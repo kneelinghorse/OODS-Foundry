@@ -3,11 +3,15 @@
 
 # Dependencies
 node_modules/
+package-lock.json
+yarn.lock
 
 # Build outputs
 dist/
 coverage/
+# Storybook static builds
 storybook-static/
+**/storybook-static/
 artifacts/
 
 # Temp and logs

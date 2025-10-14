@@ -4,15 +4,13 @@
 
 > A practical, tokens-only enterprise design system with semantic traits, context-aware rendering, and guardrails that keep accessibility and brand theming honest.
 
-[//]: # (Badges – add your own project tokens as envs or static shields)
-<!--
+
 ![Node 20+](https://img.shields.io/badge/node-20+-green)
 ![pnpm](https://img.shields.io/badge/pnpm-workspace-blue)
 ![TypeScript](https://img.shields.io/badge/ts-strict-blue)
 ![Storybook](https://img.shields.io/badge/storybook-8.x-purple)
 ![DTCG](https://img.shields.io/badge/DTCG-1.0-lightgrey)
 ![OKLCH](https://img.shields.io/badge/color-OKLCH-important)
--->
 
 ---
 
