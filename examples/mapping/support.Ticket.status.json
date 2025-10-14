@@ -1,0 +1,71 @@
+{
+  "metadata": {
+    "description": "Status mapping for support/Ticket.status",
+    "version": "1.0.0",
+    "owner": "support-experience-squad"
+  },
+  "mappings": {
+    "new": {
+      "description": "Newly created ticket, not yet triaged.",
+      "default": {
+        "foregroundColor": "color.text.info",
+        "backgroundColor": "color.background.info.subtle",
+        "borderColor": "color.border.info",
+        "iconName": "icon.status.pending"
+      }
+    },
+    "open": {
+      "description": "Assigned and in progress.",
+      "default": {
+        "foregroundColor": "color.text.accent",
+        "backgroundColor": "color.background.accent.subtle",
+        "borderColor": "color.border.accent",
+        "iconName": "icon.status.processing"
+      }
+    },
+    "pending": {
+      "description": "Waiting on requester input.",
+      "default": {
+        "foregroundColor": "color.text.warning",
+        "backgroundColor": "color.background.warning.subtle",
+        "borderColor": "color.border.warning",
+        "iconName": "icon.status.warning"
+      },
+      "contexts": {
+        "banner": {
+          "foregroundColor": "color.text.onbold",
+          "backgroundColor": "color.background.warning.bold",
+          "borderColor": "color.border.warning"
+        }
+      }
+    },
+    "on_hold": {
+      "description": "Paused awaiting external dependency.",
+      "default": {
+        "foregroundColor": "color.text.neutral",
+        "backgroundColor": "color.background.neutral.subtle",
+        "borderColor": "color.border.neutral",
+        "iconName": "icon.status.pending"
+      }
+    },
+    "solved": {
+      "description": "Resolution provided; pending auto-close.",
+      "default": {
+        "foregroundColor": "color.text.positive",
+        "backgroundColor": "color.background.positive.subtle",
+        "borderColor": "color.border.positive",
+        "iconName": "icon.status.success"
+      }
+    },
+    "closed": {
+      "description": "Closed and archived.",
+      "default": {
+        "foregroundColor": "color.text.disabled",
+        "backgroundColor": "color.background.disabled",
+        "borderColor": "color.border.disabled",
+        "iconName": "icon.status.void"
+      }
+    }
+  }
+}
+

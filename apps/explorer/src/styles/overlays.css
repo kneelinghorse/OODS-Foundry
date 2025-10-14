@@ -1,0 +1,314 @@
+/* Overlay and popover surfaces using only --cmp-* and --sys-* tokens */
+
+/* Generic overlay tokens (can be specialized per component) */
+.cmp-overlay {
+  --cmp-overlay-radius: 0.75rem;
+  --cmp-overlay-surface: var(--cmp-surface-panel);
+  --cmp-overlay-border: var(--cmp-border-default);
+  --cmp-overlay-shadow: var(--cmp-shadow-panel, 0 10px 24px rgba(15, 23, 42, 0.12));
+  --cmp-overlay-gap: var(--cmp-spacing-inset-compact, 0.5rem);
+  --cmp-overlay-focus-outer: var(--sys-focus-ring-outer);
+  --cmp-overlay-focus-width: var(--sys-focus-width, 2px);
+}
+
+/* Select (button + listbox) */
+.cmp-select {
+  --cmp-select-radius: var(--cmp-input-radius, 0.85rem);
+  --cmp-select-padding-inline: var(--cmp-input-padding-inline, 1rem);
+  --cmp-select-padding-block: var(--cmp-input-padding-block, 0.62rem);
+  --cmp-select-gap: var(--cmp-input-gap, 0.5rem);
+  --cmp-select-background: var(--cmp-input-background, var(--cmp-surface-panel));
+  --cmp-select-background-hover: var(--cmp-input-background-hover, var(--cmp-surface-subtle));
+  --cmp-select-border: var(--cmp-input-border, var(--cmp-border-default));
+  --cmp-select-border-hover: var(--cmp-input-border-hover, var(--cmp-border-strong));
+  --cmp-select-border-focus: var(--cmp-input-border-focus, var(--cmp-text-accent));
+  --cmp-select-text: var(--cmp-input-text, var(--cmp-text-body));
+  --cmp-select-icon: var(--cmp-icon-muted, currentColor);
+  --cmp-select-focus-outer: var(--cmp-input-focus-outer, var(--sys-focus-ring-outer));
+  --cmp-select-focus-width: var(--cmp-input-focus-width, var(--sys-focus-width, 2px));
+
+  position: relative;
+  display: inline-block;
+  color: var(--cmp-select-text);
+}
+
+.cmp-select__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cmp-select-gap);
+  border-radius: var(--cmp-select-radius);
+  border: 1px solid var(--cmp-select-border);
+  background: var(--cmp-select-background);
+  padding-inline: var(--cmp-select-padding-inline);
+  padding-block: var(--cmp-select-padding-block);
+  cursor: pointer;
+  transition:
+    background-color var(--motion-transition-hover-duration, var(--motion-duration-fast)) var(--motion-easing-standard),
+    border-color var(--motion-transition-hover-duration, var(--motion-duration-fast)) var(--motion-easing-standard),
+    box-shadow var(--motion-transition-focus-duration, var(--motion-duration-base)) var(--motion-easing-standard);
+}
+
+.cmp-select__trigger:hover {
+  background: var(--cmp-select-background-hover);
+  border-color: var(--cmp-select-border-hover);
+}
+
+.cmp-select__trigger:focus-visible {
+  box-shadow: 0 0 0 calc(var(--cmp-select-focus-width) + 1px)
+    color-mix(in srgb, var(--cmp-select-border-focus) 35%, transparent);
+}
+
+.cmp-select__label {
+  white-space: nowrap;
+}
+
+.cmp-select__icon {
+  color: var(--cmp-select-icon);
+  font-size: 0.9em;
+  line-height: 1;
+}
+
+.cmp-select__popover {
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: calc(100% + 6px);
+  z-index: 50;
+  min-inline-size: 100%;
+}
+
+.cmp-select__listbox {
+  /* inherit overlay tokens */
+  --cmp-overlay-radius: var(--cmp-overlay-radius, 0.75rem);
+  --cmp-overlay-surface: var(--cmp-overlay-surface, var(--cmp-surface-panel));
+  --cmp-overlay-border: var(--cmp-overlay-border, var(--cmp-border-default));
+  --cmp-overlay-shadow: var(--cmp-overlay-shadow, var(--cmp-shadow-panel));
+  --cmp-overlay-focus-outer: var(--cmp-overlay-focus-outer, var(--sys-focus-ring-outer));
+  --cmp-overlay-focus-width: var(--cmp-overlay-focus-width, var(--sys-focus-width, 2px));
+
+  list-style: none;
+  margin: 0;
+  padding: 0.25rem;
+  border-radius: var(--cmp-overlay-radius);
+  background: var(--cmp-overlay-surface);
+  border: 1px solid var(--cmp-overlay-border);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--cmp-overlay-border) 30%, transparent), var(--cmp-overlay-shadow);
+  max-block-size: min(18rem, 50vh);
+  overflow: auto;
+  outline: none;
+}
+
+.cmp-select__listbox:focus-visible {
+  box-shadow: 0 0 0 calc(var(--cmp-overlay-focus-width) + 1px)
+    color-mix(in srgb, var(--cmp-overlay-focus-outer) 35%, transparent), var(--cmp-overlay-shadow);
+}
+
+.cmp-select__option {
+  padding: 0.5rem 0.65rem;
+  border-radius: 0.5rem;
+  cursor: default;
+  transition: background-color var(--motion-transition-hover-duration, var(--motion-duration-fast)) var(--motion-easing-standard),
+    color var(--motion-transition-hover-duration, var(--motion-duration-fast)) var(--motion-easing-standard);
+}
+
+.cmp-select__option[data-active='true'] {
+  background: color-mix(in srgb, var(--cmp-select-border-focus) 15%, transparent);
+}
+
+.cmp-select__option[data-selected='true'] {
+  background: color-mix(in srgb, var(--cmp-select-border-focus) 22%, transparent);
+}
+
+.cmp-select__option[aria-disabled='true'] {
+  opacity: 0.7;
+}
+
+/* Tabs */
+.cmp-tabs {
+  --cmp-tabs-gap: var(--cmp-spacing-inset-compact, 0.75rem);
+  --cmp-tabs-border: var(--cmp-border-default);
+  --cmp-tabs-active: var(--cmp-text-accent);
+  --cmp-tabs-muted: var(--cmp-text-muted);
+  --cmp-tabs-focus-outer: var(--sys-focus-ring-outer);
+  --cmp-tabs-focus-width: var(--sys-focus-width, 2px);
+
+  display: grid;
+  gap: var(--cmp-tabs-gap);
+}
+
+.cmp-tabs__list {
+  display: flex;
+  gap: 0.25rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--cmp-tabs-border) 40%, transparent);
+}
+
+.cmp-tabs__tab {
+  appearance: none;
+  border: 0;
+  background: none;
+  color: var(--cmp-text-body);
+  padding: 0.5rem 0.9rem;
+  border-radius: 0.5rem 0.5rem 0 0;
+  cursor: pointer;
+}
+
+.cmp-tabs__tab[data-selected='true'] {
+  color: var(--cmp-text-body);
+  box-shadow: inset 0 -2px 0 var(--cmp-tabs-active);
+  font-weight: 600;
+}
+
+.cmp-tabs__tab:focus-visible {
+  outline: var(--cmp-tabs-focus-width) solid var(--cmp-tabs-focus-outer);
+  outline-offset: 3px;
+}
+
+.cmp-tabs__panel {
+  padding-block-start: 0.25rem;
+}
+
+/* Tooltip */
+.cmp-tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.cmp-tooltip__bubble {
+  --cmp-tooltip-radius: var(--cmp-tooltip-radius, 0.5rem);
+  --cmp-tooltip-surface: var(--cmp-tooltip-background, var(--cmp-surface-panel));
+  --cmp-tooltip-border: var(--cmp-tooltip-border, var(--cmp-border-strong));
+  --cmp-tooltip-text: var(--cmp-tooltip-text, var(--cmp-text-body));
+  --cmp-tooltip-shadow: var(--cmp-shadow-overlay);
+
+  position: absolute;
+  inset: auto auto auto auto; /* set by side via transforms */
+  z-index: 60;
+  background: var(--cmp-tooltip-surface);
+  color: var(--cmp-tooltip-text);
+  border: 1px solid var(--cmp-tooltip-border);
+  border-radius: var(--cmp-tooltip-radius);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--cmp-tooltip-border) 35%, transparent), var(--cmp-tooltip-shadow);
+  padding: 0.4rem 0.55rem;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(2px) scale(0.98);
+  transition:
+    opacity var(--motion-transition-tooltip-in-duration, var(--motion-duration-fast))
+      var(--motion-transition-tooltip-in-timing-function, var(--motion-easing-standard))
+      var(--motion-transition-tooltip-in-delay, 60ms),
+    transform var(--motion-transition-tooltip-in-duration, var(--motion-duration-fast))
+      var(--motion-transition-tooltip-in-timing-function, var(--motion-easing-standard))
+      var(--motion-transition-tooltip-in-delay, 60ms);
+}
+
+.cmp-tooltip__bubble[data-open='true'] {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Side positioning (simple offset) */
+.cmp-tooltip[data-side='top'] .cmp-tooltip__bubble {
+  inset-inline-start: 50%;
+  inset-block-end: calc(100% + 8px);
+  transform: translate(-50%, 4px) scale(0.98);
+}
+.cmp-tooltip[data-side='top'] .cmp-tooltip__bubble[data-open='true'] {
+  transform: translate(-50%, 0) scale(1);
+}
+
+.cmp-tooltip[data-side='bottom'] .cmp-tooltip__bubble {
+  inset-inline-start: 50%;
+  inset-block-start: calc(100% + 8px);
+  transform: translate(-50%, -4px) scale(0.98);
+}
+.cmp-tooltip[data-side='bottom'] .cmp-tooltip__bubble[data-open='true'] {
+  transform: translate(-50%, 0) scale(1);
+}
+
+.cmp-tooltip[data-side='left'] .cmp-tooltip__bubble {
+  inset-inline-end: calc(100% + 8px);
+  inset-block-start: 50%;
+  transform: translate(4px, -50%) scale(0.98);
+}
+.cmp-tooltip[data-side='left'] .cmp-tooltip__bubble[data-open='true'] {
+  transform: translate(0, -50%) scale(1);
+}
+
+.cmp-tooltip[data-side='right'] .cmp-tooltip__bubble {
+  inset-inline-start: calc(100% + 8px);
+  inset-block-start: 50%;
+  transform: translate(-4px, -50%) scale(0.98);
+}
+.cmp-tooltip[data-side='right'] .cmp-tooltip__bubble[data-open='true'] {
+  transform: translate(0, -50%) scale(1);
+}
+
+.cmp-tooltip__content {
+  font-size: 0.875rem;
+  line-height: 1.2;
+}
+
+/* Toast */
+.cmp-toast {
+  --cmp-toast-radius: var(--cmp-toast-radius, 0.85rem);
+  --cmp-toast-background: var(--cmp-toast-background, var(--cmp-surface-panel));
+  --cmp-toast-border: var(--cmp-toast-border, var(--cmp-border-default));
+  --cmp-toast-text: var(--cmp-toast-text, var(--cmp-text-body));
+  --cmp-toast-icon: var(--cmp-toast-icon, var(--cmp-icon-default));
+  --cmp-toast-focus-outer: var(--cmp-toast-focus-outer, var(--sys-focus-ring-outer));
+  --cmp-toast-focus-width: var(--cmp-toast-focus-width, var(--sys-focus-width, 2px));
+
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: var(--cmp-toast-radius);
+  background: var(--cmp-toast-background);
+  color: var(--cmp-toast-text);
+  border: 1px solid var(--cmp-toast-border);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--cmp-toast-border) 30%, transparent), var(--cmp-shadow-overlay);
+  transform: translateY(6px);
+  opacity: 0;
+  transition:
+    opacity var(--motion-transition-toast-in-duration, var(--motion-duration-base))
+      var(--motion-transition-toast-in-timing-function, var(--motion-easing-emphasized))
+      var(--motion-transition-toast-in-delay, 0ms),
+    transform var(--motion-transition-toast-in-duration, var(--motion-duration-base))
+      var(--motion-transition-toast-in-timing-function, var(--motion-easing-emphasized))
+      var(--motion-transition-toast-in-delay, 0ms);
+}
+
+.cmp-toast[data-open='true'] {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.cmp-toast__icon {
+  color: var(--cmp-toast-icon);
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.cmp-toast__title {
+  font-weight: 700;
+  line-height: 1.25;
+}
+.cmp-toast__message {
+  font-size: 0.95rem;
+  line-height: 1.35;
+}
+
+.cmp-toast__close {
+  appearance: none;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 0.5rem;
+}
+.cmp-toast__close:focus-visible {
+  outline: var(--cmp-toast-focus-width) solid var(--cmp-toast-focus-outer);
+  outline-offset: 2px;
+}

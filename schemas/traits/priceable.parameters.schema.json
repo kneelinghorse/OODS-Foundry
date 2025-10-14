@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/07/schema",
+  "$id": "https://trait-engine.dev/schemas/traits/priceable",
+  "title": "Priceable Trait Parameters",
+  "description": "Configuration contract for pricing, currency, and billing cadence metadata.",
+  "type": "object",
+  "properties": {
+    "supportedCurrencies": {
+      "type": "array",
+      "description": "ISO 4217 currency codes supported for pricing.",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z]{3}$",
+        "description": "Uppercase three-letter ISO currency code (e.g., USD)."
+      }
+    },
+    "defaultCurrency": {
+      "type": "string",
+      "description": "Currency preselected when authoring pricing information.",
+      "pattern": "^[A-Z]{3}$",
+      "enum": {
+        "$data": "1/supportedCurrencies"
+      }
+    },
+    "pricingModels": {
+      "type": "array",
+      "description": "Supported monetization strategies applied to the entity.",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 48,
+        "pattern": "^[a-z0-9_]+$",
+        "description": "Pricing model identifier such as one_time or subscription."
+      }
+    },
+    "billingIntervals": {
+      "type": "array",
+      "description": "Allowed billing cadences when the pricing model recurs.",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 24,
+        "pattern": "^[a-z0-9_]+$",
+        "description": "Billing interval identifier such as month or year."
+      }
+    },
+    "taxBehavior": {
+      "type": "string",
+      "description": "Determines whether prices are tax inclusive or exclusive.",
+      "enum": ["exclusive", "inclusive"]
+    }
+  },
+  "required": ["supportedCurrencies", "pricingModels"],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "supportedCurrencies": ["USD", "EUR", "GBP"],
+      "defaultCurrency": "USD",
+      "pricingModels": ["one_time", "subscription"],
+      "billingIntervals": ["one_time", "month", "year"],
+      "taxBehavior": "exclusive"
+    }
+  ]
+}

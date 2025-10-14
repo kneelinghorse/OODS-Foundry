@@ -1,0 +1,37 @@
+object:
+  name: User
+  version: 1.1.0
+  description: Core identity record for application users
+  tags: [core, identity]
+
+traits:
+  - name: Timestamped
+  - name: Ownable
+    alias: Ownership
+  - name: Taggable
+    parameters:
+      tagLimit: 12
+
+schema:
+  display_name: string
+  avatar_url: string?
+  timezone: string?
+  status:
+    type: string
+    required: false
+    default: active
+    description: Lifecycle label used in UI badges
+
+resolutions:
+  fields:
+    owner_id:
+      use: Ownership
+      alias:
+        Taggable: tag_owner_id
+
+metadata:
+  owners:
+    - platform@company.test
+  changelog:
+    - version: 1.1.0
+      description: Added timezone field and status metadata

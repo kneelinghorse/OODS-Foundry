@@ -1,0 +1,12 @@
+object:
+  name: Order
+  domain: commerce
+  tags:
+    - commerce
+    - transaction
+    - ecommerce
+traits:
+  - name: Timestamped
+  - name: Stateful
+  - name: Ownable
+  - name: Billable

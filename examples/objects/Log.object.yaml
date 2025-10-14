@@ -1,0 +1,12 @@
+object:
+  name: Log
+  domain: system
+  tags:
+    - system
+    - logging
+    - audit
+traits:
+  - name: Loggable
+  - name: Timestamped
+  - name: Traceable
+  - name: Immutable

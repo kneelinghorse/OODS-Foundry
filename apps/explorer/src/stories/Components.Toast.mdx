@@ -1,0 +1,38 @@
+import React from 'react';
+import { Meta, Canvas, Story } from '@storybook/blocks';
+import * as ToastStories from './Toast.stories';
+import { Toast } from '../components/Toast';
+import '../styles/index.css';
+import '../styles/overlays.css';
+
+<Meta of={ToastStories} />
+
+## States
+
+<Canvas>
+  <Story
+    name="States"
+    parameters={{ chromatic: { disableSnapshot: false }, vrt: { tags: ['vrt-critical'] } }}
+    tags={['vrt-critical']}
+  >
+    {() => (
+      <div style={{ display: 'grid', gap: '0.75rem', width: 'min(36rem, 100%)' }}>
+        <Toast tone="info" title="Heads up">Informational notice about the system.</Toast>
+        <Toast tone="accent" title="Feature">Try the new feature in Labs.</Toast>
+        <Toast tone="success" title="Saved">Changes saved successfully.</Toast>
+        <Toast tone="warning" title="Caution">Please double-check your input.</Toast>
+        <Toast tone="critical" role="alert" ariaLive="assertive" title="Error">Unable to complete action.</Toast>
+        <Toast tone="neutral">Neutral notification without a title.</Toast>
+      </div>
+    )}
+  </Story>
+</Canvas>
+
+## A11y Contract
+
+- Uses live region semantics: `role="status"` with `aria-live="polite"` by default; critical uses `role="alert"`.
+- Visuals consume only `--cmp-toast-*` tokens; tones map to `status.*` via context.
+- Focusable dismiss button has outline ring and label.
+- Motion v1 tokens: `--motion-transition-toast-*`; reduced-motion disables transitions.
+- In High Contrast, toast renders without shadow; border/text remain legible.
+

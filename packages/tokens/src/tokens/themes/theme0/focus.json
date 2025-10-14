@@ -1,0 +1,28 @@
+{
+  "theme": {
+    "focus": {
+      "ring": {
+        "outer": {
+          "$type": "color",
+          "$value": "{ref.color.neutral.900}",
+          "$description": "Outer glow of focus ring."
+        },
+        "inner": {
+          "$type": "color",
+          "$value": "{ref.color.neutral.100}",
+          "$description": "Inner contrast colour for focus outlines."
+        }
+      },
+      "text": {
+        "$type": "color",
+        "$value": "{ref.color.primary.600}",
+        "$description": "Focus text/indicator colour."
+      },
+      "width": {
+        "$type": "dimension",
+        "$value": "2px",
+        "$description": "Standard focus outline width."
+      }
+    }
+  }
+}

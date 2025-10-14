@@ -1,0 +1,31 @@
+import { Meta, Canvas, Story } from '@storybook/blocks';
+import * as BrandAStories from './BrandA.stories';
+
+<Meta of={BrandAStories} />
+
+Brand A extends the base token stack without touching component logic. Each theme swap happens via
+`data-brand="A"` combined with the relevant `data-theme` attribute so React trees stay token-only.
+
+## Light Theme
+
+Warm neutrals and accent ramps map onto the existing `--cmp-*` slots while maintaining 4.5:1 button contrast.
+
+<Canvas>
+  <Story of={BrandAStories.Light} />
+</Canvas>
+
+## Dark Theme
+
+Deep umber surfaces and luminous accents cascade through the same component slots—no conditionals in JSX.
+
+<Canvas>
+  <Story of={BrandAStories.Dark} />
+</Canvas>
+
+## High Contrast
+
+The high-contrast mode leans on system colors (`Canvas`, `Highlight`) so OS palettes drive accessibility.
+
+<Canvas>
+  <Story of={BrandAStories.HighContrast} />
+</Canvas>

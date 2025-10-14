@@ -1,0 +1,30 @@
+{
+  "theme-dark": {
+    "shadow": {
+      "elevation": {
+        "card": {
+          "$type": "shadow",
+          "$value": {
+            "offsetX": "0px",
+            "offsetY": "18px",
+            "blur": "48px",
+            "spread": "-28px",
+            "color": "rgba(4, 10, 22, 0.48)"
+          },
+          "$description": "Primary elevation for dark cards—leans on outline support with a low, cool glow."
+        },
+        "overlay": {
+          "$type": "shadow",
+          "$value": {
+            "offsetX": "0px",
+            "offsetY": "32px",
+            "blur": "68px",
+            "spread": "-30px",
+            "color": "rgba(8, 18, 38, 0.55)"
+          },
+          "$description": "Overlay elevation tuned for modals and trays without blooming."
+        }
+      }
+    }
+  }
+}

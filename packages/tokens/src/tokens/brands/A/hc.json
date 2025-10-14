@@ -1,0 +1,238 @@
+{
+  "$schema": "https://design-tokens.org/dtcg/schema.json",
+  "color": {
+    "brand": {
+      "A": {
+        "surface": {
+          "canvas": {
+            "$type": "color",
+            "$value": "Canvas",
+            "$description": "Forced-colors canvas maps to system Canvas."
+          },
+          "raised": {
+            "$type": "color",
+            "$value": "Canvas",
+            "$description": "Raised surfaces mirror Canvas in HC mode."
+          },
+          "subtle": {
+            "$type": "color",
+            "$value": "Canvas",
+            "$description": "Subtle surfaces flatten to Canvas for predictability."
+          },
+          "disabled": {
+            "$type": "color",
+            "$value": "Canvas",
+            "$description": "Disabled surfaces stay on Canvas to preserve outlines."
+          },
+          "backdrop": {
+            "$type": "color",
+            "$value": "Canvas",
+            "$description": "Backdrop scrims fall back to Canvas in HC mode."
+          },
+          "inverse": {
+            "$type": "color",
+            "$value": "CanvasText",
+            "$description": "Inverse surfaces flip to CanvasText for contrast."
+          },
+          "interactive": {
+            "primary": {
+              "default": {
+                "$type": "color",
+                "$value": "Highlight",
+                "$description": "Primary action aligns to Highlight in HC."
+              },
+              "hover": {
+                "$type": "color",
+                "$value": "Highlight",
+                "$description": "Hover remains Highlight to avoid flicker."
+              },
+              "pressed": {
+                "$type": "color",
+                "$value": "Highlight",
+                "$description": "Pressed state remains Highlight."
+              }
+            }
+          }
+        },
+        "border": {
+          "subtle": {
+            "$type": "color",
+            "$value": "CanvasText",
+            "$description": "Default border maps to CanvasText."
+          },
+          "strong": {
+            "$type": "color",
+            "$value": "Highlight",
+            "$description": "High-emphasis border uses Highlight for visibility."
+          }
+        },
+        "text": {
+          "primary": {
+            "$type": "color",
+            "$value": "CanvasText",
+            "$description": "Primary text uses CanvasText for HC compliance."
+          },
+          "secondary": {
+            "$type": "color",
+            "$value": "GrayText",
+            "$description": "Secondary copy falls back to GrayText."
+          },
+          "muted": {
+            "$type": "color",
+            "$value": "GrayText",
+            "$description": "Muted copy also maps to GrayText."
+          },
+          "inverse": {
+            "$type": "color",
+            "$value": "Canvas",
+            "$description": "Inverse text uses Canvas to contrast CanvasText surfaces."
+          },
+          "accent": {
+            "$type": "color",
+            "$value": "LinkText",
+            "$description": "Accent inline text maps to LinkText in HC."
+          },
+          "onInteractive": {
+            "$type": "color",
+            "$value": "HighlightText",
+            "$description": "Interactive foreground uses HighlightText."
+          },
+          "disabled": {
+            "$type": "color",
+            "$value": "GrayText",
+            "$description": "Disabled text uses GrayText baseline."
+          }
+        },
+        "accent": {
+          "background": {
+            "$type": "color",
+            "$value": "Canvas",
+            "$description": "Accent surfaces resolve to Canvas."
+          },
+          "border": {
+            "$type": "color",
+            "$value": "Highlight",
+            "$description": "Accent border leverages Highlight."
+          },
+          "text": {
+            "$type": "color",
+            "$value": "HighlightText",
+            "$description": "Accent text maps to HighlightText."
+          }
+        },
+        "status": {
+          "info": {
+            "surface": {
+              "$type": "color",
+              "$value": "Canvas",
+              "$description": "Info backgrounds map to Canvas." 
+            },
+            "border": {
+              "$type": "color",
+              "$value": "Highlight",
+              "$description": "Info borders use Highlight." 
+            },
+            "text": {
+              "$type": "color",
+              "$value": "HighlightText",
+              "$description": "Info text uses HighlightText." 
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "HighlightText",
+              "$description": "Info icon uses HighlightText." 
+            }
+          },
+          "success": {
+            "surface": {
+              "$type": "color",
+              "$value": "Canvas",
+              "$description": "Success surfaces map to Canvas." 
+            },
+            "border": {
+              "$type": "color",
+              "$value": "Highlight",
+              "$description": "Success border uses Highlight." 
+            },
+            "text": {
+              "$type": "color",
+              "$value": "HighlightText",
+              "$description": "Success text uses HighlightText." 
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "HighlightText",
+              "$description": "Success icon uses HighlightText." 
+            }
+          },
+          "warning": {
+            "surface": {
+              "$type": "color",
+              "$value": "Canvas",
+              "$description": "Warning surfaces map to Canvas." 
+            },
+            "border": {
+              "$type": "color",
+              "$value": "Highlight",
+              "$description": "Warning border uses Highlight." 
+            },
+            "text": {
+              "$type": "color",
+              "$value": "HighlightText",
+              "$description": "Warning text uses HighlightText." 
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "HighlightText",
+              "$description": "Warning icon uses HighlightText." 
+            }
+          },
+          "critical": {
+            "surface": {
+              "$type": "color",
+              "$value": "Canvas",
+              "$description": "Critical surfaces flatten to Canvas." 
+            },
+            "border": {
+              "$type": "color",
+              "$value": "Highlight",
+              "$description": "Critical border uses Highlight." 
+            },
+            "text": {
+              "$type": "color",
+              "$value": "HighlightText",
+              "$description": "Critical text uses HighlightText." 
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "HighlightText",
+              "$description": "Critical icon uses HighlightText." 
+            }
+          },
+          "neutral": {
+            "surface": {
+              "$type": "color",
+              "$value": "Canvas",
+              "$description": "Neutral surface maps to Canvas." 
+            },
+            "border": {
+              "$type": "color",
+              "$value": "CanvasText",
+              "$description": "Neutral border uses CanvasText." 
+            },
+            "text": {
+              "$type": "color",
+              "$value": "CanvasText",
+              "$description": "Neutral text uses CanvasText." 
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "CanvasText",
+              "$description": "Neutral icon uses CanvasText." 
+            }
+          }
+        }
+      }
+    }
+  }
+}

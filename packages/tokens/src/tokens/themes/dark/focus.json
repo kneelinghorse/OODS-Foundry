@@ -1,0 +1,43 @@
+{
+  "theme-dark": {
+    "focus": {
+      "ring": {
+        "outer": {
+          "$type": "color",
+          "$value": "oklch(0.85 0.13 274.55)",
+          "$description": "Outer focus ring tuned for dark surfaces.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#BBC9FF"
+            }
+          }
+        },
+        "inner": {
+          "$type": "color",
+          "$value": "oklch(0.16 0.015 260)",
+          "$description": "Inner focus contrast colour that nests against the outer ring.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#090D14"
+            }
+          }
+        }
+      },
+      "text": {
+        "$type": "color",
+        "$value": "oklch(0.77 0.16 274.55)",
+        "$description": "Text and indicator colour used within focus treatments.",
+        "$extensions": {
+          "ods": {
+            "fallback": "#9AACFF"
+          }
+        }
+      },
+      "width": {
+        "$type": "dimension",
+        "$value": "2px",
+        "$description": "Focus ring width shared with light theme."
+      }
+    }
+  }
+}

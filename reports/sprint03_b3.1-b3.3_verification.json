@@ -1,0 +1,46 @@
+{
+  "regions": {
+    "exported": [
+      "globalNavigation",
+      "pageHeader",
+      "breadcrumbs",
+      "viewToolbar",
+      "main",
+      "contextPanel"
+    ],
+    "count": 6,
+    "forbiddenNamesFound": [],
+    "regionOrder": [
+      "globalNavigation",
+      "pageHeader",
+      "breadcrumbs",
+      "viewToolbar",
+      "main",
+      "contextPanel"
+    ]
+  },
+  "contexts": {
+    "templates": [
+      "list",
+      "detail",
+      "form",
+      "timeline",
+      "card",
+      "inline"
+    ],
+    "snapshotStatus": "pass"
+  },
+  "compositor": {
+    "dedupLastWins": "pass",
+    "stableSort": "pass",
+    "conditions": "pass",
+    "applyOrder": "pass"
+  },
+  "purity": {
+    "harnessFound": true,
+    "sampleModifiersPassed": [
+      "withStatusBadge"
+    ],
+    "eslintRuleActive": true
+  }
+}

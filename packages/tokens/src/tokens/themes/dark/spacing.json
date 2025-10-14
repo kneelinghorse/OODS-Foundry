@@ -1,0 +1,42 @@
+{
+  "theme-dark": {
+    "space": {
+      "inset": {
+        "compact": {
+          "$type": "dimension",
+          "$value": "{ref.space.inset.compact}",
+          "$description": "Dark theme compact inset spacing matches light for parity."
+        },
+        "default": {
+          "$type": "dimension",
+          "$value": "{ref.space.inset.default}",
+          "$description": "Default inset padding shared across themes."
+        }
+      },
+      "stack": {
+        "compact": {
+          "$type": "dimension",
+          "$value": "{ref.space.stack.compact}",
+          "$description": "Compact vertical rhythm retained from base spacing."
+        },
+        "default": {
+          "$type": "dimension",
+          "$value": "{ref.space.stack.default}",
+          "$description": "Default vertical rhythm shared with Theme 0."
+        }
+      },
+      "inline": {
+        "xs": {
+          "$type": "dimension",
+          "$value": "{ref.space.inline.xs}",
+          "$description": "Extra-small inline spacing consistent across themes."
+        },
+        "sm": {
+          "$type": "dimension",
+          "$value": "{ref.space.inline.sm}",
+          "$description": "Small inline spacing retained for dark layouts."
+        }
+      }
+    }
+  }
+}

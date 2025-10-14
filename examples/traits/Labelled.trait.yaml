@@ -1,0 +1,95 @@
+# Labelled Trait
+# Adds label/display name and description fields to objects
+
+trait:
+  name: Labelled
+  version: 1.0.0
+  description: Provides human-readable label and description fields
+  category: metadata
+  tags:
+    - label
+    - description
+    - metadata
+    - display
+
+schema:
+  label:
+    type: string
+    required: true
+    description: Human-readable display name for the object
+
+  description:
+    type: string
+    required: false
+    description: Optional longer description
+
+  slug:
+    type: string
+    required: false
+    description: URL-friendly version of the label
+
+semantics:
+  label:
+    semantic_type: display_name
+    ui_hints:
+      component: TextInput
+      maxLength: 100
+
+  description:
+    semantic_type: rich_text
+    ui_hints:
+      component: TextArea
+      rows: 3
+
+  slug:
+    semantic_type: slug_field
+    ui_hints:
+      component: SlugInput
+      generateFrom: label
+
+view_extensions:
+  list:
+    - component: LabelDisplay
+      props:
+        field: label
+        truncate: true
+        maxLength: 40
+
+  detail:
+    - component: LabelHeader
+      position: top
+      props:
+        showDescription: true
+        showSlug: true
+
+  card:
+    - component: CardTitle
+      position: top
+      props:
+        field: label
+        typography: heading-sm
+
+  inline:
+    - component: InlineLabel
+      props:
+        field: label
+        maxLength: 20
+
+actions:
+  - name: editLabel
+    label: Edit Label
+    icon: edit
+    confirmation: false
+
+  - name: generateSlug
+    label: Generate Slug
+    icon: link
+    confirmation: false
+    condition: "slug === null || slug === ''"
+
+dependencies:
+  - Timestampable
+
+metadata:
+  created: "2025-10-07"
+  author: OODS Team

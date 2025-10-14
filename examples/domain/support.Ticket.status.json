@@ -1,0 +1,19 @@
+{
+  "manifest": "support.Ticket.status",
+  "object": "support/Ticket",
+  "field": "status",
+  "description": "Canonical support ticket states (normalized; aligns with Zendesk/Freshdesk patterns).",
+  "values": [
+    "new",
+    "open",
+    "pending",
+    "on_hold",
+    "solved",
+    "closed"
+  ],
+  "sources": [
+    "missions/research/r4.5_SaaS-Enum-to-Token-Mapping-Schema.md#3.4",
+    "Vendor diffs: Zendesk(new|open|pending|on-hold|solved|closed); normalized to snake_case"
+  ]
+}
+

@@ -1,0 +1,12 @@
+object:
+  name: Address
+  domain: location
+  tags:
+    - location
+    - shipping
+    - billing
+traits:
+  - name: Validatable
+  - name: Geocodable
+  - name: Timestamped
+  - name: Ownable

@@ -1,0 +1,12 @@
+object:
+  name: Event
+  domain: system
+  tags:
+    - system
+    - event
+    - logging
+traits:
+  - name: Timestamped
+  - name: Loggable
+  - name: Traceable
+  - name: Categorizable

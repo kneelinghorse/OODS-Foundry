@@ -1,0 +1,23 @@
+{
+  "valid": false,
+  "summary": {
+    "errors": 1,
+    "warnings": 0,
+    "info": 0
+  },
+  "issues": [
+    {
+      "code": "TE-0102",
+      "message": "Missing required field 'trait'",
+      "location": {
+        "file": "traits/examples/invalid-trait.yaml",
+        "path": "/"
+      },
+      "fixHint": "Add a 'trait' field with the trait name",
+      "severity": "error",
+      "source": "cli",
+      "domain": "trait",
+      "at": "/trait"
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+import React from 'react';
+import { Meta, Canvas, Story } from '@storybook/blocks';
+import * as TabsStories from './Tabs.stories';
+import { Tabs } from '../components/Tabs';
+import '../styles/index.css';
+import '../styles/overlays.css';
+
+<Meta of={TabsStories} />
+
+## States
+
+<Canvas>
+  <Story
+    name="States"
+    parameters={{
+      chromatic: { disableSnapshot: false },
+      vrt: { tags: ['vrt-critical'] },
+    }}
+    tags={['vrt-critical']}
+  >
+    {() => (
+      <div style={{ display: 'grid', gap: '1.25rem', width: 'min(38rem, 100%)' }}>
+        <Tabs
+          ariaLabel="Billing sections"
+          tabs={[
+            { id: 'summary', label: 'Summary', panel: <div>Summary view content</div> },
+            { id: 'invoices', label: 'Invoices', panel: <div>Invoices table…</div> },
+            { id: 'settings', label: 'Settings', panel: <div>Billing settings panel</div> },
+          ]}
+          defaultValue="summary"
+        />
+
+        <Tabs
+          ariaLabel="Vertical tabs"
+          orientation="vertical"
+          tabs={[
+            { id: 'a', label: 'Alpha', panel: <div>Alpha content</div> },
+            { id: 'b', label: 'Beta', panel: <div>Beta content</div> },
+            { id: 'c', label: 'Gamma', disabled: true, panel: <div>Gamma disabled</div> },
+          ]}
+          defaultValue="a"
+        />
+      </div>
+    )}
+  </Story>
+</Canvas>
+
+## Keyboard
+
+- Roving `tabindex`: only the active tab is in the tab sequence.
+- Arrow keys move focus/selection (Left/Right for horizontal, Up/Down for vertical).
+- Home/End jump to the first/last enabled tab.
+- Each panel is labelled by the active tab via `aria-labelledby`.
+
+## A11y Contract
+
+- `tablist` container with tabs as `role="tab"` and `aria-selected` state.
+- Each tab has `aria-controls` linked to a `tabpanel`; panels hide when inactive.
+- Focus ring uses tokens and remains visible in Dark/HC; no inline colors.
+- All visuals sourced from `--cmp-*` tokens.
+

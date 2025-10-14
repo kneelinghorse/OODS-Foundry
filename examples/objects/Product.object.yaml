@@ -1,0 +1,44 @@
+object:
+  name: Product
+  version: 1.0.0
+  category: ecommerce
+  tags: [catalog, ecommerce]
+
+traits:
+  - name: Timestamped
+  - name: Sellable
+    alias: Commerce
+    parameters:
+      currency: USD
+      allowBackorder: false
+  - name: InventoryTracked
+    optional: true
+
+schema:
+  sku: string
+  title: string
+  description: string?
+  status:
+    type: string
+    required: true
+    default: draft
+  price_override: number?
+
+resolutions:
+  fields:
+    price:
+      use: Commerce
+    status:
+      keep: object
+
+views:
+  detail:
+    - action: add
+      id: pricingSummary
+      component: ProductPricingSummary
+      priority: 30
+
+metadata:
+  owners:
+    - commerce@company.test
+  domain: ecommerce

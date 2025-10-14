@@ -1,0 +1,93 @@
+{
+  "metadata": {
+    "description": "Status mapping for saas/Subscription.status",
+    "version": "1.1.0",
+    "owner": "billing-platform-squad"
+  },
+  "mappings": {
+    "future": {
+      "description": "The subscription is scheduled to start at a future date.",
+      "default": {
+        "foregroundColor": "color.text.info",
+        "backgroundColor": "color.background.info.subtle",
+        "borderColor": "color.border.info",
+        "iconName": "icon.status.scheduled"
+      }
+    },
+    "trialing": {
+      "description": "The subscription is in a free trial period.",
+      "default": {
+        "foregroundColor": "color.text.accent",
+        "backgroundColor": "color.background.accent.subtle",
+        "borderColor": "color.border.accent",
+        "iconName": "icon.status.trial"
+      }
+    },
+    "active": {
+      "description": "The subscription is in good standing and paid for.",
+      "default": {
+        "foregroundColor": "color.text.positive",
+        "backgroundColor": "color.background.positive.subtle",
+        "borderColor": "color.border.positive",
+        "iconName": "icon.status.success"
+      },
+      "contexts": {
+        "banner": {
+          "foregroundColor": "color.text.positive",
+          "backgroundColor": "color.background.surface.default",
+          "borderColor": "color.border.positive"
+        }
+      }
+    },
+    "past_due": {
+      "description": "Payment has failed, and the account is delinquent.",
+      "default": {
+        "foregroundColor": "color.text.warning",
+        "backgroundColor": "color.background.warning.subtle",
+        "borderColor": "color.border.warning",
+        "iconName": "icon.status.warning"
+      },
+      "contexts": {
+        "banner": {
+          "foregroundColor": "color.text.onbold",
+          "backgroundColor": "color.background.warning.bold",
+          "borderColor": "color.border.warning"
+        }
+      }
+    },
+    "paused": {
+      "description": "Payment collection is temporarily suspended.",
+      "default": {
+        "foregroundColor": "color.text.neutral",
+        "backgroundColor": "color.background.neutral.subtle",
+        "borderColor": "color.border.neutral",
+        "iconName": "icon.status.paused"
+      }
+    },
+    "pending_cancellation": {
+      "description": "The subscription will remain active until the end of the current term, at which point it will be canceled.",
+      "default": {
+        "foregroundColor": "color.text.info",
+        "backgroundColor": "color.background.info.subtle",
+        "borderColor": "color.border.info",
+        "iconName": "icon.status.pending"
+      }
+    },
+    "canceled": {
+      "description": "The subscription is terminated and no longer active. This is a final state.",
+      "default": {
+        "foregroundColor": "color.text.disabled",
+        "backgroundColor": "color.background.disabled",
+        "borderColor": "color.border.disabled",
+        "iconName": "icon.status.canceled"
+      },
+      "contexts": {
+        "banner": {
+          "foregroundColor": "color.text.neutral",
+          "backgroundColor": "color.background.neutral.subtle",
+          "borderColor": "color.border.neutral"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "theme": {
+    "space": {
+      "inset": {
+        "compact": {
+          "$type": "dimension",
+          "$value": "{ref.space.inset.compact}",
+          "$description": "Compact padding for dense layouts in Theme 0."
+        },
+        "default": {
+          "$type": "dimension",
+          "$value": "{ref.space.inset.default}",
+          "$description": "Default padding for spacious layouts in Theme 0."
+        }
+      },
+      "stack": {
+        "compact": {
+          "$type": "dimension",
+          "$value": "{ref.space.stack.compact}",
+          "$description": "Tight vertical rhythm in Theme 0."
+        },
+        "default": {
+          "$type": "dimension",
+          "$value": "{ref.space.stack.default}",
+          "$description": "Default vertical rhythm in Theme 0."
+        }
+      },
+      "inline": {
+        "xs": {
+          "$type": "dimension",
+          "$value": "{ref.space.inline.xs}",
+          "$description": "Compact inline spacing for Theme 0."
+        },
+        "sm": {
+          "$type": "dimension",
+          "$value": "{ref.space.inline.sm}",
+          "$description": "Small inline spacing for Theme 0."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,127 @@
+trait:
+  name: Ownerable
+  version: 1.0.0
+  description: |
+    Adds ownership metadata linking entities to their governing account or principal with transfer auditing.
+  category: structural
+  tags:
+    - ownership
+    - governance
+    - relationships
+    - access
+
+parameters:
+  - name: ownerTypes
+    type: string[]
+    required: true
+    description: Allow list of principals permitted to own the entity.
+    default:
+      - organization
+      - team
+      - user
+  - name: primaryOwnerType
+    type: string
+    required: false
+    description: Default owner type applied when authoring new records.
+    default: organization
+    validation:
+      enumFromParameter: ownerTypes
+  - name: allowTransfer
+    type: boolean
+    required: false
+    description: Whether ownership may be reassigned after initial creation.
+    default: true
+
+schema:
+  owner_id:
+    type: string
+    required: true
+    description: Identifier of the owning principal scoped by owner_type.
+  owner_type:
+    type: string
+    required: true
+    description: Categorical owner type sourced from the ownerTypes parameter.
+    validation:
+      enumFromParameter: ownerTypes
+  ownership_role:
+    type: string
+    required: false
+    description: Optional role name describing how the owner governs the entity.
+    validation:
+      maxLength: 80
+  ownership_transferred_at:
+    type: datetime
+    required: false
+    description: Timestamp recording when ownership was last transferred.
+
+semantics:
+  owner_id:
+    semantic_type: ownership.owner.id
+    token_mapping: tokenMap(ownership.owner.id)
+    ui_hints:
+      component: OwnerReference
+      ownerTypeField: owner_type
+  owner_type:
+    semantic_type: ownership.owner.type
+    token_mapping: tokenMap(ownership.owner.type)
+    ui_hints:
+      component: OwnerTypeBadge
+      parameterSource: ownerTypes
+  ownership_role:
+    semantic_type: ownership.owner.role
+    token_mapping: tokenMap(ownership.owner.role)
+    ui_hints:
+      component: OwnerRolePill
+  ownership_transferred_at:
+    semantic_type: ownership.owner.transferred_at
+    token_mapping: tokenMap(ownership.owner.timestamp)
+    ui_hints:
+      component: TimelineTimestamp
+
+view_extensions:
+  detail:
+    - component: OwnershipSummary
+      position: top
+      props:
+        ownerIdField: owner_id
+        ownerTypeField: owner_type
+        roleField: ownership_role
+        transferredAtField: ownership_transferred_at
+        allowTransferParameter: allowTransfer
+  list:
+    - component: OwnerBadge
+      props:
+        ownerIdField: owner_id
+        ownerTypeField: owner_type
+  card:
+    - component: OwnershipMeta
+      position: after
+      props:
+        ownerTypeField: owner_type
+        roleField: ownership_role
+
+tokens:
+  ownership.owner.badge.bg: "var(--surface-subtle)"
+  ownership.owner.badge.text: "var(--text-default)"
+  ownership.owner.role.text: "var(--text-muted)"
+
+dependencies: []
+
+metadata:
+  created: "2025-10-16"
+  owners:
+    - governance@oods.systems
+    - platform@oods.systems
+  maturity: stable
+  accessibility:
+    keyboard: "n/a"
+    screenreader: "Announces owning principal, type, and transfer state."
+  regionsUsed:
+    - detail
+    - list
+    - card
+  examples:
+    - Project
+    - Workspace
+  references:
+    - "Trait Engine Spec v0.1 §2"

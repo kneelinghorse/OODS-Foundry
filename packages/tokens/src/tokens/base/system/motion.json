@@ -1,0 +1,113 @@
+{
+  "sys": {
+    "motion": {
+      "duration": {
+        "fast": {
+          "$type": "duration",
+          "$value": "{theme.motion.duration.fast}",
+          "$description": "System fast duration for micro-interactions."
+        },
+        "base": {
+          "$type": "duration",
+          "$value": "{theme.motion.duration.base}",
+          "$description": "System baseline duration for component transitions."
+        },
+        "slow": {
+          "$type": "duration",
+          "$value": "{theme.motion.duration.slow}",
+          "$description": "System slow duration for entrance/exit motion."
+        }
+      },
+      "reduced": {
+        "duration": {
+          "fast": {
+            "$type": "duration",
+            "$value": "{theme.motion.reduced.duration.fast}",
+            "$description": "Reduced-motion fast duration resolves to instant."
+          },
+          "base": {
+            "$type": "duration",
+            "$value": "{theme.motion.reduced.duration.base}",
+            "$description": "Reduced-motion default duration resolves to instant."
+          },
+          "slow": {
+            "$type": "duration",
+            "$value": "{theme.motion.reduced.duration.slow}",
+            "$description": "Reduced-motion slow duration resolves to instant."
+          }
+        },
+        "transition": {
+          "hover": {
+            "$type": "transition",
+            "$value": "{theme.motion.reduced.transition.hover}",
+            "$description": "Reduced-motion hover transition."
+          },
+          "focus": {
+            "$type": "transition",
+            "$value": "{theme.motion.reduced.transition.focus}",
+            "$description": "Reduced-motion focus transition."
+          },
+          "chip-in": {
+            "$type": "transition",
+            "$value": "{theme.motion.reduced.transition.chip-in}",
+            "$description": "Reduced-motion chip entry transition."
+          },
+          "chip-out": {
+            "$type": "transition",
+            "$value": "{theme.motion.reduced.transition.chip-out}",
+            "$description": "Reduced-motion chip exit transition."
+          },
+          "banner-reveal": {
+            "$type": "transition",
+            "$value": "{theme.motion.reduced.transition.banner-reveal}",
+            "$description": "Reduced-motion banner reveal transition."
+          }
+        }
+      },
+      "easing": {
+        "standard": {
+          "$type": "cubicBezier",
+          "$value": "{theme.motion.easing.standard}",
+          "$description": "System standard easing curve."
+        },
+        "emphasized": {
+          "$type": "cubicBezier",
+          "$value": "{theme.motion.easing.emphasized}",
+          "$description": "System emphasized easing curve."
+        },
+        "linear": {
+          "$type": "cubicBezier",
+          "$value": "{theme.motion.easing.linear}",
+          "$description": "System linear easing curve for reduced motion."
+        }
+      },
+      "transition": {
+        "hover": {
+          "$type": "transition",
+          "$value": "{theme.motion.transition.hover}",
+          "$description": "System hover transition for interactive affordances."
+        },
+        "focus": {
+          "$type": "transition",
+          "$value": "{theme.motion.transition.focus}",
+          "$description": "System focus transition for outlines/glow."
+        },
+        "chip-in": {
+          "$type": "transition",
+          "$value": "{theme.motion.transition.chip-in}",
+          "$description": "System chip entry transition."
+        },
+        "chip-out": {
+          "$type": "transition",
+          "$value": "{theme.motion.transition.chip-out}",
+          "$description": "System chip exit transition."
+        },
+        "banner-reveal": {
+          "$type": "transition",
+          "$value": "{theme.motion.transition.banner-reveal}",
+          "$description": "System banner reveal transition."
+        }
+      }
+    }
+  }
+}

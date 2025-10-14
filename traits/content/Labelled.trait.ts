@@ -1,0 +1,131 @@
+import type { TraitDefinition } from '../../src/core/trait-definition.ts';
+
+const LabelledTrait = {
+  trait: {
+    name: 'Labelled',
+    version: '1.0.0',
+    description: 'Provides canonical label, description, and placeholder copy for authored objects.',
+    category: 'content',
+    tags: ['label', 'description', 'copy', 'metadata'],
+  },
+
+  schema: {
+    label: {
+      type: 'string',
+      required: true,
+      description: 'Human-readable display name rendered in primary surfaces.',
+    },
+    description: {
+      type: 'string',
+      required: false,
+      description: 'Supporting description used in detail contexts.',
+    },
+    placeholder: {
+      type: 'string',
+      required: false,
+      description: 'Hint copy surfaced in form fields when empty.',
+    },
+  },
+
+  semantics: {
+    label: {
+      semantic_type: 'text.label',
+      token_mapping: 'tokenMap(text.label.*)',
+      ui_hints: {
+        component: 'TextHeading',
+        maxLength: 80,
+      },
+    },
+    description: {
+      semantic_type: 'text.description',
+      token_mapping: 'tokenMap(text.body.*)',
+      ui_hints: {
+        component: 'TextBody',
+        maxLength: 160,
+      },
+    },
+    placeholder: {
+      semantic_type: 'text.placeholder',
+      token_mapping: 'tokenMap(text.placeholder.*)',
+      ui_hints: {
+        component: 'FormHint',
+        maxLength: 80,
+      },
+    },
+  },
+
+  view_extensions: {
+    list: [
+      {
+        component: 'LabelCell',
+        props: {
+          field: 'label',
+          descriptionField: 'description',
+          truncate: true,
+        },
+      },
+    ],
+    detail: [
+      {
+        component: 'DetailHeader',
+        position: 'top',
+        props: {
+          titleField: 'label',
+          subtitleField: 'description',
+        },
+      },
+    ],
+    form: [
+      {
+        component: 'FormLabelGroup',
+        position: 'before',
+        props: {
+          labelField: 'label',
+          placeholderField: 'placeholder',
+        },
+      },
+    ],
+    card: [
+      {
+        component: 'CardHeader',
+        position: 'top',
+        props: {
+          titleField: 'label',
+          supportingField: 'description',
+        },
+      },
+    ],
+    inline: [
+      {
+        component: 'InlineLabel',
+        props: {
+          field: 'label',
+          maxLength: 40,
+        },
+      },
+    ],
+  },
+
+  tokens: {
+    'text.label.primary.color': 'var(--text-strong)',
+    'text.description.secondary.color': 'var(--text-subtle)',
+    'text.placeholder.default.color': 'var(--text-muted)',
+  },
+
+  dependencies: [] as const,
+
+  metadata: {
+    created: '2025-10-12',
+    owners: ['design@oods.systems', 'uxcopy@oods.systems'],
+    maturity: 'stable',
+    accessibility: {
+      keyboard: 'n/a',
+      copy: 'required',
+    },
+    regionsUsed: ['list', 'detail', 'forms', 'inline'],
+    examples: ['Ticket', 'Knowledge Article'],
+    references: ['Trait Engine Spec v0.1 §2'],
+  },
+} as const satisfies TraitDefinition;
+
+export default LabelledTrait;

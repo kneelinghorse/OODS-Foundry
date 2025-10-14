@@ -1,0 +1,217 @@
+{
+  "ref": {
+    "typography": {
+      "families": {
+        "sans": {
+          "$type": "fontFamily",
+          "$value": "Inter, \"Inter\", \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+          "$description": "Primary sans-serif stack for product UI."
+        }
+      },
+      "weights": {
+        "regular": {
+          "$type": "number",
+          "$value": 400,
+          "$description": "Standard reading weight."
+        },
+        "medium": {
+          "$type": "number",
+          "$value": 500,
+          "$description": "Medium emphasis for supporting text and labels."
+        },
+        "semibold": {
+          "$type": "number",
+          "$value": 600,
+          "$description": "Semibold weight for headings and key UI labels."
+        },
+        "bold": {
+          "$type": "number",
+          "$value": 700,
+          "$description": "Bold weight for hero headings and emphasis."
+        }
+      },
+      "sizes": {
+        "xs": {
+          "$type": "dimension",
+          "$value": "12px",
+          "$description": "Caption scale."
+        },
+        "sm": {
+          "$type": "dimension",
+          "$value": "14px",
+          "$description": "Compact body/label scale."
+        },
+        "md": {
+          "$type": "dimension",
+          "$value": "16px",
+          "$description": "Default reading scale."
+        },
+        "lg": {
+          "$type": "dimension",
+          "$value": "20px",
+          "$description": "Large supporting heading scale."
+        },
+        "xl": {
+          "$type": "dimension",
+          "$value": "24px",
+          "$description": "Primary heading scale."
+        },
+        "xxl": {
+          "$type": "dimension",
+          "$value": "32px",
+          "$description": "Hero heading scale."
+        }
+      },
+      "line-height": {
+        "tight": {
+          "$type": "dimension",
+          "$value": "120%",
+          "$description": "Tight rhythm for headlines and compact contexts."
+        },
+        "standard": {
+          "$type": "dimension",
+          "$value": "140%",
+          "$description": "Baseline rhythm for UI text."
+        },
+        "relaxed": {
+          "$type": "dimension",
+          "$value": "150%",
+          "$description": "Relaxed rhythm for dense reading."
+        },
+        "loose": {
+          "$type": "dimension",
+          "$value": "160%",
+          "$description": "Loose rhythm for long-form detail views."
+        }
+      },
+      "letter-spacing": {
+        "tight": {
+          "$type": "dimension",
+          "$value": "-0.01em",
+          "$description": "Tight tracking for large headings."
+        },
+        "default": {
+          "$type": "dimension",
+          "$value": "0em",
+          "$description": "Neutral tracking for body copy."
+        },
+        "wide": {
+          "$type": "dimension",
+          "$value": "0.08em",
+          "$description": "Wide tracking for uppercase captions."
+        }
+      }
+    }
+  },
+  "text": {
+    "line-height": {
+      "tight": {
+        "$type": "dimension",
+        "$value": "{ref.typography.line-height.tight}",
+        "$description": "Tight rhythm for condensed contexts."
+      },
+      "standard": {
+        "$type": "dimension",
+        "$value": "{ref.typography.line-height.standard}",
+        "$description": "Standard rhythm for general UI copy."
+      },
+      "relaxed": {
+        "$type": "dimension",
+        "$value": "{ref.typography.line-height.relaxed}",
+        "$description": "Relaxed rhythm for supporting text."
+      },
+      "loose": {
+        "$type": "dimension",
+        "$value": "{ref.typography.line-height.loose}",
+        "$description": "Loose rhythm for long-form reading."
+      }
+    },
+    "letter-spacing": {
+      "tight": {
+        "$type": "dimension",
+        "$value": "{ref.typography.letter-spacing.tight}",
+        "$description": "Tight tracking for display headings."
+      },
+      "default": {
+        "$type": "dimension",
+        "$value": "{ref.typography.letter-spacing.default}",
+        "$description": "Neutral tracking."
+      },
+      "wide": {
+        "$type": "dimension",
+        "$value": "{ref.typography.letter-spacing.wide}",
+        "$description": "Wide tracking for uppercase or caption text."
+      }
+    },
+    "scale": {
+      "caption": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{ref.typography.families.sans}",
+          "fontWeight": "{ref.typography.weights.medium}",
+          "fontSize": "{ref.typography.sizes.xs}",
+          "lineHeight": "{text.line-height.standard}",
+          "letterSpacing": "{text.letter-spacing.wide}",
+          "textCase": "uppercase"
+        },
+        "$description": "Caption text for metadata, badges, and helper copy."
+      },
+      "label-md": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{ref.typography.families.sans}",
+          "fontWeight": "{ref.typography.weights.semibold}",
+          "fontSize": "{ref.typography.sizes.sm}",
+          "lineHeight": "{text.line-height.standard}",
+          "letterSpacing": "{text.letter-spacing.default}",
+          "textCase": "none"
+        },
+        "$description": "Form labels and actionable micro copy."
+      },
+      "body-sm": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{ref.typography.families.sans}",
+          "fontWeight": "{ref.typography.weights.regular}",
+          "fontSize": "{ref.typography.sizes.sm}",
+          "lineHeight": "{text.line-height.relaxed}",
+          "letterSpacing": "{text.letter-spacing.default}"
+        },
+        "$description": "Compact body text for dense list views."
+      },
+      "body-md": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{ref.typography.families.sans}",
+          "fontWeight": "{ref.typography.weights.regular}",
+          "fontSize": "{ref.typography.sizes.md}",
+          "lineHeight": "{text.line-height.relaxed}",
+          "letterSpacing": "{text.letter-spacing.default}"
+        },
+        "$description": "Primary body copy for detail reading."
+      },
+      "heading-lg": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{ref.typography.families.sans}",
+          "fontWeight": "{ref.typography.weights.semibold}",
+          "fontSize": "{ref.typography.sizes.xl}",
+          "lineHeight": "{text.line-height.tight}",
+          "letterSpacing": "{text.letter-spacing.tight}"
+        },
+        "$description": "Major section headings and card titles."
+      },
+      "heading-xl": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "{ref.typography.families.sans}",
+          "fontWeight": "{ref.typography.weights.bold}",
+          "fontSize": "{ref.typography.sizes.xxl}",
+          "lineHeight": "{text.line-height.tight}",
+          "letterSpacing": "{text.letter-spacing.tight}"
+        },
+        "$description": "Page-level hero headings."
+      }
+    }
+  }
+}

@@ -1,0 +1,137 @@
+object:
+  name: Organization
+  version: 1.0.0
+  domain: core.account
+  description: Canonical account record for tenant and workspace governance across the platform.
+  tags:
+    - universal
+    - organization
+    - tenant
+
+traits:
+  - name: content/Labelled
+    alias: OrganizationLabel
+  - name: lifecycle/Stateful
+    parameters:
+      states:
+        - prospect
+        - onboarding
+        - active
+        - churned
+      initialState: prospect
+  - name: structural/Ownerable
+    parameters:
+      ownerTypes:
+        - parent_organization
+        - reseller
+        - platform
+      primaryOwnerType: parent_organization
+      allowTransfer: true
+  - name: lifecycle/Timestampable
+    parameters:
+      recordedEvents:
+        - created
+        - plan_upgraded
+        - plan_downgraded
+        - ownership_transferred
+      timezone: UTC
+  - name: behavioral/Taggable
+    parameters:
+      maxTags: 16
+      allowCustomTags: false
+      allowedTags:
+        - enterprise
+        - smb
+        - nonprofit
+        - startup
+        - strategic
+      caseSensitive: false
+
+schema:
+  organization_id:
+    type: uuid
+    required: true
+    description: Primary identifier for the organization tenant.
+  domain:
+    type: string
+    required: true
+    description: Verified root domain associated with the organization.
+    validation:
+      format: hostname
+  plan_tier:
+    type: string
+    required: true
+    description: Billing plan currently assigned to the organization.
+    validation:
+      enum:
+        - free
+        - growth
+        - enterprise
+  billing_status:
+    type: string
+    required: true
+    default: good_standing
+    description: Financial standing used by the billing subsystem.
+    validation:
+      enum:
+        - good_standing
+        - past_due
+        - delinquent
+        - suspended
+  industry:
+    type: string
+    required: false
+    description: Optional NAICS-derived industry tag.
+  employee_count:
+    type: number
+    required: false
+    description: Reported number of active employees.
+    validation:
+      minimum: 0
+  billing_contact_email:
+    type: email
+    required: false
+    description: Primary contact email for invoicing and finance escalations.
+  data_residency:
+    type: string
+    required: false
+    description: Preferred data residency region selected during onboarding.
+    validation:
+      enum:
+        - us
+        - eu
+        - apac
+        - latam
+
+semantics:
+  organization_id:
+    semantic_type: organization.id
+    token_mapping: tokenMap(organization.id.primary)
+  domain:
+    semantic_type: organization.domain
+    token_mapping: tokenMap(organization.domain.primary)
+  plan_tier:
+    semantic_type: organization.plan.tier
+    token_mapping: tokenMap(organization.plan.tier)
+  billing_status:
+    semantic_type: billing.account.status
+    token_mapping: tokenMap(billing.account.status)
+  employee_count:
+    semantic_type: organization.metrics.employee_count
+    token_mapping: tokenMap(metric.count.primary)
+
+tokens:
+  organization.id.primary: "var(--text-strong)"
+  organization.domain.primary: "var(--text-strong)"
+  billing.account.status.good: "var(--status-success)"
+  billing.account.status.risk: "var(--status-warning)"
+
+metadata:
+  owners:
+    - customer-success@oods.systems
+    - billing@oods.systems
+  steward: platform@oods.systems
+  changelog:
+    - version: 1.0.0
+      date: "2025-10-16"
+      description: Initial Universal Quintet baseline.

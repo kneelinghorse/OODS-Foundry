@@ -1,0 +1,169 @@
+trait:
+  name: Priceable
+  version: 1.0.0
+  description: |
+    Introduces monetization metadata with currency handling, pricing models, and billing cadence semantics.
+  category: financial
+  tags:
+    - pricing
+    - monetization
+    - commerce
+    - billing
+
+parameters:
+  - name: supportedCurrencies
+    type: string[]
+    required: true
+    description: ISO currency codes permitted for pricing this entity.
+    default:
+      - USD
+      - EUR
+      - GBP
+  - name: defaultCurrency
+    type: string
+    required: false
+    description: Currency preselected when authoring pricing information.
+    default: USD
+    validation:
+      enumFromParameter: supportedCurrencies
+  - name: pricingModels
+    type: string[]
+    required: true
+    description: Supported strategies describing how the entity is monetized.
+    default:
+      - one_time
+      - subscription
+      - usage_based
+  - name: billingIntervals
+    type: string[]
+    required: false
+    description: Allowed billing cadences when the pricing model is subscription based.
+    default:
+      - one_time
+      - day
+      - week
+      - month
+      - year
+  - name: taxBehavior
+    type: string
+    required: false
+    description: Indicates whether prices are tax inclusive or exclusive.
+    default: exclusive
+    validation:
+      enum:
+        - exclusive
+        - inclusive
+
+schema:
+  unit_amount_cents:
+    type: number
+    required: true
+    description: Base unit price expressed in the smallest currency denomination.
+    validation:
+      minimum: 0
+  currency:
+    type: string
+    required: true
+    description: ISO currency code for the unit amount.
+    validation:
+      enumFromParameter: supportedCurrencies
+  pricing_model:
+    type: string
+    required: true
+    description: Monetization model applied to the entity.
+    validation:
+      enumFromParameter: pricingModels
+  billing_interval:
+    type: string
+    required: false
+    description: Billing cadence when pricing_model indicates recurring revenue.
+    validation:
+      enumFromParameter: billingIntervals
+  tax_behavior:
+    type: string
+    required: true
+    description: Defines whether taxes are included in the displayed price.
+    validation:
+      enum:
+        - exclusive
+        - inclusive
+    default: exclusive
+
+semantics:
+  unit_amount_cents:
+    semantic_type: commerce.price.amount
+    token_mapping: tokenMap(commerce.price.primary)
+    ui_hints:
+      component: CurrencyAmount
+      currencyField: currency
+  currency:
+    semantic_type: commerce.price.currency
+    token_mapping: tokenMap(commerce.currency.primary)
+    ui_hints:
+      component: CurrencyCode
+      parameterSource: supportedCurrencies
+  pricing_model:
+    semantic_type: commerce.price.model
+    token_mapping: tokenMap(commerce.pricing.model)
+    ui_hints:
+      component: PricingModelBadge
+      parameterSource: pricingModels
+  billing_interval:
+    semantic_type: commerce.price.interval
+    token_mapping: tokenMap(commerce.pricing.interval)
+    ui_hints:
+      component: BillingIntervalBadge
+      parameterSource: billingIntervals
+  tax_behavior:
+    semantic_type: commerce.price.tax_behavior
+    token_mapping: tokenMap(commerce.pricing.tax)
+    ui_hints:
+      component: TaxBehaviorTag
+
+view_extensions:
+  detail:
+    - component: PriceSummary
+      position: top
+      props:
+        amountField: unit_amount_cents
+        currencyField: currency
+        modelField: pricing_model
+        intervalField: billing_interval
+        taxBehaviorField: tax_behavior
+  list:
+    - component: PriceBadge
+      props:
+        amountField: unit_amount_cents
+        currencyField: currency
+  card:
+    - component: PriceCardMeta
+      position: after
+      props:
+        modelField: pricing_model
+        intervalField: billing_interval
+
+tokens:
+  commerce.price.text: "var(--text-strong)"
+  commerce.price.badge.bg: "var(--surface-accent)"
+  commerce.pricing.model.text: "var(--text-default)"
+
+dependencies: []
+
+metadata:
+  created: "2025-10-16"
+  owners:
+    - commerce@oods.systems
+    - finance@oods.systems
+  maturity: stable
+  accessibility:
+    keyboard: "n/a"
+    screenreader: "Announces price, currency, billing interval, and tax behavior."
+  regionsUsed:
+    - detail
+    - list
+    - card
+  examples:
+    - Product
+    - Subscription
+  references:
+    - "Trait Engine Spec v0.1 §2"

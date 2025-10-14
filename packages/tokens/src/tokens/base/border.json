@@ -1,0 +1,68 @@
+{
+  "ref": {
+    "border": {
+      "width": {
+        "hairline": {
+          "$type": "dimension",
+          "$value": "1px",
+          "$description": "Hairline border width for foundational surfaces."
+        },
+        "bold": {
+          "$type": "dimension",
+          "$value": "2px",
+          "$description": "Bold border width for emphasis and outlines."
+        }
+      },
+      "radius": {
+        "sm": {
+          "$type": "dimension",
+          "$value": "8px",
+          "$description": "Small radius for banners and compact surfaces."
+        },
+        "md": {
+          "$type": "dimension",
+          "$value": "12px",
+          "$description": "Medium radius for cards and panels."
+        },
+        "pill": {
+          "$type": "dimension",
+          "$value": "999px",
+          "$description": "Pill radius for chip and badge treatments."
+        }
+      },
+      "style": {
+        "solid": {
+          "$type": "strokeStyle",
+          "$value": "solid",
+          "$description": "Solid border style for primary UI elements."
+        }
+      }
+    }
+  },
+  "border": {
+    "surface": {
+      "default": {
+        "$type": "border",
+        "$value": {
+          "width": "{ref.border.width.hairline}",
+          "style": "{ref.border.style.solid}",
+          "color": "{theme.border.subtle}",
+          "radius": "{ref.border.radius.md}"
+        },
+        "$description": "Default surface border for cards and primary panels."
+      }
+    },
+    "status": {
+      "critical": {
+        "$type": "border",
+        "$value": {
+          "width": "{ref.border.width.hairline}",
+          "style": "{ref.border.style.solid}",
+          "color": "{theme.status.critical.border}",
+          "radius": "{ref.border.radius.sm}"
+        },
+        "$description": "Critical status banner border with rounded corners."
+      }
+    }
+  }
+}

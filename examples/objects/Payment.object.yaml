@@ -1,0 +1,12 @@
+object:
+  name: Payment
+  domain: billing
+  tags:
+    - payment
+    - transaction
+    - financial
+traits:
+  - name: Billable
+  - name: Timestamped
+  - name: Stateful
+  - name: Auditable

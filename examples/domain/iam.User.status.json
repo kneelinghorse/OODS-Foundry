@@ -1,0 +1,18 @@
+{
+  "manifest": "iam.User.status",
+  "object": "iam/User",
+  "field": "status",
+  "description": "Canonical user/account status across IAM providers (Okta/Auth0/Cognito).",
+  "values": [
+    "invited",
+    "active",
+    "suspended",
+    "locked",
+    "deactivated"
+  ],
+  "sources": [
+    "missions/research/r4.5_SaaS-Enum-to-Token-Mapping-Schema.md#3.5",
+    "Vendor diffs: invited/pending_activation; disabled/deactivated conflation noted"
+  ]
+}
+

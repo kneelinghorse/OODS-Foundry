@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/07/schema",
+  "$id": "https://trait-engine.dev/schemas/traits/stateful",
+  "title": "Stateful Trait Parameters",
+  "description": "Configuration contract for the Stateful trait's status machine.",
+  "type": "object",
+  "properties": {
+    "states": {
+      "type": "array",
+      "description": "Ordered list of lifecycle states available to consumers.",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 32,
+        "pattern": "^[a-z0-9_-]+$",
+        "description": "Individual state identifier."
+      }
+    },
+    "initialState": {
+      "type": "string",
+      "description": "State assigned when an entity is created.",
+      "minLength": 1,
+      "maxLength": 32,
+      "pattern": "^[a-z0-9_-]+$",
+      "enum": {
+        "$data": "1/states"
+      }
+    }
+  },
+  "required": ["states", "initialState"],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "states": ["draft", "active", "paused", "archived"],
+      "initialState": "draft"
+    }
+  ]
+}

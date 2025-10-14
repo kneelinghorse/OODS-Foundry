@@ -1,0 +1,133 @@
+trait:
+  name: Timestampable
+  version: 1.0.0
+  description: |
+    Captures creation and update timestamps with configurable audit metadata for lifecycle tracking.
+  category: lifecycle
+  tags:
+    - timestamp
+    - audit
+    - lifecycle
+    - metadata
+
+parameters:
+  - name: recordedEvents
+    type: string[]
+    required: true
+    description: Canonical lifecycle events captured in the audit timeline.
+    default:
+      - created
+      - updated
+      - deleted
+  - name: timezone
+    type: string
+    required: false
+    description: Default timezone context applied when rendering timestamps.
+    default: UTC
+    validation:
+      enum:
+        - UTC
+        - LOCAL
+        - OFFSET
+  - name: allowNullUpdatedAt
+    type: boolean
+    required: false
+    description: Whether updated_at may be omitted when no mutations have occurred.
+    default: true
+
+schema:
+  created_at:
+    type: datetime
+    required: true
+    description: Timestamp recording when the entity was first created.
+  updated_at:
+    type: datetime
+    required: false
+    description: Timestamp for the most recent modification, when available.
+  last_event:
+    type: string
+    required: true
+    description: Lifecycle event associated with the most recent timestamp mutation.
+    validation:
+      enumFromParameter: recordedEvents
+  last_event_at:
+    type: datetime
+    required: false
+    description: Timestamp for the lifecycle event captured in last_event.
+
+semantics:
+  created_at:
+    semantic_type: audit.created_at
+    token_mapping: tokenMap(audit.created)
+    ui_hints:
+      component: TimelineTimestamp
+      timezoneParameter: timezone
+  updated_at:
+    semantic_type: audit.updated_at
+    token_mapping: tokenMap(audit.updated)
+    ui_hints:
+      component: TimelineTimestamp
+      timezoneParameter: timezone
+      allowNullParameter: allowNullUpdatedAt
+  last_event:
+    semantic_type: audit.event.type
+    token_mapping: tokenMap(audit.event.*)
+    ui_hints:
+      component: AuditBadge
+      parameterSource: recordedEvents
+  last_event_at:
+    semantic_type: audit.event.timestamp
+    token_mapping: tokenMap(audit.event.timestamp)
+    ui_hints:
+      component: TimelineTimestamp
+      timezoneParameter: timezone
+
+view_extensions:
+  detail:
+    - component: AuditTimeline
+      position: bottom
+      props:
+        createdField: created_at
+        updatedField: updated_at
+        eventField: last_event
+        eventTimestampField: last_event_at
+        eventOptionsParameter: recordedEvents
+  timeline:
+    - component: AuditEvent
+      props:
+        typeField: last_event
+        timestampField: last_event_at
+        timezoneParameter: timezone
+  list:
+    - component: RelativeTimestamp
+      props:
+        field: updated_at
+        fallbackField: created_at
+        timezoneParameter: timezone
+
+tokens:
+  audit.created.badge.text: "var(--text-subtle)"
+  audit.updated.badge.text: "var(--text-subtle)"
+  audit.event.badge.bg: "var(--surface-muted)"
+
+dependencies: []
+
+metadata:
+  created: "2025-10-16"
+  owners:
+    - lifecycle@oods.systems
+    - platform@oods.systems
+  maturity: stable
+  accessibility:
+    keyboard: "n/a"
+    screenreader: "Announces creation and last update information with lifecycle context."
+  regionsUsed:
+    - detail
+    - timeline
+    - list
+  examples:
+    - User
+    - Organization
+    - Transaction
+  references:
+    - "Trait Engine Spec v0.1 §2"

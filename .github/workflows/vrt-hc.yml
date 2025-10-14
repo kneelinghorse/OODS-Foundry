@@ -1,0 +1,81 @@
+name: VRT High-Contrast (HC)
+
+on:
+  workflow_dispatch: {}
+  pull_request:
+    branches: [ "**" ]
+    paths:
+      - 'src/**'
+      - 'packages/**'
+      - 'traits/**'
+      - 'tools/**'
+      - 'tests/**'
+      - 'scripts/**'
+      - '.github/workflows/vrt-hc.yml'
+  push:
+    branches: [ main ]
+    paths:
+      - 'src/**'
+      - 'packages/**'
+      - 'traits/**'
+      - 'tools/**'
+      - 'tests/**'
+      - 'scripts/**'
+      - '.github/workflows/vrt-hc.yml'
+
+jobs:
+  hc-vrt:
+    name: Capture HC snapshots (non-blocking)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers (chromium only)
+        run: npx -y playwright install --with-deps chromium
+
+      - name: Build Storybook (static)
+        run: npm run build-storybook
+
+      - name: Serve Storybook static
+        run: |
+          npx -y http-server -p 6006 ./storybook-static &
+          echo $! > .storybook_server_pid
+
+      - name: Capture HC images
+        env:
+          STORYBOOK_URL: http://127.0.0.1:6006
+        run: |
+          node testkits/vrt/storycap.hc.mjs --out artifacts/vrt/hc/${{ github.run_id }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vrt-hc-${{ github.run_id }}
+          path: artifacts/vrt/hc/${{ github.run_id }}
+          if-no-files-found: warn
+
+      - name: Job summary
+        run: |
+          echo "HC snapshots saved to artifacts/vrt/hc/${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
+          echo "Artifact: vrt-hc-${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: Cleanup server
+        if: always()
+        run: |
+          if [ -f .storybook_server_pid ]; then
+            kill $(cat .storybook_server_pid) || true
+          fi

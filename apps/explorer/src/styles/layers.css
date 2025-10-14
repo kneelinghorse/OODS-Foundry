@@ -1,0 +1,874 @@
+@import url('../../../../packages/tokens/dist/css/tokens.css');
+
+:root {
+  color-scheme: light;
+
+  /* Theme 0 (light) maps reference → theme */
+  --theme-surface-canvas: var(--ref-color-neutral-50);
+  --theme-surface-raised: var(--ref-color-neutral-100);
+  --theme-surface-subtle: var(--ref-color-neutral-200);
+  --theme-surface-disabled: var(--ref-color-neutral-200);
+  --theme-surface-backdrop: var(--ref-color-neutral-900);
+  --theme-surface-inverse: var(--ref-color-neutral-900);
+  --theme-surface-interactive-primary-default: var(--ref-color-primary-500);
+  --theme-surface-interactive-primary-hover-fallback: var(--ref-color-primary-600);
+  --theme-surface-interactive-primary-pressed-fallback: var(--ref-color-primary-700);
+  --theme-surface-interactive-primary-hover: var(--theme-surface-interactive-primary-hover-fallback);
+  --theme-surface-interactive-primary-pressed: var(--theme-surface-interactive-primary-pressed-fallback);
+
+  --theme-border-subtle: var(--ref-color-neutral-200);
+  --theme-border-strong: var(--ref-color-neutral-300);
+
+  --theme-text-primary: var(--ref-color-neutral-900);
+  --theme-text-secondary: var(--ref-color-neutral-700);
+  --theme-text-muted: var(--ref-color-neutral-500);
+  --theme-text-inverse: var(--ref-color-neutral-100);
+  --theme-text-accent: var(--ref-color-primary-600);
+  --theme-text-on-interactive: var(--ref-color-neutral-100);
+  --theme-text-disabled: var(--ref-color-neutral-400);
+
+  --theme-icon-primary: var(--ref-color-neutral-800);
+  --theme-icon-muted: var(--ref-color-neutral-500);
+  --theme-icon-on-interactive: var(--ref-color-neutral-100);
+
+  --theme-status-info-surface: var(--ref-color-info-100);
+  --theme-status-info-border: var(--ref-color-info-300);
+  --theme-status-info-text: var(--ref-color-info-900);
+  --theme-status-info-icon: var(--ref-color-info-700);
+
+  --theme-status-success-surface: var(--ref-color-success-100);
+  --theme-status-success-border: var(--ref-color-success-300);
+  --theme-status-success-text: var(--ref-color-success-900);
+  --theme-status-success-icon: var(--ref-color-success-700);
+
+  --theme-status-warning-surface: var(--ref-color-warning-100);
+  --theme-status-warning-border: var(--ref-color-warning-300);
+  --theme-status-warning-text: var(--ref-color-warning-900);
+  --theme-status-warning-icon: var(--ref-color-warning-700);
+
+  --theme-status-accent-surface: var(--ref-color-accent-100);
+  --theme-status-accent-border: var(--ref-color-accent-300);
+  --theme-status-accent-text: var(--ref-color-accent-500);
+  --theme-status-accent-icon: var(--ref-color-accent-400);
+
+  --theme-status-critical-surface: var(--ref-color-critical-100);
+  --theme-status-critical-border: var(--ref-color-critical-300);
+  --theme-status-critical-text: var(--ref-color-critical-900);
+  --theme-status-critical-icon: var(--ref-color-critical-700);
+
+  --theme-status-neutral-surface: var(--ref-color-neutral-100);
+  --theme-status-neutral-border: var(--ref-color-neutral-300);
+  --theme-status-neutral-text: var(--ref-color-neutral-800);
+  --theme-status-neutral-icon: var(--ref-color-neutral-700);
+
+  --theme-focus-ring-outer: var(--ref-color-neutral-900);
+  --theme-focus-ring-inner: var(--ref-color-neutral-100);
+  --theme-focus-text: var(--ref-color-primary-600);
+  --theme-focus-width: 2px;
+
+  --theme-space-inset-compact: var(--ref-space-inset-compact);
+  --theme-space-inset-default: var(--ref-space-inset-default);
+  --theme-space-stack-compact: var(--ref-space-stack-compact);
+  --theme-space-stack-default: var(--ref-space-stack-default);
+  --theme-space-inline-xs: var(--ref-space-inline-xs);
+  --theme-space-inline-sm: var(--ref-space-inline-sm);
+}
+
+@supports (color: oklch(from white l c h)) {
+  :root {
+    --theme-surface-interactive-primary-hover: oklch(
+      from var(--theme-surface-interactive-primary-default)
+      calc(l - 0.10)
+      calc(c + 0.015)
+      h
+    );
+    --theme-surface-interactive-primary-pressed: oklch(
+      from var(--theme-surface-interactive-primary-default)
+      calc(l - 0.14)
+      calc(c + 0.025)
+      h
+    );
+  }
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+
+  /* Dark theme placeholder mappings */
+  --theme-surface-canvas: var(--theme-dark-surface-canvas, var(--ref-color-neutral-900));
+  --theme-surface-raised: var(--theme-dark-surface-raised, var(--ref-color-neutral-800));
+  --theme-surface-subtle: var(--theme-dark-surface-subtle, var(--ref-color-neutral-700));
+  --theme-surface-disabled: var(--theme-dark-surface-disabled, var(--ref-color-neutral-700));
+  --theme-surface-backdrop: var(--theme-dark-surface-backdrop, var(--ref-color-neutral-900));
+  --theme-surface-inverse: var(--theme-dark-surface-inverse, var(--ref-color-neutral-100));
+  --theme-surface-interactive-primary-default: var(--theme-dark-surface-interactive-primary-default, var(--ref-color-primary-500));
+  --theme-surface-interactive-primary-hover-fallback: var(--theme-dark-surface-interactive-primary-hover, var(--ref-color-primary-400));
+  --theme-surface-interactive-primary-pressed-fallback: var(--theme-dark-surface-interactive-primary-pressed, var(--ref-color-primary-300));
+  --theme-surface-interactive-primary-hover: var(--theme-surface-interactive-primary-hover-fallback);
+  --theme-surface-interactive-primary-pressed: var(--theme-surface-interactive-primary-pressed-fallback);
+
+  --theme-border-subtle: var(--theme-dark-border-subtle, var(--ref-color-neutral-700));
+  --theme-border-strong: var(--theme-dark-border-strong, var(--ref-color-neutral-600));
+
+  --theme-text-primary: var(--theme-dark-text-primary, var(--ref-color-neutral-100));
+  --theme-text-secondary: var(--theme-dark-text-secondary, var(--ref-color-neutral-300));
+  --theme-text-muted: var(--theme-dark-text-muted, var(--ref-color-neutral-400));
+  --theme-text-inverse: var(--theme-dark-text-inverse, var(--ref-color-neutral-900));
+  --theme-text-accent: var(--theme-dark-text-accent, var(--ref-color-primary-500));
+  --theme-text-on-interactive: var(--theme-dark-text-on-interactive, var(--ref-color-neutral-100));
+  --theme-text-disabled: var(--theme-dark-text-disabled, var(--ref-color-neutral-500));
+
+  --theme-icon-primary: var(--theme-dark-icon-primary, var(--ref-color-neutral-200));
+  --theme-icon-muted: var(--theme-dark-icon-muted, var(--ref-color-neutral-400));
+  --theme-icon-on-interactive: var(--theme-dark-icon-on-interactive, var(--ref-color-neutral-100));
+
+  --theme-status-info-surface: var(--theme-dark-status-info-surface, var(--ref-color-info-700));
+  --theme-status-info-border: var(--theme-dark-status-info-border, var(--ref-color-info-700));
+  --theme-status-info-text: var(--theme-dark-status-info-text, var(--ref-color-info-100));
+  --theme-status-info-icon: var(--theme-dark-status-info-icon, var(--ref-color-info-100));
+
+  --theme-status-success-surface: var(--theme-dark-status-success-surface, var(--ref-color-success-700));
+  --theme-status-success-border: var(--theme-dark-status-success-border, var(--ref-color-success-700));
+  --theme-status-success-text: var(--theme-dark-status-success-text, var(--ref-color-success-100));
+  --theme-status-success-icon: var(--theme-dark-status-success-icon, var(--ref-color-success-100));
+
+  --theme-status-warning-surface: var(--theme-dark-status-warning-surface, var(--ref-color-warning-700));
+  --theme-status-warning-border: var(--theme-dark-status-warning-border, var(--ref-color-warning-700));
+  --theme-status-warning-text: var(--theme-dark-status-warning-text, var(--ref-color-warning-100));
+  --theme-status-warning-icon: var(--theme-dark-status-warning-icon, var(--ref-color-warning-100));
+
+  --theme-status-accent-surface: var(--theme-dark-status-accent-surface, var(--ref-color-accent-400));
+  --theme-status-accent-border: var(--theme-dark-status-accent-border, var(--ref-color-accent-500));
+  --theme-status-accent-text: var(--theme-dark-status-accent-text, var(--ref-color-accent-100));
+  --theme-status-accent-icon: var(--theme-dark-status-accent-icon, var(--ref-color-accent-100));
+
+  --theme-status-critical-surface: var(--theme-dark-status-critical-surface, var(--ref-color-critical-700));
+  --theme-status-critical-border: var(--theme-dark-status-critical-border, var(--ref-color-critical-700));
+  --theme-status-critical-text: var(--theme-dark-status-critical-text, var(--ref-color-critical-100));
+  --theme-status-critical-icon: var(--theme-dark-status-critical-icon, var(--ref-color-critical-100));
+
+  --theme-status-neutral-surface: var(--theme-dark-status-neutral-surface, var(--ref-color-neutral-700));
+  --theme-status-neutral-border: var(--theme-dark-status-neutral-border, var(--ref-color-neutral-600));
+  --theme-status-neutral-text: var(--theme-dark-status-neutral-text, var(--ref-color-neutral-100));
+  --theme-status-neutral-icon: var(--theme-dark-status-neutral-icon, var(--ref-color-neutral-100));
+
+  --theme-focus-ring-outer: var(--theme-dark-focus-ring-outer, var(--ref-color-neutral-100));
+  --theme-focus-ring-inner: var(--theme-dark-focus-ring-inner, var(--ref-color-neutral-900));
+  --theme-focus-text: var(--theme-dark-focus-text, var(--ref-color-primary-400));
+  --theme-focus-width: var(--theme-dark-focus-width, 2px);
+
+  --theme-space-inset-compact: var(--theme-dark-space-inset-compact, var(--ref-space-inset-compact));
+  --theme-space-inset-default: var(--theme-dark-space-inset-default, var(--ref-space-inset-default));
+  --theme-space-stack-compact: var(--theme-dark-space-stack-compact, var(--ref-space-stack-compact));
+  --theme-space-stack-default: var(--theme-dark-space-stack-default, var(--ref-space-stack-default));
+  --theme-space-inline-xs: var(--theme-dark-space-inline-xs, var(--ref-space-inline-xs));
+  --theme-space-inline-sm: var(--theme-dark-space-inline-sm, var(--ref-space-inline-sm));
+}
+
+/* System layer derives semantic values from theme */
+:where(:root, [data-brand]) {
+  --sys-surface-canvas: var(--theme-surface-canvas);
+  --sys-surface-raised: var(--theme-surface-raised);
+  --sys-surface-subtle: var(--theme-surface-subtle);
+  --sys-surface-disabled: var(--theme-surface-disabled);
+  --sys-surface-backdrop: var(--theme-surface-backdrop);
+  --sys-surface-inverse: var(--theme-surface-inverse);
+  --sys-surface-interactive-primary-default: var(--theme-surface-interactive-primary-default);
+  --sys-surface-interactive-primary-hover: var(--theme-surface-interactive-primary-hover);
+  --sys-surface-interactive-primary-pressed: var(--theme-surface-interactive-primary-pressed);
+
+  --sys-border-subtle: var(--theme-border-subtle);
+  --sys-border-strong: var(--theme-border-strong);
+
+  --sys-text-primary: var(--theme-text-primary);
+  --sys-text-secondary: var(--theme-text-secondary);
+  --sys-text-muted: var(--theme-text-muted);
+  --sys-text-inverse: var(--theme-text-inverse);
+  --sys-text-accent: var(--theme-text-accent);
+  --sys-text-on-interactive: var(--theme-text-on-interactive);
+  --sys-text-disabled: var(--theme-text-disabled);
+
+  --sys-icon-primary: var(--theme-icon-primary);
+  --sys-icon-muted: var(--theme-icon-muted);
+  --sys-icon-on-interactive: var(--theme-icon-on-interactive);
+
+  --sys-status-info-surface: var(--theme-status-info-surface);
+  --sys-status-info-border: var(--theme-status-info-border);
+  --sys-status-info-text: var(--theme-status-info-text);
+  --sys-status-info-icon: var(--theme-status-info-icon);
+
+  --sys-status-success-surface: var(--theme-status-success-surface);
+  --sys-status-success-border: var(--theme-status-success-border);
+  --sys-status-success-text: var(--theme-status-success-text);
+  --sys-status-success-icon: var(--theme-status-success-icon);
+
+  --sys-status-warning-surface: var(--theme-status-warning-surface);
+  --sys-status-warning-border: var(--theme-status-warning-border);
+  --sys-status-warning-text: var(--theme-status-warning-text);
+  --sys-status-warning-icon: var(--theme-status-warning-icon);
+
+  --sys-status-accent-surface: var(--theme-status-accent-surface);
+  --sys-status-accent-border: var(--theme-status-accent-border);
+  --sys-status-accent-text: var(--theme-status-accent-text);
+  --sys-status-accent-icon: var(--theme-status-accent-icon);
+
+  --sys-status-critical-surface: var(--theme-status-critical-surface);
+  --sys-status-critical-border: var(--theme-status-critical-border);
+  --sys-status-critical-text: var(--theme-status-critical-text);
+  --sys-status-critical-icon: var(--theme-status-critical-icon);
+
+  --sys-status-neutral-surface: var(--theme-status-neutral-surface);
+  --sys-status-neutral-border: var(--theme-status-neutral-border);
+  --sys-status-neutral-text: var(--theme-status-neutral-text);
+  --sys-status-neutral-icon: var(--theme-status-neutral-icon);
+
+  --sys-focus-ring-outer: var(--theme-focus-ring-outer);
+  --sys-focus-ring-inner: var(--theme-focus-ring-inner);
+  --sys-focus-text: var(--theme-focus-text);
+  --sys-focus-width: var(--theme-focus-width);
+
+  --sys-space-inset-compact: var(--theme-space-inset-compact);
+  --sys-space-inset-default: var(--theme-space-inset-default);
+  --sys-space-stack-compact: var(--theme-space-stack-compact);
+  --sys-space-stack-default: var(--theme-space-stack-default);
+  --sys-space-inline-xs: var(--theme-space-inline-xs);
+  --sys-space-inline-sm: var(--theme-space-inline-sm);
+
+  --sys-shadow-elevation-card:
+    var(--theme-shadow-elevation-card-offset-x, var(--oods-shadow-elevation-card-offset-x, 0px))
+    var(--theme-shadow-elevation-card-offset-y, var(--oods-shadow-elevation-card-offset-y, 16px))
+    var(--theme-shadow-elevation-card-blur, var(--oods-shadow-elevation-card-blur, 40px))
+    var(--theme-shadow-elevation-card-spread, var(--oods-shadow-elevation-card-spread, -12px))
+    var(--theme-shadow-elevation-card-color, var(--oods-shadow-elevation-card-color, rgba(15, 23, 42, 0.12)));
+
+  --sys-shadow-elevation-overlay:
+    var(--theme-shadow-elevation-overlay-offset-x, var(--oods-shadow-elevation-overlay-offset-x, 0px))
+    var(--theme-shadow-elevation-overlay-offset-y, var(--oods-shadow-elevation-overlay-offset-y, 24px))
+    var(--theme-shadow-elevation-overlay-blur, var(--oods-shadow-elevation-overlay-blur, 56px))
+    var(--theme-shadow-elevation-overlay-spread, var(--oods-shadow-elevation-overlay-spread, -16px))
+    var(--theme-shadow-elevation-overlay-color, var(--oods-shadow-elevation-overlay-color, rgba(15, 23, 42, 0.24)));
+}
+
+/* Component/context slots */
+:where(:root, [data-brand]) {
+  --cmp-surface-canvas: var(--sys-surface-canvas);
+  --cmp-surface-panel: var(--sys-surface-raised);
+  --cmp-surface-subtle: var(--sys-surface-subtle);
+  --cmp-surface-backdrop: var(--sys-surface-backdrop);
+  --cmp-surface-disabled: var(--sys-surface-disabled);
+  --cmp-surface-action: var(--sys-surface-interactive-primary-default);
+  --cmp-surface-action-hover: var(--sys-surface-interactive-primary-hover);
+  --cmp-surface-action-pressed: var(--sys-surface-interactive-primary-pressed);
+
+  --cmp-border-default: var(--sys-border-subtle);
+  --cmp-border-strong: var(--sys-border-strong);
+
+  --cmp-text-body: var(--sys-text-primary);
+  --cmp-text-muted: var(--sys-text-muted);
+  --cmp-text-inverse: var(--sys-text-inverse);
+  --cmp-text-accent: var(--sys-text-accent);
+  --cmp-text-disabled: var(--sys-text-disabled);
+  --cmp-text-on-action: var(--sys-text-on-interactive);
+
+  --cmp-icon-default: var(--sys-icon-primary);
+  --cmp-icon-muted: var(--sys-icon-muted);
+  --cmp-icon-on-action: var(--sys-icon-on-interactive);
+
+  --cmp-spacing-inset-compact: var(--sys-space-inset-compact);
+  --cmp-spacing-inset-default: var(--sys-space-inset-default);
+  --cmp-spacing-stack-compact: var(--sys-space-stack-compact);
+  --cmp-spacing-stack-default: var(--sys-space-stack-default);
+  --cmp-spacing-inline-xs: var(--sys-space-inline-xs);
+  --cmp-spacing-inline-sm: var(--sys-space-inline-sm);
+
+  --cmp-chip-background: var(--sys-status-neutral-surface);
+  --cmp-chip-border: var(--sys-status-neutral-border);
+  --cmp-chip-foreground: var(--sys-status-neutral-text);
+  --cmp-chip-icon: var(--sys-status-neutral-icon);
+  --cmp-chip-focus-outer: var(--sys-focus-ring-outer);
+  --cmp-chip-focus-inner: var(--sys-focus-ring-inner);
+  --cmp-chip-focus-width: var(--sys-focus-width);
+
+  --cmp-banner-background: var(--sys-status-info-surface);
+  --cmp-banner-border: var(--sys-status-info-border);
+  --cmp-banner-text: var(--sys-status-info-text);
+  --cmp-banner-icon: var(--sys-status-info-icon);
+
+  --cmp-chip-padding-inline: var(--sys-space-inline-sm);
+  --cmp-chip-padding-block: calc(var(--sys-space-inline-xs) * 0.5);
+  --cmp-chip-gap: 0.35rem;
+  --cmp-chip-font-size: 0.82rem;
+
+  --cmp-shadow-panel: var(--sys-shadow-elevation-card);
+  --cmp-shadow-overlay: var(--sys-shadow-elevation-overlay);
+
+  /* Motion primitives */
+  --cmp-motion-duration-fast: var(--sys-motion-duration-fast);
+  --cmp-motion-duration-base: var(--sys-motion-duration-base);
+  --cmp-motion-duration-slow: var(--sys-motion-duration-slow);
+  --cmp-motion-reduced-duration-fast: var(--sys-motion-reduced-duration-fast);
+  --cmp-motion-reduced-duration-base: var(--sys-motion-reduced-duration-base);
+  --cmp-motion-reduced-duration-slow: var(--sys-motion-reduced-duration-slow);
+
+  --cmp-motion-easing-standard: var(--sys-motion-easing-standard);
+  --cmp-motion-easing-emphasized: var(--sys-motion-easing-emphasized);
+  --cmp-motion-easing-linear: var(--sys-motion-easing-linear);
+
+  --cmp-motion-transition-hover-duration: var(--sys-motion-transition-hover-duration);
+  --cmp-motion-transition-hover-delay: var(--sys-motion-transition-hover-delay);
+  --cmp-motion-transition-hover-timing-function: var(--sys-motion-transition-hover-timing-function);
+  --cmp-motion-transition-focus-duration: var(--sys-motion-transition-focus-duration);
+  --cmp-motion-transition-focus-delay: var(--sys-motion-transition-focus-delay);
+  --cmp-motion-transition-focus-timing-function: var(--sys-motion-transition-focus-timing-function);
+  --cmp-motion-transition-chip-in-duration: var(--sys-motion-transition-chip-in-duration);
+  --cmp-motion-transition-chip-in-delay: var(--sys-motion-transition-chip-in-delay);
+  --cmp-motion-transition-chip-in-timing-function: var(--sys-motion-transition-chip-in-timing-function);
+  --cmp-motion-transition-chip-out-duration: var(--sys-motion-transition-chip-out-duration);
+  --cmp-motion-transition-chip-out-delay: var(--sys-motion-transition-chip-out-delay);
+  --cmp-motion-transition-chip-out-timing-function: var(--sys-motion-transition-chip-out-timing-function);
+  --cmp-motion-transition-banner-reveal-duration: var(--sys-motion-transition-banner-reveal-duration);
+  --cmp-motion-transition-banner-reveal-delay: var(--sys-motion-transition-banner-reveal-delay);
+  --cmp-motion-transition-banner-reveal-timing-function: var(--sys-motion-transition-banner-reveal-timing-function);
+
+  --cmp-motion-reduced-transition-hover-duration: var(--sys-motion-reduced-transition-hover-duration);
+  --cmp-motion-reduced-transition-hover-delay: var(--sys-motion-reduced-transition-hover-delay);
+  --cmp-motion-reduced-transition-hover-timing-function: var(--sys-motion-reduced-transition-hover-timing-function);
+  --cmp-motion-reduced-transition-focus-duration: var(--sys-motion-reduced-transition-focus-duration);
+  --cmp-motion-reduced-transition-focus-delay: var(--sys-motion-reduced-transition-focus-delay);
+  --cmp-motion-reduced-transition-focus-timing-function: var(--sys-motion-reduced-transition-focus-timing-function);
+  --cmp-motion-reduced-transition-chip-in-duration: var(--sys-motion-reduced-transition-chip-in-duration);
+  --cmp-motion-reduced-transition-chip-in-delay: var(--sys-motion-reduced-transition-chip-in-delay);
+  --cmp-motion-reduced-transition-chip-in-timing-function: var(--sys-motion-reduced-transition-chip-in-timing-function);
+  --cmp-motion-reduced-transition-chip-out-duration: var(--sys-motion-reduced-transition-chip-out-duration);
+  --cmp-motion-reduced-transition-chip-out-delay: var(--sys-motion-reduced-transition-chip-out-delay);
+  --cmp-motion-reduced-transition-chip-out-timing-function: var(--sys-motion-reduced-transition-chip-out-timing-function);
+  --cmp-motion-reduced-transition-banner-reveal-duration: var(--sys-motion-reduced-transition-banner-reveal-duration);
+  --cmp-motion-reduced-transition-banner-reveal-delay: var(--sys-motion-reduced-transition-banner-reveal-delay);
+  --cmp-motion-reduced-transition-banner-reveal-timing-function: var(--sys-motion-reduced-transition-banner-reveal-timing-function);
+
+  --cmp-button-padding-inline: calc(var(--cmp-spacing-inline-sm) + 0.1rem);
+  --cmp-button-padding-block: calc(var(--cmp-spacing-inline-xs) * 0.85);
+  --cmp-button-gap: var(--cmp-spacing-inline-xs);
+  --cmp-button-radius: 0.875rem;
+  --cmp-button-font-size: 0.95rem;
+  --cmp-button-font-weight: 600;
+  --cmp-button-letter-spacing: 0.01em;
+  --cmp-button-background: var(--cmp-surface-action);
+  --cmp-button-background-hover: var(--cmp-surface-action-hover);
+  --cmp-button-background-active: var(--cmp-surface-action-pressed);
+  --cmp-button-background-selected: var(--cmp-surface-action-hover);
+  --cmp-button-background-disabled: var(--cmp-surface-disabled);
+  --cmp-button-border: var(--cmp-surface-action);
+  --cmp-button-border-hover: var(--cmp-surface-action-hover);
+  --cmp-button-border-active: var(--cmp-surface-action-pressed);
+  --cmp-button-border-selected: var(--cmp-surface-action-pressed);
+  --cmp-button-border-disabled: var(--cmp-border-default);
+  --cmp-button-text: var(--cmp-text-on-action);
+  --cmp-button-text-hover: var(--cmp-text-on-action);
+  --cmp-button-text-active: var(--cmp-text-on-action);
+  --cmp-button-text-selected: var(--cmp-text-on-action);
+  --cmp-button-text-disabled: var(--cmp-text-disabled);
+  --cmp-button-icon: var(--cmp-icon-on-action);
+  --cmp-button-icon-disabled: var(--cmp-icon-muted);
+  --cmp-button-focus-outer: var(--sys-focus-ring-outer);
+  --cmp-button-focus-inner: var(--sys-focus-ring-inner);
+  --cmp-button-focus-width: var(--sys-focus-width);
+  --cmp-button-shadow: 0 12px 24px color-mix(in srgb, var(--cmp-surface-action, transparent) 25%, transparent);
+
+  --cmp-badge-padding-inline: calc(var(--cmp-spacing-inline-xs) + 0.15rem);
+  --cmp-badge-padding-block: 0.35rem;
+  --cmp-badge-gap: calc(var(--cmp-spacing-inline-xs) * 0.5);
+  --cmp-badge-radius: 999px;
+  --cmp-badge-font-size: 0.82rem;
+  --cmp-badge-font-weight: 600;
+  --cmp-badge-letter-spacing: 0.02em;
+  --cmp-badge-background: color-mix(in srgb, var(--cmp-surface-subtle) 60%, transparent);
+  --cmp-badge-background-hover: color-mix(in srgb, var(--cmp-surface-panel) 75%, transparent);
+  --cmp-badge-background-active: var(--cmp-surface-panel);
+  --cmp-badge-background-selected: var(--cmp-surface-action);
+  --cmp-badge-background-disabled: var(--cmp-surface-disabled);
+  --cmp-badge-border: var(--cmp-border-default);
+  --cmp-badge-border-hover: var(--cmp-border-strong);
+  --cmp-badge-border-selected: var(--cmp-surface-action);
+  --cmp-badge-border-disabled: var(--cmp-border-default);
+  --cmp-badge-text: var(--cmp-text-body);
+  --cmp-badge-text-hover: var(--cmp-text-body);
+  --cmp-badge-text-selected: var(--cmp-text-on-action);
+  --cmp-badge-text-disabled: var(--cmp-text-disabled);
+  --cmp-badge-icon: var(--cmp-icon-muted);
+  --cmp-badge-icon-selected: var(--cmp-icon-on-action);
+  --cmp-badge-focus-outer: var(--sys-focus-ring-outer);
+  --cmp-badge-focus-inner: var(--sys-focus-ring-inner);
+  --cmp-badge-focus-width: var(--sys-focus-width);
+
+  --cmp-banner-ring-outer: var(--sys-focus-ring-outer);
+  --cmp-banner-ring-inner: var(--sys-focus-ring-inner);
+  --cmp-banner-ring-width: var(--sys-focus-width);
+  --cmp-banner-action-text: var(--cmp-text-body);
+  --cmp-banner-action-text-hover: var(--cmp-text-accent);
+  --cmp-banner-action-background-hover: color-mix(in srgb, var(--cmp-banner-border) 16%, transparent);
+  --cmp-banner-action-background-active: color-mix(in srgb, var(--cmp-banner-border) 28%, transparent);
+  --cmp-banner-action-border: var(--cmp-banner-border);
+
+  --cmp-input-radius: 0.85rem;
+  --cmp-input-padding-inline: var(--cmp-spacing-inline-sm);
+  --cmp-input-padding-block: 0.62rem;
+  --cmp-input-gap: 0.5rem;
+  --cmp-input-background: var(--cmp-surface-panel);
+  --cmp-input-background-hover: var(--cmp-surface-subtle);
+  --cmp-input-background-active: var(--cmp-surface-panel);
+  --cmp-input-background-disabled: var(--cmp-surface-disabled);
+  --cmp-input-border: var(--cmp-border-default);
+  --cmp-input-border-hover: var(--cmp-border-strong);
+  --cmp-input-border-focus: var(--cmp-text-accent);
+  --cmp-input-border-selected: var(--cmp-text-accent);
+  --cmp-input-border-disabled: var(--cmp-border-default);
+  --cmp-input-text: var(--cmp-text-body);
+  --cmp-input-text-disabled: var(--cmp-text-disabled);
+  --cmp-input-placeholder: var(--cmp-text-muted);
+  --cmp-input-caret: var(--cmp-text-accent);
+  --cmp-input-support-text: var(--cmp-text-muted);
+  --cmp-input-message-text: var(--sys-status-info-text);
+  --cmp-input-message-surface: color-mix(in srgb, var(--sys-status-info-surface) 70%, transparent);
+  --cmp-input-message-border: var(--sys-status-info-border);
+  --cmp-input-focus-outer: var(--sys-focus-ring-outer);
+  --cmp-input-focus-inner: var(--sys-focus-ring-inner);
+  --cmp-input-focus-width: var(--sys-focus-width);
+
+  /* B8.5 — Tooltip / Toast tokens */
+  --cmp-tooltip-radius: 0.5rem;
+  --cmp-tooltip-background: var(--sys-surface-inverse);
+  --cmp-tooltip-border: var(--sys-border-strong);
+  --cmp-tooltip-text: var(--sys-text-inverse);
+
+  --cmp-toast-radius: 0.85rem;
+  --cmp-toast-background: var(--sys-status-neutral-surface);
+  --cmp-toast-border: var(--sys-status-neutral-border);
+  --cmp-toast-text: var(--sys-status-neutral-text);
+  --cmp-toast-icon: var(--sys-status-neutral-icon);
+  --cmp-toast-focus-outer: var(--sys-focus-ring-outer);
+  --cmp-toast-focus-width: var(--sys-focus-width);
+
+  /* Motion slot mapping for B8.5 (tooltip/toast) */
+  --cmp-motion-transition-tooltip-in-duration: var(--sys-motion-transition-tooltip-in-duration);
+  --cmp-motion-transition-tooltip-in-delay: var(--sys-motion-transition-tooltip-in-delay);
+  --cmp-motion-transition-tooltip-in-timing-function: var(--sys-motion-transition-tooltip-in-timing-function);
+  --cmp-motion-transition-tooltip-out-duration: var(--sys-motion-transition-tooltip-out-duration);
+  --cmp-motion-transition-tooltip-out-delay: var(--sys-motion-transition-tooltip-out-delay);
+  --cmp-motion-transition-tooltip-out-timing-function: var(--sys-motion-transition-tooltip-out-timing-function);
+
+  --cmp-motion-transition-toast-in-duration: var(--sys-motion-transition-toast-in-duration);
+  --cmp-motion-transition-toast-in-delay: var(--sys-motion-transition-toast-in-delay);
+  --cmp-motion-transition-toast-in-timing-function: var(--sys-motion-transition-toast-in-timing-function);
+  --cmp-motion-transition-toast-out-duration: var(--sys-motion-transition-toast-out-duration);
+  --cmp-motion-transition-toast-out-delay: var(--sys-motion-transition-toast-out-delay);
+  --cmp-motion-transition-toast-out-timing-function: var(--sys-motion-transition-toast-out-timing-function);
+
+  --cmp-motion-reduced-transition-tooltip-in-duration: var(--sys-motion-reduced-transition-tooltip-in-duration);
+  --cmp-motion-reduced-transition-tooltip-in-delay: var(--sys-motion-reduced-transition-tooltip-in-delay);
+  --cmp-motion-reduced-transition-tooltip-in-timing-function: var(--sys-motion-reduced-transition-tooltip-in-timing-function);
+  --cmp-motion-reduced-transition-tooltip-out-duration: var(--sys-motion-reduced-transition-tooltip-out-duration);
+  --cmp-motion-reduced-transition-tooltip-out-delay: var(--sys-motion-reduced-transition-tooltip-out-delay);
+  --cmp-motion-reduced-transition-tooltip-out-timing-function: var(--sys-motion-reduced-transition-tooltip-out-timing-function);
+
+  --cmp-motion-reduced-transition-toast-in-duration: var(--sys-motion-reduced-transition-toast-in-duration);
+  --cmp-motion-reduced-transition-toast-in-delay: var(--sys-motion-reduced-transition-toast-in-delay);
+  --cmp-motion-reduced-transition-toast-in-timing-function: var(--sys-motion-reduced-transition-toast-in-timing-function);
+  --cmp-motion-reduced-transition-toast-out-duration: var(--sys-motion-reduced-transition-toast-out-duration);
+  --cmp-motion-reduced-transition-toast-out-delay: var(--sys-motion-reduced-transition-toast-out-delay);
+  --cmp-motion-reduced-transition-toast-out-timing-function: var(--sys-motion-reduced-transition-toast-out-timing-function);
+}
+
+[data-tone='info'] {
+  --cmp-chip-background: var(--sys-status-info-surface);
+  --cmp-chip-border: var(--sys-status-info-border);
+  --cmp-chip-foreground: var(--sys-status-info-text);
+  --cmp-chip-icon: var(--sys-status-info-icon);
+}
+
+[data-tone='accent'] {
+  --cmp-chip-background: var(--sys-status-accent-surface);
+  --cmp-chip-border: var(--sys-status-accent-border);
+  --cmp-chip-foreground: var(--sys-status-accent-text);
+  --cmp-chip-icon: var(--sys-status-accent-icon);
+}
+
+[data-tone='success'] {
+  --cmp-chip-background: var(--sys-status-success-surface);
+  --cmp-chip-border: var(--sys-status-success-border);
+  --cmp-chip-foreground: var(--sys-status-success-text);
+  --cmp-chip-icon: var(--sys-status-success-icon);
+}
+
+[data-tone='warning'] {
+  --cmp-chip-background: var(--sys-status-warning-surface);
+  --cmp-chip-border: var(--sys-status-warning-border);
+  --cmp-chip-foreground: var(--sys-status-warning-text);
+  --cmp-chip-icon: var(--sys-status-warning-icon);
+}
+
+[data-tone='critical'] {
+  --cmp-chip-background: var(--sys-status-critical-surface);
+  --cmp-chip-border: var(--sys-status-critical-border);
+  --cmp-chip-foreground: var(--sys-status-critical-text);
+  --cmp-chip-icon: var(--sys-status-critical-icon);
+}
+
+[data-tone='neutral'] {
+  --cmp-chip-background: var(--sys-status-neutral-surface);
+  --cmp-chip-border: var(--sys-status-neutral-border);
+  --cmp-chip-foreground: var(--sys-status-neutral-text);
+  --cmp-chip-icon: var(--sys-status-neutral-icon);
+}
+
+[data-banner-tone='success'] {
+  --cmp-banner-background: var(--sys-status-success-surface);
+  --cmp-banner-border: var(--sys-status-success-border);
+  --cmp-banner-text: var(--sys-status-success-text);
+  --cmp-banner-icon: var(--sys-status-success-icon);
+}
+
+[data-banner-tone='warning'] {
+  --cmp-banner-background: var(--sys-status-warning-surface);
+  --cmp-banner-border: var(--sys-status-warning-border);
+  --cmp-banner-text: var(--sys-status-warning-text);
+  --cmp-banner-icon: var(--sys-status-warning-icon);
+}
+
+[data-banner-tone='critical'] {
+  --cmp-banner-background: var(--sys-status-critical-surface);
+  --cmp-banner-border: var(--sys-status-critical-border);
+  --cmp-banner-text: var(--sys-status-critical-text);
+  --cmp-banner-icon: var(--sys-status-critical-icon);
+}
+
+[data-banner-tone='accent'] {
+  --cmp-banner-background: var(--sys-status-accent-surface);
+  --cmp-banner-border: var(--sys-status-accent-border);
+  --cmp-banner-text: var(--sys-status-accent-text);
+  --cmp-banner-icon: var(--sys-status-accent-icon);
+}
+
+[data-banner-tone='neutral'] {
+  --cmp-banner-background: var(--sys-status-neutral-surface);
+  --cmp-banner-border: var(--sys-status-neutral-border);
+  --cmp-banner-text: var(--sys-status-neutral-text);
+  --cmp-banner-icon: var(--sys-status-neutral-icon);
+}
+
+/* Toast tone mapping */
+[data-toast-tone='info'] {
+  --cmp-toast-background: var(--sys-status-info-surface);
+  --cmp-toast-border: var(--sys-status-info-border);
+  --cmp-toast-text: var(--sys-status-info-text);
+  --cmp-toast-icon: var(--sys-status-info-icon);
+}
+[data-toast-tone='accent'] {
+  --cmp-toast-background: var(--sys-status-accent-surface);
+  --cmp-toast-border: var(--sys-status-accent-border);
+  --cmp-toast-text: var(--sys-status-accent-text);
+  --cmp-toast-icon: var(--sys-status-accent-icon);
+}
+[data-toast-tone='success'] {
+  --cmp-toast-background: var(--sys-status-success-surface);
+  --cmp-toast-border: var(--sys-status-success-border);
+  --cmp-toast-text: var(--sys-status-success-text);
+  --cmp-toast-icon: var(--sys-status-success-icon);
+}
+[data-toast-tone='warning'] {
+  --cmp-toast-background: var(--sys-status-warning-surface);
+  --cmp-toast-border: var(--sys-status-warning-border);
+  --cmp-toast-text: var(--sys-status-warning-text);
+  --cmp-toast-icon: var(--sys-status-warning-icon);
+}
+[data-toast-tone='critical'] {
+  --cmp-toast-background: var(--sys-status-critical-surface);
+  --cmp-toast-border: var(--sys-status-critical-border);
+  --cmp-toast-text: var(--sys-status-critical-text);
+  --cmp-toast-icon: var(--sys-status-critical-icon);
+}
+[data-toast-tone='neutral'] {
+  --cmp-toast-background: var(--sys-status-neutral-surface);
+  --cmp-toast-border: var(--sys-status-neutral-border);
+  --cmp-toast-text: var(--sys-status-neutral-text);
+  --cmp-toast-icon: var(--sys-status-neutral-icon);
+}
+
+.cmp-button[data-tone='primary'] {
+  --cmp-button-background: var(--cmp-surface-action);
+  --cmp-button-background-hover: var(--cmp-surface-action-hover);
+  --cmp-button-background-active: var(--cmp-surface-action-pressed);
+  --cmp-button-border: var(--cmp-surface-action);
+  --cmp-button-border-hover: var(--cmp-surface-action-hover);
+  --cmp-button-border-active: var(--cmp-surface-action-pressed);
+  --cmp-button-border-selected: var(--cmp-surface-action-pressed);
+  --cmp-button-text: var(--cmp-text-on-action);
+  --cmp-button-text-hover: var(--cmp-text-on-action);
+  --cmp-button-text-active: var(--cmp-text-on-action);
+  --cmp-button-text-selected: var(--cmp-text-on-action);
+  --cmp-button-icon: var(--cmp-icon-on-action);
+}
+
+.cmp-button[data-tone='neutral'] {
+  --cmp-button-background: color-mix(in srgb, var(--cmp-surface-subtle) 82%, transparent);
+  --cmp-button-background-hover: var(--cmp-surface-subtle);
+  --cmp-button-background-active: color-mix(in srgb, var(--cmp-surface-subtle) 92%, transparent);
+  --cmp-button-border: var(--cmp-border-strong);
+  --cmp-button-border-hover: var(--cmp-border-strong);
+  --cmp-button-border-active: var(--cmp-border-strong);
+  --cmp-button-border-selected: var(--cmp-border-strong);
+  --cmp-button-text: var(--cmp-text-body);
+  --cmp-button-text-hover: var(--cmp-text-body);
+  --cmp-button-text-active: var(--cmp-text-body);
+  --cmp-button-text-selected: var(--cmp-text-body);
+  --cmp-button-icon: var(--cmp-icon-default);
+}
+
+.cmp-button[data-tone='info'] {
+  --cmp-button-background: var(--sys-status-info-surface);
+  --cmp-button-background-hover: color-mix(in srgb, var(--sys-status-info-border) 20%, var(--sys-status-info-surface) 80%);
+  --cmp-button-background-active: color-mix(in srgb, var(--sys-status-info-border) 30%, var(--sys-status-info-surface) 70%);
+  --cmp-button-border: var(--sys-status-info-border);
+  --cmp-button-border-hover: var(--sys-status-info-border);
+  --cmp-button-border-active: var(--sys-status-info-border);
+  --cmp-button-border-selected: var(--sys-status-info-border);
+  --cmp-button-text: var(--sys-status-info-text);
+  --cmp-button-text-hover: var(--sys-status-info-text);
+  --cmp-button-text-active: var(--sys-status-info-text);
+  --cmp-button-text-selected: var(--sys-status-info-text);
+  --cmp-button-icon: var(--sys-status-info-icon);
+}
+
+.cmp-button[data-tone='accent'] {
+  --cmp-button-background: var(--sys-status-accent-surface);
+  --cmp-button-background-hover: color-mix(in srgb, var(--sys-status-accent-border) 24%, var(--sys-status-accent-surface) 76%);
+  --cmp-button-background-active: color-mix(in srgb, var(--sys-status-accent-border) 34%, var(--sys-status-accent-surface) 66%);
+  --cmp-button-border: var(--sys-status-accent-border);
+  --cmp-button-border-hover: var(--sys-status-accent-border);
+  --cmp-button-border-active: var(--sys-status-accent-border);
+  --cmp-button-border-selected: var(--sys-status-accent-border);
+  --cmp-button-text: var(--sys-status-accent-text);
+  --cmp-button-text-hover: var(--sys-status-accent-text);
+  --cmp-button-text-active: var(--sys-status-accent-text);
+  --cmp-button-text-selected: var(--sys-status-accent-text);
+  --cmp-button-icon: var(--sys-status-accent-icon);
+}
+
+.cmp-button[data-tone='success'] {
+  --cmp-button-background: var(--sys-status-success-surface);
+  --cmp-button-background-hover: color-mix(in srgb, var(--sys-status-success-border) 22%, var(--sys-status-success-surface) 78%);
+  --cmp-button-background-active: color-mix(in srgb, var(--sys-status-success-border) 32%, var(--sys-status-success-surface) 68%);
+  --cmp-button-border: var(--sys-status-success-border);
+  --cmp-button-border-hover: var(--sys-status-success-border);
+  --cmp-button-border-active: var(--sys-status-success-border);
+  --cmp-button-border-selected: var(--sys-status-success-border);
+  --cmp-button-text: var(--sys-status-success-text);
+  --cmp-button-text-hover: var(--sys-status-success-text);
+  --cmp-button-text-active: var(--sys-status-success-text);
+  --cmp-button-text-selected: var(--sys-status-success-text);
+  --cmp-button-icon: var(--sys-status-success-icon);
+}
+
+.cmp-button[data-tone='warning'] {
+  --cmp-button-background: var(--sys-status-warning-surface);
+  --cmp-button-background-hover: color-mix(in srgb, var(--sys-status-warning-border) 22%, var(--sys-status-warning-surface) 78%);
+  --cmp-button-background-active: color-mix(in srgb, var(--sys-status-warning-border) 34%, var(--sys-status-warning-surface) 66%);
+  --cmp-button-border: var(--sys-status-warning-border);
+  --cmp-button-border-hover: var(--sys-status-warning-border);
+  --cmp-button-border-active: var(--sys-status-warning-border);
+  --cmp-button-border-selected: var(--sys-status-warning-border);
+  --cmp-button-text: var(--sys-status-warning-text);
+  --cmp-button-text-hover: var(--sys-status-warning-text);
+  --cmp-button-text-active: var(--sys-status-warning-text);
+  --cmp-button-text-selected: var(--sys-status-warning-text);
+  --cmp-button-icon: var(--sys-status-warning-icon);
+}
+
+.cmp-button[data-tone='critical'] {
+  --cmp-button-background: var(--sys-status-critical-surface);
+  --cmp-button-background-hover: color-mix(in srgb, var(--sys-status-critical-border) 22%, var(--sys-status-critical-surface) 78%);
+  --cmp-button-background-active: color-mix(in srgb, var(--sys-status-critical-border) 34%, var(--sys-status-critical-surface) 66%);
+  --cmp-button-border: var(--sys-status-critical-border);
+  --cmp-button-border-hover: var(--sys-status-critical-border);
+  --cmp-button-border-active: var(--sys-status-critical-border);
+  --cmp-button-border-selected: var(--sys-status-critical-border);
+  --cmp-button-text: var(--sys-status-critical-text);
+  --cmp-button-text-hover: var(--sys-status-critical-text);
+  --cmp-button-text-active: var(--sys-status-critical-text);
+  --cmp-button-text-selected: var(--sys-status-critical-text);
+  --cmp-button-icon: var(--sys-status-critical-icon);
+}
+
+.cmp-badge[data-tone='primary'] {
+  --cmp-badge-background: var(--cmp-surface-action);
+  --cmp-badge-background-hover: var(--cmp-surface-action-hover);
+  --cmp-badge-background-active: var(--cmp-surface-action-pressed);
+  --cmp-badge-background-selected: var(--cmp-surface-action-pressed);
+  --cmp-badge-border: var(--cmp-surface-action);
+  --cmp-badge-border-hover: var(--cmp-surface-action-hover);
+  --cmp-badge-border-selected: var(--cmp-surface-action-pressed);
+  --cmp-badge-text: var(--cmp-text-on-action);
+  --cmp-badge-text-hover: var(--cmp-text-on-action);
+  --cmp-badge-text-selected: var(--cmp-text-on-action);
+  --cmp-badge-icon: var(--cmp-icon-on-action);
+  --cmp-badge-icon-selected: var(--cmp-icon-on-action);
+}
+
+.cmp-badge[data-tone='info'] {
+  --cmp-badge-background: var(--sys-status-info-surface);
+  --cmp-badge-background-hover: color-mix(in srgb, var(--sys-status-info-border) 22%, var(--sys-status-info-surface) 78%);
+  --cmp-badge-background-active: color-mix(in srgb, var(--sys-status-info-border) 34%, var(--sys-status-info-surface) 66%);
+  --cmp-badge-background-selected: var(--sys-status-info-border);
+  --cmp-badge-border: var(--sys-status-info-border);
+  --cmp-badge-border-hover: var(--sys-status-info-border);
+  --cmp-badge-border-selected: var(--sys-status-info-border);
+  --cmp-badge-text: var(--sys-status-info-text);
+  --cmp-badge-text-hover: var(--sys-status-info-text);
+  --cmp-badge-text-selected: var(--sys-status-info-text);
+  --cmp-badge-icon: var(--sys-status-info-icon);
+  --cmp-badge-icon-selected: var(--sys-status-info-icon);
+}
+
+.cmp-badge[data-tone='accent'] {
+  --cmp-badge-background: var(--sys-status-accent-surface);
+  --cmp-badge-background-hover: color-mix(in srgb, var(--sys-status-accent-border) 24%, var(--sys-status-accent-surface) 76%);
+  --cmp-badge-background-active: color-mix(in srgb, var(--sys-status-accent-border) 36%, var(--sys-status-accent-surface) 64%);
+  --cmp-badge-background-selected: var(--sys-status-accent-border);
+  --cmp-badge-border: var(--sys-status-accent-border);
+  --cmp-badge-border-hover: var(--sys-status-accent-border);
+  --cmp-badge-border-selected: var(--sys-status-accent-border);
+  --cmp-badge-text: var(--sys-status-accent-text);
+  --cmp-badge-text-hover: var(--sys-status-accent-text);
+  --cmp-badge-text-selected: var(--sys-status-accent-text);
+  --cmp-badge-icon: var(--sys-status-accent-icon);
+  --cmp-badge-icon-selected: var(--sys-status-accent-icon);
+}
+
+.cmp-badge[data-tone='success'] {
+  --cmp-badge-background: var(--sys-status-success-surface);
+  --cmp-badge-background-hover: color-mix(in srgb, var(--sys-status-success-border) 22%, var(--sys-status-success-surface) 78%);
+  --cmp-badge-background-active: color-mix(in srgb, var(--sys-status-success-border) 34%, var(--sys-status-success-surface) 66%);
+  --cmp-badge-background-selected: var(--sys-status-success-border);
+  --cmp-badge-border: var(--sys-status-success-border);
+  --cmp-badge-border-hover: var(--sys-status-success-border);
+  --cmp-badge-border-selected: var(--sys-status-success-border);
+  --cmp-badge-text: var(--sys-status-success-text);
+  --cmp-badge-text-hover: var(--sys-status-success-text);
+  --cmp-badge-text-selected: var(--sys-status-success-text);
+  --cmp-badge-icon: var(--sys-status-success-icon);
+  --cmp-badge-icon-selected: var(--sys-status-success-icon);
+}
+
+.cmp-badge[data-tone='warning'] {
+  --cmp-badge-background: var(--sys-status-warning-surface);
+  --cmp-badge-background-hover: color-mix(in srgb, var(--sys-status-warning-border) 24%, var(--sys-status-warning-surface) 76%);
+  --cmp-badge-background-active: color-mix(in srgb, var(--sys-status-warning-border) 36%, var(--sys-status-warning-surface) 64%);
+  --cmp-badge-background-selected: var(--sys-status-warning-border);
+  --cmp-badge-border: var(--sys-status-warning-border);
+  --cmp-badge-border-hover: var(--sys-status-warning-border);
+  --cmp-badge-border-selected: var(--sys-status-warning-border);
+  --cmp-badge-text: var(--sys-status-warning-text);
+  --cmp-badge-text-hover: var(--sys-status-warning-text);
+  --cmp-badge-text-selected: var(--sys-status-warning-text);
+  --cmp-badge-icon: var(--sys-status-warning-icon);
+  --cmp-badge-icon-selected: var(--sys-status-warning-icon);
+}
+
+.cmp-badge[data-tone='critical'] {
+  --cmp-badge-background: var(--sys-status-critical-surface);
+  --cmp-badge-background-hover: color-mix(in srgb, var(--sys-status-critical-border) 24%, var(--sys-status-critical-surface) 76%);
+  --cmp-badge-background-active: color-mix(in srgb, var(--sys-status-critical-border) 36%, var(--sys-status-critical-surface) 64%);
+  --cmp-badge-background-selected: var(--sys-status-critical-border);
+  --cmp-badge-border: var(--sys-status-critical-border);
+  --cmp-badge-border-hover: var(--sys-status-critical-border);
+  --cmp-badge-border-selected: var(--sys-status-critical-border);
+  --cmp-badge-text: var(--sys-status-critical-text);
+  --cmp-badge-text-hover: var(--sys-status-critical-text);
+  --cmp-badge-text-selected: var(--sys-status-critical-text);
+  --cmp-badge-icon: var(--sys-status-critical-icon);
+  --cmp-badge-icon-selected: var(--sys-status-critical-icon);
+}
+
+.cmp-input[data-tone='info'] {
+  --cmp-input-border: var(--sys-status-info-border);
+  --cmp-input-border-hover: var(--sys-status-info-border);
+  --cmp-input-border-focus: var(--sys-status-info-border);
+  --cmp-input-border-selected: var(--sys-status-info-border);
+  --cmp-input-message-text: var(--sys-status-info-text);
+  --cmp-input-message-surface: color-mix(in srgb, var(--sys-status-info-surface) 75%, transparent);
+  --cmp-input-message-border: var(--sys-status-info-border);
+}
+
+.cmp-input[data-tone='accent'] {
+  --cmp-input-border: var(--sys-status-accent-border);
+  --cmp-input-border-hover: var(--sys-status-accent-border);
+  --cmp-input-border-focus: var(--sys-status-accent-border);
+  --cmp-input-border-selected: var(--sys-status-accent-border);
+  --cmp-input-message-text: var(--sys-status-accent-text);
+  --cmp-input-message-surface: color-mix(in srgb, var(--sys-status-accent-surface) 75%, transparent);
+  --cmp-input-message-border: var(--sys-status-accent-border);
+}
+
+.cmp-input[data-tone='success'] {
+  --cmp-input-border: var(--sys-status-success-border);
+  --cmp-input-border-hover: var(--sys-status-success-border);
+  --cmp-input-border-focus: var(--sys-status-success-border);
+  --cmp-input-border-selected: var(--sys-status-success-border);
+  --cmp-input-message-text: var(--sys-status-success-text);
+  --cmp-input-message-surface: color-mix(in srgb, var(--sys-status-success-surface) 75%, transparent);
+  --cmp-input-message-border: var(--sys-status-success-border);
+}
+
+.cmp-input[data-tone='warning'] {
+  --cmp-input-border: var(--sys-status-warning-border);
+  --cmp-input-border-hover: var(--sys-status-warning-border);
+  --cmp-input-border-focus: var(--sys-status-warning-border);
+  --cmp-input-border-selected: var(--sys-status-warning-border);
+  --cmp-input-message-text: var(--sys-status-warning-text);
+  --cmp-input-message-surface: color-mix(in srgb, var(--sys-status-warning-surface) 75%, transparent);
+  --cmp-input-message-border: var(--sys-status-warning-border);
+}
+
+.cmp-input[data-tone='critical'] {
+  --cmp-input-border: var(--sys-status-critical-border);
+  --cmp-input-border-hover: var(--sys-status-critical-border);
+  --cmp-input-border-focus: var(--sys-status-critical-border);
+  --cmp-input-border-selected: var(--sys-status-critical-border);
+  --cmp-input-message-text: var(--sys-status-critical-text);
+  --cmp-input-message-surface: color-mix(in srgb, var(--sys-status-critical-surface) 75%, transparent);
+  --cmp-input-message-border: var(--sys-status-critical-border);
+}
+
+.cmp-input[data-tone='neutral'] {
+  --cmp-input-border: var(--cmp-border-default);
+  --cmp-input-border-hover: var(--cmp-border-strong);
+  --cmp-input-border-focus: var(--cmp-text-accent);
+  --cmp-input-border-selected: var(--cmp-text-accent);
+  --cmp-input-message-text: var(--cmp-text-muted);
+  --cmp-input-message-surface: color-mix(in srgb, var(--cmp-surface-subtle) 65%, transparent);
+  --cmp-input-message-border: var(--cmp-border-default);
+}
+
+[data-context='list'] .status-chip {
+  --cmp-chip-padding-inline: calc(var(--sys-space-inline-xs) + 2px);
+  --cmp-chip-padding-block: 0.25rem;
+  --cmp-chip-font-size: clamp(0.7rem, 0.65rem + 0.25vw, 0.78rem);
+}
+
+[data-context='detail'] .status-chip {
+  --cmp-chip-padding-inline: var(--sys-space-inline-sm);
+  --cmp-chip-padding-block: 0.4rem;
+  --cmp-chip-font-size: clamp(0.8rem, 0.78rem + 0.2vw, 0.92rem);
+}
+
+[data-context='form'] .status-chip {
+  --cmp-chip-padding-inline: calc(var(--sys-space-inline-sm) - 2px);
+  --cmp-chip-padding-block: 0.35rem;
+  --cmp-chip-font-size: clamp(0.8rem, 0.76rem + 0.18vw, 0.9rem);
+}
+
+[data-context='timeline'] .status-chip {
+  --cmp-chip-padding-inline: calc(var(--sys-space-inline-xs) + 4px);
+  --cmp-chip-padding-block: 0.3rem;
+  --cmp-chip-font-size: clamp(0.75rem, 0.72rem + 0.15vw, 0.84rem);
+}

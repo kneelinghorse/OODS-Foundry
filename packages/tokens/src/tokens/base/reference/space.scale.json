@@ -1,0 +1,42 @@
+{
+  "ref": {
+    "space": {
+      "inset": {
+        "compact": {
+          "$type": "dimension",
+          "$value": "8px",
+          "$description": "Compact padding for dense containers."
+        },
+        "default": {
+          "$type": "dimension",
+          "$value": "24px",
+          "$description": "Default padding for primary cards and panels."
+        }
+      },
+      "stack": {
+        "compact": {
+          "$type": "dimension",
+          "$value": "12px",
+          "$description": "Tight vertical spacing between related items."
+        },
+        "default": {
+          "$type": "dimension",
+          "$value": "20px",
+          "$description": "Standard vertical spacing between sections."
+        }
+      },
+      "inline": {
+        "xs": {
+          "$type": "dimension",
+          "$value": "8px",
+          "$description": "Compact horizontal spacing."
+        },
+        "sm": {
+          "$type": "dimension",
+          "$value": "14px",
+          "$description": "Small horizontal spacing used in chip contexts."
+        }
+      }
+    }
+  }
+}

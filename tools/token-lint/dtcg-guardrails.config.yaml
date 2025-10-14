@@ -1,0 +1,90 @@
+# DTCG Guardrails Configuration v1.0 (For Sprint 04)
+# Generated from research mission R4.1 — enforces a safe subset of the DTCG specification.
+
+rules:
+  # === Naming and Structure Rules (Section 3.1) ===
+  dtcg/token-name-kebab-case:
+    enabled: true
+    level: "error"
+    description: "Token and group names must use lowercase kebab-case."
+
+  dtcg/token-name-no-illegal-chars:
+    enabled: true
+    level: "error"
+    description: "Token and group names must not contain '.', '{', or '}'."
+
+  dtcg/token-name-no-dollar-prefix:
+    enabled: true
+    level: "error"
+    description: "Token and group names must not start with '$'."
+
+  # === Type System and Values (Section 3.3) ===
+  dtcg/token-must-have-value:
+    enabled: true
+    level: "error"
+    description: "All design tokens must define a '$value'."
+
+  dtcg/token-must-have-type:
+    enabled: true
+    level: "error"
+    description: "All design tokens must define a '$type'."
+
+  dtcg/token-type-is-official:
+    enabled: true
+    level: "error"
+    description: "The '$type' property must be an approved DTCG type."
+    allowedTypes:
+      - "color"
+      - "dimension"
+      - "fontFamily"
+      - "fontWeight"
+      - "duration"
+      - "cubicBezier"
+      - "number"
+      - "strokeStyle"
+      - "border"
+      - "transition"
+      - "shadow"
+      - "gradient"
+      - "typography"
+      - "content"
+      - "asset"
+      - "boolean"
+      - "other"
+
+  # === Reference (Alias) Semantics (Section 3.2) ===
+  dtcg/alias-is-full-value:
+    enabled: true
+    level: "error"
+    description: "An alias must appear as the entire '$value'."
+
+  dtcg/alias-no-string-interpolation:
+    enabled: true
+    level: "warn"
+    description: "String interpolation with aliases is not permitted."
+
+  dtcg/alias-no-in-array:
+    enabled: true
+    level: "warn"
+    description: "Aliases inside array values are not permitted."
+
+  dtcg/alias-no-fallbacks:
+    enabled: true
+    level: "warn"
+    description: "Alias fallbacks (alias + literal array) are not permitted."
+
+  dtcg/alias-no-circular-references:
+    enabled: true
+    level: "error"
+    description: "Alias graphs must be acyclic."
+
+  dtcg/alias-must-resolve:
+    enabled: true
+    level: "error"
+    description: "Aliases must reference an existing token."
+
+  # === File Integrity ===
+  dtcg/json-parse-error:
+    enabled: true
+    level: "error"
+    description: "Token sources must parse as valid JSON."

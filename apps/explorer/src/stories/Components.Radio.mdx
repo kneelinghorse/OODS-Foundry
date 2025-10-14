@@ -1,0 +1,36 @@
+import React from 'react';
+import { Meta, Canvas, Story } from '@storybook/blocks';
+import * as RadioStories from './Radio.stories';
+import { RadioGroup } from '../components/Radio';
+import '../styles/index.css';
+import '../styles/forms.css';
+
+<Meta of={RadioStories} />
+
+## States
+
+<Canvas>
+  <Story
+    name="States"
+    parameters={{
+      chromatic: { disableSnapshot: false },
+      vrt: { tags: ['vrt-critical'] }
+    }}
+    tags={['vrt-critical']}
+  >
+    {() => (
+      <div style={{ display: 'grid', gap: '1.25rem', width: 'min(28rem, 100%)' }}>
+        <RadioGroup name="plan" ariaLabel="Plan" options={[{ value: 'basic', label: 'Basic' }, { value: 'pro', label: 'Pro' }, { value: 'team', label: 'Team' }]} defaultValue="pro" />
+        <RadioGroup name="env" ariaLabel="Environment" options={[{ value: 'dev', label: 'Development' }, { value: 'stg', label: 'Staging' }, { value: 'prd', label: 'Production', disabled: true }]} defaultValue="stg" />
+      </div>
+    )}
+  </Story>
+</Canvas>
+
+## A11y Contract
+
+- Arrow keys move within the group; Home/End jump to first/last; roving `tabindex` ensures correct focus behavior.
+- Visuals consume `--cmp-radio-*` tokens only; tones map in the layer.
+- Focus ring uses `--cmp-radio-focus-*` with outline offset for clarity; ≥3:1 in HC.
+- Disabled options retain clear text and affordance.
+

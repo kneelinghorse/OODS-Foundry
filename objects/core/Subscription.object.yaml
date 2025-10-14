@@ -1,0 +1,199 @@
+object:
+  name: Subscription
+  version: 1.0.0
+  domain: core.billing
+  description: Canonical subscription record composing lifecycle, billing, and cancellation semantics.
+  tags:
+    - billing
+    - lifecycle
+    - monetization
+
+traits:
+  - name: lifecycle/Stateful
+    alias: SubscriptionLifecycle
+    parameters:
+      states:
+        - trialing
+        - active
+        - past_due
+        - paused
+        - canceled
+      initialState: trialing
+  - name: lifecycle/Cancellable
+    alias: SubscriptionCancellation
+    parameters:
+      allowCancellationAfterStart: true
+      requireReason: false
+  - name: lifecycle/Timestampable
+    alias: BillingCycleTimeline
+    parameters:
+      recordedEvents:
+        - billing_cycle_started
+        - billing_cycle_completed
+        - payment_received
+        - cancellation_requested
+      timezone: UTC
+  - name: financial/Billable
+    alias: SubscriptionBilling
+    parameters:
+      defaultCurrency: usd
+      billingIntervals:
+        - monthly
+        - yearly
+      minorUnits: 100
+
+schema:
+  subscription_id:
+    type: string
+    required: true
+    description: Primary identifier used across billing and lifecycle systems.
+  plan_name:
+    type: string
+    required: true
+    description: Human-readable plan label shown in headers.
+  plan_code:
+    type: string
+    required: false
+    description: Internal plan code or price identifier.
+  plan_interval:
+    type: string
+    required: false
+    description: Billing interval descriptor (monthly, yearly, etc.).
+  customer_name:
+    type: string
+    required: false
+    description: Customer or account name associated with the subscription.
+  customer_email:
+    type: email
+    required: false
+    description: Billing contact email address.
+  status:
+    type: string
+    required: true
+    description: Current lifecycle status of the subscription.
+    validation:
+      enum:
+        - trialing
+        - active
+        - past_due
+        - paused
+        - canceled
+        - incomplete
+  cancel_at_period_end:
+    type: boolean
+    required: true
+    description: Whether the subscription will cancel at the natural billing period end.
+  cancellation_reason:
+    type: string
+    required: false
+    description: Free-form explanation captured during cancellation workflows.
+  cancellation_requested_at:
+    type: datetime
+    required: false
+    description: Timestamp when cancellation was initiated.
+  amount:
+    type: integer
+    required: true
+    description: Recurring price expressed in minor units (e.g., cents).
+  currency:
+    type: string
+    required: true
+    description: ISO 4217 currency code used for billing.
+  billing_interval:
+    type: string
+    required: false
+    description: Recurrence cadence (monthly, yearly, quarterly, etc.).
+  current_period_start:
+    type: datetime
+    required: true
+    description: Start timestamp of the current billing cycle.
+  current_period_end:
+    type: datetime
+    required: true
+    description: End timestamp of the current billing cycle.
+  current_period_progress:
+    type: number
+    required: false
+    description: Decimal progress (0-1) through the active billing cycle.
+  last_payment_at:
+    type: datetime
+    required: false
+    description: Timestamp of the most recent successful payment.
+  next_payment_due_at:
+    type: datetime
+    required: false
+    description: Timestamp when the next payment attempt should occur.
+
+semantics:
+  subscription_id:
+    semantic_type: billing.subscription.id
+    token_mapping: tokenMap(billing.subscription.id)
+  plan_name:
+    semantic_type: billing.plan.name
+    token_mapping: tokenMap(billing.plan.name)
+  plan_code:
+    semantic_type: billing.plan.code
+    token_mapping: tokenMap(billing.plan.code)
+  plan_interval:
+    semantic_type: billing.plan.interval
+    token_mapping: tokenMap(billing.plan.interval)
+  customer_name:
+    semantic_type: customer.account.name
+    token_mapping: tokenMap(customer.account.name)
+  customer_email:
+    semantic_type: customer.account.email
+    token_mapping: tokenMap(customer.account.email)
+  status:
+    semantic_type: billing.subscription.status
+    token_mapping: tokenMap(billing.subscription.status.*)
+  cancel_at_period_end:
+    semantic_type: billing.subscription.cancel_at_period_end
+    token_mapping: tokenMap(billing.subscription.cancel_at_period_end)
+  cancellation_reason:
+    semantic_type: billing.subscription.cancellation_reason
+    token_mapping: tokenMap(billing.subscription.cancellation_reason)
+  cancellation_requested_at:
+    semantic_type: billing.subscription.cancellation_requested_at
+    token_mapping: tokenMap(billing.subscription.cancellation_requested_at)
+  amount:
+    semantic_type: billing.plan.amount
+    token_mapping: tokenMap(billing.plan.amount)
+  currency:
+    semantic_type: billing.plan.currency
+    token_mapping: tokenMap(billing.plan.currency)
+  billing_interval:
+    semantic_type: billing.subscription.interval
+    token_mapping: tokenMap(billing.subscription.interval)
+  current_period_start:
+    semantic_type: billing.subscription.current_period_start
+    token_mapping: tokenMap(billing.subscription.current_period_start)
+  current_period_end:
+    semantic_type: billing.subscription.current_period_end
+    token_mapping: tokenMap(billing.subscription.current_period_end)
+  current_period_progress:
+    semantic_type: billing.subscription.current_period_progress
+    token_mapping: tokenMap(billing.subscription.current_period_progress)
+  last_payment_at:
+    semantic_type: billing.subscription.last_payment_at
+    token_mapping: tokenMap(billing.subscription.last_payment_at)
+  next_payment_due_at:
+    semantic_type: billing.subscription.next_payment_due_at
+    token_mapping: tokenMap(billing.subscription.next_payment_due_at)
+
+tokens:
+  billing.subscription.status.active: "var(--semantic-success)"
+  billing.subscription.status.past_due: "var(--semantic-warning)"
+  billing.subscription.status.canceled: "var(--semantic-danger)"
+  billing.subscription.interval.monthly: "var(--text-subtle)"
+  billing.plan.amount: "var(--text-strong)"
+
+metadata:
+  owners:
+    - billing@oods.systems
+    - lifecycle@oods.systems
+  steward: design@oods.systems
+  maturity: beta
+  changelog:
+    - version: 1.0.0
+      date: "2025-10-21"
+      description: Initial subscription composition integrating State, Cancellation, Billing, and Timeline traits.

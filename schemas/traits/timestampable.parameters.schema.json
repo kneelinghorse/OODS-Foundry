@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/07/schema",
+  "$id": "https://trait-engine.dev/schemas/traits/timestampable",
+  "title": "Timestampable Trait Parameters",
+  "description": "Configuration contract for the Timestampable trait's audit timeline settings.",
+  "type": "object",
+  "properties": {
+    "recordedEvents": {
+      "type": "array",
+      "description": "Canonical lifecycle events captured when tracking timestamp provenance.",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 48,
+        "pattern": "^[a-z0-9_]+$",
+        "description": "Lifecycle event identifier such as created, updated, or archived."
+      }
+    },
+    "timezone": {
+      "type": "string",
+      "description": "Default timezone context applied when presenting timestamps.",
+      "enum": ["UTC", "LOCAL", "OFFSET"]
+    },
+    "allowNullUpdatedAt": {
+      "type": "boolean",
+      "description": "When true, updated_at may be omitted until a mutation occurs."
+    }
+  },
+  "required": ["recordedEvents"],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "recordedEvents": ["created", "profile_updated", "status_changed"],
+      "timezone": "UTC",
+      "allowNullUpdatedAt": false
+    }
+  ]
+}

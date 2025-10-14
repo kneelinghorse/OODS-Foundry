@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/07/schema",
+  "$id": "https://trait-engine.dev/schemas/traits/ownerable",
+  "title": "Ownerable Trait Parameters",
+  "description": "Configuration contract for ownership governance metadata.",
+  "type": "object",
+  "properties": {
+    "ownerTypes": {
+      "type": "array",
+      "description": "Principal types permitted to own the entity.",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 48,
+        "pattern": "^[a-z0-9_\\-]+$",
+        "description": "Identifier describing a valid owner type (e.g., organization, team)."
+      }
+    },
+    "primaryOwnerType": {
+      "type": "string",
+      "description": "Default owner type applied to new records.",
+      "minLength": 1,
+      "maxLength": 48,
+      "pattern": "^[a-z0-9_\\-]+$",
+      "enum": {
+        "$data": "1/ownerTypes"
+      }
+    },
+    "allowTransfer": {
+      "type": "boolean",
+      "description": "Indicates whether ownership reassignment is permitted after creation."
+    }
+  },
+  "required": ["ownerTypes"],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "ownerTypes": ["organization", "team", "platform"],
+      "primaryOwnerType": "organization",
+      "allowTransfer": true
+    }
+  ]
+}

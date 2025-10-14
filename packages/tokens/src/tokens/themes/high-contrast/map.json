@@ -1,0 +1,87 @@
+{
+  "$schema": "https://open-oods.dev/schemas/high-contrast-map.v1.json",
+  "description": "Mapping from semantic system tokens to CSS system colors for forced-colors (high contrast) rendering.",
+  "mappings": {
+    "sys": {
+      "surface": {
+        "canvas": "Canvas",
+        "raised": "Canvas",
+        "subtle": "Canvas",
+        "disabled": "Canvas",
+        "backdrop": "Canvas",
+        "inverse": "CanvasText",
+        "interactive": {
+          "primary": {
+            "default": "Highlight",
+            "hover": "Highlight",
+            "pressed": "Highlight"
+          }
+        }
+      },
+      "border": {
+        "subtle": "CanvasText",
+        "strong": "Highlight"
+      },
+      "text": {
+        "primary": "CanvasText",
+        "secondary": "GrayText",
+        "muted": "GrayText",
+        "inverse": "Canvas",
+        "accent": "LinkText",
+        "on-interactive": "HighlightText",
+        "disabled": "GrayText"
+      },
+      "icon": {
+        "primary": "CanvasText",
+        "muted": "GrayText",
+        "on-interactive": "HighlightText"
+      },
+      "status": {
+        "info": {
+          "surface": "Canvas",
+          "border": "Highlight",
+          "text": "HighlightText",
+          "icon": "HighlightText"
+        },
+        "success": {
+          "surface": "Canvas",
+          "border": "Highlight",
+          "text": "HighlightText",
+          "icon": "HighlightText"
+        },
+        "warning": {
+          "surface": "Canvas",
+          "border": "Highlight",
+          "text": "HighlightText",
+          "icon": "HighlightText"
+        },
+        "accent": {
+          "surface": "Canvas",
+          "border": "Highlight",
+          "text": "HighlightText",
+          "icon": "HighlightText"
+        },
+        "critical": {
+          "surface": "Canvas",
+          "border": "Highlight",
+          "text": "HighlightText",
+          "icon": "HighlightText"
+        },
+        "neutral": {
+          "surface": "Canvas",
+          "border": "CanvasText",
+          "text": "CanvasText",
+          "icon": "CanvasText"
+        }
+      },
+      "focus": {
+        "ring": {
+          "outer": "Highlight",
+          "inner": "Canvas"
+        },
+        "text": "HighlightText",
+        "width": "2px"
+      }
+    }
+  }
+}

@@ -1,0 +1,72 @@
+import React from 'react';
+import { Meta, Canvas, Story } from '@storybook/blocks';
+import * as BannerStories from './Banner.stories';
+import { Banner } from '../components/Banner';
+import '../styles/index.css';
+
+<Meta of={BannerStories} />
+
+## States
+
+<Canvas>
+  <Story
+    name="States"
+    parameters={{
+      chromatic: { disableSnapshot: false },
+      vrt: { tags: ['vrt-critical'] }
+    }}
+    tags={['vrt-critical']}
+  >
+    {() => {
+      const noop = () => undefined;
+
+      return (
+        <div style={{ display: 'grid', gap: '1rem', width: 'min(48rem, 100%)' }}>
+          <Banner
+            tone="info"
+            title="Review the usage guidelines"
+            description="Motion tokens land next sprint—keep interactions simple and rely on slot colors for state."
+            actions={[
+              { label: 'View docs', href: '#', rel: 'noreferrer' },
+              { label: 'Remind me later', onClick: noop, tone: 'neutral' }
+            ]}
+            dismissible
+            onDismiss={noop}
+          />
+
+          <Banner
+            tone="success"
+            title="Validation checks cleared"
+            description="All Delta guardrails and AA contrast scenarios stayed green in the latest build."
+            actions={[{ label: 'View report', onClick: noop }]}
+            selected
+          />
+
+          <Banner
+            tone="warning"
+            title="Timeline snapshot paused"
+            description="User growth dipped below the guardrail. Investigate anomalies before issuing updates."
+            actions={[{ label: 'Open timeline', href: '#timeline', rel: 'noreferrer' }]}
+          />
+
+          <Banner
+            tone="critical"
+            title="Tokens drift detected"
+            description="Badge hover colors diverged from the OKLCH delta budget. Inspect composable overrides."
+            actions={[{ label: 'Open diff', onClick: noop, icon: '⨯' }]}
+            dismissible
+            onDismiss={noop}
+          />
+        </div>
+      );
+    }}
+  </Story>
+</Canvas>
+
+## A11y Contract
+
+- Banner surfaces map to `--cmp-banner-*` slots; tone flips stay token-driven for light, dark, and HC themes.
+- Focus-visible relies on `--cmp-banner-ring-*` so nested interactive elements present consistent 2px outlines.
+- Action buttons pull from `--cmp-banner-action-*` tokens; hover shifts never exceed ΔC guardrails.
+- Dismiss affordance exposes `aria-label` for screen readers and honours `prefers-reduced-motion` transitions.
+- `role="status"` defaults to polite announcements while `role="alert"` can be opted into for assertive messaging.

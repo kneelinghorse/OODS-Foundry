@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/07/schema",
+  "$id": "https://trait-engine.dev/schemas/traits/cancellable",
+  "title": "Cancellable Trait Parameters",
+  "description": "Parameter contract for traits that add cancellation workflows.",
+  "type": "object",
+  "properties": {
+    "allowCancellationAfterStart": {
+      "type": "boolean",
+      "description": "If false, cancellation must happen before the object becomes active.",
+      "default": true
+    },
+    "cancellationWindowHours": {
+      "type": "integer",
+      "description": "Number of hours after activation where cancellation is permitted.",
+      "minimum": 0,
+      "maximum": 720
+    },
+    "requireReason": {
+      "type": "boolean",
+      "description": "Whether a cancellation reason must be supplied.",
+      "default": false
+    },
+    "allowedReasons": {
+      "type": "array",
+      "description": "Allow list of valid cancellation reason codes.",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 64,
+        "pattern": "^[a-z0-9_\\-]+$"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "requireReason": {
+            "const": true
+          }
+        },
+        "required": ["requireReason"]
+      },
+      "then": {
+        "required": ["allowedReasons"]
+      }
+    }
+  ],
+  "examples": [
+    {
+      "allowCancellationAfterStart": true,
+      "cancellationWindowHours": 72
+    },
+    {
+      "allowCancellationAfterStart": false,
+      "requireReason": true,
+      "allowedReasons": ["customer_request", "fraud_detected"]
+    }
+  ]
+}

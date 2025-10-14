@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/07/schema",
+  "$id": "https://trait-engine.dev/schemas/traits/archivable",
+  "title": "Archivable Trait Parameters",
+  "description": "Configuration contract for archival behavior.",
+  "type": "object",
+  "properties": {
+    "gracePeriodDays": {
+      "type": "integer",
+      "description": "Number of days after archival before permanent deletion.",
+      "minimum": 0,
+      "maximum": 365,
+      "default": 30
+    },
+    "retainHistory": {
+      "type": "boolean",
+      "description": "Whether archival retains a readable change history.",
+      "default": true
+    },
+    "restoreWindowDays": {
+      "type": "integer",
+      "description": "Maximum number of days archived entities can be restored.",
+      "minimum": 0,
+      "maximum": 365
+    }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "retainHistory": {
+            "const": true
+          }
+        },
+        "required": ["retainHistory"]
+      },
+      "then": {
+        "required": ["restoreWindowDays"]
+      },
+      "else": {
+        "not": {
+          "required": ["restoreWindowDays"]
+        }
+      }
+    }
+  ],
+  "examples": [
+    {
+      "gracePeriodDays": 60,
+      "retainHistory": true,
+      "restoreWindowDays": 90
+    },
+    {
+      "gracePeriodDays": 14,
+      "retainHistory": false
+    }
+  ]
+}

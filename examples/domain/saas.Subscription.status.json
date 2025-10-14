@@ -1,0 +1,18 @@
+{
+  "manifest": "saas.Subscription.status",
+  "object": "saas/Subscription",
+  "field": "status",
+  "description": "Canonical lifecycle states for SaaS subscriptions after provider normalization.",
+  "values": [
+    "future",
+    "trialing",
+    "active",
+    "past_due",
+    "paused",
+    "pending_cancellation",
+    "canceled"
+  ],
+  "sources": [
+    "missions/research/r4.5_SaaS-Enum-to-Token-Mapping-Schema.md#3.1"
+  ]
+}

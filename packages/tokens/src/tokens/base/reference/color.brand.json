@@ -1,0 +1,90 @@
+{
+  "ref": {
+    "color": {
+      "primary": {
+        "100": {
+          "$type": "color",
+          "$value": "oklch(0.9563 0.0277 225.69)",
+          "$description": "Primary 100; airy accent surface drawn from Theme 0 ramp.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#DEF5FF"
+            }
+          }
+        },
+        "300": {
+          "$type": "color",
+          "$value": "oklch(0.7031 0.1967 274.55)",
+          "$description": "Primary 300; luminous accent for dark hover states.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#8092FF"
+            }
+          }
+        },
+        "400": {
+          "$type": "color",
+          "$value": "oklch(0.6631 0.1867 274.55)",
+          "$description": "Primary 400; elevated accent for dark mode focus/hover.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#7384FF"
+            }
+          }
+        },
+        "500": {
+          "$type": "color",
+          "$value": "oklch(0.5631 0.1717 274.55)",
+          "$description": "Primary 500; core interactive colour for Theme 0.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#5A67D8"
+            }
+          }
+        },
+        "600": {
+          "$type": "color",
+          "$value": "oklch(0.4631 0.1867 274.55)",
+          "$description": "Primary 600; hover state reference for interactive surfaces.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#3F45BE"
+            }
+          }
+        },
+        "700": {
+          "$type": "color",
+          "$value": "oklch(0.4231 0.1967 274.55)",
+          "$description": "Primary 700; pressed state reference for interactive surfaces.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#3634B6"
+            }
+          }
+        }
+      },
+      "accent": {
+        "100": {
+          "$type": "color",
+          "$value": "{ref.color.primary.100}",
+          "$description": "Accent 100; mirrors primary 100 for highlight surfaces."
+        },
+        "300": {
+          "$type": "color",
+          "$value": "{ref.color.primary.500}",
+          "$description": "Accent 300; aligns accent border with primary default."
+        },
+        "400": {
+          "$type": "color",
+          "$value": "{ref.color.primary.600}",
+          "$description": "Accent 400; accent hover derived from primary hover."
+        },
+        "500": {
+          "$type": "color",
+          "$value": "{ref.color.primary.700}",
+          "$description": "Accent 500; accent foreground aligned to primary pressed."
+        }
+      }
+    }
+  }
+}

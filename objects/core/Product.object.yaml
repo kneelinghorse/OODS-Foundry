@@ -1,0 +1,142 @@
+object:
+  name: Product
+  version: 1.0.0
+  domain: core.catalog
+  description: Canonical catalog entry combining pricing, lifecycle, and merchandising metadata.
+  tags:
+    - universal
+    - product
+    - commerce
+
+traits:
+  - name: content/Labelled
+    alias: ProductLabel
+  - name: lifecycle/Stateful
+    parameters:
+      states:
+        - draft
+        - in_review
+        - active
+        - retired
+      initialState: draft
+  - name: lifecycle/Timestampable
+    parameters:
+      recordedEvents:
+        - created
+        - spec_updated
+        - price_changed
+        - retired
+      timezone: UTC
+  - name: financial/Priceable
+    parameters:
+      supportedCurrencies:
+        - USD
+        - EUR
+        - GBP
+        - AUD
+      defaultCurrency: USD
+      pricingModels:
+        - one_time
+        - subscription
+        - usage_based
+      billingIntervals:
+        - one_time
+        - month
+        - year
+      taxBehavior: exclusive
+  - name: behavioral/Taggable
+    parameters:
+      maxTags: 20
+      allowCustomTags: false
+      allowedTags:
+        - new_release
+        - beta
+        - deprecated
+        - bundle
+        - featured
+        - add_on
+      caseSensitive: false
+
+schema:
+  product_id:
+    type: uuid
+    required: true
+    description: Primary identifier for the product listing.
+  sku:
+    type: string
+    required: true
+    description: Merchandising SKU exposed to commerce systems.
+  inventory_status:
+    type: string
+    required: true
+    default: in_stock
+    description: Availability state synchronized with inventory service.
+    validation:
+      enum:
+        - in_stock
+        - low_stock
+        - backorder
+        - discontinued
+  release_channel:
+    type: string
+    required: true
+    default: general_availability
+    description: Channel describing how the product is released to customers.
+    validation:
+      enum:
+        - alpha
+        - beta
+        - limited
+        - general_availability
+  requires_subscription:
+    type: boolean
+    required: true
+    default: false
+    description: Indicates whether access to the product requires an active subscription.
+  support_level:
+    type: string
+    required: false
+    description: SLA tier associated with the product.
+    validation:
+      enum:
+        - standard
+        - premium
+        - enterprise
+  summary_blurb:
+    type: string
+    required: false
+    description: Short merchandising description surfaced in marketing contexts.
+    validation:
+      maxLength: 160
+
+semantics:
+  product_id:
+    semantic_type: product.id
+    token_mapping: tokenMap(product.id.primary)
+  sku:
+    semantic_type: product.sku
+    token_mapping: tokenMap(product.sku.primary)
+  inventory_status:
+    semantic_type: product.inventory.status
+    token_mapping: tokenMap(inventory.status.*)
+  release_channel:
+    semantic_type: product.release.channel
+    token_mapping: tokenMap(product.release.channel)
+  requires_subscription:
+    semantic_type: product.access.requires_subscription
+    token_mapping: tokenMap(product.access.subscription)
+
+tokens:
+  product.sku.primary: "var(--text-strong)"
+  inventory.status.low_stock: "var(--status-warning)"
+  inventory.status.discontinued: "var(--status-danger)"
+
+metadata:
+  owners:
+    - product@oods.systems
+    - commerce@oods.systems
+  steward: merchandising@oods.systems
+  changelog:
+    - version: 1.0.0
+      date: "2025-10-16"
+      description: Initial Universal Quintet baseline.

@@ -1,0 +1,111 @@
+{
+  "motion": {
+    "duration": {
+      "fast": {
+        "$type": "duration",
+        "$value": "{sys.motion.duration.fast}",
+        "$description": "Fast feedback for hover and tap affordances."
+      },
+      "base": {
+        "$type": "duration",
+        "$value": "{sys.motion.duration.base}",
+        "$description": "Primary system duration for selection and focus."
+      },
+      "slow": {
+        "$type": "duration",
+        "$value": "{sys.motion.duration.slow}",
+        "$description": "Extended duration for surface-level entrance motion."
+      }
+    },
+    "reduced": {
+      "duration": {
+        "fast": {
+          "$type": "duration",
+          "$value": "{sys.motion.reduced.duration.fast}",
+          "$description": "Reduced-motion fast duration resolves to instant."
+        },
+        "base": {
+          "$type": "duration",
+          "$value": "{sys.motion.reduced.duration.base}",
+          "$description": "Reduced-motion default duration resolves to instant."
+        },
+        "slow": {
+          "$type": "duration",
+          "$value": "{sys.motion.reduced.duration.slow}",
+          "$description": "Reduced-motion slow duration resolves to instant."
+        }
+      },
+      "transition": {
+        "hover": {
+          "$type": "transition",
+          "$value": "{sys.motion.reduced.transition.hover}",
+          "$description": "Hover transitions collapse when motion is reduced."
+        },
+        "focus": {
+          "$type": "transition",
+          "$value": "{sys.motion.reduced.transition.focus}",
+          "$description": "Focus transitions collapse when motion is reduced."
+        },
+        "chip-in": {
+          "$type": "transition",
+          "$value": "{sys.motion.reduced.transition.chip-in}",
+          "$description": "Chip entry collapses when motion is reduced."
+        },
+        "chip-out": {
+          "$type": "transition",
+          "$value": "{sys.motion.reduced.transition.chip-out}",
+          "$description": "Chip exit collapses when motion is reduced."
+        },
+        "banner-reveal": {
+          "$type": "transition",
+          "$value": "{sys.motion.reduced.transition.banner-reveal}",
+          "$description": "Banner reveal collapses when motion is reduced."
+        }
+      }
+    },
+    "easing": {
+      "standard": {
+        "$type": "cubicBezier",
+        "$value": "{sys.motion.easing.standard}",
+        "$description": "Default easing curve for common transitions."
+      },
+      "emphasized": {
+        "$type": "cubicBezier",
+        "$value": "{sys.motion.easing.emphasized}",
+        "$description": "Emphasized easing curve for entry/exit transitions."
+      },
+      "linear": {
+        "$type": "cubicBezier",
+        "$value": "{sys.motion.easing.linear}",
+        "$description": "Linear easing used for motion-reduced fallbacks."
+      }
+    },
+    "transition": {
+      "hover": {
+        "$type": "transition",
+        "$value": "{sys.motion.transition.hover}",
+        "$description": "Hover affordances across interactive elements."
+      },
+      "focus": {
+        "$type": "transition",
+        "$value": "{sys.motion.transition.focus}",
+        "$description": "Focus states for outlines and glows."
+      },
+      "chip-in": {
+        "$type": "transition",
+        "$value": "{sys.motion.transition.chip-in}",
+        "$description": "Chip entry and selection transitions."
+      },
+      "chip-out": {
+        "$type": "transition",
+        "$value": "{sys.motion.transition.chip-out}",
+        "$description": "Chip exit and deselection transitions."
+      },
+      "banner-reveal": {
+        "$type": "transition",
+        "$value": "{sys.motion.transition.banner-reveal}",
+        "$description": "Banner reveal transitions along the vertical axis."
+      }
+    }
+  }
+}

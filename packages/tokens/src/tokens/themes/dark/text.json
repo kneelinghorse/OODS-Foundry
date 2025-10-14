@@ -1,0 +1,108 @@
+{
+  "theme-dark": {
+    "text": {
+      "primary": {
+        "$type": "color",
+        "$value": "oklch(0.91 0.006 260)",
+        "$description": "Primary body text on dark backgrounds.",
+        "$extensions": {
+          "ods": {
+            "fallback": "#DFE1E5"
+          }
+        }
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": "oklch(0.79 0.01 260)",
+        "$description": "Secondary text for supporting detail copy.",
+        "$extensions": {
+          "ods": {
+            "fallback": "#B7BBC1"
+          }
+        }
+      },
+      "muted": {
+        "$type": "color",
+        "$value": "oklch(0.68 0.015 260)",
+        "$description": "Muted captions and tertiary text.",
+        "$extensions": {
+          "ods": {
+            "fallback": "#9399A2"
+          }
+        }
+      },
+      "inverse": {
+        "$type": "color",
+        "$value": "oklch(0.22 0.02 265)",
+        "$description": "Inverse text for light surfaces inside dark compositions.",
+        "$extensions": {
+          "ods": {
+            "fallback": "#161B24"
+          }
+        }
+      },
+      "accent": {
+        "$type": "color",
+        "$value": "oklch(0.77 0.18 274.55)",
+        "$description": "Accent text used for inline highlights and links.",
+        "$extensions": {
+          "ods": {
+            "fallback": "#9AACFF"
+          }
+        }
+      },
+      "on-interactive": {
+        "$type": "color",
+        "$value": "oklch(0.97 0.003 260)",
+        "$description": "Foreground for interactive primary surfaces.",
+        "$extensions": {
+          "ods": {
+            "fallback": "#F4F5F7"
+          }
+        }
+      },
+      "disabled": {
+        "$type": "color",
+        "$value": "oklch(0.55 0.01 260)",
+        "$description": "Disabled text with minimum 3:1 contrast against disabled surfaces.",
+        "$extensions": {
+          "ods": {
+            "fallback": "#6E7278"
+          }
+        }
+      }
+    },
+    "icon": {
+      "primary": {
+        "$type": "color",
+        "$value": "oklch(0.85 0.005 260)",
+        "$description": "Primary icon colour for dark UI.",
+        "$extensions": {
+          "ods": {
+            "fallback": "#CCCED1"
+          }
+        }
+      },
+      "muted": {
+        "$type": "color",
+        "$value": "oklch(0.64 0.01 260)",
+        "$description": "Muted icon treatment for tertiary affordances.",
+        "$extensions": {
+          "ods": {
+            "fallback": "#898C92"
+          }
+        }
+      },
+      "on-interactive": {
+        "$type": "color",
+        "$value": "oklch(0.97 0.003 260)",
+        "$description": "Icon colour on primary interactive surfaces.",
+        "$extensions": {
+          "ods": {
+            "fallback": "#F4F5F7"
+          }
+        }
+      }
+    }
+  }
+}

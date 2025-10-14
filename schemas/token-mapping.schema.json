@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://design-system.oods.systems/schemas/token-mapping.schema.json",
+  "title": "Semantic Token Mapping",
+  "description": "Defines the structure for mapping enumerated status values to semantic UI tokens.",
+  "type": "object",
+  "properties": {
+    "metadata": {
+      "description": "Descriptive metadata about the mapping manifest.",
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of the object and field this mapping applies to (e.g., 'Status mapping for saas/Subscription.status')."
+        },
+        "version": {
+          "type": "string",
+          "description": "Semantic version of this mapping file.",
+          "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$"
+        },
+        "owner": {
+          "type": "string",
+          "description": "Team or individual responsible for maintaining this mapping."
+        }
+      },
+      "required": [
+        "description",
+        "version"
+      ],
+      "additionalProperties": false
+    },
+    "mappings": {
+      "description": "Dictionary mapping each enum value to its semantic token set.",
+      "type": "object",
+      "patternProperties": {
+        "^[a-z0-9_]+$": {
+          "$ref": "#/$defs/tokenMapping"
+        }
+      },
+      "additionalProperties": false,
+      "minProperties": 1
+    }
+  },
+  "required": [
+    "metadata",
+    "mappings"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "tokenPayload": {
+      "description": "Tokens describing the default visual treatment for a single status value.",
+      "type": "object",
+      "properties": {
+        "foregroundColor": {
+          "type": "string",
+          "description": "Token for text/icon color (e.g., 'color.text.positive')."
+        },
+        "backgroundColor": {
+          "type": "string",
+          "description": "Token for background/fill color (e.g., 'color.background.positive.subtle')."
+        },
+        "borderColor": {
+          "type": "string",
+          "description": "Token for border color (e.g., 'color.border.positive')."
+        },
+        "iconName": {
+          "type": "string",
+          "description": "Icon identifier conveying the status (e.g., 'icon.status.success')."
+        }
+      },
+      "required": ["foregroundColor", "backgroundColor", "borderColor", "iconName"],
+      "additionalProperties": false
+    },
+    "tokenOverride": {
+      "description": "Tokens that override one or more visual attributes in a specific context.",
+      "type": "object",
+      "properties": {
+        "foregroundColor": {
+          "type": "string",
+          "description": "Token for text/icon color (e.g., 'color.text.positive')."
+        },
+        "backgroundColor": {
+          "type": "string",
+          "description": "Token for background/fill color (e.g., 'color.background.positive.subtle')."
+        },
+        "borderColor": {
+          "type": "string",
+          "description": "Token for border color (e.g., 'color.border.positive')."
+        },
+        "iconName": {
+          "type": "string",
+          "description": "Icon identifier conveying the status (e.g., 'icon.status.success')."
+        }
+      },
+      "minProperties": 1,
+      "additionalProperties": false
+    },
+    "tokenMapping": {
+      "description": "Defines the default treatment and any context-specific overrides for a status value.",
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string",
+          "description": "Human-readable explanation of the status."
+        },
+        "default": {
+          "description": "Default token payload to apply in most contexts.",
+          "$ref": "#/$defs/tokenPayload"
+        },
+        "contexts": {
+          "description": "Optional map of context-specific overrides (e.g., 'badge', 'banner').",
+          "type": "object",
+          "patternProperties": {
+            "^[a-zA-Z0-9_]+$": {
+              "$ref": "#/$defs/tokenOverride"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "description",
+        "default"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "examples": [
+    {
+      "metadata": {
+        "description": "Status mapping for saas/Example.status",
+        "version": "1.0.0",
+        "owner": "example-team"
+      },
+      "mappings": {
+        "active": {
+          "description": "Object is healthy and operational.",
+          "default": {
+            "foregroundColor": "color.text.positive",
+            "backgroundColor": "color.background.positive.subtle",
+            "borderColor": "color.border.positive",
+            "iconName": "icon.status.success"
+          }
+        }
+      }
+    }
+  ]
+}

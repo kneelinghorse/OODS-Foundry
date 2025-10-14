@@ -1,0 +1,76 @@
+import React from 'react';
+import { Meta, Canvas, Story } from '@storybook/blocks';
+import * as StatusChipStories from './StatusChip.stories';
+import '../styles/index.css';
+import { StatusChip, getStatusStyle } from '../components/StatusChip';
+
+import paymentIntentDomain from '../../../../examples/domain/payments.PaymentIntent.status.json';
+import ticketDomain from '../../../../examples/domain/support.Ticket.status.json';
+import userDomain from '../../../../examples/domain/iam.User.status.json';
+
+import { Banner } from '../components/Banner';
+
+export const meta = {
+  title: 'Components/Status Showcase',
+  parameters: {
+    layout: 'centered',
+    docs: {
+      source: { state: 'hidden' }
+    }
+  }
+};
+
+<Meta of={StatusChipStories} />
+
+
+## Payment Intent — Statuses
+
+<Canvas>
+  <Story of={StatusChipStories.PaymentIntentStates} />
+</Canvas>
+
+<div className="story-grid">
+  {paymentIntentDomain.values.map((status) => {
+    const style = getStatusStyle('payment_intent', status);
+    return (
+      <Banner key={status} tone={style.tone} title={`Payment: ${style.label}`} description={style.description} />
+    );
+  })}
+  </div>
+
+## Support Ticket — Statuses
+
+<Canvas>
+  <Story of={StatusChipStories.TicketStates} />
+</Canvas>
+
+<div className="story-grid">
+  {ticketDomain.values.map((status) => {
+    const style = getStatusStyle('ticket', status);
+    return (
+      <Banner key={status} tone={style.tone} title={`Ticket: ${style.label}`} description={style.description} />
+    );
+  })}
+</div>
+
+## User Account — Statuses
+
+<Canvas>
+  <Story of={StatusChipStories.UserStates} />
+</Canvas>
+
+<div className="story-grid">
+  {userDomain.values.map((status) => {
+    const style = getStatusStyle('user', status);
+    return (
+      <Banner key={status} tone={style.tone} title={`User: ${style.label}`} description={style.description} />
+    );
+  })}
+</div>
+
+## A11y Contract
+
+- Chips show tone via semantic tokens only; no raw colors.
+- Banners in warning/critical states promote tone to bold backgrounds with onbold text for ≥4.5:1.
+- Neutral/disabled states avoid low-contrast fog by using explicit disabled tokens.
+- Domains render from the same mapping schema and can be validated with `validate:tokens`.

@@ -1,0 +1,29 @@
+{
+  "entries": [
+    {
+      "pattern": "src/components/**/__stories__/**",
+      "skip": ["forbidden-vars", "color-literals"],
+      "reason": "Storybook stories may demonstrate raw theme/ref usage."
+    },
+    {
+      "pattern": "src/components/**/*.stories.*",
+      "skip": ["forbidden-vars", "color-literals"],
+      "reason": "Story files can illustrate implementation details."
+    },
+    {
+      "pattern": "src/components/**/docs/**",
+      "skip": ["forbidden-vars", "color-literals"],
+      "reason": "Component docs include guidance that may reference raw variables."
+    },
+    {
+      "pattern": "src/docs/**",
+      "skip": ["forbidden-vars", "color-literals"],
+      "reason": "Site docs are documentation-only."
+    },
+    {
+      "pattern": "src/examples/**",
+      "skip": ["forbidden-vars", "color-literals"],
+      "reason": "Example sandboxes can include raw color references."
+    }
+  ]
+}

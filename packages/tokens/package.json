@@ -1,0 +1,53 @@
+{
+  "name": "@oods/tokens",
+  "version": "0.1.0",
+  "description": "Design token source of truth for the OODS design system.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Design System Team",
+  "engines": {
+    "node": ">=20.11.1"
+  },
+  "files": [
+    "dist",
+    "CHANGELOG.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "design-tokens",
+    "dtcg",
+    "oods"
+  ],
+  "scripts": {
+    "build": "rimraf dist && node ./scripts/build.mjs && node ./scripts/build-entry.mjs",
+    "clean": "rimraf dist",
+    "lint": "node ../../tools/token-lint/index.mjs ./src/tokens",
+    "prepack": "pnpm run build"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./css": {
+      "default": "./dist/css/tokens.css"
+    },
+    "./tailwind": {
+      "default": "./dist/tailwind/tokens.json"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "packageManager": "pnpm@9.12.2",
+  "devDependencies": {
+    "rimraf": "^5.0.7"
+  }
+}

@@ -1,0 +1,147 @@
+object:
+  name: Transaction
+  version: 1.0.0
+  domain: core.commerce
+  description: Canonical transaction record tracking monetary movement, lifecycle, and audit metadata.
+  tags:
+    - universal
+    - transaction
+    - commerce
+
+traits:
+  - name: lifecycle/Stateful
+    parameters:
+      states:
+        - pending
+        - authorized
+        - settled
+        - failed
+        - refunded
+      initialState: pending
+  - name: lifecycle/Timestampable
+    parameters:
+      recordedEvents:
+        - initiated
+        - authorized
+        - settled
+        - refunded
+        - failed
+      timezone: UTC
+  - name: financial/Priceable
+    parameters:
+      supportedCurrencies:
+        - USD
+        - EUR
+        - GBP
+        - JPY
+        - AUD
+      defaultCurrency: USD
+      pricingModels:
+        - one_time
+        - usage_based
+      billingIntervals:
+        - one_time
+      taxBehavior: exclusive
+  - name: lifecycle/Cancellable
+    parameters:
+      allowCancellationAfterStart: false
+      cancellationWindowHours: 24
+      requireReason: true
+      allowedReasons:
+        - customer_request
+        - suspected_fraud
+        - duplicate_charge
+        - payment_method_error
+  - name: lifecycle/Archivable
+    parameters:
+      gracePeriodDays: 365
+      retainHistory: true
+      restoreWindowDays: 30
+
+schema:
+  transaction_id:
+    type: uuid
+    required: true
+    description: Unique identifier for the transaction record.
+  user_id:
+    type: uuid
+    required: true
+    description: Identifier of the user associated with the transaction.
+  organization_id:
+    type: uuid
+    required: false
+    description: Tenant organization responsible for the transaction.
+  occurred_at:
+    type: datetime
+    required: true
+    description: Timestamp when the transaction occurred in the source system.
+  payment_method:
+    type: string
+    required: true
+    description: Funding source used to complete the transaction.
+    validation:
+      enum:
+        - card
+        - bank_transfer
+        - digital_wallet
+        - invoice
+  channel:
+    type: string
+    required: true
+    default: online
+    description: Sales channel through which the transaction was initiated.
+    validation:
+      enum:
+        - online
+        - in_app
+        - point_of_sale
+        - partner
+  payment_reference:
+    type: string
+    required: false
+    description: Provider reference code linking to the payment processor.
+  risk_score:
+    type: number
+    required: false
+    description: Fraud assessment score assigned during authorization.
+    validation:
+      minimum: 0
+      maximum: 100
+
+semantics:
+  transaction_id:
+    semantic_type: commerce.transaction.id
+    token_mapping: tokenMap(commerce.transaction.id)
+  user_id:
+    semantic_type: identity.user.id
+    token_mapping: tokenMap(identity.id.primary)
+  organization_id:
+    semantic_type: organization.id
+    token_mapping: tokenMap(organization.id.primary)
+  occurred_at:
+    semantic_type: commerce.transaction.timestamp
+    token_mapping: tokenMap(commerce.transaction.timestamp)
+  payment_method:
+    semantic_type: commerce.payment.method
+    token_mapping: tokenMap(commerce.payment.method)
+  channel:
+    semantic_type: commerce.transaction.channel
+    token_mapping: tokenMap(commerce.transaction.channel)
+  risk_score:
+    semantic_type: risk.transaction.score
+    token_mapping: tokenMap(risk.score.primary)
+
+tokens:
+  commerce.transaction.id: "var(--text-strong)"
+  commerce.transaction.channel.partner: "var(--status-info)"
+  risk.score.primary: "var(--status-warning)"
+
+metadata:
+  owners:
+    - finance@oods.systems
+    - risk@oods.systems
+  steward: platform@oods.systems
+  changelog:
+    - version: 1.0.0
+      date: "2025-10-16"
+      description: Initial Universal Quintet baseline.

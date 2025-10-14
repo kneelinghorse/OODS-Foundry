@@ -1,0 +1,18 @@
+{
+  "manifest": "saas.Invoice.status",
+  "object": "saas/Invoice",
+  "field": "status",
+  "description": "Canonical invoice lifecycle states used for UI token mapping.",
+  "values": [
+    "draft",
+    "open",
+    "processing",
+    "past_due",
+    "paid",
+    "uncollectible",
+    "void"
+  ],
+  "sources": [
+    "missions/research/r4.5_SaaS-Enum-to-Token-Mapping-Schema.md#3.2"
+  ]
+}

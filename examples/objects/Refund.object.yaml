@@ -1,0 +1,12 @@
+object:
+  name: Refund
+  domain: billing
+  tags:
+    - billing
+    - refund
+    - financial
+traits:
+  - name: Billable
+  - name: Stateful
+  - name: Timestamped
+  - name: Auditable

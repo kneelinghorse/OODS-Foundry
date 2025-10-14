@@ -1,0 +1,73 @@
+import React from 'react';
+import { Meta, Canvas, Story } from '@storybook/blocks';
+import * as ButtonStories from './Button.stories';
+import { Button } from '../components/Button';
+import '../styles/index.css';
+
+<Meta of={ButtonStories} />
+
+## States
+
+<Canvas>
+  <Story
+    name="States"
+    parameters={{
+      chromatic: { disableSnapshot: false },
+      vrt: { tags: ['vrt-critical'] }
+    }}
+    tags={['vrt-critical']}
+  >
+    {() => (
+      <div style={{ display: 'grid', gap: '1.5rem', width: 'min(42rem, 100%)' }}>
+        <div className="story-grid">
+          <Button leadingIcon="✦">Primary</Button>
+          <Button selected leadingIcon="✦">
+            Selected
+          </Button>
+          <Button disabled leadingIcon="✦">
+            Disabled
+          </Button>
+          <Button variant="outline">Outline</Button>
+          <Button variant="ghost">Ghost</Button>
+        </div>
+        <div className="story-grid">
+          <Button tone="success" trailingIcon="✔︎">
+            Success
+          </Button>
+          <Button tone="warning" trailingIcon="⚠︎">
+            Warning
+          </Button>
+          <Button tone="critical" trailingIcon="⨯">
+            Critical
+          </Button>
+          <Button tone="accent" trailingIcon="★">
+            Accent
+          </Button>
+          <Button tone="neutral" variant="outline">
+            Neutral Outline
+          </Button>
+        </div>
+        <div className="story-grid">
+          <Button size="sm">Compact</Button>
+          <Button size="sm" selected>
+            Compact Selected
+          </Button>
+          <Button size="sm" variant="ghost">
+            Compact Ghost
+          </Button>
+          <Button size="sm" disabled>
+            Compact Disabled
+          </Button>
+        </div>
+      </div>
+    )}
+  </Story>
+</Canvas>
+
+## A11y Contract
+
+- No inline colors: backgrounds, borders, focus rings reference `--cmp-button-*` tokens for every state.
+- Hover and active surfaces cascade from relationship-safe tokens ensuring ΔL/ΔC guardrails stay green across themes.
+- Focus-visible draws a 2px ring using `--cmp-button-focus-*` slots; outline offset maintains ≥3:1 contrast.
+- Disabled buttons retain legible text (`--cmp-button-text-disabled`) and never rely on opacity drops lower than 0.9.
+- Selected/toggle buttons expose `aria-pressed` when `selected` is set so assistive tech distinguishes sticky actions.

@@ -1,0 +1,47 @@
+{
+  "name": "@oods/tw-variants",
+  "version": "0.1.0",
+  "description": "Tailwind context variant plugin for OODS.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Design System Team",
+  "engines": {
+    "node": ">=20.11.1"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./context-matrix": {
+      "types": "./dist/context-matrix.d.ts",
+      "import": "./dist/context-matrix.js",
+      "require": "./dist/context-matrix.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "CHANGELOG.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "rimraf dist && tsup --config tsup.config.ts",
+    "clean": "rimraf dist",
+    "prepack": "pnpm run build",
+    "test": "vitest run"
+  },
+  "peerDependencies": {
+    "tailwindcss": ">=3.4.0"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "packageManager": "pnpm@9.12.2"
+}

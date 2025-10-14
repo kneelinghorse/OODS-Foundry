@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "declaration": false,
+    "emitDeclarationOnly": false,
+    "declarationMap": false,
+    "rootDir": ".",
+    "lib": ["ES2022", "DOM"]
+  },
+  "include": [
+    "src/stories/**/*.ts",
+    "src/stories/**/*.tsx",
+    "src/**/*.stories.ts",
+    "src/**/*.stories.tsx",
+    "src/**/*.stories.mdx",
+    "src/**/*.mdx",
+    "apps/explorer/src/stories/**/*.stories.tsx",
+    "apps/explorer/src/stories/**/*.stories.mdx",
+    "apps/explorer/src/stories/**/*.tsx",
+    "apps/explorer/src/stories/**/*.mdx"
+  ]
+}

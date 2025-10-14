@@ -1,0 +1,125 @@
+{
+  "theme-dark": {
+    "surface": {
+      "canvas": {
+        "$type": "color",
+        "$value": "oklch(0.18 0.007 255)",
+        "$description": "Primary dark canvas with a cool bias to avoid fogging.",
+        "$extensions": {
+          "ods": {
+            "fallback": "#101215"
+          }
+        }
+      },
+      "raised": {
+        "$type": "color",
+        "$value": "oklch(0.24 0.007 255)",
+        "$description": "Raised panel surface lifted just enough to separate from canvas.",
+        "$extensions": {
+          "ods": {
+            "fallback": "#1D1F23"
+          }
+        }
+      },
+      "subtle": {
+        "$type": "color",
+        "$value": "oklch(0.3 0.01 255)",
+        "$description": "Subtle surface tone for secondary sections and timeline shells.",
+        "$extensions": {
+          "ods": {
+            "fallback": "#2A2E33"
+          }
+        }
+      },
+      "disabled": {
+        "$type": "color",
+        "$value": "oklch(0.31 0.005 255)",
+        "$description": "Disabled surface keeps affordances visible without drawing focus.",
+        "$extensions": {
+          "ods": {
+            "fallback": "#2F3033"
+          }
+        }
+      },
+      "backdrop": {
+        "$type": "color",
+        "$value": "oklch(0.12 0.015 255)",
+        "$description": "Backdrop scrim for overlays; deepens scenes without flattening.",
+        "$extensions": {
+          "ods": {
+            "fallback": "#03060B"
+          }
+        }
+      },
+      "inverse": {
+        "$type": "color",
+        "$value": "oklch(0.96 0.002 255)",
+        "$description": "Inverse surface for chips or sheets rendered inside dark UI.",
+        "$extensions": {
+          "ods": {
+            "fallback": "#F1F2F3"
+          }
+        }
+      },
+      "interactive": {
+        "primary": {
+          "default": {
+            "$type": "color",
+            "$value": "oklch(0.43 0.17 274.55)",
+            "$description": "Primary action surface tuned for dark backgrounds with AA margin.",
+            "$extensions": {
+              "ods": {
+                "relative": "oklch(from var(--theme-surface-interactive-primary-default) calc(l - 0.12) c h)",
+                "fallback": "#393EAA"
+              }
+            }
+          },
+          "hover": {
+            "$type": "color",
+            "$value": "oklch(0.51 0.18 274.55)",
+            "$description": "Hover raises luminance without sacrificing the Δ guardrail.",
+            "$extensions": {
+              "ods": {
+                "relative": "oklch(from var(--theme-dark-surface-interactive-primary-default) calc(l + 0.08) calc(c + 0.01) h)",
+                "fallback": "#4B55CB"
+              }
+            }
+          },
+          "pressed": {
+            "$type": "color",
+            "$value": "oklch(0.55 0.19 274.55)",
+            "$description": "Pressed state stays above hover while maintaining relative colour bounds.",
+            "$extensions": {
+              "ods": {
+                "relative": "oklch(from var(--theme-dark-surface-interactive-primary-default) calc(l + 0.12) calc(c + 0.02) h)",
+                "fallback": "#5560DE"
+              }
+            }
+          }
+        }
+      }
+    },
+    "border": {
+      "subtle": {
+        "$type": "color",
+        "$value": "oklch(0.41 0.025 260)",
+        "$description": "Default outline for cards and neutral shells on dark.",
+        "$extensions": {
+          "ods": {
+            "fallback": "#434B58"
+          }
+        }
+      },
+      "strong": {
+        "$type": "color",
+        "$value": "oklch(0.5 0.03 260)",
+        "$description": "High-emphasis border for focus traps and interactive outlines.",
+        "$extensions": {
+          "ods": {
+            "fallback": "#596475"
+          }
+        }
+      }
+    }
+  }
+}

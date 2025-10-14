@@ -1,0 +1,77 @@
+{
+  "theme": {
+    "surface": {
+      "canvas": {
+        "$type": "color",
+        "$value": "{ref.color.neutral.50}",
+        "$description": "Primary page background for Theme 0."
+      },
+      "raised": {
+        "$type": "color",
+        "$value": "{ref.color.neutral.100}",
+        "$description": "Raised card surface with soft separation."
+      },
+      "subtle": {
+        "$type": "color",
+        "$value": "{ref.color.neutral.200}",
+        "$description": "Secondary panel surface tone."
+      },
+      "backdrop": {
+        "$type": "color",
+        "$value": "{ref.color.neutral.900}",
+        "$description": "Backdrop scrim for overlays."
+      },
+      "inverse": {
+        "$type": "color",
+        "$value": "{ref.color.neutral.900}",
+        "$description": "Inverse surface for dark elements on light UI."
+      },
+      "disabled": {
+        "$type": "color",
+        "$value": "{ref.color.neutral.200}",
+        "$description": "Surface colour for disabled components."
+      },
+      "interactive": {
+        "primary": {
+          "default": {
+            "$type": "color",
+            "$value": "{ref.color.primary.500}",
+            "$description": "Primary action surface default state."
+          },
+          "hover": {
+            "$type": "color",
+            "$value": "{ref.color.primary.600}",
+            "$description": "Primary action hover surface.",
+            "$extensions": {
+              "ods": {
+                "relative": "oklch(from var(--theme-surface-interactive-primary-default) calc(l - 0.10) calc(c + 0.015) h)"
+              }
+            }
+          },
+          "pressed": {
+            "$type": "color",
+            "$value": "{ref.color.primary.700}",
+            "$description": "Primary action pressed surface.",
+            "$extensions": {
+              "ods": {
+                "relative": "oklch(from var(--theme-surface-interactive-primary-default) calc(l - 0.14) calc(c + 0.025) h)"
+              }
+            }
+          }
+        }
+      }
+    },
+    "border": {
+      "subtle": {
+        "$type": "color",
+        "$value": "{ref.color.neutral.200}",
+        "$description": "Subtle border colour for cards and panels."
+      },
+      "strong": {
+        "$type": "color",
+        "$value": "{ref.color.neutral.300}",
+        "$description": "Strong border for dividers and outlines."
+      }
+    }
+  }
+}

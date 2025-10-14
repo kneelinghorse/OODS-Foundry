@@ -1,0 +1,70 @@
+import React from 'react';
+import { Meta, Canvas, Story } from '@storybook/blocks';
+import * as SelectStories from './Select.stories';
+import { Select } from '../components/Select';
+import '../styles/index.css';
+import '../styles/overlays.css';
+
+<Meta of={SelectStories} />
+
+## States
+
+<Canvas>
+  <Story
+    name="States"
+    parameters={{
+      chromatic: { disableSnapshot: false },
+      vrt: { tags: ['vrt-critical'] },
+    }}
+    tags={['vrt-critical']}
+  >
+    {() => (
+      <div style={{ display: 'grid', gap: '1.1rem' }}>
+        <Select
+          ariaLabel="Choose status"
+          options={[
+            { value: 'open', label: 'Open' },
+            { value: 'processing', label: 'Processing' },
+            { value: 'closed', label: 'Closed' },
+          ]}
+          defaultValue="open"
+        />
+
+        <Select
+          ariaLabel="Choose size"
+          options={[
+            { value: 's', label: 'Small' },
+            { value: 'm', label: 'Medium' },
+            { value: 'l', label: 'Large', disabled: true },
+          ]}
+          placeholder="Select a size"
+        />
+
+        <div>
+          <p style={{ margin: 0, color: 'var(--cmp-text-muted)' }}>Disabled</p>
+          <Select
+            ariaLabel="Disabled select"
+            options={[{ value: 'na', label: 'Not available' }]}
+            defaultValue="na"
+            disabled
+          />
+        </div>
+      </div>
+    )}
+  </Story>
+</Canvas>
+
+## Keyboard
+
+- ArrowUp/ArrowDown navigate options when open.
+- Home/End jump to first/last enabled option.
+- Enter/Space selects; Escape closes and returns focus to trigger.
+- Type-to-search: type to jump to options starting with typed text (string labels only).
+
+## A11y Contract
+
+- Roles: button trigger with `aria-haspopup="listbox"`; popover hosts a focusable `listbox` with `option` children.
+- `aria-activedescendant` tracks the highlighted option, `aria-selected` denotes the chosen item.
+- Focus ring uses component/system tokens (≥3:1) and never hard-coded colors.
+- All surfaces/borders/text derive from `--cmp-*` tokens; no inline color literals.
+

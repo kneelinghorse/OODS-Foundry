@@ -1,0 +1,79 @@
+{
+  "metadata": {
+    "description": "Status mapping for saas/Invoice.status",
+    "version": "1.0.0",
+    "owner": "billing-platform-squad"
+  },
+  "mappings": {
+    "draft": {
+      "description": "The invoice is being prepared and is not yet finalized.",
+      "default": {
+        "foregroundColor": "color.text.neutral",
+        "backgroundColor": "color.background.neutral.subtle",
+        "borderColor": "color.border.neutral",
+        "iconName": "icon.status.draft"
+      }
+    },
+    "open": {
+      "description": "The invoice is finalized and awaiting payment, before its due date.",
+      "default": {
+        "foregroundColor": "color.text.info",
+        "backgroundColor": "color.background.info.subtle",
+        "borderColor": "color.border.info",
+        "iconName": "icon.status.pending"
+      }
+    },
+    "processing": {
+      "description": "Payment has been initiated but is not yet confirmed (e.g., ACH).",
+      "default": {
+        "foregroundColor": "color.text.accent",
+        "backgroundColor": "color.background.accent.subtle",
+        "borderColor": "color.border.accent",
+        "iconName": "icon.status.processing"
+      }
+    },
+    "past_due": {
+      "description": "The invoice is open and unpaid after its due date.",
+      "default": {
+        "foregroundColor": "color.text.danger",
+        "backgroundColor": "color.background.danger.subtle",
+        "borderColor": "color.border.danger",
+        "iconName": "icon.status.error"
+      },
+      "contexts": {
+        "banner": {
+          "foregroundColor": "color.text.onbold",
+          "backgroundColor": "color.background.danger.bold",
+          "borderColor": "color.border.danger"
+        }
+      }
+    },
+    "paid": {
+      "description": "The invoice has been paid in full.",
+      "default": {
+        "foregroundColor": "color.text.positive",
+        "backgroundColor": "color.background.positive.subtle",
+        "borderColor": "color.border.positive",
+        "iconName": "icon.status.success"
+      }
+    },
+    "uncollectible": {
+      "description": "The invoice is deemed unpayable and written off as bad debt.",
+      "default": {
+        "foregroundColor": "color.text.disabled",
+        "backgroundColor": "color.background.disabled",
+        "borderColor": "color.border.disabled",
+        "iconName": "icon.status.canceled"
+      }
+    },
+    "void": {
+      "description": "The invoice has been canceled and is no longer valid.",
+      "default": {
+        "foregroundColor": "color.text.disabled",
+        "backgroundColor": "color.background.disabled",
+        "borderColor": "color.border.disabled",
+        "iconName": "icon.status.void"
+      }
+    }
+  }
+}

@@ -1,0 +1,140 @@
+object:
+  name: Relationship
+  version: 1.0.0
+  domain: core.graph
+  description: Canonical graph edge linking two entities with lifecycle, ownership, and tagging semantics.
+  tags:
+    - universal
+    - relationship
+    - graph
+
+traits:
+  - name: content/Labelled
+    alias: RelationshipLabel
+  - name: lifecycle/Stateful
+    parameters:
+      states:
+        - proposed
+        - active
+        - paused
+        - completed
+        - terminated
+      initialState: proposed
+  - name: lifecycle/Timestampable
+    parameters:
+      recordedEvents:
+        - created
+        - activated
+        - paused
+        - terminated
+        - reactivated
+      timezone: UTC
+  - name: structural/Ownerable
+    parameters:
+      ownerTypes:
+        - organization
+        - team
+        - platform
+      primaryOwnerType: organization
+      allowTransfer: true
+  - name: behavioral/Taggable
+    parameters:
+      maxTags: 10
+      allowCustomTags: true
+      allowedTags:
+        - primary
+        - secondary
+        - inferred
+        - manual
+        - pending_review
+      caseSensitive: false
+
+schema:
+  relationship_id:
+    type: uuid
+    required: true
+    description: Primary identifier for the relationship edge.
+  source_id:
+    type: uuid
+    required: true
+    description: Identifier of the source node in the relationship.
+  target_id:
+    type: uuid
+    required: true
+    description: Identifier of the target node in the relationship.
+  relationship_type:
+    type: string
+    required: true
+    description: Semantic type describing the edge between the source and target.
+    validation:
+      enum:
+        - membership
+        - ownership
+        - follows
+        - depends_on
+        - references
+  direction:
+    type: string
+    required: true
+    default: bidirectional
+    description: Directionality applied when traversing the relationship.
+    validation:
+      enum:
+        - unidirectional
+        - bidirectional
+  strength:
+    type: string
+    required: false
+    description: Signal representing how strongly the entities are connected.
+    validation:
+      enum:
+        - low
+        - medium
+        - high
+  origin_source:
+    type: string
+    required: false
+    description: System that originated or inferred the relationship.
+    validation:
+      enum:
+        - manual
+        - ingestion
+        - analytics
+        - integration
+  is_bidirectional:
+    type: boolean
+    required: true
+    default: true
+    description: Flag indicating whether the relationship is symmetric.
+
+semantics:
+  relationship_id:
+    semantic_type: graph.relationship.id
+    token_mapping: tokenMap(graph.relationship.id)
+  relationship_type:
+    semantic_type: graph.relationship.type
+    token_mapping: tokenMap(graph.relationship.type)
+  direction:
+    semantic_type: graph.relationship.direction
+    token_mapping: tokenMap(graph.relationship.direction)
+  strength:
+    semantic_type: graph.relationship.strength
+    token_mapping: tokenMap(graph.relationship.strength)
+  origin_source:
+    semantic_type: graph.relationship.origin
+    token_mapping: tokenMap(graph.relationship.origin)
+
+tokens:
+  graph.relationship.type: "var(--graph-relationship-type)"
+  graph.relationship.direction: "var(--text-default)"
+  graph.relationship.strength.high: "var(--status-success)"
+
+metadata:
+  owners:
+    - data@oods.systems
+    - platform@oods.systems
+  steward: graph@oods.systems
+  changelog:
+    - version: 1.0.0
+      date: "2025-10-16"
+      description: Initial Universal Quintet baseline.

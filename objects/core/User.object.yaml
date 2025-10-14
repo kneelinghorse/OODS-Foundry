@@ -1,0 +1,129 @@
+object:
+  name: User
+  version: 1.1.0
+  domain: core.identity
+  description: Canonical identity record representing a platform user across lifecycle contexts.
+  tags:
+    - universal
+    - identity
+    - core
+
+traits:
+  - name: lifecycle/Stateful
+    alias: UserLifecycle
+    parameters:
+      states:
+        - invited
+        - active
+        - suspended
+        - deactivated
+      initialState: active
+  - name: lifecycle/Timestampable
+    alias: AuditTrail
+    parameters:
+      recordedEvents:
+        - created
+        - profile_updated
+        - status_changed
+        - role_updated
+      timezone: UTC
+      allowNullUpdatedAt: false
+  - name: behavioral/Taggable
+    alias: AffinityTags
+    parameters:
+      maxTags: 12
+      allowCustomTags: false
+      allowedTags:
+        - admin
+        - beta_tester
+        - vip
+        - suspended
+      caseSensitive: false
+
+schema:
+  user_id:
+    type: uuid
+    required: true
+    description: Primary identifier used to correlate identity across services.
+  name:
+    type: string
+    required: true
+    description: Human-friendly name rendered in headers and list contexts.
+    validation:
+      minLength: 1
+      maxLength: 120
+  preferred_name:
+    type: string
+    required: false
+    description: Preferred display name surfaced in collaborative tooling.
+  description:
+    type: string
+    required: false
+    description: Supporting summary rendered in detail and card contexts.
+    validation:
+      maxLength: 160
+  primary_email:
+    type: email
+    required: true
+    description: Canonical login email address for the user.
+  role:
+    type: string
+    required: true
+    default: end_user
+    description: Highest privilege role currently granted to the user.
+    validation:
+      enum:
+        - end_user
+        - admin
+        - owner
+        - billing
+  timezone:
+    type: string
+    required: false
+    default: UTC
+    description: Preferred timezone applied when rendering timestamps.
+
+semantics:
+  user_id:
+    semantic_type: identity.user.id
+    token_mapping: tokenMap(identity.id.primary)
+  name:
+    semantic_type: identity.user.name
+    token_mapping: tokenMap(identity.name.primary)
+  preferred_name:
+    semantic_type: identity.user.name_preferred
+    token_mapping: tokenMap(identity.name.preferred)
+  description:
+    semantic_type: identity.user.description
+    token_mapping: tokenMap(identity.description.summary)
+  primary_email:
+    semantic_type: identity.user.email
+    token_mapping: tokenMap(identity.email.primary)
+  role:
+    semantic_type: identity.user.role
+    token_mapping: tokenMap(identity.role.*)
+  timezone:
+    semantic_type: identity.user.timezone
+    token_mapping: tokenMap(identity.timezone.primary)
+
+tokens:
+  identity.id.primary: "var(--text-strong)"
+  identity.name.primary: "var(--text-strong)"
+  identity.email.primary: "var(--text-subtle)"
+  identity.role.admin: "var(--status-info)"
+  identity.timezone.primary: "var(--text-muted)"
+  identity.description.summary: "var(--text-subtle)"
+
+metadata:
+  owners:
+    - identity@oods.systems
+    - platform@oods.systems
+  steward: design@oods.systems
+  maturity: stable
+  changelog:
+    - version: 1.1.0
+      date: "2025-10-18"
+      description: Simplified composition for view engine integration (Stateful, Timestampable, Taggable).
+    - version: 1.0.0
+      date: "2025-10-16"
+      description: Initial Universal Quintet baseline.

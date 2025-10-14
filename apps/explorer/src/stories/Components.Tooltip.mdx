@@ -1,0 +1,46 @@
+import React from 'react';
+import { Meta, Canvas, Story } from '@storybook/blocks';
+import * as TooltipStories from './Tooltip.stories';
+import { Tooltip } from '../components/Tooltip';
+import '../styles/index.css';
+import '../styles/overlays.css';
+
+<Meta of={TooltipStories} />
+
+## States
+
+<Canvas>
+  <Story
+    name="States"
+    parameters={{ chromatic: { disableSnapshot: false }, vrt: { tags: ['vrt-critical'] } }}
+    tags={['vrt-critical']}
+  >
+    {() => (
+      <div style={{ display: 'grid', gap: '1.25rem', width: 'min(34rem, 100%)' }}>
+        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+          <Tooltip content="Top tooltip" side="top">
+            <button type="button">Top</button>
+          </Tooltip>
+          <Tooltip content="Right tooltip" side="right">
+            <button type="button">Right</button>
+          </Tooltip>
+          <Tooltip content="Bottom tooltip" side="bottom">
+            <button type="button">Bottom</button>
+          </Tooltip>
+          <Tooltip content="Left tooltip" side="left">
+            <button type="button">Left</button>
+          </Tooltip>
+        </div>
+      </div>
+    )}
+  </Story>
+  </Canvas>
+
+## A11y Contract
+
+- Trigger is focusable; Escape dismisses the tooltip.
+- Tooltip bubble uses `role="tooltip"` and is referenced via `aria-describedby`.
+- Visuals consume only `--cmp-tooltip-*`/overlay tokens; no inline literals.
+- Motion v1 tokens: `--motion-transition-tooltip-*`; reduced-motion disables transitions.
+- In High Contrast, bubble renders without shadow and with clear border and text.
+

@@ -1,0 +1,69 @@
+{
+  "metadata": {
+    "description": "Status mapping for iam/User.status",
+    "version": "1.0.0",
+    "owner": "iam-platform-squad"
+  },
+  "mappings": {
+    "invited": {
+      "description": "Invitation sent; awaiting activation.",
+      "default": {
+        "foregroundColor": "color.text.info",
+        "backgroundColor": "color.background.info.subtle",
+        "borderColor": "color.border.info",
+        "iconName": "icon.status.pending"
+      }
+    },
+    "active": {
+      "description": "User is active and in good standing.",
+      "default": {
+        "foregroundColor": "color.text.positive",
+        "backgroundColor": "color.background.positive.subtle",
+        "borderColor": "color.border.positive",
+        "iconName": "icon.status.success"
+      }
+    },
+    "suspended": {
+      "description": "Temporarily suspended (e.g., policy or billing).",
+      "default": {
+        "foregroundColor": "color.text.warning",
+        "backgroundColor": "color.background.warning.subtle",
+        "borderColor": "color.border.warning",
+        "iconName": "icon.status.warning"
+      },
+      "contexts": {
+        "banner": {
+          "foregroundColor": "color.text.onbold",
+          "backgroundColor": "color.background.warning.bold",
+          "borderColor": "color.border.warning"
+        }
+      }
+    },
+    "locked": {
+      "description": "Locked due to too many failed sign-in attempts or admin action.",
+      "default": {
+        "foregroundColor": "color.text.danger",
+        "backgroundColor": "color.background.danger.subtle",
+        "borderColor": "color.border.danger",
+        "iconName": "icon.status.error"
+      },
+      "contexts": {
+        "banner": {
+          "foregroundColor": "color.text.onbold",
+          "backgroundColor": "color.background.danger.bold",
+          "borderColor": "color.border.danger"
+        }
+      }
+    },
+    "deactivated": {
+      "description": "Account disabled/deactivated; user cannot sign in.",
+      "default": {
+        "foregroundColor": "color.text.disabled",
+        "backgroundColor": "color.background.disabled",
+        "borderColor": "color.border.disabled",
+        "iconName": "icon.status.canceled"
+      }
+    }
+  }
+}
+

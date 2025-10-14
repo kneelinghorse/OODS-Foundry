@@ -1,0 +1,49 @@
+{
+  "name": "@oods/a11y-tools",
+  "version": "0.1.0",
+  "description": "Accessibility evaluation utilities for the OODS design system.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Design System Team",
+  "engines": {
+    "node": ">=20.11.1"
+  },
+  "files": [
+    "dist",
+    "CHANGELOG.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "a11y",
+    "accessibility",
+    "design-system",
+    "contrast",
+    "tokens"
+  ],
+  "scripts": {
+    "build": "rimraf dist && tsup --config tsup.config.ts",
+    "clean": "rimraf dist",
+    "prepack": "pnpm run build",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "colorjs.io": "0.5.2"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "packageManager": "pnpm@9.12.2"
+}

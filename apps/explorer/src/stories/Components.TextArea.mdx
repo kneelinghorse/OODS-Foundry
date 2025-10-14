@@ -1,0 +1,40 @@
+import React from 'react';
+import { Meta, Canvas, Story } from '@storybook/blocks';
+import * as TextAreaStories from './TextArea.stories';
+import { TextArea } from '../components/TextArea';
+import '../styles/index.css';
+import '../styles/forms.css';
+
+<Meta of={TextAreaStories} />
+
+## States
+
+<Canvas>
+  <Story
+    name="States"
+    parameters={{
+      chromatic: { disableSnapshot: false },
+      vrt: { tags: ['vrt-critical'] }
+    }}
+    tags={['vrt-critical']}
+  >
+    {() => (
+      <div style={{ display: 'grid', gap: '1.25rem', width: 'min(36rem, 100%)' }}>
+        <TextArea label="Project notes" supportingText="Neutral surface with subtle hover." defaultValue={"Kickoff done. Risks look manageable."} />
+        <TextArea label="Escalation history" supportingText="Selected uses focus token ramp." selected defaultValue={"SRE engaged for incident #42."} />
+        <TextArea label="Disabled field" supportingText="Text remains legible when disabled." disabled defaultValue={"Immutable entry"} />
+        <TextArea tone="success" label="Result" supportingText="Success tone shifts border/caret via tokens." message="Checks passed." defaultValue={"All verifications passed."} />
+        <TextArea tone="warning" label="Attention" supportingText="Warn users before guardrails trip." message="Quota nearing cap." defaultValue={"95th percentile exceeded."} />
+        <TextArea tone="critical" label="Error" supportingText="Critical marks aria-invalid and alert role." message="Required field." defaultValue={""} />
+      </div>
+    )}
+  </Story>
+</Canvas>
+
+## A11y Contract
+
+- TextArea consumes `--cmp-input-*` slots only; no inline literals.
+- Focus-within ring uses `--cmp-input-focus-*` and stays ≥3:1 in HC.
+- Critical tone implies `aria-invalid=true` and message role `alert`.
+- Disabled keeps text readable via `--cmp-input-text-disabled` (no opacity hacks).
+

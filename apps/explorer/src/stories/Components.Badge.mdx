@@ -1,0 +1,59 @@
+import React from 'react';
+import { Meta, Canvas, Story } from '@storybook/blocks';
+import * as BadgeStories from './Badge.stories';
+import { Badge } from '../components/Badge';
+import '../styles/index.css';
+
+<Meta of={BadgeStories} />
+
+## States
+
+<Canvas>
+  <Story
+    name="States"
+    parameters={{
+      chromatic: { disableSnapshot: false },
+      vrt: { tags: ['vrt-critical'] }
+    }}
+    tags={['vrt-critical']}
+  >
+    {() => (
+      <div style={{ display: 'grid', gap: '1.5rem', width: 'min(38rem, 100%)' }}>
+        <div className="story-grid">
+          <Badge>Neutral</Badge>
+          <Badge selected>Selected</Badge>
+          <Badge disabled>Disabled</Badge>
+          <Badge tone="primary">Primary</Badge>
+          <Badge tone="neutral" selected>
+            Neutral Selected
+          </Badge>
+        </div>
+        <div className="story-grid">
+          <Badge tone="info" leadingIcon="ℹ︎">
+            Info
+          </Badge>
+          <Badge tone="accent" leadingIcon="★">
+            Accent
+          </Badge>
+          <Badge tone="success" leadingIcon="✔︎">
+            Success
+          </Badge>
+          <Badge tone="warning" leadingIcon="⚠︎">
+            Warning
+          </Badge>
+          <Badge tone="critical" leadingIcon="⨯">
+            Critical
+          </Badge>
+        </div>
+      </div>
+    )}
+  </Story>
+</Canvas>
+
+## A11y Contract
+
+- Badges consume only `--cmp-badge-*` slots; context classes remap tones without touching component code.
+- Outline focus ring uses `--cmp-badge-focus-*` ensuring a ≥3:1 contrast halo even on tinted surfaces.
+- Selected state promotes text/icon color to `--cmp-badge-text-selected` so toggled chips remain readable.
+- Disabled badges retain 94% opacity with explicit `--cmp-badge-text-disabled`; no reliance on transparency alone.
+- Hover/active ramps reuse `color-mix` against tokenized borders, satisfying ΔC guardrails across status palettes.

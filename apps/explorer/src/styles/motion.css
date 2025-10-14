@@ -1,0 +1,162 @@
+:root {
+  /* Resolved motion variables for component usage */
+  --motion-duration-fast: var(--cmp-motion-duration-fast, 120ms);
+  --motion-duration-base: var(--cmp-motion-duration-base, 180ms);
+  --motion-duration-slow: var(--cmp-motion-duration-slow, 320ms);
+
+  --motion-easing-standard: var(--cmp-motion-easing-standard, cubic-bezier(0.2, 0, 0.38, 1));
+  --motion-easing-emphasized: var(--cmp-motion-easing-emphasized, cubic-bezier(0.05, 0.7, 0.1, 1));
+  --motion-easing-linear: var(--cmp-motion-easing-linear, cubic-bezier(0, 0, 1, 1));
+
+  --motion-transition-hover-duration: var(--cmp-motion-transition-hover-duration, var(--motion-duration-fast));
+  --motion-transition-hover-delay: var(--cmp-motion-transition-hover-delay, 0ms);
+  --motion-transition-hover-timing-function: var(--cmp-motion-transition-hover-timing-function, var(--motion-easing-standard));
+
+  --motion-transition-focus-duration: var(--cmp-motion-transition-focus-duration, var(--motion-duration-base));
+  --motion-transition-focus-delay: var(--cmp-motion-transition-focus-delay, 0ms);
+  --motion-transition-focus-timing-function: var(--cmp-motion-transition-focus-timing-function, var(--motion-easing-standard));
+
+  --motion-transition-chip-in-duration: var(--cmp-motion-transition-chip-in-duration, var(--motion-duration-base));
+  --motion-transition-chip-in-delay: var(--cmp-motion-transition-chip-in-delay, 0ms);
+  --motion-transition-chip-in-timing-function: var(--cmp-motion-transition-chip-in-timing-function, var(--motion-easing-emphasized));
+
+  --motion-transition-chip-out-duration: var(--cmp-motion-transition-chip-out-duration, var(--motion-duration-fast));
+  --motion-transition-chip-out-delay: var(--cmp-motion-transition-chip-out-delay, 0ms);
+  --motion-transition-chip-out-timing-function: var(--cmp-motion-transition-chip-out-timing-function, var(--motion-easing-standard));
+
+  --motion-transition-banner-reveal-duration: var(--cmp-motion-transition-banner-reveal-duration, var(--motion-duration-slow));
+  --motion-transition-banner-reveal-delay: var(--cmp-motion-transition-banner-reveal-delay, 20ms);
+  --motion-transition-banner-reveal-timing-function: var(--cmp-motion-transition-banner-reveal-timing-function, var(--motion-easing-emphasized));
+
+  /* B8.5 additions */
+  --motion-transition-tooltip-in-duration: var(
+    --cmp-motion-transition-tooltip-in-duration,
+    var(--motion-duration-fast)
+  );
+  --motion-transition-tooltip-in-delay: var(--cmp-motion-transition-tooltip-in-delay, 60ms);
+  --motion-transition-tooltip-in-timing-function: var(
+    --cmp-motion-transition-tooltip-in-timing-function,
+    var(--motion-easing-standard)
+  );
+  --motion-transition-tooltip-out-duration: var(
+    --cmp-motion-transition-tooltip-out-duration,
+    var(--motion-duration-fast)
+  );
+  --motion-transition-tooltip-out-delay: var(--cmp-motion-transition-tooltip-out-delay, 0ms);
+  --motion-transition-tooltip-out-timing-function: var(
+    --cmp-motion-transition-tooltip-out-timing-function,
+    var(--motion-easing-standard)
+  );
+
+  --motion-transition-toast-in-duration: var(
+    --cmp-motion-transition-toast-in-duration,
+    var(--motion-duration-base)
+  );
+  --motion-transition-toast-in-delay: var(--cmp-motion-transition-toast-in-delay, 0ms);
+  --motion-transition-toast-in-timing-function: var(
+    --cmp-motion-transition-toast-in-timing-function,
+    var(--motion-easing-emphasized)
+  );
+  --motion-transition-toast-out-duration: var(
+    --cmp-motion-transition-toast-out-duration,
+    var(--motion-duration-base)
+  );
+  --motion-transition-toast-out-delay: var(--cmp-motion-transition-toast-out-delay, 0ms);
+  --motion-transition-toast-out-timing-function: var(
+    --cmp-motion-transition-toast-out-timing-function,
+    var(--motion-easing-standard)
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-duration-fast: var(--cmp-motion-reduced-duration-fast, 0ms);
+    --motion-duration-base: var(--cmp-motion-reduced-duration-base, 0ms);
+    --motion-duration-slow: var(--cmp-motion-reduced-duration-slow, 0ms);
+
+    --motion-transition-hover-duration: var(--cmp-motion-reduced-transition-hover-duration, 0ms);
+    --motion-transition-hover-delay: var(--cmp-motion-reduced-transition-hover-delay, 0ms);
+    --motion-transition-hover-timing-function: var(--cmp-motion-reduced-transition-hover-timing-function, var(--motion-easing-linear));
+
+    --motion-transition-focus-duration: var(--cmp-motion-reduced-transition-focus-duration, 0ms);
+    --motion-transition-focus-delay: var(--cmp-motion-reduced-transition-focus-delay, 0ms);
+    --motion-transition-focus-timing-function: var(--cmp-motion-reduced-transition-focus-timing-function, var(--motion-easing-linear));
+
+    --motion-transition-chip-in-duration: var(--cmp-motion-reduced-transition-chip-in-duration, 0ms);
+    --motion-transition-chip-in-delay: var(--cmp-motion-reduced-transition-chip-in-delay, 0ms);
+    --motion-transition-chip-in-timing-function: var(--cmp-motion-reduced-transition-chip-in-timing-function, var(--motion-easing-linear));
+
+    --motion-transition-chip-out-duration: var(--cmp-motion-reduced-transition-chip-out-duration, 0ms);
+    --motion-transition-chip-out-delay: var(--cmp-motion-reduced-transition-chip-out-delay, 0ms);
+    --motion-transition-chip-out-timing-function: var(--cmp-motion-reduced-transition-chip-out-timing-function, var(--motion-easing-linear));
+
+    --motion-transition-banner-reveal-duration: var(--cmp-motion-reduced-transition-banner-reveal-duration, 0ms);
+    --motion-transition-banner-reveal-delay: var(--cmp-motion-reduced-transition-banner-reveal-delay, 0ms);
+    --motion-transition-banner-reveal-timing-function:
+      var(--cmp-motion-reduced-transition-banner-reveal-timing-function, var(--motion-easing-linear));
+
+    /* Reduced motion for tooltip/toast */
+    --motion-transition-tooltip-in-duration: var(--cmp-motion-reduced-transition-tooltip-in-duration, 0ms);
+    --motion-transition-tooltip-in-delay: var(--cmp-motion-reduced-transition-tooltip-in-delay, 0ms);
+    --motion-transition-tooltip-in-timing-function:
+      var(--cmp-motion-reduced-transition-tooltip-in-timing-function, var(--motion-easing-linear));
+    --motion-transition-tooltip-out-duration: var(--cmp-motion-reduced-transition-tooltip-out-duration, 0ms);
+    --motion-transition-tooltip-out-delay: var(--cmp-motion-reduced-transition-tooltip-out-delay, 0ms);
+    --motion-transition-tooltip-out-timing-function:
+      var(--cmp-motion-reduced-transition-tooltip-out-timing-function, var(--motion-easing-linear));
+
+    --motion-transition-toast-in-duration: var(--cmp-motion-reduced-transition-toast-in-duration, 0ms);
+    --motion-transition-toast-in-delay: var(--cmp-motion-reduced-transition-toast-in-delay, 0ms);
+    --motion-transition-toast-in-timing-function:
+      var(--cmp-motion-reduced-transition-toast-in-timing-function, var(--motion-easing-linear));
+    --motion-transition-toast-out-duration: var(--cmp-motion-reduced-transition-toast-out-duration, 0ms);
+    --motion-transition-toast-out-delay: var(--cmp-motion-reduced-transition-toast-out-delay, 0ms);
+    --motion-transition-toast-out-timing-function:
+      var(--cmp-motion-reduced-transition-toast-out-timing-function, var(--motion-easing-linear));
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+:root[data-chromatic='true'] {
+  --motion-duration-fast: var(--cmp-motion-reduced-duration-fast, 0ms);
+  --motion-duration-base: var(--cmp-motion-reduced-duration-base, 0ms);
+  --motion-duration-slow: var(--cmp-motion-reduced-duration-slow, 0ms);
+
+  --motion-transition-hover-duration: var(--cmp-motion-reduced-transition-hover-duration, 0ms);
+  --motion-transition-hover-delay: var(--cmp-motion-reduced-transition-hover-delay, 0ms);
+  --motion-transition-hover-timing-function: var(--cmp-motion-reduced-transition-hover-timing-function, var(--motion-easing-linear));
+
+  --motion-transition-focus-duration: var(--cmp-motion-reduced-transition-focus-duration, 0ms);
+  --motion-transition-focus-delay: var(--cmp-motion-reduced-transition-focus-delay, 0ms);
+  --motion-transition-focus-timing-function: var(--cmp-motion-reduced-transition-focus-timing-function, var(--motion-easing-linear));
+
+  --motion-transition-chip-in-duration: var(--cmp-motion-reduced-transition-chip-in-duration, 0ms);
+  --motion-transition-chip-in-delay: var(--cmp-motion-reduced-transition-chip-in-delay, 0ms);
+  --motion-transition-chip-in-timing-function: var(--cmp-motion-reduced-transition-chip-in-timing-function, var(--motion-easing-linear));
+
+  --motion-transition-chip-out-duration: var(--cmp-motion-reduced-transition-chip-out-duration, 0ms);
+  --motion-transition-chip-out-delay: var(--cmp-motion-reduced-transition-chip-out-delay, 0ms);
+  --motion-transition-chip-out-timing-function:
+    var(--cmp-motion-reduced-transition-chip-out-timing-function, var(--motion-easing-linear));
+
+  --motion-transition-banner-reveal-duration: var(--cmp-motion-reduced-transition-banner-reveal-duration, 0ms);
+  --motion-transition-banner-reveal-delay: var(--cmp-motion-reduced-transition-banner-reveal-delay, 0ms);
+  --motion-transition-banner-reveal-timing-function:
+    var(--cmp-motion-reduced-transition-banner-reveal-timing-function, var(--motion-easing-linear));
+}
+
+:root[data-chromatic='true'] *,
+:root[data-chromatic='true'] *::before,
+:root[data-chromatic='true'] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0ms !important;
+}

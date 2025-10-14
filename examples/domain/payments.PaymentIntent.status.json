@@ -1,0 +1,19 @@
+{
+  "manifest": "payments.PaymentIntent.status",
+  "object": "payments/PaymentIntent",
+  "field": "status",
+  "description": "Canonical payment intent lifecycle states normalized across providers (Stripe/Adyen/Braintree).",
+  "values": [
+    "requires_payment_method",
+    "requires_confirmation",
+    "processing",
+    "requires_action",
+    "succeeded",
+    "canceled"
+  ],
+  "sources": [
+    "missions/research/r4.5_SaaS-Enum-to-Token-Mapping-Schema.md#3.3",
+    "Provider notes: Stripe(PI) — requires_payment_method | requires_confirmation | processing | requires_action | succeeded | canceled"
+  ]
+}
+

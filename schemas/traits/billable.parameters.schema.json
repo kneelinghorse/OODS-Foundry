@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/07/schema",
+  "$id": "https://trait-engine.dev/schemas/traits/billable",
+  "title": "Billable Trait Parameters",
+  "description": "Configures recurring billing defaults for composed objects.",
+  "type": "object",
+  "properties": {
+    "defaultCurrency": {
+      "type": "string",
+      "description": "ISO 4217 currency code applied when no currency is provided by data.",
+      "pattern": "^[A-Za-z]{3}$",
+      "default": "usd"
+    },
+    "billingIntervals": {
+      "type": "array",
+      "description": "Allowed billing interval identifiers (e.g., monthly, yearly).",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 32
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "default": ["monthly", "yearly"]
+    },
+    "minorUnits": {
+      "type": "integer",
+      "description": "Number of fractional units comprising a single currency unit (typically 100).",
+      "minimum": 1,
+      "maximum": 1000,
+      "default": 100
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "defaultCurrency": "usd",
+      "billingIntervals": ["monthly", "yearly"],
+      "minorUnits": 100
+    },
+    {
+      "defaultCurrency": "eur",
+      "billingIntervals": ["monthly"],
+      "minorUnits": 100
+    }
+  ]
+}

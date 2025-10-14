@@ -1,0 +1,102 @@
+# Colorized Trait
+# Adds customizable color properties to objects
+
+trait:
+  name: Colorized
+  version: 1.0.0
+  description: Provides customizable color properties and theming support
+  category: styling
+  tags:
+    - color
+    - theme
+    - styling
+
+parameters:
+  - name: colorScheme
+    type: enum
+    required: false
+    default: default
+    description: The color scheme to use for this object
+    enumValues:
+      - default
+      - primary
+      - secondary
+      - accent
+      - success
+      - warning
+      - danger
+      - info
+
+  - name: allowCustomColors
+    type: boolean
+    required: false
+    default: false
+    description: Whether to allow custom color values beyond the predefined schemes
+
+schema:
+  color:
+    type: string
+    required: false
+    description: The current color value applied to this object
+
+  colorScheme:
+    type: string
+    required: false
+    description: The selected color scheme
+
+semantics:
+  color:
+    semantic_type: color_field
+    ui_hints:
+      component: ColorPicker
+      showAlpha: false
+
+  colorScheme:
+    semantic_type: enum_field
+    ui_hints:
+      component: Select
+      options_from_parameter: colorScheme
+
+view_extensions:
+  list:
+    - component: ColorSwatch
+      props:
+        field: color
+        size: sm
+        showLabel: false
+
+  detail:
+    - component: ColorDisplay
+      position: top
+      props:
+        field: color
+        showHex: true
+        showRGB: true
+
+  card:
+    - component: ColorBadge
+      position: top
+      props:
+        field: colorScheme
+        variant: subtle
+
+actions:
+  - name: changeColor
+    label: Change Color
+    icon: palette
+    confirmation: false
+
+  - name: resetToDefault
+    label: Reset to Default
+    icon: undo
+    confirmation: true
+    confirmationMessage: Are you sure you want to reset the color to default?
+
+tokens:
+  colorized-swatch-size-sm: 1rem
+  colorized-swatch-size-md: 1.5rem
+  colorized-swatch-size-lg: 2rem
+
+metadata:
+  created: "2025-10-07"
+  author: OODS Team

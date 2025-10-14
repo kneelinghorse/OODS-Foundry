@@ -1,0 +1,40 @@
+{
+  "spacing": {
+    "inset": {
+      "compact": {
+        "$type": "dimension",
+        "$value": "{sys.space.inset.compact}",
+        "$description": "Inset spacing for dense contexts."
+      },
+      "default": {
+        "$type": "dimension",
+        "$value": "{sys.space.inset.default}",
+        "$description": "Baseline inset spacing."
+      }
+    },
+    "stack": {
+      "compact": {
+        "$type": "dimension",
+        "$value": "{sys.space.stack.compact}",
+        "$description": "Compact vertical rhythm."
+      },
+      "default": {
+        "$type": "dimension",
+        "$value": "{sys.space.stack.default}",
+        "$description": "Default vertical rhythm."
+      }
+    },
+    "inline": {
+      "xs": {
+        "$type": "dimension",
+        "$value": "{sys.space.inline.xs}",
+        "$description": "Extra small inline spacing."
+      },
+      "sm": {
+        "$type": "dimension",
+        "$value": "{sys.space.inline.sm}",
+        "$description": "Small inline spacing."
+      }
+    }
+  }
+}

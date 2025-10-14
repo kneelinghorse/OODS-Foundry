@@ -1,0 +1,55 @@
+{
+  "object": {
+    "name": "Badge",
+    "description": "Sample object demonstrating trait resolution output",
+    "source": "./examples/objects/Badge.object.yaml"
+  },
+  "resolvedTraits": [
+    {
+      "reference": {
+        "name": "Colorized",
+        "alias": "Colors"
+      },
+      "sourcePath": "./examples/traits/Colorized.trait.yaml",
+      "resolvedAt": "2025-10-16T00:00:00.000Z",
+      "parameters": {
+        "colorScheme": "primary",
+        "allowCustomColors": true
+      },
+      "definition": {
+        "trait": {
+          "name": "Colorized",
+          "version": "1.0.0",
+          "description": "Provides customizable color properties and theming support",
+          "category": "styling"
+        },
+        "metadata": {
+          "appliedParameters": {
+            "colorScheme": "primary",
+            "allowCustomColors": true
+          }
+        }
+      }
+    },
+    {
+      "reference": {
+        "name": "Labelled",
+        "alias": "Label"
+      },
+      "sourcePath": "./examples/traits/Labelled.trait.yaml",
+      "resolvedAt": "2025-10-16T00:05:00.000Z",
+      "parameters": {},
+      "definition": {
+        "trait": {
+          "name": "Labelled",
+          "version": "1.0.0",
+          "description": "Provides human-readable label and description fields",
+          "category": "metadata"
+        },
+        "metadata": {
+          "appliedParameters": {}
+        }
+      }
+    }
+  ]
+}

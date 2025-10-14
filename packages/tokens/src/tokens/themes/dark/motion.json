@@ -1,0 +1,168 @@
+{
+  "theme-dark": {
+    "motion": {
+      "duration": {
+        "fast": {
+          "$type": "duration",
+          "$value": "120ms",
+          "$description": "Snappy micro interactions such as hovers."
+        },
+        "base": {
+          "$type": "duration",
+          "$value": "180ms",
+          "$description": "Default interaction tempo for focus, chips, and buttons."
+        },
+        "slow": {
+          "$type": "duration",
+          "$value": "320ms",
+          "$description": "Long-form transitions like banners entering the viewport."
+        }
+      },
+      "easing": {
+        "standard": {
+          "$type": "cubicBezier",
+          "$value": [0.2, 0, 0.38, 1],
+          "$description": "Primary ease-out curve for UI transitions."
+        },
+        "emphasized": {
+          "$type": "cubicBezier",
+          "$value": [0.05, 0.7, 0.1, 1],
+          "$description": "Emphasized ease for entrance motion requiring more weight."
+        },
+        "linear": {
+          "$type": "cubicBezier",
+          "$value": [0, 0, 1, 1],
+          "$description": "Linear fallback for reduced-motion scenarios."
+        }
+      },
+      "transition": {
+        "hover": {
+          "$type": "transition",
+          "$value": {
+            "duration": "{theme-dark.motion.duration.fast}",
+            "delay": "0ms",
+            "timingFunction": "{theme-dark.motion.easing.standard}"
+          },
+          "$description": "Hover affordances across buttons, chips, and cards.",
+          "$extensions": {
+            "properties": ["background-color", "border-color", "box-shadow", "color"]
+          }
+        },
+        "focus": {
+          "$type": "transition",
+          "$value": {
+            "duration": "{theme-dark.motion.duration.base}",
+            "delay": "0ms",
+            "timingFunction": "{theme-dark.motion.easing.standard}"
+          },
+          "$description": "Focus outlines and glow elevation.",
+          "$extensions": {
+            "properties": ["box-shadow", "outline-color", "outline-offset"]
+          }
+        },
+        "chip-in": {
+          "$type": "transition",
+          "$value": {
+            "duration": "{theme-dark.motion.duration.base}",
+            "delay": "0ms",
+            "timingFunction": "{theme-dark.motion.easing.emphasized}"
+          },
+          "$description": "Chip selection and entry into filter groups.",
+          "$extensions": {
+            "properties": ["transform", "opacity", "background-color"]
+          }
+        },
+        "chip-out": {
+          "$type": "transition",
+          "$value": {
+            "duration": "{theme-dark.motion.duration.fast}",
+            "delay": "0ms",
+            "timingFunction": "{theme-dark.motion.easing.standard}"
+          },
+          "$description": "Chip deselection or removal.",
+          "$extensions": {
+            "properties": ["transform", "opacity", "background-color"]
+          }
+        },
+        "banner-reveal": {
+          "$type": "transition",
+          "$value": {
+            "duration": "{theme-dark.motion.duration.slow}",
+            "delay": "20ms",
+            "timingFunction": "{theme-dark.motion.easing.emphasized}"
+          },
+          "$description": "Banner entrance along the vertical axis.",
+          "$extensions": {
+            "properties": ["transform", "opacity"]
+          }
+        }
+      },
+      "reduced": {
+        "duration": {
+          "fast": {
+            "$type": "duration",
+            "$value": "0ms",
+            "$description": "Instant feedback for motion-sensitive contexts."
+          },
+          "base": {
+            "$type": "duration",
+            "$value": "0ms",
+            "$description": "Primary reduced-motion tempo."
+          },
+          "slow": {
+            "$type": "duration",
+            "$value": "0ms",
+            "$description": "Long-form transitions collapse to zero in reduced motion."
+          }
+        },
+        "transition": {
+          "hover": {
+            "$type": "transition",
+            "$value": {
+              "duration": "{theme-dark.motion.reduced.duration.fast}",
+              "delay": "0ms",
+              "timingFunction": "{theme-dark.motion.easing.linear}"
+            },
+            "$description": "Hover states snap immediately when motion is reduced."
+          },
+          "focus": {
+            "$type": "transition",
+            "$value": {
+              "duration": "{theme-dark.motion.reduced.duration.base}",
+              "delay": "0ms",
+              "timingFunction": "{theme-dark.motion.easing.linear}"
+            },
+            "$description": "Focus rings become instant in reduced-motion."
+          },
+          "chip-in": {
+            "$type": "transition",
+            "$value": {
+              "duration": "{theme-dark.motion.reduced.duration.base}",
+              "delay": "0ms",
+              "timingFunction": "{theme-dark.motion.easing.linear}"
+            },
+            "$description": "Chip selection occurs without momentum."
+          },
+          "chip-out": {
+            "$type": "transition",
+            "$value": {
+              "duration": "{theme-dark.motion.reduced.duration.fast}",
+              "delay": "0ms",
+              "timingFunction": "{theme-dark.motion.easing.linear}"
+            },
+            "$description": "Chip removal happens immediately."
+          },
+          "banner-reveal": {
+            "$type": "transition",
+            "$value": {
+              "duration": "{theme-dark.motion.reduced.duration.slow}",
+              "delay": "0ms",
+              "timingFunction": "{theme-dark.motion.easing.linear}"
+            },
+            "$description": "Banner reveal falls back to an instant appearance."
+          }
+        }
+      }
+    }
+  }
+}

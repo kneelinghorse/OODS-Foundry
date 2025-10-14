@@ -1,0 +1,258 @@
+{
+  "theme-dark": {
+    "status": {
+      "info": {
+        "surface": {
+          "$type": "color",
+          "$value": "oklch(0.31 0.08 262)",
+          "$description": "Informational surface balancing depth with clarity.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#192F58"
+            }
+          }
+        },
+        "border": {
+          "$type": "color",
+          "$value": "oklch(0.43 0.11 262)",
+          "$description": "High-contrast info outline for banners and panels.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#2D4D8B"
+            }
+          }
+        },
+        "text": {
+          "$type": "color",
+          "$value": "oklch(0.88 0.06 262)",
+          "$description": "Informational text meeting AA on the info surface.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#C2D8FF"
+            }
+          }
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "oklch(0.8 0.1 262)",
+          "$description": "Icon tone for info banners.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#9BBEFF"
+            }
+          }
+        }
+      },
+      "success": {
+        "surface": {
+          "$type": "color",
+          "$value": "oklch(0.32 0.09 161)",
+          "$description": "Success confirmation background with AA margin.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#004023"
+            }
+          }
+        },
+        "border": {
+          "$type": "color",
+          "$value": "oklch(0.43 0.11 161)",
+          "$description": "Success border emphasising resolved state.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#00613B"
+            }
+          }
+        },
+        "text": {
+          "$type": "color",
+          "$value": "oklch(0.88 0.07 165)",
+          "$description": "Success text with comfortable contrast against the surface.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#ACE7CC"
+            }
+          }
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "oklch(0.78 0.1 163)",
+          "$description": "Icon colour for success states.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#78CCA5"
+            }
+          }
+        }
+      },
+      "warning": {
+        "surface": {
+          "$type": "color",
+          "$value": "oklch(0.34 0.09 85)",
+          "$description": "Warning tone that stays legible without overpowering the scene.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#4D3300"
+            }
+          }
+        },
+        "border": {
+          "$type": "color",
+          "$value": "oklch(0.46 0.12 85)",
+          "$description": "Warning border for elevated callouts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#755100"
+            }
+          }
+        },
+        "text": {
+          "$type": "color",
+          "$value": "oklch(0.9 0.08 87)",
+          "$description": "Warning text that clears AA minimums on warning surfaces.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#F5DBA1"
+            }
+          }
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "oklch(0.81 0.11 85)",
+          "$description": "Warning icon colour harmonised with the border tone.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#E2BB6A"
+            }
+          }
+        }
+      },
+      "accent": {
+        "surface": {
+          "$type": "color",
+          "$value": "oklch(0.33 0.15 274.55)",
+          "$description": "Accent ribbon for promotion or emphasis banners.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#242480"
+            }
+          }
+        },
+        "border": {
+          "$type": "color",
+          "$value": "oklch(0.45 0.18 274.55)",
+          "$description": "Accent border providing crisp separation.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#3D42B6"
+            }
+          }
+        },
+        "text": {
+          "$type": "color",
+          "$value": "oklch(0.86 0.1 274.55)",
+          "$description": "Accent text that remains legible on saturated surfaces.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#BFCDFF"
+            }
+          }
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "oklch(0.76 0.15 274.55)",
+          "$description": "Accent icon tone pairing with the accent surface.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#96A8FF"
+            }
+          }
+        }
+      },
+      "critical": {
+        "surface": {
+          "$type": "color",
+          "$value": "oklch(0.31 0.12 25)",
+          "$description": "Critical surface tuned for alerts without blooming.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#5F050C"
+            }
+          }
+        },
+        "border": {
+          "$type": "color",
+          "$value": "oklch(0.43 0.15 25)",
+          "$description": "Critical border that stays evident on dark shells.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#901E21"
+            }
+          }
+        },
+        "text": {
+          "$type": "color",
+          "$value": "oklch(0.88 0.09 23)",
+          "$description": "Critical text exceeding AA thresholds.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#FFC2BD"
+            }
+          }
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "oklch(0.79 0.13 24)",
+          "$description": "Critical icon treatment for destructive banners.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#FF9891"
+            }
+          }
+        }
+      },
+      "neutral": {
+        "surface": {
+          "$type": "color",
+          "$value": "oklch(0.32 0.02 260)",
+          "$description": "Neutral notification surface for passive messaging.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#2D333D"
+            }
+          }
+        },
+        "border": {
+          "$type": "color",
+          "$value": "oklch(0.41 0.025 260)",
+          "$description": "Neutral border for low-emphasis outlines.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#434B58"
+            }
+          }
+        },
+        "text": {
+          "$type": "color",
+          "$value": "oklch(0.86 0.02 260)",
+          "$description": "Neutral banner text ensuring AA compliance.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#C9D2DE"
+            }
+          }
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "oklch(0.74 0.02 260)",
+          "$description": "Neutral banner icon tone.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#A4ABB8"
+            }
+          }
+        }
+      }
+    }
+  }
+}

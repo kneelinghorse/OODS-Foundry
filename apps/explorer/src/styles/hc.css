@@ -1,0 +1,106 @@
+@media (forced-colors: active) {
+  :root {
+    color-scheme: light;
+  }
+
+  :root,
+  html[data-theme='dark'] {
+    /* System token overrides sourced from packages/tokens high-contrast map */
+    --sys-surface-canvas: Canvas;
+    --sys-surface-raised: Canvas;
+    --sys-surface-subtle: Canvas;
+    --sys-surface-disabled: Canvas;
+    --sys-surface-backdrop: Canvas;
+    --sys-surface-inverse: CanvasText;
+    --sys-surface-interactive-primary-default: Highlight;
+    --sys-surface-interactive-primary-hover: Highlight;
+    --sys-surface-interactive-primary-pressed: Highlight;
+
+    --sys-border-subtle: CanvasText;
+    --sys-border-strong: Highlight;
+
+    --sys-text-primary: CanvasText;
+    --sys-text-secondary: GrayText;
+    --sys-text-muted: GrayText;
+    --sys-text-inverse: Canvas;
+    --sys-text-accent: LinkText;
+    --sys-text-on-interactive: HighlightText;
+    --sys-text-disabled: GrayText;
+
+    --sys-icon-primary: CanvasText;
+    --sys-icon-muted: GrayText;
+    --sys-icon-on-interactive: HighlightText;
+
+    --sys-status-info-surface: Canvas;
+    --sys-status-info-border: Highlight;
+    --sys-status-info-text: HighlightText;
+    --sys-status-info-icon: HighlightText;
+
+    --sys-status-success-surface: Canvas;
+    --sys-status-success-border: Highlight;
+    --sys-status-success-text: HighlightText;
+    --sys-status-success-icon: HighlightText;
+
+    --sys-status-warning-surface: Canvas;
+    --sys-status-warning-border: Highlight;
+    --sys-status-warning-text: HighlightText;
+    --sys-status-warning-icon: HighlightText;
+
+    --sys-status-accent-surface: Canvas;
+    --sys-status-accent-border: Highlight;
+    --sys-status-accent-text: HighlightText;
+    --sys-status-accent-icon: HighlightText;
+
+    --sys-status-critical-surface: Canvas;
+    --sys-status-critical-border: Highlight;
+    --sys-status-critical-text: HighlightText;
+    --sys-status-critical-icon: HighlightText;
+
+    --sys-status-neutral-surface: Canvas;
+    --sys-status-neutral-border: CanvasText;
+    --sys-status-neutral-text: CanvasText;
+    --sys-status-neutral-icon: CanvasText;
+
+    --sys-focus-ring-outer: Highlight;
+    --sys-focus-ring-inner: Canvas;
+    --sys-focus-text: HighlightText;
+    --sys-focus-width: 2px;
+  }
+
+  .list-card,
+  .detail-summary,
+  .detail-panel,
+  .detail-sidebar,
+  .invoice-row {
+    border-color: var(--cmp-border-default, CanvasText);
+    background-color: var(--cmp-surface-panel, Canvas);
+    color: var(--cmp-text-body, CanvasText);
+    box-shadow: none;
+  }
+
+  .detail-summary,
+  .detail-sidebar {
+    background-color: var(--cmp-surface-subtle, Canvas);
+  }
+
+  .status-chip {
+    border-color: var(--cmp-chip-border, CanvasText);
+    background-color: var(--cmp-chip-background, Canvas);
+    color: var(--cmp-chip-foreground, CanvasText);
+    forced-color-adjust: auto;
+  }
+
+  .status-chip:focus-visible {
+    outline-color: var(--sys-focus-ring-outer, Highlight);
+  }
+
+  /* B8.5: Ensure overlays legible without shadows in HC */
+  .cmp-tooltip__bubble,
+  .cmp-toast {
+    box-shadow: none !important;
+    border-color: var(--cmp-border-default, CanvasText) !important;
+    background-color: var(--cmp-surface-panel, Canvas) !important;
+    color: var(--cmp-text-body, CanvasText) !important;
+    forced-color-adjust: auto;
+  }
+}

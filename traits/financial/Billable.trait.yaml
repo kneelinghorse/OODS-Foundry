@@ -1,0 +1,94 @@
+trait:
+  name: Billable
+  version: 1.0.0
+  description: Normalizes recurring billing fields including price, currency, and cycle tracking metadata.
+  category: financial
+  tags:
+    - billing
+    - recurring
+    - financial
+
+parameters:
+  - name: defaultCurrency
+    type: string
+    required: false
+    description: ISO 4217 currency used when a value is not provided.
+    default: usd
+  - name: billingIntervals
+    type: string[]
+    required: false
+    description: Allowed billing interval values.
+    default:
+      - monthly
+      - yearly
+  - name: minorUnits
+    type: number
+    required: false
+    description: Number of fractional units that constitute a single major currency unit.
+    default: 100
+
+schema:
+  amount:
+    type: integer
+    required: true
+    description: Recurring price expressed in minor currency units.
+  currency:
+    type: string
+    required: true
+    description: ISO 4217 currency code.
+  billing_interval:
+    type: string
+    required: false
+    description: Interval label describing recurrence cadence.
+  last_payment_at:
+    type: datetime
+    required: false
+    description: Timestamp of the most recent successful payment.
+  next_payment_due_at:
+    type: datetime
+    required: false
+    description: Timestamp when the next payment attempt is scheduled.
+  current_period_start:
+    type: datetime
+    required: false
+    description: Beginning timestamp of the active billing cycle.
+  current_period_end:
+    type: datetime
+    required: false
+    description: Ending timestamp of the active billing cycle.
+  current_period_progress:
+    type: number
+    required: false
+    description: Decimal (0-1) indicating progress through the active billing cycle.
+
+semantics:
+  amount:
+    semantic_type: billing.plan.amount_minor
+    token_mapping: tokenMap(billing.plan.amount_minor)
+  currency:
+    semantic_type: billing.plan.currency
+    token_mapping: tokenMap(billing.plan.currency)
+  billing_interval:
+    semantic_type: billing.plan.interval
+    token_mapping: tokenMap(billing.plan.interval)
+  last_payment_at:
+    semantic_type: billing.subscription.last_payment_at
+    token_mapping: tokenMap(billing.subscription.last_payment_at)
+  next_payment_due_at:
+    semantic_type: billing.subscription.next_payment_due_at
+    token_mapping: tokenMap(billing.subscription.next_payment_due_at)
+  current_period_start:
+    semantic_type: billing.subscription.current_period_start
+    token_mapping: tokenMap(billing.subscription.current_period_start)
+  current_period_end:
+    semantic_type: billing.subscription.current_period_end
+    token_mapping: tokenMap(billing.subscription.current_period_end)
+  current_period_progress:
+    semantic_type: billing.subscription.current_period_progress
+    token_mapping: tokenMap(billing.subscription.current_period_progress)
+
+tokens:
+  billing.plan.amount_minor: "var(--commerce-amount-primary)"
+  billing.plan.currency: "var(--commerce-currency-primary)"
+  billing.plan.interval: "var(--text-subtle)"
+  billing.subscription.current_period_end: "var(--status-info)"

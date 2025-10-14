@@ -1,0 +1,67 @@
+{
+  "sys": {
+    "surface": {
+      "canvas": {
+        "$type": "color",
+        "$value": "{theme.surface.canvas}",
+        "$description": "Primary application canvas."
+      },
+      "raised": {
+        "$type": "color",
+        "$value": "{theme.surface.raised}",
+        "$description": "Raised card surface."
+      },
+      "subtle": {
+        "$type": "color",
+        "$value": "{theme.surface.subtle}",
+        "$description": "Subtle secondary surface."
+      },
+      "backdrop": {
+        "$type": "color",
+        "$value": "{theme.surface.backdrop}",
+        "$description": "Backdrop scrim surface."
+      },
+      "inverse": {
+        "$type": "color",
+        "$value": "{theme.surface.inverse}",
+        "$description": "Inverse surface for dark-on-light treatments."
+      },
+      "disabled": {
+        "$type": "color",
+        "$value": "{theme.surface.disabled}",
+        "$description": "Surface colour for disabled or inactive UI."
+      },
+      "interactive": {
+        "primary": {
+          "default": {
+            "$type": "color",
+            "$value": "{theme.surface.interactive.primary.default}",
+            "$description": "Primary interactive surface default state."
+          },
+          "hover": {
+            "$type": "color",
+            "$value": "{theme.surface.interactive.primary.hover}",
+            "$description": "Primary interactive surface hover state."
+          },
+          "pressed": {
+            "$type": "color",
+            "$value": "{theme.surface.interactive.primary.pressed}",
+            "$description": "Primary interactive surface pressed state."
+          }
+        }
+      }
+    },
+    "border": {
+      "subtle": {
+        "$type": "color",
+        "$value": "{theme.border.subtle}",
+        "$description": "Default border for surfaces."
+      },
+      "strong": {
+        "$type": "color",
+        "$value": "{theme.border.strong}",
+        "$description": "High-emphasis border."
+      }
+    }
+  }
+}

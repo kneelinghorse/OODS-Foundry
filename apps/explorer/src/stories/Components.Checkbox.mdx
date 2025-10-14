@@ -1,0 +1,40 @@
+import React from 'react';
+import { Meta, Canvas, Story } from '@storybook/blocks';
+import * as CheckboxStories from './Checkbox.stories';
+import { Checkbox } from '../components/Checkbox';
+import '../styles/index.css';
+import '../styles/forms.css';
+
+<Meta of={CheckboxStories} />
+
+## States
+
+<Canvas>
+  <Story
+    name="States"
+    parameters={{
+      chromatic: { disableSnapshot: false },
+      vrt: { tags: ['vrt-critical'] }
+    }}
+    tags={['vrt-critical']}
+  >
+    {() => (
+      <div style={{ display: 'grid', gap: '1rem', width: 'min(36rem, 100%)' }}>
+        <Checkbox label="Email notifications" defaultChecked />
+        <Checkbox label="In-product tips" />
+        <Checkbox label="Disabled option" disabled />
+        <Checkbox tone="success" label="Feature enabled" defaultChecked />
+        <Checkbox tone="warning" label="Experimental feature" defaultChecked />
+        <Checkbox tone="critical" aria-invalid label="Compliance required" />
+      </div>
+    )}
+  </Story>
+</Canvas>
+
+## A11y Contract
+
+- Space/Enter toggle the checkbox; focus ring uses `--cmp-checkbox-focus-*`.
+- Visuals consume only `--cmp-checkbox-*` tokens; tones map to status palettes in the layer.
+- Disabled remains legible; no opacity below 0.9; outline ≥3:1 in HC.
+- Hit target equals the visual label (wrapped label element), ensuring easy activation.
+

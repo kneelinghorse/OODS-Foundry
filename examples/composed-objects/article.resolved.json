@@ -1,0 +1,97 @@
+{
+  "object": {
+    "name": "Article",
+    "extends": "ContentBase",
+    "source": "./examples/objects/Article.object.yaml"
+  },
+  "resolvedTraits": [
+    {
+      "name": "Timestamped",
+      "version": "1.0.0",
+      "source": "./examples/traits/Timestamped.trait.yaml"
+    },
+    {
+      "name": "Descriptive",
+      "version": "1.0.0",
+      "source": "./examples/traits/Descriptive.trait.yaml"
+    }
+  ],
+  "composed": {
+    "schema": {
+      "created_at": {
+        "type": "string",
+        "required": true,
+        "source": "Timestamped"
+      },
+      "updated_at": {
+        "type": "string",
+        "required": true,
+        "source": "Timestamped"
+      },
+      "status": {
+        "type": "string",
+        "required": true,
+        "default": "draft",
+        "source": "ContentBase"
+      },
+      "description": {
+        "type": "string",
+        "required": true,
+        "source": "Article"
+      },
+      "title": {
+        "type": "string",
+        "required": true,
+        "source": "Article"
+      }
+    },
+    "provenance": [
+      {
+        "field": "created_at",
+        "layer": "trait",
+        "source": "Timestamped"
+      },
+      {
+        "field": "updated_at",
+        "layer": "trait",
+        "source": "Timestamped"
+      },
+      {
+        "field": "status",
+        "layer": "object",
+        "source": "ContentBase"
+      },
+      {
+        "field": "description",
+        "layer": "object",
+        "source": "Article",
+        "previous": [
+          "Descriptive"
+        ]
+      },
+      {
+        "field": "title",
+        "layer": "object",
+        "source": "Article"
+      }
+    ],
+    "collisions": [
+      {
+        "field": "description",
+        "winner": "Article",
+        "resolution": "manual",
+        "details": "Object-level override applied after Descriptive trait"
+      }
+    ]
+  },
+  "viewOverrides": {
+    "detail": [
+      {
+        "action": "add",
+        "id": "articleSummary",
+        "component": "ArticleSummary",
+        "priority": 20
+      }
+    ]
+  }
+}

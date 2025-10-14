@@ -1,0 +1,1712 @@
+{
+  "generatedAt": "2025-10-13T19:15:30.169Z",
+  "totals": {
+    "contrast": 31,
+    "guardrails": 6,
+    "overall": 37
+  },
+  "sections": {
+    "contrast": [
+      {
+        "ruleId": "text-on-surface",
+        "checkType": "contrast",
+        "target": "sys.text.primary on sys.surface.canvas",
+        "summary": "Primary text on the default surface must meet 4.5:1 contrast.",
+        "ratio": 12.71,
+        "threshold": 4.5,
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "foreground": "sys.text.primary",
+          "background": "sys.surface.canvas"
+        }
+      },
+      {
+        "ruleId": "text-on-surface",
+        "checkType": "contrast",
+        "target": "theme-dark.text.primary on theme-dark.surface.canvas",
+        "summary": "Dark theme primary text on canvas must meet 4.5:1 contrast.",
+        "ratio": 14.33,
+        "threshold": 4.5,
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "foreground": "theme-dark.text.primary",
+          "background": "theme-dark.surface.canvas"
+        }
+      },
+      {
+        "ruleId": "text-on-surface",
+        "checkType": "contrast",
+        "target": "theme-dark.text.primary on theme-dark.surface.raised",
+        "summary": "Dark theme primary text on raised surfaces must meet 4.5:1 contrast.",
+        "ratio": 12.6,
+        "threshold": 4.5,
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "foreground": "theme-dark.text.primary",
+          "background": "theme-dark.surface.raised"
+        }
+      },
+      {
+        "ruleId": "text-on-surface",
+        "checkType": "contrast",
+        "target": "theme-dark.text.primary on theme-dark.surface.subtle",
+        "summary": "Dark theme primary text on subtle surfaces must meet 4.5:1 contrast.",
+        "ratio": 10.43,
+        "threshold": 4.5,
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "foreground": "theme-dark.text.primary",
+          "background": "theme-dark.surface.subtle"
+        }
+      },
+      {
+        "ruleId": "inverse-text",
+        "checkType": "contrast",
+        "target": "sys.text.inverse on sys.surface.inverse",
+        "summary": "Inverse text must meet 4.5:1 contrast on inverse surfaces.",
+        "ratio": 12.36,
+        "threshold": 4.5,
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "foreground": "sys.text.inverse",
+          "background": "sys.surface.inverse"
+        }
+      },
+      {
+        "ruleId": "text-on-surface",
+        "checkType": "contrast",
+        "target": "sys.text.primary on sys.surface.raised",
+        "summary": "Primary text on raised surfaces must meet 4.5:1 contrast.",
+        "ratio": 12.36,
+        "threshold": 4.5,
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "foreground": "sys.text.primary",
+          "background": "sys.surface.raised"
+        }
+      },
+      {
+        "ruleId": "text-on-surface",
+        "checkType": "contrast",
+        "target": "sys.text.primary on sys.surface.subtle",
+        "summary": "Primary text on subtle surfaces must meet 4.5:1 contrast.",
+        "ratio": 10.99,
+        "threshold": 4.5,
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "foreground": "sys.text.primary",
+          "background": "sys.surface.subtle"
+        }
+      },
+      {
+        "ruleId": "text-on-surface",
+        "checkType": "contrast",
+        "target": "sys.text.secondary on sys.surface.canvas",
+        "summary": "Secondary headings on default surfaces must meet 4.5:1 contrast.",
+        "ratio": 5.6,
+        "threshold": 4.5,
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "foreground": "sys.text.secondary",
+          "background": "sys.surface.canvas"
+        }
+      },
+      {
+        "ruleId": "text-on-surface",
+        "checkType": "contrast",
+        "target": "sys.text.muted on sys.surface.canvas",
+        "summary": "Muted body text on default surfaces must meet 4.5:1 contrast.",
+        "ratio": 4.56,
+        "threshold": 4.5,
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "foreground": "sys.text.muted",
+          "background": "sys.surface.canvas"
+        }
+      },
+      {
+        "ruleId": "text-on-surface",
+        "checkType": "contrast",
+        "target": "sys.text.accent on sys.surface.canvas",
+        "summary": "Inline links on default surfaces must meet 4.5:1 contrast.",
+        "ratio": 7.3,
+        "threshold": 4.5,
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "foreground": "sys.text.accent",
+          "background": "sys.surface.canvas"
+        }
+      },
+      {
+        "ruleId": "status-text",
+        "checkType": "contrast",
+        "target": "sys.status.info.text on sys.status.info.surface",
+        "summary": "Info text inside info surfaces must meet 4.5:1 contrast.",
+        "ratio": 9.2,
+        "threshold": 4.5,
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "foreground": "sys.status.info.text",
+          "background": "sys.status.info.surface"
+        }
+      },
+      {
+        "ruleId": "status-text",
+        "checkType": "contrast",
+        "target": "sys.status.success.text on sys.status.success.surface",
+        "summary": "Success text inside success surfaces must meet 4.5:1 contrast.",
+        "ratio": 7.22,
+        "threshold": 4.5,
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "foreground": "sys.status.success.text",
+          "background": "sys.status.success.surface"
+        }
+      },
+      {
+        "ruleId": "status-text",
+        "checkType": "contrast",
+        "target": "sys.status.warning.text on sys.status.warning.surface",
+        "summary": "Warning text inside warning surfaces must meet 4.5:1 contrast.",
+        "ratio": 5.94,
+        "threshold": 4.5,
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "foreground": "sys.status.warning.text",
+          "background": "sys.status.warning.surface"
+        }
+      },
+      {
+        "ruleId": "status-text",
+        "checkType": "contrast",
+        "target": "sys.status.critical.text on sys.status.critical.surface",
+        "summary": "Critical text inside critical surfaces must meet 4.5:1 contrast.",
+        "ratio": 6.8,
+        "threshold": 4.5,
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "foreground": "sys.status.critical.text",
+          "background": "sys.status.critical.surface"
+        }
+      },
+      {
+        "ruleId": "status-icon",
+        "checkType": "contrast",
+        "target": "sys.status.info.icon on sys.status.info.surface",
+        "summary": "Info icons inside info surfaces must meet 3:1 contrast.",
+        "ratio": 4.64,
+        "threshold": 3,
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "foreground": "sys.status.info.icon",
+          "background": "sys.status.info.surface"
+        }
+      },
+      {
+        "ruleId": "status-icon",
+        "checkType": "contrast",
+        "target": "sys.status.success.icon on sys.status.success.surface",
+        "summary": "Success icons inside success surfaces must meet 3:1 contrast.",
+        "ratio": 3.47,
+        "threshold": 3,
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "foreground": "sys.status.success.icon",
+          "background": "sys.status.success.surface"
+        }
+      },
+      {
+        "ruleId": "status-icon",
+        "checkType": "contrast",
+        "target": "sys.status.warning.icon on sys.status.warning.surface",
+        "summary": "Warning icons inside warning surfaces must meet 3:1 contrast.",
+        "ratio": 3,
+        "threshold": 3,
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "foreground": "sys.status.warning.icon",
+          "background": "sys.status.warning.surface"
+        }
+      },
+      {
+        "ruleId": "status-icon",
+        "checkType": "contrast",
+        "target": "sys.status.critical.icon on sys.status.critical.surface",
+        "summary": "Critical icons inside critical surfaces must meet 3:1 contrast.",
+        "ratio": 3.84,
+        "threshold": 3,
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "foreground": "sys.status.critical.icon",
+          "background": "sys.status.critical.surface"
+        }
+      },
+      {
+        "ruleId": "status-text",
+        "checkType": "contrast",
+        "target": "sys.status.accent.text on sys.status.accent.surface",
+        "summary": "Accent text inside accent surfaces must meet 4.5:1 contrast.",
+        "ratio": 8.01,
+        "threshold": 4.5,
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "foreground": "sys.status.accent.text",
+          "background": "sys.status.accent.surface"
+        }
+      },
+      {
+        "ruleId": "status-icon",
+        "checkType": "contrast",
+        "target": "sys.status.accent.icon on sys.status.accent.surface",
+        "summary": "Accent icons inside accent surfaces must meet 3:1 contrast.",
+        "ratio": 6.63,
+        "threshold": 3,
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "foreground": "sys.status.accent.icon",
+          "background": "sys.status.accent.surface"
+        }
+      },
+      {
+        "ruleId": "status-text",
+        "checkType": "contrast",
+        "target": "sys.status.neutral.text on sys.status.neutral.surface",
+        "summary": "Neutral text inside neutral surfaces must meet 4.5:1 contrast.",
+        "ratio": 7.9,
+        "threshold": 4.5,
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "foreground": "sys.status.neutral.text",
+          "background": "sys.status.neutral.surface"
+        }
+      },
+      {
+        "ruleId": "status-icon",
+        "checkType": "contrast",
+        "target": "sys.status.neutral.icon on sys.status.neutral.surface",
+        "summary": "Neutral icons inside neutral surfaces must meet 3:1 contrast.",
+        "ratio": 5.44,
+        "threshold": 3,
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "foreground": "sys.status.neutral.icon",
+          "background": "sys.status.neutral.surface"
+        }
+      },
+      {
+        "ruleId": "focus-ring",
+        "checkType": "contrast",
+        "target": "sys.focus.ring.outer on sys.surface.canvas",
+        "summary": "Default focus ring must meet 3:1 contrast against the default surface.",
+        "ratio": 12.71,
+        "threshold": 3,
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "foreground": "sys.focus.ring.outer",
+          "background": "sys.surface.canvas"
+        }
+      },
+      {
+        "ruleId": "focus-ring",
+        "checkType": "contrast",
+        "target": "sys.focus.ring.outer on sys.surface.raised",
+        "summary": "Default focus ring must meet 3:1 contrast against raised surfaces.",
+        "ratio": 12.36,
+        "threshold": 3,
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "foreground": "sys.focus.ring.outer",
+          "background": "sys.surface.raised"
+        }
+      },
+      {
+        "ruleId": "focus-ring",
+        "checkType": "contrast",
+        "target": "sys.focus.ring.outer on sys.surface.subtle",
+        "summary": "Default focus ring must meet 3:1 contrast against subtle surfaces.",
+        "ratio": 10.99,
+        "threshold": 3,
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "foreground": "sys.focus.ring.outer",
+          "background": "sys.surface.subtle"
+        }
+      },
+      {
+        "ruleId": "text-on-interactive",
+        "checkType": "contrast",
+        "target": "sys.text.on-interactive on sys.surface.interactive.primary.default",
+        "summary": "Interactive text on the default primary surface must meet 4.5:1 contrast.",
+        "ratio": 4.56,
+        "threshold": 4.5,
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "foreground": "sys.text.on-interactive",
+          "background": "sys.surface.interactive.primary.default"
+        }
+      },
+      {
+        "ruleId": "text-on-interactive",
+        "checkType": "contrast",
+        "target": "sys.text.on-interactive on sys.surface.interactive.primary.hover",
+        "summary": "Interactive text on hover states must remain AA compliant.",
+        "ratio": 7.1,
+        "threshold": 4.5,
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "foreground": "sys.text.on-interactive",
+          "background": "sys.surface.interactive.primary.hover"
+        }
+      },
+      {
+        "ruleId": "text-on-interactive",
+        "checkType": "contrast",
+        "target": "sys.text.on-interactive on sys.surface.interactive.primary.pressed",
+        "summary": "Interactive text on pressed states must remain AA compliant.",
+        "ratio": 8.57,
+        "threshold": 4.5,
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "foreground": "sys.text.on-interactive",
+          "background": "sys.surface.interactive.primary.pressed"
+        }
+      },
+      {
+        "ruleId": "text-on-interactive",
+        "checkType": "contrast",
+        "target": "theme-dark.text.on-interactive on theme-dark.surface.interactive.primary.default",
+        "summary": "Dark theme interactive text on default surfaces must meet 4.5:1 contrast.",
+        "ratio": 7.88,
+        "threshold": 4.5,
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "foreground": "theme-dark.text.on-interactive",
+          "background": "theme-dark.surface.interactive.primary.default"
+        }
+      },
+      {
+        "ruleId": "text-on-interactive",
+        "checkType": "contrast",
+        "target": "theme-dark.text.on-interactive on theme-dark.surface.interactive.primary.hover",
+        "summary": "Dark theme interactive text on hover surfaces must remain AA compliant.",
+        "ratio": 5.56,
+        "threshold": 4.5,
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "foreground": "theme-dark.text.on-interactive",
+          "background": "theme-dark.surface.interactive.primary.hover"
+        }
+      },
+      {
+        "ruleId": "text-on-interactive",
+        "checkType": "contrast",
+        "target": "theme-dark.text.on-interactive on theme-dark.surface.interactive.primary.pressed",
+        "summary": "Dark theme interactive text on pressed surfaces must remain AA compliant.",
+        "ratio": 4.68,
+        "threshold": 4.5,
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "foreground": "theme-dark.text.on-interactive",
+          "background": "theme-dark.surface.interactive.primary.pressed"
+        }
+      }
+    ],
+    "guardrails": [
+      {
+        "ruleId": "guardrail:filled_surface_light_hover",
+        "checkType": "guardrail",
+        "target": "Filled Surface (Light) • Hover",
+        "summary": "Derived token theme.surface.interactive.primary.hover must remain within guardrail Δ ranges of theme.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using sys.text.on-interactive.",
+        "pass": true,
+        "failureSummary": "",
+        "ratio": 7.1,
+        "threshold": 4.5,
+        "metrics": {
+          "deltaL": -0.1,
+          "deltaC": 0.015,
+          "deltaH": 0,
+          "baseToken": "theme.surface.interactive.primary.default",
+          "derivedToken": "theme.surface.interactive.primary.hover",
+          "baseOklch": {
+            "l": 0.5631,
+            "c": 0.1717,
+            "h": 0
+          },
+          "derivedOklch": {
+            "l": 0.4631,
+            "c": 0.1867,
+            "h": 0
+          },
+          "contrast": {
+            "ratio": 7.1,
+            "threshold": 4.5,
+            "baseRatio": 4.56,
+            "foreground": "sys.text.on-interactive",
+            "background": "theme.surface.interactive.primary.hover"
+          }
+        },
+        "details": {
+          "usage": "filled_surface",
+          "theme": "light",
+          "state": "hover",
+          "checks": [
+            {
+              "type": "deltaL",
+              "pass": true,
+              "actual": -0.10000000000000003,
+              "expectedMin": -0.12,
+              "expectedMax": -0.08
+            },
+            {
+              "type": "deltaC",
+              "pass": true,
+              "actual": 0.015000000000000013,
+              "expectedMin": 0.01,
+              "expectedMax": 0.02
+            },
+            {
+              "type": "deltaH",
+              "pass": true,
+              "actual": 0,
+              "expectedMax": 1
+            },
+            {
+              "type": "contrast",
+              "pass": true,
+              "ratio": 7.09942286486706,
+              "threshold": 4.5,
+              "foreground": "sys.text.on-interactive",
+              "background": "theme.surface.interactive.primary.hover"
+            }
+          ]
+        }
+      },
+      {
+        "ruleId": "guardrail:filled_surface_light_pressed",
+        "checkType": "guardrail",
+        "target": "Filled Surface (Light) • Pressed",
+        "summary": "Derived token theme.surface.interactive.primary.pressed must remain within guardrail Δ ranges of theme.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using sys.text.on-interactive.",
+        "pass": true,
+        "failureSummary": "",
+        "ratio": 8.57,
+        "threshold": 4.5,
+        "metrics": {
+          "deltaL": -0.14,
+          "deltaC": 0.025,
+          "deltaH": 0,
+          "baseToken": "theme.surface.interactive.primary.default",
+          "derivedToken": "theme.surface.interactive.primary.pressed",
+          "baseOklch": {
+            "l": 0.5631,
+            "c": 0.1717,
+            "h": 0
+          },
+          "derivedOklch": {
+            "l": 0.4231,
+            "c": 0.1967,
+            "h": 0
+          },
+          "contrast": {
+            "ratio": 8.57,
+            "threshold": 4.5,
+            "baseRatio": 4.56,
+            "foreground": "sys.text.on-interactive",
+            "background": "theme.surface.interactive.primary.pressed"
+          }
+        },
+        "details": {
+          "usage": "filled_surface",
+          "theme": "light",
+          "state": "pressed",
+          "checks": [
+            {
+              "type": "deltaL",
+              "pass": true,
+              "actual": -0.14000000000000007,
+              "expectedMin": -0.15,
+              "expectedMax": -0.12
+            },
+            {
+              "type": "deltaC",
+              "pass": true,
+              "actual": 0.025000000000000022,
+              "expectedMin": 0.02,
+              "expectedMax": 0.03
+            },
+            {
+              "type": "deltaH",
+              "pass": true,
+              "actual": 0,
+              "expectedMax": 1
+            },
+            {
+              "type": "contrast",
+              "pass": true,
+              "ratio": 8.574017557234754,
+              "threshold": 4.5,
+              "foreground": "sys.text.on-interactive",
+              "background": "theme.surface.interactive.primary.pressed"
+            }
+          ]
+        }
+      },
+      {
+        "ruleId": "guardrail:filled_surface_dark_hover",
+        "checkType": "guardrail",
+        "target": "Filled Surface (Dark) • Hover",
+        "summary": "Derived token theme-dark.surface.interactive.primary.hover must remain within guardrail Δ ranges of theme-dark.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using theme-dark.text.on-interactive.",
+        "pass": true,
+        "failureSummary": "",
+        "ratio": 5.56,
+        "threshold": 4.5,
+        "metrics": {
+          "deltaL": 0.08,
+          "deltaC": 0.01,
+          "deltaH": 0,
+          "baseToken": "theme-dark.surface.interactive.primary.default",
+          "derivedToken": "theme-dark.surface.interactive.primary.hover",
+          "baseOklch": {
+            "l": 0.43,
+            "c": 0.17,
+            "h": 0
+          },
+          "derivedOklch": {
+            "l": 0.51,
+            "c": 0.18,
+            "h": 0
+          },
+          "contrast": {
+            "ratio": 5.56,
+            "threshold": 4.5,
+            "baseRatio": 7.88,
+            "foreground": "theme-dark.text.on-interactive",
+            "background": "theme-dark.surface.interactive.primary.hover"
+          }
+        },
+        "details": {
+          "usage": "filled_surface",
+          "theme": "dark",
+          "state": "hover",
+          "checks": [
+            {
+              "type": "deltaL",
+              "pass": true,
+              "actual": 0.08000000000000002,
+              "expectedMin": 0.08,
+              "expectedMax": 0.12
+            },
+            {
+              "type": "deltaC",
+              "pass": true,
+              "actual": 0.009999999999999981,
+              "expectedMin": 0.01,
+              "expectedMax": 0.02
+            },
+            {
+              "type": "deltaH",
+              "pass": true,
+              "actual": 0,
+              "expectedMax": 1
+            },
+            {
+              "type": "contrast",
+              "pass": true,
+              "ratio": 5.562279671457898,
+              "threshold": 4.5,
+              "foreground": "theme-dark.text.on-interactive",
+              "background": "theme-dark.surface.interactive.primary.hover"
+            }
+          ]
+        }
+      },
+      {
+        "ruleId": "guardrail:filled_surface_dark_pressed",
+        "checkType": "guardrail",
+        "target": "Filled Surface (Dark) • Pressed",
+        "summary": "Derived token theme-dark.surface.interactive.primary.pressed must remain within guardrail Δ ranges of theme-dark.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using theme-dark.text.on-interactive.",
+        "pass": true,
+        "failureSummary": "",
+        "ratio": 4.68,
+        "threshold": 4.5,
+        "metrics": {
+          "deltaL": 0.12,
+          "deltaC": 0.02,
+          "deltaH": 0,
+          "baseToken": "theme-dark.surface.interactive.primary.default",
+          "derivedToken": "theme-dark.surface.interactive.primary.pressed",
+          "baseOklch": {
+            "l": 0.43,
+            "c": 0.17,
+            "h": 0
+          },
+          "derivedOklch": {
+            "l": 0.55,
+            "c": 0.19,
+            "h": 0
+          },
+          "contrast": {
+            "ratio": 4.68,
+            "threshold": 4.5,
+            "baseRatio": 7.88,
+            "foreground": "theme-dark.text.on-interactive",
+            "background": "theme-dark.surface.interactive.primary.pressed"
+          }
+        },
+        "details": {
+          "usage": "filled_surface",
+          "theme": "dark",
+          "state": "pressed",
+          "checks": [
+            {
+              "type": "deltaL",
+              "pass": true,
+              "actual": 0.12000000000000005,
+              "expectedMin": 0.12,
+              "expectedMax": 0.15
+            },
+            {
+              "type": "deltaC",
+              "pass": true,
+              "actual": 0.01999999999999999,
+              "expectedMin": 0.02,
+              "expectedMax": 0.03
+            },
+            {
+              "type": "deltaH",
+              "pass": true,
+              "actual": 0,
+              "expectedMax": 1
+            },
+            {
+              "type": "contrast",
+              "pass": true,
+              "ratio": 4.679086258103043,
+              "threshold": 4.5,
+              "foreground": "theme-dark.text.on-interactive",
+              "background": "theme-dark.surface.interactive.primary.pressed"
+            }
+          ]
+        }
+      },
+      {
+        "ruleId": "guardrail:filled_surface_sys_hover",
+        "checkType": "guardrail",
+        "target": "Filled Surface (System) • Hover",
+        "summary": "Derived token sys.surface.interactive.primary.hover must remain within guardrail Δ ranges of sys.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using sys.text.on-interactive.",
+        "pass": true,
+        "failureSummary": "",
+        "ratio": 7.1,
+        "threshold": 4.5,
+        "metrics": {
+          "deltaL": -0.1,
+          "deltaC": 0.015,
+          "deltaH": 0,
+          "baseToken": "sys.surface.interactive.primary.default",
+          "derivedToken": "sys.surface.interactive.primary.hover",
+          "baseOklch": {
+            "l": 0.5631,
+            "c": 0.1717,
+            "h": 0
+          },
+          "derivedOklch": {
+            "l": 0.4631,
+            "c": 0.1867,
+            "h": 0
+          },
+          "contrast": {
+            "ratio": 7.1,
+            "threshold": 4.5,
+            "baseRatio": 4.56,
+            "foreground": "sys.text.on-interactive",
+            "background": "sys.surface.interactive.primary.hover"
+          }
+        },
+        "details": {
+          "usage": "filled_surface",
+          "theme": "system",
+          "state": "hover",
+          "checks": [
+            {
+              "type": "deltaL",
+              "pass": true,
+              "actual": -0.10000000000000003,
+              "expectedMin": -0.12,
+              "expectedMax": -0.08
+            },
+            {
+              "type": "deltaC",
+              "pass": true,
+              "actual": 0.015000000000000013,
+              "expectedMin": 0.01,
+              "expectedMax": 0.02
+            },
+            {
+              "type": "deltaH",
+              "pass": true,
+              "actual": 0,
+              "expectedMax": 1
+            },
+            {
+              "type": "contrast",
+              "pass": true,
+              "ratio": 7.09942286486706,
+              "threshold": 4.5,
+              "foreground": "sys.text.on-interactive",
+              "background": "sys.surface.interactive.primary.hover"
+            }
+          ]
+        }
+      },
+      {
+        "ruleId": "guardrail:filled_surface_sys_pressed",
+        "checkType": "guardrail",
+        "target": "Filled Surface (System) • Pressed",
+        "summary": "Derived token sys.surface.interactive.primary.pressed must remain within guardrail Δ ranges of sys.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using sys.text.on-interactive.",
+        "pass": true,
+        "failureSummary": "",
+        "ratio": 8.57,
+        "threshold": 4.5,
+        "metrics": {
+          "deltaL": -0.14,
+          "deltaC": 0.025,
+          "deltaH": 0,
+          "baseToken": "sys.surface.interactive.primary.default",
+          "derivedToken": "sys.surface.interactive.primary.pressed",
+          "baseOklch": {
+            "l": 0.5631,
+            "c": 0.1717,
+            "h": 0
+          },
+          "derivedOklch": {
+            "l": 0.4231,
+            "c": 0.1967,
+            "h": 0
+          },
+          "contrast": {
+            "ratio": 8.57,
+            "threshold": 4.5,
+            "baseRatio": 4.56,
+            "foreground": "sys.text.on-interactive",
+            "background": "sys.surface.interactive.primary.pressed"
+          }
+        },
+        "details": {
+          "usage": "filled_surface",
+          "theme": "system",
+          "state": "pressed",
+          "checks": [
+            {
+              "type": "deltaL",
+              "pass": true,
+              "actual": -0.14000000000000007,
+              "expectedMin": -0.15,
+              "expectedMax": -0.12
+            },
+            {
+              "type": "deltaC",
+              "pass": true,
+              "actual": 0.025000000000000022,
+              "expectedMin": 0.02,
+              "expectedMax": 0.03
+            },
+            {
+              "type": "deltaH",
+              "pass": true,
+              "actual": 0,
+              "expectedMax": 1
+            },
+            {
+              "type": "contrast",
+              "pass": true,
+              "ratio": 8.574017557234754,
+              "threshold": 4.5,
+              "foreground": "sys.text.on-interactive",
+              "background": "sys.surface.interactive.primary.pressed"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "results": [
+    {
+      "ruleId": "text-on-surface",
+      "checkType": "contrast",
+      "target": "sys.text.primary on sys.surface.canvas",
+      "summary": "Primary text on the default surface must meet 4.5:1 contrast.",
+      "ratio": 12.71,
+      "threshold": 4.5,
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "foreground": "sys.text.primary",
+        "background": "sys.surface.canvas"
+      }
+    },
+    {
+      "ruleId": "text-on-surface",
+      "checkType": "contrast",
+      "target": "theme-dark.text.primary on theme-dark.surface.canvas",
+      "summary": "Dark theme primary text on canvas must meet 4.5:1 contrast.",
+      "ratio": 14.33,
+      "threshold": 4.5,
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "foreground": "theme-dark.text.primary",
+        "background": "theme-dark.surface.canvas"
+      }
+    },
+    {
+      "ruleId": "text-on-surface",
+      "checkType": "contrast",
+      "target": "theme-dark.text.primary on theme-dark.surface.raised",
+      "summary": "Dark theme primary text on raised surfaces must meet 4.5:1 contrast.",
+      "ratio": 12.6,
+      "threshold": 4.5,
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "foreground": "theme-dark.text.primary",
+        "background": "theme-dark.surface.raised"
+      }
+    },
+    {
+      "ruleId": "text-on-surface",
+      "checkType": "contrast",
+      "target": "theme-dark.text.primary on theme-dark.surface.subtle",
+      "summary": "Dark theme primary text on subtle surfaces must meet 4.5:1 contrast.",
+      "ratio": 10.43,
+      "threshold": 4.5,
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "foreground": "theme-dark.text.primary",
+        "background": "theme-dark.surface.subtle"
+      }
+    },
+    {
+      "ruleId": "inverse-text",
+      "checkType": "contrast",
+      "target": "sys.text.inverse on sys.surface.inverse",
+      "summary": "Inverse text must meet 4.5:1 contrast on inverse surfaces.",
+      "ratio": 12.36,
+      "threshold": 4.5,
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "foreground": "sys.text.inverse",
+        "background": "sys.surface.inverse"
+      }
+    },
+    {
+      "ruleId": "text-on-surface",
+      "checkType": "contrast",
+      "target": "sys.text.primary on sys.surface.raised",
+      "summary": "Primary text on raised surfaces must meet 4.5:1 contrast.",
+      "ratio": 12.36,
+      "threshold": 4.5,
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "foreground": "sys.text.primary",
+        "background": "sys.surface.raised"
+      }
+    },
+    {
+      "ruleId": "text-on-surface",
+      "checkType": "contrast",
+      "target": "sys.text.primary on sys.surface.subtle",
+      "summary": "Primary text on subtle surfaces must meet 4.5:1 contrast.",
+      "ratio": 10.99,
+      "threshold": 4.5,
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "foreground": "sys.text.primary",
+        "background": "sys.surface.subtle"
+      }
+    },
+    {
+      "ruleId": "text-on-surface",
+      "checkType": "contrast",
+      "target": "sys.text.secondary on sys.surface.canvas",
+      "summary": "Secondary headings on default surfaces must meet 4.5:1 contrast.",
+      "ratio": 5.6,
+      "threshold": 4.5,
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "foreground": "sys.text.secondary",
+        "background": "sys.surface.canvas"
+      }
+    },
+    {
+      "ruleId": "text-on-surface",
+      "checkType": "contrast",
+      "target": "sys.text.muted on sys.surface.canvas",
+      "summary": "Muted body text on default surfaces must meet 4.5:1 contrast.",
+      "ratio": 4.56,
+      "threshold": 4.5,
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "foreground": "sys.text.muted",
+        "background": "sys.surface.canvas"
+      }
+    },
+    {
+      "ruleId": "text-on-surface",
+      "checkType": "contrast",
+      "target": "sys.text.accent on sys.surface.canvas",
+      "summary": "Inline links on default surfaces must meet 4.5:1 contrast.",
+      "ratio": 7.3,
+      "threshold": 4.5,
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "foreground": "sys.text.accent",
+        "background": "sys.surface.canvas"
+      }
+    },
+    {
+      "ruleId": "status-text",
+      "checkType": "contrast",
+      "target": "sys.status.info.text on sys.status.info.surface",
+      "summary": "Info text inside info surfaces must meet 4.5:1 contrast.",
+      "ratio": 9.2,
+      "threshold": 4.5,
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "foreground": "sys.status.info.text",
+        "background": "sys.status.info.surface"
+      }
+    },
+    {
+      "ruleId": "status-text",
+      "checkType": "contrast",
+      "target": "sys.status.success.text on sys.status.success.surface",
+      "summary": "Success text inside success surfaces must meet 4.5:1 contrast.",
+      "ratio": 7.22,
+      "threshold": 4.5,
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "foreground": "sys.status.success.text",
+        "background": "sys.status.success.surface"
+      }
+    },
+    {
+      "ruleId": "status-text",
+      "checkType": "contrast",
+      "target": "sys.status.warning.text on sys.status.warning.surface",
+      "summary": "Warning text inside warning surfaces must meet 4.5:1 contrast.",
+      "ratio": 5.94,
+      "threshold": 4.5,
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "foreground": "sys.status.warning.text",
+        "background": "sys.status.warning.surface"
+      }
+    },
+    {
+      "ruleId": "status-text",
+      "checkType": "contrast",
+      "target": "sys.status.critical.text on sys.status.critical.surface",
+      "summary": "Critical text inside critical surfaces must meet 4.5:1 contrast.",
+      "ratio": 6.8,
+      "threshold": 4.5,
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "foreground": "sys.status.critical.text",
+        "background": "sys.status.critical.surface"
+      }
+    },
+    {
+      "ruleId": "status-icon",
+      "checkType": "contrast",
+      "target": "sys.status.info.icon on sys.status.info.surface",
+      "summary": "Info icons inside info surfaces must meet 3:1 contrast.",
+      "ratio": 4.64,
+      "threshold": 3,
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "foreground": "sys.status.info.icon",
+        "background": "sys.status.info.surface"
+      }
+    },
+    {
+      "ruleId": "status-icon",
+      "checkType": "contrast",
+      "target": "sys.status.success.icon on sys.status.success.surface",
+      "summary": "Success icons inside success surfaces must meet 3:1 contrast.",
+      "ratio": 3.47,
+      "threshold": 3,
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "foreground": "sys.status.success.icon",
+        "background": "sys.status.success.surface"
+      }
+    },
+    {
+      "ruleId": "status-icon",
+      "checkType": "contrast",
+      "target": "sys.status.warning.icon on sys.status.warning.surface",
+      "summary": "Warning icons inside warning surfaces must meet 3:1 contrast.",
+      "ratio": 3,
+      "threshold": 3,
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "foreground": "sys.status.warning.icon",
+        "background": "sys.status.warning.surface"
+      }
+    },
+    {
+      "ruleId": "status-icon",
+      "checkType": "contrast",
+      "target": "sys.status.critical.icon on sys.status.critical.surface",
+      "summary": "Critical icons inside critical surfaces must meet 3:1 contrast.",
+      "ratio": 3.84,
+      "threshold": 3,
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "foreground": "sys.status.critical.icon",
+        "background": "sys.status.critical.surface"
+      }
+    },
+    {
+      "ruleId": "status-text",
+      "checkType": "contrast",
+      "target": "sys.status.accent.text on sys.status.accent.surface",
+      "summary": "Accent text inside accent surfaces must meet 4.5:1 contrast.",
+      "ratio": 8.01,
+      "threshold": 4.5,
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "foreground": "sys.status.accent.text",
+        "background": "sys.status.accent.surface"
+      }
+    },
+    {
+      "ruleId": "status-icon",
+      "checkType": "contrast",
+      "target": "sys.status.accent.icon on sys.status.accent.surface",
+      "summary": "Accent icons inside accent surfaces must meet 3:1 contrast.",
+      "ratio": 6.63,
+      "threshold": 3,
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "foreground": "sys.status.accent.icon",
+        "background": "sys.status.accent.surface"
+      }
+    },
+    {
+      "ruleId": "status-text",
+      "checkType": "contrast",
+      "target": "sys.status.neutral.text on sys.status.neutral.surface",
+      "summary": "Neutral text inside neutral surfaces must meet 4.5:1 contrast.",
+      "ratio": 7.9,
+      "threshold": 4.5,
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "foreground": "sys.status.neutral.text",
+        "background": "sys.status.neutral.surface"
+      }
+    },
+    {
+      "ruleId": "status-icon",
+      "checkType": "contrast",
+      "target": "sys.status.neutral.icon on sys.status.neutral.surface",
+      "summary": "Neutral icons inside neutral surfaces must meet 3:1 contrast.",
+      "ratio": 5.44,
+      "threshold": 3,
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "foreground": "sys.status.neutral.icon",
+        "background": "sys.status.neutral.surface"
+      }
+    },
+    {
+      "ruleId": "focus-ring",
+      "checkType": "contrast",
+      "target": "sys.focus.ring.outer on sys.surface.canvas",
+      "summary": "Default focus ring must meet 3:1 contrast against the default surface.",
+      "ratio": 12.71,
+      "threshold": 3,
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "foreground": "sys.focus.ring.outer",
+        "background": "sys.surface.canvas"
+      }
+    },
+    {
+      "ruleId": "focus-ring",
+      "checkType": "contrast",
+      "target": "sys.focus.ring.outer on sys.surface.raised",
+      "summary": "Default focus ring must meet 3:1 contrast against raised surfaces.",
+      "ratio": 12.36,
+      "threshold": 3,
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "foreground": "sys.focus.ring.outer",
+        "background": "sys.surface.raised"
+      }
+    },
+    {
+      "ruleId": "focus-ring",
+      "checkType": "contrast",
+      "target": "sys.focus.ring.outer on sys.surface.subtle",
+      "summary": "Default focus ring must meet 3:1 contrast against subtle surfaces.",
+      "ratio": 10.99,
+      "threshold": 3,
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "foreground": "sys.focus.ring.outer",
+        "background": "sys.surface.subtle"
+      }
+    },
+    {
+      "ruleId": "text-on-interactive",
+      "checkType": "contrast",
+      "target": "sys.text.on-interactive on sys.surface.interactive.primary.default",
+      "summary": "Interactive text on the default primary surface must meet 4.5:1 contrast.",
+      "ratio": 4.56,
+      "threshold": 4.5,
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "foreground": "sys.text.on-interactive",
+        "background": "sys.surface.interactive.primary.default"
+      }
+    },
+    {
+      "ruleId": "text-on-interactive",
+      "checkType": "contrast",
+      "target": "sys.text.on-interactive on sys.surface.interactive.primary.hover",
+      "summary": "Interactive text on hover states must remain AA compliant.",
+      "ratio": 7.1,
+      "threshold": 4.5,
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "foreground": "sys.text.on-interactive",
+        "background": "sys.surface.interactive.primary.hover"
+      }
+    },
+    {
+      "ruleId": "text-on-interactive",
+      "checkType": "contrast",
+      "target": "sys.text.on-interactive on sys.surface.interactive.primary.pressed",
+      "summary": "Interactive text on pressed states must remain AA compliant.",
+      "ratio": 8.57,
+      "threshold": 4.5,
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "foreground": "sys.text.on-interactive",
+        "background": "sys.surface.interactive.primary.pressed"
+      }
+    },
+    {
+      "ruleId": "text-on-interactive",
+      "checkType": "contrast",
+      "target": "theme-dark.text.on-interactive on theme-dark.surface.interactive.primary.default",
+      "summary": "Dark theme interactive text on default surfaces must meet 4.5:1 contrast.",
+      "ratio": 7.88,
+      "threshold": 4.5,
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "foreground": "theme-dark.text.on-interactive",
+        "background": "theme-dark.surface.interactive.primary.default"
+      }
+    },
+    {
+      "ruleId": "text-on-interactive",
+      "checkType": "contrast",
+      "target": "theme-dark.text.on-interactive on theme-dark.surface.interactive.primary.hover",
+      "summary": "Dark theme interactive text on hover surfaces must remain AA compliant.",
+      "ratio": 5.56,
+      "threshold": 4.5,
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "foreground": "theme-dark.text.on-interactive",
+        "background": "theme-dark.surface.interactive.primary.hover"
+      }
+    },
+    {
+      "ruleId": "text-on-interactive",
+      "checkType": "contrast",
+      "target": "theme-dark.text.on-interactive on theme-dark.surface.interactive.primary.pressed",
+      "summary": "Dark theme interactive text on pressed surfaces must remain AA compliant.",
+      "ratio": 4.68,
+      "threshold": 4.5,
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "foreground": "theme-dark.text.on-interactive",
+        "background": "theme-dark.surface.interactive.primary.pressed"
+      }
+    },
+    {
+      "ruleId": "guardrail:filled_surface_light_hover",
+      "checkType": "guardrail",
+      "target": "Filled Surface (Light) • Hover",
+      "summary": "Derived token theme.surface.interactive.primary.hover must remain within guardrail Δ ranges of theme.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using sys.text.on-interactive.",
+      "pass": true,
+      "failureSummary": "",
+      "ratio": 7.1,
+      "threshold": 4.5,
+      "metrics": {
+        "deltaL": -0.1,
+        "deltaC": 0.015,
+        "deltaH": 0,
+        "baseToken": "theme.surface.interactive.primary.default",
+        "derivedToken": "theme.surface.interactive.primary.hover",
+        "baseOklch": {
+          "l": 0.5631,
+          "c": 0.1717,
+          "h": 0
+        },
+        "derivedOklch": {
+          "l": 0.4631,
+          "c": 0.1867,
+          "h": 0
+        },
+        "contrast": {
+          "ratio": 7.1,
+          "threshold": 4.5,
+          "baseRatio": 4.56,
+          "foreground": "sys.text.on-interactive",
+          "background": "theme.surface.interactive.primary.hover"
+        }
+      },
+      "details": {
+        "usage": "filled_surface",
+        "theme": "light",
+        "state": "hover",
+        "checks": [
+          {
+            "type": "deltaL",
+            "pass": true,
+            "actual": -0.10000000000000003,
+            "expectedMin": -0.12,
+            "expectedMax": -0.08
+          },
+          {
+            "type": "deltaC",
+            "pass": true,
+            "actual": 0.015000000000000013,
+            "expectedMin": 0.01,
+            "expectedMax": 0.02
+          },
+          {
+            "type": "deltaH",
+            "pass": true,
+            "actual": 0,
+            "expectedMax": 1
+          },
+          {
+            "type": "contrast",
+            "pass": true,
+            "ratio": 7.09942286486706,
+            "threshold": 4.5,
+            "foreground": "sys.text.on-interactive",
+            "background": "theme.surface.interactive.primary.hover"
+          }
+        ]
+      }
+    },
+    {
+      "ruleId": "guardrail:filled_surface_light_pressed",
+      "checkType": "guardrail",
+      "target": "Filled Surface (Light) • Pressed",
+      "summary": "Derived token theme.surface.interactive.primary.pressed must remain within guardrail Δ ranges of theme.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using sys.text.on-interactive.",
+      "pass": true,
+      "failureSummary": "",
+      "ratio": 8.57,
+      "threshold": 4.5,
+      "metrics": {
+        "deltaL": -0.14,
+        "deltaC": 0.025,
+        "deltaH": 0,
+        "baseToken": "theme.surface.interactive.primary.default",
+        "derivedToken": "theme.surface.interactive.primary.pressed",
+        "baseOklch": {
+          "l": 0.5631,
+          "c": 0.1717,
+          "h": 0
+        },
+        "derivedOklch": {
+          "l": 0.4231,
+          "c": 0.1967,
+          "h": 0
+        },
+        "contrast": {
+          "ratio": 8.57,
+          "threshold": 4.5,
+          "baseRatio": 4.56,
+          "foreground": "sys.text.on-interactive",
+          "background": "theme.surface.interactive.primary.pressed"
+        }
+      },
+      "details": {
+        "usage": "filled_surface",
+        "theme": "light",
+        "state": "pressed",
+        "checks": [
+          {
+            "type": "deltaL",
+            "pass": true,
+            "actual": -0.14000000000000007,
+            "expectedMin": -0.15,
+            "expectedMax": -0.12
+          },
+          {
+            "type": "deltaC",
+            "pass": true,
+            "actual": 0.025000000000000022,
+            "expectedMin": 0.02,
+            "expectedMax": 0.03
+          },
+          {
+            "type": "deltaH",
+            "pass": true,
+            "actual": 0,
+            "expectedMax": 1
+          },
+          {
+            "type": "contrast",
+            "pass": true,
+            "ratio": 8.574017557234754,
+            "threshold": 4.5,
+            "foreground": "sys.text.on-interactive",
+            "background": "theme.surface.interactive.primary.pressed"
+          }
+        ]
+      }
+    },
+    {
+      "ruleId": "guardrail:filled_surface_dark_hover",
+      "checkType": "guardrail",
+      "target": "Filled Surface (Dark) • Hover",
+      "summary": "Derived token theme-dark.surface.interactive.primary.hover must remain within guardrail Δ ranges of theme-dark.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using theme-dark.text.on-interactive.",
+      "pass": true,
+      "failureSummary": "",
+      "ratio": 5.56,
+      "threshold": 4.5,
+      "metrics": {
+        "deltaL": 0.08,
+        "deltaC": 0.01,
+        "deltaH": 0,
+        "baseToken": "theme-dark.surface.interactive.primary.default",
+        "derivedToken": "theme-dark.surface.interactive.primary.hover",
+        "baseOklch": {
+          "l": 0.43,
+          "c": 0.17,
+          "h": 0
+        },
+        "derivedOklch": {
+          "l": 0.51,
+          "c": 0.18,
+          "h": 0
+        },
+        "contrast": {
+          "ratio": 5.56,
+          "threshold": 4.5,
+          "baseRatio": 7.88,
+          "foreground": "theme-dark.text.on-interactive",
+          "background": "theme-dark.surface.interactive.primary.hover"
+        }
+      },
+      "details": {
+        "usage": "filled_surface",
+        "theme": "dark",
+        "state": "hover",
+        "checks": [
+          {
+            "type": "deltaL",
+            "pass": true,
+            "actual": 0.08000000000000002,
+            "expectedMin": 0.08,
+            "expectedMax": 0.12
+          },
+          {
+            "type": "deltaC",
+            "pass": true,
+            "actual": 0.009999999999999981,
+            "expectedMin": 0.01,
+            "expectedMax": 0.02
+          },
+          {
+            "type": "deltaH",
+            "pass": true,
+            "actual": 0,
+            "expectedMax": 1
+          },
+          {
+            "type": "contrast",
+            "pass": true,
+            "ratio": 5.562279671457898,
+            "threshold": 4.5,
+            "foreground": "theme-dark.text.on-interactive",
+            "background": "theme-dark.surface.interactive.primary.hover"
+          }
+        ]
+      }
+    },
+    {
+      "ruleId": "guardrail:filled_surface_dark_pressed",
+      "checkType": "guardrail",
+      "target": "Filled Surface (Dark) • Pressed",
+      "summary": "Derived token theme-dark.surface.interactive.primary.pressed must remain within guardrail Δ ranges of theme-dark.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using theme-dark.text.on-interactive.",
+      "pass": true,
+      "failureSummary": "",
+      "ratio": 4.68,
+      "threshold": 4.5,
+      "metrics": {
+        "deltaL": 0.12,
+        "deltaC": 0.02,
+        "deltaH": 0,
+        "baseToken": "theme-dark.surface.interactive.primary.default",
+        "derivedToken": "theme-dark.surface.interactive.primary.pressed",
+        "baseOklch": {
+          "l": 0.43,
+          "c": 0.17,
+          "h": 0
+        },
+        "derivedOklch": {
+          "l": 0.55,
+          "c": 0.19,
+          "h": 0
+        },
+        "contrast": {
+          "ratio": 4.68,
+          "threshold": 4.5,
+          "baseRatio": 7.88,
+          "foreground": "theme-dark.text.on-interactive",
+          "background": "theme-dark.surface.interactive.primary.pressed"
+        }
+      },
+      "details": {
+        "usage": "filled_surface",
+        "theme": "dark",
+        "state": "pressed",
+        "checks": [
+          {
+            "type": "deltaL",
+            "pass": true,
+            "actual": 0.12000000000000005,
+            "expectedMin": 0.12,
+            "expectedMax": 0.15
+          },
+          {
+            "type": "deltaC",
+            "pass": true,
+            "actual": 0.01999999999999999,
+            "expectedMin": 0.02,
+            "expectedMax": 0.03
+          },
+          {
+            "type": "deltaH",
+            "pass": true,
+            "actual": 0,
+            "expectedMax": 1
+          },
+          {
+            "type": "contrast",
+            "pass": true,
+            "ratio": 4.679086258103043,
+            "threshold": 4.5,
+            "foreground": "theme-dark.text.on-interactive",
+            "background": "theme-dark.surface.interactive.primary.pressed"
+          }
+        ]
+      }
+    },
+    {
+      "ruleId": "guardrail:filled_surface_sys_hover",
+      "checkType": "guardrail",
+      "target": "Filled Surface (System) • Hover",
+      "summary": "Derived token sys.surface.interactive.primary.hover must remain within guardrail Δ ranges of sys.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using sys.text.on-interactive.",
+      "pass": true,
+      "failureSummary": "",
+      "ratio": 7.1,
+      "threshold": 4.5,
+      "metrics": {
+        "deltaL": -0.1,
+        "deltaC": 0.015,
+        "deltaH": 0,
+        "baseToken": "sys.surface.interactive.primary.default",
+        "derivedToken": "sys.surface.interactive.primary.hover",
+        "baseOklch": {
+          "l": 0.5631,
+          "c": 0.1717,
+          "h": 0
+        },
+        "derivedOklch": {
+          "l": 0.4631,
+          "c": 0.1867,
+          "h": 0
+        },
+        "contrast": {
+          "ratio": 7.1,
+          "threshold": 4.5,
+          "baseRatio": 4.56,
+          "foreground": "sys.text.on-interactive",
+          "background": "sys.surface.interactive.primary.hover"
+        }
+      },
+      "details": {
+        "usage": "filled_surface",
+        "theme": "system",
+        "state": "hover",
+        "checks": [
+          {
+            "type": "deltaL",
+            "pass": true,
+            "actual": -0.10000000000000003,
+            "expectedMin": -0.12,
+            "expectedMax": -0.08
+          },
+          {
+            "type": "deltaC",
+            "pass": true,
+            "actual": 0.015000000000000013,
+            "expectedMin": 0.01,
+            "expectedMax": 0.02
+          },
+          {
+            "type": "deltaH",
+            "pass": true,
+            "actual": 0,
+            "expectedMax": 1
+          },
+          {
+            "type": "contrast",
+            "pass": true,
+            "ratio": 7.09942286486706,
+            "threshold": 4.5,
+            "foreground": "sys.text.on-interactive",
+            "background": "sys.surface.interactive.primary.hover"
+          }
+        ]
+      }
+    },
+    {
+      "ruleId": "guardrail:filled_surface_sys_pressed",
+      "checkType": "guardrail",
+      "target": "Filled Surface (System) • Pressed",
+      "summary": "Derived token sys.surface.interactive.primary.pressed must remain within guardrail Δ ranges of sys.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using sys.text.on-interactive.",
+      "pass": true,
+      "failureSummary": "",
+      "ratio": 8.57,
+      "threshold": 4.5,
+      "metrics": {
+        "deltaL": -0.14,
+        "deltaC": 0.025,
+        "deltaH": 0,
+        "baseToken": "sys.surface.interactive.primary.default",
+        "derivedToken": "sys.surface.interactive.primary.pressed",
+        "baseOklch": {
+          "l": 0.5631,
+          "c": 0.1717,
+          "h": 0
+        },
+        "derivedOklch": {
+          "l": 0.4231,
+          "c": 0.1967,
+          "h": 0
+        },
+        "contrast": {
+          "ratio": 8.57,
+          "threshold": 4.5,
+          "baseRatio": 4.56,
+          "foreground": "sys.text.on-interactive",
+          "background": "sys.surface.interactive.primary.pressed"
+        }
+      },
+      "details": {
+        "usage": "filled_surface",
+        "theme": "system",
+        "state": "pressed",
+        "checks": [
+          {
+            "type": "deltaL",
+            "pass": true,
+            "actual": -0.14000000000000007,
+            "expectedMin": -0.15,
+            "expectedMax": -0.12
+          },
+          {
+            "type": "deltaC",
+            "pass": true,
+            "actual": 0.025000000000000022,
+            "expectedMin": 0.02,
+            "expectedMax": 0.03
+          },
+          {
+            "type": "deltaH",
+            "pass": true,
+            "actual": 0,
+            "expectedMax": 1
+          },
+          {
+            "type": "contrast",
+            "pass": true,
+            "ratio": 8.574017557234754,
+            "threshold": 4.5,
+            "foreground": "sys.text.on-interactive",
+            "background": "sys.surface.interactive.primary.pressed"
+          }
+        ]
+      }
+    }
+  ]
+}

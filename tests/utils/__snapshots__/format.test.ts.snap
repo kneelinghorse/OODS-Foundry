@@ -1,0 +1,19 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`format utilities > produces stable formatted dates > formatDate 1`] = `
+{
+  "dateInstance": "Jun 30, 2024",
+  "invalid": "",
+  "iso": "Apr 30, 2024",
+}
+`;
+
+exports[`format utilities > produces stable formatted money strings > formatMoney 1`] = `
+{
+  "eur": "€45.99",
+  "invalidAmount": "",
+  "invalidCurrency": "",
+  "noMinorUnits": "$129.00",
+  "usd": "$129.00",
+}
+`;

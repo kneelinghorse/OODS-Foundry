@@ -1,0 +1,85 @@
+name: Validate Traits
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'src/**'
+      - 'packages/**'
+      - 'traits/**'
+      - 'tools/**'
+      - 'tests/**'
+      - 'scripts/**'
+      - '.github/workflows/validate-traits.yml'
+  pull_request:
+    branches:
+      - "**"
+    paths:
+      - 'src/**'
+      - 'packages/**'
+      - 'traits/**'
+      - 'tools/**'
+      - 'tests/**'
+      - 'scripts/**'
+      - '.github/workflows/validate-traits.yml'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  validate:
+    name: Validate Trait Engine
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers (chromium)
+        run: npx -y playwright install --with-deps chromium
+
+      - name: Lint source
+        run: npm run lint
+
+      - name: Run unit test suite
+        run: npm run test:unit
+
+      - name: Run validation test suite
+        run: npm run test:validation
+
+      - name: Run integration tests
+        run: npm run test:integration
+
+      - name: Execute validation pipeline (non-examples)
+        shell: bash
+        run: |
+          set -euo pipefail
+          dirs=(traits/behavioral traits/content traits/financial traits/lifecycle traits/structural traits/visual)
+          for d in "${dirs[@]}"; do
+            echo "Validating $d"
+            npm run -s validate:pipeline -- --path "$d" --format text
+          done
+
+      - name: Generate coverage report
+        run: npm run test:coverage
+
+      - name: Upload coverage artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage
+          if-no-files-found: warn

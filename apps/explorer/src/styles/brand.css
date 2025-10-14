@@ -1,0 +1,213 @@
+/* Brand A theme overrides generated from app/packages/tokens/src/tokens/brands/A */
+[data-brand='A'] {
+  /* Base Brand A primitives */
+  --brandA-surface-canvas: oklch(0.967 0.03 86);
+  --brandA-surface-raised: oklch(0.935 0.037 86);
+  --brandA-surface-subtle: oklch(0.893 0.048 86);
+  --brandA-surface-disabled: oklch(0.886 0.03 86);
+  --brandA-surface-backdrop: oklch(0.368 0.042 86);
+  --brandA-surface-inverse: oklch(0.29 0.052 86);
+  --brandA-surface-interactive-primary-default: oklch(0.56 0.19 45);
+  --brandA-surface-interactive-primary-hover: oklch(0.5 0.2 45);
+  --brandA-surface-interactive-primary-pressed: oklch(0.44 0.21 45);
+
+  --brandA-border-subtle: oklch(0.86 0.032 86);
+  --brandA-border-strong: oklch(0.6 0.052 86);
+
+  --brandA-text-primary: oklch(0.26 0.05 265);
+  --brandA-text-secondary: oklch(0.39 0.04 265);
+  --brandA-text-muted: oklch(0.46 0.03 265);
+  --brandA-text-inverse: oklch(0.92 0.02 86);
+  --brandA-text-accent: oklch(0.52 0.17 45);
+  --brandA-text-on-interactive: oklch(0.97 0.01 95);
+  --brandA-text-disabled: oklch(0.72 0.015 265);
+
+  --brandA-status-info-surface: oklch(0.9685 0.0148 260.73);
+  --brandA-status-info-border: oklch(0.8191 0.0763 260.81);
+  --brandA-status-info-text: oklch(0.3847 0.1344 263.74);
+  --brandA-status-info-icon: oklch(0.5466 0.1806 263.48);
+
+  --brandA-status-success-surface: oklch(0.9743 0.0192 167.94);
+  --brandA-status-success-border: oklch(0.8671 0.0772 165.25);
+  --brandA-status-success-text: oklch(0.4315 0.0821 163.04);
+  --brandA-status-success-icon: oklch(0.6005 0.1199 161.34);
+
+  --brandA-status-warning-surface: oklch(0.9795 0.026 90.09);
+  --brandA-status-warning-border: oklch(0.8949 0.1177 87.87);
+  --brandA-status-warning-text: oklch(0.4914 0.1012 82.2);
+  --brandA-status-warning-icon: oklch(0.6573 0.1198 81.65);
+
+  --brandA-status-critical-surface: oklch(0.9672 0.0163 12.78);
+  --brandA-status-critical-border: oklch(0.824 0.0834 19.01);
+  --brandA-status-critical-text: oklch(0.465 0.147 24.94);
+  --brandA-status-critical-icon: oklch(0.6039 0.1827 24.43);
+
+  --brandA-status-neutral-surface: oklch(0.9816 0.0017 247.84);
+  --brandA-status-neutral-border: oklch(0.8875 0.0147 264.49);
+  --brandA-status-neutral-text: oklch(0.4239 0.021 267.53);
+  --brandA-status-neutral-icon: oklch(0.5109 0.0264 269.16);
+}
+
+:where([data-brand='A']:not([data-theme]), [data-brand='A'][data-theme='light']) {
+  /* Map Brand A light mode into theme/system slots */
+  --theme-surface-canvas: var(--brandA-surface-canvas);
+  --theme-surface-raised: var(--brandA-surface-raised);
+  --theme-surface-subtle: var(--brandA-surface-subtle);
+  --theme-surface-disabled: var(--brandA-surface-disabled);
+  --theme-surface-backdrop: var(--brandA-surface-backdrop);
+  --theme-surface-inverse: var(--brandA-surface-inverse);
+  --theme-surface-interactive-primary-default: var(--brandA-surface-interactive-primary-default);
+  --theme-surface-interactive-primary-hover: var(--brandA-surface-interactive-primary-hover);
+  --theme-surface-interactive-primary-pressed: var(--brandA-surface-interactive-primary-pressed);
+
+  --theme-border-subtle: var(--brandA-border-subtle);
+  --theme-border-strong: var(--brandA-border-strong);
+
+  --theme-text-primary: var(--brandA-text-primary);
+  --theme-text-secondary: var(--brandA-text-secondary);
+  --theme-text-muted: var(--brandA-text-muted);
+  --theme-text-inverse: var(--brandA-text-inverse);
+  --theme-text-accent: var(--brandA-text-accent);
+  --theme-text-on-interactive: var(--brandA-text-on-interactive);
+  --theme-text-disabled: var(--brandA-text-disabled);
+
+  --theme-status-info-surface: var(--brandA-status-info-surface);
+  --theme-status-info-border: var(--brandA-status-info-border);
+  --theme-status-info-text: var(--brandA-status-info-text);
+  --theme-status-info-icon: var(--brandA-status-info-icon);
+
+  --theme-status-success-surface: var(--brandA-status-success-surface);
+  --theme-status-success-border: var(--brandA-status-success-border);
+  --theme-status-success-text: var(--brandA-status-success-text);
+  --theme-status-success-icon: var(--brandA-status-success-icon);
+
+  --theme-status-warning-surface: var(--brandA-status-warning-surface);
+  --theme-status-warning-border: var(--brandA-status-warning-border);
+  --theme-status-warning-text: var(--brandA-status-warning-text);
+  --theme-status-warning-icon: var(--brandA-status-warning-icon);
+
+  --theme-status-critical-surface: var(--brandA-status-critical-surface);
+  --theme-status-critical-border: var(--brandA-status-critical-border);
+  --theme-status-critical-text: var(--brandA-status-critical-text);
+  --theme-status-critical-icon: var(--brandA-status-critical-icon);
+
+  --theme-status-neutral-surface: var(--brandA-status-neutral-surface);
+  --theme-status-neutral-border: var(--brandA-status-neutral-border);
+  --theme-status-neutral-text: var(--brandA-status-neutral-text);
+  --theme-status-neutral-icon: var(--brandA-status-neutral-icon);
+
+  --theme-focus-ring-outer: color-mix(in oklch, var(--brandA-text-accent) 55%, var(--brandA-text-on-interactive));
+  --theme-focus-ring-inner: var(--brandA-surface-canvas);
+  --theme-focus-text: var(--brandA-text-accent);
+}
+
+[data-brand='A'][data-theme='dark'] {
+  color-scheme: dark;
+  --theme-surface-canvas: oklch(0.18 0.05 45);
+  --theme-surface-raised: oklch(0.24 0.05 45);
+  --theme-surface-subtle: oklch(0.3 0.06 45);
+  --theme-surface-disabled: oklch(0.32 0.04 45);
+  --theme-surface-backdrop: oklch(0.12 0.04 45);
+  --theme-surface-inverse: oklch(0.95 0.01 45);
+  --theme-surface-interactive-primary-default: oklch(0.52 0.2 45);
+  --theme-surface-interactive-primary-hover: oklch(0.57 0.21 45);
+  --theme-surface-interactive-primary-pressed: oklch(0.62 0.22 45);
+
+  --theme-border-subtle: oklch(0.44 0.04 45);
+  --theme-border-strong: oklch(0.53 0.05 45);
+
+  --theme-text-primary: oklch(0.92 0.02 92);
+  --theme-text-secondary: oklch(0.81 0.015 92);
+  --theme-text-muted: oklch(0.7 0.01 92);
+  --theme-text-inverse: oklch(0.24 0.05 265);
+  --theme-text-accent: oklch(0.79 0.17 45);
+  --theme-text-on-interactive: oklch(0.97 0.01 95);
+  --theme-text-disabled: oklch(0.55 0.008 92);
+
+  --theme-status-info-surface: oklch(0.31 0.08 262);
+  --theme-status-info-border: oklch(0.43 0.11 262);
+  --theme-status-info-text: oklch(0.88 0.06 262);
+  --theme-status-info-icon: oklch(0.8 0.1 262);
+
+  --theme-status-success-surface: oklch(0.32 0.09 161);
+  --theme-status-success-border: oklch(0.43 0.11 161);
+  --theme-status-success-text: oklch(0.88 0.07 165);
+  --theme-status-success-icon: oklch(0.78 0.1 163);
+
+  --theme-status-warning-surface: oklch(0.34 0.09 85);
+  --theme-status-warning-border: oklch(0.46 0.12 85);
+  --theme-status-warning-text: oklch(0.9 0.08 87);
+  --theme-status-warning-icon: oklch(0.81 0.11 85);
+
+  --theme-status-critical-surface: oklch(0.31 0.12 25);
+  --theme-status-critical-border: oklch(0.43 0.15 25);
+  --theme-status-critical-text: oklch(0.88 0.09 23);
+  --theme-status-critical-icon: oklch(0.79 0.13 24);
+
+  --theme-status-neutral-surface: oklch(0.32 0.02 260);
+  --theme-status-neutral-border: oklch(0.41 0.025 260);
+  --theme-status-neutral-text: oklch(0.86 0.02 260);
+  --theme-status-neutral-icon: oklch(0.74 0.02 260);
+
+  --theme-focus-ring-outer: color-mix(in oklch, oklch(0.79 0.17 45) 60%, oklch(0.97 0.01 95));
+  --theme-focus-ring-inner: oklch(0.18 0.05 45);
+  --theme-focus-text: oklch(0.79 0.17 45);
+}
+
+[data-brand='A'][data-theme='hc'] {
+  --theme-surface-canvas: Canvas;
+  --theme-surface-raised: Canvas;
+  --theme-surface-subtle: Canvas;
+  --theme-surface-disabled: Canvas;
+  --theme-surface-backdrop: Canvas;
+  --theme-surface-inverse: CanvasText;
+  --theme-surface-interactive-primary-default: Highlight;
+  --theme-surface-interactive-primary-hover: Highlight;
+  --theme-surface-interactive-primary-pressed: Highlight;
+
+  --theme-border-subtle: CanvasText;
+  --theme-border-strong: Highlight;
+
+  --theme-text-primary: CanvasText;
+  --theme-text-secondary: GrayText;
+  --theme-text-muted: GrayText;
+  --theme-text-inverse: Canvas;
+  --theme-text-accent: LinkText;
+  --theme-text-on-interactive: HighlightText;
+  --theme-text-disabled: GrayText;
+
+  --theme-status-info-surface: Canvas;
+  --theme-status-info-border: Highlight;
+  --theme-status-info-text: HighlightText;
+  --theme-status-info-icon: HighlightText;
+
+  --theme-status-success-surface: Canvas;
+  --theme-status-success-border: Highlight;
+  --theme-status-success-text: HighlightText;
+  --theme-status-success-icon: HighlightText;
+
+  --theme-status-warning-surface: Canvas;
+  --theme-status-warning-border: Highlight;
+  --theme-status-warning-text: HighlightText;
+  --theme-status-warning-icon: HighlightText;
+
+  --theme-status-critical-surface: Canvas;
+  --theme-status-critical-border: Highlight;
+  --theme-status-critical-text: HighlightText;
+  --theme-status-critical-icon: HighlightText;
+
+  --theme-status-neutral-surface: Canvas;
+  --theme-status-neutral-border: CanvasText;
+  --theme-status-neutral-text: CanvasText;
+  --theme-status-neutral-icon: CanvasText;
+
+  --theme-focus-ring-outer: Highlight;
+  --theme-focus-ring-inner: Canvas;
+  --theme-focus-text: HighlightText;
+}
+
+@media (forced-colors: active) {
+  [data-brand='A'] {
+    forced-color-adjust: none;
+  }
+}

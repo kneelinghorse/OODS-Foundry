@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/07/schema",
+  "$id": "https://trait-engine.dev/schemas/traits/taggable",
+  "title": "Taggable Trait Parameters",
+  "description": "Controls how tags can be attached to composed objects.",
+  "type": "object",
+  "properties": {
+    "maxTags": {
+      "type": "integer",
+      "description": "Maximum number of tags that can be stored.",
+      "minimum": 1,
+      "maximum": 64,
+      "default": 10
+    },
+    "allowCustomTags": {
+      "type": "boolean",
+      "description": "Whether users may add new tags outside the allow list.",
+      "default": true
+    },
+    "allowedTags": {
+      "type": "array",
+      "description": "Optional allow list of approved tags.",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 64
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "caseSensitive": {
+      "type": "boolean",
+      "description": "Whether tag comparisons should be case sensitive.",
+      "default": false
+    }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "allowCustomTags": {
+            "const": false
+          }
+        },
+        "required": ["allowCustomTags"]
+      },
+      "then": {
+        "required": ["allowedTags"]
+      }
+    }
+  ],
+  "examples": [
+    {
+      "maxTags": 10,
+      "allowCustomTags": true
+    },
+    {
+      "maxTags": 5,
+      "allowCustomTags": false,
+      "allowedTags": ["priority", "finance", "design"],
+      "caseSensitive": false
+    }
+  ]
+}

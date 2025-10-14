@@ -1,0 +1,12 @@
+object:
+  name: Token
+  domain: security
+  tags:
+    - security
+    - authentication
+    - authorization
+traits:
+  - name: Securable
+  - name: TimeLimited
+  - name: Validatable
+  - name: Revocable

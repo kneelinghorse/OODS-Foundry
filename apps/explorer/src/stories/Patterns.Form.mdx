@@ -1,0 +1,38 @@
+import React from 'react';
+import { Meta, Canvas, Story } from '@storybook/blocks';
+import '../styles/index.css';
+import '../styles/forms.css';
+
+import { Input } from '../components/Input';
+import { TextArea } from '../components/TextArea';
+import { RadioGroup } from '../components/Radio';
+import { ValidationBanner } from '../components/ValidationBanner';
+import { FieldGroup } from '../components/FieldGroup';
+import { HelpText } from '../components/HelpText';
+import { ErrorText } from '../components/ErrorText';
+import { RequiredOptional } from '../components/RequiredOptional';
+import * as PatternsFormStories from './Patterns.Form.stories';
+
+<Meta of={PatternsFormStories} />
+
+# Form Patterns v1
+
+These patterns consume Form context classes and `--cmp-*` slots only. Validation and status states map via `status.*` tokens. See context defaults matrix in `docs/context/form-timeline-defaults.md` for spacing/typography bindings.
+
+## Validation Banner
+
+<Canvas>
+  <Story of={PatternsFormStories.ValidationBannerDemo} />
+</Canvas>
+
+## Required / Optional Labeling
+
+<Canvas>
+  <Story of={PatternsFormStories.RequiredOptionalDemo} />
+</Canvas>
+
+## Help vs Error Text
+
+<Canvas>
+  <Story of={PatternsFormStories.HelpErrorTextDemo} />
+</Canvas>

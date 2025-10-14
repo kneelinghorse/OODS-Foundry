@@ -1,0 +1,40 @@
+import React from 'react';
+import { Meta, Canvas, Story } from '@storybook/blocks';
+import * as ToggleStories from './Toggle.stories';
+import { Toggle } from '../components/Toggle';
+import '../styles/index.css';
+import '../styles/forms.css';
+
+<Meta of={ToggleStories} />
+
+## States
+
+<Canvas>
+  <Story
+    name="States"
+    parameters={{
+      chromatic: { disableSnapshot: false },
+      vrt: { tags: ['vrt-critical'] }
+    }}
+    tags={['vrt-critical']}
+  >
+    {() => (
+      <div style={{ display: 'grid', gap: '1rem', width: 'min(28rem, 100%)' }}>
+        <Toggle label="Notifications" defaultChecked />
+        <Toggle label="Beta features" />
+        <Toggle label="Disabled" disabled />
+        <Toggle tone="success" label="Integration connected" defaultChecked />
+        <Toggle tone="warning" label="Experimental" defaultChecked />
+        <Toggle tone="critical" label="Compliance required" aria-invalid />
+      </div>
+    )}
+  </Story>
+</Canvas>
+
+## A11y Contract
+
+- Toggle uses checkbox semantics with `role="switch"`; Space and Enter change state.
+- Focus ring derives from `--cmp-toggle-focus-*` and maintains ≥3:1 in HC.
+- Visuals consume only `--cmp-toggle-*` tokens; tones map in the layer.
+- Disabled remains readable and clearly non-interactive.
+

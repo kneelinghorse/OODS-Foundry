@@ -1,0 +1,56 @@
+object:
+  name: Subscription
+  version: 2.0.0
+  extends:
+    name: RecurringContract
+    version: 1.0.0
+  tags: [billing, recurring]
+
+traits:
+  - name: Stateful
+    alias: Lifecycle
+    parameters:
+      states: [trialing, active, past_due, canceled]
+      allowRollbacks: false
+  - name: Billable
+    alias: Billing
+    parameters:
+      currency: USD
+      requirePaymentMethod: true
+  - Timestamped
+
+schema:
+  plan_id: string
+  quantity: number
+  billing_cycle: string?
+  renewal_date: string?
+
+resolutions:
+  fields:
+    status:
+      use: Lifecycle
+      alias:
+        Billing: billing_status
+    renewal_date:
+      keep: object
+  semantics:
+    status:
+      use: Lifecycle
+
+views:
+  detail:
+    - action: replace
+      id: statusBadge
+      component: SubscriptionStatusBadge
+      priority: 40
+    - action: add
+      id: renewalSummary
+      component: RenewalSummary
+      priority: 60
+
+metadata:
+  owners:
+    - billing@company.test
+  changelog:
+    - version: 2.0.0
+      description: Added renewal summary and lifecycle aliasing

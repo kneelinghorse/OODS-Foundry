@@ -1,0 +1,74 @@
+import React from 'react';
+import { Meta, Canvas, Story } from '@storybook/blocks';
+import * as InputStories from './Input.stories';
+import { Input } from '../components/Input';
+import '../styles/index.css';
+
+<Meta of={InputStories} />
+
+## States
+
+<Canvas>
+  <Story
+    name="States"
+    parameters={{
+      chromatic: { disableSnapshot: false },
+      vrt: { tags: ['vrt-critical'] }
+    }}
+    tags={['vrt-critical']}
+  >
+    {() => (
+      <div style={{ display: 'grid', gap: '1.25rem', width: 'min(36rem, 100%)' }}>
+        <Input
+          label="Account name"
+          supportingText="Plain neutral surface with subtle hover."
+          defaultValue="Acme Analytics"
+          prefix="🏢"
+        />
+        <Input
+          label="Contract value"
+          supportingText="Focus + selected shares the same token ramp."
+          suffix="USD"
+          defaultValue="48,200"
+          selected
+        />
+        <Input
+          label="Escalation contact"
+          supportingText="Disabled state keeps text legible via `--cmp-input-text-disabled`."
+          defaultValue="leslie@example.com"
+          disabled
+        />
+        <Input
+          tone="success"
+          label="Provisioning window"
+          supportingText="Tokens shift to success palette while focus ring remains 2px."
+          message="Deployment will complete within the target SLO."
+          defaultValue="4 hours"
+        />
+        <Input
+          tone="warning"
+          label="Usage ceiling"
+          supportingText="Warn users before guardrails trip."
+          message="Forecast exceeds the historical 95th percentile."
+          defaultValue="150%"
+          suffix="%"
+        />
+        <Input
+          tone="critical"
+          label="Billing email"
+          supportingText="Critical state sets aria-invalid without extra props."
+          message="Use a verified corporate domain."
+          defaultValue="billing@acme"
+        />
+      </div>
+    )}
+  </Story>
+</Canvas>
+
+## A11y Contract
+
+- Inputs derive surfaces, borders, and carets from `--cmp-input-*`; no inline literals across states.
+- Focus-within / selected share a 2px halo sourced from `--cmp-input-focus-*` with offset for clear affordance.
+- Critical tone sets `aria-invalid` automatically and promotes message role to `alert` for assistive tech.
+- Supporting and message text use tokenized colors, keeping contrast ≥4.5:1 in theme and HC modes.
+- Disabled inputs still expose readable text via `--cmp-input-text-disabled`—opacity never dips below 0.9.

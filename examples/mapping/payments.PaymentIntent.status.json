@@ -1,0 +1,78 @@
+{
+  "metadata": {
+    "description": "Status mapping for payments/PaymentIntent.status",
+    "version": "1.0.0",
+    "owner": "billing-payments-squad"
+  },
+  "mappings": {
+    "requires_payment_method": {
+      "description": "Payment method is missing or invalid; action needed to proceed.",
+      "default": {
+        "foregroundColor": "color.text.info",
+        "backgroundColor": "color.background.info.subtle",
+        "borderColor": "color.border.info",
+        "iconName": "icon.status.pending"
+      }
+    },
+    "requires_confirmation": {
+      "description": "Awaiting server/client confirmation before attempting the charge.",
+      "default": {
+        "foregroundColor": "color.text.info",
+        "backgroundColor": "color.background.info.subtle",
+        "borderColor": "color.border.info",
+        "iconName": "icon.status.scheduled"
+      }
+    },
+    "processing": {
+      "description": "Payment is in-flight (e.g., ACH settlement window).",
+      "default": {
+        "foregroundColor": "color.text.accent",
+        "backgroundColor": "color.background.accent.subtle",
+        "borderColor": "color.border.accent",
+        "iconName": "icon.status.processing"
+      }
+    },
+    "requires_action": {
+      "description": "Additional customer action required (e.g., 3DS challenge).",
+      "default": {
+        "foregroundColor": "color.text.warning",
+        "backgroundColor": "color.background.warning.subtle",
+        "borderColor": "color.border.warning",
+        "iconName": "icon.status.warning"
+      },
+      "contexts": {
+        "banner": {
+          "foregroundColor": "color.text.onbold",
+          "backgroundColor": "color.background.warning.bold",
+          "borderColor": "color.border.warning"
+        }
+      }
+    },
+    "succeeded": {
+      "description": "Payment captured successfully; funds secured.",
+      "default": {
+        "foregroundColor": "color.text.positive",
+        "backgroundColor": "color.background.positive.subtle",
+        "borderColor": "color.border.positive",
+        "iconName": "icon.status.success"
+      }
+    },
+    "canceled": {
+      "description": "Payment canceled; will not proceed.",
+      "default": {
+        "foregroundColor": "color.text.disabled",
+        "backgroundColor": "color.background.disabled",
+        "borderColor": "color.border.disabled",
+        "iconName": "icon.status.canceled"
+      },
+      "contexts": {
+        "banner": {
+          "foregroundColor": "color.text.neutral",
+          "backgroundColor": "color.background.neutral.subtle",
+          "borderColor": "color.border.neutral"
+        }
+      }
+    }
+  }
+}
+
