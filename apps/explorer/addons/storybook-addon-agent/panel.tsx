@@ -10,6 +10,8 @@ import {
 import { styled } from 'storybook/theming';
 import genericInputSchema from '../../../../packages/mcp-server/src/schemas/generic.input.json' assert { type: 'json' };
 import brandApplyInputSchema from '../../../../packages/mcp-server/src/schemas/brand.apply.input.json' assert { type: 'json' };
+import billingReviewKitInputSchema from '../../../../packages/mcp-server/src/schemas/billing.reviewKit.input.json' assert { type: 'json' };
+import billingSwitchFixturesInputSchema from '../../../../packages/mcp-server/src/schemas/billing.switchFixtures.input.json' assert { type: 'json' };
 import { bridgeOrigin, fetchToolNames, fetchArtifactText, runTool } from './bridge.js';
 import { ApproveDialog } from './components/ApproveDialog.js';
 import { ArtifactList } from './components/ArtifactList.js';
@@ -146,6 +148,14 @@ const Label = styled.label`
 `;
 
 const Select = styled.select`
+  width: 100%;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  background: white;
+`;
+
+const TextInput = styled.input`
   width: 100%;
   padding: 6px 10px;
   border-radius: 6px;
@@ -314,6 +324,8 @@ const TOOL_DESCRIPTIONS: Record<ToolName, string> = {
   'diag.snapshot': 'Collect project diagnostics snapshot.',
   'reviewKit.create': 'Generate review kit artifacts (write-capable).',
   'brand.apply': 'Preview and apply Brand A palette updates via alias or patch strategies.',
+  'billing.reviewKit': 'Generate billing review kit bundles across provider fixtures.',
+  'billing.switchFixtures': 'Preview and apply billing fixture switches for Storybook contexts.',
 };
 
 function schemaDefaults(schema: JsonSchema): Record<string, unknown> {
@@ -325,9 +337,21 @@ function schemaDefaults(schema: JsonSchema): Record<string, unknown> {
     } else if (value?.type === 'boolean') {
       defaults[key] = false;
     } else if (value?.type === 'string') {
-      defaults[key] = '';
+      if (Array.isArray(value.enum) && value.enum.length) {
+        defaults[key] = typeof value.enum[0] === 'string' ? value.enum[0] : String(value.enum[0]);
+      } else {
+        defaults[key] = '';
+      }
     } else if (value?.type === 'number' || value?.type === 'integer') {
       defaults[key] = 0;
+    } else if (value?.type === 'array') {
+      if (Array.isArray(value.default)) {
+        defaults[key] = value.default;
+      } else if (value.items && Array.isArray(value.items.enum) && value.items.enum.length) {
+        defaults[key] = [value.items.enum[0]];
+      } else {
+        defaults[key] = [];
+      }
     } else {
       defaults[key] = null;
     }
@@ -336,24 +360,51 @@ function schemaDefaults(schema: JsonSchema): Record<string, unknown> {
 }
 
 function buildDescriptor(tool: ToolName): ToolDescriptor {
-  const base: ToolDescriptor = {
+  let label: string;
+  switch (tool) {
+    case 'a11y.scan':
+      label = 'Accessibility Scan';
+      break;
+    case 'purity.audit':
+      label = 'Purity Audit';
+      break;
+    case 'vrt.run':
+      label = 'Visual Regression';
+      break;
+    case 'diag.snapshot':
+      label = 'Diagnostics Snapshot';
+      break;
+    case 'reviewKit.create':
+      label = 'Review Kit';
+      break;
+    case 'billing.reviewKit':
+      label = 'Billing Review Kit';
+      break;
+    case 'billing.switchFixtures':
+      label = 'Billing Fixture Switch';
+      break;
+    default:
+      label = 'Brand Apply';
+      break;
+  }
+
+  let inputSchema: JsonSchema;
+  if (tool === 'brand.apply') {
+    inputSchema = brandApplyInputSchema as JsonSchema;
+  } else if (tool === 'billing.reviewKit') {
+    inputSchema = billingReviewKitInputSchema as JsonSchema;
+  } else if (tool === 'billing.switchFixtures') {
+    inputSchema = billingSwitchFixturesInputSchema as JsonSchema;
+  } else {
+    inputSchema = genericInputSchema as JsonSchema;
+  }
+
+  return {
     name: tool,
-    label:
-      tool === 'a11y.scan'
-        ? 'Accessibility Scan'
-        : tool === 'purity.audit'
-        ? 'Purity Audit'
-        : tool === 'vrt.run'
-        ? 'Visual Regression'
-        : tool === 'diag.snapshot'
-        ? 'Diagnostics Snapshot'
-        : tool === 'reviewKit.create'
-        ? 'Review Kit'
-        : 'Brand Apply',
+    label,
     description: TOOL_DESCRIPTIONS[tool],
-    inputSchema: tool === 'brand.apply' ? (brandApplyInputSchema as JsonSchema) : (genericInputSchema as JsonSchema),
+    inputSchema,
   };
-  return base;
 }
 
 function enforceApplyValue(values: Record<string, unknown>, schema: JsonSchema, apply: boolean): Record<string, unknown> {
@@ -616,8 +667,11 @@ export function AgentPanel() {
     if (schema?.type !== 'object' || !schema.properties) {
       return <Muted>No configurable inputs for this tool.</Muted>;
     }
+
     return Object.entries(schema.properties).map(([key, def]) => {
-      if (def?.type === 'boolean') {
+      if (!def) return null;
+
+      if (def.type === 'boolean') {
         const disabled = key === 'apply';
         return (
           <Label key={key}>
@@ -639,10 +693,106 @@ export function AgentPanel() {
           </Label>
         );
       }
+
+      if (def.type === 'string') {
+        const enumValues = Array.isArray(def.enum) ? def.enum : null;
+        const currentValue =
+          typeof inputs[key] === 'string'
+            ? inputs[key]
+            : typeof def.default === 'string'
+            ? def.default
+            : enumValues && enumValues.length
+            ? String(enumValues[0])
+            : '';
+
+        if (enumValues && enumValues.length) {
+          return (
+            <Label key={key}>
+              {def.title || key}
+              <Select
+                value={currentValue}
+                onChange={(event) => {
+                  const nextValue = event.target.value;
+                  setInputs((prev) => ({ ...prev, [key]: nextValue }));
+                }}
+                disabled={key === 'apply'}
+              >
+                {enumValues.map((option) => {
+                  const optionValue = String(option);
+                  return (
+                    <option key={optionValue} value={optionValue}>
+                      {optionValue}
+                    </option>
+                  );
+                })}
+              </Select>
+              {def.description && <FieldHint>{def.description}</FieldHint>}
+            </Label>
+          );
+        }
+
+        return (
+          <Label key={key}>
+            {def.title || key}
+            <TextInput
+              type="text"
+              name={key}
+              value={currentValue}
+              onChange={(event) => {
+                const nextValue = event.target.value;
+                setInputs((prev) => ({ ...prev, [key]: nextValue }));
+              }}
+            />
+            {def.description && <FieldHint>{def.description}</FieldHint>}
+          </Label>
+        );
+      }
+
+      if (def.type === 'array') {
+        const selectedValues = new Set(
+          Array.isArray(inputs[key]) ? (inputs[key] as unknown[]).map((value) => String(value)) : []
+        );
+        const options =
+          def.items && Array.isArray(def.items.enum) ? def.items.enum.map((option) => String(option)) : [];
+
+        return (
+          <Label key={key}>
+            {def.title || key}
+            <div>
+              {options.map((option) => (
+                <CheckboxWrap key={option}>
+                  <input
+                    type="checkbox"
+                    name={`${key}-${option}`}
+                    checked={selectedValues.has(option)}
+                    onChange={(event) => {
+                      const checked = event.target.checked;
+                      setInputs((prev) => {
+                        const previous = new Set(
+                          Array.isArray(prev[key]) ? (prev[key] as unknown[]).map((value) => String(value)) : []
+                        );
+                        if (checked) {
+                          previous.add(option);
+                        } else {
+                          previous.delete(option);
+                        }
+                        return { ...prev, [key]: Array.from(previous) };
+                      });
+                    }}
+                  />
+                  <span>{option}</span>
+                </CheckboxWrap>
+              ))}
+            </div>
+            {def.description && <FieldHint>{def.description}</FieldHint>}
+          </Label>
+        );
+      }
+
       return (
         <Label key={key}>
-          {def?.title || key}
-          <Muted>({def?.type || 'unknown'})</Muted>
+          {def.title || key}
+          <Muted>({def.type || 'unknown'})</Muted>
         </Label>
       );
     });

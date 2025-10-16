@@ -75,8 +75,17 @@ export const bridgeConfig: BridgeConfig = {
     artifacts: { max: 120, timeWindow: '1 minute' },
   },
   tools: {
-    allowed: ['a11y.scan', 'purity.audit', 'vrt.run', 'diag.snapshot', 'reviewKit.create', 'brand.apply'] as const,
-    writeGated: ['reviewKit.create', 'brand.apply'] as const,
+    allowed: [
+      'a11y.scan',
+      'purity.audit',
+      'vrt.run',
+      'diag.snapshot',
+      'reviewKit.create',
+      'brand.apply',
+      'billing.reviewKit',
+      'billing.switchFixtures',
+    ] as const,
+    writeGated: ['reviewKit.create', 'brand.apply', 'billing.reviewKit', 'billing.switchFixtures'] as const,
   },
 };
 

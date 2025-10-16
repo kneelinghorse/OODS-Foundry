@@ -19,6 +19,8 @@ Example policy (excerpt):
     { "tool": "release.verify", "allow": ["maintainer"], "writes": ["${BASE}/${DATE}/**"], "timeoutMs": 180000, "ratePerMinute": 6 },
     { "tool": "release.tag", "allow": ["maintainer"], "writes": ["${BASE}/${DATE}/**"], "timeoutMs": 60000, "ratePerMinute": 6 },
     { "tool": "reviewKit.create", "allow": ["designer", "maintainer"], "writes": ["${BASE}/${DATE}/**"], "timeoutMs": 90000, "ratePerMinute": 30 },
+    { "tool": "billing.reviewKit", "allow": ["designer", "maintainer"], "writes": ["${BASE}/${DATE}/**"], "timeoutMs": 120000, "ratePerMinute": 20 },
+    { "tool": "billing.switchFixtures", "allow": ["designer", "maintainer"], "writes": ["${BASE}/${DATE}/**"], "timeoutMs": 90000, "ratePerMinute": 20 },
     { "tool": "*", "allow": ["designer", "maintainer"], "writes": ["${BASE}/${DATE}/**"], "readOnly": false }
   ],
   "limits": { "defaultTimeoutMs": 120000, "concurrency": 1, "ratePerMinute": 60 },

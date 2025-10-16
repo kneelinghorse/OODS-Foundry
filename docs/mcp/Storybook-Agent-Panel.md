@@ -1,6 +1,6 @@
 # Storybook Agent Panel
 
-The Storybook Agent panel embeds MCP tools inside Explorer Storybook. It now supports both read-only diagnostics (a11y.scan, purity.audit, vrt.run, diag.snapshot) and write-capable flows (reviewKit.create) behind an approval gate. Designers and developers can preview changes, approve writes, and inspect generated artifacts without leaving Storybook.
+The Storybook Agent panel embeds MCP tools inside Explorer Storybook. It now supports both read-only diagnostics (a11y.scan, purity.audit, vrt.run, diag.snapshot) and write-capable flows (reviewKit.create, brand.apply, billing.reviewKit, billing.switchFixtures) behind an approval gate. Designers and developers can preview changes, approve writes, and inspect generated artifacts without leaving Storybook.
 
 ## Prerequisites
 
@@ -15,7 +15,7 @@ The bridge automatically serves files under `packages/mcp-server/artifacts/` at 
 ## Using the panel
 
 1. Open Storybook and switch to any story view (the panel hides itself in Docs mode).
-2. Pick a tool. The input schema renders with boolean toggles; `apply` remains locked until approval.
+2. Pick a tool. The input schema renders booleans, selects, and multi-select checkboxes derived from the tool schema; `apply` remains locked until approval.
 3. Press **Preview changes**. The panel issues a dry run (`apply:false`), announcing “Plan ready. Review the proposed changes.”
 4. Review the **Diff Viewer** (Unified default with Split toggle) and the **Preview artifacts** table. Both link to bridge-served files under `/artifacts/current-state/YYYY-MM-DD`.
 5. Click **Approve & Apply…** to open the confirmation dialog. `Cancel` receives initial focus, `Escape` closes the modal, and `Enter` activates the primary action.

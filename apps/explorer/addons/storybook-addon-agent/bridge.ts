@@ -77,7 +77,9 @@ export async function fetchToolNames(): Promise<ToolName[]> {
     tool === 'vrt.run' ||
     tool === 'diag.snapshot' ||
     tool === 'reviewKit.create' ||
-    tool === 'brand.apply'
+    tool === 'brand.apply' ||
+    tool === 'billing.reviewKit' ||
+    tool === 'billing.switchFixtures'
   );
   return tools;
 }

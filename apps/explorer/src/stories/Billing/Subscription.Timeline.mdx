@@ -3,12 +3,26 @@ import * as SubscriptionTimelineStories from './Subscription.Timeline.stories';
 
 <Meta of={SubscriptionTimelineStories} />
 
+### On-time Renewal
+
 <Canvas>
   <Story of={SubscriptionTimelineStories.LifecycleFeed} />
 </Canvas>
 
+### Retry Backoff
+
+<Canvas>
+  <Story of={SubscriptionTimelineStories.RetryBackoff} />
+</Canvas>
+
+### Refund & Cancellation
+
+<Canvas>
+  <Story of={SubscriptionTimelineStories.RefundCancellation} />
+</Canvas>
+
 ### Observations
 
-- Events merge multiple providers by time yet badges keep a single visual language.
-- No switch statements: tone calculation flows from the shared status payload.
-- Timeline scaffolding (`context-timeline`) ensures compact rhythm and focus handling stays compliant.
+- Events source `prevStatus`/`nextStatus` directly from the canonical timeline JSON; tone derives from the same status map as other contexts.
+- Scenario toggles (success, retry, refund) share a single component—only data changes.
+- Timeline scaffolding (`context-timeline`) keeps rhythm compact while focus and badges stay AA via shared tokens.

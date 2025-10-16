@@ -8,4 +8,12 @@ Tool Contracts (v0.1)
   - input: apply=false
   - output: artifacts[], transcriptPath, bundleIndexPath
 
+- billing.reviewKit
+  - input: object Subscription|Invoice|Plan|Usage, fixtures["stripe","chargebee"], apply=false
+  - output: artifacts[], transcriptPath, bundleIndexPath, preview diffs/specimens
+
+- billing.switchFixtures
+  - input: provider stripe|chargebee, apply=false
+  - output: artifacts[], transcriptPath, bundleIndexPath, preview diffs/stories
+
 Transport: newline-delimited JSON via stdio: { id?, tool, input }

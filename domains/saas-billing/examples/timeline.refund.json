@@ -1,0 +1,112 @@
+{
+  "scenario": "refund",
+  "summary": "Refund and cancellation path triggered by implementation rollback.",
+  "subscription": [
+    {
+      "id": "sub-refund-001",
+      "type": "subscription.cancellation_requested",
+      "subject": "subscription",
+      "at": "2025-06-20T18:10:00Z",
+      "prevStatus": "active",
+      "nextStatus": "pending_cancellation",
+      "meta": {
+        "title": "Cancellation scheduled",
+        "summary": "Customer success submitted a scheduled cancel effective at period end.",
+        "provider": "chargebee",
+        "channel": "admin_portal",
+        "actor": "success@oods.systems"
+      }
+    },
+    {
+      "id": "sub-refund-002",
+      "type": "subscription.cancellation_effective",
+      "subject": "subscription",
+      "at": "2025-06-30T23:59:00Z",
+      "prevStatus": "pending_cancellation",
+      "nextStatus": "canceled",
+      "meta": {
+        "title": "Subscription canceled",
+        "summary": "Period end reached; access revoked and provisioning hooks fired.",
+        "provider": "chargebee",
+        "channel": "system"
+      }
+    },
+    {
+      "id": "sub-refund-003",
+      "type": "subscription.refund_window_extended",
+      "subject": "subscription",
+      "at": "2025-07-01T09:05:00Z",
+      "prevStatus": "canceled",
+      "nextStatus": "canceled",
+      "meta": {
+        "title": "Refund window extended",
+        "summary": "Finance granted a 30-day courtesy refund window for implementation rollback.",
+        "provider": "chargebee",
+        "channel": "system",
+        "statusHint": "window:30_days"
+      }
+    }
+  ],
+  "invoice": [
+    {
+      "id": "inv-refund-001",
+      "type": "invoice.posted",
+      "subject": "invoice",
+      "at": "2025-06-15T08:00:00Z",
+      "prevStatus": "draft",
+      "nextStatus": "open",
+      "meta": {
+        "title": "Invoice issued",
+        "summary": "Chargebee invoice CB-2215 generated for implementation package.",
+        "provider": "chargebee",
+        "channel": "api",
+        "amountMinor": 96000,
+        "currency": "usd"
+      }
+    },
+    {
+      "id": "inv-refund-002",
+      "type": "invoice.payment_succeeded",
+      "subject": "invoice",
+      "at": "2025-06-15T09:02:00Z",
+      "prevStatus": "open",
+      "nextStatus": "paid",
+      "meta": {
+        "title": "Payment received",
+        "summary": "Wire payment posted and reconciled automatically.",
+        "provider": "chargebee",
+        "channel": "webhook"
+      }
+    },
+    {
+      "id": "inv-refund-003",
+      "type": "invoice.refund_issued",
+      "subject": "invoice",
+      "at": "2025-07-01T09:06:30Z",
+      "prevStatus": "paid",
+      "nextStatus": "refunded",
+      "meta": {
+        "title": "Partial refund issued",
+        "summary": "Finance applied credit memo CM-552 to cover unused time.",
+        "provider": "chargebee",
+        "channel": "admin_portal",
+        "amountMinor": 48000,
+        "currency": "usd"
+      }
+    },
+    {
+      "id": "inv-refund-004",
+      "type": "invoice.credit_memo_applied",
+      "subject": "invoice",
+      "at": "2025-07-01T09:07:15Z",
+      "prevStatus": "refunded",
+      "nextStatus": "refunded",
+      "meta": {
+        "title": "Credit memo exported",
+        "summary": "Credit memo synced to ERP for revenue recognition rollback.",
+        "provider": "chargebee",
+        "channel": "system"
+      }
+    }
+  ]
+}

@@ -42,6 +42,22 @@
       "ratePerMinute": 30,
       "concurrency": 1
     },
+    {
+      "tool": "billing.reviewKit",
+      "allow": ["designer", "maintainer"],
+      "writes": ["${BASE}/${DATE}/**"],
+      "timeoutMs": 120000,
+      "ratePerMinute": 20,
+      "concurrency": 1
+    },
+    {
+      "tool": "billing.switchFixtures",
+      "allow": ["designer", "maintainer"],
+      "writes": ["${BASE}/${DATE}/**"],
+      "timeoutMs": 90000,
+      "ratePerMinute": 20,
+      "concurrency": 1
+    },
     { "tool": "*", "allow": ["designer", "maintainer"], "writes": ["${BASE}/${DATE}/**"], "readOnly": false }
   ],
   "limits": {

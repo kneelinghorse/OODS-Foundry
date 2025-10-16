@@ -66,6 +66,17 @@ export type BrandApplyInput = BaseInput & {
   strategy?: BrandApplyStrategy;
 };
 
+export type BillingProvider = 'stripe' | 'chargebee';
+
+export type BillingReviewKitInput = BaseInput & {
+  object: 'Subscription' | 'Invoice' | 'Plan' | 'Usage';
+  fixtures?: BillingProvider[];
+};
+
+export type BillingSwitchFixturesInput = BaseInput & {
+  provider: BillingProvider;
+};
+
 export type ReleaseVerifyInput = BaseInput & {
   packages?: string[];
   fromTag?: string;

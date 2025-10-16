@@ -1,17 +1,28 @@
-import { Meta, Story, Canvas, Markdown } from '@storybook/blocks';
+import { Meta, Story, Canvas } from '@storybook/blocks';
 import * as InvoiceTimelineStories from './Invoice.Timeline.stories';
 
 <Meta of={InvoiceTimelineStories} />
+
+### On-time Collections
 
 <Canvas>
   <Story of={InvoiceTimelineStories.CollectionsEvents} />
 </Canvas>
 
-<Markdown>
-{`### Observations
+### Dunning & Retry
 
-- Timeline chips stay in sync with the unified status map—no provider specific CSS.
-- Events derive directly from canonical timestamps (issued, due, reminder) without branching logic.
-- The timeline scaffold remains the same component tree Storybook already ships for other domains.
-`}
-</Markdown>
+<Canvas>
+  <Story of={InvoiceTimelineStories.CollectionsDunning} />
+</Canvas>
+
+### Refund Processing
+
+<Canvas>
+  <Story of={InvoiceTimelineStories.CollectionsRefunds} />
+</Canvas>
+
+### Observations
+
+- Timeline chips stay in sync with the unified status map; `nextStatus` alone determines tone.
+- JSON scenarios cover on-time, retry, and refund paths without any provider conditionals.
+- The shared timeline scaffold continues to serve every domain context with no extra layout overrides.

@@ -1,0 +1,112 @@
+{
+  "scenario": "retry",
+  "summary": "Dunning path with smart retries and customer portal intervention.",
+  "subscription": [
+    {
+      "id": "sub-retry-001",
+      "type": "subscription.renewal_due",
+      "subject": "subscription",
+      "at": "2025-07-15T12:00:00Z",
+      "prevStatus": "active",
+      "nextStatus": "past_due",
+      "meta": {
+        "title": "Renewal failed",
+        "summary": "Card declined on renewal; access remains in grace period.",
+        "provider": "stripe",
+        "channel": "webhook",
+        "statusHint": "reason:card_declined"
+      }
+    },
+    {
+      "id": "sub-retry-002",
+      "type": "subscription.retry_scheduled",
+      "subject": "subscription",
+      "at": "2025-07-15T12:05:00Z",
+      "prevStatus": "past_due",
+      "nextStatus": "past_due",
+      "meta": {
+        "title": "Smart retry queued",
+        "summary": "Stripe scheduled retry #1 with highest success probability.",
+        "provider": "stripe",
+        "channel": "system",
+        "statusHint": "retry_attempt:1"
+      }
+    },
+    {
+      "id": "sub-retry-003",
+      "type": "subscription.recovered",
+      "subject": "subscription",
+      "at": "2025-07-17T15:25:00Z",
+      "prevStatus": "past_due",
+      "nextStatus": "active",
+      "meta": {
+        "title": "Payment method updated",
+        "summary": "Customer refreshed card in portal; access restored automatically.",
+        "provider": "chargebee",
+        "channel": "customer_portal"
+      }
+    }
+  ],
+  "invoice": [
+    {
+      "id": "inv-retry-001",
+      "type": "invoice.posted",
+      "subject": "invoice",
+      "at": "2025-07-15T11:59:00Z",
+      "prevStatus": "draft",
+      "nextStatus": "open",
+      "meta": {
+        "title": "Invoice issued",
+        "summary": "Stripe invoice 7823 released with net-0 terms for autopay.",
+        "provider": "stripe",
+        "channel": "api",
+        "amountMinor": 89000,
+        "currency": "usd"
+      }
+    },
+    {
+      "id": "inv-retry-002",
+      "type": "invoice.retry_started",
+      "subject": "invoice",
+      "at": "2025-07-15T12:00:15Z",
+      "prevStatus": "open",
+      "nextStatus": "past_due",
+      "meta": {
+        "title": "Payment failed",
+        "summary": "Autopay attempt declined; Stripe moved invoice to past_due.",
+        "provider": "stripe",
+        "channel": "webhook"
+      }
+    },
+    {
+      "id": "inv-retry-003",
+      "type": "invoice.retry_scheduled",
+      "subject": "invoice",
+      "at": "2025-07-15T12:05:15Z",
+      "prevStatus": "past_due",
+      "nextStatus": "past_due",
+      "meta": {
+        "title": "Retry scheduled",
+        "summary": "Smart retries configured for +48 hours; notifications sent to customer.",
+        "provider": "stripe",
+        "channel": "system",
+        "statusHint": "retry_attempt:1"
+      }
+    },
+    {
+      "id": "inv-retry-004",
+      "type": "invoice.payment_succeeded",
+      "subject": "invoice",
+      "at": "2025-07-17T15:24:58Z",
+      "prevStatus": "past_due",
+      "nextStatus": "paid",
+      "meta": {
+        "title": "Invoice paid",
+        "summary": "Customer portal payment succeeded; Stripe closed the dunning cycle.",
+        "provider": "stripe",
+        "channel": "customer_portal",
+        "statusHint": "retry_attempt:2"
+      }
+    }
+  ]
+}

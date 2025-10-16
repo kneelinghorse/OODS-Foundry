@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "apply": {
+      "type": "boolean",
+      "title": "Apply changes",
+      "description": "When true, writes review kit artifacts to the billing bundle directory.",
+      "default": false
+    },
+    "object": {
+      "type": "string",
+      "title": "Object",
+      "description": "Billing object to include in the review kit bundle.",
+      "enum": ["Subscription", "Invoice", "Plan", "Usage"],
+      "default": "Subscription"
+    },
+    "fixtures": {
+      "type": "array",
+      "title": "Fixtures",
+      "description": "Provider fixtures to compare in the review kit.",
+      "items": {
+        "type": "string",
+        "enum": ["stripe", "chargebee"]
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "default": ["stripe", "chargebee"]
+    }
+  },
+  "required": ["object"],
+  "additionalProperties": false
+}

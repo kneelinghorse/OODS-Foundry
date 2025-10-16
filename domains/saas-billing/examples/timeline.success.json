@@ -1,0 +1,95 @@
+{
+  "scenario": "success",
+  "summary": "On-time renewal paid via ACH auto debit with no manual intervention required.",
+  "subscription": [
+    {
+      "id": "sub-success-001",
+      "type": "subscription.scheduled",
+      "subject": "subscription",
+      "at": "2025-07-01T15:00:00Z",
+      "prevStatus": "future",
+      "nextStatus": "trialing",
+      "meta": {
+        "title": "Trial scheduled",
+        "summary": "Stripe schedule created from sales handoff; customer invited to explore premium features.",
+        "provider": "stripe",
+        "channel": "api"
+      }
+    },
+    {
+      "id": "sub-success-002",
+      "type": "subscription.activated",
+      "subject": "subscription",
+      "at": "2025-07-08T15:01:12Z",
+      "prevStatus": "trialing",
+      "nextStatus": "active",
+      "meta": {
+        "title": "Initial payment captured",
+        "summary": "Auto debit succeeded; provisioning flipped to production entitlements.",
+        "provider": "stripe",
+        "channel": "webhook"
+      }
+    },
+    {
+      "id": "sub-success-003",
+      "type": "subscription.renewed",
+      "subject": "subscription",
+      "at": "2025-08-08T15:00:00Z",
+      "prevStatus": "active",
+      "nextStatus": "active",
+      "meta": {
+        "title": "Renewal confirmed",
+        "summary": "Next period locked with no balance outstanding; CS notified via timeline digest.",
+        "provider": "chargebee",
+        "channel": "digest"
+      }
+    }
+  ],
+  "invoice": [
+    {
+      "id": "inv-success-001",
+      "type": "invoice.posted",
+      "subject": "invoice",
+      "at": "2025-07-08T15:00:00Z",
+      "prevStatus": "draft",
+      "nextStatus": "posted",
+      "meta": {
+        "title": "Invoice posted",
+        "summary": "Quarterly invoice CB-9910 finalized with net-7 terms.",
+        "provider": "chargebee",
+        "channel": "api",
+        "amountMinor": 124000,
+        "currency": "usd"
+      }
+    },
+    {
+      "id": "inv-success-002",
+      "type": "invoice.payment_initiated",
+      "subject": "invoice",
+      "at": "2025-07-08T15:00:30Z",
+      "prevStatus": "posted",
+      "nextStatus": "processing",
+      "meta": {
+        "title": "ACH debit pending",
+        "summary": "Customer bank acknowledged the debit; awaiting settlement.",
+        "provider": "chargebee",
+        "channel": "webhook"
+      }
+    },
+    {
+      "id": "inv-success-003",
+      "type": "invoice.payment_succeeded",
+      "subject": "invoice",
+      "at": "2025-07-08T15:01:18Z",
+      "prevStatus": "processing",
+      "nextStatus": "paid",
+      "meta": {
+        "title": "Invoice paid",
+        "summary": "Funds applied to CB-9910; aging bucket reset.",
+        "provider": "chargebee",
+        "channel": "webhook",
+        "statusHint": "autopay_attempt:1"
+      }
+    }
+  ]
+}

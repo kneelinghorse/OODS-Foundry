@@ -55,6 +55,20 @@ register(
   JSON.parse(fs.readFileSync(new URL('./schemas/release.tag.output.json', import.meta.url), 'utf8')) as object
 );
 
+register(
+  'billing.reviewKit',
+  await import('./tools/billing.reviewKit.js'),
+  JSON.parse(fs.readFileSync(new URL('./schemas/billing.reviewKit.input.json', import.meta.url), 'utf8')) as object,
+  JSON.parse(fs.readFileSync(new URL('./schemas/generic.output.json', import.meta.url), 'utf8')) as object
+);
+
+register(
+  'billing.switchFixtures',
+  await import('./tools/billing.switchFixtures.js'),
+  JSON.parse(fs.readFileSync(new URL('./schemas/billing.switchFixtures.input.json', import.meta.url), 'utf8')) as object,
+  JSON.parse(fs.readFileSync(new URL('./schemas/generic.output.json', import.meta.url), 'utf8')) as object
+);
+
 // Validator
 const ajv = getAjv();
 

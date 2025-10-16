@@ -2,6 +2,9 @@ import React from 'react';
 import '../../../styles/index.css';
 import stripeFixture from '~/domains/saas-billing/examples/stripe.json';
 import chargebeeFixture from '~/domains/saas-billing/examples/chargebee.json';
+import timelineSuccess from '~/domains/saas-billing/examples/timeline.success.json';
+import timelineRetry from '~/domains/saas-billing/examples/timeline.retry.json';
+import timelineRefund from '~/domains/saas-billing/examples/timeline.refund.json';
 import { StatusChip } from '../../../components/StatusChip';
 import { FieldGroup } from '../../../components/FieldGroup';
 import { Input } from '../../../components/Input';
@@ -158,6 +161,40 @@ type ProviderFixture = {
   usage: UsageFixture;
 };
 
+type TimelineScenarioId = 'success' | 'retry' | 'refund';
+
+type TimelineEvent = {
+  id: string;
+  type: string;
+  subject: 'subscription' | 'invoice';
+  at: string;
+  prevStatus: string;
+  nextStatus: string;
+  meta: {
+    title: string;
+    summary: string;
+    provider?: string;
+    actor?: string;
+    channel?: string;
+    amountMinor?: number;
+    currency?: string;
+    statusHint?: string;
+  };
+};
+
+type TimelineDataset = {
+  scenario: TimelineScenarioId;
+  summary: string;
+  subscription: TimelineEvent[];
+  invoice: TimelineEvent[];
+};
+
+const TIMELINE_DATASETS: Record<TimelineScenarioId, TimelineDataset> = {
+  success: timelineSuccess as TimelineDataset,
+  retry: timelineRetry as TimelineDataset,
+  refund: timelineRefund as TimelineDataset
+};
+
 const PROVIDERS: ProviderFixture[] = fixtures as unknown as ProviderFixture[];
 
 const currencyFormatters = new Map<string, Intl.NumberFormat>();
@@ -217,6 +254,8 @@ const titleCase = (value: string | undefined): string => {
     .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
     .join(' ');
 };
+
+const formatStatusLabel = (status: string): string => titleCase(status?.replace(/_/g, ' '));
 
 const buildRenewalCopy = (fixture: ProviderFixture): string => {
   const renewalSource = fixture.invoice.due_at || fixture.subscription.current_period_end;
@@ -293,82 +332,10 @@ const buildInvoiceListRows = () =>
     };
   });
 
-const buildSubscriptionEvents = () =>
-  PROVIDERS.flatMap((fixture) => {
-    const { subscription, invoice } = fixture;
-
-    const periodStart = {
-      id: `${fixture.provider}-period-start`,
-      time: subscription.current_period_start,
-      title: `${titleCase(fixture.provider)} period started`,
-      description: `Billing cycle anchored on day ${subscription.billing_anchor_day ?? 1}.`,
-      status: 'active',
-      domain: 'subscription' as const
-    };
-
-    const invoiceIssued = {
-      id: `${fixture.provider}-invoice-issued`,
-      time: invoice.issued_at,
-      title: `${invoice.invoice_number} issued`,
-      description: invoice.memo ?? 'Invoice generated from provider feed.',
-      status: invoice.status,
-      domain: 'invoice' as const
-    };
-
-    const renewalDue = {
-      id: `${fixture.provider}-renewal`,
-      time: invoice.due_at ?? subscription.current_period_end,
-      title: `${titleCase(fixture.provider)} renewal checkpoint`,
-      description: subscription.status_note ?? 'Monitoring renewal health.',
-      status: subscription.status,
-      domain: 'subscription' as const
-    };
-
-    return [periodStart, invoiceIssued, renewalDue];
-  }).sort((left, right) => new Date(right.time).getTime() - new Date(left.time).getTime());
-
-const buildInvoiceEvents = () =>
-  PROVIDERS.flatMap((fixture) => {
-    const { invoice } = fixture;
-
-    const issued = {
-      id: `${fixture.provider}-invoice-created`,
-      time: invoice.issued_at,
-      title: `${invoice.invoice_number} finalized`,
-      description: `Payment terms ${invoice.payment_terms ?? 'unspecified'} established.`,
-      status: invoice.status,
-      domain: 'invoice' as const
-    };
-
-    const due = {
-      id: `${fixture.provider}-invoice-due`,
-      time: invoice.due_at ?? invoice.issued_at,
-      title: `${invoice.invoice_number} due date`,
-      description: `Collector state ${invoice.collection_state ?? 'unknown'}.`,
-      status: invoice.status === 'paid' ? 'paid' : invoice.status,
-      domain: 'invoice' as const
-    };
-
-    const reminder = invoice.last_reminder_at
-      ? {
-          id: `${fixture.provider}-invoice-reminder`,
-          time: invoice.last_reminder_at,
-          title: `${invoice.invoice_number} reminder`,
-          description: 'Automated reminder sent to billing contact.',
-          status: invoice.status,
-          domain: 'invoice' as const
-        }
-      : null;
-
-    return [issued, reminder, due].filter(Boolean) as Array<{
-      id: string;
-      time: string;
-      title: string;
-      description: string;
-      status: string;
-      domain: 'invoice';
-    }>;
-  }).sort((left, right) => new Date(right.time).getTime() - new Date(left.time).getTime());
+const getTimelineEvents = (scenario: TimelineScenarioId, subject: 'subscription' | 'invoice'): TimelineEvent[] =>
+  [...TIMELINE_DATASETS[scenario][subject]].sort(
+    (left, right) => new Date(right.at).getTime() - new Date(left.at).getTime()
+  );
 
 const renderListCard = (row: ReturnType<typeof buildSubscriptionListRows>[number]) => (
   <article key={row.id} className="list-card" data-item="true">
@@ -757,76 +724,90 @@ const toneByStatus: Record<string, 'success' | 'info' | 'warning' | 'critical'> 
 const resolveToneForStatus = (status: string): 'success' | 'info' | 'warning' | 'critical' =>
   toneByStatus[status] ?? 'info';
 
-const renderTimelineItem = (
-  event: ReturnType<typeof buildSubscriptionEvents>[number] & { description: string }
-) => {
-  const timestamp = formatDate(event.time, true);
+const renderTimelineItem = (event: TimelineEvent, domain: 'subscription' | 'invoice') => {
+  const timestamp = formatDate(event.at, true);
+  const transition =
+    event.prevStatus === event.nextStatus
+      ? `Status steady: ${formatStatusLabel(event.nextStatus)}`
+      : `Status ${formatStatusLabel(event.prevStatus)} → ${formatStatusLabel(event.nextStatus)}`;
+  const amount =
+    typeof event.meta.amountMinor === 'number' && event.meta.currency
+      ? `Amount: ${formatCurrency(event.meta.amountMinor, event.meta.currency)}`
+      : '';
+  const provider = event.meta.provider ? `Source: ${titleCase(event.meta.provider)}` : '';
+  const channel = event.meta.channel ? `Channel: ${titleCase(event.meta.channel)}` : '';
+  const actor = event.meta.actor ? `Actor: ${event.meta.actor}` : '';
+  const hint = event.meta.statusHint ?? '';
+  const details = [transition, amount, provider, channel, actor, hint].filter(Boolean).join(' · ');
   return (
-    <li key={event.id} className="timeline-item" data-tone={resolveToneForStatus(event.status)}>
+    <li key={event.id} className="timeline-item" data-tone={resolveToneForStatus(event.nextStatus)}>
       <div className="timeline-item__marker" aria-hidden>
         <span className="timeline-item__dot" />
       </div>
 
       <article className="timeline-item__card">
         <header className="timeline-item__header">
-          <time className="timeline-item__time" dateTime={event.time}>
+          <time className="timeline-item__time" dateTime={event.at}>
             {timestamp}
           </time>
-          <StatusChip status={event.status} domain={event.domain} context="timeline" />
+          <StatusChip status={event.nextStatus} domain={domain} context="timeline" />
         </header>
-        <h3 className="timeline-item__title">{event.title}</h3>
-        <p className="timeline-item__description">{event.description}</p>
+        <h3 className="timeline-item__title">{event.meta.title}</h3>
+        <p className="timeline-item__description">{event.meta.summary}</p>
+        {details ? <p className="timeline-item__description">{details}</p> : null}
       </article>
     </li>
   );
 };
 
-export const SubscriptionTimelineExample: React.FC = () => {
-  const events = buildSubscriptionEvents().map((event) => ({
-    ...event,
-    description: event.description
-  }));
-
-  return (
-    <div className="explorer-view context-timeline timeline-view" data-context="timeline">
-      <header className="timeline-header" data-region="header">
-        <div>
-          <p className="view-eyebrow">Subscription lifecycle</p>
-          <h1 className="view-title">Renewal activity feed</h1>
-          <p className="view-caption">Events unify provider data with the same badge component and token map.</p>
-        </div>
-      </header>
-
-      <main className="timeline-main" data-region="body">
-        <ol className="timeline-stream" data-region="timeline">
-          {events.map((event) => renderTimelineItem(event))}
-        </ol>
-      </main>
-    </div>
-  );
+type TimelineExampleProps = {
+  scenario?: TimelineScenarioId;
 };
 
-export const InvoiceTimelineExample: React.FC = () => {
-  const events = buildInvoiceEvents().map((event) => ({
-    ...event,
-    description: event.description
-  }));
+export const SubscriptionTimelineExample: React.FC<TimelineExampleProps> = ({ scenario = 'success' }) => {
+  const dataset = TIMELINE_DATASETS[scenario];
+  const events = getTimelineEvents(scenario, 'subscription');
 
   return (
     <div className="explorer-view context-timeline timeline-view" data-context="timeline">
       <header className="timeline-header" data-region="header">
         <div>
-          <p className="view-eyebrow">Invoice lifecycle</p>
-          <h1 className="view-title">Collection milestones</h1>
+          <p className="view-eyebrow">Subscription lifecycle · {titleCase(scenario)}</p>
+          <h1 className="view-title">Renewal activity feed</h1>
           <p className="view-caption">
-            Canonical invoice states drive tone tokens—stripe and chargebee emit the same surface without extra logic.
+            {dataset.summary} Status chips resolve through the shared canonical token map.
           </p>
         </div>
       </header>
 
       <main className="timeline-main" data-region="body">
         <ol className="timeline-stream" data-region="timeline">
-          {events.map((event) => renderTimelineItem(event))}
+          {events.map((event) => renderTimelineItem(event, 'subscription'))}
+        </ol>
+      </main>
+    </div>
+  );
+};
+
+export const InvoiceTimelineExample: React.FC<TimelineExampleProps> = ({ scenario = 'success' }) => {
+  const dataset = TIMELINE_DATASETS[scenario];
+  const events = getTimelineEvents(scenario, 'invoice');
+
+  return (
+    <div className="explorer-view context-timeline timeline-view" data-context="timeline">
+      <header className="timeline-header" data-region="header">
+        <div>
+          <p className="view-eyebrow">Invoice lifecycle · {titleCase(scenario)}</p>
+          <h1 className="view-title">Collection milestones</h1>
+          <p className="view-caption">
+            {dataset.summary} Canonical invoice states continue to drive tone tokens without provider switches.
+          </p>
+        </div>
+      </header>
+
+      <main className="timeline-main" data-region="body">
+        <ol className="timeline-stream" data-region="timeline">
+          {events.map((event) => renderTimelineItem(event, 'invoice'))}
         </ol>
       </main>
     </div>

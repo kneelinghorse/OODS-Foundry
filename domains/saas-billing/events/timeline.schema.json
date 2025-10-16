@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SaaS Billing Timeline Event",
+  "description": "Canonical billing timeline events that align subscription and invoice transitions to the shared status token map.",
+  "type": "object",
+  "required": ["id", "type", "subject", "at", "prevStatus", "nextStatus", "meta"],
+  "properties": {
+    "id": {
+      "description": "Stable identifier used for deduplication and rendering keys.",
+      "type": "string",
+      "minLength": 1
+    },
+    "type": {
+      "description": "Domain-qualified event type (e.g. subscription.renewed, invoice.payment_failed).",
+      "type": "string",
+      "pattern": "^(subscription|invoice)\\.[a-z0-9._-]+$"
+    },
+    "subject": {
+      "description": "Domain for the event so UI surfaces can select the appropriate status tokens.",
+      "type": "string",
+      "enum": ["subscription", "invoice"]
+    },
+    "at": {
+      "description": "ISO-8601 timestamp when the event occurred.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "prevStatus": {
+      "description": "Canonical status before the transition. Must map to tokens/maps/saas-billing.status-map.json for the subject.",
+      "type": "string",
+      "minLength": 1
+    },
+    "nextStatus": {
+      "description": "Canonical status after the transition. UI badges use this to select tone and iconography.",
+      "type": "string",
+      "minLength": 1
+    },
+    "meta": {
+      "description": "Human-friendly narrative and optional context for the transition.",
+      "type": "object",
+      "required": ["title", "summary"],
+      "properties": {
+        "title": {
+          "description": "Short label for the event shown as the timeline headline.",
+          "type": "string",
+          "minLength": 1
+        },
+        "summary": {
+          "description": "Narrative copy explaining the transition or follow-up guidance.",
+          "type": "string",
+          "minLength": 1
+        },
+        "provider": {
+          "description": "Source system emitting the event (e.g. stripe, chargebee).",
+          "type": "string"
+        },
+        "actor": {
+          "description": "Internal or external actor responsible for the change.",
+          "type": "string"
+        },
+        "channel": {
+          "description": "System surface that triggered the event (portal, api, webhook).",
+          "type": "string"
+        },
+        "amountMinor": {
+          "description": "Amount associated with the transition (minor currency units).",
+          "type": "integer"
+        },
+        "currency": {
+          "description": "ISO-4217 currency code associated with amountMinor if present.",
+          "type": "string",
+          "pattern": "^[a-z]{3}$"
+        },
+        "statusHint": {
+          "description": "Optional additional status context (e.g. retry number).",
+          "type": "string"
+        },
+        "links": {
+          "description": "Anchors to detailed records or external resources.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["rel", "href"],
+            "properties": {
+              "rel": {
+                "description": "Relationship or purpose of the link.",
+                "type": "string",
+                "minLength": 1
+              },
+              "href": {
+                "description": "URL pointing to the external resource.",
+                "type": "string",
+                "format": "uri"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

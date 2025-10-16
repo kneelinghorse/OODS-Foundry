@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "apply": {
+      "type": "boolean",
+      "title": "Apply changes",
+      "description": "When true, records the fixture switch results as artifacts.",
+      "default": false
+    },
+    "provider": {
+      "type": "string",
+      "title": "Provider",
+      "description": "Billing fixture provider to activate for Storybook scenarios.",
+      "enum": ["stripe", "chargebee"],
+      "default": "stripe"
+    }
+  },
+  "required": ["provider"],
+  "additionalProperties": false
+}

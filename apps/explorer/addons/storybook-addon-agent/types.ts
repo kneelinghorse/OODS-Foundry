@@ -4,7 +4,9 @@ export type ToolName =
   | 'vrt.run'
   | 'diag.snapshot'
   | 'reviewKit.create'
-  | 'brand.apply';
+  | 'brand.apply'
+  | 'billing.reviewKit'
+  | 'billing.switchFixtures';
 
 export type JsonSchema = {
   type?: string;

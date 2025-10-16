@@ -66,7 +66,10 @@ Lists tools exposed through the bridge.
     "purity.audit",
     "vrt.run",
     "diag.snapshot",
-    "reviewKit.create"
+    "reviewKit.create",
+    "brand.apply",
+    "billing.reviewKit",
+    "billing.switchFixtures"
   ]
 }
 ```
@@ -77,7 +80,7 @@ Executes a tool via the MCP stdio bridge.
 
 - Content-Type must be `application/json`.
 - Body schema: `{ "tool": string, "input"?: Record<string, unknown> }`
-- For write-capable tools (currently `reviewKit.create`), `input.apply: true` requires `X-Bridge-Approval`.
+- For write-capable tools (`reviewKit.create`, `brand.apply`, `billing.reviewKit`, `billing.switchFixtures`), `input.apply: true` requires `X-Bridge-Approval`.
 - Success response:
 
 ```json
