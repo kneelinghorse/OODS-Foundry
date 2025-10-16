@@ -1,6 +1,7 @@
+import type { FC } from 'react';
+import type { Meta, StoryObj } from '@storybook/react';
 import { RenderObject } from '../../components/RenderObject';
 import type { RenderObjectProps } from '../../components/RenderObject';
-import type { FC } from 'react';
 import { createUserObjectSpec, UserObject } from '../../objects/user/object';
 import type { UserRecord } from '../../objects/user/types';
 import activeUserData from '../../fixtures/user/active.json';
@@ -11,25 +12,31 @@ type UserRenderProps = RenderObjectProps<UserRecord>;
 const activeUser = activeUserData as UserRecord;
 const disabledUser = disabledUserData as UserRecord;
 
-export default {
+const UserRenderObject = RenderObject as FC<UserRenderProps>;
+const renderStory = (args: UserRenderProps) => <UserRenderObject {...args} />;
+
+const buildArgs = (context: UserRenderProps['context'], data: UserRecord, objectOverride = UserObject) =>
+  ({
+    object: objectOverride,
+    context,
+    data,
+  }) satisfies UserRenderProps;
+
+const meta: Meta<typeof UserRenderObject> = {
   title: 'User/RenderObject',
-  component: RenderObject,
+  component: UserRenderObject,
   parameters: {
     chromatic: { disableSnapshot: true },
   },
 };
 
-const UserRenderObject = RenderObject as FC<UserRenderProps>;
+export default meta;
 
-const renderStory = (args: UserRenderProps) => <UserRenderObject {...args} />;
+type Story = StoryObj<typeof UserRenderObject>;
 
-export const ActiveDetail = {
+export const ActiveDetail: Story = {
   render: renderStory,
-  args: {
-    object: UserObject,
-    context: 'detail',
-    data: activeUser,
-  } as UserRenderProps,
+  args: buildArgs('detail', activeUser),
   parameters: {
     chromatic: { disableSnapshot: false },
     vrt: { tags: ['vrt-critical'] },
@@ -37,13 +44,9 @@ export const ActiveDetail = {
   tags: ['vrt-critical'],
 };
 
-export const ActiveList = {
+export const ActiveList: Story = {
   render: renderStory,
-  args: {
-    object: UserObject,
-    context: 'list',
-    data: activeUser,
-  } as UserRenderProps,
+  args: buildArgs('list', activeUser),
   parameters: {
     chromatic: { disableSnapshot: false },
     vrt: { tags: ['vrt'] },
@@ -51,31 +54,19 @@ export const ActiveList = {
   tags: ['vrt'],
 };
 
-export const ActiveForm = {
+export const ActiveForm: Story = {
   render: renderStory,
-  args: {
-    object: UserObject,
-    context: 'form',
-    data: activeUser,
-  } as UserRenderProps,
+  args: buildArgs('form', activeUser),
 };
 
-export const ActiveTimeline = {
+export const ActiveTimeline: Story = {
   render: renderStory,
-  args: {
-    object: UserObject,
-    context: 'timeline',
-    data: activeUser,
-  } as UserRenderProps,
+  args: buildArgs('timeline', activeUser),
 };
 
-export const DisabledDetail = {
+export const DisabledDetail: Story = {
   render: renderStory,
-  args: {
-    object: UserObject,
-    context: 'detail',
-    data: disabledUser,
-  } as UserRenderProps,
+  args: buildArgs('detail', disabledUser),
   parameters: {
     chromatic: { disableSnapshot: false },
     vrt: { tags: ['vrt-critical'] },
@@ -83,13 +74,9 @@ export const DisabledDetail = {
   tags: ['vrt-critical'],
 };
 
-export const DisabledCard = {
+export const DisabledCard: Story = {
   render: renderStory,
-  args: {
-    object: UserObject,
-    context: 'card',
-    data: disabledUser,
-  } as UserRenderProps,
+  args: buildArgs('card', disabledUser),
   parameters: {
     chromatic: { disableSnapshot: false },
     vrt: { tags: ['vrt'] },
@@ -97,20 +84,12 @@ export const DisabledCard = {
   tags: ['vrt'],
 };
 
-export const DisabledInline = {
+export const DisabledInline: Story = {
   render: renderStory,
-  args: {
-    object: UserObject,
-    context: 'inline',
-    data: disabledUser,
-  } as UserRenderProps,
+  args: buildArgs('inline', disabledUser),
 };
 
-export const DisabledWithoutTaggable = {
+export const DisabledWithoutTaggable: Story = {
   render: renderStory,
-  args: {
-    object: createUserObjectSpec({ includeTaggable: false }),
-    context: 'detail',
-    data: disabledUser,
-  } as UserRenderProps,
+  args: buildArgs('detail', disabledUser, createUserObjectSpec({ includeTaggable: false })),
 };

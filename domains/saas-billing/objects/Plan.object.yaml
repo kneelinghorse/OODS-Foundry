@@ -1,0 +1,108 @@
+object:
+  name: Plan
+  version: 1.0.0
+  domain: saas.billing
+  description: Normalized plan definition capturing pricing, packaging, and entitlement metadata.
+  tags:
+    - billing
+    - plan
+    - packaging
+
+traits:
+  - name: SaaSBillingBillable
+    alias: Pricing
+  - name: SaaSBillingMetered
+    alias: IncludedUsage
+    parameters:
+      unit: seats
+      rolloverStrategy: none
+      sampleWindowDays: 30
+  - name: structural/Ownerable
+    alias: PlanOwnership
+    parameters:
+      owners:
+        - product
+        - billing
+
+schema:
+  plan_id:
+    type: string
+    required: true
+    description: Stable identifier for the plan within the billing domain.
+  product_family:
+    type: string
+    required: true
+    description: High level product family grouping for analytics and reporting.
+  status:
+    type: string
+    required: true
+    description: Availability state of the plan (active, deprecated, private_beta).
+    validation:
+      enum:
+        - active
+        - deprecated
+        - private_beta
+        - legacy
+  feature_matrix:
+    type: FeatureDescriptor[]
+    required: false
+    description: Array of feature descriptors listing entitlement tiers.
+    default: []
+  add_on_ids:
+    type: string[]
+    required: false
+    description: Identifiers for add-ons commonly sold with this plan.
+    default: []
+  upgrade_targets:
+    type: string[]
+    required: false
+    description: Plans presented as upgrade destinations.
+    default: []
+  downgrade_targets:
+    type: string[]
+    required: false
+    description: Plans that can be downgraded to from this plan.
+    default: []
+  notes:
+    type: string
+    required: false
+    description: Internal commentary for packaging or finance teams.
+
+semantics:
+  plan_id:
+    semantic_type: billing.plan.id
+    token_mapping: tokenMap(billing.plan.id)
+  product_family:
+    semantic_type: billing.plan.product_family
+    token_mapping: tokenMap(billing.plan.product_family)
+  status:
+    semantic_type: billing.plan.status
+    token_mapping: tokenMap(billing.plan.status)
+  feature_matrix:
+    semantic_type: billing.plan.feature_matrix
+    token_mapping: tokenMap(billing.plan.feature_matrix)
+  add_on_ids:
+    semantic_type: billing.plan.add_on_ids
+    token_mapping: tokenMap(billing.plan.add_on_ids)
+  upgrade_targets:
+    semantic_type: billing.plan.upgrade_targets
+    token_mapping: tokenMap(billing.plan.upgrade_targets)
+  downgrade_targets:
+    semantic_type: billing.plan.downgrade_targets
+    token_mapping: tokenMap(billing.plan.downgrade_targets)
+  notes:
+    semantic_type: billing.plan.notes
+    token_mapping: tokenMap(billing.plan.notes)
+
+tokens:
+  billing.plan.id: "var(--cmp-text-strong)"
+  billing.plan.status: "var(--cmp-badge-text-info)"
+  billing.plan.product_family: "var(--cmp-text-subtle)"
+
+metadata:
+  owners:
+    - product@oods.systems
+    - pricing@oods.systems
+  maturity: beta
+  references:
+    - cmos/missions/research/R13.5_Canonical-Model-Subscription-and-Invoice.md

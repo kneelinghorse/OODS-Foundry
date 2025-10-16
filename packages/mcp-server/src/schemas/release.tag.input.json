@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "apply": { "type": "boolean" },
+    "tag": { "type": "string" },
+    "message": { "type": ["string", "null"] }
+  },
+  "required": ["tag"],
+  "additionalProperties": false
+}

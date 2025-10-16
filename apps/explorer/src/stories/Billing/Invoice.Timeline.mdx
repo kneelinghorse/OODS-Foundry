@@ -1,0 +1,17 @@
+import { Meta, Story, Canvas, Markdown } from '@storybook/blocks';
+import * as InvoiceTimelineStories from './Invoice.Timeline.stories';
+
+<Meta of={InvoiceTimelineStories} />
+
+<Canvas>
+  <Story of={InvoiceTimelineStories.CollectionsEvents} />
+</Canvas>
+
+<Markdown>
+{`### Observations
+
+- Timeline chips stay in sync with the unified status map—no provider specific CSS.
+- Events derive directly from canonical timestamps (issued, due, reminder) without branching logic.
+- The timeline scaffold remains the same component tree Storybook already ships for other domains.
+`}
+</Markdown>

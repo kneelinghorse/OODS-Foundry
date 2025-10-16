@@ -1,5 +1,7 @@
 import { Fragment } from 'react';
 import type { ComponentProps } from 'react';
+import '../../styles/globals.css';
+import type { Meta, StoryObj } from '@storybook/react';
 import { Button } from '../../components/base/Button';
 
 type ButtonStoryProps = ComponentProps<typeof Button>;
@@ -13,7 +15,7 @@ const intents: ButtonStoryProps['intent'][] = [
 
 const sizes: ButtonStoryProps['size'][] = ['sm', 'md', 'lg'];
 
-export default {
+const meta: Meta<typeof Button> = {
   title: 'Base/Button',
   component: Button,
   parameters: {
@@ -21,7 +23,11 @@ export default {
   },
 };
 
-export const Default = {
+export default meta;
+
+type Story = StoryObj<typeof Button>;
+
+export const Default: Story = {
   render: (args: ButtonStoryProps) => <Button {...args}>Action</Button>,
   args: {
     intent: 'neutral',
@@ -34,7 +40,7 @@ export const Default = {
   tags: ['vrt-critical'],
 };
 
-export const Intents = {
+export const Intents: Story = {
   render: () => (
     <div className="flex flex-col gap-3">
       {intents.map((intent) => (
@@ -52,7 +58,7 @@ export const Intents = {
   tags: ['vrt-critical'],
 };
 
-export const Sizes = {
+export const Sizes: Story = {
   render: () => (
     <div className="flex flex-col gap-3">
       {sizes.map((size) => (

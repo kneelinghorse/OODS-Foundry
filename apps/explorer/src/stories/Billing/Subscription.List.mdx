@@ -1,0 +1,16 @@
+import { Meta, Story, Canvas } from '@storybook/blocks';
+import * as SubscriptionListStories from './Subscription.List.stories';
+
+<Meta of={SubscriptionListStories} />
+
+<Canvas>
+  <Story of={SubscriptionListStories.NormalizedProviders} />
+</Canvas>
+
+MDX content below shares how the list stays pure while tokens and mapping drive parity.
+
+### Why it matters
+
+- Canonical subscription statuses map to the same badge tone for Stripe and Chargebee.
+- Renewal metrics use normalized amounts; the story performs no provider specific branching.
+- Context classes (`context-list`) keep spacing and typography consistent with other list views.

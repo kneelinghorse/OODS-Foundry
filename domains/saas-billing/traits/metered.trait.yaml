@@ -1,0 +1,120 @@
+trait:
+  name: SaaSBillingMetered
+  version: 1.0.0
+  description: Provides usage metering fields for consumption based billing with normalized units and rollover policy.
+  category: domain
+  tags:
+    - billing
+    - usage
+    - domain
+
+parameters:
+  - name: unit
+    type: string
+    required: true
+    description: Canonical usage unit label (ex: seats, credits, api_calls).
+    default: seats
+  - name: rolloverStrategy
+    type: string
+    required: false
+    description: Determines how unused units are treated at period end.
+    default: none
+    validation:
+      enum:
+        - none
+        - carry_forward
+        - expire
+  - name: sampleWindowDays
+    type: integer
+    required: false
+    description: Rolling window size used to calculate usage deltas.
+    default: 30
+
+schema:
+  meter_name:
+    type: string
+    required: true
+    description: Friendly metered feature name shown in UI (ex: Analytics Seats).
+  included_quantity:
+    type: integer
+    required: true
+    description: Quantity included in base plan before overages.
+  consumed_quantity:
+    type: integer
+    required: true
+    description: Actual quantity consumed in the active period.
+  unit_label:
+    type: string
+    required: true
+    description: Label for display, defaults to the unit parameter.
+    defaultFromParameter: unit
+  period_start:
+    type: date
+    required: true
+    description: Date the usage accumulation window began.
+  period_end:
+    type: date
+    required: true
+    description: Date the usage accumulation window ends.
+  rollover_strategy:
+    type: string
+    required: false
+    description: Strategy for unused units (inherits rolloverStrategy parameter).
+    defaultFromParameter: rolloverStrategy
+  overage_rate_minor:
+    type: integer
+    required: false
+    description: Cost per additional unit expressed in minor currency units.
+  projected_overage_minor:
+    type: integer
+    required: false
+    description: Forecasted overage spend derived from consumption trends.
+  samples:
+    type: UsageSample[]
+    required: false
+    description: Rolling usage measurements for charts or anomaly detection.
+    default: []
+
+semantics:
+  meter_name:
+    semantic_type: billing.usage.meter_name
+    token_mapping: tokenMap(billing.usage.meter_name)
+  included_quantity:
+    semantic_type: billing.usage.included_quantity
+    token_mapping: tokenMap(billing.usage.included_quantity)
+  consumed_quantity:
+    semantic_type: billing.usage.consumed_quantity
+    token_mapping: tokenMap(billing.usage.consumed_quantity)
+  unit_label:
+    semantic_type: billing.usage.unit_label
+    token_mapping: tokenMap(billing.usage.unit_label)
+  period_start:
+    semantic_type: billing.usage.period_start
+    token_mapping: tokenMap(billing.usage.period_start)
+  period_end:
+    semantic_type: billing.usage.period_end
+    token_mapping: tokenMap(billing.usage.period_end)
+  rollover_strategy:
+    semantic_type: billing.usage.rollover_strategy
+    token_mapping: tokenMap(billing.usage.rollover_strategy)
+  overage_rate_minor:
+    semantic_type: billing.usage.overage_rate_minor
+    token_mapping: tokenMap(billing.usage.overage_rate_minor)
+  projected_overage_minor:
+    semantic_type: billing.usage.projected_overage_minor
+    token_mapping: tokenMap(billing.usage.projected_overage_minor)
+  samples:
+    semantic_type: billing.usage.samples
+    token_mapping: tokenMap(billing.usage.samples)
+
+tokens:
+  billing.usage.meter_name: "var(--cmp-text-strong)"
+  billing.usage.consumed_quantity: "var(--cmp-text-accent)"
+  billing.usage.projected_overage_minor: "var(--cmp-text-warning)"
+
+metadata:
+  owners:
+    - product-analytics@oods.systems
+  maturity: beta
+  references:
+    - cmos/missions/research/R13.5_Canonical-Model-Subscription-and-Invoice.md

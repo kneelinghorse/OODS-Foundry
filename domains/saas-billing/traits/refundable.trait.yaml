@@ -1,0 +1,101 @@
+trait:
+  name: SaaSBillingRefundable
+  version: 1.0.0
+  description: Describes refund eligibility, policy windows, and credit memo tracking for SaaS billing flows.
+  category: domain
+  tags:
+    - billing
+    - refund
+    - domain
+
+parameters:
+  - name: defaultWindowDays
+    type: integer
+    required: false
+    description: Default number of days after payment where refunds are allowed.
+    default: 30
+  - name: creditMemoTypes
+    type: string[]
+    required: false
+    description: Supported credit memo categories used by finance teams.
+    default:
+      - service_failure
+      - retention_incentive
+      - goodwill
+
+schema:
+  refundable_until:
+    type: datetime
+    required: false
+    description: Date when refund eligibility window ends for this record.
+  refund_policy_url:
+    type: string
+    required: false
+    description: Link to customer facing refund or cancellation policy.
+  total_refunded_minor:
+    type: integer
+    required: false
+    description: Cumulative amount refunded in minor currency units.
+    default: 0
+  credit_memo_balance_minor:
+    type: integer
+    required: false
+    description: Remaining credit memo balance that can be applied to invoices.
+    default: 0
+  credit_memo_type:
+    type: string
+    required: false
+    description: Category of credit memo tied to business justification.
+    validation:
+      enumFromParameter: creditMemoTypes
+  last_refund_at:
+    type: datetime
+    required: false
+    description: Timestamp when the most recent refund was issued.
+  requires_manager_approval:
+    type: boolean
+    required: false
+    description: Indicates if finance manager approval is required before issuing refund.
+    default: false
+  notes:
+    type: string
+    required: false
+    description: Internal commentary about refund actions or policy exceptions.
+
+semantics:
+  refundable_until:
+    semantic_type: billing.refund.window_end
+    token_mapping: tokenMap(billing.refund.window_end)
+  refund_policy_url:
+    semantic_type: billing.refund.policy_link
+    token_mapping: tokenMap(billing.refund.policy_link)
+  total_refunded_minor:
+    semantic_type: billing.refund.total_minor
+    token_mapping: tokenMap(billing.refund.total_minor)
+  credit_memo_balance_minor:
+    semantic_type: billing.refund.credit_memo_balance_minor
+    token_mapping: tokenMap(billing.refund.credit_memo_balance_minor)
+  credit_memo_type:
+    semantic_type: billing.refund.credit_memo_type
+    token_mapping: tokenMap(billing.refund.credit_memo_type)
+  last_refund_at:
+    semantic_type: billing.refund.last_refund_at
+    token_mapping: tokenMap(billing.refund.last_refund_at)
+  requires_manager_approval:
+    semantic_type: billing.refund.requires_manager_approval
+    token_mapping: tokenMap(billing.refund.requires_manager_approval)
+  notes:
+    semantic_type: billing.refund.notes
+    token_mapping: tokenMap(billing.refund.notes)
+
+tokens:
+  billing.refund.total_minor: "var(--cmp-text-accent)"
+  billing.refund.credit_memo_balance_minor: "var(--cmp-text-info)"
+  billing.refund.requires_manager_approval: "var(--cmp-badge-text-warning)"
+
+metadata:
+  owners:
+    - finance@oods.systems
+  maturity: experimental
+  notes:
+    - Aligns with refund governance requirements captured in billing domain research.

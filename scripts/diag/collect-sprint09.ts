@@ -200,7 +200,7 @@ async function collectBrandCoverage(): Promise<BrandCoverage> {
       .map((cell) => cell.trim());
     if (columns.length < 6) continue;
 
-    const [theme, pair, contrast, deltaL, deltaC, note] = columns;
+    const [theme, , contrast, deltaL, deltaC, note] = columns;
     if (note) {
       notes.push(`${theme}: ${note}`);
     }

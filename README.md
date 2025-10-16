@@ -67,6 +67,7 @@ pnpm pipeline:push
 ```
 
 > **Artifacts:** every push run writes to `/artifacts/current-state/YYYY-MM-DD/` (summary + consolidated `diagnostics.json`). Keep total files ≤10 for reviews.
+> Sprint walkthrough script lives at `scripts/demo/sprint03.tsx`.
 
 ---
 
@@ -92,6 +93,7 @@ pnpm pipeline:push
 
 * Four canonical contexts: **List**, **Detail**, **Form**, **Timeline**.
 * **Regions** define layout slots; **pure modifiers** compose visual state (idempotent, side-effect free).
+* See [Region contract](docs/specs/regions.md) and [Modifier purity contract](docs/patterns/modifier-purity.md) for deep-dive docs that underpin these rules.
 
 ### 3) Theming & brand
 
@@ -183,7 +185,7 @@ pnpm pipeline:push
 * **Sprint 09 (current)** — Brand A (tokens-only), reproducible local packages, purity audit, review kit roundtrip, brand-aware VRT.
 * **Sprint 10–13** — **MCP + Agents**
 
-  * v0.1 MCP server (local) exposing a small, safe toolset (`tokens.build`, `a11y.scan`, `purity.audit`, `vrt.run`, `reviewKit.create`, `release.packVerify`, `diag.snapshot`)
+  * v0.1 MCP server (local) exposing a small, safe toolset (`tokens.build`, `a11y.scan`, `purity.audit`, `vrt.run`, `reviewKit.create`, `release.verify`, `release.tag`, `diag.snapshot`)
   * Plan → approve → execute loop with transcripts & artifacts
   * Dev-tool client first (Claude/OpenAI), then a **Storybook Agent panel**
   * Governance: allow/deny rules, roles, rate limits, redaction, audit log

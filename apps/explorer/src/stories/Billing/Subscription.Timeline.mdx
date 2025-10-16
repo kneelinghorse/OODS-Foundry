@@ -1,0 +1,14 @@
+import { Meta, Story, Canvas } from '@storybook/blocks';
+import * as SubscriptionTimelineStories from './Subscription.Timeline.stories';
+
+<Meta of={SubscriptionTimelineStories} />
+
+<Canvas>
+  <Story of={SubscriptionTimelineStories.LifecycleFeed} />
+</Canvas>
+
+### Observations
+
+- Events merge multiple providers by time yet badges keep a single visual language.
+- No switch statements: tone calculation flows from the shared status payload.
+- Timeline scaffolding (`context-timeline`) ensures compact rhythm and focus handling stays compliant.

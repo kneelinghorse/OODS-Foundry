@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "artifacts": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "diagnosticsPath": { "type": "string" },
+    "transcriptPath": { "type": "string" },
+    "bundleIndexPath": { "type": "string" },
+    "preview": {
+      "type": "object",
+      "properties": {
+        "summary": { "type": "string" },
+        "notes": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "diffs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/planDiff" }
+        },
+        "specimens": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "artifactsDetail": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/artifactDetail" }
+    }
+  },
+  "required": ["artifacts", "transcriptPath", "bundleIndexPath"],
+  "additionalProperties": false,
+  "$defs": {
+    "planDiffChange": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["context", "add", "remove"]
+        },
+        "value": { "type": "string" }
+      },
+      "required": ["type", "value"],
+      "additionalProperties": false
+    },
+    "planDiffHunk": {
+      "type": "object",
+      "properties": {
+        "header": { "type": "string" },
+        "changes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/planDiffChange" }
+        }
+      },
+      "required": ["header", "changes"],
+      "additionalProperties": false
+    },
+    "planDiff": {
+      "type": "object",
+      "properties": {
+        "path": { "type": "string" },
+        "status": {
+          "type": "string",
+          "enum": ["added", "modified", "deleted"]
+        },
+        "summary": {
+          "type": "object",
+          "properties": {
+            "additions": { "type": "number" },
+            "deletions": { "type": "number" }
+          },
+          "additionalProperties": false
+        },
+        "hunks": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/planDiffHunk" }
+        },
+        "structured": {
+          "type": "object",
+          "properties": {
+            "type": { "type": "string" },
+            "before": {},
+            "after": {}
+          },
+          "required": ["type"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["path", "status", "hunks"],
+      "additionalProperties": false
+    },
+    "artifactDetail": {
+      "type": "object",
+      "properties": {
+        "path": { "type": "string" },
+        "name": { "type": "string" },
+        "purpose": { "type": "string" },
+        "sha256": { "type": "string" },
+        "sizeBytes": { "type": "number", "minimum": 0 }
+      },
+      "required": ["path", "name"],
+      "additionalProperties": false
+    }
+  }
+}

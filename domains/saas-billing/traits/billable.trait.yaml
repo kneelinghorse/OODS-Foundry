@@ -1,0 +1,127 @@
+trait:
+  name: SaaSBillingBillable
+  version: 1.0.0
+  description: Normalizes recurring price configuration for SaaS plans including cadence, currency, and trial policy.
+  category: domain
+  tags:
+    - billing
+    - pricing
+    - domain
+
+parameters:
+  - name: defaultCurrency
+    type: string
+    required: false
+    description: ISO 4217 currency used when a plan omits currency.
+    default: usd
+  - name: supportedIntervals
+    type: string[]
+    required: false
+    description: Allowed billing intervals that downstream plans may select.
+    default:
+      - monthly
+      - quarterly
+      - annual
+  - name: decimalPrecision
+    type: number
+    required: false
+    description: Minor unit precision (ex: cents = 2, yen = 0).
+    default: 2
+
+schema:
+  plan_code:
+    type: string
+    required: true
+    description: Provider specific identifier for the plan or price.
+  plan_name:
+    type: string
+    required: true
+    description: Human readable plan label rendered in list and detail contexts.
+  billing_interval:
+    type: string
+    required: true
+    description: Billing cadence name selected from supportedIntervals.
+    validation:
+      enumFromParameter: supportedIntervals
+  interval_count:
+    type: integer
+    required: false
+    description: Multiplier for interval (ex: 12 with monthly => yearly cadence).
+    default: 1
+  amount_minor:
+    type: integer
+    required: true
+    description: Contract value expressed in minor currency units.
+  currency:
+    type: string
+    required: true
+    description: ISO 4217 currency for the plan price.
+    defaultFromParameter: defaultCurrency
+  trial_period_days:
+    type: integer
+    required: false
+    description: Length of introductory trial period in days.
+  collection_method:
+    type: string
+    required: false
+    description: How billing is collected (charge_automatically, send_invoice).
+  billing_anchor_day:
+    type: integer
+    required: false
+    description: Day of month used to anchor renewals when prorating.
+    validation:
+      minimum: 1
+      maximum: 31
+  pricing_model:
+    type: string
+    required: false
+    description: Price strategy (flat, per_unit, tiered, package).
+    default: flat
+
+semantics:
+  plan_code:
+    semantic_type: billing.plan.code
+    token_mapping: tokenMap(billing.plan.code)
+  plan_name:
+    semantic_type: billing.plan.name
+    token_mapping: tokenMap(billing.plan.name)
+  billing_interval:
+    semantic_type: billing.plan.interval
+    token_mapping: tokenMap(billing.plan.interval)
+  interval_count:
+    semantic_type: billing.plan.interval_count
+    token_mapping: tokenMap(billing.plan.interval_count)
+  amount_minor:
+    semantic_type: billing.plan.amount_minor
+    token_mapping: tokenMap(billing.plan.amount_minor)
+  currency:
+    semantic_type: billing.plan.currency
+    token_mapping: tokenMap(billing.plan.currency)
+  trial_period_days:
+    semantic_type: billing.plan.trial_period_days
+    token_mapping: tokenMap(billing.plan.trial_period_days)
+  collection_method:
+    semantic_type: billing.plan.collection_method
+    token_mapping: tokenMap(billing.plan.collection_method)
+  billing_anchor_day:
+    semantic_type: billing.plan.billing_anchor_day
+    token_mapping: tokenMap(billing.plan.billing_anchor_day)
+  pricing_model:
+    semantic_type: billing.plan.pricing_model
+    token_mapping: tokenMap(billing.plan.pricing_model)
+
+tokens:
+  billing.plan.name: "var(--cmp-text-strong)"
+  billing.plan.amount_minor: "var(--cmp-text-body-strong)"
+  billing.plan.currency: "var(--cmp-text-subtle)"
+  billing.plan.interval: "var(--cmp-text-subtle)"
+  billing.plan.collection_method: "var(--cmp-badge-text-info)"
+
+metadata:
+  owners:
+    - billing@oods.systems
+    - design@oods.systems
+  maturity: beta
+  references:
+    - cmos/missions/research/R13.5_Canonical-Model-Subscription-and-Invoice.md
+    - cmos/missions/research/r4.5_SaaS-Enum-to-Token-Mapping-Schema.md

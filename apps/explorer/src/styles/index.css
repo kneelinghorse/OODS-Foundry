@@ -1989,3 +1989,46 @@
 .cmp-field-group__message {
   /* wrapper around cmp-input__message via ErrorText to ensure spacing fits group rhythm */
 }
+
+.cmp-field-group[data-state] {
+  --cmp-field-group-border: color-mix(in srgb, var(--cmp-border-default, rgba(148, 163, 184, 0.55)) 65%, transparent);
+  --cmp-field-group-surface: color-mix(in srgb, var(--cmp-surface-panel, rgba(15, 23, 42, 0.06)) 50%, transparent);
+  border-radius: var(--cmp-input-radius, 0.95rem);
+  padding: calc(var(--cmp-spacing-inset-compact, 1rem) * 0.9);
+  box-shadow: 0 0 0 1px var(--cmp-field-group-border);
+  background: var(--cmp-field-group-surface);
+}
+
+.cmp-field-group[data-state] .cmp-field-group__fields {
+  gap: var(--cmp-spacing-stack-default, 1rem);
+}
+
+.cmp-field-group[data-tone='critical'] {
+  --cmp-field-group-border: color-mix(in srgb, var(--sys-status-critical-border, #f87171) 70%, transparent);
+  --cmp-field-group-surface: color-mix(in srgb, var(--sys-status-critical-surface, #fee2e2) 40%, transparent);
+}
+
+.cmp-field-group[data-tone='warning'] {
+  --cmp-field-group-border: color-mix(in srgb, var(--sys-status-warning-border, #fbbf24) 65%, transparent);
+  --cmp-field-group-surface: color-mix(in srgb, var(--sys-status-warning-surface, #fef3c7) 45%, transparent);
+}
+
+.cmp-field-group[data-tone='info'],
+.cmp-field-group[data-tone='accent'] {
+  --cmp-field-group-border: color-mix(in srgb, var(--sys-status-info-border, #93c5fd) 65%, transparent);
+  --cmp-field-group-surface: color-mix(in srgb, var(--sys-status-info-surface, #e0f2fe) 45%, transparent);
+}
+
+.cmp-field-group[data-tone='success'] {
+  --cmp-field-group-border: color-mix(in srgb, var(--sys-status-success-border, #34d399) 60%, transparent);
+  --cmp-field-group-surface: color-mix(in srgb, var(--sys-status-success-surface, #dcfce7) 40%, transparent);
+}
+
+.cmp-field-group[data-disabled='true'] {
+  cursor: not-allowed;
+}
+
+.cmp-field-group[data-disabled='true'] .cmp-field-group__fields {
+  opacity: 0.75;
+  pointer-events: none;
+}

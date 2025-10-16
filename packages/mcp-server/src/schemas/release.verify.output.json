@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "artifacts": { "type": "array", "items": { "type": "string" } },
+    "diagnosticsPath": { "type": "string" },
+    "transcriptPath": { "type": "string" },
+    "bundleIndexPath": { "type": "string" },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "version": { "type": "string" },
+          "identical": { "type": "boolean" },
+          "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "sizeBytes": { "type": "integer", "minimum": 0 },
+          "warnings": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "files": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "required": ["name", "version", "identical", "sha256", "sizeBytes"],
+        "additionalProperties": false
+      }
+    },
+    "changelogPath": { "type": "string" },
+    "summary": { "type": "string" },
+    "warnings": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "required": ["artifacts", "transcriptPath", "bundleIndexPath", "results", "changelogPath", "summary"],
+  "additionalProperties": false
+}

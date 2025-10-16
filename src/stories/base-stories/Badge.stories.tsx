@@ -1,4 +1,6 @@
 import type { ComponentProps } from 'react';
+import type { Meta, StoryObj } from '@storybook/react';
+import '../../styles/globals.css';
 import { Badge } from '../../components/base/Badge';
 
 type BadgeStoryProps = ComponentProps<typeof Badge>;
@@ -10,7 +12,7 @@ const intents: BadgeStoryProps['intent'][] = [
   'danger',
 ];
 
-export default {
+const meta: Meta<typeof Badge> = {
   title: 'Base/Badge',
   component: Badge,
   parameters: {
@@ -18,14 +20,18 @@ export default {
   },
 };
 
-export const Default = {
+export default meta;
+
+type Story = StoryObj<typeof Badge>;
+
+export const Default: Story = {
   render: (args: BadgeStoryProps) => <Badge {...args}>Active</Badge>,
   args: {
     intent: 'neutral',
   },
 };
 
-export const Intents = {
+export const Intents: Story = {
   render: () => (
     <div className="flex flex-wrap gap-2">
       {intents.map((intent) => (

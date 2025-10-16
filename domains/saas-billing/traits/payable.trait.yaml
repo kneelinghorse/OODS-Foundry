@@ -1,0 +1,155 @@
+trait:
+  name: SaaSBillingPayable
+  version: 1.0.0
+  description: Captures invoice level billing terms, status, and outstanding balance metadata for SaaS finance teams.
+  category: domain
+  tags:
+    - billing
+    - invoice
+    - domain
+
+parameters:
+  - name: statusEnum
+    type: string[]
+    required: true
+    description: Canonical invoice status values allowed by the domain.
+    default:
+      - draft
+      - posted
+      - open
+      - processing
+      - past_due
+      - paid
+      - refunded
+      - uncollectible
+      - void
+  - name: paymentTerms
+    type: string[]
+    required: false
+    description: Supported payment term descriptors (ex: net_15, due_upon_receipt).
+    default:
+      - due_upon_receipt
+      - net_15
+      - net_30
+      - net_45
+
+schema:
+  invoice_number:
+    type: string
+    required: true
+    description: Human readable invoice identifier presented to customers.
+  status:
+    type: string
+    required: true
+    description: Canonical invoice status after provider mapping.
+    validation:
+      enumFromParameter: statusEnum
+  provider_status:
+    type: string
+    required: false
+    description: Original provider reported status or badge.
+  issued_at:
+    type: datetime
+    required: true
+    description: Timestamp when the invoice was finalized or posted.
+  due_at:
+    type: datetime
+    required: false
+    description: Payment due timestamp derived from payment terms.
+  paid_at:
+    type: datetime
+    required: false
+    description: Timestamp when full payment cleared.
+  total_minor:
+    type: integer
+    required: true
+    description: Total amount due expressed in minor currency units.
+  balance_minor:
+    type: integer
+    required: false
+    description: Remaining amount outstanding in minor units.
+    default: 0
+  currency:
+    type: string
+    required: true
+    description: ISO 4217 currency for the invoice.
+  payment_terms:
+    type: string
+    required: false
+    description: Payment term label describing when payment is expected.
+    validation:
+      enumFromParameter: paymentTerms
+  collection_state:
+    type: string
+    required: false
+    description: Dunning phase or retry program detail presented to success teams.
+  last_reminder_at:
+    type: datetime
+    required: false
+    description: Timestamp of most recent payment reminder issued to customer.
+  aging_bucket_days:
+    type: integer
+    required: false
+    description: Number of days outstanding grouped for aging reports.
+  memo:
+    type: string
+    required: false
+    description: Internal finance note or customer visible memo.
+
+semantics:
+  invoice_number:
+    semantic_type: billing.invoice.number
+    token_mapping: tokenMap(billing.invoice.number)
+  status:
+    semantic_type: billing.invoice.status
+    token_mapping: tokenMap(billing.invoice.status.*)
+  provider_status:
+    semantic_type: billing.invoice.provider_status
+    token_mapping: tokenMap(billing.invoice.provider_status)
+  issued_at:
+    semantic_type: billing.invoice.issued_at
+    token_mapping: tokenMap(billing.invoice.issued_at)
+  due_at:
+    semantic_type: billing.invoice.due_at
+    token_mapping: tokenMap(billing.invoice.due_at)
+  paid_at:
+    semantic_type: billing.invoice.paid_at
+    token_mapping: tokenMap(billing.invoice.paid_at)
+  total_minor:
+    semantic_type: billing.invoice.total_minor
+    token_mapping: tokenMap(billing.invoice.total_minor)
+  balance_minor:
+    semantic_type: billing.invoice.balance_minor
+    token_mapping: tokenMap(billing.invoice.balance_minor)
+  currency:
+    semantic_type: billing.invoice.currency
+    token_mapping: tokenMap(billing.invoice.currency)
+  payment_terms:
+    semantic_type: billing.invoice.payment_terms
+    token_mapping: tokenMap(billing.invoice.payment_terms)
+  collection_state:
+    semantic_type: billing.invoice.collection_state
+    token_mapping: tokenMap(billing.invoice.collection_state)
+  last_reminder_at:
+    semantic_type: billing.invoice.last_reminder_at
+    token_mapping: tokenMap(billing.invoice.last_reminder_at)
+  aging_bucket_days:
+    semantic_type: billing.invoice.aging_bucket_days
+    token_mapping: tokenMap(billing.invoice.aging_bucket_days)
+  memo:
+    semantic_type: billing.invoice.memo
+    token_mapping: tokenMap(billing.invoice.memo)
+
+tokens:
+  billing.invoice.number: "var(--cmp-text-strong)"
+  billing.invoice.total_minor: "var(--cmp-text-body-strong)"
+  billing.invoice.balance_minor: "var(--cmp-text-warning)"
+  billing.invoice.status.past_due: "var(--cmp-status-critical-text)"
+  billing.invoice.status.paid: "var(--cmp-status-success-text)"
+
+metadata:
+  owners:
+    - revenue-ops@oods.systems
+  maturity: beta
+  notes:
+    - Canonical status options sourced from r4.5 mapping research.

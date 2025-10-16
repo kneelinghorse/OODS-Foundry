@@ -1,0 +1,23 @@
+{
+  "name": "@oods/release-utils",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Utilities for internal release verification and tagging workflows.",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "semver": "^7.6.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "rimraf": "^5.0.7"
+  }
+}

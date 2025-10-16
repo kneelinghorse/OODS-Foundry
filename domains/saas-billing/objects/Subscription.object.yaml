@@ -1,0 +1,173 @@
+object:
+  name: Subscription
+  version: 1.0.0
+  domain: saas.billing
+  description: Canonical SaaS subscription object composed from lifecycle, pricing, and usage traits with provider mapping.
+  tags:
+    - billing
+    - subscription
+    - lifecycle
+
+traits:
+  - name: lifecycle/Stateful
+    alias: SubscriptionLifecycle
+    parameters:
+      states:
+        - future
+        - trialing
+        - active
+        - past_due
+        - paused
+        - pending_cancellation
+        - non_renewing
+        - incomplete
+        - incomplete_expired
+        - canceled
+      initialState: future
+  - name: SaaSBillingBillable
+    alias: PlanDetails
+    parameters:
+      supportedIntervals:
+        - monthly
+        - quarterly
+        - annual
+        - biennial
+  - name: SaaSBillingMetered
+    alias: UsageMeter
+    parameters:
+      unit: seats
+      rolloverStrategy: carry_forward
+      sampleWindowDays: 30
+  - name: SaaSBillingRefundable
+    alias: RefundPolicy
+
+schema:
+  subscription_id:
+    type: string
+    required: true
+    description: Stable identifier shared across billing surfaces.
+  provider:
+    type: string
+    required: true
+    description: Source system providing subscription data (ex: stripe, chargebee).
+  provider_subscription_id:
+    type: string
+    required: false
+    description: Provider specific identifier used during reconciliation.
+  account_name:
+    type: string
+    required: true
+    description: Customer or workspace name tied to the subscription.
+  account_key:
+    type: string
+    required: false
+    description: Immutable customer identifier for linking CRM and billing.
+  account_owner:
+    type: string
+    required: false
+    description: Customer success owner assigned to the account.
+  account_owner_email:
+    type: email
+    required: false
+    description: Contact email for the assigned customer owner.
+  status_note:
+    type: string
+    required: false
+    description: Short context on the current lifecycle status (ex: payment retrying).
+  current_period_start:
+    type: datetime
+    required: true
+    description: Timestamp when the active billing period began.
+  current_period_end:
+    type: datetime
+    required: true
+    description: Timestamp when the active billing period ends.
+  trial_end_at:
+    type: datetime
+    required: false
+    description: Date when trialing subscriptions will convert or expire.
+  cancellation_effective_at:
+    type: datetime
+    required: false
+    description: When the subscription will cancel if pending.
+  renewal_rate_minor:
+    type: integer
+    required: false
+    description: Expected renewal price in minor currency units including discounts.
+  health_score:
+    type: number
+    required: false
+    description: Derived account health indicator (0-100).
+  risk_segment:
+    type: string
+    required: false
+    description: Customer stratification label (ex: at_risk, stable, expansion).
+  notes:
+    type: string
+    required: false
+    description: Free form account summary for success and finance teams.
+
+semantics:
+  subscription_id:
+    semantic_type: billing.subscription.id
+    token_mapping: tokenMap(billing.subscription.id)
+  provider:
+    semantic_type: billing.subscription.provider
+    token_mapping: tokenMap(billing.subscription.provider)
+  provider_subscription_id:
+    semantic_type: billing.subscription.provider_id
+    token_mapping: tokenMap(billing.subscription.provider_id)
+  account_name:
+    semantic_type: billing.subscription.account_name
+    token_mapping: tokenMap(billing.subscription.account_name)
+  account_key:
+    semantic_type: billing.subscription.account_key
+    token_mapping: tokenMap(billing.subscription.account_key)
+  account_owner:
+    semantic_type: billing.subscription.account_owner
+    token_mapping: tokenMap(billing.subscription.account_owner)
+  account_owner_email:
+    semantic_type: billing.subscription.account_owner_email
+    token_mapping: tokenMap(billing.subscription.account_owner_email)
+  status_note:
+    semantic_type: billing.subscription.status_note
+    token_mapping: tokenMap(billing.subscription.status_note)
+  current_period_start:
+    semantic_type: billing.subscription.current_period_start
+    token_mapping: tokenMap(billing.subscription.current_period_start)
+  current_period_end:
+    semantic_type: billing.subscription.current_period_end
+    token_mapping: tokenMap(billing.subscription.current_period_end)
+  trial_end_at:
+    semantic_type: billing.subscription.trial_end_at
+    token_mapping: tokenMap(billing.subscription.trial_end_at)
+  cancellation_effective_at:
+    semantic_type: billing.subscription.cancellation_effective_at
+    token_mapping: tokenMap(billing.subscription.cancellation_effective_at)
+  renewal_rate_minor:
+    semantic_type: billing.subscription.renewal_rate_minor
+    token_mapping: tokenMap(billing.subscription.renewal_rate_minor)
+  health_score:
+    semantic_type: billing.subscription.health_score
+    token_mapping: tokenMap(billing.subscription.health_score)
+  risk_segment:
+    semantic_type: billing.subscription.risk_segment
+    token_mapping: tokenMap(billing.subscription.risk_segment)
+  notes:
+    semantic_type: billing.subscription.notes
+    token_mapping: tokenMap(billing.subscription.notes)
+
+tokens:
+  billing.subscription.account_name: "var(--cmp-text-strong)"
+  billing.subscription.account_owner: "var(--cmp-text-subtle)"
+  billing.subscription.health_score: "var(--cmp-text-success)"
+  billing.subscription.risk_segment: "var(--cmp-badge-text-warning)"
+
+metadata:
+  owners:
+    - billing@oods.systems
+    - success@oods.systems
+  maturity: beta
+  references:
+    - cmos/missions/research/R13.5_Canonical-Model-Subscription-and-Invoice.md
+    - cmos/missions/research/r4.5_SaaS-Enum-to-Token-Mapping-Schema.md

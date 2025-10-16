@@ -1,0 +1,147 @@
+object:
+  name: Invoice
+  version: 1.0.0
+  domain: saas.billing
+  description: Canonical SaaS invoice object normalizing payment terms, status, and refund posture.
+  tags:
+    - billing
+    - invoice
+    - finance
+
+traits:
+  - name: SaaSBillingPayable
+    alias: InvoiceTerms
+  - name: SaaSBillingRefundable
+    alias: CreditWindow
+  - name: lifecycle/Timestampable
+    alias: AuditTrail
+    parameters:
+      recordedEvents:
+        - created
+        - posted
+        - payment_initiated
+        - payment_cleared
+        - payment_failed
+        - voided
+        - written_off
+      timezone: UTC
+      allowNullUpdatedAt: true
+
+schema:
+  invoice_id:
+    type: string
+    required: true
+    description: Primary identifier for the invoice inside the billing domain.
+  subscription_id:
+    type: string
+    required: true
+    description: Subscription identifier this invoice is associated with.
+  provider:
+    type: string
+    required: true
+    description: Source system providing invoice data.
+  provider_invoice_id:
+    type: string
+    required: false
+    description: Native provider identifier retained for audit trails.
+  billing_contact_name:
+    type: string
+    required: false
+    description: Customer billing contact receiving the invoice.
+  billing_contact_email:
+    type: email
+    required: false
+    description: Email address for the billing contact.
+  tax_minor:
+    type: integer
+    required: false
+    description: Tax amount collected on the invoice in minor currency units.
+  discount_minor:
+    type: integer
+    required: false
+    description: Total discounts applied to the invoice in minor units.
+  subtotal_minor:
+    type: integer
+    required: false
+    description: Subtotal before discounts and tax in minor units.
+  line_items:
+    type: InvoiceLineItem[]
+    required: false
+    description: Normalized line items with quantity, amount_minor, and description fields.
+    default: []
+  attachments:
+    type: AssetReference[]
+    required: false
+    description: Supporting documents or credit memos associated with the invoice.
+    default: []
+  portal_url:
+    type: string
+    required: false
+    description: Link to the hosted invoice or customer billing portal.
+  dunning_step:
+    type: string
+    required: false
+    description: Current dunning playbook step (ex: reminder_1, reminder_final, collections).
+  payment_source:
+    type: string
+    required: false
+    description: Payment method used or expected (card, ach, wire).
+
+semantics:
+  invoice_id:
+    semantic_type: billing.invoice.id
+    token_mapping: tokenMap(billing.invoice.id)
+  subscription_id:
+    semantic_type: billing.invoice.subscription_id
+    token_mapping: tokenMap(billing.invoice.subscription_id)
+  provider:
+    semantic_type: billing.invoice.provider
+    token_mapping: tokenMap(billing.invoice.provider)
+  provider_invoice_id:
+    semantic_type: billing.invoice.provider_id
+    token_mapping: tokenMap(billing.invoice.provider_id)
+  billing_contact_name:
+    semantic_type: billing.invoice.billing_contact_name
+    token_mapping: tokenMap(billing.invoice.billing_contact_name)
+  billing_contact_email:
+    semantic_type: billing.invoice.billing_contact_email
+    token_mapping: tokenMap(billing.invoice.billing_contact_email)
+  tax_minor:
+    semantic_type: billing.invoice.tax_minor
+    token_mapping: tokenMap(billing.invoice.tax_minor)
+  discount_minor:
+    semantic_type: billing.invoice.discount_minor
+    token_mapping: tokenMap(billing.invoice.discount_minor)
+  subtotal_minor:
+    semantic_type: billing.invoice.subtotal_minor
+    token_mapping: tokenMap(billing.invoice.subtotal_minor)
+  line_items:
+    semantic_type: billing.invoice.line_items
+    token_mapping: tokenMap(billing.invoice.line_items)
+  attachments:
+    semantic_type: billing.invoice.attachments
+    token_mapping: tokenMap(billing.invoice.attachments)
+  portal_url:
+    semantic_type: billing.invoice.portal_url
+    token_mapping: tokenMap(billing.invoice.portal_url)
+  dunning_step:
+    semantic_type: billing.invoice.dunning_step
+    token_mapping: tokenMap(billing.invoice.dunning_step)
+  payment_source:
+    semantic_type: billing.invoice.payment_source
+    token_mapping: tokenMap(billing.invoice.payment_source)
+
+tokens:
+  billing.invoice.id: "var(--cmp-text-strong)"
+  billing.invoice.billing_contact_name: "var(--cmp-text-body-strong)"
+  billing.invoice.payment_source: "var(--cmp-text-subtle)"
+  billing.invoice.dunning_step: "var(--cmp-badge-text-warning)"
+
+metadata:
+  owners:
+    - revenue-ops@oods.systems
+    - finance@oods.systems
+  maturity: beta
+  references:
+    - cmos/missions/research/R13.5_Canonical-Model-Subscription-and-Invoice.md
+    - cmos/missions/research/r4.5_SaaS-Enum-to-Token-Mapping-Schema.md

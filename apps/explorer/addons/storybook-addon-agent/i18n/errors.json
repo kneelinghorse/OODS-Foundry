@@ -1,0 +1,66 @@
+{
+  "codes": {
+    "POLICY_DENIED": {
+      "title": "Policy blocked the run",
+      "description": "The MCP policy engine denied this action for the current role or missing approval.",
+      "guidance": "Request maintainer approval, switch to a read-only tool, or rerun with an allowed role.",
+      "severity": "error"
+    },
+    "TIMEOUT": {
+      "title": "Bridge timed out waiting for the server",
+      "description": "The MCP server did not respond before the bridge timeout expired.",
+      "guidance": "Check MCP server health and retry. Long-running tools may need investigation.",
+      "severity": "error"
+    },
+    "RATE_LIMITED": {
+      "title": "Requests are rate limited",
+      "description": "The bridge or policy guards are throttling repeated requests.",
+      "guidance": "Slow down automated retries and wait a moment before trying again.",
+      "severity": "warning"
+    },
+    "VALIDATION_ERROR": {
+      "title": "Request payload is invalid",
+      "description": "Inputs failed schema validation or the request format was not accepted.",
+      "guidance": "Fix the payload (tool name, input JSON, or media type) and rerun.",
+      "severity": "warning"
+    },
+    "RUN_ERROR": {
+      "title": "Run failed unexpectedly",
+      "description": "The MCP server exited or returned an unexpected error during execution.",
+      "guidance": "Check MCP server logs, restart the service if needed, and retry the command.",
+      "severity": "error"
+    }
+  },
+  "http": {
+    "401": {
+      "title": "Bridge authentication required",
+      "description": "The bridge rejected the request without a valid X-Bridge-Token.",
+      "guidance": "Provide the configured bridge token (Storybook settings or CLI flag) and retry.",
+      "severity": "error"
+    },
+    "403": {
+      "title": "Bridge denied this request",
+      "description": "The bridge blocked the run because the tool is forbidden or approval is missing.",
+      "guidance": "Confirm the tool is allowed and supply an approval token when applying changes.",
+      "severity": "error"
+    },
+    "415": {
+      "title": "Unsupported media type",
+      "description": "The bridge only accepts application/json payloads.",
+      "guidance": "Send JSON with the correct Content-Type header and retry.",
+      "severity": "warning"
+    },
+    "429": {
+      "title": "Too many requests",
+      "description": "The bridge is rate limiting fast repeated requests.",
+      "guidance": "Pause before retrying or stagger automation to stay within the allowance.",
+      "severity": "warning"
+    }
+  },
+  "fallback": {
+    "title": "Run failed",
+    "description": "The MCP bridge reported an unexpected error.",
+    "guidance": "Retry the action or share the incident ID with a maintainer for investigation.",
+    "severity": "error"
+  }
+}

@@ -1,0 +1,114 @@
+object:
+  name: Usage
+  version: 1.0.0
+  domain: saas.billing
+  description: Metered usage snapshot for consumption based billing supporting trend analysis and overage forecasting.
+  tags:
+    - billing
+    - usage
+    - analytics
+
+traits:
+  - name: SaaSBillingMetered
+    alias: MeterReading
+    parameters:
+      unit: api_calls
+      rolloverStrategy: expire
+      sampleWindowDays: 7
+  - name: lifecycle/Timestampable
+    alias: UsageAudit
+    parameters:
+      recordedEvents:
+        - reading_captured
+        - anomaly_detected
+        - reset
+      timezone: UTC
+      allowNullUpdatedAt: true
+
+schema:
+  usage_id:
+    type: string
+    required: true
+    description: Identifier for this usage record.
+  subscription_id:
+    type: string
+    required: true
+    description: Subscription the usage belongs to.
+  meter_id:
+    type: string
+    required: true
+    description: Provider specific meter identifier.
+  provider:
+    type: string
+    required: true
+    description: Source provider for usage data.
+  status:
+    type: string
+    required: false
+    description: Health of the usage feed (ok, delayed, investigating).
+    default: ok
+    validation:
+      enum:
+        - ok
+        - delayed
+        - investigating
+  trend_percent:
+    type: number
+    required: false
+    description: Percent delta compared to previous window.
+  variance_minor:
+    type: integer
+    required: false
+    description: Currency impact of usage variance calculated with overage rate.
+  last_reported_at:
+    type: datetime
+    required: true
+    description: Timestamp of the most recent provider usage payload.
+  anomalies:
+    type: UsageAnomaly[]
+    required: false
+    description: Detected anomalies with context for investigation.
+    default: []
+
+semantics:
+  usage_id:
+    semantic_type: billing.usage.id
+    token_mapping: tokenMap(billing.usage.id)
+  subscription_id:
+    semantic_type: billing.usage.subscription_id
+    token_mapping: tokenMap(billing.usage.subscription_id)
+  meter_id:
+    semantic_type: billing.usage.meter_id
+    token_mapping: tokenMap(billing.usage.meter_id)
+  provider:
+    semantic_type: billing.usage.provider
+    token_mapping: tokenMap(billing.usage.provider)
+  status:
+    semantic_type: billing.usage.status
+    token_mapping: tokenMap(billing.usage.status)
+  trend_percent:
+    semantic_type: billing.usage.trend_percent
+    token_mapping: tokenMap(billing.usage.trend_percent)
+  variance_minor:
+    semantic_type: billing.usage.variance_minor
+    token_mapping: tokenMap(billing.usage.variance_minor)
+  last_reported_at:
+    semantic_type: billing.usage.last_reported_at
+    token_mapping: tokenMap(billing.usage.last_reported_at)
+  anomalies:
+    semantic_type: billing.usage.anomalies
+    token_mapping: tokenMap(billing.usage.anomalies)
+
+tokens:
+  billing.usage.status.ok: "var(--cmp-badge-text-success)"
+  billing.usage.status.delayed: "var(--cmp-badge-text-warning)"
+  billing.usage.status.investigating: "var(--cmp-badge-text-critical)"
+  billing.usage.trend_percent: "var(--cmp-text-accent)"
+
+metadata:
+  owners:
+    - analytics@oods.systems
+    - product-ops@oods.systems
+  maturity: beta
+  references:
+    - cmos/missions/research/R13.5_Canonical-Model-Subscription-and-Invoice.md

@@ -1,0 +1,16 @@
+{
+  "name": "@oods/agent-cli",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CLI harness for MCP plan/apply/execute flows with replay support.",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "plan": "tsx src/index.ts plan",
+    "apply": "tsx src/index.ts apply",
+    "replay": "tsx src/index.ts replay"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

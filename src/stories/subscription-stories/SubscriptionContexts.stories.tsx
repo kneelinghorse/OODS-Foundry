@@ -1,4 +1,5 @@
 import type { FC } from 'react';
+import type { Meta, StoryObj } from '@storybook/react';
 import { RenderObject } from '../../components/RenderObject';
 import type { RenderObjectProps } from '../../components/RenderObject';
 import { SubscriptionObject } from '../../objects/subscription/object';
@@ -16,21 +17,28 @@ const CancelAtPeriodEnd = cancelAtPeriodEndSubscription as SubscriptionRecord;
 const SubscriptionRenderObject = RenderObject as FC<SubscriptionRenderProps>;
 const renderStory = (args: SubscriptionRenderProps) => <SubscriptionRenderObject {...args} />;
 
-export default {
+const buildArgs = (context: SubscriptionRenderProps['context'], data: SubscriptionRecord) =>
+  ({
+    object: SubscriptionObject,
+    context,
+    data,
+  }) satisfies SubscriptionRenderProps;
+
+const meta: Meta<typeof SubscriptionRenderObject> = {
   title: 'Subscription/RenderObject',
-  component: RenderObject,
+  component: SubscriptionRenderObject,
   parameters: {
     chromatic: { disableSnapshot: true },
   },
 };
 
-export const ActiveDetail = {
+export default meta;
+
+type Story = StoryObj<typeof SubscriptionRenderObject>;
+
+export const ActiveDetail: Story = {
   render: renderStory,
-  args: {
-    object: SubscriptionObject,
-    context: 'detail',
-    data: Active,
-  } as SubscriptionRenderProps,
+  args: buildArgs('detail', Active),
   parameters: {
     chromatic: { disableSnapshot: false },
     vrt: { tags: ['vrt-critical'] },
@@ -38,40 +46,24 @@ export const ActiveDetail = {
   tags: ['vrt-critical'],
 };
 
-export const ActiveList = {
+export const ActiveList: Story = {
   render: renderStory,
-  args: {
-    object: SubscriptionObject,
-    context: 'list',
-    data: Active,
-  } as SubscriptionRenderProps,
+  args: buildArgs('list', Active),
 };
 
-export const ActiveForm = {
+export const ActiveForm: Story = {
   render: renderStory,
-  args: {
-    object: SubscriptionObject,
-    context: 'form',
-    data: Active,
-  } as SubscriptionRenderProps,
+  args: buildArgs('form', Active),
 };
 
-export const ActiveTimeline = {
+export const ActiveTimeline: Story = {
   render: renderStory,
-  args: {
-    object: SubscriptionObject,
-    context: 'timeline',
-    data: Active,
-  } as SubscriptionRenderProps,
+  args: buildArgs('timeline', Active),
 };
 
-export const ActiveCard = {
+export const ActiveCard: Story = {
   render: renderStory,
-  args: {
-    object: SubscriptionObject,
-    context: 'card',
-    data: Active,
-  } as SubscriptionRenderProps,
+  args: buildArgs('card', Active),
   parameters: {
     chromatic: { disableSnapshot: false },
     vrt: { tags: ['vrt'] },
@@ -79,22 +71,14 @@ export const ActiveCard = {
   tags: ['vrt'],
 };
 
-export const ActiveInline = {
+export const ActiveInline: Story = {
   render: renderStory,
-  args: {
-    object: SubscriptionObject,
-    context: 'inline',
-    data: Active,
-  } as SubscriptionRenderProps,
+  args: buildArgs('inline', Active),
 };
 
-export const PastDueDetail = {
+export const PastDueDetail: Story = {
   render: renderStory,
-  args: {
-    object: SubscriptionObject,
-    context: 'detail',
-    data: PastDue,
-  } as SubscriptionRenderProps,
+  args: buildArgs('detail', PastDue),
   parameters: {
     chromatic: { disableSnapshot: false },
     vrt: { tags: ['vrt-critical'] },
@@ -102,13 +86,9 @@ export const PastDueDetail = {
   tags: ['vrt-critical'],
 };
 
-export const PastDueList = {
+export const PastDueList: Story = {
   render: renderStory,
-  args: {
-    object: SubscriptionObject,
-    context: 'list',
-    data: PastDue,
-  } as SubscriptionRenderProps,
+  args: buildArgs('list', PastDue),
   parameters: {
     chromatic: { disableSnapshot: false },
     vrt: { tags: ['vrt'] },
@@ -116,92 +96,52 @@ export const PastDueList = {
   tags: ['vrt'],
 };
 
-export const PastDueForm = {
+export const PastDueForm: Story = {
   render: renderStory,
-  args: {
-    object: SubscriptionObject,
-    context: 'form',
-    data: PastDue,
-  } as SubscriptionRenderProps,
+  args: buildArgs('form', PastDue),
 };
 
-export const PastDueTimeline = {
+export const PastDueTimeline: Story = {
   render: renderStory,
-  args: {
-    object: SubscriptionObject,
-    context: 'timeline',
-    data: PastDue,
-  } as SubscriptionRenderProps,
+  args: buildArgs('timeline', PastDue),
 };
 
-export const PastDueCard = {
+export const PastDueCard: Story = {
   render: renderStory,
-  args: {
-    object: SubscriptionObject,
-    context: 'card',
-    data: PastDue,
-  } as SubscriptionRenderProps,
+  args: buildArgs('card', PastDue),
 };
 
-export const PastDueInline = {
+export const PastDueInline: Story = {
   render: renderStory,
-  args: {
-    object: SubscriptionObject,
-    context: 'inline',
-    data: PastDue,
-  } as SubscriptionRenderProps,
+  args: buildArgs('inline', PastDue),
 };
 
-export const CancelAtPeriodEndDetail = {
+export const CancelAtPeriodEndDetail: Story = {
   render: renderStory,
-  args: {
-    object: SubscriptionObject,
-    context: 'detail',
-    data: CancelAtPeriodEnd,
-  } as SubscriptionRenderProps,
+  args: buildArgs('detail', CancelAtPeriodEnd),
 };
 
-export const CancelAtPeriodEndList = {
+export const CancelAtPeriodEndList: Story = {
   render: renderStory,
-  args: {
-    object: SubscriptionObject,
-    context: 'list',
-    data: CancelAtPeriodEnd,
-  } as SubscriptionRenderProps,
+  args: buildArgs('list', CancelAtPeriodEnd),
 };
 
-export const CancelAtPeriodEndForm = {
+export const CancelAtPeriodEndForm: Story = {
   render: renderStory,
-  args: {
-    object: SubscriptionObject,
-    context: 'form',
-    data: CancelAtPeriodEnd,
-  } as SubscriptionRenderProps,
+  args: buildArgs('form', CancelAtPeriodEnd),
 };
 
-export const CancelAtPeriodEndTimeline = {
+export const CancelAtPeriodEndTimeline: Story = {
   render: renderStory,
-  args: {
-    object: SubscriptionObject,
-    context: 'timeline',
-    data: CancelAtPeriodEnd,
-  } as SubscriptionRenderProps,
+  args: buildArgs('timeline', CancelAtPeriodEnd),
 };
 
-export const CancelAtPeriodEndCard = {
+export const CancelAtPeriodEndCard: Story = {
   render: renderStory,
-  args: {
-    object: SubscriptionObject,
-    context: 'card',
-    data: CancelAtPeriodEnd,
-  } as SubscriptionRenderProps,
+  args: buildArgs('card', CancelAtPeriodEnd),
 };
 
-export const CancelAtPeriodEndInline = {
+export const CancelAtPeriodEndInline: Story = {
   render: renderStory,
-  args: {
-    object: SubscriptionObject,
-    context: 'inline',
-    data: CancelAtPeriodEnd,
-  } as SubscriptionRenderProps,
+  args: buildArgs('inline', CancelAtPeriodEnd),
 };

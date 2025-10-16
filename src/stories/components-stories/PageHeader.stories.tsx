@@ -1,9 +1,10 @@
 import type { ComponentProps } from 'react';
+import type { Meta, StoryObj } from '@storybook/react';
 import { PageHeader } from '../../components/page/PageHeader';
 
 type StoryProps = ComponentProps<typeof PageHeader>;
 
-export default {
+const meta: Meta<typeof PageHeader> = {
   title: 'Components/PageHeader',
   component: PageHeader,
   parameters: {
@@ -11,7 +12,11 @@ export default {
   },
 };
 
-export const Default = {
+export default meta;
+
+type Story = StoryObj<typeof PageHeader>;
+
+export const Default: Story = {
   render: (args: StoryProps) => <PageHeader {...args} />,
   args: {
     title: 'Acme, Inc.',
@@ -34,6 +39,6 @@ export const Default = {
   tags: ['vrt-critical'],
 };
 
-export const Minimal = {
+export const Minimal: Story = {
   render: () => <PageHeader title="Untitled Record" />,
 };

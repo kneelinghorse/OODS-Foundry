@@ -1,0 +1,17 @@
+import { Meta, Story, Canvas, Markdown } from '@storybook/blocks';
+import * as InvoiceFormScenariosStories from './Invoice.Form-Scenarios.stories';
+
+<Meta of={InvoiceFormScenariosStories} />
+
+<Canvas>
+  <Story of={InvoiceFormScenariosStories.ValidationStates} />
+</Canvas>
+
+<Markdown>
+{`### Highlights
+
+- Collector contact, credit memo, notification, and dunning groups share tone-driven FieldGroup styling for clarity.
+- ValidationBanner escalates blocking states with proper alert/live-region defaults for retrying invoices.
+- Disabled stage fields demonstrate read-only governance without diverging from the tokens-only surface.
+`}
+</Markdown>

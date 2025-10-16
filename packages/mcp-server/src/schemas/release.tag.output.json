@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "artifacts": { "type": "array", "items": { "type": "string" } },
+    "transcriptPath": { "type": "string" },
+    "bundleIndexPath": { "type": "string" },
+    "tag": { "type": "string" },
+    "created": { "type": "boolean" },
+    "warnings": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "required": ["artifacts", "transcriptPath", "bundleIndexPath", "tag", "created"],
+  "additionalProperties": false
+}

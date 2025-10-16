@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react';
-import subscriptionMapping from '../../../../examples/mapping/saas.Subscription.status.json';
-import invoiceMapping from '../../../../examples/mapping/saas.Invoice.status.json';
+import saasBillingStatusMap from '~/tokens/maps/saas-billing.status-map.json';
 import paymentIntentMapping from '../../../../examples/mapping/payments.PaymentIntent.status.json';
 import ticketMapping from '../../../../examples/mapping/support.Ticket.status.json';
 import userMapping from '../../../../examples/mapping/iam.User.status.json';
@@ -12,12 +11,13 @@ type MappingTokenPayload = {
   foregroundColor: string;
   backgroundColor: string;
   borderColor: string;
-  iconName: string;
+  iconName?: string;
 };
 
 type MappingEntry = {
   description: string;
   default: MappingTokenPayload;
+  contexts?: Record<string, MappingTokenPayload>;
 };
 
 type MappingManifest = {
@@ -62,7 +62,8 @@ const ICON_GLYPHS: Record<string, string> = {
   void: '∅',
   paid: '✔︎',
   open: '○',
-  future: '⏲'
+  future: '⏲',
+  refunded: '↺'
 };
 
 const toLabel = (status: string): string =>
@@ -124,13 +125,14 @@ const buildRegistry = (manifest: MappingManifest, domain: StatusDomain): Map<str
   Object.entries(manifest.mappings).forEach(([status, definition]) => {
     const label = toLabel(status);
     const tone = resolveTone(definition.default);
+    const iconName = definition.default.iconName ?? 'icon.status.unknown';
 
     map.set(status, {
       domain,
       status,
       label,
       description: definition.description,
-      iconName: definition.default.iconName,
+      iconName,
       tone
     });
   });
@@ -138,8 +140,62 @@ const buildRegistry = (manifest: MappingManifest, domain: StatusDomain): Map<str
   return map;
 };
 
-const SUBSCRIPTION_REGISTRY = buildRegistry(subscriptionMapping as MappingManifest, 'subscription');
-const INVOICE_REGISTRY = buildRegistry(invoiceMapping as MappingManifest, 'invoice');
+type SaasStatusTokenBlock = {
+  foreground: string;
+  background: string;
+  border: string;
+  icon: string;
+};
+
+type SaasStatusEntry = {
+  description: string;
+  chip: SaasStatusTokenBlock;
+  banner?: SaasStatusTokenBlock;
+};
+
+type SaasBillingStatusManifest = {
+  version: string;
+  generated_at: string;
+  domains: Record<'subscription' | 'invoice', Record<string, SaasStatusEntry>>;
+};
+
+const toManifestFromSaas = (domain: 'subscription' | 'invoice'): MappingManifest => {
+  const manifest = saasBillingStatusMap as SaasBillingStatusManifest;
+  const domainDefinitions = manifest.domains[domain];
+
+  if (!domainDefinitions) {
+    return { mappings: {} };
+  }
+  const mappings: Record<string, MappingEntry> = {};
+
+  Object.entries(domainDefinitions).forEach(([status, entry]) => {
+    mappings[status] = {
+      description: entry.description,
+      default: {
+        foregroundColor: entry.chip.foreground,
+        backgroundColor: entry.chip.background,
+        borderColor: entry.chip.border,
+        iconName: entry.chip.icon
+      }
+    };
+
+    if (entry.banner) {
+      mappings[status].contexts = {
+        banner: {
+          foregroundColor: entry.banner.foreground,
+          backgroundColor: entry.banner.background,
+          borderColor: entry.banner.border,
+          iconName: entry.banner.icon
+        }
+      };
+    }
+  });
+
+  return { mappings };
+};
+
+const SUBSCRIPTION_REGISTRY = buildRegistry(toManifestFromSaas('subscription'), 'subscription');
+const INVOICE_REGISTRY = buildRegistry(toManifestFromSaas('invoice'), 'invoice');
 const PAYMENT_INTENT_REGISTRY = buildRegistry(paymentIntentMapping as MappingManifest, 'payment_intent');
 const TICKET_REGISTRY = buildRegistry(ticketMapping as MappingManifest, 'ticket');
 const USER_REGISTRY = buildRegistry(userMapping as MappingManifest, 'user');

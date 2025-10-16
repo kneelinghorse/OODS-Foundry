@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "brand": {
+      "type": "string",
+      "enum": ["A"],
+      "default": "A",
+      "description": "Target brand identifier."
+    },
+    "delta": {
+      "description": "Alias changes (object) or RFC 6902 patch array when strategy=patch.",
+      "oneOf": [
+        { "type": "object" },
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "op": { "type": "string" },
+              "path": { "type": "string" }
+            },
+            "required": ["op", "path"]
+          }
+        }
+      ]
+    },
+    "strategy": {
+      "type": "string",
+      "enum": ["alias", "patch"],
+      "default": "alias",
+      "description": "Alias strategy rewrites token values; patch applies RFC 6902 operations."
+    },
+    "apply": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": ["delta"],
+  "additionalProperties": false
+}

@@ -1,0 +1,17 @@
+import { Meta, Story, Canvas, Markdown } from '@storybook/blocks';
+import * as SubscriptionFormScenariosStories from './Subscription.Form-Scenarios.stories';
+
+<Meta of={SubscriptionFormScenariosStories} />
+
+<Canvas>
+  <Story of={SubscriptionFormScenariosStories.ValidationStates} />
+</Canvas>
+
+<Markdown>
+{`### Highlights
+
+- Group legend wiring shows required vs optional while exposing success, warning, invalid, and disabled tones.
+- Proration preview stays token-driven, computing credits from canonical renewal data with no inline colors.
+- Pending submission banner uses the ValidationBanner status API so async hand-offs surface without custom markup.
+`}
+</Markdown>
