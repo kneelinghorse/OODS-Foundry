@@ -1,0 +1,53 @@
+{
+  "name": "OODS Foundry — Claude Remote MCP",
+  "summary": "Connect Claude Desktop's remote MCP client to the local OODS HTTP bridge for read-only tooling.",
+  "transport": {
+    "type": "http",
+    "baseUrl": "http://127.0.0.1:4466",
+    "healthPath": "/health",
+    "toolsPath": "/tools",
+    "runPath": "/run",
+    "artifactsPath": "/artifacts"
+  },
+  "headers": {
+    "X-Bridge-Token": "${BRIDGE_TOKEN|optional}",
+    "X-Bridge-Approval": "${APPROVAL_TOKEN|required when apply=true}"
+  },
+  "toolAllowlist": [
+    "a11y.scan",
+    "purity.audit",
+    "vrt.run",
+    "diag.snapshot",
+    "reviewKit.create",
+    "brand.apply",
+    "billing.reviewKit",
+    "billing.switchFixtures"
+  ],
+  "writeGatedTools": [
+    "reviewKit.create",
+    "brand.apply",
+    "billing.reviewKit",
+    "billing.switchFixtures"
+  ],
+  "bootstrap": {
+    "mcpServer": "pnpm --filter @oods/mcp-server run build",
+    "bridge": "pnpm --filter @oods/mcp-bridge run dev"
+  },
+  "placement": {
+    "file": "~/.claude/mcp.json",
+    "key": "mcpServers.oods-foundry-bridge"
+  },
+  "claudeDesktopConfig": {
+    "mcpServers": {
+      "oods-foundry-bridge": {
+        "type": "remote",
+        "url": "http://127.0.0.1:4466"
+      }
+    }
+  },
+  "notes": [
+    "Claude Desktop currently cannot forward custom headers for remote MCP servers. Leave BRIDGE_TOKEN unset when pairing with the desktop client, or run a tokenless bridge for local development.",
+    "Approval headers are only required when a tool requests apply=true. This profile defaults to apply=false for read-only usage.",
+    "Set MCP_BRIDGE_PORT before launching the bridge if port 4466 is unavailable."
+  ]
+}

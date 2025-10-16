@@ -307,10 +307,21 @@ export async function handle(_input: BaseInput = {}): Promise<GenericOutput> {
     endTime: new Date(),
   });
 
+  const toRunRelative = (filePath: string, fallback: string): string => {
+    const relative = path.relative(runDir, filePath);
+    if (!relative || relative.startsWith('..') || path.isAbsolute(relative)) {
+      return fallback;
+    }
+    return relative.split(path.sep).join('/');
+  };
+
+  const transcriptRelative = toRunRelative(transcriptPath, 'transcript.json');
+  const diagnosticsRelative = toRunRelative(diagnosticsPath, 'diagnostics.json');
+
   const bundleEntries: BundleIndexEntryInput[] = [
-    transcriptPath,
+    transcriptRelative,
     {
-      path: diagnosticsPath,
+      path: diagnosticsRelative,
       name: 'diagnostics.json',
       purpose: 'Consolidated diagnostics snapshot',
       sizeBytes: details[0]?.sizeBytes ?? undefined,

@@ -1,0 +1,64 @@
+{
+  "name": "OODS Foundry — OpenAI Agents Profile",
+  "summary": "Responses/Agents API profile that proxies tool calls through the local MCP bridge.",
+  "bridge": {
+    "baseUrl": "http://127.0.0.1:4466",
+    "healthPath": "/health",
+    "toolsPath": "/tools",
+    "runPath": "/run"
+  },
+  "requestDefaults": {
+    "method": "POST",
+    "headers": {
+      "Content-Type": "application/json",
+      "X-Bridge-Token": "${BRIDGE_TOKEN|optional}",
+      "X-Bridge-Approval": ""
+    },
+    "body": {
+      "tool": "diag.snapshot",
+      "input": {
+        "apply": false
+      }
+    }
+  },
+  "agent": {
+    "instructions": "You are an agent that may call local MCP bridge tools exposed by the OODS Foundry project. You must keep tool calls read-only unless the operator provides an approval token.",
+    "defaultModel": "gpt-4.1-mini",
+    "tools": [
+      {
+        "type": "function",
+        "name": "diag_snapshot",
+        "description": "Collect a diagnostics snapshot from the OODS Foundry MCP server.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "apply": {
+              "type": "boolean",
+              "description": "Must remain false unless an approval header is provided.",
+              "default": false
+            }
+          },
+          "required": []
+        }
+      }
+    ]
+  },
+  "callbackTemplate": {
+    "url": "http://127.0.0.1:4466/run",
+    "headers": {
+      "Content-Type": "application/json",
+      "X-Bridge-Token": "${BRIDGE_TOKEN|optional}"
+    },
+    "payload": {
+      "tool": "diag.snapshot",
+      "input": {
+        "apply": "{{apply:false}}"
+      }
+    }
+  },
+  "notes": [
+    "Invoke GET /tools on the bridge to synchronise the allowlisted tool names before constructing the agent.",
+    "Approval headers are required before setting apply=true for write tools (reviewKit.create, brand.apply, billing.reviewKit, billing.switchFixtures).",
+    "Set BRIDGE_URL to override the base bridge URL when running the agents-smoke harness."
+  ]
+}

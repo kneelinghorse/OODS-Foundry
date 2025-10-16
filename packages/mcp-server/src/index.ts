@@ -100,9 +100,11 @@ async function stdioLoop() {
       const line = buffer.slice(0, idx).trim();
       buffer = buffer.slice(idx + 1);
       if (!line) continue;
+      let messageId: string | number | undefined;
       try {
         const msg = JSON.parse(line);
         const { id, tool, input, role: roleRaw } = msg as { id?: string | number; tool: string; input: unknown; role?: string };
+        messageId = id;
         if (!tool || !tools[tool]) {
           process.stdout.write(JSON.stringify({ id, error: err(ERROR_CODES.UNKNOWN_TOOL, `Unknown tool: ${tool}`) }) + '\n');
           continue;
@@ -152,7 +154,11 @@ async function stdioLoop() {
         }
       } catch (e: any) {
         const te: TypedError = err(ERROR_CODES.BAD_REQUEST, String(e?.message || e));
-        process.stdout.write(JSON.stringify({ error: te }) + '\n');
+        const payload: { id?: string | number; error: TypedError } = { error: te };
+        if (messageId !== undefined) {
+          payload.id = messageId;
+        }
+        process.stdout.write(JSON.stringify(payload) + '\n');
       }
     }
   });

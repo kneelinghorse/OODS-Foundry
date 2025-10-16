@@ -1,0 +1,14 @@
+{
+  "name": "@oods/agents-smoke",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Smoke harness for MCP bridge agent connectors",
+  "scripts": {
+    "run": "tsx src/index.ts",
+    "smoke": "tsx src/index.ts"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
