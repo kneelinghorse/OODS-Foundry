@@ -4,6 +4,7 @@
 
 const DEFAULT_DATE_OPTIONS: Readonly<Intl.DateTimeFormatOptions> = Object.freeze({
   dateStyle: 'medium',
+  timeZone: 'UTC',
 });
 
 const DEFAULT_CURRENCY_OPTIONS: Readonly<Intl.NumberFormatOptions> = Object.freeze({
