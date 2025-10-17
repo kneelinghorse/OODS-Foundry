@@ -30,6 +30,7 @@ type ErrorState = {
   code?: string | null;
   status?: number | null;
   incidentId?: string | null;
+  correlationId?: string | null;
   details?: unknown;
 };
 
@@ -570,6 +571,7 @@ export function AgentPanel() {
         code: bridgeError.code ?? null,
         status: bridgeError.status ?? null,
         incidentId: bridgeError.incidentId ?? null,
+        correlationId: bridgeError.correlationId ?? null,
         details: bridgeError.details,
       });
       setPhase('error');
@@ -614,6 +616,7 @@ export function AgentPanel() {
         code: bridgeError.code ?? null,
         status: bridgeError.status ?? null,
         incidentId: bridgeError.incidentId ?? null,
+        correlationId: bridgeError.correlationId ?? null,
         details: bridgeError.details,
       });
       setPhase('error');
@@ -888,6 +891,11 @@ export function AgentPanel() {
               ? 'Replay preview loaded. Apply remains gated behind approval.'
               : 'Preview only (no changes will be applied) until approval is granted.'}
           </PlanNotice>
+          {planResult?.telemetry?.correlationId && (
+            <Muted>
+              Correlation ID: <code>{planResult.telemetry.correlationId}</code>
+            </Muted>
+          )}
           <DiffViewer
             diffs={planResult?.preview?.diffs || null}
             loading={diffLoading}
@@ -915,6 +923,14 @@ export function AgentPanel() {
             <span>
               Run complete. Artifacts are available below. Transcript and bundle index are stored for audit.
             </span>
+            {(applyResult?.telemetry?.correlationId || planResult?.telemetry?.correlationId || applyResult?.correlationId || planResult?.correlationId) && (
+              <Muted>
+                Correlation ID:{' '}
+                <code>
+                  {applyResult?.telemetry?.correlationId || applyResult?.correlationId || planResult?.telemetry?.correlationId || planResult?.correlationId}
+                </code>
+              </Muted>
+            )}
           </SummaryCard>
           <ActionsRow>
             <PrimaryButton
@@ -968,6 +984,13 @@ export function AgentPanel() {
           metaItems.push(
             <ErrorMetaItem key="incident">
               Incident ID: <code>{errorState.incidentId}</code>
+            </ErrorMetaItem>
+          );
+        }
+        if (errorState.correlationId) {
+          metaItems.push(
+            <ErrorMetaItem key="correlation">
+              Correlation ID: <code>{errorState.correlationId}</code>
             </ErrorMetaItem>
           );
         }

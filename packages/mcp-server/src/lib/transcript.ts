@@ -10,6 +10,7 @@ import {
 } from '@oods/artifacts';
 import type { TranscriptArtifact, TranscriptRedaction, TranscriptDraft, TranscriptArgs } from '@oods/artifacts';
 import { loadRedactions, type Redactions } from './security.js';
+import { currentTelemetry } from '../telemetry/log.js';
 
 export type WriteTranscriptOptions = {
   tool: string;
@@ -20,6 +21,7 @@ export type WriteTranscriptOptions = {
   endTime?: Date;
   exitCode?: number;
   role?: string | null;
+  incidentId?: string | null;
 };
 
 const MASK_TOKEN = '***';
@@ -123,6 +125,29 @@ export function writeTranscript(dir: string, options: WriteTranscriptOptions): s
     redactions: redactionMeta,
   };
 
+  const telemetry = currentTelemetry();
+  if (telemetry) {
+    const telemetryMeta: Record<string, unknown> = {
+      correlationId: telemetry.correlationId,
+      commandId: telemetry.commandId,
+    };
+    if (options.incidentId) {
+      telemetryMeta.incidentId = options.incidentId;
+    }
+    transcriptDraft.meta = {
+      ...(transcriptDraft.meta ?? {}),
+      telemetry: telemetryMeta,
+    };
+  } else if (options.incidentId) {
+    transcriptDraft.meta = {
+      ...(transcriptDraft.meta ?? {}),
+      telemetry: {
+        correlationId: null,
+        incidentId: options.incidentId,
+      },
+    };
+  }
+
   fs.mkdirSync(dir, { recursive: true });
   return writer.writeTranscript(dir, transcriptDraft);
 }
@@ -138,3 +163,4 @@ export function writeDiagnostics(dir: string, diagnostics: DiagnosticsWriteInput
 }
 
 export type { BundleIndexEntryInput, DiagnosticsDocument, DiagnosticsWriteInput };
+export { type DiagnosticsTelemetrySummary } from '@oods/artifacts';

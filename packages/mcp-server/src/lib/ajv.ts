@@ -1,19 +1,15 @@
-// Use Ajv 2020-12 to match schema meta
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore - type resolution for subpath import
-import AjvCtor from 'ajv/dist/2020.js';
+import Ajv2020 from 'ajv/dist/2020.js';
 
-let ajvInstance: any | null = null;
+let ajvInstance: Ajv2020 | null = null;
 
-export function getAjv(): any {
+export function getAjv(): Ajv2020 {
   if (!ajvInstance) {
-    const AjvClass: any = AjvCtor as any;
-    ajvInstance = new AjvClass({
+    ajvInstance = new Ajv2020({
       allErrors: true,
       allowUnionTypes: true,
       strict: true,
       removeAdditional: 'failing',
-      useDefaults: true
+      useDefaults: true,
     });
   }
   return ajvInstance;

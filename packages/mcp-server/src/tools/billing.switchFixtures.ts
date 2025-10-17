@@ -211,11 +211,15 @@ function buildDiffNotes(domain: string, previousLabel: string, nextLabel: string
 }
 
 function toPlanDiff(domain: string, previous: BillingProvider, next: BillingProvider, entries: DiffEntry[]): PlanDiff {
-  const beforeMap: Record<string, string | undefined> = {};
-  const afterMap: Record<string, string | undefined> = {};
+  const beforeMap: Record<string, string> = {};
+  const afterMap: Record<string, string> = {};
   for (const entry of entries) {
-    beforeMap[entry.path] = entry.before;
-    afterMap[entry.path] = entry.after;
+    if (entry.before !== undefined) {
+      beforeMap[entry.path] = entry.before;
+    }
+    if (entry.after !== undefined) {
+      afterMap[entry.path] = entry.after;
+    }
   }
   return {
     path: `billing/switch/${domain.toLowerCase()}/${previous}-to-${next}.json`,

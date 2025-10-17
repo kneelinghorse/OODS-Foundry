@@ -11,17 +11,13 @@
     "delta": {
       "description": "Alias changes (object) or RFC 6902 patch array when strategy=patch.",
       "oneOf": [
-        { "type": "object" },
+        {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/DeltaValue" }
+        },
         {
           "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "op": { "type": "string" },
-              "path": { "type": "string" }
-            },
-            "required": ["op", "path"]
-          }
+          "items": { "$ref": "#/$defs/PatchOperation" }
         }
       ]
     },
@@ -37,5 +33,36 @@
     }
   },
   "required": ["delta"],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "$defs": {
+    "DeltaValue": {
+      "anyOf": [
+        { "type": "string" },
+        { "type": "number" },
+        { "type": "boolean" },
+        { "type": "null" },
+        {
+          "type": "array",
+          "items": { "$ref": "#/$defs/DeltaValue" }
+        },
+        {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/DeltaValue" }
+        }
+      ]
+    },
+    "PatchOperation": {
+      "type": "object",
+      "properties": {
+        "op": {
+          "type": "string",
+          "enum": ["add", "remove", "replace"]
+        },
+        "path": { "type": "string" },
+        "value": { "$ref": "#/$defs/DeltaValue" }
+      },
+      "required": ["op", "path"],
+      "additionalProperties": false
+    }
+  }
 }

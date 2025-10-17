@@ -215,11 +215,15 @@ function toDiffNotes(base: Specimen, candidate: Specimen, entries: DiffEntry[]):
 }
 
 function buildPlanDiff(objectKey: BillingObjectKey, base: Specimen, candidate: Specimen, entries: DiffEntry[]): PlanDiff {
-  const changesBefore: Record<string, string | undefined> = {};
-  const changesAfter: Record<string, string | undefined> = {};
+  const changesBefore: Record<string, string> = {};
+  const changesAfter: Record<string, string> = {};
   for (const entry of entries) {
-    changesBefore[entry.path] = entry.before;
-    changesAfter[entry.path] = entry.after;
+    if (entry.before !== undefined) {
+      changesBefore[entry.path] = entry.before;
+    }
+    if (entry.after !== undefined) {
+      changesAfter[entry.path] = entry.after;
+    }
   }
   return {
     path: `billing/review-kit/${objectKey}/${base.provider}-vs-${candidate.provider}.json`,

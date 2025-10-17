@@ -96,6 +96,10 @@ export type ToolRunSuccess = {
   diagnosticsPath: string | null;
   preview?: ToolRunPreview;
   artifactsDetail?: ArtifactInfo[];
+  telemetry?: {
+    correlationId: string | null;
+  } | null;
+  correlationId?: string | null;
 };
 
 export type ToolRunError = {
@@ -105,7 +109,9 @@ export type ToolRunError = {
     message?: string;
     messages?: unknown;
     incidentId?: string;
+    details?: unknown;
   };
+  correlationId?: string | null;
 };
 
 export type ToolRunResponse = ToolRunSuccess | ToolRunError;
@@ -115,13 +121,20 @@ export class BridgeError extends Error {
   code?: string;
   details?: unknown;
   incidentId?: string;
+  correlationId?: string | null;
 
-  constructor(message: string, options: { status?: number; code?: string; details?: unknown; incidentId?: string } = {}) {
+  constructor(
+    message: string,
+    options: { status?: number; code?: string; details?: unknown; incidentId?: string; correlationId?: string | null } = {}
+  ) {
     super(message);
     this.name = 'BridgeError';
     this.status = options.status;
     this.code = options.code;
     this.details = options.details;
     this.incidentId = options.incidentId;
+    this.correlationId = options.correlationId ?? (typeof options.details === 'object' && options.details !== null
+      ? (options.details as any).correlationId ?? null
+      : null);
   }
 }

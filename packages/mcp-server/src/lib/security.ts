@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { loadPolicyDoc, type PolicyDoc } from '../security/policy.js';
 
 export type Redactions = {
@@ -19,23 +20,34 @@ export function loadRedactions(): Redactions {
   return JSON.parse(raw) as Redactions;
 }
 
+const REPO_ROOT = path.resolve(fileURLToPath(new URL('../../../../', import.meta.url)));
+
+function resolveBaseDir(base: string): string {
+  if (path.isAbsolute(base)) return base;
+  return path.resolve(REPO_ROOT, base);
+}
+
 export function todayDir(base: string): string {
+  const root = resolveBaseDir(base);
   const d = new Date();
   const y = d.getUTCFullYear();
   const m = String(d.getUTCMonth() + 1).padStart(2, '0');
   const day = String(d.getUTCDate()).padStart(2, '0');
-  const dir = path.join(base, `${y}-${m}-${day}`);
-  fs.mkdirSync(dir, {recursive: true});
+  const dir = path.join(root, `${y}-${m}-${day}`);
+  fs.mkdirSync(dir, { recursive: true });
   return dir;
 }
 
 export function withinAllowed(base: string, candidate: string): boolean {
-  const rel = path.relative(base, candidate);
+  const root = resolveBaseDir(base);
+  const absoluteCandidate = path.isAbsolute(candidate) ? candidate : path.resolve(process.cwd(), candidate);
+  const rel = path.relative(root, absoluteCandidate);
   return !rel.startsWith('..') && !path.isAbsolute(rel);
 }
 
 export function createRunDirectory(base: string, tool: string): { runDir: string; runRelative: string; runId: string } {
-  const dateDir = todayDir(base);
+  const root = resolveBaseDir(base);
+  const dateDir = todayDir(root);
   const toolDir = path.join(dateDir, tool);
   fs.mkdirSync(toolDir, { recursive: true });
   const stamp = new Date().toISOString().replace(/[:.]/g, '-');

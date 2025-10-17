@@ -30,9 +30,10 @@ The bridge listens on `http://127.0.0.1:${MCP_BRIDGE_PORT:-4466}` and exposes `G
 {
   "mcpServers": {
     "oods-foundry-bridge": {
-      "type": "remote",
-      "url": "http://127.0.0.1:4466"
-    }
+  	"type": "remote",
+  	"url": "http://127.0.0.1:4466",
+  	"command": ""
+	}
   }
 }
 ```

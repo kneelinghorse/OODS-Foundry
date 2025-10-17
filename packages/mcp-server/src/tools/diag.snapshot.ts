@@ -8,6 +8,7 @@ import {
   sha256File,
   type BundleIndexEntryInput,
   type DiagnosticsWriteInput,
+  type DiagnosticsTelemetrySummary,
 } from '../lib/transcript.js';
 import { createRunDirectory, loadPolicy } from '../lib/security.js';
 import type {
@@ -66,6 +67,82 @@ async function walkFiles(root: string, matcher: (fullPath: string) => boolean): 
 async function countPngAssets(): Promise<number> {
   const files = await walkFiles(BRAND_ASSETS_DIR, (full) => full.toLowerCase().endsWith('.png'));
   return files.length;
+}
+
+async function collectTelemetrySummary(runDir: string): Promise<DiagnosticsTelemetrySummary | null> {
+  const toolDir = path.dirname(runDir);
+  const dayDir = path.dirname(toolDir);
+  const dateLabel = path.basename(dayDir);
+  const telemetryFile = path.join(dayDir, 'telemetry', 'mcp-server.jsonl');
+  let raw: string;
+  try {
+    raw = await fs.readFile(telemetryFile, 'utf8');
+  } catch {
+    return null;
+  }
+  const lines = raw.split(/\r?\n/).filter((line) => line.trim().length > 0);
+  if (!lines.length) return null;
+
+  let successCount = 0;
+  let failureCount = 0;
+  const durations: number[] = [];
+  const exitCounts = new Map<string, number>();
+  const policyCounts = new Map<string, number>();
+
+  const increment = (map: Map<string, number>, key: string) => {
+    const normalized = key || 'UNKNOWN';
+    map.set(normalized, (map.get(normalized) ?? 0) + 1);
+  };
+
+  for (const line of lines) {
+    try {
+      const record = JSON.parse(line) as Record<string, unknown>;
+      const event = typeof record.event === 'string' ? record.event : '';
+      if (event !== 'tool.run.completed' && event !== 'tool.run.failed') continue;
+      const duration = typeof record.durationMs === 'number' ? record.durationMs : null;
+      if (duration !== null && Number.isFinite(duration)) {
+        durations.push(duration);
+      }
+      const exitRaw = record.exitCode;
+      if (typeof exitRaw === 'number') {
+        increment(exitCounts, exitRaw.toString());
+      } else if (typeof exitRaw === 'string' && exitRaw.length) {
+        increment(exitCounts, exitRaw);
+      }
+      const policyRaw = typeof record.policyCode === 'string' ? record.policyCode : null;
+      const policyValue = policyRaw && policyRaw.length ? policyRaw : typeof (record as any).errorCode === 'string' ? (record as any).errorCode : null;
+      if (policyValue) {
+        increment(policyCounts, policyValue);
+      }
+      if (event === 'tool.run.completed') {
+        successCount += 1;
+      } else if (event === 'tool.run.failed') {
+        failureCount += 1;
+      }
+    } catch {
+      // ignore malformed telemetry lines
+    }
+  }
+
+  const totalRuns = successCount + failureCount;
+  if (totalRuns === 0) return null;
+
+  const averageDuration = durations.length ? durations.reduce((sum, value) => sum + value, 0) / durations.length : null;
+  const maxDuration = durations.length ? Math.max(...durations) : null;
+
+  const exitCodes: Record<string, number> = Object.fromEntries(exitCounts);
+  const policyCodes: Record<string, number> = Object.fromEntries(policyCounts);
+
+  return {
+    date: dateLabel,
+    totalRuns,
+    successCount,
+    failureCount,
+    averageDurationMs: averageDuration,
+    maxDurationMs: maxDuration,
+    exitCodes,
+    policyCodes,
+  };
 }
 
 async function collectBrandSummary(): Promise<DiagnosticsBrandSummary> {
@@ -263,6 +340,7 @@ export async function handle(_input: BaseInput = {}): Promise<GenericOutput> {
   const inventory = await collectInventorySummary(storyFiles, componentCount);
   const vrt = await collectVrtSummary(storyFiles);
   const packageNote = packages.length ? packages.map((pkg) => pkg.name).join(', ') : 'none';
+  const telemetrySummary = await collectTelemetrySummary(runDir);
 
   const diagnostics: DiagnosticsWriteInput = {
     sprint: '12',
@@ -279,6 +357,9 @@ export async function handle(_input: BaseInput = {}): Promise<GenericOutput> {
     tokens,
     packages,
   };
+  if (telemetrySummary) {
+    diagnostics.telemetry = telemetrySummary;
+  }
 
   fs.mkdir(runDir, { recursive: true }).catch(() => undefined);
   const diagnosticsPath = writeDiagnostics(runDir, diagnostics);

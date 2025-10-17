@@ -10,7 +10,10 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json && mkdir -p dist/schemas dist/security && cp -f src/schemas/*.json dist/schemas/ 2>/dev/null || true && cp -f src/security/*.json dist/security/ 2>/dev/null || true",
+    "generate:types": "pnpm exec tsx ../schemas-tools/src/generate-types.ts --schemas src/schemas --out src/schemas/generated.ts",
+    "check:types": "pnpm exec tsx ../schemas-tools/src/generate-types.ts --schemas src/schemas --out src/schemas/generated.ts --check",
+    "test:contracts": "vitest run --config vitest.config.ts",
+    "build": "pnpm run check:types && tsc -p tsconfig.json && mkdir -p dist/schemas dist/security && cp -f src/schemas/*.json dist/schemas/ 2>/dev/null || true && cp -f src/security/*.json dist/security/ 2>/dev/null || true",
     "start": "node dist/index.js",
     "dev": "tsx src/index.ts"
   },

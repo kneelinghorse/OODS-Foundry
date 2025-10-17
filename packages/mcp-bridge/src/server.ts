@@ -9,6 +9,14 @@ import { fileURLToPath } from 'node:url';
 import { bridgeConfig, lowerCaseHeaders } from './config.js';
 import { registerArtifactEndpoints } from './endpoints/artifacts.js';
 import { buildErrorPayload, normalizeRunErrorCode, sendError, statusForCode } from './middleware/errors.js';
+import {
+  createCorrelationId,
+  createRequestId,
+  withBridgeTelemetry,
+  logRequestStarted,
+  logRequestCompleted,
+  logRequestFailed,
+} from './telemetry/log.js';
 
 const ALLOWED_TOOLS = new Set(bridgeConfig.tools.allowed);
 const WRITE_GATED_TOOLS = new Set(bridgeConfig.tools.writeGated);
@@ -22,12 +30,17 @@ type McpResponse =
   | { id?: string | number; result: any }
   | { id?: string | number; error: { code: string; message?: string; messages?: any } };
 
+type McpRunResponse = {
+  result: any;
+  telemetry?: any;
+};
+
 class McpClient {
   private child: ChildProcessWithoutNullStreams | null = null;
   private seq = 0;
   private pending = new Map<
     number,
-    { resolve: (v: any) => void; reject: (e: any) => void }
+    { resolve: (v: McpRunResponse) => void; reject: (e: any) => void }
   >();
   private buffer = '';
 
@@ -52,13 +65,14 @@ class McpClient {
         this.buffer = this.buffer.slice(idx + 1);
         if (!line) continue;
         try {
-          const msg = JSON.parse(line) as McpResponse;
+          const msg = JSON.parse(line) as McpResponse & { telemetry?: any };
           const id = (msg as any).id as number | undefined;
           if (id != null && this.pending.has(id)) {
             const p = this.pending.get(id)!;
             this.pending.delete(id);
-            if ((msg as any).error) p.reject((msg as any).error);
-            else p.resolve((msg as any).result);
+            const telemetry = (msg as any).telemetry ?? null;
+            if ((msg as any).error) p.reject({ ...(msg as any).error, telemetry });
+            else p.resolve({ result: (msg as any).result, telemetry });
           }
         } catch {
           // ignore parse errors on stdout
@@ -74,11 +88,11 @@ class McpClient {
     });
   }
 
-  async run(tool: string, input: any): Promise<any> {
+  async run(tool: string, input: any, correlationId: string): Promise<McpRunResponse> {
     this.ensure();
     const id = ++this.seq;
-    const payload = JSON.stringify({ id, tool, input }) + '\n';
-    return new Promise((resolve, reject) => {
+    const payload = JSON.stringify({ id, tool, input, correlationId }) + '\n';
+    return new Promise<McpRunResponse>((resolve, reject) => {
       this.pending.set(id, { resolve, reject });
       this.child!.stdin.write(payload, 'utf8');
     });
@@ -92,30 +106,33 @@ function isJsonContentType(header: unknown): boolean {
   return mediaType.trim().toLowerCase() === 'application/json';
 }
 
-function ensureJsonContentType(request: FastifyRequest, reply: FastifyReply): boolean {
+function ensureJsonContentType(request: FastifyRequest, reply: FastifyReply, correlationId?: string): boolean {
   if (request.method !== 'POST') return true;
   const header = request.headers['content-type'];
   if (isJsonContentType(Array.isArray(header) ? header[0] : header)) return true;
+  if (correlationId) reply.header('x-correlation-id', correlationId);
   sendError(reply, 415, 'VALIDATION_ERROR', 'application/json body required.', {
-    details: { reason: 'UNSUPPORTED_MEDIA_TYPE' },
+    details: { reason: 'UNSUPPORTED_MEDIA_TYPE', correlationId: correlationId ?? null },
   });
   return false;
 }
 
-function ensureAuthToken(request: FastifyRequest, reply: FastifyReply): boolean {
+function ensureAuthToken(request: FastifyRequest, reply: FastifyReply, correlationId?: string): boolean {
   const expected = bridgeConfig.auth.token;
   if (!expected) return true;
   const value = request.headers[lowerCaseHeaders.auth];
   const provided = Array.isArray(value) ? value[0] : value;
   if (!provided) {
+    reply.header('x-correlation-id', correlationId ?? '');
     sendError(reply, 401, 'POLICY_DENIED', 'Bridge token required to run tools.', {
-      details: { reason: 'MISSING_TOKEN', header: bridgeConfig.auth.header },
+      details: { reason: 'MISSING_TOKEN', header: bridgeConfig.auth.header, correlationId: correlationId ?? null },
     });
     return false;
   }
   if (provided !== expected) {
+    reply.header('x-correlation-id', correlationId ?? '');
     sendError(reply, 401, 'POLICY_DENIED', 'Bridge token rejected.', {
-      details: { reason: 'INVALID_TOKEN' },
+      details: { reason: 'INVALID_TOKEN', correlationId: correlationId ?? null },
     });
     return false;
   }
@@ -194,75 +211,147 @@ async function main() {
   }));
 
   fastify.post<{ Body: RunRequestBody }>('/run', { config: { rateLimit: bridgeConfig.rateLimit.run } }, async (request, reply) => {
-    if (!ensureJsonContentType(request, reply)) return;
-    if (!ensureAuthToken(request, reply)) return;
+    const telemetryContext = {
+      correlationId: createCorrelationId(),
+      requestId: createRequestId(),
+      tool: null as string | null,
+      apply: null as boolean | null,
+      startedAt: Date.now(),
+    };
 
-    const body = request.body ?? {};
-    const tool = body.tool;
-    if (!tool || typeof tool !== 'string') {
-      sendError(reply, 400, 'VALIDATION_ERROR', 'Tool name is required.', {
-        details: { reason: 'MISSING_TOOL' },
-      });
-      return;
-    }
-    if (!ALLOWED_TOOLS.has(tool)) {
-      sendError(reply, 403, 'POLICY_DENIED', `Tool not allowed: ${tool}`, {
-        details: { reason: 'FORBIDDEN_TOOL', tool },
-      });
-      return;
-    }
+    return withBridgeTelemetry(telemetryContext, async () => {
+      reply.header('x-correlation-id', telemetryContext.correlationId);
 
-    const input = { ...(body.input ?? {}) };
-    const applyRequested = input.apply === true;
+      if (!ensureJsonContentType(request, reply, telemetryContext.correlationId)) {
+        logRequestFailed({ reason: 'invalid_content_type', status: 415 });
+        return;
+      }
+      if (!ensureAuthToken(request, reply, telemetryContext.correlationId)) {
+        logRequestFailed({ reason: 'auth_denied', status: 401 });
+        return;
+      }
 
-    if (applyRequested && !WRITE_GATED_TOOLS.has(tool)) {
-      sendError(reply, 403, 'POLICY_DENIED', `Tool ${tool} cannot apply changes via the bridge.`, {
-        details: { reason: 'READ_ONLY_TOOL', tool },
-      });
-      return;
-    }
+      const body = request.body ?? {};
+      const tool = body.tool;
+      if (!tool || typeof tool !== 'string') {
+        logRequestFailed({ reason: 'missing_tool', status: 400 });
+        return reply
+          .code(400)
+          .send(
+            buildErrorPayload('VALIDATION_ERROR', 'Tool name is required.', {
+              details: { reason: 'MISSING_TOOL', correlationId: telemetryContext.correlationId },
+            })
+          );
+      }
+      if (!ALLOWED_TOOLS.has(tool)) {
+        logRequestFailed({ reason: 'forbidden_tool', status: 403, tool });
+        return reply
+          .code(403)
+          .send(
+            buildErrorPayload('POLICY_DENIED', `Tool not allowed: ${tool}`, {
+              details: { reason: 'FORBIDDEN_TOOL', tool, correlationId: telemetryContext.correlationId },
+            })
+          );
+      }
 
-    const approvalGranted = applyRequested && hasApprovalToken(request);
-    if (applyRequested && WRITE_GATED_TOOLS.has(tool) && !approvalGranted) {
-      sendError(reply, 403, 'POLICY_DENIED', 'Approval token required to apply changes.', {
-        details: { reason: 'READ_ONLY_ENFORCED', tool },
-      });
-      return;
-    }
+      telemetryContext.tool = tool;
 
-    if (!approvalGranted) {
-      input.apply = false;
-    }
+      const input = { ...(body.input ?? {}) };
+      const applyRequested = input.apply === true;
+      telemetryContext.apply = applyRequested;
 
-    try {
-      const result = await client.run(tool, input);
-      const normalized = {
-        ok: true as const,
-        tool,
-        artifacts: result?.artifacts ?? [],
-        transcriptPath: result?.transcriptPath ?? null,
-        bundleIndexPath: result?.bundleIndexPath ?? null,
-        diagnosticsPath: result?.diagnosticsPath ?? null,
-        preview: result?.preview ?? null,
-        artifactsDetail: result?.artifactsDetail ?? null,
-      };
-      return normalized;
-    } catch (err: any) {
-      const normalizedCode = normalizeRunErrorCode(err?.code);
-      const inferredStatus =
-        typeof err?.status === 'number'
-          ? err.status
-          : typeof err?.statusCode === 'number'
-          ? err.statusCode
-          : undefined;
-      const status = inferredStatus ?? statusForCode(normalizedCode);
-      const message = typeof err?.message === 'string' && err.message.length ? err.message : 'Failed to run tool.';
-      const details = err?.details ?? err?.messages;
-      return sendError(reply, status, normalizedCode, message, {
-        details,
-        incidentId: typeof err?.incidentId === 'string' ? err.incidentId : undefined,
-      });
-    }
+      if (applyRequested && !WRITE_GATED_TOOLS.has(tool)) {
+        logRequestFailed({ reason: 'apply_not_allowed', status: 403, tool });
+        return reply
+          .code(403)
+          .send(
+            buildErrorPayload('POLICY_DENIED', `Tool ${tool} cannot apply changes via the bridge.`, {
+              details: { reason: 'READ_ONLY_TOOL', tool, correlationId: telemetryContext.correlationId },
+            })
+          );
+      }
+
+      const approvalGranted = applyRequested && hasApprovalToken(request);
+      if (applyRequested && WRITE_GATED_TOOLS.has(tool) && !approvalGranted) {
+        logRequestFailed({ reason: 'approval_missing', status: 403, tool });
+        return reply
+          .code(403)
+          .send(
+            buildErrorPayload('POLICY_DENIED', 'Approval token required to apply changes.', {
+              details: { reason: 'READ_ONLY_ENFORCED', tool, correlationId: telemetryContext.correlationId },
+            })
+          );
+      }
+
+      if (!approvalGranted) {
+        input.apply = false;
+      }
+
+      logRequestStarted({ tool, apply: applyRequested });
+
+      try {
+        const runResponse = await client.run(tool, input, telemetryContext.correlationId);
+        const serverTelemetry = (runResponse?.telemetry ?? {}) as { correlationId?: string; incidentId?: string };
+        if (typeof serverTelemetry?.correlationId === 'string' && serverTelemetry.correlationId.length > 0) {
+          telemetryContext.correlationId = serverTelemetry.correlationId;
+          reply.header('x-correlation-id', serverTelemetry.correlationId);
+        }
+
+        const result = runResponse?.result ?? {};
+        const normalized = {
+          ok: true as const,
+          tool,
+          artifacts: result?.artifacts ?? [],
+          transcriptPath: result?.transcriptPath ?? null,
+          bundleIndexPath: result?.bundleIndexPath ?? null,
+          diagnosticsPath: result?.diagnosticsPath ?? null,
+          preview: result?.preview ?? null,
+          artifactsDetail: result?.artifactsDetail ?? null,
+          telemetry: {
+            correlationId: telemetryContext.correlationId,
+          },
+        };
+        const durationMs = Date.now() - telemetryContext.startedAt;
+        logRequestCompleted({ status: 200, artifacts: normalized.artifacts.length, durationMs });
+        return normalized;
+      } catch (err: any) {
+        const telemetry = typeof err?.telemetry === 'object' && err.telemetry
+          ? (err.telemetry as { correlationId?: string; incidentId?: string })
+          : null;
+        const correlationId =
+          (telemetry?.correlationId && typeof telemetry.correlationId === 'string' && telemetry.correlationId.length > 0)
+            ? telemetry.correlationId
+            : telemetryContext.correlationId;
+        telemetryContext.correlationId = correlationId;
+        reply.header('x-correlation-id', correlationId);
+
+        const normalizedCode = normalizeRunErrorCode(err?.code);
+        const inferredStatus =
+          typeof err?.status === 'number'
+            ? err.status
+            : typeof err?.statusCode === 'number'
+            ? err.statusCode
+            : undefined;
+        const status = inferredStatus ?? statusForCode(normalizedCode);
+        const message = typeof err?.message === 'string' && err.message.length ? err.message : 'Failed to run tool.';
+        const details = err?.details ?? err?.messages;
+        const incidentId =
+          typeof err?.incidentId === 'string'
+            ? err.incidentId
+            : typeof telemetry?.incidentId === 'string'
+            ? telemetry.incidentId
+            : undefined;
+        const durationMs = Date.now() - telemetryContext.startedAt;
+        logRequestFailed({ reason: 'tool_error', status, errorCode: normalizedCode, incidentId, durationMs });
+        return sendError(reply, status, normalizedCode, message, {
+          details: {
+            ...((details && typeof details === 'object') ? details : {}),
+            correlationId,
+          },
+          incidentId,
+        });
+      }
+    });
   });
 
   async function listenWithFallback() {

@@ -47,6 +47,8 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     throw new BridgeError('Bridge returned invalid JSON', { status: response.status, details: err });
   }
 
+  const correlationId = response.headers.get('x-correlation-id');
+
   if (!response.ok) {
     const error = data?.error ?? {};
     const message =
@@ -59,7 +61,22 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
       code: typeof error?.code === 'string' ? error.code : undefined,
       details,
       incidentId: typeof error?.incidentId === 'string' ? error.incidentId : undefined,
+      correlationId: typeof correlationId === 'string' ? correlationId : undefined,
     });
+  }
+
+  if (data && typeof data === 'object' && data !== null) {
+    const payload = data as Record<string, any>;
+    if (typeof correlationId === 'string' && correlationId.length > 0) {
+      if (!payload.telemetry || typeof payload.telemetry !== 'object' || payload.telemetry === null) {
+        payload.telemetry = { correlationId };
+      } else if ((payload.telemetry as any).correlationId == null) {
+        (payload.telemetry as any).correlationId = correlationId;
+      }
+      if (payload.correlationId == null) {
+        payload.correlationId = correlationId;
+      }
+    }
   }
 
   return data as T;

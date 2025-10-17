@@ -5,7 +5,7 @@ The OODS Agent CLI gives maintainers a local harness for running MCP tools with 
 ## Quick start
 
 ```bash
-# Dry-run a tool (no writes)
+# Dry-run a tool (no writes) — prints the correlation ID you can grep in telemetry logs
 pnpm exec tsx tools/oods-agent-cli/src/index.ts plan tokens.build '{"theme":"dark"}'
 
 # Apply writes (requires explicit approval)
@@ -36,6 +36,7 @@ Each invocation produces:
 
 - The server’s own `transcript.json` and `bundle_index.json` inside `artifacts/current-state/<date>/<tool>/`.
 - A CLI transcript (`cli.<command>`) plus `summary.json`, with a `bundle_index.json` that signs both files. These records capture role, arguments, result paths, and replay provenance.
+- A shared `correlationId` surfaced in CLI output, bridge responses, and transcripts. Use it to join against `artifacts/current-state/<date>/telemetry/mcp-server.jsonl` (per-run events) and `.../telemetry/mcp-bridge.jsonl` (HTTP request traces).
 
 Policy failures (role denial, validation errors, rate limits) exit with status code `2`; usage mistakes exit with `1`. Successful runs exit `0`.
 

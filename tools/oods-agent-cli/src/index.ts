@@ -3,6 +3,7 @@ import path from 'node:path';
 import os from 'node:os';
 import { spawn, type ChildProcessWithoutNullStreams } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { randomUUID } from 'node:crypto';
 import { classifyError, type ResolvedErrorDescriptor } from './errors.js';
 import type { BundleIndexEntryInput } from '@oods/artifacts';
 import { prepareReplay, type TranscriptReader } from './replay.js';
@@ -21,12 +22,24 @@ type ToolRunResult = {
   diagnosticsPath?: string;
 };
 
+type ToolRunResponse = {
+  result: ToolRunResult;
+  telemetry?: TelemetryData | null;
+};
+
+type TelemetryData = {
+  correlationId?: string | null;
+  incidentId?: string | null;
+};
+
 type ToolError = {
   code: string;
   message: string;
   details?: unknown;
   incidentId?: string;
   status?: number;
+  correlationId?: string;
+  telemetry?: TelemetryData | null;
 };
 
 type WriterApi = {
@@ -73,13 +86,20 @@ class McpClient {
         this.buffer = this.buffer.slice(idx + 1);
         if (!line) continue;
         try {
-          const parsed = JSON.parse(line) as { id?: number; result?: any; error?: any };
+          const parsed = JSON.parse(line) as { id?: number; result?: any; error?: any; telemetry?: any };
           const id = parsed.id;
           if (id != null && this.pending.has(id)) {
             const pending = this.pending.get(id)!;
             this.pending.delete(id);
-            if (parsed.error) pending.reject(parsed.error);
-            else pending.resolve(parsed.result);
+            const telemetry = parsed.telemetry ?? null;
+            if (parsed.error) {
+              pending.reject({ ...parsed.error, telemetry });
+            } else {
+              pending.resolve({
+                result: parsed.result ?? {},
+                telemetry,
+              });
+            }
           }
         } catch {
           // ignore parse errors
@@ -102,11 +122,11 @@ class McpClient {
     });
   }
 
-  async run(tool: string, input: any, role?: string) {
+  async run(tool: string, input: any, role?: string, correlationId?: string) {
     this.ensureStarted();
     const id = ++this.seq;
-    const payload = JSON.stringify({ id, tool, input, role }) + '\n';
-    return new Promise<any>((resolve, reject) => {
+    const payload = JSON.stringify({ id, tool, input, role, correlationId }) + '\n';
+    return new Promise<ToolRunResponse>((resolve, reject) => {
       this.pending.set(id, { resolve, reject });
       this.child!.stdin.write(payload, 'utf8');
     });
@@ -191,6 +211,19 @@ function normalizeError(err: any): ToolError {
   const message = String(err.message ?? err.messages ?? 'Unknown MCP error');
   const details = err.details ?? err.messages ?? err.errors;
   const incidentId = typeof err.incidentId === 'string' ? err.incidentId : undefined;
+  const telemetry = typeof err.telemetry === 'object' && err.telemetry !== null ? (err.telemetry as TelemetryData) : null;
+  const telemetryCorrelation =
+    typeof telemetry?.correlationId === 'string'
+      ? telemetry.correlationId
+      : typeof err.correlationId === 'string'
+      ? err.correlationId
+      : undefined;
+  const telemetryIncident =
+    typeof telemetry?.incidentId === 'string'
+      ? telemetry.incidentId
+      : typeof err.telemetry?.incidentId === 'string'
+      ? err.telemetry.incidentId
+      : undefined;
   const status =
     typeof err.status === 'number'
       ? err.status
@@ -199,8 +232,10 @@ function normalizeError(err: any): ToolError {
       : undefined;
   const normalized: ToolError = { code, message };
   if (details !== undefined) normalized.details = details;
-  if (incidentId) normalized.incidentId = incidentId;
+  if (incidentId || telemetryIncident) normalized.incidentId = incidentId ?? telemetryIncident;
   if (status !== undefined) normalized.status = status;
+  if (telemetryCorrelation) normalized.correlationId = telemetryCorrelation;
+  if (telemetry) normalized.telemetry = telemetry;
   return normalized;
 }
 
@@ -260,6 +295,7 @@ type RunSummary = {
   exitCode: number;
   user: string;
   hostname: string;
+  telemetry?: TelemetryData | null;
 };
 
 async function recordRun(writer: WriterApi, schemaVersion: string, summary: RunSummary) {
@@ -329,6 +365,14 @@ async function recordRun(writer: WriterApi, schemaVersion: string, summary: RunS
     meta.error = { code: summary.error.code, message: summary.error.message };
   }
 
+  const telemetryInfo = summary.telemetry ?? null;
+  if (telemetryInfo && (telemetryInfo.correlationId || telemetryInfo.incidentId)) {
+    meta.telemetry = {
+      correlationId: telemetryInfo.correlationId ?? null,
+      incidentId: telemetryInfo.incidentId ?? null,
+    };
+  }
+
   const transcriptDraft: Record<string, unknown> = {
     schemaVersion,
     source: 'cli',
@@ -372,10 +416,27 @@ async function recordRun(writer: WriterApi, schemaVersion: string, summary: RunS
       : null,
     error: summary.error ?? null,
     artifacts,
+    telemetry: telemetryInfo
+      ? {
+          correlationId: telemetryInfo.correlationId ?? null,
+          incidentId: telemetryInfo.incidentId ?? null,
+        }
+      : null,
   };
   fs.writeFileSync(summaryPath, JSON.stringify(summaryDoc, null, 2), 'utf8');
 
-  const bundleIndexPath = writer.writeBundleIndex(dir, [transcriptPath, summaryPath]);
+  const toRunRelative = (filePath: string, fallback: string): string => {
+    const relative = path.relative(dir, filePath);
+    if (!relative || relative.startsWith('..') || path.isAbsolute(relative)) {
+      return fallback;
+    }
+    return relative.split(path.sep).join('/');
+  };
+
+  const bundleIndexPath = writer.writeBundleIndex(dir, [
+    toRunRelative(transcriptPath, 'transcript.json'),
+    toRunRelative(summaryPath, 'summary.json'),
+  ]);
   return { dir, transcriptPath, bundleIndexPath };
 }
 
@@ -397,20 +458,28 @@ async function runTool(
   const user = detectUser();
   const hostname = os.hostname();
   const replaySourceAbs = replaySource ? path.resolve(replaySource) : undefined;
+  const requestedCorrelationId = randomUUID();
 
   let result: ToolRunResult | undefined;
   let error: ToolError | undefined;
   let exitCode = 0;
   let errorDescriptor: ResolvedErrorDescriptor | null = null;
+  let telemetry: TelemetryData | null = null;
 
   try {
-    const runResult = (await client.run(tool, payload, options.role)) as ToolRunResult;
-    result = runResult ?? {};
+    const runResponse = await client.run(tool, payload, options.role, requestedCorrelationId);
+    result = runResponse?.result ?? {};
+    const receivedTelemetry = runResponse?.telemetry;
+    telemetry = receivedTelemetry ?? { correlationId: requestedCorrelationId };
   } catch (rawErr: any) {
     const normalized = normalizeError(rawErr);
     errorDescriptor = classifyError(normalized.code, normalized.status);
     error = normalized;
     exitCode = errorDescriptor.exitCode;
+    telemetry = normalized.telemetry ?? {
+      correlationId: normalized.correlationId ?? requestedCorrelationId,
+      incidentId: normalized.incidentId,
+    };
   }
 
   if (!error) {
@@ -435,6 +504,7 @@ async function runTool(
     exitCode,
     user,
     hostname,
+    telemetry,
   });
 
   if (!error) {
@@ -455,6 +525,10 @@ async function runTool(
     }
     console.log(`CLI transcript: ${relativePath(recorded.transcriptPath)}`);
     console.log(`CLI bundle index: ${relativePath(recorded.bundleIndexPath)}`);
+    const correlationId = telemetry?.correlationId ?? null;
+    if (correlationId) {
+      console.log(`Correlation ID: ${correlationId}`);
+    }
   } else {
     const descriptor = errorDescriptor ?? classifyError(error.code, error.status);
     console.error(`❌ ${descriptor.title}`);
@@ -478,6 +552,10 @@ async function runTool(
     }
     if (error.incidentId) {
       metaParts.push(`incident ${error.incidentId}`);
+    }
+    const correlationId = telemetry?.correlationId ?? error.correlationId;
+    if (correlationId) {
+      metaParts.push(`correlation ${correlationId}`);
     }
     if (metaParts.length) {
       console.error(metaParts.join(' · '));

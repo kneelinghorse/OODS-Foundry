@@ -2,12 +2,136 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
   "properties": {
-    "artifacts": { "type": "array", "items": { "type": "string" } },
-    "diagnosticsPath": { "type": "string" },
-    "transcriptPath": { "type": "string" },
-    "bundleIndexPath": { "type": "string" }
+    "artifacts": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Absolute paths of artifacts produced by the tool."
+    },
+    "diagnosticsPath": {
+      "type": "string",
+      "description": "Path to diagnostics JSON output when produced."
+    },
+    "transcriptPath": {
+      "type": "string",
+      "description": "Absolute path to the transcript JSON file."
+    },
+    "bundleIndexPath": {
+      "type": "string",
+      "description": "Path to bundle index describing transcript and artifacts."
+    },
+    "preview": {
+      "$ref": "#/$defs/ToolPreview"
+    },
+    "artifactsDetail": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/ArtifactDetail" },
+      "description": "Optional descriptive metadata for artifacts."
+    }
   },
   "required": ["artifacts", "transcriptPath", "bundleIndexPath"],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "$defs": {
+    "JsonValue": {
+      "anyOf": [
+        { "type": "string" },
+        { "type": "number" },
+        { "type": "boolean" },
+        { "type": "null" },
+        {
+          "type": "array",
+          "items": { "$ref": "#/$defs/JsonValue" }
+        },
+        {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/JsonValue" }
+        }
+      ]
+    },
+    "PlanDiffChange": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["context", "add", "remove"]
+        },
+        "value": { "$ref": "#/$defs/JsonValue" }
+      },
+      "required": ["type", "value"],
+      "additionalProperties": false
+    },
+    "PlanDiffSummary": {
+      "type": "object",
+      "properties": {
+        "additions": { "type": "integer", "minimum": 0 },
+        "deletions": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "PlanDiff": {
+      "type": "object",
+      "properties": {
+        "path": { "type": "string" },
+        "status": { "type": "string", "enum": ["added", "modified", "deleted"] },
+        "summary": { "$ref": "#/$defs/PlanDiffSummary" },
+        "hunks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "header": { "type": "string" },
+              "changes": {
+                "type": "array",
+                "items": { "$ref": "#/$defs/PlanDiffChange" }
+              }
+            },
+            "required": ["header", "changes"],
+            "additionalProperties": false
+          }
+        },
+        "structured": {
+          "type": "object",
+          "properties": {
+            "type": { "type": "string", "const": "json" },
+            "before": { "$ref": "#/$defs/JsonValue" },
+            "after": { "$ref": "#/$defs/JsonValue" }
+          },
+          "required": ["type"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["path", "status", "hunks"],
+      "additionalProperties": false
+    },
+    "ArtifactDetail": {
+      "type": "object",
+      "properties": {
+        "path": { "type": "string" },
+        "name": { "type": "string" },
+        "purpose": { "type": ["string", "null"] },
+        "sha256": { "type": ["string", "null"], "pattern": "^[a-f0-9]{64}$" },
+        "sizeBytes": { "type": ["integer", "null"], "minimum": 0 }
+      },
+      "required": ["path", "name"],
+      "additionalProperties": false
+    },
+    "ToolPreview": {
+      "type": "object",
+      "properties": {
+        "summary": { "type": ["string", "null"] },
+        "notes": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "diffs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/PlanDiff" }
+        },
+        "specimens": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
 }
-
