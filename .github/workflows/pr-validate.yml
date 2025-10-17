@@ -222,7 +222,6 @@ jobs:
           projectToken: ${{ env.CHROMATIC_PROJECT_TOKEN }}
           workingDir: .
           storybookBuildDir: storybook-static
-          onlyChanged: true
           autoAcceptChanges: main
           exitZeroOnChanges: true
           prComment: true
