@@ -50,6 +50,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build tokens
+        run: pnpm run build:tokens
+
       - name: Lint
         run: pnpm run lint
 

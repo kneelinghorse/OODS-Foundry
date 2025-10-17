@@ -49,6 +49,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build tokens
+        run: pnpm run build:tokens
+
       - name: Build packages
         run: pnpm run build
 
@@ -193,6 +196,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build tokens
+        run: pnpm run build:tokens
+
       - name: Cache Storybook build
         uses: actions/cache@v4
         with:
@@ -236,6 +242,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Build tokens
+        run: pnpm run build:tokens
 
       - name: Run coverage suite
         run: pnpm run test:coverage
