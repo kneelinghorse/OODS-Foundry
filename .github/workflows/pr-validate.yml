@@ -54,6 +54,9 @@ jobs:
         run: pnpm run build:tokens
 
       - name: Build packages
+        run: pnpm run build:packages
+
+      - name: Build packages
         run: pnpm run build
 
   lint:
@@ -156,6 +159,9 @@ jobs:
       - name: Build tokens
         run: pnpm run build:tokens
 
+      - name: Build tw-variants package
+        run: pnpm --filter @oods/tw-variants run build
+
       - name: Install Playwright (Chromium)
         run: pnpm exec playwright install --with-deps chromium
 
@@ -201,6 +207,9 @@ jobs:
 
       - name: Build tokens
         run: pnpm run build:tokens
+
+      - name: Build tw-variants package
+        run: pnpm --filter @oods/tw-variants run build
 
       - name: Build packages
         run: pnpm run build:packages
