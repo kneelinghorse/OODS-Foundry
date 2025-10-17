@@ -173,9 +173,10 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
-    if: ${{ secrets.CHROMATIC_PROJECT_TOKEN != '' }}
     env:
       CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+      HAS_CHROMATIC_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN != '' }}
+    if: ${{ env.HAS_CHROMATIC_TOKEN == 'true' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
