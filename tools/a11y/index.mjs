@@ -16,6 +16,11 @@ const GUARDRAILS_PATH = path.resolve(__dirname, './guardrails/relative-color.csv
 
 const RANGE_TOLERANCE = 0.001;
 
+if (process.env.GITHUB_HEAD_REF && process.env.GITHUB_HEAD_REF.includes('smoke-a11y')) {
+  console.error(`[a11y-contract] Intentional smoke failure for branch ${process.env.GITHUB_HEAD_REF}`);
+  process.exit(1);
+}
+
 const RULES = [
   {
     ruleId: 'text-on-surface',
