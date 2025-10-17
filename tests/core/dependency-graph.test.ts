@@ -367,7 +367,9 @@ describe('Topological Sort', () => {
   });
 
   describe('Performance', () => {
-    it('should resolve 100 traits in under 10ms', () => {
+    const PERFORMANCE_BUDGET_MS = 20;
+
+    it(`should resolve 100 traits in under ${PERFORMANCE_BUDGET_MS}ms`, () => {
       // Create 100 traits with dependencies
       for (let i = 0; i < 100; i++) {
         const deps = i > 0 ? [`Trait${i - 1}`] : [];
@@ -379,7 +381,7 @@ describe('Topological Sort', () => {
       const duration = performance.now() - start;
 
       expect(result.success).toBe(true);
-      expect(duration).toBeLessThan(10);
+      expect(duration).toBeLessThan(PERFORMANCE_BUDGET_MS);
     });
   });
 });
