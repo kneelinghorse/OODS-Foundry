@@ -5,7 +5,7 @@ import ticketMapping from '../../../../examples/mapping/support.Ticket.status.js
 import userMapping from '../../../../examples/mapping/iam.User.status.json';
 
 type StatusDomain = 'subscription' | 'invoice' | 'payment_intent' | 'ticket' | 'user';
-type StatusTone = 'neutral' | 'info' | 'accent' | 'success' | 'warning' | 'critical';
+export type StatusTone = 'neutral' | 'info' | 'accent' | 'success' | 'warning' | 'critical';
 
 type MappingTokenPayload = {
   foregroundColor: string;

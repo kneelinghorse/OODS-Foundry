@@ -239,14 +239,26 @@ html[data-theme='dark'] {
     var(--theme-shadow-elevation-card-offset-y, var(--oods-shadow-elevation-card-offset-y, 16px))
     var(--theme-shadow-elevation-card-blur, var(--oods-shadow-elevation-card-blur, 40px))
     var(--theme-shadow-elevation-card-spread, var(--oods-shadow-elevation-card-spread, -12px))
-    var(--theme-shadow-elevation-card-color, var(--oods-shadow-elevation-card-color, rgba(15, 23, 42, 0.12)));
+    var(
+      --theme-shadow-elevation-card-color,
+      var(
+        --oods-shadow-elevation-card-color,
+        color-mix(in srgb, var(--sys-text-primary) 12%, transparent)
+      )
+    );
 
   --sys-shadow-elevation-overlay:
     var(--theme-shadow-elevation-overlay-offset-x, var(--oods-shadow-elevation-overlay-offset-x, 0px))
     var(--theme-shadow-elevation-overlay-offset-y, var(--oods-shadow-elevation-overlay-offset-y, 24px))
     var(--theme-shadow-elevation-overlay-blur, var(--oods-shadow-elevation-overlay-blur, 56px))
     var(--theme-shadow-elevation-overlay-spread, var(--oods-shadow-elevation-overlay-spread, -16px))
-    var(--theme-shadow-elevation-overlay-color, var(--oods-shadow-elevation-overlay-color, rgba(15, 23, 42, 0.24)));
+    var(
+      --theme-shadow-elevation-overlay-color,
+      var(
+        --oods-shadow-elevation-overlay-color,
+        color-mix(in srgb, var(--sys-text-primary) 24%, transparent)
+      )
+    );
 }
 
 /* Component/context slots */

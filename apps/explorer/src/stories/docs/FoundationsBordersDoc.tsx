@@ -24,9 +24,9 @@ const borderSamples = [
     copy:
       'Default surface borders lean on Theme 0 neutrals. Use them to outline cards that rest directly on the canvas.',
     styles: {
-      background: 'var(--theme-surface-raised, #ffffff)',
-      text: 'var(--sys-text-primary, #0f172a)',
-      icon: 'var(--sys-icon-primary, #1e293b)'
+      background: 'var(--theme-surface-raised)',
+      text: 'var(--sys-text-primary)',
+      icon: 'var(--sys-icon-primary)'
     }
   },
   {
@@ -36,9 +36,9 @@ const borderSamples = [
     copy:
       'Critical banners inherit their border colour from the status ramp and maintain consistent curvature with compact surfaces.',
     styles: {
-      background: 'var(--theme-status-critical-surface, #fee2e2)',
-      text: 'var(--theme-status-critical-text, #991b1b)',
-      icon: 'var(--theme-status-critical-icon, #f87171)'
+      background: 'var(--theme-status-critical-surface)',
+      text: 'var(--theme-status-critical-text)',
+      icon: 'var(--theme-status-critical-icon)'
     }
   }
 ];
@@ -72,7 +72,7 @@ const iconBadge = (color: string): React.CSSProperties => ({
   alignItems: 'center',
   justifyContent: 'center',
   fontSize: '1.2rem',
-  color: 'var(--theme-surface-canvas, #ffffff)'
+  color: 'var(--theme-surface-canvas)'
 });
 
 const tableStyle: React.CSSProperties = {
@@ -88,16 +88,16 @@ const headCellStyle: React.CSSProperties = {
   fontWeight: 600,
   letterSpacing: '0.08em',
   textTransform: 'uppercase',
-  color: 'var(--cmp-text-body, #475569)',
+  color: 'var(--cmp-text-body)',
   padding: '0.35rem 0.65rem',
-  borderBottom: '1px solid color-mix(in srgb, var(--cmp-border-default, rgba(148,163,184,0.45)) 55%, transparent)'
+  borderBottom: '1px solid color-mix(in srgb, var(--cmp-border-default) 55%, transparent)'
 };
 
 const cellStyle: React.CSSProperties = {
   padding: '0.65rem',
-  background: 'var(--cmp-surface-panel, #ffffff)',
+  background: 'var(--cmp-surface-panel)',
   borderRadius: '0.75rem',
-  border: '1px solid color-mix(in srgb, var(--cmp-border-default, rgba(148,163,184,0.35)) 45%, transparent)',
+  border: '1px solid color-mix(in srgb, var(--cmp-border-default) 45%, transparent)',
   verticalAlign: 'top'
 };
 
@@ -115,8 +115,8 @@ const BorderDoc: React.FC = () => (
     <section style={specimenContainer}>
       {borderSamples.map((sample) => (
         <article key={sample.token} style={{ display: 'grid', gap: '0.75rem' }}>
-          <div style={{ display: 'grid', gap: '0.3rem', fontSize: '0.85rem', color: 'var(--cmp-text-body, #475569)' }}>
-            <strong style={{ color: 'var(--sys-text-primary, #0f172a)' }}>{sample.name}</strong>
+          <div style={{ display: 'grid', gap: '0.3rem', fontSize: '0.85rem', color: 'var(--cmp-text-body)' }}>
+            <strong style={{ color: 'var(--sys-text-primary)' }}>{sample.name}</strong>
             <span>{sample.usage}</span>
             <code>{sample.token}</code>
           </div>

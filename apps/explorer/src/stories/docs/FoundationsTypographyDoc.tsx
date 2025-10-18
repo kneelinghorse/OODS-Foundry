@@ -72,16 +72,16 @@ const headCellStyle: React.CSSProperties = {
   fontWeight: 600,
   letterSpacing: '0.08em',
   textTransform: 'uppercase',
-  color: 'var(--cmp-text-body, #475569)',
+  color: 'var(--cmp-text-body)',
   padding: '0.35rem 0.75rem',
-  borderBottom: '1px solid color-mix(in srgb, var(--cmp-border-default, rgba(148,163,184,0.45)) 65%, transparent)'
+  borderBottom: '1px solid color-mix(in srgb, var(--cmp-border-default) 65%, transparent)'
 };
 
 const cellStyle: React.CSSProperties = {
   padding: '0.85rem 0.75rem',
-  background: 'var(--cmp-surface-panel, #ffffff)',
+  background: 'var(--cmp-surface-panel)',
   borderRadius: '0.85rem',
-  border: '1px solid color-mix(in srgb, var(--cmp-border-default, rgba(148,163,184,0.45)) 55%, transparent)',
+  border: '1px solid color-mix(in srgb, var(--cmp-border-default) 55%, transparent)',
   verticalAlign: 'top'
 };
 
@@ -115,7 +115,7 @@ const TypographyDoc: React.FC = () => (
               <td style={cellStyle}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
                   <strong>{entry.name}</strong>
-                  <span style={{ color: 'var(--cmp-text-body, #475569)', fontSize: '0.82rem' }}>{entry.usage}</span>
+                  <span style={{ color: 'var(--cmp-text-body)', fontSize: '0.82rem' }}>{entry.usage}</span>
                   <code style={{ fontSize: '0.75rem' }}>context: {entry.contexts}</code>
                 </div>
               </td>
@@ -123,10 +123,10 @@ const TypographyDoc: React.FC = () => (
                 <div
                   style={{
                     ...sampleStyle(entry.token),
-                    background: 'var(--cmp-surface-subtle, #f8fafc)',
+                    background: 'var(--cmp-surface-subtle)',
                     padding: '1.1rem',
                     borderRadius: '0.75rem',
-                    border: '1px solid color-mix(in srgb, var(--cmp-border-default, rgba(148,163,184,0.35)) 45%, transparent)'
+                    border: '1px solid color-mix(in srgb, var(--cmp-border-default) 45%, transparent)'
                   }}
                 >
                   {entry.sample}
@@ -141,17 +141,17 @@ const TypographyDoc: React.FC = () => (
               <td style={cellStyle}>
                 <dl style={{ ...detailListStyle, gridTemplateColumns: 'auto auto', columnGap: '0.75rem' }}>
                   <Fragment>
-                    <dt style={{ fontSize: '0.78rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--cmp-text-body, #475569)' }}>Font</dt>
+                    <dt style={{ fontSize: '0.78rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--cmp-text-body)' }}>Font</dt>
                     <dd style={{ margin: 0 }}>{tokenValue(entry.token, 'font-family')}</dd>
-                    <dt style={{ fontSize: '0.78rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--cmp-text-body, #475569)' }}>Size</dt>
+                    <dt style={{ fontSize: '0.78rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--cmp-text-body)' }}>Size</dt>
                     <dd style={{ margin: 0 }}>{tokenValue(entry.token, 'font-size')}</dd>
-                    <dt style={{ fontSize: '0.78rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--cmp-text-body, #475569)' }}>Weight</dt>
+                    <dt style={{ fontSize: '0.78rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--cmp-text-body)' }}>Weight</dt>
                     <dd style={{ margin: 0 }}>{tokenValue(entry.token, 'font-weight')}</dd>
-                    <dt style={{ fontSize: '0.78rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--cmp-text-body, #475569)' }}>Line height</dt>
+                    <dt style={{ fontSize: '0.78rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--cmp-text-body)' }}>Line height</dt>
                     <dd style={{ margin: 0 }}>{tokenValue(entry.token, 'line-height')}</dd>
-                    <dt style={{ fontSize: '0.78rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--cmp-text-body, #475569)' }}>Letter spacing</dt>
+                    <dt style={{ fontSize: '0.78rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--cmp-text-body)' }}>Letter spacing</dt>
                     <dd style={{ margin: 0 }}>{tokenValue(entry.token, 'letter-spacing')}</dd>
-                    <dt style={{ fontSize: '0.78rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--cmp-text-body, #475569)' }}>Case</dt>
+                    <dt style={{ fontSize: '0.78rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--cmp-text-body)' }}>Case</dt>
                     <dd style={{ margin: 0 }}>{tokenValue(entry.token, 'text-case')}</dd>
                   </Fragment>
                 </dl>

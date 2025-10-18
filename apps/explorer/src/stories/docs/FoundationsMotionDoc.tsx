@@ -87,11 +87,11 @@ const cardStyle: React.CSSProperties = {
   gap: '0.6rem',
   padding: '1.25rem',
   borderRadius: '1rem',
-  border: '1px solid color-mix(in srgb, var(--cmp-border-default, #94a3b8) 28%, transparent)',
-  background: 'var(--cmp-surface-panel, #ffffff)',
-  color: 'var(--cmp-text-body, #0f172a)',
+  border: '1px solid color-mix(in srgb, var(--cmp-border-default) 28%, transparent)',
+  background: 'var(--cmp-surface-panel)',
+  color: 'var(--cmp-text-body)',
   boxShadow:
-    '0 0 0 1px color-mix(in srgb, var(--cmp-border-default, #94a3b8) 18%, transparent), var(--cmp-shadow-panel, 0 12px 24px rgba(15,23,42,0.08))'
+    '0 0 0 1px color-mix(in srgb, var(--cmp-border-default) 18%, transparent), var(--cmp-shadow-panel)'
 };
 
 const tableStyle: React.CSSProperties = {
@@ -106,16 +106,16 @@ const headCellStyle: React.CSSProperties = {
   fontWeight: 600,
   textTransform: 'uppercase',
   letterSpacing: '0.08em',
-  color: 'var(--cmp-text-muted, #64748b)',
+  color: 'var(--cmp-text-muted)',
   padding: '0.35rem 0.55rem',
-  borderBottom: '1px solid color-mix(in srgb, var(--cmp-border-default, #94a3b8) 40%, transparent)'
+  borderBottom: '1px solid color-mix(in srgb, var(--cmp-border-default) 40%, transparent)'
 };
 
 const cellStyle: React.CSSProperties = {
   padding: '0.55rem 0.65rem',
-  background: 'var(--cmp-surface-panel, #ffffff)',
+  background: 'var(--cmp-surface-panel)',
   borderRadius: '0.65rem',
-  border: '1px solid color-mix(in srgb, var(--cmp-border-default, #94a3b8) 24%, transparent)',
+  border: '1px solid color-mix(in srgb, var(--cmp-border-default) 24%, transparent)',
   verticalAlign: 'top'
 };
 
@@ -127,7 +127,7 @@ const DurationSwatch: React.FC<{ spec: DurationSpec; engaged: boolean }> = ({ sp
         <strong>{spec.label}</strong>
         <code>{spec.token}</code>
       </div>
-      <p style={{ margin: 0, fontSize: '0.82rem', color: 'var(--cmp-text-muted, #475569)' }}>{spec.usage}</p>
+      <p style={{ margin: 0, fontSize: '0.82rem', color: 'var(--cmp-text-muted)' }}>{spec.usage}</p>
       <div
         aria-hidden="true"
         style={{
@@ -136,7 +136,7 @@ const DurationSwatch: React.FC<{ spec: DurationSpec; engaged: boolean }> = ({ sp
           alignItems: 'center',
           height: '0.65rem',
           borderRadius: '999px',
-          background: 'color-mix(in srgb, var(--cmp-surface-subtle, #e2e8f0) 60%, transparent)'
+          background: 'color-mix(in srgb, var(--cmp-surface-subtle) 60%, transparent)'
         }}
       >
         <span
@@ -148,15 +148,15 @@ const DurationSwatch: React.FC<{ spec: DurationSpec; engaged: boolean }> = ({ sp
             borderRadius: 'inherit',
             background:
               spec.label === 'Slow'
-                ? 'linear-gradient(90deg, var(--cmp-surface-action, #2563eb), var(--cmp-text-accent, #2563eb))'
-                : 'linear-gradient(90deg, var(--cmp-text-accent, #2563eb), color-mix(in srgb, var(--cmp-text-accent, #2563eb) 65%, transparent))',
+                ? 'linear-gradient(90deg, var(--cmp-surface-action), var(--cmp-text-accent)'
+                : 'linear-gradient(90deg, var(--cmp-text-accent), color-mix(in srgb, var(--cmp-text-accent) 65%, transparent))',
             transitionProperty: 'width',
             transitionDuration: `var(${spec.cssVar})`,
             transitionTimingFunction: 'var(--motion-easing-emphasized)'
           }}
         />
       </div>
-      <small style={{ fontSize: '0.75rem', color: 'var(--cmp-text-muted, #475569)' }}>
+      <small style={{ fontSize: '0.75rem', color: 'var(--cmp-text-muted)' }}>
         Duration: {lookupTokenValue(spec.token)}
       </small>
     </div>
@@ -173,7 +173,7 @@ const TransitionRow: React.FC<{ spec: TransitionSpec }> = ({ spec }) => {
       <td style={cellStyle}>
         <div style={{ display: 'grid', gap: '0.25rem' }}>
           <strong>{spec.label}</strong>
-          <span style={{ fontSize: '0.82rem', color: 'var(--cmp-text-muted, #475569)' }}>{spec.usage}</span>
+          <span style={{ fontSize: '0.82rem', color: 'var(--cmp-text-muted)' }}>{spec.usage}</span>
           <code>{spec.slug}</code>
         </div>
       </td>
@@ -307,7 +307,7 @@ const FoundationsMotionDoc: React.FC = () => {
     <div style={{ display: 'grid', gap: '2rem', padding: '2.5rem', paddingBottom: '3rem' }}>
       <section style={{ display: 'grid', gap: '0.85rem' }}>
         <h1 style={{ margin: 0 }}>Motion Tokens</h1>
-        <p style={{ margin: 0, maxWidth: '50ch', color: 'var(--cmp-text-muted, #475569)', fontSize: '1rem', lineHeight: 1.55 }}>
+        <p style={{ margin: 0, maxWidth: '50ch', color: 'var(--cmp-text-muted)', fontSize: '1rem', lineHeight: 1.55 }}>
           Motion tokens capture the shared durations, easing curves, and transition recipes used across the Explorer. They map
           directly to CSS custom properties, respect <code>prefers-reduced-motion</code>, and are automatically disabled for
           Chromatic snapshots to keep visual regressions stable.
@@ -321,10 +321,10 @@ const FoundationsMotionDoc: React.FC = () => {
             gap: '0.5rem',
             padding: '0.65rem 0.85rem',
             borderRadius: '0.75rem',
-            border: '1px solid color-mix(in srgb, var(--cmp-border-default, #94a3b8) 30%, transparent)',
-            background: 'color-mix(in srgb, var(--cmp-surface-panel, #ffffff) 75%, transparent)',
+            border: '1px solid color-mix(in srgb, var(--cmp-border-default) 30%, transparent)',
+            background: 'color-mix(in srgb, var(--cmp-surface-panel) 75%, transparent)',
             fontSize: '0.85rem',
-            color: 'var(--cmp-text-muted, #475569)'
+            color: 'var(--cmp-text-muted)'
           }}
         >
           <span aria-hidden="true">{reducedMotion ? '◼︎' : '◯'}</span>
@@ -354,7 +354,7 @@ const FoundationsMotionDoc: React.FC = () => {
 
       <section style={{ display: 'grid', gap: '1rem' }}>
         <h2 style={{ margin: 0 }}>Transition Recipes</h2>
-        <p style={{ margin: 0, maxWidth: '60ch', color: 'var(--cmp-text-muted, #475569)', fontSize: '0.95rem', lineHeight: 1.6 }}>
+        <p style={{ margin: 0, maxWidth: '60ch', color: 'var(--cmp-text-muted)', fontSize: '0.95rem', lineHeight: 1.6 }}>
           Each transition token exposes duration, easing, and delay components. Components bind these values through
           <code>motion.css</code>, and reduced-motion fallbacks switch to the zero-duration variants emitted by the token build.
         </p>

@@ -9,7 +9,12 @@ const meta = {
   parameters: {
     layout: 'fullscreen',
     docs: { source: { state: 'hidden' } },
-    chromatic: { disableSnapshot: false }
+    chromatic: {
+      disableSnapshot: false,
+      modes: {
+        dark: { globals: { theme: 'dark' } },
+      },
+    },
   },
   tags: ['vrt-critical']
 } satisfies Meta;

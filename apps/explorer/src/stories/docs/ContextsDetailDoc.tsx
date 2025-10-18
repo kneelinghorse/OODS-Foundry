@@ -15,16 +15,16 @@ const headCellStyle: React.CSSProperties = {
   fontWeight: 600,
   letterSpacing: '0.08em',
   textTransform: 'uppercase',
-  color: 'var(--cmp-text-body, #475569)',
+  color: 'var(--cmp-text-body)',
   padding: '0.4rem 0.75rem',
-  borderBottom: '1px solid color-mix(in srgb, var(--cmp-border-default, rgba(148,163,184,0.4)) 60%, transparent)'
+  borderBottom: '1px solid color-mix(in srgb, var(--cmp-border-default) 60%, transparent)'
 };
 
 const cellStyle: React.CSSProperties = {
   padding: '0.75rem 0.75rem',
-  background: 'var(--cmp-surface-panel, #ffffff)',
+  background: 'var(--cmp-surface-panel)',
   borderRadius: '0.8rem',
-  border: '1px solid color-mix(in srgb, var(--cmp-border-default, rgba(148,163,184,0.45)) 55%, transparent)',
+  border: '1px solid color-mix(in srgb, var(--cmp-border-default) 55%, transparent)',
   verticalAlign: 'top'
 };
 
@@ -66,10 +66,10 @@ const DetailDoc: React.FC = () => {
       </p>
       <pre
         style={{
-          background: 'var(--cmp-surface-subtle, #f4f7fb)',
+          background: 'var(--cmp-surface-subtle)',
           borderRadius: '0.75rem',
           padding: '1rem',
-          border: '1px solid color-mix(in srgb, var(--cmp-border-default, rgba(148,163,184,0.35)) 45%, transparent)',
+          border: '1px solid color-mix(in srgb, var(--cmp-border-default) 45%, transparent)',
           fontSize: '0.85rem',
           overflowX: 'auto'
         }}
