@@ -1,0 +1,126 @@
+{
+  "version": 1,
+  "updatedAt": "2025-10-18T04:49:09Z",
+  "stories": [
+    {
+      "id": "components-button--states",
+      "title": "Components/Button",
+      "story": "States",
+      "file": "apps/explorer/src/stories/Components.Button.mdx",
+      "modes": ["light", "dark"],
+      "viewport": "desktop",
+      "tags": ["component", "actions", "vrt-critical"],
+      "notes": "Full button ramp including intents, selection, and compact sizes; validates OKLCH guardrails and focus ring tokens."
+    },
+    {
+      "id": "components-badge--states",
+      "title": "Components/Badge",
+      "story": "States",
+      "file": "apps/explorer/src/stories/Components.Badge.mdx",
+      "modes": ["light", "dark"],
+      "viewport": "desktop",
+      "tags": ["component", "status", "vrt-critical"],
+      "notes": "Status palette coverage (info→critical) plus selected/disabled variants to exercise semantic token remaps."
+    },
+    {
+      "id": "components-banner--states",
+      "title": "Components/Banner",
+      "story": "States",
+      "file": "apps/explorer/src/stories/Components.Banner.mdx",
+      "modes": ["light", "dark"],
+      "viewport": "desktop",
+      "tags": ["component", "surface", "vrt-critical"],
+      "notes": "Multi-tone banners with dismiss + actions ensure shadow, border, and motion tokens remain deterministic."
+    },
+    {
+      "id": "components-input--states",
+      "title": "Components/Input",
+      "story": "States",
+      "file": "apps/explorer/src/stories/Components.Input.mdx",
+      "modes": ["light", "dark"],
+      "viewport": "desktop",
+      "tags": ["component", "form", "vrt-critical"],
+      "notes": "Default, supporting text, and disabled fields keep focus rings, helper text, and suffix slots aligned with tokens."
+    },
+    {
+      "id": "components-select--states",
+      "title": "Components/Select",
+      "story": "States",
+      "file": "apps/explorer/src/stories/Components.Select.mdx",
+      "modes": ["light", "dark"],
+      "viewport": "desktop",
+      "tags": ["component", "form", "vrt-critical"],
+      "notes": "Covers placeholder, disabled, and menu-open states to confirm overlay surfaces + listbox tokens stay in sync."
+    },
+    {
+      "id": "components-tabs--states",
+      "title": "Components/Tabs",
+      "story": "States",
+      "file": "apps/explorer/src/stories/Components.Tabs.mdx",
+      "modes": ["light", "dark"],
+      "viewport": "desktop",
+      "tags": ["component", "navigation", "vrt-critical"],
+      "notes": "Horizontal tabs across active/hover/disabled states validate border animations and focus outlines."
+    },
+    {
+      "id": "components-toast--states",
+      "title": "Components/Toast",
+      "story": "States",
+      "file": "apps/explorer/src/stories/Components.Toast.mdx",
+      "modes": ["light", "dark"],
+      "viewport": "desktop",
+      "tags": ["component", "overlay", "vrt-critical"],
+      "notes": "Overlay gradients and tone ramp (info→critical) paired with ARIA live-region defaults stay deterministic."
+    },
+    {
+      "id": "explorer-statuschip--subscription-states",
+      "title": "Explorer/StatusChip",
+      "story": "Subscription States",
+      "file": "apps/explorer/src/stories/StatusChip.stories.tsx",
+      "modes": ["light", "dark"],
+      "viewport": "desktop",
+      "tags": ["context", "status", "vrt-critical"],
+      "notes": "Subscription lifecycle statuses exercise enum→token mapping and typography scaling for chips."
+    },
+    {
+      "id": "patterns-form--validation-banner-demo",
+      "title": "Patterns/Form",
+      "story": "ValidationBanner",
+      "file": "apps/explorer/src/stories/Patterns.Form.stories.tsx",
+      "modes": ["light", "dark"],
+      "viewport": "desktop",
+      "tags": ["pattern", "form", "vrt-critical"],
+      "notes": "Inline validation surface ensures tone tokens, spacing, and banner rules remain aligned within the form context."
+    },
+    {
+      "id": "patterns-form--required-optional-demo",
+      "title": "Patterns/Form",
+      "story": "Required / Optional Labeling",
+      "file": "apps/explorer/src/stories/Patterns.Form.stories.tsx",
+      "modes": ["light", "dark"],
+      "viewport": "desktop",
+      "tags": ["pattern", "form", "vrt-critical"],
+      "notes": "Label + helper text combination highlights typography tokens and spacing for mixed required/optional fields."
+    },
+    {
+      "id": "patterns-form--help-error-text-demo",
+      "title": "Patterns/Form",
+      "story": "Help vs Error Text",
+      "file": "apps/explorer/src/stories/Patterns.Form.stories.tsx",
+      "modes": ["light", "dark"],
+      "viewport": "desktop",
+      "tags": ["pattern", "form", "vrt-critical"],
+      "notes": "Warning and info banners within grouped fields prove message + supporting text tokens stay in family bounds."
+    },
+    {
+      "id": "branda-timeline--dark",
+      "title": "BrandA/Timeline",
+      "story": "Dark",
+      "file": "apps/explorer/src/stories/BrandA.Timeline.stories.tsx",
+      "modes": ["dark"],
+      "viewport": "desktop",
+      "tags": ["brand", "composite", "vrt-critical"],
+      "notes": "End-to-end timeline page with Brand A theming ensures composite layout, tokens, and metrics stay stable."
+    }
+  ]
+}

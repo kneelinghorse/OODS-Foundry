@@ -1,4 +1,6 @@
 import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 export type PolicyRule = {
   tool: string; // exact name or "*"
@@ -24,13 +26,25 @@ export type PolicyDoc = {
   redactions?: string[];
 };
 
+const POLICY_SRC_DIR = path.resolve(fileURLToPath(new URL('.', import.meta.url)));
+const REPO_ROOT = path.resolve(POLICY_SRC_DIR, '..', '..', '..', '..');
+
+function resolveArtifactsBase(base: string | undefined): string {
+  const target = base && base.trim().length > 0 ? base.trim() : 'artifacts/current-state';
+  return path.isAbsolute(target) ? target : path.resolve(REPO_ROOT, target);
+}
+
 let cached: PolicyDoc | null = null;
 
 export function loadPolicyDoc(): PolicyDoc {
   if (cached) return cached;
   const p = new URL('./policy.json', import.meta.url);
   const raw = fs.readFileSync(p, 'utf8');
-  cached = JSON.parse(raw) as PolicyDoc;
+  const parsed = JSON.parse(raw) as PolicyDoc;
+  cached = {
+    ...parsed,
+    artifactsBase: resolveArtifactsBase(parsed.artifactsBase),
+  };
   return cached!;
 }
 

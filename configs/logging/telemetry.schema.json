@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://oods-foundry/configs/logging/telemetry.schema.json",
+  "title": "OODS Telemetry Event",
+  "description": "Schema for JSONL telemetry emitted by pipelines and agent actions.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "ts",
+    "missionId",
+    "job",
+    "action",
+    "status",
+    "outcome",
+    "correlationId"
+  ],
+  "properties": {
+    "ts": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Event timestamp in ISO-8601 format."
+    },
+    "missionId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Mission identifier (e.g. B14.7)."
+    },
+    "job": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Pipeline or agent job name."
+    },
+    "source": {
+      "type": "string",
+      "description": "Origin component emitting the event (pipeline, soak-runner, cli, etc.)."
+    },
+    "action": {
+      "type": "string",
+      "enum": ["start", "complete"],
+      "description": "Lifecycle action represented by the event."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["queued", "in_progress", "completed", "failed"],
+      "description": "Current lifecycle status as of the event."
+    },
+    "outcome": {
+      "type": "string",
+      "enum": ["pending", "success", "failure"],
+      "description": "Outcome of the job when known."
+    },
+    "durationMs": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Execution duration in milliseconds when applicable."
+    },
+    "correlationId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "UUID tying together all log lines for this job execution."
+    },
+    "incidentId": {
+      "type": ["string", "null"],
+      "description": "Populated with a UUID when a failure occurs."
+    },
+    "errorCode": {
+      "type": ["string", "number", "null"],
+      "description": "Exit or error code supplied by the failing job."
+    },
+    "metadata": {
+      "type": ["object", "null"],
+      "description": "Additional structured data captured for the event.",
+      "additionalProperties": true
+    }
+  }
+}

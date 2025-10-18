@@ -1,0 +1,70 @@
+{
+  "description": "Curated Storybook stories that must pass the accessibility contract (axe WCAG 2.2 AA) in PR CI.",
+  "owner": "Design System Team",
+  "failOnImpact": ["serious", "critical"],
+  "axe": {
+    "runOnly": {
+      "type": "tag",
+      "values": ["wcag2a", "wcag21aa"]
+    },
+    "rules": {
+      "color-contrast": { "enabled": false }
+    }
+  },
+  "stories": [
+    {
+      "id": "components-button--primary",
+      "title": "Components/Button — Primary CTA",
+      "tags": ["controls", "focus", "keyboard"],
+      "variants": [
+        { "name": "Theme • Light", "query": "globals=theme:light" },
+        { "name": "Theme • Dark", "query": "globals=theme:dark" }
+      ]
+    },
+    {
+      "id": "components-banner--primary",
+      "title": "Components/Banner — Inline Status",
+      "tags": ["status", "aria-live", "links"],
+      "variants": [
+        { "name": "Theme • Light", "query": "globals=theme:light" },
+        { "name": "Theme • Dark", "query": "globals=theme:dark" }
+      ]
+    },
+    {
+      "id": "components-tabs--primary",
+      "title": "Components/Tabs — Keyboard Navigation",
+      "tags": ["navigation", "aria-roles", "keyboard"],
+      "variants": [
+        { "name": "Theme • Light", "query": "globals=theme:light" },
+        { "name": "Theme • Dark", "query": "globals=theme:dark" }
+      ]
+    },
+    {
+      "id": "patterns-form--help-error-text-demo",
+      "title": "Patterns/Form — Help vs Error Text",
+      "tags": ["forms", "aria-invalid", "feedback"],
+      "variants": [
+        { "name": "Theme • Light", "query": "globals=theme:light" },
+        { "name": "Theme • Dark", "query": "globals=theme:dark" }
+      ]
+    },
+    {
+      "id": "billing-subscription-form--contract-adjustments",
+      "title": "Billing/Subscription.Form — Contract Adjustments",
+      "tags": ["forms", "aria-describedby", "validation"],
+      "variants": [
+        { "name": "Theme • Light", "query": "globals=theme:light" },
+        { "name": "Theme • Dark", "query": "globals=theme:dark" }
+      ]
+    },
+    {
+      "id": "billing-invoice-detail--finance-dossier",
+      "title": "Billing/Invoice.Detail — Finance Dossier",
+      "tags": ["detail-view", "aria-labelledby", "landmarks"],
+      "variants": [
+        { "name": "Theme • Light", "query": "globals=theme:light" },
+        { "name": "Theme • Dark", "query": "globals=theme:dark" }
+      ]
+    }
+  ]
+}

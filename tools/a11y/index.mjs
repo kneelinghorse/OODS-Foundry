@@ -1,18 +1,29 @@
 #!/usr/bin/env node
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { createReadStream } from 'node:fs';
+import { mkdir, readFile, writeFile, stat } from 'node:fs/promises';
+import { createServer } from 'node:http';
 import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
 import Color from 'colorjs.io';
+import { chromium } from 'playwright';
 import { contrastRatio } from './contrast.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const require = createRequire(import.meta.url);
 
 const TOKEN_SOURCE = path.resolve(__dirname, '../../packages/tokens/dist/tailwind/tokens.json');
 const REPORT_PATH = path.resolve(__dirname, './reports/a11y-report.json');
 const BASELINE_PATH = path.resolve(__dirname, './baseline/a11y-baseline.json');
 const GUARDRAILS_PATH = path.resolve(__dirname, './guardrails/relative-color.csv');
+const CONTRACT_PATH = path.resolve(__dirname, '../../testing/a11y/aria-contract.json');
+const STORYBOOK_STATIC_DIR = path.resolve(__dirname, '../../storybook-static');
+const AXE_MINIFIED_PATH = require.resolve('axe-core/axe.min.js');
+const DEFAULT_FAIL_IMPACTS = ['serious', 'critical'];
+const STORY_LOAD_TIMEOUT_MS = 8000;
+const STORY_POST_LOAD_WAIT_MS = 250;
 
 const RANGE_TOLERANCE = 0.001;
 
@@ -446,6 +457,320 @@ async function loadGuardrailConfig() {
   });
 }
 
+async function loadContractDefinition() {
+  let raw;
+  try {
+    raw = await readFile(CONTRACT_PATH, 'utf8');
+  } catch (error) {
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'ENOENT') {
+      throw new Error(`Accessibility contract not found at ${CONTRACT_PATH}.`);
+    }
+    throw new Error(`Unable to read accessibility contract at ${CONTRACT_PATH}: ${error instanceof Error ? error.message : String(error)}`);
+  }
+
+  try {
+    const parsed = JSON.parse(raw);
+    if (!parsed || !Array.isArray(parsed.stories) || parsed.stories.length === 0) {
+      throw new Error('Accessibility contract must include a non-empty "stories" array.');
+    }
+    return parsed;
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      throw new Error(`Accessibility contract JSON is invalid: ${error.message}`);
+    }
+    throw error;
+  }
+}
+
+async function ensureStorybookBuildExists() {
+  const iframePath = path.join(STORYBOOK_STATIC_DIR, 'iframe.html');
+  try {
+    await stat(iframePath);
+  } catch (error) {
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'ENOENT') {
+      throw new Error(
+        `Storybook static build not found at ${STORYBOOK_STATIC_DIR}. Run "pnpm run build-storybook" before executing the accessibility contract.`
+      );
+    }
+    throw error;
+  }
+}
+
+function contentTypeFor(filePath) {
+  const ext = path.extname(filePath).toLowerCase();
+  switch (ext) {
+    case '.html':
+      return 'text/html; charset=utf-8';
+    case '.js':
+      return 'application/javascript; charset=utf-8';
+    case '.mjs':
+      return 'application/javascript; charset=utf-8';
+    case '.css':
+      return 'text/css; charset=utf-8';
+    case '.json':
+      return 'application/json; charset=utf-8';
+    case '.svg':
+      return 'image/svg+xml';
+    case '.png':
+      return 'image/png';
+    case '.jpg':
+    case '.jpeg':
+      return 'image/jpeg';
+    case '.woff':
+      return 'font/woff';
+    case '.woff2':
+      return 'font/woff2';
+    case '.ttf':
+      return 'font/ttf';
+    case '.map':
+      return 'application/json; charset=utf-8';
+    default:
+      return 'application/octet-stream';
+  }
+}
+
+async function startStorybookServer(rootDir) {
+  const safeRoot = rootDir.endsWith(path.sep) ? rootDir : `${rootDir}${path.sep}`;
+  return new Promise((resolve, reject) => {
+    const server = createServer(async (req, res) => {
+      try {
+        const requestUrl = new URL(req.url ?? '/', 'http://127.0.0.1');
+        const decodedPath = decodeURIComponent(requestUrl.pathname);
+        const resolvedPath = path.join(rootDir, decodedPath);
+        const normalisedPath = path.normalize(resolvedPath);
+
+        if (normalisedPath !== rootDir && !normalisedPath.startsWith(safeRoot)) {
+          res.statusCode = 403;
+          res.end('Forbidden');
+          return;
+        }
+
+        let finalPath = normalisedPath;
+        let stats;
+        try {
+          stats = await stat(finalPath);
+        } catch {
+          res.statusCode = 404;
+          res.end('Not Found');
+          return;
+        }
+
+        if (stats.isDirectory()) {
+          finalPath = path.join(finalPath, 'index.html');
+        }
+
+        const contentType = contentTypeFor(finalPath);
+        res.statusCode = 200;
+        res.setHeader('Content-Type', contentType);
+        const stream = createReadStream(finalPath);
+        stream.on('error', (error) => {
+          res.statusCode = 500;
+          res.end(error instanceof Error ? error.message : String(error));
+        });
+        stream.pipe(res);
+      } catch (error) {
+        res.statusCode = 500;
+        res.end(error instanceof Error ? error.message : String(error));
+      }
+    });
+
+    server.on('error', reject);
+    server.listen(0, () => {
+      const address = server.address();
+      if (address && typeof address === 'object') {
+        resolve({ server, port: address.port });
+      } else {
+        reject(new Error('Failed to determine Storybook static server address.'));
+      }
+    });
+  });
+}
+
+function buildStoryUrl(port, storyId, query) {
+  const url = new URL(`http://127.0.0.1:${port}/iframe.html`);
+  url.searchParams.set('id', storyId);
+  url.searchParams.set('viewMode', 'story');
+  const trimmedQuery = typeof query === 'string' ? query.trim() : '';
+  if (trimmedQuery) {
+    const extraParams = new URLSearchParams(trimmedQuery);
+    extraParams.forEach((value, key) => {
+      url.searchParams.append(key, value);
+    });
+  }
+  return url.toString();
+}
+
+function extractNodeTargets(node) {
+  if (!node) {
+    return [];
+  }
+  const targets = Array.isArray(node.target) ? node.target : [];
+  return targets.map((target) => String(target ?? '').trim()).filter(Boolean);
+}
+
+function formatViolationDetails(violation) {
+  const nodes = Array.isArray(violation?.nodes) ? violation.nodes : [];
+  return {
+    id: violation?.id ?? 'unknown',
+    impact: violation?.impact ?? null,
+    help: violation?.help ?? '',
+    description: violation?.description ?? '',
+    helpUrl: violation?.helpUrl ?? '',
+    nodes: nodes.map((node) => ({
+      target: extractNodeTargets(node).join(' '),
+      html: node?.html ?? '',
+      failureSummary: node?.failureSummary ?? ''
+    }))
+  };
+}
+
+function violationSummary(violations, storyUrl) {
+  if (!Array.isArray(violations) || violations.length === 0) {
+    return '';
+  }
+  const [first] = violations;
+  const targets = Array.isArray(first?.nodes)
+    ? first.nodes
+        .flatMap((node) => extractNodeTargets(node))
+        .filter(Boolean)
+        .join(', ')
+    : '';
+  const headline = [
+    first?.id ?? 'violation',
+    first?.impact ? `(${first.impact})` : '',
+    first?.help ?? first?.description ?? ''
+  ]
+    .filter(Boolean)
+    .join(' ');
+  const targetSuffix = targets ? ` → nodes: ${targets}` : '';
+  return `${violations.length} violation(s). ${headline}${targetSuffix}. Inspect ${storyUrl}`;
+}
+
+async function evaluateContractStories(contract) {
+  if (!contract || !Array.isArray(contract.stories) || contract.stories.length === 0) {
+    return [];
+  }
+
+  await ensureStorybookBuildExists();
+
+  const { server, port } = await startStorybookServer(STORYBOOK_STATIC_DIR);
+  const browser = await chromium.launch({ headless: true });
+  const context = await browser.newContext();
+  const page = await context.newPage();
+
+  const failImpacts = Array.isArray(contract.failOnImpact) && contract.failOnImpact.length > 0
+    ? [...contract.failOnImpact]
+    : [...DEFAULT_FAIL_IMPACTS];
+  const failImpactSet = new Set(failImpacts.map((value) => String(value).toLowerCase()));
+
+  const runOnly = contract.axe?.runOnly ?? null;
+  const rules = contract.axe?.rules ?? null;
+
+  const results = [];
+
+  try {
+    for (const story of contract.stories) {
+      const variants = Array.isArray(story?.variants) && story.variants.length > 0
+        ? story.variants
+        : [{ name: 'Default', query: story?.query ?? '' }];
+
+      for (const variant of variants) {
+        const labelParts = [story?.title ?? story.id];
+        if (variant?.name) {
+          labelParts.push(variant.name);
+        }
+        const targetLabel = labelParts.join(' • ');
+        const ruleId = `story:${story.id}${variant?.name ? `::${variant.name}` : ''}`;
+        const storyUrl = buildStoryUrl(port, story.id, variant?.query ?? story?.query ?? '');
+        const summary = `Axe contract (WCAG 2.x serious/critical) must pass without violations for ${story.id}.`;
+
+        let pass = false;
+        let failureSummary = '';
+        let details = {};
+        const startedAt = Date.now();
+
+        try {
+          await page.goto(storyUrl, { waitUntil: 'networkidle', timeout: STORY_LOAD_TIMEOUT_MS });
+          await page.waitForTimeout(STORY_POST_LOAD_WAIT_MS);
+
+          const hasAxe = await page.evaluate(() => Boolean(window.axe));
+          if (!hasAxe) {
+            await page.addScriptTag({ path: AXE_MINIFIED_PATH });
+          }
+
+          const axePayload = await page.evaluate(
+            async ({ runOnly: runOnlyOptions, rules: runRules }) => {
+              const options = {};
+              if (runOnlyOptions) {
+                options.runOnly = runOnlyOptions;
+              }
+              if (runRules) {
+                options.rules = runRules;
+              }
+              return window.axe.run(document, options);
+            },
+            { runOnly, rules }
+          );
+
+          const violations = Array.isArray(axePayload?.violations) ? axePayload.violations : [];
+          const filteredViolations = violations.filter((violation) => {
+            if (!violation?.impact) {
+              return true;
+            }
+            return failImpactSet.has(String(violation.impact).toLowerCase());
+          });
+
+          pass = filteredViolations.length === 0;
+          failureSummary = pass ? '' : violationSummary(filteredViolations, storyUrl);
+
+          details = {
+            storyId: story.id,
+            variant: variant?.name ?? null,
+            url: storyUrl,
+            tags: Array.isArray(story?.tags) ? story.tags : [],
+            failOnImpact: [...failImpactSet],
+            violations: filteredViolations.map((violation) => formatViolationDetails(violation)),
+            incomplete: Array.isArray(axePayload?.incomplete)
+              ? axePayload.incomplete.map((violation) => formatViolationDetails(violation))
+              : [],
+            durationMs: Date.now() - startedAt
+          };
+        } catch (error) {
+          pass = false;
+          failureSummary = `[contract] Failed to evaluate ${story.id}${variant?.name ? ` (${variant.name})` : ''}: ${
+            error instanceof Error ? error.message : String(error)
+          }`;
+          details = {
+            storyId: story.id,
+            variant: variant?.name ?? null,
+            url: storyUrl,
+            tags: Array.isArray(story?.tags) ? story.tags : [],
+            error: error instanceof Error ? error.stack ?? error.message : String(error),
+            durationMs: Date.now() - startedAt
+          };
+        }
+
+        results.push({
+          ruleId,
+          checkType: 'contract',
+          target: targetLabel,
+          summary,
+          pass,
+          failureSummary,
+          details
+        });
+      }
+    }
+  } finally {
+    await page.close();
+    await context.close();
+    await browser.close();
+    await new Promise((resolve) => server.close(resolve));
+  }
+
+  return results;
+}
+
 function evaluateGuardrails(tree, guardrails) {
   if (!Array.isArray(guardrails) || guardrails.length === 0) {
     return [];
@@ -626,18 +951,23 @@ async function generateReport() {
   const guardrailConfig = await loadGuardrailConfig();
   const guardrailResults = evaluateGuardrails(tree, guardrailConfig);
 
-  const results = [...contrastResults, ...guardrailResults];
+  const contractDefinition = await loadContractDefinition();
+  const contractResults = await evaluateContractStories(contractDefinition);
+
+  const results = [...contrastResults, ...guardrailResults, ...contractResults];
 
   return {
     generatedAt: new Date().toISOString(),
     totals: {
       contrast: contrastResults.length,
       guardrails: guardrailResults.length,
+      contract: contractResults.length,
       overall: results.length
     },
     sections: {
       contrast: contrastResults,
-      guardrails: guardrailResults
+      guardrails: guardrailResults,
+      contract: contractResults
     },
     results
   };
@@ -672,9 +1002,11 @@ async function runCheck() {
 
   const contrastResults = Array.isArray(report.sections?.contrast) ? report.sections.contrast : [];
   const guardrailResults = Array.isArray(report.sections?.guardrails) ? report.sections.guardrails : [];
+  const contractResults = Array.isArray(report.sections?.contract) ? report.sections.contract : [];
 
   const contrastPasses = contrastResults.filter((item) => item.pass).length;
   const guardrailPasses = guardrailResults.filter((item) => item.pass).length;
+  const contractPasses = contractResults.filter((item) => item.pass).length;
   const totalPasses = report.results.filter((item) => item.pass).length;
   const totalFailures = report.results.length - totalPasses;
 
@@ -685,12 +1017,15 @@ async function runCheck() {
   if (guardrailResults.length > 0) {
     summaryParts.push(`guardrails ${guardrailPasses}/${guardrailResults.length}`);
   }
+  if (contractResults.length > 0) {
+    summaryParts.push(`contract ${contractPasses}/${contractResults.length}`);
+  }
   summaryParts.push(`total ${totalPasses}/${report.results.length}`);
 
   console.log(`[a11y] Report written to ${path.relative(process.cwd(), REPORT_PATH)} (${summaryParts.join(', ')}).`);
 
   if (totalFailures > 0) {
-    console.warn('[a11y] Accessibility guardrail or contrast violations detected. Run "yarn a11y:diff" to compare against the baseline.');
+    console.warn('[a11y] Accessibility contrast/guardrail/contract violations detected. Run "pnpm run a11y:diff" to compare against the baseline.');
   }
 }
 
@@ -722,7 +1057,7 @@ async function runDiff() {
   );
 
   if (newViolations.length > 0) {
-    console.error('[a11y] New accessibility guardrail/contrast violations detected:');
+    console.error('[a11y] New accessibility guardrail/contrast/contract violations detected:');
     for (const violation of newViolations) {
       const label = violation.checkType ? `[${violation.checkType}] ` : '';
       const hasRatio = typeof violation.ratio === 'number' && typeof violation.threshold === 'number';
@@ -744,7 +1079,7 @@ async function runDiff() {
     console.log('[a11y] Consider updating the baseline with "node tools/a11y/index.mjs baseline".');
   }
 
-  console.log('[a11y] No new accessibility guardrail or contrast violations detected.');
+  console.log('[a11y] No new accessibility guardrail, contrast, or contract violations detected.');
 }
 
 async function runBaselineUpdate() {

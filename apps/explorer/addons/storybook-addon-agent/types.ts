@@ -90,6 +90,9 @@ export type ToolRunPreview = {
 export type ToolRunSuccess = {
   ok: true;
   tool: ToolName;
+  role: string | null;
+  mode: 'apply' | 'dry-run';
+  incidentId: string | null;
   artifacts: string[];
   transcriptPath: string | null;
   bundleIndexPath: string | null;
