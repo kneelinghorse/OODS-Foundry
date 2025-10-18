@@ -1,39 +1,40 @@
 # Visual Regression Strategy
 
-This document captures how we operate visual regression testing across the design system. Chromatic delivers the primary PR guardrail while a Playwright + Storycap harness remains on standby for contingency.
+Chromatic is the primary guardrail for visual diffs. Every pull request and push to `main` runs the `vr-test` job out of `.github/workflows/pr-validate.yml`. The job builds Storybook, publishes to Chromatic, and fails the workflow if snapshots change without approval.
 
-## Chromatic (Primary)
+## Chromatic (primary path)
 
-- **Workflow**: `.github/workflows/chromatic.yml` runs on every PR and push to `main`. It installs dependencies inside `app`, builds Storybook via Chromatic, and posts review links.
-- **Configuration**: `chromatic.config.json` enables TurboSnap (`onlyChanged: true`), auto-accepts merges to `main`, and keeps builds scoped to the `app` workspace (`storybookBaseDir: "app"`).
-- **Secrets**: Add `CHROMATIC_PROJECT_TOKEN` in GitHub repository secrets before enabling the workflow. Locally, export the same variable when running `npx chromatic`.
-- **Story Selection**: Only stories tagged with `vrt-critical` run snapshots. Remaining stories inherit `chromatic.disableSnapshot = true` at the meta level.
-- **Tagged Stories**:
-  - `Base/Button` — `Default`, `Intents`
-  - `Base/Badge` — `Intents`
-  - `Components/PageHeader` — `Default`
-  - `Explorer/StatusChip` — `SubscriptionStates`, `InvoiceStates`
-  - `Subscription/RenderObject` — `ActiveDetail`, `PastDueDetail`
-  - `User/RenderObject` — `ActiveDetail`, `DisabledDetail`
-- **Commands**: From `app/`, use `npx chromatic --config ../chromatic.config.json` (ensure the token is exported) to reproduce PR builds locally.
+- **Secrets**: Set `CHROMATIC_PROJECT_TOKEN` in repository secrets (and locally in `.env.local`). `scripts/chromatic-run.sh` loads the token before calling the Chromatic CLI.
+- **Story selection**: `chromatic.config.json` restricts runs to the curated allowlist tracked in `testing/vr/baseline/manifest.json`. The manifest documents why each story matters and must be kept in sync with the config.
+- **Theme coverage**: `.storybook/preview.ts` defines Chromatic modes for light and dark themes. Stories can override modes when they only make sense in a single context (e.g., the Brand A timeline).
+- **Merge gate**: `exitZeroOnChanges` is disabled; Chromatic will block the pull request until reviewers approve diffs in the Chromatic UI. Acceptance on `main` still auto-updates the baseline via `autoAcceptChanges: "main"`.
+- **PR signal**: The Chromatic GitHub check posts a summary comment containing the preview URLs and diff status for each story in the allowlist.
+- **GitHub check**: Sprint 14 added the required `vr-test` workflow; keep this job green to satisfy branch protections.
 
-## Playwright + Storycap (Fallback)
+### Updating baselines
 
-> The fallback is checked in but **disabled by default**. Use it if Chromatic is unavailable or policy requires running snapshots in-house.
+1. `pnpm run build-storybook`
+2. `pnpm run chromatic:publish`
+3. Review the Chromatic build:
+   - Investigate any unexpected diffs; adjust code or tokens as needed.
+   - For intentional changes, accept the snapshots in Chromatic and capture the rationale in the PR description.
+4. If new coverage is required, update both `chromatic.config.json` and `testing/vr/baseline/manifest.json` in the same change set.
 
-- **Config Files**: `app/testkits/vrt/playwright.config.ts` and `app/testkits/vrt/storycap.config.mjs`.
-  - `playwright.config.ts` launches Storybook, runs Chromium + Firefox, disables animations, and captures screenshots at 1280×720.
-  - `storycap.config.mjs` centralises tagging rules (`vrt-critical`), sanitises file names, and standardises retry behaviour.
-- **Scripts**: `npm run vrt:fallback` executes Playwright against the config. Use `npm run vrt:fallback:update` to refresh baselines.
-- **Activating Storycap Capture**:
-  1. Install optional deps when needed: `npm install --save-dev axe-playwright @storybook/test-runner @storycap-testrun/node`.
-  2. Run Storybook locally and export `VRT_STORYCAP=true` before invoking `npm run vrt:fallback`.
-  3. Review screenshots under `artifacts/vrt/storycap/`.
-- **Snapshot Policy**: Keep fallback snapshots out of CI until we consciously flip the job on. They serve as an emergency baseline or for offline audits.
+## Playwright + Storycap (fallback)
 
-## Operational Notes
+The Storycap harness lives under `testkits/vrt/` and remains opt-in.
 
-- Ensure Storybook builds cleanly before triggering either workflow (`npm run build-storybook`).
-- When tagging new critical stories, add `vrt: { tags: ['vrt-critical'] }` and `chromatic.disableSnapshot = false` to the story or component meta.
-- Chromatic publishes diffs even when `exitZeroOnChanges` allows PRs to succeed. Treat any unexpected diff as a must-review item.
-- Keep the fallback configuration in sync with Chromatic selections—update `storycap.config.mjs` if the tag names change.
+- `testkits/vrt/playwright.config.ts` launches Storybook and captures Chromium + Firefox screenshots.
+- `testkits/vrt/storycap.lightdark.mjs` and `testkits/vrt/storycap.hc.mjs` provide targeted capture scripts.
+- Commands:
+  - `pnpm run vrt:fallback` — execute the fallback suite against the existing baselines.
+  - `pnpm run vrt:fallback:update` — refresh baseline images.
+- Outputs land in `artifacts/vrt/**`. Do not commit fallback baselines unless leadership explicitly toggles the job on.
+
+Use the fallback when Chromatic is unavailable or policy demands in-repo evidence. Keep the fallback configuration aligned with the Chromatic allowlist to avoid coverage drift.
+
+## Quick reference
+
+- `pnpm run chromatic:dry-run` — publish without failing on diffs (diagnostics only).
+- `pnpm run chromatic:publish` — mirror the CI job locally.
+- `scripts/chromatic-run.sh -- --storybook-build-dir storybook-static` — pass additional flags straight to the Chromatic CLI.

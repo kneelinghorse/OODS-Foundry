@@ -1,9 +1,10 @@
 {
-  "generatedAt": "2025-10-16T16:41:39.964Z",
+  "generatedAt": "2025-10-18T20:18:37.960Z",
   "totals": {
     "contrast": 31,
     "guardrails": 6,
-    "overall": 37
+    "contract": 12,
+    "overall": 49
   },
   "sections": {
     "contrast": [
@@ -857,6 +858,428 @@
           ]
         }
       }
+    ],
+    "contract": [
+      {
+        "ruleId": "story:components-button--primary::Theme • Light",
+        "checkType": "contract",
+        "target": "Components/Button — Primary CTA • Theme • Light",
+        "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for components-button--primary.",
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "storyId": "components-button--primary",
+          "variant": "Theme • Light",
+          "url": "http://127.0.0.1:64695/iframe.html?id=components-button--primary&viewMode=story&globals=theme%3Alight",
+          "tags": [
+            "controls",
+            "focus",
+            "keyboard"
+          ],
+          "failOnImpact": [
+            "serious",
+            "critical"
+          ],
+          "violations": [],
+          "incomplete": [
+            {
+              "id": "bypass",
+              "impact": "serious",
+              "help": "Page must have means to bypass repeated blocks",
+              "description": "Ensure each page has at least one mechanism for a user to bypass navigation and jump straight to the content",
+              "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/bypass?application=axeAPI",
+              "nodes": [
+                {
+                  "target": "html",
+                  "html": "<html lang=\"en\" data-theme=\"light\">",
+                  "failureSummary": "Fix any of the following:\n  No valid skip link found\n  Page does not have a heading\n  Page does not have a landmark region"
+                }
+              ]
+            }
+          ],
+          "durationMs": 1074
+        }
+      },
+      {
+        "ruleId": "story:components-button--primary::Theme • Dark",
+        "checkType": "contract",
+        "target": "Components/Button — Primary CTA • Theme • Dark",
+        "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for components-button--primary.",
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "storyId": "components-button--primary",
+          "variant": "Theme • Dark",
+          "url": "http://127.0.0.1:64695/iframe.html?id=components-button--primary&viewMode=story&globals=theme%3Adark",
+          "tags": [
+            "controls",
+            "focus",
+            "keyboard"
+          ],
+          "failOnImpact": [
+            "serious",
+            "critical"
+          ],
+          "violations": [],
+          "incomplete": [
+            {
+              "id": "bypass",
+              "impact": "serious",
+              "help": "Page must have means to bypass repeated blocks",
+              "description": "Ensure each page has at least one mechanism for a user to bypass navigation and jump straight to the content",
+              "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/bypass?application=axeAPI",
+              "nodes": [
+                {
+                  "target": "html",
+                  "html": "<html lang=\"en\" data-theme=\"dark\">",
+                  "failureSummary": "Fix any of the following:\n  No valid skip link found\n  Page does not have a heading\n  Page does not have a landmark region"
+                }
+              ]
+            }
+          ],
+          "durationMs": 1012
+        }
+      },
+      {
+        "ruleId": "story:components-banner--primary::Theme • Light",
+        "checkType": "contract",
+        "target": "Components/Banner — Inline Status • Theme • Light",
+        "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for components-banner--primary.",
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "storyId": "components-banner--primary",
+          "variant": "Theme • Light",
+          "url": "http://127.0.0.1:64695/iframe.html?id=components-banner--primary&viewMode=story&globals=theme%3Alight",
+          "tags": [
+            "status",
+            "aria-live",
+            "links"
+          ],
+          "failOnImpact": [
+            "serious",
+            "critical"
+          ],
+          "violations": [],
+          "incomplete": [
+            {
+              "id": "bypass",
+              "impact": "serious",
+              "help": "Page must have means to bypass repeated blocks",
+              "description": "Ensure each page has at least one mechanism for a user to bypass navigation and jump straight to the content",
+              "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/bypass?application=axeAPI",
+              "nodes": [
+                {
+                  "target": "html",
+                  "html": "<html lang=\"en\" data-theme=\"light\">",
+                  "failureSummary": "Fix any of the following:\n  No valid skip link found\n  Page does not have a heading\n  Page does not have a landmark region"
+                }
+              ]
+            }
+          ],
+          "durationMs": 974
+        }
+      },
+      {
+        "ruleId": "story:components-banner--primary::Theme • Dark",
+        "checkType": "contract",
+        "target": "Components/Banner — Inline Status • Theme • Dark",
+        "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for components-banner--primary.",
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "storyId": "components-banner--primary",
+          "variant": "Theme • Dark",
+          "url": "http://127.0.0.1:64695/iframe.html?id=components-banner--primary&viewMode=story&globals=theme%3Adark",
+          "tags": [
+            "status",
+            "aria-live",
+            "links"
+          ],
+          "failOnImpact": [
+            "serious",
+            "critical"
+          ],
+          "violations": [],
+          "incomplete": [
+            {
+              "id": "bypass",
+              "impact": "serious",
+              "help": "Page must have means to bypass repeated blocks",
+              "description": "Ensure each page has at least one mechanism for a user to bypass navigation and jump straight to the content",
+              "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/bypass?application=axeAPI",
+              "nodes": [
+                {
+                  "target": "html",
+                  "html": "<html lang=\"en\" data-theme=\"dark\">",
+                  "failureSummary": "Fix any of the following:\n  No valid skip link found\n  Page does not have a heading\n  Page does not have a landmark region"
+                }
+              ]
+            }
+          ],
+          "durationMs": 1008
+        }
+      },
+      {
+        "ruleId": "story:components-tabs--primary::Theme • Light",
+        "checkType": "contract",
+        "target": "Components/Tabs — Keyboard Navigation • Theme • Light",
+        "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for components-tabs--primary.",
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "storyId": "components-tabs--primary",
+          "variant": "Theme • Light",
+          "url": "http://127.0.0.1:64695/iframe.html?id=components-tabs--primary&viewMode=story&globals=theme%3Alight",
+          "tags": [
+            "navigation",
+            "aria-roles",
+            "keyboard"
+          ],
+          "failOnImpact": [
+            "serious",
+            "critical"
+          ],
+          "violations": [],
+          "incomplete": [
+            {
+              "id": "bypass",
+              "impact": "serious",
+              "help": "Page must have means to bypass repeated blocks",
+              "description": "Ensure each page has at least one mechanism for a user to bypass navigation and jump straight to the content",
+              "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/bypass?application=axeAPI",
+              "nodes": [
+                {
+                  "target": "html",
+                  "html": "<html lang=\"en\" data-theme=\"light\">",
+                  "failureSummary": "Fix any of the following:\n  No valid skip link found\n  Page does not have a heading\n  Page does not have a landmark region"
+                }
+              ]
+            }
+          ],
+          "durationMs": 986
+        }
+      },
+      {
+        "ruleId": "story:components-tabs--primary::Theme • Dark",
+        "checkType": "contract",
+        "target": "Components/Tabs — Keyboard Navigation • Theme • Dark",
+        "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for components-tabs--primary.",
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "storyId": "components-tabs--primary",
+          "variant": "Theme • Dark",
+          "url": "http://127.0.0.1:64695/iframe.html?id=components-tabs--primary&viewMode=story&globals=theme%3Adark",
+          "tags": [
+            "navigation",
+            "aria-roles",
+            "keyboard"
+          ],
+          "failOnImpact": [
+            "serious",
+            "critical"
+          ],
+          "violations": [],
+          "incomplete": [
+            {
+              "id": "bypass",
+              "impact": "serious",
+              "help": "Page must have means to bypass repeated blocks",
+              "description": "Ensure each page has at least one mechanism for a user to bypass navigation and jump straight to the content",
+              "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/bypass?application=axeAPI",
+              "nodes": [
+                {
+                  "target": "html",
+                  "html": "<html lang=\"en\" data-theme=\"dark\">",
+                  "failureSummary": "Fix any of the following:\n  No valid skip link found\n  Page does not have a heading\n  Page does not have a landmark region"
+                }
+              ]
+            }
+          ],
+          "durationMs": 975
+        }
+      },
+      {
+        "ruleId": "story:patterns-form--help-error-text-demo::Theme • Light",
+        "checkType": "contract",
+        "target": "Patterns/Form — Help vs Error Text • Theme • Light",
+        "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for patterns-form--help-error-text-demo.",
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "storyId": "patterns-form--help-error-text-demo",
+          "variant": "Theme • Light",
+          "url": "http://127.0.0.1:64695/iframe.html?id=patterns-form--help-error-text-demo&viewMode=story&globals=theme%3Alight",
+          "tags": [
+            "forms",
+            "aria-invalid",
+            "feedback"
+          ],
+          "failOnImpact": [
+            "serious",
+            "critical"
+          ],
+          "violations": [],
+          "incomplete": [
+            {
+              "id": "bypass",
+              "impact": "serious",
+              "help": "Page must have means to bypass repeated blocks",
+              "description": "Ensure each page has at least one mechanism for a user to bypass navigation and jump straight to the content",
+              "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/bypass?application=axeAPI",
+              "nodes": [
+                {
+                  "target": "html",
+                  "html": "<html lang=\"en\" data-theme=\"light\">",
+                  "failureSummary": "Fix any of the following:\n  No valid skip link found\n  Page does not have a heading\n  Page does not have a landmark region"
+                }
+              ]
+            }
+          ],
+          "durationMs": 963
+        }
+      },
+      {
+        "ruleId": "story:patterns-form--help-error-text-demo::Theme • Dark",
+        "checkType": "contract",
+        "target": "Patterns/Form — Help vs Error Text • Theme • Dark",
+        "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for patterns-form--help-error-text-demo.",
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "storyId": "patterns-form--help-error-text-demo",
+          "variant": "Theme • Dark",
+          "url": "http://127.0.0.1:64695/iframe.html?id=patterns-form--help-error-text-demo&viewMode=story&globals=theme%3Adark",
+          "tags": [
+            "forms",
+            "aria-invalid",
+            "feedback"
+          ],
+          "failOnImpact": [
+            "serious",
+            "critical"
+          ],
+          "violations": [],
+          "incomplete": [
+            {
+              "id": "bypass",
+              "impact": "serious",
+              "help": "Page must have means to bypass repeated blocks",
+              "description": "Ensure each page has at least one mechanism for a user to bypass navigation and jump straight to the content",
+              "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/bypass?application=axeAPI",
+              "nodes": [
+                {
+                  "target": "html",
+                  "html": "<html lang=\"en\" data-theme=\"dark\">",
+                  "failureSummary": "Fix any of the following:\n  No valid skip link found\n  Page does not have a heading\n  Page does not have a landmark region"
+                }
+              ]
+            }
+          ],
+          "durationMs": 1063
+        }
+      },
+      {
+        "ruleId": "story:billing-subscription-form--contract-adjustments::Theme • Light",
+        "checkType": "contract",
+        "target": "Billing/Subscription.Form — Contract Adjustments • Theme • Light",
+        "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for billing-subscription-form--contract-adjustments.",
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "storyId": "billing-subscription-form--contract-adjustments",
+          "variant": "Theme • Light",
+          "url": "http://127.0.0.1:64695/iframe.html?id=billing-subscription-form--contract-adjustments&viewMode=story&globals=theme%3Alight",
+          "tags": [
+            "forms",
+            "aria-describedby",
+            "validation"
+          ],
+          "failOnImpact": [
+            "serious",
+            "critical"
+          ],
+          "violations": [],
+          "incomplete": [],
+          "durationMs": 1019
+        }
+      },
+      {
+        "ruleId": "story:billing-subscription-form--contract-adjustments::Theme • Dark",
+        "checkType": "contract",
+        "target": "Billing/Subscription.Form — Contract Adjustments • Theme • Dark",
+        "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for billing-subscription-form--contract-adjustments.",
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "storyId": "billing-subscription-form--contract-adjustments",
+          "variant": "Theme • Dark",
+          "url": "http://127.0.0.1:64695/iframe.html?id=billing-subscription-form--contract-adjustments&viewMode=story&globals=theme%3Adark",
+          "tags": [
+            "forms",
+            "aria-describedby",
+            "validation"
+          ],
+          "failOnImpact": [
+            "serious",
+            "critical"
+          ],
+          "violations": [],
+          "incomplete": [],
+          "durationMs": 1077
+        }
+      },
+      {
+        "ruleId": "story:billing-invoice-detail--finance-dossier::Theme • Light",
+        "checkType": "contract",
+        "target": "Billing/Invoice.Detail — Finance Dossier • Theme • Light",
+        "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for billing-invoice-detail--finance-dossier.",
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "storyId": "billing-invoice-detail--finance-dossier",
+          "variant": "Theme • Light",
+          "url": "http://127.0.0.1:64695/iframe.html?id=billing-invoice-detail--finance-dossier&viewMode=story&globals=theme%3Alight",
+          "tags": [
+            "detail-view",
+            "aria-labelledby",
+            "landmarks"
+          ],
+          "failOnImpact": [
+            "serious",
+            "critical"
+          ],
+          "violations": [],
+          "incomplete": [],
+          "durationMs": 975
+        }
+      },
+      {
+        "ruleId": "story:billing-invoice-detail--finance-dossier::Theme • Dark",
+        "checkType": "contract",
+        "target": "Billing/Invoice.Detail — Finance Dossier • Theme • Dark",
+        "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for billing-invoice-detail--finance-dossier.",
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "storyId": "billing-invoice-detail--finance-dossier",
+          "variant": "Theme • Dark",
+          "url": "http://127.0.0.1:64695/iframe.html?id=billing-invoice-detail--finance-dossier&viewMode=story&globals=theme%3Adark",
+          "tags": [
+            "detail-view",
+            "aria-labelledby",
+            "landmarks"
+          ],
+          "failOnImpact": [
+            "serious",
+            "critical"
+          ],
+          "violations": [],
+          "incomplete": [],
+          "durationMs": 1068
+        }
+      }
     ]
   },
   "results": [
@@ -1706,6 +2129,426 @@
             "background": "sys.surface.interactive.primary.pressed"
           }
         ]
+      }
+    },
+    {
+      "ruleId": "story:components-button--primary::Theme • Light",
+      "checkType": "contract",
+      "target": "Components/Button — Primary CTA • Theme • Light",
+      "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for components-button--primary.",
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "storyId": "components-button--primary",
+        "variant": "Theme • Light",
+        "url": "http://127.0.0.1:64695/iframe.html?id=components-button--primary&viewMode=story&globals=theme%3Alight",
+        "tags": [
+          "controls",
+          "focus",
+          "keyboard"
+        ],
+        "failOnImpact": [
+          "serious",
+          "critical"
+        ],
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "bypass",
+            "impact": "serious",
+            "help": "Page must have means to bypass repeated blocks",
+            "description": "Ensure each page has at least one mechanism for a user to bypass navigation and jump straight to the content",
+            "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/bypass?application=axeAPI",
+            "nodes": [
+              {
+                "target": "html",
+                "html": "<html lang=\"en\" data-theme=\"light\">",
+                "failureSummary": "Fix any of the following:\n  No valid skip link found\n  Page does not have a heading\n  Page does not have a landmark region"
+              }
+            ]
+          }
+        ],
+        "durationMs": 1074
+      }
+    },
+    {
+      "ruleId": "story:components-button--primary::Theme • Dark",
+      "checkType": "contract",
+      "target": "Components/Button — Primary CTA • Theme • Dark",
+      "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for components-button--primary.",
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "storyId": "components-button--primary",
+        "variant": "Theme • Dark",
+        "url": "http://127.0.0.1:64695/iframe.html?id=components-button--primary&viewMode=story&globals=theme%3Adark",
+        "tags": [
+          "controls",
+          "focus",
+          "keyboard"
+        ],
+        "failOnImpact": [
+          "serious",
+          "critical"
+        ],
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "bypass",
+            "impact": "serious",
+            "help": "Page must have means to bypass repeated blocks",
+            "description": "Ensure each page has at least one mechanism for a user to bypass navigation and jump straight to the content",
+            "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/bypass?application=axeAPI",
+            "nodes": [
+              {
+                "target": "html",
+                "html": "<html lang=\"en\" data-theme=\"dark\">",
+                "failureSummary": "Fix any of the following:\n  No valid skip link found\n  Page does not have a heading\n  Page does not have a landmark region"
+              }
+            ]
+          }
+        ],
+        "durationMs": 1012
+      }
+    },
+    {
+      "ruleId": "story:components-banner--primary::Theme • Light",
+      "checkType": "contract",
+      "target": "Components/Banner — Inline Status • Theme • Light",
+      "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for components-banner--primary.",
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "storyId": "components-banner--primary",
+        "variant": "Theme • Light",
+        "url": "http://127.0.0.1:64695/iframe.html?id=components-banner--primary&viewMode=story&globals=theme%3Alight",
+        "tags": [
+          "status",
+          "aria-live",
+          "links"
+        ],
+        "failOnImpact": [
+          "serious",
+          "critical"
+        ],
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "bypass",
+            "impact": "serious",
+            "help": "Page must have means to bypass repeated blocks",
+            "description": "Ensure each page has at least one mechanism for a user to bypass navigation and jump straight to the content",
+            "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/bypass?application=axeAPI",
+            "nodes": [
+              {
+                "target": "html",
+                "html": "<html lang=\"en\" data-theme=\"light\">",
+                "failureSummary": "Fix any of the following:\n  No valid skip link found\n  Page does not have a heading\n  Page does not have a landmark region"
+              }
+            ]
+          }
+        ],
+        "durationMs": 974
+      }
+    },
+    {
+      "ruleId": "story:components-banner--primary::Theme • Dark",
+      "checkType": "contract",
+      "target": "Components/Banner — Inline Status • Theme • Dark",
+      "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for components-banner--primary.",
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "storyId": "components-banner--primary",
+        "variant": "Theme • Dark",
+        "url": "http://127.0.0.1:64695/iframe.html?id=components-banner--primary&viewMode=story&globals=theme%3Adark",
+        "tags": [
+          "status",
+          "aria-live",
+          "links"
+        ],
+        "failOnImpact": [
+          "serious",
+          "critical"
+        ],
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "bypass",
+            "impact": "serious",
+            "help": "Page must have means to bypass repeated blocks",
+            "description": "Ensure each page has at least one mechanism for a user to bypass navigation and jump straight to the content",
+            "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/bypass?application=axeAPI",
+            "nodes": [
+              {
+                "target": "html",
+                "html": "<html lang=\"en\" data-theme=\"dark\">",
+                "failureSummary": "Fix any of the following:\n  No valid skip link found\n  Page does not have a heading\n  Page does not have a landmark region"
+              }
+            ]
+          }
+        ],
+        "durationMs": 1008
+      }
+    },
+    {
+      "ruleId": "story:components-tabs--primary::Theme • Light",
+      "checkType": "contract",
+      "target": "Components/Tabs — Keyboard Navigation • Theme • Light",
+      "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for components-tabs--primary.",
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "storyId": "components-tabs--primary",
+        "variant": "Theme • Light",
+        "url": "http://127.0.0.1:64695/iframe.html?id=components-tabs--primary&viewMode=story&globals=theme%3Alight",
+        "tags": [
+          "navigation",
+          "aria-roles",
+          "keyboard"
+        ],
+        "failOnImpact": [
+          "serious",
+          "critical"
+        ],
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "bypass",
+            "impact": "serious",
+            "help": "Page must have means to bypass repeated blocks",
+            "description": "Ensure each page has at least one mechanism for a user to bypass navigation and jump straight to the content",
+            "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/bypass?application=axeAPI",
+            "nodes": [
+              {
+                "target": "html",
+                "html": "<html lang=\"en\" data-theme=\"light\">",
+                "failureSummary": "Fix any of the following:\n  No valid skip link found\n  Page does not have a heading\n  Page does not have a landmark region"
+              }
+            ]
+          }
+        ],
+        "durationMs": 986
+      }
+    },
+    {
+      "ruleId": "story:components-tabs--primary::Theme • Dark",
+      "checkType": "contract",
+      "target": "Components/Tabs — Keyboard Navigation • Theme • Dark",
+      "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for components-tabs--primary.",
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "storyId": "components-tabs--primary",
+        "variant": "Theme • Dark",
+        "url": "http://127.0.0.1:64695/iframe.html?id=components-tabs--primary&viewMode=story&globals=theme%3Adark",
+        "tags": [
+          "navigation",
+          "aria-roles",
+          "keyboard"
+        ],
+        "failOnImpact": [
+          "serious",
+          "critical"
+        ],
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "bypass",
+            "impact": "serious",
+            "help": "Page must have means to bypass repeated blocks",
+            "description": "Ensure each page has at least one mechanism for a user to bypass navigation and jump straight to the content",
+            "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/bypass?application=axeAPI",
+            "nodes": [
+              {
+                "target": "html",
+                "html": "<html lang=\"en\" data-theme=\"dark\">",
+                "failureSummary": "Fix any of the following:\n  No valid skip link found\n  Page does not have a heading\n  Page does not have a landmark region"
+              }
+            ]
+          }
+        ],
+        "durationMs": 975
+      }
+    },
+    {
+      "ruleId": "story:patterns-form--help-error-text-demo::Theme • Light",
+      "checkType": "contract",
+      "target": "Patterns/Form — Help vs Error Text • Theme • Light",
+      "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for patterns-form--help-error-text-demo.",
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "storyId": "patterns-form--help-error-text-demo",
+        "variant": "Theme • Light",
+        "url": "http://127.0.0.1:64695/iframe.html?id=patterns-form--help-error-text-demo&viewMode=story&globals=theme%3Alight",
+        "tags": [
+          "forms",
+          "aria-invalid",
+          "feedback"
+        ],
+        "failOnImpact": [
+          "serious",
+          "critical"
+        ],
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "bypass",
+            "impact": "serious",
+            "help": "Page must have means to bypass repeated blocks",
+            "description": "Ensure each page has at least one mechanism for a user to bypass navigation and jump straight to the content",
+            "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/bypass?application=axeAPI",
+            "nodes": [
+              {
+                "target": "html",
+                "html": "<html lang=\"en\" data-theme=\"light\">",
+                "failureSummary": "Fix any of the following:\n  No valid skip link found\n  Page does not have a heading\n  Page does not have a landmark region"
+              }
+            ]
+          }
+        ],
+        "durationMs": 963
+      }
+    },
+    {
+      "ruleId": "story:patterns-form--help-error-text-demo::Theme • Dark",
+      "checkType": "contract",
+      "target": "Patterns/Form — Help vs Error Text • Theme • Dark",
+      "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for patterns-form--help-error-text-demo.",
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "storyId": "patterns-form--help-error-text-demo",
+        "variant": "Theme • Dark",
+        "url": "http://127.0.0.1:64695/iframe.html?id=patterns-form--help-error-text-demo&viewMode=story&globals=theme%3Adark",
+        "tags": [
+          "forms",
+          "aria-invalid",
+          "feedback"
+        ],
+        "failOnImpact": [
+          "serious",
+          "critical"
+        ],
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "bypass",
+            "impact": "serious",
+            "help": "Page must have means to bypass repeated blocks",
+            "description": "Ensure each page has at least one mechanism for a user to bypass navigation and jump straight to the content",
+            "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/bypass?application=axeAPI",
+            "nodes": [
+              {
+                "target": "html",
+                "html": "<html lang=\"en\" data-theme=\"dark\">",
+                "failureSummary": "Fix any of the following:\n  No valid skip link found\n  Page does not have a heading\n  Page does not have a landmark region"
+              }
+            ]
+          }
+        ],
+        "durationMs": 1063
+      }
+    },
+    {
+      "ruleId": "story:billing-subscription-form--contract-adjustments::Theme • Light",
+      "checkType": "contract",
+      "target": "Billing/Subscription.Form — Contract Adjustments • Theme • Light",
+      "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for billing-subscription-form--contract-adjustments.",
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "storyId": "billing-subscription-form--contract-adjustments",
+        "variant": "Theme • Light",
+        "url": "http://127.0.0.1:64695/iframe.html?id=billing-subscription-form--contract-adjustments&viewMode=story&globals=theme%3Alight",
+        "tags": [
+          "forms",
+          "aria-describedby",
+          "validation"
+        ],
+        "failOnImpact": [
+          "serious",
+          "critical"
+        ],
+        "violations": [],
+        "incomplete": [],
+        "durationMs": 1019
+      }
+    },
+    {
+      "ruleId": "story:billing-subscription-form--contract-adjustments::Theme • Dark",
+      "checkType": "contract",
+      "target": "Billing/Subscription.Form — Contract Adjustments • Theme • Dark",
+      "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for billing-subscription-form--contract-adjustments.",
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "storyId": "billing-subscription-form--contract-adjustments",
+        "variant": "Theme • Dark",
+        "url": "http://127.0.0.1:64695/iframe.html?id=billing-subscription-form--contract-adjustments&viewMode=story&globals=theme%3Adark",
+        "tags": [
+          "forms",
+          "aria-describedby",
+          "validation"
+        ],
+        "failOnImpact": [
+          "serious",
+          "critical"
+        ],
+        "violations": [],
+        "incomplete": [],
+        "durationMs": 1077
+      }
+    },
+    {
+      "ruleId": "story:billing-invoice-detail--finance-dossier::Theme • Light",
+      "checkType": "contract",
+      "target": "Billing/Invoice.Detail — Finance Dossier • Theme • Light",
+      "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for billing-invoice-detail--finance-dossier.",
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "storyId": "billing-invoice-detail--finance-dossier",
+        "variant": "Theme • Light",
+        "url": "http://127.0.0.1:64695/iframe.html?id=billing-invoice-detail--finance-dossier&viewMode=story&globals=theme%3Alight",
+        "tags": [
+          "detail-view",
+          "aria-labelledby",
+          "landmarks"
+        ],
+        "failOnImpact": [
+          "serious",
+          "critical"
+        ],
+        "violations": [],
+        "incomplete": [],
+        "durationMs": 975
+      }
+    },
+    {
+      "ruleId": "story:billing-invoice-detail--finance-dossier::Theme • Dark",
+      "checkType": "contract",
+      "target": "Billing/Invoice.Detail — Finance Dossier • Theme • Dark",
+      "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for billing-invoice-detail--finance-dossier.",
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "storyId": "billing-invoice-detail--finance-dossier",
+        "variant": "Theme • Dark",
+        "url": "http://127.0.0.1:64695/iframe.html?id=billing-invoice-detail--finance-dossier&viewMode=story&globals=theme%3Adark",
+        "tags": [
+          "detail-view",
+          "aria-labelledby",
+          "landmarks"
+        ],
+        "failOnImpact": [
+          "serious",
+          "critical"
+        ],
+        "violations": [],
+        "incomplete": [],
+        "durationMs": 1068
       }
     }
   ]

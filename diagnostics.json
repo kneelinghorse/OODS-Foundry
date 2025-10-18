@@ -7,13 +7,271 @@
         "durationMs": 10,
         "tokensCount": 57,
         "writtenAt": "2025-10-18T00:13:13.714Z"
+      },
+      {
+        "mission": "B14.3",
+        "phase": "transform",
+        "durationMs": 12,
+        "tokensCount": 269,
+        "writtenAt": "2025-10-18T01:29:28.621Z"
+      },
+      {
+        "mission": "B14.3",
+        "phase": "transform",
+        "durationMs": 12,
+        "tokensCount": 269,
+        "writtenAt": "2025-10-18T01:54:52.369Z"
       }
     ],
     "lastRun": {
-      "mission": "B14.2",
-      "durationMs": 10,
-      "tokensCount": 57,
-      "writtenAt": "2025-10-18T00:13:13.714Z"
+      "mission": "B14.3",
+      "durationMs": 12,
+      "tokensCount": 269,
+      "writtenAt": "2025-10-18T01:54:52.369Z"
+    },
+    "guardrails": {
+      "history": [
+        {
+          "mission": "B14.4",
+          "evaluatedAt": "2025-10-18T04:07:34.258Z",
+          "checks": 6,
+          "passes": 4,
+          "failures": 2,
+          "durationMs": 5
+        },
+        {
+          "mission": "B14.4",
+          "evaluatedAt": "2025-10-18T04:08:59.259Z",
+          "checks": 6,
+          "passes": 4,
+          "failures": 2,
+          "durationMs": 5
+        },
+        {
+          "mission": "B14.4",
+          "evaluatedAt": "2025-10-18T04:09:32.657Z",
+          "checks": 6,
+          "passes": 5,
+          "failures": 1,
+          "durationMs": 5
+        },
+        {
+          "mission": "B14.4",
+          "evaluatedAt": "2025-10-18T04:10:06.667Z",
+          "checks": 6,
+          "passes": 6,
+          "failures": 0,
+          "durationMs": 5
+        },
+        {
+          "mission": "B14.4",
+          "evaluatedAt": "2025-10-18T04:18:05.132Z",
+          "checks": 6,
+          "passes": 6,
+          "failures": 0,
+          "durationMs": 7
+        }
+      ],
+      "lastRun": {
+        "mission": "B14.4",
+        "evaluatedAt": "2025-10-18T04:18:05.132Z",
+        "checks": 6,
+        "passes": 6,
+        "failures": 0,
+        "durationMs": 7
+      }
     }
-  }
+  },
+  "accessibilityContract": {
+    "lastRun": {
+      "mission": "B14.11",
+      "evaluatedAt": "2025-10-18T20:16:21Z",
+      "storiesChecked": 12,
+      "failOnImpact": ["serious", "critical"],
+      "definition": "testing/a11y/aria-contract.json",
+      "report": "tools/a11y/reports/a11y-report.json"
+    }
+  },
+  "visualRegression": [
+    {
+      "mission": "B14.5",
+      "vr": {
+        "stories": 12,
+        "changed": null
+      },
+      "preview": null,
+      "notes": "Chromatic allowlist synced with testing/vr/baseline/manifest.json; populate preview URL after first CI run."
+    }
+  ],
+  "coverage": [
+    {
+      "mission": "B14.6",
+      "runAt": "2025-10-18T05:32:40Z",
+      "thresholds": {
+        "lines": 70,
+        "statements": 70,
+        "functions": 80,
+        "branches": 70
+      },
+      "results": {
+        "lines": 70.44,
+        "statements": 70.44,
+        "functions": 83.54,
+        "branches": 74.77
+      },
+      "summary": "vitest --coverage (V8 provider) with schema contracts + CLI exclusions"
+    }
+  ],
+  "panel": [
+    {
+      "mission": "B14.9",
+      "runAt": "2025-10-18T16:56:58Z",
+      "panel": {
+        "tasksRun": 0,
+        "approvals": 0,
+        "denied": 0
+      },
+      "notes": "Agent panel queue instrumentation landed; counters populate on live runs."
+    }
+  ],
+  "reliability": {
+    "missionId": "B14.7",
+    "generated_at": "2025-10-18T13:56:47Z",
+    "soak_report": "artifacts/current-state/2025-10-18/soak-report.md",
+    "format": "markdown",
+    "summary": [
+      {
+        "tool": "a11y.scan",
+        "total_runs": 5,
+        "pass": 5,
+        "fail": 0,
+        "flake_pct": 0,
+        "p95_ms": 13,
+        "p99_ms": 13
+      },
+      {
+        "tool": "purity.audit",
+        "total_runs": 5,
+        "pass": 5,
+        "fail": 0,
+        "flake_pct": 0,
+        "p95_ms": 9,
+        "p99_ms": 9
+      },
+      {
+        "tool": "vrt.run",
+        "total_runs": 5,
+        "pass": 5,
+        "fail": 0,
+        "flake_pct": 0,
+        "p95_ms": 35,
+        "p99_ms": 35
+      },
+      {
+        "tool": "diag.snapshot",
+        "total_runs": 5,
+        "pass": 5,
+        "fail": 0,
+        "flake_pct": 0,
+        "p95_ms": 18,
+        "p99_ms": 18
+      },
+      {
+        "tool": "brand.apply",
+        "total_runs": 5,
+        "pass": 5,
+        "fail": 0,
+        "flake_pct": 0,
+        "p95_ms": 715,
+        "p99_ms": 715
+      }
+    ]
+  },
+  "telemetry": {
+    "missionId": "B14.7",
+    "generated_at": "2025-10-18T13:56:47Z",
+    "source": "soak-runner",
+    "correlation": {
+      "soak_runner": "7f4b5c04-1b0e-4b7e-8514-3444c4f508d8"
+    },
+    "jobs": [
+      {
+        "job": "soak:a11y.scan",
+        "runs": 5,
+        "pass": 5,
+        "fail": 0,
+        "flake_pct": 0
+      },
+      {
+        "job": "soak:purity.audit",
+        "runs": 5,
+        "pass": 5,
+        "fail": 0,
+        "flake_pct": 0
+      },
+      {
+        "job": "soak:vrt.run",
+        "runs": 5,
+        "pass": 5,
+        "fail": 0,
+        "flake_pct": 0
+      },
+      {
+        "job": "soak:diag.snapshot",
+        "runs": 5,
+        "pass": 5,
+        "fail": 0,
+        "flake_pct": 0
+      },
+      {
+        "job": "soak:brand.apply",
+        "runs": 5,
+        "pass": 5,
+        "fail": 0,
+        "flake_pct": 0
+      }
+    ]
+  },
+  "policy": {
+    "lastUpdate": {
+      "mission": "B14.8",
+      "updatedAt": "2025-10-18T16:16:03Z",
+      "docs": ["docs/mcp/Policy-Rules.md", "docs/mcp/Policy-UX.md"],
+      "approvals": {
+        "header": "X-Bridge-Approval",
+        "tokens": ["granted", "denied"]
+      }
+    }
+  },
+  "enumMappings": [
+    {
+      "mission": "B14.10",
+      "generatedAt": "2025-10-18T19:05:31Z",
+      "enums": {
+        "mapped": 19,
+        "missing": 0
+      }
+    }
+  ],
+  "documentation": [
+    {
+      "mission": "B14.12",
+      "updatedAt": "2025-10-18T20:32:54Z",
+      "docsUpdated": [
+        "docs/summary.md",
+        "docs/cli-reference.md",
+        "docs/figma/roundtrip-checklist.md",
+        "docs/policies/high-contrast.md",
+        "docs/policies/hc-quickstart.md",
+        "docs/policies/dark-a11y-coverage.md",
+        "docs/testing/visual-regression.md",
+        "docs/testing/integration-strategy.md",
+        "docs/mcp/Policy-Rules.md",
+        "docs/mcp/Policy-UX.md",
+        "docs/mcp/Panel-UX.md",
+        "docs/mcp/Telemetry-&-Incidents.md",
+        "docs/mcp/Storybook-Agent-Panel.md"
+      ]
+    }
+  ]
 }
