@@ -35,3 +35,9 @@ chronological order.
 - Keep notes and hints succinct—two short sentences per event maintain scannability in `context-timeline`.
 - When introducing a new status, update the status map first, then extend the timeline schema or tone map as needed.
 - Additional metadata belongs under `meta`; keep top-level keys reserved for the canonical transition contract.
+
+## Mapping governance
+
+- Timeline badges and `data-tone` resolutions flow through `apps/explorer/src/config/statusMap.ts`, which reads `configs/ui/status-map.json` instead of duplicating tone logic.
+- The helper delegates to `StatusChip.getStatusStyle` so any new enum in the token manifest automatically picks up the correct palette.
+- `scripts/lint/enum-to-token.ts` verifies the config mirrors the token manifest and that JSX never introduces manual tone maps.

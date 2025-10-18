@@ -1,4 +1,4 @@
-import tokensJson from '../../../../../packages/tokens/dist/tailwind/tokens.json';
+import tokensJson from '@oods/tokens/tailwind';
 import saasBillingStatusMap from '~/tokens/maps/saas-billing.status-map.json';
 import { TokenBrowser, type TokenEntry } from './TokenBrowser';
 import { MappingTable } from './MappingTable';
@@ -104,7 +104,7 @@ const TokensRoute = () => (
       flexDirection: 'column',
       gap: '2rem',
       padding: '2rem',
-      backgroundColor: '#f1f5f9',
+      backgroundColor: 'var(--cmp-surface-subtle)',
       minHeight: '100vh',
       boxSizing: 'border-box'
     }}

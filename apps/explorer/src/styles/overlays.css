@@ -5,7 +5,10 @@
   --cmp-overlay-radius: 0.75rem;
   --cmp-overlay-surface: var(--cmp-surface-panel);
   --cmp-overlay-border: var(--cmp-border-default);
-  --cmp-overlay-shadow: var(--cmp-shadow-panel, 0 10px 24px rgba(15, 23, 42, 0.12));
+  --cmp-overlay-shadow: var(
+    --cmp-shadow-panel,
+    0 10px 24px color-mix(in srgb, var(--cmp-text-body) 12%, transparent)
+  );
   --cmp-overlay-gap: var(--cmp-spacing-inset-compact, 0.5rem);
   --cmp-overlay-focus-outer: var(--sys-focus-ring-outer);
   --cmp-overlay-focus-width: var(--sys-focus-width, 2px);

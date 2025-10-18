@@ -1,0 +1,368 @@
+{
+  "$schema": "https://design-tokens.org/schema.json",
+  "cmp": {
+    "surface": {
+      "canvas": {
+        "$type": "color",
+        "$value": "{sys.surface.canvas}",
+        "$description": "Default page background surface."
+      },
+      "panel": {
+        "$type": "color",
+        "$value": "{sys.surface.raised}",
+        "$description": "Raised panel surface."
+      },
+      "subtle": {
+        "$type": "color",
+        "$value": "{sys.surface.subtle}",
+        "$description": "Subtle panel surface."
+      },
+      "backdrop": {
+        "$type": "color",
+        "$value": "{sys.surface.backdrop}",
+        "$description": "Backdrop surface for overlays."
+      },
+      "disabled": {
+        "$type": "color",
+        "$value": "{sys.surface.disabled}",
+        "$description": "Disabled control surface."
+      },
+      "action": {
+        "$type": "color",
+        "$value": "{sys.surface.interactive.primary.default}",
+        "$description": "Primary action surface."
+      },
+      "action_hover": {
+        "$type": "color",
+        "$value": "{sys.surface.interactive.primary.hover}",
+        "$description": "Primary action hover surface."
+      },
+      "action_pressed": {
+        "$type": "color",
+        "$value": "{sys.surface.interactive.primary.pressed}",
+        "$description": "Primary action pressed surface."
+      }
+    },
+    "border": {
+      "default": {
+        "$type": "color",
+        "$value": "{sys.border.subtle}",
+        "$description": "Default component border tone."
+      },
+      "strong": {
+        "$type": "color",
+        "$value": "{sys.border.strong}",
+        "$description": "High contrast component border tone."
+      }
+    },
+    "text": {
+      "body": {
+        "$type": "color",
+        "$value": "{sys.text.primary}",
+        "$description": "Primary body text colour."
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": "{sys.text.secondary}",
+        "$description": "Secondary text colour."
+      },
+      "muted": {
+        "$type": "color",
+        "$value": "{sys.text.muted}",
+        "$description": "Muted supporting text colour."
+      },
+      "inverse": {
+        "$type": "color",
+        "$value": "{sys.text.inverse}",
+        "$description": "Inverse text for dark surfaces."
+      },
+      "accent": {
+        "$type": "color",
+        "$value": "{sys.text.accent}",
+        "$description": "Accent text colour."
+      },
+      "disabled": {
+        "$type": "color",
+        "$value": "{sys.text.disabled}",
+        "$description": "Disabled text colour."
+      },
+      "on_action": {
+        "$type": "color",
+        "$value": "{sys.text.on_interactive}",
+        "$description": "Text on primary action surfaces."
+      }
+    },
+    "icon": {
+      "default": {
+        "$type": "color",
+        "$value": "{sys.icon.primary}",
+        "$description": "Default icon colour."
+      },
+      "muted": {
+        "$type": "color",
+        "$value": "{sys.icon.muted}",
+        "$description": "Muted icon colour."
+      },
+      "on_action": {
+        "$type": "color",
+        "$value": "{sys.icon.on_interactive}",
+        "$description": "Icon colour on action surfaces."
+      }
+    },
+    "status": {
+      "info": {
+        "surface": {
+          "$type": "color",
+          "$value": "{sys.status.info.surface}",
+          "$description": "Informational surface token slot."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{sys.status.info.border}",
+          "$description": "Informational border token slot."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "{sys.status.info.text}",
+          "$description": "Informational text token slot."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "{sys.status.info.icon}",
+          "$description": "Informational icon token slot."
+        }
+      },
+      "success": {
+        "surface": {
+          "$type": "color",
+          "$value": "{sys.status.success.surface}",
+          "$description": "Success surface token slot."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{sys.status.success.border}",
+          "$description": "Success border token slot."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "{sys.status.success.text}",
+          "$description": "Success text token slot."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "{sys.status.success.icon}",
+          "$description": "Success icon token slot."
+        }
+      },
+      "warning": {
+        "surface": {
+          "$type": "color",
+          "$value": "{sys.status.warning.surface}",
+          "$description": "Warning surface token slot."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{sys.status.warning.border}",
+          "$description": "Warning border token slot."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "{sys.status.warning.text}",
+          "$description": "Warning text token slot."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "{sys.status.warning.icon}",
+          "$description": "Warning icon token slot."
+        }
+      },
+      "critical": {
+        "surface": {
+          "$type": "color",
+          "$value": "{sys.status.critical.surface}",
+          "$description": "Critical surface token slot."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{sys.status.critical.border}",
+          "$description": "Critical border token slot."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "{sys.status.critical.text}",
+          "$description": "Critical text token slot."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "{sys.status.critical.icon}",
+          "$description": "Critical icon token slot."
+        }
+      },
+      "neutral": {
+        "surface": {
+          "$type": "color",
+          "$value": "{sys.status.neutral.surface}",
+          "$description": "Neutral surface token slot."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{sys.status.neutral.border}",
+          "$description": "Neutral border token slot."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "{sys.status.neutral.text}",
+          "$description": "Neutral text token slot."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "{sys.status.neutral.icon}",
+          "$description": "Neutral icon token slot."
+        }
+      },
+      "accent": {
+        "surface": {
+          "$type": "color",
+          "$value": "{sys.status.accent.surface}",
+          "$description": "Accent surface token slot."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{sys.status.accent.border}",
+          "$description": "Accent border token slot."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "{sys.status.accent.text}",
+          "$description": "Accent text token slot."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "{sys.status.accent.icon}",
+          "$description": "Accent icon token slot."
+        }
+      }
+    },
+    "focus": {
+      "outer": {
+        "$type": "color",
+        "$value": "{sys.focus.ring.outer}",
+        "$description": "Component focus outer ring."
+      },
+      "inner": {
+        "$type": "color",
+        "$value": "{sys.focus.ring.inner}",
+        "$description": "Component focus inner ring."
+      },
+      "text": {
+        "$type": "color",
+        "$value": "{sys.focus.text}",
+        "$description": "Component focus accent."
+      },
+      "width": {
+        "$type": "dimension",
+        "$value": "{sys.focus.width}",
+        "$description": "Component focus ring width."
+      }
+    },
+    "spacing": {
+      "inset": {
+        "compact": {
+          "$type": "dimension",
+          "$value": "{sys.space.inset.compact}",
+          "$description": "Component compact inset spacing."
+        },
+        "default": {
+          "$type": "dimension",
+          "$value": "{sys.space.inset.default}",
+          "$description": "Component default inset spacing."
+        }
+      },
+      "stack": {
+        "compact": {
+          "$type": "dimension",
+          "$value": "{sys.space.stack.compact}",
+          "$description": "Component compact stack spacing."
+        },
+        "default": {
+          "$type": "dimension",
+          "$value": "{sys.space.stack.default}",
+          "$description": "Component default stack spacing."
+        }
+      },
+      "inline": {
+        "xs": {
+          "$type": "dimension",
+          "$value": "{sys.space.inline.xs}",
+          "$description": "Component extra-small inline spacing."
+        },
+        "sm": {
+          "$type": "dimension",
+          "$value": "{sys.space.inline.sm}",
+          "$description": "Component small inline spacing."
+        }
+      }
+    },
+    "banner": {
+      "background": {
+        "$type": "color",
+        "$value": "{sys.status.info.surface}",
+        "$description": "Banner informational background."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "{sys.status.info.border}",
+        "$description": "Banner informational border."
+      },
+      "text": {
+        "$type": "color",
+        "$value": "{sys.status.info.text}",
+        "$description": "Banner informational text."
+      },
+      "icon": {
+        "$type": "color",
+        "$value": "{sys.status.info.icon}",
+        "$description": "Banner informational icon."
+      }
+    },
+    "chip": {
+      "background": {
+        "$type": "color",
+        "$value": "{sys.status.neutral.surface}",
+        "$description": "Default chip background."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "{sys.status.neutral.border}",
+        "$description": "Default chip border."
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{sys.status.neutral.text}",
+        "$description": "Default chip text colour."
+      },
+      "icon": {
+        "$type": "color",
+        "$value": "{sys.status.neutral.icon}",
+        "$description": "Default chip icon colour."
+      },
+      "focus": {
+        "outer": {
+          "$type": "color",
+          "$value": "{sys.focus.ring.outer}",
+          "$description": "Chip focus ring outer colour."
+        },
+        "inner": {
+          "$type": "color",
+          "$value": "{sys.focus.ring.inner}",
+          "$description": "Chip focus ring inner colour."
+        },
+        "width": {
+          "$type": "dimension",
+          "$value": "{sys.focus.width}",
+          "$description": "Chip focus ring width."
+        }
+      }
+    }
+  }
+}

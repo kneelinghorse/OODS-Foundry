@@ -1,0 +1,318 @@
+{
+  "$schema": "https://design-tokens.org/schema.json",
+  "sys": {
+    "surface": {
+      "canvas": {
+        "$type": "color",
+        "$value": "{theme.surface.canvas}",
+        "$description": "System canvas surface derived from theme."
+      },
+      "raised": {
+        "$type": "color",
+        "$value": "{theme.surface.raised}",
+        "$description": "System raised surface derived from theme."
+      },
+      "subtle": {
+        "$type": "color",
+        "$value": "{theme.surface.subtle}",
+        "$description": "System subtle surface derived from theme."
+      },
+      "disabled": {
+        "$type": "color",
+        "$value": "{theme.surface.disabled}",
+        "$description": "System disabled surface derived from theme."
+      },
+      "backdrop": {
+        "$type": "color",
+        "$value": "{theme.surface.backdrop}",
+        "$description": "System overlay backdrop tone."
+      },
+      "inverse": {
+        "$type": "color",
+        "$value": "{theme.surface.inverse}",
+        "$description": "System inverse surface."
+      },
+      "interactive": {
+        "primary": {
+          "default": {
+            "$type": "color",
+            "$value": "{theme.surface.interactive.primary.default}",
+            "$description": "Primary interactive default surface."
+          },
+          "hover": {
+            "$type": "color",
+            "$value": "{theme.surface.interactive.primary.hover}",
+            "$description": "Primary interactive hover surface."
+          },
+          "pressed": {
+            "$type": "color",
+            "$value": "{theme.surface.interactive.primary.pressed}",
+            "$description": "Primary interactive pressed surface."
+          }
+        }
+      }
+    },
+    "border": {
+      "subtle": {
+        "$type": "color",
+        "$value": "{theme.border.subtle}",
+        "$description": "System subtle border tone."
+      },
+      "strong": {
+        "$type": "color",
+        "$value": "{theme.border.strong}",
+        "$description": "System strong border tone."
+      }
+    },
+    "text": {
+      "primary": {
+        "$type": "color",
+        "$value": "{theme.text.primary}",
+        "$description": "System body text colour."
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": "{theme.text.secondary}",
+        "$description": "System secondary text colour."
+      },
+      "muted": {
+        "$type": "color",
+        "$value": "{theme.text.muted}",
+        "$description": "System muted text colour."
+      },
+      "inverse": {
+        "$type": "color",
+        "$value": "{theme.text.inverse}",
+        "$description": "System inverse text colour."
+      },
+      "accent": {
+        "$type": "color",
+        "$value": "{theme.text.accent}",
+        "$description": "System accent text colour."
+      },
+      "on_interactive": {
+        "$type": "color",
+        "$value": "{theme.text.on_interactive}",
+        "$description": "System text colour for interactive surfaces."
+      },
+      "disabled": {
+        "$type": "color",
+        "$value": "{theme.text.disabled}",
+        "$description": "System disabled text colour."
+      }
+    },
+    "icon": {
+      "primary": {
+        "$type": "color",
+        "$value": "{theme.icon.primary}",
+        "$description": "System primary icon colour."
+      },
+      "muted": {
+        "$type": "color",
+        "$value": "{theme.icon.muted}",
+        "$description": "System muted icon colour."
+      },
+      "on_interactive": {
+        "$type": "color",
+        "$value": "{theme.icon.on_interactive}",
+        "$description": "System icon colour on interactive surfaces."
+      }
+    },
+    "status": {
+      "info": {
+        "surface": {
+          "$type": "color",
+          "$value": "{theme.status.info.surface}",
+          "$description": "System informational surface."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{theme.status.info.border}",
+          "$description": "System informational border."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "{theme.status.info.text}",
+          "$description": "System informational text."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "{theme.status.info.icon}",
+          "$description": "System informational icon."
+        }
+      },
+      "success": {
+        "surface": {
+          "$type": "color",
+          "$value": "{theme.status.success.surface}",
+          "$description": "System success surface."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{theme.status.success.border}",
+          "$description": "System success border."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "{theme.status.success.text}",
+          "$description": "System success text."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "{theme.status.success.icon}",
+          "$description": "System success icon."
+        }
+      },
+      "warning": {
+        "surface": {
+          "$type": "color",
+          "$value": "{theme.status.warning.surface}",
+          "$description": "System warning surface."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{theme.status.warning.border}",
+          "$description": "System warning border."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "{theme.status.warning.text}",
+          "$description": "System warning text."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "{theme.status.warning.icon}",
+          "$description": "System warning icon."
+        }
+      },
+      "critical": {
+        "surface": {
+          "$type": "color",
+          "$value": "{theme.status.critical.surface}",
+          "$description": "System critical surface."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{theme.status.critical.border}",
+          "$description": "System critical border."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "{theme.status.critical.text}",
+          "$description": "System critical text."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "{theme.status.critical.icon}",
+          "$description": "System critical icon."
+        }
+      },
+      "neutral": {
+        "surface": {
+          "$type": "color",
+          "$value": "{theme.status.neutral.surface}",
+          "$description": "System neutral surface."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{theme.status.neutral.border}",
+          "$description": "System neutral border."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "{theme.status.neutral.text}",
+          "$description": "System neutral text."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "{theme.status.neutral.icon}",
+          "$description": "System neutral icon."
+        }
+      },
+      "accent": {
+        "surface": {
+          "$type": "color",
+          "$value": "{theme.status.accent.surface}",
+          "$description": "System accent surface."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{theme.status.accent.border}",
+          "$description": "System accent border."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "{theme.status.accent.text}",
+          "$description": "System accent text."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "{theme.status.accent.icon}",
+          "$description": "System accent icon."
+        }
+      }
+    },
+    "focus": {
+      "ring": {
+        "outer": {
+          "$type": "color",
+          "$value": "{theme.focus.ring.outer}",
+          "$description": "System focus outer ring colour."
+        },
+        "inner": {
+          "$type": "color",
+          "$value": "{theme.focus.ring.inner}",
+          "$description": "System focus inner ring colour."
+        }
+      },
+      "text": {
+        "$type": "color",
+        "$value": "{theme.focus.text}",
+        "$description": "System focus accent colour."
+      },
+      "width": {
+        "$type": "dimension",
+        "$value": "{theme.focus.width}",
+        "$description": "System focus ring width."
+      }
+    },
+    "space": {
+      "stack": {
+        "default": {
+          "$type": "dimension",
+          "$value": "{theme.space.stack.default}",
+          "$description": "System default vertical spacing."
+        },
+        "compact": {
+          "$type": "dimension",
+          "$value": "{theme.space.stack.compact}",
+          "$description": "System compact vertical spacing."
+        }
+      },
+      "inset": {
+        "default": {
+          "$type": "dimension",
+          "$value": "{theme.space.inset.default}",
+          "$description": "System default inset spacing."
+        },
+        "compact": {
+          "$type": "dimension",
+          "$value": "{theme.space.inset.compact}",
+          "$description": "System compact inset spacing."
+        }
+      },
+      "inline": {
+        "xs": {
+          "$type": "dimension",
+          "$value": "{theme.space.inline.xs}",
+          "$description": "System extra-small inline spacing."
+        },
+        "sm": {
+          "$type": "dimension",
+          "$value": "{theme.space.inline.sm}",
+          "$description": "System small inline spacing."
+        }
+      }
+    }
+  }
+}

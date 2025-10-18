@@ -10,9 +10,9 @@ const panelStyle: CSSProperties = {
   display: 'grid',
   gap: '0.75rem',
   padding: '1rem',
-  background: 'var(--cmp-surface-panel, rgba(15,23,42,0.6))',
+  background: 'var(--cmp-surface-panel)',
   borderRadius: '1rem',
-  border: '1px solid color-mix(in srgb, var(--cmp-border-default, rgba(148,163,184,0.45)) 65%, transparent)'
+  border: '1px solid color-mix(in srgb, var(--cmp-border-default) 65%, transparent)'
 };
 
 const meta: Meta<typeof Tabs> = {
@@ -37,7 +37,7 @@ const TABS: Tab[] = [
     panel: (
       <div style={panelStyle}>
         <h3 style={{ margin: 0 }}>Contract overview</h3>
-        <p style={{ margin: 0, color: 'var(--cmp-text-muted, #94a3b8)' }}>
+        <p style={{ margin: 0, color: 'var(--cmp-text-muted)' }}>
           Brand tokens handle headings, paragraphs, and border ramps with zero component conditionals.
         </p>
       </div>
@@ -91,7 +91,7 @@ export const Dark: Story = {
         <div style={{ ...contentCardStyle, gap: '1.75rem' }}>
           <header style={{ display: 'grid', gap: '0.75rem' }}>
             <h1 style={{ margin: 0, fontSize: '1.6rem' }}>Tabs · Brand A Dark</h1>
-            <p style={{ margin: 0, color: 'var(--cmp-text-muted, #94a3b8)', lineHeight: 1.6 }}>
+            <p style={{ margin: 0, color: 'var(--cmp-text-muted)', lineHeight: 1.6 }}>
               Selection halo + panel surfaces use brand tokens; keyboard contract remains unchanged.
             </p>
           </header>

@@ -12,18 +12,27 @@
 | `summary` | Apply completed. Success banner + applied artifacts table displayed. | → `planning` (new preview), → `idle` (tool change) |
 | `error` | Error banner shown with retry/back actions + incident metadata. | → `planning` (retry, dry-run failure), → `executing` (retry, apply failure), → `review`/`idle` (back) |
 
+## Task Runner & Queue
+
+- **Statuses:** each queued run progresses through `Queued` → `WaitingApproval` → `Running` → `Done`, with `Denied` available for human stop-requests. `planInFlight` and `applyInFlight` overlay the status badge while the bridge call is active.
+- **Queue item contract:** the list persists `tool`, canonicalised inputs, ISO `createdAt`, most recent `incidentId`, optional `deniedReason`, and telemetry link (`diagnosticsPath` → bridge `artifactHref`). Selecting an item hydrates the form with the recorded inputs.
+- **Keyboard/Screen reader affordances:** queue buttons behave like radio tabs; focus returns to the invoking control, `aria-live` announces selection changes, and badges describe the visible status text.
+- **Incident linking:** the active task status pillar shows the latest incident ID for plan/apply and the shared `correlationId`. When diagnostics are exposed the badge links directly to telemetry JSON; otherwise a `<code>` fallback prints the identifiers.
+
 ## Interaction Flow
 
-1. **Preview changes** — user triggers a dry run (`apply:false`). Panel announces “Plan ready.” and presents:
+1. **Queue task** — captures the current tool/input state into the task list. Newly queued work defaults to `Queued` and selection snaps to the new item.
+2. **Preview selected task** — user triggers a dry run (`apply:false`). Panel announces “Plan ready.” and presents:
    - Diff viewer (Unified default, Split toggle).
    - Artifact table (transcript, bundle index, diagnostics, preview artifacts).
-2. **Approve & Apply…** — opens blocking dialog (`Cancel` receives initial focus; Escape closes). Copy:
+3. **Approve & Apply…** — opens blocking dialog (`Cancel` receives initial focus; Escape closes). Copy:
    - Title: “Approve & Apply changes?”
    - Body: “You are about to write new artifacts to `/artifacts/current-state/YYYY-MM-DD`. This action requires approval.”
    - Primary: “Approve & Apply” (Enter submits), Secondary: “Cancel”.
-3. **Execute** — confirmation sends { `apply:true` }. Panel announces “Applying approved changes now.” while controls are disabled.
-4. **Summary** — success banner “Changes Applied” plus applied artifacts table. Panel announces “Run complete. Artifacts available.”
-5. **Errors** — failure banner “Apply Failed” includes error code and optional `Incident ID`. Buttons: `Retry`, `Back`. Screen reader announcement: “Run failed. See error details.”
+4. **Deny task** — optional exit that stamps the queue item as `Denied` and records an operator-supplied reason. No bridge calls occur; transcripts remain read-only.
+5. **Execute** — confirmation sends { `apply:true` }. Panel announces “Applying approved changes now.” while controls are disabled.
+6. **Summary** — success banner “Changes Applied” plus applied artifacts table. Denied tasks surface a `Task Denied` banner with the recorded reason and no artifact list. Panel announces “Run complete. Artifacts available.” or “Task denied.” accordingly.
+7. **Errors** — failure banner “Apply Failed” includes error code and optional `Incident ID`. Buttons: `Retry`, `Back`. Screen reader announcement: “Run failed. See error details.”
 
 ## Accessibility Contracts
 
@@ -36,4 +45,5 @@
 
 - Dry-run and apply responses store transcript and bundle index paths; panel table links via bridge `/artifacts/*`.
 - `planInputRef` ensures the `apply:true` request reuses reviewed inputs.
+- Queue metadata forwards `incidentId`/`diagnosticsPath` for downstream telemetry aggregation and feeds `diagnostics.json` (`panel` block) with `{ tasksRun, approvals, denied }` counters per mission.
 - SR announcements mirror CLI copy deck to keep CLI/Panel transcripts aligned.

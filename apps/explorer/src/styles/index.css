@@ -4,15 +4,15 @@
 @import './hc.css';
 
 :where(a, button, [role='button'], .status-chip, input, select, textarea):focus-visible {
-  outline: var(--sys-focus-width, 2px) solid var(--sys-focus-ring-outer, #2563eb);
+  outline: var(--sys-focus-width) solid var(--sys-focus-ring-outer);
   outline-offset: 3px;
 }
 
 .explorer-view {
   font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
   min-height: 100vh;
-  background: var(--cmp-surface-subtle, #f8fafc);
-  color: var(--cmp-text-body, #0f172a);
+  background: var(--cmp-surface-subtle);
+  color: var(--cmp-text-body);
   display: grid;
   gap: clamp(1.5rem, 2vw + 1rem, 2.75rem);
   padding: clamp(1.5rem, 1.5vw + 1.25rem, 2.5rem);
@@ -30,7 +30,7 @@
   align-items: flex-start;
   gap: clamp(1rem, 1vw + 0.75rem, 2rem);
   padding-bottom: var(--cmp-spacing-inset-compact, 1rem);
-  border-bottom: 1px solid color-mix(in srgb, var(--cmp-border-default, #94a3b8) 35%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--cmp-border-default) 35%, transparent);
 }
 
 .view-header__text {
@@ -45,7 +45,7 @@
   letter-spacing: 0.12em;
   font-weight: 600;
   font-size: 0.75rem;
-  color: var(--cmp-text-muted, #64748b);
+  color: var(--cmp-text-muted);
   margin: 0;
 }
 
@@ -57,7 +57,7 @@
 
 .view-caption {
   margin: 0;
-  color: var(--cmp-text-muted, #475569);
+  color: var(--cmp-text-muted);
   font-size: 0.95rem;
   line-height: 1.45;
 }
@@ -81,7 +81,7 @@
   font-size: 0.78rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--cmp-text-muted, #64748b);
+  color: var(--cmp-text-muted);
 }
 
 .view-metrics dd {
@@ -100,11 +100,11 @@
   gap: 0.85rem;
   padding: var(--cmp-spacing-inset-compact, 0.9rem);
   border-radius: 1rem;
-  background: var(--cmp-surface-panel, #ffffff);
+  background: var(--cmp-surface-panel);
   border: 1px solid transparent;
   box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--cmp-border-default, #94a3b8) 45%, transparent),
-    var(--cmp-shadow-panel, 0 6px 18px rgba(15, 23, 42, 0.08));
+    0 0 0 1px color-mix(in srgb, var(--cmp-border-default) 45%, transparent),
+    var(--cmp-shadow-panel);
 }
 
 .list-card__heading {
@@ -126,7 +126,7 @@
 }
 
 .list-card__plan {
-  color: var(--cmp-text-muted, #64748b);
+  color: var(--cmp-text-muted);
   font-size: 0.88rem;
 }
 
@@ -148,14 +148,14 @@
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--cmp-text-muted, #64748b);
+  color: var(--cmp-text-muted);
 }
 
 .list-card__meta dd {
   margin: 0;
   font-size: 0.95rem;
   font-weight: 600;
-  color: var(--cmp-text-body, #0f172a);
+  color: var(--cmp-text-body);
 }
 
 .status-chip {
@@ -166,13 +166,13 @@
   padding-block: var(--cmp-chip-padding-block, 0.35rem);
   border-radius: 999px;
   border: 1px solid transparent;
-  background-color: var(--cmp-chip-background, rgba(148, 163, 184, 0.2));
-  color: var(--cmp-chip-foreground, #0f172a);
+  background-color: var(--cmp-chip-background);
+  color: var(--cmp-chip-foreground);
   line-height: 1.2;
   font-size: var(--cmp-chip-font-size, 0.82rem);
   font-weight: 600;
   letter-spacing: 0.01em;
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--cmp-chip-border, rgba(15, 23, 42, 0.05)) 25%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--cmp-chip-border) 25%, transparent);
   transition:
     transform var(--motion-transition-chip-in-duration, var(--motion-duration-base))
       var(--motion-transition-chip-in-timing-function, var(--motion-easing-emphasized))
@@ -190,11 +190,11 @@
 
 .status-chip:hover {
   transform: translateY(-1px);
-  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.15);
+  box-shadow: 0 8px 18px color-mix(in srgb, var(--cmp-text-body) 15%, transparent);
 }
 
 .status-chip:focus-visible {
-  outline: var(--cmp-chip-focus-width, 2px) solid var(--cmp-chip-focus-outer, #2563eb);
+  outline: var(--cmp-chip-focus-width) solid var(--cmp-chip-focus-outer);
   outline-offset: 3px;
 }
 
@@ -223,9 +223,9 @@
 .detail-view {
   background: linear-gradient(
     180deg,
-    var(--cmp-surface-subtle, rgba(248, 250, 252, 1)) 0%,
-    color-mix(in srgb, var(--cmp-surface-subtle, rgba(241, 245, 249, 1)) 75%, transparent) 65%,
-    var(--cmp-surface-panel, #ffffff) 100%
+    var(--cmp-surface-subtle)) 0%,
+    color-mix(in srgb, var(--cmp-surface-subtle)) 75%, transparent) 65%,
+    var(--cmp-surface-panel) 100%
   );
 }
 
@@ -235,7 +235,7 @@
   align-items: flex-start;
   gap: clamp(1rem, 2vw + 0.8rem, 3rem);
   padding-bottom: var(--cmp-spacing-inset-default, 1.5rem);
-  border-bottom: 1px solid color-mix(in srgb, var(--cmp-border-default, #94a3b8) 32%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--cmp-border-default) 32%, transparent);
 }
 
 .detail-header__badges {
@@ -250,9 +250,9 @@
   gap: var(--cmp-spacing-inset-default, 1.45rem);
   padding: var(--cmp-spacing-inset-default, 1.4rem);
   border-radius: 1.25rem;
-  background: var(--cmp-surface-subtle, #f1f5f9);
+  background: var(--cmp-surface-subtle);
   border: 1px solid transparent;
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--cmp-border-default, #94a3b8) 28%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--cmp-border-default) 28%, transparent);
 }
 
 .detail-summary article {
@@ -266,7 +266,7 @@
   font-size: 0.95rem;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--cmp-text-muted, #64748b);
+  color: var(--cmp-text-muted);
 }
 
 .detail-summary__value {
@@ -276,12 +276,12 @@
 }
 
 .detail-summary__value--positive {
-  color: var(--sys-status-success-text, #0f766e);
+  color: var(--sys-status-success-text);
 }
 
 .detail-summary__hint {
   margin: 0;
-  color: var(--cmp-text-muted, #475569);
+  color: var(--cmp-text-muted);
   font-size: 0.92rem;
 }
 
@@ -297,11 +297,11 @@
   gap: 0.85rem;
   padding: var(--cmp-spacing-inset-default, 1.35rem);
   border-radius: 1.1rem;
-  background: var(--cmp-surface-panel, #ffffff);
+  background: var(--cmp-surface-panel);
   border: 1px solid transparent;
   box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--cmp-border-default, #94a3b8) 30%, transparent),
-    var(--cmp-shadow-panel, 0 10px 24px rgba(15, 23, 42, 0.12));
+    0 0 0 1px color-mix(in srgb, var(--cmp-border-default) 30%, transparent),
+    var(--cmp-shadow-panel));
 }
 
 .detail-panel header {
@@ -317,7 +317,7 @@
 
 .detail-panel header p {
   margin: 0;
-  color: var(--cmp-text-muted, #64748b);
+  color: var(--cmp-text-muted);
   font-size: 0.88rem;
 }
 
@@ -326,7 +326,7 @@
   padding-left: 1.25rem;
   display: grid;
   gap: 0.55rem;
-  color: var(--cmp-text-body, #1f2937);
+  color: var(--cmp-text-body);
 }
 
 .detail-grid {
@@ -346,7 +346,7 @@
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.07em;
-  color: var(--cmp-text-muted, #64748b);
+  color: var(--cmp-text-muted);
 }
 
 .detail-grid dd {
@@ -361,9 +361,9 @@
   gap: 1rem;
   padding: var(--cmp-spacing-inset-default, 1.5rem);
   border-radius: 1.1rem;
-  background: var(--cmp-surface-subtle, #f1f5f9);
+  background: var(--cmp-surface-subtle);
   border: 1px solid transparent;
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--cmp-border-default, #94a3b8) 25%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--cmp-border-default) 25%, transparent);
 }
 
 .detail-sidebar h2 {
@@ -384,11 +384,11 @@
   gap: 0.5rem;
   padding: 0.9rem 1rem;
   border-radius: 0.9rem;
-  background: var(--cmp-surface-panel, #ffffff);
+  background: var(--cmp-surface-panel);
   border: 1px solid transparent;
   box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--cmp-border-default, #94a3b8) 22%, transparent),
-    inset 0 0 0 1px color-mix(in srgb, var(--cmp-border-default, #94a3b8) 18%, transparent);
+    0 0 0 1px color-mix(in srgb, var(--cmp-border-default) 22%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, var(--cmp-border-default) 18%, transparent);
 }
 
 .invoice-row__meta {
@@ -402,7 +402,7 @@
 .invoice-row__id {
   font-family: 'JetBrains Mono', 'Menlo', ui-monospace, SFMono-Regular, monospace;
   font-size: 0.82rem;
-  color: var(--cmp-text-body, #1f2937);
+  color: var(--cmp-text-body);
 }
 
 .invoice-row__total {
@@ -417,12 +417,12 @@
 
 .invoice-row__due {
   font-size: 0.85rem;
-  color: var(--cmp-text-muted, #64748b);
+  color: var(--cmp-text-muted);
 }
 
 .invoice-row__note {
   margin: 0;
-  color: var(--cmp-text-muted, #475569);
+  color: var(--cmp-text-muted);
   font-size: 0.88rem;
   line-height: 1.4;
 }
@@ -430,15 +430,15 @@
 .form-view {
   background: linear-gradient(
     180deg,
-    var(--cmp-surface-subtle, #f8fafc) 0%,
-    color-mix(in srgb, var(--cmp-surface-subtle, #eef2ff) 65%, transparent) 55%,
-    var(--cmp-surface-panel, #ffffff) 100%
+    var(--cmp-surface-subtle) 0%,
+    color-mix(in srgb, var(--cmp-surface-subtle) 65%, transparent) 55%,
+    var(--cmp-surface-panel) 100%
   );
 }
 
 .form-breadcrumbs {
   font-size: 0.85rem;
-  color: var(--cmp-text-muted, #64748b);
+  color: var(--cmp-text-muted);
 }
 
 .form-breadcrumbs ol {
@@ -469,7 +469,7 @@
 
 .form-breadcrumbs a:hover,
 .form-breadcrumbs a:focus-visible {
-  color: var(--cmp-text-accent, #2563eb);
+  color: var(--cmp-text-accent);
   text-decoration: underline;
 }
 
@@ -479,7 +479,7 @@
   justify-content: space-between;
   gap: clamp(1rem, 2vw + 0.75rem, 3rem);
   padding-bottom: var(--cmp-spacing-inset-default, 1.4rem);
-  border-bottom: 1px solid color-mix(in srgb, var(--cmp-border-default, #94a3b8) 28%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--cmp-border-default) 28%, transparent);
 }
 
 .form-header__text {
@@ -505,7 +505,7 @@
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--cmp-text-muted, #64748b);
+  color: var(--cmp-text-muted);
 }
 
 .form-header__meta dd {
@@ -522,8 +522,8 @@
   gap: var(--cmp-spacing-inline-sm, 1rem);
   padding: var(--cmp-spacing-inset-compact, 1rem) var(--cmp-spacing-inset-default, 1.25rem);
   border-radius: 1rem;
-  background: color-mix(in srgb, var(--cmp-surface-subtle, #f1f5f9) 62%, transparent);
-  border: 1px solid color-mix(in srgb, var(--cmp-border-default, #94a3b8) 28%, transparent);
+  background: color-mix(in srgb, var(--cmp-surface-subtle) 62%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cmp-border-default) 28%, transparent);
 }
 
 .form-toolbar__steps {
@@ -537,7 +537,7 @@
   flex-direction: column;
   gap: 0.35rem;
   font-size: 0.9rem;
-  color: var(--cmp-text-muted, #475569);
+  color: var(--cmp-text-muted);
 }
 
 .form-toolbar__summary-step {
@@ -545,7 +545,7 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   font-weight: 600;
-  color: var(--cmp-text-body, #0f172a);
+  color: var(--cmp-text-body);
 }
 
 .form-main {
@@ -557,11 +557,11 @@
   gap: var(--cmp-spacing-stack-default, 1.6rem);
   padding: var(--cmp-spacing-inset-default, 1.5rem);
   border-radius: 1.15rem;
-  background: var(--cmp-surface-panel, #ffffff);
-  border: 1px solid color-mix(in srgb, var(--cmp-border-default, #94a3b8) 32%, transparent);
+  background: var(--cmp-surface-panel);
+  border: 1px solid color-mix(in srgb, var(--cmp-border-default) 32%, transparent);
   box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--cmp-border-default, #94a3b8) 18%, transparent),
-    var(--cmp-shadow-panel, 0 12px 32px rgba(15, 23, 42, 0.12));
+    0 0 0 1px color-mix(in srgb, var(--cmp-border-default) 18%, transparent),
+    var(--cmp-shadow-panel));
 }
 
 .form-section {
@@ -581,7 +581,7 @@
 
 .form-section__header p {
   margin: 0;
-  color: var(--cmp-text-muted, #475569);
+  color: var(--cmp-text-muted);
   font-size: 0.92rem;
   line-height: 1.45;
 }
@@ -597,42 +597,42 @@
 }
 
 .form-field {
-  --form-field-surface: var(--cmp-surface-panel, #ffffff);
-  --form-field-border: color-mix(in srgb, var(--cmp-border-default, #94a3b8) 55%, transparent);
-  --form-field-ring: var(--sys-focus-ring-outer, #2563eb);
-  --form-field-label-color: var(--cmp-text-muted, #475569);
-  --form-field-message-color: var(--cmp-text-muted, #475569);
+  --form-field-surface: var(--cmp-surface-panel);
+  --form-field-border: color-mix(in srgb, var(--cmp-border-default) 55%, transparent);
+  --form-field-ring: var(--sys-focus-ring-outer);
+  --form-field-label-color: var(--cmp-text-muted);
+  --form-field-message-color: var(--cmp-text-muted);
   --form-field-message-surface: transparent;
   display: grid;
   gap: 0.5rem;
 }
 
 .form-field[data-state='error'] {
-  --form-field-border: color-mix(in srgb, var(--sys-status-critical-border, #f87171) 70%, transparent);
-  --form-field-surface: color-mix(in srgb, var(--sys-status-critical-surface, #fee2e2) 55%, transparent);
-  --form-field-message-color: var(--sys-status-critical-text, #b91c1c);
-  --form-field-message-surface: color-mix(in srgb, var(--sys-status-critical-surface, #fee2e2) 40%, transparent);
+  --form-field-border: color-mix(in srgb, var(--sys-status-critical-border) 70%, transparent);
+  --form-field-surface: color-mix(in srgb, var(--sys-status-critical-surface) 55%, transparent);
+  --form-field-message-color: var(--sys-status-critical-text);
+  --form-field-message-surface: color-mix(in srgb, var(--sys-status-critical-surface) 40%, transparent);
 }
 
 .form-field[data-state='warning'] {
-  --form-field-border: color-mix(in srgb, var(--sys-status-warning-border, #fbbf24) 65%, transparent);
-  --form-field-surface: color-mix(in srgb, var(--sys-status-warning-surface, #fef3c7) 50%, transparent);
-  --form-field-message-color: var(--sys-status-warning-text, #92400e);
-  --form-field-message-surface: color-mix(in srgb, var(--sys-status-warning-surface, #fef3c7) 32%, transparent);
+  --form-field-border: color-mix(in srgb, var(--sys-status-warning-border) 65%, transparent);
+  --form-field-surface: color-mix(in srgb, var(--sys-status-warning-surface) 50%, transparent);
+  --form-field-message-color: var(--sys-status-warning-text);
+  --form-field-message-surface: color-mix(in srgb, var(--sys-status-warning-surface) 32%, transparent);
 }
 
 .form-field[data-state='info'] {
-  --form-field-border: color-mix(in srgb, var(--sys-status-info-border, #93c5fd) 65%, transparent);
-  --form-field-surface: color-mix(in srgb, var(--sys-status-info-surface, #e0f2fe) 45%, transparent);
-  --form-field-message-color: var(--sys-status-info-text, #1d4ed8);
-  --form-field-message-surface: color-mix(in srgb, var(--sys-status-info-surface, #e0f2fe) 28%, transparent);
+  --form-field-border: color-mix(in srgb, var(--sys-status-info-border) 65%, transparent);
+  --form-field-surface: color-mix(in srgb, var(--sys-status-info-surface) 45%, transparent);
+  --form-field-message-color: var(--sys-status-info-text);
+  --form-field-message-surface: color-mix(in srgb, var(--sys-status-info-surface) 28%, transparent);
 }
 
 .form-field[data-state='success'] {
-  --form-field-border: color-mix(in srgb, var(--sys-status-success-border, #34d399) 60%, transparent);
-  --form-field-surface: color-mix(in srgb, var(--sys-status-success-surface, #dcfce7) 45%, transparent);
-  --form-field-message-color: var(--sys-status-success-text, #166534);
-  --form-field-message-surface: color-mix(in srgb, var(--sys-status-success-surface, #dcfce7) 32%, transparent);
+  --form-field-border: color-mix(in srgb, var(--sys-status-success-border) 60%, transparent);
+  --form-field-surface: color-mix(in srgb, var(--sys-status-success-surface) 45%, transparent);
+  --form-field-message-color: var(--sys-status-success-text);
+  --form-field-message-surface: color-mix(in srgb, var(--sys-status-success-surface) 32%, transparent);
 }
 
 .form-field__label {
@@ -669,7 +669,7 @@
   border-radius: 0.8rem;
   border: 1px solid var(--form-field-border);
   background: var(--form-field-surface);
-  color: var(--cmp-text-body, #0f172a);
+  color: var(--cmp-text-body);
   font-size: var(
     --context-typography-scale-body-md-font-size,
     var(--oods-text-scale-body-md-font-size, 1rem)
@@ -706,7 +706,7 @@
 .form-field__hint {
   margin: 0;
   font-size: 0.82rem;
-  color: var(--cmp-text-muted, #64748b);
+  color: var(--cmp-text-muted);
 }
 
 .form-field__message {
@@ -781,35 +781,35 @@
 }
 
 .form-actions__button--primary {
-  background: var(--cmp-surface-action, #2563eb);
-  color: var(--cmp-text-on-action, #ffffff);
+  background: var(--cmp-surface-action);
+  color: var(--cmp-text-on-action);
   box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--cmp-border-strong, #1d4ed8) 35%, transparent),
-    var(--cmp-shadow-panel, 0 14px 32px rgba(37, 99, 235, 0.28));
+    0 0 0 1px color-mix(in srgb, var(--cmp-border-strong) 35%, transparent),
+    var(--cmp-shadow-panel));
 }
 
 .form-actions__button--primary:hover {
-  background: var(--cmp-surface-action-hover, #1d4ed8);
+  background: var(--cmp-surface-action-hover);
   transform: translateY(-1px);
 }
 
 .form-actions__button--primary:active {
-  background: var(--cmp-surface-action-pressed, #1e3a8a);
+  background: var(--cmp-surface-action-pressed);
   transform: translateY(0);
 }
 
 .form-actions__button--secondary {
   background: transparent;
-  color: var(--cmp-text-accent, #1d4ed8);
-  border: 1px solid color-mix(in srgb, var(--cmp-border-default, #94a3b8) 45%, transparent);
+  color: var(--cmp-text-accent);
+  border: 1px solid color-mix(in srgb, var(--cmp-border-default) 45%, transparent);
 }
 
 .form-actions__button--secondary:hover {
-  background: color-mix(in srgb, var(--cmp-surface-subtle, #f1f5f9) 35%, transparent);
+  background: color-mix(in srgb, var(--cmp-surface-subtle) 35%, transparent);
 }
 
 .form-actions__button--secondary:active {
-  background: color-mix(in srgb, var(--cmp-surface-subtle, #f1f5f9) 45%, transparent);
+  background: color-mix(in srgb, var(--cmp-surface-subtle) 45%, transparent);
 }
 
 .form-sidebar {
@@ -817,8 +817,8 @@
   gap: var(--cmp-spacing-stack-default, 1.5rem);
   padding: var(--cmp-spacing-inset-default, 1.4rem);
   border-radius: 1.1rem;
-  background: color-mix(in srgb, var(--cmp-surface-subtle, #f8fafc) 75%, transparent);
-  border: 1px solid color-mix(in srgb, var(--cmp-border-default, #94a3b8) 28%, transparent);
+  background: color-mix(in srgb, var(--cmp-surface-subtle) 75%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cmp-border-default) 28%, transparent);
 }
 
 .form-sidebar__section {
@@ -833,7 +833,7 @@
 
 .form-sidebar__section p {
   margin: 0;
-  color: var(--cmp-text-muted, #475569);
+  color: var(--cmp-text-muted);
   font-size: 0.9rem;
   line-height: 1.45;
 }
@@ -851,12 +851,12 @@
   align-items: center;
   gap: 0.65rem;
   font-size: 0.9rem;
-  color: var(--cmp-text-body, #0f172a);
+  color: var(--cmp-text-body);
 }
 
 .form-sidebar__list li span {
   font-size: 0.85rem;
-  color: var(--cmp-text-muted, #475569);
+  color: var(--cmp-text-muted);
 }
 
 .form-sidebar__list--bullets {
@@ -872,15 +872,15 @@
 .timeline-view {
   background: radial-gradient(
       120% 140% at 50% 0%,
-      color-mix(in srgb, var(--cmp-surface-subtle, #f8fafc) 85%, transparent) 0%,
+      color-mix(in srgb, var(--cmp-surface-subtle) 85%, transparent) 0%,
       transparent 70%
     ),
-    var(--cmp-surface-canvas, #f8fafc);
+    var(--cmp-surface-canvas);
 }
 
 .timeline-breadcrumbs {
   font-size: 0.85rem;
-  color: var(--cmp-text-muted, #64748b);
+  color: var(--cmp-text-muted);
 }
 
 .timeline-breadcrumbs ol {
@@ -911,7 +911,7 @@
 
 .timeline-breadcrumbs a:hover,
 .timeline-breadcrumbs a:focus-visible {
-  color: var(--cmp-text-accent, #2563eb);
+  color: var(--cmp-text-accent);
   text-decoration: underline;
 }
 
@@ -921,7 +921,7 @@
   justify-content: space-between;
   gap: clamp(1rem, 2vw + 0.75rem, 3rem);
   padding-bottom: var(--cmp-spacing-inset-default, 1.4rem);
-  border-bottom: 1px solid color-mix(in srgb, var(--cmp-border-default, #94a3b8) 25%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--cmp-border-default) 25%, transparent);
 }
 
 .timeline-header__meta {
@@ -941,7 +941,7 @@
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--cmp-text-muted, #64748b);
+  color: var(--cmp-text-muted);
 }
 
 .timeline-header__meta dd {
@@ -958,11 +958,11 @@
   gap: var(--cmp-spacing-inline-sm, 1rem);
   padding: var(--cmp-spacing-inset-compact, 0.9rem) var(--cmp-spacing-inset-default, 1.25rem);
   border-radius: 1rem;
-  background: color-mix(in srgb, var(--cmp-surface-panel, #ffffff) 75%, transparent);
-  border: 1px solid color-mix(in srgb, var(--cmp-border-default, #94a3b8) 24%, transparent);
+  background: color-mix(in srgb, var(--cmp-surface-panel) 75%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cmp-border-default) 24%, transparent);
   box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--cmp-border-default, #94a3b8) 14%, transparent),
-    var(--cmp-shadow-panel, 0 10px 24px rgba(15, 23, 42, 0.08));
+    0 0 0 1px color-mix(in srgb, var(--cmp-border-default) 14%, transparent),
+    var(--cmp-shadow-panel));
 }
 
 .timeline-toolbar__filters {
@@ -976,9 +976,9 @@
   align-items: center;
   padding: 0.35rem 0.9rem;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--cmp-border-default, #94a3b8) 35%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cmp-border-default) 35%, transparent);
   background: transparent;
-  color: var(--cmp-text-muted, #475569);
+  color: var(--cmp-text-muted);
   font-size: 0.85rem;
   font-weight: 600;
   letter-spacing: 0.01em;
@@ -1000,22 +1000,22 @@
 
 .timeline-toolbar__chip:hover,
 .timeline-toolbar__chip:focus-visible {
-  color: var(--cmp-text-body, #0f172a);
-  background: color-mix(in srgb, var(--cmp-surface-subtle, #f1f5f9) 45%, transparent);
+  color: var(--cmp-text-body);
+  background: color-mix(in srgb, var(--cmp-surface-subtle) 45%, transparent);
 }
 
 .timeline-toolbar__chip--active {
-  background: var(--cmp-surface-action, #2563eb);
-  color: var(--cmp-text-on-action, #ffffff);
+  background: var(--cmp-surface-action);
+  color: var(--cmp-text-on-action);
   border-color: transparent;
   box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--cmp-surface-action, #2563eb) 40%, transparent),
-    var(--cmp-shadow-panel, 0 10px 28px rgba(37, 99, 235, 0.2));
+    0 0 0 1px color-mix(in srgb, var(--cmp-surface-action) 40%, transparent),
+    var(--cmp-shadow-panel));
 }
 
 .timeline-toolbar__range {
   font-size: 0.9rem;
-  color: var(--cmp-text-muted, #475569);
+  color: var(--cmp-text-muted);
 }
 
 .timeline-main {
@@ -1037,44 +1037,44 @@
   grid-template-columns: auto 1fr;
   align-items: start;
   gap: var(--cmp-spacing-inline-sm, 1.15rem);
-  --timeline-line-color: color-mix(in srgb, var(--cmp-border-default, #94a3b8) 70%, transparent);
-  --timeline-marker-color: color-mix(in srgb, var(--cmp-text-muted, #475569) 85%, transparent);
-  --timeline-card-surface: var(--cmp-surface-panel, #ffffff);
-  --timeline-card-border: color-mix(in srgb, var(--cmp-border-default, #94a3b8) 30%, transparent);
+  --timeline-line-color: color-mix(in srgb, var(--cmp-border-default) 70%, transparent);
+  --timeline-marker-color: color-mix(in srgb, var(--cmp-text-muted) 85%, transparent);
+  --timeline-card-surface: var(--cmp-surface-panel);
+  --timeline-card-border: color-mix(in srgb, var(--cmp-border-default) 30%, transparent);
 }
 
 .timeline-item[data-tone='success'] {
-  --timeline-line-color: color-mix(in srgb, var(--sys-status-success-border, #34d399) 60%, transparent);
-  --timeline-marker-color: var(--sys-status-success-text, #15803d);
-  --timeline-card-surface: color-mix(in srgb, var(--sys-status-success-surface, #dcfce7) 45%, transparent);
-  --timeline-card-border: color-mix(in srgb, var(--sys-status-success-border, #34d399) 55%, transparent);
+  --timeline-line-color: color-mix(in srgb, var(--sys-status-success-border) 60%, transparent);
+  --timeline-marker-color: var(--sys-status-success-text);
+  --timeline-card-surface: color-mix(in srgb, var(--sys-status-success-surface) 45%, transparent);
+  --timeline-card-border: color-mix(in srgb, var(--sys-status-success-border) 55%, transparent);
 }
 
 .timeline-item[data-tone='warning'] {
-  --timeline-line-color: color-mix(in srgb, var(--sys-status-warning-border, #fbbf24) 60%, transparent);
-  --timeline-marker-color: var(--sys-status-warning-text, #b45309);
-  --timeline-card-surface: color-mix(in srgb, var(--sys-status-warning-surface, #fef3c7) 45%, transparent);
-  --timeline-card-border: color-mix(in srgb, var(--sys-status-warning-border, #fbbf24) 55%, transparent);
+  --timeline-line-color: color-mix(in srgb, var(--sys-status-warning-border) 60%, transparent);
+  --timeline-marker-color: var(--sys-status-warning-text);
+  --timeline-card-surface: color-mix(in srgb, var(--sys-status-warning-surface) 45%, transparent);
+  --timeline-card-border: color-mix(in srgb, var(--sys-status-warning-border) 55%, transparent);
 }
 
 .timeline-item[data-tone='info'] {
-  --timeline-line-color: color-mix(in srgb, var(--sys-status-info-border, #93c5fd) 65%, transparent);
-  --timeline-marker-color: var(--sys-status-info-text, #1d4ed8);
-  --timeline-card-surface: color-mix(in srgb, var(--sys-status-info-surface, #e0f2fe) 45%, transparent);
-  --timeline-card-border: color-mix(in srgb, var(--sys-status-info-border, #93c5fd) 55%, transparent);
+  --timeline-line-color: color-mix(in srgb, var(--sys-status-info-border) 65%, transparent);
+  --timeline-marker-color: var(--sys-status-info-text);
+  --timeline-card-surface: color-mix(in srgb, var(--sys-status-info-surface) 45%, transparent);
+  --timeline-card-border: color-mix(in srgb, var(--sys-status-info-border) 55%, transparent);
 }
 
 .timeline-item[data-tone='critical'] {
-  --timeline-line-color: color-mix(in srgb, var(--sys-status-critical-border, #f87171) 65%, transparent);
-  --timeline-marker-color: var(--sys-status-critical-text, #b91c1c);
-  --timeline-card-surface: color-mix(in srgb, var(--sys-status-critical-surface, #fee2e2) 45%, transparent);
-  --timeline-card-border: color-mix(in srgb, var(--sys-status-critical-border, #f87171) 55%, transparent);
+  --timeline-line-color: color-mix(in srgb, var(--sys-status-critical-border) 65%, transparent);
+  --timeline-marker-color: var(--sys-status-critical-text);
+  --timeline-card-surface: color-mix(in srgb, var(--sys-status-critical-surface) 45%, transparent);
+  --timeline-card-border: color-mix(in srgb, var(--sys-status-critical-border) 55%, transparent);
 }
 
 .timeline-item[data-tone='neutral'] {
-  --timeline-marker-color: var(--sys-status-neutral-text, #475569);
-  --timeline-card-surface: color-mix(in srgb, var(--cmp-surface-panel, #ffffff) 90%, transparent);
-  --timeline-card-border: color-mix(in srgb, var(--cmp-border-default, #94a3b8) 25%, transparent);
+  --timeline-marker-color: var(--sys-status-neutral-text);
+  --timeline-card-surface: color-mix(in srgb, var(--cmp-surface-panel) 90%, transparent);
+  --timeline-card-border: color-mix(in srgb, var(--cmp-border-default) 25%, transparent);
 }
 
 .timeline-item__marker {
@@ -1117,7 +1117,7 @@
   border: 1px solid var(--timeline-card-border);
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--timeline-card-border) 45%, transparent),
-    var(--cmp-shadow-panel, 0 10px 26px rgba(15, 23, 42, 0.08));
+    var(--cmp-shadow-panel));
 }
 
 .timeline-item__header {
@@ -1153,7 +1153,7 @@
 
 .timeline-item__description {
   margin: 0;
-  color: var(--cmp-text-muted, #475569);
+  color: var(--cmp-text-muted);
   font-size: 0.95rem;
   line-height: var(
     --context-typography-line-height-standard,
@@ -1185,7 +1185,7 @@
   margin: 0;
   font-size: 0.95rem;
   font-weight: 600;
-  color: var(--cmp-text-body, #0f172a);
+  color: var(--cmp-text-body);
 }
 
 .timeline-sidebar {
@@ -1193,8 +1193,8 @@
   gap: var(--cmp-spacing-stack-default, 1.5rem);
   padding: var(--cmp-spacing-inset-default, 1.35rem);
   border-radius: 1.1rem;
-  background: color-mix(in srgb, var(--cmp-surface-subtle, #f1f5f9) 70%, transparent);
-  border: 1px solid color-mix(in srgb, var(--cmp-border-default, #94a3b8) 24%, transparent);
+  background: color-mix(in srgb, var(--cmp-surface-subtle) 70%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cmp-border-default) 24%, transparent);
 }
 
 .timeline-sidebar__section {
@@ -1220,12 +1220,12 @@
   align-items: center;
   justify-content: space-between;
   font-size: 0.9rem;
-  color: var(--cmp-text-body, #0f172a);
+  color: var(--cmp-text-body);
 }
 
 .timeline-sidebar__section p {
   margin: 0;
-  color: var(--cmp-text-muted, #475569);
+  color: var(--cmp-text-muted);
   font-size: 0.9rem;
   line-height: 1.45;
 }
@@ -1248,11 +1248,11 @@
   gap: var(--cmp-spacing-stack-compact, 0.85rem);
   padding: var(--cmp-spacing-inset-default, 1.35rem);
   border-radius: 1.1rem;
-  background: var(--cmp-surface-panel, #ffffff);
+  background: var(--cmp-surface-panel);
   border: 1px solid transparent;
   box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--cmp-border-default, #94a3b8) 28%, transparent),
-    var(--cmp-shadow-panel, 0 12px 30px rgba(15, 23, 42, 0.12));
+    0 0 0 1px color-mix(in srgb, var(--cmp-border-default) 28%, transparent),
+    var(--cmp-shadow-panel));
 }
 
 .dark-demo__panel header {
@@ -1267,7 +1267,7 @@
 
 .dark-demo__panel header p {
   margin: 0;
-  color: var(--cmp-text-muted, #64748b);
+  color: var(--cmp-text-muted);
   font-size: 0.92rem;
   line-height: 1.45;
 }
@@ -1286,15 +1286,15 @@
   padding-inline: calc(var(--cmp-spacing-inline-sm, 14px) + 6px);
   padding-block: 0.55rem;
   border-radius: 999px;
-  border: 1px solid color-mix(in srgb, var(--cmp-border-strong, #64748b) 35%, transparent);
-  background: var(--cmp-surface-action, #3b82f6);
-  color: var(--cmp-text-on-action, #ffffff);
+  border: 1px solid color-mix(in srgb, var(--cmp-border-strong) 35%, transparent);
+  background: var(--cmp-surface-action);
+  color: var(--cmp-text-on-action);
   font-weight: 600;
   font-size: clamp(0.85rem, 0.78rem + 0.12vw, 0.95rem);
   letter-spacing: 0.01em;
   box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--cmp-border-strong, #64748b) 22%, transparent),
-    var(--cmp-shadow-panel, 0 12px 28px rgba(15, 23, 42, 0.12));
+    0 0 0 1px color-mix(in srgb, var(--cmp-border-strong) 22%, transparent),
+    var(--cmp-shadow-panel));
   cursor: pointer;
   text-decoration: none;
   transition:
@@ -1313,12 +1313,12 @@
 }
 
 .demo-button:hover {
-  background: var(--cmp-surface-action-hover, #2563eb);
+  background: var(--cmp-surface-action-hover);
   transform: translateY(-1px);
 }
 
 .demo-button:active {
-  background: var(--cmp-surface-action-pressed, #1d4ed8);
+  background: var(--cmp-surface-action-pressed);
   transform: translateY(0);
 }
 
@@ -1329,19 +1329,19 @@
 
 .demo-button[data-variant='quiet'] {
   background: transparent;
-  color: var(--cmp-text-accent, #1d4ed8);
-  border: 1px solid color-mix(in srgb, var(--cmp-border-default, #94a3b8) 45%, transparent);
+  color: var(--cmp-text-accent);
+  border: 1px solid color-mix(in srgb, var(--cmp-border-default) 45%, transparent);
   box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--cmp-border-default, #94a3b8) 45%, transparent),
-    inset 0 0 0 1px color-mix(in srgb, var(--cmp-border-default, #94a3b8) 18%, transparent);
+    0 0 0 1px color-mix(in srgb, var(--cmp-border-default) 45%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, var(--cmp-border-default) 18%, transparent);
 }
 
 .demo-button[data-variant='quiet']:hover {
-  background: color-mix(in srgb, var(--cmp-surface-subtle, #f1f5f9) 35%, transparent);
+  background: color-mix(in srgb, var(--cmp-surface-subtle) 35%, transparent);
 }
 
 .demo-button[data-variant='quiet']:active {
-  background: color-mix(in srgb, var(--cmp-surface-subtle, #f1f5f9) 45%, transparent);
+  background: color-mix(in srgb, var(--cmp-surface-subtle) 45%, transparent);
 }
 
 .demo-button[data-size='sm'] {
@@ -1361,7 +1361,7 @@
   justify-content: space-between;
   gap: var(--cmp-spacing-inline-xs, 0.75rem);
   padding: 0.5rem 0;
-  border-bottom: 1px solid color-mix(in srgb, var(--cmp-border-default, #94a3b8) 25%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--cmp-border-default) 25%, transparent);
 }
 
 .dark-demo__status:last-of-type {
@@ -1371,7 +1371,7 @@
 
 .dark-demo__status span {
   font-size: 0.92rem;
-  color: var(--cmp-text-muted, #64748b);
+  color: var(--cmp-text-muted);
 }
 
 .dark-demo__banner-stack {
@@ -1386,10 +1386,10 @@
   align-items: start;
   padding: calc(var(--cmp-spacing-inset-compact, 1rem) * 0.9);
   border-radius: 1rem;
-  background: var(--cmp-banner-background, rgba(59, 130, 246, 0.12));
-  border: 1px solid color-mix(in srgb, var(--cmp-banner-border, rgba(59, 130, 246, 0.35)) 70%, transparent);
-  color: var(--cmp-banner-text, #0f172a);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--cmp-banner-border, rgba(59, 130, 246, 0.35)) 45%, transparent);
+  background: var(--cmp-banner-background, transparent);
+  border: 1px solid color-mix(in srgb, var(--cmp-banner-border, transparent) 70%, transparent);
+  color: var(--cmp-banner-text, currentColor);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--cmp-banner-border, transparent) 45%, transparent);
 }
 
 .demo-banner[data-has-action='false'] {
@@ -1461,7 +1461,7 @@
   padding-block: var(--cmp-button-padding-block, 0.62rem);
   padding-inline: var(--cmp-button-padding-inline, 1.1rem);
   border-radius: var(--cmp-button-radius, 0.875rem);
-  border: 1px solid var(--cmp-button-border, currentColor);
+  border: 1px solid var(--cmp-button-border, transparent);
   background: var(--cmp-button-background, transparent);
   color: var(--cmp-button-text, currentColor);
   font-size: var(--cmp-button-font-size, 0.95rem);
@@ -1511,7 +1511,7 @@
 }
 
 .cmp-button:focus-visible {
-  outline: var(--cmp-button-focus-width, 2px) solid var(--cmp-button-focus-outer, currentColor);
+  outline: var(--cmp-button-focus-width, 2px) solid var(--cmp-button-focus-outer, Highlight);
   outline-offset: 3px;
 }
 
@@ -1587,7 +1587,7 @@
   padding-inline: var(--cmp-badge-padding-inline, 0.75rem);
   padding-block: var(--cmp-badge-padding-block, 0.35rem);
   border-radius: var(--cmp-badge-radius, 999px);
-  border: 1px solid var(--cmp-badge-border, currentColor);
+  border: 1px solid var(--cmp-badge-border, transparent);
   background: var(--cmp-badge-background, transparent);
   color: var(--cmp-badge-text, currentColor);
   font-size: var(--cmp-badge-font-size, 0.82rem);
@@ -1639,7 +1639,7 @@
 }
 
 .cmp-badge:focus-visible {
-  outline: var(--cmp-badge-focus-width, 2px) solid var(--cmp-badge-focus-outer, currentColor);
+  outline: var(--cmp-badge-focus-width, 2px) solid var(--cmp-badge-focus-outer, Highlight);
   outline-offset: 3px;
 }
 
@@ -1679,7 +1679,7 @@
   align-items: start;
   padding: calc(var(--cmp-spacing-inset-compact, 1rem) * 0.9);
   border-radius: 1rem;
-  border: 1px solid var(--cmp-banner-border, currentColor);
+  border: 1px solid var(--cmp-banner-border, transparent);
   background: var(--cmp-banner-background, transparent);
   color: var(--cmp-banner-text, currentColor);
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--cmp-banner-border, transparent) 45%, transparent);
@@ -1707,7 +1707,7 @@
 }
 
 .cmp-banner:focus-within {
-  outline: var(--cmp-banner-ring-width, 2px) solid var(--cmp-banner-ring-outer, currentColor);
+  outline: var(--cmp-banner-ring-width, 2px) solid var(--cmp-banner-ring-outer, Highlight);
   outline-offset: 3px;
 }
 
@@ -1753,7 +1753,7 @@
   gap: calc(var(--cmp-spacing-inline-xs, 0.5rem) * 0.8);
   padding: 0.45rem 0.95rem;
   border-radius: 0.75rem;
-  border: 1px solid var(--cmp-banner-action-border, currentColor);
+  border: 1px solid var(--cmp-banner-action-border, transparent);
   background: transparent;
   color: var(--cmp-banner-action-text, currentColor);
   font-size: 0.9rem;
@@ -1790,7 +1790,7 @@
 }
 
 .cmp-banner__action:focus-visible {
-  outline: var(--cmp-banner-ring-width, 2px) solid var(--cmp-banner-ring-outer, currentColor);
+  outline: var(--cmp-banner-ring-width, 2px) solid var(--cmp-banner-ring-outer, Highlight);
   outline-offset: 3px;
 }
 
@@ -1825,7 +1825,7 @@
 }
 
 .cmp-banner__dismiss:focus-visible {
-  outline: var(--cmp-banner-ring-width, 2px) solid var(--cmp-banner-ring-outer, currentColor);
+  outline: var(--cmp-banner-ring-width, 2px) solid var(--cmp-banner-ring-outer, Highlight);
   outline-offset: 3px;
 }
 
@@ -1854,7 +1854,7 @@
   align-items: center;
   gap: var(--cmp-spacing-inline-xs, 0.5rem);
   border-radius: var(--cmp-input-radius, 0.85rem);
-  border: 1px solid var(--cmp-input-border, currentColor);
+  border: 1px solid var(--cmp-input-border, transparent);
   background: var(--cmp-input-background, transparent);
   padding-inline: var(--cmp-input-padding-inline, 1rem);
   padding-block: var(--cmp-input-padding-block, 0.62rem);
@@ -1883,7 +1883,7 @@
   background: var(--cmp-input-background-active, var(--cmp-input-background));
   border-color: var(--cmp-input-border-focus, var(--cmp-input-border));
   box-shadow: 0 0 0 calc(var(--cmp-input-focus-width, 2px) + 1px)
-    color-mix(in srgb, var(--cmp-input-focus-inner, currentColor) 35%, transparent);
+    color-mix(in srgb, var(--cmp-input-focus-inner, Highlight) 35%, transparent);
 }
 
 .cmp-input[data-disabled='true'] .cmp-input__control {
@@ -1933,7 +1933,7 @@
 }
 
 .cmp-input__field::selection {
-  background: color-mix(in srgb, var(--cmp-input-border-focus, currentColor) 25%, transparent);
+  background: color-mix(in srgb, var(--cmp-input-border-focus, Highlight) 25%, transparent);
   color: var(--cmp-input-text, currentColor);
 }
 
@@ -1991,8 +1991,8 @@
 }
 
 .cmp-field-group[data-state] {
-  --cmp-field-group-border: color-mix(in srgb, var(--cmp-border-default, rgba(148, 163, 184, 0.55)) 65%, transparent);
-  --cmp-field-group-surface: color-mix(in srgb, var(--cmp-surface-panel, rgba(15, 23, 42, 0.06)) 50%, transparent);
+  --cmp-field-group-border: color-mix(in srgb, var(--cmp-border-default)) 65%, transparent);
+  --cmp-field-group-surface: color-mix(in srgb, var(--cmp-surface-panel)) 50%, transparent);
   border-radius: var(--cmp-input-radius, 0.95rem);
   padding: calc(var(--cmp-spacing-inset-compact, 1rem) * 0.9);
   box-shadow: 0 0 0 1px var(--cmp-field-group-border);
@@ -2004,24 +2004,24 @@
 }
 
 .cmp-field-group[data-tone='critical'] {
-  --cmp-field-group-border: color-mix(in srgb, var(--sys-status-critical-border, #f87171) 70%, transparent);
-  --cmp-field-group-surface: color-mix(in srgb, var(--sys-status-critical-surface, #fee2e2) 40%, transparent);
+  --cmp-field-group-border: color-mix(in srgb, var(--sys-status-critical-border) 70%, transparent);
+  --cmp-field-group-surface: color-mix(in srgb, var(--sys-status-critical-surface) 40%, transparent);
 }
 
 .cmp-field-group[data-tone='warning'] {
-  --cmp-field-group-border: color-mix(in srgb, var(--sys-status-warning-border, #fbbf24) 65%, transparent);
-  --cmp-field-group-surface: color-mix(in srgb, var(--sys-status-warning-surface, #fef3c7) 45%, transparent);
+  --cmp-field-group-border: color-mix(in srgb, var(--sys-status-warning-border) 65%, transparent);
+  --cmp-field-group-surface: color-mix(in srgb, var(--sys-status-warning-surface) 45%, transparent);
 }
 
 .cmp-field-group[data-tone='info'],
 .cmp-field-group[data-tone='accent'] {
-  --cmp-field-group-border: color-mix(in srgb, var(--sys-status-info-border, #93c5fd) 65%, transparent);
-  --cmp-field-group-surface: color-mix(in srgb, var(--sys-status-info-surface, #e0f2fe) 45%, transparent);
+  --cmp-field-group-border: color-mix(in srgb, var(--sys-status-info-border) 65%, transparent);
+  --cmp-field-group-surface: color-mix(in srgb, var(--sys-status-info-surface) 45%, transparent);
 }
 
 .cmp-field-group[data-tone='success'] {
-  --cmp-field-group-border: color-mix(in srgb, var(--sys-status-success-border, #34d399) 60%, transparent);
-  --cmp-field-group-surface: color-mix(in srgb, var(--sys-status-success-surface, #dcfce7) 40%, transparent);
+  --cmp-field-group-border: color-mix(in srgb, var(--sys-status-success-border) 60%, transparent);
+  --cmp-field-group-surface: color-mix(in srgb, var(--sys-status-success-surface) 40%, transparent);
 }
 
 .cmp-field-group[data-disabled='true'] {

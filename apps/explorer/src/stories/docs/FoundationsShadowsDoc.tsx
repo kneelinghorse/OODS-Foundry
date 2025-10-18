@@ -1,6 +1,6 @@
 import React from 'react';
 import '../../styles/index.css';
-import { flatTokens, type FlatTokenName } from '~/packages/tokens/dist/ts/tokens';
+import { flatTokens, type FlatTokenName } from '@oods/tokens';
 
 const hyphenate = (token: string) =>
   token.replace(/\./g, '-').replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
@@ -23,7 +23,7 @@ const buildShadow = (token: string) => {
     `var(--oods-${slug}-offset-y, 0px)`,
     `var(--oods-${slug}-blur, 0px)`,
     `var(--oods-${slug}-spread, 0px)`,
-    `var(--oods-${slug}-color, rgba(15, 23, 42, 0.12))`
+    `var(--oods-${slug}-color, rgba(15, 23, 42, 0.12)`
   ];
   return parts.join(' ');
 };
@@ -58,12 +58,12 @@ const specimenGrid: React.CSSProperties = {
 };
 
 const specimenCard = (token: string): React.CSSProperties => ({
-  background: 'var(--theme-surface-raised, #ffffff)',
-  color: 'var(--sys-text-primary, #0f172a)',
+  background: 'var(--theme-surface-raised)',
+  color: 'var(--sys-text-primary)',
   borderRadius: 'var(--oods-border-surface-default-radius, 12px)',
   borderWidth: 'var(--oods-border-surface-default-width, 1px)',
   borderStyle: 'var(--oods-border-surface-default-style, solid)',
-  borderColor: 'color-mix(in srgb, var(--theme-border-subtle, rgba(148,163,184,0.45)) 70%, transparent)',
+  borderColor: 'color-mix(in srgb, var(--theme-border-subtle) 70%, transparent)',
   padding: '1.4rem',
   boxShadow: buildShadow(token),
   maxWidth: '32rem',
@@ -77,7 +77,7 @@ const infoPanel: React.CSSProperties = {
   display: 'grid',
   gap: '0.4rem',
   fontSize: '0.82rem',
-  color: 'var(--cmp-text-body, #475569)'
+  color: 'var(--cmp-text-body)'
 };
 
 const tableStyle: React.CSSProperties = {
@@ -93,16 +93,16 @@ const headCellStyle: React.CSSProperties = {
   fontWeight: 600,
   letterSpacing: '0.08em',
   textTransform: 'uppercase',
-  color: 'var(--cmp-text-body, #475569)',
+  color: 'var(--cmp-text-body)',
   padding: '0.35rem 0.65rem',
-  borderBottom: '1px solid color-mix(in srgb, var(--cmp-border-default, rgba(148,163,184,0.45)) 55%, transparent)'
+  borderBottom: '1px solid color-mix(in srgb, var(--cmp-border-default) 55%, transparent)'
 };
 
 const cellStyle: React.CSSProperties = {
   padding: '0.65rem',
-  background: 'var(--cmp-surface-panel, #ffffff)',
+  background: 'var(--cmp-surface-panel)',
   borderRadius: '0.75rem',
-  border: '1px solid color-mix(in srgb, var(--cmp-border-default, rgba(148,163,184,0.35)) 45%, transparent)',
+  border: '1px solid color-mix(in srgb, var(--cmp-border-default) 45%, transparent)',
   verticalAlign: 'top'
 };
 
@@ -127,7 +127,7 @@ const ShadowDoc: React.FC = () => (
           </div>
           <div style={specimenCard(sample.token)}>
             <h3 style={{ margin: 0 }}>{sample.name}</h3>
-            <p style={{ margin: 0, fontSize: '0.95rem', color: 'var(--sys-text-secondary, #334155)' }}>{sample.copy}</p>
+            <p style={{ margin: 0, fontSize: '0.95rem', color: 'var(--sys-text-secondary)' }}>{sample.copy}</p>
             <code style={{ marginTop: '0.2rem', fontSize: '0.78rem' }}>
               box-shadow: {buildShadow(sample.token)}
             </code>

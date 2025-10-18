@@ -12,7 +12,14 @@
  * - Performance monitoring
  */
 
-import type { TraitDefinition } from './trait-definition.js';
+import type {
+  TraitDefinition,
+  SchemaField,
+  SemanticMapping,
+  TokenDefinition,
+  TraitAction,
+  StateMachine,
+} from './trait-definition.js';
 import { DependencyGraph } from './dependency-graph.js';
 import { validateAndSort } from './topological-sort.js';
 import {
@@ -37,11 +44,15 @@ import { mergeActions } from './merge-strategies/actions-merger.js';
 export interface BaseObjectDefinition {
   id: string;
   name: string;
-  schema?: Record<string, any>;
-  semantics?: Record<string, any>;
-  tokens?: Record<string, any>;
-  viewExtensions?: Record<string, any>;
-  actions?: any[];
+  schema?: Record<string, SchemaField>;
+  semantics?: Record<string, SemanticMapping>;
+  tokens?: TokenDefinition;
+  viewExtensions?: ComposedObject['viewExtensions'];
+  actions?: TraitAction[];
+  stateMachine?: {
+    definition: StateMachine;
+    ownerTrait: string;
+  };
 }
 
 /**
@@ -128,6 +139,12 @@ export class TraitCompositor {
         }
         if (baseObject.actions) {
           composed.actions = [...baseObject.actions];
+        }
+        if (baseObject.stateMachine) {
+          composed.stateMachine = {
+            definition: baseObject.stateMachine.definition,
+            ownerTrait: baseObject.stateMachine.ownerTrait,
+          };
         }
       }
 
@@ -288,7 +305,7 @@ export class TraitCompositor {
   /**
    * Compose traits and return only the schema (convenience method)
    */
-  composeSchema(traits: TraitDefinition[]): Record<string, any> | null {
+  composeSchema(traits: TraitDefinition[]): Record<string, SchemaField> | null {
     const result = this.compose(traits);
     return result.success && result.data ? result.data.schema : null;
   }

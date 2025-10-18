@@ -61,8 +61,18 @@ const groupTokens = (tokens: TokenEntry[]) => {
 const STATUS_TONES = ['info', 'success', 'warning', 'critical'] as const;
 const SURFACE_VARIANTS = ['default', 'raised', 'subtle'] as const;
 
-const DEFAULT_FOREGROUND = '#0f172a';
-const DEFAULT_BACKGROUND = '#ffffff';
+const TOKEN_ALIASES = {
+  textBody: 'var(--cmp-text-body)',
+  textMuted: 'var(--cmp-text-muted)',
+  textSecondary: 'var(--cmp-text-secondary, var(--sys-text-secondary))',
+  surfacePanel: 'var(--cmp-surface-panel)',
+  surfaceCanvas: 'var(--cmp-surface-canvas)',
+  borderSoft: 'color-mix(in srgb, var(--cmp-border-default) 45%, transparent)',
+  shadowSoft: '0 1px 2px color-mix(in srgb, var(--cmp-text-body) 8%, transparent)'
+} as const;
+
+const DEFAULT_FOREGROUND = TOKEN_ALIASES.textBody;
+const DEFAULT_BACKGROUND = TOKEN_ALIASES.surfacePanel;
 
 const isSurfaceToken = (path: string[]) =>
   path.includes('surface') || path.includes('background');
@@ -148,23 +158,31 @@ export const TokenBrowser = ({ tokens, resolveToken }: TokenBrowserProps) => {
         <div
           key={token.id}
           style={{
-            border: '1px solid rgba(148, 163, 184, 0.45)',
+            border: `1px solid ${TOKEN_ALIASES.borderSoft}`,
             borderRadius: '0.75rem',
             padding: '0.9rem',
-            backgroundColor: '#ffffff',
+            backgroundColor: TOKEN_ALIASES.surfacePanel,
             display: 'flex',
             flexDirection: 'column',
             gap: '0.4rem'
           }}
         >
-          <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#0f172a' }}>
+          <div style={{ fontSize: '0.9rem', fontWeight: 600, color: TOKEN_ALIASES.textBody }}>
             {token.name}
           </div>
-          <div style={{ fontFamily: 'monospace', color: '#334155', fontSize: '0.85rem' }}>
+          <div
+            style={{
+              fontFamily: 'monospace',
+              color: TOKEN_ALIASES.textSecondary,
+              fontSize: '0.85rem'
+            }}
+          >
             {token.value}
           </div>
           {token.description ? (
-            <div style={{ fontSize: '0.75rem', color: '#475569' }}>{token.description}</div>
+            <div style={{ fontSize: '0.75rem', color: TOKEN_ALIASES.textMuted }}>
+              {token.description}
+            </div>
           ) : null}
         </div>
       );
@@ -219,8 +237,10 @@ export const TokenBrowser = ({ tokens, resolveToken }: TokenBrowserProps) => {
     >
       <header style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: '1.6rem', color: '#0f172a' }}>Token Browser</h1>
-          <p style={{ margin: '0.4rem 0 0', color: '#475569' }}>
+          <h1 style={{ margin: 0, fontSize: '1.6rem', color: TOKEN_ALIASES.textBody }}>
+            Token Browser
+          </h1>
+          <p style={{ margin: '0.4rem 0 0', color: TOKEN_ALIASES.textMuted }}>
             Browse semantic tokens emitted by the pipeline, inspect live previews, and confirm
             contrast outcomes.
           </p>
@@ -232,18 +252,20 @@ export const TokenBrowser = ({ tokens, resolveToken }: TokenBrowserProps) => {
           style={{
             padding: '0.65rem 0.85rem',
             borderRadius: '0.6rem',
-            border: '1px solid rgba(148, 163, 184, 0.45)',
+            border: `1px solid ${TOKEN_ALIASES.borderSoft}`,
             fontSize: '0.95rem',
-            color: '#0f172a',
-            backgroundColor: '#ffffff',
-            boxShadow: '0 1px 2px 0 rgba(15, 23, 42, 0.05)'
+            color: TOKEN_ALIASES.textBody,
+            backgroundColor: TOKEN_ALIASES.surfacePanel,
+            boxShadow: TOKEN_ALIASES.shadowSoft
           }}
         />
       </header>
 
       {statusSwatches.length > 0 ? (
         <section style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          <h2 style={{ margin: 0, fontSize: '1.1rem', color: '#0f172a' }}>Status Palettes</h2>
+          <h2 style={{ margin: 0, fontSize: '1.1rem', color: TOKEN_ALIASES.textBody }}>
+            Status Palettes
+          </h2>
           <div
             style={{
               display: 'grid',
@@ -273,7 +295,9 @@ export const TokenBrowser = ({ tokens, resolveToken }: TokenBrowserProps) => {
 
       {surfaceSwatches.length > 0 ? (
         <section style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          <h2 style={{ margin: 0, fontSize: '1.1rem', color: '#0f172a' }}>Surface Tokens</h2>
+          <h2 style={{ margin: 0, fontSize: '1.1rem', color: TOKEN_ALIASES.textBody }}>
+            Surface Tokens
+          </h2>
           <div
             style={{
               display: 'grid',
@@ -308,7 +332,7 @@ export const TokenBrowser = ({ tokens, resolveToken }: TokenBrowserProps) => {
             gap: '0.9rem'
           }}
         >
-          <h2 style={{ margin: 0, fontSize: '1.1rem', color: '#0f172a' }}>
+          <h2 style={{ margin: 0, fontSize: '1.1rem', color: TOKEN_ALIASES.textBody }}>
             {toTitle(groupName)}
           </h2>
           <div

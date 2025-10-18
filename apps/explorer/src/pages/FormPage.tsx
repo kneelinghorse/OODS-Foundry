@@ -1,10 +1,17 @@
 import '../styles/index.css';
 import { StatusChip } from '../components/StatusChip';
+import { ensureDomainInContext, pickStatusByIndex, selectStatuses } from '../config/statusMap';
+
+ensureDomainInContext('form', 'subscription');
+ensureDomainInContext('form', 'invoice');
+
+const [FORM_DRAFT_STATUS, FORM_PROCESSING_STATUS] = selectStatuses('form', 'invoice', [0, 3]);
+const [FORM_ACTIVE_STATUS] = selectStatuses('form', 'subscription', [2]);
 
 const REVIEW_STATES = [
-  { id: 'validation', label: 'Validation pending', status: 'processing', domain: 'invoice' as const },
-  { id: 'approver', label: 'Needs legal sign-off', status: 'draft', domain: 'invoice' as const },
-  { id: 'pilot', label: 'Trial expansion enabled', status: 'trialing', domain: 'subscription' as const }
+  { id: 'validation', label: 'Validation pending', status: pickStatusByIndex('invoice', 3), domain: 'invoice' as const },
+  { id: 'approver', label: 'Needs legal sign-off', status: pickStatusByIndex('invoice', 0), domain: 'invoice' as const },
+  { id: 'pilot', label: 'Trial expansion enabled', status: pickStatusByIndex('subscription', 1), domain: 'subscription' as const }
 ] as const;
 
 const FormPage = () => (
@@ -51,9 +58,9 @@ const FormPage = () => (
 
     <div className="form-toolbar" data-region="actions" role="toolbar" aria-label="Form progress">
       <div className="form-toolbar__steps" role="group" aria-label="Checklist">
-        <StatusChip status="draft" domain="invoice" context="form" />
-        <StatusChip status="processing" domain="invoice" context="form" />
-        <StatusChip status="active" domain="subscription" context="form" />
+        <StatusChip status={FORM_DRAFT_STATUS} domain="invoice" context="form" />
+        <StatusChip status={FORM_PROCESSING_STATUS} domain="invoice" context="form" />
+        <StatusChip status={FORM_ACTIVE_STATUS} domain="subscription" context="form" />
       </div>
       <div className="form-toolbar__summary">
         <span className="form-toolbar__summary-step">Step 2 of 3</span>

@@ -32,6 +32,15 @@ export type MappingTableProps = {
   title?: string;
 };
 
+const TOKENS = {
+  textBody: 'var(--cmp-text-body)',
+  textMuted: 'var(--cmp-text-muted)',
+  textSecondary: 'var(--cmp-text-secondary, var(--sys-text-secondary))',
+  surfacePanel: 'var(--cmp-surface-panel)',
+  borderSoft: 'color-mix(in srgb, var(--cmp-border-default) 40%, transparent)',
+  shadowSoft: '0 1px 2px color-mix(in srgb, var(--cmp-text-body) 12%, transparent)'
+} as const;
+
 const formatStatusLabel = (status: string) =>
   status
     .split('_')
@@ -88,10 +97,10 @@ export const MappingTable = ({ manifest, resolveToken, title }: MappingTableProp
   return (
     <section style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
       <header>
-        <h2 style={{ margin: 0, fontSize: '1.3rem', color: '#0f172a' }}>
+        <h2 style={{ margin: 0, fontSize: '1.3rem', color: TOKENS.textBody }}>
           {title ?? manifest.metadata.description}
         </h2>
-        <p style={{ margin: '0.35rem 0 0', color: '#475569', fontSize: '0.9rem' }}>
+        <p style={{ margin: '0.35rem 0 0', color: TOKENS.textMuted, fontSize: '0.9rem' }}>
           Version {manifest.metadata.version}
           {manifest.metadata.owner ? ` • Owner: ${manifest.metadata.owner}` : ''}
         </p>
@@ -143,19 +152,21 @@ export const MappingTable = ({ manifest, resolveToken, title }: MappingTableProp
             <div
               key={statusKey}
               style={{
-                border: '1px solid rgba(148, 163, 184, 0.4)',
+                border: `1px solid ${TOKENS.borderSoft}`,
                 borderRadius: '0.9rem',
                 padding: '1.1rem',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '0.9rem',
-                backgroundColor: '#ffffff',
-                boxShadow: '0 1px 2px rgba(15, 23, 42, 0.08)'
+                backgroundColor: TOKENS.surfacePanel,
+                boxShadow: TOKENS.shadowSoft
               }}
             >
               <div>
-                <h3 style={{ margin: 0, fontSize: '1.05rem', color: '#0f172a' }}>{statusLabel}</h3>
-                <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: '#475569' }}>
+                <h3 style={{ margin: 0, fontSize: '1.05rem', color: TOKENS.textBody }}>
+                  {statusLabel}
+                </h3>
+                <p style={{ margin: '0.25rem 0 0', fontSize: '0.85rem', color: TOKENS.textMuted }}>
                   {entry.description}
                 </p>
               </div>
@@ -192,7 +203,9 @@ export const MappingTable = ({ manifest, resolveToken, title }: MappingTableProp
 
               {contextSwatches.length > 0 ? (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                  <h4 style={{ margin: 0, fontSize: '0.9rem', color: '#334155' }}>Contexts</h4>
+                  <h4 style={{ margin: 0, fontSize: '0.9rem', color: TOKENS.textSecondary }}>
+                    Contexts
+                  </h4>
                   <div
                     style={{
                       display: 'grid',

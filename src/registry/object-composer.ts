@@ -115,6 +115,12 @@ function toBaseObjectDefinition(base: ComposeOptions['base'] | undefined): BaseO
     tokens: { ...base.composed.tokens },
     viewExtensions: { ...base.composed.viewExtensions },
     actions: [...base.composed.actions],
+    stateMachine: base.composed.stateMachine
+      ? {
+          definition: base.composed.stateMachine.definition,
+          ownerTrait: base.composed.stateMachine.ownerTrait,
+        }
+      : undefined,
   };
 }
 

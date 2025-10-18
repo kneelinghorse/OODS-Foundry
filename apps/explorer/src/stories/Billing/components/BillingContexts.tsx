@@ -5,7 +5,7 @@ import chargebeeFixture from '~/domains/saas-billing/examples/chargebee.json';
 import timelineSuccess from '~/domains/saas-billing/examples/timeline.success.json';
 import timelineRetry from '~/domains/saas-billing/examples/timeline.retry.json';
 import timelineRefund from '~/domains/saas-billing/examples/timeline.refund.json';
-import { StatusChip } from '../../../components/StatusChip';
+import { StatusChip, getStatusStyle, type StatusTone } from '../../../components/StatusChip';
 import { FieldGroup } from '../../../components/FieldGroup';
 import { Input } from '../../../components/Input';
 import { TextArea } from '../../../components/TextArea';
@@ -700,29 +700,22 @@ export const SubscriptionFormExample: React.FC = () => (
   </div>
 );
 
-const toneByStatus: Record<string, 'success' | 'info' | 'warning' | 'critical'> = {
-  active: 'success',
-  paid: 'success',
-  posted: 'info',
-  open: 'info',
-  processing: 'info',
-  future: 'info',
-  trialing: 'info',
-  pending_cancellation: 'warning',
-  non_renewing: 'warning',
-  past_due: 'warning',
-  paused: 'warning',
-  incomplete: 'warning',
-  refunded: 'info',
-  draft: 'info',
-  void: 'critical',
-  uncollectible: 'critical',
-  canceled: 'critical',
-  incomplete_expired: 'critical'
+const toneFallbackMap: Record<StatusTone, 'success' | 'info' | 'warning' | 'critical' | 'neutral'> = {
+  success: 'success',
+  info: 'info',
+  accent: 'info',
+  warning: 'warning',
+  critical: 'critical',
+  neutral: 'neutral'
 };
 
-const resolveToneForStatus = (status: string): 'success' | 'info' | 'warning' | 'critical' =>
-  toneByStatus[status] ?? 'info';
+const resolveToneForStatus = (
+  domain: 'subscription' | 'invoice',
+  status: string
+): 'success' | 'info' | 'warning' | 'critical' | 'neutral' => {
+  const tone = getStatusStyle(domain, status).tone;
+  return toneFallbackMap[tone] ?? 'info';
+};
 
 const renderTimelineItem = (event: TimelineEvent, domain: 'subscription' | 'invoice') => {
   const timestamp = formatDate(event.at, true);
@@ -740,7 +733,7 @@ const renderTimelineItem = (event: TimelineEvent, domain: 'subscription' | 'invo
   const hint = event.meta.statusHint ?? '';
   const details = [transition, amount, provider, channel, actor, hint].filter(Boolean).join(' · ');
   return (
-    <li key={event.id} className="timeline-item" data-tone={resolveToneForStatus(event.nextStatus)}>
+    <li key={event.id} className="timeline-item" data-tone={resolveToneForStatus(domain, event.nextStatus)}>
       <div className="timeline-item__marker" aria-hidden>
         <span className="timeline-item__dot" />
       </div>

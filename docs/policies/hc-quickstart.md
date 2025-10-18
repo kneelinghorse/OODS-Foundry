@@ -7,8 +7,11 @@ Ensure UI remains legible under `forced-colors: active` with outline-first focus
 - Confirm focus visibility via outlines; avoid color-only affordances.
 
 ## Validate
-- Contrast: `npm run a11y:check` and visually inspect HC screenshots if available.
+- Guardrails: `pnpm run tokens:guardrails` enforces OKLCH Δ ranges for hover/pressed states.
+- Contrast rules: `pnpm run test:contrast` executes `testing/a11y/contrast.spec.ts` to verify semantic token ratios.
+- Accessibility sweep: `npm run a11y:check` and visually inspect HC screenshots if available.
 - VRT: Include HC variants in Chromatic where applicable; ensure deterministic rendering.
+- PR gate: `tokens-validate` (GitHub) re-runs the transform in `--check` mode plus the guardrail suite—fix local drift before requesting review.
 
 ## References
 - Policy: `app/docs/policies/high-contrast.md`

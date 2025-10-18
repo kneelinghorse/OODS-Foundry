@@ -2,20 +2,32 @@ import cors from '@fastify/cors';
 import rateLimit from '@fastify/rate-limit';
 import fastifyStatic from '@fastify/static';
 import Fastify, { type FastifyReply, type FastifyRequest } from 'fastify';
+import { randomUUID } from 'node:crypto';
 import { spawn, ChildProcessWithoutNullStreams } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { bridgeConfig, lowerCaseHeaders } from './config.js';
+import {
+  bridgeConfig,
+  lowerCaseHeaders,
+  policyDocs,
+  approvalRequiredTools,
+  applyCapableTools,
+  approvalTokenSets,
+} from './config.js';
 import { registerArtifactEndpoints } from './endpoints/artifacts.js';
 import { buildErrorPayload, normalizeRunErrorCode, sendError, statusForCode } from './middleware/errors.js';
 
 const ALLOWED_TOOLS = new Set(bridgeConfig.tools.allowed);
-const WRITE_GATED_TOOLS = new Set(bridgeConfig.tools.writeGated);
+const APPROVAL_REQUIRED_TOOLS = approvalRequiredTools;
+const APPLY_CAPABLE_TOOLS = applyCapableTools;
+const POLICY_UX_DOC = policyDocs.ux;
+const POLICY_RULES_DOC = policyDocs.rules;
 
 type RunRequestBody = {
   tool?: string;
   input?: Record<string, any>;
+  role?: string;
 };
 
 type McpResponse =
@@ -74,10 +86,12 @@ class McpClient {
     });
   }
 
-  async run(tool: string, input: any): Promise<any> {
+  async run(tool: string, input: any, role?: string): Promise<any> {
     this.ensure();
     const id = ++this.seq;
-    const payload = JSON.stringify({ id, tool, input }) + '\n';
+    const envelope: { id: number; tool: string; input: any; role?: string } = { id, tool, input };
+    if (role) envelope.role = role;
+    const payload = JSON.stringify(envelope) + '\n';
     return new Promise((resolve, reject) => {
       this.pending.set(id, { resolve, reject });
       this.child!.stdin.write(payload, 'utf8');
@@ -109,23 +123,43 @@ function ensureAuthToken(request: FastifyRequest, reply: FastifyReply): boolean 
   const provided = Array.isArray(value) ? value[0] : value;
   if (!provided) {
     sendError(reply, 401, 'POLICY_DENIED', 'Bridge token required to run tools.', {
-      details: { reason: 'MISSING_TOKEN', header: bridgeConfig.auth.header },
+      details: { reason: 'MISSING_TOKEN', header: bridgeConfig.auth.header, docs: POLICY_UX_DOC },
     });
     return false;
   }
   if (provided !== expected) {
     sendError(reply, 401, 'POLICY_DENIED', 'Bridge token rejected.', {
-      details: { reason: 'INVALID_TOKEN' },
+      details: { reason: 'INVALID_TOKEN', docs: POLICY_UX_DOC },
     });
     return false;
   }
   return true;
 }
 
-function hasApprovalToken(request: FastifyRequest): boolean {
-  const value = request.headers[lowerCaseHeaders.approval];
-  if (Array.isArray(value)) return value.some((item) => typeof item === 'string' && item.trim().length > 0);
-  return typeof value === 'string' && value.trim().length > 0;
+type ApprovalState = 'missing' | 'granted' | 'denied' | 'invalid';
+
+function resolveApprovalState(request: FastifyRequest): ApprovalState {
+  const header = request.headers[lowerCaseHeaders.approval];
+  const values = Array.isArray(header) ? header : header ? [header] : [];
+  if (!values.length) return 'missing';
+  let sawUnrecognized = false;
+  for (const candidate of values) {
+    if (typeof candidate !== 'string') continue;
+    const trimmed = candidate.trim();
+    if (!trimmed) continue;
+    const normalized = trimmed.toLowerCase();
+    if (approvalTokenSets.granted.size === 0) {
+      return 'granted';
+    }
+    if (approvalTokenSets.granted.has(normalized)) {
+      return 'granted';
+    }
+    if (approvalTokenSets.denied.has(normalized)) {
+      return 'denied';
+    }
+    sawUnrecognized = true;
+  }
+  return sawUnrecognized ? 'invalid' : 'missing';
 }
 
 async function main() {
@@ -207,38 +241,57 @@ async function main() {
     }
     if (!ALLOWED_TOOLS.has(tool)) {
       sendError(reply, 403, 'POLICY_DENIED', `Tool not allowed: ${tool}`, {
-        details: { reason: 'FORBIDDEN_TOOL', tool },
+        details: { reason: 'FORBIDDEN_TOOL', tool, docs: POLICY_RULES_DOC },
       });
       return;
     }
 
     const input = { ...(body.input ?? {}) };
+    const role = typeof body.role === 'string' && body.role.trim().length ? body.role.trim() : undefined;
     const applyRequested = input.apply === true;
+    let approvalState: ApprovalState = 'missing';
 
-    if (applyRequested && !WRITE_GATED_TOOLS.has(tool)) {
-      sendError(reply, 403, 'POLICY_DENIED', `Tool ${tool} cannot apply changes via the bridge.`, {
-        details: { reason: 'READ_ONLY_TOOL', tool },
-      });
-      return;
+    if (applyRequested) {
+      if (!APPLY_CAPABLE_TOOLS.has(tool)) {
+        sendError(reply, 403, 'POLICY_DENIED', `Tool ${tool} only supports dry-run mode via the bridge.`, {
+          details: { reason: 'APPLY_FORBIDDEN', tool, docs: POLICY_UX_DOC },
+        });
+        return;
+      }
+      approvalState = resolveApprovalState(request);
+      if (approvalState === 'denied') {
+        sendError(reply, 403, 'POLICY_DENIED', `Apply request for ${tool} was denied.`, {
+          details: { reason: 'APPROVAL_DENIED', tool, docs: POLICY_UX_DOC },
+        });
+        return;
+      }
+      if (approvalState === 'invalid') {
+        sendError(reply, 403, 'POLICY_DENIED', 'Approval token was not recognized.', {
+          details: { reason: 'INVALID_APPROVAL_TOKEN', tool, docs: POLICY_UX_DOC },
+        });
+        return;
+      }
+      if (APPROVAL_REQUIRED_TOOLS.has(tool) && approvalState !== 'granted') {
+        sendError(reply, 403, 'POLICY_DENIED', `Approval token required to apply ${tool}.`, {
+          details: { reason: 'READ_ONLY_ENFORCED', tool, docs: POLICY_UX_DOC },
+        });
+        return;
+      }
     }
 
-    const approvalGranted = applyRequested && hasApprovalToken(request);
-    if (applyRequested && WRITE_GATED_TOOLS.has(tool) && !approvalGranted) {
-      sendError(reply, 403, 'POLICY_DENIED', 'Approval token required to apply changes.', {
-        details: { reason: 'READ_ONLY_ENFORCED', tool },
-      });
-      return;
-    }
-
-    if (!approvalGranted) {
-      input.apply = false;
-    }
+    const applyMode = applyRequested && (!APPROVAL_REQUIRED_TOOLS.has(tool) || approvalState === 'granted');
+    input.apply = applyMode;
 
     try {
-      const result = await client.run(tool, input);
+      const result = await client.run(tool, input, role);
+      const incidentId =
+        typeof result?.incidentId === 'string' && result.incidentId.length > 0 ? result.incidentId : randomUUID();
       const normalized = {
         ok: true as const,
         tool,
+        role: role ?? null,
+        mode: applyMode ? 'apply' : 'dry-run',
+        incidentId,
         artifacts: result?.artifacts ?? [],
         transcriptPath: result?.transcriptPath ?? null,
         bundleIndexPath: result?.bundleIndexPath ?? null,

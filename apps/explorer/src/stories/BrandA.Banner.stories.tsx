@@ -35,7 +35,7 @@ export const Dark: Story = {
       <div style={{ ...contentCardStyle, gap: '1.5rem' }}>
         <header style={{ display: 'grid', gap: '0.8rem' }}>
           <h1 style={{ margin: 0, fontSize: '1.65rem' }}>Banner Spectrum · Brand A Dark</h1>
-          <p style={{ margin: 0, color: 'var(--cmp-text-muted, #94a3b8)', lineHeight: 1.6 }}>
+          <p style={{ margin: 0, color: 'var(--cmp-text-muted)', lineHeight: 1.6 }}>
             Status messaging inherits brand tokens through system surfaces and focus rings—component logic stays pure.
           </p>
         </header>

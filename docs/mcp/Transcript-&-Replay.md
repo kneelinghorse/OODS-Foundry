@@ -46,12 +46,8 @@ Each replay is logged as a new CLI transcript (`source: "cli"`) referencing the 
 
 Server tools now emit signed transcripts through the shared artifacts writer. Payloads are sanitised against configured redaction tokens, artifacts are hashed, and intent metadata matches the CLI schema. Resulting docs live beside the tool artifacts and feed Storybook/bridge consumers.
 
-## Panel Replay Entry Point
+## Panel Task Runner Telemetry
 
-The Storybook Agent panel exposes a "Replay this run" action in the summary view. Selecting it:
-
-1. Fetches the transcript via the bridge and parses the schema v1.0 payload.
-2. Automatically loads the recorded inputs, runs a new preview, and announces replay intent.
-3. Requires the user to use the existing approval flow to apply writes; previews remain read-only without approval.
-
-Replay state is announced to assistive tech and the Apply button remains gated behind the standard approval dialog.
+- The queue renders the most recent `incidentId` for every task. When the MCP response includes `diagnosticsPath`, the badge links to the telemetry JSON served by the bridge; otherwise the identifier is rendered inline for copy/paste into external tools.
+- Selecting a task hydrates the input form, replays the captured dry-run preview, and keeps the apply flow gated behind the same approval dialog. No auto-run occurs without an explicit preview or approval step.
+- Denied tasks preserve their denial reason and retain access to the dry-run transcript and diagnostics from the preview stage so operators can author follow-up tickets.

@@ -1,40 +1,109 @@
-# MCP Policy Rules (v1.0)
+# MCP Policy Rules (v1.1)
 
-Source: `packages/mcp-server/src/security/policy.json`
+Sources of truth:
 
-- Roles: `designer`, `maintainer`
-- Per-tool rules: `allow` roles, `writes` allowlists, and optional `timeoutMs`, `ratePerMinute`, `concurrency`
-- Limits: default concurrency, token-bucket rate, and timeout (used when a rule does not override)
-- Redactions: applied to transcripts and recorded in `transcript.json`
+- `packages/mcp-server/src/security/policy.json` guards server-side MCP execution (rate, concurrency, artifact base).
+- `configs/agent/policy.json` mirrors the allowlist for bridge/Panel/CLI connectors and encodes approval semantics.
 
-Example policy (excerpt):
+Shared pillars:
+
+- Roles: `designer`, `maintainer` (`role` defaults to `designer` when omitted).
+- Limits: default concurrency `1`, token bucket per tool (`ratePerMinute`) with optional overrides.
+- Defaults: unspecified `modes`, `approval`, `ratePerMinute`, or `concurrency` inherit from the `defaults` block (`["dry-run"]`, optional approval, 12 RPM, single concurrency).
+- Redactions: sanitized values land in transcripts and diagnostics.
+- Tools declare `modes` (`dry-run`, `apply`) and `approval` (`required`, `optional`) so the bridge can enforce dry-run→approval promotion.
+
+Bridge policy excerpt (`configs/agent/policy.json`):
 
 ```
 {
-  "artifactsBase": "artifacts/current-state",
-  "roles": ["designer", "maintainer"],
-  "rules": [
-    { "tool": "brand.apply", "allow": ["designer", "maintainer"], "writes": ["${BASE}/${DATE}/**"], "timeoutMs": 120000, "ratePerMinute": 12 },
-    { "tool": "diag.snapshot", "allow": ["designer", "maintainer"], "writes": ["${BASE}/${DATE}/**"], "timeoutMs": 120000, "ratePerMinute": 12 },
-    { "tool": "release.verify", "allow": ["maintainer"], "writes": ["${BASE}/${DATE}/**"], "timeoutMs": 180000, "ratePerMinute": 6 },
-    { "tool": "release.tag", "allow": ["maintainer"], "writes": ["${BASE}/${DATE}/**"], "timeoutMs": 60000, "ratePerMinute": 6 },
-    { "tool": "reviewKit.create", "allow": ["designer", "maintainer"], "writes": ["${BASE}/${DATE}/**"], "timeoutMs": 90000, "ratePerMinute": 30 },
-    { "tool": "billing.reviewKit", "allow": ["designer", "maintainer"], "writes": ["${BASE}/${DATE}/**"], "timeoutMs": 120000, "ratePerMinute": 20 },
-    { "tool": "billing.switchFixtures", "allow": ["designer", "maintainer"], "writes": ["${BASE}/${DATE}/**"], "timeoutMs": 90000, "ratePerMinute": 20 },
-    { "tool": "*", "allow": ["designer", "maintainer"], "writes": ["${BASE}/${DATE}/**"], "readOnly": false }
+  "approvals": {
+    "header": "X-Bridge-Approval",
+    "tokens": { "granted": "granted", "denied": "denied" }
+  },
+  "defaults": {
+    "modes": ["dry-run"],
+    "approval": "optional",
+    "ratePerMinute": 12,
+    "concurrency": 1
+  },
+  "limits": {
+    "ratePerMinute": 60,
+    "concurrency": 1
+  },
+  "tools": [
+    {
+      "name": "diag.snapshot",
+      "description": "Diagnostics snapshot (artifacts + bundle index)",
+      "modes": ["dry-run"],
+      "approval": "optional",
+      "allow": ["designer", "maintainer"],
+      "ratePerMinute": 12
+    },
+    {
+      "name": "reviewKit.create",
+      "description": "Creates review kit bundle for stories or contexts",
+      "modes": ["dry-run", "apply"],
+      "approval": "required",
+      "allow": ["designer", "maintainer"],
+      "ratePerMinute": 20
+    },
+    {
+      "name": "brand.apply",
+      "description": "Applies brand tokens to repository artifacts",
+      "modes": ["dry-run", "apply"],
+      "approval": "required",
+      "allow": ["designer", "maintainer"],
+      "ratePerMinute": 12
+    },
+    {
+      "name": "billing.reviewKit",
+      "description": "Builds billing review kit bundle",
+      "modes": ["dry-run", "apply"],
+      "approval": "required",
+      "allow": ["designer", "maintainer"],
+      "ratePerMinute": 20
+    },
+    {
+      "name": "billing.switchFixtures",
+      "description": "Switches billing fixtures in repo contexts",
+      "modes": ["dry-run", "apply"],
+      "approval": "required",
+      "allow": ["designer", "maintainer"],
+      "ratePerMinute": 20
+    },
+    { "name": "purity.audit", "modes": ["dry-run"], "approval": "optional", "allow": ["designer", "maintainer"], "ratePerMinute": 6 },
+    { "name": "vrt.run", "modes": ["dry-run"], "approval": "optional", "allow": ["designer", "maintainer"], "ratePerMinute": 6 },
+    { "name": "a11y.scan", "modes": ["dry-run"], "approval": "optional", "allow": ["designer", "maintainer"], "ratePerMinute": 6 },
+    { "name": "release.verify", "modes": ["dry-run"], "approval": "optional", "allow": ["maintainer"], "ratePerMinute": 6 },
+    { "name": "release.tag", "modes": ["dry-run", "apply"], "approval": "required", "allow": ["maintainer"], "ratePerMinute": 6 },
+    { "name": "tokens.build", "modes": ["dry-run"], "approval": "optional", "allow": ["designer", "maintainer"], "ratePerMinute": 12 }
   ],
-  "limits": { "defaultTimeoutMs": 120000, "concurrency": 1, "ratePerMinute": 60 },
-  "redactions": ["$HOME", "GITHUB_TOKEN", "/Users/*/secrets/*", "CHROMATIC_PROJECT_TOKEN"]
+  "connectors": [
+    {
+      "id": "claude.remote-mcp",
+      "provider": "anthropic",
+      "role": "designer",
+      "defaultMode": "dry-run",
+      "tools": ["diag.snapshot", "reviewKit.create", "brand.apply", "billing.reviewKit", "billing.switchFixtures"]
+    },
+    {
+      "id": "openai.agents",
+      "provider": "openai",
+      "role": "designer",
+      "defaultMode": "dry-run",
+      "tools": ["diag.snapshot", "brand.apply", "reviewKit.create"]
+    }
+  ]
 }
 ```
 
-Enforcement (stdio):
+Runtime guarantees:
 
-- Message shape: `{ id, tool, input, role? }` (default role: `designer`)
-- Pre-exec checks: `POLICY_DENIED` → not in `allow`
-- Rate/concurrency: `RATE_LIMIT` or `CONCURRENCY`
-- Timeout: `TIMEOUT { timeoutMs }`
-- Schema errors: `SCHEMA_INPUT` / `SCHEMA_OUTPUT`
-- Unexpected server exits: `RUN_ERROR`
+- Dry runs never include the approval header and execute with `input.apply=false`.
+- Apply mode checks that the tool advertises `"modes": ["dry-run","apply"]` **and** that the header matches a `tokens.granted` value; otherwise `POLICY_DENIED` returns with `docs/mcp/Policy-UX.md` guidance.
+- Denied tokens (for example `"denied"`) propagate as `APPROVAL_DENIED` so Panel/CLI surfaces can show next steps.
+- Every response (success or denial) carries an `incidentId` plus the shared `correlationId` so diagnostics, transcripts, soak reports, and telemetry JSONL entries line up.
+- Panel queue metadata mirrors policy fields (approval requirement, incident ID, diagnostics path) so operators can replay or deny runs without losing provenance.
 
-Artifacts are confined to `artifacts/current-state/YYYY-MM-DD/<tool>`.
+See `docs/mcp/Policy-UX.md` for user-facing messaging and `scripts/agent/approval.ts` for the dry-run→apply helper workflow.

@@ -12,7 +12,7 @@ import genericInputSchema from '../../../../packages/mcp-server/src/schemas/gene
 import brandApplyInputSchema from '../../../../packages/mcp-server/src/schemas/brand.apply.input.json' assert { type: 'json' };
 import billingReviewKitInputSchema from '../../../../packages/mcp-server/src/schemas/billing.reviewKit.input.json' assert { type: 'json' };
 import billingSwitchFixturesInputSchema from '../../../../packages/mcp-server/src/schemas/billing.switchFixtures.input.json' assert { type: 'json' };
-import { bridgeOrigin, fetchToolNames, fetchArtifactText, runTool } from './bridge.js';
+import { artifactHref, bridgeOrigin, fetchToolNames, runTool } from './bridge.js';
 import { ApproveDialog } from './components/ApproveDialog.js';
 import { ArtifactList } from './components/ArtifactList.js';
 import { ArtifactViewer } from './components/ArtifactViewer.js';
@@ -58,6 +58,28 @@ type ResolvedErrorDescriptor = {
 
 const ERROR_COPY = errorCatalog as ErrorCatalog;
 
+type TaskQueueStatus = 'Queued' | 'WaitingApproval' | 'Running' | 'Done' | 'Denied';
+
+type TaskRecord = {
+  id: string;
+  tool: ToolName;
+  label: string;
+  createdAt: string;
+  status: TaskQueueStatus;
+  inputs: Record<string, unknown>;
+  planInput: Record<string, unknown> | null;
+  planResult: ToolRunSuccess | null;
+  applyResult: ToolRunSuccess | null;
+  planError: ErrorState | null;
+  applyError: ErrorState | null;
+  planInFlight: boolean;
+  applyInFlight: boolean;
+  incidentId: string | null;
+  telemetryHref: string | null;
+  deniedReason: string | null;
+  applySupported: boolean;
+};
+
 const CODE_ALIASES: Record<string, string> = {
   RATE_LIMIT: 'RATE_LIMITED',
   CONCURRENCY: 'RATE_LIMITED',
@@ -71,6 +93,21 @@ const CODE_ALIASES: Record<string, string> = {
   MISSING_TOKEN: 'POLICY_DENIED',
   INVALID_TOKEN: 'POLICY_DENIED',
 };
+
+const APPLY_CAPABLE_TOOLS: ReadonlySet<ToolName> = new Set<ToolName>([
+  'reviewKit.create',
+  'brand.apply',
+  'billing.reviewKit',
+  'billing.switchFixtures',
+]);
+
+function createTaskId(): string {
+  const cryptoObj = globalThis.crypto as { randomUUID?: () => string } | undefined;
+  if (cryptoObj && typeof cryptoObj.randomUUID === 'function') {
+    return cryptoObj.randomUUID();
+  }
+  return `task-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+}
 
 function normalizeTaxonomyCode(code?: string | null): string | null {
   if (!code) return null;
@@ -188,6 +225,113 @@ const StatusList = styled.ul`
   font-size: 12px;
 `;
 
+const TASK_STATUS_THEME: Record<TaskQueueStatus, { bg: string; fg: string; border: string }> = {
+  Queued: { bg: 'rgba(22, 99, 255, 0.12)', fg: '#1d4ed8', border: 'rgba(22, 99, 255, 0.32)' },
+  WaitingApproval: { bg: 'rgba(217, 119, 6, 0.14)', fg: '#92400e', border: 'rgba(217, 119, 6, 0.32)' },
+  Running: { bg: 'rgba(124, 58, 237, 0.14)', fg: '#5b21b6', border: 'rgba(124, 58, 237, 0.32)' },
+  Done: { bg: 'rgba(22, 163, 74, 0.14)', fg: '#166534', border: 'rgba(22, 163, 74, 0.32)' },
+  Denied: { bg: 'rgba(220, 38, 38, 0.14)', fg: '#991b1b', border: 'rgba(220, 38, 38, 0.32)' },
+};
+
+const TaskQueueList = styled.ul`
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+`;
+
+const TaskQueueItemButton = styled.button<{ $active: boolean }>`
+  width: 100%;
+  border: 1px solid ${({ $active }) => ($active ? 'rgba(22, 99, 255, 0.45)' : 'rgba(0, 0, 0, 0.12)')};
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: ${({ $active }) => ($active ? 'rgba(22, 99, 255, 0.05)' : '#fff')};
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+  cursor: pointer;
+
+  &:hover {
+    border-color: rgba(22, 99, 255, 0.35);
+  }
+
+  &:focus-visible {
+    outline: 2px solid #1663ff;
+    outline-offset: 2px;
+  }
+`;
+
+const TaskTitleRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+`;
+
+const TaskLabel = styled.span`
+  font-size: 12px;
+  font-weight: 600;
+  color: #1f2937;
+`;
+
+const TaskRemoveButton = styled.button`
+  appearance: none;
+  border: none;
+  background: none;
+  padding: 2px;
+  margin-left: auto;
+  border-radius: 4px;
+  font-size: 11px;
+  color: #6b7280;
+  cursor: pointer;
+
+  &:hover {
+    color: #b91c1c;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #1663ff;
+    outline-offset: 2px;
+  }
+`;
+
+const TaskStatusBadge = styled.span<{ $status: TaskQueueStatus }>`
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: ${({ $status }) => TASK_STATUS_THEME[$status].bg};
+  color: ${({ $status }) => TASK_STATUS_THEME[$status].fg};
+  border: 1px solid ${({ $status }) => TASK_STATUS_THEME[$status].border};
+`;
+
+const TaskMetaRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 11px;
+  color: #4b5563;
+`;
+
+const TaskIncidentLink = styled.a`
+  color: #0f4cd2;
+  font-weight: 500;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+const TaskEmptyNotice = styled.p`
+  margin: 0;
+  font-size: 12px;
+  color: #6b7280;
+`;
+
 const ActionsRow = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -293,11 +437,6 @@ const ErrorMetaItem = styled.li`
 const ErrorMessage = styled.span`
   font-size: 11px;
   color: #6b7280;
-`;
-
-const ReplayError = styled.span`
-  font-size: 12px;
-  color: #7f1d1d;
 `;
 
 const Divider = styled.hr`
@@ -451,17 +590,15 @@ export function AgentPanel() {
   const [toolError, setToolError] = useState<string | null>(null);
   const [selected, setSelected] = useState<ToolName | ''>('');
   const [inputs, setInputs] = useState<Record<string, unknown>>({});
+  const [tasks, setTasks] = useState<TaskRecord[]>([]);
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [phase, setPhase] = useState<PanelPhase>('idle');
   const [loadingTools, setLoadingTools] = useState(false);
   const [planResult, setPlanResult] = useState<ToolRunSuccess | null>(null);
   const [applyResult, setApplyResult] = useState<ToolRunSuccess | null>(null);
   const [errorState, setErrorState] = useState<ErrorState | null>(null);
   const [srAnnouncement, setSrAnnouncement] = useState('');
-  const [showApproveDialog, setShowApproveDialog] = useState(false);
-  const [pendingReplay, setPendingReplay] = useState<{ tool: ToolName; payload: Record<string, unknown>; apply: boolean } | null>(null);
-  const [replayIntent, setReplayIntent] = useState<{ tool: ToolName; apply: boolean } | null>(null);
-  const [replayError, setReplayError] = useState<string | null>(null);
-  const [replayLoading, setReplayLoading] = useState(false);
+  const [approvalTaskId, setApprovalTaskId] = useState<string | null>(null);
   const errorHeadingRef = useRef<HTMLHeadingElement | null>(null);
   const summaryHeadingRef = useRef<HTMLHeadingElement | null>(null);
   const planInputRef = useRef<Record<string, unknown> | null>(null);
@@ -470,6 +607,29 @@ export function AgentPanel() {
   const selectedDescriptor = useMemo(
     () => descriptors.find((descriptor) => descriptor.name === selected) || null,
     [descriptors, selected]
+  );
+  const selectedTask = useMemo(
+    () => tasks.find((task) => task.id === selectedTaskId) ?? null,
+    [tasks, selectedTaskId]
+  );
+  const queueCounts = useMemo(
+    () =>
+      tasks.reduce(
+        (acc, task) => {
+          acc.total += 1;
+          acc[task.status] = (acc[task.status] ?? 0) + 1;
+          return acc;
+        },
+        {
+          total: 0,
+          Queued: 0,
+          WaitingApproval: 0,
+          Running: 0,
+          Done: 0,
+          Denied: 0,
+        } as Record<'total' | TaskQueueStatus, number>
+      ),
+    [tasks]
   );
 
   useEffect(() => {
@@ -504,20 +664,18 @@ export function AgentPanel() {
   }, []);
 
   useEffect(() => {
-    if (selectedDescriptor) {
-      const defaults = schemaDefaults(selectedDescriptor.inputSchema);
-      setInputs(enforceApplyValue(defaults, selectedDescriptor.inputSchema, false));
-      setPlanResult(null);
-      setApplyResult(null);
-      setPhase('idle');
-      setErrorState(null);
-      if (!pendingReplay) {
-        setReplayIntent(null);
-      }
-      setReplayError(null);
-      planInputRef.current = null;
+    if (!selectedDescriptor) return;
+    if (selectedTask && selectedTask.tool === selectedDescriptor.name) {
+      return;
     }
-  }, [selectedDescriptor, pendingReplay]);
+    const defaults = schemaDefaults(selectedDescriptor.inputSchema);
+    setInputs(enforceApplyValue(defaults, selectedDescriptor.inputSchema, false));
+    setPlanResult(null);
+    setApplyResult(null);
+    setErrorState(null);
+    setPhase('idle');
+    planInputRef.current = null;
+  }, [selectedDescriptor, selectedTask]);
 
   useEffect(() => {
     if (phase === 'error') {
@@ -537,120 +695,253 @@ export function AgentPanel() {
     setInputs((prev) => ({ ...prev, [name]: checked }));
   };
 
+  const canQueue = Boolean(selectedDescriptor);
   const canPlan =
-    Boolean(selectedDescriptor) && phase !== 'planning' && phase !== 'executing' && phase !== 'awaiting-approval';
+    Boolean(selectedDescriptor && selectedTask) &&
+    !selectedTask.planInFlight &&
+    !selectedTask.applyInFlight &&
+    phase !== 'planning' &&
+    phase !== 'executing';
   const canApprove =
-    Boolean(planResult) && phase !== 'planning' && phase !== 'executing' && phase !== 'awaiting-approval';
+    Boolean(planResult && selectedTask && selectedTask.status === 'WaitingApproval' && selectedTask.applySupported) &&
+    !selectedTask?.applyInFlight &&
+    phase !== 'planning' &&
+    phase !== 'executing';
+  const canDeny = Boolean(
+    selectedTask && selectedTask.applySupported && selectedTask.status === 'WaitingApproval' && !selectedTask.applyInFlight
+  );
 
-  const runPlan = useCallback(async (override?: { descriptor?: ToolDescriptor; input?: Record<string, unknown>; fromReplay?: boolean }) => {
-    const descriptor = override?.descriptor ?? selectedDescriptor;
-    if (!descriptor) return;
+  const runPlan = useCallback(async () => {
+    if (!selectedDescriptor || !selectedTask) return;
+    const descriptor = selectedDescriptor;
+    setPlanResult(null);
+    setApplyResult(null);
     setPhase('planning');
     setErrorState(null);
-    setApplyResult(null);
-    setSrAnnouncement('');
+    setSrAnnouncement('Planning preview…');
 
-    if (!override?.fromReplay) {
-      setReplayIntent(null);
-    }
-
-    const baseInput = override?.input ?? inputs;
+    const baseInput = inputs;
     const preparedInput = enforceApplyValue(baseInput, descriptor.inputSchema, false);
     planInputRef.current = { ...preparedInput };
+      setTasks((prev) =>
+        prev.map((task) =>
+          task.id === selectedTask.id
+            ? {
+                ...task,
+                status: task.applySupported ? (task.status === 'Denied' ? 'Queued' : task.status) : 'Done',
+                planInFlight: true,
+                planError: null,
+                applyError: null,
+                planInput: { ...preparedInput },
+                inputs: { ...preparedInput },
+              deniedReason: null,
+            }
+          : task
+      )
+    );
     try {
       const result = await runTool(descriptor.name, preparedInput);
       setPlanResult(result);
       setPhase('review');
-      setSrAnnouncement('Plan ready. Review the proposed changes.');
+      setSrAnnouncement(selectedTask.applySupported ? 'Plan ready. Review the proposed changes.' : 'Dry run complete.');
+      const telemetryHref = result.diagnosticsPath ? artifactHref(result.diagnosticsPath) : null;
+      setTasks((prev) =>
+        prev.map((task) =>
+          task.id === selectedTask.id
+            ? {
+                ...task,
+                status: task.applySupported ? 'WaitingApproval' : 'Done',
+                planInFlight: false,
+                planResult: result,
+                planInput: { ...preparedInput },
+                planError: null,
+                incidentId: result.incidentId ?? task.incidentId,
+                telemetryHref: telemetryHref ?? task.telemetryHref,
+              }
+            : task
+        )
+      );
     } catch (err: unknown) {
       const bridgeError = err instanceof BridgeError ? err : new BridgeError(String(err));
-      setErrorState({
+      const errorDescriptor: ErrorState = {
         phase: 'planning',
         message: bridgeError.message,
         code: bridgeError.code ?? null,
         status: bridgeError.status ?? null,
         incidentId: bridgeError.incidentId ?? null,
         details: bridgeError.details,
-      });
+      };
+      setErrorState(errorDescriptor);
       setPhase('error');
       setSrAnnouncement('Run failed. See error details.');
+      setTasks((prev) =>
+        prev.map((task) =>
+          task.id === selectedTask.id
+            ? {
+                ...task,
+                planInFlight: false,
+                planError: errorDescriptor,
+                status: 'Queued',
+              }
+            : task
+        )
+      );
     }
-  }, [inputs, selectedDescriptor]);
-
-  useEffect(() => {
-    if (!pendingReplay) return;
-    if (!selectedDescriptor || selectedDescriptor.name !== pendingReplay.tool) return;
-    const defaults = schemaDefaults(selectedDescriptor.inputSchema);
-    const mergedInput = { ...defaults, ...pendingReplay.payload };
-    const prepared = enforceApplyValue(mergedInput, selectedDescriptor.inputSchema, false);
-    setInputs(prepared);
-    planInputRef.current = { ...prepared };
-    setReplayIntent({ tool: pendingReplay.tool, apply: pendingReplay.apply });
-    void runPlan({ descriptor: selectedDescriptor, input: prepared, fromReplay: true });
-    setPendingReplay(null);
-  }, [pendingReplay, runPlan, selectedDescriptor]);
+  }, [inputs, selectedDescriptor, selectedTask]);
 
   const runApply = useCallback(async () => {
-    if (!selectedDescriptor) return;
-    if (!planResult && !planInputRef.current) return;
-    setShowApproveDialog(false);
+    if (!selectedDescriptor || !selectedTask || !selectedTask.applySupported) return;
+    if (!planResult && !planInputRef.current && !selectedTask.planInput) return;
     setPhase('executing');
     setErrorState(null);
     setSrAnnouncement('Applying approved changes now.');
 
-    const baseInput =
-      planInputRef.current ?? enforceApplyValue(inputs, selectedDescriptor.inputSchema, false);
+    const baseInput = selectedTask.planInput ?? planInputRef.current ?? enforceApplyValue(inputs, selectedDescriptor.inputSchema, false);
     const preparedInput = { ...baseInput, apply: true };
+    planInputRef.current = { ...baseInput };
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === selectedTask.id
+          ? {
+              ...task,
+              status: 'Running',
+              applyInFlight: true,
+              applyError: null,
+            }
+          : task
+      )
+    );
     try {
       const result = await runTool(selectedDescriptor.name, preparedInput);
       setApplyResult(result);
       setPhase('summary');
       setSrAnnouncement('Run complete. Artifacts available.');
+      const telemetryHref = result.diagnosticsPath ? artifactHref(result.diagnosticsPath) : selectedTask.telemetryHref;
+      setTasks((prev) =>
+        prev.map((task) =>
+          task.id === selectedTask.id
+            ? {
+                ...task,
+                status: 'Done',
+                applyInFlight: false,
+                applyResult: result,
+                applyError: null,
+                incidentId: result.incidentId ?? task.incidentId,
+                telemetryHref: telemetryHref ?? task.telemetryHref,
+                deniedReason: null,
+              }
+            : task
+        )
+      );
+      setApprovalTaskId(null);
     } catch (err: unknown) {
       const bridgeError = err instanceof BridgeError ? err : new BridgeError(String(err));
-      setErrorState({
+      const errorDescriptor: ErrorState = {
         phase: 'executing',
         message: bridgeError.message,
         code: bridgeError.code ?? null,
         status: bridgeError.status ?? null,
         incidentId: bridgeError.incidentId ?? null,
         details: bridgeError.details,
-      });
+      };
+      setErrorState(errorDescriptor);
       setPhase('error');
       setSrAnnouncement('Run failed. See error details.');
+      setTasks((prev) =>
+        prev.map((task) =>
+          task.id === selectedTask.id
+            ? {
+                ...task,
+                status: 'WaitingApproval',
+                applyInFlight: false,
+                applyError: errorDescriptor,
+              }
+            : task
+        )
+      );
+      setApprovalTaskId(null);
     }
-  }, [inputs, planResult, selectedDescriptor]);
+  }, [inputs, planResult, selectedDescriptor, selectedTask]);
 
-  const handleReplayFromSummary = useCallback(async () => {
-    const targetTranscript = applyResult?.transcriptPath ?? planResult?.transcriptPath ?? null;
-    if (!targetTranscript) {
-      setReplayError('No transcript available to replay.');
-      return;
-    }
-    setReplayLoading(true);
-    setReplayError(null);
-    try {
-      const text = await fetchArtifactText(targetTranscript);
-      const data = JSON.parse(text);
-      const replayToolRaw = typeof data?.tool === 'string' ? data.tool : null;
-      const replayTool = replayToolRaw && toolNames.includes(replayToolRaw as ToolName) ? (replayToolRaw as ToolName) : null;
-      if (!replayTool) {
-        throw new Error('Transcript references a tool that is not available.');
+  const handleRemoveTask = useCallback(
+    (taskId: string) => {
+      setTasks((prev) => prev.filter((task) => task.id !== taskId));
+      if (selectedTaskId === taskId) {
+        setSelectedTaskId(null);
       }
-      const payloadValue = data?.args?.payload;
-      const payload: Record<string, unknown> =
-        payloadValue && typeof payloadValue === 'object' ? { ...(payloadValue as Record<string, unknown>) } : {};
-      const applyFlag = Boolean(data?.args?.apply);
-      setPendingReplay({ tool: replayTool, payload, apply: applyFlag });
-      setSelected(replayTool);
-      setSrAnnouncement('Loading replay transcript.');
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : String(err);
-      setReplayError(message);
-    } finally {
-      setReplayLoading(false);
-    }
-  }, [applyResult, planResult, toolNames]);
+    },
+    [selectedTaskId]
+  );
+
+  const handleQueueTask = useCallback(() => {
+    if (!selectedDescriptor) return;
+    const preparedInput = enforceApplyValue(inputs, selectedDescriptor.inputSchema, false);
+    const id = createTaskId();
+    const applySupported = APPLY_CAPABLE_TOOLS.has(selectedDescriptor.name);
+    const nextTask: TaskRecord = {
+      id,
+      tool: selectedDescriptor.name,
+      label: selectedDescriptor.label,
+      createdAt: new Date().toISOString(),
+      status: 'Queued',
+      inputs: { ...preparedInput },
+      planInput: null,
+      planResult: null,
+      applyResult: null,
+      planError: null,
+      applyError: null,
+      planInFlight: false,
+      applyInFlight: false,
+      incidentId: null,
+      telemetryHref: null,
+      deniedReason: null,
+      applySupported,
+    };
+    setTasks((prev) => [...prev, nextTask]);
+    setSelectedTaskId(id);
+    setSelected(selectedDescriptor.name);
+    setPlanResult(null);
+    setApplyResult(null);
+    setErrorState(null);
+    setPhase('idle');
+    planInputRef.current = null;
+    setSrAnnouncement(`Task "${selectedDescriptor.label}" queued.`);
+  }, [inputs, selectedDescriptor]);
+
+  const handleSelectTask = useCallback(
+    (task: TaskRecord) => {
+      setSelectedTaskId(task.id);
+      setSelected(task.tool);
+      const descriptor = buildDescriptor(task.tool);
+      const prepared = enforceApplyValue(task.planInput ?? task.inputs, descriptor.inputSchema, false);
+      setInputs(prepared);
+      planInputRef.current = task.planInput ? { ...task.planInput } : null;
+      setSrAnnouncement(`Selected task "${task.label}".`);
+    },
+    []
+  );
+
+  const handleDenyTask = useCallback(() => {
+    if (!selectedTask || !selectedTask.applySupported) return;
+    const reason = window.prompt('Provide a short reason for denying this task (optional):', selectedTask.deniedReason ?? '') ?? '';
+    const normalizedReason = reason.trim();
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === selectedTask.id
+          ? {
+              ...task,
+              status: 'Denied',
+              planInFlight: false,
+              applyInFlight: false,
+              deniedReason: normalizedReason.length ? normalizedReason : null,
+            }
+          : task
+      )
+    );
+    setPhase('summary');
+    setErrorState(null);
+    setSrAnnouncement('Task denied. Waiting for next action.');
+  }, [selectedTask]);
 
   const handleRetry = () => {
     if (!errorState) return;
@@ -660,6 +951,79 @@ export function AgentPanel() {
       void runPlan();
     }
   };
+
+  useEffect(() => {
+    if (tasks.length === 0) {
+      if (selectedTaskId !== null) {
+        setSelectedTaskId(null);
+      }
+      setPlanResult(null);
+      setApplyResult(null);
+      setErrorState(null);
+      setPhase('idle');
+      planInputRef.current = null;
+      return;
+    }
+    if (selectedTaskId && tasks.some((task) => task.id === selectedTaskId)) {
+      return;
+    }
+    const fallback = tasks[tasks.length - 1];
+    setSelectedTaskId(fallback.id);
+    setSelected(fallback.tool);
+    const descriptor = buildDescriptor(fallback.tool);
+    const prepared = enforceApplyValue(fallback.planInput ?? fallback.inputs, descriptor.inputSchema, false);
+    setInputs(prepared);
+    planInputRef.current = fallback.planInput ? { ...fallback.planInput } : null;
+  }, [selectedTaskId, tasks]);
+
+  useEffect(() => {
+    if (!selectedTask) {
+      setPlanResult(null);
+      setApplyResult(null);
+      setErrorState(null);
+      if (phase !== 'awaiting-approval') {
+        setPhase('idle');
+      }
+      return;
+    }
+    setPlanResult(selectedTask.planResult);
+    setApplyResult(selectedTask.applyResult);
+    if (selectedTask.applyInFlight) {
+      setPhase('executing');
+      setErrorState(null);
+    } else if (selectedTask.planInFlight) {
+      setPhase('planning');
+      setErrorState(null);
+    } else if (selectedTask.applyError) {
+      setErrorState(selectedTask.applyError);
+      setPhase('error');
+    } else if (selectedTask.planError) {
+      setErrorState(selectedTask.planError);
+      setPhase('error');
+    } else if (selectedTask.status === 'WaitingApproval') {
+      setPhase('review');
+      setErrorState(null);
+    } else if (selectedTask.status === 'Running') {
+      setPhase('executing');
+      setErrorState(null);
+    } else if (selectedTask.status === 'Done') {
+      if (selectedTask.applySupported) {
+        setPhase('summary');
+      } else {
+        setPhase('review');
+      }
+      setErrorState(null);
+    } else if (selectedTask.status === 'Denied') {
+      setPhase('summary');
+      setErrorState(null);
+    } else if (phase !== 'awaiting-approval') {
+      setPhase('idle');
+      setErrorState(null);
+    }
+    if (selectedTask.planInput) {
+      planInputRef.current = { ...selectedTask.planInput };
+    }
+  }, [phase, selectedTask]);
 
   const renderFields = (): ReactNode => {
     if (!selectedDescriptor) return null;
@@ -816,6 +1180,35 @@ export function AgentPanel() {
           </li>
           <li>Panel phase: {formattedPhase(phase)}</li>
           <li>Selected tool: {selectedDescriptor ? selectedDescriptor.label : 'None'}</li>
+          <li>
+            Tasks: {queueCounts.total} total (queued {queueCounts.Queued}, waiting {queueCounts.WaitingApproval}, running{' '}
+            {queueCounts.Running}, done {queueCounts.Done}, denied {queueCounts.Denied})
+          </li>
+          {selectedTask ? (
+            <li>
+              Active task: {selectedTask.label} —{' '}
+              {selectedTask.planInFlight
+                ? 'Planning…'
+                : selectedTask.applyInFlight
+                ? 'Running…'
+                : selectedTask.status}
+              {selectedTask.incidentId && (
+                <>
+                  {' '}
+                  • Incident{' '}
+                  {selectedTask.telemetryHref ? (
+                    <TaskIncidentLink href={selectedTask.telemetryHref} target="_blank" rel="noreferrer">
+                      {selectedTask.incidentId}
+                    </TaskIncidentLink>
+                  ) : (
+                    <code>{selectedTask.incidentId}</code>
+                  )}
+                </>
+              )}
+            </li>
+          ) : (
+            <li>Active task: none</li>
+          )}
         </StatusList>
         {loadingTools && <Muted>Loading tools…</Muted>}
         {toolError && (
@@ -852,6 +1245,70 @@ export function AgentPanel() {
         {renderFields()}
       </Section>
 
+      <Section aria-labelledby="agent-queue-heading">
+        <SectionTitle id="agent-queue-heading">Task Queue</SectionTitle>
+        <ActionsRow>
+          <PrimaryButton type="button" onClick={handleQueueTask} disabled={!canQueue}>
+            Queue task
+          </PrimaryButton>
+        </ActionsRow>
+        {tasks.length === 0 ? (
+          <TaskEmptyNotice>No tasks queued yet. Configure inputs and queue a task to begin.</TaskEmptyNotice>
+        ) : (
+          <TaskQueueList className="agent-panel__task-list">
+            {tasks.map((task) => {
+              const isActive = Boolean(selectedTask && selectedTask.id === task.id);
+              return (
+                <li key={task.id}>
+                  <TaskQueueItemButton
+                    type="button"
+                    onClick={() => handleSelectTask(task)}
+                    $active={isActive}
+                    className="agent-panel__task-item"
+                  >
+                    <TaskTitleRow>
+                      <TaskLabel>{task.label}</TaskLabel>
+                      <TaskStatusBadge className="agent-panel__task-status" $status={task.status}>
+                        {task.planInFlight ? 'Planning…' : task.applyInFlight ? 'Running…' : task.status}
+                      </TaskStatusBadge>
+                      <TaskRemoveButton
+                        type="button"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleRemoveTask(task.id);
+                        }}
+                        aria-label={`Remove task ${task.label}`}
+                      >
+                        ✕
+                      </TaskRemoveButton>
+                    </TaskTitleRow>
+                    <TaskMetaRow>
+                      <span>Tool: {task.tool}</span>
+                      <span>Queued: {task.createdAt}</span>
+                      {task.incidentId && (
+                        <span>
+                          Incident:{' '}
+                          {task.telemetryHref ? (
+                            <TaskIncidentLink href={task.telemetryHref} target="_blank" rel="noreferrer">
+                              {task.incidentId}
+                            </TaskIncidentLink>
+                          ) : (
+                            <code>{task.incidentId}</code>
+                          )}
+                        </span>
+                      )}
+                      {task.deniedReason && <span>Reason: {task.deniedReason}</span>}
+                      {task.planError && <span>Dry-run error</span>}
+                      {task.applyError && <span>Apply error</span>}
+                    </TaskMetaRow>
+                  </TaskQueueItemButton>
+                </li>
+              );
+            })}
+          </TaskQueueList>
+        )}
+      </Section>
+
       <Section aria-labelledby="agent-actions-heading">
         <SectionTitle id="agent-actions-heading">Plan &amp; Apply</SectionTitle>
         <ActionsRow>
@@ -861,12 +1318,13 @@ export function AgentPanel() {
             disabled={!canPlan}
             $busy={isPlanningPhase(phase)}
           >
-            {isPlanningPhase(phase) ? 'Planning…' : 'Preview changes'}
+            {isPlanningPhase(phase) ? 'Planning…' : 'Preview selected task'}
           </PrimaryButton>
           <PrimaryButton
             type="button"
             onClick={() => {
-              setShowApproveDialog(true);
+              if (!selectedTask) return;
+              setApprovalTaskId(selectedTask.id);
               setPhase('awaiting-approval');
               setSrAnnouncement('Approval required dialog open. Focus is on the cancel button.');
             }}
@@ -875,19 +1333,22 @@ export function AgentPanel() {
           >
             Approve &amp; Apply…
           </PrimaryButton>
+          <PrimaryButton type="button" onClick={() => handleDenyTask()} disabled={!canDeny} $variant="secondary">
+            Deny Task
+          </PrimaryButton>
         </ActionsRow>
+        {!selectedTask?.applySupported && selectedTask && (
+          <Muted>This tool is dry-run only. Approval is not required.</Muted>
+        )}
         {phase === 'review' && <Muted>Plan ready. Review before approving.</Muted>}
         {phase === 'executing' && <Muted>Applying approved changes…</Muted>}
+        {selectedTask?.status === 'Denied' && <Muted>Task marked as denied. Queue another run when ready.</Muted>}
       </Section>
 
       {showPreviewSection && (
         <Section aria-labelledby="agent-preview-heading">
           <SectionTitle id="agent-preview-heading">Plan Preview</SectionTitle>
-          <PlanNotice role="status">
-            {replayIntent
-              ? 'Replay preview loaded. Apply remains gated behind approval.'
-              : 'Preview only (no changes will be applied) until approval is granted.'}
-          </PlanNotice>
+          <PlanNotice role="status">Preview only (no changes will be applied) until approval is granted.</PlanNotice>
           <DiffViewer
             diffs={planResult?.preview?.diffs || null}
             loading={diffLoading}
@@ -911,30 +1372,32 @@ export function AgentPanel() {
             Summary
           </SectionTitle>
           <SummaryCard role="status">
-            <SummaryTitle>Changes Applied</SummaryTitle>
+            <SummaryTitle>
+              {selectedTask?.status === 'Denied'
+                ? 'Task Denied'
+                : selectedTask?.applySupported === false
+                ? 'Dry Run Complete'
+                : 'Changes Applied'}
+            </SummaryTitle>
             <span>
-              Run complete. Artifacts are available below. Transcript and bundle index are stored for audit.
+              {selectedTask?.status === 'Denied'
+                ? 'Task marked as denied. No changes were applied.'
+                : selectedTask?.applySupported === false
+                ? 'Dry run finished successfully. Review the generated artifacts above.'
+                : 'Run complete. Artifacts are available below. Transcript and bundle index are stored for audit.'}
             </span>
+            {selectedTask?.deniedReason && <span>Reason: {selectedTask.deniedReason}</span>}
           </SummaryCard>
-          <ActionsRow>
-            <PrimaryButton
-              type="button"
-              onClick={() => void handleReplayFromSummary()}
-              $variant="secondary"
-              $busy={replayLoading}
-            >
-              {replayLoading ? 'Loading replay…' : 'Replay this run'}
-            </PrimaryButton>
-          </ActionsRow>
-          {replayError && <ReplayError role="alert">{replayError}</ReplayError>}
-          <ArtifactList
-            caption="Applied artifacts"
-            artifacts={applyResult?.artifacts ?? []}
-            artifactsDetail={applyResult?.artifactsDetail}
-            transcriptPath={applyResult?.transcriptPath ?? null}
-            bundleIndexPath={applyResult?.bundleIndexPath ?? null}
-            diagnosticsPath={applyResult?.diagnosticsPath ?? null}
-          />
+          {selectedTask?.status !== 'Denied' && selectedTask?.applySupported !== false && (
+            <ArtifactList
+              caption="Applied artifacts"
+              artifacts={applyResult?.artifacts ?? []}
+              artifactsDetail={applyResult?.artifactsDetail}
+              transcriptPath={applyResult?.transcriptPath ?? null}
+              bundleIndexPath={applyResult?.bundleIndexPath ?? null}
+              diagnosticsPath={applyResult?.diagnosticsPath ?? null}
+            />
+          )}
         </Section>
       )}
 
@@ -1002,7 +1465,7 @@ export function AgentPanel() {
                   $variant="secondary"
                   onClick={() => {
                     setPhase(planResult ? 'review' : 'idle');
-                    setShowApproveDialog(false);
+                    setApprovalTaskId(null);
                     setErrorState(null);
                     setSrAnnouncement('');
                   }}
@@ -1021,14 +1484,16 @@ export function AgentPanel() {
       </Section>
 
       <ApproveDialog
-        open={showApproveDialog}
-        confirming={phase === 'executing'}
+        open={Boolean(approvalTaskId)}
+        confirming={Boolean(selectedTask?.applyInFlight)}
         onCancel={() => {
-          setShowApproveDialog(false);
+          setApprovalTaskId(null);
           setPhase(planResult ? 'review' : 'idle');
           setSrAnnouncement('');
         }}
-        onConfirm={() => void runApply()}
+        onConfirm={() => {
+          void runApply();
+        }}
       />
     </Container>
   );

@@ -1,5 +1,5 @@
 import { Fragment, ReactNode, useMemo } from 'react';
-import { contrastRatio, isHexColor } from '../../../../../tools/a11y/contrast.js';
+import { contrastRatio, isHexColor } from '../../../../tools/a11y/contrast.js';
 
 type SwatchDetail = {
   label: string;
@@ -19,8 +19,21 @@ export type SwatchProps = {
 };
 
 const DEFAULT_TEXT = 'Aa';
-const FALLBACK_FOREGROUND = '#0f172a';
-const FALLBACK_BACKGROUND = '#ffffff';
+const FALLBACK_FOREGROUND = 'var(--cmp-text-body)';
+const FALLBACK_BACKGROUND = 'var(--cmp-surface-panel)';
+const SWATCH_TOKENS = {
+  textBody: 'var(--cmp-text-body)',
+  textMuted: 'var(--cmp-text-muted)',
+  textSecondary: 'var(--cmp-text-secondary, var(--sys-text-secondary))',
+  surfacePanel: 'var(--cmp-surface-panel)',
+  borderSoft: 'color-mix(in srgb, var(--cmp-border-default) 40%, transparent)',
+  borderSubtle: 'color-mix(in srgb, var(--cmp-border-default) 25%, transparent)',
+  badgePassBackground: 'color-mix(in srgb, var(--sys-status-success-surface) 45%, transparent)',
+  badgeFailBackground: 'color-mix(in srgb, var(--sys-status-critical-surface) 45%, transparent)',
+  badgePassText: 'var(--sys-status-success-text)',
+  badgeFailText: 'var(--sys-status-critical-text)',
+  insetShadow: 'inset 0 0 0 1px color-mix(in srgb, var(--cmp-text-body) 3%, transparent)'
+} as const;
 
 const formatContrast = (ratio: number | null) => {
   if (ratio === null) {
@@ -79,13 +92,13 @@ export const Swatch = ({
   return (
     <div
       style={{
-        border: '1px solid rgba(148, 163, 184, 0.4)',
+        border: `1px solid ${SWATCH_TOKENS.borderSoft}`,
         borderRadius: '0.75rem',
         padding: '0.9rem',
         display: 'flex',
         flexDirection: 'column',
         gap: '0.75rem',
-        backgroundColor: '#f8fafc'
+        backgroundColor: SWATCH_TOKENS.surfacePanel
       }}
     >
       <div
@@ -97,16 +110,22 @@ export const Swatch = ({
         }}
       >
         <div>
-          <div style={{ fontSize: '0.95rem', fontWeight: 600, color: '#0f172a' }}>{label}</div>
+          <div style={{ fontSize: '0.95rem', fontWeight: 600, color: SWATCH_TOKENS.textBody }}>
+            {label}
+          </div>
           {description ? (
-            <div style={{ fontSize: '0.8rem', color: '#475569', marginTop: '0.25rem' }}>
+            <div
+              style={{ fontSize: '0.8rem', color: SWATCH_TOKENS.textMuted, marginTop: '0.25rem' }}
+            >
               {description}
             </div>
           ) : null}
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.25rem' }}>
-          <span style={{ fontFamily: 'monospace', fontSize: '0.75rem', color: '#334155' }}>
+          <span
+            style={{ fontFamily: 'monospace', fontSize: '0.75rem', color: SWATCH_TOKENS.textSecondary }}
+          >
             {formatContrast(contrast.ratio)}
           </span>
           {passLabel ? (
@@ -116,8 +135,10 @@ export const Swatch = ({
                 fontWeight: 600,
                 padding: '0.1rem 0.4rem',
                 borderRadius: '999px',
-                backgroundColor: contrast.passes ? 'rgba(74, 222, 128, 0.15)' : 'rgba(248, 113, 113, 0.18)',
-                color: contrast.passes ? '#166534' : '#b91c1c'
+                backgroundColor: contrast.passes
+                  ? SWATCH_TOKENS.badgePassBackground
+                  : SWATCH_TOKENS.badgeFailBackground,
+                color: contrast.passes ? SWATCH_TOKENS.badgePassText : SWATCH_TOKENS.badgeFailText
               }}
             >
               {passLabel}
@@ -132,13 +153,15 @@ export const Swatch = ({
           padding: '1rem',
           backgroundColor: previewColours.background,
           color: previewColours.foreground,
-          border: previewColours.borderColour ? `1px solid ${previewColours.borderColour}` : '1px solid rgba(148, 163, 184, 0.25)',
+          border: previewColours.borderColour
+            ? `1px solid ${previewColours.borderColour}`
+            : `1px solid ${SWATCH_TOKENS.borderSubtle}`,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           gap: '0.75rem',
           minHeight: '3.75rem',
-          boxShadow: 'inset 0 0 0 1px rgba(15, 23, 42, 0.03)'
+          boxShadow: SWATCH_TOKENS.insetShadow
         }}
       >
         <span style={{ fontSize: '1rem', fontWeight: 600 }}>{sampleText}</span>
@@ -155,7 +178,7 @@ export const Swatch = ({
             columnGap: '0.75rem',
             rowGap: '0.4rem',
             fontSize: '0.78rem',
-            color: '#334155'
+            color: SWATCH_TOKENS.textSecondary
           }}
         >
           {details.map((detail) => (

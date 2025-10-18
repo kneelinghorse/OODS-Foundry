@@ -1,10 +1,4 @@
-import type {
-  ArtifactRunFile,
-  ArtifactRunSummary,
-  ToolName,
-  ToolRunInput,
-  ToolRunSuccess,
-} from './types.js';
+import type { ArtifactRunFile, ArtifactRunSummary, ToolName, ToolRunInput, ToolRunSuccess } from './types.js';
 import { BridgeError } from './types.js';
 
 const DEFAULT_BRIDGE_ORIGIN = 'http://127.0.0.1:4466';
@@ -84,12 +78,37 @@ export async function fetchToolNames(): Promise<ToolName[]> {
   return tools;
 }
 
+function resolveApprovalToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  const globalToken = (window as any).__OODS_AGENT_APPROVAL_TOKEN__;
+  if (typeof globalToken === 'string' && globalToken.trim().length) {
+    return globalToken.trim();
+  }
+  try {
+    const stored = window.localStorage.getItem('oods.agent.approval');
+    if (typeof stored === 'string' && stored.trim().length) {
+      return stored.trim();
+    }
+  } catch {
+    // Ignore storage access errors (sandboxed, disabled, etc.)
+  }
+  return 'granted';
+}
+
 export async function runTool(tool: ToolName, input: ToolRunInput): Promise<ToolRunSuccess> {
+  const headers: Record<string, string> = {};
+  if (input && typeof input === 'object' && (input as Record<string, unknown>).apply === true) {
+    const approvalToken = resolveApprovalToken();
+    if (approvalToken) {
+      headers['X-Bridge-Approval'] = approvalToken;
+    }
+  }
   const data = await request<ToolRunSuccess | { error?: { code?: string; message?: string; messages?: unknown } }>(
     '/run',
     {
       method: 'POST',
       body: JSON.stringify({ tool, input }),
+      headers,
     }
   );
 

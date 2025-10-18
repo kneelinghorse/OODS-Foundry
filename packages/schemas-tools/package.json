@@ -1,0 +1,20 @@
+{
+  "name": "@oods/schemas-tools",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Utility scripts for generating TypeScript types from JSON Schemas.",
+  "main": "dist/index.js",
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "generate": "tsx src/generate-types.ts"
+  },
+  "dependencies": {
+    "json-schema-to-typescript": "^13.1.1"
+  },
+  "devDependencies": {
+    "tsx": "^4.20.6"
+  }
+}
