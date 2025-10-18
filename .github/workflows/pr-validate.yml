@@ -132,7 +132,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Validate design tokens
-        run: pnpm run validate:tokens
+        run: pnpm run tokens:validate
 
   a11y-contract:
     name: a11y-contract

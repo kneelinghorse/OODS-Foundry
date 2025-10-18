@@ -53,3 +53,7 @@ Mission **B5.1** establishes a deterministic token ladder that keeps authoring r
 - **Component needs a token?** Introduce a `--cmp-*` slot in `layers.css` or a component-specific stylesheet and map it to the correct system token.
 
 This layering keeps references pure, allows multiple themes to coexist, and guarantees forced-colors wins last without brittle overrides.
+
+## Tailwind roundtrip
+
+`tailwind.config.ts` now extends colours with `var(--sys-...)` custom properties emitted by `scripts/tokens/transform.ts`. The generated CSS lives at `apps/explorer/src/styles/tokens.css` and is imported by Storybook so the **Foundations/Tokens Roundtrip** story demonstrates the live handshake.

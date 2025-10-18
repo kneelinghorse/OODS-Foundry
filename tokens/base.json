@@ -1,0 +1,126 @@
+{
+  "$schema": "https://design-tokens.org/schema.json",
+  "ref": {
+    "color": {
+      "neutral": {
+        "50": {
+          "$type": "color",
+          "$value": "oklch(0.9913 0.0013 286.38)",
+          "$description": "Neutral 50 canvas background for light theme."
+        },
+        "100": {
+          "$type": "color",
+          "$value": "oklch(0.9816 0.0017 247.84)",
+          "$description": "Neutral 100 raised surface tone."
+        },
+        "200": {
+          "$type": "color",
+          "$value": "oklch(0.9417 0.0052 247.88)",
+          "$description": "Neutral 200 subtle surface and soft border tone."
+        },
+        "300": {
+          "$type": "color",
+          "$value": "oklch(0.8875 0.0147 264.49)",
+          "$description": "Neutral 300 structural border contrast."
+        },
+        "500": {
+          "$type": "color",
+          "$value": "oklch(0.6929 0.0198 269.00)",
+          "$description": "Neutral 500 tertiary text/icon tone."
+        },
+        "700": {
+          "$type": "color",
+          "$value": "oklch(0.5109 0.0264 269.16)",
+          "$description": "Neutral 700 secondary text tone."
+        },
+        "900": {
+          "$type": "color",
+          "$value": "oklch(0.313 0.0171 266.40)",
+          "$description": "Neutral 900 high-contrast foreground."
+        }
+      },
+      "info": {
+        "100": {
+          "$type": "color",
+          "$value": "oklch(0.9685 0.0148 260.73)",
+          "$description": "Informational status surface."
+        },
+        "300": {
+          "$type": "color",
+          "$value": "oklch(0.8191 0.0763 260.81)",
+          "$description": "Informational status border."
+        },
+        "700": {
+          "$type": "color",
+          "$value": "oklch(0.5466 0.1806 263.48)",
+          "$description": "Informational status icon."
+        },
+        "900": {
+          "$type": "color",
+          "$value": "oklch(0.3847 0.1344 263.74)",
+          "$description": "Informational status text."
+        }
+      },
+      "accent": {
+        "100": {
+          "$type": "color",
+          "$value": "{ref.color.primary.100}",
+          "$description": "Accent surface derived from primary 100."
+        },
+        "300": {
+          "$type": "color",
+          "$value": "{ref.color.primary.500}",
+          "$description": "Accent border aligned to primary default."
+        },
+        "400": {
+          "$type": "color",
+          "$value": "{ref.color.primary.600}",
+          "$description": "Accent hover derived from primary hover."
+        },
+        "500": {
+          "$type": "color",
+          "$value": "{ref.color.primary.700}",
+          "$description": "Accent text aligned to pressed state."
+        }
+      },
+      "primary": {
+        "100": {
+          "$type": "color",
+          "$value": "oklch(0.9563 0.0277 225.69)",
+          "$description": "Primary accent surface."
+        },
+        "500": {
+          "$type": "color",
+          "$value": "oklch(0.5631 0.1717 274.55)",
+          "$description": "Primary interactive colour."
+        },
+        "600": {
+          "$type": "color",
+          "$value": "oklch(0.4631 0.1867 274.55)",
+          "$description": "Primary hover reference."
+        },
+        "700": {
+          "$type": "color",
+          "$value": "oklch(0.4231 0.1967 274.55)",
+          "$description": "Primary pressed reference."
+        }
+      }
+    },
+    "space": {
+      "stack": {
+        "default": {
+          "$type": "dimension",
+          "$value": "20px",
+          "$description": "Standard vertical spacing between sections."
+        }
+      },
+      "inset": {
+        "default": {
+          "$type": "dimension",
+          "$value": "24px",
+          "$description": "Default padding for primary panels."
+        }
+      }
+    }
+  }
+}
