@@ -44,9 +44,9 @@ const config: StorybookConfig = {
         ...(baseConfig.resolve?.alias ?? {}),
         '~': workspaceRoot,
         '@storybook/blocks': '@storybook/addon-docs/blocks',
-        '@oods/tokens': tokensModulePath,
-        '@oods/tokens/tailwind': tokensTailwindPath,
         '@oods/tokens/css': tokensCssPath,
+        '@oods/tokens/tailwind': tokensTailwindPath,
+        '@oods/tokens': tokensModulePath,
       },
     };
     const fsAllow = new Set<string>(
