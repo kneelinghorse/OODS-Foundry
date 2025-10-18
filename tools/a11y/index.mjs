@@ -14,7 +14,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const require = createRequire(import.meta.url);
 
-const TOKEN_SOURCE = path.resolve(__dirname, '../../packages/tokens/dist/tailwind/tokens.json');
+const TOKEN_SOURCE = require.resolve('@oods/tokens/tailwind');
 const REPORT_PATH = path.resolve(__dirname, './reports/a11y-report.json');
 const BASELINE_PATH = path.resolve(__dirname, './baseline/a11y-baseline.json');
 const GUARDRAILS_PATH = path.resolve(__dirname, './guardrails/relative-color.csv');
@@ -296,10 +296,26 @@ function resolveTokenNode(tree, tokenPath) {
   let current = tree;
 
   for (const segment of segments) {
-    if (!current || typeof current !== 'object' || !(segment in current)) {
+    if (!current || typeof current !== 'object') {
       throw new Error(`Token path "${tokenPath}" could not be resolved.`);
     }
-    current = current[segment];
+
+    let key = segment;
+    if (!(key in current)) {
+      const alternatives = new Set([segment.replace(/-/g, '_'), segment.replace(/_/g, '-')]);
+      for (const alt of alternatives) {
+        if (alt && alt in current) {
+          key = alt;
+          break;
+        }
+      }
+    }
+
+    if (!(key in current)) {
+      throw new Error(`Token path "${tokenPath}" could not be resolved.`);
+    }
+
+    current = current[key];
   }
 
   if (!current || typeof current !== 'object' || !('$value' in current)) {
