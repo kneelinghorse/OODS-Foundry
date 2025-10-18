@@ -168,17 +168,23 @@ function collectTokens(node: DtcgNode, trail: string[], state: CollectState, dep
     }
 
     if (rawValue && typeof rawValue === 'object' && !Array.isArray(rawValue)) {
-      if (isTokenLeaf(rawValue)) {
-        validateToken(rawValue, [...trail, key], state.filePath);
+      const nested = rawValue as Record<string, unknown>;
+
+      if (isTokenLeaf(nested)) {
+        validateToken(nested, [...trail, key], state.filePath);
+        const tokenType = nested.$type as string;
+        const tokenValue = nested.$value as string | number;
+        const description =
+          typeof nested.$description === 'string' ? nested.$description : undefined;
         state.tokens.push({
           path: [...trail, key],
-          type: rawValue.$type,
-          value: rawValue.$value,
-          description: typeof rawValue.$description === 'string' ? rawValue.$description : undefined,
+          type: tokenType,
+          value: tokenValue,
+          description,
           source: state.filePath,
         });
       } else {
-        collectTokens(rawValue as DtcgNode, [...trail, key], state, depth + 1);
+        collectTokens(nested as DtcgNode, [...trail, key], state, depth + 1);
       }
     } else {
       throw new Error(
