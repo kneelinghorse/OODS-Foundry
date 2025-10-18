@@ -78,11 +78,13 @@ describe('Accessibility | Dark theme smoke (components)', () => {
     await expectNoAxeViolations(<Input label="Label" defaultValue="Value" />);
   });
 
-  it('PageHeader (dark) passes axe checks', async () => {
-    await expectNoAxeViolations(
-      <PageHeader
-        title="Acme, Inc."
-        subtitle="Customer account"
+  it(
+    'PageHeader (dark) passes axe checks',
+    async () => {
+      await expectNoAxeViolations(
+        <PageHeader
+          title="Acme, Inc."
+          subtitle="Customer account"
         badges={[
           { id: 'status-active', label: 'Active', tone: 'success' },
           { id: 'status-risk', label: 'Risk', tone: 'danger' },
@@ -93,6 +95,12 @@ describe('Accessibility | Dark theme smoke (components)', () => {
         ]}
         metadata={<span>Last updated 2 days ago</span>}
       />
-    );
-  });
+        );
+    },
+    /**
+     * Axe runs significantly slower once V8 coverage instrumentation is enabled,
+     * so give the PageHeader scenario extra time when the coverage suite executes.
+     */
+    15000
+  );
 });

@@ -10,3 +10,4 @@ export * from './traits/priceable.parameters';
 export * from './traits/stateful.parameters';
 export * from './traits/taggable.parameters';
 export * from './traits/timestampable.parameters';
+export * from './ui/status-map';
