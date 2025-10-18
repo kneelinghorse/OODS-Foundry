@@ -7,10 +7,27 @@ function sanitizeTrailingSlash(url: string): string {
   return url.endsWith('/') ? url.slice(0, -1) : url;
 }
 
+function resolveImportMetaEnv(): Record<string, unknown> | undefined {
+  if (typeof globalThis !== 'undefined') {
+    const injected = (globalThis as any).__VITE_IMPORT_META_ENV__;
+    if (injected && typeof injected === 'object') {
+      return injected as Record<string, unknown>;
+    }
+  }
+
+  try {
+    // Using an evaluated function avoids bundlers that rewrite import.meta for non-ESM formats.
+    return (Function('return import.meta')() as any)?.env as Record<string, unknown> | undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 function detectBridgeOrigin(): string {
-  const env = (import.meta as any)?.env?.VITE_MCP_BRIDGE_ORIGIN as string | undefined;
+  const env = resolveImportMetaEnv();
+  const envOrigin = typeof env?.VITE_MCP_BRIDGE_ORIGIN === 'string' ? (env.VITE_MCP_BRIDGE_ORIGIN as string) : undefined;
   const globalOverride = typeof window !== 'undefined' ? (window as any).__OODS_AGENT_BRIDGE_ORIGIN__ : undefined;
-  const origin = globalOverride || env || DEFAULT_BRIDGE_ORIGIN;
+  const origin = globalOverride || envOrigin || DEFAULT_BRIDGE_ORIGIN;
   return sanitizeTrailingSlash(origin);
 }
 

@@ -32,9 +32,11 @@
       "require": "./dist/index.cjs"
     },
     "./css": {
+      "import": "./dist/css/tokens.css",
       "default": "./dist/css/tokens.css"
     },
     "./tailwind": {
+      "import": "./dist/tailwind/tokens.json",
       "default": "./dist/tailwind/tokens.json"
     }
   },
