@@ -1,0 +1,95 @@
+{
+  "$schema": "https://design-tokens.org/schema.json",
+  "sys": {
+    "surface": {
+      "canvas": {
+        "$type": "color",
+        "$value": "{theme.surface.canvas}",
+        "$description": "System canvas surface derived from theme."
+      },
+      "raised": {
+        "$type": "color",
+        "$value": "{theme.surface.raised}",
+        "$description": "System raised surface derived from theme."
+      }
+    },
+    "text": {
+      "primary": {
+        "$type": "color",
+        "$value": "{theme.text.primary}",
+        "$description": "System body text colour."
+      },
+      "muted": {
+        "$type": "color",
+        "$value": "{theme.text.muted}",
+        "$description": "System muted text colour."
+      }
+    },
+    "status": {
+      "info": {
+        "surface": {
+          "$type": "color",
+          "$value": "{theme.status.info.surface}",
+          "$description": "System informational surface."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{theme.status.info.border}",
+          "$description": "System informational border."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "{theme.status.info.text}",
+          "$description": "System informational text."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "{theme.status.info.icon}",
+          "$description": "System informational icon."
+        }
+      }
+    },
+    "space": {
+      "stack": {
+        "default": {
+          "$type": "dimension",
+          "$value": "{theme.space.stack.default}",
+          "$description": "System default vertical spacing."
+        }
+      },
+      "inset": {
+        "default": {
+          "$type": "dimension",
+          "$value": "{theme.space.inset.default}",
+          "$description": "System default inset spacing."
+        }
+      }
+    }
+  },
+  "cmp": {
+    "banner": {
+      "info": {
+        "background": {
+          "$type": "color",
+          "$value": "{sys.status.info.surface}",
+          "$description": "Banner background for informational status."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{sys.status.info.border}",
+          "$description": "Banner border for informational status."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "{sys.status.info.text}",
+          "$description": "Banner text colour for informational status."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "{sys.status.info.icon}",
+          "$description": "Banner icon colour for informational status."
+        }
+      }
+    }
+  }
+}

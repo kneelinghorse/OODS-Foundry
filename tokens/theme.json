@@ -1,0 +1,141 @@
+{
+  "$schema": "https://design-tokens.org/schema.json",
+  "theme": {
+    "surface": {
+      "canvas": {
+        "$type": "color",
+        "$value": "{ref.color.neutral.50}",
+        "$description": "Primary page background for Theme 0."
+      },
+      "raised": {
+        "$type": "color",
+        "$value": "{ref.color.neutral.100}",
+        "$description": "Raised card surface with soft separation."
+      },
+      "subtle": {
+        "$type": "color",
+        "$value": "{ref.color.neutral.200}",
+        "$description": "Secondary panel surface tone."
+      }
+    },
+    "border": {
+      "subtle": {
+        "$type": "color",
+        "$value": "{ref.color.neutral.300}",
+        "$description": "Default card outline tone."
+      }
+    },
+    "text": {
+      "primary": {
+        "$type": "color",
+        "$value": "{ref.color.neutral.900}",
+        "$description": "Body text on light surfaces."
+      },
+      "muted": {
+        "$type": "color",
+        "$value": "{ref.color.neutral.500}",
+        "$description": "Muted caption text."
+      }
+    },
+    "status": {
+      "info": {
+        "surface": {
+          "$type": "color",
+          "$value": "{ref.color.info.100}",
+          "$description": "Informational background tone."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{ref.color.info.300}",
+          "$description": "Informational border tone."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "{ref.color.info.900}",
+          "$description": "Informational text colour."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "{ref.color.info.700}",
+          "$description": "Informational icon tone."
+        }
+      },
+      "accent": {
+        "surface": {
+          "$type": "color",
+          "$value": "{ref.color.accent.100}",
+          "$description": "Accent emphasis surface."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{ref.color.accent.300}",
+          "$description": "Accent border tone."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "{ref.color.accent.500}",
+          "$description": "Accent text tone."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "{ref.color.accent.400}",
+          "$description": "Accent icon tone."
+        }
+      }
+    },
+    "space": {
+      "stack": {
+        "default": {
+          "$type": "dimension",
+          "$value": "{ref.space.stack.default}",
+          "$description": "Default vertical spacing for layouts."
+        }
+      },
+      "inset": {
+        "default": {
+          "$type": "dimension",
+          "$value": "{ref.space.inset.default}",
+          "$description": "Default padding for cards."
+        }
+      }
+    }
+  },
+  "theme-dark": {
+    "surface": {
+      "canvas": {
+        "$type": "color",
+        "$value": "oklch(0.18 0.007 255)",
+        "$description": "Primary dark canvas tone."
+      },
+      "raised": {
+        "$type": "color",
+        "$value": "oklch(0.24 0.007 255)",
+        "$description": "Raised panel surface for dark theme."
+      }
+    },
+    "status": {
+      "info": {
+        "surface": {
+          "$type": "color",
+          "$value": "oklch(0.31 0.08 262)",
+          "$description": "Dark informational surface."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "oklch(0.43 0.11 262)",
+          "$description": "Dark informational border."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "oklch(0.88 0.06 262)",
+          "$description": "Dark informational text."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "oklch(0.8 0.1 262)",
+          "$description": "Dark informational icon."
+        }
+      }
+    }
+  }
+}

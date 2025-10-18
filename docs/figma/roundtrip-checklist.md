@@ -7,7 +7,7 @@ This checklist locks the repository as the source of truth while giving designer
 - [ ] Issue a GitHub fine-grained personal access token with **Repository -> Contents: Read-only** scope. Store it in 1Password entry `OODS > Tokens Studio (Read Only)`.
 - [ ] In Figma, open the Tokens Studio plugin -> **Sync Providers** -> **Add provider** and configure:
   - Provider: `GitHub`
-  - Repository: `systemsystems/Design_System_Project`
+  - Repository: `kneelinghorse/OODS-Foundry`
   - Branch: `main`
   - Path: `app/packages/tokens/src/tokens`
   - Token: the read-only PAT above
@@ -38,3 +38,7 @@ This checklist locks the repository as the source of truth while giving designer
 - [ ] Claude review: confirm namespace fidelity between CSV and published styles.
 - [ ] Gemini review: validate List/Detail specimens include chips + banners with correct status ramps.
 - [ ] Handoff owner signs the checklist, links the PR, and logs outcome in `SESSIONS.jsonl`.
+
+## 6. Handshake Evidence
+- [x] `pnpm run tokens:transform -- --mission B14.2` generates `apps/explorer/src/styles/tokens.css` from the exported DTCG files in `tokens/*.json` and appends a metrics entry to `diagnostics.json`.
+- [x] Storybook entry **Foundations/Tokens Roundtrip** renders the Tailwind classes backed by `sys.status.info.*` variables, confirming that the CSS is consumed in UI.

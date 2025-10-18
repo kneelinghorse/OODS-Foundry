@@ -26,6 +26,10 @@ theme.status.info.border,color,Theme/Status/Info/Border,Paint Style,Informationa
 theme.status.info.icon,color,Theme/Status/Info/Icon,Paint Style,Informational icon colour. Used by banner + chip specimens; publish as library styles.
 theme.status.info.surface,color,Theme/Status/Info/Surface,Paint Style,Informational background tone. Used by banner + chip specimens; publish as library styles.
 theme.status.info.text,color,Theme/Status/Info/Text,Paint Style,Informational text colour. Used by banner + chip specimens; publish as library styles.
+sys.status.info.surface,color,System/Status/Info/Surface,Paint Style,Roundtrip: generated from tokens/theme.json → tokens/semantic.json → scripts/tokens/transform.ts.
+sys.status.info.border,color,System/Status/Info/Border,Paint Style,Roundtrip: mirror of theme status border for component consumption.
+sys.status.info.text,color,System/Status/Info/Text,Paint Style,Roundtrip: semantic text tone consumed by Tailwind classes.
+sys.status.info.icon,color,System/Status/Info/Icon,Paint Style,Roundtrip: semantic icon tone surfaced in Tokens Roundtrip story.
 theme.status.neutral.border,color,Theme/Status/Neutral/Border,Paint Style,Neutral status border tone. Used by banner + chip specimens; publish as library styles.
 theme.status.neutral.icon,color,Theme/Status/Neutral/Icon,Paint Style,Neutral status icon colour. Used by banner + chip specimens; publish as library styles.
 theme.status.neutral.surface,color,Theme/Status/Neutral/Surface,Paint Style,Neutral status background tone. Used by banner + chip specimens; publish as library styles.
