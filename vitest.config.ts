@@ -12,13 +12,31 @@ export default defineConfig({
     environment: 'node',
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'json', 'html'],
-      exclude: ['node_modules/', 'dist/', '**/*.test.ts', '**/*.config.ts'],
+      reporter: ['text', 'json', 'html', 'json-summary'],
+      reportsDirectory: path.join(dirname, 'coverage'),
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: [
+        'node_modules/',
+        'dist/',
+        '**/*.test.{ts,tsx}',
+        '**/*.spec.{ts,tsx}',
+        '**/*.config.{ts,tsx}',
+        'scripts/types/__fixtures__/**',
+        'src/cli/**',
+        'src/utils/visualizer.ts',
+        'src/utils/index.ts',
+        'src/types/**',
+        'src/components/index.ts',
+        'src/components/base/index.ts',
+        'src/components/page/index.ts',
+        'src/view/index.ts'
+      ],
+      reportOnFailure: true,
       thresholds: {
-        lines: 0.85,
-        functions: 0.85,
-        branches: 0.8,
-        statements: 0.85
+        lines: 70,
+        functions: 80,
+        branches: 70,
+        statements: 70
       }
     },
     projects: [{
@@ -48,6 +66,14 @@ export default defineConfig({
         name: 'a11y',
         include: ['tests/a11y/**/*.test.ts', 'tests/a11y/**/*.test.tsx'],
         environment: 'jsdom'
+      }
+    }, {
+      // Contrast guardrail checks (Node environment)
+      extends: true,
+      test: {
+        name: 'guardrails',
+        include: ['testing/a11y/**/*.spec.ts'],
+        environment: 'node'
       }
     }, {
       // Core Node tests: validation, integration, core/unit, etc.
