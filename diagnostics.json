@@ -21,13 +21,20 @@
         "durationMs": 12,
         "tokensCount": 269,
         "writtenAt": "2025-10-18T01:54:52.369Z"
+      },
+      {
+        "mission": "B14.12",
+        "phase": "transform",
+        "durationMs": 11,
+        "tokensCount": 269,
+        "writtenAt": "2025-10-18T21:15:18.565Z"
       }
     ],
     "lastRun": {
-      "mission": "B14.3",
-      "durationMs": 12,
+      "mission": "B14.12",
+      "durationMs": 11,
       "tokensCount": 269,
-      "writtenAt": "2025-10-18T01:54:52.369Z"
+      "writtenAt": "2025-10-18T21:15:18.565Z"
     },
     "guardrails": {
       "history": [
@@ -70,15 +77,23 @@
           "passes": 6,
           "failures": 0,
           "durationMs": 7
+        },
+        {
+          "mission": "unspecified",
+          "evaluatedAt": "2025-10-18T21:16:51.553Z",
+          "checks": 6,
+          "passes": 6,
+          "failures": 0,
+          "durationMs": 6
         }
       ],
       "lastRun": {
-        "mission": "B14.4",
-        "evaluatedAt": "2025-10-18T04:18:05.132Z",
+        "mission": "unspecified",
+        "evaluatedAt": "2025-10-18T21:16:51.553Z",
         "checks": 6,
         "passes": 6,
         "failures": 0,
-        "durationMs": 7
+        "durationMs": 6
       }
     }
   },
@@ -87,7 +102,10 @@
       "mission": "B14.11",
       "evaluatedAt": "2025-10-18T20:16:21Z",
       "storiesChecked": 12,
-      "failOnImpact": ["serious", "critical"],
+      "failOnImpact": [
+        "serious",
+        "critical"
+      ],
       "definition": "testing/a11y/aria-contract.json",
       "report": "tools/a11y/reports/a11y-report.json"
     }
@@ -236,10 +254,16 @@
     "lastUpdate": {
       "mission": "B14.8",
       "updatedAt": "2025-10-18T16:16:03Z",
-      "docs": ["docs/mcp/Policy-Rules.md", "docs/mcp/Policy-UX.md"],
+      "docs": [
+        "docs/mcp/Policy-Rules.md",
+        "docs/mcp/Policy-UX.md"
+      ],
       "approvals": {
         "header": "X-Bridge-Approval",
-        "tokens": ["granted", "denied"]
+        "tokens": [
+          "granted",
+          "denied"
+        ]
       }
     }
   },
