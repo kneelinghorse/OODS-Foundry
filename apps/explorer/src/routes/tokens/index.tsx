@@ -1,4 +1,4 @@
-import tokensJson from '../../../../../packages/tokens/dist/tailwind/tokens.json';
+import tokensJson from '@oods/tokens/tailwind';
 import saasBillingStatusMap from '~/tokens/maps/saas-billing.status-map.json';
 import { TokenBrowser, type TokenEntry } from './TokenBrowser';
 import { MappingTable } from './MappingTable';

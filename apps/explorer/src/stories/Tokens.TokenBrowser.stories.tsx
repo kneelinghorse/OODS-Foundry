@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import tokensJson from '../../../../packages/tokens/dist/tailwind/tokens.json';
+import tokensJson from '@oods/tokens/tailwind';
 import { TokenBrowser } from '../routes/tokens/TokenBrowser';
 import { resolveTokenValue } from '../utils/tokenResolver';
 

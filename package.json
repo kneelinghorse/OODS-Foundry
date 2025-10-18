@@ -12,7 +12,7 @@
     "test:unit": "vitest run --exclude \"tests/integration/**\"",
     "test:integration": "vitest run tests/integration",
     "test:validation": "vitest run tests/validation",
-    "pretest:coverage": "pnpm run build",
+    "pretest:coverage": "pnpm run build && pnpm run build:packages",
     "test:coverage": "vitest --coverage",
     "test:axe": "vitest run tests/a11y/components.a11y.test.tsx tests/a11y/dark.components.a11y.test.tsx",
     "test:contrast": "vitest run --project guardrails",

@@ -1,6 +1,6 @@
 import React from 'react';
 import '../../styles/index.css';
-import { flatTokens, type FlatTokenName } from '~/packages/tokens/dist/ts/tokens';
+import { flatTokens, type FlatTokenName } from '@oods/tokens';
 
 const hyphenate = (token: string) =>
   token.replace(/\./g, '-').replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
