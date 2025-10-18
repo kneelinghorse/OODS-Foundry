@@ -8,6 +8,10 @@ const workspaceRoot = path.dirname(fileURLToPath(import.meta.url));
 
 const storiesRoot = path.join(workspaceRoot, 'src', 'stories');
 const explorerStoriesRoot = path.join(workspaceRoot, 'apps', 'explorer', 'src', 'stories');
+const tokensDistDir = path.join(workspaceRoot, 'packages', 'tokens', 'dist');
+const tokensTailwindPath = path.join(tokensDistDir, 'tailwind', 'tokens.json');
+const tokensCssPath = path.join(tokensDistDir, 'css', 'tokens.css');
+const tokensModulePath = path.join(tokensDistDir, 'index.js');
 
 const config: StorybookConfig = {
   stories: [
@@ -40,6 +44,9 @@ const config: StorybookConfig = {
         ...(baseConfig.resolve?.alias ?? {}),
         '~': workspaceRoot,
         '@storybook/blocks': '@storybook/addon-docs/blocks',
+        '@oods/tokens': tokensModulePath,
+        '@oods/tokens/tailwind': tokensTailwindPath,
+        '@oods/tokens/css': tokensCssPath,
       },
     };
     const fsAllow = new Set<string>(
