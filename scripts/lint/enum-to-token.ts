@@ -92,7 +92,6 @@ async function collectSourceFiles(relativeDir: string): Promise<string[]> {
     }
 
     const nextRelative = path.join(relativeDir, entry.name);
-    const absolutePath = path.join(ROOT, nextRelative);
 
     if (entry.isDirectory()) {
       files.push(...(await collectSourceFiles(nextRelative)));
