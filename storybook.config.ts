@@ -8,10 +8,10 @@ const workspaceRoot = path.dirname(fileURLToPath(import.meta.url));
 
 const storiesRoot = path.join(workspaceRoot, 'src', 'stories');
 const explorerStoriesRoot = path.join(workspaceRoot, 'apps', 'explorer', 'src', 'stories');
-const tokensDistDir = path.join(workspaceRoot, 'packages', 'tokens', 'dist');
-const tokensTailwindPath = path.join(tokensDistDir, 'tailwind', 'tokens.json');
-const tokensCssPath = path.join(tokensDistDir, 'css', 'tokens.css');
-const tokensModulePath = path.join(tokensDistDir, 'index.js');
+const tokensDistDir = path.resolve(workspaceRoot, 'packages', 'tokens', 'dist');
+const tokensTailwindPath = path.resolve(tokensDistDir, 'tailwind', 'tokens.json');
+const tokensCssPath = path.resolve(tokensDistDir, 'css', 'tokens.css');
+const tokensModulePath = path.resolve(tokensDistDir, 'index.js');
 
 const config: StorybookConfig = {
   stories: [
@@ -36,7 +36,12 @@ const config: StorybookConfig = {
     autodocs: true,
   },
   viteFinal: async (baseConfig) => {
-    baseConfig.plugins = [...(baseConfig.plugins ?? []), tsconfigPaths()];
+    baseConfig.plugins = [
+      ...(baseConfig.plugins ?? []),
+      tsconfigPaths({
+        projects: [path.resolve(workspaceRoot, 'tsconfig.storybook.json')],
+      }),
+    ];
     baseConfig.root = workspaceRoot;
     baseConfig.resolve = {
       ...(baseConfig.resolve ?? {}),

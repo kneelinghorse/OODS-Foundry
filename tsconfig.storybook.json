@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"],
+      "~/*": ["./*"],
+      "@oods/tokens": ["./packages/tokens/dist/index.js"],
+      "@oods/tokens/css": ["./packages/tokens/dist/css/tokens.css"],
+      "@oods/tokens/tailwind": ["./packages/tokens/dist/tailwind/tokens.json"],
+      "@oods/*": ["./packages/*/src"]
+    }
+  }
+}
