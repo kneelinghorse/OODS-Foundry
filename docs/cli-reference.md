@@ -27,6 +27,20 @@ npm run object:generate
 
 Use `object:<command> --help` to print detailed usage for any subcommand.
 
+## PR Checks
+
+Sprint 14 introduced mandatory PR validation; merges to protected branches require the checks below (see `.github/workflows/pr-validate.yml`). Run the paired commands locally before pushing to keep the queue green.
+
+| Check | Workflow job | Local command | Notes |
+| --- | --- | --- | --- |
+| Build | `build` | `pnpm run build:tokens && pnpm run build:packages && pnpm run build` | Mirrors the three-step workspace build (tokens → packages → app). |
+| Lint | `lint` | `pnpm run lint` | ESLint gate for `src/**/*.{ts,tsx}`. |
+| Typecheck | `typecheck` | `pnpm exec tsc --noEmit` | Uses the workspace TS config with `skipLibCheck=false`. |
+| Tokens | `tokens-validate` | `pnpm run tokens-validate` | Runs the DTCG transform in `--check` mode, semantic lint, and OKLCH guardrails. |
+| Accessibility | `a11y-contract` | `pnpm run build-storybook && pnpm run a11y:diff` | Requires Playwright Chromium; blocks on new serious/critical axe findings. |
+| Visual regression | `vr-test` | `pnpm run build-storybook && pnpm run chromatic:publish` | Publish with `CHROMATIC_PROJECT_TOKEN` to preview diffs before CI. |
+| Coverage | `coverage` | `pnpm run build:tokens && pnpm run test:coverage` | V8 coverage thresholds: statements/lines 70%, functions 80%, branches 70%. |
+
 ## Commands
 
 ### `object:list`

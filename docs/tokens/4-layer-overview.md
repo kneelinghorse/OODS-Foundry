@@ -22,15 +22,17 @@ Mission **B5.1** establishes a deterministic token ladder that keeps authoring r
 - Dark mode is exposed as `--theme-dark-*` tokens; the CSS layer maps them back to the shared `--theme-*` hooks when `[data-theme="dark"]` is present.
 
 ### 3. System / Semantic (`--sys-*`)
-- Files in `base/system/**` reference `--theme-*`.
+- JSON location: `tokens/semantic/system.json`.
+- Entries reference `--theme-*` tokens to emit canonical system contracts.
 - Provides high-level language: surfaces, borders, text states, status roles (info/success/warning/accent/critical/neutral), focus rings, and spacing.
 - These are the contracts product teams bind to when defining contexts.
 
 ### 4. Context & Component Slots (`--cmp-*`)
-- Implemented in `apps/explorer/src/styles/layers.css`.
+- JSON location: `tokens/semantic/components.json` (emitted) + `apps/explorer/src/styles/layers.css` (context overrides).
 - Slots cascade from `--sys-*` values, e.g. `--cmp-chip-background: var(--sys-status-info-surface)`.
 - Regions or pages override `--cmp-*` using attributes (e.g. `[data-context="list"]`) without touching reference scales.
 - Components (such as `StatusChip`) **never** read `--ref-*` or `--theme-*`; they style exclusively with `--cmp-*`.
+- Storybook’s toolbar now exposes a Light/Dark toggle that flips `[data-theme]` to prove the composite chain live.
 
 ## Forced colors and dark mode precedence
 
@@ -48,9 +50,9 @@ Mission **B5.1** establishes a deterministic token ladder that keeps authoring r
 
 ## Working with the stack
 
-- **Adding a new surface role?** Define it in `base/system/surface.json`, then expose a slot in `layers.css`.
+- **Adding a new surface role?** Define it in `tokens/semantic/system.json`, regenerate tokens, then expose a slot in `layers.css`.
 - **New brand theme?** Add a sibling folder under `themes/` and provide `theme-foo` tokens; update the CSS theme switcher to point at it.
-- **Component needs a token?** Introduce a `--cmp-*` slot in `layers.css` or a component-specific stylesheet and map it to the correct system token.
+- **Component needs a token?** Add it to `tokens/semantic/components.json`, regenerate, then wire overrides in `layers.css` or the component stylesheet.
 
 This layering keeps references pure, allows multiple themes to coexist, and guarantees forced-colors wins last without brittle overrides.
 

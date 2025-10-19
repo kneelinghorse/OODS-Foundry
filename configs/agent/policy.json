@@ -1,0 +1,134 @@
+{
+  "version": 1,
+  "updated": "2025-10-18",
+  "docs": {
+    "rules": "docs/mcp/Policy-Rules.md",
+    "ux": "docs/mcp/Policy-UX.md"
+  },
+  "limits": {
+    "ratePerMinute": 60,
+    "concurrency": 1
+  },
+  "defaults": {
+    "modes": ["dry-run"],
+    "approval": "optional",
+    "ratePerMinute": 12,
+    "concurrency": 1
+  },
+  "approvals": {
+    "header": "X-Bridge-Approval",
+    "tokens": {
+      "granted": "granted",
+      "denied": "denied"
+    },
+    "notes": "Dry runs never send this header; apply requests must include it when approval is required."
+  },
+  "tools": [
+    {
+      "name": "diag.snapshot",
+      "description": "Diagnostics snapshot (artifacts + bundle index)",
+      "modes": ["dry-run"],
+      "approval": "optional",
+      "allow": ["designer", "maintainer"],
+      "ratePerMinute": 12
+    },
+    {
+      "name": "reviewKit.create",
+      "description": "Creates review kit bundle for stories or contexts",
+      "modes": ["dry-run", "apply"],
+      "approval": "required",
+      "allow": ["designer", "maintainer"],
+      "ratePerMinute": 20
+    },
+    {
+      "name": "brand.apply",
+      "description": "Applies brand tokens to repository artifacts",
+      "modes": ["dry-run", "apply"],
+      "approval": "required",
+      "allow": ["designer", "maintainer"],
+      "ratePerMinute": 12
+    },
+    {
+      "name": "billing.reviewKit",
+      "description": "Builds billing review kit bundle",
+      "modes": ["dry-run", "apply"],
+      "approval": "required",
+      "allow": ["designer", "maintainer"],
+      "ratePerMinute": 20
+    },
+    {
+      "name": "billing.switchFixtures",
+      "description": "Switches billing fixtures in repo contexts",
+      "modes": ["dry-run", "apply"],
+      "approval": "required",
+      "allow": ["designer", "maintainer"],
+      "ratePerMinute": 20
+    },
+    {
+      "name": "purity.audit",
+      "description": "Runs UI purity audit",
+      "modes": ["dry-run"],
+      "approval": "optional",
+      "allow": ["designer", "maintainer"],
+      "ratePerMinute": 6
+    },
+    {
+      "name": "vrt.run",
+      "description": "Runs Chromatic/VR test harness",
+      "modes": ["dry-run"],
+      "approval": "optional",
+      "allow": ["designer", "maintainer"],
+      "ratePerMinute": 6
+    },
+    {
+      "name": "a11y.scan",
+      "description": "Runs accessibility scans on curated stories",
+      "modes": ["dry-run"],
+      "approval": "optional",
+      "allow": ["designer", "maintainer"],
+      "ratePerMinute": 6
+    },
+    {
+      "name": "release.verify",
+      "description": "Pre-release verification checks",
+      "modes": ["dry-run"],
+      "approval": "optional",
+      "allow": ["maintainer"],
+      "ratePerMinute": 6
+    },
+    {
+      "name": "release.tag",
+      "description": "Tags release candidate",
+      "modes": ["dry-run", "apply"],
+      "approval": "required",
+      "allow": ["maintainer"],
+      "ratePerMinute": 6
+    },
+    {
+      "name": "tokens.build",
+      "description": "Builds token artifacts for storybook",
+      "modes": ["dry-run"],
+      "approval": "optional",
+      "allow": ["designer", "maintainer"],
+      "ratePerMinute": 12
+    }
+  ],
+  "connectors": [
+    {
+      "id": "claude.remote-mcp",
+      "provider": "anthropic",
+      "role": "designer",
+      "defaultMode": "dry-run",
+      "tools": ["diag.snapshot", "reviewKit.create", "brand.apply", "billing.reviewKit", "billing.switchFixtures"],
+      "notes": "Apply requests must include the approval header value defined above."
+    },
+    {
+      "id": "openai.agents",
+      "provider": "openai",
+      "role": "designer",
+      "defaultMode": "dry-run",
+      "tools": ["diag.snapshot", "brand.apply", "reviewKit.create"],
+      "notes": "Apply requires approval token and is rate limited to prevent context overrun."
+    }
+  ]
+}

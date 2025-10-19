@@ -41,7 +41,7 @@ export const Dark: Story = {
       <div style={{ ...contentCardStyle, gap: '1.75rem' }}>
         <header style={sectionStyle}>
           <h1 style={{ margin: 0, fontSize: '1.65rem' }}>Badge States · Brand A Dark</h1>
-          <p style={{ margin: 0, color: 'var(--cmp-text-muted, #94a3b8)', lineHeight: 1.6 }}>
+          <p style={{ margin: 0, color: 'var(--cmp-text-muted)', lineHeight: 1.6 }}>
             Badge surfaces, text, and icons resolve via Brand A tone tokens—no inline style overrides required.
           </p>
         </header>

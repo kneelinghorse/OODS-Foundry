@@ -1,15 +1,9 @@
-import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { Config } from 'tailwindcss';
 import contextVariants from '../../packages/tw-variants/src/index.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const tokensPath = path.resolve(
-  __dirname,
-  '../../packages/tokens/dist/tailwind/tokens.json',
-);
+const tokensUrl = import.meta.resolve('@oods/tokens/tailwind', import.meta.url);
+const tokensPath = fileURLToPath(new URL(tokensUrl));
 
 const config: Config = {
   content: [

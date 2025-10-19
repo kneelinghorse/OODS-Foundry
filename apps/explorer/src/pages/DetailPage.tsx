@@ -1,5 +1,6 @@
 import '../styles/index.css';
 import { StatusChip } from '../components/StatusChip';
+import { ensureDomainInContext, pickStatusByIndex } from '../config/statusMap';
 
 type InvoiceEntry = {
   id: string;
@@ -40,6 +41,12 @@ const INVOICE_HISTORY: InvoiceEntry[] = [
   }
 ];
 
+ensureDomainInContext('detail', 'subscription');
+ensureDomainInContext('detail', 'invoice');
+
+const CURRENT_SUBSCRIPTION_STATUS = pickStatusByIndex('subscription', 2);
+const CURRENT_INVOICE_STATUS = pickStatusByIndex('invoice', 3);
+
 const DetailPage = () => (
   <div className="explorer-view context-detail detail-view" data-context="detail" data-testid="detail-page">
     <header className="detail-header" data-region="header">
@@ -53,8 +60,8 @@ const DetailPage = () => (
       </div>
 
       <div className="detail-header__badges">
-        <StatusChip status="active" domain="subscription" context="detail" />
-        <StatusChip status="processing" domain="invoice" context="detail" />
+        <StatusChip status={CURRENT_SUBSCRIPTION_STATUS} domain="subscription" context="detail" />
+        <StatusChip status={CURRENT_INVOICE_STATUS} domain="invoice" context="detail" />
       </div>
     </header>
 

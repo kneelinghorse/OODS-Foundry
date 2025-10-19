@@ -40,16 +40,16 @@ const headCellStyle: React.CSSProperties = {
   fontWeight: 600,
   letterSpacing: '0.08em',
   textTransform: 'uppercase',
-  color: 'var(--cmp-text-muted, #64748b)',
+  color: 'var(--cmp-text-muted)',
   padding: '0.45rem 0.75rem',
-  borderBottom: '1px solid color-mix(in srgb, var(--cmp-border-default, rgba(148,163,184,0.45)) 55%, transparent)'
+  borderBottom: '1px solid color-mix(in srgb, var(--cmp-border-default) 55%, transparent)'
 };
 
 const cellStyle: React.CSSProperties = {
   padding: '0.75rem 0.75rem',
-  background: 'var(--cmp-surface-panel, #ffffff)',
+  background: 'var(--cmp-surface-panel)',
   borderRadius: '0.8rem',
-  border: '1px solid color-mix(in srgb, var(--cmp-border-default, rgba(148,163,184,0.4)) 45%, transparent)',
+  border: '1px solid color-mix(in srgb, var(--cmp-border-default) 45%, transparent)',
   verticalAlign: 'top'
 };
 

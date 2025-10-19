@@ -16,13 +16,52 @@
         "$type": "color",
         "$value": "{ref.color.neutral.200}",
         "$description": "Secondary panel surface tone."
+      },
+      "disabled": {
+        "$type": "color",
+        "$value": "{ref.color.neutral.200}",
+        "$description": "Disabled component surface fill."
+      },
+      "backdrop": {
+        "$type": "color",
+        "$value": "{ref.color.neutral.900}",
+        "$description": "Backdrop and scrim tone for overlays."
+      },
+      "inverse": {
+        "$type": "color",
+        "$value": "{ref.color.neutral.900}",
+        "$description": "Inverse surface for dark-on-light contexts."
+      },
+      "interactive": {
+        "primary": {
+          "default": {
+            "$type": "color",
+            "$value": "{ref.color.primary.500}",
+            "$description": "Primary interactive default surface."
+          },
+          "hover": {
+            "$type": "color",
+            "$value": "{ref.color.primary.600}",
+            "$description": "Primary interactive hover surface."
+          },
+          "pressed": {
+            "$type": "color",
+            "$value": "{ref.color.primary.700}",
+            "$description": "Primary interactive pressed surface."
+          }
+        }
       }
     },
     "border": {
       "subtle": {
         "$type": "color",
         "$value": "{ref.color.neutral.300}",
-        "$description": "Default card outline tone."
+        "$description": "Default subtle border tone."
+      },
+      "strong": {
+        "$type": "color",
+        "$value": "{ref.color.neutral.500}",
+        "$description": "High contrast border tone."
       }
     },
     "text": {
@@ -31,10 +70,52 @@
         "$value": "{ref.color.neutral.900}",
         "$description": "Body text on light surfaces."
       },
+      "secondary": {
+        "$type": "color",
+        "$value": "{ref.color.neutral.700}",
+        "$description": "Secondary supporting text."
+      },
       "muted": {
         "$type": "color",
         "$value": "{ref.color.neutral.500}",
         "$description": "Muted caption text."
+      },
+      "inverse": {
+        "$type": "color",
+        "$value": "{ref.color.neutral.100}",
+        "$description": "Inverse text on dark surfaces."
+      },
+      "accent": {
+        "$type": "color",
+        "$value": "{ref.color.primary.600}",
+        "$description": "Accent text for highlights."
+      },
+      "on_interactive": {
+        "$type": "color",
+        "$value": "{ref.color.neutral.100}",
+        "$description": "Text on primary interactive surfaces."
+      },
+      "disabled": {
+        "$type": "color",
+        "$value": "{ref.color.neutral.400}",
+        "$description": "Disabled text."
+      }
+    },
+    "icon": {
+      "primary": {
+        "$type": "color",
+        "$value": "{ref.color.neutral.800}",
+        "$description": "Primary iconography tone."
+      },
+      "muted": {
+        "$type": "color",
+        "$value": "{ref.color.neutral.500}",
+        "$description": "Muted/secondary icon tone."
+      },
+      "on_interactive": {
+        "$type": "color",
+        "$value": "{ref.color.neutral.100}",
+        "$description": "Icons on primary interactive surfaces."
       }
     },
     "status": {
@@ -60,6 +141,94 @@
           "$description": "Informational icon tone."
         }
       },
+      "success": {
+        "surface": {
+          "$type": "color",
+          "$value": "{ref.color.success.100}",
+          "$description": "Success background tone."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{ref.color.success.300}",
+          "$description": "Success border tone."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "{ref.color.success.900}",
+          "$description": "Success text colour."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "{ref.color.success.700}",
+          "$description": "Success icon tone."
+        }
+      },
+      "warning": {
+        "surface": {
+          "$type": "color",
+          "$value": "{ref.color.warning.100}",
+          "$description": "Warning background tone."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{ref.color.warning.300}",
+          "$description": "Warning border tone."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "{ref.color.warning.900}",
+          "$description": "Warning text colour."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "{ref.color.warning.700}",
+          "$description": "Warning icon tone."
+        }
+      },
+      "critical": {
+        "surface": {
+          "$type": "color",
+          "$value": "{ref.color.critical.100}",
+          "$description": "Critical background tone."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{ref.color.critical.300}",
+          "$description": "Critical border tone."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "{ref.color.critical.900}",
+          "$description": "Critical text colour."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "{ref.color.critical.700}",
+          "$description": "Critical icon tone."
+        }
+      },
+      "neutral": {
+        "surface": {
+          "$type": "color",
+          "$value": "{ref.color.neutral.100}",
+          "$description": "Neutral status surface."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{ref.color.neutral.300}",
+          "$description": "Neutral status border."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "{ref.color.neutral.800}",
+          "$description": "Neutral status text."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "{ref.color.neutral.700}",
+          "$description": "Neutral status icon."
+        }
+      },
       "accent": {
         "surface": {
           "$type": "color",
@@ -83,12 +252,41 @@
         }
       }
     },
+    "focus": {
+      "ring": {
+        "outer": {
+          "$type": "color",
+          "$value": "{ref.color.neutral.900}",
+          "$description": "Outer halo colour for focus indicators."
+        },
+        "inner": {
+          "$type": "color",
+          "$value": "{ref.color.neutral.100}",
+          "$description": "Inner ring contrast colour for focus."
+        }
+      },
+      "text": {
+        "$type": "color",
+        "$value": "{ref.color.primary.600}",
+        "$description": "Text/icon accent used alongside focus."
+      },
+      "width": {
+        "$type": "dimension",
+        "$value": "2px",
+        "$description": "Default focus ring width."
+      }
+    },
     "space": {
       "stack": {
         "default": {
           "$type": "dimension",
           "$value": "{ref.space.stack.default}",
           "$description": "Default vertical spacing for layouts."
+        },
+        "compact": {
+          "$type": "dimension",
+          "$value": "{ref.space.stack.compact}",
+          "$description": "Compact vertical spacing for tight stacks."
         }
       },
       "inset": {
@@ -96,6 +294,23 @@
           "$type": "dimension",
           "$value": "{ref.space.inset.default}",
           "$description": "Default padding for cards."
+        },
+        "compact": {
+          "$type": "dimension",
+          "$value": "{ref.space.inset.compact}",
+          "$description": "Compact padding for dense shells."
+        }
+      },
+      "inline": {
+        "xs": {
+          "$type": "dimension",
+          "$value": "{ref.space.inline.xs}",
+          "$description": "Extra-small inline spacing token."
+        },
+        "sm": {
+          "$type": "dimension",
+          "$value": "{ref.space.inline.sm}",
+          "$description": "Small inline spacing token."
         }
       }
     }
@@ -104,13 +319,118 @@
     "surface": {
       "canvas": {
         "$type": "color",
-        "$value": "oklch(0.18 0.007 255)",
+        "$value": "oklch(0.18 0.05 45)",
         "$description": "Primary dark canvas tone."
       },
       "raised": {
         "$type": "color",
-        "$value": "oklch(0.24 0.007 255)",
+        "$value": "oklch(0.24 0.05 45)",
         "$description": "Raised panel surface for dark theme."
+      },
+      "subtle": {
+        "$type": "color",
+        "$value": "oklch(0.3 0.06 45)",
+        "$description": "Secondary panel surface tone for dark theme."
+      },
+      "disabled": {
+        "$type": "color",
+        "$value": "oklch(0.32 0.04 45)",
+        "$description": "Disabled component surface in dark theme."
+      },
+      "backdrop": {
+        "$type": "color",
+        "$value": "oklch(0.12 0.04 45)",
+        "$description": "Backdrop and scrim tone for dark theme overlays."
+      },
+      "inverse": {
+        "$type": "color",
+        "$value": "oklch(0.95 0.01 45)",
+        "$description": "Inverse surface token for dark contexts."
+      },
+      "interactive": {
+        "primary": {
+          "default": {
+            "$type": "color",
+            "$value": "oklch(0.52 0.2 45)",
+            "$description": "Primary interactive default surface for dark theme."
+          },
+          "hover": {
+            "$type": "color",
+            "$value": "oklch(0.60 0.215 45)",
+            "$description": "Primary interactive hover surface for dark theme."
+          },
+          "pressed": {
+            "$type": "color",
+            "$value": "oklch(0.67 0.23 45)",
+            "$description": "Primary interactive pressed surface for dark theme."
+          }
+        }
+      }
+    },
+    "border": {
+      "subtle": {
+        "$type": "color",
+        "$value": "oklch(0.44 0.04 45)",
+        "$description": "Subtle border tone for dark theme."
+      },
+      "strong": {
+        "$type": "color",
+        "$value": "oklch(0.53 0.05 45)",
+        "$description": "High contrast border tone for dark theme."
+      }
+    },
+    "text": {
+      "primary": {
+        "$type": "color",
+        "$value": "oklch(0.92 0.02 92)",
+        "$description": "Body text on dark surfaces."
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": "oklch(0.81 0.015 92)",
+        "$description": "Secondary text on dark surfaces."
+      },
+      "muted": {
+        "$type": "color",
+        "$value": "oklch(0.7 0.01 92)",
+        "$description": "Muted caption text on dark surfaces."
+      },
+      "inverse": {
+        "$type": "color",
+        "$value": "oklch(0.24 0.05 265)",
+        "$description": "Inverse text colour for dark theme."
+      },
+      "accent": {
+        "$type": "color",
+        "$value": "oklch(0.79 0.17 45)",
+        "$description": "Accent text for dark theme."
+      },
+      "on_interactive": {
+        "$type": "color",
+        "$value": "oklch(0.16 0.04 45)",
+        "$description": "Text on dark interactive surfaces."
+      },
+      "disabled": {
+        "$type": "color",
+        "$value": "oklch(0.55 0.008 92)",
+        "$description": "Disabled text on dark surfaces."
+      }
+    },
+    "icon": {
+      "primary": {
+        "$type": "color",
+        "$value": "oklch(0.88 0.02 92)",
+        "$description": "Primary icons on dark surfaces."
+      },
+      "muted": {
+        "$type": "color",
+        "$value": "oklch(0.7 0.01 92)",
+        "$description": "Muted icons on dark surfaces."
+      },
+      "on_interactive": {
+        "$type": "color",
+        "$value": "oklch(0.22 0.05 45)",
+        "$description": "Icons on interactive surfaces for dark theme."
       }
     },
     "status": {
@@ -134,6 +454,178 @@
           "$type": "color",
           "$value": "oklch(0.8 0.1 262)",
           "$description": "Dark informational icon."
+        }
+      },
+      "success": {
+        "surface": {
+          "$type": "color",
+          "$value": "oklch(0.32 0.09 161)",
+          "$description": "Dark success surface."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "oklch(0.43 0.11 161)",
+          "$description": "Dark success border."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "oklch(0.88 0.07 165)",
+          "$description": "Dark success text."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "oklch(0.78 0.1 163)",
+          "$description": "Dark success icon."
+        }
+      },
+      "warning": {
+        "surface": {
+          "$type": "color",
+          "$value": "oklch(0.34 0.09 85)",
+          "$description": "Dark warning surface."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "oklch(0.46 0.12 85)",
+          "$description": "Dark warning border."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "oklch(0.9 0.08 87)",
+          "$description": "Dark warning text."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "oklch(0.81 0.11 85)",
+          "$description": "Dark warning icon."
+        }
+      },
+      "critical": {
+        "surface": {
+          "$type": "color",
+          "$value": "oklch(0.31 0.12 25)",
+          "$description": "Dark critical surface."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "oklch(0.43 0.15 25)",
+          "$description": "Dark critical border."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "oklch(0.88 0.09 23)",
+          "$description": "Dark critical text."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "oklch(0.79 0.13 24)",
+          "$description": "Dark critical icon."
+        }
+      },
+      "neutral": {
+        "surface": {
+          "$type": "color",
+          "$value": "oklch(0.32 0.02 260)",
+          "$description": "Dark neutral surface."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "oklch(0.41 0.025 260)",
+          "$description": "Dark neutral border."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "oklch(0.86 0.02 260)",
+          "$description": "Dark neutral text."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "oklch(0.74 0.02 260)",
+          "$description": "Dark neutral icon."
+        }
+      },
+      "accent": {
+        "surface": {
+          "$type": "color",
+          "$value": "oklch(0.4 0.18 45)",
+          "$description": "Dark accent surface."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "oklch(0.5 0.19 45)",
+          "$description": "Dark accent border."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "oklch(0.92 0.05 92)",
+          "$description": "Dark accent text."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "oklch(0.82 0.12 45)",
+          "$description": "Dark accent icon."
+        }
+      }
+    },
+    "focus": {
+      "ring": {
+        "outer": {
+          "$type": "color",
+          "$value": "color-mix(in oklch, oklch(0.79 0.17 45) 60%, oklch(0.97 0.01 95))",
+          "$description": "Outer focus ring for dark surfaces."
+        },
+        "inner": {
+          "$type": "color",
+          "$value": "oklch(0.18 0.05 45)",
+          "$description": "Inner focus ring contrast for dark theme."
+        }
+      },
+      "text": {
+        "$type": "color",
+        "$value": "oklch(0.79 0.17 45)",
+        "$description": "Text/icon accent accompanying dark focus."
+      },
+      "width": {
+        "$type": "dimension",
+        "$value": "2px",
+        "$description": "Default focus ring width for dark theme."
+      }
+    },
+    "space": {
+      "stack": {
+        "default": {
+          "$type": "dimension",
+          "$value": "{ref.space.stack.default}",
+          "$description": "Dark theme inherits default stack spacing."
+        },
+        "compact": {
+          "$type": "dimension",
+          "$value": "{ref.space.stack.compact}",
+          "$description": "Dark theme inherits compact stack spacing."
+        }
+      },
+      "inset": {
+        "default": {
+          "$type": "dimension",
+          "$value": "{ref.space.inset.default}",
+          "$description": "Dark theme inherits default inset spacing."
+        },
+        "compact": {
+          "$type": "dimension",
+          "$value": "{ref.space.inset.compact}",
+          "$description": "Dark theme inherits compact inset spacing."
+        }
+      },
+      "inline": {
+        "xs": {
+          "$type": "dimension",
+          "$value": "{ref.space.inline.xs}",
+          "$description": "Dark theme inherits extra-small inline spacing."
+        },
+        "sm": {
+          "$type": "dimension",
+          "$value": "{ref.space.inline.sm}",
+          "$description": "Dark theme inherits small inline spacing."
         }
       }
     }

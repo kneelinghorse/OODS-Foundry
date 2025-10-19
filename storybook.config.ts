@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { execSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 import type { StorybookConfig } from '@storybook/react-vite';
@@ -8,6 +9,11 @@ const workspaceRoot = path.dirname(fileURLToPath(import.meta.url));
 
 const storiesRoot = path.join(workspaceRoot, 'src', 'stories');
 const explorerStoriesRoot = path.join(workspaceRoot, 'apps', 'explorer', 'src', 'stories');
+const tokensDistDir = path.resolve(workspaceRoot, 'packages', 'tokens', 'dist');
+const tokensTailwindPath = path.resolve(tokensDistDir, 'tailwind', 'tokens.json');
+const tokensCssPath = path.resolve(tokensDistDir, 'css', 'tokens.css');
+const tokensModulePath = path.resolve(tokensDistDir, 'index.js');
+let tokensBuilt = false;
 
 const config: StorybookConfig = {
   stories: [
@@ -32,7 +38,19 @@ const config: StorybookConfig = {
     autodocs: true,
   },
   viteFinal: async (baseConfig) => {
-    baseConfig.plugins = [...(baseConfig.plugins ?? []), tsconfigPaths()];
+    if (!tokensBuilt) {
+      execSync('pnpm --filter @oods/tokens run build', {
+        stdio: 'inherit',
+        cwd: workspaceRoot,
+      });
+      tokensBuilt = true;
+    }
+    baseConfig.plugins = [
+      ...(baseConfig.plugins ?? []),
+      tsconfigPaths({
+        projects: [path.resolve(workspaceRoot, 'tsconfig.storybook.json')],
+      }),
+    ];
     baseConfig.root = workspaceRoot;
     baseConfig.resolve = {
       ...(baseConfig.resolve ?? {}),
@@ -40,6 +58,9 @@ const config: StorybookConfig = {
         ...(baseConfig.resolve?.alias ?? {}),
         '~': workspaceRoot,
         '@storybook/blocks': '@storybook/addon-docs/blocks',
+        '@oods/tokens/css': tokensCssPath,
+        '@oods/tokens/tailwind': tokensTailwindPath,
+        '@oods/tokens': tokensModulePath,
       },
     };
     const fsAllow = new Set<string>(

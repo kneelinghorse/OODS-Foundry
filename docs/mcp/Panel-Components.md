@@ -25,6 +25,19 @@ This note captures the current contract and behavioural guarantees for the reusa
 - **Security reminder:** a short confidentiality hint follows the table to reinforce safe handling of generated data.
 - **Styling hooks:** `.agent-panel__artifact-*` classes co-located with the diff styles.
 
+## TaskQueueList & Status Badges
+
+- **Purpose:** surface all queued panel runs with live status chips (`Queued`, `WaitingApproval`, `Running`, `Done`, `Denied`). Queue buttons double as selectors that hydrate the plan/apply form with the recorded inputs.
+- **Metadata:** each item prints the tool slug, ISO `createdAt`, latest `incidentId` (hyperlinked when diagnostics are available), and optional adornments for dry-run/apply errors or denial reasons.
+- **Accessibility:** rendered as a focusable `<button>` list; activating an item fires the same behaviour as selecting it via keyboard. `aria-live` announcements mirror the selection summary, and standard focus styling is preserved for high-contrast modes.
+- **Styling:** badges use `TASK_STATUS_THEME` inside `panel.tsx`, keeping colours tokenised. The wrapper exposes `.agent-panel__task-list` hooks if theming needs to live in CSS.
+
+## ApprovalDialog
+
+- **Purpose:** gate `apply:true` runs behind an explicit confirmation.
+- **State contract:** `open` toggles the modal; `confirming` flips the primary button into a busy state while the bridge request is in flight.
+- **Focus management:** cancelling restores focus to the original invoker; confirming holds the dialog open until the bridge resolves, then dismisses automatically.
+
 ## Integration Notes
 
 1. Import `./styles/panel.css` alongside `panel.tsx` to enable the shared tokens for both components.

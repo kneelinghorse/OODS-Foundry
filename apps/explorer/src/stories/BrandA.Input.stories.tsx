@@ -37,7 +37,7 @@ export const Dark: Story = {
       <div style={{ ...contentCardStyle, gap: '1.75rem' }}>
         <header style={{ display: 'grid', gap: '0.75rem' }}>
           <h1 style={{ margin: 0, fontSize: '1.6rem' }}>Inputs &amp; Text Areas · Brand A Dark</h1>
-          <p style={{ margin: 0, color: 'var(--cmp-text-muted, #94a3b8)', lineHeight: 1.6 }}>
+          <p style={{ margin: 0, color: 'var(--cmp-text-muted)', lineHeight: 1.6 }}>
             Controls showcase neutral, warning, critical, and success states with brand surfaces + contrast-safe focus rings.
           </p>
         </header>

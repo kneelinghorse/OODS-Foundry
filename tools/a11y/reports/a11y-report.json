@@ -1,9 +1,10 @@
 {
-  "generatedAt": "2025-10-16T16:41:39.964Z",
+  "generatedAt": "2025-10-18T23:33:24.837Z",
   "totals": {
     "contrast": 31,
     "guardrails": 6,
-    "overall": 37
+    "contract": 12,
+    "overall": 49
   },
   "sections": {
     "contrast": [
@@ -447,7 +448,7 @@
         "ruleId": "guardrail:filled_surface_light_hover",
         "checkType": "guardrail",
         "target": "Filled Surface (Light) • Hover",
-        "summary": "Derived token theme.surface.interactive.primary.hover must remain within guardrail Δ ranges of theme.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using sys.text.on-interactive.",
+        "summary": "Derived token theme.surface.interactive.primary.hover must remain within guardrail Δ ranges of theme.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using sys.text.on_interactive.",
         "pass": true,
         "failureSummary": "",
         "ratio": 7.1,
@@ -472,7 +473,7 @@
             "ratio": 7.1,
             "threshold": 4.5,
             "baseRatio": 4.56,
-            "foreground": "sys.text.on-interactive",
+            "foreground": "sys.text.on_interactive",
             "background": "theme.surface.interactive.primary.hover"
           }
         },
@@ -506,7 +507,7 @@
               "pass": true,
               "ratio": 7.09942286486706,
               "threshold": 4.5,
-              "foreground": "sys.text.on-interactive",
+              "foreground": "sys.text.on_interactive",
               "background": "theme.surface.interactive.primary.hover"
             }
           ]
@@ -516,7 +517,7 @@
         "ruleId": "guardrail:filled_surface_light_pressed",
         "checkType": "guardrail",
         "target": "Filled Surface (Light) • Pressed",
-        "summary": "Derived token theme.surface.interactive.primary.pressed must remain within guardrail Δ ranges of theme.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using sys.text.on-interactive.",
+        "summary": "Derived token theme.surface.interactive.primary.pressed must remain within guardrail Δ ranges of theme.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using sys.text.on_interactive.",
         "pass": true,
         "failureSummary": "",
         "ratio": 8.57,
@@ -541,7 +542,7 @@
             "ratio": 8.57,
             "threshold": 4.5,
             "baseRatio": 4.56,
-            "foreground": "sys.text.on-interactive",
+            "foreground": "sys.text.on_interactive",
             "background": "theme.surface.interactive.primary.pressed"
           }
         },
@@ -575,7 +576,7 @@
               "pass": true,
               "ratio": 8.574017557234754,
               "threshold": 4.5,
-              "foreground": "sys.text.on-interactive",
+              "foreground": "sys.text.on_interactive",
               "background": "theme.surface.interactive.primary.pressed"
             }
           ]
@@ -585,7 +586,7 @@
         "ruleId": "guardrail:filled_surface_dark_hover",
         "checkType": "guardrail",
         "target": "Filled Surface (Dark) • Hover",
-        "summary": "Derived token theme-dark.surface.interactive.primary.hover must remain within guardrail Δ ranges of theme-dark.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using theme-dark.text.on-interactive.",
+        "summary": "Derived token theme-dark.surface.interactive.primary.hover must remain within guardrail Δ ranges of theme-dark.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using theme-dark.text.on_interactive.",
         "pass": true,
         "failureSummary": "",
         "ratio": 5.56,
@@ -610,7 +611,7 @@
             "ratio": 5.56,
             "threshold": 4.5,
             "baseRatio": 7.88,
-            "foreground": "theme-dark.text.on-interactive",
+            "foreground": "theme-dark.text.on_interactive",
             "background": "theme-dark.surface.interactive.primary.hover"
           }
         },
@@ -644,7 +645,7 @@
               "pass": true,
               "ratio": 5.562279671457898,
               "threshold": 4.5,
-              "foreground": "theme-dark.text.on-interactive",
+              "foreground": "theme-dark.text.on_interactive",
               "background": "theme-dark.surface.interactive.primary.hover"
             }
           ]
@@ -654,7 +655,7 @@
         "ruleId": "guardrail:filled_surface_dark_pressed",
         "checkType": "guardrail",
         "target": "Filled Surface (Dark) • Pressed",
-        "summary": "Derived token theme-dark.surface.interactive.primary.pressed must remain within guardrail Δ ranges of theme-dark.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using theme-dark.text.on-interactive.",
+        "summary": "Derived token theme-dark.surface.interactive.primary.pressed must remain within guardrail Δ ranges of theme-dark.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using theme-dark.text.on_interactive.",
         "pass": true,
         "failureSummary": "",
         "ratio": 4.68,
@@ -679,7 +680,7 @@
             "ratio": 4.68,
             "threshold": 4.5,
             "baseRatio": 7.88,
-            "foreground": "theme-dark.text.on-interactive",
+            "foreground": "theme-dark.text.on_interactive",
             "background": "theme-dark.surface.interactive.primary.pressed"
           }
         },
@@ -713,7 +714,7 @@
               "pass": true,
               "ratio": 4.679086258103043,
               "threshold": 4.5,
-              "foreground": "theme-dark.text.on-interactive",
+              "foreground": "theme-dark.text.on_interactive",
               "background": "theme-dark.surface.interactive.primary.pressed"
             }
           ]
@@ -723,7 +724,7 @@
         "ruleId": "guardrail:filled_surface_sys_hover",
         "checkType": "guardrail",
         "target": "Filled Surface (System) • Hover",
-        "summary": "Derived token sys.surface.interactive.primary.hover must remain within guardrail Δ ranges of sys.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using sys.text.on-interactive.",
+        "summary": "Derived token sys.surface.interactive.primary.hover must remain within guardrail Δ ranges of sys.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using sys.text.on_interactive.",
         "pass": true,
         "failureSummary": "",
         "ratio": 7.1,
@@ -748,7 +749,7 @@
             "ratio": 7.1,
             "threshold": 4.5,
             "baseRatio": 4.56,
-            "foreground": "sys.text.on-interactive",
+            "foreground": "sys.text.on_interactive",
             "background": "sys.surface.interactive.primary.hover"
           }
         },
@@ -782,7 +783,7 @@
               "pass": true,
               "ratio": 7.09942286486706,
               "threshold": 4.5,
-              "foreground": "sys.text.on-interactive",
+              "foreground": "sys.text.on_interactive",
               "background": "sys.surface.interactive.primary.hover"
             }
           ]
@@ -792,7 +793,7 @@
         "ruleId": "guardrail:filled_surface_sys_pressed",
         "checkType": "guardrail",
         "target": "Filled Surface (System) • Pressed",
-        "summary": "Derived token sys.surface.interactive.primary.pressed must remain within guardrail Δ ranges of sys.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using sys.text.on-interactive.",
+        "summary": "Derived token sys.surface.interactive.primary.pressed must remain within guardrail Δ ranges of sys.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using sys.text.on_interactive.",
         "pass": true,
         "failureSummary": "",
         "ratio": 8.57,
@@ -817,7 +818,7 @@
             "ratio": 8.57,
             "threshold": 4.5,
             "baseRatio": 4.56,
-            "foreground": "sys.text.on-interactive",
+            "foreground": "sys.text.on_interactive",
             "background": "sys.surface.interactive.primary.pressed"
           }
         },
@@ -851,10 +852,432 @@
               "pass": true,
               "ratio": 8.574017557234754,
               "threshold": 4.5,
-              "foreground": "sys.text.on-interactive",
+              "foreground": "sys.text.on_interactive",
               "background": "sys.surface.interactive.primary.pressed"
             }
           ]
+        }
+      }
+    ],
+    "contract": [
+      {
+        "ruleId": "story:components-button--primary::Theme • Light",
+        "checkType": "contract",
+        "target": "Components/Button — Primary CTA • Theme • Light",
+        "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for components-button--primary.",
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "storyId": "components-button--primary",
+          "variant": "Theme • Light",
+          "url": "http://127.0.0.1:54053/iframe.html?id=components-button--primary&viewMode=story&globals=theme%3Alight",
+          "tags": [
+            "controls",
+            "focus",
+            "keyboard"
+          ],
+          "failOnImpact": [
+            "serious",
+            "critical"
+          ],
+          "violations": [],
+          "incomplete": [
+            {
+              "id": "bypass",
+              "impact": "serious",
+              "help": "Page must have means to bypass repeated blocks",
+              "description": "Ensure each page has at least one mechanism for a user to bypass navigation and jump straight to the content",
+              "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/bypass?application=axeAPI",
+              "nodes": [
+                {
+                  "target": "html",
+                  "html": "<html lang=\"en\" data-theme=\"light\">",
+                  "failureSummary": "Fix any of the following:\n  No valid skip link found\n  Page does not have a heading\n  Page does not have a landmark region"
+                }
+              ]
+            }
+          ],
+          "durationMs": 1092
+        }
+      },
+      {
+        "ruleId": "story:components-button--primary::Theme • Dark",
+        "checkType": "contract",
+        "target": "Components/Button — Primary CTA • Theme • Dark",
+        "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for components-button--primary.",
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "storyId": "components-button--primary",
+          "variant": "Theme • Dark",
+          "url": "http://127.0.0.1:54053/iframe.html?id=components-button--primary&viewMode=story&globals=theme%3Adark",
+          "tags": [
+            "controls",
+            "focus",
+            "keyboard"
+          ],
+          "failOnImpact": [
+            "serious",
+            "critical"
+          ],
+          "violations": [],
+          "incomplete": [
+            {
+              "id": "bypass",
+              "impact": "serious",
+              "help": "Page must have means to bypass repeated blocks",
+              "description": "Ensure each page has at least one mechanism for a user to bypass navigation and jump straight to the content",
+              "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/bypass?application=axeAPI",
+              "nodes": [
+                {
+                  "target": "html",
+                  "html": "<html lang=\"en\" data-theme=\"dark\">",
+                  "failureSummary": "Fix any of the following:\n  No valid skip link found\n  Page does not have a heading\n  Page does not have a landmark region"
+                }
+              ]
+            }
+          ],
+          "durationMs": 1013
+        }
+      },
+      {
+        "ruleId": "story:components-banner--primary::Theme • Light",
+        "checkType": "contract",
+        "target": "Components/Banner — Inline Status • Theme • Light",
+        "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for components-banner--primary.",
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "storyId": "components-banner--primary",
+          "variant": "Theme • Light",
+          "url": "http://127.0.0.1:54053/iframe.html?id=components-banner--primary&viewMode=story&globals=theme%3Alight",
+          "tags": [
+            "status",
+            "aria-live",
+            "links"
+          ],
+          "failOnImpact": [
+            "serious",
+            "critical"
+          ],
+          "violations": [],
+          "incomplete": [
+            {
+              "id": "bypass",
+              "impact": "serious",
+              "help": "Page must have means to bypass repeated blocks",
+              "description": "Ensure each page has at least one mechanism for a user to bypass navigation and jump straight to the content",
+              "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/bypass?application=axeAPI",
+              "nodes": [
+                {
+                  "target": "html",
+                  "html": "<html lang=\"en\" data-theme=\"light\">",
+                  "failureSummary": "Fix any of the following:\n  No valid skip link found\n  Page does not have a heading\n  Page does not have a landmark region"
+                }
+              ]
+            }
+          ],
+          "durationMs": 966
+        }
+      },
+      {
+        "ruleId": "story:components-banner--primary::Theme • Dark",
+        "checkType": "contract",
+        "target": "Components/Banner — Inline Status • Theme • Dark",
+        "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for components-banner--primary.",
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "storyId": "components-banner--primary",
+          "variant": "Theme • Dark",
+          "url": "http://127.0.0.1:54053/iframe.html?id=components-banner--primary&viewMode=story&globals=theme%3Adark",
+          "tags": [
+            "status",
+            "aria-live",
+            "links"
+          ],
+          "failOnImpact": [
+            "serious",
+            "critical"
+          ],
+          "violations": [],
+          "incomplete": [
+            {
+              "id": "bypass",
+              "impact": "serious",
+              "help": "Page must have means to bypass repeated blocks",
+              "description": "Ensure each page has at least one mechanism for a user to bypass navigation and jump straight to the content",
+              "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/bypass?application=axeAPI",
+              "nodes": [
+                {
+                  "target": "html",
+                  "html": "<html lang=\"en\" data-theme=\"dark\">",
+                  "failureSummary": "Fix any of the following:\n  No valid skip link found\n  Page does not have a heading\n  Page does not have a landmark region"
+                }
+              ]
+            }
+          ],
+          "durationMs": 1004
+        }
+      },
+      {
+        "ruleId": "story:components-tabs--primary::Theme • Light",
+        "checkType": "contract",
+        "target": "Components/Tabs — Keyboard Navigation • Theme • Light",
+        "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for components-tabs--primary.",
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "storyId": "components-tabs--primary",
+          "variant": "Theme • Light",
+          "url": "http://127.0.0.1:54053/iframe.html?id=components-tabs--primary&viewMode=story&globals=theme%3Alight",
+          "tags": [
+            "navigation",
+            "aria-roles",
+            "keyboard"
+          ],
+          "failOnImpact": [
+            "serious",
+            "critical"
+          ],
+          "violations": [],
+          "incomplete": [
+            {
+              "id": "bypass",
+              "impact": "serious",
+              "help": "Page must have means to bypass repeated blocks",
+              "description": "Ensure each page has at least one mechanism for a user to bypass navigation and jump straight to the content",
+              "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/bypass?application=axeAPI",
+              "nodes": [
+                {
+                  "target": "html",
+                  "html": "<html lang=\"en\" data-theme=\"light\">",
+                  "failureSummary": "Fix any of the following:\n  No valid skip link found\n  Page does not have a heading\n  Page does not have a landmark region"
+                }
+              ]
+            }
+          ],
+          "durationMs": 990
+        }
+      },
+      {
+        "ruleId": "story:components-tabs--primary::Theme • Dark",
+        "checkType": "contract",
+        "target": "Components/Tabs — Keyboard Navigation • Theme • Dark",
+        "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for components-tabs--primary.",
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "storyId": "components-tabs--primary",
+          "variant": "Theme • Dark",
+          "url": "http://127.0.0.1:54053/iframe.html?id=components-tabs--primary&viewMode=story&globals=theme%3Adark",
+          "tags": [
+            "navigation",
+            "aria-roles",
+            "keyboard"
+          ],
+          "failOnImpact": [
+            "serious",
+            "critical"
+          ],
+          "violations": [],
+          "incomplete": [
+            {
+              "id": "bypass",
+              "impact": "serious",
+              "help": "Page must have means to bypass repeated blocks",
+              "description": "Ensure each page has at least one mechanism for a user to bypass navigation and jump straight to the content",
+              "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/bypass?application=axeAPI",
+              "nodes": [
+                {
+                  "target": "html",
+                  "html": "<html lang=\"en\" data-theme=\"dark\">",
+                  "failureSummary": "Fix any of the following:\n  No valid skip link found\n  Page does not have a heading\n  Page does not have a landmark region"
+                }
+              ]
+            }
+          ],
+          "durationMs": 968
+        }
+      },
+      {
+        "ruleId": "story:patterns-form--help-error-text-demo::Theme • Light",
+        "checkType": "contract",
+        "target": "Patterns/Form — Help vs Error Text • Theme • Light",
+        "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for patterns-form--help-error-text-demo.",
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "storyId": "patterns-form--help-error-text-demo",
+          "variant": "Theme • Light",
+          "url": "http://127.0.0.1:54053/iframe.html?id=patterns-form--help-error-text-demo&viewMode=story&globals=theme%3Alight",
+          "tags": [
+            "forms",
+            "aria-invalid",
+            "feedback"
+          ],
+          "failOnImpact": [
+            "serious",
+            "critical"
+          ],
+          "violations": [],
+          "incomplete": [
+            {
+              "id": "bypass",
+              "impact": "serious",
+              "help": "Page must have means to bypass repeated blocks",
+              "description": "Ensure each page has at least one mechanism for a user to bypass navigation and jump straight to the content",
+              "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/bypass?application=axeAPI",
+              "nodes": [
+                {
+                  "target": "html",
+                  "html": "<html lang=\"en\" data-theme=\"light\">",
+                  "failureSummary": "Fix any of the following:\n  No valid skip link found\n  Page does not have a heading\n  Page does not have a landmark region"
+                }
+              ]
+            }
+          ],
+          "durationMs": 972
+        }
+      },
+      {
+        "ruleId": "story:patterns-form--help-error-text-demo::Theme • Dark",
+        "checkType": "contract",
+        "target": "Patterns/Form — Help vs Error Text • Theme • Dark",
+        "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for patterns-form--help-error-text-demo.",
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "storyId": "patterns-form--help-error-text-demo",
+          "variant": "Theme • Dark",
+          "url": "http://127.0.0.1:54053/iframe.html?id=patterns-form--help-error-text-demo&viewMode=story&globals=theme%3Adark",
+          "tags": [
+            "forms",
+            "aria-invalid",
+            "feedback"
+          ],
+          "failOnImpact": [
+            "serious",
+            "critical"
+          ],
+          "violations": [],
+          "incomplete": [
+            {
+              "id": "bypass",
+              "impact": "serious",
+              "help": "Page must have means to bypass repeated blocks",
+              "description": "Ensure each page has at least one mechanism for a user to bypass navigation and jump straight to the content",
+              "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/bypass?application=axeAPI",
+              "nodes": [
+                {
+                  "target": "html",
+                  "html": "<html lang=\"en\" data-theme=\"dark\">",
+                  "failureSummary": "Fix any of the following:\n  No valid skip link found\n  Page does not have a heading\n  Page does not have a landmark region"
+                }
+              ]
+            }
+          ],
+          "durationMs": 1068
+        }
+      },
+      {
+        "ruleId": "story:billing-subscription-form--contract-adjustments::Theme • Light",
+        "checkType": "contract",
+        "target": "Billing/Subscription.Form — Contract Adjustments • Theme • Light",
+        "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for billing-subscription-form--contract-adjustments.",
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "storyId": "billing-subscription-form--contract-adjustments",
+          "variant": "Theme • Light",
+          "url": "http://127.0.0.1:54053/iframe.html?id=billing-subscription-form--contract-adjustments&viewMode=story&globals=theme%3Alight",
+          "tags": [
+            "forms",
+            "aria-describedby",
+            "validation"
+          ],
+          "failOnImpact": [
+            "serious",
+            "critical"
+          ],
+          "violations": [],
+          "incomplete": [],
+          "durationMs": 1032
+        }
+      },
+      {
+        "ruleId": "story:billing-subscription-form--contract-adjustments::Theme • Dark",
+        "checkType": "contract",
+        "target": "Billing/Subscription.Form — Contract Adjustments • Theme • Dark",
+        "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for billing-subscription-form--contract-adjustments.",
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "storyId": "billing-subscription-form--contract-adjustments",
+          "variant": "Theme • Dark",
+          "url": "http://127.0.0.1:54053/iframe.html?id=billing-subscription-form--contract-adjustments&viewMode=story&globals=theme%3Adark",
+          "tags": [
+            "forms",
+            "aria-describedby",
+            "validation"
+          ],
+          "failOnImpact": [
+            "serious",
+            "critical"
+          ],
+          "violations": [],
+          "incomplete": [],
+          "durationMs": 1094
+        }
+      },
+      {
+        "ruleId": "story:billing-invoice-detail--finance-dossier::Theme • Light",
+        "checkType": "contract",
+        "target": "Billing/Invoice.Detail — Finance Dossier • Theme • Light",
+        "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for billing-invoice-detail--finance-dossier.",
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "storyId": "billing-invoice-detail--finance-dossier",
+          "variant": "Theme • Light",
+          "url": "http://127.0.0.1:54053/iframe.html?id=billing-invoice-detail--finance-dossier&viewMode=story&globals=theme%3Alight",
+          "tags": [
+            "detail-view",
+            "aria-labelledby",
+            "landmarks"
+          ],
+          "failOnImpact": [
+            "serious",
+            "critical"
+          ],
+          "violations": [],
+          "incomplete": [],
+          "durationMs": 977
+        }
+      },
+      {
+        "ruleId": "story:billing-invoice-detail--finance-dossier::Theme • Dark",
+        "checkType": "contract",
+        "target": "Billing/Invoice.Detail — Finance Dossier • Theme • Dark",
+        "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for billing-invoice-detail--finance-dossier.",
+        "pass": true,
+        "failureSummary": "",
+        "details": {
+          "storyId": "billing-invoice-detail--finance-dossier",
+          "variant": "Theme • Dark",
+          "url": "http://127.0.0.1:54053/iframe.html?id=billing-invoice-detail--finance-dossier&viewMode=story&globals=theme%3Adark",
+          "tags": [
+            "detail-view",
+            "aria-labelledby",
+            "landmarks"
+          ],
+          "failOnImpact": [
+            "serious",
+            "critical"
+          ],
+          "violations": [],
+          "incomplete": [],
+          "durationMs": 1077
         }
       }
     ]
@@ -1298,7 +1721,7 @@
       "ruleId": "guardrail:filled_surface_light_hover",
       "checkType": "guardrail",
       "target": "Filled Surface (Light) • Hover",
-      "summary": "Derived token theme.surface.interactive.primary.hover must remain within guardrail Δ ranges of theme.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using sys.text.on-interactive.",
+      "summary": "Derived token theme.surface.interactive.primary.hover must remain within guardrail Δ ranges of theme.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using sys.text.on_interactive.",
       "pass": true,
       "failureSummary": "",
       "ratio": 7.1,
@@ -1323,7 +1746,7 @@
           "ratio": 7.1,
           "threshold": 4.5,
           "baseRatio": 4.56,
-          "foreground": "sys.text.on-interactive",
+          "foreground": "sys.text.on_interactive",
           "background": "theme.surface.interactive.primary.hover"
         }
       },
@@ -1357,7 +1780,7 @@
             "pass": true,
             "ratio": 7.09942286486706,
             "threshold": 4.5,
-            "foreground": "sys.text.on-interactive",
+            "foreground": "sys.text.on_interactive",
             "background": "theme.surface.interactive.primary.hover"
           }
         ]
@@ -1367,7 +1790,7 @@
       "ruleId": "guardrail:filled_surface_light_pressed",
       "checkType": "guardrail",
       "target": "Filled Surface (Light) • Pressed",
-      "summary": "Derived token theme.surface.interactive.primary.pressed must remain within guardrail Δ ranges of theme.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using sys.text.on-interactive.",
+      "summary": "Derived token theme.surface.interactive.primary.pressed must remain within guardrail Δ ranges of theme.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using sys.text.on_interactive.",
       "pass": true,
       "failureSummary": "",
       "ratio": 8.57,
@@ -1392,7 +1815,7 @@
           "ratio": 8.57,
           "threshold": 4.5,
           "baseRatio": 4.56,
-          "foreground": "sys.text.on-interactive",
+          "foreground": "sys.text.on_interactive",
           "background": "theme.surface.interactive.primary.pressed"
         }
       },
@@ -1426,7 +1849,7 @@
             "pass": true,
             "ratio": 8.574017557234754,
             "threshold": 4.5,
-            "foreground": "sys.text.on-interactive",
+            "foreground": "sys.text.on_interactive",
             "background": "theme.surface.interactive.primary.pressed"
           }
         ]
@@ -1436,7 +1859,7 @@
       "ruleId": "guardrail:filled_surface_dark_hover",
       "checkType": "guardrail",
       "target": "Filled Surface (Dark) • Hover",
-      "summary": "Derived token theme-dark.surface.interactive.primary.hover must remain within guardrail Δ ranges of theme-dark.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using theme-dark.text.on-interactive.",
+      "summary": "Derived token theme-dark.surface.interactive.primary.hover must remain within guardrail Δ ranges of theme-dark.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using theme-dark.text.on_interactive.",
       "pass": true,
       "failureSummary": "",
       "ratio": 5.56,
@@ -1461,7 +1884,7 @@
           "ratio": 5.56,
           "threshold": 4.5,
           "baseRatio": 7.88,
-          "foreground": "theme-dark.text.on-interactive",
+          "foreground": "theme-dark.text.on_interactive",
           "background": "theme-dark.surface.interactive.primary.hover"
         }
       },
@@ -1495,7 +1918,7 @@
             "pass": true,
             "ratio": 5.562279671457898,
             "threshold": 4.5,
-            "foreground": "theme-dark.text.on-interactive",
+            "foreground": "theme-dark.text.on_interactive",
             "background": "theme-dark.surface.interactive.primary.hover"
           }
         ]
@@ -1505,7 +1928,7 @@
       "ruleId": "guardrail:filled_surface_dark_pressed",
       "checkType": "guardrail",
       "target": "Filled Surface (Dark) • Pressed",
-      "summary": "Derived token theme-dark.surface.interactive.primary.pressed must remain within guardrail Δ ranges of theme-dark.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using theme-dark.text.on-interactive.",
+      "summary": "Derived token theme-dark.surface.interactive.primary.pressed must remain within guardrail Δ ranges of theme-dark.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using theme-dark.text.on_interactive.",
       "pass": true,
       "failureSummary": "",
       "ratio": 4.68,
@@ -1530,7 +1953,7 @@
           "ratio": 4.68,
           "threshold": 4.5,
           "baseRatio": 7.88,
-          "foreground": "theme-dark.text.on-interactive",
+          "foreground": "theme-dark.text.on_interactive",
           "background": "theme-dark.surface.interactive.primary.pressed"
         }
       },
@@ -1564,7 +1987,7 @@
             "pass": true,
             "ratio": 4.679086258103043,
             "threshold": 4.5,
-            "foreground": "theme-dark.text.on-interactive",
+            "foreground": "theme-dark.text.on_interactive",
             "background": "theme-dark.surface.interactive.primary.pressed"
           }
         ]
@@ -1574,7 +1997,7 @@
       "ruleId": "guardrail:filled_surface_sys_hover",
       "checkType": "guardrail",
       "target": "Filled Surface (System) • Hover",
-      "summary": "Derived token sys.surface.interactive.primary.hover must remain within guardrail Δ ranges of sys.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using sys.text.on-interactive.",
+      "summary": "Derived token sys.surface.interactive.primary.hover must remain within guardrail Δ ranges of sys.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using sys.text.on_interactive.",
       "pass": true,
       "failureSummary": "",
       "ratio": 7.1,
@@ -1599,7 +2022,7 @@
           "ratio": 7.1,
           "threshold": 4.5,
           "baseRatio": 4.56,
-          "foreground": "sys.text.on-interactive",
+          "foreground": "sys.text.on_interactive",
           "background": "sys.surface.interactive.primary.hover"
         }
       },
@@ -1633,7 +2056,7 @@
             "pass": true,
             "ratio": 7.09942286486706,
             "threshold": 4.5,
-            "foreground": "sys.text.on-interactive",
+            "foreground": "sys.text.on_interactive",
             "background": "sys.surface.interactive.primary.hover"
           }
         ]
@@ -1643,7 +2066,7 @@
       "ruleId": "guardrail:filled_surface_sys_pressed",
       "checkType": "guardrail",
       "target": "Filled Surface (System) • Pressed",
-      "summary": "Derived token sys.surface.interactive.primary.pressed must remain within guardrail Δ ranges of sys.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using sys.text.on-interactive.",
+      "summary": "Derived token sys.surface.interactive.primary.pressed must remain within guardrail Δ ranges of sys.surface.interactive.primary.default. Maintain ≥4.5:1 contrast using sys.text.on_interactive.",
       "pass": true,
       "failureSummary": "",
       "ratio": 8.57,
@@ -1668,7 +2091,7 @@
           "ratio": 8.57,
           "threshold": 4.5,
           "baseRatio": 4.56,
-          "foreground": "sys.text.on-interactive",
+          "foreground": "sys.text.on_interactive",
           "background": "sys.surface.interactive.primary.pressed"
         }
       },
@@ -1702,10 +2125,430 @@
             "pass": true,
             "ratio": 8.574017557234754,
             "threshold": 4.5,
-            "foreground": "sys.text.on-interactive",
+            "foreground": "sys.text.on_interactive",
             "background": "sys.surface.interactive.primary.pressed"
           }
         ]
+      }
+    },
+    {
+      "ruleId": "story:components-button--primary::Theme • Light",
+      "checkType": "contract",
+      "target": "Components/Button — Primary CTA • Theme • Light",
+      "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for components-button--primary.",
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "storyId": "components-button--primary",
+        "variant": "Theme • Light",
+        "url": "http://127.0.0.1:54053/iframe.html?id=components-button--primary&viewMode=story&globals=theme%3Alight",
+        "tags": [
+          "controls",
+          "focus",
+          "keyboard"
+        ],
+        "failOnImpact": [
+          "serious",
+          "critical"
+        ],
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "bypass",
+            "impact": "serious",
+            "help": "Page must have means to bypass repeated blocks",
+            "description": "Ensure each page has at least one mechanism for a user to bypass navigation and jump straight to the content",
+            "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/bypass?application=axeAPI",
+            "nodes": [
+              {
+                "target": "html",
+                "html": "<html lang=\"en\" data-theme=\"light\">",
+                "failureSummary": "Fix any of the following:\n  No valid skip link found\n  Page does not have a heading\n  Page does not have a landmark region"
+              }
+            ]
+          }
+        ],
+        "durationMs": 1092
+      }
+    },
+    {
+      "ruleId": "story:components-button--primary::Theme • Dark",
+      "checkType": "contract",
+      "target": "Components/Button — Primary CTA • Theme • Dark",
+      "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for components-button--primary.",
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "storyId": "components-button--primary",
+        "variant": "Theme • Dark",
+        "url": "http://127.0.0.1:54053/iframe.html?id=components-button--primary&viewMode=story&globals=theme%3Adark",
+        "tags": [
+          "controls",
+          "focus",
+          "keyboard"
+        ],
+        "failOnImpact": [
+          "serious",
+          "critical"
+        ],
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "bypass",
+            "impact": "serious",
+            "help": "Page must have means to bypass repeated blocks",
+            "description": "Ensure each page has at least one mechanism for a user to bypass navigation and jump straight to the content",
+            "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/bypass?application=axeAPI",
+            "nodes": [
+              {
+                "target": "html",
+                "html": "<html lang=\"en\" data-theme=\"dark\">",
+                "failureSummary": "Fix any of the following:\n  No valid skip link found\n  Page does not have a heading\n  Page does not have a landmark region"
+              }
+            ]
+          }
+        ],
+        "durationMs": 1013
+      }
+    },
+    {
+      "ruleId": "story:components-banner--primary::Theme • Light",
+      "checkType": "contract",
+      "target": "Components/Banner — Inline Status • Theme • Light",
+      "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for components-banner--primary.",
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "storyId": "components-banner--primary",
+        "variant": "Theme • Light",
+        "url": "http://127.0.0.1:54053/iframe.html?id=components-banner--primary&viewMode=story&globals=theme%3Alight",
+        "tags": [
+          "status",
+          "aria-live",
+          "links"
+        ],
+        "failOnImpact": [
+          "serious",
+          "critical"
+        ],
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "bypass",
+            "impact": "serious",
+            "help": "Page must have means to bypass repeated blocks",
+            "description": "Ensure each page has at least one mechanism for a user to bypass navigation and jump straight to the content",
+            "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/bypass?application=axeAPI",
+            "nodes": [
+              {
+                "target": "html",
+                "html": "<html lang=\"en\" data-theme=\"light\">",
+                "failureSummary": "Fix any of the following:\n  No valid skip link found\n  Page does not have a heading\n  Page does not have a landmark region"
+              }
+            ]
+          }
+        ],
+        "durationMs": 966
+      }
+    },
+    {
+      "ruleId": "story:components-banner--primary::Theme • Dark",
+      "checkType": "contract",
+      "target": "Components/Banner — Inline Status • Theme • Dark",
+      "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for components-banner--primary.",
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "storyId": "components-banner--primary",
+        "variant": "Theme • Dark",
+        "url": "http://127.0.0.1:54053/iframe.html?id=components-banner--primary&viewMode=story&globals=theme%3Adark",
+        "tags": [
+          "status",
+          "aria-live",
+          "links"
+        ],
+        "failOnImpact": [
+          "serious",
+          "critical"
+        ],
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "bypass",
+            "impact": "serious",
+            "help": "Page must have means to bypass repeated blocks",
+            "description": "Ensure each page has at least one mechanism for a user to bypass navigation and jump straight to the content",
+            "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/bypass?application=axeAPI",
+            "nodes": [
+              {
+                "target": "html",
+                "html": "<html lang=\"en\" data-theme=\"dark\">",
+                "failureSummary": "Fix any of the following:\n  No valid skip link found\n  Page does not have a heading\n  Page does not have a landmark region"
+              }
+            ]
+          }
+        ],
+        "durationMs": 1004
+      }
+    },
+    {
+      "ruleId": "story:components-tabs--primary::Theme • Light",
+      "checkType": "contract",
+      "target": "Components/Tabs — Keyboard Navigation • Theme • Light",
+      "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for components-tabs--primary.",
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "storyId": "components-tabs--primary",
+        "variant": "Theme • Light",
+        "url": "http://127.0.0.1:54053/iframe.html?id=components-tabs--primary&viewMode=story&globals=theme%3Alight",
+        "tags": [
+          "navigation",
+          "aria-roles",
+          "keyboard"
+        ],
+        "failOnImpact": [
+          "serious",
+          "critical"
+        ],
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "bypass",
+            "impact": "serious",
+            "help": "Page must have means to bypass repeated blocks",
+            "description": "Ensure each page has at least one mechanism for a user to bypass navigation and jump straight to the content",
+            "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/bypass?application=axeAPI",
+            "nodes": [
+              {
+                "target": "html",
+                "html": "<html lang=\"en\" data-theme=\"light\">",
+                "failureSummary": "Fix any of the following:\n  No valid skip link found\n  Page does not have a heading\n  Page does not have a landmark region"
+              }
+            ]
+          }
+        ],
+        "durationMs": 990
+      }
+    },
+    {
+      "ruleId": "story:components-tabs--primary::Theme • Dark",
+      "checkType": "contract",
+      "target": "Components/Tabs — Keyboard Navigation • Theme • Dark",
+      "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for components-tabs--primary.",
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "storyId": "components-tabs--primary",
+        "variant": "Theme • Dark",
+        "url": "http://127.0.0.1:54053/iframe.html?id=components-tabs--primary&viewMode=story&globals=theme%3Adark",
+        "tags": [
+          "navigation",
+          "aria-roles",
+          "keyboard"
+        ],
+        "failOnImpact": [
+          "serious",
+          "critical"
+        ],
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "bypass",
+            "impact": "serious",
+            "help": "Page must have means to bypass repeated blocks",
+            "description": "Ensure each page has at least one mechanism for a user to bypass navigation and jump straight to the content",
+            "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/bypass?application=axeAPI",
+            "nodes": [
+              {
+                "target": "html",
+                "html": "<html lang=\"en\" data-theme=\"dark\">",
+                "failureSummary": "Fix any of the following:\n  No valid skip link found\n  Page does not have a heading\n  Page does not have a landmark region"
+              }
+            ]
+          }
+        ],
+        "durationMs": 968
+      }
+    },
+    {
+      "ruleId": "story:patterns-form--help-error-text-demo::Theme • Light",
+      "checkType": "contract",
+      "target": "Patterns/Form — Help vs Error Text • Theme • Light",
+      "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for patterns-form--help-error-text-demo.",
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "storyId": "patterns-form--help-error-text-demo",
+        "variant": "Theme • Light",
+        "url": "http://127.0.0.1:54053/iframe.html?id=patterns-form--help-error-text-demo&viewMode=story&globals=theme%3Alight",
+        "tags": [
+          "forms",
+          "aria-invalid",
+          "feedback"
+        ],
+        "failOnImpact": [
+          "serious",
+          "critical"
+        ],
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "bypass",
+            "impact": "serious",
+            "help": "Page must have means to bypass repeated blocks",
+            "description": "Ensure each page has at least one mechanism for a user to bypass navigation and jump straight to the content",
+            "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/bypass?application=axeAPI",
+            "nodes": [
+              {
+                "target": "html",
+                "html": "<html lang=\"en\" data-theme=\"light\">",
+                "failureSummary": "Fix any of the following:\n  No valid skip link found\n  Page does not have a heading\n  Page does not have a landmark region"
+              }
+            ]
+          }
+        ],
+        "durationMs": 972
+      }
+    },
+    {
+      "ruleId": "story:patterns-form--help-error-text-demo::Theme • Dark",
+      "checkType": "contract",
+      "target": "Patterns/Form — Help vs Error Text • Theme • Dark",
+      "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for patterns-form--help-error-text-demo.",
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "storyId": "patterns-form--help-error-text-demo",
+        "variant": "Theme • Dark",
+        "url": "http://127.0.0.1:54053/iframe.html?id=patterns-form--help-error-text-demo&viewMode=story&globals=theme%3Adark",
+        "tags": [
+          "forms",
+          "aria-invalid",
+          "feedback"
+        ],
+        "failOnImpact": [
+          "serious",
+          "critical"
+        ],
+        "violations": [],
+        "incomplete": [
+          {
+            "id": "bypass",
+            "impact": "serious",
+            "help": "Page must have means to bypass repeated blocks",
+            "description": "Ensure each page has at least one mechanism for a user to bypass navigation and jump straight to the content",
+            "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/bypass?application=axeAPI",
+            "nodes": [
+              {
+                "target": "html",
+                "html": "<html lang=\"en\" data-theme=\"dark\">",
+                "failureSummary": "Fix any of the following:\n  No valid skip link found\n  Page does not have a heading\n  Page does not have a landmark region"
+              }
+            ]
+          }
+        ],
+        "durationMs": 1068
+      }
+    },
+    {
+      "ruleId": "story:billing-subscription-form--contract-adjustments::Theme • Light",
+      "checkType": "contract",
+      "target": "Billing/Subscription.Form — Contract Adjustments • Theme • Light",
+      "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for billing-subscription-form--contract-adjustments.",
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "storyId": "billing-subscription-form--contract-adjustments",
+        "variant": "Theme • Light",
+        "url": "http://127.0.0.1:54053/iframe.html?id=billing-subscription-form--contract-adjustments&viewMode=story&globals=theme%3Alight",
+        "tags": [
+          "forms",
+          "aria-describedby",
+          "validation"
+        ],
+        "failOnImpact": [
+          "serious",
+          "critical"
+        ],
+        "violations": [],
+        "incomplete": [],
+        "durationMs": 1032
+      }
+    },
+    {
+      "ruleId": "story:billing-subscription-form--contract-adjustments::Theme • Dark",
+      "checkType": "contract",
+      "target": "Billing/Subscription.Form — Contract Adjustments • Theme • Dark",
+      "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for billing-subscription-form--contract-adjustments.",
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "storyId": "billing-subscription-form--contract-adjustments",
+        "variant": "Theme • Dark",
+        "url": "http://127.0.0.1:54053/iframe.html?id=billing-subscription-form--contract-adjustments&viewMode=story&globals=theme%3Adark",
+        "tags": [
+          "forms",
+          "aria-describedby",
+          "validation"
+        ],
+        "failOnImpact": [
+          "serious",
+          "critical"
+        ],
+        "violations": [],
+        "incomplete": [],
+        "durationMs": 1094
+      }
+    },
+    {
+      "ruleId": "story:billing-invoice-detail--finance-dossier::Theme • Light",
+      "checkType": "contract",
+      "target": "Billing/Invoice.Detail — Finance Dossier • Theme • Light",
+      "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for billing-invoice-detail--finance-dossier.",
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "storyId": "billing-invoice-detail--finance-dossier",
+        "variant": "Theme • Light",
+        "url": "http://127.0.0.1:54053/iframe.html?id=billing-invoice-detail--finance-dossier&viewMode=story&globals=theme%3Alight",
+        "tags": [
+          "detail-view",
+          "aria-labelledby",
+          "landmarks"
+        ],
+        "failOnImpact": [
+          "serious",
+          "critical"
+        ],
+        "violations": [],
+        "incomplete": [],
+        "durationMs": 977
+      }
+    },
+    {
+      "ruleId": "story:billing-invoice-detail--finance-dossier::Theme • Dark",
+      "checkType": "contract",
+      "target": "Billing/Invoice.Detail — Finance Dossier • Theme • Dark",
+      "summary": "Axe contract (WCAG 2.x serious/critical) must pass without violations for billing-invoice-detail--finance-dossier.",
+      "pass": true,
+      "failureSummary": "",
+      "details": {
+        "storyId": "billing-invoice-detail--finance-dossier",
+        "variant": "Theme • Dark",
+        "url": "http://127.0.0.1:54053/iframe.html?id=billing-invoice-detail--finance-dossier&viewMode=story&globals=theme%3Adark",
+        "tags": [
+          "detail-view",
+          "aria-labelledby",
+          "landmarks"
+        ],
+        "failOnImpact": [
+          "serious",
+          "critical"
+        ],
+        "violations": [],
+        "incomplete": [],
+        "durationMs": 1077
       }
     }
   ]

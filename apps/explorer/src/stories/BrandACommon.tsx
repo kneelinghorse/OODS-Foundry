@@ -8,8 +8,8 @@ const baseCanvasStyle: CSSProperties = {
   alignItems: 'flex-start',
   padding: '3rem',
   boxSizing: 'border-box',
-  background: 'var(--cmp-surface-canvas, #0f172a)',
-  color: 'var(--cmp-text-body, #e2e8f0)'
+  background: 'var(--cmp-surface-canvas)',
+  color: 'var(--cmp-text-body)'
 };
 
 export const contentCardStyle: CSSProperties = {

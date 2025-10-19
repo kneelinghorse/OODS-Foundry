@@ -1,6 +1,13 @@
 # Storybook Agent Panel
 
-The Storybook Agent panel embeds MCP tools inside Explorer Storybook. It now supports both read-only diagnostics (a11y.scan, purity.audit, vrt.run, diag.snapshot) and write-capable flows (reviewKit.create, brand.apply, billing.reviewKit, billing.switchFixtures) behind an approval gate. Designers and developers can preview changes, approve writes, and inspect generated artifacts without leaving Storybook.
+The Storybook Agent panel embeds MCP tools inside Explorer Storybook. The Sprint 14 refresh added a persistent task queue, policy-gated approvals, and telemetry surfacing so contributors can line up work, preview diffs, approve writes, and audit outcomes (incident + correlation IDs) without leaving Storybook.
+
+## Task Queue
+
+- **Statuses:** every entry progresses through `Queued` → `WaitingApproval` → `Running` → `Done`, with `Denied` available when an operator stops the task after review.
+- **Metadata:** queue items store the tool name, canonicalised inputs, created-on timestamp, most recent `incidentId`, shared `correlationId`, denial reason (if any), and a telemetry link. Selecting an item hydrates the form so you can replay plans or applies.
+- **Approvals:** tasks that require write access stay in `WaitingApproval` until the confirmation dialog succeeds. The approval banner references policy docs and mirrors the CLI copy deck.
+- **Reruns:** re-queuing or retrying a task keeps the existing item at the top of the list, updating status badges and telemetry pointers instead of creating duplicates.
 
 ## Prerequisites
 
@@ -15,11 +22,12 @@ The bridge automatically serves files under `packages/mcp-server/artifacts/` at 
 ## Using the panel
 
 1. Open Storybook and switch to any story view (the panel hides itself in Docs mode).
-2. Pick a tool. The input schema renders booleans, selects, and multi-select checkboxes derived from the tool schema; `apply` remains locked until approval.
-3. Press **Preview changes**. The panel issues a dry run (`apply:false`), announcing “Plan ready. Review the proposed changes.”
-4. Review the **Diff Viewer** (Unified default with Split toggle) and the **Preview artifacts** table. Both link to bridge-served files under `/artifacts/current-state/YYYY-MM-DD`.
-5. Click **Approve & Apply…** to open the confirmation dialog. `Cancel` receives initial focus, `Escape` closes the modal, and `Enter` activates the primary action.
-6. Confirm to run with `apply:true`. During execution the panel announces “Applying approved changes now.” After success, the **Summary** section appears with a success banner and the applied artifacts table.
+2. Queue work: choose a tool, fill inputs, and click **Add to queue**. The item appears in the task list as `Queued` and selection snaps to it.
+3. Preview: press **Preview changes**. The panel issues a dry run (`apply:false`), announcing “Plan ready. Review the proposed changes.” Status advances to `WaitingApproval`.
+4. Review artifacts: inspect the **Diff Viewer** (Unified default with Split toggle) and **Preview artifacts** table. Both link to bridge-served files under `/artifacts/current-state/YYYY-MM-DD`. Incident + correlation IDs from the dry run display alongside telemetry links.
+5. Approval dialog: click **Approve & Apply…**. `Cancel` receives initial focus, `Escape` closes the modal, and `Enter` activates the primary action. The task badge shows `WaitingApproval` until confirmation.
+6. Execute: confirm to run with `apply:true`. The panel announces “Applying approved changes now.” Status switches to `Running` and the queue entry records the correlation ID for the apply run.
+7. Summary: on success the task moves to `Done`, displays the applied artifacts table, and retains the latest incident/correlation IDs. Use **Deny** to stop a task; supply a reason and the badge flips to `Denied`.
 
 If the bridge reports an error, the panel surfaces an **Apply Failed** banner with the error code and optional Incident ID. `Retry` replays the last stage (plan vs apply) without clearing the review context.
 

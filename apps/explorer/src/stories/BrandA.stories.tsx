@@ -5,6 +5,7 @@ import '../styles/brand.css';
 import { Button } from '../components/Button';
 import { Badge } from '../components/Badge';
 import { StatusChip } from '../components/StatusChip';
+import { ensureDomainInContext, pickStatusByIndex } from '../config/statusMap';
 import { Input } from '../components/Input';
 import { Toggle } from '../components/Toggle';
 import { Checkbox } from '../components/Checkbox';
@@ -17,8 +18,8 @@ const previewShell: CSSProperties = {
   padding: '2rem',
   maxWidth: '1100px',
   margin: '0 auto',
-  background: 'var(--cmp-surface-canvas, #f8fafc)',
-  color: 'var(--cmp-text-body, #0f172a)',
+  background: 'var(--cmp-surface-canvas)',
+  color: 'var(--cmp-text-body)',
   transition: 'background-color 0.3s ease, color 0.3s ease'
 };
 
@@ -27,10 +28,10 @@ const cardStyle: CSSProperties = {
   gap: '1.25rem',
   padding: '1.75rem',
   borderRadius: '1.25rem',
-  border: '1px solid color-mix(in srgb, var(--cmp-border-default, rgba(148,163,184,0.45)) 55%, transparent)',
-  background: 'var(--cmp-surface-panel, #ffffff)',
+  border: '1px solid color-mix(in srgb, var(--cmp-border-default) 55%, transparent)',
+  background: 'var(--cmp-surface-panel)',
   boxShadow:
-    '0 0 0 1px color-mix(in srgb, var(--cmp-border-default, rgba(148,163,184,0.35)) 45%, transparent), var(--cmp-shadow-panel, 0 6px 18px rgba(15, 23, 42, 0.08))'
+    '0 0 0 1px color-mix(in srgb, var(--cmp-border-default) 45%, transparent), var(--cmp-shadow-panel)'
 };
 
 const gridStyle: CSSProperties = {
@@ -41,14 +42,14 @@ const gridStyle: CSSProperties = {
 
 const bodyStyle: CSSProperties = {
   margin: 0,
-  color: 'var(--cmp-text-body, #0f172a)',
+  color: 'var(--cmp-text-body)',
   fontSize: '1rem',
   lineHeight: 1.55
 };
 
 const captionStyle: CSSProperties = {
   margin: 0,
-  color: 'var(--cmp-text-muted, #475569)',
+  color: 'var(--cmp-text-muted)',
   fontSize: '0.9rem'
 };
 
@@ -62,6 +63,9 @@ const storyParameters = (theme: Theme) => ({
   chromatic: { disableSnapshot: false },
   vrt: { tags: tagsByTheme[theme] }
 });
+
+ensureDomainInContext('list', 'subscription');
+const BRAND_PREVIEW_STATUS = pickStatusByIndex('subscription', 1);
 
 interface BrandPreviewProps {
   theme: Theme;
@@ -103,7 +107,7 @@ const BrandPreview = ({ theme }: BrandPreviewProps) => {
           <Badge tone="accent" leadingIcon="＋">
             Launch Prep
           </Badge>
-          <StatusChip domain="subscription" status="trialing" />
+          <StatusChip domain="subscription" status={BRAND_PREVIEW_STATUS} />
           <Input
             label="Workspace"
             placeholder="brand-a"

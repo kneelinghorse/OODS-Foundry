@@ -1,10 +1,4 @@
-import type {
-  ArtifactRunFile,
-  ArtifactRunSummary,
-  ToolName,
-  ToolRunInput,
-  ToolRunSuccess,
-} from './types.js';
+import type { ArtifactRunFile, ArtifactRunSummary, ToolName, ToolRunInput, ToolRunSuccess } from './types.js';
 import { BridgeError } from './types.js';
 
 const DEFAULT_BRIDGE_ORIGIN = 'http://127.0.0.1:4466';
@@ -13,10 +7,27 @@ function sanitizeTrailingSlash(url: string): string {
   return url.endsWith('/') ? url.slice(0, -1) : url;
 }
 
+function resolveImportMetaEnv(): Record<string, unknown> | undefined {
+  if (typeof globalThis !== 'undefined') {
+    const injected = (globalThis as any).__VITE_IMPORT_META_ENV__;
+    if (injected && typeof injected === 'object') {
+      return injected as Record<string, unknown>;
+    }
+  }
+
+  try {
+    // Using an evaluated function avoids bundlers that rewrite import.meta for non-ESM formats.
+    return (Function('return import.meta')() as any)?.env as Record<string, unknown> | undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 function detectBridgeOrigin(): string {
-  const env = (import.meta as any)?.env?.VITE_MCP_BRIDGE_ORIGIN as string | undefined;
+  const env = resolveImportMetaEnv();
+  const envOrigin = typeof env?.VITE_MCP_BRIDGE_ORIGIN === 'string' ? (env.VITE_MCP_BRIDGE_ORIGIN as string) : undefined;
   const globalOverride = typeof window !== 'undefined' ? (window as any).__OODS_AGENT_BRIDGE_ORIGIN__ : undefined;
-  const origin = globalOverride || env || DEFAULT_BRIDGE_ORIGIN;
+  const origin = globalOverride || envOrigin || DEFAULT_BRIDGE_ORIGIN;
   return sanitizeTrailingSlash(origin);
 }
 
@@ -84,12 +95,37 @@ export async function fetchToolNames(): Promise<ToolName[]> {
   return tools;
 }
 
+function resolveApprovalToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  const globalToken = (window as any).__OODS_AGENT_APPROVAL_TOKEN__;
+  if (typeof globalToken === 'string' && globalToken.trim().length) {
+    return globalToken.trim();
+  }
+  try {
+    const stored = window.localStorage.getItem('oods.agent.approval');
+    if (typeof stored === 'string' && stored.trim().length) {
+      return stored.trim();
+    }
+  } catch {
+    // Ignore storage access errors (sandboxed, disabled, etc.)
+  }
+  return 'granted';
+}
+
 export async function runTool(tool: ToolName, input: ToolRunInput): Promise<ToolRunSuccess> {
+  const headers: Record<string, string> = {};
+  if (input && typeof input === 'object' && (input as Record<string, unknown>).apply === true) {
+    const approvalToken = resolveApprovalToken();
+    if (approvalToken) {
+      headers['X-Bridge-Approval'] = approvalToken;
+    }
+  }
   const data = await request<ToolRunSuccess | { error?: { code?: string; message?: string; messages?: unknown } }>(
     '/run',
     {
       method: 'POST',
       body: JSON.stringify({ tool, input }),
+      headers,
     }
   );
 

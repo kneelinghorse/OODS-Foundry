@@ -19,3 +19,9 @@ Billing form surfaces share a single token-driven contract so subscription and i
 - `ValidationBanner` now accepts a `status` flag; `pending` surfaces async states with `aria-busy`, while `error` and `warning` map to alerts.
 - Group `aria-describedby` chains legend help, inline guidance, and error copy, ensuring screen readers announce context once.
 - Required vs optional text stays in `RequiredOptional`, so HC and screen reader signals align with tokens.
+
+## Status mapping
+
+- Form badges resolve through `configs/ui/status-map.json`, which binds the detail/form contexts to the canonical `tokens/maps/saas-billing.status-map.json` manifest.
+- `apps/explorer/src/config/statusMap.ts` exposes helpers (`pickStatusByIndex`, `selectStatuses`) so JSX never hardcodes enum strings when choosing sample states.
+- `scripts/lint/enum-to-token.ts` runs as `pnpm lint:enum-map` to block literal `StatusChip` statuses or ad-hoc tone maps.

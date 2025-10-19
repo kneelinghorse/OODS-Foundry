@@ -23,6 +23,11 @@
           "$value": "oklch(0.8875 0.0147 264.49)",
           "$description": "Neutral 300 structural border contrast."
         },
+        "400": {
+          "$type": "color",
+          "$value": "oklch(0.7951 0.0148 268.46)",
+          "$description": "Neutral 400 disabled text tone."
+        },
         "500": {
           "$type": "color",
           "$value": "oklch(0.6929 0.0198 269.00)",
@@ -32,6 +37,11 @@
           "$type": "color",
           "$value": "oklch(0.5109 0.0264 269.16)",
           "$description": "Neutral 700 secondary text tone."
+        },
+        "800": {
+          "$type": "color",
+          "$value": "oklch(0.4239 0.021 267.53)",
+          "$description": "Neutral 800 neutral status text."
         },
         "900": {
           "$type": "color",
@@ -83,6 +93,72 @@
           "$description": "Accent text aligned to pressed state."
         }
       },
+      "success": {
+        "100": {
+          "$type": "color",
+          "$value": "oklch(0.9743 0.0192 167.94)",
+          "$description": "Success status surface."
+        },
+        "300": {
+          "$type": "color",
+          "$value": "oklch(0.8671 0.0772 165.25)",
+          "$description": "Success status border."
+        },
+        "700": {
+          "$type": "color",
+          "$value": "oklch(0.6005 0.1199 161.34)",
+          "$description": "Success status icon."
+        },
+        "900": {
+          "$type": "color",
+          "$value": "oklch(0.4315 0.0821 163.04)",
+          "$description": "Success status text."
+        }
+      },
+      "warning": {
+        "100": {
+          "$type": "color",
+          "$value": "oklch(0.9795 0.026 90.09)",
+          "$description": "Warning status surface."
+        },
+        "300": {
+          "$type": "color",
+          "$value": "oklch(0.8949 0.1177 87.87)",
+          "$description": "Warning status border."
+        },
+        "700": {
+          "$type": "color",
+          "$value": "oklch(0.6573 0.1198 81.65)",
+          "$description": "Warning status icon."
+        },
+        "900": {
+          "$type": "color",
+          "$value": "oklch(0.4914 0.1012 82.20)",
+          "$description": "Warning status text."
+        }
+      },
+      "critical": {
+        "100": {
+          "$type": "color",
+          "$value": "oklch(0.9672 0.0163 12.78)",
+          "$description": "Critical status surface."
+        },
+        "300": {
+          "$type": "color",
+          "$value": "oklch(0.824 0.0834 19.01)",
+          "$description": "Critical status border."
+        },
+        "700": {
+          "$type": "color",
+          "$value": "oklch(0.6039 0.1827 24.43)",
+          "$description": "Critical status icon."
+        },
+        "900": {
+          "$type": "color",
+          "$value": "oklch(0.465 0.147 24.94)",
+          "$description": "Critical status text."
+        }
+      },
       "primary": {
         "100": {
           "$type": "color",
@@ -108,6 +184,11 @@
     },
     "space": {
       "stack": {
+        "compact": {
+          "$type": "dimension",
+          "$value": "12px",
+          "$description": "Compact vertical spacing for dense layouts."
+        },
         "default": {
           "$type": "dimension",
           "$value": "20px",
@@ -115,10 +196,27 @@
         }
       },
       "inset": {
+        "compact": {
+          "$type": "dimension",
+          "$value": "16px",
+          "$description": "Compact padding for tight surface layouts."
+        },
         "default": {
           "$type": "dimension",
           "$value": "24px",
           "$description": "Default padding for primary panels."
+        }
+      },
+      "inline": {
+        "xs": {
+          "$type": "dimension",
+          "$value": "8px",
+          "$description": "Extra-small inline spacing token."
+        },
+        "sm": {
+          "$type": "dimension",
+          "$value": "12px",
+          "$description": "Small inline spacing token."
         }
       }
     }

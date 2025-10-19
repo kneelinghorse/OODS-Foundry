@@ -27,15 +27,15 @@ const headerCellStyle: React.CSSProperties = {
   fontSize: '0.78rem',
   letterSpacing: '0.06em',
   textTransform: 'uppercase',
-  color: 'var(--cmp-text-body, #475569)',
+  color: 'var(--cmp-text-body)',
   padding: '0.5rem 0.75rem',
-  borderBottom: '1px solid var(--cmp-border-strong, rgba(45, 49, 58, 0.16))'
+  borderBottom: '1px solid var(--cmp-border-strong)'
 };
 
 const cellStyle: React.CSSProperties = {
   padding: '0.6rem 0.75rem',
-  background: 'var(--cmp-surface-panel, #ffffff)',
-  border: '1px solid color-mix(in srgb, var(--cmp-border-default, rgba(212, 218, 228, 1)) 60%, transparent)',
+  background: 'var(--cmp-surface-panel)',
+  border: '1px solid color-mix(in srgb, var(--cmp-border-default) 60%, transparent)',
   borderRadius: '8px'
 };
 
@@ -45,7 +45,7 @@ const Swatch: React.FC<{ token: string; fallback?: string }> = ({ token, fallbac
       width: '3rem',
       height: '3rem',
       borderRadius: '0.75rem',
-      border: '1px solid var(--cmp-border-strong, rgba(45, 49, 58, 0.16))',
+      border: '1px solid var(--cmp-border-strong)',
       background: `var(${token}, ${fallback})`,
       boxShadow: '0 0 0 1px rgba(15, 23, 42, 0.05)',
       flexShrink: 0

@@ -82,7 +82,7 @@ export const HelpErrorTextDemo: Story = {
   render: () => (
     <div className="context-form" data-context="form" style={{ display: 'grid', gap: '1.25rem', width: 'min(42rem, 100%)' }}>
       <FieldGroup label="Plan selection" description="Pricing synchronizes with the catalog manifest.">
-        <Input defaultValue="Scale • Annual" readOnly />
+        <Input defaultValue="Scale • Annual" readOnly aria-label="Plan selection" />
         <HelpText>Changing plan updates renewal reminders automatically.</HelpText>
       </FieldGroup>
 
@@ -92,11 +92,15 @@ export const HelpErrorTextDemo: Story = {
         message="Commitment exceeds historical usage by 48%. Confirm with finance."
         messageTone="warning"
       >
-        <Input defaultValue="150" suffix="%" aria-invalid />
+        <Input defaultValue="150" suffix="%" aria-invalid aria-label="Usage commitment" />
       </FieldGroup>
 
       <FieldGroup label="Pilot considerations">
-        <TextArea rows={4} placeholder="Document migration blockers, security reviews, or SLAs." />
+        <TextArea
+          rows={4}
+          placeholder="Document migration blockers, security reviews, or SLAs."
+          aria-label="Pilot considerations"
+        />
         <ErrorText tone="info">Notes are visible to all approvers.</ErrorText>
       </FieldGroup>
     </div>
