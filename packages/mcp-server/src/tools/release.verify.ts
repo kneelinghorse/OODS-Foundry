@@ -32,7 +32,9 @@ type VerificationRecord = ReleaseVerifyResult['results'][number];
 type SelectedPackage = PackageDescriptor & { absPath: string };
 
 function resolvePackages(requested: string[] | undefined): SelectedPackage[] {
-  const requestedSet = new Set((requested ?? DEFAULT_PACKAGES.map((pkg) => pkg.name)).map((name) => name.trim()));
+  const requestedSet = new Set(
+    (requested ?? DEFAULT_PACKAGES.map((pkg: PackageDescriptor) => pkg.name)).map((name) => name.trim()),
+  );
   const selection: SelectedPackage[] = [];
   for (const pkg of DEFAULT_PACKAGES) {
     if (!requestedSet.has(pkg.name)) continue;
