@@ -264,7 +264,9 @@ export async function handle(_input: BaseInput = {}): Promise<GenericOutput> {
   ]);
   const inventory = await collectInventorySummary(storyFiles, componentCount);
   const vrt = await collectVrtSummary(storyFiles);
-  const packageNote = packages.length ? packages.map((pkg) => pkg.name).join(', ') : 'none';
+  const packageNote = packages.length
+    ? packages.map((pkg: DiagnosticsPackageSummary) => pkg.name).join(', ')
+    : 'none';
 
   const diagnostics: DiagnosticsWriteInput = {
     sprint: '12',
