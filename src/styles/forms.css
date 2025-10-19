@@ -1,0 +1,160 @@
+.form-field {
+  --form-field-background: var(--cmp-surface-subtle, transparent);
+  --form-field-background-active: var(--cmp-surface-subtle, transparent);
+  --form-field-border: var(--cmp-border-default, currentColor);
+  --form-field-border-active: var(--cmp-border-strong, currentColor);
+  --form-field-foreground: var(--sys-text-primary, currentColor);
+  --form-field-placeholder: color-mix(in srgb, var(--sys-text-secondary, currentColor) 80%, transparent);
+  --form-field-validation-color: var(--sys-text-secondary, currentColor);
+  --form-field-focus-inner: var(--cmp-focus-inner, Highlight);
+  --form-field-focus-outer: var(--cmp-focus-outer, HighlightText);
+  --form-field-accent: var(--cmp-status-info-text, Highlight);
+  --form-field-control-padding-block: 0.625rem;
+  --form-field-control-padding-inline: 0.75rem;
+  --form-field-gap: var(--cmp-spacing-stack-compact, 0.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: var(--form-field-gap);
+  color: var(--form-field-foreground);
+}
+
+.form-field[data-density='compact'] {
+  --form-field-control-padding-block: 0.5rem;
+  --form-field-control-padding-inline: 0.625rem;
+  --form-field-gap: calc(var(--cmp-spacing-stack-compact, 0.5rem) * 0.75);
+}
+
+.form-field__label {
+  display: inline-flex;
+  gap: 0.25rem;
+  align-items: baseline;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--sys-text-secondary, currentColor);
+}
+
+.form-field__required-indicator {
+  color: var(--cmp-status-critical-text, currentColor);
+  font-weight: 600;
+  line-height: 1;
+}
+
+.form-field__control {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.form-field__input,
+.form-field__select {
+  display: block;
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid var(--form-field-border);
+  background-color: var(--form-field-background);
+  color: inherit;
+  padding: var(--form-field-control-padding-block) var(--form-field-control-padding-inline);
+  font: inherit;
+  line-height: 1.45;
+  transition:
+    border-color 120ms ease,
+    box-shadow 120ms ease,
+    background-color 120ms ease;
+}
+
+.form-field__input::placeholder {
+  color: var(--form-field-placeholder);
+  opacity: 1;
+}
+
+.form-field__input:focus-visible,
+.form-field__select:focus-visible {
+  outline: none;
+  border-color: var(--form-field-border-active);
+  box-shadow:
+    0 0 0 var(--cmp-focus-width, 2px) var(--form-field-focus-inner),
+    0 0 0 calc(var(--cmp-focus-width, 2px) + 2px) var(--form-field-focus-outer);
+  background-color: var(--form-field-background-active);
+}
+
+.form-field__select {
+  appearance: none;
+  padding-right: calc(var(--form-field-control-padding-inline) + 1.5rem);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--sys-text-secondary, currentColor) 50%),
+    linear-gradient(135deg, var(--sys-text-secondary, currentColor) 50%, transparent 50%),
+    linear-gradient(to right, color-mix(in srgb, var(--sys-text-secondary, currentColor) 30%, transparent), color-mix(in srgb, var(--sys-text-secondary, currentColor) 30%, transparent));
+  background-position:
+    right calc(var(--form-field-control-padding-inline) + 0.35rem) center,
+    right calc(var(--form-field-control-padding-inline) - 0.15rem) center,
+    right calc(var(--form-field-control-padding-inline) + 0.4rem) center;
+  background-size:
+    8px 8px,
+    8px 8px,
+    1px calc(60%);
+  background-repeat: no-repeat;
+}
+
+.form-field__description,
+.form-field__validation {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+.form-field__description {
+  color: var(--sys-text-secondary, currentColor);
+}
+
+.form-field__validation {
+  color: var(--form-field-validation-color);
+}
+
+.form-field__checkbox-row {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cmp-spacing-inline-sm, 0.75rem);
+}
+
+.form-field__checkbox {
+  width: 1.125rem;
+  height: 1.125rem;
+  border-radius: 0.35rem;
+  border: 1px solid var(--form-field-border);
+  background-color: var(--form-field-background);
+  color: inherit;
+  accent-color: var(--form-field-accent);
+  cursor: pointer;
+  transition:
+    border-color 120ms ease,
+    box-shadow 120ms ease,
+    background-color 120ms ease;
+}
+
+.form-field__checkbox:focus-visible {
+  outline: none;
+  border-color: var(--form-field-border-active);
+  box-shadow:
+    0 0 0 var(--cmp-focus-width, 2px) var(--form-field-focus-inner),
+    0 0 0 calc(var(--cmp-focus-width, 2px) + 2px) var(--form-field-focus-outer);
+}
+
+@media (forced-colors: active) {
+  .form-field {
+    forced-color-adjust: none;
+    --form-field-background: Canvas;
+    --form-field-background-active: Canvas;
+    --form-field-border: CanvasText;
+    --form-field-border-active: Highlight;
+    --form-field-foreground: CanvasText;
+    --form-field-placeholder: GrayText;
+    --form-field-validation-color: CanvasText;
+    --form-field-focus-inner: Highlight;
+    --form-field-focus-outer: HighlightText;
+    --form-field-accent: Highlight;
+  }
+
+  .form-field__select {
+    background-image: none;
+  }
+}
