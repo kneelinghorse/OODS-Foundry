@@ -1,5 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react';
 
+type Brand = 'A' | 'B';
+
 const baseCanvasStyle: CSSProperties = {
   minHeight: '100vh',
   width: '100%',
@@ -18,6 +20,14 @@ export const contentCardStyle: CSSProperties = {
   gap: '2rem'
 };
 
+function resolveCurrentBrand(): Brand {
+  if (typeof document === 'undefined') {
+    return 'A';
+  }
+  const attribute = document.documentElement.getAttribute('data-brand');
+  return attribute === 'B' ? 'B' : 'A';
+}
+
 export function BrandADarkSurface({
   children,
   style
@@ -25,8 +35,9 @@ export function BrandADarkSurface({
   children: ReactNode;
   style?: CSSProperties;
 }) {
+  const brand = resolveCurrentBrand();
   return (
-    <div data-brand="A" data-theme="dark" style={{ ...baseCanvasStyle, ...style }}>
+    <div data-brand={brand} data-theme="dark" style={{ ...baseCanvasStyle, ...style }}>
       {children}
     </div>
   );

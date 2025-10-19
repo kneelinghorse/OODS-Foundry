@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj, StoryContext } from '@storybook/react';
 import '../styles/index.css';
 import '../styles/brand.css';
 import { Button } from '../components/Button';
@@ -11,6 +11,8 @@ import { Toggle } from '../components/Toggle';
 import { Checkbox } from '../components/Checkbox';
 
 type Theme = 'light' | 'dark' | 'hc';
+type Brand = 'A' | 'B';
+type BrandSetting = Brand | 'unset';
 
 const previewShell: CSSProperties = {
   display: 'grid',
@@ -54,9 +56,9 @@ const captionStyle: CSSProperties = {
 };
 
 const tagsByTheme: Record<Theme, string[]> = {
-  light: ['brand-a-light'],
-  dark: ['brand-a-dark'],
-  hc: ['brand-a-hc']
+  light: ['brand-light'],
+  dark: ['brand-dark'],
+  hc: ['brand-hc']
 };
 
 const storyParameters = (theme: Theme) => ({
@@ -67,28 +69,61 @@ const storyParameters = (theme: Theme) => ({
 ensureDomainInContext('list', 'subscription');
 const BRAND_PREVIEW_STATUS = pickStatusByIndex('subscription', 1);
 
-interface BrandPreviewProps {
-  theme: Theme;
+function resolveBrand(
+  context: StoryContext<typeof BrandPreview>,
+  fallback: Brand
+): Brand {
+  const globalBrand = context.globals.brand as BrandSetting | undefined;
+  if (globalBrand === 'unset' || globalBrand === undefined) {
+    return fallback;
+  }
+  return globalBrand;
 }
 
-const BrandPreview = ({ theme }: BrandPreviewProps) => {
-  const heading =
-    theme === 'light'
-      ? 'Brand A · Light'
-      : theme === 'dark'
-      ? 'Brand A · Dark'
-      : 'Brand A · High Contrast';
+const BRAND_COPY: Record<
+  Brand,
+  {
+    name: string;
+    summaries: Record<Theme, string>;
+  }
+> = {
+  A: {
+    name: 'Brand A',
+    summaries: {
+      light: 'Warm neutrals, 4.5:1 button contrast, shared system tokens.',
+      dark: 'Canvas and panels pivot to deep umber with luminous accents.',
+      hc: 'CSS system colors (Canvas / Highlight) ensure OS-driven palettes.'
+    }
+  },
+  B: {
+    name: 'Brand B',
+    summaries: {
+      light: 'Cool indigo palette with crisp neutrals and tokens-only overrides.',
+      dark: 'Deep slate canvas with saturated cyan accents for high energy product screens.',
+      hc: 'Forced-colors mapping keeps outlines sharp while respecting OS accessibility settings.'
+    }
+  }
+};
 
-  const summary =
-    theme === 'light'
-      ? 'Warm neutrals, 4.5:1 button contrast, shared system tokens.'
-      : theme === 'dark'
-      ? 'Canvas and panels pivot to deep umber with luminous accents.'
-      : 'CSS system colors (Canvas / Highlight) ensure OS-driven palettes.';
+const THEME_TITLES: Record<Theme, string> = {
+  light: 'Light',
+  dark: 'Dark',
+  hc: 'High Contrast'
+};
+
+interface BrandPreviewProps {
+  theme: Theme;
+  brand: Brand;
+}
+
+const BrandPreview = ({ theme, brand }: BrandPreviewProps) => {
+  const brandCopy = BRAND_COPY[brand];
+  const heading = `${brandCopy.name} · ${THEME_TITLES[theme]}`;
+  const summary = brandCopy.summaries[theme];
 
   return (
-    <section style={previewShell} data-brand="A" data-theme={theme} data-story-theme={theme}>
-      <article style={cardStyle} className="brand-a-preview">
+    <section style={previewShell} data-brand={brand} data-theme={theme} data-story-theme={theme}>
+      <article style={cardStyle} className="brand-preview">
         <header style={{ display: 'grid', gap: '0.4rem' }}>
           <h2 style={{ margin: 0, fontSize: '1.65rem' }}>{heading}</h2>
           <p style={captionStyle}>{summary}</p>
@@ -122,7 +157,7 @@ const BrandPreview = ({ theme }: BrandPreviewProps) => {
 };
 
 const meta: Meta<typeof BrandPreview> = {
-  title: 'Brand/Brand A',
+  title: 'Brand/Showcase',
   component: BrandPreview,
   parameters: {
     layout: 'fullscreen',
@@ -137,18 +172,27 @@ type Story = StoryObj<typeof BrandPreview>;
 
 export const Light: Story = {
   name: 'Light',
-  args: { theme: 'light' },
+  args: { theme: 'light', brand: 'A' },
+  render: (args: BrandPreviewProps, context: StoryContext<typeof BrandPreview>) => (
+    <BrandPreview {...args} brand={resolveBrand(context, args.brand ?? 'A')} />
+  ),
   parameters: storyParameters('light')
 };
 
 export const Dark: Story = {
   name: 'Dark',
-  args: { theme: 'dark' },
+  args: { theme: 'dark', brand: 'A' },
+  render: (args: BrandPreviewProps, context: StoryContext<typeof BrandPreview>) => (
+    <BrandPreview {...args} brand={resolveBrand(context, args.brand ?? 'A')} />
+  ),
   parameters: storyParameters('dark')
 };
 
 export const HighContrast: Story = {
   name: 'High Contrast',
-  args: { theme: 'hc' },
+  args: { theme: 'hc', brand: 'A' },
+  render: (args: BrandPreviewProps, context: StoryContext<typeof BrandPreview>) => (
+    <BrandPreview {...args} brand={resolveBrand(context, args.brand ?? 'A')} />
+  ),
   parameters: storyParameters('hc')
 };

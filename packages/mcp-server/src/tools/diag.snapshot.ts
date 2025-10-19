@@ -31,6 +31,8 @@ const PACKAGE_SUMMARY = [
   { name: '@oods/a11y-tools', relative: 'packages/a11y-tools' },
 ] as const;
 
+type PackageSummaryItem = typeof PACKAGE_SUMMARY[number];
+
 async function readFileSafe(filePath: string): Promise<string | null> {
   try {
     return await fs.readFile(filePath, 'utf8');
@@ -189,7 +191,7 @@ async function collectTokensSummary(): Promise<DiagnosticsTokensSummary> {
 
 async function collectPackageSummary(): Promise<DiagnosticsPackageSummary[]> {
   const entries: DiagnosticsPackageSummary[] = [];
-  for (const pkg of PACKAGE_SUMMARY) {
+  for (const pkg of PACKAGE_SUMMARY as readonly PackageSummaryItem[]) {
     const dir = path.join(PROJECT_ROOT, pkg.relative);
     const pkgPath = path.join(dir, 'package.json');
     const raw = await readFileSafe(pkgPath);
@@ -262,7 +264,9 @@ export async function handle(_input: BaseInput = {}): Promise<GenericOutput> {
   ]);
   const inventory = await collectInventorySummary(storyFiles, componentCount);
   const vrt = await collectVrtSummary(storyFiles);
-  const packageNote = packages.length ? packages.map((pkg) => pkg.name).join(', ') : 'none';
+  const packageNote = packages.length
+    ? packages.map((pkg: DiagnosticsPackageSummary) => pkg.name).join(', ')
+    : 'none';
 
   const diagnostics: DiagnosticsWriteInput = {
     sprint: '12',
