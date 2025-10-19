@@ -38,7 +38,7 @@ const VALIDATION_TONE_MAP: Record<ValidationState, StatusTone> = {
 function buildValidationVariables(tone: StatusTone): CSSProperties {
   const tokens = getToneTokenSet(tone);
 
-  const variables: CSSProperties = {
+  const variables = {
     '--form-field-border': tokens.border,
     '--form-field-border-active': tokens.border,
     '--form-field-background-active': tokens.background,
@@ -46,7 +46,7 @@ function buildValidationVariables(tone: StatusTone): CSSProperties {
     '--form-field-focus-inner': tokens.border,
     '--form-field-focus-outer': tokens.background,
     '--form-field-accent': tokens.foreground,
-  };
+  } as CSSProperties;
 
   return variables;
 }

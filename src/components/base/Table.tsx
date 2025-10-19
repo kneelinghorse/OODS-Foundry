@@ -1,4 +1,5 @@
 import * as React from 'react';
+import type { ComponentPropsWithoutRef } from 'react';
 import {
   getStatusPresentation,
   getToneTokenSet,
@@ -110,8 +111,7 @@ export const TableBody = React.forwardRef<TableBodyElement, TableBodyProps>(
 
 TableBody.displayName = 'OODS.TableBody';
 
-export interface TableCaptionProps
-  extends React.HTMLAttributes<HTMLTableCaptionElement> {}
+export type TableCaptionProps = ComponentPropsWithoutRef<'caption'>;
 
 export const TableCaption = React.forwardRef<TableCaptionElement, TableCaptionProps>(
   ({ className, ...rest }, forwardedRef) => {
@@ -179,7 +179,7 @@ export const TableRow = React.forwardRef<TableRowElement, TableRowProps>(
 TableRow.displayName = 'OODS.TableRow';
 
 export interface TableHeaderCellProps
-  extends React.ThHTMLAttributes<HTMLTableCellElement> {
+  extends ComponentPropsWithoutRef<'th'> {
   readonly numeric?: boolean;
 }
 
@@ -208,7 +208,7 @@ export const TableHeaderCell = React.forwardRef<
 
 TableHeaderCell.displayName = 'OODS.TableHeaderCell';
 
-export interface TableCellProps extends React.TdHTMLAttributes<HTMLTableCellElement> {
+export interface TableCellProps extends ComponentPropsWithoutRef<'td'> {
   readonly numeric?: boolean;
   readonly status?: string;
   readonly statusDomain?: StatusDomain;
