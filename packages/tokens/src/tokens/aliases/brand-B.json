@@ -1,0 +1,126 @@
+{
+  "$schema": "https://design-tokens.org/dtcg/schema.json",
+  "brand": {
+    "B": {
+      "$description": "Semantic aliases for Brand B tokens shared across build pipelines.",
+      "surface": {
+        "canvas": {
+          "$type": "color",
+          "$value": "{color.brand.B.surface.canvas}",
+          "$description": "Alias for Brand B canvas surface."
+        },
+        "raised": {
+          "$type": "color",
+          "$value": "{color.brand.B.surface.raised}",
+          "$description": "Alias for Brand B raised surface."
+        },
+        "subtle": {
+          "$type": "color",
+          "$value": "{color.brand.B.surface.subtle}",
+          "$description": "Alias for Brand B subtle surface."
+        },
+        "interactivePrimary": {
+          "$type": "color",
+          "$value": "{color.brand.B.surface.interactive.primary.default}",
+          "$description": "Alias for Brand B primary interactive background."
+        }
+      },
+      "text": {
+        "primary": {
+          "$type": "color",
+          "$value": "{color.brand.B.text.primary}",
+          "$description": "Alias for Brand B primary text."
+        },
+        "secondary": {
+          "$type": "color",
+          "$value": "{color.brand.B.text.secondary}",
+          "$description": "Alias for Brand B secondary text."
+        },
+        "muted": {
+          "$type": "color",
+          "$value": "{color.brand.B.text.muted}",
+          "$description": "Alias for Brand B muted text."
+        },
+        "onInteractive": {
+          "$type": "color",
+          "$value": "{color.brand.B.text.onInteractive}",
+          "$description": "Alias for Brand B interactive foreground."
+        }
+      },
+      "border": {
+        "subtle": {
+          "$type": "color",
+          "$value": "{color.brand.B.border.subtle}",
+          "$description": "Alias for Brand B subtle border."
+        },
+        "strong": {
+          "$type": "color",
+          "$value": "{color.brand.B.border.strong}",
+          "$description": "Alias for Brand B strong border."
+        }
+      },
+      "status": {
+        "info": {
+          "surface": {
+            "$type": "color",
+            "$value": "{color.brand.B.status.info.surface}",
+            "$description": "Alias for Brand B info surface."
+          },
+          "text": {
+            "$type": "color",
+            "$value": "{color.brand.B.status.info.text}",
+            "$description": "Alias for Brand B info text."
+          }
+        },
+        "success": {
+          "surface": {
+            "$type": "color",
+            "$value": "{color.brand.B.status.success.surface}",
+            "$description": "Alias for Brand B success surface."
+          },
+          "text": {
+            "$type": "color",
+            "$value": "{color.brand.B.status.success.text}",
+            "$description": "Alias for Brand B success text."
+          }
+        },
+        "warning": {
+          "surface": {
+            "$type": "color",
+            "$value": "{color.brand.B.status.warning.surface}",
+            "$description": "Alias for Brand B warning surface."
+          },
+          "text": {
+            "$type": "color",
+            "$value": "{color.brand.B.status.warning.text}",
+            "$description": "Alias for Brand B warning text."
+          }
+        },
+        "critical": {
+          "surface": {
+            "$type": "color",
+            "$value": "{color.brand.B.status.critical.surface}",
+            "$description": "Alias for Brand B critical surface."
+          },
+          "text": {
+            "$type": "color",
+            "$value": "{color.brand.B.status.critical.text}",
+            "$description": "Alias for Brand B critical text."
+          }
+        },
+        "neutral": {
+          "surface": {
+            "$type": "color",
+            "$value": "{color.brand.B.status.neutral.surface}",
+            "$description": "Alias for Brand B neutral surface."
+          },
+          "text": {
+            "$type": "color",
+            "$value": "{color.brand.B.status.neutral.text}",
+            "$description": "Alias for Brand B neutral text."
+          }
+        }
+      }
+    }
+  }
+}
