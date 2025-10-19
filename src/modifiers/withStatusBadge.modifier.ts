@@ -1,6 +1,6 @@
 import type { RenderContext } from '../types/render-context.js';
 
-export type StatusTone = 'info' | 'success' | 'warning' | 'danger' | 'neutral';
+export type StatusTone = 'info' | 'success' | 'warning' | 'critical' | 'neutral';
 
 export interface StatusBadgeDescriptor {
   readonly id: string;
@@ -16,6 +16,12 @@ export interface WithStatusBadgeContext<Data = { status?: string }> {
   readonly renderContext: RenderContext<Data>;
   readonly status?: string;
 }
+
+const CANCELLED_DESCRIPTOR: StatusBadgeDescriptor = Object.freeze({
+  id: 'status-canceled',
+  label: 'Canceled',
+  tone: 'critical',
+});
 
 const STATUS_MAP: Readonly<Record<string, StatusBadgeDescriptor>> = Object.freeze({
   active: Object.freeze({
@@ -33,11 +39,8 @@ const STATUS_MAP: Readonly<Record<string, StatusBadgeDescriptor>> = Object.freez
     label: 'Past Due',
     tone: 'warning',
   }),
-  cancelled: Object.freeze({
-    id: 'status-cancelled',
-    label: 'Cancelled',
-    tone: 'danger',
-  }),
+  canceled: CANCELLED_DESCRIPTOR,
+  cancelled: CANCELLED_DESCRIPTOR,
 });
 
 function resolveStatus<Data>(

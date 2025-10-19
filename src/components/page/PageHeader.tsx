@@ -1,17 +1,9 @@
 import * as React from 'react';
 import type { ReactNode } from 'react';
-import { Badge, type BadgeProps } from '../base/Badge.js';
+import { Badge } from '../base/Badge.js';
 import { Button, type ButtonProps } from '../base/Button.js';
 import { Text } from '../base/Text.js';
 import type { StatusBadgeDescriptor, StatusTone } from '../../modifiers/withStatusBadge.modifier.js';
-
-const TONE_TO_BADGE_INTENT: Record<StatusTone, BadgeProps['intent']> = {
-  info: 'neutral',
-  neutral: 'neutral',
-  success: 'success',
-  warning: 'warning',
-  danger: 'danger',
-} as const;
 
 type HeaderElement = React.ElementRef<'header'>;
 type HeaderProps = React.ComponentPropsWithoutRef<'header'>;
@@ -37,7 +29,7 @@ function renderBadges(badges: readonly StatusBadgeDescriptor[] | undefined) {
   }
 
   return badges.map((badge) => (
-    <Badge key={badge.id} intent={TONE_TO_BADGE_INTENT[badge.tone]} aria-label={badge.label}>
+    <Badge key={badge.id} tone={badge.tone} emphasis="solid" aria-label={badge.label}>
       {badge.label}
     </Badge>
   ));

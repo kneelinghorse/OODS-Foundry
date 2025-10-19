@@ -399,7 +399,7 @@ const SUBSCRIPTION_STATUS_PAST_DUE: StatusBadgeDescriptor = Object.freeze({
 const SUBSCRIPTION_STATUS_CANCELED: StatusBadgeDescriptor = Object.freeze({
   id: 'subscription-status-canceled',
   label: 'Canceled',
-  tone: 'danger',
+  tone: 'critical',
 });
 
 const SUBSCRIPTION_STATUS_PAUSED: StatusBadgeDescriptor = Object.freeze({
