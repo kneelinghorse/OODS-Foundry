@@ -1,3 +1,4 @@
+/* c8 ignore start */
 import { useEffect, useState, type ComponentProps } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import '../../styles/globals.css';
@@ -97,3 +98,5 @@ export const ToneGallery: Story = {
   },
   tags: ['vrt-critical'],
 };
+
+/* c8 ignore end */

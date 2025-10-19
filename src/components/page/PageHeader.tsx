@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { Badge } from '../base/Badge.js';
 import { Button, type ButtonProps } from '../base/Button.js';
 import { Text } from '../base/Text.js';
-import type { StatusBadgeDescriptor, StatusTone } from '../../modifiers/withStatusBadge.modifier.js';
+import type { StatusBadgeDescriptor } from '../../modifiers/withStatusBadge.modifier.js';
 
 type HeaderElement = React.ElementRef<'header'>;
 type HeaderProps = React.ComponentPropsWithoutRef<'header'>;

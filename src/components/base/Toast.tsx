@@ -11,7 +11,38 @@ import { resolveStatusGlyph } from '../statusables/statusGlyph.js';
 
 type ToastElement = React.ElementRef<'div'>;
 
-export interface ToastProps extends React.HTMLAttributes<HTMLDivElement> {
+interface FocusableElement {
+  focus?(options?: { preventScroll?: boolean }): void;
+}
+
+type DocumentLike = {
+  readonly activeElement?: unknown;
+};
+
+function getDocument(): DocumentLike | undefined {
+  if (typeof globalThis === 'undefined') {
+    return undefined;
+  }
+
+  const candidate = (globalThis as Record<string, unknown>).document;
+  if (!candidate || typeof candidate !== 'object') {
+    return undefined;
+  }
+
+  return candidate as DocumentLike;
+}
+
+function asFocusable(candidate: unknown): FocusableElement | null {
+  if (!candidate || typeof candidate !== 'object') {
+    return null;
+  }
+
+  const value = candidate as FocusableElement;
+  return typeof value.focus === 'function' ? value : null;
+}
+
+export interface ToastProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title' | 'children'> {
   readonly status?: string;
   readonly domain?: StatusDomain;
   readonly tone?: StatusTone;
@@ -24,6 +55,7 @@ export interface ToastProps extends React.HTMLAttributes<HTMLDivElement> {
   readonly autoDismissAfter?: number;
   readonly dismissLabel?: string;
   readonly showIcon?: boolean;
+  readonly children?: ReactNode;
 }
 
 const DEFAULT_DOMAIN: StatusDomain = 'subscription';
@@ -87,7 +119,7 @@ export const Toast = React.forwardRef<ToastElement, ToastProps>(
     const detail = description ?? presentation?.description ?? children;
 
     const localRef = React.useRef<HTMLDivElement | null>(null);
-    const previousFocusRef = React.useRef<HTMLElement | null>(null);
+    const previousFocusRef = React.useRef<FocusableElement | null>(null);
     const mergedRef = mergeRefs(localRef, forwardedRef);
 
     React.useEffect(() => {
@@ -97,17 +129,20 @@ export const Toast = React.forwardRef<ToastElement, ToastProps>(
       }
 
       if (open) {
-        const activeElement = document.activeElement;
-        if (activeElement instanceof HTMLElement) {
-          previousFocusRef.current = activeElement;
+        const activeElement = getDocument()?.activeElement;
+        const previous = asFocusable(activeElement);
+        if (previous) {
+          previousFocusRef.current = previous;
         }
 
-        // Focus on the toast after the current frame to account for Storybook renders.
-        const frame = requestAnimationFrame(() => {
-          node.focus({ preventScroll: true });
-        });
+        const focusableNode = asFocusable(node);
+        const timeout = setTimeout(() => {
+          if (focusableNode && typeof focusableNode.focus === 'function') {
+            focusableNode.focus({ preventScroll: true });
+          }
+        }, 0);
 
-        return () => cancelAnimationFrame(frame);
+        return () => clearTimeout(timeout);
       }
 
       const previous = previousFocusRef.current;
@@ -115,22 +150,20 @@ export const Toast = React.forwardRef<ToastElement, ToastProps>(
         previous.focus({ preventScroll: true });
       }
       previousFocusRef.current = null;
+
+      return undefined;
     }, [open]);
 
     React.useEffect(() => {
-      if (!open) {
+      if (!open || !autoDismissAfter || autoDismissAfter <= 0) {
         return;
       }
 
-      if (!autoDismissAfter || autoDismissAfter <= 0 || typeof window === 'undefined') {
-        return;
-      }
-
-      const timer = window.setTimeout(() => {
+      const timer = setTimeout(() => {
         onOpenChange?.(false);
       }, autoDismissAfter);
 
-      return () => window.clearTimeout(timer);
+      return () => clearTimeout(timer);
     }, [open, autoDismissAfter, onOpenChange]);
 
     const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {

@@ -1,3 +1,4 @@
+/* c8 ignore start */
 import type { ComponentProps } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import '../../styles/globals.css';
@@ -76,3 +77,5 @@ export const SnapshotGrid: Story = {
   },
   tags: ['vrt-critical'],
 };
+
+/* c8 ignore end */

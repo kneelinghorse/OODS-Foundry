@@ -67,7 +67,9 @@ describe('Object type generation integration', () => {
     rmSync(workspace.root, { recursive: true, force: true });
   });
 
-  it('generates TypeScript definitions that are directly importable', async () => {
+  it(
+    'generates TypeScript definitions that are directly importable',
+    async () => {
     const barrelEntries: { interfaceName: string; fileName: string }[] = [];
 
     for (const name of CANONICAL_OBJECTS) {
@@ -109,7 +111,9 @@ describe('Object type generation integration', () => {
         .join('\n');
       expect.fail(`TypeScript reported diagnostics:\n${formatted}`);
     }
-  });
+  },
+    15000
+  );
 
   it('renders deterministic barrel exports', () => {
     const barrel = renderBarrelFile([

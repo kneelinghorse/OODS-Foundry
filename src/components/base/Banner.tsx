@@ -12,7 +12,8 @@ import { resolveStatusGlyph } from '../statusables/statusGlyph.js';
 
 export type BannerEmphasis = 'subtle' | 'solid';
 
-export interface BannerProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface BannerProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title' | 'children'> {
   readonly status?: string;
   readonly domain?: StatusDomain;
   readonly tone?: StatusTone;
@@ -24,6 +25,7 @@ export interface BannerProps extends React.HTMLAttributes<HTMLDivElement> {
   readonly onDismiss?: () => void;
   readonly dismissLabel?: string;
   readonly showIcon?: boolean;
+  readonly children?: ReactNode;
 }
 
 type BannerElement = React.ElementRef<'div'>;
