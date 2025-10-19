@@ -2,34 +2,30 @@
 import type { ComponentProps } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import '../../styles/globals.css';
-import { Badge } from '../../components/base/Badge';
+import { Banner } from '../../components/base/Banner';
 import { listStatuses } from '../../components/statusables/statusRegistry.js';
 
-type BadgeStoryProps = ComponentProps<typeof Badge>;
+type BannerStoryProps = ComponentProps<typeof Banner>;
 
-const meta: Meta<typeof Badge> = {
-  title: 'Statusables/Badge',
-  component: Badge,
+const meta: Meta<typeof Banner> = {
+  title: 'Statusables/Banner',
+  component: Banner,
   args: {
     status: 'active',
     domain: 'subscription',
     emphasis: 'subtle',
+    title: 'Everything looks good',
+    description: 'Subscription is active and up to date.',
   },
   parameters: {
     layout: 'centered',
     chromatic: { disableSnapshot: true },
   },
   argTypes: {
-    status: {
-      control: 'text',
-    },
-    domain: {
-      control: 'text',
-    },
+    status: { control: 'text' },
+    domain: { control: 'text' },
     emphasis: {
-      control: {
-        type: 'inline-radio',
-      },
+      control: { type: 'inline-radio' },
       options: ['subtle', 'solid'],
     },
   },
@@ -37,16 +33,16 @@ const meta: Meta<typeof Badge> = {
 
 export default meta;
 
-type Story = StoryObj<typeof Badge>;
+type Story = StoryObj<typeof Banner>;
 
 export const Default: Story = {
-  render: (args: BadgeStoryProps) => <Badge {...args} />,
+  render: (args: BannerStoryProps) => <Banner {...args} />,
 };
 
 export const SnapshotGrid: Story = {
   render: () => {
     const statuses = listStatuses('subscription');
-    const emphases: Array<BadgeStoryProps['emphasis']> = ['subtle', 'solid'];
+    const emphases: Array<BannerStoryProps['emphasis']> = ['subtle', 'solid'];
 
     return (
       <div className="flex flex-col gap-6">
@@ -55,13 +51,15 @@ export const SnapshotGrid: Story = {
             <header className="text-xs font-semibold uppercase tracking-wide text-slate-500">
               Emphasis: {emphasis}
             </header>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-col gap-3">
               {statuses.map((entry) => (
-                <Badge
+                <Banner
                   key={`${entry.status}-${emphasis}`}
                   status={entry.status}
                   domain={entry.domain}
                   emphasis={emphasis}
+                  title={entry.label}
+                  description={entry.description}
                 />
               ))}
             </div>

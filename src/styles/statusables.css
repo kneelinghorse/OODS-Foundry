@@ -1,0 +1,255 @@
+.statusable-badge {
+  --statusable-badge-background: transparent;
+  --statusable-badge-border: transparent;
+  --statusable-badge-foreground: currentColor;
+  --statusable-badge-icon-color: currentColor;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 9999px;
+  border: 1px solid var(--statusable-badge-border);
+  background-color: var(--statusable-badge-background);
+  color: var(--statusable-badge-foreground);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.125rem 0.5rem;
+  line-height: 1.25;
+  min-height: 1.5rem;
+  transition:
+    background-color 120ms ease,
+    color 120ms ease,
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+  outline: none;
+}
+
+.statusable-badge__icon {
+  display: inline-flex;
+  align-items: center;
+  color: var(--statusable-badge-icon-color);
+  font-size: 0.85em;
+}
+
+.statusable-badge__label {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}
+
+.statusable-badge:focus-visible {
+  outline: var(--cmp-chip-focus-width, 2px) solid var(--cmp-chip-focus-outer, currentColor);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 calc(var(--cmp-chip-focus-width, 2px) + 2px) var(--cmp-chip-focus-inner, transparent);
+}
+
+@media (forced-colors: active) {
+  .statusable-badge {
+    forced-color-adjust: none;
+    background-color: Canvas;
+    color: CanvasText;
+    border-color: CanvasText;
+  }
+
+  .statusable-badge__icon {
+    color: CanvasText;
+  }
+}
+
+.statusable-banner {
+  --statusable-banner-background: var(--cmp-banner-background, transparent);
+  --statusable-banner-border: var(--cmp-banner-border, transparent);
+  --statusable-banner-foreground: var(--cmp-banner-text, currentColor);
+  --statusable-banner-icon-color: var(--cmp-banner-icon, currentColor);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: flex-start;
+  gap: var(--cmp-spacing-inline-sm, 0.75rem);
+  padding: var(--cmp-spacing-inset-compact, 0.75rem) var(--cmp-spacing-inset-default, 1rem);
+  background-color: var(--statusable-banner-background);
+  border: 1px solid var(--statusable-banner-border);
+  border-radius: 0.75rem;
+  color: var(--statusable-banner-foreground);
+  line-height: 1.4;
+}
+
+.statusable-banner__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--statusable-banner-icon-color);
+  font-size: 1.25rem;
+  margin-top: 0.1rem;
+}
+
+.statusable-banner__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.statusable-banner__title {
+  font-weight: 600;
+  margin: 0;
+}
+
+.statusable-banner__description {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.statusable-banner__actions {
+  display: flex;
+  gap: var(--cmp-spacing-inline-sm, 0.75rem);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.statusable-banner__dismiss {
+  appearance: none;
+  border: none;
+  background: none;
+  color: inherit;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 999px;
+  transition: background-color 120ms ease;
+}
+
+.statusable-banner__dismiss:hover {
+  background-color: color-mix(in srgb, var(--statusable-banner-foreground) 12%, transparent);
+}
+
+.statusable-banner__dismiss:focus-visible {
+  outline: var(--cmp-focus-width, 2px) solid var(--cmp-focus-outer, currentColor);
+  outline-offset: 2px;
+}
+
+.statusable-banner:focus-visible {
+  outline: var(--cmp-focus-width, 2px) solid var(--cmp-focus-outer, currentColor);
+  outline-offset: 2px;
+}
+
+@media (forced-colors: active) {
+  .statusable-banner {
+    forced-color-adjust: none;
+    background-color: Canvas;
+    border-color: CanvasText;
+    color: CanvasText;
+  }
+
+  .statusable-banner__icon {
+    color: CanvasText;
+  }
+}
+
+.statusable-toast {
+  --statusable-toast-background: var(--cmp-status-neutral-surface);
+  --statusable-toast-border: var(--cmp-status-neutral-border);
+  --statusable-toast-foreground: var(--cmp-status-neutral-text);
+  --statusable-toast-icon-color: var(--cmp-status-neutral-icon);
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: var(--cmp-spacing-inline-sm, 0.75rem);
+  padding: var(--cmp-spacing-inset-compact, 0.75rem) var(--cmp-spacing-inset-default, 1rem);
+  border-radius: 0.75rem;
+  background-color: var(--statusable-toast-background);
+  border: 1px solid var(--statusable-toast-border);
+  color: var(--statusable-toast-foreground);
+  box-shadow: 0 18px 28px -16px rgba(15, 23, 42, 0.35);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 180ms ease, transform 180ms ease;
+  outline: none;
+}
+
+.statusable-toast[data-state='open'] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.statusable-toast[data-state='closed'] {
+  pointer-events: none;
+}
+
+.statusable-toast__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--statusable-toast-icon-color);
+  font-size: 1.1rem;
+  margin-top: 0.1rem;
+}
+
+.statusable-toast__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.statusable-toast__title {
+  font-weight: 600;
+  margin: 0;
+}
+
+.statusable-toast__description {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.statusable-toast__dismiss {
+  appearance: none;
+  border: none;
+  background: none;
+  color: inherit;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 999px;
+  transition: background-color 120ms ease;
+}
+
+.statusable-toast__dismiss:hover {
+  background-color: color-mix(in srgb, var(--statusable-toast-foreground) 12%, transparent);
+}
+
+.statusable-toast__dismiss:focus-visible,
+.statusable-toast:focus-visible {
+  outline: var(--cmp-focus-width, 2px) solid var(--cmp-focus-outer, currentColor);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .statusable-toast {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .statusable-toast {
+    forced-color-adjust: none;
+    background-color: Canvas;
+    border-color: CanvasText;
+    color: CanvasText;
+    box-shadow: none;
+  }
+
+  .statusable-toast__icon {
+    color: CanvasText;
+  }
+}

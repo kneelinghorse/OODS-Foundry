@@ -1,42 +1,116 @@
 import * as React from 'react';
+import type { ReactNode } from 'react';
+import {
+  getStatusPresentation,
+  getToneTokenSet,
+  type StatusDomain,
+  type StatusPresentation,
+  type StatusTone,
+} from '../statusables/statusRegistry.js';
+import { resolveStatusGlyph } from '../statusables/statusGlyph.js';
 
-export type BadgeProps = React.HTMLAttributes<HTMLSpanElement> & {
-  intent?: 'neutral' | 'success' | 'warning' | 'danger';
-  children: React.ReactNode;
-};
+export type BadgeEmphasis = 'subtle' | 'solid';
 
-const BADGE_INTENT_STYLES: Record<
-  NonNullable<BadgeProps['intent']>,
-  string
-> = {
-  neutral:
-    'bg-slate-100 text-slate-700 ring-1 ring-inset ring-slate-200 dark:bg-slate-800 dark:text-slate-200 dark:ring-slate-700',
-  success:
-    'bg-emerald-50 text-emerald-800 ring-1 ring-inset ring-emerald-200 dark:bg-emerald-900 dark:text-emerald-50 dark:ring-emerald-700',
-  warning:
-    'bg-amber-50 text-amber-800 ring-1 ring-inset ring-amber-200 dark:bg-amber-900 dark:text-amber-50 dark:ring-amber-700',
-  danger:
-    'bg-rose-50 text-rose-800 ring-1 ring-inset ring-rose-200 dark:bg-rose-900 dark:text-rose-50 dark:ring-rose-700',
-};
-
-const BASE_BADGE_STYLES =
-  'inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold uppercase tracking-wide';
+export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
+  readonly status?: string;
+  readonly domain?: StatusDomain;
+  readonly tone?: StatusTone;
+  readonly emphasis?: BadgeEmphasis;
+  readonly icon?: ReactNode;
+  readonly iconPosition?: 'start' | 'end';
+  readonly showIcon?: boolean;
+}
 
 type BadgeElement = React.ElementRef<'span'>;
 
+const DEFAULT_DOMAIN: StatusDomain = 'subscription';
+
+function resolvePresentation(
+  domain: StatusDomain,
+  status: string | undefined
+): StatusPresentation | undefined {
+  if (!status) {
+    return undefined;
+  }
+
+  return getStatusPresentation(domain, status);
+}
+
 export const Badge = React.forwardRef<BadgeElement, BadgeProps>(
-  ({ className, intent = 'neutral', children, ...props }, forwardedRef) => {
-    const composedClassName = [
-      BASE_BADGE_STYLES,
-      BADGE_INTENT_STYLES[intent],
+  (
+    {
+      status,
+      domain: domainProp,
+      tone: toneOverride,
+      emphasis = 'subtle',
+      icon,
+      iconPosition = 'start',
+      showIcon,
+      children,
       className,
-    ]
-      .filter(Boolean)
-      .join(' ');
+      style,
+      title,
+      'aria-label': ariaLabelProp,
+      ...rest
+    },
+    forwardedRef
+  ) => {
+    const domain = (domainProp ?? DEFAULT_DOMAIN) as StatusDomain;
+    const presentation = resolvePresentation(domain, status);
+    const tone = toneOverride ?? presentation?.tone ?? 'neutral';
+    const tokens = presentation?.badge ?? {
+      subtle: getToneTokenSet(tone),
+      solid: getToneTokenSet(tone),
+    };
+
+    const palette = emphasis === 'solid' ? tokens.solid : tokens.subtle;
+    const resolvedShowIcon = showIcon ?? Boolean(presentation?.iconName || icon);
+    const glyph =
+      icon ?? (resolvedShowIcon ? resolveStatusGlyph(presentation?.iconName) : undefined);
+    const content = children ?? presentation?.label ?? status ?? null;
+    const computedTitle = title ?? presentation?.description;
+    const ariaLabel =
+      ariaLabelProp ?? (typeof content === 'string' || typeof content === 'number'
+        ? undefined
+        : presentation?.label);
+
+    const iconNode =
+      glyph && resolvedShowIcon ? (
+        <span className="statusable-badge__icon" aria-hidden>
+          {glyph}
+        </span>
+      ) : null;
+
+    const mergedClassName = ['statusable-badge', className].filter(Boolean).join(' ');
+    const cssVariables = {
+      '--statusable-badge-background': palette.background,
+      '--statusable-badge-border': palette.border,
+      '--statusable-badge-foreground': palette.foreground,
+      '--statusable-badge-icon-color': palette.foreground,
+    } as React.CSSProperties;
+
+    const mergedStyle = style
+      ? ({ ...cssVariables, ...style } as React.CSSProperties)
+      : cssVariables;
 
     return (
-      <span ref={forwardedRef} className={composedClassName} {...props}>
-        {children}
+      <span
+        ref={forwardedRef}
+        className={mergedClassName}
+        style={mergedStyle}
+        data-domain={domain}
+        data-status={status}
+        data-tone={tone}
+        data-emphasis={emphasis}
+        aria-label={ariaLabel}
+        title={computedTitle}
+        {...rest}
+      >
+        {iconPosition === 'start' ? iconNode : null}
+        {content !== null ? (
+          <span className="statusable-badge__label">{content}</span>
+        ) : null}
+        {iconPosition === 'end' ? iconNode : null}
       </span>
     );
   }

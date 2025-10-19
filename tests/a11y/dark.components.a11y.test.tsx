@@ -8,10 +8,10 @@ import type { ReactElement } from 'react';
 // OODS components
 import { Button } from '../../src/components/base/Button.js';
 import { Badge } from '../../src/components/base/Badge.js';
+import { Banner } from '../../src/components/base/Banner.js';
 import { PageHeader } from '../../src/components/page/PageHeader.js';
 
 // Explorer components (used as additional coverage targets)
-import { Banner } from '../../apps/explorer/src/components/Banner';
 import { Input } from '../../apps/explorer/src/components/Input';
 
 afterEach(() => {
@@ -65,7 +65,7 @@ describe('Accessibility | Dark theme smoke (components)', () => {
   });
 
   it('Badge (dark) passes axe checks', async () => {
-    await expectNoAxeViolations(<Badge intent="warning">Draft</Badge>);
+    await expectNoAxeViolations(<Badge tone="warning">Draft</Badge>);
   });
 
   it('Banner (dark) passes axe checks', async () => {
@@ -87,7 +87,7 @@ describe('Accessibility | Dark theme smoke (components)', () => {
           subtitle="Customer account"
           badges={[
             { id: 'status-active', label: 'Active', tone: 'success' },
-            { id: 'status-risk', label: 'Risk', tone: 'danger' },
+            { id: 'status-risk', label: 'Risk', tone: 'critical' },
           ]}
           actions={[
             { id: 'primary', label: 'Edit', intent: 'success' },

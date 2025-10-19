@@ -6,6 +6,7 @@ import axe from 'axe-core';
 import type { ReactElement } from 'react';
 import { Button } from '../../src/components/base/Button.js';
 import { Badge } from '../../src/components/base/Badge.js';
+import { Banner } from '../../src/components/base/Banner.js';
 import { PageHeader } from '../../src/components/page/PageHeader.js';
 
 afterEach(() => {
@@ -53,7 +54,11 @@ describe('Accessibility | OODS primitives', () => {
   });
 
   it('Badge passes axe checks', async () => {
-    await expectNoAxeViolations(<Badge intent="warning">Draft</Badge>);
+    await expectNoAxeViolations(<Badge tone="warning">Draft</Badge>);
+  });
+
+  it('Banner passes axe checks', async () => {
+    await expectNoAxeViolations(<Banner status="trialing" domain="subscription" />);
   });
 });
 
@@ -65,7 +70,7 @@ describe('Accessibility | Page primitives', () => {
         subtitle="Customer account"
         badges={[
           { id: 'status-active', label: 'Active', tone: 'success' },
-          { id: 'status-risk', label: 'Risk', tone: 'danger' },
+          { id: 'status-risk', label: 'Risk', tone: 'critical' },
         ]}
         actions={[
           { id: 'primary', label: 'Edit', intent: 'success' },

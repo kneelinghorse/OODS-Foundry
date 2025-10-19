@@ -56,12 +56,12 @@ export function createTaggableTraitAdapter<Data extends TaggableViewData>(
               Tags
             </Text>
             {visible.map((tag) => (
-              <Badge key={`tag-${tag}`} intent="neutral">
+              <Badge key={`tag-${tag}`} tone="neutral">
                 #{tag}
               </Badge>
             ))}
             {overflow > 0 ? (
-              <Badge key="tag-overflow" intent="neutral">
+              <Badge key="tag-overflow" tone="neutral">
                 +{overflow}
               </Badge>
             ) : null}

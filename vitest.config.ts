@@ -29,7 +29,8 @@ export default defineConfig({
         'src/components/index.ts',
         'src/components/base/index.ts',
         'src/components/page/index.ts',
-        'src/view/index.ts'
+        'src/view/index.ts',
+        'src/stories/**'
       ],
       reportOnFailure: true,
       thresholds: {

@@ -11,7 +11,7 @@ describe('<PageHeader>', () => {
         description="Manage account status and billing"
         badges={[
           { id: 'status-active', label: 'Active', tone: 'success' },
-          { id: 'status-risk', label: 'At Risk', tone: 'danger' },
+          { id: 'status-risk', label: 'At Risk', tone: 'critical' },
         ]}
         actions={[
           { id: 'primary', label: 'Edit', intent: 'success' },
@@ -22,8 +22,9 @@ describe('<PageHeader>', () => {
     );
 
     expect(markup.startsWith('<header')).toBe(true);
-    expect(markup).toContain('bg-emerald-50'); // success badge
-    expect(markup).toContain('bg-rose-50'); // danger badge
+    expect(markup).toContain('data-tone="success"'); // success badge tone
+    expect(markup).toContain('data-tone="critical"'); // critical badge tone
+    expect(markup).toContain('--statusable-badge-background'); // CSS variables applied
     expect(markup).toContain('bg-emerald-600'); // success button
     expect(markup).toContain('bg-rose-600'); // danger button
   });
