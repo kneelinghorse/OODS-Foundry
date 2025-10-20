@@ -134,6 +134,113 @@ jobs:
       - name: Validate design tokens
         run: pnpm run tokens:validate
 
+  tokens-governance:
+    name: tokens-governance
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: write
+    strategy:
+      fail-fast: false
+      matrix:
+        brand: [A, B]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build tokens
+        run: pnpm run build:tokens
+
+      - name: Collect PR labels
+        id: labels
+        run: |
+          labels=$(jq -r '[.pull_request.labels[].name] | join(",")' "$GITHUB_EVENT_PATH")
+          if [ "$labels" = "null" ]; then
+            labels=""
+          fi
+          echo "value=$labels" >> "$GITHUB_OUTPUT"
+
+      - name: Run tokens-governance diff (Brand ${{ matrix.brand }})
+        id: governance
+        env:
+          BRAND: ${{ matrix.brand }}
+        run: |
+          mkdir -p artifacts/tokens
+          brand_lower=$(printf '%s' "$BRAND" | tr '[:upper:]' '[:lower:]')
+          report="artifacts/tokens/brand-${brand_lower}-report.json"
+          comment="artifacts/tokens/brand-${brand_lower}-comment.md"
+          set +e
+          pnpm run tokens:governance -- diff \
+            --brand "$BRAND" \
+            --base "${{ github.event.pull_request.base.sha }}" \
+            --head "${{ github.sha }}" \
+            --json "$report" \
+            --comment "$comment" \
+            --labels "${{ steps.labels.outputs.value }}"
+          status=$?
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          echo "report=$report" >> "$GITHUB_OUTPUT"
+          echo "comment=$comment" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Upload governance artifacts (Brand ${{ matrix.brand }})
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tokens-governance-${{ matrix.brand }}-${{ github.run_id }}
+          path: |
+            ${{ steps.governance.outputs.report }}
+            ${{ steps.governance.outputs.comment }}
+          if-no-files-found: warn
+
+      - name: Publish governance comment (Brand ${{ matrix.brand }})
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            const filePath = path.resolve(process.env.GITHUB_WORKSPACE, '${{ steps.governance.outputs.comment }}');
+            if (!fs.existsSync(filePath)) {
+              core.warning(`Governance comment file not found at ${filePath}`);
+              return;
+            }
+            const body = fs.readFileSync(filePath, 'utf8').trim();
+            if (!body) {
+              core.warning('Governance comment body empty, skipping.');
+              return;
+            }
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });
+
+      - name: Enforce governance result (Brand ${{ matrix.brand }})
+        if: steps.governance.outputs.status != '0'
+        run: |
+          echo "tokens-governance exited with status ${{ steps.governance.outputs.status }} for brand ${{ matrix.brand }}"
+          exit 1
+
   a11y-contract:
     name: a11y-contract
     runs-on: ubuntu-latest

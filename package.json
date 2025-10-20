@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "Object-Oriented Design System Trait Composition Engine",
   "type": "module",
+  "bin": {
+    "tokens-governance": "./tools/tokens-governance/index.ts"
+  },
   "packageManager": "pnpm@9.12.2",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -39,6 +42,7 @@
     "tokens:lint-semantic": "tsx scripts/tokens/lint-semantic.ts",
     "tokens:guardrails": "tsx scripts/tokens/color-guardrails.ts",
     "tokens-validate": "pnpm run tokens:validate && pnpm run tokens:lint-semantic && pnpm run tokens:guardrails -- --quiet",
+    "tokens:governance": "node tools/tokens-governance/index.ts",
     "build:packages": "pnpm --filter @oods/* run build",
     "prea11y:check": "pnpm --filter @oods/tokens run build",
     "a11y:check": "node tools/a11y/index.mjs check",
