@@ -1,4 +1,4 @@
-import React from 'react';
+// React import not required with react-jsx runtime
 import type { Meta, StoryObj } from '@storybook/react';
 import { Button as DSButton } from '../../components/base/Button';
 

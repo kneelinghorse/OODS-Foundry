@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta = {
@@ -8,13 +8,18 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj;
 
-function getFocusable(container: HTMLElement): HTMLElement[] {
+function getFocusable(container: unknown): any[] {
   const selectors = [
-    'a[href]','button:not([disabled])','textarea:not([disabled])','input:not([disabled])',
-    'select:not([disabled])','[tabindex]:not([tabindex="-1"])'
+    'a[href]',
+    'button:not([disabled])',
+    'textarea:not([disabled])',
+    'input:not([disabled])',
+    'select:not([disabled])',
+    '[tabindex]:not([tabindex="-1"])',
   ];
-  const nodes = Array.from(container.querySelectorAll<HTMLElement>(selectors.join(',')));
-  return nodes.filter((el) => !el.hasAttribute('disabled') && !el.getAttribute('aria-hidden'));
+  const host = container as any;
+  const list: any[] = Array.from(host?.querySelectorAll?.(selectors.join(',')) ?? []);
+  return list.filter((el) => !el?.hasAttribute?.('disabled') && !el?.getAttribute?.('aria-hidden')) as any[];
 }
 
 const overlayStyles: React.CSSProperties = {
@@ -49,28 +54,38 @@ function OverlayProof() {
   const lastFocused = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    if (open) {
-      lastFocused.current = (document.activeElement as HTMLElement) ?? null;
-      const panel = panelRef.current!;
+    const doc: any = (globalThis as any).document;
+    if (open && doc) {
+      lastFocused.current = (doc.activeElement as HTMLElement) ?? null;
+      const panel = panelRef.current as any;
       const focusables = getFocusable(panel);
-      (focusables[0] ?? panel).focus();
-      const onKeyDown = (e: KeyboardEvent) => {
-        if (e.key === 'Escape') { setOpen(false); }
-        if (e.key === 'Tab') {
+      (focusables[0] ?? panel)?.focus?.();
+      const onKeyDown = (e: any) => {
+        if (e?.key === 'Escape') {
+          setOpen(false);
+        }
+        if (e?.key === 'Tab') {
           const els = getFocusable(panel);
           if (!els.length) return;
           const first = els[0];
           const last = els[els.length - 1];
-          const active = document.activeElement as HTMLElement;
-          if (e.shiftKey && active === first) { e.preventDefault(); last.focus(); }
-          else if (!e.shiftKey && active === last) { e.preventDefault(); first.focus(); }
+          const active = doc.activeElement as any;
+          if (e.shiftKey && active === first) {
+            e.preventDefault();
+            last?.focus?.();
+          } else if (!e.shiftKey && active === last) {
+            e.preventDefault();
+            first?.focus?.();
+          }
         }
       };
-      document.addEventListener('keydown', onKeyDown);
-      return () => document.removeEventListener('keydown', onKeyDown);
-    } else if (lastFocused.current) {
-      lastFocused.current.focus();
+      doc.addEventListener('keydown', onKeyDown);
+      return () => doc.removeEventListener('keydown', onKeyDown);
     }
+    if (!open && lastFocused.current) {
+      (lastFocused.current as any)?.focus?.();
+    }
+    return undefined;
   }, [open]);
 
   const outsideInertProps = useMemo(() => ({ 'aria-hidden': open ? true : undefined }), [open]);
@@ -98,7 +113,7 @@ function OverlayProof() {
             <p>Tab cycles within, ESC closes, backdrop clickable.</p>
             <input placeholder="Focusable input" />
             <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-              <button className="cmp-button" data-tone="accent" onClick={() => alert('confirm')}>Confirm</button>
+              <button className="cmp-button" data-tone="accent" onClick={() => (globalThis as any).alert?.('confirm') || console.log('confirm')}>Confirm</button>
               <button className="cmp-button" data-variant="outline" onClick={() => setOpen(false)}>Close</button>
             </div>
           </div>
