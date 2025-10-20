@@ -1,0 +1,11 @@
+{
+  "overlay": {
+    "backdrop": {
+      "opacity": { "$type": "number", "$value": 0.5, "$description": "Default backdrop opacity for overlays." }
+    },
+    "transition": {
+      "open": { "$type": "transition", "$value": "{motion.transition.focus}", "$description": "Overlay open transition; collapses under reduced motion." },
+      "close": { "$type": "transition", "$value": "{motion.transition.focus}", "$description": "Overlay close transition; collapses under reduced motion." }
+    }
+  }
+}
