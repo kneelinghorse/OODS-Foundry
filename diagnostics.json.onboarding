@@ -1,0 +1,37 @@
+{
+  "mission": "B15.5",
+  "generated_at": "2025-10-20T01:41:07Z",
+  "dry_run": {
+    "design_quickstart": {
+      "duration_minutes": 8.4,
+      "notes": [
+        "Tokens export + transform + Storybook spin-up completed in 2.6 minutes.",
+        "Proof story update for Surfaces/Card captured with before-after controls."
+      ]
+    },
+    "dev_quickstart": {
+      "duration_minutes": 9.3,
+      "notes": [
+        "Brand switcher exercised across light/dark/HC themes with compact density modifier.",
+        "Local PR script completed on first pass; no retries required."
+      ]
+    }
+  },
+  "local_pr_check": {
+    "commands": [
+      "pnpm lint",
+      "pnpm typecheck",
+      "pnpm test:unit",
+      "pnpm a11y:check",
+      "pnpm chromatic:dry-run | pnpm vrt:lightdark --ci"
+    ],
+    "duration_minutes": 3.8,
+    "fallback": "chromatic:dry-run",
+    "notes": "Chromatic token present; no fallback necessary."
+  },
+  "issues_addressed": [
+    "Documented Chromatic token requirement in troubleshooting to avoid dry-run auth failures.",
+    "Added Storybook port override guidance for local conflicts with port 6006.",
+    "Reinforced export/transform order to prevent DTCG token mismatch noise."
+  ]
+}
