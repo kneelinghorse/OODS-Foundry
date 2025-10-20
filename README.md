@@ -29,6 +29,8 @@ See live status and plan in `missions/backlog.yaml`.
 
 ## Repo quickstart
 
+> ⚡ Need a 10-minute onboarding path? See `docs/getting-started/design.md` (Design) and `docs/getting-started/dev.md` (Development).
+
 ### Prereqs
 - Node **20+**, pnpm (**via Corepack**)
 - If using HC snapshots: Playwright (`pnpm exec playwright install`)
@@ -41,6 +43,9 @@ pnpm i
 ### Common scripts
 
 ```bash
+# Pre-flight local PR checks
+pnpm local:pr-check
+
 # Dev Storybook
 pnpm storybook:dev
 

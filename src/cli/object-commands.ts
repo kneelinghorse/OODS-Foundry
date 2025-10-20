@@ -3,7 +3,7 @@ import { accessSync, constants, existsSync, mkdirSync, readdirSync, unlinkSync, 
 import path from 'node:path';
 import process from 'node:process';
 
-import { ObjectRegistry } from '../registry/registry.js';
+import { ObjectRegistry, type DiagnosticEntry } from '../registry/registry.js';
 import { TraitLoader } from '../registry/trait-loader.js';
 import { TraitResolver } from '../registry/resolver.js';
 import { ParameterValidator } from '../validation/parameter-validator.js';
@@ -76,6 +76,12 @@ const COMMANDS = new Map<string, CommandDefinition>();
 
 function registerCommand(definition: CommandDefinition): void {
   COMMANDS.set(definition.name, definition);
+}
+
+function isParseErrorDiagnostic(
+  entry: DiagnosticEntry
+): entry is Extract<DiagnosticEntry, { type: 'parse_error' }> {
+  return entry.type === 'parse_error';
 }
 
 function normalizeCommandName(raw: string | undefined): string | undefined {
@@ -977,9 +983,10 @@ function registerCommands(): void {
         await withRegistry(options.objectRoots, async (registry) => {
           const diagnostics = registry.getDiagnostics();
           for (const [filePath, entries] of diagnostics.entries()) {
-            const parseIssues = entries
-              .filter((entry) => entry.type === 'parse_error')
-              .flatMap((entry) => normalizeParseErrors(entry.errors, filePath));
+            const parseEntries = entries.filter(isParseErrorDiagnostic);
+            const parseIssues = parseEntries.flatMap((entry) =>
+              normalizeParseErrors(entry.errors, filePath)
+            );
 
             results.push({
               path: filePath,

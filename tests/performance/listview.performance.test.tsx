@@ -22,7 +22,7 @@ function buildRegionMap(data: UserRecord): RegionMap {
   return composeExtensions(extensions, context);
 }
 
-const TARGET_MS = 180;
+const TARGET_MS = process.env.CI ? 180 : 320;
 
 describe('ListView performance', () => {
   it('renders 100 user rows under the interactive threshold', () => {
