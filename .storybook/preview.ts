@@ -44,6 +44,20 @@ function resolveInitialBrand(): BrandSetting {
 
 const initialBrand = resolveInitialBrand();
 
+// Apply initial theme/brand attributes ASAP to avoid unstyled flashes
+if (typeof document !== 'undefined') {
+  const root = document.documentElement;
+  const body = document.body;
+  const initialTheme = 'light';
+  root.setAttribute('data-theme', initialTheme);
+  body.setAttribute('data-theme', initialTheme);
+  const effectiveBrand = initialBrand === 'unset' ? null : initialBrand;
+  if (effectiveBrand) {
+    root.setAttribute('data-brand', effectiveBrand);
+    body.setAttribute('data-brand', effectiveBrand);
+  }
+}
+
 if (typeof globalThis !== 'undefined' && !(globalThis as any).__VITE_IMPORT_META_ENV__) {
   (globalThis as any).__VITE_IMPORT_META_ENV__ = import.meta.env;
 }
