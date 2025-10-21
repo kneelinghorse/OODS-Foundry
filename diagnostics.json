@@ -353,5 +353,106 @@
         "docs/mcp/Storybook-Agent-Panel.md"
       ]
     }
-  ]
+  ],
+  "helpers": {
+    "overlaysProof": {
+      "totals": {
+        "runs": 2,
+        "pass": 2,
+        "fail": 0
+      },
+      "lastRun": {
+        "mission": "B16.6",
+        "runAt": "2025-10-21T23:06:10.419Z",
+        "status": "passed",
+        "durationMs": 7755,
+        "tasks": [
+          {
+            "id": "overlay-manager-e2e",
+            "status": "passed",
+            "durationMs": 4020,
+            "exitCode": null
+          },
+          {
+            "id": "overlay-components-axe",
+            "status": "passed",
+            "durationMs": 3735,
+            "exitCode": null
+          }
+        ]
+      },
+      "history": [
+        {
+          "mission": "B16.6",
+          "runAt": "2025-10-21T23:06:10.419Z",
+          "status": "passed",
+          "durationMs": 7755,
+          "tasks": [
+            {
+              "id": "overlay-manager-e2e",
+              "status": "passed",
+              "durationMs": 4020,
+              "exitCode": null
+            },
+            {
+              "id": "overlay-components-axe",
+              "status": "passed",
+              "durationMs": 3735,
+              "exitCode": null
+            }
+          ]
+        },
+        {
+          "mission": "B16.6",
+          "runAt": "2025-10-21T22:31:08.172Z",
+          "status": "passed",
+          "durationMs": 8185,
+          "tasks": [
+            {
+              "id": "overlay-manager-e2e",
+              "status": "passed",
+              "durationMs": 4402,
+              "exitCode": null
+            },
+            {
+              "id": "overlay-components-axe",
+              "status": "passed",
+              "durationMs": 3783,
+              "exitCode": null
+            }
+          ]
+        }
+      ]
+    },
+    "pkgCompat": {
+      "totals": {
+        "runs": 2,
+        "pass": 2,
+        "fail": 0
+      },
+      "lastRun": {
+        "mission": "B16.6",
+        "runAt": "2025-10-21T23:06:29.554Z",
+        "status": "passed",
+        "durationMs": 13224,
+        "exitCode": null
+      },
+      "history": [
+        {
+          "mission": "B16.6",
+          "runAt": "2025-10-21T23:06:29.554Z",
+          "status": "passed",
+          "durationMs": 13224,
+          "exitCode": null
+        },
+        {
+          "mission": "B16.6",
+          "runAt": "2025-10-21T22:31:37.844Z",
+          "status": "passed",
+          "durationMs": 13808,
+          "exitCode": null
+        }
+      ]
+    }
+  }
 }
