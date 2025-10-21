@@ -1,0 +1,54 @@
+name: Package Compatibility
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'tsup.config.ts'
+      - 'scripts/pkg/**'
+      - 'src/**'
+      - 'storybook.config.ts'
+      - 'apps/explorer/addons/storybook-addon-agent/**'
+      - 'examples/sample-app/**'
+      - 'configs/provenance.placeholder.json'
+      - 'docs/packaging/internal.md'
+  pull_request:
+    paths:
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'tsup.config.ts'
+      - 'scripts/pkg/**'
+      - 'src/**'
+      - 'storybook.config.ts'
+      - 'apps/explorer/addons/storybook-addon-agent/**'
+      - 'examples/sample-app/**'
+      - 'configs/provenance.placeholder.json'
+      - 'docs/packaging/internal.md'
+
+jobs:
+  compat:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9.12.2
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Package compatibility
+        run: pnpm run pkg:compat

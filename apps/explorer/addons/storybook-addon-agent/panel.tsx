@@ -101,6 +101,43 @@ const APPLY_CAPABLE_TOOLS: ReadonlySet<ToolName> = new Set<ToolName>([
   'billing.switchFixtures',
 ]);
 
+type ProvenanceInfo = {
+  generated_at: string;
+  sb_build_hash: string;
+  vr_baseline_id: string;
+};
+
+const PROVENANCE_DEFAULT: ProvenanceInfo = {
+  generated_at: 'unavailable',
+  sb_build_hash: 'unavailable',
+  vr_baseline_id: 'unavailable',
+};
+
+const PROVENANCE_KEYS: ReadonlyArray<keyof ProvenanceInfo> = [
+  'generated_at',
+  'sb_build_hash',
+  'vr_baseline_id',
+];
+
+function readGlobalProvenance(): ProvenanceInfo {
+  const globalValue = (globalThis as { __OODS_PROVENANCE__?: unknown }).__OODS_PROVENANCE__;
+  if (!globalValue || typeof globalValue !== 'object') {
+    return PROVENANCE_DEFAULT;
+  }
+
+  const record = globalValue as Record<string, unknown>;
+  const result: ProvenanceInfo = { ...PROVENANCE_DEFAULT };
+
+  for (const key of PROVENANCE_KEYS) {
+    const value = record[key];
+    if (typeof value === 'string' && value.length > 0) {
+      result[key] = value;
+    }
+  }
+
+  return result;
+}
+
 function createTaskId(): string {
   const cryptoObj = globalThis.crypto as { randomUUID?: () => string } | undefined;
   if (cryptoObj && typeof cryptoObj.randomUUID === 'function') {
@@ -174,6 +211,35 @@ const SectionTitle = styled.h3`
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: #333;
+`;
+
+const ProvenanceList = styled.dl`
+  margin: 0;
+  display: grid;
+  grid-template-columns: minmax(100px, 140px) 1fr;
+  gap: 6px 12px;
+  font-size: 12px;
+  color: #333;
+`;
+
+const ProvenanceTerm = styled.dt`
+  margin: 0;
+  font-weight: 600;
+  text-transform: none;
+`;
+
+const ProvenanceValue = styled.dd`
+  margin: 0;
+  font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  word-break: break-all;
+`;
+
+const ProvenanceStatus = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: #1f6feb;
 `;
 
 const Label = styled.label`
@@ -631,6 +697,12 @@ export function AgentPanel() {
       ),
     [tasks]
   );
+
+  const provenanceInfo = useMemo(readGlobalProvenance, []);
+  const sbBuildHash = provenanceInfo.sb_build_hash;
+  const vrBaselineId = provenanceInfo.vr_baseline_id;
+  const provenanceGeneratedAt = provenanceInfo.generated_at;
+  const provenanceReady = sbBuildHash !== 'unavailable' && vrBaselineId !== 'unavailable';
 
   useEffect(() => {
     let cancelled = false;
@@ -1171,6 +1243,31 @@ export function AgentPanel() {
       <SRStatus role="status" aria-live="polite">
         {srAnnouncementText}
       </SRStatus>
+
+      <Section aria-labelledby="agent-provenance-heading">
+        <SectionTitle id="agent-provenance-heading">About This Build</SectionTitle>
+        <ProvenanceList>
+          <ProvenanceTerm>Status</ProvenanceTerm>
+          <ProvenanceValue>
+            <ProvenanceStatus>{provenanceReady ? 'Ready' : 'Pending pkg:build'}</ProvenanceStatus>
+          </ProvenanceValue>
+          <ProvenanceTerm>Generated</ProvenanceTerm>
+          <ProvenanceValue>{provenanceGeneratedAt}</ProvenanceValue>
+          <ProvenanceTerm>Storybook hash</ProvenanceTerm>
+          <ProvenanceValue>
+            <code>{sbBuildHash}</code>
+          </ProvenanceValue>
+          <ProvenanceTerm>VR baseline</ProvenanceTerm>
+          <ProvenanceValue>
+            <code>{vrBaselineId}</code>
+          </ProvenanceValue>
+        </ProvenanceList>
+        {!provenanceReady ? (
+          <Muted>
+            Run <code>pnpm run pkg:build</code> to refresh Storybook and visual-regression provenance.
+          </Muted>
+        ) : null}
+      </Section>
 
       <Section aria-labelledby="agent-status-heading">
         <SectionTitle id="agent-status-heading">Status</SectionTitle>
