@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { captureFocusTarget, focusTrap, getFocusable, restoreFocus } from './focus';
 
 export function useReducedMotion(): boolean {
@@ -19,16 +19,16 @@ export function usePortalRoot(id = 'oods-overlay-root'): HTMLElement | null {
   const [host, setHost] = useState<HTMLElement | null>(null);
   useEffect(() => {
     const doc = document;
-    let node = doc.getElementById(id) as HTMLElement | null;
-    if (!node) {
-      node = doc.createElement('div');
-      node.id = id;
-      // Rely on tokenized z-index; do not use numeric literals
-      node.style.position = 'relative';
-      node.style.zIndex = 'var(--sys-z-overlay, var(--cmp-z-overlay))';
-      doc.body.appendChild(node);
+    let existing = doc.getElementById(id) as HTMLElement | null;
+    if (!existing) {
+      const created = doc.createElement('div');
+      created.id = id;
+      created.style.position = 'relative';
+      created.style.zIndex = 'var(--sys-z-overlay, var(--cmp-z-overlay))';
+      doc.body.appendChild(created);
+      existing = created;
     }
-    setHost(node);
+    setHost(existing);
     return () => {
       // keep root for reuse across overlays
     };
@@ -54,26 +54,31 @@ export function useInertOutside(active: boolean, overlayElement: HTMLElement | n
 }
 
 /** Install ESC and optional backdrop click handlers */
-export function useEscapeRoutes(onClose: () => void, backdropRef?: React.RefObject<HTMLElement>): void {
+export function useEscapeRoutes<T extends Element>(
+  onClose: () => void,
+  backdrop?: React.RefObject<T | null> | T | null
+): void {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
     document.addEventListener('keydown', onKey);
-    const backdrop = backdropRef?.current ?? null;
+    const el: Element | null = (backdrop && (backdrop as any).current !== undefined)
+      ? (backdrop as React.RefObject<T | null>).current
+      : (backdrop as T | null);
     const onClick = (e: Event) => {
-      if (e.target === backdrop) onClose();
+      if (e.target === el) onClose();
     };
-    if (backdrop) backdrop.addEventListener('click', onClick);
+    if (el) el.addEventListener('click', onClick as EventListener);
     return () => {
       document.removeEventListener('keydown', onKey);
-      if (backdrop) backdrop.removeEventListener('click', onClick);
+      if (el) el.removeEventListener('click', onClick as EventListener);
     };
-  }, [onClose, backdropRef?.current]);
+  }, [onClose, backdrop]);
 }
 
 /** Manage focus on open/close for the given panel element */
-export function useFocusManagement(open: boolean, panelRef: React.RefObject<HTMLElement>) {
+export function useFocusManagement<T extends HTMLElement>(open: boolean, panelRef: React.RefObject<T | null>) {
   const restoreTargetRef = useRef<HTMLElement | null>(null);
   useEffect(() => {
     const panel = panelRef.current;
