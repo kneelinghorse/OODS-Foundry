@@ -57,6 +57,7 @@ async function runSampleAppSmokeTest(): Promise<void> {
 
 async function main(): Promise<void> {
   await run('pnpm', ['run', 'pkg:build']);
+  await run('pnpm', ['--filter', '@oods/tw-variants', 'run', 'build']);
   await run(
     'pnpm',
     ['run', 'build-storybook', '--quiet'],

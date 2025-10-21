@@ -58,7 +58,7 @@ function determineReleaseType(commits: ConventionalEntry[]): ReleaseType {
     if (entry.breaking) {
       return 'major';
     }
-    if (entry.type === 'feat' && releaseType !== 'major') {
+    if (entry.type === 'feat' && releaseType === 'patch') {
       releaseType = 'minor';
     }
   }

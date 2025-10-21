@@ -3,10 +3,9 @@ import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { build as tsupBuild } from 'tsup';
-import tsupConfig from '../../tsup.config.ts';
 
 type ProvenanceRecord = {
   generated_at: string;
@@ -25,8 +24,18 @@ async function ensureCleanDist(): Promise<void> {
   await fsp.mkdir(PACKAGE_DIST_DIR, { recursive: true });
 }
 
+type TsupConfig = Parameters<typeof tsupBuild>[0];
+
+async function loadTsupConfigs(): Promise<TsupConfig[]> {
+  const tsupConfigPath = path.join(WORKSPACE_ROOT, 'tsup.config.mjs');
+  const module = await import(pathToFileURL(tsupConfigPath).href);
+  const exported = module.default ?? module;
+  const configs = Array.isArray(exported) ? exported : [exported];
+  return configs as TsupConfig[];
+}
+
 async function runTsup(): Promise<void> {
-  const configs = Array.isArray(tsupConfig) ? tsupConfig : [tsupConfig];
+  const configs = await loadTsupConfigs();
   for (const config of configs) {
     await tsupBuild({
       ...config,
