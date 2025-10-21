@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Sheet } from '../../components/Sheet/Sheet';
 
@@ -39,4 +39,3 @@ export const BottomLarge: Story = {
     );
   },
 };
-

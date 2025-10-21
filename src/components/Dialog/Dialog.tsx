@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useId, useMemo, useRef } from 'react';
+import { PropsWithChildren, useId, useMemo, useRef } from 'react';
 import { OverlayRoot } from '../../overlays/manager/OverlayRoot';
 import { useEscapeRoutes, useFocusManagement, useInertOutside } from '../../overlays/manager/hooks';
 
@@ -101,4 +101,3 @@ export function Dialog({
     </OverlayRoot>
   );
 }
-

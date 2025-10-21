@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useMemo, useRef } from 'react';
+import { type CSSProperties, PropsWithChildren, useMemo, useRef } from 'react';
 import { OverlayRoot } from '../../overlays/manager/OverlayRoot';
 import { useEscapeRoutes, useFocusManagement, useInertOutside } from '../../overlays/manager/hooks';
 
@@ -48,15 +48,14 @@ export function Sheet({
     return { px };
   }, [size]);
 
-  const panelStyle: React.CSSProperties = useMemo(() => {
-    const base: React.CSSProperties = {
+  const panelStyle: CSSProperties = useMemo(() => {
+    const base: CSSProperties = {
       position: 'fixed',
       background: 'var(--cmp-surface-panel)',
       color: 'var(--cmp-text-body)',
       padding: 'var(--cmp-spacing-inset-default, 1rem)',
       border: '2px solid var(--cmp-border-strong)',
     };
-    const offset = 0;
     if (anchor === 'right') return { ...base, top: 0, bottom: 0, right: 0, width: dims.px };
     if (anchor === 'left') return { ...base, top: 0, bottom: 0, left: 0, width: dims.px };
     if (anchor === 'top') return { ...base, top: 0, left: 0, right: 0, height: dims.px };
@@ -90,4 +89,3 @@ export function Sheet({
     </OverlayRoot>
   );
 }
-

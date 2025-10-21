@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Dialog } from '../../components/Dialog/Dialog';
 
@@ -31,4 +31,3 @@ export const Basic: Story = {
     );
   },
 };
-
