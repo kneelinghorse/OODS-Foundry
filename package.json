@@ -1,5 +1,5 @@
 {
-  "name": "trait-engine",
+  "name": "@oods/trait-engine",
   "version": "0.1.0",
   "description": "Object-Oriented Design System Trait Composition Engine",
   "type": "module",
@@ -7,10 +7,26 @@
     "tokens-governance": "./tools/tokens-governance/index.ts"
   },
   "packageManager": "pnpm@9.12.2",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/pkg/index.cjs",
+  "module": "dist/pkg/index.js",
+  "types": "dist/pkg/index.d.ts",
+  "files": [
+    "dist/pkg"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/pkg/index.d.ts",
+      "import": "./dist/pkg/index.js",
+      "require": "./dist/pkg/index.cjs"
+    },
+    "./package.json": "./package.json",
+    "./provenance.json": "./dist/pkg/provenance.json"
+  },
   "scripts": {
     "build": "tsc",
+    "pkg:build": "tsx scripts/pkg/build.ts",
+    "pkg:version": "tsx scripts/pkg/version.ts",
+    "pkg:compat": "tsx scripts/pkg/compat.ts",
     "test": "vitest",
     "test:unit": "vitest run --exclude \"tests/integration/**\"",
     "test:integration": "vitest run tests/integration",
@@ -123,6 +139,7 @@
     "tsup": "^8.2.4",
     "tsx": "^4.20.6",
     "typescript": "~5.3.3",
+    "semver": "^7.6.3",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4"
   },

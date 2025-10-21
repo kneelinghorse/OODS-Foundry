@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import path from 'node:path';
 import { execSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
@@ -13,6 +14,27 @@ const tokensDistDir = path.resolve(workspaceRoot, 'packages', 'tokens', 'dist');
 const tokensTailwindPath = path.resolve(tokensDistDir, 'tailwind', 'tokens.json');
 const tokensCssPath = path.resolve(tokensDistDir, 'css', 'tokens.css');
 const tokensModulePath = path.resolve(tokensDistDir, 'index.js');
+const provenanceCandidate = path.resolve(workspaceRoot, 'dist', 'pkg', 'provenance.json');
+const provenanceFallback = path.resolve(workspaceRoot, 'configs', 'provenance.placeholder.json');
+let provenancePayload: Record<string, unknown> = {
+  generated_at: 'unavailable',
+  sb_build_hash: 'unavailable',
+  vr_baseline_id: 'unavailable',
+};
+
+try {
+  const provenanceSource = fs.existsSync(provenanceCandidate) ? provenanceCandidate : provenanceFallback;
+  const raw = fs.readFileSync(provenanceSource, 'utf8');
+  const parsed = JSON.parse(raw);
+  if (parsed && typeof parsed === 'object') {
+    provenancePayload = parsed as Record<string, unknown>;
+  }
+} catch (error) {
+  console.warn('[storybook] Unable to load provenance metadata. Falling back to placeholder.', error);
+}
+
+const provenanceSerialized = JSON.stringify(provenancePayload).replace(/</g, '\\u003c');
+const provenanceScriptTag = `<script>window.__OODS_PROVENANCE__ = ${provenanceSerialized};</script>`;
 let tokensBuilt = false;
 
 const config: StorybookConfig = {
@@ -34,6 +56,8 @@ const config: StorybookConfig = {
     name: '@storybook/react-vite',
     options: {},
   },
+  managerHead: (head) => `${head ?? ''}${provenanceScriptTag}`,
+  previewHead: (head) => `${head ?? ''}${provenanceScriptTag}`,
   docs: {
     autodocs: true,
   },
