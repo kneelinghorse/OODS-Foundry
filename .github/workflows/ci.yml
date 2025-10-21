@@ -337,7 +337,8 @@ jobs:
           workingDir: .
           storybookBuildDir: storybook-static
           autoAcceptChanges: main
-          exitZeroOnChanges: false
+          # Do not fail the job on visual diffs; reviewers will approve changes in Chromatic UI
+          exitZeroOnChanges: true
 
   coverage:
     name: coverage
@@ -374,4 +375,3 @@ jobs:
           name: coverage-${{ github.run_id }}
           path: coverage
           if-no-files-found: warn
-
