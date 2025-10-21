@@ -1,0 +1,405 @@
+﻿2025-10-21T19:41:28.3619909Z Current runner version: '2.329.0'
+2025-10-21T19:41:28.3651545Z ##[group]Runner Image Provisioner
+2025-10-21T19:41:28.3652790Z Hosted Compute Agent
+2025-10-21T19:41:28.3653619Z Version: 20250912.392
+2025-10-21T19:41:28.3654533Z Commit: d921fda672a98b64f4f82364647e2f10b2267d0b
+2025-10-21T19:41:28.3655652Z Build Date: 2025-09-12T15:23:14Z
+2025-10-21T19:41:28.3656602Z ##[endgroup]
+2025-10-21T19:41:28.3657449Z ##[group]Operating System
+2025-10-21T19:41:28.3658366Z Ubuntu
+2025-10-21T19:41:28.3659277Z 24.04.3
+2025-10-21T19:41:28.3659949Z LTS
+2025-10-21T19:41:28.3660794Z ##[endgroup]
+2025-10-21T19:41:28.3661498Z ##[group]Runner Image
+2025-10-21T19:41:28.3662342Z Image: ubuntu-24.04
+2025-10-21T19:41:28.3663234Z Version: 20250929.60.1
+2025-10-21T19:41:28.3664930Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20250929.60/images/ubuntu/Ubuntu2404-Readme.md
+2025-10-21T19:41:28.3667612Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20250929.60
+2025-10-21T19:41:28.3669429Z ##[endgroup]
+2025-10-21T19:41:28.3671382Z ##[group]GITHUB_TOKEN Permissions
+2025-10-21T19:41:28.3673792Z Contents: read
+2025-10-21T19:41:28.3674635Z Metadata: read
+2025-10-21T19:41:28.3675422Z PullRequests: write
+2025-10-21T19:41:28.3676159Z ##[endgroup]
+2025-10-21T19:41:28.3679305Z Secret source: Actions
+2025-10-21T19:41:28.3680364Z Prepare workflow directory
+2025-10-21T19:41:28.4221467Z Prepare all required actions
+2025-10-21T19:41:28.4276715Z Getting action download info
+2025-10-21T19:41:28.8033930Z Download action repository 'actions/checkout@v4' (SHA:08eba0b27e820071cde6df949e0beb9ba4906955)
+2025-10-21T19:41:28.9682127Z Download action repository 'pnpm/action-setup@v4' (SHA:41ff72655975bd51cab0327fa583b6e92b6d3061)
+2025-10-21T19:41:29.2314933Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+2025-10-21T19:41:29.4746936Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2025-10-21T19:41:29.6273653Z Download action repository 'actions/github-script@v7' (SHA:f28e40c7f34bde8b3046d885e986cb6290c5673b)
+2025-10-21T19:41:29.9386186Z Complete job name: tokens-governance (B)
+2025-10-21T19:41:30.0142327Z ##[group]Run actions/checkout@v4
+2025-10-21T19:41:30.0143625Z with:
+2025-10-21T19:41:30.0144352Z   fetch-depth: 0
+2025-10-21T19:41:30.0145215Z   repository: kneelinghorse/OODS-Foundry
+2025-10-21T19:41:30.0146558Z   token: ***
+2025-10-21T19:41:30.0147312Z   ssh-strict: true
+2025-10-21T19:41:30.0148087Z   ssh-user: git
+2025-10-21T19:41:30.0149052Z   persist-credentials: true
+2025-10-21T19:41:30.0149940Z   clean: true
+2025-10-21T19:41:30.0150761Z   sparse-checkout-cone-mode: true
+2025-10-21T19:41:30.0151728Z   fetch-tags: false
+2025-10-21T19:41:30.0152521Z   show-progress: true
+2025-10-21T19:41:30.0153367Z   lfs: false
+2025-10-21T19:41:30.0154112Z   submodules: false
+2025-10-21T19:41:30.0154920Z   set-safe-directory: true
+2025-10-21T19:41:30.0156062Z env:
+2025-10-21T19:41:30.0156758Z   NODE_VERSION: 20
+2025-10-21T19:41:30.0157562Z ##[endgroup]
+2025-10-21T19:41:30.1247556Z Syncing repository: kneelinghorse/OODS-Foundry
+2025-10-21T19:41:30.1250948Z ##[group]Getting Git version info
+2025-10-21T19:41:30.1252546Z Working directory is '/home/runner/work/OODS-Foundry/OODS-Foundry'
+2025-10-21T19:41:30.1254741Z [command]/usr/bin/git version
+2025-10-21T19:41:30.1315418Z git version 2.51.0
+2025-10-21T19:41:30.1341878Z ##[endgroup]
+2025-10-21T19:41:30.1356242Z Temporarily overriding HOME='/home/runner/work/_temp/5bc6c406-9af4-40e6-952e-01838cc1286f' before making global git config changes
+2025-10-21T19:41:30.1359520Z Adding repository directory to the temporary git global config as a safe directory
+2025-10-21T19:41:30.1363416Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/OODS-Foundry/OODS-Foundry
+2025-10-21T19:41:30.1402137Z Deleting the contents of '/home/runner/work/OODS-Foundry/OODS-Foundry'
+2025-10-21T19:41:30.1406181Z ##[group]Initializing the repository
+2025-10-21T19:41:30.1411199Z [command]/usr/bin/git init /home/runner/work/OODS-Foundry/OODS-Foundry
+2025-10-21T19:41:30.1531634Z hint: Using 'master' as the name for the initial branch. This default branch name
+2025-10-21T19:41:30.1534217Z hint: is subject to change. To configure the initial branch name to use in all
+2025-10-21T19:41:30.1537020Z hint: of your new repositories, which will suppress this warning, call:
+2025-10-21T19:41:30.1539739Z hint:
+2025-10-21T19:41:30.1541679Z hint: 	git config --global init.defaultBranch <name>
+2025-10-21T19:41:30.1543782Z hint:
+2025-10-21T19:41:30.1545727Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2025-10-21T19:41:30.1549314Z hint: 'development'. The just-created branch can be renamed via this command:
+2025-10-21T19:41:30.1551967Z hint:
+2025-10-21T19:41:30.1553280Z hint: 	git branch -m <name>
+2025-10-21T19:41:30.1554888Z hint:
+2025-10-21T19:41:30.1556544Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2025-10-21T19:41:30.1558894Z Initialized empty Git repository in /home/runner/work/OODS-Foundry/OODS-Foundry/.git/
+2025-10-21T19:41:30.1563710Z [command]/usr/bin/git remote add origin https://github.com/kneelinghorse/OODS-Foundry
+2025-10-21T19:41:30.1590954Z ##[endgroup]
+2025-10-21T19:41:30.1593654Z ##[group]Disabling automatic garbage collection
+2025-10-21T19:41:30.1596057Z [command]/usr/bin/git config --local gc.auto 0
+2025-10-21T19:41:30.1625540Z ##[endgroup]
+2025-10-21T19:41:30.1628115Z ##[group]Setting up auth
+2025-10-21T19:41:30.1633318Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-10-21T19:41:30.1666093Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-10-21T19:41:30.2000506Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-10-21T19:41:30.2029936Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-10-21T19:41:30.2260064Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2025-10-21T19:41:30.2295998Z ##[endgroup]
+2025-10-21T19:41:30.2298935Z ##[group]Fetching the repository
+2025-10-21T19:41:30.2309152Z [command]/usr/bin/git -c protocol.version=2 fetch --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/* +033d0457fb7895894c7168e1ff4b856139c32752:refs/remotes/pull/20/merge
+2025-10-21T19:41:30.5270320Z From https://github.com/kneelinghorse/OODS-Foundry
+2025-10-21T19:41:30.5273647Z  * [new branch]      chore/b16-1-overlay-contract             -> origin/chore/b16-1-overlay-contract
+2025-10-21T19:41:30.5277543Z  * [new branch]      chore/ci-consolidation                   -> origin/chore/ci-consolidation
+2025-10-21T19:41:30.5280905Z  * [new branch]      main                                     -> origin/main
+2025-10-21T19:41:30.5283213Z  * [new ref]         033d0457fb7895894c7168e1ff4b856139c32752 -> pull/20/merge
+2025-10-21T19:41:30.5315623Z ##[endgroup]
+2025-10-21T19:41:30.5317987Z ##[group]Determining the checkout info
+2025-10-21T19:41:30.5320033Z ##[endgroup]
+2025-10-21T19:41:30.5322207Z [command]/usr/bin/git sparse-checkout disable
+2025-10-21T19:41:30.5366577Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2025-10-21T19:41:30.5398049Z ##[group]Checking out the ref
+2025-10-21T19:41:30.5401003Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/20/merge
+2025-10-21T19:41:30.6026704Z Note: switching to 'refs/remotes/pull/20/merge'.
+2025-10-21T19:41:30.6027741Z 
+2025-10-21T19:41:30.6028723Z You are in 'detached HEAD' state. You can look around, make experimental
+2025-10-21T19:41:30.6030545Z changes and commit them, and you can discard any commits you make in this
+2025-10-21T19:41:30.6032441Z state without impacting any branches by switching back to a branch.
+2025-10-21T19:41:30.6033949Z 
+2025-10-21T19:41:30.6034991Z If you want to create a new branch to retain commits you create, you may
+2025-10-21T19:41:30.6036736Z do so (now or later) by using -c with the switch command. Example:
+2025-10-21T19:41:30.6037655Z 
+2025-10-21T19:41:30.6038217Z   git switch -c <new-branch-name>
+2025-10-21T19:41:30.6039200Z 
+2025-10-21T19:41:30.6039624Z Or undo this operation with:
+2025-10-21T19:41:30.6040244Z 
+2025-10-21T19:41:30.6040650Z   git switch -
+2025-10-21T19:41:30.6041144Z 
+2025-10-21T19:41:30.6041987Z Turn off this advice by setting config variable advice.detachedHead to false
+2025-10-21T19:41:30.6043143Z 
+2025-10-21T19:41:30.6044343Z HEAD is now at 033d045 Merge 5dc10f809208e37eb8d0684e027971c54caf7d86 into c14735735818f7a2717e0e966a34f13ec2262c01
+2025-10-21T19:41:30.6048204Z ##[endgroup]
+2025-10-21T19:41:30.6077175Z [command]/usr/bin/git log -1 --format=%H
+2025-10-21T19:41:30.6099782Z 033d0457fb7895894c7168e1ff4b856139c32752
+2025-10-21T19:41:30.6402609Z ##[group]Run pnpm/action-setup@v4
+2025-10-21T19:41:30.6403651Z with:
+2025-10-21T19:41:30.6404324Z   run_install: false
+2025-10-21T19:41:30.6405103Z   dest: ~/setup-pnpm
+2025-10-21T19:41:30.6405925Z   package_json_file: package.json
+2025-10-21T19:41:30.6406849Z   standalone: false
+2025-10-21T19:41:30.6407573Z env:
+2025-10-21T19:41:30.6408239Z   NODE_VERSION: 20
+2025-10-21T19:41:30.6409287Z ##[endgroup]
+2025-10-21T19:41:30.6959647Z ##[group]Running self-installer...
+2025-10-21T19:41:31.2990748Z Progress: resolved 1, reused 0, downloaded 0, added 0
+2025-10-21T19:41:31.3104751Z Packages: +1
+2025-10-21T19:41:31.3105212Z +
+2025-10-21T19:41:31.7560865Z Progress: resolved 1, reused 0, downloaded 1, added 1, done
+2025-10-21T19:41:31.7887403Z 
+2025-10-21T19:41:31.7888278Z dependencies:
+2025-10-21T19:41:31.7888981Z + pnpm 9.12.2 (10.19.0 is available)
+2025-10-21T19:41:31.7889329Z 
+2025-10-21T19:41:31.7927905Z Done in 925ms
+2025-10-21T19:41:31.8120720Z ##[endgroup]
+2025-10-21T19:41:31.8125572Z Installation Completed!
+2025-10-21T19:41:31.8286234Z ##[group]Run actions/setup-node@v4
+2025-10-21T19:41:31.8286539Z with:
+2025-10-21T19:41:31.8286745Z   node-version: 20
+2025-10-21T19:41:31.8286967Z   cache: pnpm
+2025-10-21T19:41:31.8287174Z   always-auth: false
+2025-10-21T19:41:31.8287401Z   check-latest: false
+2025-10-21T19:41:31.8287759Z   token: ***
+2025-10-21T19:41:31.8287962Z env:
+2025-10-21T19:41:31.8288153Z   NODE_VERSION: 20
+2025-10-21T19:41:31.8288439Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2025-10-21T19:41:31.8288909Z ##[endgroup]
+2025-10-21T19:41:32.2251509Z Found in cache @ /opt/hostedtoolcache/node/20.19.5/x64
+2025-10-21T19:41:32.2252560Z ##[group]Environment details
+2025-10-21T19:41:35.0535381Z node: v20.19.5
+2025-10-21T19:41:35.0535999Z npm: 10.8.2
+2025-10-21T19:41:35.0536296Z yarn: 1.22.22
+2025-10-21T19:41:35.0537129Z ##[endgroup]
+2025-10-21T19:41:35.0564963Z [command]/home/runner/setup-pnpm/node_modules/.bin/pnpm store path --silent
+2025-10-21T19:41:35.6114582Z /home/runner/setup-pnpm/node_modules/.bin/store/v3
+2025-10-21T19:41:35.7303529Z Cache hit for: node-cache-Linux-x64-pnpm-9aefe4b87137c3c1d2eadd92fe89e0de461db97242fb5c042f2daf6d1d57ccec
+2025-10-21T19:41:36.1985972Z Received 75848598 of 75848598 (100.0%), 167.4 MBs/sec
+2025-10-21T19:41:36.1986650Z Cache Size: ~72 MB (75848598 B)
+2025-10-21T19:41:36.2042889Z [command]/usr/bin/tar -xf /home/runner/work/_temp/5c1ff6dd-1ada-498c-8602-2c82be5e6cdb/cache.tzst -P -C /home/runner/work/OODS-Foundry/OODS-Foundry --use-compress-program unzstd
+2025-10-21T19:41:37.3339793Z Cache restored successfully
+2025-10-21T19:41:37.3477289Z Cache restored from key: node-cache-Linux-x64-pnpm-9aefe4b87137c3c1d2eadd92fe89e0de461db97242fb5c042f2daf6d1d57ccec
+2025-10-21T19:41:37.3648004Z ##[group]Run pnpm install --frozen-lockfile
+2025-10-21T19:41:37.3648425Z [36;1mpnpm install --frozen-lockfile[0m
+2025-10-21T19:41:37.3759893Z shell: /usr/bin/bash -e {0}
+2025-10-21T19:41:37.3760165Z env:
+2025-10-21T19:41:37.3760347Z   NODE_VERSION: 20
+2025-10-21T19:41:37.3760869Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2025-10-21T19:41:37.3761191Z ##[endgroup]
+2025-10-21T19:41:37.8140809Z Scope: all 11 workspace projects
+2025-10-21T19:41:37.8875557Z Lockfile is up to date, resolution step is skipped
+2025-10-21T19:41:37.9558876Z Progress: resolved 1, reused 0, downloaded 0, added 0
+2025-10-21T19:41:38.1144432Z Packages: +671
+2025-10-21T19:41:38.1148649Z ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2025-10-21T19:41:38.9559025Z Progress: resolved 671, reused 671, downloaded 0, added 538
+2025-10-21T19:41:39.0662783Z Progress: resolved 671, reused 671, downloaded 0, added 671, done
+2025-10-21T19:41:40.0287159Z 
+2025-10-21T19:41:40.0287771Z dependencies:
+2025-10-21T19:41:40.0288280Z + @radix-ui/react-slot 1.2.3
+2025-10-21T19:41:40.0288964Z + ajv 8.17.1
+2025-10-21T19:41:40.0289337Z + ajv-formats 3.0.1
+2025-10-21T19:41:40.0289660Z + js-yaml 4.1.0
+2025-10-21T19:41:40.0289961Z + react 19.2.0
+2025-10-21T19:41:40.0290288Z + react-dom 19.2.0
+2025-10-21T19:41:40.0290616Z + zod 4.1.12
+2025-10-21T19:41:40.0290793Z 
+2025-10-21T19:41:40.0290930Z devDependencies:
+2025-10-21T19:41:40.0291348Z + @chromatic-com/storybook 4.1.1
+2025-10-21T19:41:40.0291876Z + @oods/a11y-tools 0.1.0 <- packages/a11y-tools
+2025-10-21T19:41:40.0292434Z + @oods/tokens 0.1.0 <- packages/tokens
+2025-10-21T19:41:40.0292906Z + @playwright/test 1.56.1
+2025-10-21T19:41:40.0293346Z + @storybook/addon-a11y 9.1.10
+2025-10-21T19:41:40.0293796Z + @storybook/addon-docs 9.1.10
+2025-10-21T19:41:40.0294276Z + @storybook/addon-onboarding 9.1.10
+2025-10-21T19:41:40.0294765Z + @storybook/addon-vitest 9.1.10
+2025-10-21T19:41:40.0295184Z + @storybook/react 9.1.10
+2025-10-21T19:41:40.0295615Z + @storybook/react-vite 9.1.10
+2025-10-21T19:41:40.0296105Z + @testing-library/react 16.3.0
+2025-10-21T19:41:40.0296582Z + @tokens-studio/sd-transforms 1.3.0
+2025-10-21T19:41:40.0297012Z + @types/js-yaml 4.0.9
+2025-10-21T19:41:40.0297360Z + @types/node 20.19.21
+2025-10-21T19:41:40.0297713Z + @types/react 19.2.2
+2025-10-21T19:41:40.0298081Z + @types/react-dom 19.2.2
+2025-10-21T19:41:40.0298775Z + @typescript-eslint/eslint-plugin 6.21.0
+2025-10-21T19:41:40.0299304Z + @typescript-eslint/parser 6.21.0
+2025-10-21T19:41:40.0299748Z + @vitejs/plugin-react 5.0.4
+2025-10-21T19:41:40.0300145Z + @vitest/browser 3.2.4
+2025-10-21T19:41:40.0300521Z + @vitest/coverage-v8 3.2.4
+2025-10-21T19:41:40.0300885Z + axe-core 4.11.0
+2025-10-21T19:41:40.0301215Z + colorjs.io 0.5.2
+2025-10-21T19:41:40.0301527Z + eslint 8.57.1
+2025-10-21T19:41:40.0301926Z + eslint-plugin-storybook 9.1.10
+2025-10-21T19:41:40.0302303Z + jsdom 24.1.3
+2025-10-21T19:41:40.0302698Z + json-schema-to-typescript 13.1.2
+2025-10-21T19:41:40.0303134Z + markdown-to-jsx 7.7.15
+2025-10-21T19:41:40.0303501Z + playwright 1.56.1
+2025-10-21T19:41:40.0303813Z + prettier 3.6.2
+2025-10-21T19:41:40.0304124Z + rimraf 5.0.10
+2025-10-21T19:41:40.0304448Z + storybook 9.1.10
+2025-10-21T19:41:40.0304793Z + style-dictionary 4.4.0
+2025-10-21T19:41:40.0305153Z + tailwindcss 3.4.18
+2025-10-21T19:41:40.0305475Z + tsup 8.5.0
+2025-10-21T19:41:40.0305769Z + tsx 4.20.6
+2025-10-21T19:41:40.0306084Z + typescript 5.3.3
+2025-10-21T19:41:40.0306443Z + vite-tsconfig-paths 5.1.4
+2025-10-21T19:41:40.0306801Z + vitest 3.2.4
+2025-10-21T19:41:40.0306979Z 
+2025-10-21T19:41:40.0568301Z . prepare$ node tools/token-lint/setup-precommit.mjs
+2025-10-21T19:41:40.0935545Z . prepare: No .git directory detected; skipping pre-commit hook installation.
+2025-10-21T19:41:40.0964902Z . prepare: Done
+2025-10-21T19:41:40.0980922Z Done in 2.6s
+2025-10-21T19:41:40.1315870Z ##[group]Run pnpm run build:tokens
+2025-10-21T19:41:40.1316202Z [36;1mpnpm run build:tokens[0m
+2025-10-21T19:41:40.1352058Z shell: /usr/bin/bash -e {0}
+2025-10-21T19:41:40.1352428Z env:
+2025-10-21T19:41:40.1352700Z   NODE_VERSION: 20
+2025-10-21T19:41:40.1353094Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2025-10-21T19:41:40.1353550Z ##[endgroup]
+2025-10-21T19:41:40.5836391Z 
+2025-10-21T19:41:40.5837399Z > trait-engine@0.1.0 build:tokens /home/runner/work/OODS-Foundry/OODS-Foundry
+2025-10-21T19:41:40.5839044Z > node packages/tokens/scripts/build.mjs
+2025-10-21T19:41:40.5839439Z 
+2025-10-21T19:41:40.9310371Z 
+2025-10-21T19:41:40.9310880Z Token collisions detected (758):
+2025-10-21T19:41:40.9311407Z Use log.verbosity "verbose" or use CLI option --verbose for more details.
+2025-10-21T19:41:40.9312154Z Refer to: https://styledictionary.com/reference/logging/
+2025-10-21T19:41:40.9590293Z Building design tokens with Style Dictionary…
+2025-10-21T19:41:41.4936328Z 
+2025-10-21T19:41:41.4950688Z ts
+2025-10-21T19:41:41.4951567Z ! dist/ts/tokens.ts, does not exist
+2025-10-21T19:41:41.5002257Z 
+2025-10-21T19:41:41.5002851Z tailwind
+2025-10-21T19:41:41.5003673Z ! dist/tailwind/tokens.json, does not exist
+2025-10-21T19:41:41.5337352Z 
+2025-10-21T19:41:41.5338719Z css
+2025-10-21T19:41:41.5339466Z ! dist/css/tokens.css, does not exist
+2025-10-21T19:41:42.3544048Z 
+2025-10-21T19:41:42.3544559Z ts
+2025-10-21T19:41:42.3545701Z ✔︎ dist/ts/tokens.ts
+2025-10-21T19:41:42.3547625Z 
+2025-10-21T19:41:42.3547771Z tailwind
+2025-10-21T19:41:42.3548199Z ✔︎ dist/tailwind/tokens.json
+2025-10-21T19:41:42.4486280Z 
+2025-10-21T19:41:42.4486752Z css
+2025-10-21T19:41:42.4487393Z ✔︎ dist/css/tokens.css
+2025-10-21T19:41:42.5854468Z ✔︎ tokens built successfully in 1.63s
+2025-10-21T19:41:42.5854969Z    css:      dist/css/tokens.css
+2025-10-21T19:41:42.5855286Z    types:    dist/ts/tokens.ts
+2025-10-21T19:41:42.5855591Z    tailwind: dist/tailwind/tokens.json
+2025-10-21T19:41:42.6130679Z ##[group]Run labels=$(jq -r '[.pull_request.labels[].name] | join(",")' "$GITHUB_EVENT_PATH")
+2025-10-21T19:41:42.6131686Z [36;1mlabels=$(jq -r '[.pull_request.labels[].name] | join(",")' "$GITHUB_EVENT_PATH")[0m
+2025-10-21T19:41:42.6132347Z [36;1mif [ "$labels" = "null" ]; then[0m
+2025-10-21T19:41:42.6132766Z [36;1m  labels=""[0m
+2025-10-21T19:41:42.6133104Z [36;1mfi[0m
+2025-10-21T19:41:42.6133480Z [36;1mecho "value=$labels" >> "$GITHUB_OUTPUT"[0m
+2025-10-21T19:41:42.6181176Z shell: /usr/bin/bash -e {0}
+2025-10-21T19:41:42.6181588Z env:
+2025-10-21T19:41:42.6181870Z   NODE_VERSION: 20
+2025-10-21T19:41:42.6182298Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2025-10-21T19:41:42.6182789Z ##[endgroup]
+2025-10-21T19:41:42.6494341Z ##[group]Run mkdir -p artifacts/tokens
+2025-10-21T19:41:42.6494699Z [36;1mmkdir -p artifacts/tokens[0m
+2025-10-21T19:41:42.6495035Z [36;1mbrand_lower=$(printf '%s' "$BRAND" | tr '[:upper:]' '[:lower:]')[0m
+2025-10-21T19:41:42.6495461Z [36;1mreport="artifacts/tokens/brand-${brand_lower}-report.json"[0m
+2025-10-21T19:41:42.6495871Z [36;1mcomment="artifacts/tokens/brand-${brand_lower}-comment.md"[0m
+2025-10-21T19:41:42.6496177Z [36;1mset +e[0m
+2025-10-21T19:41:42.6496404Z [36;1mpnpm run tokens:governance -- diff \[0m
+2025-10-21T19:41:42.6496684Z [36;1m  --brand "$BRAND" \[0m
+2025-10-21T19:41:42.6496970Z [36;1m  --base "c14735735818f7a2717e0e966a34f13ec2262c01" \[0m
+2025-10-21T19:41:42.6497305Z [36;1m  --head "033d0457fb7895894c7168e1ff4b856139c32752" \[0m
+2025-10-21T19:41:42.6497628Z [36;1m  --json "$report" \[0m
+2025-10-21T19:41:42.6497865Z [36;1m  --comment "$comment" \[0m
+2025-10-21T19:41:42.6498095Z [36;1m  --labels ""[0m
+2025-10-21T19:41:42.6498341Z [36;1mstatus=$?[0m
+2025-10-21T19:41:42.6498709Z [36;1mecho "status=$status" >> "$GITHUB_OUTPUT"[0m
+2025-10-21T19:41:42.6499023Z [36;1mecho "report=$report" >> "$GITHUB_OUTPUT"[0m
+2025-10-21T19:41:42.6499344Z [36;1mecho "comment=$comment" >> "$GITHUB_OUTPUT"[0m
+2025-10-21T19:41:42.6499612Z [36;1mexit 0[0m
+2025-10-21T19:41:42.6530514Z shell: /usr/bin/bash -e {0}
+2025-10-21T19:41:42.6530755Z env:
+2025-10-21T19:41:42.6530924Z   NODE_VERSION: 20
+2025-10-21T19:41:42.6531184Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2025-10-21T19:41:42.6531472Z   BRAND: B
+2025-10-21T19:41:42.6531641Z ##[endgroup]
+2025-10-21T19:41:43.0767909Z 
+2025-10-21T19:41:43.0769010Z > trait-engine@0.1.0 tokens:governance /home/runner/work/OODS-Foundry/OODS-Foundry
+2025-10-21T19:41:43.0771561Z > node tools/tokens-governance/index.ts "--" "diff" "--brand" "B" "--base" "c14735735818f7a2717e0e966a34f13ec2262c01" "--head" "033d0457fb7895894c7168e1ff4b856139c32752" "--json" "artifacts/tokens/brand-b-report.json" "--comment" "artifacts/tokens/brand-b-comment.md" "--labels" ""
+2025-10-21T19:41:43.0773656Z 
+2025-10-21T19:41:43.1094194Z node:internal/modules/esm/get_format:189
+2025-10-21T19:41:43.1095191Z   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
+2025-10-21T19:41:43.1095833Z         ^
+2025-10-21T19:41:43.1096110Z 
+2025-10-21T19:41:43.1097305Z TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/work/OODS-Foundry/OODS-Foundry/tools/tokens-governance/index.ts
+2025-10-21T19:41:43.1100040Z     at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
+2025-10-21T19:41:43.1101158Z     at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
+2025-10-21T19:41:43.1101933Z     at defaultLoad (node:internal/modules/esm/load:145:22)
+2025-10-21T19:41:43.1102887Z     at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:543:45)
+2025-10-21T19:41:43.1103826Z     at async ModuleJob._link (node:internal/modules/esm/module_job:148:19) {
+2025-10-21T19:41:43.1104523Z   code: 'ERR_UNKNOWN_FILE_EXTENSION'
+2025-10-21T19:41:43.1104950Z }
+2025-10-21T19:41:43.1105120Z 
+2025-10-21T19:41:43.1105265Z Node.js v20.19.5
+2025-10-21T19:41:43.1135493Z  ELIFECYCLE  Command failed with exit code 1.
+2025-10-21T19:41:43.1400812Z ##[group]Run actions/upload-artifact@v4
+2025-10-21T19:41:43.1401092Z with:
+2025-10-21T19:41:43.1401288Z   name: tokens-governance-B-18695613644
+2025-10-21T19:41:43.1401686Z   path: artifacts/tokens/brand-b-report.json
+artifacts/tokens/brand-b-comment.md
+
+2025-10-21T19:41:43.1402070Z   if-no-files-found: warn
+2025-10-21T19:41:43.1402289Z   compression-level: 6
+2025-10-21T19:41:43.1402489Z   overwrite: false
+2025-10-21T19:41:43.1402680Z   include-hidden-files: false
+2025-10-21T19:41:43.1402895Z env:
+2025-10-21T19:41:43.1403058Z   NODE_VERSION: 20
+2025-10-21T19:41:43.1403309Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2025-10-21T19:41:43.1403581Z ##[endgroup]
+2025-10-21T19:41:43.3635463Z Multiple search paths detected. Calculating the least common ancestor of all paths
+2025-10-21T19:41:43.3637930Z The least common ancestor is /home/runner/work/OODS-Foundry/OODS-Foundry/artifacts/tokens. This will be the root directory of the artifact
+2025-10-21T19:41:43.3663313Z ##[warning]No files were found with the provided path: artifacts/tokens/brand-b-report.json
+artifacts/tokens/brand-b-comment.md. No artifacts will be uploaded.
+2025-10-21T19:41:43.3774006Z ##[group]Run actions/github-script@v7
+2025-10-21T19:41:43.3774293Z with:
+2025-10-21T19:41:43.3775888Z   script: const fs = require('fs');
+const path = require('path');
+const filePath = path.resolve(process.env.GITHUB_WORKSPACE, 'artifacts/tokens/brand-b-comment.md');
+if (!fs.existsSync(filePath)) {
+  core.warning(`Governance comment file not found at ${filePath}`);
+  return;
+}
+const body = fs.readFileSync(filePath, 'utf8').trim();
+if (!body) {
+  core.warning('Governance comment body empty, skipping.');
+  return;
+}
+await github.rest.issues.createComment({
+  owner: context.repo.owner,
+  repo: context.repo.repo,
+  issue_number: context.issue.number,
+  body,
+});
+
+2025-10-21T19:41:43.3777712Z   github-token: ***
+2025-10-21T19:41:43.3777907Z   debug: false
+2025-10-21T19:41:43.3778112Z   user-agent: actions/github-script
+2025-10-21T19:41:43.3778367Z   result-encoding: json
+2025-10-21T19:41:43.3778776Z   retries: 0
+2025-10-21T19:41:43.3779015Z   retry-exempt-status-codes: 400,401,403,404,422
+2025-10-21T19:41:43.3779274Z env:
+2025-10-21T19:41:43.3779440Z   NODE_VERSION: 20
+2025-10-21T19:41:43.3779679Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2025-10-21T19:41:43.3779955Z ##[endgroup]
+2025-10-21T19:41:43.4639618Z ##[warning]Governance comment file not found at /home/runner/work/OODS-Foundry/OODS-Foundry/artifacts/tokens/brand-b-comment.md
+2025-10-21T19:41:43.4727012Z ##[group]Run echo "tokens-governance exited with status 1 for brand B"
+2025-10-21T19:41:43.4727642Z [36;1mecho "tokens-governance exited with status 1 for brand B"[0m
+2025-10-21T19:41:43.4727961Z [36;1mexit 1[0m
+2025-10-21T19:41:43.4760028Z shell: /usr/bin/bash -e {0}
+2025-10-21T19:41:43.4760269Z env:
+2025-10-21T19:41:43.4760445Z   NODE_VERSION: 20
+2025-10-21T19:41:43.4760698Z   PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
+2025-10-21T19:41:43.4760988Z ##[endgroup]
+2025-10-21T19:41:43.4813435Z tokens-governance exited with status 1 for brand B
+2025-10-21T19:41:43.4817830Z ##[error]Process completed with exit code 1.
+2025-10-21T19:41:43.4856971Z Post job cleanup.
+2025-10-21T19:41:43.5404735Z Pruning is unnecessary.
+2025-10-21T19:41:43.5496664Z Post job cleanup.
+2025-10-21T19:41:43.6448247Z [command]/usr/bin/git version
+2025-10-21T19:41:43.6493331Z git version 2.51.0
+2025-10-21T19:41:43.6536930Z Temporarily overriding HOME='/home/runner/work/_temp/18ea96f2-ad1f-49f9-a8ac-5c88e0284551' before making global git config changes
+2025-10-21T19:41:43.6538401Z Adding repository directory to the temporary git global config as a safe directory
+2025-10-21T19:41:43.6543303Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/OODS-Foundry/OODS-Foundry
+2025-10-21T19:41:43.6578802Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-10-21T19:41:43.6611922Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-10-21T19:41:43.6850807Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-10-21T19:41:43.6876441Z http.https://github.com/.extraheader
+2025-10-21T19:41:43.6889870Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2025-10-21T19:41:43.6924587Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-10-21T19:41:43.7283049Z Cleaning up orphan processes
