@@ -61,7 +61,8 @@ export function Popover({ trigger, title, children, open, defaultOpen, onOpenCha
   // Focus management while open
   useFocusManagement(actualOpen, panelRef);
 
-  const trig = React.Children.only(trigger) as ReactElement;
+  // Treat trigger as a generic React element so we can safely clone and attach a ref/handlers
+  const trig = React.Children.only(trigger) as React.ReactElement<any>;
   const setAnchor = (el: HTMLElement | null) => {
     anchorRef.current = el;
     const childRef: any = (trig as any).ref;
@@ -74,15 +75,15 @@ export function Popover({ trigger, title, children, open, defaultOpen, onOpenCha
   return (
     <>
       {cloneElement(trig, {
-        ref: setAnchor,
+        ref: setAnchor as any,
         'aria-haspopup': 'dialog',
         'aria-expanded': actualOpen,
         'aria-controls': panelId,
         onClick: (e: any) => {
-          trig.props.onClick?.(e);
+          (trig as any).props?.onClick?.(e);
           setOpen(!actualOpen);
         },
-      })}
+      } as any)}
       {actualOpen && pos && (
         <OverlayRoot>
           <div

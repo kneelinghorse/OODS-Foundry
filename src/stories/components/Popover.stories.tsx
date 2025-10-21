@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import React from 'react';
 import '../../styles/globals.css';
 import { Popover } from '../../components/Popover/Popover';
 import { TextField } from '../../components/base/TextField';
