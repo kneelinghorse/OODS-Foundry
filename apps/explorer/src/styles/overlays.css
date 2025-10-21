@@ -176,20 +176,14 @@
 }
 
 .cmp-tooltip__bubble {
-  --cmp-tooltip-radius: var(--cmp-tooltip-radius, 0.5rem);
-  --cmp-tooltip-surface: var(--cmp-tooltip-background, var(--cmp-surface-panel));
-  --cmp-tooltip-border: var(--cmp-tooltip-border, var(--cmp-border-strong));
-  --cmp-tooltip-text: var(--cmp-tooltip-text, var(--cmp-text-body));
-  --cmp-tooltip-shadow: var(--cmp-shadow-overlay);
-
   position: absolute;
   inset: auto auto auto auto; /* set by side via transforms */
   z-index: 60;
-  background: var(--cmp-tooltip-surface);
-  color: var(--cmp-tooltip-text);
-  border: 1px solid var(--cmp-tooltip-border);
-  border-radius: var(--cmp-tooltip-radius);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--cmp-tooltip-border) 35%, transparent), var(--cmp-tooltip-shadow);
+  background: var(--cmp-tooltip-background, var(--sys-surface-inverse));
+  color: var(--cmp-tooltip-text, var(--sys-text-inverse));
+  border: 1px solid var(--cmp-tooltip-border, var(--cmp-border-strong));
+  border-radius: var(--cmp-tooltip-radius, 0.5rem);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--cmp-tooltip-border, var(--cmp-border-strong)) 35%, transparent), var(--cmp-shadow-overlay);
   padding: 0.4rem 0.55rem;
   white-space: nowrap;
   pointer-events: none;

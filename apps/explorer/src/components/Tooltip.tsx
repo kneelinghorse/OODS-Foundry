@@ -65,7 +65,18 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
       : (children as React.ReactElement);
 
     return (
-      <div ref={ref ? (node) => { wrapperRef.current = node; (ref as React.MutableRefObject<HTMLDivElement | null>).current = node; } : wrapperRef as any} className={composedClass} data-side={side}>
+      <div
+        ref={
+          ref
+            ? (node) => {
+                wrapperRef.current = node;
+                (ref as React.MutableRefObject<HTMLDivElement | null>).current = node;
+              }
+            : (wrapperRef as any)
+        }
+        className={composedClass}
+        data-side={side}
+      >
         {trigger}
         <div
           id={bubbleId}
