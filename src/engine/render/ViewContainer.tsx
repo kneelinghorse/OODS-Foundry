@@ -25,6 +25,7 @@ export type ViewContainerAttributes = Readonly<
   {
     readonly 'data-view': ContextKind;
     readonly 'data-view-profile': ContextKind;
+    readonly 'data-view-context': ContextKind;
     readonly className?: string;
   } & Record<RegionFlagAttribute, 'true' | 'false'>
 >;
@@ -56,6 +57,7 @@ export function buildViewContainerAttributes(
   return Object.freeze({
     'data-view': context,
     'data-view-profile': context,
+    'data-view-context': context,
     className: className?.trim() || undefined,
     ...regionFlags,
   }) as ViewContainerAttributes;
