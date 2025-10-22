@@ -20,12 +20,16 @@ The billing domain establishes normalized objects and traits for subscription-dr
 
 ## Fixtures
 
-Provider fixtures live in `domains/saas-billing/examples/` and include complete payloads for Stripe (`stripe.json`) and Chargebee (`chargebee.json`). Each aligns to the canonical object schema so UI surfaces can hydrate without case statements.
+Provider fixtures live in `domains/saas-billing/examples/` and include complete payloads for Stripe (`stripe.json`) and Chargebee (`chargebee.json`). Each aligns to the canonical object schema so UI surfaces can hydrate without case statements. Render-ready UI fixtures now live under `fixtures/billing/` so Storybook and integration tests can consume canonical data without touching Explorer demos.
 
 ## Story coverage
 
-Eight context stories under `apps/explorer/src/stories/Billing/` exercise the Subscription and Invoice objects across List, Detail, Form, and Timeline contexts. Each story imports the shared data module so status chips, metrics, and layout remain consistent across providers.
+Domain stories under `stories/domains/Billing/` exercise the Subscription and Invoice objects across Detail, List, Form, and Timeline contexts through the shared `RenderObject`. These stories hydrate canonical fixtures, ensuring status chips, trait contributions, and semantic tokens stay consistent across providers and accessibility modes.
 
 ## Status mapping
 
 The manifest `tokens/maps/saas-billing.status-map.json` is now the source of truth for subscription and invoice tones. `StatusChip` consumes this file directly, and the tokens explorer route renders its metadata alongside resolved token values.
+
+## Migration notes
+
+- **2025-10-20:** Explorer-specific billing stories were removed in favour of domain stories backed by the render engine. Consumers should point to `stories/domains/Billing/*.stories.tsx` and the fixtures in `fixtures/billing/` rather than `apps/explorer/src/stories/Billing`.

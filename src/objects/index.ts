@@ -7,3 +7,6 @@ export type {
   CreateSubscriptionObjectOptions,
 } from './subscription/object.js';
 export type { SubscriptionRecord } from './subscription/types.js';
+export { InvoiceObject, createInvoiceObjectSpec } from './invoice/object.js';
+export type { InvoiceObjectSpec, CreateInvoiceObjectOptions } from './invoice/object.js';
+export type { InvoiceRecord } from './invoice/types.js';

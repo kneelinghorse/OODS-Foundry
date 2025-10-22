@@ -8,6 +8,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 
 const workspaceRoot = path.dirname(fileURLToPath(import.meta.url));
 
+const missionStoriesRoot = path.join(workspaceRoot, 'stories');
 const storiesRoot = path.join(workspaceRoot, 'src', 'stories');
 const explorerStoriesRoot = path.join(workspaceRoot, 'apps', 'explorer', 'src', 'stories');
 const tokensDistDir = path.resolve(workspaceRoot, 'packages', 'tokens', 'dist');
@@ -39,6 +40,8 @@ let tokensBuilt = false;
 
 const config: StorybookConfig = {
   stories: [
+    `${missionStoriesRoot}/**/*.mdx`,
+    `${missionStoriesRoot}/**/*.stories.@(ts|tsx)`,
     `${storiesRoot}/**/*.mdx`,
     `${storiesRoot}/**/*.stories.@(ts|tsx)`,
     `${explorerStoriesRoot}/**/*.mdx`,
