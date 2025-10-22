@@ -1,6 +1,5 @@
 import type { FC } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { withPage } from '~/.storybook/decorators/withPage';
 import { RenderObject } from '../../components/RenderObject';
 import type { RenderObjectProps } from '../../components/RenderObject';
 import { SubscriptionObject } from '../../objects/subscription/object';
@@ -15,6 +14,15 @@ const Active = activeSubscription as SubscriptionRecord;
 const PastDue = pastDueSubscription as SubscriptionRecord;
 const CancelAtPeriodEnd = cancelAtPeriodEndSubscription as SubscriptionRecord;
 
+const contextClassName: Partial<Record<SubscriptionRenderProps['context'], string>> = {
+  detail: 'explorer-view context-detail detail-view',
+  list: 'explorer-view context-list list-view',
+  form: 'explorer-view context-form form-view',
+  timeline: 'explorer-view context-timeline timeline-view',
+  card: 'explorer-view context-card card-view',
+  inline: 'explorer-view context-inline inline-view',
+};
+
 const SubscriptionRenderObject = RenderObject as FC<SubscriptionRenderProps>;
 const renderStory = (args: SubscriptionRenderProps) => <SubscriptionRenderObject {...args} />;
 
@@ -23,21 +31,22 @@ const buildArgs = (context: SubscriptionRenderProps['context'], data: Subscripti
     object: SubscriptionObject,
     context,
     data,
+    className: contextClassName[context],
   }) satisfies SubscriptionRenderProps;
 
-const meta: Meta<typeof SubscriptionRenderObject> = {
-  title: 'Contexts/Subscription',
+const meta = {
+  title: 'Domains/Subscription/Contexts',
   component: SubscriptionRenderObject,
-  decorators: [withPage()],
   parameters: {
     layout: 'fullscreen',
     chromatic: { disableSnapshot: true },
   },
-};
+  tags: ['hidden'],
+} satisfies Meta<typeof SubscriptionRenderObject>;
 
 export default meta;
 
-type Story = StoryObj<typeof SubscriptionRenderObject>;
+type Story = StoryObj<typeof meta>;
 
 export const ActiveDetail: Story = {
   render: renderStory,
@@ -68,6 +77,7 @@ export const ActiveCard: Story = {
   render: renderStory,
   args: buildArgs('card', Active),
   parameters: {
+    layout: 'centered',
     chromatic: { disableSnapshot: false },
     vrt: { tags: ['vrt'] },
   },
@@ -77,6 +87,9 @@ export const ActiveCard: Story = {
 export const ActiveInline: Story = {
   render: renderStory,
   args: buildArgs('inline', Active),
+  parameters: {
+    layout: 'centered',
+  },
 };
 
 export const PastDueDetail: Story = {
@@ -112,11 +125,20 @@ export const PastDueTimeline: Story = {
 export const PastDueCard: Story = {
   render: renderStory,
   args: buildArgs('card', PastDue),
+  parameters: {
+    layout: 'centered',
+    chromatic: { disableSnapshot: false },
+    vrt: { tags: ['vrt'] },
+  },
+  tags: ['vrt'],
 };
 
 export const PastDueInline: Story = {
   render: renderStory,
   args: buildArgs('inline', PastDue),
+  parameters: {
+    layout: 'centered',
+  },
 };
 
 export const CancelAtPeriodEndDetail: Story = {
@@ -142,9 +164,18 @@ export const CancelAtPeriodEndTimeline: Story = {
 export const CancelAtPeriodEndCard: Story = {
   render: renderStory,
   args: buildArgs('card', CancelAtPeriodEnd),
+  parameters: {
+    layout: 'centered',
+    chromatic: { disableSnapshot: false },
+    vrt: { tags: ['vrt'] },
+  },
+  tags: ['vrt'],
 };
 
 export const CancelAtPeriodEndInline: Story = {
   render: renderStory,
   args: buildArgs('inline', CancelAtPeriodEnd),
+  parameters: {
+    layout: 'centered',
+  },
 };
