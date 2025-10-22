@@ -1,14 +1,22 @@
 import type { RegionMap } from '../types/regions.js';
+import type { ViewContainerAttributes } from '../engine/render/ViewContainer.js';
+import { buildViewContainerAttributes } from '../engine/render/ViewContainer.js';
 import { renderRegionSlot } from './region-slot.js';
 
 export interface TimelineViewProps {
   readonly regions: RegionMap;
   readonly className?: string;
+  readonly containerProps?: ViewContainerAttributes;
 }
 
-export function TimelineView({ regions, className }: TimelineViewProps) {
+export function TimelineView({ regions, className, containerProps }: TimelineViewProps) {
+  const effectiveContainerProps =
+    containerProps ?? buildViewContainerAttributes('timeline', regions);
+  const { className: containerClassName, ...restContainerProps } = effectiveContainerProps;
+  const rootClassName = [containerClassName, className].filter(Boolean).join(' ') || undefined;
+
   return (
-    <div className={className} data-view-context="timeline">
+    <div {...restContainerProps} className={rootClassName}>
       {renderRegionSlot('globalNavigation', regions.globalNavigation, {
         as: 'nav',
         props: {

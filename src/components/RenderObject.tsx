@@ -8,6 +8,7 @@ import type { RegionMap } from '../types/regions.js';
 import type { ViewExtension } from '../types/view-extension.js';
 import { resolveTraitExtensions, type TraitViewErrorDetails } from '../traits/adapter.js';
 import { renderReport, type RenderReportPayload } from './renderReport.js';
+import { ViewContainer } from '../engine/render/ViewContainer.js';
 
 export interface RenderObjectProps<Data = unknown> {
   readonly object: ObjectSpec<Data>;
@@ -131,7 +132,13 @@ export const RenderObject: React.FC<RenderObjectProps> = ({
   const ContextComponent = React.useMemo(() => getContextComponent(context), [context]);
 
   const content = React.useMemo<ReactNode>(() => {
-    const renderedContext = <ContextComponent regions={regions} className={className} />;
+    const renderedContext = (
+      <ViewContainer context={context} regions={regions} className={className}>
+        {(containerAttributes) => (
+          <ContextComponent regions={regions} containerProps={containerAttributes} />
+        )}
+      </ViewContainer>
+    );
 
     if (!debug || !report) {
       return renderedContext;
@@ -142,8 +149,8 @@ export const RenderObject: React.FC<RenderObjectProps> = ({
         data-render-debug="true"
         style={{
           display: 'grid',
-          gap: '1rem',
-          gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
+          gap: 'var(--view-gap-default)',
+          gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
         }}
       >
         <div data-debug-pane="view">{renderedContext}</div>
@@ -152,7 +159,7 @@ export const RenderObject: React.FC<RenderObjectProps> = ({
         </pre>
       </div>
     );
-  }, [debug, report, ContextComponent, regions, className]);
+  }, [className, context, debug, report, ContextComponent, regions]);
 
   return <>{content}</>;
 };

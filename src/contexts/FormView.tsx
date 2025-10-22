@@ -1,14 +1,22 @@
 import type { RegionMap } from '../types/regions.js';
+import type { ViewContainerAttributes } from '../engine/render/ViewContainer.js';
+import { buildViewContainerAttributes } from '../engine/render/ViewContainer.js';
 import { renderRegionSlot } from './region-slot.js';
 
 export interface FormViewProps {
   readonly regions: RegionMap;
   readonly className?: string;
+  readonly containerProps?: ViewContainerAttributes;
 }
 
-export function FormView({ regions, className }: FormViewProps) {
+export function FormView({ regions, className, containerProps }: FormViewProps) {
+  const effectiveContainerProps =
+    containerProps ?? buildViewContainerAttributes('form', regions);
+  const { className: containerClassName, ...restContainerProps } = effectiveContainerProps;
+  const rootClassName = [containerClassName, className].filter(Boolean).join(' ') || undefined;
+
   return (
-    <div className={className} data-view-context="form">
+    <div {...restContainerProps} className={rootClassName}>
       {renderRegionSlot('globalNavigation', regions.globalNavigation, {
         as: 'nav',
         props: {

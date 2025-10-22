@@ -1,0 +1,237 @@
+{
+  "$schema": "https://design-tokens.org/schema.json",
+  "view": {
+    "columns": {
+      "default": {
+        "$type": "string",
+        "$value": "minmax(0, 1fr)",
+        "$description": "Default single column layout for all contexts"
+      },
+      "two-column-standard": {
+        "$type": "string",
+        "$value": "minmax(0, 1fr) minmax(18rem, 24rem)",
+        "$description": "Two-column layout with standard rail (detail view)"
+      },
+      "two-column-narrow": {
+        "$type": "string",
+        "$value": "minmax(0, 1fr) minmax(16rem, 22rem)",
+        "$description": "Two-column layout with narrow rail (list view)"
+      },
+      "two-column-guidance": {
+        "$type": "string",
+        "$value": "minmax(0, 2.75fr) minmax(16rem, 22rem)",
+        "$description": "Two-column layout with wider main and guidance rail (form view)"
+      }
+    },
+    "gap": {
+      "default": {
+        "$type": "dimension",
+        "$value": "1.5rem",
+        "$description": "Default gap between major sections"
+      },
+      "compact": {
+        "$type": "dimension",
+        "$value": "1rem",
+        "$description": "Compact gap for dense layouts"
+      },
+      "relaxed": {
+        "$type": "dimension",
+        "$value": "2rem",
+        "$description": "Relaxed gap for spacious layouts"
+      },
+      "card": {
+        "$type": "dimension",
+        "$value": "1.25rem",
+        "$description": "Gap for card content sections"
+      },
+      "inline": {
+        "$type": "dimension",
+        "$value": "0.8rem",
+        "$description": "Minimal gap for inline contexts"
+      }
+    },
+    "rail": {
+      "width": {
+        "standard": {
+          "$type": "dimension",
+          "$value": "24rem",
+          "$description": "Standard rail width for detail view context panels"
+        },
+        "narrow": {
+          "$type": "dimension",
+          "$value": "22rem",
+          "$description": "Narrow rail width for list/form filter panels"
+        },
+        "min-standard": {
+          "$type": "dimension",
+          "$value": "18rem",
+          "$description": "Minimum rail width before collapse (standard)"
+        },
+        "min-narrow": {
+          "$type": "dimension",
+          "$value": "16rem",
+          "$description": "Minimum rail width before collapse (narrow)"
+        }
+      }
+    },
+    "border": {
+      "thin": {
+        "$type": "dimension",
+        "$value": "1px",
+        "$description": "Default border thickness for view surfaces"
+      },
+      "medium": {
+        "$type": "dimension",
+        "$value": "2px",
+        "$description": "Emphasized border thickness for high-contrast surfaces"
+      },
+      "strong": {
+        "$type": "dimension",
+        "$value": "3px",
+        "$description": "Strong border thickness for card focus treatments"
+      }
+    },
+    "toolbar": {
+      "gap": {
+        "$type": "dimension",
+        "$value": "0.75rem",
+        "$description": "Gap between toolbar items"
+      },
+      "item-gap": {
+        "$type": "dimension",
+        "$value": "0.5rem",
+        "$description": "Gap within toolbar item contents"
+      }
+    },
+    "timeline": {
+      "gap": {
+        "$type": "dimension",
+        "$value": "1rem",
+        "$description": "Gap between timeline metadata sections"
+      },
+      "stream-gap": {
+        "$type": "dimension",
+        "$value": "1.5rem",
+        "$description": "Gap between timeline stream items"
+      },
+      "background": {
+        "$type": "color",
+        "$value": "var(--cmp-surface-subtle)",
+        "$description": "Background surface for timeline contexts"
+      }
+    },
+    "shell": {
+      "padding-inline": {
+        "$type": "dimension",
+        "$value": "clamp(1.5rem, 1vw + 1rem, 2.5rem)",
+        "$description": "Horizontal padding for view container"
+      },
+      "padding-block": {
+        "$type": "dimension",
+        "$value": "clamp(1.75rem, 1vw + 1.2rem, 3rem)",
+        "$description": "Vertical padding for view container"
+      },
+      "max-width": {
+        "$type": "dimension",
+        "$value": "min(75rem, 100%)",
+        "$description": "Maximum width constraint for view content"
+      }
+    },
+    "card": {
+      "radius": {
+        "$type": "dimension",
+        "$value": "clamp(1rem, 0.6vw + 0.8rem, 1.5rem)",
+        "$description": "Border radius for card surfaces"
+      },
+      "padding": {
+        "$type": "dimension",
+        "$value": "clamp(1.25rem, 0.9vw + 1rem, 2rem)",
+        "$description": "Internal padding for card surfaces"
+      },
+      "gap": {
+        "$type": "dimension",
+        "$value": "clamp(1rem, 0.65vw + 0.7rem, 1.75rem)",
+        "$description": "Gap between cards or card sections"
+      },
+      "max-width": {
+        "$type": "dimension",
+        "$value": "min(46rem, 100%)",
+        "$description": "Maximum width for card-context container"
+      }
+    },
+    "section": {
+      "gap": {
+        "detail": {
+          "$type": "dimension",
+          "$value": "clamp(1.5rem, 1vw + 1rem, 2.25rem)",
+          "$description": "Gap between body sections in detail view"
+        },
+        "list": {
+          "$type": "dimension",
+          "$value": "clamp(1.25rem, 0.75vw + 0.9rem, 2rem)",
+          "$description": "Gap between body sections in list view"
+        },
+        "form": {
+          "$type": "dimension",
+          "$value": "clamp(1.5rem, 0.9vw + 1.1rem, 2.3rem)",
+          "$description": "Gap between body sections in form view"
+        },
+        "timeline": {
+          "$type": "dimension",
+          "$value": "clamp(1.5rem, 0.95vw + 1.1rem, 2.4rem)",
+          "$description": "Gap between body sections in timeline view"
+        }
+      }
+    },
+    "pageHeader": {
+      "gap": {
+        "$type": "dimension",
+        "$value": "clamp(1.25rem, 0.8vw + 0.75rem, 1.9rem)",
+        "$description": "Internal gap within page header region"
+      },
+      "card-gap": {
+        "$type": "dimension",
+        "$value": "clamp(0.75rem, 0.5vw + 0.5rem, 1.25rem)",
+        "$description": "Gap within page header card surface"
+      }
+    },
+    "contextPanel": {
+      "padding": {
+        "$type": "dimension",
+        "$value": "clamp(1rem, 0.8vw + 0.8rem, 1.75rem)",
+        "$description": "Internal padding for context panel"
+      },
+      "gap": {
+        "$type": "dimension",
+        "$value": "clamp(0.85rem, 0.5vw + 0.6rem, 1.5rem)",
+        "$description": "Gap between context panel sections"
+      }
+    },
+    "main": {
+      "gap": {
+        "default": {
+          "$type": "dimension",
+          "$value": "var(--view-card-gap)",
+          "$description": "Default gap for main region content"
+        },
+        "list": {
+          "$type": "dimension",
+          "$value": "clamp(1rem, 0.6vw + 0.75rem, 1.65rem)",
+          "$description": "Gap for list view main content"
+        },
+        "inline": {
+          "$type": "dimension",
+          "$value": "clamp(1rem, 0.6vw + 0.75rem, 1.65rem)",
+          "$description": "Gap for inline view main content"
+        }
+      }
+    },
+    "focus": {
+      "outline-offset": {
+        "$type": "dimension",
+        "$value": "2px",
+        "$description": "Offset applied to focus outlines in forced-colors mode"
+      }
+    }
+  }
+}

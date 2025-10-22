@@ -1,0 +1,241 @@
+# View Profiles Configuration
+# Canonical layouts and region definitions for each context
+# Used by RenderObject to determine structure and layout patterns
+#
+# Each profile defines:
+# - regions: which canonical regions are used/required
+# - layout: grid structure (columns, gaps, rail behavior)
+# - description: semantic purpose of the context
+
+version: "1.0.0"
+schema: "view-profiles.v1"
+
+profiles:
+  detail:
+    displayName: "Detail View"
+    description: >
+      Full-page view of a single object with comprehensive information.
+      Two-column layout with optional right rail for context panel.
+      Used for in-depth exploration of a single entity.
+    
+    regions:
+      globalNavigation:
+        required: false
+        semantic: "nav"
+        label: "Global navigation"
+      breadcrumbs:
+        required: false
+        semantic: "nav"
+        label: "Breadcrumbs"
+      pageHeader:
+        required: true
+        semantic: "header"
+      viewToolbar:
+        required: false
+        semantic: "toolbar"
+        role: "toolbar"
+      main:
+        required: true
+        semantic: "main"
+      contextPanel:
+        required: false
+        semantic: "aside"
+        label: "Context panel"
+    
+    layout:
+      type: "two-column-with-rail"
+      templateToken: "--view-columns-two-column-standard"
+      fallbackTemplateToken: "--view-columns-default"
+      mainGapToken: "--view-main-gap-default"
+      bodyGapToken: "--view-section-gap-detail"
+      railWidthToken: "--view-rail-width-standard"
+      railMinToken: "--view-rail-width-min-standard"
+
+  list:
+    displayName: "List View"
+    description: >
+      Tabular or grid display of multiple items with filtering/sorting.
+      Two-column layout with narrower optional rail for filters/actions.
+      Optimized for scanning and comparison.
+    
+    regions:
+      globalNavigation:
+        required: false
+        semantic: "nav"
+        label: "Global navigation"
+      breadcrumbs:
+        required: false
+        semantic: "nav"
+        label: "Breadcrumbs"
+      pageHeader:
+        required: true
+        semantic: "header"
+      viewToolbar:
+        required: true
+        semantic: "toolbar"
+        role: "toolbar"
+      main:
+        required: true
+        semantic: "main"
+      contextPanel:
+        required: false
+        semantic: "aside"
+        label: "Context panel"
+    
+    layout:
+      type: "two-column-with-narrow-rail"
+      templateToken: "--view-columns-two-column-narrow"
+      fallbackTemplateToken: "--view-columns-default"
+      mainGapToken: "--view-main-gap-list"
+      chromeGapToken: "--view-section-gap-list"
+      contentGapToken: "--view-card-gap"
+      railWidthToken: "--view-rail-width-narrow"
+      railMinToken: "--view-rail-width-min-narrow"
+
+  form:
+    displayName: "Form View"
+    description: >
+      Interactive data entry with validation and submission.
+      Two-column layout with wider main column and optional guidance rail.
+      Optimized for focused data input.
+    
+    regions:
+      globalNavigation:
+        required: false
+        semantic: "nav"
+        label: "Global navigation"
+      breadcrumbs:
+        required: false
+        semantic: "nav"
+        label: "Breadcrumbs"
+      pageHeader:
+        required: true
+        semantic: "header"
+      viewToolbar:
+        required: false
+        semantic: "toolbar"
+        role: "toolbar"
+      main:
+        required: true
+        semantic: "main"
+      contextPanel:
+        required: false
+        semantic: "aside"
+        label: "Context panel"
+    
+    layout:
+      type: "two-column-with-guidance-rail"
+      templateToken: "--view-columns-two-column-guidance"
+      fallbackTemplateToken: "--view-columns-default"
+      mainGapToken: "--view-main-gap-default"
+      bodyGapToken: "--view-section-gap-form"
+      railWidthToken: "--view-rail-width-narrow"
+      railMinToken: "--view-rail-width-min-narrow"
+
+  timeline:
+    displayName: "Timeline View"
+    description: >
+      Chronological stream of events/activities with temporal context.
+      Single-column layout with vertical flow.
+      Optimized for narrative and temporal relationships.
+    
+    regions:
+      globalNavigation:
+        required: false
+        semantic: "nav"
+        label: "Global navigation"
+      breadcrumbs:
+        required: false
+        semantic: "nav"
+        label: "Breadcrumbs"
+      pageHeader:
+        required: true
+        semantic: "header"
+      viewToolbar:
+        required: true
+        semantic: "toolbar"
+        role: "toolbar"
+      main:
+        required: true
+        semantic: "main"
+      contextPanel:
+        required: false
+        semantic: "aside"
+        label: "Context panel"
+    
+    layout:
+      type: "single-column-stream"
+      templateToken: "--view-columns-default"
+      bodyGapToken: "--view-section-gap-timeline"
+      metaGapToken: "--view-timeline-gap"
+      streamGapToken: "--view-timeline-stream-gap"
+      backgroundToken: "--view-timeline-background"
+
+  card:
+    displayName: "Card View"
+    description: >
+      Compact, self-contained presentation suitable for embedding.
+      Single-column layout with constrained width.
+      Optimized for at-a-glance information.
+    
+    regions:
+      pageHeader:
+        required: false
+        semantic: "header"
+      viewToolbar:
+        required: false
+        semantic: "toolbar"
+        role: "toolbar"
+      main:
+        required: true
+        semantic: "main"
+      contextPanel:
+        required: false
+        semantic: "aside"
+        label: "Context panel"
+    
+    layout:
+      type: "single-column-constrained"
+      templateToken: "--view-columns-default"
+      gapToken: "--view-card-gap"
+      maxWidthToken: "--view-card-max-width"
+      container: "card"
+
+  inline:
+    displayName: "Inline View"
+    description: >
+      Minimal presentation for embedding within other content.
+      Single-column layout with optional compact header.
+      Optimized for space efficiency.
+    
+    regions:
+      pageHeader:
+        required: false
+        semantic: "header"
+      viewToolbar:
+        required: false
+        semantic: "toolbar"
+        role: "toolbar"
+      main:
+        required: true
+        semantic: "main"
+    
+    layout:
+      type: "single-column-minimal"
+      templateToken: "--view-columns-default"
+      gapToken: "--view-gap-inline"
+      headerGapToken: "--view-gap-inline"
+      mainGapToken: "--view-main-gap-inline"
+
+# Global layout constraints
+constraints:
+  maxWidthToken: "--view-shell-max-width"
+  minRailToken: "--view-rail-width-min-narrow"
+  maxRailToken: "--view-rail-width-standard"
+  
+# Breakpoints for responsive behavior
+breakpoints:
+  mobile: "640px"
+  tablet: "768px"
+  desktop: "1024px"
+  wide: "1280px"

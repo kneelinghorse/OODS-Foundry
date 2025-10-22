@@ -6,12 +6,14 @@ import { InlineView } from './InlineView.js';
 import { ListView } from './ListView.js';
 import { TimelineView } from './TimelineView.js';
 import type { RegionMap } from '../types/regions.js';
+import type { ViewContainerAttributes } from '../engine/render/ViewContainer.js';
 
 export type ContextKind = 'list' | 'detail' | 'form' | 'timeline' | 'card' | 'inline';
 
 export type ContextComponent = ComponentType<{
   readonly regions: RegionMap;
   readonly className?: string;
+  readonly containerProps?: ViewContainerAttributes;
 }>;
 
 const CONTEXT_REGISTRY: Record<ContextKind, ContextComponent> = Object.freeze({
