@@ -17,10 +17,10 @@ type TokenBrowserStory = StoryObj<typeof TokenBrowser>;
 
 type FlatTokenRecord = {
   name: string;
-  value: string;
+  value: string | number;
   path: string[];
   cssVariable?: string;
-  originalValue?: string;
+  originalValue?: unknown;
   description?: string;
 };
 
@@ -29,7 +29,7 @@ const flatRecord = tokensJson.flat as Record<string, FlatTokenRecord>;
 const tokenEntries = Object.entries(flatRecord).map(([id, token]) => ({
   id,
   name: token.path.join('.'),
-  value: token.value,
+  value: String(token.value),
   path: token.path,
   description: token.description?.trim() ? token.description : undefined,
 }));
