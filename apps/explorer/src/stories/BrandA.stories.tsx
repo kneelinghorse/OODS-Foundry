@@ -12,7 +12,7 @@ import { Checkbox } from '../components/Checkbox';
 
 type Theme = 'light' | 'dark' | 'hc';
 type Brand = 'A' | 'B';
-type BrandSetting = Brand | 'unset';
+type ToolbarBrandSetting = 'default' | 'brand-a' | 'brand-b' | 'unset';
 
 const previewShell: CSSProperties = {
   display: 'grid',
@@ -61,20 +61,55 @@ const tagsByTheme: Record<Theme, string[]> = {
   hc: ['brand-hc']
 };
 
+const showcaseLayout: CSSProperties = {
+  display: 'grid',
+  gap: '2.5rem',
+  padding: '2rem',
+  margin: '0 auto',
+  maxWidth: '1200px',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))'
+};
+
+const brandTokenForGlobals: Record<Brand, 'brand-a' | 'brand-b'> = {
+  A: 'brand-a',
+  B: 'brand-b'
+};
+
+const themeTokenForGlobals: Record<Theme, 'light' | 'dark'> = {
+  light: 'light',
+  dark: 'dark',
+  hc: 'light'
+};
+
 const storyParameters = (theme: Theme) => ({
   chromatic: { disableSnapshot: false },
   vrt: { tags: tagsByTheme[theme] }
 });
 
+const storyParametersWithGlobals = (theme: Theme, brand: Brand) => ({
+  ...storyParameters(theme),
+  globals: {
+    theme: themeTokenForGlobals[theme],
+    brand: brandTokenForGlobals[brand]
+  }
+});
+
 ensureDomainInContext('list', 'subscription');
 const BRAND_PREVIEW_STATUS = pickStatusByIndex('subscription', 1);
 
-function resolveBrand(context: StoryContext<BrandPreviewProps>, fallback: Brand): Brand {
-  const globalBrand = context.globals.brand as BrandSetting | undefined;
-  if (globalBrand === 'unset' || globalBrand === undefined) {
-    return fallback;
+function normalizeBrandSetting(value: unknown): Brand | undefined {
+  if (value === 'A' || value === 'brand-a') {
+    return 'A';
   }
-  return globalBrand;
+  if (value === 'B' || value === 'brand-b') {
+    return 'B';
+  }
+  return undefined;
+}
+
+function resolveBrand(context: StoryContext<BrandPreviewProps>, fallback: Brand): Brand {
+  const globalBrand = normalizeBrandSetting(context.globals.brand as ToolbarBrandSetting | undefined);
+  return globalBrand ?? fallback;
 }
 
 const BRAND_COPY: Record<
@@ -160,6 +195,10 @@ const meta: Meta<typeof BrandPreview> = {
     layout: 'fullscreen',
     docs: { source: { state: 'hidden' } }
   },
+  argTypes: {
+    brand: { control: false },
+    theme: { control: false }
+  },
   tags: ['vrt-critical']
 };
 
@@ -171,23 +210,43 @@ const renderBrandPreview: Story['render'] = (args, context) => (
   <BrandPreview {...args} brand={resolveBrand(context, args.brand ?? 'A')} />
 );
 
+export const Showcase: Story = {
+  name: 'Showcase',
+  render: () => (
+    <div style={showcaseLayout}>
+      {(['light', 'dark', 'hc'] as const).map((theme) => (
+        <BrandPreview key={theme} theme={theme} brand="A" />
+      ))}
+    </div>
+  ),
+  parameters: {
+    chromatic: { disableSnapshot: false },
+    vrt: { tags: ['brand-showcase', 'brand-light', 'brand-dark', 'brand-hc'] },
+    globals: {
+      theme: 'light',
+      brand: 'brand-a'
+    }
+  },
+  tags: ['vrt-critical']
+};
+
 export const Light: Story = {
   name: 'Light',
   args: { theme: 'light', brand: 'A' },
   render: renderBrandPreview,
-  parameters: storyParameters('light')
+  parameters: storyParametersWithGlobals('light', 'A')
 };
 
 export const Dark: Story = {
   name: 'Dark',
   args: { theme: 'dark', brand: 'A' },
   render: renderBrandPreview,
-  parameters: storyParameters('dark')
+  parameters: storyParametersWithGlobals('dark', 'A')
 };
 
 export const HighContrast: Story = {
   name: 'High Contrast',
   args: { theme: 'hc', brand: 'A' },
   render: renderBrandPreview,
-  parameters: storyParameters('hc')
+  parameters: storyParametersWithGlobals('hc', 'A')
 };

@@ -8,7 +8,7 @@ import { ensureDomainInContext, selectStatuses } from '../config/statusMap';
 type Story = StoryObj;
 
 const meta: Meta = {
-  title: 'Explorer/Guardrails/High Contrast',
+  title: 'High Contrast/Proof Gallery',
   parameters: {
     layout: 'fullscreen',
     controls: { hideNoControlsWarning: true },
@@ -18,11 +18,18 @@ const meta: Meta = {
           'Proof stories exercising the high-contrast guardrails. Enable Windows High Contrast or a forced-colors emulator to validate the system tokens.',
       },
     },
+    globals: { theme: 'light', brand: 'brand-a' },
+    chromatic: { disableSnapshot: false },
   },
+  tags: ['proof', 'forced-colors'],
   decorators: [
-    (StoryComponent) => (
+    (StoryComponent, context) => {
+      const brandSetting = (context.globals?.brand as string | undefined) ?? 'brand-a';
+      const domBrand = brandSetting === 'brand-b' ? 'B' : 'A';
+      return (
       <div
         data-theme="light"
+        data-brand={domBrand}
         style={{
           padding: '2.5rem',
           minHeight: '100vh',
@@ -35,7 +42,8 @@ const meta: Meta = {
       >
         <StoryComponent />
       </div>
-    ),
+      );
+    },
   ],
 };
 
@@ -71,6 +79,18 @@ const tokenStackStyle: CSSProperties = {
   gap: '0.75rem',
   flexWrap: 'wrap',
   alignItems: 'stretch',
+};
+
+const statusMatrixStyle: CSSProperties = {
+  display: 'grid',
+  gap: '0.75rem',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+};
+
+const focusGridStyle: CSSProperties = {
+  display: 'grid',
+  gap: '0.75rem',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
 };
 
 ensureDomainInContext('list', 'subscription');
@@ -113,14 +133,14 @@ export const InteractiveSurfaces: Story = {
   ),
 };
 
-export const StatusProofs: Story = {
+export const StatusChips: Story = {
   name: 'Status Chips',
   render: () => (
     <GuardrailCard
       title="Status token mapping"
       description="System tokens route through the high-contrast map. With forced-colors active, chips flip to CanvasText/Highlight pairings while outlines stay crisp."
     >
-      <div style={tokenStackStyle}>
+      <div style={statusMatrixStyle}>
         <StatusChip status={ACTIVE_STATUS} domain="subscription" />
         <StatusChip status={PAST_DUE_STATUS} domain="subscription" />
         <StatusChip status={PAUSED_STATUS} domain="subscription" />
@@ -131,7 +151,7 @@ export const StatusProofs: Story = {
   ),
 };
 
-export const FocusRings: Story = {
+export const FocusIndicators: Story = {
   name: 'Focus Indicators',
   render: () => {
     const hintId = useId();
@@ -144,7 +164,7 @@ export const FocusRings: Story = {
           Press <kbd>Tab</kbd> to cycle focus. In forced-colors the outline swaps to Highlight while the inner
           guard maintains Canvas separation.
         </p>
-        <div style={tokenStackStyle} aria-describedby={hintId}>
+        <div style={focusGridStyle} aria-describedby={hintId}>
           <Button tone="primary">Primary focus</Button>
           <Button tone="neutral">Neutral focus</Button>
           <Button tone="accent">Accent focus</Button>
