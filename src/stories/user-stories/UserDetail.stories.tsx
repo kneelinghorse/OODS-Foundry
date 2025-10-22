@@ -1,5 +1,6 @@
 import type { FC } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { withPage } from '~/.storybook/decorators/withPage';
 import { RenderObject } from '../../components/RenderObject';
 import type { RenderObjectProps } from '../../components/RenderObject';
 import { createUserObjectSpec, UserObject } from '../../objects/user/object';
@@ -25,7 +26,9 @@ const buildArgs = (context: UserRenderProps['context'], data: UserRecord, object
 const meta: Meta<typeof UserRenderObject> = {
   title: 'Domains/Users/Detail',
   component: UserRenderObject,
+  decorators: [withPage()],
   parameters: {
+    layout: 'fullscreen',
     chromatic: { disableSnapshot: true },
   },
 };

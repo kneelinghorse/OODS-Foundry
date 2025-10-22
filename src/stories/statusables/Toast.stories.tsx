@@ -1,6 +1,7 @@
 /* c8 ignore start */
 import { useEffect, useState, type ComponentProps } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { withPage } from '~/.storybook/decorators/withPage';
 import '../../styles/globals.css';
 import { Toast } from '../../components/base/Toast';
 import { listStatuses } from '../../components/statusables/statusRegistry.js';
@@ -10,6 +11,7 @@ type ToastStoryProps = ComponentProps<typeof Toast>;
 const meta: Meta<typeof Toast> = {
   title: 'Components/Statusables/Toast',
   component: Toast,
+  decorators: [withPage()],
   args: {
     status: 'active',
     domain: 'subscription',
@@ -19,7 +21,7 @@ const meta: Meta<typeof Toast> = {
     autoDismissAfter: 0,
   },
   parameters: {
-    layout: 'centered',
+    layout: 'fullscreen',
     chromatic: { disableSnapshot: true },
   },
   argTypes: {
@@ -34,6 +36,9 @@ type Story = StoryObj<typeof Toast>;
 
 export const Default: Story = {
   render: (args: ToastStoryProps) => <ToastPlayground {...args} />,
+  parameters: {
+    layout: 'centered',
+  },
 };
 
 const ToastPlayground = ({
