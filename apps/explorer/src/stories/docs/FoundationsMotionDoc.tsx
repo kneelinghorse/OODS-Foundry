@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import '../../styles/index.css';
-import { flatTokens, type FlatTokenName } from '@oods/tokens';
+import { flatTokens } from '@oods/tokens';
+
+type FlatTokenName = keyof typeof flatTokens;
 
 type DurationSpec = {
   label: string;

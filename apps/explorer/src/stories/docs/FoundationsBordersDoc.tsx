@@ -1,12 +1,12 @@
 import React from 'react';
 import '../../styles/index.css';
-import { flatTokens, type FlatTokenName } from '@oods/tokens';
+import { flatTokens } from '@oods/tokens';
 
 const hyphenate = (token: string) =>
   token.replace(/\./g, '-').replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
 
 const lookup = (key: string): string => {
-  const entry = flatTokens[key as FlatTokenName];
+  const entry = flatTokens[key as keyof typeof flatTokens];
   const value = entry?.value ?? null;
   if (value == null) {
     return '—';
