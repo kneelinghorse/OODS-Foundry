@@ -1,6 +1,8 @@
 import React, { Fragment } from 'react';
 import '../../styles/index.css';
-import { flatTokens, type FlatTokenName } from '@oods/tokens';
+import { flatTokens } from '@oods/tokens';
+
+type FlatTokenKey = keyof typeof flatTokens;
 
 const hyphenate = (token: string) =>
   token.replace(/\./g, '-').replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
@@ -13,7 +15,7 @@ const normalizeValue = (value: unknown) => {
 };
 
 const getFlatTokenValue = (key: string) => {
-  const entry = flatTokens[key as FlatTokenName];
+  const entry = flatTokens[key as FlatTokenKey];
   return normalizeValue(entry?.value);
 };
 

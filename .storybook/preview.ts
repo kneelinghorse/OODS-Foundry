@@ -6,21 +6,30 @@ import type { Decorator, Preview } from '@storybook/react';
 import React, { useEffect } from 'react';
 import * as ReactDOM from 'react-dom';
 
-type Brand = 'A' | 'B';
-type BrandSetting = Brand | 'unset';
+type ThemeSetting = 'light' | 'dark';
+type BrandSetting = 'default' | 'brand-a' | 'brand-b';
 
 const BRAND_STORAGE_KEY = 'oods:storybook:brand';
+
+const DOM_BRAND_BY_SETTING: Record<BrandSetting, 'A' | 'B' | null> = {
+  default: null,
+  'brand-a': 'A',
+  'brand-b': 'B',
+};
 
 function normaliseBrand(value: unknown): BrandSetting | undefined {
   if (typeof value !== 'string') {
     return undefined;
   }
-  const upper = value.trim().toUpperCase();
-  if (upper === 'A' || upper === 'B') {
-    return upper as Brand;
+  const token = value.trim().toLowerCase().replace(/[\s_]/g, '-');
+  if (token === 'brand-a' || token === 'a' || token === 'branda') {
+    return 'brand-a';
   }
-  if (upper === 'UNSET') {
-    return 'unset';
+  if (token === 'brand-b' || token === 'b' || token === 'brandb') {
+    return 'brand-b';
+  }
+  if (token === '' || token === 'default' || token === 'unset' || token === 'base') {
+    return 'default';
   }
   return undefined;
 }
@@ -37,29 +46,57 @@ function readEnvBrand(): BrandSetting | undefined {
   return fromImportMeta ?? fromNode;
 }
 
+function readStoredBrand(): BrandSetting | undefined {
+  if (typeof window === 'undefined') {
+    return undefined;
+  }
+  try {
+    return normaliseBrand(window.localStorage.getItem(BRAND_STORAGE_KEY));
+  } catch {
+    return undefined;
+  }
+}
+
 function resolveInitialBrand(): BrandSetting {
-  const stored =
-    typeof window !== 'undefined'
-      ? normaliseBrand(window.localStorage.getItem(BRAND_STORAGE_KEY))
-      : undefined;
-  return stored ?? readEnvBrand() ?? 'A';
+  return readStoredBrand() ?? readEnvBrand() ?? 'brand-a';
 }
 
 const initialBrand = resolveInitialBrand();
+const initialTheme: ThemeSetting = 'light';
 
-// Apply initial theme/brand attributes ASAP to avoid unstyled flashes
-if (typeof document !== 'undefined') {
+function applyGlobals(theme: ThemeSetting, brand: BrandSetting): void {
+  if (typeof document === 'undefined') {
+    return;
+  }
+
   const root = document.documentElement;
   const body = document.body;
-  const initialTheme = 'light';
-  root.setAttribute('data-theme', initialTheme);
-  body.setAttribute('data-theme', initialTheme);
-  const effectiveBrand = initialBrand === 'unset' ? null : initialBrand;
-  if (effectiveBrand) {
-    root.setAttribute('data-brand', effectiveBrand);
-    body.setAttribute('data-brand', effectiveBrand);
+  const domBrand = DOM_BRAND_BY_SETTING[brand];
+
+  root.setAttribute('data-theme', theme);
+  body.setAttribute('data-theme', theme);
+
+  if (domBrand) {
+    root.setAttribute('data-brand', domBrand);
+    body.setAttribute('data-brand', domBrand);
+  } else {
+    root.removeAttribute('data-brand');
+    body.removeAttribute('data-brand');
   }
 }
+
+function persistBrand(brand: BrandSetting): void {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  try {
+    window.localStorage.setItem(BRAND_STORAGE_KEY, brand);
+  } catch {
+    // localStorage unavailable (e.g. iframe sandbox); swallow intentionally.
+  }
+}
+
+applyGlobals(initialTheme, initialBrand);
 
 if (typeof globalThis !== 'undefined' && !(globalThis as any).__VITE_IMPORT_META_ENV__) {
   (globalThis as any).__VITE_IMPORT_META_ENV__ = import.meta.env;
@@ -71,41 +108,22 @@ if (typeof window !== 'undefined') {
 }
 
 interface GlobalsWrapperProps {
-  theme: string;
+  theme: ThemeSetting;
   brand: BrandSetting;
   children: React.ReactNode;
 }
 
 const GlobalsWrapper: React.FC<GlobalsWrapperProps> = ({ theme, brand, children }) => {
   useEffect(() => {
-    if (typeof document === 'undefined') {
-      return undefined;
-    }
-
-    const root = document.documentElement;
-    const body = document.body;
-
-    root.setAttribute('data-theme', theme);
-    body.setAttribute('data-theme', theme);
-    const effectiveBrand = brand === 'unset' ? null : brand;
-
-    if (effectiveBrand) {
-      root.setAttribute('data-brand', effectiveBrand);
-      body.setAttribute('data-brand', effectiveBrand);
-    } else {
-      root.removeAttribute('data-brand');
-      body.removeAttribute('data-brand');
-    }
-
-    if (typeof window !== 'undefined') {
-      if (effectiveBrand) {
-        window.localStorage.setItem(BRAND_STORAGE_KEY, effectiveBrand);
-      } else {
-        window.localStorage.removeItem(BRAND_STORAGE_KEY);
-      }
-    }
+    applyGlobals(theme, brand);
+    persistBrand(brand);
 
     return () => {
+      if (typeof document === 'undefined') {
+        return;
+      }
+      const root = document.documentElement;
+      const body = document.body;
       root.removeAttribute('data-theme');
       body.removeAttribute('data-theme');
       root.removeAttribute('data-brand');
@@ -118,6 +136,7 @@ const GlobalsWrapper: React.FC<GlobalsWrapperProps> = ({ theme, brand, children 
 
 const preview: Preview = {
   parameters: {
+    layout: 'centered',
     actions: { argTypesRegex: '^on[A-Z].*' },
     controls: {
       matchers: {
@@ -127,10 +146,10 @@ const preview: Preview = {
     },
     chromatic: {
       modes: {
-        'brand-a-light': { globals: { theme: 'light', brand: 'A' } },
-        'brand-a-dark': { globals: { theme: 'dark', brand: 'A' } },
-        'brand-b-light': { globals: { theme: 'light', brand: 'B' } },
-        'brand-b-dark': { globals: { theme: 'dark', brand: 'B' } },
+        'brand-a-light': { globals: { theme: 'light', brand: 'brand-a' } },
+        'brand-a-dark': { globals: { theme: 'dark', brand: 'brand-a' } },
+        'brand-b-light': { globals: { theme: 'light', brand: 'brand-b' } },
+        'brand-b-dark': { globals: { theme: 'dark', brand: 'brand-b' } },
       },
     },
   },
@@ -138,7 +157,7 @@ const preview: Preview = {
     theme: {
       name: 'Theme',
       description: 'Toggle light/dark design tokens',
-      defaultValue: 'light',
+      defaultValue: initialTheme,
       toolbar: {
         icon: 'mirror',
         items: [
@@ -155,9 +174,9 @@ const preview: Preview = {
       toolbar: {
         icon: 'paintbrush',
         items: [
-          { value: 'A', title: 'Brand A' },
-          { value: 'B', title: 'Brand B' },
-          { value: 'unset', title: 'Story Default' },
+          { value: 'default', title: 'Default' },
+          { value: 'brand-a', title: 'Brand A' },
+          { value: 'brand-b', title: 'Brand B' },
         ],
         dynamicTitle: true,
       },
@@ -165,16 +184,15 @@ const preview: Preview = {
   },
   decorators: [
     ((Story, context) => {
-      const theme = (context.globals.theme as string | undefined) ?? 'light';
+      const theme = (context.globals.theme as ThemeSetting | undefined) ?? initialTheme;
       const brand = (context.globals.brand as BrandSetting | undefined) ?? initialBrand;
       return React.createElement(GlobalsWrapper, { theme, brand }, React.createElement(Story));
     }) as Decorator,
   ],
-};
-
-preview.globals = {
-  ...(preview.globals ?? {}),
-  brand: initialBrand,
+  globals: {
+    brand: initialBrand,
+    theme: initialTheme,
+  },
 };
 
 export default preview;

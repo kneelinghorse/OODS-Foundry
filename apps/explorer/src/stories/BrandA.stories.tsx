@@ -69,10 +69,7 @@ const storyParameters = (theme: Theme) => ({
 ensureDomainInContext('list', 'subscription');
 const BRAND_PREVIEW_STATUS = pickStatusByIndex('subscription', 1);
 
-function resolveBrand(
-  context: StoryContext<typeof BrandPreview>,
-  fallback: Brand
-): Brand {
+function resolveBrand(context: StoryContext<BrandPreviewProps>, fallback: Brand): Brand {
   const globalBrand = context.globals.brand as BrandSetting | undefined;
   if (globalBrand === 'unset' || globalBrand === undefined) {
     return fallback;
@@ -170,29 +167,27 @@ export default meta;
 
 type Story = StoryObj<typeof BrandPreview>;
 
+const renderBrandPreview: Story['render'] = (args, context) => (
+  <BrandPreview {...args} brand={resolveBrand(context, args.brand ?? 'A')} />
+);
+
 export const Light: Story = {
   name: 'Light',
   args: { theme: 'light', brand: 'A' },
-  render: (args: BrandPreviewProps, context: StoryContext<typeof BrandPreview>) => (
-    <BrandPreview {...args} brand={resolveBrand(context, args.brand ?? 'A')} />
-  ),
+  render: renderBrandPreview,
   parameters: storyParameters('light')
 };
 
 export const Dark: Story = {
   name: 'Dark',
   args: { theme: 'dark', brand: 'A' },
-  render: (args: BrandPreviewProps, context: StoryContext<typeof BrandPreview>) => (
-    <BrandPreview {...args} brand={resolveBrand(context, args.brand ?? 'A')} />
-  ),
+  render: renderBrandPreview,
   parameters: storyParameters('dark')
 };
 
 export const HighContrast: Story = {
   name: 'High Contrast',
   args: { theme: 'hc', brand: 'A' },
-  render: (args: BrandPreviewProps, context: StoryContext<typeof BrandPreview>) => (
-    <BrandPreview {...args} brand={resolveBrand(context, args.brand ?? 'A')} />
-  ),
+  render: renderBrandPreview,
   parameters: storyParameters('hc')
 };

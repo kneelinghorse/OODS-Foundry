@@ -769,19 +769,25 @@ export function AgentPanel() {
 
   const canQueue = Boolean(selectedDescriptor);
   const canPlan =
-    Boolean(selectedDescriptor && selectedTask) &&
+    selectedDescriptor != null &&
+    selectedTask != null &&
     !selectedTask.planInFlight &&
     !selectedTask.applyInFlight &&
     phase !== 'planning' &&
     phase !== 'executing';
   const canApprove =
-    Boolean(planResult && selectedTask && selectedTask.status === 'WaitingApproval' && selectedTask.applySupported) &&
-    !selectedTask?.applyInFlight &&
+    planResult != null &&
+    selectedTask != null &&
+    selectedTask.status === 'WaitingApproval' &&
+    selectedTask.applySupported &&
+    !selectedTask.applyInFlight &&
     phase !== 'planning' &&
     phase !== 'executing';
-  const canDeny = Boolean(
-    selectedTask && selectedTask.applySupported && selectedTask.status === 'WaitingApproval' && !selectedTask.applyInFlight
-  );
+  const canDeny =
+    selectedTask != null &&
+    selectedTask.applySupported &&
+    selectedTask.status === 'WaitingApproval' &&
+    !selectedTask.applyInFlight;
 
   const runPlan = useCallback(async () => {
     if (!selectedDescriptor || !selectedTask) return;
@@ -1132,14 +1138,15 @@ export function AgentPanel() {
 
       if (def.type === 'string') {
         const enumValues = Array.isArray(def.enum) ? def.enum : null;
-        const currentValue =
+        const candidate =
           typeof inputs[key] === 'string'
             ? inputs[key]
             : typeof def.default === 'string'
             ? def.default
             : enumValues && enumValues.length
-            ? String(enumValues[0])
+            ? enumValues[0]
             : '';
+        const currentValue = String(candidate);
 
         if (enumValues && enumValues.length) {
           return (
