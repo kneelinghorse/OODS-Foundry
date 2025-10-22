@@ -5,7 +5,7 @@ import { PageHeader } from '../../components/page/PageHeader';
 type StoryProps = ComponentProps<typeof PageHeader>;
 
 const meta: Meta<typeof PageHeader> = {
-  title: 'Components/PageHeader',
+  title: 'Patterns/Page Header',
   component: PageHeader,
   parameters: {
     chromatic: { disableSnapshot: true },

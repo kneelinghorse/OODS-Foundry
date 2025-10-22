@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { InvoiceFormExample } from './components/BillingContexts';
 
 const meta: Meta<typeof InvoiceFormExample> = {
-  title: 'Billing/Invoice.Form',
+  title: 'Domains/Billing/Invoice/Form',
   component: InvoiceFormExample,
   parameters: {
     layout: 'fullscreen',

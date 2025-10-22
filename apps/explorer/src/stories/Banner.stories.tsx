@@ -3,7 +3,7 @@ import { Banner } from '../components/Banner';
 import '../styles/index.css';
 
 const meta: Meta<typeof Banner> = {
-  title: 'Components/Banner',
+  title: 'Explorer/Components/Banner',
   component: Banner,
   parameters: {
     layout: 'centered',

@@ -25,7 +25,7 @@ const buildArgs = (context: SubscriptionRenderProps['context'], data: Subscripti
   }) satisfies SubscriptionRenderProps;
 
 const meta: Meta<typeof SubscriptionRenderObject> = {
-  title: 'Subscription/RenderObject',
+  title: 'Contexts/Subscription',
   component: SubscriptionRenderObject,
   parameters: {
     chromatic: { disableSnapshot: true },

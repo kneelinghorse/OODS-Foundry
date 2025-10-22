@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta = {
-  title: 'Proofs/Overlay Contract',
+  title: 'Explorer/Proofs/Overlay Contract',
 };
 
 export default meta;

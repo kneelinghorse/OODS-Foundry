@@ -4,7 +4,7 @@ import '../styles/index.css';
 import '../styles/overlays.css';
 
 const meta: Meta<typeof Tooltip> = {
-  title: 'Components/Tooltip',
+  title: 'Components/Overlays/Tooltip',
   component: Tooltip,
   parameters: {
     layout: 'centered',
@@ -23,4 +23,3 @@ export const Primary: Story = {
     </Tooltip>
   ),
 };
-

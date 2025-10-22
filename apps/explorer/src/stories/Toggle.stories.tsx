@@ -4,7 +4,7 @@ import '../styles/index.css';
 import '../styles/forms.css';
 
 const meta: Meta<typeof Toggle> = {
-  title: 'Components/Toggle',
+  title: 'Components/Primitives/Toggle',
   component: Toggle,
   parameters: {
     layout: 'centered',
@@ -22,4 +22,3 @@ export const Primary: Story = {
     defaultChecked: true,
   },
 };
-

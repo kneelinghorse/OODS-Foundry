@@ -4,7 +4,7 @@ import '../styles/index.css';
 import '../styles/overlays.css';
 
 const meta: Meta<typeof Tabs> = {
-  title: 'Components/Tabs',
+  title: 'Components/Primitives/Tabs',
   component: Tabs,
   parameters: {
     layout: 'centered',
@@ -29,4 +29,3 @@ export const Primary: Story = {
     />
   ),
 };
-

@@ -8,7 +8,7 @@ import { listStatuses } from '../../components/statusables/statusRegistry.js';
 type BadgeStoryProps = ComponentProps<typeof Badge>;
 
 const meta: Meta<typeof Badge> = {
-  title: 'Statusables/Badge',
+  title: 'Components/Statusables/Badge',
   component: Badge,
   args: {
     status: 'active',

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { SubscriptionTimelineExample } from './components/BillingContexts';
 
 const meta: Meta<typeof SubscriptionTimelineExample> = {
-  title: 'Billing/Subscription.Timeline',
+  title: 'Domains/Billing/Subscription/Timeline',
   component: SubscriptionTimelineExample,
   parameters: {
     layout: 'fullscreen',

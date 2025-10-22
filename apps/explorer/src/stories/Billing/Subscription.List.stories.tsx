@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { SubscriptionListExample } from './components/BillingContexts';
 
 const meta: Meta<typeof SubscriptionListExample> = {
-  title: 'Billing/Subscription.List',
+  title: 'Domains/Billing/Subscription/List',
   component: SubscriptionListExample,
   parameters: {
     layout: 'fullscreen',

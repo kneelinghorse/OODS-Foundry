@@ -4,7 +4,7 @@ import { Popover } from '../../components/Popover/Popover';
 import { TextField } from '../../components/base/TextField';
 
 const meta: Meta<typeof Popover> = {
-  title: 'Components/Popover',
+  title: 'Components/Overlays/Popover',
   component: Popover,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],

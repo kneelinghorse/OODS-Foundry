@@ -4,7 +4,7 @@ import '../styles/index.css';
 import { StatusChip } from '../components/StatusChip';
 
 const meta: Meta<typeof StatusChip> = {
-  title: 'Explorer/StatusChip',
+  title: 'Components/Statusables/Status Chip',
   component: StatusChip,
   parameters: {
     layout: 'centered',

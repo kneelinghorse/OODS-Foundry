@@ -4,7 +4,7 @@ import '../styles/index.css';
 import '../styles/forms.css';
 
 const meta: Meta<typeof TextArea> = {
-  title: 'Components/TextArea',
+  title: 'Components/Primitives/Text Area',
   component: TextArea,
   parameters: {
     layout: 'centered',
@@ -22,4 +22,3 @@ export const Primary: Story = {
     placeholder: 'Enter details...'
   },
 };
-

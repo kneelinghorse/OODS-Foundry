@@ -8,7 +8,7 @@ import { ensureDomainInContext, selectStatuses } from '../config/statusMap';
 type Story = StoryObj;
 
 const meta: Meta = {
-  title: 'High Contrast/Guardrails (HC)',
+  title: 'Explorer/Guardrails/High Contrast',
   parameters: {
     layout: 'fullscreen',
     controls: { hideNoControlsWarning: true },

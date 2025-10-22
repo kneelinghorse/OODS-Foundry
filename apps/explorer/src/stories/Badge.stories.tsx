@@ -3,7 +3,7 @@ import { Badge } from '../components/Badge';
 import '../styles/index.css';
 
 const meta: Meta<typeof Badge> = {
-  title: 'Components/Badge',
+  title: 'Explorer/Components/Badge',
   component: Badge,
   parameters: {
     layout: 'centered',

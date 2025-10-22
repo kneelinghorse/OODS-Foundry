@@ -8,7 +8,7 @@ import { listStatuses } from '../../components/statusables/statusRegistry.js';
 type ToastStoryProps = ComponentProps<typeof Toast>;
 
 const meta: Meta<typeof Toast> = {
-  title: 'Statusables/Toast',
+  title: 'Components/Statusables/Toast',
   component: Toast,
   args: {
     status: 'active',
