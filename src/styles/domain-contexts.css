@@ -1,13 +1,13 @@
 /**
  * Domain Context Layouts
- * Mission BI-20251020-1610a
+ * Mission BI-20251020-1610d
  *
  * Context-aware grid scaffolds powered exclusively by semantic tokens.
  * No literal spacing/colour values; all sizing comes from view/system tokens.
  */
 
 @layer components {
-  /* Base container */
+  /* Base container — tokens: --cmp-surface-canvas, --cmp-text-body, --view-shell-padding-inline, --view-shell-padding-block, --view-shell-max-width */
   [data-view] {
     background: var(--cmp-surface-canvas);
     color: var(--cmp-text-body);
@@ -19,12 +19,13 @@
     box-sizing: border-box;
   }
 
+  /* Shell constraint — tokens: --view-shell-max-width */
   [data-view] > * {
     width: var(--view-shell-max-width);
     box-sizing: border-box;
   }
 
-  /* Page header */
+  /* Page header — tokens: --view-pageHeader-gap, --cmp-surface-panel, --view-card-radius, --view-card-padding, --cmp-shadow-panel, --view-border-thin, --cmp-border-default, --view-pageHeader-card-gap */
   [data-view] header[data-region='pageHeader'] {
     display: grid;
     gap: var(--view-pageHeader-gap);
@@ -40,11 +41,12 @@
     gap: var(--view-pageHeader-card-gap);
   }
 
-  /* Toolbar */
+  /* Toolbar cluster — tokens: --view-toolbar-gap, --view-toolbar-item-gap */
   [data-view] [data-region='viewToolbar'] {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
+    justify-content: flex-start;
     gap: var(--view-toolbar-gap);
   }
 
@@ -54,22 +56,36 @@
     gap: var(--view-toolbar-item-gap);
   }
 
-  /* Main content */
+  /* Main region — tokens: --view-main-gap-default */
   [data-view] main[data-region='main'] {
     display: grid;
     gap: var(--view-main-gap-default);
+    align-content: start;
   }
 
-  [data-view='list'] main[data-region='main'] {
+  /* List main rhythm — tokens: --view-main-gap-list */
+  [data-view-context='list'] main[data-region='main'] {
     gap: var(--view-main-gap-list);
   }
 
-  [data-view='inline'] main[data-region='main'] {
+  /* Inline main rhythm — tokens: --view-main-gap-inline */
+  [data-view-context='inline'] main[data-region='main'] {
     gap: var(--view-main-gap-inline);
   }
 
-  [data-view] main[data-region='main'] > *,
-  [data-view] main[data-region='main'] > * > * {
+  /* Primary panels — tokens: --cmp-surface-panel, --view-card-radius, --view-card-padding, --cmp-shadow-panel, --view-border-thin, --cmp-border-default */
+  :is(
+      [data-view-context='detail'],
+      [data-view-context='list'],
+      [data-view-context='form'],
+      [data-view-context='timeline']
+    ) main[data-region='main'] > *,
+  :is(
+      [data-view-context='detail'],
+      [data-view-context='list'],
+      [data-view-context='form'],
+      [data-view-context='timeline']
+    ) main[data-region='main'] > * > * {
     background: var(--cmp-surface-panel);
     border-radius: var(--view-card-radius);
     padding: var(--view-card-padding);
@@ -77,7 +93,17 @@
     border: var(--view-border-thin) solid var(--cmp-border-default);
   }
 
-  /* Context rail */
+  /* Inline surfaces — tokens: --view-gap-inline */
+  [data-view-context='inline'] main[data-region='main'] > *,
+  [data-view-context='inline'] main[data-region='main'] > * > * {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    box-shadow: none;
+  }
+
+  /* Context rail — tokens: --cmp-surface-panel, --view-card-radius, --view-contextPanel-padding, --cmp-shadow-panel, --view-border-thin, --cmp-border-default, --view-contextPanel-gap */
   [data-view] aside[data-region='contextPanel'] {
     background: var(--cmp-surface-panel);
     border-radius: var(--view-card-radius);
@@ -86,92 +112,128 @@
     border: var(--view-border-thin) solid var(--cmp-border-default);
     display: grid;
     gap: var(--view-contextPanel-gap);
+    align-content: start;
   }
 
-  /* Detail view */
-  [data-view='detail'] [data-region-group='detail-body'] {
+  /* Standard rail sizing — tokens: --view-rail-width-standard, --view-rail-width-min-standard */
+  :is([data-view-context='detail'], [data-view-context='timeline'])
+    aside[data-region='contextPanel'] {
+    inline-size: var(--view-rail-width-standard);
+    min-inline-size: var(--view-rail-width-min-standard);
+  }
+
+  /* Narrow rail sizing — tokens: --view-rail-width-narrow, --view-rail-width-min-narrow */
+  :is([data-view-context='list'], [data-view-context='form'])
+    aside[data-region='contextPanel'] {
+    inline-size: var(--view-rail-width-narrow);
+    min-inline-size: var(--view-rail-width-min-narrow);
+  }
+
+  /* Detail view layout — tokens: --view-section-gap-detail, --view-main-gap-default, --view-columns-default, --view-columns-two-column-standard */
+  [data-view-context='detail'] [data-region-group='detail-body'] {
     display: grid;
     gap: var(--view-section-gap-detail);
+    align-content: start;
   }
 
-  [data-view='detail'] [data-region-group='detail-content'] {
+  [data-view-context='detail'] [data-region-group='detail-content'] {
     display: grid;
+    gap: var(--view-main-gap-default);
     align-items: start;
-    gap: var(--view-card-gap);
+    align-content: start;
     grid-template-columns: var(--view-columns-default);
   }
 
-  [data-view='detail'][data-view-has-contextpanel='true'] [data-region-group='detail-content'] {
+  [data-view-context='detail'][data-view-has-contextpanel='true']
+    [data-region-group='detail-content'] {
     grid-template-columns: var(--view-columns-two-column-standard);
   }
 
-  /* List view */
-  [data-view='list'] [data-region-group='list-body'] {
+  /* List view layout — tokens: --view-section-gap-list, --view-main-gap-list, --view-columns-default, --view-columns-two-column-narrow */
+  [data-view-context='list'] [data-region-group='list-body'] {
     display: grid;
     gap: var(--view-section-gap-list);
+    align-content: start;
   }
 
-  [data-view='list'] [data-region-group='list-content'] {
+  [data-view-context='list'] [data-region-group='list-chrome'] {
     display: grid;
-    gap: var(--view-card-gap);
+    gap: var(--view-section-gap-list);
+    align-content: start;
+  }
+
+  [data-view-context='list'] [data-region-group='list-content'] {
+    display: grid;
+    gap: var(--view-main-gap-list);
     align-items: start;
+    align-content: start;
     grid-template-columns: var(--view-columns-default);
   }
 
-  [data-view='list'][data-view-has-contextpanel='true'] [data-region-group='list-content'] {
+  [data-view-context='list'][data-view-has-contextpanel='true']
+    [data-region-group='list-content'] {
     grid-template-columns: var(--view-columns-two-column-narrow);
   }
 
-  /* Form view */
-  [data-view='form'] [data-region-group='form-body'] {
+  /* Form view layout — tokens: --view-section-gap-form, --view-main-gap-default, --view-columns-default, --view-columns-two-column-guidance */
+  [data-view-context='form'] [data-region-group='form-body'] {
     display: grid;
     gap: var(--view-section-gap-form);
+    align-content: start;
   }
 
-  [data-view='form'] [data-region-group='form-content'] {
+  [data-view-context='form'] [data-region-group='form-content'] {
     display: grid;
-    gap: var(--view-card-gap);
+    gap: var(--view-main-gap-default);
     align-items: start;
+    align-content: start;
     grid-template-columns: var(--view-columns-default);
   }
 
-  [data-view='form'][data-view-has-contextpanel='true'] [data-region-group='form-content'] {
+  [data-view-context='form'][data-view-has-contextpanel='true']
+    [data-region-group='form-content'] {
     grid-template-columns: var(--view-columns-two-column-guidance);
   }
 
-  /* Timeline view */
-  [data-view='timeline'] {
+  /* Timeline view layout — tokens: --view-timeline-background, --view-section-gap-timeline, --view-timeline-gap, --view-timeline-stream-gap */
+  [data-view-context='timeline'] {
     background: var(--view-timeline-background);
   }
 
-  [data-view='timeline'] [data-region-group='timeline-body'] {
+  [data-view-context='timeline'] [data-region-group='timeline-body'] {
     display: grid;
     gap: var(--view-section-gap-timeline);
+    align-content: start;
   }
 
-  [data-view='timeline'] [data-region-group='timeline-meta'] {
+  [data-view-context='timeline'] [data-region-group='timeline-meta'] {
     display: grid;
     gap: var(--view-timeline-gap);
+    align-content: start;
   }
 
-  [data-view='timeline'] [data-region-group='timeline-stream'] {
+  [data-view-context='timeline'] [data-region-group='timeline-stream'] {
     display: grid;
     gap: var(--view-timeline-stream-gap);
+    align-content: start;
   }
 
-  /* Inline view */
-  [data-view='inline'] {
+  /* Inline view layout — tokens: --view-gap-inline, --view-main-gap-inline */
+  [data-view-context='inline'] {
     display: grid;
+    gap: var(--view-gap-inline);
+    justify-items: stretch;
+  }
+
+  [data-view-context='inline'] [data-region-group='inline-header-row'] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
     gap: var(--view-gap-inline);
   }
 
-  [data-view='inline'] [data-region-group='inline-header-row'] {
-    display: grid;
-    gap: var(--view-gap-inline);
-  }
-
-  /* Card view */
-  [data-view='card'] {
+  /* Card view layout — tokens: --cmp-surface-panel, --view-card-radius, --view-card-padding, --cmp-shadow-panel, --view-border-thin, --cmp-border-default, --view-card-gap, --view-card-max-width */
+  [data-view-context='card'] {
     background: var(--cmp-surface-panel);
     border-radius: var(--view-card-radius);
     padding: var(--view-card-padding);
@@ -181,17 +243,23 @@
     gap: var(--view-card-gap);
     max-width: var(--view-card-max-width);
     margin-inline: auto;
+    justify-items: stretch;
   }
 
-  [data-view='card'] main[data-region='main'] > *,
-  [data-view='card'] aside[data-region='contextPanel'] {
+  [data-view-context='card'] aside[data-region='contextPanel'] {
+    inline-size: auto;
+    min-inline-size: 0;
+  }
+
+  [data-view-context='card'] main[data-region='main'] > *,
+  [data-view-context='card'] aside[data-region='contextPanel'] {
     border: none;
     padding: 0;
     box-shadow: none;
     background: transparent;
   }
 
-  /* Forced colours compatibility */
+  /* Forced colours — tokens: --view-border-thin, --view-border-medium, --view-border-strong, --cmp-spacing-inset-compact, --cmp-focus-width, --view-focus-outline-offset */
   @media (forced-colors: active) {
     [data-view] {
       border: var(--view-border-thin) solid CanvasText;
@@ -203,9 +271,30 @@
       padding: var(--cmp-spacing-inset-compact);
     }
 
-    [data-view] main[data-region='main'] > *,
-    [data-view] main[data-region='main'] > * > *,
-    [data-view] aside[data-region='contextPanel'],
+    :is(
+        [data-view-context='detail'],
+        [data-view-context='list'],
+        [data-view-context='form'],
+        [data-view-context='timeline']
+      ) main[data-region='main'] > *,
+    :is(
+        [data-view-context='detail'],
+        [data-view-context='list'],
+        [data-view-context='form'],
+        [data-view-context='timeline']
+      ) main[data-region='main'] > * > * {
+      border: var(--view-border-medium) solid CanvasText;
+      box-shadow: none;
+      background: Canvas;
+      forced-color-adjust: none;
+    }
+
+    :is(
+        [data-view-context='detail'],
+        [data-view-context='list'],
+        [data-view-context='form'],
+        [data-view-context='timeline']
+      ) aside[data-region='contextPanel'],
     [data-view] header[data-region='pageHeader'] header {
       border: var(--view-border-medium) solid CanvasText;
       box-shadow: none;
@@ -213,7 +302,7 @@
       forced-color-adjust: none;
     }
 
-    [data-view='card'] {
+    [data-view-context='card'] {
       border: var(--view-border-strong) solid CanvasText;
       box-shadow: none;
       background: Canvas;
