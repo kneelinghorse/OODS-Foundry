@@ -4,7 +4,7 @@ import '../../styles/globals.css';
 import { Select } from '../../components/base/Select.js';
 
 const meta: Meta<typeof Select> = {
-  title: 'Forms/Select',
+  title: 'Components/Primitives/Select',
   component: Select,
   args: {
     id: 'plan',

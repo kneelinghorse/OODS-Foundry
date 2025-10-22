@@ -4,7 +4,7 @@ import '../styles/index.css';
 import '../styles/overlays.css';
 
 const meta: Meta<typeof Toast> = {
-  title: 'Components/Toast',
+  title: 'Explorer/Components/Toast',
   component: Toast,
   parameters: {
     layout: 'centered',
@@ -27,4 +27,3 @@ export const Primary: Story = {
     </div>
   ),
 };
-

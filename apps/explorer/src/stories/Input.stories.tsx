@@ -3,7 +3,7 @@ import { Input } from '../components/Input';
 import '../styles/index.css';
 
 const meta: Meta<typeof Input> = {
-  title: 'Components/Input',
+  title: 'Components/Primitives/Input',
   component: Input,
   parameters: {
     layout: 'centered',

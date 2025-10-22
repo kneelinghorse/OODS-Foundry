@@ -7,7 +7,7 @@ import { Checkbox } from '../../components/base/Checkbox.js';
 import { Button } from '../../components/base/Button.js';
 
 const meta: Meta<typeof TextField> = {
-  title: 'Forms/TextField',
+  title: 'Components/Primitives/Text Field',
   component: TextField,
   args: {
     id: 'email',

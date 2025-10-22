@@ -8,7 +8,7 @@ import { listStatuses } from '../../components/statusables/statusRegistry.js';
 type BannerStoryProps = ComponentProps<typeof Banner>;
 
 const meta: Meta<typeof Banner> = {
-  title: 'Statusables/Banner',
+  title: 'Components/Statusables/Banner',
   component: Banner,
   args: {
     status: 'active',

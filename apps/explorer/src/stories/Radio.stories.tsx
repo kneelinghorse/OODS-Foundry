@@ -4,7 +4,7 @@ import '../styles/index.css';
 import '../styles/forms.css';
 
 const meta: Meta<typeof Radio> = {
-  title: 'Components/Radio',
+  title: 'Components/Primitives/Radio',
   component: Radio,
   parameters: {
     layout: 'centered',
@@ -29,4 +29,3 @@ export const Primary: Story = {
     />
   ),
 };
-

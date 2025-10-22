@@ -23,7 +23,7 @@ const buildArgs = (context: UserRenderProps['context'], data: UserRecord, object
   }) satisfies UserRenderProps;
 
 const meta: Meta<typeof UserRenderObject> = {
-  title: 'User/RenderObject',
+  title: 'Domains/Users/Detail',
   component: UserRenderObject,
   parameters: {
     chromatic: { disableSnapshot: true },

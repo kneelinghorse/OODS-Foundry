@@ -4,7 +4,7 @@ import '../styles/index.css';
 import '../styles/overlays.css';
 
 const meta: Meta<typeof Select> = {
-  title: 'Components/Select',
+  title: 'Explorer/Components/Select',
   component: Select,
   parameters: {
     layout: 'centered',
@@ -29,4 +29,3 @@ export const Primary: Story = {
     />
   ),
 };
-

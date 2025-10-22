@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { SubscriptionFormScenarios } from './components/BillingContexts';
 
 const meta: Meta<typeof SubscriptionFormScenarios> = {
-  title: 'Billing/Subscription.Form-Scenarios',
+  title: 'Domains/Billing/Subscription/Form Scenarios',
   component: SubscriptionFormScenarios,
   parameters: {
     layout: 'fullscreen',

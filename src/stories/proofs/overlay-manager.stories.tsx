@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { OverlayRoot, useEscapeRoutes, useFocusManagement, useInertOutside } from '../../overlays/manager';
 
 const meta: Meta = {
-  title: 'Proofs/Overlay Manager',
+  title: 'Explorer/Proofs/Overlay Manager',
 };
 
 export default meta;

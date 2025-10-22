@@ -183,7 +183,7 @@ const PreviewWiringSanityProbe: React.FC = () => {
 };
 
 const meta: Meta<typeof PreviewWiringSanityProbe> = {
-  title: 'Proofs/Preview Wiring Sanity',
+  title: 'Explorer/Proofs/Preview Wiring Sanity',
   component: PreviewWiringSanityProbe,
   parameters: {
     layout: 'centered',

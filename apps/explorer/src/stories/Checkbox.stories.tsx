@@ -4,7 +4,7 @@ import '../styles/index.css';
 import '../styles/forms.css';
 
 const meta: Meta<typeof Checkbox> = {
-  title: 'Components/Checkbox',
+  title: 'Explorer/Components/Checkbox',
   component: Checkbox,
   parameters: {
     layout: 'centered',
@@ -22,4 +22,3 @@ export const Primary: Story = {
     defaultChecked: true,
   },
 };
-

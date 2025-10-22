@@ -1,4 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import tokensJson from '@oods/tokens/tailwind';
+import { TokenBrowser } from '../../../apps/explorer/src/routes/tokens/TokenBrowser';
+import { resolveTokenValue } from '../../../apps/explorer/src/utils/tokenResolver';
 
 const meta: Meta = {
   title: 'Foundations/Tokens Roundtrip',
@@ -10,6 +13,26 @@ const meta: Meta = {
 export default meta;
 
 type Story = StoryObj;
+type TokenBrowserStory = StoryObj<typeof TokenBrowser>;
+
+type FlatTokenRecord = {
+  name: string;
+  value: string;
+  path: string[];
+  cssVariable?: string;
+  originalValue?: string;
+  description?: string;
+};
+
+const flatRecord = tokensJson.flat as Record<string, FlatTokenRecord>;
+
+const tokenEntries = Object.entries(flatRecord).map(([id, token]) => ({
+  id,
+  name: token.path.join('.'),
+  value: token.value,
+  path: token.path,
+  description: token.description?.trim() ? token.description : undefined,
+}));
 
 type PreviewKind = 'background' | 'text' | 'border';
 
@@ -159,6 +182,14 @@ const RoundtripPreview = () => (
   </div>
 );
 
-export const Demo: Story = {
+export const Roundtrip: Story = {
   render: () => <RoundtripPreview />,
+};
+
+export const Browser: TokenBrowserStory = {
+  name: 'Token Browser',
+  parameters: {
+    layout: 'fullscreen',
+  },
+  render: () => <TokenBrowser tokens={tokenEntries} resolveToken={resolveTokenValue} />,
 };

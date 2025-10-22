@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Button as DSButton } from '../../components/base/Button';
 
 const meta: Meta = {
-  title: 'Foundations/Elements — Smoke Test',
+  title: 'Foundations/Elements Smoke Test',
   parameters: {
     controls: { disable: true },
     options: { showPanel: false },
