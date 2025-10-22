@@ -1,13 +1,15 @@
 import type { ComponentProps } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { withPage } from '~/.storybook/decorators/withPage';
 import '../styles/index.css';
 import { StatusChip } from '../components/StatusChip';
 
 const meta: Meta<typeof StatusChip> = {
   title: 'Components/Statusables/Status Chip',
   component: StatusChip,
+  decorators: [withPage()],
   parameters: {
-    layout: 'centered',
+    layout: 'fullscreen',
     chromatic: { disableSnapshot: true },
   },
   args: {

@@ -1,6 +1,7 @@
 /* c8 ignore start */
 import type { ComponentProps } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { withPage } from '~/.storybook/decorators/withPage';
 import '../../styles/globals.css';
 import { Badge } from '../../components/base/Badge';
 import { listStatuses } from '../../components/statusables/statusRegistry.js';
@@ -10,13 +11,14 @@ type BadgeStoryProps = ComponentProps<typeof Badge>;
 const meta: Meta<typeof Badge> = {
   title: 'Components/Statusables/Badge',
   component: Badge,
+  decorators: [withPage()],
   args: {
     status: 'active',
     domain: 'subscription',
     emphasis: 'subtle',
   },
   parameters: {
-    layout: 'centered',
+    layout: 'fullscreen',
     chromatic: { disableSnapshot: true },
   },
   argTypes: {
@@ -41,6 +43,9 @@ type Story = StoryObj<typeof Badge>;
 
 export const Default: Story = {
   render: (args: BadgeStoryProps) => <Badge {...args} />,
+  parameters: {
+    layout: 'centered',
+  },
 };
 
 export const SnapshotGrid: Story = {

@@ -1,6 +1,7 @@
 /* c8 ignore start */
 import type { ComponentProps } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { withPage } from '~/.storybook/decorators/withPage';
 import '../../styles/globals.css';
 import { Banner } from '../../components/base/Banner';
 import { listStatuses } from '../../components/statusables/statusRegistry.js';
@@ -10,6 +11,7 @@ type BannerStoryProps = ComponentProps<typeof Banner>;
 const meta: Meta<typeof Banner> = {
   title: 'Components/Statusables/Banner',
   component: Banner,
+  decorators: [withPage({ fullWidth: true })],
   args: {
     status: 'active',
     domain: 'subscription',
@@ -18,7 +20,7 @@ const meta: Meta<typeof Banner> = {
     description: 'Subscription is active and up to date.',
   },
   parameters: {
-    layout: 'centered',
+    layout: 'fullscreen',
     chromatic: { disableSnapshot: true },
   },
   argTypes: {

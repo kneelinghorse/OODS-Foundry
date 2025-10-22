@@ -1,5 +1,6 @@
 import type { ComponentProps } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { withPage } from '~/.storybook/decorators/withPage';
 import { PageHeader } from '../../components/page/PageHeader';
 
 type StoryProps = ComponentProps<typeof PageHeader>;
@@ -7,7 +8,9 @@ type StoryProps = ComponentProps<typeof PageHeader>;
 const meta: Meta<typeof PageHeader> = {
   title: 'Patterns/Page Header',
   component: PageHeader,
+  decorators: [withPage({ fullWidth: true })],
   parameters: {
+    layout: 'fullscreen',
     chromatic: { disableSnapshot: true },
   },
 };

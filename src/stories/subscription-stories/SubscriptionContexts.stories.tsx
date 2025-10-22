@@ -1,5 +1,6 @@
 import type { FC } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { withPage } from '~/.storybook/decorators/withPage';
 import { RenderObject } from '../../components/RenderObject';
 import type { RenderObjectProps } from '../../components/RenderObject';
 import { SubscriptionObject } from '../../objects/subscription/object';
@@ -27,7 +28,9 @@ const buildArgs = (context: SubscriptionRenderProps['context'], data: Subscripti
 const meta: Meta<typeof SubscriptionRenderObject> = {
   title: 'Contexts/Subscription',
   component: SubscriptionRenderObject,
+  decorators: [withPage()],
   parameters: {
+    layout: 'fullscreen',
     chromatic: { disableSnapshot: true },
   },
 };
