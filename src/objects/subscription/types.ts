@@ -2,11 +2,13 @@ import type { SubscriptionStatefulViewData } from '../../traits/Stateful/view.js
 import type { CancellableViewData } from '../../traits/Cancellable/view.js';
 import type { SubscriptionTimestampableViewData } from '../../traits/Timestampable/view.js';
 import type { BillableViewData } from '../../traits/Billable/view.js';
+import type { TaggableViewData } from '../../traits/Taggable/types.js';
 
 export type SubscriptionRecord = SubscriptionStatefulViewData &
   CancellableViewData &
   SubscriptionTimestampableViewData &
-  BillableViewData & {
+  BillableViewData &
+  TaggableViewData & {
     readonly subscription_id: string;
     readonly plan_name: string;
     readonly plan_code?: string | null;

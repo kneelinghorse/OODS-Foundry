@@ -12,6 +12,8 @@ import type { SubscriptionRecord } from '../../src/objects/subscription/types.js
 import activeSubscription from '../../src/fixtures/subscription/active.json';
 import pastDueSubscription from '../../src/fixtures/subscription/past_due.json';
 import cancelSubscription from '../../src/fixtures/subscription/active_cancel_at_period_end.json';
+import type { ContextKind } from '../../src/contexts/index.js';
+import { collectContributionExtensions } from '../../src/engine/contributions/index.js';
 
 const Active = activeSubscription as SubscriptionRecord;
 const PastDue = pastDueSubscription as SubscriptionRecord;
@@ -27,13 +29,24 @@ function renderRegionContent(content: ReactNode): string {
   return renderToStaticMarkup(createElement(Fragment, null, content));
 }
 
-function renderContextMarkup(data: SubscriptionRecord): Record<string, string> {
+function renderContextMarkup(
+  data: SubscriptionRecord,
+  view: ContextKind = 'detail'
+): Record<string, string> {
   const context = buildRenderContext<SubscriptionRecord>({
     object: SubscriptionObject,
     data,
   });
-  const extensions = resolveTraitExtensions(SubscriptionObject, context);
-  const regions = composeExtensions(extensions, context);
+  const baseExtensions = resolveTraitExtensions(SubscriptionObject, context);
+  const contributionExtensions = collectContributionExtensions<SubscriptionRecord>({
+    object: SubscriptionObject,
+    context: view,
+    renderContext: context,
+  });
+  const regions = composeExtensions(
+    [...baseExtensions, ...contributionExtensions],
+    context
+  );
 
   return REGION_ORDER.reduce<Record<string, string>>((result, region) => {
     result[region] = renderRegionContent(regions[region]);

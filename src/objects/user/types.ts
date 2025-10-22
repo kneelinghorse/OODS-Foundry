@@ -1,6 +1,6 @@
 import type { StateTransitionRecord, StatefulViewData } from '../../traits/Stateful/view.js';
 import type { TimestampableViewData } from '../../traits/Timestampable/view.js';
-import type { TaggableViewData } from '../../traits/Taggable/view.js';
+import type { TaggableViewData } from '../../traits/Taggable/types.js';
 
 export interface UserStateTransition extends StateTransitionRecord {}
 
