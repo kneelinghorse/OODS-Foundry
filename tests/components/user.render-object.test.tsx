@@ -11,6 +11,8 @@ import type { ObjectSpec } from '../../src/types/render-context.js';
 import activeUserData from '../../src/fixtures/user/active.json';
 import { createUserObjectSpec } from '../../src/objects/user/object.js';
 import type { UserRecord } from '../../src/objects/user/types.js';
+import type { ContextKind } from '../../src/contexts/index.js';
+import { collectContributionExtensions } from '../../src/engine/contributions/index.js';
 
 const activeUser = activeUserData as UserRecord;
 
@@ -22,10 +24,19 @@ function renderRegionContent(content: ReactNode): string {
   return renderToStaticMarkup(createElement(Fragment, null, content));
 }
 
-function renderContextMarkup(object: ObjectSpec<UserRecord>, data: UserRecord): Record<string, string> {
+function renderContextMarkup(
+  object: ObjectSpec<UserRecord>,
+  data: UserRecord,
+  view: ContextKind = 'detail'
+): Record<string, string> {
   const context = buildRenderContext<UserRecord>({ object, data });
-  const extensions = resolveTraitExtensions(object, context);
-  const regions = composeExtensions(extensions, context);
+  const baseExtensions = resolveTraitExtensions(object, context);
+  const contributionExtensions = collectContributionExtensions<UserRecord>({
+    object,
+    context: view,
+    renderContext: context,
+  });
+  const regions = composeExtensions([...baseExtensions, ...contributionExtensions], context);
 
   return REGION_ORDER.reduce<Record<string, string>>((result, region) => {
     result[region] = renderRegionContent(regions[region]);

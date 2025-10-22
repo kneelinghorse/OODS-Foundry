@@ -9,6 +9,7 @@ import type { ViewExtension } from '../types/view-extension.js';
 import { resolveTraitExtensions, type TraitViewErrorDetails } from '../traits/adapter.js';
 import { renderReport, type RenderReportPayload } from './renderReport.js';
 import { ViewContainer } from '../engine/render/ViewContainer.js';
+import { collectContributionExtensions } from '../engine/contributions/index.js';
 
 export interface RenderObjectProps<Data = unknown> {
   readonly object: ObjectSpec<Data>;
@@ -20,22 +21,29 @@ export interface RenderObjectProps<Data = unknown> {
 
 function useTraitExtensions<Data>(
   object: ObjectSpec<Data>,
+  contextKind: ContextKind,
   renderContext: RenderContext<Data>,
   onTraitViewError?: (details: TraitViewErrorDetails<Data>) => void
 ): ViewExtension<Data>[] {
-  return React.useMemo(
-    () =>
-      resolveTraitExtensions<Data>(
-        object,
-        renderContext,
-        onTraitViewError
-          ? {
-              onTraitViewError,
-            }
-          : undefined
-      ),
-    [object, renderContext, onTraitViewError]
-  );
+  return React.useMemo(() => {
+    const baseExtensions = resolveTraitExtensions<Data>(
+      object,
+      renderContext,
+      onTraitViewError
+        ? {
+            onTraitViewError,
+          }
+        : undefined
+    );
+
+    const contributionExtensions = collectContributionExtensions<Data>({
+      object,
+      context: contextKind,
+      renderContext,
+    });
+
+    return baseExtensions.concat(contributionExtensions);
+  }, [object, renderContext, contextKind, onTraitViewError]);
 }
 
 function useRegionMap<Data>(
@@ -123,6 +131,7 @@ export const RenderObject: React.FC<RenderObjectProps> = ({
 
   const extensions = useTraitExtensions(
     object,
+    context,
     renderContext,
     debug ? traitErrorLogger : undefined
   );

@@ -6,6 +6,7 @@ import { buildRenderContext } from '../../src/context/buildRenderContext.js';
 import { composeExtensions } from '../../src/compositor/composeExtensions.js';
 import { resolveTraitExtensions } from '../../src/traits/adapter.js';
 import type { ObjectSpec, TraitAdapter } from '../../src/types/render-context.js';
+import { collectContributionExtensions } from '../../src/engine/contributions/index.js';
 
 interface UserData {
   readonly id: string;
@@ -124,7 +125,13 @@ describe('<RenderObject>', () => {
       data: baseData,
     });
 
-    const extensions = resolveTraitExtensions(object, context);
+    const baseExtensions = resolveTraitExtensions(object, context);
+    const contributionExtensions = collectContributionExtensions<UserData>({
+      object,
+      context: 'detail',
+      renderContext: context,
+    });
+    const extensions = [...baseExtensions, ...contributionExtensions];
     const regions = composeExtensions<UserData>(extensions, context);
     const report = renderReport(object, 'detail', regions, extensions);
 

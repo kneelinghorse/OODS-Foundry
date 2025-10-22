@@ -5,6 +5,9 @@
   "plan_interval": "monthly",
   "customer_name": "Helios Labs",
   "customer_email": "ops@helios.example.com",
+  "name": "Helios Labs",
+  "preferred_name": "Helios Labs",
+  "primary_email": "ops@helios.example.com",
   "status": "active",
   "cancel_at_period_end": true,
   "cancellation_reason": "Switching to annual billing with reseller",
@@ -16,5 +19,25 @@
   "current_period_end": "2024-06-09T23:59:59Z",
   "current_period_progress": 0.52,
   "last_payment_at": "2024-05-10T00:07:45Z",
-  "next_payment_due_at": "2024-06-09T23:59:59Z"
+  "next_payment_due_at": "2024-06-09T23:59:59Z",
+  "tags": ["enterprise", "solar", "migration"],
+  "tag_count": 4,
+  "state_history": [
+    {
+      "from_state": "active",
+      "to_state": "active",
+      "timestamp": "2024-05-10T00:07:45Z",
+      "actor_id": "sys_billing",
+      "reason": "Monthly renewal processed"
+    },
+    {
+      "from_state": "active",
+      "to_state": "active",
+      "timestamp": "2024-05-15T18:32:00Z",
+      "actor_id": "usr_finance",
+      "reason": "Cancellation requested effective next period"
+    }
+  ],
+  "last_event": "cancellation_requested",
+  "last_event_at": "2024-05-15T18:32:00Z"
 }
