@@ -67,14 +67,14 @@ function renderTagList<Data extends TaggableViewData>(
 
 const DEFAULT_CONTEXTS: readonly ContextKind[] = Object.freeze(['detail', 'list', 'form']);
 
-export interface RegisterTaggableContributionsInput<Data extends TaggableViewData> {
+export interface RegisterTaggableContributionsInput {
   readonly traitId: string;
   readonly options?: TaggableTraitOptions;
   readonly contexts?: readonly ContextKind[];
 }
 
 export function registerTaggableContributions<Data extends TaggableViewData>(
-  input: RegisterTaggableContributionsInput<Data>
+  input: RegisterTaggableContributionsInput
 ): void {
   const { traitId, options, contexts = DEFAULT_CONTEXTS } = input;
   const maxVisible = Math.max(1, options?.maxVisibleTags ?? 4);

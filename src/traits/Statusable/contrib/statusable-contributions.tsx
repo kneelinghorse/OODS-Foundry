@@ -179,7 +179,7 @@ function renderListRow<Data extends StatusableViewData>(
   );
 }
 
-export interface RegisterStatusableContributionsInput<Data extends StatusableViewData> {
+export interface RegisterStatusableContributionsInput {
   readonly traitId: string;
   readonly options?: StatusableContributionOptions;
   readonly contexts?: readonly ContextKind[];
@@ -193,7 +193,7 @@ const DEFAULT_CONTEXTS: readonly ContextKind[] = Object.freeze([
 ]);
 
 export function registerStatusableContributions<Data extends StatusableViewData>(
-  input: RegisterStatusableContributionsInput<Data>
+  input: RegisterStatusableContributionsInput
 ): void {
   const { traitId, options, contexts = DEFAULT_CONTEXTS } = input;
   const statusDomain = (options?.statusDomain ?? DEFAULT_STATUS_DOMAIN) as StatusDomain;

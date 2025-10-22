@@ -22,7 +22,8 @@ export interface ContributionRegistration<Data = unknown> {
   readonly render: (input: ContributionRenderContext<Data>) => ReactNode;
 }
 
-interface RegisteredContribution<Data = unknown> extends ContributionRegistration<Data> {
+interface RegisteredContribution<Data = unknown>
+  extends Omit<ContributionRegistration<Data>, 'context'> {
   readonly contexts: readonly ContextKind[];
 }
 
@@ -37,7 +38,7 @@ function toContextArray(
   if (Array.isArray(value)) {
     return value.slice() as readonly ContextKind[];
   }
-  return [value];
+  return [value] as readonly ContextKind[];
 }
 
 function buildContributionKey(traitId: string, contributionId: string): ContributionKey {
@@ -47,9 +48,10 @@ function buildContributionKey(traitId: string, contributionId: string): Contribu
 export function registerContribution<Data = unknown>(
   registration: ContributionRegistration<Data>
 ): void {
-  const contexts = toContextArray(registration.context);
+  const { context, ...rest } = registration;
+  const contexts = toContextArray(context);
   const entry: RegisteredContribution<Data> = {
-    ...registration,
+    ...rest,
     contexts,
   };
 

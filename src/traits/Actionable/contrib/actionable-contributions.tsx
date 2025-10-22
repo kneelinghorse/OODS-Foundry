@@ -59,7 +59,7 @@ function renderActionToolbar<Data extends StatusableViewData>(
   );
 }
 
-export interface RegisterActionableContributionsInput<Data extends StatusableViewData> {
+export interface RegisterActionableContributionsInput {
   readonly traitId: string;
   readonly contexts?: readonly ContextKind[];
 }
@@ -67,7 +67,7 @@ export interface RegisterActionableContributionsInput<Data extends StatusableVie
 const DEFAULT_CONTEXTS: readonly ContextKind[] = Object.freeze(['detail', 'list', 'form', 'timeline']);
 
 export function registerActionableContributions<Data extends StatusableViewData>(
-  input: RegisterActionableContributionsInput<Data>
+  input: RegisterActionableContributionsInput
 ): void {
   const { traitId, contexts = DEFAULT_CONTEXTS } = input;
 

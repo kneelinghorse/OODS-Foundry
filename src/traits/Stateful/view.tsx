@@ -92,7 +92,7 @@ function registerSharedContributions<Data extends StatefulViewData>(
   options: StatefulTraitOptions = {}
 ): void {
   const contexts = options.contexts;
-  const statusableInput: RegisterStatusableContributionsInput<Data> = {
+  const statusableInput: RegisterStatusableContributionsInput = {
     traitId,
     options: {
       statusDomain: options.statusDomain,
@@ -188,12 +188,12 @@ export function createStatefulTraitAdapter<Data extends StatefulViewData>(
   });
 
   const extensions: ViewExtension<Data>[] = [
-    createPageHeaderExtension<StatefulViewData>({
+    createPageHeaderExtension<Data>({
       id: headerId,
       priority: pageHeaderPriority,
-      buildTitle: resolveDisplayName,
-      buildSubtitle: resolveSubtitle,
-      buildDescription: resolveDescription,
+      buildTitle: (record) => resolveDisplayName(record),
+      buildSubtitle: (record) => resolveSubtitle(record),
+      buildDescription: (record) => resolveDescription(record),
     }),
   ];
 
@@ -216,13 +216,13 @@ export function createSubscriptionStatefulTraitAdapter<
   });
 
   const extensions: ViewExtension<Data>[] = [
-    createPageHeaderExtension<SubscriptionStatefulViewData>({
+    createPageHeaderExtension<Data>({
       id: headerId,
       priority: pageHeaderPriority,
-      buildTitle: resolveSubscriptionTitle,
-      buildSubtitle: resolveSubscriptionSubtitle,
-      buildDescription: resolveSubscriptionDescription,
-      buildMetadata: (data) => renderMetadata(resolveSubscriptionMetadata(data)),
+      buildTitle: (record) => resolveSubscriptionTitle(record),
+      buildSubtitle: (record) => resolveSubscriptionSubtitle(record),
+      buildDescription: (record) => resolveSubscriptionDescription(record),
+      buildMetadata: (record) => renderMetadata(resolveSubscriptionMetadata(record)),
     }),
   ];
 
