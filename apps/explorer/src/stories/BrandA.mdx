@@ -3,6 +3,15 @@ import * as BrandAStories from './BrandA.stories';
 
 <Meta of={BrandAStories} />
 
+## Showcase Gallery
+
+Brand proofs are curated as pre-set galleries. The showcase view renders the light, dark, and high-contrast
+contracts together so changes surface across modes in a single glance.
+
+<Canvas>
+  <Story of={BrandAStories.Showcase} />
+</Canvas>
+
 Brand A extends the base token stack without touching component logic. Each theme swap happens via
 `data-brand="A"` combined with the relevant `data-theme` attribute so React trees stay token-only.
 
