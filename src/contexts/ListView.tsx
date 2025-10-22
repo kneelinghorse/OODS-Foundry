@@ -1,14 +1,22 @@
 import type { RegionMap } from '../types/regions.js';
+import type { ViewContainerAttributes } from '../engine/render/ViewContainer.js';
+import { buildViewContainerAttributes } from '../engine/render/ViewContainer.js';
 import { renderRegionSlot } from './region-slot.js';
 
 export interface ListViewProps {
   readonly regions: RegionMap;
   readonly className?: string;
+  readonly containerProps?: ViewContainerAttributes;
 }
 
-export function ListView({ regions, className }: ListViewProps) {
+export function ListView({ regions, className, containerProps }: ListViewProps) {
+  const effectiveContainerProps =
+    containerProps ?? buildViewContainerAttributes('list', regions);
+  const { className: containerClassName, ...restContainerProps } = effectiveContainerProps;
+  const rootClassName = [containerClassName, className].filter(Boolean).join(' ') || undefined;
+
   return (
-    <div className={className} data-view-context="list">
+    <div {...restContainerProps} className={rootClassName}>
       {renderRegionSlot('globalNavigation', regions.globalNavigation, {
         as: 'nav',
         props: {

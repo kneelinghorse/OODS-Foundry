@@ -269,4 +269,44 @@
   --theme-text-on_interactive: var(--ref-color-neutral-100); /* Text on primary interactive surfaces. */
   --theme-text-primary: var(--ref-color-neutral-900); /* Body text on light surfaces. */
   --theme-text-secondary: var(--ref-color-neutral-700); /* Secondary supporting text. */
+  --view-border-medium: 2px; /* Emphasized border thickness for high-contrast surfaces */
+  --view-border-strong: 3px; /* Strong border thickness for card focus treatments */
+  --view-border-thin: 1px; /* Default border thickness for view surfaces */
+  --view-card-gap: clamp(1rem, 0.65vw + 0.7rem, 1.75rem); /* Gap between cards or card sections */
+  --view-card-max-width: min(46rem, 100%); /* Maximum width for card-context container */
+  --view-card-padding: clamp(1.25rem, 0.9vw + 1rem, 2rem); /* Internal padding for card surfaces */
+  --view-card-radius: clamp(1rem, 0.6vw + 0.8rem, 1.5rem); /* Border radius for card surfaces */
+  --view-columns-default: minmax(0, 1fr); /* Default single column layout for all contexts */
+  --view-columns-two-column-guidance: minmax(0, 2.75fr) minmax(16rem, 22rem); /* Two-column layout with wider main and guidance rail (form view) */
+  --view-columns-two-column-narrow: minmax(0, 1fr) minmax(16rem, 22rem); /* Two-column layout with narrow rail (list view) */
+  --view-columns-two-column-standard: minmax(0, 1fr) minmax(18rem, 24rem); /* Two-column layout with standard rail (detail view) */
+  --view-contextpanel-gap: clamp(0.85rem, 0.5vw + 0.6rem, 1.5rem); /* Gap between context panel sections */
+  --view-contextpanel-padding: clamp(1rem, 0.8vw + 0.8rem, 1.75rem); /* Internal padding for context panel */
+  --view-focus-outline-offset: 2px; /* Offset applied to focus outlines in forced-colors mode */
+  --view-gap-card: 1.25rem; /* Gap for card content sections */
+  --view-gap-compact: 1rem; /* Compact gap for dense layouts */
+  --view-gap-default: 1.5rem; /* Default gap between major sections */
+  --view-gap-inline: 0.8rem; /* Minimal gap for inline contexts */
+  --view-gap-relaxed: 2rem; /* Relaxed gap for spacious layouts */
+  --view-main-gap-default: var(--view-card-gap); /* Default gap for main region content */
+  --view-main-gap-inline: clamp(1rem, 0.6vw + 0.75rem, 1.65rem); /* Gap for inline view main content */
+  --view-main-gap-list: clamp(1rem, 0.6vw + 0.75rem, 1.65rem); /* Gap for list view main content */
+  --view-pageheader-card-gap: clamp(0.75rem, 0.5vw + 0.5rem, 1.25rem); /* Gap within page header card surface */
+  --view-pageheader-gap: clamp(1.25rem, 0.8vw + 0.75rem, 1.9rem); /* Internal gap within page header region */
+  --view-rail-width-min-narrow: 16rem; /* Minimum rail width before collapse (narrow) */
+  --view-rail-width-min-standard: 18rem; /* Minimum rail width before collapse (standard) */
+  --view-rail-width-narrow: 22rem; /* Narrow rail width for list/form filter panels */
+  --view-rail-width-standard: 24rem; /* Standard rail width for detail view context panels */
+  --view-section-gap-detail: clamp(1.5rem, 1vw + 1rem, 2.25rem); /* Gap between body sections in detail view */
+  --view-section-gap-form: clamp(1.5rem, 0.9vw + 1.1rem, 2.3rem); /* Gap between body sections in form view */
+  --view-section-gap-list: clamp(1.25rem, 0.75vw + 0.9rem, 2rem); /* Gap between body sections in list view */
+  --view-section-gap-timeline: clamp(1.5rem, 0.95vw + 1.1rem, 2.4rem); /* Gap between body sections in timeline view */
+  --view-shell-max-width: min(75rem, 100%); /* Maximum width constraint for view content */
+  --view-shell-padding-block: clamp(1.75rem, 1vw + 1.2rem, 3rem); /* Vertical padding for view container */
+  --view-shell-padding-inline: clamp(1.5rem, 1vw + 1rem, 2.5rem); /* Horizontal padding for view container */
+  --view-timeline-background: var(--cmp-surface-subtle); /* Background surface for timeline contexts */
+  --view-timeline-gap: 1rem; /* Gap between timeline metadata sections */
+  --view-timeline-stream-gap: 1.5rem; /* Gap between timeline stream items */
+  --view-toolbar-gap: 0.75rem; /* Gap between toolbar items */
+  --view-toolbar-item-gap: 0.5rem; /* Gap within toolbar item contents */
 }

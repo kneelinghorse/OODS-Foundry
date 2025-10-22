@@ -1,12 +1,20 @@
 import type { RegionMap } from '../types/regions.js';
+import type { ViewContainerAttributes } from '../engine/render/ViewContainer.js';
+import { buildViewContainerAttributes } from '../engine/render/ViewContainer.js';
 import { renderRegionSlot } from './region-slot.js';
 
 export interface InlineViewProps {
   readonly regions: RegionMap;
   readonly className?: string;
+  readonly containerProps?: ViewContainerAttributes;
 }
 
-export function InlineView({ regions, className }: InlineViewProps) {
+export function InlineView({ regions, className, containerProps }: InlineViewProps) {
+  const effectiveContainerProps =
+    containerProps ?? buildViewContainerAttributes('inline', regions);
+  const { className: containerClassName, ...restContainerProps } = effectiveContainerProps;
+  const rootClassName = [containerClassName, className].filter(Boolean).join(' ') || undefined;
+
   const hasHeaderContent =
     regions.pageHeader !== undefined &&
     regions.pageHeader !== null &&
@@ -17,7 +25,7 @@ export function InlineView({ regions, className }: InlineViewProps) {
     regions.viewToolbar !== false;
 
   return (
-    <div className={className} data-view-context="inline">
+    <div {...restContainerProps} className={rootClassName}>
       {(hasHeaderContent || hasToolbarContent) && (
         <div data-region-group="inline-header-row">
           {renderRegionSlot('pageHeader', regions.pageHeader, {
