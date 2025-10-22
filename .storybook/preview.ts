@@ -1,6 +1,7 @@
 // Ensure design-token variables are present before any DS CSS consumes them.
 import '../apps/explorer/src/styles/tokens.css';
 import '../apps/explorer/src/styles/overlays.css';
+import '../apps/explorer/src/styles/index.css';
 import '../src/styles/globals.css';
 import type { Decorator, Preview } from '@storybook/react';
 import React, { useEffect } from 'react';

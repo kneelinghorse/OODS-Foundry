@@ -1,6 +1,5 @@
 import type { FC } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { withPage } from '~/.storybook/decorators/withPage';
 import { RenderObject } from '../../components/RenderObject';
 import type { RenderObjectProps } from '../../components/RenderObject';
 import { createUserObjectSpec, UserObject } from '../../objects/user/object';
@@ -13,6 +12,15 @@ type UserRenderProps = RenderObjectProps<UserRecord>;
 const activeUser = activeUserData as UserRecord;
 const disabledUser = disabledUserData as UserRecord;
 
+const contextClassName: Partial<Record<UserRenderProps['context'], string>> = {
+  detail: 'explorer-view context-detail detail-view',
+  list: 'explorer-view context-list list-view',
+  form: 'explorer-view context-form form-view',
+  timeline: 'explorer-view context-timeline timeline-view',
+  card: 'explorer-view context-card card-view',
+  inline: 'explorer-view context-inline inline-view',
+};
+
 const UserRenderObject = RenderObject as FC<UserRenderProps>;
 const renderStory = (args: UserRenderProps) => <UserRenderObject {...args} />;
 
@@ -21,21 +29,22 @@ const buildArgs = (context: UserRenderProps['context'], data: UserRecord, object
     object: objectOverride,
     context,
     data,
+    className: contextClassName[context],
   }) satisfies UserRenderProps;
 
-const meta: Meta<typeof UserRenderObject> = {
-  title: 'Domains/Users/Detail',
+const meta = {
+  title: 'Domains/User/Detail',
   component: UserRenderObject,
-  decorators: [withPage()],
   parameters: {
     layout: 'fullscreen',
     chromatic: { disableSnapshot: true },
   },
-};
+  tags: ['hidden'],
+} satisfies Meta<typeof UserRenderObject>;
 
 export default meta;
 
-type Story = StoryObj<typeof UserRenderObject>;
+type Story = StoryObj<typeof meta>;
 
 export const ActiveDetail: Story = {
   render: renderStory,
@@ -81,6 +90,7 @@ export const DisabledCard: Story = {
   render: renderStory,
   args: buildArgs('card', disabledUser),
   parameters: {
+    layout: 'centered',
     chromatic: { disableSnapshot: false },
     vrt: { tags: ['vrt'] },
   },
@@ -90,6 +100,9 @@ export const DisabledCard: Story = {
 export const DisabledInline: Story = {
   render: renderStory,
   args: buildArgs('inline', disabledUser),
+  parameters: {
+    layout: 'centered',
+  },
 };
 
 export const DisabledWithoutTaggable: Story = {
