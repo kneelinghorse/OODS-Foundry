@@ -1,0 +1,110 @@
+{
+  "invoice_id": "inv_784512",
+  "invoice_number": "INV-784512",
+  "subscription_id": "sub_2025_001",
+  "provider": "stripe",
+  "provider_invoice_id": "in_67890",
+  "provider_status": "open",
+  "status": "past_due",
+  "status_note": "Auto charge failed – smart retries are in-flight.",
+  "issued_at": "2025-07-01T00:00:00Z",
+  "due_at": "2025-07-08T00:00:00Z",
+  "paid_at": null,
+  "total_minor": 284000,
+  "balance_minor": 284000,
+  "currency": "usd",
+  "payment_terms": "net_7",
+  "collection_state": "retrying",
+  "last_reminder_at": "2025-07-03T10:00:00Z",
+  "aging_bucket_days": 2,
+  "memo": "Finance coordinating retries while customer refreshes payment method.",
+  "billing_contact_name": "Jordan Reed",
+  "billing_contact_email": "jordan.reed@example.com",
+  "billing_contact_title": "Director of Finance",
+  "collection_owner": "Leslie Alexander",
+  "collection_owner_email": "leslie.alexander@example.com",
+  "collection_team": "Revenue Operations",
+  "collection_channels": ["email", "customer_portal", "slack"],
+  "tax_minor": 22724,
+  "discount_minor": 0,
+  "subtotal_minor": 261276,
+  "line_items": [
+    {
+      "id": "li_plan_scale",
+      "description": "Scale plan (annual)",
+      "quantity": 1,
+      "amount_minor": 240000,
+      "unit_amount_minor": 240000,
+      "product_code": "plan_scale_2025",
+      "plan_interval": "annual"
+    },
+    {
+      "id": "li_overage_seats",
+      "description": "Seat overage (12 seats)",
+      "quantity": 12,
+      "amount_minor": 21276,
+      "unit_amount_minor": 1773,
+      "product_code": "addon_overage_seat",
+      "plan_interval": "monthly"
+    }
+  ],
+  "attachments": [
+    {
+      "id": "att_statement",
+      "name": "Collections memo.pdf",
+      "href": "https://billing.example.com/invoices/INV-784512/memo",
+      "description": "Internal collections memo shared with finance leadership."
+    }
+  ],
+  "portal_url": "https://billing.example.com/invoices/INV-784512",
+  "dunning_step": "reminder_first",
+  "payment_source": "card",
+  "risk_segment": "at_risk",
+  "health_score": 82,
+  "refundable_until": "2025-07-15T00:00:00Z",
+  "refund_policy_url": "https://atlas.example.com/policies/refunds",
+  "total_refunded_minor": 0,
+  "credit_memo_balance_minor": 15000,
+  "credit_memo_type": "retention_incentive",
+  "last_refund_at": null,
+  "requires_manager_approval": true,
+  "notes": "Smart retries configured; refund requests must be approved by finance leadership.",
+  "created_at": "2025-07-01T00:00:00Z",
+  "updated_at": "2025-07-03T10:00:00Z",
+  "last_event": "invoice.retry_scheduled",
+  "last_event_at": "2025-07-03T10:00:00Z",
+  "provider_region": "us",
+  "retry_attempt": 2,
+  "tags": ["high_value", "retry_program", "finance_watchlist"],
+  "tag_count": 5,
+  "state_history": [
+    {
+      "from_state": "draft",
+      "to_state": "posted",
+      "timestamp": "2025-07-01T00:00:00Z",
+      "actor_id": "billing_system",
+      "reason": "Invoice issued via automated renewal."
+    },
+    {
+      "from_state": "posted",
+      "to_state": "past_due",
+      "timestamp": "2025-07-01T00:01:12Z",
+      "actor_id": "billing_system",
+      "reason": "Initial payment attempt failed (card_expired)."
+    },
+    {
+      "from_state": "past_due",
+      "to_state": "past_due",
+      "timestamp": "2025-07-02T06:30:00Z",
+      "actor_id": "collections_agent",
+      "reason": "Customer contacted—awaiting payment method update."
+    },
+    {
+      "from_state": "past_due",
+      "to_state": "past_due",
+      "timestamp": "2025-07-03T10:00:00Z",
+      "actor_id": "billing_system",
+      "reason": "Smart retry #2 scheduled for high-success window."
+    }
+  ]
+}

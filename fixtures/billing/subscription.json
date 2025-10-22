@@ -1,0 +1,54 @@
+{
+  "subscription_id": "sub_2025_001",
+  "plan_name": "Scale",
+  "plan_code": "scale_annual",
+  "plan_interval": "annual",
+  "customer_name": "Atlas Analytics",
+  "customer_email": "billing@atlas.example.com",
+  "name": "Atlas Analytics",
+  "preferred_name": "Atlas Analytics — Scale",
+  "primary_email": "billing@atlas.example.com",
+  "email": "finance@atlas.example.com",
+  "description": "Annual Scale subscription with smart retry coverage and usage-based overages.",
+  "status": "past_due",
+  "cancel_at_period_end": false,
+  "cancellation_reason": null,
+  "cancellation_requested_at": null,
+  "amount": 284000,
+  "currency": "usd",
+  "billing_interval": "annual",
+  "current_period_start": "2025-06-01T00:00:00Z",
+  "current_period_end": "2026-05-31T23:59:59Z",
+  "current_period_progress": 0.08,
+  "last_payment_at": "2024-06-01T00:04:11Z",
+  "next_payment_due_at": "2025-07-08T00:00:00Z",
+  "tags": ["enterprise", "smart_retry", "success_watch"],
+  "tag_count": 6,
+  "state_history": [
+    {
+      "from_state": "active",
+      "to_state": "active",
+      "timestamp": "2025-06-01T00:00:00Z",
+      "actor_id": "billing_system",
+      "reason": "Renewal for FY25 kicked off with updated seat counts."
+    },
+    {
+      "from_state": "active",
+      "to_state": "past_due",
+      "timestamp": "2025-07-01T00:01:12Z",
+      "actor_id": "billing_system",
+      "reason": "Card expired during automatic renewal attempt."
+    },
+    {
+      "from_state": "past_due",
+      "to_state": "past_due",
+      "timestamp": "2025-07-03T10:00:00Z",
+      "actor_id": "collections_agent",
+      "reason": "Customer contacted; awaiting payment method update before retry."
+    }
+  ],
+  "last_event": "invoice.retry_scheduled",
+  "last_event_at": "2025-07-03T10:00:00Z",
+  "created_at": "2021-04-12T15:12:00Z",
+  "updated_at": "2025-07-03T10:00:00Z"
+}
