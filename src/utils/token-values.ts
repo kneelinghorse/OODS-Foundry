@@ -1,4 +1,4 @@
-import tokensJson from '@oods/tokens/tailwind';
+import tokensBundle from '@oods/tokens';
 
 type FlatTokenRecord = {
   path?: unknown;
@@ -12,7 +12,10 @@ type TokenMeta = {
 };
 
 const flatRecord =
-  (tokensJson as { flat?: Record<string, FlatTokenRecord> }).flat ?? {};
+  ((tokensBundle?.flatTokens ??
+    (tokensBundle as { default?: { flatTokens?: Record<string, FlatTokenRecord> } })?.default
+      ?.flatTokens) ??
+    {}) as Record<string, FlatTokenRecord>;
 
 const metaByPath = new Map<string, TokenMeta>();
 
@@ -83,4 +86,3 @@ export const formatTokenReference = (
 
   return `var(${cssVariableFallback}, ${fallbackValue})`;
 };
-

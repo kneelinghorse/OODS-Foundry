@@ -9,6 +9,8 @@ const EXTERNAL_DEPENDENCIES = [
   'ajv-formats',
   'js-yaml',
   'zod',
+  '@oods/tokens',
+  '@oods/tokens/tailwind',
 ];
 
 export default defineConfig({

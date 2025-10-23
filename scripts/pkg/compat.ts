@@ -12,6 +12,7 @@ type RunOptions = {
 
 const WORKSPACE_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const DIST_DIR = path.join(WORKSPACE_ROOT, 'dist', 'pkg');
+const TOKENS_PACKAGE_ROOT = path.join(WORKSPACE_ROOT, 'packages', 'tokens');
 const SAMPLE_APP_ROOT = path.join(WORKSPACE_ROOT, 'examples', 'sample-app');
 
 function run(command: string, args: string[], options: RunOptions = {}): Promise<void> {
@@ -38,6 +39,7 @@ async function prepareSampleApp(tempRoot: string): Promise<void> {
   const pkg = JSON.parse(await fsp.readFile(packagePath, 'utf8')) as Record<string, unknown>;
   const dependencies = (pkg.dependencies as Record<string, string> | undefined) ?? {};
   dependencies['@oods/trait-engine'] = `file:${DIST_DIR}`;
+  dependencies['@oods/tokens'] = `file:${TOKENS_PACKAGE_ROOT}`;
   pkg.dependencies = dependencies;
   await fsp.writeFile(packagePath, `${JSON.stringify(pkg, null, 2)}\n`, 'utf8');
 }
@@ -57,6 +59,7 @@ async function runSampleAppSmokeTest(): Promise<void> {
 
 async function main(): Promise<void> {
   await run('pnpm', ['run', 'pkg:build']);
+  await run('pnpm', ['--filter', '@oods/tokens', 'run', 'build']);
   await run('pnpm', ['--filter', '@oods/tw-variants', 'run', 'build']);
   await run(
     'pnpm',

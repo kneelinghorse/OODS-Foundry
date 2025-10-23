@@ -28,6 +28,10 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
+      "node": {
+        "import": "./dist/index.cjs",
+        "require": "./dist/index.cjs"
+      },
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
