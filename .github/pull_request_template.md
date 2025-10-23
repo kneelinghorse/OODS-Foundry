@@ -9,6 +9,7 @@
 - [ ] `pnpm run build`
 - [ ] `pnpm run validate:tokens` _(if tokens or palettes changed)_
 - [ ] `pnpm run a11y:diff` reviewed and issues triaged
+- [ ] `pnpm run sb:verify` curated axe + Chromatic dry-run artifacts reviewed
 - [ ] `pnpm run test:coverage` meets thresholds / coverage report attached
 - [ ] Visual regression comment (Chromatic) reviewed and snapshots acknowledged
 

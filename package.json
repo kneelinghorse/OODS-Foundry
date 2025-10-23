@@ -83,6 +83,7 @@
     "build-storybook": "storybook build",
     "chromatic:dry-run": "scripts/chromatic-run.sh --dry-run --storybook-build-dir storybook-static --exit-zero-on-changes --auto-accept-changes main",
     "chromatic:publish": "scripts/chromatic-run.sh --storybook-build-dir storybook-static --auto-accept-changes main",
+    "sb:verify": "node scripts/sb-verify.mjs",
     "local:pr-check": "node scripts/local-pr-check.mjs",
     "agent:overlays": "node scripts/agent-overlay-recipe.mjs",
     "current-state:sprint06": "node ../scripts/diagnostics/sprint06-current-state.mjs",
