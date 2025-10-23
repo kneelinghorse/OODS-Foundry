@@ -79,7 +79,7 @@ via the declared regions so the shared stylesheet can style them generically.
 
 ## Proofs & Verification
 
-- Storybook: `Proofs/Contexts/Domain Context Gallery` renders subscription,
+- Storybook: `Contexts/Domain Context Gallery` renders subscription,
   invoice, and user objects across all six contexts using only tokenised rules.
 - Automated a11y: Story parameters enable axe colour-contrast and landmark
   assertions; run `pnpm test:storybook -- --smoke` before handoff.

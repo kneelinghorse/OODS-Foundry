@@ -10,7 +10,7 @@ pre-sets the theme/brand globals so reproducible screenshots and guardrail check
   longer create duplicate entries. Use the brand toolbar only when you intentionally need to audit brand B.
 - Chromatic tags (`brand-light`, `brand-dark`, `brand-hc`) remain attached for PR review parity.
 
-## High Contrast Proof Gallery (`High Contrast/Proof Gallery`)
+## High Contrast Proof Gallery (`Brand/High Contrast/Proof Gallery`)
 
 - Stories are limited to the contract essentials:
   - `Interactive Surfaces` &mdash; tab through button states and confirm Highlight/HighlightText mapping.
@@ -22,7 +22,7 @@ pre-sets the theme/brand globals so reproducible screenshots and guardrail check
 ## How to Validate
 
 1. `pnpm storybook` from the repo root.
-2. Open **Brand/Showcase** or **High Contrast/Proof Gallery**.
+2. Open **Brand/Showcase** or **Brand/High Contrast/Proof Gallery**.
 3. Toggle the `Brand` toolbar if you need to inspect brand B; snapshots default to brand A.
 4. For high-contrast checks, enable forced colors (Windows High Contrast or Chromium dev tools → Rendering →
    Emulate CSS media feature `prefers-contrast` + `forced-colors`).
