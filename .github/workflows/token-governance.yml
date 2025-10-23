@@ -1,0 +1,78 @@
+name: Token Governance Gate
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, labeled, unlabeled]
+    paths-ignore:
+      - 'cmos/**'
+      - 'docs/**'
+      - '*.md'
+      - 'artifacts/**'
+
+permissions:
+  contents: read
+  pull-requests: read
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  enforce:
+    name: enforce
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build tokens package
+        run: pnpm run build:tokens
+
+      - name: Run token assessment
+        run: node scripts/state-assessment.mjs --tokens
+
+      - name: Collect PR labels
+        id: labels
+        run: |
+          labels=$(jq -r '[.pull_request.labels[].name] | join(",")' "$GITHUB_EVENT_PATH")
+          if [ "$labels" = "null" ]; then
+            labels=""
+          fi
+          echo "value=$labels" >> "$GITHUB_OUTPUT"
+
+      - name: Generate triage snapshot
+        run: node scripts/gov/triage.mjs --report artifacts/gov/ci-triage.md --reverts artifacts/gov/reverts.diff
+
+      - name: Enforce governance gate
+        env:
+          PR_LABELS: ${{ steps.labels.outputs.value }}
+        run: node scripts/gov/enforce.mjs
+
+      - name: Upload governance artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: token-governance-${{ github.run_id }}
+          path: |
+            artifacts/state/tokens.json
+            artifacts/state/governance/brand-*.json
+            artifacts/gov/ci-triage.md
+            artifacts/gov/reverts.diff
+          if-no-files-found: warn
+

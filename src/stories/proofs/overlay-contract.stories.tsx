@@ -41,7 +41,8 @@ const panelStyles: React.CSSProperties = {
   border: '2px solid var(--cmp-border-strong)',
   borderRadius: 8,
   // Keep a shadow for non-HC; forced-colors will ignore it and rely on border
-  boxShadow: '0 24px 56px -16px rgba(15,23,42,0.24)'
+  boxShadow:
+    'var(--sys-shadow-elevation-overlay, 0 24px 56px -16px color-mix(in srgb, var(--cmp-text-body, CanvasText) 24%, transparent))'
 };
 
 export const ContractProof: Story = {

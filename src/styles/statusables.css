@@ -165,7 +165,10 @@
   background-color: var(--statusable-toast-background);
   border: 1px solid var(--statusable-toast-border);
   color: var(--statusable-toast-foreground);
-  box-shadow: 0 18px 28px -16px rgba(15, 23, 42, 0.35);
+  box-shadow: var(
+    --sys-shadow-elevation-overlay,
+    0 18px 28px -16px color-mix(in srgb, var(--cmp-text-body, CanvasText) 24%, transparent)
+  );
   opacity: 0;
   transform: translateY(8px);
   transition: opacity 180ms ease, transform 180ms ease;

@@ -24,7 +24,7 @@ import type {
  * {
  *   status: {
  *     state: {
- *       active: '#0f0'
+ *       active: 'var(--sys-status-success-surface)'
  *     }
  *   }
  * }
