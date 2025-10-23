@@ -863,7 +863,7 @@ async function runVisualRegressionCheck(context) {
   const mode = context.options.vrMode;
   const rationale = [];
   const evidence = [];
-  const chromaticRoot = path.join(context.repoRoot, 'chromatic-baselines');
+  const reportScript = path.join(context.repoRoot, 'scripts', 'vr', 'report.mjs');
   const artifactPath = path.join(context.artifactsRoot, 'vr.json');
 
   let actualMode = mode;
@@ -893,26 +893,63 @@ async function runVisualRegressionCheck(context) {
   }
 
   let status = 'UNKNOWN';
-  let metrics = {};
   let keyMetric = 'No visual regression metrics captured';
+  let metrics = {};
+  let vrReport = null;
 
   if (actualMode === 'chromatic' && commandResult.exitCode === 0) {
-    const diagnostics = await collectChromaticDiagnostics(chromaticRoot);
-    metrics = diagnostics.metrics;
-    evidence.push(...diagnostics.evidence);
+    const summariseResult = await runProcess(context.nodeCmd, [reportScript], {
+      cwd: context.repoRoot
+    });
+    if (summariseResult.exitCode !== 0) {
+      rationale.push('Chromatic run completed but JSON summariser failed.');
+    }
 
-    if (typeof diagnostics.greenRate === 'number') {
-      if (diagnostics.greenRate >= 0.98) {
-        status = 'GREEN';
-      } else if (diagnostics.greenRate >= 0.95) {
-        status = 'YELLOW';
-      } else {
-        status = 'RED';
-      }
-      keyMetric = `Chromatic green rate: ${(diagnostics.greenRate * 100).toFixed(2)}%`;
+    vrReport = await readJsonIfExists(artifactPath);
+    if (!vrReport) {
+      rationale.push('Chromatic JSON summary missing at artifacts/state/vr.json.');
     } else {
-      status = 'UNKNOWN';
-      rationale.push('Unable to derive green rate from Chromatic diagnostics.');
+      metrics = {
+        totals: vrReport.totals ?? {},
+        totalDiffs: vrReport.totalDiffs ?? 0,
+        byBrand: vrReport.byBrand ?? {},
+        suspectedGroupingOnly: vrReport.suspectedGroupingOnly ?? false
+      };
+
+      evidence.push({
+        label: 'VR summary',
+        path: path.relative(context.repoRoot, artifactPath)
+      });
+
+      if (vrReport.sources) {
+        for (const [brandKey, relPath] of Object.entries(vrReport.sources)) {
+          const labelBrand = brandKey.replace(/^brand-/, 'brand ').toUpperCase();
+          evidence.push({
+            label: `Chromatic ${labelBrand}`,
+            path: relPath
+          });
+        }
+      }
+
+      const greenRate =
+        typeof vrReport.totals?.greenRate === 'number' ? vrReport.totals.greenRate : null;
+
+      if (greenRate != null) {
+        if (greenRate >= 0.98) {
+          status = 'GREEN';
+        } else if (greenRate >= 0.95) {
+          status = 'YELLOW';
+        } else {
+          status = 'RED';
+        }
+        const diffCount = vrReport.totalDiffs ?? metrics.totalDiffs ?? 0;
+        keyMetric = `Chromatic green rate: ${(greenRate * 100).toFixed(2)}% (diffs: ${diffCount})`;
+        if (vrReport.suspectedGroupingOnly && diffCount > 0) {
+          rationale.push('Diffs appear to stem from grouping/taxonomy changes only.');
+        }
+      } else {
+        rationale.push('Chromatic JSON summary did not include a green rate.');
+      }
     }
   } else if (actualMode === 'fallback') {
     status = commandResult.exitCode === 0 ? 'YELLOW' : 'RED';
@@ -926,17 +963,34 @@ async function runVisualRegressionCheck(context) {
     } else {
       rationale.push('Fallback visual regression harness failed.');
     }
+    vrReport = buildFallbackVrReport(actualMode, {
+      sources: { fallback: 'artifacts/vrt/lightdark/local' }
+    });
+    metrics = {
+      totals: vrReport.totals,
+      totalDiffs: vrReport.totalDiffs,
+      byBrand: vrReport.byBrand,
+      suspectedGroupingOnly: vrReport.suspectedGroupingOnly
+    };
   } else {
     rationale.push('Chromatic run failed to produce diagnostics.');
   }
 
-  await writeJson(artifactPath, {
-    generatedAt: new Date().toISOString(),
-    status,
-    mode: actualMode,
-    metrics,
-    notes: rationale
-  });
+  if (!vrReport) {
+    vrReport = buildFallbackVrReport(actualMode);
+    metrics = {
+      totals: vrReport.totals,
+      totalDiffs: vrReport.totalDiffs,
+      byBrand: vrReport.byBrand,
+      suspectedGroupingOnly: vrReport.suspectedGroupingOnly
+    };
+  }
+
+  vrReport.status = status;
+  vrReport.keyMetric = keyMetric;
+  vrReport.notes = rationale;
+
+  await writeJson(artifactPath, vrReport);
 
   return {
     id: 'vr',
@@ -949,84 +1003,34 @@ async function runVisualRegressionCheck(context) {
   };
 }
 
-async function collectChromaticDiagnostics(rootDir) {
-  const evidence = [];
-  const byBrand = [];
-  let totalStories = 0;
-  let countedStories = 0;
-  let totalPassed = 0;
+function buildFallbackVrReport(mode, overrides = {}) {
+  const baseTotals = {
+    totalSnapshots: 0,
+    totalChanged: 0,
+    totalAdded: 0,
+    totalRemoved: 0,
+    totalPassed: 0,
+    totalDiffs: 0,
+    greenRate: null
+  };
 
-  const brands = await tryReadDir(rootDir);
-  for (const entry of brands) {
-    if (!entry.startsWith('brand-')) {
-      continue;
-    }
-    const brand = entry.replace('brand-', '').toUpperCase();
-    const dir = path.join(rootDir, entry);
-    const diagnosticsPath = path.join(dir, 'chromatic-diagnostics.json');
-    const logPath = path.join(dir, 'chromatic.log');
-    const diagnostics = await readJsonIfExists(diagnosticsPath);
-    const log = await readFileSafe(logPath);
+  const totals = {
+    ...baseTotals,
+    ...(overrides.totals ?? {})
+  };
 
-    if (diagnostics) {
-      evidence.push({ label: `Chromatic ${brand} diagnostics`, path: path.relative(repoRoot, diagnosticsPath) });
-    }
-    if (log) {
-      evidence.push({ label: `Chromatic ${brand} log`, path: path.relative(repoRoot, logPath) });
-    }
-
-    const storyCount = Array.isArray(diagnostics?.configuration?.onlyStoryFiles)
-      ? diagnostics.configuration.onlyStoryFiles.length
-      : null;
-    const status = resolveChromaticStatus(diagnostics, log);
-    const passed = status === 'passed' || status === 'skipped';
-
-    if (typeof storyCount === 'number') {
-      totalStories += storyCount;
-      if (passed || status === 'changes' || status === 'failed') {
-        countedStories += storyCount;
-        if (passed) {
-          totalPassed += storyCount;
-        }
-      }
-    }
-
-    byBrand.push({
-      brand,
-      storyCount,
-      status,
-      exitCode: diagnostics?.exitCode ?? null
-    });
-  }
-
-  const greenRate =
-    countedStories > 0 ? totalPassed / countedStories : null;
+  totals.totalDiffs =
+    totals.totalDiffs ?? totals.totalChanged + totals.totalAdded + totals.totalRemoved;
 
   return {
-    greenRate,
-    metrics: {
-      byBrand,
-      totalStories: countedStories,
-      totalPassed
-    },
-    evidence
+    generatedAt: new Date().toISOString(),
+    mode,
+    totals,
+    totalDiffs: totals.totalDiffs,
+    suspectedGroupingOnly: overrides.suspectedGroupingOnly ?? false,
+    byBrand: overrides.byBrand ?? {},
+    sources: overrides.sources ?? {}
   };
-}
-
-function resolveChromaticStatus(diagnostics, log) {
-  if (diagnostics && typeof diagnostics.exitCode === 'number' && diagnostics.exitCode !== 0) {
-    return 'failed';
-  }
-  if (log && /Visual tests detected changes/i.test(log)) {
-    return 'changes';
-  }
-  if (log && /No visual changes detected/i.test(log)) {
-    return 'passed';
-  }
-  if (log && /Skipping build/i.test(log)) {
-    return 'skipped';
-  }
-  return 'unknown';
 }
 
 /**

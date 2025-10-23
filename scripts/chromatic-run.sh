@@ -14,6 +14,9 @@ cd "$ROOT_DIR"
 
 ROOT_ENV_FILE=".env.local"
 EXPLORER_ENV_FILE="apps/explorer/.env.local"
+STATE_DIR="$ROOT_DIR/artifacts/state"
+
+mkdir -p "$STATE_DIR"
 
 if [ -f "$ROOT_ENV_FILE" ]; then
   set -a
@@ -60,6 +63,9 @@ fi
 HAS_DIAGNOSTICS=0
 HAS_LOG=0
 HAS_SB_LOG=0
+HAS_JSON=0
+HAS_OUTPUT_FILE=0
+HAS_DIAGNOSTICS_FLAG=0
 
 if [ "${#ARGS[@]}" -gt 0 ]; then
   for ((i = 0; i < ${#ARGS[@]}; i++)); do
@@ -86,12 +92,47 @@ if [ "${#ARGS[@]}" -gt 0 ]; then
       --storybook-log-file=*|--no-storybook-log-file)
         HAS_SB_LOG=1
         ;;
+      --json|--no-json)
+        HAS_JSON=1
+        ;;
+      --output-file)
+        HAS_OUTPUT_FILE=1
+        i=$((i + 1))
+        ;;
+      --output-file=*|--no-output-file)
+        HAS_OUTPUT_FILE=1
+        ;;
+      --diagnostics|--no-diagnostics)
+        HAS_DIAGNOSTICS_FLAG=1
+        ;;
     esac
   done
 fi
 
 if [ "$SPLIT_BRANDS" -eq 0 ]; then
-  exec pnpm dlx chromatic "${ARGS[@]}"
+  EXTRA_ARGS=()
+  if [ "${#ARGS[@]}" -gt 0 ]; then
+    EXTRA_ARGS+=("${ARGS[@]}")
+  fi
+  if [ "$HAS_JSON" -eq 0 ]; then
+    EXTRA_ARGS+=(--json)
+  fi
+  if [ "$HAS_OUTPUT_FILE" -eq 0 ]; then
+    EXTRA_ARGS+=(--output-file "$STATE_DIR/chromatic.json")
+  fi
+  if [ "$HAS_DIAGNOSTICS_FLAG" -eq 0 ]; then
+    EXTRA_ARGS+=(--diagnostics)
+  fi
+  if [ "$HAS_DIAGNOSTICS" -eq 0 ]; then
+    EXTRA_ARGS+=(--diagnostics-file "$STATE_DIR/chromatic-diagnostics.json")
+  fi
+  if [ "$HAS_LOG" -eq 0 ]; then
+    EXTRA_ARGS+=(--log-file "$STATE_DIR/chromatic.log")
+  fi
+  if [ "$HAS_SB_LOG" -eq 0 ]; then
+    EXTRA_ARGS+=(--storybook-log-file "$STATE_DIR/storybook-build.log")
+  fi
+  exec pnpm dlx chromatic "${EXTRA_ARGS[@]}"
 fi
 
 BRAND_SPEC="${OODS_CHROMATIC_BRANDS:-A,B}"
@@ -115,10 +156,20 @@ for raw_brand in "${BRAND_LIST[@]}"; do
   slug="$(echo "$brand_upper" | tr '[:upper:]' '[:lower:]')"
   brand_dir="$BASELINE_ROOT/brand-$slug"
   mkdir -p "$brand_dir"
+  json_output="$STATE_DIR/chromatic-brand-$slug.json"
 
   EXTRA_ARGS=()
   if [ "${#ARGS[@]}" -gt 0 ]; then
     EXTRA_ARGS+=("${ARGS[@]}")
+  fi
+  if [ "$HAS_JSON" -eq 0 ]; then
+    EXTRA_ARGS+=(--json)
+  fi
+  if [ "$HAS_OUTPUT_FILE" -eq 0 ]; then
+    EXTRA_ARGS+=(--output-file "$json_output")
+  fi
+  if [ "$HAS_DIAGNOSTICS_FLAG" -eq 0 ]; then
+    EXTRA_ARGS+=(--diagnostics)
   fi
   if [ "$HAS_DIAGNOSTICS" -eq 0 ]; then
     EXTRA_ARGS+=(--diagnostics-file "$brand_dir/chromatic-diagnostics.json")
