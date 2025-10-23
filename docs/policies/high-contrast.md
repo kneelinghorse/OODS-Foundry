@@ -34,13 +34,13 @@
 ## Automation & Guardrails
 - Run `pnpm run tokens:guardrails` (see `scripts/tokens/color-guardrails.ts`) to verify ΔL/ΔC/ΔH ranges for every interactive token pair. The script fails CI when a state drifts outside the guardrail window or loses the required contrast ratio.
 - Add `pnpm run test:contrast` to pull-request checks. The Vitest suite in `testing/a11y/contrast.spec.ts` evaluates the semantic token map via `@oods/a11y-tools` and blocks merges when ratios fall below 4.5:1 (text) or 3:1 (icons).
-- Storybook surfaces the proof set under **High Contrast/Guardrails (HC)**. The stories exercise primary, semantic, and focus tokens so forced-colors regressions surface in Chromatic or the fallback Storycap run.
+- Storybook surfaces the proof set under **Brand/High Contrast/Proof Gallery (HC)**. The stories exercise primary, semantic, and focus tokens so forced-colors regressions surface in Chromatic or the fallback Storycap run.
 - GitHub’s `tokens-validate` check (Sprint 14) runs the transform in `--check` mode, semantic lint, and this guardrail suite—expect PRs to stay red until all three pass.
 
 ## HC Snapshot Workflow (Required)
 - Chromatic is configured to fail PRs on visual diffs (baseline is auto-accepted on `main`).
   1. Tag the 10 critical stories listed in `missions/research/r5.7_High-Contrast-Mode-Regression-Prevention.md` with a `forcedColors` Storybook parameter.
-  2. Ensure Storybook disables animations during CI and that `@media (forced-colors: active)` rules apply to components via `app/apps/explorer/src/styles/hc.css`. The **High Contrast/Guardrails (HC)** proof stories should stay green before publishing Chromatic snapshots.
+  2. Ensure Storybook disables animations during CI and that `@media (forced-colors: active)` rules apply to components via `app/apps/explorer/src/styles/hc.css`. The **Brand/High Contrast/Proof Gallery (HC)** proof stories should stay green before publishing Chromatic snapshots.
   3. CI publishes snapshots to Chromatic; PRs fail when HC diffs exceed the configured threshold. Merge to `main` establishes or updates the baseline automatically.
   4. For local reproduction, use DevTools emulation (`Rendering > Emulate CSS media feature forced-colors`) and validate the checklist below.
 
