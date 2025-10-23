@@ -5,6 +5,14 @@
  */
 
 import { DependencyGraph, GraphNode } from '../core/dependency-graph.js';
+import { formatTokenReference } from './token-values.js';
+
+const highlightedFill = formatTokenReference('sys.status.warning.surface', '--cmp-status-warning-surface', 'Canvas');
+const highlightedStroke = formatTokenReference('sys.status.warning.border', '--cmp-status-warning-border', 'CanvasText');
+const conflictFill = formatTokenReference('sys.status.critical.surface', '--cmp-status-critical-surface', 'Canvas');
+const conflictStroke = formatTokenReference('sys.status.critical.border', '--cmp-status-critical-border', 'CanvasText');
+const normalFill = formatTokenReference('sys.status.info.surface', '--cmp-status-info-surface', 'Canvas');
+const normalStroke = formatTokenReference('sys.status.info.border', '--cmp-status-info-border', 'CanvasText');
 
 /**
  * Visualization options
@@ -88,9 +96,9 @@ export function generateMermaidDiagram(
 
   // Add styling classes
   lines.push('');
-  lines.push('  classDef highlighted fill:#ff9,stroke:#f90,stroke-width:3px');
-  lines.push('  classDef hasConflicts fill:#faa,stroke:#f00,stroke-width:2px');
-  lines.push('  classDef normal fill:#9cf,stroke:#06c,stroke-width:1px');
+  lines.push(`  classDef highlighted fill:${highlightedFill},stroke:${highlightedStroke},stroke-width:3px`);
+  lines.push(`  classDef hasConflicts fill:${conflictFill},stroke:${conflictStroke},stroke-width:2px`);
+  lines.push(`  classDef normal fill:${normalFill},stroke:${normalStroke},stroke-width:1px`);
 
   return lines.join('\n');
 }
@@ -173,7 +181,7 @@ export function generateCycleDiagram(cycle: string[]): string {
   }
 
   lines.push('');
-  lines.push('  classDef cycleNode fill:#f99,stroke:#f00,stroke-width:3px');
+  lines.push(`  classDef cycleNode fill:${conflictFill},stroke:${conflictStroke},stroke-width:3px`);
 
   return lines.join('\n');
 }

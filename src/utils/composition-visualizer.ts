@@ -9,6 +9,7 @@
  */
 
 import type { ComposedObject, CollisionInfo } from '../core/composed-object.js';
+import { formatTokenReference } from './token-values.js';
 
 /**
  * Generate an ASCII diagram showing the composition flow
@@ -222,6 +223,29 @@ export function exportAsJSON(composed: ComposedObject): string {
  * Generate an HTML report
  */
 export function generateHTMLReport(composed: ComposedObject): string {
+  const palette = {
+    surfacePanel: formatTokenReference('sys.surface.raised', '--cmp-surface-panel', 'Canvas'),
+    surfaceSubtle: formatTokenReference('sys.surface.subtle', '--cmp-surface-subtle', 'Canvas'),
+    textBody: formatTokenReference('sys.text.primary', '--cmp-text-body', 'CanvasText'),
+    textMuted: formatTokenReference('sys.text.muted', '--cmp-text-muted', 'GrayText'),
+    textAccent: formatTokenReference('sys.text.accent', '--cmp-text-accent', 'CanvasText'),
+    borderDefault: formatTokenReference('sys.border.subtle', '--cmp-border-default', 'CanvasText'),
+    borderInfo: formatTokenReference('sys.status.info.border', '--cmp-status-info-border', 'CanvasText'),
+    borderStrong: formatTokenReference('sys.border.strong', '--cmp-border-strong', 'CanvasText'),
+    badgeSuccessSurface: formatTokenReference('sys.status.success.surface', '--cmp-status-success-surface', 'Canvas'),
+    badgeSuccessText: formatTokenReference('sys.status.success.text', '--cmp-status-success-text', 'CanvasText'),
+    badgeWarningSurface: formatTokenReference('sys.status.warning.surface', '--cmp-status-warning-surface', 'Canvas'),
+    badgeWarningText: formatTokenReference('sys.status.warning.text', '--cmp-status-warning-text', 'CanvasText'),
+    badgeInfoSurface: formatTokenReference('sys.status.info.surface', '--cmp-status-info-surface', 'Canvas'),
+    badgeInfoText: formatTokenReference('sys.status.info.text', '--cmp-status-info-text', 'CanvasText'),
+    shadowCard: formatTokenReference(
+      'sys.shadow.elevation.card',
+      '--sys-shadow-elevation-card',
+      '0 18px 36px color-mix(in srgb, var(--cmp-text-body, CanvasText) 16%, transparent)'
+    ),
+    flowArrow: formatTokenReference('sys.status.info.text', '--cmp-status-info-text', 'CanvasText')
+  };
+
   const html = `
 <!DOCTYPE html>
 <html lang="en">
@@ -235,27 +259,28 @@ export function generateHTMLReport(composed: ComposedObject): string {
       max-width: 1200px;
       margin: 0 auto;
       padding: 2rem;
-      background: #f5f5f5;
+      background: ${palette.surfaceSubtle};
+      color: ${palette.textBody};
     }
     .header {
-      background: white;
+      background: ${palette.surfacePanel};
       padding: 2rem;
       border-radius: 8px;
       margin-bottom: 2rem;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: ${palette.shadowCard};
     }
     h1 { margin: 0 0 0.5rem 0; }
-    .meta { color: #666; font-size: 0.9rem; }
+    .meta { color: ${palette.textMuted}; font-size: 0.9rem; }
     .section {
-      background: white;
+      background: ${palette.surfacePanel};
       padding: 1.5rem;
       border-radius: 8px;
       margin-bottom: 1.5rem;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: ${palette.shadowCard};
     }
     .section h2 {
       margin-top: 0;
-      border-bottom: 2px solid #007bff;
+      border-bottom: 2px solid ${palette.borderInfo};
       padding-bottom: 0.5rem;
     }
     table {
@@ -265,10 +290,10 @@ export function generateHTMLReport(composed: ComposedObject): string {
     th, td {
       padding: 0.75rem;
       text-align: left;
-      border-bottom: 1px solid #eee;
+      border-bottom: 1px solid ${palette.borderDefault};
     }
     th {
-      background: #f8f9fa;
+      background: ${palette.surfaceSubtle};
       font-weight: 600;
     }
     .badge {
@@ -278,29 +303,26 @@ export function generateHTMLReport(composed: ComposedObject): string {
       font-size: 0.85rem;
       font-weight: 500;
     }
-    .badge-success { background: #d4edda; color: #155724; }
-    .badge-warning { background: #fff3cd; color: #856404; }
-    .badge-info { background: #d1ecf1; color: #0c5460; }
+    .badge-success { background: ${palette.badgeSuccessSurface}; color: ${palette.badgeSuccessText}; }
+    .badge-warning { background: ${palette.badgeWarningSurface}; color: ${palette.badgeWarningText}; }
+    .badge-info { background: ${palette.badgeInfoSurface}; color: ${palette.badgeInfoText}; }
     .flow {
       display: flex;
       align-items: center;
       gap: 1rem;
       padding: 1rem;
-      background: #f8f9fa;
+      background: ${palette.surfaceSubtle};
       border-radius: 4px;
       overflow-x: auto;
     }
     .flow-item {
       padding: 0.5rem 1rem;
-      background: white;
-      border: 2px solid #007bff;
+      background: ${palette.surfacePanel};
+      border: 2px solid ${palette.borderInfo};
       border-radius: 4px;
       white-space: nowrap;
     }
-    .flow-arrow {
-      color: #007bff;
-      font-size: 1.5rem;
-    }
+    .flow-arrow { color: ${palette.flowArrow}; font-size: 1.5rem; }
   </style>
 </head>
 <body>

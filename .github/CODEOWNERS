@@ -9,10 +9,13 @@ traits/**                           @kneelinghorse
 # Tokens and theming pipeline
 tokens/**                           @kneelinghorse
 packages/tokens/**                  @kneelinghorse
-packages/tokens/src/tokens/base/**  @kneelinghorse
 packages/tokens/src/tokens/aliases/** @kneelinghorse
 packages/tokens/src/tokens/brands/** @kneelinghorse
-packages/tokens/src/tokens/base/system/focus/** @kneelinghorse
+
+# Protected token namespaces require governance sign-off
+packages/tokens/src/tokens/base/**               @kneelinghorse governance@oods.systems
+packages/tokens/src/tokens/base/system/**        @kneelinghorse governance@oods.systems
+packages/tokens/src/tokens/base/system/focus/**  @kneelinghorse governance@oods.systems
 
 # MCP, connectors, and tooling surfaces
 packages/mcp-server/**              @kneelinghorse
