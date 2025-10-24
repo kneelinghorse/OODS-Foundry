@@ -326,7 +326,7 @@ export class RBACService {
    * Check if permission constraints are satisfied
    * For now, always returns true; extend with constraint evaluation logic
    */
-  private matchesConstraints(permission: Permission, resourceRef: string): boolean {
+  private matchesConstraints(_permission: Permission, _resourceRef: string): boolean {
     // Future: evaluate constraints like {"owner": true, "status": ["active"]}
     return true;
   }

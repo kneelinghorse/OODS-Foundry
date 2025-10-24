@@ -10,7 +10,7 @@
 
 import { RBACService } from '../../src/services/compliance/rbac-service';
 import { AuditLogService } from '../../src/services/compliance/audit-service';
-import { BASELINE_ROLES, BASELINE_PERMISSIONS } from '../../src/domain/compliance/rbac';
+import { BASELINE_PERMISSIONS } from '../../src/domain/compliance/rbac';
 import type { Role, Permission, RolePermission } from '../../src/domain/compliance/rbac';
 
 // ANSI colors for terminal output
