@@ -5,6 +5,14 @@ import { fileURLToPath } from 'node:url';
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 const dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
 
+const complianceOnly = process.argv.some(arg => /tests\/compliance/.test(arg));
+const defaultCoverageInclude = ['src/**/*.{ts,tsx}'];
+const complianceCoverageInclude = [
+  'src/services/compliance/**/*.{ts,tsx}',
+  'src/domain/compliance/**/*.{ts,tsx}',
+  'scripts/compliance/**/*.{ts,tsx}',
+];
+
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
   test: {
@@ -14,7 +22,7 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'json-summary'],
       reportsDirectory: path.join(dirname, 'coverage'),
-      include: ['src/**/*.{ts,tsx}'],
+      include: complianceOnly ? complianceCoverageInclude : defaultCoverageInclude,
       exclude: [
         'node_modules/',
         'dist/',
@@ -24,7 +32,10 @@ export default defineConfig({
         'scripts/types/__fixtures__/**',
         'src/cli/**',
         'src/utils/visualizer.ts',
+        'src/utils/composition-visualizer.ts',
+        'src/utils/graph-visualizer.ts',
         'src/utils/index.ts',
+        'src/generators/**',
         'src/types/**',
         'src/components/index.ts',
         'src/components/base/index.ts',
@@ -65,7 +76,12 @@ export default defineConfig({
       extends: true,
       test: {
         name: 'a11y',
-        include: ['tests/a11y/**/*.test.ts', 'tests/a11y/**/*.test.tsx'],
+        include: [
+          'tests/a11y/**/*.test.ts',
+          'tests/a11y/**/*.test.tsx',
+          'tests/a11y/**/*.spec.ts',
+          'tests/a11y/**/*.spec.tsx'
+        ],
         environment: 'jsdom'
       }
     }, {
@@ -81,7 +97,12 @@ export default defineConfig({
       extends: true,
       test: {
         name: 'core',
-        include: ['tests/**/*.test.ts', 'tests/**/*.test.tsx'],
+        include: [
+          'tests/**/*.test.ts',
+          'tests/**/*.test.tsx',
+          'tests/**/*.spec.ts',
+          'tests/**/*.spec.tsx'
+        ],
         exclude: ['tests/a11y/**'],
         environment: 'node'
       }
