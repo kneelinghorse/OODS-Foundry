@@ -12,6 +12,7 @@ import { RBACService } from '../../src/services/compliance/rbac-service';
 import { AuditLogService } from '../../src/services/compliance/audit-service';
 import { BASELINE_PERMISSIONS } from '../../src/domain/compliance/rbac';
 import type { Role, Permission, RolePermission } from '../../src/domain/compliance/rbac';
+import { AuditSeverity } from '../../src/domain/compliance/audit';
 
 // ANSI colors for terminal output
 const colors = {
@@ -69,7 +70,7 @@ async function main(): Promise<void> {
     action: 'subscription.pause',
     resourceRef: 'subscription:sub_premium_123',
     payload: { denied: true, reason: viewerCheck.reason },
-    severity: 'CRITICAL',
+    severity: AuditSeverity.CRITICAL,
     metadata: { scenario: 'denied_attempt' },
   });
 
@@ -99,7 +100,7 @@ async function main(): Promise<void> {
     action: 'subscription.pause',
     resourceRef: 'subscription:sub_premium_123',
     payload: { reason: 'customer request', timestamp: new Date().toISOString() },
-    severity: 'WARNING',
+    severity: AuditSeverity.WARNING,
   });
 
   // Scenario 3: Approver publishes overlay (allowed + audited)
@@ -131,7 +132,7 @@ async function main(): Promise<void> {
       environment: 'production',
       changedTokens: ['color.primary', 'spacing.base'],
     },
-    severity: 'CRITICAL',
+    severity: AuditSeverity.CRITICAL,
   });
 
   // Scenario 4: Separation of Duty (SoD)

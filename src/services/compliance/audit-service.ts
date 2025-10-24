@@ -7,12 +7,8 @@
  * @module services/compliance/audit-service
  */
 
-import type {
-  AuditLogEntry,
-  AuditLogQuery,
-  AuditSeverity,
-} from '../../domain/compliance/audit';
-import { computeAuditHash, verifyChainIntegrity } from '../../domain/compliance/audit';
+import type { AuditLogEntry, AuditLogQuery } from '../../domain/compliance/audit';
+import { AuditSeverity, computeAuditHash, verifyChainIntegrity } from '../../domain/compliance/audit';
 
 /**
  * In-memory audit log store
@@ -76,7 +72,7 @@ export class AuditLogService {
       resourceRef: event.resourceRef,
       payloadHash: computeAuditHash(event.payload),
       metadata: event.metadata,
-      severity: event.severity ?? 'INFO',
+      severity: event.severity ?? AuditSeverity.INFO,
       previousHash,
       sequenceNumber,
     };
@@ -240,4 +236,3 @@ export function getAuditLogService(): AuditLogService {
 export function resetAuditLogService(): void {
   _instance = null;
 }
-
