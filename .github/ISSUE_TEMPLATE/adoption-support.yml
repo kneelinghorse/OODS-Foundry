@@ -1,0 +1,124 @@
+name: 🚀 Brownfield Adoption Support Request
+description: Request help integrating OODS Foundry into an existing application
+title: "[Adoption] "
+labels: ["adoption", "support"]
+assignees:
+  - systemsystems
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Brownfield Adoption Support
+
+        Use this template to request help integrating OODS Foundry into your existing application.
+        
+        📚 **Reference:** [Brownfield Adoption Guide](../../docs/adoption/brownfield-guide.md)
+
+  - type: dropdown
+    id: phase
+    attributes:
+      label: Adoption Phase
+      description: Which phase are you working on?
+      options:
+        - Phase 1 - Tokens & Theming
+        - Phase 2 - Components & Contexts
+        - Phase 3 - Objects & Domain Logic
+        - Phase 4 - Compliance & Governance
+        - Not sure yet
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-state
+    attributes:
+      label: Current State
+      description: Describe your current application architecture and design system (if any)
+      placeholder: |
+        - Tech stack: React + TypeScript + Tailwind CSS
+        - Existing design system: Custom component library (~50 components)
+        - Token management: None (hardcoded colors/spacing)
+        - Multi-tenancy: Not yet implemented
+    validations:
+      required: true
+
+  - type: textarea
+    id: goal
+    attributes:
+      label: Adoption Goal
+      description: What do you want to achieve with OODS Foundry?
+      placeholder: |
+        - Establish semantic token foundation for multi-brand support
+        - Migrate 20 core components to trait-driven architecture
+        - Enable RBAC and audit logging for compliance
+    validations:
+      required: true
+
+  - type: textarea
+    id: blockers
+    attributes:
+      label: Blockers or Questions
+      description: What's preventing you from progressing, or what questions do you have?
+      placeholder: |
+        - How do I map legacy status colors to OODS semantic tokens?
+        - Can I run OODS components alongside legacy components during migration?
+        - What's the recommended rollout strategy for multi-tenant apps?
+    validations:
+      required: true
+
+  - type: textarea
+    id: audit-results
+    attributes:
+      label: Audit Results (if available)
+      description: Paste output from `pnpm adoption:audit` if you've run it
+      placeholder: |
+        ```
+        # OODS Brownfield Adoption Audit Report
+        
+        **Timestamp:** 2025-10-25T18:00:00Z
+        **Focus:** all
+        
+        ## Summary
+        - **Total Findings:** 3
+        - **High Severity:** 1
+        ...
+        ```
+      render: markdown
+
+  - type: dropdown
+    id: urgency
+    attributes:
+      label: Urgency
+      description: How urgent is this request?
+      options:
+        - Low - Planning phase
+        - Medium - Actively migrating
+        - High - Blocked on production deadline
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      description: Please confirm you've reviewed the following resources
+      options:
+        - label: I've read the [Brownfield Adoption Guide](../../docs/adoption/brownfield-guide.md)
+          required: true
+        - label: I've run `pnpm adoption:audit` to identify gaps
+          required: false
+        - label: I've reviewed the [Design Quickstart](../../docs/getting-started/design.md) or [Dev Quickstart](../../docs/getting-started/dev.md)
+          required: false
+        - label: I've searched existing issues to avoid duplicates
+          required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other information that might help us assist you
+      placeholder: |
+        - Timeline constraints
+        - Team size and composition
+        - Existing design/dev tooling
+

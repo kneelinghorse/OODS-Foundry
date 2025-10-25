@@ -1,0 +1,307 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Docs/Brownfield Adoption" />
+
+# Brownfield Adoption — Incremental Integration
+
+**Version:** 1.0.0  
+**Last Updated:** 2025-10-25
+
+---
+
+## Overview
+
+Adopting OODS Foundry into an existing ("brownfield") application requires a phased approach. This guide provides visual proofs, CLI recipes, and validation flows for each adoption phase.
+
+📚 **Full Guide:** [`docs/adoption/brownfield-guide.md`](https://github.com/systemsystems/oods-foundry/blob/main/docs/adoption/brownfield-guide.md)
+
+---
+
+## Four-Phase Adoption Model
+
+<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '2rem' }}>
+  <div style={{ padding: '1rem', border: '2px solid var(--color-border-default)', borderRadius: '8px' }}>
+    <h3>Phase 1: Tokens & Theming</h3>
+    <p><strong>Duration:</strong> 1-2 weeks</p>
+    <p><strong>Goal:</strong> Establish semantic token foundation</p>
+    <ul>
+      <li>Export baseline tokens from Figma</li>
+      <li>Introduce brand/theme switcher</li>
+      <li>Validate 100% semantic coverage</li>
+    </ul>
+    <p><strong>CLI:</strong> <code>pnpm adoption:audit --focus=tokens</code></p>
+  </div>
+
+  <div style={{ padding: '1rem', border: '2px solid var(--color-border-default)', borderRadius: '8px' }}>
+    <h3>Phase 2: Components & Contexts</h3>
+    <p><strong>Duration:</strong> 2-4 weeks</p>
+    <p><strong>Goal:</strong> Adopt trait-driven components</p>
+    <ul>
+      <li>Migrate statusables (Badge, Banner, Toast)</li>
+      <li>Layer in context wrappers</li>
+      <li>Validate component parity</li>
+    </ul>
+    <p><strong>CLI:</strong> <code>pnpm adoption:storybook-checklist --phase=2</code></p>
+  </div>
+
+  <div style={{ padding: '1rem', border: '2px solid var(--color-border-default)', borderRadius: '8px' }}>
+    <h3>Phase 3: Objects & Domain Logic</h3>
+    <p><strong>Duration:</strong> 2-3 weeks</p>
+    <p><strong>Goal:</strong> Adopt trait-composed objects</p>
+    <ul>
+      <li>Map domain entities to OODS objects</li>
+      <li>Compose custom objects with traits</li>
+      <li>Integrate validation pipeline</li>
+    </ul>
+    <p><strong>CLI:</strong> <code>pnpm adoption:audit --focus=objects</code></p>
+  </div>
+
+  <div style={{ padding: '1rem', border: '2px solid var(--color-border-default)', borderRadius: '8px' }}>
+    <h3>Phase 4: Compliance & Governance</h3>
+    <p><strong>Duration:</strong> 3-4 weeks</p>
+    <p><strong>Goal:</strong> Enable RBAC, audit, tenancy</p>
+    <ul>
+      <li>Enable RBAC service for permissions</li>
+      <li>Enable audit logging with hash chain</li>
+      <li>Configure tenant isolation</li>
+    </ul>
+    <p><strong>CLI:</strong> <code>pnpm adoption:audit --focus=compliance</code></p>
+  </div>
+</div>
+
+---
+
+## Visual Proofs
+
+### Theme Switcher Integration
+
+The brand/theme switcher enables multi-brand support and theme toggling.
+
+**Example Integration:**
+
+```typescript
+import { useBrand, useTheme } from '@oods/react-core';
+
+function AppShell() {
+  const { brand, setBrand } = useBrand();
+  const { theme, setTheme } = useTheme();
+
+  return (
+    <div data-brand={brand} data-theme={theme}>
+      <header>
+        <select value={brand} onChange={(e) => setBrand(e.target.value)}>
+          <option value="brand-a">Brand A</option>
+          <option value="brand-b">Brand B</option>
+        </select>
+        <select value={theme} onChange={(e) => setTheme(e.target.value)}>
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+        </select>
+      </header>
+      {/* App content */}
+    </div>
+  );
+}
+```
+
+**Verify:** Toggle the brand/theme switcher in the Storybook toolbar (top right) and ensure no visual regressions occur.
+
+---
+
+### Component Migration: Legacy → OODS
+
+**Before (Legacy Badge):**
+
+```tsx
+<Badge color={status === 'active' ? 'green' : 'red'}>
+  {status}
+</Badge>
+```
+
+**After (OODS Badge):**
+
+```tsx
+import { Badge } from '@oods/react-components';
+import { getStatusIntent } from '@oods/react-core';
+
+<Badge intent={getStatusIntent(status)}>
+  {status}
+</Badge>
+```
+
+**Benefits:**
+- ✅ Semantic intent mapping (no hardcoded colors)
+- ✅ Automatic WCAG AA compliance
+- ✅ HC mode support with outline
+- ✅ Multi-brand theming support
+
+---
+
+### Context-Aware Layouts
+
+Wrap feature areas with context providers to apply density/typography/spacing defaults:
+
+```tsx
+import { ContextProvider } from '@oods/react-core';
+
+// List context: compact, tight spacing
+<ContextProvider context="list">
+  <UserTable users={users} />
+</ContextProvider>
+
+// Detail context: default, relaxed spacing
+<ContextProvider context="detail">
+  <UserProfile user={user} />
+</ContextProvider>
+
+// Form context: relaxed line-height, validation tokens
+<ContextProvider context="form">
+  <SubscriptionForm />
+</ContextProvider>
+```
+
+**Verify:** Check spacing, typography, and density match the context specification.
+
+---
+
+## CLI Validation Workflows
+
+### 1. Run Adoption Audit
+
+```bash
+pnpm adoption:audit [--focus=tokens|components|objects|compliance]
+```
+
+**Output:** `artifacts/adoption/audit-report.md`
+
+**Example Report:**
+
+```markdown
+# OODS Brownfield Adoption Audit Report
+
+**Timestamp:** 2025-10-25T18:00:00Z
+**Focus:** all
+**Threshold:** low
+
+## Summary
+
+- **Total Findings:** 3
+- **High Severity:** 1
+- **Medium Severity:** 1
+- **Low Severity:** 1
+
+## Phase: Tokens
+
+### Components using hex literals instead of semantic tokens [HIGH]
+
+**Description:** Found 5 files with hardcoded color values
+
+**Affected Files:**
+- src/components/LegacyButton.tsx
+- src/components/LegacyBadge.tsx
+- src/pages/Dashboard.tsx
+
+**Remediation:** Replace hex colors with CSS variables from tokens.css
+```
+
+### 2. Generate Component Checklist
+
+```bash
+pnpm adoption:storybook-checklist --phase=2
+```
+
+**Output:** `artifacts/adoption/checklist-phase2.md`
+
+**Example Checklist:**
+
+```markdown
+# Phase 2 Component Parity Checklist
+
+**Generated:** 2025-10-25T18:00:00Z
+**Auto-detected components:** Button, Badge, TextField
+
+---
+
+## Button ✅
+
+- [x] OODS variant matches legacy visually
+- [ ] Hover/focus states use tokens
+- [ ] Size variants (sm, md, lg) implemented
+- [ ] Intent variants (primary, secondary, danger) implemented
+- [ ] Accessibility: ARIA labels and roles
+- [ ] Storybook stories cover all variants
+```
+
+### 3. Run Local PR Check
+
+```bash
+pnpm local:pr-check
+```
+
+**Runs:**
+- Lint checks
+- Type checks
+- Unit tests
+- Accessibility contract (`pnpm a11y:diff`)
+- Visual regression dry run (Chromatic or local harness)
+
+**Exit Code:** Non-zero if any check fails
+
+---
+
+## Success Metrics
+
+### Phase 1: Tokens
+- ✅ **Token coverage:** 100% components using semantic tokens
+- ✅ **WCAG compliance:** 100% token pairs passing AA
+- ✅ **Brand switch errors:** 0
+
+### Phase 2: Components
+- ✅ **Component migration:** 80%+ components using OODS traits
+- ✅ **Accessibility score:** &lt;5 serious/critical axe violations
+- ✅ **Context adoption:** 100% pages with context wrappers
+
+### Phase 3: Objects
+- ✅ **Object coverage:** 100% domain entities with OODS objects
+- ✅ **Validation coverage:** 100% API endpoints with validation
+- ✅ **Type safety:** 100% generated types with no `any`
+
+### Phase 4: Compliance
+- ✅ **RBAC coverage:** 100% privileged actions gated
+- ✅ **Audit completeness:** 100% critical actions logged
+- ✅ **Tenant isolation:** 100% cross-tenant leak tests passed
+
+---
+
+## Next Steps
+
+1. **Run the initial audit:**
+   ```bash
+   pnpm adoption:audit
+   ```
+
+2. **Review the gap analysis report:**
+   ```
+   artifacts/adoption/audit-report.md
+   ```
+
+3. **Plan your first phase** (most teams: Phase 1 → 2 → 3 → 4)
+
+4. **Request adoption support:**
+   - GitHub: `.github/ISSUE_TEMPLATE/adoption-support.yml`
+   - Slack: `#oods-adoption`
+
+---
+
+## References
+
+- **Full Guide:** [`docs/adoption/brownfield-guide.md`](https://github.com/systemsystems/oods-foundry/blob/main/docs/adoption/brownfield-guide.md)
+- **Design Quickstart:** [`docs/getting-started/design.md`](https://github.com/systemsystems/oods-foundry/blob/main/docs/getting-started/design.md)
+- **Dev Quickstart:** [`docs/getting-started/dev.md`](https://github.com/systemsystems/oods-foundry/blob/main/docs/getting-started/dev.md)
+- **Multi-Brand Theming:** [`docs/theming/multi-brand.md`](https://github.com/systemsystems/oods-foundry/blob/main/docs/theming/multi-brand.md)
+- **Compliance Core:** [`docs/policies/compliance-core.md`](https://github.com/systemsystems/oods-foundry/blob/main/docs/policies/compliance-core.md)
+- **Tenancy Guide:** [`docs/tenancy/README.md`](https://github.com/systemsystems/oods-foundry/blob/main/docs/tenancy/README.md)
+
+---
+
+**Support:** Questions or blockers? Open an [adoption support request](.github/ISSUE_TEMPLATE/adoption-support.yml) or join `#oods-adoption` on Slack.
