@@ -7,13 +7,7 @@
  * @module services/billing/usage-aggregator
  */
 
-import type {
-  UsageEvent,
-  UsageEventInput,
-  UsageSummary,
-  AggregationPeriod,
-  MeterUnit,
-} from '../../domain/billing/usage.js';
+import type { UsageEvent, UsageEventInput, UsageSummary, AggregationPeriod } from '../../domain/billing/usage.js';
 import {
   validateUsageEvent,
   generateUsageEventId,
@@ -143,7 +137,7 @@ export class UsageAggregator {
     
     // Generate summaries
     const summaries: UsageSummary[] = [];
-    for (const [key, groupEvents] of Object.entries(groups)) {
+    for (const groupEvents of Object.values(groups)) {
       const summary = this.createSummary(groupEvents, period);
       await this.summaryRepository.add(summary);
       summaries.push(summary);

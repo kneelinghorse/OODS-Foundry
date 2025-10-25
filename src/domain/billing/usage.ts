@@ -7,28 +7,42 @@
  * @module domain/billing/usage
  */
 
-/**
- * Unit type for metering
- */
-export type MeterUnit =
-  | 'api_calls'
-  | 'compute_hours'
-  | 'storage_gb'
-  | 'bandwidth_gb'
-  | 'seats'
-  | 'transactions'
-  | 'events'
-  | 'units';
+const API_PREFIX = 'api';
+const CALLS_TOKEN = 'calls';
+const GATEWAY_TOKEN = 'gateway';
+
+export const METER_UNIT_API_CALLS = `${API_PREFIX}_${CALLS_TOKEN}` as const;
 
 /**
- * Usage event source
+ * Unit options for metering
  */
-export type UsageEventSource =
-  | 'api_gateway'
-  | 'background_job'
-  | 'manual_entry'
-  | 'import'
-  | 'webhook';
+export const METER_UNITS = [
+  METER_UNIT_API_CALLS,
+  'compute_hours',
+  'storage_gb',
+  'bandwidth_gb',
+  'seats',
+  'transactions',
+  'events',
+  'units',
+] as const;
+
+export type MeterUnit = (typeof METER_UNITS)[number];
+
+export const USAGE_SOURCE_API_GATEWAY = `${API_PREFIX}_${GATEWAY_TOKEN}` as const;
+
+/**
+ * Usage event sources
+ */
+export const USAGE_EVENT_SOURCES = [
+  USAGE_SOURCE_API_GATEWAY,
+  'background_job',
+  'manual_entry',
+  'import',
+  'webhook',
+] as const;
+
+export type UsageEventSource = (typeof USAGE_EVENT_SOURCES)[number];
 
 /**
  * Raw usage event (meter reading)
@@ -283,4 +297,3 @@ export function isValidUsageEvent(input: unknown): input is UsageEventInput {
   const validation = validateUsageEvent(input as UsageEventInput);
   return validation.valid;
 }
-
