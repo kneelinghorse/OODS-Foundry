@@ -248,8 +248,8 @@ export class FileUsageSummaryRepository implements UsageSummaryRepository {
   private serialize(summary: UsageSummary): SerializedUsageSummary {
     return {
       ...summary,
-      business_time: summary.business_time.toISO() ?? summary.business_time.toUTC().toISO()!,
-      system_time: summary.system_time.toISO() ?? summary.system_time.toUTC().toISO()!,
+      business_time: TimeService.toIsoString(summary.business_time, { preserveZone: true }),
+      system_time: TimeService.toIsoString(summary.system_time),
     };
   }
 

@@ -67,7 +67,7 @@ export class TimeService {
    */
   static displayInTenantZone(date: DateTime, tenant: Tenant): string {
     const zonedDate = date.setZone(tenant.timezone);
-    return zonedDate.toISO() ?? date.toUTC().toISO()!;
+    return zonedDate.toISO({ suppressMilliseconds: false }) ?? this.toIsoString(zonedDate, { preserveZone: true });
   }
 
   /**
@@ -193,7 +193,29 @@ export class TimeService {
    * Convert DateTime to database-safe format
    */
   static toDatabase(dt: DateTime): string {
-    return dt.toUTC().toISO()!;
+    return this.toIsoString(dt);
+  }
+
+  /**
+   * Safe ISO string conversion that never returns null for valid DateTimes
+   */
+  static toIsoString(dt: DateTime, options: { preserveZone?: boolean } = {}): string {
+    if (!dt.isValid) {
+      throw new Error(`Invalid DateTime: ${dt.invalidExplanation ?? dt.invalidReason ?? 'unknown reason'}`);
+    }
+    const target = options.preserveZone ? dt : dt.toUTC();
+    return target.toISO({ suppressMilliseconds: false }) ?? target.toFormat("yyyy-LL-dd'T'HH:mm:ss.SSSZZ");
+  }
+
+  /**
+   * Safe ISO date (YYYY-MM-DD) conversion that never returns null for valid DateTimes
+   */
+  static toIsoDateString(dt: DateTime): string {
+    if (!dt.isValid) {
+      throw new Error(`Invalid DateTime: ${dt.invalidExplanation ?? dt.invalidReason ?? 'unknown reason'}`);
+    }
+    const target = dt.toUTC();
+    return target.toISODate() ?? target.toFormat('yyyy-LL-dd');
   }
 
   /**

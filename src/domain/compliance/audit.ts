@@ -120,8 +120,8 @@ export function verifyChainIntegrity(entries: AuditLogEntry[]): boolean {
 function computeEntryHash(entry: AuditLogEntry): string {
   const canonical = {
     id: entry.id,
-    system_time: entry.system_time.toISO(),
-    business_time: entry.business_time.toISO(),
+    system_time: toIsoString(entry.system_time),
+    business_time: toIsoString(entry.business_time, true),
     actorId: entry.actorId,
     action: entry.action,
     resourceRef: entry.resourceRef,
@@ -156,6 +156,11 @@ export function createAuditEvent(params: {
     metadata: params.metadata,
     severity: params.severity ?? AuditSeverity.INFO,
   };
+}
+
+function toIsoString(dt: DateTime, preserveZone = false): string {
+  const target = preserveZone ? dt : dt.toUTC();
+  return target.toISO({ suppressMilliseconds: false }) ?? target.toFormat("yyyy-LL-dd'T'HH:mm:ss.SSSZZ");
 }
 
 /**

@@ -63,8 +63,8 @@ export class UsageInvoiceBuilder {
   ): Promise<CanonicalInvoice> {
     const periodStartSource = subscription.currentPeriod?.start ?? invoice.issuedAt;
     const periodEndSource = subscription.currentPeriod?.end ?? invoice.dueAt;
-    const periodStart = TimeService.normalizeToUtc(periodStartSource).toISO()!;
-    const periodEnd = TimeService.normalizeToUtc(periodEndSource).toISO()!;
+    const periodStart = TimeService.toIsoString(TimeService.normalizeToUtc(periodStartSource));
+    const periodEnd = TimeService.toIsoString(TimeService.normalizeToUtc(periodEndSource));
 
     const summaries = await this.summaries.getBySubscription(
       subscription.subscriptionId,
@@ -113,7 +113,7 @@ export class UsageInvoiceBuilder {
         periodStart: summary.periodStart,
         periodEnd: summary.periodEnd,
         summaryId: summary.summaryIds[0],
-        createdAt: this.now().toISO(),
+        createdAt: TimeService.toIsoString(this.now()),
       });
     }
 
@@ -134,7 +134,7 @@ export class UsageInvoiceBuilder {
       usageSummaries: summaries,
       usageLineItems,
       lineItems: mergedLineItems,
-      updatedAt: this.now().toISO(),
+      updatedAt: TimeService.toIsoString(this.now()),
     };
   }
 
@@ -184,8 +184,8 @@ export class UsageInvoiceBuilder {
     totalQuantity: number,
     unitLabel: string | MeterUnit
   ): string {
-    const startDate = TimeService.normalizeToUtc(periodStart).toISODate();
-    const endDate = TimeService.normalizeToUtc(periodEnd).toISODate();
+    const startDate = TimeService.toIsoDateString(TimeService.normalizeToUtc(periodStart));
+    const endDate = TimeService.toIsoDateString(TimeService.normalizeToUtc(periodEnd));
     const meterLabel = meterName.replace(/_/g, ' ');
     return `${meterLabel} usage (${startDate} → ${endDate}) — ${totalQuantity.toLocaleString()} ${unitLabel}`;
   }

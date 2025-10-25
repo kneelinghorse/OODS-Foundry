@@ -152,17 +152,17 @@ export function toMajorUnits(amountMinor: number, currency: string): number {
  */
 export function normalizeTimestamp(timestamp: unknown, timezone?: string): string {
   if (typeof timestamp === 'string') {
-    return TimeService.normalizeToUtc(timestamp, timezone).toISO()!;
+    return TimeService.toIsoString(TimeService.normalizeToUtc(timestamp, timezone));
   }
 
   if (typeof timestamp === 'number') {
     // Unix timestamp (seconds)
     const dt = DateTime.fromSeconds(timestamp, { zone: timezone ?? 'UTC' });
-    return dt.toUTC().toISO()!;
+    return TimeService.toIsoString(dt);
   }
 
   if (timestamp instanceof Date) {
-    return TimeService.fromDatabase(timestamp).toISO()!;
+    return TimeService.toIsoString(TimeService.fromDatabase(timestamp));
   }
 
   throw new Error(`Invalid timestamp format: ${typeof timestamp}`);

@@ -85,7 +85,7 @@ export class UsageAggregator {
     }
     
     const systemNow = this.now();
-    const recordedAt = input.recordedAt ?? systemNow.toISO();
+    const recordedAt = input.recordedAt ?? TimeService.toIsoString(systemNow);
     
     // Create event
     const event: UsageEvent = {
@@ -99,7 +99,7 @@ export class UsageAggregator {
       source: input.source,
       idempotencyKey: input.idempotencyKey,
       metadata: input.metadata,
-      createdAt: systemNow.toISO(),
+      createdAt: TimeService.toIsoString(systemNow),
     };
     
     await this.eventRepository.add(event);
@@ -159,7 +159,7 @@ export class UsageAggregator {
     return {
       summaries,
       eventCount: events.length,
-      processedAt: this.now().toISO(),
+      processedAt: TimeService.toIsoString(this.now()),
     };
   }
   
@@ -210,7 +210,7 @@ export class UsageAggregator {
       const timezone = this.extractTimezone(event);
       const periodStart = this.getPeriodStart(event.recordedAt, period, timezone);
       const periodEnd = this.getPeriodEnd(periodStart, period);
-      const key = `${event.subscriptionId}:${event.meterName}:${periodStart.toUTC().toISO()}::${timezone ?? 'UTC'}`;
+      const key = `${event.subscriptionId}:${event.meterName}:${TimeService.toIsoString(periodStart)}::${timezone ?? 'UTC'}`;
 
       if (!groups[key]) {
         groups[key] = {
@@ -244,11 +244,11 @@ export class UsageAggregator {
     const quantities = events.map((e) => e.quantity);
     const tenant = this.toTenant(first.tenantId, timezone);
     const dualTimestamp = TimeService.createDualTimestamp(tenant);
-    const periodStartIso = periodStart.toUTC().toISO()!;
-    const periodEndIso = periodEnd.toUTC().toISO()!;
+    const periodStartIso = TimeService.toIsoString(periodStart);
+    const periodEndIso = TimeService.toIsoString(periodEnd);
     const businessBoundary = periodEnd;
-    const aggregatedBusinessIso = businessBoundary.toISO() ?? dualTimestamp.business_time.toISO()!;
-    const systemIso = dualTimestamp.system_time.toISO()!;
+    const aggregatedBusinessIso = TimeService.toIsoString(businessBoundary, { preserveZone: true });
+    const systemIso = TimeService.toIsoString(dualTimestamp.system_time);
     
     return {
       summaryId: generateUsageSummaryId(first.subscriptionId, first.meterName, periodStartIso),

@@ -71,7 +71,7 @@ export class AuditLogService {
       : undefined;
 
     const dualTimestamp = TimeService.createDualTimestamp(tenantContext);
-    const timestampIso = dualTimestamp.system_time.toISO()!;
+    const timestampIso = TimeService.toIsoString(dualTimestamp.system_time);
     const uniqueComponent = dualTimestamp.system_time.toMillis().toString(36);
     const randomSegment = Math.random().toString(36).slice(2, 8);
 
@@ -224,8 +224,8 @@ export class AuditLogService {
   private computeEntryHash(entry: AuditLogEntry): string {
     const canonical = {
       id: entry.id,
-      system_time: entry.system_time.toISO(),
-      business_time: entry.business_time.toISO(),
+      system_time: TimeService.toIsoString(entry.system_time),
+      business_time: TimeService.toIsoString(entry.business_time, { preserveZone: true }),
       actorId: entry.actorId,
       action: entry.action,
       resourceRef: entry.resourceRef,

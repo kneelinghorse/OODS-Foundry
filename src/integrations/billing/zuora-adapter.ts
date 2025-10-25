@@ -110,10 +110,11 @@ export class ZuoraAdapter implements BillingAdapter {
 
       const periodStartIso = normalizeTimestamp(termStartDate);
       const periodEndIso = normalizeTimestamp(termEndDate);
-      const createdAtIso = normalizeTimestamp(getField<string>(sub, 'CreatedDate', DateTime.utc().toISO()));
-      const updatedAtIso = normalizeTimestamp(getField<string>(sub, 'UpdatedDate', DateTime.utc().toISO()));
+      const defaultIso = TimeService.toIsoString(TimeService.nowSystem());
+      const createdAtIso = normalizeTimestamp(getField<string>(sub, 'CreatedDate', defaultIso));
+      const updatedAtIso = normalizeTimestamp(getField<string>(sub, 'UpdatedDate', defaultIso));
       const cancellationIso = getField<string>(sub, 'CancelledDate')
-        ? normalizeTimestamp(getField<string>(sub, 'CancelledDate', DateTime.utc().toISO()))
+        ? normalizeTimestamp(getField<string>(sub, 'CancelledDate', defaultIso))
         : undefined;
       const systemNow = TimeService.nowSystem();
       const businessTime = DateTime.fromISO(periodEndIso);
@@ -150,7 +151,7 @@ export class ZuoraAdapter implements BillingAdapter {
           provider: 'zuora',
           providerResourceId: id,
           providerStatus: status,
-          translatedAt: systemNow.toISO(),
+          translatedAt: TimeService.toIsoString(systemNow),
           translationVersion: '1.0.0',
         },
       };
@@ -188,7 +189,7 @@ export class ZuoraAdapter implements BillingAdapter {
       const issuedAtIso = normalizeTimestamp(invoiceDate);
       const dueAtIso = normalizeTimestamp(dueDate);
       const createdAtIso = normalizeTimestamp(getField<string>(inv, 'CreatedDate', invoiceDate));
-      const updatedAtIso = normalizeTimestamp(getField<string>(inv, 'UpdatedDate', DateTime.utc().toISO()));
+      const updatedAtIso = normalizeTimestamp(getField<string>(inv, 'UpdatedDate', TimeService.toIsoString(TimeService.nowSystem())));
       const paidAtIso = inv.PostedDate ? normalizeTimestamp(inv.PostedDate) : undefined;
       const systemNow = TimeService.nowSystem();
       const businessTime = DateTime.fromISO(dueAtIso);
@@ -233,7 +234,7 @@ export class ZuoraAdapter implements BillingAdapter {
           provider: 'zuora',
           providerResourceId: id,
           providerStatus: status,
-          translatedAt: systemNow.toISO(),
+          translatedAt: TimeService.toIsoString(systemNow),
           translationVersion: '1.0.0',
         },
       };

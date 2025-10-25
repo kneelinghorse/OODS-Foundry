@@ -19,8 +19,7 @@ export function fileHeaderTemplate(options: {
 }): string {
   const { traitName, version, description, generatedDate } = options;
   const now = TimeService.nowSystem();
-  const timestamp =
-    generatedDate ?? now.toISO() ?? now.toFormat(`yyyy-LL-dd'T'HH:mm:ssZZ`);
+  const timestamp = generatedDate ?? TimeService.toIsoString(now);
 
   return `/**
  * Generated types for ${traitName} trait
@@ -176,8 +175,7 @@ export function composedFileTemplate(options: {
 }): string {
   const { traitNames, content, generatedDate } = options;
   const now = TimeService.nowSystem();
-  const timestamp =
-    generatedDate ?? now.toISO() ?? now.toFormat(`yyyy-LL-dd'T'HH:mm:ssZZ`);
+  const timestamp = generatedDate ?? TimeService.toIsoString(now);
 
   const header = `/**
  * Composed types for traits: ${traitNames.join(' + ')}

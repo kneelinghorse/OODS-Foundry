@@ -158,7 +158,7 @@ export class ChargebeeAdapter implements BillingAdapter {
           provider: 'chargebee',
           providerResourceId: id,
           providerStatus: status,
-          translatedAt: systemNow.toISO(),
+          translatedAt: TimeService.toIsoString(systemNow),
           translationVersion: '1.0.0',
         },
       };
@@ -239,7 +239,7 @@ export class ChargebeeAdapter implements BillingAdapter {
           provider: 'chargebee',
           providerResourceId: id,
           providerStatus: status,
-          translatedAt: systemNow.toISO(),
+          translatedAt: TimeService.toIsoString(systemNow),
           translationVersion: '1.0.0',
         },
       };
