@@ -55,6 +55,7 @@ export interface BillingEventIngestionContext {
   actorId?: string;
   actorType?: 'user' | 'agent' | 'system';
   metadata?: BillingEventAuditMetadata;
+  tenantTimezone?: string;
 }
 
 /**
@@ -162,6 +163,7 @@ export class BillingEventIngestionService {
       action: AUDIT_ACTION,
       resourceRef: `billing-event::${eventWithTenant.eventId}`,
       tenantId: eventWithTenant.tenantId,
+      tenantTimezone: context.tenantTimezone,
       payload: {
         providerEventId: eventWithTenant.provider.eventId,
         providerEventType: eventWithTenant.provider.eventType,

@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon';
+
 /**
  * Formatting utilities for presenting canonical field values in views.
  */
@@ -27,8 +29,27 @@ export function formatDate(
     return '';
   }
 
-  const date = value instanceof Date ? value : new Date(value);
-  if (Number.isNaN(date.getTime())) {
+  let dateTime: DateTime | null = null;
+
+  if (value instanceof Date) {
+    dateTime = DateTime.fromJSDate(value);
+  } else if (typeof value === 'number') {
+    dateTime = DateTime.fromMillis(value, { zone: 'utc' });
+  } else if (typeof value === 'string') {
+    const trimmed = value.trim();
+    const candidates = [
+      DateTime.fromISO(trimmed, { zone: 'utc' }),
+      DateTime.fromRFC2822(trimmed, { zone: 'utc' }),
+      DateTime.fromSQL(trimmed, { zone: 'utc' }),
+    ];
+    dateTime = candidates.find((candidate) => candidate.isValid) ?? null;
+
+    if ((!dateTime || !dateTime.isValid) && /^\d+$/.test(trimmed)) {
+      dateTime = DateTime.fromMillis(Number.parseInt(trimmed, 10), { zone: 'utc' });
+    }
+  }
+
+  if (!dateTime || !dateTime.isValid) {
     return '';
   }
 
@@ -37,7 +58,7 @@ export function formatDate(
     ...options,
   });
 
-  return formatter.format(date);
+  return formatter.format(dateTime.toJSDate());
 }
 
 export interface FormatMoneyOptions extends Intl.NumberFormatOptions {

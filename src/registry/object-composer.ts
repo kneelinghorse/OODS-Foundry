@@ -1,3 +1,4 @@
+import { performance } from 'node:perf_hooks';
 import { TraitCompositor, type BaseObjectDefinition } from '../core/compositor.js';
 import type { ComposedObject, CollisionInfo, FieldProvenance } from '../core/composed-object.js';
 import { mergeTokens } from '../core/merge-strategies/tokens-merger.js';
@@ -9,6 +10,7 @@ import type {
 } from './object-definition.js';
 import { buildConflictPlan, type ConflictResolutionPlan } from './conflict-applier.js';
 import type { ResolvedTrait, TraitResolver } from './resolver.js';
+import TimeService from '../services/time/index.js';
 
 export interface ObjectComposerOptions {
   readonly traitResolver: TraitResolver;
@@ -47,12 +49,12 @@ export class ObjectComposer {
   }
 
   async compose(record: RegistryRecord, options: ComposeOptions = {}): Promise<ResolvedObject> {
-    const resolutionStart = Date.now();
+    const resolutionStart = performance.now();
     const resolvedTraits = await this.traitResolver.resolveObject(record.definition, {
       objectName: record.definition.object.name,
       objectFilePath: record.source.path,
     });
-    const resolutionMs = Date.now() - resolutionStart;
+    const resolutionMs = performance.now() - resolutionStart;
 
     const conflictPlan = buildConflictPlan(record.definition);
     const compositor = this.createCompositor(conflictPlan);
@@ -60,9 +62,9 @@ export class ObjectComposer {
     const baseDefinition = options.base ? toBaseObjectDefinition(options.base) : undefined;
     const traitDefinitions = resolvedTraits.map((resolved) => resolved.definition);
 
-    const compositionStart = Date.now();
+    const compositionStart = performance.now();
     const compositionResult = compositor.compose(traitDefinitions, baseDefinition);
-    const compositionMs = Date.now() - compositionStart;
+    const compositionMs = performance.now() - compositionStart;
 
     if (!compositionResult.success || !compositionResult.data) {
       throw new Error(
@@ -75,7 +77,7 @@ export class ObjectComposer {
     applyObjectOverrides(composed, record.definition, conflictPlan, record.definition.object.name);
 
     const metadata: ResolvedObjectMetadata = {
-      resolvedAt: new Date(),
+      resolvedAt: TimeService.nowSystem().toJSDate(),
       resolutionMs,
       compositionMs,
       totalMs: resolutionMs + compositionMs,

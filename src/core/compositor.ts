@@ -12,6 +12,7 @@
  * - Performance monitoring
  */
 
+import { performance } from 'node:perf_hooks';
 import type {
   TraitDefinition,
   SchemaField,
@@ -84,7 +85,7 @@ export class TraitCompositor {
     traits: TraitDefinition[],
     baseObject?: BaseObjectDefinition
   ): CompositionResult {
-    const startTime = this.options.trackPerformance ? Date.now() : 0;
+    const startTime = this.options.trackPerformance ? performance.now() : 0;
     const warnings: string[] = [];
 
     try {
@@ -267,7 +268,7 @@ export class TraitCompositor {
       composed.metadata.warnings = warnings;
 
       if (this.options.trackPerformance) {
-        const endTime = Date.now();
+        const endTime = performance.now();
         composed.metadata.performance = {
           durationMs: endTime - startTime,
           fieldsProcessed,

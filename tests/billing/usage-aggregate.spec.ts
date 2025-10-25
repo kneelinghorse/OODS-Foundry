@@ -270,6 +270,8 @@ describe('Usage Aggregator', () => {
       expect(day1?.totalQuantity).toBe(300); // 3 events × 100
       expect(day1?.eventCount).toBe(3);
       expect(day1?.avgQuantity).toBe(100);
+      expect(day1?.business_time.toUTC().toISO()).toBe(day1?.periodEnd);
+      expect(day1?.system_time.zoneName).toBe('UTC');
     });
     
     it('should calculate summary statistics', async () => {
@@ -391,4 +393,3 @@ describe('Usage Aggregator', () => {
     });
   });
 });
-

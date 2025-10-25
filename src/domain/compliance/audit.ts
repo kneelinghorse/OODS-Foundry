@@ -7,6 +7,7 @@
  * @module domain/compliance/audit
  */
 
+import type { DateTime } from 'luxon';
 import { sha256 } from '../../utils/hash/sha256.js';
 
 /**
@@ -23,8 +24,14 @@ export enum AuditSeverity {
  */
 export interface AuditLogEntry {
   id: string;
-  
-  /** ISO timestamp */
+
+  /** Business timestamp (tenant-relative) */
+  business_time: DateTime;
+
+  /** System timestamp (immutable UTC) */
+  system_time: DateTime;
+
+  /** @deprecated Use business_time/system_time */
   timestamp: string;
   
   /** Actor who performed the action */
@@ -113,7 +120,8 @@ export function verifyChainIntegrity(entries: AuditLogEntry[]): boolean {
 function computeEntryHash(entry: AuditLogEntry): string {
   const canonical = {
     id: entry.id,
-    timestamp: entry.timestamp,
+    system_time: entry.system_time.toISO(),
+    business_time: entry.business_time.toISO(),
     actorId: entry.actorId,
     action: entry.action,
     resourceRef: entry.resourceRef,
@@ -137,7 +145,7 @@ export function createAuditEvent(params: {
   tenantId?: string;
   metadata?: Record<string, unknown>;
   severity?: AuditSeverity;
-}): Omit<AuditLogEntry, 'id' | 'timestamp' | 'previousHash' | 'sequenceNumber'> {
+}): Omit<AuditLogEntry, 'id' | 'business_time' | 'system_time' | 'timestamp' | 'previousHash' | 'sequenceNumber'> {
   return {
     actorId: params.actorId,
     actorType: params.actorType,

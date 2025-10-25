@@ -7,6 +7,7 @@
  * @module integrations/billing/zuora-adapter
  */
 
+import { DateTime } from 'luxon';
 import type {
   CanonicalSubscriptionWithProvider,
   CanonicalInvoiceWithProvider,
@@ -23,6 +24,7 @@ import {
   getField,
   normalizeTimestamp,
 } from './adapter.js';
+import TimeService from '../../services/time';
 
 /**
  * Zuora subscription status mapping
@@ -92,7 +94,7 @@ export class ZuoraAdapter implements BillingAdapter {
       
       // Map status
       const canonicalStatus = ZUORA_SUBSCRIPTION_STATUS_MAP[status] || 'active';
-      
+
       // Parse rate plan charges (Zuora's pricing structure)
       const ratePlans = getField<Array<Record<string, unknown>>>(sub, 'RatePlans', []);
       const firstPlan = ratePlans[0] || {};
@@ -105,6 +107,16 @@ export class ZuoraAdapter implements BillingAdapter {
       const currency = getField<string>(firstCharge, 'Currency', 'USD');
       
       const canonicalInterval = ZUORA_PERIOD_MAP[billingPeriod] || 'monthly';
+
+      const periodStartIso = normalizeTimestamp(termStartDate);
+      const periodEndIso = normalizeTimestamp(termEndDate);
+      const createdAtIso = normalizeTimestamp(getField<string>(sub, 'CreatedDate', DateTime.utc().toISO()));
+      const updatedAtIso = normalizeTimestamp(getField<string>(sub, 'UpdatedDate', DateTime.utc().toISO()));
+      const cancellationIso = getField<string>(sub, 'CancelledDate')
+        ? normalizeTimestamp(getField<string>(sub, 'CancelledDate', DateTime.utc().toISO()))
+        : undefined;
+      const systemNow = TimeService.nowSystem();
+      const businessTime = DateTime.fromISO(periodEndIso);
       
       // Build canonical subscription
       const canonical: CanonicalSubscriptionWithProvider = {
@@ -122,21 +134,23 @@ export class ZuoraAdapter implements BillingAdapter {
           trialPeriodDays: 0, // Zuora doesn't have a standard trial field
         },
         currentPeriod: {
-          start: normalizeTimestamp(termStartDate),
-          end: normalizeTimestamp(termEndDate),
+          start: periodStartIso,
+          end: periodEndIso,
         },
-        cancellationEffectiveAt: sub.CancelledDate ? normalizeTimestamp(sub.CancelledDate) : undefined,
+        cancellationEffectiveAt: cancellationIso,
         collectionMethod: getField<string>(sub, 'AutoRenew', 'true') === 'true'
           ? 'charge_automatically'
           : 'send_invoice',
         tenantId,
-        createdAt: normalizeTimestamp(getField<string>(sub, 'CreatedDate', new Date().toISOString())),
-        updatedAt: normalizeTimestamp(getField<string>(sub, 'UpdatedDate', new Date().toISOString())),
+        createdAt: createdAtIso,
+        updatedAt: updatedAtIso,
+        business_time: businessTime,
+        system_time: systemNow,
         provider: {
           provider: 'zuora',
           providerResourceId: id,
           providerStatus: status,
-          translatedAt: new Date().toISOString(),
+          translatedAt: systemNow.toISO(),
           translationVersion: '1.0.0',
         },
       };
@@ -170,6 +184,14 @@ export class ZuoraAdapter implements BillingAdapter {
       
       // Map status
       const canonicalStatus = ZUORA_INVOICE_STATUS_MAP[status] || 'posted';
+
+      const issuedAtIso = normalizeTimestamp(invoiceDate);
+      const dueAtIso = normalizeTimestamp(dueDate);
+      const createdAtIso = normalizeTimestamp(getField<string>(inv, 'CreatedDate', invoiceDate));
+      const updatedAtIso = normalizeTimestamp(getField<string>(inv, 'UpdatedDate', DateTime.utc().toISO()));
+      const paidAtIso = inv.PostedDate ? normalizeTimestamp(inv.PostedDate) : undefined;
+      const systemNow = TimeService.nowSystem();
+      const businessTime = DateTime.fromISO(dueAtIso);
       
       // Parse invoice items
       const invoiceItems = getField<Array<Record<string, unknown>>>(inv, 'InvoiceItems', []);
@@ -188,9 +210,9 @@ export class ZuoraAdapter implements BillingAdapter {
         invoiceNumber,
         subscriptionId: accountId ? `zuora_${accountId}` : 'unknown',
         status: canonicalStatus,
-        issuedAt: normalizeTimestamp(invoiceDate),
-        dueAt: normalizeTimestamp(dueDate),
-        paidAt: inv.PostedDate ? normalizeTimestamp(inv.PostedDate) : undefined,
+        issuedAt: issuedAtIso,
+        dueAt: dueAtIso,
+        paidAt: paidAtIso,
         totalMinor: amount * 100, // Convert to minor units
         balanceMinor: balance * 100,
         currency: currency.toLowerCase(),
@@ -203,13 +225,15 @@ export class ZuoraAdapter implements BillingAdapter {
         portalUrl: getField<string>(inv, 'InvoiceURL'),
         paymentSource: 'invoice',
         tenantId,
-        createdAt: normalizeTimestamp(getField<string>(inv, 'CreatedDate', invoiceDate)),
-        updatedAt: normalizeTimestamp(getField<string>(inv, 'UpdatedDate', new Date().toISOString())),
+        createdAt: createdAtIso,
+        updatedAt: updatedAtIso,
+        business_time: businessTime,
+        system_time: systemNow,
         provider: {
           provider: 'zuora',
           providerResourceId: id,
           providerStatus: status,
-          translatedAt: new Date().toISOString(),
+          translatedAt: systemNow.toISO(),
           translationVersion: '1.0.0',
         },
       };

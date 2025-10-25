@@ -5,6 +5,7 @@
  * guards, and delinquency derivation logic.
  */
 
+import { DateTime } from 'luxon';
 import { describe, it, expect } from 'vitest';
 import {
   SubscriptionStateMachine,
@@ -226,6 +227,8 @@ describe('deriveDelinquency', () => {
     collectionMethod: 'charge_automatically',
     createdAt: '2025-09-01T00:00:00Z',
     updatedAt: '2025-10-01T00:00:00Z',
+    business_time: DateTime.fromISO('2025-09-01T00:00:00Z'),
+    system_time: DateTime.fromISO('2025-10-01T00:00:00Z'),
   });
 
   const createInvoice = (status: InvoiceState, balanceMinor: number): CanonicalInvoice => ({
@@ -246,6 +249,8 @@ describe('deriveDelinquency', () => {
     attachments: [],
     createdAt: '2025-10-01T00:00:00Z',
     updatedAt: '2025-10-01T00:00:00Z',
+    business_time: DateTime.fromISO('2025-10-15T00:00:00Z'),
+    system_time: DateTime.fromISO('2025-10-01T00:00:00Z'),
   });
 
   it('should derive delinquent when active subscription has past_due invoices', () => {
@@ -464,13 +469,16 @@ describe('time-based helpers', () => {
       const pastDate = new Date();
       pastDate.setDate(pastDate.getDate() - 10);
 
+      const issuedAt = '2025-10-01T00:00:00Z';
+      const dueAt = pastDate.toISOString();
+
       const invoice: CanonicalInvoice = {
         invoiceId: 'inv_123',
         invoiceNumber: 'INV-001',
         subscriptionId: 'sub_123',
         status: 'past_due' as any,
-        issuedAt: '2025-10-01T00:00:00Z',
-        dueAt: pastDate.toISOString(),
+        issuedAt,
+        dueAt,
         totalMinor: 9900,
         balanceMinor: 9900,
         currency: 'USD',
@@ -480,8 +488,10 @@ describe('time-based helpers', () => {
         subtotalMinor: 9900,
         lineItems: [],
         attachments: [],
-        createdAt: '2025-10-01T00:00:00Z',
-        updatedAt: '2025-10-01T00:00:00Z',
+        createdAt: issuedAt,
+        updatedAt: issuedAt,
+        business_time: DateTime.fromISO(dueAt),
+        system_time: DateTime.fromISO(issuedAt),
       };
 
       const aging = calculateInvoiceAging(invoice);
@@ -490,13 +500,16 @@ describe('time-based helpers', () => {
     });
 
     it('should return 0 for non-overdue invoices', () => {
+      const issuedAt = '2025-10-01T00:00:00Z';
+      const dueAt = '2025-10-15T00:00:00Z';
+
       const invoice: CanonicalInvoice = {
         invoiceId: 'inv_123',
         invoiceNumber: 'INV-001',
         subscriptionId: 'sub_123',
         status: 'paid' as any,
-        issuedAt: '2025-10-01T00:00:00Z',
-        dueAt: '2025-10-15T00:00:00Z',
+        issuedAt,
+        dueAt,
         totalMinor: 9900,
         balanceMinor: 0,
         currency: 'USD',
@@ -506,9 +519,11 @@ describe('time-based helpers', () => {
         subtotalMinor: 9900,
         lineItems: [],
         attachments: [],
-        createdAt: '2025-10-01T00:00:00Z',
-        updatedAt: '2025-10-01T00:00:00Z',
+        createdAt: issuedAt,
+        updatedAt: issuedAt,
         paidAt: '2025-10-10T00:00:00Z',
+        business_time: DateTime.fromISO(dueAt),
+        system_time: DateTime.fromISO(issuedAt),
       };
 
       expect(calculateInvoiceAging(invoice)).toBe(0);

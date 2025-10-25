@@ -17,6 +17,7 @@ import { parseObjectDefinitionFromFile } from '../parsers/object-parser.js';
 import type { ParseError } from '../core/trait-definition.js';
 import { type ValidationIssue, type ValidationResult } from '../validation/index.js';
 import { toPascalCase } from '../generators/type-utils.js';
+import TimeService from '../services/time/index.js';
 
 type CommandHandler = (args: string[]) => Promise<void> | void;
 
@@ -330,7 +331,7 @@ function kebabCase(value: string): string {
 }
 
 function todayIso(): string {
-  return new Date().toISOString().slice(0, 10);
+  return TimeService.nowSystem().toFormat('yyyy-LL-dd');
 }
 
 function ensureDirectory(pathname: string): void {

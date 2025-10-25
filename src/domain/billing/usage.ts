@@ -7,6 +7,8 @@
  * @module domain/billing/usage
  */
 
+import { DateTime } from 'luxon';
+
 const API_PREFIX = 'api';
 const CALLS_TOKEN = 'calls';
 const GATEWAY_TOKEN = 'gateway';
@@ -82,6 +84,7 @@ export interface UsageEvent {
     region?: string;
     userId?: string;
     resourceId?: string;
+     timezone?: string;
     [key: string]: unknown;
   };
   
@@ -152,11 +155,17 @@ export interface UsageSummary {
   /** Average quantity per event */
   avgQuantity: number;
   
-  /** Aggregation timestamp (ISO 8601) */
+  /** @deprecated Use business_time instead */
   aggregatedAt: string;
   
-  /** Created timestamp (ISO 8601) */
+  /** @deprecated Use system_time instead */
   createdAt: string;
+
+  /** Business timestamp for summary availability */
+  business_time: DateTime;
+
+  /** System timestamp when summary persisted */
+  system_time: DateTime;
 }
 
 /**
@@ -272,8 +281,8 @@ export function generateUsageEventId(input: UsageEventInput): string {
   if (input.idempotencyKey) {
     return `evt_${input.idempotencyKey}`;
   }
-  
-  const timestamp = Date.now();
+
+  const timestamp = DateTime.utc().toMillis().toString(36);
   const random = Math.random().toString(36).substring(2, 10);
   return `evt_${timestamp}_${random}`;
 }
@@ -286,7 +295,7 @@ export function generateUsageSummaryId(
   meterName: string,
   periodStart: string
 ): string {
-  const period = new Date(periodStart).toISOString().split('T')[0];
+  const period = DateTime.fromISO(periodStart, { zone: 'utc' }).toISODate();
   return `sum_${subscriptionId}_${meterName}_${period}`;
 }
 

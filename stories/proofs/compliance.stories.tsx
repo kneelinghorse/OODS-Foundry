@@ -7,8 +7,10 @@
 
 import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { DateTime } from 'luxon';
 import { RBACService } from '../../src/services/compliance/rbac-service';
 import { AuditLogService } from '../../src/services/compliance/audit-service';
+import TimeService from '../../src/services/time';
 import { BASELINE_PERMISSIONS } from '../../src/domain/compliance/rbac';
 import type { Role, Permission, RolePermission, AuditLogEntry } from '../../src/domain/compliance/rbac';
 
@@ -77,7 +79,7 @@ export const PermissionCheckDemo: StoryObj = {
         actorType: 'user',
         action: `${resourceRef.split(':')[0]}.${selectedAction}`,
         resourceRef,
-        payload: { check: true, timestamp: new Date().toISOString() },
+        payload: { check: true, timestamp: TimeService.nowSystem().toISO() },
         severity: permResult.allowed ? 'INFO' : 'CRITICAL',
       });
 
@@ -194,7 +196,7 @@ export const AuditLogViewer: StoryObj = {
           actorType: e.actorId.startsWith('agent') ? 'agent' : 'user',
           action: e.action,
           resourceRef: e.ref,
-          payload: { timestamp: new Date().toISOString() },
+          payload: { timestamp: TimeService.nowSystem().toISO() },
           severity: e.severity,
         });
       });
@@ -236,7 +238,7 @@ export const AuditLogViewer: StoryObj = {
               <tr key={log.id} style={{ borderBottom: '1px solid #e0e0e0' }}>
                 <td style={{ padding: '0.5rem' }}>{log.sequenceNumber}</td>
                 <td style={{ padding: '0.5rem', fontSize: '0.75rem' }}>
-                  {new Date(log.timestamp).toLocaleString()}
+                  {DateTime.fromISO(log.timestamp).toLocaleString(DateTime.DATETIME_MED_WITH_SECONDS)}
                 </td>
                 <td style={{ padding: '0.5rem' }}>{log.actorId}</td>
                 <td style={{ padding: '0.5rem' }}>{log.action}</td>
@@ -275,14 +277,17 @@ export const AuditLogViewer: StoryObj = {
  * Seed baseline roles and permissions
  */
 function seedBaseline(service: RBACService): void {
+  const now = DateTime.utc();
+  const nowDate = now.toJSDate();
+
   const roles: Role[] = [
     {
       id: 'role_viewer',
       name: 'viewer',
       description: 'Read-only',
       metadata: {},
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: nowDate,
+      updatedAt: nowDate,
     },
     {
       id: 'role_contributor',
@@ -290,8 +295,8 @@ function seedBaseline(service: RBACService): void {
       description: 'Edit resources',
       metadata: {},
       parentRoleId: 'role_viewer',
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: nowDate,
+      updatedAt: nowDate,
     },
     {
       id: 'role_approver',
@@ -299,19 +304,22 @@ function seedBaseline(service: RBACService): void {
       description: 'Approve changes',
       metadata: {},
       parentRoleId: 'role_contributor',
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: nowDate,
+      updatedAt: nowDate,
     },
   ];
 
   roles.forEach(r => service.seedRole(r));
 
-  const permissions: Permission[] = BASELINE_PERMISSIONS.map((bp, idx) => ({
-    ...bp,
-    id: `perm_${idx}`,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  }));
+  const permissions: Permission[] = BASELINE_PERMISSIONS.map((bp, idx) => {
+    const timestamp = now.plus({ seconds: idx }).toJSDate();
+    return {
+      ...bp,
+      id: `perm_${idx}`,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    };
+  });
 
   permissions.forEach(p => service.seedPermission(p));
 
@@ -323,13 +331,13 @@ function seedBaseline(service: RBACService): void {
 
   mappings.forEach(mapping => {
     mapping.permIds.forEach(permIdx => {
+      const created = now.plus({ seconds: permIdx }).toJSDate();
       service.seedRolePermission({
         id: `rp_${mapping.roleId}_${permIdx}`,
         roleId: mapping.roleId,
         permissionId: permissions[permIdx].id,
-        createdAt: new Date(),
+        createdAt: created,
       });
     });
   });
 }
-

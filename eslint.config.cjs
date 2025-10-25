@@ -5,6 +5,7 @@ const tsParser = require('@typescript-eslint/parser');
 const tseslint = require('@typescript-eslint/eslint-plugin');
 const noHooksRule = require('./eslint/rules/no-hooks-in-modifiers.cjs');
 const noProviderLeakageRule = require('./eslint/rules/no-provider-leakage.cjs');
+const noNaiveDateRule = require('./eslint/rules/no-naive-date.cjs');
 
 module.exports = [
   {
@@ -29,6 +30,7 @@ module.exports = [
         rules: {
           'no-hooks-in-modifiers': noHooksRule,
           'no-provider-leakage': noProviderLeakageRule,
+          'no-naive-date': noNaiveDateRule,
         },
       },
     },
@@ -71,6 +73,13 @@ module.exports = [
     ],
     rules: {
       'oods/no-provider-leakage': 'error',
+    },
+  },
+  {
+    files: ['src/**/*.ts', 'src/**/*.tsx', 'apps/**/*.ts', 'apps/**/*.tsx'],
+    ignores: ['**/*.test.ts', '**/*.spec.ts', '**/*.test.tsx', '**/*.spec.tsx'],
+    rules: {
+      'oods/no-naive-date': 'error',
     },
   },
 ];

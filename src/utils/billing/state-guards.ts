@@ -7,6 +7,7 @@
  * @module utils/billing/state-guards
  */
 
+import { DateTime } from 'luxon';
 import type { CanonicalSubscription, CanonicalInvoice } from '../../domain/billing/core.js';
 import {
   type SubscriptionState,
@@ -238,19 +239,19 @@ export function getAvailableInvoiceActions(state: InvoiceState): string[] {
  * @returns Days until next state change, or null if no scheduled change
  */
 export function daysUntilStateChange(subscription: CanonicalSubscription): number | null {
-  const now = new Date();
+  const now = DateTime.utc();
 
   // Trial ending
   if (subscription.status === 'trialing' && subscription.trialEndAt) {
-    const trialEnd = new Date(subscription.trialEndAt);
-    const diff = Math.ceil((trialEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    const trialEnd = DateTime.fromISO(subscription.trialEndAt).toUTC();
+    const diff = Math.ceil(trialEnd.diff(now, 'days').days ?? 0);
     return Math.max(0, diff);
   }
 
   // Pending cancellation
   if (subscription.status === 'pending_cancellation' && subscription.cancellationEffectiveAt) {
-    const cancelDate = new Date(subscription.cancellationEffectiveAt);
-    const diff = Math.ceil((cancelDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    const cancelDate = DateTime.fromISO(subscription.cancellationEffectiveAt).toUTC();
+    const diff = Math.ceil(cancelDate.diff(now, 'days').days ?? 0);
     return Math.max(0, diff);
   }
 
@@ -268,9 +269,9 @@ export function calculateInvoiceAging(invoice: CanonicalInvoice): number {
     return 0;
   }
 
-  const now = new Date();
-  const dueDate = new Date(invoice.dueAt);
-  const diff = Math.floor((now.getTime() - dueDate.getTime()) / (1000 * 60 * 60 * 24));
+  const now = DateTime.utc();
+  const dueDate = DateTime.fromISO(invoice.dueAt).toUTC();
+  const diff = Math.floor(now.diff(dueDate, 'days').days ?? 0);
   
   return Math.max(0, diff);
 }

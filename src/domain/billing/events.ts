@@ -7,6 +7,7 @@
  * @module domain/billing/events
  */
 
+import { DateTime } from 'luxon';
 import type {
   CanonicalSubscription,
   CanonicalInvoice,
@@ -226,7 +227,7 @@ export class BillingEventsRouter {
       return {
         eventId: event.eventId,
         status: 'duplicate',
-        processedAt: new Date().toISOString(),
+        processedAt: DateTime.utc().toISO(),
       };
     }
 
@@ -240,7 +241,7 @@ export class BillingEventsRouter {
       return {
         eventId: event.eventId,
         status: 'accepted',
-        processedAt: new Date().toISOString(),
+        processedAt: DateTime.utc().toISO(),
         actions: ['no_handlers'],
       };
     }
@@ -257,7 +258,7 @@ export class BillingEventsRouter {
     return {
       eventId: event.eventId,
       status: failed === 0 ? 'accepted' : 'failed',
-      processedAt: new Date().toISOString(),
+      processedAt: DateTime.utc().toISO(),
       actions: [
         `handlers_executed:${successful}`,
         failed > 0 ? `handlers_failed:${failed}` : undefined,
@@ -348,7 +349,7 @@ export function createBillingEvent(
     eventId: crypto.randomUUID(),
     type,
     severity,
-    timestamp: new Date().toISOString(),
+    timestamp: DateTime.utc().toISO(),
     provider,
     data,
     ...options,

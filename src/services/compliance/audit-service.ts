@@ -9,6 +9,7 @@
 
 import type { AuditLogEntry, AuditLogQuery } from '../../domain/compliance/audit';
 import { AuditSeverity, computeAuditHash, verifyChainIntegrity } from '../../domain/compliance/audit';
+import TimeService, { type Tenant } from '../time';
 
 /**
  * In-memory audit log store
@@ -48,6 +49,7 @@ export class AuditLogService {
     tenantId?: string;
     metadata?: Record<string, unknown>;
     severity?: AuditSeverity;
+    tenantTimezone?: string;
   }): AuditLogEntry {
     // Validate required fields
     if (!event.actorId || !event.action || !event.resourceRef) {
@@ -61,10 +63,24 @@ export class AuditLogService {
     // Increment sequence
     const sequenceNumber = this.store.sequenceCounter++;
 
+    const tenantContext: Tenant | undefined = event.tenantTimezone
+      ? {
+          id: event.tenantId ?? 'unknown-tenant',
+          timezone: event.tenantTimezone,
+        }
+      : undefined;
+
+    const dualTimestamp = TimeService.createDualTimestamp(tenantContext);
+    const timestampIso = dualTimestamp.system_time.toISO()!;
+    const uniqueComponent = dualTimestamp.system_time.toMillis().toString(36);
+    const randomSegment = Math.random().toString(36).slice(2, 8);
+
     // Create immutable entry
     const entry: AuditLogEntry = {
-      id: `aud_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      timestamp: new Date().toISOString(),
+      id: `aud_${uniqueComponent}_${randomSegment}`,
+      business_time: dualTimestamp.business_time,
+      system_time: dualTimestamp.system_time,
+      timestamp: timestampIso,
       actorId: event.actorId,
       actorType: event.actorType,
       tenantId: event.tenantId,
@@ -114,11 +130,13 @@ export class AuditLogService {
     }
 
     if (query.startTime) {
-      results = results.filter(e => e.timestamp >= query.startTime!);
+      const start = TimeService.normalizeToUtc(query.startTime);
+      results = results.filter((e) => e.system_time.toMillis() >= start.toMillis());
     }
 
     if (query.endTime) {
-      results = results.filter(e => e.timestamp <= query.endTime!);
+      const end = TimeService.normalizeToUtc(query.endTime);
+      results = results.filter((e) => e.system_time.toMillis() <= end.toMillis());
     }
 
     // Sort by sequence number (newest first by default)
@@ -206,7 +224,8 @@ export class AuditLogService {
   private computeEntryHash(entry: AuditLogEntry): string {
     const canonical = {
       id: entry.id,
-      timestamp: entry.timestamp,
+      system_time: entry.system_time.toISO(),
+      business_time: entry.business_time.toISO(),
       actorId: entry.actorId,
       action: entry.action,
       resourceRef: entry.resourceRef,

@@ -11,7 +11,14 @@
 
 import { promises as fs } from 'node:fs';
 import { dirname } from 'node:path';
+import { DateTime } from 'luxon';
 import { UsageEvent, UsageSummary } from '../../domain/billing/usage.js';
+import TimeService from '../time';
+
+type SerializedUsageSummary = Omit<UsageSummary, 'business_time' | 'system_time'> & {
+  business_time: string;
+  system_time: string;
+};
 
 /**
  * Repository interface for raw usage events.
@@ -213,7 +220,8 @@ export class FileUsageSummaryRepository implements UsageSummaryRepository {
 
     try {
       const data = await fs.readFile(this.filePath, 'utf-8');
-      this.summaries = JSON.parse(data) as UsageSummary[];
+      const parsed = JSON.parse(data) as SerializedUsageSummary[];
+      this.summaries = parsed.map((summary) => this.hydrate(summary));
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
         throw error;
@@ -228,12 +236,28 @@ export class FileUsageSummaryRepository implements UsageSummaryRepository {
 
   private async persist(): Promise<void> {
     await this.ensureDirectory();
-    await fs.writeFile(this.filePath, JSON.stringify(this.summaries, null, 2), 'utf-8');
+    const serialized = this.summaries.map((summary) => this.serialize(summary));
+    await fs.writeFile(this.filePath, JSON.stringify(serialized, null, 2), 'utf-8');
   }
 
   private async ensureDirectory(): Promise<void> {
     const directory = dirname(this.filePath);
     await fs.mkdir(directory, { recursive: true });
   }
-}
 
+  private serialize(summary: UsageSummary): SerializedUsageSummary {
+    return {
+      ...summary,
+      business_time: summary.business_time.toISO() ?? summary.business_time.toUTC().toISO()!,
+      system_time: summary.system_time.toISO() ?? summary.system_time.toUTC().toISO()!,
+    };
+  }
+
+  private hydrate(summary: SerializedUsageSummary): UsageSummary {
+    return {
+      ...summary,
+      business_time: DateTime.fromISO(summary.business_time),
+      system_time: TimeService.normalizeToUtc(summary.system_time),
+    };
+  }
+}

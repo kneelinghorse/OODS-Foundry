@@ -4,12 +4,16 @@
  * Provider-agnostic billing entities that preserve sovereignty
  * and prevent third-party terminology leakage.
  * 
+ * Dual-time model: All entities include business_time and system_time
+ * See: docs/policies/time.md
+ * 
  * @module domain/billing/core
  */
 
 import type { SubscriptionState, InvoiceState } from './states.js';
 import type { ProviderName } from '../../integrations/billing/adapter.js';
 import type { UsageLineItem, UsageSummary } from './usage.js';
+import type { DateTime } from 'luxon';
 
 /**
  * Canonical subscription states (7-state model)
@@ -90,10 +94,16 @@ export interface BillingAccount {
   /** Metadata (non-PII only) */
   metadata?: Record<string, unknown>;
   
-  /** Created timestamp (ISO 8601) */
+  /** Business time: account creation in tenant timezone */
+  business_time: DateTime;
+  
+  /** System time: immutable UTC record creation timestamp */
+  system_time: DateTime;
+  
+  /** @deprecated Use business_time instead */
   createdAt: string;
   
-  /** Last updated timestamp (ISO 8601) */
+  /** @deprecated Use system_time instead */
   updatedAt: string;
 }
 
@@ -173,10 +183,16 @@ export interface CanonicalSubscription {
   /** Tenant ID for multi-tenancy */
   tenantId?: string;
   
-  /** Created timestamp (ISO 8601) */
+  /** Business time: subscription lifecycle event in tenant timezone */
+  business_time: DateTime;
+  
+  /** System time: immutable UTC record timestamp */
+  system_time: DateTime;
+  
+  /** @deprecated Use business_time instead */
   createdAt: string;
   
-  /** Last updated timestamp (ISO 8601) */
+  /** @deprecated Use system_time instead */
   updatedAt: string;
 }
 
@@ -315,10 +331,16 @@ export interface CanonicalInvoice {
   /** Tenant ID for multi-tenancy */
   tenantId?: string;
   
-  /** Created timestamp (ISO 8601) */
+  /** Business time: invoice due date in tenant timezone */
+  business_time: DateTime;
+  
+  /** System time: immutable UTC record timestamp */
+  system_time: DateTime;
+  
+  /** @deprecated Use business_time for due date */
   createdAt: string;
   
-  /** Last updated timestamp (ISO 8601) */
+  /** @deprecated Use system_time for audit trail */
   updatedAt: string;
 }
 
@@ -366,10 +388,16 @@ export interface CanonicalPaymentIntent {
   /** Tenant ID for multi-tenancy */
   tenantId?: string;
   
-  /** Created timestamp (ISO 8601) */
+  /** Business time: payment attempt time in tenant timezone */
+  business_time: DateTime;
+  
+  /** System time: immutable UTC record timestamp */
+  system_time: DateTime;
+  
+  /** @deprecated Use business_time instead */
   createdAt: string;
   
-  /** Last updated timestamp (ISO 8601) */
+  /** @deprecated Use system_time instead */
   updatedAt: string;
 }
 

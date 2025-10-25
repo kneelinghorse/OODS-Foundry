@@ -6,6 +6,7 @@
  * along with provenance metadata tracking which traits contributed what.
  */
 
+import TimeService from '../services/time/index.js';
 import type {
   TraitDefinition,
   SchemaField,
@@ -260,6 +261,7 @@ export interface CompositionOptions {
  * Helper to create an empty composed object
  */
 export function createEmptyComposedObject(id: string, name: string): ComposedObject {
+  const now = TimeService.nowSystem();
   return {
     id,
     name,
@@ -270,7 +272,7 @@ export function createEmptyComposedObject(id: string, name: string): ComposedObj
     tokens: {},
     actions: [],
     metadata: {
-      composedAt: new Date(),
+      composedAt: now.toJSDate(),
       traitOrder: [],
       traitCount: 0,
       provenance: new Map(),

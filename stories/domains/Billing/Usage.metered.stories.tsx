@@ -6,6 +6,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
+import { DateTime } from 'luxon';
 import React from 'react';
 import type { CanonicalSubscription, CanonicalInvoice } from '../../../src/domain/billing/core.js';
 import type { UsageEvent, UsageSummary } from '../../../src/domain/billing/usage.js';
@@ -340,6 +341,8 @@ export const APICallsMetered: Story = {
       tenantId: 'tenant_001',
       createdAt: '2024-12-01T00:00:00Z',
       updatedAt: '2025-01-15T00:00:00Z',
+      business_time: DateTime.fromISO('2025-01-01T00:00:00Z'),
+      system_time: DateTime.fromISO('2025-01-15T00:00:00Z'),
     },
     events: Array.from({ length: 50 }, (_, i) => ({
       eventId: `evt_api_${i}`,
@@ -372,6 +375,8 @@ export const APICallsMetered: Story = {
       avgQuantity: 300,
       aggregatedAt: '2025-01-31T23:59:00Z',
       createdAt: '2025-01-31T23:59:00Z',
+      business_time: DateTime.fromISO('2025-02-01T00:00:00Z'),
+      system_time: DateTime.fromISO('2025-01-31T23:59:00Z'),
     },
     invoice: {
       invoiceId: 'inv_001',
@@ -392,6 +397,8 @@ export const APICallsMetered: Story = {
       tenantId: 'tenant_001',
       createdAt: '2025-02-01T00:00:00Z',
       updatedAt: '2025-02-01T00:00:00Z',
+      business_time: DateTime.fromISO('2025-02-15T00:00:00Z'),
+      system_time: DateTime.fromISO('2025-02-01T00:00:00Z'),
       usageLineItems: [
         {
           id: 'li_base',
@@ -469,6 +476,8 @@ export const ComputeHoursHeavyUse: Story = {
       tenantId: 'tenant_002',
       createdAt: '2024-12-01T00:00:00Z',
       updatedAt: '2025-01-20T00:00:00Z',
+      business_time: DateTime.fromISO('2025-01-01T00:00:00Z'),
+      system_time: DateTime.fromISO('2025-01-20T00:00:00Z'),
     },
     events: Array.from({ length: 30 }, (_, i) => ({
       eventId: `evt_compute_${i}`,
@@ -501,6 +510,8 @@ export const ComputeHoursHeavyUse: Story = {
       avgQuantity: 15,
       aggregatedAt: '2025-01-31T23:59:00Z',
       createdAt: '2025-01-31T23:59:00Z',
+      business_time: DateTime.fromISO('2025-02-01T00:00:00Z'),
+      system_time: DateTime.fromISO('2025-01-31T23:59:00Z'),
     },
     invoice: {
       invoiceId: 'inv_002',
@@ -521,6 +532,8 @@ export const ComputeHoursHeavyUse: Story = {
       tenantId: 'tenant_002',
       createdAt: '2025-02-01T00:00:00Z',
       updatedAt: '2025-02-01T00:00:00Z',
+      business_time: DateTime.fromISO('2025-02-15T00:00:00Z'),
+      system_time: DateTime.fromISO('2025-02-01T00:00:00Z'),
       usageLineItems: [
         {
           id: 'li_base_compute',
