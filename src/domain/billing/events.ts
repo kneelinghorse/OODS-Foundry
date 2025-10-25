@@ -7,7 +7,12 @@
  * @module domain/billing/events
  */
 
-import type { CanonicalSubscription, CanonicalInvoice, CanonicalPaymentIntent } from './core.js';
+import type {
+  CanonicalSubscription,
+  CanonicalInvoice,
+  CanonicalPaymentIntent,
+} from './core.js';
+import type { ProviderName } from '../../integrations/billing/adapter.js';
 
 /**
  * Billing event types
@@ -63,7 +68,7 @@ export interface BillingEvent {
   /** Provider information */
   provider: {
     /** Provider name */
-    name: 'stripe' | 'chargebee' | 'zuora' | 'manual';
+    name: ProviderName | 'manual';
     
     /** Provider event ID */
     eventId: string;
@@ -365,4 +370,3 @@ function getEventSeverity(type: BillingEventType): EventSeverity {
   }
   return 'info';
 }
-

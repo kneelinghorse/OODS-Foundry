@@ -83,11 +83,28 @@ export class BillingEventIngestionService {
     router?: BillingEventsRouter;
     auditService?: AuditLogService;
   } = {}) {
-    this.adapters = new Map<ProviderName, BillingAdapter>([
-      ['stripe', options.adapters?.stripe ?? new StripeAdapter()],
-      ['chargebee', options.adapters?.chargebee ?? new ChargebeeAdapter()],
-      ['zuora', options.adapters?.zuora ?? new ZuoraAdapter()],
-    ]);
+    const adapterRegistry = new Map<ProviderName, BillingAdapter>();
+
+    if (options.adapters) {
+      for (const adapter of Object.values(options.adapters)) {
+        if (adapter) {
+          adapterRegistry.set(adapter.providerName, adapter);
+        }
+      }
+    }
+
+    const ensureAdapter = (createAdapter: () => BillingAdapter) => {
+      const adapter = createAdapter();
+      if (!adapterRegistry.has(adapter.providerName)) {
+        adapterRegistry.set(adapter.providerName, adapter);
+      }
+    };
+
+    ensureAdapter(() => new StripeAdapter());
+    ensureAdapter(() => new ChargebeeAdapter());
+    ensureAdapter(() => new ZuoraAdapter());
+
+    this.adapters = adapterRegistry;
 
     this.router = options.router ?? new BillingEventsRouter();
     this.audit = options.auditService ?? new AuditLogService();
@@ -184,4 +201,3 @@ export class BillingEventIngestionService {
     return this.audit;
   }
 }
-

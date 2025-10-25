@@ -8,6 +8,7 @@
  */
 
 import type { SubscriptionState, InvoiceState } from './states.js';
+import type { ProviderName } from '../../integrations/billing/adapter.js';
 
 /**
  * Canonical subscription states (7-state model)
@@ -369,8 +370,8 @@ export interface CanonicalPaymentIntent {
  * Provider metadata (for audit trails)
  */
 export interface ProviderMetadata {
-  /** Provider name (stripe, chargebee, zuora) */
-  provider: 'stripe' | 'chargebee' | 'zuora' | 'manual';
+  /** Provider identifier emitted by ACL adapters */
+  provider: ProviderName | 'manual';
   
   /** Provider-specific ID (retained for audit) */
   providerResourceId?: string;
@@ -454,4 +455,3 @@ export function formatAmount(amountMinor: number, currency: string): string {
     currency: currency.toUpperCase(),
   }).format(major);
 }
-
