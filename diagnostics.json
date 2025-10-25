@@ -357,31 +357,51 @@
   "helpers": {
     "overlaysProof": {
       "totals": {
-        "runs": 2,
-        "pass": 2,
+        "runs": 3,
+        "pass": 3,
         "fail": 0
       },
       "lastRun": {
         "mission": "B16.6",
-        "runAt": "2025-10-21T23:06:10.419Z",
+        "runAt": "2025-10-24T14:55:42.462Z",
         "status": "passed",
-        "durationMs": 7755,
+        "durationMs": 7963,
         "tasks": [
           {
             "id": "overlay-manager-e2e",
             "status": "passed",
-            "durationMs": 4020,
+            "durationMs": 4276,
             "exitCode": null
           },
           {
             "id": "overlay-components-axe",
             "status": "passed",
-            "durationMs": 3735,
+            "durationMs": 3687,
             "exitCode": null
           }
         ]
       },
       "history": [
+        {
+          "mission": "B16.6",
+          "runAt": "2025-10-24T14:55:42.462Z",
+          "status": "passed",
+          "durationMs": 7963,
+          "tasks": [
+            {
+              "id": "overlay-manager-e2e",
+              "status": "passed",
+              "durationMs": 4276,
+              "exitCode": null
+            },
+            {
+              "id": "overlay-components-axe",
+              "status": "passed",
+              "durationMs": 3687,
+              "exitCode": null
+            }
+          ]
+        },
         {
           "mission": "B16.6",
           "runAt": "2025-10-21T23:06:10.419Z",
@@ -426,18 +446,25 @@
     },
     "pkgCompat": {
       "totals": {
-        "runs": 2,
-        "pass": 2,
+        "runs": 3,
+        "pass": 3,
         "fail": 0
       },
       "lastRun": {
         "mission": "B16.6",
-        "runAt": "2025-10-21T23:06:29.554Z",
+        "runAt": "2025-10-24T14:56:30.292Z",
         "status": "passed",
-        "durationMs": 13224,
+        "durationMs": 15375,
         "exitCode": null
       },
       "history": [
+        {
+          "mission": "B16.6",
+          "runAt": "2025-10-24T14:56:30.292Z",
+          "status": "passed",
+          "durationMs": 15375,
+          "exitCode": null
+        },
         {
           "mission": "B16.6",
           "runAt": "2025-10-21T23:06:29.554Z",

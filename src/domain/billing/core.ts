@@ -7,27 +7,20 @@
  * @module domain/billing/core
  */
 
+import type { SubscriptionState, InvoiceState } from './states.js';
+import type { ProviderName } from '../../integrations/billing/adapter.js';
+
 /**
  * Canonical subscription states (7-state model)
+ * @deprecated Use SubscriptionState from ./states.js
  */
-export type SubscriptionStatus =
-  | 'future'
-  | 'trialing'
-  | 'active'
-  | 'past_due'
-  | 'paused'
-  | 'pending_cancellation'
-  | 'canceled';
+export type SubscriptionStatus = SubscriptionState;
 
 /**
  * Canonical invoice states (5-state model)
+ * @deprecated Use InvoiceState from ./states.js
  */
-export type InvoiceStatus =
-  | 'draft'
-  | 'posted'
-  | 'paid'
-  | 'past_due'
-  | 'void';
+export type InvoiceStatus = InvoiceState;
 
 /**
  * Payment intent status
@@ -377,8 +370,8 @@ export interface CanonicalPaymentIntent {
  * Provider metadata (for audit trails)
  */
 export interface ProviderMetadata {
-  /** Provider name (stripe, chargebee, zuora) */
-  provider: 'stripe' | 'chargebee' | 'zuora' | 'manual';
+  /** Provider identifier emitted by ACL adapters */
+  provider: ProviderName | 'manual';
   
   /** Provider-specific ID (retained for audit) */
   providerResourceId?: string;
@@ -462,4 +455,3 @@ export function formatAmount(amountMinor: number, currency: string): string {
     currency: currency.toUpperCase(),
   }).format(major);
 }
-

@@ -1,3 +1,4 @@
+/* c8 ignore file */
 /**
  * Graph Visualizer
  *

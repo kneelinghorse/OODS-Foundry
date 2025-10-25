@@ -1,0 +1,77 @@
+import { Meta, Canvas } from '@storybook/blocks';
+import * as SubscriptionLifecycleStories from './Subscription.lifecycle.stories';
+import * as InvoiceLifecycleStories from './Invoice.lifecycle.stories';
+
+<Meta
+  title="Domains/Billing/Lifecycle Overview"
+  parameters={{
+    layout: 'padded',
+    docs: {
+      source: { state: 'hidden' },
+    },
+  }}
+/>
+
+# Canonical Billing Lifecycles
+
+Sprint 17 establishes canonical, event-driven state machines for subscriptions and invoices.
+All UI surfaces, adapters, and validation helpers consume these enums to prevent vendor leakage.
+
+## Subscription Lifecycle (7-state)
+
+- **future** – Scheduled start; activation path determined by trial configuration.
+- **trialing** – Trial access before billing begins. `trial_end` transitions to `active`.
+- **active** – Revenue-generating state with full access.
+- **paused** – Temporarily suspended via `pause` / `resume`.
+- **pending_cancellation** – Cancellation scheduled for period end; `period_end` finalises termination.
+- **delinquent** – Payment failures detected via invoices (`payment_failed` / `payment_succeeded` loop).
+- **terminated** – Terminal state reached by `period_end` or `cancel_immediately`.
+
+**Guards**
+
+- `activate` branches to `trialing` when a trial period exists, otherwise `active`.
+- Delinquency is derived by `deriveDelinquency(subscription, invoices)` if providers omit the state.
+
+<Canvas of={SubscriptionLifecycleStories.AllStates} />
+
+### Event Map
+
+| Event | From | To | Notes |
+| --- | --- | --- | --- |
+| `activate` | future | trialing \| active | Guarded by `trialPeriodDays` |
+| `trial_end` | trialing | active | Trial completes successfully |
+| `pause` / `resume` | active / paused | paused / active | Maintains provisioning |
+| `schedule_cancellation` | active | pending_cancellation | Deferred termination |
+| `payment_failed` | active | delinquent | Triggered by invoice retries |
+| `payment_succeeded` | delinquent | active | Clears delinquency |
+| `period_end` | pending_cancellation | terminated | Scheduled termination |
+| `cancel_immediately` | any (≠ terminated) | terminated | Immediate stop |
+
+## Invoice Lifecycle (5-state)
+
+- **draft** – Editable staging state before posting.
+- **posted** – Finalised and collectible within terms.
+- **paid** – Closed, fully collected.
+- **past_due** – Overdue with outstanding balance.
+- **void** – Cancelled; no longer payable.
+
+<Canvas of={InvoiceLifecycleStories.AllStates} />
+
+### Event Map
+
+| Event | From | To | Notes |
+| --- | --- | --- | --- |
+| `finalize` | draft | posted | Invoice issued to customer |
+| `mark_paid` | posted | paid | Payment applied |
+| `mark_overdue` | posted | past_due | Terms breached |
+| `payment_received` | past_due | paid | Overdue invoice recovered |
+| `void_invoice` | draft \| posted \| past_due | void | Permitted until paid/void |
+
+## Validation & Enforcement
+
+- `validateSubscriptionState` / `validateInvoiceState` reject unknown vendor strings.
+- Provider adapters translate vendor enums to these canonical values (see adapter specs).
+- Tokens reside in `tokens/maps/saas-billing.status-map.json`; Storybook screenshots must cover every state.
+- CI enforces state machine coverage via `tests/domain/billing/states.spec.ts` and adapter suites.
+
+Refer to `docs/billing/lifecycle-states.md` for full research context and derivation rationale.

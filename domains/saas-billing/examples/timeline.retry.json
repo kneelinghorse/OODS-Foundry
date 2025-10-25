@@ -8,7 +8,7 @@
       "subject": "subscription",
       "at": "2025-07-15T12:00:00Z",
       "prevStatus": "active",
-      "nextStatus": "past_due",
+      "nextStatus": "delinquent",
       "meta": {
         "title": "Renewal failed",
         "summary": "Card declined on renewal; access remains in grace period.",
@@ -22,8 +22,8 @@
       "type": "subscription.retry_scheduled",
       "subject": "subscription",
       "at": "2025-07-15T12:05:00Z",
-      "prevStatus": "past_due",
-      "nextStatus": "past_due",
+      "prevStatus": "delinquent",
+      "nextStatus": "delinquent",
       "meta": {
         "title": "Smart retry queued",
         "summary": "Stripe scheduled retry #1 with highest success probability.",
@@ -37,7 +37,7 @@
       "type": "subscription.recovered",
       "subject": "subscription",
       "at": "2025-07-17T15:25:00Z",
-      "prevStatus": "past_due",
+      "prevStatus": "delinquent",
       "nextStatus": "active",
       "meta": {
         "title": "Payment method updated",
@@ -54,7 +54,7 @@
       "subject": "invoice",
       "at": "2025-07-15T11:59:00Z",
       "prevStatus": "draft",
-      "nextStatus": "open",
+      "nextStatus": "posted",
       "meta": {
         "title": "Invoice issued",
         "summary": "Stripe invoice 7823 released with net-0 terms for autopay.",
@@ -69,7 +69,7 @@
       "type": "invoice.retry_started",
       "subject": "invoice",
       "at": "2025-07-15T12:00:15Z",
-      "prevStatus": "open",
+      "prevStatus": "posted",
       "nextStatus": "past_due",
       "meta": {
         "title": "Payment failed",

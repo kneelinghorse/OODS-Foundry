@@ -38,7 +38,7 @@ describe('OODS.Table', () => {
       <Table>
         <TableBody>
           <TableRow>
-            <TableCell status="past_due" statusDomain="subscription" />
+            <TableCell status="delinquent" statusDomain="subscription" />
           </TableRow>
         </TableBody>
       </Table>
@@ -46,6 +46,6 @@ describe('OODS.Table', () => {
 
     expect(markup).toContain('data-has-status="true"');
     expect(markup).toContain('--table-cell-status-background');
-    expect(markup).toContain('Past Due');
+    expect(markup).toContain('Delinquent');
   });
 });

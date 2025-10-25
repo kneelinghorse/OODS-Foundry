@@ -13,12 +13,14 @@ traits:
     alias: SubscriptionLifecycle
     parameters:
       states:
+        - future
         - trialing
         - active
-        - past_due
         - paused
-        - canceled
-      initialState: trialing
+        - pending_cancellation
+        - delinquent
+        - terminated
+      initialState: future
   - name: lifecycle/Cancellable
     alias: SubscriptionCancellation
     parameters:
@@ -73,12 +75,13 @@ schema:
     description: Current lifecycle status of the subscription.
     validation:
       enum:
+        - future
         - trialing
         - active
-        - past_due
         - paused
-        - canceled
-        - incomplete
+        - pending_cancellation
+        - delinquent
+        - terminated
   cancel_at_period_end:
     type: boolean
     required: true
@@ -181,9 +184,13 @@ semantics:
     token_mapping: tokenMap(billing.subscription.next_payment_due_at)
 
 tokens:
+  billing.subscription.status.future: "var(--semantic-info)"
+  billing.subscription.status.trialing: "var(--semantic-info)"
   billing.subscription.status.active: "var(--semantic-success)"
-  billing.subscription.status.past_due: "var(--semantic-warning)"
-  billing.subscription.status.canceled: "var(--semantic-danger)"
+  billing.subscription.status.paused: "var(--semantic-warning)"
+  billing.subscription.status.pending_cancellation: "var(--semantic-info)"
+  billing.subscription.status.delinquent: "var(--semantic-danger)"
+  billing.subscription.status.terminated: "var(--semantic-neutral)"
   billing.subscription.interval.monthly: "var(--text-subtle)"
   billing.plan.amount: "var(--text-strong)"
 

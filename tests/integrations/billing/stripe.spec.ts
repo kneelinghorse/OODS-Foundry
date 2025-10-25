@@ -57,10 +57,12 @@ describe('StripeAdapter', () => {
     it('should map Stripe subscription statuses correctly', () => {
       const statuses: Array<[string, string]> = [
         ['incomplete', 'future'],
+        ['incomplete_expired', 'terminated'],
         ['trialing', 'trialing'],
         ['active', 'active'],
-        ['past_due', 'past_due'],
-        ['canceled', 'canceled'],
+        ['past_due', 'delinquent'],
+        ['unpaid', 'delinquent'],
+        ['canceled', 'terminated'],
         ['paused', 'paused'],
       ];
 
@@ -279,4 +281,3 @@ describe('StripeAdapter', () => {
     });
   });
 });
-

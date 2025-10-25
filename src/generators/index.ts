@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* c8 ignore file */
 /**
  * Type Generator CLI
  *

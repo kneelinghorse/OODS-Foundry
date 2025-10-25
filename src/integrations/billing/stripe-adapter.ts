@@ -31,12 +31,12 @@ import {
  */
 const STRIPE_SUBSCRIPTION_STATUS_MAP: Record<string, SubscriptionStatus> = {
   'incomplete': 'future',
-  'incomplete_expired': 'canceled',
+  'incomplete_expired': 'terminated',
   'trialing': 'trialing',
   'active': 'active',
-  'past_due': 'past_due',
-  'canceled': 'canceled',
-  'unpaid': 'past_due',
+  'past_due': 'delinquent',
+  'canceled': 'terminated',
+  'unpaid': 'delinquent',
   'paused': 'paused',
 };
 

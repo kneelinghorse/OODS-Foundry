@@ -32,9 +32,9 @@ const ZUORA_SUBSCRIPTION_STATUS_MAP: Record<string, SubscriptionStatus> = {
   'PendingActivation': 'future',
   'PendingAcceptance': 'trialing',
   'Active': 'active',
-  'Cancelled': 'canceled',
+  'Cancelled': 'terminated',
   'Suspended': 'paused',
-  'Expired': 'canceled',
+  'Expired': 'terminated',
 };
 
 /**

@@ -10,7 +10,7 @@
   "primary_email": "billing@atlas.example.com",
   "email": "finance@atlas.example.com",
   "description": "Annual Scale subscription with smart retry coverage and usage-based overages.",
-  "status": "past_due",
+  "status": "delinquent",
   "cancel_at_period_end": false,
   "cancellation_reason": null,
   "cancellation_requested_at": null,
@@ -34,14 +34,14 @@
     },
     {
       "from_state": "active",
-      "to_state": "past_due",
+      "to_state": "delinquent",
       "timestamp": "2025-07-01T00:01:12Z",
       "actor_id": "billing_system",
       "reason": "Card expired during automatic renewal attempt."
     },
     {
-      "from_state": "past_due",
-      "to_state": "past_due",
+      "from_state": "delinquent",
+      "to_state": "delinquent",
       "timestamp": "2025-07-03T10:00:00Z",
       "actor_id": "collections_agent",
       "reason": "Customer contacted; awaiting payment method update before retry."

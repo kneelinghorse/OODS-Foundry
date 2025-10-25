@@ -17,10 +17,10 @@ export interface WithStatusBadgeContext<Data = { status?: string }> {
   readonly status?: string;
 }
 
-const CANCELLED_DESCRIPTOR: StatusBadgeDescriptor = Object.freeze({
-  id: 'status-canceled',
-  label: 'Canceled',
-  tone: 'critical',
+const TERMINATED_DESCRIPTOR: StatusBadgeDescriptor = Object.freeze({
+  id: 'status-terminated',
+  label: 'Terminated',
+  tone: 'neutral',
 });
 
 const STATUS_MAP: Readonly<Record<string, StatusBadgeDescriptor>> = Object.freeze({
@@ -29,6 +29,32 @@ const STATUS_MAP: Readonly<Record<string, StatusBadgeDescriptor>> = Object.freez
     label: 'Active',
     tone: 'success',
   }),
+  trialing: Object.freeze({
+    id: 'status-trialing',
+    label: 'Trialing',
+    tone: 'info',
+  }),
+  future: Object.freeze({
+    id: 'status-future',
+    label: 'Future',
+    tone: 'info',
+  }),
+  paused: Object.freeze({
+    id: 'status-paused',
+    label: 'Paused',
+    tone: 'warning',
+  }),
+  pending_cancellation: Object.freeze({
+    id: 'status-pending-cancellation',
+    label: 'Pending Cancellation',
+    tone: 'warning',
+  }),
+  delinquent: Object.freeze({
+    id: 'status-delinquent',
+    label: 'Delinquent',
+    tone: 'critical',
+  }),
+  terminated: TERMINATED_DESCRIPTOR,
   inactive: Object.freeze({
     id: 'status-inactive',
     label: 'Inactive',
@@ -39,8 +65,8 @@ const STATUS_MAP: Readonly<Record<string, StatusBadgeDescriptor>> = Object.freez
     label: 'Past Due',
     tone: 'warning',
   }),
-  canceled: CANCELLED_DESCRIPTOR,
-  cancelled: CANCELLED_DESCRIPTOR,
+  canceled: TERMINATED_DESCRIPTOR,
+  cancelled: TERMINATED_DESCRIPTOR,
 });
 
 function resolveStatus<Data>(

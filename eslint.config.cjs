@@ -4,6 +4,7 @@ const globals = require('globals');
 const tsParser = require('@typescript-eslint/parser');
 const tseslint = require('@typescript-eslint/eslint-plugin');
 const noHooksRule = require('./eslint/rules/no-hooks-in-modifiers.cjs');
+const noProviderLeakageRule = require('./eslint/rules/no-provider-leakage.cjs');
 
 module.exports = [
   {
@@ -27,6 +28,7 @@ module.exports = [
       oods: {
         rules: {
           'no-hooks-in-modifiers': noHooksRule,
+          'no-provider-leakage': noProviderLeakageRule,
         },
       },
     },
@@ -57,6 +59,18 @@ module.exports = [
     files: ['**/*.modifier.ts', '**/*.modifier.tsx'],
     rules: {
       'oods/no-hooks-in-modifiers': 'error',
+    },
+  },
+  {
+    files: ['src/**/*.ts', 'src/**/*.tsx', 'apps/**/*.ts', 'apps/**/*.tsx'],
+    ignores: [
+      'src/integrations/billing/**',
+      'tests/integrations/billing/**',
+      'fixtures/billing/**',
+      'domains/saas-billing/**',
+    ],
+    rules: {
+      'oods/no-provider-leakage': 'error',
     },
   },
 ];

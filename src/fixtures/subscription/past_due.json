@@ -8,7 +8,7 @@
   "name": "Lambda Fabricators",
   "preferred_name": "Lambda Fab",
   "primary_email": "finance@lambdafab.example.com",
-  "status": "past_due",
+  "status": "delinquent",
   "cancel_at_period_end": false,
   "cancellation_reason": null,
   "cancellation_requested_at": null,
@@ -25,14 +25,14 @@
   "state_history": [
     {
       "from_state": "active",
-      "to_state": "past_due",
+      "to_state": "delinquent",
       "timestamp": "2024-09-01T00:00:00Z",
       "actor_id": "sys_billing",
       "reason": "Invoice payment missed"
     },
     {
-      "from_state": "past_due",
-      "to_state": "past_due",
+      "from_state": "delinquent",
+      "to_state": "delinquent",
       "timestamp": "2024-09-05T14:12:00Z",
       "actor_id": "usr_renewals",
       "reason": "Reminder sent to customer"

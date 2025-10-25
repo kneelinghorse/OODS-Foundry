@@ -39,19 +39,19 @@
         }
       }
     },
-    "past_due": {
-      "description": "Payment has failed, and the account is delinquent.",
+    "delinquent": {
+      "description": "Payment has failed and the subscription is in collection.",
       "default": {
-        "foregroundColor": "color.text.warning",
-        "backgroundColor": "color.background.warning.subtle",
-        "borderColor": "color.border.warning",
+        "foregroundColor": "color.text.danger",
+        "backgroundColor": "color.background.danger.subtle",
+        "borderColor": "color.border.danger",
         "iconName": "icon.status.warning"
       },
       "contexts": {
         "banner": {
           "foregroundColor": "color.text.onbold",
-          "backgroundColor": "color.background.warning.bold",
-          "borderColor": "color.border.warning"
+          "backgroundColor": "color.background.danger.bold",
+          "borderColor": "color.border.danger"
         }
       }
     },
@@ -73,7 +73,7 @@
         "iconName": "icon.status.pending"
       }
     },
-    "canceled": {
+    "terminated": {
       "description": "The subscription is terminated and no longer active. This is a final state.",
       "default": {
         "foregroundColor": "color.text.disabled",

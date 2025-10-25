@@ -3,7 +3,7 @@
  * Billing ACL Translation CLI
  *
  * Demonstrates provider payload translation through the Billing ACL adapters.
- * Usage: pnpm billing:translate [--provider stripe] [--resource subscription] [--tenant tenant-1]
+ * Usage: pnpm billing:translate [--provider <provider>] [--resource subscription] [--tenant tenant-1]
  */
 
 import { writeFileSync } from 'node:fs';
@@ -14,7 +14,16 @@ import {
   StripeAdapter,
   ZuoraAdapter,
 } from '../integrations/billing/index.js';
-import type { ProviderName } from '../integrations/billing/adapter.js';
+import type {
+  BillingAdapter,
+  ProviderName,
+} from '../integrations/billing/adapter.js';
+import {
+  chargebeeSamples,
+  stripeSamples,
+  zuoraSamples,
+} from '../integrations/billing/samples/index.js';
+import type { ProviderSampleSet } from '../integrations/billing/samples/index.js';
 import type {
   CanonicalInvoiceWithProvider,
   CanonicalSubscriptionWithProvider,
@@ -29,167 +38,50 @@ interface CliOptions {
   output?: string;
 }
 
-const stripeSamples = {
-  subscription: {
-    id: 'sub_abc123',
-    customer: 'cus_xyz789',
-    status: 'active',
-    currency: 'usd',
-    current_period_start: 1704067200,
-    current_period_end: 1735689599,
-    created: 1704067200,
-    items: [
-      {
-        price: {
-          id: 'price_pro_2025',
-          nickname: 'Pro Plan',
-          unit_amount: 9900,
-          currency: 'usd',
-          interval: 'month',
-          interval_count: 1,
-          trial_period_days: 14,
-        },
-      },
-    ],
-    collection_method: 'charge_automatically',
-  },
-  invoice: {
-    id: 'in_abc123',
-    subscription: 'sub_xyz789',
-    status: 'open',
-    number: 'INV-001',
-    currency: 'usd',
-    created: 1704067200,
-    due_date: 1704326400,
-    total: 9900,
-    amount_due: 9900,
-    subtotal: 9000,
-    tax: 900,
-    lines: [
-      {
-        id: 'li_123',
-        description: 'Pro Plan',
-        quantity: 1,
-        amount: 9000,
-        unit_amount: 9000,
-      },
-    ],
-    hosted_invoice_url: 'https://stripe.com/invoice/123',
-    payment_method_type: 'card',
-  },
+type ProviderAssets = {
+  adapter: BillingAdapter;
+  samples: ProviderSampleSet;
 };
 
-const chargebeeSamples = {
-  subscription: {
-    id: 'cb_sub_123',
-    customer_id: 'cb_cus_456',
-    status: 'active',
-    plan_id: 'pro-plan',
-    plan_name: 'Pro Plan',
-    currency_code: 'USD',
-    plan_unit_price: 9900,
-    plan_quantity: 1,
-    plan_free_quantity: 0,
-    billing_period: 1,
-    billing_period_unit: 'month',
-    current_term_start: 1704067200,
-    current_term_end: 1706745599,
-    created_at: 1704067200,
-    updated_at: 1704067200,
-    auto_collection: 'on',
-  },
-  invoice: {
-    id: 'cb_inv_123',
-    subscription_id: 'cb_sub_456',
-    status: 'posted',
-    invoice_number: 'CB-001',
-    currency_code: 'USD',
-    date: 1704067200,
-    due_date: 1706745599,
-    total: 10900,
-    amount_due: 10900,
-    sub_total: 10000,
-    tax: 900,
-    line_items: [
-      {
-        id: 'li_cb_1',
-        description: 'Pro Plan',
-        quantity: 1,
-        amount: 10000,
-        unit_amount: 10000,
-        entity_id: 'pro-plan',
-      },
-    ],
-    invoice_url: 'https://chargebee.com/invoice/123',
-    payment_method: 'card',
-    updated_at: 1704067200,
-  },
+const providerCatalog: Map<ProviderName, ProviderAssets> = new Map();
+
+const registerProvider = (adapter: BillingAdapter, samples: ProviderSampleSet) => {
+  providerCatalog.set(adapter.providerName, { adapter, samples });
 };
 
-const zuoraSamples = {
-  subscription: {
-    Id: 'zuora-sub-123',
-    Status: 'Active',
-    AccountId: 'zuora-acct-456',
-    Name: 'Enterprise Subscription',
-    TermStartDate: '2024-01-01',
-    TermEndDate: '2024-12-31',
-    CreatedDate: '2024-01-01T00:00:00Z',
-    UpdatedDate: '2024-01-01T00:00:00Z',
-    AutoRenew: 'true',
-    RatePlans: [
-      {
-        ProductRatePlanId: 'rp-123',
-        ProductRatePlanName: 'Enterprise Plan',
-        RatePlanCharges: [
-          {
-            Id: 'rpc-456',
-            Price: 299.0,
-            Currency: 'USD',
-            BillingPeriod: 'Annual',
-          },
-        ],
-      },
-    ],
-  },
-  invoice: {
-    Id: 'zuora-inv-123',
-    AccountId: 'zuora-acct-456',
-    Status: 'Posted',
-    InvoiceNumber: 'ZU-001',
-    InvoiceDate: '2024-01-01',
-    DueDate: '2024-01-31',
-    Amount: 299.0,
-    Balance: 299.0,
-    Currency: 'USD',
-    TaxAmount: 29.0,
-    CreatedDate: '2024-01-01T00:00:00Z',
-    UpdatedDate: '2024-01-01T00:00:00Z',
-    InvoiceItems: [
-      {
-        Id: 'ii-789',
-        ServiceStartDate: '2024-01-01',
-        Quantity: 1,
-        ChargeAmount: 270.0,
-        UnitPrice: 270.0,
-        ProductName: 'Enterprise Plan',
-      },
-    ],
-    InvoiceURL: 'https://zuora.com/invoice/123',
-  },
-};
+registerProvider(new StripeAdapter(), stripeSamples);
+registerProvider(new ChargebeeAdapter(), chargebeeSamples);
+registerProvider(new ZuoraAdapter(), zuoraSamples);
 
-function parseArgs(argv: string[]): CliOptions {
+const providerChoices = Array.from(providerCatalog.keys());
+
+if (providerChoices.length === 0) {
+  throw new Error('No billing providers registered for translation CLI.');
+}
+
+function parseArgs(
+  argv: string[],
+  providers: ProviderName[]
+): CliOptions {
   const args = argv.slice(2);
+  const [defaultProvider] = providers;
+
+  if (!defaultProvider) {
+    throw new Error('No default provider available for translation CLI.');
+  }
 
   const options: CliOptions = {
-    provider: 'stripe',
+    provider: defaultProvider,
     resource: 'subscription',
   };
 
   for (const arg of args) {
     if (arg.startsWith('--provider=')) {
-      options.provider = arg.split('=')[1] as ProviderName;
+      const provider = arg.split('=')[1] as ProviderName;
+      if (!providerCatalog.has(provider)) {
+        throw new Error(`Unsupported provider: ${provider}`);
+      }
+      options.provider = provider;
     } else if (arg.startsWith('--resource=')) {
       options.resource = arg.split('=')[1] as ResourceType;
     } else if (arg.startsWith('--tenant=')) {
@@ -197,7 +89,7 @@ function parseArgs(argv: string[]): CliOptions {
     } else if (arg.startsWith('--output=')) {
       options.output = arg.split('=')[1];
     } else if (arg === '--help' || arg === '-h') {
-      printHelp();
+      printHelp(providers);
       process.exit(0);
     }
   }
@@ -205,15 +97,18 @@ function parseArgs(argv: string[]): CliOptions {
   return options;
 }
 
-function printHelp(): void {
+function printHelp(providers: ProviderName[]): void {
+  const providerOptions = providers.join(' | ');
+  const defaultProvider = providers[0];
+
   console.log(`
 Billing ACL Translation CLI
 
 Usage:
-  pnpm billing:translate [--provider stripe] [--resource subscription] [--tenant tenant-1] [--output ./canonical.json]
+  pnpm billing:translate [--provider ${providerOptions}] [--resource subscription] [--tenant tenant-1] [--output ./canonical.json]
 
 Options:
-  --provider   stripe | chargebee | zuora (default: stripe)
+  --provider   ${providerOptions} (default: ${defaultProvider})
   --resource   subscription | invoice (default: subscription)
   --tenant     Optional tenant identifier to stamp on canonical payloads
   --output     Optional path to write canonical JSON (defaults to stdout)
@@ -221,40 +116,33 @@ Options:
 `);
 }
 
-const options = parseArgs(process.argv);
+const options = parseArgs(process.argv, providerChoices);
 
-function translate(provider: ProviderName, resource: ResourceType) {
-  switch (provider) {
-    case 'stripe': {
-      const adapter = new StripeAdapter();
-      return resource === 'subscription'
-        ? adapter.translateSubscription(stripeSamples.subscription, options.tenantId)
-        : adapter.translateInvoice(stripeSamples.invoice, options.tenantId);
-    }
-    case 'chargebee': {
-      const adapter = new ChargebeeAdapter();
-      return resource === 'subscription'
-        ? adapter.translateSubscription(chargebeeSamples.subscription, options.tenantId)
-        : adapter.translateInvoice(chargebeeSamples.invoice, options.tenantId);
-    }
-    case 'zuora': {
-      const adapter = new ZuoraAdapter();
-      return resource === 'subscription'
-        ? adapter.translateSubscription(zuoraSamples.subscription, options.tenantId)
-        : adapter.translateInvoice(zuoraSamples.invoice, options.tenantId);
-    }
-    default: {
-      const exhaustiveCheck: never = provider;
-      throw new Error(`Unsupported provider: ${exhaustiveCheck as string}`);
-    }
+function translate(
+  provider: ProviderName,
+  resource: ResourceType,
+  tenantId?: string
+) {
+  const entry = providerCatalog.get(provider);
+
+  if (!entry) {
+    throw new Error(`Unsupported provider: ${provider}`);
   }
+
+  const { adapter, samples } = entry;
+
+  return resource === 'subscription'
+    ? adapter.translateSubscription(samples.subscription, tenantId)
+    : adapter.translateInvoice(samples.invoice, tenantId);
 }
 
-let canonical:
+const canonical:
   | CanonicalSubscriptionWithProvider
-  | CanonicalInvoiceWithProvider;
-
-canonical = translate(options.provider, options.resource);
+  | CanonicalInvoiceWithProvider = translate(
+    options.provider,
+    options.resource,
+    options.tenantId
+  );
 
 const output = JSON.stringify(canonical, null, 2);
 
@@ -265,3 +153,4 @@ if (options.output) {
 } else {
   console.log(output);
 }
+

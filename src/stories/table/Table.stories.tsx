@@ -32,14 +32,14 @@ const SUBSCRIPTIONS: readonly SubscriptionRow[] = [
     id: 'SUB-1064',
     customer: 'Helios Labs',
     plan: 'Scale',
-    status: 'past_due',
+    status: 'delinquent',
     mrr: '$2,440',
   },
   {
     id: 'SUB-1088',
     customer: 'Northwind Ops',
     plan: 'Starter',
-    status: 'cancel_at_period_end',
+    status: 'pending_cancellation',
     mrr: '$640',
   },
 ];
@@ -152,14 +152,14 @@ export const CompactStatusMatrix: Story = {
           <TableCell numeric>42</TableCell>
         </TableRow>
         <TableRow>
-          <TableCell status="past_due" statusDomain="subscription" />
-          <TableCell status="past_due" statusDomain="subscription" statusEmphasis="text">
+          <TableCell status="delinquent" statusDomain="subscription" />
+          <TableCell status="delinquent" statusDomain="subscription" statusEmphasis="text">
             Payment outstanding — retries scheduled through policy.
           </TableCell>
           <TableCell numeric>17</TableCell>
         </TableRow>
         <TableRow>
-          <TableCell status="canceled" statusDomain="subscription" />
+          <TableCell status="terminated" statusDomain="subscription" />
           <TableCell>Ended subscriptions retained for historical reporting.</TableCell>
           <TableCell numeric>9</TableCell>
         </TableRow>

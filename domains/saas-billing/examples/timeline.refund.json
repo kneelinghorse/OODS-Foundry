@@ -23,9 +23,9 @@
       "subject": "subscription",
       "at": "2025-06-30T23:59:00Z",
       "prevStatus": "pending_cancellation",
-      "nextStatus": "canceled",
+      "nextStatus": "terminated",
       "meta": {
-        "title": "Subscription canceled",
+        "title": "Subscription terminated",
         "summary": "Period end reached; access revoked and provisioning hooks fired.",
         "provider": "chargebee",
         "channel": "system"
@@ -36,8 +36,8 @@
       "type": "subscription.refund_window_extended",
       "subject": "subscription",
       "at": "2025-07-01T09:05:00Z",
-      "prevStatus": "canceled",
-      "nextStatus": "canceled",
+      "prevStatus": "terminated",
+      "nextStatus": "terminated",
       "meta": {
         "title": "Refund window extended",
         "summary": "Finance granted a 30-day courtesy refund window for implementation rollback.",
@@ -54,7 +54,7 @@
       "subject": "invoice",
       "at": "2025-06-15T08:00:00Z",
       "prevStatus": "draft",
-      "nextStatus": "open",
+      "nextStatus": "posted",
       "meta": {
         "title": "Invoice issued",
         "summary": "Chargebee invoice CB-2215 generated for implementation package.",
@@ -69,7 +69,7 @@
       "type": "invoice.payment_succeeded",
       "subject": "invoice",
       "at": "2025-06-15T09:02:00Z",
-      "prevStatus": "open",
+      "prevStatus": "posted",
       "nextStatus": "paid",
       "meta": {
         "title": "Payment received",
@@ -84,7 +84,7 @@
       "subject": "invoice",
       "at": "2025-07-01T09:06:30Z",
       "prevStatus": "paid",
-      "nextStatus": "refunded",
+      "nextStatus": "paid",
       "meta": {
         "title": "Partial refund issued",
         "summary": "Finance applied credit memo CM-552 to cover unused time.",
@@ -99,8 +99,8 @@
       "type": "invoice.credit_memo_applied",
       "subject": "invoice",
       "at": "2025-07-01T09:07:15Z",
-      "prevStatus": "refunded",
-      "nextStatus": "refunded",
+      "prevStatus": "paid",
+      "nextStatus": "paid",
       "meta": {
         "title": "Credit memo exported",
         "summary": "Credit memo synced to ERP for revenue recognition rollback.",

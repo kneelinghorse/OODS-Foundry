@@ -51,11 +51,13 @@ module.exports = {
         // ========================================
         
         // Subscription Domain
+        'subscription-status-future': 'var(--colors-semantic-info)',
+        'subscription-status-trialing': 'var(--colors-semantic-accent)',
         'subscription-status-active': 'var(--colors-semantic-success)',
-        'subscription-status-trialing': 'var(--colors-semantic-info)',
-        'subscription-status-past-due': 'var(--colors-semantic-warning)',
-        'subscription-status-canceled': 'var(--colors-semantic-error)',
-        'subscription-status-incomplete': 'var(--colors-semantic-neutral)',
+        'subscription-status-paused': 'var(--colors-semantic-neutral)',
+        'subscription-status-pending-cancellation': 'var(--colors-semantic-info)',
+        'subscription-status-delinquent': 'var(--colors-semantic-error)',
+        'subscription-status-terminated': 'var(--colors-semantic-neutral)',
         
         // User Domain
         'user-role-admin': '#8b5cf6',
@@ -72,9 +74,10 @@ module.exports = {
         'payment-status-refunded': 'var(--colors-semantic-neutral)',
         
         // Invoice Domain
+        'invoice-status-draft': 'var(--colors-semantic-neutral)',
+        'invoice-status-posted': 'var(--colors-semantic-info)',
         'invoice-status-paid': 'var(--colors-semantic-success)',
-        'invoice-status-open': 'var(--colors-semantic-info)',
-        'invoice-status-overdue': 'var(--colors-semantic-error)',
+        'invoice-status-past-due': 'var(--colors-semantic-error)',
         'invoice-status-void': 'var(--colors-semantic-neutral)',
       },
       
@@ -212,11 +215,13 @@ module.exports = {
         },
         {
           values: {
-            'active': theme('colors.subscription-status-active'),
+            'future': theme('colors.subscription-status-future'),
             'trialing': theme('colors.subscription-status-trialing'),
-            'past-due': theme('colors.subscription-status-past-due'),
-            'canceled': theme('colors.subscription-status-canceled'),
-            'incomplete': theme('colors.subscription-status-incomplete'),
+            'active': theme('colors.subscription-status-active'),
+            'paused': theme('colors.subscription-status-paused'),
+            'pending-cancellation': theme('colors.subscription-status-pending-cancellation'),
+            'delinquent': theme('colors.subscription-status-delinquent'),
+            'terminated': theme('colors.subscription-status-terminated'),
           },
         }
       );

@@ -18,7 +18,7 @@ import type { StatusTone } from '@/modifiers/withStatusBadge.modifier';
 <Badge tone="critical">Risk</Badge>;
 
 <Banner
-  status="past_due"
+  status="delinquent"
   domain="subscription"
   title="Payment overdue"
   description="Service is limited until billing is resolved."

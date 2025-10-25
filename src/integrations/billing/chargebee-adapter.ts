@@ -33,7 +33,7 @@ const CHARGEBEE_SUBSCRIPTION_STATUS_MAP: Record<string, SubscriptionStatus> = {
   'active': 'active',
   'non_renewing': 'pending_cancellation',
   'paused': 'paused',
-  'cancelled': 'canceled',
+  'cancelled': 'terminated',
 };
 
 /**

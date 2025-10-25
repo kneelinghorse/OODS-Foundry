@@ -59,9 +59,9 @@ describe('ZuoraAdapter', () => {
         ['PendingActivation', 'future'],
         ['PendingAcceptance', 'trialing'],
         ['Active', 'active'],
-        ['Cancelled', 'canceled'],
+        ['Cancelled', 'terminated'],
         ['Suspended', 'paused'],
-        ['Expired', 'canceled'],
+        ['Expired', 'terminated'],
       ];
 
       statuses.forEach(([zuoraStatus, expectedCanonical]) => {
@@ -219,4 +219,3 @@ describe('ZuoraAdapter', () => {
     });
   });
 });
-

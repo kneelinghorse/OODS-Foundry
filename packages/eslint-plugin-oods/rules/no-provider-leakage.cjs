@@ -56,12 +56,12 @@ const PROVIDER_ID_PATTERNS = [
 
 function globToRegExp(pattern) {
   const escaped = pattern
-    .replace(/[-/\\^$+?.()|[\]{}]/g, '\\$&')
-    .replace(/\\\*\\\*/g, '::DOUBLE_STAR::')
-    .replace(/\\\*/g, '[^/]*')
+    .replace(/[.+^${}()|[\]\\]/g, '\\$&')
+    .replace(/\*\*/g, '::DOUBLE_STAR::')
+    .replace(/\*/g, '[^/]*')
     .replace(/::DOUBLE_STAR::/g, '.*');
 
-  return new RegExp(escaped);
+  return new RegExp(`^${escaped}$`);
 }
 
 function normalizePath(path) {
@@ -217,4 +217,3 @@ module.exports = {
     };
   },
 };
-

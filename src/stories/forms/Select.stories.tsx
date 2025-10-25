@@ -65,7 +65,7 @@ export const ValidationStates: Story = {
       >
         <option value="active">Active</option>
         <option value="trialing">Trialing</option>
-        <option value="canceled">Canceled</option>
+        <option value="terminated">Terminated</option>
       </Select>
       <Select
         id="select-error"
@@ -77,7 +77,7 @@ export const ValidationStates: Story = {
         <option value="">Select a status</option>
         <option value="active">Active</option>
         <option value="trialing">Trialing</option>
-        <option value="canceled">Canceled</option>
+        <option value="terminated">Terminated</option>
       </Select>
     </div>
   ),

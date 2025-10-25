@@ -1,7 +1,7 @@
 {
   "$schema": "../../schemas/ui/status-map.schema.json",
-  "version": "1.0.0",
-  "generated_at": "2025-10-18T19:05:31Z",
+  "version": "1.1.0",
+  "generated_at": "2025-10-27T00:00:00Z",
   "notes": "Billing contexts render subscription and invoice statuses through the canonical token manifest.",
   "domains": {
     "subscription": {
@@ -11,13 +11,10 @@
         "future",
         "trialing",
         "active",
-        "past_due",
+        "delinquent",
         "paused",
         "pending_cancellation",
-        "non_renewing",
-        "incomplete",
-        "incomplete_expired",
-        "canceled"
+        "terminated"
       ]
     },
     "invoice": {
@@ -26,12 +23,8 @@
       "statuses": [
         "draft",
         "posted",
-        "open",
-        "processing",
         "past_due",
         "paid",
-        "refunded",
-        "uncollectible",
         "void"
       ]
     }
