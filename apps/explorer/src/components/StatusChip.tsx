@@ -58,12 +58,14 @@ const ICON_GLYPHS: Record<string, string> = {
   trial: '★',
   paused: '⏸',
   canceled: '∅',
+  terminated: '∅',
   draft: '✎',
   void: '∅',
   paid: '✔︎',
   open: '○',
   future: '⏲',
-  refunded: '↺'
+  refunded: '↺',
+  delinquent: '⚠︎'
 };
 
 const toLabel = (status: string): string =>

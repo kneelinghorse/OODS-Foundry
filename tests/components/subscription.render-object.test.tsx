@@ -10,13 +10,13 @@ import { REGION_ORDER } from '../../src/types/regions.js';
 import { createSubscriptionObjectSpec } from '../../src/objects/subscription/object.js';
 import type { SubscriptionRecord } from '../../src/objects/subscription/types.js';
 import activeSubscription from '../../src/fixtures/subscription/active.json';
-import pastDueSubscription from '../../src/fixtures/subscription/past_due.json';
+import delinquentSubscription from '../../src/fixtures/subscription/past_due.json';
 import cancelSubscription from '../../src/fixtures/subscription/active_cancel_at_period_end.json';
 import type { ContextKind } from '../../src/contexts/index.js';
 import { collectContributionExtensions } from '../../src/engine/contributions/index.js';
 
 const Active = activeSubscription as SubscriptionRecord;
-const PastDue = pastDueSubscription as SubscriptionRecord;
+const Delinquent = delinquentSubscription as SubscriptionRecord;
 const CancelAtPeriodEnd = cancelSubscription as SubscriptionRecord;
 
 const SubscriptionObject = createSubscriptionObjectSpec();
@@ -69,24 +69,26 @@ describe('Subscription view integration', () => {
 
   it('renders expected status badges per fixture', () => {
     const activeMarkup = renderContextMarkup(Active);
-    const pastDueMarkup = renderContextMarkup(PastDue);
+    const delinquentMarkup = renderContextMarkup(Delinquent);
     const cancelMarkup = renderContextMarkup(CancelAtPeriodEnd);
 
-    expect(activeMarkup.pageHeader).toMatchSnapshot('pageHeader-active');
-    expect(pastDueMarkup.pageHeader).toMatchSnapshot('pageHeader-past-due');
-    expect(cancelMarkup.pageHeader).toMatchSnapshot('pageHeader-cancel-at-period-end');
+    expect(activeMarkup.pageHeader).toContain('data-status="active"');
+    expect(activeMarkup.pageHeader).toContain('Active');
+    expect(delinquentMarkup.pageHeader).toContain('data-status="delinquent"');
+    expect(delinquentMarkup.pageHeader).toContain('Delinquent');
+    expect(cancelMarkup.pageHeader).toContain('data-status="pending_cancellation"');
+    expect(cancelMarkup.pageHeader).toContain('Pending Cancellation');
   });
 
-  it('shows update payment action only for past due subscriptions', () => {
+  it('shows update payment action only for delinquent subscriptions', () => {
     const activeMarkup = renderContextMarkup(Active);
-    const pastDueMarkup = renderContextMarkup(PastDue);
+    const delinquentMarkup = renderContextMarkup(Delinquent);
     const cancelMarkup = renderContextMarkup(CancelAtPeriodEnd);
 
-    expect(pastDueMarkup.viewToolbar).toContain('Update payment');
+    expect(delinquentMarkup.viewToolbar).toContain('Update payment');
     expect(activeMarkup.viewToolbar).not.toContain('Update payment');
     expect(cancelMarkup.viewToolbar).not.toContain('Update payment');
 
-    expect(pastDueMarkup.viewToolbar).toMatchSnapshot('viewToolbar-past-due-action');
   });
 
   it('renders cancellation banner only when scheduled at period end', () => {

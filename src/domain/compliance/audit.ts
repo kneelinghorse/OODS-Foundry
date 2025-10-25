@@ -7,7 +7,7 @@
  * @module domain/compliance/audit
  */
 
-import { createHash } from 'crypto';
+import { sha256 } from '../../utils/hash/sha256.js';
 
 /**
  * Audit event severity levels
@@ -77,7 +77,7 @@ export interface AuditLogQuery {
  */
 export function computeAuditHash(data: string | Record<string, unknown>): string {
   const payload = typeof data === 'string' ? data : JSON.stringify(data);
-  return createHash('sha256').update(payload).digest('hex');
+  return sha256(payload);
 }
 
 /**
@@ -188,4 +188,3 @@ export type AuditedAction = typeof AUDITED_ACTIONS[number];
 export function isAuditedAction(action: string): action is AuditedAction {
   return (AUDITED_ACTIONS as readonly string[]).includes(action);
 }
-

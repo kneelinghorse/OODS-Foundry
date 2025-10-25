@@ -30,10 +30,10 @@ export const SubscriptionStates: Story = {
       <StatusChip {...args} status="future" />
       <StatusChip {...args} status="trialing" />
       <StatusChip {...args} status="active" />
-      <StatusChip {...args} status="past_due" />
       <StatusChip {...args} status="paused" />
       <StatusChip {...args} status="pending_cancellation" />
-      <StatusChip {...args} status="canceled" />
+      <StatusChip {...args} status="delinquent" />
+      <StatusChip {...args} status="terminated" />
     </div>
   ),
   parameters: {
@@ -50,11 +50,9 @@ export const InvoiceStates: Story = {
   render: (args: StatusChipArgs) => (
     <div className="story-grid">
       <StatusChip {...args} status="draft" />
-      <StatusChip {...args} status="open" />
-      <StatusChip {...args} status="processing" />
+      <StatusChip {...args} status="posted" />
       <StatusChip {...args} status="paid" />
       <StatusChip {...args} status="past_due" />
-      <StatusChip {...args} status="uncollectible" />
       <StatusChip {...args} status="void" />
     </div>
   ),

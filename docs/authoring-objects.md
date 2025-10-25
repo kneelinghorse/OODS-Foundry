@@ -485,7 +485,7 @@ traits:
   - name: Stateful
     alias: Lifecycle
     parameters:
-      states: [trialing, active, past_due, canceled]
+      states: [future, trialing, active, paused, pending_cancellation, delinquent, terminated]
       allowRollbacks: false
   - name: Billable
     alias: Billing

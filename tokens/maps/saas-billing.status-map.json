@@ -1,6 +1,6 @@
 {
-  "version": "1.0.0",
-  "generated_at": "2025-10-16T02:18:20Z",
+  "version": "1.1.0",
+  "generated_at": "2025-10-27T00:00:00Z",
   "domains": {
     "subscription": {
       "future": {
@@ -48,21 +48,6 @@
           "icon": "icon.status.success"
         }
       },
-      "past_due": {
-        "description": "Renewal payment failed and collection is retrying.",
-        "chip": {
-          "foreground": "color.text.warning",
-          "background": "color.background.warning.subtle",
-          "border": "color.border.warning",
-          "icon": "icon.status.warning"
-        },
-        "banner": {
-          "foreground": "color.text.onbold",
-          "background": "color.background.warning.bold",
-          "border": "color.border.warning",
-          "icon": "icon.status.warning"
-        }
-      },
       "paused": {
         "description": "Billing paused temporarily by finance or customer request.",
         "chip": {
@@ -93,52 +78,22 @@
           "icon": "icon.status.pending"
         }
       },
-      "non_renewing": {
-        "description": "Customer disabled auto renewal but service is still active.",
-        "chip": {
-          "foreground": "color.text.accent",
-          "background": "color.background.accent.subtle",
-          "border": "color.border.accent",
-          "icon": "icon.status.pending"
-        },
-        "banner": {
-          "foreground": "color.text.accent",
-          "background": "color.background.surface.default",
-          "border": "color.border.accent",
-          "icon": "icon.status.pending"
-        }
-      },
-      "incomplete": {
-        "description": "Initial payment failed and customer action is required.",
-        "chip": {
-          "foreground": "color.text.accent",
-          "background": "color.background.accent.subtle",
-          "border": "color.border.accent",
-          "icon": "icon.status.processing"
-        },
-        "banner": {
-          "foreground": "color.text.accent",
-          "background": "color.background.surface.default",
-          "border": "color.border.accent",
-          "icon": "icon.status.processing"
-        }
-      },
-      "incomplete_expired": {
-        "description": "Initial payment window passed without completion; subscription closed.",
+      "delinquent": {
+        "description": "Renewal payment failed; collection retries in progress.",
         "chip": {
           "foreground": "color.text.danger",
           "background": "color.background.danger.subtle",
           "border": "color.border.danger",
-          "icon": "icon.status.error"
+          "icon": "icon.status.warning"
         },
         "banner": {
           "foreground": "color.text.onbold",
           "background": "color.background.danger.bold",
           "border": "color.border.danger",
-          "icon": "icon.status.error"
+          "icon": "icon.status.warning"
         }
       },
-      "canceled": {
+      "terminated": {
         "description": "Subscription ended; service access revoked and billing stopped.",
         "chip": {
           "foreground": "color.text.disabled",
@@ -171,7 +126,7 @@
         }
       },
       "posted": {
-        "description": "Invoice finalized with net payment terms before collection.",
+        "description": "Invoice finalized with terms before collection.",
         "chip": {
           "foreground": "color.text.info",
           "background": "color.background.info.subtle",
@@ -183,51 +138,6 @@
           "background": "color.background.surface.default",
           "border": "color.border.info",
           "icon": "icon.status.pending"
-        }
-      },
-      "open": {
-        "description": "Invoice is awaiting payment and within terms.",
-        "chip": {
-          "foreground": "color.text.info",
-          "background": "color.background.info.subtle",
-          "border": "color.border.info",
-          "icon": "icon.status.pending"
-        },
-        "banner": {
-          "foreground": "color.text.info",
-          "background": "color.background.surface.default",
-          "border": "color.border.info",
-          "icon": "icon.status.pending"
-        }
-      },
-      "processing": {
-        "description": "Payment initiated (ACH or offline) and confirmation pending.",
-        "chip": {
-          "foreground": "color.text.accent",
-          "background": "color.background.accent.subtle",
-          "border": "color.border.accent",
-          "icon": "icon.status.processing"
-        },
-        "banner": {
-          "foreground": "color.text.accent",
-          "background": "color.background.surface.default",
-          "border": "color.border.accent",
-          "icon": "icon.status.processing"
-        }
-      },
-      "past_due": {
-        "description": "Invoice is unpaid past its due date.",
-        "chip": {
-          "foreground": "color.text.danger",
-          "background": "color.background.danger.subtle",
-          "border": "color.border.danger",
-          "icon": "icon.status.error"
-        },
-        "banner": {
-          "foreground": "color.text.onbold",
-          "background": "color.background.danger.bold",
-          "border": "color.border.danger",
-          "icon": "icon.status.error"
         }
       },
       "paid": {
@@ -245,34 +155,19 @@
           "icon": "icon.status.success"
         }
       },
-      "refunded": {
-        "description": "Invoice paid previously and a refund or credit note has been issued.",
+      "past_due": {
+        "description": "Invoice is unpaid past its due date.",
         "chip": {
-          "foreground": "color.text.accent",
-          "background": "color.background.accent.subtle",
-          "border": "color.border.accent",
-          "icon": "icon.status.refunded"
+          "foreground": "color.text.danger",
+          "background": "color.background.danger.subtle",
+          "border": "color.border.danger",
+          "icon": "icon.status.error"
         },
         "banner": {
-          "foreground": "color.text.accent",
-          "background": "color.background.surface.default",
-          "border": "color.border.accent",
-          "icon": "icon.status.refunded"
-        }
-      },
-      "uncollectible": {
-        "description": "Invoice written off as bad debt.",
-        "chip": {
-          "foreground": "color.text.disabled",
-          "background": "color.background.disabled",
-          "border": "color.border.disabled",
-          "icon": "icon.status.canceled"
-        },
-        "banner": {
-          "foreground": "color.text.neutral",
-          "background": "color.background.neutral.subtle",
-          "border": "color.border.neutral",
-          "icon": "icon.status.canceled"
+          "foreground": "color.text.onbold",
+          "background": "color.background.danger.bold",
+          "border": "color.border.danger",
+          "icon": "icon.status.error"
         }
       },
       "void": {

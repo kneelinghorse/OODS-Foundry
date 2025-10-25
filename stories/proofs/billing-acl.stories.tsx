@@ -39,11 +39,21 @@ function BillingObjectViewer({ title, subscription, invoice }: BillingObjectView
             <div>
               <div className="text-sm font-medium text-gray-500 dark:text-gray-400">Status</div>
               <div className="text-base">
-                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                  subscription.status === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
-                  subscription.status === 'past_due' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
-                  'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
-                }`}>
+                <span
+                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                    subscription.status === 'active'
+                      ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                      : subscription.status === 'trialing'
+                      ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                      : subscription.status === 'paused'
+                      ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                      : subscription.status === 'pending_cancellation'
+                      ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                      : subscription.status === 'delinquent'
+                      ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                      : 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
+                  }`}
+                >
                   {subscription.status}
                 </span>
               </div>
@@ -354,4 +364,3 @@ export const AllProviders: Story = {
     );
   },
 };
-

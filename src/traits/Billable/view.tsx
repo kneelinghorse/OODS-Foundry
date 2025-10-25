@@ -109,7 +109,7 @@ function buildPastDueAction<Data extends BillableViewData>(
     type: 'action',
     priority,
     render: ({ data }) => {
-      if (normalizeStatus(data.status) !== 'past_due') {
+      if (normalizeStatus(data.status) !== 'delinquent') {
         return null;
       }
 

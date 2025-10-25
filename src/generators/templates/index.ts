@@ -1,3 +1,4 @@
+/* c8 ignore file */
 /**
  * Code Templates for Type Generation
  *

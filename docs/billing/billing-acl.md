@@ -102,10 +102,10 @@ interface CanonicalSubscription {
 - `future` - Not yet started
 - `trialing` - In trial period
 - `active` - Active subscription
-- `past_due` - Payment overdue
+- `delinquent` - Payment overdue with collection in flight
 - `paused` - Temporarily suspended
 - `pending_cancellation` - Scheduled to cancel
-- `canceled` - Terminated
+- `terminated` - Access ended
 
 ### CanonicalInvoice
 
@@ -351,8 +351,8 @@ describe('StripeAdapter', () => {
   it('should map Stripe statuses correctly', () => {
     const statuses = [
       ['active', 'active'],
-      ['past_due', 'past_due'],
-      ['canceled', 'canceled'],
+      ['past_due', 'delinquent'],
+      ['canceled', 'terminated'],
     ];
     
     statuses.forEach(([stripeStatus, canonicalStatus]) => {
@@ -562,8 +562,8 @@ Provider statuses change over time. Ensure all known statuses are mapped:
 ```typescript
 const STRIPE_STATUS_MAP: Record<string, SubscriptionStatus> = {
   'active': 'active',
-  'past_due': 'past_due',
-  'canceled': 'canceled',
+  'past_due': 'delinquent',
+  'canceled': 'terminated',
   // ... all known statuses
 };
 

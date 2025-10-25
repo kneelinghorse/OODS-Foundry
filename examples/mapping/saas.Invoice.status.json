@@ -14,22 +14,13 @@
         "iconName": "icon.status.draft"
       }
     },
-    "open": {
-      "description": "The invoice is finalized and awaiting payment, before its due date.",
+    "posted": {
+      "description": "The invoice is finalized and awaiting payment before its due date.",
       "default": {
         "foregroundColor": "color.text.info",
         "backgroundColor": "color.background.info.subtle",
         "borderColor": "color.border.info",
         "iconName": "icon.status.pending"
-      }
-    },
-    "processing": {
-      "description": "Payment has been initiated but is not yet confirmed (e.g., ACH).",
-      "default": {
-        "foregroundColor": "color.text.accent",
-        "backgroundColor": "color.background.accent.subtle",
-        "borderColor": "color.border.accent",
-        "iconName": "icon.status.processing"
       }
     },
     "past_due": {
@@ -55,15 +46,6 @@
         "backgroundColor": "color.background.positive.subtle",
         "borderColor": "color.border.positive",
         "iconName": "icon.status.success"
-      }
-    },
-    "uncollectible": {
-      "description": "The invoice is deemed unpayable and written off as bad debt.",
-      "default": {
-        "foregroundColor": "color.text.disabled",
-        "backgroundColor": "color.background.disabled",
-        "borderColor": "color.border.disabled",
-        "iconName": "icon.status.canceled"
       }
     },
     "void": {

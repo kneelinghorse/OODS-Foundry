@@ -104,7 +104,7 @@ Rules
 
 Naming: TraitName:Field (e.g., Stateful:Status)
 
-Values: use lowercase kebab-case (active, past-due, canceled)
+Values: use lowercase kebab-case (future, trialing, active, paused, pending-cancellation, delinquent, terminated)
 
 Defaults: first listed value becomes the default variant
 
@@ -112,7 +112,7 @@ Visibility: variant properties are visible to designers but locked if they come 
 
 Example
 Variant	Values	Token Binding
-Status	Active / Past Due / Canceled	status-success-bg / status-warning-bg / status-error-bg
+Status	Future / Trialing / Active / Paused / Pending Cancellation / Delinquent / Terminated	status-info-bg / status-info-bg / status-success-bg / status-warning-bg / status-info-bg / status-error-bg / status-neutral-bg
 5️⃣ Style Binding (Tokens)
 
 Each trait defines which Figma styles should link to which tokens.

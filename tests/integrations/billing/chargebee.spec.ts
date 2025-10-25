@@ -53,7 +53,7 @@ describe('ChargebeeAdapter', () => {
         ['active', 'active'],
         ['non_renewing', 'pending_cancellation'],
         ['paused', 'paused'],
-        ['cancelled', 'canceled'],
+        ['cancelled', 'terminated'],
       ];
 
       statuses.forEach(([cbStatus, expectedCanonical]) => {
@@ -222,4 +222,3 @@ describe('ChargebeeAdapter', () => {
     });
   });
 });
-

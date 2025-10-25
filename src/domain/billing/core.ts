@@ -7,27 +7,19 @@
  * @module domain/billing/core
  */
 
+import type { SubscriptionState, InvoiceState } from './states.js';
+
 /**
  * Canonical subscription states (7-state model)
+ * @deprecated Use SubscriptionState from ./states.js
  */
-export type SubscriptionStatus =
-  | 'future'
-  | 'trialing'
-  | 'active'
-  | 'past_due'
-  | 'paused'
-  | 'pending_cancellation'
-  | 'canceled';
+export type SubscriptionStatus = SubscriptionState;
 
 /**
  * Canonical invoice states (5-state model)
+ * @deprecated Use InvoiceState from ./states.js
  */
-export type InvoiceStatus =
-  | 'draft'
-  | 'posted'
-  | 'paid'
-  | 'past_due'
-  | 'void';
+export type InvoiceStatus = InvoiceState;
 
 /**
  * Payment intent status
