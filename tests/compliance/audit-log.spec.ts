@@ -34,6 +34,8 @@ describe('AuditLogService', () => {
       expect(event.payloadHash).toBeTruthy();
       expect(event.sequenceNumber).toBe(0);
       expect(event.previousHash).toBeUndefined(); // First entry
+      expect(event.system_time.zoneName).toBe('UTC');
+      expect(event.business_time.isValid).toBe(true);
     });
 
     it('should chain subsequent events', () => {

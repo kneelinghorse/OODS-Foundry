@@ -7,6 +7,7 @@
  * @module services/compliance/rbac-service
  */
 
+import { DateTime } from 'luxon';
 import type {
   Role,
   Permission,
@@ -17,6 +18,7 @@ import type {
   UserOrganizationMembership,
 } from '../../domain/compliance/rbac';
 import { isActiveMembership } from '../../domain/compliance/rbac';
+import TimeService from '../time';
 
 /**
  * In-memory storage for development/testing
@@ -146,8 +148,14 @@ export class RBACService {
       : userRoles;
 
     // Filter expired roles
-    const now = new Date();
-    const activeRoles = scopedRoles.filter(ur => !ur.expiresAt || new Date(ur.expiresAt) > now);
+    const now = TimeService.nowSystem();
+    const activeRoles = scopedRoles.filter((ur) => {
+      if (!ur.expiresAt) {
+        return true;
+      }
+      const expiry = DateTime.fromJSDate(ur.expiresAt).toUTC();
+      return expiry > now;
+    });
 
     // Get base roles
     const baseRoles = activeRoles
@@ -213,12 +221,15 @@ export class RBACService {
       );
     }
 
+    const systemNow = TimeService.nowSystem();
+    const idSeed = systemNow.toMillis().toString(36);
+
     const userRole: UserRole = {
-      id: `ur_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      id: `ur_${idSeed}_${Math.random().toString(36).substr(2, 9)}`,
       userId,
       roleId,
       tenantId,
-      grantedAt: new Date(),
+      grantedAt: systemNow.toJSDate(),
       grantedBy,
       expiresAt,
     };

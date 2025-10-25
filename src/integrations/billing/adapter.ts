@@ -7,12 +7,14 @@
  * @module integrations/billing/adapter
  */
 
+import { DateTime } from 'luxon';
 import type {
   CanonicalSubscriptionWithProvider,
   CanonicalInvoiceWithProvider,
   CanonicalPaymentIntentWithProvider,
 } from '../../domain/billing/core.js';
 import type { BillingEvent } from '../../domain/billing/events.js';
+import TimeService from '../../services/time';
 
 /**
  * Provider name type
@@ -148,19 +150,20 @@ export function toMajorUnits(amountMinor: number, currency: string): number {
 /**
  * Normalize timestamp to ISO 8601
  */
-export function normalizeTimestamp(timestamp: unknown): string {
+export function normalizeTimestamp(timestamp: unknown, timezone?: string): string {
   if (typeof timestamp === 'string') {
-    return timestamp;
+    return TimeService.toIsoString(TimeService.normalizeToUtc(timestamp, timezone));
   }
-  
+
   if (typeof timestamp === 'number') {
     // Unix timestamp (seconds)
-    return new Date(timestamp * 1000).toISOString();
+    const dt = DateTime.fromSeconds(timestamp, { zone: timezone ?? 'UTC' });
+    return TimeService.toIsoString(dt);
   }
-  
+
   if (timestamp instanceof Date) {
-    return timestamp.toISOString();
+    return TimeService.toIsoString(TimeService.fromDatabase(timestamp));
   }
-  
+
   throw new Error(`Invalid timestamp format: ${typeof timestamp}`);
 }

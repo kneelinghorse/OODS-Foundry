@@ -7,6 +7,7 @@
  * @module services/billing/usage-aggregator
  */
 
+import { DateTime } from 'luxon';
 import type { UsageEvent, UsageEventInput, UsageSummary, AggregationPeriod } from '../../domain/billing/usage.js';
 import {
   validateUsageEvent,
@@ -19,6 +20,14 @@ import {
   type UsageEventRepository,
   type UsageSummaryRepository,
 } from './usage-repositories.js';
+import TimeService, { type Tenant } from '../time';
+
+type UsageEventGroup = {
+  events: UsageEvent[];
+  timezone?: string;
+  periodStart: DateTime;
+  periodEnd: DateTime;
+};
 
 /**
  * Date range for aggregation
@@ -52,7 +61,7 @@ export interface AggregationResult {
 export class UsageAggregator {
   private readonly eventRepository: UsageEventRepository;
   private readonly summaryRepository: UsageSummaryRepository;
-  private readonly now: () => Date;
+  private readonly now: () => DateTime;
 
   constructor(options: {
     eventRepository?: UsageEventRepository;
@@ -61,7 +70,8 @@ export class UsageAggregator {
   } = {}) {
     this.eventRepository = options.eventRepository ?? new InMemoryUsageEventRepository();
     this.summaryRepository = options.summaryRepository ?? new InMemoryUsageSummaryRepository();
-    this.now = options.clock ?? (() => new Date());
+    const clock = options.clock ?? (() => TimeService.nowSystem().toJSDate());
+    this.now = () => TimeService.fromDatabase(clock());
   }
   
   /**
@@ -74,6 +84,9 @@ export class UsageAggregator {
       throw new Error(`Invalid usage event: ${validation.errors.join(', ')}`);
     }
     
+    const systemNow = this.now();
+    const recordedAt = input.recordedAt ?? TimeService.toIsoString(systemNow);
+    
     // Create event
     const event: UsageEvent = {
       eventId: generateUsageEventId(input),
@@ -82,11 +95,11 @@ export class UsageAggregator {
       meterName: input.meterName,
       unit: input.unit,
       quantity: input.quantity,
-      recordedAt: input.recordedAt || this.now().toISOString(),
+      recordedAt,
       source: input.source,
       idempotencyKey: input.idempotencyKey,
       metadata: input.metadata,
-      createdAt: this.now().toISOString(),
+      createdAt: TimeService.toIsoString(systemNow),
     };
     
     await this.eventRepository.add(event);
@@ -146,7 +159,7 @@ export class UsageAggregator {
     return {
       summaries,
       eventCount: events.length,
-      processedAt: new Date().toISOString(),
+      processedAt: TimeService.toIsoString(this.now()),
     };
   }
   
@@ -190,17 +203,24 @@ export class UsageAggregator {
   /**
    * Group events by subscription + meter + period
    */
-  private groupEvents(events: UsageEvent[], period: AggregationPeriod): Record<string, UsageEvent[]> {
-    const groups: Record<string, UsageEvent[]> = {};
-    
+  private groupEvents(events: UsageEvent[], period: AggregationPeriod): Record<string, UsageEventGroup> {
+    const groups: Record<string, UsageEventGroup> = {};
+
     for (const event of events) {
-      const periodStart = this.getPeriodStart(event.recordedAt, period);
-      const key = `${event.subscriptionId}:${event.meterName}:${periodStart}`;
-      
+      const timezone = this.extractTimezone(event);
+      const periodStart = this.getPeriodStart(event.recordedAt, period, timezone);
+      const periodEnd = this.getPeriodEnd(periodStart, period);
+      const key = `${event.subscriptionId}:${event.meterName}:${TimeService.toIsoString(periodStart)}::${timezone ?? 'UTC'}`;
+
       if (!groups[key]) {
-        groups[key] = [];
+        groups[key] = {
+          events: [],
+          timezone,
+          periodStart,
+          periodEnd,
+        };
       }
-      groups[key].push(event);
+      groups[key].events.push(event);
     }
     
     return groups;
@@ -210,75 +230,99 @@ export class UsageAggregator {
    * Create usage summary from events
    */
   private createSummary(
-    events: UsageEvent[],
+    group: UsageEventGroup,
     period: AggregationPeriod
   ): UsageSummary {
+    const { events, timezone, periodStart, periodEnd } = group;
+
     if (events.length === 0) {
       throw new Error('Cannot create summary from empty events array');
     }
-    
+
     const first = events[0];
-    const periodStart = this.getPeriodStart(first.recordedAt, period);
-    const periodEnd = this.getPeriodEnd(periodStart, period);
-    
     const totalQuantity = events.reduce((sum, e) => sum + e.quantity, 0);
     const quantities = events.map((e) => e.quantity);
-    const timestamp = this.now().toISOString();
+    const tenant = this.toTenant(first.tenantId, timezone);
+    const dualTimestamp = TimeService.createDualTimestamp(tenant);
+    const periodStartIso = TimeService.toIsoString(periodStart);
+    const periodEndIso = TimeService.toIsoString(periodEnd);
+    const businessBoundary = periodEnd;
+    const aggregatedBusinessIso = TimeService.toIsoString(businessBoundary, { preserveZone: true });
+    const systemIso = TimeService.toIsoString(dualTimestamp.system_time);
     
     return {
-      summaryId: generateUsageSummaryId(first.subscriptionId, first.meterName, periodStart),
+      summaryId: generateUsageSummaryId(first.subscriptionId, first.meterName, periodStartIso),
       subscriptionId: first.subscriptionId,
       tenantId: first.tenantId,
       meterName: first.meterName,
       unit: first.unit,
       period,
-      periodStart,
-      periodEnd,
+      periodStart: periodStartIso,
+      periodEnd: periodEndIso,
       totalQuantity,
       eventCount: events.length,
       minQuantity: Math.min(...quantities),
       maxQuantity: Math.max(...quantities),
       avgQuantity: totalQuantity / events.length,
-      aggregatedAt: timestamp,
-      createdAt: timestamp,
+      aggregatedAt: aggregatedBusinessIso,
+      createdAt: systemIso,
+      business_time: businessBoundary,
+      system_time: dualTimestamp.system_time,
     };
   }
   
   /**
    * Get period start for a date
    */
-  private getPeriodStart(date: string, period: AggregationPeriod): string {
-    const d = new Date(date);
-    
-    if (period === 'daily') {
-      d.setUTCHours(0, 0, 0, 0);
-    } else if (period === 'weekly') {
-      const day = d.getUTCDay();
-      d.setUTCDate(d.getUTCDate() - day); // Start on Sunday
-      d.setUTCHours(0, 0, 0, 0);
+  private getPeriodStart(date: string, period: AggregationPeriod, timezone?: string): DateTime {
+    const zone = this.resolveZone(timezone);
+    let dt = TimeService.normalizeToUtc(date).setZone(zone);
+
+    if (period === 'weekly') {
+      const weekdayIndex = dt.weekday % 7; // Convert Sunday to 0
+      dt = dt.minus({ days: weekdayIndex }).startOf('day');
     } else if (period === 'monthly') {
-      d.setUTCDate(1);
-      d.setUTCHours(0, 0, 0, 0);
+      dt = dt.startOf('month');
+    } else {
+      dt = dt.startOf('day');
     }
-    
-    return d.toISOString();
+
+    return dt;
   }
-  
+
   /**
    * Get period end for a period start
    */
-  private getPeriodEnd(periodStart: string, period: AggregationPeriod): string {
-    const d = new Date(periodStart);
-    
-    if (period === 'daily') {
-      d.setUTCDate(d.getUTCDate() + 1);
-    } else if (period === 'weekly') {
-      d.setUTCDate(d.getUTCDate() + 7);
-    } else if (period === 'monthly') {
-      d.setUTCMonth(d.getUTCMonth() + 1);
+  private getPeriodEnd(periodStart: DateTime, period: AggregationPeriod): DateTime {
+    if (period === 'weekly') {
+      return periodStart.plus({ weeks: 1 });
     }
-    
-    return d.toISOString();
+    if (period === 'monthly') {
+      return periodStart.plus({ months: 1 });
+    }
+    return periodStart.plus({ days: 1 });
+  }
+
+  private extractTimezone(event: UsageEvent): string | undefined {
+    const candidate = event.metadata?.timezone;
+    if (typeof candidate === 'string' && TimeService.isValidTimezone(candidate)) {
+      return candidate;
+    }
+    return undefined;
+  }
+
+  private resolveZone(timezone?: string): string {
+    return timezone && TimeService.isValidTimezone(timezone) ? timezone : 'UTC';
+  }
+
+  private toTenant(tenantId: string, timezone?: string): Tenant | undefined {
+    if (!timezone || !TimeService.isValidTimezone(timezone)) {
+      return undefined;
+    }
+    return {
+      id: tenantId,
+      timezone,
+    };
   }
 }
 

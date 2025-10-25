@@ -6,6 +6,7 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
+import { DateTime } from 'luxon';
 import { UsageAggregator } from '../../../src/services/billing/usage-aggregator.js';
 import { UsageInvoiceBuilder } from '../../../src/services/billing/invoice-builder.js';
 import {
@@ -95,6 +96,9 @@ describe('UsageInvoiceBuilder', () => {
       }
     );
 
+    const invoiceBusinessTime = DateTime.fromISO('2025-02-15T00:00:00Z');
+    const invoiceSystemTime = DateTime.fromISO('2025-02-01T00:00:00Z');
+
     const baseInvoice: CanonicalInvoice = {
       invoiceId: 'inv-alpha',
       invoiceNumber: 'INV-ALPHA-001',
@@ -121,9 +125,14 @@ describe('UsageInvoiceBuilder', () => {
         },
       ],
       attachments: [],
-      createdAt: '2025-02-01T00:00:00Z',
-      updatedAt: '2025-02-01T00:00:00Z',
+      createdAt: invoiceSystemTime.toISO(),
+      updatedAt: invoiceSystemTime.toISO(),
+      business_time: invoiceBusinessTime,
+      system_time: invoiceSystemTime,
     };
+
+    const subscriptionBusiness = DateTime.fromISO('2024-12-01T00:00:00Z');
+    const subscriptionSystem = DateTime.fromISO('2024-12-15T00:00:00Z');
 
     const subscription: CanonicalSubscription = {
       subscriptionId,
@@ -153,8 +162,10 @@ describe('UsageInvoiceBuilder', () => {
         projectedOverageMinor: 0,
       },
       tenantId,
-      createdAt: '2024-12-01T00:00:00Z',
-      updatedAt: '2024-12-15T00:00:00Z',
+      createdAt: subscriptionBusiness.toISO(),
+      updatedAt: subscriptionSystem.toISO(),
+      business_time: subscriptionBusiness,
+      system_time: subscriptionSystem,
     };
 
     const enriched = await builder.attachUsage(baseInvoice, subscription);
@@ -216,6 +227,9 @@ describe('UsageInvoiceBuilder', () => {
       { tenantId: tenantB, period: 'monthly' }
     );
 
+    const invoiceABusiness = DateTime.fromISO('2025-02-10T00:00:00Z');
+    const invoiceASystem = DateTime.fromISO('2025-02-01T00:00:00Z');
+
     const invoiceA: CanonicalInvoice = {
       invoiceId: 'inv-a',
       invoiceNumber: 'INV-A-001',
@@ -232,8 +246,10 @@ describe('UsageInvoiceBuilder', () => {
       subtotalMinor: 1000,
       lineItems: [],
       attachments: [],
-      createdAt: '2025-02-01T00:00:00Z',
-      updatedAt: '2025-02-01T00:00:00Z',
+      createdAt: invoiceASystem.toISO(),
+      updatedAt: invoiceASystem.toISO(),
+      business_time: invoiceABusiness,
+      system_time: invoiceASystem,
     };
 
     const invoiceB: CanonicalInvoice = {
@@ -242,6 +258,9 @@ describe('UsageInvoiceBuilder', () => {
       invoiceNumber: 'INV-B-001',
       subscriptionId: 'sub-b',
     };
+
+    const subscriptionABusiness = DateTime.fromISO('2025-01-01T00:00:00Z');
+    const subscriptionASystem = DateTime.fromISO('2025-01-10T00:00:00Z');
 
     const subscriptionA: CanonicalSubscription = {
       subscriptionId: 'sub-a',
@@ -271,8 +290,10 @@ describe('UsageInvoiceBuilder', () => {
         projectedOverageMinor: 0,
       },
       tenantId: tenantA,
-      createdAt: '2025-01-01T00:00:00Z',
-      updatedAt: '2025-01-10T00:00:00Z',
+      createdAt: subscriptionABusiness.toISO(),
+      updatedAt: subscriptionASystem.toISO(),
+      business_time: subscriptionABusiness,
+      system_time: subscriptionASystem,
     };
 
     const subscriptionB: CanonicalSubscription = {
@@ -300,4 +321,3 @@ describe('UsageInvoiceBuilder', () => {
     );
   });
 });
-

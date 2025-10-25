@@ -6,6 +6,8 @@
  * Templates use template literals for clean, readable code generation.
  */
 
+import TimeService from '../../services/time/index.js';
+
 /**
  * Template for a file header with metadata
  */
@@ -15,13 +17,15 @@ export function fileHeaderTemplate(options: {
   description?: string;
   generatedDate?: string;
 }): string {
-  const { traitName, version, description, generatedDate = new Date().toISOString() } = options;
+  const { traitName, version, description, generatedDate } = options;
+  const now = TimeService.nowSystem();
+  const timestamp = generatedDate ?? TimeService.toIsoString(now);
 
   return `/**
  * Generated types for ${traitName} trait
  *
  * DO NOT EDIT - This file is auto-generated
- * Generated: ${generatedDate}
+ * Generated: ${timestamp}
  * Trait version: ${version}${description ? `\n * \n * ${description}` : ''}
  */
 `;
@@ -169,13 +173,15 @@ export function composedFileTemplate(options: {
   content: string;
   generatedDate?: string;
 }): string {
-  const { traitNames, content, generatedDate = new Date().toISOString() } = options;
+  const { traitNames, content, generatedDate } = options;
+  const now = TimeService.nowSystem();
+  const timestamp = generatedDate ?? TimeService.toIsoString(now);
 
   const header = `/**
  * Composed types for traits: ${traitNames.join(' + ')}
  *
  * DO NOT EDIT - This file is auto-generated
- * Generated: ${generatedDate}
+ * Generated: ${timestamp}
  */
 
 `;

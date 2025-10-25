@@ -7,6 +7,7 @@
  * @module integrations/billing/chargebee-adapter
  */
 
+import { DateTime } from 'luxon';
 import type {
   CanonicalSubscriptionWithProvider,
   CanonicalInvoiceWithProvider,
@@ -23,6 +24,7 @@ import {
   getField,
   normalizeTimestamp,
 } from './adapter.js';
+import TimeService from '../../services/time';
 
 /**
  * Chargebee subscription status mapping
@@ -96,7 +98,7 @@ export class ChargebeeAdapter implements BillingAdapter {
       
       // Map status
       const canonicalStatus = CHARGEBEE_SUBSCRIPTION_STATUS_MAP[status] || 'active';
-      
+
       // Parse plan details
       const planUnitPrice = getField<number>(sub, 'plan_unit_price', 0);
       const planQuantity = getField<number>(sub, 'plan_quantity', 1);
@@ -105,6 +107,15 @@ export class ChargebeeAdapter implements BillingAdapter {
       const billingPeriodUnit = getField<string>(sub, 'billing_period_unit', 'month');
       
       const canonicalInterval = CHARGEBEE_PERIOD_MAP[billingPeriodUnit] || 'monthly';
+
+      const periodStartIso = normalizeTimestamp(currentTermStart);
+      const periodEndIso = normalizeTimestamp(currentTermEnd);
+      const createdAtIso = normalizeTimestamp(requireField<number>(sub, 'created_at', 'chargebee', 'subscription'));
+      const updatedAtIso = normalizeTimestamp(getField<number>(sub, 'updated_at', DateTime.utc().toSeconds()));
+      const trialEndIso = sub.trial_end ? normalizeTimestamp(sub.trial_end) : undefined;
+      const cancellationIso = sub.cancelled_at ? normalizeTimestamp(sub.cancelled_at) : undefined;
+      const systemNow = TimeService.nowSystem();
+      const businessTime = DateTime.fromISO(periodEndIso);
       
       // Build canonical subscription
       const canonical: CanonicalSubscriptionWithProvider = {
@@ -123,11 +134,11 @@ export class ChargebeeAdapter implements BillingAdapter {
             : 0,
         },
         currentPeriod: {
-          start: normalizeTimestamp(currentTermStart),
-          end: normalizeTimestamp(currentTermEnd),
+          start: periodStartIso,
+          end: periodEndIso,
         },
-        trialEndAt: sub.trial_end ? normalizeTimestamp(sub.trial_end) : undefined,
-        cancellationEffectiveAt: sub.cancelled_at ? normalizeTimestamp(sub.cancelled_at) : undefined,
+        trialEndAt: trialEndIso,
+        cancellationEffectiveAt: cancellationIso,
         collectionMethod: getField<string>(sub, 'auto_collection', 'on') === 'on'
           ? 'charge_automatically'
           : 'send_invoice',
@@ -139,13 +150,15 @@ export class ChargebeeAdapter implements BillingAdapter {
           rolloverStrategy: 'none',
         } : undefined,
         tenantId,
-        createdAt: normalizeTimestamp(requireField<number>(sub, 'created_at', 'chargebee', 'subscription')),
-        updatedAt: normalizeTimestamp(getField<number>(sub, 'updated_at', Date.now() / 1000)),
+        createdAt: createdAtIso,
+        updatedAt: updatedAtIso,
+        business_time: businessTime,
+        system_time: systemNow,
         provider: {
           provider: 'chargebee',
           providerResourceId: id,
           providerStatus: status,
-          translatedAt: new Date().toISOString(),
+          translatedAt: TimeService.toIsoString(systemNow),
           translationVersion: '1.0.0',
         },
       };
@@ -179,6 +192,13 @@ export class ChargebeeAdapter implements BillingAdapter {
       
       // Map status
       const canonicalStatus = CHARGEBEE_INVOICE_STATUS_MAP[status] || 'posted';
+
+      const issuedAtIso = normalizeTimestamp(date);
+      const dueAtIso = normalizeTimestamp(dueDate);
+      const updatedAtIso = normalizeTimestamp(getField<number>(inv, 'updated_at', DateTime.utc().toSeconds()));
+      const systemNow = TimeService.nowSystem();
+      const businessTime = DateTime.fromISO(dueAtIso);
+      const paidAtIso = inv.paid_at ? normalizeTimestamp(inv.paid_at) : undefined;
       
       // Parse line items
       const lineItems = getField<Array<Record<string, unknown>>>(inv, 'line_items', []).map((line, idx) => ({
@@ -196,9 +216,9 @@ export class ChargebeeAdapter implements BillingAdapter {
         invoiceNumber: getField<string>(inv, 'invoice_number', id),
         subscriptionId: subscriptionId ? `chargebee_${subscriptionId}` : 'unknown',
         status: canonicalStatus,
-        issuedAt: normalizeTimestamp(date),
-        dueAt: normalizeTimestamp(dueDate),
-        paidAt: inv.paid_at ? normalizeTimestamp(inv.paid_at) : undefined,
+        issuedAt: issuedAtIso,
+        dueAt: dueAtIso,
+        paidAt: paidAtIso,
         totalMinor: total,
         balanceMinor: amountDue,
         currency: currency.toLowerCase(),
@@ -211,13 +231,15 @@ export class ChargebeeAdapter implements BillingAdapter {
         portalUrl: getField<string>(inv, 'invoice_url'),
         paymentSource: getField<string>(inv, 'payment_method', 'invoice') as 'card' | 'ach' | 'wire' | 'invoice',
         tenantId,
-        createdAt: normalizeTimestamp(date),
-        updatedAt: normalizeTimestamp(getField<number>(inv, 'updated_at', Date.now() / 1000)),
+        createdAt: issuedAtIso,
+        updatedAt: updatedAtIso,
+        business_time: businessTime,
+        system_time: systemNow,
         provider: {
           provider: 'chargebee',
           providerResourceId: id,
           providerStatus: status,
-          translatedAt: new Date().toISOString(),
+          translatedAt: TimeService.toIsoString(systemNow),
           translationVersion: '1.0.0',
         },
       };
@@ -288,4 +310,3 @@ export class ChargebeeAdapter implements BillingAdapter {
     }
   }
 }
-

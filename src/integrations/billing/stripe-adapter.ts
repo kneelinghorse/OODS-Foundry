@@ -7,6 +7,7 @@
  * @module integrations/billing/stripe-adapter
  */
 
+import { DateTime } from 'luxon';
 import type {
   CanonicalSubscriptionWithProvider,
   CanonicalInvoiceWithProvider,
@@ -25,6 +26,7 @@ import {
   getField,
   normalizeTimestamp,
 } from './adapter.js';
+import TimeService from '../../services/time';
 
 /**
  * Stripe subscription status mapping
@@ -129,6 +131,12 @@ export class StripeAdapter implements BillingAdapter {
       // Map status
       const canonicalStatus = STRIPE_SUBSCRIPTION_STATUS_MAP[status] || 'active';
       const canonicalInterval = STRIPE_INTERVAL_MAP[interval] || 'monthly';
+
+      const periodStartIso = normalizeTimestamp(currentPeriodStart);
+      const periodEndIso = normalizeTimestamp(currentPeriodEnd);
+      const createdAtIso = normalizeTimestamp(requireField<number>(sub, 'created', 'stripe', 'subscription'));
+      const systemNow = TimeService.nowSystem();
+      const businessTime = DateTime.fromISO(periodEndIso);
       
       // Build canonical subscription
       const canonical: CanonicalSubscriptionWithProvider = {
@@ -146,20 +154,22 @@ export class StripeAdapter implements BillingAdapter {
           trialPeriodDays,
         },
         currentPeriod: {
-          start: normalizeTimestamp(currentPeriodStart),
-          end: normalizeTimestamp(currentPeriodEnd),
+          start: periodStartIso,
+          end: periodEndIso,
         },
         trialEndAt: sub.trial_end ? normalizeTimestamp(sub.trial_end) : undefined,
         cancellationEffectiveAt: sub.cancel_at ? normalizeTimestamp(sub.cancel_at) : undefined,
         collectionMethod: getField<string>(sub, 'collection_method', 'charge_automatically') as 'charge_automatically' | 'send_invoice',
         tenantId,
-        createdAt: normalizeTimestamp(requireField<number>(sub, 'created', 'stripe', 'subscription')),
-        updatedAt: new Date().toISOString(),
+        createdAt: createdAtIso,
+        updatedAt: TimeService.toIsoString(systemNow),
+        business_time: businessTime,
+        system_time: systemNow,
         provider: {
           provider: 'stripe',
           providerResourceId: id,
           providerStatus: status,
-          translatedAt: new Date().toISOString(),
+          translatedAt: TimeService.toIsoString(systemNow),
           translationVersion: '1.0.0',
         },
       };
@@ -194,6 +204,10 @@ export class StripeAdapter implements BillingAdapter {
       
       // Map status
       const canonicalStatus = STRIPE_INVOICE_STATUS_MAP[status] || 'posted';
+      const issuedAtIso = normalizeTimestamp(created);
+      const dueAtIso = normalizeTimestamp(dueDate);
+      const systemNow = TimeService.nowSystem();
+      const businessTime = DateTime.fromISO(dueAtIso);
       
       // Parse line items
       const lines = getField<Array<Record<string, unknown>>>(inv, 'lines', []);
@@ -211,8 +225,8 @@ export class StripeAdapter implements BillingAdapter {
         invoiceNumber: number,
         subscriptionId: subscriptionId ? `stripe_${subscriptionId}` : 'unknown',
         status: canonicalStatus,
-        issuedAt: normalizeTimestamp(created),
-        dueAt: normalizeTimestamp(dueDate),
+        issuedAt: issuedAtIso,
+        dueAt: dueAtIso,
         paidAt: inv.status_transitions && typeof inv.status_transitions === 'object' 
           ? normalizeTimestamp((inv.status_transitions as Record<string, unknown>).paid_at)
           : undefined,
@@ -228,13 +242,15 @@ export class StripeAdapter implements BillingAdapter {
         portalUrl: getField<string>(inv, 'hosted_invoice_url'),
         paymentSource: getField<string>(inv, 'payment_method_type', 'card') as 'card' | 'ach' | 'wire' | 'invoice',
         tenantId,
-        createdAt: normalizeTimestamp(created),
-        updatedAt: new Date().toISOString(),
+        createdAt: issuedAtIso,
+        updatedAt: TimeService.toIsoString(systemNow),
+        business_time: businessTime,
+        system_time: systemNow,
         provider: {
           provider: 'stripe',
           providerResourceId: id,
           providerStatus: status,
-          translatedAt: new Date().toISOString(),
+          translatedAt: TimeService.toIsoString(systemNow),
           translationVersion: '1.0.0',
         },
       };
@@ -262,6 +278,9 @@ export class StripeAdapter implements BillingAdapter {
       
       // Map status
       const canonicalStatus = STRIPE_PAYMENT_INTENT_STATUS_MAP[status] || 'processing';
+      const createdAtIso = normalizeTimestamp(requireField<number>(pi, 'created', 'stripe', 'payment_intent'));
+      const systemNow = TimeService.nowSystem();
+      const businessTime = DateTime.fromISO(createdAtIso);
       
       const canonical: CanonicalPaymentIntentWithProvider = {
         paymentIntentId: `stripe_${id}`,
@@ -279,13 +298,15 @@ export class StripeAdapter implements BillingAdapter {
           declineCode: getField<string>(pi.last_payment_error as Record<string, unknown>, 'decline_code'),
         } : undefined,
         tenantId,
-        createdAt: normalizeTimestamp(requireField<number>(pi, 'created', 'stripe', 'payment_intent')),
-        updatedAt: new Date().toISOString(),
+        createdAt: createdAtIso,
+        updatedAt: TimeService.toIsoString(systemNow),
+        business_time: businessTime,
+        system_time: systemNow,
         provider: {
           provider: 'stripe',
           providerResourceId: id,
           providerStatus: status,
-          translatedAt: new Date().toISOString(),
+          translatedAt: TimeService.toIsoString(systemNow),
           translationVersion: '1.0.0',
         },
       };
@@ -362,4 +383,3 @@ export class StripeAdapter implements BillingAdapter {
     }
   }
 }
-

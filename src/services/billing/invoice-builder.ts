@@ -10,6 +10,8 @@
  */
 
 import { resolve } from 'node:path';
+import { DateTime } from 'luxon';
+import TimeService from '../time';
 import type { CanonicalInvoice, CanonicalSubscription, InvoiceLineItem } from '../../domain/billing/core.js';
 import type { UsageLineItem, UsageSummary, MeterUnit } from '../../domain/billing/usage.js';
 import {
@@ -42,13 +44,14 @@ interface CombinedSummary {
  */
 export class UsageInvoiceBuilder {
   private readonly summaries: UsageSummaryRepository;
-  private readonly now: () => Date;
+  private readonly now: () => DateTime;
 
   constructor(options: UsageInvoiceBuilderOptions = {}) {
     this.summaries =
       options.summaryRepository ??
       new FileUsageSummaryRepository(DEFAULT_SUMMARY_PATH);
-    this.now = options.clock ?? (() => new Date());
+    const clock = options.clock ?? (() => TimeService.nowSystem().toJSDate());
+    this.now = () => TimeService.fromDatabase(clock());
   }
 
   /**
@@ -60,8 +63,8 @@ export class UsageInvoiceBuilder {
   ): Promise<CanonicalInvoice> {
     const periodStartSource = subscription.currentPeriod?.start ?? invoice.issuedAt;
     const periodEndSource = subscription.currentPeriod?.end ?? invoice.dueAt;
-    const periodStart = new Date(periodStartSource).toISOString();
-    const periodEnd = new Date(periodEndSource).toISOString();
+    const periodStart = TimeService.toIsoString(TimeService.normalizeToUtc(periodStartSource));
+    const periodEnd = TimeService.toIsoString(TimeService.normalizeToUtc(periodEndSource));
 
     const summaries = await this.summaries.getBySubscription(
       subscription.subscriptionId,
@@ -110,7 +113,7 @@ export class UsageInvoiceBuilder {
         periodStart: summary.periodStart,
         periodEnd: summary.periodEnd,
         summaryId: summary.summaryIds[0],
-        createdAt: this.now().toISOString(),
+        createdAt: TimeService.toIsoString(this.now()),
       });
     }
 
@@ -131,7 +134,7 @@ export class UsageInvoiceBuilder {
       usageSummaries: summaries,
       usageLineItems,
       lineItems: mergedLineItems,
-      updatedAt: this.now().toISOString(),
+      updatedAt: TimeService.toIsoString(this.now()),
     };
   }
 
@@ -181,8 +184,8 @@ export class UsageInvoiceBuilder {
     totalQuantity: number,
     unitLabel: string | MeterUnit
   ): string {
-    const startDate = new Date(periodStart).toISOString().split('T')[0];
-    const endDate = new Date(periodEnd).toISOString().split('T')[0];
+    const startDate = TimeService.toIsoDateString(TimeService.normalizeToUtc(periodStart));
+    const endDate = TimeService.toIsoDateString(TimeService.normalizeToUtc(periodEnd));
     const meterLabel = meterName.replace(/_/g, ' ');
     return `${meterLabel} usage (${startDate} → ${endDate}) — ${totalQuantity.toLocaleString()} ${unitLabel}`;
   }

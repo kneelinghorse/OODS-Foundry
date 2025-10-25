@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon';
 import type { StatusableViewData } from './types.js';
 
 const TIMESTAMP_FORMATTER = new Intl.DateTimeFormat('en-US', {
@@ -34,12 +35,25 @@ export function formatTimestamp(value: string | null | undefined): string | null
     return null;
   }
 
-  const date = new Date(sanitized);
-  if (Number.isNaN(date.getTime())) {
+  const candidates = [
+    DateTime.fromISO(sanitized, { zone: 'utc' }),
+    DateTime.fromRFC2822(sanitized, { zone: 'utc' }),
+    DateTime.fromSQL(sanitized, { zone: 'utc' }),
+  ];
+
+  let parsed = candidates.find((candidate) => candidate.isValid);
+
+  if (!parsed || !parsed.isValid) {
+    if (/^\d+$/.test(sanitized)) {
+      parsed = DateTime.fromMillis(Number.parseInt(sanitized, 10), { zone: 'utc' });
+    }
+  }
+
+  if (!parsed || !parsed.isValid) {
     return null;
   }
 
-  return TIMESTAMP_FORMATTER.format(date);
+  return TIMESTAMP_FORMATTER.format(parsed.toJSDate());
 }
 
 export function resolveDisplayName(data: StatusableViewData): string {

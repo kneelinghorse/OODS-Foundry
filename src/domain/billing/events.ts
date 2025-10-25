@@ -7,6 +7,7 @@
  * @module domain/billing/events
  */
 
+import { DateTime } from 'luxon';
 import type {
   CanonicalSubscription,
   CanonicalInvoice,
@@ -226,7 +227,7 @@ export class BillingEventsRouter {
       return {
         eventId: event.eventId,
         status: 'duplicate',
-        processedAt: new Date().toISOString(),
+        processedAt: toIsoString(DateTime.utc()),
       };
     }
 
@@ -240,7 +241,7 @@ export class BillingEventsRouter {
       return {
         eventId: event.eventId,
         status: 'accepted',
-        processedAt: new Date().toISOString(),
+        processedAt: toIsoString(DateTime.utc()),
         actions: ['no_handlers'],
       };
     }
@@ -257,7 +258,7 @@ export class BillingEventsRouter {
     return {
       eventId: event.eventId,
       status: failed === 0 ? 'accepted' : 'failed',
-      processedAt: new Date().toISOString(),
+      processedAt: toIsoString(DateTime.utc()),
       actions: [
         `handlers_executed:${successful}`,
         failed > 0 ? `handlers_failed:${failed}` : undefined,
@@ -344,11 +345,12 @@ export function createBillingEvent(
 ): BillingEvent {
   const severity = getEventSeverity(type);
   
+  const timestamp = DateTime.utc();
   return {
     eventId: crypto.randomUUID(),
     type,
     severity,
-    timestamp: new Date().toISOString(),
+    timestamp: toIsoString(timestamp),
     provider,
     data,
     ...options,
@@ -369,4 +371,8 @@ function getEventSeverity(type: BillingEventType): EventSeverity {
     return 'info';
   }
   return 'info';
+}
+
+function toIsoString(dt: DateTime): string {
+  return dt.toISO({ suppressMilliseconds: false }) ?? dt.toFormat("yyyy-LL-dd'T'HH:mm:ss.SSSZZ");
 }

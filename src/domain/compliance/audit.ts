@@ -7,6 +7,7 @@
  * @module domain/compliance/audit
  */
 
+import type { DateTime } from 'luxon';
 import { sha256 } from '../../utils/hash/sha256.js';
 
 /**
@@ -23,8 +24,14 @@ export enum AuditSeverity {
  */
 export interface AuditLogEntry {
   id: string;
-  
-  /** ISO timestamp */
+
+  /** Business timestamp (tenant-relative) */
+  business_time: DateTime;
+
+  /** System timestamp (immutable UTC) */
+  system_time: DateTime;
+
+  /** @deprecated Use business_time/system_time */
   timestamp: string;
   
   /** Actor who performed the action */
@@ -113,7 +120,8 @@ export function verifyChainIntegrity(entries: AuditLogEntry[]): boolean {
 function computeEntryHash(entry: AuditLogEntry): string {
   const canonical = {
     id: entry.id,
-    timestamp: entry.timestamp,
+    system_time: toIsoString(entry.system_time),
+    business_time: toIsoString(entry.business_time, true),
     actorId: entry.actorId,
     action: entry.action,
     resourceRef: entry.resourceRef,
@@ -137,7 +145,7 @@ export function createAuditEvent(params: {
   tenantId?: string;
   metadata?: Record<string, unknown>;
   severity?: AuditSeverity;
-}): Omit<AuditLogEntry, 'id' | 'timestamp' | 'previousHash' | 'sequenceNumber'> {
+}): Omit<AuditLogEntry, 'id' | 'business_time' | 'system_time' | 'timestamp' | 'previousHash' | 'sequenceNumber'> {
   return {
     actorId: params.actorId,
     actorType: params.actorType,
@@ -148,6 +156,11 @@ export function createAuditEvent(params: {
     metadata: params.metadata,
     severity: params.severity ?? AuditSeverity.INFO,
   };
+}
+
+function toIsoString(dt: DateTime, preserveZone = false): string {
+  const target = preserveZone ? dt : dt.toUTC();
+  return target.toISO({ suppressMilliseconds: false }) ?? target.toFormat("yyyy-LL-dd'T'HH:mm:ss.SSSZZ");
 }
 
 /**

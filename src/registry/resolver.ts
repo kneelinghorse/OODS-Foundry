@@ -1,3 +1,4 @@
+import TimeService from '../services/time/index.js';
 import type { TraitDefinition } from '../core/trait-definition.js';
 import type {
   ObjectDefinition,
@@ -148,7 +149,7 @@ export class TraitResolver {
           definition: applied.definition,
           parameters: applied.parameters,
           sourcePath: loadResult.path,
-          resolvedAt: new Date(),
+          resolvedAt: TimeService.nowSystem().toJSDate(),
         };
       })
     );

@@ -3,12 +3,16 @@
  */
 
 import { describe, it, expect, vi, afterEach } from 'vitest';
+import { DateTime } from 'luxon';
 import type { BillingAdapter, ProviderName } from '../../../src/integrations/billing/adapter.js';
 import type { BillingEvent } from '../../../src/domain/billing/events.js';
 import { BillingEventIngestionService } from '../../../src/services/billing/event-ingestion.js';
 import { BillingEventsRouter } from '../../../src/domain/billing/events.js';
 import { AuditLogService } from '../../../src/services/compliance/audit-service.js';
 import { TenancyContext } from '../../../src/services/tenancy/tenancy-context.js';
+
+const invoiceBusinessTime = DateTime.fromISO('2025-02-15T00:00:00Z');
+const invoiceSystemTime = DateTime.fromISO('2025-02-01T00:00:00Z');
 
 const canonicalEvent: BillingEvent = {
   eventId: 'evt_canonical',
@@ -38,8 +42,10 @@ const canonicalEvent: BillingEvent = {
       subtotalMinor: 1000,
       lineItems: [],
       attachments: [],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      createdAt: invoiceSystemTime.toISO(),
+      updatedAt: invoiceSystemTime.toISO(),
+      business_time: invoiceBusinessTime,
+      system_time: invoiceSystemTime,
     },
   },
 };
