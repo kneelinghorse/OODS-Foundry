@@ -9,6 +9,7 @@
 
 import type { SubscriptionState, InvoiceState } from './states.js';
 import type { ProviderName } from '../../integrations/billing/adapter.js';
+import type { UsageLineItem, UsageSummary } from './usage.js';
 
 /**
  * Canonical subscription states (7-state model)
@@ -280,6 +281,12 @@ export interface CanonicalInvoice {
   
   /** Line items */
   lineItems: InvoiceLineItem[];
+
+  /** Aggregated usage summaries attached to the invoice */
+  usageSummaries?: UsageSummary[];
+
+  /** Metered usage line items derived from summaries */
+  usageLineItems?: UsageLineItem[];
   
   /** Attachments */
   attachments: AssetReference[];

@@ -74,6 +74,8 @@
     "tenancy:seed": "tsx scripts/tenancy/seed.ts",
     "tenancy:test": "vitest run tests/tenancy/",
     "tenancy:check": "tsx scripts/tenancy/check.ts",
+    "usage:sample": "node scripts/usage/emit-sample.mjs",
+    "usage:aggregate": "tsx scripts/usage/aggregate.ts",
     "vrt:fallback": "playwright test --config testkits/vrt/playwright.config.ts",
     "vrt:fallback:update": "playwright test --config testkits/vrt/playwright.config.ts --update-snapshots",
     "vrt:lightdark": "node testkits/vrt/storycap.lightdark.mjs --out artifacts/vrt/lightdark/local",
