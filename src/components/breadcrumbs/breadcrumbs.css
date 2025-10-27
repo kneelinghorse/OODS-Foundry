@@ -1,0 +1,172 @@
+/**
+ * Breadcrumbs component styles
+ * Token-driven with high-contrast support
+ */
+
+.breadcrumbs {
+  position: relative;
+  display: block;
+  font-size: var(--breadcrumbs-font-size);
+  font-weight: var(--breadcrumbs-font-weight);
+  color: var(--breadcrumbs-color-text);
+}
+
+.breadcrumbs__list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--breadcrumbs-gap);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.breadcrumbs__list--measurement {
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: 0;
+  visibility: hidden;
+  pointer-events: none;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  overflow: visible;
+}
+
+.breadcrumbs__list-item {
+  display: flex;
+  align-items: center;
+}
+
+.breadcrumbs__item {
+  padding-block: var(--breadcrumbs-padding-block);
+  padding-inline: var(--breadcrumbs-padding-inline);
+  color: var(--breadcrumbs-color-text);
+  text-decoration: none;
+  border-radius: 0.25rem;
+  transition: color 150ms ease-in-out, background-color 150ms ease-in-out;
+}
+
+.breadcrumbs__link {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--breadcrumbs-color-link);
+  text-decoration: underline;
+  text-underline-offset: 0.125rem;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  padding-block: var(--breadcrumbs-padding-block);
+  padding-inline: var(--breadcrumbs-padding-inline);
+  border-radius: 0.25rem;
+}
+
+.breadcrumbs__link:hover {
+  color: var(--breadcrumbs-color-link-hover);
+  background-color: color-mix(in srgb, currentColor 5%, transparent);
+}
+
+.breadcrumbs__link:focus-visible {
+  outline: var(--breadcrumbs-focus-outline-width) solid
+    var(--breadcrumbs-focus-outline-color);
+  outline-offset: 2px;
+}
+
+.breadcrumbs__item--current {
+  font-weight: var(--font-weight-medium, 500);
+  color: var(--breadcrumbs-color-text-current);
+}
+
+.breadcrumbs__item--disabled {
+  color: var(--breadcrumbs-color-text-disabled);
+  cursor: not-allowed;
+}
+
+.breadcrumbs__separator {
+  color: var(--breadcrumbs-color-separator);
+  flex-shrink: 0;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.breadcrumbs__overflow-trigger {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--breadcrumbs-color-link);
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: var(--font-weight-bold, 700);
+  padding-block: var(--breadcrumbs-padding-block);
+  padding-inline: var(--breadcrumbs-padding-inline);
+  border-radius: 0.25rem;
+  letter-spacing: 0.05em;
+}
+
+.breadcrumbs__overflow-trigger:hover {
+  color: var(--breadcrumbs-color-link-hover);
+  background-color: color-mix(in srgb, currentColor 5%, transparent);
+}
+
+.breadcrumbs__overflow-trigger:focus-visible {
+  outline: var(--breadcrumbs-focus-outline-width) solid
+    var(--breadcrumbs-focus-outline-color);
+  outline-offset: 2px;
+}
+
+.breadcrumbs__overflow-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 180px;
+}
+
+.breadcrumbs__overflow-item {
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.25rem;
+  font-family: inherit;
+  font-size: var(--font-size-body-md, 0.875rem);
+  color: var(--breadcrumbs-color-link);
+  transition: background-color 150ms ease-in-out;
+  text-decoration: none;
+  display: block;
+  width: 100%;
+}
+
+.breadcrumbs__overflow-item:hover:not(:disabled) {
+  background-color: color-mix(in srgb, currentColor 8%, transparent);
+}
+
+.breadcrumbs__overflow-item:focus-visible {
+  outline: var(--breadcrumbs-focus-outline-width) solid
+    var(--breadcrumbs-focus-outline-color);
+  outline-offset: -2px;
+}
+
+.breadcrumbs__overflow-item--disabled {
+  color: var(--breadcrumbs-color-text-disabled);
+  cursor: not-allowed;
+}
+
+/* High-contrast mode support */
+@media (forced-colors: active) {
+  .breadcrumbs__link,
+  .breadcrumbs__overflow-trigger,
+  .breadcrumbs__overflow-item {
+    forced-color-adjust: auto;
+  }
+
+  .breadcrumbs__link:focus-visible,
+  .breadcrumbs__overflow-trigger:focus-visible,
+  .breadcrumbs__overflow-item:focus-visible {
+    outline: 2px solid CanvasText;
+  }
+
+  .breadcrumbs__separator {
+    color: CanvasText;
+  }
+}
