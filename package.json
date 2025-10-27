@@ -74,6 +74,8 @@
     "tenancy:seed": "tsx scripts/tenancy/seed.ts",
     "tenancy:test": "vitest run tests/tenancy/",
     "tenancy:check": "tsx scripts/tenancy/check.ts",
+    "adoption:audit": "node scripts/adoption/audit.mjs",
+    "adoption:storybook-checklist": "node scripts/adoption/storybook-checklist.mjs",
     "usage:sample": "node scripts/usage/emit-sample.mjs",
     "usage:aggregate": "tsx scripts/usage/aggregate.ts",
     "vrt:fallback": "playwright test --config testkits/vrt/playwright.config.ts",
@@ -102,7 +104,8 @@
     "validate:contexts": "node scripts/validate-contexts.cjs",
     "pipeline:push": "pnpm run build:tokens && pnpm run build-storybook && (pnpm run chromatic || echo chromatic skipped) && pnpm run vrt:hc && pnpm run current-state:sprint08 && pnpm run validate:contexts && pnpm run purity:audit",
     "pack:verify": "bash scripts/release/local-release.sh",
-    "purity:audit": "node scripts/purity/audit.js"
+    "purity:audit": "node scripts/purity/audit.js",
+    "state:token-breaking": "CMOS_TOKEN_LABELS=token-change:breaking node scripts/state-assessment.mjs"
   },
   "keywords": [
     "design-system",
@@ -123,7 +126,9 @@
     "@storybook/addon-vitest": "^9.1.10",
     "@storybook/react": "9.1.10",
     "@storybook/react-vite": "^9.1.10",
+    "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.6.1",
     "@tokens-studio/sd-transforms": "^1.3.0",
     "@types/js-yaml": "^4.0.9",
     "@types/luxon": "^3.7.1",
@@ -154,7 +159,8 @@
     "tsx": "^4.20.6",
     "typescript": "~5.3.3",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "vitest-axe": "^0.1.0"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.1.2",
