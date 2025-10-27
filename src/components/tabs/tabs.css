@@ -10,13 +10,15 @@
   --tabs-padding-block: var(--sys-space-stack-compact, 0.5rem);
   --tabs-padding-inline: var(--sys-space-inline-sm, 1rem);
 
-  --tabs-color-text-default: var(--sys-text-primary, #1a1a1a);
-  --tabs-color-text-selected: var(--sys-text-accent, #005fcc);
-  --tabs-color-text-disabled: var(--sys-text-muted, #999);
-  --tabs-color-bg-hover: var(--sys-surface-subtle, #f5f5f5);
-  --tabs-color-border-base: var(--sys-border-subtle, #e0e0e0);
-  --tabs-color-border-selected: var(--sys-border-strong, #005fcc);
-  --tabs-focus-outer: var(--sys-focus-ring-outer, #0066cc);
+  --tabs-color-text-default: var(--sys-text-primary, CanvasText);
+  --tabs-color-text-selected: var(--sys-text-accent, Highlight);
+  --tabs-color-text-disabled: var(--sys-text-muted, GrayText);
+  --tabs-color-bg-hover: var(--sys-surface-subtle, Canvas);
+  --tabs-color-border-base: var(--sys-border-subtle, CanvasText);
+  --tabs-color-border-selected: var(--sys-border-strong, Highlight);
+  --tabs-focus-outer: var(--sys-focus-ring-outer, Highlight);
+  --tabs-shadow-offset-y: var(--sys-space-stack-default, 1.5rem);
+  --tabs-shadow-blur: calc(var(--sys-space-stack-default, 1.5rem) * 2.5);
   --tabs-border-width: 2px;
 
   display: flex;
@@ -94,7 +96,7 @@
   box-sizing: border-box;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--sys-space-inline-xs, 0.5rem);
   cursor: pointer;
   font-size: var(--tabs-font-size);
   padding: var(--tabs-padding-block) var(--tabs-padding-inline);
@@ -124,12 +126,13 @@
   flex-direction: column;
   min-width: 160px;
   padding: var(--sys-space-inset-compact, 0.5rem);
-  background: var(--sys-surface-raised, #ffffff);
+  background: var(--sys-surface-raised, Canvas);
   border: 1px solid var(--tabs-color-border-base);
   border-radius: 4px;
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--tabs-color-border-base) 35%, transparent),
-    0 16px 40px rgba(15, 23, 42, 0.12);
+    0 var(--tabs-shadow-offset-y) var(--tabs-shadow-blur)
+      color-mix(in srgb, var(--sys-text-primary, CanvasText) 18%, transparent);
 }
 
 .tabs__overflow-item {
