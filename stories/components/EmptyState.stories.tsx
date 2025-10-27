@@ -13,7 +13,7 @@ type Story = StoryObj<EmptyStateProps>;
 
 const CAPTION_STYLE: React.CSSProperties = {
   fontSize: '0.8125rem',
-  color: 'var(--cmp-text-muted, var(--sys-color-text-secondary, #6b7280))',
+  color: 'var(--cmp-text-muted, var(--sys-color-text-secondary))',
   maxWidth: '32rem',
   textAlign: 'center',
   margin: 0,
@@ -49,13 +49,13 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     transition: 'background-color 120ms ease, color 120ms ease, border-color 120ms ease',
     border: isPrimary
       ? '1px solid transparent'
-      : '1px solid var(--cmp-border-default, var(--sys-border-subtle, #d1d5db))',
+      : '1px solid var(--cmp-border-default, var(--sys-border-subtle))',
     backgroundColor: isPrimary
-      ? 'var(--cmp-surface-action, var(--sys-surface-interactive-primary, #2563eb))'
+      ? 'var(--cmp-surface-action, var(--sys-surface-interactive-primary))'
       : 'transparent',
     color: isPrimary
-      ? 'var(--cmp-text-on_action, var(--sys-text-on-interactive, #ffffff))'
-      : 'var(--cmp-text-action, var(--sys-text-interactive-primary, #2563eb))',
+      ? 'var(--cmp-text-on_action, var(--sys-text-on-interactive))'
+      : 'var(--cmp-text-action, var(--sys-text-interactive-primary))',
     boxShadow: isPrimary
       ? 'inset 0 -1px 0 color-mix(in srgb, currentColor 14%, transparent)'
       : 'none',
@@ -120,10 +120,36 @@ const SampleIllustration: React.FC = () => (
     xmlns="http://www.w3.org/2000/svg"
     role="presentation"
   >
-    <rect x="18" y="46" width="164" height="88" rx="12" fill="#E5E7EB" />
-    <rect x="38" y="66" width="124" height="10" rx="5" fill="#94A3B8" />
-    <rect x="38" y="88" width="92" height="10" rx="5" fill="#CBD5F5" />
-    <circle cx="100" cy="114" r="22" fill="#BFDBFE" />
+    <rect
+      x="18"
+      y="46"
+      width="164"
+      height="88"
+      rx="12"
+      fill="var(--cmp-surface-subtle, var(--sys-surface-subtle))"
+    />
+    <rect
+      x="38"
+      y="66"
+      width="124"
+      height="10"
+      rx="5"
+      fill="var(--cmp-text-muted, var(--sys-text-muted))"
+    />
+    <rect
+      x="38"
+      y="88"
+      width="92"
+      height="10"
+      rx="5"
+      fill="var(--cmp-status-info-surface, var(--sys-status-info-surface))"
+    />
+    <circle
+      cx="100"
+      cy="114"
+      r="22"
+      fill="var(--cmp-status-info-surface, var(--sys-status-info-surface))"
+    />
   </svg>
 );
 

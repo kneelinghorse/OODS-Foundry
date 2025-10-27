@@ -1,4 +1,4 @@
-import { Meta, Canvas, ArgsTable } from '@storybook/blocks';
+import { Meta, Canvas } from '@storybook/blocks';
 import * as EmptyStateStories from './EmptyState.stories';
 
 <Meta of={EmptyStateStories} title="Components/Feedback/EmptyState/Guidelines" />
@@ -65,10 +65,6 @@ Empty states set expectations when there is no data, the user is onboarding, or 
 - All illustrations/icons are rendered `aria-hidden`—ensure text conveys the full message.  
 - Buttons are standard HTML elements; focus order follows document flow.  
 - Component snapshots include axe coverage (`tests/components/empty-state.spec.tsx`).
-
-## Props
-
-<ArgsTable of={EmptyStateStories.default} />
 
 ## Additional Resources
 
