@@ -452,4 +452,304 @@ const paginatedData = useMemo(() => {
 
 ## Breadcrumbs
 
-_(To be implemented in B18.4)_
+The Breadcrumbs component provides hierarchical location context and navigation through nested site structures.
+
+### Features
+
+- **Smart overflow** - Collapses middle items into an overflow menu when layout width cannot accommodate the full path or when it exceeds `maxVisibleItems`
+- **First/last preservation** - Always keeps first and last items visible for context and current page clarity
+- **Semantic landmarks** - Uses `<nav>` with `aria-label="breadcrumb"` and `aria-current="page"` for screen readers
+- **Flexible item types** - Supports both links (`href`) and buttons for navigation
+- **High-contrast mode** - Link colors and separators respect `forced-colors` system settings
+- **Keyboard accessible** - All links/buttons in tab order, overflow menu keyboard navigable
+
+### Usage
+
+```tsx
+import { Breadcrumbs } from '@oods/components';
+
+const items = [
+  { id: '1', label: 'Home', href: '/' },
+  { id: '2', label: 'Products', href: '/products' },
+  { id: '3', label: 'Electronics', href: '/products/electronics' },
+  { id: '4', label: 'Laptops' }, // Current page (no href)
+];
+
+<Breadcrumbs
+  items={items}
+  maxVisibleItems={5}
+  onItemClick={(item) => console.log('Navigating to:', item.label)}
+  aria-label="breadcrumb"
+/>;
+```
+
+### API
+
+#### BreadcrumbsProps
+
+| Prop              | Type                                  | Default        | Description                                     |
+| ----------------- | ------------------------------------- | -------------- | ----------------------------------------------- |
+| `items`           | `BreadcrumbItem[]`                    | -              | Array of breadcrumb items (required)            |
+| `maxVisibleItems` | `number`                              | `5`            | Max visible items before overflow               |
+| `overflowLabel`   | `string`                              | `'...'`        | Label for overflow menu trigger                 |
+| `onItemClick`     | `(item: BreadcrumbItem) => void`      | -              | Callback when item is clicked                   |
+| `aria-label`      | `string`                              | `'breadcrumb'` | Accessible label for navigation landmark        |
+| `className`       | `string`                              | -              | Additional CSS class                            |
+
+#### BreadcrumbItem
+
+| Property   | Type      | Description                                    |
+| ---------- | --------- | ---------------------------------------------- |
+| `id`       | `string`  | Unique identifier (required)                   |
+| `label`    | `string`  | Display text (required)                        |
+| `href`     | `string`  | Optional URL for navigation (anchor link)      |
+| `disabled` | `boolean` | Whether this item is disabled (optional)       |
+
+### Accessibility
+
+The Breadcrumbs component follows WCAG 2.1 AA and WAI-ARIA Breadcrumb pattern:
+
+- **Landmark**: Uses `<nav>` with `aria-label="breadcrumb"` to identify the breadcrumb trail
+- **Current page**: Last item marked with `aria-current="page"` for screen readers
+- **Ordered list**: Uses `<ol>` for semantic structure representing navigation hierarchy
+- **Link vs. Button**: Items with `href` render as `<a>` tags, items without render as `<button>` (unless disabled or current)
+- **Disabled state**: Disabled items render as `<span>` with appropriate styling
+- **Keyboard support**:
+  - Links and buttons are keyboard navigable with Tab
+  - Overflow menu accessible via Enter/Space on trigger
+  - Overflow items navigable with arrow keys
+- **Focus indicators**: Clear 2px outline on focus-visible
+- **High-contrast mode**: Separators and link colors respect system forced-colors
+
+### Overflow Behavior
+
+When the breadcrumb path exceeds `maxVisibleItems`, middle items collapse into an overflow menu:
+
+#### No Overflow (≤ maxVisibleItems)
+```
+Home > Products > Electronics > Computers > Laptops
+```
+
+#### With Overflow (> maxVisibleItems)
+```
+Home > ... > Laptops
+```
+
+The overflow menu (`...` button) contains all hidden middle items:
+- First item always visible
+- Last item (current page) always visible
+- Middle items hidden in overflow menu
+
+**Example**: 7 items with `maxVisibleItems={3}`
+- Visible: [Home] [...] [Current Page]
+- Overflow menu: [Products, Electronics, Computers, Laptops, Gaming]
+
+### Responsive Behavior
+
+Breadcrumbs wrap naturally on narrow viewports. Consider reducing `maxVisibleItems` on mobile to minimize overflow menu depth:
+
+```tsx
+const isMobile = useMediaQuery('(max-width: 640px)');
+
+<Breadcrumbs
+  items={items}
+  maxVisibleItems={isMobile ? 2 : 5}
+/>
+```
+
+### Theming
+
+Breadcrumbs use semantic design tokens for consistent theming:
+
+| Token                           | Usage                              |
+| ------------------------------- | ---------------------------------- |
+| `--cmp-text-body`               | Default text and current page      |
+| `--cmp-text-action`             | Link text                          |
+| `--cmp-text-action_hover`       | Link hover text                    |
+| `--cmp-text-disabled`           | Disabled item text                 |
+| `--cmp-text-subtle`             | Separator icon color               |
+| `--font-size-body-sm`           | Breadcrumb font size               |
+| `--font-weight-regular`         | Default font weight                |
+| `--font-weight-medium`          | Current page font weight           |
+| `--spacing-inline-xs`           | Gap between items                  |
+| `--spacing-squish-block-xs`     | Item padding (vertical)            |
+| `--spacing-squish-inline-xs`    | Item padding (horizontal)          |
+
+### Examples
+
+#### Basic Breadcrumbs
+
+```tsx
+const items = [
+  { id: '1', label: 'Home', href: '/' },
+  { id: '2', label: 'Products', href: '/products' },
+  { id: '3', label: 'Laptops' },
+];
+
+<Breadcrumbs items={items} />
+```
+
+#### With Router Integration
+
+```tsx
+import { useRouter } from 'next/router';
+
+const items = [
+  { id: '1', label: 'Home', href: '/' },
+  { id: '2', label: 'Docs', href: '/docs' },
+  { id: '3', label: 'Components', href: '/docs/components' },
+  { id: '4', label: 'Breadcrumbs' },
+];
+
+<Breadcrumbs
+  items={items}
+  onItemClick={(item) => {
+    if (item.href) {
+      router.push(item.href);
+    }
+  }}
+/>
+```
+
+#### With Overflow Menu
+
+```tsx
+const items = [
+  { id: '1', label: 'Root', href: '/' },
+  { id: '2', label: 'Products', href: '/products' },
+  { id: '3', label: 'Electronics', href: '/products/electronics' },
+  { id: '4', label: 'Computers', href: '/products/electronics/computers' },
+  { id: '5', label: 'Laptops', href: '/products/electronics/computers/laptops' },
+  { id: '6', label: 'Gaming', href: '/products/electronics/computers/laptops/gaming' },
+  { id: '7', label: 'High Performance' },
+];
+
+<Breadcrumbs
+  items={items}
+  maxVisibleItems={3}  // Shows: Root > ... > High Performance
+/>
+```
+
+#### With Disabled Items
+
+```tsx
+const items = [
+  { id: '1', label: 'Home', href: '/' },
+  { id: '2', label: 'Archive (disabled)', href: '/archive', disabled: true },
+  { id: '3', label: 'Legacy Content' },
+];
+
+<Breadcrumbs items={items} />
+```
+
+#### Internationalized Labels
+
+```tsx
+const items = [
+  { id: '1', label: 'Accueil', href: '/' },
+  { id: '2', label: 'Produits', href: '/produits' },
+  { id: '3', label: 'Électronique', href: '/produits/electronique' },
+  { id: '4', label: 'Ordinateurs portables' },
+];
+
+<Breadcrumbs items={items} aria-label="Fil d'Ariane" />
+```
+
+### Best Practices
+
+✅ **Do**:
+
+- Use concise, descriptive labels (avoid truncation when possible)
+- Keep the last item as current page without href (represents current location)
+- Provide an accessible `aria-label` for screen readers
+- Use consistent label casing (sentence case recommended)
+- Place breadcrumbs near the top of the page, below main navigation
+- Use overflow menu for paths deeper than 5-7 levels
+
+❌ **Don't**:
+
+- Don't make the current page clickable (no href on last item)
+- Don't use breadcrumbs for single-level navigation (not hierarchical)
+- Don't duplicate primary navigation (breadcrumbs show location, not all options)
+- Don't use breadcrumbs on mobile if space is constrained (consider alternatives)
+- Don't mix breadcrumbs with other navigation patterns in the same space
+- Don't use extremely long labels (restructure hierarchy if labels are too verbose)
+
+### Related Components
+
+- **Tabs** - For switching between peer content sections
+- **Pagination** - For navigating through paginated datasets
+- **Stepper** - For multi-step workflows with sequential progress
+
+### Integration Patterns
+
+#### Dynamic Breadcrumbs from Route
+
+```tsx
+import { usePathname } from 'next/navigation';
+
+function useBreadcrumbs() {
+  const pathname = usePathname();
+
+  const items = useMemo(() => {
+    const segments = pathname.split('/').filter(Boolean);
+    return segments.map((segment, index) => {
+      const href = '/' + segments.slice(0, index + 1).join('/');
+      const label = segment.charAt(0).toUpperCase() + segment.slice(1);
+      const isLast = index === segments.length - 1;
+
+      return {
+        id: String(index),
+        label,
+        href: isLast ? undefined : href,
+      };
+    });
+  }, [pathname]);
+
+  return [{ id: 'home', label: 'Home', href: '/' }, ...items];
+}
+
+// Usage
+const breadcrumbItems = useBreadcrumbs();
+<Breadcrumbs items={breadcrumbItems} />
+```
+
+#### Schema.org Structured Data
+
+```tsx
+import { useJsonLd } from 'next-seo';
+
+function BreadcrumbsWithSchema({ items }) {
+  useJsonLd({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.label,
+      item: item.href ? `https://example.com${item.href}` : undefined,
+    })),
+  });
+
+  return <Breadcrumbs items={items} />;
+}
+```
+
+#### With Page Context
+
+```tsx
+<header>
+  <nav aria-label="Main">
+    <Logo />
+    <MainNav />
+  </nav>
+
+  <nav aria-label="breadcrumb">
+    <Breadcrumbs items={breadcrumbItems} />
+  </nav>
+</header>
+
+<main>
+  {/* Page content */}
+</main>
+```

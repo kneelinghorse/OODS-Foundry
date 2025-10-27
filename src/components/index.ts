@@ -4,4 +4,5 @@ export * from './page/index.js';
 export * from './progress/index.js';
 export * from './stepper/index.js';
 export * from './tabs/index.js';
+export * from './breadcrumbs/index.js';
 export { OODS } from './OODS.js';
