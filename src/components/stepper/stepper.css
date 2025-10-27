@@ -1,0 +1,228 @@
+/**
+ * Stepper component styles
+ */
+
+/* ============================================================================
+   Stepper Container
+   ========================================================================== */
+
+.stepper {
+  display: flex;
+  padding: 0;
+  margin: 0;
+}
+
+.stepper--horizontal {
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+.stepper--vertical {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* ============================================================================
+   Step Item
+   ========================================================================== */
+
+.stepper__step {
+  flex: 1;
+  display: flex;
+  position: relative;
+}
+
+.stepper--horizontal .stepper__step {
+  flex-direction: column;
+  align-items: center;
+}
+
+.stepper--vertical .stepper__step {
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+/* ============================================================================
+   Step Header
+   ========================================================================== */
+
+.stepper__step-header {
+  display: flex;
+  align-items: center;
+  cursor: default;
+}
+
+.stepper--horizontal .stepper__step-header {
+  flex-direction: column;
+  text-align: center;
+}
+
+.stepper--vertical .stepper__step-header {
+  flex-direction: row;
+  text-align: left;
+}
+
+.stepper__step--clickable .stepper__step-header {
+  cursor: pointer;
+}
+
+.stepper__step--clickable .stepper__step-header:hover .stepper__step-icon {
+  transform: scale(1.1);
+}
+
+.stepper__step--clickable .stepper__step-header:focus {
+  outline: var(--stepper-focus-outline-width, var(--sys-focus-width, 2px))
+    solid var(--stepper-focus-outline-color, var(--sys-focus-text));
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ============================================================================
+   Step Indicator
+   ========================================================================== */
+
+.stepper__step-indicator {
+  flex-shrink: 0;
+}
+
+.stepper__step-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--stepper-step-border-color);
+  background-color: var(--stepper-step-icon-surface, var(--sys-surface-raised));
+  color: var(--stepper-step-icon-color);
+  font-size: 14px;
+  font-weight: 600;
+  transition: transform 0.2s ease-out;
+}
+
+/* Current step styling */
+.stepper__step--current .stepper__step-icon {
+  background-color: var(--stepper-step-fill-color, var(--stepper-step-border-color));
+  color: var(--stepper-step-fill-contrast, var(--sys-text-on_interactive));
+}
+
+/* Completed step styling */
+.stepper__step--completed .stepper__step-icon {
+  background-color: var(--stepper-step-fill-color, var(--stepper-step-border-color));
+  color: var(--stepper-step-fill-contrast, var(--sys-text-on_interactive));
+}
+
+/* ============================================================================
+   Step Content
+   ========================================================================== */
+
+.stepper__step-content {
+  margin-top: 8px;
+}
+
+.stepper--vertical .stepper__step-content {
+  margin-top: 0;
+  margin-left: 12px;
+}
+
+.stepper__step-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--stepper-step-text-color);
+  margin: 0;
+}
+
+.stepper__step-description {
+  font-size: 12px;
+  color: var(--stepper-step-description-color, var(--sys-text-secondary));
+  margin-top: 4px;
+}
+
+.stepper__step-optional {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--stepper-step-optional-color, var(--sys-text-secondary));
+}
+
+/* ============================================================================
+   Connector
+   ========================================================================== */
+
+.stepper__connector {
+  position: relative;
+  background-color: var(--stepper-connector-color, var(--sys-border-subtle));
+}
+
+.stepper__connector--horizontal {
+  height: 2px;
+  flex: 1;
+  margin: 16px 8px 0 8px;
+  align-self: flex-start;
+}
+
+.stepper__connector--vertical {
+  width: 2px;
+  height: 32px;
+  margin-left: 15px;
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+/* Connector for completed steps */
+.stepper__step--completed + .stepper__step .stepper__connector,
+.stepper__step--completed .stepper__connector {
+  background-color: var(--stepper-connector-active-color, var(--cmp-status-info-border));
+}
+
+/* ============================================================================
+   Status-specific Styles
+   ========================================================================== */
+
+.stepper__step--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.stepper__step--disabled .stepper__step-header {
+  cursor: not-allowed;
+}
+
+/* ============================================================================
+   Responsive & Reduced Motion
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .stepper__step-icon,
+  .stepper__connector {
+    transition: none;
+  }
+}
+
+/* Mobile adjustments */
+@media (max-width: 640px) {
+  .stepper--horizontal {
+    flex-direction: column;
+  }
+
+  .stepper--horizontal .stepper__step {
+    flex-direction: row;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .stepper--horizontal .stepper__step-header {
+    flex-direction: row;
+    text-align: left;
+  }
+
+  .stepper--horizontal .stepper__step-content {
+    margin-top: 0;
+    margin-left: 12px;
+  }
+
+  .stepper__connector--horizontal {
+    width: 2px;
+    height: 32px;
+    margin: 4px 0 4px 15px;
+  }
+}

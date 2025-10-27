@@ -1,0 +1,118 @@
+/**
+ * Progress component styles
+ */
+
+/* ============================================================================
+   Linear Progress
+   ========================================================================== */
+
+.progress-linear {
+  width: 100%;
+  position: relative;
+}
+
+.progress-linear__track {
+  width: 100%;
+  height: var(--progress-linear-height, 6px);
+  background-color: var(--progress-linear-track);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-linear__fill {
+  height: 100%;
+  background-color: var(--progress-linear-fill);
+  border-radius: 999px;
+  transition: width 0.3s ease-out;
+}
+
+/* Indeterminate animation */
+.progress-linear--indeterminate .progress-linear__fill {
+  width: 40%;
+  animation: progress-indeterminate 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes progress-indeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(250%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .progress-linear__fill {
+    transition: none;
+  }
+
+  .progress-linear--indeterminate .progress-linear__fill {
+    animation: none;
+    width: 100%;
+    opacity: 0.5;
+  }
+}
+
+/* ============================================================================
+   Circular Progress
+   ========================================================================== */
+
+.progress-circular {
+  display: inline-block;
+  position: relative;
+}
+
+.progress-circular__svg {
+  display: block;
+  transform: rotate(-90deg);
+}
+
+.progress-circular__fill {
+  transition: stroke-dashoffset 0.3s ease-out;
+}
+
+/* Indeterminate (spinner) animation */
+.progress-circular--indeterminate .progress-circular__svg {
+  animation: progress-circular-rotate 1.4s linear infinite;
+}
+
+.progress-circular--indeterminate .progress-circular__fill {
+  animation: progress-circular-dash 1.4s ease-in-out infinite;
+}
+
+@keyframes progress-circular-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes progress-circular-dash {
+  0% {
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dashoffset: calc(var(--progress-circular-diameter, 40px) * 3.14159 * 0.5);
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .progress-circular__fill {
+    transition: none;
+  }
+
+  .progress-circular--indeterminate .progress-circular__svg,
+  .progress-circular--indeterminate .progress-circular__fill {
+    animation: none;
+  }
+}
