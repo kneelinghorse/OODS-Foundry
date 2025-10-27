@@ -64,13 +64,21 @@ function resolveStepCssVariables(step: StepDescriptor): React.CSSProperties {
       : undefined;
   const iconSurface = isDisabled ? DISABLED_SURFACE : undefined;
 
-  return {
+  const cssVariables: Record<string, string> = {
     '--stepper-step-icon-color': iconColor,
     '--stepper-step-text-color': textColor,
     '--stepper-step-border-color': borderColor,
-    ...(fillColor ? { '--stepper-step-fill-color': fillColor } : {}),
-    ...(iconSurface ? { '--stepper-step-icon-surface': iconSurface } : {}),
   };
+
+  if (fillColor) {
+    cssVariables['--stepper-step-fill-color'] = fillColor;
+  }
+
+  if (iconSurface) {
+    cssVariables['--stepper-step-icon-surface'] = iconSurface;
+  }
+
+  return cssVariables as React.CSSProperties;
 }
 
 type StepperElement = React.ElementRef<'div'>;
