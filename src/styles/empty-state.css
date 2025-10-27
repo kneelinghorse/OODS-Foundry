@@ -1,0 +1,161 @@
+/* ========================================
+ * Empty State Component
+ * ======================================== */
+
+.empty-state {
+  --empty-state-padding: var(--cmp-spacing-inset-spacious, var(--sys-spacing-inset-xl, 2rem));
+  --empty-state-padding-mobile: var(--cmp-spacing-inset-default, var(--sys-spacing-inset-md, 1.5rem));
+  --empty-state-max-width: 36rem;
+  --empty-state-gap: var(--cmp-spacing-stack-default, 1.5rem);
+  --empty-state-content-gap: var(--cmp-spacing-stack-compact, 0.75rem);
+  --empty-state-illustration-gap: var(--cmp-spacing-stack-default, 1.5rem);
+  --empty-state-illustration-max-width: 16rem;
+  --empty-state-icon-size: 3rem;
+  --empty-state-icon-gap: var(--cmp-spacing-stack-compact, 1rem);
+  --empty-state-icon-border-radius: var(--sys-shape-radius-circle, 50%);
+  --empty-state-icon-font-size: 1.5rem;
+  --empty-state-icon-background: var(--cmp-status-neutral-surface, var(--sys-color-background-neutral-subtle));
+  --empty-state-icon-foreground: var(--cmp-status-neutral-text, var(--sys-color-icon-neutral));
+  --empty-state-icon-border: var(--cmp-status-neutral-border, transparent);
+  --empty-state-headline-color: var(--cmp-text-body, var(--sys-color-text-primary));
+  --empty-state-headline-font-size: var(--sys-font-size-heading-md, 1.25rem);
+  --empty-state-headline-font-weight: var(--sys-font-weight-semibold, 600);
+  --empty-state-headline-line-height: var(--sys-font-lineheight-heading, 1.3);
+  --empty-state-body-color: var(--cmp-text-muted, var(--sys-color-text-secondary));
+  --empty-state-body-font-size: var(--sys-font-size-body-md, 0.875rem);
+  --empty-state-body-line-height: var(--sys-font-lineheight-body, 1.5);
+  --empty-state-actions-gap: var(--cmp-spacing-inline-sm, 0.75rem);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--empty-state-padding);
+  max-width: var(--empty-state-max-width);
+  margin-inline: auto;
+  gap: var(--empty-state-gap);
+}
+
+/* Illustration slot */
+.empty-state__illustration {
+  display: flex;
+  justify-content: center;
+  width: min(100%, var(--empty-state-illustration-max-width));
+  margin-inline: auto;
+  margin-bottom: max(0px, calc(var(--empty-state-illustration-gap) - var(--empty-state-gap)));
+}
+
+.empty-state__illustration > svg,
+.empty-state__illustration > img,
+.empty-state__illustration > picture,
+.empty-state__illustration > canvas {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Icon slot */
+.empty-state__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--empty-state-icon-size);
+  height: var(--empty-state-icon-size);
+  border-radius: var(--empty-state-icon-border-radius);
+  background-color: var(--empty-state-icon-background);
+  color: var(--empty-state-icon-foreground);
+  border: 1px solid var(--empty-state-icon-border);
+  font-size: var(--empty-state-icon-font-size);
+  line-height: 1;
+}
+
+.empty-state__icon > svg {
+  width: 60%;
+  height: 60%;
+  fill: currentColor;
+}
+
+/* Content section */
+.empty-state__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--empty-state-content-gap);
+  align-items: center;
+}
+
+.empty-state__headline {
+  margin: 0;
+  font-size: var(--empty-state-headline-font-size);
+  font-weight: var(--empty-state-headline-font-weight);
+  line-height: var(--empty-state-headline-line-height);
+  color: var(--empty-state-headline-color);
+}
+
+.empty-state__body {
+  margin: 0;
+  font-size: var(--empty-state-body-font-size);
+  line-height: var(--empty-state-body-line-height);
+  color: var(--empty-state-body-color);
+  max-width: 28rem;
+}
+
+/* Actions */
+.empty-state__actions {
+  display: flex;
+  gap: var(--empty-state-actions-gap);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.empty-state__action {
+  display: contents;
+}
+
+.empty-state__actions > * {
+  flex: 0 0 auto;
+}
+
+/* ========================================
+ * High Contrast Mode
+ * ======================================== */
+
+@media (forced-colors: active) {
+  .empty-state__icon {
+    forced-color-adjust: none;
+    border: 1px solid ButtonText;
+    background-color: ButtonFace;
+    color: ButtonText;
+  }
+
+  .empty-state__headline {
+    color: CanvasText;
+  }
+
+  .empty-state__body {
+    color: CanvasText;
+  }
+}
+
+/* ========================================
+ * Responsive
+ * ======================================== */
+
+@media (max-width: 640px) {
+  .empty-state {
+    padding: var(--empty-state-padding-mobile);
+  }
+
+  .empty-state__illustration {
+    width: min(100%, 12rem);
+  }
+
+  .empty-state__actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .empty-state__actions > * {
+    width: 100%;
+  }
+}

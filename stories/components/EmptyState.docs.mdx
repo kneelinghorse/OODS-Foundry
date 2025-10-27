@@ -1,0 +1,72 @@
+import { Meta, Canvas } from '@storybook/blocks';
+import * as EmptyStateStories from './EmptyState.stories';
+
+<Meta of={EmptyStateStories} title="Components/Feedback/EmptyState/Guidelines" />
+
+# EmptyState
+
+Empty states set expectations when there is no data, the user is onboarding, or a flow is complete. The component aligns illustration, headline, body copy, and actions with Statusables tone tokens so the messaging and visual language stay consistent across products.
+
+<Canvas of={EmptyStateStories.NoData} />
+
+## Anatomy
+
+1. **Illustration** (optional) — branded hero artwork for first-use or celebratory states.  
+2. **Icon** (optional) — compact intent glyph when illustration is omitted.  
+3. **Headline** — short statement rendered with `headlineLevel` (default `h2`).  
+4. **Body** — supporting copy that clarifies what happened or what to do next.  
+5. **Primary action** — dominant call-to-action exposed via `primaryAction`.  
+6. **Secondary action** — alternate or supporting choice via `secondaryAction`.  
+7. **Additional actions** — tertiary links or custom markup provided through `actions`.
+
+## Content Checklist
+
+### ✅ Do
+
+- Keep the headline to 3–7 words and reuse product vocabulary.  
+- Use the body to explain *why* the state occurred and suggest a next step.  
+- Pair `primaryAction` with an imperative verb (“Create project”, “Upgrade plan”).  
+- Use `secondaryAction` for a single alternate path (help docs, import flows).  
+- Map states to the product journey: first-use, empty/no data, success/completion.
+
+### 🚫 Avoid
+
+- Repeating the headline in the body copy.  
+- Stacking more than two primary buttons or ambiguous labels (“Click here”).  
+- Introducing new concepts that weren’t taught elsewhere in the flow.  
+- Leaving the user with no action when it is possible to recover.
+
+## Tone & Statusables Alignment
+
+| Prop | Statusables tone | Usage |
+| --- | --- | --- |
+| `intent="neutral"` | `var(--cmp-status-neutral-{surface,text,border})` | Passive states when nothing urgent is required. |
+| `intent="info"` | `var(--cmp-status-info-*)` | Informational or guidance states (e.g., filters, read-only views). |
+| `intent="success"` | `var(--cmp-status-success-*)` | Completion and celebratory messaging. |
+| `intent="warning"` | `var(--cmp-status-warning-*)` | Attention needed, but not blocking. |
+| `status="⋯"` | Derived from `statusRegistry` | Overrides tone/icon from Statusables taxonomy (e.g., `subscription.trialing`). |
+
+`EmptyState` exposes `--empty-state-icon-{background,foreground,border}` variables so design tokens or themes can plug into governance pipelines.
+
+### Status-Driven Example
+
+<Canvas of={EmptyStateStories.StatusDriven} />
+
+## Illustration Guidance
+
+- Use illustrations for first-run, brand, or celebratory states where delight matters.  
+- Prefer icons for transient or data-driven states (search, filters, inbox zero).  
+- Keep artwork lightweight, with a max width of 16rem (12rem on mobile).  
+- Treat decorative illustrations as `aria-hidden`; describe meaningful imagery in body copy.
+
+## Accessibility
+
+- Default heading level is `h2`; adjust via `headlineLevel` to keep the page outline valid.  
+- All illustrations/icons are rendered `aria-hidden`—ensure text conveys the full message.  
+- Buttons are standard HTML elements; focus order follows document flow.  
+- Component snapshots include axe coverage (`tests/components/empty-state.spec.tsx`).
+
+## Additional Resources
+
+- Full guidance: [`docs/components/empty-state.md`](https://github.com/systemsystems/oods-foundry/blob/main/docs/components/empty-state.md)  
+- Research summary: `cmos/missions/research/R18.1_Technical-Research-Report-Component-Set-IV.md`
