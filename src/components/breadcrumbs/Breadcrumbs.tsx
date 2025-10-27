@@ -10,6 +10,7 @@ import { Popover } from '../Popover/Popover.js';
 import './breadcrumbs.css';
 
 type BreadcrumbsElement = React.ElementRef<'nav'>;
+type BreadcrumbsHandle = BreadcrumbsElement | null;
 
 const useIsomorphicLayoutEffect =
   typeof window !== 'undefined' ? React.useLayoutEffect : React.useEffect;
@@ -42,7 +43,7 @@ const sanitizeMaxVisibleItems = (maxVisibleItems: number): number => {
   return Math.floor(maxVisibleItems);
 };
 
-export const Breadcrumbs = React.forwardRef<BreadcrumbsElement, BreadcrumbsProps>(
+export const Breadcrumbs = React.forwardRef<BreadcrumbsHandle, BreadcrumbsProps>(
   (
     {
       items,
@@ -55,10 +56,25 @@ export const Breadcrumbs = React.forwardRef<BreadcrumbsElement, BreadcrumbsProps
     forwardedRef
   ) => {
     const tokens = resolveBreadcrumbsTokens();
-    const navRef = React.useRef<BreadcrumbsElement>(null);
-    const measurementListRef = React.useRef<HTMLOListElement>(null);
+    const navRef = React.useRef<BreadcrumbsElement | null>(null);
+    const measurementListRef = React.useRef<HTMLOListElement | null>(null);
 
-    React.useImperativeHandle(forwardedRef, () => navRef.current);
+    const assignNavRef = React.useCallback(
+      (node: BreadcrumbsElement | null) => {
+        navRef.current = node;
+
+        if (!forwardedRef) {
+          return;
+        }
+
+        if (typeof forwardedRef === 'function') {
+          forwardedRef(node);
+        } else {
+          forwardedRef.current = node;
+        }
+      },
+      [forwardedRef]
+    );
 
     const normalizedMaxVisible = React.useMemo(
       () => sanitizeMaxVisibleItems(maxVisibleItems),
@@ -280,7 +296,7 @@ export const Breadcrumbs = React.forwardRef<BreadcrumbsElement, BreadcrumbsProps
 
     return (
       <nav
-        ref={navRef}
+        ref={assignNavRef}
         aria-label={ariaLabel}
         className={className ? `breadcrumbs ${className}` : 'breadcrumbs'}
         style={{
