@@ -1,0 +1,147 @@
+/**
+ * Pagination component styles
+ */
+
+.pagination {
+  --pagination-font-size: 0.875rem;
+  --pagination-font-weight: 500;
+  --pagination-gap: 0.25rem;
+  --pagination-padding-block: 0.375rem;
+  --pagination-padding-inline: 0.75rem;
+  --pagination-border-radius: 0.25rem;
+
+  /* Colors - hooked to design tokens */
+  --pagination-color-text: var(--cmp-text-body, var(--sys-text-primary));
+  --pagination-color-text-disabled: var(--cmp-text-disabled, var(--sys-text-disabled));
+  --pagination-color-text-selected: var(--cmp-text-on_action, var(--sys-text-on_interactive));
+  --pagination-color-background: var(--cmp-surface-canvas, transparent);
+  --pagination-color-background-hover: var(--cmp-surface-action_hover, var(--sys-surface-interactive-primary-hover));
+  --pagination-color-background-selected: var(--cmp-surface-action, var(--sys-surface-interactive-primary-default));
+  --pagination-color-border: var(--cmp-border-default, var(--sys-border-subtle));
+  --pagination-color-border-hover: var(--cmp-border-strong, var(--sys-border-strong));
+  --pagination-focus-outline-color: var(--cmp-focus-text, var(--sys-focus-text));
+  --pagination-focus-outline-width: var(--cmp-focus-width, var(--sys-focus-width, 2px));
+
+  display: block;
+  font-family: var(--font-family-base, system-ui, sans-serif);
+}
+
+.pagination__list {
+  display: flex;
+  align-items: center;
+  gap: var(--pagination-gap);
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pagination__item {
+  display: flex;
+  align-items: center;
+}
+
+.pagination__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.5rem;
+  height: 2.5rem;
+  padding: var(--pagination-padding-block) var(--pagination-padding-inline);
+  font-size: var(--pagination-font-size);
+  font-weight: var(--pagination-font-weight);
+  line-height: 1;
+  color: var(--pagination-color-text);
+  background-color: var(--pagination-color-background);
+  border: 1px solid var(--pagination-color-border);
+  border-radius: var(--pagination-border-radius);
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+  user-select: none;
+}
+
+.pagination__button:hover:not(:disabled):not(.pagination__button--selected) {
+  background-color: var(--pagination-color-background-hover);
+  border-color: var(--pagination-color-border-hover);
+}
+
+.pagination__button:focus-visible {
+  outline: var(--pagination-focus-outline-width) solid var(--pagination-focus-outline-color);
+  outline-offset: 2px;
+}
+
+.pagination__button:disabled {
+  color: var(--pagination-color-text-disabled);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.pagination__button--selected {
+  color: var(--pagination-color-text-selected);
+  background-color: var(--pagination-color-background-selected);
+  border-color: var(--pagination-color-background-selected);
+  cursor: default;
+}
+
+.pagination__button--nav {
+  padding: var(--pagination-padding-block);
+}
+
+.pagination__button--page {
+  /* Page number buttons maintain default sizing */
+}
+
+.pagination__ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.5rem;
+  height: 2.5rem;
+  padding: var(--pagination-padding-block);
+  font-size: var(--pagination-font-size);
+  color: var(--pagination-color-text);
+  user-select: none;
+}
+
+/* Mobile responsive behavior */
+@media (max-width: 480px) {
+  .pagination {
+    --pagination-gap: 0.125rem;
+  }
+
+  .pagination__list {
+    justify-content: center;
+  }
+
+  .pagination__button--page {
+    min-width: 2rem;
+    padding-inline: 0.5rem;
+  }
+
+  .pagination__ellipsis {
+    min-width: 2rem;
+  }
+}
+
+/* High-contrast mode support */
+@media (forced-colors: active) {
+  .pagination__button {
+    border: 1px solid ButtonText;
+  }
+
+  .pagination__button:focus-visible {
+    outline: 2px solid Highlight;
+  }
+
+  .pagination__button--selected {
+    background-color: Highlight;
+    color: HighlightText;
+    border-color: Highlight;
+    font-weight: 700;
+  }
+
+  .pagination__button:disabled {
+    color: GrayText;
+    border-color: GrayText;
+  }
+}
