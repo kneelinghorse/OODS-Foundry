@@ -15,7 +15,7 @@ import { BASELINE_PERMISSIONS } from '../../src/domain/compliance/rbac';
 import type { Role, Permission, RolePermission, AuditLogEntry } from '../../src/domain/compliance/rbac';
 
 const meta: Meta = {
-  title: 'Proofs/Compliance Core',
+  title: 'Explorer/Proofs/Compliance Core',
   parameters: {
     layout: 'padded',
     docs: {

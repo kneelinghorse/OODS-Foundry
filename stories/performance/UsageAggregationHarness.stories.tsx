@@ -10,7 +10,7 @@ import { Button } from '~/src/components/base/Button';
 import '~/src/styles/globals.css';
 
 const meta: Meta = {
-  title: 'Performance/Usage Aggregation Harness',
+  title: 'Explorer/Performance/Usage Aggregation Harness',
   parameters: {
     layout: 'padded',
     chromatic: { disableSnapshot: true },

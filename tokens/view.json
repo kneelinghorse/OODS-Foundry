@@ -114,10 +114,10 @@
         "$value": "1.5rem",
         "$description": "Gap between timeline stream items"
       },
-      "background": {
+      "layer": {
         "$type": "color",
         "$value": "var(--cmp-surface-subtle)",
-        "$description": "Background surface for timeline contexts"
+        "$description": "Surface layer for timeline contexts"
       }
     },
     "shell": {
@@ -226,11 +226,11 @@
         }
       }
     },
-    "focus": {
+    "accessibility": {
       "outline-offset": {
         "$type": "dimension",
         "$value": "2px",
-        "$description": "Offset applied to focus outlines in forced-colors mode"
+        "$description": "Offset applied to forced-colors outlines"
       }
     }
   }

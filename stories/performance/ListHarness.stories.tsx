@@ -20,7 +20,7 @@ import type { TabItem } from '~/src/components/tabs/types.js';
 import '~/src/styles/globals.css';
 
 const meta: Meta = {
-  title: 'Performance/List Harness',
+  title: 'Explorer/Performance/List Harness',
   parameters: {
     layout: 'fullscreen',
     chromatic: { disableSnapshot: true },

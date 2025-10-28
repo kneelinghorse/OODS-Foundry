@@ -269,6 +269,7 @@
   --theme-text-on_interactive: var(--ref-color-neutral-100); /* Text on primary interactive surfaces. */
   --theme-text-primary: var(--ref-color-neutral-900); /* Body text on light surfaces. */
   --theme-text-secondary: var(--ref-color-neutral-700); /* Secondary supporting text. */
+  --view-accessibility-outline-offset: 2px; /* Offset applied to forced-colors outlines */
   --view-border-medium: 2px; /* Emphasized border thickness for high-contrast surfaces */
   --view-border-strong: 3px; /* Strong border thickness for card focus treatments */
   --view-border-thin: 1px; /* Default border thickness for view surfaces */
@@ -282,7 +283,6 @@
   --view-columns-two-column-standard: minmax(0, 1fr) minmax(18rem, 24rem); /* Two-column layout with standard rail (detail view) */
   --view-contextpanel-gap: clamp(0.85rem, 0.5vw + 0.6rem, 1.5rem); /* Gap between context panel sections */
   --view-contextpanel-padding: clamp(1rem, 0.8vw + 0.8rem, 1.75rem); /* Internal padding for context panel */
-  --view-focus-outline-offset: 2px; /* Offset applied to focus outlines in forced-colors mode */
   --view-gap-card: 1.25rem; /* Gap for card content sections */
   --view-gap-compact: 1rem; /* Compact gap for dense layouts */
   --view-gap-default: 1.5rem; /* Default gap between major sections */
@@ -304,8 +304,8 @@
   --view-shell-max-width: min(75rem, 100%); /* Maximum width constraint for view content */
   --view-shell-padding-block: clamp(1.75rem, 1vw + 1.2rem, 3rem); /* Vertical padding for view container */
   --view-shell-padding-inline: clamp(1.5rem, 1vw + 1rem, 2.5rem); /* Horizontal padding for view container */
-  --view-timeline-background: var(--cmp-surface-subtle); /* Background surface for timeline contexts */
   --view-timeline-gap: 1rem; /* Gap between timeline metadata sections */
+  --view-timeline-layer: var(--cmp-surface-subtle); /* Surface layer for timeline contexts */
   --view-timeline-stream-gap: 1.5rem; /* Gap between timeline stream items */
   --view-toolbar-gap: 0.75rem; /* Gap between toolbar items */
   --view-toolbar-item-gap: 0.5rem; /* Gap within toolbar item contents */

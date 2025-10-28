@@ -30,7 +30,7 @@ This proof story demonstrates the canonical view profiles defined in `configs/vi
 
 ### 4. Timeline View
 - **Layout:** Single-column stream via `--view-columns-default`
-- **Primary Tokens:** `--view-timeline-gap`, `--view-timeline-stream-gap`, `--view-timeline-background`
+- **Primary Tokens:** `--view-timeline-gap`, `--view-timeline-stream-gap`, `--view-timeline-layer`
 - **Use Case:** Chronological activity streams
 - **Story:** `Timeline` (`view-profiles/Timeline.stories.tsx`)
 
@@ -63,7 +63,7 @@ All success criteria from mission B16.10a have been met:
   - `--view-gap-*` (context spacing)
   - `--view-rail-width-*` (sidebar widths)
   - `--view-border-{thin,medium,strong}` (surface borders)
-  - `--view-focus-outline-offset` (forced-colors focus offset)
+  - `--view-accessibility-outline-offset` (forced-colors outline offset)
   - `--view-timeline-*` (timeline spacing/background)
 
 ✅ **Token-Based CSS**  
@@ -79,7 +79,7 @@ All success criteria from mission B16.10a have been met:
 ✅ **Accessibility**  
 - Forced-colors mode shows explicit borders sourced from view border tokens
 - No reliance on shadows in high-contrast
-- Focus indicators use `--cmp-focus-width` with `--view-focus-outline-offset`
+- Focus indicators use `--cmp-focus-width` with `--view-accessibility-outline-offset`
 - Axe smoke tests: **0 violations** across all contexts
 
 ## Architecture
