@@ -52,7 +52,10 @@
   background: var(--statusable-toast-background, var(--cmp-status-neutral-surface));
   border: 1px solid var(--statusable-toast-border, var(--cmp-status-neutral-border));
   color: var(--statusable-toast-foreground, var(--cmp-status-neutral-text));
-  box-shadow: var(--shadow-overlay, 0 8px 16px rgba(0, 0, 0, 0.15));
+  box-shadow: var(
+    --shadow-overlay,
+    var(--cmp-shadow-overlay, var(--sys-shadow-elevation-overlay, none))
+  );
   pointer-events: auto;
   min-width: 280px;
   max-width: 100%;
@@ -142,7 +145,11 @@
 }
 
 .statusable-toast__dismiss:hover {
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: color-mix(
+    in srgb,
+    var(--cmp-text-body, CanvasText) 12%,
+    transparent
+  );
 }
 
 .statusable-toast__dismiss:focus-visible {
@@ -266,7 +273,7 @@
 
 /* Focus visible styles for keyboard navigation */
 .statusable-toast:focus-visible {
-  outline: 2px solid var(--color-border-focus, #0066cc);
+  outline: var(--sys-focus-width, 2px) solid var(--sys-focus-text, Highlight);
   outline-offset: 2px;
 }
 

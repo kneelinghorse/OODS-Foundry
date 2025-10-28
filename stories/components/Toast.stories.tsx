@@ -6,7 +6,36 @@ import {
   useToast,
   type ToastAPI,
 } from '../../src/components/toast/toastService.js';
+import { formatTokenReference } from '../../src/utils/token-values.js';
 import '../../src/styles/globals.css';
+
+const SURFACE_SUBTLE = formatTokenReference('sys.surface.subtle', '--cmp-surface-subtle', 'Canvas');
+const TEXT_BODY = formatTokenReference('sys.text.primary', '--cmp-text-body', 'CanvasText');
+const TEXT_MUTED = formatTokenReference('sys.text.secondary', '--cmp-text-muted', 'GrayText');
+const TEXT_ACTION = formatTokenReference(
+  'sys.text.on.interactive',
+  '--cmp-text-on_action',
+  'HighlightText'
+);
+
+const TONE_PRESETS = {
+  info: {
+    surface: formatTokenReference('sys.status.info.surface', '--cmp-status-info-surface', 'Canvas'),
+    text: formatTokenReference('sys.status.info.text', '--cmp-status-info-text', 'CanvasText'),
+  },
+  success: {
+    surface: formatTokenReference('sys.status.success.surface', '--cmp-status-success-surface', 'Canvas'),
+    text: formatTokenReference('sys.status.success.text', '--cmp-status-success-text', 'CanvasText'),
+  },
+  warning: {
+    surface: formatTokenReference('sys.status.warning.surface', '--cmp-status-warning-surface', 'Canvas'),
+    text: formatTokenReference('sys.status.warning.text', '--cmp-status-warning-text', 'CanvasText'),
+  },
+  error: {
+    surface: formatTokenReference('sys.status.critical.surface', '--cmp-status-critical-surface', 'Canvas'),
+    text: formatTokenReference('sys.status.critical.text', '--cmp-status-critical-text', 'CanvasText'),
+  },
+} as const;
 
 type Story = StoryObj<typeof ToastPortal>;
 
@@ -33,25 +62,19 @@ export default meta;
 const Button: React.FC<
   React.ButtonHTMLAttributes<HTMLButtonElement> & { readonly tone?: 'info' | 'success' | 'warning' | 'error' }
 > = ({ tone = 'info', children, style, ...props }) => {
-  const toneStyles: Record<typeof tone, React.CSSProperties> = {
-    info: { backgroundColor: '#2563eb' },
-    success: { backgroundColor: '#16a34a' },
-    warning: { backgroundColor: '#ca8a04' },
-    error: { backgroundColor: '#dc2626' },
-  };
-
+  const toneTokens = TONE_PRESETS[tone];
   return (
     <button
       type="button"
       style={{
         borderRadius: 8,
         padding: '0.5rem 1rem',
-        color: '#fff',
+        color: toneTokens.text || TEXT_ACTION,
         fontWeight: 600,
         border: 'none',
         cursor: 'pointer',
         transition: 'filter 120ms ease',
-        ...toneStyles[tone],
+        background: toneTokens.surface,
         ...style,
       }}
       onMouseEnter={(event) => {
@@ -75,12 +98,12 @@ const DemoSurface: React.FC<React.PropsWithChildren<unknown>> = ({ children }) =
       alignItems: 'start',
       padding: '2rem',
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, rgba(15,23,42,0.35), rgba(15,118,110,0.25))',
-      color: '#0f172a',
+      background: SURFACE_SUBTLE,
+      color: TEXT_BODY,
     }}
   >
     {children}
-    <p style={{ margin: 0, fontSize: '0.875rem', color: 'rgba(15,23,42,0.72)' }}>
+    <p style={{ margin: 0, fontSize: '0.875rem', color: TEXT_MUTED }}>
       Keyboard shortcut: <kbd>Ctrl</kbd>/<kbd>⌘</kbd> + <kbd>M</kbd> focuses the most recent toast.
     </p>
   </div>
@@ -164,7 +187,7 @@ const QueueStackingDemo: React.FC = () => {
   return (
     <DemoSurface>
       <h2 style={{ fontSize: '1.5rem', marginBottom: 0 }}>Queue stacking</h2>
-      <p style={{ margin: 0, maxWidth: '34rem', color: 'rgba(15,23,42,0.75)' }}>
+      <p style={{ margin: 0, maxWidth: '34rem', color: TEXT_MUTED }}>
         Trigger multiple toasts rapidly to validate FIFO ordering, spacing, and animation offsets.
       </p>
       <Button tone="info" onClick={handleStack}>
@@ -193,7 +216,7 @@ const StickyToastDemo: React.FC = () => {
   return (
     <DemoSurface>
       <h2 style={{ fontSize: '1.5rem', marginBottom: 0 }}>Sticky toast</h2>
-      <p style={{ margin: 0, color: 'rgba(15,23,42,0.75)' }}>
+      <p style={{ margin: 0, color: TEXT_MUTED }}>
         Sticky toasts omit auto-dismiss to keep persistent issues visible until acknowledged.
       </p>
       <Button tone="error" onClick={handleShowSticky}>
@@ -229,7 +252,7 @@ const ActionToastDemo: React.FC = () => {
   return (
     <DemoSurface>
       <h2 style={{ fontSize: '1.5rem', marginBottom: 0 }}>Custom action</h2>
-      <p style={{ margin: 0, color: 'rgba(15,23,42,0.75)' }}>
+      <p style={{ margin: 0, color: TEXT_MUTED }}>
         Provide a contextual CTA with extended timeout for actionable notifications.
       </p>
       <Button tone="info" onClick={handleShowAction}>

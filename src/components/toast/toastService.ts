@@ -33,6 +33,7 @@ import {
   type ReactNode,
 } from 'react';
 import type { StatusDomain, StatusTone } from '../statusables/statusRegistry.js';
+import TimeService from '../../services/time/index.js';
 
 export type ToastIntent = 'info' | 'success' | 'warning' | 'error';
 
@@ -109,7 +110,8 @@ class ToastManager {
 
   private generateId(): string {
     this.counter += 1;
-    return `toast-${this.counter}-${Date.now()}`;
+    const timestamp = TimeService.nowSystem().toMillis();
+    return `toast-${this.counter}-${timestamp}`;
   }
 
   private notify(): void {
@@ -154,7 +156,7 @@ class ToastManager {
 
     const instance: ToastInstance = {
       id: this.generateId(),
-      createdAt: Date.now(),
+      createdAt: TimeService.nowSystem().toMillis(),
       open: true,
       ...options,
       intent,
@@ -221,7 +223,20 @@ const manager = new ToastManager();
  * toast.dismissAll();
  * ```
  */
-export const toast = {
+export interface ToastAPI {
+  show: (options: ToastOptions) => string;
+  dismiss: (id: string) => void;
+  dismissAll: () => void;
+  subscribe: (callback: ToastSubscriber) => () => void;
+  getQueue: () => readonly ToastInstance[];
+  success: (title: string, description?: string) => string;
+  error: (title: string, description?: string) => string;
+  warning: (title: string, description?: string) => string;
+  info: (title: string, description?: string) => string;
+  _resetForTesting: () => void;
+}
+
+export const toast: ToastAPI = {
   /**
    * Display a new toast notification
    * @returns Toast ID for manual dismissal
@@ -252,25 +267,16 @@ export const toast = {
   /**
    * @internal Reset manager state (testing only)
    */
+  success: (title: string, description?: string): string =>
+    manager.show({ intent: 'success', title, description }),
+  error: (title: string, description?: string): string =>
+    manager.show({ intent: 'error', title, description }),
+  warning: (title: string, description?: string): string =>
+    manager.show({ intent: 'warning', title, description }),
+  info: (title: string, description?: string): string =>
+    manager.show({ intent: 'info', title, description }),
   _resetForTesting: (): void => manager._resetForTesting(),
 };
-
-/**
- * Convenience methods for common intents
- */
-toast.success = (title: string, description?: string): string =>
-  toast.show({ intent: 'success', title, description });
-
-toast.error = (title: string, description?: string): string =>
-  toast.show({ intent: 'error', title, description });
-
-toast.warning = (title: string, description?: string): string =>
-  toast.show({ intent: 'warning', title, description });
-
-toast.info = (title: string, description?: string): string =>
-  toast.show({ intent: 'info', title, description });
-
-export type ToastAPI = typeof toast;
 
 export const ToastContext = createContext<ToastAPI>(toast);
 
