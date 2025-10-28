@@ -1,4 +1,4 @@
-import tokensBundle from '@oods/tokens';
+import { flatTokens } from '@oods/tokens';
 
 type FlatTokenRecord = {
   path?: unknown;
@@ -11,11 +11,7 @@ type TokenMeta = {
   cssVariable?: string;
 };
 
-const flatRecord =
-  ((tokensBundle?.flatTokens ??
-    (tokensBundle as { default?: { flatTokens?: Record<string, FlatTokenRecord> } })?.default
-      ?.flatTokens) ??
-    {}) as Record<string, FlatTokenRecord>;
+const flatRecord = (flatTokens ?? {}) as Record<string, FlatTokenRecord>;
 
 const metaByPath = new Map<string, TokenMeta>();
 
