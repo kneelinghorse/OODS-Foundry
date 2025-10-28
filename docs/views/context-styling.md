@@ -27,8 +27,8 @@ contributors should extend the system, and which proofs keep the contract green.
 | Card | `--view-card-radius`, `--view-card-padding`, `--view-card-max-width` | Shared surface treatments |
 | Toolbar | `--view-toolbar-gap`, `--view-toolbar-item-gap` | Action cluster spacing |
 | Context panel | `--view-contextPanel-padding`, `--view-contextPanel-gap` | Stack spacing inside the rail |
-| Timeline | `--view-timeline-background`, `--view-timeline-gap`, `--view-timeline-stream-gap` | Temporal flow treatment |
-| Focus/Border | `--view-border-*`, `--view-focus-outline-offset` | Forced-colour + HC affordances |
+| Timeline | `--view-timeline-layer`, `--view-timeline-gap`, `--view-timeline-stream-gap` | Temporal flow treatment |
+| Focus/Border | `--view-border-*`, `--view-accessibility-outline-offset` | Forced-colour + HC affordances |
 
 ## Context Layout Summaries
 
@@ -38,7 +38,7 @@ contributors should extend the system, and which proofs keep the contract green.
   gaps from `--view-section-gap-list` and `--view-main-gap-list`.
 - **Form** — guidance rail using `--view-columns-two-column-guidance` with body
   spacing `--view-section-gap-form`.
-- **Timeline** — single column background `--view-timeline-background` plus meta
+- **Timeline** — single column surface layer `--view-timeline-layer` plus meta
   and stream cadence from the timeline gap tokens.
 - **Card** — constrained width through `--view-card-max-width`; inner regions
   inherit the card surface tokens.

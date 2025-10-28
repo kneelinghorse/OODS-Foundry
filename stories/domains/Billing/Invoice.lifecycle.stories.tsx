@@ -184,6 +184,7 @@ type Story = StoryObj<typeof InvoiceLifecycle>;
  * Draft invoice - uncommitted, editable
  */
 export const Draft: Story = {
+  name: 'Detail – Draft state review',
   args: {
     state: 'draft',
   },
@@ -193,6 +194,7 @@ export const Draft: Story = {
  * Posted invoice - finalized and sent
  */
 export const Posted: Story = {
+  name: 'List – Posted status summary',
   args: {
     state: 'posted',
   },
@@ -211,6 +213,7 @@ export const Paid: Story = {
  * Past due invoice - overdue
  */
 export const PastDue: Story = {
+  name: 'Timeline – Past due escalation',
   args: {
     state: 'past_due',
   },
@@ -220,6 +223,7 @@ export const PastDue: Story = {
  * Void invoice - cancelled
  */
 export const Void: Story = {
+  name: 'Form – Void authorization',
   args: {
     state: 'void',
   },
@@ -308,4 +312,3 @@ export const TransitionFlow: Story = {
     );
   },
 };
-

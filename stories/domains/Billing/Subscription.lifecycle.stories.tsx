@@ -184,6 +184,7 @@ type Story = StoryObj<typeof SubscriptionLifecycle>;
  * Future subscription - not yet started
  */
 export const Future: Story = {
+  name: 'Timeline – Scheduled activation',
   args: {
     state: 'future',
   },
@@ -193,6 +194,7 @@ export const Future: Story = {
  * Trialing subscription - free trial active
  */
 export const Trialing: Story = {
+  name: 'Detail – Trial period status',
   args: {
     state: 'trialing',
   },
@@ -202,6 +204,7 @@ export const Trialing: Story = {
  * Active subscription - revenue generating
  */
 export const Active: Story = {
+  name: 'List – Active subscriber snapshot',
   args: {
     state: 'active',
   },
@@ -220,6 +223,7 @@ export const Paused: Story = {
  * Pending cancellation - scheduled to end at period end
  */
 export const PendingCancellation: Story = {
+  name: 'Form – Cancellation confirmation',
   args: {
     state: 'pending_cancellation',
   },
@@ -339,4 +343,3 @@ export const TransitionFlow: Story = {
     );
   },
 };
-

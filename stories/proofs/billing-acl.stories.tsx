@@ -179,7 +179,7 @@ function BillingObjectViewer({ title, subscription, invoice }: BillingObjectView
 }
 
 const meta: Meta<typeof BillingObjectViewer> = {
-  title: 'Proofs/Billing ACL',
+  title: 'Explorer/Proofs/Billing ACL',
   component: BillingObjectViewer,
   parameters: {
     layout: 'fullscreen',

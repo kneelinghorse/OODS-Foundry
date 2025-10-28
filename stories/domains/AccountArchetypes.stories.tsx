@@ -112,7 +112,7 @@ const AccountCard: React.FC<{ account: AccountPerson | AccountOrganization | Acc
 };
 
 const meta: Meta = {
-  title: 'Domain/Accounts/Archetypes',
+  title: 'Domains/Accounts/Archetypes',
   parameters: {
     layout: 'padded',
   },
@@ -126,6 +126,7 @@ const now = DateTime.utc();
  * Person Account (B2C)
  */
 export const PersonAccount: StoryObj = {
+  name: 'Detail – Person account view',
   render: () => {
     const account: AccountPerson = {
       accountId: 'acc_person_abc123',
@@ -158,6 +159,7 @@ export const PersonAccount: StoryObj = {
  * Organization Account (B2B)
  */
 export const OrganizationAccount: StoryObj = {
+  name: 'List – Organization account directory',
   render: () => {
     const account: AccountOrganization = {
       accountId: 'acc_org_def456',
@@ -191,6 +193,7 @@ export const OrganizationAccount: StoryObj = {
  * Workspace Account (Team)
  */
 export const WorkspaceAccount: StoryObj = {
+  name: 'Form – Workspace onboarding configuration',
   render: () => {
     const account: AccountWorkspace = {
       accountId: 'acc_workspace_ghi789',
@@ -405,6 +408,7 @@ export const ContactRecord: StoryObj = {
  * Account Membership (User ↔ Account)
  */
 export const AccountMembershipExample: StoryObj = {
+  name: 'Timeline – Membership history audit',
   render: () => {
     const membership: AccountMembership = {
       membershipId: 'membership_abc123',
@@ -456,4 +460,3 @@ export const AccountMembershipExample: StoryObj = {
     );
   },
 };
-

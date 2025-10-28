@@ -300,6 +300,7 @@ type Story = StoryObj<typeof UsageDashboard>;
  * API Calls Metered Subscription
  */
 export const APICallsMetered: Story = {
+  name: 'Detail – API usage dashboard',
   args: {
     transitions: [
       {
@@ -431,10 +432,40 @@ export const APICallsMetered: Story = {
   },
 };
 
+export const APICallsLeaderboard: Story = {
+  name: 'List – Tenant usage leaderboard',
+  args: {
+    ...APICallsMetered.args,
+    events: APICallsMetered.args?.events?.slice(0, 20) ?? [],
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'List view concentrates on the top usage events for quick comparisons across tenants and meters.',
+      },
+    },
+  },
+};
+
+export const UsageAlertForm: Story = {
+  name: 'Form – Configure usage anomaly alert',
+  args: {
+    ...APICallsMetered.args,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Form context demonstrates the configuration surface for alerting on projected overages.',
+      },
+    },
+  },
+};
+
 /**
  * Compute Hours with High Usage
  */
 export const ComputeHoursHeavyUse: Story = {
+  name: 'Timeline – Compute hours anomaly',
   args: {
     transitions: [
       {

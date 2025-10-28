@@ -195,9 +195,9 @@
     grid-template-columns: var(--view-columns-two-column-guidance);
   }
 
-  /* Timeline view layout — tokens: --view-timeline-background, --view-section-gap-timeline, --view-timeline-gap, --view-timeline-stream-gap */
+  /* Timeline view layout — tokens: --view-timeline-layer, --view-section-gap-timeline, --view-timeline-gap, --view-timeline-stream-gap */
   [data-view-context='timeline'] {
-    background: var(--view-timeline-background);
+    background: var(--view-timeline-layer);
   }
 
   [data-view-context='timeline'] [data-region-group='timeline-body'] {
@@ -259,7 +259,7 @@
     background: transparent;
   }
 
-  /* Forced colours — tokens: --view-border-thin, --view-border-medium, --view-border-strong, --cmp-spacing-inset-compact, --cmp-focus-width, --view-focus-outline-offset */
+  /* Forced colours — tokens: --view-border-thin, --view-border-medium, --view-border-strong, --cmp-spacing-inset-compact, --cmp-focus-width, --view-accessibility-outline-offset */
   @media (forced-colors: active) {
     [data-view] {
       border: var(--view-border-thin) solid CanvasText;
@@ -310,7 +310,7 @@
 
     [data-view] *:focus {
       outline: var(--cmp-focus-width) solid Highlight;
-      outline-offset: var(--view-focus-outline-offset);
+      outline-offset: var(--view-accessibility-outline-offset);
       forced-color-adjust: none;
     }
 
