@@ -51,6 +51,14 @@ pnpm perf:harness --scenario list --browser firefox
 pnpm perf:harness --output ./my-results/perf.json
 ```
 
+### Compare Against Stored Baseline
+
+```bash
+pnpm perf:harness --baseline diagnostics/perf-baseline.json
+```
+
+> If `--baseline` is omitted, the CLI looks for `diagnostics/perf-baseline.json` by default.
+
 ---
 
 ## Architecture
@@ -231,74 +239,104 @@ All metrics conform to `diagnostics/performance-harness.schema.json`:
 
 ## CI Integration
 
-### Nightly Performance Run
+### Nightly Performance Pipeline
 
-A GitHub Actions workflow will run the full harness nightly on `main`:
+The performance harness runs nightly at **2 AM UTC** via `.github/workflows/perf-harness.yml`:
+
+**Pipeline steps:**
+
+1. **Run harness** - Execute full test suite, output to `diagnostics/perf-results-{sha}.json`
+2. **Download history** - Retrieve last 10 nightly artifacts
+3. **Calculate baseline** - Compute median + stdDev for each metric
+4. **Check regressions** - Apply 3-sigma + absolute + relative thresholds
+5. **Send alerts** - Post to Slack if regressions detected
+6. **Update diagnostics** - Merge latest run into `diagnostics.json`
+
+**Workflow triggers:**
 
 ```yaml
-# .github/workflows/perf-nightly.yml
-name: Performance Nightly
-
 on:
   schedule:
-    - cron: '0 2 * * *'  # 2 AM UTC
-  workflow_dispatch:
-
-jobs:
-  performance:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v2
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'pnpm'
-
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm perf:harness --output diagnostics/perf-results.json
-
-      - name: Upload results
-        uses: actions/upload-artifact@v4
-        with:
-          name: perf-results-${{ github.sha }}
-          path: diagnostics/perf-results.json
+    - cron: '0 2 * * *'  # Nightly at 2 AM UTC
+  workflow_dispatch:      # Manual trigger with optional scenario filter
 ```
 
-### PR Smoke Check
+**Manual trigger:**
 
-A lightweight smoke check runs on PRs to catch catastrophic regressions:
-
-```yaml
-# .github/workflows/pr-validate.yml (add to existing)
-- name: Performance Smoke Check
-  run: pnpm perf:harness --scenario compositor --browser chromium
-  continue-on-error: true
+```bash
+# Via GitHub Actions UI:
+# Actions → Performance Harness Nightly → Run workflow
+# Optional: specify scenario (compositor, list, token-transform, usage-aggregation)
 ```
 
----
-
-## Baselines and Regression Detection
-
-### Establishing Baselines
-
-Baselines are calculated from the last **N=10** successful nightly runs on `main`:
-
-1. Retrieve last 10 `diagnostics.json` artifacts
-2. For each metric, calculate:
-   - **Median** (baseline value)
-   - **Standard deviation** (variability)
-3. Store baseline data for comparison
-
-### Regression Thresholds
+### Regression Detection
 
 A regression is flagged when **all three** conditions are met:
 
 1. **Statistical significance**: `newValue > (baselineMedian + 3 * stdDev)`
 2. **Absolute significance**: `(newValue - baselineMedian) > 50ms`
-3. **Relative significance**: `((newValue - baselineMedian) / baselineMedian) * 100 > 15%`
+3. **Relative significance**: `((newValue - baselineMedian) / baselineMedian) > 15%`
 
-This multi-faceted approach minimizes false positives.
+This multi-faceted approach minimizes false positives while catching meaningful slowdowns.
+
+**Example output:**
+
+```
+⚠️  Performance Regressions Detected:
+
+  ❌ List.Table.100Rows → React.actualDuration (chromium)
+     Baseline: 14.20 ms (±2.10)
+     Current:  22.40 ms
+     Δ 8.20 ms (+57.7%)
+     Checks: statistical=true, absolute=true, relative=true
+```
+
+### Slack Notifications
+
+When regressions are detected, the workflow posts a summary to the engineering Slack channel:
+
+- Top 5 regressions (scenario, metric, delta)
+- Commit SHA and CI run links
+- Improvements (if any)
+
+**Setup:**
+
+1. Create Slack incoming webhook
+2. Add `SLACK_PERF_WEBHOOK_URL` to repository secrets
+3. Workflow automatically posts on regression
+
+### Local CI Simulation
+
+Test the full CI pipeline locally:
+
+```bash
+# Run harness
+pnpm perf:harness --output diagnostics/perf-results-local.json
+
+# Calculate baseline (requires historical runs)
+pnpm perf:baseline --history 10 --input diagnostics/perf-history --output diagnostics/perf-baseline.json
+
+# Check for regressions
+pnpm perf:check --current diagnostics/perf-results-local.json --baseline diagnostics/perf-baseline.json
+
+# Send Slack notification (optional)
+SLACK_WEBHOOK_URL=https://... pnpm perf:notify --report diagnostics/perf-regressions.json
+```
+
+### Artifacts
+
+All runs produce artifacts with 90-day retention:
+
+| Artifact | Contents | Use Case |
+|----------|----------|----------|
+| `perf-results-{sha}` | Raw performance snapshots | Baseline calculation, historical analysis |
+| `perf-regression-report-{sha}` | Regression analysis + baseline | Debugging slowdowns, trend analysis |
+
+Download artifacts via GitHub Actions UI or CLI:
+
+```bash
+gh run download <run-id> -n perf-results-abc1234
+```
 
 ---
 
@@ -318,7 +356,7 @@ pnpm perf:harness --scenario list
 
 ### Interpreting Results
 
-The CLI outputs a summary table:
+The CLI outputs a summary table and compares results against the latest baseline:
 
 ```
 🚀 Starting Performance Harness...
@@ -327,6 +365,7 @@ Configuration:
   Scenario: list
   Browser:  chromium
   Output:   diagnostics/perf-results.json
+  Baseline: diagnostics/perf-baseline.json
 
 Running 3 tests using 1 worker
 
@@ -337,6 +376,13 @@ Running 3 tests using 1 worker
     • List.Table.FilterApply → UserTiming.duration: 0.10 ms
     • List.Tabs.NavigationSwitch → React.actualDuration: 0.30 ms
     • List.Tabs.NavigationSwitch → UserTiming.duration: 0.10 ms
+
+📉 Baseline comparison
+    Source: diagnostics/perf-baseline.json (computed 2025-10-27T02:00:00Z, last 10 runs)
+    • List.Table.100Rows → React.actualDuration (chromium)
+      14.60 ms vs baseline 14.20 ms (Δ +0.40 ms, +2.8%)
+    • List.Tabs.NavigationSwitch → React.actualDuration (chromium)
+      0.30 ms vs baseline 0.40 ms (Δ -0.10 ms, -25.0%)
 ```
 
 ### Trace Files
@@ -386,13 +432,13 @@ console.log('Captured metrics:', metrics);
 
 ## Future Enhancements
 
-### Sprint 19+ (Out of Scope for B18.7)
+### Sprint 19+ Backlog
 
 - **Lighthouse integration** - Capture Web Vitals (LCP, TTI)
-- **Regression alerting** - Automated Slack notifications
-- **Baseline auto-fetch** - Pull baselines from CI artifacts
-- **Performance budgets** - Hard limits enforced in CI
+- **Performance budgets** - Hard limits enforced in CI (currently uses regression detection only)
 - **Parameterized scenarios** - Test across tenancy modes, feature flags
+- **Dashboard visualization** - Historical trend charts
+- **Cross-browser matrix** - Expand beyond Chromium to Firefox/WebKit
 
 ---
 
@@ -406,5 +452,5 @@ console.log('Captured metrics:', metrics);
 
 ---
 
-**Last updated**: Sprint 18 (B18.7)
-**Status**: Core harness implemented, CI integration pending (B18.8)
+**Last updated**: Sprint 18 (B18.8)
+**Status**: ✅ Core harness + CI integration complete
