@@ -23,6 +23,20 @@
   box-sizing: inherit;
 }
 
+.context-dark {
+  background: var(--theme-dark-surface-canvas, #0f1117);
+  color: var(--theme-dark-text-primary, #f6f8ff);
+  --cmp-text-body: var(--theme-dark-text-primary, #f6f8ff);
+  --cmp-text-muted: color-mix(in srgb, var(--theme-dark-text-primary, #f6f8ff) 60%, transparent);
+  --cmp-border-default: color-mix(in srgb, var(--theme-dark-text-primary, #f6f8ff) 18%, transparent);
+  --cmp-border-strong: color-mix(in srgb, var(--theme-dark-text-primary, #f6f8ff) 32%, transparent);
+  --cmp-surface-subtle: color-mix(in srgb, var(--theme-dark-surface-canvas, #0f1117) 92%, black 8%);
+  --cmp-surface-panel: color-mix(in srgb, var(--theme-dark-surface-canvas, #0f1117) 86%, black 14%);
+  --cmp-surface-action: color-mix(in srgb, var(--theme-dark-status-accent-surface, #24315a) 94%, transparent);
+  --cmp-surface-action_hover: color-mix(in srgb, var(--theme-dark-status-accent-surface, #24315a) 88%, black 12%);
+  --cmp-surface-action_pressed: color-mix(in srgb, var(--theme-dark-status-accent-surface, #24315a) 80%, black 20%);
+}
+
 .view-header {
   display: flex;
   flex-wrap: wrap;

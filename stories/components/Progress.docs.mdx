@@ -1,0 +1,61 @@
+import { Meta, Canvas } from '@storybook/blocks';
+import * as ProgressStories from './Progress.stories';
+
+<Meta of={ProgressStories} title="Components/Progression/Progress/Guidelines" />
+
+# Progress Indicators
+
+Progress indicators communicate the status of ongoing work. Use them to acknowledge user actions, provide feedback for background processing, and set expectations about how long something will take.
+
+<Canvas of={ProgressStories.LinearDeterminate} />
+
+## Usage Guidance
+
+- Choose **determinate** progress when you can calculate completion (file uploads, queued jobs).  
+- Prefer **indeterminate** progress for unknown durations (fetching configuration, waiting on third parties).  
+- Always pass a descriptive `label` so screen readers announce the active operation.  
+- For long-running jobs, surface a primary action near the indicator so people can take the next step while they wait.  
+- Combine progress with contextual messaging (e.g. "Uploading 3 of 12 files") instead of repeating the component label.
+
+```tsx
+// Determinate linear progress
+<ProgressLinear value={65} intent="info" label="Uploading quarterly report" />
+
+// Circular spinner for unknown duration
+<ProgressCircular isIndeterminate intent="info" label="Syncing subscriptions" />
+```
+
+## Intent Mapping
+
+| Intent | Status tone (Statusables) | Indicator token | Typical scenarios |
+| --- | --- | --- | --- |
+| `info` | `getToneTokenSet('info')` | `var(--cmp-status-info-border)` | Neutral operations such as imports or background syncs |
+| `success` | `getToneTokenSet('success')` | `var(--cmp-status-success-border)` | Completion states when closing a workflow |
+| `warning` | `getToneTokenSet('warning')` | `var(--cmp-status-warning-border)` | Operations that may require attention (retries, degraded mode) |
+| `error` | `getToneTokenSet('critical')` | `var(--cmp-status-critical-border)` | Blocking issues (failed uploads, validation blockers) |
+
+The track color is anchored to the neutral palette: `var(--cmp-status-neutral-background)`. Both linear and circular variants derive their CSS custom properties from those tokens, so brand and theme swaps remain resilient.
+
+## Size Reference
+
+| Size | Token | Height |
+| --- | --- | --- |
+| `sm` | `--progress-linear-height` | 4px |
+| `md` (default) | `--progress-linear-height` | 6px |
+| `lg` | `--progress-linear-height` | 8px |
+
+Circular indicators inherit `diameter` and `strokeWidth` props, with sensible defaults (40px / 4px). Use smaller diameters inside buttons or cards, and the default for full-screen loading states.
+
+## Accessibility Checklist
+
+- Linear and circular components expose `role="progressbar"` and the correct ARIA values for determinate states.  
+- Provide `aria-label` or reference visible text for screen readers.  
+- Indeterminate progress omits `aria-valuenow` per WAI-ARIA guidance.  
+- Motion respects `prefers-reduced-motion`: indeterminate animations pause for users who opt out.  
+- Ensure surrounding UI conveys whether people can leave the view while work continues.
+
+## Related Resources
+
+- API surface: `~/src/components/progress/types.ts`  
+- Tokens: `resolveProgressTokens` → `getToneTokenSet(intent)`  
+- Reference guide: `docs/components/progression.md`

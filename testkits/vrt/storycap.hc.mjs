@@ -96,12 +96,12 @@ function resolveTargets(entries) {
     { titles: ['Components/Tabs', 'Components.Tabs'], name: 'Primary' },
     { titles: ['Components/Tooltip', 'Components.Tooltip'], name: 'Primary' },
     { titles: ['Components/Toast', 'Components.Toast'], name: 'Primary' },
-    // Contexts
-    { titles: ['Contexts/List', 'Contexts.List'], prefer: 'docs' },
-    { titles: ['Contexts/Detail', 'Contexts.Detail'], prefer: 'docs' },
-    { titles: ['Contexts/Form', 'Contexts.Form'], prefer: 'docs' },
-    { titles: ['Contexts/Timeline', 'Contexts.Timeline'], prefer: 'docs' },
-    { titles: ['Contexts/Dark', 'Contexts.Dark'], prefer: 'docs' },
+  // Contexts
+  { titles: ['Docs/Contexts/List'], prefer: 'docs' },
+  { titles: ['Docs/Contexts/Detail'], prefer: 'docs' },
+  { titles: ['Docs/Contexts/Form'], prefer: 'docs' },
+  { titles: ['Docs/Contexts/Timeline'], prefer: 'docs' },
+  { titles: ['Docs/Contexts/Dark'], prefer: 'docs' },
     // Patterns
     { titles: ['Patterns/Form', 'Patterns.Form'], prefer: 'docs' },
     // Page header (round to ~10 total)
@@ -111,13 +111,13 @@ function resolveTargets(entries) {
     { titles: ['Base/Badge'], name: 'Primary' },
     // Explorer showcase
     { titles: ['Explorer/StatusChip'], name: 'SubscriptionStates' },
-    // Foundations (additional)
-    { titles: ['Foundations/Borders', 'Foundations.Borders'], prefer: 'docs' },
-    { titles: ['Foundations/Motion', 'Foundations.Motion'], prefer: 'docs' },
-    { titles: ['Foundations/Shadows', 'Foundations.Shadows'], prefer: 'docs' },
-    { titles: ['Foundations/Typography', 'Foundations.Typography'], prefer: 'docs' },
-    // A11y contract page
-    { titles: ['ContractA11y'], prefer: 'docs' },
+  // Foundations (additional)
+  { titles: ['Docs/Foundations/Borders'], prefer: 'docs' },
+  { titles: ['Docs/Foundations/Motion'], prefer: 'docs' },
+  { titles: ['Docs/Foundations/Shadows'], prefer: 'docs' },
+  { titles: ['Docs/Foundations/Typography'], prefer: 'docs' },
+  // A11y contract page
+  { titles: ['Docs/Accessibility/Contract A11y'], prefer: 'docs' },
     // Object renderers
     { titles: ['Subscription/RenderObject'], name: 'ActiveDetail' },
     { titles: ['User/RenderObject'], name: 'ActiveDetail' },

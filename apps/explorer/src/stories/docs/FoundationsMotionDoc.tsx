@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import '../../styles/index.css';
-import { flatTokens } from '@oods/tokens';
+import { flatTokens } from '~/src/utils/design-tokens';
 
 type FlatTokenName = keyof typeof flatTokens;
 

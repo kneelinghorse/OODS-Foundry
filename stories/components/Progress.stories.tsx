@@ -4,13 +4,15 @@
 
 import { useState, useEffect } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { ProgressLinear } from '../../components/progress/ProgressLinear';
-import { ProgressCircular } from '../../components/progress/ProgressCircular';
-import type { ProgressIntent, ProgressSize } from '../../components/progress/types';
+import { ProgressLinear } from '~/src/components/progress/ProgressLinear';
+import { ProgressCircular } from '~/src/components/progress/ProgressCircular';
+import type {
+  ProgressIntent,
+  ProgressSize,
+} from '~/src/components/progress/types';
 
 const meta: Meta = {
   title: 'Components/Progression/Progress',
-  tags: ['autodocs'],
 };
 export default meta;
 

@@ -1,0 +1,35 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Docs/Component Set IV Overview" />
+
+# Component Set IV Overview
+
+Component Set IV packages eight high-impact UI primitives delivered in Sprint 18. Mission B19.1 focused on cross-brand QA, accessibility sweeps, and documentation alignment ahead of packaging.
+
+## QA Highlights
+
+- ✅ Chromatic baselines refreshed for light, dark, and brand variants (0 diffs).  
+- ✅ 49/49 axe checks passing across curated stories and forced-colors mode.  
+- ✅ Keyboard matrices executed for Tabs, Pagination, Breadcrumbs, and Toast queue.  
+- ✅ QA matrix archived at `docs/qa/component-set-iv-checklist.md`.
+
+## Component Docs
+
+- [Progress Guidelines](?path=/docs/components-progression-progress-guidelines--docs) — determinate/indeterminate patterns, Statusables intents, reduced-motion behavior.  
+- [Stepper Guidelines](?path=/docs/components-progression-stepper-guidelines--docs) — status mapping, optional steps, accessibility.  
+- [Tabs Guidelines](?path=/docs/components-navigation-tabs-guidelines--docs) — overflow menu, sizing tokens, keyboard flows.  
+- [Pagination Guidelines](?path=/docs/components-navigation-pagination-guidelines--docs) — hook integration, mobile collapse, token references.  
+- [Breadcrumbs Guidelines](?path=/docs/components-navigation-breadcrumbs-guidelines--docs) — overflow trigger, token hooks, screen reader strategy.  
+- [Empty State Guidelines](?path=/docs/components-feedback-emptystate-guidelines--docs) — tone alignment with Statusables.  
+- [Toast Guidelines](?path=/docs/components-feedback-toast-guidelines--docs) — queue management, intents, accessibility.
+
+## Testing Artifacts
+
+- Storybook build snapshot: `storybook-static/`  
+- A11y report: `tools/a11y/reports/a11y-report.json`  
+- A11y report: `tools/a11y/reports/a11y-report.json`  
+- A11y state snapshot: `artifacts/state/a11y.json`  
+- Chromatic run state: `artifacts/state/chromatic.json`  
+- Diagnostics summary: `diagnostics.json → sprint19.B19.1`
+
+Refer to `docs/changelog/sprint-19.md` for the mission summary and handoff notes for B19.2.

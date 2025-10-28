@@ -1,0 +1,64 @@
+import { Meta, Canvas } from '@storybook/blocks';
+import * as TabsStories from './Tabs.stories';
+
+<Meta of={TabsStories} title="Components/Navigation/Tabs/Guidelines" />
+
+# Tabs
+
+Tabs switch between related views inside the same layout. They support responsive overflow, keyboard navigation, and high-contrast theming out of the box.
+
+<Canvas of={TabsStories.Default} />
+
+## Usage Guidance
+
+- Keep labels short (1–2 words) so truncation is rare; tooltips expose the full string when necessary.  
+- Provide an `aria-label` or `aria-labelledby` for the tablist whenever context isn’t obvious.  
+- Pick the density that matches the containing surface: `sm` for sidebars, `md` for standard content, `lg` for touch-heavy layouts.  
+- Use the overflow menu for collections that grow dynamically. The active tab always remains visible.  
+- Avoid using tabs for sequential workflows—prefer the Stepper component when order matters.
+
+```tsx
+const items: TabItem[] = [
+  { id: 'overview', label: 'Overview', panel: <OverviewPanel /> },
+  { id: 'metrics', label: 'Metrics', panel: <MetricsPanel /> },
+  { id: 'settings', label: 'Settings', panel: <SettingsPanel /> },
+];
+
+<Tabs items={items} defaultSelectedId="overview" overflowLabel="More" aria-label="Project navigation" />;
+```
+
+## Token Reference
+
+| State / Size | Token | Purpose |
+| --- | --- | --- |
+| Default text | `--tabs-color-text-default` (`var(--sys-text-primary)`) | Unselected tab color |
+| Selected text | `--tabs-color-text-selected` (`var(--sys-text-accent)`) | Highlighted tab |
+| Selected border | `--tabs-color-border-selected` (`var(--sys-border-strong)`) | Active indicator |
+| Disabled text | `--tabs-color-text-disabled` (`var(--sys-text-muted)`) | Muted tone plus reduced opacity |
+| Hover background | `--tabs-color-bg-hover` (`var(--sys-surface-subtle)`) | Pointer affordance |
+| Focus outline | `--tabs-focus-outer` (`var(--sys-focus-ring-outer)`) | Visible focus ring |
+| Size typography | `resolveTabsTokens(size).fontSize` | Adjusts density via semantic typography tokens |
+
+All sizing knobs (`paddingBlock`, `paddingInline`) derive from spacing tokens so the component follows theme density rules.
+
+## Keyboard & Accessibility
+
+- Arrow keys wrap and move focus between tabs (roving tabindex pattern).  
+- `Home` / `End` jump to the first or last tab.  
+- `Enter` / `Space` activates the focused tab, matching the ARIA manual activation model.  
+- Overflow menus expose `role="menu"` items that remain keyboard navigable.  
+- Panels link back to their controlling tab via `aria-labelledby` and set `hidden` when inactive.
+
+## Responsive Overflow
+
+<Canvas of={TabsStories.WithOverflow} />
+
+- When the container width is constrained, extra tabs collapse behind an overflow trigger.  
+- The trigger inherits tab sizing tokens and respects focus/high-contrast styles.  
+- Selecting an item from the overflow menu re-focuses the tablist and keeps the newly selected tab visible.
+
+## Related Resources
+
+- API: `~/src/components/tabs/types.ts`  
+- Token helpers: `resolveTabsTokens` (`~/src/components/tabs/tokens.ts`)  
+- Extended guidance: `docs/components/navigation.md`
