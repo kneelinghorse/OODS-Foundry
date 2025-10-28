@@ -92,31 +92,18 @@ export function Popover({ trigger, title, children, open, defaultOpen, onOpenCha
             role="dialog"
             aria-modal={false}
             {...labelledProps}
-            style={{
-              position: 'fixed',
-              top: pos.top,
-              left: pos.left,
-              transform: 'translateX(-50%)',
-              background: 'var(--cmp-surface-panel)',
-              color: 'var(--cmp-text-body)',
-              border: '1px solid var(--cmp-border-strong)',
-              borderRadius: '0.5rem',
-              boxShadow: '0 0 0 1px color-mix(in srgb, var(--cmp-border-strong) 35%, transparent), var(--cmp-shadow-overlay)',
-              padding: 12,
-              minWidth: 240,
-              maxWidth: 420,
-              width: 'max-content',
-              zIndex: 1000,
-            }}
+            className="cmp-overlay cmp-popover"
+            data-overlay="popover"
+            style={{ top: pos.top, left: pos.left }}
           >
             {title ? (
-              <div id={`${panelId}-label`} style={{ fontWeight: 600, marginBottom: 8 }}>
+              <div id={`${panelId}-label`} className="cmp-popover__title">
                 {title}
               </div>
             ) : null}
-            <div>{children}</div>
-            <div style={{ marginTop: 12, textAlign: 'right' }}>
-              <button type="button" onClick={() => setOpen(false)}>
+            <div className="cmp-popover__content">{children}</div>
+            <div className="cmp-popover__actions">
+              <button type="button" className="cmp-popover__close" onClick={() => setOpen(false)}>
                 Close
               </button>
             </div>

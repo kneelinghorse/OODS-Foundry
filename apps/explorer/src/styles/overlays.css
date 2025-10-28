@@ -14,6 +14,178 @@
   --cmp-overlay-focus-width: var(--sys-focus-width, 2px);
 }
 
+.cmp-overlay__root {
+  position: fixed;
+  inset: 0;
+  z-index: var(--cmp-overlay-layer, 1000);
+  display: grid;
+  place-items: center;
+  padding: clamp(1rem, 2vw, 2rem);
+}
+
+.cmp-overlay__root[data-overlay-anchor] {
+  place-items: stretch;
+  padding: 0;
+}
+
+.cmp-overlay__backdrop {
+  position: fixed;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: color-mix(in srgb, var(--cmp-surface-backdrop, rgba(15, 17, 23, 0.78)) 55%, transparent);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.cmp-overlay__backdrop[data-dismiss-enabled='false'] {
+  cursor: default;
+}
+
+.cmp-overlay {
+  border-radius: var(--cmp-overlay-radius);
+  background: var(--cmp-overlay-surface);
+  border: 1px solid var(--cmp-overlay-border);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--cmp-overlay-border) 30%, transparent), var(--cmp-overlay-shadow);
+  color: var(--cmp-text-body);
+  display: grid;
+  gap: var(--cmp-overlay-gap);
+  padding: var(--cmp-spacing-inset-default, 1.25rem);
+  pointer-events: auto;
+  min-inline-size: min(22rem, 100%);
+  box-sizing: border-box;
+}
+
+.cmp-overlay:focus-visible {
+  outline: var(--cmp-overlay-focus-width) solid var(--cmp-overlay-focus-outer);
+  outline-offset: 4px;
+}
+
+.cmp-dialog {
+  max-inline-size: min(32rem, calc(100vw - 3rem));
+}
+
+.cmp-dialog__title {
+  margin: 0;
+  font-size: clamp(1.05rem, 0.5vw + 1rem, 1.25rem);
+  font-weight: 600;
+  color: var(--cmp-text-body);
+}
+
+.cmp-dialog__description {
+  margin: 0;
+  color: var(--cmp-text-muted);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.cmp-sheet {
+  position: fixed;
+  inset-block: 0;
+  display: grid;
+  gap: var(--cmp-overlay-gap);
+  padding: var(--cmp-spacing-inset-default, 1.5rem);
+  border-radius: 0;
+  min-block-size: 100vh;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--cmp-overlay-border) 30%, transparent),
+    var(--cmp-shadow-overlay, 0 24px 56px -16px color-mix(in srgb, var(--cmp-text-body, CanvasText) 24%, transparent));
+}
+
+.cmp-sheet[data-size='sm'] {
+  --cmp-sheet-extent: clamp(18rem, 26vw, 22rem);
+}
+.cmp-sheet[data-size='md'] {
+  --cmp-sheet-extent: clamp(22rem, 32vw, 28rem);
+}
+.cmp-sheet[data-size='lg'] {
+  --cmp-sheet-extent: clamp(26rem, 40vw, 36rem);
+}
+
+.cmp-sheet[data-anchor='right'] {
+  inset-inline-end: 0;
+  width: min(var(--cmp-sheet-extent, 28rem), 100vw);
+}
+
+.cmp-sheet[data-anchor='left'] {
+  inset-inline-start: 0;
+  width: min(var(--cmp-sheet-extent, 28rem), 100vw);
+}
+
+.cmp-sheet[data-anchor='top'] {
+  inset-block-start: 0;
+  inset-inline: 0;
+  min-inline-size: 100vw;
+  min-block-size: min(var(--cmp-sheet-extent, 24rem), 100vh);
+}
+
+.cmp-sheet[data-anchor='bottom'] {
+  inset-block-end: 0;
+  inset-inline: 0;
+  min-inline-size: 100vw;
+  min-block-size: min(var(--cmp-sheet-extent, 24rem), 100vh);
+}
+
+.cmp-popover {
+  position: fixed;
+  transform: translateX(-50%);
+  z-index: calc(var(--cmp-overlay-layer, 1000) + 2);
+  min-inline-size: min(18rem, calc(100vw - 2rem));
+  max-inline-size: min(26rem, calc(100vw - 2rem));
+  padding: var(--cmp-spacing-inset-compact, 0.9rem);
+  gap: var(--cmp-spacing-stack-compact, 0.75rem);
+}
+
+.cmp-popover__title {
+  margin: 0;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--cmp-text-body);
+}
+
+.cmp-popover__content {
+  font-size: 0.95rem;
+  color: var(--cmp-text-body);
+}
+
+.cmp-popover__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--cmp-spacing-inline-sm, 0.75rem);
+}
+
+.cmp-popover__close {
+  appearance: none;
+  border: 1px solid color-mix(in srgb, var(--cmp-border-default) 35%, transparent);
+  background: color-mix(in srgb, var(--cmp-surface-panel) 92%, transparent);
+  color: var(--cmp-text-body);
+  border-radius: 0.65rem;
+  padding: 0.45rem 0.85rem;
+  font: inherit;
+  cursor: pointer;
+  transition: background-color var(--motion-transition-hover-duration, 120ms) ease, border-color var(--motion-transition-hover-duration, 120ms) ease;
+}
+
+.cmp-popover__close:hover {
+  background: color-mix(in srgb, var(--cmp-surface-panel) 86%, transparent);
+  border-color: var(--cmp-border-strong);
+}
+
+.cmp-popover__close:focus-visible {
+  outline: var(--cmp-overlay-focus-width) solid var(--cmp-overlay-focus-outer);
+  outline-offset: 2px;
+}
+
+.cmp-overlay__root > .cmp-overlay {
+  pointer-events: auto;
+  z-index: calc(var(--cmp-overlay-layer, 1000) + 1);
+}
+
+.cmp-overlay__root > .cmp-overlay__backdrop {
+  z-index: var(--cmp-overlay-layer, 1000);
+}
+
 /* Select (button + listbox) */
 .cmp-select {
   --cmp-select-radius: var(--cmp-input-radius, 0.85rem);

@@ -23,17 +23,6 @@ export default meta;
 
 type Story = StoryObj;
 
-// Minimal, non-visual anchor so the CSF module is indexed by Storybook.
-// Hidden from docs and Chromatic to avoid noise.
-export const DocsOnly: Story = {
-  parameters: {
-    docs: { disable: true },
-    chromatic: { disableSnapshot: true },
-  },
-  tags: ['hidden'],
-  render: () => <span style={{ display: 'none' }} />,
-};
-
 export const ValidationBannerDemo: Story = {
   name: 'ValidationBanner',
   parameters: { chromatic: { disableSnapshot: false }, vrt: { tags: ['vrt-critical'] } },
