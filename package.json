@@ -82,6 +82,7 @@
     "vrt:fallback:update": "playwright test --config testkits/vrt/playwright.config.ts --update-snapshots",
     "vrt:lightdark": "node testkits/vrt/storycap.lightdark.mjs --out artifacts/vrt/lightdark/local",
     "vrt:hc": "node testkits/vrt/storycap.hc.mjs --out artifacts/vrt/hc/local",
+    "perf:harness": "tsx testkits/perf-harness/cli.ts",
     "registry:list": "tsx src/cli/registry-list.ts",
     "object:list": "tsx src/cli/object-commands.ts list",
     "object:resolve": "tsx src/cli/object-commands.ts resolve",
