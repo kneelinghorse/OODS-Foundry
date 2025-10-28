@@ -28,6 +28,19 @@ const meta: Meta = {
 
 export default meta;
 
+const DEMO_USERS = [
+  { id: 'user_viewer', role: 'role_viewer', label: 'Viewer' },
+  { id: 'user_contributor', role: 'role_contributor', label: 'Contributor' },
+  { id: 'user_approver', role: 'role_approver', label: 'Approver' },
+] as const;
+
+const DEMO_ACTIONS = [
+  { id: 'read', label: 'Read Subscription' },
+  { id: 'write', label: 'Edit Subscription' },
+  { id: 'pause', label: 'Pause Subscription' },
+  { id: 'approve', label: 'Approve Token Change' },
+] as const;
+
 /**
  * Interactive Permission Check Demo
  */
@@ -36,6 +49,7 @@ export const PermissionCheckDemo: StoryObj = {
     const [rbacService] = useState(() => {
       const service = new RBACService();
       seedBaseline(service);
+      seedDemoAssignments(service);
       return service;
     });
 
@@ -43,24 +57,6 @@ export const PermissionCheckDemo: StoryObj = {
     const [selectedUser, setSelectedUser] = useState('user_viewer');
     const [selectedAction, setSelectedAction] = useState('read');
     const [result, setResult] = useState<any>(null);
-
-    const users = [
-      { id: 'user_viewer', role: 'role_viewer', label: 'Viewer' },
-      { id: 'user_contributor', role: 'role_contributor', label: 'Contributor' },
-      { id: 'user_approver', role: 'role_approver', label: 'Approver' },
-    ];
-
-    const actions = [
-      { id: 'read', label: 'Read Subscription' },
-      { id: 'write', label: 'Edit Subscription' },
-      { id: 'pause', label: 'Pause Subscription' },
-      { id: 'approve', label: 'Approve Token Change' },
-    ];
-
-    // Grant roles
-    users.forEach(u => {
-      rbacService.grantRole(u.id, u.role, 'system');
-    });
 
     const checkPermission = () => {
       const resourceRef = selectedAction === 'approve' 
@@ -99,7 +95,7 @@ export const PermissionCheckDemo: StoryObj = {
             onChange={e => setSelectedUser(e.target.value)}
             style={{ width: '100%', padding: '0.5rem' }}
           >
-            {users.map(u => (
+            {DEMO_USERS.map(u => (
               <option key={u.id} value={u.id}>{u.label}</option>
             ))}
           </select>
@@ -114,7 +110,7 @@ export const PermissionCheckDemo: StoryObj = {
             onChange={e => setSelectedAction(e.target.value)}
             style={{ width: '100%', padding: '0.5rem' }}
           >
-            {actions.map(a => (
+            {DEMO_ACTIONS.map(a => (
               <option key={a.id} value={a.id}>{a.label}</option>
             ))}
           </select>
@@ -340,4 +336,17 @@ function seedBaseline(service: RBACService): void {
       });
     });
   });
+}
+
+function seedDemoAssignments(service: RBACService): void {
+  for (const { id, role } of DEMO_USERS) {
+    try {
+      service.grantRole(id, role, 'system');
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('already granted')) {
+        continue;
+      }
+      throw error;
+    }
+  }
 }

@@ -1,4 +1,4 @@
-import { type CSSProperties, PropsWithChildren, useMemo, useRef } from 'react';
+import { PropsWithChildren, useRef } from 'react';
 import { OverlayRoot } from '../../overlays/manager/OverlayRoot';
 import { useEscapeRoutes, useFocusManagement, useInertOutside } from '../../overlays/manager/hooks';
 
@@ -42,39 +42,23 @@ export function Sheet({
     closeOnBackdrop ? backdropRef : null
   );
 
-  const dims = useMemo(() => {
-    const sizes: Record<SheetSize, number> = { sm: 300, md: 420, lg: 640 };
-    const px = sizes[size];
-    return { px };
-  }, [size]);
-
-  const panelStyle: CSSProperties = useMemo(() => {
-    const base: CSSProperties = {
-      position: 'fixed',
-      background: 'var(--cmp-surface-panel)',
-      color: 'var(--cmp-text-body)',
-      padding: 'var(--cmp-spacing-inset-default, 1rem)',
-      border: '2px solid var(--cmp-border-strong)',
-    };
-    if (anchor === 'right') return { ...base, top: 0, bottom: 0, right: 0, width: dims.px };
-    if (anchor === 'left') return { ...base, top: 0, bottom: 0, left: 0, width: dims.px };
-    if (anchor === 'top') return { ...base, top: 0, left: 0, right: 0, height: dims.px };
-    return { ...base, bottom: 0, left: 0, right: 0, height: dims.px };
-  }, [anchor, dims.px]);
-
   if (!open) return null;
+
+  const panelClassName = ['cmp-overlay', 'cmp-sheet', className].filter(Boolean).join(' ');
 
   return (
     <OverlayRoot rootId={rootId}>
-      <div style={{ position: 'fixed', inset: 0 }} aria-hidden={false}>
+      <div className="cmp-overlay__root" data-overlay-anchor={anchor} aria-hidden={false}>
         <div
           role="dialog"
           aria-modal="true"
           aria-labelledby={labelledBy}
           ref={panelRef}
           tabIndex={-1}
-          className={className}
-          style={panelStyle}
+          className={panelClassName}
+          data-overlay="sheet"
+          data-anchor={anchor}
+          data-size={size}
         >
           {children}
         </div>
@@ -82,7 +66,9 @@ export function Sheet({
           ref={backdropRef}
           aria-label="Close overlay (backdrop)"
           onClick={() => closeOnBackdrop && onOpenChange(false)}
-          style={{ position: 'fixed', inset: 0, background: 'transparent', border: 'none' }}
+          className="cmp-overlay__backdrop"
+          data-dismiss-enabled={closeOnBackdrop ? 'true' : 'false'}
+          type="button"
           tabIndex={-1}
         />
       </div>

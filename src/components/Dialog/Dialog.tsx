@@ -54,12 +54,11 @@ export function Dialog({
 
   if (!open) return null;
 
+  const panelClassName = ['cmp-overlay', 'cmp-dialog', className].filter(Boolean).join(' ');
+
   return (
     <OverlayRoot rootId={rootId}>
-      <div
-        style={{ position: 'fixed', inset: 0, display: 'grid', placeItems: 'center' }}
-        aria-hidden={false}
-      >
+      <div className="cmp-overlay__root" aria-hidden={false}>
         <div
           role="dialog"
           aria-modal="true"
@@ -67,25 +66,16 @@ export function Dialog({
           aria-describedby={aria.ariaDescribedBy}
           ref={panelRef}
           tabIndex={-1}
-          className={className}
-          style={{
-            background: 'var(--cmp-surface-panel)',
-            color: 'var(--cmp-text-body)',
-            padding: 'var(--cmp-spacing-inset-default, 1rem)',
-            minWidth: 320,
-            border: '2px solid var(--cmp-border-strong)',
-            borderRadius: 8,
-            boxShadow:
-              'var(--sys-shadow-elevation-overlay, 0 24px 56px -16px color-mix(in srgb, var(--cmp-text-body, CanvasText) 24%, transparent))'
-          }}
+          className={panelClassName}
+          data-overlay="dialog"
         >
           {title ? (
-            <h3 id={aria.ariaLabelledBy} style={{ marginTop: 0 }}>
+            <h3 id={aria.ariaLabelledBy} className="cmp-dialog__title">
               {title}
             </h3>
           ) : null}
           {description ? (
-            <p id={aria.ariaDescribedBy} style={{ marginTop: 4 }}>
+            <p id={aria.ariaDescribedBy} className="cmp-dialog__description">
               {description}
             </p>
           ) : null}
@@ -95,7 +85,9 @@ export function Dialog({
           ref={backdropRef}
           aria-label="Close overlay (backdrop)"
           onClick={() => closeOnBackdrop && onOpenChange(false)}
-          style={{ position: 'fixed', inset: 0, background: 'transparent', border: 'none' }}
+          className="cmp-overlay__backdrop"
+          data-dismiss-enabled={closeOnBackdrop ? 'true' : 'false'}
+          type="button"
           tabIndex={-1}
         />
       </div>

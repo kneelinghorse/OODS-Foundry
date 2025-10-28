@@ -26,7 +26,7 @@ type StatusChipArgs = ComponentProps<typeof StatusChip>;
 
 export const SubscriptionStates: Story = {
   render: (args: StatusChipArgs) => (
-    <div className="story-grid">
+    <div className="story-grid status-chip-grid">
       <StatusChip {...args} status="future" />
       <StatusChip {...args} status="trialing" />
       <StatusChip {...args} status="active" />
@@ -48,7 +48,7 @@ export const InvoiceStates: Story = {
     domain: 'invoice'
   },
   render: (args: StatusChipArgs) => (
-    <div className="story-grid">
+    <div className="story-grid status-chip-grid">
       <StatusChip {...args} status="draft" />
       <StatusChip {...args} status="posted" />
       <StatusChip {...args} status="paid" />
@@ -68,7 +68,7 @@ export const PaymentIntentStates: Story = {
     domain: 'payment_intent'
   },
   render: (args: StatusChipArgs) => (
-    <div className="story-grid">
+    <div className="story-grid status-chip-grid">
       <StatusChip {...args} status="requires_payment_method" />
       <StatusChip {...args} status="requires_confirmation" />
       <StatusChip {...args} status="processing" />
@@ -89,7 +89,7 @@ export const TicketStates: Story = {
     domain: 'ticket'
   },
   render: (args: StatusChipArgs) => (
-    <div className="story-grid">
+    <div className="story-grid status-chip-grid">
       <StatusChip {...args} status="new" />
       <StatusChip {...args} status="open" />
       <StatusChip {...args} status="pending" />
@@ -110,7 +110,7 @@ export const UserStates: Story = {
     domain: 'user'
   },
   render: (args: StatusChipArgs) => (
-    <div className="story-grid">
+    <div className="story-grid status-chip-grid">
       <StatusChip {...args} status="invited" />
       <StatusChip {...args} status="active" />
       <StatusChip {...args} status="suspended" />

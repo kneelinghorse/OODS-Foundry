@@ -1333,6 +1333,12 @@
   width: min(32rem, 100%);
 }
 
+.story-grid.status-chip-grid {
+  grid-template-columns: repeat(auto-fit, minmax(14rem, max-content));
+  justify-content: flex-start;
+  width: min(48rem, 100%);
+}
+
 .dark-demo__grid {
   display: grid;
   gap: var(--cmp-spacing-inset-default, 1.5rem);
