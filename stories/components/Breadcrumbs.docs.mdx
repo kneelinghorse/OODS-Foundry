@@ -1,0 +1,62 @@
+import { Meta, Canvas } from '@storybook/blocks';
+import * as BreadcrumbStories from './Breadcrumbs.stories';
+
+<Meta of={BreadcrumbStories} title="Components/Navigation/Breadcrumbs/Guidelines" />
+
+# Breadcrumbs
+
+Breadcrumbs expose hierarchical context and let people retrace their path without backtracking through multiple views. Component logic handles truncation, overflow menus, and keyboard flows across brands.
+
+<Canvas of={BreadcrumbStories.LongPathWithOverflow} />
+
+## Usage Guidance
+
+- Restrict the trail to meaningful hierarchy levels; avoid surfacing more than 7 items at once.  
+- Provide a unique `aria-label` when multiple breadcrumb trails exist on the same page (e.g., `aria-label="Primary navigation"`).  
+- Keep labels concise and descriptive—full strings are preserved in overflow menus.  
+- Use `maxVisibleItems` to lock the number of items rendered before overflow.  
+- Pass an `onItemClick` handler when you need analytics or custom routing for breadcrumb links.
+
+```tsx
+const items: BreadcrumbItem[] = [
+  { id: 'home', label: 'Home', href: '/' },
+  { id: 'catalog', label: 'Catalog', href: '/catalog' },
+  { id: 'laptops', label: 'Laptops', href: '/catalog/laptops' },
+  { id: 'gaming', label: 'Gaming Laptops' },
+];
+
+<Breadcrumbs
+  items={items}
+  maxVisibleItems={4}
+  overflowLabel="⋯"
+  aria-label="Store hierarchy"
+/>;
+```
+
+## Token Reference
+
+| Token | Description |
+| --- | --- |
+| `--breadcrumbs-font-size` / `--breadcrumbs-font-weight` | Typography sourced from Statusables text scales |
+| `--breadcrumbs-gap` | Inline spacing between items |
+| `--breadcrumbs-color-link` / `--breadcrumbs-color-link-hover` | Interactive link colors mapped to action tokens |
+| `--breadcrumbs-color-text-current` | Current page color (defaults to body text) |
+| `--breadcrumbs-color-text-disabled` | Disabled state when intermediate levels are not navigable |
+| `--breadcrumbs-focus-outline-color` / `--breadcrumbs-focus-outline-width` | Focus ring tokens for keyboard users |
+| `--breadcrumbs-color-separator` | Token for the chevron or separator character |
+
+All values are resolved by `resolveBreadcrumbsTokens()` so brand themes and high-contrast modes ingest the same semantic primitives.
+
+## Overflow & Accessibility
+
+- Overflow trigger exposes `aria-haspopup="menu"` and opens a keyboard navigable menu listing hidden ancestors.  
+- The current page sets `aria-current="page"` and uses the dedicated `--breadcrumbs-color-text-current` token.  
+- Disabled items render as text instead of links, preventing navigation loops.  
+- Separator glyphs are marked decorative (`aria-hidden`) and use tokenized colors to remain visible in forced colors.  
+- Screen readers announce the trail as a list thanks to the underlying semantic markup (`<nav>` + `<ol>`/`<li>` roles).
+
+## Related Resources
+
+- API: `~/src/components/breadcrumbs/types.ts`  
+- Token helper: `resolveBreadcrumbsTokens` (`~/src/components/breadcrumbs/tokens.ts`)  
+- Strategic guidance: `docs/components/navigation.md`

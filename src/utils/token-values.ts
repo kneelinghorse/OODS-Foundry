@@ -1,4 +1,4 @@
-import { flatTokens } from '@oods/tokens';
+import { flatTokens } from './design-tokens';
 
 type FlatTokenRecord = {
   path?: unknown;

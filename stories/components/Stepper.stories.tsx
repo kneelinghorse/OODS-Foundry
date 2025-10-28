@@ -4,12 +4,11 @@
 
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { Stepper } from '../../components/stepper/Stepper';
-import type { StepDescriptor } from '../../components/stepper/types';
+import { Stepper } from '~/src/components/stepper/Stepper';
+import type { StepDescriptor } from '~/src/components/stepper/types';
 
 const meta: Meta = {
   title: 'Components/Progression/Stepper',
-  tags: ['autodocs'],
 };
 export default meta;
 

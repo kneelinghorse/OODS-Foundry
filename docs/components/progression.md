@@ -341,5 +341,5 @@ If upgrading from a previous progress/stepper implementation:
 
 - Research: `cmos/missions/research/R18.1_Technical-Research-Report-Component-Set-IV.md`
 - Mission: `cmos/missions/sprint-18/B18.1_progress-and-stepper.yaml`
-- Stories: `src/stories/components/Progress.stories.tsx`, `Stepper.stories.tsx`
+- Stories: `stories/components/Progress.stories.tsx`, `stories/components/Stepper.stories.tsx`
 - Tests: `tests/components/progress.test.tsx`, `stepper.test.tsx`

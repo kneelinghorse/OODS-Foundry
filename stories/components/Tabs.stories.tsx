@@ -4,10 +4,10 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import '../../styles/globals.css';
-import '../../components/tabs/tabs.css';
-import { Tabs } from '../../components/tabs/Tabs.js';
-import type { TabItem, TabsProps } from '../../components/tabs/types.js';
+import '~/src/styles/globals.css';
+import '~/src/components/tabs/tabs.css';
+import { Tabs } from '~/src/components/tabs/Tabs.js';
+import type { TabItem, TabsProps } from '~/src/components/tabs/types.js';
 
 const meta = {
   title: 'Components/Navigation/Tabs',
@@ -37,7 +37,7 @@ Tabs component for organizing related content into separate, switchable views.
       },
     },
   },
-  tags: ['autodocs', 'vrt'],
+  tags: ['vrt'],
   argTypes: {
     items: {
       control: false,

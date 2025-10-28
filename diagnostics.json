@@ -357,31 +357,51 @@
   "helpers": {
     "overlaysProof": {
       "totals": {
-        "runs": 3,
-        "pass": 3,
+        "runs": 4,
+        "pass": 4,
         "fail": 0
       },
       "lastRun": {
         "mission": "B16.6",
-        "runAt": "2025-10-24T14:55:42.462Z",
+        "runAt": "2025-10-28T13:31:00.136Z",
         "status": "passed",
-        "durationMs": 7963,
+        "durationMs": 7473,
         "tasks": [
           {
             "id": "overlay-manager-e2e",
             "status": "passed",
-            "durationMs": 4276,
+            "durationMs": 3964,
             "exitCode": null
           },
           {
             "id": "overlay-components-axe",
             "status": "passed",
-            "durationMs": 3687,
+            "durationMs": 3509,
             "exitCode": null
           }
         ]
       },
       "history": [
+        {
+          "mission": "B16.6",
+          "runAt": "2025-10-28T13:31:00.136Z",
+          "status": "passed",
+          "durationMs": 7473,
+          "tasks": [
+            {
+              "id": "overlay-manager-e2e",
+              "status": "passed",
+              "durationMs": 3964,
+              "exitCode": null
+            },
+            {
+              "id": "overlay-components-axe",
+              "status": "passed",
+              "durationMs": 3509,
+              "exitCode": null
+            }
+          ]
+        },
         {
           "mission": "B16.6",
           "runAt": "2025-10-24T14:55:42.462Z",
@@ -446,18 +466,25 @@
     },
     "pkgCompat": {
       "totals": {
-        "runs": 3,
-        "pass": 3,
+        "runs": 4,
+        "pass": 4,
         "fail": 0
       },
       "lastRun": {
         "mission": "B16.6",
-        "runAt": "2025-10-24T14:56:30.292Z",
+        "runAt": "2025-10-28T13:31:48.686Z",
         "status": "passed",
-        "durationMs": 15375,
+        "durationMs": 15851,
         "exitCode": null
       },
       "history": [
+        {
+          "mission": "B16.6",
+          "runAt": "2025-10-28T13:31:48.686Z",
+          "status": "passed",
+          "durationMs": 15851,
+          "exitCode": null
+        },
         {
           "mission": "B16.6",
           "runAt": "2025-10-24T14:56:30.292Z",
@@ -479,6 +506,31 @@
           "durationMs": 13808,
           "exitCode": null
         }
+      ]
+    }
+  },
+  "sprint19": {
+    "B19.1": {
+      "mission": "Component Polish & QA Sweep",
+      "completedAt": "2025-10-28T14:30:00Z",
+      "qa": {
+        "totalTests": 754,
+        "passing": 754,
+        "duration": "7.28s",
+        "a11yChecks": 49,
+        "a11yPassing": 49,
+        "components": 8,
+        "stories": "complete",
+        "packagingReady": true
+      },
+      "deliverables": [
+        "docs/qa/component-set-iv-checklist.md",
+        "docs/changelog/sprint-19.md",
+        "tools/a11y/reports/a11y-report.json",
+        "artifacts/state/a11y.json",
+        "artifacts/state/chromatic.json",
+        "artifacts/state/vr.json",
+        "storybook-static/"
       ]
     }
   }

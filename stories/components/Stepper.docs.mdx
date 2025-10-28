@@ -1,0 +1,55 @@
+import { Meta, Canvas } from '@storybook/blocks';
+import * as StepperStories from './Stepper.stories';
+
+<Meta of={StepperStories} title="Components/Progression/Stepper/Guidelines" />
+
+# Stepper
+
+Steppers guide people through multi-step workflows. Use them when the order of operations matters or when users need a clear sense of completion across several screens.
+
+<Canvas of={StepperStories.HorizontalLinear} />
+
+## Usage Guidance
+
+- Reserve steppers for flows with three or more discrete steps; tabs are better for non-linear content switching.  
+- Pick `isLinear={true}` when users must complete steps in sequence. Switch to non-linear mode for optional navigation between finished steps.  
+- Keep labels short (2–3 words) and add `description` copy when the step requires extra context.  
+- Mark steps as `optional` to set expectations up front; the component renders the label badge automatically.  
+- When validation fails, set the step `status` to `'error'` and provide inline messaging in the panel.
+
+```tsx
+const steps: StepDescriptor[] = [
+  { id: 'account', label: 'Account', status: 'completed' },
+  { id: 'billing', label: 'Billing', status: 'current' },
+  { id: 'review', label: 'Review', status: 'incomplete' },
+];
+
+<Stepper steps={steps} activeStepId="billing" isLinear />;
+```
+
+## Status & Token Mapping
+
+| Status | Tone | Icon / border token | Recommended usage |
+| --- | --- | --- | --- |
+| `completed` | `getToneTokenSet('success')` | `--stepper-step-fill-color` = `var(--cmp-status-success-border)` | Step finished successfully |
+| `current` | `getToneTokenSet('info')` | `--stepper-step-fill-color` = `var(--cmp-status-info-border)` | Active step user is working on |
+| `error` | `getToneTokenSet('critical')` | `--stepper-step-fill-color` = `var(--cmp-status-critical-border)` | Validation or blocking issues |
+| `incomplete` | `getToneTokenSet('neutral')` | `--stepper-step-border-color` = `var(--cmp-status-neutral-border)` | Future step not yet started |
+| `disabled` | Neutral surface tokens | `--stepper-step-icon-surface` = `var(--sys-surface-disabled)` | Gated steps that cannot be opened |
+| `optional` | `getToneTokenSet('accent')` | Optional badge uses `var(--cmp-status-accent-foreground)` | Non-mandatory steps |
+
+Focus outlines use the global focus tokens (`--cmp-focus-text`, `--cmp-focus-width`) so keyboard navigation remains visible in high-contrast themes.
+
+## Accessibility Checklist
+
+- The active step announces `aria-current="step"`; optional click areas expose `role="button"` and keyboard handlers for Enter/Space.  
+- Connector dividers are marked `aria-hidden` so they do not pollute the accessibility tree.  
+- Use semantic headings inside each panel so screen readers can skim the workflow.  
+- Keep `onStepClick` gated behind `isLinear={false}` if skipping ahead would break data integrity.  
+- Ensure error states pair visual color changes with text guidance in the panel.
+
+## Related Resources
+
+- API: `~/src/components/stepper/types.ts`  
+- Tokens: `resolveStepCssVariables` in `Stepper.tsx`  
+- Research notes: `cmos/missions/research/R18.1_Technical-Research-Report-Component-Set-IV.md`

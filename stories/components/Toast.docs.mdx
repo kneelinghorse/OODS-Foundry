@@ -1,0 +1,64 @@
+import { Meta, Canvas } from '@storybook/blocks';
+import * as ToastStories from './Toast.stories';
+
+<Meta of={ToastStories} title="Components/Feedback/Toast/Guidelines" />
+
+# Toast Notifications
+
+Toast notifications deliver non-blocking feedback that queues, auto-dismisses, and maps intents to Statusables tokens. The portal stacks messages intelligently so people can review and dismiss them without losing context.
+
+<Canvas of={ToastStories.Intents} />
+
+## Usage Guidance
+
+- Mount `ToastPortal` once near the app root and wrap your tree in `ToastProvider` so hooks and the imperative API share a single queue.  
+- Keep toast copy short—aim for a title plus one sentence of supporting context.  
+- Choose `duration: 0` (sticky) for critical issues that require user acknowledgement.  
+- Provide an `action` when the next step is obvious (e.g., “Retry”, “View details”).  
+- Derive styling from domain statuses via `{ status, domain }` when you need taxonomy-aligned messaging.
+
+```tsx
+toast.show({
+  intent: 'success',
+  title: 'Profile updated',
+  description: 'We saved your new preferences.',
+  action: {
+    label: 'View profile',
+    onClick: () => navigate('/profile'),
+  },
+});
+```
+
+## Intent Token Mapping
+
+| Intent | Tone | Background / border tokens | Ideal scenarios |
+| --- | --- | --- | --- |
+| `info` | `getToneTokenSet('info')` | `--statusable-toast-background` = `var(--cmp-status-info-surface)`<br/>`--statusable-toast-border` = `var(--cmp-status-info-border)` | Neutral updates, system notifications |
+| `success` | `getToneTokenSet('success')` | `--cmp-status-success-surface` / `--cmp-status-success-border` | Confirmations and completions |
+| `warning` | `getToneTokenSet('warning')` | `--cmp-status-warning-surface` / `--cmp-status-warning-border` | Action recommended, non-blocking issues |
+| `error` | `getToneTokenSet('critical')` | `--cmp-status-critical-surface` / `--cmp-status-critical-border` | Blocking failures that may require attention |
+
+Icon color, title text, and action button inherit the same tone via `--statusable-toast-foreground` so contrast stays compliant across light, dark, and forced-colors themes.
+
+## Behavior & Queueing
+
+<Canvas of={ToastStories.QueueStacking} />
+
+- Queue order is FIFO with subtle staggering, preventing overlap.  
+- Dismiss buttons and action buttons remain pointer and keyboard accessible because the portal enables pointer events per toast.  
+- The manager pauses dismissal timers while a toast is focused or hovered, ensuring interactive content stays accessible.  
+- `toast.dismiss(id)` and `toast.dismissAll()` are exposed for manual control.
+
+## Accessibility
+
+- The portal announces messages via `role="status"` with `aria-live="polite"` so updates surface without stealing focus.  
+- Provide `dismissLabel` overrides for localized close buttons.  
+- Animations respect `prefers-reduced-motion` and fall back to simple fades when motion should be minimized.  
+- Sticky toasts should include guidance inside the title or description about how to resolve the issue.  
+- Ensure follow-up actions are available elsewhere in the UI, not just in transient toasts.
+
+## Related Resources
+
+- Provider & hooks: `~/src/components/toast/toastService.ts`  
+- Portal styles: `~/src/styles/toast-portal.css`  
+- Component overview: `docs/components/toast.md`

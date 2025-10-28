@@ -1,0 +1,68 @@
+import { Meta, Canvas } from '@storybook/blocks';
+import * as PaginationStories from './Pagination.stories';
+
+<Meta of={PaginationStories} title="Components/Navigation/Pagination/Guidelines" />
+
+# Pagination
+
+Pagination provides page-by-page navigation for large result sets. The component pairs a headless hook (`usePagination`) with a styled UI that respects theme tokens, high-contrast mode, and accessibility contracts.
+
+<Canvas of={PaginationStories.LargeDataset} />
+
+## Usage Guidance
+
+- Use pagination when data sets exceed comfortable scrolling length; prefer infinite scroll only when context loss is acceptable.  
+- For collections under ~8 pages, keep all page buttons visible by increasing `siblingCount`/`boundaryCount`.  
+- Label the control (`aria-label`) according to the underlying collection (e.g., `"Invoices pagination"`).  
+- Combine with server-side filtering by calling `onChange` and loading new data when `page` changes.  
+- Toggle `showFirstLast` to add jump controls for long result sets.
+
+```tsx
+const [page, setPage] = useState(1);
+
+<Pagination
+  page={page}
+  count={42}
+  onChange={setPage}
+  siblingCount={1}
+  boundaryCount={1}
+  showFirstLast
+  aria-label="Invoices pagination"
+/>;
+```
+
+## Token Reference
+
+| Element | Token | Purpose |
+| --- | --- | --- |
+| Button text | `var(--cmp-text-body)` | Default page numbers |
+| Selected text | `var(--cmp-text-on_action)` | Contrast over the selected chip |
+| Hover background | `var(--cmp-surface-action_hover)` | Rollover feedback |
+| Selected background | `var(--cmp-surface-action)` | Active page chip |
+| Disabled text | `var(--cmp-text-disabled)` | Previous/next guard rails |
+| Focus outline | `var(--cmp-focus-text)` / `var(--cmp-focus-width)` | Keyboard focus visibility |
+| Radius & spacing | `var(--border-radius-md)`, `var(--spacing-squish-inline-sm)` | Chip shape and hit target |
+
+All values flow from `resolvePaginationTokens()` so derivatives (ghost buttons, high-contrast mode) inherit the correct semantics.
+
+## Accessibility Details
+
+- Buttons expose `aria-label` (`"Page X"`, `"Go to next page"`) and set `aria-current="page"` for the active item.  
+- Previous/next controls disable when no more pages exist, preventing redundant focus stops.  
+- Ellipsis items are rendered as `aria-hidden` spans so screen readers skip them cleanly.  
+- Keyboard users can tab through the whole control; focus outlines rely on global focus tokens for visibility.  
+- Pair with `aria-live` messaging in the consuming view to announce when new results load.
+
+## Mobile Collapse Pattern
+
+<Canvas of={PaginationStories.MobileCollapsed} />
+
+- On narrow viewports, the component collapses into previous/next controls plus the current page summary.  
+- The summary text inherits neutral tokens to maintain readability across themes.  
+- You can override the layout by providing custom styles while reusing the `usePagination` hook.
+
+## Related Resources
+
+- Hook API: `~/src/components/pagination/usePagination.ts`  
+- Token helper: `~/src/components/pagination/tokens.ts`  
+- Content design: `docs/components/navigation.md`
