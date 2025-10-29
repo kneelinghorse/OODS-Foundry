@@ -24,6 +24,7 @@ OODS Foundry is a **design-system you can ship**:
 - **MCP + Agents (roadmap)** — a small, safe toolset exposed via MCP for plan→approve→execute flows (no repo-wide writes).
 
 See live status and plan in `missions/backlog.yaml`.
+Live Storybook (GitHub Pages): https://kneelinghorse.github.io/OODS-Foundry/
 
 ---
 

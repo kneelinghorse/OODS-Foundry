@@ -1,0 +1,81 @@
+name: Deploy Storybook
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - 'cmos/**'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  build:
+    name: build-storybook
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build tokens
+        run: pnpm run build:tokens
+
+      - name: Build tw-variants package
+        run: pnpm --filter @oods/tw-variants run build
+
+      - name: Build packages
+        run: pnpm run build:packages
+
+      - name: Cache Storybook build
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules/.cache/storybook
+          key: ${{ runner.os }}-sb-pages-${{ hashFiles('pnpm-lock.yaml', '.storybook/**', 'src/**', 'packages/**') }}
+          restore-keys: |
+            ${{ runner.os }}-sb-pages-
+
+      - name: Build Storybook
+        run: pnpm run build-storybook
+
+      - name: Upload Storybook artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: storybook-static
+
+  deploy:
+    name: deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
