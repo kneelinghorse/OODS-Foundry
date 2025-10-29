@@ -1,7 +1,7 @@
 # Sprint 19 Changelog
 
 **Sprint:** 19 - Design System Hardening & Packaging Readiness
-**Status:** In Progress
+**Status:** ✅ COMPLETED
 **Focus:** Polish components, run packaging dry run, finalize guardrails, and ship Storybook display deployment (no external pilot)
 
 ---
@@ -244,6 +244,37 @@ All criteria met for Component Set IV:
 | State assessment CLI + check | ✅ | `scripts/state-assessment.mjs` |
 | Diagnostics runbook | ✅ | `docs/diagnostics/README.md` |
 
+## Mission B19.5: Storybook GitHub Pages Deployment
+
+**Status:** ✅ COMPLETED  
+**Date:** 2025-10-29  
+**Lead:** Release Engineering
+
+### Summary
+
+- Automated Storybook publishing to GitHub Pages with `.github/workflows/deploy-storybook.yml` (push to `main` + manual dispatch).
+- Warmed token/package builds and cached Storybook artifacts to keep deploys under ~6 minutes.
+- Authored `docs/display-site/README.md` covering setup, validation, troubleshooting, and maintenance.
+- Surfaced the hosted Storybook URL in the repository `README.md` for stakeholder access.
+
+### Achievements
+
+**✅ Actions workflow**
+- `Deploy Storybook` job builds tokens, packages, and Storybook, uploads with `actions/upload-pages-artifact`, and deploys via `actions/deploy-pages`.
+- Pages-specific concurrency guard (`pages-deploy`) prevents overlapping publishes while keeping manual retries easy.
+
+**✅ Documentation & visibility**
+- Runbook in `docs/display-site/README.md` documents prerequisites, validation steps, and recovery paths.
+- Root README now links to https://kneelinghorse.github.io/OODS-Foundry/ for quick discovery.
+
+### Deliverables
+
+| Deliverable | Status | Location |
+|-------------|--------|----------|
+| GitHub Pages workflow | ✅ | `.github/workflows/deploy-storybook.yml` |
+| Deployment runbook | ✅ | `docs/display-site/README.md` |
+| Public Storybook link | ✅ | `README.md` |
+
 ## Timeline
 
 | Mission | Status | Started | Completed | Duration |
@@ -252,7 +283,7 @@ All criteria met for Component Set IV:
 | B19.2 | ✅ | 2025-10-28T23:43Z | 2025-10-28T23:54Z | ~11m |
 | B19.3 | ✅ | 2025-10-29 | 2025-10-29 | ~3h |
 | B19.4 | ✅ | 2025-10-29T01:26Z | 2025-10-29T01:37Z | ~11m |
-| B19.5 | Queued | - | - | - |
+| B19.5 | ✅ | 2025-10-29T01:49Z | 2025-10-29T01:52Z | ~3m |
 
 ---
 
@@ -295,5 +326,5 @@ All criteria met for Component Set IV:
 ---
 
 **Last Updated:** 2025-10-28
-**Sprint Status:** In Progress
-**Next Update:** Upon B19.3 completion
+**Sprint Status:** ✅ COMPLETED
+**Next Update:** Sprint 20 kickoff briefing
