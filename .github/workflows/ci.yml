@@ -286,6 +286,46 @@ jobs:
           echo "tokens-governance exited with status ${{ steps.governance.outputs.status }} for brand ${{ matrix.brand }}"
           exit 1
 
+  guardrails:
+    name: guardrails-check
+    needs: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build tokens
+        run: pnpm run build:tokens
+
+      - name: Run guardrail snapshots
+        run: node scripts/state-assessment.mjs --guardrails --tokens
+
+      - name: Upload guardrail artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: guardrails-state-${{ github.run_id }}
+          path: |
+            artifacts/state/guardrails.json
+            artifacts/state/tokens.json
+            diagnostics.json
+          if-no-files-found: warn
+
   a11y-contract:
     name: a11y-contract
     runs-on: ubuntu-latest
