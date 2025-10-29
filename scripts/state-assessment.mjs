@@ -28,10 +28,17 @@ const CHECK_IDS = [
   'a11y',
   'vr',
   'guardrails',
+  'performance',
   'tokens',
   'coverage',
   'packaging'
 ];
+
+const PERFORMANCE_BUDGETS = {
+  compositorActualDurationMs: 7,
+  listActualDurationMs: 150,
+  tokenTransformUserTimingMs: 3000
+};
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -149,6 +156,7 @@ async function main() {
       overlays: 'artifacts/state/overlays.json',
       a11y: 'artifacts/state/a11y.json',
       vr: 'artifacts/state/vr.json',
+      performance: 'artifacts/state/performance.json',
       tokens: 'artifacts/state/tokens.json',
       coverage: 'artifacts/state/tests.json',
       packaging: 'artifacts/state/packaging.json'
@@ -215,6 +223,10 @@ function parseArgs(argv) {
         enabled.add('vr');
         options.vrMode = 'fallback';
         break;
+      case 'perf':
+      case 'performance':
+        enabled.add('performance');
+        break;
       case 'guardrails':
         enabled.add('guardrails');
         break;
@@ -252,6 +264,8 @@ Options:
   --vr              Force Chromatic dry run (requires CHROMATIC_PROJECT_TOKEN)
   --vr-dry          Alias for --vr
   --vr-fallback     Force local VRT fallback (storycap light/dark)
+  --perf            Only run performance baseline check
+  --performance     Alias for --perf
   --guardrails      Only run metadata & tenancy guardrail lint checks
   --tokens          Only run token governance & CSS purity checks
   --coverage        Only run coverage & reliability checks
@@ -305,6 +319,13 @@ const CHECK_RUNNERS = {
       json: 'artifacts/state/guardrails.json'
     },
     run: runGuardrailsCheck
+  },
+  performance: {
+    label: 'Performance baselines',
+    outputs: {
+      json: 'artifacts/state/performance.json'
+    },
+    run: runPerformanceCheck
   },
   tokens: {
     label: 'Token governance & CSS purity',
@@ -1203,6 +1224,80 @@ async function runGuardrailsCheck(context) {
   };
 }
 
+async function runPerformanceCheck(context) {
+  const artifactsPath = path.join(context.artifactsRoot, 'performance.json');
+  const resultsPath = path.join(context.repoRoot, 'diagnostics', 'perf-results.json');
+  const evidence = [{ label: 'Performance harness results', path: 'diagnostics/perf-results.json' }];
+
+  const results = await readJsonIfExists(resultsPath);
+  const snapshots = Array.isArray(results?.performanceHarness?.snapshots)
+    ? results.performanceHarness.snapshots.filter(
+        (snapshot) => typeof snapshot?.value === 'number' && Number.isFinite(snapshot.value)
+      )
+    : [];
+
+  if (snapshots.length === 0) {
+    const note = 'Performance harness results missing or empty at diagnostics/perf-results.json.';
+    await writeJson(artifactsPath, {
+      generatedAt: new Date().toISOString(),
+      status: 'UNKNOWN',
+      reason: note
+    });
+    return {
+      id: 'performance',
+      label: CHECK_RUNNERS.performance.label,
+      status: 'UNKNOWN',
+      keyMetric: 'No performance snapshots available',
+      metrics: {},
+      rationale: [note],
+      evidence
+    };
+  }
+
+  const stats = collectPerformanceStats(snapshots);
+  const evaluation = evaluatePerformanceBudgets(stats);
+  const status = evaluation.status;
+  const generatedAt = new Date().toISOString();
+
+  const budgetsPayload = buildPerformanceBudgetPayload(stats);
+  await writeJson(artifactsPath, {
+    generatedAt,
+    status,
+    budgets: budgetsPayload,
+    snapshots: {
+      total: snapshots.length,
+      source: 'diagnostics/perf-results.json'
+    },
+    source: {
+      runTimestamp: results?.performanceHarness?.runTimestamp ?? null,
+      commitSha: results?.performanceHarness?.commitSha ?? null,
+      path: 'diagnostics/perf-results.json'
+    },
+    notes: evaluation.notes
+  });
+
+  const keyMetric = [
+    `compositor ${formatNumber(stats.compositorActualDurationMs?.p95)}ms ≤ ${PERFORMANCE_BUDGETS.compositorActualDurationMs}ms`,
+    `list ${formatNumber(stats.listActualDurationMs?.p95)}ms ≤ ${PERFORMANCE_BUDGETS.listActualDurationMs}ms`,
+    `token ${formatNumber(stats.tokenTransformUserTimingMs?.p95)}ms ≤ ${PERFORMANCE_BUDGETS.tokenTransformUserTimingMs}ms`
+  ].join(' | ');
+
+  return {
+    id: 'performance',
+    label: CHECK_RUNNERS.performance.label,
+    status,
+    keyMetric,
+    metrics: {
+      budgets: budgetsPayload,
+      snapshots: {
+        total: snapshots.length
+      }
+    },
+    rationale: evaluation.notes,
+    evidence
+  };
+}
+
 async function runTokenGovernanceCheck(context) {
   const rationale = [];
   const evidence = [];
@@ -1550,6 +1645,143 @@ function computePercentile(values, percentile) {
   const sorted = [...values].sort((a, b) => a - b);
   const index = Math.min(sorted.length - 1, Math.floor(percentile * sorted.length));
   return sorted[index];
+}
+
+function collectPerformanceStats(snapshots) {
+  const groups = {
+    compositorActualDurationMs: {
+      scenarioPrefix: 'Compositor.',
+      metricName: 'React.actualDuration'
+    },
+    listActualDurationMs: {
+      scenarioPrefix: 'List.',
+      metricName: 'React.actualDuration'
+    },
+    tokenTransformUserTimingMs: {
+      scenarioPrefix: 'TokenTransform.',
+      metricName: 'UserTiming.duration'
+    }
+  };
+
+  const stats = {};
+
+  for (const [key, config] of Object.entries(groups)) {
+    const values = snapshots
+      .filter(
+        (snapshot) =>
+          typeof snapshot?.scenarioId === 'string' &&
+          snapshot.scenarioId.startsWith(config.scenarioPrefix) &&
+          snapshot.metricName === config.metricName
+      )
+      .map((snapshot) => Number(snapshot.value))
+      .filter((value) => Number.isFinite(value));
+
+    if (values.length === 0) {
+      stats[key] = null;
+      continue;
+    }
+
+    const p95 = computePercentile(values, 0.95);
+    const max = values.reduce((acc, value) => (value > acc ? value : acc), values[0]);
+
+    stats[key] = {
+      samples: values.length,
+      p95: roundTo(p95),
+      max: roundTo(max)
+    };
+  }
+
+  return stats;
+}
+
+function buildPerformanceBudgetPayload(stats) {
+  const mapping = {
+    compositorActualDurationMs: {
+      scenario: 'Compositor.*',
+      metric: 'React.actualDuration'
+    },
+    listActualDurationMs: {
+      scenario: 'List.*',
+      metric: 'React.actualDuration'
+    },
+    tokenTransformUserTimingMs: {
+      scenario: 'TokenTransform.*',
+      metric: 'UserTiming.duration'
+    }
+  };
+
+  const payload = {};
+
+  for (const [key, meta] of Object.entries(mapping)) {
+    const stat = stats[key];
+    payload[key] = {
+      budget: PERFORMANCE_BUDGETS[key],
+      p95: typeof stat?.p95 === 'number' ? stat.p95 : null,
+      max: typeof stat?.max === 'number' ? stat.max : null,
+      samples: stat?.samples ?? 0,
+      scenario: meta.scenario,
+      metric: meta.metric
+    };
+  }
+
+  return payload;
+}
+
+function evaluatePerformanceBudgets(stats) {
+  let status = 'GREEN';
+  const notes = [];
+
+  for (const [key, budget] of Object.entries(PERFORMANCE_BUDGETS)) {
+    const stat = stats[key];
+    const label = performanceLabel(key);
+    if (!stat || typeof stat.p95 !== 'number') {
+      if (status !== 'RED') {
+        status = 'YELLOW';
+      }
+      notes.push(`${label} missing recent performance snapshots.`);
+      continue;
+    }
+    if (stat.p95 > budget) {
+      status = 'RED';
+      notes.push(`${label} p95 ${formatNumber(stat.p95)}ms exceeds budget ${budget}ms.`);
+    } else {
+      notes.push(`${label} p95 ${formatNumber(stat.p95)}ms within ${budget}ms budget.`);
+    }
+  }
+
+  return { status, notes };
+}
+
+function performanceLabel(key) {
+  switch (key) {
+    case 'compositorActualDurationMs':
+      return 'Compositor updates';
+    case 'listActualDurationMs':
+      return 'List rendering';
+    case 'tokenTransformUserTimingMs':
+      return 'Token transform';
+    default:
+      return key;
+  }
+}
+
+function roundTo(value, decimals = 2) {
+  if (typeof value !== 'number' || Number.isNaN(value)) {
+    return null;
+  }
+  const factor = 10 ** decimals;
+  return Math.round(value * factor) / factor;
+}
+
+function formatNumber(value, decimals = 2) {
+  if (typeof value !== 'number' || Number.isNaN(value)) {
+    return 'n/a';
+  }
+  const rounded = roundTo(value, decimals);
+  if (rounded === null) {
+    return 'n/a';
+  }
+  return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(decimals).replace(/\.?0+$/, '');
 }
 
 /**
