@@ -208,6 +208,42 @@ All criteria met for Component Set IV:
 | Diagnostics updates | ✅ | `diagnostics.json.helpers.guardrails`, `diagnostics.tokens.governance` |
 | Guardrail overview doc | ✅ | `docs/guardrails/overview.md` |
 
+## Mission B19.4: Diagnostics Refresh & Perf Baselines
+
+**Status:** ✅ COMPLETED  
+**Date:** 2025-10-29  
+**Lead:** Diagnostics & Performance
+
+### Summary
+
+- Established reviewer-facing performance budgets (compositor <= 7 ms, list <= 150 ms, token transform <= 3000 ms) using 38 fresh snapshots captured in `diagnostics/perf-results.json`.
+- Added `diagnostics.helpers.performance` and `artifacts/state/performance.json` so state assessment reports expose budgets, metadata, and history.
+- Extended `scripts/state-assessment.mjs` with a `performance` check (`--perf` / `--performance`) that enforces the budgets and writes the new artifact.
+- Authored `docs/diagnostics/README.md` covering how to regenerate evidence, tie guardrail/token snapshots together, and troubleshoot harness runs.
+
+### Achievements
+
+**✅ Performance baselines recorded**
+- Aggregated compositor/list/token metrics (p95 0.7 ms, 14 ms, 30.5 ms) and stored budgets for reviewer dashboards.
+- Captured run metadata (timestamp, commit, snapshot count) alongside budgets in `artifacts/state/performance.json`.
+
+**✅ Diagnostics integration**
+- Introduced `diagnostics.helpers.performance` with notes and history referencing the new budgets.
+- Updated the assessment artifact map so `assessment.json` links to the performance output for future runs.
+
+**✅ Runbook & CLI**
+- Added `docs/diagnostics/README.md` covering build/run steps (`pnpm perf:harness:ci`, `node scripts/state-assessment.mjs --performance`) and troubleshooting.
+- CLI help now highlights the `--perf` option alongside existing guardrail and token flags.
+
+### Deliverables
+
+| Deliverable | Status | Location |
+|-------------|--------|----------|
+| Performance budgets artifact | ✅ | `artifacts/state/performance.json` |
+| Diagnostics helper updates | ✅ | `diagnostics.json.helpers.performance` |
+| State assessment CLI + check | ✅ | `scripts/state-assessment.mjs` |
+| Diagnostics runbook | ✅ | `docs/diagnostics/README.md` |
+
 ## Timeline
 
 | Mission | Status | Started | Completed | Duration |
@@ -215,7 +251,7 @@ All criteria met for Component Set IV:
 | B19.1 | ✅ | 2025-10-28 | 2025-10-28 | ~4h |
 | B19.2 | ✅ | 2025-10-28T23:43Z | 2025-10-28T23:54Z | ~11m |
 | B19.3 | ✅ | 2025-10-29 | 2025-10-29 | ~3h |
-| B19.4 | Queued | - | - | - |
+| B19.4 | ✅ | 2025-10-29T01:26Z | 2025-10-29T01:37Z | ~11m |
 | B19.5 | Queued | - | - | - |
 
 ---

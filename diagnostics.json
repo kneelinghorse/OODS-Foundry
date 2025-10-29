@@ -854,6 +854,69 @@
           "tenancyViolations": []
         }
       ]
+    },
+    "performance": {
+      "status": "GREEN",
+      "artifact": "artifacts/state/performance.json",
+      "lastRun": {
+        "runTimestamp": "2025-10-29T01:30:07.903Z",
+        "commitSha": "502807f",
+        "snapshots": 38,
+        "source": "diagnostics/perf-results.json"
+      },
+      "budgets": {
+        "compositorActualDurationMs": {
+          "budget": 7,
+          "p95": 0.7,
+          "max": 0.7,
+          "samples": 4
+        },
+        "listActualDurationMs": {
+          "budget": 150,
+          "p95": 14,
+          "max": 14,
+          "samples": 4
+        },
+        "tokenTransformUserTimingMs": {
+          "budget": 3000,
+          "p95": 30.5,
+          "max": 30.5,
+          "samples": 6
+        }
+      },
+      "history": [
+        {
+          "runTimestamp": "2025-10-29T01:30:07.903Z",
+          "commitSha": "502807f",
+          "snapshots": 38,
+          "budgets": {
+            "compositorActualDurationMs": {
+              "budget": 7,
+              "p95": 0.7,
+              "max": 0.7,
+              "samples": 4
+            },
+            "listActualDurationMs": {
+              "budget": 150,
+              "p95": 14,
+              "max": 14,
+              "samples": 4
+            },
+            "tokenTransformUserTimingMs": {
+              "budget": 3000,
+              "p95": 30.5,
+              "max": 30.5,
+              "samples": 6
+            }
+          }
+        }
+      ],
+      "notes": [
+        "Compositor actualDuration p95 0.7ms (budget 7ms) across 4 snapshots.",
+        "List rendering actualDuration p95 14ms (budget 150ms) across 4 snapshots.",
+        "Token transform user timing p95 30.5ms (budget 3000ms) across 6 snapshots.",
+        "React commitTime metrics remain skewed by instrumentation; budgets track actualDuration/userTiming for reviewer clarity."
+      ]
     }
   },
   "sprint19": {
@@ -878,6 +941,24 @@
         "artifacts/state/chromatic.json",
         "artifacts/state/vr.json",
         "storybook-static/"
+      ]
+    },
+    "B19.4": {
+      "mission": "Diagnostics Refresh & Perf Baselines",
+      "completedAt": "2025-10-29T01:37:02Z",
+      "performance": {
+        "budgets": {
+          "compositorActualDurationMs": 0.7,
+          "listActualDurationMs": 14,
+          "tokenTransformUserTimingMs": 30.5
+        },
+        "snapshots": 38,
+        "artifact": "artifacts/state/performance.json"
+      },
+      "documentation": [
+        "docs/diagnostics/README.md",
+        "docs/changelog/sprint-19.md",
+        "scripts/state-assessment.mjs --performance"
       ]
     }
   }
