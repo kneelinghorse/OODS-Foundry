@@ -16,11 +16,11 @@ module.exports = {
       recommended: true,
     },
     messages: {
-      unsafeMetadataWrite: 
+      unsafeMetadataWrite:
         'Direct metadata writes are forbidden. Use MetadataPolicy.validate() to ensure safe metadata.',
-      missingValidation: 
-        'Metadata assignment must be preceded by MetadataPolicy.validate() call.',
-      recordAnyType: 
+      missingValidation:
+        'Metadata assignment must be preceded by MetadataPolicy.validate() call on the same account instance.',
+      recordAnyType:
         'Account metadata typed as Record<string, any> or Record<string, unknown> without validation is unsafe.',
     },
     schema: [],
@@ -28,7 +28,19 @@ module.exports = {
 
   create(context) {
     let hasMetadataPolicyImport = false;
-    let hasValidationCall = false;
+    const scopeStack = [];
+
+    const currentScope = () => scopeStack[scopeStack.length - 1];
+
+    const pushScope = () => {
+      scopeStack.push({
+        validated: new Set(),
+      });
+    };
+
+    const popScope = () => {
+      scopeStack.pop();
+    };
 
     /**
      * Determine if the target expression looks like an Account instance.
@@ -57,7 +69,68 @@ module.exports = {
       return false;
     };
 
+    const getRootIdentifierName = (node) => {
+      if (!node) return null;
+
+      if (node.type === 'Identifier') {
+        return node.name;
+      }
+
+      if (node.type === 'MemberExpression') {
+        return getRootIdentifierName(node.object);
+      }
+
+      return null;
+    };
+
+    const markValidated = (identifierName) => {
+      if (!identifierName) {
+        return;
+      }
+      const scope = currentScope();
+      if (scope) {
+        scope.validated.add(identifierName);
+      }
+    };
+
+    const hasValidated = (identifierName) => {
+      if (!identifierName) {
+        return false;
+      }
+      for (let index = scopeStack.length - 1; index >= 0; index -= 1) {
+        if (scopeStack[index].validated.has(identifierName)) {
+          return true;
+        }
+      }
+      return false;
+    };
+
     return {
+      Program() {
+        pushScope();
+      },
+      'Program:exit'() {
+        popScope();
+      },
+      FunctionDeclaration() {
+        pushScope();
+      },
+      'FunctionDeclaration:exit'() {
+        popScope();
+      },
+      FunctionExpression() {
+        pushScope();
+      },
+      'FunctionExpression:exit'() {
+        popScope();
+      },
+      ArrowFunctionExpression() {
+        pushScope();
+      },
+      'ArrowFunctionExpression:exit'() {
+        popScope();
+      },
+
       // Check for MetadataPolicy import
       ImportDeclaration(node) {
         if (
@@ -66,7 +139,7 @@ module.exports = {
             node.source.value.includes('metadata-policy'))
         ) {
           const specifiers = node.specifiers || [];
-          if (specifiers.some(s => s.imported && s.imported.name === 'MetadataPolicy')) {
+          if (specifiers.some((specifier) => specifier.imported && specifier.imported.name === 'MetadataPolicy')) {
             hasMetadataPolicyImport = true;
           }
         }
@@ -76,28 +149,35 @@ module.exports = {
       CallExpression(node) {
         if (
           node.callee.type === 'MemberExpression' &&
+          node.callee.object &&
+          node.callee.object.type === 'Identifier' &&
           node.callee.object.name === 'MetadataPolicy' &&
-          (node.callee.property.name === 'validate' ||
-            node.callee.property.name === 'validateKeyValue')
+          (node.callee.property.name === 'validate' || node.callee.property.name === 'validateKeyValue')
         ) {
-          hasValidationCall = true;
+          const firstArg = node.arguments && node.arguments[0];
+          const identifierName = getRootIdentifierName(firstArg);
+          if (identifierName) {
+            markValidated(identifierName);
+          }
         }
       },
 
       // Check for direct metadata property assignment
       AssignmentExpression(node) {
-        // account.metadata = { ... }
         if (
           node.left.type === 'MemberExpression' &&
+          !node.left.computed &&
+          node.left.property.type === 'Identifier' &&
           node.left.property.name === 'metadata' &&
           isAccountTarget(node.left.object)
         ) {
+          const identifierName = getRootIdentifierName(node.left.object);
           if (!hasMetadataPolicyImport) {
             context.report({
               node,
               messageId: 'unsafeMetadataWrite',
             });
-          } else if (!hasValidationCall) {
+          } else if (!hasValidated(identifierName)) {
             context.report({
               node,
               messageId: 'missingValidation',
@@ -105,9 +185,9 @@ module.exports = {
           }
         }
 
-        // account['metadata'] = { ... }
         if (
           node.left.type === 'MemberExpression' &&
+          node.left.computed &&
           node.left.property.type === 'Literal' &&
           node.left.property.value === 'metadata' &&
           isAccountTarget(node.left.object)
@@ -117,20 +197,27 @@ module.exports = {
               node,
               messageId: 'unsafeMetadataWrite',
             });
+          } else {
+            const identifierName = getRootIdentifierName(node.left.object);
+            if (!hasValidated(identifierName)) {
+              context.report({
+                node,
+                messageId: 'missingValidation',
+              });
+            }
           }
         }
       },
 
       // Check for unsafe metadata type in object literal
       Property(node) {
-        if (
-          node.key.name === 'metadata' &&
-          node.value.type === 'TSAsExpression'
-        ) {
+        if (node.key && node.key.type === 'Identifier' && node.key.name === 'metadata' && node.value.type === 'TSAsExpression') {
           const typeAnnotation = node.value.typeAnnotation;
           if (
             typeAnnotation &&
             typeAnnotation.type === 'TSTypeReference' &&
+            typeAnnotation.typeName &&
+            typeAnnotation.typeName.type === 'Identifier' &&
             typeAnnotation.typeName.name === 'Record'
           ) {
             context.report({

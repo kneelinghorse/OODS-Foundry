@@ -22,29 +22,6 @@ function getFocusable(container: unknown): any[] {
   return list.filter((el) => !el?.hasAttribute?.('disabled') && !el?.getAttribute?.('aria-hidden')) as any[];
 }
 
-const overlayStyles: React.CSSProperties = {
-  position: 'fixed',
-  inset: 0,
-  display: 'grid',
-  placeItems: 'center',
-  // Use tokenized backdrop tone; mix to achieve scrim effect with safe fallback
-  backgroundColor: 'var(--cmp-surface-backdrop)',
-  background: 'color-mix(in oklch, var(--cmp-surface-backdrop) 55%, transparent)',
-};
-const panelStyles: React.CSSProperties = {
-  // Tokenized panel and text colours
-  background: 'var(--cmp-surface-panel)',
-  color: 'var(--cmp-text-body)',
-  padding: 'var(--cmp-spacing-inset-default, 1rem)',
-  minWidth: 320,
-  // Tokenized border emphasis for HC/brand contrast
-  border: '2px solid var(--cmp-border-strong)',
-  borderRadius: 8,
-  // Keep a shadow for non-HC; forced-colors will ignore it and rely on border
-  boxShadow:
-    'var(--sys-shadow-elevation-overlay, 0 24px 56px -16px color-mix(in srgb, var(--cmp-text-body, CanvasText) 24%, transparent))'
-};
-
 export const ContractProof: Story = {
   render: () => <OverlayProof />,
 };
@@ -101,16 +78,16 @@ function OverlayProof() {
       </div>
 
       {open && (
-        <div style={overlayStyles} aria-hidden={false}>
+        <div className="cmp-overlay__root" aria-hidden={false}>
           <div
             role="dialog"
             aria-modal="true"
             aria-labelledby="overlay-title"
             ref={panelRef}
-            style={panelStyles}
+            className="cmp-overlay cmp-dialog"
             tabIndex={-1}
           >
-            <h3 id="overlay-title" style={{ marginTop: 0, color: 'var(--cmp-text-body)' }}>Overlay Contract Proof</h3>
+            <h3 id="overlay-title" className="cmp-dialog__title">Overlay Contract Proof</h3>
             <p>Tab cycles within, ESC closes, backdrop clickable.</p>
             <input placeholder="Focusable input" />
             <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
@@ -121,7 +98,8 @@ function OverlayProof() {
           <button
             aria-label="Close overlay (backdrop)"
             onClick={() => setOpen(false)}
-            style={{ position: 'fixed', inset: 0, background: 'transparent', border: 'none' }}
+            className="cmp-overlay__backdrop"
+            type="button"
             tabIndex={-1}
           />
         </div>

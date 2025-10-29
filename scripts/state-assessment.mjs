@@ -16,6 +16,8 @@ import path from 'node:path';
 import process from 'node:process';
 import { performance } from 'node:perf_hooks';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
+import { ESLint } from 'eslint';
 
 const SCRIPT_VERSION = '1.0.0';
 const MISSION_ID = 'BI-20251023-1690';
@@ -25,6 +27,7 @@ const CHECK_IDS = [
   'overlays',
   'a11y',
   'vr',
+  'guardrails',
   'tokens',
   'coverage',
   'packaging'
@@ -37,6 +40,9 @@ const artifactsRoot = path.join(repoRoot, 'artifacts', 'state');
 const screenshotsRoot = path.join(artifactsRoot, 'screenshots');
 const pnpmCmd = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm';
 const nodeCmd = process.execPath;
+const require = createRequire(import.meta.url);
+const metadataGuardrailRule = require('../eslint/rules/no-account-unsafe-metadata.cjs');
+const tenancyGuardrailRule = require('../eslint/rules/no-unsafe-tenancy-override.cjs');
 
 /**
  * Entry point.
@@ -209,6 +215,9 @@ function parseArgs(argv) {
         enabled.add('vr');
         options.vrMode = 'fallback';
         break;
+      case 'guardrails':
+        enabled.add('guardrails');
+        break;
       case 'tokens':
         enabled.add('tokens');
         break;
@@ -243,6 +252,7 @@ Options:
   --vr              Force Chromatic dry run (requires CHROMATIC_PROJECT_TOKEN)
   --vr-dry          Alias for --vr
   --vr-fallback     Force local VRT fallback (storycap light/dark)
+  --guardrails      Only run metadata & tenancy guardrail lint checks
   --tokens          Only run token governance & CSS purity checks
   --coverage        Only run coverage & reliability checks
   --packaging       Only run packaging & provenance readiness
@@ -288,6 +298,13 @@ const CHECK_RUNNERS = {
       json: 'artifacts/state/vr.json'
     },
     run: runVisualRegressionCheck
+  },
+  guardrails: {
+    label: 'Metadata & tenancy guardrails',
+    outputs: {
+      json: 'artifacts/state/guardrails.json'
+    },
+    run: runGuardrailsCheck
   },
   tokens: {
     label: 'Token governance & CSS purity',
@@ -1036,6 +1053,156 @@ function buildFallbackVrReport(mode, overrides = {}) {
 /**
  * Token governance and CSS purity.
  */
+async function runGuardrailsCheck(context) {
+  const rationale = [];
+  const artifactsPath = path.join(context.artifactsRoot, 'guardrails.json');
+  const evidence = [{ label: 'Guardrail audit', path: 'artifacts/state/guardrails.json' }];
+  const metadataViolations = [];
+  const tenancyViolations = [];
+
+  const eslint = new ESLint({
+    useEslintrc: false,
+    cwd: context.repoRoot,
+    plugins: {
+      oods: {
+        rules: {
+          'no-account-unsafe-metadata': metadataGuardrailRule,
+          'no-unsafe-tenancy-override': tenancyGuardrailRule,
+        },
+      },
+    },
+    overrideConfig: {
+      parser: require.resolve('@typescript-eslint/parser'),
+      parserOptions: {
+        ecmaVersion: 2022,
+        sourceType: 'module',
+      },
+      plugins: ['oods'],
+      ignorePatterns: [
+        '**/node_modules/**',
+        'dist/**',
+        'storybook-static/**',
+        'coverage/**',
+        'tests/**',
+        '**/*.test.ts',
+        '**/*.test.tsx',
+        '**/*.spec.ts',
+        '**/*.spec.tsx',
+        'stories/**',
+        'scripts/tenancy/**',
+      ],
+      rules: {
+        'oods/no-account-unsafe-metadata': 'error',
+        'oods/no-unsafe-tenancy-override': 'error',
+      },
+    },
+  });
+
+  let lintResults;
+  try {
+    lintResults = await eslint.lintFiles(['src/**/*.ts', 'src/**/*.tsx']);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error ?? 'Unknown lint failure');
+    rationale.push(`Guardrail lint failed: ${message}`);
+    await writeJson(artifactsPath, {
+      generatedAt: new Date().toISOString(),
+      status: 'UNKNOWN',
+      error: message,
+    });
+    return {
+      id: 'guardrails',
+      label: CHECK_RUNNERS.guardrails.label,
+      status: 'UNKNOWN',
+      keyMetric: 'Guardrail lint failed',
+      metrics: {},
+      rationale,
+      evidence,
+    };
+  }
+
+  for (const result of lintResults) {
+    if (!result.messages || result.messages.length === 0) {
+      continue;
+    }
+    const relativePath = path.relative(context.repoRoot, result.filePath).split(path.sep).join('/');
+    for (const message of result.messages) {
+      if (message.ruleId === 'oods/no-account-unsafe-metadata') {
+        metadataViolations.push({
+          file: relativePath,
+          line: message.line ?? null,
+          column: message.column ?? null,
+          message: message.message,
+        });
+      }
+      if (message.ruleId === 'oods/no-unsafe-tenancy-override') {
+        tenancyViolations.push({
+          file: relativePath,
+          line: message.line ?? null,
+          column: message.column ?? null,
+          message: message.message,
+        });
+      }
+    }
+  }
+
+  const metadataCount = metadataViolations.length;
+  const tenancyCount = tenancyViolations.length;
+  const generatedAt = new Date().toISOString();
+
+  const status = metadataCount === 0 && tenancyCount === 0 ? 'GREEN' : 'RED';
+  const keyMetric = `Metadata violations: ${metadataCount} | Tenancy overrides: ${tenancyCount}`;
+
+  if (status === 'GREEN') {
+    rationale.push('Metadata policy and tenancy override guardrails clean across source files.');
+  } else {
+    if (metadataCount > 0) {
+      const first = metadataViolations[0];
+      rationale.push(
+        `Metadata guardrail violations detected (first: ${first.file}:${first.line ?? 0} ${first.message}).`
+      );
+    }
+    if (tenancyCount > 0) {
+      const first = tenancyViolations[0];
+      rationale.push(
+        `Tenancy override guardrail violations detected (first: ${first.file}:${first.line ?? 0} ${first.message}).`
+      );
+    }
+  }
+
+  await writeJson(artifactsPath, {
+    generatedAt,
+    status,
+    totals: {
+      metadataViolations: metadataCount,
+      tenancyViolations: tenancyCount,
+    },
+    metadataViolations,
+    tenancyViolations,
+  });
+
+  await updateGuardrailDiagnostics(context.repoRoot, {
+    generatedAt,
+    status,
+    metadataViolations: metadataViolations.slice(0, 5),
+    metadataTotal: metadataCount,
+    tenancyViolations: tenancyViolations.slice(0, 5),
+    tenancyTotal: tenancyCount,
+  });
+
+  return {
+    id: 'guardrails',
+    label: CHECK_RUNNERS.guardrails.label,
+    status,
+    keyMetric,
+    metrics: {
+      metadataViolations: metadataCount,
+      tenancyViolations: tenancyCount,
+    },
+    rationale,
+    evidence,
+  };
+}
+
 async function runTokenGovernanceCheck(context) {
   const rationale = [];
   const evidence = [];
@@ -1109,8 +1276,10 @@ async function runTokenGovernanceCheck(context) {
 
   const keyMetric = `High-risk token deltas: ${highRisk} | CSS literals: ${purityViolations.length}`;
 
+  const generatedAt = new Date().toISOString();
+
   await writeJson(path.join(context.artifactsRoot, 'tokens.json'), {
-    generatedAt: new Date().toISOString(),
+    generatedAt,
     status,
     brands: brandReports,
     purityViolations,
@@ -1119,6 +1288,40 @@ async function runTokenGovernanceCheck(context) {
       leaks,
       orphans
     }
+  });
+
+  const brandSummaries = Object.fromEntries(
+    Object.entries(brandReports).map(([brand, report]) => [
+      brand,
+      {
+        highRisk: report?.summary?.highRisk ?? 0,
+        mediumRisk: report?.summary?.mediumRisk ?? 0,
+        lowRisk: report?.summary?.lowRisk ?? 0,
+        requiresBreakingLabel: !!report?.requiresBreakingLabel,
+        hasBreakingLabel: !!report?.hasBreakingLabel,
+        labels: Array.isArray(report?.labels) ? report.labels : [],
+      }
+    ])
+  );
+
+  const artifactMap = Object.fromEntries(
+    Object.keys(brandReports).map((brand) => [
+      brand,
+      path.posix.join('artifacts/state/governance', `brand-${brand}.json`)
+    ])
+  );
+
+  await updateTokenGovernanceDiagnostics(context.repoRoot, {
+    generatedAt,
+    status,
+    highRisk,
+    leaks,
+    orphans,
+    purityViolationsCount: purityViolations.length,
+    purityViolationsSample: purityViolations.slice(0, 5),
+    requiresBreaking,
+    brands: brandSummaries,
+    artifacts: artifactMap
   });
 
   return {
@@ -1147,6 +1350,86 @@ function parsePurityViolations(result) {
     .map((line) => line.trim())
     .filter((line) => line.includes('[forbidden var]') || line.includes('[color literal]'));
   return lines;
+}
+
+async function updateGuardrailDiagnostics(repoRoot, record) {
+  const diagnosticsPath = path.join(repoRoot, 'diagnostics.json');
+  const diagnostics = (await readJsonIfExists(diagnosticsPath)) ?? {};
+
+  diagnostics.helpers = diagnostics.helpers ?? {};
+  const helper = diagnostics.helpers.guardrails ?? {};
+  const history = Array.isArray(helper.history) ? helper.history.slice(0, 9) : [];
+
+  const entry = {
+    generatedAt: record.generatedAt,
+    status: record.status,
+    metadataViolations: record.metadataViolations,
+    counts: {
+      metadata: record.metadataTotal,
+      tenancy: record.tenancyTotal,
+    },
+    tenancyViolations: record.tenancyViolations,
+  };
+
+  history.unshift(entry);
+
+  const totals = {
+    runs: (helper.totals?.runs ?? 0) + 1,
+    metadataViolations: (helper.totals?.metadataViolations ?? 0) + record.metadataTotal,
+    tenancyViolations: (helper.totals?.tenancyViolations ?? 0) + record.tenancyTotal,
+  };
+
+  diagnostics.helpers.guardrails = {
+    totals,
+    lastRun: entry,
+    history,
+  };
+
+  await fs.writeFile(diagnosticsPath, `${JSON.stringify(diagnostics, null, 2)}\n`, 'utf8');
+}
+
+async function updateTokenGovernanceDiagnostics(repoRoot, record) {
+  const diagnosticsPath = path.join(repoRoot, 'diagnostics.json');
+  const diagnostics = (await readJsonIfExists(diagnosticsPath)) ?? {};
+
+  const tokensSection = diagnostics.tokens ?? {};
+  const governance = tokensSection.governance ?? {};
+  const history = Array.isArray(governance.history) ? governance.history.slice(0, 9) : [];
+
+  const entry = {
+    generatedAt: record.generatedAt,
+    status: record.status,
+    highRisk: record.highRisk,
+    leaks: record.leaks,
+    orphans: record.orphans,
+    purityViolations: {
+      count: record.purityViolationsCount,
+      samples: record.purityViolationsSample,
+    },
+    requiresBreakingLabel: record.requiresBreaking,
+    brands: record.brands,
+    artifacts: record.artifacts,
+  };
+
+  history.unshift(entry);
+
+  const totals = {
+    runs: (governance.totals?.runs ?? 0) + 1,
+    highRisk: (governance.totals?.highRisk ?? 0) + record.highRisk,
+    purityViolations: (governance.totals?.purityViolations ?? 0) + record.purityViolationsCount,
+  };
+
+  tokensSection.governance = {
+    totals,
+    lastRun: entry,
+    history,
+  };
+
+  diagnostics.tokens = {
+    ...tokensSection,
+  };
+
+  await fs.writeFile(diagnosticsPath, `${JSON.stringify(diagnostics, null, 2)}\n`, 'utf8');
 }
 
 /**

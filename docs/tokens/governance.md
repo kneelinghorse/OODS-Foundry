@@ -40,3 +40,18 @@ Sample outputs live under `artifacts/tokens/`:
 - `brand-b-report.json` / `brand-b-comment.md`
 
 Regenerate them locally via the CLI (ensure tokens are built so `packages/tokens/dist/tailwind/tokens.json` is current).
+
+## Diagnostics dashboard
+
+Every state assessment run now aggregates governance metrics into `diagnostics.json`:
+
+- Latest snapshot: `diagnostics.tokens.governance.lastRun` (high-risk counts, label state, and per-brand artifacts).
+- History: `diagnostics.tokens.governance.history` retains recent diffs so reviewers can track drift over time.
+
+Re-run the tokens check in isolation with:
+
+```bash
+node scripts/state-assessment.mjs --tokens
+```
+
+This command refreshes `artifacts/state/tokens.json`, regenerates the per-brand governance reports, and updates the diagnostics dashboard.

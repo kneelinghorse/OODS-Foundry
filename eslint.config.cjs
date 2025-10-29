@@ -7,6 +7,7 @@ const noHooksRule = require('./eslint/rules/no-hooks-in-modifiers.cjs');
 const noProviderLeakageRule = require('./eslint/rules/no-provider-leakage.cjs');
 const noNaiveDateRule = require('./eslint/rules/no-naive-date.cjs');
 const noAccountUnsafeMetadataRule = require('./eslint/rules/no-account-unsafe-metadata.cjs');
+const noUnsafeTenancyOverrideRule = require('./eslint/rules/no-unsafe-tenancy-override.cjs');
 
 module.exports = [
   {
@@ -33,6 +34,7 @@ module.exports = [
           'no-provider-leakage': noProviderLeakageRule,
           'no-naive-date': noNaiveDateRule,
           'no-account-unsafe-metadata': noAccountUnsafeMetadataRule,
+          'no-unsafe-tenancy-override': noUnsafeTenancyOverrideRule,
         },
       },
     },
@@ -58,6 +60,7 @@ module.exports = [
       '@typescript-eslint/no-redundant-type-constituents': 'off',
       '@typescript-eslint/no-unnecessary-type-assertion': 'off',
       'oods/no-account-unsafe-metadata': 'error',
+      'oods/no-unsafe-tenancy-override': 'error',
     },
   },
   {

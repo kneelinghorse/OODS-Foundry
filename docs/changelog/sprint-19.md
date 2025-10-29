@@ -117,22 +117,104 @@ All criteria met for Component Set IV:
 - High-contrast resilience verified
 - Ready for packaging and external review
 
+## Mission B19.2: Packaging Dry Run & Provenance
+
+**Status:** ✅ COMPLETED  
+**Date:** 2025-10-28  
+**Lead:** Release Engineering
+
+### Summary
+
+- Added `pnpm run release:dry-run` to orchestrate `pkg:compat`, `pack:verify`, and deterministic `npm pack` for all workspace packages.
+- Produced reproducible tarballs with SHA-256 plus SBOM/bundle index at `dist/releases/2025-10-28T23-52-36-530Z` and `artifacts/release-dry-run/2025-10-28T23-52-36-530Z/`.
+- Regenerated packaging assessment (`artifacts/state/packaging.json`) showing GREEN status, 8/8 passing pkgCompat history, and provenance hash `287099c334c4dc73e7cdc6d914dd504b2d9280702aee7feeebce99a04d808c5b`.
+
+### Achievements
+
+**✅ Deterministic packaging pipeline**
+- `pack:verify` diffed twin tarballs for `@oods/trait-engine`, `@oods/tokens`, `@oods/tw-variants`, and `@oods/a11y-tools` with zero deltas.
+- `diagnostics.json.helpers.pkgCompat` totals now read 8 runs / 8 passes (latest duration 15.3s).
+
+**✅ Provenance + SBOM capture**
+- `sbom.json` lists package dependencies, peer requirements, and tarball SHA-256 for audit replay.
+- `bundle_index.json` signs summary, SBOM, and command log for Artifact Viewer integrity checks.
+
+**✅ Runbook + rollback guidance**
+- Authored `docs/releases/runbook.md` covering dry-run execution, verification, and promotion/rollback notes.
+- Logging kept VR baseline `48f4c39596cfa5bcfb3c7a24782ccf20bc9eecd3df8599bc93244dedeb83376f` in sync with generated tarballs.
+
+### Deliverables
+
+| Deliverable | Status | Location |
+|-------------|--------|----------|
+| Release tarballs | ✅ | `dist/releases/2025-10-28T23-52-36-530Z/` |
+| SBOM + bundle index + summary | ✅ | `artifacts/release-dry-run/2025-10-28T23-52-36-530Z/` |
+| Packaging assessment | ✅ | `artifacts/state/packaging.json` |
+| Updated runbook | ✅ | `docs/releases/runbook.md` |
+
+### Metrics
+
+- `pkg:compat`: 15.3s (2025-10-28T23:53:55Z, pass)
+- Tarballs: 4 packages, SHA-256 recorded in `summary.json.tarballs[*].sha256`
+- SBOM timestamp: 2025-10-28T23:53:16Z
+
+### Blocking Gaps
+
+- None — release dry run passes reproducibility, provenance, and diagnostics gates.
+
 ### Next Mission
 
-**B19.2: Packaging Dry Run & Provenance**
-- Execute release pipeline without publish
-- Verify provenance, changelog, and rollback steps
-- Capture packaging diagnostics
+- **B19.4: Diagnostics refresh & perf baselines** – align diagnostics artifacts with new performance budgets and reviewer prep.
 
 ---
+
+## Mission B19.3: Guardrail Automation Expansion
+
+**Status:** ✅ COMPLETED  
+**Date:** 2025-10-29  
+**Lead:** Guardrail Engineering
+
+### Summary
+
+- Hardened metadata and tenancy guardrails with new ESLint rules (`oods/no-account-unsafe-metadata`, `oods/no-unsafe-tenancy-override`) plus Vitest coverage under `tests/lint/`.
+- Added a guardrail audit to the state assessment (`artifacts/state/guardrails.json`) and surfaced results via `diagnostics.helpers.guardrails`.
+- Wired token governance outputs into the diagnostics dashboard (`diagnostics.tokens.governance`) so high-risk deltas and label state stay visible between assessments.
+- Authored `docs/guardrails/overview.md` to capture the guardrail matrix and how to re-run the checks locally/CI.
+
+### Achievements
+
+**✅ Metadata policy enforcement**
+- Extended `no-account-unsafe-metadata` to track validation per account reference, blocking unsafe writes.
+- Added regression tests (`tests/lint/no-account-unsafe-metadata.spec.ts`).
+
+**✅ Tenancy override protection**
+- Introduced `no-unsafe-tenancy-override` to prevent `TenancyContext` overrides outside sanctioned harnesses.
+- Added regression tests (`tests/lint/no-unsafe-tenancy-override.spec.ts`).
+
+**✅ Diagnostics & dashboards**
+- `artifacts/state/guardrails.json` records metadata/tenancy findings with GREEN/RED status.
+- `diagnostics.helpers.guardrails` + `diagnostics.tokens.governance` persist history for release reviewers.
+
+**✅ Documentation**
+- Guardrail matrix published in `docs/guardrails/overview.md`.
+- Token governance doc updated with diagnostics pointers.
+
+### Deliverables
+
+| Deliverable | Status | Location |
+|-------------|--------|----------|
+| Guardrail lint rules + tests | ✅ | `eslint/rules/*`, `tests/lint/` |
+| Guardrail state snapshot | ✅ | `artifacts/state/guardrails.json` |
+| Diagnostics updates | ✅ | `diagnostics.json.helpers.guardrails`, `diagnostics.tokens.governance` |
+| Guardrail overview doc | ✅ | `docs/guardrails/overview.md` |
 
 ## Timeline
 
 | Mission | Status | Started | Completed | Duration |
 |---------|--------|---------|-----------|----------|
 | B19.1 | ✅ | 2025-10-28 | 2025-10-28 | ~4h |
-| B19.2 | Queued | - | - | - |
-| B19.3 | Queued | - | - | - |
+| B19.2 | ✅ | 2025-10-28T23:43Z | 2025-10-28T23:54Z | ~11m |
+| B19.3 | ✅ | 2025-10-29 | 2025-10-29 | ~3h |
 | B19.4 | Queued | - | - | - |
 | B19.5 | Queued | - | - | - |
 
@@ -178,4 +260,4 @@ All criteria met for Component Set IV:
 
 **Last Updated:** 2025-10-28
 **Sprint Status:** In Progress
-**Next Update:** Upon B19.2 completion
+**Next Update:** Upon B19.3 completion
