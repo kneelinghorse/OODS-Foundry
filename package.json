@@ -110,6 +110,7 @@
     "validate:contexts": "node scripts/validate-contexts.cjs",
     "pipeline:push": "pnpm run build:tokens && pnpm run build-storybook && (pnpm run chromatic || echo chromatic skipped) && pnpm run vrt:hc && pnpm run current-state:sprint08 && pnpm run validate:contexts && pnpm run purity:audit",
     "pack:verify": "bash scripts/release/local-release.sh",
+    "release:dry-run": "node scripts/release/dry-run.mjs",
     "purity:audit": "node scripts/purity/audit.js",
     "state:token-breaking": "CMOS_TOKEN_LABELS=token-change:breaking node scripts/state-assessment.mjs"
   },

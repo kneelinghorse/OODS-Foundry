@@ -158,6 +158,185 @@
         "failures": 0,
         "durationMs": 5
       }
+    },
+    "governance": {
+      "totals": {
+        "runs": 4,
+        "highRisk": 0,
+        "purityViolations": 0
+      },
+      "lastRun": {
+        "generatedAt": "2025-10-29T00:31:28.438Z",
+        "status": "GREEN",
+        "highRisk": 0,
+        "leaks": 0,
+        "orphans": 0,
+        "purityViolations": {
+          "count": 0,
+          "samples": []
+        },
+        "requiresBreakingLabel": false,
+        "brands": {
+          "A": {
+            "highRisk": 0,
+            "mediumRisk": 0,
+            "lowRisk": 40,
+            "requiresBreakingLabel": false,
+            "hasBreakingLabel": false,
+            "labels": []
+          },
+          "B": {
+            "highRisk": 0,
+            "mediumRisk": 0,
+            "lowRisk": 40,
+            "requiresBreakingLabel": false,
+            "hasBreakingLabel": false,
+            "labels": []
+          }
+        },
+        "artifacts": {
+          "A": "artifacts/state/governance/brand-A.json",
+          "B": "artifacts/state/governance/brand-B.json"
+        }
+      },
+      "history": [
+        {
+          "generatedAt": "2025-10-29T00:31:28.438Z",
+          "status": "GREEN",
+          "highRisk": 0,
+          "leaks": 0,
+          "orphans": 0,
+          "purityViolations": {
+            "count": 0,
+            "samples": []
+          },
+          "requiresBreakingLabel": false,
+          "brands": {
+            "A": {
+              "highRisk": 0,
+              "mediumRisk": 0,
+              "lowRisk": 40,
+              "requiresBreakingLabel": false,
+              "hasBreakingLabel": false,
+              "labels": []
+            },
+            "B": {
+              "highRisk": 0,
+              "mediumRisk": 0,
+              "lowRisk": 40,
+              "requiresBreakingLabel": false,
+              "hasBreakingLabel": false,
+              "labels": []
+            }
+          },
+          "artifacts": {
+            "A": "artifacts/state/governance/brand-A.json",
+            "B": "artifacts/state/governance/brand-B.json"
+          }
+        },
+        {
+          "generatedAt": "2025-10-29T00:30:48.979Z",
+          "status": "GREEN",
+          "highRisk": 0,
+          "leaks": 0,
+          "orphans": 0,
+          "purityViolations": {
+            "count": 0,
+            "samples": []
+          },
+          "requiresBreakingLabel": false,
+          "brands": {
+            "A": {
+              "highRisk": 0,
+              "mediumRisk": 0,
+              "lowRisk": 40,
+              "requiresBreakingLabel": false,
+              "hasBreakingLabel": false,
+              "labels": []
+            },
+            "B": {
+              "highRisk": 0,
+              "mediumRisk": 0,
+              "lowRisk": 40,
+              "requiresBreakingLabel": false,
+              "hasBreakingLabel": false,
+              "labels": []
+            }
+          },
+          "artifacts": {
+            "A": "artifacts/state/governance/brand-A.json",
+            "B": "artifacts/state/governance/brand-B.json"
+          }
+        },
+        {
+          "generatedAt": "2025-10-29T00:23:21.742Z",
+          "status": "GREEN",
+          "highRisk": 0,
+          "leaks": 0,
+          "orphans": 0,
+          "purityViolations": {
+            "count": 0,
+            "samples": []
+          },
+          "requiresBreakingLabel": false,
+          "brands": {
+            "A": {
+              "highRisk": 0,
+              "mediumRisk": 0,
+              "lowRisk": 40,
+              "requiresBreakingLabel": false,
+              "hasBreakingLabel": false,
+              "labels": []
+            },
+            "B": {
+              "highRisk": 0,
+              "mediumRisk": 0,
+              "lowRisk": 40,
+              "requiresBreakingLabel": false,
+              "hasBreakingLabel": false,
+              "labels": []
+            }
+          },
+          "artifacts": {
+            "A": "artifacts/state/governance/brand-A.json",
+            "B": "artifacts/state/governance/brand-B.json"
+          }
+        },
+        {
+          "generatedAt": "2025-10-29T00:18:20.615Z",
+          "status": "GREEN",
+          "highRisk": 0,
+          "leaks": 0,
+          "orphans": 0,
+          "purityViolations": {
+            "count": 0,
+            "samples": []
+          },
+          "requiresBreakingLabel": false,
+          "brands": {
+            "A": {
+              "highRisk": 0,
+              "mediumRisk": 0,
+              "lowRisk": 40,
+              "requiresBreakingLabel": false,
+              "hasBreakingLabel": false,
+              "labels": []
+            },
+            "B": {
+              "highRisk": 0,
+              "mediumRisk": 0,
+              "lowRisk": 40,
+              "requiresBreakingLabel": false,
+              "hasBreakingLabel": false,
+              "labels": []
+            }
+          },
+          "artifacts": {
+            "A": "artifacts/state/governance/brand-A.json",
+            "B": "artifacts/state/governance/brand-B.json"
+          }
+        }
+      ]
     }
   },
   "accessibilityContract": {
@@ -364,31 +543,91 @@
   "helpers": {
     "overlaysProof": {
       "totals": {
-        "runs": 4,
-        "pass": 4,
+        "runs": 7,
+        "pass": 7,
         "fail": 0
       },
       "lastRun": {
         "mission": "B16.6",
-        "runAt": "2025-10-28T13:31:00.136Z",
+        "runAt": "2025-10-29T00:31:08.709Z",
         "status": "passed",
-        "durationMs": 7473,
+        "durationMs": 7289,
         "tasks": [
           {
             "id": "overlay-manager-e2e",
             "status": "passed",
-            "durationMs": 3964,
+            "durationMs": 3681,
             "exitCode": null
           },
           {
             "id": "overlay-components-axe",
             "status": "passed",
-            "durationMs": 3509,
+            "durationMs": 3608,
             "exitCode": null
           }
         ]
       },
       "history": [
+        {
+          "mission": "B16.6",
+          "runAt": "2025-10-29T00:31:08.709Z",
+          "status": "passed",
+          "durationMs": 7289,
+          "tasks": [
+            {
+              "id": "overlay-manager-e2e",
+              "status": "passed",
+              "durationMs": 3681,
+              "exitCode": null
+            },
+            {
+              "id": "overlay-components-axe",
+              "status": "passed",
+              "durationMs": 3608,
+              "exitCode": null
+            }
+          ]
+        },
+        {
+          "mission": "B16.6",
+          "runAt": "2025-10-29T00:23:01.615Z",
+          "status": "passed",
+          "durationMs": 7505,
+          "tasks": [
+            {
+              "id": "overlay-manager-e2e",
+              "status": "passed",
+              "durationMs": 3795,
+              "exitCode": null
+            },
+            {
+              "id": "overlay-components-axe",
+              "status": "passed",
+              "durationMs": 3710,
+              "exitCode": null
+            }
+          ]
+        },
+        {
+          "mission": "B16.6",
+          "runAt": "2025-10-29T00:11:25.097Z",
+          "status": "passed",
+          "durationMs": 7528,
+          "tasks": [
+            {
+              "id": "overlay-manager-e2e",
+              "status": "passed",
+              "durationMs": 3862,
+              "exitCode": null
+            },
+            {
+              "id": "overlay-components-axe",
+              "status": "passed",
+              "durationMs": 3666,
+              "exitCode": null
+            }
+          ]
+        },
         {
           "mission": "B16.6",
           "runAt": "2025-10-28T13:31:00.136Z",
@@ -473,18 +712,67 @@
     },
     "pkgCompat": {
       "totals": {
-        "runs": 4,
-        "pass": 4,
+        "runs": 11,
+        "pass": 11,
         "fail": 0
       },
       "lastRun": {
         "mission": "B16.6",
-        "runAt": "2025-10-28T13:31:48.686Z",
+        "runAt": "2025-10-29T00:31:57.334Z",
         "status": "passed",
         "durationMs": 15851,
         "exitCode": null
       },
       "history": [
+        {
+          "mission": "B16.6",
+          "runAt": "2025-10-29T00:31:57.334Z",
+          "status": "passed",
+          "durationMs": 15851,
+          "exitCode": null
+        },
+        {
+          "mission": "B16.6",
+          "runAt": "2025-10-29T00:23:52.067Z",
+          "status": "passed",
+          "durationMs": 17083,
+          "exitCode": null
+        },
+        {
+          "mission": "B16.6",
+          "runAt": "2025-10-29T00:12:13.135Z",
+          "status": "passed",
+          "durationMs": 16318,
+          "exitCode": null
+        },
+        {
+          "mission": "B16.6",
+          "runAt": "2025-10-28T23:53:55.927Z",
+          "status": "passed",
+          "durationMs": 15289,
+          "exitCode": null
+        },
+        {
+          "mission": "B16.6",
+          "runAt": "2025-10-28T23:52:52.075Z",
+          "status": "passed",
+          "durationMs": 15324,
+          "exitCode": null
+        },
+        {
+          "mission": "B16.6",
+          "runAt": "2025-10-28T23:49:22.130Z",
+          "status": "passed",
+          "durationMs": 15921,
+          "exitCode": null
+        },
+        {
+          "mission": "B16.6",
+          "runAt": "2025-10-28T23:48:29.243Z",
+          "status": "passed",
+          "durationMs": 15494,
+          "exitCode": null
+        },
         {
           "mission": "B16.6",
           "runAt": "2025-10-28T13:31:48.686Z",
@@ -505,13 +793,65 @@
           "status": "passed",
           "durationMs": 13224,
           "exitCode": null
+        }
+      ]
+    },
+    "guardrails": {
+      "totals": {
+        "runs": 4,
+        "metadataViolations": 0,
+        "tenancyViolations": 0
+      },
+      "lastRun": {
+        "generatedAt": "2025-10-29T00:31:26.869Z",
+        "status": "GREEN",
+        "metadataViolations": [],
+        "counts": {
+          "metadata": 0,
+          "tenancy": 0
+        },
+        "tenancyViolations": []
+      },
+      "history": [
+        {
+          "generatedAt": "2025-10-29T00:31:26.869Z",
+          "status": "GREEN",
+          "metadataViolations": [],
+          "counts": {
+            "metadata": 0,
+            "tenancy": 0
+          },
+          "tenancyViolations": []
         },
         {
-          "mission": "B16.6",
-          "runAt": "2025-10-21T22:31:37.844Z",
-          "status": "passed",
-          "durationMs": 13808,
-          "exitCode": null
+          "generatedAt": "2025-10-29T00:30:35.810Z",
+          "status": "GREEN",
+          "metadataViolations": [],
+          "counts": {
+            "metadata": 0,
+            "tenancy": 0
+          },
+          "tenancyViolations": []
+        },
+        {
+          "generatedAt": "2025-10-29T00:23:20.143Z",
+          "status": "GREEN",
+          "metadataViolations": [],
+          "counts": {
+            "metadata": 0,
+            "tenancy": 0
+          },
+          "tenancyViolations": []
+        },
+        {
+          "generatedAt": "2025-10-29T00:21:31.995Z",
+          "status": "GREEN",
+          "metadataViolations": [],
+          "counts": {
+            "metadata": 0,
+            "tenancy": 0
+          },
+          "tenancyViolations": []
         }
       ]
     }
