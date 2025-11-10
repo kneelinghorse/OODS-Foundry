@@ -1,0 +1,47 @@
+# cmos/missions/sprint-19/R19.5_display-site-discovery.yaml
+name: "Build.TechnicalResearch.v1"
+version: "1.0.0"
+displayName: "Technical Research Mission"
+
+missionId: "TR-20251101-195"
+
+objective: >
+  Identify the lowest-maintenance approach to publish our design system externally by evaluating static
+  Storybook hosting and adjacent low-code options (e.g., GitHub Pages, Netlify, Vercel) so Sprint 19 can
+  recommend an implementation path without standing up a bespoke marketing site.
+
+context: |
+  Stakeholders need an easy way to explore Component Set IV without cloning the repository. We want to
+  scope a display-site strategy that keeps maintenance near-zero, respects the zero-external-dependency
+  constraint for core builds, and can scale from private previews to public sharing. The research should
+  capture deployment mechanics (actions, auth, secrets), hosting costs, brand considerations, and the
+  review workflow for publishing updated Storybook bundles.
+
+successCriteria:
+  - "Survey at least three hosting strategies (GitHub Pages, static asset host, Chromatic/Vercel or equivalent) with pros/cons."
+  - "Document deployment mechanics, required secrets, and CI hooks for each option."
+  - "Evaluate maintenance overhead, governance implications, and accessibility of shared artifacts."
+  - "Provide a recommended path with fallback options and decision triggers for future build work."
+
+deliverables:
+  - "This completed research brief summarizing findings, evidence, and recommended implementation path."
+  - "Comparison matrix table capturing effort, cost, auth/privacy, and maintenance signals per option."
+  - "Implementation notes ready to seed a follow-on build mission (B19.5)."
+
+domainFields:
+  type: "Build.TechnicalResearch.v1"
+
+  researchQuestions:
+    - "What low-code/no-code hosting options can serve our static Storybook bundle with minimal upkeep?"
+    - "How do GitHub Pages, Netlify, Vercel, Chromatic, and similar services compare on deployment workflow, cost, SLA, and governance?"
+    - "What automation (GitHub Actions, pnpm scripts) is required to keep the display site updated without manual intervention?"
+    - "How do branding, access control, and analytics considerations influence the hosting choice?"
+    - "What risks or blockers exist (e.g., asset size limits, rate limits, privacy) that could affect a Sprint 20 reviewer preview?"
+
+  keyFindings: []
+
+  contradictionsAndUncertainties: ""
+
+  buildImplications: {}
+
+  evidenceCollection: []

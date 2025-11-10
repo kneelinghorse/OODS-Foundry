@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CMOS Pattern Telemetry Event",
+  "description": "Schema describing telemetry emitted by RSIP, Delegation, and Boomerang patterns.",
+  "type": "object",
+  "required": ["timestamp", "missionId", "pattern", "stage", "status"],
+  "properties": {
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "missionId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "pattern": {
+      "type": "string",
+      "enum": ["rsip", "delegation", "boomerang"]
+    },
+    "stage": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["started", "succeeded", "failed", "fallback"]
+    },
+    "tokensUsed": {
+      "type": "number",
+      "minimum": 0
+    },
+    "latencyMs": {
+      "type": "number",
+      "minimum": 0
+    },
+    "iteration": {
+      "type": "number",
+      "minimum": 0
+    },
+    "evaluationScore": {
+      "type": "number"
+    },
+    "workerId": {
+      "type": "string"
+    },
+    "stepIndex": {
+      "type": "number",
+      "minimum": 0
+    },
+    "errorCode": {
+      "type": "string"
+    },
+    "errorMessage": {
+      "type": "string"
+    },
+    "fallbackTriggered": {
+      "type": "boolean"
+    },
+    "metadata": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": true
+}

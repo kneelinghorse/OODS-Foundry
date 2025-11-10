@@ -1,0 +1,79 @@
+# missions/sprint-09/B9.4_Figma-to-Git-Review-Kit.yaml
+sprint: "09"
+title: "Review Kit: Figma → Git roundtrip (Brand A palette tweak)"
+completionProtocolRef: "../current.yaml#completionProtocol"
+
+missionId: "B9.4"
+objective: >
+  Execute one real palette change for Brand A in Figma, move it through the push pipeline,
+  and publish a Review Kit page capturing artifacts (specimen, Storybook link, Chromatic diff).
+
+context: |
+  We are PR-less for speed. This mission documents the handshake and proves it works end-to-end.
+  Derek will perform the Figma change; the rest is automated and documented here.
+
+successCriteria:
+  - "A single swatch tweak is applied in Figma and mapped to Brand A tokens."
+  - "Push pipeline builds tokens, runs gates, and produces artifacts."
+  - "Review Kit page includes: before/after specimen, Storybook static link, Chromatic diff URL, and notes."
+
+deliverables:
+  - "/docs/review-kits/brand-a-roundtrip.md"
+  - "/docs/brand-a/specimen.before.png"
+  - "/docs/brand-a/specimen.after.png"
+  - "/docs/brand-a/chromatic-diff.txt"           # store URL/reference
+  - "/app/apps/explorer/storybook-static/**"      # artifact referenced, not versioned (as per repo policy)
+
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - finding: "Branch/push-triggered token updates with generated review artifacts; Git as SoT."
+      sourceMission: "r.13.3_The-PR-less-Pipeline.md"
+    - finding: "Maintain alias/var-chaining discipline to prevent drift; record deltas."
+      sourceMission: "r.13.1_Multi-Brand-Theming.md"
+
+  implementationScope:
+    coreDeliverable: "A documented, repeatable review flow with real outputs."
+    outOfScope:
+      - "General PR automation."
+      - "Multiple palette changes."
+
+  handoffContext:
+    completed:
+      - "Review Kit published with links and images."
+    interfaces:
+      - "User action: apply one palette tweak in Figma (Derek)."
+      - "Scripted: tokens build; Storybook build; Chromatic upload."
+    assumptions:
+      - "Figma variables export → tokens mapping is already configured."
+    nextMission: "Optional: parameterize the review kit script."
+    blockers: []
+
+examples:
+  review_kit_template_md: |
+    # Brand A Roundtrip (YYYY-MM-DD)
+    - Change: Primary 600 hue +5 OKLCH°
+    - Storybook: <local-static-path-or-hosted-link>
+    - Chromatic: <diff-URL>
+    - Before/After specimen:
+      - ![](../brand-a/specimen.before.png)
+      - ![](../brand-a/specimen.after.png)
+    - AA/Δ summary: all pairs = pass
+    - Notes: mapping, any nudges applied
+
+tests:
+  - "Run push pipeline after Figma tweak; expect diagnostics + artifacts updated."
+  - "Open Review Kit and verify all links work."
+
+acceptance:
+  - "Review Kit page complete and committed."
+  - "Artifacts demonstrate the end-to-end flow with no manual component edits."
+
+outcome:
+  status: "Completed"
+  summary: "Interactive primary ramp warmed +2° with review kit artifacts published."
+  artifacts:
+    - "app/docs/review-kits/brand-a-roundtrip.md"
+    - "app/docs/brand-a/specimen.before.png"
+    - "app/docs/brand-a/specimen.after.png"
+    - "app/docs/brand-a/chromatic-diff.txt"

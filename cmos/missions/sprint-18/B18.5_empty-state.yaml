@@ -1,0 +1,55 @@
+# cmos/missions/sprint-18/B18.5_empty-state.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251024-185"
+
+objective: >
+  Create the EmptyState component with illustration/headline/body/action slots, tokenized spacing, and
+  content guidelines per R18.1.
+
+context: |
+  Empty states are critical for first-run and no-data experiences. Research specifies canonical anatomy,
+  token hooks (spacing, typography, color), and Statusables alignment for intent-based variants. This
+  mission delivers the component, Storybook templates for common scenarios, and documentation to ensure
+  consistency across domains.
+
+successCriteria:
+  - "EmptyState component supports illustration, headline, body, primary/secondary actions, and optional intent prop mapping to Statusables tokens."
+  - "Spacing/typography driven via design tokens; layout responsive and accessible (headings, landmarks)."
+  - "Storybook stories cover 'No Data', 'First Use', 'Success/Completion', with content guidance + MDX doc."
+  - "Unit/snapshot tests ensure slot rendering + token classnames; axe check passes."
+  - "Documentation includes copywriting checklist and illustration usage guidance."
+
+deliverables:
+  - "Component: src/components/empty-state/EmptyState.tsx."
+  - "Storybook: stories/components/EmptyState.stories.tsx + MDX docs."
+  - "Tests: tests/components/empty-state.spec.tsx."
+  - "Docs: docs/components/empty-state.md (content + design guidance)."
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  Read for Context researchFoundation:
+    - finding: "Empty state anatomy, token hooks, intent alignment."
+      sourceMission: "cmos/missions/research/R18.1_Technical-Research-Report-Component-Set-IV.md"
+
+  implementationScope:
+    coreDeliverable: "EmptyState component with tokens, docs, tests."
+    outOfScope:
+      - "Illustration asset library (link to existing assets)."
+      - "Page-level layout wrappers (component only)."
+
+  handoffContext:
+    completed:
+      - "Component exported; docs published with guidelines."
+      - "Storybook includes design tokens table and usage examples."
+      - "Tokens validated via governance job."
+    interfaces:
+      - "<EmptyState headline body illustration actions intent />"
+    assumptions:
+      - "Button/Link components exist for actions."
+      - "Illustrations referenced by name or React node."
+    nextMission: "BI-20251024-186: Toast queue infrastructure."
+    blockers: []

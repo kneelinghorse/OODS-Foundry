@@ -1,0 +1,74 @@
+# cmos/missions/sprint-10/10.1_mcp-server-v0.1.yaml
+sprint: "10"
+missionId: "B10.1"
+title: "MCP server v0.1 (stdio, sandboxed)"
+type: "Build.Implementation.v1"
+
+objective: >
+  Implement a minimal, safe MCP server (Node 20, Fastify + Ajv) exposing schema-validated tools:
+  tokens.build, a11y.scan, purity.audit, vrt.run, reviewKit.create, release.packVerify, diag.snapshot.
+  Default DRY-RUN; writes only with apply=true; all writes confined to /artifacts/current-state/YYYY-MM-DD/.
+
+context: |
+  The server speaks stdio for agent clients and (in B10.2) is bridged to HTTP for Storybook.
+  Every invocation emits a signed transcript and bundle index (sha256) next to outputs.
+
+researchFoundation:
+  - "cmos/missions/research/R10.1_MCP-Server-Patterns.md"
+  - "cmos/missions/research/R10.3_Security-&-Governance.md"
+  - "cmos/missions/research/R10.5_Artifact-Contracts-&-Reproducibility.md"
+
+deliverables:
+  - "/packages/mcp-server/src/index.ts"
+  - "/packages/mcp-server/src/tools/*.ts"
+  - "/packages/mcp-server/src/schemas/*.json"
+  - "/packages/mcp-server/src/security/policy.json"
+  - "/packages/mcp-server/src/security/redactions.json"
+  - "/packages/mcp-server/package.json"
+  - "/docs/mcp/Tool-Specs.md"
+  - "/docs/mcp/Security-Model.md"
+
+steps:
+  - "Scaffold /packages/mcp-server (TypeScript, tsconfig nodenext, strict)."
+  - "Add runtime: Fastify for local health/debug, stdio transport for agents."
+  - "Implement Ajv validators for each tool; reject on schema fail."
+  - "Implement DRY-RUN by default; honor { apply:true } to allow writes."
+  - "Implement path allowlist: only /artifacts/current-state/${DATE}/… (create if missing)."
+  - "Add safe spawn wrapper for underlying scripts (no shell; args array; timeout)."
+  - "Emit transcript.json (redacted) and bundle_index.json with sha256 for each artifact."
+  - "Document tool contracts in /docs/mcp/Tool-Specs.md; summarize controls in Security-Model.md."
+
+exampleSchemas:
+  tokens.build.input: |
+    {
+      "type":"object",
+      "properties":{
+        "brand":{"type":"string","enum":["A"],"default":"A"},
+        "theme":{"type":"string","enum":["light","dark","hc"],"default":"dark"},
+        "apply":{"type":"boolean","default":false}
+      },
+      "additionalProperties":false
+    }
+  tokens.build.output: |
+    {
+      "type":"object",
+      "properties":{
+        "artifacts":{"type":"array","items":{"type":"string"}},
+        "diagnosticsPath":{"type":"string"},
+        "transcriptPath":{"type":"string"},
+        "bundleIndexPath":{"type":"string"}
+      },
+      "required":["artifacts","transcriptPath","bundleIndexPath"],
+      "additionalProperties":false
+    }
+
+tests:
+  - "Invalid payloads are rejected with 400 + error schema."
+  - "DRY-RUN writes only transcript + bundle index; no other files created."
+  - "apply:true writes artifacts strictly under /artifacts/current-state/YYYY-MM-DD/."
+  - "Killing child process at timeout returns a structured error (code=TIMEOUT)."
+
+acceptance:
+  - "All 7 tools registered with input/output schemas and DRY-RUN default."
+  - "Transcripts redact configured tokens/paths; bundle index lists sha256 for each file."
+  - "No writes occur outside the artifacts allowlist; policy doc published."

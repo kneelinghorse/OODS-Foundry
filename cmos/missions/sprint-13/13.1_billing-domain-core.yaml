@@ -1,0 +1,50 @@
+# cmos/missions/sprint-13/13.1_billing-domain-core.yaml
+sprint: "13"
+missionId: "B13.1"
+title: "Billing domain core — objects, traits, enums → tokens, 4 contexts"
+type: "Build.Implementation.v1"
+
+objective: >
+  Stand up the SaaS Billing domain with normalized objects (Subscription, Invoice, Plan, Usage),
+  cross-provider status enums mapped to UI tokens, and complete List/Detail/Form/Timeline stories
+  using tokens-only components (no component code changes).
+
+context: |
+  This mission delivers the baseline domain with sample fixtures and full context coverage.
+  Components must continue reading only `--cmp-*`. Status→token mapping provides badges, banners,
+  and field visual states consistently across providers.
+
+please review for context researchFoundation:
+  - "cmos/missions/research/R13.5_Canonical-Model-Subscription-and-Invoice.md"   # canonical enums + provider mappings :contentReference[oaicite:0]{index=0}
+  - "cmos/missions/research/subscription-fields-states-ui-mapping.md"
+  - "cmos/missions/research/r4.5_SaaS-Enum-to-Token-Mapping-Schema.md"
+
+deliverables:
+  - "/domains/saas-billing/traits/{billable,payable,refundable,metered}.trait.yaml"
+  - "/domains/saas-billing/objects/{Subscription,Invoice,Plan,Usage}.object.yaml"
+  - "/domains/saas-billing/examples/{providers}.{json}"             # e.g., stripe.json, chargebee.json
+  - "/tokens/maps/saas-billing.status-map.json"                     # enum→token mapping (badge/banner/field)
+  - "/app/apps/explorer/src/stories/Billing/{Subscription,Invoice}.{List,Detail,Form,Timeline}.mdx"
+  - "/docs/domains/billing/README.md"                               # object schemas, mapping table, contracts
+
+enumMappingSpec:
+  subscription: ["trialing","active","past_due","paused","canceled","incomplete","incomplete_expired"]
+  invoice:      ["draft","open","paid","void","uncollectible","past_due","retrying","refunded"]
+
+steps:
+  - "Define traits (billable/payable/refundable/metered) as composition units; wire to objects."
+  - "Normalize external provider statuses to canonical enums; record original→canonical mapping."
+  - "Create tokens map (saas-billing.status-map.json): per status define chip + banner tokens (bg/fg/border/icon)."
+  - "Author fixtures for 2 providers (min) and verify identical UI via mapping (no switch/case in stories)."
+  - "Write context stories (List/Detail/Form/Timeline) with realistic fields and sample state deltas."
+  - "Document object schemas + mapping in docs/domains/billing/README.md."
+
+tests:
+  - "Stories render identical visuals for provider A vs B (status mapping only)."
+  - "No component references `--ref-*`/`--theme-*`/color literals (purity audit passes)."
+  - "Axe pass on all 8 primary stories (two objects × 4 contexts)."
+  - "Dark + HC snapshots generated; AA/Δ guardrails remain green."
+
+acceptance:
+  - "4 contexts per object, enum mapping works, and fixtures produce consistent UI across providers."
+  - "Tokens-only discipline intact; a11y and HC policies pass."

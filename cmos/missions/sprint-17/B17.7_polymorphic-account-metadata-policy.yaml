@@ -1,0 +1,64 @@
+# cmos/missions/sprint-17/B17.7_polymorphic-account-metadata-policy.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251024-177"
+
+objective: >
+  Unify the Account model with polymorphic archetypes (B2C, B2B, Workspace) and enforce a safe metadata
+  policy that forbids PII leakage via generic blobs.
+
+context: |
+  Direction guidance highlights "polymorphic Account + metadata" coupled with compliance guardrails
+  (cmos/docs/OODS Direction-Check-for-sprint-17.md:22, 90-101). Cross-platform research underscores the
+  need to distinguish identity vs account vs contact objects and handle organization memberships cleanly
+  (cmos/Industry-Research/R1.2_A Cross-Platform Analysis ... Schemas.md:130-209). With RBAC, tenancy, and
+  canonical billing states in place, this mission consolidates Account archetypes, introduces typed
+  metadata slots (business_profile, workspace_settings), and adds lint/test enforcement so PII is only
+  captured in explicit schemas with retention/erasure support.
+
+successCriteria:
+  - "Account union types defined (AccountPerson, AccountOrganization, AccountWorkspace) with explicit fields and ownership rules."
+  - "Metadata policy doc + schema ensures only approved keys stored; PII fields moved to dedicated tables with retention metadata."
+  - "Membership resolver maps Users ↔ Accounts via roles from RBAC mission; tests confirm separation of identity vs account vs contact."
+  - "Lint/test fails if code writes arbitrary JSON metadata or introduces vendor-specific account fields."
+  - "Storybook + docs show examples of each archetype and safe metadata usage."
+
+deliverables:
+  - "src/domain/accounts/{core.ts,metadata-policy.ts}."
+  - "Docs: docs/policies/account-archetypes.md + metadata guardrail."
+  - "ESLint/codemod rule `no-account-unsafe-metadata`."
+  - "Tests: tests/accounts/{account-archetypes.spec.ts,metadata-policy.spec.ts}."
+  - "Migration scripts to move existing metadata → typed tables."
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  researchFoundation:
+    - finding: "Adopt polymorphic Account with controlled metadata; no PII in generic blobs."
+      sourceMission: "cmos/docs/OODS Direction-Check-for-sprint-17.md"
+    - finding: "Distinguish User vs Contact vs Account archetypes across platforms."
+      sourceMission: "cmos/Industry-Research/R1.2_A Cross-Platform Analysis of Core Data Models- Archetypes, Convergence, and Divergence in User, Account, and Subscription Schemas.md"
+    - finding: "Security & governance guidance for compliance data segregation."
+      sourceMission: "cmos/missions/research/R10.3_Security-&-Governance.md"
+
+  implementationScope:
+    coreDeliverable: "Polymorphic account types, metadata policy enforcement, migrations + proofs."
+    outOfScope:
+      - "UI for account editing beyond sample Storybook forms."
+      - "Full GDPR deletion workflow automation (documented follow-up)."
+
+  handoffContext:
+    completed:
+      - "Account archetype modules exported; membership mapping updated."
+      - "Metadata policy doc + lint active; tests ensure compliance."
+      - "Migration scripts ready with instructions."
+    interfaces:
+      - "AccountService.create(accountInput: AccountInput): Promise<Account>"
+      - "MetadataPolicy.validate(key, value): ValidationResult"
+    assumptions:
+      - "Existing data small enough for simple migration; large-scale pipelines documented."
+      - "RBAC mission provided role definitions for account ownership."
+    nextMission: "BI-20251024-178: Docs & Brownfield Guide v1."
+    blockers: []

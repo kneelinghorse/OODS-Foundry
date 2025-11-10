@@ -1,0 +1,55 @@
+# cmos/missions/sprint-15/B15.5_onboarding-docs-design-and-dev.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251019-155"
+
+objective: >
+  Ship two copy-paste quickstarts (Design + Dev) that work on a clean machine in ≤10 minutes,
+  plus a local PR check script and a troubleshooting section based on a dry run.
+
+context: |
+  New contributors must be productive immediately. These docs codify the setup, the most common
+  pitfalls, and a single command to run the local CI checks before opening a PR.
+
+successCriteria:
+  - "Design and Dev quickstarts each validated on a fresh clone in ≤10 minutes."
+  - "Local PR script runs lint, types, unit, a11y, and VR-dry; exits non-zero on failure."
+  - "Troubleshooting covers Chromatic auth, Storybook port conflicts, and Tokens export mismatch."
+  - "Design quickstart shows a minimal Figma→Tokens export and creating a proof story."
+  - "Dev quickstart shows running brand switcher and verifying per-brand baselines."
+
+deliverables:
+  - "/docs/getting-started/design.md and /docs/getting-started/dev.md"
+  - "scripts/local-pr-check.mjs and docs link in top-level README."
+  - "diagnostics.json.onboarding with timings and any fixes discovered."
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+ read for context: researchFoundation:
+    - finding: "Tokens Studio→DTCG→Tailwind pipeline; Figma is a client of Git."
+      sourceMission: "cmos/missions/research/r4.2_Tokens-Studio-to-Tailwind-CSS-v4-Pipeline"
+    - finding: "PR-less pipeline and artifact-first reviews accelerate onboarding."
+      sourceMission: "cmos/missions/research/r09.3_The-PR-less-Pipeline"
+    - finding: "Storybook Agent Panel + approvals inform local CI steps."
+      sourceMission: "cmos/missions/research/R10.4_Storybook-Agent-Panel-Integration"
+
+  implementationScope:
+    coreDeliverable: >
+      Two runnable quickstarts, one local PR script, and a troubleshooting section verified by a real run.
+    outOfScope:
+      - "Video tutorials and complete curriculum."
+      - "Design philosophy essays; link to existing docs instead."
+
+  handoffContext:
+    completed:
+      - "Quickstarts validated; timings captured."
+      - "Local PR script wired into package.json scripts."
+    interfaces:
+      - "pnpm local:pr-check runs the consolidated checks."
+    assumptions:
+      - "Node/pnpm versions pinned and pre-requisites documented."
+    nextMission: "BI-20251019-160: Sprint 15 current-state audit (coverage, a11y, VR, tokens, onboarding)."
+    blockers: []

@@ -1,0 +1,50 @@
+# cmos/missions/sprint-10/10.4_policy-governance-v0.1.yaml
+sprint: "10"
+missionId: "B10.4"
+title: "Policy & governance v0.1 (roles, limits, redaction, errors)"
+type: "Build.Implementation.v1"
+
+objective: >
+  Add a JSON policy engine with roles (designer, maintainer), per-tool allow/deny and write-path rules,
+  rate limits/timeouts, transcript redactions, and structured error responses.
+
+context: |
+  Security posture: no arbitrary shell, no repo-wide writes, reads/writes constrained by schema + policy.
+
+researchFoundation:
+  - "cmos/missions/research/R10.3_Security-&-Governance.md"
+  - "cmos/missions/research/R10.1_MCP-Server-Patterns.md"
+
+deliverables:
+  - "/packages/mcp-server/src/security/policy.ts"
+  - "/packages/mcp-server/src/security/policy.json"
+  - "/packages/mcp-server/src/security/errors.ts"
+  - "/docs/mcp/Policy-Rules.md"
+
+policyDefaults:
+  roles: ["designer","maintainer"]
+  rules:
+    - tool: "reviewKit.create"
+      allow: ["designer","maintainer"]
+      writes: ["/artifacts/current-state/${DATE}/**"]
+    - tool: "release.packVerify"
+      allow: ["maintainer"]
+      writes: ["/artifacts/current-state/${DATE}/**"]
+  limits:
+    defaultTimeoutMs: 90000
+    concurrency: 1
+  redactions: ["$HOME","GITHUB_TOKEN","/Users/*/secrets/*"]
+
+steps:
+  - "Load policy.json; enforce on every call pre-execution."
+  - "Implement rate-limit/token bucket per tool; enforce timeouts."
+  - "Apply redactions to transcripts; include redactions array in transcript."
+  - "Return errors in a typed shape { code, message, details }."
+
+tests:
+  - "Denied tool/action returns POLICY_DENIED with details."
+  - "Timeout produces TIMEOUT with elapsedMs; no partial writes."
+  - "Transcripts contain redactions list; secrets absent."
+
+acceptance:
+  - "Policy enforced across all tools; docs contain example rules and responses."

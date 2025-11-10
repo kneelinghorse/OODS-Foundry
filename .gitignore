@@ -22,8 +22,14 @@ tmp/
 .idea/
 .vscode/
 
-# Local project management (exclude entirely)
-cmos/
+# CMOS Runtime Data (session-specific, don't commit)
+cmos/db/cmos.sqlite
+cmos/SESSIONS.jsonl
+cmos/dist/
+cmos/telemetry/events/*.jsonl
+cmos/runtime/boomerang/
+cmos/**/__pycache__/
+cmos/**/*.pyc
 
 # Local environment secrets
 .env.local

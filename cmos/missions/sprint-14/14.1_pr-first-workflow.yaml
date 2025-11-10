@@ -1,0 +1,128 @@
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+description: "A mission to implement a specific, well-scoped technical component based on the findings of a prior research mission. Sized for a single, focused development session."
+author: "Design System Team"
+schema: "./schemas/Implementation.v1.json"
+
+---
+
+missionId: "B14.1"
+objective: >
+  Reinstate a PR-first workflow with required checks, PR previews, and branch protections so
+  all refinement work happens safely via pull requests with clear, actionable signals.
+
+context: |
+  Why this matters: we’re entering refinement, collaboration, and “human fine-tuning.”
+  PR-first ensures safe iteration, review gates, and consistent CI/preview signals before merges.
+  This mission delivers:
+    • A single `pr-validate.yml` that runs the required checks (build, lint, types, tokens-validate,
+      a11y-contract, visual-regression, coverage).
+    • PR previews (Storybook/Chromatic) linked in the PR conversation.
+    • Branch protection rules that block merges on failing checks and require at least one Codeowner review.
+    • Concurrency (cancel in-progress) to keep CI fast and non-flaky.
+  Status writes:
+    • Update PROJECT_CONTEXT.json (add Sprint 14 → B14.1: completed)
+    • Update diagnostics.json (append CI job summary & versions)
+  Out-of-scope: packaging/publish; adding new components; non-PR push paths (remain for main/release only).
+
+successCriteria:
+  - "PRs trigger `build`, `lint`, `typecheck`, `tokens-validate`, `a11y-contract`, `vr-test`, `coverage` jobs."
+  - "PR comment includes a preview link (Chromatic or equivalent)."
+  - "Branch protection blocks merge on failing required checks; 1+ Codeowner review required."
+  - "Concurrency cancels superseded runs; path filters avoid noisy, unrelated jobs."
+  - "A smoke PR demonstrates a red→green cycle, including an intentional a11y/contrast fail caught by CI."
+  - "PROJECT_CONTEXT.json and diagnostics.json updated by the mission’s final step."
+
+deliverables:
+  - ".github/workflows/pr-validate.yml"
+  - ".github/workflows/push-main.yml  # limited to main/release/*, not PRs"
+  - ".github/CODEOWNERS"
+  - ".github/pull_request_template.md"
+  - "docs/cli-reference.md (append PR-checks section link)  # only if needed"
+  - "docs/testing/visual-regression.md (baseline mgmt note)  # only if needed"
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  researchFoundation:
+    - finding: "CI must enforce a11y contract and policy in PRs."
+      sourceMission: "r4.4_A11y-Contract-and-CI-Policy.md"
+    - finding: "Visual regression should gate diffs; curate baseline stories."
+      sourceMission: "r5.4_Visual-Regression-Tooling.md"
+    - finding: "Figma→Repo roundtrip and token transforms inform PR checks."
+      sourceMission: "r5.3_Figma-to-Repository-Handshake-Recipe.md"
+    - finding: "Token pipeline must stay DTCG-compliant; Tailwind v4 CSS vars."
+      sourceMission: "r4.2_Tokens-Studio-to-Tailwind-CSS-v4-Pipeline.md"
+    - finding: "Use perceptually uniform color (OKLCH) and guardrails for contrast."
+      sourceMission: "r5.2_Perceptually-Uniform-Color-System.md"
+    - finding: "High-contrast mode regression prevention patterns."
+      sourceMission: "r5.7_High-Contrast-Mode-Regression-Prevention.md"
+    - finding: "Composite tokens and theming guardrails will plug into later sessions."
+      sourceMission: "r5.1_Implementing-DTCG-Compliant-Composite-Tokens.md"
+
+  implementationScope:
+    coreDeliverable: |
+      Implement a PR-first workflow:
+        1) Workflow files
+           - Create `.github/workflows/pr-validate.yml` with jobs:
+             • setup (checkout, Node 20.x, cache)
+             • build (monorepo-aware), lint, typecheck
+             • tokens-validate (DTCG schema check)
+             • a11y-contract (axe/ARIA against curated stories)
+             • vr-test (Chromatic or equivalent)
+             • coverage (instrumented Vitest, thresholds restored)
+             Shared:
+             • `concurrency: { group: ${{ github.workflow }}-${{ github.ref }}, cancel-in-progress: true }`
+             • `on: pull_request` with path filters for `packages/**`, `tokens/**`, `apps/**`, `.github/**`
+           - Create `.github/workflows/push-main.yml` that runs a reduced set on `push` to `main` and `release/*`.
+        2) PR previews
+           - Use Chromatic in `vr-test` job (requires `CHROMATIC_PROJECT_TOKEN` secret).
+           - Post preview link via the action’s PR comment.
+        3) Branch protections
+           - Require status checks: build, lint, typecheck, tokens-validate, a11y-contract, vr-test, coverage.
+           - Require ≥1 review from CODEOWNERS.
+           - Example (manual or GH CLI):
+             • gh api -X PUT repos/$ORG/$REPO/branches/main/protection \
+                 -f required_status_checks.strict=true \
+                 -f required_status_checks.contexts[]='build' \
+                 -f required_status_checks.contexts[]='lint' \
+                 -f required_status_checks.contexts[]='typecheck' \
+                 -f required_status_checks.contexts[]='tokens-validate' \
+                 -f required_status_checks.contexts[]='a11y-contract' \
+                 -f required_status_checks.contexts[]='vr-test' \
+                 -f required_status_checks.contexts[]='coverage' \
+                 -f enforce_admins=true -f required_pull_request_reviews.required_approving_review_count=1
+        4) Repo hygiene
+           - `.github/CODEOWNERS` maps areas (tokens, components, mcp, docs) to reviewers.
+           - `.github/pull_request_template.md` with checklist (tokens-only, a11y pass, VR reviewed, telemetry notes).
+        5) Smoke PR
+           - Open a PR that intentionally fails a11y or contrast; confirm red→green cycle.
+        6) Status writes
+           - Update `PROJECT_CONTEXT.json` → { sprint: 14, mission: "B14.1", status: "Completed", checks: [..] }
+           - Append to `diagnostics.json` → { mission: "B14.1", ci: { jobs, durations, node, actionVersions } }
+
+    outOfScope:
+      - "Packaging/distribution."
+      - "Adding new components."
+      - "Changing mainline push behavior (beyond restricting to main/release/*)."
+
+  handoffContext:
+    completed:
+      - "PR-first workflow live; required checks block merges; previews appear in PRs."
+      - "Branch protections applied; CODEOWNERS enforced."
+      - "Smoke PR validated red→green CI signals."
+      - "PROJECT_CONTEXT.json and diagnostics.json updated with CI run metadata."
+    interfaces:
+      - "Workflow: .github/workflows/pr-validate.yml"
+      - "Workflow: .github/workflows/push-main.yml"
+      - "Config: .github/CODEOWNERS"
+      - "Template: .github/pull_request_template.md"
+    assumptions:
+      - "Node 20.x available on runners; npm/pnpm scripts exist for build, lint, test."
+      - "Secrets set: CHROMATIC_PROJECT_TOKEN (for vr-test previews); GITHUB_TOKEN provided by Actions."
+      - "Chromatic project linked (or alternative preview host configured)."
+    nextMission: "B14.2 — Figma↔Repo handshake (Tokens Studio→DTCG→Tailwind v4)."
+    blockers:
+      - "Missing Chromatic token or preview host credentials."
+      - "Repo lacks admin permission to set branch protection (manual step may be required)."

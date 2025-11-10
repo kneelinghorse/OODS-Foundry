@@ -1,0 +1,47 @@
+# cmos/missions/sprint-16/B16.8_sidebar-taxonomy-normalization.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251020-168"
+
+objective: >
+  Reorganize Storybook sections to the canonical taxonomy; remove duplicates and dev-only examples
+  without changing component code.
+
+context: |
+  A stable, minimal taxonomy reduces reviewer confusion and stabilizes visual baselines. This
+  session updates story titles/paths only, and removes redundant sections.
+
+successCriteria:
+  - "Stories grouped exactly as: Foundations, Components/{Primitives|Statusables|Data|Overlays}, Contexts, Domains, Patterns, Explorer, Brand."
+  - "Removed: #Example, #BrandA duplicates, unstyled Token Browser (fold into Foundations/Tokens Roundtrip)."
+  - "No broken story imports; all stories compile and render post-move."
+  - "README in /.storybook documents the taxonomy rules."
+
+deliverables:
+  - "Updated default exports `title: '...'` across stories to match taxonomy."
+  - "Deleted/merged duplicate sections; PR diff lists all file path/title changes."
+  - ".storybook/TAXONOMY.md with the authoritative tree."
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  pleasse read researchFoundation:
+    - finding: "Artifact-first review depends on predictable, curated story surfaces."
+      sourceMission: "cmos/research/R11.1_Storybook-Approval-UX.md"
+
+  implementationScope:
+    coreDeliverable: "Titles/paths adjusted; duplicates removed; docs added."
+    outOfScope:
+      - "Visual/layout fixes; wrappers handled in B16.9."
+
+  handoffContext:
+    completed:
+      - "Taxonomy compiles and renders; Chromatic dry-run OK (no approvals yet)."
+    interfaces:
+      - "No change to component APIs."
+    assumptions:
+      - "Titles reflect folders; no custom SB sidebar plugins."
+    nextMission: "BI-20251020-169: Section Wrappers & Layout Contracts."
+    blockers: []

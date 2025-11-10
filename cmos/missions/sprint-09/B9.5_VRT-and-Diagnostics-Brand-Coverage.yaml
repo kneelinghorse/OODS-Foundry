@@ -1,0 +1,74 @@
+# missions/sprint-09/B9.5_VRT-and-Diagnostics-Brand-Coverage.yaml
+sprint: "09"
+title: "Expand VRT & diagnostics to brand dimension"
+completionProtocolRef: "../current.yaml#completionProtocol"
+
+missionId: "B9.5"
+objective: >
+  Add Brand A to curated VRT stories (dark variants) and extend diagnostics to report brand coverage,
+  build time, AA/Δ summaries, and HC image counts.
+
+context: |
+  We keep VRT lean (dark only in Chromatic, HC via Playwright PNGs). Diagnostics now break down by brand.
+
+successCriteria:
+  - "Chromatic includes Brand A dark stories for 6 key components + 2 composites."
+  - "Diagnostics page shows counts/time broken down by brand (stories, AA/Δ pass %, HC PNGs)."
+  - "VRT runtime remains within target; flake rate unchanged."
+
+deliverables:
+  - "/app/apps/explorer/.chromatic-allowlist.json"     # updated with Brand A stories
+  - "/app/testkits/vrt/stories/hc/brand-a.spec.ts"     # HC snapshots for Brand A
+  - "/docs/diagnostics/sprint-09.md"                   # brand-aware diagnostics
+
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - finding: "PR-less push pipeline with artifact generation (incl. Chromatic link)."
+      sourceMission: "r.13.3_The-PR-less-Pipeline.md"
+
+  implementationScope:
+    coreDeliverable: "Brand-aware VRT allowlist + diagnostics."
+    outOfScope:
+      - "Adding HC to Chromatic (keeps Playwright)."
+
+  handoffContext:
+    completed:
+      - "Brand A stories under VRT; diagnostics reflect brand dimension."
+    interfaces:
+      - "`pnpm chromatic` and `pnpm test:hc`"
+    assumptions:
+      - "Existing curated list of high-signal stories."
+    nextMission: "Ongoing maintenance."
+    blockers: []
+
+examples:
+  allowlist_snippet: |
+    {
+      "criticalStoryIds": [
+        "BrandA/Button/Dark",
+        "BrandA/Badge/Dark",
+        "BrandA/Banner/Dark",
+        "BrandA/Input/Dark",
+        "BrandA/Select/Dark",
+        "BrandA/Tabs/Dark",
+        "BrandA/Form/Dark",
+        "BrandA/Timeline/Dark"
+      ]
+    }
+
+tests:
+  - "Run VRT and confirm the new Brand A stories appear and stabilize."
+  - "Generate sprint-09 diagnostics; confirm brand breakdowns visible."
+
+acceptance:
+  - "Chromatic run includes Brand A dark stories and is stable (flakes unchanged)."
+  - "Diagnostics show brand-aware metrics and pass all gates."
+
+outcome:
+  status: "Completed"
+  summary: "Brand A dark allowlist, HC suite, and diagnostics doc ready for sprint close."
+  artifacts:
+    - app/apps/explorer/.chromatic-allowlist.json
+    - app/testkits/vrt/stories/hc/brand-a.spec.ts
+    - app/docs/diagnostics/sprint-09.md

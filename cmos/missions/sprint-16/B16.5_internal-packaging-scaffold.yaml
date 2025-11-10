@@ -1,0 +1,53 @@
+# cmos/missions/sprint-16/B16.5_internal-packaging-scaffold.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251020-165"
+
+objective: >
+  Produce private, installable packages (ESM + types) with provenance metadata and a Storybook
+  add-on compatibility check—no public publishing.
+
+context: |
+  Teams need to install the system internally. We add dist outputs, semver discipline, changelog
+  generation, compat checks, and embed provenance (SB build hash + VR baseline id).
+
+successCriteria:
+  - "Packages build dist/esm + *.d.ts; no TS path leaks; exports map valid."
+  - "Conventional commits → CHANGELOG; version bump script wired."
+  - "Compat job boots Storybook against built package (green)."
+  - "Provenance fields embedded: { sb_build_hash, vr_baseline_id } surfaced in SB 'About' panel."
+  - "Sample app consumes the package with clean install."
+
+deliverables:
+  - "package.json exports/types; tsconfig build configs; tsup/rollup config."
+  - ".github/workflows/pkg-compat.yml (build + SB-compat job)."
+  - "scripts/pkg:build, pkg:version, pkg:compat; docs at /docs/packaging/internal.md"
+  - "examples/sample-app/* (smoke)."
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+ please review documents in researchFoundation:
+    - finding: "Release provenance & prep; reproducibility."
+      sourceMission: "cmos/research/R12.3_Release-Provenance-&-Prep.md"
+    - finding: "Publishing reproducible TS packages; conditional exports."
+      sourceMission: "cmos/research/r09.2_Publishing-Reproducible-TypeScript-Packages.md"
+    - finding: "Storybook integration & agent panel add-ons."
+      sourceMission: "cmos/research/R10.4_Storybook-Agent-Panel-Integration.md"
+
+  implementationScope:
+    coreDeliverable: "Private packages + compat + provenance; no registry publish."
+    outOfScope:
+      - "Public OSS release, marketing site."
+
+  handoffContext:
+    completed:
+      - "Packages install internally; compat job green; provenance visible."
+    interfaces:
+      - "SB 'About' panel reads provenance from pkg.json"
+    assumptions:
+      - "Node/pnpm versions pinned; build cache stable."
+    nextMission: "BI-20251020-166: Agent/CI helpers."
+    blockers: []

@@ -1,0 +1,60 @@
+# cmos/missions/sprint-15/B15.1_multi-brand-scaffolding.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251019-151"
+
+objective: >
+  Implement multi-brand scaffolding with per-brand token scopes, Storybook persistence, and
+  brand-scoped visual baselines, ensuring no brand-bleed and passing a11y/VR gates.
+
+context: |
+  This mission establishes a second brand alongside the base theme, with deterministic brand scoping
+  and governance. It persists brand selection in Storybook, adds per-brand Chromatic baselines, and
+  introduces a canary to prove brand-bleed linting works.
+
+successCriteria:
+  - "Brand switcher added to Storybook via globalTypes; selection persists across reloads."
+  - "Per-brand CSS-var scoping contract documented and implemented (data-brand on :root)."
+  - "Chromatic maintains separate baselines: chromatic-baselines/brand-a/** and brand-b/**."
+  - "Brand-bleed canary story causes lint/CI failure when forbidden cross-brand tokens are imported."
+  - "A11y (axe) passes on curated cross-brand story matrix; forced-colors proofs captured."
+
+deliverables:
+  - "Brand scaffolding code and Storybook globalTypes + localStorage persistence."
+  - "Per-brand tokens + entrypoints; brand switcher stories; canary-bleed story."
+  - "Chromatic config with brand-scoped baselines."
+  - "Docs: /docs/theming/multi-brand.md (scoping contract, examples, pitfalls)."
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+ read for context: researchFoundation:
+    - finding: "Adopt Global→Brand→Semantic layering; scope via :root[data-brand]."
+      sourceMission: "cmos/missions/research/R09.1_Multi-Brand-Theming"
+    - finding: "Keep DTCG tokens as SoT; Tailwind v4 consumes generated CSS vars."
+      sourceMission: "cmos/missions/research/R4.2_Tokens-Studio-to-Tailwind-CSS-v4-Pipeline"
+    - finding: "HC mode must remain stable across brands; avoid color literals."
+      sourceMission: "cmos/missions/research/R4.4_A11y-Contract-and-CI-Policy"
+
+  implementationScope:
+    coreDeliverable: >
+      Second brand + Storybook brand control (persisted), per-brand token bundles, brand
+      baselines in Chromatic, and brand-bleed lint rule with failing canary.
+    outOfScope:
+      - "Full brand design expansion (typography/illustration)."
+      - "Runtime theme negotiation outside Storybook."
+      - "Docs site branding; follow-up in B15.6."
+
+  handoffContext:
+    completed:
+      - "Brand A/B tokens and scopes in place; Storybook switcher persisted."
+      - "Per-brand Chromatic baselines generated."
+      - "Brand-bleed lint + canary story validated."
+    interfaces:
+      - "data-brand attribute on <html> or :root controls token scope."
+    assumptions:
+      - "Brand tokens align to existing semantic token names."
+    nextMission: "BI-20251019-154: Token governance for brands (diff risk rules)."
+    blockers: []

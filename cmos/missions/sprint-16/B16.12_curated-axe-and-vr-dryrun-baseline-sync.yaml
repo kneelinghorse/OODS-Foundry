@@ -1,0 +1,50 @@
+# cmos/missions/sprint-16/B16.12_curated-axe-and-vr-dryrun-baseline-sync.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251020-172"
+
+objective: >
+  Run a curated a11y smoke (axe) and Chromatic VR dry-run after wiring/taxonomy changes, confirm
+  zero a11y violations and stable visuals, then checkpoint new baselines if intentional moves occurred.
+
+context: |
+  After wiring/taxonomy normalization, we need a quick confidence sweep. This does not approve visual
+  changes unless intentional; it documents diffs and, if approved, syncs baselines.
+
+successCriteria:
+  - "Axe: 0 violations on curated set spanning Foundations/Components/Contexts/Domains/Brand/HC."
+  - "VR dry-run produces only expected grouping/directory changes; component visuals unchanged."
+  - "If intentional diffs exist, PR notes list them and baselines are accepted once reviewed."
+  - "Diagnostics updated: per-brand VR green rate and axe summary."
+
+deliverables:
+  - "scripts/sb-verify.mjs (runs curated axe + VR dry)."
+  - "artifacts/storybook/verify/axe.json and vr-summary.json (+ per-brand stats)."
+  - "PR checklist note in .github/PULL_REQUEST_TEMPLATE.md for story changes."
+  - "docs/storybook/verification.md (how to run/interpret)."
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  please read researchFoundation:
+    - finding: "Visual baselines + curated stories are the review contract."
+      sourceMission: "cmos/research/r5.4_Visual-Regression-Tooling.md"
+    - finding: "Approval-gated writes & transcripts."
+      sourceMission: "cmos/research/R10.2_Agent-UX-Plan-Approve-Execute.md"
+
+  implementationScope:
+    coreDeliverable: "One-click verify script + artifacts; optional baseline acceptance if intentional."
+    outOfScope:
+      - "Refactoring components; only verification here."
+
+  handoffContext:
+    completed:
+      - "Curated set passes axe; VR diffs documented; baselines synced if approved."
+    interfaces:
+      - "CI can invoke sb-verify.mjs and archive artifacts."
+    assumptions:
+      - "Chromatic project key configured; no flaky stories in curated set."
+    nextMission: null
+    blockers: []

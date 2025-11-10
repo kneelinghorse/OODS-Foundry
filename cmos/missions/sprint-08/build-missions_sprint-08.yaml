@@ -1,0 +1,320 @@
+# Sprint 08 — Full Build Missions (B8.1–B8.9)
+# Schema: Build.Implementation.v1
+# Purpose: Component scale-out + light hardening, aligned to roadmap.
+# Cross-links to research (for policies & patterns, not specs):
+#   /missions/research/r4.3_Contextual-Design-Token-Defaults.md
+#   /missions/research/r4.4_ A11y-Contract-and-CI-Policy.md
+#   /missions/research/r4.5_SaaS-Enum-to-Token-Mapping-Schema.md
+#   /missions/research/r5.1_Implementing-DTCG-Compliant-Composite-Tokens.md
+#   /missions/research/r5.2_Perceptually-Uniform-Color-System.md
+#   /missions/research/r5.4_Visual-Regression-Tooling.md
+#   /missions/research/r5.5_Scalable-Theming-Architecture.md
+#   /missions/research/r5.6_Definitive-Guide-to-OKLCH-Relative-Color Guardrails.md
+#   /missions/research/r5.7_High-Contrast-Mode-Regression-Prevention.md
+# Context defaults doc (authoritative): docs/context/form-timeline-defaults.md
+
+# ========== B8.1 — Story Curation & VRT Shaping (signal over noise) ==========
+missionId: "BI-20251012-B8.1"
+objective: "Prune/curate stories to ~40 high-signal snapshots, ensure Dark variants are covered, and keep HC snapshots only in Playwright job."
+context: |
+  We currently have ~51 stories tagged in Chromatic (Dark included, HC excluded). Curate to a clean set that maximizes diff signal,
+  reduces runtime/flakes, and explicitly excludes HC (handled by Playwright). Keep one “golden” story per component/state group.
+successCriteria:
+  - "Chromatic tagged stories ≈ 40 (±3), runtime ≤ 150s (TurboSnap on)."
+  - "Dark variants present via decorator; HC explicitly excluded from Chromatic."
+  - "No animation flakes (motion stabilizer active)."
+deliverables:
+  - "/app/apps/explorer/.storybook/preview.ts"             # ensure Dark decorator + motion stabilizer in place
+  - "/chromatic.config.json"                               # curated include/exclude & params
+  - "/.github/workflows/chromatic.yml"                     # caching & thresholds tuned; no HC paths
+domainFields:
+  type: "Build.Implementation.v1"
+  implementationScope:
+    coreDeliverable: |
+      - Merge near-duplicates into a single “States” story per component
+      - Annotate sandboxes with: export const parameters = { chromatic: { disableSnapshot: true } }
+      - Add/verify Dark theme decorator; keep HC out of Chromatic (B7.3 job owns HC images)
+      - Keep HC out of Chromatic (handled by Playwright job).
+    outOfScope:
+      - "Adding new components (handled in later missions this sprint)."
+  validationProtocol:
+    - validator: "Gemini"   # runtime/coverage
+    - validator: "Claude"   # duplication & signal quality
+  handoffContext:
+    nextMission: "BI-20251012-B8.2"
+
+---
+
+# ========== B8.2 — Motion Tokens v1 (populate + targeted consumption) ==========
+missionId: "BI-20251012-B8.2"
+objective: "Populate motion.duration/easing/transitions and consume them in Button/Badge/Banner with reduced-motion compliance and VRT stability."
+context: |
+  The motion family exists but counts are 0. Fill minimal, production-safe tokens and wire into common interactions without introducing VRT flakes.
+successCriteria:
+  - "Non-zero motion token counts emitted (CSS/TS/Tailwind)."
+  - "motion.json non-zero counts (duration {fast,base,slow}; easing {standard,emphasized}; transitions {chipIn,chipOut,bannerReveal,focusRing})."
+  - "Components consume tokens via CSS vars; prefers-reduced-motion respected."
+  - "Components honor prefers-reduced-motion; Chromatic snapshots stable."
+deliverables:
+  - "/app/packages/tokens/src/tokens/base/motion.json"
+  - "/app/packages/tokens/dist/{css,ts,tailwind}/**"
+  - "/app/apps/explorer/src/styles/motion.css"              # contains prefers-reduced-motion guards
+  - "/app/apps/explorer/src/components/{Button,Badge,Banner}.tsx"
+  - "/app/apps/explorer/src/stories/Foundations.Motion.mdx"
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - sourceMission: "/missions/research/r5.1_Implementing-DTCG-Compliant-Composite-Tokens.md"
+    - sourceMission: "/missions/research/r5.7_High-Contrast-Mode-Regression-Prevention.md"
+  implementationScope:
+    coreDeliverable: |
+      Tokens (baseline):
+        motion.duration.{fast,base,slow} = {100ms, 180ms, 260ms}
+        motion.easing.{standard,emphasized} = {cubic-bezier(...), cubic-bezier(...)}
+        motion.transition.{chipIn,chipOut,bannerReveal,focusRing} reference duration/easing tokens
+      Consumption:
+        - Use CSS vars for animation/transition timing; never hard-code durations
+        - In motion.css: guard with @media (prefers-reduced-motion: reduce) { animation: none; transition: none; }
+      VRT:
+        - In .storybook/preview.ts, during Chromatic, disable animations or set --motion-scale: 0 to remove timing
+    outOfScope:
+      - "Advanced page transitions or physics."
+  validationProtocol:
+    - validator: "Gemini"
+    - validator: "Claude"
+  handoffContext:
+    nextMission: "BI-20251012-B8.3"
+
+---
+
+# ========== B8.3 — Inputs & Controls (TextArea, Checkbox, Radio, Toggle) ==========
+missionId: "BI-20251012-B8.3"
+objective: "Implement four production-grade controls with full states, AA/Δ compliance (light/dark/HC), and tokens-only styling."
+context: |
+  Controls must consume only --cmp-* slots; never read --ref/--theme. Provide keyboard contracts and A11y Contract stories.
+successCriteria:
+  - "Components pass AA in light/dark; HC outline is visible (≥3:1)."
+  - "States: default, hover, active, focus, disabled, invalid (where applicable)."
+  - "Stories include 'States' + A11y Contract blocks; no inline color literals."
+deliverables:
+  - "/app/apps/explorer/src/components/{TextArea,Checkbox,Radio,Toggle}.tsx"
+  - "/app/apps/explorer/src/stories/Components.{TextArea,Checkbox,Radio,Toggle}.mdx"
+  - "/app/apps/explorer/src/styles/forms.css"                 # shared form tokens/hooks if needed
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - sourceMission: "/missions/research/r4.4_ A11y-Contract-and-CI-Policy.md"
+    - sourceMission: "missions/research/r5.5_Scalable-Theming-Architecture.md"
+    - sourceMission: "/missions/research/r5.6_Definitive-Guide-to-OKLCH-Relative-Color Guardrails.md"
+    - sourceMission: "/missions/research/r5.7_High-Contrast-Mode-Regression-Prevention.md"
+  implementationScope:
+    coreDeliverable: |
+      - Keyboard:
+          Checkbox/Toggle: Space/Enter toggles; focus ring via tokens; ARIA checked
+          Radio: arrow keys move within group (roving tabindex pattern), Home/End jump to first/last
+      - Visuals:
+          Read only --cmp-* tokens (bg/fg/border/focus/status)
+          Invalid = status.critical.*, Warning = status.warning.*; disabled legible
+      - Docs:
+          For each component, MDX with States grid and A11y Contract table (contrast & focus proof)
+    outOfScope:
+      - "Form validation logic beyond visual states."
+  validationProtocol:
+    - validator: "Claude"   # token purity & keyboard contracts
+    - validator: "Gemini"   # AA/Δ & HC checks
+  handoffContext:
+    nextMission: "BI-20251012-B8.4"
+
+---
+
+# ========== B8.4 — Selection & Navigation (Select as Listbox, Tabs with Roving Tabindex) ==========
+missionId: "BI-20251012-B8.4"
+objective: "Build Select (listbox pattern) and Tabs with full keyboard contracts, tokens-only visuals, and Dark/HC compliance."
+context: |
+  These components set the tone for accessible selection & navigation. Keep visuals token-driven and bind context via classes only.
+successCriteria:
+  - "Select supports typing to match, arrow navigation, Home/End, Escape; focus ring ≥3:1; AA pass for text/surfaces."
+  - "Tabs uses roving tabindex; arrow/Home/End navigation; focus visible; panels labelled by active tab."
+  - "Stories cover states & keyboard usage; no inline color literals."
+deliverables:
+  - "/app/apps/explorer/src/components/{Select,Tabs}.tsx"
+  - "/app/apps/explorer/src/stories/Components.{Select,Tabs}.mdx"
+  - "/app/apps/explorer/src/styles/overlays.css"                 # popover/surface tokens for Select
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - sourceMission: "/missions/research/r4.4_ A11y-Contract-and-CI-Policy.md"
+    - sourceMission: "/missions/research/r5.6_Definitive-Guide-to-OKLCH-Relative-Color Guardrails.md"
+    - sourceMission: "/missions/research/r5.5_Scalable-Theming-Architecture.md"
+  implementationScope:
+    coreDeliverable: |
+      - Select (listbox):
+          Roles/props: combobox or button + listbox + options (single-select)
+          Keyboard: ArrowUp/Down navigate; Home/End jump; Escape closes; type-to-search optional
+          Visuals: menu/option tokens from --cmp-*; invalid/warning states via status.*
+      - Tabs:
+          Roving tabindex on tablist; arrow/Home/End; focus ring via tokens; aria-controls/aria-labelledby wired
+    outOfScope:
+      - "Async filtering/virtualization."
+  validationProtocol:
+    - validator: "Claude"
+    - validator: "Gemini"
+  handoffContext:
+    nextMission: "BI-20251012-B8.5"
+
+---
+
+# ========== B8.5 — Feedback & Affordance (Tooltip, Toast) ==========
+missionId: "BI-20251012-B8.5"
+objective: "Implement Tooltip and Toast with tokenized visuals, motion v1 timing, Dark/HC compliance, and reduced-motion behavior."
+context: |
+  Tooltips and toasts must never rely on color alone; ensure AA over surfaces and use motion tokens for entrance/exit.
+successCriteria:
+  - "Tooltip and Toast consume --cmp-*; AA pass over surfaces (text/surface/icon/border)."
+  - "Motion v1 tokens used for show/hide; reduced-motion disables animations cleanly."
+  - "Stories include States + A11y Contract; HC renders legibly without shadows."
+deliverables:
+  - "/app/apps/explorer/src/components/{Tooltip,Toast}.tsx"
+  - "/app/apps/explorer/src/stories/Components.{Tooltip,Toast}.mdx"
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - sourceMission: "/missions/research/r5.1_Implementing-DTCG-Compliant-Composite-Tokens.md"
+    - sourceMission: "/missions/research/r5.7_High-Contrast-Mode-Regression-Prevention.md"
+  implementationScope:
+    coreDeliverable: |
+      - Tooltip: delay tokens (from motion), position classes; focusable trigger; Esc to dismiss; HC outline visible
+      - Toast: success/warning/error/info variants via status.*; motion tokens for reveal; ensure live region/ARIA role
+    outOfScope:
+      - "Queueing or cross-page toasts."
+  validationProtocol:
+    - validator: "Gemini"
+    - validator: "Claude"
+  handoffContext:
+    nextMission: "BI-20251012-B8.6"
+
+---
+
+# ========== B8.6 — Form Patterns v1 (FieldGroup, Help/Error text, Required/Optional, ValidationBanner) ==========
+missionId: "BI-20251012-B8.6"
+objective: "Ship core form patterns bound to the Form context; encode validation states with semantic tokens; document defaults."
+context: |
+  Use the authoritative context defaults at docs/context/form-timeline-defaults.md. All visuals are class-only via context bindings and --cmp-* slots.
+successCriteria:
+  - "Pattern components render with Form context classes only; no component branches; AA/HC green."
+  - "ValidationBanner uses enum→token mappings (status.*) for critical/warning/info; focus traps avoided."
+  - "Docs updated: form patterns page that references the defaults matrix."
+deliverables:
+  - "/app/apps/explorer/src/components/{FieldGroup,HelpText,ErrorText,ValidationBanner,RequiredOptional}.tsx"
+  - "/app/apps/explorer/src/stories/Patterns.Form.mdx"
+  - "docs/context/form-timeline-defaults.md"                      # referenced, not reauthored
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - sourceMission: "/missions/research/r4.3_Contextual-Design-Token-Defaults.md"
+    - sourceMission: "/missions/research/r4.5_SaaS-Enum-to-Token-Mapping-Schema.md"
+  implementationScope:
+    coreDeliverable: |
+      - Bind spacing/typography via Form context; apply status.* tokens for messages
+      - Provide examples: required/optional labeling, help vs error, banner at form/top
+    outOfScope:
+      - "Form validation logic; server interactions."
+  validationProtocol:
+    - validator: "Claude"
+    - validator: "Gemini"
+  handoffContext:
+    nextMission: "BI-20251012-B8.7"
+
+---
+
+# ========== B8.7 — A11y & HC/VRT Coverage for New Components ==========
+missionId: "BI-20251012-B8.7"
+objective: "Extend AA + Δ guardrails and HC image snapshots to the newly added components and patterns."
+context: |
+  New components must meet the same bar: AA in light/dark, Δ guardrails for interactive states, HC images via Playwright job.
+successCriteria:
+  - "A11y scripts report 0 new failures; derived (hover/active) within Δ guardrails."
+  - "HC snapshot list includes the new components; ≥ 20 HC images total after run."
+deliverables:
+  - "/app/tools/a11y/index.mjs"                             # extend coverage graph to new components
+  - "/app/testkits/vrt/storycap.hc.mjs"                     # add routes/stories to HC list
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - sourceMission: "/missions/research/r4.4_ A11y-Contract-and-CI-Policy.md"
+    - sourceMission: "/missions/research/r5.6_Definitive-Guide-to-OKLCH-Relative-Color Guardrails.md"
+    - sourceMission: "/missions/research/r5.7_High-Contrast-Mode-Regression-Prevention.md"
+  implementationScope:
+    coreDeliverable: |
+      - Add new token pairs to the AA/Δ checker; keep guardrail thresholds consistent
+      - Update HC snapshot routes; verify images render with system colors & outline focus
+    outOfScope:
+      - "APCA migration."
+  validationProtocol:
+    - validator: "Gemini"
+    - validator: "Claude"
+  handoffContext:
+    nextMission: "BI-20251012-B8.8"
+
+---
+
+# ========== B8.8 — VRT Coverage Refresh (Chromatic ≥ 40, Dark included; HC stays separate) ==========
+missionId: "BI-20251012-B8.8"
+objective: "After component additions, re-balance Chromatic to ~40 high-signal stories including Dark variants; keep HC snapshots in Playwright job."
+context: |
+  Maintain signal and speed as the story set changes. Ensure golden stories exist for each new component and Dark variant.
+successCriteria:
+  - "Chromatic tagged stories ≈ 40; runtime ≤ 150s; no animation flakes."
+  - "HC absent from Chromatic (lives in Playwright)."
+deliverables:
+  - "/chromatic.config.json"                     # updated include/exclude
+  - "/.github/workflows/chromatic.yml"           # thresholds unchanged or tuned
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - sourceMission: "/missions/research/r5.4_Visual-Regression-Tooling.md"
+  implementationScope:
+    coreDeliverable: |
+      - Tag one “golden” story per new component + Dark variant
+      - Disable snapshots on sandboxes/dev permutations
+    outOfScope:
+      - "HC images (handled by Playwright job)."
+  validationProtocol:
+    - validator: "Gemini"
+    - validator: "Claude"
+  handoffContext:
+    nextMission: "BI-20251012-B8.9"
+
+---
+
+# ========== B8.9 — Diagnostics: Sprint-08 Snapshot ==========
+missionId: "DIAG-20251012-B8.9"
+objective: "Extend the current-state generator to include motion counts, curated Chromatic totals, new component coverage, and HC image counts."
+context: |
+  Keep the one-command snapshot current so Sprint-09 planning is grounded in facts.
+successCriteria:
+  - "scripts/diagnostics/sprint08-current-state.mjs runs and writes reports under /artifacts/current-state/<DATE>/."
+  - "SUMMARY.md highlights motion counts, curated story totals, AA/Δ status for new components, and HC image totals."
+deliverables:
+  - "/scripts/diagnostics/sprint08-current-state.mjs"
+  - "/app/package.json"                         # add 'current-state:sprint08'
+  - "/artifacts/current-state/<DATE>/SUMMARY.md"
+  - "/artifacts/current-state/<DATE>/motion-report.json"
+  - "/artifacts/current-state/<DATE>/vrt-coverage-report.json"
+  - "/artifacts/current-state/<DATE>/a11y-report.dark.json"
+  - "/artifacts/current-state/<DATE>/hc-required-report.json"
+domainFields:
+  type: "Build.Implementation.v1"
+  implementationScope:
+    coreDeliverable: |
+      - Fork sprint07 script; add motion token counters; recompute story counts; ensure new components appear in AA/Δ coverage
+      - Count HC PNGs from artifacts/vrt/hc/* and include in report
+      - Graceful “N/A” handling remains
+    outOfScope:
+      - "Fixes; only reporting."
+  validationProtocol:
+    - validator: "Claude"
+    - validator: "Gemini"
+  handoffContext:
+    nextMission: ""
+    blockers: []

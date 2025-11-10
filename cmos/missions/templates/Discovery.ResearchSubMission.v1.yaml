@@ -1,0 +1,54 @@
+# pack.yaml - Metadata for the "Research Sub-Mission" Domain Pack
+name: "Discovery.ResearchSubMission.v1"
+version: "1.0.0"
+displayName: "Research Sub-Mission"
+description: "A focused research mission to gather evidence on a specific dimension (e.g., Problem Validation, Market Timing). It requires sourced findings and a summary of confidence." #
+author: "Your Name/Team"
+schema: "./schemas/ResearchSubMission.v1.json"
+
+---
+
+# Mission File: <problem-name>-r1-problem-validation.yaml
+
+missionId: "RSM-20251004-003"
+
+objective: "To find and document evidence that validates and quantifies the scale, frequency, and cost of the defined problem."
+
+context: |
+  This is Sub-Mission R1, part of the Research Orchestrator mission <RO-20251004-001>.
+  The core problem being investigated is: "Compliance Officers waste 5-8 hours per week manually filtering audit logs..."
+  The findings must be grounded in verifiable evidence.
+
+successCriteria:
+  - "At least 3 key questions are answered with sourced findings."
+  - "Every finding in the 'findings' list includes a verifiable source."
+  - "A clear summary is provided, including confidence levels."
+
+deliverables:
+  - "This completed mission file containing all documented findings."
+
+domainFields:
+  type: "Discovery.ResearchSubMission.v1"
+
+  # Specific questions for THIS sub-mission, taken from your roadmap.
+  keyQuestions:
+    - "Who complains about this problem, where, and how often?"
+    - "What are the specific phrases and keywords they use to describe their frustration? (Search query signals)"
+    - "What are the current workarounds people are using?"
+    - "What is the quantifiable cost of the problem (time, money, risk)?"
+
+  # Enforces the Evidence Chain pattern.
+  findings:
+    - statement: "Forum posts on 'SysAdminWorld' show 15 threads in the last 6 months complaining about audit log filtering in competing products."
+      evidence: "URL to forum search results."
+      confidence: 4 # Scale 1-5
+    - statement: "Internal support tickets show this issue is the #3 most common feature request for enterprise clients."
+      evidence: "Link to Zendesk report #5678."
+      confidence: 5 # Scale 1-5
+    - statement: "Users are currently exporting full logs to CSV and using Excel/Python to filter, a process that takes an average of 45 minutes per report."
+      evidence: "User interview notes from call with ACME Corp."
+      confidence: 4 # Scale 1-5
+  
+  summary: "Evidence strongly indicates this is a frequent and high-cost problem for our target persona. The language used consistently revolves around 'wasted time' and 'manual frustration'. Confidence in the problem's severity is high."
+
+  risksAndUnknowns: "While the problem is validated for enterprise users, it's unclear if this is a significant issue for our SMB user segment."

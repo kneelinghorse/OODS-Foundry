@@ -1,0 +1,9 @@
+context:
+  name: "Sample Safe Context"
+  version: "1.0.0"
+  description: "Fixture used for validating positive security scan"
+  data:
+    endpoints:
+      - "/api/users"
+      - "/api/projects"
+    notes: "Contains no secrets or traversal paths."

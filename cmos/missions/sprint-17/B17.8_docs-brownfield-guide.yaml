@@ -1,0 +1,63 @@
+# cmos/missions/sprint-17/B17.8_docs-brownfield-guide.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251024-178"
+
+objective: >
+  Author the Brownfield Adoption Guide v1: document incremental integration steps for teams adopting
+  traits/objects/tokens, including Figma + Storybook validation flows, CLI recipes, and tenancy/compliance hooks.
+
+context: |
+  Sprint 17 direction emphasizes enabling brownfield adoption once convergence layers land (cmos/docs/
+  OODS Direction-Check-for-sprint-17.md:97-103). Prior sprints produced onboarding quickstarts (S15) and
+  agent recipes; this mission consolidates them with the new compliance/billing capabilities, giving
+  product teams a step-by-step path to layer OODS Foundry into existing apps. The guide should include
+  reference architectures, CLI scripts, Storybook/VR validation flow, and cross-links to research
+  underpinning decisions.
+
+successCriteria:
+  - "docs/adoption/brownfield-guide.md published with narrative + diagrams, covering Figma, tokens, RBAC, tenancy."
+  - "Checklists + CLI recipes (e.g., `pnpm adoption:audit`) verifying compliance + tenancy toggles in brownfield sample."
+  - "Storybook Explorer note: Brownfield Adoption deck referencing core objects and proofs."
+  - "Updated onboarding quickstarts linking to Brownfield guide; docs build passes."
+  - "Feedback loop established (issue template or doc) for teams to request adoption support."
+
+deliverables:
+  - "docs/adoption/brownfield-guide.md + assets under docs/adoption/assets/*."
+  - "CLI scripts: scripts/adoption/{audit.mjs,storybook-checklist.mjs}."
+  - "Storybook MDX page: stories/docs/Brownfield.adoption.mdx."
+  - "Doc updates in docs/onboarding/{design-quickstart.md,dev-quickstart.md}."
+  - "Feedback template: .github/ISSUE_TEMPLATE/adoption-support.yml."
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  researchFoundation:
+    - finding: "Brownfield adoption guide to accompany converged core."
+      sourceMission: "cmos/docs/OODS Direction-Check-for-sprint-17.md"
+    - finding: "Foundational onboarding research (10-minute quickstarts)."
+      sourceMission: "cmos/missions/research/r09.1_Multi-Brand-Theming.md"
+    - finding: "Compliance & governance considerations to include in adoption docs."
+      sourceMission: "cmos/missions/research/R10.3_Security-&-Governance.md"
+
+  implementationScope:
+    coreDeliverable: "Comprehensive brownfield adoption guide + updated quickstarts + CLI/Storybook aids."
+    outOfScope:
+      - "Live training sessions (documentation only)."
+      - "Product-specific integration (future case studies)."
+
+  handoffContext:
+    completed:
+      - "Brownfield guide published + linked; CLI scripts executed in CI proof."
+      - "Storybook doc page live; onboarding quickstarts updated."
+      - "Support issue template added."
+    interfaces:
+      - "pnpm adoption:audit"
+      - "Storybook Explorer › Docs › Brownfield Adoption"
+    assumptions:
+      - "Docs site builds via existing pipeline; CLI uses mission outputs (RBAC, tenancy)."
+      - "Teams will supply feedback via GitHub issues."
+    nextMission: "Pending Sprint 18 planning."
+    blockers: []

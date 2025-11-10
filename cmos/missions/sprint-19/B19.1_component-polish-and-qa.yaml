@@ -1,0 +1,64 @@
+# cmos/missions/sprint-19/B19.1_component-polish-and-qa.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251101-191"
+
+objective: >
+  Complete a cross-brand polish and QA sweep for Component Set IV (Progress/Stepper, Tabs, Pagination,
+  Breadcrumbs, Empty State, Toast queue), ensuring accessibility, visual regression, and documentation
+  standards are met ahead of packaging.
+
+context: |
+  Sprint 18 introduces six high-impact components. Before packaging we want a focused pass that re-tests
+  brands, HC mode, and keyboard flows; aligns Storybook docs with final APIs; and resolves any findings
+  raised during research sign-off. The latest state assessment (2025-10-28) flagged domain context gaps,
+  Storybook taxonomy drift, and token governance breaks (high-risk additions + CSS literals). This mission
+  absorbs that cleanup so the kit is stable before packaging. It coordinates with perf/guardrail work so
+  design + eng reviewers can sign off on a stable kit.
+
+successCriteria:
+  - "Cross-brand manual QA matrix executed and archived (light/dark/HC, keyboard, screen reader notes)."
+  - "VR/a11y baselines refreshed for updated stories; Chromatic & axe runs green."
+  - "Storybook docs include usage guidance, token references, and intent tables per component."
+  - "Domain views assessment shows no missing contexts (artifacts/state/domains.json gaps array empty)."
+  - "Storybook taxonomy matches allowed roots (extras removed and documented)."
+  - "Token governance diff and CSS purity checks pass without high-risk alerts; breaking label applied if needed."
+  - "Open issues from Sprint 18 component builds triaged and closed or logged with owners."
+  - "Design sign-off notes captured in docs/changelog/sprint-19.md."
+
+deliverables:
+  - "QA matrix: docs/qa/component-set-iv-checklist.md (with findings + follow-up)."
+  - "Updated Storybook stories/docs for component set IV under stories/components/ and stories/docs/."
+  - "artifacts/state/domains.json updated via state assessment with all contexts covered."
+  - "Tokens governance + purity reports (artifacts/state/tokens.json, artifacts/state/governance/*) showing green status."
+  - "Chromatic + axe run artifacts linked in diagnostics.json and artifacts/state/."
+  - "Summary entry in docs/changelog/sprint-19.md."
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  researchFoundation:
+    - finding: "Component Set IV requirements and accessibility patterns."
+      sourceMission: "cmos/missions/research/R18.1_Technical-Research-Report-Component-Set-IV.md"
+
+  implementationScope:
+    coreDeliverable: "QA polish + documentation alignment for Component Set IV, resolving assessment regressions."
+    outOfScope:
+      - "New component functionality beyond bug fixes/QA items."
+      - "Packaging/publish mechanics (handled by B19.2)."
+
+  handoffContext:
+    completed:
+      - "QA checklist stored with PASS/FAIL + links to issues."
+      - "Storybook docs reflect final API/props and a11y guidance."
+      - "VR/a11y runs attached with green status."
+      - "State assessment rerun with Storybook/domains/tokens categories green."
+    interfaces:
+      - "Storybook explorer entries updated for reviewer walkthroughs."
+    assumptions:
+      - "Component code exists from Sprint 18 missions."
+      - "QA tooling (Chromatic, axe scripts) configured."
+    nextMission: "B19.2 Packaging dry run & provenance."
+    blockers: []

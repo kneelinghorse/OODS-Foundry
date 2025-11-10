@@ -1,0 +1,45 @@
+# cmos/missions/sprint-13/13.6_agent-connectors-claude-openai.yaml
+sprint: "13"
+missionId: "B13.6"
+title: "Agent connectors — Claude Remote MCP + OpenAI Agents profile (smoke-tested)"
+type: "Build.Implementation.v1"
+
+objective: >
+  Provide working connection profiles and smoke tests for two agent clients:
+  1) Claude Remote MCP (connects to local MCP server/bridge)
+  2) OpenAI Agents profile (tooling client that calls the same bridge)
+  Ensure both can list tools and run read-only flows; writes remain approval-gated.
+
+context: |
+  We already have MCP server (stdio) + HTTP bridge. This mission delivers connector configs,
+  a tiny “agents-smoke” harness, and docs so people can point Claude Code / GPT-based agents at the same tools.
+  
+Please read for context research Foundation:
+  - "cmos/missions/research/R13.1_Tool-Integration-for-Claude-MCP-and-OpenAI-Agents.md"   # patterns, auth, CORS/OPTIONS, tool schemas :contentReference[oaicite:14]{index=14}
+
+
+deliverables:
+  - "/configs/agents/claude.remote-mcp.json"       # host/port, tool allowlist, launch hints
+  - "/configs/agents/openai.agents.json"           # base URL, auth header mapping, tool names
+  - "/tools/agents-smoke/src/index.ts"             # lists tools, runs read-only tool (diag.snapshot)
+  - "/tools/agents-smoke/package.json"
+  - "/docs/mcp/Connections.md"                     # step-by-step setup and screenshots
+
+steps:
+  - "Define connector JSON for Claude Remote MCP → bridge (http://localhost:<bridgePort>), read-only by default."
+  - "Define OpenAI Agents client profile that points to the bridge and exposes the same tool names/schemas."
+  - "Implement agents-smoke: list tools; run diag.snapshot (dry-run); print artifact links."
+  - "Approval gate: document how to trigger a write (panel/CLI) after a dry-run plan."
+
+tests:
+  - "Claude profile: list tools succeeds; diag.snapshot dry-run returns links; no write without approval."
+  - "OpenAI profile: same behavior from the test harness."
+  - "Error mapping consistent (401/403/429) when token or policy blocks."
+
+acceptance:
+  - "Both connector profiles work with read-only tools and respect approval gates for writes."
+  - "Docs explain setup clearly; smoke harness returns artifact links under /artifacts/current-state/YYYY-MM-DD/."
+dependencies:
+  - "B10.1"   # MCP server
+  - "B10.2"   # HTTP bridge
+  - "B12.5"   # Policy enforcement

@@ -1,0 +1,40 @@
+# cmos/missions/sprint-13/13.8_telemetry-and-incident-tracing.yaml
+sprint: "13"
+missionId: "B13.8"
+title: "Observability — structured telemetry + Incident ID tracing end-to-end"
+type: "Build.Implementation.v1"
+
+objective: >
+  Add structured telemetry to server and bridge with a per-run correlationId/incidentId,
+  thread it through panel/CLI, record it in transcripts, and summarize durations/exit codes/policy codes
+  in diagnostics.json.
+
+context: |
+  This improves day-to-day ops: easier debugging, clear run histories, and consistent incident references across surfaces.
+  
+Please read for context research Foundation:
+  - "cmos/missions/research/R13.3_Telemetry-Framework-for-Distributed-Architectures.md"   # unified log schema, ULID, redaction, logs-to-metrics :contentReference[oaicite:17]{index=17}
+
+
+deliverables:
+  - "/packages/mcp-server/src/telemetry/log.ts"         # JSON logs with correlationId
+  - "/packages/mcp-bridge/src/telemetry/log.ts"
+  - "/packages/artifacts/src/transcript.ts"             # include correlationId + incidentId
+  - "/app/apps/explorer/addons/storybook-addon-agent/panel.tsx"  # surface Incident ID in Summary/Error
+  - "/tools/oods-agent-cli/src/run.ts"                  # print Incident ID on stderr for errors
+  - "/docs/mcp/Telemetry-&-Incidents.md"
+
+steps:
+  - "Generate a correlationId per run; include in every log line and transcript."
+  - "Bridge maps server errors to {code,message,details,incidentId}; panel shows it; CLI echoes to stderr."
+  - "Diagnostics: aggregate tool durations, exit codes, and policy codes per day."
+
+tests:
+  - "Same ID visible in server log, bridge log, panel summary, CLI stderr, and transcript."
+  - "Diagnostics contains per-tool timing + code counts; no PII or secrets in logs."
+
+acceptance:
+  - "Incident/correlation IDs are consistent end-to-end and appear in transcripts and diagnostics."
+dependencies:
+  - "B11.5"
+  - "B12.3"

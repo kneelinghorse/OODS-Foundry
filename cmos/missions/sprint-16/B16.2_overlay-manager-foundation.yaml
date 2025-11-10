@@ -1,0 +1,51 @@
+# cmos/missions/sprint-16/B16.2_overlay-manager-foundation.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251020-162"
+
+objective: >
+  Implement a reusable Overlay Manager providing focus trap, portal, scroll lock, inert background,
+  escape routes, stacking via z.* tokens, and reduced-motion hooks.
+
+context: |
+  All overlays must compose the same infra. The manager exposes small, testable utilities and a
+  thin React wrapper. It enforces contract rules and reports diagnostics.
+
+successCriteria:
+  - "Utilities: focusTrap, restoreFocus, useInertOutside, useEscapeRoutes, useReducedMotion, usePortal."
+  - "Z-index reads only from tokens (z.*); no numeric literals."
+  - "Unit tests: focus loop, restore after close, inert toggling, Esc/backdrop behavior."
+  - "Playwright: open→tab-through→close→focus restored to trigger."
+  - "Forced-colors story shows visible focus and borders."
+
+deliverables:
+  - "src/overlays/manager/*.ts(x)"
+  - "stories/proofs/overlay-manager.stories.tsx"
+  - "tests/overlays/manager.spec.ts + e2e/overlay-manager.spec.ts"
+  - "artifacts/overlays/manager-diagnostics.json (timings, z-usage)"
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  please review documents inresearchFoundation:
+    - finding: "Policy & governance require purity (tokens over literals)."
+      sourceMission: "cmos/research/R10.2_Agent-UX-Plan-Approve-Execute.md"
+    - finding: "OKLCH/HC guardrails: outlines for focus, motion opt-outs."
+      sourceMission: "cmos/research/r5.6_Definitive-Guide-to-OKLCH-Relative-Color Guardrails.md"
+
+  implementationScope:
+    coreDeliverable: "Overlay Manager + tests + proofs wired to tokens from B16.1."
+    outOfScope:
+      - "Component visuals (spacing/typography beyond tokens)."
+
+  handoffContext:
+    completed:
+      - "Manager published; proofs/tests green."
+    interfaces:
+      - "`withOverlay` HOC and `<OverlayRoot>` provider."
+    assumptions:
+      - "Consumers supply labelled headers/aria."
+    nextMission: "BI-20251020-163: Dialog & Sheet."
+    blockers: []

@@ -1,0 +1,63 @@
+# cmos/missions/sprint-16/B16.10b_trait-to-region-contributions_subscription-user.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251020-1610b"
+
+objective: >
+  Implement a lightweight contribution registry so traits can inject UI into context-specific regions
+  (e.g., Status chip into pageHeader, Actions into viewToolbar, Summary into contextPanel, Event stream
+  into timeline main). Apply to Subscription and User with realistic fixtures so each context renders
+  distinct, populated layouts.
+
+context: |
+  Our contexts look the same because most regions are empty. We’ll add a small API for traits to
+  contribute context-aware fragments. RenderObject will gather contributions for the active context
+  and place them in the configured regions (per view-profiles). No brand logic or literals—renderers
+  must consume styled components and semantic tokens only.
+
+successCriteria:
+  - "Contribution registry implemented: register({context,region,when?,priority?,render})."
+  - "Baseline contributions shipped for common traits:
+      - Statusable → pageHeader: <StatusChip/>
+      - Taggable → pageHeader: <TagList/>
+      - Actionable → viewToolbar: <Primary/SecondaryAction/>
+      - Auditable → timeline main: <EventList/>"
+  - "Subscription and User fixtures populate enough traits to render non-empty pageHeader, viewToolbar, and contextPanel in detail/list/form; timeline shows events."
+  - "All contribution renderers import only styled components (no raw HTML/CSS)."
+  - "Axe smoke for Domain stories (Subscription/User across detail/list/form/timeline) = 0 violations."
+
+deliverables:
+  - "src/engine/contributions/index.ts (registry) + types"
+  - "src/traits/*/contrib/*.tsx (Statusable/Taggable/Actionable/Auditable → region renderers)"
+  - "fixtures/subscription/*.json, fixtures/user/*.json with trait-rich examples"
+  - "Updated stories under Domains/Subscription and Domains/User using the fixtures"
+  - "docs/engine/contributions.md (how traits contribute to regions)"
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  researchFoundation:
+    - finding: "Trait-based composition and pure-modifier principle (no brand logic in components)."
+      sourceMission: "OODS Foundry — Technical Architecture & Build Roadmap.md"
+    - finding: "Enum→token status mapping is SoT for Statusables."
+      sourceMission: "r4.5_SaaS-Enum-to-Token-Mapping-Schema.md"
+    - finding: "Approval/contract-first UX requires deterministic region output for review."
+      sourceMission: "R11.1_Storybook-Approval-UX.md"
+
+  implementationScope:
+    coreDeliverable: >
+      Contribution API + baseline contributions + fixtures + updated domain stories for Subscription/User.
+    outOfScope:
+      - "Billing domain rehost; handled in B16.10c."
+
+  handoffContext:
+    completed:
+      - "Subscription/User contexts render populated, distinct layouts via contributions."
+    interfaces:
+      - "RenderObject(context) → contributions.get(context,region) → ReactNode[] by priority."
+    assumptions:
+      - "Styled components exist for StatusChip, TagList, EventList, and Action buttons."
+    nextMission: "BI-20251020-1610c: Billing rehost to RenderObject."
+    blockers: []

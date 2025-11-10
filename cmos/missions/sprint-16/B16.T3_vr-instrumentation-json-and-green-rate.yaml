@@ -1,0 +1,44 @@
+# cmos/missions/sprint-16/B16.T3_vr-instrumentation-json-and-green-rate.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251023-T03"
+
+objective: >
+  Turn VR from UNKNOWN into a numeric signal: emit a Chromatic JSON summary, compute per-brand green rate,
+  and write artifacts/state/vr.json in a stable shape consumed by the assessor.
+
+context: |
+  Assessor ran Chromatic but couldn't compute pass/fail evidence (no parseable output). We will switch to JSON output,
+  keep brand-scoped baselines, and calculate green rate per brand/mode.
+
+successCriteria:
+  - "scripts/vr/report.mjs writes artifacts/state/vr.json with { byBrand: {brand-a:{greenRate}, brand-b:{...}}, totalDiffs, suspectedGroupingOnly }"
+  - "assessment.json shows VR status GREEN or YELLOW/RED with explicit numbers (no UNKNOWN)."
+  - "Per-brand baselines remain isolated; taxonomy changes do not collapse brand paths."
+
+deliverables:
+  - "scripts/vr/report.mjs (parse Chromatic JSON, compute rates)"
+  - ".github/workflows/vr-report.yml (optional job)"
+  - "artifacts/state/vr.json (stable schema)"
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  Read for context researchFoundation:
+    - finding: "Per-brand baselines and curated matrices stabilize visual review."
+      sourceMission: "cmos/research/r5.4_Visual-Regression-Tooling.md"
+
+implementationNotes: |
+  - Use Chromatic CLI with JSON: `npx chromatic --exit-zero-on-changes --diagnostics --json --output-file artifacts/state/chromatic.json`
+  - Parse:
+      - total (snapshots), diffs (changed), added, removed
+      - derive greenRate = (total - diffs - added - removed)/total
+  - Brand scoping:
+      - Keep per-brand directories (chromatic-baselines/brand-a/**, brand-b/**)
+  - Commands:
+      - node scripts/vr/report.mjs
+      - node scripts/state-assessment.mjs --vr-dry
+  - Acceptance:
+      - artifacts/state/vr.json exists with non-null numbers; assessment flips VR from UNKNOWN to a concrete status. :contentReference[oaicite:5]{index=5}

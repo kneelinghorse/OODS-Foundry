@@ -1,0 +1,59 @@
+# cmos/missions/sprint-18/B18.3_pagination-hook.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251024-183"
+
+objective: >
+  Build a headless usePagination hook and presentational Pagination component supporting truncation,
+  mobile collapse, and WCAG-compliant semantics.
+
+context: |
+  Research highlights the need for a reusable pagination logic layer (Material UI's usePagination) and
+  responsive truncation (ellipsis, sibling/boundary counts). The component must expose aria-current,
+  handle mobile collapse, and integrate with tokens for interactive states. This mission delivers both
+  the hook and UI component plus Storybook proofs for multiple data scenarios.
+
+successCriteria:
+  - "usePagination hook returns structured items (page, next, previous, ellipsis) with configurable sibling/boundary counts."
+  - "Pagination component consumes hook output, renders buttons/links with aria-current, disabled states for boundaries, mobile collapse pattern."
+  - "Storybook stories cover small & large page counts, double ellipsis, mobile layout, and integration demo with data table."
+  - "Unit tests validate hook logic (edge cases, invalid inputs) + component interactions; axe/HC run passes."
+  - "Tokens applied via theme (selected background/text, hover) and no literal colors introduced."
+
+deliverables:
+  - "Hook: src/hooks/usePagination.ts."
+  - "Component: src/components/pagination/Pagination.tsx."
+  - "Storybook: stories/components/Pagination.stories.tsx."
+  - "Tests: tests/components/pagination.spec.ts (hook + component)."
+  - "Doc snippet in docs/components/navigation.md (pagination section)."
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+ Read for Context  researchFoundation:
+    - finding: "Pagination truncation patterns, hook separation, mobile behavior."
+      sourceMission: "cmos/missions/research/R18.1_Technical-Research-Report-Component-Set-IV.md"
+    - finding: "ARIA/current semantics and HC requirements for navigation components."
+      sourceMission: "cmos/missions/research/R18.1_Technical-Research-Report-Component-Set-IV.md"
+
+  implementationScope:
+    coreDeliverable: "usePagination hook + Pagination component with docs/tests."
+    outOfScope:
+      - "Server-side data fetching adapters (left to app teams)."
+      - "Vertical pagination controls (future)."
+
+  handoffContext:
+    completed:
+      - "Hook exported for reuse; component integrated into design system index."
+      - "Storybook demos include knobs for sibling/boundary counts."
+      - "Docs reference usage in data table patterns."
+    interfaces:
+      - "const { items } = usePagination({ page, count, siblingCount, boundaryCount });"
+      - "<Pagination page={page} count={count} onChange={setPage} />"
+    assumptions:
+      - "Button/Icon primitives available for navigation elements."
+      - "Design tokens include background/text for selected states."
+    nextMission: "BI-20251024-184: Breadcrumbs with overflow menu."
+    blockers: []

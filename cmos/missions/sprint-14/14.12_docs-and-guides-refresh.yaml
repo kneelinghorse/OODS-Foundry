@@ -1,0 +1,71 @@
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+description: "Refresh internal docs/guides to reflect Sprint 14 changes and the operating model."
+author: "Design System Team"
+schema: "./schemas/Implementation.v1.json"
+
+---
+
+missionId: "B14.12"
+objective: >
+  Update docs to reflect PR-first workflow, tokens roundtrip, compositing/theming, color/HC guardrails,
+  VR/coverage/a11y CI, telemetry/incident flows, agent policy/approvals, and the Agent Panel v1.5 UX.
+
+context: |
+  Documentation is the glue that keeps contributions consistent and fast. This is internal-quality, contributor-focused,
+  and targeted—no packaging or distribution work here.
+
+successCriteria:
+  - "All referenced docs updated; cross-links verified."
+  - "Quickstarts exist for Figma roundtrip, PR workflow, VR baselines, a11y contract, approvals."
+  - "`docs/summary.md` updated with Sprint 14 highlights and links."
+  - "PROJECT_CONTEXT.json and diagnostics.json updated."
+
+deliverables:
+  - "docs/cli-reference.md (PR checks section)"
+  - "docs/figma/roundtrip-checklist.md"
+  - "docs/policies/high-contrast.md, docs/policies/hc-quickstart.md, docs/policies/dark-a11y-coverage.md"
+  - "docs/testing/visual-regression.md, docs/testing/integration-strategy.md"
+  - "docs/mcp/*.md (Policy-Rules, Policy-UX, Panel-UX, Telemetry-&-Incidents, Storybook-Agent-Panel)"
+  - "docs/summary.md  # add Sprint 14 section"
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  researchFoundation:
+    - finding: "Ensure each new guardrail is captured in contributor docs."
+      sourceMission: "OODS Foundry — Technical Architecture & Build Roadmap.md"
+
+  implementationScope:
+    coreDeliverable: |
+      1) Audit & cross-link
+         - Ensure every new check/tool has a doc entry and a link from summary.md.
+      2) Quickstarts
+         - Author concise steps for the roundtrip, PR checks, VR baselines, a11y contract, approvals flow.
+      3) Verify
+         - Run internal link checker; fix broken anchors.
+
+    outOfScope:
+      - "Public packaging or release notes."
+
+  handoffContext:
+    completed:
+      - "Docs aligned with the working system; contributors can self-serve."
+    interfaces:
+      - "docs/**/*"
+    assumptions:
+      - "All prior missions completed; PR workflow stable."
+    nextMission: "Sprint Close — promote backlog to Sprint 15 planning."
+    blockers:
+      - "Outdated cross-links; run link checker."
+
+statusWrites:
+  projectContext:
+    path: "PROJECT_CONTEXT.json"
+    updates:
+      - { key: "missions.B14.12", value: "Completed" }
+  diagnostics:
+    path: "diagnostics.json"
+    append:
+      - { mission: "B14.12", docsUpdated: ["cli-reference.md","summary.md"] }

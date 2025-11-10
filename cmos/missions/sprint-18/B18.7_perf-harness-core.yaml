@@ -1,0 +1,59 @@
+# cmos/missions/sprint-18/B18.7_perf-harness-core.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251024-187"
+
+objective: >
+  Scaffold the Playwright-based performance harness, instrument target scenarios, and emit structured
+  metrics ready for diagnostics integration.
+
+context: |
+  R18.2 recommends a hybrid stack centered on Playwright with React Profiler + User Timing for capturing
+  compositor, list, token transform, and usage aggregation metrics. This mission covers harness setup,
+  instrumentation of target components/functions, and development of test scenarios plus JSON schema
+  serialization for diagnostics. Subsequent missions will wire CI, alerting, and developer workflows.
+
+successCriteria:
+  - "Playwright project initialized (playwright.config.ts, smoke test hitting Storybook)."
+  - "Target components/functions instrumented: React <Profiler> wrappers for compositor/list stories; performance.mark/measure for token transform & usage aggregation."
+  - "Playwright tests authored for all four scenarios, collecting metrics and producing structured snapshot objects."
+  - "performance-harness.schema.json defined; harness output conforms (validated during run)."
+  - "Local `pnpm perf:harness --scenario all` command executes and prints raw metrics (baseline)."
+
+deliverables:
+  - "playwright/perf-harness.config.ts + tests/perf/*.spec.ts."
+  - "Instrumentation hooks: src/perf/instrumentation/{profiler.tsx,userTiming.ts}."
+  - "Schema: diagnostics/performance-harness.schema.json + JSON serialization utilities."
+  - "NPM scripts: package.json entry `perf:harness`."
+  - "Docs snippet in PERFORMANCE_TESTING.md (initial setup)."
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+ Read for Context  researchFoundation:
+    - finding: "Playwright + Profiler/User Timing stack for Sprint 18."
+      sourceMission: "cmos/missions/research/R18.2_Performance-Instrumentation-Strategy.md"
+    - finding: "Diagnostics schema requirements for performanceHarness snapshots."
+      sourceMission: "cmos/missions/research/R18.2_Performance-Instrumentation-Strategy.md"
+
+  implementationScope:
+    coreDeliverable: "Performance harness scaffolding, instrumentation, tests, schema serialization."
+    outOfScope:
+      - "Nightly CI job / regression alerting (handled in follow-up mission)."
+      - "Developer-friendly CLI messaging (basic script acceptable)."
+
+  handoffContext:
+    completed:
+      - "Harness runs locally end-to-end; outputs diagnostics/perf-results.json."
+      - "Schema stored + validated via AJV (or similar)."
+      - "Instrumentation toggles documented for components."
+    interfaces:
+      - "npm run perf:harness -- --scenario compositor"
+      - "recordPerformanceMetric(name, data): PerfSnapshot"
+    assumptions:
+      - "Storybook stories for perf scenarios exist (or stubbed)."
+      - "Node 18+ environment with Playwright dependencies allowed."
+    nextMission: "BI-20251024-188: Performance CI integration & runbooks."
+    blockers: []

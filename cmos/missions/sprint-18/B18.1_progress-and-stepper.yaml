@@ -1,0 +1,60 @@
+# cmos/missions/sprint-18/B18.1_progress-and-stepper.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251024-181"
+
+objective: >
+  Deliver Progress (linear + circular) and Stepper components with canonical state models, multi-brand
+  token hooks, and WCAG-compliant behavior informed by R18.1 research.
+
+context: |
+  Research R18.1 documents converged patterns for progress indicators and steppers across enterprise
+  systems: determinate/indeterminate modes, step statuses (current, completed, incomplete, error,
+  disabled, optional), and mandatory accessibility affordances (role="progressbar", ARIA attributes,
+  keyboard focus). Sprint 18 needs production-ready components wired to Statusables tokens, Storybook
+  proofs, and automated tests so downstream domains can adopt guided workflows without custom builds.
+
+successCriteria:
+  - "Linear and circular Progress components render determinate & indeterminate states; expose aria-valuenow/min/max when determinate."
+  - "Stepper supports horizontal & vertical orientations, linear vs non-linear navigation, and emits step click events respecting isLinear guard."
+  - "Storybook stories cover size variants, state transitions (indeterminate → determinate), and all step statuses with VR baselines refreshed."
+  - "Tokens map to Statusables and view spacing per R18.1; lint/tests fail if literal colors are introduced."
+  - "Automated axe/HC runs pass; unit tests cover state transitions and onStepClick contract."
+
+deliverables:
+  - "Components: src/components/progress/{ProgressLinear.tsx,ProgressCircular.tsx}, src/components/stepper/Stepper.tsx."
+  - "Hooks/types: src/components/progress/types.ts, src/components/stepper/types.ts."
+  - "Storybook: stories/components/Progress.stories.tsx, Stepper.stories.tsx with controls + docs."
+  - "Tests: tests/components/progress.spec.tsx, stepper.spec.tsx (render + interaction + a11y)."
+  - "Token additions (if required) + documentation snippet under docs/components/progression.md."
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  Read for Context researchFoundation:
+    - finding: "Adopt determinate/indeterminate progress patterns; enforce status token mapping."
+      sourceMission: "cmos/missions/research/R18.1_Technical-Research-Report-Component-Set-IV.md"
+    - finding: "Stepper states and accessibility checklist (keyboard, ARIA)."
+      sourceMission: "cmos/missions/research/R18.1_Technical-Research-Report-Component-Set-IV.md"
+
+  implementationScope:
+    coreDeliverable: "Progress + Stepper components with tokens, accessibility, tests, and stories."
+    outOfScope:
+      - "Stepper-driven form orchestration (handled by downstream domain missions)."
+      - "Progress persistence APIs (purely presentational)."
+
+  handoffContext:
+    completed:
+      - "Progress/Stepper components exported via index.ts."
+      - "Storybook docs include usage guidelines + a11y checklist."
+      - "Tokens committed + token governance job green."
+    interfaces:
+      - "<ProgressLinear value={number} max={number} intent?: 'info'|'success'|'warning'|'error' } />"
+      - "<Stepper steps={StepDescriptor[]} activeStepId="..." onStepClick? />"
+    assumptions:
+      - "Statusables tokens already defined for intents."
+      - "Consumers adopt new components via design system package exports."
+    nextMission: "BI-20251024-182: Tabs & Overflow Navigation."
+    blockers: []

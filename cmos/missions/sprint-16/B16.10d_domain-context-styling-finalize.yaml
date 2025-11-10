@@ -1,0 +1,57 @@
+# cmos/missions/sprint-16/B16.10d_domain-context-styling-finalize.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251020-1610d"
+
+objective: >
+  Finalize domain-contexts.css against the new View Profiles and Contributions so each context
+  (detail/list/form/timeline/card/inline) reads only tokens, renders distinct layouts, and passes
+  HC/dark/light across brands with zero literals.
+
+context: |
+  With view profiles and trait contributions in place, we tighten the styling layer: two-column
+  layouts for detail/list (right rail), toolbar spacing, timeline stream rhythm, card/inline
+  compact rules. We avoid per-domain CSS forks; everything keys off data-view and region attributes
+  plus the minimal view tokens introduced in 16.10a.
+
+successCriteria:
+  - "Distinct, readable layouts per context with clear affordances for toolbar, rail, and stream."
+  - "No CSS literals—colors, radii, spacing, borders derive from semantic/system/view tokens."
+  - "Forced-colors: visible borders/focus; no shadow-only affordances; AA contrast holds."
+  - "Axe smoke across Domain stories (Subscription, User, Billing) = 0 violations."
+  - "VR dry-run: only intentional visual changes; PR notes document them."
+
+deliverables:
+  - "styles/domain-contexts.css refined (comments mapping selectors → tokens)"
+  - "stories/proofs/context-gallery.stories.tsx (grid of contexts × domain)"
+  - "docs/views/context-styling.md (how tokens control layout; how to add a new context)"
+  - "artifacts/domains/context-finalize-report.md (before/after screenshots + a11y results)"
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  researchFoundation:
+    - finding: "Perceptually uniform color & motion guardrails; HC/dark constraints."
+      sourceMission: "r5.2_Perceptually-Uniform-Color-System.md"
+    - finding: "OKLCH + relative-color guardrails; focus/contrast contracts."
+      sourceMission: "r5.6_Definitive-Guide-to-OKLCH-Relative-Color Guardrails.md"
+    - finding: "A11y contract is a CI gate; proofs must be deterministic."
+      sourceMission: "r4.4_ A11y-Contract-and-CI-Policy.md"
+
+  implementationScope:
+    coreDeliverable: >
+      Finalized, token-driven context CSS + proofs and verification artifacts across brands/modes.
+    outOfScope:
+      - "Additional traits or domain logic; those are complete in 16.10b/16.10c."
+
+  handoffContext:
+    completed:
+      - "Contexts visually differentiated and a11y/VR green; ready for Brand/HC proofs and baseline sync."
+    interfaces:
+      - "Consumes tokens/view.json and data-view/region attrs."
+    assumptions:
+      - "Subscription/User/Billing stories already wired to engine + contributions."
+    nextMission: "B16.11 Brand & High-Contrast proofs (existing plan)."
+    blockers: []

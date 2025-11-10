@@ -1,0 +1,51 @@
+# cmos/missions/sprint-12/12.4_release-verify-and-tag.yaml
+sprint: "12"
+missionId: "B12.4"
+title: "Internal release readiness — verify & tag (no publish)"
+type: "Build.Implementation.v1"
+
+objective: >
+  Add MCP tools to verify internal release readiness deterministically (two-run pack + sha256 compare,
+  export-map/type sanity, Conventional-Commit CHANGELOG) and an approval-gated lightweight git tag step.
+  No npm publish; artifacts and hashes recorded in diagnostics.json.
+
+context: |
+  This is for internal consumption from GitHub only. Runs appear in the Artifact Viewer.
+  Tagging happens only after verification passes and explicit approval.
+
+researchFoundation:
+  - "cmos/missions/research/R12.3_Release-Provenance-&-Prep.md"
+
+deliverables:
+  - "/packages/mcp-server/src/tools/release.verify.ts"
+  - "/packages/mcp-server/src/tools/release.tag.ts"
+  - "/packages/release-utils/src/pack-twice-compare.ts"
+  - "/packages/release-utils/src/changelog.ts"
+  - "/docs/mcp/Internal-Release-Readiness.md"
+
+apiContract:
+  verify_input: |
+    { "packages": ["@oods/tokens","@oods/tw-variants","@oods/a11y-tools"], "apply": false }
+  verify_output: |
+    { "results":[{"name":"@oods/tokens","identical":true,"sha256":"…"}], "diagnosticsPath":"…","transcriptPath":"…","bundleIndexPath":"…" }
+  tag_input: |
+    { "tag": "v0.0.0-internal.YYYYMMDD", "apply": false }
+  tag_output: |
+    { "created": false, "tag": "v0.0.0-internal.20251015", "diagnosticsPath":"…","transcriptPath":"…" }
+
+steps:
+  - "Implement pack-twice-compare: build → npm pack twice → diff file lists + cmp tarballs; compute sha256; return identical flag."
+  - "Implement export-map/types sanity checks; accumulate warnings."
+  - "Generate CHANGELOG (Conventional Commits) as a candidate text block (no write)."
+  - "DRY-RUN: produce a verification report in diagnostics.json; no git changes."
+  - "APPLY (tag tool only): create lightweight git tag (no version bump), record it in transcript; never push from the tool."
+  - "Panel/CLI: add actions to run verify and (optionally) tag with Approve & Apply gate."
+
+tests:
+  - "Two-run tarballs identical with same sha256; introduce change to see failure signal."
+  - "Export-map/type check warnings appear in diagnostics."
+  - "Tagging requires approval; transcript lists created=false in dry-run and true after apply."
+
+acceptance:
+  - "release.verify writes a deterministic report to diagnostics.json and surfaces hashes in the bundle index."
+  - "release.tag creates a local lightweight tag only after approval; never publishes; changes are logged in transcript."

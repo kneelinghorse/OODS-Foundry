@@ -1,0 +1,19 @@
+scenarios:
+  - id: legacy-linear
+    description: "Legacy linear mission using Build.Implementation.v1 template"
+    expectations:
+      - "Structured prompting sections remain optional"
+      - "No orchestration patterns enabled by default"
+      - "Security guardrails do not block existing behaviors"
+  - id: migration-assisted
+    description: "Migrated project using agents.md and enhanced context"
+    expectations:
+      - "agents.md is detected if present but not required"
+      - "PROJECT_CONTEXT.json schema remains backward-compatible"
+      - "Integration test runner reports compatibility status"
+  - id: orchestration-disabled
+    description: "Project with advanced orchestration disabled"
+    expectations:
+      - "RSIP/Sub-Agent/Boomerang toggles default to false"
+      - "No performance regression compared to baseline"
+      - "Security guardrails still enforce OWASP coverage"

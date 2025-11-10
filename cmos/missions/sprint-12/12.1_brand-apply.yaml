@@ -1,0 +1,87 @@
+# cmos/missions/sprint-12/12.1_brand-apply.yaml
+sprint: "12"
+missionId: "B12.1"
+title: "brand.apply — alias default, patch fallback (Review Kit roundtrip)"
+type: "Build.Implementation.v1"
+
+objective: >
+  Implement a schema-validated MCP tool and panel action to apply approved Brand A palette deltas.
+  Default strategy is DTCG alias updates; fallback is JSON Patch for high-governance changes.
+  Dry-run previews a JSON diff and specimen images; Apply writes updated token sources, rebuilds tokens,
+  and emits a Review Kit bundle under /artifacts/current-state/YYYY-MM-DD/ (≤10 files).
+
+context: |
+  Components remain tokens-only (`--cmp-*`). No component code changes allowed.
+  Write paths are confined to /artifacts/current-state/YYYY-MM-DD/.
+  The panel flow is approval-gated (plan → Approve & Apply → summary).
+
+researchFoundation:
+  - "cmos/missions/research/R12.1_Brand-Apply-Techniques.md"
+  - "cmos/missions/research/R11.1_Storybook-Approval-UX.md"
+  - "cmos/missions/research/R11.3_Diff-&-Artifact-Presentation.md"
+
+deliverables:
+  - "/packages/mcp-server/src/tools/brand.apply.ts"             # MCP tool (schema + strategy execution)
+  - "/packages/mcp-server/src/schemas/brand.apply.input.json"
+  - "/packages/mcp-server/src/schemas/brand.apply.output.json"
+  - "/app/apps/explorer/addons/storybook-addon-agent/panel.tsx" # add ‘Brand Apply’ action + approval UI
+  - "/docs/mcp/Brand-Apply.md"                                  # runbook + examples
+
+apiContract:
+  input_schema: |
+    {
+      "type": "object",
+      "properties": {
+        "brand": { "type": "string", "enum": ["A"], "default": "A" },
+        "delta": { "type": "object", "description": "Token color deltas (OKLCH-friendly hex/oklch)" },
+        "strategy": { "type": "string", "enum": ["alias","patch"], "default": "alias" },
+        "apply": { "type": "boolean", "default": false }
+      },
+      "required": ["delta"],
+      "additionalProperties": false
+    }
+  output_schema: |
+    {
+      "type": "object",
+      "properties": {
+        "preview": { "type": "object", "properties": { "jsonDiff": { "type":"string" }, "specimens": { "type":"array", "items": { "type":"string" } } } },
+        "artifacts": { "type": "array", "items": { "type": "string" } },
+        "transcriptPath": { "type": "string" },
+        "bundleIndexPath": { "type": "string" }
+      },
+      "required": ["transcriptPath","bundleIndexPath"],
+      "additionalProperties": false
+    }
+
+steps:
+  - "Implement alias strategy: rewrite brand-scoped alias tokens in tokens/brands/A/{base,dark,hc}.json (in-memory); never write repo files."
+  - "Implement patch strategy: apply RFC 6902 JSON Patches to the same token objects (in-memory)."
+  - "DRY-RUN (apply=false): compute unified JSON diff (stable key order), render before/after swatch specimens to PNG, and return preview paths."
+  - "APPLY (apply=true): write artifacts ONLY under /artifacts/current-state/${DATE}/review-kit/, including updated token JSON snapshots (not repo files), specimen images, diagnostics.json, transcript.json, bundle_index.json; then run tokens build and include build timing in diagnostics."
+  - "Panel: add ‘Brand Apply’ action → plan preview (DiffViewer + ArtifactList) → Approve & Apply dialog (focus on Cancel) → summary page with links."
+  - "Keep the day bundle ≤10 files by consolidating metrics into diagnostics.json; reference images rather than duplicating."
+
+examples:
+  delta_example: |
+    {
+      "color": {
+        "primary": { "value": "oklch(0.66 0.12 250)" },
+        "bg": { "value": "oklch(0.98 0.01 95)" }
+      }
+    }
+  json_patch_example: |
+    [
+      { "op":"replace", "path":"/color/primary/value", "value":"oklch(0.67 0.11 248)" }
+    ]
+
+tests:
+  - "Invalid payloads rejected by schema; detailed validation errors returned."
+  - "DRY-RUN returns jsonDiff + specimen paths; no non-transcript writes occur."
+  - "APPLY writes only to /artifacts/current-state/${DATE}/review-kit/ and updates diagnostics.json; transcript and bundle index exist."
+  - "Token build completes; `variables.css` contains brand A updates; diagnostics includes build ms."
+  - "Panel enforces Approve & Apply for apply=true; SR announcements and focus order verified."
+
+acceptance:
+  - "Alias strategy is default; patch strategy available via strategy=patch."
+  - "Review Kit contains before/after specimens, diagnostics.json, transcript.json, bundle_index.json (≤10 files total for the day)."
+  - "No repo file is modified; all writes stay in the dated artifacts folder."

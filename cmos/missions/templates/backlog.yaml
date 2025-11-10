@@ -1,0 +1,97 @@
+# pack.yaml - Metadata for the "Sprint Plan" Domain Pack
+name: "Planning.SprintPlan.v1"
+version: "1.0.0"
+displayName: "Sprint Plan Orchestrator"
+description: "A high-level mission to track and manage a project's sprints, missions, and dependencies. It serves as a living document for the project backlog and current status."
+author: "Your Name/Team"
+schema: "./schemas/SprintPlan.v1.json"
+
+---
+
+# Mission File: project-main-backlog.yaml
+
+missionId: "SP-MAIN-001"
+
+objective: "To successfully track, manage, and complete all planned development sprints, from Sprint 1 (Foundation) through Sprint 4 (Intelligence Layer)."
+
+context: |
+  This mission file represents the master backlog and sprint plan for the Mission Creation Protocol (MCP) project.
+  It provides a single source of truth for what has been completed, what is in progress, and what is planned.
+  This structured format allows for automated status tracking and dependency management.
+
+successCriteria:
+  - "All missions within Sprint 1 are marked as 'Completed'."
+  - "All missions within Sprint 2 are marked as 'Completed'."
+  - "All missions within Sprint 3 are marked as 'Completed'."
+  - "All missions within Sprint 4 are successfully moved through 'Current' to 'Completed' status."
+
+deliverables:
+  - "A fully updated version of this mission file with all sprints marked as complete."
+
+domainFields:
+  type: "Planning.SprintPlan.v1"
+
+  sprints:
+    - sprintId: "Sprint 1"
+      title: "Foundation - Secure Discovery"
+      focus: "Build MCP server foundation with secure YAML loading and domain discovery."
+      status: "Completed"
+      missions:
+        - { id: "B1.1", name: "Secure YAML Loading Pipeline", status: "Completed" }
+        - { id: "B1.2", name: "Registry Parser and Validation", status: "Completed" }
+        - { id: "B1.3", name: "list_available_domains MCP Tool", status: "Completed" }
+        - { id: "B1.4", name: "MCP Server Setup and Tool Exposure", status: "Completed" }
+        - { id: "B1.5", name: "Integration Tests and Example Templates", status: "Completed" }
+
+    - sprintId: "Sprint 2"
+      title: "Phase 2 - Core Mission Creation"
+      focus: "Mission template system, deep merge algorithm, and create_mission tool."
+      status: "Completed"
+      missions:
+        - { id: "B2.1", name: "Generic Mission Template Schema", status: "Completed" }
+        - { id: "B2.2", name: "Deep Merge Logic Implementation", status: "Completed" }
+        - { id: "B2.3", name: "Domain Pack Loader and Validator", status: "Completed" }
+        - { id: "B2.4", name: "create_mission MCP Tool", status: "Completed" }
+        - { id: "B2.5", name: "Example Domain Packs and Integration Tests", status: "Completed" }
+
+    - sprintId: "Sprint 3"
+      title: "Phase 3 - Extension System"
+      focus: "Template extraction, import/export, pack combination, and versioning."
+      status: "Completed"
+      missions:
+        - { id: "B3.1", name: "Template Extraction Tool", status: "Completed" }
+        - { id: "B3.2", name: "Import/Export System", status: "Completed" }
+        - { id: "B3.3", name: "Pack Combination Logic", status: "Completed" }
+        - { id: "B3.4", name: "Versioning System", status: "Completed" }
+        - { id: "B3.5", name: "Integration & Documentation", status: "Completed" }
+
+    - sprintId: "Sprint 4"
+      title: "Phase 4 - Intelligence Layer"
+      focus: "Token optimization, mission splitting, dependency detection, and quality scoring."
+      status: "In Progress"
+      missions:
+        - { id: "B4.1", name: "Token Optimization Engine", status: "Completed" }
+        - { id: "B4.2", name: "Mission Splitting Engine", status: "Completed" }
+        - { id: "B4.3", name: "Dependency Detection System", status: "Completed" }
+        - { id: "B4.4", name: "Quality Scoring System", status: "Current" }
+        - { id: "B4.5", name: "Phase 4 Integration & Documentation", status: "Queued" }
+
+  # Structured representation of the Mermaid diagram from backlog.md
+  missionDependencies:
+    # Sprint 3 dependencies
+    - { from: "R3.1", to: "B3.1", type: "Research informs Build" }
+    - { from: "R3.2", to: "B3.2", type: "Research informs Build" }
+    - { from: "B3.1", to: "B3.3", type: "Blocks" }
+    - { from: "B3.2", to: "B3.3", type: "Blocks" }
+    - { from: "B3.3", to: "B3.4", type: "Blocks" }
+    - { from: "B3.4", to: "B3.5", type: "Blocks" }
+
+    # Sprint 4 dependencies
+    - { from: "R4.1", to: "B4.1", type: "Research informs Build" }
+    - { from: "R4.2", to: "B4.2", type: "Research informs Build" }
+    - { from: "R4.3", to: "B4.3", type: "Research informs Build" }
+    - { from: "R4.4", to: "B4.4", type: "Research informs Build" }
+    - { from: "B4.1", to: "B4.2", type: "Blocks" }
+    - { from: "B4.2", to: "B4.3", type: "Blocks" }
+    - { from: "B4.3", to: "B4.4", type: "Blocks" }
+    - { from: "B4.4", to: "B4.5", type: "Blocks" }

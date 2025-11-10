@@ -1,0 +1,46 @@
+# cmos/missions/sprint-18/R18.2_perf-harness-instrumentation.yaml
+name: "Build.TechnicalResearch.v1"
+version: "1.0.0"
+displayName: "Technical Research Mission"
+
+missionId: "TR-20251024-182"
+
+objective: >
+  Design the performance instrumentation strategy required for Sprint 18's QA wave: identify tooling,
+  metrics, diagnostics integration, and CI cadence to monitor compositor, list, token transform, and
+  usage aggregation performance budgets.
+
+context: |
+  Sprint 18 exit criteria include perf harness snapshots logged to diagnostics with alerts on >15%
+  regressions. We need research to pick the tooling stack (Storybook instrumentation vs headless browser
+  runs vs custom CLI), define measurement methodology (scenarios, sample sizes), and align outputs with
+  diagnostics.json and telemetry policies. This complements prior telemetry/governance missions (R10.3,
+  R13.x) and ensures build missions have clear implementation guidance.
+
+successCriteria:
+  - "Research questions answered with options, trade-offs, and recommended stack."
+  - "Key findings document instrumentation requirements, diagnostics schema updates, and automation cadence."
+  - "Build implications provide clear tasks for Sprint 18 QA/perf missions."
+  - "Any gaps or tool uncertainties noted with proposed follow-ups."
+
+deliverables:
+  - "Completed research mission file with evidence references."
+  - "buildImplications describing perf harness implementation plan."
+
+domainFields:
+  type: "Build.TechnicalResearch.v1"
+
+  researchQuestions:
+    - "Which tooling stack best measures Storybook compositor/list demos across browsers (Lighthouse, Playwright traces, Storybook addon)?"
+    - "How should we capture and aggregate performance metrics (compositor ms, list render time, token transform duration) into diagnostics.json?"
+    - "What CI cadence and thresholds should trigger alerts for >15% regression?"
+    - "How do we reconcile performance measurements with usage ingest/tenancy modes introduced in Sprint 17?"
+    - "What is the developer workflow for running perf harness locally before publishing a component?"
+
+  keyFindings: []
+
+  contradictionsAndUncertainties: ""
+
+  buildImplications: {}
+
+  evidenceCollection: []

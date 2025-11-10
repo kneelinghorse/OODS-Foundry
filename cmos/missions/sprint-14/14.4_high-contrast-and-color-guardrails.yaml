@@ -1,0 +1,76 @@
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+description: "Enforce perceptual color guardrails (OKLCH), HC mode resilience, and contrast tests."
+author: "Design System Team"
+schema: "./schemas/Implementation.v1.json"
+
+---
+
+missionId: "B14.4"
+objective: >
+  Add OKLCH-based color guardrails and High Contrast (forced-colors) resilience, with CI checks
+  for contrast thresholds and proof stories.
+
+context: |
+  We reduce regressions by enforcing perceptually uniform color tokens and ensuring OS-level HC mode
+  remains usable. PRs will fail on contrast regressions and missing HC-safe patterns.
+
+successCriteria:
+  - "Color tokens normalized to OKLCH ranges; guardrails doc committed."
+  - "Forced-colors stories render with legible states; transparent-border technique used where needed."
+  - "Contrast checker runs in CI over curated stories; failures block merges."
+  - "docs/policies/high-contrast.md and docs/policies/hc-quickstart.md updated."
+  - "PROJECT_CONTEXT.json and diagnostics.json updated."
+
+deliverables:
+  - "scripts/tokens/color-guardrails.(mjs|ts)  # validates OKLCH ranges"
+  - "testing/a11y/contrast.spec.(ts|js)  # contrast checks wired to Storybook"
+  - "stories/*-hc.stories.(tsx|jsx)  # HC proof stories"
+  - "docs/policies/high-contrast.md"
+  - "docs/policies/hc-quickstart.md"
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  researchFoundation:
+    - finding: "Perceptually uniform color improves contrast predictability."
+      sourceMission: "r5.2_Perceptually-Uniform-Color-System.md"
+    - finding: "Guardrail ranges and implementation notes."
+      sourceMission: "r5.6_Definitive-Guide-to-OKLCH-Relative-Color Guardrails.md"
+    - finding: "HC regression prevention patterns."
+      sourceMission: "r5.7_High-Contrast-Mode-Regression-Prevention.md"
+
+  implementationScope:
+    coreDeliverable: |
+      1) OKLCH normalization
+         - Validate color tokens against ranges; fail CI on out-of-range.
+      2) Forced-colors resilience
+         - Add CSS for forced-colors; use transparent-border technique on focus/interactive components.
+      3) Contrast CI
+         - Run contrast checks (axe + custom ratio) on curated set; output diffs into PR artifacts.
+
+    outOfScope:
+      - "Axe rules beyond contrast/landmarks (covered in B14.11)."
+
+  handoffContext:
+    completed:
+      - "Color and HC guardrails enforced, CI blocking regressions."
+    interfaces:
+      - "scripts/tokens/color-guardrails.(mjs|ts)"
+      - "testing/a11y/contrast.spec.(ts|js)"
+    assumptions:
+      - "Composite tokens in place; theme switch working."
+    nextMission: "B14.5 — Visual regression & PR previews."
+    blockers:
+      - "Token palette gaps; add interim mappings or document exceptions."
+
+statusWrites:
+  projectContext:
+    path: "PROJECT_CONTEXT.json"
+    updates:
+      - { key: "missions.B14.4", value: "Completed" }
+  diagnostics:
+    path: "diagnostics.json"
+    append:
+      - { mission: "B14.4", contrast: { storiesChecked: "$N", failures: "$F" } }

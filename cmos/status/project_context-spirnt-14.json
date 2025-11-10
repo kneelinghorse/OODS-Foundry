@@ -1,0 +1,269 @@
+{
+  "project": {
+    "name": "OODS Foundry + CMOS",
+    "version": "2025.10.18",
+    "description": "Object-Oriented Design System (OODS) with CMOS mission orchestration — tokens⇄traits⇄regions, PR-first CI, Figma↔Repo handshake, agent policy & panel.",
+    "status": "active",
+    "start_date": "2025-08-01",
+    "deployment": {
+      "platform": "Local/Node.js + Storybook",
+      "integration_target": "Design system + agent panel monorepo",
+      "environment": "development"
+    }
+  },
+
+  "working_memory": {
+    "active_domain": "design_system",
+    "session_count": 14,
+    "last_session": "14",
+    "last_mission": "B14.12",
+    "next_mission": "S15.1",
+    "domains": {
+      "design_system": {
+        "status": "active",
+        "priority": 1,
+        "critical_facts": [
+          "PR-first workflow with required checks is enforced (build, lint, typecheck, tokens-validate, a11y-contract, vr-test, coverage).",
+          "Figma↔Repo roundtrip is live (Tokens Studio → DTCG JSON → Tailwind v4 CSS vars → Storybook proofs).",
+          "Composite tokens + theming guardrails in place; no literals in base components.",
+          "High-contrast (forced-colors) and OKLCH color guardrails are wired with CI checks.",
+          "Visual regression baselines curated; PR previews auto-post to the PR.",
+          "Coverage thresholds and schema→types + contract tests are on; merges blocked on failures.",
+          "Telemetry JSONL with Correlation/Incident IDs is emitted; short soak run completed.",
+          "Agent connectors are policy-gated with dry-run + approval; Agent Panel v1.5 supports task queue and approvals.",
+          "Enum→Token mapping is enforced for statusables; a11y contract runs in CI.",
+          "Docs refreshed for internal ops (PR process, tokens pipeline, color/HC, VR, a11y, approvals)."
+        ],
+        "constraints": [
+          "Packaging/distribution is deferred until post-Sprint 15 internal readiness.",
+          "Artifacts limited; most missions only update `PROJECT_CONTEXT.json` and `diagnostics.json`.",
+          "Token purity: components must consume semantic/composite tokens (no raw hex/px)."
+        ],
+        "decisions_made": [
+          "Adopt PR-first as default contributor path; push triggers limited to main/release.",
+          "Approve-to-apply agent workflow with policy allowlist, scopes, rate limits, and dry-run.",
+          "Use OKLCH palette with contrast/HC guardrails as CI blockers.",
+          "Curate proof stories; treat VR baselines as governed artifacts with codeowner approval on updates.",
+          "Use enum→token schema for all status visuals (badges, banners, tables, validation messaging)."
+        ],
+        "files_created": [
+          ".github/workflows/pr-validate.yml",
+          ".github/workflows/push-main.yml",
+          ".github/CODEOWNERS",
+          ".github/pull_request_template.md",
+          "scripts/tokens/transform.(mjs|ts)",
+          "scripts/tokens/lint-semantic.(mjs|ts)",
+          "scripts/tokens/color-guardrails.(mjs|ts)",
+          "testing/a11y/contrast.spec.(ts|js)",
+          "testing/a11y/axe.spec.(ts|js)",
+          "testing/vr/baseline/**",
+          "apps/*/styles/tokens.css",
+          "configs/logging/telemetry.schema.json",
+          "configs/agent/policy.json",
+          "schemas/ui/status-map.schema.json",
+          "configs/ui/status-map.json"
+        ],
+        "achievements": [
+          "Sprint 14 closed green across all checks; guardrails prevent regressions during refinement.",
+          "Agent Panel v1.5 enables real work with clear auditability.",
+          "Roundtrip Figma→Repo validated with evidence in Storybook and docs."
+        ]
+      },
+      "current_sprint": {
+        "status": "planning",
+        "sprint": "15",
+        "updated_at": "2025-10-18",
+        "active_mission": {
+          "id": "S15.1",
+          "name": "Multi-brand theme scaffolding"
+        },
+        "completed_missions": [
+          "B14.1","B14.2","B14.3","B14.4","B14.5","B14.6","B14.7","B14.8","B14.9","B14.10","B14.11","B14.12"
+        ],
+        "queued_missions": [
+          "S15.1","S15.2","S15.3","S15.4","S15.5"
+        ]
+      }
+    }
+  },
+
+  "handoff": {
+    "last_updated": "2025-10-18",
+    "status": {
+      "phase": "Sprint 15 planning",
+      "features": "Multi-brand scaffolding, statusables, inputs/tables, token governance, onboarding docs",
+      "performance": {
+        "vr_green_rate_target": "≥98% curated stories per brand",
+        "a11y_target": "AA + HC pass on curated components",
+        "flake_target": "≤2% in soak; incident-linked failures only"
+      }
+    },
+    "notes": "Use the Agent Panel v1.5 recipes for small changes (token roundtrip, VR baseline update, a11y fix, enum→token drift repair) to keep PRs atomic and auditable."
+  },
+
+  "sprint_files": {
+    "current_sprint": "15",
+    "backlog": "cmos/missions/backlog.yaml",
+    "build": "cmos/missions/sprint-15/build_sprint.15.yaml",
+    "research": "cmos/missions/sprint-15/research_sprint.15.yaml",
+    "mission_files": {
+      "S15.1": "cmos/missions/sprint-15/15.1_multi-brand-scaffolding.yaml",
+      "S15.2": "cmos/missions/sprint-15/15.2_component-scaleout-statusables.yaml",
+      "S15.3": "cmos/missions/sprint-15/15.3_component-scaleout-inputs-tables.yaml",
+      "S15.4": "cmos/missions/sprint-15/15.4_token-governance-for-brands.yaml",
+      "S15.5": "cmos/missions/sprint-15/15.5_onboarding-docs-design-and-dev.yaml"
+    }
+  },
+
+  "technical_context": {
+    "stack": {
+      "tokens": "DTCG JSON → Tailwind v4 CSS variables",
+      "components": "Headless primitives + pure modifiers; semantic tokens only",
+      "storybook": "Proof stories across themes/brands/HC; VR and a11y run in CI",
+      "agent": "MCP connectors behind policy; dry-run + approvals; panel task runner",
+      "telemetry": "JSONL logs with CorrelationId/IncidentId; PRs link to incidents"
+    },
+    "ci_checks_required": [
+      "build","lint","typecheck","tokens-validate","a11y-contract","vr-test","coverage"
+    ],
+    "design_tokens": {
+      "layers": ["base","alias","semantic","theme"],
+      "policies": [
+        "No literals in base/components",
+        "Composite tokens for UI consumption",
+        "OKLCH ranges validated in CI",
+        "Contextual defaults allowed via region models"
+      ]
+    },
+    "a11y_policies": {
+      "hc_forced_colors": "Transparent-border focus; system color fallbacks",
+      "contrast_thresholds": "AA as blocker; failures with story links",
+      "axe_ruleset": "Curated rules with ARIA focus states"
+    },
+    "enum_to_token": {
+      "schema": "schemas/ui/status-map.schema.json",
+      "config": "configs/ui/status-map.json",
+      "usage": "All statusables (badges/banners/toasts) and validation messages"
+    },
+    "agents": {
+      "policy": "configs/agent/policy.json",
+      "allowlist": "Tool scopes + rate limits",
+      "approvals": "Dry-run → approve → execute; incident-linked",
+      "panel_ui": "Task queue, diffs, approval prompts, telemetry deep-links"
+    }
+  },
+
+  "guardrails": {
+    "token_purity": "CI lint blocks literal colors/px in components",
+    "color_system": "OKLCH guardrails with documented ranges",
+    "visual_regression": "Curated baselines per brand and theme; approvals required to update",
+    "a11y_contract": "PR gate with actionable diffs and links",
+    "telemetry": "All CI/agent actions emit JSONL with IDs; soak baseline captured"
+  },
+
+  "docs_index": {
+    "roots": [
+      "docs/summary.md",
+      "docs/cli-reference.md",
+      "docs/tokens/4-layer-overview.md",
+      "docs/patterns/modifier-purity.md",
+      "docs/specs/regions.md",
+      "docs/figma/roundtrip-checklist.md",
+      "docs/figma/mapping-table.csv",
+      "docs/policies/high-contrast.md",
+      "docs/policies/hc-quickstart.md",
+      "docs/policies/dark-a11y-coverage.md",
+      "docs/testing/visual-regression.md",
+      "docs/testing/integration-strategy.md",
+      "docs/mcp/Policy-Rules.md",
+      "docs/mcp/Policy-UX.md",
+      "docs/mcp/Telemetry-&-Incidents.md",
+      "docs/mcp/Panel-UX.md",
+      "docs/mcp/Panel-Components.md",
+      "docs/mcp/Storybook-Agent-Panel.md",
+      "docs/domains/billing/README.md",
+      "docs/domains/billing/forms.md",
+      "docs/domains/billing/timeline.md",
+      "docs/themes/brand-a/README.md",
+      "docs/themes/brand-a/coverage.md"
+    ],
+    "new_for_s15": [
+      "docs/themes/brand-b/README.md",
+      "docs/themes/dark-guidelines.md",
+      "docs/onboarding/design-quickstart.md",
+      "docs/onboarding/dev-quickstart.md",
+      "docs/mcp/Agent-Recipes.md"
+    ]
+  },
+
+  "backlog_snapshot": {
+    "sprint_14": {
+      "status": "completed",
+      "missions": [
+        "B14.1 PR-first workflow & protections",
+        "B14.2 Figma↔Repo handshake",
+        "B14.3 Composite tokens & theming guardrails",
+        "B14.4 HC & color guardrails",
+        "B14.5 Visual regression & PR previews",
+        "B14.6 Coverage & type hygiene",
+        "B14.7 Telemetry + Incident IDs (soak)",
+        "B14.8 Policy-gated agent connectors",
+        "B14.9 Agent Panel v1.5",
+        "B14.10 Enum→Token enforcement",
+        "B14.11 A11y contract in CI",
+        "B14.12 Docs & guides refresh"
+      ]
+    },
+    "sprint_15": {
+      "status": "current",
+      "missions": [
+        "S15.1 Multi-brand theme scaffolding",
+        "S15.2 Component scale-out I — statusables",
+        "S15.3 Component scale-out II — inputs & tables",
+        "S15.4 Token governance for brands",
+        "S15.5 Onboarding docs — design & development quickstarts"
+      ]
+    }
+  },
+
+  "metrics": {
+    "coverage_thresholds": { "statements": 80, "branches": 75, "functions": 80, "lines": 80 },
+    "vr_targets": { "green_rate": "≥98%" },
+    "a11y_targets": { "aa": true, "hc": true },
+    "soak_targets": { "flake_pct": "<=2%" }
+  },
+
+  "conventions": {
+    "repo_paths": {
+      "backlog": "cmos/missions/backlog.yaml",
+      "missions": "cmos/missions/sprint-XX/NN.N_<slug>.yaml",
+      "research": "cmos/missions/research/rXX.N_<name>.md",
+      "artifacts": "artifacts/current-state/",
+      "status_json": ["PROJECT_CONTEXT.json", "diagnostics.json"]
+    },
+    "status_flow": ["Queued","Current","In Progress","Completed","Blocked"],
+    "story_curation": "Any visual change must have/adjust a proof story; VR/a11y will guard it.",
+    "labels": ["qa-tweak","a11y-fix","vr-baseline","brand-bleed","token-change:breaking"]
+  },
+
+  "common_commands": {
+    "install": "pnpm i",
+    "storybook": "pnpm storybook",
+    "lint": "pnpm lint",
+    "typecheck": "pnpm typecheck",
+    "test": "pnpm test",
+    "coverage": "pnpm test --coverage",
+    "tokens:export": "pnpm tokens:export   # from Figma (Tokens Studio) → repo",
+    "tokens:transform": "pnpm tokens:transform  # DTCG → Tailwind v4 CSS vars",
+    "tokens:lint": "pnpm tokens:lint",
+    "tokens:govern": "pnpm tokens:govern",
+    "vr": "pnpm vr",
+    "a11y": "pnpm a11y",
+    "soak": "pnpm soak",
+    "agent:panel": "pnpm panel",
+    "agent:dryrun": "pnpm agent:dryrun",
+    "agent:approve": "pnpm agent:approve"
+  },
+
+  "last_report_ts": "2025-10-18T18:45:00Z"
+}

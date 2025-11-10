@@ -1,0 +1,50 @@
+# cmos/missions/sprint-16/B16.7_storybook-preview-wiring.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251020-167"
+
+objective: >
+  Normalize Storybook preview wiring: import global tokens/styles once, wire global toolbar to
+  <html data-theme|data-brand>, persist selections, and set safe default layout.
+
+context: |
+  Many visual mismatches stem from inconsistent global wiring. This session guarantees all stories
+  receive brand/theme attrs and token CSS, with sane defaults that avoid false layout constraints.
+
+successCriteria:
+  - "Global tokens/styles imported exactly once in .storybook/preview.(ts|tsx)."
+  - "Global types { theme: light|dark, brand: default|brand-a|brand-b } control <html data-*>."
+  - "Selections persist across reloads via localStorage."
+  - "Default parameters.layout = 'centered' set; components needing full-bleed can override to 'fullscreen'."
+  - "Sanity stories verify data-attrs, computed CSS vars, and a no-regression smoke run (axe 0 violations) on curated set."
+
+deliverables:
+  - ".storybook/preview.ts(x) with: tokens/style imports, globalTypes, decorator, default parameters."
+  - "stories/proofs/preview-wiring-sanity.stories.tsx (shows attrs + key vars)."
+  - "artifacts/storybook/wiring-diagnostics.json (attrs present, var samples, axe pass)."
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  please read researchFoundation:
+    - finding: "A11y contract: forced-colors & focus must be honored globally."
+      sourceMission: "cmos/research/r4.4_ A11y-Contract-and-CI-Policy.md"
+    - finding: "DTCG tokens as SoT; globals should not import ad-hoc CSS per-story."
+      sourceMission: "cmos/research/r4.2_Tokens-Studio-to-Tailwind-CSS-v4-Pipeline.md"
+
+  implementationScope:
+    coreDeliverable: "Preview wiring + sanity proofs."
+    outOfScope:
+      - "Taxonomy moves and section-specific wrappers (handled in B16.8–B16.10)."
+
+  handoffContext:
+    completed:
+      - "Globals wired; curated axe smoke 0 violations."
+    interfaces:
+      - "Globals: theme/brand toolbar; decorator sets html[data-*]."
+    assumptions:
+      - "Token CSS bundle exists and is importable."
+    nextMission: "BI-20251020-168: Sidebar Taxonomy Normalization."
+    blockers: []

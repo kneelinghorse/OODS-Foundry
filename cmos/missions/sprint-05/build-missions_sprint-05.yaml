@@ -1,0 +1,364 @@
+# Sprint 05 — Full Build Missions (B5.1–B5.8)
+# Uses the Build.Implementation.v1 mission schema / pack. :contentReference[oaicite:0]{index=0}
+# NOTE: Code/artifacts live under /app; root only for CI/config. Cross-links point to /missions/research/r5.1–r5.7.
+
+# ========== B5.1 — Four-Layer Token Architecture & Var-Chaining Skeleton ==========
+missionId: "BI-20251010-B5.1"
+objective: "Implement the 4-layer CSS token stack (Reference → Theme → System/Semantic → Context/Component) with deterministic var-chaining and forced-colors precedence."
+context: |
+  This establishes the semantic foundation we promised in the roadmap: components never touch brand or raw scales; they read
+  context/component slots only. Dark/HC override at the theme layer, with forced-colors winning over dark. Includes slot naming
+  and a minimal demo binding in Explorer.
+successCriteria:
+  - "CSS exports define four clear namespaces: --ref-*, --theme-*, --sys-*, --cmp-*; no component reads --ref or --theme directly."
+  - "Dark switched via [data-theme='dark']; HC via @media (forced-colors: active), with HC having precedence."
+  - "Explorer demo shows a StatusChip consuming only --cmp-* slots."
+deliverables:
+  - "/app/packages/tokens/src/tokens/base/reference/*.json"         # L1 Reference (scales)
+  - "/app/packages/tokens/src/tokens/themes/theme0/**/*.json"       # L2 Theme (light)
+  - "/app/packages/tokens/src/tokens/themes/dark/**/*.json"         # L2 Dark seed (scaffold only; values can be placeholders)
+  - "/app/packages/tokens/src/tokens/base/system/**/*.json"         # L3 System/Semantic (surface/text/status/focus)
+  - "/app/apps/explorer/src/styles/layers.css"                      # L4 slot sketch & root hooks
+  - "/app/apps/explorer/src/components/StatusChip.tsx"              # reads only --cmp-*
+  - "/app/docs/tokens/4-layer-overview.md"
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - finding: "Theme layering & var-chaining contract; forced-colors precedence over dark."
+      sourceMission: "missions/research/r5.5_Scalable-Theming-Architecture.md"
+    - finding: "Context binding belongs at region/component slot layer; components remain pure."
+      sourceMission: "missions/research/r5.3_Figma-to-Repository-Handshake-Recipe.md"
+  implementationScope:
+    coreDeliverable: |
+      1) Namespacing & files:
+         - L1 Reference: --ref-* (brand-agnostic ramps & scales)
+         - L2 Theme:     --theme-* → var(--ref-*)  (light in :root, dark in [data-theme='dark'])
+         - L3 System:    --sys-* → var(--theme-*)  (meaningful tokens: surface/text/status/focus)
+         - L4 Context/Component slots: --cmp-* set by region/context plugin; components only read these
+      2) Root hooks:
+         - :root defines Theme 0
+         - html[data-theme='dark'] overrides only --theme-* vars (no component logic)
+         - @media (forced-colors: active): map critical vars to system colors, ensure 'forced-colors' > dark
+      3) Explorer proof:
+         - Minimal page with list/detail contexts setting --cmp-chip-bg/fg via classes; StatusChip only consumes slots
+    outOfScope:
+      - "Final Theme 0 values (B5.2), typography scale (B5.3)."
+  validationProtocol:
+    - validator: "Gemini"
+      focus: "Namespace correctness & var-chaining integrity."
+    - validator: "Claude"
+      focus: "Purity (components read only --cmp-*); dark/HC precedence."
+  handoffContext:
+    completed:
+      - "Four layers wired; Explorer demo reading slot vars."
+    interfaces:
+      - "CSS variables: --ref-*, --theme-*, --sys-*, --cmp-*"
+    assumptions:
+      - "Tailwind variant plugin from Sprint 04 is present; we only assign slots."
+    nextMission: "BI-20251010-B5.2"
+    blockers: []
+
+---
+
+# ========== B5.2 — Theme 0 (OKLCH) Palette Integration & Token Assignment ==========
+missionId: "BI-20251010-B5.2"
+objective: "Integrate the chosen OKLCH palette for Theme 0, assign swatches to semantic tokens, and keep AA baseline green."
+context: |
+  Replace placeholder colors with Theme 0 (OKLCH) and map them to system tokens. Use relative color for hover/active where supported,
+  and provide precomputed fallbacks when RC is unavailable. Produce a single assignment table for future audits.
+successCriteria:
+  - "All surface/text/status/focus tokens in Theme 0 have concrete values; a11y diff shows no new AA failures."
+  - "Interactive states derive from base tokens via RC or SD transform fallbacks; no duplicated hard-coded swatches."
+  - "Assignment table checked in; Storybook Foundations.Colors reflects Theme 0."
+deliverables:
+  - "/app/packages/tokens/src/tokens/themes/theme0/**/*.json"
+  - "/app/docs/palettes/theme0-assignment.csv"
+  - "/app/apps/explorer/src/stories/Foundations.Colors.mdx"
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - finding: "Perceptually uniform OKLCH ramps; recommended palette candidates & contrast matrix."
+      sourceMission: "missions/research/r5.2_Perceptually-Uniform-Color-System.md"
+    - finding: "Relative color guardrails (ΔL/ΔC) for hover/active; fallback strategy."
+      sourceMission: "missions/research/r5.6_Definitive-Guide-to-OKLCH-Relative-Color Guardrails.md"
+  implementationScope:
+    coreDeliverable: |
+      - Map palette → --theme-* vars, then → --sys-* semantics (surface/text/status/focus)
+      - Implement hover/active via: oklch(from var(--… ) l calc(l ± ΔL) c calc(c ± ΔC)) with a prebuilt fallback transform for old browsers
+      - Run: yarn a11y:check && yarn a11y:diff; keep baseline green
+    outOfScope:
+      - "Typography & density (B5.3)."
+  validationProtocol:
+    - validator: "Claude"
+      focus: "Correct semantic assignments; AA verification."
+    - validator: "Gemini"
+      focus: "RC usage & fallbacks."
+  handoffContext:
+    completed:
+      - "Theme 0 applied & verified; assignment table committed."
+    interfaces:
+      - "A11y scripts: yarn a11y:check, yarn a11y:diff"
+    assumptions:
+      - "Palette A/B choice is available from research files."
+    nextMission: "BI-20251010-B5.3"
+    blockers: []
+
+---
+
+# ========== B5.3 — Typography (Composite Tokens) & Context Density Binding ==========
+missionId: "BI-20251010-B5.3"
+objective: "Add DTCG-compliant typography composites and bind context density (list vs detail) via the variant plugin."
+context: |
+  We need a durable type ramp (size/line-height/weight) and spacing density deltas by context. Emit composite tokens cleanly to CSS/TS/Tailwind,
+  then connect them to context bindings (no component conditionals).
+successCriteria:
+  - "Typography composites emit to CSS vars/TS/Tailwind without lossy flattening; build <3s on ~2k tokens."
+  - "Contexts apply density/typography deltas through classes only; components remain pure."
+  - "Foundations.Typography & Contexts docs render and match assignments."
+deliverables:
+  - "/app/packages/tokens/src/tokens/base/typography.json"
+  - "/app/packages/tokens/dist/{css,ts,tailwind}/**"
+  - "/app/apps/explorer/src/stories/Foundations.Typography.mdx"
+  - "/app/apps/explorer/src/stories/Contexts.List.mdx"
+  - "/app/apps/explorer/src/stories/Contexts.Detail.mdx"
+  - "/app/docs/contexts/defaults.md"
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - finding: "Composite token shapes & SD v4 + @tokens-studio/sd-transforms config."
+      sourceMission: "missions/research/r5.1_Implementing-DTCG-Compliant-Composite-Tokens.md"
+    - finding: "Figma handshake & context specimens guidance for verification."
+      sourceMission: "missions/research/r5.3_Figma-to-Repository-Handshake-Recipe.md"
+  implementationScope:
+    coreDeliverable: |
+      - Configure SD v4 preprocessors & expand.typesMap for typography; ensure sub-keys (fontSize, lineHeight, weight) are addressable
+      - Bind list/detail density via Tailwind plugin utilities (class-only); prove on Explorer pages
+    outOfScope:
+      - "Shadow & border composites (B5.4)."
+  validationProtocol:
+    - validator: "Gemini"
+      focus: "Composite emission correctness & build determinism."
+    - validator: "Claude"
+      focus: "Context density binding purity."
+  handoffContext:
+    completed:
+      - "Typography composites + context bindings; docs & stories updated."
+    interfaces:
+      - "Tailwind plugin utilities (context×region), tokens dist outputs"
+    assumptions:
+      - "Variant plugin from Sprint 04 is available."
+    nextMission: "BI-20251010-B5.4"
+    blockers: []
+
+---
+
+# ========== B5.4 — Shadow & Border Composites (DTCG) ==========
+missionId: "BI-20251010-B5.4"
+objective: "Implement shadow and border composite tokens with stable cross-platform outputs and no key collisions."
+context: |
+  Round out composites so elevation, outlines, and critical state borders are tokenized (not hard-coded). Preserve addressable sub-keys and
+  avoid '[object Object]' emissions. Provide simple Explorer specimens for sanity checks.
+successCriteria:
+  - "shadow.json and border.json emit to CSS/TS/Tailwind; no duplicate var names; build remains <3s."
+  - "Explorer specimens for elevated card & critical banner render using tokens."
+deliverables:
+  - "/app/packages/tokens/src/tokens/base/shadow.json"
+  - "/app/packages/tokens/src/tokens/base/border.json"
+  - "/app/apps/explorer/src/stories/Foundations.Shadows.mdx"
+  - "/app/apps/explorer/src/stories/Foundations.Borders.mdx"
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - finding: "Composite token structures & SD v4 transform recipes."
+      sourceMission: "missions/research/r5.1_Implementing-DTCG-Compliant-Composite-Tokens.md"
+  implementationScope:
+    coreDeliverable: |
+      - Add composites with explicit sub-keys: shadow.{offsetX,offsetY,blur,spread,color}, border.{width,style,color,radius}
+      - Update SD config; emit CSS custom properties & TS/Tailwind maps
+    outOfScope:
+      - "Motion tokens; component redesign."
+  validationProtocol:
+    - validator: "Claude"
+      focus: "Token shape clarity & no collisions."
+    - validator: "Gemini"
+      focus: "Build config & outputs."
+  handoffContext:
+    completed:
+      - "Shadow/Border composites available with specimens."
+    interfaces:
+      - "CSS vars & TS/Tailwind maps"
+    assumptions:
+      - "Theme 0 colors present from B5.2."
+    nextMission: "BI-20251010-B5.5"
+    blockers: []
+
+---
+
+# ========== B5.5 — Relative-Color Guardrails & CI Enforcement ==========
+missionId: "BI-20251010-B5.5"
+objective: "Codify ΔL/ΔC guardrails for interactive states and enforce them alongside AA checks in CI."
+context: |
+  Ensure hover/active/focus derivations never degrade contrast. Guardrails come from the OKLCH delta research and should be machine-checked
+  for both base and derived token pairs. Provide RC fallbacks for older browsers.
+successCriteria:
+  - "Guardrails table (CSV/JSON) committed; a11y scripts validate base & derived pairs within Δ ranges."
+  - "CI blocks PRs that violate guardrails or AA ratios; report lists the failing token pairs and deltas."
+deliverables:
+  - "/app/tools/a11y/guardrails/relative-color.csv"
+  - "/app/tools/a11y/index.mjs"                  # updated to compute deltas & contrast for derived pairs
+  - "/.github/workflows/ci.yaml"                 # a11y job includes guardrail check
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - finding: "Validated ΔL/ΔC bands and RC/fallback recommendations."
+      sourceMission: "missions/research/r5.6_Definitive-Guide-to-OKLCH-Relative-Color Guardrails.md"
+  implementationScope:
+    coreDeliverable: |
+      - Add guardrails data (usage,theme,ΔL,ΔC[,ΔH],minContrast)
+      - Extend a11y script: generate derived token pairs; verify Δ within bands and AA ≥ thresholds; emit diff vs baseline
+      - Provide RC CSS examples + precomputed SD fallback path
+    outOfScope:
+      - "APCA migration (note for future)."
+  validationProtocol:
+    - validator: "Gemini"
+      focus: "Delta math, performance, and report clarity."
+    - validator: "Claude"
+      focus: "Coverage of key usages (text, surfaces, focus)."
+  handoffContext:
+    completed:
+      - "Guardrails enforced in CI with actionable reports."
+    interfaces:
+      - "Scripts: yarn a11y:check, yarn a11y:diff"
+    assumptions:
+      - "Theme 0 tokens present; composites wired."
+    nextMission: "BI-20251010-B5.6"
+    blockers: []
+
+---
+
+# ========== B5.6 — High-Contrast (HC) Mapping & Resilience ==========
+missionId: "BI-20251010-B5.6"
+objective: "Implement forced-colors mapping, transparent-border baseline, and outline-first focus to prevent HC regressions."
+context: |
+  Users with HC enabled often lose elevation & subtle color cues. Map semantic tokens to CSS system colors in HC,
+  switch to outline-first focus with offsets, and add 1px transparent borders to shells so system colors can paint.
+successCriteria:
+  - "HC mode uses system colors (Canvas/CanvasText/Highlight/LinkText/GrayText) via dedicated mapping."
+  - "Outline focus ≥3:1 in HC; shells render separation without shadows (transparent-border baseline)."
+  - "Optional HC snapshot job generates images for the 10 critical stories (non-blocking)."
+deliverables:
+  - "/app/packages/tokens/src/tokens/themes/high-contrast/map.json"
+  - "/app/apps/explorer/src/styles/hc.css"       # forced-colors overrides (can be inlined in main CSS if desired)
+  - "/app/docs/policies/high-contrast.md"
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - finding: "HC regression prevention checklist & system-color mapping."
+      sourceMission: "missions/research/r5.7_High-Contrast-Mode-Regression-Prevention.md"
+    - finding: "Theme layering & precedence (forced-colors wins)."
+      sourceMission: "missions/research/r5.5_Scalable-Theming-Architecture.md"
+  implementationScope:
+    coreDeliverable: |
+      - In @media (forced-colors: active): map critical semantics to system colors
+      - Apply outline + outline-offset focus; add transparent borders on panels/cards
+      - Add optional HC snapshot pass (separate baseline suffix) to VRT config without gating PRs yet
+    outOfScope:
+      - "Full redesigns for HC; this is resilience scaffolding."
+  validationProtocol:
+    - validator: "Claude"
+      focus: "Legibility, focus visibility, and separation."
+    - validator: "Gemini"
+      focus: "System-color mapping & CSS mechanics."
+  handoffContext:
+    completed:
+      - "HC mapping & resilience patterns in place."
+    interfaces:
+      - "HC CSS and token mappings"
+    assumptions:
+      - "Chromatic or fallback VRT exists/arrives in B5.7."
+    nextMission: "BI-20251010-B5.7"
+    blockers: []
+
+---
+
+# ========== B5.7 — Visual Regression (Chromatic) with Fallback Kit ==========
+missionId: "BI-20251010-B5.7"
+objective: "Adopt Chromatic (TurboSnap) for PR diffs; tag ~10 critical stories; check in Playwright+Storycap fallback (disabled)."
+context: |
+  We need fast, reliable VRT for Theme 0 and context bindings. Chromatic provides managed baselines & PR UX; keep a self-hosted Playwright+Storycap
+  fallback ready for contingency.
+successCriteria:
+  - "Chromatic runs on PRs with ~10 tagged stories; total runtime ≤90s; PR shows diffs."
+  - "Fallback kit present but disabled in CI."
+deliverables:
+  - "/chromatic.config.json"
+  - "/.github/workflows/chromatic.yml"
+  - "/app/testkits/vrt/playwright.config.ts"     # fallback
+  - "/app/testkits/vrt/storycap.config.mjs"      # fallback
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - finding: "Tooling decision & configs (Chromatic vs Playwright+Storycap)."
+      sourceMission: "missions/research/r5.4_Visual-Regression-Tooling.md"
+  implementationScope:
+    coreDeliverable: |
+      - Wire Chromatic with project token; enable TurboSnap; tag stories in preview params
+      - Add fallback kit configs; document how to enable if needed
+    outOfScope:
+      - "Cross-browser matrix beyond initial scope."
+  validationProtocol:
+    - validator: "Gemini"
+      focus: "CI integration & runtime."
+    - validator: "Claude"
+      focus: "Story selection relevance."
+  handoffContext:
+    completed:
+      - "VRT live on PRs; fallback checked in."
+    interfaces:
+      - "PR checks with linked Chromatic reports"
+    assumptions:
+      - "Storybook already builds."
+    nextMission: "BI-20251010-B5.8"
+    blockers: []
+
+---
+
+# ========== B5.8 — Figma Handshake (Read-Only) & Specimens ==========
+missionId: "BI-20251010-B5.8"
+objective: "Enable you to edit Theme 0 visually: set up the read-only Repo→Figma bridge and ship minimal specimens that mirror contexts/regions."
+context: |
+  Git/DTCG is the source of truth. Figma is for exploration. We’ll connect Tokens Studio (read-only), mirror namespaces as Style groups,
+  and publish specimens aligned to the region/context model so design decisions (color/typography/density) can be made visually.
+successCriteria:
+  - "Tokens Studio pulls from /app/packages/tokens/src/tokens with no errors."
+  - "Mapping table mirrors namespaces; specimens show List/Detail with chips & banners."
+  - "Round-trip checklist committed to prevent drift."
+deliverables:
+  - "/app/docs/figma/mapping-table.csv"
+  - "/app/docs/figma/roundtrip-checklist.md"
+  - "(External) Figma library file: OODS • Theme 0 (shared link referenced in checklist)"
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - finding: "Exact handshake steps, style naming, and round-trip checklist."
+      sourceMission: "missions/research/r5.3_Figma-to-Repository-Handshake-Recipe.md"
+  implementationScope:
+    coreDeliverable: |
+      - Configure read-only Git sync in Tokens Studio; map token namespaces → Figma Style groups (dot → slash)
+      - Create List/Detail specimens reflecting region slots; annotate how to propose token changes via PR
+    outOfScope:
+      - "Design exploration itself; only the bridge & specimens."
+  validationProtocol:
+    - validator: "Claude"
+      focus: "Namespace fidelity & drift prevention."
+    - validator: "Gemini"
+      focus: "Specimen clarity & mapping completeness."
+  handoffContext:
+    completed:
+      - "Figma bridge live; specimens available; drift checklist in repo."
+    interfaces:
+      - "Figma Styles mapped to token namespaces; PR template references checklist"
+    assumptions:
+      - "You will create or share the Figma library file this session."
+    nextMission: ""
+    blockers: []

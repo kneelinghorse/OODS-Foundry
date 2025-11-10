@@ -1,0 +1,42 @@
+# cmos/missions/sprint-13/13.4_billing-ops-through-mcp.yaml
+sprint: "13"
+missionId: "B13.4"
+title: "Billing ops via MCP — review kit, fixture switch, diagnostics"
+type: "Build.Implementation.v1"
+
+objective: >
+  Add agent-driven utility flows for the billing domain: generate a Billing Review Kit bundle from
+  selected fixtures, switch fixtures (provider A/B) and re-render stories, and emit a domain-scoped
+  diagnostics entry—approval gated, artifacts only under /artifacts/current-state/YYYY-MM-DD/.
+
+context: |
+  Functional, not a demo: these flows help you iterate on the domain and validate mapping integrity quickly.
+  
+please review researchFoundation:
+  - "cmos/missions/research/R13.1_Tool-Integration-for-Claude-MCP-and-OpenAI-Agents.md"   # connectors/pitfalls (CORS, OPTIONS, timeouts) :contentReference[oaicite:9]{index=9}
+
+
+deliverables:
+  - "/packages/mcp-server/src/tools/billing.reviewKit.ts"
+  - "/packages/mcp-server/src/tools/billing.switchFixtures.ts"
+  - "/app/apps/explorer/addons/storybook-addon-agent/panel.tsx"    # add actions to run the flows
+  - "/docs/domains/billing/ops.md"
+
+apiContracts:
+  reviewKit.input: |
+    { "object": "Subscription|Invoice", "fixtures": ["stripe","chargebee"], "apply": false }
+  switchFixtures.input: |
+    { "provider": "stripe|chargebee", "apply": false }
+
+steps:
+  - "Implement reviewKit tool: dry-run produces diff + specimens; apply writes a bundle (≤10 files) with transcript and index."
+  - "Implement switchFixtures: dry-run previews deltas; apply swaps active fixtures for stories (no repo writes; artifacts only)."
+  - "Panel: add actions + approval gate; link outputs from Summary into Artifact Viewer."
+
+tests:
+  - "Dry-run never writes beyond transcript/index; apply writes only under dated folder."
+  - "Review Kit includes before/after visuals and a short mapping summary."
+  - "Switching fixtures updates rendered stories (manual refresh OK) and leaves code untouched."
+
+acceptance:
+  - "Both tools accessible via panel and CLI with approval; artifacts link correctly in the viewer."

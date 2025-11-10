@@ -1,0 +1,460 @@
+# build-missions_sprint-03.yaml
+sprint: "03"
+theme: "View Engine — Regions, Composition, and Deterministic Modifiers"
+dates:
+  start: "2025-10-13"
+  end: "2025-10-24"
+owner: "OODS Foundry"
+version: "1.2.0"
+
+# ------------------------------------------------------------
+# B3.4 — <RenderObject> Component
+# ------------------------------------------------------------
+---
+missionId: "B3.4"
+title: "<RenderObject> Component"
+type: "Build"
+objective: "Resolve object + traits → collect view-extensions → compose → render the selected context template. Provide a dev report for explainability."
+
+sources:
+  - path: "/missions/research/r3.1_Page-Level Region Models.md"
+    anchors:
+      - "## Top-Line Recommendation"
+      - "## Recommendations for the OODS Canonical Region Set"
+  - path: "/missions/research/r3.2_Pure Modifier Pattern.md"
+    anchors:
+      - "## Canonical Signature and Contract"
+      - "## The Purity Harness"
+  - path: "/OODS Foundry — Technical Architecture & Build Roadmap.md"
+    anchors:
+      - "Sprint 03 — View Engine (Contexts & Compositor)"
+
+assumptions:
+  - "Consolidated CanonicalRegionID and REGION_ORDER finalized in B3.1."
+  - "composeExtensions(exts, ctx) returns Record<CanonicalRegionID, ReactNode> (from B3.3)."
+  - "Context templates (List/Detail/Form/Timeline/Card/Inline) accept regions: RegionMap."
+
+tasks:
+  - "Implement src/components/RenderObject.tsx:"
+  - |
+      Props signature:
+      ```ts
+      type ContextKind = 'list'|'detail'|'form'|'timeline'|'card'|'inline';
+
+      export interface RenderObjectProps {
+        object: ObjectSpec;
+        context: ContextKind;
+        data: unknown;
+        debug?: boolean;
+      }
+      ```
+  - "Build RenderContext from { object, data, theme, permissions, viewport } (B3.1)."
+  - "Resolve ViewExtension[] from object’s composed traits via a trait→extensions adapter."
+  - "Compose regions = composeExtensions(extensions, renderCtx)."
+  - "Select context component from a small registry and render with { regions }."
+  - "If debug=true, emit renderReport(object, context, regions, extensions) to console + return JSON."
+
+artifacts:
+  - "src/components/RenderObject.tsx"
+  - "src/components/renderReport.ts"
+  - "src/contexts/index.ts"
+  - "src/traits/adapter.ts (trait→extensions resolver)"
+
+examples:
+  - |
+      Trait→extensions adapter:
+      ```ts
+      // src/traits/adapter.ts
+      import { ViewExtension, RenderContext } from '@/types';
+
+      export function resolveTraitExtensions(object: ObjectSpec, ctx: RenderContext): ViewExtension[] {
+        return object.traits.flatMap(trait => {
+          if (typeof trait.view === 'function') return trait.view(ctx); // ViewExtension[]
+          return [];
+        });
+      }
+      ```
+  - |
+      <RenderObject> skeleton:
+      ```tsx
+      // src/components/RenderObject.tsx
+      import * as React from 'react';
+      import { composeExtensions } from '@/compositor/composeExtensions';
+      import { getContextComponent } from '@/contexts';
+      import { resolveTraitExtensions } from '@/traits/adapter';
+      import { buildRenderContext } from '@/context/buildRenderContext';
+      import { renderReport } from './renderReport';
+
+      export const RenderObject: React.FC<RenderObjectProps> = ({ object, context, data, debug }) => {
+        const ctx = buildRenderContext({ object, data });
+        const extensions = resolveTraitExtensions(object, ctx);
+        const regions = composeExtensions(extensions, ctx);
+
+        if (debug) console.table(renderReport(object, context, regions, extensions));
+        const ContextComponent = getContextComponent(context);
+        return <ContextComponent regions={regions} />;
+      };
+      ```
+
+tests:
+  - "Adding a trait modifies output without editing context templates (snapshot)."
+  - "Deterministic render: same object+data yields identical snapshot."
+  - "Debug report includes region→[extension.id] & trait list."
+
+ciGates:
+  - "All unit & snapshot tests pass."
+  - "No direct DOM manipulation in composition path."
+  - "Modifiers used by extensions remain pure (ESLint rule from R3.2 passes)."
+
+acceptanceCriteria:
+  - "<RenderObject> renders any object with composed traits across all six contexts."
+  - "renderReport() lists regions + extension IDs + contributing traits."
+
+
+# ------------------------------------------------------------
+# B3.5 — Radix-Based OODS Primitives
+# ------------------------------------------------------------
+---
+missionId: "B3.5"
+title: "Radix-Based OODS Primitives"
+type: "Build"
+objective: "Provide minimal headless base components (OODS.*) that wrap Radix primitives and are styled with Tailwind (token bindings in Sprint 04)."
+
+sources:
+  - path: "/missions/research/r3.2_Pure Modifier Pattern.md"
+    anchors:
+      - "## Canonical Signature and Contract"
+  - path: "/OODS Foundry — Technical Architecture & Build Roadmap.md"
+    anchors:
+      - "Sprint 03 — View Engine (Contexts & Compositor)"
+      - "Sprint 04 — Token System & Context Variants"
+
+assumptions:
+  - "Tailwind baseline acceptable now; DTCG/token plumbing lands next sprint."
+  - "Radix used for a11y & behavior; apps never consume Radix directly—only OODS.*."
+
+tasks:
+  - "Install deps: @radix-ui/react-slot, @radix-ui/react-popover, @radix-ui/react-dropdown-menu, tailwind/postcss/autoprefixer, RTL, jest-dom, axe-core."
+  - "Configure tailwind.config.ts and src/styles/globals.css (minimal theme)."
+  - "Implement OODS primitives:"
+  - "  - Button: supports asChild (Radix Slot), props: { intent, size }."
+  - "  - Badge: pill w/ intent."
+  - "  - Text: size & weight."
+  - "  - Card: simple container (optional header/body/actions internal slots)."
+
+artifacts:
+  - "src/components/base/Button.tsx"
+  - "src/components/base/Badge.tsx"
+  - "src/components/base/Text.tsx"
+  - "src/components/base/Card.tsx"
+  - "tailwind.config.ts"
+  - "src/styles/globals.css"
+
+examples:
+  - |
+      Button (asChild + intents):
+      ```tsx
+      import * as React from 'react';
+      import { Slot } from '@radix-ui/react-slot';
+      import clsx from 'clsx';
+
+      type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+        asChild?: boolean;
+        intent?: 'neutral'|'success'|'warning'|'danger';
+        size?: 'sm'|'md'|'lg';
+      };
+
+      const intentClass = {
+        neutral: 'bg-gray-100 hover:bg-gray-200 text-gray-900',
+        success: 'bg-green-600 hover:bg-green-700 text-white',
+        warning: 'bg-amber-500 hover:bg-amber-600 text-black',
+        danger:  'bg-red-600 hover:bg-red-700 text-white',
+      } as const;
+
+      const sizeClass = { sm: 'px-2 py-1 text-sm', md: 'px-3 py-2', lg: 'px-4 py-2 text-lg' } as const;
+
+      export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+        ({ asChild, intent='neutral', size='md', className, ...rest }, ref) => {
+          const Comp: any = asChild ? Slot : 'button';
+          return (
+            <Comp
+              ref={ref}
+              className={clsx(
+                'inline-flex items-center rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2',
+                intentClass[intent],
+                sizeClass[size],
+                className
+              )}
+              {...rest}
+            />
+          );
+        }
+      );
+      Button.displayName = 'OODS.Button';
+      ```
+
+tests:
+  - "RTL: Button renders with role and visible focus; Badge renders intent variants."
+  - "Basic axe check for Button/Badge interactive focus (seed for Sprint 09)."
+
+ciGates:
+  - "Unit tests + axe checks pass."
+  - "No Radix usage outside OODS.* (grep guard optional)."
+
+acceptanceCriteria:
+  - "B3.6/B3.7 consume only OODS.* primitives."
+  - "Keyboard focus and basic a11y behavior verified."
+
+
+# ------------------------------------------------------------
+# B3.6 — User Object Integration
+# ------------------------------------------------------------
+---
+missionId: "B3.6"
+title: "User Object Integration"
+type: "Build"
+objective: "Demonstrate trait→view composition on the simplest canonical object (User)."
+
+sources:
+  - path: "/missions/research/r3.1_Page-Level Region Models.md"
+    anchors:
+      - "## Summary of Key Findings"
+  - path: "/missions/research/r3.2_Pure Modifier Pattern.md"
+    anchors:
+      - "## The Determinism Mandate"
+
+assumptions:
+  - "Traits available or stubbed: Timestampable, Stateful, Taggable."
+  - "Each trait exports view(ctx): ViewExtension[]; trait logic stays pure (no hooks)."
+
+tasks:
+  - "Define /objects/User.object.yaml including schema (id, name, email, created_at, status, tags) and traits: Timestampable, Stateful, Taggable."
+  - "Implement trait view renderers:"
+  - |
+      Stateful → header badge:
+      ```ts
+      // traits/Stateful/view.ts
+      return [{
+        id: 'user-status-badge',
+        region: 'header',
+        type: 'section',
+        priority: 40,
+        render: () => <Badge intent={statusToIntent(ctx.data?.status)}>{String(ctx.data?.status)}</Badge>,
+      }];
+      ```
+  - |
+      Timestampable → 'Joined …' in main:
+      ```ts
+      return [{
+        id: 'user-timestamp',
+        region: 'main',
+        type: 'section',
+        priority: 60,
+        render: () => <Text size="sm">Joined {formatDate(ctx.data?.created_at)}</Text>,
+      }];
+      ```
+  - |
+      Taggable → chips in badges:
+      ```ts
+      return (ctx.data?.tags ?? []).map((t: string, i: number) => ({
+        id: `user-tag-${i}`,
+        region: 'badges',
+        type: 'section',
+        priority: 50,
+        render: () => <Badge intent="neutral">{t}</Badge>,
+      }));
+      ```
+  - "Fixtures: src/fixtures/user/{active.json,disabled.json}."
+  - "Stories (or Ladle): list/detail/form/timeline/card/inline for both fixtures."
+
+artifacts:
+  - "/objects/User.object.yaml"
+  - "src/traits/{Stateful,Timestampable,Taggable}/view.ts"
+  - "src/fixtures/user/*.json"
+  - "stories/User.*.tsx (or src/stories/User.*.tsx)"
+
+tests:
+  - "Before/after: adding Taggable only changes badges region (snapshot)."
+  - "All contexts render without touching context templates."
+
+ciGates:
+  - "Snapshots stable."
+  - "ESLint — no-hooks-in-modifiers: pass for trait views."
+
+acceptanceCriteria:
+  - "Adding/removing trait updates UI by composition alone."
+  - "Deterministic snapshots for identical data."
+
+
+# ------------------------------------------------------------
+# B3.7 — Subscription Object Integration
+# ------------------------------------------------------------
+---
+missionId: "B3.7"
+title: "Subscription Object Integration"
+type: "Build"
+objective: "Stress-test state, temporal, and money semantics: badges, banners, actions, and a simple billing timeline."
+
+sources:
+  - path: "/missions/research/r3.1_Page-Level Region Models.md"
+    anchors:
+      - "## Recommendations for the OODS Canonical Region Set"
+  - path: "/missions/research/r3.2_Pure Modifier Pattern.md"
+    anchors:
+      - "## Canonical Signature and Contract"
+  - path: "/missions/research/subscriptions/The Evolutionary History of Subscription Billing Database Schemas+Divergence in UI+ translation layer problem.md"
+    anchors:
+      - "## The 12 Canonical Fields"
+      - "## UI Divergence Analysis"
+  - path: "/missions/research/subscriptions/subscription-fields-states-ui-mapping.md"
+  - path: "/missions/research/saas-ui/Compositional patterns connecting database schemas to UI in production SaaS.md"
+
+assumptions:
+  - "Fields: status, cancel_at_period_end, current_period_start, current_period_end, amount (minor units), currency (ISO 4217)."
+
+tasks:
+  - "Define /objects/Subscription.object.yaml with traits: Stateful, Cancellable, Timestampable, Billable."
+  - |
+      Trait renderers:
+      - Stateful → header badge (intent by status).
+      - Cancellable → warning banner in main when cancel_at_period_end=true.
+      - Billable → price line in main, and Update payment action in actions when status=past_due.
+      - Timestampable → 'Renews on …' (current_period_end) in main.
+  - "Timeline context: represent current_period_start → current_period_end with text and a simple proportion bar (CSS)."
+  - "Fixtures: active.json, past_due.json, active_cancel_at_period_end.json."
+  - "Stories: all six contexts × the above states."
+
+artifacts:
+  - "/objects/Subscription.object.yaml"
+  - "src/traits/{Stateful,Cancellable,Timestampable,Billable}/view.ts"
+  - "src/utils/format.ts (formatMoney, formatDate)"
+  - "src/fixtures/subscription/*.json"
+  - "stories/Subscription.*.tsx"
+
+examples:
+  - |
+      format helpers:
+      ```ts
+      export function formatMoney(amount?: number, currency?: string) {
+        if (amount == null || !currency) return '';
+        return new Intl.NumberFormat(undefined, { style: 'currency', currency }).format(amount / 100);
+      }
+      export function formatDate(iso?: string) {
+        if (!iso) return '';
+        return new Date(iso).toLocaleDateString();
+      }
+      ```
+  - |
+      Update payment action (only for past_due):
+      ```ts
+      ...(ctx.data?.status === 'past_due' ? [{
+        id: 'sub-action-update-payment',
+        region: 'actions',
+        type: 'action',
+        priority: 40,
+        render: () => <Button intent="warning">Update payment</Button>,
+      }] : [])
+      ```
+
+tests:
+  - "Each fixture → correct badge/banner/action by state (snapshot)."
+  - "formatMoney/formatDate produce stable strings (snapshot)."
+  - "Timeline includes dates and a visual indicator element."
+
+ciGates:
+  - "All state stories compile and pass snapshots."
+  - "ESLint no-hooks-in-modifiers clean."
+  - "Storybook/Ladle build succeeds."
+
+acceptanceCriteria:
+  - "Semantic state drives badges/actions/banners without editing templates."
+  - "Timeline conveys the current billing cycle clearly."
+
+
+# ------------------------------------------------------------
+# B3.8 — Polish & Docs (Sprint 03 DoD)
+# ------------------------------------------------------------
+---
+missionId: "B3.8"
+title: "Polish & Docs (Sprint 03 DoD)"
+type: "Build"
+objective: "Harden the slice, document the contract, and ship a minimal internal demo page."
+
+sources:
+  - path: "/OODS Foundry — Technical Architecture & Build Roadmap.md"
+    anchors:
+      - "Definition of Done (DoD)"
+  - path: "/missions/research/r3.1_Page-Level Region Models.md"
+    anchors:
+      - "## Final Assessment: Is 11 Regions Optimal?"
+  - path: "/missions/research/r3.2_Pure Modifier Pattern.md"
+    anchors:
+      - "## Governance and Implementation Blueprint"
+
+assumptions:
+  - "Edge-case handling does not require new regions; banners remain content inside main."
+
+tasks:
+  - "Edge-cases: empty/error/loading — contexts render without throwing; trait view failures are caught/logged in debug."
+  - "Performance smoke: render ListView with 100 User rows; measure local render time (<100ms target)."
+  - "Docs:"
+  - "  - docs/specs/regions.md — final list; mapping from old 11→new set; examples (banners live inside main)."
+  - "  - docs/patterns/modifier-purity.md — author checklist and rules."
+  - "Internal demo:"
+  - |
+      scripts/demo/sprint03.tsx — render User & Subscription across all six contexts:
+      - At least one User fixture (active)
+      - Three Subscription states (active, past_due, active+cancel_at_period_end)
+      - Enable debug to show region/extension report side-by-side.
+
+artifacts:
+  - "scripts/demo/sprint03.tsx (or pages/dev/sprint03.tsx)"
+  - "docs/specs/regions.md"
+  - "docs/patterns/modifier-purity.md"
+  - "README update: link to docs + demo script"
+
+examples:
+  - |
+      Demo scaffold:
+      ```tsx
+      import { RenderObject } from '@/components/RenderObject';
+      import userActive from '@/fixtures/user/active.json';
+      import subActive from '@/fixtures/subscription/active.json';
+      import subPastDue from '@/fixtures/subscription/past_due.json';
+      import subCancel from '@/fixtures/subscription/active_cancel_at_period_end.json';
+
+      export function Sprint03Demo() {
+        const contexts: ContextKind[] = ['list','detail','form','timeline','card','inline'];
+        return (
+          <div className="grid gap-8 p-6">
+            {contexts.map(ctx => (
+              <section key={`u-${ctx}`}>
+                <h2>User — {ctx}</h2>
+                <RenderObject object={UserSpec} context={ctx} data={userActive} debug />
+              </section>
+            ))}
+            {[subActive, subPastDue, subCancel].map((data, i) => (
+              <section key={`s-${i}`}>
+                <h2>Subscription — {data.status}</h2>
+                <RenderObject object={SubscriptionSpec} context="detail" data={data} debug />
+              </section>
+            ))}
+          </div>
+        );
+      }
+      ```
+
+tests:
+  - "Perf smoke: 100-row ListView render under target (dev-time assertion/log)."
+  - "Docs presence checks (existence + basic link validation)."
+  - "Demo builds without TS errors."
+
+ciGates:
+  - "Docs present and referenced in README."
+  - "Demo compiles (tsc + bundler)."
+  - "All unit/snapshot tests green."
+
+acceptanceCriteria:
+  - "DoD: adding a trait modifies UI via composition—no manual wiring in templates."
+  - "Region contract & purity docs shipped."
+  - "Demo shows User & Subscription across contexts with debug reports."

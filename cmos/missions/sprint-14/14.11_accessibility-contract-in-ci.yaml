@@ -1,0 +1,70 @@
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+description: "Integrate an accessibility contract into PR CI with actionable diffs."
+author: "Design System Team"
+schema: "./schemas/Implementation.v1.json"
+
+---
+
+missionId: "B14.11"
+objective: >
+  Add a11y checks (axe/ARIA and targeted rules) to PR CI on curated stories with failure messaging,
+  diffs, and links to stories to fix regressions quickly.
+
+context: |
+  This formalizes our accessibility bar. Failures block merges and provide clear remediation guidance.
+
+successCriteria:
+  - "A11y job runs in PR and fails on defined rules; links to stories appear in PR."
+  - "HC and contrast checks integrated with overall a11y summary."
+  - "docs/policies/dark-a11y-coverage.md updated with thresholds/targets."
+  - "PROJECT_CONTEXT.json and diagnostics.json updated."
+
+deliverables:
+  - "testing/a11y/axe.spec.(ts|js)"
+  - "testing/a11y/aria-contract.json  # ruleset"
+  - ".github/workflows/pr-validate.yml  # ensure a11y-contract present"
+  - "docs/policies/dark-a11y-coverage.md"
+  - "docs/testing/integration-strategy.md  # append a11y-contract section"
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  researchFoundation:
+    - finding: "A11y contract and CI policy patterns."
+      sourceMission: "r4.4_ A11y-Contract-and-CI-Policy.md"
+
+  implementationScope:
+    coreDeliverable: |
+      1) Curate stories for a11y
+         - Include focus, keyboard, ARIA states, HC variants.
+      2) CI job
+         - Run axe rules and custom ARIA checks; emit JSON + human summary.
+      3) Failure UX
+         - Post a summary table with links to failed stories; attach artifact JSON.
+
+    outOfScope:
+      - "Manual audits; this is automated coverage only."
+
+  handoffContext:
+    completed:
+      - "A11y contract enforced via CI with clear guidance."
+    interfaces:
+      - "testing/a11y/*"
+      - ".github/workflows/pr-validate.yml"
+    assumptions:
+      - "B14.4 HC/contrast guardrails in place."
+    nextMission: "B14.12 — Docs & guides refresh (internal ops)."
+    blockers:
+      - "Flaky focus order in stories; adjust decorators."
+
+statusWrites:
+  projectContext:
+    path: "PROJECT_CONTEXT.json"
+    updates:
+      - { key: "missions.B14.11", value: "Completed" }
+  diagnostics:
+    path: "diagnostics.json"
+    append:
+      - { mission: "B14.11", a11y: { failures: "$N", storiesChecked: "$S" } }

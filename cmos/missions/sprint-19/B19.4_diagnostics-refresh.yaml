@@ -1,0 +1,54 @@
+# cmos/missions/sprint-19/B19.4_diagnostics-refresh.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251101-194"
+
+objective: >
+  Refresh diagnostics/performance baselines and documentation, aligning state assessment outputs and
+  runbooks for the upcoming private review.
+
+context: |
+  Performance harness work (B18.7/B18.8) introduces new metrics. Before private review we need updated
+  dashboards, docs, and state assessment artifacts that reflect current baselines with clear budgets and
+  remediation guidance.
+
+successCriteria:
+  - "Diagnostics dashboards (artifacts/state/*.json, docs/diagnostics.md) updated with latest baselines."
+  - "Perf harness budgets recorded (compositor ≤7ms, list demo ≤150ms, token transform ≤3s) with evidence."
+  - "State assessment script defaults include new metrics and README instructions."
+  - "Runbooks highlight how to rerun perf/a11y/VR checks before review."
+  - "Guardrail outputs (artifacts/state/guardrails.json, diagnostics.helpers.guardrails, diagnostics.tokens.governance) captured and referenced for reviewer readiness."
+  - "Summary logged in docs/changelog/sprint-19.md."
+
+deliverables:
+  - "Updated diagnostics.json and artifacts/state/* outputs."
+  - "docs/diagnostics/README.md refresh with budgets + troubleshooting."
+  - "Scripts/state-assessment.mjs adjustments (if needed) + README updates covering guardrail/tokens snapshots."
+  - "Changelog note capturing baseline refresh."
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  dependencies:
+    - "Requires B18.7 Performance harness core."
+    - "Requires B18.8 Performance CI integration."
+
+  implementationScope:
+    coreDeliverable: "Accurate diagnostics and perf baselines ready for reviewers."
+    outOfScope:
+      - "New perf features; only baselining/documentation."
+      - "Tooling beyond diagnostics/state assessment."
+
+  handoffContext:
+    completed:
+      - "Diagnostics doc + state artifacts committed."
+      - "Runbook instructions validated (followed once)."
+      - "Known gaps logged if budgets unmet."
+    interfaces:
+      - "scripts/state-assessment.mjs, diagnostics.json, docs/diagnostics/*."
+    assumptions:
+      - "Perf harness instrumentation available from Sprint 18."
+    nextMission: "B20.2 Reviewer kit & walkthroughs."
+    blockers: []

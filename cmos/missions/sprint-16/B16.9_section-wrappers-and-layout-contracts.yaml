@@ -1,0 +1,47 @@
+# cmos/missions/sprint-16/B16.9_section-wrappers-and-layout-contracts.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251020-169"
+
+objective: >
+  Add shared page wrapper decorator and per-story layout parameters to eliminate false wraps/bunching.
+  Keep components pure; fix only story containers.
+
+context: |
+  Page-like demos need spacing/padding tokens; full-bleed surfaces (Banner/PageHeader) need
+  'fullscreen' layout. This ensures consistent presentation without touching component code.
+
+successCriteria:
+  - "withPage decorator created and applied to Statusables and page-like Component demos."
+  - "Banner/PageHeader stories use parameters.layout='fullscreen'."
+  - "Baseline spacing tokens visible (no bunching); open-in-new-tab shows identical layout."
+  - "Axe smoke re-run: 0 violations; spacing contract noted in docs."
+
+deliverables:
+  - ".storybook/decorators/withPage.tsx"
+  - "Updated stories to apply withPage / set layout correctly."
+  - "docs/storybook/layout-contract.md (when to use centered vs fullscreen vs wrapper)."
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  please read researchFoundation:
+    - finding: "Contextual token defaults drive spacing; components remain pure."
+      sourceMission: "cmos/research/r4.3_Contextual-Design-Token-Defaults.md"
+
+  implementationScope:
+    coreDeliverable: "Wrappers + parameters applied; no component CSS changes."
+    outOfScope:
+      - "Overlay portals (handled when S16 overlays land in components)."
+
+  handoffContext:
+    completed:
+      - "Stories render with correct spacing and no faux wrapping."
+    interfaces:
+      - "Decorator imported in story meta for affected sections."
+    assumptions:
+      - "Spacing tokens are available (e.g., --space-*)."
+    nextMission: "BI-20251020-170: Domain Stories Wiring (Subscription/User)."
+    blockers: []

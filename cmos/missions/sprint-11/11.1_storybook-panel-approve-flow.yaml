@@ -1,0 +1,71 @@
+# cmos/missions/sprint-11/11.1_storybook-panel-approve-flow.yaml
+sprint: "11"
+missionId: "B11.1"
+title: "Storybook Agent panel — approval-gated write flow"
+type: "Build.Implementation.v1"
+
+objective: >
+  Implement the approval-gated write flow in the Storybook Agent panel:
+  plan preview → Approve & Apply dialog → execution → summary/error, with a11y-correct focus and SR announcements.
+
+context: |
+  The panel currently supports read-only runs via the HTTP bridge. This mission adds the write flow.
+  All writes remain confined to /artifacts/current-state/YYYY-MM-DD. Default remains DRY-RUN until explicit approval.
+  Diff view defaults to Unified with a Split toggle.
+
+researchFoundation:
+  - "cmos/missions/research/R11.1_Storybook-Approval-UX.md"
+  - "cmos/missions/research/R11.3_Diff-&-Artifact-Presentation.md"
+  - "cmos/missions/research/R11.4_Transcript-Replay-Design.md"
+  - "cmos/missions/research/R11.5_Policy-UX-Guidelines.md"
+
+deliverables:
+  - "/app/apps/explorer/addons/storybook-addon-agent/panel.tsx"
+  - "/app/apps/explorer/addons/storybook-addon-agent/components/DiffViewer.tsx"
+  - "/app/apps/explorer/addons/storybook-addon-agent/components/ArtifactList.tsx"
+  - "/app/apps/explorer/addons/storybook-addon-agent/components/ApproveDialog.tsx"
+  - "/app/apps/explorer/addons/storybook-addon-agent/types.ts"
+  - "/docs/mcp/Panel-UX.md"
+
+states:
+  - "idle"
+  - "planning"
+  - "review"
+  - "awaiting-approval"
+  - "executing"
+  - "summary"
+  - "error"
+
+steps:
+  - "Add state machine in panel.tsx with the above states; expose `dryRun` (default true) and `apply` (gated)."
+  - "Plan phase: call bridge POST /run with { apply:false }, render DiffViewer (Unified default, Split toggle), and ArtifactList."
+  - "ApproveDialog: destructive action copy (`Approve & Apply`); initial focus on Cancel; Esc to close; Enter on primary."
+  - "Execution: call bridge POST /run with { apply:true } only after user confirmation; show progress; disable inputs."
+  - "Summary: show ‘success’ banner with links to transcript.json, bundle_index.json, and key artifacts in the dated folder."
+  - "Error: map bridge/server error codes to human-friendly messages (see R11.5) + Incident ID."
+  - "A11y: announce role='status' messages on phase transitions (plan ready, apply start, apply complete, error)."
+  - "Copy: adopt R11.1 deck; avoid ambiguous verbs; include explicit ‘no changes in preview’ note."
+
+examples:
+  approve_copy: |
+    Title: "Approve & Apply changes?"
+    Body: "You are about to write new artifacts to /artifacts/current-state/YYYY-MM-DD. This action requires approval."
+    Primary: "Approve & Apply"
+    Secondary: "Cancel"
+  sr_announcements: |
+    - "Plan ready. Review the proposed changes."
+    - "Applying approved changes now."
+    - "Run complete. Artifacts available."
+    - "Run failed. See error details."
+
+tests:
+  - "Tab order: Run → DiffViewer → Approve → Cancel; Esc closes dialog; Enter triggers primary."
+  - "Plan call always uses {apply:false}; apply call uses {apply:true} only after approval."
+  - "DiffViewer renders Unified by default and toggles to Split; ArtifactList shows name/size/purpose/sha256."
+  - "Summary contains links to transcript.json and bundle_index.json in the dated artifacts folder."
+  - "Error view shows policy code (e.g., POLICY_DENIED) and Incident ID; focus moved to error heading."
+
+acceptance:
+  - "Panel can preview, approve, and apply a write-capable tool (e.g., reviewKit.create) end-to-end."
+  - "A11y checks pass (focus order, SR announcements, keyboard handling)."
+  - "No write occurs unless Approve is confirmed; artifacts land in /artifacts/current-state/YYYY-MM-DD."

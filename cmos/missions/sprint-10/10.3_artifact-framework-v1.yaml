@@ -1,0 +1,40 @@
+# cmos/missions/sprint-10/10.3_artifact-framework-v1.yaml
+sprint: "10"
+missionId: "B10.3"
+title: "Artifact framework v1 (diagnostics, transcript, bundle index)"
+type: "Build.Implementation.v1"
+
+objective: >
+  Implement standardized artifacts and integrity checks for all tool runs:
+  diagnostics.json (summary), transcript.json (signed/redacted), bundle_index.json (sha256 for each file).
+  Keep daily bundle ≤10 files.
+
+context: |
+  Aligns with Sprint 09 patterns and R10.5 schemas. The MCP server and bridge will use these writers/validators.
+
+researchFoundation:
+  - "cmos/missions/research/R10.5_Artifact-Contracts-&-Reproducibility.md"
+
+deliverables:
+  - "/packages/artifacts/src/schemas/diagnostics.schema.json"
+  - "/packages/artifacts/src/schemas/transcript.schema.json"
+  - "/packages/artifacts/src/schemas/bundle-index.schema.json"
+  - "/packages/artifacts/src/writer.ts"
+  - "/packages/artifacts/src/verify.ts"
+  - "/packages/artifacts/package.json"
+  - "/docs/mcp/Artifacts.md"
+
+steps:
+  - "Define JSON Schemas for diagnostics/transcript/bundle-index per R10.5."
+  - "Implement writer to persist files into /artifacts/current-state/${DATE}/."
+  - "Emit sha256 for every artifact; quick verifier to re-hash and compare."
+  - "Provide helpers to merge multiple diagnostics into one consolidated file."
+
+tests:
+  - "Schemas validate with Ajv; invalid writes rejected."
+  - "verify.ts detects any tampering (sha mismatch)."
+  - "Large runs consolidate into a single diagnostics.json to stay ≤10 files."
+
+acceptance:
+  - "Artifacts created by B10.1 tools are valid against schemas and verified."
+  - "Docs explain fields and ≤10-file guidance."

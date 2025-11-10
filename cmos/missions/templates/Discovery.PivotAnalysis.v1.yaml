@@ -1,0 +1,53 @@
+# pack.yaml - Metadata for the "Pivot Analysis" Domain Pack
+name: "Discovery.PivotAnalysis.v1"
+version: "1.0.0"
+displayName: "Level 5A: Pivot Analysis"
+description: "A 2-3 hour mission to extract a new hypothesis from previous research findings and decide whether to restart the discovery process or abandon the opportunity. Triggered by a 'Pivot/Refine' decision from a Level 4 Synthesis." #
+author: "Your Name/Team"
+schema: "./schemas/PivotAnalysis.v1.json"
+
+---
+
+# Mission File: <original-problem>-pivot.yaml
+
+missionId: "PA-20251004-001"
+
+objective: "To formulate and validate a new, evidence-backed hypothesis by re-examining the findings from the previous research cycle."
+
+context: |
+  This mission is triggered by the Level 4 Synthesis mission <GNG-20251004-001>, which resulted in a 'Pivot/Refine' decision.
+  Pivoting is a crucial, healthy part of the discovery process, preventing investment in a suboptimal direction.
+
+successCriteria:
+  - "The new hypothesis is clearly articulated."
+  - "Existing evidence from prior research is mapped to the new hypothesis."
+  - "A final decision to 'Restart at Level 2' or 'Abandon' is made and justified."
+
+deliverables:
+  - "This completed pivot analysis."
+  - "If restarting, a new Level 2: Problem Definition mission is created."
+
+domainFields:
+  type: "Discovery.PivotAnalysis.v1"
+
+  sourceSynthesisMission: "path/to/<problem-name>-go-no-go.yaml"
+
+  # The key insight that invalidated the original hypothesis or revealed a new opportunity.
+  pivotTrigger: "Finding from R2: Solution Landscape mission showed that while users aren't willing to pay for another filtering tool, three competitors have recently been acquired for their data aggregation capabilities, a feature our system could easily support."
+
+  newHypothesis: "Instead of a search tool, users will pay for a 'compliance dashboard' that aggregates and visualizes audit data from multiple sources, as this is a higher-value, unsolved problem for our target persona."
+
+  # Re-use existing research to test the new hypothesis quickly.
+  evidenceMapping:
+    - originalFinding: "Users are exporting data to analyze in Excel."
+      relevanceToNewHypothesis: "Supports the need for data aggregation and visualization, not just search."
+    - originalFinding: "Budget holders acknowledge the cost of manual compliance."
+      relevanceToNewHypothesis: "The cost is still valid, but the value is in the dashboard/reporting, not the underlying search."
+
+  knowledgeGaps:
+    - "What specific data sources need to be aggregated?"
+    - "What are the most critical visualizations for a compliance dashboard?"
+
+  # The explicit exit gate for the pivot.
+  decision: "Restart at Level 2" # Restart at Level 2 | Abandon
+  justification: "The new hypothesis is supported by several key findings from the original research and aligns better with observed market trends (competitor acquisitions). A new Level 2 mission is required to define the 'Compliance Dashboard' problem specifically."

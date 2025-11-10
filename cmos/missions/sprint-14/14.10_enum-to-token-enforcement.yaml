@@ -1,0 +1,70 @@
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+description: "Enforce enum→token mapping for status/badges across list/detail."
+author: "Design System Team"
+schema: "./schemas/Implementation.v1.json"
+
+---
+
+missionId: "B14.10"
+objective: >
+  Ensure status/badge visuals are driven by an enum→token mapping schema so UI never hardcodes
+  status strings or colors; render consistently across contexts.
+
+context: |
+  Billing and invoice UIs must show statuses via a canonical mapping. This prevents drift when enums evolve.
+
+successCriteria:
+  - "Mapping schema present; lint blocks raw status strings and color literals."
+  - "List/detail/timeline contexts render statuses via tokens."
+  - "docs/domains/billing/*.md updated to reference mapping patterns."
+  - "PROJECT_CONTEXT.json and diagnostics.json updated."
+
+deliverables:
+  - "schemas/ui/status-map.schema.json"
+  - "configs/ui/status-map.json  # actual mapping"
+  - "scripts/lint/enum-to-token.(mjs|ts)"
+  - "docs/domains/billing/forms.md (append mapping section)"
+  - "docs/domains/billing/timeline.md (append mapping section)"
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  researchFoundation:
+    - finding: "Enum→token schema patterns to ensure semantic visuals."
+      sourceMission: "r4.5_SaaS-Enum-to-Token-Mapping-Schema.md"
+
+  implementationScope:
+    coreDeliverable: |
+      1) Schema + config
+         - Define status-map schema; commit mapping for billing/invoice states.
+      2) Lint rule
+         - Check for raw status strings and disallowed color usage near status rendering.
+      3) Stories
+         - Add stories covering all known statuses in list and detail contexts.
+
+    outOfScope:
+      - "Non-billing domains (future)."
+
+  handoffContext:
+    completed:
+      - "Enforced mapping with stories showing coverage."
+    interfaces:
+      - "schemas/ui/status-map.schema.json"
+      - "configs/ui/status-map.json"
+    assumptions:
+      - "Statuses enumerated from domain models."
+    nextMission: "B14.11 — A11y contract in CI."
+    blockers:
+      - "Unknown/legacy statuses; add fallbacks."
+
+statusWrites:
+  projectContext:
+    path: "PROJECT_CONTEXT.json"
+    updates:
+      - { key: "missions.B14.10", value: "Completed" }
+  diagnostics:
+    path: "diagnostics.json"
+    append:
+      - { mission: "B14.10", enums: { mapped: "$N", missing: "$M" } }

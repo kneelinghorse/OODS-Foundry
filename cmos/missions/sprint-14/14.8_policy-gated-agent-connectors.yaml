@@ -1,0 +1,74 @@
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+description: "Enable agent connectors with policy scopes, rate limits, and dry-run approval flow."
+author: "Design System Team"
+schema: "./schemas/Implementation.v1.json"
+
+---
+
+missionId: "B14.8"
+objective: >
+  Safely enable agent connectors (e.g., Claude/OpenAI) with a policy allowlist, per-tool scopes,
+  rate limits, and a dry-run approval flow that logs IncidentIds.
+
+context: |
+  Agents must be able to perform work safely. This mission introduces explicit policy and an approval path
+  before any write operation can proceed.
+
+successCriteria:
+  - "Policy file defines scopes, allowed tools, rate limits, and approval requirements."
+  - "Dry-run produces a proposed diff; approval required to execute; all steps logged with IncidentId."
+  - "CI and Panel respect policy; denial produces friendly error mapped to docs."
+  - "PROJECT_CONTEXT.json and diagnostics.json updated."
+
+deliverables:
+  - "docs/mcp/Policy-Rules.md (updated with scopes/examples)"
+  - "configs/agent/policy.json"
+  - "scripts/agent/approval.(mjs|ts)  # dry-run→approve→execute hooks"
+  - "docs/mcp/Policy-UX.md  # approval UX notes"
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  researchFoundation:
+    - finding: "Policy model, connector enrichment, and error mapping."
+      sourceMission: "docs/mcp/Policy-Rules.md"
+    - finding: "User-facing approval/denial flows."
+      sourceMission: "docs/mcp/Policy-UX.md"
+
+  implementationScope:
+    coreDeliverable: |
+      1) Policy
+         - Define allowlist of tools; path-level scopes; rate limits; required approvals for write actions.
+      2) Dry-run
+         - Generate diffs/artifacts; attach CorrelationId; await approval token.
+      3) Execute
+         - On approval, apply changes; attach IncidentId; persist run log.
+      4) Error mapping
+         - Map denials/timeouts to helpful messages with doc links.
+
+    outOfScope:
+      - "Building new tools; we scope existing connectors."
+
+  handoffContext:
+    completed:
+      - "Connectors are policy-gated with approval flow and logs."
+    interfaces:
+      - "configs/agent/policy.json"
+      - "scripts/agent/approval.(mjs|ts)"
+    assumptions:
+      - "Secrets present; connectors reachable; B14.7 telemetry live."
+    nextMission: "B14.9 — Agent Panel v1.5 (task runner + approvals UI)."
+    blockers:
+      - "Missing secrets; policy misconfiguration."
+
+statusWrites:
+  projectContext:
+    path: "PROJECT_CONTEXT.json"
+    updates:
+      - { key: "missions.B14.8", value: "Completed" }
+  diagnostics:
+    path: "diagnostics.json"
+    append:
+      - { mission: "B14.8", approvals: { requested: "$N", approved: "$A", denied: "$D" } }

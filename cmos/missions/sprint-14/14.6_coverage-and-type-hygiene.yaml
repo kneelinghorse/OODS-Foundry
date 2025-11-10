@@ -1,0 +1,70 @@
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+description: "Restore coverage thresholds and tighten TypeScript/public API hygiene."
+author: "Design System Team"
+schema: "./schemas/Implementation.v1.json"
+
+---
+
+missionId: "B14.6"
+objective: >
+  Fix instrumentation, re-enable coverage thresholds, generate schema-derived types,
+  and enforce contract tests on public APIs for drift detection.
+
+context: |
+  Type/coverage gates increase confidence for refinement work. We also generate types from schemas and
+  add contract tests, reducing runtime regressions.
+
+successCriteria:
+  - "Coverage thresholds restored (e.g., statements/branches/functions/lines agreed targets)."
+  - "Public exports avoid `any`; contract tests pass."
+  - "CI blocks merges on coverage/type violations."
+  - "PROJECT_CONTEXT.json and diagnostics.json updated."
+
+deliverables:
+  - "configs/vitest.config.(ts|js)  # instrumentation fixed"
+  - "scripts/types/generate.(mjs|ts)  # schema→types"
+  - "tests/contracts/**/*.(ts|js)"
+  - "docs/testing/integration-strategy.md  # append coverage/contract notes"
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  researchFoundation:
+    - finding: "Contract tests for public API shape; generated types."
+      sourceMission: "r4.1_DTC-Specification-Maturity-and-Theming-Guardrails.md"
+
+  implementationScope:
+    coreDeliverable: |
+      1) Coverage restore
+         - Repair TS/ESM instrumentation; set thresholds; fail CI on regressions.
+      2) Types generation
+         - Generate types from schemas (tokens/traits/regions); commit artifacts or build-time emit.
+      3) Contract tests
+         - Assert public API surface; diff on changes; require codeowner approval.
+
+    outOfScope:
+      - "Behavioral E2E outside Storybook."
+
+  handoffContext:
+    completed:
+      - "Coverage & type gates enforced; contracts green."
+    interfaces:
+      - "scripts/types/generate.(mjs|ts)"
+      - "tests/contracts/**"
+    assumptions:
+      - "Schemas up to date; B14.2/3 landed."
+    nextMission: "B14.7 — Telemetry + Incident/Correlation IDs (then soak)."
+    blockers:
+      - "Legacy `any` leaking in public API; refactor required."
+
+statusWrites:
+  projectContext:
+    path: "PROJECT_CONTEXT.json"
+    updates:
+      - { key: "missions.B14.6", value: "Completed" }
+  diagnostics:
+    path: "diagnostics.json"
+    append:
+      - { mission: "B14.6", coverage: { statements: "$S", branches: "$B", functions: "$F", lines: "$L" } }

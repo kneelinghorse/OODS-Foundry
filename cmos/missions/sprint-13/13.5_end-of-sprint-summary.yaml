@@ -1,0 +1,27 @@
+# cmos/missions/sprint-13/13.9_end-of-sprint-summary.yaml
+sprint: "13"
+missionId: "B13.9"
+title: "End-of-Sprint Summary & Health Snapshot (Sprint 13)"
+type: "Build.Implementation.v1"
+
+objective: >
+  Produce a concise, decision-ready summary for Sprint 13 and a consolidated diagnostics snapshot,
+  stored under /artifacts/current-state/YYYY-MM-DD/. Cap the folder at ≤10 files.
+
+
+deliverables:
+  - "/artifacts/current-state/YYYY-MM-DD/sprint-13-summary.md"
+  - "/artifacts/current-state/YYYY-MM-DD/diagnostics.json"
+
+steps:
+  - "Run diag.snapshot with domain section (billing counts, stories, enum coverage, mapping integrity)."
+  - "Write sprint-13-summary.md (scope delivered, metrics, risks, inputs to Sprint 14)."
+  - "Validate ≤10 files in the dated folder; inline tables if needed."
+
+tests:
+  - "diagnostics.json contains billing keys (enum coverage %, fixtures used, story counts)."
+  - "Links in summary resolve to files in the same folder."
+  - "Artifact count validator passes (≤10)."
+
+acceptance:
+  - "Summary + diagnostics saved; ready inputs to plan Sprint 14."

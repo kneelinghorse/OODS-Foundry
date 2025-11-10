@@ -1,0 +1,53 @@
+# cmos/missions/sprint-11/11.3_panel-diff-and-artifacts-ui.yaml
+sprint: "11"
+missionId: "B11.3"
+title: "Panel UI components — Diff + Artifact list (accessible, virtualized)"
+type: "Build.Implementation.v1"
+
+objective: >
+  Build reusable panel components to present plan diffs and run artifacts:
+  Unified/Split diff with folding for unchanged hunks, semantic JSON diff mode,
+  and an accessible ArtifactList (name, size, purpose, sha256, open link).
+
+context: |
+  Render performance matters; adopt virtualization for large outputs. Links must open the dated artifacts folder.
+  Keep keyboard/screen-reader support high and CSS minimal.
+
+researchFoundation:
+  - "cmos/missions/research/R11.3_Diff-&-Artifact-Presentation.md"
+  - "cmos/missions/research/R11.1_Storybook-Approval-UX.md"
+
+deliverables:
+  - "/app/apps/explorer/addons/storybook-addon-agent/components/DiffViewer.tsx"
+  - "/app/apps/explorer/addons/storybook-addon-agent/components/ArtifactList.tsx"
+  - "/app/apps/explorer/addons/storybook-addon-agent/styles/panel.css"
+  - "/docs/mcp/Panel-Components.md"
+
+diff_spec:
+  default_mode: "Unified"
+  toggle: "Split"
+  json_mode: "semantic (keys sorted, ignore whitespace-only)"
+  folding: "collapse unchanged hunks; expand on demand"
+  virtualization: "windowed list for large diffs"
+
+artifact_spec:
+  columns: ["name","size","purpose","sha256","open"]
+  hash_display: "short (first 8 chars) with 'copy full' button"
+  link_behavior: "target=_blank to /artifacts/current-state/YYYY-MM-DD/... (no data URLs)"
+  a11y: "table markup; row focus; keyboard copy for hash"
+
+steps:
+  - "Implement DiffViewer with Unified default; include Switch to Split and JSON semantic mode."
+  - "Add folding controls with counts of hidden lines; ensure SR labels (e.g., '10 unchanged lines collapsed')."
+  - "Implement virtualized rendering to keep panel responsive for large diffs."
+  - "ArtifactList: render accessible table, copy-to-clipboard for sha256; open links in new tab."
+  - "Add minimal CSS (panel.css) for spacing, focus rings, and scroll behavior."
+
+tests:
+  - "Keyboard can reach all controls; SR reads collapsed/expanded states."
+  - "Large diffs remain responsive (virtualization exercised in test fixture)."
+  - "Artifact links resolve to dated folder paths; copy hash copies the full value."
+
+acceptance:
+  - "Panel shows clear, performant diff and artifact listings with strong a11y."
+  - "No inline data URIs or unsafe URL constructions."

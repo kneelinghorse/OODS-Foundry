@@ -1,0 +1,58 @@
+# cmos/missions/sprint-19/B19.5_github-pages-storybook.yaml
+name: "Build.Release.v1"
+version: "1.0.0"
+displayName: "Release Mission"
+
+missionId: "BR-20251101-195"
+
+objective: >
+  Publish the Storybook static build to GitHub Pages using an automated GitHub Actions workflow so
+  stakeholders can browse the design system without cloning the repository.
+
+context: |
+  Research mission R19.5 compared hosting options and surfaced GitHub Pages as the simplest short-term
+  solution for public access. We need a lightweight deployment pipeline that builds Storybook on each
+  main-branch change, pushes the static bundle to Pages, and documents how maintainers monitor and update
+  the display site. This mission keeps the footprint minimal while leaving room to pivot to Chromatic or
+  other managed platforms if governance needs evolve.
+
+successCriteria:
+  - "GitHub Actions workflow builds Storybook and publishes to GitHub Pages on main branch updates."
+  - "Pages configuration uses the modern artifact deployment model (no checked-in storybook-static)."
+  - "Docs explain how to trigger deploys, validate the hosted Storybook, and recover from failures."
+  - "Link to the hosted site added to the project README or docs index for quick discovery."
+
+deliverables:
+  - ".github/workflows/deploy-storybook.yml (or equivalent) with caching and artifact deployment."
+  - "Repository Pages settings configured for Actions with deployment status documented."
+  - "docs/display-site/README.md (or update to existing docs) describing usage and maintenance."
+  - "Status note in docs/changelog/sprint-19.md summarizing the deployment."
+
+domainFields:
+  type: "Build.Release.v1"
+
+  researchFoundation:
+    - finding: "GitHub Pages offers zero-cost public hosting with minimal setup; private preview not required."
+      sourceMission: "cmos/missions/research/R19.5_Low-Maintenance-Storybook-Hosting-Strategy.md"
+
+  releaseScope:
+    includes:
+      - "GitHub Actions workflow to build Storybook and upload to Pages."
+      - "Custom domain or URL configuration (if needed) and caching headers."
+      - "Documentation and smoke validation of the deployed Storybook."
+    excludes:
+      - "Advanced access control or review workflows (Chromatic/Vercel remain future pivots)."
+      - "Full marketing site or additional content beyond Storybook."
+
+  handoffContext:
+    completed:
+      - "Workflow merged to main and deployment verified."
+      - "Docs updated with deployment and troubleshooting guidance."
+      - "Storybook URL shared in README/docs for stakeholders."
+    interfaces:
+      - ".github/workflows/*"
+      - "storybook-static build output"
+    assumptions:
+      - "GitHub repository has Pages enabled and can serve from Actions deploys."
+    nextMission: "None (future pivot to managed hosting tracked separately)."
+    blockers: []

@@ -1,0 +1,65 @@
+# cmos/missions/sprint-17/B17.2_tenancy-strategy-scaffold.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251024-172"
+
+objective: >
+  Codify the bridge tenancy strategy—document pooled vs isolated modes, wire configuration toggles,
+  and deliver seed + test harnesses that exercise tenant boundaries for core services.
+
+context: |
+  Sprint 17 research stresses deliberate tenancy (shared schema vs dedicated) as an early divergence
+  decision (cmos/docs/OODS Direction-Check-for-sprint-17.md:26; cmos/Industry-Research/
+  R1.4_[1.1+1.2+1.3-linear]_Convergent Gravity and Divergent Forces-An Architectural Analysis of
+  Modern Data Model Patterns.md:84-108). With the compliance core in place, we now formalize tenancy:
+  define TENANCY.md at repo root, expose configuration via env toggles (e.g. OODS_TENANCY_MODE),
+  implement a tenancy context helper used by services (RBAC, billing, usage ingest), and create seed
+  + e2e harnesses validating isolation. This scaffolding becomes prerequisite for the billing ACL and
+  future domain packs.
+
+successCriteria:
+  - "TENANCY.md documents bridge model trade-offs, migration guidance, and operational runbooks."
+  - "Configuration layer exposes explicit tenancy modes (shared-schema, schema-per-tenant, external adapter) with validation."
+  - "TenantContext helper ensures every data access path receives tenantId and enforces row-level filters / schema switching."
+  - "Seed scripts provision sample tenants across modes; e2e tests cover cross-tenant isolation + fail-fast on leakage."
+  - "CI job (`tenancy:check`) runs in both shared and isolated modes to prevent regressions."
+
+deliverables:
+  - "Docs/TENANCY.md with diagrams + migration playbooks."
+  - "config/tenancy.ts + runtime env validation (zod schema)."
+  - "TenancyContext helper in src/services/tenancy/, wrappers for Prisma/ORM queries."
+  - "Seeds + tests under tests/tenancy/{shared.spec.ts,isolated.spec.ts}."
+  - "CI workflow or pnpm script to execute tenancy matrix runs."
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  researchFoundation:
+    - finding: "Tenancy must be explicit, documented bridge model."
+      sourceMission: "cmos/docs/OODS Direction-Check-for-sprint-17.md"
+    - finding: "Multi-tenant architectural patterns and trade-offs."
+      sourceMission: "cmos/Industry-Research/R1.4_[1.1+1.2+1.3-linear]_Convergent Gravity and Divergent Forces- An Architectural Analysis of Modern Data Model Patterns.md"
+    - finding: "Subscription/billing models expect clean tenant context."
+      sourceMission: "cmos/missions/research/R13.5_Canonical-Model-Subscription-and-Invoice.md"
+
+  implementationScope:
+    coreDeliverable: "Tenancy configuration, context helper, seeds/tests proving isolation across shared + isolated modes."
+    outOfScope:
+      - "Migration tooling for live customer data (future operations mission)."
+      - "Per-tenant role provisioning UI (dependent on B17.1)."
+
+  handoffContext:
+    completed:
+      - "TENANCY.md committed with diagrams + FAQ."
+      - "OODS_TENANCY_MODE env + validation; TenancyContext exported."
+      - "Seeds `pnpm tenancy:seed` and tests `pnpm tenancy:test` cover shared vs isolated."
+    interfaces:
+      - "withTenantContext<T>(tenantId, fn): Promise<T>"
+      - "TenantContext.getCurrentTenant(): TenantRef"
+    assumptions:
+      - "Underlying database is Postgres with schema support; row-level security configurable."
+      - "CI can spin up database twice for mode matrix tests."
+    nextMission: "BI-20251024-173: Billing ACL v1 — Provider adapters."
+    blockers: []

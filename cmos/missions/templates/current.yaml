@@ -1,0 +1,115 @@
+# This mission uses the 'Build.Implementation.v1' Domain Pack.
+
+missionId: "B3.1"
+
+objective: "Implement the template extraction tool that converts successful missions into reusable templates using the three-stage hybrid algorithm defined in research mission R3.1."
+
+context: |
+  This is the first mission of Sprint 3, focusing on the Extension System.
+  It implements the core logic for turning a completed mission file into a reusable, parameterized template.
+  This capability is foundational for scaling the UMF ecosystem.
+
+successCriteria:
+  - "The three-stage hybrid extraction algorithm is implemented according to R3.1 specifications."
+  - "All unit tests are passing with >90% code coverage."
+  - "The `extract_template` MCP tool is functional and accessible."
+  - "The handoff context is fully populated for the next mission (B3.2)."
+  - "The `completionProtocol` checklist is fully executed."
+
+deliverables:
+  - "File: app/src/extraction/template-extractor.ts"
+  - "File: app/src/extraction/types.ts"
+  - "File: app/src/tools/extract-template.ts"
+  - "Tests: app/tests/extraction/template-extractor.test.ts"
+  - "Tests: app/tests/tools/extract-template.test.ts"
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  researchFoundation:
+    - finding: "Use three-stage hybrid extraction: 1) Automated Candidate ID, 2) Automated Parameterization, 3) Human-in-the-Loop Refinement."
+      sourceMission: "R3.1_template-extraction-patterns.md"
+    - finding: "Target performance of <15 seconds for automated stages."
+      sourceMission: "R3.1_template-extraction-patterns.md"
+    - finding: "Output must be Jinja2-compatible with metadata schema as TypeScript interfaces."
+      sourceMission: "R3.1_template-extraction-patterns.md"
+    - finding: "Use AST-based structural hashing and frequency analysis for pattern detection."
+      sourceMission: "R3.1_template-extraction-patterns.md"
+      
+  implementationScope:
+    coreDeliverable: "A TypeScript class `TemplateExtractor` and the `extract_template` MCP tool."
+    outOfScope:
+      - "Multi-mission pattern detection (future enhancement)."
+      - "AI-powered extraction (manual patterns only for now)."
+      - "Full UI for human-in-the-loop stage (basic CLI interface only)."
+    
+    # Preserving the detailed schema definitions from your original file.
+    keySchemas:
+      - name: "TemplateExtractor Class Interface"
+        language: "typescript"
+        content: |
+          /**
+           * Stage 1: Automated Candidate Identification
+           */
+          class TemplateExtractor {
+            identifyCandidates(missionPath: string): CandidateMap;
+
+            /**
+             * Stage 2: Automated Parameterization & Logic Inference
+             */
+            generateTemplate(candidates: CandidateMap): ExtractedTemplate;
+
+            /**
+             * Extract metadata for template catalog
+             */
+            extractMetadata(template: ExtractedTemplate): TemplateMetadata;
+          }
+      - name: "Template Metadata Schema"
+        language: "typescript"
+        content: |
+          interface TemplateParameter {
+            type: 'string' | 'number' | 'boolean' | 'choice';
+            description: string;
+            default?: any;
+            required: boolean;
+          }
+
+          interface TemplateMetadata {
+            templateId: string;
+            name: string;
+            description: string;
+            parameters: Record<string, TemplateParameter>;
+            sourceMissionId?: string;
+          }
+
+  validationProtocol:
+    - validator: "Automated Tests"
+      focus: "Run all unit and integration tests for the extraction feature."
+      command: "npm test -- extraction"
+    - validator: "Coverage Check"
+      focus: "Verify test coverage exceeds 90%."
+      command: "npm run coverage"
+    - validator: "Manual Tool Test"
+      focus: "Test the 'extract_template' MCP tool via the Claude Desktop environment after server restart."
+
+  # A new section to formalize your end-of-mission process.
+  completionProtocol:
+    - step: "Update missions/backlog.md: Mark B3.1 as complete and B3.2 as current."
+    - step: "Update missions/current.md: Replace file content with mission details for B3.2."
+    - step: "Update PROJECT_CONTEXT.json: Set B3.1 status to 'complete' and B3.2 to 'in_progress'."
+    - step: "Update AI_HANDOFF.md: Move B3.1 to 'Recent Completions' and detail B3.2 as the new current mission."
+    - step: "Commit all changes with a standardized message (e.g., 'feat(extraction): complete mission B3.1')."
+
+  handoffContext:
+    completed:
+      - "Three-stage hybrid extraction algorithm implemented."
+      - "AST-based analysis with frequency detection."
+      - "`extract_template` MCP tool is functional."
+      - "Files created: app/src/extraction/*, app/tests/extraction/*"
+    interfaces:
+      - "Class: `TemplateExtractor`"
+      - "MCP Tool: `extract_template(missionFile, templateName, author)`"
+    assumptions:
+      - "Parameterization rules from R3.1 are sufficient for initial implementation."
+    nextMission: "B3.2: Import/Export System"
+    blockers: []

@@ -1,0 +1,66 @@
+# pack.yaml - Metadata for the "Research Orchestrator" Domain Pack
+name: "Discovery.ResearchOrchestrator.v1"
+version: "1.0.0"
+displayName: "Level 3: Research Orchestrator"
+description: "A 4-6 hour meta-mission to manage the execution of five parallel research sub-missions. Its purpose is to gather comprehensive evidence across multiple dimensions (Problem, Solution, Tech, Market, Economics) to inform a go/no-go decision." #
+author: "Your Name/Team"
+schema: "./schemas/ResearchOrchestrator.v1.json"
+
+---
+
+# Mission File: <problem-name>-research-orchestrator.yaml
+
+missionId: "RO-20251004-001"
+
+objective: "To successfully manage and complete five parallel research missions, ensuring that comprehensive, multi-dimensional evidence is gathered for the Level 4 Go/No-Go Synthesis."
+
+context: |
+  This mission is triggered after a successful Level 2 Problem Definition. It is the core evidence-gathering phase of the Progressive Discovery Framework.
+  The principle of parallel execution is critical to prevent confirmation bias and create a diverse set of findings.
+  The output of this mission is the primary input for the Level 4 decision.
+
+successCriteria:
+  - "All five defined sub-missions are moved to a 'Completed' status."
+  - "Each completed sub-mission file is linked correctly in the 'subMissions' list."
+  - "The entire research phase is completed within the 6-hour time box."
+
+deliverables:
+  - "A collection of five completed and validated Research Sub-Mission files."
+
+domainFields:
+  type: "Discovery.ResearchOrchestrator.v1"
+
+  # The validated problem statement from the Level 2 mission.
+  problemStatement: "Compliance Officers waste 5-8 hours per week manually filtering audit logs because the current system lacks date-range and user-specific search capabilities."
+
+  # The list of parallel missions to be executed.
+  subMissions:
+    - missionType: "R1: Problem Validation"
+      objective: "Quantify the pain and frequency of the problem."
+      assignee: "AI-Agent-1"
+      status: "Pending" # Pending | In-Progress | Completed
+      missionFile: "" # Link to the completed sub-mission YAML file.
+
+    - missionType: "R2: Solution Landscape"
+      objective: "Analyze existing solutions and identify market gaps."
+      assignee: "AI-Agent-2"
+      status: "Pending"
+      missionFile: ""
+
+    - missionType: "R3: Technical Feasibility"
+      objective: "Assess implementation challenges and what is newly possible."
+      assignee: "AI-Agent-3"
+      status: "Pending"
+      missionFile: ""
+
+    - missionType: "R4: Market Timing"
+      objective: "Determine if recent changes make the solution viable now."
+      assignee: "Human-Researcher-1"
+      status: "Pending"
+      missionFile: ""
+
+    - missionType: "R5: Willingness to Pay"
+      objective: "Identify the budget holder and calculate potential ROI."
+      assignee: "AI-Agent-4"
+      status: "Pending"
+      missionFile: ""

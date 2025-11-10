@@ -1,0 +1,72 @@
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+description: "Stabilize visual baselines and wire PR previews with automated comments."
+author: "Design System Team"
+schema: "./schemas/Implementation.v1.json"
+
+---
+
+missionId: "B14.5"
+objective: >
+  Establish dependable visual regression (VR) checks on curated stories and automatically publish PR previews,
+  so reviewers can see diffs and run links without checking out the branch.
+
+context: |
+  With tokens, theming, and color guardrails established, we lock in curated baselines. Previews post to PRs.
+  VR failures block merges until acknowledged or baselines updated with documented rationale.
+
+successCriteria:
+  - "Curated baseline stories stored; VR job `vr-test` runs in PR."
+  - "Preview link posted as a PR comment."
+  - "Baseline update workflow documented; VR failures block merge unless reviewers approve baseline refresh."
+  - "PROJECT_CONTEXT.json and diagnostics.json updated."
+
+deliverables:
+  - "testing/vr/baseline/**  # curated baselines"
+  - ".github/workflows/pr-validate.yml  # ensure vr-test present"
+  - "docs/testing/visual-regression.md  # baseline mgmt + approval flow"
+  - "docs/review-kits/brand-a-roundtrip.md  # add VR note if needed"
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  researchFoundation:
+    - finding: "VR toolchain and baseline governance."
+      sourceMission: "r5.4_Visual-Regression-Tooling.md"
+
+  implementationScope:
+    coreDeliverable: |
+      1) Curate stories
+         - Select representative components across states/themes/HC.
+      2) VR job
+         - Ensure deterministic build; upload snapshots; compare to baseline.
+      3) PR previews
+         - Post preview link with commit SHA; include VR summary table.
+      4) Baseline governance
+         - Document when/how to update baselines; require codeowner approval.
+
+    outOfScope:
+      - "End-to-end UI tests outside Storybook scope."
+
+  handoffContext:
+    completed:
+      - "VR and previews integrated; curated baselines established."
+    interfaces:
+      - "testing/vr/baseline/**"
+      - ".github/workflows/pr-validate.yml"
+    assumptions:
+      - "B14.1 PR-first in place; secrets set for preview hosting."
+    nextMission: "B14.6 — Coverage & type hygiene."
+    blockers:
+      - "Non-deterministic builds; flaky snapshot diffs."
+
+statusWrites:
+  projectContext:
+    path: "PROJECT_CONTEXT.json"
+    updates:
+      - { key: "missions.B14.5", value: "Completed" }
+  diagnostics:
+    path: "diagnostics.json"
+    append:
+      - { mission: "B14.5", vr: { stories: "$N", changed: "$C" }, preview: "$URL" }

@@ -1,0 +1,57 @@
+# cmos/missions/sprint-15/B15.3_component-scaleout-inputs-tables.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251019-153"
+
+objective: >
+  Implement core form inputs (TextField, Select, Checkbox) and a basic data Table with
+  standardized field contracts, validation wiring, focus/HC resilience, and brand/theme parity.
+
+context: |
+  Inputs and tables are representative surfaces that harden label/description/validation patterns,
+  focus visibility in HC, and density via spacing tokens. They reuse the centralized status mapping.
+
+successCriteria:
+  - "All inputs expose: id, label, description, validation { state, message, id }."
+  - "aria-describedby correctly associates descriptions + validation messages."
+  - "Focus ring visible in HC; no literal colors used for states."
+  - "Table supports keyboard nav, row selection via aria-selected and visible focus."
+  - "Axe checks pass for curated stories; VR matrices cover compact/comfortable densities."
+  - "Unit tests cover validation ARIA wiring; Playwright tabs through form and verifies SR text."
+
+deliverables:
+  - "TextField, Select, Checkbox; Table (Row/Cell/Header); stories for densities and status-in-cell."
+  - "Shared validation utils and status mapping reuse."
+  - "Unit + Playwright tests; docs: /docs/components/forms.md and /docs/components/table.md."
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  read for context: researchFoundation:
+    - finding: "Use data-attribute scoping for modes; tokens drive densities and focus."
+      sourceMission: "cmos/missions/research/r4.3_Contextual-Design-Token-Defaults"
+    - finding: "Centralized validation status mapping—no component-local intent decisions."
+      sourceMission: "cmos/missions/research/r4.5_SaaS-Enum-to-Token-Mapping-Schema"
+    - finding: "HC resilience requires outlines/borders; avoid shadow-only focus."
+      sourceMission: "cmos/missions/research/r4.4_A11y-Contract-and-CI-Policy"
+
+  implementationScope:
+    coreDeliverable: >
+      Implement three inputs + base Table with density tokens, ARIA wiring, and status reuse.
+      (TextArea/Radio/Switch can follow in B15.6.)
+    outOfScope:
+      - "Data fetching/sorting/virtualization."
+      - "Form schema engines or validation libraries beyond simple helpers."
+
+  handoffContext:
+    completed:
+      - "Inputs + Table implemented; curated VR and axe passes recorded."
+      - "Validation helpers and status mapping shared across components."
+    interfaces:
+      - "Validation API: { state: 'error'|'success'|'info', message?: string, id?: string }."
+    assumptions:
+      - "Consumers will supply unique ids and accessible labels."
+    nextMission: "BI-20251019-154: Token governance to protect these components across brands."
+    blockers: []
