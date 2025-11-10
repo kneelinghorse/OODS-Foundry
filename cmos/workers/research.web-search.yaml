@@ -1,0 +1,55 @@
+name: "WorkerTemplate"
+version: "1.0.0"
+worker:
+  id: "research.web-search"
+  role: "Web Research Specialist"
+  description: "Executes targeted web research with source validation and structured note taking."
+  patternCompatibility:
+    supports:
+      - delegation
+      - boomerang
+    maxParallelTasks: 2
+    contextIsolation: true
+  responsibilities:
+    - "Expand mission context with high-confidence public sources"
+    - "Validate provenance and capture citation metadata"
+    - "Summarize findings for downstream agents"
+  inputs:
+    - name: "research_brief"
+      description: "Structured request from parent mission"
+    - name: "mission_context"
+      description: "Current mission state and hypotheses"
+  outputs:
+    - name: "sources"
+      description: "Curated references with annotations"
+    - name: "insights"
+      description: "Actionable findings normalized for agent consumption"
+  orchestrationControls:
+    retryPolicy:
+      tier_1_automatic_retry:
+        conditions:
+          - network_errors
+          - worker_timeout
+        maxAttempts: 1
+      tier_2_pattern_threshold:
+        condition: "delegation_failures"
+        threshold: 2
+      tier_3_fallback_to_linear:
+        enabled: true
+        behavior: "Return control to parent agent with partial findings"
+      tier_4_human_escalation:
+        required: true
+        note: "Flag for manual review when fallback triggered"
+    telemetry:
+      stream: "telemetry/events/{{ mission_id }}.jsonl"
+      emit:
+        - event: worker_dispatch
+          when: "Worker receives task"
+        - event: worker_complete
+          when: "Worker returns results to parent"
+        - event: worker_error
+          when: "Failure occurs prior to fallback"
+  qualityGates:
+    - "Validate at least 3 independent sources when available"
+    - "Ensure citations include access timestamp"
+    - "Redact sensitive or private data before returning"

@@ -1,0 +1,87 @@
+manifest_version: "1.0.0"
+pattern_support:
+  mutually_exclusive: true
+  allowed_patterns:
+    - rsip
+    - delegation
+    - boomerang
+  fallback_pattern: none
+workers:
+  - workerId: "research.web-search"
+    name: "Web Research Worker"
+    description: "Conducts focused web research on specific topics"
+    template_path: "workers/research.web-search.yaml"
+    capabilities:
+      - web_search
+      - source_validation
+    patterns:
+      supports:
+        - delegation
+        - boomerang
+    constraints:
+      required_tools:
+        - web_fetch
+      max_concurrent: 2
+    telemetry:
+      emits:
+        - worker_dispatch
+        - worker_complete
+  - workerId: "research.code-analysis"
+    name: "Code Analysis Worker"
+    description: "Analyzes code structure and patterns"
+    template_path: "workers/research.code-analysis.yaml"
+    capabilities:
+      - code_analysis
+      - pattern_detection
+    patterns:
+      supports:
+        - delegation
+        - rsip
+    constraints:
+      required_tools: []
+      max_concurrent: 1
+    telemetry:
+      emits:
+        - worker_dispatch
+        - evaluation_complete
+  - workerId: "implementation.frontend"
+    name: "Frontend Implementation Worker"
+    description: "Implements frontend components"
+    template_path: "workers/implementation.frontend.yaml"
+    capabilities:
+      - react
+      - typescript
+      - ui_components
+    patterns:
+      supports:
+        - delegation
+        - boomerang
+    constraints:
+      required_tools:
+        - node
+      max_concurrent: 1
+    telemetry:
+      emits:
+        - worker_dispatch
+        - step_complete
+  - workerId: "implementation.backend"
+    name: "Backend Implementation Worker"
+    description: "Implements backend services"
+    template_path: "workers/implementation.backend.yaml"
+    capabilities:
+      - api
+      - database
+      - services
+    patterns:
+      supports:
+        - delegation
+        - boomerang
+    constraints:
+      required_tools:
+        - node
+        - docker
+      max_concurrent: 1
+    telemetry:
+      emits:
+        - worker_dispatch
+        - step_complete

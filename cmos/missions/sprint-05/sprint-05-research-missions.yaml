@@ -1,0 +1,258 @@
+# Sprint 05 — Research Missions (R5.1–R5.5)
+# Format: Build.TechnicalResearch.v1 (single file; you’ll split/launch as needed)
+# All research outputs MUST live under: /missions/research/
+
+# ---------- R5.1 ----------
+missionId: "TR-20251010-R5.1"
+objective: "Specify composite token families (typography, shadow, border) with DTCG-valid structures and SD v4 mapping to CSS/TS/Tailwind."
+context: |
+  Sprint 04 shipped the pipeline and base tokens but lacks composite families. Theme 0 requires stable, addressable composite tokens.
+  This research defines sample DTCG structures, naming/namespace rules, and Style Dictionary v4 transforms so sub-keys remain addressable
+  (e.g., typography.fontSize/lineHeight/fontWeight; shadow.offset/blur/spread/color; border.width/radius/color/style) in CSS variables,
+  TypeScript maps, and Tailwind JSON without lossy flattening.
+successCriteria:
+  - "A single reference document that includes: (1) DTCG examples for typography/shadow/border, (2) naming rules,
+     (3) SD v4 platform config snippets, (4) emitted example outputs (CSS vars, TS, Tailwind JSON), (5) a pass/fail matrix of supported properties."
+  - "Call out any tool limitations and propose safe workarounds (custom transforms or schema conventions)."
+  - "Include copy-paste-ready JSON/CJS snippets we can drop into the repo."
+deliverables:
+  - "/missions/research/r5.1_Composite-Token-Families-and-SD-Mapping.md"
+  - "/missions/research/appendix/r5.1_composites.samples.json"         # minimal DTCG examples for all 3 families
+  - "/missions/research/appendix/r5.1_sd-v4-snippets.cjs"               # platforms/transforms config ready to adapt
+domainFields:
+  type: "Build.TechnicalResearch.v1"
+  researchQuestions:
+    - "What is the recommended DTCG structure for typography, shadow, and border so that sub-keys remain addressable post-build?"
+    - "Which properties are reliably supported by Tokens Studio export and sd-transforms today (per family)?"
+    - "How should we name composite namespaces and leaf keys for clarity and collision-safety (kebab-case, unit semantics)?"
+    - "What Style Dictionary v4 transforms are required to emit (a) CSS custom properties with outputReferences, (b) TS maps, (c) Tailwind JSON?"
+    - "Where are the edge cases (e.g., multiple shadows, mixed units, font tokens), and what safe conventions avoid them?"
+  keyFindings: []
+  contradictionsAndUncertainties: "Document any conflicts between DTCG recommendations, Tokens Studio export shapes, and SD v4 behavior."
+  buildImplications:
+    recommendedAlgorithm: "Adopt strict DTCG composites; use sd-transforms + minimal custom transforms; preserve sub-key addresses in all outputs."
+    performanceTarget: "Build <3s on 2k tokens; zero duplicate var names; stable key paths across platforms."
+    constraintToRespect: "No bespoke schema beyond DTCG core; avoid resolver-dependent features."
+  evidenceCollection:
+    - { type: "Tooling Docs", reference: "Style Dictionary v4 composites, @tokens-studio/sd-transforms", key_insight: "Supported composite shapes & transforms.", confidence: "TBD" }
+    - { type: "Specs", reference: "Design Tokens Community Group (DTCG) guidance on composites", key_insight: "Canonical structures & property semantics.", confidence: "TBD" }
+    - { type: "OSS Examples", reference: "Enterprise SD configs using typography/shadow/border", key_insight: "Known-good patterns & pitfalls.", confidence: "TBD" }
+
+---
+# ---------- R5.2 ----------
+missionId: "TR-20251010-R5.2"
+objective: "Select a Theme 0 color strategy (prefer OKLCH) with AA budgets and a token assignment plan for surface/text/status."
+context: |
+  We need two palette candidates for Theme 0 with provable WCAG 2.2 AA compliance and predictable deltas across contexts.
+  Research should balance perceptual uniformity (e.g., OKLCH) with practical browser support and provide a final assignment
+  table mapping palette swatches to token namespaces: surface.*, text.*, status.{info/success/warning/critical}.{surface,text,icon,border}, focus.ring.*.
+successCriteria:
+  - "Two candidate palettes (A/B) with rationale, hue/luminance ladders, and contrast proofs for all required token pairs."
+  - "A final recommended candidate with a complete token assignment table and change budget guidance (min/max steps to keep AA)."
+  - "Clear notes on how to handle alert/status semantics and focus visibility (≥3:1) across light and future dark modes."
+deliverables:
+  - "/missions/research/r5.2_Theme0-Palette-and-Contrast-Budgets.md"
+  - "/missions/research/appendix/r5.2_palette-option-A.json"
+  - "/missions/research/appendix/r5.2_palette-option-B.json"
+  - "/missions/research/appendix/r5.2_token-assignment-table.csv"
+domainFields:
+  type: "Build.TechnicalResearch.v1"
+  researchQuestions:
+    - "Which base color model (OKLCH vs sRGB/HSL) offers the best control for AA compliance and predictable ramps?"
+    - "What is the recommended number of steps per ramp to cover our use cases (text, surfaces, borders, outlines)?"
+    - "How do we ensure status colors that both communicate state and pass AA across text/surface/icon/border pairs?"
+    - "What guardrails (contrast budgets) should we enforce to keep Theme 0 future-proof for dark/HC modes?"
+  keyFindings: []
+  contradictionsAndUncertainties: "If APCA guidance conflicts with WCAG 2.2 ratios, document tradeoffs and future migration notes."
+  buildImplications:
+    recommendedAlgorithm: "Adopt an OKLCH-based palette with defined AA budgets; publish a token assignment table feeding DTCG tokens."
+    performanceTarget: "A11y check <30s; maintain green baseline; zero new violations when swapping in Theme 0."
+    constraintToRespect: "No component changes; token-only swap; keep outputReferences chaining intact."
+  evidenceCollection:
+    - { type: "Standards/Guidance", reference: "WCAG 2.2 contrast definitions; APCA notes", key_insight: "Compliance targets & pitfalls.", confidence: "TBD" }
+    - { type: "Tooling Docs", reference: "OKLCH usage & browser support notes", key_insight: "Color pipeline considerations.", confidence: "TBD" }
+    - { type: "Design Systems", reference: "Public DS palettes with AA guarantees", key_insight: "Ramps & semantic mapping examples.", confidence: "TBD" }
+
+---
+# ---------- R5.3 ----------
+missionId: "TR-20251010-R5.3"
+objective: "Author a Figma handshake recipe (Tokens Studio or equivalent) for read-only import from repo → exploration → token PR."
+context: |
+  Figma is for exploration; Git/DTCG remains the source of truth. We need a step-by-step process to import our tokens.json,
+  map to Figma Color/Text styles (including composites), build region/context specimens, and produce annotated diffs that
+  become token PRs. The goal is zero drift and a fast loop between Figma and the repo.
+successCriteria:
+  - "A single illustrated recipe (screenshots acceptable) covering: plugin setup, style mapping, composite handling, context specimens,
+     and change-back to Git as a token PR with before/after + contrast proof."
+  - "Naming conventions for Figma Styles that mirror our namespaces; guidance for composite styles (typography, shadows)."
+  - "A round-trip checklist to prevent drift (versioning & sync cadence)."
+deliverables:
+  - "/missions/research/r5.3_Figma-Handshake-Recipe.md"
+  - "/missions/research/appendix/r5.3_mapping-table-figma-styles.csv"   # tokens namespace → Figma style name
+  - "/missions/research/appendix/r5.3_checklist-roundtrip.md"
+domainFields:
+  type: "Build.TechnicalResearch.v1"
+  researchQuestions:
+    - "Which Figma token plugin and import mode best support read-only sync from our tokens.json with minimal friction?"
+    - "How do we represent composite tokens (typography/shadow/border) as Figma styles while preserving sub-key intent?"
+    - "What specimens best mirror our region/context model for quick Theme 0 approvals?"
+    - "How do we annotate Figma proposals so reviewers can turn them into precise token PRs (including contrast proofs)?"
+  keyFindings: []
+  contradictionsAndUncertainties: "Call out plugin limitations (style detaching, alias loss) and workarounds."
+  buildImplications:
+    recommendedAlgorithm: "Adopt a read-only import + annotated-diff workflow; proposals materialize as token PRs with proofs."
+    performanceTarget: "Full sync + specimen refresh in <10 minutes; approval loop <24 hours."
+    constraintToRespect: "Git/DTCG is SoT; no Figma-only style divergence."
+  evidenceCollection:
+    - { type: "Tooling Docs", reference: "Tokens plugin docs & roadmaps", key_insight: "Supported features/limits.", confidence: "TBD" }
+    - { type: "Case Studies", reference: "Teams running Git-as-SoT with Figma bridges", key_insight: "Drift-prevention patterns.", confidence: "TBD" }
+
+---
+# ---------- R5.4 ----------
+missionId: "TR-20251010-R5.4"
+objective: "Decide visual regression tooling (Chromatic vs Playwright+Storycap) and produce ready-to-use base configs."
+context: |
+  We need reliable PR diffs for key stories (Foundations, Contexts, Status Chips). Compare SaaS (Chromatic) with a self-hosted
+  Playwright+Storycap pipeline. Evaluate developer experience, cost, flake mitigation, CI integration, and baseline management.
+successCriteria:
+  - "A comparison matrix with decision criteria (DX, cost, perf, flake handling, CI integration, onboarding time)."
+  - "Ready-to-use base configs for both options, with instructions to create the first baseline and tag critical stories."
+  - "A clear recommendation for Sprint 05 adoption and a fallback path."
+deliverables:
+  - "/missions/research/r5.4_Visual-Regression-Tooling-Decision.md"
+  - "/missions/research/appendix/r5.4_comparison-matrix.csv"
+  - "/missions/research/appendix/r5.4_chromatic.config.yml"
+  - "/missions/research/appendix/r5.4_playwright.config.ts"
+  - "/missions/research/appendix/r5.4_storycap.config.mjs"
+domainFields:
+  type: "Build.TechnicalResearch.v1"
+  researchQuestions:
+    - "What are the tradeoffs between Chromatic and Playwright+Storycap for our scale and budget?"
+    - "How do we tag and snapshot the top 10 stories to maximize coverage with minimal maintenance?"
+    - "What flake-mitigation techniques are recommended (stabilization delays, throttling, forced prefers-reduced-motion)?"
+    - "How do we store/manage baselines (branch protection, artifact retention, PR comments)?"
+  keyFindings: []
+  contradictionsAndUncertainties: "Note any disputes on snapshot thresholds and acceptable deltas; propose defaults."
+  buildImplications:
+    recommendedAlgorithm: "Pick one path; ship base configs + CI wiring in Sprint 05 (B5.5)."
+    performanceTarget: "Snapshot suite ≤90s on CI; false-positive rate <2% post-tuning."
+    constraintToRespect: "No Storybook refactors; snapshots wrap the current stories."
+  evidenceCollection:
+    - { type: "Tooling Docs", reference: "Chromatic & Storybook; Playwright & storycap", key_insight: "Supported APIs & CI recipes.", confidence: "TBD" }
+    - { type: "Community Patterns", reference: "Monorepo CI examples", key_insight: "Caching & flake control.", confidence: "TBD" }
+
+---
+# ---------- R5.5 ----------
+missionId: "TR-20251010-R5.5"
+objective: "Define Dark + High-Contrast theming via CSS var-chaining (outputReferences: true) with a minimal dark seed and AA guardrails."
+context: |
+  We’ll ship Theme 0 (light) now and scaffold Dark/HC next. Research must specify a var-chaining strategy that keeps component
+  code unchanged, a minimal dark seed (surface/text/status/focus), and AA guardrails for key pairs. Include a rollout plan that
+  adds dark tokens incrementally without breaking light mode or the a11y baseline.
+successCriteria:
+  - "A var-chaining diagram showing how dark/HC override only the right layers."
+  - "A minimal dark seed JSON with clearly documented deltas vs Theme 0."
+  - "AA guardrails and a test plan reusing our a11y baseline/diff scripts."
+deliverables:
+  - "/missions/research/r5.5_Dark-and-High-Contrast-Theming-Approach.md"
+  - "/missions/research/appendix/r5.5_theme-tokens.dark.seed.json"
+  - "/missions/research/appendix/r5.5_contrast-guardrails.md"
+domainFields:
+  type: "Build.TechnicalResearch.v1"
+  researchQuestions:
+    - "What is the cleanest CSS var-chaining pattern to introduce dark/HC themes with zero component changes?"
+    - "Which token namespaces must be overridden first (surface/text/status/focus) to reach acceptable parity?"
+    - "How do we test AA in dark/HC quickly (baseline reuse, deltas only)?"
+    - "What pitfalls (overlay elevation, translucency, focus visibility) should we avoid in v1?"
+  keyFindings: []
+  contradictionsAndUncertainties: "If HC and Dark requirements conflict, propose a tie-breaker policy and phased rollout."
+  buildImplications:
+    recommendedAlgorithm: "Keep light as base; layer dark/HC via var-chaining; ship minimal dark seed; validate via a11y diff."
+    performanceTarget: "Theme switch compute cost ~0; no layout shift; zero new AA failures on key components."
+    constraintToRespect: "No runtime JS theme logic beyond adding a data-attribute/class at root."
+  evidenceCollection:
+    - { type: "Standards/Guidance", reference: "WCAG/UAAG notes on dark/high-contrast", key_insight: "Required ratios & focus visibility.", confidence: "TBD" }
+    - { type: "Design Systems", reference: "Public DS dark/HC strategies", key_insight: "Token layering & pitfalls.", confidence: "TBD" }
+
+
+# ---------- R5.6 ----------
+missionId: "TR-20251010-R5.6"
+objective: "Define OKLCH relative-color guardrails for interactive states (hover, active, focus) that preserve WCAG 2.2 AA across light & dark."
+context: |
+  Theme 0 uses OKLCH. We want *relative* adjustments (not extra hard-coded swatches) so that hover/active states are
+  generated predictably from base tokens and continue to pass AA—even after palette changes and in dark mode.
+  Produce validated ΔL/ΔC (and when necessary ΔH) ranges per usage (filled surface, text on surface, outline/focus ring),
+  plus CSS examples using relative color syntax and SD-friendly fallbacks.
+successCriteria:
+  - "A recommended ΔL/ΔC (and optional ΔH) table per usage & theme (light/dark), with pass/fail justification."
+  - "CSS examples using relative color syntax *and* a no-RC fallback (e.g., precomputed SD transform) for older browsers."
+  - "A test matrix proving AA ≥ 4.5:1 (text) / 3:1 (large text & non-text) before & after deltas across status colors."
+deliverables:
+  - "/missions/research/r5.6_Relative-Color-Guardrails-for-Interactive-States.md"
+  - "/missions/research/appendix/r5.6_oklch-deltas.csv"          # rows: usage,theme,ΔL,ΔC,ΔH,minContrast,notes
+  - "/missions/research/appendix/r5.6_calculation-snippets.css"   # RC examples + fallbacks
+  - "/missions/research/appendix/r5.6_test-matrix.json"           # enumerates token pairs & expected contrasts
+domainFields:
+  type: "Build.TechnicalResearch.v1"
+  researchQuestions:
+    - "For OKLCH ramps typical of Theme 0, what ΔL/ΔC ranges keep text-on-surface AA safe after hover/active adjustments?"
+    - "Do status colors (info/success/warning/critical) require different Δ ranges vs neutral surfaces to avoid hue collapse?"
+    - "What relative adjustments keep focus rings ≥ 3:1 against both light & dark surfaces without overshooting?"
+    - "What are robust CSS approaches: relative color syntax (oklch(from …)) vs precomputed SD transforms—when to use each?"
+    - "What browser/support constraints impact RC in production and what is our recommended fallback strategy?"
+  keyFindings: []
+  contradictionsAndUncertainties: "Document any cases where APCA guidance conflicts with WCAG 2.2 ratios; recommend a tie-breaker."
+  buildImplications:
+    recommendedAlgorithm: |
+      - Prefer relative color syntax for hover/active: keep H constant, adjust L & C within validated guardrails.
+      - For CI: compute contrast on base & derived tokens; block PRs when deltas push pairs below AA.
+    performanceTarget: "Guardrail checks run in <30s over all token pairs; zero false negatives on AA violations."
+    constraintToRespect: "No component code changes; deltas are token/transform-level only."
+  evidenceCollection:
+    - { type: "Standards/Guidance", reference: "WCAG 2.2 contrast; OKLCH/relative color syntax notes", key_insight: "Legal contrast targets & RC behavior", confidence: "TBD" }
+    - { type: "Design Systems", reference: "Public OKLCH ramps using RC", key_insight: "Empirical ΔL/ΔC that work in practice", confidence: "TBD" }
+
+---
+
+ ---------- R5.7 ----------
+missionId: "TR-20251010-R5.7"
+objective: "Author a High-Contrast (HC) regression checklist & baseline addendum using forced-colors, with system-color mappings and fallback patterns."
+context: |
+  We will scaffold Dark + HC via CSS var-chaining and @media (forced-colors: active). This research produces a practical
+  audit checklist and a tiny mapping kit so HC never regresses when shadows/elevation disappear. Include patterns like the
+  ‘transparent border’ technique, outline vs border tradeoffs, and focus visibility rules.
+successCriteria:
+  - "A concise, stepwise HC audit checklist covering separation, affordances, focus, links, and states."
+  - "A JSON map from our semantic tokens → CSS System Colors for HC (Canvas, CanvasText, LinkText, Highlight, GrayText, etc.)."
+  - "Demonstrations of three critical patterns: (1) transparent border + currentColor, (2) outline/outline-offset fallbacks,
+     (3) focus ring ≥ 3:1 with and without forced-colors."
+deliverables:
+  - "/missions/research/r5.7_High-Contrast-Regression-Checklist.md"
+  - "/missions/research/appendix/r5.7_system-color-map.json"       # token namespace → system color recommendation
+  - "/missions/research/appendix/r5.7_forced-colors-tests.md"      # manual test script (Windows HC, Edge/Chrome)
+  - "/missions/research/appendix/r5.7_snapshot-list.csv"           # prioritized Storybook stories to snapshot in HC
+domainFields:
+  type: "Build.TechnicalResearch.v1"
+  researchQuestions:
+    - "What CSS strategies ensure element separation when box-shadow is suppressed in forced-colors?"
+    - "When should we use outline vs border for focus/selection under HC, and how do we keep indicator thickness visible?"
+    - "What is the recommended mapping from tokens (surface/text/status/focus) to system colors to maximize legibility?"
+    - "How do we reliably test HC across Windows themes and modern browsers, and integrate that into our a11y baseline/diff?"
+  keyFindings: []
+  contradictionsAndUncertainties: "Note any differences across Windows HC themes and suggest neutral defaults."
+  buildImplications:
+    recommendedAlgorithm: |
+      - In @media (forced-colors: active):
+        • Replace decorative shadows with 1px transparent borders to allow system color painting.
+        • Prefer outline + outline-offset for focus; fall back to border when outline is suppressed.
+        • Map semantic tokens to system colors via the JSON map; avoid absolute hex values.
+      - Extend a11y diff script with an HC pass (opt-in at first) and snapshot top stories in HC.
+    performanceTarget: "HC audit run & snapshots in ≤2 minutes for the top 10 stories."
+    constraintToRespect: "Forced-colors takes precedence over dark; never rely on color alone for affordances."
+  evidenceCollection:
+    - { type: "Standards/Guidance", reference: "forced-colors & system colors docs; WCAG/UAAG notes", key_insight: "Authoring patterns that survive HC", confidence: "TBD" }
+    - { type: "Design Systems", reference: "HC implementations in major DS", key_insight: "Common pitfalls & mitigations", confidence: "TBD" }
+
+
+
+

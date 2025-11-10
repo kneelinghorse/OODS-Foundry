@@ -1,0 +1,40 @@
+# cmos/missions/sprint-13/13.9_type-hygiene-and-schema-locks.yaml
+sprint: "13"
+missionId: "B13.9"
+title: "Type hygiene — schema-derived types, public APIs no `any`, contract tests"
+type: "Build.Implementation.v1"
+
+objective: >
+  Eliminate `any` from public surfaces; generate TypeScript types from JSON Schemas; add contract tests
+  that round-trip input/output payloads through Ajv + TS types; fail build when types/schemas diverge.
+
+context: |
+  Strong contracts are essential for robustness and agent integrations. This mission ensures TS types = schema truth.
+  
+Please read for context research Foundation:
+  - "cmos/missions/research/R13.4_Schema-Driven-Development-in-TypeScript.md"  # schema-first, json-schema-to-typescript, drift-guard, dual-assurance tests :contentReference[oaicite:20]{index=20}
+
+
+deliverables:
+  - "/packages/schemas-tools/src/generate-types.ts"     # json-schema → d.ts
+  - "/packages/schemas-tools/package.json"
+  - "/packages/mcp-server/src/schemas/**/*.json"        # audited; versioned
+  - "/packages/mcp-server/test/contracts/*.spec.ts"     # Ajv + TS round-trip tests
+  - "/docs/mcp/Contracts.md"
+
+steps:
+  - "Add a generator to produce d.ts from JSON Schemas (namespaced per tool)."
+  - "Wire generator into build; fail on drift (git diff or checksum)."
+  - "Audit tool inputs/outputs to remove `any`; export public TS types from packages."
+  - "Add contract tests: sample payloads → validate with Ajv → compile against TS types."
+
+tests:
+  - "`pnpm -w typecheck` passes with no `any` in public exports."
+  - "Contract tests catch a deliberately broken payload (negative control)."
+  - "Generator drift test fails if schema and d.ts are out of sync."
+
+acceptance:
+  - "Public APIs are strongly typed; schemas and types are locked in step; contracts are tested."
+dependencies:
+  - "B10.1"
+  - "B12.3"

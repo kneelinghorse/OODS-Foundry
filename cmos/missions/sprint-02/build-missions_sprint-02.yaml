@@ -1,0 +1,643 @@
+# Sprint 02 - Build Missions: Object Registry & Type Generation
+# Seven focused implementation missions building on Sprint 01 foundations
+# Estimated total time: 28-35 hours (4-5 hours each)
+
+---
+# Mission B1: Object Definition Schema & Parser
+apiVersion: mission.v1
+kind: Mission
+metadata:
+  id: sprint-02-b1-object-schema
+  name: Object Definition Schema & Parser
+  domain: build.implementation
+  priority: critical
+  estimatedHours: 4-5
+  dependencies: ["sprint-01-b1-trait-schema"]
+  
+spec:
+  objective: |
+    Implement the object definition schema and parser that reads *.object.yaml files
+    and converts them into validated, typed object definitions that reference traits
+    for composition.
+
+  context: |
+    Objects compose traits plus add object-specific fields. The object definition format
+    must support trait parameterization, conflict resolution, and metadata while remaining
+    human-readable and maintainable.
+    
+    Objects follow the pattern: extends traits + adds object-specific schema + resolves
+    collisions + provides metadata. This is distinct from trait definitions which provide
+    reusable capabilities.
+
+  technicalRequirements:
+    - Implement ObjectDefinition TypeScript interface
+    - Build YAML parser for *.object.yaml files
+    - Support trait parameterization syntax (trait with parameters)
+    - Handle conflict resolution declarations
+    - Validate object-specific schema doesn't duplicate trait fields
+    - Support optional base object extension
+    - Provide detailed parse errors with line numbers
+
+  implementation:
+    inputSources:
+      - Trait Engine Spec v0.1 (object composition section)
+      - Sprint 01 TraitDefinition interface for reference
+      - Canonical schemas research doc for Universal Quintet patterns
+    
+    coreComponents:
+      - src/registry/object-definition.ts (TypeScript interfaces)
+      - src/parsers/object-parser.ts (YAML → ObjectDefinition)
+      - src/parsers/index.ts (extend unified parser facade)
+    
+    keyAlgorithms:
+      - YAML parsing with trait parameterization syntax
+      - Trait reference extraction and normalization
+      - Conflict resolution parsing
+      - Base object reference handling
+      - Metadata extraction specific to objects
+
+  acceptanceCriteria:
+    - ObjectDefinition interface covers all required fields
+    - Parser successfully reads *.object.yaml files
+    - Trait references with parameters correctly extracted
+    - Conflict resolutions parsed into structured format
+    - Invalid object files produce actionable error messages
+    - Unit tests achieve 90%+ coverage on parser logic
+    - Example objects parse without errors
+
+  deliverables:
+    - src/registry/object-definition.ts with complete interface
+    - src/parsers/object-parser.ts with YAML parser
+    - tests/parsers/object-parser.test.ts with test suite
+    - docs/authoring-objects.md with format examples
+    - 3 example object files (User, Product, Subscription)
+
+  constraints:
+    - Object definitions must not duplicate trait logic
+    - Trait references must be resolvable
+    - Parse errors must include file, line, and field path
+    - Parser must be synchronous for CLI usage
+
+---
+# Mission B2: Object Registry Core
+apiVersion: mission.v1
+kind: Mission
+metadata:
+  id: sprint-02-b2-registry-core
+  name: Object Registry Core
+  domain: build.implementation
+  priority: critical
+  estimatedHours: 5-6
+  dependencies: ["sprint-02-b1-object-schema"]
+  
+spec:
+  objective: |
+    Build the ObjectRegistry that loads, stores, and indexes object definitions,
+    providing search and discovery capabilities across traits, tags, and domains.
+
+  context: |
+    The registry is the central catalog of all object definitions in the system.
+    It must support fast lookup by name, search by trait usage, filtering by tags,
+    and domain-based organization for future domain packs.
+    
+    This is a pure data management component - no composition logic, just efficient
+    storage and retrieval.
+
+  technicalRequirements:
+    - Implement ObjectRegistry class with CRUD operations
+    - Support loading from file system (recursive directory scan)
+    - Build multi-index system (name, trait, tag, domain)
+    - Provide search/filter APIs
+    - Handle versioning metadata
+    - Support watch mode for development (file system watching)
+    - Cache parsed objects for performance
+
+  implementation:
+    inputSources:
+      - Sprint 02 B1 ObjectDefinition interface
+      - File system patterns for recursive loading
+      - Indexing patterns from search engines
+    
+    coreComponents:
+      - src/registry/registry.ts (core ObjectRegistry class)
+      - src/registry/loader.ts (file system loading)
+      - src/registry/indexer.ts (multi-index builder)
+      - src/registry/cache.ts (parsed object caching)
+    
+    keyAlgorithms:
+      - Recursive directory traversal for *.object.yaml
+      - Multi-key indexing (inverted index pattern)
+      - Cache invalidation on file change
+      - Version-aware lookup
+
+  acceptanceCriteria:
+    - Registry loads 20+ objects without errors
+    - Lookup by name: O(1) performance
+    - Search by trait returns all matching objects
+    - Filter by tag works with multiple tags
+    - Domain filtering isolates domain packs
+    - File system watching triggers cache invalidation
+    - Performance: <50ms to load and index 100 objects
+
+  deliverables:
+    - src/registry/registry.ts with full implementation
+    - src/registry/loader.ts with file system logic
+    - src/registry/indexer.ts with search indices
+    - tests/registry/registry.test.ts with comprehensive tests
+    - CLI command: yarn registry:list
+
+  constraints:
+    - Must handle missing trait references gracefully
+    - Indices must stay in sync with data
+    - Cache invalidation must be reliable
+    - File system errors must not crash registry
+
+---
+# Mission B3: Trait Resolution & Parameterization
+apiVersion: mission.v1
+kind: Mission
+metadata:
+  id: sprint-02-b3-trait-resolution
+  name: Trait Resolution & Parameterization
+  domain: build.implementation
+  priority: critical
+  estimatedHours: 5-6
+  dependencies: ["sprint-02-b2-registry-core", "sprint-01-b4-compositor"]
+  
+spec:
+  objective: |
+    Implement the resolver that takes an object definition, loads all referenced traits,
+    applies parameters, and prepares them for composition by the TraitCompositor.
+
+  context: |
+    Object definitions reference traits by name and optionally provide parameters.
+    The resolver must:
+    1. Load trait definitions from the trait library
+    2. Apply object-specific parameters to parameterized traits
+    3. Validate parameter values against trait parameter schemas
+    4. Return a fully-resolved set of TraitDefinition objects ready for composition
+    
+    This bridges objects and traits, handling the parameterization layer.
+
+  technicalRequirements:
+    - Implement resolver that loads traits by name
+    - Apply parameters to trait definitions
+    - Validate parameters against trait parameter schemas (reuse B1 AJV validator)
+    - Handle base object resolution if specified
+    - Support trait aliases/namespacing
+    - Provide detailed error messages for missing traits
+    - Cache loaded traits for performance
+
+  implementation:
+    inputSources:
+      - Sprint 02 B1 ObjectDefinition
+      - Sprint 01 TraitDefinition and parameter schemas
+      - Sprint 01 B6 AJV parameter validator
+    
+    coreComponents:
+      - src/registry/resolver.ts (main resolution logic)
+      - src/registry/trait-loader.ts (load traits from filesystem)
+      - src/registry/parameter-applier.ts (apply params to traits)
+    
+    keyAlgorithms:
+      - Trait loading with caching
+      - Parameter deep merge with trait defaults
+      - Parameter validation using existing AJV infrastructure
+      - Base object recursive resolution
+
+  acceptanceCriteria:
+    - Resolves all trait references in object definition
+    - Parameters correctly applied to trait definitions
+    - Parameter validation catches invalid values
+    - Missing trait references produce clear errors
+    - Base object extension works recursively
+    - Performance: <20ms to resolve 10 traits for one object
+
+  deliverables:
+    - src/registry/resolver.ts with resolution logic
+    - src/registry/trait-loader.ts for trait loading
+    - src/registry/parameter-applier.ts for parameterization
+    - tests/registry/resolver.test.ts with edge cases
+    - Example resolved objects showing parameter application
+
+  constraints:
+    - Must reuse Sprint 01 parameter validation (AJV)
+    - Cannot modify original trait definitions (immutable)
+    - Parameter application must preserve as const types
+    - Trait loading must be lazy (only load referenced traits)
+
+---
+# Mission B4: Object Composition Integration
+apiVersion: mission.v1
+kind: Mission
+metadata:
+  id: sprint-02-b4-composition-integration
+  name: Object Composition Integration
+  domain: build.implementation
+  priority: critical
+  estimatedHours: 4-5
+  dependencies: ["sprint-02-b3-trait-resolution", "sprint-01-b4-compositor"]
+  
+spec:
+  objective: |
+    Integrate the ObjectRegistry with the TraitCompositor, handling conflict resolution
+    declarations and object-specific schema additions to produce fully composed objects.
+
+  context: |
+    This mission connects the dots: ObjectRegistry → Resolver → TraitCompositor.
+    It adds the object-specific logic on top of trait composition:
+    - Applying conflict resolutions from object definition
+    - Merging object-specific schema fields
+    - Preserving object metadata
+    
+    The output is a ResolvedObject that includes the definition, resolved traits,
+    and the final composed result.
+
+  technicalRequirements:
+    - Implement resolve() method on ObjectRegistry
+    - Apply conflict resolutions before composition
+    - Merge object-specific schema after trait composition
+    - Handle view overrides from object definition
+    - Track composition provenance (object fields vs trait fields)
+    - Integrate with existing TraitCompositor from Sprint 01
+
+  implementation:
+    inputSources:
+      - Sprint 02 B3 resolved traits
+      - Sprint 01 B4 TraitCompositor
+      - Object definition conflict resolutions
+    
+    coreComponents:
+      - src/registry/registry.ts (extend with resolve method)
+      - src/registry/object-composer.ts (composition orchestration)
+      - src/registry/conflict-applier.ts (apply resolutions)
+      - src/registry/schema-merger.ts (merge object schema)
+    
+    keyAlgorithms:
+      - Conflict resolution application before composition
+      - Object schema field addition to composed result
+      - Provenance tracking for object vs trait fields
+      - View override merging
+
+  acceptanceCriteria:
+    - resolve() returns complete ResolvedObject
+    - Conflict resolutions correctly applied
+    - Object-specific fields merged without collisions
+    - Composition provenance distinguishes object vs trait fields
+    - View overrides preserved in final result
+    - Performance: <30ms to fully resolve and compose one object
+
+  deliverables:
+    - src/registry/object-composer.ts with orchestration
+    - src/registry/conflict-applier.ts for resolutions
+    - Extended ObjectRegistry with resolve() method
+    - tests/registry/composition-integration.test.ts
+    - Example resolved objects with provenance
+
+  constraints:
+    - Must reuse existing TraitCompositor (no duplication)
+    - Conflict resolutions must be applied before composition
+    - Object fields must not conflict with composed trait fields
+    - Provenance must clearly separate object and trait sources
+
+---
+# Mission B5: Type Generator for Objects
+apiVersion: mission.v1
+kind: Mission
+metadata:
+  id: sprint-02-b5-type-generator
+  name: Type Generator for Objects
+  domain: build.implementation
+  priority: high
+  estimatedHours: 5-6
+  dependencies: ["sprint-02-b4-composition-integration", "sprint-01-b2-type-generator"]
+  
+spec:
+  objective: |
+    Build the type generator that produces TypeScript interfaces from composed objects,
+    preserving literal types from trait parameters and adding JSDoc provenance comments.
+
+  context: |
+    Developers will import generated types like: import { User, Subscription } from '@oods/core'
+    These types must:
+    - Include all fields from composed traits + object-specific fields
+    - Preserve literal union types from trait parameters (as const)
+    - Document which trait provided each field (JSDoc comments)
+    - Be type-safe for IDE autocomplete
+    
+    This extends Sprint 01 B2's trait type generator to handle composed objects.
+
+  technicalRequirements:
+    - Generate TypeScript interface from ResolvedObject
+    - Preserve literal types from trait parameters
+    - Add JSDoc comments with trait provenance (@trait TraitName)
+    - Generate type aliases for status enums
+    - Handle optional vs required fields correctly
+    - Generate barrel export file (index.ts)
+    - Support incremental regeneration (only changed objects)
+
+  implementation:
+    inputSources:
+      - Sprint 01 B2 type generator patterns
+      - Sprint 02 B4 ResolvedObject with provenance
+      - TypeScript compiler API docs (optional)
+    
+    coreComponents:
+      - src/generators/object-type-generator.ts (main generator)
+      - src/generators/templates/object-interface.ts (templates)
+      - src/generators/type-utils.ts (type helper generation)
+      - src/generators/barrel-generator.ts (index.ts creation)
+    
+    keyAlgorithms:
+      - Interface generation from schema fields
+      - Literal type extraction from trait parameters
+      - JSDoc comment generation from provenance
+      - Union type generation for enums
+      - Barrel export aggregation
+
+  acceptanceCriteria:
+    - Generated interfaces compile in TypeScript strict mode
+    - Literal types preserved (status: 'active' | 'inactive')
+    - JSDoc comments show trait source for each field
+    - Autocomplete works in VSCode for all fields
+    - Generated types have zero 'any' types
+    - Barrel export file aggregates all object types
+    - Incremental generation only touches changed objects
+
+  deliverables:
+    - src/generators/object-type-generator.ts
+    - CLI command: yarn generate:objects
+    - generated/objects/ directory with .d.ts files
+    - generated/objects/index.ts barrel export
+    - tests/generators/object-type-generator.test.ts
+    - Example generated types for User, Subscription, Product
+
+  constraints:
+    - Must preserve exact literal types from traits
+    - JSDoc comments required for provenance
+    - Generated code must be human-readable
+    - Must work with TypeScript 5.x strict mode
+
+---
+# Mission B6: Universal Quintet Implementation
+apiVersion: mission.v1
+kind: Mission
+metadata:
+  id: sprint-02-b6-universal-quintet
+  name: Universal Quintet Implementation
+  domain: build.implementation
+  priority: high
+  estimatedHours: 6-7
+  dependencies: ["sprint-02-b1-object-schema", "sprint-01-b8-traits-set-2"]
+  
+spec:
+  objective: |
+    Implement the five core objects (User, Organization, Product, Transaction, Relationship)
+    that appear in virtually all applications, using traits from Sprint 01 plus any new
+    traits needed for these canonical patterns.
+
+  context: |
+    Research document "The canonical building blocks of software" identifies the Universal
+    Quintet that appears in 100% of applications. These objects serve as:
+    - Reference implementations for object authoring
+    - Test cases for composition
+    - Foundation for all domain-specific objects
+    
+    Each object should compose 3-5 traits and add domain-specific fields.
+
+  technicalRequirements:
+    - Implement 5 core objects in *.object.yaml format
+    - Identify and implement any missing traits needed
+    - Compose traits with appropriate parameters
+    - Add object-specific fields per canonical schemas research
+    - Validate all objects parse and compose successfully
+    - Write comprehensive documentation for each object
+
+  implementation:
+    inputSources:
+      - Research doc: "The canonical building blocks of software"
+      - Canonical schemas research (top 20 schemas)
+      - Sprint 01 traits (Stateful, Colorized, Labelled, etc.)
+    
+    objectImplementations:
+      User:
+        traits: [Stateful, Timestampable, Ownerable (self-owned)]
+        fields: [email, username, password_hash, first_name, last_name, last_login]
+        
+      Organization:
+        traits: [Stateful, Timestampable, Ownerable]
+        fields: [name, domain, address, phone, industry, size]
+        
+      Product:
+        traits: [Stateful, Categorizable, Priceable]
+        fields: [name, description, sku, stock_quantity]
+        
+      Transaction:
+        traits: [Stateful, Timestampable, Billable, Ownerable]
+        fields: [user_id, total_amount, payment_method, shipping_address]
+        
+      Relationship:
+        traits: [Stateful, Timestampable]
+        fields: [from_id, to_id, relationship_type]
+    
+    newTraitsNeeded:
+      - Timestampable (created_at, updated_at)
+      - Ownerable (owner_id, ownership tracking)
+      - Categorizable (category_id, categorization)
+      - Priceable (price, currency, pricing)
+      - (Billable already exists from Sprint 01 if applicable)
+
+  acceptanceCriteria:
+    - All 5 objects parse without errors
+    - All objects compose successfully with traits
+    - Generated types compile and provide autocomplete
+    - Each object documented with usage examples
+    - Any new traits follow Sprint 01 trait patterns
+    - Objects match canonical schemas from research
+
+  deliverables:
+    - objects/core/User.object.yaml
+    - objects/core/Organization.object.yaml
+    - objects/core/Product.object.yaml
+    - objects/core/Transaction.object.yaml
+    - objects/core/Relationship.object.yaml
+    - Any new trait definitions needed
+    - Documentation for each object with examples
+    - Generated TypeScript types for all 5 objects
+
+  constraints:
+    - Must match canonical schemas from research
+    - Objects must not duplicate trait logic
+    - Each object should compose 3-5 traits minimum
+    - New traits must follow Sprint 01 authoring patterns
+
+---
+# Mission B7: Registry Integration Tests & CLI
+apiVersion: mission.v1
+kind: Mission
+metadata:
+  id: sprint-02-b7-integration-cli
+  name: Registry Integration Tests & CLI
+  domain: build.implementation
+  priority: high
+  estimatedHours: 4-5
+  dependencies: ["sprint-02-b6-universal-quintet", "sprint-02-b5-type-generator"]
+  
+spec:
+  objective: |
+    Create comprehensive integration tests for the entire object registry pipeline
+    and build CLI commands for object management, type generation, and validation.
+
+  context: |
+    This mission proves Sprint 02 works end-to-end: define object → load into registry
+    → resolve traits → compose → generate types → import in code.
+    
+    The CLI provides the developer interface for working with objects.
+
+  technicalRequirements:
+    - Create integration tests for full pipeline
+    - Build CLI commands for object operations
+    - Test all Universal Quintet objects end-to-end
+    - Validate generated types can be imported
+    - Create performance benchmarks
+    - Document CLI usage
+
+  implementation:
+    inputSources:
+      - All Sprint 02 missions (B1-B6)
+      - Sprint 01 B10 integration test patterns
+      - CLI framework (commander.js or similar)
+    
+    testScenarios:
+      - Load registry → resolve object → compose → generate types
+      - Invalid object definition (parse failure)
+      - Missing trait reference (resolution failure)
+      - Conflict resolution application
+      - Parameter validation failure
+      - Full Universal Quintet composition and type generation
+    
+    cliCommands:
+      - yarn object:create <name> (scaffold new object)
+      - yarn object:validate <file> (validate object definition)
+      - yarn object:list (list all objects in registry)
+      - yarn object:resolve <name> (show resolved object with traits)
+      - yarn object:compose <name> (show composed result)
+      - yarn generate:objects (generate all TypeScript types)
+
+  acceptanceCriteria:
+    - All integration tests pass
+    - CLI commands work for all operations
+    - Universal Quintet fully validated end-to-end
+    - Generated types importable in TypeScript project
+    - Performance benchmarks documented
+    - CLI help text clear and complete
+
+  deliverables:
+    - tests/integration/object-registry.test.ts
+    - tests/integration/type-generation.test.ts
+    - src/cli/object-commands.ts with all commands
+    - docs/cli-reference.md with command documentation
+    - Performance benchmark results
+    - Sprint 02 completion report
+
+  constraints:
+    - Integration tests must use real components (no mocks)
+    - CLI must provide helpful error messages
+    - Performance: full pipeline <100ms per object
+    - All tests must be deterministic
+
+---
+# Sprint 02 Execution Guide
+
+## Recommended Execution Order
+
+### Phase 1: Foundation (Missions B1-B2)
+**Week 1 Days 1-2**
+- B1: Object Definition Schema & Parser
+- B2: Object Registry Core
+
+These establish the core object infrastructure. Complete sequentially.
+
+### Phase 2: Resolution & Composition (Missions B3-B4)
+**Week 1 Days 3-4**
+- B3: Trait Resolution & Parameterization
+- B4: Object Composition Integration
+
+These integrate with Sprint 01 compositor. Complete sequentially.
+
+### Phase 3: Type Generation & Objects (Missions B5-B6)
+**Week 1 Day 5, Week 2 Days 1-2**
+- B5: Type Generator for Objects
+- B6: Universal Quintet Implementation
+
+These can partially overlap. B6 can start while B5 is in progress.
+
+### Phase 4: Integration (Mission B7)
+**Week 2 Days 3-4**
+- B7: Registry Integration Tests & CLI
+
+Final validation that everything works together.
+
+## Parallel Execution Opportunities
+
+Can run in parallel:
+- B5 + B6 (type generator + object implementations)
+
+Must run sequentially:
+- B1 → B2 → B3 → B4 (each depends on previous)
+- B4 → B5 (need composed objects before generating types)
+- B6 after B1 (need parser to write objects)
+- B7 last (needs everything else)
+
+## Success Criteria for Sprint 02
+
+At sprint completion, you must have:
+- ✅ Object definition format specified and parser working
+- ✅ ObjectRegistry loading and indexing objects
+- ✅ Trait resolution with parameterization working
+- ✅ Object composition integrated with TraitCompositor
+- ✅ Type generator producing importable TypeScript types
+- ✅ Universal Quintet (5 core objects) fully implemented
+- ✅ CLI commands for object management
+- ✅ Integration tests passing end-to-end
+- ✅ Generated types importable in TypeScript: import { User } from '@oods/core'
+
+## Time Budget
+
+- **Optimistic:** 28 hours (4 hours/mission average)
+- **Realistic:** 32 hours (4.5 hours/mission average)
+- **Pessimistic:** 35 hours (5 hours/mission average)
+
+Assume 2 week sprint = 10 working days = 50 hours total capacity.
+Sprint 02 lighter than Sprint 01, builds on established patterns.
+
+## Dependencies Visualization
+
+```
+        B1 (Object Schema)
+         |
+        B2 (Registry Core)
+         |
+        B3 (Trait Resolution) --- Sprint 01 B4 (Compositor)
+         |                                    |
+        B4 (Composition Integration) ---------+
+         |
+        B5 (Type Generator) --- Sprint 01 B2 (Type patterns)
+         |
+        B6 (Universal Quintet) --- Sprint 01 B8 (Traits)
+         |
+        B7 (Integration & CLI)
+```
+
+## Research Decisions Needed
+
+While the roadmap says "Research: None unless TS generics need edge-case decisions",
+revisit this during execution if any of these arise:
+
+- TypeScript generic constraints for object composition
+- Complex parameter type inference edge cases
+- Type generation performance issues with large schemas
+
+If research is needed, create focused 1-2 hour research tasks, don't block builds.
+
+Good luck with Sprint 02! 🚀

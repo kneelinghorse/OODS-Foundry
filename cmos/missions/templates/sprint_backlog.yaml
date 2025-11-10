@@ -1,0 +1,33 @@
+sprint: 8
+period:
+  start: 2025-10-06
+  end: 2025-10-12
+status: in_progress   # in_progress | complete | paused
+theme: "Internal tooling + protocol suite completion"
+missions:
+  - id: "B8.1"
+    title: "Complete missing generators/validators for extended protocols"
+    file: "./B8.1_generators_validators.yaml"
+    status: queued      # queued | in_progress | blocked | complete | dropped
+    assignee: "agent:codex"  # optional
+    started_at: null
+    completed_at: null
+    notes: ""
+  - id: "B8.2"
+    title: "Cross-protocol relationship validation"
+    file: "./B8.2_cross_protocol_validation.yaml"
+    status: queued
+    assignee: "agent:codex"
+    started_at: null
+    completed_at: null
+    notes: ""
+  # … add B8.3 … B8.N
+
+# Optional quick meta
+metrics:
+  target_missions: 6
+  done: 0
+  blocked: 0
+
+# Optional: carryover candidates discovered during the sprint
+carryover_suggestions: []

@@ -1,0 +1,50 @@
+# cmos/missions/sprint-11/11.5_policy-ux-and-error-mapping.yaml
+sprint: "11"
+missionId: "B11.5"
+title: "Policy UX & error mapping (panel + CLI)"
+type: "Build.Implementation.v1"
+
+objective: >
+  Implement the policy/error taxonomy end-to-end: map server/bridge codes to user-facing messages,
+  surface Incident IDs, and standardize CLI stderr/exit codes with accessible panel messaging.
+
+context: |
+  Policy engine v1 enforces roles (designer/maintainer), allow/deny by tool, write-path constraints,
+  rate limits/timeouts. The panel and CLI should present clear, actionable outcomes without leaking secrets.
+
+researchFoundation:
+  - "cmos/missions/research/R11.5_Policy-UX-Guidelines.md"
+  - "cmos/missions/research/R11.2_Panel↔Bridge-Auth-&-CORS.md"
+  - "cmos/missions/research/R11.1_Storybook-Approval-UX.md"
+
+deliverables:
+  - "/app/apps/explorer/addons/storybook-addon-agent/panel.tsx"     # error banners + dialogs
+  - "/app/apps/explorer/addons/storybook-addon-agent/i18n/errors.json"
+  - "/tools/oods-agent-cli/src/errors.ts"
+  - "/docs/mcp/Policy-UX.md"
+
+taxonomy:
+  codes:
+    - "POLICY_DENIED"
+    - "TIMEOUT"
+    - "RATE_LIMITED"
+    - "VALIDATION_ERROR"
+  http_mapping:
+    "401": "Unauthorized (token missing/invalid)"
+    "403": "Forbidden by policy/read-only"
+    "415": "Unsupported media type"
+    "429": "Rate limited"
+
+steps:
+  - "Panel: render ErrorNotice with severity, code, and guidance per R11.5 copy deck; include Incident ID."
+  - "CLI: send human-readable error to stderr; exit codes: 0 success, 1 usage/validation, 2 policy/timeout/limit."
+  - "Bridge: ensure errors return normalized { code, message, details, incidentId }."
+  - "Docs: short guide with examples for designer vs maintainer messaging."
+
+tests:
+  - "Panel shows correct message for 401/403/415/429 and for policy codes; focus lands on error heading."
+  - "CLI exits with expected code and prints message to stderr; no stack traces unless DEBUG=1."
+  - "Incident ID is present and consistent across server/bridge/panel logs."
+
+acceptance:
+  - "Policy outcomes are consistently messaged in panel and CLI; developers can diagnose quickly without sensitive detail."

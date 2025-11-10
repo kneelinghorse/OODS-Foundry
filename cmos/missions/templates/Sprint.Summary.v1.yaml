@@ -1,0 +1,98 @@
+<!--
+File: docs/sprints/sprint-XX-summary.md
+Template: Sprint.Summary.v1
+Purpose: End-of-sprint summary/report for leadership + builders
+How to use:
+  1) Copy to docs/sprints/sprint-XX-summary.md (create folder if needed)
+  2) Replace all [BRACKETED] placeholders
+  3) Keep links relative to repo (backlog.yaml, AI_HANDOFF.md, mission files)
+-->
+
+# Sprint [N]: [Theme/Goal] — Summary Report
+
+> **Period:** [Start Date] → [End Date]  
+> **Owner:** [Name] · **Version:** v1.0 · **Repo tag/commit:** [tag/sha]  
+> **Related:** `docs/roadmap.md`, `missions/backlog.yaml`, `AI_HANDOFF.md`
+
+## Executive Summary
+- **Outcome:** [One line on what shipped/validated]  
+- **Status:** [Green/Yellow/Red] · **Confidence:** [High/Med/Low]  
+- **Next Step:** [One line on what’s queued for Sprint N+1]
+
+## Current State (End of Sprint)
+- **Release readiness:** [Ready / Needs polish / Not ready]
+- **Open blockers:** [List or “None”]
+- **Known risks:** [List with severity]
+- **Env/infra notes:** [If any]
+
+## Missions Delivered
+| ID | Name | Status | Key outcomes | Artifacts (PR/Commit/Docs) |
+|---:|------|--------|--------------|-----------------------------|
+| B[N].1 | [Mission name] | ✅ Completed | [Result/impact] | [links] |
+| B[N].2 | [Mission name] | ✅ Completed | [Result/impact] | [links] |
+| … | … | … | … | … |
+
+> Source of truth: `missions/backlog.yaml` and `AI_HANDOFF.md` (Recent Completions).  
+> Link each mission to its file under `/missions/sprint-XX/build/…`
+
+## Key Decisions & Rationale
+1. **[Decision]** — *Date:* [YYYY-MM-DD]  
+   **Context:** [Why we decided] · **Impact:** [Perf, scope, interface, etc.]  
+   **Refs:** [Mission IDs / research files / issues]
+
+## Build Notes (Implementation)
+- **Patterns adopted:** [e.g., parser API, trait engine boundaries]
+- **Interfaces finalized:** [Endpoints/contracts with links]
+- **Compatibility/dep notes:** [Breaking changes, migrations, flags]
+
+## Metrics
+- **Process:** Missions planned vs. completed: [X/Y]; sessions used: [count]; handoff quality: [good/moderate/poor]
+- **Quality:** Tests passing: [#]; **Coverage:** [overall %] (see next section)
+- **Performance:** [Key perf targets vs. actuals]
+- **Token efficiency (optional):** [avg in/out from `SESSIONS.jsonl`]
+
+## Test Coverage & Gaps
+- **Overall coverage:** [X%]  
+- **Critical paths covered:** [Yes/No → list]  
+- **Gaps / flakiness:**  
+  - [Gap 1] — *Risk:* [Low/Med/High] — *Plan:* [How/when to cover]
+  - [Gap 2] — *Risk:* …
+
+## Issues & Risks
+| Severity | Issue | Evidence/Link | Owner | Resolution path |
+|---|---|---|---|---|
+| High | [Issue] | [link] | [name] | [fix/ETA] |
+| … | … | … | … | … |
+
+## Technical Debt / Outstanding Work
+- **Debt register:**  
+  - [Debt item] — *Type:* [infra/api/test/doc] · *Effort:* [S/M/L] · *When:* [N+1/N+2]  
+  - …
+- **Carryovers to next sprint:** [Short list with mission-shaped descriptions]
+
+## Feedback to Next Sprint (Planning Inputs)
+- **Proposed missions:**  
+  - **B[N+1].1 — [Name]**: [1–2 sentence scope]; *Depends on:* [IDs]
+  - **B[N+1].2 — [Name]**: …
+- **Research needed (if any):**  
+  - **R[N+1].1 — [Topic]**: [Decision it will inform; success criteria]
+
+## Roadmap Delta
+- **What changed vs. plan:** [Scope/time/quality deltas]  
+- **Updated success metrics:** [New targets if adjusted]  
+- **Pivot/keep course decision:** [Why]
+
+## Artifact Index
+- `missions/backlog.yaml` (final state)  
+- `AI_HANDOFF.md` (Sprint Complete section)  
+- `PROJECT_CONTEXT.json` (snapshot)  
+- Mission files: `/missions/sprint-XX/build/…`  
+- Research files: `/missions/sprint-XX/research/…`
+
+---
+
+### Sprint Completion Checklist
+- [ ] All sprint missions marked **Completed** in `missions/backlog.yaml`  
+- [ ] `AI_HANDOFF.md` updated with **Sprint N Complete** and learnings  
+- [ ] `PROJECT_CONTEXT.json` state updated (session_count, completed_missions, next_milestone)  
+- [ ] Roadmap reviewed/updated (plan for Sprint N+1 recorded)

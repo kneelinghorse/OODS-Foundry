@@ -1,0 +1,27 @@
+{
+  "working_memory": {
+    "active_mission": null,
+    "session_count": 0,
+    "last_completed_mission": null,
+    "session_history": []
+  },
+  "context_health": {
+    "agents_md_loaded": false,
+    "last_updated": null
+  },
+  "technical_context": {
+    "dependencies": [
+      "Python 3.11+",
+      "Node.js 20+ (for optional tooling and tests)"
+    ],
+    "tooling": {
+      "seed_database": "python cmos/scripts/seed_sqlite.py --data-root <path-to-planning-repo>",
+      "validate_health": "./cmos/cli.py validate health",
+      "mission_runtime": "./cmos/cli.py mission --help"
+    },
+    "reference_docs": [
+      "foundational-docs/roadmap_template.md",
+      "foundational-docs/tech_arch_template.md"
+    ]
+  }
+}

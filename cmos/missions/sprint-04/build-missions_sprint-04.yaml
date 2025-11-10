@@ -1,0 +1,368 @@
+# Sprint 04 • Implementation Missions (B4.1–B4.7)
+# Uses Build.Implementation.v1 template pack and schema. :contentReference[oaicite:0]{index=0}
+# NOTE: All build artifacts live under /app; root-level docs are ignored per project policy.
+
+# ========== B4.1 — DTCG Token Repo + Guardrails ==========
+missionId: "BI-20251010-B4.1"
+objective: "Stand up the @oods/tokens package with strict DTCG authoring, lintable guardrails, and initial semantic seeds."
+context: |
+  This mission creates our source of truth for design tokens using the DTCG core model ($value/$type/$description),
+  enforces a Safe Resolver subset (acyclic aliases only), and seeds the minimal semantic namespaces needed by variants.
+  It also wires a dedicated lint task so future PRs are gated on naming, aliasing, and schema compliance.
+successCriteria:
+  - "@oods/tokens package builds locally; precommit hooks lint token files."
+  - "Token authoring follows strict DTCG keys (kebab-case), acyclic `{path.to.token}` aliases only (no fallbacks/interpolation)."
+  - "Initial seeds exist for: surface.*, text.*, spacing.*, focus.*, status.* (info/success/warning/critical)."
+  - "README documents authoring rules; ‘yarn lint:tokens’ fails on violations."
+deliverables:
+  - "/app/packages/tokens/package.json"
+  - "/app/packages/tokens/src/tokens/base/**.json"         # DTCG sources
+  - "/app/packages/tokens/src/tokens/themes/default/**.json"
+  - "/app/packages/tokens/README.md"
+  - "/app/tools/token-lint/index.mjs"                      # custom guardrail checks
+  - "/app/tools/token-lint/dtcg-guardrails.config.yaml"    # generated from R4.1
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - finding: "Adopt strict DTCG core; allow simple references; treat advanced Resolver features as experimental."
+      sourceMission: "missions/research/r4.1_DTC-Specification-Maturity-and-Theming-Guardrails.md"
+    - finding: "Seed minimal semantic sets to support context variants."
+      sourceMission: "missions/research/r4.3_Contextual-Design-Token-Defaults.md"
+  implementationScope:
+    coreDeliverable: |
+      Create @oods/tokens with DTCG JSON organized as:
+        - src/tokens/base/{surface,text,spacing,focus,status}.json
+        - src/tokens/themes/default/*.json
+      Add a Node lint script that validates:
+        - key format (^[a-z0-9-]+$), no spaces
+        - each token has $type and $value; optional $description encouraged
+        - references resolve acyclically; forbid circular/self references
+        - no advanced resolver syntax (no fallbacks, no arrays for $value)
+      Provide initial values (sane placeholders allowed) for:
+        - surface.{default,raised,subtle}
+        - text.{default,subtle,muted,link}
+        - spacing.{inset.compact,stack.compact,inline.xs}
+        - focus.ring.default (color, width)
+        - status.{info,success,warning,critical}.{surface,text,icon,border}
+    outOfScope:
+      - "Theme switching UI; multi-axis theming (future)."
+      - "Platform-specific outputs (handled in B4.2)."
+  validationProtocol:
+    - validator: "Gemini"
+      focus: "DTCG conformance & guardrail rule coverage."
+    - validator: "Claude"
+      focus: "Alias resolution safety; detection of cycles & naming edge cases."
+  handoffContext:
+    completed:
+      - "@oods/tokens DTCG sources with initial semantic seeds."
+      - "Token lint tool and guardrail config."
+    interfaces:
+      - "Scripts: yarn lint:tokens"
+      - "Folder: /app/packages/tokens/src/tokens/**"
+    assumptions:
+      - "Values can be placeholders; will be tuned after contrast checks (B4.4)."
+    nextMission: "BI-20251010-B4.2"
+    blockers: []
+
+---
+
+# ========== B4.2 — Build Pipeline (Style Dictionary v4 + sd-transforms) ==========
+missionId: "BI-20251010-B4.2"
+objective: "Implement the token build pipeline (SD v4 + @tokens-studio/sd-transforms) to emit CSS variables, TS maps, and Tailwind JSON."
+context: |
+  Converts DTCG sources into runtime consumables. Emphasize determinism, small bundles, and Tailwind v4-friendly JSON
+  for the variant plugin. Keep outputs reference-chained (outputReferences: true) for theming flexibility.
+successCriteria:
+  - "Running ‘yarn build:tokens’ emits: /dist/css/tokens.css, /dist/ts/tokens.ts, /dist/tailwind/tokens.json."
+  - "No duplicate var names; build completes under 3s on 2k tokens."
+  - "Config is documented; adding a new token file requires no code changes."
+deliverables:
+  - "/app/packages/tokens/style-dictionary.config.cjs"
+  - "/app/packages/tokens/scripts/build.mjs"
+  - "/app/packages/tokens/dist/css/tokens.css"
+  - "/app/packages/tokens/dist/ts/tokens.ts"
+  - "/app/packages/tokens/dist/tailwind/tokens.json"
+  - "/app/packages/tokens/README.md#build-pipeline"
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - finding: "Tokens Studio → SD v4 → Tailwind round-trip works with sd-transforms; list known edge cases."
+      sourceMission: "missions/research/r4.2_Tokens-Studio-to-Tailwind-CSS-v4-Pipeline.md"
+  implementationScope:
+    coreDeliverable: |
+      Configure Style Dictionary v4 with @tokens-studio/sd-transforms:
+        - Platforms: css (custom properties, outputReferences: true), ts (typed map), tailwind (json)
+        - Ensure composite types (shadow, typography, border) retain addressable sub-keys
+      Add package scripts:
+        - build:tokens → node scripts/build.mjs
+        - check:tokens → validates no duplicate or orphan outputs
+    outOfScope:
+      - "iOS/Android emitters (future)."
+      - "Multi-theme switching."
+  validationProtocol:
+    - validator: "Gemini"
+      focus: "SD platform config, transform selection, determinism."
+    - validator: "Claude"
+      focus: "Output sanity (reference chaining, name collisions)."
+  handoffContext:
+    completed:
+      - "Stable token build pipeline; Tailwind-ready JSON."
+    interfaces:
+      - "Scripts: yarn build:tokens, yarn check:tokens"
+      - "Artifacts: /app/packages/tokens/dist/**"
+    assumptions:
+      - "Tailwind v4 in the repo or arriving with B4.3."
+    nextMission: "BI-20251010-B4.3"
+    blockers: []
+
+---
+
+# ========== B4.3 — Tailwind Context Variant Plugin ==========
+missionId: "BI-20251010-B4.3"
+objective: "Ship a Tailwind v4 plugin that applies context variants at region scope using the emitted token JSON."
+context: |
+  Variants operate at the page/region layer (not per component). Provide four contexts—list, detail, form, timeline—
+  and map them to canonical regions (header, body, meta, badges, sidebar, actions, footer, statusBanner, timeline, attachments, comments).
+  Class flips must be purely declarative (no runtime branching).
+successCriteria:
+  - "Plugin loads with Tailwind v4 and accepts a tokens.json path."
+  - "Context flip changes density/spacing/typography without touching component code."
+  - "Unit tests cover class emission for {context × region} grid."
+deliverables:
+  - "/app/packages/tw-variants/package.json"
+  - "/app/packages/tw-variants/src/index.ts"
+  - "/app/packages/tw-variants/src/context-matrix.ts"   # generated from R4.3 defaults
+  - "/app/packages/tw-variants/__tests__/plugin.spec.ts"
+  - "/app/apps/explorer/tailwind.config.ts"             # consuming example
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - finding: "Define Context×Region default matrix and token namespaces."
+      sourceMission: "missions/research/r4.3_Contextual-Design-Token-Defaults.md"
+  implementationScope:
+    coreDeliverable: |
+      Implement a Tailwind plugin:
+        - API: require('@oods/tw-variants')({ tokensPath: '/app/packages/tokens/dist/tailwind/tokens.json' })
+        - Utilities: context:<region>:<prop> (e.g., detail:body:gap-4)
+        - Internals: resolve Region→token namespaces from context-matrix.ts; emit CSS vars/classes only
+      Provide quick usage examples in /apps/explorer with two pages: List & Detail.
+    outOfScope:
+      - "JS runtime switches; variants must be class-only."
+      - "Designing new components."
+  validationProtocol:
+    - validator: "Claude"
+      focus: "Purity (no side effects), class emission logic."
+    - validator: "Gemini"
+      focus: "Tailwind integration and DX of the plugin API."
+  handoffContext:
+    completed:
+      - "Plugin package ready; Explorer demo pages."
+    interfaces:
+      - "Tailwind plugin function signature; tokensPath option."
+    assumptions:
+      - "Canonical region IDs are available from the compositor (Sprint 03)."
+    nextMission: "BI-20251010-B4.4"
+    blockers: []
+
+---
+
+# ========== B4.4 — A11y Contrast Contract + CI Gate ==========
+missionId: "BI-20251010-B4.4"
+objective: "Enforce WCAG 2.2 AA contrast via a baseline/diff CI gate and a Storybook 'Verifiable A11y Contract'."
+context: |
+  Contrast must be continuously enforced with 'fail on new violations' semantics. Implement a fast report generator
+  that evaluates token pairs (text/surface, icon/surface, focus ring) and stores a baseline on main.
+successCriteria:
+  - "‘yarn a11y:check’ generates /app/tools/a11y/reports/a11y-report.json."
+  - "‘yarn a11y:diff’ fails PRs on new violations using a stable fingerprint (ruleId+target+summary)."
+  - "Storybook MDX demonstrates the contract fields and shows current pass/fail."
+deliverables:
+  - "/app/tools/a11y/index.mjs"
+  - "/app/tools/a11y/baseline/a11y-baseline.json"
+  - "/app/apps/explorer/src/stories/ContractA11y.mdx"
+  - "CI step in /.github/workflows/ci.yaml (a11y job)"
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - finding: "Adopt WCAG 2.2 AA now; baseline/diff gating; include focus ring rule."
+      sourceMission: "missions/research/r4.4_ A11y-Contract-and-CI-Policy.md"
+  implementationScope:
+    coreDeliverable: |
+      Build a Node utility that:
+        - Computes ratios for token pairs (using current tokens/dist) for text, icons, focus ring vs surfaces
+        - Writes a JSON report with fields: ruleId, target, ratio, threshold, pass, failureSummary
+        - Provides 'diff' against /baseline to detect only new violations
+      Add a Storybook MDX to surface the same fields and link to CI report.
+    outOfScope:
+      - "Full axe integration; snapshot testing (optional later)."
+  validationProtocol:
+    - validator: "Gemini"
+      focus: "Report schema & CI diff algorithm correctness."
+    - validator: "Claude"
+      focus: "MDX contract clarity; developer readability."
+  handoffContext:
+    completed:
+      - "A11y report generator + baseline/diff."
+      - "Contract MDX wired to Explorer."
+    interfaces:
+      - "Scripts: yarn a11y:check, yarn a11y:diff"
+    assumptions:
+      - "Tokens have reasonable placeholders; numbers may change in B4.5 mapping."
+    nextMission: "BI-20251010-B4.5"
+    blockers: []
+
+---
+
+# ========== B4.5 — Enum/Status Mapping Schema + Coverage Validator ==========
+missionId: "BI-20251010-B4.5"
+objective: "Define enum→token mapping schema; add a validator that enforces 100% coverage for known domain fields."
+context: |
+  Normalize subscription/invoice statuses to canonical sets and ensure every enum value maps to a semantic token set.
+  Validator should scan composed objects (or mock domain files) and fail when unmapped values exist.
+successCriteria:
+  - "Schema published; two mapping manifests (Subscription, Invoice) present."
+  - "‘yarn validate:tokens’ reports coverage %, fails if any enum value is unmapped."
+  - "Validator runs in under 2s on 500 enums."
+deliverables:
+  - "/app/schemas/token-mapping.schema.json"
+  - "/app/examples/mapping/saas.Subscription.status.json"
+  - "/app/examples/mapping/saas.Invoice.status.json"
+  - "/app/tools/token-coverage/index.mjs"
+  - "/app/packages/tokens/README.md#enum-mapping"
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - finding: "Canonical 7-state subscription set; invoice states; provider divergences and normalization."
+      sourceMission: "missions/research/r4.5_SaaS-Enum-to-Token-Mapping-Schema.md"
+  implementationScope:
+    coreDeliverable: |
+      Define JSON schema:
+        {
+          "$schema": "...",
+          "object": "saas/Subscription",
+          "field": "status",
+          "values": {
+            "active":   { "fg": "status.success.text", "bg": "status.success.surface", "border": "status.success.border", "icon": "status.success.icon" },
+            "past_due": { "...": "..." }
+          },
+          "overrides": { "context": { "list": {...}, "detail": {...} } }
+        }
+      Implement validator:
+        - Input: glob for domain enums (or provided manifests)
+        - Ensure every enum value has tokens for fg/bg/border/icon
+        - Print summary and nonzero exit on failures
+    outOfScope:
+      - "Live provider adapters (BFF); only the mapping schema & checks."
+  validationProtocol:
+    - validator: "Claude"
+      focus: "Schema ergonomics; clarity of overrides."
+    - validator: "Gemini"
+      focus: "Coverage algorithm performance & error messages."
+  handoffContext:
+    completed:
+      - "Schema + two exemplars; coverage validator."
+    interfaces:
+      - "Script: yarn validate:tokens"
+      - "Files: /app/examples/mapping/*.json"
+    assumptions:
+      - "Composed object metadata/enums are either available or mocked for validation."
+    nextMission: "BI-20251010-B4.6"
+    blockers: []
+
+---
+
+# ========== B4.6 — Token Browser (Explorer) ==========
+missionId: "BI-20251010-B4.6"
+objective: "Add a Token Browser view that lists tokens by namespace with live preview and shows Enum→Token mapping tables."
+context: |
+  Provide a quick, searchable UI in the Explorer app to visualize current tokens, inspect contrast status, and display
+  mapping tables (Subscription/Invoice) so designers and devs can verify choices without reading JSON.
+successCriteria:
+  - "Token list loads from /packages/tokens/dist/tailwind/tokens.json."
+  - "Search/filter by namespace; live preview swatches & text samples."
+  - "Mapping table rendered from /app/examples/mapping/*.json."
+deliverables:
+  - "/app/apps/explorer/src/routes/tokens/TokenBrowser.tsx"
+  - "/app/apps/explorer/src/routes/tokens/MappingTable.tsx"
+  - "/app/apps/explorer/src/routes/tokens/index.tsx"
+  - "/app/apps/explorer/src/components/Swatch.tsx"
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - finding: "Context defaults and status token sets inform the grouping and preview pairs."
+      sourceMission: "missions/research/r4.3_Contextual-Design-Token-Defaults.md"
+  implementationScope:
+    coreDeliverable: |
+      Build a React route in Explorer:
+        - Read tokens.json; render hierarchical list with search
+        - For color/text pairs, show computed contrast and pass/fail badges (reuse a11y utility)
+        - Render mapping tables from examples/mapping manifests
+      Keep components minimal; focus on clarity and speed.
+    outOfScope:
+      - "Editor or write-back; this is read-only."
+  validationProtocol:
+    - validator: "Gemini"
+      focus: "UX clarity; performance on large token sets."
+    - validator: "Claude"
+      focus: "Contrast preview accuracy & mapping table correctness."
+  handoffContext:
+    completed:
+      - "Token Browser routes; read-only mapping views."
+    interfaces:
+      - "Routes under /tokens/*; consumes tokens.json & mapping JSON"
+    assumptions:
+      - "Explorer already boots (from Sprint 03)."
+    nextMission: "BI-20251010-B4.7"
+    blockers: []
+
+---
+
+# ========== B4.7 — View Engine Smoke Tests (Contexts + Status Chips) ==========
+missionId: "BI-20251010-B4.7"
+objective: "Prove integration: status chips/badges respond to tokens and context flips in List and Detail pages."
+context: |
+  Connect tokens and the variant plugin into two simple pages and show enum-mapped status chips changing styles across
+  list/detail contexts. Keep modifiers pure—style via props/classes only.
+successCriteria:
+  - "List and Detail pages render with different density/typography via context classes."
+  - "Status chips use enum→token mapping and pass AA contrast checks."
+  - "No component code branches on context; all changes via class props."
+deliverables:
+  - "/app/apps/explorer/src/pages/ListPage.tsx"
+  - "/app/apps/explorer/src/pages/DetailPage.tsx"
+  - "/app/apps/explorer/src/components/StatusChip.tsx"
+  - "/app/apps/explorer/src/styles/index.css"   # imports tokens.css
+  - "/app/apps/explorer/__tests__/smoke.context.spec.tsx"
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - finding: "Variants operate at region scope; status sets map to semantic tokens."
+      sourceMission: "missions/research/r4.3_Contextual-Design-Token-Defaults.md"
+    - finding: "AA contrast enforcement must pass; focus ring visible and ≥ 3:1."
+      sourceMission: "missions/research/r4.4_ A11y-Contract-and-CI-Policy.md"
+    - finding: "Subscription/Invoice mapping manifests define chip styles by enum."
+      sourceMission: "missions/research/r4.5_SaaS-Enum-to-Token-Mapping-Schema.md"
+  implementationScope:
+    coreDeliverable: |
+      Wire Explorer pages:
+        - Apply context classes: e.g., <div className="detail:body:gap-4 list:body:gap-2">…
+        - StatusChip reads a mapping (prop or import) and applies fg/bg/border/icon classes from tokens
+        - Include 6–8 sample items with varied statuses; add a quick contrast assertion in test
+    outOfScope:
+      - "Data fetching; use static mocks."
+      - "Behavioral traits (hover/tooltips) beyond simple focus/active."
+  validationProtocol:
+    - validator: "Claude"
+      focus: "Purity of modifiers; no side effects."
+    - validator: "Gemini"
+      focus: "Visual regression expectations; test robustness."
+  handoffContext:
+    completed:
+      - "End-to-end smoke of tokens → tailwind-variants → Explorer pages."
+    interfaces:
+      - "Component: <StatusChip status='active' context='list' />"
+      - "CSS: tokens.css imported at app root."
+    assumptions:
+      - "Tailwind build is working with the plugin from B4.3."
+    nextMission: ""
+    blockers: []

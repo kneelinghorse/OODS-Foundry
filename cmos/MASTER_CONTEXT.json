@@ -1,0 +1,150 @@
+{
+  "project": {
+    "name": "CMOS v1.0",
+    "version": "1.0.0",
+    "description": "Context + Mission Orchestration System - Simple, powerful context management for AI-assisted development",
+    "status": "template",
+    "start_date": "",
+    "deployment": {
+      "platform": "Local/Node.js",
+      "integration_target": "Any project",
+      "environment": "development"
+    }
+  },
+  "working_memory": {
+    "active_domain": "main",
+    "session_count": 0,
+    "last_session": "",
+    "domains": {
+      "main": {
+        "status": "active",
+        "priority": 1,
+        "critical_facts": [
+          "CMOS provides context management through domain compartmentalization",
+          "Smart compression achieves 4x-10x reduction based on state",
+          "Health monitoring uses statistical metrics for real-time assessment",
+          "Component Set IV (progression, navigation, contextual feedback) is staged for Sprint 18 delivery with multi-brand + accessibility requirements captured in R18.1"
+        ],
+        "constraints": [
+          "Zero external dependencies",
+          "File-based storage only",
+          "Single-project focus"
+        ],
+        "decisions_made": [
+          "Removed protocol suite dependency for v1.0 simplicity",
+          "Self-contained statistical metrics for health monitoring",
+          "Graceful degradation for all advanced features",
+          "Roadmap realigned: Sprint 19 pivots to design-system hardening and packaging dry run, Sprint 20 prepares a private release review (brownfield pilot deferred post-review)",
+          "Add Sprint 19 display-site research mission to identify low-maintenance external showcase options",
+          "Select GitHub Pages as the initial Storybook hosting approach for Sprint 19 deployment work",
+          "Guardrail automation now updates diagnostics and state artifacts (metadata, tenancy, token governance)"
+        ],
+        "files_created": [
+          "cmos/missions/sprint-19/B19.1_component-polish-and-qa.yaml",
+          "cmos/missions/sprint-19/B19.2_packaging-dry-run.yaml",
+          "cmos/missions/sprint-19/B19.3_guardrail-automation.yaml",
+          "cmos/missions/sprint-19/B19.4_diagnostics-refresh.yaml",
+          "cmos/missions/sprint-19/R19.5_display-site-discovery.yaml",
+          "cmos/missions/sprint-19/B19.5_github-pages-storybook.yaml",
+          "docs/guardrails/overview.md"
+        ],
+        "achievements": [
+          "Clean v1.0 release without external dependencies",
+          "Simple migration tool for existing projects",
+          "Comprehensive documentation",
+          "State assessment now supports a breaking-token-label shortcut via pnpm state:token-breaking"
+        ]
+      }
+    }
+  },
+  "technical_context": {
+    "dependencies": [
+      "Python 3.x (required)",
+      "Node.js (optional for advanced features)"
+    ],
+    "cmos_features": {
+      "compression": "4x-10x context reduction",
+      "state_monitoring": "4D vector tracking (Form, Function, Behavior, Context)",
+      "domain_management": "Intelligent compartmentalization",
+      "health_assessment": "Real-time statistical metrics",
+      "anti_patterns": "Automated detection and recovery"
+    },
+    "integration_points": [
+      "project_context.py - main Python interface",
+      "context/cmos/ - JavaScript modules for advanced features",
+      "smart_migrate.js - migration tool for existing projects"
+    ]
+  },
+  "context_health": {
+    "size_kb": 0,
+    "size_limit_kb": 100,
+    "sessions_since_reset": 0,
+    "last_reset": "",
+    "compression_enabled": true,
+    "anti_pattern_detection": true
+  },
+  "ai_instructions": {
+    "preferred_language": "javascript",
+    "code_style": "modular_zero_dependency",
+    "testing_required": true,
+    "documentation_level": "concise"
+  },
+  "planning_context": {
+    "last_updated": "2025-10-26",
+    "current_sprint": {
+      "id": "Sprint 18",
+      "status": "Current",
+      "focus": "Component Set IV delivery + performance harness automation",
+      "missions": [
+        "B18.1_progress-and-stepper",
+        "B18.2_tabs-navigation",
+        "B18.3_pagination-hook",
+        "B18.4_breadcrumbs-overflow",
+        "B18.5_empty-state",
+        "B18.6_toast-queue",
+        "B18.7_perf-harness-core",
+        "B18.8_perf-ci-and-docs"
+      ]
+    },
+    "next_sprint_ready": {
+      "id": "Sprint 19",
+      "status": "Queued",
+      "focus": "Design system hardening, packaging readiness, and Storybook display deployment (no external pilot)",
+      "missions": [
+        "B19.1_component-polish-and-qa",
+        "B19.2_packaging-dry-run",
+        "B19.3_guardrail-automation",
+        "B19.4_diagnostics-refresh",
+        "B19.5_github-pages-storybook"
+      ]
+    },
+    "review_pipeline": {
+      "upcoming_review": {
+        "id": "Sprint 20",
+        "status": "Planned",
+        "focus": "Private release candidate & reviewer enablement",
+        "notes": "Prepare reviewer kit, feedback intake, and pause for go/no-go before public launch"
+      }
+    },
+    "key_documents": {
+      "roadmap_release": "cmos/docs/roadmap_s17_release.md",
+      "sprint17_direction": "cmos/docs/OODS Direction-Check-for-sprint-17.md",
+      "component_research": "cmos/missions/research/R18.1_Technical-Research-Report-Component-Set-IV.md",
+      "performance_research": "cmos/missions/research/R18.2_Performance-Instrumentation-Strategy.md",
+      "backlog": "cmos/missions/backlog.yaml"
+    },
+    "state_assessment": {
+      "command": "node scripts/state-assessment.mjs",
+      "artifacts_dir": "artifacts/state",
+      "notes": "Run before each planning review to refresh assessment.json/assessment.md"
+    },
+    "checklist_next_session": [
+      "Kick off B19.4 diagnostics refresh using the new guardrail snapshots and perf baselines.",
+      "Verify CI pipelines surface the metadata/tenancy lint rules (update `.github/workflows/pr-validate.yml` as needed).",
+      "Schedule a guardrail spot-check (`node scripts/state-assessment.mjs --guardrails`) before reviewer hand-off.",
+      "Finalize GitHub Pages deployment plan for B19.5 (domain selection, workflow wiring).",
+      "Capture reviewer enablement prerequisites for Sprint 20 private RC ahead of the next review."
+    ],
+    "notes": "Planning cadence: deliver Sprint 18 Component Set IV + perf harness, run refreshed state assessment, then transition into Sprint 19 hardening (polish, packaging dry run, guardrails, diagnostics, Storybook display deployment) before staging Sprint 20 private review."
+  }
+}

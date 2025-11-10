@@ -1,0 +1,98 @@
+# missions/sprint-09/B9.1_Brand-A-theme.yaml
+sprint: "09"
+title: "Brand A theme (tokens-only, light/dark/HC)"
+completionProtocolRef: "../current.yaml#completionProtocol"
+
+missionId: "B9.1"
+objective: >
+  Implement Brand A as a tokens-only theme layer with zero component edits.
+  Provide light, dark, and forced-colors variants using OKLCH guardrails and our push pipeline.
+
+context: |
+  This mission introduces Brand A via DTCG tokens → Style Dictionary v4 → CSS variables consumed by Tailwind v4.
+  The brand switch is declarative: `[data-brand="A"]` in the DOM with `[data-theme="light|dark|hc"]`.
+  No components may reference theme/ref tokens directly; they must keep reading `--cmp-*` only.
+
+successCriteria:
+  - "Switching `[data-brand=A][data-theme=light|dark|hc]` changes appearance without component code changes."
+  - "All brand+theme color pairs pass AA and ΔL/ΔC guardrails; HC maps to CSS System Colors."
+  - "`tokens:build` remains < 3s and diagnostics include Brand A coverage."
+  - "VRT: dark variants stable; HC snapshots generated via push pipeline."
+  - "Purity: static check confirms components read only `--cmp-*` variables."
+
+deliverables:
+  - "/app/packages/tokens/src/tokens/brands/A/base.json"
+  - "/app/packages/tokens/src/tokens/brands/A/dark.json"
+  - "/app/packages/tokens/src/tokens/brands/A/hc.json"
+  - "/app/packages/tokens/src/tokens/aliases/brand-A.json" # optional brand-scoped aliases if needed
+  - "/app/apps/explorer/src/styles/brand.css"        # outputs brand scoping selectors + system-colors map
+  - "/docs/brand-a/README.md"                        # palette specimen + usage notes
+  - "/docs/brand-a/coverage.md"                      # AA, ΔL/ΔC, HC coverage table
+  - "/app/apps/explorer/src/stories/BrandA.mdx"      # story set exercising brand+theme across 6 components
+
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - finding: "Use DTCG tokens → SD v4 → Tailwind v4; prefer var-chaining for brand overrides."
+      sourceMission: "r.13.1_Multi-Brand-Theming.md"
+    - finding: "Apply OKLCH palette construction and Δ guardrails; document state deltas."
+      sourceMission: "r.13.1_Multi-Brand-Theming.md"
+    - finding: "Forced-colors uses CSS System Colors; avoid custom literals in HC."
+      sourceMission: "r.13.3_The-PR-less-Pipeline.md"
+
+  implementationScope:
+    coreDeliverable: "Brand A tokens and selectors with complete light/dark/HC coverage."
+    outOfScope:
+      - "Figma authoring beyond palette edits (covered in B9.4)."
+      - "Additional brands."
+      - "Component code changes (tokens-only)."
+
+  handoffContext:
+    completed:
+      - "Brand A tokens compiled and consumed in stories."
+      - "AA/Δ/HC coverage documented; diagnostics updated."
+    interfaces:
+      - "DOM contract: `[data-brand=\"A\"][data-theme=\"light|dark|hc\"]`"
+      - "CSS vars available under `:root` and `[data-brand=\"A\"]` brand scope."
+    assumptions:
+      - "Existing `tokens:build` and push pipeline are available."
+    nextMission: "B9.4 Figma→Git review kit roundtrip for Brand A."
+    blockers: []
+
+examples:
+  dtcg_base_json: |
+    {
+      "$schema": "https://design-tokens.org/dtcg/schema.json",
+      "color": {
+        "bg": { "value": "oklch(0.98 0.01 95)", "type": "color" },
+        "fg": { "value": "oklch(0.22 0.03 240)", "type": "color" },
+        "primary": { "value": "oklch(0.66 0.12 250)", "type": "color" }
+      }
+    }
+  brand_scoping_css: |
+    :root { /* base (Brand Neutral) vars emitted by SD v4 */ }
+    [data-brand="A"] {
+      /* Brand A overrides (var-chaining preferred; no literals in components) */
+      --sys-color-bg: var(--brandA-color-bg);
+      --sys-color-fg: var(--brandA-color-fg);
+      --sys-color-primary: var(--brandA-color-primary);
+    }
+    @media (forced-colors: active) {
+      [data-theme="hc"] {
+        --sys-color-bg: Canvas;
+        --sys-color-fg: CanvasText;
+        --sys-color-primary: Highlight;
+        --sys-color-primaryText: HighlightText;
+      }
+    }
+
+tests:
+  - "Run tokens:build; assert CSS contains `--brandA-color-primary` and brand scope selectors."
+  - "AA & Δ report: generate `/docs/brand-a/coverage.md` with all key pairs passing."
+  - "VRT: dark variants stable on Chromatic; HC PNGs generated (non-blocking)."
+  - "Purity: static scan detects no reads of `--ref-*` / `--theme-*` inside components."
+
+acceptance:
+  - "All coverage tables show green (AA/Δ) for light/dark; HC maps to System Colors only."
+  - "No component code modified; stories demonstrate brand switch via DOM attributes."
+  - "Diagnostics updated to include Brand A counts and build time."

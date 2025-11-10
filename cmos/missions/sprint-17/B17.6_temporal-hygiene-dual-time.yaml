@@ -1,0 +1,65 @@
+# cmos/missions/sprint-17/B17.6_temporal-hygiene-dual-time.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251024-176"
+
+objective: >
+  Adopt the dual-time convention (business vs system time) and standardize timestamptz handling across
+  billing/compliance domains to eliminate drift and timezone bugs.
+
+context: |
+  Temporal hygiene is a new Sprint 17 requirement (cmos/docs/OODS Direction-Check-for-sprint-17.md:36,
+  90-99). Enterprise research highlights time modeling as a frequent divergence point causing reporting
+  inconsistencies (cmos/Industry-Research/R1.4_[1.1+1.2+1.3-linear]_Convergent Gravity and Divergent
+  Forces- An Architectural Analysis ... .md:164-237). This mission formalizes dual timestamps
+  (business_time and system_time), introduces timestamptz utilities, updates schema/types to capture
+  time zone explicitly, and adds lint/tests ensuring new fields comply. Targets include Subscription,
+  Invoice, AuditLog, UsageSummary, and Storybook proofs for time-sensitive scenarios.
+
+successCriteria:
+  - "Time model spec committed (docs/policies/time.md) describing business/system semantics + timezone use."
+  - "Migrations add business_time / system_time columns (where applicable) with timestamptz type; helpers enforce conversions."
+  - "Temporal utilities (`TimeService`) provide normalizeToUtc, displayInTenantZone, compareBusinessTime."
+  - "Tests cover DST boundaries, timezone conversions, and audit lineage (hash includes timestamps)."
+  - "CI lint prevents naive Date.now() usage and enforces TimeService across codebase."
+
+deliverables:
+  - "docs/policies/time.md + diagrams."
+  - "src/services/time/index.ts with dual-time helpers."
+  - "Database migrations updating key tables; generated types."
+  - "ESLint rule/time lint or codemod to forbid `new Date()` without wrapper."
+  - "Tests: tests/time/temporal-hygiene.spec.ts + updated domain tests."
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  researchFoundation:
+    - finding: "Adopt dual time + timestamptz to avoid reporting drift."
+      sourceMission: "cmos/docs/OODS Direction-Check-for-sprint-17.md"
+    - finding: "Enterprise scale introduces OLTP/OLAP divergence requiring temporal rigor."
+      sourceMission: "cmos/Industry-Research/R1.4_[1.1+1.2+1.3-linear]_Convergent Gravity and Divergent Forces- An Architectural Analysis of Modern Data Model Patterns.md"
+    - finding: "Audit improvements rely on consistent timestamp modeling."
+      sourceMission: "cmos/missions/research/R10.3_Security-&-Governance.md"
+
+  implementationScope:
+    coreDeliverable: "Dual-time spec + utilities, schema updates, lint/tests ensuring compliance across billing/compliance services."
+    outOfScope:
+      - "Historical data backfill (documented plan acceptable)."
+      - "Downstream analytics warehouse changes (tracked separately)."
+
+  handoffContext:
+    completed:
+      - "TimeService exported; migrations and tests passing in CI."
+      - "Time policy doc published; lint enabled."
+      - "Storybook/time proofs updated to display tenant-relative time."
+    interfaces:
+      - "TimeService.nowBusiness(): DateTime"
+      - "TimeService.toSystemTime(input): Date"
+      - "TimeService.displayForTenant(date, tenant): string"
+    assumptions:
+      - "Luxon (or similar) available for timezone-aware dates."
+      - "Tenancy mission (B17.2) provides tenant timezone metadata."
+    nextMission: "BI-20251024-177: Polymorphic Account + metadata policy."
+    blockers: []

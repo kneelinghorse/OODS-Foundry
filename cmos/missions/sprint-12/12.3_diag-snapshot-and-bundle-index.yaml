@@ -1,0 +1,52 @@
+# cmos/missions/sprint-12/12.3_diag-snapshot-and-bundle-index.yaml
+sprint: "12"
+missionId: "B12.3"
+title: "diag.snapshot + bundle_index v2 (consolidated diagnostics, integrity)"
+type: "Build.Implementation.v1"
+
+objective: >
+  Provide a single consolidated diagnostics.json for each run and a richer bundle_index.json
+  (name, purpose, size, sha256, openUrl). Add a quick verifier to re-hash and compare entries
+  to detect tampering. Keep the day folder ≤10 files.
+
+context: |
+  These writers are used by B12.1 and surfaced in the Artifact Viewer (B12.2).
+  The MCP server must call these helpers for every tool that produces artifacts.
+
+researchFoundation:
+  - "cmos/missions/research/R12.2_Artifact-Viewer-IA.md"
+  - "cmos/missions/research/R12.3_Release-Provenance-&-Prep.md"
+
+deliverables:
+  - "/packages/artifacts/src/schemas/diagnostics.schema.json"
+  - "/packages/artifacts/src/schemas/bundle-index.schema.json"
+  - "/packages/artifacts/src/writer.ts"         # create diagnostics + bundle index
+  - "/packages/artifacts/src/verify.ts"         # re-hash and compare sha256
+  - "/packages/mcp-server/src/tools/diag.snapshot.ts"
+  - "/docs/mcp/Artifacts.md"
+
+diagnostics_shape: |
+  {
+    "sprint":"12",
+    "runId":"…",
+    "brandA": { "aaPassPct": 100, "hcPngCount": 8 },
+    "vrt": { "total": 40, "darkCount": 32, "flakePct": 1.8, "runUrl": "…" },
+    "inventory": { "components": 27, "stories": 74 },
+    "tokens": { "buildMs": 700 },
+    "packages": [{ "name":"@oods/tokens","reproducible":true,"sha256":"…" }]
+  }
+
+steps:
+  - "Define/validate schemas for diagnostics and bundle index; export TS types."
+  - "Implement writer.ts to emit both files to /artifacts/current-state/${DATE}/${RUN_ID}/."
+  - "Implement verify.ts to recompute hashes and compare with bundle index; return violations."
+  - "Implement diag.snapshot tool to aggregate brand/theme/VRT/a11y/purity/runtime metrics; use writer.ts."
+
+tests:
+  - "Schemas validated by Ajv; invalid writes rejected with details."
+  - "Verifier detects any tampering; returns list of mismatches."
+  - "Panel can read diagnostics via bridge and render a summary."
+
+acceptance:
+  - "Each run produces diagnostics.json and bundle_index.json with sha256 for every file."
+  - "Writer keeps the day’s folder ≤10 files (consolidation rules documented in Artifacts.md)."

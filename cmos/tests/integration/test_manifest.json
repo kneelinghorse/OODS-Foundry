@@ -1,0 +1,194 @@
+{
+  "meta": {
+    "mission": "B2.6",
+    "version": "1.0.0",
+    "generated": "2025-11-04T01:07:00Z",
+    "description": "Sprint 02 integration test manifest covering agents.md, structured prompting, security guardrails, orchestration patterns, and performance benchmarks"
+  },
+  "suites": [
+    {
+      "id": "core-integration",
+      "name": "Core Integration Coverage",
+      "description": "Ensures foundational Sprint 02 assets are present and ready for orchestration",
+      "tests": [
+        {
+          "id": "agents-template-present",
+          "type": "file_exists",
+          "target": "agents.md",
+          "description": "agents.md template available for mission execution",
+          "expectation": "pass"
+        },
+        {
+          "id": "project-context-updated",
+          "type": "file_exists",
+          "target": "PROJECT_CONTEXT.json",
+          "description": "PROJECT_CONTEXT.json available with enhanced fields",
+          "expectation": "pass"
+        },
+        {
+          "id": "orchestration-runtime",
+          "type": "directory_exists",
+          "target": "runtime/boomerang",
+          "description": "Boomerang runtime directory provisioned",
+          "expectation": "pass"
+        },
+        {
+          "id": "integration-guide-available",
+          "type": "file_exists",
+          "target": "docs/integration-testing-guide.md",
+          "description": "Integration testing guide documented",
+          "expectation": "pass"
+        },
+        {
+          "id": "test-runner-present",
+          "type": "file_exists",
+          "target": "context/integration_test_runner.js",
+          "description": "Automation entry point present",
+          "expectation": "pass"
+        }
+      ]
+    },
+    {
+      "id": "security-guardrails",
+      "name": "Security Guardrail Validation",
+      "description": "Validates OWASP-aligned guardrails using safe and risky fixtures",
+      "tests": [
+        {
+          "id": "security-safe-fixture",
+          "type": "security_scan",
+          "target": "tests/security/context-safe.yaml",
+          "description": "Safe context fixture should pass security validation",
+          "expectation": "pass"
+        },
+        {
+          "id": "security-risk-fixture",
+          "type": "security_scan",
+          "target": "tests/security/context-risky.yaml",
+          "description": "Risky context should be rejected by guardrails",
+          "expectation": "fail"
+        }
+      ]
+    },
+    {
+      "id": "quality-assurance",
+      "name": "Quality Assurance Coverage",
+      "description": "Exercises AI-generated code assessment utilities",
+      "tests": [
+        {
+          "id": "quality-safe-code",
+          "type": "code_quality",
+          "target": "tests/quality/sample-safe.js",
+          "description": "Well-structured sample should pass QA checks",
+          "expectation": "pass"
+        },
+        {
+          "id": "quality-risk-code",
+          "type": "code_quality",
+          "target": "tests/quality/sample-risky.js",
+          "description": "Intentionally risky sample should fail QA checks",
+          "expectation": "fail"
+        }
+      ]
+    },
+    {
+      "id": "performance-benchmarks",
+      "name": "Performance Benchmarking",
+      "description": "Verifies Sprint 02 enhancements meet performance targets",
+      "tests": [
+        {
+          "id": "benchmark-improvements",
+          "type": "performance_snapshot",
+          "target": "tests/performance/benchmarks.json",
+          "description": "Enhanced metrics should meet minimum improvement deltas",
+          "metrics": [
+            {
+              "name": "token_efficiency",
+              "baselinePath": "token_efficiency.baseline",
+              "enhancedPath": "token_efficiency.enhanced",
+              "trend": "decrease",
+              "minImprovement": 0.25
+            },
+            {
+              "name": "execution_time",
+              "baselinePath": "execution_time.baseline",
+              "enhancedPath": "execution_time.enhanced",
+              "trend": "decrease",
+              "minImprovement": 0.25
+            },
+            {
+              "name": "reliability_score",
+              "baselinePath": "reliability_score.baseline",
+              "enhancedPath": "reliability_score.enhanced",
+              "trend": "increase",
+              "minImprovement": 0.2
+            },
+            {
+              "name": "security_incidents",
+              "baselinePath": "security_incidents.baseline",
+              "enhancedPath": "security_incidents.enhanced",
+              "trend": "decrease",
+              "minImprovement": 1.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "backward-compatibility",
+      "name": "Backward Compatibility",
+      "description": "Ensures legacy assets remain accessible and documented",
+      "tests": [
+        {
+          "id": "legacy-template-present",
+          "type": "file_exists",
+          "target": "missions/templates/Build.Implementation.v1.yaml",
+          "description": "Legacy template still available",
+          "expectation": "pass"
+        },
+        {
+          "id": "compatibility-scenarios-doc",
+          "type": "file_exists",
+          "target": "tests/backward_compatibility/scenarios.yaml",
+          "description": "Compatibility scenarios documented",
+          "expectation": "pass"
+        },
+        {
+          "id": "compatibility-checklist",
+          "type": "file_exists",
+          "target": "tests/backward_compatibility/checklist.md",
+          "description": "Operational checklist captured",
+          "expectation": "pass"
+        }
+      ]
+    },
+    {
+      "id": "structured-prompting",
+      "name": "Structured Prompting Coverage",
+      "description": "Confirms contextual assets reference structured prompting and guardrails",
+      "tests": [
+        {
+          "id": "agents-md-mentions-guardrails",
+          "type": "content_includes",
+          "target": "agents.md",
+          "description": "agents.md highlights security and AI agent instructions",
+          "includes": [
+            "Security & Quality Guardrails",
+            "AI Agent Specific Instructions"
+          ],
+          "expectation": "pass"
+        },
+        {
+          "id": "master-context-highlights",
+          "type": "content_includes",
+          "target": "context/MASTER_CONTEXT.json",
+          "description": "MASTER_CONTEXT references structured prompting and orchestration",
+          "includes": [
+            "structured prompting",
+            "advanced orchestration patterns"
+          ],
+          "expectation": "pass"
+        }
+      ]
+    }
+  ]
+}

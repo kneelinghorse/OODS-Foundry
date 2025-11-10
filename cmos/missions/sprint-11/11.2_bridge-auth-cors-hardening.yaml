@@ -1,0 +1,53 @@
+# cmos/missions/sprint-11/11.2_bridge-auth-cors-hardening.yaml
+sprint: "11"
+missionId: "B11.2"
+title: "HTTP bridge — strict CORS, optional token, and read-only enforcement"
+type: "Build.Implementation.v1"
+
+objective: >
+  Harden the HTTP bridge used by the Storybook panel with strict CORS for localhost:6006,
+  an optional local API token, correct OPTIONS handling, and read-only enforcement by default.
+
+context: |
+  The bridge forwards to the MCP stdio server. The panel calls GET /tools and POST /run.
+  For local developer UX, the token is optional; when BRIDGE_TOKEN is set, the panel must include it via X-Bridge-Token.
+
+researchFoundation:
+  - "cmos/missions/research/R11.2_Panel↔Bridge-Auth-&-CORS.md"
+  - "cmos/missions/research/R11.1_Storybook-Approval-UX.md"
+
+deliverables:
+  - "/packages/mcp-bridge/src/server.ts"            # updated CORS/auth/OPTIONS
+  - "/packages/mcp-bridge/src/config.ts"
+  - "/packages/mcp-bridge/package.json"
+  - "/docs/mcp/Bridge-API.md"
+
+config:
+  cors:
+    origin: "http://localhost:6006"
+    methods: ["GET","POST","OPTIONS"]
+    allow_headers: ["Content-Type","Authorization","X-Bridge-Token"]
+    expose_headers: ["Content-Type"]
+    credentials: false
+    max_age_seconds: 600
+  auth:
+    header: "X-Bridge-Token"
+    env: "BRIDGE_TOKEN"
+    required_by_default: false
+
+steps:
+  - "Enforce CORS with the above allowlist; implement OPTIONS preflight with caching."
+  - "Implement token check middleware reading BRIDGE_TOKEN; skip when unset (dev-friendly)."
+  - "Force read-only: override {apply:false} for all POST /run calls unless an ‘approval’ token is explicitly passed by the panel."
+  - "Normalize error taxonomy: 401 (missing/invalid token), 403 (policy/read-only), 415 (content-type), 429 (rate-limit)."
+  - "Update docs with example curl calls and a test matrix (success/failure/preflight)."
+
+tests:
+  - "OPTIONS returns correct headers; preflight cached for 600s."
+  - "GET /tools works without token; POST /run (read-only tool) works without token."
+  - "POST /run (write) returns 403 unless panel passes the approved ‘apply’ flag after dialog."
+  - "With BRIDGE_TOKEN set, missing/invalid token yields 401; valid token allows read-only and gated writes."
+
+acceptance:
+  - "Panel calls succeed without hacks; write attempts are blocked unless approved/gated."
+  - "Security notes documented (no wildcard origins, no cookies)."

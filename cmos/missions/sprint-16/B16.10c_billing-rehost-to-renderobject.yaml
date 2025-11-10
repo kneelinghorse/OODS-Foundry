@@ -1,0 +1,55 @@
+# cmos/missions/sprint-16/B16.10c_billing-rehost-to-renderobject.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251020-1610c"
+
+objective: >
+  Replace Explorer’s hand-authored Billing demos with real engine-backed Domain stories for Invoice
+  and Subscription, using RenderObject + View Profiles + Trait Contributions so Billing respects
+  tokens/brands/HC and aligns with the rest of the system.
+
+context: |
+  Current Billing stories (Invoice.* and Subscription.* under apps/explorer) bypass the engine and
+  use bespoke layout/styles, so they neither exercise tokens nor reflect context regions. This
+  mission ports Billing into the canonical path with realistic fixtures and removes the one-offs.
+
+successCriteria:
+  - "New Domains/Billing stories render Invoice and Subscription via RenderObject across detail/list/form/timeline."
+  - "Stories consume view-profiles + trait contributions (status, tags, actions, timeline)."
+  - "All visuals come from semantic tokens; brand/light/dark/HC toggles work as expected."
+  - "Explorer one-offs removed or clearly moved under Patterns/Explorer with warning labels."
+  - "Axe smoke on Billing curated set = 0 violations; VR dry-run shows expected structural diffs only."
+
+deliverables:
+  - "stories/domains/Billing/*.stories.tsx using RenderObject"
+  - "fixtures/billing/invoice.json, fixtures/billing/subscription.json with events/actions/status"
+  - "Removal or relocation PR for apps/explorer Billing pages + a migration note in docs"
+  - "artifacts/domains/billing-port-report.md (files moved, fixtures added, screenshots)"
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  researchFoundation:
+    - finding: "Canonical billing models and UI mapping guidelines."
+      sourceMission: "The Evolutionary History of Subscription Billing... (and) subscription-fields-states-ui-mapping.md"
+    - finding: "Brand/theming guardrails and VR review practices."
+      sourceMission: "r5.4_Visual-Regression-Tooling.md"
+
+  implementationScope:
+    coreDeliverable: >
+      Engine-backed Billing domain stories that exercise tokens, profiles, and contributions;
+      remove/relocate custom Explorer demos.
+    outOfScope:
+      - "New billing component patterns beyond what exists (we reuse styled components)."
+
+  handoffContext:
+    completed:
+      - "Billing domain is first-class in the engine; Explorer one-offs no longer the source of truth."
+    interfaces:
+      - "RenderObject + contributions registry from 16.10b."
+    assumptions:
+      - "Statusables/Inputs/Tables already available for composition."
+    nextMission: "BI-20251020-1610d: Domain Context Styling Finalize."
+    blockers: []

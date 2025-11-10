@@ -1,0 +1,76 @@
+# pack.yaml - Metadata for the "Problem Definition" Domain Pack
+name: "Discovery.ProblemDefinition.v1"
+version: "1.0.0"
+displayName: "Level 2: Problem Definition"
+description: "A 2-3 hour mission to establish a specific, evidence-backed problem statement and identify the affected parties. Use this after a successful Opportunity Scan to create a clear definition of the problem before committing to full research." #
+author: "Your Name/Team"
+schema: "./schemas/ProblemDefinition.v1.json"
+
+---
+
+# Mission File: <problem-name>-definition.yaml
+
+missionId: "PD-20251004-002"
+
+objective: "Produce a clear, evidence-backed problem statement that defines a specific actor, their broken workflow, and their desired outcome."
+
+context: |
+  This mission follows a successful Level 1 Opportunity Scan.
+  Its purpose is to prevent the creation of generic solutions by forcing specificity about the actor and their actions.
+  The time investment is 2-3 hours.
+
+successCriteria:
+  - "The 'actor' field identifies a specific, non-generic role."
+  - "Every claim in the 'evidence' section has a cited source and strength rating."
+  - "All three confidence scores are filled out with a justification for each."
+  - "The output is a clear problem statement."
+
+deliverables:
+  - "This completed mission file."
+  - "A one-sentence problem statement ready for wider communication."
+
+domainFields:
+  type: "Discovery.ProblemDefinition.v1"
+
+  # Corresponds to "Actor & Action" section.
+  actorAndAction:
+    actor: "" # e.g., "Compliance Officer", not "User".
+    currentWorkflow:
+      - "Step 1: Logs into the system."
+      - "Step 2: Navigates to the audit report section."
+      - "..."
+    brokenStep: "" # e.g., "Step 4: Manually filters thousands of rows to find relevant events."
+    desiredOutcome: "To generate a report of all access events for a specific user within a date range in under one minute."
+
+  # Corresponds to "Evidence Gathering" section.
+  evidence:
+    - claim: "The current filtering process is time-consuming."
+      source: "User interview with ACME Corp's compliance team."
+      strength: 4 # Scale of 1-5
+    - claim: "Users are exporting data to analyze in Excel."
+      source: "Product analytics, 'Export' event logs."
+      strength: 5 # Scale of 1-5
+  
+  # Corresponds to "Solution Space" section.
+  solutionSpace:
+    existingSolutions: "Competitor X has a basic filter. Internal scripts are used by some power users."
+    whyTheyFail: "Competitor X's filter lacks date-range functionality. Internal scripts are not accessible to all and are unsupported."
+    ourAngle: "Provide a fully integrated, supported, and powerful search/filter capability directly within the UI."
+
+  # Corresponds to "Scope Sizing" section.
+  scopeSizing:
+    smallestValuableSolution: "A server-side filter for username and date range."
+    fullVision: "A natural language query interface for all audit logs."
+    firstMilestone: "Implement the smallest valuable solution."
+
+  # Corresponds to the "Confidence Score" and exit gate.
+  confidenceScores:
+    problemIsReal:
+      score: 0 # 1-5
+      justification: ""
+    solutionIsPossible:
+      score: 0 # 1-5
+      justification: ""
+    weCanBuild:
+      score: 0 # 1-5
+      justification: ""

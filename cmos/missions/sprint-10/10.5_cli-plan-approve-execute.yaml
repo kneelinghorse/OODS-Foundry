@@ -1,0 +1,46 @@
+# cmos/missions/sprint-10/10.5_cli-plan-approve-execute.yaml
+sprint: "10"
+missionId: "B10.5"
+title: "CLI harness: plan → approve → execute (with replay)"
+type: "Build.Implementation.v1"
+
+objective: >
+  Provide a minimal CLI that calls the MCP server: prints plan/diffs/artifact preview in DRY-RUN,
+  requires --approve for writes, emits a signed transcript, and supports basic replay from transcript.
+
+context: |
+  This gives maintainers a fast local interface before the Storybook panel supports write flows.
+
+researchFoundation:
+  - "cmos/missions/research/R10.2_Agent-UX-Plan-Approve-Execute.md"
+  - "cmos/missions/research/R10.5_Artifact-Contracts-&-Reproducibility.md"
+
+deliverables:
+  - "/tools/oods-agent-cli/src/index.ts"
+  - "/tools/oods-agent-cli/package.json"
+  - "/docs/mcp/CLI-UX.md"
+
+cliSpec:
+  commands:
+    - "plan <tool> [jsonArgs]"
+    - "apply <tool> [jsonArgs] --approve"
+    - "replay <transcriptPath> [--approve]"
+  exitCodes:
+    - "0 = success"
+    - "1 = usage/error"
+    - "2 = policy/validation failure"
+
+steps:
+  - "Implement plan: invoke server with apply=false; pretty-print diffs and artifact preview."
+  - "Implement apply: require --approve flag; apply=true; echo artifact paths."
+  - "Implement replay: load transcript.json; re-run with same args; require --approve for writes."
+  - "Write CLI UX doc with examples and copy guidelines (warnings, confirmations)."
+
+tests:
+  - "Running apply without --approve returns USAGE error with hint."
+  - "Replay reuses args, respects current policy, and writes to today’s artifacts dir."
+  - "All outputs link to artifacts; transcript sha matches bundle index."
+
+acceptance:
+  - "CLI supports plan/apply/replay with clear copy and correct exit codes."
+  - "Transcripts from CLI runs validate and verify."

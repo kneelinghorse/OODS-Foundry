@@ -1,0 +1,49 @@
+# cmos/missions/sprint-16/B16.T2_storybook-taxonomy-fold-and-stabilize.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251023-T02"
+
+objective: >
+  Resolve Storybook YELLOW by folding stray sections and aligning titles to the canonical taxonomy:
+  Foundations, Components/{Primitives|Statusables|Data|Overlays}, Contexts, Domains, Patterns, Explorer, Brand.
+  Remove top-level 'Proofs/*' and 'High Contrast' duplicates; keep HC proofs under Brand/High Contrast only.
+
+context: |
+  Assessor flagged missing canonical groups and stray top-level Proofs/Components/High Contrast. Stabilizing titles/paths
+  improves navigation and reduces Chromatic grouping noise before S17 planning.
+
+successCriteria:
+  - "New tree matches canonical taxonomy exactly; no top-level Proofs or duplicate High Contrast groups."
+  - "assessment.storybook.json → taxonomy.ok = true; extras: []"
+  - "Chromatic dry-run shows no mass renames beyond intended folder folds."
+
+deliverables:
+  - "scripts/sb-taxonomy-fix.mjs (mass title rewrites + safe checks)"
+  - ".storybook/TAXONOMY.md (authoritative tree + rules)"
+  - "PR diff list of moved/retitled stories (for reviewer map)"
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  Read For Context researchFoundation:
+    - finding: "Artifact-first review depends on curated, predictable story surfaces."
+      sourceMission: "cmos/research/R11.1_Storybook-Approval-UX.md"
+    - finding: "VR tooling relies on stable story grouping."
+      sourceMission: "cmos/research/r5.4_Visual-Regression-Tooling.md"
+
+implementationNotes: |
+  - Canonical mapping (examples):
+      'Proofs/Components/Banner'     → 'Components/Statusables/Banner'
+      'Proofs/High Contrast/*'       → 'Brand/High Contrast/*'
+      'Components/Proofs/*'          → merge into respective Components/* or remove if dev-only
+  - Guardrails:
+      - Do NOT import CSS per-story; rely on global preview wiring.
+      - For full-bleed: set `parameters.layout = 'fullscreen'` on the story (not globally).
+  - Commands:
+      - node scripts/sb-taxonomy-fix.mjs --dry
+      - node scripts/sb-taxonomy-fix.mjs --apply
+      - node scripts/state-assessment.mjs --sb
+  - Acceptance:
+      - Compare artifacts/state/storybook.json before/after; extras must be empty. :contentReference[oaicite:4]{index=4}

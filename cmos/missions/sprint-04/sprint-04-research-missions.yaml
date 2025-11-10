@@ -1,0 +1,178 @@
+# Research missions for Sprint 04 — ready to run with the Build.TechnicalResearch.v1 schema
+# Template pack this follows: :contentReference[oaicite:0]{index=0}
+# Roadmap DoD & context variants requirement: :contentReference[oaicite:1]{index=1} :contentReference[oaicite:2]{index=2}
+# Supporting specs: DTCG maturity & Resolver status: :contentReference[oaicite:3]{index=3} :contentReference[oaicite:4]{index=4}
+# Region API/context awareness + canonical regions: :contentReference[oaicite:5]{index=5} :contentReference[oaicite:6]{index=6} :contentReference[oaicite:7]{index=7}
+# Pure Modifier boundaries (styling-only): :contentReference[oaicite:8]{index=8} :contentReference[oaicite:9]{index=9} :contentReference[oaicite:10]{index=10}
+# A11y governance baseline: :contentReference[oaicite:11]{index=11}
+
+# ---------- R4.1 ----------
+missionId: "TR-20251010-R4.1"
+objective: "Assess DTCG Aliases/Groups/Resolver maturity and produce guardrails we can lint/enforce now."
+context: |
+  This mission de-risks theming by surveying the DTCG spec (aliases/references, groups) and the proposed Resolver.
+  Produce a precise list of *safe-to-implement* authoring rules for Sprint 04 and flag “future” features behind a guard.
+  Your outputs will become lint rules + CI checks and inform our token naming and reference policy.
+  Grounding: DTCG spec & Resolver (status and risk) and enterprise token pipelines. :contentReference[oaicite:12]{index=12} :contentReference[oaicite:13]{index=13}
+successCriteria:
+  - "All questions in domainFields.researchQuestions are answered with citations."
+  - "Deliver a 1-page Guardrails note plus a YAML lint-config stub we can drop into the repo."
+  - "Clearly separate 'Allowed now' vs 'Deferred/experimental' behaviors."
+deliverables:
+  - "docs/tokens/guardrails/dtcg-alias-resolver-guardrails.md"
+  - "tools/token-lint/dtcg-guardrails.config.yaml (stub with rules & examples)"
+domainFields:
+  type: "Build.TechnicalResearch.v1"
+  researchQuestions:
+    - "What is the current (Oct 2025) status of DTCG Aliases, Groups, and the proposed Resolver? Enumerate stability levels and breaking-change risks."
+    - "What concrete naming/escaping rules should we adopt (allowed characters, path separators, reserved words)?"
+    - "What reference semantics should we enforce now (no self/recursive cycles, explicit fallbacks, cross-file references)?"
+    - "What minimal, future-compatible subset of Resolver behavior should we plan for without implementing it?"
+  keyFindings: []
+  contradictionsAndUncertainties: "Note any spec/RFC disagreements or tool incompatibilities (Tokens Studio vs SD)."
+  buildImplications:
+    recommendedAlgorithm: "Adopt strict DTCG core ($value/$type/$description), allow simple {path.to.token} aliases; forbid nested Resolver behaviors pending maturity."
+    performanceTarget: "Zero ambiguous references; token build must resolve in O(n) over tokens with no cycles."
+    constraintToRespect: "No production usage of experimental Resolver features; emit warnings when authors attempt them."
+  evidenceCollection:
+    - type: "Spec/RFC"
+      reference: "DTCG Third Editors’ Draft + Resolver RFC (Sept 2025)"
+      key_insight: "Core format stable; Aliases/Groups under revision; Resolver experimental → defer advanced features."
+      confidence: "High"
+
+---
+# ---------- R4.2 ----------
+missionId: "TR-20251010-R4.2"
+objective: "Validate the Tokens Studio → Style Dictionary v4 (+ sd-transforms) → Tailwind JSON round-trip and document edge cases."
+context: |
+  Prove our pipeline: (a) author tokens in DTCG (or Tokens Studio export), (b) transform with Style Dictionary v4
+  using @tokens-studio/sd-transforms, (c) emit CSS variables + a Tailwind JSON for our context-variant plugin.
+  Catalog exactly which token types/props round-trip cleanly (color, dimension, shadow, typography, border, etc.).
+  Grounding: ecosystem baseline and Git-as-SoT pipeline. :contentReference[oaicite:14]{index=14}
+successCriteria:
+  - "Provide a pass/fail matrix for each token type and composite prop."
+  - "Attach minimal sample inputs/outputs proving the round-trip."
+  - "List required transforms and config snippets for SD v4."
+deliverables:
+  - "docs/tokens/pipeline/roundtrip-matrix.md"
+  - "examples/tokens/minimal-dtcg.json, built css/js/tailwind.json outputs"
+domainFields:
+  type: "Build.TechnicalResearch.v1"
+  researchQuestions:
+    - "Which DTCG token types & composites are supported by Tokens Studio export + sd-transforms + SD v4 today?"
+    - "What naming/alias patterns survive the full round-trip without lossy transforms?"
+    - "What SD configuration (platforms/transforms) is required to emit Tailwind-friendly JSON and prefixed CSS vars?"
+    - "Where do we need custom transforms, and what are their risks?"
+  keyFindings: []
+  contradictionsAndUncertainties: "Note discrepancies between Tokens Studio export structure and strict DTCG."
+  buildImplications:
+    recommendedAlgorithm: "Use sd-transforms with SD v4; emit per-platform bundles + a Tailwind token map for the variant plugin."
+    performanceTarget: "Build completes <3s on 2k tokens; no duplicate var emissions."
+    constraintToRespect: "No composite → rasterized value loss (typography/shadow/border must remain addressable sub-keys)."
+  evidenceCollection:
+    - type: "Tooling Docs"
+      reference: "Tokens Studio, Style Dictionary v4, @tokens-studio/sd-transforms"
+      key_insight: "TS ↔ SD pipeline is the de facto standard in enterprise token workflows."
+      confidence: "High"
+
+---
+# ---------- R4.3 ----------
+missionId: "TR-20251010-R4.3"
+objective: "Define default token sets per context variant (list, detail, form, timeline) mapped to Region IDs."
+context: |
+  Our View Engine composes canonical regions and filters by runtime context; the variant layer must operate at the
+  **context/region** level, not within components. Produce opinionated defaults for density, spacing, typography scale,
+  focus, and status semantics per context, aligned to our canonical regions (header, badges, meta, body, sidebar,
+  footer, actions, statusBanner, timeline, attachments, comments). :contentReference[oaicite:15]{index=15} :contentReference[oaicite:16]{index=16}
+successCriteria:
+  - "Deliver a single markdown table mapping {context × region} → token namespaces (spacing.*, text.*, surface.*, focus.*, status.*)."
+  - "Include rationale + 3 quick visual comps (references only; no Figma required)."
+  - "Call out any gaps needing new tokens."
+deliverables:
+  - "docs/variants/context-defaults-matrix.md"
+domainFields:
+  type: "Build.TechnicalResearch.v1"
+  researchQuestions:
+    - "What density/spacing/typography deltas should distinguish list vs detail vs form vs timeline?"
+    - "Which regions vary most by context and need explicit defaults?"
+    - "What status/focus treatments are safe defaults across contexts (chips, badges, banners) without violating purity?"
+  keyFindings: []
+  contradictionsAndUncertainties: "Ambiguities around timeline density vs detail readability—document tradeoffs."
+  buildImplications:
+    recommendedAlgorithm: "Ship a Tailwind plugin that flips region-scoped classes per context; tokens feed props; modifiers remain pure."
+    performanceTarget: "Variant flip must be class-list only; no component code branching."
+    constraintToRespect: "Respect Pure Modifier constraints—no hooks/side-effects in style transforms." 
+  evidenceCollection:
+    - type: "Internal Spec"
+      reference: "Region API context awareness + canonical region IDs"
+      key_insight: "Context gating belongs in the compositor; variants map to regions, not component internals."
+      confidence: "High"
+
+---
+# ---------- R4.4 ----------
+missionId: "TR-20251010-R4.4"
+objective: "Pick the contrast metric & CI policy ('fail on new violations') and author an A11y Contract sample."
+context: |
+  Sprint 04 DoD requires AA contrast and pre-merge gating. Choose the calculation approach (WCAG 2.x contrast ratio
+  now; note APCA as a future track), define budgets/thresholds, and produce a sample CI report + a Storybook A11y
+  Contract snippet to standardize verification. Grounding: Roadmap CI/a11y DoD + Playbook’s verifiable contract. :contentReference[oaicite:17]{index=17} :contentReference[oaicite:18]{index=18}
+successCriteria:
+  - "One-pager policy + a minimal JSON schema for 'a11y-report.json'."
+  - "Example: 'only new violations fail' algorithm, with baseline file and diff logic."
+  - "Storybook MDX snippet demonstrating the A11y Contract fields."
+deliverables:
+  - "docs/a11y/contrast-policy-and-ci.md"
+  - "tools/a11y/baseline/a11y-baseline.json (example)"
+  - "apps/explorer/stories/ContractA11y.mdx (example)"
+domainFields:
+  type: "Build.TechnicalResearch.v1"
+  researchQuestions:
+    - "Which contrast calculation will we enforce today for text/iconography over surfaces? How do we treat non-text UI (badges, focus rings)?"
+    - "What is the exact CI strategy to record a baseline and fail only on new regressions?"
+    - "What fields belong in an 'A11y Contract' to keep enforcement verifiable in code?"
+  keyFindings: []
+  contradictionsAndUncertainties: "Document any disagreements between tools (axe/playwright snapshots vs manual measurements)."
+  buildImplications:
+    recommendedAlgorithm: "Adopt WCAG 2.2 AA ratios now; generate per-token pair checks; baseline regressions only fail."
+    performanceTarget: "Policy evaluation runs <30s on PR; report inline with ValidationIssue schema."
+    constraintToRespect: "A11y enforcement must block publish paths per Roadmap."
+  evidenceCollection:
+    - type: "Governance/Playbook"
+      reference: "Verifiable Accessibility Contract (component MDX pattern)"
+      key_insight: "Turn guidance into a testable, versioned contract developers can read and CI can verify."
+      confidence: "High"
+
+---
+# ---------- R4.5 ----------
+missionId: "TR-20251010-R4.5"
+objective: "Standardize the enum/status → semantic token mapping schema with Subscription & Invoice exemplars."
+context: |
+  Our DoD requires 100% enum/status field coverage mapped to semantic tokens. Define a portable JSON schema for
+  mapping (object.field → token namespace per value), provide at least two exemplars (saas/Subscription.status,
+  saas/Invoice.status), and recommend defaults for badges/banners across contexts.
+  Grounding: Roadmap Token System DoD; subscription field/state research; UI composition patterns. :contentReference[oaicite:19]{index=19} :contentReference[oaicite:20]{index=20} :contentReference[oaicite:21]{index=21}
+successCriteria:
+  - "Schema file with validation examples + two complete mapping manifests."
+  - "Evidence that mappings align with common industry enums (Stripe-like 7-state set)."
+  - "Notes on translation-layer divergences to watch (provider → unified mapping)."
+deliverables:
+  - "schemas/token-mapping.schema.json"
+  - "examples/mapping/saas.Subscription.status.json"
+  - "examples/mapping/saas.Invoice.status.json"
+domainFields:
+  type: "Build.TechnicalResearch.v1"
+  researchQuestions:
+    - "What is the minimal, widely-compatible status set for subscriptions/invoices that we should normalize to?"
+    - "How should the mapping schema express per-value token sets (fg/bg/border/icon) and context overrides?"
+    - "What translation divergences exist across providers (Stripe/Chargebee/Recurly/Zuora) that affect enums?"
+  keyFindings: []
+  contradictionsAndUncertainties: "Call out ambiguous or vendor-specific states and how to degrade gracefully."
+  buildImplications:
+    recommendedAlgorithm: "Normalize to Stripe-like 7-state Subscription and a small Invoice state set; publish a mapping manifest consumed by CI."
+    performanceTarget: "validate:tokens detects unmapped enum values in O(n) over fields; zero false negatives."
+    constraintToRespect: "Mappings feed tokens only; behavior remains in traits; maintain Pure Modifier boundaries."
+  evidenceCollection:
+    - type: "Domain Research"
+      reference: "Subscription canonical fields & 7-state evolution; provider mapping tables"
+      key_insight: "Industry converges on Stripe-style enums; translation layers still vary by vendor."
+      confidence: "High"

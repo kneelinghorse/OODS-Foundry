@@ -1,0 +1,88 @@
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+description: "Wire the Figma→DTCG→Tailwind v4 tokens round-trip and validate it end-to-end."
+author: "Design System Team"
+schema: "./schemas/Implementation.v1.json"
+
+---
+
+missionId: "B14.2"
+objective: >
+  Establish a reliable Figma↔Repo handshake so Tokens Studio exports DTCG-compliant JSON that
+  transforms to Tailwind v4 CSS variables and is consumed by stories/components.
+
+context: |
+  This mission unlocks safe, human-in-the-loop iteration. Designers change tokens in Figma; we export
+  via Tokens Studio; a transform produces DTCG JSON and Tailwind v4 CSS vars; Storybook demos reflect the change.
+  This becomes the backbone for theming and guardrails in later missions.
+
+successCriteria:
+  - "A token change in Figma propagates to `tokens/*.json` (valid DTCG) and to a generated CSS vars file."
+  - "Tailwind v4 consumes variables; a demo story reflects the new token value."
+  - "Transform CI job `tokens-validate` passes and fails on malformed DTCG."
+  - "Roundtrip checklist filled: docs/figma/roundtrip-checklist.md updated with evidence links."
+  - "PROJECT_CONTEXT.json and diagnostics.json updated with handshake status and transform timings."
+
+deliverables:
+  - "tokens/*.json  # DTCG-compliant export from Tokens Studio"
+  - "apps/*/styles/tokens.css  # generated CSS variables for Tailwind v4"
+  - "scripts/tokens/transform.(mjs|ts)  # DTCG→CSS-vars transform and validation"
+  - "docs/figma/mapping-table.csv  # updated with any new token paths"
+  - "docs/figma/roundtrip-checklist.md  # updated with this run’s evidence"
+  - "docs/tokens/4-layer-overview.md  # append note on Tailwind v4 variable consumption"
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  researchFoundation:
+    - finding: "Stable DTCG export, then transforms for Tailwind v4 CSS variables."
+      sourceMission: "r4.2_Tokens-Studio-to-Tailwind-CSS-v4-Pipeline.md"
+    - finding: "Repository handshake checklist to catch drift."
+      sourceMission: "r5.3_Figma-to-Repository-Handshake-Recipe.md"
+
+  implementationScope:
+    coreDeliverable: |
+      1) Export & validate
+         - Configure Tokens Studio export to `tokens/base/*.json`, `tokens/semantic/*.json`, `tokens/theme/*.json`.
+         - Add schema validation step (`tokens-validate`) that fails CI on non-DTCG JSON.
+      2) Transform
+         - Implement `scripts/tokens/transform.(mjs|ts)`:
+           • Merge layers → single DTCG object.
+           • Emit `apps/*/styles/tokens.css` with CSS variables for Tailwind v4.
+           • Emit build log with counts and timing for diagnostics.json.
+      3) Tailwind v4 integration
+         - Ensure Tailwind reads from CSS variables; update config if needed.
+         - Add a minimal demo story that uses a semantic color token.
+      4) Proof of roundtrip
+         - Change a token in Figma; export; run transform; verify story UI change.
+         - Update docs/figma/roundtrip-checklist.md with screenshots/links.
+
+    outOfScope:
+      - "Theme switching or composite tokens (handled in B14.3)."
+      - "Color guardrails (handled in B14.4)."
+
+  handoffContext:
+    completed:
+      - "Roundtrip demonstrably works; CI validation for DTCG and transform passes."
+    interfaces:
+      - "scripts/tokens/transform.(mjs|ts)"
+      - "apps/*/styles/tokens.css"
+      - "tokens/**/*.json"
+    assumptions:
+      - "Tokens Studio mappings are available; access to Figma file."
+      - "Tailwind v4 already installed/configured."
+    nextMission: "B14.3 — Composite tokens & theming guardrails."
+    blockers:
+      - "Invalid/misaligned token path mapping; Tailwind not reading CSS vars."
+
+statusWrites:
+  projectContext:
+    path: "PROJECT_CONTEXT.json"
+    updates:
+      - { key: "sprint", value: 14 }
+      - { key: "missions.B14.2", value: "Completed" }
+  diagnostics:
+    path: "diagnostics.json"
+    append:
+      - { mission: "B14.2", phase: "transform", durationMs: "$RUNTIME", tokensCount: "$COUNT" }

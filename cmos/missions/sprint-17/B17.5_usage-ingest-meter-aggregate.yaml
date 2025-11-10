@@ -1,0 +1,64 @@
+# cmos/missions/sprint-17/B17.5_usage-ingest-meter-aggregate.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251024-175"
+
+objective: >
+  Implement the minimal usage-based billing pipeline: capture meter events, aggregate daily usage per
+  subscription, and surface the totals for invoice generation + Storybook proofs.
+
+context: |
+  Usage ingest is listed as a new focus for Sprint 17 (cmos/docs/OODS Direction-Check-for-sprint-17.md:34,
+  90-97). Industry analysis highlights the need for granular usage events feeding aggregation before
+  billing (cmos/Industry-Research/R1.4_[1.1+1.2+1.3-linear]_Convergent Gravity and Divergent Forces-
+  An Architectural Analysis ... .md:35). With the Billing ACL (B17.3) and canonical states (B17.4) in
+  place, we now create a usage_events schema, an aggregation job (daily by default) producing usage
+  summaries, and integration hooks that feed canonical invoices. Proof stories show metered add-ons and
+  CLI fixtures enable local testing.
+
+successCriteria:
+  - "usage_events table/schema defined with tenant + subscription references, unit, quantity, recorded_at, source metadata."
+  - "Aggregator job (`pnpm usage:aggregate`) computes daily totals and emits UsageSummary records consumed by invoice builder."
+  - "Integration tests verify event ingestion across tenancy modes and confirm invoices include metered line items."
+  - "Storybook stories illustrate metered subscription variant (e.g., API calls) with canonical state transitions."
+  - "Docs cover usage event ingestion contract + fake data generator for sandbox."
+
+deliverables:
+  - "Database schema + types: src/domain/billing/usage.ts."
+  - "Aggregator service: src/services/billing/usage-aggregator.ts + schedule (cron or PNPM script)."
+  - "CLI: scripts/usage/emit-sample.mjs for fixtures and tests."
+  - "Tests: tests/billing/usage-aggregate.spec.ts and integration with invoice builder."
+  - "Storybook proof: stories/domains/Billing/Usage.metred.stories.tsx."
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  researchFoundation:
+    - finding: "Add usage-based billing ingest path (meter → aggregate → invoice)."
+      sourceMission: "cmos/docs/OODS Direction-Check-for-sprint-17.md"
+    - finding: "Usage-based models require granular events + aggregation before invoicing."
+      sourceMission: "cmos/Industry-Research/R1.4_[1.1+1.2+1.3-linear]_Convergent Gravity and Divergent Forces- An Architectural Analysis of Modern Data Model Patterns.md"
+    - finding: "Canonical billing model outlines usage integration points."
+      sourceMission: "cmos/missions/research/R13.5_Canonical-Model-Subscription-and-Invoice.md"
+
+  implementationScope:
+    coreDeliverable: "Usage event schema, aggregator job, integration with canonical invoice builder + proofs."
+    outOfScope:
+      - "Real-time streaming analytics (future enhancements)."
+      - "Provider-specific usage push (this mission assumes internal event ingestion)."
+
+  handoffContext:
+    completed:
+      - "usage_events + usage_summary tables live with migrations; aggregator job scheduled."
+      - "Invoice builder consumes UsageSummary; tests + stories passing."
+      - "Docs/CLI illustrate local testing + sample data."
+    interfaces:
+      - "recordUsageEvent(event: UsageEventInput): Promise<void>"
+      - "UsageAggregator.run(dateRange): Promise<UsageSummary[]>"
+    assumptions:
+      - "TenancyContext ensures per-tenant isolation; aggregator runs per tenant."
+      - "Billing ACL already maps providers; usage events originate internally."
+    nextMission: "BI-20251024-176: Temporal Hygiene — dual time & tz."
+    blockers: []

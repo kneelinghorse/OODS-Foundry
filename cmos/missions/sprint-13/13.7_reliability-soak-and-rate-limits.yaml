@@ -1,0 +1,43 @@
+# cmos/missions/sprint-13/13.7_reliability-soak-and-rate-limits.yaml
+sprint: "13"
+missionId: "B13.7"
+title: "Reliability — soak tests, rate limits, timeout behavior, flake%"
+type: "Build.Implementation.v1"
+
+objective: >
+  Prove stability under repeated runs: add a soak runner that executes each tool N times with backoff,
+  records durations/exit-codes, enforces rate limits/timeouts, and writes a consolidated soak-report.json.
+  Expose flake% and p95/p99 latency in diagnostics.json.
+
+context: |
+  This is about real reliability, not demos. We’ll stress read-only tools and one gated write path (brand.apply dry-run → approve once).
+  
+Please read for context research Foundation:
+  - "cmos/missions/research/R13.2_Framework-for-Developer-Tooling-Reliability.md"   # targets, timeouts, backoff/jitter, soak schema :contentReference[oaicite:15]{index=15}
+
+
+deliverables:
+  - "/tools/soak-runner/src/soak.ts"
+  - "/tools/soak-runner/package.json"
+  - "/docs/mcp/Reliability.md"                     # how we run, targets, how to read the report
+
+params:
+  runsPerTool: 25
+  backoffMs: 250
+  maxConcurrent: 1
+
+steps:
+  - "Implement soak.ts to run: [a11y.scan, purity.audit, vrt.run, diag.snapshot] × runsPerTool (dry-run)."
+  - "Include one gated write flow: brand.apply → dry-run × (runsPerTool-1) then 1 approved apply."
+  - "Record (start, end, duration, exitCode, policyCode) per run; compute flake% and p95/p99."
+  - "Emit soak-report.json and append summary into diagnostics.json."
+
+tests:
+  - "Rate-limit violations produce expected 429; backoff avoids cascading failures."
+  - "TIMEOUTs surface correctly with elapsedMs; no partial writes on timeout."
+  - "Flake% ≤ 2% and p95 under target (document baseline in Reliability.md)."
+
+acceptance:
+  - "Soak report and diagnostics include flake%, p95/p99 latency, and zero unsafe writes."
+dependencies:
+  - "B12.5"

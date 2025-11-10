@@ -1,0 +1,62 @@
+# cmos/missions/sprint-12/12.5_policy-v1-sweep.yaml
+sprint: "12"
+missionId: "B12.5"
+title: "Policy v1 sweep — enforce roles, write-paths, limits across new tools"
+type: "Build.Implementation.v1"
+
+objective: >
+  Apply the policy engine (roles, allow/deny, write-path allowlist, timeouts/rate-limits, redactions)
+  uniformly to brand.apply, diag.snapshot, release.verify, and release.tag; normalize error shapes and
+  incident IDs; map messages to panel and CLI.
+
+context: |
+  Security posture remains: no arbitrary shell; no repo-wide writes; all writes go to /artifacts/current-state/YYYY-MM-DD/.
+  Panel and CLI must present consistent, actionable errors.
+
+researchFoundation:
+  - "cmos/missions/research/R11.5_Policy-UX-Guidelines.md"
+  - "cmos/missions/research/R11.2_Panel↔Bridge-Auth-&-CORS.md"
+
+deliverables:
+  - "/packages/mcp-server/src/security/policy.json"     # updated with new tools
+  - "/packages/mcp-server/src/security/policy.ts"       # enforcement across tools
+  - "/packages/mcp-bridge/src/middleware/errors.ts"     # { code, message, details, incidentId }
+  - "/app/apps/explorer/addons/storybook-addon-agent/i18n/errors.json"
+  - "/docs/mcp/Policy-Rules.md"
+
+policyDefaults:
+  roles: ["designer","maintainer"]
+  rules:
+    - tool: "brand.apply"          # allow both roles, but write on approval only
+      allow: ["designer","maintainer"]
+      write_paths: ["/artifacts/current-state/${DATE}/**"]
+    - tool: "diag.snapshot"
+      allow: ["designer","maintainer"]
+      write_paths: ["/artifacts/current-state/${DATE}/**"]
+    - tool: "release.verify"
+      allow: ["maintainer"]
+      write_paths: ["/artifacts/current-state/${DATE}/**"]
+    - tool: "release.tag"
+      allow: ["maintainer"]
+      write_paths: ["/artifacts/current-state/${DATE}/**"]
+  limits:
+    defaultTimeoutMs: 120000
+    concurrency: 1
+  redactions: ["$HOME","GITHUB_TOKEN","/Users/*/secrets/*"]
+
+steps:
+  - "Extend policy.json with new tools and role rules; enforce pre-execution in policy.ts."
+  - "Apply timeouts/rate-limits per tool; return TIMEOUT/RATE_LIMITED shapes with incident IDs."
+  - "Ensure transcripts carry redactions[] and that sensitive values are removed."
+  - "Bridge: map server errors to normalized { code, message, details, incidentId } and forward to panel."
+  - "Panel/CLI: wire i18n messages (copy from R11.5) and set correct exit codes on CLI."
+
+tests:
+  - "Designer can dry-run release.verify but apply is denied (POLICY_DENIED)."
+  - "brand.apply write blocked until approval; denied writes resolve as 403 with POLICY_DENIED."
+  - "Timeout/injection tests return typed errors; incidentId consistent across logs."
+  - "Transcripts redact configured values; verify no secrets present."
+
+acceptance:
+  - "All S12 tools enforce roles, write-paths, limits, and redactions consistently."
+  - "Panel and CLI show the same codes/messages with Incident IDs; developer can diagnose without sensitive detail."

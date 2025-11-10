@@ -1,0 +1,66 @@
+# cmos/missions/sprint-17/B17.3_billing-acl-provider-adapters.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251024-173"
+
+objective: >
+  Establish the Billing Anti-Corruption Layer: isolate third-party provider models (Stripe/Chargebee/Zuora)
+  behind adapters mapped to internal BillingAccount/Subscription/Invoice types with boundary tests and linting.
+
+context: |
+  Research explicitly adds a Billing ACL to preserve core sovereignty and prevent provider terminology from
+  leaking inward (cmos/docs/OODS Direction-Check-for-sprint-17.md:32, 90-95). Our data model analysis shows
+  high convergence on canonical billing entities with divergence at the integration layer (cmos/Industry-Research/
+  R1.2_A Cross-Platform Analysis of Core Data Models- Archetypes, Convergence, and Divergence in User, Account,
+  and Subscription Schemas.md:201-248; cmos/missions/research/R13.5_Canonical-Model-Subscription-and-Invoice.md).
+  This mission creates a provider-agnostic Billing domain (BillingAccount, Subscription, Invoice, PaymentIntent)
+  and adapter modules that translate provider payloads/events to internal types. It also introduces a lint rule /
+  CI check forbidding provider enums or IDs from surfacing in core packages or UI strings.
+
+successCriteria:
+  - "Internal billing types live under src/domain/billing/core.ts with canonical fields (no vendor strings)."
+  - "Provider adapters (stripe, chargebee, zuora) implement translateSubscription(), translateInvoice(), translateEvent()."
+  - "Event ingestion pipeline routes through ACL and records audit + tenancy metadata."
+  - "CI lint fails when `Stripe*` identifiers appear outside adapter modules/tests."
+  - "Storybook proof + tests demonstrate provider payload transformed into canonical objects powering UI tokens."
+
+deliverables:
+  - "src/domain/billing/{core.ts,events.ts}."
+  - "src/integrations/billing/{stripe-adapter.ts,chargebee-adapter.ts,zuora-adapter.ts}."
+  - "tests/integrations/billing/{stripe.spec.ts,chargebee.spec.ts,zuora.spec.ts}."
+  - "ESLint custom rule or codemod guard `packages/eslint-plugin-oods/rules/no-provider-leakage.ts`."
+  - "Docs: docs/billing/billing-acl.md with diagrams + runbooks."
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  researchFoundation:
+    - finding: "Create Billing ACL so vendors never leak into core objects."
+      sourceMission: "cmos/docs/OODS Direction-Check-for-sprint-17.md"
+    - finding: "Canonical subscription/invoice structures across providers."
+      sourceMission: "cmos/Industry-Research/R1.2_A Cross-Platform Analysis of Core Data Models- Archetypes, Convergence, and Divergence in User, Account, and Subscription Schemas.md"
+    - finding: "Internal canonical model for billing data."
+      sourceMission: "cmos/missions/research/R13.5_Canonical-Model-Subscription-and-Invoice.md"
+
+  implementationScope:
+    coreDeliverable: "Provider adapters + canonical billing domain, enforcement lint, and proof stories."
+    outOfScope:
+      - "Actual HTTP polling/webhook server configuration (wired in operations missions)."
+      - "Usage metering aggregation (covered by B17.5)."
+
+  handoffContext:
+    completed:
+      - "ACL modules shipping with tests; CLI `pnpm billing:translate` shows sample conversions."
+      - "Lint rule integrated; CI fails on leakage."
+      - "Docs outline how new providers implement Adapter interface."
+    interfaces:
+      - "BillingAdapter.translateSubscription(raw): CanonicalSubscription"
+      - "BillingAdapter.translateInvoice(raw): CanonicalInvoice"
+      - "BillingEventsRouter.handle(event, providerInfo): Promise<void>"
+    assumptions:
+      - "Providers supply JSON payloads accessible to adapter; secrets managed via existing config."
+      - "Canonical domain leverages TenancyContext from B17.2."
+    nextMission: "BI-20251024-174: Canonical Subscription & Invoice States."
+    blockers: []

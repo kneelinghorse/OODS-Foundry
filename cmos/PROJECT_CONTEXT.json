@@ -1,0 +1,864 @@
+{
+  "working_memory": {
+    "active_mission": "B20.1",
+    "session_count": 130,
+    "last_completed_mission": null,
+    "session_history": [],
+    "active_domain": "components",
+    "last_session": "2025-10-29T01:52:33Z-B19.5-storybook-pages",
+    "domains": {
+      "trait_engine": {
+        "status": "complete",
+        "priority": 1,
+        "current_mission": "B10",
+        "missions": {
+          "B1": {
+            "name": "Trait Definition Schema & Parser",
+            "status": "completed",
+            "started": "2025-10-07",
+            "completed": "2025-10-07",
+            "estimatedHours": "4-5"
+          },
+          "B2": {
+            "name": "Parameter Type Generator",
+            "status": "completed",
+            "started": "2025-10-07",
+            "completed": "2025-10-08",
+            "estimatedHours": "5-6"
+          },
+          "B3": {
+            "name": "Dependency Graph & Topological Sort",
+            "status": "completed",
+            "estimatedHours": "4-5",
+            "completed": "2025-10-08"
+          },
+          "B4": {
+            "name": "Trait Compositor Core",
+            "status": "completed",
+            "estimatedHours": "6-7",
+            "completed": "2025-10-08"
+          },
+          "B5": {
+            "name": "Validation Pipeline Foundation",
+            "status": "completed",
+            "estimatedHours": "4-5",
+            "completed": "2025-10-09"
+          },
+          "B6": {
+            "name": "AJV Parameter Validator",
+            "status": "completed",
+            "estimatedHours": "4-5",
+            "started": "2025-10-09",
+            "completed": "2025-10-10"
+          },
+          "B7": {
+            "name": "Core Trait Implementations (Set 1)",
+            "status": "completed",
+            "estimatedHours": "5-6",
+            "started": "2025-10-10",
+            "completed": "2025-10-12"
+          },
+          "B8": {
+            "name": "Core Trait Implementations (Set 2)",
+            "status": "completed",
+            "estimatedHours": "6-7",
+            "started": "2025-10-12",
+            "completed": "2025-10-13"
+          },
+          "B9": {
+            "name": "Zod Composition Validator",
+            "status": "completed",
+            "estimatedHours": "4-5",
+            "started": "2025-10-13",
+            "completed": "2025-10-14"
+          },
+          "B10": {
+            "name": "Integration Tests & CI Setup",
+            "status": "completed",
+            "estimatedHours": "4-5",
+            "started": "2025-10-14",
+            "completed": "2025-10-15",
+            "notes": [
+              "Integration fixtures and helpers under app/tests/integration",
+              "CI workflow validate-traits.yml authored",
+              "Coverage thresholds raised to 85% lines/functions/statements, 80% branches"
+            ]
+          }
+        },
+        "critical_facts": [
+          "Traits use 'as const' tuple pattern for type-safe parameters (Research R1)",
+          "Dual validation: AJV for parameters (11x faster), Zod for composition logic (Research R2)",
+          "5-layer merge cascade: Foundation \u2192 Base Object \u2192 Traits \u2192 Object Overrides \u2192 Context",
+          "Collision policy: same type = stricter; enums = union; required wins over optional",
+          "All trait files support both YAML and TypeScript module formats"
+        ],
+        "constraints": [
+          "Must support TypeScript 5.x strict mode",
+          "Parse errors must include file, line number, and field path",
+          "Generated code must be human-readable",
+          "No runtime dependencies in generated type files",
+          "Performance targets: <10ms for 100 trait deps, <5ms to compose 10 traits"
+        ],
+        "decisions_made": [
+          "Chose js-yaml for YAML parsing",
+          "Implemented comprehensive error reporting with line numbers",
+          "Created both sync and async parser APIs"
+        ],
+        "files_created": [
+          "app/src/core/trait-definition.ts",
+          "app/src/parsers/yaml-parser.ts",
+          "app/src/parsers/ts-parser.ts",
+          "app/src/parsers/index.ts",
+          "app/tests/parsers/yaml-parser.test.ts",
+          "app/tests/parsers/index.test.ts",
+          "app/docs/authoring-traits.md",
+          "app/examples/traits/Stateful.trait.yaml",
+          "app/examples/traits/Colorized.trait.ts",
+          "app/examples/traits/Labelled.trait.yaml",
+          "app/package.json",
+          "app/tsconfig.json",
+          "app/vitest.config.ts",
+          "app/src/generators/type-generator.ts",
+          "app/src/generators/templates/index.ts",
+          "app/src/generators/composer.ts",
+          "app/src/generators/index.ts",
+          "app/tests/generators/type-generator.test.ts",
+          "app/tests/generators/composer.test.ts",
+          "chromatic.config.json",
+          ".github/workflows/chromatic.yml",
+          "app/testkits/vrt/playwright.config.ts",
+          "app/testkits/vrt/storycap.config.mjs",
+          "app/docs/testing/visual-regression.md",
+          "app/testkits/vrt/stories/README.md",
+          "app/examples/generated/stateful_colorized.composed.types.ts",
+          "app/src/core/dependency-graph.ts",
+          "app/src/core/dependency-validator.ts",
+          "app/tests/core/dependency-graph.test.ts",
+          "app/src/utils/graph-visualizer.ts",
+          "app/dist/cli/validate-dependencies.js",
+          "app/src/core/compositor.ts",
+          "app/src/core/composed-object.ts",
+          "app/src/core/collision-resolver.ts",
+          "app/src/core/merge-strategies/schema-merger.ts",
+          "app/src/core/merge-strategies/semantics-merger.ts",
+          "app/src/core/merge-strategies/tokens-merger.ts",
+          "app/src/core/merge-strategies/view-extensions-merger.ts",
+          "app/src/core/merge-strategies/actions-merger.ts",
+          "app/tests/core/compositor.test.ts",
+          "app/docs/compositor-readme.md",
+          "app/src/utils/composition-visualizer.ts",
+          "app/examples/composed-objects/subscription.example.ts",
+          "app/examples/composed-objects/user.example.ts",
+          "app/examples/composed-objects/product.example.ts",
+          "app/tests/validation/formatter.test.ts",
+          "app/tests/validation/reporters.test.ts",
+          "app/tests/validation/pipeline.test.ts",
+          "app/tests/validation/cli.test.ts",
+          "app/.eslintrc.json",
+          "app/tests/integration/universal-quintet.integration.test.ts",
+          "app/tests/integration/failure-scenarios.integration.test.ts",
+          "app/tests/integration/fixtures/universal-quintet.ts",
+          "app/tests/integration/utils/pipeline-helpers.ts",
+          ".github/workflows/validate-traits.yml",
+          "app/docs/testing/integration-strategy.md",
+          "app/docs/validation/benchmarks/validation-throughput.md"
+        ],
+        "research_completed": [
+          "Research R1: TypeScript type patterns validated (as const approach)",
+          "Research R2: Validation architecture (AJV + Zod hybrid)"
+        ],
+        "achievements": [
+          "Trait parsing infrastructure complete",
+          "17/17 parser tests passing",
+          "Full YAML and TypeScript trait support",
+          "Comprehensive trait authoring documentation",
+          "Type generation system complete",
+          "Dependency graph and topological sort implemented",
+          "Cycle detection with full path reporting",
+          "Conflict validation for conflicts_with relationships",
+          "CLI command validate:dependencies available",
+          "Graph visualization via Mermaid output",
+          "Trait compositor core implemented",
+          "Collision resolver with stricter type/enum union/required-wins",
+          "Provenance tracking and composition reporting",
+          "Examples delivered: User, Subscription, Product",
+          "Validation pipeline foundation implemented (types, formatter, pipeline, reporters)",
+          "Validation CLI delivers JSON, text, and GitHub outputs with severity-based exit codes"
+        ]
+      },
+      "object_registry": {
+        "status": "completed",
+        "priority": 2,
+        "current_mission": "B7",
+        "missions": {
+          "B1": {
+            "name": "Object Definition Schema & Parser",
+            "status": "completed",
+            "started": "2025-10-16",
+            "completed": "2025-10-16",
+            "estimatedHours": "4-5"
+          },
+          "B2": {
+            "name": "Object Registry Core",
+            "status": "completed",
+            "started": "2025-10-16",
+            "completed": "2025-10-16",
+            "estimatedHours": "5-6"
+          },
+          "B3": {
+            "name": "Trait Resolution & Parameterization",
+            "status": "completed",
+            "started": "2025-10-16",
+            "completed": "2025-10-16",
+            "estimatedHours": "5-6"
+          },
+          "B4": {
+            "name": "Object Composition Integration",
+            "status": "completed",
+            "started": "2025-10-16",
+            "completed": "2025-10-16",
+            "estimatedHours": "4-5"
+          },
+          "B5": {
+            "name": "Type Generator for Objects",
+            "status": "completed",
+            "started": "2025-10-16",
+            "completed": "2025-10-16",
+            "estimatedHours": "5-6"
+          },
+          "B6": {
+            "name": "Universal Quintet Implementation",
+            "status": "completed",
+            "started": "2025-10-16",
+            "completed": "2025-10-16",
+            "estimatedHours": "6-7"
+          },
+          "B7": {
+            "name": "Registry Integration Tests & CLI",
+            "status": "completed",
+            "started": "2025-10-16",
+            "completed": "2025-10-16",
+            "estimatedHours": "4-5"
+          }
+        },
+        "sprint_02": {
+          "status": "completed",
+          "completed": "2025-10-16"
+        },
+        "critical_facts": [
+          "Objects compose traits plus add object-specific fields",
+          "Object definitions support trait parameterization and conflict resolution",
+          "Registry provides search and indexing capabilities across traits, tags, and domains",
+          "Type generation preserves literal types from trait parameters",
+          "Universal Quintet (User, Organization, Product, Transaction, Relationship) serves as foundation"
+        ],
+        "constraints": [
+          "Object definitions must not duplicate trait logic",
+          "Trait references must be resolvable from Sprint 01 trait library",
+          "Parse errors must include file, line, and field path",
+          "Generated types must be importable in TypeScript strict mode",
+          "Performance: <100ms for full object pipeline"
+        ],
+        "decisions_made": [],
+        "files_to_create": [
+          "app/src/registry/object-definition.ts",
+          "app/src/parsers/object-parser.ts",
+          "app/src/registry/registry.ts",
+          "app/src/registry/trait-loader.ts",
+          "app/src/registry/parameter-applier.ts",
+          "app/src/registry/resolver.ts",
+          "app/src/registry/conflict-applier.ts",
+          "app/src/registry/object-composer.ts",
+          "app/src/generators/object-type-generator.ts",
+          "objects/core/User.object.yaml",
+          "objects/core/Organization.object.yaml",
+          "objects/core/Product.object.yaml",
+          "objects/core/Transaction.object.yaml",
+          "objects/core/Relationship.object.yaml",
+          "app/tests/registry/composition-integration.test.ts",
+          "app/examples/composed-objects/article.resolved.json"
+        ],
+        "research_completed": [
+          "Trait Engine Spec v0.1 object composition patterns",
+          "Canonical schemas for Universal Quintet"
+        ],
+        "achievements": [
+          "Object definition schema and parser implemented",
+          "Object registry with search and indexing capabilities",
+          "Trait resolution with parameterization working",
+          "Object composition integrated with trait compositor",
+          "Type generator producing importable TypeScript types",
+          "Universal Quintet fully implemented and validated",
+          "CLI commands for object management operational"
+        ]
+      },
+      "view_engine": {
+        "status": "completed",
+        "priority": 3,
+        "current_mission": "B3.8",
+        "missions": {
+          "R3.1": {
+            "name": "Region Ergonomics Validation",
+            "status": "completed",
+            "started": "2025-10-09",
+            "completed": "2025-10-09",
+            "target_completion": "1 session"
+          },
+          "R3.2": {
+            "name": "Pure Modifier Pattern Specification",
+            "status": "queued"
+          },
+          "B3.1": {
+            "name": "Region Contract & RenderContext",
+            "status": "completed",
+            "started": "2025-10-09",
+            "completed": "2025-10-09"
+          },
+          "B3.2": {
+            "name": "Base Context Templates (Shells)",
+            "status": "completed",
+            "started": "2025-10-09",
+            "completed": "2025-10-09"
+          },
+          "B3.3": {
+            "name": "Extension Compositor Core",
+            "status": "completed",
+            "started": "2025-10-09"
+          },
+          "B3.4": {
+            "name": "<RenderObject> Component",
+            "status": "completed",
+            "completed": "2025-10-09"
+          },
+          "B3.5": {
+            "name": "Radix-Based OODS Primitives",
+            "status": "completed",
+            "completed": "2025-10-10"
+          },
+          "B3.6": {
+            "name": "User Object Integration",
+            "status": "completed",
+            "started": "2025-10-10",
+            "completed": "2025-10-10"
+          },
+          "B3.7": {
+            "name": "Subscription Object Integration",
+            "status": "completed"
+          },
+          "B3.8": {
+            "name": "Polish & Docs (Sprint 03 DoD)",
+            "status": "completed"
+          }
+        },
+        "critical_facts": [
+          "Regions are semantic containers (5-7 universal areas), not prescriptive layouts",
+          "Banners/tabs/notifications are content components, not regions",
+          "Modifiers must be pure, deterministic prop transformers (no side effects)",
+          "Context templates map regions to layouts for list/detail/form/timeline/card/inline",
+          "Extension compositor groups by region, dedups by id, sorts by priority, filters conditions"
+        ],
+        "constraints": [
+          "Regions must support all six context templates",
+          "Modifiers must pass purity harness tests (deepFreeze + repeat-compare)",
+          "ESLint rule blocks hooks/external effects inside modifiers",
+          "Compositor must produce deterministic, snapshot-stable output",
+          "Performance: 100-row ListView perf smoke test"
+        ],
+        "decisions_made": [],
+        "files_to_create": [
+          "app/src/view/compositor/composeExtensions.ts",
+          "app/src/view/compositor/composeDebug.ts",
+          "app/src/components/RenderObject.tsx",
+          "app/src/components/base/Button.tsx",
+          "app/src/components/base/Badge.tsx",
+          "app/src/components/base/Text.tsx",
+          "app/src/components/base/Card.tsx"
+        ],
+        "research_completed": [
+          "R3.1: Region Ergonomics Validation (Carbon/Fluent/Polaris benchmark synthesis)"
+        ],
+        "achievements": [
+          "B3.1: CanonicalRegionId + REGION_ORDER contract implemented with RenderContext factory and ViewExtension helpers",
+          "B3.1: Documentation updated (region migration map, Figma/token contract, authoring guidance) with passing regression suite",
+          "B3.2: Base context templates implemented with deterministic slot coverage tests"
+        ]
+      },
+      "design_tokens": {
+        "status": "active",
+        "priority": 4,
+        "current_mission": "B8.9",
+        "missions": {
+          "R4.1": {
+            "name": "DTCG Specification Maturity and Theming Guardrails",
+            "status": "complete",
+            "started": "2025-10-10",
+            "completed": "2025-10-10"
+          },
+          "R4.2": {
+            "name": "Tokens Studio to Tailwind CSS v4 Pipeline",
+            "status": "complete",
+            "started": "2025-10-10",
+            "completed": "2025-10-10"
+          },
+          "R4.3": {
+            "name": "Contextual Design Token Defaults",
+            "status": "queued"
+          },
+          "R4.4": {
+            "name": "A11y Contract and CI Policy",
+            "status": "queued"
+          },
+          "R4.5": {
+            "name": "SaaS Enum-to-Token Mapping Schema",
+            "status": "queued"
+          },
+          "B4.1": {
+            "name": "DTCG Token Repo + Guardrails",
+            "status": "complete",
+            "completed": "2025-10-10"
+          },
+          "B4.2": {
+            "name": "Build Pipeline (Style Dictionary v4 + sd-transforms)",
+            "status": "complete",
+            "started": "2025-10-10",
+            "completed": "2025-10-10"
+          },
+          "B4.3": {
+            "name": "Tailwind Context Variant Plugin",
+            "status": "complete",
+            "started": "2025-10-10"
+          },
+          "B4.4": {
+            "name": "A11y Contrast Contract + CI Gate",
+            "status": "complete",
+            "completed": "2025-10-10"
+          },
+          "B4.5": {
+            "name": "Enum/Status Mapping Schema + Coverage Validator",
+            "status": "complete",
+            "started": "2025-10-10",
+            "completed": "2025-10-10"
+          },
+          "B4.6": {
+            "name": "Token Browser (Explorer)",
+            "status": "complete",
+            "started": "2025-10-10",
+            "completed": "2025-10-10"
+          },
+          "B4.7": {
+            "name": "View Engine Smoke Tests (Contexts + Status Chips)",
+            "status": "completed",
+            "started": "2025-10-10",
+            "completed": "2025-10-11"
+          },
+          "B5.1": {
+            "name": "Four-Layer Token Architecture & Var-Chaining Skeleton",
+            "status": "complete",
+            "started": "2025-10-11",
+            "completed": "2025-10-11"
+          },
+          "B5.2": {
+            "name": "Theme 0 (OKLCH) Palette Integration & Token Assignment",
+            "status": "complete",
+            "started": "2025-10-11",
+            "completed": "2025-10-12"
+          },
+          "B5.3": {
+            "name": "Typography (Composite Tokens) & Context Density Binding",
+            "status": "complete",
+            "started": "2025-10-12",
+            "completed": "2025-10-13"
+          },
+          "B5.4": {
+            "name": "Shadow & Border Composites (DTCG)",
+            "status": "complete",
+            "started": "2025-10-13",
+            "completed": "2025-10-14"
+          },
+          "B5.5": {
+            "name": "Relative-Color Guardrails & CI Enforcement",
+            "status": "complete",
+            "started": "2025-10-14",
+            "completed": "2025-10-15"
+          },
+          "B5.6": {
+            "name": "High-Contrast (HC) Mapping & Resilience",
+            "status": "complete",
+            "started": "2025-10-15",
+            "completed": "2025-10-16"
+          },
+          "B5.7": {
+            "name": "Visual Regression (Chromatic) with Fallback Kit",
+            "status": "complete",
+            "started": "2025-10-16",
+            "completed": "2025-10-17"
+          },
+          "B5.8": {
+            "name": "Figma Handshake (Read-Only) & Specimens",
+            "status": "complete",
+            "started": "2025-10-17",
+            "completed": "2025-10-17"
+          },
+          "B5.9": {
+            "name": "Design QA & Drift Triage",
+            "status": "proposed",
+            "notes": "Suggested follow-up for Sprint 06 planning."
+          },
+          "B6.1": {
+            "name": "Dark Theme Completion & Themed Elevation",
+            "status": "complete",
+            "started": "2025-10-11",
+            "completed": "2025-10-11"
+          },
+          "B6.2": {
+            "name": "Contexts: Form & Timeline (Defaults, Slots, Docs)",
+            "status": "complete",
+            "started": "2025-10-11",
+            "completed": "2025-10-11"
+          },
+          "B6.3": {
+            "name": "Core Component States Library (Tokens-First)",
+            "status": "complete",
+            "started": "2025-10-11",
+            "completed": "2025-10-11"
+          },
+          "B6.4": {
+            "name": "Motion Tokens v1 (Respect Reduced Motion)",
+            "status": "complete",
+            "started": "2025-10-11",
+            "completed": "2025-10-11"
+          },
+          "B6.5": {
+            "name": "Enum Mapping Expansion & Coverage (Payment, Ticket, User)",
+            "status": "complete",
+            "started": "2025-10-11",
+            "completed": "2025-10-12"
+          },
+          "B6.6": {
+            "name": "High-Contrast (HC) Test Pass: From Optional to Required",
+            "status": "complete",
+            "completed": "2025-10-12"
+          },
+          "B6.7": {
+            "name": "Visual Regression: Expand Coverage & Stabilize",
+            "status": "complete",
+            "completed": "2025-10-12"
+          },
+          "B6.8": {
+            "name": "DX & Docs: Theme Freeze, PR Template, and Usage Guides",
+            "status": "complete",
+            "completed": "2025-10-12"
+          },
+          "B7.1": {
+            "name": "Motion Tokens v1 + VRT-Stable Consumption",
+            "status": "complete"
+          },
+          "B7.2": {
+            "name": "Contexts: Finalize Form & Timeline density/typography + MDX",
+            "status": "complete",
+            "completed": "2025-10-12"
+          },
+          "B7.3": {
+            "name": "HC visual snapshots (forced-colors) via Playwright+storycap",
+            "status": "complete"
+          },
+          "B7.4": {
+            "name": "Dark a11y coverage expansion & baseline",
+            "status": "complete"
+          },
+          "B7.5": {
+            "name": "Chromatic coverage expansion (\u226525; include Dark, exclude HC)",
+            "status": "complete"
+          },
+          "B7.6": {
+            "name": "Diagnostics updater (Sprint-07 snapshot script)",
+            "status": "complete"
+          },
+          "B8.1": {
+            "name": "Story Curation & VRT Shaping",
+            "status": "complete",
+            "started": "2025-10-12",
+            "completed": "2025-10-12"
+          },
+          "B8.2": {
+            "name": "Motion Tokens v1 (populate + targeted consumption)",
+            "status": "complete",
+            "started": "2025-10-12",
+            "completed": "2025-10-12"
+          },
+          "B8.3": {
+            "name": "Inputs & Controls (TextArea, Checkbox, Radio, Toggle)",
+            "status": "complete",
+            "started": "2025-10-12",
+            "completed": "2025-10-12"
+          },
+          "B8.4": {
+            "name": "Selection & Navigation (Select, Tabs)",
+            "status": "complete",
+            "started": "2025-10-12",
+            "completed": "2025-10-12"
+          },
+          "B8.5": {
+            "name": "Feedback & Affordance (Tooltip, Toast)",
+            "status": "complete",
+            "started": "2025-10-12",
+            "completed": "2025-10-12"
+          },
+          "B8.6": {
+            "name": "Form Patterns v1",
+            "status": "complete",
+            "started": "2025-10-12",
+            "completed": "2025-10-13"
+          },
+          "B8.7": {
+            "name": "A11y & HC/VRT Coverage for New Components",
+            "status": "complete",
+            "completed": "2025-10-13"
+          },
+          "B8.8": {
+            "name": "VRT Coverage Refresh",
+            "status": "complete",
+            "completed": "2025-10-13"
+          },
+          "B8.9": {
+            "name": "Diagnostics: Sprint-08 Snapshot",
+            "status": "in_progress"
+          }
+        },
+        "critical_facts": [
+          "DTCG tokens use strict core model with acyclic aliases only",
+          "Build pipeline uses Style Dictionary v4 with @tokens-studio/sd-transforms",
+          "Tailwind variants operate at region scope for context flipping",
+          "A11y contract enforces WCAG 2.2 AA with baseline/diff CI gating",
+          "Enum mapping schema ensures 100% coverage for SaaS domain fields"
+        ],
+        "constraints": [
+          "Token references must resolve acyclically with no circular dependencies",
+          "Build pipeline must complete under 3s on 2k tokens",
+          "All token pairs must pass WCAG 2.2 AA contrast requirements",
+          "Enum coverage validator must achieve 100% for SaaS domain status values",
+          "Context variants must be purely declarative (no runtime branching)"
+        ],
+        "decisions_made": [
+          "Swapped Storybook doc coverage to CSF stories that render typed React docs components for improved static analysis.",
+          "Standardised accessible table headers to context body text token to satisfy axe contrast contract."
+        ],
+        "files_to_create": [],
+        "research_completed": [
+          "missions/research/r5.6_Definitive-Guide-to-OKLCH-Relative-Color Guardrails.md",
+          "missions/research/r5.7_High-Contrast-Mode-Regression-Prevention.md",
+          "missions/research/r5.5_Scalable-Theming-Architecture.md"
+        ],
+        "achievements": [
+          "B5.3 delivered typography composites with deterministic class bindings; Storybook docs now consume React-based specimens for Contexts & Foundations pages.",
+          "B5.4 shipped shadow and border composites with per-part CSS variables plus Explorer docs that render elevated cards and banners via tokens.",
+          "B5.5 established \u0394L/\u0394C guardrails, extended a11y tooling, and wired CI gating with actionable reports.",
+          "B5.6 mapped forced-colors system tokens, implemented outline-first focus with transparent borders, and shipped the high-contrast policy doc + HC stylesheet for Explorer.",
+          "B7.2 locked Form/Timeline deltas: Form uses base scale with relaxed line-height and +1 stack step; Timeline uses -1 type step with standard line-height and compact stack spacing; stories and docs published."
+        ]
+      }
+    }
+  },
+  "context_health": {
+    "agents_md_loaded": false,
+    "last_updated": null
+  },
+  "technical_context": {
+    "dependencies": [
+      "Python 3.11+",
+      "Node.js 20+ (for optional tooling and tests)"
+    ],
+    "tooling": {
+      "seed_database": "python cmos/scripts/seed_sqlite.py --data-root <path-to-planning-repo>",
+      "validate_health": "./cmos/cli.py validate health",
+      "mission_runtime": "./cmos/cli.py mission --help"
+    },
+    "reference_docs": [
+      "foundational-docs/roadmap_template.md",
+      "foundational-docs/tech_arch_template.md"
+    ],
+    "mission_planning": {
+      "current_mission": {
+        "id": "B14.5",
+        "name": "Visual regression & PR previews",
+        "sprint": "14",
+        "status": "current",
+        "context_files": [
+          "cmos/missions/sprint-14/14.5_visual-regression-and-pr-previews.yaml",
+          "PROJECT_CONTEXT.json",
+          "diagnostics.json"
+        ],
+        "research": [
+          "missions/research/r5.4_Visual-Regression-Tooling.md"
+        ],
+        "deliverables": [
+          "testing/vr/baseline/**",
+          ".github/workflows/pr-validate.yml",
+          "docs/testing/visual-regression.md",
+          "docs/review-kits/brand-a-roundtrip.md"
+        ]
+      },
+      "next_mission": {
+        "id": "B14.6",
+        "name": "Coverage & type hygiene",
+        "status": "queued"
+      },
+      "recent_missions": [
+        {
+          "id": "B14.4",
+          "name": "High contrast & color guardrails",
+          "completed": "2025-10-18",
+          "signals": [
+            "scripts/tokens/color-guardrails.ts validates OKLCH guardrails and records diagnostics guardrail history.",
+            "testing/a11y/contrast.spec.ts and the High Contrast/Guardrails (HC) stories keep forced-colors proofs in CI.",
+            "Dark interactive tokens retuned for \u22654.5:1 contrast; docs/policies/high-contrast.md and hc-quickstart.md refreshed."
+          ]
+        },
+        {
+          "id": "B14.2",
+          "name": "Figma\u2194Repo handshake (Tokens \u2192 Tailwind)",
+          "completed": "2025-10-18",
+          "signals": [
+            "scripts/tokens/transform.ts ingests tokens/*.json to emit Tailwind-ready CSS variables in apps/explorer/src/styles/tokens.css.",
+            "Storybook Foundations/Tokens Roundtrip story exercises sys.status.info.* CSS vars via Tailwind config wiring.",
+            "diagnostics.json and docs/figma assets updated to capture the roundtrip checklist and mapping evidence."
+          ]
+        },
+        {
+          "id": "B14.1",
+          "name": "PR-first workflow & branch protections",
+          "completed": "2025-10-17",
+          "signals": [
+            "PR Validate workflow gates build, lint, typecheck, tokens, a11y, vr, coverage",
+            "Branch protection enforces CODEOWNER review and required checks"
+          ]
+        }
+      ],
+      "current_sprint_missions": {
+        "B14.1": {
+          "name": "PR-first workflow & branch protections",
+          "status": "complete",
+          "priority": 1
+        },
+        "B14.2": {
+          "name": "Figma\u2194Repo handshake (Tokens \u2192 Tailwind)",
+          "status": "complete",
+          "priority": 2
+        },
+        "B14.3": {
+          "name": "Composite tokens & theming guards",
+          "status": "complete",
+          "priority": 3
+        },
+        "B14.4": {
+          "name": "High contrast & color guardrails",
+          "status": "complete",
+          "priority": 4
+        },
+        "B14.5": {
+          "name": "Visual regression & PR previews",
+          "status": "complete",
+          "priority": 5
+        },
+        "B14.6": {
+          "name": "Coverage & type hygiene",
+          "status": "complete",
+          "priority": 6
+        },
+        "B14.7": {
+          "name": "Telemetry, incident IDs & soak",
+          "status": "complete",
+          "priority": 7
+        },
+        "B14.8": {
+          "name": "Policy-gated agent connectors",
+          "status": "complete",
+          "priority": 8
+        },
+        "B14.9": {
+          "name": "Agent panel v1.5 task runner",
+          "status": "complete",
+          "priority": 9
+        },
+        "B14.10": {
+          "name": "Enum to token enforcement",
+          "status": "complete",
+          "priority": 10
+        },
+        "B14.11": {
+          "name": "Accessibility contract in CI",
+          "status": "complete",
+          "priority": 11
+        },
+        "B14.12": {
+          "name": "Docs & guides refresh",
+          "status": "complete",
+          "priority": 12
+        }
+      }
+    },
+    "current_sprint": {
+      "sprint": "14",
+      "phase": "Sprint 14: PR-first workflow & human-in-the-loop guardrails",
+      "active_mission": "Sprint 14 complete \u2014 awaiting Sprint 15 planning",
+      "completed_missions": [
+        "B14.1: PR-first workflow & branch protections",
+        "B14.2: Figma\u2194Repo handshake",
+        "B14.3: Composite tokens & theming guards",
+        "B14.4: High contrast & color guardrails",
+        "B14.5: Visual regression & PR previews",
+        "B14.6: Coverage & type hygiene",
+        "B14.7: Telemetry, incident IDs & soak",
+        "B14.8: Policy-gated agent connectors",
+        "B14.9: Agent panel v1.5 task runner",
+        "B14.10: Enum\u2192Token mapping enforcement",
+        "B14.11: Accessibility contract in CI",
+        "B14.12: Docs & guides refresh"
+      ],
+      "in_progress": [],
+      "queued_missions": [],
+      "notes": [
+        "CI runs Chromatic previews, a11y diffs, token validation, and coverage before merge gates.",
+        "Main branch now enforces CODEOWNER review and seven required status checks.",
+        "Figma DTCG exports now flow through scripts/tokens/transform.ts to produce Tailwind-ready CSS variables and Storybook verification.",
+        "Guardrail scripts/tests cover OKLCH deltas and forced-colors stories ahead of VR baseline work.",
+        "Chromatic allowlist + manifest (testing/vr/baseline/manifest.json) gate light/dark snapshots; vr-test fails on unreviewed diffs.",
+        "Vitest coverage thresholds restored (70/80/70/70) with V8 instrumentation; schema-derived types generated under generated/types via json-schema-to-typescript.",
+        "Telemetry schema + pipeline instrumentation landed (B14.7), soak markdown report and diagnostics telemetry now tracked daily.",
+        "Bridge enforces policy-driven dry-run to approval flow with incident IDs and approval CLI (B14.8).",
+        "Agent panel v1.5 task runner (B14.9) adds queue statuses, denial reasons, and telemetry-linked incidents.",
+        "Accessibility contract (B14.11) builds Storybook and runs pnpm run a11y:diff across curated stories with serious/critical axe coverage.",
+        "Docs refreshed (B14.12) to cover PR-first checks, DTCG handshake, color/a11y guardrails, telemetry, and the panel queue.",
+        "B19.1 post-mission polish regenerated token artifacts after dropping legacy color fallbacks, refreshed domain stories for context/taxonomy gates, and updated EmptyState snapshots so coverage stays green.",
+        "B19.3 guardrail automation landed: metadata/tenancy ESLint rules with tests, guardrail + tokens snapshots wired into CI, and diagnostics.json now tracks guardrail history for B19.4 handoff."
+      ]
+    }
+  },
+  "project": {
+    "name": "Design System Trait Engine",
+    "version": "0.1.0",
+    "start_date": "2025-10-07"
+  },
+  "ai_instructions": {
+    "context_priority": [
+      "missions/current.yaml",
+      "AI_HANDOFF.md",
+      "PROJECT_CONTEXT.json"
+    ],
+    "special_instructions": [
+      "Follow completionProtocol in current.yaml exactly",
+      "Configure Chromatic with TurboSnap and tag the 10 critical stories for PR diffs",
+      "Check in Playwright + Storycap fallback configs with forced-colors emulation disabled by default",
+      "Document Chromatic workflow and fallback enablement alongside mission deliverables",
+      "Keep the fallback visual regression job non-blocking until Chromatic baselines stabilise"
+    ],
+    "preferred_language": "typescript",
+    "code_style": "strict mode, no any types, explicit return types",
+    "testing_required": true,
+    "test_coverage_target": "90%+"
+  },
+  "metadata": {
+    "migrated_at": "2025-11-09T23:09:23.071588+00:00",
+    "source_version": "cmos-v1"
+  }
+}

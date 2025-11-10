@@ -1,0 +1,268 @@
+# Sprint 01 - Technical Research Missions
+# Three focused research missions to inform Trait Engine implementation
+# Estimated total time: 6-9 hours (2-3 hours each)
+
+---
+# Mission R1: TypeScript Type System Foundations
+apiVersion: mission.v1
+kind: Mission
+metadata:
+  id: sprint-01-r1-typescript-types
+  name: TypeScript Type System Foundations
+  domain: build.technical-research
+  priority: critical
+  estimatedHours: 2-3
+  dependencies: []
+  
+spec:
+  objective: |
+    Compare and validate TypeScript type system patterns for trait parameter definitions 
+    to ensure literal type preservation through composition layers and optimal developer experience.
+    
+    This research will determine the foundational type strategy for the entire Trait Engine,
+    impacting type generation, developer autocomplete, and composition safety.
+
+  context: |
+    The Trait Engine needs to:
+    - Define parameters with exact literal types (e.g., status: ["draft", "active"] not status: string[])
+    - Preserve these literal types through multiple composition layers
+    - Generate object types that maintain readonly tuple inference
+    - Support TypeScript strict mode without requiring manual type annotations
+    
+    Key decision: Should trait parameters use 'as const' tuple patterns, enum unions, 
+    or a hybrid approach?
+
+  researchQuestions:
+    - What pattern best preserves string literal types through composition?
+    - How do 'as const' tuples behave when merged across multiple traits?
+    - Can we maintain readonly type inference without excessive type gymnastics?
+    - What are the trade-offs for developer experience in each approach?
+    - How do these patterns interact with JSON Schema validation?
+
+  technicalScope:
+    inputSources:
+      - TypeScript handbook sections on literal types and const assertions
+      - Real-world examples from tRPC, Zod, and TypeBox for literal inference
+      - Existing trait definition specs from architecture doc
+    
+    artifactsToCreate:
+      - Code spike with 4 pattern examples (as const tuples, enum unions, branded types, hybrid)
+      - Test suite showing type preservation through 3-layer composition
+      - Type inference comparison showing autocomplete behavior in VSCode
+      - Performance benchmark for type checking speed with each pattern
+    
+    toolsAndFrameworks:
+      - TypeScript 5.x with strict mode enabled
+      - ts-node for rapid prototyping
+      - VSCode for developer experience testing
+      - tsc --noEmit for type checking validation
+
+  constraints:
+    - Must preserve exact string literal types (not widen to 'string')
+    - Type inference must work without manual type annotations
+    - Pattern must support composition of 3+ traits
+    - Must compile with TypeScript strict mode enabled
+    - Should feel natural in developer autocomplete/intellisense
+
+  successCriteria:
+    - Code spike with 3-4 pattern examples comparing approaches
+    - Test results showing literal type preservation through composition
+    - Validated readonly type inference for generated object types  
+    - Written recommendation (500-800 words) with trade-off analysis
+    - Decision matrix scoring patterns on: type safety, DX, performance, maintainability
+
+  deliverables:
+    - type-patterns-spike/ directory with example implementations
+    - README.md with recommendation and decision rationale
+    - test/ directory proving type preservation
+    - screenshots showing autocomplete behavior for each pattern
+
+---
+# Mission R2: Validation Architecture Spike
+apiVersion: mission.v1
+kind: Mission
+metadata:
+  id: sprint-01-r2-validation-architecture
+  name: Validation Architecture Spike
+  domain: build.technical-research
+  priority: critical
+  estimatedHours: 2-3
+  dependencies: ["sprint-01-r1-typescript-types"]
+  
+spec:
+  objective: |
+    Survey and prototype validation architecture options to determine the optimal approach
+    for validating trait schemas, parameters, and composed objects with actionable error messages.
+
+  context: |
+    The Trait Engine requires validation at multiple layers:
+    - Trait definition schema validation (YAML structure correctness)
+    - Trait parameter validation (JSON Schema rules for parameterization)
+    - Composition validation (dependency cycles, collision detection, state machine ownership)
+    - Runtime validation (ensuring composed objects satisfy all trait constraints)
+    
+    The validation system must produce standardized ValidationIssue payloads with fix hints
+    that block CI merges and provide actionable feedback to developers.
+
+  researchQuestions:
+    - Which validation library best handles compositional schema validation?
+    - How can we compose validation schemas from multiple traits into a single object validator?
+    - What's the best approach for generating actionable error messages with fix hints?
+    - Can we validate both at build time (CI) and runtime (plugin) with the same code?
+    - How do we handle conditional validation based on trait combinations?
+
+  technicalScope:
+    inputSources:
+      - JSON Schema specification v2020-12
+      - AJV (JSON Schema validator) documentation
+      - Zod documentation and compositional patterns
+      - Existing ValidationIssue schema from architecture doc
+      - Survey of error message patterns from ESLint, TypeScript, Rust compiler
+    
+    artifactsToCreate:
+      - Comparison matrix of 3 validation approaches (AJV + JSON Schema, Zod, Custom)
+      - Prototype validator for Stateful trait showing all layers
+      - Example ValidationIssue payloads with fix hints
+      - Composition validator handling 3 trait collision scenarios
+      - Performance benchmark for validating 100 composed objects
+    
+    toolsAndFrameworks:
+      - AJV (JSON Schema validator)
+      - Zod (TypeScript-first schema validation)
+      - Custom validator prototype using TypeScript type guards
+
+  constraints:
+    - Must produce standardized ValidationIssue schema
+    - Error messages must include actionable fix hints
+    - Validators must compose (trait validators → object validator)
+    - Must support both sync (CI) and async (runtime) validation
+    - Performance target: <50ms to validate a composed object
+
+  successCriteria:
+    - Comparison matrix scoring 3 approaches on: composability, DX, performance, error quality
+    - Working prototype validating Stateful + Colorized + Labelled composition
+    - 5 example ValidationIssue payloads showing different error types with fix hints
+    - Written recommendation (600-1000 words) with implementation plan
+    - Prototype code demonstrating validation schema composition
+
+  deliverables:
+    - validation-spike/ directory with 3 approach implementations
+    - COMPARISON.md with decision matrix and recommendation
+    - examples/ directory with ValidationIssue samples
+    - benchmark-results.md showing performance data
+
+---
+# Mission R3: Region API Contract Definition
+apiVersion: mission.v1
+kind: Mission
+metadata:
+  id: sprint-01-r3-region-api
+  name: Region API Contract Definition
+  domain: build.technical-research
+  priority: high
+  estimatedHours: 2-3
+  dependencies: ["sprint-01-r1-typescript-types"]
+  
+spec:
+  objective: |
+    Prototype and validate the exact TypeScript interface for view extensions that target
+    canonical regions, ensuring the API remains stable as traits compose and extensions merge.
+
+  context: |
+    The View Engine needs a stable contract between traits and rendering contexts. Traits
+    declare view extensions that target canonical region IDs (pageHeader, viewToolbar, main, contextPanel, etc.).
+    
+    The region API must support:
+    - Extension types: wrapper, section, modifier, action
+    - Priority ordering for deterministic merge
+    - Idempotency keys to prevent duplicate extensions
+    - Context awareness (list vs detail vs form)
+    - Conditional rendering based on trait parameters
+    
+    This API is the boundary between trait authors and the rendering system - it must be
+    simple, stable, and powerful enough to handle all compositional scenarios.
+
+  researchQuestions:
+    - What TypeScript interface shape best represents a view extension?
+    - How should priority ordering work across multiple traits?
+    - What's the right abstraction for idempotency keys?
+    - How do we handle conditional extensions based on runtime state?
+    - Can the API stay stable when adding new extension types or regions?
+
+  technicalScope:
+    inputSources:
+      - Canonical region IDs from architecture doc (globalNavigation, pageHeader, breadcrumbs, viewToolbar, main, contextPanel)
+      - Extension types from architecture (wrapper, section, modifier, action)
+      - React component composition patterns
+      - Survey of plugin architectures (VSCode extensions, WordPress hooks, Babel plugins)
+    
+    artifactsToCreate:
+      - TypeScript interface definitions for ViewExtension, RegionTarget, ExtensionPipeline
+      - Prototype compositor that merges 5+ extensions into a render pipeline
+      - Example trait view extensions for Stateful, Taggable, Cancellable
+      - Test cases proving idempotency and priority ordering
+      - Documentation showing how trait authors use the API
+    
+    toolsAndFrameworks:
+      - TypeScript for interface definitions
+      - React for component composition patterns
+      - Topological sort library for priority ordering
+
+  constraints:
+    - API must accept extensions from any number of traits
+    - Priority ordering must be deterministic and predictable
+    - Idempotency keys must prevent duplicate rendering
+    - Interface should be simple enough to document in 1 page
+    - Must support conditional rendering without breaking composition
+
+  successCriteria:
+    - TypeScript interfaces for ViewExtension and RegionTarget APIs
+    - Working compositor merging 5+ extensions with priority ordering
+    - 3 example trait view extensions demonstrating all extension types
+    - Test suite proving idempotency and priority determinism
+    - API documentation showing usage patterns for trait authors
+    - Written recommendation (400-600 words) finalizing the contract
+
+  deliverables:
+    - region-api/ directory with interface definitions
+    - compositor-prototype.ts with working merge implementation  
+    - examples/ with 3 trait view extensions
+    - tests/ proving composition invariants
+    - API-SPEC.md documenting the contract for trait authors
+
+---
+# Research Sprint Summary
+
+## Execution Order
+1. **R1 (TypeScript Types)** - Run first, informs both R2 and R3
+2. **R2 (Validation) + R3 (Region API)** - Can run in parallel after R1
+
+## Dependencies Map
+```
+R1: TypeScript Type System Foundations
+├─> R2: Validation Architecture Spike (uses type patterns from R1)
+└─> R3: Region API Contract Definition (uses type patterns from R1)
+```
+
+## Time Budget
+- **Optimistic:** 6 hours total (2 hours each)
+- **Realistic:** 7.5 hours total (2.5 hours each)
+- **Pessimistic:** 9 hours total (3 hours each)
+
+## Critical Path
+R1 must complete before starting R2 or R3. R2 and R3 can run in parallel.
+
+## Success Gate
+All three missions must produce concrete recommendations before starting Sprint 01 build missions.
+The recommendations feed directly into:
+- Trait authoring format (uses R1 + R3)
+- Validation pipeline implementation (uses R2)
+- Type generation scripts (uses R1)
+- View Engine compositor (uses R3)
+
+## Next Steps After Research
+Once all three missions complete:
+1. Review recommendations together
+2. Make final decisions on any trade-offs
+3. Update architecture doc with concrete implementation choices
+4. Create Sprint 01 build missions based on validated patterns

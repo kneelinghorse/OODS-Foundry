@@ -1,0 +1,91 @@
+# missions/sprint-09/B9.2_Packages-Reproducible-Release.yaml
+sprint: "09"
+title: "@oods/* reproducible local releases"
+completionProtocolRef: "../current.yaml#completionProtocol"
+
+missionId: "B9.2"
+objective: >
+  Prepare reproducible pre-1.0 releases for @oods/tokens, @oods/tw-variants, and @oods/a11y-tools
+  using pinned toolchains, deterministic `npm pack`, and clear export maps.
+
+context: |
+  We’ll publish from a pnpm workspace with Node 20. Artifacts must be deterministic across two builds.
+  No CI/GitHub workflows are required; releases are local and verified with tarball diffs.
+
+successCriteria:
+  - "`npm pack` tarballs are bit-for-bit identical across two builds on the same machine."
+  - "Packages have ESM-first export maps; CJS provided where needed."
+  - "Type declarations, source maps, and sideEffects flags correct; README and LICENSE included."
+  - "CHANGELOG entries added via Conventional Commits."
+
+deliverables:
+  - "/packages/tokens/package.json"
+  - "/packages/tokens/dist/**"
+  - "/packages/tw-variants/package.json"
+  - "/packages/tw-variants/dist/**"
+  - "/packages/a11y-tools/package.json"
+  - "/packages/a11y-tools/dist/**"
+  - "/scripts/release/local-release.sh"
+  - "/docs/releases/release-checklist.md"
+
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - finding: "Exports-first package design; ESM with conditional CJS, NodeNext types."
+      sourceMission: "r.13.2_Publishing-Reproducible-TypeScript-Packages.md"
+    - finding: "Deterministic builds verified via two `npm pack` runs and tarball diff."
+      sourceMission: "r.13.2_Publishing-Reproducible-TypeScript-Packages.md"
+
+  implementationScope:
+    coreDeliverable: "Three packages built and verified as reproducible."
+    outOfScope:
+      - "Publishing to npm registry (manual step after verification)."
+      - "CI release automation."
+
+  handoffContext:
+    completed:
+      - "Release artifacts verified; checklist filled."
+    interfaces:
+      - "`pnpm -w build && pnpm -w pack:verify`"
+    assumptions:
+      - "Node 20, pnpm pinned; tsup/rollup/esbuild chosen and locked."
+    nextMission: "B9.4 Review kit may reference released tokens."
+    blockers: []
+
+examples:
+  pkg_json_exports: |
+    {
+      "name": "@oods/tokens",
+      "version": "0.1.0",
+      "type": "module",
+      "exports": {
+        ".": {
+          "types": "./dist/index.d.ts",
+          "import": "./dist/index.js",
+          "require": "./dist/index.cjs"
+        }
+      },
+      "main": "./dist/index.cjs",
+      "module": "./dist/index.js",
+      "types": "./dist/index.d.ts",
+      "sideEffects": false
+    }
+  release_script: |
+    #!/usr/bin/env bash
+    set -euo pipefail
+    rm -rf dist && pnpm -w build
+    one=$(npm pack --silent)
+    rm -rf dist && pnpm -w build
+    two=$(npm pack --silent)
+    diff <(tar -tf "$one") <(tar -tf "$two") || { echo "Tarball file lists differ"; exit 1; }
+    cmp "$one" "$two" || { echo "Tarballs are not identical"; exit 1; }
+    echo "Reproducible: $one == $two"
+
+tests:
+  - "Run local-release.sh for each package; expect 0 exit code."
+  - "Verify export maps work in ESM and CJS import smoke tests."
+  - "Ensure .d.ts present and types resolve in a sample TS project."
+
+acceptance:
+  - "All three packages pass reproducibility check and export-map smoke tests."
+  - "CHANGELOG updated with entries for 0.1.0."

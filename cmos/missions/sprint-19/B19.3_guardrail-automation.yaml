@@ -1,0 +1,53 @@
+# cmos/missions/sprint-19/B19.3_guardrail-automation.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251101-193"
+
+objective: >
+  Extend automated guardrails covering metadata policy, tenancy misuse, and token governance dashboards
+  so release reviewers can rely on continuous signals post-polish.
+
+context: |
+  Guardrails landed across earlier sprints (compliance, tenancy, token governance) but need consolidation
+  for the release timeframe. This mission expands lint/tests, updates dashboards, and wires signals into
+  diagnostics so packaging and private review have actionable health checks.
+
+successCriteria:
+  - "ESLint/ts rules updated to flag metadata policy breaches (PII, unsafe tenancy toggles) with tests."
+  - "Token governance dashboard renders high-risk deltas and label state; wired into diagnostics.json."
+  - "Tenancy/compliance guardrail reports integrated into artifacts/state/*.json with clear statuses."
+  - "CI steps documented; failing guardrails block merge unless waived."
+  - "Summary of guardrail coverage appended to docs/guardrails/overview.md."
+
+deliverables:
+  - "Lint rule updates under tools/lint-rules/* with tests in tests/lint/*."
+  - "Dashboard or report updates: docs/guardrails/index.md + diagnostics.json sections."
+  - "CI configuration updates (e.g., .github/workflows/* or scripts/local-pr-check.mjs)."
+  - "Summary entry in docs/changelog/sprint-19.md."
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  researchFoundation:
+    - finding: "Policy enforcement goals from Sprint 17–18 outputs."
+      sourceMission: "cmos/docs/roadmap_s17_release.md"
+
+  implementationScope:
+    coreDeliverable: "Automated guardrails + dashboards ready for pre-release monitoring."
+    outOfScope:
+      - "Manual policy documentation rewrite (only updates needed for tooling)."
+      - "Feature-level fixes outside guardrail enforcement."
+
+  handoffContext:
+    completed:
+      - "Guardrail checks documented and enforced in CI."
+      - "Dashboards refreshed with latest metrics."
+      - "Any waived checks tracked in backlog."
+    interfaces:
+      - "tools/tokens-governance, scripts/state-assessment.mjs, diagnostics.json."
+    assumptions:
+      - "Existing guardrails from prior sprints available as baseline."
+    nextMission: "B19.4 Diagnostics refresh & perf baselines."
+    blockers: []

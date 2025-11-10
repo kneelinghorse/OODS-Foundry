@@ -1,0 +1,310 @@
+# missions/research/r.10.1_MCP-Server-Patterns.yaml
+sprint: "10"
+title: "MCP server patterns: tool contracts, dry-run/apply, transcripts, path sandbox"
+missionId: "R10.1"
+type: "Research.Mission.v1"
+
+objective: >
+  Identify the best technical approach for an MCP server (Node/TS) that safely exposes OODS
+  maintenance/governance tools via a minimal, schema-validated interface. Output concrete server
+  shape, tool contracts (I/O), dry-run vs apply switch, path allowlist, error taxonomy, and transcript format.
+
+context: |
+  Target toolset: tokens.build, a11y.scan, purity.audit, vrt.run, reviewKit.create, release.packVerify, diag.snapshot.
+  Clients: Claude Remote MCP and OpenAI Agents SDK profiles. Writes must be confined to /artifacts/current-state/YYYY-MM-DD
+  (and/or a temporary git branch). Default behavior is dry-run with human approval before apply.
+
+prompt: |
+  Research current (2024–2025) MCP server patterns for design-system ops. Produce:
+  1) Recommended server shape in Node/TypeScript with JSON-schema validated tool contracts (inputs/outputs), 
+     including example schemas for { tokens.build, a11y.scan, purity.audit, vrt.run, reviewKit.create, release.packVerify }.
+  2) Dry-run vs apply design (flag naming, side-effects policy, idempotency).
+  3) Path sandbox strategy (allowlist to /artifacts/current-state/YYYY-MM-DD and/or temp git branch), 
+     execution working directory, and safe subprocess spawning.
+  4) Transcript format (what to log, redactions, integrity hash) and error taxonomy (user vs system vs policy).
+  5) Client options and connection notes for Claude Remote MCP and OpenAI Agents SDK (local dev first).
+  Include code snippets (TS), JSON schemas, and sequence diagrams. Cite sources and compare tradeoffs.
+
+sources_allowlist:
+  - "modelcontextprotocol.io"
+  - "anthropic.com"        # Remote MCP docs/announcements
+  - "platform.openai.com" # Agents SDK docs
+  - "github.com"           # reference implementations
+  - "nodejs.org", "npmjs.com", "zod.dev", "ajv.js.org"
+
+queries:
+  - "Model Context Protocol server TypeScript example tools JSON schema"
+  - "Anthropic Remote MCP how to connect local server"
+  - "OpenAI Agents SDK tools MCP integration"
+  - "safe child_process spawn best practices Node"
+  - "idempotent CLI design dry-run apply pattern"
+
+deliverables:
+  - "missions/research/r.10.1_MCP-Server-Patterns.md"
+  - "missions/research/r.10.1_MCP-Server-Patterns.findings.yaml"  # build implications (see structure below)
+
+acceptance:
+  - "≥5 authoritative sources cited; includes at least one concrete server skeleton in Node/TS."
+  - "JSON schemas for at least 4 tools (tokens.build, a11y.scan, reviewKit.create, release.packVerify)."
+  - "Explicit dry-run/apply contract and path-allowlist policy with examples."
+  - "Transcript spec includes redaction strategy and hash/integrity field."
+  - "Client notes for Claude Remote MCP AND OpenAI Agents SDK with connection steps."
+
+build_implications_schema: |
+  # missions/research/r.10.1_MCP-Server-Patterns.findings.yaml
+  recommended_server:
+    runtime: "node20"
+    framework: "express|fastify"
+    validation: "zod|ajv"
+  tools:
+    - id: "tokens.build"
+      input_schema: {}
+      output_schema: {}
+    - id: "reviewKit.create"
+      input_schema: {}
+      output_schema: {}
+  dry_run_flag: "--dry-run"   # default true
+  apply_flag: "--apply"
+  path_allowlist:
+    - "/artifacts/current-state/${YYYY-MM-DD}"
+  transcript:
+    fields: ["tool","args","start","end","exitCode","artifacts","redactions","sha256"]
+
+
+
+
+# missions/research/r.10.2_Agent-UX-Plan-Approve-Execute.yaml
+sprint: "10"
+title: "Agent UX: plan → approve → execute (CLI + Storybook panel flows)"
+missionId: "R10.2"
+type: "Research.Mission.v1"
+
+objective: >
+  Define the end-to-end user experience for agent-mediated runs: the planning preview, diff/artifact
+  presentation, explicit approval, execution, failure handling, and replay from transcripts. Output
+  CLI flow and Storybook panel wireframes and copy.
+
+context: |
+  Default is read-only (dry-run). Apply step requires explicit human approval. Evidence must include
+  artifact links and a signed transcript.
+
+prompt: |
+  Survey 2024–2025 agent UX patterns for “plan/approve/execute” in developer tools.
+  Deliver: (1) step-by-step flows for CLI and a Storybook panel, (2) examples of diff and artifact presentation,
+  (3) failure handling and retry/replay from transcript, (4) copy guidelines for warnings and approvals,
+  (5) minimal telemetry we should capture.
+  Include low-fidelity wireframes (ASCII or Mermaid), CLI examples, and acceptance criteria for a good UX.
+
+sources_allowlist:
+  - "storybook.js.org"
+  - "github.com/storybookjs"
+  - "platform.openai.com"
+  - "anthropic.com"
+  - "developer.chrome.com", "cli.style"
+
+queries:
+  - "agent plan approve execute UX patterns"
+  - "storybook addon panel custom UI how to"
+  - "diff preview best practices CLI developer tools"
+  - "human in the loop approval workflow design guidelines"
+
+deliverables:
+  - "missions/research/r.10.2_Agent-UX-Plan-Approve-Execute.md"
+  - "missions/research/r.10.2_Agent-UX-Plan-Approve-Execute.findings.yaml"
+
+acceptance:
+  - "Two concrete user journeys (CLI and Storybook) with state diagrams and wireframes."
+  - "Copy checklist for warnings, approvals, and post-run summaries."
+  - "Replay from transcript described, including how to select a past run and re-apply."
+
+build_implications_schema: |
+  # missions/research/r.10.2_Agent-UX-Plan-Approve-Execute.findings.yaml
+  flows:
+    cli: ["plan","show-diff","approve","execute","summarize"]
+    storybook: ["open-panel","select-tool","preview","approve","execute","review-artifacts"]
+  transcript_actions: ["replay","export","redact"]
+  required_components: ["AgentPanel","DiffViewer","ArtifactList","ApproveDialog"]
+
+
+
+
+# missions/research/r.10.3_Security-and-Governance.yaml
+sprint: "10"
+title: "Security & governance: policies, roles, rate limits, redaction, injection mitigations"
+missionId: "R10.3"
+type: "Research.Mission.v1"
+
+objective: >
+  Define practical security/governance controls for MCP tools: allow/deny rules, role flags (designer/maintainer),
+  rate limits/timeouts, redaction patterns, prompt-injection mitigations, and audit logging. Provide concrete
+  examples and expected server responses to violations.
+
+context: |
+  Non-goals: arbitrary shell access; repo-wide writes. Focus on policy-driven gating to keep runs safe, fast, and auditable.
+
+prompt: |
+  Research practical security controls for MCP/agent toolchains. Produce:
+  - Policy model (allowlist/denylist) with role-based overrides (designer vs maintainer).
+  - Rate limiting, concurrency, and timeout defaults per tool.
+  - Prompt-injection mitigation checklist and how to constrain file reads/writes.
+  - Redaction strategy for transcripts and logs (tokens/paths/env).
+  - Error/violation response shapes (HTTP- or JSON-RPC-like).
+  Include examples and default configs we can ship with v0.1.
+
+sources_allowlist:
+  - "modelcontextprotocol.io"
+  - "owasp.org"
+  - "auth0.com/docs"
+  - "anthropic.com"
+  - "platform.openai.com"
+
+queries:
+  - "prompt injection mitigations tools filesystem"
+  - "rate limiting best practices node typescript"
+  - "policy allowlist denylist patterns json schema"
+  - "audit logging design developer tools"
+
+deliverables:
+  - "missions/research/r.10.3_Security-and-Governance.md"
+  - "missions/research/r.10.3_Security-and-Governance.findings.yaml"
+
+acceptance:
+  - "Policy matrix with at least 6 explicit rules and role conditions."
+  - "Default limits for each tool (timeouts, max runtime, memory)."
+  - "Injection mitigation checklist tailored to file/tool execution."
+  - "Violation examples with structured error responses."
+
+build_implications_schema: |
+  # missions/research/r.10.3_Security-and-Governance.findings.yaml
+  policy:
+    roles: ["designer","maintainer"]
+    rules:
+      - tool: "reviewKit.create"
+        allow: ["designer","maintainer"]
+        write_paths: ["/artifacts/current-state/${YYYY-MM-DD}"]
+      - tool: "release.packVerify"
+        allow: ["maintainer"]
+  limits:
+    default_timeout_ms: 90000
+    concurrency: 1
+  redactions: ["$HOME","GITHUB_TOKEN","/Users/*/secrets/*"]
+  responses:
+    violation_shape: { code: "POLICY_DENIED", message: "", details: {} }
+
+
+
+
+
+# missions/research/r.10.4_Storybook-Agent-Panel-Integration.yaml
+sprint: "10"
+title: "Storybook Agent Panel: minimal addon design + message bridge to MCP"
+missionId: "R10.4"
+type: "Research.Mission.v1"
+
+objective: >
+  Define the quickest viable Storybook addon panel that can discover MCP tools, render inputs,
+  preview plan/diff, and request approval to execute (read-only by default). Output the addon structure,
+  channel/bridge design, and security notes for local dev.
+
+context: |
+  Designers should be able to trigger read-only tools (a11y.scan, purity.audit, vrt.run) and generate a Review Kit
+  without leaving Storybook. Writes happen only after explicit approval.
+
+prompt: |
+  Research Storybook addon architecture (manager vs preview, channels) and outline a minimal "Agent" panel:
+  - Panel UI structure and component list.
+  - How to call an MCP client from Storybook (local bridge, message schema).
+  - Handling auth/config for local dev.
+  - Displaying artifacts (links to /artifacts/current-state/YYYY-MM-DD, Chromatic URLs).
+  Provide code snippets, event flow diagrams, and pitfalls.
+
+sources_allowlist:
+  - "storybook.js.org"
+  - "github.com/storybookjs/storybook"
+  - "chromatic.com/docs"
+
+queries:
+  - "storybook addon panel create manager channel example"
+  - "storybook communicate between addon and preview"
+  - "chromatic link integration in storybook docs"
+  - "securely calling local service from storybook"
+
+deliverables:
+  - "missions/research/r.10.4_Storybook-Agent-Panel-Integration.md"
+  - "missions/research/r.10.4_Storybook-Agent-Panel-Integration.findings.yaml"
+
+acceptance:
+  - "Addon folder structure, key files, and event names defined."
+  - "Message schema for request/response + error handling sketched."
+  - "Security notes for local dev (port, origin, CORS) documented."
+
+build_implications_schema: |
+  # missions/research/r.10.4_Storybook-Agent-Panel-Integration.findings.yaml
+  addon:
+    name: "storybook-addon-agent"
+    files: ["register.ts","panel.tsx","bridge.ts","types.ts"]
+  events:
+    request: "agent/run"
+    response: "agent/result"
+    error: "agent/error"
+  preview_api:
+    read_only_tools: ["a11y.scan","purity.audit","vrt.run"]
+    requires_approve_for: ["reviewKit.create"]
+
+
+
+
+# missions/research/r.10.5_Artifact-Contracts-and-Reproducibility.yaml
+sprint: "10"
+title: "Artifact contracts: schemas, hashes, bundle index, ≤10 file guidance"
+missionId: "R10.5"
+type: "Research.Mission.v1"
+
+objective: >
+  Define the artifact and transcript schemas for MCP/agent runs, including integrity hashes, bundle indexing,
+  and guidance for keeping total artifacts lean (≤10 files). Produce JSON schemas and examples we can ship.
+
+context: |
+  Aligns with your current artifact pattern. Artifacts must be reproducible and linkable from Storybook/Chromatic.
+
+prompt: |
+  Research artifact and logging schemas for developer automation. Deliver:
+  - JSON Schema for `diagnostics.json` and `transcript.json` (fields, types, required).
+  - Bundle index format listing all produced files with mime, byte size, sha256, and purpose.
+  - Hashing strategy and integrity notes.
+  - Guidance for consolidating outputs to stay under a 10-file cap (embedding tables vs separate files).
+  Provide examples and tradeoffs.
+
+sources_allowlist:
+  - "json-schema.org"
+  - "datatracker.ietf.org/doc/html/rfc8949"   # (CBOR guidance if helpful)
+  - "github.com"                              # examples
+
+queries:
+  - "json schema logging artifacts transcript hash schema"
+  - "sha256 integrity manifest format example"
+  - "compact artifact bundles developer tools"
+
+deliverables:
+  - "missions/research/r.10.5_Artifact-Contracts-and-Reproducibility.md"
+  - "missions/research/r.10.5_Artifact-Contracts-and-Reproducibility.findings.yaml"
+
+acceptance:
+  - "Schemas for diagnostics.json, transcript.json, and bundle-index.json provided and validated."
+  - "Examples include sha256 and size; guidance section covers ≤10-file consolidation."
+
+build_implications_schema: |
+  # missions/research/r.10.5_Artifact-Contracts-and-Reproducibility.findings.yaml
+  schemas:
+    diagnostics: "json-schema object"
+    transcript: "json-schema object"
+    bundle_index: "json-schema object"
+  integrity:
+    algo: "sha256"
+    include: ["tool","args","start","end","artifacts[*].sha256"]
+  consolidation_guidance:
+    prefer_single_diagnostics_json: true
+    embed_tables_in_summary_md: true
+
+
+

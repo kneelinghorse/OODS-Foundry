@@ -1,0 +1,56 @@
+# cmos/missions/sprint-18/B18.6_toast-queue.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251024-186"
+
+objective: >
+  Implement the toast queue service and visual component aligned with Statusables intents, queueing
+  behavior, and accessibility mandates from R18.1.
+
+context: |
+  Toasts are central to feedback loops. Research specifies imperative API (toast.show), intents tied to
+  Statusables tokens, queueing/stacking behavior, timeout rules, and accessibility (role="status"/
+  "alert", focus shortcut). This mission builds the toast manager, React portal/stack, and documentation
+  to standardize messaging across the system.
+
+successCriteria:
+  - "toast.show API supports intents (info/success/warning/error), custom actions, duration, and sticky behavior."
+  - "Queue manager stacks toasts without overlap, configurable position (default top-right), and handles FIFO display."
+  - "Visual component uses Statusables tokens for background/icon/text; HC + axe checks pass."
+  - "Storybook stories demonstrate intents, queue stacking, sticky toast, custom action."
+  - "Unit tests cover queue logic, timeout handling, accessibility roles; integration test verifies global shortcut focus."
+
+deliverables:
+  - "Service: src/components/toast/toastService.ts (imperative API + context)."
+  - "Component: src/components/toast/ToastPortal.tsx."
+  - "Storybook: stories/components/Toast.stories.tsx."
+  - "Tests: tests/components/toast.spec.ts (queue + timer) + keyboard shortcut test."
+  - "Docs: docs/components/toast.md (usage + messaging guidelines)."
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+Read for Context   researchFoundation:
+    - finding: "Toast intents, queue behavior, accessibility heuristics."
+      sourceMission: "cmos/missions/research/R18.1_Technical-Research-Report-Component-Set-IV.md"
+
+  implementationScope:
+    coreDeliverable: "Toast service + portal + stories/tests."
+    outOfScope:
+      - "Persisted notifications center (future)."
+      - "Analytics logging of toast events (handled separately)."
+
+  handoffContext:
+    completed:
+      - "toast.show API documented; sample integration provided."
+      - "Storybook includes VR baselines for each intent."
+      - "Tokens validated via governance job."
+    interfaces:
+      - "toast.show({ intent, title, duration, action })"
+    assumptions:
+      - "Portal/root element available from overlay infrastructure."
+      - "Statusables tokens accessible via theme context."
+    nextMission: "BI-20251024-187: Performance harness implementation."
+    blockers: []

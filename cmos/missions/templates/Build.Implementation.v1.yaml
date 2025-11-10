@@ -1,0 +1,210 @@
+# pack.yaml - Metadata for the "Implementation" Domain Pack
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+description: "A mission to implement a specific, well-scoped technical component based on the findings of a prior research mission. Sized for a single, focused development session." #
+author: "Your Name/Team"
+schema: "./schemas/Implementation.v1.json"
+
+---
+
+# Mission File: B#.#_component-name.yaml
+
+missionId: "BI-20251004-001" # Build Implementation
+
+objective: "To implement the core logic for the 'GraphAnalysisService' component, ensuring it meets specified performance targets and has passing unit tests."
+
+context: |
+  This mission implements the findings from the Technical Research mission <TR-20251004-001>.
+  The scope is intentionally limited to a single developer session to ensure high focus and a clean, testable deliverable.
+
+successCriteria:
+  - "The core functionality is implemented according to the 'implementationScope'."
+  - "All unit tests are passing with >80% code coverage."
+  - "The implemented code meets the performance target defined in the 'researchFoundation'."
+  - "The handoff context is fully populated for the next mission."
+
+deliverables:
+  - "The implemented and documented source code for the component."
+  - "A suite of passing unit tests."
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  # Creates a direct, auditable link to the justifying research.
+  researchFoundation:
+    - finding: "Implement using the 'igraph' library."
+      sourceMission: "TR-20251004-001"
+    - finding: "Target query performance of < 100ms."
+      sourceMission: "TR-20251004-001"
+    - finding: "Must use the bulk-loading pattern for graph creation."
+      sourceMission: "TR-20251004-001"
+      
+  # Sized for a single session.
+  implementationScope:
+    coreDeliverable: "A Python class `GraphAnalysisService` with methods for `load_graph_from_edges` and `find_shortest_path`."
+    outOfScope:
+      - "API endpoint exposure (next mission: BI-20251004-002)."
+      - "Performance optimization beyond the initial target."
+      - "Integration with the main application."
+
+  orchestrationPatterns:
+    selectedPattern: "none"  # Allowed: none|rsip|delegation|boomerang
+    mutuallyExclusive: true  # Enforce single-pattern execution for Sprint 08
+    allowedPatterns:
+      - "none"
+      - "rsip"
+      - "delegation"
+      - "boomerang"
+    configuration:
+      rsip:
+        enabled: false
+        maxIterations: 5
+        convergenceCriteria: "evaluation_score >= 0.9"
+        refinementPrompt: |
+          Apply RSIP refinement focusing on correctness, quality, and security.
+      delegation:
+        enabled: false
+        workerManifest: "workers/manifest.yaml"
+        contextIsolation: true
+        maxDelegatedWorkers: 3
+        coordinationNotes: |
+          Sub-agent instructions must be isolated per worker and scrubbed of sensitive data.
+      boomerang:
+        enabled: false
+        checkpointDirectory: "runtime/boomerang"
+        telemetryStream: "telemetry/events/{{ mission_id }}.jsonl"
+        maxStepRetries: 2
+        autoFallback: true
+    validationRules:
+      - "Exactly one pattern may be enabled at a time (mutual exclusivity)."
+      - "When selectedPattern is not `none`, only the matching configuration block may set enabled: true."
+      - "Delegation requires workerManifest entries for each referenced worker."
+
+  runtimeTopology:
+    stateDirectories:
+      - "runtime/boomerang"
+      - "telemetry/events"
+      - "workers"
+    telemetry:
+      streamFormat: "jsonl"
+      retention: "mission"
+      requiredEvents:
+        - "worker_dispatch"
+        - "step_start"
+        - "step_complete"
+        - "fallback"
+    workerManifestPath: "workers/manifest.yaml"
+
+  # Defines the cross-AI validation strategy with LLM-as-Judge integration.
+  validationProtocol:
+    - validator: "Gemini"
+      focus: "Production readiness and adherence to Python best practices."
+    - validator: "Claude"
+      focus: "Algorithmic correctness and logical clarity."
+
+  # LLM-as-Judge automated code review framework
+  llmAsJudgeValidation:
+    enabled: true
+
+    validationCriteria:
+      - "Security vulnerabilities (OWASP Top 10 compliance)"
+      - "Code quality and maintainability standards"
+      - "Performance and efficiency requirements"
+      - "Testing coverage and quality assurance"
+      - "Documentation completeness and accuracy"
+
+    reviewerPrompt: |
+      You are a senior security engineer and code reviewer with expertise in secure software development.
+      Review the following code implementation for security vulnerabilities, code quality, and adherence to best practices:
+
+      Code to review: [code_content]
+      Implementation context: [implementation_context]
+      Security requirements: [security_requirements]
+
+      Evaluation criteria:
+      1. Security: Check for OWASP Top 10 vulnerabilities and secure coding practices
+      2. Quality: Assess code maintainability, readability, and adherence to language best practices
+      3. Performance: Evaluate efficiency, resource usage, and algorithmic complexity
+      4. Testing: Review test coverage, test quality, and edge case handling
+      5. Documentation: Check code comments, API documentation, and implementation clarity
+
+      Provide specific feedback:
+      - Security issues found (if any) with severity levels and remediation steps
+      - Quality improvements needed with specific code examples
+      - Performance optimizations suggested with complexity analysis
+      - Testing gaps identified with recommended test cases
+      - Overall assessment (PASS/FAIL/WARN) with confidence level
+
+      Be constructive, specific, and actionable in your feedback.
+      Flag any critical security issues that would prevent deployment.
+
+    outputFormat:
+      securityFindings:
+        critical: []  # Issues that block deployment
+        high: []      # Issues requiring immediate attention
+        medium: []    # Issues to address before next release
+        low: []       # Issues to address in future maintenance
+      qualityAssessment:
+        maintainability: ""  # Rating: Excellent/Good/Fair/Poor
+        readability: ""      # Rating: Excellent/Good/Fair/Poor
+        bestPractices: ""    # Compliance level: Full/Partial/Minimal/None
+        recommendations: []  # Specific improvement suggestions
+      performanceNotes:
+        complexity: ""       # Big O analysis
+        bottlenecks: []      # Identified performance issues
+        optimizations: []    # Suggested improvements
+      testingEvaluation:
+        coverage: ""         # Percentage or qualitative assessment
+        quality: ""          # Rating: Excellent/Good/Fair/Poor
+        gaps: []            # Missing test scenarios
+      overallStatus: ""      # PASS/FAIL/WARN
+      confidence: ""         # High/Medium/Low
+      actionItems: []        # Prioritized list of required fixes
+
+  failureEscalation:
+    tier_1_automatic_retry:
+      conditions:
+        - "worker_timeout"
+        - "evaluation_call_failure"
+        - "network_errors"
+      behavior: "Auto retry once per worker or iteration"
+    tier_2_pattern_thresholds:
+      rsip: "maxIterations reached without convergence → trigger fallback"
+      delegation: "2 failed worker executions → halt delegation"
+      boomerang: "Step fails twice OR checkpoint write fails once → stop sequence"
+    tier_3_fallback_to_linear:
+      behavior: "Degrade to single agent run without pattern"
+      telemetry:
+        emit:
+          - status: "fallback"
+          - fallbackTriggered: true
+    tier_4_human_escalation:
+      enforcement: "Missions hitting fallback require manual review before closing"
+      mechanism: "Checklist item or approval gate logged in summary"
+
+  # Proactive quality gates for implementation validation
+  qualityGates:
+    preCommit:
+      - "Run LLM-as-Judge security validation"
+      - "Block commit if critical security issues found"
+      - "Require security review for high-risk changes"
+      - "Validate code against OWASP Top 10 requirements"
+
+    postImplementation:
+      - "Automated security scan integration"
+      - "Performance benchmark validation"
+      - "Dependency vulnerability assessment"
+      - "Code quality metrics verification"
+
+  # The structured output that enables mission chaining.
+  handoffContext:
+    completed:
+      - "`GraphAnalysisService` class created."
+      - "`load_graph_from_edges` and `find_shortest_path` methods implemented and tested."
+    interfaces:
+      - "Class: `GraphAnalysisService`, Method: `find_shortest_path(start_node, end_node)` returns `List[node]`."
+    assumptions:
+      - "Input data will be a clean list of edge tuples."
+    nextMission: "BI-20251004-002: Expose GraphAnalysisService via FastAPI."
+    blockers: []

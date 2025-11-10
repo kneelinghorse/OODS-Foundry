@@ -1,0 +1,68 @@
+# cmos/missions/sprint-16/B16.T1_tokens-governance-triage-and-enforcement.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251023-T01"
+
+objective: >
+  Triage and resolve token governance RED: accept only minimal, intentional deltas (overlays/view-profiles/z-index),
+  revert accidental churn, remove CSS literals, and enforce protected-namespace gates (label + CODEOWNERS) in CI.
+
+context: |
+  Assessor shows 830 high-risk token moves (+2 rgba() literals) and missing `token-change:breaking` label. We will:
+  (1) classify diffs by namespace intent, (2) auto-revert unintended edits, (3) add the label to the PR holding the
+  accepted minimal set, (4) burn down CSS literals, and (5) enable CI enforcement so this cannot regress.
+
+successCriteria:
+  - "artifacts/state/governance/brand-*.json re-run → highRisk.count ≤ 25 and only in namespaces: overlay.*, view.*, z.*"
+  - "No CSS color literals in src/**/*.{ts,tsx,css}; assessor `--tokens` returns 0 literals."
+  - "CODEOWNERS requires review for protected namespaces: base/*, sys/*, a11y/*, focus/*."
+  - "CI fails if risk.high > 0 and PR lacks label `token-change:breaking`."
+  - "assessment.json updates Tokens from RED → GREEN or YELLOW with explicit rationale."
+
+deliverables:
+  - "scripts/gov/triage.mjs (classifier + auto-revert generator)"
+  - "configs/policies/token-namespaces.json (allowed/protected namespaces)"
+  - ".github/workflows/token-governance.yml (gate on risk + label)"
+  - "CODEOWNERS additions for protected namespaces"
+  - "artifacts/gov/triage-report.md (kept vs reverted, with reasons)"
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+ Read for Context researchFoundation:
+    - finding: "DTCG is SoT; composites expand deterministically."
+      sourceMission: "cmos/research/r5.1_Implementing-DTCG-Compliant-Composite-Tokens.md"
+    - finding: "Perceptual deltas (OKLCH) identify risky fg/bg/focus changes."
+      sourceMission: "cmos/research/r5.2_Perceptually-Uniform-Color-System.md"
+    - finding: "A11y contract protects focus/contrast tokens from casual edits."
+      sourceMission: "cmos/research/r4.4_ A11y-Contract-and-CI-Policy.md"
+
+implementationNotes: |
+  # Classifier (accept minimal / revert the rest)
+  1) Read assessor outputs:
+     - artifacts/state/tokens.json (literals + summary)
+     - artifacts/state/governance/brand-a.json, brand-b.json (diffs, risk.hints)  # from state-assessment
+  2) Keep deltas if:
+     - token.name startsWith('overlay.') OR 'view.' OR 'z.'  (introduced by 16.1/16.2/16.10a)
+     - OR token is an alias *pointing to* the above namespaces.
+     Everything else with risk.high → REVERT.
+  3) Autogenerate a patch:
+     - Produce a `reverts.diff` for non-accepted changes; apply and commit as "revert: unintended token churn".
+  4) Add PR label `token-change:breaking` to the PR carrying the accepted minimal set.
+  5) Remove literals:
+     - Grep src for /(#([0-9a-f]{3}|[0-9a-f]{6})\b)|(rgba?\()/i with an allowlist for tests/fixtures only.
+     - Replace with semantic tokens (cmp.* / sys.*); never inline color values.
+
+  # CI gate (GitHub Action)
+  - On pull_request:
+      - run `node scripts/state-assessment.mjs --tokens`
+      - parse artifacts/state/tokens.json + brand-* governance JSONs
+      - if (risk.high > 0 && !hasLabel('token-change:breaking')) → fail
+      - if (protectedNamespaceTouched && !reviewedByCodeOwners) → fail
+
+  # Paths & commands
+  - node scripts/gov/triage.mjs --governanceDir artifacts/state/governance --tokens artifacts/state/tokens.json --apply
+  - pnpm lint:css && pnpm stylelint 'src/**/*.{css,tsx}'
+  - node scripts/state-assessment.mjs --tokens

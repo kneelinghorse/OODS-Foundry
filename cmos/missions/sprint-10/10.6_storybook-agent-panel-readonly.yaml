@@ -1,0 +1,45 @@
+# cmos/missions/sprint-10/10.6_storybook-agent-panel-readonly.yaml
+sprint: "10"
+missionId: "B10.6"
+title: "Storybook Agent panel (read-only tools)"
+type: "Build.Implementation.v1"
+
+objective: >
+  Add a Storybook addon panel that lists tools from the HTTP bridge, renders inputs,
+  runs read-only tools (a11y.scan, purity.audit, vrt.run, diag.snapshot), and shows artifact links.
+  Write/approval flows come next sprint.
+
+context: |
+  Designers should be able to run audits and view outputs without leaving Storybook.
+  The panel calls the B10.2 bridge (CORS-allowed origin http://localhost:6006).
+
+researchFoundation:
+  - "cmos/missions/research/R10.4_Storybook-Agent-Panel-Integration.md"
+  - "cmos/missions/research/R10.2_Agent-UX-Plan-Approve-Execute.md"
+
+deliverables:
+  - "/app/apps/explorer/addons/storybook-addon-agent/register.tsx"
+  - "/app/apps/explorer/addons/storybook-addon-agent/panel.tsx"
+  - "/app/apps/explorer/addons/storybook-addon-agent/bridge.ts"
+  - "/app/apps/explorer/addons/storybook-addon-agent/types.ts"
+  - "/docs/mcp/Storybook-Agent-Panel.md"
+
+steps:
+  - "Create addon scaffold (manager UI panel)."
+  - "Implement fetch to GET /tools and POST /run on the bridge."
+  - "Render input form from tool JSON schemas; disable apply/write options."
+  - "Render result view with artifact list; open links in new tab."
+  - "Document setup and security notes (ports, origin, local dev)."
+
+tests:
+  - "Panel loads in Storybook and lists read-only tools."
+  - "Submitting a tool run shows a loading state, then artifact links."
+  - "Apply/write controls are hidden or disabled; bridge rejects any write attempt."
+
+acceptance:
+  - "Addon operates end-to-end for read-only tools with stable UX; docs published."
+
+status: "Completed"
+completed_at: "2025-10-15T00:52:53Z"
+notes: |
+  Storybook agent panel surfaces read-only MCP tools with bridge-backed artifact links directly inside Storybook.

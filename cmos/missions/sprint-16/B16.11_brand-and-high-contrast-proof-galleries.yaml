@@ -1,0 +1,47 @@
+# cmos/missions/sprint-16/B16.11_brand-and-high-contrast-proof-galleries.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251020-171"
+
+objective: >
+  Curate Brand and High-Contrast sections into focused proof galleries that pre-set globals and
+  demonstrate the contract (interactive surfaces, status matrices, focus indicators).
+
+context: |
+  BrandA duplicates and mixed HC demos caused confusion. Replace with minimal, high-signal proofs:
+  pre-set brand/theme states and show only the three HC proofs.
+
+successCriteria:
+  - "Brand: Showcase/Light/Dark/High Contrast remain as pre-set galleries (no duplicates)."
+  - "High Contrast: exactly 3 stories — Interactive Surfaces (tab-through), Status Chips (matrix), Focus Indicators (grid)."
+  - "Each HC story renders system-color tokens; keyboard tabbing visibly works; axe 0 violations."
+  - "Removed the old #BrandA section and any redundant HC pages."
+
+deliverables:
+  - "Brand/ and High Contrast/ story files updated or replaced."
+  - "docs/storybook/proofs.md describing how proofs are constructed and what to look for."
+  - "artifacts/storybook/hc-proof-results.json (tab path + checks)."
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+ please read researchFoundation:
+    - finding: "HC/contrast gates are CI contracts; proofs must be deterministic."
+      sourceMission: "cmos/research/r4.4_ A11y-Contract-and-CI-Policy.md"
+
+  implementationScope:
+    coreDeliverable: "Curated proof galleries with clear, minimal stories."
+    outOfScope:
+      - "Adjusting brand palettes (visual design changes)."
+
+  handoffContext:
+    completed:
+      - "Proof galleries curated; redundant sections removed."
+    interfaces:
+      - "Pre-sets globals inside stories via parameters/globals."
+    assumptions:
+      - "System color tokens are correctly mapped for HC."
+    nextMission: "BI-20251020-172: Curated Axe & VR Dry-Run + Baseline Sync."
+    blockers: []

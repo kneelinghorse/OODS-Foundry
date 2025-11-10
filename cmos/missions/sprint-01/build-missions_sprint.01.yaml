@@ -1,0 +1,863 @@
+# Sprint 01 - Build Missions: Trait Engine Foundations
+# Ten focused implementation missions based on validated research findings
+# Estimated total time: 40-50 hours (4-6 hours each)
+
+---
+# Mission B1: Trait Definition Schema & Parser
+apiVersion: mission.v1
+kind: Mission
+metadata:
+  id: sprint-01-b1-trait-schema
+  name: Trait Definition Schema & Parser
+  domain: build.implementation
+  priority: critical
+  estimatedHours: 4-5
+  dependencies: ["sprint-01-r1-typescript-types"]
+  
+spec:
+  objective: |
+    Implement the foundational trait definition schema and parser that reads YAML/TypeScript
+    trait files and converts them into validated, typed trait objects for the composition engine.
+
+  context: |
+    Based on Trait Engine Spec v0.1 and research findings, traits are defined in either
+    YAML or TypeScript module format with required keys: trait, schema, semantics, 
+    view_extensions, tokens, dependencies, metadata.
+    
+    This mission establishes the core data structures and parsing logic that all subsequent
+    missions depend on.
+
+  technicalRequirements:
+    - Implement TraitDefinition TypeScript interface matching spec v0.1
+    - Build YAML parser using js-yaml with schema validation
+    - Support TypeScript module imports as alternative format
+    - Validate required top-level keys on parse
+    - Handle parameterization syntax from research findings
+    - Provide detailed parse error messages with line numbers
+
+  implementation:
+    inputSources:
+      - Trait Engine Spec v0.1 (section 2: Authoring Specification)
+      - Research finding R1 (as const pattern for parameters)
+      - Example trait skeletons from spec
+    
+    coreComponents:
+      - src/core/trait-definition.ts (TypeScript interfaces)
+      - src/parsers/yaml-parser.ts (YAML → TraitDefinition)
+      - src/parsers/ts-parser.ts (TypeScript module → TraitDefinition)
+      - src/parsers/index.ts (unified parser facade)
+    
+    keyAlgorithms:
+      - YAML parsing with schema validation
+      - Parameter extraction using as const patterns
+      - Dependency array normalization
+      - Metadata extraction and validation
+
+  acceptanceCriteria:
+    - TraitDefinition interface covers all spec v0.1 fields
+    - Parser successfully reads both YAML and TS trait files
+    - Invalid trait files produce actionable error messages
+    - Parameterized traits correctly extract parameter definitions
+    - Unit tests achieve 90%+ coverage on parser logic
+    - Example traits from spec parse without errors
+
+  deliverables:
+    - src/core/trait-definition.ts with complete interface
+    - src/parsers/ directory with YAML and TS parsers
+    - tests/parsers/ with comprehensive test suite
+    - docs/authoring-traits.md with format examples
+    - 3 example trait files (Stateful, Colorized, Labelled)
+
+  constraints:
+    - Must support both YAML and TypeScript formats
+    - Parse errors must include file, line number, and field path
+    - Parser must be synchronous for CLI usage
+    - No external validation libraries yet (that's B5)
+
+---
+# Mission B2: Parameter Type Generator
+apiVersion: mission.v1
+kind: Mission
+metadata:
+  id: sprint-01-b2-type-generator
+  name: Parameter Type Generator
+  domain: build.implementation
+  priority: critical
+  estimatedHours: 5-6
+  dependencies: ["sprint-01-b1-trait-schema", "sprint-01-r1-typescript-types"]
+  
+spec:
+  objective: |
+    Build the type generation system that converts trait parameter definitions into
+    TypeScript types using the validated 'as const' tuple pattern, preserving exact
+    literal types through composition.
+
+  context: |
+    Research R1 validated that 'as const' tuples with derived union types provide
+    the best developer experience and type preservation. This mission implements
+    the code generator that:
+    - Reads parameter definitions from parsed traits
+    - Generates TypeScript const declarations with 'as const'
+    - Derives union types using (typeof X)[number] pattern
+    - Handles composition of parameters from multiple traits
+    - Outputs .d.ts files for developer consumption
+
+  technicalRequirements:
+    - Generate TypeScript code as strings (AST optional but not required)
+    - Implement const generic composition from R1 research
+    - Preserve readonly tuple types in generated output
+    - Handle parameter namespacing for trait composition
+    - Generate both runtime constants and type definitions
+    - Support incremental regeneration (only changed traits)
+
+  implementation:
+    inputSources:
+      - Research R1 (as const pattern implementation)
+      - Parsed TraitDefinition objects from B1
+      - TypeScript compiler API documentation (optional)
+    
+    coreComponents:
+      - src/generators/type-generator.ts (main generator)
+      - src/generators/templates/ (code templates)
+      - src/generators/composer.ts (multi-trait composition)
+      - src/generators/index.ts (CLI interface)
+    
+    keyAlgorithms:
+      - Template-based code generation for const declarations
+      - Union type derivation using typeof indexed access
+      - Namespace collision detection and resolution
+      - Incremental file change detection
+
+  acceptanceCriteria:
+    - Generates valid TypeScript that compiles in strict mode
+    - Literal types preserved through 3+ layer composition
+    - Generated types provide autocomplete in VSCode
+    - Readonly tuples inferred without manual annotations
+    - No 'any' types in generated output
+    - Regeneration only touches changed files
+
+  deliverables:
+    - src/generators/type-generator.ts with core logic
+    - CLI command: yarn generate:types
+    - generated/types/ directory with .d.ts files
+    - tests/generators/ with type preservation tests
+    - Example generated types for Stateful + Colorized composition
+
+  constraints:
+    - Generated code must be human-readable
+    - Must work with TypeScript 5.x strict mode
+    - No runtime dependencies in generated code
+    - Generated files must include "DO NOT EDIT" headers
+
+---
+# Mission B3: Dependency Graph & Topological Sort
+apiVersion: mission.v1
+kind: Mission
+metadata:
+  id: sprint-01-b3-dependency-graph
+  name: Dependency Graph & Topological Sort
+  domain: build.implementation
+  priority: critical
+  estimatedHours: 4-5
+  dependencies: ["sprint-01-b1-trait-schema"]
+  
+spec:
+  objective: |
+    Implement the dependency resolution algorithm that builds a directed acyclic graph
+    from trait dependencies and computes a valid topological ordering for composition.
+
+  context: |
+    Traits declare dependencies using requires, extends, and conflicts_with fields.
+    The composition engine must resolve these into a valid execution order while
+    detecting circular dependencies and conflicts before composition begins.
+    
+    This is a pure graph algorithm problem with clear inputs (trait dependencies)
+    and outputs (ordered trait list or error).
+
+  technicalRequirements:
+    - Build directed graph from trait dependency declarations
+    - Implement topological sort (Kahn's or DFS-based algorithm)
+    - Detect and report circular dependencies with full cycle path
+    - Validate conflicts_with relationships
+    - Handle optional dependencies (soft vs hard requirements)
+    - Support dependency visualization for debugging
+
+  implementation:
+    inputSources:
+      - Graph algorithm textbooks/references
+      - Trait Engine Spec v0.1 section 2.4 (Dependencies)
+      - npm packages: topological-sort or graphlib (optional)
+    
+    coreComponents:
+      - src/core/dependency-graph.ts (graph data structure)
+      - src/core/topological-sort.ts (sorting algorithm)
+      - src/core/dependency-validator.ts (conflict checking)
+      - src/utils/graph-visualizer.ts (Mermaid diagram export)
+    
+    keyAlgorithms:
+      - Kahn's algorithm for topological sort
+      - DFS-based cycle detection with path tracking
+      - Conflict relationship validation
+      - Transitive dependency closure computation
+
+  acceptanceCriteria:
+    - Successfully orders 10+ traits with complex dependencies
+    - Detects all circular dependencies with exact cycle path
+    - Validates conflicts_with and raises clear errors
+    - Performance: <10ms for 100 trait dependency resolution
+    - Produces valid Mermaid diagram for visualization
+    - Handles edge cases (disconnected graphs, self-loops)
+
+  deliverables:
+    - src/core/dependency-graph.ts with full implementation
+    - src/core/topological-sort.ts with algorithm
+    - tests/core/dependency-graph.test.ts (extensive edge cases)
+    - CLI command: yarn validate:dependencies
+    - Example Mermaid diagram output for test fixture
+
+  constraints:
+    - Must detect ALL circular dependencies (not just first found)
+    - Error messages must show complete cycle path
+    - Algorithm must be deterministic (same input = same output)
+    - No external graph libraries unless absolutely necessary
+
+---
+# Mission B4: Trait Compositor Core
+apiVersion: mission.v1
+kind: Mission
+metadata:
+  id: sprint-01-b4-compositor
+  name: Trait Compositor Core
+  domain: build.implementation
+  priority: critical
+  estimatedHours: 6-7
+  dependencies: ["sprint-01-b1-trait-schema", "sprint-01-b3-dependency-graph", "sprint-01-r1-typescript-types"]
+  
+spec:
+  objective: |
+    Implement the deterministic trait composition engine that merges multiple traits
+    into a single composed object following the validated merge order cascade and
+    collision policy from the research.
+
+  context: |
+    This is the heart of the Trait Engine. It takes an ordered list of traits
+    (from B3) and merges them following the specificity cascade:
+    Foundation → Base Object → Traits (topo order) → Object Overrides → Context
+    
+    It must handle schema merging, semantic combination, token namespace resolution,
+    and view extension aggregation while applying the collision policy from research.
+
+  technicalRequirements:
+    - Implement 5-layer merge cascade per spec
+    - Apply collision policy: same type = stricter; enums = union; required wins
+    - Handle namespace prefixing for domain traits
+    - Merge view_extensions arrays preserving order
+    - Combine token references without duplication
+    - Track merge provenance (which trait contributed what)
+    - Generate detailed merge reports for debugging
+
+  implementation:
+    inputSources:
+      - Trait Engine Spec v0.1 section 3 (Composition Algorithm)
+      - Research R1 (type composition patterns)
+      - Parsed TraitDefinition objects from B1
+      - Dependency order from B3
+    
+    coreComponents:
+      - src/core/compositor.ts (main composition logic)
+      - src/core/merge-strategies/ (field-specific mergers)
+      - src/core/collision-resolver.ts (policy implementation)
+      - src/core/composed-object.ts (output interface)
+    
+    keyAlgorithms:
+      - Cascade-based deep object merging
+      - Type strictness comparison for collision resolution
+      - Enum union computation
+      - Required vs optional field precedence
+      - Namespace collision detection and prefixing
+
+  acceptanceCriteria:
+    - Composes 3+ traits deterministically (same input = same output)
+    - Collision policy correctly applied for all test cases
+    - Merge cascade follows exact order from spec
+    - Composed object includes provenance metadata
+    - Performance: <5ms to compose 10 traits
+    - Generated types match composition result
+
+  deliverables:
+    - src/core/compositor.ts with full implementation
+    - src/core/merge-strategies/ with field-specific logic
+    - tests/core/compositor.test.ts with collision scenarios
+    - Example composed objects (User, Subscription, Product)
+    - Composition report visualizer for debugging
+
+  constraints:
+    - Composition must be pure function (no side effects)
+    - Must handle all collision types from spec
+    - Merge order must be exactly as documented
+    - Provenance must track which trait contributed each field
+
+---
+# Mission B5: Validation Pipeline Foundation
+apiVersion: mission.v1
+kind: Mission
+metadata:
+  id: sprint-01-b5-validation-pipeline
+  name: Validation Pipeline Foundation
+  domain: build.implementation
+  priority: critical
+  estimatedHours: 4-5
+  dependencies: ["sprint-01-b1-trait-schema", "sprint-01-r2-validation-architecture"]
+  
+spec:
+  objective: |
+    Implement the core validation infrastructure including the ValidationIssue schema,
+    error formatter, and the pipeline that coordinates validators for CI/CD integration.
+
+  context: |
+    Research R2 validated a hybrid approach: AJV for parameters, Zod for composition.
+    This mission builds the foundation that both validator types plug into, establishing
+    the standardized error format and the orchestration layer.
+    
+    The validation pipeline runs in CI to block invalid traits from merging.
+
+  technicalRequirements:
+    - Implement ValidationIssue TypeScript interface
+    - Build error formatter that converts raw validator errors to ValidationIssue
+    - Create severity system (error/warning/info) with CI exit codes
+    - Implement fix hint generation for common error patterns
+    - Support both synchronous (CI) and async (runtime) validation
+    - Provide JSON and human-readable output formats
+
+  implementation:
+    inputSources:
+      - Research R2 (ValidationIssue schema design)
+      - Rust compiler error format (inspiration for quality)
+      - ESLint error reporting patterns
+    
+    coreComponents:
+      - src/validation/types.ts (ValidationIssue interface)
+      - src/validation/formatter.ts (error formatter)
+      - src/validation/pipeline.ts (orchestration)
+      - src/validation/reporters/ (JSON, text, GitHub annotations)
+    
+    keyAlgorithms:
+      - Error code generation (TE-0101 pattern)
+      - Source location tracking (file, line, column)
+      - Fix hint matching based on error patterns
+      - Severity-based filtering and aggregation
+
+  acceptanceCriteria:
+    - ValidationIssue schema includes all fields from R2
+    - Error formatter handles both AJV and Zod error formats
+    - Fix hints are actionable and specific
+    - CI exit code: 0 (success), 1 (errors), 2 (warnings only)
+    - Output formats: JSON, text, GitHub annotations
+    - Error messages match quality bar from research
+
+  deliverables:
+    - src/validation/types.ts with complete interfaces
+    - src/validation/formatter.ts with error transformation
+    - src/validation/pipeline.ts with orchestration logic
+    - CLI command: yarn validate (returns ValidationIssue[])
+    - Example error outputs in all formats
+
+  constraints:
+    - ValidationIssue must be JSON-serializable
+    - Error codes must be stable across versions
+    - Fix hints required for top 10 most common errors
+    - Must support GitHub Actions annotations format
+
+---
+# Mission B6: AJV Parameter Validator
+apiVersion: mission.v1
+kind: Mission
+metadata:
+  id: sprint-01-b6-ajv-validator
+  name: AJV Parameter Validator
+  domain: build.implementation
+  priority: high
+  estimatedHours: 4-5
+  dependencies: ["sprint-01-b1-trait-schema", "sprint-01-b5-validation-pipeline", "sprint-01-r2-validation-architecture"]
+  
+spec:
+  objective: |
+    Implement the AJV-based parameter validation service that validates trait parameter
+    objects against JSON Schema definitions, leveraging AJV's performance for CI usage.
+
+  context: |
+    Research R2 validated AJV as 11x faster than Zod for bulk validation.
+    This mission implements Layer 2 validation: ensuring trait parameters conform
+    to their schema definitions before composition occurs.
+    
+    Each trait has a corresponding JSON Schema file that defines its parameter contract.
+
+  technicalRequirements:
+    - Integrate ajv and ajv-formats packages
+    - Create JSON Schema definitions for 5 core traits
+    - Build validation service that loads schemas dynamically
+    - Convert AJV errors to ValidationIssue format
+    - Support async validation for future use
+    - Cache compiled validators for performance
+
+  implementation:
+    inputSources:
+      - Research R2 (AJV implementation patterns)
+      - JSON Schema 2020-12 specification
+      - Trait parameter definitions from parsed traits
+    
+    coreComponents:
+      - src/validation/parameter-validator.ts (AJV service)
+      - schemas/traits/ (JSON Schema files for each trait)
+      - src/validation/ajv-transformer.ts (AJV → ValidationIssue)
+      - src/validation/schema-loader.ts (dynamic schema loading)
+    
+    keyAlgorithms:
+      - JSON Schema compilation and caching
+      - AJV error object transformation
+      - Schema path to fix hint mapping
+      - Parameter type inference from schema
+
+  acceptanceCriteria:
+    - Validates parameters for all 5 core traits
+    - AJV errors correctly transformed to ValidationIssue
+    - Performance: <20ms for 100 parameter validations
+    - Compiled validators cached (not recompiled per use)
+    - Fix hints generated for common schema violations
+    - Async validation works for future runtime usage
+
+  deliverables:
+    - src/validation/parameter-validator.ts with AJV integration
+    - schemas/traits/ with 5 JSON Schema files
+    - src/validation/ajv-transformer.ts for error conversion
+    - tests/validation/parameter-validator.test.ts
+    - Performance benchmark results vs research baseline
+
+  constraints:
+    - Must use JSON Schema 2020-12 draft
+    - No schema compilation at runtime (cache required)
+    - AJV strict mode enabled for safety
+    - Schema files must be versioned with traits
+
+---
+# Mission B7: Core Trait Implementations (Set 1)
+apiVersion: mission.v1
+kind: Mission
+metadata:
+  id: sprint-01-b7-traits-set-1
+  name: Core Trait Implementations (Set 1)
+  domain: build.implementation
+  status: Completed
+  priority: high
+  estimatedHours: 5-6
+  dependencies: ["sprint-01-b1-trait-schema", "sprint-01-b2-type-generator", "sprint-01-b6-ajv-validator"]
+  
+spec:
+  objective: |
+    Implement the first set of 3 core traits (Stateful, Colorized, Labelled) using
+    all validated patterns from research: as const parameters, proper dependencies,
+    semantic token mappings, and comprehensive unit tests.
+
+  context: |
+    These are the foundational traits that appear in nearly every object composition.
+    They serve as reference implementations for all future traits and validate that
+    the authoring format, type generation, and validation pipeline work end-to-end.
+    
+    Each trait must follow Trait Engine Spec v0.1 exactly.
+
+  technicalRequirements:
+    - Implement 3 traits in both YAML and TypeScript formats
+    - Use as const pattern for all parameter definitions
+    - Define semantic token mappings per spec
+    - Include view_extensions targeting canonical regions
+    - Declare dependencies where applicable
+    - Write unit tests for each trait's contract
+
+  implementation:
+    inputSources:
+      - Trait Engine Spec v0.1 section 2 (Authoring)
+      - Research R1 (as const parameter patterns)
+      - Canonical schemas document (universal quintet)
+    
+    traitImplementations:
+      Stateful:
+        parameters: ["states: string[] as const", "initialState: string"]
+        schema: { status: "enum from states", state_history: "StateTransition[]" }
+        semantics: { status: "tokenMap(status.*)" }
+        dependencies: []
+        
+      Colorized:
+        parameters: ["colorStates: string[] as const"]
+        schema: { color_state: "enum from colorStates" }
+        semantics: { color_state: "tokenMap(status.*)" }
+        dependencies: ["Stateful"]
+        
+      Labelled:
+        parameters: []
+        schema: { label: "string", description?: "string", placeholder?: "string" }
+        semantics: { label: "text.label", description: "text.hint" }
+        dependencies: []
+    
+    fileStructure:
+      - traits/lifecycle/Stateful.trait.yaml
+      - traits/visual/Colorized.trait.yaml
+      - traits/content/Labelled.trait.yaml
+      - tests/traits/Stateful.test.ts (schema, semantics, tokens, a11y)
+      - tests/traits/Colorized.test.ts
+      - tests/traits/Labelled.test.ts
+
+  acceptanceCriteria:
+    - All 3 traits parse without errors
+    - Generated types compile in TypeScript strict mode
+    - Parameter validation passes for valid inputs
+    - Parameter validation fails for invalid inputs with clear errors
+    - Each trait has 90%+ unit test coverage
+    - Token references validated (tokens exist in system)
+
+  deliverables:
+    - 3 complete trait definition files (YAML)
+    - Generated TypeScript types for all 3 traits
+    - JSON Schema files for parameter validation
+    - Comprehensive unit test suite
+  statusReport: |
+    ✅ Delivered canonical Stateful, Colorized, and Labelled traits across YAML and TypeScript definitions.
+    ✅ Added AJV-ready parameter schemas with $data alignment and semantic token mappings using tokenMap().
+    ✅ Implemented Vitest suites for schema/semantics/validation coverage; all validators passing.
+    ✅ Updated validation transformer to give trait-specific feedback (Stateful enum, Colorized uniqueness).
+    - Example usage documentation
+
+  constraints:
+    - Must follow spec v0.1 exactly (no deviations)
+    - Token references must use semantic namespace pattern
+    - View extensions must target valid canonical regions
+    - Dependencies must be resolvable (no circular refs)
+
+---
+# Mission B8: Core Trait Implementations (Set 2)
+apiVersion: mission.v1
+kind: Mission
+metadata:
+  id: sprint-01-b8-traits-set-2
+  name: Core Trait Implementations (Set 2)
+  domain: build.implementation
+  priority: high
+  estimatedHours: 5-6
+  dependencies: ["sprint-01-b7-traits-set-1", "sprint-01-b4-compositor"]
+  
+spec:
+  objective: |
+    Implement the second set of 3 core traits (Taggable, Cancellable, Archivable)
+    and validate that multi-trait composition works correctly with the compositor
+    from B4.
+
+  context: |
+    This mission proves that the composition engine handles real-world trait
+    combinations correctly. These traits introduce more complex scenarios:
+    - Taggable: array-based parameters
+    - Cancellable: boolean state management with dependencies
+    - Archivable: temporal concerns with soft delete patterns
+    
+    The tests must prove composition works with 3+ traits.
+
+  technicalRequirements:
+    - Implement 3 additional core traits per spec
+    - Test composition with traits from Set 1
+    - Validate collision policy for overlapping fields
+    - Ensure dependency ordering works correctly
+    - Test view extension merging from multiple traits
+    - Validate that generated types compose properly
+
+  implementation:
+    inputSources:
+      - Trait Engine Spec v0.1
+      - Research R1 (type composition patterns)
+      - Traits from B7 for composition testing
+    
+    traitImplementations:
+      Taggable:
+        parameters: ["maxTags?: number"]
+        schema: { tags: "string[]", tag_metadata?: "Record<string, any>" }
+        semantics: { tags: "content.tags" }
+        dependencies: []
+        
+      Cancellable:
+        parameters: []
+        schema: { is_cancelled: "boolean", cancelled_at?: "timestamp", cancelled_by?: "string" }
+        semantics: { is_cancelled: "state.cancelled" }
+        dependencies: ["Stateful"]
+        
+      Archivable:
+        parameters: []
+        schema: { is_archived: "boolean", archived_at?: "timestamp" }
+        semantics: { is_archived: "state.archived" }
+        dependencies: []
+    
+    compositionTests:
+      - Stateful + Colorized
+      - Stateful + Cancellable + Archivable
+      - Labelled + Taggable
+      - All 6 traits composed together
+
+  acceptanceCriteria:
+    - All 3 new traits parse and validate
+    - Composition of 3+ traits produces valid output
+    - No collisions occur (or resolved per policy)
+    - Dependency order respected in composition
+    - View extensions from all traits preserved
+    - Generated composed types are correct and type-safe
+
+  deliverables:
+    - 3 complete trait definition files
+    - Generated types for all traits
+    - JSON Schemas for parameter validation
+    - Composition test suite (6 trait combinations)
+    - Example composed objects documentation
+
+  constraints:
+    - Must test with real compositor from B4
+    - Composition must be deterministic
+    - All field collisions must be documented
+    - Tests must prove types preserve literals
+
+---
+# Mission B9: Zod Composition Validator
+apiVersion: mission.v1
+kind: Mission
+metadata:
+  id: sprint-01-b9-zod-validator
+  name: Zod Composition Validator
+  domain: build.implementation
+  priority: high
+  estimatedHours: 4-5
+  dependencies: ["sprint-01-b4-compositor", "sprint-01-b5-validation-pipeline", "sprint-01-r2-validation-architecture"]
+  
+spec:
+  objective: |
+    Implement Layer 3 validation using Zod to validate complex composition logic:
+    property name collisions, state machine ownership, and inter-trait dependencies.
+
+  context: |
+    Research R2 validated Zod for complex, algorithmic validation via .superRefine().
+    This mission implements the business logic that ensures composed objects are
+    logically valid beyond simple schema conformance.
+    
+    This catches errors like: two traits defining the same field, multiple traits
+    claiming state machine ownership, or missing required dependencies.
+
+  technicalRequirements:
+    - Integrate Zod for composition validation
+    - Implement collision detection with .superRefine()
+    - Validate state machine ownership (only 1 trait can own)
+    - Check that trait dependencies are satisfied
+    - Convert Zod errors to ValidationIssue format
+    - Provide specific fix hints for composition errors
+
+  implementation:
+    inputSources:
+      - Research R2 (Zod .superRefine() patterns)
+      - Composed object output from B4
+      - Collision policy from Trait Engine Spec
+    
+    coreComponents:
+      - src/validation/composition-validator.ts (Zod schemas)
+      - src/validation/zod-transformer.ts (Zod → ValidationIssue)
+      - src/validation/rules/ (specific validation rules)
+      - src/validation/composition-rules.ts (rule orchestrator)
+    
+    validationRules:
+      - Property name collision detection
+      - State machine ownership (max 1 Stateful trait)
+      - Dependency satisfaction check
+      - Token reference validation
+      - View extension target validation
+      - Semantic mapping completeness
+
+  acceptanceCriteria:
+    - Detects all property name collisions
+    - Enforces single state machine owner
+    - Validates all dependencies are present
+    - Zod errors correctly transformed to ValidationIssue
+    - Fix hints provided for each error type
+    - Performance: <50ms for 10-trait composition validation
+
+  deliverables:
+    - src/validation/composition-validator.ts with Zod implementation
+    - src/validation/zod-transformer.ts for error conversion
+    - tests/validation/composition-validator.test.ts
+    - Example error outputs with fix hints
+    - Integration with validation pipeline from B5
+
+  constraints:
+    - Must use Zod .superRefine() for complex logic
+    - Cannot use JSON Schema for composition rules
+    - Fix hints must be actionable and specific
+    - Must catch ALL collision types from spec
+
+---
+# Mission B10: Integration Tests & CI Setup
+apiVersion: mission.v1
+kind: Mission
+metadata:
+  id: sprint-01-b10-integration-ci
+  name: Integration Tests & CI Setup
+  domain: build.implementation
+  priority: high
+  estimatedHours: 4-5
+  dependencies: ["sprint-01-b4-compositor", "sprint-01-b6-ajv-validator", "sprint-01-b9-zod-validator", "sprint-01-b8-traits-set-2"]
+  
+spec:
+  objective: |
+    Create comprehensive integration tests that validate the entire trait pipeline
+    from definition to composition, and integrate validation into CI/CD to block
+    invalid traits from merging.
+
+  context: |
+    This mission proves the entire Sprint 01 build works end-to-end. It creates
+    the test fixtures, integration tests, and CI configuration that will serve
+    as the foundation for all future development.
+    
+    The CI pipeline must run on every PR and block merges if validation fails.
+
+  technicalRequirements:
+    - Create test fixtures for realistic trait compositions
+    - Implement end-to-end integration tests
+    - Configure CI to run validation pipeline
+    - Generate test coverage reports
+    - Create performance benchmarks
+    - Document the testing strategy
+
+  implementation:
+    inputSources:
+      - All previous build missions (B1-B9)
+      - CI/CD best practices (GitHub Actions)
+      - Universal Quintet from canonical schemas doc
+    
+    testScenarios:
+      - Parse → Validate → Compose → Generate Types (success path)
+      - Invalid trait definition (parse failure)
+      - Parameter validation failure (AJV)
+      - Composition collision (Zod)
+      - Circular dependency detection
+      - Missing dependency error
+      - Full Universal Quintet composition (User, Product, Organization, Transaction, Relationship)
+    
+    ciConfiguration:
+      - .github/workflows/validate-traits.yml
+      - Run on: [push, pull_request]
+      - Steps: parse, validate-params, validate-composition, generate-types, run-tests
+      - Fail PR if any validation errors
+      - Post ValidationIssue[] as PR comment
+
+  acceptanceCriteria:
+    - All integration tests pass
+    - CI runs on every PR and blocks invalid traits
+    - Test coverage >85% across all modules
+    - Performance benchmarks documented
+    - Universal Quintet successfully composed
+    - All validation errors produce actionable feedback
+
+  deliverables:
+    - tests/integration/ with full test suite
+    - .github/workflows/validate-traits.yml (CI config)
+    - tests/fixtures/ with realistic trait compositions
+    - Performance benchmark results
+    - Example composed objects: User, Subscription, Product
+    - Sprint 01 completion report with metrics
+
+  constraints:
+    - CI must complete in <2 minutes
+    - All tests must be deterministic (no flakiness)
+    - Integration tests must use real components (no mocks)
+    - Coverage must include all critical paths
+
+---
+# Sprint 01 Execution Guide
+
+## Recommended Execution Order
+
+### Phase 1: Foundation (Missions B1-B3)
+**Week 1 Days 1-3**
+- B1: Trait Schema & Parser (foundation for everything)
+- B2: Type Generator (enables trait authoring)
+- B3: Dependency Graph (required for composition)
+
+These three missions establish the core infrastructure. Complete them in order
+as each builds directly on the previous.
+
+### Phase 2: Core Engine (Missions B4-B5)
+**Week 1 Days 4-5, Week 2 Day 1**
+- B4: Compositor Core (the heart of the engine)
+- B5: Validation Pipeline (quality gates)
+
+These can start once B1-B3 are complete. B4 and B5 can partially overlap.
+
+### Phase 3: Validation & Traits (Missions B6-B8)
+**Week 2 Days 2-4**
+- B6: AJV Validator (parameter validation)
+- B7: Core Traits Set 1 (first real implementations)
+- B8: Core Traits Set 2 (composition validation)
+
+B6 and B7 can run in parallel. B8 requires B7 completion.
+
+### Phase 4: Advanced Validation & Integration (Missions B9-B10)
+**Week 2 Day 5**
+- B9: Zod Composition Validator (complex logic)
+- B10: Integration Tests & CI (prove it all works)
+
+B9 and B10 should run sequentially to ensure full validation before CI setup.
+
+## Parallel Execution Opportunities
+
+Can run in parallel:
+- B2 + B3 (after B1 completes)
+- B6 + B7 (both depend on B1, independent of each other)
+
+Must run sequentially:
+- B1 → B2 → B4 (type generation needed for composition)
+- B1 → B3 → B4 (dependency ordering needed for composition)
+- B7 → B8 (Set 2 needs Set 1 for composition tests)
+- B9 → B10 (composition validation needed before CI)
+
+## Success Criteria for Sprint 01
+
+At sprint completion, you must have:
+- ✅ 6 core traits fully implemented and validated
+- ✅ Trait composition working deterministically
+- ✅ Type generation producing literal-preserving types
+- ✅ Dual validation (AJV + Zod) integrated
+- ✅ CI pipeline blocking invalid traits
+- ✅ Universal Quintet objects composed successfully
+- ✅ 85%+ test coverage across all modules
+- ✅ Performance benchmarks meeting research targets
+
+## Time Budget
+
+- **Optimistic:** 40 hours (4 hours/mission average)
+- **Realistic:** 45 hours (4.5 hours/mission average)  
+- **Pessimistic:** 50 hours (5 hours/mission average)
+
+Assume 2 week sprint = 10 working days = 50 hours total capacity.
+
+## Dependencies Visualization
+
+```
+        B1 (Trait Schema)
+       / | \
+      /  |  \
+    B2  B3  B6 (AJV)
+     |   |    |
+     |  B4 ---|--- B5 (Validation Pipeline)
+     |  (Compositor)  |
+     |       |        |
+     +-------+--------+
+             |
+            B7 (Traits Set 1)
+             |
+            B8 (Traits Set 2)
+             |
+            B9 (Zod Validator)
+             |
+           B10 (Integration & CI)
+```
+
+Good luck! You've got validated patterns, clear missions, and a solid roadmap. 🚀

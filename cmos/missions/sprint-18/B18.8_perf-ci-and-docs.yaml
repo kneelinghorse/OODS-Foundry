@@ -1,0 +1,57 @@
+# cmos/missions/sprint-18/B18.8_perf-ci-and-docs.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251024-188"
+
+objective: >
+  Integrate the performance harness into CI with baselining + regression alerting, deliver developer CLI
+  workflow, and author runbooks per R18.2 strategy.
+
+context: |
+  Building on B18.7, this mission operationalizes the harness: nightly CI job, statistical baseline
+  computation (median, stddev, 15% threshold), Slack/alert integration, developer CLI wrapper, and
+  documentation/runbooks. These steps fulfill Sprint 18 perf exit criteria and align with telemetry
+  guardrails established in prior sprints.
+
+successCriteria:
+  - "Nightly CI workflow executes Playwright perf suite, stores diagnostics.json artifact, and computes rolling baseline (median + stddev over last 10 runs)."
+  - "Regression detection implements 3-sigma + absolute + 15% relative thresholds; CI fails + posts summary to engineering channel on breach."
+  - "Developer CLI (`pnpm perf:harness` wrapper) spins up Storybook, runs selected scenario(s), and prints diff vs latest baseline."
+  - "Documentation: PERFORMANCE_TESTING.md + runbook detail local workflow, CI pipeline, troubleshooting steps."
+  - "Telemetry: diagnostics.json entries append to diagnostics.json root with new performanceHarness object; governance job updated to validate schema."
+
+deliverables:
+  - "CI workflow file (e.g., .github/workflows/perf-harness.yml)."
+  - "Scripts: scripts/perf/calc-baseline.mjs, scripts/perf/check-regressions.mjs, Slack notifier."
+  - "package.json scripts: perf:harness (updated), perf:harness:ci."
+  - "Docs: PERFORMANCE_TESTING.md, runbooks/perf-regression.md."
+  - "Diagnostics integration patch + tests for schema validation."
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+ Read for Context  researchFoundation:
+    - finding: "CI cadence, baseline math, alerting thresholds, developer workflow."
+      sourceMission: "cmos/missions/research/R18.2_Performance-Instrumentation-Strategy.md"
+
+  implementationScope:
+    coreDeliverable: "CI pipeline + alerting + developer CLI + documentation."
+    outOfScope:
+      - "Visualization dashboard (tracked as future enhancement)."
+      - "Cross-browser matrix beyond Chromium (documented backlog)."
+
+  handoffContext:
+    completed:
+      - "Nightly workflow green; artifacts persisted; Slack notifications tested."
+      - "Docs & runbooks merged; onboarding links added to brownfield guide."
+      - "Governance job validates diagnostics schema + fails on mismatch."
+    interfaces:
+      - "scripts/perf/calc-baseline.mjs --history 10"
+      - "CI workflow job `perf-harness-nightly`."
+    assumptions:
+      - "Slack webhook/secret accessible in CI."
+      - "Storage for artifacts available (GitHub Actions artifacts)."
+    nextMission: "Pending Sprint 19 planning (release hardening)."
+    blockers: []

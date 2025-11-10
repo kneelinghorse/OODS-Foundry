@@ -1,0 +1,77 @@
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+description: "Introduce composite (alias/semantic) tokens and enforce theming guardrails."
+author: "Design System Team"
+schema: "./schemas/Implementation.v1.json"
+
+---
+
+missionId: "B14.3"
+objective: >
+  Implement composite tokens (alias/semantic), add theme switching (light/dark minimum),
+  and enforce guardrails so base literals are disallowed in UI.
+
+context: |
+  With the handshake wired, we formalize token roles. UI must consume semantic tokens, never raw literals.
+  We prove theme switching across curated stories and add CI checks to block literal color usage.
+
+successCriteria:
+  - "Composite tokens defined and emitted; UI consumes semantic tokens only."
+  - "Theme switch (light/dark) toggles successfully in Storybook demo."
+  - "CI lints fail on literal color usage in components/styles."
+  - "docs/tokens/4-layer-overview.md updated with composite guidance."
+  - "PROJECT_CONTEXT.json and diagnostics.json updated."
+
+deliverables:
+  - "tokens/semantic/*.json  # updated semantic maps"
+  - "scripts/tokens/lint-semantic.(mjs|ts)  # blocks literals in components"
+  - "storybook decorators for theme switch (light/dark)"
+  - "docs/tokens/4-layer-overview.md (composites section)"
+  - "docs/themes/dark-quickstart.md (ensure switch instructions)"
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  researchFoundation:
+    - finding: "Composite tokens reduce drift; enforce semantic layer."
+      sourceMission: "r5.1_Implementing-DTCG-Compliant-Composite-Tokens.md"
+    - finding: "Contextual defaults and theming patterns."
+      sourceMission: "r4.3_Contextual-Design-Token-Defaults.md"
+
+  implementationScope:
+    coreDeliverable: |
+      1) Composite structure
+         - Define alias/semantic relations; ensure DTCG `type`/`$value` clarity.
+      2) Theme switching
+         - Add Storybook global toolbar to toggle light/dark (and wire CSS var scopes).
+      3) Lint rule: tokens-only
+         - Implement `scripts/tokens/lint-semantic.(mjs|ts)` scanning for literals in UI code.
+         - Add to CI job `tokens-validate` or separate `tokens-lint`.
+      4) Story proofs
+         - Curate 3–5 component stories demonstrating semantic consumption across themes.
+
+    outOfScope:
+      - "OKLCH guardrails and HC mode (B14.4)."
+
+  handoffContext:
+    completed:
+      - "Composite tokens enforced; theme switch demo and lint checks in CI."
+    interfaces:
+      - "scripts/tokens/lint-semantic.(mjs|ts)"
+      - "storybook/theme-decorator.(ts|js)"
+    assumptions:
+      - "B14.2 roundtrip complete."
+    nextMission: "B14.4 — High-contrast & color guardrails."
+    blockers:
+      - "Legacy literal usage in base components; fix incrementally."
+
+statusWrites:
+  projectContext:
+    path: "PROJECT_CONTEXT.json"
+    updates:
+      - { key: "missions.B14.3", value: "Completed" }
+  diagnostics:
+    path: "diagnostics.json"
+    append:
+      - { mission: "B14.3", lint: { violations: "$COUNT", fixed: "$COUNT_FIXED" } }

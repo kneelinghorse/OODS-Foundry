@@ -1,0 +1,160 @@
+{
+  "project": {
+    "name": "OODS Foundry / CMOS",
+    "version": "0.16.x",
+    "description": "Object-Oriented Design System (OODS) Foundry + CMOS Orchestration: trait-based UI on canonical objects, DTCG tokens → Tailwind v4 pipeline, Storybook/Chromatic governance, MCP/agent approvals.",
+    "status": "active",
+    "start_date": "2025-07-01",
+    "deployment": {
+      "platform": "Local/Node.js + Storybook",
+      "integration_target": "Monorepo (packages + apps/explorer)",
+      "environment": "development"
+    }
+  },
+  "working_memory": {
+    "active_domain": "main",
+    "session_count": 0,
+    "last_session": "2025-10-23",
+    "last_mission": "B16.2",
+    "next_mission": "B16.3",
+    "domains": {
+      "main": {
+        "status": "active",
+        "priority": 1,
+        "critical_facts": [
+          "Design-code parity enforced via curated Storybook stories + Chromatic baselines.",
+          "Tokens are DTCG SoT; components read semantic CSS vars (no literals).",
+          "Multi-brand and light/dark/forced-colors are data-attribute driven.",
+          "Agent writes are approval-gated; provenance & transcripts required."
+        ],
+        "constraints": [
+          "Pure Modifier rule: no brand/theme logic inside components.",
+          "AA + HC a11y is a CI gate; shadow-only affordances are forbidden.",
+          "Enum→token mapping is authoritative for status/intents."
+        ],
+        "decisions_made": [
+          "Storybook is the review surface; Git + Chromatic baselines are the visual truth.",
+          "Overlays share one manager (focus-trap, inert, escape, z-index tokens, reduced-motion).",
+          "View differentiation handled by View Profiles + trait→region contributions (no per-domain CSS forks).",
+          "Explorer one-offs for Billing rehosted to RenderObject; Patterns/Explorer contains demos only."
+        ],
+        "files_created": [
+          "configs/view-profiles.yaml",
+          "src/engine/contributions/index.ts",
+          "styles/domain-contexts.css",
+          "tokens/view.json"
+        ],
+        "achievements": [
+          "Sprint 15 complete: dual brand + statusables + inputs/table + token governance + onboarding.",
+          "Sprint 16.1 delivered overlay contract; 16.2 overlay manager in progress.",
+          "16.10a-d delivered: View Profiles, Contributions (Subscription/User), Billing rehost, Context styling finalize.",
+          "Storybook wiring/taxonomy plan prepared for post-overlays sessions (B16.7–B16.12)."
+        ]
+      },
+      "current_sprint": {
+        "status": "active",
+        "sprint": "16",
+        "updated_at": "2025-10-23",
+        "active_mission": {
+          "id": "B16.2",
+          "name": "Overlay manager (trap, inert, escape, z-index, motion)"
+        },
+        "completed_missions": [
+          "B16.1",
+          "B16.10a",
+          "B16.10b",
+          "B16.10c",
+          "B16.10d"
+        ],
+        "queued_missions": [
+          "B16.3",
+          "B16.4",
+          "B16.5",
+          "B16.6",
+          "B16.7",
+          "B16.8",
+          "B16.9",
+          "B16.10",
+          "B16.11",
+          "B16.12",
+          "B16.90"
+        ]
+      }
+    }
+  },
+  "handoff": {
+    "last_updated": "2025-10-23",
+    "status": {
+      "phase": "Sprint 16 (in progress)",
+      "features": "Overlays foundation underway; domains render with differentiated contexts; governance/a11y/VR gates in place.",
+      "performance": {
+        "vr_green_rate_per_brand": "TBD (run B16.12 or B16.90)",
+        "axe_violations_curated": "TBD (expected 0 after wiring)",
+        "overlay_e2e": "trap/restore/hc-proof = TBD (B16.2 completes)"
+      }
+    },
+    "notes": "Use B16.90_current-state-assessment to emit objective artifacts (no auto-fix). Compare against the S15→S18 roadmap to plan Sprint 17."
+  },
+  "sprint_files": {
+    "current_sprint": "16",
+    "build": "cmos/missions/sprint-16/",
+    "research": "cmos/missions/research/"
+  },
+  "technical_context": {
+    "dependencies": [
+      "Node.js ≥ 20.x",
+      "pnpm ≥ 9",
+      "Storybook 8",
+      "Chromatic",
+      "Tailwind CSS v4 (tokens → CSS vars)",
+      "Style Dictionary v4 / DTCG JSON",
+      "Vitest + Testing Library",
+      "Playwright",
+      "Fastify + AJV (MCP/bridge)"
+    ],
+    "cmos_features": {
+      "trait_engine": "Traits contribute UI to regions per context; deterministic merge.",
+      "view_profiles": "configs/view-profiles.yaml binds context → regions/layout tokens.",
+      "design_tokens": "DTCG JSON → CSS vars → Tailwind v4; multi-brand + light/dark/HC via data-* attrs.",
+      "governance": "Token diff report w/ risk hints; CODEOWNERS required for protected namespaces.",
+      "visual_review": "Curated story matrices; per-brand baselines; dry-run diffs gated in PR.",
+      "a11y_contract": "AA + forced-colors proofs; no shadow-only focus; axe curated set.",
+      "overlays_foundation": "Shared manager (focus trap, inert background, escape routes, z-index tokens, reduced-motion).",
+      "agent_policy": "Plan → Approve → Execute; dry-run default; signed transcripts.",
+      "telemetry": "Structured logs + run diagnostics.json for key scripts."
+    },
+    "integration_points": [
+      ".storybook/preview.ts[x] (globals → html[data-theme|data-brand])",
+      "styles/domain-contexts.css (consumes tokens/view.json + data-view/region)",
+      "configs/view-profiles.yaml (authoritative layout/regions)",
+      "src/engine/contributions/index.ts (trait → region registry)",
+      "src/overlays/manager/* (focus trap, inert, portal, escape)",
+      "scripts/sb-verify.mjs (curated axe + VR dry)",
+      "scripts/state-assessment.mjs (B16.90)"
+    ]
+  },
+  "context_health": {
+    "size_kb": null,
+    "size_limit_kb": 100,
+    "sessions_since_reset": 0,
+    "last_reset": "",
+    "compression_enabled": true,
+    "anti_pattern_detection": true
+  },
+  "ai_instructions": {
+    "preferred_language": "typescript",
+    "code_style": "modular, token-first, no literals",
+    "testing_required": true,
+    "documentation_level": "concise-contracts"
+  },
+  "last_report_ts": "2025-10-23T09:00:00-05:00",
+  "last_doc_sync_ts": "2025-10-23T09:00:00-05:00",
+  "last_rollback_doc_ts": null,
+  "last_conventions_update_ts": "2025-10-23T09:00:00-05:00",
+  "submodule": {
+    "path": "apps/explorer",
+    "repo": "local",
+    "default_branch": "main",
+    "last_init": "2025-10-01T10:00:00-05:00"
+  }
+}

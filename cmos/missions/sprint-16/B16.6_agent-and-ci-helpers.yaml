@@ -1,0 +1,49 @@
+# cmos/missions/sprint-16/B16.6_agent-and-ci-helpers.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251020-166"
+
+objective: >
+  Add small CLI/agent helpers to run overlay proofs and packaging checks as single commands and wire
+  them into your approval flow.
+
+context: |
+  These helpers make sessions fast and consistent. They wrap the key e2e/axe/compat tasks and emit
+  diagnostics for trend tracking.
+
+successCriteria:
+  - "`pnpm overlays:proof` runs e2e + axe on overlays; non-zero on failure."
+  - "`pnpm pkg:compat` builds and runs the Storybook compatibility job locally."
+  - "Agent recipe: approve→apply for overlay tokens (dry-run by default)."
+  - "diagnostics.json updated with run timings and pass/fail counts."
+
+deliverables:
+  - "scripts/overlays-proof.mjs, scripts/pkg-compat.mjs, scripts/agent-overlay-recipe.mjs"
+  - "docs/agents/overlays-recipe.md"
+  - "artifacts/diagnostics.json (augmented with timings and results)"
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+ Please review documents in researchFoundation:
+    - finding: "Plan→Approve→Execute flow; dry-run default with approvals."
+      sourceMission: "cmos/research/R10.2_Agent-UX-Plan-Approve-Execute.md"
+    - finding: "Policy gates + transcript artifacts."
+      sourceMission: "cmos/research/R11.4_Transcript-Replay-Design.md"
+
+  implementationScope:
+    coreDeliverable: "Helpers + docs + diagnostics wiring."
+    outOfScope:
+      - "Full-featured CLI UX; minimal wrappers only."
+
+  handoffContext:
+    completed:
+      - "Helpers callable from panel/CLI; diagnostics recorded."
+    interfaces:
+      - "Panel button calls overlays:proof; agent posts transcript link."
+    assumptions:
+      - "Existing CI can consume exit codes and artifact paths."
+    nextMission: null
+    blockers: []

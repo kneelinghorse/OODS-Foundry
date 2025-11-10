@@ -1,0 +1,51 @@
+# cmos/missions/sprint-16/B16.3_dialog-and-sheet.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251020-163"
+
+objective: >
+  Implement Dialog (modal) and Sheet (edge-anchored) on the Overlay Manager with accessible
+  headers/descriptions, close affordances, tokenized size/spacing/motion, and HC resilience.
+
+context: |
+  These are the primary heavy overlays. They must announce correctly, trap focus, and restore it
+  when closed. Visuals derive solely from tokens; brand logic is external.
+
+successCriteria:
+  - "Dialog uses aria-modal='true', labelled by header, described by content id."
+  - "Sheet supports top/right/bottom/left anchors with tokenized sizes and motion."
+  - "Esc/backdrop policies follow the contract; configurable (default Esc=true, backdrop=false)."
+  - "Axe: 0 violations across light/dark/HC stories; VR baselines captured."
+  - "Playwright: announce on open, focus restore on close."
+
+deliverables:
+  - "src/components/Dialog/*.tsx, src/components/Sheet/*.tsx"
+  - "stories/components/Dialog.stories.tsx, Sheet.stories.tsx (light/dark/HC)"
+  - "tests/components/dialog.spec.ts, sheet.spec.ts; e2e/dialog-sheet.spec.ts"
+  - "Docs: /docs/components/dialog.md, /docs/components/sheet.md"
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+please review docuements in  researchFoundation:
+    - finding: "Region contracts and ARIA maps should be deterministic."
+      sourceMission: "cmos/research/R11.3_Diff-&-Artifact-Presentation.md"
+    - finding: "A11y contract is a gate in CI."
+      sourceMission: "cmos/research/r4.4_ A11y-Contract-and-CI-Policy.md"
+
+  implementationScope:
+    coreDeliverable: "Dialog + Sheet on the manager with proofs/tests."
+    outOfScope:
+      - "Complex subcomponents (wizards, nested dialogs)."
+
+  handoffContext:
+    completed:
+      - "Components landed with tests; baselines stored."
+    interfaces:
+      - "<Dialog open onOpenChange> ; <Sheet anchor='right' size='md'>."
+    assumptions:
+      - "Tokens provide sizes `overlay.size.*` and motion `overlay.motion.*`."
+    nextMission: "BI-20251020-164: Tooltip & Popover."
+    blockers: []

@@ -1,0 +1,73 @@
+# pack.yaml - Metadata for the "Go/No-Go Synthesis" Domain Pack
+name: "Discovery.GoNoGoSynthesis.v1"
+version: "1.0.0"
+displayName: "Level 4: Go/No-Go Synthesis"
+description: "A 2-4 hour mission to synthesize the findings from the five research sub-missions into a scored, evidence-based decision. This is the final gate of the core discovery process, resulting in a clear Stop, Pivot, or Go decision." #
+author: "Your Name/Team"
+schema: "./schemas/GoNoGoSynthesis.v1.json"
+
+---
+
+# Mission File: <problem-name>-go-no-go.yaml
+
+missionId: "GNG-20251004-001"
+
+objective: "To synthesize all evidence from the Level 3 research phase into a scored decision and define the immediate next action."
+
+context: |
+  This mission is the final step in the core Progressive Discovery Framework.
+  It consumes the outputs of the five research sub-missions managed by orchestrator <RO-20251004-001>.
+  The numerical scoring forces an honest, evidence-based assessment and creates an auditable decision record.
+
+successCriteria:
+  - "All four scoring dimensions are completed with a score and justification."
+  - "The final decision (Stop, Pivot, Conditional Go, Strong Go) is explicitly stated."
+  - "If the decision is 'Go', the 'nextSteps' section is fully completed."
+
+deliverables:
+  - "This completed decision record."
+
+domainFields:
+  type: "Discovery.GoNoGoSynthesis.v1"
+
+  # Maintains the Evidence Chain.
+  linkedResearchMissions:
+    - "path/to/<problem-name>-r1-problem-validation.yaml"
+    - "path/to/<problem-name>-r2-solution-landscape.yaml"
+    - "path/to/<problem-name>-r3-technical-feasibility.yaml"
+    - "path/to/<problem-name>-r4-market-timing.yaml"
+    - "path/to/<problem-name>-r5-willingness-to-pay.yaml"
+
+  # The scoring framework from your roadmap.
+  scoringDimensions:
+    - dimension: "1. Problem Validation"
+      keyEvidence: "R1 findings show high frequency of complaints and costly workarounds. R5 confirms budget holders acknowledge the cost."
+      justification: "The evidence for a real, painful problem is overwhelming and confirmed by multiple sources."
+      score: 9 # 0-10
+
+    - dimension: "2. Solution Feasibility"
+      keyEvidence: "R3 confirms the required data is available via internal APIs. R2 shows no competitor has a truly elegant solution, suggesting it's non-trivial but achievable."
+      justification: "Technical risk is moderate. We have the core capabilities but will need to invest in a performant search index."
+      score: 7 # 0-10
+      
+    - dimension: "3. Market Readiness"
+      keyEvidence: "R4 indicates a shift to stricter compliance (SOX, GDPR) is driving demand. R2 shows competitors are focused elsewhere."
+      justification: "The timing is excellent. Regulatory pressure creates a 'must-have' need, and the competitive landscape has a clear gap."
+      score: 9 # 0-10
+      
+    - dimension: "4. Economic Viability"
+      keyEvidence: "R5 shows current spending on workarounds (hiring extra staff) is >$50k/year for large clients. Willingness to pay for a solution is high."
+      justification: "Clear ROI for the customer. Potential to price this as an add-on to our Enterprise plan. Unit economics look promising."
+      score: 8 # 0-10
+
+  finalScore: 33 # /40
+  
+  # The final decision gate.
+  decision: "Conditional Go" # Stop (<20) | Pivot/Refine (20-28) | Conditional Go (28-35) | Strong Go (35+)
+  
+  # Defines the path forward.
+  nextSteps:
+    ifGo:
+      criticalSuccessFactor: "The search query performance must be under 2 seconds to be better than the manual workaround."
+      biggestRisk: "Underestimating the complexity of the search index, leading to timeline slips."
+      nextImmediateAction: "Initiate a Level 5B: Architecture Mission to define the technical specification and create a time-boxed technical spike for the search index."

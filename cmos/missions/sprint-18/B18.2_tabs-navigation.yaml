@@ -1,0 +1,59 @@
+# cmos/missions/sprint-18/B18.2_tabs-navigation.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251024-182"
+
+objective: >
+  Implement Tabs with responsive overflow handling and density variants, plus shared navigation a11y
+  utilities for reuse in Pagination and Breadcrumbs builds.
+
+context: |
+  R18.1 identifies overflow menus + truncation as the preferred responsive pattern for enterprise tabs
+  and mandates size variants with proper HC token hooks. Tabs must integrate with the navigation a11y
+  checklist (arrow key support, aria-selected, focus management) and provide reusable utilities for
+  upcoming pagination/breadcrumb missions. This build establishes the foundational tablist and overflow
+  menu implementation, plus documentation for design/dev adoption.
+
+successCriteria:
+  - "Tabs component renders horizontal orientation with overflow menu, tooltip truncation, and size variants (sm/md/lg)."
+  - "Keyboard interaction matches WAI-ARIA tablist (manual activation model) with arrow key navigation + aria-controls wiring."
+  - "Overflow menu accessible via keyboard and screen readers; HC mode renders active indicator using border/outline tokens."
+  - "Storybook stories demonstrate overflow behavior at responsive breakpoints, all sizes, disabled state, long labels."
+  - "Unit/integration tests cover overflow logic, focus management, and ensures no literal colors."
+
+deliverables:
+  - "Component: src/components/tabs/Tabs.tsx + supporting hooks (useTabs, useOverflowMenu)."
+  - "Utilities: src/components/navigation/a11y.ts (shared focus helpers)."
+  - "Storybook: stories/components/Tabs.stories.tsx with docs + controls."
+  - "Tests: tests/components/tabs.spec.tsx, including axe + keyboard coverage."
+  - "Docs update: docs/components/navigation.md (tabs section)."
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+ Read for Context  researchFoundation:
+    - finding: "Tabs overflow patterns, size variants, HC requirements."
+      sourceMission: "cmos/missions/research/R18.1_Technical-Research-Report-Component-Set-IV.md"
+    - finding: "Accessibility checklist for navigation components."
+      sourceMission: "cmos/missions/research/R18.1_Technical-Research-Report-Component-Set-IV.md"
+
+  implementationScope:
+    coreDeliverable: "Tabs component + overflow behavior + a11y utilities."
+    outOfScope:
+      - "Vertical tabs (future enhancement)."
+      - "Integration with router (left to app teams)."
+
+  handoffContext:
+    completed:
+      - "Tabs exported from component index; utilities documented."
+      - "Storybook includes HC screenshots + VR baselines updated."
+      - "Navigation utilities referenced by upcoming pagination mission."
+    interfaces:
+      - "<Tabs items={TabItem[]} defaultSelectedId size overflowLabel="More" />"
+    assumptions:
+      - "Popover/Menu primitives already available from overlay work."
+      - "Token pipeline includes required text/border tokens."
+    nextMission: "BI-20251024-183: Pagination + usePagination hook."
+    blockers: []

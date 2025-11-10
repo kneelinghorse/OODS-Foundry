@@ -1,0 +1,291 @@
+# Sprint 06 — Full Build Missions (B6.1–B6.8)
+# Schema: Build.Implementation.v1
+# Cross-links to supporting research under /missions/research/:
+#   r4.1_DTC-Specification-Maturity-and-Theming-Guardrails.md
+#   r4.2_Tokens-Studio-to-Tailwind-CSS-v4-Pipeline.md
+#   r4.3_Contextual-Design-Token-Defaults.md
+#   r4.4_ A11y-Contract-and-CI-Policy.md
+#   r4.5_SaaS-Enum-to-Token-Mapping-Schema.md
+#   r5.1_Implementing-DTCG-Compliant-Composite-Tokens.md
+#   r5.2_Perceptually-Uniform-Color-System.md
+#   r5.3_Figma-to-Repository-Handshake-Recipe.md
+#   r5.4_Visual-Regression-Tooling.md
+#   r5.5_Scalable-Theming-Architecture.md
+#   r5.6_Definitive-Guide-to-OKLCH-Relative-Color Guardrails.md
+#   r5.7_High-Contrast-Mode-Regression-Prevention.md
+
+# ========== B6.1 — Dark Theme Completion & Themed Elevation ==========
+missionId: "BI-20251011-B6.1"
+objective: "Finish the Dark theme with proper luminance balance, elevation strategies, and AA guarantees—without component changes."
+context: |
+  Sprint 05 scaffolded Dark/HC; this mission completes Dark so it mirrors Theme 0 coverage (surface/text/status/focus, borders, shadows).
+  Respect the 4-layer model (override only --theme-*), maintain AA and Δ guardrails, and adapt elevation (shadow ↔ outline) for Dark.
+successCriteria:
+  - "All core namespaces themed for Dark: surface.*, text.*, status.*, focus.*, border.*, shadow.*."
+  - "AA green on Dark for key pairs; RC Δ guardrails hold for hover/active; no component conditionals introduced."
+  - "Documented elevation rules for Dark (reduced glow; outline-first for low-contrast shells)."
+deliverables:
+  - "/app/packages/tokens/src/tokens/themes/dark/**/*.json"
+  - "/app/apps/explorer/src/pages/DarkModeDemo.tsx"
+  - "/app/apps/explorer/src/stories/Contexts.Dark.mdx"
+  - "/app/docs/themes/dark-guidelines.md"
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - sourceMission: "missions/research/r5.5_Scalable-Theming-Architecture.md"
+    - sourceMission: "missions/research/r5.2_Perceptually-Uniform-Color-System.md"
+    - sourceMission: "missions/research/r5.6_Definitive-Guide-to-OKLCH-Relative-Color Guardrails.md"
+  implementationScope:
+    coreDeliverable: |
+      - Override only --theme-* vars for Dark; keep --sys-* and --cmp-* unchanged.
+      - Balance luminance: avoid low-contrast fog; adjust shadow tokens to lighter/transparent outlines where needed.
+      - Run a11y:check + a11y:diff in Dark mode (set html[data-theme='dark']) and ensure 0 new critical/serious failures.
+      - Update StatusChip and two additional components (Button, Banner) to visually verify Dark via the same slots (no branching).
+    outOfScope:
+      - "HC changes (handled in B6.6)."
+  validationProtocol:
+    - validator: "Gemini"   # AA & Δ guardrails on dark
+    - validator: "Claude"   # elevation/outline judgment
+  handoffContext:
+    nextMission: "BI-20251011-B6.2"
+
+---
+
+# ========== B6.2 — Contexts: Form & Timeline (Defaults, Slots, Docs) ==========
+missionId: "BI-20251011-B6.2"
+objective: "Implement and document the Form and Timeline contexts—region defaults, slot bindings, examples, and MDX docs."
+context: |
+  Sprint 05 covered List/Detail. This adds Form (inputs, validation states) and Timeline (sequence density, time meta) contexts.
+  Use class-only bindings via the Tailwind plugin; components remain pure and read only --cmp-* slots.
+successCriteria:
+  - "Form+Timeline contexts emit region defaults (spacing, type, surfaces) and bind component slots via classes."
+  - "Validation/error tokens used for Form; Timeline items show consistent vertical rhythm and time badges."
+  - "MDX docs exist: Contexts.Form, Contexts.Timeline; both pass AA checks."
+deliverables:
+  - "/app/apps/explorer/src/pages/FormPage.tsx"
+  - "/app/apps/explorer/src/pages/TimelinePage.tsx"
+  - "/app/apps/explorer/src/stories/Contexts.Form.mdx"
+  - "/app/apps/explorer/src/stories/Contexts.Timeline.mdx"
+  - "/app/docs/contexts/form-timeline-defaults.md"
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - sourceMission: "missions/research/r4.3_Contextual-Design-Token-Defaults.md"
+    - sourceMission: "missions/research/r4.4_ A11y-Contract-and-CI-Policy.md"
+  implementationScope:
+    coreDeliverable: |
+      - Add Form & Timeline rows to the context matrix; expose utilities (e.g., form:body:gap-4, timeline:item:py-2).
+      - For Form: wire error/warning/info tokens to inputs, help text, banners; prove AA and focus visibility.
+      - For Timeline: set compact rhythm; time/meta text styles; status badges via enum mapping (if applicable).
+      - Add minimal E2E smoke: renders without branching and passes a11y spot checks.
+    outOfScope:
+      - "Full form library; only demonstration inputs & validation shell."
+  validationProtocol:
+    - validator: "Claude"
+    - validator: "Gemini"
+  handoffContext:
+    nextMission: "BI-20251011-B6.3"
+
+---
+
+# ========== B6.3 — Core Component States Library (Tokens-First) ==========
+missionId: "BI-20251011-B6.3"
+objective: "Establish a small token-driven states library: Button, Badge, Banner, Input. All states (default/hover/active/focus/disabled/selected) via tokens."
+context: |
+  Codify state semantics using system tokens and RC guardrails—no hard-coded color literals. Enforce focus ≥3:1 and disabled legibility.
+successCriteria:
+  - "Four components published with states, purely consuming --cmp-* slots; 0 inline color literals."
+  - "AA green for text/icon; Δ guardrails green for hover/active."
+  - "Storybook stories include 'States' and A11y Contract blocks."
+deliverables:
+  - "/app/apps/explorer/src/components/Button.tsx"
+  - "/app/apps/explorer/src/components/Badge.tsx"
+  - "/app/apps/explorer/src/components/Banner.tsx"
+  - "/app/apps/explorer/src/components/Input.tsx"
+  - "/app/apps/explorer/src/stories/Components.Button.mdx"
+  - "/app/apps/explorer/src/stories/Components.Badge.mdx"
+  - "/app/apps/explorer/src/stories/Components.Banner.mdx"
+  - "/app/apps/explorer/src/stories/Components.Input.mdx"
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - sourceMission: "missions/research/r5.6_Definitive-Guide-to-OKLCH-Relative-Color Guardrails.md"
+    - sourceMission: "missions/research/r4.4_ A11y-Contract-and-CI-Policy.md"
+    - sourceMission: "missions/research/r5.5_Scalable-Theming-Architecture.md"
+  implementationScope:
+    coreDeliverable: |
+      - Implement components reading tokens via slot vars; map enum/status tokens where relevant (e.g., Banner).
+      - Add 'States' stories for each component; include A11y Contract (contrast + focus).
+      - Validate with yarn a11y:check + guardrails; post failures to PR.
+    outOfScope:
+      - "Complex behaviors; keep interactions minimal."
+  validationProtocol:
+    - validator: "Gemini"   # guardrails & AA checks
+    - validator: "Claude"   # token purity & story coverage
+  handoffContext:
+    nextMission: "BI-20251011-B6.4"
+
+---
+
+# ========== B6.4 — Motion Tokens v1 (Respect Reduced Motion) ==========
+missionId: "BI-20251011-B6.4"
+objective: "Introduce motion tokens (duration, easing, key transitions) with 'prefers-reduced-motion' compliance and HC-safe defaults."
+context: |
+  Add a minimal motion token set to standardize transitions (hover, focus, chip in/out, banner reveal). Respect reduced motion,
+  ensure HC does not rely on motion for affordance, and keep values in DTCG with SD outputs.
+successCriteria:
+  - "motion.json added (duration, easing curves, common transitions) with CSS/TS/Tailwind outputs."
+  - "Global CSS honors prefers-reduced-motion; HC mode remains legible without motion."
+  - "Foundations.Motion MDX with examples; VRT ignores motion-induced noise."
+deliverables:
+  - "/app/packages/tokens/src/tokens/base/motion.json"
+  - "/app/packages/tokens/dist/{css,ts,tailwind}/**"
+  - "/app/apps/explorer/src/stories/Foundations.Motion.mdx"
+  - "/app/apps/explorer/src/styles/motion.css"
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - sourceMission: "missions/research/r5.1_Implementing-DTCG-Compliant-Composite-Tokens.md"
+    - sourceMission: "missions/research/r5.7_High-Contrast-Mode-Regression-Prevention.md"
+  implementationScope:
+    coreDeliverable: |
+      - Author durations (fast, base, slow), easings (standard, emphasized), and named transitions (chip-in, banner-reveal).
+      - Add CSS guard for reduced motion; ensure components degrade to instant or subtle transitions.
+      - Configure Storybook/Chromatic to disable animations for snapshots (stability).
+    outOfScope:
+      - "Complex choreography; keep v1 simple."
+  validationProtocol:
+    - validator: "Claude"
+    - validator: "Gemini"
+  handoffContext:
+    nextMission: "BI-20251011-B6.5"
+
+---
+
+# ========== B6.5 — Enum Mapping Expansion & Coverage (Payment, Ticket, User) ==========
+missionId: "BI-20251011-B6.5"
+objective: "Extend enum→token coverage beyond Subscription/Invoice to three additional domains and keep CI at 100% coverage."
+context: |
+  Add canonical mappings for: payment intent/charge states, ticket/case states, and user/account status. Reuse schema and coverage tooling.
+successCriteria:
+  - "Three new mapping manifests added; validate:tokens shows 100% coverage across known enums."
+  - "Banners/Chips reflect new states in stories."
+deliverables:
+  - "/app/examples/mapping/payments.PaymentIntent.status.json"
+  - "/app/examples/mapping/support.Ticket.status.json"
+  - "/app/examples/mapping/iam.User.status.json"
+  - "/app/apps/explorer/src/stories/Components.StatusShowcase.mdx"
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - sourceMission: "missions/research/r4.5_SaaS-Enum-to-Token-Mapping-Schema.md"
+  implementationScope:
+    coreDeliverable: |
+      - Normalize to canonical sets (document any vendor diffs in comments).
+      - Update validate:tokens to scan the new manifests and print a per-domain coverage table.
+      - Add a Storybook showcase with examples for each state.
+    outOfScope:
+      - "Provider adapters (BFF)."
+  validationProtocol:
+    - validator: "Gemini"
+    - validator: "Claude"
+  handoffContext:
+    nextMission: "BI-20251011-B6.6"
+
+---
+
+# ========== B6.6 — High-Contrast (HC) Test Pass: From Optional to Required ==========
+missionId: "BI-20251011-B6.6"
+objective: "Promote HC snapshot/check from optional to required; finalize system-color map and focus/outline rules."
+context: |
+  Sprint 05 added HC resilience; now make it first-class. Require HC snapshot on PR (after one baseline run), and lock outline-first focus.
+successCriteria:
+  - "HC snapshot baseline captured; PRs fail on HC diffs beyond threshold."
+  - "System-color map finalized; transparent borders & outline-offset rules documented and applied."
+deliverables:
+  - "/app/packages/tokens/src/tokens/themes/high-contrast/map.json"   # finalized
+  - "/app/apps/explorer/src/styles/hc.css"                            # updated if needed
+  - "/app/docs/policies/high-contrast.md"                             # finalized guidance
+  - "/.github/workflows/vrt-hc.yml"                                   # optional separate job or merged into chromatic.yml
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - sourceMission: "missions/research/r5.7_High-Contrast-Mode-Regression-Prevention.md"
+    - sourceMission: "missions/research/r5.5_Scalable-Theming-Architecture.md"
+  implementationScope:
+    coreDeliverable: |
+      - Create/accept initial HC baseline snapshots; enforce on subsequent PRs (threshold set conservatively).
+      - Ensure focus ≥3:1 in HC across demo components; verify separation without shadows.
+    outOfScope:
+      - "Complex HC theming variants; stick to system colors."
+  validationProtocol:
+    - validator: "Claude"
+    - validator: "Gemini"
+  handoffContext:
+    nextMission: "BI-20251011-B6.7"
+
+---
+
+# ========== B6.7 — Visual Regression: Expand Coverage & Stabilize ==========
+missionId: "BI-20251011-B6.7"
+objective: "Broaden VRT to cover Dark + HC and key component states; make Chromatic reports decisive on PRs."
+context: |
+  Chromatic is installed and recognized. Expand the tagged story set (Foundations, Contexts, core Components) and ensure animations are disabled.
+successCriteria:
+  - "Tagged stories ≥ 25 including Dark/HC variants; PR runtime ≤ 120s with TurboSnap."
+  - "No flake from animations; thresholds tuned; PRs show clear diffs."
+deliverables:
+  - "/chromatic.config.json"                 # updated tags/params
+  - "/.github/workflows/chromatic.yml"       # updated thresholds
+  - "/app/apps/explorer/.storybook/preview.ts"  # per-story parameters (disable animations)
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - sourceMission: "missions/research/r5.4_Visual-Regression-Tooling.md"
+  implementationScope:
+    coreDeliverable: |
+      - Tag Dark and HC stories (or run separate variants); ensure deterministic rendering (no random seeds/time).
+      - Tune snapshot thresholds and exclude non-deterministic stories.
+    outOfScope:
+      - "Cross-browser snapshot matrix."
+  validationProtocol:
+    - validator: "Gemini"   # runtime & coverage
+    - validator: "Claude"   # story selection relevance
+  handoffContext:
+    nextMission: "BI-20251011-B6.8"
+
+---
+
+# ========== B6.8 — DX & Docs: Theme Freeze, PR Template, and Usage Guides ==========
+missionId: "BI-20251011-B6.8"
+objective: "Polish developer experience: tag Theme 0 freeze, add token-change PR template, and ship concise usage guides."
+context: |
+  The system works; now make it easy to operate. Tag the Theme 0 freeze, document how to propose token changes (Figma → PR),
+  and add pocket guides for contexts, Dark, and HC policies.
+successCriteria:
+  - "'Theme-0-Freeze' tag created; docs link to it."
+  - "PR template for token changes lives at .github; references Figma checklist and A11y/VRT requirements."
+  - "Quickstart guides for Contexts, Dark, and HC present and linked from README."
+deliverables:
+  - "/.github/PULL_REQUEST_TEMPLATE/token-change.md"
+  - "/app/docs/contexts/quickstart.md"
+  - "/app/docs/themes/dark-quickstart.md"
+  - "/app/docs/policies/hc-quickstart.md"
+  - "Git tag: v-theme0-freeze"
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - sourceMission: "missions/research/r5.3_Figma-to-Repository-Handshake-Recipe.md"
+    - sourceMission: "missions/research/r5.5_Scalable-Theming-Architecture.md"
+  implementationScope:
+    coreDeliverable: |
+      - Author PR template with required sections: Figma link, assignment diff, contrast proofs, VRT link.
+      - Write quickstarts (≤ 1 page each) and cross-link from /app/README.md.
+    outOfScope:
+      - "New features; this is polish & ops."
+  validationProtocol:
+    - validator: "Claude"
+    - validator: "Gemini"
+  handoffContext:
+    nextMission: ""
+    blockers: []

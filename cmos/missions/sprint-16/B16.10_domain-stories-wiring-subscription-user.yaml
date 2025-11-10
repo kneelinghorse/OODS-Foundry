@@ -1,0 +1,47 @@
+# cmos/missions/sprint-16/B16.10_domain-stories-wiring-subscription-user.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251020-170"
+
+objective: >
+  Ensure Domains/Subscription and Domains/User stories inherit global decorators and token CSS,
+  and remove dev-only 'RenderObject' entries from the sidebar.
+
+context: |
+  These domain stories appeared unstyled due to missing global decorators or mis-scoped meta.
+  Fix story meta to rely on global preview wiring and eliminate dev-only artifacts from the menu.
+
+successCriteria:
+  - "All Subscription/User stories show correct styles across brand/theme (computed --cmp-* present)."
+  - "'RenderObject' removed (or hidden) from sidebar; domain pages list only intended variants."
+  - "No local CSS imports in these stories; globals provide styling."
+  - "Axe smoke on a curated set: 0 violations."
+
+deliverables:
+  - "Updated meta: title paths under Domains/Subscription and Domains/User."
+  - "Decorators array removed/cleaned where it shadowed globals; tags added as needed."
+  - "artifacts/storybook/domains-wiring.json (lists files changed, decorators state, axe results)."
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+please read  researchFoundation:
+    - finding: "Git+stories as SoT; domain proofs must reflect token scope consistently."
+      sourceMission: "cmos/research/R11.3_Diff-&-Artifact-Presentation.md"
+
+  implementationScope:
+    coreDeliverable: "Meta/exports fixed; dev-only stories pruned; styling inherited globally."
+    outOfScope:
+      - "Domain component logic or data fixtures."
+
+  handoffContext:
+    completed:
+      - "Styled domain stories across modes/brands; clean sidebar."
+    interfaces:
+      - "Relies on B16.7 preview decorator."
+    assumptions:
+      - "Domain components already consume semantic tokens."
+    nextMission: "BI-20251020-171: Brand & High-Contrast Proof Galleries."
+    blockers: []

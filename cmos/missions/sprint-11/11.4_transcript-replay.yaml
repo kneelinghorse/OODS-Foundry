@@ -1,0 +1,47 @@
+# cmos/missions/sprint-11/11.4_transcript-replay.yaml
+sprint: "11"
+missionId: "B11.4"
+title: "Transcript & replay — schema, signing, and safe re-run (CLI + panel)"
+type: "Build.Implementation.v1"
+
+objective: >
+  Finalize transcript.json schema and signing; implement replay that rehydrates args,
+  previews by default, and requires approval for apply. Provide CLI and panel wiring.
+
+context: |
+  Every run emits transcript.json and bundle_index.json with sha256 for each file.
+  Replays must verify integrity (canonicalization + SHA-256) and re-evaluate current policy.
+
+researchFoundation:
+  - "cmos/missions/research/R11.4_Transcript-Replay-Design.md"
+  - "cmos/missions/research/R11.5_Policy-UX-Guidelines.md"
+
+deliverables:
+  - "/packages/artifacts/src/schemas/transcript.schema.json"   # final v1.0
+  - "/packages/artifacts/src/signing.ts"                       # canonicalize + sha256
+  - "/tools/oods-agent-cli/src/replay.ts"
+  - "/app/apps/explorer/addons/storybook-addon-agent/panel.tsx"   # add Replay stub
+  - "/docs/mcp/Transcript-&-Replay.md"
+
+transcript_schema:
+  version: "1.0"
+  required_fields: ["tool","args","start","end","user","exitCode","artifacts","sha256","redactions"]
+  integrity:
+    algorithm: "sha256"
+    canonical_subset: ["tool","args","start","end","artifacts[*].sha256"]
+
+steps:
+  - "Finalize transcript.schema.json per research; add canonicalize() implementing JSON canonicalization (JCS-like) and sign()."
+  - "CLI: add `oods replay <transcriptPath> [--approve]` — always preview first; require --approve to apply."
+  - "Panel: add 'Replay' entry point in summary → loads transcript, shows plan preview, requires approval for apply."
+  - "Preflight checks on replay: verify signature; check artifact existence; re-check policy; print explicit reasons if apply prevented."
+  - "Docs: list failure modes (tamper_detected, policy_denied, missing_artifact) and user guidance."
+
+tests:
+  - "Tampered transcript fails integrity check; replay blocked with clear error."
+  - "Policy changes between runs prevent apply; preview still works."
+  - "Replay succeeds end-to-end with new dated artifacts folder; transcript/bundle index updated."
+
+acceptance:
+  - "CLI and panel can safely replay a past run; apply requires approval; integrity verified."
+  - "Transcript schema and signing documented and used in both surfaces."

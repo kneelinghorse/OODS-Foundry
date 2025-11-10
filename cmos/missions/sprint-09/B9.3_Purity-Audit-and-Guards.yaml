@@ -1,0 +1,67 @@
+# missions/sprint-09/B9.3_Purity-Audit-and-Guards.yaml
+sprint: "09"
+title: "Tokens-only purity guardrails"
+completionProtocolRef: "../current.yaml#completionProtocol"
+
+missionId: "B9.3"
+objective: >
+  Enforce tokens-only purity by statically detecting forbidden variable reads and unsafe literals
+  in components and styles; fail the push pipeline on violations.
+
+context: |
+  Components must consume `--cmp-*` vars exclusively. Brand/theme/ref layers are resolved in CSS,
+  not in component code. This mission adds a deterministic audit that runs on push.
+
+successCriteria:
+  - "Static audit fails on any read of `--ref-*` or `--theme-*` within `/components`."
+  - "Disallows hex/rgb/oklch literals in component TSX/MDX except in docs/examples."
+  - "Outputs a human-readable report listing offenders with line/column hints."
+
+deliverables:
+  - "/scripts/purity/audit.js"
+  - "/scripts/purity/allowlist.json"      # e.g., docs-only exceptions
+  - "/docs/architecture/purity.md"
+  - "package.json (scripts.purity:audit)"
+
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - finding: "Tokens-only component consumption keeps brand/theme surfaces independent."
+      sourceMission: "r.13.1_Multi-Brand-Theming.md"
+
+  implementationScope:
+    coreDeliverable: "Deterministic purity audit wired to the push pipeline."
+    outOfScope:
+      - "Auto-fixes (we only report + fail)."
+
+  handoffContext:
+    completed:
+      - "Purity guard blocks violations on push."
+    interfaces:
+      - "`pnpm purity:audit`"
+    assumptions:
+      - "Glob patterns for components/stories are stable."
+    nextMission: "Ongoing; remains part of push pipeline."
+    blockers: []
+
+examples:
+  audit_rules: |
+    - forbidVarPrefixes: ["--ref-", "--theme-"]
+    - forbidColorLiterals: ["#","rgb(","hsl(","oklch("]
+    - allowedPaths: ["**/stories/**","**/docs/**"]
+
+tests:
+  - "Seed a violation in a temp file and confirm non-zero exit with clear message."
+  - "Run on repo; expect '0 violations' baseline."
+
+acceptance:
+  - "Pipeline fails on violations and prints actionable locations."
+  - "Docs explain the why and how to fix."
+
+outcome:
+  status: "Completed"
+  summary: "Static purity audit with allowlist and docs added; pipeline now runs pnpm run purity:audit."
+  artifacts:
+    - "app/scripts/purity/audit.js"
+    - "app/scripts/purity/allowlist.json"
+    - "app/docs/architecture/purity.md"

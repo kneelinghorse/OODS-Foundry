@@ -1,0 +1,60 @@
+# pack.yaml - Metadata for the "Opportunity Scan" Domain Pack
+name: "Discovery.OpportunityScan.v1"
+version: "1.0.0"
+displayName: "Level 1: Opportunity Scan"
+description: "A 30-60 minute mission to perform a quick assessment of a potential opportunity to determine if it merits further investigation. Use this to validate initial signals and make a rapid go/no-go decision for a deeper dive." #
+author: "Your Name/Team"
+schema: "./schemas/OpportunityScan.v1.json" #
+
+---
+
+# Mission File: <opportunity-name>-scan.yaml
+# Adheres to the Universal Mission Framework core schema
+
+# The unique identifier for this specific mission instance.
+missionId: "OS-20251004-001"
+
+# The core objective is always a clear, primary outcome.
+objective: "Decide whether the observed signal warrants a 2-3 hour problem definition investigation."
+
+# The context provides the 'why' behind the mission.
+context: |
+  This mission is the first gate in the Progressive Discovery Framework. 
+  Its purpose is to prevent over-investment in non-opportunities while maintaining openness to unexpected discoveries.
+  The time box is critical: 30-60 minutes maximum.
+
+# Success is defined by a clear, measurable outcome.
+successCriteria:
+  - "A clear 'Y' or 'N' decision is recorded in the binaryDecision field."
+  - "Justification for the decision is documented in the domain fields."
+  - "The mission is completed within the 60-minute time box."
+
+# The deliverable is the completed analysis within this document.
+deliverables:
+  - "This completed and scored mission file."
+
+# Domain-specific fields for this 'OpportunityScan' pack.
+domainFields:
+  type: "Discovery.OpportunityScan.v1"
+
+  # Corresponds to "The Signal" section of your roadmap.
+  signal:
+    source: "" # e.g., "Customer support ticket #12345"
+    observation: "" # e.g., "User is trying to export data but finds the process cumbersome."
+    pattern: "" # e.g., "We've seen 5 similar requests this month."
+
+  # Corresponds to "The Stakes" section.
+  stakes:
+    affectedActors: "" # e.g., "Enterprise users on the Pro plan."
+    costOfInaction: "" # e.g., "Potential churn risk, manual support time spent."
+    currentAlternatives: "" # e.g., "Users manually copy-paste data or use a third-party tool."
+  
+  # Corresponds to "Feasibility Sniff Test".
+  feasibilitySniffTest:
+    technicalBarriers: "" # e.g., "Low. We have an existing export API."
+    marketReadiness: "" # e.g., "High. Competitors offer this."
+    resourceRequirements: "" # e.g., "Low. Likely a few days of engineering work."
+
+  # The explicit exit gate.
+  binaryDecision: "[Y/N]"
+  justification: ""

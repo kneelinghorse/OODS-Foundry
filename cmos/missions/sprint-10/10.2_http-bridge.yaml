@@ -1,0 +1,38 @@
+# cmos/missions/sprint-10/10.2_http-bridge.yaml
+sprint: "10"
+missionId: "B10.2"
+title: "HTTP bridge for Storybook (read-only)"
+type: "Build.Implementation.v1"
+
+objective: >
+  Provide a thin HTTP facade that forwards requests to the MCP stdio server:
+  GET /tools, POST /run. Strict CORS for http://localhost:6006. Expose read-only tools first.
+
+context: |
+  Storybook’s Agent panel will call this bridge via fetch(). Keep the bridge process separate
+  from the MCP server for simpler CORS and debugging.
+
+researchFoundation:
+  - "cmos/missions/research/R10.4_Storybook-Agent-Panel-Integration.md"
+  - "cmos/missions/research/R10.1_MCP-Server-Patterns.md"
+
+deliverables:
+  - "/packages/mcp-bridge/src/server.ts"
+  - "/packages/mcp-bridge/package.json"
+  - "/docs/mcp/Bridge-API.md"
+
+steps:
+  - "Implement Fastify server: GET /health, GET /tools, POST /run."
+  - "Add strict CORS: origin=http://localhost:6006; methods=GET,POST,OPTIONS; credentials=false."
+  - "Bridge /run to MCP stdio client; force { apply:false } regardless of request."
+  - "Return normalized result with artifact links (paths in artifacts dir)."
+  - "Document endpoints and response shapes."
+
+tests:
+  - "OPTIONS preflight passes with correct CORS headers."
+  - "GET /tools lists only read-only tools (a11y.scan, purity.audit, vrt.run, diag.snapshot)."
+  - "POST /run ignores apply=true and returns error if a write is attempted."
+
+acceptance:
+  - "Bridge serves tools and runs read-only tools end-to-end."
+  - "CORS enforced; Storybook fetches succeed without local hacks."

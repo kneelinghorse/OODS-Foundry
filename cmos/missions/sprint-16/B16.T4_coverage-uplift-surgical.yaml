@@ -1,0 +1,49 @@
+# cmos/missions/sprint-16/B16.T4_coverage-uplift-surgical.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251023-T04"
+
+objective: >
+  Raise line coverage from ~72% to the GREEN band (≥80%) with surgical tests focused on high-value gaps:
+  overlay manager edges, contribution renderers, and view-profile helpers. No blanket test-writing.
+
+context: |
+  Assessor reports 71.92% line coverage. We’ll target top 5 files by uncovered lines and add unit/e2e tests only
+  where they buy confidence (focus restoration edge cases, inert toggling, timeline contributions).
+
+successCriteria:
+  - "coverage.lines ≥ 80% (GREEN) in artifacts/state/tests.json"
+  - "New tests include: overlay trap/restore edge cases, escape routes, contributions priority/when(), and view-profile selection."
+  - "No flakiness: repeat run pass rate ≥ 99% (2x runs)."
+
+deliverables:
+  - "tests/overlays/manager.edges.spec.ts"
+  - "tests/engine/contributions.registry.spec.ts"
+  - "tests/views/view-profiles.spec.ts"
+  - "e2e/overlays.accessibility.spec.ts (tab-through + hc proof)"
+  - "scripts/tests/top-gaps.mjs (prints top uncovered files/lines from coverage)"
+  - "artifacts/state/tests.json (updated)"
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+ Read for Context researchFoundation:
+    - finding: "Approval-gated UX + deterministic regions demand robust tests around composition."
+      sourceMission: "cmos/research/R11.3_Diff-&-Artifact-Presentation.md"
+    - finding: "Accessibility contract is a gate; tests must cover focus/HC."
+      sourceMission: "cmos/research/r4.4_ A11y-Contract-and-CI-Policy.md"
+
+implementationNotes: |
+  - Identify top gaps:
+      - pnpm test --coverage && node scripts/tests/top-gaps.mjs coverage/coverage-final.json
+  - Add tests:
+      - Overlay: focus returns to trigger on close; backdrop+Esc policy matrix; inert toggles on portal mount/unmount.
+      - Contributions: priority sort stable; when() filters; multiple contributions per region.
+      - View profiles: data-view attr drives region selection; two-column rail sizing tokens applied.
+  - Verify:
+      - Repeat vitest twice to smoke flake: `pnpm test && pnpm test`
+      - node scripts/state-assessment.mjs --coverage
+  - Acceptance:
+      - artifacts/state/tests.json shows ~80%+ lines; passRate ~99%. :contentReference[oaicite:6]{index=6}

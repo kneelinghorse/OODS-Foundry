@@ -1,0 +1,66 @@
+# cmos/missions/sprint-17/B17.1_compliance-core-rbac-audit.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251024-171"
+
+objective: >
+  Deliver the first-class compliance core: canonical RBAC tables/services and an immutable audit log
+  pipeline that gates privileged actions across objects, traits, and agent workflows.
+
+context: |
+  Research across the Sprint 17 direction check and convergence studies calls RBAC + Audit the
+  "non-negotiable" convergence layer (cmos/docs/OODS Direction-Check-for-sprint-17.md:88-101;
+  cmos/Industry-Research/R1.4_[1.1+1.2+1.3-linear]_Convergent Gravity and Divergent Forces-
+  An Architectural Analysis of Modern Data Model Patterns.md:209-247). This mission implements the
+  canonical five-table RBAC model (users, roles, permissions, user_roles, role_permissions) with
+  optional role hierarchy and separation-of-duty constraints, plus an append-only audit log service
+  that records identity, tenancy scope, action, payload hash, and timestamps. The compliance core must
+  integrate with existing User↔Organization membership traits (see Sprint 13 billing objects) and seed
+  Storybook/CLI proofs so that later missions (tenancy scaffold, billing ACL) can rely on deterministic
+  permission checks and tamper-proof trails.
+
+successCriteria:
+  - "RBAC schema shipped as migration + generated types: roles, permissions, role_permissions, user_roles, optional role_hierarchy."
+  - "Service layer exposes checkPermission(), listEffectiveRoles(), and enforces separation-of-duty rules defined in metadata."
+  - "Audit log writer is append-only (immutable tables + hash chain) with CI lint preventing UPDATE/DELETE."
+  - "Coverage: unit + contract tests for RBAC service, audit log, and integration tests on representative domain actions (Subscription pause, Overlay publish)."
+  - "Storybook/CLI proofs demonstrate denied/allowed flows; docs capture operational runbook + data retention expectations."
+
+deliverables:
+  - "Database/Type model: src/domain/compliance/{rbac,audit}.ts + Prisma/SQL migrations."
+  - "Service APIs: src/services/compliance/{rbac-service.ts,audit-service.ts}."
+  - "Tests: tests/compliance/{rbac.spec.ts,audit-log.spec.ts} with fixtures for multi-role scenarios."
+  - "Docs: docs/policies/compliance-core.md + Storybook compliance proof stories."
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  researchFoundation:
+    - finding: "RBAC + audit as converged core; five-table schema + immutable log."
+      sourceMission: "cmos/docs/OODS Direction-Check-for-sprint-17.md"
+    - finding: "Enterprise convergence on RBAC meta-model (roles, permissions, audit trails)."
+      sourceMission: "cmos/Industry-Research/R1.4_[1.1+1.2+1.3-linear]_Convergent Gravity and Divergent Forces- An Architectural Analysis of Modern Data Model Patterns.md"
+    - finding: "Security governance patterns for agent + CI enforcement."
+      sourceMission: "cmos/missions/research/R10.3_Security-&-Governance.md"
+
+  implementationScope:
+    coreDeliverable: "Canonical RBAC data model + audit pipeline wired into existing User/Organization membership and agent approvals."
+    outOfScope:
+      - "UI for role management (covered in future adoption missions)."
+      - "Tenant-isolated role provisioning (handled in B17.2 Tenancy Strategy)."
+
+  handoffContext:
+    completed:
+      - "RBAC + audit schemas applied; services exported under src/services/compliance/."
+      - "Seed data for baseline roles (viewer, contributor, approver, compliance-admin)."
+      - "Storybook proof and CLI script (`pnpm compliance:proof`) demonstrate enforcement."
+    interfaces:
+      - "ComplianceService.checkPermission(userId, resourceRef, action): boolean"
+      - "AuditLogService.record(event: { actorId; resourceRef; action; payloadHash; metadata }): void"
+    assumptions:
+      - "Existing auth identity (userId) is available and validated upstream."
+      - "Database migrations can introduce new schemas without downtime."
+    nextMission: "BI-20251024-172: Tenancy Strategy & Scaffold."
+    blockers: []

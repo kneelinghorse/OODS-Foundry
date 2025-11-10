@@ -1,0 +1,66 @@
+# cmos/missions/sprint-17/B17.4_canonical-subscription-invoice-states.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251024-174"
+
+objective: >
+  Define the canonical lifecycle state machines for Subscription (7 states) and Invoice (5 states), map
+  them to tokens/stories, and ensure all UI + adapters consume the new enums.
+
+context: |
+  The direction check mandates a normalized 7-state subscription model (trialing, active, paused,
+  future, pending_cancellation, delinquent, terminated) and 5-state invoice machine, with delinquency
+  derived from invoices when providers omit it (cmos/docs/OODS Direction-Check-for-sprint-17.md:20,
+  90-95). Industry research shows mature systems model lifecycle as event-driven state machines, not
+  loose enums (cmos/Industry-Research/R1.2_A Cross-Platform Analysis ... Schemas.md:201-248). Our prior
+  research codified token + story contracts for billing states (cmos/missions/research/
+  R13.5_Canonical-Model-Subscription-and-Invoice.md). This mission implements state machine specs, token
+  mappings, Storybook proofs, and validation helpers so downstream usage ingest and docs rely on a
+  single source of truth.
+
+successCriteria:
+  - "SubscriptionStateMachine defined with explicit transitions + guards; InvoiceStateMachine likewise defined."
+  - "Enum values exported from src/domain/billing/states.ts are the only allowed statuses; provider adapters map into them."
+  - "Token coverage: semantic tokens + Statusables map for each state (light/dark/HC) with stories + VR baselines."
+  - "Validation helpers ensure UI/components reject unknown vendor strings; CI job enforces bridging through state machine."
+  - "Docs + Storybook MDX page explaining lifecycle, transitions, and event triggers."
+
+deliverables:
+  - "src/domain/billing/states.ts (state machine definitions via xstate or internal util)."
+  - "src/utils/billing/state-guards.ts + deriveDelinquency() helper."
+  - "tokens/view.json updates (view.timeline, etc.) and semantic token additions under packages/tokens."
+  - "Storybook stories: stories/domains/Billing/Subscription.lifecycle.stories.tsx; invoice equivalents."
+  - "Tests: tests/billing/states.spec.ts verifying transitions + adapter mappings."
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  researchFoundation:
+    - finding: "Normalize subscription states; derive delinquency from invoices."
+      sourceMission: "cmos/docs/OODS Direction-Check-for-sprint-17.md"
+    - finding: "State machines as maturity indicator for billing lifecycles."
+      sourceMission: "cmos/Industry-Research/R1.2_A Cross-Platform Analysis of Core Data Models- Archetypes, Convergence, and Divergence in User, Account, and Subscription Schemas.md"
+    - finding: "Canonical billing model + token alignment guidance."
+      sourceMission: "cmos/missions/research/R13.5_Canonical-Model-Subscription-and-Invoice.md"
+
+  implementationScope:
+    coreDeliverable: "State machine modules, token/story updates, validation helpers, adapters wired to new enums."
+    outOfScope:
+      - "Historical data migration (script placeholder acceptable)."
+      - "Usage aggregation events (B17.5)."
+
+  handoffContext:
+    completed:
+      - "State machine exports ready; adapters updated; tests green."
+      - "Tokens + stories regenerated; VR baseline refreshed."
+      - "Docs describing lifecycle + developer FAQ."
+    interfaces:
+      - "SubscriptionStateMachine.transition(state, event): State"
+      - "deriveDelinquency(subscription, invoices): SubscriptionState"
+    assumptions:
+      - "Token governance job enforces new tokens; VR pipeline available."
+      - "Adapters from B17.3 already route vendor payloads through ACL."
+    nextMission: "BI-20251024-175: Usage Ingest v0 — meter → aggregate → invoice."
+    blockers: []

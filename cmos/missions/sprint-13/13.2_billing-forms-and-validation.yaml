@@ -1,0 +1,46 @@
+# cmos/missions/sprint-13/13.2_billing-forms-and-validation.yaml
+sprint: "13"
+missionId: "B13.2"
+title: "Billing forms & validation — patterns v2"
+type: "Build.Implementation.v1"
+
+objective: >
+  Deliver robust billing forms for Subscription and Invoice with required/optional semantics,
+  inline help/error patterns, computed fields (e.g., proration), and submission states—without
+  breaking the tokens-only contract.
+
+context: |
+  Builds on B13.1 objects. All validation/error visuals come from tokens and pattern classes (no per-component logic).
+  
+please review for researchFoundation:
+  - "cmos/missions/research/R13.5_Canonical-Model-Subscription-and-Invoice.md"   # form states reflect canonical lifecycle nuances :contentReference[oaicite:4]{index=4}
+
+
+deliverables:
+  - "/app/apps/explorer/src/patterns/Form/FieldGroup.tsx"           # extended for billing
+  - "/app/apps/explorer/src/patterns/Form/ValidationBanner.tsx"
+  - "/app/apps/explorer/src/stories/Billing/Subscription.Form-Scenarios.mdx"
+  - "/app/apps/explorer/src/stories/Billing/Invoice.Form-Scenarios.mdx"
+  - "/docs/domains/billing/forms.md"
+
+validationMatrix:
+  fields:
+    - { id: "plan",       type: "select", required: true }
+    - { id: "quantity",   type: "number", required: true, min: 1 }
+    - { id: "startDate",  type: "date",   required: true }
+    - { id: "proration",  type: "computed:boolean" }
+    - { id: "coupon",     type: "text",   required: false }
+
+steps:
+  - "Extend form patterns to surface help/error and field states (valid/invalid/warning/disabled)."
+  - "Add computed field demo (proration preview) with pure CSS state exposure (no imperative color)."
+  - "Write form scenario stories: required/optional, invalid inputs, async-like pending state demo."
+  - "Doc page: billing form rules, required markers, error semantics, HC notes."
+
+tests:
+  - "Axe passes for all form scenarios (labels, descriptions, errors mapped to inputs)."
+  - "HC mode: focus/outline ≥ 3:1; no color-only validation cues."
+  - "VRT stable on dark; PNGs for HC states generated."
+
+acceptance:
+  - "Forms show clear, accessible states with no component-level hardcoded colors."

@@ -1,0 +1,70 @@
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+description: "Add JSONL telemetry with correlation/incident IDs, then run a short soak."
+author: "Design System Team"
+schema: "./schemas/Implementation.v1.json"
+
+---
+
+missionId: "B14.7"
+objective: >
+  Introduce structured JSONL telemetry across workflows and agent actions with CorrelationId/IncidentId,
+  then run a soak to establish stability baselines.
+
+context: |
+  Observability is required before enabling broader agent capability. We unify log fields and
+  ensure artifacts link back to incidents.
+
+successCriteria:
+  - "All pipelines/agent actions emit JSONL with CorrelationId and IncidentId."
+  - "Soak report produced with flake %, top error codes, p95/p99 timings."
+  - "PR jobs link to the corresponding incident records for failures."
+  - "PROJECT_CONTEXT.json and diagnostics.json updated."
+
+deliverables:
+  - "configs/logging/telemetry.schema.json"
+  - "scripts/logging/instrument.(mjs|ts)"
+  - "artifacts/current-state/soak-report.md  # report only (no extra artifacts)"
+  - "docs/mcp/Telemetry-&-Incidents.md  # updated"
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  researchFoundation:
+    - finding: "Telemetry fields and incident replay support."
+      sourceMission: "docs/mcp/Telemetry-&-Incidents.md"
+
+  implementationScope:
+    coreDeliverable: |
+      1) Telemetry schema
+         - Define fields: timestamp, missionId, job, CorrelationId, IncidentId, outcome, durationMs, errorCode.
+      2) Emitters
+         - Wrap CI steps and agent operations to write JSONL lines; append to diagnostics.json summary.
+      3) Soak
+         - Run retries across critical jobs; summarize flake%, error hot spots; capture timings.
+
+    outOfScope:
+      - "Long-duration stress; this is a short stability probe."
+
+  handoffContext:
+    completed:
+      - "Unified telemetry; soak baseline captured; incidents traceable."
+    interfaces:
+      - "scripts/logging/instrument.(mjs|ts)"
+      - "artifacts/current-state/soak-report.md"
+    assumptions:
+      - "B14.6 stability gates passing."
+    nextMission: "B14.8 — Policy-gated agent connectors (dry-run approvals)."
+    blockers:
+      - "Runner output permissions; noisy logs without field maps."
+
+statusWrites:
+  projectContext:
+    path: "PROJECT_CONTEXT.json"
+    updates:
+      - { key: "missions.B14.7", value: "Completed" }
+  diagnostics:
+    path: "diagnostics.json"
+    append:
+      - { mission: "B14.7", soak: { flakePct: "$FPCT", topErrors: "$LIST", p95: "$P95", p99: "$P99" } }

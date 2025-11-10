@@ -1,0 +1,50 @@
+# cmos/missions/sprint-16/B16.4_tooltip-and-popover.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251020-164"
+
+objective: >
+  Implement Tooltip (timed, described-by) and Popover (dismissible, labelled) using the Overlay Manager,
+  obeying reduced-motion timing and HC-visible focus.
+
+context: |
+  Lightweight overlays must honor timing tokens, keyboard accessibility, and clear dismissal rules.
+  They exercise hover/focus intent and ensure parity across modes.
+
+successCriteria:
+  - "Tooltip uses aria-describedby; appears on focus and hover; timing from tokens; respects reduced motion."
+  - "Popover is labelled, dismissible via Esc and explicit controls; focus trap engaged."
+  - "Forced-colors: visible border/focus; no color-only cues."
+  - "Axe: 0 violations; VR baselines captured."
+
+deliverables:
+  - "src/components/Tooltip/*.tsx, src/components/Popover/*.tsx"
+  - "stories/components/Tooltip.stories.tsx, Popover.stories.tsx"
+  - "tests/components/tooltip.spec.ts, popover.spec.ts; e2e/tooltip-popover.spec.ts"
+  - "Docs: /docs/components/tooltip.md, /docs/components/popover.md"
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+ please review documents in researchFoundation:
+    - finding: "Pure modifier rule: components read tokens, no brand logic."
+      sourceMission: "cmos/research/R10.5_Artifact-Contracts-&-Reproducibility.md"
+    - finding: "Motion/opacity tokens guided by a11y constraints."
+      sourceMission: "cmos/research/r5.6_Definitive-Guide-to-OKLCH-Relative-Color Guardrails.md"
+
+  implementationScope:
+    coreDeliverable: "Tooltip + Popover on the manager with timing tokens and proofs."
+    outOfScope:
+      - "Positioning engine beyond simple anchor placements."
+
+  handoffContext:
+    completed:
+      - "Lightweight overlays shipped; proofs/tests green."
+    interfaces:
+      - "<Tooltip delay={{open, close}}>"
+    assumptions:
+      - "Token names: overlay.timing.open/close; focus tokens present."
+    nextMission: "BI-20251020-165: Internal Packaging Scaffold."
+    blockers: []

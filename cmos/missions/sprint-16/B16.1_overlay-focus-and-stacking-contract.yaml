@@ -1,0 +1,55 @@
+# cmos/missions/sprint-16/B16.1_overlay-focus-and-stacking-contract.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251020-161"
+
+objective: >
+  Define and prove the overlay focus/stacking contract (focus trap, inert background, escape routes,
+  z-index tokens, reduced-motion, HC resilience) with a minimal POC story.
+
+context: |
+  Overlays (Dialog, Sheet, Tooltip/Popover) must share one contract: deterministic focus loop,
+  inert background, ESC/backdrop escape policy, tokenized stacking, and accessible labeling/announcements.
+  This session writes the spec + tokens and validates with a tiny demo.
+
+successCriteria:
+  - "Spec published at /docs/overlays/contract.md (rules, diagrams, examples)."
+  - "Token map committed: z.* (stacking ladder), overlay.* (backdrop/opacity/timing)."
+  - "POC story shows: focus trap, inert outside, Esc/backdrop policy, focus restoration."
+  - "Forced-colors proof story renders visible focus and borders (no shadow-only affordances)."
+  - "Axe: 0 violations on POC; keyboard path verified (Tab/Shift+Tab)."
+
+deliverables:
+  - "/docs/overlays/contract.md (+ keyboard flow diagram)"
+  - "tokens/overlay.json (overlay.*), tokens/z-index.json (z.*)"
+  - "stories/proofs/overlay-contract.stories.tsx (POC)"
+  - "artifacts/overlays/contract-checklist.md"
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  please review documents in researchFoundation:
+    - finding: "HC requires outlines/borders; shadows are ignored."
+      sourceMission: "cmos/research/r4.4_ A11y-Contract-and-CI-Policy.md"
+    - finding: "Perceptual motion/opacity changes should obey reduced motion."
+      sourceMission: "cmos/research/r5.2_Perceptually-Uniform-Color-System.md"
+    - finding: "DTCG tokens as SoT; composite expansion deterministic."
+      sourceMission: "cmos/research/r5.1_Implementing-DTCG-Compliant-Composite-Tokens.md"
+
+  implementationScope:
+    coreDeliverable: "Contract spec + tokens + POC proving trap/inert/escape/focus restore in HC and dark/light."
+    outOfScope:
+      - "Full Dialog/Sheet/Tooltip/Popover implementations."
+      - "Brand styling beyond semantic tokens."
+
+  handoffContext:
+    completed:
+      - "Contract + tokens ready; POC green in axe."
+    interfaces:
+      - "overlayManager will consume overlay.* and z.* tokens."
+    assumptions:
+      - "Consumers use labelled headers and aria-describedby for content."
+    nextMission: "BI-20251020-162: Overlay Manager."
+    blockers: []

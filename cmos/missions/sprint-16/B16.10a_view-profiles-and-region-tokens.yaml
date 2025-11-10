@@ -1,0 +1,62 @@
+# cmos/missions/sprint-16/B16.10a_view-profiles-and-region-tokens.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251020-1610a"
+
+objective: >
+  Define canonical View Profiles for each context (detail, list, form, timeline, card, inline),
+  add data-view attributes, and introduce minimal layout tokens so context-specific regions render
+  distinct, AA/HC-safe page structures with zero literals.
+
+context: |
+  RenderObject already emits regions (pageHeader, viewToolbar, contextPanel, main, aside, etc.),
+  but most contexts are visually identical because the same skeleton and CSS are applied and
+  additional regions are empty. We will (1) author a small, source-controlled View Profiles config,
+  (2) ensure RenderObject emits data-view="<context>" and consistent region attributes, and
+  (3) expose a minimal set of layout tokens (columns, gaps, rail width) consumed by a thin
+  domain-contexts.css layer to differentiate layouts without hardcoding visuals.
+
+successCriteria:
+  - "configs/view-profiles.yaml exists and enumerates regions+layouts for: detail, list, form, timeline, card, inline."
+  - "RenderObject sets [data-view=<context>] on the top container and per-region attrs (e.g., [data-region='contextPanel'])."
+  - "New layout tokens published: --view.columns, --view.gap, --view.rail.width, --view.toolbar.gap, --view.timeline.gap."
+  - "Domain contexts show visibly distinct structures (e.g., two-column detail/list with right rail; single-column timeline)."
+  - "No literals in CSS—only semantic/system tokens; forced-colors proofs render visible borders/focus."
+  - "Axe smoke on one story per context = 0 violations."
+
+deliverables:
+  - "configs/view-profiles.yaml (authoritative map of context → layout/regions)"
+  - "src/engine/render/ViewContainer.tsx: adds data-view + region attributes"
+  - "tokens/view.json: new layout tokens (DTCG) + generated CSS vars"
+  - "styles/domain-contexts.css: consumes view tokens, switches by data-view and [data-region]"
+  - "stories/proofs/view-profiles/*.stories.tsx: one minimal story per context proving structure"
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  researchFoundation:
+    - finding: "Deterministic region contracts & artifact presentation for object views."
+      sourceMission: "R11.3_Diff-&-Artifact-Presentation.md"
+    - finding: "Contextual design token defaults to drive spacing/layout without literals."
+      sourceMission: "r4.3_Contextual-Design-Token-Defaults.md"
+    - finding: "A11y contract & forced-colors: borders/focus must not rely on shadows."
+      sourceMission: "r4.4_ A11y-Contract-and-CI-Policy.md"
+
+  implementationScope:
+    coreDeliverable: >
+      View profiles config + data attributes + minimal layout tokens + CSS that differentiate contexts,
+      with proofs and a11y smoke.
+    outOfScope:
+      - "Adding domain-specific content; handled in B16.10b via trait contributions."
+
+  handoffContext:
+    completed:
+      - "Profiles/tokens/attrs in place; stories show visibly distinct layouts per context."
+    interfaces:
+      - "RenderObject(container) attaches data-view; regions carry data-region attrs."
+    assumptions:
+      - "Token pipeline already emits CSS vars from DTCG JSON."
+    nextMission: "BI-20251020-1610b: Trait→Region Contributions (Subscription/User)."
+    blockers: []

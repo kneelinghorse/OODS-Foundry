@@ -1,0 +1,55 @@
+# cmos/missions/sprint-15/B15.4_token-governance-for-brands.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251019-154"
+
+objective: >
+  Implement brand-aware token governance: orphan/leak detection, protected namespaces,
+  per-PR token diff report with risk scoring, and CODEOWNERS enforcement for high-risk edits.
+
+context: |
+  With multi-brand in place, we need CI signals that detect risky token changes and prevent
+  brand-bleed. This includes namespace policy, static analysis over code/stories, and PR comments.
+
+successCriteria:
+  - "Overlay policy enumerated: allowed namespaces (brand/*, alias/*), protected (base/*, a11y/*, focus/*)."
+  - "Token diff report flags added/removed/aliased tokens and computes contrast deltas for fg/bg pairs."
+  - "Risk=high when fg/bg or focus tokens change; CI fails unless label token-change:breaking is present."
+  - "PR comment includes counts, high-risk list, and links to impacted stories (name match)."
+  - "CODEOWNERS required for protected namespace changes."
+
+deliverables:
+  - "Governance CLI/script scanning packages/** and stories/**; ignore globs for fixtures."
+  - "PR comment generator; GitHub Action wiring; policy doc: /docs/tokens/governance.md."
+  - "Sample report artifacts under artifacts/tokens/ for both brands."
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+ read for context: researchFoundation:
+    - finding: "DTCG as SoT; composites expanded deterministically."
+      sourceMission: "cmos/missions/research/r5.1_Implementing-DTCG-Compliant-Composite-Tokens"
+    - finding: "Perceptual color deltas (OKLCH) inform UX risk."
+      sourceMission: "cmos/missions/research/r5.2_Perceptually-Uniform-Color-System"
+    - finding: "A11y contract elevates focus/contrast tokens to protected."
+      sourceMission: "cmos/missions/research/r4.4_A11y-Contract-and-CI-Policy"
+
+  implementationScope:
+    coreDeliverable: >
+      Namespace policy + diffing + PR comment + CI label/CODEOWNERS enforcement, brand-aware.
+    outOfScope:
+      - "Automated remediation of risky changes."
+      - "Design tool plugins; covered separately."
+
+  handoffContext:
+    completed:
+      - "Governance report integrated in CI; failing conditions verified."
+      - "Docs published; example artifacts attached."
+    interfaces:
+      - "CLI: tokens-governance diff --base main --head HEAD --brand {a|b}"
+    assumptions:
+      - "Token names follow established naming conventions."
+    nextMission: "BI-20251019-155: Onboarding docs (design/dev) referencing these tools."
+    blockers: []

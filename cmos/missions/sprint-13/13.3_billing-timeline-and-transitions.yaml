@@ -1,0 +1,38 @@
+# cmos/missions/sprint-13/13.3_billing-timeline-and-transitions.yaml
+sprint: "13"
+missionId: "B13.3"
+title: "Billing timeline & transitions — events, retries, refunds"
+type: "Build.Implementation.v1"
+
+objective: >
+  Implement a canonical Billing timeline model with events (created, invoiced, paid, retry, failed,
+  refunded, canceled) and visual transitions tied to the status map. Provide stories for success paths
+  and failure/retry flows.
+
+context: |
+  Timeline is a first-class context. Visuals must derive from the same status→token mapping as List/Detail/Form.
+  
+please review researchFoundation:
+  - "cmos/missions/research/R13.5_Canonical-Model-Subscription-and-Invoice.md"   # event mapping + webhook implications :contentReference[oaicite:6]{index=6}
+
+
+deliverables:
+  - "/domains/saas-billing/events/timeline.schema.json"
+  - "/domains/saas-billing/examples/timeline.{success,retry,refund}.json"
+  - "/app/apps/explorer/src/stories/Billing/Subscription.Timeline.mdx"
+  - "/app/apps/explorer/src/stories/Billing/Invoice.Timeline.mdx"
+  - "/docs/domains/billing/timeline.md"
+
+steps:
+  - "Define timeline event schema (type, at, meta, prevStatus, nextStatus)."
+  - "Create example flows: on-time payment; dunning with retry backoff; refund/cancel path."
+  - "Render timeline stories using region IDs, no side-effects; state colors resolve via tokens map."
+  - "Document event taxonomy and mapping to UI badges/banners."
+
+tests:
+  - "Axe passes; time ordering correct; SR text announces state changes."
+  - "Tokens map drives all color changes (no literals)."
+  - "HC PNGs render distinct focus and selected states."
+
+acceptance:
+  - "Timeline narratives render with consistent statuses; token mapping is the single source for visuals."

@@ -1,0 +1,54 @@
+# cmos/missions/sprint-18/B18.4_breadcrumbs-overflow.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251024-184"
+
+objective: >
+  Implement Breadcrumbs with middle-item overflow menu, semantic landmarks, and HC-compliant visuals.
+
+context: |
+  R18.1 confirms industry consensus: breadcrumbs must collapse middle items into an overflow menu,
+  reserve first/last items, and expose aria-label/aria-current semantics. This mission delivers the
+  component, ensuring token-driven styling, keyboard support, and Storybook proofs across long/short
+  hierarchies and HC scenarios.
+
+successCriteria:
+  - "Breadcrumbs renders nav landmark with aria-label='breadcrumb'; last item uses aria-current='page'."
+  - "Overflow menu appears when items exceed width; retains first/last, keyboard accessible (tab/enter/space)."
+  - "Tokens drive spacing, typography, link states; HC mode verified via forced-colors test."
+  - "Storybook stories for short path, long path (overflow), internationalized labels; VR baselines updated."
+  - "Unit tests cover overflow reduction logic, a11y attributes, tooltip/truncation if applied."
+
+deliverables:
+  - "Component: src/components/breadcrumbs/Breadcrumbs.tsx."
+  - "Storybook: stories/components/Breadcrumbs.stories.tsx."
+  - "Tests: tests/components/breadcrumbs.spec.tsx + axe/HC run."
+  - "Docs update: docs/components/navigation.md (breadcrumbs section)."
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+Read for Context   researchFoundation:
+    - finding: "Overflow menu pattern & accessibility heuristics for breadcrumbs."
+      sourceMission: "cmos/missions/research/R18.1_Technical-Research-Report-Component-Set-IV.md"
+
+  implementationScope:
+    coreDeliverable: "Breadcrumbs component with overflow + a11y tokens/tests."
+    outOfScope:
+      - "Schema-aware breadcrumb generation (provided by app teams)."
+      - "Mobile-specific animations (basic responsive layout only)."
+
+  handoffContext:
+    completed:
+      - "Component exported; docs highlight usage with router."
+      - "Storybook includes accessibility notes + keyboard walkthrough."
+      - "Token governance job confirms no literals."
+    interfaces:
+      - "<Breadcrumbs items={[{ label, href }]} currentPageLabel />"
+    assumptions:
+      - "Menu/Popover primitives available from overlay system."
+      - "Navigation a11y utilities from B18.2 imported."
+    nextMission: "BI-20251024-185: Empty State component." 
+    blockers: []

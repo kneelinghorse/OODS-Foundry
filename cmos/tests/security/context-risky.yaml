@@ -1,0 +1,9 @@
+context:
+  name: "Risky Fixture"
+  description: "Deliberately contains security issues for guardrail validation"
+  includes:
+    - "../../etc/passwd"
+    - "%2e%2e/var/log"
+  credentials:
+    admin_password: "supersecret"
+  notes: "Triggers security validator findings"

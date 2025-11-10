@@ -1,0 +1,56 @@
+# cmos/missions/sprint-19/B19.2_packaging-dry-run.yaml
+name: "Build.Release.v1"
+version: "1.0.0"
+displayName: "Release Mission"
+
+missionId: "BR-20251101-192"
+
+objective: >
+  Execute a full dry run of the release pipeline (build → test → package → provenance) without publishing,
+  capturing gaps and documenting rollback and promotion steps for the upcoming private review.
+
+context: |
+  Previous sprints assembled packaging scaffolding (S12, S16) and governance checks. Before inviting
+  external reviewers we need confidence the pipeline can produce signable artifacts on demand. This
+  mission orchestrates the dry run, records metrics, and updates runbooks; publish toggles remain disabled.
+
+successCriteria:
+  - "Pipeline executed end-to-end using current main; produces npm-ready tarballs under dist/releases/."
+  - "Provenance/SBOM artifacts generated and verified (sigstore/cosign per tooling)."
+  - "Rollback & promotion steps documented in docs/releases/runbook.md, including manual checkpoints."
+  - "Findings/issues logged in backlog with owners and severity."
+  - "State assessment tokens/packaging category green with dry-run evidence."
+
+deliverables:
+  - "CI or local pipeline script outputs attached to artifacts/release-dry-run/*."
+  - "Updated docs/releases/runbook.md with dry-run checklist + rollback plan."
+  - "Summary in docs/changelog/sprint-19.md referencing dry-run output."
+  - "Ticket list for any blocking gaps discovered."
+
+domainFields:
+  type: "Build.Release.v1"
+
+  researchFoundation:
+    - finding: "Packaging & provenance requirements from Sprint 12/S16 outcomes."
+      sourceMission: "cmos/docs/roadmap_s17_release.md"
+
+  releaseScope:
+    includes:
+      - "build-storybook, tokens build, package bundling (tsup/rollup), provenance generation."
+      - "Verification of signatures, checksums, and metadata."
+    excludes:
+      - "Publishing to npm or registries."
+      - "Version bump communication/announcement (handled in Sprint 20)."
+
+  handoffContext:
+    completed:
+      - "Dry-run artifacts archived with hashes/signatures."
+      - "Runbook updated and linked in diagnostics."
+      - "Open issues filed with priorities."
+    interfaces:
+      - "scripts/pkg-compat.mjs, pack:verify workflow, provenance tooling."
+    assumptions:
+      - "CI secrets available for signing in dry-run context."
+      - "All components already meet QA bar (B19.1)."
+    nextMission: "B20.1 Private RC build & freeze."
+    blockers: []

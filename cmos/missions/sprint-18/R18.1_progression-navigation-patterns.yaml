@@ -1,0 +1,46 @@
+# cmos/missions/sprint-18/R18.1_progression-navigation-patterns.yaml
+name: "Build.TechnicalResearch.v1"
+version: "1.0.0"
+displayName: "Technical Research Mission"
+
+missionId: "TR-20251024-181"
+
+objective: >
+  Investigate enterprise-grade progression and navigation components (Progress/Stepper, Tabs, Pagination,
+  Breadcrumbs, Empty-state kits, Toast queues) to define canonical UX patterns, token hooks, and
+  accessibility requirements for Sprint 18 build work.
+
+context: |
+  Sprint 18 plans to ship Component Set IV and a final QA wave. Before sizing those build missions we
+  need detailed evidence on cross-brand, multi-domain component behavior: states, transitions, token
+  mappings (light/dark/HC), VR/a11y requirements, and guardrails for overlays/usage contexts. This
+  research builds on prior multi-brand/theming and HC studies (r09.1, r4.x) and extends them to the
+  remaining navigation/progression primitives.
+
+successCriteria:
+  - "All research questions answered with cited sources and examples."
+  - "Key findings categorize canonical patterns and token/a11y implications."
+  - "Build implications translate into actionable component requirements and Storybook proof guidance."
+  - "Contradictions or gaps documented with recommendations for follow-up spikes if needed."
+
+deliverables:
+  - "This completed research brief with evidence references."
+  - "buildImplications section ready to seed Sprint 18 component missions."
+
+domainFields:
+  type: "Build.TechnicalResearch.v1"
+
+  researchQuestions:
+    - "What canonical states and transitions exist for Progress/Stepper components in multi-brand enterprise systems?"
+    - "How do Tabs, Pagination, and Breadcrumbs handle density, responsive behavior, and high-contrast theming across brands?"
+    - "What token hooks (spacing, typography, color, motion) are required to keep Empty-states and Toast queues aligned with Statusables/Usage tokens?"
+    - "What accessibility heuristics (focus order, ARIA attributes, keyboard support) are considered non-negotiable for these components?"
+    - "How do leading design systems instrument VR/a11y testing coverage for these navigation components?"
+
+  keyFindings: []
+
+  contradictionsAndUncertainties: ""
+
+  buildImplications: {}
+
+  evidenceCollection: []

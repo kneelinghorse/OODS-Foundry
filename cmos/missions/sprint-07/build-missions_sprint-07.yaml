@@ -1,0 +1,218 @@
+# Sprint 07 — Full Build Missions (B7.1–B7.6) — UPDATED with polish items
+# Schema: Build.Implementation.v1
+# Cross-links to supporting research under /missions/research/:
+#   r4.3_Contextual-Design-Token-Defaults.md
+#   r4.4_ A11y-Contract-and-CI-Policy.md
+#   r5.1_Implementing-DTCG-Compliant-Composite-Tokens.md
+#   r5.2_Perceptually-Uniform-Color-System.md
+#   r5.4_Visual-Regression-Tooling.md
+#   r5.5_Scalable-Theming-Architecture.md
+#   r5.6_Definitive-Guide-to-OKLCH-Relative-Color Guardrails.md
+#   r5.7_High-Contrast-Mode-Regression-Prevention.md
+
+# Key refinements applied:
+#  • HC snapshots ONLY via Playwright+storycap (not Chromatic)
+#  • Chromatic includes Dark variants; HC excluded
+#  • Motion stories stabilized for VRT by disabling animations during snapshots
+
+# ========== B7.1 — Motion Tokens v1 + VRT-Stable Consumption ==========
+missionId: "BI-20251012-B7.1"
+objective: "Ship a minimal motion token set and consume it in core interactions; ensure snapshots are stable (animations off during VRT) and reduced-motion is honored."
+context: |
+  Sprint-06 wired reduced-motion guards but the motion family was empty. Populate motion tokens (durations, easings,
+  named transitions) and consume them in Button/Badge/Banner. For VRT stability, motion must be disabled automatically
+  during Chromatic snapshots—without altering runtime behavior for users.
+successCriteria:
+  - "DTCG motion tokens exist and build to CSS/TS/Tailwind (duration {fast,base,slow}, easing {standard,emphasized}, transitions {chipIn,chipOut,bannerReveal,focusRing})."
+  - "Components consume tokens; @media (prefers-reduced-motion) respected."
+  - "VRT-stable: Chromatic runs with animations effectively disabled (no flaky diffs)."
+deliverables:
+  - "/app/packages/tokens/src/tokens/base/motion.json"
+  - "/app/packages/tokens/dist/{css,ts,tailwind}/**"
+  - "/app/apps/explorer/src/styles/motion.css"                # prefers-reduced-motion guard + var hooks
+  - "/app/apps/explorer/src/components/{Button,Badge,Banner}.tsx"
+  - "/app/apps/explorer/src/stories/Foundations.Motion.mdx"
+  - "/app/apps/explorer/.storybook/preview.ts"                # VRT snapshot stabilizer (see implementation)
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - sourceMission: "missions/research/r5.1_Implementing-DTCG-Compliant-Composite-Tokens.md"
+    - sourceMission: "missions/research/r5.7_High-Contrast-Mode-Regression-Prevention.md"
+  implementationScope:
+    coreDeliverable: |
+      Tokens:
+        - motion.duration.{fast,base,slow}
+        - motion.easing.{standard,emphasized}
+        - motion.transition.{chipIn,chipOut,bannerReveal,focusRing}
+      Consumption:
+        - Use CSS custom properties derived from tokens (e.g., --motion-duration-fast)
+        - Add @media (prefers-reduced-motion: reduce) { animation: none; transition: none; } in motion.css
+      VRT Stabilizer (Chromatic only):
+        - In .storybook/preview.ts detect Chromatic run (process.env.CHROMATIC === 'true')
+        - Add a root class (e.g., 'vrt-snapshot') that sets:
+            * { animation: none !important; transition: none !important; }
+          OR set a CSS variable (--motion-scale: 0) and multiply durations by it in motion.css
+        - Ensure stabilizer is applied only for snapshots; not in local/dev usage
+    outOfScope:
+      - "Complex choreography, page transitions, physics-based motion."
+  handoffContext:
+    nextMission: "BI-20251012-B7.2"
+
+---
+
+# ========== B7.2 — Contexts: finalize Form & Timeline density/typography + MDX ==========
+missionId: "BI-20251012-B7.2"
+objective: "Lock spacing/line-height/type deltas for Form & Timeline and publish the missing MDX docs."
+context: |
+  Inventory flagged missing docs/deltas. Finalize the context matrix so Form prioritizes readability and error affordance,
+  and Timeline prioritizes compact rhythm and scannability—all via class-only bindings.
+successCriteria:
+  - "Updated context matrix with concrete deltas (Form: readable; Timeline: compact)."
+  - "FormPage/TimelinePage use tokens-only styling via region slots; components remain pure."
+  - "Docs exist (Contexts.Form/Timeline) and pass AA checks."
+deliverables:
+  - "/app/packages/tw-variants/src/context-matrix.ts"
+  - "/app/apps/explorer/src/pages/{FormPage,TimelinePage}.tsx"
+  - "/app/apps/explorer/src/stories/Contexts.{Form,Timeline}.mdx"
+  - "/app/docs/contexts/form-timeline-defaults.md"
+domainFields:
+  type: "Build.Implementation.v1"
+   researchFoundation:
+    - sourceMission: "missions/research/r4.3_Contextual-Design-Token-Defaults.md"
+    - sourceMission: "missions/research/r4.4_ A11y-Contract-and-CI-Policy.md"
+  implementationScope:
+    coreDeliverable: |
+      - Add deltas to matrix; examples (tune to tokens):
+          Form: type scale = base, line-height +0.05, stack spacing +1 step, inputs min-tap area
+          Timeline: type scale = -1 step, line-height -0.05, stack spacing -1 step, tighter item gutters
+      - Bind strictly via classes (no runtime branches); update utilities and stories
+    outOfScope:
+      - "Full form system; only representative inputs and validation shells."
+  handoffContext:
+    nextMission: "BI-20251012-B7.3"
+
+---
+
+# ========== B7.3 — HC visual snapshots (forced-colors) via Playwright+storycap ==========
+missionId: "BI-20251012-B7.3"
+objective: "Capture High-Contrast (forced-colors) images for a focused story set using Playwright+storycap—HC snapshots live ONLY here, not in Chromatic."
+context: |
+  HC is enforced logically, but we also want image proof under system colors. Chromatic doesn’t render real forced-colors,
+  so we keep HC entirely in this separate job. CI runs it non-blocking initially; we can flip to required after a stable baseline.
+successCriteria:
+  - "Playwright/Storycap job writes ~10 HC PNGs to /artifacts/vrt/hc/<build-id>/."
+  - "CI job present (non-blocking), docs explain how to accept/update HC baselines."
+  - "Total job time ≤ 90s."
+deliverables:
+  - "/app/testkits/vrt/storycap.hc.mjs"            # launches with forced-colors: active and snapshots key routes/stories
+  - "/.github/workflows/vrt-hc.yml"                # non-blocking; artifact upload
+  - "/app/docs/policies/high-contrast.md"          # add 'HC baseline workflow' section
+domainFields:
+  type: "Build.Implementation.v1"
+    researchFoundation:
+    - sourceMission: "missions/research/r5.7_High-Contrast-Mode-Regression-Prevention.md"
+    - sourceMission: "missions/research/r5.4_Visual-Regression-Tooling.md"
+  implementationScope:
+    coreDeliverable: |
+      - Use Playwright context with forced-colors enabled; snapshot:
+          Foundations.Colors, Components.{Button,Badge,Banner,Input}, Contexts.{List,Detail,Form,Timeline}
+      - Save images to artifacts/vrt/hc/<build-id>/, upload as CI artifact; link path in job summary
+      - DO NOT add HC stories to Chromatic; keep separation to avoid duplication and flake
+    outOfScope:
+      - "Chromatic integration for HC; this job is the single source of HC images."
+  handoffContext:
+    nextMission: "BI-20251012-B7.4"
+
+---
+
+# ========== B7.4 — Dark a11y coverage expansion & baseline ==========
+missionId: "BI-20251012-B7.4"
+objective: "Expand Dark-mode AA + Δ guardrail checks to ~90% of used pairs and record a dedicated baseline/diff."
+context: |
+  Initial Dark checks were limited. Expand enumerated pairs by scanning Explorer usage and store a Dark baseline for future diffs.
+successCriteria:
+  - "≥90% of surface/text/status/focus pairs used in Explorer covered; report includes AA + Δ sections."
+  - "Dark baseline exists; PRs compute Dark diffs; 0 new critical/serious violations."
+deliverables:
+  - "/app/tools/a11y/index.mjs"                      # updated to enumerate and check dark pairs
+  - "/app/tools/a11y/baseline/a11y-dark-baseline.json"
+  - "/artifacts/current-state/<DATE>/a11y-report.dark.json"
+domainFields:
+  type: "Build.Implementation.v1"
+    researchFoundation:
+    - sourceMission: "missions/research/r4.4_ A11y-Contract-and-CI-Policy.md"
+    - sourceMission: "missions/research/r5.6_Definitive-Guide-to-OKLCH-Relative-Color Guardrails.md"
+    - sourceMission: "missions/research/r5.5_Scalable-Theming-Architecture.md"
+  implementationScope:
+    coreDeliverable: |
+      - Static analysis: collect token pairs from pages/components; run checks under html[data-theme='dark']
+      - Store baseline and emit diffs on PRs; include ΔL/ΔC guardrail violations list
+    outOfScope:
+      - "APCA migration."
+    nextMission: "BI-20251012-B7.5"
+
+---
+
+# ========== B7.5 — Chromatic coverage expansion (≥25 stories; include Dark, exclude HC) ==========
+missionId: "BI-20251012-B7.5"
+objective: "Grow Chromatic coverage to ≥25 tagged stories; explicitly include Dark variants and explicitly EXCLUDE HC (handled by B7.3)."
+context: |
+  Keep Chromatic fast and focused. Add Dark variants via a theme decorator. Exclude HC from Chromatic to avoid duplication and false diffs.
+successCriteria:
+  - "Tagged stories ≥ 25; includes Dark variants; runtime ≤ 120s with TurboSnap."
+  - "No HC stories in Chromatic; HC snapshots live only in the Playwright job."
+  - "No animation flakes (uses the stabilizer from B7.1)."
+deliverables:
+  - "/chromatic.config.json"                         # exclude HC-tagged stories; include Dark
+  - "/.github/workflows/chromatic.yml"               # thresholds & caching tuned; no HC references
+  - "/app/apps/explorer/.storybook/preview.ts"       # add Dark theme decorator and motion stabilizer if not present
+domainFields:
+  type: "Build.Implementation.v1"
+    researchFoundation:
+    - sourceMission: "missions/research/r5.4_Visual-Regression-Tooling.md"
+  implementationScope:
+    coreDeliverable: |
+      - Dark decorator: wrap stories with a provider or root attr (html[data-theme='dark']) for dark-variant stories
+      - Tag or parameterize stories so HC is not included in Chromatic
+      - Confirm TurboSnap enabled; add caching (actions/cache) to keep runtime ≤120s
+    outOfScope:
+      - "Cross-browser matrix."
+  handoffContext:
+    nextMission: "BI-20251012-B7.6"
+
+---
+
+# ========== B7.6 — Diagnostics updater (Sprint-07 snapshot script) ==========
+missionId: "BI-20251012-B7.6"
+objective: "Extend the current-state generator to include motion counts, expanded Dark a11y coverage, and HC snapshot image counts."
+context: |
+  Keep the single-command snapshot up to date with Sprint-07’s additions: motion tokens, larger Dark coverage, and HC image artifacts.
+successCriteria:
+  - "scripts/diagnostics/sprint07-current-state.mjs added; npm alias current-state:sprint07 available."
+  - "Artifacts written under /artifacts/current-state/<DATE>/ with new motion/dark/HC fields populated."
+deliverables:
+  - "/scripts/diagnostics/sprint07-current-state.mjs"
+  - "/app/package.json"                               # add 'current-state:sprint07'
+  - "/artifacts/current-state/<DATE>/SUMMARY.md"
+  - "/artifacts/current-state/<DATE>/motion-report.json"
+  - "/artifacts/current-state/<DATE>/a11y-report.dark.json"
+  - "/artifacts/current-state/<DATE>/vrt-coverage-report.json"
+  - "/artifacts/current-state/<DATE>/hc-required-report.json"
+domainFields:
+  type: "Build.Implementation.v1"
+    researchFoundation:
+    - sourceMission: "missions/research/r5.4_Visual-Regression-Tooling.md"
+    - sourceMission: "missions/research/r4.4_ A11y-Contract-and-CI-Policy.md"
+    - sourceMission: "missions/research/r5.7_High-Contrast-Mode-Regression-Prevention.md"
+  implementationScope:
+    coreDeliverable: |
+      - Fork sprint06 generator; add collectors for:
+          • motion token counts (duration/easing/transitions)
+          • dark a11y coverage % and Δ guardrail violations
+          • HC snapshot PNG count from /artifacts/vrt/hc/<build-id>/
+      - Preserve 'N/A' behavior for any missing feature
+    outOfScope:
+      - "Fixes; this only reports."
+  handoffContext:
+    nextMission: ""
+    blockers: []

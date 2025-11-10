@@ -1,0 +1,58 @@
+# cmos/missions/sprint-15/B15.2_component-scaleout-statusables.yaml
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+
+missionId: "BI-20251019-152"
+
+objective: >
+  Implement Statusable components—Badge and Banner (Toast optional)—wired to enum→token mappings
+  with full a11y semantics, reduced-motion support, and brand/theme/HC matrices.
+
+context: |
+  These primitives exercise intent mapping, contrast safety, and live-announce behavior. We centralize
+  status→semantic token mapping and prove resilience in forced-colors and reduced-motion environments.
+
+successCriteria:
+  - "Central status map JSON used by all statusables; no local intent colors."
+  - "Banner uses role='alert' for destructive/negative and role='status' for neutral/positive."
+  - "Toast (if included) announces via aria-live='polite' and respects prefers-reduced-motion."
+  - "Visible focus in HC; keyboard dismiss (Esc) and focus return."
+  - "Story: status snapshot grid (all statuses × emphasis) establishes VR baseline."
+  - "A11y tests for roles/announcements; Playwright spec verifies toast open/close announcements."
+
+deliverables:
+  - "Badge + Banner components; (optional) Toast."
+  - "status-map.json and tokens references; stories (snapshot grid)."
+  - "Unit tests for ARIA roles/associations; Playwright spec for toast."
+  - "Docs: /docs/components/statusables.md."
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  Read context researchFoundation:
+    - finding: "Enum→token mapping is the single source for UI status intents."
+      sourceMission: "cmos/missions/research/r4.5_SaaS-Enum-to-Token-Mapping-Schema"
+    - finding: "OKLCH + relative color guardrails for emphasis states."
+      sourceMission: "cmos/missions/research/r5.6_Definitive-Guide-to-OKLCH-Relative-Color Guardrails"
+    - finding: "Forced-colors requires border/focus tokens—avoid shadow-only affordances."
+      sourceMission: "cmos/missions/research/r4.4_A11y-Contract-and-CI-Policy"
+
+  implementationScope:
+    coreDeliverable: >
+      Badge + Banner with centralized status map; motion/opacity tokens; HC-friendly focus;
+      announced state changes. Toast is optional if time-constrained.
+    outOfScope:
+      - "In-app notification center or queueing."
+      - "Theming beyond brand/semantic tokens."
+
+  handoffContext:
+    completed:
+      - "Status map consumed by all statusables; snapshot grid VR baseline captured."
+      - "A11y tests passing; Playwright live-region spec passing."
+    interfaces:
+      - "status-map.json → { intent, emphasis } → semantic tokens."
+    assumptions:
+      - "Status intents align to existing semantic tokens."
+    nextMission: "BI-20251019-153: Inputs & Tables consuming the same status map."
+    blockers: []

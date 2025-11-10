@@ -1,0 +1,48 @@
+# cmos/missions/sprint-12/12.2_artifact-viewer.yaml
+sprint: "12"
+missionId: "B12.2"
+title: "Storybook panel — Artifact Viewer (Latest Run, Run List, File View)"
+type: "Build.Implementation.v1"
+
+objective: >
+  Add an Artifact Viewer inside the Agent panel to browse a run bundle:
+  Latest Run shortcut, a Run List overlay, and a File View with an accessible, virtualized table
+  (name | purpose | size | sha256 | open). Open links in a new tab; sanitize paths server-side.
+
+context: |
+  Artifacts live in /artifacts/current-state/YYYY-MM-DD/. The bridge returns opaque IDs and
+  resolved openUrl links; the client must not construct file paths. Keep ≤10 files/day via consolidation.
+
+researchFoundation:
+  - "cmos/missions/research/R12.2_Artifact-Viewer-IA.md"
+  - "cmos/missions/research/R11.3_Diff-&-Artifact-Presentation.md"
+
+deliverables:
+  - "/app/apps/explorer/addons/storybook-addon-agent/components/ArtifactViewer.tsx"
+  - "/app/apps/explorer/addons/storybook-addon-agent/components/RunList.tsx"
+  - "/app/apps/explorer/addons/storybook-addon-agent/components/FileTable.tsx"
+  - "/app/apps/explorer/addons/storybook-addon-agent/styles/artifacts.css"
+  - "/packages/mcp-bridge/src/endpoints/artifacts.ts"  # list runs/list files by id (sanitized)
+  - "/docs/mcp/Artifact-Viewer.md"
+
+bridgeApi:
+  endpoints:
+    - "GET /runs            -> [{ id, date, summary }]"
+    - "GET /runs/:id/files  -> [{ id, name, purpose, size, sha256, openUrl }]"
+    - "GET /runs/:id        -> diagnostics.json payload"
+
+steps:
+  - "Bridge: implement /runs, /runs/:id, /runs/:id/files; sanitize paths, return openUrl with targetable links."
+  - "Panel: ArtifactViewer with three-tier nav (Latest Run default, Run List modal/overlay, File View)."
+  - "FileTable: accessible table with keyboard row focus; copy-full-hash; virtualize rows when >200."
+  - "Link hygiene: target=_blank, rel='noopener noreferrer'; never use data: URIs."
+  - "Empty/loading/error states with SR announcements; hash badges show short(8) with a copy control."
+
+tests:
+  - "Large bundles remain responsive (virtualized)."
+  - "Links open in new tab; no client-constructed paths; all IDs resolved via bridge."
+  - "SR announces loading/ready/error; focus returns to trigger on close."
+
+acceptance:
+  - "Users can browse the latest run, switch to any run, and open artifacts securely."
+  - "All artifact rows display name, purpose, size, short hash, and an Open link."

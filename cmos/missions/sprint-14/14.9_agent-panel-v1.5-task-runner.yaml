@@ -1,0 +1,74 @@
+name: "Build.Implementation.v1"
+version: "1.0.0"
+displayName: "Implementation Mission"
+description: "Upgrade the Agent Panel with a task queue, approvals UI, and linked telemetry."
+author: "Design System Team"
+schema: "./schemas/Implementation.v1.json"
+
+---
+
+missionId: "B14.9"
+objective: >
+  Deliver a usable Agent Panel v1.5 that can queue tasks, request approvals, apply changes,
+  and link each step to telemetry/incident records.
+
+context: |
+  With policy/dry-run in place, we surface this UX so humans can orchestrate work, inspect diffs,
+  and approve/deny confidently.
+
+successCriteria:
+  - "Panel shows task queue with states (Queued/WaitingApproval/Running/Done/Denied)."
+  - "Displays diffs for dry-run; approve/deny updates state and triggers execution."
+  - "Each task links to IncidentId; clicking opens telemetry detail."
+  - "PROJECT_CONTEXT.json and diagnostics.json updated."
+
+deliverables:
+  - "apps/storybook/panel/*  # panel components updated"
+  - "docs/mcp/Panel-UX.md  # append task runner + approvals"
+  - "docs/mcp/Panel-Components.md  # component contract updates"
+  - "docs/mcp/Transcript-&-Replay.md  # ensure records linkable"
+
+domainFields:
+  type: "Build.Implementation.v1"
+
+  researchFoundation:
+    - finding: "Panel UX affordances and transcript/replay hooks."
+      sourceMission: "docs/mcp/Panel-UX.md"
+    - finding: "Artifact/diff viewing."
+      sourceMission: "docs/mcp/Storybook-Agent-Panel.md"
+
+  implementationScope:
+    coreDeliverable: |
+      1) Queues & states
+         - Add Task model; render list with status chips; filter/search.
+      2) Approvals
+         - Show proposed diff; approve/deny; record rationale; feed B14.8 approval hook.
+      3) Telemetry links
+         - Show IncidentId/CorrelationId; deep-link to logs.
+      4) Usability
+         - Keyboard nav, focus order, SR labels; persist last view in local storage.
+
+    outOfScope:
+      - "Long-running job orchestration across distributed workers."
+
+  handoffContext:
+    completed:
+      - "Panel v1.5 live for everyday use with approvals and telemetry."
+    interfaces:
+      - "apps/storybook/panel/*"
+      - "scripts/agent/approval.(mjs|ts)"
+    assumptions:
+      - "Policy and telemetry from B14.8/7 in place."
+    nextMission: "B14.10 — Enum→Token mapping enforcement."
+    blockers:
+      - "Connector exceptions not surfaced; add to error map."
+
+statusWrites:
+  projectContext:
+    path: "PROJECT_CONTEXT.json"
+    updates:
+      - { key: "missions.B14.9", value: "Completed" }
+  diagnostics:
+    path: "diagnostics.json"
+    append:
+      - { mission: "B14.9", panel: { tasksRun: "$N", approvals: "$A", denied: "$D" } }

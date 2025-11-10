@@ -1,0 +1,209 @@
+# missions/sprint-09/B9.6_End-of-Sprint-Summary.yaml
+sprint: "09"
+title: "End-of-Sprint Summary & Diagnostics (Sprint 09)"
+completionProtocolRef: "../current.yaml#completionProtocol"
+
+missionId: "B9.6"
+objective: >
+  Produce a concise, decision-ready Sprint 09 summary that rolls up outcomes from B9.1–B9.5,
+  with brand-aware diagnostics and reproducible evidence. Package everything under
+  /artifacts/current-state/YYYY-MM-DD with ≤10 files total.
+
+context: |
+  Sprint 09 focused on: Brand A theming (tokens-only, light/dark/HC), reproducible local package releases,
+  tokens-only purity guardrails, PR-less Figma→Git review kit roundtrip, and VRT/diagnostics expansion.
+  This mission aggregates results into one summary file plus a minimal, consolidated diagnostics file.
+
+successCriteria:
+  - "One primary summary markdown saved to /artifacts/current-state/YYYY-MM-DD."
+  - "≤10 total files in that date folder (summary + attachments)."
+  - "Brand-aware diagnostics (AA/Δ, HC, VRT, inventory, packages, purity, tokens build time) consolidated."
+  - "Clear ‘inputs to Sprint 10’ section with proposed missions/blockers, based on measured outcomes."
+
+deliverables:
+  - "/artifacts/current-state/YYYY-MM-DD/sprint-09-summary.md"     # primary, single page
+  - "/artifacts/current-state/YYYY-MM-DD/diagnostics.json"         # consolidated metrics (single JSON)
+  - "/artifacts/current-state/YYYY-MM-DD/brand-a_coverage.md"      # optional (embed in summary if near file limit)
+  - "/artifacts/current-state/YYYY-MM-DD/release-report.md"        # optional
+  - "/artifacts/current-state/YYYY-MM-DD/review-kit.md"            # optional link rollup to prior B9.4 outputs
+  - "/artifacts/current-state/YYYY-MM-DD/vrt-allowlist.json"       # optional
+  - "/artifacts/current-state/YYYY-MM-DD/purity-audit.md"          # optional
+  - "/artifacts/current-state/YYYY-MM-DD/brand-a.before.png"       # optional
+  - "/artifacts/current-state/YYYY-MM-DD/brand-a.after.png"        # optional
+
+domainFields:
+  type: "Build.Implementation.v1"
+  researchFoundation:
+    - finding: "Multi-brand theming via DTCG → SD v4 → Tailwind v4; OKLCH + Δ guardrails; HC via System Colors."
+      sourceMission: "missions/research/r.13.1_Multi-Brand-Theming.md"
+    - finding: "Deterministic local releases with exports-first packaging; two-run `npm pack` diff."
+      sourceMission: "missions/research/r.13.2_Publishing-Reproducible-TypeScript-Packages.md"
+    - finding: "PR-less push pipeline producing review artifacts (Storybook/Chromatic) for token changes."
+      sourceMission: "missions/research/r.13.3_The-PR-less-Pipeline.md"
+
+implementationScope:
+  coreDeliverable: "Sprint 09 summary + consolidated diagnostics under the dated artifacts directory."
+  outOfScope:
+    - "New feature work."
+    - "CI/GitHub workflow changes (remain push-only)."
+  constraints:
+    - "Max 10 files under /artifacts/current-state/YYYY-MM-DD; prefer consolidation into diagnostics.json."
+
+handoffContext:
+  completed:
+    - "B9.1–B9.5 outcomes available on main (tokens, packages, audits, review kit, VRT)."
+  interfaces:
+    - "Existing push pipeline (tokens build, Chromatic, HC PNGs, diagnostics)."
+  assumptions:
+    - "Team has permissions to write to /artifacts/current-state."
+  nextMission: "Use this summary to plan Sprint 10."
+  blockers: []
+
+steps:
+  - name: "Resolve date-stamped artifacts directory"
+    action: shell.run
+    command: |
+      DATE=${DATE_OVERRIDE:-$(date +%F)}
+      ART_DIR="artifacts/current-state/${DATE}"
+      mkdir -p "$ART_DIR"
+      echo "ART_DIR=$ART_DIR" > .sprint09.env
+
+  - name: "Consolidate diagnostics into a single JSON"
+    action: script.write
+    path: "/app/scripts/diag/collect-sprint09.ts"
+    content: |
+      /**
+       * Collects Sprint 09 metrics and writes diagnostics.json into the date-stamped ART_DIR.
+       * Inputs (discover via globs):
+       *  - brand coverage (AA/Δ tables)
+       *  - VRT (Chromatic run url, allowlist count, flake %)
+       *  - HC PNG count (Playwright)
+       *  - inventory (components/stories; brandA stories)
+       *  - tokens build time (ms)
+       *  - packages reproducibility (npm pack x2 identical; sha256)
+       *  - purity (violations)
+       *  - review kit links (storybook, chromatic diff)
+       * Output schema (example below in examples.json_excerpt).
+       */
+      // Codex: implement using Node/TS fs + glob; read .sprint09.env for ART_DIR.
+
+  - name: "Write sprint summary (markdown)"
+    action: file.write
+    path: "/artifacts/current-state/YYYY-MM-DD/sprint-09-summary.md"
+    content: |
+      # Sprint 09 — Summary (Brand A, Reproducible Releases, Purity, Review Kit, VRT)
+      > Period: {{period}} · Owner: Derek Niedringhaus · Version: v1.0
+
+      ## Executive Summary
+      - Outcome: {{one_line_outcome}}
+      - Status: {{Green|Yellow|Red}} · Confidence: {{High|Med|Low}}
+      - Next: See “Planning inputs for Sprint 10”.
+
+      ## Scope Delivered (B9.1–B9.5)
+      - **B9.1 Brand A** — tokens-only; light/dark/HC; AA/Δ coverage: {{aa_pct}}% pass; HC PNGs: {{hc_pngs}}
+      - **B9.2 Packages** — reproducible: {{pkg_reproducible}}; versions: {{versions}}
+      - **B9.3 Purity** — violations: {{violations}}
+      - **B9.4 Review Kit** — Storybook: {{sb_link}} · Chromatic diff: {{chromatic_link}}
+      - **B9.5 VRT/Diagnostics** — allowlisted dark stories: {{vrt_allowlist}}; flake: {{flake_pct}}%
+
+      ## Metrics Snapshot
+      *(Full JSON at ./diagnostics.json)*
+      ```json
+      {{sprint09_json_excerpt}}
+      ```
+
+      ## Key Decisions & Rationale
+      1. Tokens-only brand layering retained; components untouched.
+      2. Push-only pipeline kept for speed; evidence artifacts produced.
+      3. Reproducible packaging verified pre-publish.
+
+      ## Risks & Mitigations
+      - Edge AA pairs under Brand A → OKLCH nudges (documented).
+      - Drift Figma↔code → Review Kit roundtrip.
+
+      ## Planning Inputs for Sprint 10
+      - Proposed: {{proposed_missions}}
+      - Debt carried: {{carryovers}}
+      - Research touchpoints: r.13.1, r.13.2, r.13.3.
+
+      ## Artifact Index (≤10 in this folder)
+      - sprint-09-summary.md
+      - diagnostics.json
+      - (optional) brand-a_coverage.md
+      - (optional) release-report.md
+      - (optional) review-kit.md
+      - (optional) vrt-allowlist.json
+      - (optional) purity-audit.md
+      - (optional) brand-a.before.png
+      - (optional) brand-a.after.png
+
+  - name: "Emit consolidated diagnostics"
+    action: shell.run
+    command: |
+      source .sprint09.env
+      pnpm ts-node app/scripts/diag/collect-sprint09.ts \
+        --out "${ART_DIR}/diagnostics.json"
+
+  - name: "Validate ≤10-file constraint"
+    action: script.write
+    path: "/app/scripts/diag/validate-artifacts-count.ts"
+    content: |
+      import { readdirSync } from "fs";
+      import { join } from "path";
+      const env = Object.fromEntries(require("fs").readFileSync(".sprint09.env","utf8")
+        .trim().split("\n").map(l=>l.split("=")));
+      const ART_DIR = env["ART_DIR"];
+      const files = readdirSync(ART_DIR).filter(f => !f.startsWith("."));
+      const MAX = 10;
+      if (files.length > MAX) {
+        console.error(`Artifact limit exceeded: ${files.length} > ${MAX} in ${ART_DIR}.
+Reduce by embedding tables into sprint-09-summary.md and removing optional attachments.`);
+        process.exit(1);
+      } else {
+        console.log(`Artifacts OK: ${files.length}/${MAX}`);
+      }
+
+  - name: "Run artifact validator"
+    action: shell.run
+    command: |
+      pnpm ts-node app/scripts/diag/validate-artifacts-count.ts
+
+examples:
+  json_excerpt: |
+    {
+      "sprint": "09",
+      "commits": { "start": "abc123", "end": "def456" },
+      "brandA": { "aaPassPct": 100, "deltaGuardrails": { "ok": true }, "hcPngCount": 82 },
+      "vrt": { "total": 40, "darkCount": 32, "flakePct": 1.8, "runUrl": "…" },
+      "inventory": { "components": 27, "stories": 52, "brandAStories": 18 },
+      "tokens": { "buildMs": 1750 },
+      "packages": [
+        { "name": "@oods/tokens", "version": "0.1.0", "reproducible": true, "tarballSha256": "…" },
+        { "name": "@oods/tw-variants", "version": "0.1.0", "reproducible": true, "tarballSha256": "…" }
+      ],
+      "purity": { "violations": 0 },
+      "reviewKit": { "storybookUrl": "…", "chromaticDiffUrl": "…", "changeNote": "Primary 600 hue +5° OKLCH" }
+    }
+
+tests:
+  - "collect-sprint09.ts writes diagnostics.json with required keys in the dated folder."
+  - "sprint-09-summary.md renders and links to ./diagnostics.json."
+  - "validate-artifacts-count enforces ≤10 files; fails if exceeded and prints instructions."
+  - "If over limit, embed coverage/allowlist data into the summary and remove optional files; re-run validator."
+
+acceptance:
+  - "Summary saved at /artifacts/current-state/YYYY-MM-DD/sprint-09-summary.md."
+  - "Consolidated metrics at /artifacts/current-state/YYYY-MM-DD/diagnostics.json."
+  - "≤10 files in the date folder, verified by the validator."
+  - "Summary includes clear ‘Planning Inputs for Sprint 10’ derived from measured outcomes."
+
+notes:
+  - "Set DATE_OVERRIDE=YYYY-MM-DD if you need to regenerate artifacts for a specific day."
+  - "Prefer embedding small tables directly into the summary to stay under the 10-file cap."
+
+outcome:
+  status: "Completed"
+  summary: "Consolidated Sprint 09 summary and diagnostics into the 2025-10-14 folder (2 files, ≤10 cap)."
+  artifacts:
+    - artifacts/current-state/2025-10-14/sprint-09-summary.md
+    - artifacts/current-state/2025-10-14/diagnostics.json
