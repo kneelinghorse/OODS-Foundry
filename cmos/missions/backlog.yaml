@@ -4,7 +4,7 @@ displayName: CMOS Backlog Export
 description: Backlog export generated from the CMOS SQLite database.
 author: CMOS
 schema: ./schemas/SprintPlan.v1.json
-generatedAt: '2025-11-14T04:14:12.081780+00:00'
+generatedAt: '2025-11-14T18:44:57.884262+00:00'
 ---
 domainFields:
   type: Planning.SprintPlan.v1
@@ -720,6 +720,48 @@ domainFields:
       metadata:
         started_at: '2025-11-14T03:52:28Z'
         completed_at: '2025-11-14T04:12:20Z'
+  - sprintId: Sprint 21
+    title: Visualization Foundation
+    focus: 'Trait-based data viz: foundation, Vega-Lite renderer, atomic patterns,
+      a11y baseline'
+    status: Queued
+    startDate: null
+    endDate: null
+    totalMissions: 7
+    completedMissions: 0
+    missions:
+    - id: B21.1
+      name: Viz Trait Foundation
+      status: Completed
+      completed_at: '2025-11-14T17:39:45Z'
+      notes: 'Delivered viz trait foundation: 10 Mark/Encoding/Scale traits in traits/viz
+        (YAML + TS), parameter schemas, docs/authoring-traits-viz.md, and pnpm vitest
+        run tests/traits/viz to validate parser + validator coverage.'
+      metadata:
+        started_at: '2025-11-14T17:12:40Z'
+        completed_at: '2025-11-14T17:39:45Z'
+    - id: B21.2
+      name: Normalized Viz Spec Implementation
+      status: In Progress
+      notes: Defined normalized viz spec schema + Ajv runtime validator, added 3 reference
+        specs + docs/tests to unblock Vega-Lite adapter.
+      metadata:
+        started_at: '2025-11-14T18:24:06Z'
+    - id: B21.3
+      name: Vega-Lite Adapter
+      status: Queued
+    - id: B21.4
+      name: Bar Chart Component
+      status: Queued
+    - id: B21.5
+      name: Line Chart Component (Temporal)
+      status: Queued
+    - id: B21.6
+      name: Viz Token Integration
+      status: Queued
+    - id: B21.7
+      name: A11y & Validation Suite
+      status: Queued
   missionDependencies:
   - from: B10.1
     to: B13.9
@@ -844,5 +886,26 @@ domainFields:
   - from: B20.4
     to: B20.3
     type: Blocks
+  - from: B21.1
+    to: B21.2
+    type: Requires
+  - from: B21.2
+    to: B21.3
+    type: Requires
+  - from: B21.3
+    to: B21.4
+    type: Requires
+  - from: B21.4
+    to: B21.5
+    type: Informs
+  - from: B21.4
+    to: B21.6
+    type: Requires
+  - from: B21.5
+    to: B21.7
+    type: Requires
+  - from: B21.6
+    to: B21.7
+    type: Requires
   promptMapping:
     prompts: []

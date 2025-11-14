@@ -1,0 +1,303 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Normalized Viz Spec v0.1",
+  "type": "object",
+  "description": "Declarative visualization specification generated from trait composition.",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "const": "https://oods.dev/viz-spec/v1"
+    },
+    "id": {
+      "type": "string",
+      "description": "Stable identifier for the spec instance."
+    },
+    "name": {
+      "type": "string",
+      "description": "Human friendly label surfaced in UI + narration."
+    },
+    "data": {
+      "$ref": "#/definitions/DataSource"
+    },
+    "transforms": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Transform"
+      },
+      "description": "Declarative data transforms applied prior to rendering."
+    },
+    "marks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/Mark"
+      },
+      "description": "List of mark definitions (layers)."
+    },
+    "encoding": {
+      "$ref": "#/definitions/EncodingMap"
+    },
+    "config": {
+      "$ref": "#/definitions/VizConfig"
+    },
+    "a11y": {
+      "$ref": "#/definitions/AccessibilitySpec"
+    },
+    "portability": {
+      "$ref": "#/definitions/PortabilitySpec"
+    }
+  },
+  "required": ["data", "marks", "encoding", "a11y"],
+  "additionalProperties": false,
+  "definitions": {
+    "DataSource": {
+      "type": "object",
+      "description": "Inline values or reference to an external dataset.",
+      "properties": {
+        "values": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "format": {
+          "type": "string",
+          "enum": ["json", "csv", "tsv", "topojson", "auto"]
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Transform": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "aggregate",
+            "calculate",
+            "filter",
+            "sort",
+            "window",
+            "stack",
+            "bin"
+          ]
+        },
+        "params": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": false
+    },
+    "Mark": {
+      "type": "object",
+      "properties": {
+        "trait": {
+          "type": "string",
+          "description": "ID of Mark trait (e.g., MarkBar)."
+        },
+        "from": {
+          "type": "string",
+          "description": "Optional dataset reference for layered specs."
+        },
+        "encodings": {
+          "$ref": "#/definitions/EncodingMap"
+        },
+        "options": {
+          "type": "object",
+          "description": "Trait-specific configuration applied post-normalization.",
+          "additionalProperties": true
+        }
+      },
+      "required": ["trait"],
+      "additionalProperties": false
+    },
+    "EncodingMap": {
+      "type": "object",
+      "description": "Mapping of encoding channels to trait bindings.",
+      "properties": {
+        "x": { "$ref": "#/definitions/TraitBinding" },
+        "y": { "$ref": "#/definitions/TraitBinding" },
+        "color": { "$ref": "#/definitions/TraitBinding" },
+        "size": { "$ref": "#/definitions/TraitBinding" },
+        "shape": { "$ref": "#/definitions/TraitBinding" },
+        "detail": { "$ref": "#/definitions/TraitBinding" }
+      },
+      "minProperties": 1,
+      "additionalProperties": false
+    },
+    "TraitBinding": {
+      "type": "object",
+      "description": "Links a data field to a trait-backed encoding channel.",
+      "properties": {
+        "field": {
+          "type": "string",
+          "description": "Field name in the data source."
+        },
+        "trait": {
+          "type": "string",
+          "description": "Trait ID (e.g., EncodingColor)."
+        },
+        "channel": {
+          "type": "string",
+          "enum": ["x", "y", "color", "size", "shape", "detail"]
+        },
+        "aggregate": {
+          "type": "string",
+          "enum": [
+            "sum",
+            "count",
+            "average",
+            "median",
+            "min",
+            "max",
+            "distinct"
+          ]
+        },
+        "bin": {
+          "type": "boolean"
+        },
+        "timeUnit": {
+          "type": "string",
+          "enum": [
+            "year",
+            "quarter",
+            "month",
+            "week",
+            "day",
+            "hour",
+            "minute",
+            "second"
+          ]
+        },
+        "scale": {
+          "type": "string",
+          "enum": ["linear", "temporal", "log", "sqrt", "band", "point"]
+        },
+        "sort": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": ["none", "ascending", "descending"]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "field": { "type": "string" },
+                "order": {
+                  "type": "string",
+                  "enum": ["ascending", "descending"]
+                }
+              },
+              "required": ["field", "order"],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "legend": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "required": ["field", "trait"],
+      "additionalProperties": false
+    },
+    "VizConfig": {
+      "type": "object",
+      "properties": {
+        "theme": {
+          "type": "string",
+          "description": "Theme identifier."
+        },
+        "tokens": {
+          "type": "object",
+          "description": "Token overrides scoped to this spec.",
+          "additionalProperties": {
+            "type": ["string", "number"]
+          }
+        },
+        "layout": {
+          "type": "object",
+          "properties": {
+            "width": { "type": "number", "minimum": 0 },
+            "height": { "type": "number", "minimum": 0 },
+            "padding": { "type": "number", "minimum": 0 }
+          },
+          "additionalProperties": false
+        },
+        "mark": {
+          "type": "object",
+          "description": "Mark-level defaults applied before traits."
+        }
+      },
+      "additionalProperties": false
+    },
+    "AccessibilitySpec": {
+      "type": "object",
+      "description": "Accessibility contract mandated by RDV.4.",
+      "properties": {
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Long-form description surfaced via screen readers."
+        },
+        "ariaLabel": {
+          "type": "string",
+          "description": "Short ARIA label applied to chart container."
+        },
+        "narrative": {
+          "type": "object",
+          "properties": {
+            "summary": { "type": "string" },
+            "keyFindings": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          },
+          "additionalProperties": false
+        },
+        "tableFallback": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean", "default": true },
+            "caption": { "type": "string" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": ["description"],
+      "additionalProperties": false
+    },
+    "PortabilitySpec": {
+      "type": "object",
+      "description": "Portability hints for low-fi translations (dv-5).",
+      "properties": {
+        "fallbackType": {
+          "type": "string",
+          "enum": ["table", "text"]
+        },
+        "tableColumnOrder": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "preferredRenderer": {
+          "type": "string",
+          "enum": ["vega-lite", "echarts", "native"]
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

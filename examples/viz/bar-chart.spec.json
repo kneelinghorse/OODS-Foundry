@@ -1,0 +1,49 @@
+{
+  "$schema": "https://oods.dev/viz-spec/v1",
+  "id": "example:viz:bar-chart",
+  "name": "Monthly Recurring Revenue by Region",
+  "data": {
+    "values": [
+      { "region": "North", "mrr": 120000 },
+      { "region": "South", "mrr": 135000 },
+      { "region": "East", "mrr": 98000 },
+      { "region": "West", "mrr": 150000 }
+    ]
+  },
+  "marks": [
+    {
+      "trait": "MarkBar",
+      "encodings": {
+        "x": { "field": "region", "trait": "EncodingPositionX", "channel": "x", "sort": "ascending", "title": "Region" },
+        "y": { "field": "mrr", "trait": "EncodingPositionY", "channel": "y", "aggregate": "sum", "title": "MRR (USD)", "scale": "linear" },
+        "color": { "field": "region", "trait": "EncodingColor", "channel": "color", "legend": { "title": "Region" } }
+      }
+    }
+  ],
+  "encoding": {
+    "x": { "field": "region", "trait": "EncodingPositionX", "channel": "x", "sort": "ascending", "title": "Region" },
+    "y": { "field": "mrr", "trait": "EncodingPositionY", "channel": "y", "aggregate": "sum", "title": "MRR (USD)", "scale": "linear" },
+    "color": { "field": "region", "trait": "EncodingColor", "channel": "color", "legend": { "title": "Region" } }
+  },
+  "config": {
+    "theme": "brand-a",
+    "layout": { "width": 480, "height": 320, "padding": 16 }
+  },
+  "a11y": {
+    "description": "Bar chart comparing monthly recurring revenue per region. West leads with $150k while East is lowest at $98k.",
+    "ariaLabel": "MRR by region bar chart",
+    "narrative": {
+      "summary": "Revenue is highest in the West region and lowest in the East region.",
+      "keyFindings": ["West: $150k", "South: $135k", "North: $120k", "East: $98k"]
+    },
+    "tableFallback": {
+      "enabled": true,
+      "caption": "Table showing monthly recurring revenue per region."
+    }
+  },
+  "portability": {
+    "fallbackType": "table",
+    "tableColumnOrder": ["region", "mrr"],
+    "preferredRenderer": "vega-lite"
+  }
+}
