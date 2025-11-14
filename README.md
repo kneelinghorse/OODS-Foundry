@@ -233,3 +233,4 @@ This repo currently runs a **push-based** process for speed. External PRs may be
 * Guardrails overview: `docs/guardrails/overview.md`
 * Mission backlog + runtime: `cmos/missions/backlog.yaml`, `cmos/cli.py`, and `cmos/agents.md`
 * Daily evidence: dated folders under `artifacts/current-state/`
+* Sprint walkthrough script: `scripts/demo/sprint03.tsx`
