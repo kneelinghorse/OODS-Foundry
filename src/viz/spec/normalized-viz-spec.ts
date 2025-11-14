@@ -3,6 +3,8 @@ import addFormats from 'ajv-formats';
 import schema from '../../../schemas/viz/normalized-viz-spec.schema.json' assert { type: 'json' };
 import type { NormalizedVizSpecV01 } from '../../../generated/types/viz/normalized-viz-spec';
 
+export type { TraitBinding } from '../../../generated/types/viz/normalized-viz-spec';
+
 export type NormalizedVizSpec = NormalizedVizSpecV01;
 
 export interface NormalizedVizSpecValidationError {

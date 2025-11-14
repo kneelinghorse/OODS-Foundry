@@ -1,4 +1,4 @@
-import type { HTMLAttributes } from 'react';
+import type { HTMLAttributes, JSX } from 'react';
 import type { NormalizedVizSpec, TraitBinding } from '../../viz/spec/normalized-viz-spec.js';
 
 export interface AccessibleTableProps extends HTMLAttributes<HTMLDivElement> {

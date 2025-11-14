@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { HTMLAttributes } from 'react';
+import type { HTMLAttributes, JSX } from 'react';
 import embed, { type EmbedOptions, type VisualizationSpec } from 'vega-embed';
 import type { Result as EmbedResult } from 'vega-embed';
 import type { NormalizedVizSpec } from '../../viz/spec/normalized-viz-spec.js';
@@ -43,7 +43,7 @@ export function BarChart({
     setStatus('loading');
     setErrorMessage(null);
 
-    void embed(chartRef.current, vegaSpec as VisualizationSpec, embedOptions)
+    void embed(chartRef.current, vegaSpec as unknown as VisualizationSpec, embedOptions)
       .then((result) => {
         if (cancelled) {
           result.view?.finalize();

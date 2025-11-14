@@ -1,5 +1,5 @@
 import { useId } from 'react';
-import type { ReactNode } from 'react';
+import type { JSX, ReactNode } from 'react';
 import type { NormalizedVizSpec } from '../../viz/spec/normalized-viz-spec.js';
 
 export interface VizContainerProps extends React.HTMLAttributes<HTMLElement> {
@@ -7,7 +7,7 @@ export interface VizContainerProps extends React.HTMLAttributes<HTMLElement> {
   readonly chart: ReactNode;
   readonly fallback?: ReactNode;
   readonly description?: ReactNode;
-  readonly title?: ReactNode;
+  readonly heading?: ReactNode;
 }
 
 function mergeClassNames(...classes: Array<string | undefined>): string {
@@ -19,7 +19,7 @@ export function VizContainer({
   chart,
   fallback,
   description,
-  title,
+  heading,
   className,
   ...props
 }: VizContainerProps): JSX.Element {
@@ -28,7 +28,7 @@ export function VizContainer({
   const fallbackId = fallback ? `${headingId}-fallback` : undefined;
   const describedBy = [descriptionId, fallbackId].filter(Boolean).join(' ') || undefined;
 
-  const resolvedTitle = title ?? spec.name ?? spec.a11y.ariaLabel ?? spec.id ?? 'Visualization';
+  const resolvedTitle = heading ?? spec.name ?? spec.a11y.ariaLabel ?? spec.id ?? 'Visualization';
   const themeLabel = spec.config?.theme ? `Theme: ${spec.config.theme}` : undefined;
 
   return (
