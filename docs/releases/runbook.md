@@ -40,3 +40,48 @@ Outputs land in `artifacts/state/packaging.json` with the latest `sb_build_hash`
 ## Rollback / Promotion Notes
 - To discard a dry run, remove the generated `dist/releases/<ts>` folder.
 - Promotion steps (tagging/publish) inherit the tarballs and SBOM from `dist/releases/<ts>`; pass the bundle to the release approval workflow (mission B20.1) when ready.
+
+## RC Freeze Rollback Plan
+
+### When to trigger a rollback
+- Automated guardrails fail (tests/a11y/VRT/packaging) after the freeze.
+- SBOM validation or provenance signatures in `artifacts/release-dry-run/<ts>/bundle_index.json` diverge from the commit under review.
+- A critical bug is reported in the RC tag or reviewers detect an accessibility/regression escape that cannot be hot-fixed safely.
+
+### Immediate containment
+1. Quarantine the frozen artifacts:
+   ```bash
+   mv dist/releases/<ts> dist/releases/<ts>-rollback
+   mv artifacts/release-dry-run/<ts> artifacts/release-dry-run/<ts>-rollback
+   ```
+   Keep the renamed folder for auditability.
+2. Remove the RC tag locally (and remotely if it was pushed):
+   ```bash
+   git tag -d v1.0.0-rc
+   git push origin :refs/tags/v1.0.0-rc   # optional if tag was pushed
+   ```
+3. Log the incident in CMOS (mission notes + telemetry) so the reviewer queue knows the RC is invalid.
+
+### Baseline restoration
+1. Rebuild Storybook to ensure the frozen snapshot is reproducible: `pnpm run build-storybook`.
+2. Rerun the baseline checks that gate the freeze:
+   ```bash
+   node scripts/state-assessment.mjs --coverage --a11y --vr
+   ```
+   This refreshes `artifacts/state/tests.json`, `artifacts/state/a11y.json`, and `artifacts/state/vr.json`.
+3. If accessibility deltas require a new baseline, run `pnpm run a11y:baseline`. For visual regression drift without Chromatic access, fall back to `pnpm run vrt:lightdark -- --ci` and attach the diff artifacts when filing the blocker.
+
+### Rebuild & verification
+1. Execute `pnpm run release:dry-run` once fixes land. The script emits a new timestamped directory under both `dist/releases/` and `artifacts/release-dry-run/`.
+2. Verify the tarballs:
+   ```bash
+   shasum -a 256 dist/releases/<new-ts>/*.tgz
+   ```
+   Ensure the hashes match the entries in `summary.json.tarballs[*].sha256`.
+3. Validate the SBOM (`artifacts/release-dry-run/<new-ts>/sbom.json`) against the dependency expectations for the RC scope.
+4. Capture provenance metadata by archiving `summary.json`, `bundle_index.json`, and `commands.log` alongside the incident record.
+
+### Documentation & communication
+1. Update `docs/releases/v1.0-release-notes.md` (or sprint notes) with a short rollback summary: trigger, fix, new timestamp.
+2. Append the blocker details and remediation timeline to the active CMOS mission notes before re-promoting the RC.
+3. Only recreate the `v1.0.0-rc` tag after the new bundle passes all guardrails and reviewers sign off on the regenerated artifacts.

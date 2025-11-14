@@ -4,7 +4,7 @@ displayName: CMOS Backlog Export
 description: Backlog export generated from the CMOS SQLite database.
 author: CMOS
 schema: ./schemas/SprintPlan.v1.json
-generatedAt: '2025-11-14T02:37:54.648129+00:00'
+generatedAt: '2025-11-14T04:14:12.081780+00:00'
 ---
 domainFields:
   type: Planning.SprintPlan.v1
@@ -708,9 +708,18 @@ domainFields:
         completed_at: '2025-11-14T02:36:47Z'
     - id: B20.4
       name: RC freeze & rollback plan
-      status: Current
-      notes: Lock baselines (tests/a11y/VRT), tag v1.0.0-rc, generate build artifacts
-        with SBOM, document rollback procedures.
+      status: Completed
+      completed_at: '2025-11-14T04:12:20Z'
+      notes: 'State assessment (--coverage --a11y --vr) refreshed evidence: artifacts/state/tests.json
+        lines 81.34% (761 total/757 pass), artifacts/state/a11y.json 49/49 with 0
+        violations, artifacts/state/vr.json Chromatic brand A/B 100% green w/ 0 diffs.
+        pnpm release:dry-run emitted dist/releases/2025-11-14T04-05-29-980Z plus artifacts/release-dry-run/2025-11-14T04-05-29-980Z/{summary,sbom,bundle_index}
+        (sha256 oods-a11y-tools 67bce46d..., oods-tokens e533d097..., oods-trait-engine
+        3fdb5b86..., oods-tw-variants 30b3ebfa...). Added RC rollback playbook to
+        docs/releases/runbook.md and created annotated tag v1.0.0-rc for this freeze.'
+      metadata:
+        started_at: '2025-11-14T03:52:28Z'
+        completed_at: '2025-11-14T04:12:20Z'
   missionDependencies:
   - from: B10.1
     to: B13.9
