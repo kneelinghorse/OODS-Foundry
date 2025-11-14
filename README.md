@@ -14,16 +14,19 @@
 
 ---
 
+> **Release status:** `v1.0 RC` (Sprints 1–19). See `docs/releases/v1.0-release-notes.md` for the full journey and `docs/releases/v1.0-migration-guide.md` for adoption guidance.
+>
+> **Mission control:** Run `./cmos/cli.py mission status` or `./cmos/cli.py db show current` for the authoritative backlog (CMOS SQLite).
+
 ## Why this exists
 
-OODS Foundry is a **design-system you can ship**:
-- **Tokens-only components** — components read `--cmp-*` variables only. Brand/theme/ref layers live in CSS, not in component logic.
-- **Context model** — every object renders consistently in **List / Detail / Form / Timeline** via regions and **pure modifiers** (no side-effects).
-- **Color with guardrails** — OKLCH-based palettes with ΔL/ΔC state rules; **forced-colors** maps to **CSS System Colors**.
-- **Low-friction pipeline** — **push-based** runs build tokens, run VRT (dark) + HC snapshots, and emit diagnostics to `/artifacts/current-state/YYYY-MM-DD`.
-- **MCP + Agents (roadmap)** — a small, safe toolset exposed via MCP for plan→approve→execute flows (no repo-wide writes).
+OODS Foundry is a **design system you can ship**:
+- **Trait-first object model** — canonical traits live in `traits/` and compose into objects under `objects/` via the deterministic compositor (`src/core/compositor.ts`). Provenance + collision policies make merges explainable.
+- **Context-aware rendering** — List / Detail / Form / Timeline contexts share contracts through `src/contexts/` and region specs, with pure modifiers keeping view logic side-effect free (`docs/patterns/modifier-purity.md`).
+- **Tokens + guardrails** — DTCG JSON in `packages/tokens` flow through Style Dictionary v4 to CSS variables consumed by Tailwind v4; guardrail suites (`pnpm tokens:guardrails`, `pnpm purity:audit`) keep OKLCH deltas and CSS variable reads honest.
+- **Evidence-based pipeline** — `pnpm pipeline:push` builds tokens, runs Chromatic + HC VRT, and refreshes diagnostics bundles under `artifacts/` so every push carries a reproducible state snapshot.
+- **Mission-aware automation** — CMOS (`cmos/`) tracks missions, telemetry, and approvals so agents/CLI flows can start, log, and complete work with an auditable history.
 
-See live status and plan in `missions/backlog.yaml`.
 Live Storybook (GitHub Pages): https://kneelinghorse.github.io/OODS-Foundry/
 
 ---
@@ -44,36 +47,30 @@ pnpm i
 ### Common scripts
 
 ```bash
-# Pre-flight local PR checks
+# Pre-flight validation (lint + tokens + Storybook + diagnostics guards)
 pnpm local:pr-check
 
-# Dev Storybook
-pnpm storybook:dev
+# Storybook dev + static builds
+pnpm storybook            # dev server on :6006
+pnpm build-storybook      # static output in storybook-static/
 
-# Build tokens (DTCG → Style Dictionary v4 → CSS vars for Tailwind v4)
-pnpm tokens:build
+# Token pipeline (DTCG JSON → Style Dictionary v4 → CSS vars)
+pnpm build:tokens
+pnpm tokens:guardrails    # OKLCH Δ checks + forced-color policy
+pnpm tokens:governance    # semantic coverage + label enforcement
 
-# Build static Storybook
-pnpm storybook:build
+# Visual + accessibility evidence
+pnpm chromatic:dry-run    # or pnpm chromatic when publishing
+pnpm vrt:hc               # Playwright forced-colors PNGs
+pnpm a11y:diff            # axe-core checks across contexts
 
-# Visual regression: Chromatic (dark variants); requires CHROMATIC_PROJECT_TOKEN
-pnpm chromatic
-
-# High-contrast snapshots (PNG via Playwright; non-blocking)
-pnpm test:hc
-
-# Purity audit (forbid direct --ref/--theme reads or color literals in components)
+# Guardrails + diagnostics bundles
 pnpm purity:audit
-
-# Diagnostics snapshot (writes JSON/MD under /artifacts/current-state/YYYY-MM-DD)
-pnpm diag:sprint
-
-# Local push pipeline (tokens → storybook → chromatic → HC → diagnostics → purity)
-pnpm pipeline:push
+pnpm pipeline:push        # tokens → storybook → VRT → HC → diagnostics → purity
 ```
 
-> **Artifacts:** every push run writes to `/artifacts/current-state/YYYY-MM-DD/` (summary + consolidated `diagnostics.json`). Keep total files ≤10 for reviews.
-> Sprint walkthrough script lives at `scripts/demo/sprint03.tsx`.
+> **Artifacts:** push pipelines roll evidence into `artifacts/state/` and dated folders under `artifacts/current-state/`. Keep daily bundles ≤10 files for reviewer sanity.
+> Sprint walkthroughs and demo harnesses live under `scripts/demo/`.
 
 ---
 
@@ -126,21 +123,28 @@ pnpm pipeline:push
 ## Directory layout
 
 ```
-/app
-  └─ apps/explorer/            # Storybook "Explorer" app (components, stories, docs)
-/docs                          # Architecture, context specs, review kits, diagnostics
-/missions
-  ├─ sprint-09/                # one mission per page (current)
-  └─ research/                 # r.* research sources/findings
-/packages
-  ├─ a11y-tools/               # (pre-1.0) utilities for audits
-  ├─ tokens/                   # build + runtime helpers for tokens
-  └─ tw-variants/              # Tailwind v4 adapters (if used)
-/scripts                       # normalizers, validators, diag collectors
-/tokens                        # DTCG token source (brands, motion, aliases)
-/artifacts/current-state/YYYY-MM-DD
-                               # daily evidence bundles (≤10 files recommended)
+OODS-Foundry/
+├── src/                       # Trait engine, components, generators, contexts
+├── packages/                  # Workspace packages (@oods/*, MCP bridge, tooling)
+├── docs/                      # Architecture, adoption, releases, diagnostics
+├── tests/                     # Unit, integration, a11y, guardrail specs
+├── tokens/                    # Legacy token experiments (superseded by packages/tokens)
+├── artifacts/                 # Diagnostics bundles, VRT, release evidence
+├── scripts/                   # Build, release, diagnostics, guardrail helpers
+├── cmos/                      # Missions, contexts, SQLite DB, CLI for backlog/runtime
+└── apps/, stories/, .storybook/  # Storybook explorer + docs mode assets
 ```
+
+## Mission control (CMOS)
+
+CMOS keeps the backlog, sessions, and telemetry in SQLite. Pair this README with `agents.md` (repo root) and `cmos/agents.md` when running missions:
+
+- `./cmos/cli.py validate health` — confirm SQLite + telemetry directories are writable.
+- `./cmos/cli.py mission status` — list queued/current missions; `./cmos/cli.py db show current` mirrors the active context.
+- `python - <<'PY' ... start(...) / complete(...)` or the CLI equivalents to transition missions with notes.
+- `tail -20 cmos/telemetry/events/database-health.jsonl` — quick health pulse after major ops.
+
+The CLI writes directly to `cmos/db/cmos.sqlite` and re-exports backlog/context files to keep the docs in sync.
 
 ---
 
@@ -186,17 +190,11 @@ pnpm pipeline:push
 
 ---
 
-## Roadmap (high-level)
+## Roadmap & current focus
 
-* **Sprint 09 (current)** — Brand A (tokens-only), reproducible local packages, purity audit, review kit roundtrip, brand-aware VRT.
-* **Sprint 10–13** — **MCP + Agents**
-
-  * v0.1 MCP server (local) exposing a small, safe toolset (`tokens.build`, `a11y.scan`, `purity.audit`, `vrt.run`, `reviewKit.create`, `release.verify`, `release.tag`, `diag.snapshot`)
-  * Plan → approve → execute loop with transcripts & artifacts
-  * Dev-tool client first (Claude/OpenAI), then a **Storybook Agent panel**
-  * Governance: allow/deny rules, roles, rate limits, redaction, audit log
-
-See `missions/backlog.yaml` for authoritative status.
+- **Sprint 19 — Design System Hardening & Packaging Readiness (✅)**: Component Set IV QA, reproducible packaging dry run, guardrail automation, and diagnostics refresh landed during Sprint 19 ([docs/changelog/sprint-19.md](docs/changelog/sprint-19.md)).
+- **Sprint 20 — Private Review Preparation (🚧)**: Missions B20.1–B20.4 cover RC builds, reviewer kits, feedback triage, and release readiness per the Sprint 20 plan in `cmos/missions/backlog.yaml`.
+- **Beyond Sprint 20**: MCP-powered tooling (agents panel, transcript capture, approval governance) extends the release train; see `cmos/missions/` and `cmos/docs/` for canonical plans.
 
 ---
 
@@ -229,13 +227,10 @@ This repo currently runs a **push-based** process for speed. External PRs may be
 
 ## Pointers
 
-* Context spec: `docs/context/form-timeline-defaults.md`
-* Research foundations (Sprint 09): `missions/research/r.13.1_Multi-Brand-Theming.md`, `r.13.2_Publishing-Reproducible-TypeScript-Packages.md`, `r.13.3_The-PR-less-Pipeline.md`
-* Backlog: `missions/backlog.yaml`
-* Artifacts (daily): `/artifacts/current-state/YYYY-MM-DD/`
-
-```
-
-If you want a slim “Getting Started” variant for npm/packaged consumers (separate from the monorepo README), I can draft `packages/README.md` stubs for `@oods/tokens`, `@oods/tw-variants`, and `@oods/a11y-tools` next.
-::contentReference[oaicite:0]{index=0}
-```
+* Release notes + migration: `docs/releases/`
+* Getting started: `docs/getting-started/design.md`, `docs/getting-started/dev.md`
+* Context defaults: `docs/context/form-timeline-defaults.md`
+* Guardrails overview: `docs/guardrails/overview.md`
+* Mission backlog + runtime: `cmos/missions/backlog.yaml`, `cmos/cli.py`, and `cmos/agents.md`
+* Daily evidence: dated folders under `artifacts/current-state/`
+* Sprint walkthrough script: `scripts/demo/sprint03.tsx`

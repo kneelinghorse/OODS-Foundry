@@ -1,145 +1,22 @@
-author: Design System Team
-description: Master backlog tracking all sprints, missions, and dependencies for the
-  OODS Foundry project
-displayName: Sprint Plan Orchestrator
 name: Planning.SprintPlan.v1
+version: 0.0.0
+displayName: CMOS Backlog Export
+description: Backlog export generated from the CMOS SQLite database.
+author: CMOS
 schema: ./schemas/SprintPlan.v1.json
-version: 1.4.1
+generatedAt: '2025-11-14T02:37:54.648129+00:00'
 ---
-context: 'This orchestrator drives the program: each sprint contains missions sized
-  to single-agent sessions.
-
-  The backlog is the single source of truth for statuses, file links, and dependencies.
-
-  Status flow: Queued → Current → In Progress → Completed (Blocked when needed).
-
-  Research lives in cmos/missions/research/.
-
-  Sprint missions live in cmos/missions/sprint-XX/NN.N_mission-name.yaml.
-
-  Agents update PROJECT_CONTEXT.json and append events to SESSIONS.jsonl.
-
-  '
-deliverables:
-- This backlog file with Sprint 15 entries, dependencies, and cross-links.
 domainFields:
-  missionDependencies: &id001
-  - from: B12.3
-    to: B12.2
-    type: Relates
-  - from: B12.3
-    to: B12.1
-    type: Relates
-  - from: B12.5
-    to: B12.1
-    type: Relates
-  - from: B12.5
-    to: B12.4
-    type: Relates
-  - from: B13.1
-    to: B13.2
-    type: Blocks
-  - from: B13.1
-    to: B13.3
-    type: Blocks
-  - from: B12.5
-    to: B13.4
-    type: Relates
-  - from: B10.2
-    to: B13.6
-    type: Blocks
-  - from: B12.5
-    to: B13.6
-    type: Relates
-  - from: B12.5
-    to: B13.7
-    type: Relates
-  - from: B12.3
-    to: B13.7
-    type: Relates
-  - from: B12.3
-    to: B13.8
-    type: Relates
-  - from: B10.1
-    to: B13.9
-    type: Blocks
-  - from: B12.3
-    to: B13.9
-    type: Relates
-  - from: B14.1
-    to: B14.2
-    type: Blocks
-  - from: B14.2
-    to: B14.3
-    type: Blocks
-  - from: B14.3
-    to: B14.4
-    type: Relates
-  - from: B14.3
-    to: B14.5
-    type: Relates
-  - from: B14.5
-    to: B14.6
-    type: Relates
-  - from: B14.6
-    to: B14.7
-    type: Relates
-  - from: B14.7
-    to: B14.8
-    type: Blocks
-  - from: B14.8
-    to: B14.9
-    type: Blocks
-  - from: B14.3
-    to: B14.10
-    type: Relates
-  - from: B14.4
-    to: B14.11
-    type: Relates
-  - from: B14.1
-    to: B14.5
-    type: Relates
-  - from: B14.11
-    to: B14.12
-    type: Relates
-  - from: B14.10
-    to: B15.2
-    type: Relates
-  - from: B14.10
-    to: B15.3
-    type: Relates
-  - from: B15.1
-    to: B15.4
-    type: Blocks
-  - from: B15.2
-    to: B15.3
-    type: Relates
-  - from: B15.4
-    to: B15.5
-    type: Blocks
-  - from: B18.1
-    to: B19.1
-    type: Blocks
-  - from: B18.7
-    to: B19.2
-    type: Relates
-  - from: B18.7
-    to: B19.4
-    type: Relates
-  - from: B18.6
-    to: B19.3
-    type: Relates
-  - from: B19.2
-    to: B20.1
-    type: Blocks
-  - from: B19.4
-    to: B20.2
-    type: Relates
-  - from: B19.3
-    to: B20.3
-    type: Relates
-  sprints: &id002
-  - focus: Component scale-out + hardening; contexts; VRT expansion
+  type: Planning.SprintPlan.v1
+  sprints:
+  - sprintId: Sprint 08
+    title: Components Scale-Out
+    focus: Component scale-out + hardening; contexts; VRT expansion
+    status: Completed
+    startDate: null
+    endDate: null
+    totalMissions: null
+    completedMissions: null
     missions:
     - id: B8.1
       name: Story Curation & VRT Shaping
@@ -162,11 +39,15 @@ domainFields:
     - id: B8.7
       name: A11y & HC/VRT Coverage
       status: Completed
-    sprintId: Sprint 08
+  - sprintId: Sprint 09
+    title: Brand-A theme & release reproducibility
+    focus: "Brand-A theme; reproducible packages; purity audit; Figma\u2192Git review\
+      \ kit; VRT + diagnostics"
     status: Completed
-    title: Components Scale-Out
-  - focus: Brand-A theme; reproducible packages; purity audit; Figma→Git review kit;
-      VRT + diagnostics
+    startDate: null
+    endDate: null
+    totalMissions: null
+    completedMissions: null
     missions:
     - id: B9.1
       name: Brand-A theme
@@ -186,11 +67,15 @@ domainFields:
     - id: B9.6
       name: End-of-sprint summary
       status: Completed
-    sprintId: Sprint 09
-    status: Completed
-    title: Brand-A theme & release reproducibility
-  - focus: MCP server stdio; HTTP bridge (read-only); artifact framework; policy/governance
+  - sprintId: Sprint 10
+    title: MCP primitives
+    focus: MCP server stdio; HTTP bridge (read-only); artifact framework; policy/governance
       v0.1; CLI flow
+    status: Completed
+    startDate: null
+    endDate: null
+    totalMissions: null
+    completedMissions: null
     missions:
     - id: B10.1
       name: MCP server v0.1 (stdio, sandboxed)
@@ -205,19 +90,23 @@ domainFields:
       name: Policy & governance v0.1
       status: Completed
     - id: B10.5
-      name: CLI plan→approve→execute
+      name: "CLI plan\u2192approve\u2192execute"
       status: Completed
     - id: B10.6
       name: SB Agent panel (read-only tools)
       status: Completed
-    sprintId: Sprint 10
-    status: Completed
-    title: MCP primitives
-  - focus: Approve-to-apply write flow, bridge auth/CORS, diff/artifacts UI, transcript
+  - sprintId: Sprint 11
+    title: Agent harness + Storybook write flow
+    focus: Approve-to-apply write flow, bridge auth/CORS, diff/artifacts UI, transcript
       replay, policy UX
+    status: Completed
+    startDate: null
+    endDate: null
+    totalMissions: null
+    completedMissions: null
     missions:
     - id: B11.1
-      name: SB panel — approval-gated write flow
+      name: "SB panel \u2014 approval-gated write flow"
       status: Completed
     - id: B11.2
       name: Bridge hardening (CORS/token)
@@ -231,11 +120,15 @@ domainFields:
     - id: B11.5
       name: Policy UX & error mapping
       status: Completed
-    sprintId: Sprint 11
-    status: Completed
-    title: Agent harness + Storybook write flow
-  - focus: brand.apply, Artifact Viewer, consolidated diagnostics, internal release
+  - sprintId: Sprint 12
+    title: Tooling depth & governance (v1)
+    focus: brand.apply, Artifact Viewer, consolidated diagnostics, internal release
       verify/tag, policy v1 sweep
+    status: Completed
+    startDate: null
+    endDate: null
+    totalMissions: null
+    completedMissions: null
     missions:
     - id: B12.1
       name: brand.apply (alias default, patch fallback)
@@ -252,17 +145,21 @@ domainFields:
     - id: B12.5
       name: Policy v1 sweep
       status: Completed
-    sprintId: Sprint 12
-    status: Completed
-    title: Tooling depth & governance (v1)
-  - focus: Billing domain core + forms + timeline + ops tools; agent connectors; reliability;
+  - sprintId: Sprint 13
+    title: 'Domain: Billing + Robust MCP (connectors, reliability, telemetry, contracts)'
+    focus: Billing domain core + forms + timeline + ops tools; agent connectors; reliability;
       telemetry; type hygiene
+    status: Completed
+    startDate: null
+    endDate: null
+    totalMissions: null
+    completedMissions: null
     missions:
     - id: B13.1
       name: Billing domain objects & enums
       status: Completed
     - id: B13.2
-      name: Billing forms & validation — patterns v2
+      name: "Billing forms & validation \u2014 patterns v2"
       status: Completed
     - id: B13.3
       name: Billing timeline (events/retries/refunds)
@@ -285,505 +182,658 @@ domainFields:
     - id: B13.9
       name: Type hygiene & schema locks
       status: Completed
-    sprintId: Sprint 13
-    status: Completed
-    title: 'Domain: Billing + Robust MCP (connectors, reliability, telemetry, contracts)'
-  - focus: PR-first iteration; tokens pipeline; a11y/color guardrails; VR/coverage;
+  - sprintId: Sprint 14
+    title: 'Foundry Hardening: PR Workflow, Figma Handshake, Guardrails, Agent v1.5'
+    focus: PR-first iteration; tokens pipeline; a11y/color guardrails; VR/coverage;
       telemetry; policy-gated connectors; Agent Panel v1.5; docs
+    status: Completed
+    startDate: null
+    endDate: null
+    totalMissions: null
+    completedMissions: null
     missions:
-    - completed_at: '2025-10-17T14:26:15Z'
-      id: B14.1
+    - id: B14.1
       name: PR-first workflow & protections
-      notes: Unified PR validation workflow, CODEOWNERS, and PR template; branch protections
-        queued for maintainer apply; smoke run red→green recorded.
       status: Completed
-    - completed_at: '2025-10-18T00:16:28Z'
-      id: B14.2
-      name: Figma↔Repo handshake (Tokens Studio→DTCG→Tailwind v4)
-      notes: Transform pipeline to CSS vars; diagnostics logged; stories confirm roundtrip.
+      completed_at: '2025-10-17T14:26:15Z'
+      notes: "Unified PR validation workflow, CODEOWNERS, and PR template; branch\
+        \ protections queued for maintainer apply; smoke run red\u2192green recorded."
+    - id: B14.10
+      name: "Enum\u2192Token mapping enforcement (status/badges)"
       status: Completed
-    - completed_at: '2025-10-18T01:31:49Z'
-      id: B14.3
-      name: Composite tokens & theming guardrails
-      notes: Semantic/system maps; theme toggle; lint blocks literal colors.
-      status: Completed
-    - completed_at: '2025-10-18T04:11:50Z'
-      id: B14.4
-      name: High-contrast & color guardrails (OKLCH, forced-colors)
-      notes: OKLCH deltas; dark tokens tuned; HC proof stories/docs.
-      status: Completed
-    - completed_at: '2025-10-18T04:49:09Z'
-      id: B14.5
-      name: Visual regression & PR previews
-      notes: Chromatic allowlist + manifest; vr-test blocks on diffs.
-      status: Completed
-    - completed_at: '2025-10-18T05:32:40Z'
-      id: B14.6
-      name: Coverage & type hygiene (schema→types, thresholds)
-      notes: Vitest thresholds reset; schema-derived types; contract tests.
-      status: Completed
-    - completed_at: '2025-10-18T13:56:47Z'
-      id: B14.7
-      name: Telemetry + Incident/Correlation IDs (then soak)
-      notes: Telemetry schema + instrumentation; soak runner report.
-      status: Completed
-    - completed_at: '2025-10-18T16:16:03Z'
-      id: B14.8
-      name: Policy-gated agent connectors (dry-run approvals)
-      notes: Policy JSON enforced; dry-run→approved apply; approval CLI/docs.
-      status: Completed
-    - completed_at: '2025-10-18T16:56:58Z'
-      id: B14.9
-      name: Agent Panel v1.5 (task runner + approvals UI)
-      notes: Queue-driven panel; task statuses; incident links; denial reasons.
-      status: Completed
-    - completed_at: '2025-10-18T19:24:33Z'
-      id: B14.10
-      name: Enum→Token mapping enforcement (status/badges)
+      completed_at: '2025-10-18T19:24:33Z'
       notes: Shared status-map + helper wiring; lints enforce semantic layer.
-      status: Completed
-    - completed_at: '2025-10-18T19:56:03Z'
-      id: B14.11
+    - id: B14.11
       name: A11y contract in CI (axe/ARIA + diff)
-      notes: Curated story contract; a11y:diff wired in PR job.
       status: Completed
-    - completed_at: '2025-10-18T20:32:54Z'
-      id: B14.12
+      completed_at: '2025-10-18T19:56:03Z'
+      notes: Curated story contract; a11y:diff wired in PR job.
+    - id: B14.12
       name: Docs & guides refresh (internal ops)
+      status: Completed
+      completed_at: '2025-10-18T20:32:54Z'
       notes: Contributor docs updated across PR checks, guardrails, telemetry, agent
         queue.
+    - id: B14.2
+      name: "Figma\u2194Repo handshake (Tokens Studio\u2192DTCG\u2192Tailwind v4)"
       status: Completed
-    sprintId: Sprint 14
-    status: Completed
-    title: 'Foundry Hardening: PR Workflow, Figma Handshake, Guardrails, Agent v1.5'
-  - focus: 'Ship a credible mini-system teams can tweak: second brand, statusables,
-      core inputs/table, brand token governance, and 10-min onboarding.'
-    missions:
-    - completed_at: '2025-10-19T15:53:06Z'
-      id: B15.1
-      name: Multi-brand scaffolding
-      notes: Shipped Storybook brand switcher, Brand B tokens, per-brand Chromatic
-        baselines, and lint canary.
+      completed_at: '2025-10-18T00:16:28Z'
+      notes: Transform pipeline to CSS vars; diagnostics logged; stories confirm roundtrip.
+    - id: B14.3
+      name: Composite tokens & theming guardrails
       status: Completed
-    - completed_at: '2025-10-19T19:52:01Z'
-      id: B15.2
-      name: Component scale-out — Statusables (Badge, Banner, Toast*)
-      notes: Delivered Badge, Banner, and Toast with canonical status map, stories,
-        docs, and tests.
-      started_at: '2025-10-19T19:19:56Z'
+      completed_at: '2025-10-18T01:31:49Z'
+      notes: Semantic/system maps; theme toggle; lint blocks literal colors.
+    - id: B14.4
+      name: High-contrast & color guardrails (OKLCH, forced-colors)
       status: Completed
-    - completed_at: '2025-10-19T21:14:23Z'
-      id: B15.3
-      name: Component scale-out — Inputs & Tables
-      notes: Delivered TextField, Select, Checkbox, and Table with shared validation
-        tokens, docs, stories, and tests.
-      started_at: '2025-10-19T20:58:16Z'
+      completed_at: '2025-10-18T04:11:50Z'
+      notes: OKLCH deltas; dark tokens tuned; HC proof stories/docs.
+    - id: B14.5
+      name: Visual regression & PR previews
       status: Completed
-    - completed_at: '2025-10-19T23:53:23Z'
-      id: B15.4
-      name: Token governance for brands
-      notes: Added tokens-governance CLI with risk scoring, PR comment artifacts,
-        CODEOWNER checks, and docs.
-      started_at: '2025-10-19T23:35:21Z'
+      completed_at: '2025-10-18T04:49:09Z'
+      notes: Chromatic allowlist + manifest; vr-test blocks on diffs.
+    - id: B14.6
+      name: "Coverage & type hygiene (schema\u2192types, thresholds)"
       status: Completed
-    - completed_at: '2025-10-20T01:42:15Z'
-      id: B15.5
-      name: Onboarding docs (design & dev)
-      notes: Rebuilt 10-minute design/dev quickstarts, added local PR check script,
-        logged onboarding diagnostics.
-      started_at: '2025-10-20T01:33:28Z'
+      completed_at: '2025-10-18T05:32:40Z'
+      notes: Vitest thresholds reset; schema-derived types; contract tests.
+    - id: B14.7
+      name: Telemetry + Incident/Correlation IDs (then soak)
       status: Completed
-    sprintId: Sprint 15
-    status: Completed
+      completed_at: '2025-10-18T13:56:47Z'
+      notes: Telemetry schema + instrumentation; soak runner report.
+    - id: B14.8
+      name: Policy-gated agent connectors (dry-run approvals)
+      status: Completed
+      completed_at: '2025-10-18T16:16:03Z'
+      notes: "Policy JSON enforced; dry-run\u2192approved apply; approval CLI/docs."
+    - id: B14.9
+      name: Agent Panel v1.5 (task runner + approvals UI)
+      status: Completed
+      completed_at: '2025-10-18T16:56:58Z'
+      notes: Queue-driven panel; task statuses; incident links; denial reasons.
+  - sprintId: Sprint 15
     title: 'Representative System: Multi-Brand, Statusables, Inputs/Tables, Token
       Governance, Onboarding'
-  - focus: Overlay contract→manager→primitives; sidebar/layout shells; helpers and
-      preview wiring
+    focus: 'Ship a credible mini-system teams can tweak: second brand, statusables,
+      core inputs/table, brand token governance, and 10-min onboarding.'
+    status: Completed
+    startDate: null
+    endDate: null
+    totalMissions: null
+    completedMissions: null
     missions:
-    - completed_at: '2025-10-20T19:35:29Z'
-      id: B16.1
+    - id: B15.1
+      name: Multi-brand scaffolding
+      status: Completed
+      completed_at: '2025-10-19T15:53:06Z'
+      notes: Shipped Storybook brand switcher, Brand B tokens, per-brand Chromatic
+        baselines, and lint canary.
+    - id: B15.2
+      name: "Component scale-out \u2014 Statusables (Badge, Banner, Toast*)"
+      status: Completed
+      completed_at: '2025-10-19T19:52:01Z'
+      notes: Delivered Badge, Banner, and Toast with canonical status map, stories,
+        docs, and tests.
+      metadata:
+        metadata:
+          started_at: '2025-10-19T19:19:56Z'
+    - id: B15.3
+      name: "Component scale-out \u2014 Inputs & Tables"
+      status: Completed
+      completed_at: '2025-10-19T21:14:23Z'
+      notes: Delivered TextField, Select, Checkbox, and Table with shared validation
+        tokens, docs, stories, and tests.
+      metadata:
+        metadata:
+          started_at: '2025-10-19T20:58:16Z'
+    - id: B15.4
+      name: Token governance for brands
+      status: Completed
+      completed_at: '2025-10-19T23:53:23Z'
+      notes: Added tokens-governance CLI with risk scoring, PR comment artifacts,
+        CODEOWNER checks, and docs.
+      metadata:
+        metadata:
+          started_at: '2025-10-19T23:35:21Z'
+    - id: B15.5
+      name: Onboarding docs (design & dev)
+      status: Completed
+      completed_at: '2025-10-20T01:42:15Z'
+      notes: Rebuilt 10-minute design/dev quickstarts, added local PR check script,
+        logged onboarding diagnostics.
+      metadata:
+        metadata:
+          started_at: '2025-10-20T01:33:28Z'
+  - sprintId: Sprint 16
+    title: Overlays, Layout, and Internal Helpers
+    focus: "Overlay contract\u2192manager\u2192primitives; sidebar/layout shells;\
+      \ helpers and preview wiring"
+    status: Completed
+    startDate: null
+    endDate: null
+    totalMissions: null
+    completedMissions: null
+    missions:
+    - id: B16.1
       name: Overlay focus & stacking contract
+      status: Completed
+      completed_at: '2025-10-20T19:35:29Z'
       notes: Published contract doc, added z/overlay tokens, and proof story.
-      started_at: '2025-10-20T19:33:29Z'
-      status: Completed
-    - completed_at: '2025-10-20T21:54:57Z'
-      id: B16.2
-      name: Overlay manager foundation
-      notes: Overlay Manager foundation with focus trap, inert outside, ESC routes,
-        and portal; story + a11y tests.
-      started_at: '2025-10-20T21:48:34Z'
-      status: Completed
-    - completed_at: '2025-10-21T15:29:09Z'
-      id: B16.3
-      name: Dialog and Sheet
-      notes: Implemented Dialog & Sheet on overlay manager with stories, docs, and
-        a11y smoke tests.
-      status: Completed
-    - completed_at: '2025-10-21T17:00:41Z'
-      id: B16.4
-      name: Tooltip and Popover
-      notes: Implemented Tooltip (described-by, timing) and Popover (labelled, dismissible,
-        focus-trap) with stories, docs, and jsdom tests.
-      status: Completed
-    - completed_at: '2025-10-21T21:27:28Z'
-      id: B16.5
-      name: Internal packaging scaffold
-      notes: Implemented internal packaging build scripts, provenance surfacing, compat
-        workflow, and sample app smoke checks.
-      started_at: '2025-10-21T20:51:49Z'
-      status: Completed
-    - completed_at: '2025-10-21T22:32:02Z'
-      id: B16.6
-      name: Agent and CI helpers
-      notes: Added overlay proof + pkg helpers, agent recipe, and diagnostics wiring.
-      started_at: '2025-10-21T22:19:59Z'
-      status: Completed
-    - completed_at: '2025-10-21T23:41:10Z'
-      id: B16.7
-      name: Storybook preview wiring
-      notes: Normalized preview decorator with toolbar-driven html/body attrs, default
-        layout, and sanity diagnostics.
-      started_at: '2025-10-21T23:32:50Z'
-      status: Completed
-    - completed_at: '2025-10-22T02:21:00Z'
-      id: B16.8
-      name: Sidebar taxonomy normalization
-      notes: Normalized Storybook taxonomy, removed duplicate stories, added taxonomy
-        README, and wired token browser into foundations.
-      started_at: '2025-10-22T02:07:53Z'
-      status: Completed
-    - completed_at: '2025-10-22T03:27:53Z'
-      id: B16.9
-      name: Section wrappers and layout contracts
-      notes: Introduced withPage decorator, normalized Statusables/domain layouts,
-        and documented the contract.
-      started_at: '2025-10-22T03:16:28Z'
-      status: Completed
-    - completed_at: '2025-10-22T04:39:24Z'
-      id: B16.10
+      metadata:
+        metadata:
+          started_at: '2025-10-20T19:33:29Z'
+    - id: B16.10
       name: 'Domain stories wiring: Subscription/User'
+      status: Completed
+      completed_at: '2025-10-22T04:39:24Z'
       notes: Imported explorer domain CSS globally and passed wrapper classes per
         context so RenderObject proofs regain spacing, card layout, and axe coverage.
-      started_at: '2025-10-22T04:06:01Z'
-      status: Completed
-    - completed_at: '2025-10-22T22:26:02Z'
-      id: B16.11
+      metadata:
+        metadata:
+          started_at: '2025-10-22T04:06:01Z'
+    - id: B16.11
       name: Brand and high-contrast proof galleries
+      status: Completed
+      completed_at: '2025-10-22T22:26:02Z'
       notes: Curated brand/high-contrast proof galleries, added proofs doc, and logged
         HC proof results artifact.
-      started_at: '2025-10-22T22:13:36Z'
-      status: Completed
-    - completed_at: '2025-10-23T14:05:23Z'
-      id: B16.12
+      metadata:
+        metadata:
+          started_at: '2025-10-22T22:13:36Z'
+    - id: B16.12
       name: Curated axe & VR dry-run baseline sync
+      status: Completed
+      completed_at: '2025-10-23T14:05:23Z'
       notes: Added sb-verify harness, docs, and refreshed axe/Chromatic artifacts
         with clean pass.
-      started_at: '2025-10-23T13:54:05Z'
+      metadata:
+        metadata:
+          started_at: '2025-10-23T13:54:05Z'
+    - id: B16.2
+      name: Overlay manager foundation
       status: Completed
-    sprintId: Sprint 16
-    status: Completed
-    title: Overlays, Layout, and Internal Helpers
-  - focus: Compliance core, billing ACL + canonical states, tenancy scaffold, usage
+      completed_at: '2025-10-20T21:54:57Z'
+      notes: Overlay Manager foundation with focus trap, inert outside, ESC routes,
+        and portal; story + a11y tests.
+      metadata:
+        metadata:
+          started_at: '2025-10-20T21:48:34Z'
+    - id: B16.3
+      name: Dialog and Sheet
+      status: Completed
+      completed_at: '2025-10-21T15:29:09Z'
+      notes: Implemented Dialog & Sheet on overlay manager with stories, docs, and
+        a11y smoke tests.
+    - id: B16.4
+      name: Tooltip and Popover
+      status: Completed
+      completed_at: '2025-10-21T17:00:41Z'
+      notes: Implemented Tooltip (described-by, timing) and Popover (labelled, dismissible,
+        focus-trap) with stories, docs, and jsdom tests.
+    - id: B16.5
+      name: Internal packaging scaffold
+      status: Completed
+      completed_at: '2025-10-21T21:27:28Z'
+      notes: Implemented internal packaging build scripts, provenance surfacing, compat
+        workflow, and sample app smoke checks.
+      metadata:
+        metadata:
+          started_at: '2025-10-21T20:51:49Z'
+    - id: B16.6
+      name: Agent and CI helpers
+      status: Completed
+      completed_at: '2025-10-21T22:32:02Z'
+      notes: Added overlay proof + pkg helpers, agent recipe, and diagnostics wiring.
+      metadata:
+        metadata:
+          started_at: '2025-10-21T22:19:59Z'
+    - id: B16.7
+      name: Storybook preview wiring
+      status: Completed
+      completed_at: '2025-10-21T23:41:10Z'
+      notes: Normalized preview decorator with toolbar-driven html/body attrs, default
+        layout, and sanity diagnostics.
+      metadata:
+        metadata:
+          started_at: '2025-10-21T23:32:50Z'
+    - id: B16.8
+      name: Sidebar taxonomy normalization
+      status: Completed
+      completed_at: '2025-10-22T02:21:00Z'
+      notes: Normalized Storybook taxonomy, removed duplicate stories, added taxonomy
+        README, and wired token browser into foundations.
+      metadata:
+        metadata:
+          started_at: '2025-10-22T02:07:53Z'
+    - id: B16.9
+      name: Section wrappers and layout contracts
+      status: Completed
+      completed_at: '2025-10-22T03:27:53Z'
+      notes: Introduced withPage decorator, normalized Statusables/domain layouts,
+        and documented the contract.
+      metadata:
+        metadata:
+          started_at: '2025-10-22T03:16:28Z'
+  - sprintId: Sprint 17
+    title: Converged Core & Billing Boundary
+    focus: Compliance core, billing ACL + canonical states, tenancy scaffold, usage
       ingest v0, temporal hygiene, docs
+    status: Completed
+    startDate: null
+    endDate: null
+    totalMissions: null
+    completedMissions: null
     missions:
-    - completed_at: '2025-10-24T19:45:00Z'
-      id: B17.1
-      name: Compliance Core v1 — RBAC & Audit services
+    - id: B17.1
+      name: "Compliance Core v1 \u2014 RBAC & Audit services"
+      status: Completed
+      completed_at: '2025-10-24T19:45:00Z'
       notes: Delivered canonical RBAC (5-table model), immutable audit log with hash
         chain, comprehensive tests, CLI proof, and Storybook demos.
-      started_at: '2025-10-24T19:00:00Z'
-      status: Completed
-    - completed_at: '2025-10-24T23:30:00Z'
-      id: B17.2
+      metadata:
+        metadata:
+          started_at: '2025-10-24T19:00:00Z'
+    - id: B17.2
       name: Tenancy Strategy & Scaffold
+      status: Completed
+      completed_at: '2025-10-24T23:30:00Z'
       notes: Delivered tenancy configuration, TenancyContext helper, database adapters
         (shared-schema, schema-per-tenant), seed scripts, and 24 passing isolation
         tests.
-      started_at: '2025-10-24T22:00:00Z'
+      metadata:
+        metadata:
+          started_at: '2025-10-24T22:00:00Z'
+    - id: B17.3
+      name: "Billing ACL v1 \u2014 Provider adapters"
       status: Completed
-    - completed_at: '2025-10-24T22:12:52Z'
-      id: B17.3
-      name: Billing ACL v1 — Provider adapters
+      completed_at: '2025-10-24T22:12:52Z'
       notes: Delivered canonical billing types, Stripe/Chargebee/Zuora adapters, event
         router, ESLint rule preventing provider leakage, comprehensive tests, Storybook
         proof, and ACL documentation.
-      started_at: '2025-10-24T22:00:00Z'
-      status: Completed
-    - completed_at: '2025-10-25T01:00:00Z'
-      id: B17.4
+      metadata:
+        metadata:
+          started_at: '2025-10-24T22:00:00Z'
+    - id: B17.4
       name: Canonical Subscription & Invoice States
+      status: Completed
+      completed_at: '2025-10-25T01:00:00Z'
       notes: Delivered 7-state subscription and 5-state invoice state machines with
         guards, deriveDelinquency helper, comprehensive tests (50 passing), lifecycle
         stories, provider adapter updates, and documentation.
-      started_at: '2025-10-25T00:00:00Z'
+      metadata:
+        metadata:
+          started_at: '2025-10-25T00:00:00Z'
+    - id: B17.5
+      name: "Usage Ingest v0 \u2014 meter \u2192 aggregate \u2192 invoice"
       status: Completed
-    - completed_at: '2025-10-25T07:00:00Z'
-      id: B17.5
-      name: Usage Ingest v0 — meter → aggregate → invoice
+      completed_at: '2025-10-25T07:00:00Z'
       notes: Delivered usage events schema (8 meter units), aggregator service with
         daily/weekly/monthly rollup, CLI sample generator, comprehensive tests (16
         passing), Storybook metered billing dashboard stories, and usage ingest documentation.
-      started_at: '2025-10-25T06:00:00Z'
+      metadata:
+        metadata:
+          started_at: '2025-10-25T06:00:00Z'
+    - id: B17.6
+      name: "Temporal Hygiene \u2014 dual time & tz"
       status: Completed
-    - completed_at: '2025-10-25T14:45:00Z'
-      id: B17.6
-      name: Temporal Hygiene — dual time & tz
+      completed_at: '2025-10-25T14:45:00Z'
       notes: Delivered dual-time policy, TimeService (Luxon), migrations, ESLint no-naive-date
         rule, 33 passing tests, Storybook proofs, and migration guide.
-      started_at: '2025-10-25T14:00:00Z'
-      status: Completed
-    - completed_at: '2025-10-25T17:00:00Z'
-      id: B17.7
+      metadata:
+        metadata:
+          started_at: '2025-10-25T14:00:00Z'
+    - id: B17.7
       name: Polymorphic Account + metadata policy
+      status: Completed
+      completed_at: '2025-10-25T17:00:00Z'
       notes: Delivered polymorphic account types (Person, Organization, Workspace),
         metadata policy with PII detection, ESLint no-account-unsafe-metadata rule,
         35 passing tests, migration script, Storybook proofs, and docs.
-      started_at: '2025-10-25T16:00:00Z'
-      status: Completed
-    - completed_at: '2025-10-25T18:30:00Z'
-      id: B17.8
+      metadata:
+        metadata:
+          started_at: '2025-10-25T16:00:00Z'
+    - id: B17.8
       name: Docs & Brownfield Guide v1
+      status: Completed
+      completed_at: '2025-10-25T18:30:00Z'
       notes: Delivered brownfield adoption guide (4-phase model), CLI audit/checklist
         tools, Storybook MDX deck, quickstart updates, and adoption support issue
         template.
-      started_at: '2025-10-25T18:00:00Z'
-      status: Completed
-    sprintId: Sprint 17
-    status: Completed
-    title: Converged Core & Billing Boundary
-  - focus: Progression + navigation components, toast feedback system, performance
+      metadata:
+        metadata:
+          started_at: '2025-10-25T18:00:00Z'
+  - sprintId: Sprint 18
+    title: Component Set IV & Final QA Wave
+    focus: Progression + navigation components, toast feedback system, performance
       harness automation
+    status: Completed
+    startDate: null
+    endDate: null
+    totalMissions: null
+    completedMissions: null
     missions:
-    - completed_at: '2025-10-27T01:00:00Z'
-      id: B18.1
+    - id: B18.1
       name: Progress & Stepper components
+      status: Completed
+      completed_at: '2025-10-27T01:00:00Z'
       notes: Delivered ProgressLinear, ProgressCircular, and Stepper components with
         token hooks, ARIA compliance, Storybook stories, tests (33/33 passing), and
         comprehensive docs.
-      started_at: '2025-10-27T00:00:00Z'
-      status: Completed
-    - completed_at: '2025-10-27T15:30:00Z'
-      id: B18.2
+      metadata:
+        metadata:
+          started_at: '2025-10-27T00:00:00Z'
+    - id: B18.2
       name: Tabs & overflow navigation
+      status: Completed
+      completed_at: '2025-10-27T15:30:00Z'
       notes: Delivered Tabs component with overflow menu, size variants (sm/md/lg),
         keyboard navigation, truncation tooltips, HC support, shared navigation a11y
         utilities, comprehensive stories and tests.
-      started_at: '2025-10-27T13:57:00Z'
-      status: Completed
-    - completed_at: '2025-10-27T17:30:00Z'
-      id: B18.3
+      metadata:
+        metadata:
+          started_at: '2025-10-27T13:57:00Z'
+    - id: B18.3
       name: Pagination + usePagination hook
+      status: Completed
+      completed_at: '2025-10-27T17:30:00Z'
       notes: Delivered usePagination hook with truncation logic, Pagination component
         with aria-current and mobile collapse, comprehensive Storybook stories, unit
         tests (33 passing), and navigation.md documentation.
-      started_at: '2025-10-27T15:45:00Z'
-      status: Completed
-    - completed_at: '2025-10-27T20:00:00Z'
-      id: B18.4
+      metadata:
+        metadata:
+          started_at: '2025-10-27T15:45:00Z'
+    - id: B18.4
       name: Breadcrumbs overflow menu
+      status: Completed
+      completed_at: '2025-10-27T20:00:00Z'
       notes: Delivered Breadcrumbs component with overflow menu, semantic nav landmark
         (aria-label, aria-current), token-driven styling, comprehensive stories (10),
         unit tests (31/31 passing), HC support, and navigation.md documentation.
-      started_at: '2025-10-27T18:00:00Z'
-      status: Completed
-    - completed_at: '2025-10-27T20:30:00Z'
-      id: B18.5
+      metadata:
+        metadata:
+          started_at: '2025-10-27T18:00:00Z'
+    - id: B18.5
       name: Empty State component
+      status: Completed
+      completed_at: '2025-10-27T20:30:00Z'
       notes: Delivered EmptyState component with illustration/icon/headline/body/actions
         slots, intent-based Statusables token mapping, 18 Storybook stories (scenario
         + intent + layout variants), 25 passing unit tests, comprehensive content
         guidelines, and accessibility documentation.
-      started_at: '2025-10-27T20:15:00Z'
-      status: Completed
-    - completed_at: '2025-10-28T00:23:49Z'
-      id: B18.6
+      metadata:
+        metadata:
+          started_at: '2025-10-27T20:15:00Z'
+    - id: B18.6
       name: Toast queue infrastructure
+      status: Completed
+      completed_at: '2025-10-28T00:23:49Z'
       notes: Delivered toast.show() imperative API, ToastPortal with queue management,
         Statusables intent mapping, comprehensive tests (26/26 passing), Storybook
         stories (8 scenarios), and complete usage documentation.
-      started_at: '2025-10-28T00:11:50Z'
-      status: Completed
-    - completed_at: '2025-10-28T01:45:00Z'
-      id: B18.7
+      metadata:
+        metadata:
+          started_at: '2025-10-28T00:11:50Z'
+    - id: B18.7
       name: Performance harness core
+      status: Completed
+      completed_at: '2025-10-28T01:45:00Z'
       notes: 'Delivered Playwright-based perf harness: Profiler/UserTiming instrumentation,
         4 scenario test suites, performance-harness.schema.json, perf:harness CLI,
         comprehensive docs.'
-      started_at: '2025-10-28T00:30:00Z'
-      status: Completed
-    - completed_at: '2025-10-28T04:00:00Z'
-      id: B18.8
+      metadata:
+        metadata:
+          started_at: '2025-10-28T00:30:00Z'
+    - id: B18.8
       name: Performance CI integration & runbooks
+      status: Completed
+      completed_at: '2025-10-28T04:00:00Z'
       notes: Delivered nightly CI pipeline with baseline calculation, 3-sigma regression
         detection, Slack alerting, developer CLI, comprehensive runbook, and diagnostics
         schema validation.
-      started_at: '2025-10-28T00:00:00Z'
-      status: Completed
-    sprintId: Sprint 18
-    status: Completed
-    title: Component Set IV & Final QA Wave
-  - focus: Polish components, run packaging dry run, finalize guardrails, and ship
+      metadata:
+        metadata:
+          started_at: '2025-10-28T00:00:00Z'
+  - sprintId: Sprint 19
+    title: Design System Hardening & Packaging Readiness
+    focus: Polish components, run packaging dry run, finalize guardrails, and ship
       Storybook display deployment (no external pilot).
+    status: Completed
+    startDate: null
+    endDate: null
+    totalMissions: null
+    completedMissions: null
     missions:
-    - completed_at: '2025-10-28T18:30:00Z'
-      id: B19.1
+    - id: B19.1
       name: Component polish & QA sweep
+      status: Completed
+      completed_at: '2025-10-28T18:30:00Z'
       notes: 'Delivered comprehensive QA validation: 754/754 tests passing, 49/49
         a11y checks (WCAG 2.2 AA), cross-brand themes verified, packaging criteria
         met, QA checklist and changelog published.'
-      started_at: '2025-10-28T14:30:00Z'
-      status: Completed
-    - completed_at: '2025-10-28T23:53:55Z'
-      id: B19.2
+      metadata:
+        metadata:
+          started_at: '2025-10-28T14:30:00Z'
+    - id: B19.2
       name: Packaging dry run & provenance
+      status: Completed
+      completed_at: '2025-10-28T23:53:55Z'
       notes: Ran release:dry-run to emit reproducible tarballs + SBOM (dist/releases/2025-10-28T23-52-36-530Z)
         and kept packaging assessment GREEN.
-      started_at: '2025-10-28T23:43:32Z'
-      status: Completed
-    - completed_at: '2025-10-29T01:45:00Z'
-      id: B19.3
+      metadata:
+        metadata:
+          started_at: '2025-10-28T23:43:32Z'
+    - id: B19.3
       name: Guardrail automation expansion
+      status: Completed
+      completed_at: '2025-10-29T01:45:00Z'
       notes: Delivered metadata/tenancy lint guardrails with Vitest coverage, added
         guardrail state assessment + diagnostics dashboard, and documented enforcement
         in docs/guardrails/overview.md.
-      started_at: '2025-10-29T00:00:00Z'
-      status: Completed
-    - completed_at: '2025-10-29T01:37:02Z'
-      id: B19.4
+      metadata:
+        metadata:
+          started_at: '2025-10-29T00:00:00Z'
+    - id: B19.4
       name: Diagnostics refresh & perf baselines
+      status: Completed
+      completed_at: '2025-10-29T01:37:02Z'
       notes: Captured performance budgets in diagnostics helpers and wrote the perf
         runbook.
-      started_at: '2025-10-29T01:26:10Z'
-      status: Completed
-    - completed_at: '2025-10-29T01:52:33Z'
-      id: B19.5
+      metadata:
+        metadata:
+          started_at: '2025-10-29T01:26:10Z'
+    - id: B19.5
       name: Storybook GitHub Pages deployment
+      status: Completed
+      completed_at: '2025-10-29T01:52:33Z'
       notes: Automated Storybook Pages workflow, published runbook, and linked the
         hosted site.
-      started_at: '2025-10-29T01:49:31Z'
-      status: Completed
-    sprintId: Sprint 19
-    status: Completed
-    title: Design System Hardening & Packaging Readiness
-  - focus: Assemble private release candidate, equip reviewers, and stage post-review
+      metadata:
+        metadata:
+          started_at: '2025-10-29T01:49:31Z'
+  - sprintId: Sprint 20
+    title: Private Review Preparation
+    focus: Assemble private release candidate, equip reviewers, and stage post-review
       follow-up.
+    status: Current
+    startDate: null
+    endDate: null
+    totalMissions: null
+    completedMissions: null
     missions:
     - id: B20.1
-      name: Private RC build & freeze
-      notes: Freeze baselines, generate reviewer-ready packages, document rollback
-        plan.
-      status: Current
+      name: Storybook display polish
+      status: Completed
+      completed_at: '2025-11-13T23:22:06Z'
+      notes: '- Added Intro/Welcome landing (apps/explorer/.storybook/Intro.mdx) and
+        documented nav order while pinning the manager panel to the right.
+
+        - Toolbar brand/theme globals are fixed; Chromatic still runs multi-brand
+        coverage and docs/storybook/display-decisions.md records the policy + rationale.
+
+        - Token Browser + Swatch now render semantic colours, redundant Elements Smoke
+        story was removed, and EmptyState illustration contrast improved.
+
+        - Dark-mode docs gained the .docs-dark-surface container so the demo stays
+        legible without mutating document-level data-theme.
+
+        - Validation: pnpm vitest run tests/components/empty-state.spec.tsx; pnpm
+        build-storybook; ./cmos/cli.py validate docs; ./cmos/cli.py validate health.'
+      metadata:
+        started_at: '2025-11-13T22:53:26Z'
+        completed_at: '2025-11-13T23:22:06Z'
     - id: B20.2
-      name: Reviewer kit & walkthroughs
-      notes: Curate Storybook journeys, API notes, and evaluation checklists for invite-only
-        review.
-      status: Queued
+      name: Compliance audit & final validation
+      status: Completed
+      completed_at: '2025-11-14T00:21:12Z'
+      notes: Compliance audit complete. Guardrails + a11y sweeps are green (tools/a11y/reports/a11y-report.json;
+        diagnostics tokens.guardrails.lastRun = B20.2). Governance diffs for Brand
+        A/B exported with breaking label coverage and min contrast 5.94:1. Dropped
+        artifacts/state/compliance-audit-v1-rc.json and docs/compliance/v1-audit-report.md
+        plus referenced Chromatic brand snapshots (10/10 unchanged each).
+      metadata:
+        started_at: '2025-11-14T00:11:01Z'
+        completed_at: '2025-11-14T00:21:12Z'
     - id: B20.3
-      name: Feedback triage & backlog
-      notes: Set up intake loop, prioritize findings, capture go/no-go criteria.
-      status: Queued
+      name: Documentation refresh & release notes
+      status: Completed
+      completed_at: '2025-11-14T02:36:47Z'
+      notes: Published README updates with accurate scripts + CMOS mission pointers,
+        added docs/releases/v1.0-release-notes.md and docs/releases/v1.0-migration-guide.md,
+        tailed telemetry + reran ./cmos/cli.py validate health to close the loop.
+      metadata:
+        started_at: '2025-11-14T02:28:56Z'
+        completed_at: '2025-11-14T02:36:47Z'
     - id: B20.4
-      name: Release readiness audit (optional)
-      notes: Inventory remaining gaps for public release/OSS exposure and park follow-up
-        items.
-      status: Queued
-    sprintId: Sprint 20
-    status: Current
-    title: Private Review Preparation
-  type: Planning.SprintPlan.v1
-missionDependencies: *id001
-missionFiles:
-  B10.1: cmos/missions/sprint-10/10.1_mcp-server-v0.1.yaml
-  B10.2: cmos/missions/sprint-10/10.2_http-bridge.yaml
-  B10.3: cmos/missions/sprint-10/10.3_artifact-framework-v1.yaml
-  B10.4: cmos/missions/sprint-10/10.4_policy-governance-v0.1.yaml
-  B10.5: cmos/missions/sprint-10/10.5_cli-plan-approve-execute.yaml
-  B10.6: cmos/missions/sprint-10/10.6_sb-agent-panel-read-only.yaml
-  B11.1: cmos/missions/sprint-11/11.1_sb-approval-gated-write.yaml
-  B11.2: cmos/missions/sprint-11/11.2_bridge-hardening-cors-token.yaml
-  B11.3: cmos/missions/sprint-11/11.3_panel-diff-and-artifact-ui.yaml
-  B11.4: cmos/missions/sprint-11/11.4_transcript-and-replay.yaml
-  B11.5: cmos/missions/sprint-11/11.5_policy-ux-and-error-mapping.yaml
-  B12.1: cmos/missions/sprint-12/12.1_brand-apply.yaml
-  B12.2: cmos/missions/sprint-12/12.2_sb-artifact-viewer.yaml
-  B12.3: cmos/missions/sprint-12/12.3_diag-snapshot-and-bundle-index-v2.yaml
-  B12.4: cmos/missions/sprint-12/12.4_internal-release-verify-and-tag.yaml
-  B12.5: cmos/missions/sprint-12/12.5_policy-v1-sweep.yaml
-  B13.1: cmos/missions/sprint-13/13.1_billing-domain-objects-and-enums.yaml
-  B13.2: cmos/missions/sprint-13/13.2_billing-forms-and-validation.yaml
-  B13.3: cmos/missions/sprint-13/13.3_billing-timeline.yaml
-  B13.4: cmos/missions/sprint-13/13.4_ops-review-kit-and-fixtures.yaml
-  B13.5: cmos/missions/sprint-13/13.5_end-of-sprint-summary.yaml
-  B13.6: cmos/missions/sprint-13/13.6_agent-connectors-claude-openai.yaml
-  B13.7: cmos/missions/sprint-13/13.7_reliability-soak-and-rate-limits.yaml
-  B13.8: cmos/missions/sprint-13/13.8_telemetry-and-incident-tracing.yaml
-  B13.9: cmos/missions/sprint-13/13.9_type-hygiene-and-schema-locks.yaml
-  B14.1: cmos/missions/sprint-14/14.1_pr-first-workflow.yaml
-  B14.10: cmos/missions/sprint-14/14.10_enum-to-token-enforcement.yaml
-  B14.11: cmos/missions/sprint-14/14.11_accessibility-contract-in-ci.yaml
-  B14.12: cmos/missions/sprint-14/14.12_docs-and-guides-refresh.yaml
-  B14.2: cmos/missions/sprint-14/14.2_figma-handshake-tokens-to-tailwind.yaml
-  B14.3: cmos/missions/sprint-14/14.3_composite-tokens-and-theming-guards.yaml
-  B14.4: cmos/missions/sprint-14/14.4_high-contrast-and-color-guardrails.yaml
-  B14.5: cmos/missions/sprint-14/14.5_visual-regression-and-pr-previews.yaml
-  B14.6: cmos/missions/sprint-14/14.6_coverage-and-type-hygiene.yaml
-  B14.7: cmos/missions/sprint-14/14.7_telemetry-incident-ids-and-soak.yaml
-  B14.8: cmos/missions/sprint-14/14.8_policy-gated-agent-connectors.yaml
-  B14.9: cmos/missions/sprint-14/14.9_agent-panel-v1.5-task-runner.yaml
-  B15.1: cmos/missions/sprint-15/B15.1_multi-brand-scaffolding.yaml
-  B15.2: cmos/missions/sprint-15/B15.2_component-scaleout-statusables.yaml
-  B15.3: cmos/missions/sprint-15/B15.3_component-scaleout-inputs-tables.yaml
-  B15.4: cmos/missions/sprint-15/B15.4_token-governance-for-brands.yaml
-  B15.5: cmos/missions/sprint-15/B15.5_onboarding-docs-design-and-dev.yaml
-  B16.1: cmos/missions/sprint-16/B16.1_overlay-focus-and-stacking-contract.yaml
-  B16.10: cmos/missions/sprint-16/B16.10_domain-stories-wiring-subscription-user.yaml
-  B16.11: cmos/missions/sprint-16/16.11_brand-and-high-contrast-proof-galleries.yaml
-  B16.12: cmos/missions/sprint-16/B16.12_curated-axe-and-vr-dryrun-baseline-sync.yaml
-  B16.2: cmos/missions/sprint-16/B16.2_overlay-manager-foundation.yaml
-  B16.3: cmos/missions/sprint-16/B16.3_dialog-and-sheet.yaml
-  B16.4: cmos/missions/sprint-16/B16.4_tooltip-and-popover.yaml
-  B16.5: cmos/missions/sprint-16/B16.5_internal-packaging-scaffold.yaml
-  B16.6: cmos/missions/sprint-16/B16.6_agent-and-ci-helpers.yaml
-  B16.7: cmos/missions/sprint-16/B16.7_storybook-preview-wiring.yaml
-  B16.8: cmos/missions/sprint-16/B16.8_sidebar-taxonomy-normalization.yaml
-  B16.9: cmos/missions/sprint-16/B16.9_section-wrappers-and-layout-contracts.yaml
-  B17.1: cmos/missions/sprint-17/B17.1_compliance-core-rbac-audit.yaml
-  B17.2: cmos/missions/sprint-17/B17.2_tenancy-strategy-scaffold.yaml
-  B17.3: cmos/missions/sprint-17/B17.3_billing-acl-provider-adapters.yaml
-  B17.4: cmos/missions/sprint-17/B17.4_canonical-subscription-invoice-states.yaml
-  B17.5: cmos/missions/sprint-17/B17.5_usage-ingest-meter-aggregate.yaml
-  B17.6: cmos/missions/sprint-17/B17.6_temporal-hygiene-dual-time.yaml
-  B17.7: cmos/missions/sprint-17/B17.7_polymorphic-account-metadata-policy.yaml
-  B17.8: cmos/missions/sprint-17/B17.8_docs-brownfield-guide.yaml
-  B18.1: cmos/missions/sprint-18/B18.1_progress-and-stepper.yaml
-  B18.2: cmos/missions/sprint-18/B18.2_tabs-navigation.yaml
-  B18.3: cmos/missions/sprint-18/B18.3_pagination-hook.yaml
-  B18.4: cmos/missions/sprint-18/B18.4_breadcrumbs-overflow.yaml
-  B18.5: cmos/missions/sprint-18/B18.5_empty-state.yaml
-  B18.6: cmos/missions/sprint-18/B18.6_toast-queue.yaml
-  B18.7: cmos/missions/sprint-18/B18.7_perf-harness-core.yaml
-  B18.8: cmos/missions/sprint-18/B18.8_perf-ci-and-docs.yaml
-  B9.1: cmos/missions/sprint-09/B9.1_Brand-A-theme.yaml
-  B9.2: cmos/missions/sprint-09/B9.2_Packages-Reproducible-Release.yaml
-  B9.3: cmos/missions/sprint-09/B9.3_Purity-Audit-and-Guards.yaml
-  B9.4: cmos/missions/sprint-09/B9.4_Figma-to-Git-Review-Kit.yaml
-  B9.5: cmos/missions/sprint-09/B9.5_VRT-and-Diagnostics-Brand-Coverage.yaml
-  B9.6: cmos/missions/sprint-09/B9.6_End-of-Sprint-Summary.yaml
-missionId: SP-OODS-001
-objective: Track, manage, and complete sprints with mission-level orchestration and
-  dependencies.
-sprints:
-  sprints: *id002
-successCriteria:
-- 'Sprints/missions flow: Queued → Current → In Progress → Completed (Blocked when
-  needed).'
-- Backlog is the single source of truth for statuses, links, and dependencies.
-- No schema-breaking changes to prior sprints.
-successMetrics:
-- 'Representative system: dual-brand surfaces render accurately with no brand-bleed.'
-- Statusables & inputs/tables reuse enum→token mapping; no literal colors; AA/HC pass.
-- VR green on curated cross-brand stories; per-brand baselines managed.
-- Coverage regained to thresholds; basic component/e2e tests exist for new surfaces.
-- Token governance reports clean (or justified) across both brands.
-- Onboarding quickstarts verified ≤10 minutes on a clean clone; local PR check script
-  exits non-zero on failures.
+      name: RC freeze & rollback plan
+      status: Current
+      notes: Lock baselines (tests/a11y/VRT), tag v1.0.0-rc, generate build artifacts
+        with SBOM, document rollback procedures.
+  missionDependencies:
+  - from: B10.1
+    to: B13.9
+    type: Blocks
+  - from: B10.2
+    to: B13.6
+    type: Blocks
+  - from: B12.3
+    to: B12.1
+    type: Relates
+  - from: B12.3
+    to: B12.2
+    type: Relates
+  - from: B12.3
+    to: B13.7
+    type: Relates
+  - from: B12.3
+    to: B13.8
+    type: Relates
+  - from: B12.3
+    to: B13.9
+    type: Relates
+  - from: B12.5
+    to: B12.1
+    type: Relates
+  - from: B12.5
+    to: B12.4
+    type: Relates
+  - from: B12.5
+    to: B13.4
+    type: Relates
+  - from: B12.5
+    to: B13.6
+    type: Relates
+  - from: B12.5
+    to: B13.7
+    type: Relates
+  - from: B13.1
+    to: B13.2
+    type: Blocks
+  - from: B13.1
+    to: B13.3
+    type: Blocks
+  - from: B14.1
+    to: B14.2
+    type: Blocks
+  - from: B14.1
+    to: B14.5
+    type: Relates
+  - from: B14.10
+    to: B15.2
+    type: Relates
+  - from: B14.10
+    to: B15.3
+    type: Relates
+  - from: B14.11
+    to: B14.12
+    type: Relates
+  - from: B14.2
+    to: B14.3
+    type: Blocks
+  - from: B14.3
+    to: B14.10
+    type: Relates
+  - from: B14.3
+    to: B14.4
+    type: Relates
+  - from: B14.3
+    to: B14.5
+    type: Relates
+  - from: B14.4
+    to: B14.11
+    type: Relates
+  - from: B14.5
+    to: B14.6
+    type: Relates
+  - from: B14.6
+    to: B14.7
+    type: Relates
+  - from: B14.7
+    to: B14.8
+    type: Blocks
+  - from: B14.8
+    to: B14.9
+    type: Blocks
+  - from: B15.1
+    to: B15.4
+    type: Blocks
+  - from: B15.2
+    to: B15.3
+    type: Relates
+  - from: B15.4
+    to: B15.5
+    type: Blocks
+  - from: B18.1
+    to: B19.1
+    type: Blocks
+  - from: B18.6
+    to: B19.3
+    type: Relates
+  - from: B18.7
+    to: B19.2
+    type: Relates
+  - from: B18.7
+    to: B19.4
+    type: Relates
+  - from: B19.2
+    to: B20.1
+    type: Blocks
+  - from: B19.3
+    to: B20.3
+    type: Relates
+  - from: B19.4
+    to: B20.2
+    type: Relates
+  - from: B20.2
+    to: B20.1
+    type: Blocks
+  - from: B20.3
+    to: B20.2
+    type: Blocks
+  - from: B20.4
+    to: B20.3
+    type: Blocks
+  promptMapping:
+    prompts: []
