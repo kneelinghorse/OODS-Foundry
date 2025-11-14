@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oods.systems/schemas/traits/encoding-color",
+  "title": "EncodingColor Trait Parameters",
+  "type": "object",
+  "properties": {
+    "supportedSchemes": {
+      "type": "array",
+      "description": "Palette categories this encoding may leverage.",
+      "items": {
+        "type": "string",
+        "enum": ["categorical", "sequential", "diverging"]
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "default": ["categorical", "sequential", "diverging"]
+    },
+    "defaultScheme": {
+      "type": "string",
+      "description": "Palette category used when unspecified.",
+      "enum": ["categorical", "sequential", "diverging"],
+      "default": "categorical"
+    },
+    "redundancyMechanism": {
+      "type": "string",
+      "description": "Non-color fallback used to satisfy equivalence rules.",
+      "enum": ["texture", "shape", "label"],
+      "default": "texture"
+    },
+    "minContrast": {
+      "type": "number",
+      "description": "Minimum contrast ratio enforced between adjacent categories.",
+      "minimum": 3,
+      "maximum": 7,
+      "default": 4.5
+    },
+    "channel": {
+      "type": "string",
+      "description": "Graphical channel color touches (fill vs stroke).",
+      "enum": ["fill", "stroke"],
+      "default": "fill"
+    }
+  },
+  "required": ["supportedSchemes", "defaultScheme", "redundancyMechanism"],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "supportedSchemes": ["categorical", "sequential"],
+      "defaultScheme": "categorical",
+      "redundancyMechanism": "texture",
+      "minContrast": 5
+    }
+  ]
+}

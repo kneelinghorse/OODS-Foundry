@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oods.systems/schemas/traits/scale-temporal",
+  "title": "ScaleTemporal Trait Parameters",
+  "type": "object",
+  "properties": {
+    "domainStart": {
+      "type": "string",
+      "description": "ISO-8601 timestamp representing the lower bound.",
+      "format": "date-time",
+      "default": "2024-01-01T00:00:00Z"
+    },
+    "domainEnd": {
+      "type": "string",
+      "description": "ISO-8601 timestamp representing the upper bound.",
+      "format": "date-time",
+      "default": "2024-12-31T23:59:59Z"
+    },
+    "rangeMin": {
+      "type": "number",
+      "description": "Normalized lower range bound (0-1).",
+      "default": 0
+    },
+    "rangeMax": {
+      "type": "number",
+      "description": "Normalized upper range bound (0-1).",
+      "default": 1
+    },
+    "timezone": {
+      "type": "string",
+      "description": "Olson/IANA timezone identifier used when formatting ticks.",
+      "default": "UTC"
+    },
+    "nice": {
+      "type": "string",
+      "description": "Interval used when rounding ticks.",
+      "enum": ["day", "week", "month", "quarter", "year"],
+      "default": "month"
+    },
+    "outputFormat": {
+      "type": "string",
+      "description": "Default date format string for axes + fallbacks.",
+      "default": "YYYY-MM-DD"
+    }
+  },
+  "required": ["domainStart", "domainEnd", "rangeMin", "rangeMax"],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "domainStart": "2025-01-01T00:00:00Z",
+      "domainEnd": "2025-03-31T23:59:59Z",
+      "rangeMin": 0,
+      "rangeMax": 1,
+      "timezone": "America/Los_Angeles",
+      "nice": "week",
+      "outputFormat": "MMM d"
+    }
+  ]
+}

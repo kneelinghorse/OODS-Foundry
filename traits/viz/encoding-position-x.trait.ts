@@ -1,0 +1,203 @@
+import type { TraitDefinition } from '../../src/core/trait-definition.ts';
+
+const EncodingPositionXTrait = {
+  trait: {
+    name: 'EncodingPositionX',
+    version: '0.1.0',
+    description: 'Binds a data field to the horizontal axis with scale defaults.',
+    category: 'viz.encoding',
+    tags: ['viz', 'encoding', 'x-axis', 'position'],
+  },
+
+  parameters: [
+    {
+      name: 'fieldKinds',
+      type: 'string[]',
+      required: true,
+      description: 'Data categories that can map to the X axis.',
+      default: ['nominal', 'ordinal', 'quantitative', 'temporal'],
+    },
+    {
+      name: 'defaultScale',
+      type: 'string',
+      required: true,
+      description: 'Default scale used when none is specified by the spec author.',
+      default: 'linear',
+      validation: {
+        enum: ['linear', 'temporal'],
+      },
+    },
+    {
+      name: 'includeZero',
+      type: 'boolean',
+      required: false,
+      description: 'Whether quantitative mappings force a zero baseline.',
+      default: true,
+    },
+    {
+      name: 'axisTitle',
+      type: 'string',
+      required: false,
+      description: 'Default title surfaced in axis + a11y description.',
+      default: 'X Axis',
+    },
+    {
+      name: 'sorting',
+      type: 'string',
+      required: false,
+      description: 'Default sort applied to discrete categories.',
+      default: 'none',
+      validation: {
+        enum: ['none', 'ascending', 'descending'],
+      },
+    },
+  ] as const,
+
+  schema: {
+    viz_encoding_x_field: {
+      type: 'string',
+      required: true,
+      description: 'Name of the data field bound to the X axis.',
+    },
+    viz_encoding_x_field_kind: {
+      type: 'string',
+      required: true,
+      description: 'Data classification used for heuristics and validation.',
+      validation: {
+        enumFromParameter: 'fieldKinds',
+      },
+    },
+    viz_encoding_x_scale: {
+      type: 'string',
+      required: true,
+      description: 'Scale identifier applied to values (linear or temporal).',
+      default: 'linear',
+      validation: {
+        enum: ['linear', 'temporal'],
+      },
+    },
+    viz_encoding_x_include_zero: {
+      type: 'boolean',
+      required: false,
+      description: 'Indicates whether zero baseline enforcement is active.',
+      default: true,
+    },
+    viz_encoding_x_axis_title: {
+      type: 'string',
+      required: false,
+      description: 'Default axis title used in UI and fallback descriptions.',
+      default: 'X Axis',
+    },
+    viz_encoding_x_sort: {
+      type: 'string',
+      required: false,
+      description: 'Default sort direction for discrete axes.',
+      default: 'none',
+      validation: {
+        enum: ['none', 'ascending', 'descending'],
+      },
+    },
+  },
+
+  semantics: {
+    viz_encoding_x_field: {
+      semantic_type: 'viz.encoding.field',
+      token_mapping: 'tokenMap(viz.encoding.field)',
+      ui_hints: {
+        component: 'FieldReference',
+      },
+    },
+    viz_encoding_x_field_kind: {
+      semantic_type: 'viz.encoding.field_kind',
+      token_mapping: 'tokenMap(viz.encoding.field_kind)',
+      ui_hints: {
+        component: 'TextBadge',
+      },
+    },
+    viz_encoding_x_scale: {
+      semantic_type: 'viz.encoding.scale',
+      token_mapping: 'tokenMap(viz.scale.type)',
+      ui_hints: {
+        component: 'TextBadge',
+      },
+    },
+    viz_encoding_x_axis_title: {
+      semantic_type: 'viz.encoding.axis_title',
+      token_mapping: 'tokenMap(viz.axis.title)',
+      ui_hints: {
+        component: 'TextField',
+      },
+    },
+    viz_encoding_x_include_zero: {
+      semantic_type: 'viz.encoding.zero_baseline',
+      token_mapping: 'tokenMap(viz.scale.zero)',
+      ui_hints: {
+        component: 'BooleanBadge',
+      },
+    },
+  },
+
+  view_extensions: {
+    detail: [
+      {
+        component: 'VizAxisSummary',
+        position: 'sidebar',
+        props: {
+          axis: 'x',
+          titleField: 'viz_encoding_x_axis_title',
+          scaleField: 'viz_encoding_x_scale',
+          zeroField: 'viz_encoding_x_include_zero',
+        },
+      },
+    ],
+    form: [
+      {
+        component: 'VizAxisControls',
+        position: 'top',
+        props: {
+          axis: 'x',
+          fieldField: 'viz_encoding_x_field',
+          kindField: 'viz_encoding_x_field_kind',
+          scaleField: 'viz_encoding_x_scale',
+          titleField: 'viz_encoding_x_axis_title',
+          zeroField: 'viz_encoding_x_include_zero',
+          sortField: 'viz_encoding_x_sort',
+        },
+      },
+    ],
+    list: [
+      {
+        component: 'VizEncodingBadge',
+        props: {
+          axis: 'x',
+          fieldField: 'viz_encoding_x_field',
+        },
+      },
+    ],
+  },
+
+  tokens: {
+    'viz.encoding.x.axis.title': 'var(--cmp-text-strong)',
+    'viz.encoding.x.axis.tick': 'var(--cmp-viz-axis-tick)',
+    'viz.encoding.x.axis.line': 'var(--cmp-viz-axis-line)',
+  },
+
+  dependencies: ['ScaleLinear', { trait: 'ScaleTemporal', optional: true }] as const,
+
+  metadata: {
+    created: '2025-11-15',
+    owners: ['viz@oods.systems', 'engineering@oods.systems'],
+    maturity: 'alpha',
+    accessibility: {
+      rule_reference: 'A11Y-R-05',
+      notes: 'Provide axis titles + descriptions for assistive tech fallbacks.',
+    },
+    regionsUsed: ['detail', 'form', 'list'],
+    allows: ['MarkBar', 'MarkLine', 'MarkPoint', 'MarkArea'],
+    references: [
+      'cmos/research/data-viz-oods/RDS.7_synthesis_Mission Completion Report- Trait-Driven Visualization System Specification (v0.1).md',
+    ],
+  },
+} as const satisfies TraitDefinition;
+
+export default EncodingPositionXTrait;

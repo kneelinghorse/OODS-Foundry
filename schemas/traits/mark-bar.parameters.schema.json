@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oods.systems/schemas/traits/mark-bar",
+  "title": "MarkBar Trait Parameters",
+  "type": "object",
+  "properties": {
+    "orientation": {
+      "type": "string",
+      "description": "Axis orientation used for laying out bar rectangles.",
+      "enum": ["vertical", "horizontal"],
+      "default": "vertical"
+    },
+    "bandPadding": {
+      "type": "number",
+      "description": "Fractional padding between category bands (0-0.5).",
+      "minimum": 0,
+      "maximum": 0.5,
+      "default": 0.1
+    },
+    "cornerRadius": {
+      "type": "number",
+      "description": "Pixel radius applied to bar corners.",
+      "minimum": 0,
+      "maximum": 12,
+      "default": 2
+    },
+    "stacking": {
+      "type": "string",
+      "description": "Aggregation strategy when multiple series share the mark.",
+      "enum": ["auto", "normalize", "none"],
+      "default": "auto"
+    }
+  },
+  "required": ["orientation"],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "orientation": "vertical",
+      "bandPadding": 0.2,
+      "cornerRadius": 4,
+      "stacking": "normalize"
+    }
+  ]
+}

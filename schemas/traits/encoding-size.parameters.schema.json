@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oods.systems/schemas/traits/encoding-size",
+  "title": "EncodingSize Trait Parameters",
+  "type": "object",
+  "properties": {
+    "rangeMin": {
+      "type": "number",
+      "description": "Minimum rendered size in device-independent pixels.",
+      "minimum": 2,
+      "maximum": 32,
+      "default": 6
+    },
+    "rangeMax": {
+      "type": "number",
+      "description": "Maximum rendered size in device-independent pixels.",
+      "minimum": 12,
+      "maximum": 96,
+      "default": 36
+    },
+    "strategy": {
+      "type": "string",
+      "description": "Interprets values as area or radius for perceptual scaling.",
+      "enum": ["area", "radius"],
+      "default": "area"
+    },
+    "minPixelArea": {
+      "type": "number",
+      "description": "Minimum accessible area to avoid disappearing glyphs.",
+      "default": 36
+    },
+    "maxPixelArea": {
+      "type": "number",
+      "description": "Maximum accessible area to avoid dominating layout.",
+      "default": 576
+    }
+  },
+  "required": ["rangeMin", "rangeMax", "strategy"],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "rangeMin": 8,
+      "rangeMax": 48,
+      "strategy": "radius",
+      "minPixelArea": 64,
+      "maxPixelArea": 400
+    }
+  ]
+}
