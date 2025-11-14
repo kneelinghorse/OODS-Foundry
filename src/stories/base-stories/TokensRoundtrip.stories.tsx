@@ -8,6 +8,12 @@ const meta: Meta = {
   title: 'Foundations/Tokens Roundtrip',
   parameters: {
     layout: 'centered',
+    docs: {
+      description: {
+        component:
+          'Roundtrip visualises how semantic tokens travel from DTCG JSON → Tailwind → runtime CSS. Use the Token Browser story for interactive inspection.',
+      },
+    },
   },
 };
 
@@ -200,6 +206,11 @@ const RoundtripPreview = () => (
 );
 
 export const Roundtrip: Story = {
+  parameters: {
+    docs: {
+      storyDescription: 'Brand B swatches render directly from semantic tokens to prove the governance scanner sees real usage.',
+    },
+  },
   render: () => <RoundtripPreview />,
 };
 
@@ -207,6 +218,10 @@ export const Browser: TokenBrowserStory = {
   name: 'Token Browser',
   parameters: {
     layout: 'fullscreen',
+    docs: {
+      storyDescription:
+        'Search, group, and contrast-check every emitted semantic token. Filter by namespace, status tone, or resolved value.',
+    },
   },
   render: () => <TokenBrowser tokens={tokenEntries} resolveToken={resolveTokenValue} />,
 };
