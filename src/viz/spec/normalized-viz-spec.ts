@@ -29,7 +29,7 @@ export class NormalizedVizSpecError extends Error {
 const ajv = new Ajv({ allErrors: true, strict: false, allowUnionTypes: true });
 addFormats(ajv);
 
-const typedSchema = schema as JSONSchemaType<NormalizedVizSpec>;
+const typedSchema = schema as unknown as JSONSchemaType<NormalizedVizSpec>;
 const validator: ValidateFunction<NormalizedVizSpec> = ajv.compile(typedSchema);
 
 export function validateNormalizedVizSpec(input: unknown): VizSpecValidationResult {
