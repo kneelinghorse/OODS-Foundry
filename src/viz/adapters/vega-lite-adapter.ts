@@ -270,6 +270,10 @@ function inferFieldType(channel: ChannelName, binding: EncodingBinding): 'quanti
     return 'ordinal';
   }
 
+  if (channel === 'y') {
+    return 'ordinal';
+  }
+
   if (channel === 'shape') {
     return 'nominal';
   }
