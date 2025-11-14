@@ -101,6 +101,52 @@ describe('Vega-Lite adapter', () => {
     expect(result.encoding?.y).toMatchObject({ aggregate: 'mean' });
   });
 
+  it('treats y-position without quantitative hints as ordinal', () => {
+    const spec: NormalizedVizSpec = {
+      $schema: 'https://oods.dev/viz-spec/v1',
+      id: 'horizontal-bars',
+      name: 'Horizontal Bars',
+      data: {
+        values: [
+          { rep: 'Alex', bookings: 200000 },
+          { rep: 'Jordan', bookings: 320000 },
+        ],
+      },
+      marks: [
+        {
+          trait: 'MarkBar',
+          encodings: {
+            y: { field: 'rep', trait: 'EncodingPositionY', channel: 'y', sort: 'descending' },
+            x: {
+              field: 'bookings',
+              trait: 'EncodingPositionX',
+              channel: 'x',
+              aggregate: 'sum',
+              scale: 'linear',
+            },
+          },
+        },
+      ],
+      encoding: {
+        y: { field: 'rep', trait: 'EncodingPositionY', channel: 'y', sort: 'descending' },
+        x: {
+          field: 'bookings',
+          trait: 'EncodingPositionX',
+          channel: 'x',
+          aggregate: 'sum',
+          scale: 'linear',
+        },
+      },
+      a11y: {
+        description: 'Horizontal example',
+      },
+    };
+
+    const result = toVegaLiteSpec(spec);
+
+    expect(result.encoding?.y).toMatchObject({ type: 'ordinal' });
+  });
+
   it('throws for unsupported mark traits', () => {
     const spec = loadSpec('bar-chart');
     const invalidSpec: NormalizedVizSpec = {
