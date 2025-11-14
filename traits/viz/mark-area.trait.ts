@@ -1,0 +1,218 @@
+import type { TraitDefinition } from '../../src/core/trait-definition.ts';
+
+const MarkAreaTrait = {
+  trait: {
+    name: 'MarkArea',
+    version: '0.1.0',
+    description: 'Canonical area mark for cumulative totals and ranges.',
+    category: 'viz.mark',
+    tags: ['viz', 'mark', 'area', 'band'],
+  },
+
+  parameters: [
+    {
+      name: 'curve',
+      type: 'string',
+      required: false,
+      description: 'Curve interpolation strategy applied between samples.',
+      default: 'linear',
+      validation: {
+        enum: ['linear', 'monotone', 'step'],
+      },
+    },
+    {
+      name: 'opacity',
+      type: 'number',
+      required: false,
+      description: 'Fill opacity used for the area band.',
+      default: 0.65,
+      validation: {
+        minimum: 0.2,
+        maximum: 1,
+      },
+    },
+    {
+      name: 'baseline',
+      type: 'string',
+      required: false,
+      description: 'Baseline reference for filling the region (zero or min).',
+      default: 'zero',
+      validation: {
+        enum: ['zero', 'min'],
+      },
+    },
+    {
+      name: 'tension',
+      type: 'number',
+      required: false,
+      description: 'Curve tension applied when smoothing monotone interpolation.',
+      default: 0.3,
+      validation: {
+        minimum: 0,
+        maximum: 1,
+      },
+    },
+  ] as const,
+
+  schema: {
+    viz_mark_type: {
+      type: 'string',
+      required: true,
+      description: 'Normalized mark identifier consumed by renderer adapters.',
+      default: 'area',
+      validation: {
+        enum: ['area'],
+      },
+    },
+    viz_area_curve: {
+      type: 'string',
+      required: false,
+      description: 'Interpolation strategy applied between samples.',
+      default: 'linear',
+      validation: {
+        enum: ['linear', 'monotone', 'step'],
+      },
+    },
+    viz_area_opacity: {
+      type: 'number',
+      required: false,
+      description: 'Fill opacity used for the area band.',
+      default: 0.65,
+      validation: {
+        minimum: 0.2,
+        maximum: 1,
+      },
+    },
+    viz_area_baseline: {
+      type: 'string',
+      required: false,
+      description: 'Baseline reference for filling the region.',
+      default: 'zero',
+      validation: {
+        enum: ['zero', 'min'],
+      },
+    },
+    viz_area_tension: {
+      type: 'number',
+      required: false,
+      description: 'Curve tension applied when smoothing.',
+      default: 0.3,
+      validation: {
+        minimum: 0,
+        maximum: 1,
+      },
+    },
+    viz_mark_role: {
+      type: 'string',
+      required: true,
+      description: 'Semantic role for heuristics and docs.',
+      default: 'band',
+    },
+    viz_mark_a11y_label: {
+      type: 'string',
+      required: true,
+      description: 'Accessible description fragment for describing area marks.',
+      default: 'Area mark representing cumulative or range-based values.',
+    },
+  },
+
+  semantics: {
+    viz_mark_type: {
+      semantic_type: 'viz.mark.type',
+      token_mapping: 'tokenMap(viz.mark.type)',
+      ui_hints: {
+        component: 'VizMarkSummary',
+      },
+    },
+    viz_area_curve: {
+      semantic_type: 'viz.mark.curve',
+      token_mapping: 'tokenMap(viz.mark.curve)',
+      ui_hints: {
+        component: 'VizCurveHint',
+      },
+    },
+    viz_area_opacity: {
+      semantic_type: 'viz.mark.opacity',
+      token_mapping: 'tokenMap(viz.mark.opacity)',
+      ui_hints: {
+        component: 'NumericPreview',
+        unit: 'opacity',
+      },
+    },
+    viz_area_baseline: {
+      semantic_type: 'viz.mark.baseline',
+      token_mapping: 'tokenMap(viz.mark.baseline)',
+      ui_hints: {
+        component: 'TextBadge',
+      },
+    },
+    viz_mark_a11y_label: {
+      semantic_type: 'a11y.description',
+      token_mapping: 'tokenMap(a11y.chart.description)',
+      ui_hints: {
+        component: 'ScreenReaderHint',
+      },
+    },
+  },
+
+  view_extensions: {
+    detail: [
+      {
+        component: 'VizAreaPreview',
+        position: 'top',
+        priority: 55,
+        props: {
+          curveField: 'viz_area_curve',
+          opacityField: 'viz_area_opacity',
+          baselineField: 'viz_area_baseline',
+        },
+      },
+    ],
+    form: [
+      {
+        component: 'VizAreaControls',
+        position: 'top',
+        props: {
+          curveField: 'viz_area_curve',
+          opacityField: 'viz_area_opacity',
+          baselineField: 'viz_area_baseline',
+          tensionField: 'viz_area_tension',
+        },
+      },
+    ],
+    list: [
+      {
+        component: 'VizRoleBadge',
+        props: {
+          labelField: 'viz_mark_role',
+        },
+      },
+    ],
+  },
+
+  tokens: {
+    'viz.mark.area.fill.default': 'var(--cmp-viz-mark-area-fill)',
+    'viz.mark.area.opacity.default': 'var(--cmp-viz-mark-area-opacity)',
+    'viz.mark.area.baseline.stroke': 'var(--cmp-viz-axis-base)',
+  },
+
+  dependencies: ['EncodingPositionX', 'EncodingPositionY'] as const,
+
+  metadata: {
+    created: '2025-11-15',
+    owners: ['viz@oods.systems', 'design@oods.systems'],
+    maturity: 'alpha',
+    conflicts_with: ['MarkBar', 'MarkLine', 'MarkPoint'],
+    accessibility: {
+      rule_reference: 'A11Y-R-06',
+      notes: 'Convey baseline reference in descriptive text output.',
+    },
+    regionsUsed: ['detail', 'form', 'list'],
+    examples: ['ForecastRange', 'BurnDownVariance'],
+    references: [
+      'cmos/research/data-viz-oods/RDS.7_synthesis_Mission Completion Report- Trait-Driven Visualization System Specification (v0.1).md',
+    ],
+  },
+} as const satisfies TraitDefinition;
+
+export default MarkAreaTrait;

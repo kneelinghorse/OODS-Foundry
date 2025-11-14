@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oods.systems/schemas/traits/encoding-position-x",
+  "title": "EncodingPositionX Trait Parameters",
+  "type": "object",
+  "properties": {
+    "fieldKinds": {
+      "type": "array",
+      "description": "Data categories that can map to the X axis.",
+      "items": {
+        "type": "string",
+        "enum": ["nominal", "ordinal", "quantitative", "temporal"]
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "default": ["nominal", "ordinal", "quantitative", "temporal"]
+    },
+    "defaultScale": {
+      "type": "string",
+      "description": "Default scale used when none is specified.",
+      "enum": ["linear", "temporal"],
+      "default": "linear"
+    },
+    "includeZero": {
+      "type": "boolean",
+      "description": "Whether quantitative mappings force a zero baseline.",
+      "default": true
+    },
+    "axisTitle": {
+      "type": "string",
+      "description": "Default title surfaced in axis + a11y description.",
+      "default": "X Axis"
+    },
+    "sorting": {
+      "type": "string",
+      "description": "Default sort applied to discrete categories.",
+      "enum": ["none", "ascending", "descending"],
+      "default": "none"
+    }
+  },
+  "required": ["fieldKinds", "defaultScale"],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "fieldKinds": ["nominal", "quantitative"],
+      "defaultScale": "linear",
+      "axisTitle": "Region",
+      "sorting": "ascending"
+    }
+  ]
+}

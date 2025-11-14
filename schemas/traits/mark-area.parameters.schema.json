@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oods.systems/schemas/traits/mark-area",
+  "title": "MarkArea Trait Parameters",
+  "type": "object",
+  "properties": {
+    "curve": {
+      "type": "string",
+      "description": "Curve interpolation strategy applied between samples.",
+      "enum": ["linear", "monotone", "step"],
+      "default": "linear"
+    },
+    "opacity": {
+      "type": "number",
+      "description": "Fill opacity used for the area band.",
+      "minimum": 0.2,
+      "maximum": 1,
+      "default": 0.65
+    },
+    "baseline": {
+      "type": "string",
+      "description": "Baseline reference for filling the region.",
+      "enum": ["zero", "min"],
+      "default": "zero"
+    },
+    "tension": {
+      "type": "number",
+      "description": "Curve tension applied when smoothing.",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0.3
+    }
+  },
+  "required": [],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "curve": "monotone",
+      "opacity": 0.7,
+      "baseline": "zero",
+      "tension": 0.25
+    }
+  ]
+}

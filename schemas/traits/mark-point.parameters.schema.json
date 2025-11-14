@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oods.systems/schemas/traits/mark-point",
+  "title": "MarkPoint Trait Parameters",
+  "type": "object",
+  "properties": {
+    "shape": {
+      "type": "string",
+      "description": "Glyph shape rendered for each data point.",
+      "enum": ["circle", "square", "diamond", "triangle"],
+      "default": "circle"
+    },
+    "size": {
+      "type": "number",
+      "description": "Default glyph area in square pixels.",
+      "minimum": 4,
+      "maximum": 196,
+      "default": 48
+    },
+    "fill": {
+      "type": "string",
+      "description": "Fill strategy for glyph interior.",
+      "enum": ["solid", "hollow"],
+      "default": "solid"
+    },
+    "strokeWidth": {
+      "type": "number",
+      "description": "Outline stroke width for hollow glyphs.",
+      "minimum": 0,
+      "maximum": 6,
+      "default": 1
+    },
+    "opacity": {
+      "type": "number",
+      "description": "Default opacity applied to each point for overplotting.",
+      "minimum": 0.1,
+      "maximum": 1,
+      "default": 0.85
+    }
+  },
+  "required": [],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "shape": "square",
+      "size": 64,
+      "fill": "hollow",
+      "strokeWidth": 2,
+      "opacity": 0.7
+    }
+  ]
+}

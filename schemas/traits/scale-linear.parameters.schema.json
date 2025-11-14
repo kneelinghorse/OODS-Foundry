@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oods.systems/schemas/traits/scale-linear",
+  "title": "ScaleLinear Trait Parameters",
+  "type": "object",
+  "properties": {
+    "domainMin": {
+      "type": "number",
+      "description": "Default lower domain bound applied when unspecified.",
+      "default": 0
+    },
+    "domainMax": {
+      "type": "number",
+      "description": "Default upper domain bound applied when unspecified.",
+      "default": 1
+    },
+    "rangeMin": {
+      "type": "number",
+      "description": "Default lower range bound (normalized 0-1).",
+      "default": 0
+    },
+    "rangeMax": {
+      "type": "number",
+      "description": "Default upper range bound (normalized 0-1).",
+      "default": 1
+    },
+    "clamp": {
+      "type": "boolean",
+      "description": "Whether values outside the domain should clamp to edges.",
+      "default": true
+    },
+    "zeroBaseline": {
+      "type": "boolean",
+      "description": "Forces zero to be included in the domain.",
+      "default": true
+    },
+    "mode": {
+      "type": "string",
+      "description": "Distinguishes continuous vs band heuristics.",
+      "enum": ["continuous", "band"],
+      "default": "continuous"
+    }
+  },
+  "required": ["domainMin", "domainMax", "rangeMin", "rangeMax"],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "domainMin": 0,
+      "domainMax": 100,
+      "rangeMin": 0,
+      "rangeMax": 1,
+      "mode": "continuous"
+    }
+  ]
+}

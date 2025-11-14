@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oods.systems/schemas/traits/encoding-position-y",
+  "title": "EncodingPositionY Trait Parameters",
+  "type": "object",
+  "properties": {
+    "fieldKinds": {
+      "type": "array",
+      "description": "Data categories that can map to the Y axis.",
+      "items": {
+        "type": "string",
+        "enum": ["quantitative", "temporal", "ordinal"]
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "default": ["quantitative", "temporal", "ordinal"]
+    },
+    "defaultScale": {
+      "type": "string",
+      "description": "Default scale used when not specified explicitly.",
+      "enum": ["linear", "temporal"],
+      "default": "linear"
+    },
+    "includeZero": {
+      "type": "boolean",
+      "description": "Whether to enforce zero baseline for quantitative data.",
+      "default": true
+    },
+    "axisTitle": {
+      "type": "string",
+      "description": "Default title surfaced in UI and fallback descriptions.",
+      "default": "Y Axis"
+    },
+    "aggregate": {
+      "type": "string",
+      "description": "Default aggregation applied when spec omits one.",
+      "enum": ["sum", "mean", "median", "count"],
+      "default": "sum"
+    }
+  },
+  "required": ["fieldKinds", "defaultScale"],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "fieldKinds": ["quantitative"],
+      "defaultScale": "linear",
+      "axisTitle": "Revenue",
+      "aggregate": "sum"
+    }
+  ]
+}

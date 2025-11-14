@@ -1,0 +1,212 @@
+import type { TraitDefinition } from '../../src/core/trait-definition.ts';
+
+const EncodingColorTrait = {
+  trait: {
+    name: 'EncodingColor',
+    version: '0.1.0',
+    description: 'Maps a data field to governed chromatic encodings.',
+    category: 'viz.encoding',
+    tags: ['viz', 'encoding', 'color'],
+  },
+
+  parameters: [
+    {
+      name: 'supportedSchemes',
+      type: 'string[]',
+      required: true,
+      description: 'Palette categories that this encoding may leverage.',
+      default: ['categorical', 'sequential', 'diverging'],
+    },
+    {
+      name: 'defaultScheme',
+      type: 'string',
+      required: true,
+      description: 'Palette category used when author does not specify.',
+      default: 'categorical',
+      validation: {
+        enum: ['categorical', 'sequential', 'diverging'],
+      },
+    },
+    {
+      name: 'redundancyMechanism',
+      type: 'string',
+      required: true,
+      description: 'Non-color fallback used to satisfy equivalence rules.',
+      default: 'texture',
+      validation: {
+        enum: ['texture', 'shape', 'label'],
+      },
+    },
+    {
+      name: 'minContrast',
+      type: 'number',
+      required: false,
+      description: 'Minimum contrast ratio enforced between adjacent categories.',
+      default: 4.5,
+      validation: {
+        minimum: 3,
+        maximum: 7,
+      },
+    },
+    {
+      name: 'channel',
+      type: 'string',
+      required: false,
+      description: 'Which graphical channel color touches (fill vs stroke).',
+      default: 'fill',
+      validation: {
+        enum: ['fill', 'stroke'],
+      },
+    },
+  ] as const,
+
+  schema: {
+    viz_encoding_color_field: {
+      type: 'string',
+      required: true,
+      description: 'Data field bound to chroma.',
+    },
+    viz_encoding_color_scheme: {
+      type: 'string',
+      required: true,
+      description: 'Palette category used for this encoding.',
+      default: 'categorical',
+      validation: {
+        enumFromParameter: 'supportedSchemes',
+      },
+    },
+    viz_encoding_color_channel: {
+      type: 'string',
+      required: false,
+      description: 'Graphical channel that carries color (fill or stroke).',
+      default: 'fill',
+      validation: {
+        enum: ['fill', 'stroke'],
+      },
+    },
+    viz_encoding_color_redundancy: {
+      type: 'string',
+      required: true,
+      description: 'Secondary channel used for equivalence (texture, shape, label).',
+      default: 'texture',
+      validation: {
+        enum: ['texture', 'shape', 'label'],
+      },
+    },
+    viz_encoding_color_min_contrast: {
+      type: 'number',
+      required: false,
+      description: 'Minimum enforced contrast ratio between adjacent categories.',
+      default: 4.5,
+      validation: {
+        minimum: 3,
+        maximum: 7,
+      },
+    },
+    viz_encoding_color_description: {
+      type: 'string',
+      required: false,
+      description: 'Natural language summary for fallback narratives.',
+      default: 'Uses governed palette with redundant encodings per RDV.4.',
+    },
+  },
+
+  semantics: {
+    viz_encoding_color_field: {
+      semantic_type: 'viz.encoding.field',
+      token_mapping: 'tokenMap(viz.encoding.field)',
+      ui_hints: {
+        component: 'FieldReference',
+      },
+    },
+    viz_encoding_color_scheme: {
+      semantic_type: 'viz.encoding.palette',
+      token_mapping: 'tokenMap(viz.palette.scheme)',
+      ui_hints: {
+        component: 'TextBadge',
+      },
+    },
+    viz_encoding_color_channel: {
+      semantic_type: 'viz.encoding.channel',
+      token_mapping: 'tokenMap(viz.channel)',
+      ui_hints: {
+        component: 'TextBadge',
+      },
+    },
+    viz_encoding_color_redundancy: {
+      semantic_type: 'viz.encoding.redundancy',
+      token_mapping: 'tokenMap(viz.redundancy)',
+      ui_hints: {
+        component: 'TextBadge',
+      },
+    },
+    viz_encoding_color_min_contrast: {
+      semantic_type: 'viz.encoding.contrast',
+      token_mapping: 'tokenMap(viz.a11y.contrast)',
+      ui_hints: {
+        component: 'NumericPreview',
+        unit: 'ratio',
+      },
+    },
+  },
+
+  view_extensions: {
+    detail: [
+      {
+        component: 'VizColorLegendConfig',
+        position: 'sidebar',
+        props: {
+          field: 'viz_encoding_color_field',
+          schemeField: 'viz_encoding_color_scheme',
+          redundancyField: 'viz_encoding_color_redundancy',
+        },
+      },
+    ],
+    form: [
+      {
+        component: 'VizColorControls',
+        position: 'top',
+        props: {
+          schemeField: 'viz_encoding_color_scheme',
+          channelField: 'viz_encoding_color_channel',
+          redundancyField: 'viz_encoding_color_redundancy',
+          contrastField: 'viz_encoding_color_min_contrast',
+        },
+      },
+    ],
+    list: [
+      {
+        component: 'VizEncodingBadge',
+        props: {
+          axis: 'color',
+          fieldField: 'viz_encoding_color_field',
+        },
+      },
+    ],
+  },
+
+  tokens: {
+    'viz.encoding.color.palette.categorical': 'var(--cmp-viz-color-categorical)',
+    'viz.encoding.color.palette.sequential': 'var(--cmp-viz-color-sequential)',
+    'viz.encoding.color.palette.diverging': 'var(--cmp-viz-color-diverging)',
+  },
+
+  dependencies: [{ trait: 'ScaleLinear', optional: true }] as const,
+
+  metadata: {
+    created: '2025-11-15',
+    owners: ['viz@oods.systems', 'accessibility@oods.systems'],
+    maturity: 'alpha',
+    accessibility: {
+      rule_reference: 'A11Y-R-01',
+      notes: 'Requires redundant encoding + 4.5:1 contrast for adjacent hues.',
+    },
+    regionsUsed: ['detail', 'form', 'list'],
+    references: [
+      'cmos/research/data-viz-oods/RDV.4_Validation of Accessibility Equivalence in Trait-Driven Visualization Systems.md',
+      'cmos/research/data-viz-oods/RDS.7_synthesis_Mission Completion Report- Trait-Driven Visualization System Specification (v0.1).md',
+    ],
+  },
+} as const satisfies TraitDefinition;
+
+export default EncodingColorTrait;

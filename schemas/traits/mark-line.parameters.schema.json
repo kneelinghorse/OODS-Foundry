@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oods.systems/schemas/traits/mark-line",
+  "title": "MarkLine Trait Parameters",
+  "type": "object",
+  "properties": {
+    "curve": {
+      "type": "string",
+      "description": "Curve interpolation strategy applied between data points.",
+      "enum": ["linear", "monotone", "step"],
+      "default": "linear"
+    },
+    "strokeWidth": {
+      "type": "number",
+      "description": "Stroke width in device-independent pixels.",
+      "minimum": 1,
+      "maximum": 8,
+      "default": 2
+    },
+    "join": {
+      "type": "string",
+      "description": "Join style applied when segments meet.",
+      "enum": ["miter", "round", "bevel"],
+      "default": "round"
+    },
+    "enableMarkers": {
+      "type": "boolean",
+      "description": "Adds optional point markers on line vertices.",
+      "default": false
+    }
+  },
+  "required": [],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "curve": "monotone",
+      "strokeWidth": 3,
+      "join": "round",
+      "enableMarkers": true
+    }
+  ]
+}

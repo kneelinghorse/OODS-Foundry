@@ -1,0 +1,210 @@
+trait:
+  name: MarkPoint
+  version: 0.1.0
+  description: |
+    Canonical point mark for scatterplots and overlays. Encodes each datum as a
+    discrete glyph with configurable shape, size, and fill semantics.
+  category: viz.mark
+  tags:
+    - viz
+    - mark
+    - point
+    - distribution
+
+parameters:
+  - name: shape
+    type: string
+    required: false
+    description: Glyph shape rendered for each data point.
+    default: circle
+    validation:
+      enum:
+        - circle
+        - square
+        - diamond
+        - triangle
+  - name: size
+    type: number
+    required: false
+    description: Default glyph area in square pixels.
+    default: 48
+    validation:
+      minimum: 4
+      maximum: 196
+  - name: fill
+    type: string
+    required: false
+    description: Fill strategy for glyph interior.
+    default: solid
+    validation:
+      enum:
+        - solid
+        - hollow
+  - name: strokeWidth
+    type: number
+    required: false
+    description: Outline stroke width for hollow glyphs.
+    default: 1
+    validation:
+      minimum: 0
+      maximum: 6
+  - name: opacity
+    type: number
+    required: false
+    description: Default opacity applied to each point for overplotting.
+    default: 0.85
+    validation:
+      minimum: 0.1
+      maximum: 1
+
+schema:
+  viz_mark_type:
+    type: string
+    required: true
+    description: Normalized mark identifier consumed by renderer adapters.
+    default: point
+    validation:
+      enum:
+        - point
+  viz_point_shape:
+    type: string
+    required: false
+    description: Glyph shape applied to all rendered points by default.
+    defaultFromParameter: shape
+    validation:
+      enum:
+        - circle
+        - square
+        - diamond
+        - triangle
+  viz_point_size:
+    type: number
+    required: false
+    description: Default glyph area in square pixels.
+    defaultFromParameter: size
+    validation:
+      minimum: 4
+      maximum: 196
+  viz_point_fill:
+    type: string
+    required: false
+    description: Fill strategy for glyph interior.
+    defaultFromParameter: fill
+    validation:
+      enum:
+        - solid
+        - hollow
+  viz_point_stroke_width:
+    type: number
+    required: false
+    description: Outline stroke width for hollow glyphs.
+    defaultFromParameter: strokeWidth
+    validation:
+      minimum: 0
+      maximum: 6
+  viz_point_opacity:
+    type: number
+    required: false
+    description: Default opacity used for overplotting mitigation.
+    defaultFromParameter: opacity
+    validation:
+      minimum: 0.1
+      maximum: 1
+  viz_mark_role:
+    type: string
+    required: true
+    description: Semantic role for heuristics and docs.
+    default: distribution
+  viz_mark_a11y_label:
+    type: string
+    required: true
+    description: Accessible description fragment for describing point marks.
+    default: Point mark representing discrete values or observations.
+
+semantics:
+  viz_mark_type:
+    semantic_type: viz.mark.type
+    token_mapping: tokenMap(viz.mark.type)
+    ui_hints:
+      component: VizMarkSummary
+  viz_point_shape:
+    semantic_type: viz.mark.shape
+    token_mapping: tokenMap(viz.mark.shape)
+    ui_hints:
+      component: VizShapeHint
+  viz_point_size:
+    semantic_type: viz.mark.size
+    token_mapping: tokenMap(viz.mark.size)
+    ui_hints:
+      component: NumericPreview
+      unit: px^2
+  viz_point_fill:
+    semantic_type: viz.mark.fill
+    token_mapping: tokenMap(viz.mark.fill)
+    ui_hints:
+      component: TextBadge
+  viz_point_opacity:
+    semantic_type: viz.mark.opacity
+    token_mapping: tokenMap(viz.mark.opacity)
+    ui_hints:
+      component: NumericPreview
+      unit: opacity
+  viz_mark_a11y_label:
+    semantic_type: a11y.description
+    token_mapping: tokenMap(a11y.chart.description)
+    ui_hints:
+      component: ScreenReaderHint
+
+view_extensions:
+  detail:
+    - component: VizPointPreview
+      position: top
+      priority: 55
+      props:
+        shapeField: viz_point_shape
+        sizeField: viz_point_size
+        fillField: viz_point_fill
+  form:
+    - component: VizPointControls
+      position: top
+      props:
+        shapeField: viz_point_shape
+        sizeField: viz_point_size
+        opacityField: viz_point_opacity
+        strokeField: viz_point_stroke_width
+  list:
+    - component: VizRoleBadge
+      props:
+        labelField: viz_mark_role
+
+tokens:
+  viz.mark.point.fill.default: "var(--cmp-viz-mark-point-fill)"
+  viz.mark.point.stroke.default: "var(--cmp-viz-mark-point-stroke)"
+  viz.mark.point.opacity.default: "var(--cmp-viz-mark-point-opacity)"
+
+dependencies:
+  - EncodingPositionX
+  - EncodingPositionY
+
+metadata:
+  created: "2025-11-15"
+  owners:
+    - viz@oods.systems
+    - design@oods.systems
+  maturity: alpha
+  conflicts_with:
+    - MarkBar
+    - MarkLine
+    - MarkArea
+  accessibility:
+    rule_reference: A11Y-R-01
+    notes: Provide redundant encoding (color, shape, or texture) per RDV.4.
+  regionsUsed:
+    - detail
+    - form
+    - list
+  examples:
+    - ProfitVsRevenue
+    - SLAHeatScatter
+  references:
+    - cmos/research/data-viz-oods/RDS.7_synthesis_Mission Completion Report- Trait-Driven Visualization System Specification (v0.1).md

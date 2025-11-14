@@ -1,0 +1,178 @@
+trait:
+  name: EncodingPositionY
+  version: 0.1.0
+  description: |
+    Binds a data field to the vertical axis. Provides normalization, default
+    scale hints, and a11y metadata for describing quantitative measures.
+  category: viz.encoding
+  tags:
+    - viz
+    - encoding
+    - y-axis
+    - position
+
+parameters:
+  - name: fieldKinds
+    type: string[]
+    required: true
+    description: Data categories that can map to the Y axis.
+    default:
+      - quantitative
+      - temporal
+      - ordinal
+  - name: defaultScale
+    type: string
+    required: true
+    description: Default scale used when not specified explicitly.
+    default: linear
+    validation:
+      enum:
+        - linear
+        - temporal
+  - name: includeZero
+    type: boolean
+    required: false
+    description: Whether to enforce zero baseline for quantitative data.
+    default: true
+  - name: axisTitle
+    type: string
+    required: false
+    description: Default title surfaced in UI and fallback descriptions.
+    default: Y Axis
+  - name: aggregate
+    type: string
+    required: false
+    description: Default aggregation applied when spec omits one.
+    default: sum
+    validation:
+      enum:
+        - sum
+        - mean
+        - median
+        - count
+
+schema:
+  viz_encoding_y_field:
+    type: string
+    required: true
+    description: Name of the data field bound to the Y axis.
+  viz_encoding_y_field_kind:
+    type: string
+    required: true
+    description: Data classification used for heuristics and validation.
+    validation:
+      enumFromParameter: fieldKinds
+  viz_encoding_y_scale:
+    type: string
+    required: true
+    description: Scale identifier applied to the Y axis.
+    defaultFromParameter: defaultScale
+    validation:
+      enum:
+        - linear
+        - temporal
+  viz_encoding_y_include_zero:
+    type: boolean
+    required: false
+    description: Indicates whether zero baseline enforcement is active.
+    defaultFromParameter: includeZero
+  viz_encoding_y_axis_title:
+    type: string
+    required: false
+    description: Default axis title used in UI and fallback descriptions.
+    defaultFromParameter: axisTitle
+  viz_encoding_y_aggregate:
+    type: string
+    required: false
+    description: Aggregation strategy applied when spec omits one.
+    defaultFromParameter: aggregate
+    validation:
+      enum:
+        - sum
+        - mean
+        - median
+        - count
+
+semantics:
+  viz_encoding_y_field:
+    semantic_type: viz.encoding.field
+    token_mapping: tokenMap(viz.encoding.field)
+    ui_hints:
+      component: FieldReference
+  viz_encoding_y_field_kind:
+    semantic_type: viz.encoding.field_kind
+    token_mapping: tokenMap(viz.encoding.field_kind)
+    ui_hints:
+      component: TextBadge
+  viz_encoding_y_scale:
+    semantic_type: viz.encoding.scale
+    token_mapping: tokenMap(viz.scale.type)
+    ui_hints:
+      component: TextBadge
+  viz_encoding_y_axis_title:
+    semantic_type: viz.encoding.axis_title
+    token_mapping: tokenMap(viz.axis.title)
+    ui_hints:
+      component: TextField
+  viz_encoding_y_aggregate:
+    semantic_type: viz.encoding.aggregate
+    token_mapping: tokenMap(viz.aggregate)
+    ui_hints:
+      component: TextBadge
+
+view_extensions:
+  detail:
+    - component: VizAxisSummary
+      position: sidebar
+      props:
+        axis: y
+        titleField: viz_encoding_y_axis_title
+        scaleField: viz_encoding_y_scale
+        zeroField: viz_encoding_y_include_zero
+  form:
+    - component: VizAxisControls
+      position: top
+      props:
+        axis: y
+        fieldField: viz_encoding_y_field
+        kindField: viz_encoding_y_field_kind
+        scaleField: viz_encoding_y_scale
+        titleField: viz_encoding_y_axis_title
+        zeroField: viz_encoding_y_include_zero
+        aggregateField: viz_encoding_y_aggregate
+  list:
+    - component: VizEncodingBadge
+      props:
+        axis: y
+        fieldField: viz_encoding_y_field
+
+tokens:
+  viz.encoding.y.axis.title: "var(--cmp-text-strong)"
+  viz.encoding.y.axis.tick: "var(--cmp-viz-axis-tick)"
+  viz.encoding.y.axis.line: "var(--cmp-viz-axis-line)"
+
+dependencies:
+  - ScaleLinear
+  - trait: ScaleTemporal
+    optional: true
+
+metadata:
+  created: "2025-11-15"
+  owners:
+    - viz@oods.systems
+    - engineering@oods.systems
+  maturity: alpha
+  accessibility:
+    rule_reference: A11Y-R-05
+    notes: Axis title doubles as descriptive label in fallback tables.
+  regionsUsed:
+    - detail
+    - form
+    - list
+  allows:
+    - MarkBar
+    - MarkLine
+    - MarkPoint
+    - MarkArea
+  references:
+    - cmos/research/data-viz-oods/RDS.7_synthesis_Mission Completion Report- Trait-Driven Visualization System Specification (v0.1).md
