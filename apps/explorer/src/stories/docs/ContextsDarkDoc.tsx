@@ -54,7 +54,7 @@ const cellStyle: React.CSSProperties = {
 };
 
 const ContextsDarkDoc: React.FC = () => (
-  <div style={{ display: 'grid', gap: '1.8rem', paddingBottom: '2.5rem' }}>
+  <div className="docs-dark-surface" style={{ display: 'grid', gap: '1.8rem', paddingBottom: '2.5rem' }}>
     <section style={{ display: 'grid', gap: '0.75rem' }}>
       <h1>Dark Theme Context</h1>
       <p>

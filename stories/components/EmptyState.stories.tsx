@@ -4,7 +4,7 @@
  * Covers canonical scenarios for no data, first-use onboarding, and success moments.
  */
 
-import React from 'react';
+import React, { useId } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { EmptyState } from '../../src/components/empty-state/EmptyState.js';
 import type { EmptyStateProps } from '../../src/components/empty-state/EmptyState.js';
@@ -111,47 +111,71 @@ const meta: Meta<EmptyStateProps> = {
 
 export default meta;
 
-const SampleIllustration: React.FC = () => (
-  <svg
-    width="200"
-    height="160"
-    viewBox="0 0 200 160"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    role="presentation"
-  >
-    <rect
-      x="18"
-      y="46"
-      width="164"
-      height="88"
-      rx="12"
-      fill="var(--cmp-surface-subtle, var(--sys-surface-subtle))"
-    />
-    <rect
-      x="38"
-      y="66"
-      width="124"
-      height="10"
-      rx="5"
-      fill="var(--cmp-text-muted, var(--sys-text-muted))"
-    />
-    <rect
-      x="38"
-      y="88"
-      width="92"
-      height="10"
-      rx="5"
-      fill="var(--cmp-status-info-surface, var(--sys-status-info-surface))"
-    />
-    <circle
-      cx="100"
-      cy="114"
-      r="22"
-      fill="var(--cmp-status-info-surface, var(--sys-status-info-surface))"
-    />
-  </svg>
-);
+const SampleIllustration: React.FC = () => {
+  const gradientId = useId();
+  return (
+    <svg
+      width="200"
+      height="160"
+      viewBox="0 0 200 160"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      role="presentation"
+      aria-hidden="true"
+    >
+      <defs>
+        <linearGradient id={gradientId} x1="40" y1="50" x2="160" y2="140">
+          <stop offset="0%" stopColor="var(--cmp-status-info-surface, var(--sys-status-info-surface))" />
+          <stop offset="100%" stopColor="var(--cmp-status-success-surface, var(--sys-status-success-surface))" />
+        </linearGradient>
+      </defs>
+      <rect
+        x="12"
+        y="42"
+        width="176"
+        height="96"
+        rx="18"
+        fill="var(--cmp-surface-panel, var(--sys-surface-raised))"
+        stroke="color-mix(in srgb, var(--cmp-border-default, var(--sys-border-subtle)) 75%, transparent)"
+        strokeWidth="1.5"
+      />
+      <rect
+        x="32"
+        y="66"
+        width="84"
+        height="12"
+        rx="6"
+        fill="var(--cmp-text-muted, var(--sys-text-muted))"
+        opacity="0.8"
+      />
+      <rect
+        x="32"
+        y="88"
+        width="108"
+        height="14"
+        rx="7"
+        fill="var(--cmp-status-info-surface, var(--sys-status-info-surface))"
+        stroke="color-mix(in srgb, var(--cmp-status-info-border, var(--sys-status-info-border)) 90%, transparent)"
+        strokeWidth="1"
+      />
+      <circle
+        cx="140"
+        cy="112"
+        r="26"
+        fill={`url(#${gradientId})`}
+        stroke="color-mix(in srgb, var(--cmp-border-strong, var(--sys-border-strong)) 80%, transparent)"
+        strokeWidth="1.5"
+      />
+      <path
+        d="M132 112l5 6 11-14"
+        stroke="var(--cmp-text-on_action, var(--sys-text-on-interactive))"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+};
 
 const InfoIcon: React.FC = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" role="presentation">

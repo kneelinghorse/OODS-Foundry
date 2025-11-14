@@ -145,6 +145,12 @@ const preview: Preview = {
         date: /Date$/,
       },
     },
+    options: {
+      storySort: {
+        order: ['Intro', 'Docs', 'Foundations', 'Components', 'Contexts', 'Domains', 'Patterns', 'Explorer', 'Brand'],
+      },
+      panelPosition: 'right',
+    },
     chromatic: {
       modes: {
         'brand-a-light': { globals: { theme: 'light', brand: 'brand-a' } },
@@ -166,6 +172,7 @@ const preview: Preview = {
           { value: 'dark', title: 'Dark' },
         ],
         dynamicTitle: true,
+        hidden: true,
       },
     },
     brand: {
@@ -180,6 +187,7 @@ const preview: Preview = {
           { value: 'brand-b', title: 'Brand B' },
         ],
         dynamicTitle: true,
+        hidden: true,
       },
     },
   },

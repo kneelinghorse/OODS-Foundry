@@ -61,24 +61,34 @@ export const Swatch = ({
   details = []
 }: SwatchProps) => {
   const previewColours = useMemo(() => {
-    const fg = isHexColor(foreground ?? '') ? (foreground as string) : undefined;
-    const bg = isHexColor(background ?? '') ? (background as string) : undefined;
+    const normalise = (value?: string) => {
+      if (typeof value !== 'string') {
+        return undefined;
+      }
+      const trimmed = value.trim();
+      return trimmed.length > 0 ? trimmed : undefined;
+    };
+
+    const normalisedForeground = normalise(foreground as string | undefined);
+    const normalisedBackground = normalise(background as string | undefined);
+    const normalisedBorder = normalise(border);
 
     return {
-      foreground: fg ?? FALLBACK_FOREGROUND,
-      background: bg ?? FALLBACK_BACKGROUND,
-      borderColour: isHexColor(border ?? '') ? (border as string) : undefined,
-      canMeasure: Boolean(fg && bg)
+      foreground: normalisedForeground ?? FALLBACK_FOREGROUND,
+      background: normalisedBackground ?? FALLBACK_BACKGROUND,
+      borderColour: normalisedBorder,
+      measurableForeground: normalisedForeground && isHexColor(normalisedForeground) ? normalisedForeground : undefined,
+      measurableBackground: normalisedBackground && isHexColor(normalisedBackground) ? normalisedBackground : undefined
     };
   }, [foreground, background, border]);
 
   const contrast = useMemo(() => {
-    if (!previewColours.canMeasure) {
+    if (!previewColours.measurableForeground || !previewColours.measurableBackground) {
       return { ratio: null, passes: null };
     }
 
     try {
-      const ratio = contrastRatio(previewColours.foreground, previewColours.background);
+      const ratio = contrastRatio(previewColours.measurableForeground, previewColours.measurableBackground);
       const rounded = Number(ratio.toFixed(2));
       const passes = rounded + Number.EPSILON >= threshold;
       return { ratio: rounded, passes };

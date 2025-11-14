@@ -1,4 +1,4 @@
-import { useEffect, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import '../styles/index.css';
 import { StatusChip } from '../components/StatusChip';
 
@@ -100,23 +100,6 @@ function DemoBanner({ tone, title, description, action, icon }: DemoBannerProps)
 }
 
 const DarkModeDemo = () => {
-  useEffect(() => {
-    if (typeof document === 'undefined') {
-      return;
-    }
-    const root = document.documentElement;
-    const previousTheme = root.getAttribute('data-theme');
-    root.setAttribute('data-theme', 'dark');
-
-    return () => {
-      if (previousTheme) {
-        root.setAttribute('data-theme', previousTheme);
-      } else {
-        root.removeAttribute('data-theme');
-      }
-    };
-  }, []);
-
   return (
     <div className="explorer-view context-dark" data-context="dark" data-testid="dark-mode-demo">
       <header className="view-header" data-region="header">

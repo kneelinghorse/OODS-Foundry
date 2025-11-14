@@ -37,6 +37,40 @@
   --cmp-surface-action_pressed: color-mix(in srgb, var(--theme-dark-status-accent-surface, #24315a) 80%, black 20%);
 }
 
+.docs-dark-surface {
+  --cmp-text-body: var(--theme-dark-text-primary, #f6f8ff);
+  --cmp-text-muted: color-mix(in srgb, var(--theme-dark-text-primary, #f6f8ff) 62%, transparent);
+  --cmp-border-default: color-mix(in srgb, var(--theme-dark-text-primary, #f6f8ff) 26%, transparent);
+  --cmp-surface-panel: color-mix(in srgb, var(--theme-dark-surface-canvas, #0f1117) 88%, transparent);
+  --cmp-surface-subtle: color-mix(in srgb, var(--theme-dark-surface-canvas, #0f1117) 94%, transparent);
+  background: color-mix(in srgb, var(--theme-dark-surface-canvas, #0f1117) 92%, transparent);
+  color: var(--cmp-text-body);
+  padding: clamp(1.5rem, 2vw + 1rem, 3rem);
+  border-radius: 1.75rem;
+  border: 1px solid color-mix(in srgb, var(--theme-dark-text-primary, #f6f8ff) 18%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--theme-dark-text-primary, #f6f8ff) 8%, transparent),
+    0 32px 64px -40px color-mix(in srgb, var(--theme-dark-text-primary, #f6f8ff) 35%, transparent);
+}
+
+.docs-dark-surface :where(h1, h2, h3, h4, h5, h6) {
+  color: var(--cmp-text-body);
+}
+
+.docs-dark-surface :where(p, li) {
+  color: color-mix(in srgb, var(--cmp-text-body) 88%, var(--cmp-text-muted));
+}
+
+.docs-dark-surface table {
+  width: 100%;
+}
+
+.docs-dark-surface table td,
+.docs-dark-surface table th {
+  background: color-mix(in srgb, var(--cmp-surface-panel) 92%, transparent);
+  color: inherit;
+}
+
 .view-header {
   display: flex;
   flex-wrap: wrap;

@@ -11,6 +11,7 @@ const workspaceRoot = path.dirname(fileURLToPath(import.meta.url));
 const missionStoriesRoot = path.join(workspaceRoot, 'stories');
 const storiesRoot = path.join(workspaceRoot, 'src', 'stories');
 const explorerStoriesRoot = path.join(workspaceRoot, 'apps', 'explorer', 'src', 'stories');
+const explorerIntroRoot = path.join(workspaceRoot, 'apps', 'explorer', '.storybook');
 const tokensDistDir = path.resolve(workspaceRoot, 'packages', 'tokens', 'dist');
 const tokensTailwindPath = path.resolve(tokensDistDir, 'tailwind', 'tokens.json');
 const tokensCssPath = path.resolve(tokensDistDir, 'css', 'tokens.css');
@@ -40,6 +41,7 @@ let tokensBuilt = false;
 
 const config: StorybookConfig = {
   stories: [
+    `${explorerIntroRoot}/**/*.mdx`,
     `${missionStoriesRoot}/**/*.mdx`,
     `${missionStoriesRoot}/**/*.stories.@(ts|tsx)`,
     `${storiesRoot}/**/*.mdx`,
