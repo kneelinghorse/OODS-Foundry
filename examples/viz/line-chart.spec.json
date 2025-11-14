@@ -1,0 +1,57 @@
+{
+  "$schema": "https://oods.dev/viz-spec/v1",
+  "id": "example:viz:line-chart",
+  "name": "Active Subscribers Over Time",
+  "data": {
+    "values": [
+      { "month": "2025-06", "subscribers": 4200 },
+      { "month": "2025-07", "subscribers": 4600 },
+      { "month": "2025-08", "subscribers": 5100 },
+      { "month": "2025-09", "subscribers": 5450 },
+      { "month": "2025-10", "subscribers": 5800 },
+      { "month": "2025-11", "subscribers": 6100 }
+    ]
+  },
+  "transforms": [
+    {
+      "type": "calculate",
+      "params": {
+        "field": "month",
+        "format": "%Y-%m"
+      }
+    }
+  ],
+  "marks": [
+    {
+      "trait": "MarkLine",
+      "encodings": {
+        "x": { "field": "month", "trait": "EncodingPositionX", "channel": "x", "scale": "temporal", "title": "Month" },
+        "y": { "field": "subscribers", "trait": "EncodingPositionY", "channel": "y", "title": "Active Subscribers", "aggregate": "sum" }
+      },
+      "options": {
+        "curve": "monotone"
+      }
+    }
+  ],
+  "encoding": {
+    "x": { "field": "month", "trait": "EncodingPositionX", "channel": "x", "scale": "temporal", "title": "Month" },
+    "y": { "field": "subscribers", "trait": "EncodingPositionY", "channel": "y", "title": "Active Subscribers", "aggregate": "sum" }
+  },
+  "config": {
+    "theme": "brand-b",
+    "layout": { "width": 560, "height": 300, "padding": 24 }
+  },
+  "a11y": {
+    "description": "Line chart showing subscriber growth from June to November 2025 climbing from 4.2k to 6.1k active users.",
+    "ariaLabel": "Subscriber growth trend line chart",
+    "tableFallback": {
+      "enabled": true,
+      "caption": "Table of monthly subscriber counts"
+    }
+  },
+  "portability": {
+    "fallbackType": "table",
+    "tableColumnOrder": ["month", "subscribers"],
+    "preferredRenderer": "vega-lite"
+  }
+}

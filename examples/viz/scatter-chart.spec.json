@@ -1,0 +1,56 @@
+{
+  "$schema": "https://oods.dev/viz-spec/v1",
+  "id": "example:viz:scatter-chart",
+  "name": "Conversion Rate vs. Response Time",
+  "data": {
+    "values": [
+      { "responseMs": 120, "conversion": 3.2, "segment": "Starter" },
+      { "responseMs": 90, "conversion": 4.1, "segment": "Growth" },
+      { "responseMs": 150, "conversion": 2.4, "segment": "Starter" },
+      { "responseMs": 80, "conversion": 5.0, "segment": "Growth" },
+      { "responseMs": 60, "conversion": 5.6, "segment": "Enterprise" },
+      { "responseMs": 110, "conversion": 3.7, "segment": "Enterprise" }
+    ]
+  },
+  "marks": [
+    {
+      "trait": "MarkPoint",
+      "encodings": {
+        "x": { "field": "responseMs", "trait": "EncodingPositionX", "channel": "x", "title": "Response Time (ms)", "scale": "linear" },
+        "y": { "field": "conversion", "trait": "EncodingPositionY", "channel": "y", "title": "Conversion Rate (%)", "scale": "linear" },
+        "color": { "field": "segment", "trait": "EncodingColor", "channel": "color", "legend": { "title": "Segment" } },
+        "size": { "field": "conversion", "trait": "EncodingSize", "channel": "size", "title": "Conversion" }
+      }
+    }
+  ],
+  "encoding": {
+    "x": { "field": "responseMs", "trait": "EncodingPositionX", "channel": "x", "title": "Response Time (ms)", "scale": "linear" },
+    "y": { "field": "conversion", "trait": "EncodingPositionY", "channel": "y", "title": "Conversion Rate (%)", "scale": "linear" },
+    "color": { "field": "segment", "trait": "EncodingColor", "channel": "color", "legend": { "title": "Segment" } },
+    "size": { "field": "conversion", "trait": "EncodingSize", "channel": "size", "title": "Conversion" }
+  },
+  "config": {
+    "theme": "brand-a",
+    "layout": { "width": 520, "height": 360, "padding": 24 }
+  },
+  "a11y": {
+    "description": "Scatterplot showing that faster response times correlate with higher conversion rates. Enterprise customers hit 5.6% conversion at 60 ms.",
+    "ariaLabel": "Conversion vs response time scatterplot",
+    "narrative": {
+      "summary": "Conversion improves as requests approach sub-100ms latency.",
+      "keyFindings": [
+        "Enterprise customers reach 5.6% conversion at 60ms",
+        "Starter customers stay below 3.5% above 120ms latency"
+      ]
+    },
+    "tableFallback": {
+      "enabled": true,
+      "caption": "Conversion data by latency bucket and customer segment"
+    }
+  },
+  "portability": {
+    "fallbackType": "table",
+    "tableColumnOrder": ["segment", "responseMs", "conversion"],
+    "preferredRenderer": "vega-lite"
+  }
+}
