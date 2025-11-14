@@ -1,5 +1,7 @@
-import type { TopLevelSpec } from 'vega-lite';
-import type { Transform } from 'vega-lite/types_unstable/transform';
+import type {
+  TraitBinding as NormalizedTraitBinding,
+  Transform as NormalizedSpecTransform,
+} from '~/generated/types/viz/normalized-viz-spec';
 import type { NormalizedVizSpec } from '@/viz/spec/normalized-viz-spec.js';
 
 const VEGA_LITE_SCHEMA_URL = 'https://vega.github.io/schema/vega-lite/v6.json';
@@ -13,10 +15,12 @@ const MARK_TRAIT_MAP = {
   MarkArea: 'area',
 } as const;
 
+type AdapterTransform = Record<string, unknown>;
 type NormalizedEncoding = NormalizedVizSpec['encoding'];
 type NormalizedMark = NormalizedVizSpec['marks'][number];
-type NormalizedTransform = NonNullable<NormalizedVizSpec['transforms']>[number];
-type TraitBinding = NonNullable<NormalizedEncoding>[keyof NonNullable<NormalizedEncoding>];
+type NormalizedTransform = NormalizedSpecTransform;
+type ChannelName = (typeof CHANNEL_ORDER)[number];
+type EncodingBinding = NormalizedTraitBinding;
 
 interface ConvertedLayer {
   readonly mark: Record<string, unknown>;
@@ -33,11 +37,33 @@ export interface VegaLiteUserMeta {
   readonly portability?: NormalizedVizSpec['portability'];
 }
 
-export type VegaLiteAdapterSpec = TopLevelSpec & {
+interface BaseAdapterSpec {
+  readonly $schema?: string;
+  readonly title?: string;
+  readonly description: string;
+  readonly data: Record<string, unknown>;
+  readonly transform?: readonly AdapterTransform[];
+  readonly width?: number;
+  readonly height?: number;
+  readonly padding?: number;
+  readonly config?: Record<string, unknown>;
   readonly usermeta?: {
     readonly oods: VegaLiteUserMeta;
   };
-};
+}
+
+export type VegaLiteAdapterSpec =
+  | (BaseAdapterSpec & {
+      readonly mark: Record<string, unknown>;
+      readonly encoding: Record<string, unknown>;
+    })
+  | (BaseAdapterSpec & {
+      readonly layer: readonly {
+        readonly mark: Record<string, unknown>;
+        readonly encoding: Record<string, unknown>;
+        readonly data?: Record<string, unknown>;
+      }[];
+    });
 
 export class VegaLiteAdapterError extends Error {
   constructor(message: string) {
@@ -60,7 +86,7 @@ export function toVegaLiteSpec(spec: NormalizedVizSpec): VegaLiteAdapterSpec {
   const layout = spec.config?.layout ?? {};
   const markConfig = spec.config?.mark ? { mark: spec.config.mark } : undefined;
 
-  const vegaSpec = removeUndefined({
+  const baseSpec = removeUndefined({
     $schema: VEGA_LITE_SCHEMA_URL,
     title: spec.name,
     description: spec.a11y.description,
@@ -71,23 +97,31 @@ export function toVegaLiteSpec(spec: NormalizedVizSpec): VegaLiteAdapterSpec {
     padding: layout.padding,
     config: markConfig,
     usermeta: buildUserMeta(spec),
-  }) as VegaLiteAdapterSpec;
+  });
 
   if (requiresLayer) {
-    vegaSpec.layer = layers.map((layer) =>
-      removeUndefined({
-        mark: layer.mark,
-        encoding: layer.encoding,
-        data: layer.data,
-      })
-    ) as VegaLiteAdapterSpec['layer'];
-    return vegaSpec;
+    const layered = {
+      ...baseSpec,
+      layer: layers.map((layer) =>
+        removeUndefined({
+          mark: layer.mark,
+          encoding: layer.encoding,
+          data: layer.data,
+        })
+      ),
+    };
+
+    return layered as VegaLiteAdapterSpec;
   }
 
   const [layer] = layers;
-  vegaSpec.mark = layer.mark as VegaLiteAdapterSpec['mark'];
-  vegaSpec.encoding = layer.encoding as VegaLiteAdapterSpec['encoding'];
-  return vegaSpec;
+  const single = {
+    ...baseSpec,
+    mark: layer.mark,
+    encoding: layer.encoding,
+  };
+
+  return single as VegaLiteAdapterSpec;
 }
 
 function createLayer(mark: NormalizedMark, baseEncoding?: Record<string, unknown>): ConvertedLayer {
@@ -163,7 +197,7 @@ function mergeEncodings(
   return merged;
 }
 
-function convertBinding(channel: (typeof CHANNEL_ORDER)[number], binding: TraitBinding): Record<string, unknown> {
+function convertBinding(channel: ChannelName, binding: EncodingBinding): Record<string, unknown> {
   const definition: Record<string, unknown> = {
     field: binding.field,
     type: inferFieldType(channel, binding),
@@ -203,10 +237,7 @@ function convertBinding(channel: (typeof CHANNEL_ORDER)[number], binding: TraitB
   return definition;
 }
 
-function inferFieldType(
-  channel: (typeof CHANNEL_ORDER)[number],
-  binding: TraitBinding
-): 'quantitative' | 'temporal' | 'ordinal' | 'nominal' {
+function inferFieldType(channel: ChannelName, binding: EncodingBinding): 'quantitative' | 'temporal' | 'ordinal' | 'nominal' {
   if (binding.timeUnit || binding.scale === 'temporal') {
     return 'temporal';
   }
@@ -250,7 +281,7 @@ function inferFieldType(
   return 'quantitative';
 }
 
-function mapAggregate(value?: TraitBinding['aggregate']): string | undefined {
+function mapAggregate(value?: EncodingBinding['aggregate']): string | undefined {
   if (!value) {
     return undefined;
   }
@@ -262,7 +293,7 @@ function mapAggregate(value?: TraitBinding['aggregate']): string | undefined {
   return value;
 }
 
-function mapScaleType(scale?: TraitBinding['scale']): string | undefined {
+function mapScaleType(scale?: EncodingBinding['scale']): string | undefined {
   if (!scale || scale === 'linear' || scale === 'log' || scale === 'sqrt' || scale === 'band' || scale === 'point') {
     return scale ?? undefined;
   }
@@ -297,19 +328,19 @@ function convertData(spec: NormalizedVizSpec): Record<string, unknown> {
   return data;
 }
 
-function convertTransforms(transforms?: NormalizedVizSpec['transforms']): Transform[] | undefined {
+function convertTransforms(transforms?: NormalizedVizSpec['transforms']): AdapterTransform[] | undefined {
   if (!transforms || transforms.length === 0) {
     return undefined;
   }
 
   const converted = transforms
     .map((transform) => convertTransform(transform))
-    .filter((entry): entry is Transform => entry !== undefined);
+    .filter((entry): entry is AdapterTransform => entry !== undefined);
 
   return converted.length > 0 ? converted : undefined;
 }
 
-function convertTransform(transform: NormalizedTransform): Transform | undefined {
+function convertTransform(transform: NormalizedTransform): AdapterTransform | undefined {
   if (transform.type === 'calculate') {
     const calculated = convertCalculateTransform(transform.params ?? {});
 
@@ -326,16 +357,16 @@ function convertTransform(transform: NormalizedTransform): Transform | undefined
     return undefined;
   }
 
-  return transform.params as Transform;
+  return transform.params as AdapterTransform;
 }
 
-function convertCalculateTransform(params: Record<string, unknown>): Transform | undefined {
+function convertCalculateTransform(params: Record<string, unknown>): AdapterTransform | undefined {
   if (typeof params.calculate === 'string') {
     const as = typeof params.as === 'string' ? params.as : undefined;
     return removeUndefined({
       calculate: params.calculate,
       as,
-    }) as Transform;
+    }) as AdapterTransform;
   }
 
   if (typeof params.expression === 'string') {
@@ -343,7 +374,7 @@ function convertCalculateTransform(params: Record<string, unknown>): Transform |
     return removeUndefined({
       calculate: params.expression,
       as,
-    }) as Transform;
+    }) as AdapterTransform;
   }
 
   if (typeof params.field === 'string' && typeof params.format === 'string') {
@@ -351,7 +382,7 @@ function convertCalculateTransform(params: Record<string, unknown>): Transform |
     return {
       calculate: `timeParse(datum["${params.field}"], "${params.format}")`,
       as,
-    } as Transform;
+    } as AdapterTransform;
   }
 
   return undefined;
@@ -372,7 +403,7 @@ function buildUserMeta(spec: NormalizedVizSpec): VegaLiteAdapterSpec['usermeta']
   };
 }
 
-function removeUndefined<T extends Record<string, unknown>>(input: T): T {
-  const entries = Object.entries(input).filter(([, value]) => value !== undefined);
+function removeUndefined<T extends object>(input: T): T {
+  const entries = Object.entries(input as Record<string, unknown>).filter(([, value]) => value !== undefined);
   return Object.fromEntries(entries) as T;
 }
