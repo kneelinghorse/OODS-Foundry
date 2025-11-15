@@ -1,4 +1,4 @@
-import type { NormalizedVizSpec, TraitBinding } from '../spec/normalized-viz-spec.js';
+import type { NormalizedVizSpec } from '../spec/normalized-viz-spec.js';
 import {
   analyzeVizSpec,
   describeDataPoint,
