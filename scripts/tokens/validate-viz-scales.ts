@@ -26,9 +26,12 @@ const DIVERGING_ORDER = [
   'pos-04',
   'pos-05',
 ] as const;
-const DIVERGING_INDEX = new Map(DIVERGING_ORDER.map((token, index) => [token, index]));
-const NEGATIVE_IDS = ['neg-05', 'neg-04', 'neg-03', 'neg-02', 'neg-01'] as const;
-const POSITIVE_IDS = ['pos-05', 'pos-04', 'pos-03', 'pos-02', 'pos-01'] as const;
+type DivergingId = (typeof DIVERGING_ORDER)[number];
+const DIVERGING_INDEX = new Map<DivergingId, number>(
+  DIVERGING_ORDER.map((token, index) => [token, index]),
+);
+const NEGATIVE_IDS: DivergingId[] = ['neg-05', 'neg-04', 'neg-03', 'neg-02', 'neg-01'];
+const POSITIVE_IDS: DivergingId[] = ['pos-05', 'pos-04', 'pos-03', 'pos-02', 'pos-01'];
 const NEUTRAL_ID = 'neutral';
 const CATEGORICAL_ALIAS_PATTERN = /^\{sys\.status\.[^.]+\.(?:icon|text|border|surface)\}$/;
 
@@ -82,7 +85,7 @@ export function collectVizScaleCollections(tokens: readonly DtcgToken[]): VizSca
     }
 
     const variant = token.path[2];
-    const identifier = token.path[token.path.length - 1];
+    const identifier = token.path[token.path.length - 1] ?? '';
 
     if (variant === 'sequential') {
       const order = Number.parseInt(identifier, 10);
@@ -95,7 +98,7 @@ export function collectVizScaleCollections(tokens: readonly DtcgToken[]): VizSca
         token,
         oklch: parseOklchValue(token),
       });
-    } else if (variant === 'diverging') {
+    } else if (variant === 'diverging' && isDivergingId(identifier)) {
       const order = DIVERGING_INDEX.get(identifier);
       if (typeof order !== 'number') {
         continue;
@@ -123,6 +126,10 @@ export function validateVizScaleCollections(collections: VizScaleCollections): V
   results.push(...validateDivergingScales(collections.diverging));
   results.push(...validateCategoricalScales(collections.categorical));
   return results;
+}
+
+function isDivergingId(value: string): value is DivergingId {
+  return DIVERGING_INDEX.has(value as DivergingId);
 }
 
 function validateSequentialScales(entries: VizScaleColorEntry[]): VizScaleCheck[] {
