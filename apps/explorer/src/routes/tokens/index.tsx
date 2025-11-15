@@ -1,4 +1,4 @@
-import tokensJson from '@oods/tokens/tailwind';
+import tokensBundle, { flatTokens as exportedFlatTokens } from '@oods/tokens';
 import saasBillingStatusMap from '~/tokens/maps/saas-billing.status-map.json';
 import { TokenBrowser, type TokenEntry } from './TokenBrowser';
 import { MappingTable } from './MappingTable';
@@ -13,7 +13,7 @@ type FlatTokenRecord = {
   description?: string;
 };
 
-const flatRecord = tokensJson.flat as Record<string, FlatTokenRecord>;
+const flatRecord = (exportedFlatTokens ?? tokensBundle?.flatTokens ?? {}) as Record<string, FlatTokenRecord>;
 
 const tokenEntries: TokenEntry[] = Object.entries(flatRecord).map(([id, token]) => ({
   id,

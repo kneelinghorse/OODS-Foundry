@@ -6,7 +6,7 @@ const prefix = 'oods';
 
 module.exports = {
   prefix,
-  source: ['src/tokens/**/*.json'],
+  source: ['src/**/*.json'],
   preprocessors: ['tokens-studio'],
   expand: {},
   log: {

@@ -86,6 +86,7 @@ const config: StorybookConfig = {
       alias: {
         ...(baseConfig.resolve?.alias ?? {}),
         '~': workspaceRoot,
+        '@': path.join(workspaceRoot, 'src'),
         '@storybook/blocks': '@storybook/addon-docs/blocks',
         '@oods/tokens/css': tokensCssPath,
         '@oods/tokens/tailwind': tokensTailwindPath,

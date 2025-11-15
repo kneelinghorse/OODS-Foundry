@@ -22,7 +22,7 @@
   "scripts": {
     "build": "rimraf dist && node ./scripts/build.mjs && node ./scripts/build-entry.mjs",
     "clean": "rimraf dist",
-    "lint": "node ../../tools/token-lint/index.mjs ./src/tokens",
+    "lint": "node ../../tools/token-lint/index.mjs ./src",
     "prepack": "pnpm run build"
   },
   "exports": {

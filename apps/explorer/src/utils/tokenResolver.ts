@@ -1,4 +1,7 @@
-import tokensJson from '@oods/tokens/tailwind';
+import tokensBundle, {
+  flatTokens as exportedFlatTokens,
+  prefix as exportedPrefix,
+} from '@oods/tokens';
 
 type FlatTokenRecord = {
   value?: unknown;
@@ -24,12 +27,16 @@ export type TokenResolution = {
   source?: TokenResolutionSource;
 };
 
-const flatRecord = (tokensJson as { flat?: Record<string, FlatTokenRecord> }).flat ?? {};
+const flatRecord =
+  (exportedFlatTokens as Record<string, FlatTokenRecord> | undefined) ??
+  (tokensBundle?.flatTokens as Record<string, FlatTokenRecord> | undefined) ??
+  {};
 const prefix =
-  typeof (tokensJson as { prefix?: unknown }).prefix === 'string' &&
-  (tokensJson as { prefix: string }).prefix.length > 0
-    ? (tokensJson as { prefix: string }).prefix
-    : 'oods';
+  typeof exportedPrefix === 'string' && exportedPrefix.length > 0
+    ? exportedPrefix
+    : typeof tokensBundle?.prefix === 'string' && tokensBundle.prefix.length > 0
+      ? tokensBundle.prefix
+      : 'oods';
 const prefixlessNamespaces = new Set(['ref', 'theme', 'sys', 'cmp']);
 
 const valueByFlat = new Map<string, TokenMeta>();

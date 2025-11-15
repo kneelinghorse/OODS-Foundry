@@ -25,14 +25,24 @@ const IGNORED_DIRECTORIES = new Set(['maps']);
 const MAX_DEPTH = 32;
 const REFERENCE_PATTERN = /^\{([^}]+)\}$/;
 
-export async function loadDtcgTokens(rootDir: string, options: LoadOptions = {}): Promise<DtcgToken[]> {
+export async function loadDtcgTokens(rootPath: string, options: LoadOptions = {}): Promise<DtcgToken[]> {
   const extensions = options.extensions ?? DEFAULT_EXTENSIONS;
-  const stats = await fs.stat(rootDir);
-  if (!stats.isDirectory()) {
-    throw new Error(`DTCG root must be a directory: ${rootDir}`);
+  const stats = await fs.stat(rootPath);
+  let searchRoot = rootPath;
+  let files: string[] = [];
+
+  if (stats.isDirectory()) {
+    files = await collectFiles(rootPath, extensions);
+  } else if (stats.isFile()) {
+    if (!extensions.includes(path.extname(rootPath))) {
+      throw new Error(`Unsupported token file extension for ${rootPath}`);
+    }
+    files = [rootPath];
+    searchRoot = path.dirname(rootPath);
+  } else {
+    throw new Error(`DTCG root must be a directory or JSON file: ${rootPath}`);
   }
 
-  const files = await collectFiles(rootDir, extensions);
   const tokens: DtcgToken[] = [];
 
   for (const filePath of files) {
@@ -43,11 +53,11 @@ export async function loadDtcgTokens(rootDir: string, options: LoadOptions = {})
       parsed = JSON.parse(content);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      throw new Error(`Invalid JSON in ${relativePath(rootDir, filePath)}: ${message}`);
+      throw new Error(`Invalid JSON in ${relativePath(searchRoot, filePath)}: ${message}`);
     }
 
     if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
-      throw new Error(`Expected JSON object in ${relativePath(rootDir, filePath)}`);
+      throw new Error(`Expected JSON object in ${relativePath(searchRoot, filePath)}`);
     }
 
     const state: CollectState = {
@@ -59,7 +69,7 @@ export async function loadDtcgTokens(rootDir: string, options: LoadOptions = {})
   }
 
   if (tokens.length === 0) {
-    throw new Error(`No design tokens found under ${rootDir}`);
+    throw new Error(`No design tokens found under ${rootPath}`);
   }
 
   return tokens;
