@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import '~/apps/explorer/src/styles/index.css';
+import tokensBundle, { prefix as exportedPrefix } from '@oods/tokens';
 import { getVizScaleTokens, getVizSizeTokens, getVizMarginToken } from '@/viz/tokens/scale-token-mapper.js';
 
 const sequentialTokens = getVizScaleTokens('sequential');
@@ -14,6 +15,16 @@ const marginTokens = [
   { label: 'Default', token: getVizMarginToken('default') },
   { label: 'Roomy', token: getVizMarginToken('roomy') },
 ];
+
+const tokenPrefix =
+  (typeof exportedPrefix === 'string' && exportedPrefix.length > 0 && exportedPrefix) ||
+  (typeof tokensBundle?.prefix === 'string' && tokensBundle.prefix.length > 0 && tokensBundle.prefix) ||
+  'oods';
+
+const resolveCssVariable = (token: string): string => {
+  const trimmed = token.startsWith('--') ? token.slice(2) : token;
+  return `--${tokenPrefix}-${trimmed}`;
+};
 
 const tableStyle: React.CSSProperties = {
   width: '100%',
@@ -37,6 +48,23 @@ const cellStyle: React.CSSProperties = {
   fontSize: '0.9rem',
 };
 
+const sectionShellStyle: React.CSSProperties = {
+  border: '1px solid color-mix(in srgb, var(--cmp-border-default, #CBD5F5) 45%, transparent)',
+  borderRadius: '1rem',
+  background: 'var(--cmp-surface-panel, #fff)',
+  padding: '1.25rem 1.5rem',
+  boxShadow: '0 18px 32px -24px rgba(15, 23, 42, 0.12)',
+  marginBottom: '1.5rem',
+};
+
+const docWrapperStyle: React.CSSProperties = {
+  width: 'min(960px, 100%)',
+  margin: '0 auto',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '1.5rem',
+};
+
 interface TokenTableProps<T> {
   readonly tokens: readonly T[];
   readonly title: string;
@@ -45,7 +73,7 @@ interface TokenTableProps<T> {
 
 function TokenTable<T>({ tokens, title, renderPreview }: TokenTableProps<T>): JSX.Element {
   return (
-    <section>
+    <section style={sectionShellStyle}>
       <h3 style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>{title}</h3>
       <table style={tableStyle}>
         <thead>
@@ -81,7 +109,7 @@ const ColorSwatch = ({ token }: { token: string }): JSX.Element => (
       borderRadius: '0.75rem',
       border: '1px solid color-mix(in srgb, var(--cmp-border-default, #CBD5F5) 45%, transparent)',
       boxShadow: '0 1px 2px rgba(15, 23, 42, 0.08)',
-      background: `var(${token})`,
+      background: `var(${resolveCssVariable(token)})`,
     }}
     aria-label={token}
   />
@@ -91,8 +119,8 @@ const CircleSwatch = ({ token }: { token: string }): JSX.Element => (
   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
     <div
       style={{
-        width: `var(${token})`,
-        height: `var(${token})`,
+        width: `var(${resolveCssVariable(token)})`,
+        height: `var(${resolveCssVariable(token)})`,
         borderRadius: '999px',
         background: 'var(--viz-scale-sequential-05, #6F7FF7)',
         border: '1px solid color-mix(in srgb, var(--cmp-border-default, #CBD5F5) 65%, transparent)',
@@ -107,7 +135,7 @@ const StrokeSwatch = ({ token }: { token: string }): JSX.Element => (
     <div
       style={{
         width: '100%',
-        borderBottomWidth: `var(${token})`,
+        borderBottomWidth: `var(${resolveCssVariable(token)})`,
         borderBottomStyle: 'solid',
         borderBottomColor: 'var(--sys-text-primary, #0F172A)',
       }}
@@ -118,7 +146,7 @@ const StrokeSwatch = ({ token }: { token: string }): JSX.Element => (
 const BarPreview = ({ token }: { token: string }): JSX.Element => (
   <div
     style={{
-      width: `var(${token})`,
+      width: `var(${resolveCssVariable(token)})`,
       height: '1.75rem',
       background: 'var(--viz-scale-sequential-04, #7C8DFF)',
       borderRadius: '0.25rem',
@@ -132,7 +160,7 @@ const MarginPreview = ({ label, token }: { label: string; token: string }): JSX.
       width: '100%',
       border: '1px dashed color-mix(in srgb, var(--cmp-border-default, #CBD5F5) 55%, transparent)',
       borderRadius: '0.75rem',
-      padding: `var(${token})`,
+      padding: `var(${resolveCssVariable(token)})`,
       background: 'color-mix(in srgb, var(--cmp-surface-panel, #FFFFFF) 60%, transparent)',
     }}
   >
@@ -145,7 +173,7 @@ const MarginPreview = ({ label, token }: { label: string; token: string }): JSX.
 
 function VizTokensDoc(): JSX.Element {
   return (
-    <div className="storybook-docs">
+    <div className="storybook-docs" style={docWrapperStyle}>
       <h1>Viz Tokens</h1>
       <p>
         Tokenization for Sprint 21 visualizations combines governed OKLCH ramps with existing system aliases so chart traits
