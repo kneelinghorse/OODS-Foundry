@@ -107,7 +107,7 @@ export interface EChartsOption {
   readonly tooltip?: Record<string, unknown>;
   readonly grid?: EChartsGrid;
   readonly aria?: Record<string, unknown>;
-  readonly title?: Record<string, unknown>;
+  readonly title?: Record<string, unknown> | readonly Record<string, unknown>[];
   readonly usermeta?: {
     readonly oods: EChartsUserMeta;
   };

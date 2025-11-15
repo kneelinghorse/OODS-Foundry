@@ -322,7 +322,7 @@ function buildEChartsOption(
 }
 
 function applySeriesStack(option: EChartsOption, stackMeta: StackTransformMetadata): EChartsOption {
-  const seriesArray = Array.isArray(option.series) ? option.series : [option.series];
+  const seriesArray = option.series;
   const stackName = stackMeta.groupby.length > 0 ? stackMeta.groupby.join(':') : 'stack';
 
   const patchedSeries = seriesArray.map((entry) => {
@@ -337,7 +337,7 @@ function applySeriesStack(option: EChartsOption, stackMeta: StackTransformMetada
 
   return {
     ...option,
-    series: Array.isArray(option.series) ? patchedSeries : patchedSeries[0],
+    series: patchedSeries,
   };
 }
 
@@ -425,31 +425,39 @@ function applyStackEncoding(
   spec: VegaLiteAdapterSpec,
   metadata: StackTransformMetadata & { readonly valueField: string }
 ): VegaLiteAdapterSpec {
-  const clone = cloneSpec(spec);
-  if ('layer' in clone && Array.isArray(clone.layer)) {
-    clone.layer = clone.layer.map((layer) => ({
-      ...layer,
-      encoding: patchEncoding(layer.encoding, metadata),
-    }));
-    return clone;
+  if ('layer' in spec && Array.isArray(spec.layer)) {
+    return {
+      ...spec,
+      layer: spec.layer.map((layer) => ({
+        ...layer,
+        encoding: patchEncoding(layer.encoding, metadata),
+      })),
+    };
   }
-  return {
-    ...clone,
-    encoding: patchEncoding(clone.encoding, metadata),
-  };
+
+  if ('encoding' in spec) {
+    return {
+      ...spec,
+      encoding: patchEncoding(spec.encoding, metadata),
+    };
+  }
+
+  return spec;
 }
 
 function patchEncoding(
-  encoding: Record<string, unknown> | undefined,
+  encoding: Record<string, unknown>,
   metadata: StackTransformMetadata & { readonly valueField: string }
-): Record<string, unknown> | undefined {
-  if (!encoding) {
+): Record<string, unknown> {
+  const y = getEncodingRecord(encoding.y);
+  const field = typeof y?.field === 'string' ? y.field : undefined;
+
+  if (!y || field !== metadata.valueField) {
     return encoding;
   }
-  const y = encoding.y as Record<string, unknown> | undefined;
-  if (!y || y.field !== metadata.valueField) {
-    return encoding;
-  }
+
+  const y2 = getEncodingRecord(encoding.y2);
+
   return {
     ...encoding,
     y: {
@@ -458,7 +466,7 @@ function patchEncoding(
       stack: null,
     },
     y2: {
-      ...(encoding.y2 as Record<string, unknown> | undefined),
+      ...(y2 ?? {}),
       field: metadata.fields[0],
     },
   };
@@ -522,10 +530,9 @@ function createEChartsRuntime(instance: EChartsType): EChartsRuntime {
   };
 }
 
-function cloneSpec<T>(input: T): T {
-  const { structuredClone } = globalThis as { structuredClone?: <U>(value: U) => U };
-  if (typeof structuredClone === 'function') {
-    return structuredClone(input);
+function getEncodingRecord(value: unknown): Record<string, unknown> | undefined {
+  if (value && typeof value === 'object') {
+    return value as Record<string, unknown>;
   }
-  return JSON.parse(JSON.stringify(input)) as T;
+  return undefined;
 }

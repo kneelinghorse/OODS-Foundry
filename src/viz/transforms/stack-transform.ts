@@ -1,5 +1,8 @@
 import type { NormalizedVizSpec } from '@/viz/spec/normalized-viz-spec.js';
 
+type NormalizedTransformEntry = NonNullable<NormalizedVizSpec['transforms']>[number];
+type RawStackParams = NormalizedTransformEntry['params'];
+
 export type StackOffsetMode = 'zero' | 'normalize';
 
 export interface StackSortField {
@@ -90,7 +93,8 @@ export function stackTransform(
 }
 
 export function applyStackTransformsToSpec(spec: NormalizedVizSpec): AppliedStackTransform {
-  const candidates = (spec.transforms ?? []).filter(isStackTransformCandidate);
+  const transforms: NormalizedTransformEntry[] = Array.isArray(spec.transforms) ? spec.transforms : [];
+  const candidates = transforms.filter(isStackTransformCandidate);
   if (candidates.length === 0) {
     return { spec };
   }
@@ -100,7 +104,7 @@ export function applyStackTransformsToSpec(spec: NormalizedVizSpec): AppliedStac
   }
 
   const clone = cloneSpec(spec);
-  const remainingTransforms = (clone.transforms ?? []).filter((transform) => !isStackTransformCandidate(transform));
+  const remainingTransforms = transforms.filter((transform) => !isStackTransformCandidate(transform));
   let values: Record<string, unknown>[] = Array.isArray(clone.data.values) ? [...clone.data.values] : [];
   let metadata: (StackTransformMetadata & { readonly valueField: string }) | undefined;
 
@@ -292,13 +296,62 @@ function cloneSpec<T>(input: T): T {
   return JSON.parse(JSON.stringify(input)) as T;
 }
 
-function isStackTransformCandidate(transform: NormalizedVizSpec['transforms'][number]): transform is { type: 'stack'; params?: StackTransformConfig } {
+function isStackTransformCandidate(transform: NormalizedTransformEntry): transform is NormalizedTransformEntry & {
+  type: 'stack';
+  params?: RawStackParams;
+} {
   return Boolean(transform) && transform.type === 'stack';
 }
 
-function normalizeStackParams(params?: StackTransformConfig): StackTransformConfig | undefined {
-  if (!params || typeof params.stack !== 'string' || params.stack.trim() === '') {
+function normalizeStackParams(params?: RawStackParams): StackTransformConfig | undefined {
+  if (!params || typeof params !== 'object') {
     return undefined;
   }
-  return params;
+
+  const record = params as Record<string, unknown>;
+  const stackField = typeof record.stack === 'string' ? record.stack.trim() : '';
+
+  if (!stackField) {
+    return undefined;
+  }
+
+  const groupby = Array.isArray(record.groupby)
+    ? record.groupby.filter((value): value is string => typeof value === 'string' && value.trim() !== '')
+    : undefined;
+
+  const sort = Array.isArray(record.sort)
+    ? record.sort
+        .map((entry): StackSortField | undefined => {
+          if (!entry || typeof entry !== 'object') {
+            return undefined;
+          }
+          const sortRecord = entry as Record<string, unknown>;
+          const field = typeof sortRecord.field === 'string' ? sortRecord.field : undefined;
+          if (!field) {
+            return undefined;
+          }
+          const normalizedOrder: StackSortField['order'] =
+            sortRecord.order === 'descending' ? 'descending' : 'ascending';
+          return { field, order: normalizedOrder };
+        })
+        .filter((entry): entry is StackSortField => entry !== undefined)
+    : undefined;
+
+  const offset = record.offset === 'normalize' ? 'normalize' : 'zero';
+
+  const asFields =
+    Array.isArray(record.as) &&
+    record.as.length === 2 &&
+    typeof record.as[0] === 'string' &&
+    typeof record.as[1] === 'string'
+      ? [record.as[0], record.as[1]] as [string, string]
+      : undefined;
+
+  return {
+    stack: stackField,
+    groupby,
+    sort,
+    offset,
+    as: asFields,
+  };
 }
