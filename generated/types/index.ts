@@ -8,6 +8,8 @@ export * from './traits/encoding-color.parameters';
 export * from './traits/encoding-position-x.parameters';
 export * from './traits/encoding-position-y.parameters';
 export * from './traits/encoding-size.parameters';
+export * from './traits/interaction-highlight.parameters';
+export * from './traits/interaction-tooltip.parameters';
 export * from './traits/labelled.parameters';
 export * from './traits/mark-area.parameters';
 export * from './traits/mark-bar.parameters';

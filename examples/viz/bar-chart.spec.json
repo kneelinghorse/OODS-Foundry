@@ -25,6 +25,26 @@
     "y": { "field": "mrr", "trait": "EncodingPositionY", "channel": "y", "aggregate": "sum", "title": "MRR (USD)", "scale": "linear" },
     "color": { "field": "region", "trait": "EncodingColor", "channel": "color", "legend": { "title": "Region" } }
   },
+  "interactions": [
+    {
+      "id": "region-highlight",
+      "select": { "type": "point", "on": "hover", "fields": ["region"] },
+      "rule": {
+        "bindTo": "visual",
+        "property": "fillOpacity",
+        "condition": { "value": 1 },
+        "else": { "value": 0.35 }
+      }
+    },
+    {
+      "id": "region-tooltip",
+      "select": { "type": "point", "on": "hover", "fields": ["region", "mrr"] },
+      "rule": {
+        "bindTo": "tooltip",
+        "fields": ["region", "mrr"]
+      }
+    }
+  ],
   "config": {
     "theme": "brand-a",
     "layout": { "width": 480, "height": 320, "padding": 16 }

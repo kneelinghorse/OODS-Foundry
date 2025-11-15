@@ -1,5 +1,8 @@
+import { useMemo } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import type { NormalizedVizSpec } from '~/src/viz/spec/normalized-viz-spec';
+import { useHighlight } from '~/src/viz/hooks/useHighlight';
+import { useTooltip } from '~/src/viz/hooks/useTooltip';
 import { BarChart } from '~/src/components/viz/BarChart';
 
 const meta: Meta<typeof BarChart> = {
@@ -62,6 +65,11 @@ const simpleSpec: NormalizedVizSpec = {
     tableColumnOrder: ['region', 'mrr'],
     preferredRenderer: 'vega-lite',
   },
+};
+
+const interactiveBaseSpec: NormalizedVizSpec = {
+  ...simpleSpec,
+  id: 'stories:viz:bar:interactive',
 };
 
 const groupedSpec: NormalizedVizSpec = {
@@ -410,3 +418,19 @@ export const Sorted: Story = {
   name: 'Sorted Horizontal',
   render: () => <BarChart spec={sortedSpec} />,
 };
+
+export const Interactive: Story = {
+  name: 'Interactive (Hooks)',
+  render: () => <InteractiveBarChartStory />,
+};
+
+function InteractiveBarChartStory(): JSX.Element {
+  const highlight = useHighlight({ fields: ['region'] });
+  const tooltip = useTooltip({ fields: ['region', 'mrr'] });
+  const spec = useMemo<NormalizedVizSpec>(() => ({
+    ...interactiveBaseSpec,
+    interactions: [highlight, tooltip],
+  }), [highlight, tooltip]);
+
+  return <BarChart spec={spec} />;
+}

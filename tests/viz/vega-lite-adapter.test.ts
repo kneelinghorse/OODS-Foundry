@@ -31,10 +31,19 @@ describe('Vega-Lite adapter', () => {
       type: 'quantitative',
       aggregate: 'sum',
     });
+    expect(result.encoding?.fillOpacity).toMatchObject({
+      condition: { param: 'region-highlight', value: 1 },
+      value: 0.35,
+    });
+    expect(result.encoding?.tooltip).toEqual([{ field: 'region' }, { field: 'mrr' }]);
     expect(result.width).toBe(480);
     expect(result.height).toBe(320);
     expect(result.description).toBe(spec.a11y.description);
     expect(result.usermeta?.oods?.theme).toBe('brand-a');
+    expect(result.params?.[0]).toMatchObject({
+      name: 'region-highlight',
+      select: { type: 'point', on: 'hover' },
+    });
   });
 
   it('generates calculate transforms for field-format instructions', () => {

@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oods.systems/schemas/traits/interaction-highlight",
+  "title": "InteractionHighlight Trait Parameters",
+  "type": "object",
+  "properties": {
+    "fields": {
+      "type": "array",
+      "description": "Data fields that define the highlight predicate.",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "trigger": {
+      "type": "string",
+      "description": "Event stream that activates the highlight.",
+      "enum": ["hover", "click", "focus"],
+      "default": "hover"
+    },
+    "property": {
+      "type": "string",
+      "description": "Visual property to adjust when the predicate is active.",
+      "default": "fillOpacity"
+    },
+    "activeValue": {
+      "type": "number",
+      "description": "Value applied to highlighted marks.",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 1
+    },
+    "inactiveValue": {
+      "type": "number",
+      "description": "Value applied to non-highlighted marks.",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0.35
+    }
+  },
+  "required": ["fields"],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "fields": ["region"],
+      "trigger": "hover",
+      "property": "fillOpacity",
+      "activeValue": 1,
+      "inactiveValue": 0.35
+    }
+  ]
+}

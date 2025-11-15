@@ -25,6 +25,7 @@ type NormalizedMark = NormalizedVizSpec['marks'][number];
 type NormalizedTransform = NormalizedSpecTransform;
 type EncodingBinding = NormalizedTraitBinding;
 type LayoutConfig = NonNullable<NormalizedVizSpec['config']> extends { layout?: infer L } ? L : undefined;
+type NormalizedInteraction = NonNullable<NormalizedVizSpec['interactions']>[number];
 
 export interface EChartsDatasetTransform {
   readonly type: string;
@@ -93,6 +94,7 @@ export interface EChartsUserMeta {
   readonly layout?: LayoutConfig;
   readonly portability?: NormalizedVizSpec['portability'];
   readonly a11y: NormalizedVizSpec['a11y'];
+  readonly interactions?: NormalizedVizSpec['interactions'];
 }
 
 export interface EChartsOption {
@@ -131,6 +133,7 @@ export function toEChartsOption(spec: NormalizedVizSpec): EChartsOption {
   const xAxis = createAxis('x', axisEncoding.x);
   const yAxis = createAxis('y', axisEncoding.y);
   const legend = baseEncoding.color ? { show: true } : undefined;
+  const tooltip = buildTooltip(spec);
 
   return removeUndefined({
     dataset: [dataset],
@@ -138,7 +141,7 @@ export function toEChartsOption(spec: NormalizedVizSpec): EChartsOption {
     xAxis: xAxis ?? defaultAxis('x'),
     yAxis: yAxis ?? defaultAxis('y'),
     legend,
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+    tooltip,
     grid: convertGrid(spec.config?.layout),
     aria: buildAria(spec),
     title: buildTitle(spec),
@@ -450,6 +453,67 @@ function buildTitle(spec: NormalizedVizSpec): Record<string, unknown> | undefine
   });
 }
 
+function buildTooltip(spec: NormalizedVizSpec): Record<string, unknown> {
+  const interaction = findTooltipInteraction(spec.interactions);
+
+  if (!interaction || interaction.rule.bindTo !== 'tooltip') {
+    return { trigger: 'axis', axisPointer: { type: 'shadow' } };
+  }
+
+  return removeUndefined({
+    trigger: 'item',
+    appendToBody: true,
+    className: 'oods-viz-tooltip',
+    formatter: createTooltipFormatter(interaction.rule.fields),
+  });
+}
+
+function findTooltipInteraction(interactions?: NormalizedVizSpec['interactions']): NormalizedInteraction | undefined {
+  if (!interactions) {
+    return undefined;
+  }
+
+  return interactions.find((interaction) => interaction.rule.bindTo === 'tooltip');
+}
+
+function createTooltipFormatter(fields: readonly string[]): (params: unknown) => string {
+  return (params: unknown) => {
+    const datum = extractDatum(params);
+
+    if (!datum) {
+      return '';
+    }
+
+    const rows = fields
+      .map((field) => {
+        const value = datum[field as keyof typeof datum];
+        return `<div class="oods-viz-tooltip__row"><span class="oods-viz-tooltip__label">${field}</span><span class="oods-viz-tooltip__value">${value ?? '—'}</span></div>`;
+      })
+      .join('');
+
+    return `<div class="oods-viz-tooltip__content">${rows}</div>`;
+  };
+}
+
+function extractDatum(params: unknown): Record<string, unknown> | undefined {
+  if (Array.isArray(params)) {
+    const [first] = params;
+    if (first && typeof first === 'object' && first !== null && typeof (first as { data?: unknown }).data === 'object') {
+      return (first as { data: Record<string, unknown> }).data;
+    }
+    return undefined;
+  }
+
+  if (params && typeof params === 'object') {
+    const record = params as { data?: unknown };
+    if (record.data && typeof record.data === 'object') {
+      return record.data as Record<string, unknown>;
+    }
+  }
+
+  return undefined;
+}
+
 function buildUserMeta(spec: NormalizedVizSpec): EChartsOption['usermeta'] {
   const meta: EChartsUserMeta = {
     specId: spec.id,
@@ -459,6 +523,7 @@ function buildUserMeta(spec: NormalizedVizSpec): EChartsOption['usermeta'] {
     layout: spec.config?.layout,
     a11y: spec.a11y,
     portability: spec.portability,
+    interactions: spec.interactions,
   };
 
   return { oods: removeUndefined(meta) };

@@ -52,4 +52,28 @@ describe('Normalized Viz Spec validation', () => {
       path: '/a11y/description',
     });
   });
+
+  it('validates interaction definitions', () => {
+    const spec = loadSpec('bar-chart');
+    const invalid = {
+      ...spec,
+      interactions: [
+        {
+          ...spec.interactions?.[0],
+          select: {
+            type: 'point',
+            on: 'hover',
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- intentionally invalid for validation test
+            fields: [] as unknown,
+          },
+        },
+      ],
+    } as unknown as NormalizedVizSpec;
+
+    expect(() => assertNormalizedVizSpec(invalid)).toThrow(NormalizedVizSpecError);
+
+    const result = validateNormalizedVizSpec(invalid);
+    expect(result.valid).toBe(false);
+    expect(result.errors[0]?.path).toBe('/interactions/0/select/fields');
+  });
 });

@@ -1,0 +1,82 @@
+import type { NormalizedVizSpec } from '@/viz/spec/normalized-viz-spec.js';
+
+export interface EChartsEventParams {
+  readonly seriesIndex?: number;
+  readonly dataIndex?: number;
+}
+
+export interface EChartsDispatchAction {
+  readonly type: string;
+  readonly seriesIndex?: number;
+  readonly dataIndex?: number;
+  readonly [key: string]: unknown;
+}
+
+export interface EChartsRuntime {
+  on(event: string, handler: (params: EChartsEventParams) => void): void;
+  off?(event: string, handler: (params: EChartsEventParams) => void): void;
+  dispatchAction(action: EChartsDispatchAction): void;
+}
+
+export type InteractionCleanup = () => void;
+
+export function bindEChartsInteractions(instance: EChartsRuntime, spec: NormalizedVizSpec): InteractionCleanup {
+  const interactions = spec.interactions ?? [];
+  const handlers: Array<{ event: string; handler: (params: EChartsEventParams) => void }> = [];
+
+  for (const interaction of interactions) {
+    if (interaction.rule.bindTo !== 'visual' || interaction.select.type !== 'point') {
+      continue;
+    }
+
+    const eventName = mapEventName(interaction.select.on);
+    const highlightHandler = createHighlightHandler(instance);
+    instance.on(eventName, highlightHandler);
+    handlers.push({ event: eventName, handler: highlightHandler });
+
+    const clearHandler = () => instance.dispatchAction({ type: 'downplay' });
+    instance.on('globalout', clearHandler);
+    handlers.push({ event: 'globalout', handler: clearHandler });
+  }
+
+  return () => {
+    if (typeof instance.off !== 'function') {
+      return;
+    }
+
+    for (const binding of handlers) {
+      instance.off(binding.event, binding.handler);
+    }
+  };
+}
+
+function createHighlightHandler(instance: EChartsRuntime) {
+  return (params: EChartsEventParams): void => {
+    if (!isValidDataPoint(params)) {
+      return;
+    }
+
+    instance.dispatchAction({ type: 'downplay' });
+    instance.dispatchAction({
+      type: 'highlight',
+      seriesIndex: params.seriesIndex,
+      dataIndex: params.dataIndex,
+    });
+  };
+}
+
+function isValidDataPoint(params: EChartsEventParams): params is Required<EChartsEventParams> {
+  return typeof params.seriesIndex === 'number' && typeof params.dataIndex === 'number';
+}
+
+function mapEventName(event: string): string {
+  if (event === 'hover') {
+    return 'mouseover';
+  }
+
+  if (event === 'focus') {
+    return 'focus';
+  }
+
+  return event;
+}
