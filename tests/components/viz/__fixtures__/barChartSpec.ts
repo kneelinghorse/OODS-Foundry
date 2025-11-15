@@ -1,4 +1,5 @@
 import type { NormalizedVizSpec } from '../../../src/viz/spec/normalized-viz-spec.js';
+import { mergeSpec } from './mergeSpec.js';
 
 const BASE_SPEC: NormalizedVizSpec = {
   $schema: 'https://oods.dev/viz-spec/v1',
@@ -65,34 +66,5 @@ const BASE_SPEC: NormalizedVizSpec = {
 };
 
 export function createBarChartSpec(overrides: Partial<NormalizedVizSpec> = {}): NormalizedVizSpec {
-  return deepMerge(BASE_SPEC, overrides);
-}
-
-function deepMerge(base: NormalizedVizSpec, overrides: Partial<NormalizedVizSpec>): NormalizedVizSpec {
-  const merged = structuredClone(base);
-
-  for (const [key, value] of Object.entries(overrides) as [keyof NormalizedVizSpec, unknown][]) {
-    if (value && typeof value === 'object' && !Array.isArray(value)) {
-      // @ts-expect-error -- safe recursive merge for spec objects
-      merged[key] = deepMergeValue(merged[key] as Record<string, unknown>, value as Record<string, unknown>);
-      continue;
-    }
-    // @ts-expect-error -- assignment is safe for normalized spec overrides
-    merged[key] = value as never;
-  }
-
-  return merged;
-}
-
-function deepMergeValue<T extends Record<string, unknown>>(target: T | undefined, value: Record<string, unknown>): T {
-  const next: Record<string, unknown> = { ...(target ? structuredClone(target) : {}) };
-  for (const [innerKey, innerValue] of Object.entries(value)) {
-    if (innerValue && typeof innerValue === 'object' && !Array.isArray(innerValue)) {
-      next[innerKey] = deepMergeValue(next[innerKey] as Record<string, unknown>, innerValue as Record<string, unknown>);
-    } else {
-      next[innerKey] = innerValue;
-    }
-  }
-
-  return next as T;
+  return mergeSpec(BASE_SPEC, overrides);
 }

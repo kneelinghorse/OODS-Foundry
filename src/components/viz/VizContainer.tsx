@@ -52,10 +52,10 @@ export function VizContainer({
       </header>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-600 dark:bg-slate-900" aria-hidden="true">
+        <div className="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-600 dark:bg-slate-900" aria-hidden="true">
           {chart}
         </div>
-        <div className="flex flex-col gap-4">
+        <div className="flex min-w-0 flex-col gap-4">
           {description ? (
             <div id={descriptionId} className="space-y-3">
               {description}
