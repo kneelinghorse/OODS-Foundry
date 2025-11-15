@@ -14,7 +14,15 @@ const complianceCoverageInclude = [
 ];
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
+const srcDir = path.join(dirname, 'src');
+
 export default defineConfig({
+  resolve: {
+    alias: {
+      '@': srcDir,
+      '~': dirname
+    }
+  },
   test: {
     globals: true,
     environment: 'node',

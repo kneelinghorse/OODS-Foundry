@@ -1,0 +1,63 @@
+{
+  "$schema": "https://oods.dev/viz-spec/v1",
+  "id": "pattern:viz:stacked-100-bar",
+  "name": "Acquisition Channel Mix",
+  "data": {
+    "values": [
+      { "region": "Americas", "channel": "Direct", "share": 0.52 },
+      { "region": "Americas", "channel": "Partners", "share": 0.28 },
+      { "region": "Americas", "channel": "Self-Serve", "share": 0.20 },
+      { "region": "EMEA", "channel": "Direct", "share": 0.41 },
+      { "region": "EMEA", "channel": "Partners", "share": 0.33 },
+      { "region": "EMEA", "channel": "Self-Serve", "share": 0.26 },
+      { "region": "APAC", "channel": "Direct", "share": 0.37 },
+      { "region": "APAC", "channel": "Partners", "share": 0.42 },
+      { "region": "APAC", "channel": "Self-Serve", "share": 0.21 }
+    ]
+  },
+  "marks": [
+    {
+      "trait": "MarkBar",
+      "encodings": {
+        "x": { "field": "region", "trait": "EncodingPositionX", "channel": "x", "title": "Region" },
+        "y": {
+          "field": "share",
+          "trait": "EncodingPositionY",
+          "channel": "y",
+          "scale": "linear",
+          "title": "Share of pipeline"
+        },
+        "color": { "field": "channel", "trait": "EncodingColor", "channel": "color", "legend": { "title": "Channel" } }
+      }
+    }
+  ],
+  "encoding": {
+    "x": { "field": "region", "trait": "EncodingPositionX", "channel": "x", "title": "Region" },
+    "y": {
+      "field": "share",
+      "trait": "EncodingPositionY",
+      "channel": "y",
+      "scale": "linear",
+      "title": "Share of pipeline"
+    },
+    "color": { "field": "channel", "trait": "EncodingColor", "channel": "color", "legend": { "title": "Channel" } }
+  },
+  "config": {
+    "theme": "brand-a",
+    "layout": { "width": 640, "height": 360, "padding": 24 }
+  },
+  "a11y": {
+    "ariaLabel": "Normalized stacked bar for channel share",
+    "description": "Partners dominate APAC, while the Americas lean heavily into direct acquisition.",
+    "narrative": {
+      "summary": "Partners climb above 40% in APAC, whereas Direct claims over half of Americas pipeline.",
+      "keyFindings": ["EMEA mix near-even across all three channels", "Self-serve holds one fifth of each region"]
+    },
+    "tableFallback": { "enabled": true, "caption": "Channel share by region" }
+  },
+  "portability": {
+    "fallbackType": "table",
+    "tableColumnOrder": ["region", "channel", "share"],
+    "preferredRenderer": "vega-lite"
+  }
+}
