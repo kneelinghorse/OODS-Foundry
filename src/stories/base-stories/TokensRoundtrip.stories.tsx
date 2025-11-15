@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import tokensJson from '@oods/tokens/tailwind' assert { type: 'json' };
+import tokensBundle, { flatTokens as exportedFlatTokens } from '@oods/tokens';
 import { TokenBrowser } from '../../../apps/explorer/src/routes/tokens/TokenBrowser';
 import { resolveTokenValue } from '../../../apps/explorer/src/utils/tokenResolver';
 import { formatTokenReference } from '../../utils/token-values.js';
@@ -31,7 +31,7 @@ type FlatTokenRecord = {
   description?: string;
 };
 
-const flatRecord = tokensJson.flat as Record<string, FlatTokenRecord>;
+const flatRecord = (exportedFlatTokens ?? tokensBundle?.flatTokens ?? {}) as Record<string, FlatTokenRecord>;
 
 const tokenEntries = Object.entries(flatRecord).map(([id, token]) => ({
   id,
