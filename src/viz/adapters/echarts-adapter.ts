@@ -7,19 +7,24 @@ import type { NormalizedVizSpec } from '@/viz/spec/normalized-viz-spec.js';
 const DEFAULT_DATASET_ID = 'viz-dataset';
 const CATEGORY_SCALES = new Set(['band', 'point']);
 const QUANT_SCALES = new Set(['linear', 'sqrt']);
-const MARK_TRAIT_MAP = {
+interface MarkTraitConfig {
+  readonly type: 'bar' | 'line' | 'scatter';
+  readonly areaStyle?: Record<string, unknown>;
+}
+
+const MARK_TRAIT_MAP: Record<string, MarkTraitConfig> = {
   MarkBar: { type: 'bar' },
   MarkLine: { type: 'line' },
   MarkPoint: { type: 'scatter' },
   MarkArea: { type: 'line', areaStyle: { opacity: 0.3 } },
-} as const;
+};
 
 type ChannelName = keyof NormalizedVizSpec['encoding'];
 type NormalizedEncoding = NormalizedVizSpec['encoding'];
 type NormalizedMark = NormalizedVizSpec['marks'][number];
 type NormalizedTransform = NormalizedSpecTransform;
 type EncodingBinding = NormalizedTraitBinding;
-type LayoutConfig = NormalizedVizSpec['config'] extends { layout?: infer L } ? L : undefined;
+type LayoutConfig = NonNullable<NormalizedVizSpec['config']> extends { layout?: infer L } ? L : undefined;
 
 export interface EChartsDatasetTransform {
   readonly type: string;
@@ -34,15 +39,15 @@ export interface EChartsDataset {
 }
 
 export interface EChartsEncode {
-  readonly x?: string | readonly string[];
-  readonly y?: string | readonly string[];
-  readonly tooltip?: readonly string[];
-  readonly itemName?: string;
-  readonly itemId?: string;
-  readonly seriesName?: string;
-  readonly value?: string | readonly string[];
-  readonly size?: string;
-  readonly detail?: string;
+  x?: string | readonly string[];
+  y?: string | readonly string[];
+  tooltip?: readonly string[];
+  itemName?: string;
+  itemId?: string;
+  seriesName?: string;
+  value?: string | readonly string[];
+  size?: string;
+  detail?: string;
 }
 
 export interface EChartsSeries {
@@ -368,7 +373,7 @@ function createAxis(channel: 'x' | 'y', binding?: EncodingBinding): EChartsAxis 
   return removeUndefined({
     type: inferAxisType(channel, binding),
     name: binding.title,
-    nameLocation: 'end',
+    nameLocation: 'end' as const,
     boundaryGap: binding.channel === 'x' ? true : undefined,
   });
 }
