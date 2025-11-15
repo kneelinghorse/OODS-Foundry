@@ -14,7 +14,10 @@ export function useTooltip(options: UseTooltipOptions): InteractionTrait {
 
   const { id = 'interaction-tooltip', trigger = 'hover' } = options;
   const fieldsKey = useMemo(() => JSON.stringify(options.fields), [options.fields]);
-  const fields = useMemo(() => [...options.fields], [fieldsKey]);
+  const fields = useMemo(
+    () => [...options.fields] as [string, ...string[]],
+    [fieldsKey]
+  );
 
   return useMemo<InteractionTrait>(
     () => ({

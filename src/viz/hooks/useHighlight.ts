@@ -24,7 +24,10 @@ export function useHighlight(options: UseHighlightOptions): InteractionTrait {
   } = options;
 
   const fieldsKey = useMemo(() => JSON.stringify(options.fields), [options.fields]);
-  const fields = useMemo(() => [...options.fields], [fieldsKey]);
+  const fields = useMemo(
+    () => [...options.fields] as [string, ...string[]],
+    [fieldsKey]
+  );
 
   return useMemo<InteractionTrait>(
     () => ({
