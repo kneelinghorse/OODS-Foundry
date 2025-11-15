@@ -8,7 +8,7 @@ const DEFAULT_DATASET_ID = 'viz-dataset';
 const CATEGORY_SCALES = new Set(['band', 'point']);
 const QUANT_SCALES = new Set(['linear', 'sqrt']);
 interface MarkTraitConfig {
-  readonly type: 'bar' | 'line' | 'scatter';
+  readonly type: 'bar' | 'line' | 'scatter' | 'heatmap';
   readonly areaStyle?: Record<string, unknown>;
 }
 
@@ -17,6 +17,7 @@ const MARK_TRAIT_MAP: Record<string, MarkTraitConfig> = {
   MarkLine: { type: 'line' },
   MarkPoint: { type: 'scatter' },
   MarkArea: { type: 'line', areaStyle: { opacity: 0.3 } },
+  MarkRect: { type: 'heatmap' },
 };
 
 type ChannelName = keyof NormalizedVizSpec['encoding'];
@@ -55,7 +56,7 @@ export interface EChartsSeries {
   readonly [key: string]: unknown;
   readonly id?: string;
   readonly name?: string;
-  readonly type: 'bar' | 'line' | 'scatter';
+  readonly type: 'bar' | 'line' | 'scatter' | 'heatmap';
   readonly datasetId?: string;
   readonly encode: EChartsEncode;
   readonly smooth?: boolean;
@@ -106,6 +107,7 @@ export interface EChartsOption {
   readonly legend?: Record<string, unknown>;
   readonly tooltip?: Record<string, unknown>;
   readonly grid?: EChartsGrid;
+  readonly visualMap?: Record<string, unknown> | readonly Record<string, unknown>[];
   readonly aria?: Record<string, unknown>;
   readonly title?: Record<string, unknown> | readonly Record<string, unknown>[];
   readonly usermeta?: {
@@ -240,6 +242,10 @@ function createSeries(
   const colorBy = mergedEncoding.color ? 'data' : undefined;
   const smooth = inferSmooth(mark);
 
+  if (markConfig.type === 'heatmap') {
+    applyHeatmapEncoding(encode, mergedEncoding);
+  }
+
   return removeUndefined({
     id: mark.options?.id as string | undefined,
     name: mark.options?.name as string | undefined,
@@ -341,6 +347,24 @@ function convertSeriesEncoding(map: Partial<Record<ChannelName, EncodingBinding>
   }
 
   return encode;
+}
+
+function applyHeatmapEncoding(
+  encode: EChartsEncode,
+  map: Partial<Record<ChannelName, EncodingBinding>>
+): void {
+  if (map.color) {
+    encode.value = map.color.field;
+    const tooltip: string[] = Array.isArray(encode.tooltip) ? [...encode.tooltip] : [];
+    if (!tooltip.includes(map.color.field)) {
+      tooltip.push(map.color.field);
+    }
+    encode.tooltip = tooltip;
+  }
+
+  if ('itemName' in encode) {
+    delete (encode as { itemName?: string }).itemName;
+  }
 }
 
 function resolveAxisEncoding(

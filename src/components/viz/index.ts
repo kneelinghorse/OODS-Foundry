@@ -6,3 +6,4 @@ export * from './AccessibleTable.js';
 export * from './ChartDescription.js';
 export * from './VizContainer.js';
 export * from './AreaChart.js';
+export * from './Heatmap.js';
