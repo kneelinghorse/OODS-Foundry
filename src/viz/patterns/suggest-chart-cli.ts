@@ -6,6 +6,10 @@ import { listPatterns } from './index.js';
 import { suggestPatterns, type PatternSuggestion, type SchemaIntent } from './suggest-chart.js';
 import type { DensityPreference, IntentGoal } from './index.js';
 
+type MutableSchemaIntent = {
+  -readonly [Key in keyof SchemaIntent]: SchemaIntent[Key];
+};
+
 const DEFAULT_LIMIT = 3;
 
 export async function runCli(argv: string[]): Promise<void> {
@@ -46,14 +50,16 @@ export async function runCli(argv: string[]): Promise<void> {
   }
 
   try {
-    const schema = buildSchema(values, positionals[0]);
-    const limit = values.limit ? Number.parseInt(values.limit, 10) : DEFAULT_LIMIT;
+    const descriptorArg = typeof positionals[0] === 'string' ? positionals[0] : undefined;
+    const schema = buildSchema(values, descriptorArg);
+    const limitArg = typeof values.limit === 'string' ? values.limit : undefined;
+    const limit = limitArg ? Number.parseInt(limitArg, 10) : DEFAULT_LIMIT;
     const suggestions = suggestPatterns(schema, { limit, minScore: -4 });
     if (suggestions.length === 0) {
       console.log('No matching patterns. Adjust schema inputs or run with --list to inspect options.');
       return;
     }
-    printSuggestions(schema, suggestions);
+    printSuggestions(suggestions);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     console.error(`viz:suggest failed: ${message}`);
@@ -62,7 +68,7 @@ export async function runCli(argv: string[]): Promise<void> {
 }
 
 function buildSchema(values: Record<string, unknown>, descriptor?: string): SchemaIntent {
-  const segments: Array<Partial<SchemaIntent>> = [];
+  const segments: Array<Partial<MutableSchemaIntent>> = [];
   if (descriptor) {
     segments.push(parseDescriptor(descriptor));
   }
@@ -71,11 +77,11 @@ function buildSchema(values: Record<string, unknown>, descriptor?: string): Sche
   }
   if (typeof values.file === 'string' && values.file.trim().length > 0) {
     const filePath = path.resolve(values.file);
-    const filePayload = JSON.parse(readFileSync(filePath, 'utf-8')) as Partial<SchemaIntent>;
+    const filePayload = JSON.parse(readFileSync(filePath, 'utf-8')) as Partial<MutableSchemaIntent>;
     segments.push(filePayload);
   }
 
-  const explicit: Partial<SchemaIntent> = {};
+  const explicit: Partial<MutableSchemaIntent> = {};
   if (typeof values.measures === 'string') {
     explicit.measures = Number.parseInt(values.measures, 10);
   }
@@ -111,7 +117,7 @@ function buildSchema(values: Record<string, unknown>, descriptor?: string): Sche
   }
 
   segments.push(explicit);
-  const merged = segments.reduce<Partial<SchemaIntent>>((acc, part) => ({ ...acc, ...part }), {});
+  const merged = segments.reduce<Partial<MutableSchemaIntent>>((acc, part) => ({ ...acc, ...part }), {});
   const measures = merged.measures ?? 1;
   const dimensions = merged.dimensions ?? 1;
   if (Number.isNaN(measures) || measures <= 0) {
@@ -138,16 +144,16 @@ function buildSchema(values: Record<string, unknown>, descriptor?: string): Sche
   } satisfies SchemaIntent;
 }
 
-function parseDescriptor(input: string): Partial<SchemaIntent> {
+function parseDescriptor(input: string): Partial<MutableSchemaIntent> {
   const trimmed = input.trim();
   if (!trimmed) {
     return {};
   }
   if (trimmed.startsWith('{')) {
-    return JSON.parse(trimmed) as Partial<SchemaIntent>;
+    return JSON.parse(trimmed) as Partial<MutableSchemaIntent>;
   }
   const normalized = trimmed.toLowerCase();
-  const descriptor: Partial<SchemaIntent> = {};
+  const descriptor: Partial<MutableSchemaIntent> = {};
   const measureMatches = normalized.match(/(\d+)q/g);
   const dimensionMatches = normalized.match(/(\d+)(n|c)/g);
   const temporalMatches = normalized.match(/(\d+)t/g);
@@ -302,7 +308,7 @@ function sumMatches(matches: RegExpMatchArray): number {
     .reduce((total, value) => total + value, 0);
 }
 
-function printSuggestions(schema: SchemaIntent, suggestions: PatternSuggestion[]): void {
+function printSuggestions(suggestions: PatternSuggestion[]): void {
   console.log('Chart Pattern Suggestions');
   console.log('==========================');
   suggestions.forEach((suggestion, index) => {
