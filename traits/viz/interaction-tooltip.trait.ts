@@ -1,0 +1,98 @@
+import type { TraitDefinition } from '../../src/core/trait-definition.ts';
+
+const InteractionTooltipTrait: TraitDefinition = {
+  trait: {
+    name: 'InteractionTooltip',
+    version: '0.1.0',
+    description: 'Shows contextual details-on-demand when focusing or hovering a datum.',
+    category: 'viz.interaction',
+    tags: ['viz', 'interaction', 'tooltip'],
+  },
+
+  parameters: [
+    {
+      name: 'fields',
+      type: 'string[]',
+      required: true,
+      description: 'Ordered field list rendered inside the tooltip.',
+    },
+    {
+      name: 'trigger',
+      type: 'string',
+      required: false,
+      description: 'Event stream that reveals the tooltip.',
+      default: 'hover',
+      validation: {
+        enum: ['hover', 'focus'],
+      },
+    },
+    {
+      name: 'alignment',
+      type: 'string',
+      required: false,
+      description: 'Preferred tooltip alignment around the data point.',
+      default: 'auto',
+      validation: {
+        enum: ['auto', 'top', 'bottom', 'left', 'right'],
+      },
+    },
+  ] as const,
+
+  schema: {
+    viz_interaction_tooltip_fields: {
+      type: 'string[]',
+      required: true,
+      description: 'Fields surfaced inside the tooltip.',
+    },
+    viz_interaction_tooltip_trigger: {
+      type: 'string',
+      required: true,
+      description: 'Event stream used to reveal the tooltip.',
+      defaultFromParameter: 'trigger',
+      validation: {
+        enum: ['hover', 'focus'],
+      },
+    },
+    viz_interaction_tooltip_alignment: {
+      type: 'string',
+      required: false,
+      description: 'Preferred tooltip alignment token.',
+      defaultFromParameter: 'alignment',
+      validation: {
+        enum: ['auto', 'top', 'bottom', 'left', 'right'],
+      },
+    },
+  },
+
+  semantics: {
+    viz_interaction_tooltip_fields: {
+      semantic_type: 'viz.interaction.fields',
+      ui_hints: {
+        component: 'ListSummary',
+      },
+    },
+    viz_interaction_tooltip_trigger: {
+      semantic_type: 'viz.interaction.trigger',
+      ui_hints: {
+        component: 'Badge',
+      },
+    },
+    viz_interaction_tooltip_alignment: {
+      semantic_type: 'viz.interaction.tooltip.alignment',
+      ui_hints: {
+        component: 'Badge',
+      },
+    },
+  },
+
+  state_machine: {
+    states: ['hidden', 'visible'],
+    initial: 'hidden',
+    transitions: [
+      { from: 'hidden', to: 'visible', trigger: 'show' },
+      { from: 'visible', to: 'hidden', trigger: 'dismiss' },
+    ],
+  },
+};
+
+export default InteractionTooltipTrait;

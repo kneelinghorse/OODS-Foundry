@@ -27,6 +27,10 @@ describe('ECharts adapter', () => {
     expect(option.yAxis).toMatchObject({ type: 'value', name: 'MRR (USD)' });
     expect(option.legend?.show).toBe(true);
     expect(option.aria?.description).toBe(spec.a11y.description);
+    expect(option.tooltip).toMatchObject({ trigger: 'item' });
+    expect(option.usermeta?.oods?.interactions).toHaveLength(2);
+    const formatter = option.tooltip?.formatter as ((params: unknown) => string) | undefined;
+    expect(formatter?.({ data: { region: 'North', mrr: 120000 } })).toContain('North');
   });
 
   it('passes spec transforms through to dataset entries', () => {
@@ -76,5 +80,12 @@ describe('ECharts adapter', () => {
     };
 
     expect(() => toEChartsOption(invalidSpec)).toThrow(EChartsAdapterError);
+  });
+
+  it('falls back to axis tooltips when no interaction is defined', () => {
+    const spec = loadSpec('line-chart');
+    const option = toEChartsOption(spec);
+
+    expect(option.tooltip).toMatchObject({ trigger: 'axis' });
   });
 });

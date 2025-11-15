@@ -1,6 +1,15 @@
 // Auto-generated from viz/normalized-viz-spec.schema.json. Do not edit manually.
 
 /**
+ * Selection primitive that produces a predicate for downstream rules.
+ */
+export type InteractionSelection = PointSelection | IntervalSelection;
+/**
+ * Production rule describing how the predicate manipulates the visualization.
+ */
+export type InteractionRule = InteractionFilterRule | InteractionVisualRule | InteractionTooltipRule;
+
+/**
  * Declarative visualization specification generated from trait composition.
  */
 export interface NormalizedVizSpecV01 {
@@ -25,6 +34,10 @@ export interface NormalizedVizSpecV01 {
    */
   marks: [Mark, ...Mark[]];
   encoding: EncodingMap;
+  /**
+   * Declarative interaction traits applied to the visualization (e.g., highlight, tooltip).
+   */
+  interactions?: InteractionTrait[];
   config?: VizConfig;
   a11y: AccessibilitySpec;
   portability?: PortabilitySpec;
@@ -101,6 +114,70 @@ export interface TraitBinding {
   legend?: {
     [k: string]: unknown;
   };
+}
+/**
+ * Declarative interaction trait composed of a selection primitive and production rule.
+ */
+export interface InteractionTrait {
+  /**
+   * Unique identifier for referencing this interaction predicate.
+   */
+  id: string;
+  select: InteractionSelection;
+  rule: InteractionRule;
+}
+export interface PointSelection {
+  type: 'point';
+  /**
+   * Event stream that triggers the selection (e.g., hover, click).
+   */
+  on: string;
+  /**
+   * Data fields that participate in the predicate.
+   *
+   * @minItems 1
+   */
+  fields: [string, ...string[]];
+}
+export interface IntervalSelection {
+  type: 'interval';
+  /**
+   * Event stream that triggers the interval (e.g., drag).
+   */
+  on: string;
+  /**
+   * Encoding channels that define the brush interval.
+   *
+   * @minItems 1
+   */
+  encodings: ['x' | 'y', ...('x' | 'y')[]];
+}
+export interface InteractionFilterRule {
+  bindTo: 'filter';
+}
+export interface InteractionVisualRule {
+  bindTo: 'visual';
+  /**
+   * Visual property to conditionally modify (e.g., fillOpacity).
+   */
+  property: string;
+  condition: InteractionValueConfig;
+  else: InteractionValueConfig;
+}
+export interface InteractionValueConfig {
+  /**
+   * Value applied when the predicate condition is met or not met.
+   */
+  value: string | number | boolean;
+}
+export interface InteractionTooltipRule {
+  bindTo: 'tooltip';
+  /**
+   * Ordered list of fields rendered inside the tooltip.
+   *
+   * @minItems 1
+   */
+  fields: [string, ...string[]];
 }
 export interface VizConfig {
   /**

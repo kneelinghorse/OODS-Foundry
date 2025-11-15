@@ -30,6 +30,7 @@ renderViz(spec);
 | `transforms` | Declarative pipeline (filter, aggregate, bin, etc.) | Each entry is typed with `type` + open `params` |
 | `marks[]` | Trait-linked mark definitions | Each mark references `trait` (e.g., `MarkBar`) and optional per-layer encodings |
 | `encoding` | Top-level encoding map | x/y/color/size/shape/detail all reference trait bindings |
+| `interactions[]` | Declarative interaction traits | Each entry defines `select` + `rule` so adapters can add highlight, tooltip, or filter behaviors |
 | `config` | Theme + layout overrides | Includes layout sizing and token overrides |
 | `a11y` | Mandatory RDV.4 contract | Requires `description`, optional narrative + table fallback |
 | `portability` | RDV.5 hints | Preferred fallback type, table order, renderer hint |
@@ -67,3 +68,17 @@ Use them as templates when composing new specs from trait compositions.
 
 Validation errors include a JSON pointer path (`/encoding/x/field`) and ajv
 keyword so we can surface actionable diagnostics in the CLI or Storybook.
+
+## Interactions
+
+Mission B22.2 introduces declarative interaction traits to the spec. Each
+entry contains:
+
+- `id` – predicate name consumed across renderers.
+- `select` – the selection primitive (e.g., `{ type: 'point', on: 'hover', fields: ['region'] }`).
+- `rule` – how the predicate is applied (`visual`, `tooltip`, or `filter`).
+
+Adapters read these entries to add Vega-Lite `params` bindings, tooltip
+channels, and the ECharts interaction mapper (event handlers + formatter
+functions). Keep the rules simple (one concern per trait) so they compose
+across renderers.

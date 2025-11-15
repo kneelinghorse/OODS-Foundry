@@ -28,6 +28,11 @@ interface ConvertedLayer {
   readonly data?: Record<string, unknown>;
 }
 
+interface AdapterInteractionParam {
+  readonly name: string;
+  readonly select: Record<string, unknown>;
+}
+
 export interface VegaLiteUserMeta {
   readonly specId?: string;
   readonly name?: string;
@@ -43,6 +48,7 @@ interface BaseAdapterSpec {
   readonly description: string;
   readonly data: Record<string, unknown>;
   readonly transform?: readonly AdapterTransform[];
+  readonly params?: readonly AdapterInteractionParam[];
   readonly width?: number;
   readonly height?: number;
   readonly padding?: number;
@@ -80,7 +86,9 @@ export function toVegaLiteSpec(spec: NormalizedVizSpec): VegaLiteAdapterSpec {
   const data = convertData(spec);
   const transform = convertTransforms(spec.transforms);
   const baseEncoding = convertEncodingMap(spec.encoding);
-  const layers = spec.marks.map((mark) => createLayer(mark, baseEncoding));
+  const interactionParams = convertInteractionParams(spec.interactions);
+  const interactionEncoding = convertInteractionBindings(spec.interactions);
+  const layers = spec.marks.map((mark) => createLayer(mark, baseEncoding, interactionEncoding));
   const requiresLayer = layers.length > 1 || layers.some((layer) => layer.data !== undefined);
 
   const layout = spec.config?.layout ?? {};
@@ -92,6 +100,7 @@ export function toVegaLiteSpec(spec: NormalizedVizSpec): VegaLiteAdapterSpec {
     description: spec.a11y.description,
     data,
     transform,
+    params: interactionParams,
     width: layout.width,
     height: layout.height,
     padding: layout.padding,
@@ -124,9 +133,13 @@ export function toVegaLiteSpec(spec: NormalizedVizSpec): VegaLiteAdapterSpec {
   return single as VegaLiteAdapterSpec;
 }
 
-function createLayer(mark: NormalizedMark, baseEncoding?: Record<string, unknown>): ConvertedLayer {
+function createLayer(
+  mark: NormalizedMark,
+  baseEncoding?: Record<string, unknown>,
+  interactionEncoding?: Record<string, unknown>
+): ConvertedLayer {
   const markEncodings = convertEncodingMap(mark.encodings);
-  const encoding = mergeEncodings(baseEncoding, markEncodings);
+  const encoding = mergeEncodings(mergeEncodings(baseEncoding, markEncodings), interactionEncoding);
 
   if (Object.keys(encoding).length === 0) {
     throw new VegaLiteAdapterError(`Mark ${mark.trait} does not provide any encodings.`);
@@ -235,6 +248,87 @@ function convertBinding(channel: ChannelName, binding: EncodingBinding): Record<
   }
 
   return definition;
+}
+
+function convertInteractionParams(
+  interactions?: NormalizedVizSpec['interactions']
+): readonly AdapterInteractionParam[] | undefined {
+  if (!interactions || interactions.length === 0) {
+    return undefined;
+  }
+
+  const params = interactions
+    .map((interaction) => {
+      const select = convertInteractionSelection(interaction.select);
+      if (!select) {
+        return undefined;
+      }
+      return {
+        name: interaction.id,
+        select,
+      } satisfies AdapterInteractionParam;
+    })
+    .filter((entry): entry is AdapterInteractionParam => Boolean(entry));
+
+  return params.length > 0 ? params : undefined;
+}
+
+function convertInteractionSelection(selection: NonNullable<NormalizedVizSpec['interactions']>[number]['select']):
+  | Record<string, unknown>
+  | undefined {
+  if (selection.type === 'point') {
+    return removeUndefined({
+      type: 'point',
+      on: selection.on,
+      fields: selection.fields,
+    });
+  }
+
+  if (selection.type === 'interval') {
+    return removeUndefined({
+      type: 'interval',
+      on: selection.on,
+      encodings: selection.encodings,
+    });
+  }
+
+  return undefined;
+}
+
+function convertInteractionBindings(
+  interactions?: NormalizedVizSpec['interactions']
+): Record<string, unknown> | undefined {
+  if (!interactions || interactions.length === 0) {
+    return undefined;
+  }
+
+  const encoding: Record<string, unknown> = {};
+
+  for (const interaction of interactions) {
+    if (interaction.rule.bindTo === 'visual') {
+      const { property } = interaction.rule;
+      const active = interaction.rule.condition?.value;
+      const inactive = interaction.rule.else?.value;
+
+      if (!property || active === undefined) {
+        continue;
+      }
+
+      encoding[property] = removeUndefined({
+        condition: {
+          param: interaction.id,
+          value: active,
+        },
+        value: inactive,
+      });
+    }
+
+    if (interaction.rule.bindTo === 'tooltip' && !encoding.tooltip && interaction.rule.fields.length > 0) {
+      encoding.tooltip = interaction.rule.fields.map((field) => ({ field }));
+    }
+  }
+
+  return Object.keys(encoding).length > 0 ? encoding : undefined;
 }
 
 function inferFieldType(channel: ChannelName, binding: EncodingBinding): 'quantitative' | 'temporal' | 'ordinal' | 'nominal' {

@@ -37,6 +37,13 @@
     "encoding": {
       "$ref": "#/definitions/EncodingMap"
     },
+    "interactions": {
+      "type": "array",
+      "description": "Declarative interaction traits applied to the visualization (e.g., highlight, tooltip).",
+      "items": {
+        "$ref": "#/definitions/InteractionTrait"
+      }
+    },
     "config": {
       "$ref": "#/definitions/VizConfig"
     },
@@ -212,6 +219,148 @@
         }
       },
       "required": ["field", "trait"],
+      "additionalProperties": false
+    },
+    "InteractionTrait": {
+      "type": "object",
+      "description": "Declarative interaction trait composed of a selection primitive and production rule.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for referencing this interaction predicate."
+        },
+        "select": {
+          "$ref": "#/definitions/InteractionSelection"
+        },
+        "rule": {
+          "$ref": "#/definitions/InteractionRule"
+        }
+      },
+      "required": ["id", "select", "rule"],
+      "additionalProperties": false
+    },
+    "InteractionSelection": {
+      "description": "Selection primitive that produces a predicate for downstream rules.",
+      "oneOf": [
+        { "$ref": "#/definitions/PointSelection" },
+        { "$ref": "#/definitions/IntervalSelection" }
+      ]
+    },
+    "PointSelection": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["point"]
+        },
+        "on": {
+          "type": "string",
+          "description": "Event stream that triggers the selection (e.g., hover, click)."
+        },
+        "fields": {
+          "type": "array",
+          "description": "Data fields that participate in the predicate.",
+          "items": { "type": "string" },
+          "minItems": 1
+        }
+      },
+      "required": ["type", "on", "fields"],
+      "additionalProperties": false
+    },
+    "IntervalSelection": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["interval"]
+        },
+        "on": {
+          "type": "string",
+          "description": "Event stream that triggers the interval (e.g., drag)."
+        },
+        "encodings": {
+          "type": "array",
+          "description": "Encoding channels that define the brush interval.",
+          "items": {
+            "type": "string",
+            "enum": ["x", "y"]
+          },
+          "minItems": 1
+        }
+      },
+      "required": ["type", "on", "encodings"],
+      "additionalProperties": false
+    },
+    "InteractionRule": {
+      "description": "Production rule describing how the predicate manipulates the visualization.",
+      "oneOf": [
+        { "$ref": "#/definitions/InteractionFilterRule" },
+        { "$ref": "#/definitions/InteractionVisualRule" },
+        { "$ref": "#/definitions/InteractionTooltipRule" }
+      ]
+    },
+    "InteractionFilterRule": {
+      "type": "object",
+      "properties": {
+        "bindTo": {
+          "type": "string",
+          "enum": ["filter"]
+        }
+      },
+      "required": ["bindTo"],
+      "additionalProperties": false
+    },
+    "InteractionVisualRule": {
+      "type": "object",
+      "properties": {
+        "bindTo": {
+          "type": "string",
+          "enum": ["visual"]
+        },
+        "property": {
+          "type": "string",
+          "description": "Visual property to conditionally modify (e.g., fillOpacity)."
+        },
+        "condition": {
+          "$ref": "#/definitions/InteractionValueConfig"
+        },
+        "else": {
+          "$ref": "#/definitions/InteractionValueConfig"
+        }
+      },
+      "required": ["bindTo", "property", "condition", "else"],
+      "additionalProperties": false
+    },
+    "InteractionTooltipRule": {
+      "type": "object",
+      "properties": {
+        "bindTo": {
+          "type": "string",
+          "enum": ["tooltip"]
+        },
+        "fields": {
+          "type": "array",
+          "description": "Ordered list of fields rendered inside the tooltip.",
+          "items": { "type": "string" },
+          "minItems": 1
+        }
+      },
+      "required": ["bindTo", "fields"],
+      "additionalProperties": false
+    },
+    "InteractionValueConfig": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "description": "Value applied when the predicate condition is met or not met.",
+          "oneOf": [
+            { "type": "string" },
+            { "type": "number" },
+            { "type": "boolean" }
+          ]
+        }
+      },
+      "required": ["value"],
       "additionalProperties": false
     },
     "VizConfig": {

@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oods.systems/schemas/traits/interaction-tooltip",
+  "title": "InteractionTooltip Trait Parameters",
+  "type": "object",
+  "properties": {
+    "fields": {
+      "type": "array",
+      "description": "Ordered field list rendered inside the tooltip.",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "trigger": {
+      "type": "string",
+      "description": "Event stream that reveals the tooltip.",
+      "enum": ["hover", "focus"],
+      "default": "hover"
+    },
+    "alignment": {
+      "type": "string",
+      "description": "Preferred tooltip alignment around the data point.",
+      "enum": ["auto", "top", "bottom", "left", "right"],
+      "default": "auto"
+    }
+  },
+  "required": ["fields"],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "fields": ["region", "mrr"],
+      "trigger": "hover",
+      "alignment": "auto"
+    }
+  ]
+}
