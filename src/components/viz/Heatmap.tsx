@@ -637,6 +637,12 @@ function cleanupECharts(instanceRef: MutableRefObject<EChartsType | null>): void
   }
 }
 
+type LayeredVegaSpec = Extract<
+  VegaLiteAdapterSpec,
+  { layer: readonly { readonly encoding?: Record<string, unknown> }[] }
+>;
+type SingleVegaSpec = Extract<VegaLiteAdapterSpec, { encoding: Record<string, unknown> }>;
+
 function applyHeatmapColorScale(
   spec: VegaLiteAdapterSpec,
   palette: readonly string[],
@@ -649,18 +655,25 @@ function applyHeatmapColorScale(
   }
 
   if ('layer' in sized && Array.isArray(sized.layer)) {
+    const layered = sized as LayeredVegaSpec;
     return {
-      ...sized,
-      layer: sized.layer.map((layer) => ({
-        ...layer,
-        encoding: applyColorEncoding(layer.encoding, palette),
-      })),
+      ...layered,
+      layer: layered.layer.map((layer) => {
+        const updatedEncoding = applyColorEncoding(layer.encoding, palette);
+        return updatedEncoding ? { ...layer, encoding: updatedEncoding } : layer;
+      }),
     };
   }
 
+  const single = sized as SingleVegaSpec;
+  const updatedEncoding = applyColorEncoding(single.encoding, palette);
+  if (!updatedEncoding) {
+    return single;
+  }
+
   return {
-    ...sized,
-    encoding: applyColorEncoding(sized.encoding, palette),
+    ...single,
+    encoding: updatedEncoding,
   };
 }
 
