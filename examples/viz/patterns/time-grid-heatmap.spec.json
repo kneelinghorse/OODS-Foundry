@@ -1,0 +1,57 @@
+{
+  "$schema": "https://oods.dev/viz-spec/v1",
+  "id": "pattern:viz:time-grid-heatmap",
+  "name": "Support Load by Day & Hour",
+  "data": {
+    "values": [
+      { "day": "Monday", "hour": "08:00", "tickets": 14 },
+      { "day": "Monday", "hour": "12:00", "tickets": 32 },
+      { "day": "Monday", "hour": "16:00", "tickets": 27 },
+      { "day": "Tuesday", "hour": "08:00", "tickets": 18 },
+      { "day": "Tuesday", "hour": "12:00", "tickets": 36 },
+      { "day": "Tuesday", "hour": "16:00", "tickets": 30 },
+      { "day": "Wednesday", "hour": "08:00", "tickets": 12 },
+      { "day": "Wednesday", "hour": "12:00", "tickets": 28 },
+      { "day": "Wednesday", "hour": "16:00", "tickets": 25 },
+      { "day": "Thursday", "hour": "08:00", "tickets": 10 },
+      { "day": "Thursday", "hour": "12:00", "tickets": 24 },
+      { "day": "Thursday", "hour": "16:00", "tickets": 22 },
+      { "day": "Friday", "hour": "08:00", "tickets": 9 },
+      { "day": "Friday", "hour": "12:00", "tickets": 20 },
+      { "day": "Friday", "hour": "16:00", "tickets": 16 }
+    ]
+  },
+  "marks": [
+    {
+      "trait": "MarkRect",
+      "encodings": {
+        "x": { "field": "hour", "trait": "EncodingPositionX", "channel": "x", "scale": "band", "title": "Hour" },
+        "y": { "field": "day", "trait": "EncodingPositionY", "channel": "y", "scale": "band", "title": "Day" },
+        "color": { "field": "tickets", "trait": "EncodingColor", "channel": "color", "scale": "linear", "title": "Tickets" }
+      }
+    }
+  ],
+  "encoding": {
+    "x": { "field": "hour", "trait": "EncodingPositionX", "channel": "x", "scale": "band", "title": "Hour" },
+    "y": { "field": "day", "trait": "EncodingPositionY", "channel": "y", "scale": "band", "title": "Day" },
+    "color": { "field": "tickets", "trait": "EncodingColor", "channel": "color", "scale": "linear", "title": "Tickets" }
+  },
+  "config": {
+    "theme": "brand-a",
+    "layout": { "width": 720, "height": 420, "padding": 24 }
+  },
+  "a11y": {
+    "ariaLabel": "Day/hour support heatmap",
+    "description": "Lunch blocks mid-week trend hottest, with lighter mornings and Friday tapering off.",
+    "narrative": {
+      "summary": "Tuesdays drive the largest ticket spike at lunch; mornings remain manageable all week.",
+      "keyFindings": ["Tuesday 12:00 peaks at 36 tickets", "Friday afternoons drop below 20"]
+    },
+    "tableFallback": { "enabled": true, "caption": "Support ticket volume grid" }
+  },
+  "portability": {
+    "fallbackType": "table",
+    "tableColumnOrder": ["day", "hour", "tickets"],
+    "preferredRenderer": "vega-lite"
+  }
+}

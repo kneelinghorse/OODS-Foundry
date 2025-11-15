@@ -1,0 +1,71 @@
+{
+  "$schema": "https://oods.dev/viz-spec/v1",
+  "id": "pattern:viz:stacked-bar",
+  "name": "Support Hours by Category",
+  "data": {
+    "values": [
+      { "month": "Jan", "category": "Bug Fix", "hours": 420 },
+      { "month": "Jan", "category": "Feature", "hours": 180 },
+      { "month": "Jan", "category": "Incident", "hours": 120 },
+      { "month": "Feb", "category": "Bug Fix", "hours": 380 },
+      { "month": "Feb", "category": "Feature", "hours": 210 },
+      { "month": "Feb", "category": "Incident", "hours": 90 },
+      { "month": "Mar", "category": "Bug Fix", "hours": 360 },
+      { "month": "Mar", "category": "Feature", "hours": 260 },
+      { "month": "Mar", "category": "Incident", "hours": 140 },
+      { "month": "Apr", "category": "Bug Fix", "hours": 340 },
+      { "month": "Apr", "category": "Feature", "hours": 240 },
+      { "month": "Apr", "category": "Incident", "hours": 160 }
+    ]
+  },
+  "marks": [
+    {
+      "trait": "MarkBar",
+      "encodings": {
+        "x": { "field": "month", "trait": "EncodingPositionX", "channel": "x", "title": "Month" },
+        "y": {
+          "field": "hours",
+          "trait": "EncodingPositionY",
+          "channel": "y",
+          "aggregate": "sum",
+          "title": "Hours Logged"
+        },
+        "color": {
+          "field": "category",
+          "trait": "EncodingColor",
+          "channel": "color",
+          "legend": { "title": "Work Category" }
+        }
+      }
+    }
+  ],
+  "encoding": {
+    "x": { "field": "month", "trait": "EncodingPositionX", "channel": "x", "title": "Month" },
+    "y": {
+      "field": "hours",
+      "trait": "EncodingPositionY",
+      "channel": "y",
+      "aggregate": "sum",
+      "title": "Hours Logged"
+    },
+    "color": { "field": "category", "trait": "EncodingColor", "channel": "color", "legend": { "title": "Work Category" } }
+  },
+  "config": {
+    "theme": "brand-b",
+    "layout": { "width": 720, "height": 400, "padding": 24 }
+  },
+  "a11y": {
+    "ariaLabel": "Support workload stacked bar chart",
+    "description": "Bug fixes dominate the workload, but feature work ramps by March.",
+    "narrative": {
+      "summary": "Incidents shrink as the feature queue grows, but bug fixes still command half the stack.",
+      "keyFindings": ["Feature work reaches 260 hours in March", "Incident time drops below 100 hours by February"]
+    },
+    "tableFallback": { "enabled": true, "caption": "Monthly support hours by category" }
+  },
+  "portability": {
+    "fallbackType": "table",
+    "tableColumnOrder": ["month", "category", "hours"],
+    "preferredRenderer": "vega-lite"
+  }
+}

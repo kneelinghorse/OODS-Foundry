@@ -1,0 +1,59 @@
+{
+  "$schema": "https://oods.dev/viz-spec/v1",
+  "id": "pattern:viz:target-band-line",
+  "name": "Lead Time vs SLA Band",
+  "data": {
+    "values": [
+      { "week": "2025-05-05", "leadTime": 5.2, "slaLow": 4, "slaHigh": 6, "band": "Target Range", "series": "Lead Time" },
+      { "week": "2025-05-12", "leadTime": 5.8, "slaLow": 4, "slaHigh": 6, "band": "Target Range", "series": "Lead Time" },
+      { "week": "2025-05-19", "leadTime": 6.4, "slaLow": 4, "slaHigh": 6, "band": "Target Range", "series": "Lead Time" },
+      { "week": "2025-05-26", "leadTime": 5.1, "slaLow": 4, "slaHigh": 6, "band": "Target Range", "series": "Lead Time" },
+      { "week": "2025-06-02", "leadTime": 4.7, "slaLow": 4, "slaHigh": 6, "band": "Target Range", "series": "Lead Time" },
+      { "week": "2025-06-09", "leadTime": 4.4, "slaLow": 4, "slaHigh": 6, "band": "Target Range", "series": "Lead Time" },
+      { "week": "2025-06-16", "leadTime": 4.9, "slaLow": 4, "slaHigh": 6, "band": "Target Range", "series": "Lead Time" }
+    ]
+  },
+  "marks": [
+    {
+      "trait": "MarkArea",
+      "encodings": {
+        "x": { "field": "week", "trait": "EncodingPositionX", "channel": "x", "scale": "temporal", "title": "Week" },
+        "y": { "field": "slaHigh", "trait": "EncodingPositionY", "channel": "y", "scale": "linear", "title": "Days" },
+        "y2": { "field": "slaLow", "trait": "EncodingPositionY", "channel": "y2" },
+        "color": { "field": "band", "trait": "EncodingColor", "channel": "color", "legend": { "title": null } }
+      },
+      "options": { "opacity": 0.25 }
+    },
+    {
+      "trait": "MarkLine",
+      "encodings": {
+        "x": { "field": "week", "trait": "EncodingPositionX", "channel": "x", "scale": "temporal", "title": "Week" },
+        "y": { "field": "leadTime", "trait": "EncodingPositionY", "channel": "y", "scale": "linear", "title": "Lead Time (days)" },
+        "color": { "field": "series", "trait": "EncodingColor", "channel": "color", "legend": { "title": null } }
+      },
+      "options": { "strokeWidth": 3, "curve": "monotone" }
+    }
+  ],
+  "encoding": {
+    "x": { "field": "week", "trait": "EncodingPositionX", "channel": "x", "scale": "temporal", "title": "Week" },
+    "y": { "field": "leadTime", "trait": "EncodingPositionY", "channel": "y", "scale": "linear", "title": "Lead Time (days)" }
+  },
+  "config": {
+    "theme": "brand-c",
+    "layout": { "width": 720, "height": 360, "padding": 24 }
+  },
+  "a11y": {
+    "ariaLabel": "Lead time trend vs SLA band",
+    "description": "Lead time briefly exceeds the SLA band mid-May before falling back inside the shaded zone.",
+    "narrative": {
+      "summary": "Only the week of May 19 breaches the SLA ceiling; subsequent weeks land comfortably under 5 days.",
+      "keyFindings": ["SLA breach lasts one sprint", "Steady improvement into June"]
+    },
+    "tableFallback": { "enabled": true, "caption": "Weekly lead time with SLA bounds" }
+  },
+  "portability": {
+    "fallbackType": "table",
+    "tableColumnOrder": ["week", "leadTime", "slaLow", "slaHigh"],
+    "preferredRenderer": "vega-lite"
+  }
+}

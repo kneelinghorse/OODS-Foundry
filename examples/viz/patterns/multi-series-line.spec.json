@@ -1,0 +1,84 @@
+{
+  "$schema": "https://oods.dev/viz-spec/v1",
+  "id": "pattern:viz:multi-series-line",
+  "name": "Weekly Active Users by Plan",
+  "data": {
+    "values": [
+      { "week": "2025-09-01", "plan": "Starter", "wau": 3200 },
+      { "week": "2025-09-01", "plan": "Growth", "wau": 5400 },
+      { "week": "2025-09-01", "plan": "Enterprise", "wau": 1800 },
+      { "week": "2025-09-08", "plan": "Starter", "wau": 3300 },
+      { "week": "2025-09-08", "plan": "Growth", "wau": 5600 },
+      { "week": "2025-09-08", "plan": "Enterprise", "wau": 2100 },
+      { "week": "2025-09-15", "plan": "Starter", "wau": 3500 },
+      { "week": "2025-09-15", "plan": "Growth", "wau": 5900 },
+      { "week": "2025-09-15", "plan": "Enterprise", "wau": 2300 },
+      { "week": "2025-09-22", "plan": "Starter", "wau": 3600 },
+      { "week": "2025-09-22", "plan": "Growth", "wau": 6200 },
+      { "week": "2025-09-22", "plan": "Enterprise", "wau": 2500 }
+    ]
+  },
+  "marks": [
+    {
+      "trait": "MarkLine",
+      "encodings": {
+        "x": {
+          "field": "week",
+          "trait": "EncodingPositionX",
+          "channel": "x",
+          "scale": "temporal",
+          "title": "Week"
+        },
+        "y": {
+          "field": "wau",
+          "trait": "EncodingPositionY",
+          "channel": "y",
+          "scale": "linear",
+          "title": "Weekly Active Users"
+        },
+        "color": {
+          "field": "plan",
+          "trait": "EncodingColor",
+          "channel": "color",
+          "legend": { "title": "Plan" }
+        }
+      },
+      "options": { "curve": "monotone" }
+    }
+  ],
+  "encoding": {
+    "x": { "field": "week", "trait": "EncodingPositionX", "channel": "x", "scale": "temporal", "title": "Week" },
+    "y": { "field": "wau", "trait": "EncodingPositionY", "channel": "y", "scale": "linear", "title": "Weekly Active Users" },
+    "color": { "field": "plan", "trait": "EncodingColor", "channel": "color", "legend": { "title": "Plan" } }
+  },
+  "interactions": [
+    {
+      "id": "plan-highlight",
+      "select": { "type": "point", "on": "hover", "fields": ["plan"] },
+      "rule": { "bindTo": "visual", "property": "strokeWidth", "condition": { "value": 3 }, "else": { "value": 1.5 } }
+    },
+    {
+      "id": "plan-tooltip",
+      "select": { "type": "point", "on": "hover", "fields": ["week", "plan", "wau"] },
+      "rule": { "bindTo": "tooltip", "fields": ["week", "plan", "wau"] }
+    }
+  ],
+  "config": {
+    "theme": "brand-a",
+    "layout": { "width": 720, "height": 360, "padding": 24 }
+  },
+  "a11y": {
+    "ariaLabel": "Weekly active users multi-line chart",
+    "description": "Growth customers accelerate fastest, with Enterprise catching up in late September.",
+    "narrative": {
+      "summary": "All plans trend upward; Growth remains 2× Starter, Enterprise narrows the gap.",
+      "keyFindings": ["Growth adds 800 WAU over the period", "Enterprise crosses 2.5k WAU by 9/22"]
+    },
+    "tableFallback": { "enabled": true, "caption": "Weekly active users by plan" }
+  },
+  "portability": {
+    "fallbackType": "table",
+    "tableColumnOrder": ["week", "plan", "wau"],
+    "preferredRenderer": "vega-lite"
+  }
+}
