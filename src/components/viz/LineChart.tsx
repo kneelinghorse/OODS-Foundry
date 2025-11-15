@@ -232,18 +232,9 @@ function applyLayoutOverrides(
     return spec;
   }
 
-  const overrides: Partial<VegaLiteAdapterSpec> = {};
-
-  if (width !== undefined) {
-    overrides.width = Math.round(width);
-  }
-
-  if (height !== undefined) {
-    overrides.height = Math.round(height);
-  }
-
   return {
     ...spec,
-    ...overrides,
+    ...(width !== undefined ? { width: Math.round(width) } : {}),
+    ...(height !== undefined ? { height: Math.round(height) } : {}),
   };
 }
