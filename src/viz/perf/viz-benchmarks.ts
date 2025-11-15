@@ -3,6 +3,7 @@ import { createRequire } from 'node:module';
 import { statSync } from 'node:fs';
 import path from 'node:path';
 
+import TimeService from '@/services/time/index.js';
 import { bindEChartsInteractions } from '@/viz/adapters/echarts-interactions.js';
 import type { EChartsRuntime } from '@/viz/adapters/echarts-interactions.js';
 import type { VizRendererId } from '@/viz/adapters/renderer-selector.js';
@@ -63,11 +64,11 @@ const DATA_POINTS: readonly number[] = [10, 100, 1000, 10000] as const;
 const RENDERERS: readonly VizRendererId[] = ['vega-lite', 'echarts'];
 const DETERMINISTIC_MODE = process.env.VIZ_BENCHMARK_MODE === 'deterministic';
 
-const BAR_BASE_SPEC = barExample as NormalizedVizSpec;
-const LINE_BASE_SPEC = lineExample as NormalizedVizSpec;
-const SCATTER_BASE_SPEC = scatterExample as NormalizedVizSpec;
-const AREA_BASE_SPEC = areaExample as NormalizedVizSpec;
-const HEATMAP_BASE_SPEC = heatmapExample as NormalizedVizSpec;
+const BAR_BASE_SPEC = barExample as unknown as NormalizedVizSpec;
+const LINE_BASE_SPEC = lineExample as unknown as NormalizedVizSpec;
+const SCATTER_BASE_SPEC = scatterExample as unknown as NormalizedVizSpec;
+const AREA_BASE_SPEC = areaExample as unknown as NormalizedVizSpec;
+const HEATMAP_BASE_SPEC = heatmapExample as unknown as NormalizedVizSpec;
 
 interface ChartBlueprint {
   readonly base: NormalizedVizSpec;
@@ -135,7 +136,7 @@ export function runVizBenchmarks(
   const recommendations = buildRecommendations(results);
 
   return {
-    generatedAt: new Date().toISOString(),
+    generatedAt: TimeService.nowSystem().toISO() ?? '',
     results,
     recommendations,
   };
@@ -177,7 +178,10 @@ function buildSpec(
 
   const spec = structuredClone(blueprint.base);
   const values = blueprint.generator(dataPoints, seed);
-  spec.data = { ...(spec.data ?? {}), values };
+  spec.data = {
+    ...(spec.data ?? {}),
+    values: values.map((row) => ({ ...row })),
+  };
   spec.id = `${spec.id ?? chartType}:${renderer}:${dataPoints}`;
   spec.name = `${spec.name ?? chartType} (${renderer}, ${dataPoints} rows)`;
   spec.portability = {
@@ -324,10 +328,11 @@ function ensureInteractions(
   const hasHighlight = interactions.some((interaction) => interaction.rule.bindTo === 'visual');
   const hasTooltip = interactions.some((interaction) => interaction.rule.bindTo === 'tooltip');
 
-  if (!hasHighlight && highlightFields.length > 0) {
+  const highlightTuple = toInteractionFields(highlightFields);
+  if (!hasHighlight && highlightTuple) {
     interactions.push({
       id: `benchmark-highlight-${highlightFields.join('-')}`,
-      select: { type: 'point', on: 'hover', fields: [...highlightFields] },
+      select: { type: 'point', on: 'hover', fields: highlightTuple },
       rule: {
         bindTo: 'visual',
         property: 'fillOpacity',
@@ -337,18 +342,27 @@ function ensureInteractions(
     });
   }
 
-  if (!hasTooltip && tooltipFields.length > 0) {
+  const tooltipTuple = toInteractionFields(tooltipFields);
+  if (!hasTooltip && tooltipTuple) {
     interactions.push({
       id: `benchmark-tooltip-${tooltipFields.join('-')}`,
-      select: { type: 'point', on: 'hover', fields: [...tooltipFields] },
+      select: { type: 'point', on: 'hover', fields: tooltipTuple },
       rule: {
         bindTo: 'tooltip',
-        fields: [...tooltipFields],
+        fields: tooltipTuple,
       },
     });
   }
 
   return interactions;
+}
+
+function toInteractionFields(fields: readonly string[]): [string, ...string[]] | undefined {
+  if (fields.length === 0) {
+    return undefined;
+  }
+  const [first, ...rest] = fields;
+  return [first, ...rest];
 }
 
 function disturbSeries(spec: NormalizedVizSpec, magnitude: number): void {
@@ -380,11 +394,10 @@ function generateSeriesRows(
   slope: number
 ): readonly Record<string, unknown>[] {
   const random = createSeededRandom(seed);
-  const start = new Date('2024-01-01T00:00:00Z');
+  const start = TimeService.nowSystem().set({ year: 2024, month: 1, day: 1, hour: 0, minute: 0, second: 0 });
   return Array.from({ length: count }, (_, index) => {
-    const current = new Date(start.getTime());
-    current.setDate(current.getDate() + index);
-    const month = current.toISOString().slice(0, 7);
+    const current = start.plus({ days: index });
+    const month = current.toISODate()?.slice(0, 7) ?? '1970-01';
     const variance = random() * slope * 3;
     const value = baseValue + slope * index + variance;
     return {
@@ -483,7 +496,7 @@ function buildRecommendations(results: readonly VizBenchmarkResult[]): VizRender
   }
 
   const recommendations: VizRendererRecommendation[] = [];
-  for (const [key, bucket] of groups.entries()) {
+  for (const bucket of groups.values()) {
     if (bucket.length < 2) {
       continue;
     }
