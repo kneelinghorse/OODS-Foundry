@@ -13,6 +13,7 @@ const MARK_TRAIT_MAP = {
   MarkLine: 'line',
   MarkPoint: 'point',
   MarkArea: 'area',
+  MarkRect: 'rect',
 } as const;
 
 type AdapterTransform = Record<string, unknown>;
