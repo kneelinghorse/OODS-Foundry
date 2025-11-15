@@ -1,0 +1,89 @@
+{
+  "viz": {
+    "size": {
+      "point": {
+        "01": {
+          "$type": "dimension",
+          "$value": "3px",
+          "$description": "Point glyph size XS for dense scatterplots."
+        },
+        "02": {
+          "$type": "dimension",
+          "$value": "5px",
+          "$description": "Point glyph size SM for multi-series overlays."
+        },
+        "03": {
+          "$type": "dimension",
+          "$value": "7px",
+          "$description": "Point glyph size MD used as default marker radius."
+        },
+        "04": {
+          "$type": "dimension",
+          "$value": "10px",
+          "$description": "Point glyph size LG for highlighted selections."
+        },
+        "05": {
+          "$type": "dimension",
+          "$value": "14px",
+          "$description": "Point glyph size XL for focus or annotations."
+        }
+      },
+      "stroke": {
+        "01": {
+          "$type": "dimension",
+          "$value": "1px",
+          "$description": "Stroke width hairline (grid, helper lines)."
+        },
+        "02": {
+          "$type": "dimension",
+          "$value": "2px",
+          "$description": "Stroke width default for lines and outlines."
+        },
+        "03": {
+          "$type": "dimension",
+          "$value": "3px",
+          "$description": "Stroke width heavy for emphasis/selection."
+        },
+        "04": {
+          "$type": "dimension",
+          "$value": "4px",
+          "$description": "Stroke width extreme for focus/highlight bands."
+        }
+      },
+      "bar": {
+        "narrow": {
+          "$type": "dimension",
+          "$value": "12px",
+          "$description": "Bar width for compact spark-style charts."
+        },
+        "standard": {
+          "$type": "dimension",
+          "$value": "18px",
+          "$description": "Bar width default for dashboard usage."
+        },
+        "wide": {
+          "$type": "dimension",
+          "$value": "24px",
+          "$description": "Bar width for storytelling layouts or focus states."
+        }
+      }
+    },
+    "margin": {
+      "tight": {
+        "$type": "dimension",
+        "$value": "{sys.space.inset.compact}",
+        "$description": "Tight chart margin referencing system inset compact."
+      },
+      "default": {
+        "$type": "dimension",
+        "$value": "{sys.space.inline.sm}",
+        "$description": "Default chart margin referencing inline small spacing."
+      },
+      "roomy": {
+        "$type": "dimension",
+        "$value": "{sys.space.stack.default}",
+        "$description": "Roomy chart margin referencing stack default spacing."
+      }
+    }
+  }
+}

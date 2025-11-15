@@ -1,0 +1,142 @@
+{
+  "viz": {
+    "scale": {
+      "sequential": {
+        "01": {
+          "$type": "color",
+          "$value": "oklch(0.94 0.025 250)",
+          "$description": "Sequential scale step 01 – lightest tint for subtle backgrounds."
+        },
+        "02": {
+          "$type": "color",
+          "$value": "oklch(0.84 0.04 250)",
+          "$description": "Sequential scale step 02 – hover states on pale data regions."
+        },
+        "03": {
+          "$type": "color",
+          "$value": "oklch(0.74 0.055 250)",
+          "$description": "Sequential scale step 03 – low-emphasis series fills."
+        },
+        "04": {
+          "$type": "color",
+          "$value": "oklch(0.64 0.07 250)",
+          "$description": "Sequential scale step 04 – balanced fill for stacked charts."
+        },
+        "05": {
+          "$type": "color",
+          "$value": "oklch(0.54 0.09 250)",
+          "$description": "Sequential scale step 05 – baseline data hue."
+        },
+        "06": {
+          "$type": "color",
+          "$value": "oklch(0.44 0.11 250)",
+          "$description": "Sequential scale step 06 – hover/highlight overlay."
+        },
+        "07": {
+          "$type": "color",
+          "$value": "oklch(0.34 0.13 250)",
+          "$description": "Sequential scale step 07 – saturated accent for dense marks."
+        },
+        "08": {
+          "$type": "color",
+          "$value": "oklch(0.24 0.14 250)",
+          "$description": "Sequential scale step 08 – darker focus for dense data."
+        },
+        "09": {
+          "$type": "color",
+          "$value": "oklch(0.14 0.15 250)",
+          "$description": "Sequential scale step 09 – highest contrast extreme."
+        }
+      },
+      "diverging": {
+        "neg-05": {
+          "$type": "color",
+          "$value": "oklch(0.22 0.09 210)",
+          "$description": "Diverging scale far-negative anchor."
+        },
+        "neg-04": {
+          "$type": "color",
+          "$value": "oklch(0.32 0.08 210)",
+          "$description": "Diverging scale negative level 4."
+        },
+        "neg-03": {
+          "$type": "color",
+          "$value": "oklch(0.42 0.07 210)",
+          "$description": "Diverging scale negative level 3."
+        },
+        "neg-02": {
+          "$type": "color",
+          "$value": "oklch(0.52 0.06 210)",
+          "$description": "Diverging scale negative level 2."
+        },
+        "neg-01": {
+          "$type": "color",
+          "$value": "oklch(0.62 0.05 210)",
+          "$description": "Diverging scale near-neutral negative."
+        },
+        "neutral": {
+          "$type": "color",
+          "$value": "oklch(0.82 0.01 260)",
+          "$description": "Diverging scale midpoint neutral."
+        },
+        "pos-01": {
+          "$type": "color",
+          "$value": "oklch(0.62 0.06 25)",
+          "$description": "Diverging scale near-neutral positive."
+        },
+        "pos-02": {
+          "$type": "color",
+          "$value": "oklch(0.52 0.07 25)",
+          "$description": "Diverging scale positive level 2."
+        },
+        "pos-03": {
+          "$type": "color",
+          "$value": "oklch(0.42 0.08 25)",
+          "$description": "Diverging scale positive level 3."
+        },
+        "pos-04": {
+          "$type": "color",
+          "$value": "oklch(0.32 0.09 25)",
+          "$description": "Diverging scale positive level 4."
+        },
+        "pos-05": {
+          "$type": "color",
+          "$value": "oklch(0.22 0.11 25)",
+          "$description": "Diverging scale far-positive anchor."
+        }
+      },
+      "categorical": {
+        "01": {
+          "$type": "color",
+          "$value": "{sys.status.info.icon}",
+          "$description": "Categorical slot 01 derived from info tone."
+        },
+        "02": {
+          "$type": "color",
+          "$value": "{sys.status.accent.icon}",
+          "$description": "Categorical slot 02 derived from accent tone."
+        },
+        "03": {
+          "$type": "color",
+          "$value": "{sys.status.success.icon}",
+          "$description": "Categorical slot 03 derived from success tone."
+        },
+        "04": {
+          "$type": "color",
+          "$value": "{sys.status.warning.icon}",
+          "$description": "Categorical slot 04 derived from warning tone."
+        },
+        "05": {
+          "$type": "color",
+          "$value": "{sys.status.critical.icon}",
+          "$description": "Categorical slot 05 derived from critical tone."
+        },
+        "06": {
+          "$type": "color",
+          "$value": "{sys.status.neutral.icon}",
+          "$description": "Categorical slot 06 derived from neutral tone."
+        }
+      }
+    }
+  }
+}

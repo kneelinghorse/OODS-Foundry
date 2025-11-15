@@ -8,7 +8,7 @@ import yaml from 'js-yaml';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const DEFAULT_TARGET = 'packages/tokens/src/tokens';
+const DEFAULT_TARGET = 'packages/tokens/src';
 const CONFIG_NAME = 'dtcg-guardrails.config.yaml';
 
 /**

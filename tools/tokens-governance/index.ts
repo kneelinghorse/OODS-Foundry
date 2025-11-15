@@ -451,7 +451,7 @@ interface CollectState {
   filePath: string;
 }
 
-const SOURCE_DIRECTORIES = ['packages/tokens/src/tokens', 'tokens'];
+const SOURCE_DIRECTORIES = ['packages/tokens/src', 'tokens'];
 const MAX_TOKEN_DEPTH = 32;
 
 function collectDtcgTokens(
