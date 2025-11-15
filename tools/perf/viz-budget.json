@@ -1,0 +1,513 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2025-11-15T22:50:49.804Z",
+  "metrics": {
+    "renderTimeMs": {
+      "unit": "ms",
+      "description": "Spec → renderer payload transform time",
+      "methodology": "Measured with node:perf_hooks using adapter conversions"
+    },
+    "updateTimeMs": {
+      "unit": "ms",
+      "description": "Spec update/refresh time",
+      "methodology": "Mutates data payloads and recomputes renderer options"
+    },
+    "interactionLatencyMs": {
+      "unit": "ms",
+      "description": "Time to bind + trigger highlight/tooltip interactions",
+      "methodology": "ECharts uses stub runtime; Vega-Lite serializes predicates"
+    },
+    "memoryBytes": {
+      "unit": "bytes",
+      "description": "Serialized renderer configuration size",
+      "methodology": "UTF-8 byte length of adapter output"
+    },
+    "bundleImpactBytes": {
+      "unit": "bytes",
+      "description": "Library footprint contribution",
+      "methodology": "Static size from node_modules minified bundle"
+    }
+  },
+  "budgets": [
+    {
+      "chartType": "area",
+      "renderer": "echarts",
+      "dataPoints": 10,
+      "targets": {
+        "renderTimeMs": 0.1165,
+        "updateTimeMs": 0.123168,
+        "interactionLatencyMs": 0.186665,
+        "memoryBytes": 15410,
+        "bundleImpactBytes": 1325000
+      }
+    },
+    {
+      "chartType": "area",
+      "renderer": "vega-lite",
+      "dataPoints": 10,
+      "targets": {
+        "renderTimeMs": 0.110832,
+        "updateTimeMs": 0.117668,
+        "interactionLatencyMs": 0.128125,
+        "memoryBytes": 14760,
+        "bundleImpactBytes": 360000
+      }
+    },
+    {
+      "chartType": "area",
+      "renderer": "echarts",
+      "dataPoints": 100,
+      "targets": {
+        "renderTimeMs": 0.090664,
+        "updateTimeMs": 0.132164,
+        "interactionLatencyMs": 0.1525,
+        "memoryBytes": 19554,
+        "bundleImpactBytes": 1325000
+      }
+    },
+    {
+      "chartType": "area",
+      "renderer": "vega-lite",
+      "dataPoints": 100,
+      "targets": {
+        "renderTimeMs": 0.115168,
+        "updateTimeMs": 0.127168,
+        "interactionLatencyMs": 0.115,
+        "memoryBytes": 18909,
+        "bundleImpactBytes": 360000
+      }
+    },
+    {
+      "chartType": "area",
+      "renderer": "echarts",
+      "dataPoints": 1000,
+      "targets": {
+        "renderTimeMs": 0.115832,
+        "updateTimeMs": 0.134668,
+        "interactionLatencyMs": 0.167505,
+        "memoryBytes": 62155,
+        "bundleImpactBytes": 1325000
+      }
+    },
+    {
+      "chartType": "area",
+      "renderer": "vega-lite",
+      "dataPoints": 1000,
+      "targets": {
+        "renderTimeMs": 0.082164,
+        "updateTimeMs": 0.201332,
+        "interactionLatencyMs": 0.13729,
+        "memoryBytes": 61506,
+        "bundleImpactBytes": 360000
+      }
+    },
+    {
+      "chartType": "area",
+      "renderer": "echarts",
+      "dataPoints": 10000,
+      "targets": {
+        "renderTimeMs": 0.097168,
+        "updateTimeMs": 0.2605,
+        "interactionLatencyMs": 0.216045,
+        "memoryBytes": 499977,
+        "bundleImpactBytes": 1325000
+      }
+    },
+    {
+      "chartType": "area",
+      "renderer": "vega-lite",
+      "dataPoints": 10000,
+      "targets": {
+        "renderTimeMs": 0.1015,
+        "updateTimeMs": 0.326,
+        "interactionLatencyMs": 0.14417,
+        "memoryBytes": 499370,
+        "bundleImpactBytes": 360000
+      }
+    },
+    {
+      "chartType": "bar",
+      "renderer": "echarts",
+      "dataPoints": 10,
+      "targets": {
+        "renderTimeMs": 0.261836,
+        "updateTimeMs": 0.248668,
+        "interactionLatencyMs": 1.410005,
+        "memoryBytes": 15612,
+        "bundleImpactBytes": 1325000
+      }
+    },
+    {
+      "chartType": "bar",
+      "renderer": "vega-lite",
+      "dataPoints": 10,
+      "targets": {
+        "renderTimeMs": 0.274832,
+        "updateTimeMs": 0.2385,
+        "interactionLatencyMs": 0.24104,
+        "memoryBytes": 14990,
+        "bundleImpactBytes": 360000
+      }
+    },
+    {
+      "chartType": "bar",
+      "renderer": "echarts",
+      "dataPoints": 100,
+      "targets": {
+        "renderTimeMs": 0.1235,
+        "updateTimeMs": 0.126332,
+        "interactionLatencyMs": 0.17708,
+        "memoryBytes": 19606,
+        "bundleImpactBytes": 1325000
+      }
+    },
+    {
+      "chartType": "bar",
+      "renderer": "vega-lite",
+      "dataPoints": 100,
+      "targets": {
+        "renderTimeMs": 0.108668,
+        "updateTimeMs": 0.114336,
+        "interactionLatencyMs": 0.135415,
+        "memoryBytes": 18977,
+        "bundleImpactBytes": 360000
+      }
+    },
+    {
+      "chartType": "bar",
+      "renderer": "echarts",
+      "dataPoints": 1000,
+      "targets": {
+        "renderTimeMs": 0.170168,
+        "updateTimeMs": 0.233164,
+        "interactionLatencyMs": 0.34875,
+        "memoryBytes": 59476,
+        "bundleImpactBytes": 1325000
+      }
+    },
+    {
+      "chartType": "bar",
+      "renderer": "vega-lite",
+      "dataPoints": 1000,
+      "targets": {
+        "renderTimeMs": 0.140668,
+        "updateTimeMs": 0.185168,
+        "interactionLatencyMs": 0.18271,
+        "memoryBytes": 58838,
+        "bundleImpactBytes": 360000
+      }
+    },
+    {
+      "chartType": "bar",
+      "renderer": "echarts",
+      "dataPoints": 10000,
+      "targets": {
+        "renderTimeMs": 0.0985,
+        "updateTimeMs": 0.285168,
+        "interactionLatencyMs": 0.612495,
+        "memoryBytes": 457984,
+        "bundleImpactBytes": 1325000
+      }
+    },
+    {
+      "chartType": "bar",
+      "renderer": "vega-lite",
+      "dataPoints": 10000,
+      "targets": {
+        "renderTimeMs": 0.6745,
+        "updateTimeMs": 0.234168,
+        "interactionLatencyMs": 0.90979,
+        "memoryBytes": 457365,
+        "bundleImpactBytes": 360000
+      }
+    },
+    {
+      "chartType": "heatmap",
+      "renderer": "echarts",
+      "dataPoints": 10,
+      "targets": {
+        "renderTimeMs": 0.123832,
+        "updateTimeMs": 0.131832,
+        "interactionLatencyMs": 0.176875,
+        "memoryBytes": 15887,
+        "bundleImpactBytes": 1325000
+      }
+    },
+    {
+      "chartType": "heatmap",
+      "renderer": "vega-lite",
+      "dataPoints": 10,
+      "targets": {
+        "renderTimeMs": 0.1105,
+        "updateTimeMs": 0.115,
+        "interactionLatencyMs": 0.127705,
+        "memoryBytes": 15221,
+        "bundleImpactBytes": 360000
+      }
+    },
+    {
+      "chartType": "heatmap",
+      "renderer": "echarts",
+      "dataPoints": 100,
+      "targets": {
+        "renderTimeMs": 0.1225,
+        "updateTimeMs": 0.13,
+        "interactionLatencyMs": 0.144165,
+        "memoryBytes": 21704,
+        "bundleImpactBytes": 1325000
+      }
+    },
+    {
+      "chartType": "heatmap",
+      "renderer": "vega-lite",
+      "dataPoints": 100,
+      "targets": {
+        "renderTimeMs": 0.109164,
+        "updateTimeMs": 0.114332,
+        "interactionLatencyMs": 0.11479,
+        "memoryBytes": 21037,
+        "bundleImpactBytes": 360000
+      }
+    },
+    {
+      "chartType": "heatmap",
+      "renderer": "echarts",
+      "dataPoints": 1000,
+      "targets": {
+        "renderTimeMs": 0.124832,
+        "updateTimeMs": 0.1405,
+        "interactionLatencyMs": 0.19541,
+        "memoryBytes": 79845,
+        "bundleImpactBytes": 1325000
+      }
+    },
+    {
+      "chartType": "heatmap",
+      "renderer": "vega-lite",
+      "dataPoints": 1000,
+      "targets": {
+        "renderTimeMs": 0.1125,
+        "updateTimeMs": 0.122164,
+        "interactionLatencyMs": 0.118335,
+        "memoryBytes": 79163,
+        "bundleImpactBytes": 360000
+      }
+    },
+    {
+      "chartType": "heatmap",
+      "renderer": "echarts",
+      "dataPoints": 10000,
+      "targets": {
+        "renderTimeMs": 0.094668,
+        "updateTimeMs": 0.202832,
+        "interactionLatencyMs": 0.200415,
+        "memoryBytes": 661115,
+        "bundleImpactBytes": 1325000
+      }
+    },
+    {
+      "chartType": "heatmap",
+      "renderer": "vega-lite",
+      "dataPoints": 10000,
+      "targets": {
+        "renderTimeMs": 0.127332,
+        "updateTimeMs": 0.2495,
+        "interactionLatencyMs": 0.143545,
+        "memoryBytes": 660485,
+        "bundleImpactBytes": 360000
+      }
+    },
+    {
+      "chartType": "line",
+      "renderer": "echarts",
+      "dataPoints": 10,
+      "targets": {
+        "renderTimeMs": 0.143,
+        "updateTimeMs": 0.145,
+        "interactionLatencyMs": 2.621875,
+        "memoryBytes": 15567,
+        "bundleImpactBytes": 1325000
+      }
+    },
+    {
+      "chartType": "line",
+      "renderer": "vega-lite",
+      "dataPoints": 10,
+      "targets": {
+        "renderTimeMs": 0.124164,
+        "updateTimeMs": 0.1305,
+        "interactionLatencyMs": 0.16875,
+        "memoryBytes": 14976,
+        "bundleImpactBytes": 360000
+      }
+    },
+    {
+      "chartType": "line",
+      "renderer": "echarts",
+      "dataPoints": 100,
+      "targets": {
+        "renderTimeMs": 0.131164,
+        "updateTimeMs": 0.145336,
+        "interactionLatencyMs": 0.24812,
+        "memoryBytes": 20845,
+        "bundleImpactBytes": 1325000
+      }
+    },
+    {
+      "chartType": "line",
+      "renderer": "vega-lite",
+      "dataPoints": 100,
+      "targets": {
+        "renderTimeMs": 0.1175,
+        "updateTimeMs": 0.124336,
+        "interactionLatencyMs": 0.151455,
+        "memoryBytes": 20262,
+        "bundleImpactBytes": 360000
+      }
+    },
+    {
+      "chartType": "line",
+      "renderer": "echarts",
+      "dataPoints": 1000,
+      "targets": {
+        "renderTimeMs": 0.115332,
+        "updateTimeMs": 0.191668,
+        "interactionLatencyMs": 0.297085,
+        "memoryBytes": 74879,
+        "bundleImpactBytes": 1325000
+      }
+    },
+    {
+      "chartType": "line",
+      "renderer": "vega-lite",
+      "dataPoints": 1000,
+      "targets": {
+        "renderTimeMs": 0.114836,
+        "updateTimeMs": 0.262168,
+        "interactionLatencyMs": 0.16271,
+        "memoryBytes": 74259,
+        "bundleImpactBytes": 360000
+      }
+    },
+    {
+      "chartType": "line",
+      "renderer": "echarts",
+      "dataPoints": 10000,
+      "targets": {
+        "renderTimeMs": 0.5605,
+        "updateTimeMs": 0.217668,
+        "interactionLatencyMs": 0.257495,
+        "memoryBytes": 626651,
+        "bundleImpactBytes": 1325000
+      }
+    },
+    {
+      "chartType": "line",
+      "renderer": "vega-lite",
+      "dataPoints": 10000,
+      "targets": {
+        "renderTimeMs": 0.159164,
+        "updateTimeMs": 0.338332,
+        "interactionLatencyMs": 0.130835,
+        "memoryBytes": 626118,
+        "bundleImpactBytes": 360000
+      }
+    },
+    {
+      "chartType": "scatter",
+      "renderer": "echarts",
+      "dataPoints": 10,
+      "targets": {
+        "renderTimeMs": 0.1155,
+        "updateTimeMs": 0.105168,
+        "interactionLatencyMs": 0.20562,
+        "memoryBytes": 16694,
+        "bundleImpactBytes": 1325000
+      }
+    },
+    {
+      "chartType": "scatter",
+      "renderer": "vega-lite",
+      "dataPoints": 10,
+      "targets": {
+        "renderTimeMs": 0.104,
+        "updateTimeMs": 0.110336,
+        "interactionLatencyMs": 0.13396,
+        "memoryBytes": 16071,
+        "bundleImpactBytes": 360000
+      }
+    },
+    {
+      "chartType": "scatter",
+      "renderer": "echarts",
+      "dataPoints": 100,
+      "targets": {
+        "renderTimeMs": 0.097832,
+        "updateTimeMs": 0.109332,
+        "interactionLatencyMs": 0.169795,
+        "memoryBytes": 25699,
+        "bundleImpactBytes": 1325000
+      }
+    },
+    {
+      "chartType": "scatter",
+      "renderer": "vega-lite",
+      "dataPoints": 100,
+      "targets": {
+        "renderTimeMs": 0.119336,
+        "updateTimeMs": 0.116164,
+        "interactionLatencyMs": 0.109585,
+        "memoryBytes": 25080,
+        "bundleImpactBytes": 360000
+      }
+    },
+    {
+      "chartType": "scatter",
+      "renderer": "echarts",
+      "dataPoints": 1000,
+      "targets": {
+        "renderTimeMs": 0.104668,
+        "updateTimeMs": 0.144332,
+        "interactionLatencyMs": 0.23333,
+        "memoryBytes": 115741,
+        "bundleImpactBytes": 1325000
+      }
+    },
+    {
+      "chartType": "scatter",
+      "renderer": "vega-lite",
+      "dataPoints": 1000,
+      "targets": {
+        "renderTimeMs": 0.135336,
+        "updateTimeMs": 0.137668,
+        "interactionLatencyMs": 0.115835,
+        "memoryBytes": 115108,
+        "bundleImpactBytes": 360000
+      }
+    },
+    {
+      "chartType": "scatter",
+      "renderer": "echarts",
+      "dataPoints": 10000,
+      "targets": {
+        "renderTimeMs": 0.137,
+        "updateTimeMs": 0.194668,
+        "interactionLatencyMs": 0.210625,
+        "memoryBytes": 1016155,
+        "bundleImpactBytes": 1325000
+      }
+    },
+    {
+      "chartType": "scatter",
+      "renderer": "vega-lite",
+      "dataPoints": 10000,
+      "targets": {
+        "renderTimeMs": 0.1055,
+        "updateTimeMs": 0.3205,
+        "interactionLatencyMs": 0.14604,
+        "memoryBytes": 1015513,
+        "bundleImpactBytes": 360000
+      }
+    }
+  ]
+}
