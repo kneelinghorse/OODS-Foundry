@@ -8,6 +8,7 @@ import { toVegaLiteSpec } from '../../viz/adapters/vega-lite-adapter.js';
 import type { VegaLiteAdapterSpec } from '../../viz/adapters/vega-lite-adapter.js';
 import { toEChartsOption, type EChartsOption } from '../../viz/adapters/echarts-adapter.js';
 import { bindEChartsInteractions } from '../../viz/adapters/echarts-interactions.js';
+import type { EChartsRuntime } from '../../viz/adapters/echarts-interactions.js';
 import { selectVizRenderer, type VizRendererId } from '../../viz/adapters/renderer-selector.js';
 import { VizContainer } from './VizContainer.js';
 import { ChartDescription } from './ChartDescription.js';
@@ -206,7 +207,8 @@ export function ScatterChartBase({
         }
         const instance = echarts.init(target, undefined, { renderer: echartsRenderer, useDirtyRect: true });
         instance.setOption(option, true);
-        interactionCleanup = bindEChartsInteractions(instance, spec);
+        const runtime = createEChartsRuntime(instance);
+        interactionCleanup = bindEChartsInteractions(runtime, spec);
         echartsInstance.current = instance;
         setStatus('ready');
       } catch (error: unknown) {
@@ -310,19 +312,37 @@ function applyLayoutOverrides(spec: VegaLiteAdapterSpec, width?: number, height?
 }
 
 function stripRendererTitle(option: EChartsOption): EChartsOption {
-  if (Array.isArray(option.title)) {
+  const title = option.title;
+
+  if (Array.isArray(title)) {
     return {
       ...option,
-      title: option.title.map((entry) => ({ ...entry, show: false })),
+      title: title.map((entry) => ({ ...entry, show: false })) as typeof title,
     };
   }
 
-  if (option.title) {
+  if (title) {
     return {
       ...option,
-      title: { ...option.title, show: false },
+      title: { ...title, show: false } as typeof title,
     };
   }
 
   return option;
+}
+
+function createEChartsRuntime(instance: EChartsType): EChartsRuntime {
+  return {
+    on: (event, handler) => {
+      instance.on(event as never, handler as never);
+    },
+    off: (event, handler) => {
+      if (typeof instance.off === 'function') {
+        instance.off(event as never, handler as never);
+      }
+    },
+    dispatchAction: (action) => {
+      instance.dispatchAction(action as never);
+    },
+  };
 }

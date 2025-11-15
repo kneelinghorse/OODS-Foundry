@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import type { ScatterChartProps } from './ScatterChart.js';
 import { ScatterChartBase } from './ScatterChart.js';
 
