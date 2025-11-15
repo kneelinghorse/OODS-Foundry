@@ -1,5 +1,6 @@
 import type { HTMLAttributes, JSX } from 'react';
 import type { NormalizedVizSpec } from '../../viz/spec/normalized-viz-spec.js';
+import { generateNarrativeSummary } from '../../viz/a11y/narrative-generator.js';
 
 export interface ChartDescriptionProps extends HTMLAttributes<HTMLDivElement> {
   readonly spec: NormalizedVizSpec;
@@ -7,9 +8,9 @@ export interface ChartDescriptionProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 export function ChartDescription({ spec, heading = 'Narrative description', className, ...props }: ChartDescriptionProps): JSX.Element {
-  const narrative = spec.a11y.narrative;
-  const summary = narrative?.summary ?? spec.a11y.description;
-  const findings = narrative?.keyFindings ?? [];
+  const narrative = generateNarrativeSummary(spec);
+  const summary = narrative.summary ?? spec.a11y.description;
+  const findings = narrative.keyFindings ?? [];
 
   const rootClassName = [
     'rounded-2xl border border-slate-200 bg-white p-4 text-sm shadow-card dark:border-slate-600 dark:bg-slate-900',

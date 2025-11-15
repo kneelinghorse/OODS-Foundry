@@ -39,6 +39,6 @@ describe('BarChart', () => {
     await waitFor(() => expect(embedSpy).toHaveBeenCalledTimes(1));
 
     const note = screen.getByRole('note');
-    expect(note).toHaveTextContent('Inline data values are required to generate an accessible table');
+    expect(note).toHaveTextContent('No inline data values available to generate a table');
   });
 });
