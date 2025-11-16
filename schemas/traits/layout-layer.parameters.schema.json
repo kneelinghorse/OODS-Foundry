@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oods.systems/schemas/traits/layout-layer",
+  "title": "LayoutLayer Trait Parameters",
+  "type": "object",
+  "properties": {
+    "blendMode": {
+      "type": "string",
+      "description": "Blend/composite mode applied across stacked marks.",
+      "enum": ["normal", "multiply", "screen", "overlay"],
+      "default": "normal"
+    },
+    "syncInteractions": {
+      "type": "boolean",
+      "description": "Whether interaction predicates propagate across layers.",
+      "default": true
+    },
+    "sharedChannels": {
+      "type": "array",
+      "description": "Channels that remain synchronized across layers.",
+      "items": {
+        "type": "string",
+        "enum": ["x", "y", "color", "size", "shape", "detail"]
+      },
+      "uniqueItems": true,
+      "default": ["x", "y", "color"]
+    },
+    "orderHint": {
+      "type": "array",
+      "description": "Optional explicit bottom→top ordering for marks.",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "projection": {
+      "type": "string",
+      "description": "Projection hint for adapters.",
+      "enum": ["cartesian", "polar", "radial"],
+      "default": "cartesian"
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "blendMode": "multiply",
+      "syncInteractions": true,
+      "sharedChannels": ["x", "y"],
+      "orderHint": ["MarkArea", "MarkLine"],
+      "projection": "cartesian"
+    }
+  ]
+}

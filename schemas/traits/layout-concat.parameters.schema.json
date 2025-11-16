@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oods.systems/schemas/traits/layout-concat",
+  "title": "LayoutConcat Trait Parameters",
+  "type": "object",
+  "properties": {
+    "direction": {
+      "type": "string",
+      "description": "Primary axis used to arrange concatenated sections.",
+      "enum": ["horizontal", "vertical", "grid"],
+      "default": "horizontal"
+    },
+    "gap": {
+      "type": "integer",
+      "description": "Gap (px) between concatenated sections.",
+      "minimum": 0,
+      "maximum": 96,
+      "default": 24
+    },
+    "sharedChannels": {
+      "type": "array",
+      "description": "Channels propagated across concatenated children.",
+      "items": {
+        "type": "string",
+        "enum": ["x", "y", "color", "size", "shape", "detail"]
+      },
+      "uniqueItems": true,
+      "default": ["color"]
+    },
+    "maxSections": {
+      "type": "integer",
+      "description": "Maximum number of child sections governed by this layout.",
+      "minimum": 2,
+      "maximum": 12,
+      "default": 4
+    },
+    "projection": {
+      "type": "string",
+      "description": "Projection hint consumed by adapters.",
+      "enum": ["cartesian", "polar", "radial"],
+      "default": "cartesian"
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "direction": "horizontal",
+      "gap": 24,
+      "sharedChannels": ["color"],
+      "maxSections": 3,
+      "projection": "cartesian"
+    }
+  ]
+}

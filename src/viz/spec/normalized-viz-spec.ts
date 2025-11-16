@@ -8,6 +8,15 @@ export type {
   InteractionTrait,
   InteractionSelection,
   InteractionRule,
+  LayoutDefinition,
+  LayoutFacet,
+  LayoutLayer,
+  LayoutConcat,
+  ConcatSection,
+  SharedScaleConfig,
+  LayoutProjection,
+  FacetField,
+  SectionFilter,
 } from '../../../generated/types/viz/normalized-viz-spec';
 
 export type NormalizedVizSpec = NormalizedVizSpecV01;

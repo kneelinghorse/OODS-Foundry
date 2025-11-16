@@ -1,0 +1,107 @@
+{
+  "$schema": "https://oods.dev/viz-spec/v1",
+  "id": "example:viz:facet-layout",
+  "name": "MRR vs Pipeline by Region × Segment",
+  "data": {
+    "values": [
+      { "region": "North", "segment": "Enterprise", "metric": "MRR", "value": 120000 },
+      { "region": "North", "segment": "Enterprise", "metric": "Pipeline", "value": 95000 },
+      { "region": "North", "segment": "Growth", "metric": "MRR", "value": 68000 },
+      { "region": "North", "segment": "Growth", "metric": "Pipeline", "value": 54000 },
+      { "region": "South", "segment": "Enterprise", "metric": "MRR", "value": 108000 },
+      { "region": "South", "segment": "Enterprise", "metric": "Pipeline", "value": 87000 },
+      { "region": "South", "segment": "Growth", "metric": "MRR", "value": 72000 },
+      { "region": "South", "segment": "Growth", "metric": "Pipeline", "value": 61000 }
+    ]
+  },
+  "marks": [
+    {
+      "trait": "MarkBar",
+      "encodings": {
+        "x": {
+          "field": "metric",
+          "trait": "EncodingPositionX",
+          "channel": "x",
+          "title": "Metric",
+          "sort": "ascending"
+        },
+        "y": {
+          "field": "value",
+          "trait": "EncodingPositionY",
+          "channel": "y",
+          "title": "Value (USD)",
+          "aggregate": "sum",
+          "scale": "linear"
+        },
+        "color": {
+          "field": "metric",
+          "trait": "EncodingColor",
+          "channel": "color",
+          "legend": { "title": "Metric" }
+        }
+      }
+    }
+  ],
+  "encoding": {
+    "x": {
+      "field": "metric",
+      "trait": "EncodingPositionX",
+      "channel": "x",
+      "title": "Metric",
+      "sort": "ascending"
+    },
+    "y": {
+      "field": "value",
+      "trait": "EncodingPositionY",
+      "channel": "y",
+      "title": "Value (USD)",
+      "aggregate": "sum",
+      "scale": "linear"
+    },
+    "color": {
+      "field": "metric",
+      "trait": "EncodingColor",
+      "channel": "color",
+      "legend": { "title": "Metric" }
+    }
+  },
+  "layout": {
+    "trait": "LayoutFacet",
+    "rows": { "field": "region", "limit": 4, "sort": "ascending", "title": "Region" },
+    "columns": { "field": "segment", "limit": 3, "sort": "ascending", "title": "Segment" },
+    "wrap": "row",
+    "maxPanels": 8,
+    "gap": 12,
+    "sharedScales": { "x": "shared", "y": "shared", "color": "shared" },
+    "projection": { "type": "cartesian", "preserveAspectRatio": true }
+  },
+  "interactions": [
+    {
+      "id": "metric-highlight",
+      "select": { "type": "point", "on": "hover", "fields": ["metric"] },
+      "rule": {
+        "bindTo": "visual",
+        "property": "fillOpacity",
+        "condition": { "value": 1 },
+        "else": { "value": 0.35 }
+      }
+    }
+  ],
+  "config": {
+    "theme": "brand-a",
+    "layout": { "width": 360, "height": 260, "padding": 16 }
+  },
+  "a11y": {
+    "description": "Grid of bar charts comparing MRR and pipeline totals for each region × segment. Enterprise rows trend higher than growth rows in both regions.",
+    "ariaLabel": "Facet grid showing MRR vs pipeline totals by region and segment",
+    "tableFallback": {
+      "enabled": true,
+      "caption": "Summary of MRR and pipeline totals for every region and segment."
+    }
+  },
+  "portability": {
+    "fallbackType": "table",
+    "preferredRenderer": "vega-lite",
+    "tableColumnOrder": ["region", "segment", "metric", "value"]
+  }
+}

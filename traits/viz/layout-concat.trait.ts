@@ -1,0 +1,171 @@
+import type { TraitDefinition } from '../../src/core/trait-definition.ts';
+
+const LayoutConcatTrait: TraitDefinition = {
+  trait: {
+    name: 'LayoutConcat',
+    version: '0.1.0',
+    description: 'Defines dashboard-style concatenation of coordinated views.',
+    category: 'viz.layout',
+    tags: ['viz', 'layout', 'concat', 'dashboard'],
+  },
+
+  parameters: [
+    {
+      name: 'direction',
+      type: 'string',
+      required: false,
+      description: 'Primary axis used to arrange concatenated sections.',
+      default: 'horizontal',
+      validation: {
+        enum: ['horizontal', 'vertical', 'grid'],
+      },
+    },
+    {
+      name: 'gap',
+      type: 'number',
+      required: false,
+      description: 'Gap (px) between concatenated sections.',
+      default: 24,
+      validation: {
+        minimum: 0,
+        maximum: 96,
+      },
+    },
+    {
+      name: 'sharedChannels',
+      type: 'string[]',
+      required: false,
+      description: 'Encoding channels propagated across concatenated children.',
+      default: ['color'],
+    },
+    {
+      name: 'maxSections',
+      type: 'number',
+      required: false,
+      description: 'Maximum number of child sections governed by this layout.',
+      default: 4,
+      validation: {
+        minimum: 2,
+        maximum: 12,
+      },
+    },
+    {
+      name: 'projection',
+      type: 'string',
+      required: false,
+      description: 'Projection hint consumed by adapters.',
+      default: 'cartesian',
+      validation: {
+        enum: ['cartesian', 'polar', 'radial'],
+      },
+    },
+  ] as const,
+
+  schema: {
+    viz_layout_type: {
+      type: 'string',
+      required: true,
+      description: 'Normalized layout identifier.',
+      default: 'concat',
+      validation: {
+        enum: ['concat'],
+      },
+    },
+    viz_layout_direction: {
+      type: 'string',
+      required: false,
+      description: 'Axis used for arranging concatenated sections.',
+      defaultFromParameter: 'direction',
+      validation: {
+        enum: ['horizontal', 'vertical', 'grid'],
+      },
+    },
+    viz_layout_gap: {
+      type: 'number',
+      required: false,
+      description: 'Gap (px) between concatenated sections.',
+      defaultFromParameter: 'gap',
+      validation: {
+        minimum: 0,
+        maximum: 96,
+      },
+    },
+    viz_layout_shared_channels: {
+      type: 'string[]',
+      required: false,
+      description: 'Channels whose domains remain shared across sections.',
+      defaultFromParameter: 'sharedChannels',
+    },
+    viz_layout_max_sections: {
+      type: 'number',
+      required: false,
+      description: 'Maximum section count before a dashboard warning triggers.',
+      defaultFromParameter: 'maxSections',
+      validation: {
+        minimum: 2,
+        maximum: 12,
+      },
+    },
+    viz_layout_projection: {
+      type: 'string',
+      required: false,
+      description: 'Projection metadata forwarded to adapters.',
+      defaultFromParameter: 'projection',
+      validation: {
+        enum: ['cartesian', 'polar', 'radial'],
+      },
+    },
+  },
+
+  semantics: {
+    viz_layout_type: {
+      semantic_type: 'viz.layout.type',
+      ui_hints: {
+        component: 'Badge',
+      },
+    },
+    viz_layout_direction: {
+      semantic_type: 'viz.layout.concat.direction',
+      ui_hints: {
+        component: 'Badge',
+      },
+    },
+    viz_layout_gap: {
+      semantic_type: 'viz.layout.spacing',
+      ui_hints: {
+        component: 'NumericPreview',
+        unit: 'px',
+      },
+    },
+    viz_layout_shared_channels: {
+      semantic_type: 'viz.layout.shared_channels',
+      ui_hints: {
+        component: 'ListSummary',
+      },
+    },
+    viz_layout_max_sections: {
+      semantic_type: 'viz.layout.concat.sections',
+      ui_hints: {
+        component: 'NumericPreview',
+      },
+    },
+    viz_layout_projection: {
+      semantic_type: 'viz.layout.projection',
+      ui_hints: {
+        component: 'Badge',
+      },
+    },
+  },
+
+  tokens: {
+    'viz.layout.concat.gap': 'var(--cmp-viz-layout-gap)',
+  },
+
+  metadata: {
+    created: '2025-11-16',
+    owners: ['viz@oods.systems'],
+    maturity: 'beta',
+  },
+};
+
+export default LayoutConcatTrait;

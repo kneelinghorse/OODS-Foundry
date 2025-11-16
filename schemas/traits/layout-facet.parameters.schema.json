@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oods.systems/schemas/traits/layout-facet",
+  "title": "LayoutFacet Trait Parameters",
+  "type": "object",
+  "properties": {
+    "rowField": {
+      "type": "string",
+      "description": "Field used to create facet rows."
+    },
+    "columnField": {
+      "type": "string",
+      "description": "Field used to create facet columns."
+    },
+    "wrapDirection": {
+      "type": "string",
+      "description": "Direction to wrap when panel count exceeds the budget.",
+      "enum": ["row", "column", "auto"],
+      "default": "row"
+    },
+    "maxPanels": {
+      "type": "integer",
+      "description": "Maximum panel count rendered simultaneously.",
+      "minimum": 1,
+      "maximum": 48,
+      "default": 6
+    },
+    "sharedChannels": {
+      "type": "array",
+      "description": "Channels that remain synchronized across panels.",
+      "items": {
+        "type": "string",
+        "enum": ["x", "y", "color", "size", "shape", "detail"]
+      },
+      "uniqueItems": true,
+      "default": ["x", "y", "color"]
+    },
+    "projection": {
+      "type": "string",
+      "description": "Projection hint consumed by downstream adapters.",
+      "enum": ["cartesian", "polar", "radial"],
+      "default": "cartesian"
+    }
+  },
+  "additionalProperties": false,
+  "anyOf": [
+    { "required": ["rowField"] },
+    { "required": ["columnField"] }
+  ],
+  "examples": [
+    {
+      "rowField": "region",
+      "columnField": "segment",
+      "wrapDirection": "row",
+      "maxPanels": 6,
+      "sharedChannels": ["x", "color"],
+      "projection": "cartesian"
+    }
+  ]
+}

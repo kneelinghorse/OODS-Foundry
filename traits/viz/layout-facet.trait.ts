@@ -1,0 +1,202 @@
+import type { TraitDefinition } from '../../src/core/trait-definition.ts';
+
+const LayoutFacetTrait: TraitDefinition = {
+  trait: {
+    name: 'LayoutFacet',
+    version: '0.1.0',
+    description:
+      'Repeats the normalized visualization spec across a facet grid driven by row and column fields.',
+    category: 'viz.layout',
+    tags: ['viz', 'layout', 'facet', 'grid'],
+  },
+
+  parameters: [
+    {
+      name: 'rowField',
+      type: 'string',
+      required: false,
+      description: 'Field used to create facet rows.',
+    },
+    {
+      name: 'columnField',
+      type: 'string',
+      required: false,
+      description: 'Field used to create facet columns.',
+    },
+    {
+      name: 'wrapDirection',
+      type: 'string',
+      required: false,
+      description: 'Direction to wrap when panels exceed the column/row budget.',
+      default: 'row',
+      validation: {
+        enum: ['row', 'column', 'auto'],
+      },
+    },
+    {
+      name: 'maxPanels',
+      type: 'number',
+      required: false,
+      description: 'Maximum panel count before wrap is applied.',
+      default: 6,
+      validation: {
+        minimum: 1,
+        maximum: 48,
+      },
+    },
+    {
+      name: 'sharedChannels',
+      type: 'string[]',
+      required: false,
+      description: 'Encoding channels that remain synchronized across panels.',
+      default: ['x', 'y', 'color'],
+    },
+    {
+      name: 'projection',
+      type: 'string',
+      required: false,
+      description: 'Projection hint consumed by downstream adapters.',
+      default: 'cartesian',
+      validation: {
+        enum: ['cartesian', 'polar', 'radial'],
+      },
+    },
+  ] as const,
+
+  schema: {
+    viz_layout_type: {
+      type: 'string',
+      required: true,
+      description: 'Normalized layout identifier.',
+      default: 'facet',
+      validation: {
+        enum: ['facet'],
+      },
+    },
+    viz_layout_rows_field: {
+      type: 'string',
+      required: false,
+      description: 'Data field used to derive facet rows.',
+      defaultFromParameter: 'rowField',
+    },
+    viz_layout_columns_field: {
+      type: 'string',
+      required: false,
+      description: 'Data field used to derive facet columns.',
+      defaultFromParameter: 'columnField',
+    },
+    viz_layout_wrap_direction: {
+      type: 'string',
+      required: false,
+      description: 'How facets wrap when exceeding panel limits.',
+      defaultFromParameter: 'wrapDirection',
+      validation: {
+        enum: ['row', 'column', 'auto'],
+      },
+    },
+    viz_layout_max_panels: {
+      type: 'number',
+      required: false,
+      description: 'Maximum panel count rendered simultaneously.',
+      defaultFromParameter: 'maxPanels',
+      validation: {
+        minimum: 1,
+        maximum: 48,
+      },
+    },
+    viz_layout_shared_channels: {
+      type: 'string[]',
+      required: false,
+      description: 'Channels whose domains remain shared across panels.',
+      defaultFromParameter: 'sharedChannels',
+    },
+    viz_layout_projection: {
+      type: 'string',
+      required: false,
+      description: 'Projection metadata forwarded to adapters and docs.',
+      defaultFromParameter: 'projection',
+      validation: {
+        enum: ['cartesian', 'polar', 'radial'],
+      },
+    },
+    viz_layout_gap: {
+      type: 'number',
+      required: false,
+      description: 'Gap (px) between panels.',
+      default: 16,
+      validation: {
+        minimum: 0,
+        maximum: 64,
+      },
+    },
+  },
+
+  semantics: {
+    viz_layout_type: {
+      semantic_type: 'viz.layout.type',
+      ui_hints: {
+        component: 'Badge',
+      },
+    },
+    viz_layout_rows_field: {
+      semantic_type: 'viz.layout.facet.rows',
+      ui_hints: {
+        component: 'Code',
+      },
+    },
+    viz_layout_columns_field: {
+      semantic_type: 'viz.layout.facet.columns',
+      ui_hints: {
+        component: 'Code',
+      },
+    },
+    viz_layout_wrap_direction: {
+      semantic_type: 'viz.layout.facet.wrap',
+      ui_hints: {
+        component: 'Badge',
+      },
+    },
+    viz_layout_max_panels: {
+      semantic_type: 'viz.layout.facet.panels',
+      ui_hints: {
+        component: 'NumericPreview',
+        unit: 'panels',
+      },
+    },
+    viz_layout_shared_channels: {
+      semantic_type: 'viz.layout.shared_channels',
+      ui_hints: {
+        component: 'ListSummary',
+      },
+    },
+    viz_layout_projection: {
+      semantic_type: 'viz.layout.projection',
+      ui_hints: {
+        component: 'Badge',
+      },
+    },
+    viz_layout_gap: {
+      semantic_type: 'viz.layout.spacing',
+      ui_hints: {
+        component: 'NumericPreview',
+        unit: 'px',
+      },
+    },
+  },
+
+  tokens: {
+    'viz.layout.facet.gap': 'var(--cmp-viz-layout-gap)',
+  },
+
+  metadata: {
+    created: '2025-11-16',
+    owners: ['viz@oods.systems'],
+    maturity: 'beta',
+    references: [
+      'docs/viz/normalized-viz-spec.md',
+      'cmos/planning/sprint-23-plan.md',
+    ],
+  },
+};
+
+export default LayoutFacetTrait;
