@@ -1,0 +1,72 @@
+{
+  "$schema": "https://oods.dev/viz-spec/v1",
+  "id": "pattern:viz:facet-target-band",
+  "name": "SLA adherence by region",
+  "data": {
+    "values": [
+      { "week": "W01", "region": "Amer", "actual": 310, "lower": 280, "upper": 340, "bandSeries": "Target Band", "actualSeries": "Actual" },
+      { "week": "W02", "region": "Amer", "actual": 325, "lower": 285, "upper": 345, "bandSeries": "Target Band", "actualSeries": "Actual" },
+      { "week": "W03", "region": "Amer", "actual": 335, "lower": 290, "upper": 350, "bandSeries": "Target Band", "actualSeries": "Actual" },
+      { "week": "W01", "region": "EMEA", "actual": 270, "lower": 250, "upper": 310, "bandSeries": "Target Band", "actualSeries": "Actual" },
+      { "week": "W02", "region": "EMEA", "actual": 280, "lower": 255, "upper": 315, "bandSeries": "Target Band", "actualSeries": "Actual" },
+      { "week": "W03", "region": "EMEA", "actual": 292, "lower": 260, "upper": 320, "bandSeries": "Target Band", "actualSeries": "Actual" },
+      { "week": "W01", "region": "APAC", "actual": 240, "lower": 230, "upper": 300, "bandSeries": "Target Band", "actualSeries": "Actual" },
+      { "week": "W02", "region": "APAC", "actual": 248, "lower": 235, "upper": 305, "bandSeries": "Target Band", "actualSeries": "Actual" },
+      { "week": "W03", "region": "APAC", "actual": 255, "lower": 240, "upper": 310, "bandSeries": "Target Band", "actualSeries": "Actual" }
+    ]
+  },
+  "marks": [
+    {
+      "trait": "MarkArea",
+      "encodings": {
+        "x": { "field": "week", "trait": "EncodingPositionX", "channel": "x", "scale": "point" },
+        "y": { "field": "upper", "trait": "EncodingPositionY", "channel": "y", "scale": "linear" },
+        "y2": { "field": "lower", "trait": "EncodingPositionY", "channel": "y" },
+        "color": { "field": "bandSeries", "trait": "EncodingColor", "channel": "color", "legend": { "title": "Series" } }
+      },
+      "options": { "fillOpacity": 0.2 }
+    },
+    {
+      "trait": "MarkLine",
+      "encodings": {
+        "x": { "field": "week", "trait": "EncodingPositionX", "channel": "x", "scale": "point" },
+        "y": { "field": "actual", "trait": "EncodingPositionY", "channel": "y", "scale": "linear" },
+        "color": { "field": "actualSeries", "trait": "EncodingColor", "channel": "color" }
+      },
+      "options": { "strokeWidth": 2 }
+    }
+  ],
+  "encoding": {
+    "x": { "field": "week", "trait": "EncodingPositionX", "channel": "x" },
+    "y": { "field": "actual", "trait": "EncodingPositionY", "channel": "y" }
+  },
+  "layout": {
+    "trait": "LayoutFacet",
+    "rows": { "field": "region", "title": "Region", "limit": 3 },
+    "columns": { "field": "region", "limit": 3 },
+    "wrap": "row",
+    "gap": 12,
+    "sharedScales": { "x": "shared", "y": "shared" }
+  },
+  "interactions": [
+    {
+      "id": "region-hover",
+      "select": { "type": "point", "on": "hover", "fields": ["region", "week", "actual"] },
+      "rule": { "bindTo": "tooltip", "fields": ["region", "week", "actual", "lower", "upper"] }
+    }
+  ],
+  "config": {
+    "theme": "brand-a",
+    "layout": { "width": 720, "height": 480, "padding": 16 }
+  },
+  "a11y": {
+    "ariaLabel": "Facet grid with SLA bands and actuals per region",
+    "description": "Amer stays inside the band; APAC flirts with the upper bound by week three",
+    "tableFallback": { "enabled": true, "caption": "SLA adherence per region" }
+  },
+  "portability": {
+    "fallbackType": "table",
+    "preferredRenderer": "echarts",
+    "tableColumnOrder": ["region", "week", "actual", "lower", "upper"]
+  }
+}

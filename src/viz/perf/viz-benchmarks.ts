@@ -16,8 +16,8 @@ import type { NormalizedVizSpec } from '@/viz/spec/normalized-viz-spec.js';
 import barExample from '../../../examples/viz/bar-chart.spec.json' assert { type: 'json' };
 import lineExample from '../../../examples/viz/line-chart.spec.json' assert { type: 'json' };
 import scatterExample from '../../../examples/viz/scatter-chart.spec.json' assert { type: 'json' };
-import areaExample from '../../../examples/viz/patterns/running-total-area.spec.json' assert { type: 'json' };
-import heatmapExample from '../../../examples/viz/patterns/time-grid-heatmap.spec.json' assert { type: 'json' };
+import areaExample from '../../../examples/viz/patterns-v2/running-total-area.spec.json' assert { type: 'json' };
+import heatmapExample from '../../../examples/viz/patterns-v2/time-grid-heatmap.spec.json' assert { type: 'json' };
 
 export type VizBenchmarkChartType = 'bar' | 'line' | 'scatter' | 'area' | 'heatmap';
 type MetricKind = 'render' | 'update' | 'interaction';

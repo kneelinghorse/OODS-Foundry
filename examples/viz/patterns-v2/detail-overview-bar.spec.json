@@ -1,0 +1,73 @@
+{
+  "$schema": "https://oods.dev/viz-spec/v1",
+  "id": "pattern:viz:detail-overview-bar",
+  "name": "Detail-overview bookings",
+  "data": {
+    "values": [
+      { "product": "Core", "segment": "Enterprise", "bookings": 3.6, "target": 3.2 },
+      { "product": "Core", "segment": "Growth", "bookings": 1.8, "target": 1.7 },
+      { "product": "Core", "segment": "SMB", "bookings": 0.9, "target": 0.8 },
+      { "product": "Plus", "segment": "Enterprise", "bookings": 2.4, "target": 2.1 },
+      { "product": "Plus", "segment": "Growth", "bookings": 1.4, "target": 1.2 },
+      { "product": "Plus", "segment": "SMB", "bookings": 0.7, "target": 0.6 }
+    ]
+  },
+  "marks": [
+    {
+      "trait": "MarkBar",
+      "encodings": {
+        "x": { "field": "segment", "trait": "EncodingPositionX", "channel": "x", "title": "Segment", "scale": "band" },
+        "y": { "field": "bookings", "trait": "EncodingPositionY", "channel": "y", "scale": "linear", "title": "Bookings ($M)" },
+        "color": { "field": "product", "trait": "EncodingColor", "channel": "color", "legend": { "title": "Product" } }
+      }
+    }
+  ],
+  "encoding": {
+    "x": { "field": "segment", "trait": "EncodingPositionX", "channel": "x" },
+    "y": { "field": "bookings", "trait": "EncodingPositionY", "channel": "y" },
+    "color": { "field": "product", "trait": "EncodingColor", "channel": "color" }
+  },
+  "layout": {
+    "trait": "LayoutConcat",
+    "direction": "horizontal",
+    "gap": 16,
+    "sections": [
+      { "id": "overview", "title": "All products" },
+      {
+        "id": "detail-core",
+        "title": "Core detail",
+        "filters": [
+          { "field": "product", "operator": "==", "value": "Core" }
+        ]
+      },
+      {
+        "id": "detail-plus",
+        "title": "Plus detail",
+        "filters": [
+          { "field": "product", "operator": "==", "value": "Plus" }
+        ]
+      }
+    ]
+  },
+  "interactions": [
+    {
+      "id": "segment-drill",
+      "select": { "type": "point", "on": "click", "fields": ["segment", "product"] },
+      "rule": { "bindTo": "tooltip", "fields": ["product", "segment", "bookings", "target"] }
+    }
+  ],
+  "config": {
+    "theme": "brand-a",
+    "layout": { "width": 960, "height": 360, "padding": 20 }
+  },
+  "a11y": {
+    "ariaLabel": "Detail-overview concat showing bookings across products and segments",
+    "description": "Core outperforms targets across all segments while Plus trails only in SMB",
+    "tableFallback": { "enabled": true, "caption": "Bookings vs target by product and segment" }
+  },
+  "portability": {
+    "fallbackType": "table",
+    "preferredRenderer": "echarts",
+    "tableColumnOrder": ["product", "segment", "bookings", "target"]
+  }
+}

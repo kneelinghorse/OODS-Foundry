@@ -1,0 +1,79 @@
+{
+  "$schema": "https://oods.dev/viz-spec/v1",
+  "id": "pattern:viz:stacked-area-projection",
+  "name": "Channel contribution forecast",
+  "data": {
+    "values": [
+      { "month": "Jan", "channel": "Paid", "value": 2.4 },
+      { "month": "Jan", "channel": "Organic", "value": 1.6 },
+      { "month": "Jan", "channel": "Partners", "value": 0.8 },
+      { "month": "Feb", "channel": "Paid", "value": 2.8 },
+      { "month": "Feb", "channel": "Organic", "value": 1.7 },
+      { "month": "Feb", "channel": "Partners", "value": 0.9 },
+      { "month": "Mar", "channel": "Paid", "value": 3.2 },
+      { "month": "Mar", "channel": "Organic", "value": 1.9 },
+      { "month": "Mar", "channel": "Partners", "value": 1.1 },
+      { "month": "Apr", "channel": "Paid", "value": 3.5 },
+      { "month": "Apr", "channel": "Organic", "value": 2.1 },
+      { "month": "Apr", "channel": "Partners", "value": 1.2 }
+    ]
+  },
+  "marks": [
+    {
+      "trait": "MarkArea",
+      "encodings": {
+        "x": { "field": "month", "trait": "EncodingPositionX", "channel": "x", "scale": "point" },
+        "y": {
+          "field": "value",
+          "trait": "EncodingPositionY",
+          "channel": "y",
+          "aggregate": "sum",
+          "scale": "linear",
+          "title": "ARR ($M)"
+        },
+        "color": {
+          "field": "channel",
+          "trait": "EncodingColor",
+          "channel": "color",
+          "legend": { "title": "Channel" }
+        }
+      }
+    }
+  ],
+  "encoding": {
+    "x": { "field": "month", "trait": "EncodingPositionX", "channel": "x", "scale": "point" },
+    "y": { "field": "value", "trait": "EncodingPositionY", "channel": "y", "aggregate": "sum", "scale": "linear" },
+    "color": { "field": "channel", "trait": "EncodingColor", "channel": "color" }
+  },
+  "layout": {
+    "trait": "LayoutLayer",
+    "sharedScales": { "x": "shared", "y": "shared" },
+    "projection": { "type": "cartesian" }
+  },
+  "interactions": [
+    {
+      "id": "channel-brush",
+      "select": { "type": "point", "on": "hover", "fields": ["channel"] },
+      "rule": {
+        "bindTo": "visual",
+        "property": "fillOpacity",
+        "condition": { "value": 1 },
+        "else": { "value": 0.4 }
+      }
+    }
+  ],
+  "config": {
+    "theme": "brand-a",
+    "layout": { "width": 720, "height": 360, "padding": 20 }
+  },
+  "a11y": {
+    "ariaLabel": "Stacked area showing channel mix and total ARR contribution",
+    "description": "Paid media drives most of the ARR growth, but organic gains 0.5M share over the period",
+    "tableFallback": { "enabled": true, "caption": "Channel contribution by month" }
+  },
+  "portability": {
+    "fallbackType": "table",
+    "preferredRenderer": "echarts",
+    "tableColumnOrder": ["month", "channel", "value"]
+  }
+}

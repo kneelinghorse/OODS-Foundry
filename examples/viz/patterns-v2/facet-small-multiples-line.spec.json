@@ -1,0 +1,88 @@
+{
+  "$schema": "https://oods.dev/viz-spec/v1",
+  "id": "pattern:viz:facet-small-multiples-line",
+  "name": "Weekly active users by region × segment",
+  "data": {
+    "values": [
+      { "week": "2025-W01", "region": "North", "segment": "Enterprise", "active": 4200 },
+      { "week": "2025-W02", "region": "North", "segment": "Enterprise", "active": 4600 },
+      { "week": "2025-W03", "region": "North", "segment": "Enterprise", "active": 5120 },
+      { "week": "2025-W01", "region": "North", "segment": "Growth", "active": 2800 },
+      { "week": "2025-W02", "region": "North", "segment": "Growth", "active": 3010 },
+      { "week": "2025-W03", "region": "North", "segment": "Growth", "active": 3340 },
+      { "week": "2025-W01", "region": "South", "segment": "Enterprise", "active": 3900 },
+      { "week": "2025-W02", "region": "South", "segment": "Enterprise", "active": 4020 },
+      { "week": "2025-W03", "region": "South", "segment": "Enterprise", "active": 4175 },
+      { "week": "2025-W01", "region": "South", "segment": "Growth", "active": 2550 },
+      { "week": "2025-W02", "region": "South", "segment": "Growth", "active": 2685 },
+      { "week": "2025-W03", "region": "South", "segment": "Growth", "active": 2810 }
+    ]
+  },
+  "marks": [
+    {
+      "trait": "MarkLine",
+      "encodings": {
+        "x": {
+          "field": "week",
+          "trait": "EncodingPositionX",
+          "channel": "x",
+          "scale": "temporal",
+          "title": "Week"
+        },
+        "y": {
+          "field": "active",
+          "trait": "EncodingPositionY",
+          "channel": "y",
+          "scale": "linear",
+          "title": "Active users"
+        },
+        "color": {
+          "field": "segment",
+          "trait": "EncodingColor",
+          "channel": "color",
+          "legend": { "title": "Segment" }
+        }
+      }
+    }
+  ],
+  "encoding": {
+    "x": { "field": "week", "trait": "EncodingPositionX", "channel": "x", "scale": "temporal" },
+    "y": { "field": "active", "trait": "EncodingPositionY", "channel": "y", "scale": "linear" },
+    "color": { "field": "segment", "trait": "EncodingColor", "channel": "color" }
+  },
+  "layout": {
+    "trait": "LayoutFacet",
+    "rows": { "field": "region", "title": "Region", "limit": 4 },
+    "columns": { "field": "segment", "title": "Segment", "limit": 3 },
+    "maxPanels": 12,
+    "wrap": "row",
+    "gap": 16,
+    "sharedScales": { "x": "shared", "y": "shared" }
+  },
+  "interactions": [
+    {
+      "id": "region-focus",
+      "select": { "type": "point", "on": "click", "fields": ["region"] },
+      "rule": {
+        "bindTo": "visual",
+        "property": "opacity",
+        "condition": { "value": 1 },
+        "else": { "value": 0.4 }
+      }
+    }
+  ],
+  "config": {
+    "theme": "brand-a",
+    "layout": { "width": 320, "height": 200, "padding": 16 }
+  },
+  "a11y": {
+    "ariaLabel": "Grid of sparklines showing weekly active users for each region and segment",
+    "description": "Enterprise lines run higher than growth cohorts, and the North region accelerates fastest by week three",
+    "tableFallback": { "enabled": true, "caption": "Weekly active user counts" }
+  },
+  "portability": {
+    "fallbackType": "table",
+    "preferredRenderer": "echarts",
+    "tableColumnOrder": ["week", "region", "segment", "active"]
+  }
+}

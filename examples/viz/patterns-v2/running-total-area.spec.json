@@ -1,0 +1,48 @@
+{
+  "$schema": "https://oods.dev/viz-spec/v1",
+  "id": "pattern:viz:running-total-area",
+  "name": "ARR Burn-up",
+  "data": {
+    "values": [
+      { "month": "2025-03", "arr": 140 },
+      { "month": "2025-04", "arr": 180 },
+      { "month": "2025-05", "arr": 220 },
+      { "month": "2025-06", "arr": 270 },
+      { "month": "2025-07", "arr": 310 },
+      { "month": "2025-08", "arr": 345 },
+      { "month": "2025-09", "arr": 390 }
+    ]
+  },
+  "marks": [
+    {
+      "trait": "MarkArea",
+      "encodings": {
+        "x": { "field": "month", "trait": "EncodingPositionX", "channel": "x", "scale": "temporal", "title": "Month" },
+        "y": { "field": "arr", "trait": "EncodingPositionY", "channel": "y", "scale": "linear", "title": "Net ARR Added ($k)" }
+      },
+      "options": { "baseline": "zero", "curve": "monotone" }
+    }
+  ],
+  "encoding": {
+    "x": { "field": "month", "trait": "EncodingPositionX", "channel": "x", "scale": "temporal", "title": "Month" },
+    "y": { "field": "arr", "trait": "EncodingPositionY", "channel": "y", "scale": "linear", "title": "Net ARR Added ($k)" }
+  },
+  "config": {
+    "theme": "brand-a",
+    "layout": { "width": 720, "height": 360, "padding": 24 }
+  },
+  "a11y": {
+    "ariaLabel": "ARR burn-up area chart",
+    "description": "ARR steadily increases with a sharper slope entering Q3.",
+    "narrative": {
+      "summary": "The run rate accelerates after May, adding 120k ARR in three months.",
+      "keyFindings": ["Burn-up crosses 300k in July", "March–April plateau resolves in May"]
+    },
+    "tableFallback": { "enabled": true, "caption": "Monthly ARR burn-up" }
+  },
+  "portability": {
+    "fallbackType": "table",
+    "tableColumnOrder": ["month", "arr"],
+    "preferredRenderer": "vega-lite"
+  }
+}

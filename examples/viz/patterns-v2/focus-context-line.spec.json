@@ -1,0 +1,78 @@
+{
+  "$schema": "https://oods.dev/viz-spec/v1",
+  "id": "pattern:viz:focus-context-line",
+  "name": "Revenue focus + context",
+  "data": {
+    "values": [
+      { "week": "2025-W01", "region": "Amer", "revenue": 1.2 },
+      { "week": "2025-W02", "region": "Amer", "revenue": 1.26 },
+      { "week": "2025-W03", "region": "Amer", "revenue": 1.33 },
+      { "week": "2025-W01", "region": "EMEA", "revenue": 0.9 },
+      { "week": "2025-W02", "region": "EMEA", "revenue": 0.96 },
+      { "week": "2025-W03", "region": "EMEA", "revenue": 0.99 },
+      { "week": "2025-W01", "region": "APAC", "revenue": 0.7 },
+      { "week": "2025-W02", "region": "APAC", "revenue": 0.74 },
+      { "week": "2025-W03", "region": "APAC", "revenue": 0.78 },
+      { "week": "2025-W04", "region": "Amer", "revenue": 1.39 },
+      { "week": "2025-W04", "region": "EMEA", "revenue": 1.02 },
+      { "week": "2025-W04", "region": "APAC", "revenue": 0.8 }
+    ]
+  },
+  "marks": [
+    {
+      "trait": "MarkLine",
+      "encodings": {
+        "x": { "field": "week", "trait": "EncodingPositionX", "channel": "x", "scale": "temporal" },
+        "y": { "field": "revenue", "trait": "EncodingPositionY", "channel": "y", "scale": "linear", "title": "Revenue ($M)" },
+        "color": { "field": "region", "trait": "EncodingColor", "channel": "color", "legend": { "title": "Region" } }
+      }
+    }
+  ],
+  "encoding": {
+    "x": { "field": "week", "trait": "EncodingPositionX", "channel": "x", "scale": "temporal" },
+    "y": { "field": "revenue", "trait": "EncodingPositionY", "channel": "y", "scale": "linear" },
+    "color": { "field": "region", "trait": "EncodingColor", "channel": "color" }
+  },
+  "layout": {
+    "trait": "LayoutConcat",
+    "direction": "vertical",
+    "gap": 12,
+    "sections": [
+      {
+        "id": "overview",
+        "title": "All regions",
+        "description": "Context view with synchronized axes"
+      },
+      {
+        "id": "focus",
+        "title": "Amer focus",
+        "description": "Zoomed panel filtered to Americas",
+        "filters": [
+          { "field": "region", "operator": "==", "value": "Amer" }
+        ]
+      }
+    ],
+    "sharedScales": { "x": "shared", "y": "independent" }
+  },
+  "interactions": [
+    {
+      "id": "hover-sync",
+      "select": { "type": "point", "on": "hover", "fields": ["region", "week", "revenue"] },
+      "rule": { "bindTo": "tooltip", "fields": ["region", "week", "revenue"] }
+    }
+  ],
+  "config": {
+    "theme": "brand-a",
+    "layout": { "width": 720, "height": 480, "padding": 20 }
+  },
+  "a11y": {
+    "ariaLabel": "Focus+context line chart showing Americas zoomed below all regions",
+    "description": "The Americas line stays well above other regions and accelerates sharply in week four",
+    "tableFallback": { "enabled": true, "caption": "Weekly revenue by region" }
+  },
+  "portability": {
+    "fallbackType": "table",
+    "preferredRenderer": "echarts",
+    "tableColumnOrder": ["week", "region", "revenue"]
+  }
+}

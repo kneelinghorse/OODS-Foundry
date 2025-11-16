@@ -1,0 +1,55 @@
+{
+  "$schema": "https://oods.dev/viz-spec/v1",
+  "id": "pattern:viz:diverging-bar",
+  "name": "NPS Driver Impact",
+  "data": {
+    "values": [
+      { "driver": "Onboarding", "delta": 18 },
+      { "driver": "Response Time", "delta": 12 },
+      { "driver": "Billing", "delta": -7 },
+      { "driver": "Reporting", "delta": -12 },
+      { "driver": "Admin", "delta": 6 },
+      { "driver": "Mobile", "delta": -4 }
+    ]
+  },
+  "marks": [
+    {
+      "trait": "MarkBar",
+      "encodings": {
+        "x": { "field": "delta", "trait": "EncodingPositionX", "channel": "x", "scale": "linear", "title": "NPS Δ" },
+        "y": { "field": "driver", "trait": "EncodingPositionY", "channel": "y", "title": "Driver" },
+        "color": {
+          "field": "delta",
+          "trait": "EncodingColor",
+          "channel": "color",
+          "scale": "diverging",
+          "title": "Impact"
+        }
+      },
+      "options": { "baseline": 0 }
+    }
+  ],
+  "encoding": {
+    "x": { "field": "delta", "trait": "EncodingPositionX", "channel": "x", "scale": "linear", "title": "NPS Δ" },
+    "y": { "field": "driver", "trait": "EncodingPositionY", "channel": "y", "title": "Driver" },
+    "color": { "field": "delta", "trait": "EncodingColor", "channel": "color", "scale": "diverging", "title": "Impact" }
+  },
+  "config": {
+    "theme": "brand-b",
+    "layout": { "width": 720, "height": 360, "padding": 24 }
+  },
+  "a11y": {
+    "ariaLabel": "Diverging bar chart for NPS drivers",
+    "description": "Onboarding contributes +18 points while Reporting drags the score by 12 points.",
+    "narrative": {
+      "summary": "Positive drivers cluster around onboarding + response, with reporting and billing as primary detractors.",
+      "keyFindings": ["Reporting is the largest detractor", "Support response adds 12 points"]
+    },
+    "tableFallback": { "enabled": true, "caption": "Driver deltas" }
+  },
+  "portability": {
+    "fallbackType": "table",
+    "tableColumnOrder": ["driver", "delta"],
+    "preferredRenderer": "vega-lite"
+  }
+}

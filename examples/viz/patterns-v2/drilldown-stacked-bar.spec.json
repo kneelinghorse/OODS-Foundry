@@ -1,0 +1,70 @@
+{
+  "$schema": "https://oods.dev/viz-spec/v1",
+  "id": "pattern:viz:drilldown-stacked-bar",
+  "name": "Quarterly pipeline drill-down",
+  "data": {
+    "values": [
+      { "quarter": "Q1", "stage": "Marketing", "region": "Amer", "value": 1.4 },
+      { "quarter": "Q1", "stage": "Sales", "region": "Amer", "value": 2.2 },
+      { "quarter": "Q1", "stage": "Success", "region": "Amer", "value": 0.6 },
+      { "quarter": "Q1", "stage": "Marketing", "region": "EMEA", "value": 1.1 },
+      { "quarter": "Q1", "stage": "Sales", "region": "EMEA", "value": 1.7 },
+      { "quarter": "Q1", "stage": "Success", "region": "EMEA", "value": 0.5 },
+      { "quarter": "Q2", "stage": "Marketing", "region": "Amer", "value": 1.6 },
+      { "quarter": "Q2", "stage": "Sales", "region": "Amer", "value": 2.5 },
+      { "quarter": "Q2", "stage": "Success", "region": "Amer", "value": 0.65 },
+      { "quarter": "Q2", "stage": "Marketing", "region": "EMEA", "value": 1.2 },
+      { "quarter": "Q2", "stage": "Sales", "region": "EMEA", "value": 1.9 },
+      { "quarter": "Q2", "stage": "Success", "region": "EMEA", "value": 0.55 }
+    ]
+  },
+  "marks": [
+    {
+      "trait": "MarkBar",
+      "encodings": {
+        "x": { "field": "quarter", "trait": "EncodingPositionX", "channel": "x", "scale": "band", "title": "Quarter" },
+        "y": { "field": "value", "trait": "EncodingPositionY", "channel": "y", "aggregate": "sum", "scale": "linear", "title": "Pipeline ($M)" },
+        "color": { "field": "stage", "trait": "EncodingColor", "channel": "color", "legend": { "title": "Stage" } },
+        "detail": { "field": "region", "trait": "EncodingDetail", "channel": "detail" }
+      }
+    }
+  ],
+  "encoding": {
+    "x": { "field": "quarter", "trait": "EncodingPositionX", "channel": "x" },
+    "y": { "field": "value", "trait": "EncodingPositionY", "channel": "y" },
+    "color": { "field": "stage", "trait": "EncodingColor", "channel": "color" }
+  },
+  "layout": {
+    "trait": "LayoutFacet",
+    "rows": { "field": "region", "title": "Region", "limit": 2 },
+    "columns": { "field": "region", "limit": 2 },
+    "wrap": "row",
+    "sharedScales": { "x": "shared", "y": "shared" },
+    "gap": 14
+  },
+  "interactions": [
+    {
+      "id": "region-drill",
+      "select": { "type": "point", "on": "click", "fields": ["quarter", "region", "stage"] },
+      "rule": {
+        "bindTo": "tooltip",
+        "fields": ["region", "quarter", "stage", "value"],
+        "else": { "value": null }
+      }
+    }
+  ],
+  "config": {
+    "theme": "brand-a",
+    "layout": { "width": 720, "height": 420, "padding": 18 }
+  },
+  "a11y": {
+    "ariaLabel": "Stacked bars split by region with drill-down hover",
+    "description": "Americas pipeline grows faster in Sales stage across both quarters",
+    "tableFallback": { "enabled": true, "caption": "Pipeline composition per region" }
+  },
+  "portability": {
+    "fallbackType": "table",
+    "preferredRenderer": "echarts",
+    "tableColumnOrder": ["region", "quarter", "stage", "value"]
+  }
+}

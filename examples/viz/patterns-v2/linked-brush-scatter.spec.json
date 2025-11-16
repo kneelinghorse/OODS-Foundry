@@ -1,0 +1,63 @@
+{
+  "$schema": "https://oods.dev/viz-spec/v1",
+  "id": "pattern:viz:linked-brush-scatter",
+  "name": "Engagement vs retention with linked brush",
+  "data": {
+    "values": [
+      { "pctEngaged": 62, "pctRetained": 88, "segment": "Enterprise", "cohort": "Q1" },
+      { "pctEngaged": 57, "pctRetained": 80, "segment": "Growth", "cohort": "Q1" },
+      { "pctEngaged": 44, "pctRetained": 76, "segment": "Growth", "cohort": "Q2" },
+      { "pctEngaged": 70, "pctRetained": 92, "segment": "Enterprise", "cohort": "Q2" },
+      { "pctEngaged": 52, "pctRetained": 73, "segment": "SMB", "cohort": "Q2" },
+      { "pctEngaged": 49, "pctRetained": 71, "segment": "SMB", "cohort": "Q3" },
+      { "pctEngaged": 66, "pctRetained": 86, "segment": "Enterprise", "cohort": "Q3" },
+      { "pctEngaged": 59, "pctRetained": 82, "segment": "Growth", "cohort": "Q3" }
+    ]
+  },
+  "marks": [
+    {
+      "trait": "MarkPoint",
+      "encodings": {
+        "x": { "field": "pctEngaged", "trait": "EncodingPositionX", "channel": "x", "scale": "linear", "title": "% Weekly engaged" },
+        "y": { "field": "pctRetained", "trait": "EncodingPositionY", "channel": "y", "scale": "linear", "title": "% Retained" },
+        "color": { "field": "segment", "trait": "EncodingColor", "channel": "color", "legend": { "title": "Segment" } },
+        "size": { "field": "pctRetained", "trait": "EncodingSize", "channel": "size" }
+      }
+    }
+  ],
+  "encoding": {
+    "x": { "field": "pctEngaged", "trait": "EncodingPositionX", "channel": "x", "scale": "linear" },
+    "y": { "field": "pctRetained", "trait": "EncodingPositionY", "channel": "y", "scale": "linear" },
+    "color": { "field": "segment", "trait": "EncodingColor", "channel": "color" }
+  },
+  "interactions": [
+    {
+      "id": "segment-brush",
+      "select": { "type": "interval", "on": "drag", "fields": ["pctEngaged", "pctRetained"] },
+      "rule": { "bindTo": "visual", "property": "strokeWidth", "condition": { "value": 2 }, "else": { "value": 0 } }
+    },
+    {
+      "id": "cohort-tooltip",
+      "select": { "type": "point", "on": "hover", "fields": ["cohort", "segment", "pctEngaged", "pctRetained"] },
+      "rule": { "bindTo": "tooltip", "fields": ["cohort", "segment", "pctEngaged", "pctRetained"] }
+    }
+  ],
+  "layout": {
+    "trait": "LayoutLayer",
+    "sharedScales": { "x": "shared", "y": "shared" }
+  },
+  "config": {
+    "theme": "brand-a",
+    "layout": { "width": 640, "height": 420, "padding": 18 }
+  },
+  "a11y": {
+    "ariaLabel": "Scatter plot with linked brush to isolate cohort clusters",
+    "description": "Enterprise cohorts trend in the upper-right quadrant with >85% retention",
+    "tableFallback": { "enabled": true, "caption": "Engagement vs retention by cohort" }
+  },
+  "portability": {
+    "fallbackType": "table",
+    "preferredRenderer": "echarts",
+    "tableColumnOrder": ["cohort", "segment", "pctEngaged", "pctRetained"]
+  }
+}
