@@ -106,7 +106,7 @@ const FACET_SCATTER_BASE_SPEC: NormalizedVizSpec = {
   interactions: [
     {
       id: 'facet-brush',
-      select: { type: 'interval', on: 'drag', fields: ['leadTime', 'winRate'] },
+      select: { type: 'interval', on: 'drag', encodings: ['x', 'y'] },
       rule: {
         bindTo: 'visual',
         property: 'strokeWidth',
