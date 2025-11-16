@@ -1,0 +1,3070 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2025-11-16T19:53:30.601Z",
+  "filters": {
+    "charts": null,
+    "renderers": null,
+    "dataPoints": null
+  },
+  "budgets": {
+    "path": "tools/perf/viz-budget.json",
+    "version": "1.0.0",
+    "generatedAt": "2025-11-16T19:05:00.000Z"
+  },
+  "summary": {
+    "totalScenarios": 52,
+    "violations": 0,
+    "extremes": {
+      "renderTimeMs": {
+        "chartType": "facet-scatter-brush",
+        "renderer": "echarts",
+        "dataPoints": 240,
+        "value": 0.080208
+      },
+      "updateTimeMs": {
+        "chartType": "bar",
+        "renderer": "vega-lite",
+        "dataPoints": 10,
+        "value": 0.064292
+      },
+      "interactionLatencyMs": {
+        "chartType": "bar",
+        "renderer": "echarts",
+        "dataPoints": 10,
+        "value": 0.242333
+      },
+      "memoryBytes": {
+        "chartType": "scatter",
+        "renderer": "echarts",
+        "dataPoints": 10000,
+        "value": 717048
+      },
+      "bundleImpactBytes": {
+        "chartType": "bar",
+        "renderer": "echarts",
+        "dataPoints": 10,
+        "value": 1117939
+      }
+    }
+  },
+  "recommendations": [
+    {
+      "chartType": "area",
+      "dataPoints": 10,
+      "bestRenderer": "vega-lite",
+      "advantageMs": 0.0012920000000349319,
+      "comparison": {
+        "vegaLite": {
+          "renderTimeMs": 0.016499999999950887,
+          "updateTimeMs": 0.011665999999991072,
+          "interactionLatencyMs": 0.004207999999948697,
+          "memoryBytes": 1766,
+          "bundleImpactBytes": 249075
+        },
+        "echarts": {
+          "renderTimeMs": 0.01779199999998582,
+          "updateTimeMs": 0.019458999999983462,
+          "interactionLatencyMs": 0.013042000000041298,
+          "memoryBytes": 2230,
+          "bundleImpactBytes": 1117939
+        }
+      }
+    },
+    {
+      "chartType": "area",
+      "dataPoints": 100,
+      "bestRenderer": "echarts",
+      "advantageMs": 0.0012500000000272848,
+      "comparison": {
+        "vegaLite": {
+          "renderTimeMs": 0.018708000000060565,
+          "updateTimeMs": 0.020624999999995453,
+          "interactionLatencyMs": 0.0028340000000071086,
+          "memoryBytes": 4729,
+          "bundleImpactBytes": 249075
+        },
+        "echarts": {
+          "renderTimeMs": 0.01745800000003328,
+          "updateTimeMs": 0.018208999999956177,
+          "interactionLatencyMs": 0.009249999999951797,
+          "memoryBytes": 5190,
+          "bundleImpactBytes": 1117939
+        }
+      }
+    },
+    {
+      "chartType": "area",
+      "dataPoints": 1000,
+      "bestRenderer": "vega-lite",
+      "advantageMs": 0.0007920000000467553,
+      "comparison": {
+        "vegaLite": {
+          "renderTimeMs": 0.01675000000000182,
+          "updateTimeMs": 0.017291000000000167,
+          "interactionLatencyMs": 0.004416999999989457,
+          "memoryBytes": 35156,
+          "bundleImpactBytes": 249075
+        },
+        "echarts": {
+          "renderTimeMs": 0.017542000000048574,
+          "updateTimeMs": 0.020167000000014923,
+          "interactionLatencyMs": 0.010999999999853571,
+          "memoryBytes": 35619,
+          "bundleImpactBytes": 1117939
+        }
+      }
+    },
+    {
+      "chartType": "area",
+      "dataPoints": 10000,
+      "bestRenderer": "vega-lite",
+      "advantageMs": 0.017166999999972177,
+      "comparison": {
+        "vegaLite": {
+          "renderTimeMs": 0.009000000000014552,
+          "updateTimeMs": 0.03600000000005821,
+          "interactionLatencyMs": 0.004042000000026746,
+          "memoryBytes": 347916,
+          "bundleImpactBytes": 249075
+        },
+        "echarts": {
+          "renderTimeMs": 0.02616699999998673,
+          "updateTimeMs": 0.04245800000001054,
+          "interactionLatencyMs": 0.03437399999995705,
+          "memoryBytes": 348349,
+          "bundleImpactBytes": 1117939
+        }
+      }
+    },
+    {
+      "chartType": "bar",
+      "dataPoints": 10,
+      "bestRenderer": "echarts",
+      "advantageMs": 0.029541999999992186,
+      "comparison": {
+        "vegaLite": {
+          "renderTimeMs": 0.06974999999999909,
+          "updateTimeMs": 0.06429199999999469,
+          "interactionLatencyMs": 0.027542000000011058,
+          "memoryBytes": 1930,
+          "bundleImpactBytes": 249075
+        },
+        "echarts": {
+          "renderTimeMs": 0.040208000000006905,
+          "updateTimeMs": 0.030500000000017735,
+          "interactionLatencyMs": 0.24233300000000213,
+          "memoryBytes": 2374,
+          "bundleImpactBytes": 1117939
+        }
+      }
+    },
+    {
+      "chartType": "bar",
+      "dataPoints": 100,
+      "bestRenderer": "vega-lite",
+      "advantageMs": 0.0012080000000196378,
+      "comparison": {
+        "vegaLite": {
+          "renderTimeMs": 0.014958000000007132,
+          "updateTimeMs": 0.016416999999989912,
+          "interactionLatencyMs": 0.004041999999998325,
+          "memoryBytes": 4778,
+          "bundleImpactBytes": 249075
+        },
+        "echarts": {
+          "renderTimeMs": 0.01616600000002677,
+          "updateTimeMs": 0.01187500000000341,
+          "interactionLatencyMs": 0.013749999999987494,
+          "memoryBytes": 5227,
+          "bundleImpactBytes": 1117939
+        }
+      }
+    },
+    {
+      "chartType": "bar",
+      "dataPoints": 1000,
+      "bestRenderer": "vega-lite",
+      "advantageMs": 0.0030000000000143245,
+      "comparison": {
+        "vegaLite": {
+          "renderTimeMs": 0.015249999999980446,
+          "updateTimeMs": 0.03037500000002069,
+          "interactionLatencyMs": 0.010457999999999856,
+          "memoryBytes": 33250,
+          "bundleImpactBytes": 249075
+        },
+        "echarts": {
+          "renderTimeMs": 0.01824999999999477,
+          "updateTimeMs": 0.02337500000001569,
+          "interactionLatencyMs": 0.0312070000000233,
+          "memoryBytes": 33706,
+          "bundleImpactBytes": 1117939
+        }
+      }
+    },
+    {
+      "chartType": "bar",
+      "dataPoints": 10000,
+      "bestRenderer": "echarts",
+      "advantageMs": 0.010001000000016802,
+      "comparison": {
+        "vegaLite": {
+          "renderTimeMs": 0.021417000000013786,
+          "updateTimeMs": 0.04400000000001114,
+          "interactionLatencyMs": 0.010041999999998552,
+          "memoryBytes": 317912,
+          "bundleImpactBytes": 249075
+        },
+        "echarts": {
+          "renderTimeMs": 0.011415999999996984,
+          "updateTimeMs": 0.03695899999999597,
+          "interactionLatencyMs": 0.053084000000012566,
+          "memoryBytes": 318354,
+          "bundleImpactBytes": 1117939
+        }
+      }
+    },
+    {
+      "chartType": "concat-detail-overview",
+      "dataPoints": 180,
+      "bestRenderer": "echarts",
+      "advantageMs": 0.03216599999984737,
+      "comparison": {
+        "vegaLite": {
+          "renderTimeMs": 0.05374999999992269,
+          "updateTimeMs": 0.05095900000003439,
+          "interactionLatencyMs": 0.0038749999999936335,
+          "memoryBytes": 15459,
+          "bundleImpactBytes": 249075
+        },
+        "echarts": {
+          "renderTimeMs": 0.02158400000007532,
+          "updateTimeMs": 0.02400000000000091,
+          "interactionLatencyMs": 0.026583000000073298,
+          "memoryBytes": 16863,
+          "bundleImpactBytes": 1117939
+        }
+      }
+    },
+    {
+      "chartType": "concat-detail-overview",
+      "dataPoints": 720,
+      "bestRenderer": "echarts",
+      "advantageMs": 0.014666999999917607,
+      "comparison": {
+        "vegaLite": {
+          "renderTimeMs": 0.03516700000000128,
+          "updateTimeMs": 0.0342080000000351,
+          "interactionLatencyMs": 0.0017080000000078144,
+          "memoryBytes": 53789,
+          "bundleImpactBytes": 249075
+        },
+        "echarts": {
+          "renderTimeMs": 0.020500000000083674,
+          "updateTimeMs": 0.03599999999994452,
+          "interactionLatencyMs": 0.01704199999994671,
+          "memoryBytes": 55219,
+          "bundleImpactBytes": 1117939
+        }
+      }
+    },
+    {
+      "chartType": "facet-scatter-brush",
+      "dataPoints": 240,
+      "bestRenderer": "vega-lite",
+      "advantageMs": 0.052458000000115135,
+      "comparison": {
+        "vegaLite": {
+          "renderTimeMs": 0.027749999999969077,
+          "updateTimeMs": 0.024833000000057837,
+          "interactionLatencyMs": 0.010832999999934145,
+          "memoryBytes": 22977,
+          "bundleImpactBytes": 249075
+        },
+        "echarts": {
+          "renderTimeMs": 0.08020800000008421,
+          "updateTimeMs": 0.058209000000033484,
+          "interactionLatencyMs": 0.09066799999993691,
+          "memoryBytes": 26551,
+          "bundleImpactBytes": 1117939
+        }
+      }
+    },
+    {
+      "chartType": "facet-scatter-brush",
+      "dataPoints": 960,
+      "bestRenderer": "echarts",
+      "advantageMs": 0.0036660000000665605,
+      "comparison": {
+        "vegaLite": {
+          "renderTimeMs": 0.03270800000007057,
+          "updateTimeMs": 0.035957999999936874,
+          "interactionLatencyMs": 0.0019170000000485743,
+          "memoryBytes": 86818,
+          "bundleImpactBytes": 249075
+        },
+        "echarts": {
+          "renderTimeMs": 0.02904200000000401,
+          "updateTimeMs": 0.03083399999991343,
+          "interactionLatencyMs": 0.009000000000014552,
+          "memoryBytes": 90410,
+          "bundleImpactBytes": 1117939
+        }
+      }
+    },
+    {
+      "chartType": "heatmap",
+      "dataPoints": 10,
+      "bestRenderer": "echarts",
+      "advantageMs": 0.00795899999991434,
+      "comparison": {
+        "vegaLite": {
+          "renderTimeMs": 0.02208399999994981,
+          "updateTimeMs": 0.013874999999984539,
+          "interactionLatencyMs": 0.002334000000018932,
+          "memoryBytes": 2095,
+          "bundleImpactBytes": 249075
+        },
+        "echarts": {
+          "renderTimeMs": 0.01412500000003547,
+          "updateTimeMs": 0.014916999999968539,
+          "interactionLatencyMs": 0.009082999999918684,
+          "memoryBytes": 2571,
+          "bundleImpactBytes": 1117939
+        }
+      }
+    },
+    {
+      "chartType": "heatmap",
+      "dataPoints": 100,
+      "bestRenderer": "vega-lite",
+      "advantageMs": 0.0018319999999221181,
+      "comparison": {
+        "vegaLite": {
+          "renderTimeMs": 0.011959000000047126,
+          "updateTimeMs": 0.013417000000004009,
+          "interactionLatencyMs": 0.0019170000000485743,
+          "memoryBytes": 6249,
+          "bundleImpactBytes": 249075
+        },
+        "echarts": {
+          "renderTimeMs": 0.013790999999969245,
+          "updateTimeMs": 0.015041999999994005,
+          "interactionLatencyMs": 0.006666999999993095,
+          "memoryBytes": 6726,
+          "bundleImpactBytes": 1117939
+        }
+      }
+    },
+    {
+      "chartType": "heatmap",
+      "dataPoints": 1000,
+      "bestRenderer": "echarts",
+      "advantageMs": 0.06199999999989814,
+      "comparison": {
+        "vegaLite": {
+          "renderTimeMs": 0.07854199999997036,
+          "updateTimeMs": 0.04779099999996106,
+          "interactionLatencyMs": 0.0017500000000154614,
+          "memoryBytes": 47768,
+          "bundleImpactBytes": 249075
+        },
+        "echarts": {
+          "renderTimeMs": 0.01654200000007222,
+          "updateTimeMs": 0.01883399999996982,
+          "interactionLatencyMs": 0.009165999999936503,
+          "memoryBytes": 48255,
+          "bundleImpactBytes": 1117939
+        }
+      }
+    },
+    {
+      "chartType": "heatmap",
+      "dataPoints": 10000,
+      "bestRenderer": "vega-lite",
+      "advantageMs": 0.00283300000012332,
+      "comparison": {
+        "vegaLite": {
+          "renderTimeMs": 0.013041999999927611,
+          "updateTimeMs": 0.02366699999993216,
+          "interactionLatencyMs": 0.0027079999999841675,
+          "memoryBytes": 462998,
+          "bundleImpactBytes": 249075
+        },
+        "echarts": {
+          "renderTimeMs": 0.01587500000005093,
+          "updateTimeMs": 0.027291999999988548,
+          "interactionLatencyMs": 0.009374999999977263,
+          "memoryBytes": 463448,
+          "bundleImpactBytes": 1117939
+        }
+      }
+    },
+    {
+      "chartType": "layered-target-band",
+      "dataPoints": 360,
+      "bestRenderer": "echarts",
+      "advantageMs": 0.0014179999999441861,
+      "comparison": {
+        "vegaLite": {
+          "renderTimeMs": 0.018958999999995285,
+          "updateTimeMs": 0.019499999999993634,
+          "interactionLatencyMs": 0.0019579999999450592,
+          "memoryBytes": 21963,
+          "bundleImpactBytes": 249075
+        },
+        "echarts": {
+          "renderTimeMs": 0.0175410000000511,
+          "updateTimeMs": 0.04095800000004601,
+          "interactionLatencyMs": 0.017833000000109678,
+          "memoryBytes": 22435,
+          "bundleImpactBytes": 1117939
+        }
+      }
+    },
+    {
+      "chartType": "layered-target-band",
+      "dataPoints": 1440,
+      "bestRenderer": "vega-lite",
+      "advantageMs": 0.006709000000000742,
+      "comparison": {
+        "vegaLite": {
+          "renderTimeMs": 0.01791600000001381,
+          "updateTimeMs": 0.0236250000000382,
+          "interactionLatencyMs": 0.02633400000001984,
+          "memoryBytes": 82706,
+          "bundleImpactBytes": 249075
+        },
+        "echarts": {
+          "renderTimeMs": 0.024625000000014552,
+          "updateTimeMs": 0.03170799999998053,
+          "interactionLatencyMs": 0.01933299999996052,
+          "memoryBytes": 83191,
+          "bundleImpactBytes": 1117939
+        }
+      }
+    },
+    {
+      "chartType": "line",
+      "dataPoints": 10,
+      "bestRenderer": "echarts",
+      "advantageMs": 0.0002910000000042601,
+      "comparison": {
+        "vegaLite": {
+          "renderTimeMs": 0.012457999999980984,
+          "updateTimeMs": 0.01870800000000372,
+          "interactionLatencyMs": 0.010167000000024018,
+          "memoryBytes": 1920,
+          "bundleImpactBytes": 249075
+        },
+        "echarts": {
+          "renderTimeMs": 0.012166999999976724,
+          "updateTimeMs": 0.015084000000001652,
+          "interactionLatencyMs": 0.02787599999999202,
+          "memoryBytes": 2342,
+          "bundleImpactBytes": 1117939
+        }
+      }
+    },
+    {
+      "chartType": "line",
+      "dataPoints": 100,
+      "bestRenderer": "echarts",
+      "advantageMs": 0.004000000000019099,
+      "comparison": {
+        "vegaLite": {
+          "renderTimeMs": 0.014250000000004093,
+          "updateTimeMs": 0.01408299999997098,
+          "interactionLatencyMs": 0.004292000000020835,
+          "memoryBytes": 5696,
+          "bundleImpactBytes": 249075
+        },
+        "echarts": {
+          "renderTimeMs": 0.010249999999984993,
+          "updateTimeMs": 0.013833000000033735,
+          "interactionLatencyMs": 0.016166999999995824,
+          "memoryBytes": 6112,
+          "bundleImpactBytes": 1117939
+        }
+      }
+    },
+    {
+      "chartType": "line",
+      "dataPoints": 1000,
+      "bestRenderer": "echarts",
+      "advantageMs": 0.010790999999983342,
+      "comparison": {
+        "vegaLite": {
+          "renderTimeMs": 0.021082999999975982,
+          "updateTimeMs": 0.03245800000001964,
+          "interactionLatencyMs": 0.0032080000000291875,
+          "memoryBytes": 44265,
+          "bundleImpactBytes": 249075
+        },
+        "echarts": {
+          "renderTimeMs": 0.01029199999999264,
+          "updateTimeMs": 0.011792000000014013,
+          "interactionLatencyMs": 0.03666600000002518,
+          "memoryBytes": 44708,
+          "bundleImpactBytes": 1117939
+        }
+      }
+    },
+    {
+      "chartType": "line",
+      "dataPoints": 10000,
+      "bestRenderer": "vega-lite",
+      "advantageMs": 0.010084000000006199,
+      "comparison": {
+        "vegaLite": {
+          "renderTimeMs": 0.011540999999965607,
+          "updateTimeMs": 0.032417000000009466,
+          "interactionLatencyMs": 0.004165999999997894,
+          "memoryBytes": 438450,
+          "bundleImpactBytes": 249075
+        },
+        "echarts": {
+          "renderTimeMs": 0.021624999999971806,
+          "updateTimeMs": 0.043333000000018274,
+          "interactionLatencyMs": 0.05054100000000972,
+          "memoryBytes": 438831,
+          "bundleImpactBytes": 1117939
+        }
+      }
+    },
+    {
+      "chartType": "scatter",
+      "dataPoints": 10,
+      "bestRenderer": "echarts",
+      "advantageMs": 0.006999999999948159,
+      "comparison": {
+        "vegaLite": {
+          "renderTimeMs": 0.02533299999998917,
+          "updateTimeMs": 0.026292000000012195,
+          "interactionLatencyMs": 0.004582999999968251,
+          "memoryBytes": 2702,
+          "bundleImpactBytes": 249075
+        },
+        "echarts": {
+          "renderTimeMs": 0.01833300000004101,
+          "updateTimeMs": 0.019749999999987722,
+          "interactionLatencyMs": 0.02204100000000153,
+          "memoryBytes": 3147,
+          "bundleImpactBytes": 1117939
+        }
+      }
+    },
+    {
+      "chartType": "scatter",
+      "dataPoints": 100,
+      "bestRenderer": "echarts",
+      "advantageMs": 0.004749999999944521,
+      "comparison": {
+        "vegaLite": {
+          "renderTimeMs": 0.02304199999997536,
+          "updateTimeMs": 0.025792000000024018,
+          "interactionLatencyMs": 0.0030830000000037217,
+          "memoryBytes": 9137,
+          "bundleImpactBytes": 249075
+        },
+        "echarts": {
+          "renderTimeMs": 0.01829200000003084,
+          "updateTimeMs": 0.02029200000004039,
+          "interactionLatencyMs": 0.030208000000016,
+          "memoryBytes": 9579,
+          "bundleImpactBytes": 1117939
+        }
+      }
+    },
+    {
+      "chartType": "scatter",
+      "dataPoints": 1000,
+      "bestRenderer": "echarts",
+      "advantageMs": 0.004040999999972428,
+      "comparison": {
+        "vegaLite": {
+          "renderTimeMs": 0.02262499999994816,
+          "updateTimeMs": 0.026666999999974905,
+          "interactionLatencyMs": 0.00383300000004283,
+          "memoryBytes": 73443,
+          "bundleImpactBytes": 249075
+        },
+        "echarts": {
+          "renderTimeMs": 0.01858399999997573,
+          "updateTimeMs": 0.012833999999998014,
+          "interactionLatencyMs": 0.01924900000000207,
+          "memoryBytes": 73895,
+          "bundleImpactBytes": 1117939
+        }
+      }
+    },
+    {
+      "chartType": "scatter",
+      "dataPoints": 10000,
+      "bestRenderer": "vega-lite",
+      "advantageMs": 0.005540999999993801,
+      "comparison": {
+        "vegaLite": {
+          "renderTimeMs": 0.013833999999974367,
+          "updateTimeMs": 0.044584000000043034,
+          "interactionLatencyMs": 0.006750000000010914,
+          "memoryBytes": 716589,
+          "bundleImpactBytes": 249075
+        },
+        "echarts": {
+          "renderTimeMs": 0.019374999999968168,
+          "updateTimeMs": 0.04179199999998673,
+          "interactionLatencyMs": 0.027082999999947788,
+          "memoryBytes": 717048,
+          "bundleImpactBytes": 1117939
+        }
+      }
+    }
+  ],
+  "results": [
+    {
+      "id": "bar-10-vega-lite",
+      "chartType": "bar",
+      "renderer": "vega-lite",
+      "dataPoints": 10,
+      "metrics": {
+        "renderTimeMs": 0.06974999999999909,
+        "updateTimeMs": 0.06429199999999469,
+        "interactionLatencyMs": 0.027542000000011058,
+        "memoryBytes": 1930,
+        "bundleImpactBytes": 249075
+      },
+      "specId": "example:viz:bar-chart:vega-lite:10",
+      "preferredReason": "renderer faster on update cycle",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.06975,
+          "target": 0.274832,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.064292,
+          "target": 0.2385,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.027542,
+          "target": 0.24104,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 1930,
+          "target": 14990,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 249075,
+          "target": 360000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "bar-10-echarts",
+      "chartType": "bar",
+      "renderer": "echarts",
+      "dataPoints": 10,
+      "metrics": {
+        "renderTimeMs": 0.040208000000006905,
+        "updateTimeMs": 0.030500000000017735,
+        "interactionLatencyMs": 0.24233300000000213,
+        "memoryBytes": 2374,
+        "bundleImpactBytes": 1117939
+      },
+      "specId": "example:viz:bar-chart:echarts:10",
+      "preferredReason": "renderer faster on update cycle",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.040208,
+          "target": 0.261836,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.0305,
+          "target": 0.248668,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.242333,
+          "target": 1.410005,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 2374,
+          "target": 15612,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 1117939,
+          "target": 1325000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "bar-100-vega-lite",
+      "chartType": "bar",
+      "renderer": "vega-lite",
+      "dataPoints": 100,
+      "metrics": {
+        "renderTimeMs": 0.014958000000007132,
+        "updateTimeMs": 0.016416999999989912,
+        "interactionLatencyMs": 0.004041999999998325,
+        "memoryBytes": 4778,
+        "bundleImpactBytes": 249075
+      },
+      "specId": "example:viz:bar-chart:vega-lite:100",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.014958,
+          "target": 0.108668,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.016417,
+          "target": 0.114336,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.004042,
+          "target": 0.135415,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 4778,
+          "target": 18977,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 249075,
+          "target": 360000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "bar-100-echarts",
+      "chartType": "bar",
+      "renderer": "echarts",
+      "dataPoints": 100,
+      "metrics": {
+        "renderTimeMs": 0.01616600000002677,
+        "updateTimeMs": 0.01187500000000341,
+        "interactionLatencyMs": 0.013749999999987494,
+        "memoryBytes": 5227,
+        "bundleImpactBytes": 1117939
+      },
+      "specId": "example:viz:bar-chart:echarts:100",
+      "preferredReason": "renderer faster on update cycle",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.016166,
+          "target": 0.1235,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.011875,
+          "target": 0.126332,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.01375,
+          "target": 0.17708,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 5227,
+          "target": 19606,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 1117939,
+          "target": 1325000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "bar-1000-vega-lite",
+      "chartType": "bar",
+      "renderer": "vega-lite",
+      "dataPoints": 1000,
+      "metrics": {
+        "renderTimeMs": 0.015249999999980446,
+        "updateTimeMs": 0.03037500000002069,
+        "interactionLatencyMs": 0.010457999999999856,
+        "memoryBytes": 33250,
+        "bundleImpactBytes": 249075
+      },
+      "specId": "example:viz:bar-chart:vega-lite:1000",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.01525,
+          "target": 0.140668,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.030375,
+          "target": 0.185168,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.010458,
+          "target": 0.18271,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 33250,
+          "target": 58838,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 249075,
+          "target": 360000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "bar-1000-echarts",
+      "chartType": "bar",
+      "renderer": "echarts",
+      "dataPoints": 1000,
+      "metrics": {
+        "renderTimeMs": 0.01824999999999477,
+        "updateTimeMs": 0.02337500000001569,
+        "interactionLatencyMs": 0.0312070000000233,
+        "memoryBytes": 33706,
+        "bundleImpactBytes": 1117939
+      },
+      "specId": "example:viz:bar-chart:echarts:1000",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.01825,
+          "target": 0.170168,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.023375,
+          "target": 0.233164,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.031207,
+          "target": 0.34875,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 33706,
+          "target": 59476,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 1117939,
+          "target": 1325000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "bar-10000-vega-lite",
+      "chartType": "bar",
+      "renderer": "vega-lite",
+      "dataPoints": 10000,
+      "metrics": {
+        "renderTimeMs": 0.021417000000013786,
+        "updateTimeMs": 0.04400000000001114,
+        "interactionLatencyMs": 0.010041999999998552,
+        "memoryBytes": 317912,
+        "bundleImpactBytes": 249075
+      },
+      "specId": "example:viz:bar-chart:vega-lite:10000",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.021417,
+          "target": 0.6745,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.044,
+          "target": 0.234168,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.010042,
+          "target": 0.90979,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 317912,
+          "target": 457365,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 249075,
+          "target": 360000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "bar-10000-echarts",
+      "chartType": "bar",
+      "renderer": "echarts",
+      "dataPoints": 10000,
+      "metrics": {
+        "renderTimeMs": 0.011415999999996984,
+        "updateTimeMs": 0.03695899999999597,
+        "interactionLatencyMs": 0.053084000000012566,
+        "memoryBytes": 318354,
+        "bundleImpactBytes": 1117939
+      },
+      "specId": "example:viz:bar-chart:echarts:10000",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.011416,
+          "target": 0.0985,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.036959,
+          "target": 0.285168,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.053084,
+          "target": 0.612495,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 318354,
+          "target": 457984,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 1117939,
+          "target": 1325000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "line-10-vega-lite",
+      "chartType": "line",
+      "renderer": "vega-lite",
+      "dataPoints": 10,
+      "metrics": {
+        "renderTimeMs": 0.012457999999980984,
+        "updateTimeMs": 0.01870800000000372,
+        "interactionLatencyMs": 0.010167000000024018,
+        "memoryBytes": 1920,
+        "bundleImpactBytes": 249075
+      },
+      "specId": "example:viz:line-chart:vega-lite:10",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.012458,
+          "target": 0.124164,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.018708,
+          "target": 0.1305,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.010167,
+          "target": 0.16875,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 1920,
+          "target": 14976,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 249075,
+          "target": 360000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "line-10-echarts",
+      "chartType": "line",
+      "renderer": "echarts",
+      "dataPoints": 10,
+      "metrics": {
+        "renderTimeMs": 0.012166999999976724,
+        "updateTimeMs": 0.015084000000001652,
+        "interactionLatencyMs": 0.02787599999999202,
+        "memoryBytes": 2342,
+        "bundleImpactBytes": 1117939
+      },
+      "specId": "example:viz:line-chart:echarts:10",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.012167,
+          "target": 0.143,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.015084,
+          "target": 0.145,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.027876,
+          "target": 2.621875,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 2342,
+          "target": 15567,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 1117939,
+          "target": 1325000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "line-100-vega-lite",
+      "chartType": "line",
+      "renderer": "vega-lite",
+      "dataPoints": 100,
+      "metrics": {
+        "renderTimeMs": 0.014250000000004093,
+        "updateTimeMs": 0.01408299999997098,
+        "interactionLatencyMs": 0.004292000000020835,
+        "memoryBytes": 5696,
+        "bundleImpactBytes": 249075
+      },
+      "specId": "example:viz:line-chart:vega-lite:100",
+      "preferredReason": "renderer faster on update cycle",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.01425,
+          "target": 0.1175,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.014083,
+          "target": 0.124336,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.004292,
+          "target": 0.151455,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 5696,
+          "target": 20262,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 249075,
+          "target": 360000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "line-100-echarts",
+      "chartType": "line",
+      "renderer": "echarts",
+      "dataPoints": 100,
+      "metrics": {
+        "renderTimeMs": 0.010249999999984993,
+        "updateTimeMs": 0.013833000000033735,
+        "interactionLatencyMs": 0.016166999999995824,
+        "memoryBytes": 6112,
+        "bundleImpactBytes": 1117939
+      },
+      "specId": "example:viz:line-chart:echarts:100",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.01025,
+          "target": 0.131164,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.013833,
+          "target": 0.145336,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.016167,
+          "target": 0.24812,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 6112,
+          "target": 20845,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 1117939,
+          "target": 1325000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "line-1000-vega-lite",
+      "chartType": "line",
+      "renderer": "vega-lite",
+      "dataPoints": 1000,
+      "metrics": {
+        "renderTimeMs": 0.021082999999975982,
+        "updateTimeMs": 0.03245800000001964,
+        "interactionLatencyMs": 0.0032080000000291875,
+        "memoryBytes": 44265,
+        "bundleImpactBytes": 249075
+      },
+      "specId": "example:viz:line-chart:vega-lite:1000",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.021083,
+          "target": 0.114836,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.032458,
+          "target": 0.262168,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.003208,
+          "target": 0.16271,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 44265,
+          "target": 74259,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 249075,
+          "target": 360000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "line-1000-echarts",
+      "chartType": "line",
+      "renderer": "echarts",
+      "dataPoints": 1000,
+      "metrics": {
+        "renderTimeMs": 0.01029199999999264,
+        "updateTimeMs": 0.011792000000014013,
+        "interactionLatencyMs": 0.03666600000002518,
+        "memoryBytes": 44708,
+        "bundleImpactBytes": 1117939
+      },
+      "specId": "example:viz:line-chart:echarts:1000",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.010292,
+          "target": 0.115332,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.011792,
+          "target": 0.191668,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.036666,
+          "target": 0.297085,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 44708,
+          "target": 74879,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 1117939,
+          "target": 1325000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "line-10000-vega-lite",
+      "chartType": "line",
+      "renderer": "vega-lite",
+      "dataPoints": 10000,
+      "metrics": {
+        "renderTimeMs": 0.011540999999965607,
+        "updateTimeMs": 0.032417000000009466,
+        "interactionLatencyMs": 0.004165999999997894,
+        "memoryBytes": 438450,
+        "bundleImpactBytes": 249075
+      },
+      "specId": "example:viz:line-chart:vega-lite:10000",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.011541,
+          "target": 0.159164,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.032417,
+          "target": 0.338332,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.004166,
+          "target": 0.130835,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 438450,
+          "target": 626118,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 249075,
+          "target": 360000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "line-10000-echarts",
+      "chartType": "line",
+      "renderer": "echarts",
+      "dataPoints": 10000,
+      "metrics": {
+        "renderTimeMs": 0.021624999999971806,
+        "updateTimeMs": 0.043333000000018274,
+        "interactionLatencyMs": 0.05054100000000972,
+        "memoryBytes": 438831,
+        "bundleImpactBytes": 1117939
+      },
+      "specId": "example:viz:line-chart:echarts:10000",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.021625,
+          "target": 0.5605,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.043333,
+          "target": 0.217668,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.050541,
+          "target": 0.257495,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 438831,
+          "target": 626651,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 1117939,
+          "target": 1325000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "scatter-10-vega-lite",
+      "chartType": "scatter",
+      "renderer": "vega-lite",
+      "dataPoints": 10,
+      "metrics": {
+        "renderTimeMs": 0.02533299999998917,
+        "updateTimeMs": 0.026292000000012195,
+        "interactionLatencyMs": 0.004582999999968251,
+        "memoryBytes": 2702,
+        "bundleImpactBytes": 249075
+      },
+      "specId": "example:viz:scatter-chart:vega-lite:10",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.025333,
+          "target": 0.104,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.026292,
+          "target": 0.110336,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.004583,
+          "target": 0.13396,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 2702,
+          "target": 16071,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 249075,
+          "target": 360000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "scatter-10-echarts",
+      "chartType": "scatter",
+      "renderer": "echarts",
+      "dataPoints": 10,
+      "metrics": {
+        "renderTimeMs": 0.01833300000004101,
+        "updateTimeMs": 0.019749999999987722,
+        "interactionLatencyMs": 0.02204100000000153,
+        "memoryBytes": 3147,
+        "bundleImpactBytes": 1117939
+      },
+      "specId": "example:viz:scatter-chart:echarts:10",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.018333,
+          "target": 0.1155,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.01975,
+          "target": 0.105168,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.022041,
+          "target": 0.20562,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 3147,
+          "target": 16694,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 1117939,
+          "target": 1325000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "scatter-100-vega-lite",
+      "chartType": "scatter",
+      "renderer": "vega-lite",
+      "dataPoints": 100,
+      "metrics": {
+        "renderTimeMs": 0.02304199999997536,
+        "updateTimeMs": 0.025792000000024018,
+        "interactionLatencyMs": 0.0030830000000037217,
+        "memoryBytes": 9137,
+        "bundleImpactBytes": 249075
+      },
+      "specId": "example:viz:scatter-chart:vega-lite:100",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.023042,
+          "target": 0.119336,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.025792,
+          "target": 0.116164,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.003083,
+          "target": 0.109585,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 9137,
+          "target": 25080,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 249075,
+          "target": 360000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "scatter-100-echarts",
+      "chartType": "scatter",
+      "renderer": "echarts",
+      "dataPoints": 100,
+      "metrics": {
+        "renderTimeMs": 0.01829200000003084,
+        "updateTimeMs": 0.02029200000004039,
+        "interactionLatencyMs": 0.030208000000016,
+        "memoryBytes": 9579,
+        "bundleImpactBytes": 1117939
+      },
+      "specId": "example:viz:scatter-chart:echarts:100",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.018292,
+          "target": 0.097832,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.020292,
+          "target": 0.109332,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.030208,
+          "target": 0.169795,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 9579,
+          "target": 25699,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 1117939,
+          "target": 1325000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "scatter-1000-vega-lite",
+      "chartType": "scatter",
+      "renderer": "vega-lite",
+      "dataPoints": 1000,
+      "metrics": {
+        "renderTimeMs": 0.02262499999994816,
+        "updateTimeMs": 0.026666999999974905,
+        "interactionLatencyMs": 0.00383300000004283,
+        "memoryBytes": 73443,
+        "bundleImpactBytes": 249075
+      },
+      "specId": "example:viz:scatter-chart:vega-lite:1000",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.022625,
+          "target": 0.135336,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.026667,
+          "target": 0.137668,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.003833,
+          "target": 0.115835,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 73443,
+          "target": 115108,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 249075,
+          "target": 360000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "scatter-1000-echarts",
+      "chartType": "scatter",
+      "renderer": "echarts",
+      "dataPoints": 1000,
+      "metrics": {
+        "renderTimeMs": 0.01858399999997573,
+        "updateTimeMs": 0.012833999999998014,
+        "interactionLatencyMs": 0.01924900000000207,
+        "memoryBytes": 73895,
+        "bundleImpactBytes": 1117939
+      },
+      "specId": "example:viz:scatter-chart:echarts:1000",
+      "preferredReason": "renderer faster on update cycle",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.018584,
+          "target": 0.104668,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.012834,
+          "target": 0.144332,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.019249,
+          "target": 0.23333,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 73895,
+          "target": 115741,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 1117939,
+          "target": 1325000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "scatter-10000-vega-lite",
+      "chartType": "scatter",
+      "renderer": "vega-lite",
+      "dataPoints": 10000,
+      "metrics": {
+        "renderTimeMs": 0.013833999999974367,
+        "updateTimeMs": 0.044584000000043034,
+        "interactionLatencyMs": 0.006750000000010914,
+        "memoryBytes": 716589,
+        "bundleImpactBytes": 249075
+      },
+      "specId": "example:viz:scatter-chart:vega-lite:10000",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.013834,
+          "target": 0.1055,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.044584,
+          "target": 0.3205,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.00675,
+          "target": 0.14604,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 716589,
+          "target": 1015513,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 249075,
+          "target": 360000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "scatter-10000-echarts",
+      "chartType": "scatter",
+      "renderer": "echarts",
+      "dataPoints": 10000,
+      "metrics": {
+        "renderTimeMs": 0.019374999999968168,
+        "updateTimeMs": 0.04179199999998673,
+        "interactionLatencyMs": 0.027082999999947788,
+        "memoryBytes": 717048,
+        "bundleImpactBytes": 1117939
+      },
+      "specId": "example:viz:scatter-chart:echarts:10000",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.019375,
+          "target": 0.137,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.041792,
+          "target": 0.194668,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.027083,
+          "target": 0.210625,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 717048,
+          "target": 1016155,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 1117939,
+          "target": 1325000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "area-10-vega-lite",
+      "chartType": "area",
+      "renderer": "vega-lite",
+      "dataPoints": 10,
+      "metrics": {
+        "renderTimeMs": 0.016499999999950887,
+        "updateTimeMs": 0.011665999999991072,
+        "interactionLatencyMs": 0.004207999999948697,
+        "memoryBytes": 1766,
+        "bundleImpactBytes": 249075
+      },
+      "specId": "pattern:viz:running-total-area:vega-lite:10",
+      "preferredReason": "renderer faster on update cycle",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.0165,
+          "target": 0.110832,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.011666,
+          "target": 0.117668,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.004208,
+          "target": 0.128125,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 1766,
+          "target": 14760,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 249075,
+          "target": 360000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "area-10-echarts",
+      "chartType": "area",
+      "renderer": "echarts",
+      "dataPoints": 10,
+      "metrics": {
+        "renderTimeMs": 0.01779199999998582,
+        "updateTimeMs": 0.019458999999983462,
+        "interactionLatencyMs": 0.013042000000041298,
+        "memoryBytes": 2230,
+        "bundleImpactBytes": 1117939
+      },
+      "specId": "pattern:viz:running-total-area:echarts:10",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.017792,
+          "target": 0.1165,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.019459,
+          "target": 0.123168,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.013042,
+          "target": 0.186665,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 2230,
+          "target": 15410,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 1117939,
+          "target": 1325000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "area-100-vega-lite",
+      "chartType": "area",
+      "renderer": "vega-lite",
+      "dataPoints": 100,
+      "metrics": {
+        "renderTimeMs": 0.018708000000060565,
+        "updateTimeMs": 0.020624999999995453,
+        "interactionLatencyMs": 0.0028340000000071086,
+        "memoryBytes": 4729,
+        "bundleImpactBytes": 249075
+      },
+      "specId": "pattern:viz:running-total-area:vega-lite:100",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.018708,
+          "target": 0.115168,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.020625,
+          "target": 0.127168,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.002834,
+          "target": 0.115,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 4729,
+          "target": 18909,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 249075,
+          "target": 360000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "area-100-echarts",
+      "chartType": "area",
+      "renderer": "echarts",
+      "dataPoints": 100,
+      "metrics": {
+        "renderTimeMs": 0.01745800000003328,
+        "updateTimeMs": 0.018208999999956177,
+        "interactionLatencyMs": 0.009249999999951797,
+        "memoryBytes": 5190,
+        "bundleImpactBytes": 1117939
+      },
+      "specId": "pattern:viz:running-total-area:echarts:100",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.017458,
+          "target": 0.090664,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.018209,
+          "target": 0.132164,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.00925,
+          "target": 0.1525,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 5190,
+          "target": 19554,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 1117939,
+          "target": 1325000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "area-1000-vega-lite",
+      "chartType": "area",
+      "renderer": "vega-lite",
+      "dataPoints": 1000,
+      "metrics": {
+        "renderTimeMs": 0.01675000000000182,
+        "updateTimeMs": 0.017291000000000167,
+        "interactionLatencyMs": 0.004416999999989457,
+        "memoryBytes": 35156,
+        "bundleImpactBytes": 249075
+      },
+      "specId": "pattern:viz:running-total-area:vega-lite:1000",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.01675,
+          "target": 0.082164,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.017291,
+          "target": 0.201332,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.004417,
+          "target": 0.13729,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 35156,
+          "target": 61506,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 249075,
+          "target": 360000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "area-1000-echarts",
+      "chartType": "area",
+      "renderer": "echarts",
+      "dataPoints": 1000,
+      "metrics": {
+        "renderTimeMs": 0.017542000000048574,
+        "updateTimeMs": 0.020167000000014923,
+        "interactionLatencyMs": 0.010999999999853571,
+        "memoryBytes": 35619,
+        "bundleImpactBytes": 1117939
+      },
+      "specId": "pattern:viz:running-total-area:echarts:1000",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.017542,
+          "target": 0.115832,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.020167,
+          "target": 0.134668,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.011,
+          "target": 0.167505,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 35619,
+          "target": 62155,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 1117939,
+          "target": 1325000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "area-10000-vega-lite",
+      "chartType": "area",
+      "renderer": "vega-lite",
+      "dataPoints": 10000,
+      "metrics": {
+        "renderTimeMs": 0.009000000000014552,
+        "updateTimeMs": 0.03600000000005821,
+        "interactionLatencyMs": 0.004042000000026746,
+        "memoryBytes": 347916,
+        "bundleImpactBytes": 249075
+      },
+      "specId": "pattern:viz:running-total-area:vega-lite:10000",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.009,
+          "target": 0.1015,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.036,
+          "target": 0.326,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.004042,
+          "target": 0.14417,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 347916,
+          "target": 499370,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 249075,
+          "target": 360000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "area-10000-echarts",
+      "chartType": "area",
+      "renderer": "echarts",
+      "dataPoints": 10000,
+      "metrics": {
+        "renderTimeMs": 0.02616699999998673,
+        "updateTimeMs": 0.04245800000001054,
+        "interactionLatencyMs": 0.03437399999995705,
+        "memoryBytes": 348349,
+        "bundleImpactBytes": 1117939
+      },
+      "specId": "pattern:viz:running-total-area:echarts:10000",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.026167,
+          "target": 0.097168,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.042458,
+          "target": 0.2605,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.034374,
+          "target": 0.216045,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 348349,
+          "target": 499977,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 1117939,
+          "target": 1325000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "heatmap-10-vega-lite",
+      "chartType": "heatmap",
+      "renderer": "vega-lite",
+      "dataPoints": 10,
+      "metrics": {
+        "renderTimeMs": 0.02208399999994981,
+        "updateTimeMs": 0.013874999999984539,
+        "interactionLatencyMs": 0.002334000000018932,
+        "memoryBytes": 2095,
+        "bundleImpactBytes": 249075
+      },
+      "specId": "pattern:viz:time-grid-heatmap:vega-lite:10",
+      "preferredReason": "renderer faster on update cycle",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.022084,
+          "target": 0.1105,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.013875,
+          "target": 0.115,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.002334,
+          "target": 0.127705,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 2095,
+          "target": 15221,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 249075,
+          "target": 360000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "heatmap-10-echarts",
+      "chartType": "heatmap",
+      "renderer": "echarts",
+      "dataPoints": 10,
+      "metrics": {
+        "renderTimeMs": 0.01412500000003547,
+        "updateTimeMs": 0.014916999999968539,
+        "interactionLatencyMs": 0.009082999999918684,
+        "memoryBytes": 2571,
+        "bundleImpactBytes": 1117939
+      },
+      "specId": "pattern:viz:time-grid-heatmap:echarts:10",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.014125,
+          "target": 0.123832,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.014917,
+          "target": 0.131832,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.009083,
+          "target": 0.176875,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 2571,
+          "target": 15887,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 1117939,
+          "target": 1325000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "heatmap-100-vega-lite",
+      "chartType": "heatmap",
+      "renderer": "vega-lite",
+      "dataPoints": 100,
+      "metrics": {
+        "renderTimeMs": 0.011959000000047126,
+        "updateTimeMs": 0.013417000000004009,
+        "interactionLatencyMs": 0.0019170000000485743,
+        "memoryBytes": 6249,
+        "bundleImpactBytes": 249075
+      },
+      "specId": "pattern:viz:time-grid-heatmap:vega-lite:100",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.011959,
+          "target": 0.109164,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.013417,
+          "target": 0.114332,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.001917,
+          "target": 0.11479,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 6249,
+          "target": 21037,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 249075,
+          "target": 360000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "heatmap-100-echarts",
+      "chartType": "heatmap",
+      "renderer": "echarts",
+      "dataPoints": 100,
+      "metrics": {
+        "renderTimeMs": 0.013790999999969245,
+        "updateTimeMs": 0.015041999999994005,
+        "interactionLatencyMs": 0.006666999999993095,
+        "memoryBytes": 6726,
+        "bundleImpactBytes": 1117939
+      },
+      "specId": "pattern:viz:time-grid-heatmap:echarts:100",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.013791,
+          "target": 0.1225,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.015042,
+          "target": 0.13,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.006667,
+          "target": 0.144165,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 6726,
+          "target": 21704,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 1117939,
+          "target": 1325000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "heatmap-1000-vega-lite",
+      "chartType": "heatmap",
+      "renderer": "vega-lite",
+      "dataPoints": 1000,
+      "metrics": {
+        "renderTimeMs": 0.07854199999997036,
+        "updateTimeMs": 0.04779099999996106,
+        "interactionLatencyMs": 0.0017500000000154614,
+        "memoryBytes": 47768,
+        "bundleImpactBytes": 249075
+      },
+      "specId": "pattern:viz:time-grid-heatmap:vega-lite:1000",
+      "preferredReason": "renderer faster on update cycle",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.078542,
+          "target": 0.1125,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.047791,
+          "target": 0.122164,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.00175,
+          "target": 0.118335,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 47768,
+          "target": 79163,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 249075,
+          "target": 360000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "heatmap-1000-echarts",
+      "chartType": "heatmap",
+      "renderer": "echarts",
+      "dataPoints": 1000,
+      "metrics": {
+        "renderTimeMs": 0.01654200000007222,
+        "updateTimeMs": 0.01883399999996982,
+        "interactionLatencyMs": 0.009165999999936503,
+        "memoryBytes": 48255,
+        "bundleImpactBytes": 1117939
+      },
+      "specId": "pattern:viz:time-grid-heatmap:echarts:1000",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.016542,
+          "target": 0.124832,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.018834,
+          "target": 0.1405,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.009166,
+          "target": 0.19541,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 48255,
+          "target": 79845,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 1117939,
+          "target": 1325000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "heatmap-10000-vega-lite",
+      "chartType": "heatmap",
+      "renderer": "vega-lite",
+      "dataPoints": 10000,
+      "metrics": {
+        "renderTimeMs": 0.013041999999927611,
+        "updateTimeMs": 0.02366699999993216,
+        "interactionLatencyMs": 0.0027079999999841675,
+        "memoryBytes": 462998,
+        "bundleImpactBytes": 249075
+      },
+      "specId": "pattern:viz:time-grid-heatmap:vega-lite:10000",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.013042,
+          "target": 0.127332,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.023667,
+          "target": 0.2495,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.002708,
+          "target": 0.143545,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 462998,
+          "target": 660485,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 249075,
+          "target": 360000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "heatmap-10000-echarts",
+      "chartType": "heatmap",
+      "renderer": "echarts",
+      "dataPoints": 10000,
+      "metrics": {
+        "renderTimeMs": 0.01587500000005093,
+        "updateTimeMs": 0.027291999999988548,
+        "interactionLatencyMs": 0.009374999999977263,
+        "memoryBytes": 463448,
+        "bundleImpactBytes": 1117939
+      },
+      "specId": "pattern:viz:time-grid-heatmap:echarts:10000",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.015875,
+          "target": 0.094668,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.027292,
+          "target": 0.202832,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.009375,
+          "target": 0.200415,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 463448,
+          "target": 661115,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 1117939,
+          "target": 1325000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "facet-scatter-brush-240-vega-lite",
+      "chartType": "facet-scatter-brush",
+      "renderer": "vega-lite",
+      "dataPoints": 240,
+      "metrics": {
+        "renderTimeMs": 0.027749999999969077,
+        "updateTimeMs": 0.024833000000057837,
+        "interactionLatencyMs": 0.010832999999934145,
+        "memoryBytes": 22977,
+        "bundleImpactBytes": 249075
+      },
+      "specId": "benchmark:layout:facet-scatter:vega-lite:240",
+      "preferredReason": "renderer faster on update cycle",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.02775,
+          "target": 0.25,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.024833,
+          "target": 0.25,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.010833,
+          "target": 2.5,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 22977,
+          "target": 25275,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 249075,
+          "target": 360000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "facet-scatter-brush-240-echarts",
+      "chartType": "facet-scatter-brush",
+      "renderer": "echarts",
+      "dataPoints": 240,
+      "metrics": {
+        "renderTimeMs": 0.08020800000008421,
+        "updateTimeMs": 0.058209000000033484,
+        "interactionLatencyMs": 0.09066799999993691,
+        "memoryBytes": 26551,
+        "bundleImpactBytes": 1117939
+      },
+      "specId": "benchmark:layout:facet-scatter:echarts:240",
+      "preferredReason": "renderer faster on update cycle",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.080208,
+          "target": 0.25,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.058209,
+          "target": 0.25,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.090668,
+          "target": 2.5,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 26551,
+          "target": 29212,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 1117939,
+          "target": 1325000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "facet-scatter-brush-960-vega-lite",
+      "chartType": "facet-scatter-brush",
+      "renderer": "vega-lite",
+      "dataPoints": 960,
+      "metrics": {
+        "renderTimeMs": 0.03270800000007057,
+        "updateTimeMs": 0.035957999999936874,
+        "interactionLatencyMs": 0.0019170000000485743,
+        "memoryBytes": 86818,
+        "bundleImpactBytes": 249075
+      },
+      "specId": "benchmark:layout:facet-scatter:vega-lite:960",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.032708,
+          "target": 0.25,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.035958,
+          "target": 0.25,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.001917,
+          "target": 2.5,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 86818,
+          "target": 95482,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 249075,
+          "target": 360000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "facet-scatter-brush-960-echarts",
+      "chartType": "facet-scatter-brush",
+      "renderer": "echarts",
+      "dataPoints": 960,
+      "metrics": {
+        "renderTimeMs": 0.02904200000000401,
+        "updateTimeMs": 0.03083399999991343,
+        "interactionLatencyMs": 0.009000000000014552,
+        "memoryBytes": 90410,
+        "bundleImpactBytes": 1117939
+      },
+      "specId": "benchmark:layout:facet-scatter:echarts:960",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.029042,
+          "target": 0.25,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.030834,
+          "target": 0.25,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.009,
+          "target": 2.5,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 90410,
+          "target": 99454,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 1117939,
+          "target": 1325000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "layered-target-band-360-vega-lite",
+      "chartType": "layered-target-band",
+      "renderer": "vega-lite",
+      "dataPoints": 360,
+      "metrics": {
+        "renderTimeMs": 0.018958999999995285,
+        "updateTimeMs": 0.019499999999993634,
+        "interactionLatencyMs": 0.0019579999999450592,
+        "memoryBytes": 21963,
+        "bundleImpactBytes": 249075
+      },
+      "specId": "benchmark:layout:layered-target:vega-lite:360",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.018959,
+          "target": 0.25,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.0195,
+          "target": 0.35,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.001958,
+          "target": 2.5,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 21963,
+          "target": 24170,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 249075,
+          "target": 360000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "layered-target-band-360-echarts",
+      "chartType": "layered-target-band",
+      "renderer": "echarts",
+      "dataPoints": 360,
+      "metrics": {
+        "renderTimeMs": 0.0175410000000511,
+        "updateTimeMs": 0.04095800000004601,
+        "interactionLatencyMs": 0.017833000000109678,
+        "memoryBytes": 22435,
+        "bundleImpactBytes": 1117939
+      },
+      "specId": "benchmark:layout:layered-target:echarts:360",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.017541,
+          "target": 0.25,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.040958,
+          "target": 0.35,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.017833,
+          "target": 2.5,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 22435,
+          "target": 24654,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 1117939,
+          "target": 1325000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "layered-target-band-1440-vega-lite",
+      "chartType": "layered-target-band",
+      "renderer": "vega-lite",
+      "dataPoints": 1440,
+      "metrics": {
+        "renderTimeMs": 0.01791600000001381,
+        "updateTimeMs": 0.0236250000000382,
+        "interactionLatencyMs": 0.02633400000001984,
+        "memoryBytes": 82706,
+        "bundleImpactBytes": 249075
+      },
+      "specId": "benchmark:layout:layered-target:vega-lite:1440",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.017916,
+          "target": 0.25,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.023625,
+          "target": 0.35,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.026334,
+          "target": 2.5,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 82706,
+          "target": 91024,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 249075,
+          "target": 360000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "layered-target-band-1440-echarts",
+      "chartType": "layered-target-band",
+      "renderer": "echarts",
+      "dataPoints": 1440,
+      "metrics": {
+        "renderTimeMs": 0.024625000000014552,
+        "updateTimeMs": 0.03170799999998053,
+        "interactionLatencyMs": 0.01933299999996052,
+        "memoryBytes": 83191,
+        "bundleImpactBytes": 1117939
+      },
+      "specId": "benchmark:layout:layered-target:echarts:1440",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.024625,
+          "target": 0.25,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.031708,
+          "target": 0.35,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.019333,
+          "target": 2.5,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 83191,
+          "target": 91511,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 1117939,
+          "target": 1325000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "concat-detail-overview-180-vega-lite",
+      "chartType": "concat-detail-overview",
+      "renderer": "vega-lite",
+      "dataPoints": 180,
+      "metrics": {
+        "renderTimeMs": 0.05374999999992269,
+        "updateTimeMs": 0.05095900000003439,
+        "interactionLatencyMs": 0.0038749999999936335,
+        "memoryBytes": 15459,
+        "bundleImpactBytes": 249075
+      },
+      "specId": "benchmark:layout:concat-detail:vega-lite:180",
+      "preferredReason": "renderer faster on update cycle",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.05375,
+          "target": 0.25,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.050959,
+          "target": 0.35,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.003875,
+          "target": 2.5,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 15459,
+          "target": 16991,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 249075,
+          "target": 360000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "concat-detail-overview-180-echarts",
+      "chartType": "concat-detail-overview",
+      "renderer": "echarts",
+      "dataPoints": 180,
+      "metrics": {
+        "renderTimeMs": 0.02158400000007532,
+        "updateTimeMs": 0.02400000000000091,
+        "interactionLatencyMs": 0.026583000000073298,
+        "memoryBytes": 16863,
+        "bundleImpactBytes": 1117939
+      },
+      "specId": "benchmark:layout:concat-detail:echarts:180",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.021584,
+          "target": 0.25,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.024,
+          "target": 0.35,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.026583,
+          "target": 2.5,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 16863,
+          "target": 18545,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 1117939,
+          "target": 1325000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "concat-detail-overview-720-vega-lite",
+      "chartType": "concat-detail-overview",
+      "renderer": "vega-lite",
+      "dataPoints": 720,
+      "metrics": {
+        "renderTimeMs": 0.03516700000000128,
+        "updateTimeMs": 0.0342080000000351,
+        "interactionLatencyMs": 0.0017080000000078144,
+        "memoryBytes": 53789,
+        "bundleImpactBytes": 249075
+      },
+      "specId": "benchmark:layout:concat-detail:vega-lite:720",
+      "preferredReason": "renderer faster on update cycle",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.035167,
+          "target": 0.25,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.034208,
+          "target": 0.35,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.001708,
+          "target": 2.5,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 53789,
+          "target": 59196,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 249075,
+          "target": 360000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "concat-detail-overview-720-echarts",
+      "chartType": "concat-detail-overview",
+      "renderer": "echarts",
+      "dataPoints": 720,
+      "metrics": {
+        "renderTimeMs": 0.020500000000083674,
+        "updateTimeMs": 0.03599999999994452,
+        "interactionLatencyMs": 0.01704199999994671,
+        "memoryBytes": 55219,
+        "bundleImpactBytes": 1117939
+      },
+      "specId": "benchmark:layout:concat-detail:echarts:720",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.0205,
+          "target": 0.25,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.036,
+          "target": 0.35,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.017042,
+          "target": 2.5,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 55219,
+          "target": 60705,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 1117939,
+          "target": 1325000,
+          "status": "pass"
+        }
+      ]
+    }
+  ]
+}

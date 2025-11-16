@@ -1,0 +1,102 @@
+{
+  "generatedAt": "2025-11-16T19:40:25.030Z",
+  "status": "YELLOW",
+  "budgets": {
+    "compositorActualDurationMs": {
+      "budget": 7,
+      "p95": 0.7,
+      "max": 0.7,
+      "scenario": "Compositor.*",
+      "metric": "React.actualDuration"
+    },
+    "listActualDurationMs": {
+      "budget": 150,
+      "p95": 14,
+      "max": 14,
+      "scenario": "List.*",
+      "metric": "React.actualDuration"
+    },
+    "tokenTransformUserTimingMs": {
+      "budget": 3000,
+      "p95": 30.5,
+      "max": 30.5,
+      "scenario": "TokenTransform.*",
+      "metric": "UserTiming.duration"
+    }
+  },
+  "vizLayoutBenchmarks": {
+    "artifact": "artifacts/performance/viz-benchmark-layouts.json",
+    "generatedAt": "2025-11-16T19:39:54.922Z",
+    "scenarios": 12,
+    "status": "YELLOW",
+    "metrics": {
+      "facetScatterBrush": {
+        "vegaLite": {
+          "dataPoints": 960,
+          "renderTimeMs": 0.02975,
+          "updateTimeMs": 0.050625,
+          "interactionLatencyMs": 0.012208,
+          "memoryBytes": 86801
+        },
+        "echarts": {
+          "dataPoints": 960,
+          "renderTimeMs": 0.042416,
+          "updateTimeMs": 0.063334,
+          "interactionLatencyMs": 0.028458,
+          "memoryBytes": 90412
+        }
+      },
+      "layeredTargetBand": {
+        "vegaLite": {
+          "dataPoints": 1440,
+          "renderTimeMs": 0.016083,
+          "updateTimeMs": 0.038042,
+          "interactionLatencyMs": 0.014666,
+          "memoryBytes": 82749
+        },
+        "echarts": {
+          "dataPoints": 1440,
+          "renderTimeMs": 0.025125,
+          "updateTimeMs": 0.048125,
+          "interactionLatencyMs": 0.026125,
+          "memoryBytes": 83191
+        }
+      },
+      "concatDetailOverview": {
+        "vegaLite": {
+          "dataPoints": 720,
+          "renderTimeMs": 0.020333,
+          "updateTimeMs": 0.025375,
+          "interactionLatencyMs": 0.006125,
+          "memoryBytes": 53814
+        },
+        "echarts": {
+          "dataPoints": 720,
+          "renderTimeMs": 0.031625,
+          "updateTimeMs": 0.035167,
+          "interactionLatencyMs": 0.053042,
+          "memoryBytes": 55186
+        }
+      }
+    },
+    "alarms": [
+      "Facet scatter brush (ECharts) interaction latency peaked at 0.877ms; keep renderer brush bindings on watch.",
+      "Layered dashboard (ECharts) highlights hit 0.262ms; prioritize renderer tuning when layout work resumes."
+    ]
+  },
+  "snapshots": {
+    "total": 52,
+    "source": "artifacts/performance/viz-benchmark-results.json",
+    "vizLayouts": 12
+  },
+  "source": {
+    "runTimestamp": "2025-11-16T19:40:25.030Z",
+    "commitSha": "b15e260",
+    "path": "artifacts/performance/viz-benchmark-results.json"
+  },
+  "notes": [
+    "Performance harness captures 11 scenarios across compositor, list rendering, token transform, and usage aggregation.",
+    "Budgets now keep viz layout telemetry non-blocking (targets 0.25ms render / 0.35ms update / 2.5ms interaction) while diagnostics log actual metrics and alarms.",
+    "Layout suite recorded 12 scenarios on 2025-11-16 (artifact: artifacts/performance/viz-benchmark-layouts.json)."
+  ]
+}

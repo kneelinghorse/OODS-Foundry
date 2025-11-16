@@ -19,7 +19,11 @@ import scatterExample from '../../../examples/viz/scatter-chart.spec.json' asser
 import areaExample from '../../../examples/viz/patterns-v2/running-total-area.spec.json' assert { type: 'json' };
 import heatmapExample from '../../../examples/viz/patterns-v2/time-grid-heatmap.spec.json' assert { type: 'json' };
 
-export type VizBenchmarkChartType = 'bar' | 'line' | 'scatter' | 'area' | 'heatmap';
+export const BASE_CHART_TYPES = ['bar', 'line', 'scatter', 'area', 'heatmap'] as const;
+export const LAYOUT_CHART_TYPES = ['facet-scatter-brush', 'layered-target-band', 'concat-detail-overview'] as const;
+export type VizBenchmarkChartType =
+  | (typeof BASE_CHART_TYPES)[number]
+  | (typeof LAYOUT_CHART_TYPES)[number];
 type MetricKind = 'render' | 'update' | 'interaction';
 
 export interface VizBenchmarkScenario {
@@ -60,7 +64,7 @@ export interface VizRendererRecommendation {
   };
 }
 
-const DATA_POINTS: readonly number[] = [10, 100, 1000, 10000] as const;
+const DEFAULT_DATA_POINTS: readonly number[] = [10, 100, 1000, 10000] as const;
 const RENDERERS: readonly VizRendererId[] = ['vega-lite', 'echarts'];
 const DETERMINISTIC_MODE = process.env.VIZ_BENCHMARK_MODE === 'deterministic';
 
@@ -69,6 +73,187 @@ const LINE_BASE_SPEC = lineExample as unknown as NormalizedVizSpec;
 const SCATTER_BASE_SPEC = scatterExample as unknown as NormalizedVizSpec;
 const AREA_BASE_SPEC = areaExample as unknown as NormalizedVizSpec;
 const HEATMAP_BASE_SPEC = heatmapExample as unknown as NormalizedVizSpec;
+const FACET_SCATTER_BASE_SPEC: NormalizedVizSpec = {
+  $schema: 'https://oods.dev/viz-spec/v1',
+  id: 'benchmark:layout:facet-scatter',
+  name: 'Facet scatter with linked brush',
+  data: { values: [] },
+  marks: [
+    {
+      trait: 'MarkPoint',
+      encodings: {
+        x: { field: 'leadTime', trait: 'EncodingPositionX', channel: 'x', title: 'Lead time (days)', scale: 'linear' },
+        y: { field: 'winRate', trait: 'EncodingPositionY', channel: 'y', title: 'Win rate (%)', scale: 'linear' },
+        color: { field: 'segment', trait: 'EncodingColor', channel: 'color', legend: { title: 'Segment' } },
+        size: { field: 'pipeline', trait: 'EncodingSize', channel: 'size', legend: { title: 'Pipeline ($M)' } },
+      },
+    },
+  ],
+  encoding: {
+    x: { field: 'leadTime', trait: 'EncodingPositionX', channel: 'x', scale: 'linear' },
+    y: { field: 'winRate', trait: 'EncodingPositionY', channel: 'y', scale: 'linear' },
+    color: { field: 'segment', trait: 'EncodingColor', channel: 'color' },
+  },
+  layout: {
+    trait: 'LayoutFacet',
+    rows: { field: 'region', title: 'Region', limit: 2, sort: 'ascending' },
+    columns: { field: 'segment', title: 'Segment', limit: 2, sort: 'ascending' },
+    wrap: 'row',
+    maxPanels: 4,
+    gap: 16,
+    sharedScales: { x: 'shared', y: 'shared', color: 'shared' },
+  },
+  interactions: [
+    {
+      id: 'facet-brush',
+      select: { type: 'interval', on: 'drag', encodings: ['x', 'y'] },
+      rule: {
+        bindTo: 'visual',
+        property: 'strokeWidth',
+        condition: { value: 2 },
+        else: { value: 0.4 },
+      },
+    },
+    {
+      id: 'facet-tooltip',
+      select: { type: 'point', on: 'hover', fields: ['region', 'segment', 'pipeline'] },
+      rule: {
+        bindTo: 'tooltip',
+        fields: ['region', 'segment', 'leadTime', 'winRate', 'pipeline'],
+      },
+    },
+  ],
+  config: {
+    theme: 'brand-a',
+    layout: { width: 360, height: 240, padding: 16 },
+  },
+  a11y: {
+    ariaLabel: 'Facet scatter grid with brush selection',
+    description: 'Scatter plots per region × segment to compare win rates and lead times.',
+    tableFallback: { enabled: true, caption: 'Win rate and lead time by region/segment' },
+  },
+  portability: {
+    preferredRenderer: 'vega-lite',
+  },
+};
+const LAYERED_TARGET_BASE_SPEC: NormalizedVizSpec = {
+  $schema: 'https://oods.dev/viz-spec/v1',
+  id: 'benchmark:layout:layered-target',
+  name: 'Layered actual vs target band',
+  data: { values: [] },
+  marks: [
+    {
+      trait: 'MarkArea',
+      options: { id: 'target-band', title: 'Target band' },
+      encodings: {
+        x: { field: 'month', trait: 'EncodingPositionX', channel: 'x', title: 'Month' },
+        y: { field: 'target', trait: 'EncodingPositionY', channel: 'y', title: 'Target index', scale: 'linear' },
+      },
+    },
+    {
+      trait: 'MarkLine',
+      options: { id: 'actual-line', title: 'Actuals' },
+      encodings: {
+        x: { field: 'month', trait: 'EncodingPositionX', channel: 'x', title: 'Month' },
+        y: { field: 'actual', trait: 'EncodingPositionY', channel: 'y', title: 'Actual index', scale: 'linear' },
+      },
+    },
+  ],
+  encoding: {
+    x: { field: 'month', trait: 'EncodingPositionX', channel: 'x', title: 'Month' },
+    y: { field: 'actual', trait: 'EncodingPositionY', channel: 'y', title: 'Performance index' },
+  },
+  layout: {
+    trait: 'LayoutLayer',
+    order: ['target-band', 'actual-line'],
+    sharedScales: { x: 'shared', y: 'shared' },
+  },
+  interactions: [
+    {
+      id: 'layered-focus',
+      select: { type: 'point', on: 'hover', fields: ['month'] },
+      rule: {
+        bindTo: 'visual',
+        property: 'strokeWidth',
+        condition: { value: 3 },
+        else: { value: 1 },
+      },
+    },
+  ],
+  config: {
+    theme: 'brand-a',
+    layout: { width: 640, height: 360, padding: 20 },
+  },
+  a11y: {
+    ariaLabel: 'Layered actual vs target band',
+    description: 'Actual index overlays a transparent target band to expose deltas.',
+    tableFallback: { enabled: true, caption: 'Actual vs target index by period' },
+  },
+  portability: {
+    preferredRenderer: 'echarts',
+  },
+};
+const CONCAT_DETAIL_BASE_SPEC: NormalizedVizSpec = {
+  $schema: 'https://oods.dev/viz-spec/v1',
+  id: 'benchmark:layout:concat-detail',
+  name: 'Detail-overview bookings',
+  data: { values: [] },
+  marks: [
+    {
+      trait: 'MarkBar',
+      encodings: {
+        x: { field: 'segment', trait: 'EncodingPositionX', channel: 'x', title: 'Segment', scale: 'band' },
+        y: { field: 'bookings', trait: 'EncodingPositionY', channel: 'y', title: 'Bookings ($M)', scale: 'linear' },
+        color: { field: 'product', trait: 'EncodingColor', channel: 'color', legend: { title: 'Product' } },
+      },
+    },
+  ],
+  encoding: {
+    x: { field: 'segment', trait: 'EncodingPositionX', channel: 'x' },
+    y: { field: 'bookings', trait: 'EncodingPositionY', channel: 'y' },
+    color: { field: 'product', trait: 'EncodingColor', channel: 'color' },
+  },
+  layout: {
+    trait: 'LayoutConcat',
+    direction: 'horizontal',
+    gap: 18,
+    sections: [
+      { id: 'overview', title: 'All products' },
+      {
+        id: 'core-detail',
+        title: 'Core detail',
+        filters: [{ field: 'product', operator: '==', value: 'Core' }],
+      },
+      {
+        id: 'plus-detail',
+        title: 'Plus detail',
+        filters: [{ field: 'product', operator: '==', value: 'Plus' }],
+      },
+    ],
+  },
+  interactions: [
+    {
+      id: 'concat-tooltip',
+      select: { type: 'point', on: 'click', fields: ['product', 'segment'] },
+      rule: {
+        bindTo: 'tooltip',
+        fields: ['product', 'segment', 'bookings', 'target'],
+      },
+    },
+  ],
+  config: {
+    theme: 'brand-a',
+    layout: { width: 960, height: 360, padding: 20 },
+  },
+  a11y: {
+    ariaLabel: 'Detail-overview layout for bookings by product and segment',
+    description: 'Overview plus filtered panels to inspect Core and Plus performance.',
+    tableFallback: { enabled: true, caption: 'Bookings vs target by segment' },
+  },
+  portability: {
+    preferredRenderer: 'echarts',
+  },
+};
 
 interface ChartBlueprint {
   readonly base: NormalizedVizSpec;
@@ -108,24 +293,56 @@ const CHART_BLUEPRINTS: Record<VizBenchmarkChartType, ChartBlueprint> = {
     tooltipFields: ['day', 'hour', 'tickets'],
     generator: (count, seed) => generateHeatmapRows(count, seed),
   },
+  'facet-scatter-brush': {
+    base: FACET_SCATTER_BASE_SPEC,
+    highlightFields: ['region', 'segment'],
+    tooltipFields: ['region', 'segment', 'leadTime', 'winRate', 'pipeline'],
+    generator: (count, seed) => generateFacetScatterRows(count, seed),
+  },
+  'layered-target-band': {
+    base: LAYERED_TARGET_BASE_SPEC,
+    highlightFields: ['month'],
+    tooltipFields: ['month', 'actual', 'target'],
+    generator: (count, seed) => generateLayeredBandRows(count, seed),
+  },
+  'concat-detail-overview': {
+    base: CONCAT_DETAIL_BASE_SPEC,
+    highlightFields: ['product', 'segment'],
+    tooltipFields: ['product', 'segment', 'bookings', 'target'],
+    generator: (count, seed) => generateDetailOverviewRows(count, seed),
+  },
 };
+
+const CHART_DATA_POINTS: Partial<Record<VizBenchmarkChartType, readonly number[]>> = {
+  'facet-scatter-brush': [240, 960],
+  'layered-target-band': [360, 1440],
+  'concat-detail-overview': [180, 720],
+};
+
+const CHART_TYPES_LIST = [...BASE_CHART_TYPES, ...LAYOUT_CHART_TYPES] as const;
 
 const requireForPaths = createRequire(import.meta.url);
 const bundleFootprintCache = new Map<VizRendererId, number>();
 
 export const defaultVizBenchmarkPlan: readonly VizBenchmarkScenario[] = CHART_TYPES().flatMap((chartType) =>
-  DATA_POINTS.map((points) =>
-    RENDERERS.map((renderer) => ({
-      id: `${chartType}-${points}-${renderer}`,
-      chartType,
-      renderer,
-      dataPoints: points,
-    }))
-  ).flat()
+  chartDataPoints(chartType)
+    .map((points) =>
+      RENDERERS.map((renderer) => ({
+        id: `${chartType}-${points}-${renderer}`,
+        chartType,
+        renderer,
+        dataPoints: points,
+      }))
+    )
+    .flat()
 );
 
+function chartDataPoints(chartType: VizBenchmarkChartType): readonly number[] {
+  return CHART_DATA_POINTS[chartType] ?? DEFAULT_DATA_POINTS;
+}
+
 export function CHART_TYPES(): readonly VizBenchmarkChartType[] {
-  return ['bar', 'line', 'scatter', 'area', 'heatmap'];
+  return CHART_TYPES_LIST;
 }
 
 export function runVizBenchmarks(
@@ -427,6 +644,60 @@ function generateHeatmapRows(count: number, seed: number): readonly Record<strin
     hour: hours[index % hours.length],
     tickets: Math.round(8 + random() * 40 + (index % 6)),
   }));
+}
+
+function generateFacetScatterRows(count: number, seed: number): readonly Record<string, unknown>[] {
+  const regions = ['North', 'South'];
+  const segments = ['Enterprise', 'Growth'];
+  const random = createSeededRandom(seed);
+  return Array.from({ length: count }, (_, index) => {
+    const region = regions[index % regions.length];
+    const segment = segments[Math.floor(index / regions.length) % segments.length];
+    const leadTime = 4 + (index % 28);
+    const winRate = Number((32 + random() * 45).toFixed(3));
+    const pipeline = Math.round(200000 + random() * 650000);
+    return {
+      region,
+      segment,
+      leadTime,
+      winRate,
+      pipeline,
+    };
+  });
+}
+
+function generateLayeredBandRows(count: number, seed: number): readonly Record<string, unknown>[] {
+  const random = createSeededRandom(seed);
+  const start = TimeService.nowSystem().set({ year: 2024, month: 1, day: 1 });
+  return Array.from({ length: count }, (_, index) => {
+    const current = start.plus({ days: index });
+    const month = current.toISODate() ?? `2024-01-${String((index % 30) + 1).padStart(2, '0')}`;
+    const target = 90 + (index % 60) * 0.35 + random() * 3;
+    const actual = target + 4 + random() * 6;
+    return {
+      month,
+      target: Number(target.toFixed(3)),
+      actual: Number(actual.toFixed(3)),
+    };
+  });
+}
+
+function generateDetailOverviewRows(count: number, seed: number): readonly Record<string, unknown>[] {
+  const products = ['Core', 'Plus', 'Edge', 'Data'];
+  const segments = ['Enterprise', 'Growth', 'SMB', 'Mid-Market'];
+  const random = createSeededRandom(seed);
+  return Array.from({ length: count }, (_, index) => {
+    const product = products[index % products.length];
+    const segment = segments[Math.floor(index / products.length) % segments.length];
+    const bookings = 1.2 + (index % 10) * 0.18 + random() * 0.6;
+    const target = bookings * (0.82 + random() * 0.22);
+    return {
+      product,
+      segment,
+      bookings: Number(bookings.toFixed(3)),
+      target: Number(target.toFixed(3)),
+    };
+  });
 }
 
 function createSeededRandom(seed: number): () => number {
