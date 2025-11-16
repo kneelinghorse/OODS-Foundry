@@ -91,6 +91,7 @@
     "validate:diagnostics": "node scripts/validate-diagnostics-schema.mjs",
     "registry:list": "tsx src/cli/registry-list.ts",
     "viz:suggest": "node scripts/viz/suggest-chart.mjs",
+    "viz:figma-handshake": "tsx scripts/viz/export-figma-handshake.ts",
     "object:list": "tsx src/cli/object-commands.ts list",
     "object:resolve": "tsx src/cli/object-commands.ts resolve",
     "object:compose": "tsx src/cli/object-commands.ts compose",
