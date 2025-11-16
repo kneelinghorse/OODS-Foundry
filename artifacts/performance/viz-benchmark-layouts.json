@@ -1,0 +1,754 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2025-11-16T19:50:53.997Z",
+  "filters": {
+    "charts": [
+      "facet-scatter-brush",
+      "layered-target-band",
+      "concat-detail-overview"
+    ],
+    "renderers": null,
+    "dataPoints": null
+  },
+  "budgets": {
+    "path": "tools/perf/viz-budget.json",
+    "version": "1.0.0",
+    "generatedAt": "2025-11-16T19:05:00.000Z"
+  },
+  "summary": {
+    "totalScenarios": 12,
+    "violations": 0,
+    "extremes": {
+      "renderTimeMs": {
+        "chartType": "facet-scatter-brush",
+        "renderer": "echarts",
+        "dataPoints": 240,
+        "value": 0.069916
+      },
+      "updateTimeMs": {
+        "chartType": "facet-scatter-brush",
+        "renderer": "echarts",
+        "dataPoints": 240,
+        "value": 0.077834
+      },
+      "interactionLatencyMs": {
+        "chartType": "facet-scatter-brush",
+        "renderer": "echarts",
+        "dataPoints": 240,
+        "value": 0.353249
+      },
+      "memoryBytes": {
+        "chartType": "facet-scatter-brush",
+        "renderer": "echarts",
+        "dataPoints": 960,
+        "value": 90412
+      },
+      "bundleImpactBytes": {
+        "chartType": "facet-scatter-brush",
+        "renderer": "echarts",
+        "dataPoints": 240,
+        "value": 1117939
+      }
+    }
+  },
+  "recommendations": [
+    {
+      "chartType": "concat-detail-overview",
+      "dataPoints": 180,
+      "bestRenderer": "echarts",
+      "advantageMs": 0.008958000000006905,
+      "comparison": {
+        "vegaLite": {
+          "renderTimeMs": 0.029791999999986274,
+          "updateTimeMs": 0.03125,
+          "interactionLatencyMs": 0.006874999999979536,
+          "memoryBytes": 15446,
+          "bundleImpactBytes": 249075
+        },
+        "echarts": {
+          "renderTimeMs": 0.02083399999997937,
+          "updateTimeMs": 0.022334000000000742,
+          "interactionLatencyMs": 0.027167000000019925,
+          "memoryBytes": 16859,
+          "bundleImpactBytes": 1117939
+        }
+      }
+    },
+    {
+      "chartType": "concat-detail-overview",
+      "dataPoints": 720,
+      "bestRenderer": "echarts",
+      "advantageMs": 0.00787499999995589,
+      "comparison": {
+        "vegaLite": {
+          "renderTimeMs": 0.022749999999973625,
+          "updateTimeMs": 0.026375000000030013,
+          "interactionLatencyMs": 0.004958999999985281,
+          "memoryBytes": 53814,
+          "bundleImpactBytes": 249075
+        },
+        "echarts": {
+          "renderTimeMs": 0.014875000000017735,
+          "updateTimeMs": 0.016999999999995907,
+          "interactionLatencyMs": 0.02095800000000736,
+          "memoryBytes": 55186,
+          "bundleImpactBytes": 1117939
+        }
+      }
+    },
+    {
+      "chartType": "facet-scatter-brush",
+      "dataPoints": 240,
+      "bestRenderer": "vega-lite",
+      "advantageMs": 0.0075000000000216005,
+      "comparison": {
+        "vegaLite": {
+          "renderTimeMs": 0.062415999999984706,
+          "updateTimeMs": 0.05520799999999326,
+          "interactionLatencyMs": 0.016999999999995907,
+          "memoryBytes": 22977,
+          "bundleImpactBytes": 249075
+        },
+        "echarts": {
+          "renderTimeMs": 0.0699160000000063,
+          "updateTimeMs": 0.07783399999999574,
+          "interactionLatencyMs": 0.35324900000000525,
+          "memoryBytes": 26556,
+          "bundleImpactBytes": 1117939
+        }
+      }
+    },
+    {
+      "chartType": "facet-scatter-brush",
+      "dataPoints": 960,
+      "bestRenderer": "vega-lite",
+      "advantageMs": 0.007583000000010998,
+      "comparison": {
+        "vegaLite": {
+          "renderTimeMs": 0.020083999999997104,
+          "updateTimeMs": 0.05033399999999233,
+          "interactionLatencyMs": 0.010083000000008724,
+          "memoryBytes": 86801,
+          "bundleImpactBytes": 249075
+        },
+        "echarts": {
+          "renderTimeMs": 0.027667000000008102,
+          "updateTimeMs": 0.038958999999977095,
+          "interactionLatencyMs": 0.015581999999994878,
+          "memoryBytes": 90412,
+          "bundleImpactBytes": 1117939
+        }
+      }
+    },
+    {
+      "chartType": "layered-target-band",
+      "dataPoints": 360,
+      "bestRenderer": "echarts",
+      "advantageMs": 0.031124999999974534,
+      "comparison": {
+        "vegaLite": {
+          "renderTimeMs": 0.04329199999995126,
+          "updateTimeMs": 0.038124999999979536,
+          "interactionLatencyMs": 0.013374999999996362,
+          "memoryBytes": 21972,
+          "bundleImpactBytes": 249075
+        },
+        "echarts": {
+          "renderTimeMs": 0.012166999999976724,
+          "updateTimeMs": 0.016458000000000084,
+          "interactionLatencyMs": 0.17687499999999545,
+          "memoryBytes": 22412,
+          "bundleImpactBytes": 1117939
+        }
+      }
+    },
+    {
+      "chartType": "layered-target-band",
+      "dataPoints": 1440,
+      "bestRenderer": "vega-lite",
+      "advantageMs": 0.010125000000016371,
+      "comparison": {
+        "vegaLite": {
+          "renderTimeMs": 0.014707999999984622,
+          "updateTimeMs": 0.046499999999980446,
+          "interactionLatencyMs": 0.01391599999999471,
+          "memoryBytes": 82749,
+          "bundleImpactBytes": 249075
+        },
+        "echarts": {
+          "renderTimeMs": 0.024833000000000993,
+          "updateTimeMs": 0.03950000000003229,
+          "interactionLatencyMs": 0.03037499999999227,
+          "memoryBytes": 83191,
+          "bundleImpactBytes": 1117939
+        }
+      }
+    }
+  ],
+  "results": [
+    {
+      "id": "facet-scatter-brush-240-vega-lite",
+      "chartType": "facet-scatter-brush",
+      "renderer": "vega-lite",
+      "dataPoints": 240,
+      "metrics": {
+        "renderTimeMs": 0.062415999999984706,
+        "updateTimeMs": 0.05520799999999326,
+        "interactionLatencyMs": 0.016999999999995907,
+        "memoryBytes": 22977,
+        "bundleImpactBytes": 249075
+      },
+      "specId": "benchmark:layout:facet-scatter:vega-lite:240",
+      "preferredReason": "renderer faster on update cycle",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.062416,
+          "target": 0.25,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.055208,
+          "target": 0.25,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.017,
+          "target": 2.5,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 22977,
+          "target": 25275,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 249075,
+          "target": 360000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "facet-scatter-brush-240-echarts",
+      "chartType": "facet-scatter-brush",
+      "renderer": "echarts",
+      "dataPoints": 240,
+      "metrics": {
+        "renderTimeMs": 0.0699160000000063,
+        "updateTimeMs": 0.07783399999999574,
+        "interactionLatencyMs": 0.35324900000000525,
+        "memoryBytes": 26556,
+        "bundleImpactBytes": 1117939
+      },
+      "specId": "benchmark:layout:facet-scatter:echarts:240",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.069916,
+          "target": 0.25,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.077834,
+          "target": 0.25,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.353249,
+          "target": 2.5,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 26556,
+          "target": 29212,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 1117939,
+          "target": 1325000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "facet-scatter-brush-960-vega-lite",
+      "chartType": "facet-scatter-brush",
+      "renderer": "vega-lite",
+      "dataPoints": 960,
+      "metrics": {
+        "renderTimeMs": 0.020083999999997104,
+        "updateTimeMs": 0.05033399999999233,
+        "interactionLatencyMs": 0.010083000000008724,
+        "memoryBytes": 86801,
+        "bundleImpactBytes": 249075
+      },
+      "specId": "benchmark:layout:facet-scatter:vega-lite:960",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.020084,
+          "target": 0.25,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.050334,
+          "target": 0.25,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.010083,
+          "target": 2.5,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 86801,
+          "target": 95482,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 249075,
+          "target": 360000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "facet-scatter-brush-960-echarts",
+      "chartType": "facet-scatter-brush",
+      "renderer": "echarts",
+      "dataPoints": 960,
+      "metrics": {
+        "renderTimeMs": 0.027667000000008102,
+        "updateTimeMs": 0.038958999999977095,
+        "interactionLatencyMs": 0.015581999999994878,
+        "memoryBytes": 90412,
+        "bundleImpactBytes": 1117939
+      },
+      "specId": "benchmark:layout:facet-scatter:echarts:960",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.027667,
+          "target": 0.25,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.038959,
+          "target": 0.25,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.015582,
+          "target": 2.5,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 90412,
+          "target": 99454,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 1117939,
+          "target": 1325000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "layered-target-band-360-vega-lite",
+      "chartType": "layered-target-band",
+      "renderer": "vega-lite",
+      "dataPoints": 360,
+      "metrics": {
+        "renderTimeMs": 0.04329199999995126,
+        "updateTimeMs": 0.038124999999979536,
+        "interactionLatencyMs": 0.013374999999996362,
+        "memoryBytes": 21972,
+        "bundleImpactBytes": 249075
+      },
+      "specId": "benchmark:layout:layered-target:vega-lite:360",
+      "preferredReason": "renderer faster on update cycle",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.043292,
+          "target": 0.25,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.038125,
+          "target": 0.35,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.013375,
+          "target": 2.5,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 21972,
+          "target": 24170,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 249075,
+          "target": 360000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "layered-target-band-360-echarts",
+      "chartType": "layered-target-band",
+      "renderer": "echarts",
+      "dataPoints": 360,
+      "metrics": {
+        "renderTimeMs": 0.012166999999976724,
+        "updateTimeMs": 0.016458000000000084,
+        "interactionLatencyMs": 0.17687499999999545,
+        "memoryBytes": 22412,
+        "bundleImpactBytes": 1117939
+      },
+      "specId": "benchmark:layout:layered-target:echarts:360",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.012167,
+          "target": 0.25,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.016458,
+          "target": 0.35,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.176875,
+          "target": 2.5,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 22412,
+          "target": 24654,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 1117939,
+          "target": 1325000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "layered-target-band-1440-vega-lite",
+      "chartType": "layered-target-band",
+      "renderer": "vega-lite",
+      "dataPoints": 1440,
+      "metrics": {
+        "renderTimeMs": 0.014707999999984622,
+        "updateTimeMs": 0.046499999999980446,
+        "interactionLatencyMs": 0.01391599999999471,
+        "memoryBytes": 82749,
+        "bundleImpactBytes": 249075
+      },
+      "specId": "benchmark:layout:layered-target:vega-lite:1440",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.014708,
+          "target": 0.25,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.0465,
+          "target": 0.35,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.013916,
+          "target": 2.5,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 82749,
+          "target": 91024,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 249075,
+          "target": 360000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "layered-target-band-1440-echarts",
+      "chartType": "layered-target-band",
+      "renderer": "echarts",
+      "dataPoints": 1440,
+      "metrics": {
+        "renderTimeMs": 0.024833000000000993,
+        "updateTimeMs": 0.03950000000003229,
+        "interactionLatencyMs": 0.03037499999999227,
+        "memoryBytes": 83191,
+        "bundleImpactBytes": 1117939
+      },
+      "specId": "benchmark:layout:layered-target:echarts:1440",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.024833,
+          "target": 0.25,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.0395,
+          "target": 0.35,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.030375,
+          "target": 2.5,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 83191,
+          "target": 91511,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 1117939,
+          "target": 1325000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "concat-detail-overview-180-vega-lite",
+      "chartType": "concat-detail-overview",
+      "renderer": "vega-lite",
+      "dataPoints": 180,
+      "metrics": {
+        "renderTimeMs": 0.029791999999986274,
+        "updateTimeMs": 0.03125,
+        "interactionLatencyMs": 0.006874999999979536,
+        "memoryBytes": 15446,
+        "bundleImpactBytes": 249075
+      },
+      "specId": "benchmark:layout:concat-detail:vega-lite:180",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.029792,
+          "target": 0.25,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.03125,
+          "target": 0.35,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.006875,
+          "target": 2.5,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 15446,
+          "target": 16991,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 249075,
+          "target": 360000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "concat-detail-overview-180-echarts",
+      "chartType": "concat-detail-overview",
+      "renderer": "echarts",
+      "dataPoints": 180,
+      "metrics": {
+        "renderTimeMs": 0.02083399999997937,
+        "updateTimeMs": 0.022334000000000742,
+        "interactionLatencyMs": 0.027167000000019925,
+        "memoryBytes": 16859,
+        "bundleImpactBytes": 1117939
+      },
+      "specId": "benchmark:layout:concat-detail:echarts:180",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.020834,
+          "target": 0.25,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.022334,
+          "target": 0.35,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.027167,
+          "target": 2.5,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 16859,
+          "target": 18545,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 1117939,
+          "target": 1325000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "concat-detail-overview-720-vega-lite",
+      "chartType": "concat-detail-overview",
+      "renderer": "vega-lite",
+      "dataPoints": 720,
+      "metrics": {
+        "renderTimeMs": 0.022749999999973625,
+        "updateTimeMs": 0.026375000000030013,
+        "interactionLatencyMs": 0.004958999999985281,
+        "memoryBytes": 53814,
+        "bundleImpactBytes": 249075
+      },
+      "specId": "benchmark:layout:concat-detail:vega-lite:720",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.02275,
+          "target": 0.25,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.026375,
+          "target": 0.35,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.004959,
+          "target": 2.5,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 53814,
+          "target": 59196,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 249075,
+          "target": 360000,
+          "status": "pass"
+        }
+      ]
+    },
+    {
+      "id": "concat-detail-overview-720-echarts",
+      "chartType": "concat-detail-overview",
+      "renderer": "echarts",
+      "dataPoints": 720,
+      "metrics": {
+        "renderTimeMs": 0.014875000000017735,
+        "updateTimeMs": 0.016999999999995907,
+        "interactionLatencyMs": 0.02095800000000736,
+        "memoryBytes": 55186,
+        "bundleImpactBytes": 1117939
+      },
+      "specId": "benchmark:layout:concat-detail:echarts:720",
+      "preferredReason": "renderer faster on initial paint",
+      "checks": [
+        {
+          "metric": "renderTimeMs",
+          "value": 0.014875,
+          "target": 0.25,
+          "status": "pass"
+        },
+        {
+          "metric": "updateTimeMs",
+          "value": 0.017,
+          "target": 0.35,
+          "status": "pass"
+        },
+        {
+          "metric": "interactionLatencyMs",
+          "value": 0.020958,
+          "target": 2.5,
+          "status": "pass"
+        },
+        {
+          "metric": "memoryBytes",
+          "value": 55186,
+          "target": 60705,
+          "status": "pass"
+        },
+        {
+          "metric": "bundleImpactBytes",
+          "value": 1117939,
+          "target": 1325000,
+          "status": "pass"
+        }
+      ]
+    }
+  ]
+}

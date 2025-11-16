@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { loadStoryIndex, resolveStoryId } from '../utils/storybook';
 
 type Target = {
   title: string;
@@ -19,49 +20,13 @@ const TARGETS: Target[] = [
   { title: 'BrandA/Timeline', name: 'Dark', screenshot: 'brand-a-timeline-dark-hc.png' }
 ];
 
-type StoryIndexEntry = { id: string; title: string; name: string; type?: string };
-
-async function loadStoryIndex(baseUrl: string): Promise<StoryIndexEntry[]> {
-  const endpoints = ['/index.json', '/stories.json'];
-  for (const endpoint of endpoints) {
-    try {
-      const response = await fetch(new URL(endpoint, baseUrl));
-      if (!response.ok) continue;
-      const payload = await response.json();
-      if (payload?.entries) {
-        return Object.values(payload.entries) as StoryIndexEntry[];
-      }
-      if (payload?.stories) {
-        return Object.values(payload.stories) as StoryIndexEntry[];
-      }
-    } catch (error) {
-      if (process.env.DEBUG) {
-        console.warn(`Failed to fetch Storybook index from ${endpoint}:`, error);
-      }
-    }
-  }
-  throw new Error(`Unable to load Storybook index from ${baseUrl}`);
-}
-
-function resolveStoryId(entries: StoryIndexEntry[], target: Target): string {
-  const match = entries.find((entry) => entry.title === target.title && entry.name === target.name);
-  if (!match) {
-    const available = entries
-      .filter((entry) => entry.title === target.title)
-      .map((entry) => `${entry.title}/${entry.name || 'unknown'}`)
-      .join(', ');
-    throw new Error(`Story not found for ${target.title}/${target.name}. Available: ${available || 'none'}.`);
-  }
-  return match.id;
-}
-
 let storyIdMap: Map<string, string>;
 
 test.beforeAll(async () => {
   const entries = await loadStoryIndex(STORYBOOK_URL);
   storyIdMap = new Map(
     TARGETS.map((target) => {
-      const id = resolveStoryId(entries, target);
+      const id = resolveStoryId(entries, { title: target.title, name: target.name });
       return [`${target.title}/${target.name}`, id];
     })
   );
