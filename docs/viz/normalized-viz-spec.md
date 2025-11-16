@@ -30,6 +30,7 @@ renderViz(spec);
 | `transforms` | Declarative pipeline (filter, aggregate, bin, etc.) | Each entry is typed with `type` + open `params` |
 | `marks[]` | Trait-linked mark definitions | Each mark references `trait` (e.g., `MarkBar`) and optional per-layer encodings |
 | `encoding` | Top-level encoding map | x/y/color/size/shape/detail all reference trait bindings |
+| `layout` | View composition traits | Facet/layer/concat metadata, shared scales, projection hints |
 | `interactions[]` | Declarative interaction traits | Each entry defines `select` + `rule` so adapters can add highlight, tooltip, or filter behaviors |
 | `config` | Theme + layout overrides | Includes layout sizing and token overrides |
 | `a11y` | Mandatory RDV.4 contract | Requires `description`, optional narrative + table fallback |
@@ -47,6 +48,39 @@ Every encoding entry contains:
 The schema enforces enumerations so adapters can perform static analysis before
 rendering.
 
+## Layout Traits
+
+The new `layout` node captures view-composition traits so adapters can render
+facet grids, layered marks, and concatenated dashboards without bespoke schema
+extensions.
+
+```jsonc
+{
+  "layout": {
+    "trait": "LayoutFacet",
+    "rows": { "field": "region", "limit": 4, "sort": "ascending" },
+    "columns": { "field": "segment", "limit": 3 },
+    "sharedScales": { "x": "shared", "y": "shared", "color": "shared" },
+    "projection": { "type": "cartesian", "preserveAspectRatio": true },
+    "gap": 12
+  }
+}
+```
+
+- **LayoutFacet** – repeats the normalized spec across row/column fields with
+  governed wrapping, shared scales (`shared` vs `independent` per channel), and
+  projection hints for deterministic fallbacks.
+- **LayoutLayer** – captures blend mode, interaction syncing, explicit layer
+  ordering, and projection metadata so adapters can combine multiple mark
+  definitions without duplicating config.
+- **LayoutConcat** – declares dashboard-style sections (horizontal, vertical, or
+  grid) with optional filters per section plus shared scale configuration.
+
+Each layout trait is optional and composes with transforms, interactions, and
+tokens already present in the spec. Renderers can inspect `sharedScales` to keep
+domains aligned or duplicate axes per panel, while `projection` metadata keeps
+future map/radial compositions deterministic.
+
 ## Examples
 
 Reference specs live under `examples/viz/`:
@@ -54,6 +88,7 @@ Reference specs live under `examples/viz/`:
 1. `bar-chart.spec.json` – MRR by region (MarkBar + color)
 2. `line-chart.spec.json` – Active subscribers over time (MarkLine)
 3. `scatter-chart.spec.json` – Conversion vs response time (MarkPoint + size)
+4. `facet-layout.spec.json` – MRR vs pipeline small multiples using `LayoutFacet`
 
 These fixtures double as unit-test inputs (`tests/viz/normalized-viz-spec.test.ts`).
 Use them as templates when composing new specs from trait compositions.

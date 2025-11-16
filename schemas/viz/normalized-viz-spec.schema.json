@@ -37,6 +37,9 @@
     "encoding": {
       "$ref": "#/definitions/EncodingMap"
     },
+    "layout": {
+      "$ref": "#/definitions/LayoutDefinition"
+    },
     "interactions": {
       "type": "array",
       "description": "Declarative interaction traits applied to the visualization (e.g., highlight, tooltip).",
@@ -446,6 +449,251 @@
           "enum": ["vega-lite", "echarts", "native"]
         }
       },
+      "additionalProperties": false
+    },
+    "LayoutDefinition": {
+      "description": "Layout trait that augments the normalized spec with facet/layer/concat metadata.",
+      "oneOf": [
+        { "$ref": "#/definitions/LayoutFacet" },
+        { "$ref": "#/definitions/LayoutLayer" },
+        { "$ref": "#/definitions/LayoutConcat" }
+      ]
+    },
+    "SharedScaleConfig": {
+      "type": "object",
+      "description": "Controls whether encoding channels remain synchronized across layout children.",
+      "properties": {
+        "x": { "$ref": "#/definitions/ScaleBindingMode" },
+        "y": { "$ref": "#/definitions/ScaleBindingMode" },
+        "color": { "$ref": "#/definitions/ScaleBindingMode" },
+        "size": { "$ref": "#/definitions/ScaleBindingMode" },
+        "shape": { "$ref": "#/definitions/ScaleBindingMode" },
+        "detail": { "$ref": "#/definitions/ScaleBindingMode" }
+      },
+      "additionalProperties": false
+    },
+    "ScaleBindingMode": {
+      "type": "string",
+      "enum": ["shared", "independent"]
+    },
+    "LayoutProjection": {
+      "type": "object",
+      "description": "Projection hints forwarded to adapters.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["cartesian", "polar", "radial"]
+        },
+        "preserveAspectRatio": {
+          "type": "boolean"
+        },
+        "rotate": {
+          "type": "number",
+          "description": "Rotation (degrees) applied to the projection center."
+        }
+      },
+      "additionalProperties": false
+    },
+    "FacetField": {
+      "type": "object",
+      "description": "Declares how a facet dimension is derived.",
+      "properties": {
+        "field": {
+          "type": "string",
+          "description": "Data field used for the facet dimension."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum facet count for this dimension."
+        },
+        "sort": {
+          "$ref": "#/definitions/LayoutSort"
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "required": ["field"],
+      "additionalProperties": false
+    },
+    "LayoutSort": {
+      "description": "Sorting definition for layout fields.",
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": ["none", "ascending", "descending"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "field": { "type": "string" },
+            "order": { "type": "string", "enum": ["ascending", "descending"] }
+          },
+          "required": ["field", "order"],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "LayoutFacet": {
+      "type": "object",
+      "properties": {
+        "trait": {
+          "type": "string",
+          "const": "LayoutFacet"
+        },
+        "rows": {
+          "$ref": "#/definitions/FacetField"
+        },
+        "columns": {
+          "$ref": "#/definitions/FacetField"
+        },
+        "wrap": {
+          "type": "string",
+          "enum": ["row", "column", "auto"],
+          "default": "row"
+        },
+        "maxPanels": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 48
+        },
+        "gap": {
+          "type": "number",
+          "minimum": 0,
+          "default": 16
+        },
+        "sharedScales": {
+          "$ref": "#/definitions/SharedScaleConfig"
+        },
+        "projection": {
+          "$ref": "#/definitions/LayoutProjection"
+        }
+      },
+      "required": ["trait"],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "anyOf": [
+            { "required": ["rows"] },
+            { "required": ["columns"] }
+          ]
+        }
+      ]
+    },
+    "LayoutLayer": {
+      "type": "object",
+      "properties": {
+        "trait": {
+          "type": "string",
+          "const": "LayoutLayer"
+        },
+        "blendMode": {
+          "type": "string",
+          "enum": ["normal", "multiply", "screen", "overlay"]
+        },
+        "syncInteractions": {
+          "type": "boolean",
+          "default": true
+        },
+        "sharedScales": {
+          "$ref": "#/definitions/SharedScaleConfig"
+        },
+        "order": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "projection": {
+          "$ref": "#/definitions/LayoutProjection"
+        }
+      },
+      "required": ["trait"],
+      "additionalProperties": false
+    },
+    "LayoutConcat": {
+      "type": "object",
+      "properties": {
+        "trait": {
+          "type": "string",
+          "const": "LayoutConcat"
+        },
+        "direction": {
+          "type": "string",
+          "enum": ["horizontal", "vertical", "grid"],
+          "default": "horizontal"
+        },
+        "gap": {
+          "type": "number",
+          "minimum": 0,
+          "default": 24
+        },
+        "sections": {
+          "type": "array",
+          "description": "Dashboard sections that reference filtered variants of the normalized spec.",
+          "items": { "$ref": "#/definitions/ConcatSection" },
+          "minItems": 2
+        },
+        "sharedScales": {
+          "$ref": "#/definitions/SharedScaleConfig"
+        },
+        "projection": {
+          "$ref": "#/definitions/LayoutProjection"
+        }
+      },
+      "required": ["trait", "sections"],
+      "additionalProperties": false
+    },
+    "ConcatSection": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Stable identifier for the section."
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "filters": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/SectionFilter" }
+        },
+        "sharedScales": {
+          "$ref": "#/definitions/SharedScaleConfig"
+        },
+        "projection": {
+          "$ref": "#/definitions/LayoutProjection"
+        }
+      },
+      "required": ["id"],
+      "additionalProperties": false
+    },
+    "SectionFilter": {
+      "type": "object",
+      "properties": {
+        "field": { "type": "string" },
+        "operator": {
+          "type": "string",
+          "enum": ["==", "!=", "in", "not_in", ">", ">=", "<", "<="]
+        },
+        "value": {
+          "oneOf": [
+            { "type": "string" },
+            { "type": "number" },
+            { "type": "boolean" },
+            {
+              "type": "array",
+              "items": { "type": ["string", "number", "boolean"] },
+              "minItems": 1
+            }
+          ]
+        }
+      },
+      "required": ["field", "operator", "value"],
       "additionalProperties": false
     }
   }

@@ -1,6 +1,33 @@
 // Auto-generated from viz/normalized-viz-spec.schema.json. Do not edit manually.
 
 /**
+ * Layout trait that augments the normalized spec with facet/layer/concat metadata.
+ */
+export type LayoutDefinition = LayoutFacet | LayoutLayer | LayoutConcat;
+export type LayoutFacet = LayoutFacet1 & {
+  trait: 'LayoutFacet';
+  rows?: FacetField;
+  columns?: FacetField;
+  wrap?: 'row' | 'column' | 'auto';
+  maxPanels?: number;
+  gap?: number;
+  sharedScales?: SharedScaleConfig;
+  projection?: LayoutProjection;
+};
+export type LayoutFacet1 = {
+  [k: string]: unknown;
+};
+/**
+ * Sorting definition for layout fields.
+ */
+export type LayoutSort =
+  | ('none' | 'ascending' | 'descending')
+  | {
+      field: string;
+      order: 'ascending' | 'descending';
+    };
+export type ScaleBindingMode = 'shared' | 'independent';
+/**
  * Selection primitive that produces a predicate for downstream rules.
  */
 export type InteractionSelection = PointSelection | IntervalSelection;
@@ -34,6 +61,7 @@ export interface NormalizedVizSpecV01 {
    */
   marks: [Mark, ...Mark[]];
   encoding: EncodingMap;
+  layout?: LayoutDefinition;
   /**
    * Declarative interaction traits applied to the visualization (e.g., highlight, tooltip).
    */
@@ -114,6 +142,83 @@ export interface TraitBinding {
   legend?: {
     [k: string]: unknown;
   };
+}
+/**
+ * Declares how a facet dimension is derived.
+ */
+export interface FacetField {
+  /**
+   * Data field used for the facet dimension.
+   */
+  field: string;
+  /**
+   * Maximum facet count for this dimension.
+   */
+  limit?: number;
+  sort?: LayoutSort;
+  title?: string;
+}
+/**
+ * Controls whether encoding channels remain synchronized across layout children.
+ */
+export interface SharedScaleConfig {
+  x?: ScaleBindingMode;
+  y?: ScaleBindingMode;
+  color?: ScaleBindingMode;
+  size?: ScaleBindingMode;
+  shape?: ScaleBindingMode;
+  detail?: ScaleBindingMode;
+}
+/**
+ * Projection hints forwarded to adapters.
+ */
+export interface LayoutProjection {
+  type?: 'cartesian' | 'polar' | 'radial';
+  preserveAspectRatio?: boolean;
+  /**
+   * Rotation (degrees) applied to the projection center.
+   */
+  rotate?: number;
+}
+export interface LayoutLayer {
+  trait: 'LayoutLayer';
+  blendMode?: 'normal' | 'multiply' | 'screen' | 'overlay';
+  syncInteractions?: boolean;
+  sharedScales?: SharedScaleConfig;
+  /**
+   * @minItems 1
+   */
+  order?: [string, ...string[]];
+  projection?: LayoutProjection;
+}
+export interface LayoutConcat {
+  trait: 'LayoutConcat';
+  direction?: 'horizontal' | 'vertical' | 'grid';
+  gap?: number;
+  /**
+   * Dashboard sections that reference filtered variants of the normalized spec.
+   *
+   * @minItems 2
+   */
+  sections: [ConcatSection, ConcatSection, ...ConcatSection[]];
+  sharedScales?: SharedScaleConfig;
+  projection?: LayoutProjection;
+}
+export interface ConcatSection {
+  /**
+   * Stable identifier for the section.
+   */
+  id: string;
+  title?: string;
+  description?: string;
+  filters?: SectionFilter[];
+  sharedScales?: SharedScaleConfig;
+  projection?: LayoutProjection;
+}
+export interface SectionFilter {
+  field: string;
+  operator: '==' | '!=' | 'in' | 'not_in' | '>' | '>=' | '<' | '<=';
+  value: string | number | boolean | [string | number | boolean, ...(string | number | boolean)[]];
 }
 /**
  * Declarative interaction trait composed of a selection primitive and production rule.

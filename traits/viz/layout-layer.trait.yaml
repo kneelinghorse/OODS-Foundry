@@ -1,0 +1,117 @@
+trait:
+  name: LayoutLayer
+  version: 0.1.0
+  description: >
+    Governs sequencing, blending, and shared channel behavior for layered mark
+    compositions.
+  category: viz.layout
+  tags:
+    - viz
+    - layout
+    - layer
+    - composition
+
+parameters:
+  - name: blendMode
+    type: string
+    required: false
+    description: Blend/composite mode applied across stacked marks.
+    default: normal
+    validation:
+      enum: [normal, multiply, screen, overlay]
+  - name: syncInteractions
+    type: boolean
+    required: false
+    description: Whether interaction predicates propagate across all layers.
+    default: true
+  - name: sharedChannels
+    type: string[]
+    required: false
+    description: Channels whose scales remain synchronized across layers.
+    default: [x, y, color]
+  - name: orderHint
+    type: string[]
+    required: false
+    description: Optional list describing explicit bottom→top layer ordering.
+  - name: projection
+    type: string
+    required: false
+    description: Projection hint for adapters when layering across spaces.
+    default: cartesian
+    validation:
+      enum: [cartesian, polar, radial]
+
+schema:
+  viz_layout_type:
+    type: string
+    required: true
+    description: Normalized layout identifier.
+    default: layer
+    validation:
+      enum: [layer]
+  viz_layout_blend_mode:
+    type: string
+    required: false
+    description: Blend/composite mode applied to layered marks.
+    defaultFromParameter: blendMode
+    validation:
+      enum: [normal, multiply, screen, overlay]
+  viz_layout_sync_interactions:
+    type: boolean
+    required: false
+    description: Whether interaction predicates are shared across layers.
+    defaultFromParameter: syncInteractions
+  viz_layout_shared_channels:
+    type: string[]
+    required: false
+    description: Channels that share a domain across layered marks.
+    defaultFromParameter: sharedChannels
+  viz_layout_order_hint:
+    type: string[]
+    required: false
+    description: Optional ordered list describing layer precedence.
+    defaultFromParameter: orderHint
+  viz_layout_projection:
+    type: string
+    required: false
+    description: Projection metadata forwarded to adapters and docs.
+    defaultFromParameter: projection
+    validation:
+      enum: [cartesian, polar, radial]
+
+semantics:
+  viz_layout_type:
+    semantic_type: viz.layout.type
+    ui_hints:
+      component: Badge
+  viz_layout_blend_mode:
+    semantic_type: viz.layout.layer.blend
+    ui_hints:
+      component: Badge
+  viz_layout_sync_interactions:
+    semantic_type: viz.layout.layer.sync_interactions
+    ui_hints:
+      component: BooleanPill
+  viz_layout_shared_channels:
+    semantic_type: viz.layout.shared_channels
+    ui_hints:
+      component: ListSummary
+  viz_layout_order_hint:
+    semantic_type: viz.layout.layer.order
+    ui_hints:
+      component: ListSummary
+  viz_layout_projection:
+    semantic_type: viz.layout.projection
+    ui_hints:
+      component: Badge
+
+tokens:
+  viz.layout.layer.blend: var(--cmp-viz-layer-blend)
+
+metadata:
+  created: '2025-11-16'
+  owners:
+    - viz@oods.systems
+  maturity: beta
+  references:
+    - docs/viz/normalized-viz-spec.md

@@ -34,6 +34,16 @@ describe('Normalized Viz Spec validation', () => {
     expect(normalized.portability?.fallbackType).toBe('table');
   });
 
+  it('accepts specs that declare LayoutFacet metadata', () => {
+    const spec = loadSpec('facet-layout');
+    const result = validateNormalizedVizSpec(spec);
+
+    expect(result.valid).toBe(true);
+    expect(result.errors).toEqual([]);
+    expect(spec.layout?.trait).toBe('LayoutFacet');
+    expect(spec.layout?.sharedScales?.x).toBe('shared');
+  });
+
   it('reports missing accessibility description', () => {
     const spec = loadSpec('line-chart');
     const invalid = {
@@ -75,5 +85,22 @@ describe('Normalized Viz Spec validation', () => {
     const result = validateNormalizedVizSpec(invalid);
     expect(result.valid).toBe(false);
     expect(result.errors[0]?.path).toBe('/interactions/0/select/fields');
+  });
+
+  it('rejects layout entries missing facet dimensions', () => {
+    const spec = loadSpec('facet-layout');
+    const invalid = {
+      ...spec,
+      layout: {
+        trait: 'LayoutFacet',
+        wrap: 'row',
+      },
+    } as unknown as NormalizedVizSpec;
+
+    expect(() => assertNormalizedVizSpec(invalid)).toThrow(NormalizedVizSpecError);
+
+    const result = validateNormalizedVizSpec(invalid);
+    expect(result.valid).toBe(false);
+    expect(result.errors[0]?.path).toBe('/layout');
   });
 });
