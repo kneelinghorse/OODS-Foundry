@@ -34,7 +34,11 @@ export type InteractionSelection = PointSelection | IntervalSelection;
 /**
  * Production rule describing how the predicate manipulates the visualization.
  */
-export type InteractionRule = InteractionFilterRule | InteractionVisualRule | InteractionTooltipRule;
+export type InteractionRule =
+  | InteractionFilterRule
+  | InteractionVisualRule
+  | InteractionTooltipRule
+  | InteractionZoomRule;
 
 /**
  * Declarative visualization specification generated from trait composition.
@@ -256,6 +260,14 @@ export interface IntervalSelection {
    * @minItems 1
    */
   encodings: ['x' | 'y', ...('x' | 'y')[]];
+  /**
+   * Binding target for the selection (e.g., 'scales' for zoom).
+   */
+  bind?:
+    | 'scales'
+    | {
+        [k: string]: unknown;
+      };
 }
 export interface InteractionFilterRule {
   bindTo: 'filter';
@@ -283,6 +295,9 @@ export interface InteractionTooltipRule {
    * @minItems 1
    */
   fields: [string, ...string[]];
+}
+export interface InteractionZoomRule {
+  bindTo: 'zoom';
 }
 export interface VizConfig {
   /**

@@ -148,4 +148,77 @@ describe('bindEChartsInteractions', () => {
       dataIndex: 1,
     });
   });
+
+  it('registers brush handlers for interval filters across axes', () => {
+    const spec = createSpec();
+    spec.interactions = [
+      {
+        id: 'brush-all',
+        select: { type: 'interval', on: 'drag', encodings: ['x', 'y'] },
+        rule: { bindTo: 'filter' },
+      },
+    ];
+    const handlers: Record<string, (event: unknown) => void> = {};
+    const onSpy = vi.fn<(event: string, handler: (event: unknown) => void) => void>((event, handler) => {
+      handlers[event] = handler;
+    });
+    const dispatchSpy = vi.fn<(action: { type: string; seriesIndex?: number; dataIndex?: number }) => void>();
+
+    bindEChartsInteractions(
+      {
+        on: onSpy,
+        dispatchAction: dispatchSpy,
+      },
+      spec
+    );
+
+    expect(onSpy).toHaveBeenCalledWith('brushselected', expect.any(Function));
+    handlers.brushselected?.({
+      batch: [
+        {
+          selected: [
+            {
+              seriesIndex: 0,
+              dataIndex: [0, 1],
+            },
+          ],
+        },
+      ],
+    });
+
+    expect(dispatchSpy).toHaveBeenNthCalledWith(1, { type: 'downplay' });
+    expect(dispatchSpy).toHaveBeenCalledWith({
+      type: 'highlight',
+      seriesIndex: 0,
+      dataIndex: 0,
+    });
+  });
+
+  it('clears highlights when zoom interactions fire datazoom events', () => {
+    const spec = createSpec();
+    spec.interactions = [
+      {
+        id: 'zoom',
+        select: { type: 'interval', on: 'wheel', encodings: ['x'] },
+        rule: { bindTo: 'zoom' },
+      },
+    ];
+    const handlers: Record<string, (event: unknown) => void> = {};
+    const onSpy = vi.fn<(event: string, handler: (event: unknown) => void) => void>((event, handler) => {
+      handlers[event] = handler;
+    });
+    const dispatchSpy = vi.fn<(action: { type: string }) => void>();
+
+    bindEChartsInteractions(
+      {
+        on: onSpy,
+        dispatchAction: dispatchSpy,
+      },
+      spec
+    );
+
+    expect(onSpy).toHaveBeenCalledWith('datazoom', expect.any(Function));
+    handlers.datazoom?.({});
+    expect(dispatchSpy).toHaveBeenCalledWith({ type: 'downplay' });
+  });
 });

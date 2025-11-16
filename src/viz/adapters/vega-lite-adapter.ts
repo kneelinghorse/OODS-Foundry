@@ -87,7 +87,7 @@ export function toVegaLiteSpec(spec: NormalizedVizSpec): VegaLiteAdapterSpec {
   }
 
   const data = convertData(spec);
-  const transform = convertTransforms(spec.transforms);
+  const transform = mergeTransforms(convertTransforms(spec.transforms), buildInteractionTransforms(spec.interactions));
   const baseEncoding = convertEncodingMap(spec.encoding);
   const interactionParams = convertInteractionParams(spec.interactions);
   const interactionEncoding = convertInteractionBindings(spec.interactions);
@@ -288,6 +288,7 @@ function convertInteractionSelection(selection: NonNullable<NormalizedVizSpec['i
       type: 'interval',
       on: selection.on,
       encodings: selection.encodings,
+      bind: selection.bind,
     });
   }
 
@@ -435,6 +436,25 @@ function convertTransforms(transforms?: NormalizedVizSpec['transforms']): Adapte
     .filter((entry): entry is AdapterTransform => entry !== undefined);
 
   return converted.length > 0 ? converted : undefined;
+}
+
+function buildInteractionTransforms(interactions?: NormalizedVizSpec['interactions']): AdapterTransform[] | undefined {
+  if (!interactions || interactions.length === 0) {
+    return undefined;
+  }
+
+  const filters = interactions
+    .filter((interaction) => interaction.rule.bindTo === 'filter')
+    .map((interaction) => ({ filter: { param: interaction.id } } satisfies AdapterTransform));
+
+  return filters.length > 0 ? filters : undefined;
+}
+
+function mergeTransforms(
+  ...pipelines: Array<AdapterTransform[] | undefined>
+): AdapterTransform[] | undefined {
+  const merged = pipelines.filter((pipeline): pipeline is AdapterTransform[] => Boolean(pipeline)).flat();
+  return merged.length > 0 ? merged : undefined;
 }
 
 function convertTransform(transform: NormalizedTransform): AdapterTransform | undefined {

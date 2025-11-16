@@ -116,4 +116,33 @@ entry contains:
 Adapters read these entries to add Vega-Lite `params` bindings, tooltip
 channels, and the ECharts interaction mapper (event handlers + formatter
 functions). Keep the rules simple (one concern per trait) so they compose
-across renderers.
+across renderers. Hooks in `src/viz/hooks` emit typed interaction traits so
+stories/components can remain declarative:
+
+```ts
+import { useFilter, useBrush, useZoom } from '@oods/viz';
+
+const filter = useFilter();                // Interval filter (x-axis slider)
+const brush = useBrush({ encodings: ['x', 'y'] }); // 2D brush / linked views
+const zoom = useZoom({ encodings: ['x'] }); // Scale-binding zoom gesture
+```
+
+Each helper ensures the schema stays deterministic (tuple encodings, sensible
+defaults, and no implicit mutation), allowing adapters to map them to
+Vega-Lite `params + transform` and ECharts `dataZoom` + `brush` components.
+
+### Accessibility expectations for filters/brush/zoom
+
+When a spec declares `filter`, `brush`, or `zoom` interactions:
+
+- Update `spec.a11y.description` to explain **what changes when the control is
+  used** (“Drag to filter the timeline; screen readers hear the new range
+  immediately.”).
+- Populate `spec.a11y.narrative.summary` with the *default view* so non-visual
+  users understand the baseline before applying filters.
+- Keep `tableFallback` enabled so every filtered state still has an accessible
+  equivalent.
+
+This mirrors the RDV.4 guidance on “dynamic focus.” The adapters automatically
+bind keyboard focus and announce filter results, but the spec must describe the
+workflow up front so the narration remains deterministic.

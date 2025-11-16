@@ -289,6 +289,19 @@
             "enum": ["x", "y"]
           },
           "minItems": 1
+        },
+        "bind": {
+          "description": "Binding target for the selection (e.g., 'scales' for zoom).",
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": ["scales"]
+            },
+            {
+              "type": "object",
+              "additionalProperties": true
+            }
+          ]
         }
       },
       "required": ["type", "on", "encodings"],
@@ -299,7 +312,8 @@
       "oneOf": [
         { "$ref": "#/definitions/InteractionFilterRule" },
         { "$ref": "#/definitions/InteractionVisualRule" },
-        { "$ref": "#/definitions/InteractionTooltipRule" }
+        { "$ref": "#/definitions/InteractionTooltipRule" },
+        { "$ref": "#/definitions/InteractionZoomRule" }
       ]
     },
     "InteractionFilterRule": {
@@ -308,6 +322,17 @@
         "bindTo": {
           "type": "string",
           "enum": ["filter"]
+        }
+      },
+      "required": ["bindTo"],
+      "additionalProperties": false
+    },
+    "InteractionZoomRule": {
+      "type": "object",
+      "properties": {
+        "bindTo": {
+          "type": "string",
+          "enum": ["zoom"]
         }
       },
       "required": ["bindTo"],

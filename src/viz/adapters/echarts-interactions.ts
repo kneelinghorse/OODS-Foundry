@@ -9,6 +9,19 @@ export interface EChartsEventParams {
   readonly dataIndex?: number;
 }
 
+interface BrushSelectionDetail {
+  readonly seriesIndex?: number;
+  readonly dataIndex?: readonly number[];
+}
+
+interface BrushSelectionBatch {
+  readonly selected?: readonly BrushSelectionDetail[];
+}
+
+interface BrushSelectionEvent {
+  readonly batch?: readonly BrushSelectionBatch[];
+}
+
 export interface EChartsDispatchAction {
   readonly type: string;
   readonly seriesIndex?: number;
@@ -26,7 +39,7 @@ export type InteractionCleanup = () => void;
 
 export function bindEChartsInteractions(instance: EChartsRuntime, spec: NormalizedVizSpec): InteractionCleanup {
   const interactions = spec.interactions ?? [];
-  const handlers: Array<{ event: string; handler: (params: EChartsEventParams) => void }> = [];
+  const handlers: Array<{ event: string; handler: (...args: unknown[]) => void }> = [];
   const propagationPlan = createInteractionPropagationPlan(spec);
 
   for (const interaction of interactions) {
@@ -42,6 +55,31 @@ export function bindEChartsInteractions(instance: EChartsRuntime, spec: Normaliz
     const clearHandler = () => instance.dispatchAction({ type: 'downplay' });
     instance.on('globalout', clearHandler);
     handlers.push({ event: 'globalout', handler: clearHandler });
+  }
+
+  const hasRangeInteractions = interactions.some(
+    (interaction) =>
+      interaction.select.type === 'interval' &&
+      (interaction.rule.bindTo === 'filter' || interaction.rule.bindTo === 'zoom')
+  );
+
+  if (hasRangeInteractions) {
+    const dataZoomHandler = () => {
+      instance.dispatchAction({ type: 'downplay' });
+    };
+    instance.on('datazoom', dataZoomHandler);
+    handlers.push({ event: 'datazoom', handler: dataZoomHandler });
+  }
+
+  const hasBrushInteraction = interactions.some(
+    (interaction) =>
+      interaction.rule.bindTo === 'filter' && interaction.select.type === 'interval' && interaction.select.encodings.length > 1
+  );
+
+  if (hasBrushInteraction) {
+    const brushHandler = createBrushSelectionHandler(instance);
+    instance.on('brushselected', brushHandler);
+    handlers.push({ event: 'brushselected', handler: brushHandler });
   }
 
   return () => {
@@ -84,6 +122,31 @@ function createHighlightHandler(instance: EChartsRuntime, plan: ReturnType<typeo
       seriesIndex: params.seriesIndex,
       dataIndex: params.dataIndex,
     });
+  };
+}
+
+function createBrushSelectionHandler(instance: EChartsRuntime) {
+  return (event: BrushSelectionEvent): void => {
+    instance.dispatchAction({ type: 'downplay' });
+
+    for (const batch of event.batch ?? []) {
+      for (const selection of batch.selected ?? []) {
+        if (!Array.isArray(selection.dataIndex) || typeof selection.seriesIndex !== 'number') {
+          continue;
+        }
+
+        for (const index of selection.dataIndex) {
+          if (typeof index !== 'number') {
+            continue;
+          }
+          instance.dispatchAction({
+            type: 'highlight',
+            seriesIndex: selection.seriesIndex,
+            dataIndex: index,
+          });
+        }
+      }
+    }
   };
 }
 
