@@ -227,6 +227,85 @@ profiles:
       headerGapToken: "--view-gap-inline"
       mainGapToken: "--view-main-gap-inline"
 
+  chart:
+    displayName: "Chart View"
+    description: >
+      Focused visualization context used for standalone analytical cards or
+      embeds within existing views. Includes a hero header, lightweight toolbar,
+      and optional insight rail.
+    
+    regions:
+      globalNavigation:
+        required: false
+        semantic: "nav"
+        label: "Global navigation"
+      breadcrumbs:
+        required: false
+        semantic: "nav"
+        label: "Breadcrumbs"
+      pageHeader:
+        required: true
+        semantic: "header"
+      viewToolbar:
+        required: false
+        semantic: "toolbar"
+        role: "toolbar"
+      main:
+        required: true
+        semantic: "main"
+      contextPanel:
+        required: false
+        semantic: "aside"
+        label: "Insight rail"
+    
+    layout:
+      type: "single-visualization"
+      templateToken: "--view-columns-default"
+      fallbackTemplateToken: "--view-columns-default"
+      chromeGapToken: "--view-section-gap-detail"
+      mainGapToken: "--view-main-gap-default"
+      railWidthToken: "--view-rail-width-narrow"
+      railMinToken: "--view-rail-width-min-narrow"
+
+  dashboard:
+    displayName: "Dashboard View"
+    description: >
+      Multi-panel analytics layout for coordinated charts, KPIs, and narrative
+      insights. Extends the chart view with a persistent grid and right-rail.
+    
+    regions:
+      globalNavigation:
+        required: false
+        semantic: "nav"
+        label: "Global navigation"
+      breadcrumbs:
+        required: false
+        semantic: "nav"
+        label: "Breadcrumbs"
+      pageHeader:
+        required: true
+        semantic: "header"
+      viewToolbar:
+        required: false
+        semantic: "toolbar"
+        role: "toolbar"
+      main:
+        required: true
+        semantic: "main"
+      contextPanel:
+        required: false
+        semantic: "aside"
+        label: "Narrative insights"
+    
+    layout:
+      type: "multi-panel-grid"
+      templateToken: "--view-columns-two-column-standard"
+      fallbackTemplateToken: "--view-columns-default"
+      chromeGapToken: "--view-section-gap-detail"
+      mainGapToken: "--view-main-gap-default"
+      railWidthToken: "--view-rail-width-standard"
+      railMinToken: "--view-rail-width-min-standard"
+
 # Global layout constraints
 constraints:
   maxWidthToken: "--view-shell-max-width"

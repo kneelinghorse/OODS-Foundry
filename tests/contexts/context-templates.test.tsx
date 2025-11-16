@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import {
   CardView,
+  ChartView,
+  DashboardView,
   DetailView,
   FormView,
   InlineView,
@@ -156,6 +158,48 @@ describe('Context templates', () => {
       });
 
       const markup = renderToStaticMarkup(<InlineView regions={regions} />);
+      expect(markup).toMatchSnapshot();
+    });
+  });
+
+  describe('ChartView', () => {
+    it('renders required slots when regions are empty', () => {
+      const regions = createRegionMap();
+      const render = () => renderToStaticMarkup(<ChartView regions={regions} />);
+      expect(render).not.toThrow();
+      expect(render()).toMatchSnapshot();
+    });
+
+    it('renders hero, toolbar, and insight rail when provided', () => {
+      const regions = createRegionMap({
+        pageHeader: <header>Chart Hero</header>,
+        viewToolbar: <div>Filters</div>,
+        main: <section>Chart Body</section>,
+        contextPanel: <aside>Insights</aside>,
+      });
+
+      const markup = renderToStaticMarkup(<ChartView regions={regions} />);
+      expect(markup).toMatchSnapshot();
+    });
+  });
+
+  describe('DashboardView', () => {
+    it('renders required slots when regions are empty', () => {
+      const regions = createRegionMap();
+      const render = () => renderToStaticMarkup(<DashboardView regions={regions} />);
+      expect(render).not.toThrow();
+      expect(render()).toMatchSnapshot();
+    });
+
+    it('renders chrome, grid, and insight rail when populated', () => {
+      const regions = createRegionMap({
+        pageHeader: <header>Dashboard Hero</header>,
+        viewToolbar: <div>Dashboard Toolbar</div>,
+        main: <section>Dashboard Grid</section>,
+        contextPanel: <aside>Dashboard Insights</aside>,
+      });
+
+      const markup = renderToStaticMarkup(<DashboardView regions={regions} />);
       expect(markup).toMatchSnapshot();
     });
   });

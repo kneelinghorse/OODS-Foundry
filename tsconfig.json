@@ -29,6 +29,12 @@
       "../../../../packages/*": ["./packages/*"]
     }
   },
-  "include": ["src/**/*", "scripts/**/*.ts", "scripts/**/*.tsx"],
+  "include": [
+    "src/**/*",
+    "scripts/**/*.ts",
+    "scripts/**/*.tsx",
+    "examples/**/*.ts",
+    "examples/**/*.tsx"
+  ],
   "exclude": ["node_modules", "dist", "**/*.test.ts"]
 }

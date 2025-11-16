@@ -63,6 +63,20 @@
     align-content: start;
   }
 
+  [data-view] [data-chart-grid] {
+    display: grid;
+    gap: var(--view-main-gap-default);
+    align-content: start;
+  }
+
+  [data-view] [data-chart-grid='chart'] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  [data-view] [data-chart-grid='dashboard'] {
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  }
+
   /* List main rhythm — tokens: --view-main-gap-list */
   [data-view-context='list'] main[data-region='main'] {
     gap: var(--view-main-gap-list);
@@ -230,6 +244,52 @@
     flex-wrap: wrap;
     align-items: center;
     gap: var(--view-gap-inline);
+  }
+
+  /* Chart view layout — tokens: --view-section-gap-detail, --view-main-gap-default, --view-columns-default, --view-columns-two-column-narrow */
+  [data-view-context='chart'] [data-region-group='chart-body'] {
+    display: grid;
+    gap: var(--view-section-gap-detail);
+    align-content: start;
+  }
+
+  [data-view-context='chart'] [data-region-group='chart-content'] {
+    display: grid;
+    gap: var(--view-main-gap-default);
+    align-items: start;
+    align-content: start;
+    grid-template-columns: var(--view-columns-default);
+  }
+
+  [data-view-context='chart'][data-view-has-contextpanel='true']
+    [data-region-group='chart-content'] {
+    grid-template-columns: var(--view-columns-two-column-narrow);
+  }
+
+  /* Dashboard view layout — tokens: --view-section-gap-detail, --view-main-gap-default, --view-columns-default, --view-columns-two-column-standard */
+  [data-view-context='dashboard'] [data-region-group='dashboard-body'] {
+    display: grid;
+    gap: var(--view-section-gap-detail);
+    align-content: start;
+  }
+
+  [data-view-context='dashboard'] [data-region-group='dashboard-chrome'] {
+    display: grid;
+    gap: var(--view-section-gap-detail);
+    align-content: start;
+  }
+
+  [data-view-context='dashboard'] [data-region-group='dashboard-content'] {
+    display: grid;
+    gap: var(--view-main-gap-default);
+    align-items: start;
+    align-content: start;
+    grid-template-columns: var(--view-columns-default);
+  }
+
+  [data-view-context='dashboard'][data-view-has-contextpanel='true']
+    [data-region-group='dashboard-content'] {
+    grid-template-columns: var(--view-columns-two-column-standard);
   }
 
   /* Card view layout — tokens: --cmp-surface-panel, --view-card-radius, --view-card-padding, --cmp-shadow-panel, --view-border-thin, --cmp-border-default, --view-card-gap, --view-card-max-width */

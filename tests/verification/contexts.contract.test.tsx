@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import {
   CardView,
+  ChartView,
+  DashboardView,
   DetailView,
   FormView,
   InlineView,
@@ -22,6 +24,8 @@ const CONTEXTS: readonly ContextEntry[] = [
   { name: 'timeline', Component: TimelineView },
   { name: 'card', Component: CardView },
   { name: 'inline', Component: InlineView },
+  { name: 'chart', Component: ChartView },
+  { name: 'dashboard', Component: DashboardView },
 ];
 
 const EXPECTED_REGIONS_BY_CONTEXT: Record<string, readonly string[]> = {
@@ -31,6 +35,8 @@ const EXPECTED_REGIONS_BY_CONTEXT: Record<string, readonly string[]> = {
   timeline: REGION_ORDER,
   card: ['pageHeader', 'main', 'contextPanel'],
   inline: ['pageHeader', 'viewToolbar', 'main'],
+  chart: REGION_ORDER,
+  dashboard: REGION_ORDER,
 };
 
 function createRegionMap(overrides: Partial<RegionMap> = {}): RegionMap {
