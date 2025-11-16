@@ -2,7 +2,9 @@ import type {
   TraitBinding as NormalizedTraitBinding,
   Transform as NormalizedSpecTransform,
 } from '~/generated/types/viz/normalized-viz-spec';
-import type { NormalizedVizSpec } from '@/viz/spec/normalized-viz-spec.js';
+import type { LayoutProjection, NormalizedVizSpec } from '@/viz/spec/normalized-viz-spec.js';
+import { applyEChartsLayout } from './echarts-layout-mapper.js';
+import type { ScaleResolution } from './scale-resolver.js';
 
 const DEFAULT_DATASET_ID = 'viz-dataset';
 const CATEGORY_SCALES = new Set(['band', 'point']);
@@ -35,6 +37,7 @@ export interface EChartsDatasetTransform {
 
 export interface EChartsDataset {
   readonly id: string;
+  readonly fromDatasetId?: string;
   readonly source?: readonly Record<string, unknown>[];
   readonly transform?: readonly EChartsDatasetTransform[];
   readonly dimensions?: readonly string[];
@@ -69,6 +72,8 @@ export interface EChartsSeries {
   readonly symbolSize?: number;
   readonly lineStyle?: Record<string, unknown>;
   readonly itemStyle?: Record<string, unknown>;
+  readonly xAxisIndex?: number;
+  readonly yAxisIndex?: number;
 }
 
 export interface EChartsAxis {
@@ -85,6 +90,8 @@ export interface EChartsGrid {
   readonly right?: number | string;
   readonly top?: number | string;
   readonly bottom?: number | string;
+   readonly width?: number | string;
+   readonly height?: number | string;
 }
 
 export interface EChartsUserMeta {
@@ -93,9 +100,21 @@ export interface EChartsUserMeta {
   readonly theme?: string;
   readonly tokens?: Record<string, string | number>;
   readonly layout?: LayoutConfig;
+  readonly layoutTrait?: NormalizedVizSpec['layout'];
+  readonly layoutRuntime?: LayoutRuntimeMetadata;
   readonly portability?: NormalizedVizSpec['portability'];
   readonly a11y: NormalizedVizSpec['a11y'];
   readonly interactions?: NormalizedVizSpec['interactions'];
+}
+
+export interface LayoutRuntimeMetadata {
+  readonly trait: NonNullable<NormalizedVizSpec['layout']>['trait'];
+  readonly panelCount?: number;
+  readonly sharedScales?: ScaleResolution;
+  readonly shareX: boolean;
+  readonly shareY: boolean;
+  readonly shareColor: boolean;
+  readonly projection?: LayoutProjection;
 }
 
 export interface EChartsOption {
@@ -106,7 +125,7 @@ export interface EChartsOption {
   readonly yAxis: EChartsAxis | readonly EChartsAxis[];
   readonly legend?: Record<string, unknown>;
   readonly tooltip?: Record<string, unknown>;
-  readonly grid?: EChartsGrid;
+  readonly grid?: EChartsGrid | readonly EChartsGrid[];
   readonly visualMap?: Record<string, unknown> | readonly Record<string, unknown>[];
   readonly aria?: Record<string, unknown>;
   readonly title?: Record<string, unknown> | readonly Record<string, unknown>[];
@@ -137,7 +156,7 @@ export function toEChartsOption(spec: NormalizedVizSpec): EChartsOption {
   const legend = baseEncoding.color ? { show: true } : undefined;
   const tooltip = buildTooltip(spec);
 
-  return removeUndefined({
+  const option = removeUndefined({
     dataset: [dataset],
     series,
     xAxis: xAxis ?? defaultAxis('x'),
@@ -149,6 +168,8 @@ export function toEChartsOption(spec: NormalizedVizSpec): EChartsOption {
     title: buildTitle(spec),
     usermeta: buildUserMeta(spec),
   });
+
+  return applyEChartsLayout(spec, option);
 }
 
 function deriveDatasetId(spec: NormalizedVizSpec): string {
@@ -548,6 +569,7 @@ function buildUserMeta(spec: NormalizedVizSpec): EChartsOption['usermeta'] {
     a11y: spec.a11y,
     portability: spec.portability,
     interactions: spec.interactions,
+    layoutTrait: spec.layout,
   };
 
   return { oods: removeUndefined(meta) };

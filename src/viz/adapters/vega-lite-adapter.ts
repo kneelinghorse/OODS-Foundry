@@ -3,6 +3,7 @@ import type {
   Transform as NormalizedSpecTransform,
 } from '~/generated/types/viz/normalized-viz-spec';
 import type { NormalizedVizSpec } from '@/viz/spec/normalized-viz-spec.js';
+import { buildVegaLiteSpec } from './vega-lite-layout-mapper.js';
 
 const VEGA_LITE_SCHEMA_URL = 'https://vega.github.io/schema/vega-lite/v6.json';
 const CHANNEL_ORDER = ['x', 'y', 'color', 'size', 'shape', 'detail'] as const;
@@ -24,6 +25,7 @@ type ChannelName = (typeof CHANNEL_ORDER)[number];
 type EncodingBinding = NormalizedTraitBinding;
 
 interface ConvertedLayer {
+  readonly key: string;
   readonly mark: Record<string, unknown>;
   readonly encoding: Record<string, unknown>;
   readonly data?: Record<string, unknown>;
@@ -43,7 +45,7 @@ export interface VegaLiteUserMeta {
   readonly portability?: NormalizedVizSpec['portability'];
 }
 
-interface BaseAdapterSpec {
+export interface BaseAdapterSpec {
   readonly $schema?: string;
   readonly title?: string;
   readonly description: string;
@@ -89,8 +91,9 @@ export function toVegaLiteSpec(spec: NormalizedVizSpec): VegaLiteAdapterSpec {
   const baseEncoding = convertEncodingMap(spec.encoding);
   const interactionParams = convertInteractionParams(spec.interactions);
   const interactionEncoding = convertInteractionBindings(spec.interactions);
-  const layers = spec.marks.map((mark) => createLayer(mark, baseEncoding, interactionEncoding));
-  const requiresLayer = layers.length > 1 || layers.some((layer) => layer.data !== undefined);
+  const convertedLayers = spec.marks.map((mark) => createLayer(mark, baseEncoding, interactionEncoding));
+  const orderedLayers = applyLayerOrdering(spec.layout, convertedLayers);
+  const requiresLayer = orderedLayers.length > 1 || orderedLayers.some((layer) => layer.data !== undefined);
 
   const layout = spec.config?.layout ?? {};
   const markConfig = spec.config?.mark ? { mark: spec.config.mark } : undefined;
@@ -109,29 +112,23 @@ export function toVegaLiteSpec(spec: NormalizedVizSpec): VegaLiteAdapterSpec {
     usermeta: buildUserMeta(spec),
   });
 
-  if (requiresLayer) {
-    const layered = {
-      ...baseSpec,
-      layer: layers.map((layer) =>
-        removeUndefined({
-          mark: layer.mark,
-          encoding: layer.encoding,
-          data: layer.data,
-        })
-      ),
-    };
+  const primitive = requiresLayer
+    ? {
+        layer: orderedLayers.map((layer) =>
+          removeUndefined({
+            mark: layer.mark,
+            encoding: layer.encoding,
+            data: layer.data,
+          })
+        ),
+      }
+    : removeUndefined({
+        mark: orderedLayers[0]?.mark,
+        encoding: orderedLayers[0]?.encoding,
+        data: orderedLayers[0]?.data,
+      });
 
-    return layered as VegaLiteAdapterSpec;
-  }
-
-  const [layer] = layers;
-  const single = {
-    ...baseSpec,
-    mark: layer.mark,
-    encoding: layer.encoding,
-  };
-
-  return single as VegaLiteAdapterSpec;
+  return buildVegaLiteSpec(spec, { base: baseSpec, primitive });
 }
 
 function createLayer(
@@ -147,6 +144,7 @@ function createLayer(
   }
 
   return {
+    key: inferLayerKey(mark),
     mark: createMark(mark),
     encoding,
     data: mark.from ? { name: mark.from } : undefined,
@@ -505,4 +503,43 @@ function buildUserMeta(spec: NormalizedVizSpec): VegaLiteAdapterSpec['usermeta']
 function removeUndefined<T extends object>(input: T): T {
   const entries = Object.entries(input as Record<string, unknown>).filter(([, value]) => value !== undefined);
   return Object.fromEntries(entries) as T;
+}
+
+function inferLayerKey(mark: NormalizedMark): string {
+  const candidate = mark.options?.id;
+  if (typeof candidate === 'string' && candidate.length > 0) {
+    return candidate;
+  }
+
+  return mark.trait;
+}
+
+function applyLayerOrdering(
+  layout: NormalizedVizSpec['layout'],
+  layers: readonly ConvertedLayer[]
+): readonly ConvertedLayer[] {
+  if (!layout || layout.trait !== 'LayoutLayer' || !layout.order || layout.order.length === 0) {
+    return layers;
+  }
+
+  const order = layout.order;
+  const remaining = new Map<string, ConvertedLayer>();
+  layers.forEach((layer) => remaining.set(layer.key, layer));
+
+  const ordered: ConvertedLayer[] = [];
+  for (const key of order) {
+    const match = remaining.get(key);
+    if (match) {
+      ordered.push(match);
+      remaining.delete(key);
+    }
+  }
+
+  for (const layer of layers) {
+    if (!ordered.includes(layer)) {
+      ordered.push(layer);
+    }
+  }
+
+  return ordered;
 }

@@ -10,7 +10,7 @@ export interface RendererSelectionOptions {
 
 export interface RendererSelectionResult {
   readonly renderer: VizRendererId;
-  readonly reason: 'user-preference' | 'spec-preference' | 'data-volume' | 'temporal' | 'default';
+  readonly reason: 'user-preference' | 'spec-preference' | 'layout' | 'data-volume' | 'temporal' | 'default';
 }
 
 export class RendererSelectionError extends Error {
@@ -42,6 +42,11 @@ export function selectVizRenderer(
     return { renderer: specPreferred, reason: 'spec-preference' };
   }
 
+  const layoutPreferred = selectLayoutRenderer(spec, pool);
+  if (layoutPreferred) {
+    return { renderer: layoutPreferred, reason: 'layout' };
+  }
+
   const valuesCount = Array.isArray(spec.data.values) ? spec.data.values.length : 0;
   const minEChartsRows = options.minRowsForECharts ?? DEFAULT_ECHARTS_THRESHOLD;
   if (valuesCount >= minEChartsRows && pool.includes('echarts')) {
@@ -71,6 +76,27 @@ function normalizeRendererId(renderer?: string | null): VizRendererId | undefine
   return undefined;
 }
 
+function selectLayoutRenderer(spec: NormalizedVizSpec, pool: VizRendererId[]): VizRendererId | undefined {
+  const layout = spec.layout;
+
+  if (!layout) {
+    return undefined;
+  }
+
+  if (layout.trait === 'LayoutFacet' && pool.includes('vega-lite')) {
+    return 'vega-lite';
+  }
+
+  if (layout.trait === 'LayoutLayer' && pool.includes('echarts')) {
+    return 'echarts';
+  }
+
+  if (layout.trait === 'LayoutConcat' && pool.includes('vega-lite')) {
+    return 'vega-lite';
+  }
+
+  return undefined;
+}
 function hasTemporalEncodings(spec: NormalizedVizSpec): boolean {
   const channelMaps = [
     spec.encoding,

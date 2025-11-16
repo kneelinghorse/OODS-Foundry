@@ -45,6 +45,22 @@ function createSpec(): NormalizedVizSpec {
   };
 }
 
+function createFacetSpec(): NormalizedVizSpec {
+  const spec = createSpec();
+  spec.layout = {
+    trait: 'LayoutFacet',
+    rows: { field: 'region', limit: 2 },
+    sharedScales: { x: 'shared', y: 'shared' },
+  };
+  spec.data = {
+    values: [
+      { region: 'North', category: 'A', value: 100 },
+      { region: 'South', category: 'B', value: 80 },
+    ],
+  };
+  return spec;
+}
+
 describe('bindEChartsInteractions', () => {
   it('registers highlight handlers for point interactions', () => {
     const handlers: Record<string, (params: { seriesIndex?: number; dataIndex?: number }) => void> = {};
@@ -99,5 +115,37 @@ describe('bindEChartsInteractions', () => {
 
     expect(onSpy).not.toHaveBeenCalled();
     cleanup();
+  });
+
+  it('propagates highlights across panels when layout syncing is enabled', () => {
+    const spec = createFacetSpec();
+    const handlers: Record<string, (params: { seriesIndex?: number; dataIndex?: number }) => void> = {};
+    const onSpy = vi.fn<(event: string, handler: (params: { seriesIndex?: number; dataIndex?: number }) => void) => void>(
+      (event, handler) => {
+        handlers[event] = handler;
+      }
+    );
+    const dispatchSpy = vi.fn<(action: { type: string; seriesIndex?: number; dataIndex?: number }) => void>();
+
+    const instance: EChartsRuntime = {
+      on: onSpy,
+      dispatchAction: dispatchSpy,
+    };
+
+    bindEChartsInteractions(instance, spec);
+
+    handlers.mouseover?.({ seriesIndex: 0, dataIndex: 1 });
+
+    expect(dispatchSpy).toHaveBeenNthCalledWith(1, { type: 'downplay' });
+    expect(dispatchSpy).toHaveBeenNthCalledWith(2, {
+      type: 'highlight',
+      seriesIndex: 0,
+      dataIndex: 1,
+    });
+    expect(dispatchSpy).toHaveBeenNthCalledWith(3, {
+      type: 'highlight',
+      seriesIndex: 1,
+      dataIndex: 1,
+    });
   });
 });

@@ -104,6 +104,33 @@ describe('Renderer selector', () => {
     expect(result).toEqual({ renderer: 'vega-lite', reason: 'temporal' });
   });
 
+  it('prefers Vega-Lite for facet layouts when available', () => {
+    const spec = createSpec({
+      layout: {
+        trait: 'LayoutFacet',
+        rows: { field: 'region', limit: 2 },
+        columns: { field: 'segment', limit: 2 },
+        sharedScales: { x: 'shared', y: 'shared' },
+      },
+    });
+
+    const result = selectVizRenderer(spec, { available: ['vega-lite', 'echarts'] });
+    expect(result).toEqual({ renderer: 'vega-lite', reason: 'layout' });
+  });
+
+  it('prefers ECharts when layering metadata is supplied', () => {
+    const spec = createSpec({
+      layout: {
+        trait: 'LayoutLayer',
+        order: ['MarkBar', 'MarkLine'],
+        sharedScales: { x: 'shared', y: 'shared' },
+      },
+    });
+
+    const result = selectVizRenderer(spec, { available: ['vega-lite', 'echarts'] });
+    expect(result).toEqual({ renderer: 'echarts', reason: 'layout' });
+  });
+
   it('throws when no renderer options are supplied', () => {
     const spec = createSpec();
 

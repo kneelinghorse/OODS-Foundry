@@ -1,4 +1,8 @@
 import type { NormalizedVizSpec } from '@/viz/spec/normalized-viz-spec.js';
+import {
+  createInteractionPropagationPlan,
+  shouldPropagateInteractions,
+} from './interaction-propagator.js';
 
 export interface EChartsEventParams {
   readonly seriesIndex?: number;
@@ -23,6 +27,7 @@ export type InteractionCleanup = () => void;
 export function bindEChartsInteractions(instance: EChartsRuntime, spec: NormalizedVizSpec): InteractionCleanup {
   const interactions = spec.interactions ?? [];
   const handlers: Array<{ event: string; handler: (params: EChartsEventParams) => void }> = [];
+  const propagationPlan = createInteractionPropagationPlan(spec);
 
   for (const interaction of interactions) {
     if (interaction.rule.bindTo !== 'visual' || interaction.select.type !== 'point') {
@@ -30,7 +35,7 @@ export function bindEChartsInteractions(instance: EChartsRuntime, spec: Normaliz
     }
 
     const eventName = mapEventName(interaction.select.on);
-    const highlightHandler = createHighlightHandler(instance);
+    const highlightHandler = createHighlightHandler(instance, propagationPlan);
     instance.on(eventName, highlightHandler);
     handlers.push({ event: eventName, handler: highlightHandler });
 
@@ -50,13 +55,30 @@ export function bindEChartsInteractions(instance: EChartsRuntime, spec: Normaliz
   };
 }
 
-function createHighlightHandler(instance: EChartsRuntime) {
+function createHighlightHandler(instance: EChartsRuntime, plan: ReturnType<typeof createInteractionPropagationPlan>) {
   return (params: EChartsEventParams): void => {
     if (!isValidDataPoint(params)) {
       return;
     }
 
     instance.dispatchAction({ type: 'downplay' });
+
+    if (shouldPropagateInteractions(plan)) {
+      const seriesSpan = Math.max(plan.baseSeriesCount, 1);
+      const baseIndex = params.seriesIndex % seriesSpan;
+
+      for (let panelIndex = 0; panelIndex < plan.panelCount; panelIndex += 1) {
+        const seriesIndex = panelIndex * seriesSpan + baseIndex;
+        instance.dispatchAction({
+          type: 'highlight',
+          seriesIndex,
+          dataIndex: params.dataIndex,
+        });
+      }
+
+      return;
+    }
+
     instance.dispatchAction({
       type: 'highlight',
       seriesIndex: params.seriesIndex,
