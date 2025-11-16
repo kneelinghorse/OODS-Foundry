@@ -7,3 +7,6 @@ export * from './ChartDescription.js';
 export * from './VizContainer.js';
 export * from './AreaChart.js';
 export * from './Heatmap.js';
+export * from './SharedLegend.js';
+export * from './VizFacetGrid.js';
+export * from './VizLayeredView.js';
