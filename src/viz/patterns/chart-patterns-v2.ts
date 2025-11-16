@@ -68,7 +68,7 @@ function deriveLayoutProfile(pattern: ChartPattern): PatternLayoutProfile {
   const goals = heuristics.goal;
 
   const strategyOrder: LayoutRecommendationEntry[] = [];
-  const baselineStrategy = heuristics.matrix
+  const baselineStrategy = heuristics.matrix || heuristics.concatPreferred
     ? 'concat'
     : heuristics.requiresGrouping || (heuristics.dimensions.max ?? heuristics.dimensions.min) > 1
       ? 'facet'

@@ -1,0 +1,50 @@
+{
+  "$schema": "https://oods.dev/viz-spec/v1",
+  "id": "pattern:viz:correlation-scatter",
+  "name": "Latency vs Conversion",
+  "data": {
+    "values": [
+      { "segment": "Starter", "latency": 140, "conversion": 2.8 },
+      { "segment": "Starter", "latency": 110, "conversion": 3.3 },
+      { "segment": "Starter", "latency": 170, "conversion": 2.1 },
+      { "segment": "Growth", "latency": 95, "conversion": 4.4 },
+      { "segment": "Growth", "latency": 80, "conversion": 5.1 },
+      { "segment": "Enterprise", "latency": 70, "conversion": 5.3 },
+      { "segment": "Enterprise", "latency": 60, "conversion": 5.6 },
+      { "segment": "Enterprise", "latency": 85, "conversion": 4.9 }
+    ]
+  },
+  "marks": [
+    {
+      "trait": "MarkPoint",
+      "encodings": {
+        "x": { "field": "latency", "trait": "EncodingPositionX", "channel": "x", "scale": "linear", "title": "Latency (ms)" },
+        "y": { "field": "conversion", "trait": "EncodingPositionY", "channel": "y", "scale": "linear", "title": "Conversion (%)" },
+        "color": { "field": "segment", "trait": "EncodingColor", "channel": "color", "legend": { "title": "Segment" } }
+      }
+    }
+  ],
+  "encoding": {
+    "x": { "field": "latency", "trait": "EncodingPositionX", "channel": "x", "scale": "linear", "title": "Latency (ms)" },
+    "y": { "field": "conversion", "trait": "EncodingPositionY", "channel": "y", "scale": "linear", "title": "Conversion (%)" },
+    "color": { "field": "segment", "trait": "EncodingColor", "channel": "color", "legend": { "title": "Segment" } }
+  },
+  "config": {
+    "theme": "brand-a",
+    "layout": { "width": 640, "height": 420, "padding": 24 }
+  },
+  "a11y": {
+    "ariaLabel": "Latency vs conversion scatter chart",
+    "description": "Conversion increases as latency drops below 100 ms, especially for enterprise customers.",
+    "narrative": {
+      "summary": "Enterprise dots cluster in the upper-left, confirming the inverse latency relationship.",
+      "keyFindings": ["Every point above 120 ms falls below 3% conversion", "Growth maintains >4% once latency <100 ms"]
+    },
+    "tableFallback": { "enabled": true, "caption": "Conversion rate by latency bucket" }
+  },
+  "portability": {
+    "fallbackType": "table",
+    "tableColumnOrder": ["segment", "latency", "conversion"],
+    "preferredRenderer": "vega-lite"
+  }
+}

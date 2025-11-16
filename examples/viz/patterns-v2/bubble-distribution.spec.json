@@ -1,0 +1,61 @@
+{
+  "$schema": "https://oods.dev/viz-spec/v1",
+  "id": "pattern:viz:bubble-distribution",
+  "name": "Initiative Impact Matrix",
+  "data": {
+    "values": [
+      { "initiative": "Playbooks", "impact": 4.5, "effort": 3.5, "customers": 1800 },
+      { "initiative": "Audit Trails", "impact": 3.2, "effort": 2.1, "customers": 2400 },
+      { "initiative": "AI Assist", "impact": 4.8, "effort": 4.2, "customers": 950 },
+      { "initiative": "Usage Alerts", "impact": 3.8, "effort": 1.8, "customers": 1500 },
+      { "initiative": "Billing Revamp", "impact": 4.1, "effort": 4.5, "customers": 2200 }
+    ]
+  },
+  "marks": [
+    {
+      "trait": "MarkPoint",
+      "encodings": {
+        "x": { "field": "effort", "trait": "EncodingPositionX", "channel": "x", "scale": "linear", "title": "Engineering Effort" },
+        "y": { "field": "impact", "trait": "EncodingPositionY", "channel": "y", "scale": "linear", "title": "Customer Impact" },
+        "size": { "field": "customers", "trait": "EncodingSize", "channel": "size", "title": "Customers affected" },
+        "color": { "field": "initiative", "trait": "EncodingColor", "channel": "color", "legend": { "title": "Initiative" } }
+      }
+    }
+  ],
+  "encoding": {
+    "x": { "field": "effort", "trait": "EncodingPositionX", "channel": "x", "scale": "linear", "title": "Engineering Effort" },
+    "y": { "field": "impact", "trait": "EncodingPositionY", "channel": "y", "scale": "linear", "title": "Customer Impact" },
+    "size": { "field": "customers", "trait": "EncodingSize", "channel": "size", "title": "Customers affected" },
+    "color": { "field": "initiative", "trait": "EncodingColor", "channel": "color", "legend": { "title": "Initiative" } }
+  },
+  "interactions": [
+    {
+      "id": "bubble-highlight",
+      "select": { "type": "point", "on": "hover", "fields": ["initiative"] },
+      "rule": { "bindTo": "visual", "property": "strokeWidth", "condition": { "value": 2 }, "else": { "value": 0.5 } }
+    },
+    {
+      "id": "bubble-tooltip",
+      "select": { "type": "point", "on": "hover", "fields": ["initiative", "impact", "effort", "customers"] },
+      "rule": { "bindTo": "tooltip", "fields": ["initiative", "impact", "effort", "customers"] }
+    }
+  ],
+  "config": {
+    "theme": "brand-b",
+    "layout": { "width": 720, "height": 420, "padding": 24 }
+  },
+  "a11y": {
+    "ariaLabel": "Initiative impact bubble chart",
+    "description": "AI Assist has the highest impact but also the highest effort, while Usage Alerts offers a quick win.",
+    "narrative": {
+      "summary": "Usage Alerts sits in the high-impact/low-effort quadrant; Billing Revamp is large but expensive.",
+      "keyFindings": ["Usage Alerts ideal quick win", "AI Assist promises biggest impact if we can fund it"]
+    },
+    "tableFallback": { "enabled": true, "caption": "Initiative effort vs impact" }
+  },
+  "portability": {
+    "fallbackType": "table",
+    "tableColumnOrder": ["initiative", "impact", "effort", "customers"],
+    "preferredRenderer": "vega-lite"
+  }
+}

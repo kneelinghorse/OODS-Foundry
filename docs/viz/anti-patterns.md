@@ -34,5 +34,15 @@ RDS.7/RDV.2 research cycles.
 - **Fix**: use the `a11y.narrative` block from the provided specs as a template
   and ensure every component renders `AccessibleTable` fallback.
 
+## 6. Ignoring Responsive Contracts
+- **Symptom**: Leaving facet grids horizontal on mobile or exposing brush/drag
+  interactions on narrow touch breakpoints.
+- **Issue**: Users are forced to scroll sideways, hover affordances disappear,
+  and Chromatic baselines fail to catch regressions.
+- **Fix**: Consume `scoreResponsiveStrategies()` and follow the emitted
+  adjustments (stack panels vertically, collapse legends, switch to tap-to-
+  isolate). Document decisions in the responsive recipe table so design,
+  engineering, and QA stay aligned.
+
 Keep this checklist handy during reviews and run `pnpm viz:suggest` to confirm
 the schema-goal pairing lines up with approved patterns.

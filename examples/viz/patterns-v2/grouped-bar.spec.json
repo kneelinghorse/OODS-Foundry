@@ -1,0 +1,83 @@
+{
+  "$schema": "https://oods.dev/viz-spec/v1",
+  "id": "pattern:viz:grouped-bar",
+  "name": "Pipeline Coverage by Segment",
+  "data": {
+    "values": [
+      { "quarter": "Q1", "segment": "Growth", "coverage": 2.1 },
+      { "quarter": "Q1", "segment": "Enterprise", "coverage": 3.4 },
+      { "quarter": "Q1", "segment": "Mid-Market", "coverage": 1.5 },
+      { "quarter": "Q2", "segment": "Growth", "coverage": 2.6 },
+      { "quarter": "Q2", "segment": "Enterprise", "coverage": 3.7 },
+      { "quarter": "Q2", "segment": "Mid-Market", "coverage": 1.6 },
+      { "quarter": "Q3", "segment": "Growth", "coverage": 2.9 },
+      { "quarter": "Q3", "segment": "Enterprise", "coverage": 3.9 },
+      { "quarter": "Q3", "segment": "Mid-Market", "coverage": 1.8 },
+      { "quarter": "Q4", "segment": "Growth", "coverage": 3.2 },
+      { "quarter": "Q4", "segment": "Enterprise", "coverage": 4.1 },
+      { "quarter": "Q4", "segment": "Mid-Market", "coverage": 2.0 }
+    ]
+  },
+  "marks": [
+    {
+      "trait": "MarkBar",
+      "encodings": {
+        "x": { "field": "quarter", "trait": "EncodingPositionX", "channel": "x", "title": "Quarter" },
+        "y": {
+          "field": "coverage",
+          "trait": "EncodingPositionY",
+          "channel": "y",
+          "scale": "linear",
+          "title": "Pipeline Coverage (× quota)"
+        },
+        "color": { "field": "segment", "trait": "EncodingColor", "channel": "color", "legend": { "title": "Segment" } }
+      }
+    }
+  ],
+  "encoding": {
+    "x": { "field": "quarter", "trait": "EncodingPositionX", "channel": "x", "title": "Quarter" },
+    "y": {
+      "field": "coverage",
+      "trait": "EncodingPositionY",
+      "channel": "y",
+      "scale": "linear",
+      "title": "Pipeline Coverage (× quota)"
+    },
+    "color": { "field": "segment", "trait": "EncodingColor", "channel": "color", "legend": { "title": "Segment" } }
+  },
+  "interactions": [
+    {
+      "id": "segment-highlight",
+      "select": { "type": "point", "on": "hover", "fields": ["segment"] },
+      "rule": {
+        "bindTo": "visual",
+        "property": "strokeWidth",
+        "condition": { "value": 2 },
+        "else": { "value": 0 }
+      }
+    },
+    {
+      "id": "segment-tooltip",
+      "select": { "type": "point", "on": "hover", "fields": ["quarter", "segment", "coverage"] },
+      "rule": { "bindTo": "tooltip", "fields": ["quarter", "segment", "coverage"] }
+    }
+  ],
+  "config": {
+    "theme": "brand-a",
+    "layout": { "width": 720, "height": 380, "padding": 24 }
+  },
+  "a11y": {
+    "ariaLabel": "Pipeline coverage grouped bar chart",
+    "description": "Enterprise coverage leads every quarter while Growth closes the gap by Q4.",
+    "narrative": {
+      "summary": "Enterprise bars stay 0.5–1.0× higher than Growth until late-year convergence.",
+      "keyFindings": ["Enterprise peaks at 4.1× in Q4", "Mid-Market contributions remain near 2×"]
+    },
+    "tableFallback": { "enabled": true, "caption": "Quarterly pipeline coverage by segment" }
+  },
+  "portability": {
+    "fallbackType": "table",
+    "tableColumnOrder": ["quarter", "segment", "coverage"],
+    "preferredRenderer": "vega-lite"
+  }
+}

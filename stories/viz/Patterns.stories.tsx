@@ -9,17 +9,17 @@ import { ScatterChart } from '~/src/components/viz/ScatterChart';
 import { BubbleChart } from '~/src/components/viz/BubbleChart';
 import { Heatmap } from '~/src/components/viz/Heatmap';
 
-import groupedBar from '../../examples/viz/patterns/grouped-bar.spec.json';
-import stackedBar from '../../examples/viz/patterns/stacked-bar.spec.json';
-import stacked100 from '../../examples/viz/patterns/stacked-100-bar.spec.json';
-import divergingBar from '../../examples/viz/patterns/diverging-bar.spec.json';
-import multiSeriesLine from '../../examples/viz/patterns/multi-series-line.spec.json';
-import targetBand from '../../examples/viz/patterns/target-band-line.spec.json';
-import runningArea from '../../examples/viz/patterns/running-total-area.spec.json';
-import bubble from '../../examples/viz/patterns/bubble-distribution.spec.json';
-import correlationScatter from '../../examples/viz/patterns/correlation-scatter.spec.json';
-import timeGrid from '../../examples/viz/patterns/time-grid-heatmap.spec.json';
-import correlationMatrix from '../../examples/viz/patterns/correlation-matrix.spec.json';
+import groupedBar from '../../examples/viz/patterns-v2/grouped-bar.spec.json';
+import stackedBar from '../../examples/viz/patterns-v2/stacked-bar.spec.json';
+import stacked100 from '../../examples/viz/patterns-v2/stacked-100-bar.spec.json';
+import divergingBar from '../../examples/viz/patterns-v2/diverging-bar.spec.json';
+import multiSeriesLine from '../../examples/viz/patterns-v2/multi-series-line.spec.json';
+import targetBand from '../../examples/viz/patterns-v2/target-band-line.spec.json';
+import runningArea from '../../examples/viz/patterns-v2/running-total-area.spec.json';
+import bubble from '../../examples/viz/patterns-v2/bubble-distribution.spec.json';
+import correlationScatter from '../../examples/viz/patterns-v2/correlation-scatter.spec.json';
+import timeGrid from '../../examples/viz/patterns-v2/time-grid-heatmap.spec.json';
+import correlationMatrix from '../../examples/viz/patterns-v2/correlation-matrix.spec.json';
 
 const specs: Record<string, NormalizedVizSpec> = {
   'grouped-bar': groupedBar as NormalizedVizSpec,

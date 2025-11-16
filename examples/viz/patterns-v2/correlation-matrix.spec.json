@@ -1,0 +1,64 @@
+{
+  "$schema": "https://oods.dev/viz-spec/v1",
+  "id": "pattern:viz:correlation-matrix",
+  "name": "Feature Correlation Matrix",
+  "data": {
+    "values": [
+      { "featureX": "Usage", "featureY": "Usage", "correlation": 1 },
+      { "featureX": "Usage", "featureY": "Retention", "correlation": 0.78 },
+      { "featureX": "Usage", "featureY": "Expansion", "correlation": 0.46 },
+      { "featureX": "Usage", "featureY": "Support", "correlation": -0.32 },
+      { "featureX": "Retention", "featureY": "Usage", "correlation": 0.78 },
+      { "featureX": "Retention", "featureY": "Retention", "correlation": 1 },
+      { "featureX": "Retention", "featureY": "Expansion", "correlation": 0.54 },
+      { "featureX": "Retention", "featureY": "Support", "correlation": -0.28 },
+      { "featureX": "Expansion", "featureY": "Usage", "correlation": 0.46 },
+      { "featureX": "Expansion", "featureY": "Retention", "correlation": 0.54 },
+      { "featureX": "Expansion", "featureY": "Expansion", "correlation": 1 },
+      { "featureX": "Expansion", "featureY": "Support", "correlation": -0.12 },
+      { "featureX": "Support", "featureY": "Usage", "correlation": -0.32 },
+      { "featureX": "Support", "featureY": "Retention", "correlation": -0.28 },
+      { "featureX": "Support", "featureY": "Expansion", "correlation": -0.12 },
+      { "featureX": "Support", "featureY": "Support", "correlation": 1 }
+    ]
+  },
+  "marks": [
+    {
+      "trait": "MarkRect",
+      "encodings": {
+        "x": { "field": "featureX", "trait": "EncodingPositionX", "channel": "x", "scale": "band", "title": "Metric" },
+        "y": { "field": "featureY", "trait": "EncodingPositionY", "channel": "y", "scale": "band", "title": "Metric" },
+        "color": {
+          "field": "correlation",
+          "trait": "EncodingColor",
+          "channel": "color",
+          "scale": "diverging",
+          "title": "Correlation"
+        }
+      }
+    }
+  ],
+  "encoding": {
+    "x": { "field": "featureX", "trait": "EncodingPositionX", "channel": "x", "scale": "band", "title": "Metric" },
+    "y": { "field": "featureY", "trait": "EncodingPositionY", "channel": "y", "scale": "band", "title": "Metric" },
+    "color": { "field": "correlation", "trait": "EncodingColor", "channel": "color", "scale": "diverging", "title": "Correlation" }
+  },
+  "config": {
+    "theme": "brand-b",
+    "layout": { "width": 540, "height": 540, "padding": 20 }
+  },
+  "a11y": {
+    "ariaLabel": "Correlation matrix heatmap",
+    "description": "Usage and retention correlate strongly, while support tickets are inversely related to every metric.",
+    "narrative": {
+      "summary": "Expansion tracks with usage/retention, support ticket volume is the only negative driver.",
+      "keyFindings": ["Usage↔Retention correlation = 0.78", "Support inverse relationship is strongest vs usage"]
+    },
+    "tableFallback": { "enabled": true, "caption": "Correlation coefficients" }
+  },
+  "portability": {
+    "fallbackType": "table",
+    "tableColumnOrder": ["featureX", "featureY", "correlation"],
+    "preferredRenderer": "vega-lite"
+  }
+}

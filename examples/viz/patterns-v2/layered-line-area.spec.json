@@ -1,0 +1,118 @@
+{
+  "$schema": "https://oods.dev/viz-spec/v1",
+  "id": "pattern:viz:layered-line-area",
+  "name": "Net retention vs objective",
+  "data": {
+    "values": [
+      {
+        "week": "2025-W01",
+        "actual": 0.96,
+        "target": 0.94,
+        "capacity": 0.92,
+        "actualSeries": "Actual",
+        "targetSeries": "Target",
+        "capacitySeries": "Capacity"
+      },
+      {
+        "week": "2025-W02",
+        "actual": 0.97,
+        "target": 0.945,
+        "capacity": 0.92,
+        "actualSeries": "Actual",
+        "targetSeries": "Target",
+        "capacitySeries": "Capacity"
+      },
+      {
+        "week": "2025-W03",
+        "actual": 0.975,
+        "target": 0.95,
+        "capacity": 0.93,
+        "actualSeries": "Actual",
+        "targetSeries": "Target",
+        "capacitySeries": "Capacity"
+      },
+      {
+        "week": "2025-W04",
+        "actual": 0.979,
+        "target": 0.952,
+        "capacity": 0.93,
+        "actualSeries": "Actual",
+        "targetSeries": "Target",
+        "capacitySeries": "Capacity"
+      },
+      {
+        "week": "2025-W05",
+        "actual": 0.982,
+        "target": 0.955,
+        "capacity": 0.94,
+        "actualSeries": "Actual",
+        "targetSeries": "Target",
+        "capacitySeries": "Capacity"
+      }
+    ]
+  },
+  "marks": [
+    {
+      "trait": "MarkArea",
+      "encodings": {
+        "x": { "field": "week", "trait": "EncodingPositionX", "channel": "x", "scale": "temporal" },
+        "y": { "field": "actual", "trait": "EncodingPositionY", "channel": "y", "scale": "linear" },
+        "color": {
+          "field": "actualSeries",
+          "trait": "EncodingColor",
+          "channel": "color",
+          "legend": { "title": "Series" }
+        }
+      },
+      "options": { "fillOpacity": 0.35 }
+    },
+    {
+      "trait": "MarkLine",
+      "encodings": {
+        "x": { "field": "week", "trait": "EncodingPositionX", "channel": "x", "scale": "temporal" },
+        "y": { "field": "target", "trait": "EncodingPositionY", "channel": "y", "scale": "linear" },
+        "color": { "field": "targetSeries", "trait": "EncodingColor", "channel": "color" }
+      },
+      "options": { "strokeWidth": 2 }
+    },
+    {
+      "trait": "MarkLine",
+      "encodings": {
+        "x": { "field": "week", "trait": "EncodingPositionX", "channel": "x", "scale": "temporal" },
+        "y": { "field": "capacity", "trait": "EncodingPositionY", "channel": "y", "scale": "linear" },
+        "color": { "field": "capacitySeries", "trait": "EncodingColor", "channel": "color" }
+      },
+      "options": { "strokeDash": [4, 4] }
+    }
+  ],
+  "encoding": {
+    "x": { "field": "week", "trait": "EncodingPositionX", "channel": "x", "scale": "temporal" },
+    "y": { "field": "actual", "trait": "EncodingPositionY", "channel": "y", "scale": "linear" }
+  },
+  "layout": {
+    "trait": "LayoutLayer",
+    "sharedScales": { "x": "shared", "y": "shared" },
+    "blendMode": "normal"
+  },
+  "interactions": [
+    {
+      "id": "delta-tooltip",
+      "select": { "type": "point", "on": "hover", "fields": ["week", "actual", "target"] },
+      "rule": { "bindTo": "tooltip", "fields": ["week", "actual", "target"] }
+    }
+  ],
+  "config": {
+    "theme": "brand-a",
+    "layout": { "width": 720, "height": 360, "padding": 20 }
+  },
+  "a11y": {
+    "ariaLabel": "Layered area chart showing actual net retention against target and capacity bands",
+    "description": "Actual retention remains above both target and capacity thresholds for five consecutive weeks",
+    "tableFallback": { "enabled": true, "caption": "Net retention per week" }
+  },
+  "portability": {
+    "fallbackType": "table",
+    "preferredRenderer": "echarts",
+    "tableColumnOrder": ["week", "actual", "target", "capacity"]
+  }
+}
