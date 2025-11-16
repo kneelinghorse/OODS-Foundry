@@ -22,14 +22,14 @@
     {
       "trait": "MarkLine",
       "encodings": {
-        "x": { "field": "week", "trait": "EncodingPositionX", "channel": "x", "scale": "temporal" },
+        "x": { "field": "week", "trait": "EncodingPositionX", "channel": "x", "scale": "point" },
         "y": { "field": "revenue", "trait": "EncodingPositionY", "channel": "y", "scale": "linear", "title": "Revenue ($M)" },
         "color": { "field": "region", "trait": "EncodingColor", "channel": "color", "legend": { "title": "Region" } }
       }
     }
   ],
   "encoding": {
-    "x": { "field": "week", "trait": "EncodingPositionX", "channel": "x", "scale": "temporal" },
+    "x": { "field": "week", "trait": "EncodingPositionX", "channel": "x", "scale": "point" },
     "y": { "field": "revenue", "trait": "EncodingPositionY", "channel": "y", "scale": "linear" },
     "color": { "field": "region", "trait": "EncodingColor", "channel": "color" }
   },

@@ -6,7 +6,7 @@ import type { NormalizedVizSpec } from '@/viz/spec/normalized-viz-spec.js';
 import { buildVegaLiteSpec } from './vega-lite-layout-mapper.js';
 
 const VEGA_LITE_SCHEMA_URL = 'https://vega.github.io/schema/vega-lite/v6.json';
-const CHANNEL_ORDER = ['x', 'y', 'color', 'size', 'shape', 'detail'] as const;
+const CHANNEL_ORDER = ['x', 'x2', 'y', 'y2', 'color', 'size', 'shape', 'detail'] as const;
 const QUANT_SCALE_TYPES = new Set(['linear', 'log', 'sqrt']);
 const ORDINAL_SCALE_TYPES = new Set(['band', 'point']);
 const MARK_TRAIT_MAP = {
@@ -172,7 +172,7 @@ function convertEncodingMap(map?: NormalizedEncoding): Record<string, unknown> {
   const encoding: Record<string, unknown> = {};
 
   for (const channel of CHANNEL_ORDER) {
-    const binding = map[channel];
+    const binding = (map as Record<string, EncodingBinding | undefined>)[channel];
 
     if (!binding) {
       continue;
@@ -210,9 +210,10 @@ function mergeEncodings(
 }
 
 function convertBinding(channel: ChannelName, binding: EncodingBinding): Record<string, unknown> {
+  const normalizedChannel = channel === 'x2' ? 'x' : channel === 'y2' ? 'y' : channel;
   const definition: Record<string, unknown> = {
     field: binding.field,
-    type: inferFieldType(channel, binding),
+    type: inferFieldType(normalizedChannel, binding),
   };
 
   const aggregate = mapAggregate(binding.aggregate);

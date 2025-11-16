@@ -26,7 +26,7 @@
           "field": "week",
           "trait": "EncodingPositionX",
           "channel": "x",
-          "scale": "temporal",
+          "scale": "point",
           "title": "Week"
         },
         "y": {
@@ -46,7 +46,7 @@
     }
   ],
   "encoding": {
-    "x": { "field": "week", "trait": "EncodingPositionX", "channel": "x", "scale": "temporal" },
+    "x": { "field": "week", "trait": "EncodingPositionX", "channel": "x", "scale": "point" },
     "y": { "field": "active", "trait": "EncodingPositionY", "channel": "y", "scale": "linear" },
     "color": { "field": "segment", "trait": "EncodingColor", "channel": "color" }
   },
