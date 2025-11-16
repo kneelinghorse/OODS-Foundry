@@ -2,8 +2,9 @@ import type {
   TraitBinding as NormalizedTraitBinding,
   Transform as NormalizedSpecTransform,
 } from '~/generated/types/viz/normalized-viz-spec';
-import type { NormalizedVizSpec } from '@/viz/spec/normalized-viz-spec.js';
+import type { LayoutProjection, NormalizedVizSpec } from '@/viz/spec/normalized-viz-spec.js';
 import { applyEChartsLayout } from './echarts-layout-mapper.js';
+import type { ScaleResolution } from './scale-resolver.js';
 
 const DEFAULT_DATASET_ID = 'viz-dataset';
 const CATEGORY_SCALES = new Set(['band', 'point']);
@@ -100,9 +101,20 @@ export interface EChartsUserMeta {
   readonly tokens?: Record<string, string | number>;
   readonly layout?: LayoutConfig;
   readonly layoutTrait?: NormalizedVizSpec['layout'];
+  readonly layoutRuntime?: LayoutRuntimeMetadata;
   readonly portability?: NormalizedVizSpec['portability'];
   readonly a11y: NormalizedVizSpec['a11y'];
   readonly interactions?: NormalizedVizSpec['interactions'];
+}
+
+export interface LayoutRuntimeMetadata {
+  readonly trait: NonNullable<NormalizedVizSpec['layout']>['trait'];
+  readonly panelCount?: number;
+  readonly sharedScales?: ScaleResolution;
+  readonly shareX: boolean;
+  readonly shareY: boolean;
+  readonly shareColor: boolean;
+  readonly projection?: LayoutProjection;
 }
 
 export interface EChartsOption {

@@ -13,6 +13,7 @@ import type {
   EChartsGrid,
   EChartsOption,
   EChartsSeries,
+  LayoutRuntimeMetadata,
 } from './echarts-adapter.js';
 
 interface PanelDescriptor {
@@ -38,8 +39,7 @@ export function applyEChartsLayout(spec: NormalizedVizSpec, option: EChartsOptio
     return mapConcatLayout(spec, layout, option);
   }
 
-  annotateLayoutMetadata(option, layout);
-  return option;
+  return annotateLayoutMetadata(option, layout);
 }
 
 function mapFacetLayout(spec: NormalizedVizSpec, layout: LayoutFacet, option: EChartsOption): EChartsOption {
@@ -47,8 +47,7 @@ function mapFacetLayout(spec: NormalizedVizSpec, layout: LayoutFacet, option: EC
   const baseDataset = getBaseDataset(option.dataset);
 
   if (!rows || !baseDataset) {
-    annotateLayoutMetadata(option, layout);
-    return option;
+    return annotateLayoutMetadata(option, layout, undefined, spec);
   }
 
   const rowValues = collectFacetValues(rows, layout.rows?.field, layout.rows?.limit);
@@ -60,16 +59,14 @@ function mapFacetLayout(spec: NormalizedVizSpec, layout: LayoutFacet, option: EC
     return option;
   }
 
-  applyPanelMapping(option, panels, layout, spec);
-  return option;
+  return applyPanelMapping(option, panels, layout, spec);
 }
 
 function mapConcatLayout(spec: NormalizedVizSpec, layout: LayoutConcat, option: EChartsOption): EChartsOption {
   const baseDataset = getBaseDataset(option.dataset);
 
   if (!baseDataset) {
-    annotateLayoutMetadata(option, layout);
-    return option;
+    return annotateLayoutMetadata(option, layout, undefined, spec);
   }
 
   const sections = layout.sections ?? [];
@@ -85,8 +82,7 @@ function mapConcatLayout(spec: NormalizedVizSpec, layout: LayoutConcat, option: 
     return option;
   }
 
-  applyPanelMapping(option, panels, layout, spec);
-  return option;
+  return applyPanelMapping(option, panels, layout, spec);
 }
 
 function applyPanelMapping(
@@ -94,10 +90,10 @@ function applyPanelMapping(
   panels: PanelDescriptor[],
   layout: LayoutDefinition,
   spec: NormalizedVizSpec
-): void {
+): EChartsOption {
   const baseDataset = getBaseDataset(option.dataset);
   if (!baseDataset) {
-    return;
+    return option;
   }
 
   const derivedDatasets: EChartsDataset[] = panels.map((panel) => ({
@@ -106,25 +102,28 @@ function applyPanelMapping(
     transform: buildDatasetTransforms(panel.filters),
   }));
 
-  option.dataset = [...(option.dataset ?? []), ...derivedDatasets];
-
   const baseSeries = option.series ?? [];
   const expandedSeries = expandSeries(baseSeries, panels);
-  option.series = expandedSeries;
 
   const { grid, xAxis, yAxis } = buildGridAndAxes(option, panels);
-  option.grid = grid;
-  option.xAxis = xAxis;
-  option.yAxis = yAxis;
 
-  annotateLayoutMetadata(option, layout, panels.length, spec);
+  const updated: EChartsOption = {
+    ...option,
+    dataset: [...option.dataset, ...derivedDatasets] as readonly EChartsDataset[],
+    series: expandedSeries as readonly EChartsSeries[],
+    grid: grid as readonly EChartsGrid[],
+    xAxis,
+    yAxis,
+  };
+
+  return annotateLayoutMetadata(updated, layout, panels.length, spec);
 }
 
 function expandSeries(series: readonly EChartsSeries[], panels: PanelDescriptor[]): EChartsSeries[] {
   const clones: EChartsSeries[] = [];
 
   panels.forEach((panel, panelIndex) => {
-    series.forEach((entry, markIndex) => {
+    series.forEach((entry) => {
       clones.push({
         ...entry,
         datasetId: panel.datasetId,
@@ -148,16 +147,14 @@ function buildGridAndAxes(
   const gridRows = Math.max(...panels.map((panel) => panel.rowIndex)) + 1;
   const gridCols = Math.max(...panels.map((panel) => panel.columnIndex)) + 1;
 
-  const grids = panels.map((panel) =>
-    createGrid(panel.rowIndex, panel.columnIndex, gridRows, gridCols, option.grid)
-  );
+  const grids = panels.map((panel) => createGrid(panel.rowIndex, panel.columnIndex, gridRows, gridCols, option.grid));
 
-  const xAxes = panels.map((panel, index) => ({
+  const xAxes = panels.map((_, index) => ({
     ...baseXAxis,
     gridIndex: index,
   }));
 
-  const yAxes = panels.map((panel, index) => ({
+  const yAxes = panels.map((_, index) => ({
     ...baseYAxis,
     gridIndex: index,
   }));
@@ -312,15 +309,15 @@ function annotateLayoutMetadata(
   layout: LayoutDefinition,
   panelCount?: number,
   spec?: NormalizedVizSpec
-): void {
-  if (!option.usermeta?.oods) {
-    return;
+): EChartsOption {
+  const baseUserMeta = option.usermeta?.oods;
+  if (!baseUserMeta) {
+    return option;
   }
 
   const scales = resolveScaleBindings(layout);
   const flags = asEChartsScaleFlags(scales);
-
-  option.usermeta.oods.layoutTrait = {
+  const runtimeMetadata: LayoutRuntimeMetadata = {
     trait: layout.trait,
     panelCount,
     sharedScales: scales,
@@ -329,17 +326,29 @@ function annotateLayoutMetadata(
     shareColor: flags.shareColor,
     projection: layout.projection ?? spec?.layout?.projection,
   };
+
+  const updatedUserMeta = {
+    oods: {
+      ...baseUserMeta,
+      layoutRuntime: runtimeMetadata,
+    },
+  };
+
+  return {
+    ...option,
+    usermeta: updatedUserMeta,
+  };
 }
 
 function normalizeAxis(axis: EChartsOption['xAxis'], fallback: 'x' | 'y'): EChartsAxis {
-  if (Array.isArray(axis)) {
+  if (isAxisCollection(axis)) {
     const [first] = axis;
     if (first) {
       return first;
     }
   }
 
-  if (axis && !Array.isArray(axis)) {
+  if (axis && !isAxisCollection(axis)) {
     return axis;
   }
 
@@ -353,4 +362,8 @@ function normalizeAxis(axis: EChartsOption['xAxis'], fallback: 'x' | 'y'): EChar
   return {
     type: 'value',
   };
+}
+
+function isAxisCollection(axis: EChartsOption['xAxis']): axis is readonly EChartsAxis[] {
+  return Array.isArray(axis);
 }

@@ -48,7 +48,7 @@ describe('Layout adapters', () => {
     expect(derivedDataset.fromDatasetId).toBe(option.dataset[0]?.id);
     expect(derivedDataset.transform?.[0]?.config).toMatchObject({ field: 'region' });
 
-    const layoutMeta = option.usermeta?.oods.layoutTrait;
+    const layoutMeta = option.usermeta?.oods.layoutRuntime;
     expect(layoutMeta?.trait).toBe('LayoutFacet');
     expect(layoutMeta?.panelCount).toBe(4);
     expect(layoutMeta?.shareX).toBe(true);

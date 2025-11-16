@@ -45,7 +45,7 @@ export interface VegaLiteUserMeta {
   readonly portability?: NormalizedVizSpec['portability'];
 }
 
-interface BaseAdapterSpec {
+export interface BaseAdapterSpec {
   readonly $schema?: string;
   readonly title?: string;
   readonly description: string;

@@ -10,7 +10,7 @@ pipeline, where shared scale logic lives, and how to validate new specs.
 | File | Purpose |
 | --- | --- |
 | `src/viz/adapters/vega-lite-layout-mapper.ts` | Wraps primitive specs in `facet`, `concat`, or layer-aware nodes, keeping sizing and `resolve.scale` metadata aligned with the normalized spec. |
-| `src/viz/adapters/echarts-layout-mapper.ts` | Builds multi-grid options by cloning datasets/series per panel, applies dataset filters, and annotates `usermeta.oods.layoutTrait`. |
+| `src/viz/adapters/echarts-layout-mapper.ts` | Builds multi-grid options by cloning datasets/series per panel, applies dataset filters, and annotates `usermeta.oods.layoutRuntime`. |
 | `src/viz/adapters/scale-resolver.ts` | Converts `sharedScales` declarations into renderer-specific configs (Vega-Lite `resolve.scale`, ECharts sharing flags). |
 | `src/viz/adapters/interaction-propagator.ts` | Computes panel count + sync plan so interaction runtimes (e.g., `bindEChartsInteractions`) can broadcast highlights across layouts. |
 
@@ -45,7 +45,7 @@ pipeline, where shared scale logic lives, and how to validate new specs.
 3. For **LayoutConcat**:
    - Each section generates a panel using `section.filters`.
    - Direction (`horizontal`, `vertical`, `grid`) controls grid placement.
-4. Metadata (`usermeta.oods.layoutTrait`) captures trait name, panel count, and
+4. Metadata (`usermeta.oods.layoutRuntime`) captures trait name, panel count, and
    whether x/y/color channels remain shared.
 
 ### Interaction Propagation

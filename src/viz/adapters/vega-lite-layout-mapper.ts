@@ -6,12 +6,12 @@ import type {
   SectionFilter,
 } from '@/viz/spec/normalized-viz-spec.js';
 import { asVegaLiteResolve, resolveScaleBindings } from './scale-resolver.js';
-import type { VegaLiteAdapterSpec } from './vega-lite-adapter.js';
+import type { BaseAdapterSpec, VegaLiteAdapterSpec } from './vega-lite-adapter.js';
 
 type PrimitiveSpec = Record<string, unknown>;
 
 interface BaseSpecFragments {
-  readonly base: Record<string, unknown>;
+  readonly base: BaseAdapterSpec;
   readonly primitive: PrimitiveSpec;
 }
 
@@ -23,43 +23,44 @@ export function buildVegaLiteSpec(
   const { base, primitive } = fragments;
   const { width, height, padding, ...outer } = base;
   const sizing = { width, height, padding };
+  const baseOuter = outer as BaseAdapterSpec;
 
   if (!layout) {
-    return omitUndefined({
-      ...outer,
+    return {
+      ...baseOuter,
       ...primitive,
       ...omitUndefined(sizing),
-    }) as VegaLiteAdapterSpec;
+    } as unknown as VegaLiteAdapterSpec;
   }
 
   const clonedPrimitive = withSizing(clonePrimitive(primitive), sizing);
   const resolve = asVegaLiteResolve(resolveScaleBindings(layout));
 
   if (layout.trait === 'LayoutFacet') {
-    return buildFacetSpec(outer, clonedPrimitive, layout, resolve);
+    return buildFacetSpec(baseOuter, clonedPrimitive, layout, resolve);
   }
 
   if (layout.trait === 'LayoutConcat') {
-    return buildConcatSpec(outer, clonedPrimitive, layout, resolve);
+    return buildConcatSpec(baseOuter, clonedPrimitive, layout, resolve);
   }
 
   if (layout.trait === 'LayoutLayer') {
-    return omitUndefined({
-      ...outer,
+    return {
+      ...baseOuter,
       ...clonedPrimitive,
       resolve,
-    }) as VegaLiteAdapterSpec;
+    } as unknown as VegaLiteAdapterSpec;
   }
 
-  return omitUndefined({
-    ...outer,
+  return {
+    ...baseOuter,
     ...clonedPrimitive,
     resolve,
-  }) as VegaLiteAdapterSpec;
+  } as unknown as VegaLiteAdapterSpec;
 }
 
 function buildFacetSpec(
-  outer: Record<string, unknown>,
+  outer: BaseAdapterSpec,
   primitive: PrimitiveSpec,
   layout: LayoutFacet,
   resolve?: { scale: Record<string, 'shared' | 'independent'> }
@@ -83,11 +84,11 @@ function buildFacetSpec(
     spec: primitive,
     spacing: layout.gap,
     resolve,
-  }) as VegaLiteAdapterSpec;
+  }) as unknown as VegaLiteAdapterSpec;
 }
 
 function buildConcatSpec(
-  outer: Record<string, unknown>,
+  outer: BaseAdapterSpec,
   primitive: PrimitiveSpec,
   layout: LayoutConcat,
   resolve?: { scale: Record<string, 'shared' | 'independent'> }
@@ -108,7 +109,7 @@ function buildConcatSpec(
     spec.columns = Math.ceil(Math.sqrt(sections.length));
   }
 
-  return omitUndefined(spec) as VegaLiteAdapterSpec;
+  return omitUndefined(spec) as unknown as VegaLiteAdapterSpec;
 }
 
 function createSectionSpec(section: ConcatSection, primitive: PrimitiveSpec): Record<string, unknown> {
@@ -221,7 +222,7 @@ function clonePrimitive(input: PrimitiveSpec): PrimitiveSpec {
   return cloned;
 }
 
-function omitUndefined<T extends Record<string, unknown>>(input: T): T {
-  const entries = Object.entries(input).filter(([, value]) => value !== undefined);
+function omitUndefined<T extends object>(input: T): T {
+  const entries = Object.entries(input as Record<string, unknown>).filter(([, value]) => value !== undefined);
   return Object.fromEntries(entries) as T;
 }

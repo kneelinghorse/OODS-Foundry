@@ -26,7 +26,7 @@ describe('Layout parity', () => {
 
     expect(Number.isInteger(panelCount)).toBe(true);
     expect(panelCount).toBeGreaterThan(1);
-    expect(option.usermeta?.oods.layoutTrait?.panelCount).toBe(panelCount);
+    expect(option.usermeta?.oods.layoutRuntime?.panelCount).toBe(panelCount);
   });
 
   it('preserves shared scale declarations across adapters', () => {
@@ -36,6 +36,6 @@ describe('Layout parity', () => {
 
     const resolve = (vlSpec as { resolve?: { scale?: Record<string, string> } }).resolve;
     expect(resolve?.scale?.color).toBe('shared');
-    expect(option.usermeta?.oods.layoutTrait?.shareColor).toBe(true);
+    expect(option.usermeta?.oods.layoutRuntime?.shareColor).toBe(true);
   });
 });
