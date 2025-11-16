@@ -3,6 +3,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import { listPatterns } from './index.js';
+import { scoreLayoutForPattern, type LayoutRecommendationBundle } from './layout-scorer.js';
+import { recommendInteractions, type InteractionBundle } from './interaction-scorer.js';
+import { generateScaffold, type ScaffoldFormat } from './scaffold-generator.js';
 import { suggestPatterns, type PatternSuggestion, type SchemaIntent } from './suggest-chart.js';
 import type { DensityPreference, IntentGoal } from './index.js';
 
@@ -32,6 +35,10 @@ export async function runCli(argv: string[]): Promise<void> {
       schema: { type: 'string' },
       file: { type: 'string' },
       list: { type: 'boolean' },
+      layout: { type: 'boolean' },
+      interactions: { type: 'boolean' },
+      scaffold: { type: 'boolean' },
+      'scaffold-format': { type: 'string' },
     },
     strict: false,
     allowPositionals: true,
@@ -49,6 +56,11 @@ export async function runCli(argv: string[]): Promise<void> {
     return;
   }
 
+  const includeLayout = values.layout === true;
+  const includeInteractions = values.interactions === true;
+  const scaffoldRequested = values.scaffold === true;
+  const scaffoldFormat = parseScaffoldFormat(values['scaffold-format']);
+
   try {
     const descriptorArg = typeof positionals[0] === 'string' ? positionals[0] : undefined;
     const schema = buildSchema(values, descriptorArg);
@@ -59,7 +71,15 @@ export async function runCli(argv: string[]): Promise<void> {
       console.log('No matching patterns. Adjust schema inputs or run with --list to inspect options.');
       return;
     }
-    printSuggestions(suggestions);
+    const enriched = suggestions.map((entry) => ({
+      suggestion: entry,
+      layout: includeLayout || scaffoldRequested ? scoreLayoutForPattern(entry.pattern.id, schema) : undefined,
+      interactions: includeInteractions || scaffoldRequested ? recommendInteractions(entry.pattern.id, schema) : undefined,
+    }));
+    printSuggestions(enriched, { showLayout: includeLayout, showInteractions: includeInteractions });
+    if (scaffoldRequested) {
+      emitScaffold(enriched[0], schema, scaffoldFormat);
+    }
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     console.error(`viz:suggest failed: ${message}`);
@@ -308,11 +328,22 @@ function sumMatches(matches: RegExpMatchArray): number {
     .reduce((total, value) => total + value, 0);
 }
 
-function printSuggestions(suggestions: PatternSuggestion[]): void {
+interface EnrichedSuggestion {
+  readonly suggestion: PatternSuggestion;
+  readonly layout?: LayoutRecommendationBundle;
+  readonly interactions?: InteractionBundle;
+}
+
+interface PrintOptions {
+  readonly showLayout: boolean;
+  readonly showInteractions: boolean;
+}
+
+function printSuggestions(suggestions: EnrichedSuggestion[], options: PrintOptions): void {
   console.log('Chart Pattern Suggestions');
   console.log('==========================');
   suggestions.forEach((suggestion, index) => {
-    const { pattern, score, signals } = suggestion;
+    const { pattern, score, signals } = suggestion.suggestion;
     console.log(`${index + 1}. ${pattern.name} [${pattern.chartType}] — score ${score.toFixed(1)}`);
     console.log(`   Summary: ${pattern.summary}`);
     console.log(`   Spec: ${pattern.specPath}`);
@@ -320,9 +351,73 @@ function printSuggestions(suggestions: PatternSuggestion[]): void {
     console.log(`   Suggested use: ${pattern.usage.bestFor[0] ?? 'See docs/viz/pattern-library.md'}`);
     console.log('   Fit signals:');
     signals.slice(0, 3).forEach((signal) => console.log(`      • ${signal}`));
+    if (options.showLayout && suggestion.layout) {
+      const layout = suggestion.layout;
+      console.log(
+        `   Layout: ${layout.primary.strategy} (${formatPercent(layout.primary.score)}) — ${layout.primary.rationale}`,
+      );
+      if (layout.alternates.length > 0) {
+        const alt = layout.alternates[0];
+        console.log(`           Alt: ${alt.strategy} (${formatPercent(alt.score)})`);
+      }
+    }
+    if (options.showInteractions && suggestion.interactions) {
+      const interactions = suggestion.interactions.primary.slice(0, 2);
+      if (interactions.length > 0) {
+        const labels = interactions.map(
+          (entry) => `${entry.kind} (${formatPercent(entry.score)})`,
+        );
+        console.log(`   Interactions: ${labels.join(', ')}`);
+      }
+    }
     console.log('');
   });
   console.log('Docs → docs/viz/pattern-library.md | Decision guide → docs/viz/chart-selection-guide.md');
+}
+
+function emitScaffold(entry: EnrichedSuggestion | undefined, schema: SchemaIntent, format: ScaffoldFormat): void {
+  if (!entry) {
+    console.log('Unable to scaffold without a suggestion.');
+    return;
+  }
+  const layout = entry.layout ?? scoreLayoutForPattern(entry.suggestion.pattern.id, schema);
+  const interactions = entry.interactions ?? recommendInteractions(entry.suggestion.pattern.id, schema);
+  const artifacts = generateScaffold({
+    suggestion: entry.suggestion,
+    schema,
+    layout,
+    interactions,
+    format,
+  });
+  if (artifacts.spec) {
+    console.log('\nGenerated Spec (JSON)');
+    console.log('=====================');
+    console.log(artifacts.spec);
+  }
+  if (artifacts.component) {
+    console.log('\nGenerated Component (TypeScript)');
+    console.log('================================');
+    console.log(artifacts.component);
+  }
+}
+
+function parseScaffoldFormat(input: unknown): ScaffoldFormat {
+  if (typeof input !== 'string') {
+    return 'all';
+  }
+  const normalized = input.trim().toLowerCase();
+  if (normalized === 'spec') {
+    return 'spec';
+  }
+  if (normalized === 'component') {
+    return 'component';
+  }
+  return 'all';
+}
+
+function formatPercent(value: number): string {
+  const bounded = Math.max(0, Math.min(1, value));
+  return `${Math.round(bounded * 100)}%`;
 }
 
 function printHelp(): void {
@@ -349,6 +444,10 @@ Flags:
   --negative        Allow negative values
   --limit           Number of suggestions (default 3)
   --file            Path to JSON schema descriptor
+  --layout          Include layout scoring hints
+  --interactions    Include interaction recommendations
+  --scaffold        Generate scaffolded spec/component for the top suggestion
+  --scaffold-format spec|component|all (default all)
 `);
 }
 
