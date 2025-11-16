@@ -1,7 +1,7 @@
 import { createRef, useEffect, useMemo, useRef, useState } from 'react';
 import type { HTMLAttributes, JSX, KeyboardEvent as ReactKeyboardEvent, RefObject } from 'react';
 import embed, { type EmbedOptions, type Result as EmbedResult, type VisualizationSpec } from 'vega-embed';
-import type { NormalizedVizSpec, Mark, TraitBinding } from '../../viz/spec/normalized-viz-spec.js';
+import type { NormalizedVizSpec, TraitBinding } from '../../viz/spec/normalized-viz-spec.js';
 import { toVegaLiteSpec, type VegaLiteAdapterSpec } from '../../viz/adapters/vega-lite-adapter.js';
 import { VizContainer } from './VizContainer.js';
 import { ChartDescription } from './ChartDescription.js';
@@ -42,7 +42,9 @@ export function VizLayeredView({
   const vegaSpec = useMemo<VegaLiteAdapterSpec>(() => toVegaLiteSpec(spec), [spec]);
   const embedOptions = useMemo<EmbedOptions>(() => ({ actions: false, renderer }), [renderer]);
   const layerSummaries = useMemo<readonly LayerSummary[]>(() => deriveLayerSummaries(spec.marks), [spec]);
-  const summaryRefs = useMemo<RefObject<HTMLDivElement>[]>(() => layerSummaries.map(() => createRef<HTMLDivElement>()), [layerSummaries]);
+  const summaryRefs = useMemo<RefObject<HTMLDivElement>[]>(() => {
+    return layerSummaries.map(() => createRef<HTMLDivElement>()) as RefObject<HTMLDivElement>[];
+  }, [layerSummaries]);
 
   useEffect(() => {
     if (!chartRef.current) {
@@ -119,6 +121,8 @@ export function VizLayeredView({
   );
 }
 
+type LayeredMark = NormalizedVizSpec['marks'][number];
+
 interface LayerSummary {
   readonly key: string;
   readonly title: string;
@@ -126,10 +130,12 @@ interface LayerSummary {
   readonly details: string[];
 }
 
-function deriveLayerSummaries(marks: readonly Mark[]): LayerSummary[] {
+function deriveLayerSummaries(marks: readonly LayeredMark[]): LayerSummary[] {
   return marks.map((mark, index) => {
-    const title = mark.options?.title ?? humanizeTrait(mark.trait) ?? `Layer ${index + 1}`;
-    const key = `${mark.options?.id ?? mark.trait ?? 'layer'}:${index}`;
+    const optionTitle = typeof mark.options?.title === 'string' ? mark.options.title : undefined;
+    const optionId = typeof mark.options?.id === 'string' ? mark.options.id : undefined;
+    const title = optionTitle ?? humanizeTrait(mark.trait) ?? `Layer ${index + 1}`;
+    const key = `${optionId ?? mark.trait ?? 'layer'}:${index}`;
     const details: string[] = [];
     appendEncodingDetail(details, 'X', mark.encodings?.x);
     appendEncodingDetail(details, 'Y', mark.encodings?.y);

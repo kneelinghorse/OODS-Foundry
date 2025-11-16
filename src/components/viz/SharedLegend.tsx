@@ -73,21 +73,19 @@ function deriveLegendCategories(rows: readonly Record<string, unknown>[], field:
   for (const row of rows) {
     const raw = row[field];
     const key = classifyLegendKey(raw);
-
-    let entry = seen.get(key);
-    if (!entry) {
-      if (seen.size >= maxItems) {
-        continue;
-      }
-      entry = {
-        key,
-        label: formatDimension(raw) ?? 'Unspecified',
-        count: 0,
-      };
-      seen.set(key, entry);
+    const existing = seen.get(key);
+    if (existing) {
+      seen.set(key, { ...existing, count: existing.count + 1 });
+      continue;
     }
-
-    entry.count += 1;
+    if (seen.size >= maxItems) {
+      continue;
+    }
+    seen.set(key, {
+      key,
+      label: formatDimension(raw) ?? 'Unspecified',
+      count: 1,
+    });
   }
 
   return Array.from(seen.values());

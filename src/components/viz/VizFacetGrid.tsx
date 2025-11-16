@@ -45,7 +45,10 @@ export function VizFacetGrid({
   const embedOptions = useMemo<EmbedOptions>(() => ({ actions: false, renderer }), [renderer]);
   const facetTables = useMemo<FacetTableResult>(() => generateFacetTables(spec), [spec]);
   const panelRefs = useMemo<RefObject<HTMLDivElement>[]>(() => {
-    return facetTables.status === 'ready' ? facetTables.groups.map(() => createRef<HTMLDivElement>()) : [];
+    if (facetTables.status !== 'ready') {
+      return [];
+    }
+    return facetTables.groups.map(() => createRef<HTMLDivElement>()) as RefObject<HTMLDivElement>[];
   }, [facetTables]);
 
   useEffect(() => {
