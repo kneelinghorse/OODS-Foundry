@@ -55,7 +55,7 @@
     {
       "trait": "MarkArea",
       "encodings": {
-        "x": { "field": "week", "trait": "EncodingPositionX", "channel": "x", "scale": "temporal" },
+        "x": { "field": "week", "trait": "EncodingPositionX", "channel": "x", "scale": "point" },
         "y": { "field": "actual", "trait": "EncodingPositionY", "channel": "y", "scale": "linear" },
         "color": {
           "field": "actualSeries",
@@ -69,7 +69,7 @@
     {
       "trait": "MarkLine",
       "encodings": {
-        "x": { "field": "week", "trait": "EncodingPositionX", "channel": "x", "scale": "temporal" },
+        "x": { "field": "week", "trait": "EncodingPositionX", "channel": "x", "scale": "point" },
         "y": { "field": "target", "trait": "EncodingPositionY", "channel": "y", "scale": "linear" },
         "color": { "field": "targetSeries", "trait": "EncodingColor", "channel": "color" }
       },
@@ -78,7 +78,7 @@
     {
       "trait": "MarkLine",
       "encodings": {
-        "x": { "field": "week", "trait": "EncodingPositionX", "channel": "x", "scale": "temporal" },
+        "x": { "field": "week", "trait": "EncodingPositionX", "channel": "x", "scale": "point" },
         "y": { "field": "capacity", "trait": "EncodingPositionY", "channel": "y", "scale": "linear" },
         "color": { "field": "capacitySeries", "trait": "EncodingColor", "channel": "color" }
       },
@@ -86,7 +86,7 @@
     }
   ],
   "encoding": {
-    "x": { "field": "week", "trait": "EncodingPositionX", "channel": "x", "scale": "temporal" },
+    "x": { "field": "week", "trait": "EncodingPositionX", "channel": "x", "scale": "point" },
     "y": { "field": "actual", "trait": "EncodingPositionY", "channel": "y", "scale": "linear" }
   },
   "layout": {
