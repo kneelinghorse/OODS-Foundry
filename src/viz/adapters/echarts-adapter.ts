@@ -2,7 +2,11 @@ import type {
   TraitBinding as NormalizedTraitBinding,
   Transform as NormalizedSpecTransform,
 } from '~/generated/types/viz/normalized-viz-spec';
-import type { LayoutProjection, NormalizedVizSpec } from '@/viz/spec/normalized-viz-spec.js';
+import type {
+  IntervalSelection,
+  LayoutProjection,
+  NormalizedVizSpec,
+} from '@/viz/spec/normalized-viz-spec.js';
 import { applyEChartsLayout } from './echarts-layout-mapper.js';
 import type { ScaleResolution } from './scale-resolver.js';
 
@@ -29,6 +33,7 @@ type NormalizedTransform = NormalizedSpecTransform;
 type EncodingBinding = NormalizedTraitBinding;
 type LayoutConfig = NonNullable<NormalizedVizSpec['config']> extends { layout?: infer L } ? L : undefined;
 type NormalizedInteraction = NonNullable<NormalizedVizSpec['interactions']>[number];
+type IntervalInteraction = NormalizedInteraction & { select: IntervalSelection };
 
 export interface EChartsDatasetTransform {
   readonly type: string;
@@ -501,7 +506,7 @@ function buildDataZoomComponents(spec: NormalizedVizSpec): readonly EChartsDataZ
   const components: EChartsDataZoom[] = [];
 
   for (const interaction of interactions) {
-    if (interaction.select.type !== 'interval') {
+    if (!isIntervalInteraction(interaction)) {
       continue;
     }
 
@@ -546,12 +551,7 @@ function buildDataZoomComponents(spec: NormalizedVizSpec): readonly EChartsDataZ
 
 function buildBrushComponent(spec: NormalizedVizSpec): EChartsBrush | undefined {
   const interactions = spec.interactions ?? [];
-  const candidate = interactions.find(
-    (interaction) =>
-      interaction.rule.bindTo === 'filter' &&
-      interaction.select.type === 'interval' &&
-      interaction.select.encodings.length > 1
-  );
+  const candidate = interactions.find(isMultiAxisBrushInteraction);
 
   if (!candidate) {
     return undefined;
@@ -587,6 +587,18 @@ function deriveAxisTargets(encodings: readonly ('x' | 'y')[]): {
     xAxisIndex: hasX ? 'all' : undefined,
     yAxisIndex: hasY ? 'all' : undefined,
   };
+}
+
+function isIntervalInteraction(interaction: NormalizedInteraction): interaction is IntervalInteraction {
+  return interaction.select.type === 'interval';
+}
+
+function isMultiAxisBrushInteraction(interaction: NormalizedInteraction): interaction is IntervalInteraction {
+  return (
+    isIntervalInteraction(interaction) &&
+    interaction.rule.bindTo === 'filter' &&
+    interaction.select.encodings.length > 1
+  );
 }
 
 function buildAria(spec: NormalizedVizSpec): Record<string, unknown> {

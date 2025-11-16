@@ -30,8 +30,8 @@ export interface EChartsDispatchAction {
 }
 
 export interface EChartsRuntime {
-  on(event: string, handler: (params: EChartsEventParams) => void): void;
-  off?(event: string, handler: (params: EChartsEventParams) => void): void;
+  on(event: string, handler: (params: unknown) => void): void;
+  off?(event: string, handler: (params: unknown) => void): void;
   dispatchAction(action: EChartsDispatchAction): void;
 }
 
@@ -39,7 +39,7 @@ export type InteractionCleanup = () => void;
 
 export function bindEChartsInteractions(instance: EChartsRuntime, spec: NormalizedVizSpec): InteractionCleanup {
   const interactions = spec.interactions ?? [];
-  const handlers: Array<{ event: string; handler: (...args: unknown[]) => void }> = [];
+  const handlers: Array<{ event: string; handler: (payload: unknown) => void }> = [];
   const propagationPlan = createInteractionPropagationPlan(spec);
 
   for (const interaction of interactions) {
@@ -94,10 +94,12 @@ export function bindEChartsInteractions(instance: EChartsRuntime, spec: Normaliz
 }
 
 function createHighlightHandler(instance: EChartsRuntime, plan: ReturnType<typeof createInteractionPropagationPlan>) {
-  return (params: EChartsEventParams): void => {
-    if (!isValidDataPoint(params)) {
+  return (payload: unknown): void => {
+    if (!isValidDataPoint(payload)) {
       return;
     }
+
+    const params = payload as Required<EChartsEventParams>;
 
     instance.dispatchAction({ type: 'downplay' });
 
@@ -126,10 +128,15 @@ function createHighlightHandler(instance: EChartsRuntime, plan: ReturnType<typeo
 }
 
 function createBrushSelectionHandler(instance: EChartsRuntime) {
-  return (event: BrushSelectionEvent): void => {
+  return (event: unknown): void => {
     instance.dispatchAction({ type: 'downplay' });
 
-    for (const batch of event.batch ?? []) {
+    const batches = extractBrushBatches(event);
+    if (!batches) {
+      return;
+    }
+
+    for (const batch of batches) {
       for (const selection of batch.selected ?? []) {
         if (!Array.isArray(selection.dataIndex) || typeof selection.seriesIndex !== 'number') {
           continue;
@@ -150,8 +157,26 @@ function createBrushSelectionHandler(instance: EChartsRuntime) {
   };
 }
 
-function isValidDataPoint(params: EChartsEventParams): params is Required<EChartsEventParams> {
-  return typeof params.seriesIndex === 'number' && typeof params.dataIndex === 'number';
+function isValidDataPoint(params: unknown): params is Required<EChartsEventParams> {
+  if (!params || typeof params !== 'object') {
+    return false;
+  }
+
+  const candidate = params as EChartsEventParams;
+  return typeof candidate.seriesIndex === 'number' && typeof candidate.dataIndex === 'number';
+}
+
+function extractBrushBatches(event: unknown): readonly BrushSelectionBatch[] | undefined {
+  if (!event || typeof event !== 'object') {
+    return undefined;
+  }
+
+  const { batch } = event as BrushSelectionEvent;
+  if (!Array.isArray(batch)) {
+    return undefined;
+  }
+
+  return batch;
 }
 
 function mapEventName(event: string): string {
