@@ -56,11 +56,11 @@ export const chartPatternsV2: ReadonlyArray<ChartPatternV2> = chartPatterns.map(
   interactionProfile: deriveInteractionProfile(pattern),
 }));
 
-const patternCache = new Map<ChartPatternId, ChartPatternV2>();
+const patternCache = new Map<string, ChartPatternV2>();
 chartPatternsV2.forEach((pattern) => patternCache.set(pattern.id, pattern));
 
 export function getPatternV2ById(id: ChartPatternId | string): ChartPatternV2 | undefined {
-  return patternCache.get(id as ChartPatternId);
+  return patternCache.get(id);
 }
 
 function deriveLayoutProfile(pattern: ChartPattern): PatternLayoutProfile {

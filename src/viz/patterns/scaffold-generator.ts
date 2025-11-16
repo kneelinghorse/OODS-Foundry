@@ -4,14 +4,10 @@ import type { ChartPattern } from './index.js';
 import type { LayoutRecommendationBundle } from './layout-scorer.js';
 import type { InteractionBundle, InteractionScoreEntry } from './interaction-scorer.js';
 import type { PatternSuggestion, SchemaIntent } from './suggest-chart.js';
-import type {
-  EncodingMap,
-  InteractionTrait,
-  LayoutDefinition,
-  Mark,
-  NormalizedVizSpec,
-  TraitBinding,
-} from '@/viz/spec/normalized-viz-spec.js';
+import type { InteractionTrait, LayoutDefinition, NormalizedVizSpec, TraitBinding } from '@/viz/spec/normalized-viz-spec.js';
+
+type EncodingMap = NormalizedVizSpec['encoding'];
+type MarkSpec = NormalizedVizSpec['marks'][number];
 
 export type ScaffoldFormat = 'all' | 'spec' | 'component';
 
@@ -29,12 +25,12 @@ export interface GenerateScaffoldOptions {
 }
 
 export function generateScaffold(options: GenerateScaffoldOptions): ScaffoldArtifacts {
-  const { suggestion, schema, layout, interactions, format = 'all' } = options;
+  const { suggestion, layout, interactions, format = 'all' } = options;
   const pattern = suggestion.pattern;
   const blueprint = extractFieldBlueprint(pattern);
-  const spec = buildSpec(pattern, schema, layout, interactions, blueprint);
+  const spec = buildSpec(pattern, layout, interactions, blueprint);
   const specLiteral = JSON.stringify(spec, null, 2);
-  const component = buildComponentSource(pattern, spec, interactions, blueprint);
+  const component = buildComponentSource(pattern, spec, interactions);
 
   if (format === 'spec') {
     return { spec: specLiteral };
@@ -47,14 +43,13 @@ export function generateScaffold(options: GenerateScaffoldOptions): ScaffoldArti
 
 function buildSpec(
   pattern: ChartPattern,
-  schema: SchemaIntent,
   layout: LayoutRecommendationBundle,
   interactions: InteractionBundle,
   blueprint: ReturnType<typeof extractFieldBlueprint>,
 ): NormalizedVizSpec {
   const encoding = buildEncodingMap(pattern, blueprint);
   const sampleData = buildSampleData(blueprint);
-  const marks = [createMark(pattern, encoding)] as [Mark, ...Mark[]];
+  const marks = [createMark(pattern, encoding)] as [MarkSpec, ...MarkSpec[]];
   const interactionTraits = buildInteractionTraits(interactions.primary, blueprint);
   const layoutTrait = buildLayoutTrait(layout.primary.strategy, blueprint);
   const layoutFrame = layoutFrameByChartType[pattern.chartType] ?? layoutFrameByChartType.bar;
@@ -100,7 +95,7 @@ function buildSpec(
   return spec;
 }
 
-function createMark(pattern: ChartPattern, encoding: EncodingMap): Mark {
+function createMark(pattern: ChartPattern, encoding: EncodingMap): MarkSpec {
   const trait = chartMarkByType[pattern.chartType] ?? 'MarkBar';
   return {
     trait,
@@ -273,10 +268,12 @@ function buildInteractionTraits(
 ): InteractionTrait[] {
   const traits: InteractionTrait[] = [];
   const defaultFields = [...blueprint.dimensions, ...blueprint.measures].map((field) => field.id);
+  const fallbackField = defaultFields[0] ?? 'category';
   const axisEncodings = blueprint.dimensions.length > 1 ? (['x', 'y'] as ['x', 'y']) : (['x'] as ['x']);
 
   entries.forEach((entry) => {
-    const fields = entry.fields.length > 0 ? entry.fields : defaultFields;
+    const fields = entry.fields.length > 0 ? [...entry.fields] : [...defaultFields];
+    const tupleFields = toPointFieldTuple(fields, fallbackField);
     switch (entry.kind) {
       case 'filter':
         traits.push({
@@ -323,7 +320,7 @@ function buildInteractionTraits(
           select: {
             type: 'point',
             on: 'hover',
-            fields: fields.length > 0 ? (fields as [string, ...string[]]) : ([defaultFields[0] ?? 'category'] as [string]),
+            fields: tupleFields,
           },
           rule: {
             bindTo: 'visual',
@@ -340,11 +337,11 @@ function buildInteractionTraits(
           select: {
             type: 'point',
             on: 'hover',
-            fields: fields.length > 0 ? (fields as [string, ...string[]]) : ([defaultFields[0] ?? 'category'] as [string]),
+            fields: tupleFields,
           },
           rule: {
             bindTo: 'tooltip',
-            fields: fields.length > 0 ? fields : defaultFields,
+            fields: tupleFields,
           },
         });
         break;
@@ -354,15 +351,22 @@ function buildInteractionTraits(
   return traits;
 }
 
+function toPointFieldTuple(values: ReadonlyArray<string>, fallback: string): [string, ...string[]] {
+  if (values.length === 0) {
+    return [fallback];
+  }
+  const [first, ...rest] = values;
+  return [first, ...rest];
+}
+
 function buildComponentSource(
   pattern: ChartPattern,
   spec: NormalizedVizSpec,
   interactions: InteractionBundle,
-  blueprint: ReturnType<typeof extractFieldBlueprint>,
 ): string {
   const componentMeta = componentByChartType[pattern.chartType] ?? componentByChartType.bar;
   const componentName = toComponentName(pattern.name);
-  const hookPlan = prepareHookPlan(interactions.primary, blueprint);
+  const hookPlan = prepareHookPlan(interactions.primary);
   const imports = buildImportBlock(componentMeta.component, hookPlan.requiredHooks);
   const hookImports = imports
     .map((statement) => {
@@ -423,13 +427,10 @@ ${hookDeclarations ? `${hookDeclarations}\n` : ''}  ${interactionArray}
 `;
 }
 
-function prepareHookPlan(
-  entries: ReadonlyArray<InteractionScoreEntry>,
-  blueprint: ReturnType<typeof extractFieldBlueprint>,
-) {
+function prepareHookPlan(entries: ReadonlyArray<InteractionScoreEntry>) {
   const requiredHooks = new Set<string>();
   const hooks: Array<{ hook: string; variable: string; fieldConstant?: string }> = [];
-  const fieldConstants: Array<{ name: string; values: string[] }> = [];
+  const fieldConstants: Array<{ name: string; values: ReadonlyArray<string> }> = [];
   let fieldIndex = 1;
 
   entries.slice(0, 3).forEach((entry) => {
@@ -440,7 +441,7 @@ function prepareHookPlan(
       let fieldConstant: string | undefined;
       if ((hook === 'useTooltip' || hook === 'useHighlight') && entry.fields.length > 0) {
         fieldConstant = `${hook.replace('use', '').toUpperCase()}_${fieldIndex}_FIELDS`;
-        fieldConstants.push({ name: fieldConstant, values: entry.fields });
+        fieldConstants.push({ name: fieldConstant, values: [...entry.fields] });
         fieldIndex += 1;
       }
       hooks.push({ hook, variable, fieldConstant });
@@ -488,7 +489,7 @@ function capitalize(value: string): string {
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
-const chartMarkByType: Record<ChartPattern['chartType'], Mark['trait']> = {
+const chartMarkByType: Record<ChartPattern['chartType'], MarkSpec['trait']> = {
   bar: 'MarkBar',
   line: 'MarkLine',
   area: 'MarkArea',
