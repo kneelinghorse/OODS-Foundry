@@ -5,7 +5,7 @@
  */
 
 import { DependencyGraph } from '../../src/core/dependency-graph.js';
-import { topologicalSort, validateAndSort } from '../../src/core/topological-sort.js';
+import { validateAndSort } from '../../src/core/topological-sort.js';
 import { DependencyValidator } from '../../src/core/dependency-validator.js';
 import {
   generateMermaidDiagram,

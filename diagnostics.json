@@ -519,6 +519,47 @@
       }
     }
   ],
+  "viewEngine": {
+    "layouts": {
+      "mission": "B23.8",
+      "updatedAt": "2025-11-16T17:07:50Z",
+      "contexts": [
+        {
+          "id": "chart",
+          "regions": [
+            "globalNavigation",
+            "breadcrumbs",
+            "pageHeader",
+            "viewToolbar",
+            "main",
+            "contextPanel"
+          ],
+          "notes": "Hero header + toolbar + insight rail. Emits data-chart-grid=\"chart\"."
+        },
+        {
+          "id": "dashboard",
+          "regions": [
+            "globalNavigation",
+            "breadcrumbs",
+            "pageHeader",
+            "viewToolbar",
+            "main",
+            "contextPanel"
+          ],
+          "notes": "Extends chart layout with persistent mosaic and narrative rail."
+        }
+      ],
+      "telemetry": {
+        "chartPanelsRendered": 9,
+        "dashboardPanelsRendered": 9,
+        "sources": [
+          "examples/dashboards/user-adoption.tsx",
+          "examples/dashboards/subscription-mrr.tsx",
+          "examples/dashboards/product-analytics.tsx"
+        ]
+      }
+    }
+  },
   "documentation": [
     {
       "mission": "B14.12",
