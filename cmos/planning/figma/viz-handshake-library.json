@@ -1,0 +1,420 @@
+{
+  "mission": "B23.7",
+  "generatedAt": "2025-11-16T16:48:37.192Z",
+  "artifact": "cmos/planning/figma/viz-handshake-library.json",
+  "library": {
+    "name": "OODS - Viz Layouts",
+    "figmaFile": "https://www.figma.com/file/OODS-Viz-Library/OODS-%E2%80%A2-Viz-Layouts",
+    "components": [
+      {
+        "id": "viz-facet-grid",
+        "name": "Viz - Facet Grid (4-up)",
+        "componentKey": "FacetGrid/4up",
+        "patternId": "facet-small-multiples-line"
+      },
+      {
+        "id": "viz-layered-overlay",
+        "name": "Viz - Layered Overlay (band + dual line)",
+        "componentKey": "LayeredOverlay/band",
+        "patternId": "layered-line-area"
+      },
+      {
+        "id": "viz-heatmap-matrix",
+        "name": "Viz - Heatmap Matrix (calendar)",
+        "componentKey": "HeatmapMatrix/calendar",
+        "patternId": "time-grid-heatmap"
+      }
+    ]
+  },
+  "primitives": [
+    {
+      "id": "viz-facet-grid",
+      "name": "Viz - Facet Grid (4-up)",
+      "figma": {
+        "componentKey": "FacetGrid/4up",
+        "variant": "density=compact,legend=inline",
+        "fileUrl": "https://www.figma.com/file/OODS-Viz-Library/OODS-%E2%80%A2-Viz-Layouts?node-id=10-210"
+      },
+      "pattern": {
+        "id": "facet-small-multiples-line",
+        "name": "Facet Small Multiples (Line)",
+        "chartType": "line",
+        "summary": "Facet grid of synchronized sparklines that compare a temporal metric across two grouping dimensions (region x segment).",
+        "specPath": "examples/viz/patterns-v2/facet-small-multiples-line.spec.json",
+        "heuristics": {
+          "measures": {
+            "min": 1,
+            "max": 1
+          },
+          "dimensions": {
+            "min": 2,
+            "max": 3
+          },
+          "temporals": {
+            "min": 1,
+            "max": 1
+          },
+          "goal": [
+            "trend",
+            "comparison"
+          ],
+          "requiresGrouping": true,
+          "density": "flex"
+        },
+        "layoutProfile": {
+          "primary": {
+            "strategy": "facet",
+            "rationale": "Facet grid distributes categories into repeatable panels for fast scanning.",
+            "bestFor": [
+              "trend",
+              "comparison"
+            ],
+            "score": 0.76
+          },
+          "alternates": [
+            {
+              "strategy": "single",
+              "rationale": "Single-scene layout keeps emphasis on the main encoding and simplifies narration.",
+              "bestFor": [
+                "trend",
+                "comparison"
+              ],
+              "score": 0.68
+            },
+            {
+              "strategy": "concat",
+              "rationale": "Concatenated dashboard stitches complementary slices with shared styling.",
+              "bestFor": [
+                "trend",
+                "comparison"
+              ],
+              "score": 0.82
+            }
+          ]
+        },
+        "interactionProfile": {
+          "primary": [
+            {
+              "kind": "tooltip",
+              "score": 0.72,
+              "rationale": "Surface dense values on demand without clutter.",
+              "bestFor": [
+                "trend",
+                "comparison"
+              ],
+              "hooks": [
+                "useTooltip"
+              ],
+              "fieldSource": "all"
+            },
+            {
+              "kind": "filter",
+              "score": 0.66,
+              "rationale": "Swipe across categories to focus on a subset.",
+              "bestFor": [
+                "trend",
+                "comparison"
+              ],
+              "hooks": [
+                "useFilter"
+              ],
+              "fieldSource": "dimensions"
+            },
+            {
+              "kind": "zoom",
+              "score": 0.64,
+              "rationale": "Zoom through temporal sequences while keeping axes synced.",
+              "bestFor": [
+                "trend",
+                "comparison"
+              ],
+              "hooks": [
+                "useZoom"
+              ],
+              "fieldSource": "dimensions"
+            }
+          ],
+          "optional": []
+        }
+      },
+      "tokenBindings": {
+        "seriesPalette": [
+          "--viz-scale-categorical-01",
+          "--viz-scale-categorical-02",
+          "--viz-scale-categorical-03",
+          "--viz-scale-categorical-04"
+        ],
+        "comparisonAccent": "--viz-scale-categorical-05",
+        "facetBackground": "--viz-scale-sequential-02",
+        "focusOutline": "--viz-size-stroke-03",
+        "axisStroke": "--viz-size-stroke-01",
+        "gutterSpacing": "--viz-margin-tight"
+      },
+      "componentGuidance": [
+        "Gutters, padding and outer frame reference var(--viz-margin-tight) to mirror Storybook Layout demos.",
+        "Legends are capped at four categorical slots to stay aligned with token governance.",
+        "Include per-facet captions pulled from pattern heuristics (dimensions.min/max) so designers know when to swap layouts."
+      ],
+      "datasetExample": "Quarter x Segment pipeline trend (normalized per segment)."
+    },
+    {
+      "id": "viz-layered-overlay",
+      "name": "Viz - Layered Overlay (band + dual line)",
+      "figma": {
+        "componentKey": "LayeredOverlay/band",
+        "variant": "density=default,annotations=on",
+        "fileUrl": "https://www.figma.com/file/OODS-Viz-Library/OODS-%E2%80%A2-Viz-Layouts?node-id=20-410"
+      },
+      "pattern": {
+        "id": "layered-line-area",
+        "name": "Layered Actual vs Target",
+        "chartType": "area",
+        "summary": "Overlays an area for actual performance with target and capacity lines to highlight variance over time.",
+        "specPath": "examples/viz/patterns-v2/layered-line-area.spec.json",
+        "heuristics": {
+          "measures": {
+            "min": 1,
+            "max": 1
+          },
+          "dimensions": {
+            "min": 1,
+            "max": 2
+          },
+          "temporals": {
+            "min": 1,
+            "max": 1
+          },
+          "goal": [
+            "trend",
+            "comparison"
+          ],
+          "stacking": "preferred",
+          "multiMetrics": true,
+          "density": "flex"
+        },
+        "layoutProfile": {
+          "primary": {
+            "strategy": "facet",
+            "rationale": "Facet grid distributes categories into repeatable panels for fast scanning.",
+            "bestFor": [
+              "trend",
+              "comparison"
+            ],
+            "score": 0.76
+          },
+          "alternates": [
+            {
+              "strategy": "single",
+              "rationale": "Single-scene layout keeps emphasis on the main encoding and simplifies narration.",
+              "bestFor": [
+                "trend",
+                "comparison"
+              ],
+              "score": 0.68
+            },
+            {
+              "strategy": "layer",
+              "rationale": "Layered view overlays aligned series to highlight deltas and thresholds.",
+              "bestFor": [
+                "trend",
+                "comparison"
+              ],
+              "score": 0.8
+            },
+            {
+              "strategy": "concat",
+              "rationale": "Concatenated dashboard stitches complementary slices with shared styling.",
+              "bestFor": [
+                "trend",
+                "comparison"
+              ],
+              "score": 0.82
+            }
+          ]
+        },
+        "interactionProfile": {
+          "primary": [
+            {
+              "kind": "tooltip",
+              "score": 0.72,
+              "rationale": "Surface dense values on demand without clutter.",
+              "bestFor": [
+                "trend",
+                "comparison"
+              ],
+              "hooks": [
+                "useTooltip"
+              ],
+              "fieldSource": "all"
+            },
+            {
+              "kind": "filter",
+              "score": 0.66,
+              "rationale": "Swipe across categories to focus on a subset.",
+              "bestFor": [
+                "trend",
+                "comparison"
+              ],
+              "hooks": [
+                "useFilter"
+              ],
+              "fieldSource": "dimensions"
+            },
+            {
+              "kind": "zoom",
+              "score": 0.64,
+              "rationale": "Zoom through temporal sequences while keeping axes synced.",
+              "bestFor": [
+                "trend",
+                "comparison"
+              ],
+              "hooks": [
+                "useZoom"
+              ],
+              "fieldSource": "dimensions"
+            }
+          ],
+          "optional": [
+            {
+              "kind": "brush",
+              "score": 0.6,
+              "rationale": "Drag a brush to compare overlapping bands or series.",
+              "bestFor": [
+                "trend",
+                "comparison"
+              ],
+              "hooks": [
+                "useBrush"
+              ],
+              "fieldSource": "dimensions"
+            }
+          ]
+        }
+      },
+      "tokenBindings": {
+        "baselineSeries": "--viz-scale-diverging-pos-03",
+        "comparisonSeries": "--viz-scale-diverging-pos-01",
+        "thresholdBand": {
+          "fill": "--viz-scale-diverging-neutral",
+          "stroke": "--viz-scale-diverging-neg-01"
+        },
+        "highlightMarker": "--viz-size-point-04",
+        "defaultStrokeWidth": "--viz-size-stroke-02",
+        "annotationStroke": "--viz-size-stroke-03"
+      },
+      "componentGuidance": [
+        "Bands reference diverging neutral fill with negative stroke to highlight breach conditions.",
+        "Markers inherit var(--viz-size-point-04) for focus states and shrink to --viz-size-point-02 in dense mode.",
+        "Provide text callouts for max/min per heuristics.goal to reinforce accessibility guidance."
+      ],
+      "datasetExample": "ARR forecast vs plan with tolerance band."
+    },
+    {
+      "id": "viz-heatmap-matrix",
+      "name": "Viz - Heatmap Matrix (calendar)",
+      "figma": {
+        "componentKey": "HeatmapMatrix/calendar",
+        "variant": "density=dense,legend=inline",
+        "fileUrl": "https://www.figma.com/file/OODS-Viz-Library/OODS-%E2%80%A2-Viz-Layouts?node-id=30-102"
+      },
+      "pattern": {
+        "id": "time-grid-heatmap",
+        "name": "Time Grid Heatmap",
+        "chartType": "heatmap",
+        "summary": "Uses MarkRect grid for two categorical/temporal axes (e.g., day x hour) with color intensity representing volume.",
+        "specPath": "examples/viz/patterns-v2/time-grid-heatmap.spec.json",
+        "heuristics": {
+          "measures": {
+            "min": 1,
+            "max": 1
+          },
+          "dimensions": {
+            "min": 2,
+            "max": 2
+          },
+          "goal": [
+            "intensity"
+          ],
+          "matrix": true,
+          "density": "dense"
+        },
+        "layoutProfile": {
+          "primary": {
+            "strategy": "concat",
+            "rationale": "Concatenated dashboard stitches complementary slices with shared styling.",
+            "bestFor": [
+              "intensity"
+            ],
+            "score": 0.82
+          },
+          "alternates": [
+            {
+              "strategy": "single",
+              "rationale": "Single-scene layout keeps emphasis on the main encoding and simplifies narration.",
+              "bestFor": [
+                "intensity"
+              ],
+              "score": 0.68
+            }
+          ]
+        },
+        "interactionProfile": {
+          "primary": [
+            {
+              "kind": "tooltip",
+              "score": 0.72,
+              "rationale": "Surface dense values on demand without clutter.",
+              "bestFor": [
+                "intensity"
+              ],
+              "hooks": [
+                "useTooltip"
+              ],
+              "fieldSource": "all"
+            },
+            {
+              "kind": "filter",
+              "score": 0.66,
+              "rationale": "Swipe across categories to focus on a subset.",
+              "bestFor": [
+                "intensity"
+              ],
+              "hooks": [
+                "useFilter"
+              ],
+              "fieldSource": "dimensions"
+            }
+          ],
+          "optional": []
+        }
+      },
+      "tokenBindings": {
+        "sequentialRamp": [
+          "--viz-scale-sequential-01",
+          "--viz-scale-sequential-02",
+          "--viz-scale-sequential-03",
+          "--viz-scale-sequential-04",
+          "--viz-scale-sequential-05",
+          "--viz-scale-sequential-06",
+          "--viz-scale-sequential-07",
+          "--viz-scale-sequential-08",
+          "--viz-scale-sequential-09"
+        ],
+        "legendStops": [
+          "--viz-scale-sequential-02",
+          "--viz-scale-sequential-05",
+          "--viz-scale-sequential-08"
+        ],
+        "focusStroke": "--viz-size-stroke-02",
+        "gridGap": "--viz-margin-tight",
+        "axisStroke": "--viz-size-stroke-01"
+      },
+      "componentGuidance": [
+        "Sequential ramp must remain in order; designers can only adjust stop count, not hues.",
+        "Legend uses three labeled stops that mirror diagnostics (min/mid/max) to keep parity with CLI + Storybook.",
+        "Cells expose value labels at >= Delta L 15 to satisfy accessibility guardrails documented in docs/viz/heatmap.md."
+      ],
+      "datasetExample": "Support tickets per day/hour."
+    }
+  ]
+}

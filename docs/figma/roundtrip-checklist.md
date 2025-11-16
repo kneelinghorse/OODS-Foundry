@@ -45,3 +45,9 @@ This checklist locks the repository as the source of truth while giving designer
 ## 6. Handshake Evidence
 - [x] `pnpm run tokens:transform -- --mission B14.2` generates `apps/explorer/src/styles/tokens.css` from the exported DTCG files in `tokens/*.json` and appends a metrics entry to `diagnostics.json`.
 - [x] Storybook entry **Foundations/Tokens Roundtrip** renders the Tailwind classes backed by `sys.status.info.*` variables, confirming that the CSS is consumed in UI.
+
+## 7. Visualization Layout Handshake (B23.7+)
+- [ ] Run `pnpm viz:figma-handshake` to refresh `cmos/planning/figma/viz-handshake-library.json` (pattern metadata + token bindings live in git for auditability).
+- [ ] Follow `docs/viz/figma-handshake.md` to mirror the exported primitives (`Viz - Facet Grid`, `Viz - Layered Overlay`, `Viz - Heatmap Matrix`) inside the **OODS - Viz Layouts** Figma library using governed `--viz-*` tokens.
+- [ ] Record the refresh timestamp + component coverage under `diagnostics.json.helpers.vizHandshake` (script writes automatically; verify via `pnpm viz:figma-handshake && git status`).
+- [ ] Attach the JSON diff + Storybook/CLI references to the design ops ticket so designers can request layout-ready components by pattern ID.
