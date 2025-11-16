@@ -88,4 +88,61 @@ describe('ECharts adapter', () => {
 
     expect(option.tooltip).toMatchObject({ trigger: 'axis' });
   });
+
+  it('adds dataZoom components for interval filter interactions', () => {
+    const spec = loadSpec('bar-chart');
+    const interactive: NormalizedVizSpec = {
+      ...spec,
+      interactions: [
+        {
+          id: 'filter-range',
+          select: { type: 'interval', on: 'drag', encodings: ['x'] },
+          rule: { bindTo: 'filter' },
+        },
+      ],
+    };
+
+    const option = toEChartsOption(interactive);
+    expect(option.dataZoom).toBeDefined();
+    expect(option.dataZoom).toEqual(
+      expect.arrayContaining([expect.objectContaining({ filterMode: 'filter' })])
+    );
+  });
+
+  it('enables brush configuration when both axes are filtered', () => {
+    const spec = loadSpec('scatter-chart');
+    const interactive: NormalizedVizSpec = {
+      ...spec,
+      interactions: [
+        {
+          id: 'brush',
+          select: { type: 'interval', on: 'drag', encodings: ['x', 'y'] },
+          rule: { bindTo: 'filter' },
+        },
+      ],
+    };
+
+    const option = toEChartsOption(interactive);
+    expect(option.brush).toBeDefined();
+    expect(option.brush).toMatchObject({ brushMode: 'single' });
+  });
+
+  it('creates zoom dataZoom entries without filtering data', () => {
+    const spec = loadSpec('line-chart');
+    const interactive: NormalizedVizSpec = {
+      ...spec,
+      interactions: [
+        {
+          id: 'zoom-axis',
+          select: { type: 'interval', on: 'wheel', encodings: ['x'] },
+          rule: { bindTo: 'zoom' },
+        },
+      ],
+    };
+
+    const option = toEChartsOption(interactive);
+    expect(option.dataZoom).toEqual(
+      expect.arrayContaining([expect.objectContaining({ filterMode: 'none' })])
+    );
+  });
 });

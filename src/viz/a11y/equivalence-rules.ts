@@ -302,6 +302,29 @@ const RULES: readonly RuleDefinition[] = [
       return fail('Narrative generation failed to produce output for this spec.');
     },
   },
+  {
+    id: 'A11Y-R-16',
+    summary: 'Filter/zoom interactions must describe their announce workflow.',
+    severity: 'warn',
+    check: (context) => {
+      const requiresNarrative = Boolean(
+        context.spec.interactions?.some(
+          (interaction) => interaction.rule.bindTo === 'filter' || interaction.rule.bindTo === 'zoom'
+        )
+      );
+
+      if (!requiresNarrative) {
+        return pass();
+      }
+
+      const summary = context.spec.a11y.narrative?.summary ?? '';
+      if (summary.trim().length === 0) {
+        return fail('Provide a11y.narrative.summary describing how filter/zoom results are announced.');
+      }
+
+      return pass();
+    },
+  },
 ];
 
 function pass(): RuleCheckResult {

@@ -46,6 +46,45 @@ describe('Vega-Lite adapter', () => {
     });
   });
 
+  it('injects filter transforms from interaction definitions', () => {
+    const spec = loadSpec('bar-chart');
+    const interactive: NormalizedVizSpec = {
+      ...spec,
+      interactions: [
+        {
+          id: 'range-filter',
+          select: { type: 'interval', on: 'drag', encodings: ['x'] },
+          rule: { bindTo: 'filter' },
+        },
+      ],
+    };
+
+    const result = toVegaLiteSpec(interactive);
+    expect(result.transform).toEqual(
+      expect.arrayContaining([expect.objectContaining({ filter: { param: 'range-filter' } })])
+    );
+  });
+
+  it('binds zoom interactions to Vega-Lite scales', () => {
+    const spec = loadSpec('line-chart');
+    const interactive: NormalizedVizSpec = {
+      ...spec,
+      interactions: [
+        {
+          id: 'zoom-all',
+          select: { type: 'interval', on: 'wheel', encodings: ['x'], bind: 'scales' },
+          rule: { bindTo: 'zoom' },
+        },
+      ],
+    };
+
+    const result = toVegaLiteSpec(interactive);
+    expect(result.params?.[0]).toMatchObject({
+      name: 'zoom-all',
+      select: { bind: 'scales' },
+    });
+  });
+
   it('generates calculate transforms for field-format instructions', () => {
     const spec = loadSpec('line-chart');
     const result = toVegaLiteSpec(spec);

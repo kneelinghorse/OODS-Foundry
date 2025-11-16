@@ -2,7 +2,11 @@ import type {
   TraitBinding as NormalizedTraitBinding,
   Transform as NormalizedSpecTransform,
 } from '~/generated/types/viz/normalized-viz-spec';
-import type { LayoutProjection, NormalizedVizSpec } from '@/viz/spec/normalized-viz-spec.js';
+import type {
+  IntervalSelection,
+  LayoutProjection,
+  NormalizedVizSpec,
+} from '@/viz/spec/normalized-viz-spec.js';
 import { applyEChartsLayout } from './echarts-layout-mapper.js';
 import type { ScaleResolution } from './scale-resolver.js';
 
@@ -29,6 +33,7 @@ type NormalizedTransform = NormalizedSpecTransform;
 type EncodingBinding = NormalizedTraitBinding;
 type LayoutConfig = NonNullable<NormalizedVizSpec['config']> extends { layout?: infer L } ? L : undefined;
 type NormalizedInteraction = NonNullable<NormalizedVizSpec['interactions']>[number];
+type IntervalInteraction = NormalizedInteraction & { select: IntervalSelection };
 
 export interface EChartsDatasetTransform {
   readonly type: string;
@@ -94,6 +99,24 @@ export interface EChartsGrid {
    readonly height?: number | string;
 }
 
+export interface EChartsDataZoom {
+  readonly id?: string;
+  readonly type?: 'inside' | 'slider';
+  readonly xAxisIndex?: 'all' | readonly number[];
+  readonly yAxisIndex?: 'all' | readonly number[];
+  readonly filterMode?: 'filter' | 'none' | 'weakFilter';
+  readonly orient?: 'horizontal' | 'vertical';
+}
+
+export interface EChartsBrush {
+  readonly toolbox?: readonly string[];
+  readonly brushMode?: 'single' | 'multiple';
+  readonly brushLink?: 'all' | readonly number[];
+  readonly xAxisIndex?: 'all' | readonly number[];
+  readonly yAxisIndex?: 'all' | readonly number[];
+  readonly throttleType?: 'debounce' | 'fixed';
+}
+
 export interface EChartsUserMeta {
   readonly specId?: string;
   readonly name?: string;
@@ -126,6 +149,8 @@ export interface EChartsOption {
   readonly legend?: Record<string, unknown>;
   readonly tooltip?: Record<string, unknown>;
   readonly grid?: EChartsGrid | readonly EChartsGrid[];
+  readonly dataZoom?: readonly EChartsDataZoom[];
+  readonly brush?: EChartsBrush;
   readonly visualMap?: Record<string, unknown> | readonly Record<string, unknown>[];
   readonly aria?: Record<string, unknown>;
   readonly title?: Record<string, unknown> | readonly Record<string, unknown>[];
@@ -155,6 +180,8 @@ export function toEChartsOption(spec: NormalizedVizSpec): EChartsOption {
   const yAxis = createAxis('y', axisEncoding.y);
   const legend = baseEncoding.color ? { show: true } : undefined;
   const tooltip = buildTooltip(spec);
+  const dataZoom = buildDataZoomComponents(spec);
+  const brush = buildBrushComponent(spec);
 
   const option = removeUndefined({
     dataset: [dataset],
@@ -164,6 +191,8 @@ export function toEChartsOption(spec: NormalizedVizSpec): EChartsOption {
     legend,
     tooltip,
     grid: convertGrid(spec.config?.layout),
+    dataZoom,
+    brush,
     aria: buildAria(spec),
     title: buildTitle(spec),
     usermeta: buildUserMeta(spec),
@@ -470,6 +499,106 @@ function convertGrid(layout?: LayoutConfig): EChartsGrid | undefined {
     top: padding,
     bottom: padding,
   };
+}
+
+function buildDataZoomComponents(spec: NormalizedVizSpec): readonly EChartsDataZoom[] | undefined {
+  const interactions = spec.interactions ?? [];
+  const components: EChartsDataZoom[] = [];
+
+  for (const interaction of interactions) {
+    if (!isIntervalInteraction(interaction)) {
+      continue;
+    }
+
+    if (interaction.rule.bindTo !== 'filter' && interaction.rule.bindTo !== 'zoom') {
+      continue;
+    }
+
+    const axes = deriveAxisTargets(interaction.select.encodings);
+    if (!axes) {
+      continue;
+    }
+
+    const filterMode: EChartsDataZoom['filterMode'] =
+      interaction.rule.bindTo === 'filter' ? 'filter' : 'none';
+
+    components.push(
+      removeUndefined<EChartsDataZoom>({
+        id: `${interaction.id}:inside`,
+        type: 'inside',
+        filterMode,
+        xAxisIndex: axes.xAxisIndex,
+        yAxisIndex: axes.yAxisIndex,
+      })
+    );
+
+    if (interaction.rule.bindTo === 'filter') {
+      components.push(
+        removeUndefined<EChartsDataZoom>({
+          id: `${interaction.id}:slider`,
+          type: 'slider',
+          filterMode,
+          orient: axes.xAxisIndex && !axes.yAxisIndex ? 'horizontal' : 'vertical',
+          xAxisIndex: axes.xAxisIndex,
+          yAxisIndex: axes.yAxisIndex,
+        })
+      );
+    }
+  }
+
+  return components.length > 0 ? components : undefined;
+}
+
+function buildBrushComponent(spec: NormalizedVizSpec): EChartsBrush | undefined {
+  const interactions = spec.interactions ?? [];
+  const candidate = interactions.find(isMultiAxisBrushInteraction);
+
+  if (!candidate) {
+    return undefined;
+  }
+
+  const axes = deriveAxisTargets(candidate.select.encodings);
+  if (!axes?.xAxisIndex || !axes?.yAxisIndex) {
+    return undefined;
+  }
+
+  return {
+    toolbox: ['rect', 'keep', 'clear'],
+    brushMode: 'single',
+    brushLink: 'all',
+    throttleType: 'debounce',
+    xAxisIndex: axes.xAxisIndex,
+    yAxisIndex: axes.yAxisIndex,
+  };
+}
+
+function deriveAxisTargets(encodings: readonly ('x' | 'y')[]): {
+  readonly xAxisIndex?: 'all';
+  readonly yAxisIndex?: 'all';
+} | undefined {
+  const hasX = encodings.includes('x');
+  const hasY = encodings.includes('y');
+
+  if (!hasX && !hasY) {
+    return undefined;
+  }
+
+  return {
+    xAxisIndex: hasX ? 'all' : undefined,
+    yAxisIndex: hasY ? 'all' : undefined,
+  };
+}
+
+function isIntervalInteraction(interaction: NormalizedInteraction): interaction is IntervalInteraction {
+  return interaction.select.type === 'interval';
+}
+
+function isMultiAxisBrushInteraction(interaction: NormalizedInteraction): interaction is IntervalInteraction {
+  return (
+    isIntervalInteraction(interaction) &&
+    interaction.rule.bindTo === 'filter' &&
+    interaction.select.encodings.length > 1
+  );
 }
 
 function buildAria(spec: NormalizedVizSpec): Record<string, unknown> {

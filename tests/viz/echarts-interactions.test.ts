@@ -63,19 +63,15 @@ function createFacetSpec(): NormalizedVizSpec {
 
 describe('bindEChartsInteractions', () => {
   it('registers highlight handlers for point interactions', () => {
-    const handlers: Record<string, (params: { seriesIndex?: number; dataIndex?: number }) => void> = {};
-    const onSpy = vi.fn<(event: string, handler: (params: { seriesIndex?: number; dataIndex?: number }) => void) => void>(
-      (event, handler) => {
-        handlers[event] = handler;
+    const handlers: Record<string, (payload: unknown) => void> = {};
+    const onSpy = vi.fn<(event: string, handler: (payload: unknown) => void) => void>((event, handler) => {
+      handlers[event] = handler;
+    });
+    const offSpy = vi.fn<(event: string, handler: (payload: unknown) => void) => void>((event, handler) => {
+      if (handlers[event] === handler) {
+        delete handlers[event];
       }
-    );
-    const offSpy = vi.fn<(event: string, handler: (params: { seriesIndex?: number; dataIndex?: number }) => void) => void>(
-      (event, handler) => {
-        if (handlers[event] === handler) {
-          delete handlers[event];
-        }
-      }
-    );
+    });
     const dispatchSpy = vi.fn<(action: { type: string; seriesIndex?: number; dataIndex?: number }) => void>();
 
     const instance: EChartsRuntime = {
@@ -104,7 +100,7 @@ describe('bindEChartsInteractions', () => {
   it('no-ops when no visual interactions are defined', () => {
     const spec = createSpec();
     spec.interactions = undefined;
-    const onSpy = vi.fn<(event: string, handler: () => void) => void>();
+    const onSpy = vi.fn<(event: string, handler: (payload: unknown) => void) => void>();
     const dispatchSpy = vi.fn<(action: { type: string }) => void>();
     const instance: EChartsRuntime = {
       on: onSpy,
@@ -119,12 +115,10 @@ describe('bindEChartsInteractions', () => {
 
   it('propagates highlights across panels when layout syncing is enabled', () => {
     const spec = createFacetSpec();
-    const handlers: Record<string, (params: { seriesIndex?: number; dataIndex?: number }) => void> = {};
-    const onSpy = vi.fn<(event: string, handler: (params: { seriesIndex?: number; dataIndex?: number }) => void) => void>(
-      (event, handler) => {
-        handlers[event] = handler;
-      }
-    );
+    const handlers: Record<string, (payload: unknown) => void> = {};
+    const onSpy = vi.fn<(event: string, handler: (payload: unknown) => void) => void>((event, handler) => {
+      handlers[event] = handler;
+    });
     const dispatchSpy = vi.fn<(action: { type: string; seriesIndex?: number; dataIndex?: number }) => void>();
 
     const instance: EChartsRuntime = {
@@ -147,5 +141,78 @@ describe('bindEChartsInteractions', () => {
       seriesIndex: 1,
       dataIndex: 1,
     });
+  });
+
+  it('registers brush handlers for interval filters across axes', () => {
+    const spec = createSpec();
+    spec.interactions = [
+      {
+        id: 'brush-all',
+        select: { type: 'interval', on: 'drag', encodings: ['x', 'y'] },
+        rule: { bindTo: 'filter' },
+      },
+    ];
+    const handlers: Record<string, (event: unknown) => void> = {};
+    const onSpy = vi.fn<(event: string, handler: (event: unknown) => void) => void>((event, handler) => {
+      handlers[event] = handler;
+    });
+    const dispatchSpy = vi.fn<(action: { type: string; seriesIndex?: number; dataIndex?: number }) => void>();
+
+    bindEChartsInteractions(
+      {
+        on: onSpy,
+        dispatchAction: dispatchSpy,
+      },
+      spec
+    );
+
+    expect(onSpy).toHaveBeenCalledWith('brushselected', expect.any(Function));
+    handlers.brushselected?.({
+      batch: [
+        {
+          selected: [
+            {
+              seriesIndex: 0,
+              dataIndex: [0, 1],
+            },
+          ],
+        },
+      ],
+    });
+
+    expect(dispatchSpy).toHaveBeenNthCalledWith(1, { type: 'downplay' });
+    expect(dispatchSpy).toHaveBeenCalledWith({
+      type: 'highlight',
+      seriesIndex: 0,
+      dataIndex: 0,
+    });
+  });
+
+  it('clears highlights when zoom interactions fire datazoom events', () => {
+    const spec = createSpec();
+    spec.interactions = [
+      {
+        id: 'zoom',
+        select: { type: 'interval', on: 'wheel', encodings: ['x'] },
+        rule: { bindTo: 'zoom' },
+      },
+    ];
+    const handlers: Record<string, (event: unknown) => void> = {};
+    const onSpy = vi.fn<(event: string, handler: (event: unknown) => void) => void>((event, handler) => {
+      handlers[event] = handler;
+    });
+    const dispatchSpy = vi.fn<(action: { type: string }) => void>();
+
+    bindEChartsInteractions(
+      {
+        on: onSpy,
+        dispatchAction: dispatchSpy,
+      },
+      spec
+    );
+
+    expect(onSpy).toHaveBeenCalledWith('datazoom', expect.any(Function));
+    handlers.datazoom?.({});
+    expect(dispatchSpy).toHaveBeenCalledWith({ type: 'downplay' });
   });
 });
