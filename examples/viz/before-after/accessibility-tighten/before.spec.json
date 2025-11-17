@@ -1,0 +1,48 @@
+{
+  "$schema": "https://oods.dev/viz-spec/v1",
+  "id": "before:viz:a11y-tighten",
+  "name": "Quarterly variance (before)",
+  "data": {
+    "values": [
+      { "kpi": "Bookings", "delta": 12 },
+      { "kpi": "Pipeline", "delta": 6 },
+      { "kpi": "Retention", "delta": -4 },
+      { "kpi": "Support", "delta": -9 }
+    ]
+  },
+  "marks": [
+    {
+      "trait": "MarkBar",
+      "encodings": {
+        "y": { "field": "kpi", "trait": "EncodingPositionY", "channel": "y", "title": "KPI" },
+        "x": { "field": "delta", "trait": "EncodingPositionX", "channel": "x", "title": "Variance" },
+        "color": { "field": "delta", "trait": "EncodingColor", "channel": "color", "scheme": "diverging" }
+      }
+    }
+  ],
+  "encoding": {
+    "y": { "field": "kpi", "trait": "EncodingPositionY", "channel": "y" },
+    "x": { "field": "delta", "trait": "EncodingPositionX", "channel": "x" },
+    "color": { "field": "delta", "trait": "EncodingColor", "channel": "color" }
+  },
+  "interactions": [
+    {
+      "id": "hover",
+      "select": { "type": "point", "on": "hover", "fields": ["kpi", "delta"] },
+      "rule": { "bindTo": "tooltip", "fields": ["kpi", "delta"] }
+    }
+  ],
+  "config": {
+    "theme": "brand-a",
+    "layout": { "width": 560, "height": 320, "padding": 18 }
+  },
+  "a11y": {
+    "ariaLabel": "Diverging bar chart showing quarterly variance",
+    "description": "Bars pointing left or right show variance.",
+    "tableFallback": { "enabled": false }
+  },
+  "portability": {
+    "fallbackType": "table",
+    "preferredRenderer": "vega-lite"
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "$schema": "https://oods.dev/viz-spec/v1",
+  "id": "after:viz:facet-small-multiples",
+  "name": "Pipeline throughput by region (facet)",
+  "data": {
+    "values": [
+      { "region": "North", "stage": "Qualified", "count": 120 },
+      { "region": "North", "stage": "Proposal", "count": 82 },
+      { "region": "North", "stage": "Closed", "count": 44 },
+      { "region": "South", "stage": "Qualified", "count": 130 },
+      { "region": "South", "stage": "Proposal", "count": 95 },
+      { "region": "South", "stage": "Closed", "count": 51 },
+      { "region": "West", "stage": "Qualified", "count": 142 },
+      { "region": "West", "stage": "Proposal", "count": 110 },
+      { "region": "West", "stage": "Closed", "count": 67 }
+    ]
+  },
+  "marks": [
+    {
+      "trait": "MarkBar",
+      "encodings": {
+        "x": { "field": "stage", "trait": "EncodingPositionX", "channel": "x", "title": "Stage", "scale": "band" },
+        "y": { "field": "count", "trait": "EncodingPositionY", "channel": "y", "scale": "linear", "title": "Deals" },
+        "color": { "field": "stage", "trait": "EncodingColor", "channel": "color", "legend": { "title": "Stage" } }
+      }
+    }
+  ],
+  "encoding": {
+    "x": { "field": "stage", "trait": "EncodingPositionX", "channel": "x" },
+    "y": { "field": "count", "trait": "EncodingPositionY", "channel": "y" },
+    "color": { "field": "stage", "trait": "EncodingColor", "channel": "color" }
+  },
+  "layout": {
+    "trait": "LayoutFacet",
+    "rows": { "field": "region", "title": "Region", "limit": 3, "sort": "ascending" },
+    "wrap": "row",
+    "gap": 12,
+    "sharedScales": { "x": "shared", "y": "shared", "color": "independent" },
+    "maxPanels": 3
+  },
+  "interactions": [
+    {
+      "id": "stage-highlight",
+      "select": { "type": "point", "on": ["hover", "focus"], "fields": ["stage"] },
+      "rule": {
+        "bindTo": "visual",
+        "property": "fillOpacity",
+        "condition": { "value": 1 },
+        "else": { "value": 0.45 }
+      }
+    }
+  ],
+  "config": {
+    "theme": "brand-a",
+    "layout": { "width": 420, "height": 720, "padding": 16 }
+  },
+  "a11y": {
+    "ariaLabel": "Facet grid showing pipeline throughput per region",
+    "description": "West region drives the largest deal volume across every stage while North trails.",
+    "narrative": {
+      "summary": "West dominates pipeline throughput, South is balanced, and North needs support.",
+      "keyFindings": [
+        "West Qualified count 142 vs North 120",
+        "North Closed count 44 vs South 51",
+        "Stage mix is consistent across regions"
+      ]
+    },
+    "tableFallback": {
+      "enabled": true,
+      "caption": "Deals per stage and region",
+      "headings": ["region", "stage", "count"]
+    }
+  },
+  "portability": {
+    "fallbackType": "table",
+    "preferredRenderer": "vega-lite",
+    "tableColumnOrder": ["region", "stage", "count"]
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "$schema": "https://oods.dev/viz-spec/v1",
+  "id": "before:viz:facet-small-multiples",
+  "name": "Pipeline throughput by region (concat)",
+  "data": {
+    "values": [
+      { "region": "North", "stage": "Qualified", "count": 120 },
+      { "region": "North", "stage": "Proposal", "count": 82 },
+      { "region": "North", "stage": "Closed", "count": 44 },
+      { "region": "South", "stage": "Qualified", "count": 130 },
+      { "region": "South", "stage": "Proposal", "count": 95 },
+      { "region": "South", "stage": "Closed", "count": 51 },
+      { "region": "West", "stage": "Qualified", "count": 142 },
+      { "region": "West", "stage": "Proposal", "count": 110 },
+      { "region": "West", "stage": "Closed", "count": 67 }
+    ]
+  },
+  "marks": [
+    {
+      "trait": "MarkBar",
+      "encodings": {
+        "x": { "field": "stage", "trait": "EncodingPositionX", "channel": "x", "title": "Stage", "scale": "band" },
+        "y": { "field": "count", "trait": "EncodingPositionY", "channel": "y", "scale": "linear", "title": "Deals" },
+        "color": { "field": "region", "trait": "EncodingColor", "channel": "color", "legend": { "title": "Region" } }
+      }
+    }
+  ],
+  "encoding": {
+    "x": { "field": "stage", "trait": "EncodingPositionX", "channel": "x" },
+    "y": { "field": "count", "trait": "EncodingPositionY", "channel": "y" },
+    "color": { "field": "region", "trait": "EncodingColor", "channel": "color" }
+  },
+  "layout": {
+    "trait": "LayoutConcat",
+    "direction": "horizontal",
+    "gap": 24,
+    "sections": [
+      { "id": "north", "title": "North" },
+      {
+        "id": "south",
+        "title": "South",
+        "filters": [{ "field": "region", "operator": "==", "value": "South" }]
+      },
+      {
+        "id": "west",
+        "title": "West",
+        "filters": [{ "field": "region", "operator": "==", "value": "West" }]
+      }
+    ]
+  },
+  "config": {
+    "theme": "brand-a",
+    "layout": { "width": 1080, "height": 360, "padding": 24 }
+  },
+  "a11y": {
+    "ariaLabel": "Concat of pipeline throughput by region",
+    "description": "Each panel repeats the same chart with minimal differences.",
+    "tableFallback": { "enabled": false }
+  },
+  "portability": {
+    "fallbackType": "table",
+    "preferredRenderer": "vega-lite"
+  }
+}
