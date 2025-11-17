@@ -38,12 +38,10 @@ export type FacetTableResult =
       readonly columns: readonly AccessibleTableColumn[];
       readonly groups: readonly FacetTableGroup[];
       readonly layout: FacetLayoutSummary;
-      readonly analysis: VizDataAnalysis;
     }
   | {
       readonly status: 'disabled' | 'unavailable';
       readonly message: string;
-      readonly analysis: VizDataAnalysis;
       readonly reason: 'table-disabled' | 'table-unavailable' | 'missing-layout';
     };
 
@@ -51,13 +49,12 @@ const PANEL_KEY_SEPARATOR = '__@@__';
 
 export function generateFacetTables(spec: NormalizedVizSpec): FacetTableResult {
   const table = generateAccessibleTable(spec);
-  const analysis = table.analysis ?? analyzeVizSpec(spec);
+  const analysis: VizDataAnalysis = table.analysis ?? analyzeVizSpec(spec);
 
   if (table.status === 'disabled') {
     return {
       status: 'disabled',
       message: table.message,
-      analysis,
       reason: 'table-disabled',
     };
   }
@@ -66,7 +63,6 @@ export function generateFacetTables(spec: NormalizedVizSpec): FacetTableResult {
     return {
       status: 'unavailable',
       message: table.message,
-      analysis,
       reason: 'table-unavailable',
     };
   }
@@ -76,7 +72,6 @@ export function generateFacetTables(spec: NormalizedVizSpec): FacetTableResult {
     return {
       status: 'unavailable',
       message: 'Spec does not declare LayoutFacet metadata, so facet tables cannot be generated.',
-      analysis,
       reason: 'missing-layout',
     };
   }
@@ -90,7 +85,6 @@ export function generateFacetTables(spec: NormalizedVizSpec): FacetTableResult {
     return {
       status: 'unavailable',
       message: 'LayoutFacet metadata must declare at least one dimension (rows or columns).',
-      analysis,
       reason: 'missing-layout',
     };
   }
@@ -152,7 +146,6 @@ export function generateFacetTables(spec: NormalizedVizSpec): FacetTableResult {
       columnCount: columnDimension ? columnDimension.length : 1,
       panelCount: groups.length,
     },
-    analysis,
   };
 }
 

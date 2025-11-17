@@ -1,6 +1,7 @@
 import { createRef, useEffect, useMemo, useRef, useState } from 'react';
 import type { HTMLAttributes, JSX, KeyboardEvent as ReactKeyboardEvent, RefObject } from 'react';
-import embed, { type EmbedOptions, type Result as EmbedResult, type VisualizationSpec } from 'vega-embed';
+import { loadVegaEmbed } from '../../viz/runtime/vega-embed-loader.js';
+import type { EmbedOptions, EmbedResult, VisualizationSpec } from '../../viz/runtime/vega-embed-loader.js';
 import type { NormalizedVizSpec, TraitBinding } from '../../viz/spec/normalized-viz-spec.js';
 import { toVegaLiteSpec, type VegaLiteAdapterSpec } from '../../viz/adapters/vega-lite-adapter.js';
 import { VizContainer } from './VizContainer.js';
@@ -47,7 +48,8 @@ export function VizLayeredView({
   }, [layerSummaries]);
 
   useEffect(() => {
-    if (!chartRef.current) {
+    const target = chartRef.current;
+    if (!target) {
       return undefined;
     }
 
@@ -55,22 +57,24 @@ export function VizLayeredView({
     setStatus('loading');
     setErrorMessage(null);
 
-    void embed(chartRef.current, vegaSpec as unknown as VisualizationSpec, embedOptions)
-      .then((result) => {
+    void (async () => {
+      try {
+        const embed = await loadVegaEmbed();
+        const result = await embed(target, vegaSpec as unknown as VisualizationSpec, embedOptions);
         if (cancelled) {
           result.view?.finalize();
           return;
         }
         embedHandle.current = result;
         setStatus('ready');
-      })
-      .catch((error: unknown) => {
+      } catch (error: unknown) {
         if (cancelled) {
           return;
         }
         setStatus('error');
         setErrorMessage(error instanceof Error ? error.message : 'Unable to render layered view');
-      });
+      }
+    })();
 
     return () => {
       cancelled = true;

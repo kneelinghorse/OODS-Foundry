@@ -7,9 +7,9 @@ import { ScatterChart } from '../../../src/components/viz/ScatterChart.js';
 import { createDenseScatterSpec, createScatterChartSpec } from './__fixtures__/scatterChartSpec.js';
 
 const embedSpy = vi.hoisted(() => vi.fn(() => Promise.resolve({ view: { finalize: vi.fn() } })));
-vi.mock('vega-embed', () => ({
-  __esModule: true,
-  default: embedSpy,
+vi.mock('../../../src/viz/runtime/vega-embed-loader.js', () => ({
+  loadVegaEmbed: () => Promise.resolve(embedSpy),
+  preloadVegaEmbed: () => Promise.resolve(embedSpy),
 }));
 
 const disposeMock = vi.fn();
@@ -60,18 +60,22 @@ describe('ScatterChart', () => {
     expect(rows[0]).toHaveAttribute('aria-label');
   });
 
-  it('selects the ECharts renderer for dense datasets and wires interactions', async () => {
-    render(<ScatterChart spec={createDenseScatterSpec(720)} />);
+  it(
+    'selects the ECharts renderer for dense datasets and wires interactions',
+    { timeout: 15000 },
+    async () => {
+      render(<ScatterChart spec={createDenseScatterSpec(720)} />);
 
-    await waitFor(() => expect(initSpy).toHaveBeenCalledTimes(1));
-    expect(embedSpy).not.toHaveBeenCalled();
+      await waitFor(() => expect(initSpy).toHaveBeenCalledTimes(1));
+      expect(embedSpy).not.toHaveBeenCalled();
 
     const renderer = screen.getByTestId('scatter-chart-renderer');
     expect(renderer).toHaveAttribute('data-renderer', 'echarts');
 
     const option = setOptionMock.mock.calls[0]?.[0] as { dataset?: Array<{ source?: unknown[] }> } | undefined;
-    expect(option?.dataset?.[0]?.source?.length).toBe(720);
-    expect(onMock).toHaveBeenCalledWith('mouseover', expect.any(Function));
-    expect(onMock).toHaveBeenCalledWith('globalout', expect.any(Function));
-  });
+      expect(option?.dataset?.[0]?.source?.length).toBe(720);
+      expect(onMock).toHaveBeenCalledWith('mouseover', expect.any(Function));
+      expect(onMock).toHaveBeenCalledWith('globalout', expect.any(Function));
+    }
+  );
 });

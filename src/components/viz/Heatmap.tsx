@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { HTMLAttributes, JSX, MutableRefObject } from 'react';
-import embed, { type EmbedOptions, type Result as EmbedResult, type VisualizationSpec } from 'vega-embed';
+import { loadVegaEmbed } from '../../viz/runtime/vega-embed-loader.js';
+import type { EmbedOptions, EmbedResult, VisualizationSpec } from '../../viz/runtime/vega-embed-loader.js';
 import type { EChartsType } from 'echarts';
 import type { NormalizedVizSpec, TraitBinding } from '../../viz/spec/normalized-viz-spec.js';
 import { toVegaLiteSpec, type VegaLiteAdapterSpec } from '../../viz/adapters/vega-lite-adapter.js';
@@ -163,23 +164,25 @@ export function Heatmap({
       return undefined;
     }
 
-    void embed(target, vegaSpec as unknown as VisualizationSpec, embedOptions)
-      .then((result) => {
+    void (async () => {
+      try {
+        const embed = await loadVegaEmbed();
+        const result = await embed(target, vegaSpec as unknown as VisualizationSpec, embedOptions);
         if (cancelled) {
           result.view?.finalize();
           return;
         }
         embedHandle.current = result;
         setStatus('ready');
-      })
-      .catch((error: unknown) => {
+      } catch (error: unknown) {
         if (cancelled) {
           return;
         }
         const message = error instanceof Error ? error.message : 'Unable to render chart';
         setStatus('error');
         setErrorMessage(message);
-      });
+      }
+    })();
 
     return () => {
       cancelled = true;

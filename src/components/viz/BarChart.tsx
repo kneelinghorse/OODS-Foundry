@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { HTMLAttributes, JSX } from 'react';
-import embed, { type EmbedOptions, type VisualizationSpec } from 'vega-embed';
-import type { Result as EmbedResult } from 'vega-embed';
+import { loadVegaEmbed } from '../../viz/runtime/vega-embed-loader.js';
+import type { EmbedOptions, EmbedResult, VisualizationSpec } from '../../viz/runtime/vega-embed-loader.js';
 import type { NormalizedVizSpec } from '../../viz/spec/normalized-viz-spec.js';
 import { toVegaLiteSpec } from '../../viz/adapters/vega-lite-adapter.js';
 import type { VegaLiteAdapterSpec } from '../../viz/adapters/vega-lite-adapter.js';
@@ -35,7 +35,8 @@ export function BarChart({
   const embedOptions = useMemo<EmbedOptions>(() => ({ actions: false, renderer }), [renderer]);
 
   useEffect(() => {
-    if (!chartRef.current) {
+    const target = chartRef.current;
+    if (!target) {
       return undefined;
     }
 
@@ -43,16 +44,17 @@ export function BarChart({
     setStatus('loading');
     setErrorMessage(null);
 
-    void embed(chartRef.current, vegaSpec as unknown as VisualizationSpec, embedOptions)
-      .then((result) => {
+    void (async () => {
+      try {
+        const embed = await loadVegaEmbed();
+        const result = await embed(target, vegaSpec as unknown as VisualizationSpec, embedOptions);
         if (cancelled) {
           result.view?.finalize();
           return;
         }
         embedHandle.current = result;
         setStatus('ready');
-      })
-      .catch((error: unknown) => {
+      } catch (error: unknown) {
         if (cancelled) {
           return;
         }
@@ -63,7 +65,8 @@ export function BarChart({
           // eslint-disable-next-line no-console -- surfaced only for local debugging
           console.error('BarChart failed to render via Vega-Lite adapter', error);
         }
-      });
+      }
+    })();
 
     return () => {
       cancelled = true;
