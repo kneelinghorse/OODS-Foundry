@@ -536,14 +536,16 @@ function normalizeInteractions(
       if (!rawId) {
         return undefined;
       }
-      const base = sanitizeInteractionId(rawId);
-      let candidate = base;
-      let counter = 1;
-      while (seen.has(candidate)) {
+      const baseKey = canonicalizeInteractionId(rawId);
+      let candidate = rawId;
+      let candidateKey = baseKey;
+      let counter = 2;
+      while (seen.has(candidateKey)) {
+        candidate = `${rawId}-${counter}`;
+        candidateKey = `${baseKey}-${counter}`;
         counter += 1;
-        candidate = `${base}_${counter}`;
       }
-      seen.add(candidate);
+      seen.add(candidateKey);
       return {
         ...interaction,
         id: candidate,
@@ -554,8 +556,8 @@ function normalizeInteractions(
   return normalized.length > 0 ? normalized : undefined;
 }
 
-function sanitizeInteractionId(id: string): string {
-  return id.toLowerCase().replace(/[^a-z0-9_]/g, '_');
+function canonicalizeInteractionId(id: string): string {
+  return id.toLowerCase().replace(/[^a-z0-9_-]/g, '_');
 }
 
 function removeUndefined<T extends object>(input: T): T {
