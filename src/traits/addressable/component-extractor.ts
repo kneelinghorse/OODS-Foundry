@@ -37,7 +37,10 @@ export function extractComponents(
     if (isMultilineLine(lineDef)) {
       const result = extractMultilineBlock(template, lines, templateIndex, lineIndex);
       if (result) {
-        components[lineDef.tokens[0]!.component] = result.values;
+        const token = lineDef.tokens[0];
+        if (token && token.kind === 'component') {
+          components[token.component] = result.values;
+        }
         lineIndex = result.nextIndex;
       }
       continue;

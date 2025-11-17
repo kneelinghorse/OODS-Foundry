@@ -3,12 +3,12 @@ import type { Address } from '@/schemas/address.js';
 export type AddressTemplateComponent = keyof Address | 'countryName';
 
 export interface TemplateComponentOptions {
-  readonly prefix?: string;
-  readonly suffix?: string;
-  readonly uppercase?: boolean;
-  readonly multiline?: boolean;
-  readonly separator?: string;
-  readonly required?: boolean;
+  prefix?: string;
+  suffix?: string;
+  uppercase?: boolean;
+  multiline?: boolean;
+  separator?: string;
+  required?: boolean;
 }
 
 export interface TemplateComponentToken {

@@ -9,7 +9,6 @@ import type {
   AddressTemplateComponent,
   TemplateComponentToken,
   TemplateLine,
-  TemplateToken,
 } from './template-parser.js';
 
 export interface FormatAddressOptions {
