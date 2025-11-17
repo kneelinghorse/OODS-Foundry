@@ -13,6 +13,9 @@
   "files": [
     "dist/pkg"
   ],
+  "sideEffects": [
+    "**/*.css"
+  ],
   "exports": {
     ".": {
       "types": "./dist/pkg/index.d.ts",

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, createRef, forwardRef } from 'react';
 import type { HTMLAttributes, JSX, KeyboardEvent as ReactKeyboardEvent, RefObject } from 'react';
-import embed, { type EmbedOptions, type Result as EmbedResult, type VisualizationSpec } from 'vega-embed';
+import { loadVegaEmbed } from '../../viz/runtime/vega-embed-loader.js';
+import type { EmbedOptions, EmbedResult, VisualizationSpec } from '../../viz/runtime/vega-embed-loader.js';
 import type { NormalizedVizSpec } from '../../viz/spec/normalized-viz-spec.js';
 import type { VegaLiteAdapterSpec } from '../../viz/adapters/vega-lite-adapter.js';
 import { toVegaLiteSpec } from '../../viz/adapters/vega-lite-adapter.js';
@@ -24,6 +25,8 @@ export interface VizFacetGridProps extends HTMLAttributes<HTMLElement> {
 type ChartStatus = 'idle' | 'loading' | 'ready' | 'error';
 
 const DEFAULT_MIN_HEIGHT = 360;
+const FULL_RENDER_THRESHOLD = 8;
+const DEFAULT_EXPANDED_PANELS = 4;
 
 export function VizFacetGrid({
   spec,
@@ -52,7 +55,8 @@ export function VizFacetGrid({
   }, [facetTables]);
 
   useEffect(() => {
-    if (!chartRef.current) {
+    const target = chartRef.current;
+    if (!target) {
       return undefined;
     }
 
@@ -60,22 +64,24 @@ export function VizFacetGrid({
     setStatus('loading');
     setErrorMessage(null);
 
-    void embed(chartRef.current, vegaSpec as unknown as VisualizationSpec, embedOptions)
-      .then((result) => {
+    void (async () => {
+      try {
+        const embed = await loadVegaEmbed();
+        const result = await embed(target, vegaSpec as unknown as VisualizationSpec, embedOptions);
         if (cancelled) {
           result.view?.finalize();
           return;
         }
         embedHandle.current = result;
         setStatus('ready');
-      })
-      .catch((error: unknown) => {
+      } catch (error: unknown) {
         if (cancelled) {
           return;
         }
         setStatus('error');
         setErrorMessage(error instanceof Error ? error.message : 'Unable to render facet grid');
-      });
+      }
+    })();
 
     return () => {
       cancelled = true;
@@ -148,10 +154,30 @@ function FacetTableFallback({ result, enableKeyboardNavigation, refs }: FacetTab
     );
   }
 
+  const [expandedPanels, setExpandedPanels] = useState<Set<number>>(() => buildInitialExpandedSet(groups.length));
+
+  useEffect(() => {
+    setExpandedPanels(buildInitialExpandedSet(groups.length));
+  }, [groups.length]);
+
+  const isExpanded = (index: number): boolean => expandedPanels.has(index);
+  const toggleExpanded = (index: number): void => {
+    setExpandedPanels((current) => {
+      const next = new Set(current);
+      if (next.has(index)) {
+        next.delete(index);
+      } else {
+        next.add(index);
+      }
+      return next;
+    });
+  };
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-testid="facet-table-fallback">
       {groups.map((group, index) => {
         const ref = refs[index];
+        const tableId = `facet-panel-table-${group.key}`;
         return (
           <FacetPanel
             key={group.key}
@@ -163,11 +189,24 @@ function FacetTableFallback({ result, enableKeyboardNavigation, refs }: FacetTab
             enableKeyboardNavigation={enableKeyboardNavigation}
             totalPanels={layout.panelCount}
             focusRefs={refs}
+            expanded={isExpanded(index)}
+            onToggle={() => toggleExpanded(index)}
+            tableId={tableId}
+            rowCount={group.rows.length}
           />
         );
       })}
     </div>
   );
+}
+
+function buildInitialExpandedSet(panelCount: number): Set<number> {
+  const limit = panelCount <= FULL_RENDER_THRESHOLD ? panelCount : DEFAULT_EXPANDED_PANELS;
+  const initial = new Set<number>();
+  for (let index = 0; index < limit; index += 1) {
+    initial.add(index);
+  }
+  return initial;
 }
 
 interface FacetPanelProps {
@@ -178,10 +217,14 @@ interface FacetPanelProps {
   readonly totalPanels: number;
   readonly enableKeyboardNavigation: boolean;
   readonly focusRefs: readonly RefObject<HTMLDivElement>[];
+  readonly expanded: boolean;
+  readonly onToggle: () => void;
+  readonly tableId: string;
+  readonly rowCount: number;
 }
 
 const FacetPanel = forwardRef<HTMLDivElement, FacetPanelProps>(function FacetPanelInner(
-  { group, columns, panelIndex, columnCount, totalPanels, enableKeyboardNavigation, focusRefs },
+  { group, columns, panelIndex, columnCount, totalPanels, enableKeyboardNavigation, focusRefs, expanded, onToggle, tableId, rowCount },
   ref
 ): JSX.Element {
   const className =
@@ -206,43 +249,63 @@ const FacetPanel = forwardRef<HTMLDivElement, FacetPanelProps>(function FacetPan
       className={className}
       onKeyDown={handleKeyDown}
     >
-      <div className="flex items-center justify-between gap-4">
-        <p className="text-sm font-semibold text-text">{group.title}</p>
-        <p className="text-xs text-text-muted">
-          Panel {panelIndex + 1} of {totalPanels}
-        </p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="text-sm font-semibold text-text">{group.title}</p>
+          <p className="text-xs text-text-muted">
+            Panel {panelIndex + 1} of {totalPanels}
+          </p>
+        </div>
+        <button
+          type="button"
+          className="rounded-full border border-slate-300 px-3 py-1 text-xs font-semibold text-text hover:border-slate-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[--sys-focus-ring]"
+          aria-expanded={expanded}
+          aria-controls={tableId}
+          aria-label={`${expanded ? 'Hide' : 'Show'} table for panel ${panelIndex + 1}`}
+          onClick={onToggle}
+        >
+          {expanded ? 'Hide table' : 'Show table'}
+        </button>
       </div>
-      {group.empty ? (
-        <p className="mt-3 text-sm text-text-muted">No data available for this facet.</p>
-      ) : (
-        <div className="mt-3 overflow-auto">
-          <table className="min-w-full border-collapse" aria-label={group.title}>
-            <thead className="bg-slate-50">
-              <tr>
-                {columns.map((column) => (
-                  <th
-                    key={column.field}
-                    scope="col"
-                    className="whitespace-nowrap border-b border-slate-200 px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-text"
-                  >
-                    {column.label}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {group.rows.map((row) => (
-                <tr key={row.key} className="odd:bg-white even:bg-slate-50">
-                  {row.cells.map((cell) => (
-                    <td key={`${row.key}:${cell.field}`} className="border-b border-slate-100 px-3 py-2 text-sm text-text">
-                      {cell.text}
-                    </td>
+      {expanded ? (
+        group.empty ? (
+          <p className="mt-3 text-sm text-text-muted">No data available for this facet.</p>
+        ) : (
+          <div className="mt-3 overflow-auto" id={tableId}>
+            <table className="min-w-full border-collapse" aria-label={group.title}>
+              <thead className="bg-slate-50">
+                <tr>
+                  {columns.map((column) => (
+                    <th
+                      key={column.field}
+                      scope="col"
+                      className="whitespace-nowrap border-b border-slate-200 px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-text"
+                    >
+                      {column.label}
+                    </th>
                   ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {group.rows.map((row) => (
+                  <tr key={row.key} className="odd:bg-white even:bg-slate-50">
+                    {row.cells.map((cell) => (
+                      <td key={`${row.key}:${cell.field}`} className="border-b border-slate-100 px-3 py-2 text-sm text-text">
+                        {cell.text}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )
+      ) : (
+        <p className="mt-3 text-sm text-text-muted" id={tableId}>
+          {group.empty
+            ? 'No data available for this facet.'
+            : `${rowCount} rows available. Select “Show table” to render the accessible fallback.`}
+        </p>
       )}
     </div>
   );

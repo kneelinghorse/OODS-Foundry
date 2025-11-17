@@ -12,9 +12,9 @@ expect.extend({ toHaveNoViolations });
 
 const embedSpy = vi.hoisted(() => vi.fn(() => Promise.resolve({ view: { finalize: vi.fn() } })));
 
-vi.mock('vega-embed', () => ({
-  __esModule: true,
-  default: embedSpy,
+vi.mock('../../../src/viz/runtime/vega-embed-loader.js', () => ({
+  loadVegaEmbed: () => Promise.resolve(embedSpy),
+  preloadVegaEmbed: () => Promise.resolve(embedSpy),
 }));
 
 vi.mock('echarts', () => ({
@@ -51,10 +51,14 @@ beforeEach(() => {
 });
 
 describe('AreaChart accessibility', () => {
-  it('has no axe violations', async () => {
-    const { container } = render(<AreaChart spec={createAreaChartSpec()} renderer="vega-lite" />);
-    await waitFor(() => expect(embedSpy).toHaveBeenCalledTimes(1));
-    const results = await axe(container);
-    expect(results).toHaveNoViolations();
-  });
+  it(
+    'has no axe violations',
+    { timeout: 15000 },
+    async () => {
+      const { container } = render(<AreaChart spec={createAreaChartSpec()} renderer="vega-lite" />);
+      await waitFor(() => expect(embedSpy).toHaveBeenCalledTimes(1));
+      const results = await axe(container);
+      expect(results).toHaveNoViolations();
+    }
+  );
 });

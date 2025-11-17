@@ -9,9 +9,9 @@ import { BarChart } from '../../../src/components/viz/BarChart.js';
 import { createBarChartSpec } from './__fixtures__/barChartSpec.js';
 
 const embedSpy = vi.hoisted(() => vi.fn(() => Promise.resolve({ view: { finalize: vi.fn() } })));
-vi.mock('vega-embed', () => ({
-  __esModule: true,
-  default: embedSpy,
+vi.mock('../../../src/viz/runtime/vega-embed-loader.js', () => ({
+  loadVegaEmbed: () => Promise.resolve(embedSpy),
+  preloadVegaEmbed: () => Promise.resolve(embedSpy),
 }));
 
 beforeEach(() => {
