@@ -10,27 +10,6 @@ import { ScatterChart } from '~/src/components/viz/ScatterChart';
 import { BubbleChart } from '~/src/components/viz/BubbleChart';
 import { Heatmap } from '~/src/components/viz/Heatmap';
 
-import groupedBar from '../../examples/viz/patterns-v2/grouped-bar.spec.json';
-import stackedBar from '../../examples/viz/patterns-v2/stacked-bar.spec.json';
-import stacked100 from '../../examples/viz/patterns-v2/stacked-100-bar.spec.json';
-import divergingBar from '../../examples/viz/patterns-v2/diverging-bar.spec.json';
-import multiSeriesLine from '../../examples/viz/patterns-v2/multi-series-line.spec.json';
-import targetBand from '../../examples/viz/patterns-v2/target-band-line.spec.json';
-import runningArea from '../../examples/viz/patterns-v2/running-total-area.spec.json';
-import bubble from '../../examples/viz/patterns-v2/bubble-distribution.spec.json';
-import correlationScatter from '../../examples/viz/patterns-v2/correlation-scatter.spec.json';
-import timeGrid from '../../examples/viz/patterns-v2/time-grid-heatmap.spec.json';
-import correlationMatrix from '../../examples/viz/patterns-v2/correlation-matrix.spec.json';
-import facetMultiples from '../../examples/viz/patterns-v2/facet-small-multiples-line.spec.json';
-import layeredLineArea from '../../examples/viz/patterns-v2/layered-line-area.spec.json';
-import stackedAreaProjection from '../../examples/viz/patterns-v2/stacked-area-projection.spec.json';
-import linkedBrush from '../../examples/viz/patterns-v2/linked-brush-scatter.spec.json';
-import focusContext from '../../examples/viz/patterns-v2/focus-context-line.spec.json';
-import detailOverview from '../../examples/viz/patterns-v2/detail-overview-bar.spec.json';
-import sparklineGrid from '../../examples/viz/patterns-v2/sparkline-grid.spec.json';
-import facetTargetBand from '../../examples/viz/patterns-v2/facet-target-band.spec.json';
-import drilldownStackedBar from '../../examples/viz/patterns-v2/drilldown-stacked-bar.spec.json';
-
 type ResponsiveViewport = 'mobile' | 'tablet' | 'desktop';
 
 interface PatternGalleryV2Props {
@@ -44,29 +23,6 @@ interface PatternCard {
   readonly recipe: ReturnType<typeof scoreResponsiveStrategies>['recipes'][number];
 }
 
-const specMap: Record<string, NormalizedVizSpec> = {
-  'grouped-bar': groupedBar as NormalizedVizSpec,
-  'stacked-bar': stackedBar as NormalizedVizSpec,
-  'stacked-100-bar': stacked100 as NormalizedVizSpec,
-  'diverging-bar': divergingBar as NormalizedVizSpec,
-  'multi-series-line': multiSeriesLine as NormalizedVizSpec,
-  'target-band-line': targetBand as NormalizedVizSpec,
-  'running-total-area': runningArea as NormalizedVizSpec,
-  'bubble-distribution': bubble as NormalizedVizSpec,
-  'correlation-scatter': correlationScatter as NormalizedVizSpec,
-  'time-grid-heatmap': timeGrid as NormalizedVizSpec,
-  'correlation-matrix': correlationMatrix as NormalizedVizSpec,
-  'facet-small-multiples-line': facetMultiples as NormalizedVizSpec,
-  'layered-line-area': layeredLineArea as NormalizedVizSpec,
-  'stacked-area-projection': stackedAreaProjection as NormalizedVizSpec,
-  'linked-brush-scatter': linkedBrush as NormalizedVizSpec,
-  'focus-context-line': focusContext as NormalizedVizSpec,
-  'detail-overview-bar': detailOverview as NormalizedVizSpec,
-  'sparkline-grid': sparklineGrid as NormalizedVizSpec,
-  'facet-target-band': facetTargetBand as NormalizedVizSpec,
-  'drilldown-stacked-bar': drilldownStackedBar as NormalizedVizSpec,
-};
-
 const componentMap = {
   bar: BarChart,
   line: LineChart,
@@ -74,6 +30,18 @@ const componentMap = {
   scatter: ScatterChart,
   heatmap: Heatmap,
 } as const;
+
+const specModules = import.meta.glob<NormalizedVizSpec>('../../examples/viz/patterns-v2/*.spec.json', {
+  eager: true,
+  import: 'default',
+});
+
+function resolveSpec(pattern: (typeof chartPatterns)[number]): NormalizedVizSpec | undefined {
+  const normalizedPath = pattern.specPath.startsWith('examples/')
+    ? `../../${pattern.specPath}`
+    : pattern.specPath;
+  return specModules[normalizedPath];
+}
 
 function buildSchemaFromPattern(pattern: (typeof chartPatterns)[number]) {
   return {
@@ -101,7 +69,7 @@ export function PatternGalleryV2({ viewport = 'desktop' }: PatternGalleryV2Props
   const cards = useMemo<PatternCard[]>(() => {
     return chartPatterns
       .map((pattern) => {
-        const spec = specMap[pattern.id];
+        const spec = resolveSpec(pattern);
         const ChartComponent =
           pattern.id === 'bubble-distribution'
             ? BubbleChart

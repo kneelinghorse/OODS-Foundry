@@ -86,11 +86,12 @@ export function toVegaLiteSpec(spec: NormalizedVizSpec): VegaLiteAdapterSpec {
     throw new VegaLiteAdapterError('Normalized viz spec must contain at least one mark.');
   }
 
+  const interactions = normalizeInteractions(spec.interactions);
   const data = convertData(spec);
-  const transform = mergeTransforms(convertTransforms(spec.transforms), buildInteractionTransforms(spec.interactions));
+  const transform = mergeTransforms(convertTransforms(spec.transforms), buildInteractionTransforms(interactions));
   const baseEncoding = convertEncodingMap(spec.encoding);
-  const interactionParams = convertInteractionParams(spec.interactions);
-  const interactionEncoding = convertInteractionBindings(spec.interactions);
+  const interactionParams = convertInteractionParams(interactions);
+  const interactionEncoding = convertInteractionBindings(interactions);
   const convertedLayers = spec.marks.map((mark) => createLayer(mark, baseEncoding, interactionEncoding));
   const orderedLayers = applyLayerOrdering(spec.layout, convertedLayers);
   const requiresLayer = orderedLayers.length > 1 || orderedLayers.some((layer) => layer.data !== undefined);
@@ -519,6 +520,42 @@ function buildUserMeta(spec: NormalizedVizSpec): VegaLiteAdapterSpec['usermeta']
   return {
     oods: removeUndefined(meta),
   };
+}
+
+function normalizeInteractions(
+  interactions?: NormalizedVizSpec['interactions']
+): NormalizedVizSpec['interactions'] | undefined {
+  if (!interactions || interactions.length === 0) {
+    return undefined;
+  }
+
+  const seen = new Set<string>();
+  const normalized = interactions
+    .map((interaction) => {
+      const rawId = interaction.id?.trim();
+      if (!rawId) {
+        return undefined;
+      }
+      const base = sanitizeInteractionId(rawId);
+      let candidate = base;
+      let counter = 1;
+      while (seen.has(candidate)) {
+        counter += 1;
+        candidate = `${base}_${counter}`;
+      }
+      seen.add(candidate);
+      return {
+        ...interaction,
+        id: candidate,
+      };
+    })
+    .filter((interaction): interaction is NonNullable<typeof interaction> => Boolean(interaction));
+
+  return normalized.length > 0 ? normalized : undefined;
+}
+
+function sanitizeInteractionId(id: string): string {
+  return id.toLowerCase().replace(/[^a-z0-9_]/g, '_');
 }
 
 function removeUndefined<T extends object>(input: T): T {

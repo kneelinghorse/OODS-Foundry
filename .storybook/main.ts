@@ -1,5 +1,6 @@
 import type { StorybookConfig } from '@storybook/react-vite';
 import baseConfig from '../storybook.config';
+const baseViteFinal = baseConfig.viteFinal;
 
 function remapStories(patterns: StorybookConfig['stories']): StorybookConfig['stories'] {
   if (!patterns) return patterns;
@@ -35,6 +36,18 @@ const config: StorybookConfig = {
   ...baseConfig,
   stories: remapStories(baseConfig.stories),
   addons: remapAddons(baseConfig.addons),
+  viteFinal: async (incomingConfig, options) => {
+    const resolved =
+      typeof baseViteFinal === 'function' ? await baseViteFinal(incomingConfig, options) : incomingConfig;
+    const chunkSizeWarningLimit = Math.max(resolved.build?.chunkSizeWarningLimit ?? 0, 2000);
+    return {
+      ...resolved,
+      build: {
+        ...(resolved.build ?? {}),
+        chunkSizeWarningLimit,
+      },
+    };
+  },
 };
 
 export default config;
