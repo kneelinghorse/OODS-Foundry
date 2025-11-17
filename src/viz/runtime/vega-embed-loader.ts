@@ -33,4 +33,4 @@ export function preloadVegaEmbed(): Promise<VegaEmbed> {
   return loadVegaEmbed();
 }
 
-export type { EmbedOptions, EmbedResult, VisualizationSpec } from 'vega-embed';
+export type { EmbedOptions, Result as EmbedResult, VisualizationSpec } from 'vega-embed';
