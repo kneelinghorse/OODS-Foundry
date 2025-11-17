@@ -1,5 +1,4 @@
 
-````md
 # OODS Foundry — Object-Oriented Design System
 
 > A practical, tokens-only enterprise design system with semantic traits, context-aware rendering, and guardrails that keep accessibility and brand theming honest.
