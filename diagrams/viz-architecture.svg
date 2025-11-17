@@ -1,0 +1,78 @@
+<svg width="1100" height="420" viewBox="0 0 1100 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">OODS Visualization Architecture Flow</title>
+  <desc id="desc">Diagram showing how traits and tokens feed the normalized viz spec, adapters, renderers, components, view contexts, and tooling guardrails.</desc>
+  <defs>
+    <linearGradient id="node" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f8fbff" />
+      <stop offset="100%" stop-color="#e3ecff" />
+    </linearGradient>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L12,6 L0,12 z" fill="#5c6ac4" />
+    </marker>
+    <style>
+      .node { fill: url(#node); stroke: #5c6ac4; stroke-width: 2; rx: 12; ry: 12; }
+      .label { font-family: 'Inter', 'Segoe UI', sans-serif; font-size: 16px; fill: #0f172a; font-weight: 600; }
+      .meta { font-family: 'Inter', 'Segoe UI', sans-serif; font-size: 13px; fill: #475569; }
+      .arrow { stroke: #5c6ac4; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .callout { fill: #fef3c7; stroke: #d97706; stroke-width: 1.5; rx: 10; ry: 10; }
+      .callout-label { font-family: 'Inter', 'Segoe UI', sans-serif; font-size: 14px; fill: #78350f; font-weight: 600; }
+      .callout-meta { font-family: 'Inter', 'Segoe UI', sans-serif; font-size: 12px; fill: #92400e; }
+    </style>
+  </defs>
+
+  <!-- Top row nodes -->
+  <rect class="node" x="30" y="70" width="180" height="110" />
+  <text class="label" x="120" y="105" text-anchor="middle">Trait Engine</text>
+  <text class="meta" x="120" y="130" text-anchor="middle">Mark / Encoding / Layout / Interaction</text>
+  <text class="meta" x="120" y="150" text-anchor="middle">Viz tokens (--viz-*)</text>
+
+  <rect class="node" x="240" y="70" width="200" height="110" />
+  <text class="label" x="340" y="105" text-anchor="middle">Normalized Viz Spec</text>
+  <text class="meta" x="340" y="130" text-anchor="middle">Schema + Ajv validator</text>
+  <text class="meta" x="340" y="150" text-anchor="middle">Data · Layout · Interactions · A11y</text>
+
+  <rect class="node" x="470" y="70" width="200" height="110" />
+  <text class="label" x="570" y="105" text-anchor="middle">Adapters & Selector</text>
+  <text class="meta" x="570" y="130" text-anchor="middle">Vega-Lite / ECharts mapping</text>
+  <text class="meta" x="570" y="150" text-anchor="middle">Renderer heuristics + parity tests</text>
+
+  <rect class="node" x="700" y="70" width="180" height="110" />
+  <text class="label" x="790" y="105" text-anchor="middle">Renderers</text>
+  <text class="meta" x="790" y="130" text-anchor="middle">Vega-Lite (spec portability)</text>
+  <text class="meta" x="790" y="150" text-anchor="middle">ECharts (perf + density)</text>
+
+  <rect class="node" x="900" y="70" width="180" height="110" />
+  <text class="label" x="990" y="105" text-anchor="middle">Components & Layouts</text>
+  <text class="meta" x="990" y="130" text-anchor="middle">Bar/Line/Scatter/Area/Heatmap</text>
+  <text class="meta" x="990" y="150" text-anchor="middle">VizFacetGrid · VizLayeredView</text>
+
+  <!-- Bottom node -->
+  <rect class="node" x="350" y="240" width="260" height="110" />
+  <text class="label" x="480" y="275" text-anchor="middle">View Engine & Dashboards</text>
+  <text class="meta" x="480" y="300" text-anchor="middle">Chart/Dashboard contexts · SharedLegend</text>
+  <text class="meta" x="480" y="320" text-anchor="middle">RenderObject extensions + diagnostics</text>
+
+  <!-- Tooling callouts -->
+  <rect class="callout" x="40" y="240" width="250" height="110" />
+  <text class="callout-label" x="165" y="275" text-anchor="middle">Tooling & Automation</text>
+  <text class="callout-meta" x="165" y="300" text-anchor="middle">Pattern library · pnpm viz:suggest</text>
+  <text class="callout-meta" x="165" y="320" text-anchor="middle">Benchmarks · CLI scaffolds · tokens</text>
+
+  <rect class="callout" x="640" y="240" width="250" height="110" />
+  <text class="callout-label" x="765" y="275" text-anchor="middle">Quality Guardrails</text>
+  <text class="callout-meta" x="765" y="300" text-anchor="middle">RDV.4 a11y · OKLCH tokens</text>
+  <text class="callout-meta" x="765" y="320" text-anchor="middle">Performance budgets · Chromatic</text>
+
+  <!-- Connectors -->
+  <path class="arrow" d="M210 125 L240 125" />
+  <path class="arrow" d="M440 125 L470 125" />
+  <path class="arrow" d="M670 125 L700 125" />
+  <path class="arrow" d="M880 125 L900 125" />
+  <path class="arrow" d="M180 180 C180 220 420 220 420 240" />
+  <path class="arrow" d="M540 180 C540 220 520 220 520 240" />
+  <path class="arrow" d="M990 180 C990 220 610 220 610 240" />
+  <path class="arrow" d="M290 240 C290 200 320 170 370 170" />
+  <path class="arrow" d="M600 240 C600 200 640 170 700 170" />
+  <path class="arrow" d="M510 350 C510 380 765 380 765 350" marker-end="url(#arrow)" />
+  <path class="arrow" d="M510 350 C510 380 165 380 165 350" marker-end="url(#arrow)" />
+</svg>
