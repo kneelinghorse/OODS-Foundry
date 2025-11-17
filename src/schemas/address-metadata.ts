@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
-import { AddressSchema } from './address.ts';
-import type { Address, AddressInput } from './address.ts';
+import { AddressSchema } from './address.js';
+import type { Address, AddressInput } from './address.js';
 
 export const ADDRESS_VALIDATION_STATUSES = ['unvalidated', 'validated', 'corrected', 'enriched'] as const;
 export type AddressValidationStatus = (typeof ADDRESS_VALIDATION_STATUSES)[number];

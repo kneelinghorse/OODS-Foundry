@@ -1,12 +1,18 @@
-import { normalizeAddressRole, createAddressableEntry, fromAddressableEntry, toAddressRoleRecord } from './address-entry.ts';
+import {
+  normalizeAddressRole,
+  createAddressableEntry,
+  fromAddressableEntry,
+  toAddressRoleRecord,
+} from './address-entry.js';
 import type {
   AddressableEntry,
   AddressableEntryInput,
   AddressRoleRecord,
   CreateAddressableEntryOptions,
-} from './address-entry.ts';
-import type { AddressInput } from '@/schemas/address.ts';
-import type { AddressMetadataInput } from '@/schemas/address-metadata.ts';
+} from './address-entry.js';
+import type { AddressInput } from '@/schemas/address.js';
+import type { AddressMetadataInput } from '@/schemas/address-metadata.js';
+import TimeService from '@/services/time/index.js';
 
 export interface AddressableTraitOptions {
   readonly roles?: readonly string[];
@@ -56,7 +62,8 @@ export class AddressableTrait {
     });
 
     this.allowDynamicRoles = options.allowDynamicRoles ?? false;
-    this.clock = options.clock ?? (() => new Date().toISOString());
+    const defaultClock = () => TimeService.toIsoString(TimeService.nowSystem());
+    this.clock = options.clock ?? defaultClock;
     this.defaultRole = state.defaultRole
       ? normalizeAddressRole(state.defaultRole)
       : options.defaultRole

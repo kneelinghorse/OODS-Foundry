@@ -109,8 +109,8 @@ export function getAddressLine(address: Address, line: 1 | 2 | 3): string | unde
 }
 
 /**
- * Converts a set of lines into an immutable array to avoid accidental mutation.
+ * Creates a shallow copy of address lines to avoid leaking external references.
  */
-function freezeLines(lines: readonly string[]): readonly string[] {
-  return Object.freeze([...lines]);
+function freezeLines(lines: readonly string[]): string[] {
+  return [...lines];
 }

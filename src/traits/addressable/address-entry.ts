@@ -1,7 +1,8 @@
-import { normalizeAddress } from '@/schemas/address.ts';
-import type { Address, AddressInput } from '@/schemas/address.ts';
-import { AddressMetadataSchema } from '@/schemas/address-metadata.ts';
-import type { AddressMetadata, AddressMetadataInput } from '@/schemas/address-metadata.ts';
+import { normalizeAddress } from '@/schemas/address.js';
+import type { Address, AddressInput } from '@/schemas/address.js';
+import { AddressMetadataSchema } from '@/schemas/address-metadata.js';
+import type { AddressMetadata, AddressMetadataInput } from '@/schemas/address-metadata.js';
+import TimeService from '@/services/time/index.js';
 
 const ROLE_SLUG_PATTERN = /^[a-z0-9][a-z0-9._-]*$/i;
 
@@ -62,7 +63,8 @@ export function createAddressableEntry(
   const normalizedRole = normalizeAddressRole(role);
   const normalizedAddress = normalizeAddress(address);
   const normalizedMetadata = metadata ? AddressMetadataSchema.parse(metadata) : undefined;
-  const updatedAt = options.timestamp ?? new Date().toISOString();
+  const updatedAt =
+    options.timestamp ?? TimeService.toIsoString(TimeService.nowSystem());
 
   return Object.freeze({
     role: normalizedRole,
@@ -92,7 +94,7 @@ export function updateAddressMetadata(
 ): AddressableEntry {
   return createAddressableEntry(entry.role, entry.address, metadata, {
     isDefault: entry.isDefault,
-    timestamp: new Date().toISOString(),
+    timestamp: TimeService.toIsoString(TimeService.nowSystem()),
   });
 }
 
