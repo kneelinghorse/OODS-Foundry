@@ -294,7 +294,7 @@ export class GoogleAddressValidationAdapter implements AddressValidationProvider
   }
 }
 
-function extractValue(value: Address[keyof Address] | undefined): string | readonly string[] | undefined {
+function extractValue(value: Address[keyof Address] | undefined): string | string[] | undefined {
   if (Array.isArray(value)) {
     return value.length ? [...value] : undefined;
   }
@@ -314,8 +314,8 @@ function resolveComponentStatus(
     readonly missingComponents: ReadonlySet<string>;
     readonly unconfirmedComponents: ReadonlySet<string>;
   },
-  input?: string | readonly string[],
-  corrected?: string | readonly string[]
+  input?: string | string[],
+  corrected?: string | string[]
 ): ComponentValidationResult['status'] {
   if (verdict.missingComponents.has(component)) {
     return 'missing';
@@ -333,8 +333,8 @@ function resolveComponentStatus(
 }
 
 function valuesEqual(
-  a?: string | readonly string[],
-  b?: string | readonly string[]
+  a?: string | string[],
+  b?: string | string[]
 ): boolean {
   if (Array.isArray(a) || Array.isArray(b)) {
     const arrayA = Array.isArray(a) ? a : a ? [a] : [];
@@ -369,13 +369,14 @@ function toCandidateAddress(postal?: GooglePostalAddress | null): Address | unde
     return undefined;
   }
 
+  const addressLines = [...postal.addressLines];
   const input = compact({
     countryCode: postal.regionCode,
     postalCode: postal.postalCode,
     administrativeArea: postal.administrativeArea,
     locality: postal.locality ?? postal.sublocality,
     dependentLocality: postal.sublocality,
-    addressLines: postal.addressLines,
+    addressLines,
     organizationName: postal.organization,
     languageCode: postal.languageCode,
   });

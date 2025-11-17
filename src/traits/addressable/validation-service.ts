@@ -14,10 +14,10 @@ import { AddressValidationLifecycle } from './validation-lifecycle.js';
 export type ComponentValidationResult = ValidationComponentStatus;
 
 export interface ProviderEnrichmentMetadata {
-  readonly isResidential?: boolean;
-  readonly isBusiness?: boolean;
-  readonly isPOBox?: boolean;
-  readonly validationFlags?: Record<string, boolean>;
+  isResidential?: boolean;
+  isBusiness?: boolean;
+  isPOBox?: boolean;
+  validationFlags?: Record<string, boolean>;
 }
 
 export interface ProviderAddressValidationResult {
