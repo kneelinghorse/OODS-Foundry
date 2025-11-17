@@ -1,5 +1,6 @@
 // Auto-generated barrel for schema-derived types.
 export * from './token-mapping';
+export * from './traits/addressable.parameters';
 export * from './traits/archivable.parameters';
 export * from './traits/billable.parameters';
 export * from './traits/cancellable.parameters';

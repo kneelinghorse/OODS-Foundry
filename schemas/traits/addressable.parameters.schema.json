@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/07/schema",
+  "$id": "https://trait-engine.dev/schemas/traits/addressable",
+  "title": "Addressable Trait Parameters",
+  "description": "Configures the multi-role Addressable trait.",
+  "type": "object",
+  "properties": {
+    "roles": {
+      "type": "array",
+      "description": "Ordered list of supported address roles.",
+      "minItems": 1,
+      "maxItems": 16,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9._-]+$",
+        "minLength": 2,
+        "maxLength": 32
+      },
+      "default": ["billing", "shipping"]
+    },
+    "defaultRole": {
+      "type": "string",
+      "description": "Role returned when consumers omit a role argument.",
+      "pattern": "^[a-z0-9._-]+$"
+    },
+    "allowDynamicRoles": {
+      "type": "boolean",
+      "description": "Allow runtime addition of roles that are not predeclared.",
+      "default": false
+    }
+  },
+  "required": ["roles"],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "defaultRole": { "type": "string" }
+        },
+        "required": ["defaultRole"]
+      },
+      "then": {
+        "properties": {
+          "defaultRole": {
+            "enum": { "$data": "1/roles" }
+          }
+        }
+      }
+    }
+  ],
+  "examples": [
+    {
+      "roles": ["billing", "shipping"],
+      "defaultRole": "billing"
+    },
+    {
+      "roles": ["billing", "shipping", "warehouse"],
+      "defaultRole": "shipping",
+      "allowDynamicRoles": true
+    }
+  ]
+}
