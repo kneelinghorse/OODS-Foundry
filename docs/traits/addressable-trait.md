@@ -89,10 +89,12 @@ trait.removeAddress('billing'); // default shifts to shipping
 
 **Available methods**
 
-- `getAddress(role?: string)` – returns an `AddressableEntry` or falls back to default role
-- `getDefaultAddress()` / `getDefaultRole()` – explicit default accessors
-- `getAddresses()` – ordered entries using role precedence
+- `getAddress(role?: string)` – returns an `AddressableEntry` or falls back to the default role
+- `getDefaultAddress(role?: string)` / `getDefaultRole()` – explicit default accessors for global or role-scoped reads
+- `getAddresses(roles?: readonly string[])` – ordered entries using role precedence, optionally filtered to a subset
 - `setAddress(role, address, options)` – validates inputs via shared Zod schemas
+- `setAddresses(entries)` – bulk replace the role map using arrays, records, or `Map` inputs
+- `setDefaultAddress(role)` – reassign the canonical default without mutating address payloads
 - `removeAddress(role)` – deletes entries and reassigns the default when necessary
 - `toSnapshot()` – serializes addresses for persistence/composition
 
