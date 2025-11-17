@@ -57,9 +57,9 @@ export const DASHBOARD_EXAMPLES = [
 ] as const;
 
 export function listDashboardExamples(): readonly AnyDashboardExampleDefinition[] {
-  return DASHBOARD_EXAMPLES;
+  return DASHBOARD_EXAMPLES as readonly AnyDashboardExampleDefinition[];
 }
 
 export function findDashboardExample(id: string): AnyDashboardExampleDefinition | undefined {
-  return DASHBOARD_EXAMPLES.find((entry) => entry.id === id);
+  return DASHBOARD_EXAMPLES.find((entry) => entry.id === id) as AnyDashboardExampleDefinition | undefined;
 }
