@@ -14,8 +14,6 @@
 ---
 
 > **Release status:** `v1.0 RC` (Sprints 1–19). See `docs/releases/v1.0-release-notes.md` for the full journey and `docs/releases/v1.0-migration-guide.md` for adoption guidance.
->
-> **Mission control:** Run `./cmos/cli.py mission status` or `./cmos/cli.py db show current` for the authoritative backlog (CMOS SQLite).
 
 ## Why this exists
 
