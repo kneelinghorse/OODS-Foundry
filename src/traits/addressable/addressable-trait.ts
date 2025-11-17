@@ -1,25 +1,17 @@
-import {
-  normalizeAddressRole,
-  createAddressableEntry,
-  fromAddressableEntry,
-  toAddressRoleRecord,
-} from './address-entry.js';
-import type {
-  AddressableEntry,
-  AddressableEntryInput,
-  AddressRoleRecord,
-  CreateAddressableEntryOptions,
-} from './address-entry.js';
+import type { AddressableEntry } from './address-entry.js';
 import type { AddressInput } from '@/schemas/address.js';
-import type { AddressMetadataInput } from '@/schemas/address-metadata.js';
-import TimeService from '@/services/time/index.js';
-import {
-  formatAddress as formatAddressValue,
-} from './address-formatter.js';
+import { formatAddress as formatAddressValue } from './address-formatter.js';
 import type {
   FormatAddressOptions,
   FormatAddressResult,
 } from './address-formatter.js';
+import {
+  AddressStore,
+  type AddressCollectionInput,
+  type AddressStoreSnapshot,
+  type SetAddressOptions as StoreSetAddressOptions,
+} from './address-store.js';
+import { DEFAULT_ADDRESS_ROLES } from './role-manager.js';
 
 export interface AddressableTraitOptions {
   readonly roles?: readonly string[];
@@ -33,122 +25,85 @@ export interface AddressableTraitState {
   readonly defaultRole?: string;
 }
 
-export interface AddressableSnapshot {
-  readonly addresses: AddressRoleRecord;
-  readonly defaultRole?: string;
-}
+export type AddressableSnapshot = AddressStoreSnapshot;
 
-export interface SetAddressOptions extends Omit<CreateAddressableEntryOptions, 'timestamp'> {
-  readonly metadata?: AddressMetadataInput;
-}
+export type SetAddressOptions = StoreSetAddressOptions;
 
-type AddressCollectionInput =
-  | AddressableEntryInput[]
-  | AddressRoleRecord
-  | Map<string, AddressableEntryInput>
-  | undefined;
-
-export const DEFAULT_ADDRESS_ROLES = ['billing', 'shipping'] as const;
+export { DEFAULT_ADDRESS_ROLES } from './role-manager.js';
 
 /**
  * Runtime helper managing Addressable trait data in memory.
  * Provides deterministic get/set/remove operations with role guardrails.
  */
 export class AddressableTrait {
-  private readonly allowDynamicRoles: boolean;
-  private readonly clock: () => string;
-  private readonly roleOrder = new Map<string, number>();
-  private readonly entries = new Map<string, AddressableEntry>();
-  private defaultRole?: string;
+  private readonly store: AddressStore;
 
   constructor(state: AddressableTraitState = {}, options: AddressableTraitOptions = {}) {
-    const roles = options.roles ?? DEFAULT_ADDRESS_ROLES;
-    roles.forEach((role, index) => {
-      const normalized = normalizeAddressRole(role);
-      this.roleOrder.set(normalized, index);
+    this.store = new AddressStore({
+      roles: options.roles ?? DEFAULT_ADDRESS_ROLES,
+      allowDynamicRoles: options.allowDynamicRoles,
+      defaultRole: state.defaultRole ?? options.defaultRole,
+      addresses: state.addresses,
+      clock: options.clock,
     });
-
-    this.allowDynamicRoles = options.allowDynamicRoles ?? false;
-    const defaultClock = () => TimeService.toIsoString(TimeService.nowSystem());
-    this.clock = options.clock ?? defaultClock;
-    this.defaultRole = state.defaultRole
-      ? normalizeAddressRole(state.defaultRole)
-      : options.defaultRole
-        ? normalizeAddressRole(options.defaultRole)
-        : undefined;
-
-    this.ingestAddresses(state.addresses);
-    this.ensureDefaultRole();
   }
 
   /**
   * Returns the Addressable entry for a specific role (or default role if omitted).
   */
   getAddress(role?: string): AddressableEntry | null {
-    if (role) {
-      const normalized = normalizeAddressRole(role);
-      return this.entries.get(normalized) ?? null;
-    }
-
-    const fallback = this.defaultRole
-      ? this.entries.get(this.defaultRole)
-      : this.entries.values().next().value;
-    return fallback ?? null;
+    return this.store.getAddress(role);
   }
 
   getDefaultRole(): string | null {
-    return this.defaultRole ?? null;
+    return this.store.getDefaultRole();
   }
 
-  getDefaultAddress(): AddressableEntry | null {
-    return this.defaultRole ? this.getAddress(this.defaultRole) : this.getAddress();
+  getDefaultAddress(role?: string): AddressableEntry | null {
+    if (role) {
+      return this.store.getDefaultAddress(role);
+    }
+
+    return this.store.getDefaultAddress() ?? this.store.getAddress();
   }
 
-  getAddresses(): AddressableEntry[] {
-    return this.sortEntries();
+  getAddresses(roles?: readonly string[]): AddressableEntry[] {
+    return this.store.getAddresses(roles);
   }
 
   /**
    * Adds or replaces an address for the provided role.
    */
   setAddress(role: string, address: AddressInput, options: SetAddressOptions = {}): AddressableEntry {
-    const normalizedRole = this.assertRoleAllowed(role);
-    const entry = createAddressableEntry(normalizedRole, address, options.metadata, {
-      isDefault: options.isDefault,
-      timestamp: this.clock(),
-    });
+    return this.store.setAddress(role, address, options);
+  }
 
-    this.entries.set(normalizedRole, entry);
-    this.updateDefaultRole(entry);
-    return entry;
+  /**
+   * Bulk replace the current role map.
+   */
+  setAddresses(addresses: AddressCollectionInput): void {
+    this.store.setAddresses(addresses);
+  }
+
+  /**
+   * Explicitly assigns the default address role without mutating entries.
+   */
+  setDefaultAddress(role: string): AddressableEntry {
+    return this.store.setDefaultRole(role);
   }
 
   /**
    * Removes an address role; returns true when a role was present.
    */
   removeAddress(role: string): boolean {
-    const normalized = normalizeAddressRole(role);
-    const removed = this.entries.delete(normalized);
-
-    if (!removed) {
-      return false;
-    }
-
-    if (this.defaultRole === normalized) {
-      this.defaultRole = this.entries.keys().next().value;
-    }
-
-    return true;
+    return this.store.removeAddress(role);
   }
 
   /**
    * Serialize the current state for persistence or composition.
    */
   toSnapshot(): AddressableSnapshot {
-    return {
-      addresses: toAddressRoleRecord(this.entries.values()),
-      defaultRole: this.defaultRole,
-    };
+    return this.store.toSnapshot();
   }
 
   /**
@@ -168,80 +123,5 @@ export class AddressableTrait {
   getFormattedAddress(role?: string, options?: FormatAddressOptions): string | null {
     const result = this.formatAddress(role, options);
     return result?.formatted ?? null;
-  }
-
-  private ingestAddresses(addresses: AddressCollectionInput): void {
-    if (!addresses) {
-      return;
-    }
-
-    if (Array.isArray(addresses)) {
-      addresses.forEach((entry) => this.insertEntry(entry));
-      return;
-    }
-
-    if (addresses instanceof Map) {
-      addresses.forEach((entry) => this.insertEntry(entry));
-      return;
-    }
-
-    Object.values(addresses).forEach((entry) => this.insertEntry(entry));
-  }
-
-  private insertEntry(entry: AddressableEntryInput | AddressableEntry): void {
-    const normalizedRole = this.assertRoleAllowed(entry.role);
-    const normalized = fromAddressableEntry({
-      ...entry,
-      role: normalizedRole,
-    });
-
-    this.entries.set(normalizedRole, Object.freeze({ ...normalized, role: normalizedRole }));
-    this.updateDefaultRole(normalized);
-  }
-
-  private assertRoleAllowed(role: string): string {
-    const normalized = normalizeAddressRole(role);
-    if (this.roleOrder.has(normalized)) {
-      return normalized;
-    }
-
-    if (this.allowDynamicRoles) {
-      this.roleOrder.set(normalized, this.roleOrder.size);
-      return normalized;
-    }
-
-    throw new Error(`Role "${role}" is not allowed. Configure it via the roles parameter.`);
-  }
-
-  private ensureDefaultRole(): void {
-    if (this.defaultRole && this.entries.has(this.defaultRole)) {
-      return;
-    }
-
-    const preferred = this.sortEntries().find((entry) => entry.isDefault);
-    this.defaultRole = preferred?.role ?? this.entries.keys().next().value;
-  }
-
-  private updateDefaultRole(entry: AddressableEntry): void {
-    if (entry.isDefault) {
-      this.defaultRole = entry.role;
-      return;
-    }
-
-    if (!this.defaultRole) {
-      this.defaultRole = entry.role;
-    }
-  }
-
-  private sortEntries(): AddressableEntry[] {
-    const collection = Array.from(this.entries.values());
-
-    const rank = (role: string): number => this.roleOrder.get(role) ?? Number.MAX_SAFE_INTEGER;
-    collection.sort((a, b) => {
-      const diff = rank(a.role) - rank(b.role);
-      return diff !== 0 ? diff : a.role.localeCompare(b.role);
-    });
-
-    return collection;
   }
 }
