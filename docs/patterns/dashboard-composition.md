@@ -61,6 +61,8 @@ const AccountDashboardTrait: TraitAdapter<AccountRecord> = {
 
 Each example exports `create<Name>DashboardExample()` plus a preview component
 that renders `<RenderObject context="dashboard" />`.
+See `docs/viz/real-world-dashboard-examples.md` for deep dives and Storybook
+references for the same dashboards.
 
 ## Diagnostics & telemetry
 

@@ -1,12 +1,13 @@
+import type { ComponentType } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import '~/apps/explorer/src/styles/index.css';
-import { UserDashboardPreview } from '~/examples/dashboards/user-adoption';
-import { SubscriptionDashboardPreview } from '~/examples/dashboards/subscription-mrr';
-import { ProductDashboardPreview } from '~/examples/dashboards/product-analytics';
+import { listDashboardExamples } from '~/examples/dashboards';
 
-const meta: Meta<typeof UserDashboardPreview> = {
+const DASHBOARD_EXAMPLES = listDashboardExamples();
+
+const meta: Meta<ComponentType> = {
   title: 'Proofs/Dashboard Contexts',
-  component: UserDashboardPreview,
+  component: DASHBOARD_EXAMPLES[0]!.Preview,
   parameters: {
     layout: 'fullscreen',
   },
@@ -14,19 +15,29 @@ const meta: Meta<typeof UserDashboardPreview> = {
 
 export default meta;
 
-type Story = StoryObj<typeof UserDashboardPreview>;
+type Story = StoryObj<ComponentType>;
 
-export const UserDashboard: Story = {
-  name: 'User adoption dashboard',
-  render: () => <UserDashboardPreview />,
-};
+function storyFromExample(id: string): Story {
+  const example = DASHBOARD_EXAMPLES.find((entry) => entry.id === id);
+  if (!example) {
+    throw new Error(`Unknown dashboard example "${id}"`);
+  }
+  const Preview = example.Preview;
+  return {
+    name: example.title,
+    parameters: {
+      docs: {
+        description: {
+          story: example.summary,
+        },
+      },
+    },
+    render: () => <Preview />,
+  };
+}
 
-export const SubscriptionDashboard: Story = {
-  name: 'Subscription MRR dashboard',
-  render: () => <SubscriptionDashboardPreview />,
-};
+export const UserDashboard: Story = storyFromExample('user-adoption');
 
-export const ProductDashboard: Story = {
-  name: 'Product analytics dashboard',
-  render: () => <ProductDashboardPreview />,
-};
+export const SubscriptionDashboard: Story = storyFromExample('subscription-mrr');
+
+export const ProductDashboard: Story = storyFromExample('product-analytics');
