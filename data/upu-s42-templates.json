@@ -1,0 +1,76 @@
+[
+  {
+    "key": "US",
+    "countryCode": "US",
+    "description": "United States (USPS domestic + territories)",
+    "aliases": ["USA", "US-PR"],
+    "template": "{{organizationName}}\\n{{addressLines|multiline}}\\n{{locality}}{{administrativeArea|prefix=', '}}{{postalCode|prefix=' '}}\\n{{countryName}}"
+  },
+  {
+    "key": "CA",
+    "countryCode": "CA",
+    "description": "Canada Post format",
+    "template": "{{organizationName}}\\n{{addressLines|multiline}}\\n{{locality}}{{administrativeArea|prefix=', '}}{{postalCode|prefix='  ' | uppercase}}\\n{{countryName}}"
+  },
+  {
+    "key": "GB-PAF",
+    "countryCode": "GB",
+    "description": "United Kingdom (Postcode Address File)",
+    "aliases": ["UK", "GB"],
+    "template": "{{organizationName}}\\n{{addressLines|multiline}}\\n{{dependentLocality}}\\n{{locality}}{{administrativeArea|prefix=', '}}\\n{{postalCode|uppercase}}\\n{{countryName}}"
+  },
+  {
+    "key": "AU",
+    "countryCode": "AU",
+    "description": "Australia Post formatting",
+    "template": "{{organizationName}}\\n{{addressLines|multiline}}\\n{{locality}}{{administrativeArea|prefix=' '}}{{postalCode|prefix=' '}}\\n{{countryName}}"
+  },
+  {
+    "key": "JP",
+    "countryCode": "JP",
+    "description": "Japan Post (largest → smallest)",
+    "template": "{{organizationName}}\\n{{postalCode|prefix='〒'}}\\n{{administrativeArea}}{{locality}}{{dependentLocality}}\\n{{addressLines|multiline}}\\n{{countryName}}"
+  },
+  {
+    "key": "DE",
+    "countryCode": "DE",
+    "description": "Germany (street before house number)",
+    "template": "{{organizationName}}\\n{{addressLines|multiline}}\\n{{postalCode}}{{locality|prefix=' '}}\\n{{countryName}}"
+  },
+  {
+    "key": "FR",
+    "countryCode": "FR",
+    "description": "France La Poste",
+    "template": "{{organizationName}}\\n{{addressLines|multiline}}\\n{{postalCode}}{{locality|prefix=' '}}\\n{{countryName}}"
+  },
+  {
+    "key": "ES",
+    "countryCode": "ES",
+    "description": "Spain Correos",
+    "template": "{{organizationName}}\\n{{addressLines|multiline}}\\n{{postalCode}}{{locality|prefix=' '}}{{administrativeArea|prefix=' ('|suffix=')'}}\\n{{countryName}}"
+  },
+  {
+    "key": "IT",
+    "countryCode": "IT",
+    "description": "Italy Poste Italiane",
+    "template": "{{organizationName}}\\n{{addressLines|multiline}}\\n{{postalCode}}{{locality|prefix=' '}}{{administrativeArea|prefix=' ('|suffix=')'}}\\n{{countryName}}"
+  },
+  {
+    "key": "BR",
+    "countryCode": "BR",
+    "description": "Brazil Correios (logradouro + complemento)",
+    "template": "{{organizationName}}\\n{{addressLines|multiline}}\\n{{locality}}{{administrativeArea|prefix=' - '}}\\n{{postalCode|prefix='CEP '}}\\n{{countryName}}"
+  },
+  {
+    "key": "MX",
+    "countryCode": "MX",
+    "description": "Mexico SEPOMEX",
+    "template": "{{organizationName}}\\n{{addressLines|multiline}}\\n{{postalCode}}{{locality|prefix=' '}}{{administrativeArea|prefix=', '}}\\n{{countryName}}"
+  },
+  {
+    "key": "IN",
+    "countryCode": "IN",
+    "description": "India PIN format",
+    "template": "{{organizationName}}\\n{{addressLines|multiline}}\\n{{locality}}{{administrativeArea|prefix=', '}}{{postalCode|prefix=' '}}\\n{{countryName}}"
+  }
+]
