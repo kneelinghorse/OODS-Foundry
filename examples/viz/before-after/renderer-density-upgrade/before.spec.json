@@ -1,0 +1,73 @@
+{
+  "$schema": "https://oods.dev/viz-spec/v1",
+  "id": "before:viz:renderer-density-upgrade",
+  "name": "Bookings by cohort (pre-upgrade)",
+  "meta": {
+    "rowCount": 1800,
+    "benchArtifact": "artifacts/performance/viz-benchmark-results.json#bar-large"
+  },
+  "data": {
+    "values": [
+      { "cohort": "2019", "segment": "Enterprise", "bookings": 7.4 },
+      { "cohort": "2019", "segment": "Growth", "bookings": 4.2 },
+      { "cohort": "2019", "segment": "SMB", "bookings": 2.1 },
+      { "cohort": "2020", "segment": "Enterprise", "bookings": 6.8 },
+      { "cohort": "2020", "segment": "Growth", "bookings": 3.5 },
+      { "cohort": "2020", "segment": "SMB", "bookings": 1.9 },
+      { "cohort": "2021", "segment": "Enterprise", "bookings": 6.3 },
+      { "cohort": "2021", "segment": "Growth", "bookings": 3.0 },
+      { "cohort": "2021", "segment": "SMB", "bookings": 1.4 }
+    ]
+  },
+  "marks": [
+    {
+      "trait": "MarkBar",
+      "encodings": {
+        "x": { "field": "segment", "trait": "EncodingPositionX", "channel": "x", "title": "Segment", "scale": "band" },
+        "y": { "field": "bookings", "trait": "EncodingPositionY", "channel": "y", "title": "Bookings ($M)" },
+        "color": { "field": "cohort", "trait": "EncodingColor", "channel": "color", "legend": { "title": "Cohort" } }
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "id": "highlight",
+      "select": { "type": "point", "on": ["hover", "focus"], "fields": ["cohort", "segment"] },
+      "rule": {
+        "bindTo": "visual",
+        "property": "opacity",
+        "condition": { "value": 1 },
+        "else": { "value": 0.3 }
+      }
+    },
+    {
+      "id": "tooltip",
+      "select": { "type": "point", "on": ["hover", "focus"], "fields": ["cohort", "segment", "bookings"] },
+      "rule": {
+        "bindTo": "tooltip",
+        "fields": ["cohort", "segment", "bookings"]
+      }
+    },
+    {
+      "id": "brush",
+      "select": { "type": "interval", "on": "drag", "encodings": ["x"] },
+      "rule": {
+        "bindTo": "filter",
+        "target": "segment"
+      }
+    }
+  ],
+  "config": {
+    "theme": "brand-a",
+    "layout": { "width": 720, "height": 420, "padding": 18 }
+  },
+  "a11y": {
+    "ariaLabel": "Grouped bar chart showing bookings by cohort and segment",
+    "description": "Bar chart toggles highlight, tooltip, and brush interactions but loads slowly at 1.8k rows.",
+    "tableFallback": { "enabled": true, "caption": "Bookings per cohort and segment" }
+  },
+  "portability": {
+    "preferredRenderer": "vega-lite",
+    "fallbackType": "table"
+  }
+}

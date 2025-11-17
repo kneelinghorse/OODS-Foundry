@@ -1,0 +1,75 @@
+{
+  "$schema": "https://oods.dev/viz-spec/v1",
+  "id": "after:viz:a11y-tighten",
+  "name": "Quarterly variance (a11y complete)",
+  "data": {
+    "values": [
+      { "kpi": "Bookings", "delta": 12 },
+      { "kpi": "Pipeline", "delta": 6 },
+      { "kpi": "Retention", "delta": -4 },
+      { "kpi": "Support", "delta": -9 }
+    ]
+  },
+  "marks": [
+    {
+      "trait": "MarkBar",
+      "options": { "id": "variance-bars" },
+      "encodings": {
+        "y": { "field": "kpi", "trait": "EncodingPositionY", "channel": "y", "title": "KPI" },
+        "x": { "field": "delta", "trait": "EncodingPositionX", "channel": "x", "title": "Variance" },
+        "color": {
+          "field": "delta",
+          "trait": "EncodingColor",
+          "channel": "color",
+          "scheme": "diverging",
+          "legend": { "title": "Variance vs plan" }
+        }
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "id": "highlight",
+      "select": { "type": "point", "on": ["hover", "focus"], "fields": ["kpi"] },
+      "rule": {
+        "bindTo": "visual",
+        "property": "stroke",
+        "condition": { "value": "var(--sys-focus-ring)" }
+      }
+    },
+    {
+      "id": "tooltip",
+      "select": { "type": "point", "on": ["hover", "focus"], "fields": ["kpi", "delta"] },
+      "rule": { "bindTo": "tooltip", "fields": ["kpi", "delta"] }
+    }
+  ],
+  "config": {
+    "theme": "brand-a",
+    "layout": { "width": 560, "height": 320, "padding": 18 }
+  },
+  "a11y": {
+    "ariaLabel": "Diverging bar chart showing quarterly variance",
+    "description": "Bookings and Pipeline beat plan while Retention and Support lag behind.",
+    "narrative": {
+      "summary": "North-star KPIs exceeded plan, but service metrics dipped below expectations.",
+      "keyFindings": [
+        "Bookings +12 percentage points vs plan",
+        "Pipeline +6 points, supporting bookings growth",
+        "Support -9 points signals incident backlog",
+        "Retention -4 points needs follow-up" 
+      ],
+      "interactions": "Use Tab or arrow keys to move between bars; press Enter to announce the tooltip values."
+    },
+    "tableFallback": {
+      "enabled": true,
+      "caption": "Variance per KPI",
+      "headings": ["kpi", "delta"],
+      "summary": "Positive deltas indicate KPIs beating plan."
+    }
+  },
+  "portability": {
+    "fallbackType": "table",
+    "preferredRenderer": "vega-lite",
+    "tableColumnOrder": ["kpi", "delta"]
+  }
+}

@@ -1,32 +1,36 @@
 import React from 'react';
 
 const metrics = [
-  { label: 'Release Target', value: 'v1.0 RC' },
+  { label: 'Release', value: 'v1.0 RC' },
   { label: 'Tests', value: '754 / 754' },
-  { label: 'A11y', value: '49 / 49 axes' },
-  { label: 'Guardrails', value: 'Purity • Tokens • Perf' },
+  { label: 'A11y', value: '49 / 49' },
+  { label: 'Viz System', value: 'Sprint 21-23' },
 ];
 
 const quickLinks = [
   {
     title: 'Foundations',
-    description: 'Color, typography, and motion guardrails with OKLCH deltas.',
-    href: '?path=/docs/docs-foundations-colors--docs',
+    description: 'Color, typography, spacing, motion tokens with OKLCH deltas and WCAG guardrails.',
   },
   {
     title: 'Components',
-    description: 'Statusable primitives and feedback components wired to tokens.',
-    href: '?path=/docs/components-feedback-emptystate-guidelines--docs',
+    description: '40+ production components: primitives, statusables, inputs, overlays, data displays.',
   },
   {
     title: 'Contexts',
-    description: 'Detail/List/Form/Timeline render contexts with domain wiring.',
-    href: '?path=/story/contexts-domain-context-gallery--docs',
+    description: 'List/Detail/Form/Timeline render contexts with responsive density and semantic regions.',
+  },
+  {
+    title: 'Visualization',
+    description: '5 chart types, layout compositions (facet/layer), 35+ patterns, dual-renderer support.',
+  },
+  {
+    title: 'Domains',
+    description: 'End-to-end flows: Billing (subscription, invoice, usage), Account management, Authorization.',
   },
   {
     title: 'Brand & Accessibility',
-    description: 'High contrast proofs plus Brand B showcase snapshots.',
-    href: '?path=/story/brand-high-contrast-proof-gallery--primary',
+    description: 'Multi-brand theming (A/B), dark mode, forced-colors snapshots, automated compliance.',
   },
 ];
 
@@ -75,7 +79,7 @@ const IntroSplash: React.FC = () => (
             lineHeight: 1.05,
           }}
         >
-          Trait-based objects. Purpose-built docs. Public-ready Storybook.
+          Build from meaning, not markup
         </h1>
         <p
           style={{
@@ -85,8 +89,9 @@ const IntroSplash: React.FC = () => (
             color: 'var(--cmp-text-muted)',
           }}
         >
-          Explore how traits compose canonical billing objects, how statusables inherit semantic tokens, and how the Explorer keeps documentation,
-          proofs, and guardrails in one place.
+          Describe your objects once—User, Subscription, Product. Compose from traits—Statusable, Timestamped, Addressable. Render in any
+          context—List, Detail, Dashboard, Chart. The system generates types, views, tokens, tests, and documentation. Object-oriented design,
+          trait-first composition, agent-native architecture.
         </p>
       </div>
 
@@ -98,7 +103,7 @@ const IntroSplash: React.FC = () => (
         }}
       >
         <a
-          href="?path=/docs/docs-contexts-detail--docs"
+          href="https://github.com/kneelinghorse/OODS-Foundry"
           style={{
             display: 'inline-flex',
             alignItems: 'center',
@@ -110,12 +115,15 @@ const IntroSplash: React.FC = () => (
             background: 'var(--cmp-surface-action)',
             border: '1px solid transparent',
             boxShadow: 'inset 0 -1px 0 color-mix(in srgb, currentColor 18%, transparent)',
+            textDecoration: 'none',
           }}
+          target="_blank"
+          rel="noopener noreferrer"
         >
-          Enter Explorer
+          View on GitHub ↗︎
         </a>
         <a
-          href="https://github.com/systemsystems/oods-foundry/blob/main/README.md"
+          href="https://github.com/kneelinghorse/OODS-Foundry/blob/main/README.md"
           target="_blank"
           rel="noopener noreferrer"
           style={{
@@ -128,9 +136,10 @@ const IntroSplash: React.FC = () => (
             color: 'var(--cmp-text-action)',
             border: '1px solid var(--cmp-border-default)',
             background: 'transparent',
+            textDecoration: 'none',
           }}
         >
-          View README ↗︎
+          Read Documentation ↗︎
         </a>
       </div>
     </section>
@@ -186,7 +195,8 @@ const IntroSplash: React.FC = () => (
           What to explore
         </h2>
         <p style={{ margin: '0.25rem 0 0', color: 'var(--cmp-text-muted)' }}>
-          Navigation is curated: Intro → Docs → Foundations → Components → Contexts → Domains → Patterns → Explorer → Brand.
+          Browse the sidebar or start with any section below. Navigation follows: Intro → Docs → Foundations → Components → Visualization →
+          Contexts → Domains → Patterns → Brand.
         </p>
       </div>
 
@@ -198,23 +208,20 @@ const IntroSplash: React.FC = () => (
         }}
       >
         {quickLinks.map((link) => (
-          <a
+          <article
             key={link.title}
-            href={link.href}
             style={{
               borderRadius: '1.25rem',
               padding: '1.35rem',
               background: 'var(--cmp-surface-panel)',
               border: '1px solid color-mix(in srgb, var(--cmp-border-default) 35%, transparent)',
-              textDecoration: 'none',
-              color: 'inherit',
               display: 'grid',
               gap: '0.6rem',
             }}
           >
             <strong style={{ fontSize: '1rem' }}>{link.title}</strong>
             <span style={{ color: 'var(--cmp-text-muted)', lineHeight: 1.5 }}>{link.description}</span>
-          </a>
+          </article>
         ))}
       </div>
     </section>
@@ -229,10 +236,10 @@ const IntroSplash: React.FC = () => (
         border: '1px dashed color-mix(in srgb, var(--cmp-border-default) 45%, transparent)',
       }}
     >
-      <h2 style={{ margin: 0, fontSize: '1.2rem' }}>Brand & theme guidance</h2>
+      <h2 style={{ margin: 0, fontSize: '1.2rem' }}>Theme & accessibility</h2>
       <p style={{ margin: 0, color: 'var(--cmp-text-muted)', lineHeight: 1.5 }}>
-        The toolbar is fixed to Brand A • Light for consistency. Brand B, dark theme, and high-contrast snapshots live under their dedicated nav
-        entries. Chromatic continues to capture all four global combinations via Storybook globals.
+        Stories default to Brand A • Light mode. Brand B, dark theme, and forced-colors (high-contrast) variants live under Brand navigation.
+        Chromatic captures all four global combinations and automated WCAG 2.2 AA checks ensure contrast + OKLCH guardrails stay enforced.
       </p>
     </section>
   </div>

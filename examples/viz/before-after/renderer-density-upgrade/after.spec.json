@@ -1,0 +1,76 @@
+{
+  "$schema": "https://oods.dev/viz-spec/v1",
+  "id": "after:viz:renderer-density-upgrade",
+  "name": "Bookings by cohort (ECharts upgrade)",
+  "meta": {
+    "rowCount": 1800,
+    "benchArtifact": "artifacts/performance/renderer-density-upgrade.json",
+    "rendererNotes": "Highlight latency dropped from 92 ms to 37 ms by switching to ECharts and removing brush"
+  },
+  "data": {
+    "values": [
+      { "cohort": "2019", "segment": "Enterprise", "bookings": 7.4 },
+      { "cohort": "2019", "segment": "Growth", "bookings": 4.2 },
+      { "cohort": "2019", "segment": "SMB", "bookings": 2.1 },
+      { "cohort": "2020", "segment": "Enterprise", "bookings": 6.8 },
+      { "cohort": "2020", "segment": "Growth", "bookings": 3.5 },
+      { "cohort": "2020", "segment": "SMB", "bookings": 1.9 },
+      { "cohort": "2021", "segment": "Enterprise", "bookings": 6.3 },
+      { "cohort": "2021", "segment": "Growth", "bookings": 3.0 },
+      { "cohort": "2021", "segment": "SMB", "bookings": 1.4 }
+    ]
+  },
+  "marks": [
+    {
+      "trait": "MarkBar",
+      "encodings": {
+        "x": { "field": "segment", "trait": "EncodingPositionX", "channel": "x", "title": "Segment", "scale": "band" },
+        "y": { "field": "bookings", "trait": "EncodingPositionY", "channel": "y", "title": "Bookings ($M)" },
+        "color": { "field": "cohort", "trait": "EncodingColor", "channel": "color", "legend": { "title": "Cohort" } }
+      }
+    }
+  ],
+  "interactions": [
+    {
+      "id": "highlight",
+      "select": { "type": "point", "on": ["hover", "focus"], "fields": ["cohort", "segment"] },
+      "rule": {
+        "bindTo": "visual",
+        "property": "opacity",
+        "condition": { "value": 1 },
+        "else": { "value": 0.35 }
+      }
+    },
+    {
+      "id": "tooltip",
+      "select": { "type": "point", "on": ["hover", "focus"], "fields": ["cohort", "segment", "bookings"] },
+      "rule": {
+        "bindTo": "tooltip",
+        "fields": ["cohort", "segment", "bookings"]
+      }
+    }
+  ],
+  "config": {
+    "theme": "brand-a",
+    "layout": { "width": 720, "height": 420, "padding": 18 },
+    "renderer": { "id": "echarts" }
+  },
+  "a11y": {
+    "ariaLabel": "Grouped bar chart showing bookings by cohort and segment",
+    "description": "ECharts renderer keeps highlight responsive for 1.8k rows and retains the same keyboard interactions.",
+    "narrative": {
+      "summary": "Enterprise segments lead bookings across all cohorts.",
+      "keyFindings": [
+        "2019 cohort leads all segments",
+        "Cohort drop from 2019 to 2021 is consistent",
+        "SMB remains under $2M regardless of cohort"
+      ]
+    },
+    "tableFallback": { "enabled": true, "caption": "Bookings per cohort and segment" }
+  },
+  "portability": {
+    "preferredRenderer": "echarts",
+    "fallbackType": "table",
+    "rendererJustification": "See artifacts/performance/renderer-density-upgrade.json"
+  }
+}
