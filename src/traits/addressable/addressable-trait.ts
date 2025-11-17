@@ -13,6 +13,13 @@ import type {
 import type { AddressInput } from '@/schemas/address.js';
 import type { AddressMetadataInput } from '@/schemas/address-metadata.js';
 import TimeService from '@/services/time/index.js';
+import {
+  formatAddress as formatAddressValue,
+} from './address-formatter.js';
+import type {
+  FormatAddressOptions,
+  FormatAddressResult,
+} from './address-formatter.js';
 
 export interface AddressableTraitOptions {
   readonly roles?: readonly string[];
@@ -142,6 +149,25 @@ export class AddressableTrait {
       addresses: toAddressRoleRecord(this.entries.values()),
       defaultRole: this.defaultRole,
     };
+  }
+
+  /**
+   * Format the address for the requested role using the UPU S42 template.
+   */
+  formatAddress(role?: string, options?: FormatAddressOptions): FormatAddressResult | null {
+    const entry = this.getAddress(role);
+    if (!entry) {
+      return null;
+    }
+    return formatAddressValue(entry.address, options);
+  }
+
+  /**
+   * Convenience method returning the formatted address string (lines joined by newline).
+   */
+  getFormattedAddress(role?: string, options?: FormatAddressOptions): string | null {
+    const result = this.formatAddress(role, options);
+    return result?.formatted ?? null;
   }
 
   private ingestAddresses(addresses: AddressCollectionInput): void {
