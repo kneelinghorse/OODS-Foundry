@@ -9,20 +9,28 @@ import { normalizeTag, type Tag } from '@/schemas/classification/tag.js';
 const hybridCategories: CategoryNode[] = [
   normalizeCategoryNode({
     id: 'kb_platform',
+    slug: 'platform',
     name: 'Platform',
     path: ['knowledge-base', 'platform'],
     ancestors: ['knowledge-base'],
     childCount: 8,
     metadata: { source: 'kb', sortKey: 1 },
+    depth: 1,
+    mode: 'taxonomy',
+    isSelectable: true,
   }),
   normalizeCategoryNode({
     id: 'kb_platform_traits',
+    slug: 'traits',
     name: 'Traits',
     path: ['knowledge-base', 'platform', 'traits'],
     parentId: 'kb_platform',
     ancestors: ['knowledge-base', 'kb_platform'],
     childCount: 4,
     metadata: { source: 'kb', sortKey: 4 },
+    depth: 2,
+    mode: 'taxonomy',
+    isSelectable: true,
   }),
 ];
 
@@ -30,20 +38,29 @@ const hybridTags: Tag[] = [
   normalizeTag({
     id: 'tag_classification',
     name: 'Classification',
+    slug: 'classification',
     usageCount: 184,
     synonyms: ['taxonomy', 'category'],
+    state: 'active',
+    isCanonical: true,
   }),
   normalizeTag({
     id: 'tag_hybrid',
     name: 'Hybrid Mode',
+    slug: 'hybrid-mode',
     usageCount: 67,
     synonyms: ['wordpress'],
+    state: 'active',
+    isCanonical: true,
   }),
   normalizeTag({
     id: 'tag_oklch',
     name: 'OKLCH',
+    slug: 'oklch',
     usageCount: 21,
     synonyms: ['color'],
+    state: 'active',
+    isCanonical: true,
   }),
 ];
 

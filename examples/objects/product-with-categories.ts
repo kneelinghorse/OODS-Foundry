@@ -7,31 +7,40 @@ import { normalizeClassificationMetadata } from '@/schemas/classification/classi
 
 const primaryCategory = normalizeCategoryNode({
   id: 'cat_mobile_android',
+  slug: 'android-phones',
   name: 'Android Phones',
   path: ['hardware', 'mobile', 'android'],
   parentId: 'cat_mobile',
   ancestors: ['cat_hardware', 'cat_mobile'],
   childCount: 42,
   mode: 'taxonomy',
+  depth: 2,
+  isSelectable: true,
   metadata: { source: 'catalog', sortKey: 30 },
 });
 
 const ancestorCategories: CategoryNode[] = [
   normalizeCategoryNode({
     id: 'cat_hardware',
+    slug: 'hardware',
     name: 'Hardware',
     path: ['hardware'],
     childCount: 6,
     mode: 'taxonomy',
+    depth: 0,
+    isSelectable: true,
   }),
   normalizeCategoryNode({
     id: 'cat_mobile',
+    slug: 'mobile',
     name: 'Mobile',
     path: ['hardware', 'mobile'],
     parentId: 'cat_hardware',
     ancestors: ['cat_hardware'],
     childCount: 3,
     mode: 'taxonomy',
+    depth: 1,
+    isSelectable: true,
   }),
 ];
 

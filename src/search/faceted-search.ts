@@ -148,14 +148,17 @@ function buildCategoryBuckets<T extends ClassifiableRecord>(items: readonly T[])
         continue;
       }
       seen.add(node.id);
-      const bucket = counts.get(node.id) ?? {
-        id: node.id,
-        label: node.name,
-        count: 0,
-        type: 'category' as const,
-      };
-      bucket.count += 1;
-      counts.set(node.id, bucket);
+      const existing = counts.get(node.id);
+      const nextBucket =
+        existing !== undefined
+          ? { ...existing, count: existing.count + 1 }
+          : {
+              id: node.id,
+              label: node.name,
+              count: 1,
+              type: 'category' as const,
+            };
+      counts.set(node.id, nextBucket);
     }
   }
   return sortBuckets(counts);
@@ -174,14 +177,17 @@ function buildTagBuckets<T extends ClassifiableRecord>(items: readonly T[]): Fac
         continue;
       }
       seen.add(id);
-      const bucket = counts.get(id) ?? {
-        id,
-        label: tag.name,
-        count: 0,
-        type: 'tag' as const,
-      };
-      bucket.count += 1;
-      counts.set(id, bucket);
+      const existing = counts.get(id);
+      const nextBucket =
+        existing !== undefined
+          ? { ...existing, count: existing.count + 1 }
+          : {
+              id,
+              label: tag.name,
+              count: 1,
+              type: 'tag' as const,
+            };
+      counts.set(id, nextBucket);
     }
   }
   return sortBuckets(counts);
