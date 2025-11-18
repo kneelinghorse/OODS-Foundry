@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type { CategoryNode } from '@/schemas/classification/category-node.ts';
+import type { CategoryNode } from '@/schemas/classification/category-node.js';
 import {
   useCategoryTree,
   type UseCategoryTreeResult,
@@ -48,7 +48,7 @@ export function CategoryTree({
   onNodeSelect,
   resolveDropIntent,
   ...hookOptions
-}: CategoryTreeProps): JSX.Element {
+}: CategoryTreeProps): React.ReactElement {
   const state = useCategoryTree(nodes, hookOptions);
   return (
     <CategoryTreeView
@@ -83,7 +83,7 @@ export function CategoryTreeView({
   breadcrumbsLabel = 'Selected category path',
   onNodeSelect,
   resolveDropIntent,
-}: CategoryTreeViewProps): JSX.Element {
+}: CategoryTreeViewProps): React.ReactElement {
   const [dragState, setDragState] = React.useState<{ sourceId: string | null; overId: string | null }>({
     sourceId: null,
     overId: null,
@@ -215,7 +215,6 @@ export function CategoryTreeView({
           return (
             <CategoryNodeRow
               key={entry.id}
-              itemId={entry.id}
               data={entry.node}
               level={entry.level}
               hasChildren={hasChildren}

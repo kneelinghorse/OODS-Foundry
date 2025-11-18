@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type { CategoryNode } from '@/schemas/classification/category-node.ts';
+import type { CategoryNode } from '@/schemas/classification/category-node.js';
 
 export type CategoryTreeFilterMode = 'highlight' | 'hide';
 export type CategoryTreeDropPosition = 'inside' | 'before' | 'after';

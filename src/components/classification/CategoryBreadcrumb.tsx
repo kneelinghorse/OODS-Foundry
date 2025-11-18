@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type { CategoryNode } from '@/schemas/classification/category-node.ts';
+import type { CategoryNode } from '@/schemas/classification/category-node.js';
 
 export interface CategoryBreadcrumbProps {
   readonly nodes: readonly CategoryNode[];
@@ -21,7 +21,7 @@ export function CategoryBreadcrumb({
   separator = DEFAULT_SEPARATOR,
   onNavigate,
   'aria-label': ariaLabel = 'Category breadcrumb',
-}: CategoryBreadcrumbProps): JSX.Element | null {
+}: CategoryBreadcrumbProps): React.ReactElement | null {
   if (!nodes || nodes.length === 0) {
     return null;
   }

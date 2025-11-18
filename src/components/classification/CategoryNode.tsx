@@ -1,8 +1,7 @@
 import * as React from 'react';
-import type { CategoryNode } from '@/schemas/classification/category-node.ts';
+import type { CategoryNode } from '@/schemas/classification/category-node.js';
 
 export interface CategoryNodeRowProps {
-  readonly itemId: string;
   readonly data: CategoryNode;
   readonly level: number;
   readonly hasChildren: boolean;
@@ -31,7 +30,6 @@ export interface CategoryNodeRowProps {
 }
 
 export function CategoryNodeRow({
-  itemId,
   data,
   level,
   hasChildren,
@@ -57,7 +55,7 @@ export function CategoryNodeRow({
   onDrop,
   onDragEnd,
   disableSelection = false,
-}: CategoryNodeRowProps): JSX.Element {
+}: CategoryNodeRowProps): React.ReactElement {
   const handleToggleClick = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
@@ -83,33 +81,30 @@ export function CategoryNodeRow({
     onFocus?.();
   }, [onFocus]);
 
-  const focusableAttributes: React.HTMLAttributes<HTMLDivElement> = {
-    role: 'treeitem',
-    tabIndex: isFocused ? 0 : -1,
-    'aria-selected': disableSelection ? undefined : isSelected,
-    'aria-expanded': hasChildren ? isExpanded : undefined,
-    'aria-level': level,
-    'aria-setsize': setSize,
-    'aria-posinset': position,
-    onKeyDown,
-    onFocus: handleFocus,
-    draggable,
-    onDragStart,
-    onDragOver,
-    onDrop,
-    onDragEnd,
-    'data-focused': isFocused ? 'true' : undefined,
-    'data-selected': isSelected ? 'true' : undefined,
-    'data-match': isMatch ? 'true' : undefined,
-    'data-drop-target': isDropTarget ? 'true' : undefined,
-    'data-drag-source': isDragSource ? 'true' : undefined,
-    style: {
-      '--category-tree-level': String(level),
-    } as React.CSSProperties,
-  };
-
   return (
-    <div className="category-tree__node" {...focusableAttributes}>
+    <div
+      className="category-tree__node"
+      role="treeitem"
+      tabIndex={isFocused ? 0 : -1}
+      aria-selected={disableSelection ? undefined : isSelected}
+      aria-expanded={hasChildren ? isExpanded : undefined}
+      aria-level={level}
+      aria-setsize={setSize}
+      aria-posinset={position}
+      onKeyDown={onKeyDown}
+      onFocus={handleFocus}
+      draggable={draggable}
+      onDragStart={onDragStart}
+      onDragOver={onDragOver}
+      onDrop={onDrop}
+      onDragEnd={onDragEnd}
+      data-focused={isFocused ? 'true' : undefined}
+      data-selected={isSelected ? 'true' : undefined}
+      data-match={isMatch ? 'true' : undefined}
+      data-drop-target={isDropTarget ? 'true' : undefined}
+      data-drag-source={isDragSource ? 'true' : undefined}
+      style={{ '--category-tree-level': String(level) } as React.CSSProperties}
+    >
       <div className="category-tree__node-content">
         {hasChildren ? (
           <button

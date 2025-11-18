@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type { CategoryNode } from '@/schemas/classification/category-node.ts';
+import type { CategoryNode } from '@/schemas/classification/category-node.js';
 import {
   useCategoryTree,
   type CategorySelectionChangePayload,
@@ -61,7 +61,7 @@ export function CategoryPicker({
   enableReorder = false,
   onSelectionChange,
   ...hookOptions
-}: CategoryPickerProps): JSX.Element {
+}: CategoryPickerProps): React.ReactElement {
   const state = useCategoryTree(nodes, {
     multiSelect: true,
     defaultExpandedDepth: 1,
