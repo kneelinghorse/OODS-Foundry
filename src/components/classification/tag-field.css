@@ -1,0 +1,210 @@
+/**
+ * Tag classification inputs + lists
+ *
+ * Shared styles for TagInput, TagList, TagAutocomplete, and TagPill.
+ * All color tokens reference component/system variables for purity compliance.
+ */
+
+.tag-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.125rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--cmp-border-subtle, var(--sys-border-subtle));
+  background-color: var(--cmp-surface-subtle, var(--sys-surface-raised));
+  color: var(--cmp-text-body, var(--sys-text-primary));
+  font-size: var(--font-size-body-small, 0.8125rem);
+  line-height: 1.5;
+  min-height: 1.75rem;
+  max-width: 100%;
+  cursor: default;
+  transition: background-color 120ms ease-in-out, border-color 120ms ease-in-out;
+}
+
+.tag-pill[data-interactive='true'] {
+  cursor: pointer;
+}
+
+.tag-pill[data-state='selected'] {
+  background-color: var(
+    --cmp-selection-pill,
+    color-mix(in srgb, var(--cmp-surface-accent, var(--sys-surface-accent)) 15%, transparent)
+  );
+  border-color: var(--cmp-border-accent, var(--sys-border-strong));
+  color: var(--cmp-selection-text, var(--sys-text-on-accent));
+}
+
+.tag-pill[data-disabled='true'] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.tag-pill__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  white-space: nowrap;
+}
+
+.tag-pill__slug {
+  font-size: 0.75em;
+  color: var(--cmp-text-muted, var(--sys-text-secondary));
+}
+
+.tag-pill__meta {
+  font-size: 0.75em;
+  color: var(--cmp-text-muted, var(--sys-text-muted));
+}
+
+.tag-pill__button {
+  appearance: none;
+  border: none;
+  background: none;
+  color: inherit;
+  line-height: 1;
+  padding: 0;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.tag-pill__button:focus-visible {
+  outline: 2px solid var(--cmp-focus-inner, var(--sys-focus-inner, Highlight));
+  outline-offset: 1px;
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0.125rem 0;
+  margin: 0;
+  list-style: none;
+}
+
+.tag-list[data-density='compact'] {
+  gap: 0.25rem;
+}
+
+.tag-list__overflow-button {
+  appearance: none;
+  border: 1px dashed var(--cmp-border-subtle, var(--sys-border-subtle));
+  border-radius: 999px;
+  background: transparent;
+  color: var(--cmp-text-body, var(--sys-text-primary));
+  padding: 0.125rem 0.75rem;
+  font-size: var(--font-size-body-small, 0.8125rem);
+  cursor: pointer;
+}
+
+.tag-input__control {
+  border: 1px solid var(--form-field-border);
+  border-radius: 0.75rem;
+  background-color: var(--form-field-background);
+  min-height: 3rem;
+  padding: 0.35rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.tag-input__control:focus-within {
+  border-color: var(--form-field-border-active);
+  background-color: var(--form-field-background-active);
+  box-shadow:
+    0 0 0 var(--cmp-focus-width, 2px) var(--form-field-focus-inner),
+    0 0 0 calc(var(--cmp-focus-width, 2px) + 2px) var(--form-field-focus-outer);
+}
+
+.tag-input__combobox {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.tag-input__input {
+  flex: 1;
+  min-width: 9ch;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  padding: 0.35rem 0.25rem;
+}
+
+.tag-input__input:focus {
+  outline: none;
+}
+
+.tag-input__placeholder {
+  color: var(--form-field-placeholder);
+  opacity: 0.9;
+  font-size: var(--font-size-body-small, 0.8125rem);
+}
+
+.tag-input__status {
+  font-size: var(--font-size-body-small, 0.8125rem);
+  color: var(--cmp-text-muted, var(--sys-text-muted));
+}
+
+.tag-autocomplete {
+  margin-top: 0.35rem;
+  border: 1px solid var(--cmp-border-default, var(--sys-border-strong));
+  border-radius: 0.75rem;
+  background-color: var(--cmp-surface-overlay, var(--sys-surface-overlay));
+  box-shadow: var(--cmp-shadow-overlay, var(--sys-shadow-elevation-overlay, none));
+  max-height: 280px;
+  overflow: auto;
+  padding: 0.25rem 0;
+  list-style: none;
+}
+
+.tag-autocomplete[data-empty='true'] {
+  display: none;
+}
+
+.tag-autocomplete__option {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  color: var(--cmp-text-body, var(--sys-text-primary));
+}
+
+.tag-autocomplete__option[aria-selected='true'] {
+  background-color: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.tag-autocomplete__option-description {
+  font-size: 0.75rem;
+  color: var(--cmp-text-muted, var(--sys-text-secondary));
+}
+
+.tag-autocomplete__badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--cmp-text-muted, var(--sys-text-secondary));
+}
+
+.tag-autocomplete__meta {
+  display: inline-flex;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--cmp-text-muted, var(--sys-text-muted));
+}
+
+.tag-autocomplete mark {
+  background-color: color-mix(in srgb, currentColor 20%, transparent);
+  color: inherit;
+  border-radius: 0.15rem;
+  padding: 0 0.1rem;
+}
