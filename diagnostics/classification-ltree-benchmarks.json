@@ -1,0 +1,17 @@
+{
+  "timestamp": "2025-11-18T14:14:00.833Z",
+  "dialect": "sqlite (sql.js)",
+  "dataset": {
+    "tenants": 1,
+    "nodes": 9
+  },
+  "targets": {
+    "subtreeMs": "<=3",
+    "reparentMs": "<=10"
+  },
+  "measurements": {
+    "subtreeMs": 0.38,
+    "reparentMs": 29.084
+  },
+  "notes": "sqlite mock uses sql.js; postgres path uses classification.reparent_category for production."
+}

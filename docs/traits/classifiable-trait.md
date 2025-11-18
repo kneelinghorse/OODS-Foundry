@@ -24,6 +24,8 @@
 | `CategoryNode` | [`src/schemas/classification/category-node.ts`](../../src/schemas/classification/category-node.ts) / [`schemas/classification/category-node.schema.json`](../../schemas/classification/category-node.schema.json) | Normalizes identifiers, slugs, ancestors, and `ltreePath` segments. Supports derived depth + metadata for governance dashboards. |
 | `Tag` | [`src/schemas/classification/tag.ts`](../../src/schemas/classification/tag.ts) / [`schemas/classification/tag.schema.json`](../../schemas/classification/tag.schema.json) | Enforces synonym dedupe, state machine (`active | pending_review | archived`), and moderation metadata. |
 | `ClassificationMetadata` | [`src/schemas/classification/classification-metadata.ts`](../../src/schemas/classification/classification-metadata.ts) / [`schemas/classification/classification-metadata.schema.json`](../../schemas/classification/classification-metadata.schema.json) | Stores effective mode, hierarchy storage model, tag policy, and governance heuristics for audits + diagnostics. |
+| `classification.categories` (DDL) | [`database/migrations/20251118_b26_2_ltree_infrastructure.sql`](../../database/migrations/20251118_b26_2_ltree_infrastructure.sql) | Canonical Postgres schema with ltree paths, adjacency fallback, closure table, and `reparent_category` helper (<3 ms subtree reads, <10 ms reparent). |
+| `LtreeQueryService` | [`src/services/classification/ltree-query-service.ts`](../../src/services/classification/ltree-query-service.ts) | Dialect-aware Node helper that builds paths, fetches subtrees/ancestors, and re-parents nodes via Postgres (`classification.reparent_category`) or sqlite mocks (sql.js). |
 
 The JSON Schema artifacts feed `json-schema-to-typescript`, emitting typed DTOs under [`generated/types/classification`](../../generated/types/classification). Ajv can validate persisted payloads directly, ensuring parity between runtime (Zod) and transport contracts.
 
@@ -59,6 +61,7 @@ The JSON Schema artifacts feed `json-schema-to-typescript`, emitting typed DTOs 
 import { normalizeCategoryNode } from '@/schemas/classification/category-node.ts';
 import { normalizeTag } from '@/schemas/classification/tag.ts';
 import { normalizeClassificationMetadata } from '@/schemas/classification/classification-metadata.ts';
+import { LtreeQueryService } from '@/services/classification/ltree-query-service.ts';
 
 const metadata = normalizeClassificationMetadata({
   mode: 'hybrid',
@@ -90,11 +93,29 @@ const snapshot = {
   tags,
   tag_count: tags.length,
 };
+
+const taxonomyQueries = new LtreeQueryService(pgClient, {
+  dialect: 'postgres',
+});
+
+const subtree = await taxonomyQueries.fetchSubtree({
+  tenantId: 'tenant-a',
+  path: 'electronics.mobile',
+  includeRoot: false,
+});
+
+await taxonomyQueries.reparentSubtree({
+  tenantId: 'tenant-a',
+  categoryId: 'cat-accessories',
+  newParentId: 'cat-mobile',
+  actor: 'migration-script',
+});
 ```
 
 ## Testing & Validation
 
 - `tests/schemas/classification.test.ts` covers normalization of ltree paths, synonym handling, and governance defaults.
+- `tests/services/classification/ltree-query-service.spec.ts` exercises sqlite-backed mocks (sql.js) for subtree, ancestor, and reparent flows while enforcing the <10 ms reparent SLA.
 - Ajv validation can load the JSON Schemas directly (see `scripts/types/generate.ts` for generation pipeline).
 
 ## References
