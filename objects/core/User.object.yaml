@@ -1,6 +1,6 @@
 object:
   name: User
-  version: 1.1.0
+  version: 1.2.0
   domain: core.identity
   description: Canonical identity record representing a platform user across lifecycle contexts.
   tags:
@@ -39,6 +39,14 @@ traits:
         - vip
         - suspended
       caseSensitive: false
+  - name: core/Addressable
+    alias: UserAddresses
+    parameters:
+      roles:
+        - home
+        - billing
+        - shipping
+      defaultRole: home
 
 schema:
   user_id:
@@ -121,6 +129,9 @@ metadata:
   steward: design@oods.systems
   maturity: stable
   changelog:
+    - version: 1.2.0
+      date: "2025-11-18"
+      description: Added Addressable trait for multi-role user addresses (home, billing, shipping).
     - version: 1.1.0
       date: "2025-10-18"
       description: Simplified composition for view engine integration (Stateful, Timestampable, Taggable).

@@ -1,6 +1,6 @@
 object:
   name: Organization
-  version: 1.0.0
+  version: 1.1.0
   domain: core.account
   description: Canonical account record for tenant and workspace governance across the platform.
   tags:
@@ -46,6 +46,15 @@ traits:
         - startup
         - strategic
       caseSensitive: false
+  - name: core/Addressable
+    alias: OrganizationLocations
+    parameters:
+      roles:
+        - headquarters
+        - office
+        - warehouse
+        - branch
+      defaultRole: headquarters
 
 schema:
   organization_id:
@@ -132,6 +141,9 @@ metadata:
     - billing@oods.systems
   steward: platform@oods.systems
   changelog:
+    - version: 1.1.0
+      date: "2025-11-18"
+      description: Added Addressable trait for headquarters, branch, office, and warehouse roles.
     - version: 1.0.0
       date: "2025-10-16"
       description: Initial Universal Quintet baseline.

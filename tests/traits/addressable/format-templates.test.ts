@@ -34,4 +34,13 @@ describe('UPU S42 template registry', () => {
   it('throws when requesting an unknown template key', () => {
     expect(() => getTemplateByKey('ZZZ')).toThrow(/No format template/);
   });
+
+  it('resolves Netherlands templates by key or alias', () => {
+    const nl = getTemplateByKey('NL');
+    expect(nl.countryCode).toBe('NL');
+    expect(nl.lines[2]?.tokens[0]?.component).toBe('postalCode');
+
+    const alias = getTemplateByKey('nld');
+    expect(alias.key).toBe('NL');
+  });
 });
