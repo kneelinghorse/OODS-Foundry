@@ -94,9 +94,13 @@ function collectSegments(input: string | readonly string[] | undefined): string[
     return [];
   }
 
-  if (Array.isArray(input)) {
-    return input.filter((segment) => typeof segment === 'string' && segment.trim().length > 0);
+  if (typeof input === 'string') {
+    return input
+      .split(/[./]/)
+      .map((segment) => segment.trim())
+      .filter((segment): segment is string => segment.length > 0);
   }
 
-  return input.split(/[./]/).map((segment) => segment.trim()).filter(Boolean);
+  const segments = Array.from(input);
+  return segments.filter((segment) => typeof segment === 'string' && segment.trim().length > 0);
 }
