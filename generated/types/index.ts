@@ -1,6 +1,8 @@
 // Auto-generated barrel for schema-derived types.
+export * from './classification/category-node';
+export * from './classification/classification-metadata';
+export * from './classification/tag';
 export * from './token-mapping';
-export * from './address';
 export * from './traits/addressable.parameters';
 export * from './traits/archivable.parameters';
 export * from './traits/billable.parameters';

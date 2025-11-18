@@ -1,0 +1,162 @@
+trait:
+  name: Classifiable
+  version: 1.0.0
+  description: >
+    Canonical taxonomy + folksonomy trait supporting taxonomy, tag, and hybrid
+    modes with governance metadata.
+  category: core
+  tags: [taxonomy, tags, ltree, classification, governance]
+
+parameters:
+  - name: classification_mode
+    type: enum
+    required: true
+    enum: [taxonomy, tag, hybrid]
+    default: hybrid
+    description: >
+      taxonomy = hierarchical only, tag = folksonomy only, hybrid = WordPress
+      three-table pattern.
+
+  - name: hierarchy_storage_model
+    type: enum
+    required: false
+    enum: [adjacency_list, materialized_path, closure_table]
+    default: materialized_path
+    description: >
+      Storage pattern for taxonomy hierarchies. materialized_path assumes ltree
+      for <3ms subtree queries.
+
+  - name: tag_policy
+    type: enum
+    required: false
+    enum: [locked, moderated, open]
+    default: moderated
+    description: >
+      Controls whether tags are curated only (locked), require moderation, or
+      are open to user generation.
+
+  - name: max_tags
+    type: number
+    required: false
+    default: 10
+    description: Maximum number of canonical tags per object.
+    validation:
+      minimum: 1
+      maximum: 50
+
+  - name: require_primary_category
+    type: boolean
+    required: false
+    default: false
+    description: Require at least one primary taxonomy category.
+
+schema:
+  classification_metadata:
+    type: ClassificationMetadata
+    required: true
+    description: >
+      Operational metadata describing mode, storage model, governance rules, and
+      audit timestamps.
+  categories:
+    type: CategoryNode[]
+    required: false
+    default: []
+    description: Ordered taxonomy nodes scoped to the object.
+  primary_category_id:
+    type: string
+    required: false
+    description: Identifier of the canonical taxonomy node.
+  primary_category_path:
+    type: string
+    required: false
+    description: Human-readable breadcrumb path (Electronics > Mobile > Android).
+  tags:
+    type: Tag[]
+    required: false
+    default: []
+    description: Canonical tag collection after synonym collapse.
+  tag_count:
+    type: number
+    required: false
+    default: 0
+    description: Number of canonical tags assigned to the object.
+  tag_preview:
+    type: string
+    required: false
+    description: Denormalized comma-delimited preview for list renders.
+
+semantics:
+  classification_metadata:
+    semantic_type: classification.metadata
+    token_mapping: tokenMap(classification.metadata)
+    ui_hints:
+      component: ClassificationDiagnostics
+  categories:
+    semantic_type: classification.categories
+    token_mapping: tokenMap(classification.categories.*)
+    ui_hints:
+      component: CategoryTree
+  tags:
+    semantic_type: classification.tags
+    token_mapping: tokenMap(classification.tags.*)
+    ui_hints:
+      component: TagTokenCloud
+      policyParameter: tag_policy
+  primary_category_id:
+    semantic_type: classification.primary
+    token_mapping: tokenMap(classification.primary)
+    ui_hints:
+      component: CategoryBreadcrumb
+
+view_extensions:
+  list:
+    - component: ClassificationBadge
+      position: after
+      props:
+        mode: "{classification_mode}"
+        primaryCategoryField: primary_category_id
+        tagPreviewField: tag_preview
+
+  detail:
+    - component: ClassificationPanel
+      position: sidebar
+      priority: 40
+      props:
+        categoriesField: categories
+        tagsField: tags
+        metadataField: classification_metadata
+        modeParameter: classification_mode
+
+  form:
+    - component: ClassificationEditor
+      position: main
+      props:
+        modeParameter: classification_mode
+        tagPolicyParameter: tag_policy
+        maxTagsParameter: max_tags
+
+tokens:
+  classification:
+    category:
+      badge:
+        bg: var(--sys-surface-raised)
+        border: var(--sys-border-strong)
+    tag:
+      chip:
+        bg: var(--sys-surface-muted)
+        text: var(--sys-text-strong)
+
+dependencies:
+  - trait: Identifiable
+
+metadata:
+  created: 2025-11-18
+  updated: 2025-11-18
+  owners:
+    - core@oods.systems
+    - taxonomy@oods.systems
+  maturity: draft
+  references:
+    - R21.4_Deep-Dive-Implementation-Research-for-the-Classifiable-Core-Trait.md
+    - Core_Traits_Specification_Draft.md
+  regionsUsed: [list, detail, form]
