@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import TimeService from '@/services/time/index.js';
 import type { Tag } from '@/schemas/classification/tag.js';
 
 export interface TagUsageSignal {
@@ -87,20 +88,21 @@ export function useTagSuggestions({
 }
 
 function computeRecencyBoost(timestamp: string): number {
-  const now = Date.now();
-  const value = Date.parse(timestamp);
-  if (Number.isNaN(value)) {
+  try {
+    const now = TimeService.nowSystem();
+    const normalized = TimeService.normalizeToUtc(timestamp);
+    const elapsedDays = Math.max(now.diff(normalized, 'days').days, 0);
+    if (elapsedDays <= 1) {
+      return 1.25;
+    }
+    if (elapsedDays <= 7) {
+      return 1.1;
+    }
+    if (elapsedDays <= 30) {
+      return 1.05;
+    }
+  } catch {
     return 1;
-  }
-  const elapsedDays = (now - value) / (1000 * 60 * 60 * 24);
-  if (elapsedDays <= 1) {
-    return 1.25;
-  }
-  if (elapsedDays <= 7) {
-    return 1.1;
-  }
-  if (elapsedDays <= 30) {
-    return 1.05;
   }
   return 1;
 }

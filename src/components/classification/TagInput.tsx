@@ -263,7 +263,17 @@ export function TagInput({
     try {
       const result = await onCreateTag?.(labelValue);
       const created = result && 'tag' in result ? result.tag : result;
-      const finalTag = created ?? normalizeTag({ name: labelValue, synonyms: [] });
+      const finalTag =
+        created ??
+        normalizeTag({
+          id: labelValue,
+          name: labelValue,
+          slug: labelValue,
+          usageCount: 0,
+          state: 'active',
+          isCanonical: true,
+          synonyms: [],
+        });
       addTag(finalTag, 'create');
     } finally {
       setIsCreating(false);

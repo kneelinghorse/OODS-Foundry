@@ -31,65 +31,68 @@ export function TagPill({
   onClick,
   onRemove,
 }: TagPillProps): React.ReactElement {
-  const RootTag = (interactive ? 'button' : 'span') as const;
-  const rootProps: React.HTMLAttributes<HTMLSpanElement> & React.ButtonHTMLAttributes<HTMLButtonElement> = {
+  const commonProps = {
     className: ['tag-pill', className].filter(Boolean).join(' '),
     'data-interactive': interactive ? 'true' : undefined,
     'data-state': selected ? 'selected' : undefined,
     'data-disabled': disabled ? 'true' : undefined,
-    onClick: interactive
-      ? (event) => {
-          if (disabled) {
-            event.preventDefault();
-            return;
-          }
-          onClick?.(tag, event);
-        }
-      : undefined,
+  } as const;
+
+  const handleRemove = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!disabled) {
+      onRemove?.(tag);
+    }
   };
 
-  if (interactive) {
-    Object.assign(rootProps, {
-      type: 'button',
-      disabled,
-      'aria-pressed': selected || undefined,
-    });
-  }
+  const usage =
+    showUsage && typeof tag.usageCount === 'number' ? (
+      <span className="tag-pill__meta" aria-hidden="true">
+        {tag.usageCount.toLocaleString()}
+      </span>
+    ) : null;
 
-  const removeButton = removable ? (
-    <button
-      type="button"
-      className="tag-pill__button"
-      aria-label={`Remove ${tag.name}`}
-      onClick={(event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        if (!disabled) {
-          onRemove?.(tag);
-        }
-      }}
-      disabled={disabled}
-    >
-      {'\u00d7'}
-    </button>
-  ) : null;
-
-  const usage = showUsage && typeof tag.usageCount === 'number'
-    ? (
-        <span className="tag-pill__meta" aria-hidden="true">
-          {tag.usageCount.toLocaleString()}
-        </span>
-      )
-    : null;
-
-  return (
-    <RootTag {...(rootProps as Record<string, unknown>)}>
+  const content = (
+    <>
       <span className="tag-pill__label">
         <span>{tag.name}</span>
         {tag.slug ? <span className="tag-pill__slug">#{tag.slug}</span> : null}
       </span>
       {usage}
-      {removeButton}
-    </RootTag>
+      {removable ? (
+        <button
+          type="button"
+          className="tag-pill__button"
+          aria-label={`Remove ${tag.name}`}
+          onClick={handleRemove}
+          disabled={disabled}
+        >
+          {'\u00d7'}
+        </button>
+      ) : null}
+    </>
   );
+
+  if (interactive) {
+    return (
+      <button
+        type="button"
+        {...commonProps}
+        aria-pressed={selected || undefined}
+        disabled={disabled}
+        onClick={(event) => {
+          if (disabled) {
+            event.preventDefault();
+            return;
+          }
+          onClick?.(tag, event);
+        }}
+      >
+        {content}
+      </button>
+    );
+  }
+
+  return <span {...commonProps}>{content}</span>;
 }
