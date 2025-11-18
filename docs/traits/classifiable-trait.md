@@ -122,3 +122,4 @@ await taxonomyQueries.reparentSubtree({
 
 - [R21.4 Classifiable Implementation Deep Dive](../../cmos/research/R21.4_Deep-Dive-Implementation-Research-for-the-Classifiable-Core-Trait.md)
 - [Core Traits Specification Draft (Classifiable section)](../../cmos/planning/Core_Traits_Specification_Draft.md)
+- [Folksonomy Governance Guide](./folksonomy-governance.md)

@@ -1,0 +1,175 @@
+.tag-governance-dashboard {
+  border: 1px solid var(--cmp-border-subtle, var(--sys-border-subtle));
+  border-radius: 1rem;
+  background: var(--cmp-surface-raised, var(--sys-surface-raised));
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  color: var(--cmp-text-body, var(--sys-text-primary));
+}
+
+.tag-governance-dashboard__header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--cmp-text-strong, var(--sys-text-primary));
+}
+
+.tag-governance-dashboard__eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+  margin: 0;
+  color: var(--cmp-text-muted, var(--sys-text-muted));
+}
+
+.tag-governance-dashboard__subtitle {
+  margin: 0.25rem 0 0;
+  color: var(--cmp-text-muted, var(--sys-text-secondary));
+}
+
+.tag-governance-dashboard__summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 1rem;
+}
+
+.tag-governance-dashboard__summary-card {
+  border-radius: 0.75rem;
+  padding: 1rem;
+  background: var(--cmp-surface, var(--sys-surface));
+  border: 1px solid var(--cmp-border-subtle, var(--sys-border-subtle));
+}
+
+.tag-governance-dashboard__summary-label {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--cmp-text-muted, var(--sys-text-secondary));
+}
+
+.tag-governance-dashboard__summary-value {
+  margin: 0.5rem 0 0;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: var(--cmp-text-strong, var(--sys-text-primary));
+}
+
+.tag-governance-dashboard__summary-trend {
+  margin: 0.25rem 0 0;
+  font-size: 0.85rem;
+  color: var(--cmp-text-muted, var(--sys-text-secondary));
+}
+
+.tag-governance-dashboard__panel {
+  border-radius: 0.75rem;
+  border: 1px solid var(--cmp-border-subtle, var(--sys-border-subtle));
+  background: var(--cmp-surface, var(--sys-surface));
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.tag-governance-dashboard__panel-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--cmp-text-strong, var(--sys-text-primary));
+}
+
+.tag-governance-dashboard__panel-header p {
+  margin: 0.25rem 0 0;
+  color: var(--cmp-text-muted, var(--sys-text-secondary));
+}
+
+.tag-governance-dashboard__table {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  border-radius: 0.5rem;
+  border: 1px solid var(--cmp-border-subtle, var(--sys-border-subtle));
+}
+
+.tag-governance-dashboard__table-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--cmp-border-subtle, var(--sys-border-subtle));
+}
+
+.tag-governance-dashboard__table-row:last-of-type {
+  border-bottom: none;
+}
+
+.tag-governance-dashboard__table-row--head {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--cmp-text-muted, var(--sys-text-secondary));
+  background: var(--cmp-surface-muted, var(--sys-surface-neutral));
+  border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.tag-governance-dashboard__slug {
+  margin-left: 0.25rem;
+  font-size: 0.85rem;
+  color: var(--cmp-text-muted, var(--sys-text-secondary));
+}
+
+.tag-governance-dashboard__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.tag-governance-dashboard__list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--cmp-border-subtle, var(--sys-border-subtle));
+}
+
+.tag-governance-dashboard__list-title {
+  margin: 0;
+  font-weight: 600;
+}
+
+.tag-governance-dashboard__list-meta {
+  margin: 0.1rem 0 0;
+  color: var(--cmp-text-muted, var(--sys-text-secondary));
+  font-size: 0.85rem;
+}
+
+.tag-governance-dashboard__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tag-governance-dashboard__actions button {
+  border: 1px solid var(--cmp-button-border, var(--sys-border-accent));
+  background: var(--cmp-button-surface, var(--sys-surface-accent));
+  color: var(--cmp-button-text, var(--sys-text-on-accent));
+  border-radius: 999px;
+  padding: 0.25rem 0.9rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: box-shadow 150ms ease;
+}
+
+.tag-governance-dashboard__actions button:last-child {
+  background: transparent;
+  color: var(--cmp-text-strong, var(--sys-text-primary));
+  border-color: var(--cmp-border-strong, var(--sys-border-strong));
+}
+
+.tag-governance-dashboard__actions button:focus-visible {
+  outline: 2px solid var(--cmp-focus-ring, var(--sys-focus-ring));
+  outline-offset: 2px;
+}
