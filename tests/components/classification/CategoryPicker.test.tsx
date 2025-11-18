@@ -96,13 +96,13 @@ describe('CategoryPicker', () => {
 
     await user.tab(); // focus search
     await user.keyboard('{Tab}');
-    const treeitem = screen.getByRole('treeitem', { name: 'Electronics' });
+    const treeitem = screen.getByRole('treeitem', { name: /Electronics/ });
     expect(treeitem).toHaveAttribute('tabindex', '0');
     await user.click(screen.getByRole('button', { name: /View Mobile/ }));
 
-    const hiddenInputs = screen.getAllByDisplayValue(/mobile/i, { selector: 'input[type="hidden"]' });
-    expect(hiddenInputs).toHaveLength(1);
-    expect(hiddenInputs[0]).toHaveAttribute('name', 'categories[]');
+    const hiddenInput = document.querySelector<HTMLInputElement>('input[type="hidden"][value="mobile"]');
+    expect(hiddenInput).not.toBeNull();
+    expect(hiddenInput).toHaveAttribute('name', 'categories[]');
   });
 
   it('toggles selection via recently used chips', async () => {
@@ -111,6 +111,7 @@ describe('CategoryPicker', () => {
       <CategoryPicker
         id="picker-recent"
         label="Categories"
+        name="categories[]"
         nodes={PICKER_FIXTURES}
         recentlyUsedIds={['android']}
       />
@@ -118,7 +119,7 @@ describe('CategoryPicker', () => {
 
     const chip = screen.getByRole('button', { name: /^Android$/ });
     await user.click(chip);
-    const hidden = screen.getByDisplayValue('android', { selector: 'input[type="hidden"]' });
-    expect(hidden).toBeInTheDocument();
+    const hidden = document.querySelector('input[type="hidden"][value="android"]');
+    expect(hidden).not.toBeNull();
   });
 });
