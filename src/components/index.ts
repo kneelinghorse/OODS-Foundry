@@ -6,4 +6,5 @@ export * from './stepper/index.js';
 export * from './tabs/index.js';
 export * from './breadcrumbs/index.js';
 export * from './viz/index.js';
+export * from './addresses/index.js';
 export { OODS } from './OODS.js';
