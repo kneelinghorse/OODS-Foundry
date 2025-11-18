@@ -1,4 +1,5 @@
 import { normalizeSlug } from '@/schemas/classification/utils.js';
+import TimeService from '@/services/time/index.js';
 
 export interface TagCandidate {
   readonly name: string;
@@ -63,7 +64,7 @@ export class SpamDetector {
     this.velocityWindowMs = (options.velocityWindowMinutes ?? 10) * 60 * 1000;
     this.velocityLimit = options.velocityLimit ?? 5;
     this.maxTagsPerItem = options.maxTagsPerItem ?? 15;
-    this.now = options.now ?? (() => new Date());
+    this.now = options.now ?? (() => TimeService.nowSystem().toJSDate());
   }
 
   evaluate(candidate: TagCandidate, context: TagCreationContext): SpamFinding[] {
@@ -148,8 +149,12 @@ export class SpamDetector {
       if (record.actorId && record.actorId !== context.userId) {
         return false;
       }
-      const createdTime = Date.parse(record.createdAt);
-      return !Number.isNaN(createdTime) && createdTime >= cutoff;
+      try {
+        const createdTime = TimeService.normalizeToUtc(record.createdAt).toMillis();
+        return createdTime >= cutoff;
+      } catch {
+        return false;
+      }
     }).length;
 
     if (count >= this.velocityLimit) {

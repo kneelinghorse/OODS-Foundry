@@ -1,4 +1,5 @@
 import { normalizeTag, type Tag, type TagInput } from '@/schemas/classification/tag.js';
+import TimeService from '@/services/time/index.js';
 
 import { SpamDetector, type SpamFinding, type TagCandidate, type TagCreationContext } from './spam-detector.js';
 import { SynonymMapper, type SynonymResolution } from './synonym-mapper.js';
@@ -64,7 +65,7 @@ export class TagManager {
     this.audit = options.auditLogger ?? NOOP_LOGGER;
     this.spamDetector = options.spamDetector ?? new SpamDetector();
     this.synonymMapper = options.synonymMapper ?? new SynonymMapper(options.initialTags);
-    this.now = options.now ?? (() => new Date());
+    this.now = options.now ?? (() => TimeService.nowSystem().toJSDate());
 
     this.merger =
       options.merger ??

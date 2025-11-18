@@ -1,5 +1,6 @@
 import { normalizeSlug } from '@/schemas/classification/utils.js';
 import { normalizeTag, type Tag } from '@/schemas/classification/tag.js';
+import TimeService from '@/services/time/index.js';
 
 import type { SynonymMapper } from './synonym-mapper.js';
 
@@ -61,7 +62,7 @@ export class TagMerger {
     this.relationships = options.relationships;
     this.auditLogger = options.auditLogger;
     this.synonymMapper = options.synonymMapper;
-    this.now = options.now ?? (() => new Date());
+    this.now = options.now ?? (() => TimeService.nowSystem().toJSDate());
   }
 
   async merge(request: MergeRequest): Promise<MergeResult> {
