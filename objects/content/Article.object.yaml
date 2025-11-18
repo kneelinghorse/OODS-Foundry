@@ -1,0 +1,140 @@
+object:
+  name: Article
+  version: 1.0.0
+  domain: content.publication
+  description: Canonical editorial article with hybrid taxonomy + tag classification for CMS surfaces.
+  tags:
+    - content
+    - article
+    - hybrid
+    - classifiable
+
+traits:
+  - name: content/Labelled
+    alias: ArticleHeadline
+  - name: lifecycle/Stateful
+    alias: ArticleWorkflow
+    parameters:
+      states:
+        - draft
+        - in_review
+        - scheduled
+        - published
+        - archived
+      initialState: draft
+  - name: lifecycle/Timestampable
+    alias: ArticleTimestamps
+    parameters:
+      recordedEvents:
+        - created
+        - scheduled
+        - published
+        - updated
+        - archived
+      timezone: UTC
+  - name: core/Classifiable
+    alias: ArticleClassification
+    parameters:
+      classification_mode: hybrid
+      hierarchy_storage_model: materialized_path
+      tag_policy: moderated
+      max_tags: 24
+      require_primary_category: true
+
+schema:
+  article_id:
+    type: uuid
+    required: true
+    description: Primary identifier for the article document.
+  slug:
+    type: string
+    required: true
+    description: Canonical slug rendered in URLs and breadcrumb links.
+    validation:
+      pattern: '^[a-z0-9]+(?:-[a-z0-9]+)*$'
+  author_id:
+    type: uuid
+    required: true
+    description: Reference to the authoring user.
+  content_type:
+    type: string
+    required: true
+    default: knowledge_base
+    description: Editorial template driving layout and governance workflows.
+    validation:
+      enum:
+        - knowledge_base
+        - announcement
+        - release_notes
+        - how_to
+  excerpt:
+    type: string
+    required: false
+    description: Summary text used in list + SEO contexts.
+    validation:
+      maxLength: 240
+  body_markdown:
+    type: string
+    required: true
+    description: Markdown content rendered in CMS detail views.
+  hero_media_id:
+    type: string
+    required: false
+    description: Optional Media object identifier referenced in hero slots.
+  reading_time_minutes:
+    type: number
+    required: false
+    description: Estimated reading time derived from body length.
+    validation:
+      minimum: 1
+      maximum: 60
+  locale:
+    type: string
+    required: false
+    default: en-US
+    description: Locale tag determining headline, copy, and SEO metadata.
+  published_at:
+    type: datetime
+    required: false
+    description: Timestamp when the article was published live.
+
+semantics:
+  article_id:
+    semantic_type: content.article.id
+    token_mapping: tokenMap(content.article.id)
+  slug:
+    semantic_type: content.article.slug
+    token_mapping: tokenMap(content.article.slug)
+  author_id:
+    semantic_type: content.article.author
+    token_mapping: tokenMap(identity.user.id)
+  content_type:
+    semantic_type: content.article.type
+    token_mapping: tokenMap(content.article.type)
+  reading_time_minutes:
+    semantic_type: content.article.read_time
+    token_mapping: tokenMap(metric.duration.short)
+  locale:
+    semantic_type: content.article.locale
+    token_mapping: tokenMap(content.locale.badge)
+  published_at:
+    semantic_type: content.article.published_at
+    token_mapping: tokenMap(timestamp.published_at)
+
+tokens:
+  content.article.id: "var(--sys-text-strong)"
+  content.article.slug: "var(--sys-text-muted)"
+  content.article.type: "var(--sys-badge-neutral-fg)"
+  content.article.read_time: "var(--sys-text-subtle)"
+  content.locale.badge: "var(--sys-badge-accent-fg)"
+  timestamp.published_at: "var(--sys-text-muted)"
+
+metadata:
+  owners:
+    - content-platform@oods.systems
+    - docs@oods.systems
+  steward: publishing@oods.systems
+  changelog:
+    - version: 1.0.0
+      date: "2025-11-18"
+      description: Initial article object composing hybrid Classifiable mode for taxonomy + tags.

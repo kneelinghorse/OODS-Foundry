@@ -15,3 +15,4 @@ export * as views from './view/index.js';
 export * as utils from './utils/index.js';
 export * as contexts from './contexts/index.js';
 export * as viz from './viz/index.js';
+export * as search from './search/index.js';

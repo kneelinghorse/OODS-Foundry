@@ -1,0 +1,137 @@
+object:
+  name: Media
+  version: 1.0.0
+  domain: content.asset
+  description: Canonical digital asset metadata powering media library, DAM, and CMS integrations.
+  tags:
+    - content
+    - media
+    - asset
+    - classifiable
+
+traits:
+  - name: content/Labelled
+    alias: MediaLabel
+  - name: lifecycle/Stateful
+    alias: MediaLifecycle
+    parameters:
+      states:
+        - ingested
+        - processing
+        - available
+        - deprecated
+      initialState: ingested
+  - name: lifecycle/Timestampable
+    alias: MediaTimestamps
+    parameters:
+      recordedEvents:
+        - ingested
+        - transcoded
+        - published
+        - archived
+      timezone: UTC
+  - name: core/Classifiable
+    alias: MediaClassification
+    parameters:
+      classification_mode: tag
+      tag_policy: open
+      max_tags: 32
+
+schema:
+  media_id:
+    type: uuid
+    required: true
+    description: Primary identifier for the media asset across services.
+  asset_type:
+    type: string
+    required: true
+    description: Media form factor guiding viewer presentation.
+    validation:
+      enum:
+        - image
+        - video
+        - audio
+        - document
+  mime_type:
+    type: string
+    required: true
+    description: IANA MIME type recorded at ingestion.
+  storage_bucket:
+    type: string
+    required: true
+    description: Storage namespace (S3 bucket, GCS bucket) backing the asset.
+  object_key:
+    type: string
+    required: true
+    description: Provider-specific path or key referencing the binary object.
+  source_url:
+    type: string
+    required: false
+    description: Canonical CDN URL for public consumption.
+  checksum:
+    type: string
+    required: false
+    description: Hex-encoded checksum (SHA-256) for deduplication.
+  file_size_bytes:
+    type: number
+    required: true
+    description: Size of the binary payload in bytes.
+    validation:
+      minimum: 0
+  width_px:
+    type: number
+    required: false
+    description: Pixel width for images/videos when available.
+    validation:
+      minimum: 1
+  height_px:
+    type: number
+    required: false
+    description: Pixel height for images/videos when available.
+    validation:
+      minimum: 1
+  duration_seconds:
+    type: number
+    required: false
+    description: Media playback duration for video/audio assets.
+    validation:
+      minimum: 0
+  transcoding_profiles:
+    type: string[]
+    required: false
+    description: List of transcoding profiles generated for the asset.
+    default: []
+
+semantics:
+  media_id:
+    semantic_type: media.asset.id
+    token_mapping: tokenMap(media.asset.id)
+  asset_type:
+    semantic_type: media.asset.type
+    token_mapping: tokenMap(media.asset.type)
+  mime_type:
+    semantic_type: media.asset.mime
+    token_mapping: tokenMap(media.asset.mime)
+  file_size_bytes:
+    semantic_type: media.asset.size
+    token_mapping: tokenMap(metric.storage.bytes)
+  duration_seconds:
+    semantic_type: media.asset.duration
+    token_mapping: tokenMap(metric.duration.media)
+
+tokens:
+  media.asset.id: "var(--sys-text-strong)"
+  media.asset.type: "var(--sys-badge-neutral-fg)"
+  media.asset.mime: "var(--sys-text-muted)"
+  metric.storage.bytes: "var(--sys-text-subtle)"
+  metric.duration.media: "var(--sys-text-subtle)"
+
+metadata:
+  owners:
+    - media-platform@oods.systems
+    - dam@oods.systems
+  steward: experience@oods.systems
+  changelog:
+    - version: 1.0.0
+      date: "2025-11-18"
+      description: Initial Media object with tag-mode Classifiable integration for asset folksonomy.
