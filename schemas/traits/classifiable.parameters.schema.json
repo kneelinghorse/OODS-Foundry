@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/07/schema",
+  "$id": "https://trait-engine.dev/schemas/traits/classifiable",
+  "title": "Classifiable Trait Parameters",
+  "description": "Configures taxonomy vs tag vs hybrid classification behavior.",
+  "type": "object",
+  "properties": {
+    "classification_mode": {
+      "type": "string",
+      "description": "Switches between taxonomy-only, tag-only, or hybrid storage.",
+      "enum": ["taxonomy", "tag", "hybrid"],
+      "default": "hybrid"
+    },
+    "hierarchy_storage_model": {
+      "type": "string",
+      "description": "Storage pattern for taxonomy hierarchies.",
+      "enum": ["adjacency_list", "materialized_path", "closure_table"],
+      "default": "materialized_path"
+    },
+    "tag_policy": {
+      "type": "string",
+      "description": "Controls governance level for tag creation.",
+      "enum": ["locked", "moderated", "open"],
+      "default": "moderated"
+    },
+    "max_tags": {
+      "type": "integer",
+      "description": "Maximum number of canonical tags allowed per object.",
+      "minimum": 1,
+      "maximum": 50,
+      "default": 10
+    },
+    "require_primary_category": {
+      "type": "boolean",
+      "description": "Whether at least one primary category must be selected.",
+      "default": false
+    }
+  },
+  "required": ["classification_mode"],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "classification_mode": "taxonomy",
+      "hierarchy_storage_model": "materialized_path",
+      "tag_policy": "locked",
+      "require_primary_category": true
+    },
+    {
+      "classification_mode": "tag",
+      "tag_policy": "open",
+      "max_tags": 32
+    },
+    {
+      "classification_mode": "hybrid",
+      "hierarchy_storage_model": "materialized_path",
+      "tag_policy": "moderated",
+      "max_tags": 24,
+      "require_primary_category": true
+    }
+  ]
+}

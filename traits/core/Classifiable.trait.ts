@@ -197,13 +197,6 @@ const ClassifiableTrait = {
     'classification.tag.chip.text': 'var(--sys-text-strong)',
   },
 
-  dependencies: [
-    {
-      trait: 'Identifiable',
-      optional: false,
-    },
-  ] as const,
-
   metadata: {
     created: '2025-11-18',
     updated: '2025-11-18',

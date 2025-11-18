@@ -91,7 +91,7 @@ function parseArgs(argv: string[]): CliOptions {
   const cwd = process.cwd();
 
   if (objectRoots.length === 0) {
-    const canonicalRootCandidates = [
+    const objectsRootCandidates = [
       resolve(cwd, 'objects'),
       resolve(cwd, '..', 'objects'),
     ];
@@ -99,20 +99,15 @@ function parseArgs(argv: string[]): CliOptions {
       resolve(cwd, 'objects', 'core'),
       resolve(cwd, '..', 'objects', 'core'),
     ];
+    const objectsRoot = objectsRootCandidates.find((candidate) => existsSync(candidate));
     const coreRoot = coreRootCandidates.find((candidate) => existsSync(candidate));
-    const canonicalRoot = canonicalRootCandidates.find((candidate) => existsSync(candidate));
     const examplesRoot = resolve(cwd, 'examples/objects');
 
-    let canonicalAdded = false;
-    if (coreRoot) {
+    if (objectsRoot) {
+      objectRoots.push(objectsRoot);
+    } else if (coreRoot) {
       objectRoots.push(coreRoot);
-      canonicalAdded = true;
-    } else if (canonicalRoot) {
-      objectRoots.push(canonicalRoot);
-      canonicalAdded = true;
-    }
-
-    if (!canonicalAdded) {
+    } else {
       objectRoots.push(examplesRoot);
     }
   }

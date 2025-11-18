@@ -1,12 +1,13 @@
 object:
   name: Product
-  version: 1.0.0
+  version: 1.1.0
   domain: core.catalog
   description: Canonical catalog entry combining pricing, lifecycle, and merchandising metadata.
   tags:
     - universal
     - product
     - commerce
+    - taxonomy
 
 traits:
   - name: content/Labelled
@@ -44,18 +45,14 @@ traits:
         - month
         - year
       taxBehavior: exclusive
-  - name: behavioral/Taggable
+  - name: core/Classifiable
+    alias: ProductClassification
     parameters:
-      maxTags: 20
-      allowCustomTags: false
-      allowedTags:
-        - new_release
-        - beta
-        - deprecated
-        - bundle
-        - featured
-        - add_on
-      caseSensitive: false
+      classification_mode: taxonomy
+      hierarchy_storage_model: materialized_path
+      tag_policy: locked
+      max_tags: 8
+      require_primary_category: true
 
 schema:
   product_id:
@@ -137,6 +134,9 @@ metadata:
     - commerce@oods.systems
   steward: merchandising@oods.systems
   changelog:
+    - version: 1.1.0
+      date: "2025-11-18"
+      description: Added Classifiable trait (taxonomy mode) for hierarchical categories + breadcrumbs.
     - version: 1.0.0
       date: "2025-10-16"
       description: Initial Universal Quintet baseline.
