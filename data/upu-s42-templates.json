@@ -38,6 +38,13 @@
     "template": "{{organizationName}}\\n{{addressLines|multiline}}\\n{{postalCode}}{{locality|prefix=' '}}\\n{{countryName}}"
   },
   {
+    "key": "NL",
+    "countryCode": "NL",
+    "description": "Netherlands (PostNL standard)",
+    "aliases": ["NLD", "NL-NL"],
+    "template": "{{organizationName}}\\n{{addressLines|multiline}}\\n{{postalCode}} {{locality}}\\n{{countryName}}"
+  },
+  {
     "key": "FR",
     "countryCode": "FR",
     "description": "France La Poste",

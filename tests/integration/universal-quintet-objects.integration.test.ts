@@ -4,9 +4,18 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { ObjectRegistry } from '../../src/registry/registry.ts';
 import { generateObjectInterface } from '../../src/generators/object-type-generator.ts';
 
+type FieldLayer = 'foundation' | 'base' | 'trait' | 'object' | 'context';
+
+interface ExpectedField {
+  name: string;
+  layer?: FieldLayer;
+}
+
+type FieldExpectation = ExpectedField | string;
+
 interface CanonicalObjectCase {
   name: string;
-  expectedFields: string[];
+  expectedFields: FieldExpectation[];
   expectedTraits: string[];
   unionSnippet?: string;
 }
@@ -20,14 +29,24 @@ describe('Canonical object registry integration', () => {
   const cases: CanonicalObjectCase[] = [
     {
       name: 'User',
-      expectedFields: ['primary_email', 'role', 'user_id'],
-      expectedTraits: ['Stateful', 'Timestampable', 'Taggable'],
+      expectedFields: [
+        { name: 'primary_email' },
+        { name: 'role' },
+        { name: 'user_id' },
+        { name: 'address_roles', layer: 'trait' },
+      ],
+      expectedTraits: ['Addressable', 'Stateful', 'Timestampable', 'Taggable'],
       unionSnippet: "role: 'end_user' | 'admin' | 'owner' | 'billing';",
     },
     {
       name: 'Organization',
-      expectedFields: ['plan_tier', 'billing_status', 'organization_id'],
-      expectedTraits: ['Labelled', 'Stateful', 'Ownerable', 'Timestampable', 'Taggable'],
+      expectedFields: [
+        { name: 'plan_tier' },
+        { name: 'billing_status' },
+        { name: 'organization_id' },
+        { name: 'address_roles', layer: 'trait' },
+      ],
+      expectedTraits: ['Addressable', 'Labelled', 'Stateful', 'Ownerable', 'Timestampable', 'Taggable'],
       unionSnippet: "plan_tier: 'free' | 'growth' | 'enterprise';",
     },
     {
@@ -80,11 +99,15 @@ describe('Canonical object registry integration', () => {
         new Set(resolved.composed.metadata.traitOrder)
       ).toEqual(new Set(testCase.expectedTraits));
 
-      for (const field of testCase.expectedFields) {
-        expect(resolved.composed.schema[field], `${field} missing on ${testCase.name}`).toBeDefined();
-        const provenance = resolved.composed.metadata.provenance.get(field);
-        expect(provenance?.layer, `${field} should originate from object overrides`).toBe(
-          'object'
+      for (const fieldExpectation of testCase.expectedFields) {
+        const fieldName = typeof fieldExpectation === 'string' ? fieldExpectation : fieldExpectation.name;
+        const expectedLayer = typeof fieldExpectation === 'string'
+          ? 'object'
+          : fieldExpectation.layer ?? 'object';
+        expect(resolved.composed.schema[fieldName], `${fieldName} missing on ${testCase.name}`).toBeDefined();
+        const provenance = resolved.composed.metadata.provenance.get(fieldName);
+        expect(provenance?.layer, `${fieldName} should originate from ${expectedLayer} layer`).toBe(
+          expectedLayer
         );
       }
 
