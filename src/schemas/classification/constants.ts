@@ -13,3 +13,6 @@ export type TagPolicy = (typeof TAG_POLICIES)[number];
 
 export const TAG_STATES = ['active', 'pending_review', 'archived'] as const;
 export type TagState = (typeof TAG_STATES)[number];
+
+export const TERM_TAXONOMY_TYPES = ['category', 'tag', 'custom'] as const;
+export type TermTaxonomyType = (typeof TERM_TAXONOMY_TYPES)[number];
