@@ -159,7 +159,10 @@ function formatCorrection(
     }
     return value.join(', ');
   }
-  return value;
+  if (typeof value === 'string') {
+    return value;
+  }
+  return undefined;
 }
 
 function resolveRequiredFlags(template: AddressFormatTemplate): Partial<Record<AddressFormField, boolean>> {

@@ -6,6 +6,8 @@ import './address.css';
 import { Badge } from '@/components/base/Badge.js';
 import type { BadgeProps } from '@/components/base/Badge.js';
 import type { AddressMetadata, AddressValidationStatus } from '@/schemas/address-metadata.js';
+import TimeService from '@/services/time/index.js';
+import { DateTime } from 'luxon';
 
 export interface ValidationStatusBadgeProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'> {
   readonly status?: AddressValidationStatus;
@@ -34,17 +36,16 @@ function formatTimestamp(value: string | undefined): string | undefined {
   if (!value) {
     return undefined;
   }
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return undefined;
-  }
   try {
-    return new Intl.DateTimeFormat(undefined, {
-      dateStyle: 'medium',
-      timeStyle: 'short',
-    }).format(date);
+    const dt = TimeService.fromDatabase(value);
+    if (!dt.isValid) {
+      return undefined;
+    }
+    return dt
+      .setZone(Intl.DateTimeFormat().resolvedOptions().timeZone ?? DateTime.local().zoneName ?? 'UTC')
+      .toLocaleString(DateTime.DATETIME_MED_WITH_SECONDS);
   } catch {
-    return date.toISOString();
+    return undefined;
   }
 }
 
