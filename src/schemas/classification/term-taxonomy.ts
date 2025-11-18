@@ -29,7 +29,7 @@ export const TermTaxonomySchema = z
       .number()
       .int()
       .min(0),
-    metadata: z.record(z.unknown()).optional(),
+    metadata: z.record(z.string(), z.unknown()).optional(),
     createdAt: z.string().datetime().optional(),
     updatedAt: z.string().datetime().optional(),
   })
@@ -44,7 +44,7 @@ export interface TermTaxonomyInput
   readonly taxonomy: TermTaxonomyType;
   readonly hierarchyPath?: string | readonly string[] | null;
   readonly depth?: number;
-  readonly metadata?: Record<string, unknown>;
+  readonly metadata?: Record<string, unknown> | undefined;
 }
 
 /**

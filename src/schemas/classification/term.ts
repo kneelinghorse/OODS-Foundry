@@ -29,7 +29,7 @@ export const TermSchema = z
       .min(2)
       .max(16)
       .optional(),
-    metadata: z.record(z.unknown()).optional(),
+    metadata: z.record(z.string(), z.unknown()).optional(),
     createdAt: z.string().datetime().optional(),
     updatedAt: z.string().datetime().optional(),
   })
@@ -41,7 +41,7 @@ export interface TermInput extends Partial<Omit<Term, 'slug'>> {
   readonly tenantId: string;
   readonly slug?: string;
   readonly name: string;
-  readonly metadata?: Record<string, unknown>;
+  readonly metadata?: Record<string, unknown> | undefined;
 }
 
 /**

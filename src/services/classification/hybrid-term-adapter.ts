@@ -16,6 +16,7 @@ import {
   type TermRelationshipInput,
 } from '@/schemas/classification/term-relationship.js';
 import type { TermTaxonomyType } from '@/schemas/classification/constants.js';
+import TimeService from '@/services/time/index.js';
 
 export interface HybridBridgeClient {
   query<T = unknown>(sql: string, params?: readonly unknown[]): Promise<QueryResult<T>>;
@@ -102,7 +103,7 @@ export class HybridTermAdapter {
   async ensureTerm(input: TermInput): Promise<Term> {
     const normalized = normalizeTerm(input);
     const payload = this.buildTermUpsert(normalized);
-    const result = await this.client.query(payload.sql, payload.params);
+    const result = await this.client.query<Record<string, unknown>>(payload.sql, payload.params);
     const row = result.rows[0];
     if (!row) {
       throw new Error('Failed to upsert canonical term.');
@@ -113,7 +114,7 @@ export class HybridTermAdapter {
   async upsertTaxonomy(input: TermTaxonomyInput): Promise<TermTaxonomyEntry> {
     const normalized = normalizeTermTaxonomyEntry(input);
     const payload = this.buildTaxonomyUpsert(normalized);
-    const result = await this.client.query(payload.sql, payload.params);
+    const result = await this.client.query<Record<string, unknown>>(payload.sql, payload.params);
     const row = result.rows[0];
     if (!row) {
       throw new Error('Failed to upsert term taxonomy entry.');
@@ -124,7 +125,7 @@ export class HybridTermAdapter {
   async assignRelationship(input: TermRelationshipInput): Promise<TermRelationship> {
     const normalized = normalizeTermRelationship(input);
     const payload = this.buildRelationshipUpsert(normalized);
-    const result = await this.client.query(payload.sql, payload.params);
+    const result = await this.client.query<Record<string, unknown>>(payload.sql, payload.params);
     const row = result.rows[0];
     if (!row) {
       throw new Error('Failed to save term relationship.');
@@ -341,8 +342,13 @@ export class HybridTermAdapter {
       return value;
     }
     const candidate = `${value.replace(' ', 'T')}Z`;
-    const parsed = Date.parse(candidate);
-    return Number.isNaN(parsed) ? undefined : new Date(parsed).toISOString();
+    try {
+      const normalized = TimeService.normalizeToUtc(candidate);
+      const iso = normalized.toISO();
+      return iso ?? undefined;
+    } catch {
+      return undefined;
+    }
   }
 
   private coerceNumber(value: unknown, fallback: number): number {
