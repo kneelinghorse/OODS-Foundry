@@ -50,7 +50,7 @@ interface SeedRecord {
 
 async function main(): Promise<void> {
   const SQL = await initSqlJs({
-    locateFile: (file) => resolve(process.cwd(), 'node_modules/sql.js/dist', file),
+    locateFile: (file: string) => resolve(process.cwd(), 'node_modules/sql.js/dist', file),
   });
 
   const db = new SQL.Database();

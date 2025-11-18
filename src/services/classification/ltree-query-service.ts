@@ -6,6 +6,7 @@
  */
 
 import { normalizeLtreePath } from '@/schemas/classification/utils.js';
+import TimeService from '@/services/time/index.js';
 
 export type DatabaseDialect = 'postgres' | 'sqlite';
 
@@ -305,7 +306,7 @@ export class LtreeQueryService {
       [options.tenantId, current.ltree_path, `${current.ltree_path}.%`]
     );
 
-    const updatedAt = new Date().toISOString();
+    const updatedAt = TimeService.toIsoString(TimeService.nowSystem());
     await this.client.execute('BEGIN');
 
     try {
