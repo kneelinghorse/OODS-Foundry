@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import type { JSX } from 'react';
 import type { FormProps, IChangeEvent } from '@rjsf/core';
-import { withTheme } from '@rjsf/core';
+import FormCore from '@rjsf/core';
 import type { FormContextType, RJSFSchema, UiSchema } from '@rjsf/utils';
 import validatorAjv8 from '@rjsf/validator-ajv8';
 
@@ -9,6 +9,8 @@ import type { PreferenceDocument } from '@/schemas/preferences/preference-docume
 import { resolvePreferenceSchema } from '@/traits/preferenceable/schema-registry.js';
 
 import { oodsRjsfTheme } from './oods-rjsf-theme.js';
+
+const { withTheme } = (FormCore as unknown as typeof import('@rjsf/core'));
 
 const ThemedForm = withTheme<PreferenceDocument, RJSFSchema, DefaultContext>(oodsRjsfTheme);
 const DEFAULT_VALIDATOR = validatorAjv8;
