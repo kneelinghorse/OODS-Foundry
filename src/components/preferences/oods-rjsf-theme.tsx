@@ -6,10 +6,12 @@ import type {
   StrictRJSFSchema,
   WidgetProps,
 } from '@rjsf/utils';
-import { getTemplate, getUiOptions } from '@rjsf/utils';
+import * as RjsfUtils from '@rjsf/utils';
 import type { ChangeEvent, ReactNode } from 'react';
 
 import type { FieldDensity } from '@/components/base/fieldUtils.js';
+
+const { getTemplate, getUiOptions } = RjsfUtils;
 
 type DensityAwareContext = FormContextType & {
   readonly density?: FieldDensity;
