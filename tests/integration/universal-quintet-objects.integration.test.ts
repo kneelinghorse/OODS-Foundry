@@ -34,8 +34,10 @@ describe('Canonical object registry integration', () => {
         { name: 'role' },
         { name: 'user_id' },
         { name: 'address_roles', layer: 'trait' },
+        { name: 'preference_document', layer: 'trait' },
+        { name: 'preference_version', layer: 'trait' },
       ],
-      expectedTraits: ['Addressable', 'Stateful', 'Timestampable', 'Taggable'],
+      expectedTraits: ['Addressable', 'Stateful', 'Timestampable', 'Taggable', 'Preferenceable'],
       unionSnippet: "role: 'end_user' | 'admin' | 'owner' | 'billing';",
     },
     {
