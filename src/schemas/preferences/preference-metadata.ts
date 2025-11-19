@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import TimeService from '@/services/time/index.js';
+
 export const SEMVER_PATTERN = /^\d+\.\d+\.\d+$/;
 
 export const PREFERENCE_SOURCES = ['user', 'system', 'migration', 'import'] as const;
@@ -60,7 +62,9 @@ export function normalizePreferenceMetadata(
   input: PreferenceMetadataInput,
   options: NormalizePreferenceMetadataOptions = {}
 ): PreferenceMetadata {
-  const clock = options.clock ?? (() => new Date().toISOString());
+  const clock =
+    options.clock ??
+    (() => TimeService.toIsoString(TimeService.nowSystem(), { preserveZone: false }));
 
   const payload: PreferenceMetadataInput = {
     schemaVersion: input.schemaVersion ?? options.schemaVersionFallback ?? '1.0.0',
@@ -79,8 +83,8 @@ export function normalizePreferenceMetadata(
     a.appliedAt.localeCompare(b.appliedAt)
   );
 
-  return Object.freeze({
+  return {
     ...metadata,
-    migrationApplied: sortedMigrations.map((record) => Object.freeze({ ...record })),
-  });
+    migrationApplied: sortedMigrations,
+  };
 }

@@ -9,6 +9,7 @@ import {
   normalizePreferenceDocument,
 } from '@/schemas/preferences/preference-document.js';
 import {
+  PreferenceMetadataSchema,
   type PreferenceMetadata,
   type PreferenceMetadataInput,
   type PreferenceMigrationRecord,
@@ -16,6 +17,7 @@ import {
   type PreferenceMigrationStrategy,
   SEMVER_PATTERN,
 } from '@/schemas/preferences/preference-metadata.js';
+import TimeService from '@/services/time/index.js';
 
 const SEGMENT_PATTERN = /^[a-z0-9_-]+$/i;
 const DEFAULT_NAMESPACES = ['theme', 'notifications', 'display'] as const;
@@ -63,7 +65,9 @@ export class PreferenceStore {
     );
     this.allowUnknownNamespaces = Boolean(options.allowUnknownNamespaces);
     this.defaultPreferences = clonePreferenceRecord(options.defaults ?? {});
-    this.clock = options.clock ?? (() => new Date().toISOString());
+    this.clock =
+      options.clock ??
+      (() => TimeService.toIsoString(TimeService.nowSystem(), { preserveZone: false }));
 
     const baseDocument: PreferenceDocumentInput =
       state.document ??
@@ -190,9 +194,10 @@ export class PreferenceStore {
       ...(options.notes ? { notes: options.notes } : {}),
     };
 
-    const history = [...this.document.metadata.migrationApplied, record].map((entry) =>
-      Object.freeze({ ...entry })
-    );
+    const history: PreferenceMigrationRecord[] = [
+      ...this.document.metadata.migrationApplied,
+      record,
+    ];
 
     this.document = {
       ...this.document,
@@ -254,15 +259,15 @@ export class PreferenceStore {
   }
 
   private touchMetadata(partial: PreferenceMetadataInput): void {
-    const migrationApplied =
-      partial.migrationApplied?.map((record) => Object.freeze({ ...record })) ??
-      this.document.metadata.migrationApplied;
-
-    const nextMetadata: PreferenceMetadata = Object.freeze({
+    const merged = {
       ...this.document.metadata,
       ...partial,
-      migrationApplied,
-    });
+      migrationApplied:
+        (partial.migrationApplied as PreferenceMigrationRecord[] | undefined) ??
+        this.document.metadata.migrationApplied,
+    };
+
+    const nextMetadata: PreferenceMetadata = PreferenceMetadataSchema.parse(merged);
     this.document = {
       ...this.document,
       metadata: nextMetadata,

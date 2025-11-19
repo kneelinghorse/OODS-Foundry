@@ -2,7 +2,6 @@ import { z } from 'zod';
 
 import {
   PreferenceMetadataSchema,
-  type PreferenceMetadata,
   type PreferenceMetadataInput,
   normalizePreferenceMetadata,
   SEMVER_PATTERN,
@@ -11,12 +10,12 @@ import {
 const PREFERENCE_KEY_PATTERN = /^[a-z0-9._-]+$/i;
 
 export type PreferencePrimitive = string | number | boolean | null;
-
 export type PreferenceValue =
   | PreferencePrimitive
   | PreferenceValue[]
-  | PreferenceRecord;
-
+  | {
+      [key: string]: PreferenceValue;
+    };
 export type PreferenceRecord = Record<string, PreferenceValue>;
 
 const PreferenceScalarSchema = z.union([
@@ -61,7 +60,8 @@ export function normalizePreferenceDocument(
   options: NormalizePreferenceDocumentOptions = {}
 ): PreferenceDocument {
   const version = input.version ?? options.defaultVersion ?? '1.0.0';
-  const preferences = clonePreferenceRecord(input.preferences ?? {});
+  const rawPreferences = (input.preferences ?? {}) as PreferenceRecord;
+  const preferences = clonePreferenceRecord(rawPreferences);
 
   const metadataInput: PreferenceMetadataInput = {
     ...input.metadata,
@@ -97,9 +97,16 @@ export function clonePreferenceValue(value: PreferenceValue): PreferenceValue {
   if (Array.isArray(value)) {
     return value.map((entry) => clonePreferenceValue(entry));
   }
-  const clone: PreferenceRecord = {};
-  for (const [key, entry] of Object.entries(value)) {
-    clone[key] = clonePreferenceValue(entry);
+  if (isPreferenceRecord(value)) {
+    const clone: PreferenceRecord = {};
+    for (const [key, entry] of Object.entries(value)) {
+      clone[key] = clonePreferenceValue(entry);
+    }
+    return clone;
   }
-  return clone;
+  return value;
+}
+
+function isPreferenceRecord(value: PreferenceValue): value is PreferenceRecord {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
 }
