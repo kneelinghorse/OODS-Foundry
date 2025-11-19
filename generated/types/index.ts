@@ -1,9 +1,8 @@
 // Auto-generated barrel for schema-derived types.
-export * from './address';
-export * from './preferences.d';
 export * from './classification/category-node';
 export * from './classification/classification-metadata';
 export * from './classification/tag';
+export * from './preferences/notification-preferences';
 export * from './token-mapping';
 export * from './traits/addressable.parameters';
 export * from './traits/archivable.parameters';
@@ -26,10 +25,10 @@ export * from './traits/mark-bar.parameters';
 export * from './traits/mark-line.parameters';
 export * from './traits/mark-point.parameters';
 export * from './traits/ownerable.parameters';
+export * from './traits/preferenceable.parameters';
 export * from './traits/priceable.parameters';
 export * from './traits/scale-linear.parameters';
 export * from './traits/scale-temporal.parameters';
-export * from './traits/preferenceable.parameters';
 export * from './traits/stateful.parameters';
 export * from './traits/taggable.parameters';
 export * from './traits/timestampable.parameters';

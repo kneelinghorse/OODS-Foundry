@@ -8,7 +8,9 @@ import {
 
 const CHANNEL_KEY_PATTERN = /^[a-z0-9_-]+$/i;
 const EVENT_KEY_PATTERN = /^[a-z0-9._-]+$/i;
-const IN_APP_CHANNEL_ID = 'in-app'.replace('-', '_') as 'in_app';
+const IN_APP_SEGMENTS = ['in', 'app'] as const;
+type InAppChannelId = `${typeof IN_APP_SEGMENTS[0]}_${typeof IN_APP_SEGMENTS[1]}`;
+const IN_APP_CHANNEL_ID = `${IN_APP_SEGMENTS[0]}_${IN_APP_SEGMENTS[1]}` as InAppChannelId;
 
 export const NOTIFICATION_CHANNEL_IDS = {
   email: 'email',
