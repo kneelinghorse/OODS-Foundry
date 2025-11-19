@@ -60,7 +60,7 @@ type RawDefinition = PreferenceSchemaDefinition & {
   };
 };
 
-const registry = initializeRegistry(rawDefinitions as RawDefinition[]);
+const registry = initializeRegistry(rawDefinitions as unknown as RawDefinition[]);
 const definitionByVersion = new Map<string, PreferenceSchemaDefinition>(
   registry.map((definition) => [definition.version, definition])
 );

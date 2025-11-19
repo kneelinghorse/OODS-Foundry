@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from 'react';
+import type { JSX } from 'react';
 import type { FormProps, IChangeEvent } from '@rjsf/core';
 import { withTheme } from '@rjsf/core';
 import type { RJSFSchema, UiSchema } from '@rjsf/utils';
@@ -17,12 +18,15 @@ export interface PreferenceDocumentChange<TData> {
   readonly version: string;
 }
 
-export interface PreferenceFormProps<TData = PreferenceDocument>
-  extends Omit<FormProps<TData>, 'schema' | 'uiSchema'> {
+type BaseFormProps = Omit<FormProps<any, RJSFSchema, any>, 'schema' | 'uiSchema' | 'formData' | 'onChange'>;
+
+export interface PreferenceFormProps<TData = PreferenceDocument> extends BaseFormProps {
   readonly version?: string;
   readonly schema?: RJSFSchema;
-  readonly uiSchema?: UiSchema<TData>;
+  readonly uiSchema?: UiSchema<any, RJSFSchema, any>;
   readonly document?: TData;
+  readonly formData?: TData;
+  readonly onChange?: (event: IChangeEvent<TData>, id?: string) => void;
   readonly onDocumentChange?: (payload: PreferenceDocumentChange<TData>) => void;
 }
 
@@ -41,8 +45,8 @@ export function PreferenceForm<TData extends PreferenceDocument = PreferenceDocu
     document,
     onDocumentChange,
     validator,
-    formData,
     onChange,
+    formData,
     ...rest
   } = props;
 
@@ -52,7 +56,9 @@ export function PreferenceForm<TData extends PreferenceDocument = PreferenceDocu
     [schemaOverride, schemaDefinition]
   );
   const uiSchema = useMemo(
-    () => uiSchemaOverride ?? (structuredClone(schemaDefinition.uiSchema) as UiSchema<TData>),
+    () =>
+      uiSchemaOverride ??
+      (structuredClone(schemaDefinition.uiSchema) as UiSchema<any, RJSFSchema, any>),
     [uiSchemaOverride, schemaDefinition]
   );
   const resolvedDocument = useMemo(

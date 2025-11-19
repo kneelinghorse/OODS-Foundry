@@ -5,7 +5,7 @@ import type { PreferenceDocument } from '@/schemas/preferences/preference-docume
 import { formatAjvErrors } from '@/validation/formatter.js';
 import type { ValidationIssue } from '@/validation/types.js';
 
-import { getPreferenceSchema, resolvePreferenceSchema } from './schema-registry.js';
+import { resolvePreferenceSchema } from './schema-registry.js';
 
 const ajv = new Ajv({
   allErrors: true,
