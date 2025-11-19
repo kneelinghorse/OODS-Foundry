@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import TimeService from '@/services/time/index.js';
+
 /**
  * Membership is the canonical integration point described in R21.2 Part 2.2 and
  * TABLE 4. Each record binds a user to an organization + role triple, enabling
@@ -47,7 +49,7 @@ export function normalizeMembership(
   input: MembershipInput,
   options: NormalizeMembershipOptions = {}
 ): MembershipDocument {
-  const now = options.clock?.() ?? new Date().toISOString();
+  const now = options.clock?.() ?? TimeService.toIsoString(TimeService.nowSystem());
   const payload: MembershipInput = {
     id: input.id ?? options.generateId?.(),
     user_id: input.user_id,

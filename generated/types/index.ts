@@ -1,5 +1,4 @@
 // Auto-generated barrel for schema-derived types.
-export * from './address';
 export * from './classification/category-node';
 export * from './classification/classification-metadata';
 export * from './classification/tag';
@@ -7,6 +6,7 @@ export * from './preferences/notification-preferences';
 export * from './token-mapping';
 export * from './traits/addressable.parameters';
 export * from './traits/archivable.parameters';
+export * from './traits/authable.parameters';
 export * from './traits/billable.parameters';
 export * from './traits/cancellable.parameters';
 export * from './traits/classifiable.parameters';
@@ -35,5 +35,6 @@ export * from './traits/taggable.parameters';
 export * from './traits/timestampable.parameters';
 export * from './ui/status-map';
 export * from './viz/normalized-viz-spec';
+export * from './address';
 export * from './authz.d';
 export * from './preferences.d';

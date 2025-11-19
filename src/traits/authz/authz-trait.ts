@@ -1,3 +1,5 @@
+import TimeService from '@/services/time/index.js';
+
 import {
   normalizeRole,
   type RoleDocument,
@@ -21,7 +23,7 @@ import {
 
 type MembershipKey = `${string}|${string}|${string}`;
 
-const DEFAULT_CLOCK = (): string => new Date().toISOString();
+const DEFAULT_CLOCK = (): string => TimeService.toIsoString(TimeService.nowSystem());
 
 function membershipKey(userId: string, organizationId: string, roleId: string): MembershipKey {
   return `${userId}|${organizationId}|${roleId}`;
@@ -306,5 +308,5 @@ export class AuthableTrait {
 }
 
 function cryptoRandomFallback(): string {
-  return Math.random().toString(36).slice(2) + Date.now().toString(36);
+  return Math.random().toString(36).slice(2) + TimeService.nowSystem().toMillis().toString(36);
 }
