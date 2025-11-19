@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import type { JSX } from 'react';
 import type { FormProps, IChangeEvent } from '@rjsf/core';
-import { withTheme } from '@rjsf/core';
+import * as FormCore from '@rjsf/core';
 import type { FormContextType, RJSFSchema, UiSchema } from '@rjsf/utils';
 import validatorAjv8 from '@rjsf/validator-ajv8';
 
@@ -10,7 +10,18 @@ import { resolvePreferenceSchema } from '@/traits/preferenceable/schema-registry
 
 import { oodsRjsfTheme } from './oods-rjsf-theme.js';
 
-const ThemedForm = withTheme<PreferenceDocument, RJSFSchema, DefaultContext>(oodsRjsfTheme);
+const resolveWithTheme = (): typeof import('@rjsf/core')['withTheme'] => {
+  const candidate = (FormCore.default && 'withTheme' in FormCore.default)
+    ? FormCore.default
+    : FormCore;
+  const fn = (candidate as typeof import('@rjsf/core')).withTheme;
+  if (typeof fn !== 'function') {
+    throw new Error('withTheme is not available on @rjsf/core.');
+  }
+  return fn;
+};
+
+const ThemedForm = resolveWithTheme()<PreferenceDocument, RJSFSchema, DefaultContext>(oodsRjsfTheme);
 const DEFAULT_VALIDATOR = validatorAjv8;
 
 export interface PreferenceDocumentChange<TData> {
