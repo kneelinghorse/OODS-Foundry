@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { FormContextType, RJSFSchema, UiSchema } from '@rjsf/utils';
+import validatorAjv8 from '@rjsf/validator-ajv8';
 
 import type { PreferenceDocument } from '@/schemas/preferences/preference-document.js';
 import {
@@ -88,7 +89,7 @@ export function usePreferenceForm<TData extends PreferenceDocument = PreferenceD
 
   const handleValidationState = useCallback(
     (state: PreferenceFormValidationState<TData>) => {
-      setValidationIssues(state.issues);
+      setValidationIssues([...state.issues]);
     },
     []
   );
@@ -113,6 +114,8 @@ export function usePreferenceForm<TData extends PreferenceDocument = PreferenceD
     });
   }, [canonicalInitial, onChange, schemaDefinition]);
 
+  const resolvedValidator = (validatorOverride ?? validatorAjv8) as PreferenceFormProps<TData>['validator'];
+
   const formProps: PreferenceFormProps<TData> = useMemo(
     () => ({
       version: schemaDefinition.version,
@@ -120,7 +123,7 @@ export function usePreferenceForm<TData extends PreferenceDocument = PreferenceD
       formData: document,
       schema: schemaOverride,
       uiSchema: uiSchemaOverride,
-      validator: validatorOverride,
+      validator: resolvedValidator,
       liveValidate: true,
       showErrorList: false,
       noHtml5Validate: true,
@@ -134,7 +137,7 @@ export function usePreferenceForm<TData extends PreferenceDocument = PreferenceD
       handleValidationState,
       schemaOverride,
       uiSchemaOverride,
-      validatorOverride,
+      resolvedValidator,
       schemaDefinition.version,
     ]
   );

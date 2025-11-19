@@ -258,7 +258,7 @@ function CheckboxWidget(props: WidgetProps<boolean>): ReactNode {
 }
 
 function ToggleWidget(props: WidgetProps<boolean>): ReactNode {
-  const { id, value, required, disabled, readonly, onChange, onBlur, onFocus } = props;
+  const { id, value, disabled, readonly, onChange, onBlur, onFocus } = props;
   const ariaDescribedBy = props['aria-describedby'];
   const accessibleLabel = props.label || id;
 
@@ -273,8 +273,8 @@ function ToggleWidget(props: WidgetProps<boolean>): ReactNode {
       aria-label={accessibleLabel}
       data-state={Boolean(value) ? 'on' : 'off'}
       disabled={disabled || readonly}
-      onBlur={(event) => onBlur(id, Boolean(value))}
-      onFocus={(event) => onFocus(id, Boolean(value))}
+      onBlur={() => onBlur(id, Boolean(value))}
+      onFocus={() => onFocus(id, Boolean(value))}
       onClick={() => onChange(!value)}
     >
       <span

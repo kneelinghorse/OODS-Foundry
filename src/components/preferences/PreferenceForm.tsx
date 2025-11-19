@@ -87,6 +87,7 @@ export function PreferenceForm<TData extends PreferenceDocument = PreferenceDocu
     focusOnFirstError = false,
     className,
     formContext,
+    id,
     ...rest
   } = props;
 
@@ -117,15 +118,21 @@ export function PreferenceForm<TData extends PreferenceDocument = PreferenceDocu
   const resolvedContext = contextMetadata ? viewContext : 'form';
   const contextDensity: FieldDensity = density ?? (contextMetadata?.density === 'compact' ? 'compact' : 'comfortable');
   const dataContextAttr = getContextDataAttr(resolvedContext);
-  const formComponentRef = useRef<{ formElement?: { current: HTMLFormElement | null } } | null>(null);
+  const autoIdRef = useRef<string | undefined>(undefined);
+  if (!autoIdRef.current) {
+    autoIdRef.current = `preference-form-${Math.random().toString(36).slice(2)}`;
+  }
+  const formId = id ?? autoIdRef.current;
 
   useEffect(() => {
-    const instance = formComponentRef.current;
-    const node = instance?.formElement?.current;
-    if (node) {
-      node.setAttribute('data-context', dataContextAttr);
+    if (typeof window === 'undefined') {
+      return;
     }
-  }, [dataContextAttr]);
+    const formNode = window.document.getElementById(formId);
+    if (formNode) {
+      formNode.setAttribute('data-context', dataContextAttr);
+    }
+  }, [formId, dataContextAttr]);
 
   const handleChange = useCallback(
     (event: IChangeEvent<TData>, id?: string) => {
@@ -148,6 +155,7 @@ export function PreferenceForm<TData extends PreferenceDocument = PreferenceDocu
 
   const themedProps: FormProps<PreferenceDocument, RJSFSchema, DefaultContext> = {
     ...(rest as FormProps<PreferenceDocument, RJSFSchema, DefaultContext>),
+    id: formId,
     className: ['preference-form', className].filter(Boolean).join(' ') || undefined,
     formData: effectiveFormData,
     schema,
@@ -168,10 +176,9 @@ export function PreferenceForm<TData extends PreferenceDocument = PreferenceDocu
     showErrorList,
     noHtml5Validate,
     focusOnFirstError,
-    'data-context': dataContextAttr,
   };
 
-  return <ThemedForm ref={formComponentRef} {...themedProps} />;
+  return <ThemedForm {...themedProps} />;
 }
 
 function extractIssues<TData extends PreferenceDocument>(event: IChangeEvent<TData>): PreferenceFormValidationIssue[] {
