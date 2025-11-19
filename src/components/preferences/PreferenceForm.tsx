@@ -1,10 +1,12 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import type { JSX } from 'react';
 import type { FormProps, IChangeEvent } from '@rjsf/core';
 import * as FormCore from '@rjsf/core';
 import type { FormContextType, RJSFSchema, UiSchema } from '@rjsf/utils';
 import validatorAjv8 from '@rjsf/validator-ajv8';
 
+import { getContextDataAttr, useContextMetadata, useViewContext } from '@/ViewContextProvider.jsx';
+import type { FieldDensity } from '@/components/base/fieldUtils.js';
 import type { PreferenceDocument } from '@/schemas/preferences/preference-document.js';
 import { resolvePreferenceSchema } from '@/traits/preferenceable/schema-registry.js';
 
@@ -29,6 +31,18 @@ export interface PreferenceDocumentChange<TData> {
   readonly version: string;
 }
 
+export interface PreferenceFormValidationIssue {
+  readonly message: string;
+  readonly path: string;
+}
+
+export interface PreferenceFormValidationState<TData extends PreferenceDocument> {
+  readonly document: TData;
+  readonly version: string;
+  readonly issues: readonly PreferenceFormValidationIssue[];
+  readonly rawEvent: IChangeEvent<TData>;
+}
+
 type DefaultContext = FormContextType;
 type BaseFormProps<TData extends PreferenceDocument> = Omit<
   FormProps<TData, RJSFSchema, DefaultContext>,
@@ -42,8 +56,10 @@ export interface PreferenceFormProps<TData extends PreferenceDocument = Preferen
   readonly uiSchema?: UiSchema<TData, RJSFSchema, DefaultContext>;
   readonly document?: TData;
   readonly formData?: TData;
+  readonly density?: FieldDensity;
   readonly onChange?: (event: IChangeEvent<TData>, id?: string) => void;
   readonly onDocumentChange?: (payload: PreferenceDocumentChange<TData>) => void;
+  readonly onValidationChange?: (state: PreferenceFormValidationState<TData>) => void;
 }
 
 /**
@@ -62,7 +78,15 @@ export function PreferenceForm<TData extends PreferenceDocument = PreferenceDocu
     onDocumentChange,
     validator,
     onChange,
+    onValidationChange,
     formData,
+    density,
+    liveValidate = true,
+    showErrorList = false,
+    noHtml5Validate = true,
+    focusOnFirstError = false,
+    className,
+    formContext,
     ...rest
   } = props;
 
@@ -83,6 +107,25 @@ export function PreferenceForm<TData extends PreferenceDocument = PreferenceDocu
     () => structuredClone((document ?? schemaDefinition.metadata.example) as TData),
     [document, schemaDefinition]
   );
+  const effectiveFormData = useMemo(
+    () => (formData ?? resolvedDocument) as PreferenceDocument,
+    [formData, resolvedDocument]
+  );
+
+  const viewContext = useViewContext();
+  const contextMetadata = useContextMetadata();
+  const resolvedContext = contextMetadata ? viewContext : 'form';
+  const contextDensity: FieldDensity = density ?? (contextMetadata?.density === 'compact' ? 'compact' : 'comfortable');
+  const dataContextAttr = getContextDataAttr(resolvedContext);
+  const formComponentRef = useRef<{ formElement?: { current: HTMLFormElement | null } } | null>(null);
+
+  useEffect(() => {
+    const instance = formComponentRef.current;
+    const node = instance?.formElement?.current;
+    if (node) {
+      node.setAttribute('data-context', dataContextAttr);
+    }
+  }, [dataContextAttr]);
 
   const handleChange = useCallback(
     (event: IChangeEvent<TData>, id?: string) => {
@@ -91,13 +134,22 @@ export function PreferenceForm<TData extends PreferenceDocument = PreferenceDocu
         version: schemaDefinition.version,
       });
       onChange?.(event, id);
+      if (onValidationChange) {
+        onValidationChange({
+          document: event.formData as TData,
+          version: schemaDefinition.version,
+          issues: extractIssues(event),
+          rawEvent: event,
+        });
+      }
     },
-    [onChange, onDocumentChange, schemaDefinition.version]
+    [onChange, onDocumentChange, onValidationChange, schemaDefinition.version]
   );
 
   const themedProps: FormProps<PreferenceDocument, RJSFSchema, DefaultContext> = {
     ...(rest as FormProps<PreferenceDocument, RJSFSchema, DefaultContext>),
-    formData: (formData ?? resolvedDocument) as PreferenceDocument,
+    className: ['preference-form', className].filter(Boolean).join(' ') || undefined,
+    formData: effectiveFormData,
     schema,
     uiSchema: uiSchema as UiSchema<PreferenceDocument, RJSFSchema, DefaultContext>,
     validator: (validator ?? DEFAULT_VALIDATOR) as FormProps<
@@ -106,7 +158,28 @@ export function PreferenceForm<TData extends PreferenceDocument = PreferenceDocu
       DefaultContext
     >['validator'],
     onChange: handleChange as FormProps<PreferenceDocument, RJSFSchema, DefaultContext>['onChange'],
+    formContext: {
+      ...(formContext as DefaultContext),
+      density: contextDensity,
+      viewContext: resolvedContext,
+      metadata: contextMetadata ?? null,
+    } satisfies DefaultContext,
+    liveValidate,
+    showErrorList,
+    noHtml5Validate,
+    focusOnFirstError,
+    'data-context': dataContextAttr,
   };
 
-  return <ThemedForm {...themedProps} />;
+  return <ThemedForm ref={formComponentRef} {...themedProps} />;
+}
+
+function extractIssues<TData extends PreferenceDocument>(event: IChangeEvent<TData>): PreferenceFormValidationIssue[] {
+  if (!event.errors || event.errors.length === 0) {
+    return [];
+  }
+  return event.errors.map((error) => ({
+    message: error.stack ?? error.message ?? 'Validation error',
+    path: error.property ?? '/',
+  }));
 }
