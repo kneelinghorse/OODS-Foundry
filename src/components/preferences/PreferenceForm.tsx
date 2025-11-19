@@ -18,12 +18,17 @@ export interface PreferenceDocumentChange<TData> {
   readonly version: string;
 }
 
-type BaseFormProps = Omit<FormProps<any, RJSFSchema, any>, 'schema' | 'uiSchema' | 'formData' | 'onChange'>;
+type DefaultFormData = Record<string, unknown>;
+type DefaultContext = unknown;
+type BaseFormProps = Omit<
+  FormProps<DefaultFormData, RJSFSchema, DefaultContext>,
+  'schema' | 'uiSchema' | 'formData' | 'onChange'
+>;
 
 export interface PreferenceFormProps<TData = PreferenceDocument> extends BaseFormProps {
   readonly version?: string;
   readonly schema?: RJSFSchema;
-  readonly uiSchema?: UiSchema<any, RJSFSchema, any>;
+  readonly uiSchema?: UiSchema<DefaultFormData, RJSFSchema, DefaultContext>;
   readonly document?: TData;
   readonly formData?: TData;
   readonly onChange?: (event: IChangeEvent<TData>, id?: string) => void;
@@ -58,7 +63,9 @@ export function PreferenceForm<TData extends PreferenceDocument = PreferenceDocu
   const uiSchema = useMemo(
     () =>
       uiSchemaOverride ??
-      (structuredClone(schemaDefinition.uiSchema) as UiSchema<any, RJSFSchema, any>),
+      (structuredClone(
+        schemaDefinition.uiSchema
+      ) as UiSchema<DefaultFormData, RJSFSchema, DefaultContext>),
     [uiSchemaOverride, schemaDefinition]
   );
   const resolvedDocument = useMemo(
