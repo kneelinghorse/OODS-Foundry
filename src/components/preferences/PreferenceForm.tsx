@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import type { JSX } from 'react';
 import type { FormProps, IChangeEvent } from '@rjsf/core';
 import { withTheme } from '@rjsf/core';
-import type { RJSFSchema, UiSchema } from '@rjsf/utils';
+import type { FormContextType, RJSFSchema, UiSchema } from '@rjsf/utils';
 import validatorAjv8 from '@rjsf/validator-ajv8';
 
 import type { PreferenceDocument } from '@/schemas/preferences/preference-document.js';
@@ -10,7 +10,7 @@ import { resolvePreferenceSchema } from '@/traits/preferenceable/schema-registry
 
 import { oodsRjsfTheme } from './oods-rjsf-theme.js';
 
-const ThemedForm = withTheme(oodsRjsfTheme);
+const ThemedForm = withTheme<PreferenceDocument, RJSFSchema, DefaultContext>(oodsRjsfTheme);
 const DEFAULT_VALIDATOR = validatorAjv8;
 
 export interface PreferenceDocumentChange<TData> {
@@ -18,17 +18,17 @@ export interface PreferenceDocumentChange<TData> {
   readonly version: string;
 }
 
-type DefaultFormData = Record<string, unknown>;
-type DefaultContext = unknown;
-type BaseFormProps = Omit<
-  FormProps<DefaultFormData, RJSFSchema, DefaultContext>,
+type DefaultContext = FormContextType;
+type BaseFormProps<TData extends PreferenceDocument> = Omit<
+  FormProps<TData, RJSFSchema, DefaultContext>,
   'schema' | 'uiSchema' | 'formData' | 'onChange'
 >;
 
-export interface PreferenceFormProps<TData = PreferenceDocument> extends BaseFormProps {
+export interface PreferenceFormProps<TData extends PreferenceDocument = PreferenceDocument>
+  extends BaseFormProps<TData> {
   readonly version?: string;
   readonly schema?: RJSFSchema;
-  readonly uiSchema?: UiSchema<DefaultFormData, RJSFSchema, DefaultContext>;
+  readonly uiSchema?: UiSchema<TData, RJSFSchema, DefaultContext>;
   readonly document?: TData;
   readonly formData?: TData;
   readonly onChange?: (event: IChangeEvent<TData>, id?: string) => void;
@@ -65,7 +65,7 @@ export function PreferenceForm<TData extends PreferenceDocument = PreferenceDocu
       uiSchemaOverride ??
       (structuredClone(
         schemaDefinition.uiSchema
-      ) as UiSchema<DefaultFormData, RJSFSchema, DefaultContext>),
+      ) as UiSchema<TData, RJSFSchema, DefaultContext>),
     [uiSchemaOverride, schemaDefinition]
   );
   const resolvedDocument = useMemo(
@@ -84,14 +84,18 @@ export function PreferenceForm<TData extends PreferenceDocument = PreferenceDocu
     [onChange, onDocumentChange, schemaDefinition.version]
   );
 
-  return (
-    <ThemedForm
-      {...rest}
-      formData={formData ?? resolvedDocument}
-      schema={schema}
-      uiSchema={uiSchema}
-      validator={validator ?? DEFAULT_VALIDATOR}
-      onChange={handleChange}
-    />
-  );
+  const themedProps: FormProps<PreferenceDocument, RJSFSchema, DefaultContext> = {
+    ...(rest as FormProps<PreferenceDocument, RJSFSchema, DefaultContext>),
+    formData: (formData ?? resolvedDocument) as PreferenceDocument,
+    schema,
+    uiSchema: uiSchema as UiSchema<PreferenceDocument, RJSFSchema, DefaultContext>,
+    validator: (validator ?? DEFAULT_VALIDATOR) as FormProps<
+      PreferenceDocument,
+      RJSFSchema,
+      DefaultContext
+    >['validator'],
+    onChange: handleChange as FormProps<PreferenceDocument, RJSFSchema, DefaultContext>['onChange'],
+  };
+
+  return <ThemedForm {...themedProps} />;
 }
