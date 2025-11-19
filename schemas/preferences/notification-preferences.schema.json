@@ -1,0 +1,100 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://oods-foundry.dev/schemas/preferences/notification-preferences",
+  "title": "Notification Channel × Event Matrix",
+  "description": "Represents a preference matrix where users can enable or disable notification channels per event type.",
+  "type": "object",
+  "additionalProperties": false,
+  "patternProperties": {
+    "^[a-z0-9._-]+$": {
+      "type": "object",
+      "description": "Channel preferences for the given event type.",
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "$ref": "#/definitions/channelToggle",
+          "description": "Send transactional email notifications."
+        },
+        "push": {
+          "$ref": "#/definitions/channelToggle",
+          "description": "Dispatch mobile push notifications."
+        },
+        "sms": {
+          "$ref": "#/definitions/channelToggle",
+          "description": "Deliver SMS text messages via verified phone numbers."
+        },
+        "in_app": {
+          "$ref": "#/definitions/channelToggle",
+          "description": "Render alerts within the notification center UI."
+        }
+      },
+      "patternProperties": {
+        "^[a-z0-9_-]+$": {
+          "$ref": "#/definitions/channelToggle",
+          "description": "Custom channel toggle (extensible by application domains)."
+        }
+      },
+      "default": {
+        "email": true,
+        "push": true,
+        "sms": false,
+        "in_app": true
+      }
+    }
+  },
+  "examples": [
+    {
+      "new_comment": {
+        "email": true,
+        "push": false,
+        "sms": false,
+        "in_app": true
+      },
+      "mention": {
+        "email": true,
+        "push": true,
+        "sms": false,
+        "in_app": true
+      },
+      "billing_alert": {
+        "email": true,
+        "push": true,
+        "sms": true,
+        "in_app": true
+      }
+    }
+  ],
+  "default": {
+    "new_comment": {
+      "email": true,
+      "push": false,
+      "sms": false,
+      "in_app": true
+    },
+    "mention": {
+      "email": true,
+      "push": true,
+      "sms": false,
+      "in_app": true
+    },
+    "new_follower": {
+      "email": false,
+      "push": true,
+      "sms": false,
+      "in_app": true
+    },
+    "billing_alert": {
+      "email": true,
+      "push": true,
+      "sms": true,
+      "in_app": true
+    }
+  },
+  "definitions": {
+    "channelToggle": {
+      "type": "boolean",
+      "default": false,
+      "description": "Controls whether the notification channel is enabled for the event."
+    }
+  }
+}

@@ -14,3 +14,7 @@ export type {
   PreferencePreviewEntry,
   PreferencePreviewSection,
 } from './PreferencePreview.js';
+export { NotificationMatrix } from './NotificationMatrix.js';
+export type { NotificationMatrixProps } from './NotificationMatrix.js';
+export { ChannelToggle } from './ChannelToggle.js';
+export type { ChannelToggleProps } from './ChannelToggle.js';
