@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/07/schema",
+  "$id": "https://trait-engine.dev/schemas/traits/preferenceable",
+  "title": "Preferenceable Trait Parameters",
+  "description": "Configures namespaces and registry bindings for the Preferenceable trait.",
+  "type": "object",
+  "properties": {
+    "namespaces": {
+      "type": "array",
+      "description": "Allowed top-level namespaces for preference keys (theme, notifications, display, etc.).",
+      "minItems": 1,
+      "maxItems": 12,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9._-]+$",
+        "minLength": 2,
+        "maxLength": 48
+      },
+      "default": ["theme", "notifications", "display"]
+    },
+    "schemaVersion": {
+      "type": "string",
+      "description": "Current JSON Schema version served by the registry for validation and UI generation.",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "default": "1.0.0"
+    },
+    "allowUnknownNamespaces": {
+      "type": "boolean",
+      "description": "Escape hatch allowing writes outside the declared namespace allow list.",
+      "default": false
+    },
+    "registryNamespace": {
+      "type": "string",
+      "description": "Registry identifier used to fetch JSON Schema and uiSchema bundles.",
+      "pattern": "^[a-z0-9._-]+$",
+      "default": "user-preferences"
+    }
+  },
+  "required": ["namespaces", "schemaVersion"],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "namespaces": ["theme", "notifications", "display"],
+      "schemaVersion": "1.0.0"
+    },
+    {
+      "namespaces": ["theme", "notifications", "display", "accessibility"],
+      "schemaVersion": "1.1.0",
+      "registryNamespace": "beta-user-prefs",
+      "allowUnknownNamespaces": true
+    }
+  ]
+}
