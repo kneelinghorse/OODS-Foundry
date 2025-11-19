@@ -1,12 +1,14 @@
 import { createHash } from 'node:crypto';
 
+import type { QueryResultRow } from 'pg';
+
 import {
   PermissionSchema,
   type PermissionDocument,
-} from '@/schemas/authz/permission.schema.ts';
-import { RoleSchema, type RoleDocument } from '@/schemas/authz/role.schema.ts';
+} from '@/schemas/authz/permission.schema.js';
+import { RoleSchema, type RoleDocument } from '@/schemas/authz/role.schema.js';
 
-import { cloneParams, nowIso, type RuntimeLogger, type SqlExecutor } from './runtime-types.ts';
+import { cloneParams, nowIso, type RuntimeLogger, type SqlExecutor } from './runtime-types.js';
 
 export interface RoleHierarchyNode extends RoleDocument {
   readonly depth: number;
@@ -19,14 +21,14 @@ export interface RoleGraphResolverOptions {
 
 export class RoleGraphResolverError extends Error {}
 
-interface RoleHierarchyRow {
+interface RoleHierarchyRow extends QueryResultRow {
   readonly id: string;
   readonly name: string;
   readonly description: string | null;
   readonly depth: number;
 }
 
-interface PermissionRow {
+interface PermissionRow extends QueryResultRow {
   readonly id: string;
   readonly name: string;
   readonly description: string | null;
@@ -114,7 +116,7 @@ export class RoleGraphResolver {
     );
   }
 
-  private async runQuery<T>(sql: string, params: readonly unknown[]): Promise<T[]> {
+  private async runQuery<T extends QueryResultRow>(sql: string, params: readonly unknown[]): Promise<T[]> {
     const startedAt = performance.now();
     const result = await this.executor.query<T>(sql, cloneParams(params));
     this.logger?.debug?.('role_graph_query', {

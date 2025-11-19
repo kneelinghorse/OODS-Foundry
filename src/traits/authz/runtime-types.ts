@@ -1,4 +1,6 @@
-import type { QueryResult } from 'pg';
+import type { QueryResult, QueryResultRow } from 'pg';
+
+import TimeService from '@/services/time/index.js';
 
 /**
  * Minimal query executor contract so runtime services can operate with any
@@ -8,7 +10,7 @@ import type { QueryResult } from 'pg';
  * implementation lightweight and focused on prepared statements.
  */
 export interface SqlExecutor {
-  query<T = Record<string, unknown>>(
+  query<T extends QueryResultRow = QueryResultRow>(
     sql: string,
     params?: readonly unknown[]
   ): Promise<QueryResult<T>>;
@@ -28,5 +30,5 @@ export function cloneParams(params?: readonly unknown[]): unknown[] | undefined 
 }
 
 export function nowIso(): string {
-  return new Date().toISOString();
+  return TimeService.toIsoString(TimeService.nowSystem());
 }

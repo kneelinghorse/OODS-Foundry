@@ -1,10 +1,12 @@
-import { MembershipSchema, type MembershipDocument } from '@/schemas/authz/membership.schema.ts';
+import type { QueryResultRow } from 'pg';
 
-import { cloneParams, nowIso, type RuntimeLogger, type SqlExecutor } from './runtime-types.ts';
+import { MembershipSchema, type MembershipDocument } from '@/schemas/authz/membership.schema.js';
+
+import { cloneParams, nowIso, type RuntimeLogger, type SqlExecutor } from './runtime-types.js';
 
 export class MembershipServiceError extends Error {}
 
-interface MembershipRow {
+interface MembershipRow extends QueryResultRow {
   readonly id: string;
   readonly user_id: string;
   readonly organization_id: string;

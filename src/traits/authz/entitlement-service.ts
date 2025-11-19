@@ -1,11 +1,12 @@
 import { createHash } from 'node:crypto';
+import type { QueryResultRow } from 'pg';
 
-import type { PermissionDocument } from '@/schemas/authz/permission.schema.ts';
-import { RoleSchema, type RoleDocument } from '@/schemas/authz/role.schema.ts';
+import type { PermissionDocument } from '@/schemas/authz/permission.schema.js';
+import { RoleSchema, type RoleDocument } from '@/schemas/authz/role.schema.js';
 
-import { MembershipService, type MembershipServiceOptions } from './membership-service.ts';
-import { RoleGraphResolver, type RoleGraphResolverOptions } from './role-graph-resolver.ts';
-import { cloneParams, nowIso, type RuntimeLogger, type SqlExecutor } from './runtime-types.ts';
+import { MembershipService, type MembershipServiceOptions } from './membership-service.js';
+import { RoleGraphResolver, type RoleGraphResolverOptions } from './role-graph-resolver.js';
+import { cloneParams, nowIso, type RuntimeLogger, type SqlExecutor } from './runtime-types.js';
 
 export interface PermissionResolution {
   readonly permissions: PermissionDocument[];
@@ -22,7 +23,7 @@ export interface EntitlementServiceOptions {
   readonly roleGraphOptions?: RoleGraphResolverOptions;
 }
 
-interface RoleRow {
+interface RoleRow extends QueryResultRow {
   readonly id: string;
   readonly name: string;
   readonly description: string | null;
