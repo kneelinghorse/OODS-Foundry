@@ -3,6 +3,7 @@ import { dirname } from 'node:path';
 import { mkdirSync, writeFileSync } from 'node:fs';
 
 import type { PreferenceMigrationStrategy } from '@/schemas/preferences/preference-metadata.js';
+import TimeService from '@/services/time/index.js';
 
 export type PreferenceMigrationLogStatus =
   | 'started'
@@ -54,7 +55,8 @@ export interface PreferenceMigrationLogWriter {
   write(entry: PreferenceMigrationLogEntry): void;
 }
 
-const DEFAULT_CLOCK = (): string => new Date().toISOString();
+const DEFAULT_CLOCK = (): string =>
+  TimeService.toIsoString(TimeService.nowSystem(), { preserveZone: false });
 
 export class PreferenceMigrationLogger {
   private readonly writer: PreferenceMigrationLogWriter;

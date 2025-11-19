@@ -5,18 +5,18 @@ import path from 'node:path';
 
 import type { PreferenceDocument } from '@/schemas/preferences/preference-document.js';
 import type { PreferenceMigrationStrategy } from '@/schemas/preferences/preference-metadata.js';
-import { analyzeSchemaCompatibility } from '@/traits/preferenceable/compatibility-checker.ts';
-import { runDualWriteMigration } from '@/traits/preferenceable/dual-write-migrator.ts';
+import { analyzeSchemaCompatibility } from '@/traits/preferenceable/compatibility-checker.js';
+import { runDualWriteMigration } from '@/traits/preferenceable/dual-write-migrator.js';
 import {
   applyPreferenceReadRepair,
   rollbackPreferenceReadRepair,
-} from '@/traits/preferenceable/read-repair.ts';
+} from '@/traits/preferenceable/read-repair.js';
 import {
   JsonlMigrationLogWriter,
   PreferenceMigrationLogger,
   type PreferenceMigrationChange,
-} from '@/traits/preferenceable/migration-logger.ts';
-import { resolvePreferenceSchema } from '@/traits/preferenceable/schema-registry.ts';
+} from '@/traits/preferenceable/migration-logger.js';
+import { resolvePreferenceSchema } from '@/traits/preferenceable/schema-registry.js';
 
 interface MigrationInputRecord {
   readonly userId: string;
