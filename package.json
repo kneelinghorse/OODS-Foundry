@@ -49,6 +49,7 @@
     "generate:types": "tsx src/generators/index.ts",
     "generate:trait-types": "tsx src/generators/index.ts",
     "generate:schema-types": "tsx scripts/types/generate.ts",
+    "authz:generate-types": "tsx src/traits/authz/type-generator.ts",
     "generate:objects": "tsx src/cli/generate-objects.ts",
     "validate": "tsx src/cli/validate.ts",
     "validate:dependencies": "tsx src/cli/validate-dependencies.ts",

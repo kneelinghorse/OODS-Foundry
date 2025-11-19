@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/07/schema",
+  "$id": "https://trait-engine.dev/schemas/traits/authable",
+  "title": "Authable Trait Parameters",
+  "description": "Configures default roles and hierarchy traversal guardrails for the Authable RBAC trait (R21.2 Part 2.2 & 3.1).",
+  "type": "object",
+  "properties": {
+    "defaultRoleId": {
+      "type": "string",
+      "description": "Role identifier applied when inviting members without an explicit role (R21.2 §2.3).",
+      "pattern": "^[0-9a-fA-F-]{32,36}$"
+    },
+    "hierarchyDepthLimit": {
+      "type": "integer",
+      "description": "Maximum recursion depth when walking role hierarchies to bubble permissions (Part 3.1).",
+      "minimum": 1,
+      "maximum": 10,
+      "default": 5
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "defaultRoleId": "550e8400-e29b-41d4-a716-446655440000",
+      "hierarchyDepthLimit": 4
+    }
+  ]
+}
