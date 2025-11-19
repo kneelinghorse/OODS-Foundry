@@ -276,6 +276,10 @@ interface MemoryEntry {
 export class InMemoryPreferenceCacheTransport implements PreferenceCacheTransport {
   private readonly entries = new Map<string, MemoryEntry>();
 
+  private now(): number {
+    return TimeService.nowSystem().toMillis();
+  }
+
   async read(key: string): Promise<string | null> {
     this.purgeExpired(key);
     const entry = this.entries.get(key);
@@ -283,7 +287,7 @@ export class InMemoryPreferenceCacheTransport implements PreferenceCacheTranspor
   }
 
   async write(key: string, value: string, ttlSeconds: number): Promise<void> {
-    const expiresAt = Date.now() + Math.max(ttlSeconds, 1) * 1000;
+    const expiresAt = this.now() + Math.max(ttlSeconds, 1) * 1000;
     this.entries.set(key, { value, expiresAt });
   }
 
@@ -296,7 +300,7 @@ export class InMemoryPreferenceCacheTransport implements PreferenceCacheTranspor
     if (!entry) {
       return;
     }
-    if (entry.expiresAt <= Date.now()) {
+    if (entry.expiresAt <= this.now()) {
       this.entries.delete(key);
     }
   }

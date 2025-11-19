@@ -39,6 +39,7 @@ class SyntheticPreferenceRepository implements PreferenceDocumentRepository {
   }
 
   async fetchDocument(locator: PreferenceDocumentLocator): Promise<PreferenceDocumentRecord | null> {
+    void locator;
     await sleep(this.latencyMs);
     return {
       document: this.sampleDocument,
