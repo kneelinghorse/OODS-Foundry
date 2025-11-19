@@ -8,60 +8,80 @@ import {
 
 const CHANNEL_KEY_PATTERN = /^[a-z0-9_-]+$/i;
 const EVENT_KEY_PATTERN = /^[a-z0-9._-]+$/i;
+const IN_APP_CHANNEL_ID = 'in-app'.replace('-', '_') as 'in_app';
 
-export const DEFAULT_NOTIFICATION_CHANNELS = [
+export const NOTIFICATION_CHANNEL_IDS = {
+  email: 'email',
+  push: 'push',
+  sms: 'sms',
+  inApp: IN_APP_CHANNEL_ID,
+} as const;
+
+type CanonicalNotificationChannelId =
+  (typeof NOTIFICATION_CHANNEL_IDS)[keyof typeof NOTIFICATION_CHANNEL_IDS];
+
+export type NotificationChannelId =
+  | CanonicalNotificationChannelId
+  | (string & Record<never, never>);
+
+export const DEFAULT_NOTIFICATION_CHANNELS: readonly NotificationChannelConfig[] = [
   {
-    id: 'email',
+    id: NOTIFICATION_CHANNEL_IDS.email,
     label: 'Email',
     description: 'Send to the primary inbox via transactional ESP.',
   },
   {
-    id: 'push',
+    id: NOTIFICATION_CHANNEL_IDS.push,
     label: 'Push',
     description: 'Dispatch via mobile push notifications.',
   },
   {
-    id: 'sms',
+    id: NOTIFICATION_CHANNEL_IDS.sms,
     label: 'SMS',
     description: 'Deliver through the registered phone number via SMS.',
   },
   {
-    id: 'in_app',
+    id: NOTIFICATION_CHANNEL_IDS.inApp,
     label: 'In-app',
     description: 'Render inside the application notification center.',
   },
-] as const satisfies readonly NotificationChannelConfig[];
+] as const;
 
-export const DEFAULT_NOTIFICATION_EVENTS = [
+export const DEFAULT_NOTIFICATION_EVENTS: readonly NotificationEventDefinition[] = [
   {
     id: 'new_comment',
     label: 'New comment',
     description: 'Thread replies, reviews, or other comment activity.',
-    defaultChannels: ['email', 'in_app'],
+    defaultChannels: [NOTIFICATION_CHANNEL_IDS.email, NOTIFICATION_CHANNEL_IDS.inApp],
   },
   {
     id: 'mention',
     label: 'Mention',
     description: 'Direct @mentions inside projects or tickets.',
-    defaultChannels: ['email', 'push', 'in_app'],
+    defaultChannels: [
+      NOTIFICATION_CHANNEL_IDS.email,
+      NOTIFICATION_CHANNEL_IDS.push,
+      NOTIFICATION_CHANNEL_IDS.inApp,
+    ],
   },
   {
     id: 'new_follower',
     label: 'New follower',
     description: 'Fires when another user follows this account.',
-    defaultChannels: ['push', 'in_app'],
+    defaultChannels: [NOTIFICATION_CHANNEL_IDS.push, NOTIFICATION_CHANNEL_IDS.inApp],
   },
   {
     id: 'billing_alert',
     label: 'Billing alert',
     description: 'Payment failures, expiring cards, and plan downgrades.',
-    defaultChannels: ['email', 'push', 'sms', 'in_app'],
+    defaultChannels: [
+      NOTIFICATION_CHANNEL_IDS.email,
+      NOTIFICATION_CHANNEL_IDS.push,
+      NOTIFICATION_CHANNEL_IDS.sms,
+      NOTIFICATION_CHANNEL_IDS.inApp,
+    ],
   },
-] as const satisfies readonly NotificationEventDefinition[];
-
-export type NotificationChannelId =
-  | (typeof DEFAULT_NOTIFICATION_CHANNELS)[number]['id']
-  | (string & Record<never, never>);
+] as const;
 
 export interface NotificationChannelConfig {
   readonly id: NotificationChannelId;
@@ -78,8 +98,8 @@ export interface NotificationEventDefinition {
   readonly defaultChannels?: readonly NotificationChannelId[];
 }
 
-export type NotificationMatrixRow = Record<NotificationChannelId, boolean>;
-export type NotificationPreferenceMatrix = Record<string, NotificationMatrixRow>;
+export type NotificationMatrixRow = Partial<Record<NotificationChannelId, boolean>> & PreferenceRecord;
+export type NotificationPreferenceMatrix = Record<string, NotificationMatrixRow> & PreferenceRecord;
 
 export interface NotificationMatrixOptions {
   readonly events?: readonly NotificationEventDefinition[];

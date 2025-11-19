@@ -18,7 +18,7 @@ export interface ChannelToggleProps {
 const BASE_CLASSES =
   'channel-toggle inline-flex w-full items-center justify-center rounded-xl border px-3 py-2 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[--sys-focus-ring]';
 const ENABLED_CLASSES =
-  'border-[--cmp-border-strong] bg-[--cmp-surface-accent] text-[--cmp-text-body] shadow-sm shadow-[color-mix(in_srgb,var(--cmp-surface-accent)_30%,transparent)]';
+  'border-[--cmp-border-strong] bg-[--cmp-surface-accent] text-[--cmp-text-body] shadow-sm';
 const DISABLED_CLASSES =
   'border-[--cmp-border-subtle] bg-[--cmp-surface-canvas] text-[--sys-text-muted]';
 const DISABLED_STATE_CLASSES = 'opacity-60 cursor-not-allowed';
