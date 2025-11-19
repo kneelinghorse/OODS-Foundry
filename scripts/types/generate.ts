@@ -30,6 +30,12 @@ interface GenerationResult {
   readonly status: 'created' | 'updated' | 'unchanged' | 'skipped';
 }
 
+const STATIC_EXPORTS: ReadonlyArray<{ modulePath: string; fileName: string }> = [
+  { modulePath: './address', fileName: 'address.ts' },
+  { modulePath: './authz.d', fileName: 'authz.d.ts' },
+  { modulePath: './preferences.d', fileName: 'preferences.d.ts' },
+];
+
 function parseArgs(argv: string[]): CliOptions {
   const options: CliOptions = {
     schemaDir: 'schemas',
@@ -219,12 +225,22 @@ async function writeIndex(
     return 'unchanged';
   }
 
-  const exports = results
-    .map((result) => {
-      const modulePath = `./${result.relative.replace(/\.ts$/, '')}`;
-      const normalized = modulePath.split(path.sep).join('/');
-      return `export * from '${normalized}';`;
-    })
+  const dynamicExports = results.map((result) => {
+    const modulePath = `./${result.relative.replace(/\.ts$/, '')}`;
+    return modulePath.split(path.sep).join('/');
+  });
+
+  const exportSet = new Set(dynamicExports);
+  const manualExports = STATIC_EXPORTS.filter((entry) => {
+    if (exportSet.has(entry.modulePath)) {
+      return false;
+    }
+    const targetPath = path.join(options.outDir, entry.fileName);
+    return existsSync(targetPath);
+  }).map((entry) => entry.modulePath);
+
+  const exports = [...dynamicExports, ...manualExports]
+    .map((modulePath) => `export * from '${modulePath}';`)
     .join('\n');
 
   const content = `// Auto-generated barrel for schema-derived types.\n${exports}\n`;

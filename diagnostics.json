@@ -582,6 +582,11 @@
     }
   ],
   "helpers": {
+    "authzSchemas": {
+      "lastValidated": "2025-11-19T20:11:24Z",
+      "coveragePercent": ">90",
+      "mission": "B28.1"
+    },
     "overlaysProof": {
       "totals": {
         "runs": 7,
@@ -753,18 +758,32 @@
     },
     "pkgCompat": {
       "totals": {
-        "runs": 14,
-        "pass": 14,
+        "runs": 16,
+        "pass": 16,
         "fail": 0
       },
       "lastRun": {
         "mission": "B16.6",
-        "runAt": "2025-11-14T20:39:30.299Z",
+        "runAt": "2025-11-19T06:40:35.890Z",
         "status": "passed",
-        "durationMs": 90050,
+        "durationMs": 26568,
         "exitCode": null
       },
       "history": [
+        {
+          "mission": "B16.6",
+          "runAt": "2025-11-19T06:40:35.890Z",
+          "status": "passed",
+          "durationMs": 26568,
+          "exitCode": null
+        },
+        {
+          "mission": "B16.6",
+          "runAt": "2025-11-19T03:42:08.952Z",
+          "status": "passed",
+          "durationMs": 50024,
+          "exitCode": null
+        },
         {
           "mission": "B16.6",
           "runAt": "2025-11-14T20:39:30.299Z",
@@ -819,20 +838,6 @@
           "runAt": "2025-10-28T23:52:52.075Z",
           "status": "passed",
           "durationMs": 15324,
-          "exitCode": null
-        },
-        {
-          "mission": "B16.6",
-          "runAt": "2025-10-28T23:49:22.130Z",
-          "status": "passed",
-          "durationMs": 15921,
-          "exitCode": null
-        },
-        {
-          "mission": "B16.6",
-          "runAt": "2025-10-28T23:48:29.243Z",
-          "status": "passed",
-          "durationMs": 15494,
           "exitCode": null
         }
       ]
@@ -1229,6 +1234,20 @@
       ]
     }
   },
+  "traits": {
+    "authable": {
+      "status": "implemented",
+      "mission": "B28.1",
+      "version": "1.0.0",
+      "schemas": [
+        "role",
+        "permission",
+        "membership",
+        "role-hierarchy"
+      ],
+      "registry": "data/authz-schemas/registry.json"
+    }
+  },
   "sprint19": {
     "B19.1": {
       "mission": "Component Polish & QA Sweep",
@@ -1270,6 +1289,375 @@
         "docs/changelog/sprint-19.md",
         "scripts/state-assessment.mjs --performance"
       ]
+    }
+  },
+  "sprint25": {
+    "missionRange": "B25.1-B25.7",
+    "status": "Completed",
+    "generatedAt": "2025-11-18T04:29:54Z",
+    "addressable": {
+      "traitFiles": 13,
+      "runtimeModules": [
+        "src/traits/addressable/addressable-trait.ts",
+        "src/traits/addressable/address-store.ts",
+        "src/traits/addressable/role-manager.ts",
+        "src/traits/addressable/address-entry.ts",
+        "src/traits/addressable/default-resolver.ts",
+        "src/traits/addressable/address-formatter.ts",
+        "src/traits/addressable/format-templates.ts",
+        "src/traits/addressable/template-parser.ts",
+        "src/traits/addressable/component-extractor.ts",
+        "src/traits/addressable/validation-lifecycle.ts",
+        "src/traits/addressable/validation-service.ts",
+        "src/traits/addressable/google-av-adapter.ts",
+        "src/traits/addressable/geocoder.ts"
+      ],
+      "templates": {
+        "count": 13,
+        "countries": [
+          "US",
+          "CA",
+          "GB",
+          "AU",
+          "JP",
+          "DE",
+          "NL",
+          "FR",
+          "ES",
+          "IT",
+          "BR",
+          "MX",
+          "IN"
+        ],
+        "source": "data/upu-s42-templates.json"
+      },
+      "validation": {
+        "providers": [
+          "google-av"
+        ],
+        "lifecycleStates": [
+          "unvalidated",
+          "validated",
+          "enriched"
+        ],
+        "testFiles": [
+          "tests/traits/addressable.test.ts",
+          "tests/schemas/address.test.ts",
+          "tests/integration/addressable-composition.test.ts"
+        ]
+      },
+      "ui": {
+        "components": [
+          "src/components/addresses/address-form.tsx",
+          "src/components/addresses/address-display.tsx",
+          "src/components/addresses/address-field-set.tsx",
+          "src/components/addresses/role-selector.tsx",
+          "src/components/addresses/validation-status-badge.tsx"
+        ],
+        "tests": [
+          "tests/components/addresses/address-form.test.tsx",
+          "tests/components/addresses/address-form.a11y.test.tsx",
+          "tests/components/addresses/address-display.test.tsx"
+        ]
+      },
+      "objectIntegration": {
+        "updated": [
+          "objects/core/User.object.yaml",
+          "objects/core/Organization.object.yaml"
+        ],
+        "validation": "tests/integration/addressable-composition.test.ts"
+      }
+    },
+    "quality": {
+      "tests": {
+        "status": "passing",
+        "files": 6,
+        "notes": "Trait + schema + integration + component + a11y suites"
+      },
+      "a11y": {
+        "axe": "tests/components/addresses/address-form.a11y.test.tsx",
+        "status": "passing"
+      }
+    },
+    "documentation": [
+      "docs/traits/addressable-trait.md",
+      "docs/traits/international-addresses.md",
+      "docs/traits/address-validation.md",
+      "docs/traits/multi-role-addresses.md",
+      "docs/components/address-form.md",
+      "docs/components/address-display.md",
+      "docs/migration/adding-addressable.md"
+    ],
+    "artifacts": {
+      "retrospective": "cmos/planning/sprint-25-retrospective.md",
+      "changelog": "docs/changelog/sprint-25.md",
+      "diagnostics": "diagnostics.json"
+    },
+    "completedAt": "2025-11-18T04:34:34Z"
+  },
+  "sprint26": {
+    "classifiable": {
+      "traitDefinition": "traits/core/Classifiable.trait.ts",
+      "yaml": "traits/core/Classifiable.trait.yaml",
+      "valueObjects": {
+        "typescript": [
+          "src/schemas/classification/category-node.ts",
+          "src/schemas/classification/tag.ts",
+          "src/schemas/classification/classification-metadata.ts",
+          "src/schemas/classification/term.ts",
+          "src/schemas/classification/term-taxonomy.ts",
+          "src/schemas/classification/term-relationship.ts",
+          "src/schemas/classification/constants.ts"
+        ],
+        "jsonSchemas": [
+          "schemas/classification/category-node.schema.json",
+          "schemas/classification/tag.schema.json",
+          "schemas/classification/classification-metadata.schema.json"
+        ],
+        "tests": [
+          "tests/schemas/classification.test.ts"
+        ]
+      },
+      "migrations": [
+        "database/migrations/20251118_b26_2_ltree_infrastructure.sql",
+        "database/migrations/20251118_tag_governance.sql",
+        "database/migrations/20251119_b26_5_hybrid_bridge.sql"
+      ],
+      "runtimeModules": {
+        "services": [
+          "src/services/classification/ltree-query-service.ts",
+          "src/services/classification/hybrid-term-adapter.ts"
+        ],
+        "tagGovernance": [
+          "src/traits/classifiable/tag/tag-manager.ts",
+          "src/traits/classifiable/tag/tag-merger.ts",
+          "src/traits/classifiable/tag/synonym-mapper.ts",
+          "src/traits/classifiable/tag/spam-detector.ts"
+        ]
+      },
+      "components": {
+        "files": [
+          "src/components/classification/CategoryTree.tsx",
+          "src/components/classification/CategoryPicker.tsx",
+          "src/components/classification/CategoryBreadcrumb.tsx",
+          "src/components/classification/TagInput.tsx",
+          "src/components/classification/TagList.tsx",
+          "src/components/classification/TagPill.tsx",
+          "src/components/classification/TagGovernanceDashboard.tsx"
+        ],
+        "stories": [
+          "stories/components/classification/CategoryTree.stories.tsx",
+          "stories/components/classification/CategoryPicker.stories.tsx",
+          "stories/components/classification/TagInput.stories.tsx",
+          "stories/components/classification/TagList.stories.tsx"
+        ],
+        "docs": [
+          "docs/components/category-tree.md",
+          "docs/components/category-picker.md",
+          "docs/components/tag-input.md",
+          "docs/components/tag-list.md"
+        ]
+      },
+      "hooks": [
+        "src/hooks/useCategoryTree.ts",
+        "src/hooks/useTagAutocomplete.ts",
+        "src/hooks/useTagSuggestions.ts"
+      ],
+      "objects": {
+        "updated": [
+          "objects/core/Product.object.yaml",
+          "objects/content/Article.object.yaml",
+          "objects/content/Media.object.yaml"
+        ],
+        "examples": [
+          "examples/objects/product-with-categories.ts",
+          "examples/objects/article-with-hybrid.ts"
+        ],
+        "searchHelper": "src/search/faceted-search.ts",
+        "migrationGuide": "docs/migration/adding-classifiable.md"
+      },
+      "tests": {
+        "components": [
+          "tests/components/classification/CategoryTree.test.tsx",
+          "tests/components/classification/CategoryTree.a11y.test.tsx",
+          "tests/components/classification/CategoryPicker.test.tsx",
+          "tests/components/classification/TagInput.test.tsx",
+          "tests/components/classification/TagInput.a11y.test.tsx"
+        ],
+        "traits": [
+          "tests/traits/classifiable/tag-governance.test.ts",
+          "tests/traits/classifiable/spam-detection.test.ts"
+        ],
+        "services": [
+          "tests/services/classification/ltree-query-service.spec.ts",
+          "tests/services/classification/hybrid-term-adapter.spec.ts"
+        ],
+        "integration": [
+          "tests/integration/classifiable-composition.test.ts"
+        ]
+      }
+    },
+    "artifacts": {
+      "retrospective": "cmos/planning/sprint-26-retrospective.md",
+      "changelog": "docs/changelog/sprint-26.md",
+      "diagnostics": "diagnostics.json"
+    },
+    "documentation": [
+      "docs/traits/classifiable-trait.md",
+      "docs/traits/folksonomy-governance.md",
+      "docs/migration/adding-classifiable.md",
+      "docs/components/category-tree.md",
+      "docs/components/category-picker.md",
+      "docs/components/tag-input.md",
+      "docs/components/tag-list.md"
+    ],
+    "missionRange": "B26.1-B26.7",
+    "status": "Completed",
+    "generatedAt": "2025-11-18T23:05:16Z",
+    "completedAt": "2025-11-18T21:27:52Z",
+    "quality": {
+      "tests": {
+        "files": 12,
+        "status": "passing",
+        "notes": "Trait, service, component, a11y, and integration suites run via Vitest for Classifiable."
+      },
+      "a11y": {
+        "axe": "tests/components/classification/TagInput.a11y.test.tsx",
+        "status": "passing"
+      }
+    }
+  },
+  "sprint27": {
+    "preferenceable": {
+      "traitDefinition": "traits/core/Preferenceable.trait.ts",
+      "yaml": "traits/core/Preferenceable.trait.yaml",
+      "parameterSchema": "schemas/traits/preferenceable.parameters.schema.json",
+      "docs": [
+        "docs/traits/preferenceable-trait.md",
+        "docs/traits/preference-scope-boundaries.md"
+      ]
+    },
+    "schemas": {
+      "typescript": [
+        "src/schemas/preferences/preference-document.ts",
+        "src/schemas/preferences/preference-metadata.ts"
+      ],
+      "jsonSchemas": [
+        "schemas/preferences/notification-preferences.schema.json"
+      ],
+      "generated": [
+        "generated/types/preferences.d.ts"
+      ],
+      "tests": [
+        "tests/schemas/preferences.test.ts"
+      ]
+    },
+    "registry": {
+      "data": "data/preference-schemas/registry.json",
+      "modules": [
+        "src/traits/preferenceable/schema-registry.ts",
+        "src/traits/preferenceable/schema-validator.ts",
+        "src/traits/preferenceable/type-generator.ts"
+      ],
+      "hooks": [
+        "src/hooks/usePreferenceForm.ts"
+      ],
+      "components": [
+        "src/components/preferences/PreferenceForm.tsx",
+        "src/components/preferences/PreferencePreview.tsx"
+      ],
+      "stories": [
+        "stories/components/PreferenceForm.stories.tsx"
+      ]
+    },
+    "migrationToolkit": {
+      "migrations": [
+        "database/migrations/20251118_preference_migration_log.sql"
+      ],
+      "files": [
+        "src/traits/preferenceable/compatibility-checker.ts",
+        "src/traits/preferenceable/dual-write-migrator.ts",
+        "src/traits/preferenceable/read-repair.ts",
+        "src/traits/preferenceable/version-tracker.ts",
+        "src/traits/preferenceable/migration-logger.ts"
+      ]
+    },
+    "notificationMatrix": {
+      "schema": "schemas/preferences/notification-preferences.schema.json",
+      "runtime": [
+        "src/traits/preferenceable/notification/notification-matrix.ts",
+        "src/traits/preferenceable/notification/preference-filter.ts"
+      ],
+      "components": [
+        "src/components/preferences/NotificationMatrix.tsx",
+        "src/components/preferences/ChannelToggle.tsx"
+      ],
+      "docs": [
+        "docs/traits/notification-preferences.md"
+      ]
+    },
+    "performance": {
+      "migrations": [
+        "database/migrations/20251119_preference_gin_index.sql"
+      ],
+      "cache": [
+        "src/traits/preferenceable/cache/preference-cache.ts",
+        "src/traits/preferenceable/cache/redis-adapter.ts",
+        "src/traits/preferenceable/cache/cache-warmer.ts"
+      ],
+      "queries": [
+        "src/traits/preferenceable/query/optimized-queries.ts"
+      ],
+      "docs": [
+        "docs/traits/preference-performance.md"
+      ]
+    },
+    "integration": {
+      "examples": [
+        "examples/objects/user-with-preferences.ts"
+      ],
+      "generated": [
+        "generated/objects/User.d.ts"
+      ],
+      "pages": [
+        "src/pages/UserProfileSettings.tsx"
+      ],
+      "tests": [
+        "tests/traits/preferenceable.test.ts",
+        "tests/integration/preferenceable-composition.test.ts"
+      ],
+      "stories": [
+        "stories/objects/UserPreferences.stories.tsx"
+      ]
+    },
+    "docs": [
+      "docs/traits/preferenceable-trait.md",
+      "docs/traits/preference-scope-boundaries.md",
+      "docs/traits/json-schema-preferences.md",
+      "docs/traits/notification-preferences.md",
+      "docs/traits/preference-performance.md"
+    ],
+    "artifacts": {
+      "retrospective": "cmos/planning/sprint-27-retrospective.md",
+      "changelog": "docs/changelog/sprint-27.md",
+      "extensionPlan": "cmos/planning/sprint-28-30-overview.md",
+      "diagnostics": "diagnostics.json",
+      "context": "cmos/context/MASTER_CONTEXT.json"
+    },
+    "missionRange": "B27.1-B27.8",
+    "status": "Completed",
+    "generatedAt": "2025-11-19T15:34:22Z",
+    "completedAt": "2025-11-19T15:34:22Z",
+    "quality": {
+      "tests": {
+        "files": 3,
+        "status": "passing",
+        "command": "pnpm vitest run tests/traits/preferenceable.test.ts tests/schemas/preferences.test.ts tests/integration/preferenceable-composition.test.ts"
+      },
+      "a11y": {
+        "status": "informational",
+        "notes": "PreferenceForm/NotificationMatrix inherit cmp token + RJSF semantics; dedicated axe suite scheduled for Sprint 28."
+      }
     }
   }
 }
