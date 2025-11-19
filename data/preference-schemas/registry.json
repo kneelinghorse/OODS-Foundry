@@ -1,0 +1,860 @@
+[
+  {
+    "version": "1.0.0",
+    "title": "Preference baseline",
+    "description": "Initial schema covering theme, notification, and display preferences.",
+    "schema": {
+      "$id": "https://oods-foundry/preferences/v1",
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "PreferenceDocument v1.0.0",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "type": "string",
+          "const": "1.0.0"
+        },
+        "preferences": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "theme": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "mode": {
+                  "type": "string",
+                  "enum": ["light", "dark", "system"],
+                  "default": "system"
+                },
+                "density": {
+                  "type": "string",
+                  "enum": ["comfortable", "compact"],
+                  "default": "comfortable"
+                }
+              },
+              "required": ["mode"]
+            },
+            "notifications": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "mentions": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "email": { "type": "boolean", "default": true },
+                    "push": { "type": "boolean", "default": true }
+                  },
+                  "required": ["email", "push"]
+                },
+                "digest": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "enabled": { "type": "boolean", "default": false },
+                    "time": {
+                      "type": "string",
+                      "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+                      "description": "Stored as HH:MM in 24h format"
+                    },
+                    "timezone": {
+                      "type": "string",
+                      "pattern": "^[A-Za-z_]+\\/[A-Za-z_]+$",
+                      "default": "UTC"
+                    }
+                  },
+                  "required": ["enabled"]
+                },
+                "channels": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": ["email", "push", "sms"]
+                  },
+                  "uniqueItems": true,
+                  "default": ["email", "push"]
+                },
+                "sms": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "enabled": { "type": "boolean", "default": false },
+                    "phoneNumber": {
+                      "type": "string",
+                      "pattern": "^\\+?[1-9]\\d{7,14}$",
+                      "description": "E.164 formatted phone"
+                    },
+                    "quietHours": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "start": {
+                          "type": "string",
+                          "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                        },
+                        "end": {
+                          "type": "string",
+                          "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "required": ["mentions"]
+            },
+            "display": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "timezone": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z_]+\\/[A-Za-z_]+$",
+                  "default": "UTC"
+                },
+                "locale": {
+                  "type": "string",
+                  "pattern": "^[a-z]{2}-[A-Z]{2}$",
+                  "default": "en-US"
+                }
+              }
+            }
+          },
+          "required": ["theme", "notifications"]
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "schemaVersion": {
+              "type": "string",
+              "pattern": "^\\d+\\.\\d+\\.\\d+$"
+            },
+            "lastUpdated": { "type": "string", "format": "date-time" },
+            "source": {
+              "type": "string",
+              "enum": ["user", "system", "migration", "import"],
+              "default": "user"
+            },
+            "updatedBy": { "type": "string", "minLength": 2, "maxLength": 128 },
+            "migrationApplied": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "id": { "type": "string", "minLength": 3, "maxLength": 80 },
+                  "fromVersion": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+                  "toVersion": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+                  "appliedAt": { "type": "string", "format": "date-time" },
+                  "strategy": { "type": "string", "enum": ["lazy", "eager"] },
+                  "notes": { "type": "string", "maxLength": 280 }
+                },
+                "required": ["id", "fromVersion", "toVersion", "appliedAt", "strategy"]
+              },
+              "default": []
+            }
+          },
+          "required": ["schemaVersion", "lastUpdated", "source", "migrationApplied"]
+        }
+      },
+      "required": ["version", "preferences", "metadata"],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "preferences": {
+                "properties": {
+                  "notifications": {
+                    "properties": {
+                      "channels": {
+                        "contains": { "const": "sms" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "preferences": {
+                "properties": {
+                  "notifications": {
+                    "required": ["sms"],
+                    "properties": {
+                      "sms": {
+                        "required": ["phoneNumber"]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "uiSchema": {
+      "version": { "ui:widget": "hidden" },
+      "metadata": {
+        "ui:readonly": true,
+        "ui:options": { "label": false }
+      },
+      "preferences": {
+        "ui:title": "Preferences",
+        "theme": {
+          "mode": { "ui:widget": "radio" },
+          "density": { "ui:widget": "select" }
+        },
+        "notifications": {
+          "mentions": {
+            "email": { "ui:title": "Email alerts" },
+            "push": { "ui:title": "Push alerts" }
+          },
+          "digest": {
+            "time": { "ui:help": "HH:MM 24h" },
+            "timezone": { "ui:widget": "select" }
+          },
+          "channels": {
+            "ui:widget": "checkboxes",
+            "ui:options": { "inline": true }
+          },
+          "sms": {
+            "phoneNumber": { "ui:placeholder": "+15551234567" }
+          }
+        }
+      }
+    },
+    "metadata": {
+      "status": "stable",
+      "introducedAt": "2025-11-18",
+      "compatibleWith": ["1.0.0"],
+      "deprecatedAt": null,
+      "changelog": [
+        "Baseline schema for theme, notification, and display preferences."
+      ],
+      "migrations": [],
+      "example": {
+        "version": "1.0.0",
+        "preferences": {
+          "theme": { "mode": "dark", "density": "comfortable" },
+          "notifications": {
+            "mentions": { "email": true, "push": true },
+            "digest": { "enabled": false, "timezone": "UTC" },
+            "channels": ["email", "push"]
+          },
+          "display": {
+            "timezone": "America/Los_Angeles",
+            "locale": "en-US"
+          }
+        },
+        "metadata": {
+          "schemaVersion": "1.0.0",
+          "lastUpdated": "2025-11-18T00:00:00Z",
+          "source": "system",
+          "migrationApplied": []
+        }
+      }
+    }
+  },
+  {
+    "version": "1.1.0",
+    "title": "Preference digest enhancements",
+    "description": "Adds digest cadence + high contrast theme toggles.",
+    "schema": {
+      "$id": "https://oods-foundry/preferences/v1.1",
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "PreferenceDocument v1.1.0",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "type": "string",
+          "const": "1.1.0"
+        },
+        "preferences": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "theme": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "mode": {
+                  "type": "string",
+                  "enum": ["light", "dark", "system"],
+                  "default": "system"
+                },
+                "density": {
+                  "type": "string",
+                  "enum": ["comfortable", "compact"],
+                  "default": "comfortable"
+                },
+                "highContrast": {
+                  "type": "boolean",
+                  "default": false
+                }
+              },
+              "required": ["mode"]
+            },
+            "notifications": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "mentions": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "email": { "type": "boolean", "default": true },
+                    "push": { "type": "boolean", "default": true },
+                    "sms": { "type": "boolean", "default": false }
+                  },
+                  "required": ["email", "push"]
+                },
+                "digest": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "enabled": { "type": "boolean", "default": true },
+                    "time": {
+                      "type": "string",
+                      "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$",
+                      "default": "09:00"
+                    },
+                    "timezone": {
+                      "type": "string",
+                      "pattern": "^[A-Za-z_]+\\/[A-Za-z_]+$",
+                      "default": "UTC"
+                    },
+                    "frequency": {
+                      "type": "string",
+                      "enum": ["daily", "weekly"],
+                      "default": "daily"
+                    }
+                  },
+                  "required": ["enabled"]
+                },
+                "channels": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": ["email", "push", "sms"]
+                  },
+                  "uniqueItems": true,
+                  "default": ["email", "push", "sms"]
+                },
+                "sms": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "enabled": { "type": "boolean", "default": false },
+                    "phoneNumber": {
+                      "type": "string",
+                      "pattern": "^\\+?[1-9]\\d{7,14}$"
+                    },
+                    "quietHours": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "start": {
+                          "type": "string",
+                          "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                        },
+                        "end": {
+                          "type": "string",
+                          "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "required": ["mentions"]
+            },
+            "display": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "timezone": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z_]+\\/[A-Za-z_]+$",
+                  "default": "UTC"
+                },
+                "locale": {
+                  "type": "string",
+                  "pattern": "^[a-z]{2}-[A-Z]{2}$",
+                  "default": "en-US"
+                }
+              }
+            }
+          },
+          "required": ["theme", "notifications"]
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "schemaVersion": {
+              "type": "string",
+              "pattern": "^\\d+\\.\\d+\\.\\d+$"
+            },
+            "lastUpdated": { "type": "string", "format": "date-time" },
+            "source": {
+              "type": "string",
+              "enum": ["user", "system", "migration", "import"],
+              "default": "user"
+            },
+            "updatedBy": { "type": "string", "minLength": 2, "maxLength": 128 },
+            "migrationApplied": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "id": { "type": "string", "minLength": 3, "maxLength": 80 },
+                  "fromVersion": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+                  "toVersion": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+                  "appliedAt": { "type": "string", "format": "date-time" },
+                  "strategy": { "type": "string", "enum": ["lazy", "eager"] },
+                  "notes": { "type": "string", "maxLength": 280 }
+                },
+                "required": ["id", "fromVersion", "toVersion", "appliedAt", "strategy"]
+              },
+              "default": []
+            }
+          },
+          "required": ["schemaVersion", "lastUpdated", "source", "migrationApplied"]
+        }
+      },
+      "required": ["version", "preferences", "metadata"],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "preferences": {
+                "properties": {
+                  "notifications": {
+                    "properties": {
+                      "channels": {
+                        "contains": { "const": "sms" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "preferences": {
+                "properties": {
+                  "notifications": {
+                    "required": ["sms"],
+                    "properties": {
+                      "sms": {
+                        "required": ["phoneNumber"]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "uiSchema": {
+      "version": { "ui:widget": "hidden" },
+      "preferences": {
+        "theme": {
+          "mode": { "ui:widget": "radio" },
+          "highContrast": { "ui:widget": "toggle" }
+        },
+        "notifications": {
+          "mentions": {
+            "sms": { "ui:help": "Enable SMS mention digests" }
+          },
+          "digest": {
+            "frequency": { "ui:widget": "select" }
+          },
+          "channels": {
+            "ui:widget": "checkboxes",
+            "ui:options": { "inline": true }
+          }
+        }
+      },
+      "metadata": { "ui:readonly": true }
+    },
+    "metadata": {
+      "status": "stable",
+      "introducedAt": "2025-11-19",
+      "compatibleWith": ["1.0.0", "1.1.0"],
+      "deprecatedAt": null,
+      "changelog": [
+        "Adds digest frequency and theme high contrast toggles."
+      ],
+      "migrations": [
+        {
+          "fromVersion": "1.0.0",
+          "strategy": "lazy",
+          "summary": "Populate digest.frequency and theme.highContrast defaults.",
+          "steps": [
+            {
+              "description": "Set digest.frequency to 'daily' when digest.enabled is true.",
+              "fromPath": "preferences.digest",
+              "toPath": "preferences.digest.frequency",
+              "example": "daily"
+            },
+            {
+              "description": "Backfill theme.highContrast=false.",
+              "toPath": "preferences.theme.highContrast",
+              "example": false
+            }
+          ]
+        }
+      ],
+      "example": {
+        "version": "1.1.0",
+        "preferences": {
+          "theme": { "mode": "system", "density": "comfortable", "highContrast": false },
+          "notifications": {
+            "mentions": { "email": true, "push": true, "sms": false },
+            "digest": {
+              "enabled": true,
+              "time": "09:00",
+              "timezone": "UTC",
+              "frequency": "daily"
+            },
+            "channels": ["email", "push"]
+          },
+          "display": {
+            "timezone": "America/New_York",
+            "locale": "en-US"
+          }
+        },
+        "metadata": {
+          "schemaVersion": "1.1.0",
+          "lastUpdated": "2025-11-19T00:00:00Z",
+          "source": "system",
+          "migrationApplied": []
+        }
+      }
+    }
+  },
+  {
+    "version": "2.0.0",
+    "title": "Preference privacy + channel map",
+    "description": "Introduces privacy block and a keyed notification channel map (breaking change).",
+    "schema": {
+      "$id": "https://oods-foundry/preferences/v2",
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "PreferenceDocument v2.0.0",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "type": "string",
+          "const": "2.0.0"
+        },
+        "preferences": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "theme": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "mode": {
+                  "type": "string",
+                  "enum": ["light", "dark", "system"],
+                  "default": "system"
+                },
+                "density": {
+                  "type": "string",
+                  "enum": ["comfortable", "compact"],
+                  "default": "comfortable"
+                },
+                "highContrast": { "type": "boolean", "default": false }
+              },
+              "required": ["mode"]
+            },
+            "notifications": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "channels": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "email": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "enabled": { "type": "boolean", "default": true },
+                        "address": { "type": "string", "format": "email" }
+                      },
+                      "required": ["enabled"]
+                    },
+                    "push": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "enabled": { "type": "boolean", "default": true },
+                        "deviceCount": { "type": "integer", "minimum": 0 }
+                      },
+                      "required": ["enabled"]
+                    },
+                    "sms": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "enabled": { "type": "boolean", "default": false },
+                        "phoneNumber": { "type": "string", "pattern": "^\\+?[1-9]\\d{7,14}$" },
+                        "quietHours": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "start": { "type": "string", "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$" },
+                            "end": { "type": "string", "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$" }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "required": ["email", "push"]
+                },
+                "policies": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "digest": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "properties": {
+                        "enabled": { "type": "boolean", "default": true },
+                        "frequency": { "type": "string", "enum": ["daily", "weekly", "monthly"], "default": "weekly" },
+                        "time": { "type": "string", "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$" }
+                      },
+                      "required": ["enabled", "frequency"]
+                    }
+                  }
+                }
+              },
+              "required": ["channels", "policies"]
+            },
+            "display": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "timezone": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z_]+\\/[A-Za-z_]+$",
+                  "default": "UTC"
+                },
+                "locale": {
+                  "type": "string",
+                  "pattern": "^[a-z]{2}-[A-Z]{2}$",
+                  "default": "en-US"
+                }
+              }
+            },
+            "privacy": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "shareActivity": { "type": "boolean", "default": false },
+                "profiling": { "type": "boolean", "default": false },
+                "region": {
+                  "type": "string",
+                  "enum": ["us", "eu", "apac"],
+                  "default": "us"
+                }
+              },
+              "required": ["shareActivity", "region"]
+            }
+          },
+          "required": ["theme", "notifications", "privacy"]
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "schemaVersion": {
+              "type": "string",
+              "pattern": "^\\d+\\.\\d+\\.\\d+$"
+            },
+            "lastUpdated": { "type": "string", "format": "date-time" },
+            "source": {
+              "type": "string",
+              "enum": ["user", "system", "migration", "import"],
+              "default": "user"
+            },
+            "updatedBy": { "type": "string", "minLength": 2, "maxLength": 128 },
+            "migrationApplied": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "id": { "type": "string", "minLength": 3, "maxLength": 80 },
+                  "fromVersion": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+                  "toVersion": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+                  "appliedAt": { "type": "string", "format": "date-time" },
+                  "strategy": { "type": "string", "enum": ["lazy", "eager"] },
+                  "notes": { "type": "string", "maxLength": 280 }
+                },
+                "required": ["id", "fromVersion", "toVersion", "appliedAt", "strategy"]
+              },
+              "default": []
+            }
+          },
+          "required": ["schemaVersion", "lastUpdated", "source", "migrationApplied"]
+        }
+      },
+      "required": ["version", "preferences", "metadata"],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "preferences": {
+                "properties": {
+                  "notifications": {
+                    "properties": {
+                      "channels": {
+                        "properties": {
+                          "sms": {
+                            "properties": {
+                              "enabled": { "const": true }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "preferences": {
+                "properties": {
+                  "notifications": {
+                    "properties": {
+                      "channels": {
+                        "properties": {
+                          "sms": {
+                            "required": ["phoneNumber"]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "uiSchema": {
+      "version": { "ui:widget": "hidden" },
+      "preferences": {
+        "notifications": {
+          "channels": {
+            "email": { "address": { "ui:placeholder": "user@example.com" } },
+            "sms": {
+              "phoneNumber": { "ui:placeholder": "+15551234567" }
+            }
+          },
+          "policies": {
+            "digest": {
+              "frequency": { "ui:widget": "select" },
+              "time": { "ui:help": "HH:MM 24h" }
+            }
+          }
+        },
+        "privacy": {
+          "shareActivity": { "ui:widget": "toggle" },
+          "profiling": { "ui:widget": "toggle" }
+        }
+      },
+      "metadata": { "ui:readonly": true }
+    },
+    "metadata": {
+      "status": "experimental",
+      "introducedAt": "2025-11-20",
+      "compatibleWith": ["2.0.0"],
+      "deprecatedAt": null,
+      "changelog": [
+        "Breaking: notification channels moved to keyed map",
+        "Adds privacy.region for regulation-aware rendering"
+      ],
+      "migrations": [
+        {
+          "fromVersion": "1.1.0",
+          "strategy": "eager",
+          "summary": "Transform array channels into keyed channel map; add privacy defaults.",
+          "steps": [
+            {
+              "description": "Map notifications.channels array entries into keyed channel objects.",
+              "fromPath": "preferences.notifications.channels",
+              "toPath": "preferences.notifications.channels",
+              "example": {
+                "email": { "enabled": true },
+                "push": { "enabled": true },
+                "sms": { "enabled": true }
+              }
+            },
+            {
+              "description": "Backfill privacy with shareActivity=false and region derived from locale.",
+              "toPath": "preferences.privacy",
+              "example": {
+                "shareActivity": false,
+                "profiling": false,
+                "region": "us"
+              }
+            }
+          ]
+        }
+      ],
+      "example": {
+        "version": "2.0.0",
+        "preferences": {
+          "theme": { "mode": "system", "density": "compact", "highContrast": false },
+          "notifications": {
+            "channels": {
+              "email": { "enabled": true, "address": "user@example.com" },
+              "push": { "enabled": true, "deviceCount": 2 },
+              "sms": { "enabled": false }
+            },
+            "policies": {
+              "digest": {
+                "enabled": true,
+                "frequency": "weekly",
+                "time": "07:30"
+              }
+            }
+          },
+          "display": {
+            "timezone": "Europe/Paris",
+            "locale": "fr-FR"
+          },
+          "privacy": {
+            "shareActivity": false,
+            "profiling": false,
+            "region": "eu"
+          }
+        },
+        "metadata": {
+          "schemaVersion": "2.0.0",
+          "lastUpdated": "2025-11-20T00:00:00Z",
+          "source": "system",
+          "migrationApplied": []
+        }
+      }
+    }
+  }
+]

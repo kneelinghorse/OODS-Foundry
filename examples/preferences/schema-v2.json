@@ -1,0 +1,64 @@
+{
+  "version": "2.0.0",
+  "preferences": {
+    "theme": {
+      "mode": "light",
+      "density": "compact",
+      "highContrast": false
+    },
+    "notifications": {
+      "channels": {
+        "email": {
+          "enabled": true,
+          "address": "user@example.com"
+        },
+        "push": {
+          "enabled": true,
+          "deviceCount": 3
+        },
+        "sms": {
+          "enabled": true,
+          "phoneNumber": "+15555550123"
+        }
+      },
+      "policies": {
+        "digest": {
+          "enabled": true,
+          "frequency": "weekly",
+          "time": "07:30"
+        }
+      }
+    },
+    "display": {
+      "timezone": "Europe/Paris",
+      "locale": "fr-FR"
+    },
+    "privacy": {
+      "shareActivity": false,
+      "profiling": false,
+      "region": "eu"
+    }
+  },
+  "metadata": {
+    "schemaVersion": "2.0.0",
+    "lastUpdated": "2025-11-20T00:00:00Z",
+    "source": "system",
+    "migrationApplied": [
+      {
+        "id": "pref-v2",
+        "fromVersion": "1.1.0",
+        "toVersion": "2.0.0",
+        "appliedAt": "2025-11-20T00:00:00Z",
+        "strategy": "eager",
+        "notes": "Channel array migrated to keyed map"
+      }
+    ]
+  },
+  "migrationPlan": {
+    "fromVersion": "1.1.0",
+    "steps": [
+      "Fold notifications.channels array into keyed structure",
+      "Seed privacy block with defaults and derive region from locale"
+    ]
+  }
+}
