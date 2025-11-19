@@ -1,0 +1,171 @@
+import { createHash } from 'node:crypto';
+
+import type { PermissionDocument } from '@/schemas/authz/permission.schema.ts';
+import { RoleSchema, type RoleDocument } from '@/schemas/authz/role.schema.ts';
+
+import { MembershipService, type MembershipServiceOptions } from './membership-service.ts';
+import { RoleGraphResolver, type RoleGraphResolverOptions } from './role-graph-resolver.ts';
+import { cloneParams, nowIso, type RuntimeLogger, type SqlExecutor } from './runtime-types.ts';
+
+export interface PermissionResolution {
+  readonly permissions: PermissionDocument[];
+  readonly roles: RoleDocument[];
+  readonly cacheKey: string;
+  readonly generatedAt: string;
+  readonly source: 'database';
+}
+
+export interface EntitlementServiceOptions {
+  readonly cacheNamespace?: string;
+  readonly logger?: RuntimeLogger;
+  readonly membershipOptions?: MembershipServiceOptions;
+  readonly roleGraphOptions?: RoleGraphResolverOptions;
+}
+
+interface RoleRow {
+  readonly id: string;
+  readonly name: string;
+  readonly description: string | null;
+}
+
+export class EntitlementService {
+  private readonly membershipService: MembershipService;
+  private readonly roleGraphResolver: RoleGraphResolver;
+  private readonly cacheNamespace: string;
+  private readonly logger?: RuntimeLogger;
+
+  constructor(private readonly executor: SqlExecutor, options: EntitlementServiceOptions = {}) {
+    this.logger = options.logger;
+    this.membershipService = new MembershipService(executor, { logger: this.logger, ...options.membershipOptions });
+    this.roleGraphResolver = new RoleGraphResolver(executor, { logger: this.logger, ...options.roleGraphOptions });
+    this.cacheNamespace = options.cacheNamespace ?? 'entitlements';
+  }
+
+  async getUserPermissions(userId: string, organizationId: string): Promise<PermissionDocument[]> {
+    const snapshot = await this.resolveUserPermissions(userId, organizationId);
+    return snapshot.permissions;
+  }
+
+  async hasPermission(userId: string, organizationId: string, permission: string): Promise<boolean> {
+    const normalized = permission.trim();
+    if (!normalized) {
+      return false;
+    }
+    const snapshot = await this.resolveUserPermissions(userId, organizationId);
+    const matcher = buildPermissionMatcher(normalized);
+    return snapshot.permissions.some(matcher);
+  }
+
+  async resolveUserPermissions(userId: string, organizationId: string): Promise<PermissionResolution> {
+    const directRoles = await this.getUserRoles(userId, organizationId);
+    if (directRoles.length === 0) {
+      return {
+        permissions: [],
+        roles: [],
+        cacheKey: this.buildCacheKey(userId, organizationId, []),
+        generatedAt: nowIso(),
+        source: 'database',
+      } satisfies PermissionResolution;
+    }
+
+    const permissionMap = new Map<string, PermissionDocument>();
+    const resolverCache = new Map<string, PermissionDocument[]>();
+
+    for (const role of directRoles) {
+      const inherited = await this.getPermissionsForRole(role.id, resolverCache);
+      for (const permission of inherited) {
+        permissionMap.set(permission.id, permission);
+      }
+    }
+
+    const permissions = [...permissionMap.values()].sort((a, b) => a.name.localeCompare(b.name));
+    const snapshot: PermissionResolution = {
+      permissions,
+      roles: directRoles,
+      cacheKey: this.buildCacheKey(userId, organizationId, directRoles),
+      generatedAt: nowIso(),
+      source: 'database',
+    };
+
+    this.logger?.debug?.('entitlements_resolved', {
+      userId,
+      organizationId,
+      permissionCount: permissions.length,
+      roleCount: directRoles.length,
+      ts: snapshot.generatedAt,
+    });
+
+    return snapshot;
+  }
+
+  async getUserRoles(userId: string, organizationId: string): Promise<RoleDocument[]> {
+    const memberships = await this.membershipService.listUserMemberships(userId, organizationId);
+    const roleIds = [...new Set(memberships.map((membership) => membership.role_id))];
+    if (roleIds.length === 0) {
+      return [];
+    }
+    return this.fetchRolesByIds(roleIds);
+  }
+
+  private async getPermissionsForRole(
+    roleId: string,
+    cache: Map<string, PermissionDocument[]>
+  ): Promise<PermissionDocument[]> {
+    const cached = cache.get(roleId);
+    if (cached) {
+      return cached;
+    }
+    const permissions = await this.roleGraphResolver.getInheritedPermissions(roleId);
+    cache.set(roleId, permissions);
+    return permissions;
+  }
+
+  private async fetchRolesByIds(roleIds: readonly string[]): Promise<RoleDocument[]> {
+    if (roleIds.length === 1) {
+      const result = await this.executor.query<RoleRow>(
+        'SELECT id, name, description FROM authz.roles WHERE id = $1::uuid',
+        cloneParams([roleIds[0]])
+      );
+      return result.rows.map((row) =>
+        RoleSchema.parse({
+          id: row.id,
+          name: row.name,
+          description: row.description ?? undefined,
+        })
+      );
+    }
+
+    const result = await this.executor.query<RoleRow>(
+      'SELECT id, name, description FROM authz.roles WHERE id = ANY($1::uuid[]) ORDER BY name ASC;',
+      cloneParams([roleIds])
+    );
+    return result.rows.map((row) =>
+      RoleSchema.parse({
+        id: row.id,
+        name: row.name,
+        description: row.description ?? undefined,
+      })
+    );
+  }
+
+  private buildCacheKey(userId: string, organizationId: string, roles: readonly RoleDocument[]): string {
+    const hash = createHash('sha1');
+    hash.update(userId);
+    hash.update(':');
+    hash.update(organizationId);
+    hash.update(':');
+    const roleIds = roles.map((role) => role.id).sort();
+    hash.update(roleIds.join(','));
+    const digest = hash.digest('hex');
+    return `${this.cacheNamespace}:${organizationId}:${userId}:${digest}`;
+  }
+}
+
+function buildPermissionMatcher(needle: string): (permission: PermissionDocument) => boolean {
+  const target = needle.toLowerCase();
+  const isUuid = /^[0-9a-f-]{32,36}$/i.test(needle);
+  if (isUuid) {
+    return (permission) => permission.id.toLowerCase() === target;
+  }
+  return (permission) => permission.name.toLowerCase() === target;
+}
