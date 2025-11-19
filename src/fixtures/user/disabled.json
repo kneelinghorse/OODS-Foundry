@@ -13,6 +13,85 @@
   "last_event_at": "2024-02-10T15:10:00Z",
   "tags": ["suspended"],
   "tag_count": 1,
+  "preference_document": {
+    "version": "2.0.0",
+    "preferences": {
+      "theme": {
+        "mode": "light",
+        "density": "compact",
+        "highContrast": true
+      },
+      "notifications": {
+        "channels": {
+          "email": {
+            "enabled": true,
+            "address": "grace.hopper@example.com"
+          },
+          "push": {
+            "enabled": false,
+            "deviceCount": 0
+          },
+          "sms": {
+            "enabled": true,
+            "phoneNumber": "+12065551212",
+            "quietHours": {
+              "start": "20:00",
+              "end": "08:00"
+            }
+          }
+        },
+        "policies": {
+          "digest": {
+            "enabled": true,
+            "frequency": "monthly",
+            "time": "18:00"
+          }
+        }
+      },
+      "display": {
+        "timezone": "America/New_York",
+        "locale": "en-US"
+      },
+      "privacy": {
+        "shareActivity": true,
+        "profiling": false,
+        "region": "us"
+      }
+    },
+    "metadata": {
+      "schemaVersion": "2.0.0",
+      "lastUpdated": "2025-10-02T13:37:00Z",
+      "source": "system",
+      "updatedBy": "usr_2042",
+      "migrationApplied": [
+        {
+          "id": "migration-2.0.0",
+          "fromVersion": "1.1.0",
+          "toVersion": "2.0.0",
+          "appliedAt": "2025-10-02T13:37:00Z",
+          "strategy": "eager"
+        }
+      ]
+    }
+  },
+  "preference_metadata": {
+    "schemaVersion": "2.0.0",
+    "lastUpdated": "2025-10-02T13:37:00Z",
+    "source": "system",
+    "updatedBy": "usr_2042",
+    "migrationApplied": [
+      {
+        "id": "migration-2.0.0",
+        "fromVersion": "1.1.0",
+        "toVersion": "2.0.0",
+        "appliedAt": "2025-10-02T13:37:00Z",
+        "strategy": "eager"
+      }
+    ]
+  },
+  "preference_version": "2.0.0",
+  "preference_namespaces": ["theme", "notifications", "display", "privacy"],
+  "preference_mutations": 4,
   "state_history": [
     {
       "from_state": "invited",
