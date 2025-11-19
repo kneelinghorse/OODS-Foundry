@@ -1,7 +1,8 @@
 import { useCallback, useMemo, useState } from 'react';
 import type { JSX } from 'react';
+import validatorAjv8 from '@rjsf/validator-ajv8';
 
-import type { User } from '@/generated/objects/User';
+import type { User } from '../../generated/objects/User';
 import type { PreferenceDocument } from '@/schemas/preferences/preference-document.js';
 import {
   PreferenceForm,
@@ -22,7 +23,10 @@ export function UserProfileSettings({ user, onSave }: UserProfileSettingsProps):
   const [status, setStatus] = useState<SaveState>('clean');
   const [validationIssues, setValidationIssues] = useState<string[]>([]);
 
-  const namespaces = useMemo(() => user.preference_namespaces ?? [], [user.preference_namespaces]);
+  const namespaces: readonly string[] = useMemo(
+    () => user.preference_namespaces ?? [],
+    [user.preference_namespaces]
+  );
 
   const handleDocumentChange = useCallback(
     ({ document: next }: PreferenceDocumentChange<PreferenceDocument>) => {
@@ -78,13 +82,13 @@ export function UserProfileSettings({ user, onSave }: UserProfileSettingsProps):
             </div>
           </dl>
         </div>
-        <div className="mt-4 flex flex-wrap gap-2">
-          {namespaces.map((namespace) => (
-            <span
-              key={namespace}
-              className="rounded-full border border-[--cmp-border-subtle] px-3 py-1 text-xs font-medium text-[--sys-text-secondary]"
-            >
-              {namespace}
+          <div className="mt-4 flex flex-wrap gap-2">
+            {namespaces.map((namespace: string) => (
+              <span
+                key={namespace}
+                className="rounded-full border border-[--cmp-border-subtle] px-3 py-1 text-xs font-medium text-[--sys-text-secondary]"
+              >
+                {namespace}
             </span>
           ))}
         </div>
@@ -106,6 +110,7 @@ export function UserProfileSettings({ user, onSave }: UserProfileSettingsProps):
             version={user.preference_version}
             onDocumentChange={handleDocumentChange}
             onValidationChange={handleValidationChange}
+            validator={validatorAjv8}
           />
           <div className="mt-4 flex flex-wrap gap-3">
             <button

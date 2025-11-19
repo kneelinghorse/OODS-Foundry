@@ -60,6 +60,6 @@ export const UserWithPreferencesExample: User = {
   preference_document: preferenceDocument,
   preference_metadata: preferenceDocument.metadata,
   preference_version: preferenceDocument.version,
-  preference_namespaces: store.getNamespaces(),
+  preference_namespaces: [...store.getNamespaces()],
   preference_mutations: 5,
 };
