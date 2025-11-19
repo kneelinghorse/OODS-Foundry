@@ -1659,5 +1659,17 @@
         "notes": "PreferenceForm/NotificationMatrix inherit cmp token + RJSF semantics; dedicated axe suite scheduled for Sprint 28."
       }
     }
+  },
+  "database": {
+    "authz": {
+      "status": "migrated",
+      "mission": "B28.2",
+      "schema": "authz",
+      "tables": 7,
+      "migrations": 8,
+      "indexes": 6,
+      "triggers": 1,
+      "lastMigration": "20251119_008_create_sod_trigger.sql"
+    }
   }
 }
