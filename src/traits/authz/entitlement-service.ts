@@ -4,6 +4,7 @@ import type { QueryResultRow } from 'pg';
 import type { PermissionDocument } from '@/schemas/authz/permission.schema.js';
 import { RoleSchema, type RoleDocument } from '@/schemas/authz/role.schema.js';
 
+import type { PermissionCache } from './cache/permission-cache.js';
 import { MembershipService, type MembershipServiceOptions } from './membership-service.js';
 import { RoleGraphResolver, type RoleGraphResolverOptions } from './role-graph-resolver.js';
 import { cloneParams, nowIso, type RuntimeLogger, type SqlExecutor } from './runtime-types.js';
@@ -21,6 +22,7 @@ export interface EntitlementServiceOptions {
   readonly logger?: RuntimeLogger;
   readonly membershipOptions?: MembershipServiceOptions;
   readonly roleGraphOptions?: RoleGraphResolverOptions;
+  readonly permissionCache?: PermissionCache;
 }
 
 interface RoleRow extends QueryResultRow {
@@ -34,17 +36,18 @@ export class EntitlementService {
   private readonly roleGraphResolver: RoleGraphResolver;
   private readonly cacheNamespace: string;
   private readonly logger?: RuntimeLogger;
+  private readonly permissionCache?: PermissionCache;
 
   constructor(private readonly executor: SqlExecutor, options: EntitlementServiceOptions = {}) {
     this.logger = options.logger;
     this.membershipService = new MembershipService(executor, { logger: this.logger, ...options.membershipOptions });
     this.roleGraphResolver = new RoleGraphResolver(executor, { logger: this.logger, ...options.roleGraphOptions });
     this.cacheNamespace = options.cacheNamespace ?? 'entitlements';
+    this.permissionCache = options.permissionCache;
   }
 
   async getUserPermissions(userId: string, organizationId: string): Promise<PermissionDocument[]> {
-    const snapshot = await this.resolveUserPermissions(userId, organizationId);
-    return snapshot.permissions;
+    return this.fetchPermissionsWithCache(userId, organizationId);
   }
 
   async hasPermission(userId: string, organizationId: string, permission: string): Promise<boolean> {
@@ -52,51 +55,13 @@ export class EntitlementService {
     if (!normalized) {
       return false;
     }
-    const snapshot = await this.resolveUserPermissions(userId, organizationId);
+    const permissions = await this.fetchPermissionsWithCache(userId, organizationId);
     const matcher = buildPermissionMatcher(normalized);
-    return snapshot.permissions.some(matcher);
+    return permissions.some(matcher);
   }
 
   async resolveUserPermissions(userId: string, organizationId: string): Promise<PermissionResolution> {
-    const directRoles = await this.getUserRoles(userId, organizationId);
-    if (directRoles.length === 0) {
-      return {
-        permissions: [],
-        roles: [],
-        cacheKey: this.buildCacheKey(userId, organizationId, []),
-        generatedAt: nowIso(),
-        source: 'database',
-      } satisfies PermissionResolution;
-    }
-
-    const permissionMap = new Map<string, PermissionDocument>();
-    const resolverCache = new Map<string, PermissionDocument[]>();
-
-    for (const role of directRoles) {
-      const inherited = await this.getPermissionsForRole(role.id, resolverCache);
-      for (const permission of inherited) {
-        permissionMap.set(permission.id, permission);
-      }
-    }
-
-    const permissions = [...permissionMap.values()].sort((a, b) => a.name.localeCompare(b.name));
-    const snapshot: PermissionResolution = {
-      permissions,
-      roles: directRoles,
-      cacheKey: this.buildCacheKey(userId, organizationId, directRoles),
-      generatedAt: nowIso(),
-      source: 'database',
-    };
-
-    this.logger?.debug?.('entitlements_resolved', {
-      userId,
-      organizationId,
-      permissionCount: permissions.length,
-      roleCount: directRoles.length,
-      ts: snapshot.generatedAt,
-    });
-
-    return snapshot;
+    return this.computePermissionSnapshot(userId, organizationId);
   }
 
   async getUserRoles(userId: string, organizationId: string): Promise<RoleDocument[]> {
@@ -147,6 +112,71 @@ export class EntitlementService {
         description: row.description ?? undefined,
       })
     );
+  }
+
+  private async fetchPermissionsWithCache(userId: string, organizationId: string): Promise<PermissionDocument[]> {
+    if (!this.permissionCache) {
+      const snapshot = await this.computePermissionSnapshot(userId, organizationId);
+      return [...snapshot.permissions];
+    }
+    const result = await this.permissionCache.getPermissions(userId, organizationId, {
+      loader: async () => (await this.computePermissionSnapshot(userId, organizationId)).permissions,
+    });
+    this.logger?.debug?.('permission_cache_lookup', {
+      userId,
+      organizationId,
+      source: result.source,
+      cacheKey: result.cacheKey,
+      latencyMs: Number(result.latencyMs.toFixed(3)),
+    });
+    if (result.permissions) {
+      return [...result.permissions];
+    }
+    const snapshot = await this.computePermissionSnapshot(userId, organizationId);
+    await this.permissionCache.setPermissions(userId, organizationId, snapshot.permissions);
+    return [...snapshot.permissions];
+  }
+
+  private async computePermissionSnapshot(userId: string, organizationId: string): Promise<PermissionResolution> {
+    const directRoles = await this.getUserRoles(userId, organizationId);
+    if (directRoles.length === 0) {
+      return {
+        permissions: [],
+        roles: [],
+        cacheKey: this.buildCacheKey(userId, organizationId, []),
+        generatedAt: nowIso(),
+        source: 'database',
+      } satisfies PermissionResolution;
+    }
+
+    const permissionMap = new Map<string, PermissionDocument>();
+    const resolverCache = new Map<string, PermissionDocument[]>();
+
+    for (const role of directRoles) {
+      const inherited = await this.getPermissionsForRole(role.id, resolverCache);
+      for (const permission of inherited) {
+        permissionMap.set(permission.id, permission);
+      }
+    }
+
+    const permissions = [...permissionMap.values()].sort((a, b) => a.name.localeCompare(b.name));
+    const snapshot: PermissionResolution = {
+      permissions,
+      roles: directRoles,
+      cacheKey: this.buildCacheKey(userId, organizationId, directRoles),
+      generatedAt: nowIso(),
+      source: 'database',
+    };
+
+    this.logger?.debug?.('entitlements_resolved', {
+      userId,
+      organizationId,
+      permissionCount: permissions.length,
+      roleCount: directRoles.length,
+      ts: snapshot.generatedAt,
+    });
+
+    return snapshot;
   }
 
   private buildCacheKey(userId: string, organizationId: string, roles: readonly RoleDocument[]): string {
