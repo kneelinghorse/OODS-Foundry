@@ -1,0 +1,53 @@
+{
+  "version": "1.1.0",
+  "preferences": {
+    "theme": {
+      "mode": "system",
+      "density": "comfortable",
+      "highContrast": false
+    },
+    "notifications": {
+      "mentions": {
+        "email": true,
+        "push": true,
+        "sms": false
+      },
+      "digest": {
+        "enabled": true,
+        "time": "09:00",
+        "timezone": "UTC",
+        "frequency": "daily"
+      },
+      "channels": ["email", "push", "sms"],
+      "sms": {
+        "enabled": true,
+        "phoneNumber": "+15551234567"
+      }
+    },
+    "display": {
+      "timezone": "America/New_York",
+      "locale": "en-US"
+    }
+  },
+  "metadata": {
+    "schemaVersion": "1.1.0",
+    "lastUpdated": "2025-11-19T00:00:00Z",
+    "source": "system",
+    "migrationApplied": [
+      {
+        "id": "pref-v1-1",
+        "fromVersion": "1.0.0",
+        "toVersion": "1.1.0",
+        "appliedAt": "2025-11-19T00:00:00Z",
+        "strategy": "lazy"
+      }
+    ]
+  },
+  "migrationPlan": {
+    "fromVersion": "1.0.0",
+    "steps": [
+      "Ensure digest.frequency is populated (default daily)",
+      "Seed theme.highContrast field"
+    ]
+  }
+}
