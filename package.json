@@ -82,6 +82,7 @@
     "adoption:storybook-checklist": "node scripts/adoption/storybook-checklist.mjs",
     "usage:sample": "node scripts/usage/emit-sample.mjs",
     "usage:aggregate": "tsx scripts/usage/aggregate.ts",
+    "user:prefs": "tsx scripts/preferences/preference-cli.ts",
     "vrt:fallback": "playwright test --config testkits/vrt/playwright.config.ts",
     "vrt:fallback:update": "playwright test --config testkits/vrt/playwright.config.ts --update-snapshots",
     "vrt:layouts": "playwright test testkits/vrt/stories/viz/layout.visual.spec.ts --config testkits/vrt/playwright.config.ts --project=chromium",

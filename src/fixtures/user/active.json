@@ -13,6 +13,64 @@
   "last_event_at": "2024-06-12T09:45:00Z",
   "tags": ["admin", "beta_tester", "vip"],
   "tag_count": 3,
+  "preference_document": {
+    "version": "2.0.0",
+    "preferences": {
+      "theme": {
+        "mode": "dark",
+        "density": "comfortable",
+        "highContrast": false
+      },
+      "notifications": {
+        "channels": {
+          "email": {
+            "enabled": true,
+            "address": "ada.lovelace@example.com"
+          },
+          "push": {
+            "enabled": true,
+            "deviceCount": 3
+          },
+          "sms": {
+            "enabled": false
+          }
+        },
+        "policies": {
+          "digest": {
+            "enabled": true,
+            "frequency": "weekly",
+            "time": "09:00"
+          }
+        }
+      },
+      "display": {
+        "timezone": "UTC",
+        "locale": "en-GB"
+      },
+      "privacy": {
+        "shareActivity": false,
+        "profiling": false,
+        "region": "eu"
+      }
+    },
+    "metadata": {
+      "schemaVersion": "2.0.0",
+      "lastUpdated": "2025-11-19T08:45:00Z",
+      "source": "user",
+      "updatedBy": "usr_1001",
+      "migrationApplied": []
+    }
+  },
+  "preference_metadata": {
+    "schemaVersion": "2.0.0",
+    "lastUpdated": "2025-11-19T08:45:00Z",
+    "source": "user",
+    "updatedBy": "usr_1001",
+    "migrationApplied": []
+  },
+  "preference_version": "2.0.0",
+  "preference_namespaces": ["theme", "notifications", "display", "privacy"],
+  "preference_mutations": 12,
   "state_history": [
     {
       "from_state": "invited",

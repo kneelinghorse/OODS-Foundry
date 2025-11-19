@@ -1,6 +1,6 @@
 object:
   name: User
-  version: 1.2.0
+  version: 1.3.0
   domain: core.identity
   description: Canonical identity record representing a platform user across lifecycle contexts.
   tags:
@@ -47,6 +47,16 @@ traits:
         - billing
         - shipping
       defaultRole: home
+  - name: core/Preferenceable
+    alias: UserPreferences
+    parameters:
+      namespaces:
+        - theme
+        - notifications
+        - display
+        - privacy
+      schemaVersion: 2.0.0
+      registryNamespace: user-preferences
 
 schema:
   user_id:
@@ -129,6 +139,9 @@ metadata:
   steward: design@oods.systems
   maturity: stable
   changelog:
+    - version: 1.3.0
+      date: "2025-11-19"
+      description: Added Preferenceable trait for schema-governed user preferences (theme, notifications, display, privacy).
     - version: 1.2.0
       date: "2025-11-18"
       description: Added Addressable trait for multi-role user addresses (home, billing, shipping).

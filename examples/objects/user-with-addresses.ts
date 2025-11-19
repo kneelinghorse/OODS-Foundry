@@ -1,4 +1,6 @@
 import type { User } from '../../generated/objects/User';
+import type { PreferenceMetadata } from '@/schemas/preferences/preference-metadata.js';
+import type { PreferenceDocument } from '@/schemas/preferences/preference-document.js';
 import type { AddressableEntry } from '@/traits/addressable/address-entry.js';
 import { normalizeAddress } from '@/schemas/address.js';
 
@@ -68,6 +70,54 @@ const userAddressEntries: AddressableEntry[] = [
   },
 ];
 
+const preferenceDocument: PreferenceDocument = {
+  version: '2.0.0',
+  preferences: {
+    theme: {
+      mode: 'dark',
+      density: 'comfortable',
+    },
+    notifications: {
+      channels: {
+        email: { enabled: true, address: 'rayna.chen@example.com' },
+        push: { enabled: true, deviceCount: 2 },
+        sms: { enabled: false },
+      },
+      policies: {
+        digest: {
+          enabled: true,
+          frequency: 'weekly',
+          time: '08:30',
+        },
+      },
+    },
+    display: {
+      timezone: 'America/New_York',
+      locale: 'en-US',
+    },
+    privacy: {
+      shareActivity: false,
+      profiling: false,
+      region: 'us',
+    },
+  },
+  metadata: {
+    schemaVersion: '2.0.0',
+    lastUpdated: '2025-11-19T12:15:00Z',
+    source: 'user',
+    updatedBy: 'usr_3ba4816f',
+    migrationApplied: [],
+  },
+};
+
+const preferenceMetadata: PreferenceMetadata = {
+  schemaVersion: '2.0.0',
+  lastUpdated: '2025-11-19T12:15:00Z',
+  source: 'user',
+  updatedBy: 'usr_3ba4816f',
+  migrationApplied: [],
+};
+
 /**
  * Example helper showing a User object with Addressable trait roles populated.
  */
@@ -93,6 +143,11 @@ export const UserWithAddressesExample: User = {
   timezone: 'America/New_York',
   tags: ['beta_tester', 'vip'],
   tag_count: 2,
+  preference_document: preferenceDocument,
+  preference_metadata: preferenceMetadata,
+  preference_version: '2.0.0',
+  preference_namespaces: ['theme', 'notifications', 'display', 'privacy'],
+  preference_mutations: 3,
   address_roles: ['home', 'billing', 'shipping'],
   default_address_role: 'home',
   addresses: userAddressEntries,
