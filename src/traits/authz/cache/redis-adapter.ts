@@ -85,7 +85,7 @@ export class RedisPermissionCacheAdapter implements PermissionCacheTransport {
     if (typeof this.client.scan !== 'function') {
       return this.fallback?.deleteMatching ? this.fallback.deleteMatching(pattern) : 0;
     }
-    let cursor: number | string = 0;
+    let cursor = '0';
     let removed = 0;
     try {
       do {
@@ -95,7 +95,7 @@ export class RedisPermissionCacheAdapter implements PermissionCacheTransport {
           continue;
         }
         removed += await this.deleteKeys(keys);
-      } while (cursor !== 0 && cursor !== '0');
+      } while (cursor !== '0');
       return removed;
     } catch (error) {
       this.logger?.warn?.('permission_cache_redis_scan_failed', { pattern, error });

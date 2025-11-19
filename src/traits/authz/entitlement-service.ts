@@ -117,7 +117,7 @@ export class EntitlementService {
   private async fetchPermissionsWithCache(userId: string, organizationId: string): Promise<PermissionDocument[]> {
     if (!this.permissionCache) {
       const snapshot = await this.computePermissionSnapshot(userId, organizationId);
-      return snapshot.permissions;
+      return [...snapshot.permissions];
     }
     const result = await this.permissionCache.getPermissions(userId, organizationId, {
       loader: async () => (await this.computePermissionSnapshot(userId, organizationId)).permissions,
@@ -130,11 +130,11 @@ export class EntitlementService {
       latencyMs: Number(result.latencyMs.toFixed(3)),
     });
     if (result.permissions) {
-      return result.permissions;
+      return [...result.permissions];
     }
     const snapshot = await this.computePermissionSnapshot(userId, organizationId);
     await this.permissionCache.setPermissions(userId, organizationId, snapshot.permissions);
-    return snapshot.permissions;
+    return [...snapshot.permissions];
   }
 
   private async computePermissionSnapshot(userId: string, organizationId: string): Promise<PermissionResolution> {
