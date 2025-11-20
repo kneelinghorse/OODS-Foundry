@@ -24,6 +24,7 @@ const MIGRATIONS = [
   '20251120_007_create_delivery_attempts_table.sql',
   '20251120_008_create_conversations_table.sql',
   '20251120_009_create_conversation_participants_table.sql',
+  '20251120_010_create_sla_metrics_table.sql',
 ] as const;
 
 const MIGRATIONS_DIR = path.resolve('database/migrations');

@@ -15,9 +15,11 @@ const MIGRATIONS = [
   '20251120_007_create_delivery_attempts_table.sql',
   '20251120_008_create_conversations_table.sql',
   '20251120_009_create_conversation_participants_table.sql',
+  '20251120_010_create_sla_metrics_table.sql',
 ] as const;
 
 const ROLLBACKS = [
+  '20251120_010_drop_sla_metrics_table.sql',
   '20251120_009_drop_conversation_participants_table.sql',
   '20251120_008_drop_conversations_table.sql',
   '20251120_007_drop_delivery_attempts_table.sql',
@@ -176,6 +178,7 @@ describe('Communication migrations', () => {
         'communication.delivery_attempts',
         'communication.conversations',
         'communication.conversation_participants',
+        'communication.sla_metrics',
       ];
       for (const table of tablesToProbe) {
         await pool.query(`SELECT 1 FROM ${table} LIMIT 0`);
