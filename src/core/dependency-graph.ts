@@ -5,7 +5,7 @@
  * validation and traversal functionality.
  */
 
-import { TraitDefinition } from './trait-definition.js';
+import { TraitDefinition, type TraitDependency } from './trait-definition.js';
 
 /**
  * Represents a node in the dependency graph
@@ -246,7 +246,9 @@ export class DependencyGraph {
     for (const node of this.nodes.values()) {
       for (const depId of node.dependencies) {
         const depNode = this.nodes.get(depId);
-        if (!depNode || !depNode.trait) {
+        const spec = findDependencySpec(node.trait?.dependencies, depId);
+        const optional = spec?.optional === true;
+        if ((!depNode || !depNode.trait) && !optional) {
           errors.push({
             type: 'missing_dependency',
             message: `Trait "${node.id}" depends on "${depId}" which is not defined`,
@@ -348,4 +350,27 @@ export class DependencyGraph {
 
     return cloned;
   }
+}
+
+function findDependencySpec(
+  dependencies: TraitDefinition['dependencies'] | undefined,
+  targetId: string
+): TraitDependency | null {
+  if (!dependencies || dependencies.length === 0) {
+    return null;
+  }
+
+  for (const entry of dependencies) {
+    if (typeof entry === 'string') {
+      if (entry === targetId) {
+        return { trait: entry };
+      }
+      continue;
+    }
+    if (entry?.trait === targetId) {
+      return entry;
+    }
+  }
+
+  return null;
 }
