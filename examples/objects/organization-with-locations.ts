@@ -118,4 +118,10 @@ export const OrganizationWithLocationsExample: Organization = {
   address_roles: ['headquarters', 'office', 'warehouse', 'branch'],
   default_address_role: 'headquarters',
   addresses: locationEntries,
+  membership_records: [],
+  role_catalog: [],
+  permission_catalog: [],
+  role_permissions: {},
+  role_hierarchy_edges: [],
+  session_roles: [],
 };

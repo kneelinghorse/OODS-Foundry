@@ -37,7 +37,7 @@ describe('Canonical object registry integration', () => {
         { name: 'preference_document', layer: 'trait' },
         { name: 'preference_version', layer: 'trait' },
       ],
-      expectedTraits: ['Addressable', 'Stateful', 'Timestampable', 'Taggable', 'Preferenceable'],
+      expectedTraits: ['Addressable', 'Stateful', 'Timestampable', 'Taggable', 'Preferenceable', 'Authable'],
       unionSnippet: "role: 'end_user' | 'admin' | 'owner' | 'billing';",
     },
     {
@@ -48,7 +48,7 @@ describe('Canonical object registry integration', () => {
         { name: 'organization_id' },
         { name: 'address_roles', layer: 'trait' },
       ],
-      expectedTraits: ['Addressable', 'Labelled', 'Stateful', 'Ownerable', 'Timestampable', 'Taggable'],
+      expectedTraits: ['Addressable', 'Labelled', 'Stateful', 'Ownerable', 'Timestampable', 'Taggable', 'Authable'],
       unionSnippet: "plan_tier: 'free' | 'growth' | 'enterprise';",
     },
     {

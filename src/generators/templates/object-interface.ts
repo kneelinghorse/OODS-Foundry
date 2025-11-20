@@ -84,6 +84,11 @@ export function renderObjectInterfaceFile(options: ObjectInterfaceTemplateOption
     }
   }
 
+  if (traits.includes('Authable')) {
+    interfaceLines.push('');
+    interfaceLines.push(...renderAuthableHelperMethods());
+  }
+
   interfaceLines.push('}');
 
   return `${headerComment}${headerComment ? '\n' : ''}${stateTransitionType}${interfaceLines.join('\n')}\n`;
@@ -109,4 +114,48 @@ function indent(block: string, spaces: number): string {
     .split('\n')
     .map((line) => (line.length > 0 ? `${prefix}${line}` : line))
     .join('\n');
+}
+
+function renderAuthableHelperMethods(): string[] {
+  const lines: string[] = [];
+  const helperDocs = [
+    {
+      doc: [
+        'Return Authable roles scoped to the provided organization identifier.',
+        '',
+        'Source: Authable (trait helper)',
+      ],
+      signature: 'getRolesInOrg?(organizationId: string): AuthzRoleDocument[];',
+    },
+    {
+      doc: [
+        'Check whether the user has a permission (UUID or resource:action) in the specified organization.',
+        '',
+        'Source: Authable (trait helper)',
+      ],
+      signature: 'hasPermission?(organizationId: string, permission: string): boolean;',
+    },
+    {
+      doc: [
+        'Emit a normalized entitlement export for downstream IAM integrations.',
+        '',
+        'Source: Authable (trait helper)',
+      ],
+      signature:
+        'exportEntitlements?(organizationId: string): { roles: AuthzRoleDocument[]; permissions: AuthzPermissionDocument[] };',
+    },
+  ];
+
+  helperDocs.forEach((entry, index) => {
+    const doc = renderJsDoc(entry.doc);
+    if (doc) {
+      lines.push(indent(doc.trimEnd(), 2));
+    }
+    lines.push(`  ${entry.signature}`);
+    if (index < helperDocs.length - 1) {
+      lines.push('');
+    }
+  });
+
+  return lines;
 }
