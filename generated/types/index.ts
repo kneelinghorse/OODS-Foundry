@@ -11,6 +11,7 @@ export * from './traits/billable.parameters';
 export * from './traits/cancellable.parameters';
 export * from './traits/classifiable.parameters';
 export * from './traits/colorized.parameters';
+export * from './traits/communicable.parameters';
 export * from './traits/encoding-color.parameters';
 export * from './traits/encoding-position-x.parameters';
 export * from './traits/encoding-position-y.parameters';
