@@ -10,8 +10,6 @@ import {
   TableRow,
 } from '@/components/base/Table.js';
 import type {
-  PermissionDescriptor,
-  RoleDescriptor,
   RolePermissionCellKey,
   RolePermissionMatrixState,
 } from '@/hooks/useRolePermissions.js';
