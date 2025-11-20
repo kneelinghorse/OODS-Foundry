@@ -103,13 +103,15 @@ export function renderAuditReport(report: AuditReport, format: 'json' | 'text'):
 }
 
 async function trackMessageDelivery(monitor: SLAMonitor, message: Message): Promise<void> {
-  const queuedAt = new Date(message.queued_at ?? message.created_at ?? TimeService.nowSystem().toISO());
-  const sentAt = new Date(message.sent_at ?? message.delivered_at ?? queuedAt);
+  const queuedAtIso = message.queued_at ?? message.created_at ?? TimeService.nowSystem().toISO();
+  const sentAtIso = message.sent_at ?? message.delivered_at ?? queuedAtIso;
+  const queuedAt = TimeService.normalizeToUtc(queuedAtIso).toJSDate();
+  const sentAt = TimeService.normalizeToUtc(sentAtIso).toJSDate();
   await monitor.trackDelivery(message.id, queuedAt, sentAt, message.status);
 }
 
 class MemoryExecutor implements SqlExecutor {
-  async query<T>(sql: string, params?: readonly unknown[]): Promise<{ rows: T[]; rowCount: number; command: string; oid: number; fields: [] }> {
+  async query<T>(_sql: string, _params?: readonly unknown[]): Promise<{ rows: T[]; rowCount: number; command: string; oid: number; fields: [] }> {
     return { rows: [], rowCount: 0, command: 'INSERT', oid: 0, fields: [] };
   }
 }
@@ -118,9 +120,9 @@ function resolveWindowHours(range?: DateRange): number {
   if (!range?.start || !range?.end) {
     return 24;
   }
-  const start = Date.parse(range.start);
-  const end = Date.parse(range.end);
-  if (Number.isNaN(start) || Number.isNaN(end) || end <= start) {
+  const start = TimeService.normalizeToUtc(range.start).toMillis();
+  const end = TimeService.normalizeToUtc(range.end).toMillis();
+  if (end <= start) {
     return 24;
   }
   const diffMs = end - start;

@@ -4,6 +4,7 @@ import { pathToFileURL } from 'node:url';
 import process from 'node:process';
 
 import type { JsonValue, MessageState } from '@/schemas/communication/common.js';
+import type { Conversation } from '@/schemas/communication/conversation.js';
 import type { Message } from '@/schemas/communication/message.js';
 import {
   isWithinRange,
@@ -63,8 +64,9 @@ export function buildUserTranscript(
     if (range && !isWithinRange(message.created_at, range)) {
       continue;
     }
-    const conversation =
-      (message.conversation_id && conversationLookup.get(message.conversation_id)) ?? undefined;
+    const conversation: Conversation | undefined = message.conversation_id
+      ? conversationLookup.get(message.conversation_id)
+      : undefined;
     messages.push({
       messageId: message.id,
       direction,

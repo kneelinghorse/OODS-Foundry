@@ -6,7 +6,8 @@ import type { Message } from '@/schemas/communication/message.js';
 import type { Template } from '@/schemas/communication/template.js';
 import type { SLAMetrics } from '@/traits/communication/sla-monitor.js';
 import type { MessageDeliveryResult } from '@/traits/communication/runtime-types.js';
-import { cloneDataset, SAMPLE_COMMUNICATION_DATASET, type CommunicationDataset } from '@/cli/communication-shared.js';
+import TimeService from '@/services/time/index.js';
+import { cloneDataset, SAMPLE_COMMUNICATION_DATASET } from '@/cli/communication-shared.js';
 
 interface CommunicableOrganization {
   organization_id: string;
@@ -25,7 +26,7 @@ function createOrganization(organizationId: string): CommunicableOrganization {
     organization_id: organizationId,
     name: 'Communicable Org',
     broadcastMessage: (recipientIds, template) => {
-      const now = new Date().toISOString();
+      const now = TimeService.toIsoString(TimeService.nowSystem());
       const message: Message = {
         id: randomUUID(),
         sender_id: 'system-broadcast',
@@ -69,12 +70,18 @@ function createOrganization(organizationId: string): CommunicableOrganization {
     getDeliveryPolicies: () => dataset.deliveryPolicies,
     getSLAMetrics: (windowHours) => {
       const hours = typeof windowHours === 'number' ? windowHours : Number.parseInt(String(windowHours), 10) || 24;
-      const cutoff = Date.now() - hours * 3_600_000;
+      const now = TimeService.nowSystem();
+      const windowStart = now.minus({ hours });
+      const cutoff = windowStart.toMillis();
       const durations = dataset.messages
-        .filter((message) => Date.parse(message.created_at ?? '') >= cutoff)
+        .filter((message) => TimeService.normalizeToUtc(message.created_at ?? now.toISO()).toMillis() >= cutoff)
         .map((message) => {
-          const start = Date.parse(message.queued_at ?? message.created_at ?? '');
-          const end = Date.parse(message.delivered_at ?? message.read_at ?? message.sent_at ?? message.created_at ?? '');
+          const start = TimeService.normalizeToUtc(
+            message.queued_at ?? message.created_at ?? TimeService.toIsoString(now)
+          ).toMillis();
+          const end = TimeService.normalizeToUtc(
+            message.delivered_at ?? message.read_at ?? message.sent_at ?? message.created_at ?? TimeService.toIsoString(now)
+          ).toMillis();
           return Math.max(0, end - start);
         });
       const sorted = [...durations].sort((a, b) => a - b);
@@ -85,15 +92,14 @@ function createOrganization(organizationId: string): CommunicableOrganization {
       };
       const average =
         sorted.reduce((sum, value) => sum + value, 0) / (sorted.length === 0 ? 1 : sorted.length);
-      const now = new Date();
       return {
         value: Number(average.toFixed(3)),
         p50: percentile(0.5),
         p95: percentile(0.95),
         p99: percentile(0.99),
         count: sorted.length,
-        windowStart: new Date(cutoff),
-        windowEnd: now,
+        windowStart: windowStart.toJSDate(),
+        windowEnd: now.toJSDate(),
       };
     },
   };

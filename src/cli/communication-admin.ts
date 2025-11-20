@@ -8,9 +8,6 @@ import type { Template } from '@/schemas/communication/template.js';
 import { cloneDataset, loadCommunicationDataset } from './communication-shared.js';
 
 type AdminCommand = 'channel' | 'template' | 'policy';
-type ChannelAction = 'add' | 'list' | 'disable';
-type TemplateAction = 'add' | 'list';
-type PolicyAction = 'add' | 'list';
 
 interface AdminCliOptions {
   readonly command?: AdminCommand;
@@ -219,7 +216,7 @@ Commands:
 
 Options:
   --org <uuid>          Organization identifier
-  --type <channel>      Channel type (email|sms|push|in_app|webhook|custom)
+  --type <channel>      Channel type identifier (see configured channels)
   --name <name>         Resource name
   --config <json>       JSON payload for channel config
   --subject <text>      Template subject

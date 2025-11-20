@@ -4,8 +4,11 @@ import path from 'node:path';
 import type { Channel } from '@/schemas/communication/channel.js';
 import type { Conversation, ConversationParticipant } from '@/schemas/communication/conversation.js';
 import type { DeliveryPolicy } from '@/schemas/communication/delivery-policy.js';
-import type { Message, MessageStatusEntry } from '@/schemas/communication/message.js';
+import { IN_APP_CHANNEL_TYPE } from '@/schemas/communication/common.js';
+import type { Message } from '@/schemas/communication/message.js';
+import type { MessageStatusEntry } from '@/schemas/communication/message-status.js';
 import type { Template } from '@/schemas/communication/template.js';
+import TimeService from '@/services/time/index.js';
 
 export type MessageDirection = 'sent' | 'received';
 
@@ -75,7 +78,7 @@ const MESSAGES: Message[] = [
     sender_id: USERS.recipient,
     organization_id: ORG_ID,
     recipient_ids: [USERS.sender],
-    channel_type: 'in_app',
+    channel_type: IN_APP_CHANNEL_TYPE,
     template_id: 'tmpl-thread-reply',
     variables: { escalation: false },
     metadata: { subject: 'Re: Welcome to Foundry', event_type: 'thread' },
@@ -172,7 +175,7 @@ const TEMPLATES: Template[] = [
   {
     id: 'tmpl-thread-reply',
     name: 'Conversation Reply',
-    channel_type: 'in_app',
+    channel_type: IN_APP_CHANNEL_TYPE,
     subject: 'You have a new reply',
     body: '{{author}} replied to your conversation.',
     variables: ['author'],
@@ -249,14 +252,11 @@ export function isWithinRange(timestamp: string | undefined, range?: DateRange):
   if (!range) {
     return true;
   }
-  const value = Date.parse(timestamp);
-  if (Number.isNaN(value)) {
+  const value = TimeService.normalizeToUtc(timestamp).toMillis();
+  if (range.start && value < TimeService.normalizeToUtc(range.start).toMillis()) {
     return false;
   }
-  if (range.start && value < Date.parse(range.start)) {
-    return false;
-  }
-  if (range.end && value > Date.parse(range.end)) {
+  if (range.end && value > TimeService.normalizeToUtc(range.end).toMillis()) {
     return false;
   }
   return true;

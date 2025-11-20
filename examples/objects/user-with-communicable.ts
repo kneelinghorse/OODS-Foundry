@@ -1,14 +1,16 @@
 import { randomUUID } from 'node:crypto';
 
+import type { JsonValue } from '@/schemas/communication/common.js';
 import type { Message } from '@/schemas/communication/message.js';
 import type { Template } from '@/schemas/communication/template.js';
 import type { MessageDeliveryResult } from '@/traits/communication/runtime-types.js';
+import TimeService from '@/services/time/index.js';
 import { cloneDataset, SAMPLE_COMMUNICATION_DATASET, type CommunicationDataset } from '@/cli/communication-shared.js';
 
 interface CommunicableUser {
   user_id: string;
   name: string;
-  sendMessage: (recipientIds: string[], template: Template, variables?: Record<string, unknown>) => MessageDeliveryResult;
+  sendMessage: (recipientIds: string[], template: Template, variables?: Record<string, JsonValue>) => MessageDeliveryResult;
   getMessages: () => Message[];
   getConversations: () => CommunicationDataset['conversations'];
   getUnreadCount: () => number;
@@ -22,7 +24,7 @@ function createUser(userId: string): CommunicableUser {
     user_id: userId,
     name: 'Communicable User',
     sendMessage: (recipientIds, template, variables): MessageDeliveryResult => {
-      const now = new Date().toISOString();
+      const now = TimeService.toIsoString(TimeService.nowSystem());
       const message: Message = {
         id: randomUUID(),
         sender_id: userId,
@@ -65,24 +67,23 @@ function createUser(userId: string): CommunicableUser {
         (message) => message.recipient_ids.includes(userId) && message.status !== 'read'
       ).length,
     markAllAsRead: () => {
-      dataset.messages = dataset.messages.map((message) =>
-        message.recipient_ids.includes(userId)
-          ? {
-              ...message,
-              status: 'read',
-              read_at: message.read_at ?? new Date().toISOString(),
-              status_history: [
-                ...message.status_history,
-                {
-                  message_id: message.id,
-                  state: 'read',
-                  occurred_at: new Date().toISOString(),
-                  attempt: 0,
-                },
-              ],
-            }
-          : message
-      );
+      const now = TimeService.toIsoString(TimeService.nowSystem());
+      dataset.messages.forEach((message) => {
+        if (!message.recipient_ids.includes(userId) || message.status === 'read') {
+          return;
+        }
+        message.status = 'read';
+        message.read_at = message.read_at ?? now;
+        message.status_history = [
+          ...message.status_history,
+          {
+            message_id: message.id,
+            state: 'read',
+            occurred_at: now,
+            attempt: 0,
+          },
+        ];
+      });
     },
   };
 }
