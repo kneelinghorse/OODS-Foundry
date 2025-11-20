@@ -4,6 +4,8 @@ import type { QueryResultRow } from 'pg';
 import type { PermissionDocument } from '@/schemas/authz/permission.schema.js';
 import { RoleSchema, type RoleDocument } from '@/schemas/authz/role.schema.js';
 
+import TimeService from '@/services/time/index.js';
+
 import type { PermissionCache } from './cache/permission-cache.js';
 import { MembershipService, type MembershipServiceOptions } from './membership-service.js';
 import { RoleGraphResolver, type RoleGraphResolverOptions } from './role-graph-resolver.js';
@@ -37,6 +39,8 @@ export class EntitlementService {
   private readonly cacheNamespace: string;
   private readonly logger?: RuntimeLogger;
   private readonly permissionCache?: PermissionCache;
+  private readonly localCache = new Map<string, { permissions: PermissionDocument[]; expiresAt: number }>();
+  private readonly localCacheTtlMs = 500;
 
   constructor(private readonly executor: SqlExecutor, options: EntitlementServiceOptions = {}) {
     this.logger = options.logger;
@@ -116,7 +120,12 @@ export class EntitlementService {
 
   private async fetchPermissionsWithCache(userId: string, organizationId: string): Promise<PermissionDocument[]> {
     if (!this.permissionCache) {
+      const cached = this.readLocalCache(userId, organizationId);
+      if (cached) {
+        return [...cached];
+      }
       const snapshot = await this.computePermissionSnapshot(userId, organizationId);
+      this.writeLocalCache(userId, organizationId, snapshot.permissions);
       return [...snapshot.permissions];
     }
     const result = await this.permissionCache.getPermissions(userId, organizationId, {
@@ -135,6 +144,29 @@ export class EntitlementService {
     const snapshot = await this.computePermissionSnapshot(userId, organizationId);
     await this.permissionCache.setPermissions(userId, organizationId, snapshot.permissions);
     return [...snapshot.permissions];
+  }
+
+  private readLocalCache(userId: string, organizationId: string): PermissionDocument[] | null {
+    const entry = this.localCache.get(this.localCacheKey(userId, organizationId));
+    if (!entry) {
+      return null;
+    }
+    if (entry.expiresAt < TimeService.nowSystem().toMillis()) {
+      this.localCache.delete(this.localCacheKey(userId, organizationId));
+      return null;
+    }
+    return entry.permissions;
+  }
+
+  private writeLocalCache(userId: string, organizationId: string, permissions: readonly PermissionDocument[]): void {
+    this.localCache.set(this.localCacheKey(userId, organizationId), {
+      permissions: [...permissions],
+      expiresAt: TimeService.nowSystem().toMillis() + this.localCacheTtlMs,
+    });
+  }
+
+  private localCacheKey(userId: string, organizationId: string): string {
+    return `${organizationId}:${userId}`;
   }
 
   private async computePermissionSnapshot(userId: string, organizationId: string): Promise<PermissionResolution> {
