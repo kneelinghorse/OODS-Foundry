@@ -1,6 +1,6 @@
-import type { KeyboardEvent } from 'react';
+import type { JSX, KeyboardEvent } from 'react';
 import { forwardRef, memo, useMemo, useRef } from 'react';
-import { FixedSizeList, type ListChildComponentProps } from 'react-window';
+import { FixedSizeList, type ListChildComponentProps, type ListOnItemsRenderedProps } from 'react-window';
 import { DateTime } from 'luxon';
 
 import type { Message } from '@/schemas/communication/message.js';
@@ -107,7 +107,7 @@ export function MessageTimeline({
     [isLoading]
   );
 
-  const handleItemsRendered = ({ visibleStopIndex }: { visibleStopIndex: number }) => {
+  const handleItemsRendered = ({ visibleStopIndex }: ListOnItemsRenderedProps) => {
     const nearEnd = visibleStopIndex >= rows.length - LOAD_THRESHOLD;
     if (nearEnd && hasMore && onLoadMore) {
       void onLoadMore();
