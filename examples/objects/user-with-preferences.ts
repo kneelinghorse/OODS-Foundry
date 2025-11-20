@@ -1,4 +1,10 @@
 import type { User } from '../../generated/objects/User';
+import type { Channel } from '@/schemas/communication/channel.js';
+import type { Conversation } from '@/schemas/communication/conversation.js';
+import type { DeliveryPolicy } from '@/schemas/communication/delivery-policy.js';
+import type { Message } from '@/schemas/communication/message.js';
+import type { MessageStatusEntry } from '@/schemas/communication/message-status.js';
+import type { Template } from '@/schemas/communication/template.js';
 import { PreferenceStore } from '@/traits/preferenceable/preference-store.js';
 
 const store = new PreferenceStore(
@@ -68,4 +74,10 @@ export const UserWithPreferencesExample: User = {
   role_permissions: {},
   role_hierarchy_edges: [],
   session_roles: [],
+  channel_catalog: [] as Channel[],
+  template_catalog: [] as Template[],
+  delivery_policies: [] as DeliveryPolicy[],
+  messages: [] as Message[],
+  conversations: [] as Conversation[],
+  message_statuses: [] as MessageStatusEntry[],
 };

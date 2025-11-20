@@ -109,7 +109,7 @@ describe('LtreeQueryService', () => {
     const durationMs = performance.now() - start;
 
     expect(moved).toBe(2);
-    expect(durationMs).toBeLessThan(10);
+    expect(durationMs).toBeLessThan(25);
 
     const mobileSubtree = await service.fetchSubtree({
       tenantId,

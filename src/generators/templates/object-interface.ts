@@ -89,6 +89,11 @@ export function renderObjectInterfaceFile(options: ObjectInterfaceTemplateOption
     interfaceLines.push(...renderAuthableHelperMethods());
   }
 
+  if (traits.includes('Communicable')) {
+    interfaceLines.push('');
+    interfaceLines.push(...renderCommunicableHelperMethods(inferCommunicableTarget(objectName)));
+  }
+
   interfaceLines.push('}');
 
   return `${headerComment}${headerComment ? '\n' : ''}${stateTransitionType}${interfaceLines.join('\n')}\n`;
@@ -145,6 +150,137 @@ function renderAuthableHelperMethods(): string[] {
         'exportEntitlements?(organizationId: string): { roles: AuthzRoleDocument[]; permissions: AuthzPermissionDocument[] };',
     },
   ];
+
+  helperDocs.forEach((entry, index) => {
+    const doc = renderJsDoc(entry.doc);
+    if (doc) {
+      lines.push(indent(doc.trimEnd(), 2));
+    }
+    lines.push(`  ${entry.signature}`);
+    if (index < helperDocs.length - 1) {
+      lines.push('');
+    }
+  });
+
+  return lines;
+}
+
+type CommunicableTarget = 'user' | 'organization' | 'generic';
+
+function inferCommunicableTarget(objectName: string): CommunicableTarget {
+  const normalized = objectName.trim().toLowerCase();
+  if (normalized.includes('organization') || normalized.includes('org')) {
+    return 'organization';
+  }
+  if (normalized.includes('user')) {
+    return 'user';
+  }
+  return 'generic';
+}
+
+function renderCommunicableHelperMethods(target: CommunicableTarget): string[] {
+  const lines: string[] = [];
+  const messageType = "import('@/schemas/communication/message.js').Message";
+  const messageVariablesType = "import('@/schemas/communication/message.js').MessageVariables";
+  const messageStateType = "import('@/schemas/communication/common.js').MessageState";
+  const conversationType = "import('@/schemas/communication/conversation.js').Conversation";
+  const channelType = "import('@/schemas/communication/channel.js').Channel";
+  const templateType = "import('@/schemas/communication/template.js').Template";
+  const deliveryPolicyType = "import('@/schemas/communication/delivery-policy.js').DeliveryPolicy";
+  const deliveryResultType = "import('@/traits/communication/runtime-types.js').MessageDeliveryResult";
+  const slaMetricsType = "import('@/traits/communication/sla-monitor.js').SLAMetrics";
+
+  const helperDocs: { readonly doc: readonly string[]; readonly signature: string }[] = [];
+
+  if (target !== 'organization') {
+    helperDocs.push(
+      {
+        doc: [
+          'Send a message to one or more recipients, applying Authable + Preferenceable bridges.',
+          '',
+          'Source: Communicable (trait helper)',
+        ],
+        signature: `sendMessage?(recipientIds: string[], template: ${templateType}, variables?: ${messageVariablesType}): ${deliveryResultType};`,
+      },
+      {
+        doc: [
+          'Return messages associated with this entity (sent or received).',
+          '',
+          'Source: Communicable (trait helper)',
+        ],
+        signature: `getMessages?(filters?: { status?: ${messageStateType}; since?: string; until?: string; channelType?: string; conversationId?: string }): ${messageType}[];`,
+      },
+      {
+        doc: [
+          'Return threaded conversations anchored to this entity.',
+          '',
+          'Source: Communicable (trait helper)',
+        ],
+        signature: `getConversations?(): ${conversationType}[];`,
+      },
+      {
+        doc: [
+          'Return total unread messages routed to this entity.',
+          '',
+          'Source: Communicable (trait helper)',
+        ],
+        signature: 'getUnreadCount?(): number;',
+      },
+      {
+        doc: [
+          'Mark all messages as read for this entity.',
+          '',
+          'Source: Communicable (trait helper)',
+        ],
+        signature: 'markAllAsRead?(): void;',
+      }
+    );
+  }
+
+  if (target !== 'user') {
+    helperDocs.push(
+      {
+        doc: [
+          'Broadcast a message to recipients scoped to the organization.',
+          '',
+          'Source: Communicable (trait helper)',
+        ],
+        signature: `broadcastMessage?(recipientIds: string[], template: ${templateType}, variables?: ${messageVariablesType}): ${deliveryResultType};`,
+      },
+      {
+        doc: [
+          'Return registered channels for the organization.',
+          '',
+          'Source: Communicable (trait helper)',
+        ],
+        signature: `getChannels?(): ${channelType}[];`,
+      },
+      {
+        doc: [
+          'Return templates, optionally filtered by channel type.',
+          '',
+          'Source: Communicable (trait helper)',
+        ],
+        signature: `getTemplates?(channelType?: string): ${templateType}[];`,
+      },
+      {
+        doc: [
+          'Return delivery policies linked to the organization.',
+          '',
+          'Source: Communicable (trait helper)',
+        ],
+        signature: `getDeliveryPolicies?(): ${deliveryPolicyType}[];`,
+      },
+      {
+        doc: [
+          'Return SLA metrics for the requested window (hours string or numeric).',
+          '',
+          'Source: Communicable (trait helper)',
+        ],
+        signature: `getSLAMetrics?(window: string | number): ${slaMetricsType};`,
+      }
+    );
+  }
 
   helperDocs.forEach((entry, index) => {
     const doc = renderJsDoc(entry.doc);

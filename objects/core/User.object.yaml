@@ -1,8 +1,8 @@
 object:
   name: User
-  version: 1.4.0
+  version: 1.5.0
   domain: core.identity
-  description: Canonical identity record representing a platform user across lifecycle contexts.
+  description: Canonical identity record representing a platform user across lifecycle contexts, now including messaging capabilities via Communicable.
   tags:
     - universal
     - identity
@@ -61,6 +61,13 @@ traits:
     alias: UserAuthz
     parameters:
       hierarchyDepthLimit: 5
+  - name: core/Communicable
+    alias: UserCommunication
+    parameters:
+      channelTypes:
+        - email
+        - in_app
+      supportConversations: true
 
 schema:
   user_id:
@@ -143,6 +150,9 @@ metadata:
   steward: design@oods.systems
   maturity: stable
   changelog:
+    - version: 1.5.0
+      date: "2025-11-20"
+      description: Added Communicable trait for messaging (email/in-app), exposing helper methods for sending, conversations, and unread management.
     - version: 1.4.0
       date: "2025-11-20"
       description: Composed Authable trait to attach RBAC memberships and entitlement exports.

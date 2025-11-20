@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/07/schema",
+  "$id": "https://trait-engine.dev/schemas/traits/communicable",
+  "title": "Communicable Trait Parameters",
+  "description": "Configures messaging channels and conversation support for the Communicable trait (R20.1/R20.6).",
+  "type": "object",
+  "properties": {
+    "channelTypes": {
+      "type": "array",
+      "description": "Channel types enabled for deliveries (email, sms, push, in_app, webhook, or custom).",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9._-]+$"
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "default": ["email", "sms", "push", "in_app", "webhook"]
+    },
+    "supportConversations": {
+      "type": "boolean",
+      "description": "Whether threaded conversations are enabled alongside atomic messages.",
+      "default": true
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "channelTypes": ["email", "in_app"],
+      "supportConversations": true
+    }
+  ]
+}

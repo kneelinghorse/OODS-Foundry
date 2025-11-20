@@ -1,4 +1,10 @@
 import type { User } from '../../generated/objects/User';
+import type { Channel } from '@/schemas/communication/channel.js';
+import type { Conversation } from '@/schemas/communication/conversation.js';
+import type { DeliveryPolicy } from '@/schemas/communication/delivery-policy.js';
+import type { Message } from '@/schemas/communication/message.js';
+import type { MessageStatusEntry } from '@/schemas/communication/message-status.js';
+import type { Template } from '@/schemas/communication/template.js';
 import { AUTHZ_SAMPLE_DATASET, AUTHZ_SAMPLE_IDS, createSampleAuthableTrait } from '@/data/authz/sample-entitlements.js';
 import type { AuthzDataset } from '@/data/authz/types.js';
 import { PreferenceStore } from '@/traits/preferenceable/preference-store.js';
@@ -67,4 +73,10 @@ export const UserWithAuthableExample: User = {
   role_permissions: cloneRolePermissions(AUTHZ_SAMPLE_DATASET.rolePermissions),
   role_hierarchy_edges: authableTrait.listHierarchyEdges(),
   session_roles: [...(sampleUserRecord?.sessionRoles ?? [])],
+  channel_catalog: [] as Channel[],
+  template_catalog: [] as Template[],
+  delivery_policies: [] as DeliveryPolicy[],
+  messages: [] as Message[],
+  conversations: [] as Conversation[],
+  message_statuses: [] as MessageStatusEntry[],
 };
