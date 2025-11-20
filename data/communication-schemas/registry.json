@@ -1,0 +1,463 @@
+{
+  "id": "communication-schema-registry",
+  "version": "1.0.0",
+  "updatedAt": "2025-11-20",
+  "changelog": [
+    {
+      "version": "1.0.0",
+      "date": "2025-11-20",
+      "notes": [
+        "Initial registry covering Channel, Template, DeliveryPolicy, Message, Conversation, and MessageStatus schemas",
+        "Grounded in R20.1 (Notification Model) and R20.6 (Messaging Systems) research"
+      ]
+    }
+  ],
+  "schemas": [
+    {
+      "id": "channel",
+      "title": "Delivery Channel",
+      "description": "Provider configuration for a communication channel (email, SMS, push, in-app, webhook).",
+      "status": "experimental",
+      "citation": "R20.1 Part 2.1 Channel Taxonomy",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "https://oods-foundry/communication/channel.json",
+        "type": "object",
+        "required": ["id", "name", "type", "enabled", "config"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9._-]{1,63}$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 120
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 512
+          },
+          "type": {
+            "type": "string",
+            "pattern": "^[a-z0-9._-]+$",
+            "examples": ["email", "sms", "push", "in_app", "webhook"]
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "uniqueItems": true
+          },
+          "metadata": {
+            "$ref": "#/definitions/metadata"
+          },
+          "config": {
+            "type": "object",
+            "description": "Provider-specific configuration. Detailed validation occurs in the runtime schema validator.",
+            "additionalProperties": true
+          }
+        },
+        "definitions": {
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "emailConfig": {
+            "type": "object",
+            "required": ["provider", "host", "port", "from"],
+            "additionalProperties": false,
+            "properties": {
+              "provider": {
+                "type": "string",
+                "enum": ["smtp", "ses", "sendgrid", "mailgun", "postmark", "custom"]
+              },
+              "host": { "type": "string", "minLength": 3 },
+              "port": { "type": "integer", "minimum": 1, "maximum": 65535 },
+              "secure": { "type": "boolean" },
+              "auth": {
+                "type": "object",
+                "required": ["user", "pass"],
+                "properties": {
+                  "user": { "type": "string" },
+                  "pass": { "type": "string", "minLength": 8 }
+                }
+              },
+              "from": {
+                "type": "object",
+                "required": ["name", "email"],
+                "properties": {
+                  "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+                  "email": { "type": "string", "format": "email" }
+                }
+              },
+              "headers": {
+                "type": "object",
+                "additionalProperties": { "type": "string" }
+              }
+            }
+          },
+          "smsConfig": {
+            "type": "object",
+            "required": ["provider", "sender_id"],
+            "properties": {
+              "provider": {
+                "type": "string",
+                "enum": ["twilio", "sns", "plivo", "messagebird", "custom"]
+              },
+              "sender_id": {
+                "type": "string",
+                "maxLength": 20
+              },
+              "long_code_pool": {
+                "type": "array",
+                "items": { "type": "string", "pattern": "^\\+[1-9]\\d{1,14}$" },
+                "uniqueItems": true
+              },
+              "delivery_receipts": { "type": "boolean" },
+              "dlr_webhook": { "type": "string", "format": "uri" }
+            }
+          },
+          "pushConfig": {
+            "type": "object",
+            "required": ["provider", "credentials"],
+            "properties": {
+              "provider": {
+                "type": "string",
+                "enum": ["fcm", "apns", "wns", "custom"]
+              },
+              "credentials": {
+                "type": "object",
+                "required": ["key_id", "key"],
+                "properties": {
+                  "key_id": { "type": "string", "minLength": 4 },
+                  "key": { "type": "string", "minLength": 32 },
+                  "team_id": { "type": "string" },
+                  "bundle_id": { "type": "string" }
+                }
+              },
+              "topics": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "supports_silent": { "type": "boolean" }
+            }
+          },
+          "inAppConfig": {
+            "type": "object",
+            "required": ["notification_center_id"],
+            "properties": {
+              "notification_center_id": { "type": "string", "minLength": 3 },
+              "stream": { "type": "string" },
+              "retention_days": { "type": "integer", "minimum": 1, "maximum": 365 },
+              "allow_mark_seen": { "type": "boolean" }
+            }
+          },
+          "webhookConfig": {
+            "type": "object",
+            "required": ["url", "secret", "retry"],
+            "properties": {
+              "url": { "type": "string", "format": "uri" },
+              "method": { "type": "string", "enum": ["POST", "PUT"] },
+              "signature_header": { "type": "string" },
+              "secret": { "type": "string", "minLength": 16 },
+              "retry": {
+                "type": "object",
+                "required": ["max_attempts", "backoff_seconds"],
+                "properties": {
+                  "max_attempts": { "type": "integer", "minimum": 0, "maximum": 10 },
+                  "backoff_seconds": { "type": "integer", "minimum": 1, "maximum": 3600 }
+                }
+              },
+              "headers": {
+                "type": "object",
+                "additionalProperties": { "type": "string" }
+              }
+            }
+          },
+          "customConfig": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
+      "example": {
+        "id": "primary-email",
+        "name": "Primary Email",
+        "type": "email",
+        "enabled": true,
+        "config": {
+          "provider": "smtp",
+          "host": "smtp.example.com",
+          "port": 587,
+          "secure": true,
+          "from": { "name": "OODS", "email": "notifications@example.com" }
+        }
+      }
+    },
+    {
+      "id": "template",
+      "title": "Message Template",
+      "description": "Subject/body definition with declared template variables.",
+      "status": "experimental",
+      "citation": "R20.1 Part 2.3 Template Engine",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "https://oods-foundry/communication/template.json",
+        "type": "object",
+        "required": ["id", "name", "channel_type", "subject", "body", "variables"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{1,127}$" },
+          "name": { "type": "string", "minLength": 2, "maxLength": 120 },
+          "channel_type": { "type": "string" },
+          "subject": { "type": "string", "minLength": 1, "maxLength": 240 },
+          "body": { "type": "string", "minLength": 1 },
+          "variables": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9._]*$"
+            },
+            "uniqueItems": true
+          },
+          "locale": { "type": "string", "pattern": "^[a-z]{2}(?:-[A-Z][a-zA-Z]+)*$" },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
+      "example": {
+        "id": "welcome-email-v1",
+        "name": "Welcome Email",
+        "channel_type": "email",
+        "subject": "Welcome, {{user.name}}!",
+        "body": "Hi {{user.name}}, your {{organization.name}} account is live.",
+        "variables": ["user.name", "organization.name"],
+        "locale": "en-US"
+      }
+    },
+    {
+      "id": "delivery-policy",
+      "title": "Delivery Policy",
+      "description": "Retry, throttling, quiet hours, and priority configuration.",
+      "status": "experimental",
+      "citation": "R20.1 Part 3.1 State Lifecycle",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "https://oods-foundry/communication/delivery-policy.json",
+        "type": "object",
+        "required": ["id", "name", "retry", "throttling", "priority"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9._-]{2,64}$" },
+          "name": { "type": "string", "minLength": 2, "maxLength": 120 },
+          "priority": { "type": "string", "enum": ["urgent", "high", "normal", "low"] },
+          "retry": {
+            "type": "object",
+            "required": ["max_attempts", "backoff_strategy"],
+            "properties": {
+              "max_attempts": { "type": "integer", "minimum": 0, "maximum": 10 },
+              "backoff_strategy": { "type": "string", "enum": ["linear", "exponential", "none"] },
+              "initial_delay_seconds": { "type": "integer", "minimum": 0, "maximum": 3600 }
+            }
+          },
+          "throttling": {
+            "type": "object",
+            "properties": {
+              "max_per_minute": { "type": "integer", "minimum": 0, "maximum": 1000 },
+              "max_per_hour": { "type": "integer", "minimum": 0, "maximum": 10000 },
+              "max_per_day": { "type": "integer", "minimum": 0, "maximum": 100000 }
+            }
+          },
+          "quiet_hours": {
+            "type": "object",
+            "properties": {
+              "start_time": { "type": "string", "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d$" },
+              "end_time": { "type": "string", "pattern": "^(?:[01]\\d|2[0-3]):[0-5]\\d$" },
+              "timezone": { "type": "string" },
+              "days_of_week": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+                },
+                "uniqueItems": true
+              }
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
+      "example": {
+        "id": "standard-policy",
+        "name": "Standard Delivery",
+        "priority": "normal",
+        "retry": { "max_attempts": 3, "backoff_strategy": "exponential", "initial_delay_seconds": 30 },
+        "throttling": { "max_per_minute": 60, "max_per_hour": 500, "max_per_day": 5000 }
+      }
+    },
+    {
+      "id": "message",
+      "title": "Message",
+      "description": "Atomic message payload queued for delivery.",
+      "status": "experimental",
+      "citation": "R20.6 Part 1.2 Domain Primitives",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "https://oods-foundry/communication/message.json",
+        "type": "object",
+        "required": ["id", "sender_id", "recipient_ids", "channel_type", "template_id", "created_at"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9._-]{2,128}$" },
+          "organization_id": { "type": "string" },
+          "sender_id": { "type": "string" },
+          "recipient_ids": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 1,
+            "maxItems": 100,
+            "uniqueItems": true
+          },
+          "channel_type": { "type": "string" },
+          "template_id": { "type": "string" },
+          "variables": { "type": "object", "additionalProperties": true },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "priority": { "type": "string", "enum": ["urgent", "high", "normal", "low"] },
+          "delivery_policy": { "$ref": "https://oods-foundry/communication/delivery-policy.json" },
+          "conversation_id": { "type": "string" },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "uri", "type"],
+              "properties": {
+                "id": { "type": "string" },
+                "uri": { "type": "string", "format": "uri" },
+                "type": { "type": "string" },
+                "size_bytes": { "type": "integer", "minimum": 0 }
+              }
+            },
+            "maxItems": 10
+          },
+          "status": { "type": "string", "enum": ["queued", "sent", "delivered", "failed", "retried", "read"] },
+          "status_history": {
+            "type": "array",
+            "items": { "$ref": "https://oods-foundry/communication/message-status.json" }
+          },
+          "created_at": { "type": "string", "format": "date-time" },
+          "queued_at": { "type": "string", "format": "date-time" },
+          "sent_at": { "type": "string", "format": "date-time" },
+          "delivered_at": { "type": "string", "format": "date-time" },
+          "read_at": { "type": "string", "format": "date-time" },
+          "failed_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "example": {
+        "id": "msg_01hf0v1",
+        "sender_id": "user_123",
+        "recipient_ids": ["user_456"],
+        "channel_type": "email",
+        "template_id": "welcome-email-v1",
+        "status": "queued",
+        "created_at": "2025-11-20T05:00:00Z"
+      }
+    },
+    {
+      "id": "conversation",
+      "title": "Conversation",
+      "description": "Threaded conversation grouping multiple messages and participants.",
+      "status": "experimental",
+      "citation": "R20.6 Part 3.3 Authorization Bridge",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "https://oods-foundry/communication/conversation.json",
+        "type": "object",
+        "required": ["id", "subject", "participants", "messages", "created_at"],
+        "properties": {
+          "id": { "type": "string" },
+          "subject": { "type": "string", "minLength": 1, "maxLength": 240 },
+          "participants": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "object",
+              "required": ["user_id", "role", "joined_at"],
+              "properties": {
+                "user_id": { "type": "string" },
+                "role": { "type": "string", "enum": ["owner", "member", "viewer"] },
+                "joined_at": { "type": "string", "format": "date-time" },
+                "last_seen_at": { "type": "string", "format": "date-time" }
+              }
+            },
+            "uniqueItems": true
+          },
+          "messages": {
+            "type": "array",
+            "items": { "$ref": "https://oods-foundry/communication/message.json" }
+          },
+          "status": { "type": "string", "enum": ["active", "archived", "deleted"] },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "created_at": { "type": "string", "format": "date-time" },
+          "updated_at": { "type": "string", "format": "date-time" }
+        }
+      },
+      "example": {
+        "id": "conv_onboarding",
+        "subject": "Welcome conversation",
+        "participants": [
+          { "user_id": "user_123", "role": "owner", "joined_at": "2025-11-20T05:00:00Z" },
+          { "user_id": "user_456", "role": "member", "joined_at": "2025-11-20T05:00:00Z" }
+        ],
+        "messages": [],
+        "status": "active",
+        "created_at": "2025-11-20T05:00:00Z"
+      }
+    },
+    {
+      "id": "message-status",
+      "title": "Message Status",
+      "description": "State transition entry for a message delivery attempt.",
+      "status": "experimental",
+      "citation": "R20.1 Part 3.1 State Lifecycle",
+      "schema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "https://oods-foundry/communication/message-status.json",
+        "type": "object",
+        "required": ["message_id", "state", "occurred_at"],
+        "properties": {
+          "id": { "type": "string" },
+          "message_id": { "type": "string" },
+          "state": { "type": "string", "enum": ["queued", "sent", "delivered", "failed", "retried", "read"] },
+          "occurred_at": { "type": "string", "format": "date-time" },
+          "description": { "type": "string", "maxLength": 512 },
+          "channel_response": { "type": "object", "additionalProperties": true },
+          "error_code": { "type": "string" },
+          "attempt": { "type": "integer", "minimum": 0 }
+        }
+      },
+      "example": {
+        "message_id": "msg_01hf0v1",
+        "state": "sent",
+        "occurred_at": "2025-11-20T05:01:02Z",
+        "description": "Queued by SES"
+      }
+    }
+  ]
+}

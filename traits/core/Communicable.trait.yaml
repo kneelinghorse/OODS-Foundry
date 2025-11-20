@@ -1,0 +1,148 @@
+trait:
+  name: Communicable
+  version: 1.0.0
+  description: |
+    Canonical communication trait that unifies multi-channel delivery, template governance,
+    delivery policies, and threaded conversations derived from R20.1/R20.6 research. Provides
+    orchestration-ready schemas for channels, messages, policies, and conversations with
+    Preferenceable/Authable/Classifiable integration points.
+  category: communication
+  tags:
+    - notification
+    - messaging
+    - template
+    - delivery
+    - conversation
+
+parameters:
+  - name: channelTypes
+    type: string[]
+    required: false
+    default:
+      - email
+      - sms
+      - push
+      - in_app
+      - webhook
+    description: Channels enabled for the tenant (R20.1 Part 2.1 multi-channel taxonomy).
+  - name: supportConversations
+    type: boolean
+    required: false
+    default: true
+    description: Toggle for threaded conversations in addition to standalone messages.
+
+schema:
+  channel_catalog:
+    type: Channel[]
+    required: true
+    description: Provider configuration for each channel (SMTP/Twilio/FCM/Webhook).
+    default: []
+  template_catalog:
+    type: Template[]
+    required: true
+    description: Localized template definitions with declared variables per R20.1 Part 2.3.
+    default: []
+  delivery_policies:
+    type: DeliveryPolicy[]
+    required: true
+    description: Retry/throttle/quiet-hour policies (R20.1 Part 3 lifecycle).
+    default: []
+  messages:
+    type: Message[]
+    required: false
+    description: Atomic message payloads queued for delivery (R20.6 Part 1.2 primitives).
+    default: []
+  conversations:
+    type: Conversation[]
+    required: false
+    description: Multi-party threaded conversations with membership metadata (R20.6 Part 3.3).
+    default: []
+  message_statuses:
+    type: MessageStatusEntry[]
+    required: false
+    description: Delivery state machine transitions (queued → sent → delivered → failed → retried → read).
+    default: []
+
+semantics:
+  channel_catalog:
+    semantic_type: communication.channels
+    token_mapping: "--sys-communication-accent"
+    ui_hints:
+      component: ChannelGrid
+      badges: channel_catalog[].type
+  template_catalog:
+    semantic_type: communication.templates
+    token_mapping: "--sys-communication-muted"
+    ui_hints:
+      component: TemplateDrawer
+      variableBadge: template_catalog[].variables
+  delivery_policies:
+    semantic_type: communication.delivery_policy
+    token_mapping: "--sys-communication-accent"
+    ui_hints:
+      component: DeliveryPolicyCapsule
+  messages:
+    semantic_type: communication.messages
+    token_mapping: "--sys-communication-success"
+    ui_hints:
+      component: MessageTimeline
+  conversations:
+    semantic_type: communication.conversations
+    token_mapping: "--sys-communication-accent"
+    ui_hints:
+      component: ConversationViewer
+
+view_extensions:
+  list:
+    - component: MessageStatusBadge
+      position: before
+      priority: 90
+      props:
+        statusesField: message_statuses
+  detail:
+    - component: CommunicationDetailPanel
+      position: main
+      priority: 80
+      props:
+        channelsField: channel_catalog
+        templatesField: template_catalog
+        policiesField: delivery_policies
+        conversationsField: conversations
+  form:
+    - component: TemplatePicker
+      position: main
+      props:
+        templatesField: template_catalog
+        channelsField: channel_catalog
+  timeline:
+    - component: MessageEventTimeline
+      props:
+        messagesField: messages
+        statusesField: message_statuses
+
+tokens:
+  communication.card.bg: "var(--sys-surface-raised)"
+  communication.card.border: "var(--sys-communication-muted)"
+  communication.status.success: "var(--sys-communication-success)"
+  communication.status.error: "var(--sys-communication-error)"
+
+dependencies:
+  - trait: Preferenceable
+    version: ">=1.0.0"
+  - trait: Authable
+    version: ">=1.0.0"
+  - trait: Classifiable
+    version: ">=1.0.0"
+    optional: true
+
+metadata:
+  created: "2025-11-20"
+  owners:
+    - notifications@oods.systems
+  maturity: experimental
+  accessibility:
+    keyboard: ChannelGrid keeps linear tab stops and roving focus for template previews.
+    screenreader: MessageEventTimeline announces delivery transitions with ARIA live updates per R20.6 guidance.
+  references:
+    - "R20.1 Canonical Notification Model"
+    - "R20.6 Foundational Analysis of Modern Message and Communication Systems"
