@@ -11,6 +11,7 @@ export interface AuthzTestContext {
   users: Record<'alpha' | 'beta', string>;
   organizations: Record<'northwind' | 'globex', string>;
   addHierarchyEdge(parentRoleId: string, childRoleId: string): void;
+  grantPermission(roleId: string, permissionName: string): string;
   dispose(): Promise<void>;
 }
 
@@ -49,6 +50,7 @@ export function createAuthzTestContext(): AuthzTestContext {
     addHierarchyEdge: (parentRoleId: string, childRoleId: string) => {
       executor.addHierarchyEdge({ parent_role_id: parentRoleId, child_role_id: childRoleId });
     },
+    grantPermission: (roleId: string, permissionName: string) => executor.registerPermission(roleId, permissionName),
     dispose: async () => {
       executor.reset();
     },
@@ -110,6 +112,20 @@ class FakeSqlExecutor implements SqlExecutor {
 
   addHierarchyEdge(edge: RoleHierarchyEdge): void {
     this.roleHierarchy.push(edge);
+  }
+
+  registerPermission(roleId: string, permissionName: string): string {
+    const id = randomUUID();
+    this.permissions.set(id, {
+      id,
+      name: permissionName,
+      description: `${permissionName} (dynamic)`,
+      resource_type: null,
+    });
+    const bucket = this.rolePermissions.get(roleId) ?? new Set<string>();
+    bucket.add(id);
+    this.rolePermissions.set(roleId, bucket);
+    return id;
   }
 
   async query<T = Record<string, unknown>>(
