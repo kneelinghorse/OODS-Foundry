@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import TimeService from '@/services/time/index.js';
+
 const DEFAULT_CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes mirrors B28.5 TTL
 
 type AssignmentRecord = Record<string, readonly string[]>;
@@ -99,14 +101,14 @@ export function createRolePermissionMatrixCache(options?: { ttlMs?: number }): R
       if (!entry) {
         return undefined;
       }
-      if (entry.expiresAt < Date.now()) {
+      if (entry.expiresAt < systemMillis()) {
         entries.delete(key);
         return undefined;
       }
       return cloneSnapshot(entry.snapshot);
     },
     write(key, snapshot) {
-      entries.set(key, { snapshot: cloneSnapshot(snapshot), expiresAt: Date.now() + ttlMs });
+      entries.set(key, { snapshot: cloneSnapshot(snapshot), expiresAt: systemMillis() + ttlMs });
     },
     invalidate(key) {
       if (!key) {
@@ -130,11 +132,11 @@ export function useRolePermissions(options: UseRolePermissionsOptions): UseRoleP
     autoRefreshIntervalMs,
   } = options;
 
-  const fallbackCacheRef = useRef<RolePermissionMatrixCache>();
-  if (!fallbackCacheRef.current) {
-    fallbackCacheRef.current = providedCache ?? createRolePermissionMatrixCache({ ttlMs: cacheTtlMs });
-  } else if (providedCache && fallbackCacheRef.current !== providedCache) {
+  const fallbackCacheRef = useRef<RolePermissionMatrixCache | null>(null);
+  if (providedCache) {
     fallbackCacheRef.current = providedCache;
+  } else if (!fallbackCacheRef.current) {
+    fallbackCacheRef.current = createRolePermissionMatrixCache({ ttlMs: cacheTtlMs });
   }
 
   const cache = providedCache ?? fallbackCacheRef.current ?? FALLBACK_CACHE;
@@ -210,12 +212,13 @@ export function useRolePermissions(options: UseRolePermissionsOptions): UseRoleP
 
   const mutateAssignment = useCallback(
     async (roleId: string, permissionId: string, nextState?: boolean) => {
-      if (!matrix) {
+      const currentMatrix = matrixRef.current;
+      if (!currentMatrix) {
         return;
       }
-      const currentAssignments = ensureAssignmentMap(matrix.assignments, roleId);
+      const currentAssignments = ensureAssignmentMap(currentMatrix.assignments, roleId);
       const desiredState = nextState ?? !currentAssignments.has(permissionId);
-      const previousSnapshot = toSnapshot(matrix);
+      const previousSnapshot = toSnapshot(currentMatrix);
       const optimistic = applyAssignment(previousSnapshot, roleId, permissionId, desiredState);
       const normalizedOptimistic = normalizeSnapshot(optimistic);
       matrixRef.current = normalizedOptimistic;
@@ -250,7 +253,7 @@ export function useRolePermissions(options: UseRolePermissionsOptions): UseRoleP
         controller.abort();
       }
     },
-    [applySnapshot, cache, cacheKey, client, matrix, organizationId]
+    [applySnapshot, cache, cacheKey, client, organizationId]
   );
 
   return {
@@ -303,16 +306,19 @@ function applyAssignment(
   permissionId: string,
   enabled: boolean
 ): RolePermissionMatrixSnapshot {
-  const clone = cloneSnapshot(snapshot);
-  const existing = new Set(clone.assignments[roleId] ?? []);
+  const assignments: AssignmentRecord = { ...snapshot.assignments };
+  const existing = new Set(assignments[roleId] ?? []);
   if (enabled) {
     existing.add(permissionId);
   } else {
     existing.delete(permissionId);
   }
-  clone.assignments[roleId] = Array.from(existing);
-  clone.updatedAt = new Date().toISOString();
-  return clone;
+  assignments[roleId] = Array.from(existing);
+  return {
+    ...snapshot,
+    assignments,
+    updatedAt: TimeService.toIsoString(TimeService.nowSystem()),
+  } satisfies RolePermissionMatrixSnapshot;
 }
 
 function cloneSnapshot(snapshot: RolePermissionMatrixSnapshot): RolePermissionMatrixSnapshot {
@@ -331,4 +337,8 @@ function cloneSnapshot(snapshot: RolePermissionMatrixSnapshot): RolePermissionMa
 
 function buildCacheKey(organizationId?: string): string {
   return `role-permissions:${organizationId ?? 'global'}`;
+}
+
+function systemMillis(): number {
+  return TimeService.nowSystem().toMillis();
 }

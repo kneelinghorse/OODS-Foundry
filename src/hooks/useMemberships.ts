@@ -1,4 +1,6 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
+import TimeService from '@/services/time/index.js';
 
 const DEFAULT_REFRESH_INTERVAL_MS = 30_000;
 
@@ -126,7 +128,7 @@ export function useMemberships(options: UseMembershipsOptions): UseMembershipsRe
         roleId,
         organizationId,
         valid: result.valid,
-        checkedAt: new Date().toISOString(),
+        checkedAt: TimeService.toIsoString(TimeService.nowSystem()),
         violations: result.violations,
       };
       setValidationState(state);

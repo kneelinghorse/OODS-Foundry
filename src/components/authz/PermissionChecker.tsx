@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import type { JSX, ChangeEvent, FormEvent } from 'react';
 
+import TimeService from '@/services/time/index.js';
+
 export interface PermissionCheckInput {
   readonly userId: string;
   readonly organizationId: string;
@@ -166,9 +168,8 @@ export function PermissionChecker({
 
 function formatDate(value: string): string {
   try {
-    return new Intl.DateTimeFormat(undefined, { hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(
-      new Date(value)
-    );
+    const dt = TimeService.fromDatabase(value);
+    return dt.toFormat('HH:mm:ss ZZZZ');
   } catch (error) {
     return value;
   }

@@ -7,6 +7,7 @@ import type {
   MembershipValidationState,
   PendingMembershipKey,
 } from '@/hooks/useMemberships.js';
+import TimeService from '@/services/time/index.js';
 
 export interface MembershipRoleOption {
   readonly id: string;
@@ -295,11 +296,8 @@ function formatDate(value?: string): string {
     return 'unknown';
   }
   try {
-    return new Intl.DateTimeFormat(undefined, {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    }).format(new Date(value));
+    const dt = TimeService.fromDatabase(value);
+    return dt.toFormat('LLL d, yyyy');
   } catch (error) {
     return value;
   }

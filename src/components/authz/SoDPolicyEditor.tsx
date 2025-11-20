@@ -11,6 +11,7 @@ import {
 } from '@/components/base/Table.js';
 
 import type { MembershipRoleOption, OrganizationSummary } from './MembershipManager.js';
+import TimeService from '@/services/time/index.js';
 
 export interface SodPolicy {
   readonly id: string;
@@ -305,7 +306,8 @@ function formatDate(value?: string): string {
     return '';
   }
   try {
-    return new Intl.DateTimeFormat(undefined, { year: 'numeric', month: 'short', day: 'numeric' }).format(new Date(value));
+    const dt = TimeService.fromDatabase(value);
+    return dt.toFormat('LLL d, yyyy');
   } catch (error) {
     return value;
   }

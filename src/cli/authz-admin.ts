@@ -2,11 +2,11 @@
 import process from 'node:process';
 
 import { Pool } from 'pg';
-import type { QueryResult } from 'pg';
+import type { QueryResult, QueryResultRow } from 'pg';
 
 import { MembershipService } from '@/traits/authz/membership-service.js';
 import { createSodPolicyBuilder } from '@/traits/authz/sod-policy-builder.js';
-import type { SqlExecutor } from '@/traits/authz/runtime-types.js';
+import { cloneParams, type SqlExecutor } from '@/traits/authz/runtime-types.js';
 
 interface ParsedOptions {
   readonly command: AuthzAdminCommand;
@@ -219,8 +219,9 @@ function requirePool(pool: Pool | null): Pool {
 class PoolExecutor implements SqlExecutor {
   constructor(private readonly pool: Pool) {}
 
-  query<T>(sql: string, params?: readonly unknown[]): Promise<QueryResult<T>> {
-    return this.pool.query(sql, params);
+  query<T extends QueryResultRow = QueryResultRow>(sql: string, params?: readonly unknown[]): Promise<QueryResult<T>> {
+    const normalized = cloneParams(params) as unknown[] | undefined;
+    return this.pool.query<T>(sql, normalized);
   }
 }
 
