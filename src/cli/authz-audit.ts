@@ -2,6 +2,8 @@
 import process from 'node:process';
 import { pathToFileURL } from 'node:url';
 
+import TimeService from '@/services/time/index.js';
+
 import { AUTHZ_SAMPLE_DATASET } from '@/data/authz/sample-entitlements.js';
 import type { AuthzDataset } from '@/data/authz/types.js';
 
@@ -116,7 +118,7 @@ export function auditUserPermissions(
     membershipCount: memberships.length,
     issues,
     status,
-    generatedAt: new Date().toISOString(),
+    generatedAt: TimeService.toIsoString(TimeService.nowSystem()),
   } satisfies AuditUserReport;
 }
 
@@ -169,7 +171,7 @@ export function auditOrgAccess(
     memberCount: usersWithMembership.size,
     membershipRecords: memberships.length,
     issues,
-    generatedAt: new Date().toISOString(),
+    generatedAt: TimeService.toIsoString(TimeService.nowSystem()),
     status,
   } satisfies AuditOrgReport;
 }

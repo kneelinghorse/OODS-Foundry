@@ -32,7 +32,7 @@ const DatasetSchema: z.ZodType<AuthzDataset> = z
   .object({
     roles: RoleSchema.array().nonempty('Provide at least one role entry.'),
     permissions: PermissionSchema.array().nonempty('Provide at least one permission entry.'),
-    rolePermissions: z.record(z.array(z.string().uuid())),
+    rolePermissions: z.record(z.string(), z.array(z.string().uuid())),
     roleHierarchy: RoleHierarchySchema.array().optional(),
     memberships: MembershipSchema.array(),
     users: DatasetUserSchema.array(),

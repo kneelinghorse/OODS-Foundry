@@ -66,5 +66,5 @@ export const UserWithAuthableExample: User = {
   permission_catalog: authableTrait.listPermissions(),
   role_permissions: cloneRolePermissions(AUTHZ_SAMPLE_DATASET.rolePermissions),
   role_hierarchy_edges: authableTrait.listHierarchyEdges(),
-  session_roles: sampleUserRecord?.sessionRoles ?? [],
+  session_roles: [...(sampleUserRecord?.sessionRoles ?? [])],
 };

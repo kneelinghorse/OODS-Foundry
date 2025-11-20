@@ -5,6 +5,7 @@ import { pathToFileURL } from 'node:url';
 import type { MembershipDocument } from '@/schemas/authz/membership.schema.js';
 import type { PermissionDocument } from '@/schemas/authz/permission.schema.js';
 import type { RoleDocument } from '@/schemas/authz/role.schema.js';
+import TimeService from '@/services/time/index.js';
 
 import { AUTHZ_SAMPLE_DATASET } from '@/data/authz/sample-entitlements.js';
 import type { AuthzDataset } from '@/data/authz/types.js';
@@ -99,7 +100,7 @@ export function exportUserEntitlements(
     roles: roleDocuments.map(toRoleSummary),
     permissions: permissions.map(toPermissionSummary),
     memberships: memberships.length,
-    generatedAt: new Date().toISOString(),
+    generatedAt: TimeService.toIsoString(TimeService.nowSystem()),
     source: 'authable-trait',
   } satisfies UserEntitlementExport;
 }
@@ -122,7 +123,7 @@ export function exportOrgEntitlements(
     members,
     memberCount: members.length,
     distinctRoles: roleIds.size,
-    generatedAt: new Date().toISOString(),
+    generatedAt: TimeService.toIsoString(TimeService.nowSystem()),
     source: 'authable-trait',
   } satisfies OrgEntitlementExport;
 }
