@@ -1,3 +1,6 @@
+import { DateTime } from 'luxon';
+
+import TimeService from '@/services/time/index.js';
 import type { ChannelType, PriorityLevel } from '@/schemas/communication/common.js';
 import type { DeliveryPolicy } from '@/schemas/communication/delivery-policy.js';
 import type { RuntimeLogger } from '@/traits/authz/runtime-types.js';
@@ -37,7 +40,7 @@ export class ThrottlingEnforcer {
 
   constructor(options: ThrottlingEnforcerOptions = {}) {
     this.store = options.store ?? new InMemoryThrottlingStore({ clock: options.clock });
-    this.clock = options.clock ?? (() => new Date());
+    this.clock = options.clock ?? (() => TimeService.nowSystem().toJSDate());
     this.logger = options.logger;
   }
 
@@ -122,10 +125,9 @@ export class ThrottlingEnforcer {
     now: Date
   ): Promise<Date> {
     const oldest = await this.store.getOldestTimestamp(userId, channelType, windowSeconds, now);
-    if (!oldest) {
-      return new Date(now.getTime() + windowSeconds * 1000);
-    }
-    return new Date(oldest.getTime() + windowSeconds * 1000);
+    const fallback = now.getTime() + windowSeconds * 1000;
+    const millis = oldest ? oldest.getTime() + windowSeconds * 1000 : fallback;
+    return DateTime.fromMillis(millis, { zone: 'utc' }).toJSDate();
   }
 
   private recordMetrics(allowed: boolean, minuteRate: number, hourRate: number, dayRate: number): void {

@@ -41,7 +41,7 @@ export class RedisThrottlingStore implements ThrottlingStore {
   constructor(private readonly client: RedisSortedSetClient, options: ThrottlingStoreOptions = {}) {
     this.prefix = options.prefix ?? 'throttle';
     this.logger = options.logger;
-    this.clock = options.clock ?? (() => new Date());
+    this.clock = options.clock ?? (() => TimeService.nowSystem().toJSDate());
   }
 
   async recordSend(userId: string, channelType: ChannelType, timestamp: Date = this.clock()): Promise<void> {
@@ -89,7 +89,7 @@ export class RedisThrottlingStore implements ThrottlingStore {
       }
       const [entry] = entries;
       const timestamp = Number.parseInt(entry.split('-')[0] ?? '', 10);
-      return Number.isFinite(timestamp) ? new Date(timestamp) : null;
+      return Number.isFinite(timestamp) ? DateTime.fromMillis(timestamp, { zone: 'utc' }).toJSDate() : null;
     } catch (error) {
       this.logger?.warn?.('throttling_store_get_oldest_failed', { key, windowSeconds, error });
       return null;
@@ -131,7 +131,7 @@ export class InMemoryThrottlingStore implements ThrottlingStore {
   private readonly entries = new Map<string, number[]>();
 
   constructor(options: ThrottlingStoreOptions = {}) {
-    this.clock = options.clock ?? (() => new Date());
+    this.clock = options.clock ?? (() => TimeService.nowSystem().toJSDate());
   }
 
   async recordSend(userId: string, channelType: ChannelType, timestamp: Date = this.clock()): Promise<void> {
@@ -170,7 +170,7 @@ export class InMemoryThrottlingStore implements ThrottlingStore {
     }
     const cutoff = now.getTime() - windowSeconds * 1000;
     const oldest = list.find((value) => value >= cutoff);
-    return typeof oldest === 'number' ? new Date(oldest) : null;
+    return typeof oldest === 'number' ? DateTime.fromMillis(oldest, { zone: 'utc' }).toJSDate() : null;
   }
 
   async cleanupOldEntries(windowSeconds: number, now: Date = this.clock()): Promise<void> {
@@ -189,3 +189,6 @@ export class InMemoryThrottlingStore implements ThrottlingStore {
     return `${channelType}:${userId}`;
   }
 }
+import { DateTime } from 'luxon';
+
+import TimeService from '@/services/time/index.js';

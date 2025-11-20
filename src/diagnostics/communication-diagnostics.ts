@@ -1,3 +1,4 @@
+import TimeService from '@/services/time/index.js';
 import type { DeliveryStats } from '@/traits/communication/runtime-types.js';
 import type { SLAMetrics, SLAMonitor } from '@/traits/communication/sla-monitor.js';
 import type { ThrottlingDiagnostics, ThrottlingEnforcer } from '@/traits/communication/throttling-enforcer.js';
@@ -51,8 +52,8 @@ export class CommunicationDiagnostics {
         queued: 0,
         blocked: 0,
         blockedReasons: {},
-        startedAt: new Date(0).toISOString(),
-        completedAt: new Date(0).toISOString(),
+        startedAt: TimeService.nowSystem().toJSDate().toISOString(),
+        completedAt: TimeService.nowSystem().toJSDate().toISOString(),
       } satisfies DeliveryStats;
     }
     const result = this.deliveryStatsProvider();

@@ -39,7 +39,7 @@ export class SLAMonitor {
 
   constructor(executor: SqlExecutor, options: SLAMonitorOptions = {}) {
     this.executor = executor;
-    this.clock = options.clock ?? (() => new Date());
+    this.clock = options.clock ?? (() => TimeService.nowSystem().toJSDate());
     this.logger = options.logger;
     this.channelType = options.channelType ?? 'all';
   }
@@ -193,3 +193,4 @@ function percentile(values: readonly number[], percentileRank: number): number {
 function round(value: number): number {
   return Number(value.toFixed(3));
 }
+import TimeService from '@/services/time/index.js';
