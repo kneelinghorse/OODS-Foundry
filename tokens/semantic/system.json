@@ -252,6 +252,28 @@
         }
       }
     },
+    "communication": {
+      "accent": {
+        "$type": "color",
+        "$value": "{theme.status.accent.surface}",
+        "$description": "Communication accent tone for unread and emphasis states."
+      },
+      "muted": {
+        "$type": "color",
+        "$value": "{theme.text.muted}",
+        "$description": "Communication metadata foreground and helper tone."
+      },
+      "success": {
+        "$type": "color",
+        "$value": "{theme.status.success.surface}",
+        "$description": "Communication success tone for delivery health."
+      },
+      "error": {
+        "$type": "color",
+        "$value": "{theme.status.critical.surface}",
+        "$description": "Communication error tone for delivery failures."
+      }
+    },
     "focus": {
       "ring": {
         "outer": {
