@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon';
+
 import TimeService from '@/services/time/index.js';
 import type { RetryPolicy } from '@/traits/communication/runtime-types.js';
 
@@ -17,7 +19,7 @@ export class RetryScheduler {
       return null;
     }
     const delayMs = Math.max(0, this.computeDelay(attemptNumber, policy));
-    return new Date(this.clock().getTime() + delayMs);
+    return DateTime.fromMillis(this.clock().getTime() + delayMs).toJSDate();
   }
 
   private computeDelay(attemptNumber: number, policy: RetryPolicy): number {

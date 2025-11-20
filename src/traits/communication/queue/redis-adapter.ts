@@ -1,3 +1,5 @@
+import { DateTime } from 'luxon';
+
 import TimeService from '@/services/time/index.js';
 import type {
   QueueAckToken,
@@ -82,7 +84,7 @@ export class RedisQueueAdapter<TPayload> implements QueueAdapter<TPayload> {
     const token: QueueAckToken = {
       id: message.id,
       receipt: `${member}:${nowMs}`,
-      issuedAt: new Date(nowMs),
+      issuedAt: DateTime.fromMillis(nowMs).toJSDate(),
       attempt: message.attempt,
     };
     await this.client.hset(this.inflightKey, token.receipt, serialized);
@@ -110,12 +112,12 @@ export class RedisQueueAdapter<TPayload> implements QueueAdapter<TPayload> {
     const message = deserializeMessage<TPayload>(serialized);
     await this.client.hdel(this.inflightKey, token.receipt);
     const delayMs = Math.max(0, options?.delayMs ?? 0);
-    const scheduledAt = options?.scheduledAt ?? new Date(this.clock().getTime() + delayMs);
+    const scheduledAt = options?.scheduledAt ?? DateTime.fromMillis(this.clock().getTime() + delayMs).toJSDate();
     const nextMessage: QueueMessage<TPayload> = {
       ...message,
       attempt: options?.incrementAttempt === false ? message.attempt : message.attempt + 1,
       scheduledAt,
-      availableAt: new Date(scheduledAt.getTime()),
+      availableAt: cloneDate(scheduledAt),
     };
     const payload = serializeMessage(nextMessage);
     await this.client.hset(this.payloadKey, payload.id, JSON.stringify(payload));
@@ -218,8 +220,8 @@ function deserializeMessage<TPayload>(raw: string): QueueMessage<TPayload> {
     id: data.id,
     payload: data.payload as TPayload,
     attempt: data.attempt,
-    scheduledAt: new Date(data.scheduledAt),
-    availableAt: new Date(data.availableAt),
+    scheduledAt: TimeService.fromDatabase(data.scheduledAt).toJSDate(),
+    availableAt: TimeService.fromDatabase(data.availableAt).toJSDate(),
     priority: data.priority,
     dedupeKey: data.dedupeKey,
   } satisfies QueueMessage<TPayload>;
@@ -228,4 +230,8 @@ function deserializeMessage<TPayload>(raw: string): QueueMessage<TPayload> {
 async function fallbackCount(client: RedisCommandClient, key: string): Promise<number> {
   const entries = await client.zrangebyscore(key, '-inf', '+inf');
   return entries.length;
+}
+
+function cloneDate(source: Date): Date {
+  return DateTime.fromMillis(source.getTime()).toJSDate();
 }

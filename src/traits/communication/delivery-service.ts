@@ -3,15 +3,17 @@ import { randomUUID } from 'node:crypto';
 import type { Channel } from '@/schemas/communication/channel.js';
 import type { DeliveryPolicy } from '@/schemas/communication/delivery-policy.js';
 import type { Message } from '@/schemas/communication/message.js';
+import TimeService from '@/services/time/index.js';
 import type { RuntimeLogger } from '@/traits/authz/runtime-types.js';
 
 import { AuthableBridge } from './bridges/authable-bridge.js';
 import { PreferenceableBridge } from './bridges/preferenceable-bridge.js';
 import { ChannelResolver } from './channel-resolver.js';
-import { RetryScheduler } from './retry-scheduler.js';
 import { calculateNextDeliveryWindow, isInQuietHours } from './quiet-hours-checker.js';
 import type {
+  BlockedRecipient,
   DeliveryQueuePayload,
+  DeliveryRecipientResult,
   MessageDeliveryResult,
   QueueMessage,
 } from './runtime-types.js';
@@ -30,7 +32,6 @@ export interface MessageDeliveryServiceOptions {
   readonly channelResolver: ChannelResolver;
   readonly authBridge: AuthableBridge;
   readonly preferenceBridge: PreferenceableBridge;
-  readonly retryScheduler: RetryScheduler;
   readonly logger?: RuntimeLogger;
   readonly idFactory?: () => string;
   readonly clock?: () => Date;
@@ -41,7 +42,6 @@ export class MessageDeliveryService {
   private readonly channelResolver: ChannelResolver;
   private readonly authBridge: AuthableBridge;
   private readonly preferenceBridge: PreferenceableBridge;
-  private readonly retryScheduler: RetryScheduler;
   private readonly logger?: RuntimeLogger;
   private readonly idFactory: () => string;
   private readonly clock: () => Date;
@@ -51,10 +51,9 @@ export class MessageDeliveryService {
     this.channelResolver = options.channelResolver;
     this.authBridge = options.authBridge;
     this.preferenceBridge = options.preferenceBridge;
-    this.retryScheduler = options.retryScheduler;
     this.logger = options.logger;
     this.idFactory = options.idFactory ?? randomUUID;
-    this.clock = options.clock ?? (() => new Date());
+    this.clock = options.clock ?? (() => TimeService.nowSystem().toJSDate());
   }
 
   async sendMessage(message: Message, recipients: readonly string[], options: SendMessageOptions): Promise<MessageDeliveryResult> {
@@ -71,8 +70,8 @@ export class MessageDeliveryService {
     }
     const policy = options.policy ?? message.delivery_policy ?? null;
     const retryPolicy = deriveRetryPolicyFromDeliveryPolicy(policy);
-    const queuedRecipients: MessageDeliveryResult['queuedRecipients'] = [];
-    const blockedRecipients: MessageDeliveryResult['blockedRecipients'] = [];
+    const queuedRecipients: DeliveryRecipientResult[] = [];
+    const blockedRecipients: BlockedRecipient[] = [];
 
     for (const recipientId of recipients) {
       try {

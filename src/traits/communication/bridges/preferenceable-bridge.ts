@@ -1,6 +1,6 @@
 import type { PreferenceCache } from '@/traits/preferenceable/cache/preference-cache.js';
 import { getNotificationMatrixFromPreferences } from '@/traits/preferenceable/notification/notification-matrix.js';
-import type { PreferenceDocument } from '@/schemas/preferences/preference-document.js';
+import type { PreferenceDocument, PreferenceRecord } from '@/schemas/preferences/preference-document.js';
 import type { ChannelType } from '@/schemas/communication/common.js';
 
 import type { ChannelPreferences, QuietHours } from '@/traits/communication/runtime-types.js';
@@ -86,8 +86,8 @@ function extractQuietHours(document: PreferenceDocument | null): QuietHours | nu
     return null;
   }
   const candidates = [
-    document.preferences.quietHours,
-    document.preferences.notifications?.quietHours,
+    readPreferenceNode(document.preferences, ['quietHours']),
+    readPreferenceNode(document.preferences, ['notifications', 'quietHours']),
   ];
   for (const candidate of candidates) {
     const parsed = normalizeQuietHours(candidate);
@@ -131,4 +131,19 @@ function readTime(value: unknown): string | null {
     return null;
   }
   return value;
+}
+
+function readPreferenceNode(record: PreferenceRecord | null | undefined, path: readonly string[]): unknown {
+  if (!record) {
+    return undefined;
+  }
+  let cursor: unknown = record;
+  for (const segment of path) {
+    if (!cursor || typeof cursor !== 'object' || Array.isArray(cursor)) {
+      return undefined;
+    }
+    const map = cursor as PreferenceRecord;
+    cursor = map[segment];
+  }
+  return cursor;
 }

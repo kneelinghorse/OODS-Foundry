@@ -12,7 +12,6 @@ import type {
 import { PreferenceableBridge } from '@/traits/communication/bridges/preferenceable-bridge.js';
 import { ChannelResolver } from '@/traits/communication/channel-resolver.js';
 import { MessageDeliveryService } from '@/traits/communication/delivery-service.js';
-import { RetryScheduler } from '@/traits/communication/retry-scheduler.js';
 import { InMemoryQueueAdapter } from '@/traits/communication/queue/in-memory-adapter.js';
 import type { DeliveryQueuePayload } from '@/traits/communication/runtime-types.js';
 
@@ -99,7 +98,6 @@ describe('Communication ↔ Preferenceable integration', () => {
         validateRecipientPermission: async () => true,
       } as never,
       preferenceBridge,
-      retryScheduler: new RetryScheduler({ clock: () => new Date('2025-11-20T03:00:00Z') }),
       clock: () => new Date('2025-11-20T03:00:00Z'),
     });
 

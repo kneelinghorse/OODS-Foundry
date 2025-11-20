@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { DateTime } from 'luxon';
 
 import TimeService from '@/services/time/index.js';
 import type {
@@ -53,7 +54,7 @@ export class InMemoryQueueAdapter<TPayload> implements QueueAdapter<TPayload> {
     const token: QueueAckToken = {
       id: message.id,
       receipt: randomUUID(),
-      issuedAt: new Date(now),
+      issuedAt: DateTime.fromMillis(now).toJSDate(),
       attempt: message.attempt,
     };
     this.inFlight.set(token.receipt, { token, message: cloneMessage(message) });
@@ -79,11 +80,11 @@ export class InMemoryQueueAdapter<TPayload> implements QueueAdapter<TPayload> {
     }
     this.inFlight.delete(token.receipt);
     const delayMs = Math.max(0, options?.delayMs ?? 0);
-    const scheduledAt = options?.scheduledAt ?? new Date(this.clock().getTime() + delayMs);
+    const scheduledAt = options?.scheduledAt ?? DateTime.fromMillis(this.clock().getTime() + delayMs).toJSDate();
     const message: QueueMessage<TPayload> = {
       ...entry.message,
       scheduledAt,
-      availableAt: new Date(scheduledAt.getTime()),
+      availableAt: cloneDate(scheduledAt),
       attempt: options?.incrementAttempt === false ? entry.message.attempt : entry.message.attempt + 1,
     };
     this.queued.push(message);
@@ -100,9 +101,9 @@ export class InMemoryQueueAdapter<TPayload> implements QueueAdapter<TPayload> {
     const nextAvailable = this.queued.reduce<Date | undefined>((candidate, message) => {
       const available = message.availableAt ?? message.scheduledAt;
       if (!candidate) {
-        return new Date(available.getTime());
+        return cloneDate(available);
       }
-      return available.getTime() < candidate.getTime() ? new Date(available.getTime()) : candidate;
+      return available.getTime() < candidate.getTime() ? cloneDate(available) : candidate;
     }, undefined);
     return {
       name: this.name,
@@ -128,8 +129,8 @@ export class InMemoryQueueAdapter<TPayload> implements QueueAdapter<TPayload> {
 }
 
 function normalizeMessage<TPayload>(message: QueueMessage<TPayload>): QueueMessage<TPayload> {
-  const scheduledAt = new Date(message.scheduledAt.getTime());
-  const availableAt = message.availableAt ? new Date(message.availableAt.getTime()) : new Date(scheduledAt.getTime());
+  const scheduledAt = cloneDate(message.scheduledAt);
+  const availableAt = message.availableAt ? cloneDate(message.availableAt) : cloneDate(scheduledAt);
   return {
     ...message,
     scheduledAt,
@@ -141,7 +142,11 @@ function normalizeMessage<TPayload>(message: QueueMessage<TPayload>): QueueMessa
 function cloneMessage<TPayload>(message: QueueMessage<TPayload>): QueueMessage<TPayload> {
   return {
     ...message,
-    scheduledAt: new Date(message.scheduledAt.getTime()),
-    availableAt: message.availableAt ? new Date(message.availableAt.getTime()) : new Date(message.scheduledAt.getTime()),
+    scheduledAt: cloneDate(message.scheduledAt),
+    availableAt: message.availableAt ? cloneDate(message.availableAt) : cloneDate(message.scheduledAt),
   } satisfies QueueMessage<TPayload>;
+}
+
+function cloneDate(source: Date): Date {
+  return DateTime.fromMillis(source.getTime()).toJSDate();
 }

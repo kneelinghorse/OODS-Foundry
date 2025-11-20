@@ -3,7 +3,6 @@ import { describe, expect, it } from 'vitest';
 import type { Channel } from '@/schemas/communication/channel.js';
 import type { Message } from '@/schemas/communication/message.js';
 import { MessageDeliveryService } from '@/traits/communication/delivery-service.js';
-import { RetryScheduler } from '@/traits/communication/retry-scheduler.js';
 import { InMemoryQueueAdapter } from '@/traits/communication/queue/in-memory-adapter.js';
 import type { DeliveryQueuePayload } from '@/traits/communication/runtime-types.js';
 
@@ -78,7 +77,6 @@ describe('MessageDeliveryService', () => {
       channelResolver: new ResolverStub(CHANNEL) as never,
       authBridge: authBridge as never,
       preferenceBridge: preferenceBridge as never,
-      retryScheduler: new RetryScheduler(),
       clock: () => new Date('2025-11-20T10:00:00Z'),
     });
 
@@ -103,7 +101,6 @@ describe('MessageDeliveryService', () => {
         validateRecipientPermission: async () => true,
       } as never,
       preferenceBridge: preferenceBridge as never,
-      retryScheduler: new RetryScheduler(),
     });
     const result = await service.sendMessage(buildMessage(), ['user-1'], {
       availableChannels: [CHANNEL],
@@ -123,7 +120,6 @@ describe('MessageDeliveryService', () => {
         ...preferenceBridge,
         getQuietHours: async () => ({ start_time: '00:00', end_time: '08:00', timezone: 'UTC' }),
       } as never,
-      retryScheduler: new RetryScheduler({ clock: () => new Date('2025-11-20T02:00:00Z') }),
       clock: () => new Date('2025-11-20T02:00:00Z'),
     });
     const result = await service.sendMessage(buildMessage(), ['user-1'], {
@@ -139,7 +135,6 @@ describe('MessageDeliveryService', () => {
       channelResolver: new ResolverStub(null) as never,
       authBridge: authBridge as never,
       preferenceBridge: preferenceBridge as never,
-      retryScheduler: new RetryScheduler(),
     });
     const result = await service.sendMessage(buildMessage(), ['user-1'], {
       availableChannels: [CHANNEL],

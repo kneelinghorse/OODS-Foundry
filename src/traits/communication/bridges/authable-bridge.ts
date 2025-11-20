@@ -1,4 +1,5 @@
 import type { ChannelType } from '@/schemas/communication/common.js';
+import TimeService from '@/services/time/index.js';
 import type { EntitlementService } from '@/traits/authz/entitlement-service.js';
 
 export interface AuthableBridgeOptions {
@@ -40,12 +41,13 @@ export class AuthableBridge {
   ): Promise<boolean> {
     const key = this.cacheKey(direction, userId, organizationId, channelType);
     const cached = this.cache.get(key);
-    if (cached && cached.expiresAt > Date.now()) {
+    const now = TimeService.nowSystem().toMillis();
+    if (cached && cached.expiresAt > now) {
       return cached.outcome;
     }
     const permission = this.buildPermission(direction, channelType);
     const outcome = await this.entitlementService.hasPermission(userId, organizationId, permission);
-    this.cache.set(key, { outcome, expiresAt: Date.now() + this.ttlMs });
+    this.cache.set(key, { outcome, expiresAt: now + this.ttlMs });
     return outcome;
   }
 

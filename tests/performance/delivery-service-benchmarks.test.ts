@@ -5,7 +5,6 @@ import { describe, expect, it } from 'vitest';
 import type { Channel } from '@/schemas/communication/channel.js';
 import type { Message } from '@/schemas/communication/message.js';
 import { MessageDeliveryService } from '@/traits/communication/delivery-service.js';
-import { RetryScheduler } from '@/traits/communication/retry-scheduler.js';
 import type { QueueAdapter } from '@/traits/communication/queue/queue-adapter.js';
 import type { DeliveryQueuePayload, QueueEntry, QueueMessage, QueueStats } from '@/traits/communication/runtime-types.js';
 
@@ -78,7 +77,6 @@ describe('Delivery runtime benchmarks', () => {
       channelResolver: resolver as never,
       authBridge: authBridge as never,
       preferenceBridge: preferenceBridge as never,
-      retryScheduler: new RetryScheduler(),
     });
     const samples: number[] = [];
     for (let index = 0; index < 50; index += 1) {

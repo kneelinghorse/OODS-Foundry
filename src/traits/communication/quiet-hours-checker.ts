@@ -115,7 +115,11 @@ function dayMatches(start: DateTime, quietHours: QuietHours): boolean {
     return true;
   }
   const normalized = new Set(days.map((day) => day.toLowerCase()));
-  return normalized.has(start.weekdayLong.toLowerCase());
+  const weekday = (start.weekdayLong ?? '').toLowerCase();
+  if (!weekday) {
+    return false;
+  }
+  return normalized.has(weekday);
 }
 
 function parseTime(value: string): [number, number] {

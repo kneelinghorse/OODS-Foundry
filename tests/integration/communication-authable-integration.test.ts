@@ -5,7 +5,6 @@ import type { Message } from '@/schemas/communication/message.js';
 import { AuthableBridge } from '@/traits/communication/bridges/authable-bridge.js';
 import { ChannelResolver } from '@/traits/communication/channel-resolver.js';
 import { MessageDeliveryService } from '@/traits/communication/delivery-service.js';
-import { RetryScheduler } from '@/traits/communication/retry-scheduler.js';
 import { InMemoryQueueAdapter } from '@/traits/communication/queue/in-memory-adapter.js';
 import type { PreferenceableBridge } from '@/traits/communication/bridges/preferenceable-bridge.js';
 import type { DeliveryQueuePayload } from '@/traits/communication/runtime-types.js';
@@ -75,7 +74,6 @@ describe('Communication ↔ Authable integration', () => {
       channelResolver,
       authBridge,
       preferenceBridge,
-      retryScheduler: new RetryScheduler({ clock: () => new Date('2025-11-20T12:00:00Z') }),
       clock: () => new Date('2025-11-20T12:00:00Z'),
     });
 
@@ -98,7 +96,6 @@ describe('Communication ↔ Authable integration', () => {
         permissionBuilder: (direction, channelType) => `messages:${direction}-${channelType}`,
       }),
       preferenceBridge,
-      retryScheduler: new RetryScheduler(),
     });
     const failureMessage = buildMessage(
       failureContext.users.alpha,
