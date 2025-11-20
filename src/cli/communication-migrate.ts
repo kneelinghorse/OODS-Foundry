@@ -35,7 +35,6 @@ const COMMUNICATION_MIGRATION_PAIRS = [
 ] as const;
 
 const COMMUNICATION_MIGRATIONS = COMMUNICATION_MIGRATION_PAIRS.map(([migration]) => migration) as readonly string[];
-const COMMUNICATION_ROLLBACKS = COMMUNICATION_MIGRATION_PAIRS.map(([, rollback]) => rollback) as readonly string[];
 
 const MIGRATION_FILES: readonly SqlFileDescriptor[] = COMMUNICATION_MIGRATIONS.map((name) => ({
   name,

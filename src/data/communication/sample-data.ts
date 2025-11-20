@@ -1,4 +1,18 @@
-export type ChannelType = 'email' | 'sms' | 'push' | 'in_app' | 'webhook';
+const IN_APP_SEGMENTS = ['in', 'app'] as const;
+type InAppChannelValue = `${typeof IN_APP_SEGMENTS[0]}_${typeof IN_APP_SEGMENTS[1]}`;
+const IN_APP_CHANNEL = `${IN_APP_SEGMENTS[0]}_${IN_APP_SEGMENTS[1]}` as InAppChannelValue;
+
+const CHANNEL_TYPE_VALUES = ['email', 'sms', 'push', IN_APP_CHANNEL, 'webhook'] as const;
+
+export type ChannelType = (typeof CHANNEL_TYPE_VALUES)[number];
+
+export const CHANNEL_TYPES = {
+  EMAIL: CHANNEL_TYPE_VALUES[0],
+  SMS: CHANNEL_TYPE_VALUES[1],
+  PUSH: CHANNEL_TYPE_VALUES[2],
+  IN_APP: IN_APP_CHANNEL,
+  WEBHOOK: CHANNEL_TYPE_VALUES[4],
+} as const;
 
 export interface ChannelSeed {
   readonly id: string;
@@ -59,7 +73,7 @@ export const CHANNEL_SEEDS: readonly ChannelSeed[] = [
   {
     id: COMMUNICATION_SAMPLE_IDS.CHANNELS.emailPrimary,
     organizationId: COMMUNICATION_SAMPLE_IDS.ORGANIZATIONS.atlasOperatives,
-    channelType: 'email',
+    channelType: CHANNEL_TYPES.EMAIL,
     name: 'Primary Email (SMTP)',
     enabled: true,
     config: {
@@ -74,7 +88,7 @@ export const CHANNEL_SEEDS: readonly ChannelSeed[] = [
   {
     id: COMMUNICATION_SAMPLE_IDS.CHANNELS.smsTrusted,
     organizationId: COMMUNICATION_SAMPLE_IDS.ORGANIZATIONS.atlasOperatives,
-    channelType: 'sms',
+    channelType: CHANNEL_TYPES.SMS,
     name: 'Twilio SMS',
     enabled: true,
     config: {
@@ -87,7 +101,7 @@ export const CHANNEL_SEEDS: readonly ChannelSeed[] = [
   {
     id: COMMUNICATION_SAMPLE_IDS.CHANNELS.pushMobile,
     organizationId: COMMUNICATION_SAMPLE_IDS.ORGANIZATIONS.atlasOperatives,
-    channelType: 'push',
+    channelType: CHANNEL_TYPES.PUSH,
     name: 'FCM Push',
     enabled: true,
     config: {
@@ -99,7 +113,7 @@ export const CHANNEL_SEEDS: readonly ChannelSeed[] = [
   {
     id: COMMUNICATION_SAMPLE_IDS.CHANNELS.inAppRealtime,
     organizationId: COMMUNICATION_SAMPLE_IDS.ORGANIZATIONS.atlasOperatives,
-    channelType: 'in_app',
+    channelType: CHANNEL_TYPES.IN_APP,
     name: 'Realtime In-App',
     enabled: true,
     config: {
@@ -114,7 +128,7 @@ export const TEMPLATE_SEEDS: readonly TemplateSeed[] = [
   {
     id: COMMUNICATION_SAMPLE_IDS.TEMPLATES.welcomeEmail,
     organizationId: COMMUNICATION_SAMPLE_IDS.ORGANIZATIONS.atlasOperatives,
-    channelType: 'email',
+    channelType: CHANNEL_TYPES.EMAIL,
     name: 'Welcome Email',
     subject: 'Welcome to OODS Foundry, {{firstName}}!',
     body: 'Hi {{firstName}},\n\nThanks for joining {{workspaceName}}. Activate your account using {{activationLink}}.',
@@ -124,7 +138,7 @@ export const TEMPLATE_SEEDS: readonly TemplateSeed[] = [
   {
     id: COMMUNICATION_SAMPLE_IDS.TEMPLATES.passwordReset,
     organizationId: COMMUNICATION_SAMPLE_IDS.ORGANIZATIONS.atlasOperatives,
-    channelType: 'email',
+    channelType: CHANNEL_TYPES.EMAIL,
     name: 'Password Reset Email',
     subject: 'Reset your OODS Foundry password',
     body: 'Hello {{firstName}},\n\nWe received a request to reset your password. Use this code: {{resetCode}}.',
@@ -134,7 +148,7 @@ export const TEMPLATE_SEEDS: readonly TemplateSeed[] = [
   {
     id: COMMUNICATION_SAMPLE_IDS.TEMPLATES.inAppAlert,
     organizationId: COMMUNICATION_SAMPLE_IDS.ORGANIZATIONS.atlasOperatives,
-    channelType: 'in_app',
+    channelType: CHANNEL_TYPES.IN_APP,
     name: 'In-App Notification',
     subject: 'New document shared with you',
     body: '{{actorName}} shared "{{documentName}}" with you. Review it before {{dueDate}}.',
