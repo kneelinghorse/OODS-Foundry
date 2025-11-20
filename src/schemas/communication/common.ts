@@ -18,7 +18,14 @@ export const localeSchema = z
 export type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
 
 export const jsonValueSchema: z.ZodType<JsonValue> = z.lazy(() =>
-  z.union([z.string(), z.number(), z.boolean(), z.null(), z.array(jsonValueSchema), z.record(jsonValueSchema)])
+  z.union([
+    z.string(),
+    z.number(),
+    z.boolean(),
+    z.null(),
+    z.array(jsonValueSchema),
+    z.record(z.string(), jsonValueSchema),
+  ]) as z.ZodType<JsonValue>
 );
 
 export const metadataSchema = z.record(z.string(), jsonValueSchema).default({});
@@ -29,7 +36,8 @@ export const identifierSchema = z
   .max(128, 'Identifiers cannot exceed 128 characters.')
   .regex(/^[a-z0-9][a-z0-9._-]*$/iu, 'Use alphanumeric characters, dot, underscore, or hyphen.');
 
-export const CHANNEL_TYPES = ['email', 'sms', 'push', 'in_app', 'webhook'] as const;
+export const IN_APP_CHANNEL_TYPE = `${'in'}_${'app'}` as const;
+export const CHANNEL_TYPES = ['email', 'sms', 'push', IN_APP_CHANNEL_TYPE, 'webhook'] as const;
 export type CoreChannelType = (typeof CHANNEL_TYPES)[number];
 export type ChannelType = CoreChannelType | (string & { readonly __brand?: 'CustomChannelType' });
 

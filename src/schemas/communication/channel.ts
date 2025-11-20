@@ -2,6 +2,7 @@ import { z, ZodIssueCode } from 'zod';
 
 import {
   CHANNEL_TYPES,
+  IN_APP_CHANNEL_TYPE,
   channelTypeSchema,
   identifierSchema,
   metadataSchema,
@@ -92,7 +93,7 @@ const configValidators: Record<CoreChannelType, z.ZodTypeAny> = {
   email: emailConfigSchema,
   sms: smsConfigSchema,
   push: pushConfigSchema,
-  in_app: inAppConfigSchema,
+  [IN_APP_CHANNEL_TYPE]: inAppConfigSchema,
   webhook: webhookConfigSchema,
 };
 

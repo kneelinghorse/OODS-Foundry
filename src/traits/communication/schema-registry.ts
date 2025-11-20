@@ -21,7 +21,7 @@ const SCHEMA_IDS = [
 ] as const;
 export type CommunicationSchemaId = (typeof SCHEMA_IDS)[number];
 
-type JsonSchemaDocument = Record<string, unknown>;
+type JsonSchemaDocument = AnySchema;
 
 interface RegistrySchemaDefinition {
   readonly id: CommunicationSchemaId;
