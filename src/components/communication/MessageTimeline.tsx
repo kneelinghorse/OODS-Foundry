@@ -71,7 +71,7 @@ const MessageRow = memo(({ data, index, style }: ListChildComponentProps<Timelin
         <span className="text-[--sys-text-subtle]">{formatTimestamp(message.created_at)}</span>
         {message.priority === 'urgent' ? <span className="text-[--sys-status-warning-fg]">urgent</span> : null}
       </div>
-      <div className="text-sm text-[--sys-text-primary] truncate">{message.metadata?.subject ?? message.id}</div>
+      <div className="text-sm text-[--sys-text-primary] truncate">{renderSubject(message.metadata?.subject ?? message.id)}</div>
       <div className="text-xs text-[--sys-text-subtle]">Status: {message.status}</div>
     </div>
   );
@@ -191,4 +191,17 @@ function formatTimestamp(timestamp: string): string {
     return 'Unknown time';
   }
   return dt.toFormat('LLL dd, HH:mm');
+}
+
+function renderSubject(value: unknown): string {
+  if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+    return String(value);
+  }
+  if (value === null || value === undefined) {
+    return 'Message';
+  }
+  if (Array.isArray(value)) {
+    return value.map((item) => renderSubject(item)).join(', ');
+  }
+  return '[object]';
 }
