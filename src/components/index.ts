@@ -9,4 +9,5 @@ export * from './classification/index.js';
 export * from './viz/index.js';
 export * from './addresses/index.js';
 export * from './preferences/index.js';
+export * from './authz/index.js';
 export { OODS } from './OODS.js';
