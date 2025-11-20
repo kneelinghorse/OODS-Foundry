@@ -13,6 +13,15 @@
   --cmp-chip-focus-width: var(--sys-focus-width); /* Chip focus ring width. */
   --cmp-chip-foreground: var(--sys-status-neutral-text); /* Default chip text colour. */
   --cmp-chip-icon: var(--sys-status-neutral-icon); /* Default chip icon colour. */
+  --cmp-communication-date-header-fg: var(--sys-communication-muted); /* Date header text colour. */
+  --cmp-communication-health-critical: var(--sys-communication-error); /* Critical delivery state colour. */
+  --cmp-communication-health-success: var(--sys-communication-success); /* Healthy delivery state colour. */
+  --cmp-communication-health-warning: var(--sys-status-warning-surface); /* Warning delivery state colour. */
+  --cmp-communication-policy-editor-border: var(--sys-border-subtle); /* Border tone for policy editor sections. */
+  --cmp-communication-thread-indent: 20px; /* Indentation step per conversation depth. */
+  --cmp-communication-timeline-bg: var(--sys-surface-subtle); /* Timeline background surface. */
+  --cmp-communication-timeline-fg: var(--sys-text-primary); /* Timeline foreground text colour. */
+  --cmp-communication-unread-bg: var(--sys-communication-accent); /* Unread message background accent. */
   --cmp-focus-inner: var(--sys-focus-ring-inner); /* Component focus inner ring. */
   --cmp-focus-outer: var(--sys-focus-ring-outer); /* Component focus outer ring. */
   --cmp-focus-text: var(--sys-focus-text); /* Component focus accent. */
@@ -106,6 +115,10 @@
   --ref-space-stack-default: 20px; /* Standard vertical spacing between sections. */
   --sys-border-strong: var(--theme-border-strong); /* System strong border tone. */
   --sys-border-subtle: var(--theme-border-subtle); /* System subtle border tone. */
+  --sys-communication-accent: var(--theme-status-accent-surface); /* Communication accent tone for unread and emphasis states. */
+  --sys-communication-error: var(--theme-status-critical-surface); /* Communication error tone for delivery failures. */
+  --sys-communication-muted: var(--theme-text-muted); /* Communication metadata foreground and helper tone. */
+  --sys-communication-success: var(--theme-status-success-surface); /* Communication success tone for delivery health. */
   --sys-focus-ring-inner: var(--theme-focus-ring-inner); /* System focus inner ring colour. */
   --sys-focus-ring-outer: var(--theme-focus-ring-outer); /* System focus outer ring colour. */
   --sys-focus-text: var(--theme-focus-text); /* System focus accent colour. */

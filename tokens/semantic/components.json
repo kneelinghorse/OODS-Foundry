@@ -363,6 +363,55 @@
           "$description": "Chip focus ring width."
         }
       }
+    },
+    "communication": {
+      "timeline-bg": {
+        "$type": "color",
+        "$value": "{sys.surface.subtle}",
+        "$description": "Timeline background surface."
+      },
+      "timeline-fg": {
+        "$type": "color",
+        "$value": "{sys.text.primary}",
+        "$description": "Timeline foreground text colour."
+      },
+      "unread-bg": {
+        "$type": "color",
+        "$value": "{sys.communication.accent}",
+        "$description": "Unread message background accent."
+      },
+      "date-header-fg": {
+        "$type": "color",
+        "$value": "{sys.communication.muted}",
+        "$description": "Date header text colour."
+      },
+      "policy-editor-border": {
+        "$type": "color",
+        "$value": "{sys.border.subtle}",
+        "$description": "Border tone for policy editor sections."
+      },
+      "health": {
+        "success": {
+          "$type": "color",
+          "$value": "{sys.communication.success}",
+          "$description": "Healthy delivery state colour."
+        },
+        "warning": {
+          "$type": "color",
+          "$value": "{sys.status.warning.surface}",
+          "$description": "Warning delivery state colour."
+        },
+        "critical": {
+          "$type": "color",
+          "$value": "{sys.communication.error}",
+          "$description": "Critical delivery state colour."
+        }
+      },
+      "thread-indent": {
+        "$type": "dimension",
+        "$value": "20px",
+        "$description": "Indentation step per conversation depth."
+      }
     }
   }
 }

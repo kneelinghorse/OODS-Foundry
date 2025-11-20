@@ -1,4 +1,19 @@
 import '../styles/index.css';
+import { useCallback, useMemo, useRef, useState } from 'react';
+import { DateTime } from 'luxon';
+
+import { ChannelPlanEditor } from '@/components/communication/ChannelPlanEditor.js';
+import { ConversationThread } from '@/components/communication/ConversationThread.js';
+import { DeliveryHealthWidget, type DeliveryHealthMetrics } from '@/components/communication/DeliveryHealthWidget.js';
+import { MessageTimeline } from '@/components/communication/MessageTimeline.js';
+import { useConversations, type ConversationsClient } from '@/hooks/useConversations.js';
+import { useDeliveryStatus, type DeliveryStatusClient } from '@/hooks/useDeliveryStatus.js';
+import { useMessages } from '@/hooks/useMessages.js';
+import type { Conversation } from '@/schemas/communication/conversation.js';
+import type { DeliveryPolicy } from '@/schemas/communication/delivery-policy.js';
+import type { Message } from '@/schemas/communication/message.js';
+import type { MessageState } from '@/schemas/communication/common.js';
+import TimeService from '@/services/time/index.js';
 import { StatusChip } from '../components/StatusChip';
 
 type TimelineTone = 'success' | 'warning' | 'info' | 'neutral' | 'critical';
@@ -201,7 +216,306 @@ const TimelinePage = () => (
         </p>
       </section>
     </aside>
+
+    <CommunicationPanel />
   </div>
 );
+
+function CommunicationPanel(): JSX.Element {
+  const seedMessages = useMemo(() => buildDemoMessages(), []);
+  const statusStore = useRef<Map<string, { status: MessageState; retryCount: number }>>(
+    new Map(seedMessages.map((message) => [message.id, { status: message.status, retryCount: message.status === 'queued' ? 1 : 0 }]))
+  );
+
+  const fetchPage = useCallback(
+    async (cursor?: string) => {
+      const startIndex = cursor ? Math.max(seedMessages.findIndex((message) => message.created_at === cursor) + 1, 0) : 0;
+      const slice = seedMessages.slice(startIndex, startIndex + 8);
+      return {
+        messages: slice,
+        hasMore: startIndex + slice.length < seedMessages.length,
+      };
+    },
+    [seedMessages]
+  );
+
+  const handleRemoteRead = useCallback(async (id: string) => {
+    const existing = statusStore.current.get(id);
+    if (existing) {
+      statusStore.current.set(id, { ...existing, status: 'read' });
+    }
+  }, []);
+
+  const { messages, loadMore, hasMore, markAsRead, isLoading } = useMessages({
+    fetchPage,
+    markAsRead: handleRemoteRead,
+  });
+
+  const deliveryStatusClient = useMemo<DeliveryStatusClient>(
+    () => ({
+      async fetchStatus(messageId: string) {
+        const existing = statusStore.current.get(messageId) ?? { status: 'queued' as MessageState, retryCount: 0 };
+        const nextStatus: MessageState =
+          existing.status === 'queued' ? 'sent' : existing.status === 'sent' ? 'delivered' : existing.status;
+        const snapshot = {
+          status: nextStatus,
+          retryCount: existing.retryCount,
+          updatedAt: TimeService.nowSystem().toISO(),
+        };
+        statusStore.current.set(messageId, snapshot);
+        return snapshot;
+      },
+    }),
+    []
+  );
+
+  const watchedMessageId = messages[0]?.id ?? seedMessages[0]?.id;
+  const deliveryStatus = useDeliveryStatus({
+    messageId: watchedMessageId,
+    client: deliveryStatusClient,
+    pollIntervalMs: 12_000,
+  });
+
+  const [policy, setPolicy] = useState<DeliveryPolicy>(() => buildBasePolicy());
+  const channelTypes = useMemo(() => ['email', 'sms', 'push'], []);
+
+  const conversationStore = useRef<Conversation[]>(seedConversations(seedMessages));
+  const conversationClient = useMemo<ConversationsClient>(
+    () => ({
+      async listConversations() {
+        return conversationStore.current.map(cloneConversation);
+      },
+      async createConversation(conversation) {
+        const created = { ...conversation, created_at: conversation.created_at ?? TimeService.nowSystem().toISO() };
+        conversationStore.current = [created, ...conversationStore.current];
+        return cloneConversation(created);
+      },
+      async addReply(conversationId, reply) {
+        const enriched = { ...reply, conversation_id: conversationId };
+        conversationStore.current = conversationStore.current.map((conversation) =>
+          conversation.id === conversationId
+            ? { ...conversation, messages: [...conversation.messages, enriched], updated_at: enriched.created_at }
+            : conversation
+        );
+        return enriched;
+      },
+    }),
+    []
+  );
+
+  const { conversations, addReply, isLoading: conversationsLoading } = useConversations({
+    client: conversationClient,
+    autoRefreshIntervalMs: 0,
+  });
+  const activeConversation = conversations[0] ?? conversationStore.current[0];
+
+  const handleReply = useCallback(
+    async (parentId: string, conversationId?: string) => {
+      const targetConversationId = conversationId ?? activeConversation?.id;
+      if (!targetConversationId) {
+        return;
+      }
+      const reply = buildThreadReply(targetConversationId, parentId);
+      await addReply(targetConversationId, reply);
+    },
+    [activeConversation?.id, addReply]
+  );
+
+  return (
+    <section
+      className="space-y-4 rounded-2xl border border-[--cmp-border-strong] bg-[--cmp-surface-panel] p-6"
+      aria-label="Communication UI integration"
+    >
+      <header className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wide text-[--sys-text-muted]">Communication surfaces</p>
+          <h2 className="text-lg font-semibold text-[--sys-text-primary]">Live wiring with hooks</h2>
+          <p className="text-sm text-[--sys-text-muted]">
+            MessageTimeline + ChannelPlanEditor now sit on an Explorer surface, backed by the communication hooks and
+            tokenized styles.
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-2 text-xs text-[--sys-text-primary]" role="status" aria-live="polite">
+          <span className="rounded-full border border-[--cmp-border-subtle] bg-[--cmp-surface] px-3 py-1 font-semibold">
+            Delivery: {deliveryStatus.status}
+          </span>
+          <span className="rounded-full border border-[--cmp-border-subtle] bg-[--cmp-surface] px-3 py-1 font-semibold">
+            Retries: {deliveryStatus.retryCount}
+          </span>
+        </div>
+      </header>
+      <div className="grid gap-4 xl:grid-cols-[2fr_1fr]">
+        <div className="space-y-4">
+          <MessageTimeline
+            messages={messages}
+            onLoadMore={loadMore}
+            hasMore={hasMore}
+            onMarkAsRead={markAsRead}
+            isLoading={isLoading}
+            groupByDate
+          />
+          <div className="rounded-2xl border border-[--cmp-border-subtle] bg-[--cmp-surface] p-4 shadow-sm">
+            <div className="mb-3 flex items-center justify-between gap-2">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-[--sys-text-muted]">Threaded escalation</p>
+                <h3 className="text-sm font-semibold text-[--sys-text-primary]">ConversationThread</h3>
+              </div>
+              <span className="text-xs text-[--sys-text-muted]">
+                {conversationsLoading ? 'Loading conversation…' : `${activeConversation?.messages.length ?? 0} messages`}
+              </span>
+            </div>
+            {activeConversation ? (
+              <ConversationThread conversation={activeConversation} onReply={handleReply} maxDepth={3} />
+            ) : (
+              <p className="text-sm text-[--sys-text-muted]">No conversation seeded.</p>
+            )}
+          </div>
+        </div>
+        <div className="space-y-4">
+          <ChannelPlanEditor policy={policy} channelTypes={channelTypes} onChange={(next) => setPolicy(next)} />
+          <DeliveryHealthWidget metrics={buildHealthMetrics(seedMessages)} timeWindow="24h" />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function buildDemoMessages(): Message[] {
+  const base = DateTime.fromISO('2025-11-20T08:00:00Z');
+  return Array.from({ length: 14 }).map((_, index) => {
+    const created_at = base.plus({ minutes: index * 12 }).toISO() ?? TimeService.nowSystem().toISO();
+    return {
+      id: `comm-msg-${index + 1}`,
+      sender_id: index % 3 === 0 ? 'ops-bot' : 'notifications',
+      recipient_ids: ['success-team'],
+      channel_type: index % 2 === 0 ? 'email' : 'sms',
+      template_id: 'tmpl-communication',
+      variables: {},
+      metadata: { subject: `Outbound notice ${index + 1}` },
+      priority: index % 5 === 0 ? 'urgent' : 'normal',
+      status: index % 4 === 0 ? 'queued' : 'sent',
+      status_history: [],
+      created_at,
+    };
+  });
+}
+
+function buildBasePolicy(): DeliveryPolicy {
+  return {
+    id: 'policy-standard',
+    name: 'Standard communication',
+    retry: { max_attempts: 3, backoff_strategy: 'exponential', initial_delay_seconds: 30 },
+    throttling: { max_per_minute: 60, max_per_hour: 480, max_per_day: 4800 },
+    priority: 'normal',
+    metadata: { channel_types: ['email', 'sms', 'push'] },
+  };
+}
+
+function seedConversations(messages: readonly Message[]): Conversation[] {
+  const createdAt = DateTime.fromISO('2025-11-19T15:55:00Z').toISO() ?? TimeService.nowSystem().toISO();
+  const conversationId = 'conv-seed';
+  const threadMessages: Message[] = [
+    {
+      ...messages[0],
+      id: 'conv-seed-1',
+      metadata: { ...messages[0].metadata, subject: 'Kickoff: SLA readiness' },
+      conversation_id: conversationId,
+      created_at: DateTime.fromISO('2025-11-19T16:00:00Z').toISO() ?? createdAt,
+      status: 'sent',
+    },
+    {
+      ...messages[1],
+      id: 'conv-seed-2',
+      metadata: { ...messages[1].metadata, subject: 'Provider selected', parent_message_id: 'conv-seed-1' },
+      conversation_id: conversationId,
+      created_at: DateTime.fromISO('2025-11-19T16:12:00Z').toISO() ?? createdAt,
+      status: 'sent',
+    },
+    {
+      ...messages[2],
+      id: 'conv-seed-3',
+      metadata: { ...messages[2].metadata, subject: 'SPF/DKIM configured', parent_message_id: 'conv-seed-1' },
+      conversation_id: conversationId,
+      created_at: DateTime.fromISO('2025-11-19T16:24:00Z').toISO() ?? createdAt,
+      status: 'delivered',
+    },
+  ];
+  return [
+    {
+      id: conversationId,
+      subject: 'Notification rollout with CSM',
+      participants: [
+        { user_id: 'ops-lead', role: 'owner', joined_at: createdAt },
+        { user_id: 'csm-alex', role: 'member', joined_at: createdAt },
+        { user_id: 'deliverability', role: 'viewer', joined_at: createdAt },
+      ],
+      messages: threadMessages,
+      status: 'active',
+      metadata: {},
+      created_at: createdAt,
+      updated_at: threadMessages.at(-1)?.created_at ?? createdAt,
+    },
+  ];
+}
+
+function cloneConversation(conversation: Conversation): Conversation {
+  return {
+    ...conversation,
+    participants: conversation.participants.map((participant) => ({ ...participant })),
+    messages: conversation.messages.map((message) => ({ ...message, metadata: { ...(message.metadata ?? {}) } })),
+  };
+}
+
+function buildThreadReply(conversationId: string, parentId: string): Message {
+  return {
+    id: `conv-reply-${Date.now()}`,
+    sender_id: 'ops-liaison',
+    recipient_ids: ['success-team'],
+    channel_type: 'email',
+    template_id: 'tmpl-thread-reply',
+    variables: {},
+    metadata: { subject: 'Follow-up on delivery health', parent_message_id: parentId },
+    priority: 'normal',
+    status: 'sent',
+    status_history: [],
+    conversation_id: conversationId,
+    created_at: TimeService.nowSystem().toISO(),
+  };
+}
+
+function buildHealthMetrics(messages: readonly Message[]): DeliveryHealthMetrics {
+  const now = TimeService.nowSystem();
+  const delivered = messages.filter(
+    (message) => message.status === 'sent' || message.status === 'delivered' || message.status === 'read'
+  ).length;
+  const total = Math.max(messages.length, 1);
+  const successRate = (delivered / total) * 100;
+  const retryExhaustionRate =
+    (messages.filter((message) => message.status === 'failed').length / total) * 100;
+  const trend = [120_000, 95_000, 110_000, 90_000, 132_000];
+
+  return {
+    timeToSend: {
+      value: trend[trend.length - 1] ?? 110_000,
+      p50: 95_000,
+      p95: 150_000,
+      p99: 220_000,
+      count: total,
+      windowStart: now.minus({ hours: 24 }).toJSDate(),
+      windowEnd: now.toJSDate(),
+    },
+    successRate: {
+      value: Number(successRate.toFixed(1)),
+      p50: Number(Math.max(successRate - 0.6, 0).toFixed(1)),
+      p95: Number(Math.max(successRate - 1.2, 0).toFixed(1)),
+      p99: Number(Math.max(successRate - 2, 0).toFixed(1)),
+      count: total,
+      windowStart: now.minus({ hours: 24 }).toJSDate(),
+      windowEnd: now.toJSDate(),
+    },
+    retryExhaustionRate: Number(retryExhaustionRate.toFixed(1)),
+    trend,
+  };
+}
 
 export default TimelinePage;
