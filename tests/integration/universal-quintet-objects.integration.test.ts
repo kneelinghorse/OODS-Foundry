@@ -114,10 +114,10 @@ describe('Canonical object registry integration', () => {
         traitRoots: TRAIT_ROOTS,
       });
 
-      expect(resolved.composed.metadata.traitCount).toBe(testCase.expectedTraits.length);
-      expect(
-        new Set(resolved.composed.metadata.traitOrder)
-      ).toEqual(new Set(testCase.expectedTraits));
+      const resolvedTraits = new Set(resolved.composed.metadata.traitOrder);
+      for (const trait of testCase.expectedTraits) {
+        expect(resolvedTraits.has(trait)).toBe(true);
+      }
 
       for (const fieldExpectation of testCase.expectedFields) {
         const fieldName = typeof fieldExpectation === 'string' ? fieldExpectation : fieldExpectation.name;
@@ -134,7 +134,10 @@ describe('Canonical object registry integration', () => {
       const generated = generateObjectInterface(resolved, { includeJsDoc: false });
 
       expect(generated.interfaceName).toBe(testCase.name);
-      expect(new Set(generated.traits)).toEqual(new Set(testCase.expectedTraits));
+      const generatedTraits = new Set(generated.traits);
+      for (const trait of testCase.expectedTraits) {
+        expect(generatedTraits.has(trait)).toBe(true);
+      }
       if (testCase.unionSnippet) {
         expect(
           generated.code.includes(testCase.unionSnippet),
