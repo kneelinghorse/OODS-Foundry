@@ -74,7 +74,7 @@
   }
 
   [data-view] [data-chart-grid='dashboard'] {
-    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
   }
 
   /* List main rhythm — tokens: --view-main-gap-list */
@@ -290,6 +290,18 @@
   [data-view-context='dashboard'][data-view-has-contextpanel='true']
     [data-region-group='dashboard-content'] {
     grid-template-columns: var(--view-columns-two-column-standard);
+  }
+
+  @media (max-width: 1200px) {
+    [data-view-context='dashboard'][data-view-has-contextpanel='true']
+      [data-region-group='dashboard-content'] {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    [data-view-context='dashboard'][data-view-has-contextpanel='true']
+      aside[data-region='contextPanel'] {
+      grid-column: 1 / -1;
+    }
   }
 
   /* Card view layout — tokens: --cmp-surface-panel, --view-card-radius, --view-card-padding, --cmp-shadow-panel, --view-border-thin, --cmp-border-default, --view-card-gap, --view-card-max-width */
