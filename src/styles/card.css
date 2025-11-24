@@ -1,0 +1,39 @@
+.cmp-card {
+  --cmp-card-surface: var(--cmp-surface-panel, var(--sys-surface-raised, Canvas));
+  --cmp-card-border: var(--cmp-border-default, CanvasText);
+  --cmp-card-radius: var(--cmp-radius-lg, 1rem);
+  --cmp-card-padding: var(--cmp-spacing-inset-relaxed, 1.5rem);
+  --cmp-card-gap: var(--cmp-spacing-stack-default, 1rem);
+  --cmp-card-shadow: var(
+    --cmp-shadow-card,
+    0 12px 28px color-mix(in srgb, var(--cmp-text-body, CanvasText) 12%, transparent)
+  );
+  --cmp-card-shadow-elevated: var(
+    --cmp-shadow-card-elevated,
+    0 18px 34px color-mix(in srgb, var(--cmp-text-body, CanvasText) 18%, transparent)
+  );
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--cmp-card-gap);
+  border-radius: var(--cmp-card-radius);
+  border: 1px solid color-mix(in srgb, var(--cmp-card-border) 70%, transparent);
+  background: var(--cmp-card-surface);
+  box-shadow: var(--cmp-card-shadow);
+  padding: var(--cmp-card-padding);
+  color: var(--cmp-text-body, currentColor);
+}
+
+.cmp-card[data-elevated='true'],
+.cmp-card--elevated {
+  box-shadow: var(--cmp-card-shadow-elevated);
+}
+
+@media (forced-colors: active) {
+  .cmp-card {
+    border-color: ButtonText;
+    background: Canvas;
+    color: CanvasText;
+    box-shadow: none;
+  }
+}
