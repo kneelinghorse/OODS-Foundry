@@ -13,10 +13,10 @@
   --cmp-chip-focus-width: var(--sys-focus-width); /* Chip focus ring width. */
   --cmp-chip-foreground: var(--sys-status-neutral-text); /* Default chip text colour. */
   --cmp-chip-icon: var(--sys-status-neutral-icon); /* Default chip icon colour. */
-  --cmp-communication-date-header-fg: var(--sys-communication-muted); /* Date header text colour. */
-  --cmp-communication-health-critical: var(--sys-communication-error); /* Critical delivery state colour. */
-  --cmp-communication-health-success: var(--sys-communication-success); /* Healthy delivery state colour. */
-  --cmp-communication-health-warning: var(--sys-status-warning-surface); /* Warning delivery state colour. */
+  --cmp-communication-date-header-fg: var(--sys-text-muted); /* Date header text colour (AA contrast on timeline bg). */
+  --cmp-communication-health-critical: var(--sys-status-critical-icon); /* Critical delivery state colour (high visibility). */
+  --cmp-communication-health-success: var(--sys-status-success-icon); /* Healthy delivery state colour (high visibility). */
+  --cmp-communication-health-warning: var(--sys-status-warning-icon); /* Warning delivery state colour (high visibility). */
   --cmp-communication-policy-editor-border: var(--sys-border-subtle); /* Border tone for policy editor sections. */
   --cmp-communication-thread-indent: 20px; /* Indentation step per conversation depth. */
   --cmp-communication-timeline-bg: var(--sys-surface-subtle); /* Timeline background surface. */
