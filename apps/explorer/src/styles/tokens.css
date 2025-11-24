@@ -215,8 +215,8 @@
   --theme-dark-surface-canvas: oklch(0.18 0.05 45); /* Primary dark canvas tone. */
   --theme-dark-surface-disabled: oklch(0.32 0.04 45); /* Disabled component surface in dark theme. */
   --theme-dark-surface-interactive-primary-default: oklch(0.52 0.2 45); /* Primary interactive default surface for dark theme. */
-  --theme-dark-surface-interactive-primary-hover: oklch(0.60 0.215 45); /* Primary interactive hover surface for dark theme. */
-  --theme-dark-surface-interactive-primary-pressed: oklch(0.67 0.23 45); /* Primary interactive pressed surface for dark theme. */
+  --theme-dark-surface-interactive-primary-hover: oklch(0.48 0.20 45); /* Primary interactive hover surface for dark theme (darkened for contrast). */
+  --theme-dark-surface-interactive-primary-pressed: oklch(0.44 0.19 45); /* Primary interactive pressed surface for dark theme (darkened for contrast). */
   --theme-dark-surface-inverse: oklch(0.95 0.01 45); /* Inverse surface token for dark contexts. */
   --theme-dark-surface-raised: oklch(0.24 0.05 45); /* Raised panel surface for dark theme. */
   --theme-dark-surface-subtle: oklch(0.3 0.06 45); /* Secondary panel surface tone for dark theme. */
@@ -224,13 +224,13 @@
   --theme-dark-text-disabled: oklch(0.55 0.008 92); /* Disabled text on dark surfaces. */
   --theme-dark-text-inverse: oklch(0.24 0.05 265); /* Inverse text colour for dark theme. */
   --theme-dark-text-muted: oklch(0.7 0.01 92); /* Muted caption text on dark surfaces. */
-  --theme-dark-text-on_interactive: oklch(0.16 0.04 45); /* Text on dark interactive surfaces. */
+  --theme-dark-text-on_interactive: var(--ref-color-neutral-50); /* Text on dark interactive surfaces (raised for contrast). */
   --theme-dark-text-primary: oklch(0.92 0.02 92); /* Body text on dark surfaces. */
   --theme-dark-text-secondary: oklch(0.81 0.015 92); /* Secondary text on dark surfaces. */
   --theme-border-strong: var(--ref-color-neutral-500); /* High contrast border tone. */
   --theme-border-subtle: var(--ref-color-neutral-300); /* Default subtle border tone. */
   --theme-focus-ring-inner: var(--ref-color-neutral-100); /* Inner ring contrast colour for focus. */
-  --theme-focus-ring-outer: var(--ref-color-neutral-900); /* Outer halo colour for focus indicators. */
+  --theme-focus-ring-outer: var(--ref-color-neutral-700); /* Outer halo colour for focus indicators (higher contrast on light). */
   --theme-focus-text: var(--ref-color-primary-600); /* Text/icon accent used alongside focus. */
   --theme-focus-width: 2px; /* Default focus ring width. */
   --theme-icon-muted: var(--ref-color-neutral-500); /* Muted/secondary icon tone. */
