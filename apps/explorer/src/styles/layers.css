@@ -61,7 +61,7 @@
   --theme-status-neutral-text: var(--ref-color-neutral-800);
   --theme-status-neutral-icon: var(--ref-color-neutral-700);
 
-  --theme-focus-ring-outer: var(--ref-color-neutral-900);
+  --theme-focus-ring-outer: var(--ref-color-neutral-700);
   --theme-focus-ring-inner: var(--ref-color-neutral-100);
   --theme-focus-text: var(--ref-color-primary-600);
   --theme-focus-width: 2px;
@@ -104,8 +104,8 @@ html[data-theme='dark'] {
   --theme-surface-interactive-primary-default: var(--theme-dark-surface-interactive-primary-default, var(--ref-color-primary-500));
   --theme-surface-interactive-primary-hover-fallback: var(--theme-dark-surface-interactive-primary-hover, var(--ref-color-primary-400));
   --theme-surface-interactive-primary-pressed-fallback: var(--theme-dark-surface-interactive-primary-pressed, var(--ref-color-primary-300));
-  --theme-surface-interactive-primary-hover: var(--theme-surface-interactive-primary-hover-fallback);
-  --theme-surface-interactive-primary-pressed: var(--theme-surface-interactive-primary-pressed-fallback);
+  --theme-surface-interactive-primary-hover: var(--theme-dark-surface-interactive-primary-default, var(--ref-color-primary-500));
+  --theme-surface-interactive-primary-pressed: var(--theme-dark-surface-interactive-primary-default, var(--ref-color-primary-500));
 
   --theme-border-subtle: var(--theme-dark-border-subtle, var(--ref-color-neutral-700));
   --theme-border-strong: var(--theme-dark-border-strong, var(--ref-color-neutral-600));
@@ -115,7 +115,8 @@ html[data-theme='dark'] {
   --theme-text-muted: var(--theme-dark-text-muted, var(--ref-color-neutral-400));
   --theme-text-inverse: var(--theme-dark-text-inverse, var(--ref-color-neutral-900));
   --theme-text-accent: var(--theme-dark-text-accent, var(--ref-color-primary-500));
-  --theme-text-on-interactive: var(--theme-dark-text-on-interactive, var(--ref-color-neutral-100));
+  --theme-dark-text-on-interactive: var(--ref-color-neutral-50);
+  --theme-text-on-interactive: var(--theme-dark-text-on-interactive, var(--ref-color-neutral-50));
   --theme-text-disabled: var(--theme-dark-text-disabled, var(--ref-color-neutral-500));
 
   --theme-icon-primary: var(--theme-dark-icon-primary, var(--ref-color-neutral-200));
@@ -379,10 +380,10 @@ html[data-theme='dark'] {
   --cmp-button-text-hover: var(--cmp-text-on-action);
   --cmp-button-text-active: var(--cmp-text-on-action);
   --cmp-button-text-selected: var(--cmp-text-on-action);
-  --cmp-button-text-disabled: var(--cmp-text-disabled);
+  --cmp-button-text-disabled: var(--cmp-text-secondary);
   --cmp-button-icon: var(--cmp-icon-on-action);
   --cmp-button-icon-disabled: var(--cmp-icon-muted);
-  --cmp-button-focus-outer: var(--sys-focus-ring-outer);
+  --cmp-button-focus-outer: var(--ref-color-neutral-50);
   --cmp-button-focus-inner: var(--sys-focus-ring-inner);
   --cmp-button-focus-width: var(--sys-focus-width);
   --cmp-button-shadow: 0 12px 24px color-mix(in srgb, var(--cmp-surface-action, transparent) 25%, transparent);
@@ -394,7 +395,7 @@ html[data-theme='dark'] {
   --cmp-badge-font-size: 0.82rem;
   --cmp-badge-font-weight: 600;
   --cmp-badge-letter-spacing: 0.02em;
-  --cmp-badge-background: color-mix(in srgb, var(--cmp-surface-subtle) 60%, transparent);
+  --cmp-badge-background: var(--cmp-surface-panel);
   --cmp-badge-background-hover: color-mix(in srgb, var(--cmp-surface-panel) 75%, transparent);
   --cmp-badge-background-active: var(--cmp-surface-panel);
   --cmp-badge-background-selected: var(--cmp-surface-action);
@@ -403,7 +404,7 @@ html[data-theme='dark'] {
   --cmp-badge-border-hover: var(--cmp-border-strong);
   --cmp-badge-border-selected: var(--cmp-surface-action);
   --cmp-badge-border-disabled: var(--cmp-border-default);
-  --cmp-badge-text: var(--cmp-text-body);
+  --cmp-badge-text: var(--cmp-text-secondary);
   --cmp-badge-text-hover: var(--cmp-text-body);
   --cmp-badge-text-selected: var(--cmp-text-on-action);
   --cmp-badge-text-disabled: var(--cmp-text-disabled);
@@ -436,8 +437,8 @@ html[data-theme='dark'] {
   --cmp-input-border-selected: var(--cmp-text-accent);
   --cmp-input-border-disabled: var(--cmp-border-default);
   --cmp-input-text: var(--cmp-text-body);
-  --cmp-input-text-disabled: var(--cmp-text-disabled);
-  --cmp-input-placeholder: var(--cmp-text-muted);
+  --cmp-input-text-disabled: var(--cmp-text-secondary);
+  --cmp-input-placeholder: var(--cmp-text-secondary);
   --cmp-input-caret: var(--cmp-text-accent);
   --cmp-input-support-text: var(--cmp-text-muted);
   --cmp-input-message-text: var(--sys-status-info-text);
