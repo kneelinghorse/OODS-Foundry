@@ -121,6 +121,7 @@ This guide consolidates operational procedures for both AI agents and human main
 | Purpose | Command |
 | --- | --- |
 | Seed database | `python cmos/scripts/seed_sqlite.py` |
+| Migrate YAML missions | `python cmos/scripts/migrate_sprint_yaml_to_db.py --sprint N` |
 | Check DB health | `./cmos/cli.py db show current` |
 | Integration suite | `node cmos/context/integration_test_runner.js` |
 | Guardrail refs | `./cmos/cli.py validate docs` |
@@ -132,6 +133,16 @@ This guide consolidates operational procedures for both AI agents and human main
 | Start mission | `./cmos/cli.py mission start <id> --summary "<session>"` |
 | Complete mission | `./cmos/cli.py mission complete <id> --summary "<session>" --notes "<notes>"` |
 | Export research report | `./cmos/cli.py research export <id>` |
+| Snapshot context | `./cmos/cli.py context snapshot master --source "<milestone>"` |
+| View context history | `./cmos/cli.py context history master` |
+| List strategic decisions | `./cmos/cli.py decisions list [--limit N] [--domain]` |
+| Search decisions | `./cmos/cli.py decisions search "<keyword>"` |
+| Start session | `./cmos/cli.py session start --type <type> --title "<title>"` |
+| Capture insight | `./cmos/cli.py session capture <category> "<content>"` |
+| Complete session | `./cmos/cli.py session complete --summary "<summary>"` |
+| Onboard agent | `./cmos/cli.py session onboard` |
+| List sessions | `./cmos/cli.py session list [--limit N] [--type <type>]` |
+| Search sessions | `./cmos/cli.py session search "<query>"` |
 | Package starter | `./cmos/scripts/package_starter.sh` |
 | Reset starter | `./cmos/scripts/reset_starter.sh` |
 
@@ -177,6 +188,7 @@ This guide consolidates operational procedures for both AI agents and human main
 
 ### Maintenance Operations
 - **Database refresh**: Run `python cmos/scripts/seed_sqlite.py` when importing external data or schema changes
+- **YAML migration**: When agents write mission specs to YAML files instead of DB, run `python cmos/scripts/migrate_sprint_yaml_to_db.py --sprint N --dry-run` to preview and then apply migration
 - **Database health**: Check `./cmos/cli.py db show current` and review telemetry logs
 - **Export contexts**: Generate file snapshots when needed: `./cmos/cli.py db export contexts`
 - **Export backlog**: Generate minimal backlog view: `./cmos/cli.py db export backlog`

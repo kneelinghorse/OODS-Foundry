@@ -9,9 +9,9 @@
 **CMOS** (Context + Mission Orchestration System) is a project management layer for AI-assisted development. It provides:
 
 - 📊 **SQLite-backed mission tracking** - History, sprints, dependencies
-- 📝 **Context management** - PROJECT_CONTEXT, MASTER_CONTEXT
+- 📝 **Context management** - PROJECT_CONTEXT, MASTER_CONTEXT with snapshots
 - 🎯 **Mission-based workflow** - Research → Plan → Build → Ship
-- 🔄 **Session logging** - Track every build session
+- 🔄 **Session management** - Capture planning, onboarding, reviews, and build sessions
 - ✅ **Validation guardrails** - Keep code and management in sync
 
 **Critical Principle**: CMOS is **project management**, NOT your application code. Keep them separate!
@@ -48,10 +48,10 @@ cd yourproject
 # Python dependencies (required)
 pip install PyYAML
 
-# Node dependencies (optional, for testing)
-cd cmos
-npm install
-cd ..
+# Node scripts (optional, for testing)
+# No npm install required; run Node tools directly when needed
+# Example:
+node cmos/context/integration_test_runner.js --help
 ```
 
 **Verify**:
@@ -72,8 +72,8 @@ python cmos/scripts/seed_sqlite.py
 ```
 
 **What this does**:
-- Creates `cmos/db/cmos.sqlite` with empty schema
-- Initializes contexts table
+- Applies the schema to create `cmos/db/cmos.sqlite`
+- Imports mirrors if present (contexts, backlog, sessions, telemetry, prompt mappings)
 - Ready for your first mission
 
 **Verify**:
@@ -246,8 +246,8 @@ After setup, verify everything works:
 # Should show: "Active mission not set in project context."
 
 # 2. Database health check works
-./cmos/cli.py db show current
-# Should show: "Active mission not set"
+./cmos/cli.py validate health
+# Should show: "Database cmos/db/cmos.sqlite is reachable and passed health checks."
 
 # 3. Check database
 ./cmos/cli.py db show backlog
@@ -336,6 +336,13 @@ ls -la agents.md cmos/agents.md
 | Update mission status | `./cmos/cli.py mission update <id> --status "<status>"` |
 | Add dependency | `./cmos/cli.py mission depends <from> <to> --type "Blocks"` |
 | Export research report | `./cmos/cli.py research export <id>` |
+| Snapshot MASTER_CONTEXT | `./cmos/cli.py context snapshot master --source "<milestone>"` |
+| View context history | `./cmos/cli.py context history master` |
+| View specific snapshot | `./cmos/cli.py context view <snapshot-id>` |
+| Start session | `./cmos/cli.py session start --type <type> --title "<title>"` |
+| Capture session insight | `./cmos/cli.py session capture <category> "<content>"` |
+| Complete session | `./cmos/cli.py session complete --summary "<summary>"` |
+| Onboard agent | `./cmos/cli.py session onboard` |
 | Validate sync | `./cmos/cli.py validate health` |
 | Start build session | See `cmos/docs/build-session-prompt.md` |
 
@@ -344,6 +351,7 @@ ls -la agents.md cmos/agents.md
 ## Getting Help
 
 - **Setup issues**: Check `cmos/docs/operations-guide.md`
+- **Session management**: See `cmos/docs/session-management-guide.md`
 - **Migration from legacy**: See `cmos/docs/legacy-migration-guide.md`
 - **Database queries**: See `cmos/docs/sqlite-schema-reference.md`
 - **Build sessions**: See `cmos/docs/build-session-prompt.md`
