@@ -33,7 +33,7 @@ const MessageRow = memo(({ data, index, style }: ListChildComponentProps<Timelin
     return (
       <div
         style={style}
-        className="px-3 py-2 text-xs font-semibold text-[--cmp-communication-date-header-fg]"
+        className="px-3 py-2 text-xs font-semibold text-[--sys-text-primary]"
         aria-label={row.label}
         role="presentation"
         aria-hidden="true"
