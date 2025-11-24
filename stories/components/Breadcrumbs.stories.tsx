@@ -32,7 +32,7 @@ export default meta;
 
 const MUTED_TEXT_STYLE: React.CSSProperties = {
   fontSize: '0.75rem',
-  color: 'var(--cmp-text-muted, var(--sys-text-muted))',
+  color: 'var(--cmp-text-body, var(--sys-text-primary))',
   marginTop: '0.5rem',
 };
 
@@ -263,7 +263,7 @@ export const WithPageContext: Story = {
           }}
         >
           <h1 style={{ marginTop: 0 }}>{content.title}</h1>
-          <p style={{ color: 'var(--cmp-text-muted, var(--sys-text-muted))' }}>
+          <p style={{ color: 'var(--cmp-text-body, var(--sys-text-primary))' }}>
             {content.description}
           </p>
         </main>
