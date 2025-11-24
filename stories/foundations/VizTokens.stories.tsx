@@ -111,6 +111,7 @@ const ColorSwatch = ({ token }: { token: string }): JSX.Element => (
       boxShadow: '0 1px 2px rgba(15, 23, 42, 0.08)',
       background: `var(${resolveCssVariable(token)})`,
     }}
+    role="img"
     aria-label={token}
   />
 );

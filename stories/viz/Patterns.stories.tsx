@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import type { ComponentType, JSX } from 'react';
+import type { ComponentType, CSSProperties, JSX } from 'react';
 import type { NormalizedVizSpec } from '~/src/viz/spec/normalized-viz-spec';
 import { chartPatterns } from '~/src/viz/patterns/index.js';
 import { BarChart } from '~/src/components/viz/BarChart';
@@ -61,6 +61,20 @@ const componentMap: Record<string, ComponentType<{ spec: NormalizedVizSpec; show
   heatmap: Heatmap,
 };
 
+const cardStyle: CSSProperties = {
+  background: 'var(--cmp-surface-panel, #ffffff)',
+  borderColor: 'var(--cmp-border-default, #CBD5F5)',
+  padding: '1.25rem',
+};
+
+const summaryTextStyle: CSSProperties = {
+  color: 'var(--sys-text-default, var(--sys-text-primary, #0f172a))',
+};
+
+const metaTextStyle: CSSProperties = {
+  color: 'var(--sys-text-secondary, #334155)',
+};
+
 function PatternGallery(): JSX.Element {
   return (
     <div className="space-y-12">
@@ -79,17 +93,19 @@ function PatternGallery(): JSX.Element {
           return null;
         }
         return (
-          <section key={pattern.id} className="space-y-3">
+          <section key={pattern.id} className="space-y-3 rounded-2xl border shadow-sm" style={cardStyle}>
             <div>
               <h3 className="text-xl font-semibold">{pattern.name}</h3>
-              <p className="text-neutral-600">{pattern.summary}</p>
+              <p className="text-sm leading-relaxed" style={summaryTextStyle}>
+                {pattern.summary}
+              </p>
             </div>
-            <p className="text-sm text-neutral-500">
+            <p className="text-sm leading-relaxed" style={metaTextStyle}>
               <strong>Schema:</strong> {pattern.schema.structure} · <strong>Confidence:</strong>{' '}
               {pattern.confidence.score.toFixed(2)} ({pattern.confidence.level}) · <strong>Spec:</strong>{' '}
               <code>{pattern.specPath}</code>
             </p>
-            <p className="text-sm text-neutral-500">
+            <p className="text-sm leading-relaxed" style={metaTextStyle}>
               <strong>Best for:</strong> {pattern.usage.bestFor.join('; ')}
             </p>
             <div className="rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm">
