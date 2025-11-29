@@ -129,14 +129,7 @@ export function fitProjectionToFeatures(
   const width = dimensions?.width ?? projection.translate()[0] * 2;
   const height = dimensions?.height ?? projection.translate()[1] * 2;
 
-  if (typeof (projection as GeoProjection).fitSize === 'function') {
-    projection.fitSize([width, height], features);
-    return projection;
-  }
-
-  const path = d3Geo.geoPath(projection);
-  const fitted = path.fitSize([width, height], features);
-  projection.scale(fitted.projection().scale()).translate(fitted.projection().translate());
+  projection.fitSize([width, height], features);
 
   return projection;
 }

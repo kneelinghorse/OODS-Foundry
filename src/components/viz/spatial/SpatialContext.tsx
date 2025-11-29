@@ -5,7 +5,7 @@
  * projection state, layer configuration, and interaction handlers.
  */
 
-import { createContext, useContext, type ReactNode } from 'react';
+import { createContext, useContext, type ReactNode, type JSX } from 'react';
 import type { Feature } from 'geojson';
 import type { ProjectionConfig, SpatialA11yConfig } from '../../../types/viz/spatial.js';
 import type { DataRecord } from '../../../viz/adapters/spatial/geo-data-joiner.js';
