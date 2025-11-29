@@ -6,7 +6,7 @@
  */
 
 import { PROJECTION_TYPES } from './HasProjection.trait.js';
-import type { ProjectionConfig, ProjectionType } from './HasProjection.trait.js';
+import type { ProjectionType } from './HasProjection.trait.js';
 
 /**
  * Renderer type for projection config generation
@@ -115,6 +115,7 @@ function generateEChartsConfig(
   projectionType: ProjectionType
 ): RendererProjectionConfig {
   const config: RendererProjectionConfig = {
+    type: projectionType,
     projection: projectionType,
   };
 
