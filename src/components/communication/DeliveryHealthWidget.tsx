@@ -77,7 +77,6 @@ export function DeliveryHealthWidget({
             const heightRatio = Math.max(0.05, value / maxTrend);
             return (
               <div
-                // eslint-disable-next-line react/no-array-index-key
                 key={index}
                 className="flex-1 rounded-sm bg-[--cmp-communication-health-success]"
                 style={{ height: `${heightRatio * 100}%` }}

@@ -127,7 +127,8 @@ function mergeSnapshots(
     delivered: 2,
     read: 3,
     failed: 4,
-    retry_exhausted: 5,
+    retried: 5,
+    retry_exhausted: 6,
   };
 
   const previousRank = order[previous.status] ?? 0;

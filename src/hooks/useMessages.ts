@@ -74,7 +74,7 @@ export function useMessages(options: UseMessagesOptions): UseMessagesResult {
             ? {
                 ...message,
                 status: 'read',
-                read_at: message.read_at ?? TimeService.nowSystem().toISO(),
+                read_at: message.read_at ?? TimeService.toIsoString(TimeService.nowSystem()),
               }
             : message
         )
