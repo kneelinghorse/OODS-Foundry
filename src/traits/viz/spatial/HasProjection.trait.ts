@@ -1,4 +1,4 @@
-import type { TraitDefinition } from '../../core/trait-definition.js';
+import type { TraitDefinition } from '../../../core/trait-definition';
 
 /**
  * Projection configuration type for renderer-specific projection settings
@@ -243,5 +243,3 @@ const HasProjectionTrait = {
 };
 
 export default HasProjectionTrait;
-export type { ProjectionType, ProjectionConfig };
-

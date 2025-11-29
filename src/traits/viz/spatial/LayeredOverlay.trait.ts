@@ -1,4 +1,4 @@
-import type { TraitDefinition } from '../../core/trait-definition.js';
+import type { TraitDefinition } from '../../../core/trait-definition';
 
 /**
  * Basemap type for the map base layer
@@ -253,5 +253,3 @@ const LayeredOverlayTrait = {
 };
 
 export default LayeredOverlayTrait;
-export type { BasemapType, LayerType, LayerConfig, OrderedLayerConfig };
-
