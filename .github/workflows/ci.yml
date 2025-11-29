@@ -1,9 +1,15 @@
 name: CI
 
 on:
-  # Manual-only: CI will not run automatically on push or PR.
   workflow_dispatch: {}
-
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths-ignore:
+      - 'cmos/**'
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - 'cmos/**'
 permissions:
   contents: read
   pull-requests: write
