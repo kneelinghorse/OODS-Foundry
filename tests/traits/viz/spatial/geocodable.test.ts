@@ -126,6 +126,18 @@ describe('Geocodable trait', () => {
       expect(GeocodableTrait.tokens).toHaveProperty('viz.spatial.geocodable.badge.point');
       expect(GeocodableTrait.tokens).toHaveProperty('viz.spatial.geocodable.badge.boundary');
     });
+
+    it('exposes detection metadata and outputs contract', () => {
+      expect(GeocodableTrait.detection.fieldPatterns).toHaveLength(3);
+      expect(GeocodableTrait.detection.fieldTypes).toEqual(
+        expect.arrayContaining(['field.geopoint', 'field.geojson', 'field.topojson'])
+      );
+
+      expect(GeocodableTrait.outputs.geoResolution).toContain('point');
+      expect(GeocodableTrait.outputs.geoResolution).toContain('boundary');
+      expect(GeocodableTrait.outputs.geoResolution).toContain('both');
+      expect(GeocodableTrait.outputs.requiresLookup).toBe('boolean');
+    });
   });
 
   describe('parameter definitions', () => {
@@ -243,6 +255,39 @@ describe('geo-field-detector', () => {
       expect(coordFields.every((f) => f.confidence >= 0.7)).toBe(true);
     });
 
+    it('detects prefixed/suffixed geo fields', () => {
+      const data = [
+        { shipping_country: 'USA', billing_state: 'CA', user_latitude: 34.05, user_longitude: -118.24 },
+      ];
+
+      const result = detectGeoFields(data);
+
+      expect(result.geoResolution).toBe('both');
+      expect(result.requiresLookup).toBe(false);
+      const fields = result.detectedFields.map((f) => f.field);
+      expect(fields).toEqual(
+        expect.arrayContaining(['shipping_country', 'billing_state', 'user_latitude', 'user_longitude'])
+      );
+    });
+
+    it('uses geometry type to infer boundary resolution without lookup', () => {
+      const result = detectGeoFields(
+        [{ geometry: { type: 'Polygon', coordinates: [] } }],
+        { fieldSchemas: [{ name: 'geometry', type: 'field.geojson' }] }
+      );
+
+      expect(result.geoResolution).toBe('boundary');
+      expect(result.requiresLookup).toBe(false);
+      expect(result.detectedFields.some((f) => f.field === 'geometry' && f.type === 'geometry')).toBe(true);
+    });
+
+    it('does not treat generic x/y fields as geo without hints', () => {
+      const result = detectGeoFields([{ x: 1, y: 2, value: 3 }], { minConfidence: 0.6 });
+
+      expect(result.detectedFields).toHaveLength(0);
+      expect(result.geoResolution).toBe('point');
+    });
+
     it('respects minConfidence threshold', () => {
       const resultLow = detectGeoFields(SAMPLE_DATA_COORDINATES, { minConfidence: 0.5 });
       const resultHigh = detectGeoFields(SAMPLE_DATA_COORDINATES, { minConfidence: 0.99 });
@@ -358,8 +403,8 @@ describe('GEO_FIELD_PATTERNS', () => {
       ['lng', true],
       ['geo_x', true],
       ['geo_y', true],
-      ['x', true],
-      ['y', true],
+      ['x', false],
+      ['y', false],
       ['name', false],
       ['value', false],
     ] as const;
