@@ -1,0 +1,185 @@
+trait:
+  name: HasProjection
+  version: 1.0.0
+  description: |
+    Visualization uses a geographic projection to map coordinates to screen space.
+    Supports common map projections with configurable parameters.
+  category: viz.spatial
+  tags:
+    - viz
+    - spatial
+    - geo
+    - projection
+    - map
+
+parameters:
+  - name: projectionType
+    type: enum
+    required: false
+    description: Type of geographic projection to use.
+    default: mercator
+    enumValues:
+      - mercator
+      - albersUsa
+      - equalEarth
+      - orthographic
+      - conicEqualArea
+      - naturalEarth1
+  - name: center
+    type: string
+    required: false
+    description: Center point of the projection as [longitude, latitude] array (JSON string).
+    default: "[0, 0]"
+  - name: scale
+    type: number
+    required: false
+    description: Scale factor for the projection.
+    default: 100
+    validation:
+      minimum: 1
+  - name: rotate
+    type: string
+    required: false
+    description: Rotation angles as [lambda, phi, gamma] array (JSON string).
+    default: "[0, 0, 0]"
+  - name: clipExtent
+    type: string
+    required: false
+    description: Clip extent as [[x0, y0], [x1, y1]] array (JSON string).
+
+schema:
+  projection_type:
+    type: string
+    required: true
+    description: Type of geographic projection (mercator, albersUsa, equalEarth, etc.).
+    default: mercator
+    validation:
+      enum:
+        - mercator
+        - albersUsa
+        - equalEarth
+        - orthographic
+        - conicEqualArea
+        - naturalEarth1
+  projection_center:
+    type: string
+    required: false
+    description: Center point as JSON array [longitude, latitude].
+    default: "[0, 0]"
+  projection_scale:
+    type: number
+    required: false
+    description: Scale factor for the projection.
+    default: 100
+    validation:
+      minimum: 1
+  projection_rotate:
+    type: string
+    required: false
+    description: Rotation angles as JSON array [lambda, phi, gamma].
+    default: "[0, 0, 0]"
+  projection_clip_extent:
+    type: string
+    required: false
+    description: Clip extent as JSON array [[x0, y0], [x1, y1]].
+  projection_config:
+    type: object
+    required: false
+    description: Renderer-specific projection configuration (generated).
+
+semantics:
+  projection_type:
+    semantic_type: viz.spatial.projection.type
+    token_mapping: tokenMap(viz.spatial.projection.type)
+    ui_hints:
+      component: ProjectionTypeSelector
+  projection_center:
+    semantic_type: viz.spatial.projection.center
+    ui_hints:
+      component: CoordinateInput
+      label: "Center [lon, lat]"
+  projection_scale:
+    semantic_type: viz.spatial.projection.scale
+    ui_hints:
+      component: NumberInput
+      label: Scale
+      min: 1
+  projection_rotate:
+    semantic_type: viz.spatial.projection.rotate
+    ui_hints:
+      component: CoordinateInput
+      label: "Rotate [λ, φ, γ]"
+  projection_clip_extent:
+    semantic_type: viz.spatial.projection.clip
+    ui_hints:
+      component: ExtentInput
+      label: Clip Extent
+  projection_config:
+    semantic_type: viz.spatial.projection.config
+    ui_hints:
+      component: ProjectionConfigViewer
+      readOnly: true
+
+view_extensions:
+  detail:
+    - component: ProjectionPreview
+      position: top
+      priority: 75
+      props:
+        typeField: projection_type
+        centerField: projection_center
+        scaleField: projection_scale
+        configField: projection_config
+  form:
+    - component: ProjectionConfigForm
+      position: top
+      priority: 80
+      props:
+        typeField: projection_type
+        centerField: projection_center
+        scaleField: projection_scale
+        rotateField: projection_rotate
+        clipExtentField: projection_clip_extent
+  list:
+    - component: ProjectionTypeBadge
+      props:
+        typeField: projection_type
+
+tokens:
+  viz.spatial.projection.icon: "var(--cmp-viz-spatial-projection-icon)"
+  viz.spatial.projection.badge.mercator: "var(--cmp-viz-spatial-projection-badge-mercator)"
+  viz.spatial.projection.badge.albersUsa: "var(--cmp-viz-spatial-projection-badge-albers-usa)"
+  viz.spatial.projection.badge.equalEarth: "var(--cmp-viz-spatial-projection-badge-equal-earth)"
+  viz.spatial.projection.badge.orthographic: "var(--cmp-viz-spatial-projection-badge-orthographic)"
+  viz.spatial.projection.badge.conicEqualArea: "var(--cmp-viz-spatial-projection-badge-conic-equal-area)"
+  viz.spatial.projection.badge.naturalEarth1: "var(--cmp-viz-spatial-projection-badge-natural-earth-1)"
+
+dependencies: []
+
+outputs:
+  projectionConfig:
+    type: object
+    description: Renderer-specific projection configuration.
+
+metadata:
+  created: "2025-11-29"
+  owners:
+    - viz@oods.systems
+    - spatial@oods.systems
+  maturity: alpha
+  conflicts_with: []
+  accessibility:
+    rule_reference: A11Y-R-04
+    notes: Projection settings must be accessible via keyboard and screen reader.
+  regionsUsed:
+    - detail
+    - form
+    - list
+  examples:
+    - WorldMap
+    - USMap
+    - RegionalMap
+  references:
+    - cmos/foundational-docs/data-viz-part2/spatial-module/ARCHITECTURE.md
+    - cmos/missions/B31.3-projection-overlay-traits.yaml
+

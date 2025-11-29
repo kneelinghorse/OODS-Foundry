@@ -1,0 +1,181 @@
+trait:
+  name: LayeredOverlay
+  version: 1.0.0
+  description: |
+    Supports stacking multiple visualization layers on a single map base.
+    Enables composition of choropleth, symbol, route, and other layer types
+    with deterministic z-ordering.
+  category: viz.spatial
+  tags:
+    - viz
+    - spatial
+    - geo
+    - layers
+    - map
+    - composition
+
+parameters:
+  - name: basemap
+    type: enum
+    required: false
+    description: Type of basemap to use for the map base layer.
+    default: boundaries
+    enumValues:
+      - none
+      - tile
+      - boundaries
+  - name: layers
+    type: string
+    required: false
+    description: Array of layer configurations as JSON string.
+    default: "[]"
+  - name: panZoom
+    type: boolean
+    required: false
+    description: Enable pan and zoom interactions.
+    default: true
+  - name: layerToggle
+    type: boolean
+    required: false
+    description: Enable layer visibility toggle controls.
+    default: false
+  - name: featureSelect
+    type: boolean
+    required: false
+    description: Enable click-to-select feature interactions.
+    default: true
+
+schema:
+  basemap_type:
+    type: string
+    required: true
+    description: Type of basemap (none, tile, boundaries).
+    default: boundaries
+    validation:
+      enum:
+        - none
+        - tile
+        - boundaries
+  layers:
+    type: string
+    required: false
+    description: Array of layer configurations as JSON string.
+    default: "[]"
+  interaction_pan_zoom:
+    type: boolean
+    required: true
+    description: Enable pan and zoom interactions.
+    default: true
+  interaction_layer_toggle:
+    type: boolean
+    required: true
+    description: Enable layer visibility toggle controls.
+    default: false
+  interaction_feature_select:
+    type: boolean
+    required: true
+    description: Enable click-to-select feature interactions.
+    default: true
+  ordered_layers:
+    type: object
+    required: false
+    description: Ordered layer configuration with deterministic z-ordering (generated).
+
+semantics:
+  basemap_type:
+    semantic_type: viz.spatial.basemap.type
+    token_mapping: tokenMap(viz.spatial.basemap.type)
+    ui_hints:
+      component: BasemapTypeSelector
+  layers:
+    semantic_type: viz.spatial.layers
+    ui_hints:
+      component: LayerListEditor
+  interaction_pan_zoom:
+    semantic_type: viz.spatial.interaction.panZoom
+    ui_hints:
+      component: BooleanToggle
+      label: "Pan & Zoom"
+  interaction_layer_toggle:
+    semantic_type: viz.spatial.interaction.layerToggle
+    ui_hints:
+      component: BooleanToggle
+      label: "Layer Toggle"
+  interaction_feature_select:
+    semantic_type: viz.spatial.interaction.featureSelect
+    ui_hints:
+      component: BooleanToggle
+      label: "Feature Select"
+  ordered_layers:
+    semantic_type: viz.spatial.layers.ordered
+    ui_hints:
+      component: OrderedLayerViewer
+      readOnly: true
+
+view_extensions:
+  detail:
+    - component: LayeredMapPreview
+      position: top
+      priority: 76
+      props:
+        basemapField: basemap_type
+        layersField: layers
+        orderedLayersField: ordered_layers
+        panZoomField: interaction_pan_zoom
+        layerToggleField: interaction_layer_toggle
+        featureSelectField: interaction_feature_select
+  form:
+    - component: LayerCompositionForm
+      position: top
+      priority: 81
+      props:
+        basemapField: basemap_type
+        layersField: layers
+        panZoomField: interaction_pan_zoom
+        layerToggleField: interaction_layer_toggle
+        featureSelectField: interaction_feature_select
+  list:
+    - component: LayerCountBadge
+      props:
+        layersField: layers
+
+tokens:
+  viz.spatial.layers.icon: "var(--cmp-viz-spatial-layers-icon)"
+  viz.spatial.layers.basemap.none: "var(--cmp-viz-spatial-basemap-none)"
+  viz.spatial.layers.basemap.tile: "var(--cmp-viz-spatial-basemap-tile)"
+  viz.spatial.layers.basemap.boundaries: "var(--cmp-viz-spatial-basemap-boundaries)"
+  viz.spatial.layers.type.regionFill: "var(--cmp-viz-spatial-layer-region-fill)"
+  viz.spatial.layers.type.symbol: "var(--cmp-viz-spatial-layer-symbol)"
+  viz.spatial.layers.type.route: "var(--cmp-viz-spatial-layer-route)"
+  viz.spatial.layers.type.heatmap: "var(--cmp-viz-spatial-layer-heatmap)"
+  viz.spatial.layers.type.contour: "var(--cmp-viz-spatial-layer-contour)"
+
+dependencies: []
+
+outputs:
+  orderedLayers:
+    type: object
+    description: Ordered layer configuration with deterministic z-ordering.
+
+metadata:
+  created: "2025-11-29"
+  owners:
+    - viz@oods.systems
+    - spatial@oods.systems
+  maturity: alpha
+  conflicts_with: []
+  accessibility:
+    rule_reference: A11Y-R-04
+    notes: Layer controls must be keyboard accessible and provide screen reader announcements.
+  regionsUsed:
+    - detail
+    - form
+    - list
+  examples:
+    - MultiLayerMap
+    - ChoroplethWithSymbols
+    - RouteMap
+  references:
+    - cmos/foundational-docs/data-viz-part2/spatial-module/ARCHITECTURE.md
+    - cmos/missions/B31.3-projection-overlay-traits.yaml
+
