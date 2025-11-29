@@ -264,6 +264,108 @@ describe('Spatial Spec Schema', () => {
       expect(valid).toBe(true);
     });
 
+    it('validates inline GeoJSON source with geo field definitions', () => {
+      const spec = {
+        type: 'spatial',
+        data: {
+          values: [{ id: 1, city: 'San Francisco', lon: -122.42, lat: 37.77 }],
+          format: 'geojson',
+          fields: {
+            point: { type: 'field.geopoint', value: [37.77, -122.42] },
+            geometry: {
+              type: 'field.geojson',
+              geometry: { type: 'Point', coordinates: [-122.42, 37.77] },
+            },
+          },
+        },
+        projection: {
+          type: 'mercator',
+        },
+        geo: {
+          source: {
+            type: 'FeatureCollection',
+            features: [
+              {
+                type: 'Feature',
+                properties: { id: 1 },
+                geometry: { type: 'Point', coordinates: [-122.42, 37.77] },
+              },
+            ],
+          },
+          format: 'geojson',
+        },
+        layers: [
+          {
+            type: 'symbol',
+            encoding: {
+              longitude: { field: 'lon' },
+              latitude: { field: 'lat' },
+            },
+          },
+        ],
+        a11y: {
+          description: 'City point rendered from inline GeoJSON FeatureCollection',
+        },
+      };
+
+      const valid = validate(spec);
+      expect(validate.errors).toBeNull();
+      expect(valid).toBe(true);
+    });
+
+    it('validates TopoJSON field definitions on data', () => {
+      const spec = {
+        type: 'spatial',
+        data: {
+          values: [{ region: 'CA', value: 10 }],
+          format: 'topojson',
+          fields: {
+            topology: {
+              type: 'field.topojson',
+              topology: 'states',
+              feature: 'states',
+            },
+          },
+        },
+        projection: {
+          type: 'albersUsa',
+        },
+        geo: {
+          source: {
+            type: 'Topology',
+            objects: {
+              states: {
+                type: 'GeometryCollection',
+                geometries: [],
+              },
+            },
+            arcs: [],
+          },
+          format: 'topojson',
+          topology: 'states',
+          feature: 'states',
+        },
+        layers: [
+          {
+            type: 'regionFill',
+            encoding: {
+              color: {
+                field: 'value',
+                scale: 'quantize',
+              },
+            },
+          },
+        ],
+        a11y: {
+          description: 'TopoJSON choropleth with field.topojson definitions',
+        },
+      };
+
+      const valid = validate(spec);
+      expect(validate.errors).toBeNull();
+      expect(valid).toBe(true);
+    });
+
     it('validates all projection types', () => {
       const projectionTypes = [
         'mercator',
@@ -503,6 +605,32 @@ describe('Spatial Spec Schema', () => {
 
       const valid = validate(spec);
       expect(valid).toBe(false);
+    });
+
+    it('rejects topo field without required topology reference', () => {
+      const spec = {
+        type: 'spatial',
+        data: {
+          values: [],
+          fields: {
+            topology: {
+              type: 'field.topojson',
+            },
+          },
+        },
+        projection: {},
+        layers: [
+          {
+            type: 'regionFill',
+            encoding: { color: { field: 'value' } },
+          },
+        ],
+        a11y: { description: 'Test' },
+      };
+
+      const valid = validate(spec);
+      expect(valid).toBe(false);
+      expect(validate.errors?.some((e) => e.message?.includes('topology'))).toBe(true);
     });
 
     it('rejects data.geo.join without required join keys', () => {
