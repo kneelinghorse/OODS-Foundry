@@ -119,6 +119,14 @@
       "required": ["type", "topology"],
       "additionalProperties": false
     },
+    "GeoField": {
+      "oneOf": [
+        { "$ref": "#/definitions/GeoPointField" },
+        { "$ref": "#/definitions/GeoJsonField" },
+        { "$ref": "#/definitions/TopoJsonField" }
+      ],
+      "description": "Geo-enabled field definitions that can be bound within datasets."
+    },
     "ProjectionConfig": {
       "type": "object",
       "description": "Geographic projection configuration following d3-geo patterns.",
@@ -510,6 +518,16 @@
                 "format": {
                   "type": "string",
                   "enum": ["json", "csv", "topojson", "geojson"]
+                },
+                "fields": {
+                  "type": "object",
+                  "description": "Geo field definitions for inline data sources.",
+                  "properties": {
+                    "geometry": { "$ref": "#/definitions/GeoJsonField" },
+                    "topology": { "$ref": "#/definitions/TopoJsonField" },
+                    "point": { "$ref": "#/definitions/GeoPointField" }
+                  },
+                  "additionalProperties": false
                 }
               },
               "not": {

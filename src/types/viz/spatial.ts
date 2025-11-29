@@ -49,6 +49,11 @@ export interface TopoJsonField {
   feature?: string;
 }
 
+/**
+ * Geo-enabled field definitions.
+ */
+export type GeoField = GeoPointField | GeoJsonField | TopoJsonField;
+
 // =============================================================================
 // Data Source Types
 // =============================================================================
@@ -72,6 +77,11 @@ export interface SpatialDataSource {
   values?: Record<string, unknown>[];
   url?: string;
   format?: 'json' | 'csv' | 'topojson' | 'geojson';
+  fields?: {
+    geometry?: GeoJsonField;
+    topology?: TopoJsonField;
+    point?: GeoPointField;
+  };
 }
 
 // =============================================================================
@@ -396,4 +406,3 @@ export function isSymbolLayer(layer: SpatialLayer): layer is SymbolLayer {
 export function isRouteLayer(layer: SpatialLayer): layer is RouteLayer {
   return layer.type === 'route';
 }
-

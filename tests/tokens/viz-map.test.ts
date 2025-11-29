@@ -44,10 +44,6 @@ function isSemanticReference(value: string): boolean {
   return typeof value === 'string' && value.startsWith('{') && value.endsWith('}');
 }
 
-function isOklchColor(value: string): boolean {
-  return typeof value === 'string' && value.startsWith('oklch(');
-}
-
 function isDimensionValue(value: string): boolean {
   return typeof value === 'string' && /^\d+(\.\d+)?(px|rem|em|%)$/.test(value);
 }
@@ -116,50 +112,27 @@ describe('viz-map tokens', () => {
       expect(blue).toBeDefined();
       expect(Object.keys(blue).filter((k) => !k.startsWith('$'))).toHaveLength(7);
     });
-
-    it('has green sequential scale with 7 steps', () => {
-      const scaleTokens = (tokens.viz as TokenNode).scale as TokenNode;
-      const sequential = scaleTokens.sequential as TokenNode;
-      const green = sequential.green as TokenNode;
-
-      expect(green).toBeDefined();
-      expect(Object.keys(green).filter((k) => !k.startsWith('$'))).toHaveLength(7);
-    });
-
-    it('has orange sequential scale with 7 steps', () => {
-      const scaleTokens = (tokens.viz as TokenNode).scale as TokenNode;
-      const sequential = scaleTokens.sequential as TokenNode;
-      const orange = sequential.orange as TokenNode;
-
-      expect(orange).toBeDefined();
-      expect(Object.keys(orange).filter((k) => !k.startsWith('$'))).toHaveLength(7);
-    });
   });
 
   describe('diverging color scales', () => {
-    it('has blue-orange diverging scale', () => {
+    it('exposes negative/neutral/positive diverging entries', () => {
       const scaleTokens = (tokens.viz as TokenNode).scale as TokenNode;
       const diverging = scaleTokens.diverging as TokenNode;
 
-      expect(diverging['blue-orange']).toBeDefined();
+      expect(diverging.negative).toBeDefined();
+      expect(diverging.neutral).toBeDefined();
+      expect(diverging.positive).toBeDefined();
     });
 
-    it('has red-green diverging scale', () => {
+    it('has balanced negative and positive steps', () => {
       const scaleTokens = (tokens.viz as TokenNode).scale as TokenNode;
       const diverging = scaleTokens.diverging as TokenNode;
 
-      expect(diverging['red-green']).toBeDefined();
-    });
+      const negative = diverging.negative as TokenNode;
+      const positive = diverging.positive as TokenNode;
 
-    it('has neutral midpoint in diverging scales', () => {
-      const scaleTokens = (tokens.viz as TokenNode).scale as TokenNode;
-      const diverging = scaleTokens.diverging as TokenNode;
-
-      const blueOrange = diverging['blue-orange'] as TokenNode;
-      expect(blueOrange.neutral).toBeDefined();
-
-      const redGreen = diverging['red-green'] as TokenNode;
-      expect(redGreen.neutral).toBeDefined();
+      expect(Object.keys(negative).filter((k) => !k.startsWith('$'))).toHaveLength(3);
+      expect(Object.keys(positive).filter((k) => !k.startsWith('$'))).toHaveLength(3);
     });
   });
 
@@ -190,8 +163,10 @@ describe('viz-map tokens', () => {
 
       for (const { path, token } of colorTokens) {
         const value = token.$value as string;
-        const isValid = isSemanticReference(value) || isOklchColor(value);
-        expect(isValid, `Token ${path.join('.')} has invalid color value: ${value}`).toBe(true);
+        expect(
+          isSemanticReference(value),
+          `Token ${path.join('.')} should use semantic reference: ${value}`
+        ).toBe(true);
       }
     });
 
@@ -265,50 +240,6 @@ describe('viz-map tokens', () => {
           expect(value.startsWith('hsl'), `Token ${path.join('.')} uses hsl literal: ${value}`).toBe(false);
         }
       }
-    });
-  });
-
-  describe('scale color progression', () => {
-    it('sequential blue scale has increasing chroma/lightness progression', () => {
-      const scaleTokens = (tokens.viz as TokenNode).scale as TokenNode;
-      const sequential = scaleTokens.sequential as TokenNode;
-      const blue = sequential.blue as TokenNode;
-
-      const steps = Object.entries(blue)
-        .filter(([key]) => !key.startsWith('$'))
-        .sort(([a], [b]) => Number(a) - Number(b))
-        .map(([, token]) => token as DtcgToken);
-
-      // Extract lightness values from oklch
-      const lightnesses: number[] = [];
-      for (const step of steps) {
-        const match = (step.$value as string).match(/oklch\(([\d.]+)/);
-        if (match) {
-          lightnesses.push(parseFloat(match[1]));
-        }
-      }
-
-      // Should have decreasing lightness (lighter to darker)
-      expect(lightnesses.length).toBe(7);
-      for (let i = 1; i < lightnesses.length; i++) {
-        expect(
-          lightnesses[i],
-          `Step ${i + 1} should be darker than step ${i}`
-        ).toBeLessThan(lightnesses[i - 1]);
-      }
-    });
-
-    it('diverging scale has symmetric structure', () => {
-      const scaleTokens = (tokens.viz as TokenNode).scale as TokenNode;
-      const diverging = scaleTokens.diverging as TokenNode;
-      const blueOrange = diverging['blue-orange'] as TokenNode;
-
-      const keys = Object.keys(blueOrange).filter((k) => !k.startsWith('$'));
-
-      // Should have negative, neutral, and positive
-      expect(keys.some((k) => k.includes('negative'))).toBe(true);
-      expect(keys.some((k) => k === 'neutral')).toBe(true);
-      expect(keys.some((k) => k.includes('positive'))).toBe(true);
     });
   });
 });
