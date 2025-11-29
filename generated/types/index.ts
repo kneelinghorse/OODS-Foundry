@@ -36,6 +36,7 @@ export * from './traits/taggable.parameters';
 export * from './traits/timestampable.parameters';
 export * from './ui/status-map';
 export * from './viz/normalized-viz-spec';
+export * from './viz/spatial-spec';
 export * from './address';
 export * from './authz.d';
 export * from './preferences.d';
