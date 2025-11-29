@@ -4,7 +4,7 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 import { SpatialContainer } from './SpatialContainer.js';
-import type { NormalizedVizSpec } from '../../../viz/spec/normalized-viz-spec.js';
+import type { SpatialSpec } from '../../../types/viz/spatial.js';
 import type { FeatureCollection, Polygon } from 'geojson';
 
 const meta: Meta<typeof SpatialContainer> = {
@@ -92,13 +92,20 @@ const sampleGeoData: FeatureCollection<Polygon> = {
   ],
 };
 
-const sampleSpec: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
-  id: 'spatial-demo',
+const sampleSpec: SpatialSpec = {
+  type: 'spatial',
   name: 'US States Map',
   data: { values: [] },
-  marks: [],
-  encoding: {},
+  projection: { type: 'mercator' },
+  layers: [
+    {
+      type: 'regionFill',
+      encoding: {
+        color: { field: 'value' },
+      },
+      zIndex: 0,
+    },
+  ],
   a11y: {
     description: 'A map showing US states with sample data',
     ariaLabel: 'US States Map',
@@ -231,4 +238,3 @@ export const Error: Story = {
     },
   },
 };
-

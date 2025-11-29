@@ -1,23 +1,24 @@
 /**
  * useSpatialSpec Hook
  *
- * React hook that processes spatial visualization specifications and provides
- * render-ready data including GeoJSON features, joined data, and projection config.
+ * Processes a spatial visualization specification into render-ready data by
+ * resolving geo sources, performing joins, and exposing projection/layer configs.
  */
 
-import { useEffect, useState } from 'react';
-import type { Feature } from 'geojson';
-import type { NormalizedVizSpec } from '../spec/normalized-viz-spec.js';
+import { useEffect, useMemo, useState } from 'react';
+import type { Feature, FeatureCollection } from 'geojson';
+import type * as TopoJSON from 'topojson-specification';
 import { resolveGeoData, type GeoResolverInput } from '../adapters/spatial/geo-data-resolver.js';
-import type { DataRecord } from '../adapters/spatial/geo-data-joiner.js';
-import type { ProjectionConfig, ProjectionType, SpatialLayer } from '../../types/viz/spatial.js';
+import type { DataRecord, JoinConfig } from '../adapters/spatial/geo-data-joiner.js';
+import { mergeLayerDefaults } from '../../components/viz/spatial/utils/layer-utils.js';
+import type { ProjectionConfig, SpatialLayer, SpatialSpec, GeoJoinData } from '../../types/viz/spatial.js';
 
 /**
  * Options for useSpatialSpec hook.
  */
 export interface UseSpatialSpecOptions {
-  spec: NormalizedVizSpec;
-  geoSource: string | GeoJSON.FeatureCollection | TopoJSON.Topology;
+  spec: SpatialSpec;
+  geoSource?: string | FeatureCollection | TopoJSON.Topology;
   data?: DataRecord[];
   dimensions: { width: number; height: number };
 }
@@ -34,78 +35,60 @@ export interface UseSpatialSpecResult {
   layerConfigs: SpatialLayer[];
 }
 
-/**
- * Extracts projection configuration from normalized viz spec.
- */
-function extractProjectionConfig(spec: NormalizedVizSpec): ProjectionConfig {
-  const layout = spec.layout;
-  const projection: ProjectionConfig = {
-    type: 'mercator', // Default
+function isGeoJoinDataSource(data: SpatialSpec['data']): data is GeoJoinData {
+  return typeof data === 'object' && data !== null && 'type' in data && (data as GeoJoinData).type === 'data.geo.join';
+}
+
+function resolveGeoSource(options: UseSpatialSpecOptions): string | FeatureCollection | TopoJSON.Topology | undefined {
+  if (options.geoSource) {
+    return options.geoSource;
+  }
+  if (isGeoJoinDataSource(options.spec.data)) {
+    return options.spec.data.geoSource;
+  }
+  if (options.spec.geo?.source) {
+    return options.spec.geo.source as string | FeatureCollection | TopoJSON.Topology;
+  }
+  return undefined;
+}
+
+function deriveProjectionConfig(spec: SpatialSpec, dimensions: { width: number; height: number }): ProjectionConfig {
+  const projection = spec.projection ?? {};
+
+  return {
+    type: projection.type ?? 'mercator',
+    center: projection.center,
+    scale: projection.scale ?? Math.min(dimensions.width, dimensions.height) / 2,
+    rotate: projection.rotate,
+    parallels: projection.parallels,
+    clipAngle: projection.clipAngle,
+    clipExtent: projection.clipExtent,
+    precision: projection.precision,
+    fitToData: projection.fitToData ?? false,
   };
-
-  // Check layout.projection (from LayoutLayer or LayoutFacet)
-  if (layout && 'projection' in layout && layout.projection) {
-    const layoutProj = layout.projection;
-    if (layoutProj.type) {
-      projection.type = layoutProj.type as ProjectionType;
-    }
-    if (layoutProj.center) {
-      projection.center = layoutProj.center as [number, number];
-    }
-    if (layoutProj.scale !== undefined) {
-      projection.scale = layoutProj.scale;
-    }
-    if (layoutProj.rotate !== undefined) {
-      projection.rotate = [layoutProj.rotate, 0, 0];
-    }
-  }
-
-  // Check config for overrides
-  if (spec.config?.layout) {
-    // Config can override layout dimensions but not projection type
-    // (projection type is a trait-level decision)
-  }
-
-  return projection;
 }
 
-/**
- * Extracts layer configurations from normalized viz spec marks.
- * Converts marks to SpatialLayer format.
- */
-function extractLayerConfigs(spec: NormalizedVizSpec): SpatialLayer[] {
-  const layers: SpatialLayer[] = [];
+function deriveLayerConfigs(spec: SpatialSpec): SpatialLayer[] {
+  return (spec.layers ?? []).map((layer) => mergeLayerDefaults(layer));
+}
 
-  spec.marks.forEach((mark, index) => {
-    // For now, we'll create a basic layer structure
-    // In a full implementation, this would parse mark.trait to determine layer type
-    // and extract encoding information
-
-    // Default to regionFill for spatial visualizations
-    // This is a simplified implementation - full version would inspect mark.trait
-    const layer: SpatialLayer = {
-      type: 'regionFill',
-      encoding: {
-        color: {
-          field: 'value', // Placeholder - would come from mark encoding
-        },
-      },
-      zIndex: index,
+function deriveJoinConfig(spec: SpatialSpec): JoinConfig | undefined {
+  if (isGeoJoinDataSource(spec.data)) {
+    return {
+      geoKey: spec.data.geoKey,
+      dataKey: spec.data.joinKey,
     };
-
-    layers.push(layer);
-  });
-
-  return layers;
+  }
+  return undefined;
 }
 
-/**
- * Extracts join configuration from spec data structure.
- */
-function extractJoinConfig(spec: NormalizedVizSpec): { geoKey: string; dataKey: string } | undefined {
-  // If spec.data has join information, extract it
-  // This is a simplified version - full implementation would parse spec.data structure
-  // For now, return undefined (no join) or use defaults
+function deriveTabularData(options: UseSpatialSpecOptions): DataRecord[] | undefined {
+  if (options.data) {
+    return options.data;
+  }
+  if ('values' in options.spec.data) {
+    return options.spec.data.values as DataRecord[] | undefined;
+  }
   return undefined;
 }
 
@@ -116,17 +99,22 @@ function extractJoinConfig(spec: NormalizedVizSpec): { geoKey: string; dataKey: 
  * @returns Processed spatial data with loading and error states
  */
 export function useSpatialSpec(options: UseSpatialSpecOptions): UseSpatialSpecResult {
-  const { spec, geoSource, data, dimensions } = options;
+  const { spec, dimensions } = options;
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
   const [features, setFeatures] = useState<Feature[]>([]);
   const [joinedData, setJoinedData] = useState<Map<string, DataRecord>>(new Map());
 
-  // Extract configuration (these don't depend on async operations)
-  const projectionConfig = extractProjectionConfig(spec);
-  const layerConfigs = extractLayerConfigs(spec);
-  const joinConfig = extractJoinConfig(spec);
+  const projectionConfig = useMemo(() => deriveProjectionConfig(spec, dimensions), [spec, dimensions]);
+  const layerConfigs = useMemo(() => deriveLayerConfigs(spec), [spec]);
+  const joinConfig = useMemo(() => deriveJoinConfig(spec), [spec]);
+  const resolvedGeoSource = useMemo(() => resolveGeoSource(options), [options.geoSource, spec]);
+  const dataFingerprint = useMemo(
+    () => JSON.stringify(options.data ?? ('values' in spec.data ? spec.data.values ?? [] : [])),
+    [options.data, spec]
+  );
+  const tabularData = useMemo(() => deriveTabularData(options), [dataFingerprint, spec]);
 
   useEffect(() => {
     let cancelled = false;
@@ -135,41 +123,38 @@ export function useSpatialSpec(options: UseSpatialSpecOptions): UseSpatialSpecRe
       setIsLoading(true);
       setError(null);
 
+      if (!resolvedGeoSource) {
+        setError(new Error('Geo source is required for spatial visualizations'));
+        setFeatures([]);
+        setJoinedData(new Map());
+        setIsLoading(false);
+        return;
+      }
+
       try {
-        // Prepare resolver input
         const resolverInput: GeoResolverInput = {
-          geoSource: typeof geoSource === 'string' ? geoSource : geoSource,
-          data,
-          joinConfig: joinConfig
-            ? {
-                geoKey: joinConfig.geoKey,
-                dataKey: joinConfig.dataKey,
-              }
-            : undefined,
+          geoSource: resolvedGeoSource,
+          data: tabularData,
+          joinConfig,
         };
 
-        // Resolve geo data
         const result = await resolveGeoData(resolverInput);
 
         if (cancelled) {
           return;
         }
 
-        // Convert GeoJSONFeature[] to Feature[]
-        const convertedFeatures: Feature[] = result.features.map((f) => ({
+        const convertedFeatures: Feature[] = result.features.map((feature) => ({
           type: 'Feature',
-          geometry: f.geometry,
-          properties: f.properties,
-          id: f.id,
+          geometry: feature.geometry,
+          properties: feature.properties,
+          id: feature.id,
         }));
 
-        // Convert joined data
         const convertedJoinedData = new Map<string, DataRecord>();
         if (result.joinedData) {
           result.joinedData.forEach((value, key) => {
-            // Handle one-to-many joins (value can be array)
             if (Array.isArray(value)) {
-              // For now, take first record
               if (value.length > 0) {
                 convertedJoinedData.set(key, value[0]);
               }
@@ -186,8 +171,10 @@ export function useSpatialSpec(options: UseSpatialSpecOptions): UseSpatialSpecRe
         if (cancelled) {
           return;
         }
-        const error = err instanceof Error ? err : new Error(String(err));
-        setError(error);
+        const normalizedError = err instanceof Error ? err : new Error(String(err));
+        setError(normalizedError);
+        setFeatures([]);
+        setJoinedData(new Map());
         setIsLoading(false);
       }
     }
@@ -197,7 +184,7 @@ export function useSpatialSpec(options: UseSpatialSpecOptions): UseSpatialSpecRe
     return () => {
       cancelled = true;
     };
-  }, [geoSource, data, joinConfig]);
+  }, [resolvedGeoSource, joinConfig, spec, dataFingerprint]);
 
   return {
     isLoading,
@@ -208,4 +195,3 @@ export function useSpatialSpec(options: UseSpatialSpecOptions): UseSpatialSpecRe
     layerConfigs,
   };
 }
-

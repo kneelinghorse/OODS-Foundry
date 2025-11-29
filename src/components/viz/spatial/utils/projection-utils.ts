@@ -119,31 +119,24 @@ export function createProjection(
  */
 export function fitProjectionToFeatures(
   projection: GeoProjection,
-  features: FeatureCollection<Geometry>
+  features: FeatureCollection<Geometry>,
+  dimensions?: { width: number; height: number }
 ): GeoProjection {
-  // Calculate bounding box of all features
-  const bbox = d3Geo.geoPath().bounds(features);
-  if (bbox && bbox[0] && bbox[1]) {
-    const [[x0, y0], [x1, y1]] = bbox;
-    const width = x1 - x0;
-    const height = y1 - y0;
-
-    // Get current translate
-    const translate = projection.translate();
-    const scale = projection.scale();
-
-    // Calculate new scale to fit
-    const scaleX = Math.abs(translate[0] * 2) / width;
-    const scaleY = Math.abs(translate[1] * 2) / height;
-    const newScale = Math.min(scaleX, scaleY) * scale;
-
-    projection.scale(newScale);
-
-    // Center on bounding box center
-    const centerX = (x0 + x1) / 2;
-    const centerY = (y0 + y1) / 2;
-    projection.center([-centerX, -centerY]);
+  if (features.features.length === 0) {
+    return projection;
   }
+
+  const width = dimensions?.width ?? projection.translate()[0] * 2;
+  const height = dimensions?.height ?? projection.translate()[1] * 2;
+
+  if (typeof (projection as GeoProjection).fitSize === 'function') {
+    projection.fitSize([width, height], features);
+    return projection;
+  }
+
+  const path = d3Geo.geoPath(projection);
+  const fitted = path.fitSize([width, height], features);
+  projection.scale(fitted.projection().scale()).translate(fitted.projection().translate());
 
   return projection;
 }
@@ -164,4 +157,3 @@ export function projectCoordinates(
   const result = projection([lon, lat]);
   return result ? [result[0], result[1]] : null;
 }
-

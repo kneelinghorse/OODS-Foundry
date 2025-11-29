@@ -4,15 +4,15 @@
  * Accessibility tests for SpatialContainer component.
  */
 
-import { describe, it, expect, vi } from 'vitest';
-import { render } from '@testing-library/react';
+import { describe, it, expect, vi, beforeAll } from 'vitest';
+import { render, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 import { axe } from 'vitest-axe';
 import { toHaveNoViolations } from 'vitest-axe/matchers';
 
 expect.extend({ toHaveNoViolations });
 import { SpatialContainer } from '../../../../src/components/viz/spatial/SpatialContainer.js';
-import type { NormalizedVizSpec } from '../../../../src/viz/spec/normalized-viz-spec.js';
+import type { SpatialSpec } from '../../../../src/types/viz/spatial.js';
 import type { FeatureCollection, Point } from 'geojson';
 
 // Mock the hooks
@@ -45,14 +45,22 @@ vi.mock('../../../../src/viz/hooks/useSpatialProjection.js', () => ({
   }),
 }));
 
+beforeAll(() => {
+  vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null);
+});
+
 describe('SpatialContainer a11y', () => {
-  const mockSpec: NormalizedVizSpec = {
-    $schema: 'https://oods.dev/viz-spec/v1',
-    id: 'test-spec',
+  const mockSpec: SpatialSpec = {
+    type: 'spatial',
     name: 'Test Map',
     data: { values: [] },
-    marks: [],
-    encoding: {},
+    projection: { type: 'mercator' },
+    layers: [
+      {
+        type: 'regionFill',
+        encoding: { color: { field: 'value' } },
+      },
+    ],
     a11y: {
       description: 'Test spatial visualization showing geographic data',
       ariaLabel: 'Test Map',
@@ -162,5 +170,24 @@ describe('SpatialContainer a11y', () => {
     const caption = table?.querySelector('caption');
     expect(caption?.textContent).toContain('Data Table');
   });
-});
 
+  it('should announce keyboard navigation changes', () => {
+    const { container } = render(
+      <SpatialContainer
+        spec={mockSpec}
+        geoData={mockGeoData}
+        width={800}
+        height={600}
+        a11y={{ description: 'Test map' }}
+      />
+    );
+
+    const application = container.querySelector('[role="application"]');
+    expect(application).toBeDefined();
+    if (application) {
+      fireEvent.keyDown(application, { key: 'ArrowRight' });
+      const liveRegion = container.querySelector('[aria-live="polite"]');
+      expect(liveRegion?.textContent?.length ?? 0).toBeGreaterThan(0);
+    }
+  });
+});

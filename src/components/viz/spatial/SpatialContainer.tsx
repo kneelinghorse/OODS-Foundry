@@ -5,59 +5,61 @@
  * layer ordering, and accessibility context. Provides SpatialContext to child components.
  */
 
-import { useEffect, useId, useMemo, useRef, type JSX, type ReactNode } from 'react';
-import type { FeatureCollection } from 'geojson';
-import type { NormalizedVizSpec } from '../../../viz/spec/normalized-viz-spec.js';
-import type { ProjectionConfig, ProjectionType, SpatialA11yConfig, SpatialLayer } from '../../../types/viz/spatial.js';
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type JSX,
+  type ReactNode,
+} from 'react';
+import type { Feature, FeatureCollection } from 'geojson';
 import type { DataRecord } from '../../../viz/adapters/spatial/geo-data-joiner.js';
 import { useSpatialSpec } from '../../../viz/hooks/useSpatialSpec.js';
 import { useSpatialProjection } from '../../../viz/hooks/useSpatialProjection.js';
 import { SpatialContextProvider, type GeoFeature } from './SpatialContext.js';
-import { orderLayers } from './utils/layer-utils.js';
+import { mergeLayerDefaults, orderLayers } from './utils/layer-utils.js';
+import type {
+  ProjectionConfig,
+  ProjectionType,
+  SpatialA11yConfig,
+  SpatialLayer,
+  SpatialSpec,
+} from '../../../types/viz/spatial.js';
 
-/**
- * Props for SpatialContainer component.
- */
 export interface SpatialContainerProps {
-  /** Normalized visualization specification */
-  spec: NormalizedVizSpec;
-
-  /** GeoJSON feature collection */
+  spec: SpatialSpec;
   geoData: FeatureCollection;
-
-  /** Optional tabular data to join with geo features */
   data?: DataRecord[];
-
-  /** Container width in pixels */
   width: number;
-
-  /** Container height in pixels */
   height: number;
-
-  /** Projection type override */
   projection?: ProjectionType;
-
-  /** Projection configuration override */
   projectionConfig?: ProjectionConfig;
-
-  /** Layer configurations override */
   layers?: SpatialLayer[];
-
-  /** Accessibility configuration */
   a11y: {
     description: string;
-    tableFallback?: { enabled: boolean; caption: string };
+    ariaLabel?: string;
+    tableFallback?: { enabled: boolean; caption: string; columns?: string[] };
     narrative?: { summary: string; keyFindings: string[] };
   };
-
-  /** Feature click handler */
   onFeatureClick?: (feature: GeoFeature, datum?: DataRecord) => void;
-
-  /** Feature hover handler */
-  onFeatureHover?: (feature: GeoFeature, datum?: DataRecord) => void;
-
-  /** Child components to render */
+  onFeatureHover?: (feature: GeoFeature | null, datum?: DataRecord) => void;
   children?: ReactNode;
+}
+
+function getFeatureId(feature: Feature, index: number): string {
+  const id = feature.id;
+  if (id === null || id === undefined) {
+    return `feature-${index}`;
+  }
+  return String(id);
+}
+
+function featureLabel(featureId: string, feature: Feature | undefined): string {
+  const name = feature?.properties?.name;
+  return typeof name === 'string' && name.trim().length > 0 ? name : featureId;
 }
 
 /**
@@ -82,8 +84,11 @@ export function SpatialContainer({
   const descriptionId = `${containerId}-description`;
   const tableId = `${containerId}-table`;
   const containerRef = useRef<HTMLDivElement>(null);
+  const [hoveredFeature, setHoveredFeature] = useState<string | null>(null);
+  const [selectedFeature, setSelectedFeature] = useState<string | null>(null);
+  const [focusedIndex, setFocusedIndex] = useState<number>(-1);
+  const [liveMessage, setLiveMessage] = useState<string>('');
 
-  // Use useSpatialSpec to process spec and get features
   const spatialSpecResult = useSpatialSpec({
     spec,
     geoSource: geoData,
@@ -91,16 +96,33 @@ export function SpatialContainer({
     dimensions: { width, height },
   });
 
-  const { isLoading, error, features, joinedData, projectionConfig: specProjectionConfig, layerConfigs: specLayerConfigs } = spatialSpecResult;
+  const {
+    isLoading,
+    error,
+    features,
+    joinedData,
+    projectionConfig: specProjectionConfig,
+    layerConfigs: specLayerConfigs,
+  } = spatialSpecResult;
 
-  // Determine projection type and config
-  const projectionType: ProjectionType = projectionOverride ?? specProjectionConfig.type ?? 'mercator';
-  const projectionConfig: ProjectionConfig = projectionConfigOverride ?? specProjectionConfig;
+  const projectionType: ProjectionType =
+    projectionOverride ?? projectionConfigOverride?.type ?? specProjectionConfig.type ?? spec.projection.type ?? 'mercator';
 
-  // Determine layers
-  const layers: SpatialLayer[] = layersOverride ?? specLayerConfigs;
+  const projectionConfig: ProjectionConfig = useMemo(
+    () => ({
+      ...specProjectionConfig,
+      ...projectionConfigOverride,
+      type: projectionType,
+    }),
+    [projectionConfigOverride, projectionType, specProjectionConfig]
+  );
 
-  // Use projection hook
+  const layers = useMemo(
+    () => (layersOverride ?? spec.layers ?? specLayerConfigs ?? []).map((layer) => mergeLayerDefaults(layer)),
+    [layersOverride, spec.layers, specLayerConfigs]
+  );
+  const orderedLayers = useMemo(() => orderLayers(layers), [layers]);
+
   const featureCollection: FeatureCollection = useMemo(
     () => ({
       type: 'FeatureCollection',
@@ -111,55 +133,156 @@ export function SpatialContainer({
 
   const { project, bounds } = useSpatialProjection(projectionType, projectionConfig, { width, height }, featureCollection);
 
-  // Convert a11y props to SpatialA11yConfig
   const spatialA11yConfig: SpatialA11yConfig = useMemo(
     () => ({
-      description: a11y.description,
-      ariaLabel: spec.a11y.ariaLabel ?? spec.name ?? 'Spatial visualization',
-      narrative: a11y.narrative,
-      tableFallback: a11y.tableFallback,
+      description: a11y.description ?? spec.a11y.description,
+      ariaLabel: a11y.ariaLabel ?? spec.a11y?.ariaLabel ?? spec.name ?? 'Spatial visualization',
+      narrative: a11y.narrative ?? spec.a11y?.narrative,
+      tableFallback: a11y.tableFallback ?? spec.a11y?.tableFallback,
     }),
     [a11y, spec]
   );
 
-  // Set up keyboard navigation
+  const featureIds = useMemo(() => features.map((feature, index) => getFeatureId(feature, index)), [features]);
+
+  const featureMap = useMemo(() => {
+    const map = new Map<string, Feature>();
+    features.forEach((feature, index) => {
+      map.set(featureIds[index], feature);
+    });
+    return map;
+  }, [features, featureIds]);
+
+  const joinedDataMap = useMemo(() => joinedData ?? new Map<string, DataRecord>(), [joinedData]);
+
+  useEffect(() => {
+    if (hoveredFeature && !featureMap.has(hoveredFeature)) {
+      setHoveredFeature(null);
+    }
+    if (selectedFeature && !featureMap.has(selectedFeature)) {
+      setSelectedFeature(null);
+    }
+    if (focusedIndex >= featureIds.length) {
+      setFocusedIndex(-1);
+    }
+  }, [featureIds, featureMap, focusedIndex, hoveredFeature, selectedFeature]);
+
+  const tableColumns = useMemo(() => {
+    if (a11y.tableFallback?.columns?.length) {
+      return a11y.tableFallback.columns;
+    }
+    if (data && data.length > 0) {
+      return Object.keys(data[0]);
+    }
+    const sampleFeature = features[0];
+    if (sampleFeature?.properties) {
+      return Object.keys(sampleFeature.properties);
+    }
+    return [] as string[];
+  }, [a11y.tableFallback, data, features]);
+
+  const announce = useCallback(
+    (message: string) => {
+      setLiveMessage(message);
+    },
+    [setLiveMessage]
+  );
+
+  const handleFeatureHover = useCallback(
+    (featureId: string | null) => {
+      if (featureId === null) {
+        setHoveredFeature(null);
+        setFocusedIndex(-1);
+        announce('Focus cleared');
+        onFeatureHover?.(null);
+        return;
+      }
+
+      const feature = featureMap.get(featureId);
+      if (!feature) {
+        return;
+      }
+
+      const datum = joinedDataMap.get(featureId);
+      setHoveredFeature(featureId);
+      setFocusedIndex(featureIds.indexOf(featureId));
+      onFeatureHover?.(feature as GeoFeature, datum);
+      announce(`Focused ${featureLabel(featureId, feature)}`);
+    },
+    [announce, featureIds, featureMap, joinedDataMap, onFeatureHover]
+  );
+
+  const handleFeatureClick = useCallback(
+    (featureId: string) => {
+      const feature = featureMap.get(featureId);
+      if (!feature) {
+        return;
+      }
+      const datum = joinedDataMap.get(featureId);
+      setSelectedFeature(featureId);
+      onFeatureClick?.(feature as GeoFeature, datum);
+      announce(`Selected ${featureLabel(featureId, feature)}`);
+    },
+    [announce, featureMap, joinedDataMap, onFeatureClick]
+  );
+
   useEffect(() => {
     const container = containerRef.current;
-    if (!container) {
+    if (!container || featureIds.length === 0) {
       return;
     }
 
-    // Make container focusable for keyboard navigation
-    container.setAttribute('tabindex', '0');
-    container.setAttribute('role', 'application');
-    container.setAttribute('aria-label', spatialA11yConfig.ariaLabel ?? spatialA11yConfig.description);
+    const focusFeature = (index: number): void => {
+      const boundedIndex = ((index % featureIds.length) + featureIds.length) % featureIds.length;
+      const featureId = featureIds[boundedIndex];
+      setFocusedIndex(boundedIndex);
+      handleFeatureHover(featureId);
+    };
 
-    // Keyboard navigation handler
     const handleKeyDown = (event: KeyboardEvent): void => {
-      // Arrow keys for navigating features
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
         event.preventDefault();
-        // TODO: Implement feature navigation logic
-        // This would require maintaining a focus index and moving between features
+        const delta = event.key === 'ArrowLeft' || event.key === 'ArrowUp' ? -1 : 1;
+        const nextIndex = focusedIndex === -1 ? 0 : focusedIndex + delta;
+        focusFeature(nextIndex);
+        return;
       }
 
-      // Enter/Space to activate focused feature
-      if (['Enter', ' '].includes(event.key)) {
+      if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
-        // TODO: Trigger click on focused feature
+        const targetIndex = focusedIndex === -1 ? 0 : focusedIndex;
+        const targetFeature = featureIds[targetIndex];
+        if (targetFeature) {
+          handleFeatureClick(targetFeature);
+        }
+        return;
+      }
+
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setSelectedFeature(null);
+        setHoveredFeature(null);
+        setFocusedIndex(-1);
+        announce('Selection cleared');
+        return;
+      }
+
+      if (event.key === '+' || event.key === '=') {
+        announce('Zoom in');
+        return;
+      }
+
+      if (event.key === '-') {
+        announce('Zoom out');
       }
     };
 
     container.addEventListener('keydown', handleKeyDown);
-
     return () => {
       container.removeEventListener('keydown', handleKeyDown);
     };
-  }, [spatialA11yConfig]);
+  }, [announce, featureIds, focusedIndex, handleFeatureClick, handleFeatureHover]);
 
-  // Context value - orderLayers returns OrderedLayerConfig[], but context expects layers with layer property
-  const orderedLayers = useMemo(() => orderLayers(layers), [layers]);
-  
   const contextValue = useMemo(
     () => ({
       projection: projectionConfig,
@@ -167,12 +290,31 @@ export function SpatialContainer({
       layers: orderedLayers,
       a11y: spatialA11yConfig,
       features,
-      joinedData: joinedData ?? new Map(),
+      joinedData: joinedDataMap,
+      handleFeatureClick,
+      handleFeatureHover,
+      hoveredFeature,
+      selectedFeature,
+      project,
+      bounds,
     }),
-    [projectionConfig, width, height, orderedLayers, spatialA11yConfig, features, joinedData]
+    [
+      projectionConfig,
+      width,
+      height,
+      orderedLayers,
+      spatialA11yConfig,
+      features,
+      joinedDataMap,
+      handleFeatureClick,
+      handleFeatureHover,
+      hoveredFeature,
+      selectedFeature,
+      project,
+      bounds,
+    ]
   );
 
-  // Render loading state
   if (isLoading) {
     return (
       <div
@@ -189,7 +331,6 @@ export function SpatialContainer({
     );
   }
 
-  // Render error state
   if (error) {
     return (
       <div
@@ -207,22 +348,23 @@ export function SpatialContainer({
   }
 
   return (
-    <SpatialContextProvider value={contextValue} onFeatureClick={onFeatureClick} onFeatureHover={onFeatureHover}>
+    <SpatialContextProvider value={contextValue}>
       <div
         ref={containerRef}
         id={containerId}
         className="relative"
         style={{ width, height }}
         role="application"
+        tabIndex={0}
         aria-label={spatialA11yConfig.ariaLabel}
         aria-describedby={descriptionId}
+        data-active-feature={hoveredFeature ?? undefined}
+        data-selected-feature={selectedFeature ?? undefined}
       >
-        {/* Map container */}
         <div id={mapId} className="absolute inset-0" aria-hidden={a11y.tableFallback?.enabled ? 'true' : undefined}>
           {children}
         </div>
 
-        {/* Description for screen readers */}
         <div id={descriptionId} className="sr-only">
           {spatialA11yConfig.description}
           {spatialA11yConfig.narrative?.summary && <p>{spatialA11yConfig.narrative.summary}</p>}
@@ -235,7 +377,6 @@ export function SpatialContainer({
           )}
         </div>
 
-        {/* Table fallback for accessibility */}
         {a11y.tableFallback?.enabled && (
           <div id={tableId} className="mt-4">
             <table className="w-full border-collapse">
@@ -243,21 +384,23 @@ export function SpatialContainer({
               <thead>
                 <tr>
                   <th scope="col">Feature</th>
-                  {data && data.length > 0 && Object.keys(data[0]).map((key) => <th key={key} scope="col">{key}</th>)}
+                  {tableColumns.map((column) => (
+                    <th key={column} scope="col">
+                      {column}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
-                {features.map((feature, index) => {
-                  const featureId = (feature.id as string | undefined) ?? `feature-${index}`;
-                  const datum = joinedData?.get(String(featureId));
+                {featureIds.map((featureId) => {
+                  const feature = featureMap.get(featureId);
+                  const datum = joinedDataMap.get(featureId);
                   return (
                     <tr key={featureId}>
-                      <td>{feature.properties?.name ?? featureId}</td>
-                      {data &&
-                        data.length > 0 &&
-                        Object.keys(data[0]).map((key) => (
-                          <td key={key}>{datum ? String(datum[key] ?? '') : ''}</td>
-                        ))}
+                      <td>{featureLabel(featureId, feature)}</td>
+                      {tableColumns.map((column) => (
+                        <td key={column}>{datum ? String((datum as Record<string, unknown>)[column] ?? '') : ''}</td>
+                      ))}
                     </tr>
                   );
                 })}
@@ -265,8 +408,11 @@ export function SpatialContainer({
             </table>
           </div>
         )}
+
+        <div className="sr-only" aria-live="polite">
+          {liveMessage}
+        </div>
       </div>
     </SpatialContextProvider>
   );
 }
-

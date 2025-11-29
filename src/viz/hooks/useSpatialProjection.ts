@@ -5,6 +5,7 @@
  */
 
 import { useMemo } from 'react';
+import { geoBounds } from 'd3-geo';
 import type { FeatureCollection, Geometry } from 'geojson';
 import type { ProjectionConfig, ProjectionType } from '../../types/viz/spatial.js';
 import { createProjection, fitProjectionToFeatures, projectCoordinates } from '../../components/viz/spatial/utils/projection-utils.js';
@@ -50,7 +51,7 @@ export function useSpatialProjection(
 
     // Auto-fit if requested
     if (config.fitToData && features.features.length > 0) {
-      fitProjectionToFeatures(proj, features);
+      fitProjectionToFeatures(proj, features, dimensions);
     }
 
     return proj;
@@ -65,51 +66,19 @@ export function useSpatialProjection(
       ] as [[number, number], [number, number]];
     }
 
-    let minLon = Infinity;
-    let maxLon = -Infinity;
-    let minLat = Infinity;
-    let maxLat = -Infinity;
+    const computedBounds = geoBounds(features);
+    const [min, max] = computedBounds;
 
-    const extractCoordinates = (coords: unknown): void => {
-      if (Array.isArray(coords)) {
-        if (coords.length === 2 && typeof coords[0] === 'number' && typeof coords[1] === 'number') {
-          // Point
-          const [lon, lat] = coords;
-          minLon = Math.min(minLon, lon);
-          maxLon = Math.max(maxLon, lon);
-          minLat = Math.min(minLat, lat);
-          maxLat = Math.max(maxLat, lat);
-        } else {
-          // Nested array (LineString, Polygon, etc.)
-          coords.forEach(extractCoordinates);
-        }
-      }
-    };
-
-    features.features.forEach((feature) => {
-      if (feature.geometry.type === 'Point') {
-        const [lon, lat] = feature.geometry.coordinates as [number, number];
-        minLon = Math.min(minLon, lon);
-        maxLon = Math.max(maxLon, lon);
-        minLat = Math.min(minLat, lat);
-        maxLat = Math.max(maxLat, lat);
-      } else if (feature.geometry.type === 'LineString' || feature.geometry.type === 'MultiPoint') {
-        const coords = feature.geometry.coordinates as Array<[number, number]>;
-        coords.forEach(([lon, lat]) => {
-          minLon = Math.min(minLon, lon);
-          maxLon = Math.max(maxLon, lon);
-          minLat = Math.min(minLat, lat);
-          maxLat = Math.max(maxLat, lat);
-        });
-      } else {
-        // Polygon, MultiLineString, MultiPolygon, etc.
-        extractCoordinates(feature.geometry.coordinates);
-      }
-    });
+    if (!min || !max || !Number.isFinite(min[0]) || !Number.isFinite(min[1]) || !Number.isFinite(max[0]) || !Number.isFinite(max[1])) {
+      return [
+        [-180, -90],
+        [180, 90],
+      ] as [[number, number], [number, number]];
+    }
 
     return [
-      [minLon === Infinity ? -180 : minLon, minLat === Infinity ? -90 : minLat],
-      [maxLon === -Infinity ? 180 : maxLon, maxLat === -Infinity ? 90 : maxLat],
+      [min[0], min[1]],
+      [max[0], max[1]],
     ] as [[number, number], [number, number]];
   }, [features]);
 
@@ -120,7 +89,7 @@ export function useSpatialProjection(
 
   const fitToFeatures = useMemo(
     () => (): ProjectionConfig => {
-      const fitted = fitProjectionToFeatures(createProjection(projectionType, config, dimensions), features);
+      const fitted = fitProjectionToFeatures(createProjection(projectionType, config, dimensions), features, dimensions);
       return {
         type: projectionType,
         ...config,
@@ -137,4 +106,3 @@ export function useSpatialProjection(
     bounds,
   };
 }
-

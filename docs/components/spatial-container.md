@@ -15,7 +15,7 @@ Root container component for spatial/geographic visualizations that manages proj
 
 | Prop | Type | Required | Description |
 |------|------|----------|-------------|
-| `spec` | `NormalizedVizSpec` | Yes | Normalized visualization specification |
+| `spec` | `SpatialSpec` | Yes | Spatial visualization specification |
 | `geoData` | `FeatureCollection` | Yes | GeoJSON feature collection |
 | `data` | `DataRecord[]` | No | Tabular data to join with geo features |
 | `width` | `number` | Yes | Container width in pixels |
@@ -25,7 +25,7 @@ Root container component for spatial/geographic visualizations that manages proj
 | `layers` | `SpatialLayer[]` | No | Layer configurations override |
 | `a11y` | `A11yConfig` | Yes | Accessibility configuration |
 | `onFeatureClick` | `(feature, datum) => void` | No | Feature click handler |
-| `onFeatureHover` | `(feature, datum) => void` | No | Feature hover handler |
+| `onFeatureHover` | `(feature, datum) => void` | No | Feature hover handler (passes `null` when focus clears) |
 | `children` | `ReactNode` | No | Child components to render |
 
 ### A11y Config
@@ -33,9 +33,11 @@ Root container component for spatial/geographic visualizations that manages proj
 ```typescript
 interface A11yConfig {
   description: string;
+  ariaLabel?: string;
   tableFallback?: {
     enabled: boolean;
     caption: string;
+    columns?: string[];
   };
   narrative?: {
     summary: string;
@@ -50,16 +52,20 @@ interface A11yConfig {
 
 ```tsx
 import { SpatialContainer } from '@/components/viz/spatial';
-import type { NormalizedVizSpec } from '@/viz/spec/normalized-viz-spec';
+import type { SpatialSpec } from '@/types/viz/spatial';
 import type { FeatureCollection } from 'geojson';
 
-const spec: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
-  id: 'my-map',
+const spec: SpatialSpec = {
+  type: 'spatial',
   name: 'My Map',
   data: { values: [] },
-  marks: [],
-  encoding: {},
+  projection: { type: 'mercator' },
+  layers: [
+    {
+      type: 'regionFill',
+      encoding: { color: { field: 'value' } },
+    },
+  ],
   a11y: {
     description: 'A map showing geographic data',
     ariaLabel: 'My Map',
@@ -116,6 +122,7 @@ const geoData: FeatureCollection = {
     tableFallback: {
       enabled: true,
       caption: 'State Data',
+      columns: ['state', 'value'],
     },
   }}
 />
@@ -154,6 +161,8 @@ function MyMapLayer() {
 - `a11y`: Accessibility configuration
 - `features`: GeoJSON features
 - `joinedData`: Map of feature ID to joined data record
+- `project`: Projection function mapping `[lon, lat]` to screen coordinates
+- `bounds`: Geographic bounds [[minLon, minLat], [maxLon, maxLat]]
 - `handleFeatureClick`: Function to trigger feature click
 - `handleFeatureHover`: Function to trigger feature hover
 - `hoveredFeature`: ID of currently hovered feature
@@ -170,12 +179,15 @@ function MyMapLayer() {
 ### Keyboard Navigation
 
 - **Tab**: Focus the map container
-- **Arrow Keys**: Navigate between features (implementation pending)
-- **Enter/Space**: Activate focused feature (implementation pending)
+- **Arrow Keys**: Navigate between features (looped order)
+- **Enter/Space**: Activate focused feature
+- **Escape**: Clear selection and focus
+- **+ / -**: Announces zoom intent for assistive tech
 
 ### Screen Reader Support
 
 - Hidden description element with full narrative
+- Live region announcements for keyboard navigation and selections
 - Table fallback option for non-visual access
 - Dynamic ARIA labels for feature interactions
 
@@ -239,4 +251,3 @@ See Storybook stories in `src/components/viz/spatial/SpatialContainer.stories.ts
 - [Spatial Visualization Architecture](../../../cmos/foundational-docs/data-viz-part2/spatial-module/ARCHITECTURE.md)
 - [Accessibility Guidelines](../../viz/accessibility-checklist.md)
 - [Normalized Viz Spec](../../viz/normalized-viz-spec.md)
-
