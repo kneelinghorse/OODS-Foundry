@@ -76,7 +76,7 @@ function ThreadItem({
       <div className="flex items-start justify-between gap-2 rounded-md bg-[--cmp-surface] p-2">
         <div className="space-y-1">
           <p className="text-xs font-semibold text-[--sys-text-primary]">
-            {node.message.metadata?.subject ?? 'Message'}
+            {typeof node.message.metadata?.subject === 'string' ? node.message.metadata.subject : 'Message'}
           </p>
           <p className="text-xs text-[--sys-text-muted]">
             From {node.message.sender_id} • Status: {node.message.status}
