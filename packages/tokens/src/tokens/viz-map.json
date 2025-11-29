@@ -1,0 +1,275 @@
+{
+  "viz": {
+    "map": {
+      "basemap": {
+        "fill": {
+          "$type": "color",
+          "$value": "{ref.color.neutral.100}",
+          "$description": "Base map fill color for land/water boundaries."
+        },
+        "stroke": {
+          "$type": "color",
+          "$value": "{ref.color.neutral.300}",
+          "$description": "Base map stroke color for coastlines and borders."
+        },
+        "stroke-width": {
+          "$type": "dimension",
+          "$value": "0.5px",
+          "$description": "Base map stroke width for subtle boundary lines."
+        }
+      },
+      "region": {
+        "stroke": {
+          "$type": "color",
+          "$value": "{ref.color.neutral.400}",
+          "$description": "Region boundary stroke color for choropleth regions."
+        },
+        "stroke-width": {
+          "$type": "dimension",
+          "$value": "1px",
+          "$description": "Region boundary stroke width."
+        },
+        "hover-stroke": {
+          "$type": "color",
+          "$value": "{ref.color.primary.500}",
+          "$description": "Region stroke color on hover state."
+        },
+        "hover-stroke-width": {
+          "$type": "dimension",
+          "$value": "2px",
+          "$description": "Region stroke width on hover state."
+        }
+      },
+      "symbol": {
+        "stroke": {
+          "$type": "color",
+          "$value": "{ref.color.neutral.0}",
+          "$description": "Symbol outline stroke for contrast on filled shapes."
+        },
+        "stroke-width": {
+          "$type": "dimension",
+          "$value": "1px",
+          "$description": "Symbol outline stroke width."
+        },
+        "min-radius": {
+          "$type": "dimension",
+          "$value": "4px",
+          "$description": "Minimum symbol radius for bubble maps."
+        },
+        "max-radius": {
+          "$type": "dimension",
+          "$value": "40px",
+          "$description": "Maximum symbol radius for bubble maps."
+        }
+      },
+      "route": {
+        "stroke-opacity": {
+          "$type": "number",
+          "$value": 0.6,
+          "$description": "Default opacity for route/flow lines."
+        },
+        "min-width": {
+          "$type": "dimension",
+          "$value": "1px",
+          "$description": "Minimum route line width."
+        },
+        "max-width": {
+          "$type": "dimension",
+          "$value": "10px",
+          "$description": "Maximum route line width for high-volume flows."
+        }
+      }
+    },
+    "scale": {
+      "sequential": {
+        "blue": {
+          "1": {
+            "$type": "color",
+            "$value": "oklch(0.97 0.015 240)",
+            "$description": "Sequential blue step 1 - lightest for low values."
+          },
+          "2": {
+            "$type": "color",
+            "$value": "oklch(0.91 0.035 240)",
+            "$description": "Sequential blue step 2."
+          },
+          "3": {
+            "$type": "color",
+            "$value": "oklch(0.82 0.06 240)",
+            "$description": "Sequential blue step 3."
+          },
+          "4": {
+            "$type": "color",
+            "$value": "oklch(0.72 0.09 240)",
+            "$description": "Sequential blue step 4 - midpoint."
+          },
+          "5": {
+            "$type": "color",
+            "$value": "oklch(0.60 0.12 240)",
+            "$description": "Sequential blue step 5."
+          },
+          "6": {
+            "$type": "color",
+            "$value": "oklch(0.48 0.14 240)",
+            "$description": "Sequential blue step 6."
+          },
+          "7": {
+            "$type": "color",
+            "$value": "oklch(0.36 0.15 240)",
+            "$description": "Sequential blue step 7 - darkest for high values."
+          }
+        },
+        "green": {
+          "1": {
+            "$type": "color",
+            "$value": "oklch(0.97 0.015 145)",
+            "$description": "Sequential green step 1 - lightest for low values."
+          },
+          "2": {
+            "$type": "color",
+            "$value": "oklch(0.91 0.04 145)",
+            "$description": "Sequential green step 2."
+          },
+          "3": {
+            "$type": "color",
+            "$value": "oklch(0.82 0.07 145)",
+            "$description": "Sequential green step 3."
+          },
+          "4": {
+            "$type": "color",
+            "$value": "oklch(0.72 0.10 145)",
+            "$description": "Sequential green step 4 - midpoint."
+          },
+          "5": {
+            "$type": "color",
+            "$value": "oklch(0.60 0.12 145)",
+            "$description": "Sequential green step 5."
+          },
+          "6": {
+            "$type": "color",
+            "$value": "oklch(0.48 0.13 145)",
+            "$description": "Sequential green step 6."
+          },
+          "7": {
+            "$type": "color",
+            "$value": "oklch(0.36 0.12 145)",
+            "$description": "Sequential green step 7 - darkest for high values."
+          }
+        },
+        "orange": {
+          "1": {
+            "$type": "color",
+            "$value": "oklch(0.97 0.02 70)",
+            "$description": "Sequential orange step 1 - lightest for low values."
+          },
+          "2": {
+            "$type": "color",
+            "$value": "oklch(0.91 0.05 60)",
+            "$description": "Sequential orange step 2."
+          },
+          "3": {
+            "$type": "color",
+            "$value": "oklch(0.82 0.09 55)",
+            "$description": "Sequential orange step 3."
+          },
+          "4": {
+            "$type": "color",
+            "$value": "oklch(0.72 0.13 50)",
+            "$description": "Sequential orange step 4 - midpoint."
+          },
+          "5": {
+            "$type": "color",
+            "$value": "oklch(0.62 0.16 45)",
+            "$description": "Sequential orange step 5."
+          },
+          "6": {
+            "$type": "color",
+            "$value": "oklch(0.52 0.16 40)",
+            "$description": "Sequential orange step 6."
+          },
+          "7": {
+            "$type": "color",
+            "$value": "oklch(0.42 0.14 35)",
+            "$description": "Sequential orange step 7 - darkest for high values."
+          }
+        }
+      },
+      "diverging": {
+        "blue-orange": {
+          "negative-3": {
+            "$type": "color",
+            "$value": "oklch(0.40 0.14 240)",
+            "$description": "Diverging blue-orange far negative anchor."
+          },
+          "negative-2": {
+            "$type": "color",
+            "$value": "oklch(0.55 0.11 240)",
+            "$description": "Diverging blue-orange negative level 2."
+          },
+          "negative-1": {
+            "$type": "color",
+            "$value": "oklch(0.72 0.07 240)",
+            "$description": "Diverging blue-orange near-neutral negative."
+          },
+          "neutral": {
+            "$type": "color",
+            "$value": "oklch(0.92 0.01 100)",
+            "$description": "Diverging blue-orange midpoint neutral."
+          },
+          "positive-1": {
+            "$type": "color",
+            "$value": "oklch(0.72 0.08 50)",
+            "$description": "Diverging blue-orange near-neutral positive."
+          },
+          "positive-2": {
+            "$type": "color",
+            "$value": "oklch(0.55 0.13 45)",
+            "$description": "Diverging blue-orange positive level 2."
+          },
+          "positive-3": {
+            "$type": "color",
+            "$value": "oklch(0.40 0.15 40)",
+            "$description": "Diverging blue-orange far positive anchor."
+          }
+        },
+        "red-green": {
+          "negative-3": {
+            "$type": "color",
+            "$value": "oklch(0.45 0.15 25)",
+            "$description": "Diverging red-green far negative (red) anchor."
+          },
+          "negative-2": {
+            "$type": "color",
+            "$value": "oklch(0.58 0.12 25)",
+            "$description": "Diverging red-green negative level 2."
+          },
+          "negative-1": {
+            "$type": "color",
+            "$value": "oklch(0.75 0.06 25)",
+            "$description": "Diverging red-green near-neutral negative."
+          },
+          "neutral": {
+            "$type": "color",
+            "$value": "oklch(0.92 0.01 100)",
+            "$description": "Diverging red-green midpoint neutral."
+          },
+          "positive-1": {
+            "$type": "color",
+            "$value": "oklch(0.75 0.06 145)",
+            "$description": "Diverging red-green near-neutral positive."
+          },
+          "positive-2": {
+            "$type": "color",
+            "$value": "oklch(0.58 0.10 145)",
+            "$description": "Diverging red-green positive level 2."
+          },
+          "positive-3": {
+            "$type": "color",
+            "$value": "oklch(0.45 0.12 145)",
+            "$description": "Diverging red-green far positive (green) anchor."
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,617 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Spatial Viz Spec Extension v0.1",
+  "type": "object",
+  "description": "Spatial extensions for normalized-viz-spec to support geographic visualizations.",
+  "definitions": {
+    "GeoJoinDataSource": {
+      "type": "object",
+      "description": "Dataset-level type for geo+data joins.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "data.geo.join"
+        },
+        "source": {
+          "type": "string",
+          "description": "URL or reference to the data source."
+        },
+        "geoSource": {
+          "type": "string",
+          "description": "URL or reference to the GeoJSON/TopoJSON geography."
+        },
+        "joinKey": {
+          "type": "string",
+          "description": "Field in data source used for joining."
+        },
+        "geoKey": {
+          "type": "string",
+          "description": "Property path in geo features for joining (e.g., 'properties.FIPS')."
+        },
+        "format": {
+          "type": "string",
+          "enum": ["geojson", "topojson"],
+          "default": "geojson"
+        }
+      },
+      "required": ["type", "source", "geoSource", "joinKey", "geoKey"],
+      "additionalProperties": false
+    },
+    "GeoPointField": {
+      "type": "object",
+      "description": "Field type for lat/lon coordinate pairs.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "field.geopoint"
+        },
+        "value": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": { "type": "number" },
+              "minItems": 2,
+              "maxItems": 2,
+              "description": "Coordinate as [latitude, longitude] array."
+            },
+            {
+              "type": "object",
+              "properties": {
+                "lat": { "type": "number", "minimum": -90, "maximum": 90 },
+                "lon": { "type": "number", "minimum": -180, "maximum": 180 }
+              },
+              "required": ["lat", "lon"],
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "required": ["type"],
+      "additionalProperties": false
+    },
+    "GeoJsonField": {
+      "type": "object",
+      "description": "Field type for inline GeoJSON geometry.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "field.geojson"
+        },
+        "geometry": {
+          "$ref": "#/definitions/GeoJsonGeometry"
+        }
+      },
+      "required": ["type", "geometry"],
+      "additionalProperties": false
+    },
+    "GeoJsonGeometry": {
+      "type": "object",
+      "description": "GeoJSON geometry object.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["Point", "LineString", "Polygon", "MultiPoint", "MultiLineString", "MultiPolygon", "GeometryCollection"]
+        },
+        "coordinates": {
+          "description": "GeoJSON coordinates array."
+        }
+      },
+      "required": ["type", "coordinates"],
+      "additionalProperties": true
+    },
+    "TopoJsonField": {
+      "type": "object",
+      "description": "Field type for reference to TopoJSON topology.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "field.topojson"
+        },
+        "topology": {
+          "type": "string",
+          "description": "Object name within the TopoJSON file (e.g., 'objects.states')."
+        },
+        "feature": {
+          "type": "string",
+          "description": "Feature type within the topology."
+        }
+      },
+      "required": ["type", "topology"],
+      "additionalProperties": false
+    },
+    "ProjectionConfig": {
+      "type": "object",
+      "description": "Geographic projection configuration following d3-geo patterns.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "mercator",
+            "albersUsa",
+            "equalEarth",
+            "orthographic",
+            "conicEqualArea",
+            "conicConformal",
+            "azimuthalEqualArea",
+            "azimuthalEquidistant",
+            "gnomonic",
+            "stereographic",
+            "naturalEarth1",
+            "equirectangular"
+          ],
+          "default": "mercator",
+          "description": "Projection type from d3-geo projection library."
+        },
+        "center": {
+          "type": "array",
+          "items": { "type": "number" },
+          "minItems": 2,
+          "maxItems": 2,
+          "description": "Projection center as [longitude, latitude]."
+        },
+        "scale": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Projection scale factor."
+        },
+        "rotate": {
+          "type": "array",
+          "items": { "type": "number" },
+          "minItems": 2,
+          "maxItems": 3,
+          "description": "Rotation as [lambda, phi] or [lambda, phi, gamma] in degrees."
+        },
+        "parallels": {
+          "type": "array",
+          "items": { "type": "number" },
+          "minItems": 2,
+          "maxItems": 2,
+          "description": "Standard parallels for conic projections."
+        },
+        "clipAngle": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 180,
+          "description": "Clip angle for azimuthal projections."
+        },
+        "clipExtent": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": { "type": "number" },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "minItems": 2,
+          "maxItems": 2,
+          "description": "Clip extent as [[x0, y0], [x1, y1]]."
+        },
+        "precision": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Projection precision for adaptive sampling."
+        },
+        "fitToData": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically fit projection to data bounds."
+        }
+      },
+      "additionalProperties": false
+    },
+    "GeoSourceConfig": {
+      "type": "object",
+      "description": "Geographic data source configuration.",
+      "properties": {
+        "source": {
+          "oneOf": [
+            {
+              "type": "string",
+              "description": "URL to GeoJSON or TopoJSON file."
+            },
+            {
+              "type": "object",
+              "description": "Inline GeoJSON FeatureCollection."
+            }
+          ]
+        },
+        "format": {
+          "type": "string",
+          "enum": ["geojson", "topojson"],
+          "default": "geojson"
+        },
+        "topology": {
+          "type": "string",
+          "description": "For TopoJSON: object name within the topology (e.g., 'states')."
+        },
+        "feature": {
+          "type": "string",
+          "description": "Feature type to extract from the source."
+        },
+        "meshOnly": {
+          "type": "boolean",
+          "default": false,
+          "description": "For TopoJSON: extract mesh (boundaries only) instead of features."
+        }
+      },
+      "required": ["source"],
+      "additionalProperties": false
+    },
+    "SpatialLayer": {
+      "type": "object",
+      "description": "Layer definition for spatial visualizations.",
+      "oneOf": [
+        { "$ref": "#/definitions/RegionFillLayer" },
+        { "$ref": "#/definitions/SymbolLayer" },
+        { "$ref": "#/definitions/RouteLayer" }
+      ]
+    },
+    "RegionFillLayer": {
+      "type": "object",
+      "description": "Choropleth/region fill layer type.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "regionFill"
+        },
+        "from": {
+          "type": "string",
+          "description": "Reference to geo source for this layer."
+        },
+        "encoding": {
+          "type": "object",
+          "properties": {
+            "color": {
+              "type": "object",
+              "properties": {
+                "field": { "type": "string" },
+                "scale": {
+                  "type": "string",
+                  "enum": ["quantize", "quantile", "threshold", "linear", "ordinal"],
+                  "default": "quantize"
+                },
+                "domain": {
+                  "type": "array",
+                  "items": { "type": "number" }
+                },
+                "range": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Color token references."
+                },
+                "nullValue": {
+                  "type": "string",
+                  "description": "Color for null/missing values."
+                }
+              },
+              "required": ["field"]
+            },
+            "opacity": {
+              "type": "object",
+              "properties": {
+                "field": { "type": "string" },
+                "value": { "type": "number", "minimum": 0, "maximum": 1 }
+              }
+            },
+            "stroke": {
+              "type": "object",
+              "properties": {
+                "value": { "type": "string" }
+              }
+            },
+            "strokeWidth": {
+              "type": "object",
+              "properties": {
+                "value": { "type": "number", "minimum": 0 }
+              }
+            }
+          },
+          "required": ["color"]
+        },
+        "zIndex": {
+          "type": "integer",
+          "default": 0
+        }
+      },
+      "required": ["type", "encoding"],
+      "additionalProperties": false
+    },
+    "SymbolLayer": {
+      "type": "object",
+      "description": "Symbol/bubble map layer type.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "symbol"
+        },
+        "encoding": {
+          "type": "object",
+          "properties": {
+            "longitude": {
+              "type": "object",
+              "properties": {
+                "field": { "type": "string" }
+              },
+              "required": ["field"]
+            },
+            "latitude": {
+              "type": "object",
+              "properties": {
+                "field": { "type": "string" }
+              },
+              "required": ["field"]
+            },
+            "size": {
+              "type": "object",
+              "properties": {
+                "field": { "type": "string" },
+                "value": { "type": "number", "minimum": 0 },
+                "scale": {
+                  "type": "string",
+                  "enum": ["linear", "sqrt", "log"],
+                  "default": "sqrt"
+                },
+                "range": {
+                  "type": "array",
+                  "items": { "type": "number" },
+                  "minItems": 2,
+                  "maxItems": 2,
+                  "description": "Size range as [min, max] in pixels."
+                }
+              }
+            },
+            "color": {
+              "type": "object",
+              "properties": {
+                "field": { "type": "string" },
+                "value": { "type": "string" },
+                "scale": {
+                  "type": "string",
+                  "enum": ["ordinal", "linear", "quantize"]
+                }
+              }
+            },
+            "shape": {
+              "type": "object",
+              "properties": {
+                "field": { "type": "string" },
+                "value": {
+                  "type": "string",
+                  "enum": ["circle", "square", "triangle", "diamond", "cross"],
+                  "default": "circle"
+                }
+              }
+            },
+            "opacity": {
+              "type": "object",
+              "properties": {
+                "field": { "type": "string" },
+                "value": { "type": "number", "minimum": 0, "maximum": 1, "default": 1 }
+              }
+            }
+          },
+          "required": ["longitude", "latitude"]
+        },
+        "zIndex": {
+          "type": "integer",
+          "default": 10
+        }
+      },
+      "required": ["type", "encoding"],
+      "additionalProperties": false
+    },
+    "RouteLayer": {
+      "type": "object",
+      "description": "Route/flow line layer type.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "route"
+        },
+        "encoding": {
+          "type": "object",
+          "properties": {
+            "start": {
+              "type": "object",
+              "properties": {
+                "field": { "type": "string" },
+                "longitude": { "type": "string" },
+                "latitude": { "type": "string" }
+              },
+              "required": ["field"]
+            },
+            "end": {
+              "type": "object",
+              "properties": {
+                "field": { "type": "string" },
+                "longitude": { "type": "string" },
+                "latitude": { "type": "string" }
+              },
+              "required": ["field"]
+            },
+            "strokeWidth": {
+              "type": "object",
+              "properties": {
+                "field": { "type": "string" },
+                "value": { "type": "number", "minimum": 0 },
+                "scale": {
+                  "type": "string",
+                  "enum": ["linear", "sqrt", "log"],
+                  "default": "linear"
+                },
+                "range": {
+                  "type": "array",
+                  "items": { "type": "number" },
+                  "minItems": 2,
+                  "maxItems": 2
+                }
+              }
+            },
+            "color": {
+              "type": "object",
+              "properties": {
+                "field": { "type": "string" },
+                "value": { "type": "string" }
+              }
+            },
+            "opacity": {
+              "type": "object",
+              "properties": {
+                "value": { "type": "number", "minimum": 0, "maximum": 1, "default": 0.6 }
+              }
+            },
+            "curvature": {
+              "type": "object",
+              "properties": {
+                "value": { "type": "number", "minimum": 0, "maximum": 1, "default": 0.3 }
+              },
+              "description": "Arc curvature for route lines (0 = straight, 1 = max arc)."
+            }
+          },
+          "required": ["start", "end"]
+        },
+        "zIndex": {
+          "type": "integer",
+          "default": 5
+        }
+      },
+      "required": ["type", "encoding"],
+      "additionalProperties": false
+    },
+    "SpatialSpec": {
+      "type": "object",
+      "description": "Complete spatial visualization specification extending normalized-viz-spec.",
+      "properties": {
+        "$schema": {
+          "type": "string",
+          "const": "https://oods.dev/viz-spec/spatial/v1"
+        },
+        "id": {
+          "type": "string",
+          "description": "Stable identifier for the spec instance."
+        },
+        "name": {
+          "type": "string",
+          "description": "Human friendly label surfaced in UI + narration."
+        },
+        "type": {
+          "type": "string",
+          "const": "spatial"
+        },
+        "data": {
+          "oneOf": [
+            { "$ref": "#/definitions/GeoJoinDataSource" },
+            {
+              "type": "object",
+              "description": "Standard data source with geo fields.",
+              "properties": {
+                "values": { "type": "array" },
+                "url": { "type": "string" },
+                "format": {
+                  "type": "string",
+                  "enum": ["json", "csv", "topojson", "geojson"]
+                }
+              },
+              "not": {
+                "required": ["type"]
+              },
+              "additionalProperties": false
+            }
+          ]
+        },
+        "projection": {
+          "$ref": "#/definitions/ProjectionConfig"
+        },
+        "geo": {
+          "$ref": "#/definitions/GeoSourceConfig"
+        },
+        "layers": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/SpatialLayer" },
+          "minItems": 1,
+          "description": "Ordered list of spatial layers to render."
+        },
+        "config": {
+          "type": "object",
+          "properties": {
+            "theme": { "type": "string" },
+            "tokens": {
+              "type": "object",
+              "additionalProperties": { "type": ["string", "number"] }
+            },
+            "layout": {
+              "type": "object",
+              "properties": {
+                "width": { "type": "number", "minimum": 0 },
+                "height": { "type": "number", "minimum": 0 },
+                "padding": { "type": "number", "minimum": 0 }
+              }
+            }
+          }
+        },
+        "a11y": {
+          "type": "object",
+          "description": "Accessibility contract for spatial visualizations.",
+          "properties": {
+            "description": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Long-form description surfaced via screen readers."
+            },
+            "ariaLabel": {
+              "type": "string",
+              "description": "Short ARIA label applied to map container."
+            },
+            "narrative": {
+              "type": "object",
+              "properties": {
+                "summary": { "type": "string" },
+                "keyFindings": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                }
+              }
+            },
+            "tableFallback": {
+              "type": "object",
+              "properties": {
+                "enabled": { "type": "boolean", "default": true },
+                "caption": { "type": "string" },
+                "columns": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "sortDefault": { "type": "string" },
+                "sortOrder": {
+                  "type": "string",
+                  "enum": ["asc", "desc"]
+                }
+              }
+            }
+          },
+          "required": ["description"]
+        },
+        "interactions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": ["panZoom", "regionSelect", "tooltip", "layerToggle"]
+              },
+              "enabled": { "type": "boolean", "default": true },
+              "config": { "type": "object" }
+            },
+            "required": ["type"]
+          }
+        }
+      },
+      "required": ["type", "data", "projection", "layers", "a11y"],
+      "additionalProperties": false
+    }
+  },
+  "allOf": [
+    { "$ref": "#/definitions/SpatialSpec" }
+  ]
+}
