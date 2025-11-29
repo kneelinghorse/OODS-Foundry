@@ -153,10 +153,11 @@ detection:
       - "state|province|region"
       - "city|town|municipality"
       - "zip|postal"
-      - "county|district"
+      - "county|district|prefecture"
     coordinates:
       - "lat|latitude"
       - "lon|longitude|lng"
+      - "geo_x|geo_y"
     codes:
       - "fips"
       - "iso"
@@ -165,6 +166,19 @@ detection:
     - "field.geopoint"
     - "field.geojson"
     - "field.topojson"
+
+outputs:
+  geoResolution:
+    type: enum
+    values:
+      - point
+      - boundary
+      - both
+  requiresLookup:
+    type: boolean
+  detectedFields:
+    type: object[]
+    description: Array of detected geographic fields with type and confidence metadata.
 
 metadata:
   created: "2025-11-29"

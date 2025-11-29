@@ -51,8 +51,8 @@ export const GEO_FIELD_PATTERNS = {
     /^lat(itude)?$/i,
     /^lon(gitude)?$/i,
     /^lng$/i,
-    /^(geo_?)?x$/i,
-    /^(geo_?)?y$/i,
+    /^geo_?x$/i,
+    /^geo_?y$/i,
   ],
   /** Standard geographic code systems */
   codes: [
@@ -121,7 +121,27 @@ const LON_RANGE = { min: -180, max: 180 };
  */
 function matchesPatternGroup(fieldName: string, patterns: readonly RegExp[]): RegExp | undefined {
   const normalized = fieldName.toLowerCase().trim();
-  return patterns.find((pattern) => pattern.test(normalized));
+  const tokenized = normalized
+    // Break camelCase into tokens before splitting on delimiters
+    .replace(/([a-z])([A-Z])/g, '$1_$2')
+    .split(/[^a-z0-9]+/)
+    .filter(Boolean);
+
+  // Exact/whole-field match
+  const direct = patterns.find((pattern) => pattern.test(normalized));
+  if (direct) {
+    return direct;
+  }
+
+  // Token-level match (supports prefixes/suffixes like shipping_country, userLatitude)
+  for (const token of tokenized) {
+    const match = patterns.find((pattern) => pattern.test(token));
+    if (match) {
+      return match;
+    }
+  }
+
+  return undefined;
 }
 
 /**
@@ -397,8 +417,10 @@ export function detectGeoFields(
   let geoResolution: GeoResolutionType;
   if ((hasCoordinates || hasGeometry) && hasIdentifiers) {
     geoResolution = 'both';
-  } else if (hasCoordinates || hasGeometry) {
+  } else if (hasCoordinates) {
     geoResolution = 'point';
+  } else if (hasGeometry) {
+    geoResolution = 'boundary';
   } else if (hasIdentifiers) {
     geoResolution = 'boundary';
   } else {

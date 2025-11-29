@@ -33,19 +33,19 @@ The Geocodable trait automatically detects geographic fields using pattern match
 
 | Pattern | Examples |
 |---------|----------|
-| Latitude | `lat`, `latitude` |
-| Longitude | `lon`, `longitude`, `lng` |
-| Generic | `geo_x`, `geo_y`, `x`, `y` |
+| Latitude | `lat`, `latitude`, `user_latitude`, `home.latitude` |
+| Longitude | `lon`, `longitude`, `lng`, `user_longitude`, `home.longitude` |
+| Generic | `geo_x`, `geo_y` |
 
 ### Identifier Patterns
 
 | Pattern | Examples |
 |---------|----------|
-| Country | `country`, `country_code`, `nation` |
-| State/Province | `state`, `province`, `region` |
+| Country | `country`, `country_code`, `nation`, `shipping_country` |
+| State/Province | `state`, `province`, `region`, `billing_state` |
 | City | `city`, `town`, `municipality` |
 | Postal | `zip`, `zip_code`, `postal_code` |
-| County | `county`, `district` |
+| County | `county`, `district`, `prefecture` |
 
 ### Code Patterns
 
@@ -70,8 +70,8 @@ Type of geographic resolution available:
 
 | Value | Meaning |
 |-------|---------|
-| `point` | Data contains lat/lon coordinates or geometry |
-| `boundary` | Data contains region identifiers (country, state, etc.) |
+| `point` | Data contains lat/lon coordinates (direct numeric fields) |
+| `boundary` | Data contains region identifiers or geometry (GeoJSON/TopoJSON) |
 | `both` | Data contains both coordinates and identifiers |
 
 ### `requiresLookup`

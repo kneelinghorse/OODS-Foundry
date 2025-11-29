@@ -4,6 +4,7 @@
  * Exports for spatial visualization traits and utilities.
  */
 
+export { default as GeocodableTrait } from '../../../../traits/viz/spatial/geocodable.trait.js';
 export {
   detectGeoFields,
   hasGeoFields,
