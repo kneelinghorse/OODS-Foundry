@@ -1,7 +1,9 @@
+import type { NetworkFlowVizType } from '@/types/viz/resolver.js';
 import type { SpatialSpec } from '@/types/viz/spatial.js';
 import type { NormalizedVizSpec, TraitBinding } from '@/viz/spec/normalized-viz-spec.js';
+import { resolveNetworkFlowPath } from '@/viz/resolver/network-flow-resolver.js';
 
-export type VizRendererId = 'vega-lite' | 'echarts';
+export type VizRendererId = 'vega-lite' | 'echarts' | 'vega';
 
 export interface RendererSelectionOptions {
   readonly available?: readonly VizRendererId[];
@@ -14,6 +16,7 @@ export interface RendererSelectionResult {
   readonly reason:
     | 'user-preference'
     | 'spec-preference'
+    | 'network-flow'
     | 'layout'
     | 'data-volume'
     | 'temporal'
@@ -33,13 +36,34 @@ const DEFAULT_ECHARTS_THRESHOLD = 500;
 const DEFAULT_SPATIAL_POINT_THRESHOLD = 10_000;
 
 export function selectVizRenderer(
-  spec: NormalizedVizSpec | SpatialSpec,
+  spec: NormalizedVizSpec | SpatialSpec | NetworkFlowSpec,
   options: RendererSelectionOptions = {}
 ): RendererSelectionResult {
   const pool = normalizePool(options.available);
 
   if (pool.length === 0) {
     throw new RendererSelectionError('No renderer targets provided.');
+  }
+
+  if (isNetworkFlowSpec(spec)) {
+    const networkFlowType = detectNetworkFlowVizType(spec);
+
+    if (!networkFlowType) {
+      throw new RendererSelectionError('Network & Flow visualization type is missing or invalid.');
+    }
+
+    const result = resolveNetworkFlowPath({
+      vizType: networkFlowType,
+      data: spec.data ?? {},
+      availableRenderers: pool,
+      dimensions: extractDimensions(spec),
+    });
+
+    if (result.path === 'unsupported' || !result.renderer) {
+      throw new RendererSelectionError(result.reason);
+    }
+
+    return { renderer: result.renderer, reason: 'network-flow' };
   }
 
   if (options.preferred && pool.includes(options.preferred)) {
@@ -78,11 +102,14 @@ function normalizePool(available?: readonly VizRendererId[]): VizRendererId[] {
     return [...DEFAULT_RENDERERS];
   }
 
-  return available.filter((renderer): renderer is VizRendererId => renderer === 'vega-lite' || renderer === 'echarts');
+  return available.filter(
+    (renderer): renderer is VizRendererId =>
+      renderer === 'vega-lite' || renderer === 'echarts' || renderer === 'vega'
+  );
 }
 
 function normalizeRendererId(renderer?: string | null): VizRendererId | undefined {
-  if (renderer === 'vega-lite' || renderer === 'echarts') {
+  if (renderer === 'vega-lite' || renderer === 'echarts' || renderer === 'vega') {
     return renderer;
   }
 
@@ -162,4 +189,61 @@ function hasTemporalEncodings(spec: NormalizedVizSpec): boolean {
   }
 
   return false;
+}
+
+type NetworkFlowSpec = {
+  mark?: { type?: string | null };
+  marks?: Array<{ type?: string | null }>;
+  data?: unknown;
+  dimensions?: { width?: number; height?: number };
+  config?: { layout?: { width?: number; height?: number } };
+  portability?: { preferredRenderer?: string | null };
+};
+
+function isNetworkFlowSpec(
+  spec: NetworkFlowSpec | SpatialSpec | NormalizedVizSpec
+): spec is NetworkFlowSpec {
+  if (spec.mark && typeof spec.mark.type === 'string') {
+    return true;
+  }
+
+  const marks = spec.marks;
+  return Array.isArray(marks) && marks.some((mark) => typeof mark?.type === 'string');
+}
+
+function detectNetworkFlowVizType(spec: NetworkFlowSpec): NetworkFlowVizType | null {
+  const markType = spec.mark?.type;
+  if (typeof markType === 'string' && isNetworkFlowVizType(markType)) {
+    return markType;
+  }
+
+  const marks = spec.marks;
+  if (Array.isArray(marks)) {
+    for (const mark of marks) {
+      const candidate = typeof mark?.type === 'string' ? mark.type : undefined;
+      if (candidate && isNetworkFlowVizType(candidate)) {
+        return candidate;
+      }
+    }
+  }
+
+  return null;
+}
+
+function isNetworkFlowVizType(candidate: string): candidate is NetworkFlowVizType {
+  return candidate === 'treemap' || candidate === 'sunburst' || candidate === 'force_graph' || candidate === 'sankey';
+}
+
+function extractDimensions(
+  spec: NetworkFlowSpec | SpatialSpec | NormalizedVizSpec
+): { width: number; height: number } {
+  const explicit = (spec as { dimensions?: { width?: number; height?: number } }).dimensions;
+  const width = explicit?.width ?? (spec as { config?: { layout?: { width?: number } } }).config?.layout?.width ?? 0;
+  const height =
+    explicit?.height ?? (spec as { config?: { layout?: { height?: number } } }).config?.layout?.height ?? 0;
+
+  return {
+    width: typeof width === 'number' ? width : 0,
+    height: typeof height === 'number' ? height : 0,
+  };
 }
