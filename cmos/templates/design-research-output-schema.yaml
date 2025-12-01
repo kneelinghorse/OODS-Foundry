@@ -1,0 +1,422 @@
+apiVersion: research-output.v1
+kind: ResearchOutputSchema
+metadata:
+  name: design-research-output-schema
+  version: "1.0.0"
+  author: "OODS Design Research Team"
+  description: "Standard schema for design research mission outputs that feed into OODS MCP tools"
+  updated: "2025-11-25"
+
+spec:
+  purpose: |
+    This schema defines the structure for design research outputs from missions.
+    Research data in this format can be directly transformed into MCP tool inputs.
+
+    Workflow:
+    1. Mission uses 6-layer prompt templates to gather research
+    2. Mission outputs data in this schema format (YAML or JSON)
+    3. Agent/CLI reads outputs and transforms to MCP tool parameters
+    4. MCP tools use research + OODS components → generate designs
+
+  output_categories:
+    - personas
+    - visual_references
+    - brand_guidelines
+    - jobs_to_be_done
+    - constraints
+    - accessibility_requirements
+
+  schemas:
+    persona:
+      description: "User persona with goals, pain points, and visual preferences"
+      required_fields:
+        - name
+        - role
+        - goals
+      optional_fields:
+        - pain_points
+        - context
+        - visual_preferences
+        - ui_implications
+      format: |
+        personas:
+          - name: string              # Persona name (e.g., "Sarah - Hiring Manager")
+            role: string              # Professional role
+            goals: array<string>      # What they want to achieve
+            pain_points: array<string> # Frustrations and blockers
+            context: string           # Usage context and scenarios
+            visual_preferences:
+              layout_style: string    # "minimal", "dense", "spacious"
+              information_density: string # "low", "medium", "high"
+              navigation_preference: string # "simple", "advanced"
+              trust_signals: array<string> # What builds trust
+            ui_implications: array<string> # Direct UI consequences
+
+      example: |
+        personas:
+          - name: "Sarah - Hiring Manager"
+            role: "Senior Hiring Manager at Tech Startup"
+            goals:
+              - "Quickly assess candidate portfolio"
+              - "See relevant project samples"
+              - "Get contact information easily"
+            pain_points:
+              - "Too many portfolios are slow or overcomplicated"
+              - "Hard to find actual work samples"
+              - "Contact forms buried deep in navigation"
+            context: "Reviews 10-15 portfolios per day. Spends 2-3 minutes max on each. Mobile-first (60% of views)."
+            visual_preferences:
+              layout_style: "clean, minimal, focused"
+              information_density: "low to medium"
+              navigation_preference: "simple, predictable"
+              trust_signals: ["professional photography", "client logos", "case studies"]
+            ui_implications:
+              - "Hero should have portfolio samples immediately visible"
+              - "Contact CTA should be persistent/accessible"
+              - "Mobile-optimized project grid"
+
+    visual_reference:
+      description: "Analysis of visual design reference (screenshot, mockup, comp)"
+      required_fields:
+        - name
+        - source
+        - extracted_tokens
+      optional_fields:
+        - image_path
+        - analysis_method
+        - layout_patterns
+        - aesthetic_tags
+        - component_suggestions
+        - oods_mapping
+        - wcag_validation
+      format: |
+        visual_references:
+          - name: string                    # Reference name
+            source: string                  # Origin (Dribbble, Figma, etc.)
+            image_path: string              # Local path to image (optional)
+            analysis_method: string         # "gemini-1.5-pro", "claude-3.5-sonnet", "manual"
+            extracted_tokens:
+              colors:
+                primary: string             # Hex code
+                secondary: string
+                accent: string
+                background: string
+                surface: string
+              typography:
+                heading_font: string        # Font family
+                body_font: string
+                heading_sizes: array<string> # ["48px", "36px", "24px"]
+                body_size: string
+                line_heights: array<string>
+                weights: array<number>
+              spacing:
+                grid_system: string         # "4pt", "8pt", "16pt"
+                section_spacing: string     # "64px"
+                element_spacing: string     # "24px"
+                micro_spacing: string       # "8px"
+              borders:
+                radius: array<string>       # ["4px", "8px", "12px"]
+                widths: array<string>
+              shadows:
+                elevations: array<object>   # [{name: "sm", value: "0 1px 2px rgba(...)"}]
+            layout_patterns: array<string>  # ["Hero with CTA", "3-column grid"]
+            aesthetic_tags: array<string>   # ["minimal", "professional", "high-contrast"]
+            component_suggestions: array<string> # ["HeroSection", "ProjectCard"]
+            oods_mapping:                   # Map patterns to OODS components
+              hero: string                  # "HeroSection (trait: Presentable)"
+              grid: string                  # "GridLayout with ProjectCard"
+            wcag_validation:
+              passed: boolean
+              contrast_ratios: object       # {primary_on_white: 14.2}
+              issues: array<string>
+
+      example: |
+        visual_references:
+          - name: "Homepage Comp - Clean Portfolio"
+            source: "Dribbble inspiration"
+            image_path: "comp-homepage.png"
+            analysis_method: "gemini-1.5-pro-with-json-schema"
+            extracted_tokens:
+              colors:
+                primary: "#1A1A1A"
+                secondary: "#6B7280"
+                accent: "#3B82F6"
+                background: "#FFFFFF"
+                surface: "#F9FAFB"
+              typography:
+                heading_font: "Inter"
+                body_font: "Inter"
+                heading_sizes: ["48px", "36px", "24px"]
+                body_size: "16px"
+                line_heights: ["1.2", "1.5", "1.75"]
+              spacing:
+                grid_system: "8pt"
+                section_spacing: "64px"
+                element_spacing: "24px"
+            layout_patterns:
+              - "Hero with large headline + CTA"
+              - "3-column project grid"
+              - "Sticky header navigation"
+            aesthetic_tags: ["minimal", "professional", "high-contrast"]
+            component_suggestions: ["HeroSection", "ProjectCard", "Navigation"]
+            oods_mapping:
+              hero: "HeroSection (trait: Presentable, Navigable)"
+              project_grid: "GridLayout with ProjectCard"
+              navigation: "Navigation (trait: Navigable, Contextual)"
+
+    brand_guidelines:
+      description: "Brand identity and design system constraints"
+      required_fields:
+        - colors
+      optional_fields:
+        - typography
+        - voice_tone
+        - imagery_style
+        - animation_principles
+      format: |
+        brand_guidelines:
+          colors:
+            primary: string               # Hex code
+            secondary: string
+            accent: string
+            neutral_palette: array<string> # ["#000000", "#333333", ...]
+          typography:
+            headings: string              # Font family
+            body: string
+            mono: string                  # Monospace font
+            weights: array<number>        # [400, 600, 700]
+            scale: string                 # "major-third", "perfect-fourth"
+          voice_tone: array<string>       # ["professional", "approachable", "innovative"]
+          imagery_style:
+            photography: string           # "high-quality", "candid", "abstract"
+            illustrations: string         # "minimal", "detailed", "none"
+            icons: string                 # "outlined", "filled", "duotone"
+          animation_principles:
+            duration: string              # "fast", "standard", "slow"
+            easing: string                # "ease-in-out", "linear"
+            purpose: string               # "functional", "expressive"
+
+      example: |
+        brand_guidelines:
+          colors:
+            primary: "#3B82F6"
+            secondary: "#8B5CF6"
+            accent: "#10B981"
+            neutral_palette: ["#000000", "#6B7280", "#F9FAFB", "#FFFFFF"]
+          typography:
+            headings: "Inter"
+            body: "Inter"
+            mono: "JetBrains Mono"
+            weights: [400, 600, 700]
+          voice_tone: ["professional", "approachable", "data-driven"]
+
+    job_to_be_done:
+      description: "User job with context and UI implications"
+      required_fields:
+        - job_statement
+        - desired_outcome
+      optional_fields:
+        - context
+        - success_criteria
+        - ui_implication
+        - priority
+      format: |
+        jobs_to_be_done:
+          - job_statement: string         # What user is trying to do
+            context: string               # When/where/why
+            desired_outcome: string       # What success looks like
+            success_criteria: array<string> # Measurable outcomes
+            ui_implication: string        # Direct UI consequence
+            priority: string              # "high", "medium", "low"
+
+      example: |
+        jobs_to_be_done:
+          - job_statement: "Assess candidate portfolio quality"
+            context: "During initial screening phase, time-constrained"
+            desired_outcome: "Quick decision on whether to proceed to interview"
+            success_criteria:
+              - "Can view 3-5 portfolio samples in under 60 seconds"
+              - "Can identify skill level and style fit"
+              - "Can easily save or share for later review"
+            ui_implication: "Portfolio samples must be immediately visible on homepage, not behind navigation"
+            priority: "high"
+
+    constraints:
+      description: "Technical and design constraints"
+      format: |
+        constraints:
+          technical:
+            - constraint: string
+              rationale: string
+          accessibility:
+            - standard: string            # "WCAG 2.2 AA"
+              requirements: array<string>
+          performance:
+            - metric: string              # "LCP", "FID", "CLS"
+              target: string              # "< 2.5s"
+          responsive:
+            - breakpoints: array<string>  # ["320px", "768px", "1024px"]
+              approach: string            # "mobile-first", "desktop-first"
+
+      example: |
+        constraints:
+          technical:
+            - constraint: "Must use 8-point grid system"
+              rationale: "Maintains consistency with design system"
+            - constraint: "Components must support dark mode"
+              rationale: "Brand requirement for accessibility"
+          accessibility:
+            - standard: "WCAG 2.2 AA"
+              requirements:
+                - "Minimum 4.5:1 contrast ratio for normal text"
+                - "Keyboard navigation support for all interactive elements"
+                - "Screen reader compatibility"
+          performance:
+            - metric: "LCP"
+              target: "< 2.5s"
+            - metric: "CLS"
+              target: "< 0.1"
+          responsive:
+            - breakpoints: ["320px", "768px", "1024px", "1440px"]
+              approach: "mobile-first"
+
+  transformation_to_mcp:
+    description: "How research outputs map to MCP tool inputs"
+
+    repl_render_input:
+      description: "Enhanced repl.render with research context"
+      mapping: |
+        MCP Tool Input:
+        {
+          "mode": "full",
+          "schema": { /* UiSchema */ },
+          "researchContext": {
+            "personas": personas,                    // Direct copy from personas
+            "visualReferences": visual_references,   // Direct copy from visual_references
+            "brandGuidelines": brand_guidelines,     // Direct copy from brand_guidelines
+            "jtbd": jobs_to_be_done,                // Direct copy from jobs_to_be_done
+            "constraints": constraints               // Direct copy from constraints
+          }
+        }
+
+    repl_generate_input:
+      description: "New tool to generate UiSchema from research"
+      mapping: |
+        MCP Tool Input:
+        {
+          "intent": "Create homepage for portfolio",
+          "researchContext": {
+            "personas": personas,
+            "visualReferences": visual_references,
+            "brandGuidelines": brand_guidelines,
+            "jtbd": jobs_to_be_done,
+            "constraints": constraints
+          },
+          "preferences": {
+            "components": ["HeroSection", "ProjectGrid"],  // Optional hints
+            "layout": "minimal",
+            "priority": "mobile-first"
+          }
+        }
+
+  file_organization:
+    description: "Recommended structure for research files in any project"
+    structure: |
+      <project-root>/
+      ├── design-research/
+      │   ├── manifest.yaml              # Index of all research
+      │   ├── personas/
+      │   │   ├── primary-user.yaml
+      │   │   └── secondary-user.yaml
+      │   ├── visual-references/
+      │   │   ├── comp-homepage.yaml
+      │   │   ├── comp-homepage.png
+      │   │   └── comp-about.yaml
+      │   ├── brand-guidelines.yaml
+      │   ├── jobs-to-be-done.yaml
+      │   └── constraints.yaml
+      └── .mcp-config.json               # Points to OODS MCP server
+
+  validation:
+    rules:
+      - "All personas must have at least: name, role, goals"
+      - "Visual references must have extracted_tokens with at least colors"
+      - "Brand guidelines must define primary color"
+      - "JTBD must have job_statement and desired_outcome"
+      - "Hex colors must be valid 6-digit hex codes with #"
+      - "Spacing values must include units (px, rem, em)"
+
+    recommended_tools:
+      - "YAML validation: yamllint"
+      - "Schema validation: ajv (JSON Schema)"
+      - "Custom validator: ./cmos/cli.py research validate <path>"
+
+  examples:
+    complete_mission_output: |
+      # Complete output from a visual analysis mission
+      apiVersion: research-output.v1
+      kind: VisualAnalysisResult
+      metadata:
+        mission_id: "R31.1.2"
+        analyzed: "2025-11-25"
+        project: "derekn.com"
+
+      output:
+        visual_references:
+          - name: "Homepage Comp - Portfolio"
+            source: "Figma mockup"
+            image_path: "comp-homepage.png"
+            analysis_method: "gemini-1.5-pro"
+            extracted_tokens:
+              colors:
+                primary: "#1A1A1A"
+                secondary: "#6B7280"
+                accent: "#3B82F6"
+              typography:
+                heading_font: "Inter"
+                body_font: "Inter"
+                heading_sizes: ["48px", "36px"]
+              spacing:
+                grid_system: "8pt"
+                section_spacing: "64px"
+            layout_patterns:
+              - "Hero with headline + CTA"
+              - "3-column project grid"
+            component_suggestions:
+              - "HeroSection"
+              - "ProjectCard"
+            oods_mapping:
+              hero: "HeroSection"
+              grid: "GridLayout with ProjectCard"
+
+        personas:
+          - name: "Sarah - Hiring Manager"
+            role: "Senior Hiring Manager"
+            goals:
+              - "Quick portfolio assessment"
+            ui_implications:
+              - "Samples visible immediately"
+
+        jobs_to_be_done:
+          - job_statement: "Assess portfolio quality"
+            desired_outcome: "Quick decision on fit"
+            ui_implication: "Portfolio samples on homepage"
+
+  usage:
+    agent_workflow: |
+      1. Agent runs mission using 6-layer prompt template
+      2. Mission saves output in this schema format
+      3. Agent reads output file(s)
+      4. Agent transforms to MCP tool input JSON
+      5. Agent calls OODS MCP tool
+      6. Tool returns UiSchema or validation results
+
+    cli_command_example: |
+      # Validate research structure
+      ./cmos/cli.py research validate ~/derekn.com/design-research
+
+      # Transform research to MCP input
+      ./cmos/cli.py research transform ~/derekn.com/design-research/personas/sarah.yaml
+
+      # Generate design from research
+      ./cmos/cli.py design generate --research ~/derekn.com/design-research --intent "Create homepage"

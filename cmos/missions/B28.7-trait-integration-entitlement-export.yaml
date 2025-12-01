@@ -1,0 +1,128 @@
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B28.7
+sprintId: Sprint 28
+name: "Trait Integration & Entitlement Export"
+
+objective: |
+  Wire Authable trait into User and Organization core objects, completing the
+  integration contract specified in R21.2 Part 2.2 (Membership table). Deliver
+  entitlement export CLI for downstream services and comprehensive composition tests.
+
+context:
+  background: |
+    All runtime services (B28.3-B28.6) are ready. This mission completes the
+    integration loop: User/Org objects compose Authable trait, enabling
+    RBAC membership queries.
+
+  dependencies:
+    - "B28.1 complete (Authable trait definition)"
+    - "B28.3 complete (entitlement service)"
+    - "User and Organization objects from Core Trait set"
+
+  constraints:
+    - "Integration must not break existing User/Org functionality"
+    - "Composition tests must validate all trait interactions"
+    - "Generated types must include Authable methods"
+
+researchFindings:
+  integrationPoint:
+    source: "R21.2 Part 4.2 TABLE 4"
+    contract: "authz.memberships links user_id, organization_id, role_id"
+    implementation: "User/Org compose Authable → gain membership methods"
+
+deliverables:
+  integration:
+    - file: "examples/objects/user-with-authable.ts"
+      requirements:
+        - "Compose User + Authable trait"
+        - "Example: user.getRolesInOrg(orgId)"
+        - "Example: user.hasPermission(orgId, 'document:create')"
+        
+    - file: "examples/objects/organization-with-authable.ts"
+      requirements:
+        - "Compose Organization + Authable trait"
+        - "Example: org.getUsersWithRole(roleId)"
+        - "Example: org.getMemberPermissions(userId)"
+        
+    - file: "generated/objects/User.d.ts"
+      requirements:
+        - "Update generated User interface"
+        - "Include Authable methods"
+        - "TypeScript strict mode compliant"
+
+  cli:
+    - file: "src/cli/authz-export.ts"
+      requirements:
+        - "exportUserEntitlements(userId): JSON"
+        - "exportOrgEntitlements(orgId): JSON"
+        - "Format: userId, roles[], permissions[], org context"
+        - "Use case: sync to external IAM systems"
+        
+    - file: "src/cli/authz-audit.ts"
+      requirements:
+        - "auditUserPermissions(userId): Report"
+        - "auditOrgAccess(orgId): Report"
+        - "Detect: users with no roles, orphaned memberships"
+
+  tests:
+    - file: "tests/integration/authable-composition.test.ts"
+      requirements:
+        - "Test User + Authable composition"
+        - "Test Organization + Authable composition"
+        - "Test permission resolution through composed object"
+        - "Test multi-trait interaction (Authable + Preferenceable + Addressable)"
+        
+    - file: "tests/integration/entitlement-export.test.ts"
+      requirements:
+        - "Test export JSON format"
+        - "Test audit report generation"
+        - "Validate exported data against schemas"
+
+  storybook:
+    - file: "stories/objects/UserWithAuthable.stories.tsx"
+      requirements:
+        - "Story: User with multiple roles in different orgs"
+        - "Story: User permission check UI"
+        
+    - file: "stories/objects/OrganizationMembers.stories.tsx"
+      requirements:
+        - "Story: Org member list with roles"
+        - "Story: Role assignment UI"
+
+  documentation:
+    - file: "docs/integration/authable-trait-integration.md"
+      requirements:
+        - "How to compose Authable with User/Org"
+        - "API reference for Authable methods"
+        - "Migration guide for existing projects"
+        - "Entitlement export use cases"
+
+successCriteria:
+  integration:
+    - criterion: "User object composes Authable successfully"
+      validation: "user.getRolesInOrg(orgId) returns correct roles"
+    - criterion: "Organization object composes Authable successfully"
+      validation: "org.getUsersWithRole(roleId) returns members"
+      
+  export:
+    - criterion: "Entitlement export produces valid JSON"
+      validation: "Exported JSON validates against schema"
+    - criterion: "Audit reports identify anomalies"
+      validation: "Detects users with no roles, orphaned memberships"
+      
+  composition:
+    - criterion: "Multi-trait composition works"
+      validation: "User with Authable + Preferenceable + Addressable composes cleanly"
+
+qualityGates:
+  beforeCompletion:
+    - "pnpm test tests/integration/authable-composition.test.ts"
+    - "pnpm test tests/integration/entitlement-export.test.ts"
+    - "Run CLI export commands, validate output"
+    - "Storybook: verify composed object stories render"
+
+metadata:
+  estimatedEffort: "4-5 hours"
+  complexity: "Medium (integration testing, export utilities)"
+  riskLevel: "Low (trait composition pattern proven)"

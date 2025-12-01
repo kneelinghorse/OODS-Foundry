@@ -1,0 +1,231 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B34.1
+name: Network & Flow React Components
+sprint: Sprint 34
+status: Queued
+
+objective: >
+  Implement React wrapper components for all four Network & Flow visualization types:
+  Treemap, Sunburst, ForceGraph, and Sankey. v1.0 uses ECharts exclusively.
+
+context:
+  background: |
+    OODS provides React components that wrap the ECharts adapters, providing a
+    consistent API with proper TypeScript types, accessibility features, and
+    interaction handling.
+
+    In v1.0, all Network & Flow components use ECharts exclusively. The component
+    API is designed for future extensibility (renderer prop exists but defaults
+    to 'echarts' and shows warning for other values).
+
+  research_basis:
+    - "R33.0: Renderer Parameter Alignment (ECharts-First decision)"
+    - "cmos/foundational-docs/data-viz-part2/network-flow-module/ARCHITECTURE.md"
+
+  dependencies:
+    - B33.1  # Schemas
+    - B33.2  # Resolver
+    - B33.3  # Hierarchy adapters
+    - B33.4  # Graph adapter
+    - B33.5  # Sankey adapter
+    - B33.6  # Traits
+
+successCriteria:
+  - All four components render correctly with ECharts
+  - Interactions work (selection, tooltip, drill-down, drag, zoom)
+  - Accessibility fallbacks implemented
+  - Loading and error states handled
+  - TypeScript types are comprehensive
+  - Tests pass with >90% coverage
+
+constraints:
+  - Must follow existing component patterns in src/components/viz/
+  - Must use existing VizContainer infrastructure
+  - v1.0 is ECharts-only (show warning for other renderer values)
+  - Must integrate with cross-filter system
+
+deliverables:
+  components:
+    - path: src/components/viz/Treemap.tsx
+      description: |
+        Treemap React component:
+
+        ```typescript
+        import React, { useMemo } from 'react';
+        import { VizContainer, useEChartsViz } from '../viz-core';
+        import { adaptTreemapToECharts } from '../../viz/adapters/echarts/treemap-adapter';
+        import type { HierarchyInput, TreemapEncoding, TreemapInteraction } from '../../types';
+
+        export interface TreemapProps {
+          /** Hierarchical data (nested or adjacency list format) */
+          data: HierarchyInput;
+          /** Width in pixels */
+          width?: number;
+          /** Height in pixels */
+          height?: number;
+          /** Field to use for color encoding */
+          colorField?: string;
+          /** Color scheme name */
+          colorScheme?: string;
+          /** Enable drill-down on click */
+          drilldown?: boolean;
+          /** Show breadcrumb navigation */
+          breadcrumb?: boolean;
+          /** Callback when a node is selected */
+          onSelect?: (node: TreemapNode) => void;
+          /** Callback when drilling down */
+          onDrillDown?: (path: string[]) => void;
+          /** Renderer (v1.0: only 'echarts' supported) */
+          renderer?: 'echarts';
+          /** CSS class name */
+          className?: string;
+          /** Accessibility label */
+          'aria-label'?: string;
+        }
+
+        export const Treemap: React.FC<TreemapProps> = ({
+          data,
+          width = 400,
+          height = 400,
+          colorField = 'depth',
+          colorScheme = 'blues',
+          drilldown = true,
+          breadcrumb = true,
+          onSelect,
+          onDrillDown,
+          renderer = 'echarts',
+          className,
+          'aria-label': ariaLabel
+        }) => {
+          // v1.0: Warn if non-echarts renderer requested
+          if (renderer !== 'echarts') {
+            console.warn(
+              `Treemap: renderer="${renderer}" is not supported in v1.0. ` +
+              'Using ECharts. Vega-Lite support planned for v1.1+'
+            );
+          }
+
+          // Build ECharts option
+          const option = useMemo(() => {
+            return adaptTreemapToECharts(
+              {
+                dimensions: { width, height },
+                encoding: {
+                  color: { field: colorField, scheme: colorScheme }
+                },
+                interaction: { drilldown, breadcrumb }
+              },
+              data
+            );
+          }, [data, width, height, colorField, colorScheme, drilldown, breadcrumb]);
+
+          // Render with ECharts
+          const { chartRef, isLoading, error } = useEChartsViz(option, {
+            onSelect,
+            onDrillDown
+          });
+
+          if (error) {
+            return <VizContainer.Error error={error} vizType="treemap" />;
+          }
+
+          return (
+            <VizContainer
+              className={className}
+              width={width}
+              height={height}
+              isLoading={isLoading}
+              aria-label={ariaLabel ?? 'Treemap visualization'}
+              a11yFallback={<TreemapA11yFallback data={data} />}
+            >
+              <div ref={chartRef} style={{ width, height }} />
+            </VizContainer>
+          );
+        };
+        ```
+
+    - path: src/components/viz/Sunburst.tsx
+      description: Sunburst React component (similar pattern to Treemap)
+
+    - path: src/components/viz/ForceGraph.tsx
+      description: |
+        Force Graph React component with drag/zoom support
+
+    - path: src/components/viz/Sankey.tsx
+      description: |
+        Sankey React component for flow visualizations
+
+    - path: src/components/viz/network-index.ts
+      description: |
+        Barrel export for all network components:
+
+        ```typescript
+        export { Treemap } from './Treemap';
+        export type { TreemapProps } from './Treemap';
+
+        export { Sunburst } from './Sunburst';
+        export type { SunburstProps } from './Sunburst';
+
+        export { ForceGraph } from './ForceGraph';
+        export type { ForceGraphProps } from './ForceGraph';
+
+        export { Sankey } from './Sankey';
+        export type { SankeyProps } from './Sankey';
+        ```
+
+  a11y:
+    - path: src/components/viz/a11y/
+      description: |
+        Accessibility fallback components:
+        - TreemapA11yFallback.tsx (hierarchical table)
+        - SunburstA11yFallback.tsx (hierarchical table)
+        - GraphA11yFallback.tsx (node + edge lists)
+        - SankeyA11yFallback.tsx (flow table)
+
+  tests:
+    - path: tests/components/viz/Treemap.test.tsx
+    - path: tests/components/viz/Sunburst.test.tsx
+    - path: tests/components/viz/ForceGraph.test.tsx
+    - path: tests/components/viz/Sankey.test.tsx
+
+  storybook:
+    - path: stories/components/Treemap.stories.tsx
+    - path: stories/components/Sunburst.stories.tsx
+    - path: stories/components/ForceGraph.stories.tsx
+    - path: stories/components/Sankey.stories.tsx
+
+technicalApproach:
+  - Review existing viz component patterns
+  - Implement components using ECharts adapters
+  - Implement accessibility fallbacks
+  - Show warnings for unsupported renderer values
+  - Write comprehensive tests
+  - Create Storybook stories
+
+qualityGates:
+  during_development:
+    - Components render correctly
+    - Interactions work as expected
+    - No console errors
+
+  before_completion:
+    - pnpm test tests/components/viz/*.test.tsx passes
+    - Storybook stories complete
+    - Accessibility fallbacks work
+    - a11y audit passes
+    - Coverage >90%
+
+estimatedEffort: "1 session (60-75k tokens)"
+
+notes: |
+  v1.0 Simplifications:
+  - ECharts-only (no renderer switching)
+  - No server transforms needed
+  - No useVizPipeline complexity
+
+  Component API designed for future:
+  - renderer prop exists (defaults to 'echarts')
+  - Shows helpful warning for other values
+  - Can add Vega support in v1.1+ without breaking changes

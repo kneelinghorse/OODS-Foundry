@@ -1,0 +1,403 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B34.2
+name: Vega-Lite Network & Flow Adapters (Server Transform Path)
+sprint: Sprint 34
+status: Queued
+
+objective: >
+  Implement Vega-Lite adapters for Treemap, Sunburst, and Force Graph using
+  pre-computed coordinates from server-side D3 transforms. (Sankey excluded - see B34.3)
+
+context:
+  background: |
+    Vega-Lite lacks native hierarchy and network transforms, so we use server-side
+    D3 transforms (B33.3, B33.4) to pre-compute coordinates. These adapters consume
+    the transform output and generate Vega-Lite specs using primitive marks:
+    - Treemap: rect mark with x/x2/y/y2
+    - Sunburst: arc mark with theta/theta2/radius/radius2
+    - Force Graph: point + rule marks
+
+    NOTE: Sankey is NOT supported in Vega-Lite. See B34.3 for Full Vega escape hatch.
+
+  research_basis:
+    - "RDS.11.4: Vega Transform Gap analysis"
+    - "RDS.11.1: D3-Hierarchy Research (output format)"
+    - "RDS.11.2: D3-Force Research (output format)"
+
+  architecture_reference: "cmos/foundational-docs/data-viz-part2/network-flow-module/ARCHITECTURE.md Section 5.2"
+
+  dependencies:
+    - B33.1  # Schemas (output schemas for transform results)
+    - B33.2  # Resolver (routes to Vega-Lite + transform path)
+    - B33.3  # Hierarchy transforms (Treemap, Sunburst)
+    - B33.4  # Force transform (Network Graph)
+
+successCriteria:
+  - All three adapters produce valid Vega-Lite specs
+  - Treemap renders rectangles at correct positions
+  - Sunburst renders arcs at correct angles
+  - Force graph renders nodes and edges at correct positions
+  - Visual output matches ECharts equivalents
+  - OODS tokens applied correctly
+  - Tests pass with >90% coverage
+
+constraints:
+  - Must consume pre-computed coordinates (not raw hierarchy data)
+  - Sankey NOT supported in Vega-Lite (use B34.3 escape hatch)
+  - Must follow existing Vega-Lite adapter patterns
+  - Must apply OODS design tokens consistently
+
+deliverables:
+  adapters:
+    - path: src/viz/adapters/vega-lite/treemap-adapter.ts
+      description: |
+        Treemap Vega-Lite adapter (consumes server transform output):
+
+        ```typescript
+        import type { TopLevelSpec } from 'vega-lite';
+        import type { TreemapOutput } from '../../types';
+        import { applyVegaTokens, getColorScale } from '../utils/vega-token-utils';
+
+        export function adaptTreemapToVegaLite(
+          spec: NormalizedVizSpec,
+          transformOutput: TreemapOutput
+        ): TopLevelSpec {
+          // Transform output has pre-computed x0/y0/x1/y1
+          const { nodes } = transformOutput;
+
+          return {
+            $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
+            width: spec.dimensions?.width ?? 400,
+            height: spec.dimensions?.height ?? 400,
+            data: {
+              values: nodes
+            },
+            mark: {
+              type: 'rect',
+              stroke: applyVegaTokens('viz.border.color'),
+              strokeWidth: 1
+            },
+            encoding: {
+              x: { field: 'x0', type: 'quantitative', scale: { domain: [0, spec.dimensions?.width ?? 400] }, axis: null },
+              x2: { field: 'x1' },
+              y: { field: 'y0', type: 'quantitative', scale: { domain: [0, spec.dimensions?.height ?? 400] }, axis: null },
+              y2: { field: 'y1' },
+              color: generateColorEncoding(spec, 'depth'),
+              tooltip: generateTooltipEncoding(spec, nodes)
+            },
+            config: applyVegaConfig(spec)
+          };
+        }
+
+        // Optional: Add text labels as a layer
+        export function adaptTreemapWithLabels(
+          spec: NormalizedVizSpec,
+          transformOutput: TreemapOutput
+        ): TopLevelSpec {
+          return {
+            $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
+            width: spec.dimensions?.width ?? 400,
+            height: spec.dimensions?.height ?? 400,
+            data: {
+              values: transformOutput.nodes
+            },
+            layer: [
+              {
+                mark: { type: 'rect', stroke: applyVegaTokens('viz.border.color'), strokeWidth: 1 },
+                encoding: {
+                  x: { field: 'x0', type: 'quantitative', axis: null },
+                  x2: { field: 'x1' },
+                  y: { field: 'y0', type: 'quantitative', axis: null },
+                  y2: { field: 'y1' },
+                  color: generateColorEncoding(spec, 'depth')
+                }
+              },
+              {
+                mark: {
+                  type: 'text',
+                  align: 'center',
+                  baseline: 'middle',
+                  fontSize: 10,
+                  ...applyVegaTokens('viz.label')
+                },
+                encoding: {
+                  x: { field: 'x0', type: 'quantitative' },
+                  x2: { field: 'x1' },
+                  y: { field: 'y0', type: 'quantitative' },
+                  y2: { field: 'y1' },
+                  text: { field: 'id', type: 'nominal' }
+                },
+                transform: [
+                  // Only show labels for cells large enough
+                  { filter: '(datum.x1 - datum.x0) > 50 && (datum.y1 - datum.y0) > 20' }
+                ]
+              }
+            ]
+          };
+        }
+        ```
+
+    - path: src/viz/adapters/vega-lite/sunburst-adapter.ts
+      description: |
+        Sunburst Vega-Lite adapter (consumes server transform output):
+
+        ```typescript
+        import type { TopLevelSpec } from 'vega-lite';
+        import type { SunburstOutput } from '../../types';
+
+        export function adaptSunburstToVegaLite(
+          spec: NormalizedVizSpec,
+          transformOutput: SunburstOutput
+        ): TopLevelSpec {
+          // Transform output has pre-computed startAngle/endAngle/innerRadius/outerRadius
+          const { nodes } = transformOutput;
+          const radius = spec.dimensions?.radius ?? 200;
+
+          return {
+            $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
+            width: radius * 2,
+            height: radius * 2,
+            data: {
+              values: nodes
+            },
+            mark: {
+              type: 'arc',
+              stroke: applyVegaTokens('viz.border.color'),
+              strokeWidth: 1
+            },
+            encoding: {
+              theta: { field: 'startAngle', type: 'quantitative' },
+              theta2: { field: 'endAngle' },
+              radius: { field: 'innerRadius', type: 'quantitative', scale: { domain: [0, radius] } },
+              radius2: { field: 'outerRadius' },
+              color: generateColorEncoding(spec, 'depth'),
+              tooltip: generateTooltipEncoding(spec, nodes)
+            },
+            config: applyVegaConfig(spec)
+          };
+        }
+
+        // Note: Vega-Lite arc mark uses theta/theta2 (radians) directly
+        // Server transform already outputs radians (0 to 2π)
+        ```
+
+    - path: src/viz/adapters/vega-lite/graph-adapter.ts
+      description: |
+        Force Graph Vega-Lite adapter (consumes server transform output):
+
+        ```typescript
+        import type { TopLevelSpec } from 'vega-lite';
+        import type { ForceLayoutOutput } from '../../types';
+
+        export function adaptGraphToVegaLite(
+          spec: NormalizedVizSpec,
+          transformOutput: ForceLayoutOutput
+        ): TopLevelSpec {
+          // Transform output has pre-computed node x/y and link source/target coords
+          const { nodes, links } = transformOutput;
+          const { width = 400, height = 400 } = spec.dimensions ?? {};
+
+          return {
+            $schema: 'https://vega.github.io/schema/vega-lite/v5.json',
+            width,
+            height,
+            layer: [
+              // Links layer (rule marks)
+              {
+                data: { values: links },
+                mark: {
+                  type: 'rule',
+                  ...applyVegaTokens('viz.line'),
+                  opacity: 0.6
+                },
+                encoding: {
+                  x: { field: 'sourceX', type: 'quantitative', scale: { domain: [0, width] }, axis: null },
+                  y: { field: 'sourceY', type: 'quantitative', scale: { domain: [0, height] }, axis: null },
+                  x2: { field: 'targetX' },
+                  y2: { field: 'targetY' },
+                  strokeWidth: generateLinkWidthEncoding(spec)
+                }
+              },
+              // Nodes layer (point marks)
+              {
+                data: { values: nodes },
+                mark: {
+                  type: 'point',
+                  filled: true,
+                  ...applyVegaTokens('viz.point')
+                },
+                encoding: {
+                  x: { field: 'x', type: 'quantitative', scale: { domain: [0, width] }, axis: null },
+                  y: { field: 'y', type: 'quantitative', scale: { domain: [0, height] }, axis: null },
+                  size: generateNodeSizeEncoding(spec),
+                  color: generateNodeColorEncoding(spec),
+                  tooltip: generateTooltipEncoding(spec, nodes)
+                }
+              },
+              // Labels layer (optional)
+              ...(spec.encoding?.label?.show !== false ? [{
+                data: { values: nodes },
+                mark: {
+                  type: 'text',
+                  align: 'left',
+                  dx: 8,
+                  ...applyVegaTokens('viz.label')
+                },
+                encoding: {
+                  x: { field: 'x', type: 'quantitative' },
+                  y: { field: 'y', type: 'quantitative' },
+                  text: { field: 'id', type: 'nominal' }
+                }
+              }] : [])
+            ],
+            config: applyVegaConfig(spec)
+          };
+        }
+
+        function generateNodeSizeEncoding(spec: NormalizedVizSpec): any {
+          if (spec.encoding?.size?.field) {
+            return {
+              field: spec.encoding.size.field,
+              type: 'quantitative',
+              scale: { range: [50, 500] }
+            };
+          }
+          return { value: 100 };
+        }
+
+        function generateNodeColorEncoding(spec: NormalizedVizSpec): any {
+          if (spec.encoding?.color?.field) {
+            return {
+              field: spec.encoding.color.field,
+              type: spec.encoding.color.type ?? 'nominal',
+              scale: { scheme: 'category10' }
+            };
+          }
+          return { value: applyVegaTokens('viz.primary') };
+        }
+        ```
+
+    - path: src/viz/adapters/vega-lite/network-utils.ts
+      description: |
+        Shared utilities for Vega-Lite network adapters:
+
+        ```typescript
+        // Generate color encoding from spec
+        function generateColorEncoding(spec: NormalizedVizSpec, defaultField: string): any;
+
+        // Generate tooltip encoding from spec and data
+        function generateTooltipEncoding(spec: NormalizedVizSpec, data: any[]): any;
+
+        // Generate link width encoding
+        function generateLinkWidthEncoding(spec: NormalizedVizSpec): any;
+
+        // Apply Vega-Lite config with OODS tokens
+        function applyVegaConfig(spec: NormalizedVizSpec): any;
+
+        // Apply OODS tokens to Vega-Lite properties
+        function applyVegaTokens(tokenPath: string): string | number;
+        ```
+
+  tests:
+    - path: tests/viz/adapters/vega-lite/treemap-adapter.test.ts
+      description: |
+        Treemap adapter tests:
+        - Produces valid Vega-Lite spec
+        - Rect marks have correct x/x2/y/y2 encoding
+        - Color encoding applied correctly
+        - Labels layer optional and conditional
+        - OODS tokens applied
+
+    - path: tests/viz/adapters/vega-lite/sunburst-adapter.test.ts
+      description: |
+        Sunburst adapter tests:
+        - Produces valid Vega-Lite spec
+        - Arc marks have correct theta/radius encoding
+        - Angles in radians (0 to 2π)
+        - Color encoding by depth
+        - OODS tokens applied
+
+    - path: tests/viz/adapters/vega-lite/graph-adapter.test.ts
+      description: |
+        Graph adapter tests:
+        - Produces valid Vega-Lite spec
+        - Links layer with rule marks
+        - Nodes layer with point marks
+        - Labels layer optional
+        - Node size encoding works
+        - Node color encoding works
+        - OODS tokens applied
+
+    - path: tests/viz/adapters/vega-lite/network-parity.test.ts
+      description: |
+        Parity tests (compare with ECharts output):
+        - Same data produces visually similar output
+        - Node positions match
+        - Color scales match
+        - Overall layout comparable
+
+  storybook:
+    - path: stories/viz/vega-lite/Treemap.stories.tsx
+    - path: stories/viz/vega-lite/Sunburst.stories.tsx
+    - path: stories/viz/vega-lite/Graph.stories.tsx
+
+technicalApproach:
+  - Review existing Vega-Lite adapter patterns
+  - Implement TreemapVegaLiteAdapter consuming TreemapOutput
+  - Implement SunburstVegaLiteAdapter consuming SunburstOutput
+  - Implement GraphVegaLiteAdapter consuming ForceLayoutOutput
+  - Create shared utilities for Vega-Lite network adapters
+  - Apply OODS tokens using Vega-Lite config
+  - Write comprehensive tests
+  - Create Storybook stories for each
+  - Run parity tests against ECharts adapters
+
+qualityGates:
+  during_development:
+    - Adapters produce valid Vega-Lite specs
+    - Specs render correctly in vega-embed
+    - Visual output similar to ECharts
+
+  before_completion:
+    - pnpm test tests/viz/adapters/vega-lite/*treemap*.test.ts passes
+    - pnpm test tests/viz/adapters/vega-lite/*sunburst*.test.ts passes
+    - pnpm test tests/viz/adapters/vega-lite/*graph*.test.ts passes
+    - Parity tests pass
+    - Storybook stories complete
+    - Coverage >90% on new code
+
+estimatedEffort: "1 session (65-75k tokens)"
+
+notes: |
+  📋 FULL MISSION DETAILS: This YAML file contains complete implementation guidance.
+
+  Key insight: Vega-Lite adapters consume TRANSFORM OUTPUT, not raw data.
+  The pipeline is:
+  1. Raw data → Server transform (B33.3/B33.4) → Computed coordinates
+  2. Computed coordinates → Vega-Lite adapter (this mission) → VL spec
+  3. VL spec → vega-embed → Rendered visualization
+
+  Vega-Lite mark types used:
+  - rect: For treemap rectangles (x/x2/y/y2)
+  - arc: For sunburst arcs (theta/theta2/radius/radius2)
+  - point: For graph nodes (x/y)
+  - rule: For graph edges (x/y/x2/y2)
+  - text: For labels
+
+  Coordinate systems:
+  - Treemap: Cartesian (pixels), origin top-left
+  - Sunburst: Polar (radians/pixels), theta from 0 to 2π
+  - Graph: Cartesian (pixels), origin top-left
+
+  IMPORTANT: Sankey is NOT supported here!
+  - Sankey requires SVG path strings
+  - Vega-Lite cannot bind SVG paths to marks
+  - Use Full Vega escape hatch (B34.3) for Sankey
+  - Resolver must route Sankey + Vega to escape hatch
+
+  Token integration:
+  - Use Vega-Lite config object for global styles
+  - Map OODS tokens to Vega-Lite config properties
+  - Mark-level overrides for specific styles

@@ -1,0 +1,231 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B32.10
+name: Spatial Storybook Polish
+sprint: Sprint 32
+status: Queued
+
+objective: >
+  Enrich spatial Storybook stories with comprehensive controls, realistic data,
+  MDX documentation, interaction demos, and accessibility showcases. Ensure
+  stories serve as both documentation and interactive playground.
+
+context:
+  background: |
+    Spatial components have basic stories from implementation missions (B32.1-B32.3)
+    but they need polish: full controls coverage, realistic data examples, MDX docs
+    tabs, and explicit a11y narrative/fallback demonstrations.
+
+  research_basis:
+    - "ARCHITECTURE.md Appendix B: Pattern 2 - Use Real GeoJSON Data in Stories"
+    - "Existing stories in src/components/viz/spatial/*.stories.tsx"
+
+  architecture_reference: "cmos/foundational-docs/data-viz-part2/spatial-module/ARCHITECTURE.md"
+
+  dependencies:
+    - B32.1  # ChoroplethMap stories exist
+    - B32.2  # BubbleMap stories exist
+    - B32.3  # Supporting component stories exist
+
+successCriteria:
+  - All spatial stories have comprehensive Storybook controls
+  - Stories use real GeoJSON/TopoJSON data (US states, world countries)
+  - Each component has MDX documentation tab
+  - Interaction stories demonstrate hover, click, selection
+  - Accessibility stories show table fallback and narrative
+  - A11y addon shows no violations on all stories
+  - Stories render without console errors/warnings
+
+constraints:
+  - Use existing fixture data from src/components/viz/spatial/fixtures/
+  - Follow existing OODS Storybook patterns (CSF 3.0)
+  - Stories must work in both light and dark themes
+  - No fake/placeholder data (use real geographic boundaries)
+
+deliverables:
+  choropleth_stories:
+    - path: src/components/viz/spatial/ChoroplethMap.stories.tsx (update)
+      description: |
+        Enhance ChoroplethMap stories:
+
+        Stories to include:
+        - Default: US states choropleth with sales data
+        - WorldMap: World countries with population
+        - ColorScales: Sequential, diverging, quantile examples
+        - Interactions: Hover highlights, click selects
+        - Projections: Mercator, AlbersUSA, EqualEarth variants
+        - Accessibility: Table fallback visible, narrative shown
+        - Loading: Skeleton state while data loads
+        - Error: Error boundary demonstration
+
+        Controls:
+        - projection: select dropdown
+        - colorScale: select (quantize/quantile/threshold)
+        - colorRange: color picker array
+        - showLegend: boolean
+        - enableTooltip: boolean
+        - enableSelection: boolean
+
+        ```typescript
+        export const Default: Story = {
+          args: {
+            geoData: usStatesTopology,
+            data: salesByState,
+            valueField: 'sales',
+            geoJoinKey: 'name',
+            projection: 'albersUsa',
+            colorScale: 'quantize',
+            a11y: {
+              description: 'Sales by US state, 2024',
+              tableFallback: { enabled: true, caption: 'Sales by State' },
+              narrative: { summary: 'California leads with $2.3M in sales...' }
+            }
+          }
+        };
+        ```
+
+  bubble_stories:
+    - path: src/components/viz/spatial/BubbleMap.stories.tsx (update)
+      description: |
+        Enhance BubbleMap stories:
+
+        Stories to include:
+        - Default: Store locations with revenue sizing
+        - Clustered: Dense points with clustering enabled
+        - Categorized: Color by category, size by value
+        - Interactions: Hover tooltip, click select
+        - NoBasemap: Points only, no background map
+        - Accessibility: Table fallback, point announcements
+
+        Controls:
+        - sizeRange: [min, max] slider
+        - colorField: select from data fields
+        - cluster.enabled: boolean
+        - cluster.radius: number slider
+        - projection: select dropdown
+
+  supporting_stories:
+    - path: src/components/viz/spatial/MapLegend.stories.tsx (update)
+      description: |
+        Enhance MapLegend stories:
+
+        Stories:
+        - Sequential: Gradient legend for choropleth
+        - Categorical: Discrete color swatches
+        - Size: Circle size legend for bubble
+        - Combined: Color + size together
+        - Positions: Top, bottom, left, right placement
+
+        Controls:
+        - type: select (sequential/categorical/size)
+        - position: select
+        - title: text input
+
+    - path: src/components/viz/spatial/MapControls.stories.tsx (update)
+      description: |
+        Enhance MapControls stories:
+
+        Stories:
+        - Default: Zoom in/out, reset
+        - WithLayers: Layer toggle buttons
+        - Compact: Minimal control set
+        - Keyboard: Focus indicators, keyboard demo
+
+        Controls:
+        - showZoom: boolean
+        - showReset: boolean
+        - showLayerToggles: boolean
+        - position: select
+
+    - path: src/components/viz/spatial/AccessibleMapFallback.stories.tsx (update)
+      description: |
+        Enhance AccessibleMapFallback stories:
+
+        Stories:
+        - TableView: Full data table with sorting
+        - Narrative: Summary and key findings
+        - Combined: Table + narrative together
+        - ScreenReader: Demonstrates live region announcements
+
+        Controls:
+        - showTable: boolean
+        - showNarrative: boolean
+        - sortColumn: select
+        - sortOrder: select (asc/desc)
+
+  mdx_docs:
+    - path: src/components/viz/spatial/ChoroplethMap.mdx
+      description: |
+        MDX documentation for ChoroplethMap:
+        - Component overview
+        - Props table
+        - Basic usage example
+        - Data format requirements
+        - Accessibility requirements
+        - Common patterns
+
+    - path: src/components/viz/spatial/BubbleMap.mdx
+      description: |
+        MDX documentation for BubbleMap:
+        - Similar structure to ChoroplethMap
+
+    - path: src/components/viz/spatial/SpatialOverview.mdx
+      description: |
+        Overview MDX for spatial category:
+        - When to use spatial visualizations
+        - Component comparison table
+        - Quick start guide
+        - Links to individual component docs
+
+  interaction_demos:
+    - path: src/components/viz/spatial/SpatialInteractions.stories.tsx
+      description: |
+        Dedicated interaction demonstration stories:
+
+        Stories:
+        - HoverHighlight: Region/point highlights on hover
+        - ClickSelect: Single and multi-select
+        - CrossFilter: Dashboard context with linked filtering
+        - ZoomPan: Map navigation interactions
+        - KeyboardNav: Full keyboard walkthrough
+
+technicalApproach:
+  - Audit existing stories for gaps
+  - Add argTypes for comprehensive controls
+  - Replace fake data with real GeoJSON fixtures
+  - Create MDX docs following existing patterns
+  - Add interaction-focused stories
+  - Run a11y addon on all stories
+  - Verify no console errors in Storybook
+
+qualityGates:
+  during_development:
+    - Each story renders without errors
+    - Controls affect component as expected
+
+  before_completion:
+    - pnpm storybook builds successfully
+    - All stories pass a11y addon checks
+    - No console errors/warnings
+    - Stories work in light and dark themes
+    - Real geographic data used throughout
+
+estimatedEffort: "1 session (25-35k tokens)"
+
+notes: |
+  Storybook best practices for spatial:
+  - Use real TopoJSON/GeoJSON (US states 10m is good default)
+  - Include realistic data values (sales, population, etc.)
+  - Show both success and edge cases (empty data, single region)
+  - Demonstrate accessibility features explicitly
+  - Add play functions for interaction testing where valuable
+
+  Fixture locations:
+  - src/components/viz/spatial/fixtures/us-states.json
+  - examples/dashboards/us-states-topology.json
+
+  MDX structure:
+  - Keep concise, link to full docs for details
+  - Focus on "how to use" over "how it works"
+  - Include copy-paste ready examples

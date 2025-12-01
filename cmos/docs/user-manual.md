@@ -11,8 +11,9 @@
 3. [Phase 1: Foundation](#phase-1-foundation)
 4. [Phase 2: Sprint Planning](#phase-2-sprint-planning)
 5. [Phase 3: Build Execution](#phase-3-build-execution)
-6. [Phase 4: Sprint Closure](#phase-4-sprint-closure)
-7. [Ongoing Operations](#ongoing-operations)
+6. [Session Management](#session-management)
+7. [Phase 4: Sprint Closure](#phase-4-sprint-closure)
+8. [Ongoing Operations](#ongoing-operations)
 
 ---
 
@@ -420,6 +421,46 @@ The command writes `cmos/research/<mission-id>.md`. Review the generated Markdow
 - **Document as you go**: Update notes, contexts, decisions
 - **Validate frequently**: Catch drift early
 - **Pause intelligently**: Stop at natural breakpoints
+
+---
+
+## Session Management
+
+Build missions aren't the only work you run inside CMOS. Planning, onboarding, and review sessions keep context healthy between builds and write directly to the SQLite timeline.
+
+### Session Types
+
+- **onboarding** – bring a new agent up to speed on a feature or sprint
+- **planning** – roadmap, sprint, or architecture planning conversations
+- **review** – retrospectives, weekly check-ins, or post-mission evaluations
+- **research** – exploratory investigations, spikes, benchmarking
+- **check-in** – quick syncs to capture current progress and blockers
+- **custom** – any structured collaboration that doesn't fit the above
+
+Need deeper walkthroughs? See `docs/session-management-guide.md` for worked examples and templates.
+
+### When to Use Sessions vs Missions
+
+- Use **sessions** for non-build work where the output is context: onboarding, planning, reviews, or research summaries.
+- Use **missions** for build or documentation work that changes the repository and should follow the mission lifecycle.
+- It's common to start a planning session before a series of missions, or to capture learnings in a review session after completing them.
+
+### Basic Session Workflow
+
+1. **Start**: `./cmos/cli.py session start --type planning --title "Sprint 17 planning"`
+2. **Capture**: `./cmos/cli.py session capture decision "Prioritize API latency"`
+3. **Complete**: `./cmos/cli.py session complete --summary "Sprint aligned; next focus on latency" --next-steps "Profile gateway"`
+
+All session captures stay in the active session until completion, when `session_runtime` automatically updates `project_context`, `master_context`, and strategic decisions.
+
+### Common Patterns
+
+- **Sprint planning**: Start a planning session, capture decisions/constraints, then complete with next steps that seed the next missions.
+- **Agent onboarding**: Run `./cmos/cli.py session onboard` for a snapshot, start an onboarding session, capture context and decisions, then complete with actionable next steps.
+- **Weekly review**: Start a review session, capture learnings/constraints, and complete with a concise summary that feeds the master context.
+- **Research spike**: Use a research session to capture findings before creating a follow-up mission.
+
+Keep session notes concise and actionable—agents should be able to follow the transcript later without guessing what happened.
 
 ---
 

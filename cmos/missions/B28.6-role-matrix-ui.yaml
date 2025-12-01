@@ -1,0 +1,145 @@
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B28.6
+sprintId: Sprint 28
+name: "Role Matrix UI & Policy Editor Components"
+
+objective: |
+  Implement React components for authorization management: Role Matrix,
+  Policy Editor, Membership Manager. Deliver Storybook coverage, a11y
+  compliance, and CLI interfaces for ops teams.
+
+context:
+  background: |
+    B28.1-B28.5 delivered backend infrastructure. This mission adds UI layer
+    for managing roles, permissions, memberships, and SoD policies.
+
+  dependencies:
+    - "B28.3 complete (entitlement service APIs)"
+    - "B28.4 complete (SoD policy APIs)"
+    - "Preferenceable UI patterns (PreferenceForm, Matrix components)"
+
+  constraints:
+    - "WCAG 2.2 AA compliance required"
+    - "Keyboard navigation for all interactions"
+    - "Chromatic VRT for visual regressions"
+    - "Reuse OODS RJSF theme from Preferenceable"
+
+scaffoldingReuse:
+  from: "src/components/preferences/NotificationMatrix.tsx"
+  pattern: "Matrix UI → RolePermissionMatrix"
+  adaptations: "Channel × Event → Role × Permission"
+
+deliverables:
+  components:
+    - file: "src/components/authz/RolePermissionMatrix.tsx"
+      requirements:
+        - "Grid: roles (rows) × permissions (columns)"
+        - "Toggle checkboxes for role-permission assignments"
+        - "Read-only mode for viewers"
+        - "Keyboard nav: arrow keys + space to toggle"
+        
+    - file: "src/components/authz/MembershipManager.tsx"
+      requirements:
+        - "List user memberships (org + role)"
+        - "Add/remove role assignments"
+        - "SoD conflict warnings (integrates B28.4 validator)"
+        - "Org-scoped view"
+        
+    - file: "src/components/authz/SoDPolicyEditor.tsx"
+      requirements:
+        - "Create/edit role conflicts"
+        - "Select conflicting roles (dual dropdowns)"
+        - "Reason text field"
+        - "Org scope selector (global vs specific)"
+        
+    - file: "src/components/authz/PermissionChecker.tsx"
+      requirements:
+        - "Diagnostic tool: check if user has permission"
+        - "Inputs: userId, orgId, permission name"
+        - "Output: Yes/No + explanation (via role hierarchy)"
+
+  hooks:
+    - file: "src/hooks/useRolePermissions.ts"
+      requirements:
+        - "Fetches role-permission matrix"
+        - "Optimistic updates with rollback"
+        - "Cache integration (B28.5)"
+        
+    - file: "src/hooks/useMemberships.ts"
+      requirements:
+        - "Fetches user/org memberships"
+        - "assignRole(), revokeRole() mutations"
+        - "SoD validation before mutations"
+
+  stories:
+    - file: "stories/authz/RolePermissionMatrix.stories.tsx"
+      requirements:
+        - "Story: Admin managing permissions"
+        - "Story: Read-only viewer"
+        - "Story: SoD conflict warning"
+        
+    - file: "stories/authz/MembershipManager.stories.tsx"
+      requirements:
+        - "Story: Assign role to user"
+        - "Story: SoD conflict prevention"
+        - "Story: Multi-role user"
+
+  cli:
+    - file: "src/cli/authz-admin.ts"
+      requirements:
+        - "Commands: list-roles, list-permissions, assign-role"
+        - "Commands: create-sod-policy, list-conflicts"
+        - "Dry-run mode for all mutations"
+
+  tests:
+    - file: "tests/components/authz/RolePermissionMatrix.test.tsx"
+      requirements:
+        - "Unit tests: rendering, interaction"
+        - "a11y tests: keyboard nav, screen reader"
+        
+    - file: "tests/components/authz/MembershipManager.a11y.test.tsx"
+      requirements:
+        - "Axe suite: no violations"
+        - "Keyboard-only workflow test"
+
+  documentation:
+    - file: "docs/components/authz-ui-guide.md"
+      requirements:
+        - "Component API reference"
+        - "Usage examples"
+        - "A11y considerations"
+
+successCriteria:
+  functionality:
+    - criterion: "Role-permission matrix supports CRUD"
+      validation: "Can assign/revoke permissions via UI"
+    - criterion: "Membership manager shows SoD warnings"
+      validation: "Attempting conflicting role shows warning"
+      
+  accessibility:
+    - criterion: "All components pass axe suite"
+      validation: "pnpm test tests/components/authz/*.a11y.test.tsx"
+    - criterion: "Keyboard navigation works"
+      validation: "Can complete workflows without mouse"
+      
+  quality:
+    - criterion: "Storybook coverage for all components"
+      validation: "4 components × 3 stories each = 12 stories"
+    - criterion: "VRT baseline established"
+      validation: "Chromatic snapshots approved"
+
+qualityGates:
+  duringDevelopment:
+    - "Test components in Storybook interactively"
+    - "Run axe addon in Storybook"
+    - "Test keyboard nav for each component"
+  beforeCompletion:
+    - "pnpm test tests/components/authz/"
+    - "pnpm chromatic (dry-run, then approve baselines)"
+    - "Minimum 90% coverage"
+
+metadata:
+  estimatedEffort: "5-6 hours"
+  complexity: "Medium (UI patterns established, reuse from Preferenceable)"
+  riskLevel: "Low (well-specified components)"

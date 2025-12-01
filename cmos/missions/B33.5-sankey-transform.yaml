@@ -1,0 +1,399 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B33.5
+name: Sankey Transform & SVG Path Generation
+sprint: Sprint 33
+status: Queued
+
+objective: >
+  Implement server-side D3-sankey transform that computes node positions and generates
+  SVG path strings for links. Critical for Full Vega escape hatch (Vega-Lite cannot render Sankey).
+
+context:
+  background: |
+    Sankey diagrams require complex curved link paths that Vega-Lite cannot produce.
+    This mission implements the server-side transform that:
+    1. Computes node positions (x0/x1/y0/y1)
+    2. Generates SVG path strings for curved links
+    3. Handles circular flows using d3-sankey-circular
+
+    The output is consumed by the Full Vega escape hatch adapter (B34.3).
+
+  research_basis:
+    - "RDS.11.3: D3-Sankey Research (CRITICAL: SVG path generation)"
+    - "RDS.11.4: Vega Transform Gap - Sankey impossible in VL"
+
+  architecture_reference: "cmos/foundational-docs/data-viz-part2/network-flow-module/ARCHITECTURE.md Section 4.2.3"
+
+  dependencies:
+    - B33.1  # Schemas (SankeyInput, SankeyLayoutOutput)
+    - B33.2  # Resolver (routes Sankey + Vega to escape hatch)
+
+successCriteria:
+  - computeSankeyLayout produces correct node rectangles
+  - SVG path strings render correctly in Full Vega
+  - Circular flows handled without errors
+  - Link path smoothness configurable
+  - Performance acceptable for 50-node flows (< 200ms)
+  - Tests pass with >90% coverage on new code
+
+constraints:
+  - Must use d3-sankey (or d3-sankey-circular for cycles)
+  - SVG paths must be valid and renderable
+  - Must run in Node.js (no DOM required)
+  - Output must match SankeyLayoutOutput schema
+  - Must handle bidirectional flows
+
+deliverables:
+  transforms:
+    - path: src/viz/transforms/sankey-transform.ts
+      description: |
+        Sankey layout transform implementation:
+
+        ```typescript
+        import * as d3Sankey from 'd3-sankey';
+        import { sankeyCircular } from 'd3-sankey-circular';
+
+        interface SankeyLayoutOptions {
+          width: number;
+          height: number;
+          nodeWidth?: number;      // default 24
+          nodePadding?: number;    // default 8
+          nodeAlign?: 'left' | 'right' | 'center' | 'justify';  // default 'justify'
+          linkSort?: 'ascending' | 'descending' | null;
+          iterations?: number;     // default 6
+          circular?: boolean;      // auto-detect or force circular mode
+        }
+
+        function computeSankeyLayout(
+          input: SankeyInput,
+          options: SankeyLayoutOptions
+        ): SankeyLayoutOutput {
+          const {
+            width,
+            height,
+            nodeWidth = 24,
+            nodePadding = 8,
+            nodeAlign = 'justify',
+            linkSort = null,
+            iterations = 6,
+            circular = detectCircular(input)
+          } = options;
+
+          // Clone input to avoid mutation
+          const nodes = input.nodes.map(n => ({ ...n }));
+          const links = input.links.map(l => ({ ...l }));
+
+          // Choose sankey generator
+          const generator = circular
+            ? sankeyCircular()
+            : d3Sankey.sankey();
+
+          // Configure generator
+          generator
+            .nodeId((d: any) => d.id)
+            .nodeWidth(nodeWidth)
+            .nodePadding(nodePadding)
+            .nodeAlign(getAlignFunction(nodeAlign))
+            .extent([[0, 0], [width, height]])
+            .iterations(iterations);
+
+          if (linkSort) {
+            generator.linkSort((a, b) =>
+              linkSort === 'ascending'
+                ? a.value - b.value
+                : b.value - a.value
+            );
+          }
+
+          // Compute layout
+          const { nodes: layoutNodes, links: layoutLinks } = generator({
+            nodes,
+            links
+          });
+
+          // Generate SVG paths for links
+          const linkPathGenerator = circular
+            ? sankeyCircular.sankeyLinkPath()
+            : d3Sankey.sankeyLinkHorizontal();
+
+          return {
+            nodes: layoutNodes.map(node => ({
+              id: node.id,
+              x0: node.x0,
+              x1: node.x1,
+              y0: node.y0,
+              y1: node.y1,
+              value: node.value,
+              depth: node.depth,
+              height: node.height,
+              layer: node.layer,
+              ...preserveExtraFields(node)
+            })),
+            links: layoutLinks.map(link => ({
+              sourceId: link.source.id,
+              targetId: link.target.id,
+              value: link.value,
+              width: link.width,
+              y0: link.y0,
+              y1: link.y1,
+              svgPath: linkPathGenerator(link),
+              circular: link.circular ?? false,
+              ...preserveExtraFields(link, ['source', 'target', 'value', 'width', 'y0', 'y1'])
+            }))
+          };
+        }
+
+        // Detect if graph has circular flows
+        function detectCircular(input: SankeyInput): boolean {
+          // Build adjacency and check for cycles via DFS
+          const adj = new Map<string, string[]>();
+          input.links.forEach(link => {
+            const sourceId = typeof link.source === 'object' ? link.source.id : link.source;
+            const targetId = typeof link.target === 'object' ? link.target.id : link.target;
+            if (!adj.has(sourceId)) adj.set(sourceId, []);
+            adj.get(sourceId)!.push(targetId);
+          });
+
+          const visited = new Set<string>();
+          const recursionStack = new Set<string>();
+
+          function hasCycle(nodeId: string): boolean {
+            visited.add(nodeId);
+            recursionStack.add(nodeId);
+
+            for (const neighbor of adj.get(nodeId) || []) {
+              if (!visited.has(neighbor)) {
+                if (hasCycle(neighbor)) return true;
+              } else if (recursionStack.has(neighbor)) {
+                return true;
+              }
+            }
+
+            recursionStack.delete(nodeId);
+            return false;
+          }
+
+          for (const nodeId of adj.keys()) {
+            if (!visited.has(nodeId) && hasCycle(nodeId)) {
+              return true;
+            }
+          }
+
+          return false;
+        }
+
+        // Get d3-sankey alignment function
+        function getAlignFunction(align: string): (node: any, n: number) => number {
+          switch (align) {
+            case 'left': return d3Sankey.sankeyLeft;
+            case 'right': return d3Sankey.sankeyRight;
+            case 'center': return d3Sankey.sankeyCenter;
+            case 'justify':
+            default: return d3Sankey.sankeyJustify;
+          }
+        }
+        ```
+
+    - path: src/viz/transforms/sankey-validation.ts
+      description: |
+        Sankey data validation:
+
+        ```typescript
+        interface SankeyValidationResult {
+          valid: boolean;
+          errors: SankeyError[];
+          warnings: SankeyWarning[];
+          stats: {
+            nodeCount: number;
+            linkCount: number;
+            totalFlow: number;
+            isCircular: boolean;
+            maxDepth: number;
+          };
+        }
+
+        function validateSankeyData(input: SankeyInput): SankeyValidationResult {
+          // Check for missing node references
+          // Check for negative flow values
+          // Check for zero-value links
+          // Detect circular flows
+          // Calculate flow statistics
+        }
+        ```
+
+        Error types:
+        - SANKEY_MISSING_NODE: Link references non-existent node
+        - SANKEY_NEGATIVE_VALUE: Link has negative value
+        - SANKEY_ZERO_VALUE: Link has zero value (warning or error)
+
+        Warning types:
+        - SANKEY_CIRCULAR_DETECTED: Graph has cycles (handled, but noted)
+        - SANKEY_UNBALANCED_FLOW: Input != output for intermediate nodes
+
+    - path: src/viz/transforms/sankey-utils.ts
+      description: |
+        Utility functions:
+
+        ```typescript
+        // Field preservation
+        function preserveExtraFields(
+          data: Record<string, unknown>,
+          excludeFields?: string[]
+        ): Record<string, unknown>;
+
+        // Flow analysis
+        function calculateTotalFlow(links: SankeyLink[]): number;
+        function calculateNodeFlows(
+          nodes: SankeyNode[],
+          links: SankeyLink[]
+        ): Map<string, { incoming: number; outgoing: number }>;
+
+        // Path validation
+        function isValidSvgPath(path: string): boolean;
+
+        // Circular flow utilities
+        function getCircularLinks(links: SankeyLayoutLink[]): SankeyLayoutLink[];
+        ```
+
+  tests:
+    - path: tests/viz/transforms/sankey-transform.test.ts
+      description: |
+        Transform tests:
+
+        Basic layout tests:
+        - Nodes have correct x0/x1/y0/y1 coordinates
+        - Nodes fit within specified dimensions
+        - Node width matches option
+        - Node padding applied correctly
+
+        Link tests:
+        - SVG paths are valid strings
+        - Paths start and end at correct node positions
+        - Link width proportional to value
+        - All links have svgPath property
+
+        Alignment tests:
+        - 'left' alignment pushes sources left
+        - 'right' alignment pushes targets right
+        - 'justify' spreads across full width
+        - 'center' centers the layout
+
+        Circular flow tests:
+        - Circular flows detected automatically
+        - d3-sankey-circular used when cycles present
+        - Circular links marked with circular: true
+        - Layout doesn't throw on cycles
+
+    - path: tests/viz/transforms/sankey-validation.test.ts
+      description: |
+        Validation tests:
+        - Detects missing node references
+        - Detects negative values
+        - Warns on zero-value links
+        - Detects circular flows
+        - Calculates flow statistics correctly
+        - Valid data passes without errors
+
+    - path: tests/viz/transforms/sankey-performance.test.ts
+      description: |
+        Performance benchmarks:
+        - 10 nodes, 15 links: < 20ms
+        - 25 nodes, 50 links: < 50ms
+        - 50 nodes, 100 links: < 200ms
+        - Path generation included in timing
+
+  sample_data:
+    - path: tests/fixtures/network-flow/valid-sankey.json
+    - path: tests/fixtures/network-flow/circular-sankey.json
+    - path: tests/fixtures/network-flow/simple-flow.json
+    - path: tests/fixtures/network-flow/energy-flow.json  # Classic Sankey example
+    - path: tests/fixtures/network-flow/invalid-sankey-missing-node.json
+
+  documentation:
+    - path: docs/viz/transforms/sankey-transform.md
+      description: |
+        Transform documentation:
+        - API reference
+        - Configuration options
+        - SVG path format explanation
+        - Circular flow handling
+        - Performance characteristics
+        - Integration with Full Vega adapter
+        - Examples
+
+technicalApproach:
+  - Install d3-sankey and @types/d3-sankey
+  - Install d3-sankey-circular for cycle handling
+  - Implement layout computation using d3-sankey
+  - Implement SVG path generation using sankeyLinkHorizontal
+  - Implement automatic circular flow detection
+  - Build validation layer for sankey data
+  - Write comprehensive tests
+  - Run performance benchmarks
+  - Document SVG path format for Vega integration
+
+qualityGates:
+  during_development:
+    - Sankey layout produces reasonable rectangles
+    - SVG paths are valid and renderable
+    - Circular flows don't crash
+
+  before_completion:
+    - pnpm test tests/viz/transforms/sankey*.test.ts passes
+    - SVG paths render correctly in test harness
+    - Performance benchmarks pass
+    - Documentation reviewed
+    - Coverage >90% on new code
+
+estimatedEffort: "1 session (65-75k tokens)"
+
+notes: |
+  📋 FULL MISSION DETAILS: This YAML file contains complete implementation guidance.
+
+  D3-sankey key concepts:
+  - sankey(): Creates sankey generator
+  - .nodeId(): Accessor for node ID
+  - .nodeWidth(): Width of node rectangles (pixels)
+  - .nodePadding(): Vertical spacing between nodes
+  - .nodeAlign(): Horizontal alignment strategy
+  - .extent(): Layout bounds [[x0, y0], [x1, y1]]
+  - .iterations(): Relaxation iterations for layout
+
+  Node output properties:
+  - x0, x1: Horizontal bounds (left/right edges)
+  - y0, y1: Vertical bounds (top/bottom edges)
+  - value: Total flow through node
+  - depth: Distance from left (source side)
+  - height: Distance from right (target side)
+  - layer: Horizontal position index
+
+  Link output properties:
+  - source, target: Node object references
+  - y0: Vertical position at source
+  - y1: Vertical position at target
+  - width: Link thickness (based on value)
+
+  SVG path generation:
+  - sankeyLinkHorizontal() generates cubic bezier curves
+  - Path format: "M{x0},{y0}C{cx0},{y0},{cx1},{y1},{x1},{y1}"
+  - Curved paths look better than straight lines
+  - Path can be bound directly to Vega path mark
+
+  Circular flows:
+  - Standard d3-sankey throws on cycles
+  - d3-sankey-circular handles cycles gracefully
+  - Circular links get special curved paths
+  - Auto-detection prevents runtime errors
+
+  Full Vega integration:
+  - Vega path mark binds to svgPath field directly
+  - No additional transformation needed in adapter
+  - See B34.3 for Full Vega escape hatch implementation
+
+  CRITICAL: This is the most complex transform because:
+  1. Sankey is impossible in Vega-Lite
+  2. SVG path strings must be generated server-side
+  3. Full Vega escape hatch is required
+  4. This transform is the bridge that makes it possible

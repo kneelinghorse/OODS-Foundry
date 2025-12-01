@@ -1,0 +1,102 @@
+version: 0.1
+decision: REVISE
+summary:
+  rationale: >
+    Global coverage is high (87.4%, 95% CI 86.2–88.5) but the uncovered 12.6%
+    clusters into coherent, cross-domain gaps (network/topology, flow/alluvial,
+    layered geospatial). Domain dependence is significant (Cyber/Marketing
+    lag Finance/HR by 8–12pp), triggering the revise criteria.
+  target_outcome: >
+    Close structural gaps by elevating Topology and Flow as core archetypes and
+    treating Spatial as a first-class canvas dimension; raise projected
+    coverage toward >95% with domain-balanced performance.
+
+archetypes:
+  existing:
+    - Temporal
+    - ComparisonRanking
+    - PartToWhole
+    - SequentialFlow
+    - DistributionCorrelation
+    - CohortMatrix
+  additions:
+    - name: Topology
+      definition: Visualizations where structure (nodes/edges) is the primary signal.
+      examples:
+        - ForceDirectedGraph
+        - ArcDiagram
+        - AdjacencyMatrix
+        - RouteNetwork (geo-projected)
+      trait_hooks:
+        - TopologyRenderable
+        - NodeStateTokenMap
+        - EdgeEmphasisTokenMap
+      acceptance_criteria:
+        - Supports >1k nodes with clustering or level-of-detail
+        - Keyboard and focus management for nodes/edges
+        - Conservation of theming tokens (no direct colors)
+    - name: Flow
+      definition: Visualizations encoding conserved movement or transitions between stages.
+      examples:
+        - Sankey
+        - Alluvial
+        - Chord
+        - ParallelSets
+      trait_hooks:
+        - FlowConservative
+        - StageSemantics
+        - LinkWeightTokenMap
+      acceptance_criteria:
+        - Validates inflow≈outflow (or declared loss)
+        - Supports labeled bifurcations/merges and hover/focus states
+        - Provides dark-mode and high-contrast token sets
+  canvas_dimensions:
+    - name: Spatial
+      role: Coordinate layer usable with Distribution, Comparison, Topology.
+      capabilities:
+        - ChoroplethBins
+        - PinClustering
+        - RouteOverlay
+        - HeatLayer
+      accessibility:
+        - Contrast-safe basemaps; zoom/pan a11y; keyboard navigation for markers
+
+classification_rules:
+  composite_bars: >
+    Define precedence for grouped vs. stacked vs. 100% stacked; default to
+    grouped when category comparison is primary, stacked when composition is
+    primary, 100% stacked when share-of-total is primary.
+  kpi_with_trend: >
+    KPI-with-sparkline is classified as KPI (not Line) with a trend property;
+    sparkline adheres to line/area token rules but inherits KPI theming.
+  tables_vs_heatmaps: >
+    Use CohortMatrix when grid semantics drive comprehension; encode density
+    via heatmap tokens; avoid treating irregular geographies as matrices.
+
+implementation_impacts:
+  trait_engine:
+    - Add traits: TopologyRenderable, FlowConservative, GeoLayered.
+    - Update validation to enforce conservation checks for Flow.
+  registry:
+    - Register Topology and Flow archetypes with Storybook demos and docs.
+    - Add spatial overlays to Distribution/Comparison examples.
+  tokens:
+    - New tokens for node states, edge emphasis, route status, flow links.
+    - Extend a11y contrast tokens for dense graphs and dark-mode maps.
+  testing:
+    - Add VRT baselines for node-link density, link hover/focus, and geospatial layers.
+    - Expand axe/keyboard coverage for interactive graphs and maps.
+
+coverage_targets:
+  global: ">=0.95 after Flow+Topology modules"
+  domains:
+    finance_hr: ">=0.93 maintained"
+    sales: ">=0.88"
+    marketing: ">=0.90 with Flow module"
+    cybersecurity: ">=0.88 with Topology module"
+    logistics: ">=0.90 with Spatial+Topology overlays"
+
+risk_notes:
+  - WebGL/Canvas performance for dense graphs may impact bundle size; consider lazy-loading modules.
+  - Geospatial data licensing/tiles must remain externalized (no bundled map assets).
+  - Custom visualization container remains required for ~12% bespoke cases.

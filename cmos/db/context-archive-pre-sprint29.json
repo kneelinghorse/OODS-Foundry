@@ -1,0 +1,206 @@
+{
+  "archived_at": "2025-11-29T12:11:33.999833",
+  "sprint_completions": [
+    {
+      "sprint": "Sprint 21",
+      "title": "Visualization Foundation",
+      "completed_at": "2025-11-15T02:32:06Z",
+      "missions_completed": 7,
+      "key_deliverables": [
+        "10 viz traits (Mark, Encoding, Scale)",
+        "Normalized Viz Spec v0.1 with schema",
+        "Vega-Lite adapter (trait \u2192 VL JSON compiler)",
+        "Bar chart component with full a11y",
+        "Line chart component with temporal support",
+        "Viz token system (--viz-* namespace)",
+        "A11y validation suite (15 equivalence rules)"
+      ],
+      "learnings": [
+        "Viz trait taxonomy v0.1 integrates cleanly with existing trait engine - composition patterns validated",
+        "Normalized Viz Spec v0.1 proves renderer abstraction concept - same spec can target multiple renderers",
+        "Vega-Lite adapter demonstrates 1:1 trait\u2192VL mapping works - translation layer is clean and testable",
+        "Two-part a11y (table + narrative) automated successfully - AccessibleTable + ChartDescription reusable across all charts",
+        "Viz tokens as separate --viz-* namespace avoids protected namespace changes - no breaking labels needed",
+        "15 equivalence rules from RDV.4 implemented as validators - a11y baked into foundation",
+        "ResizeObserver + reduced-motion patterns from LineChart applicable to all future chart components"
+      ],
+      "what_worked_well": [
+        "Rich JSON mission specs made handoff crystal clear",
+        "Progressive approach (10 traits, not 30) kept sprint focused",
+        "Research foundation (RDS.7-10) eliminated guesswork",
+        "Single renderer (Vega-Lite) validated architecture before complexity",
+        "Pure additive tokens avoided governance overhead"
+      ],
+      "challenges": [
+        "Token linting fails in pre-existing brand alias files (noted in B21.6)",
+        "ResizeObserver patterns needed refinement for temporal charts"
+      ],
+      "readiness_for_sprint_22": "Excellent - foundation solid, ready for ECharts adapter and interactions"
+    },
+    {
+      "sprint": "Sprint 22",
+      "title": "Visualization Scale-Out",
+      "completed_at": "2025-11-16T00:10:00Z",
+      "missions_completed": 8,
+      "key_deliverables": [
+        "ECharts adapter + renderer selector (src/viz/adapters/echarts-adapter.ts, renderer-selector.ts)",
+        "Interaction hooks + schema updates (src/viz/hooks/useHighlight.ts, docs/viz/normalized-viz-spec.md)",
+        "Scatter/Bubble, Area, Heatmap components with RDV.4 fallbacks (src/components/viz/*.tsx)",
+        "Chart pattern library + pnpm viz:suggest CLI (docs/viz/pattern-library.md, scripts/viz/suggest-chart.mjs)",
+        "Viz benchmark suite + budgets (scripts/perf/run-viz-benchmarks.mjs, tools/perf/viz-budget.json)",
+        "Renderer/performance guides (docs/viz/renderer-selection-guide.md, docs/viz/performance-guide.md)"
+      ],
+      "learnings": [
+        "Spec-first authoring handled interactions + renderer parity without schema churn.",
+        "Deterministic perf tests plus pnpm viz:suggest CLI boosted confidence for product-facing decisions.",
+        "Token-governed color utilities (color-intensity-mapper) are required whenever canvas renderers enter the mix."
+      ],
+      "what_worked_well": [
+        "Renderer abstraction let highlight/tooltip traits ship once and fan out to both stacks.",
+        "Storybook + docs kept pace with code, so every mission shipped with references and a11y baselines.",
+        "Benchmark artifact + diagnostics created an auditable contract for future missions."
+      ],
+      "challenges": [
+        "Needed extra cleanup hooks when switching between vega-embed and ECharts instances to avoid double mounts.",
+        "Palette fidelity required OKLCH to sRGB conversion for heatmaps rendered on canvas."
+      ],
+      "readiness_for_sprint_23": "Layout trait schema, CLI planning, and benchmark coverage are ready; Sprint 23 can focus on facets, layers, and dashboard contexts."
+    },
+    {
+      "sprint": "Sprint 23",
+      "title": "Viz Complex Patterns & Layout Traits",
+      "completed_at": "2025-11-16T19:24:57Z",
+      "missions_completed": 9,
+      "key_deliverables": [
+        "Layout traits: Facet, Layer, Concat (15 trait files total)",
+        "Layout adapters for VL + ECharts (scale resolver, interaction propagation)",
+        "VizFacetGrid + VizLayeredView components with SharedLegend",
+        "Advanced interactions: Filter, Zoom, Brush with React hooks",
+        "Pattern library v2: 20+ complex compositions with responsive strategies",
+        "CLI upgrade: pnpm viz:suggest with --layout and --interactions flags",
+        "Figma handshake: chart primitives + token sync workflow",
+        "Dashboard contexts: Chart + Dashboard as view engine contexts",
+        "CI telemetry: 60+ benchmark scenarios, VRT for layouts"
+      ],
+      "learnings": [
+        "Layout traits compose cleanly with existing Mark/Encoding/Scale/Interaction traits",
+        "Facet scale sharing complex in ECharts - required explicit scale resolver",
+        "Interaction propagation across layout boundaries works via shared state pattern",
+        "Pattern library v2 with responsive strategies reduces decision paralysis",
+        "CLI scaffold generation dramatically improves developer experience",
+        "Dashboard contexts integrate seamlessly with existing view engine",
+        "Performance budgets held across layout scenarios - no violations",
+        "Figma handshake for viz patterns validated design-to-code workflow"
+      ],
+      "what_worked_well": [
+        "RDS.8 research predicted layout adapter challenges - no surprises",
+        "Shared scale resolver pattern reusable across facet/layer/concat",
+        "Sprint 22 interaction foundation made Filter/Zoom/Brush straightforward",
+        "Pattern library v1 \u2192 v2 evolution natural (11 \u2192 20+ patterns)",
+        "Snapshot fix enabled proper progress tracking (8 \u2192 79 snapshots)",
+        "79 snapshots captured entire Sprint 23 journey - excellent audit trail"
+      ],
+      "challenges": [
+        "ECharts facet grid requires manual scale coordination (unlike VL automatic)",
+        "Keyboard navigation across facet panels needed custom focus management",
+        "Brush interaction state sync complex for linked views",
+        "Figma component properties \u2192 VizSpec mapping required schema alignment",
+        "Performance testing with 10K points per panel stressed memory budgets"
+      ],
+      "metrics": {
+        "traits_added": 6,
+        "components_added": 3,
+        "patterns_documented": 20,
+        "benchmark_scenarios": 60,
+        "test_files": 15,
+        "documentation_pages": 8,
+        "context_snapshots_captured": 71
+      },
+      "readiness_for_sprint_24": "Excellent - complete viz system ready for geospatial extensions, hierarchy/network patterns, and polish phase"
+    },
+    {
+      "sprint": "Sprint 24",
+      "title": "Viz Polish & Documentation",
+      "completed_at": "2025-11-17T17:04:31.468856+00:00",
+      "missions_completed": 6,
+      "key_deliverables": [
+        "Viz system overview documentation (Sprint 21-23 synthesis)",
+        "Storybook improvements (welcome page, broken charts fixed, token warnings eliminated)",
+        "Best practices guide (chart selection, performance, a11y)",
+        "3 real-world dashboard examples (User adoption, Subscription MRR, Product usage)",
+        "Performance optimization (25% bundle reduction, 18% memory improvement)",
+        "Sprint 25 planning (Addressable trait ready)"
+      ],
+      "learnings": [
+        "Documentation synthesis after major phase valuable for adoption",
+        "Polish sprints maintain quality and prevent technical debt",
+        "Real-world examples more valuable than pattern specs alone",
+        "Performance optimization without feature creep possible",
+        "Phase transitions need explicit closure + preparation"
+      ],
+      "type": "polish_and_synthesis",
+      "phase_transition": "Viz complete \u2192 Core traits begin"
+    },
+    {
+      "sprint": "Sprint 25",
+      "title": "Addressable Trait (Core Expansion)",
+      "type": "core_trait",
+      "completed_at": "2025-11-18T04:34:34Z",
+      "missions_completed": 7,
+      "key_deliverables": [
+        "Address schema + metadata + Addressable runtime (src/schemas/address.ts, src/traits/addressable/addressable-trait.ts).",
+        "UPU S42 template parser + dataset (src/traits/addressable/template-parser.ts, data/upu-s42-templates.json).",
+        "Validation lifecycle + Google AV adapter + metadata normalization (src/traits/addressable/validation-service.ts, google-av-adapter.ts).",
+        "Multi-role store + default resolver + diagnostics (src/traits/addressable/address-store.ts, role-manager.ts, default-resolver.ts).",
+        "AddressForm / AddressDisplay components with docs + axe coverage (src/components/addresses/*, docs/components/address-form.md).",
+        "User & Organization object integration + integration tests (objects/core/*.object.yaml, tests/integration/addressable-composition.test.ts).",
+        "Sprint 25 retrospective, changelog, diagnostics, and Sprint 26 plan recorded."
+      ],
+      "learnings": [
+        "Three-axis architecture (structure/lifecycle/composition) kept Addressable scope testable and composable.",
+        "Template registry caching + Intl.DisplayNames avoided runtime costs while improving localization fit.",
+        "Validation metadata must capture component-level corrections so UI + service adapters share a contract."
+      ],
+      "what_worked_well": [
+        "Trait/test scaffolding matured \u2013 Addressable shipped with docs + tests inside the same sprint window.",
+        "Diagnostics + changelog loop ensured documentation stayed synchronized with runtime + contexts.",
+        "Object integration playbook reused from viz sprints kept User/Organization adoption deterministic."
+      ],
+      "challenges": [
+        "Google Address Validation throttling required injectable fetch + API key validation in adapter.",
+        "Storybook permutations for addresses needed curated fixtures to avoid Chromatic noise.",
+        "International template QA surfaced dataset drift; JSON snapshot tests now cover template registry."
+      ],
+      "readiness_for_sprint_26": "B26.1\u2013B26.8 missions queued with R21.4 references; Addressable deliverables locked so Classifiable can start immediately."
+    },
+    {
+      "sprint": "Sprint 27",
+      "title": "Preferenceable Trait Close-Out",
+      "type": "core_trait",
+      "completed_at": "2025-11-19T15:38:55Z",
+      "missions_completed": 8,
+      "key_deliverables": [
+        "Preferenceable trait definition + runtime + schemas (traits/core/Preferenceable.trait.*, src/traits/preferenceable/preferenceable-trait.ts, src/schemas/preferences/*).",
+        "Schema registry + RJSF PreferenceForm/Preview components and Notification Matrix widgets (data/preference-schemas/registry.json, src/components/preferences/*).",
+        "Migration log + compatibility/diff tooling, cache + jsonb_path_ops GIN index, diagnostics + docs (database/migrations/20251118_preference_migration_log.sql, database/migrations/20251119_preference_gin_index.sql, src/traits/preferenceable/compatibility-checker.ts, dual-write-migrator.ts, read-repair.ts, cache/*).",
+        "User integration + examples/tests (`examples/objects/user-with-preferences.ts`, generated/objects/User.d.ts, tests/integration/preferenceable-composition.test.ts)."
+      ],
+      "learnings": [
+        "Registry + uiSchema exports keep PreferenceForm + type generation aligned.",
+        "Splitting lazy read-repair vs eager dual-write made migration logs auditable.",
+        "Cache metrics + jsonb_path_ops indexing are mandatory for <10 ms preference reads."
+      ],
+      "what_worked_well": [
+        "Trait, registry, UI, and docs shipped in one sprint using shared scaffolding.",
+        "Diagnostics + context updates stayed in lockstep with deliverables.",
+        "Storybook + integration examples made downstream adoption straightforward."
+      ],
+      "challenges": [
+        "Balancing read-repair defaults with migration history required additional guards.",
+        "Notification matrix widgets needed explicit compact density styles to avoid overflow.",
+        "Cache warmers surfaced a need for summarized telemetry; metrics table added as part of sprint."
+      ],
+      "readiness_for_sprint_28": "Extension Pack overview + research links captured in cmos/planning/sprint-28-30-overview.md; Authorization missions can start immediately."
+    }
+  ]
+}

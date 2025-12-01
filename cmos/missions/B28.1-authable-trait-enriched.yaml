@@ -1,0 +1,532 @@
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B28.1
+sprintId: Sprint 28
+name: "Authable Trait Foundation & RBAC Schema Registry"
+
+# ============================================================================
+# OBJECTIVE
+# ============================================================================
+objective: |
+  Implement the foundational Authable trait and canonical RBAC schema registry
+  for Sprint 28's Authorization Extension Pack. This mission establishes the
+  trait interface, JSON Schema definitions, TypeScript DTOs, and registry/validator
+  modules that will power multi-tenant role-based access control.
+
+  This work mirrors the Preferenceable trait scaffolding pattern from Sprint 27
+  but adapts it for authorization domain concerns: roles, permissions, memberships,
+  and role hierarchies per R21.2 canonical model.
+
+# ============================================================================
+# CONTEXT & BACKGROUND
+# ============================================================================
+context:
+  background: |
+    Sprint 28 kicks off the Extension Pack phase (Sprint 28-30) following the
+    completion of Core Trait Expansion (Addressable, Classifiable, Preferenceable).
+
+    Authorization is NOT a core trait—it's an Extension Pack because of domain
+    complexity (hierarchies, ABAC/ReBAC evolution paths). The Membership table
+    serves as the integration point linking core User/Organization traits to
+    the authz domain (R21.2 Part 2.2).
+
+    This mission delivers the schema foundation that B28.2-B28.7 will build upon.
+
+  dependencies:
+    - "Sprint 27 complete (Preferenceable trait pattern established)"
+    - "R21.2 research complete and validated"
+    - "User and Organization core objects available for FK references"
+
+  constraints:
+    - "Reuse Preferenceable registry/validator scaffolding patterns"
+    - "All schema decisions must cite R21.2 sections explicitly"
+    - "Maintain ≥90% test coverage per PROJECT_CONTEXT standards"
+    - "Follow CMOS quality gates: validate incrementally, not at end"
+    - "Chromatic TurboSnap enabled; Storycap fallback disabled until baselines stable"
+
+# ============================================================================
+# RESEARCH FINDINGS TO INCORPORATE
+# ============================================================================
+researchFindings:
+  coreModel:
+    source: "R21.2 Part 2.1 & 4.2"
+    findings:
+      - key: "5-table canonical RBAC model"
+        details: |
+          Roles, Permissions, Role_Permissions (junction), Memberships (multi-tenant junction),
+          Role_Hierarchy (adjacency list). This is the NIST standard + SaaS adaptations.
+        citation: "R21.2 Part 2.1 (Core 5), Part 4.2 (SQL DDL)"
+
+      - key: "Membership table is THE critical integration point"
+        details: |
+          Replaces naive user_roles with (user_id, organization_id, role_id) triple.
+          This enables multi-tenant SaaS: user can be Admin in OrgA, Viewer in OrgB.
+        citation: "R21.2 Part 2.2 (The SaaS Imperative: The Membership Pattern)"
+
+      - key: "Roles are global in v1.0"
+        details: |
+          Role definitions (Admin, Editor, Viewer) are system-wide, not org-specific.
+          Future v2.0 could add organization_id FK to roles for custom roles per tenant.
+        citation: "R21.2 Part 4.2 TABLE 1 comment"
+
+      - key: "Permissions are atomic operations"
+        details: |
+          Format: 'resource:action' (e.g., 'document:create', 'user:invite').
+          resource_type column optional for UI grouping.
+        citation: "R21.2 Part 4.2 TABLE 2"
+
+  architectureDecisions:
+    source: "R21.2 Part 3"
+    decisions:
+      - decision: "Adjacency List for role hierarchy (v1.0)"
+        rationale: |
+          Simple write (single INSERT), acceptable read performance with aggressive caching.
+          Nested Set model deferred to v2.0 due to write complexity.
+        tradeoff: "Read requires recursive CTE or multi-level JOIN, but cache mitigates this"
+        citation: "R21.2 Part 3.1 (Advanced Model: Hierarchical Roles)"
+
+      - decision: "Relational junction for permissions (v1.0)"
+        rationale: |
+          role_permissions junction table is simple, normalized, easy to query.
+          JSON policy documents (AWS IAM style) deferred to v2.0 for ABAC support.
+        tradeoff: "Cannot represent conditions or 'Deny' rules, but v1.0 doesn't need them"
+        citation: "R21.2 Part 3.2 (Relational Junction vs JSON Policy Documents)"
+
+      - decision: "ABAC/ReBAC out of scope for v1.0"
+        rationale: |
+          Attribute-Based AC (dynamic context evaluation) and Relationship-Based AC
+          (Zanzibar-style graph) are v2.0/v3.0 concerns. v1.0 is pure RBAC.
+        citation: "R21.2 Part 3.3 (The Inevitable Evolution), Part 4.3 (Out-of-Scope)"
+
+  integrationPoints:
+    source: "R21.2 Part 4.2 TABLE 4"
+    points:
+      - point: "authz.memberships.user_id → core.users(id)"
+        description: "Foreign key to OODS User trait"
+        constraint: "ON DELETE CASCADE"
+
+      - point: "authz.memberships.organization_id → core.organizations(id)"
+        description: "Foreign key to OODS Organization trait"
+        constraint: "ON DELETE CASCADE"
+
+      - point: "authz.memberships.role_id → authz.roles(id)"
+        description: "Foreign key to Role defined in this extension pack"
+        constraint: "ON DELETE CASCADE"
+
+      - point: "UNIQUE constraint"
+        description: "UNIQUE(user_id, organization_id, role_id)"
+        rationale: "User can have multiple roles in one org, but not same role twice"
+
+# ============================================================================
+# DELIVERABLES (Concrete File List)
+# ============================================================================
+deliverables:
+  traits:
+    - file: "traits/core/Authable.trait.ts"
+      description: "TypeScript trait definition with membership semantics"
+      requirements:
+        - "Define trait parameters if any (likely none for v1.0)"
+        - "Reference Membership integration points in trait metadata"
+        - "Include semantics section explaining RBAC role"
+
+    - file: "traits/core/Authable.trait.yaml"
+      description: "YAML trait definition (mirrors .ts for dual format support)"
+      requirements:
+        - "Must validate against trait schema"
+        - "Include R21.2 citations in comments/description"
+
+  schemas:
+    - file: "src/schemas/authz/role.schema.ts"
+      description: "Zod schema for Role entity"
+      requirements:
+        - "Fields: id (uuid), name (text, unique), description (text optional)"
+        - "Validation: name must be non-empty, alphanumeric + underscore"
+        - "Export TypeScript type via z.infer"
+
+    - file: "src/schemas/authz/permission.schema.ts"
+      description: "Zod schema for Permission entity"
+      requirements:
+        - "Fields: id (uuid), name (text, unique), description, resource_type (optional)"
+        - "Validation: name format 'resource:action' (e.g., 'document:create')"
+        - "Export TypeScript type"
+
+    - file: "src/schemas/authz/membership.schema.ts"
+      description: "Zod schema for Membership entity (THE critical schema)"
+      requirements:
+        - "Fields: id, user_id (FK), organization_id (FK), role_id (FK), created_at, updated_at"
+        - "Validation: all FKs must be valid UUIDs"
+        - "Document the UNIQUE constraint in comments"
+        - "Export TypeScript type MembershipDocument"
+
+    - file: "src/schemas/authz/role-hierarchy.schema.ts"
+      description: "Zod schema for RoleHierarchy adjacency list"
+      requirements:
+        - "Fields: parent_role_id (FK), child_role_id (FK)"
+        - "Validation: parent_role_id !== child_role_id (prevent self-reference)"
+        - "Export TypeScript type"
+
+    - file: "data/authz-schemas/registry.json"
+      description: "JSON Schema registry (mirrors Preferenceable pattern)"
+      requirements:
+        - "JSON Schema definitions for Role, Permission, Membership, RoleHierarchy"
+        - "Schema versioning metadata (v1.0.0)"
+        - "UI schema stubs for future form generation"
+
+  runtime:
+    - file: "src/traits/authz/authz-trait.ts"
+      description: "Authable trait implementation"
+      requirements:
+        - "Trait interface matching trait definition"
+        - "Integration helpers for User/Org composition"
+
+    - file: "src/traits/authz/schema-registry.ts"
+      description: "Schema registry API (mirrors Preferenceable)"
+      requirements:
+        - "getSchema(schemaId: string) method"
+        - "validateSchema(data, schemaId) method"
+        - "listSchemas() method"
+        - "Compatibility check utilities (for future migrations)"
+
+    - file: "src/traits/authz/schema-validator.ts"
+      description: "Dual validation: Zod + JSON Schema"
+      requirements:
+        - "validateRole(data) using role.schema.ts"
+        - "validatePermission(data)"
+        - "validateMembership(data)"
+        - "Detailed error messages with field paths"
+
+    - file: "src/traits/authz/type-generator.ts"
+      description: "TypeScript type generator from JSON Schemas"
+      requirements:
+        - "Generate .d.ts files from registry.json"
+        - "CLI integration for regeneration"
+        - "Mirrors Preferenceable type-generator pattern"
+
+  documentation:
+    - file: "docs/traits/authable-trait.md"
+      description: "Authable trait documentation"
+      requirements:
+        - "Overview of RBAC model with R21.2 citations"
+        - "Membership pattern explanation with diagrams"
+        - "Integration examples: User + Authable, Organization + Authable"
+        - "Code examples for common operations"
+
+    - file: "docs/traits/authz-membership-pattern.md"
+      description: "Deep dive on Membership integration point"
+      requirements:
+        - "Multi-tenant SaaS rationale (R21.2 Part 2.2)"
+        - "Comparison table: naive user_roles vs Membership"
+        - "FK relationship diagram"
+        - "Usage examples: querying user roles in an org"
+
+    - file: "docs/authz/schema-registry-guide.md"
+      description: "Schema registry usage documentation"
+      requirements:
+        - "How to validate RBAC entities"
+        - "CLI commands for schema operations"
+        - "Future migration workflow (tie to B28.3)"
+
+  tests:
+    - file: "tests/traits/authable.test.ts"
+      description: "Authable trait validation tests"
+      requirements:
+        - "Test trait composition with User object"
+        - "Test trait composition with Organization object"
+        - "Test trait metadata and semantics"
+        - "Minimum 90% coverage"
+
+    - file: "tests/schemas/authz.test.ts"
+      description: "RBAC schema validation tests"
+      requirements:
+        - "Test Role schema: valid/invalid names, uniqueness"
+        - "Test Permission schema: name format validation"
+        - "Test Membership schema: FK validation, UNIQUE constraint logic"
+        - "Test RoleHierarchy schema: circular dependency prevention"
+        - "Minimum 90% coverage"
+
+    - file: "tests/schemas/authz-registry.test.ts"
+      description: "Schema registry tests"
+      requirements:
+        - "Test schema retrieval by ID"
+        - "Test validation via registry"
+        - "Test compatibility checks"
+        - "Minimum 90% coverage"
+
+  generated:
+    - file: "generated/types/authz.d.ts"
+      description: "Generated TypeScript types from JSON Schemas"
+      requirements:
+        - "Role, Permission, Membership, RoleHierarchy interfaces"
+        - "Auto-generated, do not edit header"
+
+# ============================================================================
+# SCAFFOLDING REUSE MAP (from Preferenceable)
+# ============================================================================
+scaffoldingReuseMap:
+  - from: "src/traits/preferenceable/schema-registry.ts"
+    to: "src/traits/authz/schema-registry.ts"
+    pattern: "Registry pattern with getSchema, validateSchema, compatibility checks"
+    adaptation: |
+      Replace preference schema references with authz schema references.
+      Maintain same API surface for consistency.
+
+  - from: "src/traits/preferenceable/schema-validator.ts"
+    to: "src/traits/authz/schema-validator.ts"
+    pattern: "Zod + JSON Schema dual validation approach"
+    adaptation: |
+      Adapt for Role/Permission/Membership instead of PreferenceDocument.
+      Keep same error formatting structure.
+
+  - from: "data/preference-schemas/registry.json"
+    to: "data/authz-schemas/registry.json"
+    pattern: "JSON Schema registry structure with versioning"
+    adaptation: |
+      Replace preference schemas with RBAC entity schemas.
+      Maintain schema versioning metadata structure (v1.0.0).
+
+  - from: "docs/traits/preferenceable-trait.md"
+    to: "docs/traits/authable-trait.md"
+    pattern: "Trait documentation structure with research citations"
+    adaptation: |
+      Replace R21.5 references with R21.2 references.
+      Adapt examples from preferences to roles/permissions.
+
+  - from: "tests/schemas/preferences.test.ts"
+    to: "tests/schemas/authz.test.ts"
+    pattern: "Schema validation test structure"
+    adaptation: |
+      Adapt test cases for RBAC entities instead of preference documents.
+
+# ============================================================================
+# SUCCESS CRITERIA
+# ============================================================================
+successCriteria:
+  traitDefinition:
+    - criterion: "Authable trait specs (TS + YAML) authored and validated"
+      validation: "Trait parser accepts both formats without errors"
+      citation: "Following trait authoring standards from agents.md"
+
+    - criterion: "Trait metadata references Membership integration points"
+      validation: "Trait includes comments/semantics explaining User/Org FK refs"
+      citation: "R21.2 Part 4.2 TABLE 4 (Memberships table)"
+
+  schemas:
+    - criterion: "All 4 core schemas implemented with Zod + JSON Schema"
+      validation: "Role, Permission, Membership, RoleHierarchy schemas pass validation"
+      entities:
+        - "Role: name UNIQUE, non-empty description optional (R21.2 Part 4.2 TABLE 1)"
+        - "Permission: name format 'resource:action', resource_type optional (R21.2 Part 4.2 TABLE 2)"
+        - "Membership: user_id/org_id/role_id FKs, UNIQUE constraint (R21.2 Part 4.2 TABLE 4)"
+        - "RoleHierarchy: parent/child FKs, circular prevention (R21.2 Part 4.2 TABLE 5)"
+
+    - criterion: "JSON Schema registry published at data/authz-schemas/registry.json"
+      validation: "Registry includes all 4 schemas with v1.0.0 version metadata"
+
+  runtime:
+    - criterion: "Schema registry API mirrors Preferenceable interface"
+      validation: "getSchema, validateSchema, listSchemas methods work correctly"
+      coverage: "≥90% test coverage on schema-registry.ts"
+
+    - criterion: "Schema validator provides detailed error messages"
+      validation: "Failed validation includes field path and reason"
+      example: "membership.user_id: must be a valid UUID"
+
+  documentation:
+    - criterion: "All docs cross-link to R21.2 sections explicitly"
+      validation: "Each architectural decision cites R21.2 Part X.Y"
+      docs:
+        - "authable-trait.md references R21.2 Part 2.2 (Membership)"
+        - "authz-membership-pattern.md includes R21.2 citations"
+
+    - criterion: "Integration examples show User + Authable composition"
+      validation: "Code examples demonstrate trait composition pattern"
+
+  testing:
+    - criterion: "Test coverage ≥90% for all new modules"
+      validation: "pnpm vitest --coverage tests/traits tests/schemas"
+      threshold: "90% lines, 90% functions, 90% branches"
+
+    - criterion: "All schemas have positive and negative test cases"
+      validation: "Tests cover valid data, invalid formats, constraint violations"
+
+  quality:
+    - criterion: "Type checking passes"
+      validation: "pnpm typecheck runs clean"
+
+    - criterion: "Documentation links validated"
+      validation: "./cmos/cli.py validate docs passes"
+
+    - criterion: "Chromatic guardrails configured (TurboSnap enabled)"
+      validation: "Chromatic config references authz stories (even if stories minimal for B28.1)"
+
+# ============================================================================
+# QUALITY GATES (Progressive Validation)
+# ============================================================================
+qualityGates:
+  duringDevelopment:
+    - gate: "Incremental test writing"
+      cadence: "After each schema/module implementation"
+      commands:
+        - "pnpm vitest tests/schemas/authz.test.ts (after schemas)"
+        - "pnpm vitest tests/schemas/authz-registry.test.ts (after registry)"
+        - "pnpm vitest tests/traits/authable.test.ts (after trait)"
+
+    - gate: "Coverage monitoring"
+      cadence: "After each test suite addition"
+      commands:
+        - "pnpm vitest --coverage tests/schemas"
+        - "pnpm vitest --coverage tests/traits"
+
+    - gate: "Type checking"
+      cadence: "After adding new types or schemas"
+      commands:
+        - "pnpm typecheck"
+
+  beforeCompletion:
+    - gate: "Full test suite"
+      commands:
+        - "pnpm test tests/traits/authable.test.ts"
+        - "pnpm test tests/schemas/authz.test.ts"
+        - "pnpm test tests/schemas/authz-registry.test.ts"
+      threshold: "All tests pass, ≥90% coverage"
+
+    - gate: "Type system validation"
+      commands:
+        - "pnpm typecheck"
+      threshold: "Zero TypeScript errors"
+
+    - gate: "Documentation validation"
+      commands:
+        - "./cmos/cli.py validate docs"
+      threshold: "All internal links resolve"
+
+    - gate: "Generated types sync check"
+      commands:
+        - "pnpm authz:generate-types (ensure up-to-date)"
+        - "git diff generated/types/authz.d.ts (should be clean)"
+
+# ============================================================================
+# EXAMPLES & PATTERNS
+# ============================================================================
+examples:
+  traitComposition:
+    user: |
+      // examples/objects/user-with-authable.ts
+      import { User } from '@/objects/User';
+      import { Authable } from '@/traits/authz/authz-trait';
+
+      // User already has Identifiable, Timestamped, Statusable
+      // Now add Authable to enable RBAC membership
+      const AuthorizedUser = composeTraits(User, [Authable]);
+
+      // This enables:
+      // - user.memberships: Membership[]
+      // - user.getRolesInOrg(orgId): Role[]
+      // - user.hasPermission(orgId, permission): boolean
+
+    organization: |
+      // examples/objects/organization-with-authable.ts
+      import { Organization } from '@/objects/Organization';
+      import { Authable } from '@/traits/authz/authz-trait';
+
+      const AuthorizedOrganization = composeTraits(Organization, [Authable]);
+
+      // This enables:
+      // - org.memberships: Membership[]
+      // - org.getUsersWithRole(roleId): User[]
+      // - org.getMemberPermissions(userId): Permission[]
+
+  schemaUsage:
+    validation: |
+      // Using the schema validator
+      import { validateMembership } from '@/traits/authz/schema-validator';
+
+      const membershipData = {
+        id: '550e8400-e29b-41d4-a716-446655440000',
+        user_id: '123e4567-e89b-12d3-a456-426614174000',
+        organization_id: '789e0123-e45b-67c8-d901-234567890abc',
+        role_id: 'abc12345-def6-7890-ghij-klmnopqrstuv',
+        created_at: '2025-11-19T00:00:00Z',
+        updated_at: '2025-11-19T00:00:00Z'
+      };
+
+      const result = validateMembership(membershipData);
+      if (!result.success) {
+        console.error('Validation failed:', result.errors);
+        // Example error: "membership.user_id: must be a valid UUID"
+      }
+
+    registry: |
+      // Using the schema registry
+      import { schemaRegistry } from '@/traits/authz/schema-registry';
+
+      const roleSchema = schemaRegistry.getSchema('role');
+      const isValid = schemaRegistry.validateSchema(roleData, 'role');
+      const allSchemas = schemaRegistry.listSchemas();
+      // Returns: ['role', 'permission', 'membership', 'role-hierarchy']
+
+# ============================================================================
+# DIAGNOSTIC UPDATES
+# ============================================================================
+diagnosticUpdates:
+  location: "diagnostics.json"
+  updates:
+    - path: "traits.authable"
+      value:
+        status: "implemented"
+        mission: "B28.1"
+        version: "1.0.0"
+        schemas:
+          - "role"
+          - "permission"
+          - "membership"
+          - "role-hierarchy"
+        registry: "data/authz-schemas/registry.json"
+
+    - path: "helpers.authzSchemas"
+      value:
+        lastValidated: "<timestamp>"
+        coveragePercent: ">90"
+        mission: "B28.1"
+
+# ============================================================================
+# HANDOFF NOTES (for B28.2)
+# ============================================================================
+handoffNotes:
+  forNextMission: "B28.2 - RBAC Database Foundations"
+  keyOutputs:
+    - "Schema definitions ready for SQL DDL generation"
+    - "Membership table spec ready for FK references to core.users/organizations"
+    - "Role hierarchy adjacency list pattern ready for implementation"
+
+  integrationPoints:
+    - "B28.2 will create SQL migrations using these schema definitions"
+    - "authz.memberships table must reference core.users and core.organizations"
+    - "Seed scripts in B28.2 should use schema validators from this mission"
+
+  blockers:
+    - "None expected - schemas are self-contained"
+    - "If User/Organization core tables don't exist, B28.2 will need to create stubs"
+
+# ============================================================================
+# NOTES & REMINDERS
+# ============================================================================
+notes:
+  - "This is Sprint 28's foundation mission - take time to get schemas right"
+  - "Membership table is THE integration point - document it thoroughly"
+  - "R21.2 research is comprehensive - cite sections generously in docs"
+  - "Reusing Preferenceable patterns accelerates delivery and ensures consistency"
+  - "Coverage threshold is 90% per PROJECT_CONTEXT - enforce via vitest.config.ts"
+  - "TDD approach: write failing test, implement feature, iterate"
+
+# ============================================================================
+# METADATA
+# ============================================================================
+metadata:
+  estimatedEffort: "4-6 hours"
+  complexity: "Medium (well-researched, clear patterns)"
+  riskLevel: "Low (foundational work, no external dependencies)"
+  prerequisites:
+    - "R21.2 research reviewed"
+    - "Preferenceable trait pattern understood"
+    - "Sprint 27 retrospective reviewed"

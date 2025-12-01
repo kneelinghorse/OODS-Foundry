@@ -1,0 +1,58 @@
+apiVersion: mission.v1
+kind: Mission
+metadata:
+  name: hero-component-token-extraction-example
+  description: "Example instantiation: Extracting design tokens from a landing page hero component"
+  template: "design-system-token-extraction-gemini"
+  version: "1.0.0"
+
+spec:
+  parameters:
+    component_name: "landing_page_hero"
+    component_type: "landing_page"
+    token_categories:
+      - "color"
+      - "typography"
+      - "spacing"
+      - "border"
+    grid_system: "8pt"
+    color_format: "hex"
+    wcag_validation: true
+    extract_specific_tokens:
+      - "primary_brand_color"
+      - "hero_heading_font"
+      - "hero_padding_vertical"
+      - "hero_padding_horizontal"
+      - "cta_button_radius"
+    design_system_context: "B2B SaaS platform targeting enterprise customers, emphasizing trust, professionalism, and clear value proposition"
+    json_schema:
+      schema_name: "HeroComponentTokenSchema"
+      enforce_strict_validation: true
+      include_metadata: true
+
+  resources:
+    visual_input: "screenshots/landing-page-hero-component.png"
+    reference_design_system: "resources/design-tokens-reference.json"
+    expected_output: "structured-json"
+    processing_priority: "high"
+
+  execution:
+    model: "Gemini 1.5 Pro"
+    temperature: 0.1
+    max_tokens: 3000
+    chain_of_thought: true
+    
+  validation:
+    success_criteria:
+      - "Minimum 15 tokens extracted across all categories"
+      - "All color tokens include WCAG contrast ratios"
+      - "All spacing values are multiples of 8pt grid"
+      - "Typography tokens include complete font specifications"
+      - "JSON conforms to specified schema"
+    quality_threshold: 0.95
+
+  output:
+    format: "json"
+    file_path: "results/hero-component-tokens.json"
+    include_confidence_scores: true
+    include_validation_results: true

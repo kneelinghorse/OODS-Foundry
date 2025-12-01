@@ -1,0 +1,392 @@
+---
+mission: B29.1
+name: "Communicable Trait Foundation & Messaging Schema Registry"
+sprint: "Sprint 29"
+type: "Build"
+status: "Queued"
+estimatedEffort: "4-6 hours"
+complexity: "Medium"
+dependencies: []
+tags: ["trait", "foundation", "schema-registry", "communication"]
+
+# ============================================================================
+# MISSION OVERVIEW
+# ============================================================================
+summary: |
+  Implement the foundational Communicable trait and canonical messaging schema
+  registry based on R20.1 (Notification Model) and R20.6 (Messaging Systems)
+  research. Establish the trait specification, core schemas (Channel, Template,
+  DeliveryPolicy, Message), registry with validation, and comprehensive
+  documentation with explicit research citations.
+
+objectives:
+  - Define Communicable trait with trait specification in TypeScript + YAML
+  - Create messaging schema registry mirroring Preferenceable/Authable patterns
+  - Implement schema validator using Zod DTOs for all communication entities
+  - Deliver comprehensive documentation with R20.1/R20.6 citations
+  - Achieve ≥90% test coverage for registry + validator modules
+
+# ============================================================================
+# RESEARCH FOUNDATIONS
+# ============================================================================
+researchFindings:
+  notificationModel:
+    source: "R20.1 Canonical Notification Model"
+    findings:
+      - key: "Multi-channel orchestration (email, SMS, push, in-app, webhook)"
+        citation: "R20.1 Part 2.1 (Channel Taxonomy)"
+        implication: "Channel enum must support 5 core types + extensibility"
+
+      - key: "Template-driven content with variable substitution"
+        citation: "R20.1 Part 2.3 (Template Engine Patterns)"
+        implication: "Template schema needs body, subject, variables map, locale support"
+
+      - key: "Delivery state machine (queued → sent → delivered → failed → retried)"
+        citation: "R20.1 Part 3.1 (State Lifecycle)"
+        implication: "DeliveryAttempt schema tracks state + transitions + timestamps"
+
+      - key: "Preference-driven routing with opt-out granularity"
+        citation: "R20.1 Part 4.2 (Integration with Preferenceable)"
+        implication: "Bridge to Preferenceable notification matrix (Channel × Event)"
+
+  messagingPatterns:
+    source: "R20.6 Foundational Analysis of Modern Message and Communication Systems"
+    findings:
+      - key: "Message vs Conversation distinction (atomic vs thread)"
+        citation: "R20.6 Part 1.2 (Domain Primitives)"
+        implication: "Support both one-off messages and threaded conversations"
+
+      - key: "Read receipts and delivery confirmation patterns"
+        citation: "R20.6 Part 2.4 (Acknowledgment Protocols)"
+        implication: "MessageStatus tracks sent/delivered/read with timestamps"
+
+      - key: "Multi-party conversations with role-based permissions"
+        citation: "R20.6 Part 3.3 (Authorization Bridge)"
+        implication: "ConversationMembership links to Authable for sender/recipient gating"
+
+      - key: "Async queue patterns for delivery (not synchronous HTTP)"
+        citation: "R20.6 Part 4.1 (Queue Architecture)"
+        implication: "Delivery runtime (B29.3) uses queue adapters, not direct send"
+
+integrationContract:
+  authable:
+    description: "Permission-gated delivery: only authorized users can send to channels/recipients"
+    table: "authz.memberships"
+    citation: "R21.2 Part 4.2 TABLE 4 (Membership junction)"
+    usage: |
+      Before sending message, check:
+      - user.hasPermission(organizationId, 'messages:send:channel-type')
+      - recipient.hasPermission(organizationId, 'messages:receive:channel-type')
+
+  preferenceable:
+    description: "Notification matrix controls opt-in/opt-out per Channel × Event"
+    table: "preferences.user_preferences"
+    citation: "Sprint 27 NotificationMatrix pattern"
+    usage: |
+      Before delivery, query:
+      - preferences.getMatrix(userId, 'notifications')
+      - Check: matrix[eventType][channelType] === true
+      - Respect quiet hours from preferences.notificationSettings
+
+  classifiable:
+    description: "Optional message categorization for filtering/routing"
+    table: "classifications.entity_categories, entity_tags"
+    citation: "Sprint 26 Classifiable trait"
+    usage: |
+      Messages can be tagged:
+      - Support/Sales/Marketing categories
+      - Tags for campaign tracking, sentiment, priority
+
+# ============================================================================
+# DELIVERABLES
+# ============================================================================
+deliverables:
+  traitDefinitions:
+    - file: "traits/core/Communicable.trait.ts"
+      description: "TypeScript trait definition with trait metadata, parameters, semantics"
+      requirements:
+        - "Trait name: 'Communicable'"
+        - "Parameters: channelTypes (array), supportConversations (boolean)"
+        - "Semantics: channel_type (role: enum), message_body (criticality: high)"
+        - "DTCG hooks: --sys-communication-* token references"
+
+    - file: "traits/core/Communicable.trait.yaml"
+      description: "YAML trait definition (equivalent to TS, human-readable)"
+      requirements:
+        - "Same trait spec as TS version"
+        - "Used for documentation + code generation"
+
+  schemaRegistry:
+    - file: "data/communication-schemas/registry.json"
+      description: "Central registry for all communication entity schemas"
+      requirements:
+        - "Schemas: Channel, Template, DeliveryPolicy, Message, Conversation, MessageStatus"
+        - "Each schema: $id, title, description, properties, required fields, examples"
+        - "Version metadata (schema version, last updated, changelog)"
+
+    - file: "src/traits/communication/schema-registry.ts"
+      description: "Schema registry module (mirrors Preferenceable/Authable patterns)"
+      requirements:
+        - "getSchema(entityType): returns JSON Schema"
+        - "validateSchema(data, entityType): returns validation result"
+        - "listSchemas(): returns all registered entity types"
+        - "getSchemaVersion(entityType): returns version string"
+
+    - file: "src/traits/communication/schema-validator.ts"
+      description: "Zod-based validator for communication entities"
+      requirements:
+        - "Zod DTOs for each entity type (ChannelSchema, TemplateSchema, etc.)"
+        - "validateChannel(data), validateTemplate(data), etc."
+        - "Detailed error messages with field paths"
+        - "Type guards: isChannel(data), isTemplate(data)"
+
+  schemas:
+    - file: "src/schemas/communication/channel.ts"
+      description: "Channel schema (email, SMS, push, in-app, webhook)"
+      requirements:
+        - "Zod schema: z.object({ type, config, enabled, metadata })"
+        - "Channel types: email | sms | push | in_app | webhook"
+        - "Config varies by type (SMTP for email, Twilio for SMS, etc.)"
+        - "TypeScript type export: Channel"
+
+    - file: "src/schemas/communication/template.ts"
+      description: "Message template schema with variable substitution"
+      requirements:
+        - "Fields: id, name, channel_type, subject, body, variables, locale"
+        - "Variable syntax: {{user.name}}, {{organization.name}}, etc."
+        - "Locale support: en-US, es-ES, etc. (BCP 47)"
+        - "Validation: ensure variables in body match variables array"
+
+    - file: "src/schemas/communication/delivery-policy.ts"
+      description: "Delivery policy schema (retry, throttling, quiet hours)"
+      requirements:
+        - "Retry policy: max_attempts, backoff_strategy (linear/exponential)"
+        - "Throttling: max_per_minute, max_per_hour, max_per_day"
+        - "Quiet hours: start_time, end_time, timezone, days_of_week"
+        - "Priority levels: urgent, high, normal, low"
+
+    - file: "src/schemas/communication/message.ts"
+      description: "Message entity schema (atomic message, not conversation)"
+      requirements:
+        - "Fields: id, sender_id, recipient_ids[], channel_type, template_id, variables, metadata"
+        - "Status tracking: queued, sent, delivered, failed, retried"
+        - "Timestamps: created_at, queued_at, sent_at, delivered_at"
+        - "Foreign keys: sender (User), recipients (User[]), template (Template)"
+
+    - file: "src/schemas/communication/conversation.ts"
+      description: "Conversation schema (threaded messages)"
+      requirements:
+        - "Fields: id, subject, participants[], messages[], metadata"
+        - "Participants: { user_id, role (owner/member/viewer), joined_at }"
+        - "Messages: array of Message entities in thread"
+        - "Status: active, archived, deleted"
+
+  runtimeSurface:
+    - file: "src/traits/communication/communication-trait.ts"
+      description: "Communicable trait runtime surface (mirrors authz-trait.ts pattern)"
+      requirements:
+        - "Class CommunicableTrait with schema access methods"
+        - "getChannels(): Channel[]"
+        - "getTemplates(channelType?): Template[]"
+        - "validateMessage(message): ValidationResult"
+        - "Export factory: createCommunicableTrait(config)"
+
+  documentation:
+    - file: "docs/traits/communicable-trait.md"
+      description: "Comprehensive trait documentation with R20.1/R20.6 citations"
+      requirements:
+        - "Overview: trait purpose, integration points, use cases"
+        - "Schema reference: all entity types with field descriptions"
+        - "Integration guide: Authable permissions, Preferenceable routing, Classifiable tagging"
+        - "Examples: defining channels, creating templates, sending messages"
+        - "R20.1/R20.6 research citations in footnotes"
+
+    - file: "docs/traits/communication-channel-patterns.md"
+      description: "Channel-specific configuration patterns"
+      requirements:
+        - "Email: SMTP config, HTML vs plain text, attachments"
+        - "SMS: Twilio/SNS config, character limits, delivery receipts"
+        - "Push: FCM/APNS config, silent vs alert, badges"
+        - "In-app: WebSocket delivery, notification center UI"
+        - "Webhook: HTTP POST, retry logic, signature verification"
+
+  tests:
+    - file: "tests/traits/communication/schema-registry.test.ts"
+      description: "Schema registry unit tests"
+      requirements:
+        - "Test: getSchema returns valid JSON Schema for each entity type"
+        - "Test: validateSchema accepts valid entities, rejects invalid"
+        - "Test: listSchemas returns all 6 entity types"
+        - "Coverage target: ≥90%"
+
+    - file: "tests/traits/communication/schema-validator.test.ts"
+      description: "Zod validator unit tests"
+      requirements:
+        - "Test each entity validator (Channel, Template, DeliveryPolicy, Message, Conversation)"
+        - "Test: valid entities pass validation"
+        - "Test: invalid entities fail with descriptive errors"
+        - "Test: type guards work correctly (isChannel, isTemplate, etc.)"
+        - "Coverage target: ≥90%"
+
+    - file: "tests/traits/communication/communication-trait.test.ts"
+      description: "Communicable trait runtime tests"
+      requirements:
+        - "Test: trait instantiation with config"
+        - "Test: getChannels returns configured channels"
+        - "Test: getTemplates filters by channel type"
+        - "Test: validateMessage catches invalid messages"
+        - "Coverage target: ≥90%"
+
+# ============================================================================
+# SCAFFOLDING REUSE MAP
+# ============================================================================
+scaffoldingReuseMap:
+  - from: "src/traits/preferenceable/schema-registry.ts"
+    to: "src/traits/communication/schema-registry.ts"
+    pattern: "Registry pattern: getSchema, validateSchema, listSchemas, version tracking"
+    adaptation: "Add communication entity types (Channel, Template, etc.)"
+
+  - from: "src/traits/authz/schema-validator.ts"
+    to: "src/traits/communication/schema-validator.ts"
+    pattern: "Zod DTOs + type guards + detailed error messages"
+    adaptation: "Communication entities instead of RBAC entities"
+
+  - from: "data/authz-schemas/registry.json"
+    to: "data/communication-schemas/registry.json"
+    pattern: "JSON Schema registry structure with $id, version, changelog"
+    adaptation: "Communication schemas (6 entity types) instead of RBAC schemas"
+
+  - from: "src/traits/authz/authz-trait.ts"
+    to: "src/traits/communication/communication-trait.ts"
+    pattern: "Trait runtime surface: class + factory + schema access methods"
+    adaptation: "Communication-specific methods (getChannels, getTemplates, etc.)"
+
+  - from: "docs/traits/authable-trait.md"
+    to: "docs/traits/communicable-trait.md"
+    pattern: "Documentation structure: overview, schema ref, integration, examples, citations"
+    adaptation: "R20.1/R20.6 citations instead of R21.2 citations"
+
+# ============================================================================
+# QUALITY GATES
+# ============================================================================
+qualityGates:
+  duringDevelopment:
+    - gate: "Schema registry validates all 6 entity types"
+      validation: "Run validateSchema for Channel, Template, DeliveryPolicy, Message, Conversation, MessageStatus"
+      criterion: "All valid entities pass, all invalid entities fail with clear errors"
+
+    - gate: "Zod DTOs match JSON Schema definitions"
+      validation: "Compare Zod schema fields with registry.json schemas"
+      criterion: "100% field parity (no missing/extra fields)"
+
+    - gate: "Type guards work correctly"
+      validation: "Test isChannel(validChannel) === true, isChannel(invalidData) === false"
+      criterion: "All type guards pass positive/negative tests"
+
+    - gate: "Documentation has R20.1/R20.6 citations"
+      validation: "Grep docs for 'R20.1' and 'R20.6' references"
+      criterion: "≥5 citations to each research report"
+
+  beforeCompletion:
+    - gate: "Test coverage ≥90%"
+      validation: "pnpm test:coverage --run (filter: tests/traits/communication/)"
+      criterion: "Lines ≥90%, functions ≥90%, branches ≥90%"
+
+    - gate: "All schemas in registry are valid JSON Schema Draft 2020-12"
+      validation: "Validate registry.json against JSON Schema meta-schema"
+      criterion: "No validation errors"
+
+    - gate: "Documentation builds without warnings"
+      validation: "Check markdown linting + internal link validation"
+      criterion: "Zero warnings/errors in docs/traits/communicable-*.md"
+
+    - gate: "Integration points documented"
+      validation: "Verify Authable/Preferenceable/Classifiable integration examples exist"
+      criterion: "Each integration has code example + explanation"
+
+# ============================================================================
+# SUCCESS CRITERIA
+# ============================================================================
+successCriteria:
+  functional:
+    - "Communicable trait spec defined in TypeScript + YAML"
+    - "Schema registry with 6 entity types (Channel, Template, DeliveryPolicy, Message, Conversation, MessageStatus)"
+    - "Zod validators for all entity types with type guards"
+    - "Trait runtime surface (CommunicableTrait class + factory)"
+    - "Comprehensive documentation with ≥10 research citations"
+
+  quality:
+    - "Test coverage ≥90% for registry + validator + trait runtime"
+    - "All schemas validate against JSON Schema Draft 2020-12"
+    - "Documentation passes markdown lint + link validation"
+    - "Zero TypeScript errors in trait/schema modules"
+
+  validation:
+    - command: "pnpm test --run tests/traits/communication/"
+      expectation: "All tests pass, coverage ≥90%"
+
+    - command: "pnpm typecheck"
+      expectation: "Zero TypeScript errors"
+
+    - command: "node -e \"require('./src/traits/communication/schema-registry').getSchema('Channel'); console.log('✓ Registry loads')\""
+      expectation: "No runtime errors, registry loads successfully"
+
+# ============================================================================
+# EXAMPLES & PATTERNS
+# ============================================================================
+examples:
+  channelDefinition: |
+    // Email channel configuration
+    const emailChannel: Channel = {
+      type: 'email',
+      config: {
+        provider: 'smtp',
+        host: 'smtp.example.com',
+        port: 587,
+        auth: { user: 'app@example.com', pass: '***' },
+        from: { name: 'OODS App', email: 'noreply@example.com' }
+      },
+      enabled: true,
+      metadata: { description: 'Primary email channel' }
+    };
+
+  templateDefinition: |
+    // Welcome email template
+    const welcomeTemplate: Template = {
+      id: 'welcome-email-v1',
+      name: 'Welcome Email',
+      channel_type: 'email',
+      subject: 'Welcome to {{organization.name}}, {{user.name}}!',
+      body: 'Hi {{user.name}},\n\nWelcome to {{organization.name}}. Your account is ready!',
+      variables: ['user.name', 'organization.name'],
+      locale: 'en-US',
+      metadata: { category: 'onboarding' }
+    };
+
+  deliveryPolicyDefinition: |
+    // Standard delivery policy
+    const standardPolicy: DeliveryPolicy = {
+      id: 'standard-policy',
+      retry: { max_attempts: 3, backoff_strategy: 'exponential' },
+      throttling: { max_per_minute: 10, max_per_hour: 100 },
+      quiet_hours: { start_time: '22:00', end_time: '08:00', timezone: 'America/New_York' },
+      priority: 'normal'
+    };
+
+# ============================================================================
+# NOTES
+# ============================================================================
+notes:
+  - "This mission establishes the foundation for Sprint 29 Communication Extension Pack"
+  - "R20.1 (Notification Model) and R20.6 (Messaging Systems) provide comprehensive research backing"
+  - "Integration points with Authable, Preferenceable, Classifiable are explicitly defined"
+  - "Scaffolding reuse from Preferenceable/Authable patterns reduces implementation risk"
+  - "Schema registry pattern is proven from Sprint 27-28, adapt rather than rebuild"
+
+blockers: []
+risks:
+  - risk: "Channel configuration complexity (each channel type has unique config)"
+    mitigation: "Start with email + in-app (simplest), add SMS/push/webhook incrementally"
+
+  - risk: "Template variable substitution edge cases (missing vars, type mismatches)"
+    mitigation: "Comprehensive validation in schema-validator.ts, error messages show missing vars"

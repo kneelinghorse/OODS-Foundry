@@ -1,0 +1,414 @@
+---
+mission: B29.3
+name: "Delivery Runtime & Channel Resolution Services"
+sprint: "Sprint 29"
+type: "Build"
+status: "Queued"
+estimatedEffort: "5-6 hours"
+complexity: "High"
+dependencies: ["B29.1", "B29.2"]
+tags: ["runtime", "delivery", "queue", "integration"]
+
+# ============================================================================
+# MISSION OVERVIEW
+# ============================================================================
+summary: |
+  Implement delivery runtime engine with channel resolution, queue adapters,
+  permission gating (Authable integration), preference checking (Preferenceable
+  integration), and retry logic. Deliver MessageDeliveryService, ChannelResolver,
+  QueueAdapter abstraction, and integration services that bridge to Sprint 27-28
+  traits. Target <10ms delivery scheduling (queue push), <5ms permission checks.
+
+objectives:
+  - Build MessageDeliveryService with queue-based async delivery
+  - Implement ChannelResolver to select delivery channels based on preferences
+  - Create QueueAdapter abstraction (in-memory + Redis implementations)
+  - Integrate Authable for sender/recipient permission validation
+  - Integrate Preferenceable for channel opt-in/opt-out + quiet hours
+  - Achieve <10ms delivery scheduling, <5ms permission checks (p99)
+
+# ============================================================================
+# RESEARCH FOUNDATIONS
+# ============================================================================
+researchFindings:
+  queueArchitecture:
+    source: "R20.6 Part 4.1 (Async Queue Patterns)"
+    findings:
+      - key: "Delivery must be async (queue-based), not synchronous HTTP"
+        citation: "R20.6 Part 4.1 PATTERN 1"
+        implication: "MessageDeliveryService.send() pushes to queue, returns immediately"
+
+      - key: "Queue consumers poll for scheduled_at ≤ now()"
+        citation: "R20.6 Part 4.2 (Queue Processing)"
+        implication: "Worker queries delivery_attempts WHERE status='queued' AND scheduled_at <= NOW()"
+
+      - key: "Retry backoff uses exponential strategy (1min → 5min → 30min)"
+        citation: "R20.6 Part 4.3 (Retry Logic)"
+        implication: "ScheduleRetry calculates next_attempt_at based on attempt_number"
+
+  channelSelection:
+    source: "R20.1 Part 4.1 (Channel Routing)"
+    findings:
+      - key: "Channel selection prioritizes user preferences over system defaults"
+        citation: "R20.1 Part 4.1 DECISION TREE"
+        implication: "ChannelResolver checks Preferenceable matrix first, fallback to defaults"
+
+      - key: "Quiet hours suppress delivery until window ends"
+        citation: "R20.1 Part 4.3 (Quiet Hours)"
+        implication: "Reschedule delivery_attempt if current time in quiet_hours window"
+
+      - key: "Permission gating prevents unauthorized send/receive"
+        citation: "R20.1 Part 4.4 (Authorization Bridge)"
+        implication: "Validate sender.hasPermission('messages:send') before queueing"
+
+integrationContract:
+  authable:
+    service: "EntitlementService (Sprint 28)"
+    usage: |
+      // Check sender permission
+      const canSend = await entitlementService.hasPermission(
+        userId,
+        organizationId,
+        `messages:send:${channelType}`
+      );
+
+      // Check recipient permission
+      const canReceive = await entitlementService.hasPermission(
+        recipientId,
+        organizationId,
+        `messages:receive:${channelType}`
+      );
+
+  preferenceable:
+    service: "PreferenceCache (Sprint 27)"
+    usage: |
+      // Check channel opt-in
+      const preferences = await preferenceCache.get(userId, 'notifications');
+      const matrix = preferences?.notificationMatrix || {};
+      const isOptedIn = matrix[eventType]?.[channelType] === true;
+
+      // Check quiet hours
+      const quietHours = preferences?.quietHours;
+      if (isInQuietHours(quietHours)) {
+        rescheduleAfterQuietHours(deliveryAttempt);
+      }
+
+# ============================================================================
+# DELIVERABLES
+# ============================================================================
+deliverables:
+  runtimeServices:
+    - file: "src/traits/communication/delivery-service.ts"
+      description: "Core message delivery service"
+      requirements:
+        - "sendMessage(message, recipients[], policy): Promise<MessageDeliveryResult>"
+        - "Permission validation via EntitlementService"
+        - "Preference checking via PreferenceCache"
+        - "Queue message via QueueAdapter"
+        - "Return: { messageId, queuedRecipients[], blockedRecipients[] }"
+
+    - file: "src/traits/communication/channel-resolver.ts"
+      description: "Channel selection logic based on preferences"
+      requirements:
+        - "resolveChannel(userId, eventType, availableChannels): Channel"
+        - "Priority: user preferences > organization defaults > system defaults"
+        - "Respect opt-outs from Preferenceable matrix"
+        - "Fallback: if all channels opted-out, return null (no delivery)"
+
+    - file: "src/traits/communication/retry-scheduler.ts"
+      description: "Retry backoff calculation"
+      requirements:
+        - "scheduleRetry(attemptNumber, policy): Date"
+        - "Strategies: linear, exponential, custom"
+        - "Exponential: 1min * 2^attemptNumber (cap at policy.max_backoff)"
+        - "Respect policy.max_attempts limit"
+
+    - file: "src/traits/communication/quiet-hours-checker.ts"
+      description: "Quiet hours validation"
+      requirements:
+        - "isInQuietHours(quietHours, timezone, now): boolean"
+        - "calculateNextDeliveryWindow(quietHours, timezone, now): Date"
+        - "Support daily quiet hours (22:00-08:00) and custom schedules"
+
+  queueAdapters:
+    - file: "src/traits/communication/queue/queue-adapter.ts"
+      description: "Queue adapter interface"
+      requirements:
+        - "Interface: QueueAdapter { enqueue, dequeue, ack, nack, peek }"
+        - "Generic type: QueueAdapter<T> for different message types"
+        - "Methods return Promise for async operations"
+
+    - file: "src/traits/communication/queue/in-memory-adapter.ts"
+      description: "In-memory queue (development/testing)"
+      requirements:
+        - "Array-based queue with FIFO ordering"
+        - "Support scheduled_at (delayed delivery)"
+        - "Auto-cleanup of acked messages"
+
+    - file: "src/traits/communication/queue/redis-adapter.ts"
+      description: "Redis queue adapter (production)"
+      requirements:
+        - "Use Redis sorted sets (ZADD with scheduled_at as score)"
+        - "ZRANGEBYSCORE to fetch due messages"
+        - "ZPOPMIN for atomic dequeue + ack"
+        - "Connection pooling via ioredis"
+
+  integrationBridges:
+    - file: "src/traits/communication/bridges/authable-bridge.ts"
+      description: "Bridge to Authable trait for permission checks"
+      requirements:
+        - "validateSenderPermission(userId, orgId, channelType): Promise<boolean>"
+        - "validateRecipientPermission(userId, orgId, channelType): Promise<boolean>"
+        - "Uses EntitlementService from Sprint 28"
+        - "Caches permission results (PermissionCache reuse)"
+
+    - file: "src/traits/communication/bridges/preferenceable-bridge.ts"
+      description: "Bridge to Preferenceable trait for preferences"
+      requirements:
+        - "getUserChannelPreferences(userId, eventType): Promise<ChannelPreferences>"
+        - "isChannelOptedIn(userId, eventType, channelType): Promise<boolean>"
+        - "getQuietHours(userId): Promise<QuietHours | null>"
+        - "Uses PreferenceCache from Sprint 27"
+
+  runtimeTypes:
+    - file: "src/traits/communication/runtime-types.ts"
+      description: "TypeScript types for runtime services"
+      requirements:
+        - "MessageDeliveryResult, ChannelPreferences, QuietHours, RetryPolicy"
+        - "QueueMessage<T>, QueueStats, DeliveryStats"
+        - "All types exported for use in delivery-service.ts"
+
+  documentation:
+    - file: "docs/traits/communication-delivery-runtime.md"
+      description: "Delivery runtime documentation"
+      requirements:
+        - "Architecture diagram (message flow from send → queue → delivery)"
+        - "Permission gating flow (Authable integration)"
+        - "Preference checking flow (Preferenceable integration)"
+        - "Retry logic with backoff examples"
+        - "Queue adapter comparison (in-memory vs Redis)"
+
+  tests:
+    - file: "tests/traits/communication/delivery-service.test.ts"
+      description: "Delivery service unit tests"
+      requirements:
+        - "Test: sendMessage queues message with valid permissions"
+        - "Test: sendMessage blocks unauthorized senders"
+        - "Test: sendMessage respects channel opt-outs"
+        - "Test: sendMessage reschedules during quiet hours"
+        - "Coverage ≥90%"
+
+    - file: "tests/traits/communication/channel-resolver.test.ts"
+      description: "Channel resolver unit tests"
+      requirements:
+        - "Test: resolveChannel prioritizes user preferences"
+        - "Test: resolveChannel falls back to defaults"
+        - "Test: resolveChannel returns null if all channels opted-out"
+        - "Coverage ≥90%"
+
+    - file: "tests/traits/communication/retry-scheduler.test.ts"
+      description: "Retry scheduler unit tests"
+      requirements:
+        - "Test: exponential backoff calculates correct delays"
+        - "Test: linear backoff calculates correct delays"
+        - "Test: respects max_attempts limit"
+        - "Coverage ≥90%"
+
+    - file: "tests/integration/communication-authable-integration.test.ts"
+      description: "Integration test: Communication + Authable"
+      requirements:
+        - "Test: sendMessage checks sender permission via EntitlementService"
+        - "Test: blocked senders cannot queue messages"
+        - "Test: permission cache improves performance (cached vs uncached)"
+
+    - file: "tests/integration/communication-preferenceable-integration.test.ts"
+      description: "Integration test: Communication + Preferenceable"
+      requirements:
+        - "Test: sendMessage respects notification matrix opt-outs"
+        - "Test: quiet hours reschedule delivery"
+        - "Test: preference changes affect delivery routing"
+
+  performanceBenchmarks:
+    - file: "tests/performance/delivery-service-benchmarks.test.ts"
+      description: "Delivery runtime performance benchmarks"
+      requirements:
+        - "Benchmark: sendMessage with permission check (<10ms p99)"
+        - "Benchmark: channel resolution with preference lookup (<5ms p99)"
+        - "Benchmark: queue enqueue/dequeue throughput (1000 msg/s)"
+        - "Report: metrics table with p50/p95/p99 latencies"
+
+# ============================================================================
+# SCAFFOLDING REUSE MAP
+# ============================================================================
+scaffoldingReuseMap:
+  - from: "src/traits/authz/entitlement-service.ts"
+    to: "src/traits/communication/bridges/authable-bridge.ts"
+    pattern: "Permission checking via EntitlementService"
+    adaptation: "Communication-specific permissions (messages:send, messages:receive)"
+
+  - from: "src/traits/preferenceable/cache/preference-cache.ts"
+    to: "src/traits/communication/bridges/preferenceable-bridge.ts"
+    pattern: "Preference lookup via PreferenceCache"
+    adaptation: "Communication-specific preferences (notification matrix, quiet hours)"
+
+  - from: "src/traits/authz/cache/redis-adapter.ts"
+    to: "src/traits/communication/queue/redis-adapter.ts"
+    pattern: "Redis connection management + error handling"
+    adaptation: "Sorted sets for queue (ZADD/ZRANGE) instead of hash/string for cache"
+
+  - from: "src/traits/authz/role-graph-resolver.ts"
+    to: "src/traits/communication/channel-resolver.ts"
+    pattern: "Resolver pattern with fallback logic (hierarchy → direct permissions → defaults)"
+    adaptation: "Channel selection (user prefs → org defaults → system defaults)"
+
+# ============================================================================
+# QUALITY GATES
+# ============================================================================
+qualityGates:
+  duringDevelopment:
+    - gate: "Permission checks integrate with EntitlementService"
+      validation: "Call sendMessage with unauthorized sender, verify rejection"
+      criterion: "Unauthorized senders blocked with clear error message"
+
+    - gate: "Preference checks integrate with PreferenceCache"
+      validation: "Call sendMessage with opted-out channel, verify skipped"
+      criterion: "Opted-out channels not queued, blockedRecipients[] populated"
+
+    - gate: "Quiet hours reschedule delivery"
+      validation: "Send message during quiet hours, verify scheduled_at adjusted"
+      criterion: "delivery_attempts.scheduled_at set to end of quiet hours window"
+
+    - gate: "Queue adapters work (in-memory + Redis)"
+      validation: "Enqueue 100 messages, dequeue all, verify FIFO order"
+      criterion: "All messages dequeued in correct order, zero lost messages"
+
+  beforeCompletion:
+    - gate: "Performance targets met"
+      validation: "pnpm vitest run tests/performance/delivery-service-benchmarks.test.ts"
+      criterion: "sendMessage <10ms p99, channel resolution <5ms p99"
+
+    - gate: "Integration tests pass"
+      validation: "pnpm test --run tests/integration/communication-*-integration.test.ts"
+      criterion: "All integration tests pass, Authable + Preferenceable bridges validated"
+
+    - gate: "Test coverage ≥90%"
+      validation: "pnpm test:coverage (filter: src/traits/communication/)"
+      criterion: "Lines ≥90%, functions ≥90%, branches ≥90%"
+
+# ============================================================================
+# SUCCESS CRITERIA
+# ============================================================================
+successCriteria:
+  functional:
+    - "MessageDeliveryService with queue-based async delivery"
+    - "ChannelResolver with preference-driven routing"
+    - "RetryScheduler with exponential backoff"
+    - "QueueAdapter interface + in-memory + Redis implementations"
+    - "Authable bridge for permission validation"
+    - "Preferenceable bridge for preference checking"
+
+  quality:
+    - "Test coverage ≥90% for delivery runtime services"
+    - "Integration tests validate Authable + Preferenceable bridges"
+    - "Performance benchmarks: sendMessage <10ms p99, channel resolution <5ms p99"
+    - "Documentation covers all integration points"
+
+  validation:
+    - command: "pnpm test --run tests/traits/communication/delivery-service.test.ts"
+      expectation: "All tests pass, coverage ≥90%"
+
+    - command: "pnpm vitest run tests/performance/delivery-service-benchmarks.test.ts"
+      expectation: "sendMessage p99 <10ms, channel resolution p99 <5ms"
+
+    - command: "pnpm test --run tests/integration/communication-authable-integration.test.ts"
+      expectation: "Permission checks validated, unauthorized sends blocked"
+
+# ============================================================================
+# PERFORMANCE TARGETS
+# ============================================================================
+performanceTargets:
+  - metric: "sendMessage (with permission + preference checks)"
+    target: "<10ms p99"
+    validation: "Benchmark with 1000 sends, measure end-to-end latency"
+
+  - metric: "Channel resolution (preference lookup)"
+    target: "<5ms p99"
+    validation: "Benchmark with PreferenceCache warm (reuse Sprint 27 cache)"
+
+  - metric: "Queue throughput"
+    target: "≥1000 msg/s (enqueue + dequeue)"
+    validation: "Benchmark Redis adapter with concurrent workers"
+
+  - metric: "Permission check (cached)"
+    target: "<1ms p99"
+    validation: "Reuse PermissionCache from Sprint 28 (99.9% hit rate)"
+
+# ============================================================================
+# EXAMPLES & PATTERNS
+# ============================================================================
+examples:
+  sendMessageFlow: |
+    // Example: Send welcome email
+    const result = await deliveryService.sendMessage(
+      {
+        sender_id: systemUserId,
+        organization_id: orgId,
+        channel_type: 'email',
+        template_id: welcomeTemplateId,
+        subject: 'Welcome to OODS!',
+        body: 'Hi {{user.name}}, welcome aboard!',
+        variables: { 'user.name': user.name }
+      },
+      [user.id], // recipients
+      standardPolicy // delivery policy
+    );
+
+    // Result
+    // {
+    //   messageId: 'msg-123',
+    //   queuedRecipients: [user.id],
+    //   blockedRecipients: [] // empty if all authorized
+    // }
+
+  channelResolution: |
+    // Example: Resolve channel for notification
+    const channel = await channelResolver.resolveChannel(
+      userId,
+      'user.welcome', // event type
+      [emailChannel, inAppChannel] // available channels
+    );
+
+    // Priority:
+    // 1. User preferences (notification matrix)
+    // 2. Organization defaults
+    // 3. System defaults
+
+  retryScheduling: |
+    // Example: Schedule retry with exponential backoff
+    const nextAttemptAt = retryScheduler.scheduleRetry(
+      attemptNumber: 2, // 2nd retry
+      policy: { max_attempts: 5, backoff_strategy: 'exponential' }
+    );
+
+    // Result: now() + (1min * 2^2) = now() + 4 minutes
+
+# ============================================================================
+# NOTES
+# ============================================================================
+notes:
+  - "Delivery runtime is the integration hub: connects Authable + Preferenceable + Communication"
+  - "Queue-based architecture enables horizontal scaling (multiple workers)"
+  - "Permission checks reuse PermissionCache from Sprint 28 (99.9% hit rate expected)"
+  - "Preference checks reuse PreferenceCache from Sprint 27 (>80% hit rate expected)"
+  - "Retry logic is critical for transient failures (network errors, rate limits)"
+
+blockers: []
+risks:
+  - risk: "High delivery volume may overwhelm queue (>10K msg/s)"
+    mitigation: "Redis adapter supports clustering, add queue metrics to monitor depth"
+
+  - risk: "Permission/preference cache misses spike latency"
+    mitigation: "Warm caches on service startup, monitor cache hit rates in diagnostics"
+
+  - risk: "Quiet hours logic complexity (timezones, DST)"
+    mitigation: "Use date-fns-tz for timezone handling, comprehensive test cases for edge cases"

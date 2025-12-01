@@ -25,17 +25,20 @@ EXCLUDES=(
 
 cd "${CMOS_DIR}"
 tar -czf "${ARCHIVE_PATH}" "${EXCLUDES[@]}" \
-  agents.md \
+  AGENTS.md \
+  cli.py \
+  README.md \
   context \
   db \
   docs \
+  foundational-docs \
+  missions \
   PROJECT_CONTEXT.json \
+  runtime \
   scripts \
   templates \
   telemetry \
   tests \
-  runtime \
-  workers \
-  missions
+  workers
 
 echo "Starter package created at ${ARCHIVE_PATH}"

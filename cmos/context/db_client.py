@@ -74,7 +74,8 @@ class SQLiteClient:
                 self._connection = sqlite3.connect(
                     str(self.db_path),
                     timeout=self.timeout,
-                    detect_types=sqlite3.PARSE_DECLTYPES
+                    detect_types=sqlite3.PARSE_DECLTYPES,
+                    isolation_level=None,
                 )
             except sqlite3.Error as error:
                 raise DatabaseUnavailable(f"Unable to open database {self.db_path}") from error
@@ -184,7 +185,8 @@ class SQLiteClient:
         session_id: str | None = None,
         source: str | None = None,
         created_at: str | None = None
-    ) -> bool:
+    ) -> int | None:
+        """Add a context snapshot. Returns snapshot ID if created, None if duplicate."""
         canonical = _canonical_json(payload)
         digest = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
         last = self.fetchone(
@@ -192,7 +194,7 @@ class SQLiteClient:
             {"id": context_id}
         )
         if last and last.get("content_hash") == digest:
-            return False
+            return None
         pretty = json.dumps(payload, ensure_ascii=False, indent=2)
         timestamp = created_at or _utc_now()
         self.execute(
@@ -209,7 +211,78 @@ class SQLiteClient:
                 "created_at": timestamp,
             }
         )
-        return True
+        # Return the new snapshot ID
+        result = self.fetchone("SELECT last_insert_rowid() as id")
+        return result["id"] if result else None
+
+    def _sync_strategic_decisions(
+        self,
+        master_context: Dict[str, Any],
+        snapshot_id: int | None,
+        timestamp: str
+    ) -> None:
+        """Sync decisions from MASTER_CONTEXT to strategic_decisions table."""
+        decisions = []
+
+        general_decisions = master_context.get("decisions_made") or []
+        if isinstance(general_decisions, list):
+            for decision_text in general_decisions:
+                if isinstance(decision_text, str):
+                    cleaned = decision_text.strip()
+                    if cleaned:
+                        decisions.append(
+                            {
+                                "decision_text": cleaned,
+                                "project_domain": "general",
+                            }
+                        )
+
+        domains = master_context.get("working_memory", {}).get("domains", {})
+        if isinstance(domains, dict):
+            for domain_name, domain_data in domains.items():
+                if not isinstance(domain_data, dict):
+                    continue
+                domain_decisions = domain_data.get("decisions_made", [])
+                if not isinstance(domain_decisions, list):
+                    continue
+                for decision_text in domain_decisions:
+                    if isinstance(decision_text, str):
+                        cleaned = decision_text.strip()
+                        if cleaned:
+                            decisions.append(
+                                {
+                                    "decision_text": cleaned,
+                                    "project_domain": domain_name,
+                                }
+                            )
+
+        if not decisions:
+            return
+
+        existing = self.fetchall(
+            "SELECT decision_text FROM strategic_decisions WHERE context_id = 'master_context'"
+        )
+        existing_texts = {(row["decision_text"] or "").strip() for row in existing}
+
+        new_decisions = [d for d in decisions if d["decision_text"] not in existing_texts]
+
+        if new_decisions:
+            self.executemany(
+                """
+                INSERT INTO strategic_decisions (
+                    context_id, decision_text, created_at, snapshot_id, project_domain
+                ) VALUES ('master_context', :decision_text, :created_at, :snapshot_id, :project_domain)
+                """,
+                [
+                    {
+                        "decision_text": d["decision_text"],
+                        "created_at": timestamp,
+                        "snapshot_id": snapshot_id,
+                        "project_domain": d.get("project_domain"),
+                    }
+                    for d in new_decisions
+                ]
+            )
 
     def set_context(
         self,
@@ -233,26 +306,46 @@ class SQLiteClient:
         )
         content = json.dumps(payload, ensure_ascii=False, indent=2)
         timestamp = _utc_now()
-        self.execute(
-            """
-            INSERT OR REPLACE INTO contexts (id, source_path, content, updated_at)
-            VALUES (:id, :source_path, :content, :updated_at)
-            """,
-            {
-                "id": context_id,
-                "source_path": resolved_source,
-                "content": content,
-                "updated_at": timestamp,
-            },
-        )
+        
+        # Use UPDATE if exists, INSERT if new (avoids CASCADE DELETE)
+        if existing:
+            self.execute(
+                """
+                UPDATE contexts 
+                SET source_path = :source_path, content = :content, updated_at = :updated_at
+                WHERE id = :id
+                """,
+                {
+                    "id": context_id,
+                    "source_path": resolved_source,
+                    "content": content,
+                    "updated_at": timestamp,
+                },
+            )
+        else:
+            self.execute(
+                """
+                INSERT INTO contexts (id, source_path, content, updated_at)
+                VALUES (:id, :source_path, :content, :updated_at)
+                """,
+                {
+                    "id": context_id,
+                    "source_path": resolved_source,
+                    "content": content,
+                    "updated_at": timestamp,
+                },
+            )
         if snapshot:
-            self.add_context_snapshot(
+            snapshot_id = self.add_context_snapshot(
                 context_id,
                 payload,
                 session_id=session_id,
                 source=snapshot_source or resolved_source,
                 created_at=timestamp,
             )
+            # Sync strategic decisions if this is master_context
+            if context_id == "master_context":
+                self._sync_strategic_decisions(payload, snapshot_id, timestamp)
 
 
 def _run_cli(args: argparse.Namespace) -> int:

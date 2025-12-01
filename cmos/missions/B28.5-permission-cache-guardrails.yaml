@@ -1,0 +1,99 @@
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B28.5
+sprintId: Sprint 28
+name: "Permission Cache & Performance Guardrails"
+
+objective: |
+  Implement permission caching infrastructure mirroring Preferenceable cache
+  patterns from Sprint 27. Deliver Redis adapter, cache warmers, metrics
+  telemetry, and performance benchmarks to ensure <5ms permission checks.
+
+context:
+  background: |
+    B28.3 delivered entitlement runtime. Without caching, recursive role
+    hierarchy queries (R21.2 Part 3.1) are expensive. This mission adds
+    aggressive caching to hit <5ms p99 targets.
+
+  dependencies:
+    - "B28.3 complete (entitlement service with cacheable APIs)"
+    - "Sprint 27 complete (Preferenceable cache pattern reference)"
+    - "Redis available (or in-memory fallback)"
+
+  constraints:
+    - "Reuse Preferenceable cache infrastructure patterns"
+    - "Cache keys: user:{userId}:org:{orgId}:permissions"
+    - "TTL strategy: 5 minutes (short-lived, invalidation on role changes)"
+    - "Metrics must track hit rate, p95, cache pressure"
+
+scaffoldingReuse:
+  from: "src/traits/preferenceable/cache/"
+  pattern: "PreferenceCache → PermissionCache"
+  adapters: "Redis adapter, warming strategies, metrics logging"
+
+deliverables:
+  cache:
+    - file: "src/traits/authz/cache/permission-cache.ts"
+      requirements:
+        - "getPermissions(userId, orgId): Permission[] | null"
+        - "setPermissions(userId, orgId, permissions, ttl)"
+        - "invalidateUser(userId), invalidateOrg(orgId)"
+        - "Interface matches Preferenceable pattern"
+        
+    - file: "src/traits/authz/cache/redis-adapter.ts"
+      requirements:
+        - "Redis connection pooling"
+        - "Serialization: JSON.stringify(permissions)"
+        - "Graceful degradation if Redis unavailable"
+        
+    - file: "src/traits/authz/cache/cache-warmer.ts"
+      requirements:
+        - "warmUserPermissions(userId, orgIds[])"
+        - "warmOrgPermissions(orgId, userIds[])"
+        - "Batch warming utilities"
+
+  metrics:
+    - file: "database/migrations/20251119_009_permission_cache_metrics.sql"
+      requirements:
+        - "authz.permission_cache_metrics table"
+        - "Columns: ts, cache_key, hit/miss, latency_ms, source"
+        - "Mirrors Preferenceable metrics table"
+        
+  performance:
+    - file: "tests/performance/permission-cache-benchmarks.test.ts"
+      requirements:
+        - "Benchmark cold vs warm lookups"
+        - "Measure hit rate over 1000 queries"
+        - "Validate <5ms p99 with cache, <1ms p50"
+
+  documentation:
+    - file: "docs/traits/permission-cache-strategy.md"
+      requirements:
+        - "Cache key structure"
+        - "TTL and invalidation strategy"
+        - "Redis setup for production"
+        - "Monitoring metrics guide"
+
+successCriteria:
+  performance:
+    - criterion: "Permission lookups <5ms p99 with cache"
+      validation: "Performance benchmarks pass"
+    - criterion: "Cache hit rate >80% in simulation"
+      validation: "1000-query test shows ≥80% hits after warm-up"
+      
+  reliability:
+    - criterion: "Cache invalidation on role changes"
+      validation: "assignRole() invalidates affected users/orgs"
+    - criterion: "Graceful degradation without Redis"
+      validation: "Falls back to DB queries, no crashes"
+
+qualityGates:
+  beforeCompletion:
+    - "pnpm test tests/performance/permission-cache-benchmarks.test.ts"
+    - "Validate metrics table logs cache events"
+    - "Redis integration test (if available)"
+
+metadata:
+  estimatedEffort: "4-5 hours"
+  complexity: "Medium (pattern established in Sprint 27)"
+  riskLevel: "Low (proven pattern reuse)"

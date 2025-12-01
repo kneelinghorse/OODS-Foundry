@@ -1,0 +1,346 @@
+---
+mission: B29.6
+name: "Trait Integration & Message Export"
+sprint: "Sprint 29"
+type: "Build"
+status: "Queued"
+estimatedEffort: "4-5 hours"
+complexity: "Medium"
+dependencies: ["B29.1", "B29.2", "B29.3", "B29.4", "B29.5"]
+tags: ["integration", "composition", "cli", "export"]
+
+# ============================================================================
+# MISSION OVERVIEW
+# ============================================================================
+summary: |
+  Integrate Communicable trait into User + Organization objects, deliver CLI
+  tools for message/conversation management (message-export, conversation-audit,
+  channel-admin), create composition examples, write integration tests, and
+  document the full integration pattern. Mirror Sprint 28 Authable integration
+  approach.
+
+objectives:
+  - Compose Communicable trait into User + Organization objects
+  - Extend object generators to surface Communication helper methods
+  - Deliver CLI tools (export, audit, admin) for message management
+  - Create integration examples (User + Communicable, Org + Communicable)
+  - Write integration tests validating composition + CLI tools
+  - Document integration pattern with code examples
+
+# ============================================================================
+# RESEARCH FOUNDATIONS
+# ============================================================================
+integrationContract:
+  userObject:
+    description: "User composes Communicable for sending/receiving messages"
+    methods:
+      - "user.sendMessage(recipientIds, template, variables): MessageDeliveryResult"
+      - "user.getMessages(filters?): Message[]"
+      - "user.getConversations(): Conversation[]"
+      - "user.getUnreadCount(): number"
+      - "user.markAllAsRead(): void"
+
+  organizationObject:
+    description: "Organization composes Communicable for org-wide messaging"
+    methods:
+      - "org.broadcastMessage(recipientIds, template, variables): MessageDeliveryResult"
+      - "org.getChannels(): Channel[]"
+      - "org.getTemplates(channelType?): Template[]"
+      - "org.getDeliveryPolicies(): DeliveryPolicy[]"
+      - "org.getSLAMetrics(window): SLAMetrics"
+
+# ============================================================================
+# DELIVERABLES
+# ============================================================================
+deliverables:
+  objectComposition:
+    - file: "objects/core/User.object.yaml"
+      description: "User object with Communicable trait"
+      requirements:
+        - "Add to traits list: - core/Communicable"
+        - "Communicable parameters: { channelTypes: [email, in_app], supportConversations: true }"
+        - "Document messaging capabilities in object description"
+
+    - file: "objects/core/Organization.object.yaml"
+      description: "Organization object with Communicable trait"
+      requirements:
+        - "Add to traits list: - core/Communicable"
+        - "Communicable parameters: { channelTypes: [email, sms, push, in_app, webhook], supportConversations: true }"
+        - "Document broadcast messaging capabilities"
+
+  generatorExtensions:
+    - file: "src/generators/templates/object-interface.ts"
+      description: "Extended generator for Communication helper methods"
+      requirements:
+        - "Detect Communicable trait in object definition"
+        - "Generate sendMessage(), getMessages(), getConversations() methods"
+        - "Generate type signatures with Message, Conversation, Channel types"
+        - "Preserve existing method generation (Authable, Preferenceable, etc.)"
+
+  cli:
+    - file: "src/cli/communication-export.ts"
+      description: "Message transcript export CLI"
+      requirements:
+        - "Command: export --user <userId> --format <json|csv|html>"
+        - "Export all messages for user (sent + received)"
+        - "Include metadata: timestamps, delivery status, conversation threads"
+        - "HTML format: readable transcript with date grouping"
+
+    - file: "src/cli/communication-audit.ts"
+      description: "Communication audit report CLI"
+      requirements:
+        - "Command: audit --organization <orgId> --start <date> --end <date>"
+        - "Report: total messages sent, success rate, failed deliveries, SLA metrics"
+        - "Output: JSON or text table"
+        - "Use SLAMonitor + delivery_attempts table for data"
+
+    - file: "src/cli/communication-admin.ts"
+      description: "Channel/template/policy admin CLI"
+      requirements:
+        - "Commands: channel [add|list|disable], template [add|list], policy [add|list]"
+        - "Channel add: prompts for type, config (SMTP/Twilio/etc.)"
+        - "Template add: prompts for name, subject, body, variables"
+        - "Policy add: prompts for retry, throttling, quiet hours"
+
+  examples:
+    - file: "examples/objects/user-with-communicable.ts"
+      description: "Example: User object with messaging capabilities"
+      requirements:
+        - "Create User instance with Communicable trait"
+        - "Send message: user.sendMessage([recipient], template, vars)"
+        - "Get unread count: user.getUnreadCount()"
+        - "Mark as read: user.markAllAsRead()"
+
+    - file: "examples/objects/organization-with-communicable.ts"
+      description: "Example: Organization object with broadcast messaging"
+      requirements:
+        - "Create Organization instance with Communicable trait"
+        - "Broadcast message: org.broadcastMessage(allUsers, template, vars)"
+        - "Get SLA metrics: org.getSLAMetrics('24h')"
+        - "Manage channels: org.getChannels(), org.addChannel(...)"
+
+  documentation:
+    - file: "docs/integration/communicable-trait-integration.md"
+      description: "Communicable integration guide"
+      requirements:
+        - "How to compose Communicable into objects (YAML syntax)"
+        - "Generated methods reference (User, Organization)"
+        - "Integration with Authable (permission checks)"
+        - "Integration with Preferenceable (channel preferences)"
+        - "CLI tools reference (export, audit, admin)"
+        - "Code examples for common use cases"
+
+  tests:
+    - file: "tests/integration/communicable-composition.test.ts"
+      description: "Integration test: Communicable trait composition"
+      requirements:
+        - "Test: User + Communicable generates correct interface"
+        - "Test: Organization + Communicable generates correct interface"
+        - "Test: sendMessage method validates permissions (Authable)"
+        - "Test: sendMessage method respects preferences (Preferenceable)"
+
+    - file: "tests/integration/communication-export.test.ts"
+      description: "Integration test: Message export CLI"
+      requirements:
+        - "Test: export generates valid JSON"
+        - "Test: export generates valid CSV with headers"
+        - "Test: export generates readable HTML transcript"
+        - "Test: export filters by date range"
+
+    - file: "tests/integration/communication-audit.test.ts"
+      description: "Integration test: Audit report CLI"
+      requirements:
+        - "Test: audit calculates correct metrics (total, success rate)"
+        - "Test: audit filters by date range"
+        - "Test: audit output matches SLA metrics from database"
+
+# ============================================================================
+# SCAFFOLDING REUSE MAP
+# ============================================================================
+scaffoldingReuseMap:
+  - from: "objects/core/User.object.yaml (with Authable)"
+    to: "objects/core/User.object.yaml (add Communicable)"
+    pattern: "Multi-trait composition: Authable + Preferenceable + Communicable"
+    adaptation: "Add Communicable to existing traits list"
+
+  - from: "src/cli/authz-export.ts"
+    to: "src/cli/communication-export.ts"
+    pattern: "Export CLI: fetch data, format (JSON/CSV/HTML), write to file"
+    adaptation: "Export messages/conversations instead of roles/permissions"
+
+  - from: "src/cli/authz-audit.ts"
+    to: "src/cli/communication-audit.ts"
+    pattern: "Audit CLI: query database, calculate metrics, generate report"
+    adaptation: "Communication metrics (SLA, delivery stats) instead of authz metrics"
+
+  - from: "src/cli/authz-admin.ts"
+    to: "src/cli/communication-admin.ts"
+    pattern: "Admin CLI: CRUD operations for config entities"
+    adaptation: "Channels/templates/policies instead of roles/permissions"
+
+  - from: "examples/objects/user-with-authable.ts"
+    to: "examples/objects/user-with-communicable.ts"
+    pattern: "Object composition example with trait usage"
+    adaptation: "Communication methods instead of authorization methods"
+
+# ============================================================================
+# QUALITY GATES
+# ============================================================================
+qualityGates:
+  duringDevelopment:
+    - gate: "Object composition works"
+      validation: "Add Communicable to User.object.yaml, regenerate types, verify methods exist"
+      criterion: "user.sendMessage, user.getMessages methods generated"
+
+    - gate: "CLI tools execute without errors"
+      validation: "Run communication-export/audit/admin with test data"
+      criterion: "All CLIs execute successfully, output valid data"
+
+    - gate: "Integration with Authable works"
+      validation: "Send message as unauthorized user, verify blocked"
+      criterion: "Permission checks validated via Authable bridge"
+
+    - gate: "Integration with Preferenceable works"
+      validation: "Send message to opted-out channel, verify skipped"
+      criterion: "Preference checks validated via Preferenceable bridge"
+
+  beforeCompletion:
+    - gate: "Integration tests pass"
+      validation: "pnpm test --run tests/integration/communicable-*.test.ts"
+      criterion: "All integration tests pass, composition validated"
+
+    - gate: "CLI tests pass"
+      validation: "pnpm test --run tests/integration/communication-export.test.ts, communication-audit.test.ts"
+      criterion: "Export/audit CLIs tested, output validated"
+
+    - gate: "Test coverage ≥90%"
+      validation: "pnpm test:coverage (filter: src/cli/communication-*.ts)"
+      criterion: "Lines ≥90%, functions ≥90%, branches ≥90%"
+
+    - gate: "Documentation accurate"
+      validation: "Follow integration guide, verify code examples work"
+      criterion: "All code examples execute successfully"
+
+# ============================================================================
+# SUCCESS CRITERIA
+# ============================================================================
+successCriteria:
+  functional:
+    - "Communicable trait composed into User + Organization objects"
+    - "Object generator extended for Communication helper methods"
+    - "CLI tools: export, audit, admin (3 CLIs)"
+    - "Integration examples for User + Organization with Communicable"
+    - "Comprehensive integration documentation"
+
+  quality:
+    - "Integration tests validate composition + Authable/Preferenceable bridges"
+    - "CLI tests validate export/audit output"
+    - "Test coverage ≥90% for CLI tools"
+    - "Documentation examples execute successfully"
+
+  validation:
+    - command: "pnpm tsx src/generators/generate-objects.ts"
+      expectation: "User + Organization interfaces include Communication methods"
+
+    - command: "pnpm tsx src/cli/communication-export.ts --user <test-user-id> --format json"
+      expectation: "Generates valid JSON message transcript"
+
+    - command: "pnpm test --run tests/integration/communicable-composition.test.ts"
+      expectation: "All tests pass, composition validated"
+
+# ============================================================================
+# CLI EXAMPLES
+# ============================================================================
+cliExamples:
+  export: |
+    # Export user's messages as JSON
+    pnpm tsx src/cli/communication-export.ts \
+      --user 550e8400-e29b-41d4-a716-446655440000 \
+      --format json \
+      --output messages.json
+
+    # Export as HTML transcript
+    pnpm tsx src/cli/communication-export.ts \
+      --user 550e8400-e29b-41d4-a716-446655440000 \
+      --format html \
+      --output transcript.html
+
+  audit: |
+    # Audit organization communication (last 7 days)
+    pnpm tsx src/cli/communication-audit.ts \
+      --organization 660e8400-e29b-41d4-a716-446655440000 \
+      --start 2025-11-13 \
+      --end 2025-11-20 \
+      --format json
+
+    # Output:
+    # {
+    #   "total_messages": 1523,
+    #   "success_rate": 0.982,
+    #   "failed_deliveries": 27,
+    #   "sla_metrics": {
+    #     "time_to_send_p95": 3200,
+    #     "retry_exhaustion_rate": 0.018
+    #   }
+    # }
+
+  admin: |
+    # Add email channel
+    pnpm tsx src/cli/communication-admin.ts channel add \
+      --type email \
+      --org 660e8400-e29b-41d4-a716-446655440000 \
+      --config '{"provider":"smtp","host":"smtp.example.com"}'
+
+    # List templates
+    pnpm tsx src/cli/communication-admin.ts template list \
+      --org 660e8400-e29b-41d4-a716-446655440000
+
+# ============================================================================
+# INTEGRATION PATTERNS
+# ============================================================================
+integrationPatterns:
+  userMessaging: |
+    // User sends message with permission check
+    const user = await getUserWithTraits(userId); // Includes Communicable
+
+    // Permission check happens automatically (Authable integration)
+    const result = await user.sendMessage(
+      [recipientId],
+      emailTemplate,
+      { user_name: user.name }
+    );
+
+    if (result.blockedRecipients.length > 0) {
+      console.log('Some recipients blocked (insufficient permissions)');
+    }
+
+  organizationBroadcast: |
+    // Organization broadcasts to all members
+    const org = await getOrganizationWithTraits(orgId); // Includes Communicable
+
+    // Preference check happens automatically (Preferenceable integration)
+    const result = await org.broadcastMessage(
+      org.getAllMemberIds(),
+      announcementTemplate,
+      { announcement: 'System maintenance scheduled' }
+    );
+
+    console.log(`Queued: ${result.queuedRecipients.length}, Opted-out: ${result.blockedRecipients.length}`);
+
+# ============================================================================
+# NOTES
+# ============================================================================
+notes:
+  - "Communicable trait composition enables messaging for any object (User, Organization, Team, etc.)"
+  - "Integration with Authable ensures permission-gated delivery (sender/recipient validation)"
+  - "Integration with Preferenceable ensures preference-driven routing (opt-in/opt-out)"
+  - "CLI tools provide operational visibility (export for support, audit for compliance)"
+  - "Generator extensions follow established pattern (Authable/Preferenceable helper methods)"
+
+blockers: []
+risks:
+  - risk: "Generator complexity increases with each trait (Authable + Preferenceable + Communicable)"
+    mitigation: "Modular generator design, each trait contributes methods independently"
+
+  - risk: "CLI tools require database access (may fail if DB unavailable)"
+    mitigation: "Graceful error handling, clear error messages, connection retry logic"

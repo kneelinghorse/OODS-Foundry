@@ -1,0 +1,221 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B32.8
+name: Spatial Documentation Set
+sprint: Sprint 32
+status: Queued
+
+objective: >
+  Author comprehensive documentation for the Spatial Module including module overview,
+  pattern guidance, migration guide, and system overview updates. Documentation should
+  enable developers to understand, use, and migrate to OODS spatial components.
+
+context:
+  background: |
+    The Spatial Module components are implemented (B32.1-B32.6) but lack comprehensive
+    documentation. Some docs already exist (spatial-accessibility.md, spatial-dashboard-integration.md)
+    but the main module docs, pattern guide, and migration guide are missing.
+
+  research_basis:
+    - "ARCHITECTURE.md full document for technical reference"
+    - "Appendix B: Implementation Patterns (Lessons Learned)"
+    - "Existing docs: docs/viz/spatial-accessibility.md, docs/viz/spatial-dashboard-integration.md"
+
+  architecture_reference: "cmos/foundational-docs/data-viz-part2/spatial-module/ARCHITECTURE.md"
+
+  dependencies:
+    - B32.1  # ChoroplethMap
+    - B32.2  # BubbleMap
+    - B32.3  # Supporting components
+    - B32.4  # Vega-Lite adapter
+    - B32.5  # ECharts adapter
+    - B32.6  # Dashboard integration
+
+successCriteria:
+  - docs/viz/spatial-module.md provides complete module overview
+  - docs/viz/spatial-patterns.md guides chart type selection
+  - docs/viz/spatial-migration.md enables migration from custom implementations
+  - docs/viz/system-overview.md updated with Spatial Module
+  - All docs render correctly in doc viewer
+  - Cross-references between docs are valid
+  - Code examples are accurate and runnable
+
+constraints:
+  - Documentation must be comprehensive but concise
+  - Code examples must use current API signatures
+  - Must reference existing accessibility and dashboard docs (don't duplicate)
+  - Follow existing OODS documentation style
+
+deliverables:
+  main_docs:
+    - path: docs/viz/spatial-module.md
+      description: |
+        Main spatial module documentation:
+
+        ## Overview
+        - What the Spatial Module provides
+        - When to use spatial visualizations
+        - Module capabilities summary
+
+        ## Quick Start
+        - Minimal ChoroplethMap example
+        - Minimal BubbleMap example
+        - Required data formats
+
+        ## Component Reference
+        - ChoroplethMap props and usage
+        - BubbleMap props and usage
+        - MapLegend, MapControls, AccessibleMapFallback
+        - SpatialContainer and SpatialContext
+
+        ## Trait Reference
+        - Geocodable: data location resolution
+        - HasProjection: projection configuration
+        - LayeredOverlay: multi-layer composition
+
+        ## Adapter Reference
+        - Vega-Lite adapter usage
+        - ECharts adapter usage
+        - Renderer selection heuristics
+
+        ## Data Format Requirements
+        - GeoJSON structure
+        - TopoJSON structure
+        - Data join requirements (keys must match)
+
+        ## Performance Considerations
+        - Data volume thresholds
+        - Clustering for dense data
+        - Renderer selection for performance
+
+        ## See Also
+        - Link to spatial-accessibility.md
+        - Link to spatial-dashboard-integration.md
+        - Link to spatial-patterns.md
+
+    - path: docs/viz/spatial-patterns.md
+      description: |
+        When to use each spatial pattern:
+
+        ## Choropleth Maps
+        - Best for: regional comparisons, discrete boundaries
+        - Data requirements: region identifiers, numeric values
+        - Examples: sales by state, cases by country, population density
+
+        ## Bubble/Symbol Maps
+        - Best for: point locations, continuous space
+        - Data requirements: lat/lon coordinates, magnitude values
+        - Examples: store locations, event intensity, facility capacity
+
+        ## Choosing Projections
+        - Mercator: web standard, familiar, good for local maps
+        - Albers USA: US-centric with Alaska/Hawaii insets
+        - Equal Earth: global comparisons, equal-area
+        - Orthographic: globe view, 3D appearance
+
+        ## Color Scale Selection
+        - Sequential: single-hue progression (low to high)
+        - Diverging: two-hue with neutral midpoint (positive/negative)
+        - Quantize vs Quantile vs Threshold
+
+        ## Common Mistakes
+        - Using Mercator for area comparisons
+        - Color-only encoding without legends
+        - Join key mismatches (case sensitivity, whitespace)
+        - Ignoring accessibility requirements
+
+    - path: docs/viz/spatial-migration.md
+      description: |
+        Migration guide for existing map implementations:
+
+        ## Pre-Migration Audit
+        - Inventory existing geo data sources
+        - Document current prop interfaces
+        - Identify custom legend/control implementations
+        - Note accessibility gaps
+
+        ## Step-by-Step Migration
+
+        ### 1. Audit Geo Data Sources
+        - Check GeoJSON/TopoJSON structure
+        - Verify join keys match data
+        - Normalize key formats if needed
+
+        ### 2. Map Props to OODS Interfaces
+        - ChoroplethMapProps mapping table
+        - BubbleMapProps mapping table
+        - Event handler migration
+
+        ### 3. Add Accessibility Fields
+        - Required a11y.description
+        - tableFallback configuration
+        - narrative summary and keyFindings
+
+        ### 4. Replace Custom Components
+        - Custom legend → MapLegend
+        - Custom controls → MapControls
+        - Add AccessibleMapFallback
+
+        ### 5. Verification Checklist
+        - [ ] Component renders correctly
+        - [ ] Data joins work
+        - [ ] Interactions fire events
+        - [ ] Accessibility passes axe audit
+        - [ ] Keyboard navigation works
+
+        ## Common Migration Issues
+        - Token prefix: use --oods-viz-* not --viz-*
+        - Projection from context: use SpatialContext.projectionInstance
+        - Join keys: normalize before comparison
+
+    - path: docs/viz/system-overview.md (update)
+      description: |
+        Update system overview to include Spatial Module:
+
+        ## Architecture Diagram
+        - Add Spatial box to visualization system diagram
+        - Show relationship to adapters and traits
+
+        ## Capability Matrix
+        - Add Spatial row with component list
+        - Add coverage metrics
+
+        ## Module Summary Table
+        | Module | Components | Status |
+        |--------|------------|--------|
+        | Core | Bar, Line, Area, Pie, ... | Complete |
+        | Spatial | ChoroplethMap, BubbleMap | Complete |
+        | Network | (future) | Planned |
+
+technicalApproach:
+  - Review existing component implementations for accurate API docs
+  - Extract examples from Storybook stories
+  - Reference ARCHITECTURE.md Appendix B for lessons learned
+  - Cross-link to existing accessibility and dashboard docs
+  - Validate all code examples compile
+  - Check all internal links resolve
+
+qualityGates:
+  during_development:
+    - Each doc section has accurate code examples
+    - Cross-references point to valid files
+
+  before_completion:
+    - All docs render correctly
+    - Code examples pass TypeScript check
+    - Links validated (no 404s)
+    - Spelling/grammar review
+
+estimatedEffort: "1 session (25-35k tokens)"
+
+notes: |
+  Existing docs to reference (don't duplicate):
+  - docs/viz/spatial-accessibility.md - keyboard nav, screen reader, a11y testing
+  - docs/viz/spatial-dashboard-integration.md - renderer selection, cross-filter, tooltips
+
+  Key implementation patterns to document (from ARCHITECTURE.md Appendix B):
+  - Pattern 1: Use fitted projection from SpatialContext
+  - Pattern 2: Use real GeoJSON data in examples
+  - Pattern 3: Join keys must match exactly
+  - Pattern 4: Token references use --oods- prefix

@@ -1,0 +1,146 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B31.2
+name: Geocodable Trait Implementation
+sprint: Sprint 31
+status: Queued
+
+objective: >
+  Enable automatic detection and processing of geographic data by implementing
+  the Geocodable trait with field pattern detection and geo resolution capabilities.
+
+context:
+  background: |
+    The Geocodable trait is the first of three spatial traits. It indicates that data
+    contains location-resolvable information and provides auto-detection of geo fields
+    based on naming patterns and field types.
+
+  research_basis:
+    - "RDS.10: Complex Schema Extension Research Mission"
+    - "RV.03: Gap Analysis (Spatial gap identified)"
+
+  architecture_reference: "cmos/foundational-docs/data-viz-part2/spatial-module/ARCHITECTURE.md Section 3.1"
+
+  dependencies:
+    - B31.1  # Requires spatial schema types
+
+  blocks:
+    - B31.5
+
+successCriteria:
+  - Trait auto-detects geo fields in sample datasets
+  - Field pattern detection works for common geo naming conventions
+  - Field type detection works for geopoint, geojson types
+  - Trait composition works with existing OODS traits
+  - Tests pass with >90% coverage on new code
+  - Trait documentation complete
+
+constraints:
+  - Follow existing trait definition patterns (TS + YAML)
+  - Must integrate with trait engine without modifications
+  - Detection should not produce false positives on non-geo data
+  - Must handle both explicit (field.geopoint) and implicit (field named "latitude") geo fields
+
+deliverables:
+  traits:
+    - path: src/traits/viz/spatial/Geocodable.trait.ts
+      description: |
+        TypeScript trait definition:
+
+        ```typescript
+        export const Geocodable = {
+          id: 'viz.spatial.Geocodable',
+          family: 'Encoding',
+          description: 'Data contains geographic identifiers that can be resolved to coordinates or boundaries',
+
+          detection: {
+            fieldPatterns: [
+              /country|state|province|region|city|zip|postal/i,
+              /lat|latitude|lon|longitude|lng/i,
+              /fips|iso|geo_id/i
+            ],
+            fieldTypes: ['field.geopoint', 'field.geojson']
+          },
+
+          outputs: {
+            geoResolution: 'point' | 'boundary' | 'both',
+            requiresLookup: boolean,
+            detectedFields: { field: string, type: 'coordinate' | 'identifier' | 'geometry' }[]
+          }
+        };
+        ```
+
+    - path: src/traits/viz/spatial/Geocodable.trait.yaml
+      description: YAML version of trait for schema-based tooling
+
+  utilities:
+    - path: src/traits/viz/spatial/geo-field-detector.ts
+      description: |
+        Utility function that scans a dataset and detects geo fields:
+        - detectGeoFields(data: DataRecord[]): GeoFieldDetection
+        - Checks field names against patterns
+        - Checks field values for coordinate-like data
+        - Returns detected fields with confidence scores
+
+  tests:
+    - path: tests/traits/spatial/geocodable.test.ts
+      description: |
+        Trait tests:
+        - Detects explicit geopoint fields
+        - Detects lat/lon named fields
+        - Detects country/state identifier fields
+        - Returns correct geoResolution (point vs boundary)
+        - Handles mixed geo + non-geo data
+        - Does not false-positive on similar but non-geo fields
+        - Trait composes with Identifiable, Timestamped, etc.
+
+  documentation:
+    - path: docs/traits/geocodable.md
+      description: |
+        Trait documentation:
+        - Purpose and use cases
+        - Auto-detection behavior
+        - Manual override options
+        - Examples with sample data
+        - Composition patterns
+
+technicalApproach:
+  - Review existing trait implementations in src/traits/
+  - Implement Geocodable trait following established patterns
+  - Build geo-field-detector utility with regex patterns
+  - Add coordinate value detection (numbers in lat/lon ranges)
+  - Write comprehensive tests with real-world field naming examples
+  - Test trait composition with existing traits
+  - Document trait usage and detection behavior
+
+qualityGates:
+  during_development:
+    - Trait registers with trait engine
+    - No TypeScript errors in strict mode
+    - Detection patterns match expected fields
+
+  before_completion:
+    - pnpm test tests/traits/spatial/geocodable.test.ts passes
+    - Trait composes without conflicts
+    - Documentation reviewed
+    - Coverage >90% on new code
+
+estimatedEffort: "1 session (50-60k tokens)"
+
+notes: |
+  📋 FULL MISSION DETAILS: This YAML file contains complete implementation guidance.
+
+  Field detection patterns (from ARCHITECTURE.md):
+  - Geographic identifiers: country, state, province, region, city, zip, postal
+  - Coordinates: lat, latitude, lon, longitude, lng
+  - Standard codes: fips, iso, geo_id
+
+  geoResolution output logic:
+  - "point" if lat/lon coordinates detected
+  - "boundary" if region identifiers detected (country, state, etc.)
+  - "both" if both coordinate and identifier fields present
+
+  requiresLookup output:
+  - true if only identifiers detected (need to resolve to boundaries)
+  - false if coordinates or geometry already present

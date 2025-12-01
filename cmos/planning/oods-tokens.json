@@ -1,0 +1,2343 @@
+{
+  "generatedAt": "2025-11-26T02:24:17Z",
+  "sources": {
+    "base": "tokens/base.json",
+    "theme": "tokens/theme.json",
+    "semantic": {
+      "system": "tokens/semantic/system.json",
+      "components": "tokens/semantic/components.json"
+    },
+    "view": "tokens/view.json",
+    "maps": [
+      "saas-billing.status-map"
+    ],
+    "traitOverlays": 32
+  },
+  "layers": {
+    "reference": {
+      "$schema": "https://design-tokens.org/schema.json",
+      "ref": {
+        "color": {
+          "neutral": {
+            "50": {
+              "$type": "color",
+              "$value": "oklch(0.9913 0.0013 286.38)",
+              "$description": "Neutral 50 canvas background for light theme."
+            },
+            "100": {
+              "$type": "color",
+              "$value": "oklch(0.9816 0.0017 247.84)",
+              "$description": "Neutral 100 raised surface tone."
+            },
+            "200": {
+              "$type": "color",
+              "$value": "oklch(0.9417 0.0052 247.88)",
+              "$description": "Neutral 200 subtle surface and soft border tone."
+            },
+            "300": {
+              "$type": "color",
+              "$value": "oklch(0.8875 0.0147 264.49)",
+              "$description": "Neutral 300 structural border contrast."
+            },
+            "400": {
+              "$type": "color",
+              "$value": "oklch(0.7951 0.0148 268.46)",
+              "$description": "Neutral 400 disabled text tone."
+            },
+            "500": {
+              "$type": "color",
+              "$value": "oklch(0.6929 0.0198 269.00)",
+              "$description": "Neutral 500 tertiary text/icon tone."
+            },
+            "700": {
+              "$type": "color",
+              "$value": "oklch(0.5109 0.0264 269.16)",
+              "$description": "Neutral 700 secondary text tone."
+            },
+            "800": {
+              "$type": "color",
+              "$value": "oklch(0.4239 0.021 267.53)",
+              "$description": "Neutral 800 neutral status text."
+            },
+            "900": {
+              "$type": "color",
+              "$value": "oklch(0.313 0.0171 266.40)",
+              "$description": "Neutral 900 high-contrast foreground."
+            }
+          },
+          "info": {
+            "100": {
+              "$type": "color",
+              "$value": "oklch(0.9685 0.0148 260.73)",
+              "$description": "Informational status surface."
+            },
+            "300": {
+              "$type": "color",
+              "$value": "oklch(0.8191 0.0763 260.81)",
+              "$description": "Informational status border."
+            },
+            "700": {
+              "$type": "color",
+              "$value": "oklch(0.5466 0.1806 263.48)",
+              "$description": "Informational status icon."
+            },
+            "900": {
+              "$type": "color",
+              "$value": "oklch(0.3847 0.1344 263.74)",
+              "$description": "Informational status text."
+            }
+          },
+          "accent": {
+            "100": {
+              "$type": "color",
+              "$value": "{ref.color.primary.100}",
+              "$description": "Accent surface derived from primary 100."
+            },
+            "300": {
+              "$type": "color",
+              "$value": "{ref.color.primary.500}",
+              "$description": "Accent border aligned to primary default."
+            },
+            "400": {
+              "$type": "color",
+              "$value": "{ref.color.primary.600}",
+              "$description": "Accent hover derived from primary hover."
+            },
+            "500": {
+              "$type": "color",
+              "$value": "{ref.color.primary.700}",
+              "$description": "Accent text aligned to pressed state."
+            }
+          },
+          "success": {
+            "100": {
+              "$type": "color",
+              "$value": "oklch(0.9743 0.0192 167.94)",
+              "$description": "Success status surface."
+            },
+            "300": {
+              "$type": "color",
+              "$value": "oklch(0.8671 0.0772 165.25)",
+              "$description": "Success status border."
+            },
+            "700": {
+              "$type": "color",
+              "$value": "oklch(0.6005 0.1199 161.34)",
+              "$description": "Success status icon."
+            },
+            "900": {
+              "$type": "color",
+              "$value": "oklch(0.4315 0.0821 163.04)",
+              "$description": "Success status text."
+            }
+          },
+          "warning": {
+            "100": {
+              "$type": "color",
+              "$value": "oklch(0.9795 0.026 90.09)",
+              "$description": "Warning status surface."
+            },
+            "300": {
+              "$type": "color",
+              "$value": "oklch(0.8949 0.1177 87.87)",
+              "$description": "Warning status border."
+            },
+            "700": {
+              "$type": "color",
+              "$value": "oklch(0.6573 0.1198 81.65)",
+              "$description": "Warning status icon."
+            },
+            "900": {
+              "$type": "color",
+              "$value": "oklch(0.4914 0.1012 82.20)",
+              "$description": "Warning status text."
+            }
+          },
+          "critical": {
+            "100": {
+              "$type": "color",
+              "$value": "oklch(0.9672 0.0163 12.78)",
+              "$description": "Critical status surface."
+            },
+            "300": {
+              "$type": "color",
+              "$value": "oklch(0.824 0.0834 19.01)",
+              "$description": "Critical status border."
+            },
+            "700": {
+              "$type": "color",
+              "$value": "oklch(0.6039 0.1827 24.43)",
+              "$description": "Critical status icon."
+            },
+            "900": {
+              "$type": "color",
+              "$value": "oklch(0.465 0.147 24.94)",
+              "$description": "Critical status text."
+            }
+          },
+          "primary": {
+            "100": {
+              "$type": "color",
+              "$value": "oklch(0.9563 0.0277 225.69)",
+              "$description": "Primary accent surface."
+            },
+            "500": {
+              "$type": "color",
+              "$value": "oklch(0.5631 0.1717 274.55)",
+              "$description": "Primary interactive colour."
+            },
+            "600": {
+              "$type": "color",
+              "$value": "oklch(0.4631 0.1867 274.55)",
+              "$description": "Primary hover reference."
+            },
+            "700": {
+              "$type": "color",
+              "$value": "oklch(0.4231 0.1967 274.55)",
+              "$description": "Primary pressed reference."
+            }
+          }
+        },
+        "space": {
+          "stack": {
+            "compact": {
+              "$type": "dimension",
+              "$value": "12px",
+              "$description": "Compact vertical spacing for dense layouts."
+            },
+            "default": {
+              "$type": "dimension",
+              "$value": "20px",
+              "$description": "Standard vertical spacing between sections."
+            }
+          },
+          "inset": {
+            "compact": {
+              "$type": "dimension",
+              "$value": "16px",
+              "$description": "Compact padding for tight surface layouts."
+            },
+            "default": {
+              "$type": "dimension",
+              "$value": "24px",
+              "$description": "Default padding for primary panels."
+            }
+          },
+          "inline": {
+            "xs": {
+              "$type": "dimension",
+              "$value": "8px",
+              "$description": "Extra-small inline spacing token."
+            },
+            "sm": {
+              "$type": "dimension",
+              "$value": "12px",
+              "$description": "Small inline spacing token."
+            }
+          }
+        }
+      }
+    },
+    "theme": {
+      "$schema": "https://design-tokens.org/schema.json",
+      "theme": {
+        "surface": {
+          "canvas": {
+            "$type": "color",
+            "$value": "{ref.color.neutral.50}",
+            "$description": "Primary page background for Theme 0."
+          },
+          "raised": {
+            "$type": "color",
+            "$value": "{ref.color.neutral.100}",
+            "$description": "Raised card surface with soft separation."
+          },
+          "subtle": {
+            "$type": "color",
+            "$value": "{ref.color.neutral.200}",
+            "$description": "Secondary panel surface tone."
+          },
+          "disabled": {
+            "$type": "color",
+            "$value": "{ref.color.neutral.200}",
+            "$description": "Disabled component surface fill."
+          },
+          "backdrop": {
+            "$type": "color",
+            "$value": "{ref.color.neutral.900}",
+            "$description": "Backdrop and scrim tone for overlays."
+          },
+          "inverse": {
+            "$type": "color",
+            "$value": "{ref.color.neutral.900}",
+            "$description": "Inverse surface for dark-on-light contexts."
+          },
+          "interactive": {
+            "primary": {
+              "default": {
+                "$type": "color",
+                "$value": "{ref.color.primary.500}",
+                "$description": "Primary interactive default surface."
+              },
+              "hover": {
+                "$type": "color",
+                "$value": "{ref.color.primary.600}",
+                "$description": "Primary interactive hover surface."
+              },
+              "pressed": {
+                "$type": "color",
+                "$value": "{ref.color.primary.700}",
+                "$description": "Primary interactive pressed surface."
+              }
+            }
+          }
+        },
+        "border": {
+          "subtle": {
+            "$type": "color",
+            "$value": "{ref.color.neutral.300}",
+            "$description": "Default subtle border tone."
+          },
+          "strong": {
+            "$type": "color",
+            "$value": "{ref.color.neutral.500}",
+            "$description": "High contrast border tone."
+          }
+        },
+        "text": {
+          "primary": {
+            "$type": "color",
+            "$value": "{ref.color.neutral.900}",
+            "$description": "Body text on light surfaces."
+          },
+          "secondary": {
+            "$type": "color",
+            "$value": "{ref.color.neutral.700}",
+            "$description": "Secondary supporting text."
+          },
+          "muted": {
+            "$type": "color",
+            "$value": "{ref.color.neutral.500}",
+            "$description": "Muted caption text."
+          },
+          "inverse": {
+            "$type": "color",
+            "$value": "{ref.color.neutral.100}",
+            "$description": "Inverse text on dark surfaces."
+          },
+          "accent": {
+            "$type": "color",
+            "$value": "{ref.color.primary.600}",
+            "$description": "Accent text for highlights."
+          },
+          "on_interactive": {
+            "$type": "color",
+            "$value": "{ref.color.neutral.100}",
+            "$description": "Text on primary interactive surfaces."
+          },
+          "disabled": {
+            "$type": "color",
+            "$value": "{ref.color.neutral.400}",
+            "$description": "Disabled text."
+          }
+        },
+        "icon": {
+          "primary": {
+            "$type": "color",
+            "$value": "{ref.color.neutral.800}",
+            "$description": "Primary iconography tone."
+          },
+          "muted": {
+            "$type": "color",
+            "$value": "{ref.color.neutral.500}",
+            "$description": "Muted/secondary icon tone."
+          },
+          "on_interactive": {
+            "$type": "color",
+            "$value": "{ref.color.neutral.100}",
+            "$description": "Icons on primary interactive surfaces."
+          }
+        },
+        "status": {
+          "info": {
+            "surface": {
+              "$type": "color",
+              "$value": "{ref.color.info.100}",
+              "$description": "Informational background tone."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "{ref.color.info.300}",
+              "$description": "Informational border tone."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "{ref.color.info.900}",
+              "$description": "Informational text colour."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "{ref.color.info.700}",
+              "$description": "Informational icon tone."
+            }
+          },
+          "success": {
+            "surface": {
+              "$type": "color",
+              "$value": "{ref.color.success.100}",
+              "$description": "Success background tone."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "{ref.color.success.300}",
+              "$description": "Success border tone."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "{ref.color.success.900}",
+              "$description": "Success text colour."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "{ref.color.success.700}",
+              "$description": "Success icon tone."
+            }
+          },
+          "warning": {
+            "surface": {
+              "$type": "color",
+              "$value": "{ref.color.warning.100}",
+              "$description": "Warning background tone."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "{ref.color.warning.300}",
+              "$description": "Warning border tone."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "{ref.color.warning.900}",
+              "$description": "Warning text colour."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "{ref.color.warning.700}",
+              "$description": "Warning icon tone."
+            }
+          },
+          "critical": {
+            "surface": {
+              "$type": "color",
+              "$value": "{ref.color.critical.100}",
+              "$description": "Critical background tone."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "{ref.color.critical.300}",
+              "$description": "Critical border tone."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "{ref.color.critical.900}",
+              "$description": "Critical text colour."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "{ref.color.critical.700}",
+              "$description": "Critical icon tone."
+            }
+          },
+          "neutral": {
+            "surface": {
+              "$type": "color",
+              "$value": "{ref.color.neutral.100}",
+              "$description": "Neutral status surface."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "{ref.color.neutral.300}",
+              "$description": "Neutral status border."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "{ref.color.neutral.800}",
+              "$description": "Neutral status text."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "{ref.color.neutral.700}",
+              "$description": "Neutral status icon."
+            }
+          },
+          "accent": {
+            "surface": {
+              "$type": "color",
+              "$value": "{ref.color.accent.100}",
+              "$description": "Accent emphasis surface."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "{ref.color.accent.300}",
+              "$description": "Accent border tone."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "{ref.color.accent.500}",
+              "$description": "Accent text tone."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "{ref.color.accent.400}",
+              "$description": "Accent icon tone."
+            }
+          }
+        },
+        "focus": {
+          "ring": {
+            "outer": {
+              "$type": "color",
+              "$value": "{ref.color.neutral.900}",
+              "$description": "Outer halo colour for focus indicators."
+            },
+            "inner": {
+              "$type": "color",
+              "$value": "{ref.color.neutral.100}",
+              "$description": "Inner ring contrast colour for focus."
+            }
+          },
+          "text": {
+            "$type": "color",
+            "$value": "{ref.color.primary.600}",
+            "$description": "Text/icon accent used alongside focus."
+          },
+          "width": {
+            "$type": "dimension",
+            "$value": "2px",
+            "$description": "Default focus ring width."
+          }
+        },
+        "space": {
+          "stack": {
+            "default": {
+              "$type": "dimension",
+              "$value": "{ref.space.stack.default}",
+              "$description": "Default vertical spacing for layouts."
+            },
+            "compact": {
+              "$type": "dimension",
+              "$value": "{ref.space.stack.compact}",
+              "$description": "Compact vertical spacing for tight stacks."
+            }
+          },
+          "inset": {
+            "default": {
+              "$type": "dimension",
+              "$value": "{ref.space.inset.default}",
+              "$description": "Default padding for cards."
+            },
+            "compact": {
+              "$type": "dimension",
+              "$value": "{ref.space.inset.compact}",
+              "$description": "Compact padding for dense shells."
+            }
+          },
+          "inline": {
+            "xs": {
+              "$type": "dimension",
+              "$value": "{ref.space.inline.xs}",
+              "$description": "Extra-small inline spacing token."
+            },
+            "sm": {
+              "$type": "dimension",
+              "$value": "{ref.space.inline.sm}",
+              "$description": "Small inline spacing token."
+            }
+          }
+        }
+      },
+      "theme-dark": {
+        "surface": {
+          "canvas": {
+            "$type": "color",
+            "$value": "oklch(0.18 0.05 45)",
+            "$description": "Primary dark canvas tone."
+          },
+          "raised": {
+            "$type": "color",
+            "$value": "oklch(0.24 0.05 45)",
+            "$description": "Raised panel surface for dark theme."
+          },
+          "subtle": {
+            "$type": "color",
+            "$value": "oklch(0.3 0.06 45)",
+            "$description": "Secondary panel surface tone for dark theme."
+          },
+          "disabled": {
+            "$type": "color",
+            "$value": "oklch(0.32 0.04 45)",
+            "$description": "Disabled component surface in dark theme."
+          },
+          "backdrop": {
+            "$type": "color",
+            "$value": "oklch(0.12 0.04 45)",
+            "$description": "Backdrop and scrim tone for dark theme overlays."
+          },
+          "inverse": {
+            "$type": "color",
+            "$value": "oklch(0.95 0.01 45)",
+            "$description": "Inverse surface token for dark contexts."
+          },
+          "interactive": {
+            "primary": {
+              "default": {
+                "$type": "color",
+                "$value": "oklch(0.52 0.2 45)",
+                "$description": "Primary interactive default surface for dark theme."
+              },
+              "hover": {
+                "$type": "color",
+                "$value": "oklch(0.60 0.215 45)",
+                "$description": "Primary interactive hover surface for dark theme."
+              },
+              "pressed": {
+                "$type": "color",
+                "$value": "oklch(0.67 0.23 45)",
+                "$description": "Primary interactive pressed surface for dark theme."
+              }
+            }
+          }
+        },
+        "border": {
+          "subtle": {
+            "$type": "color",
+            "$value": "oklch(0.44 0.04 45)",
+            "$description": "Subtle border tone for dark theme."
+          },
+          "strong": {
+            "$type": "color",
+            "$value": "oklch(0.53 0.05 45)",
+            "$description": "High contrast border tone for dark theme."
+          }
+        },
+        "text": {
+          "primary": {
+            "$type": "color",
+            "$value": "oklch(0.92 0.02 92)",
+            "$description": "Body text on dark surfaces."
+          },
+          "secondary": {
+            "$type": "color",
+            "$value": "oklch(0.81 0.015 92)",
+            "$description": "Secondary text on dark surfaces."
+          },
+          "muted": {
+            "$type": "color",
+            "$value": "oklch(0.7 0.01 92)",
+            "$description": "Muted caption text on dark surfaces."
+          },
+          "inverse": {
+            "$type": "color",
+            "$value": "oklch(0.24 0.05 265)",
+            "$description": "Inverse text colour for dark theme."
+          },
+          "accent": {
+            "$type": "color",
+            "$value": "oklch(0.79 0.17 45)",
+            "$description": "Accent text for dark theme."
+          },
+          "on_interactive": {
+            "$type": "color",
+            "$value": "oklch(0.16 0.04 45)",
+            "$description": "Text on dark interactive surfaces."
+          },
+          "disabled": {
+            "$type": "color",
+            "$value": "oklch(0.55 0.008 92)",
+            "$description": "Disabled text on dark surfaces."
+          }
+        },
+        "icon": {
+          "primary": {
+            "$type": "color",
+            "$value": "oklch(0.88 0.02 92)",
+            "$description": "Primary icons on dark surfaces."
+          },
+          "muted": {
+            "$type": "color",
+            "$value": "oklch(0.7 0.01 92)",
+            "$description": "Muted icons on dark surfaces."
+          },
+          "on_interactive": {
+            "$type": "color",
+            "$value": "oklch(0.22 0.05 45)",
+            "$description": "Icons on interactive surfaces for dark theme."
+          }
+        },
+        "status": {
+          "info": {
+            "surface": {
+              "$type": "color",
+              "$value": "oklch(0.31 0.08 262)",
+              "$description": "Dark informational surface."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "oklch(0.43 0.11 262)",
+              "$description": "Dark informational border."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "oklch(0.88 0.06 262)",
+              "$description": "Dark informational text."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "oklch(0.8 0.1 262)",
+              "$description": "Dark informational icon."
+            }
+          },
+          "success": {
+            "surface": {
+              "$type": "color",
+              "$value": "oklch(0.32 0.09 161)",
+              "$description": "Dark success surface."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "oklch(0.43 0.11 161)",
+              "$description": "Dark success border."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "oklch(0.88 0.07 165)",
+              "$description": "Dark success text."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "oklch(0.78 0.1 163)",
+              "$description": "Dark success icon."
+            }
+          },
+          "warning": {
+            "surface": {
+              "$type": "color",
+              "$value": "oklch(0.34 0.09 85)",
+              "$description": "Dark warning surface."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "oklch(0.46 0.12 85)",
+              "$description": "Dark warning border."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "oklch(0.9 0.08 87)",
+              "$description": "Dark warning text."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "oklch(0.81 0.11 85)",
+              "$description": "Dark warning icon."
+            }
+          },
+          "critical": {
+            "surface": {
+              "$type": "color",
+              "$value": "oklch(0.31 0.12 25)",
+              "$description": "Dark critical surface."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "oklch(0.43 0.15 25)",
+              "$description": "Dark critical border."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "oklch(0.88 0.09 23)",
+              "$description": "Dark critical text."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "oklch(0.79 0.13 24)",
+              "$description": "Dark critical icon."
+            }
+          },
+          "neutral": {
+            "surface": {
+              "$type": "color",
+              "$value": "oklch(0.32 0.02 260)",
+              "$description": "Dark neutral surface."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "oklch(0.41 0.025 260)",
+              "$description": "Dark neutral border."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "oklch(0.86 0.02 260)",
+              "$description": "Dark neutral text."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "oklch(0.74 0.02 260)",
+              "$description": "Dark neutral icon."
+            }
+          },
+          "accent": {
+            "surface": {
+              "$type": "color",
+              "$value": "oklch(0.4 0.18 45)",
+              "$description": "Dark accent surface."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "oklch(0.5 0.19 45)",
+              "$description": "Dark accent border."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "oklch(0.92 0.05 92)",
+              "$description": "Dark accent text."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "oklch(0.82 0.12 45)",
+              "$description": "Dark accent icon."
+            }
+          }
+        },
+        "focus": {
+          "ring": {
+            "outer": {
+              "$type": "color",
+              "$value": "color-mix(in oklch, oklch(0.79 0.17 45) 60%, oklch(0.97 0.01 95))",
+              "$description": "Outer focus ring for dark surfaces."
+            },
+            "inner": {
+              "$type": "color",
+              "$value": "oklch(0.18 0.05 45)",
+              "$description": "Inner focus ring contrast for dark theme."
+            }
+          },
+          "text": {
+            "$type": "color",
+            "$value": "oklch(0.79 0.17 45)",
+            "$description": "Text/icon accent accompanying dark focus."
+          },
+          "width": {
+            "$type": "dimension",
+            "$value": "2px",
+            "$description": "Default focus ring width for dark theme."
+          }
+        },
+        "space": {
+          "stack": {
+            "default": {
+              "$type": "dimension",
+              "$value": "{ref.space.stack.default}",
+              "$description": "Dark theme inherits default stack spacing."
+            },
+            "compact": {
+              "$type": "dimension",
+              "$value": "{ref.space.stack.compact}",
+              "$description": "Dark theme inherits compact stack spacing."
+            }
+          },
+          "inset": {
+            "default": {
+              "$type": "dimension",
+              "$value": "{ref.space.inset.default}",
+              "$description": "Dark theme inherits default inset spacing."
+            },
+            "compact": {
+              "$type": "dimension",
+              "$value": "{ref.space.inset.compact}",
+              "$description": "Dark theme inherits compact inset spacing."
+            }
+          },
+          "inline": {
+            "xs": {
+              "$type": "dimension",
+              "$value": "{ref.space.inline.xs}",
+              "$description": "Dark theme inherits extra-small inline spacing."
+            },
+            "sm": {
+              "$type": "dimension",
+              "$value": "{ref.space.inline.sm}",
+              "$description": "Dark theme inherits small inline spacing."
+            }
+          }
+        }
+      }
+    },
+    "system": {
+      "$schema": "https://design-tokens.org/schema.json",
+      "sys": {
+        "surface": {
+          "canvas": {
+            "$type": "color",
+            "$value": "{theme.surface.canvas}",
+            "$description": "System canvas surface derived from theme."
+          },
+          "raised": {
+            "$type": "color",
+            "$value": "{theme.surface.raised}",
+            "$description": "System raised surface derived from theme."
+          },
+          "subtle": {
+            "$type": "color",
+            "$value": "{theme.surface.subtle}",
+            "$description": "System subtle surface derived from theme."
+          },
+          "disabled": {
+            "$type": "color",
+            "$value": "{theme.surface.disabled}",
+            "$description": "System disabled surface derived from theme."
+          },
+          "backdrop": {
+            "$type": "color",
+            "$value": "{theme.surface.backdrop}",
+            "$description": "System overlay backdrop tone."
+          },
+          "inverse": {
+            "$type": "color",
+            "$value": "{theme.surface.inverse}",
+            "$description": "System inverse surface."
+          },
+          "interactive": {
+            "primary": {
+              "default": {
+                "$type": "color",
+                "$value": "{theme.surface.interactive.primary.default}",
+                "$description": "Primary interactive default surface."
+              },
+              "hover": {
+                "$type": "color",
+                "$value": "{theme.surface.interactive.primary.hover}",
+                "$description": "Primary interactive hover surface."
+              },
+              "pressed": {
+                "$type": "color",
+                "$value": "{theme.surface.interactive.primary.pressed}",
+                "$description": "Primary interactive pressed surface."
+              }
+            }
+          }
+        },
+        "border": {
+          "subtle": {
+            "$type": "color",
+            "$value": "{theme.border.subtle}",
+            "$description": "System subtle border tone."
+          },
+          "strong": {
+            "$type": "color",
+            "$value": "{theme.border.strong}",
+            "$description": "System strong border tone."
+          }
+        },
+        "text": {
+          "primary": {
+            "$type": "color",
+            "$value": "{theme.text.primary}",
+            "$description": "System body text colour."
+          },
+          "secondary": {
+            "$type": "color",
+            "$value": "{theme.text.secondary}",
+            "$description": "System secondary text colour."
+          },
+          "muted": {
+            "$type": "color",
+            "$value": "{theme.text.muted}",
+            "$description": "System muted text colour."
+          },
+          "inverse": {
+            "$type": "color",
+            "$value": "{theme.text.inverse}",
+            "$description": "System inverse text colour."
+          },
+          "accent": {
+            "$type": "color",
+            "$value": "{theme.text.accent}",
+            "$description": "System accent text colour."
+          },
+          "on_interactive": {
+            "$type": "color",
+            "$value": "{theme.text.on_interactive}",
+            "$description": "System text colour for interactive surfaces."
+          },
+          "disabled": {
+            "$type": "color",
+            "$value": "{theme.text.disabled}",
+            "$description": "System disabled text colour."
+          }
+        },
+        "icon": {
+          "primary": {
+            "$type": "color",
+            "$value": "{theme.icon.primary}",
+            "$description": "System primary icon colour."
+          },
+          "muted": {
+            "$type": "color",
+            "$value": "{theme.icon.muted}",
+            "$description": "System muted icon colour."
+          },
+          "on_interactive": {
+            "$type": "color",
+            "$value": "{theme.icon.on_interactive}",
+            "$description": "System icon colour on interactive surfaces."
+          }
+        },
+        "status": {
+          "info": {
+            "surface": {
+              "$type": "color",
+              "$value": "{theme.status.info.surface}",
+              "$description": "System informational surface."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "{theme.status.info.border}",
+              "$description": "System informational border."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "{theme.status.info.text}",
+              "$description": "System informational text."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "{theme.status.info.icon}",
+              "$description": "System informational icon."
+            }
+          },
+          "success": {
+            "surface": {
+              "$type": "color",
+              "$value": "{theme.status.success.surface}",
+              "$description": "System success surface."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "{theme.status.success.border}",
+              "$description": "System success border."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "{theme.status.success.text}",
+              "$description": "System success text."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "{theme.status.success.icon}",
+              "$description": "System success icon."
+            }
+          },
+          "warning": {
+            "surface": {
+              "$type": "color",
+              "$value": "{theme.status.warning.surface}",
+              "$description": "System warning surface."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "{theme.status.warning.border}",
+              "$description": "System warning border."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "{theme.status.warning.text}",
+              "$description": "System warning text."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "{theme.status.warning.icon}",
+              "$description": "System warning icon."
+            }
+          },
+          "critical": {
+            "surface": {
+              "$type": "color",
+              "$value": "{theme.status.critical.surface}",
+              "$description": "System critical surface."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "{theme.status.critical.border}",
+              "$description": "System critical border."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "{theme.status.critical.text}",
+              "$description": "System critical text."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "{theme.status.critical.icon}",
+              "$description": "System critical icon."
+            }
+          },
+          "neutral": {
+            "surface": {
+              "$type": "color",
+              "$value": "{theme.status.neutral.surface}",
+              "$description": "System neutral surface."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "{theme.status.neutral.border}",
+              "$description": "System neutral border."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "{theme.status.neutral.text}",
+              "$description": "System neutral text."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "{theme.status.neutral.icon}",
+              "$description": "System neutral icon."
+            }
+          },
+          "accent": {
+            "surface": {
+              "$type": "color",
+              "$value": "{theme.status.accent.surface}",
+              "$description": "System accent surface."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "{theme.status.accent.border}",
+              "$description": "System accent border."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "{theme.status.accent.text}",
+              "$description": "System accent text."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "{theme.status.accent.icon}",
+              "$description": "System accent icon."
+            }
+          }
+        },
+        "communication": {
+          "accent": {
+            "$type": "color",
+            "$value": "{theme.status.accent.surface}",
+            "$description": "Communication accent tone for unread and emphasis states."
+          },
+          "muted": {
+            "$type": "color",
+            "$value": "{theme.text.muted}",
+            "$description": "Communication metadata foreground and helper tone."
+          },
+          "success": {
+            "$type": "color",
+            "$value": "{theme.status.success.surface}",
+            "$description": "Communication success tone for delivery health."
+          },
+          "error": {
+            "$type": "color",
+            "$value": "{theme.status.critical.surface}",
+            "$description": "Communication error tone for delivery failures."
+          }
+        },
+        "focus": {
+          "ring": {
+            "outer": {
+              "$type": "color",
+              "$value": "{theme.focus.ring.outer}",
+              "$description": "System focus outer ring colour."
+            },
+            "inner": {
+              "$type": "color",
+              "$value": "{theme.focus.ring.inner}",
+              "$description": "System focus inner ring colour."
+            }
+          },
+          "text": {
+            "$type": "color",
+            "$value": "{theme.focus.text}",
+            "$description": "System focus accent colour."
+          },
+          "width": {
+            "$type": "dimension",
+            "$value": "{theme.focus.width}",
+            "$description": "System focus ring width."
+          }
+        },
+        "space": {
+          "stack": {
+            "default": {
+              "$type": "dimension",
+              "$value": "{theme.space.stack.default}",
+              "$description": "System default vertical spacing."
+            },
+            "compact": {
+              "$type": "dimension",
+              "$value": "{theme.space.stack.compact}",
+              "$description": "System compact vertical spacing."
+            }
+          },
+          "inset": {
+            "default": {
+              "$type": "dimension",
+              "$value": "{theme.space.inset.default}",
+              "$description": "System default inset spacing."
+            },
+            "compact": {
+              "$type": "dimension",
+              "$value": "{theme.space.inset.compact}",
+              "$description": "System compact inset spacing."
+            }
+          },
+          "inline": {
+            "xs": {
+              "$type": "dimension",
+              "$value": "{theme.space.inline.xs}",
+              "$description": "System extra-small inline spacing."
+            },
+            "sm": {
+              "$type": "dimension",
+              "$value": "{theme.space.inline.sm}",
+              "$description": "System small inline spacing."
+            }
+          }
+        }
+      }
+    },
+    "component": {
+      "$schema": "https://design-tokens.org/schema.json",
+      "cmp": {
+        "surface": {
+          "canvas": {
+            "$type": "color",
+            "$value": "{sys.surface.canvas}",
+            "$description": "Default page background surface."
+          },
+          "panel": {
+            "$type": "color",
+            "$value": "{sys.surface.raised}",
+            "$description": "Raised panel surface."
+          },
+          "subtle": {
+            "$type": "color",
+            "$value": "{sys.surface.subtle}",
+            "$description": "Subtle panel surface."
+          },
+          "backdrop": {
+            "$type": "color",
+            "$value": "{sys.surface.backdrop}",
+            "$description": "Backdrop surface for overlays."
+          },
+          "disabled": {
+            "$type": "color",
+            "$value": "{sys.surface.disabled}",
+            "$description": "Disabled control surface."
+          },
+          "action": {
+            "$type": "color",
+            "$value": "{sys.surface.interactive.primary.default}",
+            "$description": "Primary action surface."
+          },
+          "action_hover": {
+            "$type": "color",
+            "$value": "{sys.surface.interactive.primary.hover}",
+            "$description": "Primary action hover surface."
+          },
+          "action_pressed": {
+            "$type": "color",
+            "$value": "{sys.surface.interactive.primary.pressed}",
+            "$description": "Primary action pressed surface."
+          }
+        },
+        "border": {
+          "default": {
+            "$type": "color",
+            "$value": "{sys.border.subtle}",
+            "$description": "Default component border tone."
+          },
+          "strong": {
+            "$type": "color",
+            "$value": "{sys.border.strong}",
+            "$description": "High contrast component border tone."
+          }
+        },
+        "text": {
+          "body": {
+            "$type": "color",
+            "$value": "{sys.text.primary}",
+            "$description": "Primary body text colour."
+          },
+          "secondary": {
+            "$type": "color",
+            "$value": "{sys.text.secondary}",
+            "$description": "Secondary text colour."
+          },
+          "muted": {
+            "$type": "color",
+            "$value": "{sys.text.muted}",
+            "$description": "Muted supporting text colour."
+          },
+          "inverse": {
+            "$type": "color",
+            "$value": "{sys.text.inverse}",
+            "$description": "Inverse text for dark surfaces."
+          },
+          "accent": {
+            "$type": "color",
+            "$value": "{sys.text.accent}",
+            "$description": "Accent text colour."
+          },
+          "disabled": {
+            "$type": "color",
+            "$value": "{sys.text.disabled}",
+            "$description": "Disabled text colour."
+          },
+          "on_action": {
+            "$type": "color",
+            "$value": "{sys.text.on_interactive}",
+            "$description": "Text on primary action surfaces."
+          }
+        },
+        "icon": {
+          "default": {
+            "$type": "color",
+            "$value": "{sys.icon.primary}",
+            "$description": "Default icon colour."
+          },
+          "muted": {
+            "$type": "color",
+            "$value": "{sys.icon.muted}",
+            "$description": "Muted icon colour."
+          },
+          "on_action": {
+            "$type": "color",
+            "$value": "{sys.icon.on_interactive}",
+            "$description": "Icon colour on action surfaces."
+          }
+        },
+        "status": {
+          "info": {
+            "surface": {
+              "$type": "color",
+              "$value": "{sys.status.info.surface}",
+              "$description": "Informational surface token slot."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "{sys.status.info.border}",
+              "$description": "Informational border token slot."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "{sys.status.info.text}",
+              "$description": "Informational text token slot."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "{sys.status.info.icon}",
+              "$description": "Informational icon token slot."
+            }
+          },
+          "success": {
+            "surface": {
+              "$type": "color",
+              "$value": "{sys.status.success.surface}",
+              "$description": "Success surface token slot."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "{sys.status.success.border}",
+              "$description": "Success border token slot."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "{sys.status.success.text}",
+              "$description": "Success text token slot."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "{sys.status.success.icon}",
+              "$description": "Success icon token slot."
+            }
+          },
+          "warning": {
+            "surface": {
+              "$type": "color",
+              "$value": "{sys.status.warning.surface}",
+              "$description": "Warning surface token slot."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "{sys.status.warning.border}",
+              "$description": "Warning border token slot."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "{sys.status.warning.text}",
+              "$description": "Warning text token slot."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "{sys.status.warning.icon}",
+              "$description": "Warning icon token slot."
+            }
+          },
+          "critical": {
+            "surface": {
+              "$type": "color",
+              "$value": "{sys.status.critical.surface}",
+              "$description": "Critical surface token slot."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "{sys.status.critical.border}",
+              "$description": "Critical border token slot."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "{sys.status.critical.text}",
+              "$description": "Critical text token slot."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "{sys.status.critical.icon}",
+              "$description": "Critical icon token slot."
+            }
+          },
+          "neutral": {
+            "surface": {
+              "$type": "color",
+              "$value": "{sys.status.neutral.surface}",
+              "$description": "Neutral surface token slot."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "{sys.status.neutral.border}",
+              "$description": "Neutral border token slot."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "{sys.status.neutral.text}",
+              "$description": "Neutral text token slot."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "{sys.status.neutral.icon}",
+              "$description": "Neutral icon token slot."
+            }
+          },
+          "accent": {
+            "surface": {
+              "$type": "color",
+              "$value": "{sys.status.accent.surface}",
+              "$description": "Accent surface token slot."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "{sys.status.accent.border}",
+              "$description": "Accent border token slot."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "{sys.status.accent.text}",
+              "$description": "Accent text token slot."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "{sys.status.accent.icon}",
+              "$description": "Accent icon token slot."
+            }
+          }
+        },
+        "focus": {
+          "outer": {
+            "$type": "color",
+            "$value": "{sys.focus.ring.outer}",
+            "$description": "Component focus outer ring."
+          },
+          "inner": {
+            "$type": "color",
+            "$value": "{sys.focus.ring.inner}",
+            "$description": "Component focus inner ring."
+          },
+          "text": {
+            "$type": "color",
+            "$value": "{sys.focus.text}",
+            "$description": "Component focus accent."
+          },
+          "width": {
+            "$type": "dimension",
+            "$value": "{sys.focus.width}",
+            "$description": "Component focus ring width."
+          }
+        },
+        "spacing": {
+          "inset": {
+            "compact": {
+              "$type": "dimension",
+              "$value": "{sys.space.inset.compact}",
+              "$description": "Component compact inset spacing."
+            },
+            "default": {
+              "$type": "dimension",
+              "$value": "{sys.space.inset.default}",
+              "$description": "Component default inset spacing."
+            }
+          },
+          "stack": {
+            "compact": {
+              "$type": "dimension",
+              "$value": "{sys.space.stack.compact}",
+              "$description": "Component compact stack spacing."
+            },
+            "default": {
+              "$type": "dimension",
+              "$value": "{sys.space.stack.default}",
+              "$description": "Component default stack spacing."
+            }
+          },
+          "inline": {
+            "xs": {
+              "$type": "dimension",
+              "$value": "{sys.space.inline.xs}",
+              "$description": "Component extra-small inline spacing."
+            },
+            "sm": {
+              "$type": "dimension",
+              "$value": "{sys.space.inline.sm}",
+              "$description": "Component small inline spacing."
+            }
+          }
+        },
+        "banner": {
+          "background": {
+            "$type": "color",
+            "$value": "{sys.status.info.surface}",
+            "$description": "Banner informational background."
+          },
+          "border": {
+            "$type": "color",
+            "$value": "{sys.status.info.border}",
+            "$description": "Banner informational border."
+          },
+          "text": {
+            "$type": "color",
+            "$value": "{sys.status.info.text}",
+            "$description": "Banner informational text."
+          },
+          "icon": {
+            "$type": "color",
+            "$value": "{sys.status.info.icon}",
+            "$description": "Banner informational icon."
+          }
+        },
+        "chip": {
+          "background": {
+            "$type": "color",
+            "$value": "{sys.status.neutral.surface}",
+            "$description": "Default chip background."
+          },
+          "border": {
+            "$type": "color",
+            "$value": "{sys.status.neutral.border}",
+            "$description": "Default chip border."
+          },
+          "foreground": {
+            "$type": "color",
+            "$value": "{sys.status.neutral.text}",
+            "$description": "Default chip text colour."
+          },
+          "icon": {
+            "$type": "color",
+            "$value": "{sys.status.neutral.icon}",
+            "$description": "Default chip icon colour."
+          },
+          "focus": {
+            "outer": {
+              "$type": "color",
+              "$value": "{sys.focus.ring.outer}",
+              "$description": "Chip focus ring outer colour."
+            },
+            "inner": {
+              "$type": "color",
+              "$value": "{sys.focus.ring.inner}",
+              "$description": "Chip focus ring inner colour."
+            },
+            "width": {
+              "$type": "dimension",
+              "$value": "{sys.focus.width}",
+              "$description": "Chip focus ring width."
+            }
+          }
+        },
+        "communication": {
+          "timeline-bg": {
+            "$type": "color",
+            "$value": "{sys.surface.subtle}",
+            "$description": "Timeline background surface."
+          },
+          "timeline-fg": {
+            "$type": "color",
+            "$value": "{sys.text.primary}",
+            "$description": "Timeline foreground text colour."
+          },
+          "unread-bg": {
+            "$type": "color",
+            "$value": "{sys.communication.accent}",
+            "$description": "Unread message background accent."
+          },
+          "date-header-fg": {
+            "$type": "color",
+            "$value": "{sys.communication.muted}",
+            "$description": "Date header text colour."
+          },
+          "policy-editor-border": {
+            "$type": "color",
+            "$value": "{sys.border.subtle}",
+            "$description": "Border tone for policy editor sections."
+          },
+          "health": {
+            "success": {
+              "$type": "color",
+              "$value": "{sys.communication.success}",
+              "$description": "Healthy delivery state colour."
+            },
+            "warning": {
+              "$type": "color",
+              "$value": "{sys.status.warning.surface}",
+              "$description": "Warning delivery state colour."
+            },
+            "critical": {
+              "$type": "color",
+              "$value": "{sys.communication.error}",
+              "$description": "Critical delivery state colour."
+            }
+          },
+          "thread-indent": {
+            "$type": "dimension",
+            "$value": "20px",
+            "$description": "Indentation step per conversation depth."
+          }
+        }
+      }
+    },
+    "view": {
+      "$schema": "https://design-tokens.org/schema.json",
+      "view": {
+        "columns": {
+          "default": {
+            "$type": "string",
+            "$value": "minmax(0, 1fr)",
+            "$description": "Default single column layout for all contexts"
+          },
+          "two-column-standard": {
+            "$type": "string",
+            "$value": "minmax(0, 1fr) minmax(18rem, 24rem)",
+            "$description": "Two-column layout with standard rail (detail view)"
+          },
+          "two-column-narrow": {
+            "$type": "string",
+            "$value": "minmax(0, 1fr) minmax(16rem, 22rem)",
+            "$description": "Two-column layout with narrow rail (list view)"
+          },
+          "two-column-guidance": {
+            "$type": "string",
+            "$value": "minmax(0, 2.75fr) minmax(16rem, 22rem)",
+            "$description": "Two-column layout with wider main and guidance rail (form view)"
+          }
+        },
+        "gap": {
+          "default": {
+            "$type": "dimension",
+            "$value": "1.5rem",
+            "$description": "Default gap between major sections"
+          },
+          "compact": {
+            "$type": "dimension",
+            "$value": "1rem",
+            "$description": "Compact gap for dense layouts"
+          },
+          "relaxed": {
+            "$type": "dimension",
+            "$value": "2rem",
+            "$description": "Relaxed gap for spacious layouts"
+          },
+          "card": {
+            "$type": "dimension",
+            "$value": "1.25rem",
+            "$description": "Gap for card content sections"
+          },
+          "inline": {
+            "$type": "dimension",
+            "$value": "0.8rem",
+            "$description": "Minimal gap for inline contexts"
+          }
+        },
+        "rail": {
+          "width": {
+            "standard": {
+              "$type": "dimension",
+              "$value": "24rem",
+              "$description": "Standard rail width for detail view context panels"
+            },
+            "narrow": {
+              "$type": "dimension",
+              "$value": "22rem",
+              "$description": "Narrow rail width for list/form filter panels"
+            },
+            "min-standard": {
+              "$type": "dimension",
+              "$value": "18rem",
+              "$description": "Minimum rail width before collapse (standard)"
+            },
+            "min-narrow": {
+              "$type": "dimension",
+              "$value": "16rem",
+              "$description": "Minimum rail width before collapse (narrow)"
+            }
+          }
+        },
+        "border": {
+          "thin": {
+            "$type": "dimension",
+            "$value": "1px",
+            "$description": "Default border thickness for view surfaces"
+          },
+          "medium": {
+            "$type": "dimension",
+            "$value": "2px",
+            "$description": "Emphasized border thickness for high-contrast surfaces"
+          },
+          "strong": {
+            "$type": "dimension",
+            "$value": "3px",
+            "$description": "Strong border thickness for card focus treatments"
+          }
+        },
+        "toolbar": {
+          "gap": {
+            "$type": "dimension",
+            "$value": "0.75rem",
+            "$description": "Gap between toolbar items"
+          },
+          "item-gap": {
+            "$type": "dimension",
+            "$value": "0.5rem",
+            "$description": "Gap within toolbar item contents"
+          }
+        },
+        "timeline": {
+          "gap": {
+            "$type": "dimension",
+            "$value": "1rem",
+            "$description": "Gap between timeline metadata sections"
+          },
+          "stream-gap": {
+            "$type": "dimension",
+            "$value": "1.5rem",
+            "$description": "Gap between timeline stream items"
+          },
+          "layer": {
+            "$type": "color",
+            "$value": "var(--cmp-surface-subtle)",
+            "$description": "Surface layer for timeline contexts"
+          }
+        },
+        "shell": {
+          "padding-inline": {
+            "$type": "dimension",
+            "$value": "clamp(1.5rem, 1vw + 1rem, 2.5rem)",
+            "$description": "Horizontal padding for view container"
+          },
+          "padding-block": {
+            "$type": "dimension",
+            "$value": "clamp(1.75rem, 1vw + 1.2rem, 3rem)",
+            "$description": "Vertical padding for view container"
+          },
+          "max-width": {
+            "$type": "dimension",
+            "$value": "min(75rem, 100%)",
+            "$description": "Maximum width constraint for view content"
+          }
+        },
+        "card": {
+          "radius": {
+            "$type": "dimension",
+            "$value": "clamp(1rem, 0.6vw + 0.8rem, 1.5rem)",
+            "$description": "Border radius for card surfaces"
+          },
+          "padding": {
+            "$type": "dimension",
+            "$value": "clamp(1.25rem, 0.9vw + 1rem, 2rem)",
+            "$description": "Internal padding for card surfaces"
+          },
+          "gap": {
+            "$type": "dimension",
+            "$value": "clamp(1rem, 0.65vw + 0.7rem, 1.75rem)",
+            "$description": "Gap between cards or card sections"
+          },
+          "max-width": {
+            "$type": "dimension",
+            "$value": "min(46rem, 100%)",
+            "$description": "Maximum width for card-context container"
+          }
+        },
+        "section": {
+          "gap": {
+            "detail": {
+              "$type": "dimension",
+              "$value": "clamp(1.5rem, 1vw + 1rem, 2.25rem)",
+              "$description": "Gap between body sections in detail view"
+            },
+            "list": {
+              "$type": "dimension",
+              "$value": "clamp(1.25rem, 0.75vw + 0.9rem, 2rem)",
+              "$description": "Gap between body sections in list view"
+            },
+            "form": {
+              "$type": "dimension",
+              "$value": "clamp(1.5rem, 0.9vw + 1.1rem, 2.3rem)",
+              "$description": "Gap between body sections in form view"
+            },
+            "timeline": {
+              "$type": "dimension",
+              "$value": "clamp(1.5rem, 0.95vw + 1.1rem, 2.4rem)",
+              "$description": "Gap between body sections in timeline view"
+            }
+          }
+        },
+        "pageHeader": {
+          "gap": {
+            "$type": "dimension",
+            "$value": "clamp(1.25rem, 0.8vw + 0.75rem, 1.9rem)",
+            "$description": "Internal gap within page header region"
+          },
+          "card-gap": {
+            "$type": "dimension",
+            "$value": "clamp(0.75rem, 0.5vw + 0.5rem, 1.25rem)",
+            "$description": "Gap within page header card surface"
+          }
+        },
+        "contextPanel": {
+          "padding": {
+            "$type": "dimension",
+            "$value": "clamp(1rem, 0.8vw + 0.8rem, 1.75rem)",
+            "$description": "Internal padding for context panel"
+          },
+          "gap": {
+            "$type": "dimension",
+            "$value": "clamp(0.85rem, 0.5vw + 0.6rem, 1.5rem)",
+            "$description": "Gap between context panel sections"
+          }
+        },
+        "main": {
+          "gap": {
+            "default": {
+              "$type": "dimension",
+              "$value": "var(--view-card-gap)",
+              "$description": "Default gap for main region content"
+            },
+            "list": {
+              "$type": "dimension",
+              "$value": "clamp(1rem, 0.6vw + 0.75rem, 1.65rem)",
+              "$description": "Gap for list view main content"
+            },
+            "inline": {
+              "$type": "dimension",
+              "$value": "clamp(1rem, 0.6vw + 0.75rem, 1.65rem)",
+              "$description": "Gap for inline view main content"
+            }
+          }
+        },
+        "accessibility": {
+          "outline-offset": {
+            "$type": "dimension",
+            "$value": "2px",
+            "$description": "Offset applied to forced-colors outlines"
+          }
+        }
+      }
+    }
+  },
+  "maps": {
+    "saas-billing.status-map": {
+      "version": "1.1.0",
+      "generated_at": "2025-10-27T00:00:00Z",
+      "domains": {
+        "subscription": {
+          "future": {
+            "description": "Subscription is scheduled but not yet active.",
+            "chip": {
+              "foreground": "color.text.info",
+              "background": "color.background.info.subtle",
+              "border": "color.border.info",
+              "icon": "icon.status.scheduled"
+            },
+            "banner": {
+              "foreground": "color.text.info",
+              "background": "color.background.surface.default",
+              "border": "color.border.info",
+              "icon": "icon.status.scheduled"
+            }
+          },
+          "trialing": {
+            "description": "Subscription is in a trial period before billing begins.",
+            "chip": {
+              "foreground": "color.text.accent",
+              "background": "color.background.accent.subtle",
+              "border": "color.border.accent",
+              "icon": "icon.status.trial"
+            },
+            "banner": {
+              "foreground": "color.text.accent",
+              "background": "color.background.surface.default",
+              "border": "color.border.accent",
+              "icon": "icon.status.trial"
+            }
+          },
+          "active": {
+            "description": "Subscription is paid and service is provisioned.",
+            "chip": {
+              "foreground": "color.text.positive",
+              "background": "color.background.positive.subtle",
+              "border": "color.border.positive",
+              "icon": "icon.status.success"
+            },
+            "banner": {
+              "foreground": "color.text.positive",
+              "background": "color.background.surface.default",
+              "border": "color.border.positive",
+              "icon": "icon.status.success"
+            }
+          },
+          "paused": {
+            "description": "Billing paused temporarily by finance or customer request.",
+            "chip": {
+              "foreground": "color.text.neutral",
+              "background": "color.background.neutral.subtle",
+              "border": "color.border.neutral",
+              "icon": "icon.status.paused"
+            },
+            "banner": {
+              "foreground": "color.text.neutral",
+              "background": "color.background.surface.muted",
+              "border": "color.border.neutral",
+              "icon": "icon.status.paused"
+            }
+          },
+          "pending_cancellation": {
+            "description": "Subscription will cancel at period end but remains active now.",
+            "chip": {
+              "foreground": "color.text.info",
+              "background": "color.background.info.subtle",
+              "border": "color.border.info",
+              "icon": "icon.status.pending"
+            },
+            "banner": {
+              "foreground": "color.text.info",
+              "background": "color.background.surface.default",
+              "border": "color.border.info",
+              "icon": "icon.status.pending"
+            }
+          },
+          "delinquent": {
+            "description": "Renewal payment failed; collection retries in progress.",
+            "chip": {
+              "foreground": "color.text.danger",
+              "background": "color.background.danger.subtle",
+              "border": "color.border.danger",
+              "icon": "icon.status.warning"
+            },
+            "banner": {
+              "foreground": "color.text.onbold",
+              "background": "color.background.danger.bold",
+              "border": "color.border.danger",
+              "icon": "icon.status.warning"
+            }
+          },
+          "terminated": {
+            "description": "Subscription ended; service access revoked and billing stopped.",
+            "chip": {
+              "foreground": "color.text.disabled",
+              "background": "color.background.disabled",
+              "border": "color.border.disabled",
+              "icon": "icon.status.canceled"
+            },
+            "banner": {
+              "foreground": "color.text.neutral",
+              "background": "color.background.neutral.subtle",
+              "border": "color.border.neutral",
+              "icon": "icon.status.canceled"
+            }
+          }
+        },
+        "invoice": {
+          "draft": {
+            "description": "Invoice is editable and not yet finalized.",
+            "chip": {
+              "foreground": "color.text.neutral",
+              "background": "color.background.neutral.subtle",
+              "border": "color.border.neutral",
+              "icon": "icon.status.draft"
+            },
+            "banner": {
+              "foreground": "color.text.neutral",
+              "background": "color.background.surface.muted",
+              "border": "color.border.neutral",
+              "icon": "icon.status.draft"
+            }
+          },
+          "posted": {
+            "description": "Invoice finalized with terms before collection.",
+            "chip": {
+              "foreground": "color.text.info",
+              "background": "color.background.info.subtle",
+              "border": "color.border.info",
+              "icon": "icon.status.pending"
+            },
+            "banner": {
+              "foreground": "color.text.info",
+              "background": "color.background.surface.default",
+              "border": "color.border.info",
+              "icon": "icon.status.pending"
+            }
+          },
+          "paid": {
+            "description": "Invoice collected successfully in full.",
+            "chip": {
+              "foreground": "color.text.positive",
+              "background": "color.background.positive.subtle",
+              "border": "color.border.positive",
+              "icon": "icon.status.success"
+            },
+            "banner": {
+              "foreground": "color.text.positive",
+              "background": "color.background.surface.default",
+              "border": "color.border.positive",
+              "icon": "icon.status.success"
+            }
+          },
+          "past_due": {
+            "description": "Invoice is unpaid past its due date.",
+            "chip": {
+              "foreground": "color.text.danger",
+              "background": "color.background.danger.subtle",
+              "border": "color.border.danger",
+              "icon": "icon.status.error"
+            },
+            "banner": {
+              "foreground": "color.text.onbold",
+              "background": "color.background.danger.bold",
+              "border": "color.border.danger",
+              "icon": "icon.status.error"
+            }
+          },
+          "void": {
+            "description": "Invoice canceled and no longer payable.",
+            "chip": {
+              "foreground": "color.text.disabled",
+              "background": "color.background.disabled",
+              "border": "color.border.disabled",
+              "icon": "icon.status.void"
+            },
+            "banner": {
+              "foreground": "color.text.neutral",
+              "background": "color.background.neutral.subtle",
+              "border": "color.border.neutral",
+              "icon": "icon.status.void"
+            }
+          }
+        }
+      }
+    }
+  },
+  "traitOverlays": [
+    {
+      "trait": "SaaSBillingBillable",
+      "tokens": {
+        "billing.plan.name": "var(--cmp-text-strong)",
+        "billing.plan.amount_minor": "var(--cmp-text-body-strong)",
+        "billing.plan.currency": "var(--cmp-text-subtle)",
+        "billing.plan.interval": "var(--cmp-text-subtle)",
+        "billing.plan.collection_method": "var(--cmp-badge-text-info)"
+      }
+    },
+    {
+      "trait": "SaaSBillingMetered",
+      "tokens": {
+        "billing.usage.meter_name": "var(--cmp-text-strong)",
+        "billing.usage.consumed_quantity": "var(--cmp-text-accent)",
+        "billing.usage.projected_overage_minor": "var(--cmp-text-warning)"
+      }
+    },
+    {
+      "trait": "SaaSBillingPayable",
+      "tokens": {
+        "billing.invoice.number": "var(--cmp-text-strong)",
+        "billing.invoice.total_minor": "var(--cmp-text-body-strong)",
+        "billing.invoice.balance_minor": "var(--cmp-text-warning)",
+        "billing.invoice.status.past_due": "var(--cmp-status-critical-text)",
+        "billing.invoice.status.paid": "var(--cmp-status-success-text)"
+      }
+    },
+    {
+      "trait": "SaaSBillingRefundable",
+      "tokens": {
+        "billing.refund.total_minor": "var(--cmp-text-accent)",
+        "billing.refund.credit_memo_balance_minor": "var(--cmp-text-info)",
+        "billing.refund.requires_manager_approval": "var(--cmp-badge-text-warning)"
+      }
+    },
+    {
+      "trait": "Taggable",
+      "tokens": {
+        "taxonomy.tag.chip.bg": "var(--surface-tag-bg)",
+        "taxonomy.tag.chip.text": "var(--surface-tag-text)",
+        "taxonomy.tag.summary.count": "var(--text-subtle)"
+      }
+    },
+    {
+      "trait": "Labelled",
+      "tokens": {
+        "text.label.primary.color": "var(--text-strong)",
+        "text.description.secondary.color": "var(--text-subtle)",
+        "text.placeholder.default.color": "var(--text-muted)"
+      }
+    },
+    {
+      "trait": "Addressable",
+      "tokens": {
+        "location.address.card.bg": "var(--sys-surface-raised)",
+        "location.address.card.border": "var(--sys-border-subtle)",
+        "location.address.role.text": "var(--sys-text-muted)"
+      }
+    },
+    {
+      "trait": "Authable",
+      "tokens": {
+        "auth.roles.badge.bg": "var(--sys-surface-neutral)",
+        "auth.roles.badge.text": "var(--sys-text-strong)",
+        "auth.membership.card.border": "var(--sys-border-strong)",
+        "auth.membership.card.bg": "var(--sys-surface-raised)"
+      }
+    },
+    {
+      "trait": "Classifiable",
+      "tokens": {
+        "classification": {
+          "category": {
+            "badge": {
+              "bg": "var(--sys-surface-raised)",
+              "border": "var(--sys-border-strong)"
+            }
+          },
+          "tag": {
+            "chip": {
+              "bg": "var(--sys-surface-muted)",
+              "text": "var(--sys-text-strong)"
+            }
+          }
+        }
+      }
+    },
+    {
+      "trait": "Communicable",
+      "tokens": {
+        "communication.card.bg": "var(--sys-surface-raised)",
+        "communication.card.border": "var(--sys-communication-muted)",
+        "communication.status.success": "var(--sys-communication-success)",
+        "communication.status.error": "var(--sys-communication-error)"
+      }
+    },
+    {
+      "trait": "Preferenceable",
+      "tokens": {
+        "preferences.panel.bg": "var(--sys-surface-raised)",
+        "preferences.panel.border": "var(--sys-border-strong)",
+        "preferences.namespace.badge.bg": "var(--sys-surface-muted)",
+        "preferences.namespace.badge.text": "var(--sys-text-strong)"
+      }
+    },
+    {
+      "trait": "Billable",
+      "tokens": {
+        "billing.plan.amount_minor": "var(--commerce-amount-primary)",
+        "billing.plan.currency": "var(--commerce-currency-primary)",
+        "billing.plan.interval": "var(--text-subtle)",
+        "billing.subscription.current_period_end": "var(--status-info)"
+      }
+    },
+    {
+      "trait": "Priceable",
+      "tokens": {
+        "commerce.price.text": "var(--text-strong)",
+        "commerce.price.badge.bg": "var(--surface-accent)",
+        "commerce.pricing.model.text": "var(--text-default)"
+      }
+    },
+    {
+      "trait": "Archivable",
+      "tokens": {
+        "status.archive.primary.bg": "var(--status-archive-bg)",
+        "status.archive.primary.text": "var(--status-archive-text)",
+        "status.archive.timestamp.text": "var(--text-subtle)",
+        "status.archive.reason.text": "var(--text-default)"
+      }
+    },
+    {
+      "trait": "Cancellable",
+      "tokens": {
+        "status.cancel.primary.bg": "var(--status-cancel-bg)",
+        "status.cancel.primary.text": "var(--status-cancel-text)",
+        "status.cancel.reason.text": "var(--text-default)",
+        "status.cancel.timestamp.text": "var(--text-subtle)"
+      }
+    },
+    {
+      "trait": "Stateful",
+      "tokens": {
+        "status.state.default.bg": "var(--status-neutral-bg)",
+        "status.state.default.text": "var(--status-neutral-text)",
+        "status.timeline.connector": "var(--border-subtle)"
+      }
+    },
+    {
+      "trait": "Timestampable",
+      "tokens": {
+        "audit.created.badge.text": "var(--text-subtle)",
+        "audit.updated.badge.text": "var(--text-subtle)",
+        "audit.event.badge.bg": "var(--surface-muted)"
+      }
+    },
+    {
+      "trait": "Ownerable",
+      "tokens": {
+        "ownership.owner.badge.bg": "var(--surface-subtle)",
+        "ownership.owner.badge.text": "var(--text-default)",
+        "ownership.owner.role.text": "var(--text-muted)"
+      }
+    },
+    {
+      "trait": "Colorized",
+      "tokens": {
+        "status.state.badge.radius": "var(--radius-md)",
+        "status.state.badge.gap": "var(--space-1)",
+        "status.state.badge.icon.size": "var(--size-2)"
+      }
+    },
+    {
+      "trait": "EncodingColor",
+      "tokens": {
+        "viz.encoding.color.palette.categorical": "var(--cmp-viz-color-categorical)",
+        "viz.encoding.color.palette.sequential": "var(--cmp-viz-color-sequential)",
+        "viz.encoding.color.palette.diverging": "var(--cmp-viz-color-diverging)"
+      }
+    },
+    {
+      "trait": "EncodingPositionX",
+      "tokens": {
+        "viz.encoding.x.axis.title": "var(--cmp-text-strong)",
+        "viz.encoding.x.axis.tick": "var(--cmp-viz-axis-tick)",
+        "viz.encoding.x.axis.line": "var(--cmp-viz-axis-line)"
+      }
+    },
+    {
+      "trait": "EncodingPositionY",
+      "tokens": {
+        "viz.encoding.y.axis.title": "var(--cmp-text-strong)",
+        "viz.encoding.y.axis.tick": "var(--cmp-viz-axis-tick)",
+        "viz.encoding.y.axis.line": "var(--cmp-viz-axis-line)"
+      }
+    },
+    {
+      "trait": "EncodingSize",
+      "tokens": {
+        "viz.encoding.size.range.min": "var(--cmp-viz-size-min)",
+        "viz.encoding.size.range.max": "var(--cmp-viz-size-max)",
+        "viz.encoding.size.stroke": "var(--cmp-viz-size-stroke)"
+      }
+    },
+    {
+      "trait": "LayoutConcat",
+      "tokens": {
+        "viz.layout.concat.gap": "var(--cmp-viz-layout-gap)"
+      }
+    },
+    {
+      "trait": "LayoutFacet",
+      "tokens": {
+        "viz.layout.facet.gap": "var(--cmp-viz-layout-gap)"
+      }
+    },
+    {
+      "trait": "LayoutLayer",
+      "tokens": {
+        "viz.layout.layer.blend": "var(--cmp-viz-layer-blend)"
+      }
+    },
+    {
+      "trait": "MarkArea",
+      "tokens": {
+        "viz.mark.area.fill.default": "var(--cmp-viz-mark-area-fill)",
+        "viz.mark.area.opacity.default": "var(--cmp-viz-mark-area-opacity)",
+        "viz.mark.area.baseline.stroke": "var(--cmp-viz-axis-base)"
+      }
+    },
+    {
+      "trait": "MarkBar",
+      "tokens": {
+        "viz.mark.bar.fill.default": "var(--cmp-viz-mark-bar-fill)",
+        "viz.mark.bar.stroke.default": "var(--cmp-viz-mark-bar-stroke)",
+        "viz.mark.bar.spacing": "var(--cmp-viz-mark-spacing)"
+      }
+    },
+    {
+      "trait": "MarkLine",
+      "tokens": {
+        "viz.mark.line.stroke.default": "var(--cmp-viz-mark-line-stroke)",
+        "viz.mark.line.stroke.highlight": "var(--cmp-viz-mark-line-highlight)",
+        "viz.mark.line.marker.fill": "var(--cmp-viz-mark-point-fill)"
+      }
+    },
+    {
+      "trait": "MarkPoint",
+      "tokens": {
+        "viz.mark.point.fill.default": "var(--cmp-viz-mark-point-fill)",
+        "viz.mark.point.stroke.default": "var(--cmp-viz-mark-point-stroke)",
+        "viz.mark.point.opacity.default": "var(--cmp-viz-mark-point-opacity)"
+      }
+    },
+    {
+      "trait": "ScaleLinear",
+      "tokens": {
+        "viz.scale.linear.grid": "var(--cmp-viz-grid-line)",
+        "viz.scale.linear.axis": "var(--cmp-viz-axis-line)",
+        "viz.scale.linear.zero": "var(--cmp-viz-zero-line)"
+      }
+    },
+    {
+      "trait": "ScaleTemporal",
+      "tokens": {
+        "viz.scale.temporal.grid": "var(--cmp-viz-grid-line)",
+        "viz.scale.temporal.axis": "var(--cmp-viz-axis-line)",
+        "viz.scale.temporal.tick": "var(--cmp-viz-axis-tick)"
+      }
+    }
+  ],
+  "stats": {
+    "referenceTokens": 39,
+    "themeTokens": 110,
+    "systemTokens": 59,
+    "componentTokens": 74,
+    "viewTokens": 40,
+    "mapCount": 1,
+    "traitOverlayCount": 32
+  }
+}

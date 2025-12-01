@@ -1,0 +1,102 @@
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B28.4
+sprintId: Sprint 28
+name: "SoD Policy Builder & Validator"
+
+objective: |
+  Implement Separation of Duty (SoD) policy management tools based on R28.1
+  research findings. Deliver policy builder API, validator, and enforcement
+  logic for Static SoD (DB trigger already in B28.2) and Dynamic SoD (detection).
+
+context:
+  background: |
+    R28.1 research identified Static SoD (mutually exclusive roles) and
+    Dynamic SoD (instance-level separation). B28.2 created DB trigger for
+    Static SoD. This mission adds policy management UI/API and Dynamic SoD
+    detection layer.
+
+  dependencies:
+    - "B28.2 complete (sod_role_conflicts table, trigger installed)"
+    - "B28.3 complete (entitlement service for validation)"
+    - "R28.1 complete (SoD patterns researched)"
+
+  constraints:
+    - "v1.0 scope: Static SoD enforcement + Dynamic SoD detection (no blocking)"
+    - "Defer Quorum SoD to v2.0 per R28.1 recommendation"
+    - "Policy evaluation must be performant (cached via B28.5)"
+
+researchFindings:
+  staticSoD:
+    source: "R28.1 Part 1.1 (Static SoD)"
+    implementation: "DB trigger on authz.memberships (already in B28.2)"
+    thisMission: "Policy builder UI/API for authz.sod_role_conflicts"
+    
+  dynamicSoD:
+    source: "R28.1 Part 1.2 (Dynamic SoD)"
+    implementation: "Application layer detection using authz.action_log"
+    thisM
+
+ission: "Detector function, no enforcement (audit mode only)"
+
+deliverables:
+  policyBuilder:
+    - file: "src/traits/authz/sod-policy-builder.ts"
+      requirements:
+        - "createRoleConflict(roleA, roleB, reason, orgId?): SoDPolicy"
+        - "updateRoleConflict(policyId, updates)"
+        - "deleteRoleConflict(policyId)"
+        - "listConflicts(orgId?): SoDPolicy[]"
+        - "Validates against existing memberships (can't create conflict if users already have both)"
+        
+    - file: "src/traits/authz/sod-validator.ts"
+      requirements:
+        - "validateMembershipAssignment(userId, orgId, roleId): ValidationResult"
+        - "detectDynamicSoDViolation(userId, action, resourceType, resourceId): ViolationResult"
+        - "Uses R28.1 test cases as regression suite"
+
+  tests:
+    - file: "tests/traits/authz/sod-policy.test.ts"
+      requirements:
+        - "Test policy CRUD operations"
+        - "Test conflict detection per R28.1 test cases"
+        - "Test org-scoped vs global conflicts"
+        
+    - file: "tests/traits/authz/sod-validator.test.ts"
+      requirements:
+        - "Test Static SoD: Accountant + Auditor conflict"
+        - "Test Dynamic SoD: creator ≠ approver detection"
+        - "Test false positives (different resources OK)"
+
+  documentation:
+    - file: "docs/traits/sod-policy-guide.md"
+      requirements:
+        - "SoD taxonomy from R28.1"
+        - "How to create/manage policies"
+        - "v1.0 vs v2.0 scope explanation"
+        - "Example policies (financial, security)"
+
+successCriteria:
+  staticSoD:
+    - criterion: "Policy builder creates conflicts correctly"
+      validation: "Created conflict blocks membership assignment (via trigger)"
+    - criterion: "Org-scoped conflicts work"
+      validation: "Global conflict blocks all orgs, org-specific blocks only that org"
+      
+  dynamicSoD:
+    - criterion: "Detector identifies creator-approver violations"
+      validation: "User A creates resource, User A approves → detected"
+    - criterion: "Detection doesn't block (audit only)"
+      validation: "Violation logged but operation succeeds"
+
+qualityGates:
+  beforeCompletion:
+    - "pnpm test tests/traits/authz/sod-policy.test.ts"
+    - "pnpm test tests/traits/authz/sod-validator.test.ts"
+    - "Run R28.1 test cases as regression"
+    - "Minimum 90% coverage"
+
+metadata:
+  estimatedEffort: "4-5 hours"
+  complexity: "Medium (well-researched, clear patterns)"
+  riskLevel: "Low (foundational work complete in B28.2)"

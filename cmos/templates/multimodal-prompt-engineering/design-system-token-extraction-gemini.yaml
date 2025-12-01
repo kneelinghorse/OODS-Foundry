@@ -1,0 +1,370 @@
+apiVersion: mission-template.v1
+kind: MissionTemplate
+metadata:
+  name: design-system-token-extraction-gemini
+  version: "1.0.0"
+  author: "UX Research Team"
+  description: "Template for extracting design system tokens from visual inputs using Gemini's JSON Schema enforcement capabilities"
+  domain: "multimodal-prompt-engineering"
+  tags:
+    - "design-tokens"
+    - "gemini"
+    - "json-schema"
+    - "extraction"
+    - "quantitative-analysis"
+
+spec:
+  parameters:
+    - name: "component_name"
+      type: "string"
+      description: "Name of the UI component being analyzed"
+      required: true
+      examples:
+        - "landing_page_hero"
+        - "navigation_header"
+        - "card_component"
+        - "form_input"
+    
+    - name: "component_type"
+      type: "string"
+      description: "Type of UI component"
+      required: true
+      enum: ["landing_page", "navigation", "card", "form", "button", "modal", "dashboard", "data_table"]
+    
+    - name: "token_categories"
+      type: "array"
+      description: "Categories of design tokens to extract"
+      required: true
+      items:
+        type: "string"
+        enum: ["color", "typography", "spacing", "border", "shadow", "animation"]
+      default: ["color", "typography", "spacing"]
+    
+    - name: "grid_system"
+      type: "string"
+      description: "Grid system specification for spacing validation"
+      required: false
+      enum: ["4pt", "8pt", "16pt", "custom"]
+      default: "8pt"
+    
+    - name: "color_format"
+      type: "string"
+      description: "Color format for extracted values"
+      required: false
+      enum: ["hex", "rgb", "hsl", "design_token"]
+      default: "hex"
+    
+    - name: "wcag_validation"
+      type: "boolean"
+      description: "Enable WCAG compliance validation for color contrast"
+      required: false
+      default: true
+    
+    - name: "extract_specific_tokens"
+      type: "array"
+      description: "Specific token names to extract if known"
+      required: false
+      items:
+        type: "string"
+      examples:
+        - "primary_color"
+        - "heading_font_family"
+        - "space_lg"
+        - "border_radius"
+    
+    - name: "design_system_context"
+      type: "string"
+      description: "Context about the design system or brand guidelines"
+      required: false
+      examples:
+        - "Enterprise SaaS design system with emphasis on data density"
+        - "Consumer app with playful, approachable brand personality"
+    
+    - name: "json_schema"
+      type: "object"
+      description: "JSON Schema definition for structured output"
+      required: true
+      properties:
+        schema_name:
+          type: "string"
+          default: "DesignTokenExtractionSchema"
+        enforce_strict_validation:
+          type: "boolean"
+          default: true
+        include_metadata:
+          type: "boolean"
+          default: true
+
+  template: |
+    # DESIGN SYSTEM TOKEN EXTRACTION - GEMINI OPTIMIZED
+    # Component: {{component_name}} ({{component_type}})
+    
+    ## ROLE ASSIGNMENT
+    You are a Design System Analyst specializing in technical visual analysis and token extraction.
+    
+    ## CONTEXT
+    Extract design tokens from the attached {{component_type}} component: "{{component_name}}"
+    
+    {% if design_system_context %}
+    Design System Context: {{design_system_context}}
+    {% endif %}
+    
+    ## SPECIFIC CONSTRAINTS (PASS/FAIL CRITERIA)
+    - Extract tokens from the following categories: {{token_categories|join(', ')}}
+    - Grid System: {{grid_system}} grid adherence required
+    - Color Format: Extract colors as {{color_format}}
+    {% if wcag_validation %}
+    - WCAG Compliance: Validate color contrast ratios against WCAG 2.2 AA standards
+    {% endif %}
+    {% if extract_specific_tokens %}
+    - Specific Tokens: Focus on extracting these named tokens: {{extract_specific_tokens|join(', ')}}
+    {% endif %}
+    
+    ## INTENT/TASK
+    Extract all utilized design tokens from the visual input with precision and technical accuracy.
+    
+    ## GEMINI-SPECIFIC OPTIMIZATION
+    - Place image before text for optimal visual focus
+    - Leverage native multimodal capabilities for cross-modal reasoning
+    - Use JSON Schema enforcement for type-safe, predictable outputs
+    - Treat text and images as equal-class inputs
+    
+    ## CHAIN-OF-THOUGHT REQUIREMENT
+    Before providing token extraction, follow this reasoning process:
+    
+    1. **Visual Description**: Describe the component layout, hierarchy, and key visual elements
+    2. **Token Identification**: Identify potential token locations and applications
+    3. **Measurement & Extraction**: Extract precise values for each token category
+    4. **Validation**: Verify extracted values against constraints and standards
+    
+    Place your reasoning in <thinking> tags.
+    
+    ## RESPONSE FORMAT - JSON SCHEMA ENFORCEMENT
+    Output must conform strictly to the following JSON Schema:
+    
+    ```json
+    {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "{{json_schema.schema_name}}",
+      "type": "object",
+      "required": ["component_info", "extracted_tokens", "validation_results"],
+      "properties": {
+        "component_info": {
+          "type": "object",
+          "properties": {
+            "component_name": {"type": "string", "enum": ["{{component_name}}"]},
+            "component_type": {"type": "string", "enum": ["{{component_type}}"]},
+            "analysis_timestamp": {"type": "string", "format": "date-time"},
+            "grid_system": {"type": "string", "enum": ["{{grid_system}}"]}
+          },
+          "required": ["component_name", "component_type"]
+        },
+        "extracted_tokens": {
+          "type": "object",
+          "properties": {
+            {% if 'color' in token_categories %}
+            "color_tokens": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "token_name": {"type": "string"},
+                  "value": {"type": "string"},
+                  "format": {"type": "string", "enum": ["{{color_format}}"]},
+                  "applied_to": {"type": "string"},
+                  "wcag_compliance": {"type": "object", "properties": {
+                    "contrast_ratio": {"type": "number"},
+                    "compliance_level": {"type": "string", "enum": ["AA", "AAA", "FAIL"]}
+                  }}
+                },
+                "required": ["token_name", "value", "applied_to"]
+              }
+            },
+            {% endif %}
+            {% if 'typography' in token_categories %}
+            "typography_tokens": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "token_name": {"type": "string"},
+                  "font_family": {"type": "string"},
+                  "font_size": {"type": "string"},
+                  "font_weight": {"type": "string"},
+                  "line_height": {"type": "string"},
+                  "letter_spacing": {"type": "string"},
+                  "applied_to": {"type": "string"}
+                },
+                "required": ["token_name", "font_family", "font_size", "applied_to"]
+              }
+            },
+            {% endif %}
+            {% if 'spacing' in token_categories %}
+            "spacing_tokens": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "token_name": {"type": "string"},
+                  "value": {"type": "number"},
+                  "unit": {"type": "string", "enum": ["px", "rem", "em"]},
+                  "grid_multiple": {"type": "number"},
+                  "applied_to": {"type": "string"},
+                  "grid_adherence": {"type": "boolean"}
+                },
+                "required": ["token_name", "value", "applied_to", "grid_adherence"]
+              }
+            },
+            {% endif %}
+            {% if 'border' in token_categories %}
+            "border_tokens": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "token_name": {"type": "string"},
+                  "border_width": {"type": "string"},
+                  "border_style": {"type": "string"},
+                  "border_color": {"type": "string"},
+                  "border_radius": {"type": "string"},
+                  "applied_to": {"type": "string"}
+                },
+                "required": ["token_name", "applied_to"]
+              }
+            },
+            {% endif %}
+            {% if 'shadow' in token_categories %}
+            "shadow_tokens": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "token_name": {"type": "string"},
+                  "shadow_type": {"type": "string", "enum": ["box-shadow", "drop-shadow", "text-shadow"]},
+                  "shadow_values": {"type": "string"},
+                  "applied_to": {"type": "string"}
+                },
+                "required": ["token_name", "shadow_type", "applied_to"]
+              }
+            },
+            {% endif %}
+            {% if 'animation' in token_categories %}
+            "animation_tokens": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "token_name": {"type": "string"},
+                  "animation_type": {"type": "string"},
+                  "duration": {"type": "string"},
+                  "easing": {"type": "string"},
+                  "applied_to": {"type": "string"}
+                },
+                "required": ["token_name", "animation_type", "applied_to"]
+              }
+            }
+            {% endif %}
+          }
+        },
+        "validation_results": {
+          "type": "object",
+          "properties": {
+            "total_tokens_extracted": {"type": "integer"},
+            "wcag_compliance_passed": {"type": "integer"},
+            "wcag_compliance_failed": {"type": "integer"},
+            "grid_adherence_passed": {"type": "integer"},
+            "grid_adherence_failed": {"type": "integer"},
+            "compliance_rate": {"type": "number"},
+            "critical_issues": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "issue_type": {"type": "string"},
+                  "severity": {"type": "string", "enum": ["critical", "high", "medium", "low"]},
+                  "description": {"type": "string"},
+                  "location": {"type": "string"},
+                  "recommendation": {"type": "string"}
+                }
+              }
+            }
+          }
+        }{% if json_schema.include_metadata %},
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "extraction_confidence": {"type": "number", "minimum": 0, "maximum": 1},
+            "model_used": {"type": "string"},
+            "processing_time_ms": {"type": "integer"},
+            "notes": {"type": "string"}
+          }
+        }{% endif %}
+      }
+    }
+    ```
+    
+    {% if json_schema.enforce_strict_validation %}
+    **CRITICAL**: Strict schema validation is enabled. All extracted data must conform exactly to the specified types, formats, and required fields.
+    {% endif %}
+    
+    ## EXECUTION
+    Extract design tokens from the attached visual input following the JSON Schema specification and provide type-safe, structured output.
+
+  examples:
+    - name: "Landing Page Hero Component"
+      parameters:
+        component_name: "landing_page_hero"
+        component_type: "landing_page"
+        token_categories: ["color", "typography", "spacing"]
+        grid_system: "8pt"
+        color_format: "hex"
+        wcag_validation: true
+        extract_specific_tokens:
+          - "primary_brand_color"
+          - "heading_font_family"
+          - "hero_padding"
+        design_system_context: "B2B SaaS platform emphasizing trust and professionalism"
+        json_schema:
+          schema_name: "HeroComponentTokenSchema"
+          enforce_strict_validation: true
+          include_metadata: true
+    
+    - name: "Complex Dashboard Component"
+      parameters:
+        component_name: "analytics_dashboard"
+        component_type: "dashboard"
+        token_categories: ["color", "typography", "spacing", "border", "shadow"]
+        grid_system: "4pt"
+        color_format: "design_token"
+        wcag_validation: true
+        design_system_context: "Data-heavy enterprise dashboard requiring high information density"
+        json_schema:
+          schema_name: "DashboardTokenSchema"
+          enforce_strict_validation: true
+          include_metadata: true
+
+  validation:
+    required_parameters: ["component_name", "component_type", "token_categories", "json_schema"]
+    parameter_constraints:
+      - parameter: "token_categories"
+        constraint: "len(value) > 0"
+        message: "At least one token category must be specified"
+      - parameter: "grid_system"
+        constraint: "value in ['4pt', '8pt', '16pt', 'custom']"
+        message: "Grid system must be one of: 4pt, 8pt, 16pt, or custom"
+
+  deployment:
+    recommended_models:
+      - "Gemini 1.5 Pro"
+      - "Gemini 1.5 Flash"
+    api_integration:
+      - "Google AI Studio API"
+      - "Vertex AI API"
+    environment_variables:
+      - "GOOGLE_API_KEY"
+      - "GEMINI_MODEL_VERSION"
+    special_features:
+      - "Native JSON Schema enforcement"
+      - "Multimodal input processing"
+      - "Type-safe structured outputs"
+      - "Pydantic/Zod schema integration"

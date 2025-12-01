@@ -1,0 +1,480 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B34.4
+name: Network & Flow Traits
+sprint: Sprint 34
+status: Queued
+
+objective: >
+  Implement OODS traits for Network & Flow visualizations: Hierarchical,
+  NetworkTopology, FlowConservation, and CrossFilterable extension for network selections.
+
+context:
+  background: |
+    OODS traits are composable behaviors that describe data patterns and capabilities.
+    Network & Flow visualizations require traits that describe:
+    - Hierarchical data structure (parent-child relationships)
+    - Network topology (nodes and edges)
+    - Flow conservation (value must balance at nodes)
+    - Cross-filter selection patterns for network elements
+
+    These traits integrate with the existing trait engine and enable automatic
+    visualization suggestions and validation.
+
+  research_basis:
+    - "RV.04: Topology/Conservation as fundamental data patterns"
+    - "cmos/foundational-docs/data-viz-part2/network-flow-module/ARCHITECTURE.md Section 2"
+
+  dependencies:
+    - B33.1  # Schemas (type definitions for trait output)
+    - B33.2  # Resolver (uses traits to make routing decisions)
+
+successCriteria:
+  - Hierarchical trait detects parent-child data patterns
+  - NetworkTopology trait detects node-link data patterns
+  - FlowConservation trait validates value balance
+  - CrossFilterable extended for network selections
+  - Traits integrate with existing trait engine
+  - Tests pass with >90% coverage on new code
+
+constraints:
+  - Must follow existing trait patterns in src/viz/traits/
+  - Must compose with existing traits
+  - Must produce machine-readable output for resolver
+  - Must not break existing trait functionality
+
+deliverables:
+  traits:
+    - path: src/viz/traits/hierarchical.ts
+      description: |
+        Hierarchical trait implementation:
+
+        ```typescript
+        import { Trait, TraitResult, DataContext } from './types';
+
+        /**
+         * Hierarchical Trait
+         *
+         * Detects data that has parent-child relationships,
+         * suitable for treemap, sunburst, icicle, dendrogram, etc.
+         */
+        export const Hierarchical: Trait = {
+          id: 'hierarchical',
+          name: 'Hierarchical',
+          description: 'Data with parent-child relationships forming a tree structure',
+
+          detect(ctx: DataContext): TraitResult {
+            const signals: string[] = [];
+            let confidence = 0;
+
+            // Check for nested children format
+            if (hasNestedChildren(ctx.data)) {
+              signals.push('nested_children_format');
+              confidence += 0.9;
+            }
+
+            // Check for adjacency list format (id + parentId)
+            if (hasAdjacencyFormat(ctx.data)) {
+              signals.push('adjacency_list_format');
+              confidence += 0.9;
+            }
+
+            // Check for hierarchical field names
+            if (hasHierarchicalFieldNames(ctx.schema)) {
+              signals.push('hierarchical_field_names');
+              confidence += 0.3;
+            }
+
+            // Check for depth/level fields
+            if (hasDepthFields(ctx.schema)) {
+              signals.push('depth_fields');
+              confidence += 0.2;
+            }
+
+            return {
+              detected: confidence > 0.5,
+              confidence: Math.min(confidence, 1),
+              signals,
+              metadata: {
+                format: detectHierarchyFormat(ctx.data),
+                rootCount: countRoots(ctx.data),
+                maxDepth: estimateMaxDepth(ctx.data),
+                totalNodes: countNodes(ctx.data)
+              }
+            };
+          },
+
+          suggestVizTypes(): string[] {
+            return ['treemap', 'sunburst', 'icicle', 'tree', 'dendrogram'];
+          }
+        };
+
+        // Detection helpers
+        function hasNestedChildren(data: any): boolean {
+          if (!Array.isArray(data) && data.children) return true;
+          if (Array.isArray(data) && data.length > 0 && data[0].children) return true;
+          return false;
+        }
+
+        function hasAdjacencyFormat(data: any): boolean {
+          if (!Array.isArray(data) || data.length === 0) return false;
+          const sample = data[0];
+          return 'id' in sample && ('parentId' in sample || 'parent' in sample);
+        }
+
+        function hasHierarchicalFieldNames(schema: any): boolean {
+          const hierarchicalNames = ['parent', 'parentId', 'children', 'level', 'depth', 'path'];
+          return Object.keys(schema.fields || {})
+            .some(f => hierarchicalNames.includes(f.toLowerCase()));
+        }
+        ```
+
+    - path: src/viz/traits/network-topology.ts
+      description: |
+        NetworkTopology trait implementation:
+
+        ```typescript
+        import { Trait, TraitResult, DataContext } from './types';
+
+        /**
+         * NetworkTopology Trait
+         *
+         * Detects data with explicit node-link relationships,
+         * suitable for force graphs, arc diagrams, chord diagrams, etc.
+         */
+        export const NetworkTopology: Trait = {
+          id: 'network-topology',
+          name: 'Network Topology',
+          description: 'Data with explicit nodes and edges forming a network graph',
+
+          detect(ctx: DataContext): TraitResult {
+            const signals: string[] = [];
+            let confidence = 0;
+
+            // Check for nodes + links structure
+            if (hasNodesAndLinks(ctx.data)) {
+              signals.push('nodes_links_structure');
+              confidence += 0.95;
+            }
+
+            // Check for edge list format
+            if (hasEdgeListFormat(ctx.data)) {
+              signals.push('edge_list_format');
+              confidence += 0.8;
+            }
+
+            // Check for adjacency matrix
+            if (hasAdjacencyMatrix(ctx.data)) {
+              signals.push('adjacency_matrix');
+              confidence += 0.7;
+            }
+
+            // Check for network field names
+            if (hasNetworkFieldNames(ctx.schema)) {
+              signals.push('network_field_names');
+              confidence += 0.2;
+            }
+
+            return {
+              detected: confidence > 0.5,
+              confidence: Math.min(confidence, 1),
+              signals,
+              metadata: {
+                format: detectNetworkFormat(ctx.data),
+                nodeCount: countNetworkNodes(ctx.data),
+                edgeCount: countNetworkEdges(ctx.data),
+                isDirected: detectDirectionality(ctx.data),
+                isWeighted: detectWeighted(ctx.data),
+                hasCycles: detectCyclesExist(ctx.data)
+              }
+            };
+          },
+
+          suggestVizTypes(): string[] {
+            return ['force-graph', 'arc-diagram', 'chord', 'adjacency-matrix'];
+          }
+        };
+
+        function hasNodesAndLinks(data: any): boolean {
+          return data && 'nodes' in data && 'links' in data;
+        }
+
+        function hasEdgeListFormat(data: any): boolean {
+          if (!Array.isArray(data) || data.length === 0) return false;
+          const sample = data[0];
+          return ('source' in sample && 'target' in sample) ||
+                 ('from' in sample && 'to' in sample);
+        }
+        ```
+
+    - path: src/viz/traits/flow-conservation.ts
+      description: |
+        FlowConservation trait implementation:
+
+        ```typescript
+        import { Trait, TraitResult, DataContext } from './types';
+
+        /**
+         * FlowConservation Trait
+         *
+         * Detects flow data where values must balance at intermediate nodes
+         * (inflow = outflow). Suitable for Sankey, alluvial, flow maps.
+         */
+        export const FlowConservation: Trait = {
+          id: 'flow-conservation',
+          name: 'Flow Conservation',
+          description: 'Flow data where values balance at intermediate nodes',
+
+          detect(ctx: DataContext): TraitResult {
+            const signals: string[] = [];
+            let confidence = 0;
+
+            // Check for flow structure (nodes + links with values)
+            if (hasFlowStructure(ctx.data)) {
+              signals.push('flow_structure');
+              confidence += 0.7;
+            }
+
+            // Check for value field on links
+            if (hasLinkValues(ctx.data)) {
+              signals.push('link_values');
+              confidence += 0.3;
+            }
+
+            // Check for stage/phase pattern
+            if (hasStagePattern(ctx.data)) {
+              signals.push('stage_pattern');
+              confidence += 0.2;
+            }
+
+            // Validate flow conservation (inflow ≈ outflow)
+            const conservationResult = validateFlowConservation(ctx.data);
+            if (conservationResult.conserved) {
+              signals.push('flow_conserved');
+              confidence += 0.4;
+            }
+
+            return {
+              detected: confidence > 0.5,
+              confidence: Math.min(confidence, 1),
+              signals,
+              metadata: {
+                totalFlow: conservationResult.totalFlow,
+                conserved: conservationResult.conserved,
+                imbalanceNodes: conservationResult.imbalanceNodes,
+                stages: detectStages(ctx.data),
+                hasCircularFlow: detectCircularFlow(ctx.data)
+              }
+            };
+          },
+
+          suggestVizTypes(): string[] {
+            return ['sankey', 'alluvial', 'parallel-sets'];
+          },
+
+          validate(ctx: DataContext): ValidationResult {
+            const result = validateFlowConservation(ctx.data);
+            return {
+              valid: result.conserved,
+              warnings: result.imbalanceNodes.length > 0
+                ? [`Flow imbalance at nodes: ${result.imbalanceNodes.join(', ')}`]
+                : [],
+              errors: []
+            };
+          }
+        };
+
+        function validateFlowConservation(data: any): FlowValidation {
+          // For intermediate nodes, check: sum(inflows) = sum(outflows)
+          // Sources and sinks are exempt
+        }
+        ```
+
+    - path: src/viz/traits/cross-filterable-network.ts
+      description: |
+        CrossFilterable trait extension for networks:
+
+        ```typescript
+        import { Trait, TraitResult, DataContext } from './types';
+
+        /**
+         * CrossFilterableNetwork
+         *
+         * Extends CrossFilterable for network-specific selection patterns:
+         * - Node selection
+         * - Edge selection
+         * - Adjacency selection (node + connected edges + neighbors)
+         * - Path selection (all nodes/edges in path)
+         */
+        export const CrossFilterableNetwork: Trait = {
+          id: 'cross-filterable-network',
+          name: 'Network Cross-Filter',
+          description: 'Network-aware cross-filtering with adjacency and path selections',
+
+          detect(ctx: DataContext): TraitResult {
+            // Extend base CrossFilterable detection
+            const baseResult = CrossFilterable.detect(ctx);
+
+            if (NetworkTopology.detect(ctx).detected || FlowConservation.detect(ctx).detected) {
+              return {
+                ...baseResult,
+                detected: true,
+                confidence: Math.max(baseResult.confidence, 0.8),
+                signals: [...baseResult.signals, 'network_structure'],
+                metadata: {
+                  ...baseResult.metadata,
+                  selectionModes: [
+                    'node',
+                    'edge',
+                    'adjacency',
+                    'path',
+                    'connected-component'
+                  ]
+                }
+              };
+            }
+
+            return baseResult;
+          },
+
+          getSelectionSchema(): SelectionSchema {
+            return {
+              node: {
+                idField: 'id',
+                propagation: 'highlight-adjacent'
+              },
+              edge: {
+                sourceField: 'source',
+                targetField: 'target',
+                propagation: 'highlight-endpoints'
+              },
+              adjacency: {
+                depth: 1,  // Immediate neighbors only
+                includeEdges: true
+              },
+              path: {
+                algorithm: 'shortest-path',
+                maxLength: 10
+              }
+            };
+          }
+        };
+        ```
+
+  registry:
+    - path: src/viz/traits/index.ts
+      description: |
+        Update trait registry with new traits:
+
+        ```typescript
+        import { Hierarchical } from './hierarchical';
+        import { NetworkTopology } from './network-topology';
+        import { FlowConservation } from './flow-conservation';
+        import { CrossFilterableNetwork } from './cross-filterable-network';
+
+        export const NETWORK_TRAITS = [
+          Hierarchical,
+          NetworkTopology,
+          FlowConservation,
+          CrossFilterableNetwork
+        ];
+
+        // Add to global trait registry
+        registerTraits(NETWORK_TRAITS);
+        ```
+
+  tests:
+    - path: tests/viz/traits/hierarchical.test.ts
+      description: |
+        Hierarchical trait tests:
+        - Detects nested children format
+        - Detects adjacency list format
+        - Returns correct metadata (root count, max depth)
+        - Suggests correct viz types
+        - Returns low confidence for non-hierarchical data
+
+    - path: tests/viz/traits/network-topology.test.ts
+      description: |
+        NetworkTopology trait tests:
+        - Detects nodes + links structure
+        - Detects edge list format
+        - Detects adjacency matrix
+        - Returns correct metadata (node/edge count, directed, weighted)
+        - Suggests correct viz types
+
+    - path: tests/viz/traits/flow-conservation.test.ts
+      description: |
+        FlowConservation trait tests:
+        - Detects flow structure
+        - Validates flow conservation correctly
+        - Identifies imbalanced nodes
+        - Handles circular flows
+        - Suggests correct viz types
+
+    - path: tests/viz/traits/cross-filterable-network.test.ts
+      description: |
+        CrossFilterableNetwork trait tests:
+        - Extends base cross-filterable
+        - Adds network selection modes
+        - Returns correct selection schema
+        - Works with hierarchical data
+        - Works with network topology data
+
+technicalApproach:
+  - Review existing trait patterns in src/viz/traits/
+  - Implement Hierarchical trait with format detection
+  - Implement NetworkTopology trait with graph analysis
+  - Implement FlowConservation trait with validation
+  - Extend CrossFilterable for network selections
+  - Register all traits in trait engine
+  - Write comprehensive tests for each trait
+  - Ensure integration with resolver service
+
+qualityGates:
+  during_development:
+    - Traits detect correct data patterns
+    - Metadata provides useful information
+    - No false positives on unrelated data
+
+  before_completion:
+    - pnpm test tests/viz/traits/*network*.test.ts passes
+    - pnpm test tests/viz/traits/*hierarchical*.test.ts passes
+    - pnpm test tests/viz/traits/*flow*.test.ts passes
+    - All traits registered correctly
+    - Documentation updated
+    - Coverage >90% on new code
+
+estimatedEffort: "1 session (50-65k tokens)"
+
+notes: |
+  📋 FULL MISSION DETAILS: This YAML file contains complete implementation guidance.
+
+  OODS Trait System:
+  - Traits describe data patterns and capabilities
+  - Composed to describe complex data
+  - Used by viz suggester and validator
+  - Machine-readable output for automation
+
+  Key data patterns:
+  - Hierarchical: Parent-child (nested or adjacency)
+  - Network Topology: Nodes and edges
+  - Flow Conservation: Values balance at nodes
+
+  Format detection priority:
+  1. Explicit structure (nodes/links, children)
+  2. Field patterns (parentId, source/target)
+  3. Field names (suggestive but lower confidence)
+
+  Integration points:
+  - Resolver uses traits to decide render path
+  - Viz suggester uses traits to recommend types
+  - Validator uses traits to check data quality
+  - Cross-filter uses traits for selection modes
+
+  Cross-filter network selections:
+  - node: Single node selection
+  - edge: Single edge selection
+  - adjacency: Node + immediate neighbors + connecting edges
+  - path: All nodes/edges along path between two nodes
+  - connected-component: Entire connected subgraph

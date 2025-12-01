@@ -1,164 +1,1407 @@
 {
-  "project_identity": {},
+  "project_identity": {
+    "name": "OODS Foundry"
+  },
   "technical_foundation": {
-    "reference_docs": [
-      "foundational-docs/roadmap_template.md",
-      "foundational-docs/tech_arch_template.md"
-    ]
-  },
-  "decisions_made": [],
-  "constraints": [],
-  "quality_standards": {},
-  "project": {
-    "name": "CMOS v1.0",
-    "version": "1.0.0",
-    "description": "Context + Mission Orchestration System - Simple, powerful context management for AI-assisted development",
-    "status": "template",
-    "start_date": "",
-    "deployment": {
-      "platform": "Local/Node.js",
-      "integration_target": "Any project",
-      "environment": "development"
-    }
-  },
-  "working_memory": {
-    "active_domain": "main",
-    "session_count": 0,
-    "last_session": "",
-    "domains": {
-      "main": {
-        "status": "active",
+    "sprint_history": {
+      "trait_engine": {
+        "status": "complete",
         "priority": 1,
+        "current_mission": "B10",
+        "missions": {
+          "B1": {
+            "name": "Trait Definition Schema & Parser",
+            "status": "completed",
+            "started": "2025-10-07",
+            "completed": "2025-10-07",
+            "estimatedHours": "4-5"
+          },
+          "B2": {
+            "name": "Parameter Type Generator",
+            "status": "completed",
+            "started": "2025-10-07",
+            "completed": "2025-10-08",
+            "estimatedHours": "5-6"
+          },
+          "B3": {
+            "name": "Dependency Graph & Topological Sort",
+            "status": "completed",
+            "estimatedHours": "4-5",
+            "completed": "2025-10-08"
+          },
+          "B4": {
+            "name": "Trait Compositor Core",
+            "status": "completed",
+            "estimatedHours": "6-7",
+            "completed": "2025-10-08"
+          },
+          "B5": {
+            "name": "Validation Pipeline Foundation",
+            "status": "completed",
+            "estimatedHours": "4-5",
+            "completed": "2025-10-09"
+          },
+          "B6": {
+            "name": "AJV Parameter Validator",
+            "status": "completed",
+            "estimatedHours": "4-5",
+            "started": "2025-10-09",
+            "completed": "2025-10-10"
+          },
+          "B7": {
+            "name": "Core Trait Implementations (Set 1)",
+            "status": "completed",
+            "estimatedHours": "5-6",
+            "started": "2025-10-10",
+            "completed": "2025-10-12"
+          },
+          "B8": {
+            "name": "Core Trait Implementations (Set 2)",
+            "status": "completed",
+            "estimatedHours": "6-7",
+            "started": "2025-10-12",
+            "completed": "2025-10-13"
+          },
+          "B9": {
+            "name": "Zod Composition Validator",
+            "status": "completed",
+            "estimatedHours": "4-5",
+            "started": "2025-10-13",
+            "completed": "2025-10-14"
+          },
+          "B10": {
+            "name": "Integration Tests & CI Setup",
+            "status": "completed",
+            "estimatedHours": "4-5",
+            "started": "2025-10-14",
+            "completed": "2025-10-15",
+            "notes": [
+              "Integration fixtures and helpers under app/tests/integration",
+              "CI workflow validate-traits.yml authored",
+              "Coverage thresholds raised to 85% lines/functions/statements, 80% branches"
+            ]
+          }
+        },
         "critical_facts": [
-          "CMOS provides context management through domain compartmentalization",
-          "Smart compression achieves 4x-10x reduction based on state",
-          "Health monitoring uses statistical metrics for real-time assessment",
-          "Component Set IV (progression, navigation, contextual feedback) is staged for Sprint 18 delivery with multi-brand + accessibility requirements captured in R18.1"
+          "Traits use 'as const' tuple pattern for type-safe parameters (Research R1)",
+          "Dual validation: AJV for parameters (11x faster), Zod for composition logic (Research R2)",
+          "5-layer merge cascade: Foundation \u2192 Base Object \u2192 Traits \u2192 Object Overrides \u2192 Context",
+          "Collision policy: same type = stricter; enums = union; required wins over optional",
+          "All trait files support both YAML and TypeScript module formats"
         ],
         "constraints": [
-          "Zero external dependencies",
-          "File-based storage only",
-          "Single-project focus"
+          "Must support TypeScript 5.x strict mode",
+          "Parse errors must include file, line number, and field path",
+          "Generated code must be human-readable",
+          "No runtime dependencies in generated type files",
+          "Performance targets: <10ms for 100 trait deps, <5ms to compose 10 traits"
         ],
         "decisions_made": [
-          "Removed protocol suite dependency for v1.0 simplicity",
-          "Self-contained statistical metrics for health monitoring",
-          "Graceful degradation for all advanced features",
-          "Roadmap realigned: Sprint 19 pivots to design-system hardening and packaging dry run, Sprint 20 prepares a private release review (brownfield pilot deferred post-review)",
-          "Add Sprint 19 display-site research mission to identify low-maintenance external showcase options",
-          "Select GitHub Pages as the initial Storybook hosting approach for Sprint 19 deployment work",
-          "Guardrail automation now updates diagnostics and state artifacts (metadata, tenancy, token governance)"
+          "Chose js-yaml for YAML parsing",
+          "Implemented comprehensive error reporting with line numbers",
+          "Created both sync and async parser APIs"
         ],
         "files_created": [
-          "cmos/missions/sprint-19/B19.1_component-polish-and-qa.yaml",
-          "cmos/missions/sprint-19/B19.2_packaging-dry-run.yaml",
-          "cmos/missions/sprint-19/B19.3_guardrail-automation.yaml",
-          "cmos/missions/sprint-19/B19.4_diagnostics-refresh.yaml",
-          "cmos/missions/sprint-19/R19.5_display-site-discovery.yaml",
-          "cmos/missions/sprint-19/B19.5_github-pages-storybook.yaml",
-          "docs/guardrails/overview.md"
+          "app/src/core/trait-definition.ts",
+          "app/src/parsers/yaml-parser.ts",
+          "app/src/parsers/ts-parser.ts",
+          "app/src/parsers/index.ts",
+          "app/tests/parsers/yaml-parser.test.ts",
+          "app/tests/parsers/index.test.ts",
+          "app/docs/authoring-traits.md",
+          "app/examples/traits/Stateful.trait.yaml",
+          "app/examples/traits/Colorized.trait.ts",
+          "app/examples/traits/Labelled.trait.yaml",
+          "app/package.json",
+          "app/tsconfig.json",
+          "app/vitest.config.ts",
+          "app/src/generators/type-generator.ts",
+          "app/src/generators/templates/index.ts",
+          "app/src/generators/composer.ts",
+          "app/src/generators/index.ts",
+          "app/tests/generators/type-generator.test.ts",
+          "app/tests/generators/composer.test.ts",
+          "chromatic.config.json",
+          ".github/workflows/chromatic.yml",
+          "app/testkits/vrt/playwright.config.ts",
+          "app/testkits/vrt/storycap.config.mjs",
+          "app/docs/testing/visual-regression.md",
+          "app/testkits/vrt/stories/README.md",
+          "app/examples/generated/stateful_colorized.composed.types.ts",
+          "app/src/core/dependency-graph.ts",
+          "app/src/core/dependency-validator.ts",
+          "app/tests/core/dependency-graph.test.ts",
+          "app/src/utils/graph-visualizer.ts",
+          "app/dist/cli/validate-dependencies.js",
+          "app/src/core/compositor.ts",
+          "app/src/core/composed-object.ts",
+          "app/src/core/collision-resolver.ts",
+          "app/src/core/merge-strategies/schema-merger.ts",
+          "app/src/core/merge-strategies/semantics-merger.ts",
+          "app/src/core/merge-strategies/tokens-merger.ts",
+          "app/src/core/merge-strategies/view-extensions-merger.ts",
+          "app/src/core/merge-strategies/actions-merger.ts",
+          "app/tests/core/compositor.test.ts",
+          "app/docs/compositor-readme.md",
+          "app/src/utils/composition-visualizer.ts",
+          "app/examples/composed-objects/subscription.example.ts",
+          "app/examples/composed-objects/user.example.ts",
+          "app/examples/composed-objects/product.example.ts",
+          "app/tests/validation/formatter.test.ts",
+          "app/tests/validation/reporters.test.ts",
+          "app/tests/validation/pipeline.test.ts",
+          "app/tests/validation/cli.test.ts",
+          "app/.eslintrc.json",
+          "app/tests/integration/universal-quintet.integration.test.ts",
+          "app/tests/integration/failure-scenarios.integration.test.ts",
+          "app/tests/integration/fixtures/universal-quintet.ts",
+          "app/tests/integration/utils/pipeline-helpers.ts",
+          ".github/workflows/validate-traits.yml",
+          "app/docs/testing/integration-strategy.md",
+          "app/docs/validation/benchmarks/validation-throughput.md"
+        ],
+        "research_completed": [
+          "Research R1: TypeScript type patterns validated (as const approach)",
+          "Research R2: Validation architecture (AJV + Zod hybrid)"
         ],
         "achievements": [
-          "Clean v1.0 release without external dependencies",
-          "Simple migration tool for existing projects",
-          "Comprehensive documentation",
-          "State assessment now supports a breaking-token-label shortcut via pnpm state:token-breaking"
+          "Trait parsing infrastructure complete",
+          "17/17 parser tests passing",
+          "Full YAML and TypeScript trait support",
+          "Comprehensive trait authoring documentation",
+          "Type generation system complete",
+          "Dependency graph and topological sort implemented",
+          "Cycle detection with full path reporting",
+          "Conflict validation for conflicts_with relationships",
+          "CLI command validate:dependencies available",
+          "Graph visualization via Mermaid output",
+          "Trait compositor core implemented",
+          "Collision resolver with stricter type/enum union/required-wins",
+          "Provenance tracking and composition reporting",
+          "Examples delivered: User, Subscription, Product",
+          "Validation pipeline foundation implemented (types, formatter, pipeline, reporters)",
+          "Validation CLI delivers JSON, text, and GitHub outputs with severity-based exit codes"
+        ]
+      },
+      "object_registry": {
+        "status": "completed",
+        "priority": 2,
+        "current_mission": "B7",
+        "missions": {
+          "B1": {
+            "name": "Object Definition Schema & Parser",
+            "status": "completed",
+            "started": "2025-10-16",
+            "completed": "2025-10-16",
+            "estimatedHours": "4-5"
+          },
+          "B2": {
+            "name": "Object Registry Core",
+            "status": "completed",
+            "started": "2025-10-16",
+            "completed": "2025-10-16",
+            "estimatedHours": "5-6"
+          },
+          "B3": {
+            "name": "Trait Resolution & Parameterization",
+            "status": "completed",
+            "started": "2025-10-16",
+            "completed": "2025-10-16",
+            "estimatedHours": "5-6"
+          },
+          "B4": {
+            "name": "Object Composition Integration",
+            "status": "completed",
+            "started": "2025-10-16",
+            "completed": "2025-10-16",
+            "estimatedHours": "4-5"
+          },
+          "B5": {
+            "name": "Type Generator for Objects",
+            "status": "completed",
+            "started": "2025-10-16",
+            "completed": "2025-10-16",
+            "estimatedHours": "5-6"
+          },
+          "B6": {
+            "name": "Universal Quintet Implementation",
+            "status": "completed",
+            "started": "2025-10-16",
+            "completed": "2025-10-16",
+            "estimatedHours": "6-7"
+          },
+          "B7": {
+            "name": "Registry Integration Tests & CLI",
+            "status": "completed",
+            "started": "2025-10-16",
+            "completed": "2025-10-16",
+            "estimatedHours": "4-5"
+          }
+        },
+        "sprint_02": {
+          "status": "completed",
+          "completed": "2025-10-16"
+        },
+        "critical_facts": [
+          "Objects compose traits plus add object-specific fields",
+          "Object definitions support trait parameterization and conflict resolution",
+          "Registry provides search and indexing capabilities across traits, tags, and domains",
+          "Type generation preserves literal types from trait parameters",
+          "Universal Quintet (User, Organization, Product, Transaction, Relationship) serves as foundation"
+        ],
+        "constraints": [
+          "Object definitions must not duplicate trait logic",
+          "Trait references must be resolvable from Sprint 01 trait library",
+          "Parse errors must include file, line, and field path",
+          "Generated types must be importable in TypeScript strict mode",
+          "Performance: <100ms for full object pipeline"
+        ],
+        "decisions_made": [],
+        "files_to_create": [
+          "app/src/registry/object-definition.ts",
+          "app/src/parsers/object-parser.ts",
+          "app/src/registry/registry.ts",
+          "app/src/registry/trait-loader.ts",
+          "app/src/registry/parameter-applier.ts",
+          "app/src/registry/resolver.ts",
+          "app/src/registry/conflict-applier.ts",
+          "app/src/registry/object-composer.ts",
+          "app/src/generators/object-type-generator.ts",
+          "objects/core/User.object.yaml",
+          "objects/core/Organization.object.yaml",
+          "objects/core/Product.object.yaml",
+          "objects/core/Transaction.object.yaml",
+          "objects/core/Relationship.object.yaml",
+          "app/tests/registry/composition-integration.test.ts",
+          "app/examples/composed-objects/article.resolved.json"
+        ],
+        "research_completed": [
+          "Trait Engine Spec v0.1 object composition patterns",
+          "Canonical schemas for Universal Quintet"
+        ],
+        "achievements": [
+          "Object definition schema and parser implemented",
+          "Object registry with search and indexing capabilities",
+          "Trait resolution with parameterization working",
+          "Object composition integrated with trait compositor",
+          "Type generator producing importable TypeScript types",
+          "Universal Quintet fully implemented and validated",
+          "CLI commands for object management operational"
+        ]
+      },
+      "view_engine": {
+        "status": "completed",
+        "priority": 3,
+        "current_mission": "B3.8",
+        "missions": {
+          "R3.1": {
+            "name": "Region Ergonomics Validation",
+            "status": "completed",
+            "started": "2025-10-09",
+            "completed": "2025-10-09",
+            "target_completion": "1 session"
+          },
+          "R3.2": {
+            "name": "Pure Modifier Pattern Specification",
+            "status": "queued"
+          },
+          "B3.1": {
+            "name": "Region Contract & RenderContext",
+            "status": "completed",
+            "started": "2025-10-09",
+            "completed": "2025-10-09"
+          },
+          "B3.2": {
+            "name": "Base Context Templates (Shells)",
+            "status": "completed",
+            "started": "2025-10-09",
+            "completed": "2025-10-09"
+          },
+          "B3.3": {
+            "name": "Extension Compositor Core",
+            "status": "completed",
+            "started": "2025-10-09"
+          },
+          "B3.4": {
+            "name": "<RenderObject> Component",
+            "status": "completed",
+            "completed": "2025-10-09"
+          },
+          "B3.5": {
+            "name": "Radix-Based OODS Primitives",
+            "status": "completed",
+            "completed": "2025-10-10"
+          },
+          "B3.6": {
+            "name": "User Object Integration",
+            "status": "completed",
+            "started": "2025-10-10",
+            "completed": "2025-10-10"
+          },
+          "B3.7": {
+            "name": "Subscription Object Integration",
+            "status": "completed"
+          },
+          "B3.8": {
+            "name": "Polish & Docs (Sprint 03 DoD)",
+            "status": "completed"
+          }
+        },
+        "critical_facts": [
+          "Regions are semantic containers (5-7 universal areas), not prescriptive layouts",
+          "Banners/tabs/notifications are content components, not regions",
+          "Modifiers must be pure, deterministic prop transformers (no side effects)",
+          "Context templates map regions to layouts for list/detail/form/timeline/card/inline",
+          "Extension compositor groups by region, dedups by id, sorts by priority, filters conditions"
+        ],
+        "constraints": [
+          "Regions must support all six context templates",
+          "Modifiers must pass purity harness tests (deepFreeze + repeat-compare)",
+          "ESLint rule blocks hooks/external effects inside modifiers",
+          "Compositor must produce deterministic, snapshot-stable output",
+          "Performance: 100-row ListView perf smoke test"
+        ],
+        "decisions_made": [],
+        "files_to_create": [
+          "app/src/view/compositor/composeExtensions.ts",
+          "app/src/view/compositor/composeDebug.ts",
+          "app/src/components/RenderObject.tsx",
+          "app/src/components/base/Button.tsx",
+          "app/src/components/base/Badge.tsx",
+          "app/src/components/base/Text.tsx",
+          "app/src/components/base/Card.tsx"
+        ],
+        "research_completed": [
+          "R3.1: Region Ergonomics Validation (Carbon/Fluent/Polaris benchmark synthesis)"
+        ],
+        "achievements": [
+          "B3.1: CanonicalRegionId + REGION_ORDER contract implemented with RenderContext factory and ViewExtension helpers",
+          "B3.1: Documentation updated (region migration map, Figma/token contract, authoring guidance) with passing regression suite",
+          "B3.2: Base context templates implemented with deterministic slot coverage tests"
+        ]
+      },
+      "design_tokens": {
+        "status": "active",
+        "priority": 4,
+        "current_mission": "B8.9",
+        "missions": {
+          "R4.1": {
+            "name": "DTCG Specification Maturity and Theming Guardrails",
+            "status": "complete",
+            "started": "2025-10-10",
+            "completed": "2025-10-10"
+          },
+          "R4.2": {
+            "name": "Tokens Studio to Tailwind CSS v4 Pipeline",
+            "status": "complete",
+            "started": "2025-10-10",
+            "completed": "2025-10-10"
+          },
+          "R4.3": {
+            "name": "Contextual Design Token Defaults",
+            "status": "queued"
+          },
+          "R4.4": {
+            "name": "A11y Contract and CI Policy",
+            "status": "queued"
+          },
+          "R4.5": {
+            "name": "SaaS Enum-to-Token Mapping Schema",
+            "status": "queued"
+          },
+          "B4.1": {
+            "name": "DTCG Token Repo + Guardrails",
+            "status": "complete",
+            "completed": "2025-10-10"
+          },
+          "B4.2": {
+            "name": "Build Pipeline (Style Dictionary v4 + sd-transforms)",
+            "status": "complete",
+            "started": "2025-10-10",
+            "completed": "2025-10-10"
+          },
+          "B4.3": {
+            "name": "Tailwind Context Variant Plugin",
+            "status": "complete",
+            "started": "2025-10-10"
+          },
+          "B4.4": {
+            "name": "A11y Contrast Contract + CI Gate",
+            "status": "complete",
+            "completed": "2025-10-10"
+          },
+          "B4.5": {
+            "name": "Enum/Status Mapping Schema + Coverage Validator",
+            "status": "complete",
+            "started": "2025-10-10",
+            "completed": "2025-10-10"
+          },
+          "B4.6": {
+            "name": "Token Browser (Explorer)",
+            "status": "complete",
+            "started": "2025-10-10",
+            "completed": "2025-10-10"
+          },
+          "B4.7": {
+            "name": "View Engine Smoke Tests (Contexts + Status Chips)",
+            "status": "completed",
+            "started": "2025-10-10",
+            "completed": "2025-10-11"
+          },
+          "B5.1": {
+            "name": "Four-Layer Token Architecture & Var-Chaining Skeleton",
+            "status": "complete",
+            "started": "2025-10-11",
+            "completed": "2025-10-11"
+          },
+          "B5.2": {
+            "name": "Theme 0 (OKLCH) Palette Integration & Token Assignment",
+            "status": "complete",
+            "started": "2025-10-11",
+            "completed": "2025-10-12"
+          },
+          "B5.3": {
+            "name": "Typography (Composite Tokens) & Context Density Binding",
+            "status": "complete",
+            "started": "2025-10-12",
+            "completed": "2025-10-13"
+          },
+          "B5.4": {
+            "name": "Shadow & Border Composites (DTCG)",
+            "status": "complete",
+            "started": "2025-10-13",
+            "completed": "2025-10-14"
+          },
+          "B5.5": {
+            "name": "Relative-Color Guardrails & CI Enforcement",
+            "status": "complete",
+            "started": "2025-10-14",
+            "completed": "2025-10-15"
+          },
+          "B5.6": {
+            "name": "High-Contrast (HC) Mapping & Resilience",
+            "status": "complete",
+            "started": "2025-10-15",
+            "completed": "2025-10-16"
+          },
+          "B5.7": {
+            "name": "Visual Regression (Chromatic) with Fallback Kit",
+            "status": "complete",
+            "started": "2025-10-16",
+            "completed": "2025-10-17"
+          },
+          "B5.8": {
+            "name": "Figma Handshake (Read-Only) & Specimens",
+            "status": "complete",
+            "started": "2025-10-17",
+            "completed": "2025-10-17"
+          },
+          "B5.9": {
+            "name": "Design QA & Drift Triage",
+            "status": "proposed",
+            "notes": "Suggested follow-up for Sprint 06 planning."
+          },
+          "B6.1": {
+            "name": "Dark Theme Completion & Themed Elevation",
+            "status": "complete",
+            "started": "2025-10-11",
+            "completed": "2025-10-11"
+          },
+          "B6.2": {
+            "name": "Contexts: Form & Timeline (Defaults, Slots, Docs)",
+            "status": "complete",
+            "started": "2025-10-11",
+            "completed": "2025-10-11"
+          },
+          "B6.3": {
+            "name": "Core Component States Library (Tokens-First)",
+            "status": "complete",
+            "started": "2025-10-11",
+            "completed": "2025-10-11"
+          },
+          "B6.4": {
+            "name": "Motion Tokens v1 (Respect Reduced Motion)",
+            "status": "complete",
+            "started": "2025-10-11",
+            "completed": "2025-10-11"
+          },
+          "B6.5": {
+            "name": "Enum Mapping Expansion & Coverage (Payment, Ticket, User)",
+            "status": "complete",
+            "started": "2025-10-11",
+            "completed": "2025-10-12"
+          },
+          "B6.6": {
+            "name": "High-Contrast (HC) Test Pass: From Optional to Required",
+            "status": "complete",
+            "completed": "2025-10-12"
+          },
+          "B6.7": {
+            "name": "Visual Regression: Expand Coverage & Stabilize",
+            "status": "complete",
+            "completed": "2025-10-12"
+          },
+          "B6.8": {
+            "name": "DX & Docs: Theme Freeze, PR Template, and Usage Guides",
+            "status": "complete",
+            "completed": "2025-10-12"
+          },
+          "B7.1": {
+            "name": "Motion Tokens v1 + VRT-Stable Consumption",
+            "status": "complete"
+          },
+          "B7.2": {
+            "name": "Contexts: Finalize Form & Timeline density/typography + MDX",
+            "status": "complete",
+            "completed": "2025-10-12"
+          },
+          "B7.3": {
+            "name": "HC visual snapshots (forced-colors) via Playwright+storycap",
+            "status": "complete"
+          },
+          "B7.4": {
+            "name": "Dark a11y coverage expansion & baseline",
+            "status": "complete"
+          },
+          "B7.5": {
+            "name": "Chromatic coverage expansion (\u226525; include Dark, exclude HC)",
+            "status": "complete"
+          },
+          "B7.6": {
+            "name": "Diagnostics updater (Sprint-07 snapshot script)",
+            "status": "complete"
+          },
+          "B8.1": {
+            "name": "Story Curation & VRT Shaping",
+            "status": "complete",
+            "started": "2025-10-12",
+            "completed": "2025-10-12"
+          },
+          "B8.2": {
+            "name": "Motion Tokens v1 (populate + targeted consumption)",
+            "status": "complete",
+            "started": "2025-10-12",
+            "completed": "2025-10-12"
+          },
+          "B8.3": {
+            "name": "Inputs & Controls (TextArea, Checkbox, Radio, Toggle)",
+            "status": "complete",
+            "started": "2025-10-12",
+            "completed": "2025-10-12"
+          },
+          "B8.4": {
+            "name": "Selection & Navigation (Select, Tabs)",
+            "status": "complete",
+            "started": "2025-10-12",
+            "completed": "2025-10-12"
+          },
+          "B8.5": {
+            "name": "Feedback & Affordance (Tooltip, Toast)",
+            "status": "complete",
+            "started": "2025-10-12",
+            "completed": "2025-10-12"
+          },
+          "B8.6": {
+            "name": "Form Patterns v1",
+            "status": "complete",
+            "started": "2025-10-12",
+            "completed": "2025-10-13"
+          },
+          "B8.7": {
+            "name": "A11y & HC/VRT Coverage for New Components",
+            "status": "complete",
+            "completed": "2025-10-13"
+          },
+          "B8.8": {
+            "name": "VRT Coverage Refresh",
+            "status": "complete",
+            "completed": "2025-10-13"
+          },
+          "B8.9": {
+            "name": "Diagnostics: Sprint-08 Snapshot",
+            "status": "in_progress"
+          }
+        },
+        "critical_facts": [
+          "DTCG tokens use strict core model with acyclic aliases only",
+          "Build pipeline uses Style Dictionary v4 with @tokens-studio/sd-transforms",
+          "Tailwind variants operate at region scope for context flipping",
+          "A11y contract enforces WCAG 2.2 AA with baseline/diff CI gating",
+          "Enum mapping schema ensures 100% coverage for SaaS domain fields"
+        ],
+        "constraints": [
+          "Token references must resolve acyclically with no circular dependencies",
+          "Build pipeline must complete under 3s on 2k tokens",
+          "All token pairs must pass WCAG 2.2 AA contrast requirements",
+          "Enum coverage validator must achieve 100% for SaaS domain status values",
+          "Context variants must be purely declarative (no runtime branching)"
+        ],
+        "decisions_made": [
+          "Swapped Storybook doc coverage to CSF stories that render typed React docs components for improved static analysis.",
+          "Standardised accessible table headers to context body text token to satisfy axe contrast contract."
+        ],
+        "files_to_create": [],
+        "research_completed": [
+          "missions/research/r5.6_Definitive-Guide-to-OKLCH-Relative-Color Guardrails.md",
+          "missions/research/r5.7_High-Contrast-Mode-Regression-Prevention.md",
+          "missions/research/r5.5_Scalable-Theming-Architecture.md"
+        ],
+        "achievements": [
+          "B5.3 delivered typography composites with deterministic class bindings; Storybook docs now consume React-based specimens for Contexts & Foundations pages.",
+          "B5.4 shipped shadow and border composites with per-part CSS variables plus Explorer docs that render elevated cards and banners via tokens.",
+          "B5.5 established \u0394L/\u0394C guardrails, extended a11y tooling, and wired CI gating with actionable reports.",
+          "B5.6 mapped forced-colors system tokens, implemented outline-first focus with transparent borders, and shipped the high-contrast policy doc + HC stylesheet for Explorer.",
+          "B7.2 locked Form/Timeline deltas: Form uses base scale with relaxed line-height and +1 stack step; Timeline uses -1 type step with standard line-height and compact stack spacing; stories and docs published."
         ]
       }
     }
   },
-  "technical_context": {
-    "dependencies": [
-      "Python 3.x (required)",
-      "Node.js (optional for advanced features)"
-    ],
-    "cmos_features": {
-      "compression": "4x-10x context reduction",
-      "state_monitoring": "4D vector tracking (Form, Function, Behavior, Context)",
-      "domain_management": "Intelligent compartmentalization",
-      "health_assessment": "Real-time statistical metrics",
-      "anti_patterns": "Automated detection and recovery"
+  "decisions_made": [
+    {
+      "date": "2025-11-13T06:30:00Z",
+      "decision": "Core: 6 traits"
     },
-    "integration_points": [
-      "project_context.py - main Python interface",
-      "context/cmos/ - JavaScript modules for advanced features",
-      "smart_migrate.js - migration tool for existing projects"
-    ]
+    {
+      "date": "2025-11-13T06:30:01Z",
+      "decision": "Auditable \u2192 Extension"
+    },
+    {
+      "date": "2025-11-13T06:30:02Z",
+      "decision": "Classifiable: Tag mode"
+    },
+    {
+      "date": "2025-11-13T06:30:03Z",
+      "decision": "Addressable: US-first"
+    },
+    {
+      "date": "2025-11-13T06:30:04Z",
+      "decision": "Preferenceable: User-level"
+    },
+    {
+      "date": "2025-11-13T06:30:05Z",
+      "decision": "Authorization \u2192 Extension"
+    },
+    {
+      "date": "2025-11-13T06:31:00Z",
+      "decision": "Viz Extension Pack"
+    },
+    {
+      "date": "2025-11-13T06:31:01Z",
+      "decision": "Normalized Viz Spec v0.1"
+    },
+    {
+      "date": "2025-11-13T06:31:02Z",
+      "decision": "Reactive signal + FSM"
+    },
+    {
+      "date": "2025-11-13T06:31:03Z",
+      "decision": "Server Resolver"
+    },
+    {
+      "date": "2025-11-13T06:32:00Z",
+      "decision": "Version: v1.0\u2192v1.5\u2192v2.0"
+    },
+    "Sprint 20 goal: Final polish for public shareability, no npm publish yet (from PS-2025-11-13-001)",
+    "Add MIT LICENSE file to project root (from PS-2025-11-13-002)",
+    "Version in package.json (no git tags): bump to 1.0.0-rc.1 in B20.4 (from PS-2025-11-13-002)",
+    "Add positioning section to README - draft first, maintainer can refine before article launch (from PS-2025-11-13-002)",
+    "Sprint 21 scope: Foundation only (7 missions) - Vega-Lite renderer, 2 chart types, a11y baseline",
+    "Viz traits: Start with 10 essential traits (Mark, Encoding, Scale, Guide) - progressive implementation",
+    "Token strategy: Hybrid approach (extend existing typography/spacing, add viz-specific color/size scales)",
+    "A11y baseline: Two-part alternative (table fallback + narrative description) per RDV.4",
+    "Renderer strategy: Vega-Lite only for Sprint 21, ECharts adapter deferred to Sprint 22",
+    "Testing: Dual strategy (spec snapshots + Chromatic VRT for critical charts)",
+    "Quality over timeline: Foundation first, validate architecture before scaling to more chart types",
+    "Sprint 23 scope: Layout traits (Facet/Layer/Concat), advanced interactions (Filter/Zoom/Brush), pattern library v2",
+    "Layout strategy: Facet for small multiples, Layer for overlays, Concat for dashboards",
+    "Advanced interactions defer to Sprint 23 per Sprint 22 decision - Filter/Zoom/Brush fully implemented",
+    "Pattern library v2: 20+ patterns including complex compositions and responsive strategies",
+    "Dashboard context: Add Chart/Dashboard as 5th/6th view contexts in view engine",
+    "Sprint 25 scope: Addressable trait implementation (7 missions) - first core trait expansion beyond Universal Quintet",
+    "Addressable trait: Three axes of complexity - structural (international), lifecycle (validation), compositional (multi-role)",
+    "International support: UPU S42 template-based formatting per R21.1 architecture",
+    "Validation lifecycle: unvalidated \u2192 validated \u2192 enriched (with geocoding/metadata)",
+    "Multi-role pattern: billing, shipping, warehouse addresses via getAddress(role) / setAddress(role, address)",
+    "Core trait expansion (Addressable, Classifiable, Preferenceable) is officially complete; Extension Packs begin with Sprint 28.",
+    "Preferenceable registry + migration pipeline is the canonical template for future schema-governed traits (Authorization, Communication, Content).",
+    "Extension Pack sequence locked: Sprint 28 Authorization, Sprint 29 Communication, Sprint 30 Content (see cmos/planning/sprint-28-30-overview.md).",
+    "Authorization remains an Extension Pack (not a core trait) so User/Organization stay lightweight while RBAC evolves independently.",
+    "Static SoD is enforced via authz.prevent_conflicting_roles() trigger; Dynamic SoD ships as detection/audit only until v2.0 enforcement.",
+    "Role hierarchy uses an adjacency list (authz.role_hierarchy) for v1.0; nested sets deferred to later phases."
+  ],
+  "roadmap": {
+    "sprint_20": "Ready",
+    "sprint_21_30": "Extension Packs queued (Authorization \u2192 Communication \u2192 Content)",
+    "sprint_21": "Completed - Viz foundation delivered",
+    "sprint_22_24": "In progress - Layout traits, advanced interactions, dashboard contexts",
+    "sprint_22": "Completed - Dual renderer, interactions, pattern library, benchmarks",
+    "sprint_23": "Completed - Layout traits, advanced interactions, pattern lib v2",
+    "sprint_24": "Completed - Viz polish, documentation synthesis",
+    "sprint_25": "Completed - Addressable trait (R21.1)",
+    "sprint_26": "Completed - Classifiable trait (R21.4)",
+    "sprint_27": "Completed - Preferenceable trait (R21.5)",
+    "sprint_28": "Queued - Authorization extension pack (R21.2)",
+    "sprint_29": "Queued - Communication extension pack (R20.1 + R20.6)",
+    "sprint_30": "Queued - Content management extension pack (R20.2 + R20.3)"
   },
   "context_health": {
-    "size_kb": 0,
-    "size_limit_kb": 100,
-    "sessions_since_reset": 0,
-    "last_reset": "",
-    "compression_enabled": true,
-    "anti_pattern_detection": true
+    "sessions_since_reset": 87,
+    "last_update": "2025-11-19T15:38:55Z",
+    "size_kb": 56.84,
+    "size_limit_kb": 100
   },
-  "ai_instructions": {
-    "preferred_language": "javascript",
-    "code_style": "modular_zero_dependency",
-    "testing_required": true,
-    "documentation_level": "concise"
+  "learnings": [
+    "Renderer selection decisions must cite artifacts/performance/viz-benchmark-results.json + docs/viz/renderer-selection-guide.md."
+  ],
+  "constraints": [
+    "Maintain 754/754 test pass rate and 49/49 a11y baseline",
+    "Permission resolution (Authable) must remain <5ms p99 using PermissionCache benchmarks."
+  ],
+  "context_notes": [
+    "RC tag v1.0.0-rc for internal milestone, article writing happens outside sprint scope",
+    "Sprint 22 close complete; viz benchmarks + renderer guidance captured, Sprint 23 plan stored in cmos/planning/sprint-23-plan.md.",
+    "Sprint 27 closed on 2025-11-19T15:38:55Z with diagnostics.json + cmos/context/MASTER_CONTEXT.json synced to SQLite.",
+    "Extension Pack overview added at cmos/planning/sprint-28-30-overview.md; reuse Preferenceable registry/migration pipeline for Authorization work."
+  ],
+  "next_session_context": {
+    "title": "Sprint 29 Communication Pack prep",
+    "when_we_resume": [
+      "Promote Sprint 29 Communication missions referencing R20.1 (Notifications) + R20.6 (Messaging).",
+      "Leverage Authable PermissionCache + Preferenceable registry to gate messaging permissions and notification routing.",
+      "Carry Sprint 28 diagnostics forward (permission cache metrics, SoD validator) before expanding to Communication channels."
+    ],
+    "dependencies": [
+      "Sprint 28 Authorization pack is complete; contexts snapshot tagged \"Sprint 28 Complete\" recorded in SQLite.",
+      "Communication pack depends on Authable runtime/CLI surfaces and Preferenceable notification registry."
+    ]
   },
-  "planning_context": {
-    "last_updated": "2025-10-26",
-    "current_sprint": {
-      "id": "Sprint 18",
-      "status": "Current",
-      "focus": "Component Set IV delivery + performance harness automation",
-      "missions": [
-        "B18.1_progress-and-stepper",
-        "B18.2_tabs-navigation",
-        "B18.3_pagination-hook",
-        "B18.4_breadcrumbs-overflow",
-        "B18.5_empty-state",
-        "B18.6_toast-queue",
-        "B18.7_perf-harness-core",
-        "B18.8_perf-ci-and-docs"
-      ]
-    },
-    "next_sprint_ready": {
-      "id": "Sprint 19",
-      "status": "Queued",
-      "focus": "Design system hardening, packaging readiness, and Storybook display deployment (no external pilot)",
-      "missions": [
-        "B19.1_component-polish-and-qa",
-        "B19.2_packaging-dry-run",
-        "B19.3_guardrail-automation",
-        "B19.4_diagnostics-refresh",
-        "B19.5_github-pages-storybook"
-      ]
-    },
-    "review_pipeline": {
-      "upcoming_review": {
-        "id": "Sprint 20",
-        "status": "Planned",
-        "focus": "Private release candidate & reviewer enablement",
-        "notes": "Prepare reviewer kit, feedback intake, and pause for go/no-go before public launch"
+  "recent_sessions": [
+    {
+      "id": "BUILD-2025-11-19-B27.8",
+      "title": "Sprint 27 Close-Out",
+      "type": "build",
+      "session_type": "build",
+      "completed_at": "2025-11-19T15:38:55Z",
+      "summary": "Delivered Preferenceable retrospective, changelog, diagnostics, context refresh, and extension-pack plan.",
+      "capture_count": 4,
+      "captures": {
+        "decision": 2,
+        "context": 1,
+        "next-step": 1
       }
     },
-    "key_documents": {
-      "roadmap_release": "cmos/docs/roadmap_s17_release.md",
-      "sprint17_direction": "cmos/docs/OODS Direction-Check-for-sprint-17.md",
-      "component_research": "cmos/missions/research/R18.1_Technical-Research-Report-Component-Set-IV.md",
-      "performance_research": "cmos/missions/research/R18.2_Performance-Instrumentation-Strategy.md",
-      "backlog": "cmos/missions/backlog.yaml"
+    {
+      "id": "BUILD-2025-11-16-B22.8",
+      "session_type": "build",
+      "type": "build",
+      "title": "Sprint 22 Close-Out",
+      "summary": "Completed retrospective, diagnostics refresh, and Sprint 23 plan.",
+      "completed_at": "2025-11-16T00:06:31Z",
+      "capture_count": 0,
+      "captures": {}
     },
-    "state_assessment": {
-      "command": "node scripts/state-assessment.mjs",
-      "artifacts_dir": "artifacts/state",
-      "notes": "Run before each planning review to refresh assessment.json/assessment.md"
+    {
+      "id": "PS-2025-11-13-001",
+      "session_type": "planning",
+      "type": "planning",
+      "title": "Sprint 20 Launch Check-In",
+      "summary": "Sprint 20 scoped: Final polish for public shareability with v1.0.0-rc tag, no npm publish yet",
+      "completed_at": "2025-11-13T22:31:35Z",
+      "capture_count": 5,
+      "captures": {
+        "decision": 1,
+        "context": 1,
+        "constraint": 1,
+        "next-step": 2
+      }
     },
-    "checklist_next_session": [
-      "Kick off B19.4 diagnostics refresh using the new guardrail snapshots and perf baselines.",
-      "Verify CI pipelines surface the metadata/tenancy lint rules (update `.github/workflows/pr-validate.yml` as needed).",
-      "Schedule a guardrail spot-check (`node scripts/state-assessment.mjs --guardrails`) before reviewer hand-off.",
-      "Finalize GitHub Pages deployment plan for B19.5 (domain selection, workflow wiring).",
-      "Capture reviewer enablement prerequisites for Sprint 20 private RC ahead of the next review."
+    {
+      "id": "PS-2025-11-13-002",
+      "session_type": "planning",
+      "type": "planning",
+      "title": "Sprint 20 Shareability Decisions",
+      "summary": "Sprint 20 shareability decisions finalized: MIT LICENSE, package.json versioning, README positioning draft",
+      "completed_at": "2025-11-13T22:36:45Z",
+      "capture_count": 3,
+      "captures": {
+        "decision": 3
+      }
+    }
+  ],
+  "working_memory": {
+    "session_history": [
+      {
+        "mission": "B22.6",
+        "agent": "codex",
+        "summary": "Beginning Chart Pattern Library implementation session",
+        "action": "start",
+        "ts": "2025-11-15T20:39:01Z"
+      },
+      {
+        "mission": "B22.6",
+        "agent": "codex",
+        "summary": "Chart pattern library docs, specs, CLI, and Storybook gallery delivered",
+        "action": "complete",
+        "ts": "2025-11-15T21:17:05Z"
+      },
+      {
+        "mission": "B22.7",
+        "agent": "codex",
+        "summary": "Initializing renderer benchmark tooling and docs",
+        "action": "start",
+        "ts": "2025-11-15T22:25:49Z"
+      },
+      {
+        "mission": "B22.7",
+        "agent": "codex",
+        "summary": "Viz benchmark suite, docs, and automation delivered",
+        "action": "complete",
+        "ts": "2025-11-15T22:58:12Z"
+      },
+      {
+        "mission": "B22.8",
+        "agent": "codex",
+        "summary": "Kick off Sprint 22 close-out package (retrospective, diagnostics, Sprint 23 prep)",
+        "action": "start",
+        "ts": "2025-11-16T00:01:15Z"
+      },
+      {
+        "mission": "B22.8",
+        "agent": "codex",
+        "summary": "Sprint 22 close-out docs, diagnostics, and Sprint 23 plan completed",
+        "action": "complete",
+        "ts": "2025-11-16T00:06:54Z"
+      },
+      {
+        "mission": "B23.1",
+        "agent": "codex",
+        "summary": "Kick off layout trait schema work",
+        "action": "start",
+        "ts": "2025-11-16T00:45:11Z"
+      },
+      {
+        "mission": "B23.1",
+        "agent": "codex",
+        "summary": "Layout facet/layer/concat schema + traits delivered",
+        "action": "complete",
+        "ts": "2025-11-16T01:01:20Z"
+      },
+      {
+        "mission": "B23.2",
+        "agent": "codex",
+        "summary": "Begin layout adapter implementation for Vega-Lite and ECharts",
+        "action": "start",
+        "ts": "2025-11-16T01:32:54Z"
+      },
+      {
+        "mission": "B23.2",
+        "agent": "codex",
+        "summary": "Layout adapter support landed with tests + docs",
+        "action": "complete",
+        "ts": "2025-11-16T02:02:03Z"
+      },
+      {
+        "mission": "B23.3",
+        "agent": "codex",
+        "summary": "Begin Viz Facet/Grid components mission",
+        "action": "start",
+        "ts": "2025-11-16T02:36:04Z"
+      },
+      {
+        "mission": "B23.3",
+        "agent": "codex",
+        "summary": "Viz facet + layered components implemented with accessibility fallbacks.",
+        "action": "complete",
+        "ts": "2025-11-16T03:06:15Z"
+      },
+      {
+        "mission": "B23.4",
+        "agent": "codex",
+        "summary": "Starting advanced interaction traits work",
+        "action": "start",
+        "ts": "2025-11-16T03:54:35Z"
+      },
+      {
+        "mission": "B23.4",
+        "agent": "codex",
+        "summary": "Advanced interaction traits shipped",
+        "action": "complete",
+        "ts": "2025-11-16T04:18:28Z"
+      },
+      {
+        "mission": "B23.5",
+        "agent": "codex",
+        "summary": "Starting Pattern Automation & CLI upgrade work session",
+        "action": "start",
+        "ts": "2025-11-16T05:50:57Z"
+      },
+      {
+        "mission": "B23.5",
+        "agent": "codex",
+        "summary": "Enhanced viz:suggest CLI with layout + interaction scoring and scaffolding",
+        "action": "complete",
+        "ts": "2025-11-16T06:14:46Z"
+      },
+      {
+        "mission": "B23.6",
+        "agent": "codex",
+        "summary": "Begin Responsive Pattern Library v2 implementation",
+        "action": "start",
+        "ts": "2025-11-16T14:33:42Z"
+      },
+      {
+        "mission": "B23.6",
+        "agent": "codex",
+        "summary": "Responsive Pattern Library v2 docs/specs/story/tests delivered",
+        "action": "complete",
+        "ts": "2025-11-16T14:57:27Z"
+      },
+      {
+        "mission": "B23.7",
+        "agent": "codex",
+        "summary": "Initiating CMOS build session for Figma-token handshake",
+        "action": "start",
+        "ts": "2025-11-16T16:29:24Z"
+      },
+      {
+        "mission": "B23.7",
+        "agent": "codex",
+        "summary": "Viz handshake artifacts + telemetry shipped",
+        "action": "complete",
+        "ts": "2025-11-16T16:39:40Z"
+      },
+      {
+        "mission": "B23.8",
+        "agent": "codex",
+        "summary": "Kicking off dashboard context integration work",
+        "action": "start",
+        "ts": "2025-11-16T17:07:50Z"
+      },
+      {
+        "mission": "B23.8",
+        "agent": "codex",
+        "summary": "Chart + Dashboard contexts wired into view engine with canonical dashboards.",
+        "action": "complete",
+        "ts": "2025-11-16T17:42:01Z"
+      },
+      {
+        "mission": "B23.9",
+        "agent": "codex",
+        "summary": "Kicking off CI guardrails + telemetry for layouts",
+        "action": "start",
+        "ts": "2025-11-16T18:58:34Z"
+      },
+      {
+        "mission": "B23.9",
+        "agent": "codex",
+        "summary": "Layout telemetry + Playwright VRT guardrails added",
+        "action": "complete",
+        "ts": "2025-11-16T19:24:57Z"
+      },
+      {
+        "mission": "B24.1",
+        "agent": "codex",
+        "summary": "Starting viz documentation synthesis (overview+guides)",
+        "action": "start",
+        "ts": "2025-11-17T01:24:11Z"
+      },
+      {
+        "mission": "B24.1",
+        "agent": "codex",
+        "summary": "Viz system documentation suite delivered",
+        "action": "complete",
+        "ts": "2025-11-17T01:24:23Z"
+      },
+      {
+        "mission": "B24.2",
+        "agent": "codex",
+        "summary": "Begin B24.2 Storybook polish + viz fixes",
+        "action": "start",
+        "ts": "2025-11-17T02:00:14Z"
+      },
+      {
+        "mission": "B24.2",
+        "agent": "codex",
+        "summary": "Storybook polish + viz gallery fixes shipped",
+        "action": "complete",
+        "ts": "2025-11-17T02:04:08Z"
+      },
+      {
+        "mission": "B24.3",
+        "agent": "assistant",
+        "summary": "Kickoff viz best practices deliverables",
+        "action": "start",
+        "ts": "2025-11-17T04:12:46Z"
+      },
+      {
+        "mission": "B24.3",
+        "agent": "assistant",
+        "summary": "Viz best practices docs + CLI delivered",
+        "action": "complete",
+        "ts": "2025-11-17T04:25:39Z"
+      },
+      {
+        "mission": "B24.4",
+        "agent": "codex",
+        "summary": "Kickoff real-world dashboard examples session",
+        "action": "start",
+        "ts": "2025-11-17T05:08:39Z"
+      },
+      {
+        "mission": "B24.4",
+        "agent": "codex",
+        "summary": "Real-world dashboard examples wired with registry + docs",
+        "action": "complete",
+        "ts": "2025-11-17T05:13:40Z"
+      },
+      {
+        "mission": "B24.5",
+        "agent": "assistant",
+        "summary": "Kicking off B24.5 performance optimization pass",
+        "action": "start",
+        "ts": "2025-11-17T06:24:53Z"
+      },
+      {
+        "mission": "B24.5",
+        "agent": "assistant",
+        "summary": "Lazy-loaded Vega renderer path, tree-shaking tweaks, and optimized facet fallbacks.",
+        "action": "complete",
+        "ts": "2025-11-17T08:49:13Z"
+      },
+      {
+        "mission": "B24.6",
+        "agent": "assistant",
+        "summary": "Starting Sprint 24 close - retrospective, master context update, Sprint 25 prep",
+        "action": "start",
+        "ts": "2025-11-17T17:03:55Z"
+      },
+      {
+        "mission": "B24.6",
+        "agent": "assistant",
+        "summary": "Sprint 24 retrospective complete, Sprint 25 planning ready",
+        "action": "complete",
+        "ts": "2025-11-17T17:05:01Z"
+      },
+      {
+        "mission": "B25.1",
+        "agent": "assistant",
+        "summary": "Starting Addressable trait foundations: schema + trait interface + docs",
+        "action": "start",
+        "ts": "2025-11-17T19:43:37Z"
+      },
+      {
+        "mission": "B25.1",
+        "agent": "assistant",
+        "summary": "Addressable trait foundation, schemas, runtime, docs, and tests delivered",
+        "action": "complete",
+        "ts": "2025-11-17T20:07:09Z"
+      },
+      {
+        "mission": "B25.2",
+        "agent": "codex",
+        "summary": "Kickoff B25.2 international address format templates + formatter",
+        "action": "start",
+        "ts": "2025-11-17T20:59:30Z"
+      },
+      {
+        "mission": "B25.2",
+        "agent": "codex",
+        "summary": "Delivered UPU S42 template registry, formatter, extractor, and documentation",
+        "action": "complete",
+        "ts": "2025-11-17T21:25:16Z"
+      },
+      {
+        "mission": "B25.3",
+        "agent": "assistant",
+        "summary": "Begin Address validation lifecycle integration work",
+        "action": "start",
+        "ts": "2025-11-17T21:57:21Z"
+      },
+      {
+        "mission": "B25.3",
+        "agent": "assistant",
+        "summary": "Delivered address validation service with lifecycle + Google AV adapter",
+        "action": "complete",
+        "ts": "2025-11-17T22:20:18Z"
+      },
+      {
+        "mission": "B25.4",
+        "agent": "codex",
+        "summary": "Starting multi-role address manager implementation",
+        "action": "start",
+        "ts": "2025-11-17T23:06:14Z"
+      },
+      {
+        "mission": "B25.4",
+        "agent": "codex",
+        "summary": "Delivered multi-role address management runtime",
+        "action": "complete",
+        "ts": "2025-11-17T23:23:36Z"
+      },
+      {
+        "mission": "B25.5",
+        "agent": "codex",
+        "summary": "Implementing AddressForm + Display components",
+        "action": "start",
+        "ts": "2025-11-17T23:38:47Z"
+      },
+      {
+        "mission": "B25.5",
+        "agent": "codex",
+        "summary": "Address UI components, docs, and validation coverage delivered",
+        "action": "complete",
+        "ts": "2025-11-18T00:29:01Z"
+      },
+      {
+        "mission": "B25.6",
+        "agent": "codex",
+        "summary": "Starting Addressable integration for User + Organization",
+        "action": "start",
+        "ts": "2025-11-18T03:42:03Z"
+      },
+      {
+        "mission": "B25.6",
+        "agent": "codex",
+        "summary": "Addressable integration for User + Organization complete",
+        "action": "complete",
+        "ts": "2025-11-18T04:01:25Z"
+      },
+      {
+        "mission": "B25.7",
+        "agent": "codex",
+        "summary": "Kick off Sprint 25 retrospective + Sprint 26 planning package",
+        "action": "start",
+        "ts": "2025-11-18T04:23:15Z"
+      },
+      {
+        "mission": "B25.7",
+        "agent": "codex",
+        "summary": "Sprint 25 close-out artifacts shipped; Sprint 26 Classifiable backlog ready.",
+        "action": "complete",
+        "ts": "2025-11-18T04:34:34Z"
+      },
+      {
+        "mission": "B27.8",
+        "agent": "codex",
+        "summary": "Starting Sprint 27 close-out session",
+        "action": "start",
+        "ts": "2025-11-19T15:25:50Z"
+      },
+      {
+        "mission": "B27.8",
+        "agent": "codex",
+        "summary": "Retrospective, diagnostics, context + roadmap updates delivered",
+        "action": "complete",
+        "ts": "2025-11-19T15:38:55Z"
+      }
     ],
-    "notes": "Planning cadence: deliver Sprint 18 Component Set IV + perf harness, run refreshed state assessment, then transition into Sprint 19 hardening (polish, packaging dry run, guardrails, diagnostics, Storybook display deployment) before staging Sprint 20 private review."
+    "last_session": "2025-11-19T15:38:55Z",
+    "session_count": 83,
+    "active_mission": null,
+    "blocked_missions": [],
+    "last_completed_mission": "B27.8"
   },
-  "metadata": {
-    "migrated_at": "2025-11-09T23:09:23.072654+00:00",
-    "source_version": "cmos-v1"
-  }
+  "sprint_completions": [
+    {
+      "sprint": "Sprint 21",
+      "title": "Visualization Foundation",
+      "completed_at": "2025-11-15T02:32:06Z",
+      "missions_completed": 7,
+      "key_deliverables": [
+        "10 viz traits (Mark, Encoding, Scale)",
+        "Normalized Viz Spec v0.1 with schema",
+        "Vega-Lite adapter (trait \u2192 VL JSON compiler)",
+        "Bar chart component with full a11y",
+        "Line chart component with temporal support",
+        "Viz token system (--viz-* namespace)",
+        "A11y validation suite (15 equivalence rules)"
+      ],
+      "learnings": [
+        "Viz trait taxonomy v0.1 integrates cleanly with existing trait engine - composition patterns validated",
+        "Normalized Viz Spec v0.1 proves renderer abstraction concept - same spec can target multiple renderers",
+        "Vega-Lite adapter demonstrates 1:1 trait\u2192VL mapping works - translation layer is clean and testable",
+        "Two-part a11y (table + narrative) automated successfully - AccessibleTable + ChartDescription reusable across all charts",
+        "Viz tokens as separate --viz-* namespace avoids protected namespace changes - no breaking labels needed",
+        "15 equivalence rules from RDV.4 implemented as validators - a11y baked into foundation",
+        "ResizeObserver + reduced-motion patterns from LineChart applicable to all future chart components"
+      ],
+      "what_worked_well": [
+        "Rich JSON mission specs made handoff crystal clear",
+        "Progressive approach (10 traits, not 30) kept sprint focused",
+        "Research foundation (RDS.7-10) eliminated guesswork",
+        "Single renderer (Vega-Lite) validated architecture before complexity",
+        "Pure additive tokens avoided governance overhead"
+      ],
+      "challenges": [
+        "Token linting fails in pre-existing brand alias files (noted in B21.6)",
+        "ResizeObserver patterns needed refinement for temporal charts"
+      ],
+      "readiness_for_sprint_22": "Excellent - foundation solid, ready for ECharts adapter and interactions"
+    },
+    {
+      "sprint": "Sprint 22",
+      "title": "Visualization Scale-Out",
+      "completed_at": "2025-11-16T00:10:00Z",
+      "missions_completed": 8,
+      "key_deliverables": [
+        "ECharts adapter + renderer selector (src/viz/adapters/echarts-adapter.ts, renderer-selector.ts)",
+        "Interaction hooks + schema updates (src/viz/hooks/useHighlight.ts, docs/viz/normalized-viz-spec.md)",
+        "Scatter/Bubble, Area, Heatmap components with RDV.4 fallbacks (src/components/viz/*.tsx)",
+        "Chart pattern library + pnpm viz:suggest CLI (docs/viz/pattern-library.md, scripts/viz/suggest-chart.mjs)",
+        "Viz benchmark suite + budgets (scripts/perf/run-viz-benchmarks.mjs, tools/perf/viz-budget.json)",
+        "Renderer/performance guides (docs/viz/renderer-selection-guide.md, docs/viz/performance-guide.md)"
+      ],
+      "learnings": [
+        "Spec-first authoring handled interactions + renderer parity without schema churn.",
+        "Deterministic perf tests plus pnpm viz:suggest CLI boosted confidence for product-facing decisions.",
+        "Token-governed color utilities (color-intensity-mapper) are required whenever canvas renderers enter the mix."
+      ],
+      "what_worked_well": [
+        "Renderer abstraction let highlight/tooltip traits ship once and fan out to both stacks.",
+        "Storybook + docs kept pace with code, so every mission shipped with references and a11y baselines.",
+        "Benchmark artifact + diagnostics created an auditable contract for future missions."
+      ],
+      "challenges": [
+        "Needed extra cleanup hooks when switching between vega-embed and ECharts instances to avoid double mounts.",
+        "Palette fidelity required OKLCH to sRGB conversion for heatmaps rendered on canvas."
+      ],
+      "readiness_for_sprint_23": "Layout trait schema, CLI planning, and benchmark coverage are ready; Sprint 23 can focus on facets, layers, and dashboard contexts."
+    },
+    {
+      "sprint": "Sprint 23",
+      "title": "Viz Complex Patterns & Layout Traits",
+      "completed_at": "2025-11-16T19:24:57Z",
+      "missions_completed": 9,
+      "key_deliverables": [
+        "Layout traits: Facet, Layer, Concat (15 trait files total)",
+        "Layout adapters for VL + ECharts (scale resolver, interaction propagation)",
+        "VizFacetGrid + VizLayeredView components with SharedLegend",
+        "Advanced interactions: Filter, Zoom, Brush with React hooks",
+        "Pattern library v2: 20+ complex compositions with responsive strategies",
+        "CLI upgrade: pnpm viz:suggest with --layout and --interactions flags",
+        "Figma handshake: chart primitives + token sync workflow",
+        "Dashboard contexts: Chart + Dashboard as view engine contexts",
+        "CI telemetry: 60+ benchmark scenarios, VRT for layouts"
+      ],
+      "learnings": [
+        "Layout traits compose cleanly with existing Mark/Encoding/Scale/Interaction traits",
+        "Facet scale sharing complex in ECharts - required explicit scale resolver",
+        "Interaction propagation across layout boundaries works via shared state pattern",
+        "Pattern library v2 with responsive strategies reduces decision paralysis",
+        "CLI scaffold generation dramatically improves developer experience",
+        "Dashboard contexts integrate seamlessly with existing view engine",
+        "Performance budgets held across layout scenarios - no violations",
+        "Figma handshake for viz patterns validated design-to-code workflow"
+      ],
+      "what_worked_well": [
+        "RDS.8 research predicted layout adapter challenges - no surprises",
+        "Shared scale resolver pattern reusable across facet/layer/concat",
+        "Sprint 22 interaction foundation made Filter/Zoom/Brush straightforward",
+        "Pattern library v1 \u2192 v2 evolution natural (11 \u2192 20+ patterns)",
+        "Snapshot fix enabled proper progress tracking (8 \u2192 79 snapshots)",
+        "79 snapshots captured entire Sprint 23 journey - excellent audit trail"
+      ],
+      "challenges": [
+        "ECharts facet grid requires manual scale coordination (unlike VL automatic)",
+        "Keyboard navigation across facet panels needed custom focus management",
+        "Brush interaction state sync complex for linked views",
+        "Figma component properties \u2192 VizSpec mapping required schema alignment",
+        "Performance testing with 10K points per panel stressed memory budgets"
+      ],
+      "metrics": {
+        "traits_added": 6,
+        "components_added": 3,
+        "patterns_documented": 20,
+        "benchmark_scenarios": 60,
+        "test_files": 15,
+        "documentation_pages": 8,
+        "context_snapshots_captured": 71
+      },
+      "readiness_for_sprint_24": "Excellent - complete viz system ready for geospatial extensions, hierarchy/network patterns, and polish phase"
+    },
+    {
+      "sprint": "Sprint 24",
+      "title": "Viz Polish & Documentation",
+      "completed_at": "2025-11-17T17:04:31.468856+00:00",
+      "missions_completed": 6,
+      "key_deliverables": [
+        "Viz system overview documentation (Sprint 21-23 synthesis)",
+        "Storybook improvements (welcome page, broken charts fixed, token warnings eliminated)",
+        "Best practices guide (chart selection, performance, a11y)",
+        "3 real-world dashboard examples (User adoption, Subscription MRR, Product usage)",
+        "Performance optimization (25% bundle reduction, 18% memory improvement)",
+        "Sprint 25 planning (Addressable trait ready)"
+      ],
+      "learnings": [
+        "Documentation synthesis after major phase valuable for adoption",
+        "Polish sprints maintain quality and prevent technical debt",
+        "Real-world examples more valuable than pattern specs alone",
+        "Performance optimization without feature creep possible",
+        "Phase transitions need explicit closure + preparation"
+      ],
+      "type": "polish_and_synthesis",
+      "phase_transition": "Viz complete \u2192 Core traits begin"
+    },
+    {
+      "sprint": "Sprint 25",
+      "title": "Addressable Trait (Core Expansion)",
+      "type": "core_trait",
+      "completed_at": "2025-11-18T04:34:34Z",
+      "missions_completed": 7,
+      "key_deliverables": [
+        "Address schema + metadata + Addressable runtime (src/schemas/address.ts, src/traits/addressable/addressable-trait.ts).",
+        "UPU S42 template parser + dataset (src/traits/addressable/template-parser.ts, data/upu-s42-templates.json).",
+        "Validation lifecycle + Google AV adapter + metadata normalization (src/traits/addressable/validation-service.ts, google-av-adapter.ts).",
+        "Multi-role store + default resolver + diagnostics (src/traits/addressable/address-store.ts, role-manager.ts, default-resolver.ts).",
+        "AddressForm / AddressDisplay components with docs + axe coverage (src/components/addresses/*, docs/components/address-form.md).",
+        "User & Organization object integration + integration tests (objects/core/*.object.yaml, tests/integration/addressable-composition.test.ts).",
+        "Sprint 25 retrospective, changelog, diagnostics, and Sprint 26 plan recorded."
+      ],
+      "learnings": [
+        "Three-axis architecture (structure/lifecycle/composition) kept Addressable scope testable and composable.",
+        "Template registry caching + Intl.DisplayNames avoided runtime costs while improving localization fit.",
+        "Validation metadata must capture component-level corrections so UI + service adapters share a contract."
+      ],
+      "what_worked_well": [
+        "Trait/test scaffolding matured \u2013 Addressable shipped with docs + tests inside the same sprint window.",
+        "Diagnostics + changelog loop ensured documentation stayed synchronized with runtime + contexts.",
+        "Object integration playbook reused from viz sprints kept User/Organization adoption deterministic."
+      ],
+      "challenges": [
+        "Google Address Validation throttling required injectable fetch + API key validation in adapter.",
+        "Storybook permutations for addresses needed curated fixtures to avoid Chromatic noise.",
+        "International template QA surfaced dataset drift; JSON snapshot tests now cover template registry."
+      ],
+      "readiness_for_sprint_26": "B26.1\u2013B26.8 missions queued with R21.4 references; Addressable deliverables locked so Classifiable can start immediately."
+    },
+    {
+      "sprint": "Sprint 27",
+      "title": "Preferenceable Trait Close-Out",
+      "type": "core_trait",
+      "completed_at": "2025-11-19T15:38:55Z",
+      "missions_completed": 8,
+      "key_deliverables": [
+        "Preferenceable trait definition + runtime + schemas (traits/core/Preferenceable.trait.*, src/traits/preferenceable/preferenceable-trait.ts, src/schemas/preferences/*).",
+        "Schema registry + RJSF PreferenceForm/Preview components and Notification Matrix widgets (data/preference-schemas/registry.json, src/components/preferences/*).",
+        "Migration log + compatibility/diff tooling, cache + jsonb_path_ops GIN index, diagnostics + docs (database/migrations/20251118_preference_migration_log.sql, database/migrations/20251119_preference_gin_index.sql, src/traits/preferenceable/compatibility-checker.ts, dual-write-migrator.ts, read-repair.ts, cache/*).",
+        "User integration + examples/tests (`examples/objects/user-with-preferences.ts`, generated/objects/User.d.ts, tests/integration/preferenceable-composition.test.ts)."
+      ],
+      "learnings": [
+        "Registry + uiSchema exports keep PreferenceForm + type generation aligned.",
+        "Splitting lazy read-repair vs eager dual-write made migration logs auditable.",
+        "Cache metrics + jsonb_path_ops indexing are mandatory for <10 ms preference reads."
+      ],
+      "what_worked_well": [
+        "Trait, registry, UI, and docs shipped in one sprint using shared scaffolding.",
+        "Diagnostics + context updates stayed in lockstep with deliverables.",
+        "Storybook + integration examples made downstream adoption straightforward."
+      ],
+      "challenges": [
+        "Balancing read-repair defaults with migration history required additional guards.",
+        "Notification matrix widgets needed explicit compact density styles to avoid overflow.",
+        "Cache warmers surfaced a need for summarized telemetry; metrics table added as part of sprint."
+      ],
+      "readiness_for_sprint_28": "Extension Pack overview + research links captured in cmos/planning/sprint-28-30-overview.md; Authorization missions can start immediately."
+    }
+  ]
 }

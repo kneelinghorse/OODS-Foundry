@@ -1,0 +1,418 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B34.6
+name: Dashboard Integration & CLI Support
+sprint: Sprint 34
+status: Queued
+
+objective: >
+  Integrate Network & Flow visualizations into dashboard context with cross-filter
+  support, and extend CLI scaffolding for new visualization types.
+
+context:
+  background: |
+    For Network & Flow visualizations to be fully usable in OODS, they must:
+    1. Work within dashboard layouts
+    2. Participate in cross-filter interactions
+    3. Be scaffoldable via CLI
+    4. Have diagnostic telemetry
+
+    This mission connects the individual components to the broader OODS ecosystem.
+
+  research_basis:
+    - "cmos/foundational-docs/data-viz-part2/network-flow-module/ROADMAP.md Phase 4"
+
+  dependencies:
+    - B34.4  # Traits (for cross-filter network selections)
+    - B34.5  # Components (all four viz types)
+
+successCriteria:
+  - All four viz types work in dashboard layouts
+  - Cross-filter selections propagate correctly
+  - CLI scaffolds working network visualizations
+  - Data validation CLI works
+  - Diagnostic telemetry tracks usage
+  - E2E tests pass for all scenarios
+
+constraints:
+  - Must not break existing dashboard functionality
+  - Must follow existing CLI patterns
+  - Must maintain cross-filter performance
+  - Must support responsive layouts
+
+deliverables:
+  dashboard_integration:
+    - path: src/dashboard/widgets/network-widgets.ts
+      description: |
+        Dashboard widget definitions for network viz:
+
+        ```typescript
+        import { WidgetDefinition, WidgetCategory } from '../types';
+
+        export const networkWidgets: WidgetDefinition[] = [
+          {
+            type: 'treemap',
+            name: 'Treemap',
+            category: WidgetCategory.HIERARCHY,
+            component: 'Treemap',
+            defaultSize: { width: 4, height: 3 },  // Grid units
+            minSize: { width: 2, height: 2 },
+            configSchema: treemapConfigSchema,
+            dataRequirements: {
+              traits: ['hierarchical'],
+              minRows: 2
+            }
+          },
+          {
+            type: 'sunburst',
+            name: 'Sunburst',
+            category: WidgetCategory.HIERARCHY,
+            component: 'Sunburst',
+            defaultSize: { width: 3, height: 3 },
+            minSize: { width: 2, height: 2 },
+            configSchema: sunburstConfigSchema,
+            dataRequirements: {
+              traits: ['hierarchical'],
+              minRows: 2
+            }
+          },
+          {
+            type: 'force-graph',
+            name: 'Network Graph',
+            category: WidgetCategory.NETWORK,
+            component: 'ForceGraph',
+            defaultSize: { width: 4, height: 4 },
+            minSize: { width: 3, height: 3 },
+            configSchema: forceGraphConfigSchema,
+            dataRequirements: {
+              traits: ['network-topology'],
+              minRows: 2
+            }
+          },
+          {
+            type: 'sankey',
+            name: 'Sankey Diagram',
+            category: WidgetCategory.FLOW,
+            component: 'Sankey',
+            defaultSize: { width: 6, height: 3 },
+            minSize: { width: 4, height: 2 },
+            configSchema: sankeyConfigSchema,
+            dataRequirements: {
+              traits: ['flow-conservation'],
+              minRows: 2
+            }
+          }
+        ];
+
+        // Register widgets
+        registerWidgets(networkWidgets);
+        ```
+
+    - path: src/dashboard/cross-filter/network-handlers.ts
+      description: |
+        Cross-filter handlers for network selections:
+
+        ```typescript
+        import { CrossFilterHandler, Selection, FilterPropagation } from '../types';
+
+        /**
+         * Treemap/Sunburst cross-filter handler
+         * Selections filter by hierarchy path
+         */
+        export const hierarchyCrossFilterHandler: CrossFilterHandler = {
+          vizTypes: ['treemap', 'sunburst'],
+
+          onSelection(selection: Selection): FilterPropagation {
+            const { nodeId, path, depth } = selection;
+
+            return {
+              filters: [
+                {
+                  type: 'hierarchy-path',
+                  field: 'path',
+                  value: path,
+                  operator: 'starts-with'
+                }
+              ],
+              highlightMode: 'ancestors-descendants'
+            };
+          },
+
+          applyFilter(data: any[], filter: Filter): any[] {
+            // Filter data by hierarchy path
+          }
+        };
+
+        /**
+         * Network graph cross-filter handler
+         * Selections can be node, edge, or adjacency
+         */
+        export const networkCrossFilterHandler: CrossFilterHandler = {
+          vizTypes: ['force-graph'],
+
+          onSelection(selection: Selection): FilterPropagation {
+            const { type, ids } = selection;
+
+            switch (type) {
+              case 'node':
+                return {
+                  filters: [{ type: 'in', field: 'id', values: ids }],
+                  highlightMode: 'adjacency'
+                };
+              case 'edge':
+                return {
+                  filters: [{ type: 'edge', sourceIds: ids.sources, targetIds: ids.targets }],
+                  highlightMode: 'endpoints'
+                };
+              case 'adjacency':
+                return {
+                  filters: [{ type: 'in', field: 'id', values: ids }],
+                  highlightMode: 'selected'
+                };
+              default:
+                return { filters: [], highlightMode: 'none' };
+            }
+          }
+        };
+
+        /**
+         * Sankey cross-filter handler
+         * Selections filter connected flows
+         */
+        export const sankeyCrossFilterHandler: CrossFilterHandler = {
+          vizTypes: ['sankey'],
+
+          onSelection(selection: Selection): FilterPropagation {
+            const { type, ids } = selection;
+
+            if (type === 'node') {
+              return {
+                filters: [
+                  { type: 'in', field: 'source', values: ids },
+                  { type: 'in', field: 'target', values: ids, combineWith: 'OR' }
+                ],
+                highlightMode: 'connected-flows'
+              };
+            }
+
+            if (type === 'link') {
+              return {
+                filters: [{ type: 'flow-path', linkIds: ids }],
+                highlightMode: 'flow-path'
+              };
+            }
+
+            return { filters: [], highlightMode: 'none' };
+          }
+        };
+
+        // Register handlers
+        registerCrossFilterHandlers([
+          hierarchyCrossFilterHandler,
+          networkCrossFilterHandler,
+          sankeyCrossFilterHandler
+        ]);
+        ```
+
+  cli:
+    - path: src/cli/commands/viz-scaffold-network.ts
+      description: |
+        CLI commands for scaffolding network visualizations:
+
+        ```typescript
+        import { Command } from 'commander';
+
+        export const vizScaffoldNetwork = new Command('viz:scaffold')
+          .description('Scaffold a new visualization component')
+          .option('-t, --type <type>', 'Visualization type', 'treemap')
+          .option('-d, --data <path>', 'Path to sample data file')
+          .option('-o, --output <path>', 'Output directory')
+          .action(async (options) => {
+            const { type, data, output } = options;
+
+            // Validate type
+            const validTypes = ['treemap', 'sunburst', 'force-graph', 'sankey'];
+            if (!validTypes.includes(type)) {
+              console.error(`Invalid type. Valid types: ${validTypes.join(', ')}`);
+              process.exit(1);
+            }
+
+            // Load and validate data
+            const sampleData = await loadData(data);
+            const validation = await validateDataForVizType(sampleData, type);
+
+            if (!validation.valid) {
+              console.error('Data validation failed:');
+              validation.errors.forEach(e => console.error(`  - ${e}`));
+              process.exit(1);
+            }
+
+            // Generate scaffold
+            const scaffold = generateScaffold(type, sampleData, options);
+
+            // Write files
+            await writeScaffold(scaffold, output);
+
+            console.log(`✓ Scaffolded ${type} visualization to ${output}`);
+          });
+
+        export const dataValidate = new Command('data:validate')
+          .description('Validate data for network/flow visualizations')
+          .argument('<path>', 'Path to data file')
+          .option('-t, --type <type>', 'Expected visualization type')
+          .action(async (path, options) => {
+            const data = await loadData(path);
+
+            // Run trait detection
+            const traits = detectTraits(data);
+
+            console.log('Detected traits:');
+            traits.forEach(t => {
+              console.log(`  ${t.detected ? '✓' : '✗'} ${t.name} (${(t.confidence * 100).toFixed(0)}%)`);
+            });
+
+            // Validate for specific type if provided
+            if (options.type) {
+              const validation = await validateDataForVizType(data, options.type);
+              if (!validation.valid) {
+                console.error(`\\nValidation errors for ${options.type}:`);
+                validation.errors.forEach(e => console.error(`  - ${e}`));
+                process.exit(1);
+              }
+              console.log(`\\n✓ Data is valid for ${options.type}`);
+            }
+
+            // Suggest viz types
+            const suggestions = suggestVizTypes(traits);
+            console.log('\\nSuggested visualization types:');
+            suggestions.forEach(s => console.log(`  - ${s}`));
+          });
+        ```
+
+    - path: src/cli/templates/network-viz/
+      description: |
+        Scaffold templates for each network viz type:
+        - treemap.template.tsx
+        - sunburst.template.tsx
+        - force-graph.template.tsx
+        - sankey.template.tsx
+        - sample-data/hierarchy.json
+        - sample-data/network.json
+        - sample-data/flow.json
+
+  diagnostics:
+    - path: src/diagnostics/network-telemetry.ts
+      description: |
+        Telemetry tracking for network visualizations:
+
+        ```typescript
+        export function trackNetworkVizUsage(event: NetworkVizEvent): void {
+          emit({
+            category: 'viz',
+            action: event.action,
+            vizType: event.vizType,
+            renderer: event.renderer,
+            nodeCount: event.nodeCount,
+            renderTime: event.renderTime,
+            transformTime: event.transformTime,
+            interactionType: event.interactionType
+          });
+        }
+
+        // Event types
+        type NetworkVizEvent =
+          | { action: 'render'; vizType: string; renderer: string; nodeCount: number; renderTime: number; transformTime?: number }
+          | { action: 'interact'; vizType: string; interactionType: 'select' | 'drilldown' | 'zoom' | 'drag' }
+          | { action: 'error'; vizType: string; errorType: string; message: string };
+        ```
+
+  tests:
+    - path: tests/dashboard/network-widgets.test.ts
+      description: |
+        Dashboard widget tests:
+        - All widgets registered correctly
+        - Widget configs validate
+        - Default sizes appropriate
+        - Data requirements enforced
+
+    - path: tests/dashboard/network-cross-filter.test.ts
+      description: |
+        Cross-filter tests:
+        - Hierarchy path filtering works
+        - Network adjacency selection works
+        - Sankey flow selection works
+        - Filter propagation correct
+        - Performance acceptable
+
+    - path: tests/cli/viz-scaffold-network.test.ts
+      description: |
+        CLI tests:
+        - Scaffold command works for all types
+        - Data validation command works
+        - Invalid data rejected
+        - Output files generated correctly
+
+    - path: tests/e2e/network-dashboard.test.ts
+      description: |
+        E2E tests:
+        - Treemap in dashboard renders
+        - Sunburst in dashboard renders
+        - Force graph in dashboard renders
+        - Sankey in dashboard renders
+        - Cross-filter between widgets works
+        - Responsive layout works
+
+technicalApproach:
+  - Register network widgets in dashboard system
+  - Implement cross-filter handlers for each viz type
+  - Extend CLI with scaffold commands
+  - Add data validation CLI command
+  - Implement diagnostic telemetry
+  - Write comprehensive tests
+  - Create example dashboards
+
+qualityGates:
+  during_development:
+    - Widgets appear in dashboard editor
+    - Cross-filter interactions work
+    - CLI commands execute correctly
+
+  before_completion:
+    - pnpm test tests/dashboard/network*.test.ts passes
+    - pnpm test tests/cli/viz-scaffold*.test.ts passes
+    - E2E tests pass
+    - Example dashboards work
+    - Coverage >90% on new code
+
+estimatedEffort: "1 session (65-75k tokens)"
+
+notes: |
+  📋 FULL MISSION DETAILS: This YAML file contains complete implementation guidance.
+
+  Dashboard integration:
+  - Widgets are the atomic units in dashboards
+  - Each widget has size, config, and data requirements
+  - Cross-filter connects widgets via selections
+
+  Cross-filter complexity:
+  - Hierarchical: Filter by path prefix
+  - Network: Multiple selection modes (node, edge, adjacency)
+  - Flow: Connected flow paths
+
+  CLI scaffolding:
+  - Generates working component + data file
+  - Validates data before scaffolding
+  - Suggests appropriate viz types
+
+  Telemetry tracking:
+  - Render time (transform + render)
+  - Node count (for performance analysis)
+  - Interaction types (for UX insights)
+  - Errors (for debugging)
+
+  Example dashboards to create:
+  1. Org hierarchy (Treemap + Sunburst)
+  2. Social network (Force Graph)
+  3. Budget flow (Sankey)
+  4. Combined: Hierarchy + Network

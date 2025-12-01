@@ -1,0 +1,375 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: R33.0
+name: Renderer Parameter Alignment Research
+sprint: Sprint 33
+status: Queued
+type: research
+
+objective: >
+  Research and document the default parameters used by ECharts vs D3 for hierarchy,
+  network, and flow visualizations. Define parity expectations and a comparison
+  test strategy to ensure consistent output across renderers.
+
+context:
+  background: |
+    The Network & Flow Module will support both ECharts (native) and Vega-Lite
+    (via D3 transforms) rendering paths. However, each renderer uses different
+    default values for padding, tiling algorithms, force strengths, and layout
+    parameters. Without explicit alignment, the same data will produce visually
+    different results depending on renderer.
+
+    This research establishes the "golden reference" approach: ECharts output
+    becomes the target, and D3 transforms are tuned to match.
+
+  key_questions:
+    - What are ECharts' default parameters for treemap, sunburst, graph, and sankey?
+    - What are D3's default parameters for the equivalent layouts?
+    - Where do defaults diverge significantly?
+    - What level of parity is achievable? (pixel-perfect, layout-equivalent, data-equivalent)
+    - How should we structure comparison tests?
+
+  architecture_reference: "cmos/foundational-docs/data-viz-part2/network-flow-module/ARCHITECTURE.md"
+
+deliverables:
+  research_report:
+    path: cmos/research/R33.0-renderer-parameter-alignment.md
+    sections:
+      - title: "1. ECharts Default Parameters"
+        content: |
+          Document defaults for each visualization type from ECharts docs/source:
+
+          ## 1.1 Treemap (series-treemap)
+          - squareRatio: (golden ratio ~0.618?)
+          - leafDepth:
+          - nodeClick:
+          - roam:
+          - visibleMin:
+          - childrenVisibleMin:
+          - label.position:
+          - itemStyle.borderWidth:
+          - itemStyle.gapWidth:
+          - levels[].itemStyle:
+
+          ## 1.2 Sunburst (series-sunburst)
+          - nodeClick:
+          - sort:
+          - radius: [innerRadius, outerRadius]
+          - levels[].r0, r:
+          - label.rotate:
+          - itemStyle.borderWidth:
+
+          ## 1.3 Graph (series-graph, layout:'force')
+          - force.repulsion:
+          - force.gravity:
+          - force.edgeLength:
+          - force.friction:
+          - force.layoutAnimation:
+          - autoCurveness:
+          - nodeScaleRatio:
+
+          ## 1.4 Sankey (series-sankey)
+          - nodeWidth:
+          - nodeGap:
+          - nodeAlign: (justify, left, right)
+          - orient: (horizontal, vertical)
+          - layoutIterations:
+          - emphasis.focus:
+
+      - title: "2. D3 Default Parameters"
+        content: |
+          Document defaults from d3-hierarchy, d3-force, d3-sankey:
+
+          ## 2.1 d3.treemap()
+          - tile: d3.treemapSquarify (ratio = φ = (1 + √5) / 2)
+          - paddingInner: 0
+          - paddingOuter: 0
+          - paddingTop/Right/Bottom/Left: 0
+          - round: false
+
+          ## 2.2 d3.partition() (sunburst)
+          - padding: 0
+          - round: false
+          - size: [1, 1] (must set explicitly)
+
+          ## 2.3 d3.forceSimulation()
+          - alpha: 1
+          - alphaMin: 0.001
+          - alphaDecay: ~0.0228
+          - alphaTarget: 0
+          - velocityDecay: 0.4
+
+          d3.forceManyBody():
+          - strength: -30
+          - theta: 0.9
+          - distanceMin: 1
+          - distanceMax: Infinity
+
+          d3.forceLink():
+          - distance: 30
+          - strength: (varies by node degree)
+          - iterations: 1
+
+          d3.forceCenter():
+          - x, y: (must specify)
+
+          ## 2.4 d3-sankey
+          - nodeWidth: 24
+          - nodePadding: 8
+          - nodeAlign: d3.sankeyJustify
+          - nodeSort: undefined (input order)
+          - linkSort: undefined
+          - iterations: 6
+
+      - title: "3. Parameter Divergence Analysis"
+        content: |
+          Side-by-side comparison of significant differences:
+
+          | Parameter | ECharts Default | D3 Default | Impact |
+          |-----------|-----------------|------------|--------|
+          | Treemap padding | ? | 0 | Visual density |
+          | Treemap tiling | ? | squarify (φ) | Rectangle shapes |
+          | Force repulsion | ? | -30 | Node spacing |
+          | Force edge length | ? | 30 | Link tightness |
+          | Sankey node width | ? | 24 | Node prominence |
+          | Sankey iterations | ? | 6 | Layout quality |
+
+          Identify which divergences are:
+          - Cosmetic (easy to align)
+          - Structural (affect layout algorithm)
+          - Fundamental (cannot fully align)
+
+      - title: "4. Parity Threshold Definition"
+        content: |
+          Define what "parity" means for OODS:
+
+          ## 4.1 Parity Levels
+
+          **Level 1: Data-Equivalent**
+          - Same nodes/links rendered
+          - Same values displayed
+          - Layout may differ significantly
+          - Acceptable for: fallback scenarios
+
+          **Level 2: Layout-Equivalent**
+          - Same relative positions (node A left of node B)
+          - Same hierarchy/grouping visible
+          - Proportions similar but not identical
+          - Acceptable for: most use cases
+
+          **Level 3: Pixel-Approximate**
+          - Coordinates within 5% tolerance
+          - Visual appearance nearly identical
+          - Requires parameter tuning
+          - Acceptable for: high-fidelity requirements
+
+          **Level 4: Pixel-Perfect**
+          - Identical coordinates
+          - Not achievable (different algorithms)
+
+          ## 4.2 OODS Target Level
+
+          Recommend: **Level 2 (Layout-Equivalent)** as default
+          - Users expect "same chart" not "identical pixels"
+          - Achievable without heroic effort
+          - Document known differences
+
+          Optional: Level 3 for specific viz types where alignment is easy
+
+      - title: "5. Parameter Mapping Recommendations"
+        content: |
+          Concrete parameter mappings to achieve parity:
+
+          ## 5.1 Treemap Alignment
+          ```typescript
+          // To match ECharts defaults in D3:
+          d3.treemap()
+            .paddingInner(???)  // Match ECharts gapWidth
+            .paddingOuter(???)  // Match ECharts borderWidth
+            .tile(d3.treemapSquarify.ratio(???))  // Match ECharts squareRatio
+          ```
+
+          ## 5.2 Sunburst Alignment
+          ```typescript
+          // To match ECharts defaults in D3:
+          d3.partition()
+            .padding(???)  // Match ECharts itemStyle.borderWidth
+            .size([2 * Math.PI, radius])  // Standard
+          ```
+
+          ## 5.3 Force Graph Alignment
+          ```typescript
+          // To match ECharts defaults in D3:
+          d3.forceSimulation()
+            .force('charge', d3.forceManyBody().strength(???))  // Match ECharts repulsion
+            .force('link', d3.forceLink().distance(???))  // Match ECharts edgeLength
+            // Note: ECharts force uses different algorithm internally
+          ```
+
+          ## 5.4 Sankey Alignment
+          ```typescript
+          // To match ECharts defaults in D3:
+          d3.sankey()
+            .nodeWidth(???)  // Match ECharts nodeWidth
+            .nodePadding(???)  // Match ECharts nodeGap
+            .iterations(???)  // Match ECharts layoutIterations
+          ```
+
+      - title: "6. Comparison Test Strategy"
+        content: |
+          How to verify parity during development:
+
+          ## 6.1 Test Harness Design
+
+          ```typescript
+          interface ParityTest {
+            name: string;
+            vizType: 'treemap' | 'sunburst' | 'force' | 'sankey';
+            inputData: unknown;
+            expectedParityLevel: 1 | 2 | 3;
+          }
+
+          interface ParityResult {
+            echarts: RenderedOutput;
+            vega: RenderedOutput;
+            metrics: {
+              nodePositionDelta: number;  // avg distance
+              areaRatioDelta: number;     // for treemap
+              angleDelta: number;         // for sunburst
+              layoutScore: number;        // 0-1 similarity
+            };
+            passed: boolean;
+          }
+          ```
+
+          ## 6.2 Metrics by Viz Type
+
+          **Treemap:**
+          - Compare x0/y0/x1/y1 coordinates (normalized to %)
+          - Compare area ratios between siblings
+          - Compare depth distribution
+
+          **Sunburst:**
+          - Compare startAngle/endAngle (normalized)
+          - Compare arc area ratios
+          - Compare depth rings
+
+          **Force Graph:**
+          - Compare relative node positions (who's near whom)
+          - Compare cluster formation
+          - Note: Absolute positions will differ
+
+          **Sankey:**
+          - Compare node column positions
+          - Compare link widths (proportional)
+          - Compare vertical ordering within columns
+
+          ## 6.3 Test Fixtures
+
+          Create canonical test datasets:
+          - simple-tree.json (5 nodes, 2 levels)
+          - medium-tree.json (50 nodes, 4 levels)
+          - simple-network.json (10 nodes, 15 edges)
+          - clustered-network.json (30 nodes, 3 groups)
+          - simple-flow.json (6 nodes, 8 links)
+          - complex-flow.json (20 nodes, 40 links)
+
+          ## 6.4 Visual Diff Approach
+
+          For Storybook/VRT:
+          - Render both side-by-side
+          - Generate overlay diff image
+          - Human review for "acceptable" differences
+          - NOT automated pixel diff (will always fail)
+
+      - title: "7. Recommendations for Sprint 33-34"
+        content: |
+          Based on findings, recommend:
+
+          ## 7.1 Sequencing
+
+          1. Build ECharts adapters first (native, no alignment needed)
+          2. Document ECharts output as "golden reference"
+          3. Build D3 transforms with alignment parameters
+          4. Run parity tests during VL adapter development
+          5. Defer escape hatch until VL path is stable
+
+          ## 7.2 Architecture Changes
+
+          Add to NormalizedVizSpec:
+          ```typescript
+          interface LayoutOptions {
+            // Explicit overrides (user can tune)
+            treemap?: {
+              padding?: number;
+              tiling?: 'squarify' | 'binary' | 'slice' | 'dice';
+            };
+            force?: {
+              strength?: number;
+              distance?: number;
+              iterations?: number;
+            };
+            sankey?: {
+              nodeWidth?: number;
+              nodePadding?: number;
+              iterations?: number;
+            };
+          }
+          ```
+
+          ## 7.3 Documentation Requirements
+
+          Add to user docs:
+          - "Renderer differences" section
+          - "ECharts is recommended for Network & Flow"
+          - "Vega-Lite output may vary slightly"
+          - Parameter override examples
+
+          ## 7.4 Out of Scope
+
+          Do NOT attempt:
+          - Pixel-perfect parity (not achievable)
+          - Runtime renderer switching with identical output
+          - Custom force algorithm to match ECharts
+
+research_approach:
+  sources:
+    - ECharts documentation (echarts.apache.org)
+    - ECharts source code (github.com/apache/echarts)
+    - D3 documentation (d3js.org)
+    - D3 source code (github.com/d3)
+    - d3-sankey documentation
+    - Existing OODS spatial module (for patterns)
+
+  methodology:
+    - Document defaults from official docs first
+    - Verify against source code where unclear
+    - Create small test cases to observe behavior
+    - Compare output visually
+    - Propose concrete parameter mappings
+
+  output_format: |
+    Markdown report with:
+    - Tables for parameter comparison
+    - Code snippets for recommended mappings
+    - Clear recommendations for sprint planning
+    - Any risks or blockers identified
+
+estimatedEffort: "1 session (40-50k tokens)"
+
+notes: |
+  This research spike de-risks the entire Network & Flow module by:
+
+  1. Establishing ECharts as the "golden reference"
+  2. Defining achievable parity expectations (Level 2)
+  3. Providing concrete parameter mappings
+  4. Creating a test strategy before adapters are built
+
+  Key insight: We're NOT trying to make D3 output identical to ECharts.
+  We're trying to make them "equivalent enough" that users see the same story.
+
+  If research reveals fundamental incompatibilities, we can:
+  - Adjust mission scope
+  - Add warnings to docs
+  - Recommend ECharts-only for specific viz types

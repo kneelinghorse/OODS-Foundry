@@ -1,0 +1,292 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B33.5
+name: ECharts Sankey Adapter
+sprint: Sprint 33
+status: Queued
+
+objective: >
+  Implement ECharts adapter for Sankey/flow diagram visualization.
+  Pass-through architecture leveraging ECharts native series-sankey.
+
+context:
+  background: |
+    ECharts has native support for Sankey diagrams via series-sankey. This adapter
+    transforms normalized OODS flow specs into ECharts option objects. ECharts
+    handles all layout computation (node positioning, link routing) client-side.
+
+    R33.0 documented that ECharts uses 32 layout iterations by default (vs D3's 6),
+    producing significantly cleaner layouts with fewer link crossings.
+
+    Sankey is the viz type that would have required a Vega "escape hatch" since
+    Vega-Lite cannot render it at all. By using ECharts, we avoid this complexity.
+
+  research_basis:
+    - "R33.0: Renderer Parameter Alignment (Sankey iterations: 32 vs 6)"
+    - "RDS.11.3: D3-Sankey API Research (Vega-Lite impossibility)"
+    - "RDS.11.5: ECharts Native Support Research"
+    - "cmos/foundational-docs/data-viz-part2/network-flow-module/ARCHITECTURE.md Section 5.1"
+
+  architecture_reference: "cmos/foundational-docs/data-viz-part2/network-flow-module/ARCHITECTURE.md Section 5.1"
+
+  dependencies:
+    - B33.1  # Schemas (SankeyInput type)
+    - B33.2  # Resolver (routes to ECharts)
+
+  blocks:
+    - B34.1  # Components depend on adapters
+
+successCriteria:
+  - Adapter produces valid ECharts SankeySeriesOption
+  - Horizontal and vertical orientations work
+  - Node alignment options work (justify, left, right)
+  - Gradient link coloring works
+  - Flow values display correctly in tooltips
+  - Adjacency emphasis works on hover
+  - Tests pass with >90% coverage
+
+constraints:
+  - Must follow existing adapter patterns in src/viz/adapters/echarts/
+  - Must apply OODS design tokens consistently
+  - Must use ECharts defaults (32 iterations for clean layout)
+  - Link values are required (Sankey is meaningless without flow quantities)
+
+deliverables:
+  adapters:
+    - path: src/viz/adapters/echarts/sankey-adapter.ts
+      description: |
+        Sankey ECharts adapter:
+
+        ```typescript
+        import type { SankeySeriesOption, EChartsOption } from 'echarts';
+        import type { NormalizedVizSpec, SankeyInput } from '../../types';
+        import { applyTokens, getColorScale } from '../utils/echarts-token-utils';
+
+        export function adaptSankeyToECharts(
+          spec: NormalizedVizSpec,
+          input: SankeyInput
+        ): EChartsOption {
+          // Validate: Sankey requires values on links
+          validateSankeyInput(input);
+
+          // Transform nodes for ECharts
+          const nodes = input.nodes.map(node => ({
+            name: node.name ?? node.id,
+            value: calculateNodeValue(node, input.links),
+            itemStyle: node.color ? { color: node.color } : undefined,
+            ...preserveExtraFields(node, ['name', 'id', 'value', 'color'])
+          }));
+
+          // Transform links for ECharts
+          const links = input.links.map(link => ({
+            source: typeof link.source === 'object' ? link.source.id : link.source,
+            target: typeof link.target === 'object' ? link.target.id : link.target,
+            value: link.value,
+            ...preserveExtraFields(link, ['source', 'target', 'value'])
+          }));
+
+          const series: SankeySeriesOption = {
+            type: 'sankey',
+            data: nodes,
+            links,
+
+            // Orientation
+            orient: spec.layout?.orientation ?? 'horizontal',
+
+            // Node configuration (ECharts defaults from R33.0)
+            nodeAlign: spec.layout?.nodeAlign ?? 'justify',
+            nodeWidth: spec.layout?.nodeWidth ?? 20,  // Slightly narrower than D3's 24
+            nodeGap: spec.layout?.nodeGap ?? 8,       // Same as D3
+
+            // Layout iterations (ECharts default: 32, much higher than D3's 6)
+            layoutIterations: spec.layout?.iterations ?? 32,
+
+            // Emphasis
+            emphasis: {
+              focus: 'adjacency'  // Highlight connected flows
+            },
+
+            // Labels
+            label: {
+              show: true,
+              position: spec.layout?.orientation === 'vertical' ? 'top' : 'right',
+              ...applyTokens('viz.label')
+            },
+
+            // Link styling
+            lineStyle: {
+              color: spec.encoding?.link?.color ?? 'gradient',
+              curveness: 0.5,
+              opacity: 0.5
+            },
+
+            // Node styling
+            itemStyle: {
+              borderWidth: 1,
+              borderColor: applyTokens('viz.border.color')
+            }
+          };
+
+          return {
+            series: [series],
+            tooltip: generateSankeyTooltip(spec),
+            ...applyBaseOptions(spec)
+          };
+        }
+
+        /**
+         * Validate Sankey input - values are required
+         */
+        function validateSankeyInput(input: SankeyInput): void {
+          const linksWithoutValue = input.links.filter(l => l.value === undefined || l.value === null);
+          if (linksWithoutValue.length > 0) {
+            throw new Error(
+              `Sankey diagrams require 'value' on all links. ` +
+              `Found ${linksWithoutValue.length} links without values.`
+            );
+          }
+        }
+
+        /**
+         * Calculate node value from incoming/outgoing flows
+         */
+        function calculateNodeValue(node: any, links: any[]): number {
+          if (node.value !== undefined) return node.value;
+
+          // Sum of incoming or outgoing flows (whichever is larger)
+          const nodeId = node.name ?? node.id;
+          const incoming = links
+            .filter(l => l.target === nodeId || l.target?.id === nodeId)
+            .reduce((sum, l) => sum + (l.value ?? 0), 0);
+          const outgoing = links
+            .filter(l => l.source === nodeId || l.source?.id === nodeId)
+            .reduce((sum, l) => sum + (l.value ?? 0), 0);
+
+          return Math.max(incoming, outgoing);
+        }
+
+        /**
+         * Generate tooltip configuration
+         */
+        function generateSankeyTooltip(spec: NormalizedVizSpec): any {
+          return {
+            trigger: 'item',
+            triggerOn: 'mousemove',
+            formatter: (params: any) => {
+              if (params.dataType === 'edge') {
+                const { source, target, value } = params.data;
+                return `<strong>${source} → ${target}</strong><br/>Flow: ${formatValue(value)}`;
+              }
+              return `<strong>${params.name}</strong><br/>Total: ${formatValue(params.value)}`;
+            }
+          };
+        }
+
+        /**
+         * Format value for display
+         */
+        function formatValue(value: number): string {
+          if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
+          if (value >= 1000) return `${(value / 1000).toFixed(1)}K`;
+          return value.toLocaleString();
+        }
+
+        /**
+         * Preserve extra fields from input data
+         */
+        function preserveExtraFields(data: Record<string, unknown>, exclude: string[]): Record<string, unknown> {
+          const result: Record<string, unknown> = {};
+          for (const [key, value] of Object.entries(data)) {
+            if (!exclude.includes(key)) {
+              result[key] = value;
+            }
+          }
+          return result;
+        }
+        ```
+
+  tests:
+    - path: tests/viz/adapters/echarts/sankey-adapter.test.ts
+      description: |
+        Sankey adapter tests:
+        - Produces valid ECharts SankeySeriesOption
+        - Horizontal orientation works
+        - Vertical orientation works
+        - Node alignment options work (justify, left, right)
+        - Gradient link colors work
+        - Solid link colors work
+        - Tooltip shows flow values
+        - layoutIterations defaults to 32
+        - nodeWidth defaults to 20
+        - nodeGap defaults to 8
+        - Validates links have values
+        - Throws error for missing link values
+        - Node values calculated from flows
+
+    - path: tests/viz/adapters/echarts/sankey-adapter-edge-cases.test.ts
+      description: |
+        Edge case tests:
+        - Single-level flow (2 columns)
+        - Multi-level flow (5+ columns)
+        - Circular flow detection (warning, not error)
+        - Large flow (50+ nodes)
+        - Highly connected flow (many links per node)
+        - Emphasis adjacency highlighting works
+
+  storybook:
+    - path: stories/viz/echarts/Sankey.stories.tsx
+      description: |
+        Sankey stories:
+        - Basic energy flow (classic example)
+        - Vertical Sankey
+        - Multi-level Sankey
+        - Sankey with gradient links
+        - Sankey with solid color links
+        - Large Sankey (50+ nodes)
+        - Sankey with custom node colors
+
+technicalApproach:
+  - Review existing ECharts adapter patterns
+  - Implement sankey adapter with high iteration count
+  - Implement node/link transformations
+  - Implement node value calculation from flows
+  - Implement link validation (values required)
+  - Apply OODS tokens consistently
+  - Write comprehensive tests
+  - Create Storybook stories
+
+qualityGates:
+  during_development:
+    - Adapter produces valid ECharts options
+    - Sankey renders correctly in Storybook
+    - Both orientations work
+
+  before_completion:
+    - pnpm test tests/viz/adapters/echarts/*sankey*.test.ts passes
+    - Storybook stories complete
+    - layoutIterations is 32 (not D3's 6)
+    - Coverage >90% on new code
+
+estimatedEffort: "1 session (45-60k tokens)"
+
+notes: |
+  ECharts Sankey defaults (from R33.0):
+  - layoutIterations: 32 (vs D3's 6) - much cleaner layout
+  - nodeWidth: 20 (vs D3's 24) - slightly slimmer nodes
+  - nodeGap: 8 (same as D3)
+  - nodeAlign: 'justify' (same as D3)
+  - curveness: 0.5 (same as D3)
+
+  Why ECharts is preferred for Sankey:
+  1. Native support (no escape hatch needed)
+  2. Higher iteration count = fewer link crossings
+  3. Built-in gradient link coloring
+  4. Built-in adjacency emphasis
+  5. Smooth animations
+
+  Sankey requires link values:
+  - Unlike force graphs where edges can be unweighted
+  - Sankey is fundamentally about flow QUANTITIES
+  - A Sankey without values is meaningless
+  - We enforce this with validation

@@ -1,0 +1,323 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B33.1
+name: Network & Flow Schema Definitions
+sprint: Sprint 33
+status: Queued
+
+objective: >
+  Define all data contracts for hierarchy, network, and flow visualizations including
+  input schemas, transform output schemas, and TypeScript interfaces.
+
+context:
+  background: |
+    The Network & Flow Module adds four visualization types (Treemap, Sunburst, Force Graph,
+    Sankey) which require different data structures than the core OODS archetypes. This
+    mission establishes the canonical data contracts that all subsequent work depends on.
+
+  research_basis:
+    - "RDS.11.1: D3-Hierarchy API research"
+    - "RDS.11.2: D3-Force API research"
+    - "RDS.11.3: D3-Sankey API research"
+    - "RV.04: Topology/Conservation as fundamental"
+
+  architecture_reference: "cmos/foundational-docs/data-viz-part2/network-flow-module/ARCHITECTURE.md Section 2"
+
+  dependencies:
+    - B32.7  # Spatial Module complete (clean foundation)
+
+  blocks:
+    - B33.2
+    - B33.3
+    - B33.4
+    - B33.5
+
+successCriteria:
+  - All input schemas validate sample data correctly
+  - All output schemas match transform output structures
+  - TypeScript types correctly represent all contracts
+  - Both input formats for hierarchy (adjacency + nested) work
+  - Schema validation tests pass with >90% coverage
+
+constraints:
+  - Schemas must be JSON Schema draft-07 compatible
+  - TypeScript interfaces must be strict mode compatible
+  - Input formats should support common data export patterns
+  - Output schemas must align with D3 transform outputs
+
+deliverables:
+  schemas:
+    - path: src/schemas/viz/hierarchy-input.schema.json
+      description: |
+        Hierarchy input schema supporting two formats:
+
+        Format A: Adjacency List (Flat)
+        ```json
+        {
+          "type": "adjacency_list",
+          "data": [
+            { "id": "root", "parentId": null, "value": 100, "name": "Root" },
+            { "id": "child1", "parentId": "root", "value": 60 },
+            { "id": "child2", "parentId": "root", "value": 40 }
+          ]
+        }
+        ```
+
+        Format B: Nested JSON
+        ```json
+        {
+          "type": "nested",
+          "data": {
+            "name": "Root",
+            "value": 100,
+            "children": [
+              { "name": "Child 1", "value": 60 },
+              { "name": "Child 2", "value": 40 }
+            ]
+          }
+        }
+        ```
+
+    - path: src/schemas/viz/network-input.schema.json
+      description: |
+        Network graph input schema:
+        ```json
+        {
+          "nodes": [
+            { "id": "server-1", "group": "web", "radius": 10 },
+            { "id": "server-2", "group": "db", "fixed": true, "x": 100, "y": 100 }
+          ],
+          "links": [
+            { "source": "server-1", "target": "server-2", "value": 10 }
+          ]
+        }
+        ```
+
+    - path: src/schemas/viz/sankey-input.schema.json
+      description: |
+        Sankey/flow input schema:
+        ```json
+        {
+          "nodes": [
+            { "name": "Coal" },
+            { "name": "Electricity" },
+            { "name": "Homes" }
+          ],
+          "links": [
+            { "source": "Coal", "target": "Electricity", "value": 100 },
+            { "source": "Electricity", "target": "Homes", "value": 80 }
+          ]
+        }
+        ```
+
+    - path: src/schemas/viz/treemap-output.schema.json
+      description: |
+        Treemap transform output schema:
+        ```json
+        {
+          "nodes": [
+            {
+              "id": "root",
+              "x0": 0, "y0": 0, "x1": 800, "y1": 600,
+              "depth": 0, "value": 100
+            }
+          ]
+        }
+        ```
+
+    - path: src/schemas/viz/sunburst-output.schema.json
+      description: |
+        Sunburst transform output schema:
+        ```json
+        {
+          "nodes": [
+            {
+              "id": "root",
+              "startAngle": 0, "endAngle": 6.28,
+              "innerRadius": 0, "outerRadius": 100,
+              "depth": 0, "value": 100
+            }
+          ]
+        }
+        ```
+
+    - path: src/schemas/viz/force-output.schema.json
+      description: |
+        Force layout transform output schema:
+        ```json
+        {
+          "nodes": [
+            { "id": "server-1", "x": 150.5, "y": 200.3 }
+          ],
+          "links": [
+            {
+              "source": "server-1", "target": "server-2",
+              "x1": 150.5, "y1": 200.3, "x2": 300.2, "y2": 150.8
+            }
+          ]
+        }
+        ```
+
+    - path: src/schemas/viz/sankey-output.schema.json
+      description: |
+        Sankey transform output schema:
+        ```json
+        {
+          "nodes": [
+            { "name": "Coal", "x0": 0, "y0": 0, "x1": 15, "y1": 100, "value": 100 }
+          ],
+          "links": [
+            {
+              "source": "Coal", "target": "Electricity",
+              "value": 100, "width": 50,
+              "y0": 25, "y1": 25,
+              "svgPath": "M0,25 C100,25 100,50 200,50"
+            }
+          ]
+        }
+        ```
+
+  types:
+    - path: src/types/viz/network-flow.ts
+      description: |
+        TypeScript interfaces for all contracts:
+
+        ```typescript
+        // Input types
+        interface HierarchyAdjacencyInput { ... }
+        interface HierarchyNestedInput { ... }
+        type HierarchyInput = HierarchyAdjacencyInput | HierarchyNestedInput;
+
+        interface NetworkInput { ... }
+        interface SankeyInput { ... }
+
+        // Output types
+        interface TreemapOutput { ... }
+        interface SunburstOutput { ... }
+        interface ForceOutput { ... }
+        interface SankeyOutput { ... }
+
+        // Node/Link types
+        interface HierarchyNode { ... }
+        interface NetworkNode { ... }
+        interface NetworkLink { ... }
+        interface SankeyNode { ... }
+        interface SankeyLink { ... }
+        ```
+
+  validation:
+    - path: src/viz/validation/network-flow-validators.ts
+      description: |
+        Runtime validators using schemas:
+        - validateHierarchyInput(data): ValidationResult
+        - validateNetworkInput(data): ValidationResult
+        - validateSankeyInput(data): ValidationResult
+        - detectHierarchyFormat(data): 'adjacency_list' | 'nested' | 'unknown'
+
+  tests:
+    - path: tests/schemas/viz/hierarchy-input.test.ts
+      description: |
+        Hierarchy input validation tests:
+        - Valid adjacency list passes
+        - Valid nested structure passes
+        - Invalid (missing id) fails with clear error
+        - Invalid (orphan node) fails with clear error
+        - Format detection works correctly
+
+    - path: tests/schemas/viz/network-input.test.ts
+      description: |
+        Network input validation tests:
+        - Valid nodes + links passes
+        - Missing node for link fails
+        - Duplicate node IDs fails
+        - Empty arrays handled
+
+    - path: tests/schemas/viz/sankey-input.test.ts
+      description: |
+        Sankey input validation tests:
+        - Valid flow data passes
+        - Missing value fails (required for Sankey)
+        - Missing source/target node fails
+        - Circular flows allowed (warning, not error)
+
+    - path: tests/schemas/viz/transform-outputs.test.ts
+      description: |
+        Transform output schema tests:
+        - Treemap output validates
+        - Sunburst output validates
+        - Force output validates
+        - Sankey output validates (including svgPath)
+
+  sample_data:
+    - path: tests/fixtures/network-flow/file-system-hierarchy.json
+      description: Sample file system tree (adjacency list format)
+
+    - path: tests/fixtures/network-flow/org-chart-nested.json
+      description: Sample org chart (nested format)
+
+    - path: tests/fixtures/network-flow/server-network.json
+      description: Sample server dependency network
+
+    - path: tests/fixtures/network-flow/energy-flow.json
+      description: Sample energy Sankey (like the classic UK energy flow)
+
+  documentation:
+    - path: docs/viz/network-flow-data-formats.md
+      description: |
+        Data format documentation:
+        - Hierarchy input formats with examples
+        - Network input format with examples
+        - Sankey input format with examples
+        - Common data sources and how to transform them
+        - Validation error reference
+
+technicalApproach:
+  - Review D3 hierarchy/force/sankey data structures
+  - Design input schemas that support common export formats
+  - Design output schemas matching D3 transform outputs
+  - Generate TypeScript types from schemas
+  - Build runtime validators
+  - Create realistic sample data
+  - Write comprehensive validation tests
+  - Document data formats
+
+qualityGates:
+  during_development:
+    - Schemas validate against JSON Schema draft-07
+    - TypeScript types compile without errors
+    - Sample data validates correctly
+
+  before_completion:
+    - pnpm test tests/schemas/viz/hierarchy*.test.ts passes
+    - pnpm test tests/schemas/viz/network*.test.ts passes
+    - pnpm test tests/schemas/viz/sankey*.test.ts passes
+    - pnpm test tests/schemas/viz/transform*.test.ts passes
+    - Documentation reviewed
+    - Coverage >90% on new code
+
+estimatedEffort: "1 session (55-65k tokens)"
+
+notes: |
+  📋 FULL MISSION DETAILS: This YAML file contains complete implementation guidance.
+
+  Key design decisions (from ARCHITECTURE.md):
+
+  Hierarchy: Support both formats because:
+  - Adjacency list: Common in databases, CSV exports
+  - Nested: Common in JSON APIs, d3 examples
+
+  Network: Nodes + Links is the standard format:
+  - Node IDs must be unique
+  - Links reference nodes by ID
+  - Extra fields (group, radius, fixed) are pass-through
+
+  Sankey: Requires value on links:
+  - Sankey is about flow quantities
+  - Links without values are meaningless
+  - Circular flows are allowed (use d3-sankey-circular)
+
+  SVG path in Sankey output:
+  - This is the critical piece for Vega rendering
+  - Path string generated by d3-sankey linkHorizontal()
+  - Format: "M{x0},{y0} C{cx1},{cy1} {cx2},{cy2} {x1},{y1}"

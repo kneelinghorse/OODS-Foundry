@@ -1,0 +1,407 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://designlab.local/schemas/oods-component-schema.json",
+  "title": "OODS Structured Data Export",
+  "description": "Validates OODS structured data exports (components, traits, objects, domains, patterns, sample queries).",
+  "type": "object",
+  "required": [
+    "generatedAt",
+    "stats",
+    "components",
+    "traits",
+    "objects",
+    "domains",
+    "patterns",
+    "sampleQueries"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "stats": {
+      "type": "object",
+      "required": [
+        "componentCount",
+        "traitCount",
+        "objectCount",
+        "domainCount",
+        "patternCount"
+      ],
+      "properties": {
+        "componentCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "traitCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "objectCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "domainCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "patternCount": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "components": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "displayName",
+          "traitUsages"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "contexts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "regions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sourceFiles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "traitUsages": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "trait",
+                "context"
+              ],
+              "properties": {
+                "trait": {
+                  "type": "string"
+                },
+                "traitCategory": {
+                  "type": "string"
+                },
+                "context": {
+                  "type": "string"
+                },
+                "position": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "priority": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "props": {
+                  "type": "object"
+                },
+                "source": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "traits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "category",
+          "version"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "contexts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "viewExtensions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "component": {
+                  "type": "string"
+                },
+                "context": {
+                  "type": "string"
+                },
+                "position": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "priority": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "props": {
+                  "type": "object"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "parameters": {
+            "type": "array"
+          },
+          "schema": {
+            "type": "object"
+          },
+          "semantics": {
+            "type": "object"
+          },
+          "tokens": {
+            "type": "object"
+          },
+          "dependencies": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "trait"
+                  ],
+                  "properties": {
+                    "trait": {
+                      "type": "string"
+                    },
+                    "optional": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "metadata": {
+            "type": "object"
+          },
+          "objects": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "source": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "objects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "version"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "domain": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "traits": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "reference": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "alias": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "parameters": {
+                  "type": "object"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "semantics": {
+            "type": "object"
+          },
+          "tokens": {
+            "type": "object"
+          },
+          "metadata": {
+            "type": "object"
+          },
+          "source": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "domains": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "objectCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "objects": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "traitCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "traits": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "source": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "patterns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "source"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "sampleQueries": {
+      "type": "object",
+      "description": "Precomputed slices for downstream MCP and API consumers."
+    }
+  },
+  "additionalProperties": true
+}
