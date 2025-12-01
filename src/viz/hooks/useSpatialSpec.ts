@@ -6,10 +6,10 @@
  */
 
 import { useEffect, useMemo, useState } from 'react';
-import type { Feature, FeatureCollection } from 'geojson';
-import type * as TopoJSON from 'topojson-specification';
+import type { Feature } from 'geojson';
 import { resolveGeoData, type GeoResolverInput } from '../adapters/spatial/geo-data-resolver.js';
 import type { DataRecord, JoinConfig } from '../adapters/spatial/geo-data-joiner.js';
+import type { ParsedGeoData } from '../adapters/spatial/geo-format-parser.js';
 import { mergeLayerDefaults } from '../../components/viz/spatial/utils/layer-utils.js';
 import type { ProjectionConfig, SpatialLayer, SpatialSpec, GeoJoinData } from '../../types/viz/spatial.js';
 
@@ -18,7 +18,7 @@ import type { ProjectionConfig, SpatialLayer, SpatialSpec, GeoJoinData } from '.
  */
 export interface UseSpatialSpecOptions {
   spec: SpatialSpec;
-  geoSource?: string | FeatureCollection | TopoJSON.Topology;
+  geoSource?: string | ParsedGeoData;
   data?: DataRecord[];
   dimensions: { width: number; height: number };
 }
@@ -39,7 +39,7 @@ function isGeoJoinDataSource(data: SpatialSpec['data']): data is GeoJoinData {
   return typeof data === 'object' && data !== null && 'type' in data && (data as GeoJoinData).type === 'data.geo.join';
 }
 
-function resolveGeoSource(options: UseSpatialSpecOptions): string | FeatureCollection | TopoJSON.Topology | undefined {
+function resolveGeoSource(options: UseSpatialSpecOptions): string | ParsedGeoData | undefined {
   if (options.geoSource) {
     return options.geoSource;
   }
@@ -47,7 +47,7 @@ function resolveGeoSource(options: UseSpatialSpecOptions): string | FeatureColle
     return options.spec.data.geoSource;
   }
   if (options.spec.geo?.source) {
-    return options.spec.geo.source as string | FeatureCollection | TopoJSON.Topology;
+    return options.spec.geo.source as ParsedGeoData | string;
   }
   return undefined;
 }
