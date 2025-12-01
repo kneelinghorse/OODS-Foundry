@@ -39,8 +39,8 @@ export function adaptTreemapToECharts(spec: NormalizedVizSpec, input: HierarchyI
   const dimensions = resolveDimensions(spec);
   const interactions = extractInteractionFlags(spec);
 
-  const series: TreemapSeriesOption = pruneUndefined({
-    type: 'treemap',
+  const series = pruneUndefined({
+    type: 'treemap' as const,
     name: spec.name ?? 'Treemap',
     data,
     width: dimensions.width,
@@ -80,7 +80,7 @@ export function adaptTreemapToECharts(spec: NormalizedVizSpec, input: HierarchyI
         shadowBlur: 12,
       },
     },
-  });
+  }) as TreemapSeriesOption;
 
   return pruneUndefined({
     color: palette,

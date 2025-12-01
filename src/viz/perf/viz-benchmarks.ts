@@ -29,7 +29,7 @@ type MetricKind = 'render' | 'update' | 'interaction';
 export interface VizBenchmarkScenario {
   readonly id: string;
   readonly chartType: VizBenchmarkChartType;
-  readonly renderer: VizRendererId;
+  readonly renderer: BenchmarkRenderer;
   readonly dataPoints: number;
 }
 
@@ -64,8 +64,10 @@ export interface VizRendererRecommendation {
   };
 }
 
+type BenchmarkRenderer = Exclude<VizRendererId, 'vega'>;
+
 const DEFAULT_DATA_POINTS: readonly number[] = [10, 100, 1000, 10000] as const;
-const RENDERERS: readonly VizRendererId[] = ['vega-lite', 'echarts'];
+const RENDERERS: readonly BenchmarkRenderer[] = ['vega-lite', 'echarts'];
 const DETERMINISTIC_MODE = process.env.VIZ_BENCHMARK_MODE === 'deterministic';
 
 const BAR_BASE_SPEC = barExample as unknown as NormalizedVizSpec;
@@ -385,7 +387,7 @@ function runScenario(scenario: VizBenchmarkScenario, seed: number): VizBenchmark
 function buildSpec(
   chartType: VizBenchmarkChartType,
   dataPoints: number,
-  renderer: VizRendererId,
+  renderer: BenchmarkRenderer,
   seed: number
 ): NormalizedVizSpec {
   const blueprint = CHART_BLUEPRINTS[chartType];
@@ -411,7 +413,7 @@ function buildSpec(
 
 function measureRender(
   spec: NormalizedVizSpec,
-  renderer: VizRendererId
+  renderer: BenchmarkRenderer
 ): { renderTimeMs: number; product: VegaLiteAdapterSpec | EChartsOption } {
   let product: VegaLiteAdapterSpec | EChartsOption =
     renderer === 'vega-lite' ? toVegaLiteSpec(spec) : toEChartsOption(spec);
@@ -440,7 +442,7 @@ function measureRender(
   };
 }
 
-function measureUpdate(spec: NormalizedVizSpec, renderer: VizRendererId): number {
+function measureUpdate(spec: NormalizedVizSpec, renderer: BenchmarkRenderer): number {
   if (DETERMINISTIC_MODE) {
     return simulateMetric('update', spec, renderer);
   }
@@ -463,7 +465,7 @@ function measureUpdate(spec: NormalizedVizSpec, renderer: VizRendererId): number
   return Math.min(...samples);
 }
 
-function measureInteractions(spec: NormalizedVizSpec, renderer: VizRendererId): number {
+function measureInteractions(spec: NormalizedVizSpec, renderer: BenchmarkRenderer): number {
   if (!spec.interactions || spec.interactions.length === 0) {
     return 0;
   }
@@ -502,7 +504,7 @@ function measureMemory(product: VegaLiteAdapterSpec | EChartsOption): number {
   return Buffer.byteLength(serialized, 'utf8');
 }
 
-function resolveBundleFootprint(renderer: VizRendererId): number {
+function resolveBundleFootprint(renderer: BenchmarkRenderer): number {
   const cached = bundleFootprintCache.get(renderer);
   if (typeof cached === 'number') {
     return cached;

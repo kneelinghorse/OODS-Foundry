@@ -18,7 +18,7 @@ export function isAdjacencyList(input: HierarchyInput): input is HierarchyAdjace
   return input.type === 'adjacency_list';
 }
 
-export function convertToEChartsTreeData(input: HierarchyInput): readonly Record<string, unknown>[] {
+export function convertToEChartsTreeData(input: HierarchyInput): Record<string, unknown>[] {
   if (isAdjacencyList(input)) {
     return buildTreeFromAdjacency(input.data);
   }
@@ -26,7 +26,7 @@ export function convertToEChartsTreeData(input: HierarchyInput): readonly Record
   return normalizeNestedData(input.data);
 }
 
-function buildTreeFromAdjacency(nodes: readonly HierarchyAdjacencyNode[]): readonly Record<string, unknown>[] {
+function buildTreeFromAdjacency(nodes: readonly HierarchyAdjacencyNode[]): Record<string, unknown>[] {
   const nodeMap = new Map<string, Record<string, unknown>>();
   const roots: Record<string, unknown>[] = [];
 
@@ -64,7 +64,7 @@ function buildTreeFromAdjacency(nodes: readonly HierarchyAdjacencyNode[]): reado
   return roots;
 }
 
-function normalizeNestedData(data: HierarchyNestedInput['data']): readonly Record<string, unknown>[] {
+function normalizeNestedData(data: HierarchyNestedInput['data']): Record<string, unknown>[] {
   const normalize = (node: HierarchyNestedInput['data']): Record<string, unknown> => ({
     name: node.name ?? (node as { id?: string }).id ?? 'node',
     value: node.value,
