@@ -1,0 +1,156 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: CLEANUP-S32
+name: Sprint 32 CI Error Cleanup
+sprint: Cleanup
+status: Queued
+type: cleanup
+
+objective: >
+  Fix CI build errors from Sprint 32 spatial module. Errors are TypeScript
+  type declaration issues - primarily missing @types packages and incomplete
+  Storybook story arguments.
+
+context:
+  background: |
+    Sprint 32 shipped the spatial module successfully, but CI has type errors.
+    The visualizations work correctly - these are purely TypeScript/Storybook issues.
+
+    Root causes:
+    1. Missing @types packages for geo dependencies
+    2. Storybook stories missing required args
+    3. Example dashboard with loose typing
+
+  error_report: cmos/reports/CI-errors-sprint-32.md
+  priority: Low (visualizations work, CI is red)
+
+successCriteria:
+  - pnpm run build passes without errors
+  - pnpm run test:coverage passes
+  - CI workflow goes green
+  - No regression in existing functionality
+
+constraints:
+  - Do NOT change component logic
+  - Do NOT change visual output
+  - Only fix type declarations and story args
+
+deliverables:
+  dependencies:
+    description: |
+      Install missing @types packages:
+
+      ```bash
+      pnpm add -D @types/geojson @types/d3-geo @types/d3-scale @types/topojson-specification @types/topojson-client
+      ```
+
+  storybook_fixes:
+    - path: src/components/viz/spatial/BubbleMap.stories.tsx
+      issues:
+        - "Missing module imports (.js extensions)"
+        - "BubbleStoryArgs missing required properties"
+        - "SpatialSpec layers type mismatch"
+        - "Implicit any on datum parameters"
+        - "Unused variable: worldCountriesGeoData"
+      fix: |
+        1. Remove .js extensions from imports (TypeScript handles this)
+        2. Add default values for required BubbleStoryArgs:
+           - specProjection, clusterEnabled, clusterRadius, clusterMinPoints, etc.
+        3. Fix SpatialSpec layers to include required longitude/latitude encoding
+        4. Add explicit types to datum parameters
+        5. Remove or use worldCountriesGeoData
+
+    - path: src/components/viz/spatial/ChoroplethMap.stories.tsx
+      issues:
+        - "Missing module imports (.js extensions)"
+        - "ChoroplethStoryArgs missing: geoData, showLegend, enableTooltip, enableSelection"
+        - "argTypes has unknown properties"
+        - "ReactNode type error on empty objects"
+      fix: |
+        1. Remove .js extensions from imports
+        2. Add missing args to story defaults:
+           - geoData (use usStatesGeoData or fixture)
+           - showLegend: true
+           - enableTooltip: true
+           - enableSelection: false
+        3. Fix argTypes to match ChoroplethMapProps
+        4. Replace {} with null or proper ReactNode for children
+
+    - path: src/components/viz/spatial/SpatialContainer.stories.tsx
+      issues:
+        - "Cannot find module 'geojson'" (fixed by @types install)
+      fix: Types install resolves this
+
+  example_fixes:
+    - path: examples/dashboards/spatial-dashboard.tsx
+      issues:
+        - "Cannot find modules (.js extensions)"
+        - "Implicit any on parameters: entry, feature, v, datum"
+        - "Set<unknown> not assignable to ReadonlySet<string>"
+        - "Unused variable: joinedByFeature"
+        - "StateMetric not assignable to Record<string, unknown>"
+      fix: |
+        1. Remove .js extensions from all imports
+        2. Add explicit types:
+           - entry: IntersectionObserverEntry
+           - feature: Feature<Geometry>
+           - v: number (or appropriate type)
+           - datum: StateMetric
+        3. Type the Set properly: new Set<string>()
+        4. Remove unused joinedByFeature or add eslint-disable comment
+        5. Cast StateMetric properly: (metric as unknown as Record<string, unknown>)
+
+  json_declaration:
+    - path: src/components/viz/spatial/fixtures/
+      issues:
+        - "Cannot find module '*.json'"
+      fix: |
+        Option A: Add to tsconfig.json:
+        ```json
+        {
+          "compilerOptions": {
+            "resolveJsonModule": true,
+            "esModuleInterop": true
+          }
+        }
+        ```
+
+        Option B: Create declaration file (fixtures.d.ts):
+        ```typescript
+        declare module '*.json' {
+          const value: unknown;
+          export default value;
+        }
+        ```
+
+technicalApproach:
+  - Install missing @types packages first (resolves ~50% of errors)
+  - Fix import extensions (remove .js)
+  - Add Storybook story arg defaults
+  - Add explicit parameter types in examples
+  - Verify build passes
+  - Run full test suite
+
+estimatedEffort: "30-45 minutes"
+
+verification:
+  commands:
+    - pnpm run build
+    - pnpm run test:coverage
+    - pnpm run storybook:build  # if available
+
+notes: |
+  This is a quick cleanup mission. The spatial module works correctly -
+  these are purely developer experience (TypeScript/Storybook) issues.
+
+  Priority order:
+  1. @types packages (biggest impact)
+  2. Import extensions
+  3. Story args
+  4. Example dashboard types
+
+  If time is short, focus on #1 and #2 - they fix the majority of errors.
+
+  The Storybook stories themselves render fine; the errors are just
+  TypeScript being strict about argument types.

@@ -15,7 +15,7 @@ import { ChoroplethMap } from './ChoroplethMap.js';
 import { BubbleMap } from './BubbleMap.js';
 import type { SpatialSpec } from '../../../types/viz/spatial.js';
 import type { NormalizedVizSpec } from '../../../viz/spec/normalized-viz-spec.js';
-import type { FeatureCollection, Geometry } from 'geojson';
+import type { Feature, FeatureCollection, Geometry } from 'geojson';
 import { feature } from 'topojson-client';
 import type { Topology } from 'topojson-specification';
 import usStatesTopology from './fixtures/us-states-10m.json';
@@ -39,17 +39,27 @@ const meta: Meta<typeof SpatialContainer> = {
 export default meta;
 type Story = StoryObj<typeof SpatialContainer>;
 
+function toFeatureCollection(topology: Topology, objectKey: string): FeatureCollection<Geometry> {
+  const result = feature(
+    topology as unknown as Topology,
+    (topology as { objects: Record<string, unknown> }).objects[objectKey] as never
+  ) as FeatureCollection<Geometry> | Feature<Geometry>;
+
+  if (result.type === 'FeatureCollection') {
+    return result;
+  }
+
+  return {
+    type: 'FeatureCollection',
+    features: [result],
+  };
+}
+
 // Real US states GeoJSON via TopoJSON conversion
-const usStatesGeoData = feature(
-  usStatesTopology as unknown as Topology,
-  (usStatesTopology as { objects: { states: unknown } }).objects.states
-) as FeatureCollection<Geometry>;
+const usStatesGeoData = toFeatureCollection(usStatesTopology as unknown as Topology, 'states');
 
 // World countries for projection comparison
-const worldCountriesGeoData = feature(
-  worldCountriesTopology as unknown as Topology,
-  (worldCountriesTopology as { objects: { countries: unknown } }).objects.countries
-) as FeatureCollection<Geometry>;
+const worldCountriesGeoData = toFeatureCollection(worldCountriesTopology as unknown as Topology, 'countries');
 
 // Sample data for US states
 const usStateData = [

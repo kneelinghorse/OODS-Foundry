@@ -1,10 +1,9 @@
 import type { FeatureCollection } from 'geojson';
-import type { TopLevelSpec } from 'vega-lite';
 import type { RegionFillLayer } from '@/types/viz/spatial.js';
 import { buildVegaLiteTooltip, createChoroplethTooltipFields } from '../../tooltip/spatial-tooltip-config.js';
 import { mapColorScale } from './vega-lite-scale-map.js';
 
-export type VegaLiteLayer = NonNullable<TopLevelSpec['layer']>[number];
+export type VegaLiteLayer = Record<string, unknown>;
 
 const DEFAULT_REGION_NAME_FIELD = 'name';
 const DEFAULT_REGION_STROKE = 'var(--sys-border-subtle)';

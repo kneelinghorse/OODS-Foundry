@@ -58,7 +58,7 @@ export function MapControls({
   const resolvedLayers =
     layers ??
     context?.layers.map((entry, index) => ({
-      id: entry.layer?.id ? String(entry.layer.id) : `layer-${index}`,
+      id: entry.layer?.type ? `${entry.layer.type}-${index}` : `layer-${index}`,
       label: entry.layer?.type ? `${entry.layer.type} layer` : `Layer ${index + 1}`,
       visible: true,
     }));

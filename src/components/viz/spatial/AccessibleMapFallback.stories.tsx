@@ -3,10 +3,9 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
+import type { JSX } from 'react';
 import type { Feature, Polygon } from 'geojson';
 import { AccessibleMapFallback } from './AccessibleMapFallback.js';
-
-type Story = StoryObj<typeof AccessibleMapFallback>;
 
 interface FallbackStoryArgs {
   showTable: boolean;
@@ -93,9 +92,9 @@ function FallbackDemo({
   );
 }
 
-const meta: Meta<typeof AccessibleMapFallback> = {
+const meta = {
   title: 'Viz/Spatial/AccessibleMapFallback',
-  component: AccessibleMapFallback,
+  component: FallbackDemo,
   parameters: {
     layout: 'padded',
     docs: {
@@ -114,9 +113,10 @@ const meta: Meta<typeof AccessibleMapFallback> = {
     triggerLabel: { control: 'text' },
     alwaysVisible: { control: 'boolean' },
   },
-};
+} satisfies Meta<FallbackStoryArgs>;
 
 export default meta;
+type Story = StoryObj<FallbackStoryArgs>;
 
 export const TableView: Story = {
   args: {

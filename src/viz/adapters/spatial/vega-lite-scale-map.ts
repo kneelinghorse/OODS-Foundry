@@ -1,5 +1,10 @@
-import type { Scale } from 'vega-lite/build/src/scale';
 import type { ColorEncoding } from '@/types/viz/spatial.js';
+
+interface VegaLiteScale {
+  type?: string;
+  range?: readonly string[];
+  domain?: unknown;
+}
 
 const DEFAULT_SEQUENTIAL_RANGE: readonly string[] = [
   'var(--oods-viz-scale-sequential-01)',
@@ -24,7 +29,7 @@ function normalizeRange(range?: readonly string[]): readonly string[] | undefine
 /**
  * Maps OODS color scale configuration to Vega-Lite scale definition.
  */
-export function mapColorScale(encoding: ColorEncoding): Scale | undefined {
+export function mapColorScale(encoding: ColorEncoding): VegaLiteScale | undefined {
   if (encoding.value) {
     return undefined;
   }
@@ -37,5 +42,5 @@ export function mapColorScale(encoding: ColorEncoding): Scale | undefined {
     type,
     range,
     domain,
-  }) as Scale;
+  }) as VegaLiteScale;
 }

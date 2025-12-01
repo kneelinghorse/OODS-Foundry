@@ -1,12 +1,22 @@
-import type { Projection } from 'vega-lite/build/src/projection';
 import type { ProjectionConfig } from '@/types/viz/spatial.js';
+
+interface VegaLiteProjection {
+  type?: string;
+  center?: [number, number];
+  scale?: number;
+  rotate?: [number, number] | [number, number, number];
+  parallels?: [number, number];
+  clipAngle?: number;
+  clipExtent?: [[number, number], [number, number]];
+  precision?: number;
+}
 
 export interface ProjectionMappingOptions {
   readonly fitToData?: boolean;
   readonly dimensions?: { readonly width: number; readonly height: number };
 }
 
-const DEFAULT_PROJECTION: Projection['type'] = 'mercator';
+const DEFAULT_PROJECTION = 'mercator';
 
 function pruneUndefined<T extends object>(input: T): T {
   return Object.fromEntries(
@@ -14,15 +24,15 @@ function pruneUndefined<T extends object>(input: T): T {
   ) as T;
 }
 
-export function mapProjectionType(type?: ProjectionConfig['type']): Projection['type'] {
+export function mapProjectionType(type?: ProjectionConfig['type']): VegaLiteProjection['type'] {
   return type ?? DEFAULT_PROJECTION;
 }
 
 export function mapProjectionConfig(
   config: ProjectionConfig,
   _options: ProjectionMappingOptions = {}
-): Projection {
-  const projection: Projection = {
+): VegaLiteProjection {
+  const projection: VegaLiteProjection = {
     type: mapProjectionType(config.type),
     center: config.center,
     scale: config.scale,

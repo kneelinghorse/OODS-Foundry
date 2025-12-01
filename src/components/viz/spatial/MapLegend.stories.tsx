@@ -3,11 +3,11 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
+import type { JSX } from 'react';
 import { MapLegend } from './MapLegend.js';
 import { createLinearScale, createQuantizeScale } from './utils/color-scale-utils.js';
 import { createLinearSizeScale } from './utils/size-scale-utils.js';
 
-type Story = StoryObj<typeof MapLegend>;
 type LegendType = 'sequential' | 'categorical' | 'size' | 'combined';
 
 interface LegendStoryArgs {
@@ -36,9 +36,14 @@ const sizeScale = createLinearSizeScale([1_000, 120_000], [6, 32]);
 function LegendDemo({ legendType, position, title }: LegendStoryArgs): JSX.Element {
   const colorScale =
     legendType === 'sequential'
-      ? { type: 'continuous', scale: sequentialScale, label: title || 'Sequential scale', format: (v: number) => `${v.toFixed(0)}%` }
+      ? {
+          type: 'continuous' as const,
+          scale: sequentialScale,
+          label: title || 'Sequential scale',
+          format: (v: number) => `${v.toFixed(0)}%`,
+        }
       : legendType === 'categorical'
-        ? { type: 'categorical', scale: categoricalScale, label: title || 'Categories' }
+        ? { type: 'categorical' as const, scale: categoricalScale, label: title || 'Categories' }
         : undefined;
 
   const sizeLegend =
@@ -49,7 +54,7 @@ function LegendDemo({ legendType, position, title }: LegendStoryArgs): JSX.Eleme
   const activeColorScale =
     legendType === 'combined'
       ? {
-          type: 'continuous',
+          type: 'continuous' as const,
           scale: sequentialScale,
           label: title || 'Combined metric',
           format: (v: number) => `${v.toFixed(0)}%`,
@@ -68,9 +73,9 @@ function LegendDemo({ legendType, position, title }: LegendStoryArgs): JSX.Eleme
   );
 }
 
-const meta: Meta<typeof MapLegend> = {
+const meta = {
   title: 'Viz/Spatial/MapLegend',
-  component: MapLegend,
+  component: LegendDemo,
   parameters: {
     layout: 'fullscreen',
     docs: {
@@ -86,9 +91,10 @@ const meta: Meta<typeof MapLegend> = {
     position: { control: 'select', options: ['top-left', 'top-right', 'bottom-left', 'bottom-right'] },
     title: { control: 'text' },
   },
-};
+} satisfies Meta<LegendStoryArgs>;
 
 export default meta;
+type Story = StoryObj<LegendStoryArgs>;
 
 export const Sequential: Story = {
   args: {

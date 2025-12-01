@@ -5,7 +5,7 @@
  */
 
 import { useCallback, type JSX, type KeyboardEvent, type MouseEvent } from 'react';
-import type { DataRecord } from '../../viz/adapters/spatial/geo-data-joiner.js';
+import type { DataRecord } from '../../../viz/adapters/spatial/geo-data-joiner';
 
 export interface BubbleMapPointProps {
   id: string;
