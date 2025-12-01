@@ -203,12 +203,16 @@ type NetworkFlowSpec = {
 function isNetworkFlowSpec(
   spec: NetworkFlowSpec | SpatialSpec | NormalizedVizSpec
 ): spec is NetworkFlowSpec {
-  if (spec.mark && typeof spec.mark.type === 'string') {
+  if ('mark' in spec && spec.mark && typeof spec.mark.type === 'string') {
     return true;
   }
 
+  if (!('marks' in spec)) {
+    return false;
+  }
+
   const marks = spec.marks;
-  return Array.isArray(marks) && marks.some((mark) => typeof mark?.type === 'string');
+  return Array.isArray(marks) && marks.some((mark) => typeof (mark as { type?: unknown })?.type === 'string');
 }
 
 function detectNetworkFlowVizType(spec: NetworkFlowSpec): NetworkFlowVizType | null {

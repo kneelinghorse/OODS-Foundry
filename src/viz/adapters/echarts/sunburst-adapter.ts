@@ -31,8 +31,8 @@ export function adaptSunburstToECharts(spec: NormalizedVizSpec, input: Hierarchy
   const palette = buildPalette();
   const dimensions = resolveDimensions(spec);
 
-  const series: SunburstSeriesOption = pruneUndefined({
-    type: 'sunburst',
+  const series = pruneUndefined({
+    type: 'sunburst' as const,
     name: spec.name ?? 'Sunburst',
     data,
     radius: ['0%', '90%'],
@@ -58,7 +58,7 @@ export function adaptSunburstToECharts(spec: NormalizedVizSpec, input: Hierarchy
     levels: buildSunburstLevels(),
     width: dimensions.width,
     height: dimensions.height,
-  });
+  }) as SunburstSeriesOption;
 
   return pruneUndefined({
     color: palette,
