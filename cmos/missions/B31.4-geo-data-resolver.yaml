@@ -1,0 +1,198 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B31.4
+name: Geo Data Resolver Utility
+sprint: Sprint 31
+status: Queued
+
+objective: >
+  Build the utility that fetches, parses, and joins geographic data from various
+  sources (URL, inline GeoJSON, TopoJSON) with tabular data for visualization.
+
+context:
+  background: |
+    The Geo Data Resolver is the critical bridge between raw data and spatial visualization.
+    It handles the complexity of geo data formats, remote fetching, format conversion,
+    and data joining so that components receive normalized, ready-to-render data.
+
+  research_basis:
+    - "RDS.10: Complex Schema Extension Research Mission"
+    - "RV.03: Gap Analysis"
+
+  architecture_reference: "cmos/foundational-docs/data-viz-part2/spatial-module/ARCHITECTURE.md Section 4.3"
+
+  dependencies:
+    - B31.1  # Requires spatial schema types
+
+  blocks:
+    - B31.5
+
+successCriteria:
+  - Resolver handles GeoJSON input correctly
+  - Resolver handles TopoJSON input and converts to GeoJSON
+  - Resolver fetches remote geo sources via URL
+  - Data joining correctly merges geo features with data records by key
+  - Error messages are actionable for common failure cases
+  - Performance acceptable for US states (~50 features) and world countries (~200 features)
+  - Tests pass with >90% coverage on new code
+
+constraints:
+  - Must handle both GeoJSON and TopoJSON formats
+  - Must support URL, inline, and file reference sources
+  - Join operation must handle missing keys gracefully
+  - Error messages must be specific and actionable
+  - Must be usable both server-side and client-side
+
+deliverables:
+  utilities:
+    - path: src/viz/adapters/spatial/geo-data-resolver.ts
+      description: |
+        Main resolver utility:
+
+        ```typescript
+        interface GeoResolverInput {
+          geoSource: string | GeoJSON | TopoJSON;  // URL, inline, or parsed
+          data?: DataRecord[];
+          joinConfig?: {
+            geoKey: string;    // Key in geo feature properties
+            dataKey: string;   // Key in data records
+          };
+        }
+
+        interface GeoResolverOutput {
+          features: GeoJSON.Feature[];  // Always normalized to GeoJSON
+          joinedData?: Map<string, DataRecord>;  // Data keyed by feature ID
+          metadata: {
+            featureCount: number;
+            hasJoinedData: boolean;
+            unmatchedFeatures: string[];
+            unmatchedData: string[];
+          };
+        }
+
+        async function resolveGeoData(input: GeoResolverInput): Promise<GeoResolverOutput>;
+        ```
+
+    - path: src/viz/adapters/spatial/geo-format-parser.ts
+      description: |
+        Format detection and parsing:
+        - parseGeoSource(source): ParsedGeoData
+        - detectGeoFormat(data): 'geojson' | 'topojson' | 'unknown'
+        - convertTopoToGeo(topo, objectName): GeoJSON.FeatureCollection
+
+    - path: src/viz/adapters/spatial/geo-data-joiner.ts
+      description: |
+        Data joining logic:
+        - joinGeoWithData(features, data, geoKey, dataKey): JoinedFeatures
+        - Handles one-to-one and one-to-many joins
+        - Reports unmatched features and data records
+
+    - path: src/viz/adapters/spatial/geo-fetch.ts
+      description: |
+        Remote fetching with caching:
+        - fetchGeoSource(url): Promise<GeoJSON | TopoJSON>
+        - Built-in caching for repeated requests
+        - Timeout handling
+        - Error handling for network failures
+
+  sample_data:
+    - path: tests/fixtures/geo/us-states.topojson
+      description: US states TopoJSON for testing
+
+    - path: tests/fixtures/geo/world-countries.geojson
+      description: World countries GeoJSON for testing
+
+    - path: tests/fixtures/geo/sample-data.json
+      description: Sample tabular data to join with geo features
+
+  tests:
+    - path: tests/viz/spatial/geo-data-resolver.test.ts
+      description: |
+        Resolver tests:
+        - Resolves inline GeoJSON correctly
+        - Resolves inline TopoJSON and converts to GeoJSON
+        - Fetches remote URL (mocked)
+        - Joins data with geo features by key
+        - Reports unmatched features
+        - Reports unmatched data records
+        - Handles missing join keys gracefully
+        - Performance test: resolves US states in <100ms
+
+    - path: tests/viz/spatial/geo-format-parser.test.ts
+      description: |
+        Parser tests:
+        - Detects GeoJSON format
+        - Detects TopoJSON format
+        - Converts TopoJSON to GeoJSON correctly
+        - Handles invalid geo data with clear error
+
+    - path: tests/viz/spatial/geo-data-joiner.test.ts
+      description: |
+        Joiner tests:
+        - Joins by string key
+        - Joins by numeric key
+        - Handles case-insensitive keys
+        - Reports all unmatched items
+        - Handles empty data array
+
+  documentation:
+    - path: docs/viz/geo-data-resolver.md
+      description: |
+        Resolver documentation:
+        - Supported input formats
+        - Join configuration options
+        - Error handling and recovery
+        - Performance considerations
+        - Examples with real geo data
+
+technicalApproach:
+  - Install topojson-client dependency for TopoJSON conversion
+  - Implement format detection based on structure (topology vs features)
+  - Implement TopoJSON → GeoJSON conversion using topojson-client
+  - Implement URL fetching with fetch API (works in Node and browser)
+  - Implement simple in-memory cache for fetched geo data
+  - Implement data joining with key matching
+  - Build comprehensive error messages for common failure modes
+  - Write tests with real geo data fixtures
+  - Document usage patterns and error handling
+
+qualityGates:
+  during_development:
+    - Format detection works for both GeoJSON and TopoJSON
+    - TopoJSON conversion produces valid GeoJSON
+    - Join operation matches expected features
+
+  before_completion:
+    - pnpm test tests/viz/spatial/geo-*.test.ts passes
+    - Performance acceptable for 200+ features
+    - Error messages are actionable
+    - Documentation reviewed
+    - Coverage >90% on new code
+
+estimatedEffort: "1 session (60-70k tokens)"
+
+notes: |
+  📋 FULL MISSION DETAILS: This YAML file contains complete implementation guidance.
+
+  Dependencies to install:
+  - topojson-client: For TopoJSON → GeoJSON conversion
+  - @types/geojson: GeoJSON type definitions
+  - @types/topojson-specification: TopoJSON type definitions
+
+  Common geo data sources for testing:
+  - Natural Earth: naturalearthdata.com (public domain)
+  - US Census: census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.html
+
+  Error handling priorities:
+  - Invalid JSON: "Failed to parse geo data: invalid JSON at position X"
+  - Unknown format: "Unrecognized geo format. Expected GeoJSON or TopoJSON."
+  - Missing topology object: "TopoJSON object 'X' not found. Available objects: [Y, Z]"
+  - Network error: "Failed to fetch geo data from URL: [status/error]"
+  - Join key missing: "Join key 'X' not found in geo feature properties. Available: [Y, Z]"
+  - No matches: "Warning: No data records matched geo features. Check join keys."
+
+  Caching strategy:
+  - Cache by URL with 15-minute TTL
+  - Clear cache on memory pressure (optional)
+  - Allow force-refresh option

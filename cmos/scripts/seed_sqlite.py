@@ -126,6 +126,41 @@ def load_prompt_mapping(mission_path: Path) -> List[Dict[str, Any]]:
     return formatted
 
 
+def load_mission_files(missions_dir: Path) -> Dict[str, Dict[str, Any]]:
+    """Scan sprint-XX/ directories for mission YAML files and parse them.
+    
+    Returns a dict mapping mission_id to full mission spec.
+    """
+    mission_specs: Dict[str, Dict[str, Any]] = {}
+    
+    if not missions_dir.exists():
+        return mission_specs
+    
+    # Find all sprint-XX directories
+    for sprint_dir in sorted(missions_dir.glob("sprint-*")):
+        if not sprint_dir.is_dir():
+            continue
+        
+        # Load all YAML files in this sprint directory
+        for mission_file in sorted(sprint_dir.glob("*.yaml")):
+            try:
+                with mission_file.open("r", encoding="utf-8") as f:
+                    mission_data = yaml.safe_load(f)
+                    if not mission_data:
+                        continue
+                    
+                    mission_id = mission_data.get("missionId")
+                    if not mission_id:
+                        continue
+                    
+                    mission_specs[mission_id] = mission_data
+            except (yaml.YAMLError, IOError) as e:
+                print(f"Warning: Failed to load {mission_file}: {e}", file=sys.stderr)
+                continue
+    
+    return mission_specs
+
+
 def insert_sprints(connection: sqlite3.Connection, sprints: Iterable[Dict[str, Any]]) -> None:
     connection.executemany(
         """
@@ -149,29 +184,64 @@ def insert_sprints(connection: sqlite3.Connection, sprints: Iterable[Dict[str, A
     )
 
 
-def insert_missions(connection: sqlite3.Connection, missions: Iterable[Dict[str, Any]]) -> None:
+def insert_missions(
+    connection: sqlite3.Connection, 
+    missions: Iterable[Dict[str, Any]],
+    mission_specs: Dict[str, Dict[str, Any]] | None = None
+) -> None:
+    """Insert missions with full YAML content if available.
+    
+    Args:
+        connection: SQLite connection
+        missions: Basic mission data from backlog.yaml
+        mission_specs: Full mission YAML content keyed by mission_id
+    """
+    mission_specs = mission_specs or {}
+    
     def serialize_metadata(mission: Dict[str, Any]) -> str | None:
         extras = {k: v for k, v in mission.items() if k not in {"id", "name", "status", "notes", "completed_at", "sprintId"}}
         return json.dumps(extras, ensure_ascii=False) if extras else None
+    
+    def serialize_json_field(value: Any) -> str | None:
+        """Serialize list or dict to JSON, return None for empty."""
+        if not value:
+            return None
+        return json.dumps(value, ensure_ascii=False)
+
+    rows = []
+    for mission in missions:
+        mission_id = mission.get("id")
+        spec = mission_specs.get(mission_id, {})
+        
+        rows.append({
+            "id": mission_id,
+            "sprint_id": mission.get("sprintId"),
+            "name": mission.get("name"),
+            "status": mission.get("status"),
+            "completed_at": mission.get("completed_at"),
+            "notes": mission.get("notes"),
+            "objective": spec.get("objective"),
+            "context": spec.get("context"),
+            "success_criteria": serialize_json_field(spec.get("successCriteria")),
+            "deliverables": serialize_json_field(spec.get("deliverables")),
+            "reference_docs": serialize_json_field(spec.get("references")),
+            "domain_fields": serialize_json_field(spec.get("domainFields")),
+            "metadata": serialize_metadata(mission)
+        })
 
     connection.executemany(
         """
         INSERT OR REPLACE INTO missions (
-            id, sprint_id, name, status, completed_at, notes, metadata
-        ) VALUES (:id, :sprint_id, :name, :status, :completed_at, :notes, :metadata)
-        """,
-        (
-            {
-                "id": mission.get("id"),
-                "sprint_id": mission.get("sprintId"),
-                "name": mission.get("name"),
-                "status": mission.get("status"),
-                "completed_at": mission.get("completed_at"),
-                "notes": mission.get("notes"),
-                "metadata": serialize_metadata(mission)
-            }
-            for mission in missions
+            id, sprint_id, name, status, completed_at, notes,
+            objective, context, success_criteria, deliverables, reference_docs, domain_fields,
+            metadata
+        ) VALUES (
+            :id, :sprint_id, :name, :status, :completed_at, :notes,
+            :objective, :context, :success_criteria, :deliverables, :reference_docs, :domain_fields,
+            :metadata
         )
+        """,
+        rows
     )
 
 
@@ -319,6 +389,7 @@ def seed_database(root: Path, db_path: Path, data_root: Path | None = None) -> N
     mirrors_root = Path(data_root).resolve() if data_root else project_root
     schema_path = project_root / "db" / "schema.sql"
     backlog_path = mirrors_root / "missions" / "backlog.yaml"
+    missions_dir = mirrors_root / "missions"
     project_context_path = mirrors_root / "PROJECT_CONTEXT.json"
     master_context_path = mirrors_root / "context" / "MASTER_CONTEXT.json"
     sessions_path = mirrors_root / "SESSIONS.jsonl"
@@ -326,9 +397,12 @@ def seed_database(root: Path, db_path: Path, data_root: Path | None = None) -> N
     mission_path = mirrors_root / "missions" / "sprint-03" / "B3.1_sqlite-foundation-prototype.yaml"
 
     sprints, missions, dependencies = load_backlog(backlog_path)
+    mission_specs = load_mission_files(missions_dir)
     session_events = load_sessions(sessions_path)
     telemetry_payloads = load_telemetry(telemetry_dir)
     prompt_mappings = load_prompt_mapping(mission_path)
+    
+    print(f"Loaded {len(mission_specs)} mission YAML files from {missions_dir}")
 
     db_path.parent.mkdir(parents=True, exist_ok=True)
     if db_path.exists():
@@ -342,7 +416,7 @@ def seed_database(root: Path, db_path: Path, data_root: Path | None = None) -> N
                 ("seeded_at", utc_now())
             )
             insert_sprints(connection, sprints)
-            insert_missions(connection, missions)
+            insert_missions(connection, missions, mission_specs)
             insert_dependencies(connection, dependencies)
             insert_context(connection, "project_context", project_context_path, load_json(project_context_path))
             insert_context(connection, "master_context", master_context_path, load_json(master_context_path))

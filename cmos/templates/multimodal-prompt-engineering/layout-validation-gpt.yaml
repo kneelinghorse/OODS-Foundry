@@ -1,0 +1,400 @@
+apiVersion: mission-template.v1
+kind: MissionTemplate
+metadata:
+  name: layout-validation-gpt
+  version: "1.0.0"
+  author: "UX Research Team"
+  description: "Template for validating layout structure and component hierarchy using GPT's Visual Question Answering capabilities and pre-description strategy"
+  domain: "multimodal-prompt-engineering"
+  tags:
+    - "layout-validation"
+    - "gpt"
+    - "vqa"
+    - "technical-compliance"
+    - "markdown-output"
+
+spec:
+  parameters:
+    - name: "layout_name"
+      type: "string"
+      description: "Name of the layout or interface being validated"
+      required: true
+      examples:
+        - "desktop_dashboard"
+        - "mobile_checkout_flow"
+        - "responsive_landing_page"
+    
+    - name: "layout_type"
+      type: "string"
+      description: "Type of layout interface"
+      required: true
+      enum: ["desktop", "mobile", "tablet", "responsive"]
+    
+    - name: "validation_constraints"
+      type: "array"
+      description: "Technical and functional constraints to validate against"
+      required: true
+      items:
+        type: "string"
+        enum: ["grid_adherence", "responsive_breakpoints", "skeleton_loader_prep", "navigation_flow", "component_hierarchy", "accessibility_focus", "information_architecture"]
+      default: ["grid_adherence", "component_hierarchy", "navigation_flow"]
+    
+    - name: "grid_specification"
+      type: "object"
+      description: "Grid system specifications for validation"
+      required: false
+      properties:
+        grid_type:
+          type: "string"
+          enum: ["4pt", "8pt", "16pt", "12col", "custom"]
+        expected_gutters:
+          type: "string"
+        expected_margins:
+          type: "string"
+        column_count:
+          type: "integer"
+    
+    - name: "responsive_requirements"
+      type: "object"
+      description: "Responsive design requirements"
+      required: false
+      properties:
+        breakpoints:
+          type: "array"
+          items:
+            type: "object"
+            properties:
+              width: { type: "integer" }
+              name: { type: "string" }
+        fluid_layout:
+          type: "boolean"
+          default: true
+    
+    - name: "primary_user_task"
+      type: "string"
+      description: "Main user task that the layout should support"
+      required: true
+      examples:
+        - "Complete purchase checkout"
+        - "Analyze sales data trends"
+        - "Navigate product catalog"
+    
+    - name: "component_requirements"
+      type: "array"
+      description: "Required UI components and their states"
+      required: false
+      items:
+        type: "object"
+        properties:
+          component_type:
+            type: "string"
+            enum: ["header", "navigation", "sidebar", "main_content", "footer", "modal", "loading_state", "error_state", "empty_state"]
+          required_states:
+            type: "array"
+            items:
+              type: "string"
+              enum: ["default", "loading", "error", "empty", "hover", "focus", "active"]
+    
+    - name: "accessibility_standards"
+      type: "string"
+      description: "Accessibility compliance level required"
+      required: false
+      enum: ["WCAG_AA", "WCAG_AAA", "Section_508"]
+      default: "WCAG_AA"
+    
+    - name: "performance_requirements"
+      type: "object"
+      description: "Performance-related layout requirements"
+      required: false
+      properties:
+        skeleton_loaders:
+          type: "boolean"
+          default: true
+        lazy_loading:
+          type: "boolean"
+          default: false
+        critical_path_optimization:
+          type: "boolean"
+          default: false
+    
+    - name: "output_detail_level"
+      type: "string"
+      description: "Level of detail in validation report"
+      required: false
+      enum: ["concise", "standard", "comprehensive"]
+      default: "standard"
+
+  template: |
+    # LAYOUT VALIDATION - GPT OPTIMIZED
+    # Layout: {{layout_name}} ({{layout_type}})
+    
+    ## PRE-DESCRIPTION REQUIREMENT (MANDATORY FIRST STEP)
+    **CRITICAL**: Before performing any validation analysis, you must first provide a detailed, objective description of the attached {{layout_type}} UI layout.
+    
+    ### Required Description Elements:
+    1. **Primary Sectional Divisions**: Identify and describe the main layout sections (header, navigation, main content areas, sidebars, footer)
+    2. **Component Hierarchy**: Detail the visual hierarchy and nesting of UI components
+    3. **Interactive Elements**: Identify all interactive elements (buttons, links, forms, navigation items)
+    4. **Visual Structure**: Describe the overall visual structure, spacing, and organization
+    5. **Content Areas**: Identify key content areas and their purposes
+    
+    Place your detailed description in <visual_description> tags.
+    
+    ## ROLE ASSIGNMENT
+    You are a Senior Frontend Architecture Auditor specializing in layout validation and technical compliance.
+    
+    ## CONTEXT
+    Validate the layout structure for: {{layout_name}}
+    
+    Primary User Task: {{primary_user_task}}
+    Layout Type: {{layout_type}}
+    
+    ## SPECIFIC CONSTRAINTS (PASS/FAIL CRITERIA)
+    ### Technical Constraints:
+    {% if grid_specification %}
+    - **Grid System**: {{grid_specification.grid_type}} grid adherence
+      {% if grid_specification.expected_gutters %}Expected gutters: {{grid_specification.expected_gutters}}{% endif %}
+      {% if grid_specification.expected_margins %}Expected margins: {{grid_specification.expected_margins}}{% endif %}
+      {% if grid_specification.column_count %}Column count: {{grid_specification.column_count}}{% endif %}
+    {% endif %}
+    
+    {% if responsive_requirements %}
+    - **Responsive Requirements**:
+      {% for breakpoint in responsive_requirements.breakpoints %}
+      - {{breakpoint.name}}: {{breakpoint.width}}px
+      {% endfor %}
+      Fluid layout: {{responsive_requirements.fluid_layout}}
+    {% endif %}
+    
+    {% if accessibility_standards %}
+    - **Accessibility Standards**: {{accessibility_standards}} compliance
+    {% endif %}
+    
+    ### Functional Constraints:
+    {% if component_requirements %}
+    - **Required Components**:
+      {% for component in component_requirements %}
+      - {{component.component_type}}: Required states {{component.required_states|join(', ')}}
+      {% endfor %}
+    {% endif %}
+    
+    {% if performance_requirements %}
+    - **Performance Requirements**:
+      - Skeleton loaders: {{performance_requirements.skeleton_loaders}}
+      - Lazy loading: {{performance_requirements.lazy_loading}}
+      - Critical path optimization: {{performance_requirements.critical_path_optimization}}
+    {% endif %}
+    
+    ## VALIDATION FOCUS AREAS
+    {% for constraint in validation_constraints %}
+    - **{{constraint|replace('_', ' ')|capitalize}}**: Comprehensive validation required
+    {% endfor %}
+    
+    ## INTENT/TASK
+    Validate the layout structure against all specified technical and functional constraints. Identify compliance failures, optimization opportunities, and provide actionable recommendations.
+    
+    ## GPT-SPECIFIC OPTIMIZATION
+    - **Pre-description Strategy**: Detailed visual description before analysis (COMPLETED ABOVE)
+    - **Explicit Format Definition**: Structured markdown table output required
+    - **Clear Sectional Analysis**: Organized by validation categories
+    - **Action-Oriented Recommendations**: Specific, implementable suggestions
+    
+    ## CHAIN-OF-THOOTH REQUIREMENT
+    After your visual description, provide step-by-step reasoning:
+    
+    <validation_reasoning>
+    1. **Grid Analysis**: Evaluate spacing, alignment, and grid adherence
+    2. **Component Hierarchy**: Assess visual hierarchy and information architecture
+    3. **Navigation Flow**: Analyze user flow and task completion paths
+    4. **Accessibility Check**: Evaluate focus order, keyboard navigation, and ARIA patterns
+    5. **Performance Readiness**: Assess skeleton loader placement and loading states
+    6. **Constraint Validation**: Systematic pass/fail assessment against each criterion
+    </validation_reasoning>
+    
+    ## RESPONSE FORMAT - STRUCTURED MARKDOWN TABLE
+    Generate a comprehensive validation report with the following structure:
+    
+    ```markdown
+    # Layout Validation Report: {{layout_name}}
+    
+    ## Executive Summary
+    - **Overall Compliance Score**: [Percentage]
+    - **Critical Issues**: [Count]
+    - **High Priority Issues**: [Count]
+    - **Medium Priority Issues**: [Count]
+    - **Low Priority Issues**: [Count]
+    
+    ## Detailed Validation Results
+    
+    ### 1. Grid System Adherence
+    | Element | Expected | Actual | Status | Issue Description | Recommendation |
+    |---------|----------|--------|--------|-------------------|----------------|
+    | [Component/section] | [Expected value] | [Actual value] | [PASS/FAIL] | [Description] | [Specific recommendation] |
+    
+    ### 2. Component Hierarchy & Structure
+    | Component | Hierarchy Level | Visual Prominence | Status | Issue Description | Recommendation |
+    |-----------|----------------|-------------------|--------|-------------------|----------------|
+    | [Component name] | [Primary/Secondary/Tertiary] | [High/Medium/Low] | [PASS/FAIL] | [Description] | [Specific recommendation] |
+    
+    ### 3. Navigation Flow & UX Optimization
+    | Flow Element | Expected Path | Actual Implementation | Status | Issue Description | Recommendation |
+    |--------------|---------------|----------------------|--------|-------------------|----------------|
+    | [Navigation element] | [Expected flow] | [Actual flow] | [PASS/FAIL] | [Description] | [Specific recommendation] |
+    
+    ### 4. Accessibility Compliance
+    | Accessibility Criterion | Requirement | Current State | Status | Issue Description | Recommendation |
+    |------------------------|-------------|---------------|--------|-------------------|----------------|
+    | [WCAG criterion] | [Requirement] | [Current state] | [PASS/FAIL] | [Description] | [Specific recommendation] |
+    
+    ### 5. Performance & Loading Optimization
+    | Performance Aspect | Requirement | Current Implementation | Status | Issue Description | Recommendation |
+    |-------------------|-------------|----------------------|--------|-------------------|----------------|
+    | [Performance area] | [Requirement] | [Current state] | [PASS/FAIL] | [Description] | [Specific recommendation] |
+    
+    ### 6. Responsive Design Validation
+    | Breakpoint | Layout Adaptation | Content Reflow | Status | Issue Description | Recommendation |
+    |------------|-------------------|----------------|--------|-------------------|----------------|
+    | [Breakpoint name] | [Adaptation quality] | [Reflow quality] | [PASS/FAIL] | [Description] | [Specific recommendation] |
+    
+    ## Priority-Based Recommendations
+    
+    ### 🔴 Critical Issues (Immediate Action Required)
+    1. **[Issue Title]**
+       - **Element**: [Affected component]
+       - **Impact**: [User/business impact]
+       - **Recommendation**: [Specific, actionable solution]
+       - **Estimated Effort**: [Low/Medium/High]
+    
+    ### 🟠 High Priority Issues
+    1. **[Issue Title]**
+       - **Element**: [Affected component]
+       - **Impact**: [User/business impact]
+       - **Recommendation**: [Specific, actionable solution]
+       - **Estimated Effort**: [Low/Medium/High]
+    
+    ### 🟡 Medium Priority Issues
+    1. **[Issue Title]**
+       - **Element**: [Affected component]
+       - **Impact**: [User/business impact]
+       - **Recommendation**: [Specific, actionable solution]
+       - **Estimated Effort**: [Low/Medium/High]
+    
+    ### 🟢 Low Priority Issues
+    1. **[Issue Title]**
+       - **Element**: [Affected component]
+       - **Impact**: [User/business impact]
+       - **Recommendation**: [Specific, actionable solution]
+       - **Estimated Effort**: [Low/Medium/High]
+    
+    ## JTBD Optimization Analysis
+    
+    ### Current State for Primary Task: {{primary_user_task}}
+    - **Task Completion Efficiency**: [Assessment]
+    - **Cognitive Load**: [Assessment]
+    - **Error Prevention**: [Assessment]
+    - **User Confidence**: [Assessment]
+    
+    ### Optimization Opportunities
+    1. **[Optimization Area]**
+       - **Current Barrier**: [What's hindering task completion]
+       - **Proposed Solution**: [Specific layout/component change]
+       - **Expected Improvement**: [Quantified improvement]
+    
+    ## Compliance Summary
+    
+    | Constraint Category | Pass Count | Fail Count | Compliance Rate |
+    |---------------------|------------|------------|-----------------|
+    {% for constraint in validation_constraints %}
+    | {{constraint|replace('_', ' ')|capitalize}} | [Count] | [Count] | [Percentage] |
+    {% endfor %}
+    | **TOTAL** | **[Total Pass]** | **[Total Fail]** | **[Overall Rate]** |
+    
+    ## Implementation Roadmap
+    
+    ### Phase 1: Critical Fixes (Week 1)
+    - [List of critical issues to address]
+    
+    ### Phase 2: High Priority Improvements (Week 2-3)
+    - [List of high priority improvements]
+    
+    ### Phase 3: Polish & Optimization (Week 4)
+    - [List of medium and low priority enhancements]
+    
+    ## Additional Notes
+    - [Any additional observations or context]
+    - [Technical considerations for implementation]
+    - [Dependencies or prerequisites for recommendations]
+    ```
+    
+    ## EXECUTION
+    1. Complete the mandatory visual description in <visual_description> tags
+    2. Provide reasoning in <validation_reasoning> tags
+    3. Generate the comprehensive markdown validation report
+    4. Ensure all tables are complete with specific, actionable recommendations
+    5. Prioritize issues based on impact to {{primary_user_task}}
+
+  examples:
+    - name: "E-commerce Checkout Validation"
+      parameters:
+        layout_name: "checkout_flow_desktop"
+        layout_type: "desktop"
+        validation_constraints: ["grid_adherence", "navigation_flow", "component_hierarchy", "accessibility_focus"]
+        grid_specification:
+          grid_type: "12col"
+          expected_gutters: "24px"
+          expected_margins: "32px"
+        primary_user_task: "Complete purchase checkout with minimal friction"
+        component_requirements:
+          - component_type: "navigation"
+            required_states: ["default", "focus"]
+          - component_type: "main_content"
+            required_states: ["default", "loading", "error"]
+        accessibility_standards: "WCAG_AA"
+        performance_requirements:
+          skeleton_loaders: true
+          lazy_loading: false
+        output_detail_level: "comprehensive"
+    
+    - name: "Mobile Dashboard Validation"
+      parameters:
+        layout_name: "analytics_mobile"
+        layout_type: "mobile"
+        validation_constraints: ["responsive_breakpoints", "component_hierarchy", "information_architecture"]
+        responsive_requirements:
+          breakpoints:
+            - width: 375
+              name: "mobile"
+            - width: 768
+              name: "tablet"
+          fluid_layout: true
+        primary_user_task: "Quickly access key performance metrics"
+        accessibility_standards: "WCAG_AA"
+        output_detail_level: "standard"
+
+  validation:
+    required_parameters: ["layout_name", "layout_type", "validation_constraints", "primary_user_task"]
+    parameter_constraints:
+      - parameter: "validation_constraints"
+        constraint: "len(value) > 0"
+        message: "At least one validation constraint is required"
+      - parameter: "layout_type"
+        constraint: "value in ['desktop', 'mobile', 'tablet', 'responsive']"
+        message: "Layout type must be desktop, mobile, tablet, or responsive"
+
+  deployment:
+    recommended_models:
+      - "GPT-4 Vision"
+      - "GPT-4 Turbo"
+      - "Azure OpenAI GPT-4"
+    api_integration:
+      - "OpenAI API"
+      - "Azure OpenAI Service"
+    environment_variables:
+      - "OPENAI_API_KEY"
+      - "AZURE_OPENAI_ENDPOINT"
+      - "GPT_MODEL_VERSION"
+    special_features:
+      - "Visual Question Answering (VQA) capabilities"
+      - "Pre-description strategy for accuracy"
+      - "Robust markdown generation"
+      - "Detailed reasoning audit trail"

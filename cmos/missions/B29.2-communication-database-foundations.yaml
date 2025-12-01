@@ -1,0 +1,408 @@
+---
+mission: B29.2
+name: "Communication Database Foundations & Postgres Migrations"
+sprint: "Sprint 29"
+type: "Build"
+status: "Queued"
+estimatedEffort: "5-6 hours"
+complexity: "Medium"
+dependencies: ["B29.1"]
+tags: ["database", "migrations", "postgresql", "communication"]
+
+# ============================================================================
+# MISSION OVERVIEW
+# ============================================================================
+summary: |
+  Implement PostgreSQL schema for communication infrastructure: messages table,
+  delivery_attempts (state tracking), conversations (threaded messages), channel
+  configurations, templates, and delivery policies. Deliver 9 migrations with
+  complete DDL, indexes, triggers, rollback procedures, seed scripts, and
+  comprehensive documentation. Mirror Sprint 28 RBAC database patterns.
+
+objectives:
+  - Create dedicated `communication` schema with all core tables
+  - Implement 9 migrations covering schema, tables, indexes, triggers, seed data
+  - Deliver migration orchestration CLI (mirroring authz-migrate.ts)
+  - Write comprehensive schema guide + migration runbook
+  - Seed scripts with sample channels, templates, policies for testing
+
+# ============================================================================
+# RESEARCH FOUNDATIONS
+# ============================================================================
+researchFindings:
+  messageStorage:
+    source: "R20.6 Part 2.1 (Message Storage Patterns)"
+    findings:
+      - key: "Messages table stores atomic message entities with JSONB metadata"
+        citation: "R20.6 Part 2.1 TABLE 1"
+        implication: "messages.metadata (JSONB) for extensibility, GIN index for queries"
+
+      - key: "Delivery attempts track state machine separately from message"
+        citation: "R20.6 Part 2.2 (Delivery State Tracking)"
+        implication: "delivery_attempts table with FK to messages, state enum, timestamps"
+
+      - key: "Conversation threads use parent_message_id for threading"
+        citation: "R20.6 Part 2.3 (Threading Patterns)"
+        implication: "Self-referential FK: messages.parent_message_id → messages.id"
+
+  deliveryTracking:
+    source: "R20.1 Part 3.2 (Delivery Lifecycle)"
+    findings:
+      - key: "State machine: queued → sent → delivered → failed → retried"
+        citation: "R20.1 Part 3.2 STATE DIAGRAM"
+        implication: "delivery_status enum with 5 states + transition tracking"
+
+      - key: "Retry backoff requires attempt_number + scheduled_at tracking"
+        citation: "R20.1 Part 3.3 (Retry Logic)"
+        implication: "delivery_attempts.attempt_number, scheduled_at for queue processing"
+
+integrationContract:
+  userTable:
+    description: "Messages reference core.users for sender/recipient"
+    table: "core.users"
+    foreignKeys:
+      - "messages.sender_id → core.users.id"
+      - "conversation_participants.user_id → core.users.id"
+
+  organizationTable:
+    description: "Multi-tenant isolation via organization_id"
+    table: "core.organizations"
+    foreignKeys:
+      - "messages.organization_id → core.organizations.id"
+      - "channels.organization_id → core.organizations.id"
+
+  authzMemberships:
+    description: "Permission checks use authz.memberships for sender/recipient validation"
+    table: "authz.memberships"
+    usage: "Delivery runtime (B29.3) queries memberships to validate send/receive permissions"
+
+  preferences:
+    description: "Notification matrix controls delivery opt-in/opt-out"
+    table: "preferences.user_preferences"
+    usage: "Delivery runtime (B29.3) queries preferences to respect channel opt-outs"
+
+# ============================================================================
+# DELIVERABLES
+# ============================================================================
+deliverables:
+  migrations:
+    - file: "database/migrations/20251120_001_create_communication_schema.sql"
+      description: "Create communication schema"
+      requirements:
+        - "CREATE SCHEMA IF NOT EXISTS communication;"
+        - "COMMENT ON SCHEMA communication IS 'Multi-channel messaging and notification system';"
+
+    - file: "database/migrations/20251120_002_create_channels_table.sql"
+      description: "Channels configuration table"
+      requirements:
+        - "Columns: id (uuid), organization_id (uuid), type (enum), config (jsonb), enabled (boolean)"
+        - "FK: organization_id → core.organizations.id ON DELETE CASCADE"
+        - "Index: idx_channels_org_type (organization_id, type)"
+        - "GIN index: idx_channels_config ON config"
+
+    - file: "database/migrations/20251120_003_create_templates_table.sql"
+      description: "Message templates table"
+      requirements:
+        - "Columns: id (uuid), organization_id, channel_type (enum), name, subject, body, variables (jsonb), locale"
+        - "FK: organization_id → core.organizations.id"
+        - "Index: idx_templates_org_channel (organization_id, channel_type)"
+        - "Check constraint: body contains all variables from variables array"
+
+    - file: "database/migrations/20251120_004_create_delivery_policies_table.sql"
+      description: "Delivery policies (retry, throttling, quiet hours)"
+      requirements:
+        - "Columns: id (uuid), organization_id, name, retry_config (jsonb), throttling_config (jsonb), quiet_hours (jsonb)"
+        - "FK: organization_id → core.organizations.id"
+        - "Index: idx_policies_org (organization_id)"
+
+    - file: "database/migrations/20251120_005_create_messages_table.sql"
+      description: "Core messages table"
+      requirements:
+        - "Columns: id (uuid), organization_id, sender_id, channel_type, template_id, subject, body, variables (jsonb), metadata (jsonb), parent_message_id (nullable), created_at, queued_at"
+        - "FK: sender_id → core.users.id, template_id → templates.id, parent_message_id → messages.id (self-ref)"
+        - "Index: idx_messages_sender (sender_id, created_at DESC)"
+        - "Index: idx_messages_parent (parent_message_id) -- for threading"
+        - "GIN index: idx_messages_metadata ON metadata"
+
+    - file: "database/migrations/20251120_006_create_message_recipients_table.sql"
+      description: "Message recipients (many-to-many junction)"
+      requirements:
+        - "Columns: id (uuid), message_id, recipient_id (user), read_at (nullable), delivered_at (nullable)"
+        - "FK: message_id → messages.id ON DELETE CASCADE, recipient_id → core.users.id"
+        - "Index: idx_recipients_message (message_id)"
+        - "Index: idx_recipients_user (recipient_id, read_at) -- for unread queries"
+
+    - file: "database/migrations/20251120_007_create_delivery_attempts_table.sql"
+      description: "Delivery state tracking table"
+      requirements:
+        - "Columns: id (uuid), message_id, channel_type, status (enum: queued|sent|delivered|failed|retried), attempt_number, scheduled_at, sent_at, delivered_at, failed_at, error_message, metadata (jsonb)"
+        - "FK: message_id → messages.id ON DELETE CASCADE"
+        - "Index: idx_delivery_message (message_id, attempt_number)"
+        - "Index: idx_delivery_status_scheduled (status, scheduled_at) -- for queue processing"
+
+    - file: "database/migrations/20251120_008_create_conversations_table.sql"
+      description: "Conversation/thread metadata table"
+      requirements:
+        - "Columns: id (uuid), organization_id, subject, status (enum: active|archived|deleted), metadata (jsonb), created_at, updated_at"
+        - "FK: organization_id → core.organizations.id"
+        - "Index: idx_conversations_org_status (organization_id, status, updated_at DESC)"
+
+    - file: "database/migrations/20251120_009_create_conversation_participants_table.sql"
+      description: "Conversation participants (many-to-many)"
+      requirements:
+        - "Columns: id (uuid), conversation_id, user_id, role (enum: owner|member|viewer), joined_at, last_read_at"
+        - "FK: conversation_id → conversations.id ON DELETE CASCADE, user_id → core.users.id"
+        - "Index: idx_participants_conversation (conversation_id)"
+        - "Index: idx_participants_user (user_id, last_read_at)"
+
+  migrationCLI:
+    - file: "src/cli/communication-migrate.ts"
+      description: "Migration orchestration CLI (mirrors authz-migrate.ts)"
+      requirements:
+        - "Commands: migrate, rollback, status, reset"
+        - "Flag: --url (Postgres connection string)"
+        - "Migration tracking in schema_migrations table"
+        - "Dry-run mode (--dry-run) shows SQL without executing"
+        - "Rollback support for each migration"
+
+  seedScripts:
+    - file: "src/data/communication/seed-channels.ts"
+      description: "Sample channel configurations"
+      requirements:
+        - "Email channel (SMTP config)"
+        - "In-app channel (WebSocket config)"
+        - "SMS channel (Twilio config placeholder)"
+        - "Push channel (FCM config placeholder)"
+
+    - file: "src/data/communication/seed-templates.ts"
+      description: "Sample message templates"
+      requirements:
+        - "Welcome email template"
+        - "Password reset email template"
+        - "In-app notification template"
+        - "All templates reference sample channels"
+
+    - file: "src/data/communication/seed-policies.ts"
+      description: "Sample delivery policies"
+      requirements:
+        - "Standard policy (3 retries, exponential backoff)"
+        - "Urgent policy (5 retries, aggressive throttling)"
+        - "Low priority policy (1 retry, gentle throttling)"
+
+  documentation:
+    - file: "docs/database/communication-schema-guide.md"
+      description: "Comprehensive schema documentation"
+      requirements:
+        - "ERD diagram (Mermaid) showing all tables + relationships"
+        - "Table reference: each table with column descriptions, indexes, FKs"
+        - "Integration points: User, Organization, Authz, Preferences"
+        - "Query patterns: fetch unread messages, conversation threads, delivery status"
+        - "R20.1/R20.6 citations for design decisions"
+
+    - file: "docs/database/communication-migration-runbook.md"
+      description: "Migration runbook for ops teams"
+      requirements:
+        - "Pre-migration checklist (backup, read replica check)"
+        - "Migration execution steps (dry-run → migrate → validate)"
+        - "Rollback procedures for each migration"
+        - "Post-migration validation queries"
+        - "Troubleshooting guide (common errors, FK constraint failures)"
+
+  tests:
+    - file: "tests/database/communication-migrations.test.ts"
+      description: "Migration integration tests"
+      requirements:
+        - "Test: migrations apply cleanly (no SQL errors)"
+        - "Test: all FKs are valid (reference existing tables)"
+        - "Test: indexes created successfully"
+        - "Test: rollback restores previous state"
+        - "Use in-memory Postgres (pg-mem) for fast tests"
+
+    - file: "tests/database/communication-seeds.test.ts"
+      description: "Seed script validation tests"
+      requirements:
+        - "Test: seed scripts insert valid data"
+        - "Test: FK references resolve (channels → orgs, templates → channels)"
+        - "Test: sample messages can be created using seed data"
+
+# ============================================================================
+# SQL EXAMPLES
+# ============================================================================
+sqlExamples:
+  messagesTable: |
+    CREATE TABLE communication.messages (
+      id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+      organization_id uuid NOT NULL REFERENCES core.organizations(id) ON DELETE CASCADE,
+      sender_id uuid NOT NULL REFERENCES core.users(id) ON DELETE CASCADE,
+      channel_type text NOT NULL CHECK (channel_type IN ('email', 'sms', 'push', 'in_app', 'webhook')),
+      template_id uuid REFERENCES communication.templates(id),
+      subject text,
+      body text NOT NULL,
+      variables jsonb DEFAULT '{}',
+      metadata jsonb DEFAULT '{}',
+      parent_message_id uuid REFERENCES communication.messages(id), -- threading
+      created_at timestamptz NOT NULL DEFAULT now(),
+      queued_at timestamptz
+    );
+
+    CREATE INDEX idx_messages_sender ON communication.messages(sender_id, created_at DESC);
+    CREATE INDEX idx_messages_parent ON communication.messages(parent_message_id) WHERE parent_message_id IS NOT NULL;
+    CREATE INDEX idx_messages_metadata ON communication.messages USING GIN(metadata);
+
+  deliveryAttemptsTable: |
+    CREATE TABLE communication.delivery_attempts (
+      id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+      message_id uuid NOT NULL REFERENCES communication.messages(id) ON DELETE CASCADE,
+      channel_type text NOT NULL,
+      status text NOT NULL CHECK (status IN ('queued', 'sent', 'delivered', 'failed', 'retried')),
+      attempt_number int NOT NULL DEFAULT 1,
+      scheduled_at timestamptz NOT NULL DEFAULT now(),
+      sent_at timestamptz,
+      delivered_at timestamptz,
+      failed_at timestamptz,
+      error_message text,
+      metadata jsonb DEFAULT '{}'
+    );
+
+    CREATE INDEX idx_delivery_message ON communication.delivery_attempts(message_id, attempt_number);
+    CREATE INDEX idx_delivery_queue ON communication.delivery_attempts(status, scheduled_at) WHERE status IN ('queued', 'failed');
+
+  conversationsTable: |
+    CREATE TABLE communication.conversations (
+      id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+      organization_id uuid NOT NULL REFERENCES core.organizations(id) ON DELETE CASCADE,
+      subject text,
+      status text NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'archived', 'deleted')),
+      metadata jsonb DEFAULT '{}',
+      created_at timestamptz NOT NULL DEFAULT now(),
+      updated_at timestamptz NOT NULL DEFAULT now()
+    );
+
+    CREATE INDEX idx_conversations_org_status ON communication.conversations(organization_id, status, updated_at DESC);
+
+# ============================================================================
+# SCAFFOLDING REUSE MAP
+# ============================================================================
+scaffoldingReuseMap:
+  - from: "database/migrations/20251119_00*_authz_*.sql"
+    to: "database/migrations/20251120_00*_communication_*.sql"
+    pattern: "Migration file structure: CREATE TABLE, indexes, FKs, comments, rollback"
+    adaptation: "Communication tables instead of RBAC tables"
+
+  - from: "src/cli/authz-migrate.ts"
+    to: "src/cli/communication-migrate.ts"
+    pattern: "Migration CLI: migrate, rollback, status, dry-run commands"
+    adaptation: "Communication migration paths instead of authz paths"
+
+  - from: "docs/database/authz-schema-guide.md"
+    to: "docs/database/communication-schema-guide.md"
+    pattern: "Schema documentation: ERD, table reference, query patterns, citations"
+    adaptation: "Communication schema instead of RBAC schema"
+
+  - from: "src/data/authz/sample-entitlements.ts"
+    to: "src/data/communication/seed-*.ts"
+    pattern: "Seed data structure with FK references + validation"
+    adaptation: "Communication entities (channels, templates, policies) instead of roles/permissions"
+
+# ============================================================================
+# QUALITY GATES
+# ============================================================================
+qualityGates:
+  duringDevelopment:
+    - gate: "All migrations apply cleanly"
+      validation: "pnpm tsx src/cli/communication-migrate.ts migrate --url <test-db>"
+      criterion: "Zero SQL errors, all tables created"
+
+    - gate: "All FKs resolve"
+      validation: "Query pg_constraint to verify all FK constraints exist"
+      criterion: "All FKs in schema guide match database constraints"
+
+    - gate: "Indexes created successfully"
+      validation: "Query pg_indexes for communication schema"
+      criterion: "All indexes in schema guide match database indexes"
+
+    - gate: "Rollback procedures work"
+      validation: "Migrate up, then rollback, verify clean state"
+      criterion: "Rollback removes all tables/indexes, no orphaned objects"
+
+  beforeCompletion:
+    - gate: "Migration tests pass"
+      validation: "pnpm test --run tests/database/communication-migrations.test.ts"
+      criterion: "All tests pass, ≥90% coverage of migration logic"
+
+    - gate: "Seed scripts execute without errors"
+      validation: "pnpm tsx src/data/communication/seed-channels.ts"
+      criterion: "Sample data inserted successfully, FK constraints satisfied"
+
+    - gate: "Schema documentation accurate"
+      validation: "Compare docs/database/communication-schema-guide.md with actual schema"
+      criterion: "100% table/column/index accuracy in documentation"
+
+    - gate: "Query patterns validated"
+      validation: "Run sample queries from schema guide against test database"
+      criterion: "All example queries execute successfully, return expected results"
+
+# ============================================================================
+# SUCCESS CRITERIA
+# ============================================================================
+successCriteria:
+  functional:
+    - "9 migrations created covering schema, 7 tables, indexes, seed data"
+    - "Migration CLI (communication-migrate.ts) with migrate/rollback/status commands"
+    - "Seed scripts for channels, templates, policies"
+    - "Comprehensive schema guide + migration runbook"
+    - "All FKs resolve to User, Organization, Authz, Preferences tables"
+
+  quality:
+    - "All migrations apply cleanly without SQL errors"
+    - "Rollback procedures restore database to pre-migration state"
+    - "Test coverage ≥90% for migration/seed scripts"
+    - "Documentation accuracy: 100% match with actual schema"
+
+  validation:
+    - command: "pnpm tsx src/cli/communication-migrate.ts migrate --url postgresql://test"
+      expectation: "All 9 migrations apply successfully"
+
+    - command: "pnpm test --run tests/database/communication-migrations.test.ts"
+      expectation: "All tests pass, coverage ≥90%"
+
+    - command: "psql -c '\\dt communication.*'"
+      expectation: "Shows all 9 tables (channels, templates, policies, messages, recipients, delivery_attempts, conversations, participants, schema_migrations)"
+
+# ============================================================================
+# PERFORMANCE TARGETS
+# ============================================================================
+performanceTargets:
+  - metric: "Message insert"
+    target: "<10ms (single message + recipient)"
+    validation: "Benchmark INSERT with EXPLAIN ANALYZE"
+
+  - metric: "Unread messages query"
+    target: "<50ms (100 messages per user)"
+    validation: "SELECT with idx_recipients_user index"
+
+  - metric: "Conversation thread query"
+    target: "<100ms (50 messages in thread)"
+    validation: "Recursive query via parent_message_id index"
+
+  - metric: "Delivery queue query"
+    target: "<20ms (1000 queued messages)"
+    validation: "SELECT with idx_delivery_queue index"
+
+# ============================================================================
+# NOTES
+# ============================================================================
+notes:
+  - "Migration numbering starts at 20251120_001 to align with Sprint 29 launch date"
+  - "Communication schema is self-contained, only FKs to core tables (users, organizations)"
+  - "JSONB fields (variables, metadata, config) use GIN indexes for efficient queries"
+  - "Delivery attempts table is critical for retry logic + queue processing (B29.3)"
+  - "Self-referential FK (parent_message_id) enables threaded conversations"
+
+blockers: []
+risks:
+  - risk: "JSONB schema evolution (config/metadata fields may change over time)"
+    mitigation: "Document JSONB structure in schema guide, add validation in application layer"
+
+  - risk: "Large message volume may slow down indexes"
+    mitigation: "Composite indexes optimized for common queries (sender + created_at, status + scheduled_at)"

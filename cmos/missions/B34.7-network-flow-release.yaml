@@ -1,0 +1,374 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B34.7
+name: Network & Flow Documentation, Testing & v2.0 Release
+sprint: Sprint 34
+status: Queued
+
+objective: >
+  Complete documentation, finalize testing, perform accessibility and performance audits,
+  and release OODS v2.0 with full Network & Flow visualization support.
+
+context:
+  background: |
+    This is the final mission for the Network & Flow module. It ensures:
+    1. Complete documentation for all new features
+    2. Comprehensive test coverage
+    3. Accessibility compliance
+    4. Performance within thresholds
+    5. Clean v2.0 release
+
+    After this mission, OODS visualization coverage will increase from 87.4% to ~95%+.
+
+  research_basis:
+    - "RV.05: 87.4% coverage, κ=0.763 → target 95%+ coverage"
+    - "cmos/foundational-docs/data-viz-part2/network-flow-module/ROADMAP.md Phase 5"
+
+  dependencies:
+    - B34.1 through B34.6 (all previous Sprint 34 missions)
+
+successCriteria:
+  - All documentation complete and reviewed
+  - Test coverage >90% on new code
+  - Accessibility audit passes (WCAG 2.1 AA)
+  - Performance benchmarks pass
+  - No P0/P1 bugs open
+  - v2.0 released with changelog
+  - Coverage validation shows 95%+ improvement
+
+constraints:
+  - No new features in this mission
+  - Focus on quality, not scope
+  - All breaking changes documented
+  - Migration guide complete
+
+deliverables:
+  documentation:
+    - path: docs/viz/network-flow-module.md
+      description: |
+        Module overview documentation:
+
+        # Network & Flow Visualization Module
+
+        ## Overview
+        - What's included (Treemap, Sunburst, Force Graph, Sankey)
+        - Architecture overview (bifurcated rendering)
+        - When to use each visualization type
+
+        ## Quick Start
+        - Installation
+        - Basic usage examples
+        - Component props reference
+
+        ## Data Formats
+        - Hierarchical data (nested vs adjacency)
+        - Network data (nodes + links)
+        - Flow data (Sankey format)
+
+        ## Renderer Selection
+        - ECharts (native, recommended)
+        - Vega-Lite (requires server transforms)
+        - Full Vega (Sankey only)
+
+    - path: docs/viz/hierarchy-visualizations.md
+      description: |
+        Hierarchy visualization guide:
+
+        # Hierarchy Visualizations
+
+        ## Treemap
+        - Use cases
+        - Configuration options
+        - Tiling methods explained
+        - Drilldown interaction
+        - Examples
+
+        ## Sunburst
+        - Use cases
+        - Configuration options
+        - Radial layout concepts
+        - Drilldown interaction
+        - Examples
+
+        ## Data Preparation
+        - Nested format
+        - Adjacency list format
+        - Converting between formats
+        - Handling edge cases
+
+    - path: docs/viz/network-visualizations.md
+      description: |
+        Network visualization guide:
+
+        # Network Visualizations
+
+        ## Force-Directed Graph
+        - Use cases
+        - Force configuration
+        - Node and edge styling
+        - Interaction modes
+        - Performance considerations
+        - Examples
+
+        ## Sankey Diagram
+        - Use cases
+        - Layout options
+        - Circular flow handling
+        - Renderer note (ECharts vs Full Vega)
+        - Examples
+
+        ## Data Preparation
+        - Nodes and links format
+        - Flow data format
+        - Validation requirements
+        - Common pitfalls
+
+    - path: docs/viz/network-flow-api.md
+      description: |
+        API reference documentation:
+
+        # API Reference
+
+        ## Components
+        - <Treemap /> props
+        - <Sunburst /> props
+        - <ForceGraph /> props
+        - <Sankey /> props
+
+        ## Traits
+        - Hierarchical trait
+        - NetworkTopology trait
+        - FlowConservation trait
+        - CrossFilterableNetwork trait
+
+        ## Transform Functions
+        - computeTreemap()
+        - computeSunburst()
+        - computeForceLayout()
+        - computeSankeyLayout()
+
+        ## CLI Commands
+        - oods viz:scaffold --type=<type>
+        - oods data:validate
+
+    - path: docs/viz/network-flow-accessibility.md
+      description: |
+        Accessibility documentation:
+
+        # Accessibility Guide
+
+        ## Requirements
+        - WCAG 2.1 AA compliance
+        - Keyboard navigation
+        - Screen reader support
+        - Color contrast
+
+        ## Implementation
+        - Accessible fallback tables
+        - ARIA labels and roles
+        - Focus management
+        - Announcements for interactions
+
+        ## Testing
+        - Automated a11y testing
+        - Manual testing checklist
+        - Screen reader testing guide
+
+    - path: docs/viz/escape-hatch-pattern.md
+      description: |
+        Escape hatch documentation:
+
+        # Vega Escape Hatch Pattern
+
+        ## When to Use
+        - Vega-Lite limitations
+        - Current escape hatches (Sankey)
+
+        ## How It Works
+        - Transform pipeline
+        - Full Vega spec generation
+        - vega-embed integration
+
+        ## Adding New Escape Hatches
+        - Step-by-step guide
+        - Registry pattern
+        - Testing requirements
+
+    - path: docs/migration/v1-to-v2.md
+      description: |
+        Migration guide:
+
+        # Migrating from v1.x to v2.0
+
+        ## What's New
+        - Network & Flow visualizations
+        - New traits
+        - CLI enhancements
+
+        ## Breaking Changes
+        - Schema extensions
+        - Trait engine updates
+        - Resolver changes
+
+        ## Migration Steps
+        - Update dependencies
+        - Update imports
+        - Update configurations
+
+        ## Troubleshooting
+        - Common issues
+        - FAQ
+
+  testing:
+    - path: tests/integration/network-flow-full-pipeline.test.ts
+      description: |
+        Full pipeline integration tests:
+        - Data → Trait detection → Resolver → Transform → Adapter → Render
+        - All four viz types
+        - Both renderer paths
+        - Error handling paths
+
+    - path: tests/performance/network-benchmarks.test.ts
+      description: |
+        Performance benchmark suite:
+
+        | Viz Type | Node Count | Target | Metric |
+        |----------|------------|--------|--------|
+        | Treemap | 500 | <100ms | Transform time |
+        | Sunburst | 500 | <100ms | Transform time |
+        | Force Graph | 200 | <500ms | Transform time |
+        | Sankey | 50 | <200ms | Transform time |
+        | All types | - | <500ms | Render time |
+
+    - path: tests/a11y/network-accessibility.test.ts
+      description: |
+        Accessibility test suite:
+        - axe-core automated tests
+        - Keyboard navigation tests
+        - Focus management tests
+        - ARIA attribute tests
+        - Color contrast tests
+
+  audits:
+    - path: reports/network-flow-a11y-audit.md
+      description: |
+        Accessibility audit report:
+        - WCAG 2.1 AA checklist
+        - Issues found and resolved
+        - Screen reader testing results
+        - Keyboard navigation verification
+
+    - path: reports/network-flow-performance-audit.md
+      description: |
+        Performance audit report:
+        - Benchmark results
+        - Memory usage analysis
+        - Render time breakdown
+        - Recommendations for large datasets
+
+  storybook:
+    - path: stories/viz/NetworkFlowOverview.mdx
+      description: |
+        Storybook documentation pages:
+        - Module overview
+        - Getting started
+        - Best practices
+        - Code examples
+
+  release:
+    - path: CHANGELOG.md
+      description: |
+        Update CHANGELOG with v2.0 release notes:
+
+        ## [2.0.0] - YYYY-MM-DD
+
+        ### Added
+        - Network & Flow Visualization Module
+          - Treemap component for hierarchical data
+          - Sunburst component for radial hierarchies
+          - ForceGraph component for network topology
+          - Sankey component for flow diagrams
+        - New traits: Hierarchical, NetworkTopology, FlowConservation
+        - Server-side D3 transforms for Vega-Lite path
+        - Full Vega escape hatch for Sankey
+        - CLI scaffolding for network visualizations
+        - Data validation CLI command
+        - Dashboard cross-filter support for network selections
+
+        ### Changed
+        - Resolver service extended for network viz types
+        - Renderer selector includes network heuristics
+        - Trait engine supports new network traits
+
+        ### Fixed
+        - (any bug fixes from Sprint 33-34)
+
+        ### Performance
+        - Transform benchmarks within targets
+        - Render performance optimized for 500+ nodes
+
+technicalApproach:
+  - Write all documentation (API, guides, migration)
+  - Complete test coverage for all new code
+  - Run accessibility audit and fix issues
+  - Run performance benchmarks and optimize if needed
+  - Update CHANGELOG with comprehensive release notes
+  - Create GitHub release with v2.0 tag
+  - Update package.json version
+  - Publish to npm (if applicable)
+  - Update Storybook documentation
+
+qualityGates:
+  during_development:
+    - Documentation written and reviewed
+    - All tests passing
+    - No console errors
+
+  before_completion:
+    - pnpm test passes (all tests)
+    - pnpm a11y:audit passes
+    - pnpm benchmark passes (all targets met)
+    - Documentation reviewed by team
+    - No P0/P1 bugs open
+    - CHANGELOG complete
+    - Version bumped to 2.0.0
+
+estimatedEffort: "1-2 sessions (75-100k tokens)"
+
+notes: |
+  📋 FULL MISSION DETAILS: This YAML file contains complete implementation guidance.
+
+  Release checklist:
+  1. [ ] All documentation written
+  2. [ ] Documentation reviewed
+  3. [ ] Test coverage >90%
+  4. [ ] a11y audit passes
+  5. [ ] Performance benchmarks pass
+  6. [ ] No P0/P1 bugs
+  7. [ ] CHANGELOG updated
+  8. [ ] Version bumped
+  9. [ ] Git tag created
+  10. [ ] Release notes published
+  11. [ ] npm published (if applicable)
+
+  Post-release:
+  - Monitor telemetry for issues
+  - Address any reported bugs
+  - Plan v2.1 improvements
+
+  Coverage validation:
+  - Re-run validation against RV.01 corpus
+  - Verify coverage improvement (87.4% → 95%+)
+  - Document actual coverage achieved
+
+  Success metrics:
+  | Metric | v1.x | v2.0 Target | Actual |
+  |--------|------|-------------|--------|
+  | Coverage | 87.4% | 95%+ | TBD |
+  | Viz Types | 6 | 13 | 13 |
+  | Test Coverage | - | >90% | TBD |
+  | A11y | - | WCAG 2.1 AA | TBD |
+
+  Celebration! 🎉
+  This completes a major milestone for OODS visualization capabilities.

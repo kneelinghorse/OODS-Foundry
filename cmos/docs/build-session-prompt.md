@@ -45,13 +45,13 @@ We'll run missions in a loop. For each mission:
 
 If blocked: Call `block(mission_id, summary, reason, needs=[...])`. Do not promote next mission.
 
-Loop until all missions complete or you need to pause.
 ```
 
 ---
 
 ## Minimal Loop Prompt (For Experienced Users)
 
+B22.1 If you are unsure or have questions, please pause and clarify
 ```
 CMOS build loop from project root:
 

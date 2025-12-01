@@ -1,0 +1,525 @@
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: R28.1
+sprintId: Sprint 28
+missionType: Research
+name: "Separation of Duty (SoD) Constraint Patterns for RBAC"
+
+# ============================================================================
+# OBJECTIVE
+# ============================================================================
+objective: |
+  Conduct focused research on Separation of Duty (SoD) constraint patterns
+  to inform B28.4's policy builder implementation. This research will identify
+  canonical SoD patterns, implementation strategies, and provide concrete
+  examples for the OODS Authorization Extension Pack.
+
+  Timeboxed to 60-90 minutes with immediate application to B28.4.
+
+# ============================================================================
+# CONTEXT & BACKGROUND
+# ============================================================================
+context:
+  background: |
+    R21.2 established the foundational RBAC model (5 tables) but didn't deeply
+    explore Separation of Duty (SoD) constraints—a critical governance feature
+    for enterprise authorization systems.
+
+    SoD prevents fraud and errors by ensuring no single user has conflicting
+    permissions (e.g., the person who requests payment cannot also approve it).
+
+    This research spike will provide the implementation blueprint for B28.4.
+
+  prerequisites:
+    - "R21.2 research complete (canonical RBAC model understood)"
+    - "B28.1 complete (schema foundation in place)"
+    - "Understanding of role-permission model"
+
+  scope:
+    inScope:
+      - "Static SoD: Mutually exclusive role constraints"
+      - "Dynamic SoD: Approval workflow patterns (requester ≠ approver)"
+      - "Quorum-based SoD: N-of-M approval requirements"
+      - "Database schema patterns for storing SoD policies"
+      - "Enforcement points: DB triggers vs application layer"
+
+    outOfScope:
+      - "Chinese Wall policies (too complex for v1.0)"
+      - "Temporal constraints (time-based SoD)"
+      - "ABAC integration (deferred to v2.0)"
+
+  timeboxConstraints:
+    maxDuration: "90 minutes"
+    deliveryFormat: "Markdown report + JSON schema examples"
+    applicationTarget: "B28.4 (Policy Builder & Validator)"
+
+# ============================================================================
+# RESEARCH QUESTIONS
+# ============================================================================
+researchQuestions:
+  primary:
+    - question: "What are the canonical SoD constraint types?"
+      focus: "Static vs Dynamic SoD, industry-standard taxonomy"
+      sources:
+        - "Academic papers (NIST RBAC standards)"
+        - "Enterprise IAM documentation (AWS IAM, Azure RBAC)"
+        - "Open-source RBAC libraries (Casbin, Oso, Permit.io)"
+
+    - question: "How are SoD policies typically stored in relational databases?"
+      focus: "Schema patterns, constraint enforcement mechanisms"
+      sources:
+        - "PostgreSQL documentation (triggers, constraints)"
+        - "Multi-tenant SaaS RBAC patterns"
+        - "Audit-compliant policy storage"
+
+    - question: "What are the enforcement strategies for SoD?"
+      focus: "DB triggers vs application logic, performance trade-offs"
+      sources:
+        - "Database constraint patterns"
+        - "Application-layer policy engines"
+
+  secondary:
+    - question: "What are common SoD violation scenarios?"
+      focus: "Real-world examples to inform test cases"
+      examples:
+        - "Financial: Requester cannot approve their own expense"
+        - "HR: Employee cannot approve their own leave request"
+        - "Security: User cannot both create and approve access grants"
+
+    - question: "How do SoD policies interact with role hierarchies?"
+      focus: "Inheritance considerations, conflict resolution"
+      scenario: "If Admin inherits Editor, and Editor conflicts with Viewer, does Admin conflict with Viewer?"
+
+# ============================================================================
+# EXPECTED DELIVERABLES
+# ============================================================================
+deliverables:
+  report:
+    file: "cmos/research/R28.1_Separation-of-Duty-Constraint-Patterns.md"
+    sections:
+      - section: "Executive Summary"
+        content: "1-2 paragraph summary of findings and recommendations"
+
+      - section: "Part 1: SoD Taxonomy & Patterns"
+        subsections:
+          - "1.1 Static SoD (Mutually Exclusive Roles)"
+          - "1.2 Dynamic SoD (Instance-Level Constraints)"
+          - "1.3 Quorum-Based SoD (N-of-M Approvals)"
+          - "1.4 Role Hierarchy Interactions"
+
+      - section: "Part 2: Database Schema Patterns"
+        subsections:
+          - "2.1 SoD Policy Storage (Recommended Table Structure)"
+          - "2.2 Constraint Types (role-role, role-permission, user-action)"
+          - "2.3 Enforcement Mechanisms (Triggers vs Application Layer)"
+
+      - section: "Part 3: Implementation Guidance for B28.4"
+        subsections:
+          - "3.1 Recommended v1.0 Scope (What to implement now)"
+          - "3.2 Policy Builder Requirements"
+          - "3.3 Validator/Checker Logic"
+          - "3.4 Test Case Examples"
+
+      - section: "Part 4: Canonical Examples"
+        examples:
+          - "Financial approval workflow"
+          - "Multi-signature operations"
+          - "Conflicting role detection"
+
+      - section: "Part 5: References & Citations"
+        content: "Annotated bibliography of sources consulted"
+
+  schemas:
+    file: "cmos/research/R28.1_sod-policy-schema.json"
+    description: "Example JSON schema for SoD policy storage"
+    structure: |
+      {
+        "policy_id": "uuid",
+        "type": "static_sod | dynamic_sod | quorum",
+        "name": "string (e.g., 'Expense Requester-Approver Conflict')",
+        "description": "string",
+        "constraint": {
+          "conflicting_roles": ["role_id_1", "role_id_2"], // for static
+          "operation_pairs": [
+            {"action": "create", "resource_type": "expense"},
+            {"action": "approve", "resource_type": "expense"}
+          ], // for dynamic
+          "quorum_settings": {
+            "required_approvers": 2,
+            "eligible_roles": ["approver", "manager"]
+          } // for quorum
+        },
+        "enforcement": "prevent | warn | audit",
+        "scope": "organization_id (optional, null = global)",
+        "active": true
+      }
+
+  artifacts:
+    - file: "cmos/research/R28.1_sod-sql-triggers.sql"
+      description: "Example PostgreSQL triggers for SoD enforcement"
+      content: "Sample trigger preventing conflicting role assignments"
+
+    - file: "cmos/research/R28.1_sod-test-cases.md"
+      description: "Canonical test cases for B28.4 validator"
+      content: "Positive/negative test scenarios with expected outcomes"
+
+# ============================================================================
+# RESEARCH METHODOLOGY
+# ============================================================================
+methodology:
+  phase1_literatureReview:
+    duration: "20-25 minutes"
+    activities:
+      - "Search for 'Separation of Duty RBAC' in academic databases"
+      - "Review NIST RBAC standard (NIST Special Publication 800-162)"
+      - "Survey enterprise IAM SoD features (AWS, Azure, GCP)"
+      - "Check open-source RBAC libraries (Casbin policies, Oso documentation)"
+
+    sources:
+      primary:
+        - url: "https://csrc.nist.gov/publications/detail/sp/800-162/final"
+          description: "NIST RBAC standard with SoD section"
+        - url: "https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html"
+          description: "AWS IAM policy patterns"
+        - url: "https://casbin.org/docs/rbac"
+          description: "Casbin RBAC with role inheritance and SoD"
+
+      secondary:
+        - "Academic papers: 'Separation of Duty in RBAC' (search Google Scholar)"
+        - "SOC2/ISO27001 compliance guides (SoD requirements)"
+        - "Financial systems documentation (SOX compliance patterns)"
+
+  phase2_patternSynthesis:
+    duration: "15-20 minutes"
+    activities:
+      - "Identify common SoD patterns across sources"
+      - "Map patterns to OODS use cases (multi-tenant SaaS)"
+      - "Draft taxonomy: Static/Dynamic/Quorum"
+      - "Document trade-offs (complexity vs coverage)"
+
+  phase3_schemaDesign:
+    duration: "15-20 minutes"
+    activities:
+      - "Draft sod_policies table structure"
+      - "Design JSON policy document format"
+      - "Create example policies for 3 scenarios"
+      - "Document enforcement points (trigger vs app layer)"
+
+  phase4_implementationGuidance:
+    duration: "10-15 minutes"
+    activities:
+      - "Define v1.0 scope (what to ship in B28.4)"
+      - "List policy builder requirements"
+      - "Outline validator logic (detect conflicts)"
+      - "Create 5-7 test case examples"
+
+  phase5_documentation:
+    duration: "10-15 minutes"
+    activities:
+      - "Write executive summary"
+      - "Organize findings into Part 1-5 structure"
+      - "Add citations and cross-references"
+      - "Export JSON schemas and SQL examples"
+
+# ============================================================================
+# SUCCESS CRITERIA
+# ============================================================================
+successCriteria:
+  completeness:
+    - criterion: "SoD taxonomy clearly defined"
+      validation: "Static, Dynamic, Quorum patterns explained with examples"
+
+    - criterion: "Database schema pattern provided"
+      validation: "sod_policies table structure with field descriptions"
+
+    - criterion: "Implementation guidance specific to B28.4"
+      validation: "Clear scope definition, builder requirements, validator logic"
+
+  quality:
+    - criterion: "All patterns cite authoritative sources"
+      validation: "NIST, AWS, Casbin, or academic papers cited"
+
+    - criterion: "Examples are concrete and testable"
+      validation: "3+ real-world scenarios with expected outcomes"
+
+    - criterion: "Trade-offs documented"
+      validation: "Enforcement strategy pros/cons explained"
+
+  usability:
+    - criterion: "Research can be directly applied to B28.4"
+      validation: "Agent can use this research to implement policy builder"
+
+    - criterion: "Test cases ready for B28.4 validator"
+      validation: "5-7 test scenarios with pass/fail criteria"
+
+  timeboxing:
+    - criterion: "Completed within 90 minutes"
+      validation: "Research spike doesn't delay sprint progress"
+
+# ============================================================================
+# KEY PATTERNS TO INVESTIGATE
+# ============================================================================
+patternsToInvestigate:
+  staticSoD:
+    pattern: "Mutually Exclusive Roles"
+    description: |
+      A user cannot be assigned two conflicting roles simultaneously.
+      Example: "Accountant" and "Auditor" are mutually exclusive.
+
+    databasePattern: |
+      CREATE TABLE authz.sod_role_conflicts (
+        id uuid PRIMARY KEY,
+        role_a_id uuid REFERENCES authz.roles(id),
+        role_b_id uuid REFERENCES authz.roles(id),
+        reason text,
+        UNIQUE(role_a_id, role_b_id)
+      );
+
+      -- Trigger: Prevent user from being assigned both conflicting roles
+      -- Enforcement: DB trigger on authz.memberships INSERT
+
+    exampleConstraints:
+      - "Admin + Auditor (separation of power)"
+      - "Requester + Approver (financial controls)"
+      - "Developer + Production-Admin (security isolation)"
+
+  dynamicSoD:
+    pattern: "Instance-Level Separation"
+    description: |
+      A user cannot perform conflicting actions on the SAME resource instance.
+      Example: User A creates Expense #123; User A cannot approve Expense #123.
+
+    databasePattern: |
+      -- Store action history at resource level
+      CREATE TABLE authz.action_log (
+        id uuid PRIMARY KEY,
+        user_id uuid REFERENCES core.users(id),
+        action text,  -- 'create', 'approve', 'reject'
+        resource_type text,  -- 'expense', 'purchase_order'
+        resource_id uuid,  -- The specific instance
+        performed_at timestamptz DEFAULT now()
+      );
+
+      -- Enforcement: Application layer checks action_log before allowing approval
+
+    exampleConstraints:
+      - "Expense creator ≠ expense approver (same expense)"
+      - "PR author ≠ PR merger (same pull request)"
+      - "Document owner ≠ document reviewer (same document)"
+
+  quorumSoD:
+    pattern: "N-of-M Approval Requirement"
+    description: |
+      Certain actions require multiple independent approvals.
+      Example: Wire transfer >$10k requires 2 of 3 managers to approve.
+
+    databasePattern: |
+      CREATE TABLE authz.approval_policies (
+        id uuid PRIMARY KEY,
+        resource_type text,
+        condition jsonb,  -- e.g., {"amount": {">": 10000}}
+        required_approvers int,
+        eligible_roles uuid[],  -- Array of role IDs
+        organization_id uuid REFERENCES core.organizations(id)
+      );
+
+      CREATE TABLE authz.approval_history (
+        id uuid PRIMARY KEY,
+        resource_id uuid,
+        user_id uuid REFERENCES core.users(id),
+        approved_at timestamptz,
+        policy_id uuid REFERENCES authz.approval_policies(id)
+      );
+
+      -- Enforcement: Application checks approval count before finalizing action
+
+    exampleConstraints:
+      - "Wire transfer >$10k: 2 of 3 manager approvals"
+      - "Production deployment: 2 senior engineers"
+      - "Account deletion: 2 of 4 admin approvals"
+
+# ============================================================================
+# ENFORCEMENT STRATEGY ANALYSIS
+# ============================================================================
+enforcementStrategies:
+  databaseTriggers:
+    approach: "PostgreSQL triggers on authz.memberships or action tables"
+    pros:
+      - "Guaranteed enforcement (cannot bypass)"
+      - "Data integrity at DB level"
+      - "Consistent across all applications"
+    cons:
+      - "Complex trigger logic for dynamic SoD"
+      - "Performance overhead on writes"
+      - "Harder to unit test (requires DB)"
+
+    recommendedFor:
+      - "Static SoD (mutually exclusive roles)"
+      - "Critical constraints (financial controls)"
+
+    example: |
+      CREATE OR REPLACE FUNCTION prevent_conflicting_roles()
+      RETURNS TRIGGER AS $$
+      BEGIN
+        IF EXISTS (
+          SELECT 1 FROM authz.memberships m
+          JOIN authz.sod_role_conflicts c ON (
+            (c.role_a_id = NEW.role_id AND c.role_b_id = m.role_id) OR
+            (c.role_b_id = NEW.role_id AND c.role_a_id = m.role_id)
+          )
+          WHERE m.user_id = NEW.user_id
+            AND m.organization_id = NEW.organization_id
+        ) THEN
+          RAISE EXCEPTION 'SoD violation: User already has conflicting role';
+        END IF;
+        RETURN NEW;
+      END;
+      $$ LANGUAGE plpgsql;
+
+  applicationLayer:
+    approach: "Policy engine in application code (before DB write)"
+    pros:
+      - "Flexible logic (easy to extend)"
+      - "Better error messages to users"
+      - "Easier to unit test"
+      - "Can implement 'warn' vs 'block' modes"
+    cons:
+      - "Can be bypassed if not called consistently"
+      - "Requires discipline across all API endpoints"
+
+    recommendedFor:
+      - "Dynamic SoD (instance-level checks)"
+      - "Quorum-based approvals"
+      - "Complex conditional logic"
+
+    example: |
+      // TypeScript application layer
+      async function assignRole(userId, orgId, roleId) {
+        const conflicts = await checkRoleConflicts(userId, orgId, roleId);
+        if (conflicts.length > 0) {
+          throw new SoDViolationError(
+            `Cannot assign role: conflicts with ${conflicts.join(', ')}`
+          );
+        }
+        await db.memberships.insert({ userId, orgId, roleId });
+      }
+
+  hybridApproach:
+    recommendation: |
+      Use BOTH for defense in depth:
+      - DB triggers for Static SoD (critical controls)
+      - Application layer for Dynamic SoD & Quorum (complex logic)
+
+      This provides:
+      - Guaranteed enforcement for core rules (DB)
+      - Flexibility for business logic (app)
+      - Better user experience (app layer gives better errors)
+
+# ============================================================================
+# V1.0 SCOPE RECOMMENDATION
+# ============================================================================
+v1Recommendation:
+  implement:
+    - pattern: "Static SoD (Mutually Exclusive Roles)"
+      justification: "Most common, well-understood, DB-enforceable"
+      deliverables:
+        - "authz.sod_role_conflicts table"
+        - "DB trigger on authz.memberships"
+        - "Policy builder UI for creating conflicts"
+        - "Validator function for checking violations"
+
+    - pattern: "Basic Dynamic SoD Detection"
+      justification: "Common compliance requirement, app-layer only"
+      deliverables:
+        - "authz.action_log table (foundation)"
+        - "Application-layer check function"
+        - "No enforcement, audit mode only for v1.0"
+
+      scope: "Detect (log + warn), don't prevent (too complex for v1.0)"
+
+  defer:
+    - pattern: "Quorum-Based SoD"
+      justification: "Complex approval workflow, needs workflow engine"
+      version: "v2.0 (Sprint 29 Communication pack may include workflow)"
+
+    - pattern: "Temporal SoD Constraints"
+      justification: "Time-based restrictions rare, added complexity"
+      version: "v3.0 if customer demand"
+
+    - pattern: "Hierarchical SoD Propagation"
+      justification: "How conflicts inherit through role hierarchy - complex edge cases"
+      version: "v2.0 after core hierarchy stabilizes"
+
+# ============================================================================
+# TEST CASE EXAMPLES (for B28.4)
+# ============================================================================
+testCases:
+  staticSoD:
+    - name: "Prevent assigning conflicting roles"
+      scenario: "User has 'Accountant' role in Org A, attempt to assign 'Auditor' role"
+      expectedResult: "FAIL with SoDViolationError"
+      policy: "Accountant + Auditor conflict defined in sod_role_conflicts"
+
+    - name: "Allow non-conflicting roles"
+      scenario: "User has 'Editor' role in Org A, assign 'Viewer' role"
+      expectedResult: "PASS (no conflict defined)"
+
+    - name: "Org isolation for SoD"
+      scenario: "User has 'Accountant' in Org A, assign 'Auditor' in Org B"
+      expectedResult: "PASS (conflicts are org-scoped)"
+
+  dynamicSoD:
+    - name: "Detect creator-approver conflict"
+      scenario: "User A creates Expense #123, User A attempts to approve it"
+      expectedResult: "WARN (log violation, allow in v1.0)"
+      policy: "creator ≠ approver for same resource instance"
+
+    - name: "Allow different users to approve"
+      scenario: "User A creates Expense #123, User B approves it"
+      expectedResult: "PASS"
+
+    - name: "Allow creator to approve different resource"
+      scenario: "User A creates Expense #123, User A approves Expense #456"
+      expectedResult: "PASS (different instances)"
+
+  hierarchyInteraction:
+    - name: "Conflict propagation through hierarchy"
+      scenario: |
+        Roles: Admin inherits Editor, Editor conflicts with Viewer
+        User has Admin role, attempt to assign Viewer
+      expectedResult: "FAIL (Admin transitively conflicts with Viewer)"
+      note: "Deferred to v2.0 - v1.0 checks direct roles only"
+
+# ============================================================================
+# HANDOFF TO B28.4
+# ============================================================================
+handoffToB284:
+  schemaOutputs:
+    - "authz.sod_role_conflicts table DDL"
+    - "authz.action_log table DDL (foundation for dynamic SoD)"
+    - "sod_policies JSON schema (if JSON storage chosen)"
+
+  codeOutputs:
+    - "Example trigger function: prevent_conflicting_roles()"
+    - "Example app function: checkRoleConflicts(userId, orgId, roleId)"
+    - "Example validator: detectDynamicSoDViolation(userId, action, resourceId)"
+
+  documentationOutputs:
+    - "SoD taxonomy (Static/Dynamic/Quorum)"
+    - "v1.0 scope: Static SoD enforcement, Dynamic SoD detection only"
+    - "Test cases for policy builder validator"
+
+  implementationGuidance:
+    - "Start with Static SoD (simplest, highest value)"
+    - "Build policy builder UI for sod_role_conflicts table"
+    - "Add validator that checks conflicts before role assignment"
+    - "Dynamic SoD: log only, no enforcement in v1.0"
+
+# ============================================================================
+# METADATA
+# ============================================================================
+metadata:
+  estimatedDuration: "60-90 minutes"
+  outputFormat: "Markdown report + JSON/SQL examples"
+  criticality: "Medium (B28.4 can proceed with basic SoD, this adds rigor)"
+  riskLevel: "Low (research only, no code changes)"

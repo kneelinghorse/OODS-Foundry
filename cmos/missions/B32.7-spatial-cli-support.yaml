@@ -1,0 +1,183 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B32.7
+name: Spatial CLI Support (viz:suggest + scaffold)
+sprint: Sprint 32
+status: Queued
+
+objective: >
+  Add spatial detection and scaffolding to the viz CLI tooling. Enable viz:suggest
+  to detect geo fields and recommend ChoroplethMap vs BubbleMap, and add viz:scaffold-spatial
+  to generate starter specs and component usage code.
+
+context:
+  background: |
+    The viz CLI already has suggest and scaffold patterns for core chart types.
+    This mission extends those patterns to support spatial visualizations,
+    completing the developer experience for the Spatial Module.
+
+  research_basis:
+    - "ARCHITECTURE.md Section 11: CLI scaffold usage"
+    - "Existing viz:suggest implementation in scripts/viz/suggest-chart.mjs"
+
+  architecture_reference: "cmos/foundational-docs/data-viz-part2/spatial-module/ARCHITECTURE.md"
+
+  dependencies:
+    - B32.1  # ChoroplethMap (defines component interface)
+    - B32.2  # BubbleMap (defines component interface)
+    - B32.6  # Dashboard integration (renderer selection heuristics)
+
+successCriteria:
+  - viz:suggest --type spatial detects geo fields in sample data
+  - viz:suggest recommends ChoroplethMap for region data, BubbleMap for point data
+  - viz:scaffold-spatial generates valid ChoroplethMap usage code
+  - viz:scaffold-spatial generates valid BubbleMap usage code
+  - Generated code includes a11y fields pre-populated
+  - Unit tests cover detection logic and scaffold outputs
+  - CLI documentation updated
+
+constraints:
+  - Follow existing viz:suggest patterns (scripts/viz/suggest-chart.mjs shim)
+  - Entrypoints in src/cli/, pattern logic in src/viz/patterns/
+  - Detection must be deterministic (same input → same output)
+  - Generated code must pass TypeScript strict mode
+
+deliverables:
+  cli_entrypoints:
+    - path: src/cli/viz-suggest.ts (update)
+      description: |
+        Extend existing viz:suggest with spatial detection:
+
+        ```bash
+        pnpm viz:suggest --type spatial --data ./my-geo-data.json
+        ```
+
+        Detection logic:
+        - Look for lat/lon/latitude/longitude fields → suggest BubbleMap
+        - Look for region identifiers (country, state, fips, iso) → suggest ChoroplethMap
+        - Look for geometry/geojson fields → suggest ChoroplethMap
+        - Output recommendation with confidence score
+
+    - path: src/cli/viz-scaffold-spatial.ts
+      description: |
+        New CLI entrypoint for spatial scaffolding:
+
+        ```bash
+        pnpm viz:scaffold-spatial --type choropleth --geo us-states --value sales
+        pnpm viz:scaffold-spatial --type bubble --lat latitude --lon longitude --size population
+        ```
+
+        Output:
+        - Complete component usage code
+        - Sample data structure
+        - A11y configuration (description, tableFallback, narrative)
+        - Common customization options as comments
+
+  pattern_logic:
+    - path: src/viz/patterns/spatial-detection.ts
+      description: |
+        Core detection logic for spatial data:
+
+        ```typescript
+        interface SpatialDetectionResult {
+          type: 'choropleth' | 'bubble' | 'unknown';
+          confidence: number;
+          detectedFields: {
+            geoFields?: string[];
+            latField?: string;
+            lonField?: string;
+            regionField?: string;
+          };
+          recommendations: string[];
+        }
+
+        function detectSpatialType(data: unknown[]): SpatialDetectionResult;
+        ```
+
+    - path: src/viz/patterns/spatial-scaffold.ts
+      description: |
+        Scaffold generation for spatial components:
+
+        ```typescript
+        interface SpatialScaffoldOptions {
+          type: 'choropleth' | 'bubble';
+          geoSource?: string;
+          valueField?: string;
+          latField?: string;
+          lonField?: string;
+          sizeField?: string;
+          colorField?: string;
+        }
+
+        function generateSpatialScaffold(options: SpatialScaffoldOptions): string;
+        ```
+
+  tests:
+    - path: tests/cli/spatial-detection.test.ts
+      description: |
+        Unit tests for spatial detection:
+        - Detects lat/lon fields correctly
+        - Detects region fields (state, country, fips)
+        - Returns 'unknown' for non-spatial data
+        - Confidence scores are reasonable
+        - Handles edge cases (mixed data, missing fields)
+
+    - path: tests/cli/spatial-scaffold.test.ts
+      description: |
+        Unit tests for scaffold generation:
+        - Choropleth scaffold is valid TypeScript
+        - Bubble scaffold is valid TypeScript
+        - A11y fields are populated
+        - Generated code includes imports
+
+  documentation:
+    - path: docs/cli/spatial-cli.md
+      description: |
+        CLI documentation for spatial commands:
+        - viz:suggest --type spatial usage
+        - viz:scaffold-spatial usage
+        - Examples with sample data
+        - Integration with existing viz CLI
+
+  scripts:
+    - path: scripts/viz/suggest-chart.mjs (update)
+      description: |
+        Update shim to call into src/viz/patterns/spatial-detection.ts
+        when --type spatial is specified.
+
+    - path: package.json (update)
+      description: |
+        Add script entry:
+        "viz:scaffold-spatial": "tsx src/cli/viz-scaffold-spatial.ts"
+
+technicalApproach:
+  - Review existing viz:suggest implementation in scripts/viz/suggest-chart.mjs
+  - Design detection heuristics based on field name patterns
+  - Implement spatial-detection.ts with comprehensive field pattern matching
+  - Implement spatial-scaffold.ts with template generation
+  - Wire CLI entrypoints to pattern logic
+  - Write unit tests for all detection and scaffold paths
+  - Update CLI documentation
+
+qualityGates:
+  during_development:
+    - Detection returns correct type for test fixtures
+    - Scaffold generates syntactically valid code
+
+  before_completion:
+    - pnpm test tests/cli/spatial-*.test.ts passes
+    - pnpm typecheck passes
+    - CLI commands work end-to-end with sample data
+
+estimatedEffort: "1 session (30-40k tokens)"
+
+notes: |
+  Field detection patterns (from ARCHITECTURE.md):
+  - Lat/lon: lat, latitude, lon, longitude, lng, y, x (when paired)
+  - Region: country, state, province, region, city, zip, postal, fips, iso, geo_id
+  - Geometry: geometry, geojson, geom, shape, boundary
+
+  Scaffold templates should reference real token values:
+  - Colors: var(--oods-viz-scale-sequential-*)
+  - Strokes: var(--oods-viz-map-region-stroke)

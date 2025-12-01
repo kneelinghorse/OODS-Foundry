@@ -1,0 +1,119 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B34.2
+name: Dashboard Integration & CLI Support
+sprint: Sprint 34
+status: Queued
+
+objective: >
+  Integrate Network & Flow visualizations into dashboard context with cross-filter
+  support, and extend CLI scaffolding for new visualization types.
+
+context:
+  background: |
+    For Network & Flow visualizations to be fully usable in OODS, they must:
+    1. Work within dashboard layouts
+    2. Participate in cross-filter interactions
+    3. Be scaffoldable via CLI
+    4. Support data validation
+
+    This mission connects the individual components to the broader OODS ecosystem.
+
+  dependencies:
+    - B33.6  # Traits (for cross-filter network selections)
+    - B34.1  # Components (all four viz types)
+
+successCriteria:
+  - All four viz types work in dashboard layouts
+  - Cross-filter selections propagate correctly
+  - CLI scaffolds working network visualizations
+  - Data validation CLI works
+  - E2E tests pass
+
+constraints:
+  - Must not break existing dashboard functionality
+  - Must follow existing CLI patterns
+  - Must maintain cross-filter performance
+
+deliverables:
+  dashboard_integration:
+    - path: src/dashboard/widgets/network-widgets.ts
+      description: |
+        Dashboard widget definitions for network viz:
+
+        ```typescript
+        import { WidgetDefinition, WidgetCategory } from '../types';
+
+        export const networkWidgets: WidgetDefinition[] = [
+          {
+            type: 'treemap',
+            name: 'Treemap',
+            category: WidgetCategory.HIERARCHY,
+            component: 'Treemap',
+            defaultSize: { width: 4, height: 3 },
+            minSize: { width: 2, height: 2 },
+            configSchema: treemapConfigSchema,
+            dataRequirements: {
+              traits: ['hierarchical'],
+              minRows: 2
+            },
+            rendererNote: 'Requires ECharts (v1.0)'
+          },
+          // ... sunburst, force-graph, sankey
+        ];
+
+        registerWidgets(networkWidgets);
+        ```
+
+    - path: src/dashboard/cross-filter/network-handlers.ts
+      description: Cross-filter handlers for hierarchy, network, and flow selections
+
+  cli:
+    - path: src/cli/commands/viz-scaffold-network.ts
+      description: |
+        CLI commands for scaffolding network visualizations:
+        - viz:scaffold --type treemap|sunburst|force-graph|sankey
+        - data:validate <path> --type <viz-type>
+
+    - path: src/cli/templates/network-viz/
+      description: |
+        Scaffold templates and sample data:
+        - treemap.template.tsx
+        - sunburst.template.tsx
+        - force-graph.template.tsx
+        - sankey.template.tsx
+        - sample-data/
+
+  tests:
+    - path: tests/dashboard/network-widgets.test.ts
+    - path: tests/dashboard/network-cross-filter.test.ts
+    - path: tests/cli/viz-scaffold-network.test.ts
+    - path: tests/e2e/network-dashboard.test.ts
+
+technicalApproach:
+  - Register network widgets in dashboard system
+  - Implement cross-filter handlers for each viz type
+  - Extend CLI with scaffold commands
+  - Add data validation CLI command
+  - Write comprehensive tests
+  - Create example dashboards
+
+qualityGates:
+  before_completion:
+    - pnpm test tests/dashboard/network*.test.ts passes
+    - pnpm test tests/cli/viz-scaffold*.test.ts passes
+    - E2E tests pass
+    - Coverage >90%
+
+estimatedEffort: "1 session (60-70k tokens)"
+
+notes: |
+  Dashboard integration is straightforward since all components use ECharts.
+
+  Cross-filter complexity:
+  - Hierarchical: Filter by path prefix
+  - Network: Multiple selection modes (node, edge, adjacency)
+  - Flow: Connected flow paths
+
+  CLI commands scaffold working ECharts-based components.

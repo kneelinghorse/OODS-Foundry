@@ -1,0 +1,218 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B31.3
+name: HasProjection & LayeredOverlay Traits
+sprint: Sprint 31
+status: Queued
+
+objective: >
+  Define map projection and layer composition capabilities by implementing the
+  HasProjection and LayeredOverlay traits for spatial visualizations.
+
+context:
+  background: |
+    HasProjection specifies the coordinate-to-screen mapping system (Mercator, Albers, etc.).
+    LayeredOverlay enables composition of multiple geographic layers on a single map base.
+    Together with Geocodable, these form the complete spatial trait set.
+
+  research_basis:
+    - "RDS.10: Complex Schema Extension Research Mission"
+    - "RV.03: Gap Analysis"
+
+  architecture_reference: "cmos/foundational-docs/data-viz-part2/spatial-module/ARCHITECTURE.md Section 3.1"
+
+  dependencies:
+    - B31.1  # Requires spatial schema types
+
+  blocks:
+    - B31.5
+
+successCriteria:
+  - Projection configs generate correctly for all supported projection types
+  - Layer composition metadata is accurate and deterministic
+  - All three spatial traits (Geocodable, HasProjection, LayeredOverlay) compose without conflicts
+  - Interaction definitions work correctly
+  - Tests pass with >90% coverage on new code
+  - Trait documentation complete
+
+constraints:
+  - Projection type names must match d3-geo projection names
+  - Layer z-ordering must be deterministic
+  - Must support common projection parameters (center, scale, rotate, clipExtent)
+  - Interaction definitions must be renderer-agnostic
+
+deliverables:
+  traits:
+    - path: src/traits/viz/spatial/HasProjection.trait.ts
+      description: |
+        TypeScript trait definition:
+
+        ```typescript
+        export const HasProjection = {
+          id: 'viz.spatial.HasProjection',
+          family: 'Layout',
+          description: 'Visualization uses a geographic projection to map coordinates to screen space',
+
+          parameters: {
+            projectionType: {
+              type: 'enum',
+              values: ['mercator', 'albersUsa', 'equalEarth', 'orthographic', 'conicEqualArea', 'naturalEarth1'],
+              default: 'mercator'
+            },
+            center: [number, number],  // [lon, lat]
+            scale: number,
+            rotate: [number, number, number],  // [lambda, phi, gamma]
+            clipExtent: [[number, number], [number, number]]  // [[x0, y0], [x1, y1]]
+          },
+
+          outputs: {
+            projectionConfig: object  // Renderer-specific config
+          }
+        };
+        ```
+
+    - path: src/traits/viz/spatial/HasProjection.trait.yaml
+      description: YAML version of trait
+
+    - path: src/traits/viz/spatial/LayeredOverlay.trait.ts
+      description: |
+        TypeScript trait definition:
+
+        ```typescript
+        export const LayeredOverlay = {
+          id: 'viz.spatial.LayeredOverlay',
+          family: 'Layout',
+          description: 'Supports stacking multiple visualization layers on a single map base',
+
+          parameters: {
+            basemap: {
+              type: 'enum',
+              values: ['none', 'tile', 'boundaries'],
+              default: 'boundaries'
+            },
+            layers: {
+              type: 'array',
+              items: {
+                type: 'regionFill' | 'symbol' | 'route' | 'heatmap' | 'contour',
+                zIndex: number,
+                opacity: number
+              }
+            }
+          },
+
+          interactions: {
+            panZoom: boolean,
+            layerToggle: boolean,
+            featureSelect: boolean
+          }
+        };
+        ```
+
+    - path: src/traits/viz/spatial/LayeredOverlay.trait.yaml
+      description: YAML version of trait
+
+  utilities:
+    - path: src/traits/viz/spatial/projection-config-generator.ts
+      description: |
+        Utility that generates renderer-specific projection config:
+        - generateProjectionConfig(params, renderer): RendererProjectionConfig
+        - Handles differences between Vega-Lite and ECharts projection APIs
+        - Validates projection parameters
+
+    - path: src/traits/viz/spatial/layer-compositor.ts
+      description: |
+        Utility that composes layers into ordered structure:
+        - composeLayers(layers): OrderedLayerConfig
+        - Sorts by zIndex
+        - Validates layer types
+        - Merges opacity settings
+
+  tests:
+    - path: tests/traits/spatial/has-projection.test.ts
+      description: |
+        HasProjection trait tests:
+        - All projection types generate valid config
+        - Center/scale/rotate parameters apply correctly
+        - clipExtent works
+        - Default values apply when not specified
+        - Invalid projection type throws clear error
+
+    - path: tests/traits/spatial/layered-overlay.test.ts
+      description: |
+        LayeredOverlay trait tests:
+        - Layer ordering is deterministic (sorted by zIndex)
+        - Opacity values apply correctly
+        - Basemap setting works
+        - Interaction flags work
+        - Invalid layer type throws clear error
+
+    - path: tests/traits/spatial/spatial-composition.test.ts
+      description: |
+        Composition tests:
+        - Geocodable + HasProjection compose
+        - Geocodable + HasProjection + LayeredOverlay compose
+        - No trait conflicts
+        - All outputs accessible from composed trait
+
+  documentation:
+    - path: docs/traits/has-projection.md
+      description: |
+        HasProjection documentation:
+        - Supported projection types with use cases
+        - Parameter explanations
+        - Examples for US maps, world maps, regional maps
+
+    - path: docs/traits/layered-overlay.md
+      description: |
+        LayeredOverlay documentation:
+        - Layer types and their purpose
+        - Z-ordering behavior
+        - Interaction options
+        - Examples of multi-layer maps
+
+technicalApproach:
+  - Review existing trait implementations for patterns
+  - Implement HasProjection with projection type enum
+  - Implement projection-config-generator for renderer abstraction
+  - Implement LayeredOverlay with layer composition logic
+  - Implement layer-compositor utility
+  - Write comprehensive tests for both traits
+  - Test composition of all three spatial traits together
+  - Document both traits with examples
+
+qualityGates:
+  during_development:
+    - Both traits register with trait engine
+    - No TypeScript errors in strict mode
+    - Projection config generates correctly
+
+  before_completion:
+    - pnpm test tests/traits/spatial/ passes (all spatial trait tests)
+    - All three traits compose without conflicts
+    - Documentation reviewed
+    - Coverage >90% on new code
+
+estimatedEffort: "1 session (50-60k tokens)"
+
+notes: |
+  📋 FULL MISSION DETAILS: This YAML file contains complete implementation guidance.
+
+  Projection type use cases (from ARCHITECTURE.md):
+  - mercator: Web standard, conformal, good for street-level
+  - albersUsa: US-centric with Alaska/Hawaii insets
+  - equalEarth: Equal-area, modern, good for thematic maps
+  - orthographic: Globe view, good for global perspective
+  - conicEqualArea: Regional maps, preserves area
+
+  Layer types align with rendering marks:
+  - regionFill: Choropleth fills (rect/geoshape marks)
+  - symbol: Points/bubbles (circle marks)
+  - route: Flow lines (line marks)
+  - heatmap: Density visualization (future)
+  - contour: Isolines (future)
+
+  Interaction definitions are renderer-agnostic:
+  - panZoom: Enable drag-to-pan and scroll-to-zoom
+  - layerToggle: Show/hide layer controls
+  - featureSelect: Click-to-select features

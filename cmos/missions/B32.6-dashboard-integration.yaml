@@ -1,0 +1,241 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B32.6
+name: Dashboard Integration & Renderer Selection
+sprint: Sprint 32
+status: Queued
+
+objective: >
+  Wire spatial visualizations into the existing viz pipeline including dashboard context
+  integration, cross-filter support, and renderer selection heuristics.
+
+context:
+  background: |
+    Spatial visualizations need to work within the broader OODS dashboard context.
+    This includes embedding maps in grid layouts, supporting cross-filtering between
+    maps and other widgets, and intelligent renderer selection based on data characteristics.
+
+  research_basis:
+    - "RDS.10: Renderer capability analysis"
+    - "ARCHITECTURE.md Section 7: View Contexts"
+    - "ARCHITECTURE.md Section 8: Performance Considerations"
+
+  architecture_reference: "cmos/foundational-docs/data-viz-part2/spatial-module/ARCHITECTURE.md Sections 7, 8"
+
+  dependencies:
+    - B32.1  # ChoroplethMap
+    - B32.2  # BubbleMap
+    - B32.4  # Vega-Lite adapter
+    - B32.5  # ECharts adapter
+
+successCriteria:
+  - Renderer selection picks appropriate renderer based on data characteristics
+  - Maps embed correctly in dashboard grid layouts
+  - Filter interactions work (click region → filter other widgets)
+  - Tooltip consistency across renderers
+  - Diagnostics track spatial usage
+  - Integration tests pass
+  - Tests pass with >90% coverage on new code
+
+constraints:
+  - Must integrate with existing renderer-selector.ts
+  - Must work with existing dashboard context system
+  - Filter actions must use existing action dispatch system
+  - Performance must remain acceptable with spatial added
+
+deliverables:
+  integration:
+    - path: src/viz/adapters/renderer-selector.ts (update)
+      description: |
+        Update renderer selector with spatial heuristics:
+
+        ```typescript
+        function selectSpatialRenderer(spec: NormalizedVizSpec): 'vega-lite' | 'echarts' {
+          // ECharts preferred for:
+          // - Large point counts (better WebGL support)
+          // - Real-time streaming updates
+          // - Complex animations
+
+          // Vega-Lite preferred for:
+          // - Static choropleths
+          // - Interaction-heavy exploratory views
+          // - Specification portability requirements
+
+          if (spec.data.length > 10000) return 'echarts';
+          if (spec.streaming?.enabled) return 'echarts';
+          if (spec.portability?.priority === 'high') return 'vega-lite';
+
+          return 'vega-lite';  // Default
+        }
+        ```
+
+    - path: src/viz/contexts/dashboard-spatial-context.ts
+      description: |
+        Dashboard context integration for spatial:
+        - Register spatial viz types with dashboard
+        - Define grid span defaults for map widgets
+        - Set up interaction bindings
+
+  cross_filter:
+    - path: src/viz/interactions/spatial-filter-actions.ts
+      description: |
+        Cross-filter action creators for spatial:
+
+        ```typescript
+        function createRegionFilterAction(
+          sourceWidgetId: string,
+          feature: GeoFeature,
+          datum: DataRecord
+        ): FilterAction;
+
+        function createPointFilterAction(
+          sourceWidgetId: string,
+          datum: DataRecord
+        ): FilterAction;
+        ```
+
+        Action types:
+        - FILTER_BY_REGION: Filter by geographic region (e.g., state)
+        - FILTER_BY_LOCATION: Filter by lat/lon proximity
+        - CLEAR_SPATIAL_FILTER: Remove spatial filter
+
+    - path: src/viz/interactions/spatial-filter-reducer.ts
+      description: |
+        Filter reducer for spatial actions:
+        - Handles FILTER_BY_REGION
+        - Handles FILTER_BY_LOCATION
+        - Handles CLEAR_SPATIAL_FILTER
+        - Supports multiple simultaneous spatial filters
+
+  tooltip:
+    - path: src/viz/tooltip/spatial-tooltip-config.ts
+      description: |
+        Consistent tooltip configuration for spatial:
+        - Default tooltip fields for choropleth
+        - Default tooltip fields for bubble
+        - Format functions for common data types
+        - Consistent styling across renderers
+
+  diagnostics:
+    - path: diagnostics.json (update)
+      description: |
+        Add spatial metrics to diagnostics:
+        ```json
+        {
+          "viz": {
+            "spatial": {
+              "choroplethCount": 0,
+              "bubbleMapCount": 0,
+              "rendererUsage": {
+                "echarts": 0,
+                "vegaLite": 0
+              },
+              "avgFeatureCount": 0,
+              "avgPointCount": 0
+            }
+          }
+        }
+        ```
+
+  tests:
+    - path: tests/viz/integration/spatial-dashboard.test.tsx
+      description: |
+        Dashboard integration tests:
+        - Spatial widget embeds in dashboard grid
+        - Widget respects grid span settings
+        - Multiple spatial widgets coexist
+        - Resize handling works
+
+    - path: tests/viz/integration/spatial-crossfilter.test.ts
+      description: |
+        Cross-filter tests:
+        - Region click creates filter action
+        - Filter action dispatches to store
+        - Other widgets receive filter
+        - Clear filter works
+        - Multiple filters combine correctly
+
+    - path: tests/viz/integration/renderer-selection-spatial.test.ts
+      description: |
+        Renderer selection tests:
+        - Small dataset → Vega-Lite
+        - Large dataset → ECharts
+        - Streaming → ECharts
+        - Portability priority → Vega-Lite
+        - Default is Vega-Lite
+
+  example:
+    - path: examples/dashboards/spatial-dashboard.tsx
+      description: |
+        Example dashboard demonstrating:
+        - Choropleth map (US sales by state)
+        - Linked data table
+        - Linked bar chart
+        - Cross-filtering between all widgets
+        - Renderer selection in action
+
+  documentation:
+    - path: docs/viz/spatial-dashboard-integration.md
+      description: |
+        Integration documentation:
+        - Embedding maps in dashboards
+        - Cross-filter setup
+        - Renderer selection logic
+        - Performance considerations
+        - Examples
+
+technicalApproach:
+  - Review existing renderer-selector.ts implementation
+  - Add spatial branch to selectRenderer function
+  - Implement spatial heuristics based on data size and features
+  - Review existing dashboard context system
+  - Register spatial viz types
+  - Implement filter action creators
+  - Implement filter reducer
+  - Create tooltip configuration
+  - Update diagnostics.json schema
+  - Write integration tests
+  - Build example dashboard
+  - Document integration patterns
+
+qualityGates:
+  during_development:
+    - Renderer selection returns correct renderer
+    - Maps render in dashboard grid
+    - Filter actions dispatch correctly
+
+  before_completion:
+    - pnpm test tests/viz/integration/spatial*.test.ts passes
+    - Example dashboard works end-to-end
+    - Diagnostics tracking works
+    - Documentation reviewed
+    - Coverage >90% on new code
+
+estimatedEffort: "1 session (55-65k tokens)"
+
+notes: |
+  📋 FULL MISSION DETAILS: This YAML file contains complete implementation guidance.
+
+  Renderer selection heuristics (from ARCHITECTURE.md Section 8.2):
+  - Point count > 10000: ECharts (better WebGL performance)
+  - Streaming enabled: ECharts (better update performance)
+  - Portability priority high: Vega-Lite (spec is more portable)
+  - Default: Vega-Lite (better for exploratory analysis)
+
+  Dashboard grid defaults:
+  - Choropleth: 2x2 grid span (large, needs space)
+  - Bubble map: 2x2 grid span
+  - Can be overridden by user
+
+  Cross-filter flow:
+  1. User clicks region on map
+  2. Map component creates filter action with region ID
+  3. Action dispatched to dashboard store
+  4. Other widgets receive filter via context
+  5. Other widgets re-render with filtered data
+
+  Tooltip consistency requirements:
+  - Same information shown regardless of renderer
+  - Same formatting for numbers, dates, etc.
+  - Same visual styling (via CSS tokens)

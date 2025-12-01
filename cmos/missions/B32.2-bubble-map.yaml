@@ -1,0 +1,248 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B32.2
+name: BubbleMap Component
+sprint: Sprint 32
+status: Queued
+
+objective: >
+  Build the point/symbol visualization component for discrete locations,
+  enabling size and color encoding of data values at geographic coordinates.
+
+context:
+  background: |
+    BubbleMap (also called Symbol Map or Proportional Symbol Map) shows discrete
+    locations with symbols whose size and/or color represent data values. Common
+    use cases include city populations, store locations, incident reports, and
+    facility capacities.
+
+  research_basis:
+    - "RDS.10: Complex Schema Extension Research Mission"
+    - "RV.03: Gap Analysis (Symbol maps for point data)"
+    - "RDV.4: Accessibility Equivalence Validation"
+
+  architecture_reference: "cmos/foundational-docs/data-viz-part2/spatial-module/ARCHITECTURE.md Section 4.2"
+
+  dependencies:
+    - B31.5  # Requires SpatialContainer
+    - B32.1  # Shares color scale utilities
+
+successCriteria:
+  - Points render at correct coordinates
+  - Size encoding works with configurable range
+  - Color encoding works (categorical and continuous)
+  - Optional clustering groups nearby points when enabled
+  - No a11y violations (axe passes)
+  - Stories show real-world examples
+  - Tests pass with >90% coverage on new code
+
+constraints:
+  - Must integrate with SpatialContainer context
+  - Must support both ECharts and Vega-Lite rendering paths
+  - Must be accessible (WCAG 2.1 AA)
+  - Clustering should be optional and configurable
+
+deliverables:
+  components:
+    - path: src/components/viz/spatial/BubbleMap.tsx
+      description: |
+        Bubble/symbol map visualization component:
+
+        ```typescript
+        interface BubbleMapProps {
+          spec: NormalizedVizSpec;
+          geoData?: GeoJSON.FeatureCollection;  // Optional basemap
+          data: DataRecord[];
+
+          // Position encoding
+          longitudeField: string;
+          latitudeField: string;
+
+          // Size encoding
+          sizeField?: string;
+          sizeRange?: [number, number];  // [minRadius, maxRadius] in pixels
+          sizeScale?: 'linear' | 'sqrt' | 'log';  // sqrt is common for area perception
+
+          // Color encoding
+          colorField?: string;
+          colorType?: 'categorical' | 'continuous';
+          colorRange?: string[];
+
+          // Projection (can override container)
+          projection?: ProjectionType;
+
+          // Clustering
+          cluster?: {
+            enabled: boolean;
+            radius: number;      // Cluster radius in pixels
+            minPoints: number;   // Minimum points to form cluster
+          };
+
+          // Interactions
+          onPointClick?: (datum: DataRecord) => void;
+          onPointHover?: (datum: DataRecord) => void;
+          onClusterClick?: (points: DataRecord[]) => void;
+
+          // Accessibility
+          a11y: SpatialA11yConfig;
+
+          // Renderer preference
+          preferredRenderer?: 'echarts' | 'vega-lite';
+        }
+        ```
+
+        Responsibilities:
+        - Project coordinates to screen positions
+        - Calculate size scale from data
+        - Calculate color scale from data
+        - Render points with size/color encoding
+        - Handle clustering when enabled
+        - Handle hover and click interactions
+        - Provide a11y fallback
+
+    - path: src/components/viz/spatial/BubbleMapPoint.tsx
+      description: |
+        Individual point component:
+        - Renders single point/symbol
+        - Handles hover/focus state
+        - Fires interaction events
+        - Manages ARIA attributes
+
+    - path: src/components/viz/spatial/BubbleMapCluster.tsx
+      description: |
+        Cluster component for grouped points:
+        - Renders cluster indicator
+        - Shows point count
+        - Expands on click/hover
+        - Accessible cluster summary
+
+  utilities:
+    - path: src/components/viz/spatial/utils/clustering-utils.ts
+      description: |
+        Point clustering utilities:
+        - clusterPoints(points, projection, radius): ClusterResult
+        - Uses grid-based clustering (simple, deterministic)
+        - Returns clusters and unclustered points
+        - Provides cluster metadata (count, bounds, centroid)
+
+    - path: src/components/viz/spatial/utils/size-scale-utils.ts
+      description: |
+        Size scale utilities:
+        - createLinearSizeScale(domain, range): SizeScale
+        - createSqrtSizeScale(domain, range): SizeScale
+        - createLogSizeScale(domain, range): SizeScale
+        - getSizeForValue(scale, value): number
+
+  tests:
+    - path: tests/components/viz/spatial/BubbleMap.test.tsx
+      description: |
+        Component tests:
+        - Renders points at correct coordinates
+        - Size encoding scales correctly
+        - Color encoding applies correctly (categorical)
+        - Color encoding applies correctly (continuous)
+        - Sqrt scale produces perceptually accurate sizes
+        - Hover changes point styling
+        - Click fires event with correct data
+        - Handles out-of-bounds coordinates
+        - Handles null/undefined size values
+
+    - path: tests/components/viz/spatial/BubbleMapClustering.test.tsx
+      description: |
+        Clustering tests:
+        - Clusters form when points are within radius
+        - Cluster count is correct
+        - Unclustered points remain individual
+        - Cluster click returns all contained points
+        - Clustering is deterministic
+        - Performance with 1000+ points
+
+    - path: tests/components/viz/spatial/BubbleMap.a11y.test.tsx
+      description: |
+        A11y tests:
+        - No axe violations
+        - Points are keyboard focusable
+        - Focus ring is visible
+        - ARIA labels describe point data
+        - Clusters announce contained count
+
+  stories:
+    - path: src/components/viz/spatial/BubbleMap.stories.tsx
+      description: |
+        Storybook stories:
+        - CityPopulations: US cities sized by population
+        - StoreLocations: Retail locations with sales encoding
+        - IncidentMap: Security incidents with severity coloring
+        - Clustered: High-density data with clustering
+        - SizeOnly: Size encoding without color
+        - ColorOnly: Color encoding without size
+        - Interactive: With click and hover handlers
+        - Accessible: With table fallback enabled
+
+  documentation:
+    - path: docs/components/bubble-map.md
+      description: |
+        Component documentation:
+        - Props reference
+        - Size scale options (linear vs sqrt vs log)
+        - Color encoding options
+        - Clustering configuration
+        - Performance considerations
+        - Accessibility features
+        - Examples with code
+
+technicalApproach:
+  - Review SpatialContainer context API
+  - Implement size scale utilities (sqrt is default for area perception)
+  - Build BubbleMap component consuming context
+  - Implement coordinate projection using context projection
+  - Add clustering utility using grid-based algorithm
+  - Implement BubbleMapCluster component
+  - Add hover/click interaction handlers
+  - Implement keyboard navigation
+  - Write comprehensive tests
+  - Create Storybook stories with realistic data
+  - Document component usage
+
+qualityGates:
+  during_development:
+    - Points render at correct screen positions
+    - Size scaling looks perceptually correct
+    - Clustering groups nearby points
+
+  before_completion:
+    - pnpm test tests/components/viz/spatial/BubbleMap*.test.tsx passes
+    - pnpm a11y:diff passes
+    - Storybook stories render correctly
+    - Documentation reviewed
+    - Coverage >90% on new code
+
+estimatedEffort: "1 session (55-65k tokens)"
+
+notes: |
+  📋 FULL MISSION DETAILS: This YAML file contains complete implementation guidance.
+
+  Size scale guidance (from data viz best practices):
+  - Use sqrt scale by default (area scales with sqrt of value for perception)
+  - Linear scale for direct radius mapping (rare)
+  - Log scale for data with extreme ranges
+
+  Size range defaults:
+  - minRadius: 4px (minimum visible/clickable size)
+  - maxRadius: 40px (maximum before overlap issues)
+
+  Clustering algorithm:
+  - Grid-based clustering is simple and deterministic
+  - Divide viewport into grid cells of `radius` size
+  - Points in same cell cluster together
+  - Centroid is average of contained points
+
+  Sample data requirements:
+  - City populations: 100-500 points with lat/lon/population
+  - Store locations: 50-200 points with lat/lon/sales
+  - Include points at various densities for clustering tests
+
+  Performance threshold:
+  - Should handle 1000+ points without visible lag
+  - Clustering should activate automatically above threshold

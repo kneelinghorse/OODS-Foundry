@@ -1,0 +1,346 @@
+---
+mission: B29.7
+name: "Sprint 29 Close-out & Sprint 30 Preparation"
+sprint: "Sprint 29"
+type: "Closeout"
+status: "Queued"
+estimatedEffort: "2-3 hours"
+complexity: "Low"
+dependencies: ["B29.1", "B29.2", "B29.3", "B29.4", "B29.5", "B29.6"]
+tags: ["closeout", "retrospective", "documentation", "planning"]
+
+# ============================================================================
+# MISSION OVERVIEW
+# ============================================================================
+summary: |
+  Complete Sprint 29 close-out activities: retrospective documentation, changelog
+  authoring, diagnostics updates (communication trait + helpers), MASTER_CONTEXT
+  sync, SQLite snapshot, and Sprint 30 preparation document. Capture learnings,
+  validate deliverables, and set up next sprint foundation.
+
+objectives:
+  - Author Sprint 29 retrospective with learnings + metrics
+  - Create user-facing changelog (docs/changelog/sprint-29.md)
+  - Update diagnostics.json with Communication trait metadata + metrics
+  - Sync MASTER_CONTEXT with Sprint 29 decisions + constraints
+  - Capture SQLite context snapshot (source: "Sprint 29 Complete")
+  - Create Sprint 30 prep document with mission outline + research references
+
+# ============================================================================
+# DELIVERABLES
+# ============================================================================
+deliverables:
+  retrospective:
+    - file: "cmos/planning/sprint-29-retrospective.md"
+      description: "Sprint 29 retrospective document"
+      requirements:
+        - "Mission completion summary (7/7 missions with status)"
+        - "Key deliverables per mission (Communicable trait, database, runtime, UI, etc.)"
+        - "Metrics: test coverage, performance benchmarks (delivery scheduling, SLA)"
+        - "Learnings: integration patterns, throttling effectiveness, SLA monitoring"
+        - "Challenges: queue architecture complexity, multi-trait composition"
+        - "Ready for Sprint 30 section (Content Management or alternative)"
+
+  changelog:
+    - file: "docs/changelog/sprint-29.md"
+      description: "User-facing Sprint 29 changelog"
+      requirements:
+        - "Overview: Communication Extension Pack delivered"
+        - "User-facing changes: Communicable trait, CLI tools, UI kit"
+        - "New APIs & components: MessageTimeline, ChannelPlanEditor, hooks"
+        - "Migration guide: adding Communicable to objects, running migrations"
+        - "Breaking changes: None (additive changes only)"
+        - "Diagnostics & context updates summary"
+
+  diagnostics:
+    - file: "diagnostics.json (update)"
+      description: "Update diagnostics with Communication trait metadata"
+      requirements:
+        - "Section: traits.communicable (trait metadata, schemas, runtime surface)"
+        - "Section: database.communication (table counts, index stats)"
+        - "Section: helpers.communicationDelivery (queue throughput, permission check latency)"
+        - "Section: helpers.communicationSLA (p95 time-to-send, success rate, retry exhaustion)"
+        - "Section: artifacts.sprint29 (files created, migrations, CLI tools)"
+
+  masterContext:
+    - file: "cmos/context/MASTER_CONTEXT.json (update)"
+      description: "Sync MASTER_CONTEXT with Sprint 29 decisions"
+      requirements:
+        - "Add decision: Communication as Extension Pack (not core trait)"
+        - "Rationale: Multi-channel complexity + queue architecture justify isolation"
+        - "Add decision: Queue-based delivery (not synchronous HTTP)"
+        - "Rationale: Async delivery enables retries, throttling, quiet hours enforcement"
+        - "Add decision: Sliding window throttling (not fixed window)"
+        - "Rationale: More accurate rate limiting, avoids burst at window boundaries"
+        - "Add constraint: Delivery scheduling <10ms p99, permission checks <5ms p99"
+        - "Add next-session context: Sprint 30 Content Management prep (or alternative if adjusted)"
+
+  contextSnapshot:
+    - file: "cmos/db/cmos.sqlite (context_snapshots table)"
+      description: "Capture Sprint 29 completion snapshot"
+      requirements:
+        - "Source: 'Sprint 29 Complete'"
+        - "Context type: master_context"
+        - "Timestamp: Sprint 29 completion date"
+        - "Use: SQLiteClient.snapshot_context('master_context', source='Sprint 29 Complete')"
+
+  sprint30Prep:
+    - file: "cmos/planning/sprint-30-prep.md"
+      description: "Sprint 30 preparation document"
+      requirements:
+        - "Objectives: Content Management Extension Pack (Media, Comments) OR adjusted scope"
+        - "Research inputs: R20.2 (Media Management), R20.3 (Comment Systems)"
+        - "Integration points: Communicable (notifications), Authable (permissions), Classifiable (categorization)"
+        - "Draft mission outline: 7-8 missions covering media upload, CDN delivery, comment threads, moderation"
+        - "Quality checklist: coverage ≥90%, a11y compliance, performance targets"
+        - "Note: User requested discussion on Content Management before committing to Sprint 30"
+
+  tests:
+    - file: "tests/validation/sprint-29-validation.test.ts"
+      description: "Sprint 29 deliverable validation suite"
+      requirements:
+        - "Test: All 7 missions marked complete in database"
+        - "Test: All deliverables exist (traits, schemas, runtime, UI, CLI, docs)"
+        - "Test: Test coverage ≥90% across communication modules"
+        - "Test: Diagnostics.json has communication sections"
+        - "Test: MASTER_CONTEXT has Sprint 29 decisions"
+
+# ============================================================================
+# VALIDATION CHECKLIST
+# ============================================================================
+validationChecklist:
+  codeQuality:
+    - "pnpm typecheck (zero TypeScript errors)"
+    - "pnpm lint (zero ESLint warnings)"
+    - "pnpm test --run (all tests pass)"
+    - "pnpm test:coverage (≥90% across communication modules)"
+
+  buildPipeline:
+    - "pnpm build (TypeScript compilation succeeds)"
+    - "pnpm build-storybook (Storybook build succeeds)"
+    - "pnpm build:tokens (token transformation succeeds)"
+
+  accessibility:
+    - "pnpm a11y:check (zero axe violations in Communication UI)"
+    - "pnpm a11y:diff (no regressions from baseline)"
+
+  database:
+    - "pnpm tsx src/cli/communication-migrate.ts status (all migrations applied)"
+    - "./cmos/cli.py db show current (verify Sprint 29 missions complete)"
+    - "./cmos/cli.py validate health (database health check passes)"
+
+  documentation:
+    - "All docs/traits/communication-*.md files exist"
+    - "All docs/database/communication-*.md files exist"
+    - "All docs/components/communication-*.md files exist"
+    - "All docs/integration/communicable-*.md files exist"
+    - "Changelog (docs/changelog/sprint-29.md) reviewed and complete"
+
+# ============================================================================
+# SPRINT 29 METRICS (TO BE CAPTURED)
+# ============================================================================
+metricsToCapture:
+  deliverables:
+    - "Trait definitions: 1 (Communicable)"
+    - "Database migrations: 10 (schema + 9 tables)"
+    - "Runtime services: 5 (DeliveryService, ChannelResolver, RetryScheduler, etc.)"
+    - "React components: 4 (MessageTimeline, ChannelPlanEditor, DeliveryHealthWidget, ConversationThread)"
+    - "Hooks: 3 (useMessages, useConversations, useDeliveryStatus)"
+    - "CLI tools: 3 (export, audit, admin)"
+    - "Documentation files: 8+ (traits, database, components, integration)"
+
+  testCoverage:
+    - "Unit tests: src/traits/communication/ (≥90%)"
+    - "Integration tests: tests/integration/communicable-*.test.ts (≥90%)"
+    - "A11y tests: tests/components/communication/*.a11y.test.tsx (zero violations)"
+    - "Performance benchmarks: tests/performance/delivery-service-benchmarks.test.ts"
+
+  performanceTargets:
+    - "Delivery scheduling: <10ms p99 (target met: TBD)"
+    - "Permission checks: <5ms p99 (target met: TBD via Sprint 28 cache)"
+    - "Channel resolution: <5ms p99 (target met: TBD)"
+    - "Queue throughput: ≥1000 msg/s (target met: TBD)"
+
+  integrationPoints:
+    - "Authable: Permission-gated delivery (sender/recipient validation)"
+    - "Preferenceable: Notification matrix opt-in/opt-out"
+    - "Classifiable: Optional message categorization/tagging"
+
+# ============================================================================
+# LEARNINGS TO CAPTURE (PLACEHOLDERS)
+# ============================================================================
+learningsPlaceholders:
+  - "Queue-based architecture effectiveness (async delivery benefits)"
+  - "Multi-trait composition complexity (Authable + Preferenceable + Communicable)"
+  - "Throttling enforcement patterns (sliding window vs fixed window)"
+  - "SLA monitoring value (proactive vs reactive incident response)"
+  - "CLI tool adoption (export/audit usage patterns)"
+
+# ============================================================================
+# SPRINT 30 DISCUSSION POINTS
+# ============================================================================
+sprint30DiscussionPoints:
+  - "User requested discussion on Content Management scope before committing"
+  - "Options: Content Management (R20.2, R20.3) OR adjust roadmap"
+  - "Alternative tracks: Polish existing traits, advanced features, production readiness"
+  - "Decision needed: Continue extension pack pattern OR pivot to different focus"
+
+# ============================================================================
+# SUCCESS CRITERIA
+# ============================================================================
+successCriteria:
+  functional:
+    - "Retrospective authored with metrics + learnings"
+    - "Changelog published for user-facing changes"
+    - "Diagnostics.json updated with Communication sections"
+    - "MASTER_CONTEXT synced with Sprint 29 decisions"
+    - "Context snapshot captured in SQLite"
+    - "Sprint 30 prep document created (pending user discussion)"
+
+  quality:
+    - "All validation checklist items pass"
+    - "Sprint 29 validation suite passes"
+    - "Database health check passes"
+    - "Zero outstanding issues/blockers"
+
+  validation:
+    - command: "./cmos/cli.py db show backlog"
+      expectation: "Sprint 29 missions all marked Complete"
+
+    - command: "./cmos/cli.py validate health"
+      expectation: "Database health check passes"
+
+    - command: "pnpm test --run tests/validation/sprint-29-validation.test.ts"
+      expectation: "All Sprint 29 deliverables validated"
+
+# ============================================================================
+# COMMANDS TO RUN
+# ============================================================================
+commandsToRun:
+  diagnosticsUpdate: |
+    python3 << 'EOF'
+    import json
+    from pathlib import Path
+
+    # Load current diagnostics
+    diag_path = Path('diagnostics.json')
+    diagnostics = json.loads(diag_path.read_text())
+
+    # Add Communication trait section
+    diagnostics['traits']['communicable'] = {
+      'status': 'complete',
+      'schemas': ['Channel', 'Template', 'DeliveryPolicy', 'Message', 'Conversation', 'MessageStatus'],
+      'runtime': 'CommunicableTrait',
+      'integration': ['Authable', 'Preferenceable', 'Classifiable']
+    }
+
+    # Add Communication database section
+    diagnostics['database']['communication'] = {
+      'schema': 'communication',
+      'tables': 9,
+      'migrations': 10,
+      'indexes': 15
+    }
+
+    # Add helper metrics
+    diagnostics['helpers']['communicationDelivery'] = {
+      'queueThroughput': '1000+ msg/s',
+      'deliverySchedulingP99': '<10ms',
+      'permissionCheckP99': '<5ms'
+    }
+
+    diagnostics['helpers']['communicationSLA'] = {
+      'timeToSendP95': 'TBD',
+      'successRate': 'TBD',
+      'retryExhaustionRate': 'TBD'
+    }
+
+    # Write updated diagnostics
+    diag_path.write_text(json.dumps(diagnostics, indent=2))
+    print('✓ diagnostics.json updated')
+    EOF
+
+  masterContextUpdate: |
+    python3 << 'EOF'
+    from pathlib import Path
+    import sys
+    sys.path.insert(0, 'cmos')
+
+    from context.db_client import SQLiteClient
+
+    client = SQLiteClient('cmos/db/cmos.sqlite', create_missing=False)
+    master = client.get_context('master_context') or {}
+
+    # Add Sprint 29 decisions
+    master.setdefault('decisions_made', []).extend([
+      {
+        'decision': 'Communication as Extension Pack (not core trait)',
+        'rationale': 'Multi-channel complexity (email, SMS, push, in-app, webhook) + queue architecture justify extension pack isolation. Messaging table provides clean integration contract.',
+        'citation': 'R20.1 Part 1.3, R20.6 Part 1.2',
+        'date': '2025-11-20',
+        'impact': 'User/Organization can compose Communicable without bloating core traits'
+      },
+      {
+        'decision': 'Queue-based delivery (not synchronous HTTP)',
+        'rationale': 'Async delivery enables retries, throttling, quiet hours enforcement, and horizontal scaling via worker pools.',
+        'citation': 'R20.6 Part 4.1 (Async Queue Patterns)',
+        'date': '2025-11-20',
+        'impact': 'Delivery scheduling <10ms, supports high-volume messaging (1000+ msg/s)'
+      },
+      {
+        'decision': 'Sliding window throttling (not fixed window)',
+        'rationale': 'More accurate rate limiting, avoids burst at window boundaries (fixed window allows 2x burst at boundary).',
+        'citation': 'R20.1 Part 5.1 (Rate Limiting Strategies)',
+        'date': '2025-11-20',
+        'tradeoff': 'Slightly higher Redis memory usage (storing timestamps vs counter)'
+      }
+    ])
+
+    # Add Sprint 29 constraints
+    master.setdefault('constraints', []).extend([
+      'Delivery scheduling must be <10ms p99 (queue push latency)',
+      'Permission checks must be <5ms p99 (reuse Sprint 28 PermissionCache)',
+      'SLA metrics tracked: time-to-send p95, success rate, retry exhaustion rate'
+    ])
+
+    # Set next-session context
+    master['next_session_context'] = 'Sprint 30 Content Management prep (pending discussion on scope adjustment)'
+
+    # Save
+    client.set_context('master_context', master, source_path='context/MASTER_CONTEXT.json')
+    client.close()
+    print('✓ MASTER_CONTEXT updated')
+    EOF
+
+  contextSnapshot: |
+    python3 << 'EOF'
+    from pathlib import Path
+    import sys
+    sys.path.insert(0, 'cmos')
+
+    from context.db_client import SQLiteClient
+
+    client = SQLiteClient('cmos/db/cmos.sqlite', create_missing=False)
+
+    # Capture snapshot
+    snapshot_id = client.snapshot_context(
+      context_type='master_context',
+      source='Sprint 29 Complete'
+    )
+
+    print(f'✓ Context snapshot captured: {snapshot_id}')
+    client.close()
+    EOF
+
+# ============================================================================
+# NOTES
+# ============================================================================
+notes:
+  - "Sprint 29 completes Phase 3 Extension Packs: Authorization (S28) ✅, Communication (S29) ✅, Content (S30) 🔜"
+  - "Sprint 30 scope pending user discussion (Content Management vs alternative)"
+  - "Communication Extension Pack integrates with 3 prior traits (Authable, Preferenceable, Classifiable)"
+  - "Retrospective should capture queue architecture learnings (async delivery benefits)"
+  - "Diagnostics updates follow Sprint 28 pattern (trait metadata + helper metrics)"
+
+blockers: []
+risks: []

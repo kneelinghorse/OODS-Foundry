@@ -1,0 +1,104 @@
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B28.8
+sprintId: Sprint 28
+name: "Sprint 28 Close-out & Sprint 29 Preparation"
+
+objective: |
+  Complete Sprint 28 by authoring retrospective, updating diagnostics,
+  syncing contexts to SQLite, creating changelog, and preparing Sprint 29
+  Communication Extension Pack hooks.
+
+context:
+  background: |
+    B28.1-B28.7 delivered the Authorization Extension Pack. This mission
+    captures learnings, validates deliverables, and transitions to Sprint 29.
+
+  dependencies:
+    - "B28.1-B28.7 all complete"
+    - "All tests passing"
+    - "Storybook baselines approved"
+
+  constraints:
+    - "Follow Sprint 27 retrospective format"
+    - "Update MASTER_CONTEXT with strategic decisions"
+    - "Take context snapshot for Sprint 28 milestone"
+    - "Prepare Sprint 29 backlog entries"
+
+deliverables:
+  retrospective:
+    - file: "cmos/planning/sprint-28-retrospective.md"
+      requirements:
+        - "Mission completion summary (8/8 table)"
+        - "Deliverables: schemas, runtime, UI, tests, docs"
+        - "Metrics: test coverage, performance benchmarks"
+        - "Learnings: what worked, challenges, patterns"
+        - "Readiness signals for Sprint 29"
+        
+  changelog:
+    - file: "docs/changelog/sprint-28.md"
+      requirements:
+        - "User-facing changes"
+        - "New APIs and components"
+        - "Migration guide for projects adding Authable"
+        - "Breaking changes (if any)"
+
+  diagnostics:
+    - file: "diagnostics.json"
+      updates:
+        - "traits.authable: status, version, mission"
+        - "database.authz: tables, migrations, indexes"
+        - "helpers.authzSchemas: coverage, validation"
+        - "helpers.authzCache: hit rate, p95 metrics"
+        - "Sprint 28 mission completion markers"
+
+  contexts:
+    - file: "cmos/context/MASTER_CONTEXT.json"
+      updates:
+        - "decisions_made: Authorization as Extension Pack (not core trait)"
+        - "decisions_made: Static SoD enforcement, Dynamic SoD detection"
+        - "decisions_made: Adjacency List for role hierarchy (v1.0)"
+        - "constraints: Permission resolution <5ms p99"
+        - "next_session_context: Sprint 29 Communication Pack prep"
+        
+  planning:
+    - file: "cmos/planning/sprint-29-prep.md"
+      requirements:
+        - "Sprint 29 objectives (Communication Extension Pack)"
+        - "Integration points: Authable + Preferenceable for message permissions"
+        - "Research references: R20.1 (Notifications), R20.6 (Messaging)"
+
+  snapshot:
+    - command: "./cmos/cli.py context snapshot master --source 'Sprint 28 Complete'"
+      requirements:
+        - "Capture MASTER_CONTEXT snapshot"
+        - "Tag with Sprint 28 milestone"
+
+successCriteria:
+  documentation:
+    - criterion: "Retrospective captures all deliverables"
+      validation: "8/8 missions documented with metrics"
+    - criterion: "Changelog is user-facing and clear"
+      validation: "Migration guide helps existing projects"
+      
+  contexts:
+    - criterion: "MASTER_CONTEXT updated with strategic decisions"
+      validation: "3+ decisions captured from Sprint 28"
+    - criterion: "Context snapshot taken"
+      validation: "Snapshot exists in database"
+      
+  readiness:
+    - criterion: "Sprint 29 prep complete"
+      validation: "Sprint 29 backlog seeded, ready to start"
+
+qualityGates:
+  beforeCompletion:
+    - "Validate all B28.1-B28.7 missions marked complete in DB"
+    - "Run full test suite: pnpm test"
+    - "Run diagnostics validation: ./cmos/cli.py validate health"
+    - "Verify contexts synced to SQLite"
+
+metadata:
+  estimatedEffort: "2-3 hours"
+  complexity: "Low (administrative, documentation)"
+  riskLevel: "Low (no code changes)"

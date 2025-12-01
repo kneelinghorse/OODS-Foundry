@@ -1,0 +1,427 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B34.3
+name: Vega Escape Hatch (Sankey via Full Vega)
+sprint: Sprint 34
+status: Queued
+
+objective: >
+  Implement Full Vega adapter for Sankey diagrams, bypassing Vega-Lite entirely.
+  This is the escape hatch for visualization types that Vega-Lite cannot render.
+
+context:
+  background: |
+    Vega-Lite fundamentally cannot render Sankey diagrams because:
+    1. It lacks the SVG path mark type
+    2. It cannot bind computed SVG path strings to marks
+
+    The solution is a Full Vega escape hatch that generates complete Vega specs
+    (not Vega-Lite specs) using the path mark to render pre-computed SVG paths
+    from the server-side Sankey transform (B33.5).
+
+    This pattern also establishes the precedent for future escape hatches
+    when Vega-Lite proves insufficient.
+
+  research_basis:
+    - "RDS.11.3: D3-Sankey Research (SVG path output)"
+    - "RDS.11.4: Vega Transform Gap (Sankey impossible in VL)"
+    - "cmos/foundational-docs/data-viz-part2/network-flow-module/ARCHITECTURE.md Section 5.3"
+
+  dependencies:
+    - B33.1  # Schemas (SankeyLayoutOutput with svgPath field)
+    - B33.2  # Resolver (routes Sankey + Vega to escape hatch)
+    - B33.5  # Sankey transform (produces SVG path strings)
+
+successCriteria:
+  - Full Vega adapter produces valid Vega spec
+  - Sankey renders correctly via vega-embed
+  - Node rectangles positioned correctly
+  - Link paths render correctly (curved, correct width)
+  - Circular flows render (if present)
+  - Visual output matches ECharts Sankey
+  - OODS tokens applied correctly
+  - Tests pass with >90% coverage
+
+constraints:
+  - Must use Full Vega (not Vega-Lite)
+  - Must consume pre-computed SVG paths from transform
+  - Must render via vega-embed with spec.type override
+  - Must be clearly documented as escape hatch pattern
+  - Must handle both standard and circular Sankey
+
+deliverables:
+  adapters:
+    - path: src/viz/adapters/vega/sankey-adapter.ts
+      description: |
+        Full Vega Sankey adapter:
+
+        ```typescript
+        import type { Spec as VegaSpec } from 'vega';
+        import type { SankeyLayoutOutput } from '../../types';
+        import { applyVegaFullTokens } from '../utils/vega-full-token-utils';
+
+        /**
+         * ESCAPE HATCH: This adapter generates Full Vega specs (not Vega-Lite)
+         * because Vega-Lite cannot render Sankey diagrams.
+         *
+         * Use this pattern when Vega-Lite is fundamentally incapable of
+         * rendering a visualization type.
+         */
+        export function adaptSankeyToVega(
+          spec: NormalizedVizSpec,
+          transformOutput: SankeyLayoutOutput
+        ): VegaSpec {
+          const { nodes, links } = transformOutput;
+          const { width = 600, height = 400 } = spec.dimensions ?? {};
+
+          return {
+            $schema: 'https://vega.github.io/schema/vega/v5.json',
+            width,
+            height,
+            padding: 10,
+
+            data: [
+              {
+                name: 'nodes',
+                values: nodes
+              },
+              {
+                name: 'links',
+                values: links
+              }
+            ],
+
+            scales: [
+              {
+                name: 'color',
+                type: 'ordinal',
+                domain: { data: 'nodes', field: 'id' },
+                range: { scheme: spec.encoding?.color?.scheme ?? 'category20' }
+              }
+            ],
+
+            marks: [
+              // Link paths (rendered first, behind nodes)
+              {
+                type: 'path',
+                name: 'link-paths',
+                from: { data: 'links' },
+                encode: {
+                  enter: {
+                    path: { field: 'svgPath' },
+                    strokeWidth: { field: 'width' },
+                    stroke: generateLinkStroke(spec),
+                    strokeOpacity: { value: 0.5 },
+                    fill: { value: 'none' }
+                  },
+                  update: {
+                    strokeOpacity: { value: 0.5 }
+                  },
+                  hover: {
+                    strokeOpacity: { value: 0.8 }
+                  }
+                }
+              },
+              // Circular link indicators (if any)
+              {
+                type: 'path',
+                name: 'circular-links',
+                from: { data: 'links' },
+                transform: [
+                  { type: 'filter', expr: 'datum.circular === true' }
+                ],
+                encode: {
+                  enter: {
+                    path: { field: 'svgPath' },
+                    strokeWidth: { field: 'width' },
+                    stroke: { value: applyVegaFullTokens('viz.warning') },
+                    strokeOpacity: { value: 0.7 },
+                    strokeDash: { value: [4, 2] },
+                    fill: { value: 'none' }
+                  }
+                }
+              },
+              // Node rectangles
+              {
+                type: 'rect',
+                name: 'node-rects',
+                from: { data: 'nodes' },
+                encode: {
+                  enter: {
+                    x: { field: 'x0' },
+                    x2: { field: 'x1' },
+                    y: { field: 'y0' },
+                    y2: { field: 'y1' },
+                    fill: { scale: 'color', field: 'id' },
+                    stroke: { value: applyVegaFullTokens('viz.border.color') },
+                    strokeWidth: { value: 1 }
+                  },
+                  update: {
+                    fillOpacity: { value: 1 }
+                  },
+                  hover: {
+                    fillOpacity: { value: 0.8 }
+                  }
+                }
+              },
+              // Node labels
+              {
+                type: 'text',
+                name: 'node-labels',
+                from: { data: 'nodes' },
+                encode: {
+                  enter: {
+                    x: { signal: 'datum.x0 < width / 2 ? datum.x1 + 5 : datum.x0 - 5' },
+                    y: { signal: '(datum.y0 + datum.y1) / 2' },
+                    align: { signal: 'datum.x0 < width / 2 ? "left" : "right"' },
+                    baseline: { value: 'middle' },
+                    text: { field: 'id' },
+                    fontSize: { value: 11 },
+                    fill: { value: applyVegaFullTokens('viz.text.primary') }
+                  }
+                }
+              }
+            ],
+
+            // Tooltip signal
+            signals: [
+              {
+                name: 'tooltip',
+                value: {},
+                on: [
+                  { events: '@node-rects:mouseover', update: 'datum' },
+                  { events: '@node-rects:mouseout', update: '{}' },
+                  { events: '@link-paths:mouseover', update: 'datum' },
+                  { events: '@link-paths:mouseout', update: '{}' }
+                ]
+              }
+            ],
+
+            config: applyVegaFullConfig(spec)
+          };
+        }
+
+        function generateLinkStroke(spec: NormalizedVizSpec): any {
+          if (spec.encoding?.link?.color === 'gradient') {
+            // Gradient from source to target color
+            return {
+              gradient: 'linear',
+              stops: [
+                { offset: 0, color: { scale: 'color', field: 'sourceId' } },
+                { offset: 1, color: { scale: 'color', field: 'targetId' } }
+              ]
+            };
+          }
+          // Default: source color
+          return { scale: 'color', field: 'sourceId' };
+        }
+        ```
+
+    - path: src/viz/adapters/vega/vega-full-utils.ts
+      description: |
+        Full Vega utility functions:
+
+        ```typescript
+        // Apply OODS tokens to Full Vega properties
+        function applyVegaFullTokens(tokenPath: string): string | number;
+
+        // Apply Vega config with OODS tokens
+        function applyVegaFullConfig(spec: NormalizedVizSpec): any;
+
+        // Generate tooltip specification for Full Vega
+        function generateVegaTooltip(spec: NormalizedVizSpec): any;
+
+        // Validate that transform output has required svgPath field
+        function validateSankeyTransformOutput(output: any): boolean;
+        ```
+
+    - path: src/viz/adapters/vega/escape-hatch-registry.ts
+      description: |
+        Registry of escape hatch adapters:
+
+        ```typescript
+        /**
+         * Escape Hatch Registry
+         *
+         * When Vega-Lite cannot render a visualization type, register
+         * a Full Vega escape hatch here.
+         *
+         * Current escape hatches:
+         * - sankey: Requires SVG path mark (VL has no path mark)
+         *
+         * Future candidates:
+         * - Custom glyph-based visualizations
+         * - Complex multi-layer annotations
+         * - Anything requiring custom marks
+         */
+
+        const escapeHatchRegistry = new Map<string, EscapeHatchAdapter>([
+          ['sankey', {
+            vizType: 'sankey',
+            adapter: adaptSankeyToVega,
+            reason: 'Vega-Lite lacks path mark for SVG path strings',
+            requiresTransform: true,
+            transformType: 'sankey'
+          }]
+        ]);
+
+        export function isEscapeHatchRequired(vizType: string, renderer: string): boolean {
+          if (renderer !== 'vega-lite') return false;
+          return escapeHatchRegistry.has(vizType);
+        }
+
+        export function getEscapeHatchAdapter(vizType: string): EscapeHatchAdapter | undefined {
+          return escapeHatchRegistry.get(vizType);
+        }
+        ```
+
+  integration:
+    - path: src/viz/renderers/vega-embed-wrapper.ts
+      description: |
+        Update vega-embed wrapper to handle Full Vega specs:
+
+        ```typescript
+        import embed from 'vega-embed';
+
+        export async function renderVegaSpec(
+          container: HTMLElement,
+          spec: VegaLiteSpec | VegaSpec,
+          options?: EmbedOptions
+        ): Promise<Result> {
+          // Detect if spec is Full Vega (not Vega-Lite)
+          const isFullVega = spec.$schema?.includes('/vega/');
+
+          return embed(container, spec, {
+            mode: isFullVega ? 'vega' : 'vega-lite',
+            ...options
+          });
+        }
+        ```
+
+  tests:
+    - path: tests/viz/adapters/vega/sankey-adapter.test.ts
+      description: |
+        Sankey Full Vega adapter tests:
+        - Produces valid Full Vega spec
+        - Path marks bind to svgPath field correctly
+        - Node rectangles positioned correctly
+        - Link widths correct
+        - Gradient link colors work
+        - Circular links styled differently
+        - Labels positioned correctly
+        - Tooltip signals work
+        - OODS tokens applied
+
+    - path: tests/viz/adapters/vega/escape-hatch-registry.test.ts
+      description: |
+        Registry tests:
+        - isEscapeHatchRequired returns true for sankey + vega-lite
+        - isEscapeHatchRequired returns false for sankey + echarts
+        - getEscapeHatchAdapter returns correct adapter
+
+    - path: tests/viz/adapters/vega/sankey-parity.test.ts
+      description: |
+        Parity tests with ECharts:
+        - Same data produces visually similar output
+        - Node positions match
+        - Flow widths proportional
+        - Color scales match
+
+    - path: tests/viz/adapters/vega/sankey-render.test.ts
+      description: |
+        Render integration tests:
+        - Spec renders via vega-embed
+        - vega-embed mode set to 'vega' (not 'vega-lite')
+        - No console errors
+        - SVG output generated
+
+  storybook:
+    - path: stories/viz/vega/Sankey.stories.tsx
+      description: |
+        Sankey Storybook story:
+        - Basic flow diagram
+        - Multi-level flow
+        - Circular flow example
+        - Gradient link colors
+        - Large flow (50+ nodes)
+
+  documentation:
+    - path: docs/viz/escape-hatch-pattern.md
+      description: |
+        Escape hatch documentation:
+        - When to use escape hatch
+        - How escape hatch works
+        - Current escape hatches (Sankey)
+        - How to add new escape hatches
+        - Limitations and considerations
+
+technicalApproach:
+  - Understand Full Vega spec format (different from Vega-Lite)
+  - Implement SankeyVegaAdapter consuming SankeyLayoutOutput
+  - Use path mark to bind svgPath field directly
+  - Implement gradient link coloring
+  - Handle circular flow styling
+  - Create escape hatch registry
+  - Update vega-embed wrapper for mode detection
+  - Write comprehensive tests
+  - Create Storybook story
+  - Document escape hatch pattern
+
+qualityGates:
+  during_development:
+    - Adapter produces valid Full Vega spec
+    - Spec renders correctly in vega-embed
+    - Path marks display SVG paths
+
+  before_completion:
+    - pnpm test tests/viz/adapters/vega/*.test.ts passes
+    - Parity tests with ECharts pass
+    - Storybook story renders correctly
+    - Documentation reviewed
+    - Coverage >90% on new code
+
+estimatedEffort: "1 session (50-65k tokens)"
+
+notes: |
+  📋 FULL MISSION DETAILS: This YAML file contains complete implementation guidance.
+
+  Full Vega vs Vega-Lite:
+  - Vega-Lite: High-level, declarative, limited mark types
+  - Full Vega: Low-level, imperative, complete control
+  - Both render to same SVG/Canvas output
+  - vega-embed handles both with mode option
+
+  Why Sankey needs escape hatch:
+  - Sankey links are curved paths (cubic bezier)
+  - Paths defined as SVG path strings (M...C...Z)
+  - Vega-Lite has no "path" mark type
+  - Cannot bind arbitrary strings to marks
+  - Full Vega has "path" mark with path: { field: 'svgPath' }
+
+  Full Vega path mark:
+  ```json
+  {
+    "type": "path",
+    "encode": {
+      "enter": {
+        "path": { "field": "svgPath" },
+        "strokeWidth": { "field": "width" },
+        "stroke": { "value": "#888" }
+      }
+    }
+  }
+  ```
+
+  vega-embed mode detection:
+  - Check $schema URL
+  - If contains '/vega/' (not '/vega-lite/'), use mode: 'vega'
+  - This ensures correct parsing and rendering
+
+  Escape hatch pattern for future:
+  1. Identify VL limitation
+  2. Create server-side transform if needed
+  3. Create Full Vega adapter
+  4. Register in escape hatch registry
+  5. Update resolver to route correctly
+  6. Document limitation and workaround

@@ -78,6 +78,48 @@ The CLI automatically:
 
 ## Mission Lifecycle
 
+### Reading Mission Details
+
+**CRITICAL**: Mission database records contain summary information only. For complete implementation guidance, **ALWAYS read the mission YAML file** specified in the mission's `notes` field or `metadata.yaml_file`.
+
+**Example workflow**:
+```python
+from context.mission_runtime import next_mission
+
+# 1. Fetch next mission from database
+mission = next_mission()
+print(f"Mission: {mission['id']} - {mission['name']}")
+print(f"Notes: {mission.get('notes', 'No notes')}")
+
+# 2. Extract YAML file path from notes or metadata
+# The notes field will contain: "📋 FULL MISSION DETAILS: Read cmos/missions/B28.1-authable-trait-enriched.yaml..."
+
+# 3. READ THE YAML FILE for comprehensive details
+# The YAML file contains:
+#   - Research findings with explicit citations
+#   - Concrete deliverables list (10-20+ specific files)
+#   - Scaffolding reuse maps
+#   - Quality gates and success criteria
+#   - SQL/code examples
+#   - Performance targets
+```
+
+**Mission YAML files provide**:
+
+- **Research Findings**: Explicit citations (e.g., "R21.2 Part 4.2 TABLE 4")
+- **Deliverables**: Concrete file list with requirements for each file
+- **Scaffolding Reuse**: Maps showing how to adapt patterns from previous sprints
+- **Quality Gates**: Progressive validation steps (during development & before completion)
+- **Examples**: SQL DDL, code patterns, integration examples
+- **Success Criteria**: Measurable validation methods
+
+**Database vs YAML**:
+
+- **Database** (via `next_mission()`): Summary, status, basic metadata (100-200 chars)
+- **YAML file** (e.g., `B28.1-authable-trait-enriched.yaml`): Full implementation guide (100-550 lines)
+
+**Always read the YAML file before starting implementation!**
+
 ### Mission Status Flow
 `Queued` → `Current` → `In Progress` → `Completed` (or `Blocked`)
 

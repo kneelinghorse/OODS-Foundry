@@ -1,0 +1,257 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B32.9
+name: Spatial Validation Tests (Parity + Performance)
+sprint: Sprint 32
+status: Queued
+
+objective: >
+  Add parity tests comparing Vega-Lite and ECharts adapter output, performance
+  benchmarks against ARCHITECTURE budgets, and targeted e2e/a11y tests for
+  spatial components.
+
+context:
+  background: |
+    Both Vega-Lite and ECharts adapters are implemented (B32.4, B32.5) but lack
+    parity validation ensuring they produce equivalent output for the same spec.
+    Performance benchmarks from ARCHITECTURE.md Section 8 need automated verification.
+
+  research_basis:
+    - "ARCHITECTURE.md Section 8: Performance Considerations"
+    - "ARCHITECTURE.md Section 4.3: Adapter Layer"
+
+  architecture_reference: "cmos/foundational-docs/data-viz-part2/spatial-module/ARCHITECTURE.md"
+
+  dependencies:
+    - B32.4  # Vega-Lite adapter
+    - B32.5  # ECharts adapter
+    - B32.1  # ChoroplethMap (component to test)
+    - B32.2  # BubbleMap (component to test)
+
+successCriteria:
+  - Parity tests confirm same spec produces structurally similar output on both adapters
+  - Performance benchmarks pass ARCHITECTURE budgets with 10% headroom
+  - Interaction parity verified (hover, click events fire on both)
+  - Targeted e2e tests cover critical render paths
+  - A11y integration tests validate keyboard/screen reader
+
+constraints:
+  - Use existing fixtures in src/components/viz/spatial/fixtures/
+  - Performance tests must be deterministic (no flaky timing)
+  - Parity tests compare structure, not pixel-perfect rendering
+  - Tests must run in jsdom/headless context
+
+deliverables:
+  fixtures:
+    - path: src/components/viz/spatial/fixtures/ (update)
+      description: |
+        Add/verify performance test fixtures:
+
+        Choropleth fixtures:
+        - us-states-50.json: 50 regions (subset of US states)
+        - us-states-200.json: 200 regions (US counties subset)
+        - world-500.json: 500 regions (world countries + subdivisions)
+
+        Bubble fixtures:
+        - points-1k.json: 1,000 deterministic points (seeded random)
+        - points-5k.json: 5,000 deterministic points
+        - Points have: lat, lon, magnitude, category
+
+        Generation:
+        - Use deterministic seed for reproducibility
+        - Lat/lon within realistic bounds (-90 to 90, -180 to 180)
+        - Magnitude values follow realistic distribution
+
+  parity_tests:
+    - path: tests/viz/spatial/adapter-parity.test.ts
+      description: |
+        Parity tests comparing Vega-Lite and ECharts output:
+
+        ```typescript
+        describe('Spatial Adapter Parity', () => {
+          describe('Choropleth', () => {
+            it('same spec produces equivalent Vega-Lite and ECharts config', () => {
+              const spec = createChoroplethSpec(usStatesFixture);
+              const vegaResult = vegaLiteSpatialAdapter(spec);
+              const echartsResult = echartsSpatialAdapter(spec);
+
+              // Structural parity checks
+              expect(vegaResult.mark).toBe('geoshape');
+              expect(echartsResult.series[0].type).toBe('map');
+
+              // Both reference same geo data
+              // Both have color encoding for value field
+              // Both have tooltip configuration
+            });
+
+            it('hover interaction fires on both renderers', async () => {
+              // Render both, simulate hover, verify event
+            });
+
+            it('click interaction fires on both renderers', async () => {
+              // Render both, simulate click, verify event
+            });
+          });
+
+          describe('Bubble', () => {
+            it('same spec produces equivalent output', () => {
+              // Similar structure tests for bubble maps
+            });
+
+            it('interactions work on both', async () => {
+              // Hover and click parity
+            });
+          });
+        });
+        ```
+
+  performance_tests:
+    - path: tests/viz/spatial/performance.test.ts
+      description: |
+        Performance benchmark tests against ARCHITECTURE budgets:
+
+        ```typescript
+        describe('Spatial Performance Benchmarks', () => {
+          // Budgets from ARCHITECTURE.md Section 8 with 10% headroom
+          const BUDGETS = {
+            choropleth50: 90,    // < 100ms target, 90ms threshold
+            choropleth200: 225,  // < 250ms target
+            choropleth500: 450,  // < 500ms target
+            bubble1k: 180,       // < 200ms target
+            bubble5k: 450,       // < 500ms target
+          };
+
+          describe('Choropleth', () => {
+            it('50 regions renders under budget', async () => {
+              const start = performance.now();
+              await renderChoropleth(fixtures.regions50);
+              const elapsed = performance.now() - start;
+              expect(elapsed).toBeLessThan(BUDGETS.choropleth50);
+            });
+
+            it('200 regions renders under budget', async () => {
+              // Similar
+            });
+
+            it('500 regions renders under budget', async () => {
+              // Similar
+            });
+          });
+
+          describe('Bubble', () => {
+            it('1000 points renders under budget', async () => {
+              // Similar
+            });
+
+            it('5000 points renders under budget', async () => {
+              // Similar
+            });
+          });
+
+          describe('Memory', () => {
+            it('does not leak memory on repeated renders', async () => {
+              // Render 10x, check heap growth is bounded
+            });
+          });
+        });
+        ```
+
+        Bench harness approach:
+        - Use adapter layer directly (adapt spec → renderer config)
+        - Render to canvas/SVG in jsdom
+        - Measure end-to-end adapt+render time
+        - Exclude network fetch time (use pre-loaded fixtures)
+
+  e2e_tests:
+    - path: tests/viz/spatial/e2e-spatial.test.ts
+      description: |
+        End-to-end tests for critical paths:
+
+        ```typescript
+        describe('Spatial E2E', () => {
+          it('ChoroplethMap renders from spec to screen', async () => {
+            render(<ChoroplethMap spec={testSpec} geoData={usStates} data={salesData} />);
+            // Verify SVG/canvas has expected regions
+            // Verify colors match data values
+          });
+
+          it('BubbleMap renders from spec to screen', async () => {
+            render(<BubbleMap spec={testSpec} data={pointData} />);
+            // Verify points rendered
+            // Verify sizes match magnitude
+          });
+
+          it('cross-filter works in dashboard context', async () => {
+            render(<SpatialDashboard />);
+            // Click region
+            // Verify filter action dispatched
+            // Verify linked components update
+          });
+        });
+        ```
+
+  a11y_tests:
+    - path: tests/viz/spatial/a11y-integration.test.ts
+      description: |
+        Accessibility integration tests:
+
+        ```typescript
+        describe('Spatial A11y Integration', () => {
+          it('keyboard navigation cycles through regions', async () => {
+            render(<ChoroplethMap {...props} />);
+            // Tab to map
+            // Arrow keys cycle regions
+            // Verify focus announcements
+          });
+
+          it('screen reader announces region on focus', async () => {
+            // Verify live region updates
+          });
+
+          it('table fallback is accessible', async () => {
+            render(<AccessibleMapFallback {...props} />);
+            // Verify table structure
+            // Verify sort works
+            // Verify axe passes
+          });
+        });
+        ```
+
+technicalApproach:
+  - Generate deterministic fixtures with seeded random
+  - Create adapter parity test harness that runs same spec through both adapters
+  - Implement performance bench using performance.now() with warmup runs
+  - Add memory leak detection using heap snapshots
+  - Wire e2e tests to render actual components
+  - Use testing-library for interaction simulation
+
+qualityGates:
+  during_development:
+    - Fixtures generate consistently (same seed → same output)
+    - Parity tests catch real differences between adapters
+
+  before_completion:
+    - pnpm test tests/viz/spatial/*.test.ts passes
+    - Performance tests pass on CI (may need adjustment for CI environment)
+    - No flaky tests (run 3x to verify stability)
+
+estimatedEffort: "1 session (35-45k tokens)"
+
+notes: |
+  Performance budgets from ARCHITECTURE.md Section 8:
+  - Simple choropleth (50 regions): < 100ms
+  - Medium choropleth (200 regions): < 250ms
+  - Complex choropleth (500 regions): < 500ms
+  - Moderate bubble (1000 points): < 200ms
+  - Dense bubble (5000 points): < 500ms
+
+  Parity testing approach:
+  - Structural comparison, not visual (SVG paths will differ slightly)
+  - Verify same data encoded in output
+  - Verify interaction handlers present
+  - Verify tooltip configuration equivalent
+
+  Fixture generation:
+  - Use crypto.getRandomValues with fixed seed for reproducibility
+  - Or simpler: pre-generate and commit fixtures as JSON

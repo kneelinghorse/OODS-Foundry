@@ -1,0 +1,121 @@
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B28.3
+sprintId: Sprint 28
+name: "Role Graph & Entitlement Runtime Services"
+
+objective: |
+  Implement the core authorization runtime services that resolve user permissions
+  through role hierarchies and membership queries. This mission delivers the
+  permission evaluation engine that B28.4-B28.7 will build upon, with <5ms
+  performance targets per R21.2 caching strategy.
+
+context:
+  background: |
+    B28.2 delivered the database schema. This mission implements the runtime
+    layer that queries authz.memberships, traverses authz.role_hierarchy,
+    and resolves effective permissions for users in organizations.
+
+  dependencies:
+    - "B28.1 complete (schema validators)"
+    - "B28.2 complete (database tables + indexes)"
+    - "PostgreSQL with authz schema seeded"
+
+  constraints:
+    - "Permission resolution must be <5ms (99th percentile)"
+    - "Role hierarchy traversal uses recursive CTE (R21.2 Part 3.1)"
+    - "Results must be cacheable (prep for B28.5)"
+    - "All queries use prepared statements (no SQL injection)"
+
+researchFindings:
+  hierarchyPattern:
+    source: "R21.2 Part 3.1 (Adjacency List)"
+    approach: "Recursive CTE for role inheritance, aggressive caching"
+    tradeoff: "Complex read (CTE) mitigated by cache"
+    
+  performanceTarget:
+    source: "R21.2, Preferenceable cache patterns"
+    targets:
+      - "get
+
+User permissions: <5ms (cold), <1ms (warm)"
+      - "Role hierarchy traversal: <10ms (any depth)"
+      - "Membership lookup: <2ms (indexed)"
+
+deliverables:
+  runtime:
+    - file: "src/traits/authz/role-graph-resolver.ts"
+      description: "Role hierarchy traversal with CTE"
+      requirements:
+        - "resolveRoleHierarchy(roleId): Role[] - returns role + all parents"
+        - "getInheritedPermissions(roleId): Permission[]"
+        - "Uses WITH RECURSIVE query per R21.2"
+        
+    - file: "src/traits/authz/entitlement-service.ts"
+      description: "Main permission evaluation API"
+      requirements:
+        - "getUserPermissions(userId, orgId): Permission[]"
+        - "hasPermission(userId, orgId, permission): boolean"
+        - "getUserRoles(userId, orgId): Role[]"
+        - "Returns cacheable results (B28.5 integration point)"
+        
+    - file: "src/traits/authz/membership-service.ts"
+      description: "Membership CRUD operations"
+      requirements:
+        - "assignRole(userId, orgId, roleId)"
+        - "revokeRole(userId, orgId, roleId)"
+        - "listUserMemberships(userId): Membership[]"
+        - "listOrgMembers(orgId): Membership[]"
+
+  tests:
+    - file: "tests/traits/authz/role-graph.test.ts"
+      requirements:
+        - "Test hierarchy traversal (3-level depth)"
+        - "Test circular dependency prevention"
+        - "Test inherited permissions accumulation"
+        
+    - file: "tests/traits/authz/entitlement.test.ts"
+      requirements:
+        - "Test permission resolution with hierarchy"
+        - "Test multi-role permission union"
+        - "Test org isolation (permissions don't leak)"
+        
+    - file: "tests/performance/authz-benchmarks.test.ts"
+      requirements:
+        - "Benchmark getUserPermissions <5ms"
+        - "Benchmark hasPermission <2ms"
+        - "100 concurrent users scenario"
+
+  documentation:
+    - file: "docs/traits/authz-runtime-api.md"
+      requirements:
+        - "API reference for all services"
+        - "Query performance characteristics"
+        - "Caching strategy (prep for B28.5)"
+
+successCriteria:
+  performance:
+    - criterion: "Permission resolution <5ms (p99)"
+      validation: "Performance benchmarks pass"
+    - criterion: "Role hierarchy traversal handles 5-level depth"
+      validation: "Integration tests with deep hierarchies"
+      
+  correctness:
+    - criterion: "Multi-role permission union works correctly"
+      validation: "User with Editor + Viewer gets union of both"
+    - criterion: "Org isolation enforced"
+      validation: "Permissions in Org A don't apply to Org B"
+
+qualityGates:
+  duringDevelopment:
+    - "Test each service method with unit tests"
+    - "Run benchmarks after optimization attempts"
+  beforeCompletion:
+    - "pnpm test tests/traits/authz/"
+    - "pnpm test tests/performance/authz-benchmarks.test.ts"
+    - "Minimum 90% coverage"
+
+metadata:
+  estimatedEffort: "5-6 hours"
+  complexity: "High (recursive queries, performance optimization)"
+  riskLevel: "Medium (performance constraints)"

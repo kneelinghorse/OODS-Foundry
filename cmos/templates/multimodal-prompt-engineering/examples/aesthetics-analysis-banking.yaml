@@ -1,0 +1,52 @@
+apiVersion: mission.v1
+kind: Mission
+metadata:
+  name: banking-app-aesthetics-analysis-example
+  description: "Example instantiation: Analyzing design aesthetics of a mobile banking app against brand personality"
+  template: "design-aesthetics-analysis-claude"
+  version: "1.0.0"
+
+spec:
+  parameters:
+    ui_type: "mobile_app"
+    screen_name: "account_dashboard"
+    brand_personality_traits:
+      - "trustworthy"
+      - "efficient"
+      - "professional"
+      - "secure"
+    target_audience: "banking customers managing personal finances across multiple account types"
+    primary_jtbd: "Quickly check account balances, recent transactions, and transfer funds between accounts"
+    evaluation_criteria:
+      - "visual_clarity"
+      - "emotional_fit"
+      - "hierarchy"
+      - "consistency"
+    analysis_depth: "comprehensive"
+    competitive_context: "Competing with Chase Mobile, Bank of America, and Wells Fargo mobile apps in the US market"
+
+  resources:
+    visual_input: "screenshots/banking-dashboard-mobile.png"
+    brand_guidelines: "resources/brand-personality-guide.pdf"
+    expected_output: "structured-xml"
+    processing_priority: "high"
+
+  execution:
+    model: "Claude 3.5 Sonnet"
+    temperature: 0.2
+    max_tokens: 5000
+    chain_of_thought: true
+    
+  validation:
+    success_criteria:
+      - "All four brand personality traits evaluated"
+      - "Each trait receives alignment score (1-10)"
+      - "Minimum 5 specific recommendations provided"
+      - "XML structure is well-formed and complete"
+    quality_threshold: 0.90
+
+  output:
+    format: "xml"
+    file_path: "results/banking-aesthetics-analysis.xml"
+    include_reasoning: true
+    include_priority_ranking: true

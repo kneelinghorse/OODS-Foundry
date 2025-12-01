@@ -1,0 +1,331 @@
+---
+mission: B29.4
+name: "Communication Policy Builder & SLA Guardrails"
+sprint: "Sprint 29"
+type: "Build"
+status: "Queued"
+estimatedEffort: "4-5 hours"
+complexity: "Medium"
+dependencies: ["B29.1", "B29.2", "B29.3"]
+tags: ["policy", "throttling", "sla", "governance"]
+
+# ============================================================================
+# MISSION OVERVIEW
+# ============================================================================
+summary: |
+  Implement communication policy builder and SLA guardrails: delivery policy
+  DSL, throttling enforcement (rate limits per minute/hour/day), quiet hours
+  validation, SLO metrics tracking, and diagnostics integration. Mirror SoD
+  policy builder patterns from Sprint 28 while adapting for communication
+  governance needs.
+
+objectives:
+  - Build DeliveryPolicyBuilder API for programmatic policy creation
+  - Implement ThrottlingEnforcer with sliding window rate limiting
+  - Create SLAMonitor to track delivery SLOs (time-to-send, success rate)
+  - Deliver diagnostics integration for throttling metrics + SLA dashboards
+  - Achieve ≥90% test coverage for policy + throttling modules
+
+# ============================================================================
+# RESEARCH FOUNDATIONS
+# ============================================================================
+researchFindings:
+  throttlingPatterns:
+    source: "R20.1 Part 5.1 (Rate Limiting Strategies)"
+    findings:
+      - key: "Sliding window rate limiting (not fixed window)"
+        citation: "R20.1 Part 5.1 PATTERN 2"
+        implication: "Track timestamps of last N sends, reject if count > limit"
+
+      - key: "Per-channel throttling (email: 10/min, SMS: 5/min)"
+        citation: "R20.1 Part 5.2 (Channel-Specific Limits)"
+        implication: "ThrottlingEnforcer checks limits by channel_type"
+
+      - key: "Burst allowance for urgent messages"
+        citation: "R20.1 Part 5.3 (Priority Bypass)"
+        implication: "Urgent priority bypasses throttling (up to burst_limit)"
+
+  slaMetrics:
+    source: "R20.6 Part 5.1 (Delivery SLOs)"
+    findings:
+      - key: "Time-to-send SLO: 95% sent within 5 minutes"
+        citation: "R20.6 Part 5.1 TABLE 3"
+        implication: "Track queued_at → sent_at duration, alert if p95 > 5min"
+
+      - key: "Success rate SLO: 98% delivered without failure"
+        citation: "R20.6 Part 5.2 (Reliability Targets)"
+        implication: "Track delivery_attempts with status='delivered' vs 'failed'"
+
+      - key: "Retry exhaustion rate: <2% reach max_attempts"
+        citation: "R20.6 Part 5.3 (Retry Metrics)"
+        implication: "Monitor messages where attempt_number = max_attempts"
+
+# ============================================================================
+# DELIVERABLES
+# ============================================================================
+deliverables:
+  policyBuilder:
+    - file: "src/traits/communication/policy-builder.ts"
+      description: "Delivery policy builder API"
+      requirements:
+        - "createDeliveryPolicy(options): DeliveryPolicy"
+        - "Builder pattern: policy.setRetry(...).setThrottling(...).setQuietHours(...)"
+        - "Validation: ensure max_attempts > 0, throttling limits reasonable"
+        - "Presets: standardPolicy(), urgentPolicy(), lowPriorityPolicy()"
+
+  throttling:
+    - file: "src/traits/communication/throttling-enforcer.ts"
+      description: "Throttling enforcement with sliding window"
+      requirements:
+        - "checkThrottle(userId, channelType, policy): ThrottleResult"
+        - "ThrottleResult: { allowed: boolean, retryAfter?: Date, currentRate: number }"
+        - "Sliding window: track last N sends in Redis sorted set (ZADD with timestamp)"
+        - "Per-channel limits: configurable via policy.throttling_config"
+        - "Priority bypass: urgent messages skip throttle (up to burst_limit)"
+
+    - file: "src/traits/communication/throttling-store.ts"
+      description: "Throttling state storage (Redis)"
+      requirements:
+        - "recordSend(userId, channelType, timestamp): Promise<void>"
+        - "getSendCount(userId, channelType, windowSeconds): Promise<number>"
+        - "cleanupOldEntries(windowSeconds): Promise<void> // TTL-based cleanup"
+        - "Uses Redis sorted sets (ZADD, ZCOUNT, ZREMRANGEBYSCORE)"
+
+  slaMonitoring:
+    - file: "src/traits/communication/sla-monitor.ts"
+      description: "SLA metrics tracker"
+      requirements:
+        - "trackDelivery(messageId, queuedAt, sentAt, status): Promise<void>"
+        - "getTimeToSendMetrics(windowHours): Promise<SLAMetrics>"
+        - "getSuccessRateMetrics(windowHours): Promise<SLAMetrics>"
+        - "getRetryExhaustionRate(windowHours): Promise<number>"
+        - "Write metrics to communication.sla_metrics table (B29.2)"
+
+    - file: "database/migrations/20251120_010_create_sla_metrics_table.sql"
+      description: "SLA metrics table for telemetry"
+      requirements:
+        - "Columns: id, metric_type (enum), channel_type, value (numeric), p50, p95, p99, window_start, window_end"
+        - "Metric types: time_to_send, success_rate, retry_exhaustion_rate"
+        - "Index: idx_sla_metrics_type_window (metric_type, window_start DESC)"
+
+  diagnosticsIntegration:
+    - file: "src/diagnostics/communication-diagnostics.ts"
+      description: "Communication diagnostics collector"
+      requirements:
+        - "collectThrottlingMetrics(): ThrottlingStats"
+        - "collectSLAMetrics(): SLAStats"
+        - "collectDeliveryStats(): DeliveryStats"
+        - "Format for diagnostics.json: communication.throttling, communication.sla, communication.delivery"
+
+  documentation:
+    - file: "docs/traits/communication-policy-guide.md"
+      description: "Policy DSL and throttling documentation"
+      requirements:
+        - "Policy builder examples (standard, urgent, low priority)"
+        - "Throttling limits explanation (per-minute, per-hour, per-day)"
+        - "Quiet hours configuration (timezone, daily schedule)"
+        - "SLA metrics reference (time-to-send, success rate, retry exhaustion)"
+        - "R20.1/R20.6 citations for throttling + SLA patterns"
+
+  tests:
+    - file: "tests/traits/communication/policy-builder.test.ts"
+      description: "Policy builder unit tests"
+      requirements:
+        - "Test: createDeliveryPolicy builds valid policies"
+        - "Test: builder pattern chains correctly"
+        - "Test: validation catches invalid policies (max_attempts = 0)"
+        - "Test: presets return expected configurations"
+        - "Coverage ≥90%"
+
+    - file: "tests/traits/communication/throttling-enforcer.test.ts"
+      description: "Throttling enforcer unit tests"
+      requirements:
+        - "Test: sliding window allows sends within limit"
+        - "Test: sliding window blocks sends exceeding limit"
+        - "Test: urgent priority bypasses throttle"
+        - "Test: retryAfter calculated correctly when throttled"
+        - "Coverage ≥90%"
+
+    - file: "tests/traits/communication/sla-monitor.test.ts"
+      description: "SLA monitor unit tests"
+      requirements:
+        - "Test: trackDelivery records metrics"
+        - "Test: getTimeToSendMetrics calculates p50/p95/p99"
+        - "Test: getSuccessRateMetrics calculates percentage"
+        - "Test: getRetryExhaustionRate detects max_attempts failures"
+        - "Coverage ≥90%"
+
+    - file: "tests/integration/communication-throttling-integration.test.ts"
+      description: "Throttling integration tests"
+      requirements:
+        - "Test: throttling enforces limits across multiple sends"
+        - "Test: sliding window cleanup removes old entries"
+        - "Test: per-channel limits work independently (email vs SMS)"
+
+# ============================================================================
+# SCAFFOLDING REUSE MAP
+# ============================================================================
+scaffoldingReuseMap:
+  - from: "src/traits/authz/sod-policy-builder.ts"
+    to: "src/traits/communication/policy-builder.ts"
+    pattern: "Builder pattern with validation + presets"
+    adaptation: "Delivery policies (retry, throttling, quiet hours) instead of SoD policies"
+
+  - from: "src/traits/authz/cache/redis-adapter.ts"
+    to: "src/traits/communication/throttling-store.ts"
+    pattern: "Redis operations with error handling + connection pooling"
+    adaptation: "Sorted sets (ZADD/ZCOUNT) for sliding window instead of hash for cache"
+
+  - from: "src/traits/authz/cache/permission-cache.ts"
+    to: "src/traits/communication/sla-monitor.ts"
+    pattern: "Metrics tracking + aggregation (p50/p95/p99 calculation)"
+    adaptation: "SLA metrics (time-to-send, success rate) instead of cache metrics"
+
+  - from: "database/migrations/20251119_009_permission_cache_metrics.sql"
+    to: "database/migrations/20251120_010_create_sla_metrics_table.sql"
+    pattern: "Telemetry table structure with metric types + window tracking"
+    adaptation: "Communication SLA metrics instead of permission cache metrics"
+
+# ============================================================================
+# QUALITY GATES
+# ============================================================================
+qualityGates:
+  duringDevelopment:
+    - gate: "Policy builder creates valid policies"
+      validation: "Build policy, validate against DeliveryPolicy schema"
+      criterion: "All policies pass schema validation"
+
+    - gate: "Throttling enforcer blocks excessive sends"
+      validation: "Send 11 messages with 10/min limit, verify 11th blocked"
+      criterion: "11th send returns { allowed: false, retryAfter: <timestamp> }"
+
+    - gate: "Sliding window cleanup works"
+      validation: "Record sends, wait for TTL, verify old entries removed"
+      criterion: "Redis ZCOUNT decreases after TTL expiration"
+
+    - gate: "SLA metrics track correctly"
+      validation: "Track 100 deliveries, verify p50/p95/p99 calculated"
+      criterion: "Metrics match manual calculation (within 5% margin)"
+
+  beforeCompletion:
+    - gate: "Test coverage ≥90%"
+      validation: "pnpm test:coverage (filter: src/traits/communication/policy-builder.ts, throttling-*.ts, sla-*.ts)"
+      criterion: "Lines ≥90%, functions ≥90%, branches ≥90%"
+
+    - gate: "SLA metrics migration applies cleanly"
+      validation: "pnpm tsx src/cli/communication-migrate.ts migrate (migration 010)"
+      criterion: "Table created, indexes applied, zero SQL errors"
+
+    - gate: "Diagnostics integration works"
+      validation: "Run collectSLAMetrics(), verify output matches schema"
+      criterion: "diagnostics.json updated with communication.sla section"
+
+# ============================================================================
+# SUCCESS CRITERIA
+# ============================================================================
+successCriteria:
+  functional:
+    - "DeliveryPolicyBuilder with builder pattern + presets"
+    - "ThrottlingEnforcer with sliding window rate limiting"
+    - "SLAMonitor tracking time-to-send, success rate, retry exhaustion"
+    - "SLA metrics table (migration 010) with indexes"
+    - "Diagnostics integration for throttling + SLA metrics"
+
+  quality:
+    - "Test coverage ≥90% for policy + throttling + SLA modules"
+    - "SLA metrics migration applies cleanly"
+    - "Diagnostics output validates against schema"
+    - "Documentation covers all policy options + SLA metrics"
+
+  validation:
+    - command: "pnpm test --run tests/traits/communication/throttling-enforcer.test.ts"
+      expectation: "All tests pass, coverage ≥90%"
+
+    - command: "pnpm tsx src/cli/communication-migrate.ts migrate --migrations 010"
+      expectation: "SLA metrics table created successfully"
+
+    - command: "node -e \"require('./src/diagnostics/communication-diagnostics').collectSLAMetrics().then(console.log)\""
+      expectation: "Returns SLA metrics object with time_to_send, success_rate, retry_exhaustion fields"
+
+# ============================================================================
+# PERFORMANCE TARGETS
+# ============================================================================
+performanceTargets:
+  - metric: "checkThrottle (Redis lookup)"
+    target: "<5ms p99"
+    validation: "Benchmark ZCOUNT operation with warm Redis connection"
+
+  - metric: "recordSend (Redis write)"
+    target: "<3ms p99"
+    validation: "Benchmark ZADD operation with TTL"
+
+  - metric: "SLA metrics aggregation"
+    target: "<100ms (1000 deliveries)"
+    validation: "Query delivery_attempts table, calculate p50/p95/p99"
+
+# ============================================================================
+# EXAMPLES & PATTERNS
+# ============================================================================
+examples:
+  policyBuilder: |
+    // Create standard delivery policy
+    const standardPolicy = createDeliveryPolicy()
+      .setRetry({ max_attempts: 3, backoff_strategy: 'exponential' })
+      .setThrottling({ max_per_minute: 10, max_per_hour: 100 })
+      .setQuietHours({ start: '22:00', end: '08:00', timezone: 'America/New_York' })
+      .setPriority('normal')
+      .build();
+
+    // Urgent policy (bypass throttling, aggressive retry)
+    const urgentPolicy = createDeliveryPolicy()
+      .setRetry({ max_attempts: 5, backoff_strategy: 'linear' })
+      .setThrottling({ burst_limit: 50 }) // bypass normal limits
+      .setPriority('urgent')
+      .build();
+
+  throttlingCheck: |
+    // Check if send is allowed
+    const result = await throttlingEnforcer.checkThrottle(
+      userId,
+      'email',
+      standardPolicy
+    );
+
+    if (!result.allowed) {
+      console.log(`Throttled. Retry after: ${result.retryAfter}`);
+      return;
+    }
+
+    // Proceed with send
+    await deliveryService.sendMessage(...);
+
+  slaTracking: |
+    // Track delivery for SLA metrics
+    await slaMonitor.trackDelivery(
+      messageId,
+      queuedAt: new Date('2025-11-20T10:00:00Z'),
+      sentAt: new Date('2025-11-20T10:02:30Z'),
+      status: 'delivered'
+    );
+
+    // Query SLA metrics
+    const metrics = await slaMonitor.getTimeToSendMetrics(windowHours: 24);
+    console.log(`Time-to-send p95: ${metrics.p95}ms`);
+
+# ============================================================================
+# NOTES
+# ============================================================================
+notes:
+  - "Throttling enforcer is critical for preventing spam + abuse"
+  - "Sliding window is more accurate than fixed window (avoids burst at window boundary)"
+  - "SLA metrics enable proactive monitoring (alert before SLO breach)"
+  - "Policy builder mirrors SoD pattern from Sprint 28 (proven abstraction)"
+  - "Redis sorted sets provide efficient time-based queries (ZCOUNT, ZREMRANGEBYSCORE)"
+
+blockers: []
+risks:
+  - risk: "Throttling state loss if Redis crashes"
+    mitigation: "Redis persistence (AOF), throttle resets acceptable for short downtime"
+
+  - risk: "SLA metrics table grows large over time"
+    mitigation: "Add retention policy (delete metrics older than 90 days), use TimescaleDB for production"

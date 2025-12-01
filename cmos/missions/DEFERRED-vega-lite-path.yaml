@@ -1,0 +1,157 @@
+---
+schemaType: MissionArchive
+schemaVersion: "2.0"
+archiveId: DEFERRED-VL-PATH
+name: Deferred Vega-Lite Network & Flow Support
+status: Deferred
+deferredDate: 2025-12-01
+deferredReason: |
+  Following R33.0 research on renderer parameter alignment, the Vega-Lite path for
+  Network & Flow visualizations is deferred to v1.1+ based on:
+
+  1. ECharts provides native, presentation-ready support for all four viz types
+  2. D3/Vega defaults diverge significantly from ECharts (6-10x force multipliers)
+  3. Achieving visual parity would require extensive parameter alignment
+  4. ECharts includes built-in interactivity that D3 lacks
+  5. No immediate user demand for Vega-Lite in this context
+
+  This work will be triggered by user demand. R33.0 established parameter mappings
+  for future implementation when needed.
+
+trigger: User request for Vega-Lite support in Network & Flow visualizations
+researchBasis: cmos/research/R33.0_Comprehensive Comparative Analysis of Default Parameterization and Parity Alignment in ECharts and D3.md
+
+originalMissions:
+  - missionId: B33.3-DEFERRED
+    name: D3 Hierarchy Transforms
+    originalId: B33.3
+    description: |
+      Server-side D3 transforms for treemap and sunburst layouts.
+      Implements d3-hierarchy stratify, treemap, and partition algorithms.
+
+      Parameter alignment (from R33.0):
+      - squareRatio: 1.618 (match ECharts Golden ratio)
+      - paddingInner: 5 (match ECharts gapWidth)
+      - paddingOuter: 5 (match ECharts borderWidth)
+
+    estimatedEffort: "1 session"
+    dependencies: [B33.1, B33.2]
+
+  - missionId: B33.4-DEFERRED
+    name: D3 Force Transform
+    originalId: B33.4
+    description: |
+      Server-side D3 force layout transform for network graphs.
+      Implements d3-force with deterministic batch processing.
+
+      Parameter alignment (from R33.0):
+      - strength: -200 to -300 (6-10x D3 default to match ECharts repulsion)
+      - Add forceX/Y with strength 0.1 (simulate ECharts gravity)
+      - iterations: 300+ for stable layout
+
+      Note: Even with alignment, layouts will differ due to different physics models.
+      Targeting "layout-equivalent" not "pixel-perfect" parity.
+
+    estimatedEffort: "1 session"
+    dependencies: [B33.1, B33.2]
+
+  - missionId: B33.5-DEFERRED
+    name: D3 Sankey Transform
+    originalId: B33.5
+    description: |
+      Server-side D3-sankey transform for flow diagrams.
+      Generates SVG path strings for link curves.
+
+      Parameter alignment (from R33.0):
+      - iterations: 32 (match ECharts, up from D3 default 6)
+      - nodeWidth: 20 (match ECharts)
+      - nodePadding: 8 (same as ECharts)
+
+      Required for Vega escape hatch since Vega-Lite cannot render Sankey.
+
+    estimatedEffort: "1 session"
+    dependencies: [B33.1, B33.2]
+
+  - missionId: B34.2-DEFERRED
+    name: Vega-Lite Network Adapters
+    originalId: B34.2
+    description: |
+      Vega-Lite adapters for hierarchy and network visualizations.
+      Uses server transform output to generate Vega-Lite specs with pre-computed coordinates.
+
+      Supports:
+      - Treemap (rect marks with x0/y0/x1/y1)
+      - Sunburst (arc marks with angles and radii)
+      - Force Graph (circle + rule marks with coordinates)
+
+      Does NOT support Sankey (impossible in Vega-Lite).
+
+    estimatedEffort: "1 session"
+    dependencies: [B33.3-DEFERRED, B33.4-DEFERRED]
+
+  - missionId: B34.3-DEFERRED
+    name: Vega Escape Hatch (Sankey)
+    originalId: B34.3
+    description: |
+      Full Vega spec generation for Sankey diagrams.
+      Uses D3-sankey transform output to generate Vega path marks.
+
+      Required because:
+      - Vega-Lite's path mark cannot bind arbitrary SVG paths
+      - Full Vega supports: "path": {"field": "svgPath"}
+
+      This is the only viz type that requires Full Vega instead of Vega-Lite.
+
+    estimatedEffort: "0.5 session"
+    dependencies: [B33.5-DEFERRED]
+
+parameterMappings:
+  treemap:
+    echarts:
+      squareRatio: 1.618  # Golden ratio
+      gapWidth: 1
+      borderWidth: 1
+    d3_aligned:
+      tile: "d3.treemapSquarify.ratio(1.618)"
+      paddingInner: 5
+      paddingOuter: 5
+
+  force:
+    echarts:
+      repulsion: 50
+      gravity: 0.1
+      edgeLength: 30
+    d3_aligned:
+      strength: -200  # 6-10x to match ECharts spread
+      forceX_strength: 0.1  # Simulate gravity
+      forceY_strength: 0.1
+      link_distance: 30
+      iterations: 300
+
+  sankey:
+    echarts:
+      nodeWidth: 20
+      nodeGap: 8
+      layoutIterations: 32
+    d3_aligned:
+      nodeWidth: 20
+      nodePadding: 8
+      iterations: 32
+
+notes: |
+  This archive preserves the original mission plans for the Vega-Lite path.
+  If user demand emerges, these missions can be revived with:
+
+  1. Review R33.0 parameter mappings
+  2. Update missions with any new learnings
+  3. Add to appropriate sprint backlog
+  4. Execute implementation
+
+  The R33.0 research provides the foundation for future implementation,
+  including concrete parameter mappings and parity expectations.
+
+  Expected parity level: Layout-Equivalent (Level 2)
+  - Same relative positions
+  - Same hierarchy/grouping visible
+  - Proportions similar but not identical
+  - NOT pixel-perfect

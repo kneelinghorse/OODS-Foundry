@@ -1,0 +1,304 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B33.3
+name: Hierarchy Transforms (Treemap & Sunburst)
+sprint: Sprint 33
+status: Queued
+
+objective: >
+  Implement server-side D3 transforms for tree layouts including stratify (flat to tree),
+  treemap (tree to rectangles), and partition (tree to arcs for sunburst).
+
+context:
+  background: |
+    When Vega-Lite is the only available renderer, OODS must compute layout coordinates
+    server-side using D3 algorithms. This mission implements the hierarchy transforms
+    that convert raw tree data into positioned rectangles (treemap) or arc segments (sunburst).
+
+  research_basis:
+    - "RDS.11.1: D3-Hierarchy API research"
+    - "RDS.11.4: Vega Transform Gap analysis"
+
+  architecture_reference: "cmos/foundational-docs/data-viz-part2/network-flow-module/ARCHITECTURE.md Section 4.2.1"
+
+  dependencies:
+    - B33.1  # Schemas (HierarchyInput, TreemapOutput, SunburstOutput)
+    - B33.2  # Resolver (knows when to call transforms)
+
+successCriteria:
+  - stratifyData correctly converts adjacency list to tree
+  - computeTreemap produces correct x0/y0/x1/y1 coordinates
+  - computeSunburst produces correct startAngle/endAngle/innerRadius/outerRadius
+  - Edge cases handled (orphans, cycles, multiple roots)
+  - Performance acceptable for 500-node trees (< 100ms)
+  - Tests pass with >90% coverage on new code
+
+constraints:
+  - Must use d3-hierarchy for algorithms
+  - Must run in Node.js (no DOM required)
+  - Output must match schema definitions
+  - Must preserve extra fields from input data
+
+deliverables:
+  transforms:
+    - path: src/viz/transforms/hierarchy-transform.ts
+      description: |
+        Main hierarchy transform implementation:
+
+        ```typescript
+        import * as d3 from 'd3-hierarchy';
+
+        // Convert flat adjacency list to tree structure
+        function stratifyData(input: HierarchyAdjacencyInput): d3.HierarchyNode {
+          const stratify = d3.stratify()
+            .id(d => d.id)
+            .parentId(d => d.parentId);
+
+          const root = stratify(input.data);
+          root.sum(d => d.value || 0);
+          root.sort((a, b) => (b.value || 0) - (a.value || 0));
+
+          return root;
+        }
+
+        // Compute treemap layout (rectangles)
+        function computeTreemap(
+          input: HierarchyInput,
+          width: number,
+          height: number,
+          options?: TreemapOptions
+        ): TreemapOutput {
+          const root = isAdjacencyList(input)
+            ? stratifyData(input)
+            : d3.hierarchy(input.data);
+
+          root.sum(d => d.value || 0);
+          root.sort((a, b) => (b.value || 0) - (a.value || 0));
+
+          const treemap = d3.treemap()
+            .size([width, height])
+            .paddingInner(options?.paddingInner ?? 1)
+            .paddingOuter(options?.paddingOuter ?? 2)
+            .tile(getTilingMethod(options?.tiling ?? 'squarify'));
+
+          treemap(root);
+
+          return {
+            nodes: root.descendants().map(node => ({
+              id: node.data.id ?? node.data.name,
+              x0: node.x0,
+              y0: node.y0,
+              x1: node.x1,
+              y1: node.y1,
+              depth: node.depth,
+              value: node.value,
+              ...preserveExtraFields(node.data)
+            }))
+          };
+        }
+
+        // Compute sunburst/partition layout (arcs)
+        function computeSunburst(
+          input: HierarchyInput,
+          radius: number,
+          options?: SunburstOptions
+        ): SunburstOutput {
+          const root = isAdjacencyList(input)
+            ? stratifyData(input)
+            : d3.hierarchy(input.data);
+
+          root.sum(d => d.value || 0);
+          root.sort((a, b) => (b.value || 0) - (a.value || 0));
+
+          const partition = d3.partition()
+            .size([2 * Math.PI, radius]);
+
+          partition(root);
+
+          return {
+            nodes: root.descendants().map(node => ({
+              id: node.data.id ?? node.data.name,
+              startAngle: node.x0,
+              endAngle: node.x1,
+              innerRadius: node.y0,
+              outerRadius: node.y1,
+              depth: node.depth,
+              value: node.value,
+              ...preserveExtraFields(node.data)
+            }))
+          };
+        }
+        ```
+
+    - path: src/viz/transforms/hierarchy-validation.ts
+      description: |
+        Input validation and error handling:
+
+        ```typescript
+        interface ValidationResult {
+          valid: boolean;
+          errors: HierarchyError[];
+          warnings: HierarchyWarning[];
+          fixedData?: HierarchyInput;  // Auto-fixed data if possible
+        }
+
+        function validateHierarchyData(input: HierarchyInput): ValidationResult {
+          // Check for orphan nodes (parentId doesn't exist)
+          // Check for cycles (A→B→C→A)
+          // Check for multiple roots
+          // Return actionable errors
+        }
+        ```
+
+        Error types:
+        - HIERARCHY_ORPHAN_NODE: Node's parent doesn't exist
+        - HIERARCHY_CYCLE_DETECTED: Circular reference found
+        - HIERARCHY_MULTIPLE_ROOTS: More than one root node
+        - HIERARCHY_EMPTY_DATA: No data provided
+
+    - path: src/viz/transforms/hierarchy-utils.ts
+      description: |
+        Utility functions:
+
+        ```typescript
+        // Format detection
+        function isAdjacencyList(input: HierarchyInput): input is HierarchyAdjacencyInput;
+        function isNestedFormat(input: HierarchyInput): input is HierarchyNestedInput;
+
+        // Tiling method selection
+        function getTilingMethod(name: string): d3.TreemapTiling;
+        // squarify (default), binary, slice, dice, sliceDice
+
+        // Field preservation
+        function preserveExtraFields(data: Record<string, unknown>): Record<string, unknown>;
+
+        // Cycle detection
+        function detectCycles(data: AdjacencyNode[]): CycleInfo[];
+
+        // Orphan detection
+        function detectOrphans(data: AdjacencyNode[]): string[];
+        ```
+
+  tests:
+    - path: tests/viz/transforms/hierarchy-transform.test.ts
+      description: |
+        Transform tests:
+
+        stratifyData tests:
+        - Converts flat list to tree correctly
+        - Preserves all node data
+        - Handles single root
+        - Sums values correctly
+
+        computeTreemap tests:
+        - Produces correct coordinates for simple tree
+        - Coordinates stay within bounds
+        - Padding applies correctly
+        - All tiling methods work (squarify, binary, slice, dice)
+        - Nested format input works
+        - Adjacency format input works
+        - Preserves extra fields
+
+        computeSunburst tests:
+        - Produces correct angles (0 to 2π)
+        - Inner/outer radius correct per depth
+        - All nodes accounted for
+        - Preserves extra fields
+
+    - path: tests/viz/transforms/hierarchy-validation.test.ts
+      description: |
+        Validation tests:
+        - Detects orphan nodes
+        - Detects cycles
+        - Detects multiple roots
+        - Returns actionable error messages
+        - Valid data passes validation
+        - Warnings for potential issues
+
+    - path: tests/viz/transforms/hierarchy-performance.test.ts
+      description: |
+        Performance tests:
+        - 100 nodes: < 10ms
+        - 500 nodes: < 50ms
+        - 1000 nodes: < 100ms
+        - Memory usage acceptable
+
+  sample_data:
+    - path: tests/fixtures/network-flow/valid-adjacency-tree.json
+    - path: tests/fixtures/network-flow/valid-nested-tree.json
+    - path: tests/fixtures/network-flow/orphan-node-tree.json
+    - path: tests/fixtures/network-flow/cyclic-tree.json
+    - path: tests/fixtures/network-flow/multi-root-tree.json
+    - path: tests/fixtures/network-flow/large-tree-500.json
+
+  documentation:
+    - path: docs/viz/transforms/hierarchy-transforms.md
+      description: |
+        Transform documentation:
+        - API reference
+        - Input format requirements
+        - Output format details
+        - Tiling method explanations
+        - Error handling
+        - Performance characteristics
+        - Examples
+
+technicalApproach:
+  - Install d3-hierarchy and @types/d3-hierarchy
+  - Implement stratifyData using d3.stratify()
+  - Implement computeTreemap using d3.treemap()
+  - Implement computeSunburst using d3.partition()
+  - Build validation layer with cycle/orphan detection
+  - Implement all tiling methods
+  - Ensure extra fields are preserved
+  - Write comprehensive tests
+  - Run performance benchmarks
+  - Document APIs
+
+qualityGates:
+  during_development:
+    - Transforms produce correct output
+    - Validation catches bad data
+    - No DOM dependencies (runs in Node)
+
+  before_completion:
+    - pnpm test tests/viz/transforms/hierarchy*.test.ts passes
+    - Performance benchmarks pass
+    - Documentation reviewed
+    - Coverage >90% on new code
+
+estimatedEffort: "1 session (65-75k tokens)"
+
+notes: |
+  📋 FULL MISSION DETAILS: This YAML file contains complete implementation guidance.
+
+  D3-hierarchy key concepts:
+  - d3.stratify(): Converts flat data to hierarchy
+  - d3.hierarchy(): Wraps nested data as hierarchy
+  - root.sum(): Computes value for internal nodes
+  - root.sort(): Orders children (important for layout stability)
+  - d3.treemap(): Computes rectangle coordinates
+  - d3.partition(): Computes arc coordinates
+
+  Tiling methods (from d3):
+  - squarify: Balanced rectangles (default, best for comparison)
+  - binary: Binary split (good for ordered data)
+  - slice: Horizontal slices (for top-level breakdown)
+  - dice: Vertical slices
+  - sliceDice: Alternating (classic treemap)
+
+  Coordinate systems:
+  - Treemap: x0/y0 = top-left, x1/y1 = bottom-right (pixels)
+  - Sunburst: startAngle/endAngle (radians 0-2π), innerRadius/outerRadius (pixels)
+
+  Edge case handling:
+  - Orphans: Error with list of orphan IDs
+  - Cycles: Error with cycle path (A→B→C→A)
+  - Multiple roots: Either error or auto-inject synthetic root
+  - Empty data: Return empty nodes array
+
+  Extra field preservation:
+  - D3 stores original data in node.data
+  - Copy all fields except id/parentId/value/children
+  - Include in output for use in rendering (labels, colors, etc.)

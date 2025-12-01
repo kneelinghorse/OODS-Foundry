@@ -1,0 +1,212 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B32.1
+name: ChoroplethMap Component
+sprint: Sprint 32
+status: Queued
+
+objective: >
+  Build the primary spatial visualization component for regional comparisons,
+  enabling filled regions with color encoding based on data values.
+
+context:
+  background: |
+    ChoroplethMap is the most common spatial visualization in B2B SaaS dashboards.
+    It shows regions (countries, states, counties) filled with colors representing
+    data values. This is the first of two main spatial visualization components.
+
+  research_basis:
+    - "RDS.10: Complex Schema Extension Research Mission"
+    - "RV.03: Gap Analysis (Choropleth is primary spatial need)"
+    - "RDV.4: Accessibility Equivalence Validation"
+
+  architecture_reference: "cmos/foundational-docs/data-viz-part2/spatial-module/ARCHITECTURE.md Section 4.2"
+
+  dependencies:
+    - B31.5  # Requires SpatialContainer
+
+successCriteria:
+  - Renders filled regions with correct color encoding
+  - Color scales work (quantize, quantile, threshold)
+  - Hover highlights work with correct styling
+  - Click events fire with feature and datum
+  - No a11y violations (axe passes)
+  - Stories show real geo data (US states, world countries)
+  - Tests pass with >90% coverage on new code
+
+constraints:
+  - Must integrate with SpatialContainer context
+  - Must support both ECharts and Vega-Lite rendering paths
+  - Must be accessible (WCAG 2.1 AA)
+  - Color encoding must use design tokens, not raw colors
+
+deliverables:
+  components:
+    - path: src/components/viz/spatial/ChoroplethMap.tsx
+      description: |
+        Choropleth visualization component:
+
+        ```typescript
+        interface ChoroplethMapProps {
+          spec: NormalizedVizSpec;
+          geoData: GeoJSON.FeatureCollection;
+          data: DataRecord[];
+
+          // Encoding
+          valueField: string;
+          geoJoinKey: string;
+          dataJoinKey?: string;  // defaults to geoJoinKey
+
+          // Color scale
+          colorScale?: 'quantize' | 'quantile' | 'threshold';
+          colorRange?: string[];  // Token references: --viz-scale-sequential-*
+          thresholds?: number[];  // For threshold scale
+
+          // Projection (can override container)
+          projection?: ProjectionType;
+          fitToData?: boolean;
+
+          // Interactions
+          onRegionClick?: (feature: GeoFeature, datum: DataRecord) => void;
+          onRegionHover?: (feature: GeoFeature, datum: DataRecord) => void;
+
+          // Accessibility
+          a11y: {
+            description: string;
+            tableFallback?: { enabled: boolean; caption: string };
+            narrative?: { summary: string; keyFindings: string[] };
+          };
+
+          // Renderer preference
+          preferredRenderer?: 'echarts' | 'vega-lite';
+        }
+        ```
+
+        Responsibilities:
+        - Consume SpatialContext for projection and features
+        - Calculate color scale from data
+        - Map data values to colors
+        - Render regions with fill colors
+        - Handle hover and click interactions
+        - Provide a11y fallback
+
+    - path: src/components/viz/spatial/ChoroplethMapRegion.tsx
+      description: |
+        Individual region component for rendering and interaction:
+        - Renders single region path
+        - Handles hover/focus state styling
+        - Fires interaction events
+        - Manages ARIA attributes for accessibility
+
+  utilities:
+    - path: src/components/viz/spatial/utils/color-scale-utils.ts
+      description: |
+        Color scale calculation utilities:
+        - createQuantizeScale(domain, range): ColorScale
+        - createQuantileScale(values, range): ColorScale
+        - createThresholdScale(thresholds, range): ColorScale
+        - getColorForValue(scale, value): string
+
+    - path: src/components/viz/spatial/utils/choropleth-utils.ts
+      description: |
+        Choropleth-specific utilities:
+        - calculateDomain(data, valueField): [min, max]
+        - assignColors(features, data, scale): ColorAssignment[]
+        - generateLegendStops(scale): LegendStop[]
+
+  tests:
+    - path: tests/components/viz/spatial/ChoroplethMap.test.tsx
+      description: |
+        Component tests:
+        - Renders with US states data
+        - Renders with world countries data
+        - Color encoding applies correctly
+        - Quantize scale distributes colors evenly
+        - Quantile scale distributes colors by data distribution
+        - Threshold scale uses specified breakpoints
+        - Hover changes region styling
+        - Click fires event with correct data
+        - Handles missing data gracefully (unmatched regions)
+
+    - path: tests/components/viz/spatial/ChoroplethMap.a11y.test.tsx
+      description: |
+        A11y tests:
+        - No axe violations
+        - Regions are keyboard focusable
+        - Focus ring is visible
+        - ARIA labels describe region and value
+        - Screen reader announces region on focus
+
+  stories:
+    - path: src/components/viz/spatial/ChoroplethMap.stories.tsx
+      description: |
+        Storybook stories:
+        - USPopulation: US states colored by population
+        - WorldGDP: World countries colored by GDP
+        - QuantizeScale: Demonstrating quantize color scale
+        - QuantileScale: Demonstrating quantile color scale
+        - ThresholdScale: Custom threshold breakpoints
+        - Interactive: With click and hover handlers
+        - WithLegend: Integrated with MapLegend
+        - Accessible: With table fallback enabled
+
+  documentation:
+    - path: docs/components/choropleth-map.md
+      description: |
+        Component documentation:
+        - Props reference
+        - Color scale options and when to use each
+        - Data requirements
+        - Interaction handling
+        - Accessibility features
+        - Examples with code
+
+technicalApproach:
+  - Review SpatialContainer context API
+  - Implement color scale utilities using d3-scale patterns
+  - Build ChoroplethMap component consuming context
+  - Implement region rendering with SVG paths (for Vega) or ECharts series
+  - Add hover/click interaction handlers
+  - Implement keyboard navigation (Tab between regions)
+  - Add ARIA attributes for accessibility
+  - Write comprehensive tests with real geo data
+  - Create Storybook stories demonstrating all features
+  - Document component usage
+
+qualityGates:
+  during_development:
+    - Regions render with correct colors
+    - Interactions fire correctly
+    - No TypeScript errors in strict mode
+
+  before_completion:
+    - pnpm test tests/components/viz/spatial/ChoroplethMap*.test.tsx passes
+    - pnpm a11y:diff passes
+    - Storybook stories render correctly with real data
+    - Documentation reviewed
+    - Coverage >90% on new code
+
+estimatedEffort: "1 session (60-70k tokens)"
+
+notes: |
+  📋 FULL MISSION DETAILS: This YAML file contains complete implementation guidance.
+
+  Color scale guidance:
+  - Quantize: Equal-interval breaks (good for uniform distribution)
+  - Quantile: Equal-count breaks (good for skewed data)
+  - Threshold: Custom breaks (good for meaningful categories)
+
+  Default color ranges should use sequential tokens:
+  - viz.scale.sequential.blue.1-7 for single-hue sequential
+  - viz.scale.diverging.* for diverging data (pos/neg)
+
+  Sample data requirements:
+  - US states: ~50 features, FIPS codes as keys
+  - World countries: ~200 features, ISO codes as keys
+  - Sample data should have realistic distributions
+
+  Keyboard navigation (from ARCHITECTURE.md Section 6.2):
+  - Tab: Move focus between regions
+  - Enter: Select focused region
+  - Escape: Clear selection

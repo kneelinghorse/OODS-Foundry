@@ -1,0 +1,325 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B32.3
+name: Supporting Components (Legend, Controls, A11y Fallback)
+sprint: Sprint 32
+status: Queued
+
+objective: >
+  Complete the spatial component suite with MapLegend, MapControls, AccessibleMapFallback,
+  keyboard navigation implementation, and screen reader announcements.
+
+context:
+  background: |
+    These supporting components complete the spatial visualization system. MapLegend
+    shows the color/size encoding, MapControls provides navigation, and AccessibleMapFallback
+    ensures the data is accessible to all users including those using screen readers.
+
+  research_basis:
+    - "RDV.4: Accessibility Equivalence Validation"
+    - "WCAG 2.1 AA requirements for interactive data visualizations"
+
+  architecture_reference: "cmos/foundational-docs/data-viz-part2/spatial-module/ARCHITECTURE.md Sections 4.1, 6"
+
+  dependencies:
+    - B32.1  # ChoroplethMap (uses legend)
+    - B32.2  # BubbleMap (uses legend)
+
+successCriteria:
+  - MapLegend correctly reflects color/size scales
+  - MapControls function correctly (zoom, reset, layer toggles)
+  - AccessibleMapFallback renders data table and narrative
+  - Keyboard navigation works per spec (Tab, Enter, Escape, +/-, arrows)
+  - Screen reader announces correctly on focus changes
+  - Integration tests show full component composition
+  - Tests pass with >90% coverage on new code
+
+constraints:
+  - Must integrate with SpatialContext
+  - Must be WCAG 2.1 AA compliant
+  - Controls must be keyboard accessible
+  - Table fallback must be semantically correct HTML
+
+deliverables:
+  components:
+    - path: src/components/viz/spatial/MapLegend.tsx
+      description: |
+        Legend component for spatial visualizations:
+
+        ```typescript
+        interface MapLegendProps {
+          // Color legend
+          colorScale?: {
+            type: 'continuous' | 'categorical';
+            scale: ColorScale;
+            label?: string;
+            format?: (value: number) => string;
+          };
+
+          // Size legend
+          sizeScale?: {
+            scale: SizeScale;
+            label?: string;
+            format?: (value: number) => string;
+          };
+
+          // Layout
+          position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+          orientation?: 'horizontal' | 'vertical';
+
+          // Styling
+          className?: string;
+        }
+        ```
+
+        Features:
+        - Continuous gradient for sequential/diverging scales
+        - Discrete swatches for categorical scales
+        - Size legend showing example circles
+        - Tick marks and labels
+        - Responsive to container size
+
+    - path: src/components/viz/spatial/MapControls.tsx
+      description: |
+        Navigation controls component:
+
+        ```typescript
+        interface MapControlsProps {
+          // Zoom controls
+          onZoomIn?: () => void;
+          onZoomOut?: () => void;
+          onZoomReset?: () => void;
+          zoomLevel?: number;
+          minZoom?: number;
+          maxZoom?: number;
+
+          // Layer controls
+          layers?: Array<{
+            id: string;
+            label: string;
+            visible: boolean;
+          }>;
+          onLayerToggle?: (layerId: string, visible: boolean) => void;
+
+          // Position
+          position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+        }
+        ```
+
+        Features:
+        - Zoom in/out buttons with icons
+        - Reset zoom button
+        - Layer visibility toggles (checkboxes)
+        - All controls keyboard accessible
+        - ARIA labels for screen readers
+
+    - path: src/components/viz/spatial/AccessibleMapFallback.tsx
+      description: |
+        Accessible alternative to visual map:
+
+        ```typescript
+        interface AccessibleMapFallbackProps {
+          data: DataRecord[];
+          features: GeoJSON.Feature[];
+          joinedData: Map<string, DataRecord>;
+
+          // Table configuration
+          table: {
+            caption: string;
+            columns: Array<{
+              field: string;
+              label: string;
+              format?: (value: unknown) => string;
+            }>;
+            sortDefault?: string;
+            sortOrder?: 'asc' | 'desc';
+          };
+
+          // Narrative summary
+          narrative?: {
+            summary: string;
+            keyFindings: string[];
+          };
+
+          // Visibility
+          alwaysVisible?: boolean;  // Show alongside map
+          triggerLabel?: string;    // Button to show fallback
+        }
+        ```
+
+        Features:
+        - Sortable data table
+        - Narrative summary section
+        - Key findings list
+        - Toggle button to show/hide
+        - Proper heading hierarchy
+
+  utilities:
+    - path: src/components/viz/spatial/utils/keyboard-nav-utils.ts
+      description: |
+        Keyboard navigation utilities:
+        - setupKeyboardNav(containerRef, features): CleanupFn
+        - handleArrowKeys(event, currentFeature, features): nextFeature
+        - announceFeatureFocus(feature, datum): void
+        - announceLayerChange(layerName, count): void
+
+        Key mappings (from ARCHITECTURE.md Section 6.2):
+        - Tab: Move focus to map, then between regions/points
+        - Enter: Select focused region
+        - Escape: Clear selection
+        - +/-: Zoom in/out
+        - Arrow keys: Pan map
+
+    - path: src/components/viz/spatial/utils/screen-reader-utils.ts
+      description: |
+        Screen reader announcement utilities:
+        - createLiveRegion(): HTMLElement
+        - announce(message, priority): void
+        - announceRegionFocus(feature, datum): string
+        - announceLayerChange(layerName, count): string
+
+  tests:
+    - path: tests/components/viz/spatial/MapLegend.test.tsx
+      description: |
+        Legend tests:
+        - Renders continuous gradient correctly
+        - Renders categorical swatches correctly
+        - Renders size legend correctly
+        - Labels and ticks display correctly
+        - Position variants work
+        - Orientation variants work
+
+    - path: tests/components/viz/spatial/MapControls.test.tsx
+      description: |
+        Controls tests:
+        - Zoom in button calls handler
+        - Zoom out button calls handler
+        - Reset button calls handler
+        - Layer toggles work
+        - All controls are keyboard accessible
+        - ARIA labels are present
+
+    - path: tests/components/viz/spatial/AccessibleMapFallback.test.tsx
+      description: |
+        Fallback tests:
+        - Table renders with correct data
+        - Sorting works on column click
+        - Narrative summary displays
+        - Key findings list displays
+        - Toggle button shows/hides content
+        - Table is properly semantic (caption, headers, etc.)
+
+    - path: tests/components/viz/spatial/keyboard-nav.test.tsx
+      description: |
+        Keyboard navigation tests:
+        - Tab moves focus to first feature
+        - Tab cycles through features
+        - Enter selects feature
+        - Escape clears selection
+        - +/- triggers zoom
+        - Arrow keys trigger pan
+        - Focus ring is visible
+
+    - path: tests/components/viz/spatial/spatial-integration.test.tsx
+      description: |
+        Integration tests:
+        - ChoroplethMap + MapLegend compose
+        - BubbleMap + MapLegend compose
+        - Full composition with all supporting components
+        - Context flows correctly through composition
+        - Interactions work in composed state
+
+  stories:
+    - path: src/components/viz/spatial/MapLegend.stories.tsx
+      description: |
+        Legend stories:
+        - ContinuousGradient
+        - CategoricalSwatches
+        - SizeLegend
+        - Combined (color + size)
+        - Positions (all four corners)
+        - Orientations (horizontal/vertical)
+
+    - path: src/components/viz/spatial/MapControls.stories.tsx
+      description: |
+        Controls stories:
+        - ZoomOnly
+        - WithLayers
+        - AllControls
+        - KeyboardAccessible (demonstrates keyboard nav)
+
+    - path: src/components/viz/spatial/AccessibleMapFallback.stories.tsx
+      description: |
+        Fallback stories:
+        - TableOnly
+        - WithNarrative
+        - Sortable
+        - AlwaysVisible
+        - ToggleMode
+
+  documentation:
+    - path: docs/components/map-legend.md
+    - path: docs/components/map-controls.md
+    - path: docs/components/accessible-map-fallback.md
+    - path: docs/viz/spatial-accessibility.md
+      description: |
+        Accessibility documentation:
+        - Keyboard navigation reference
+        - Screen reader behavior
+        - Table fallback usage
+        - ARIA attributes reference
+        - Testing accessibility
+
+technicalApproach:
+  - Implement MapLegend with gradient and swatch rendering
+  - Implement MapControls with button and toggle components
+  - Implement AccessibleMapFallback with semantic table
+  - Build keyboard navigation utilities
+  - Build screen reader announcement utilities
+  - Add ARIA attributes to all interactive elements
+  - Write comprehensive tests for each component
+  - Write integration tests for full composition
+  - Create Storybook stories
+  - Document accessibility features
+
+qualityGates:
+  during_development:
+    - Legend renders scales correctly
+    - Controls are interactive
+    - Table displays data correctly
+
+  before_completion:
+    - pnpm test tests/components/viz/spatial/Map*.test.tsx passes
+    - pnpm test tests/components/viz/spatial/spatial-integration.test.tsx passes
+    - pnpm a11y:diff passes
+    - All components keyboard accessible
+    - Storybook stories render correctly
+    - Documentation reviewed
+    - Coverage >90% on new code
+
+estimatedEffort: "1 session (60-70k tokens)"
+
+notes: |
+  📋 FULL MISSION DETAILS: This YAML file contains complete implementation guidance.
+
+  Keyboard navigation spec (from ARCHITECTURE.md Section 6.2):
+  - Tab: Move focus to map, then between regions/points
+  - Enter: Select focused region (triggers filter if enabled)
+  - Escape: Clear selection
+  - +/-: Zoom in/out
+  - Arrow keys: Pan map
+
+  Screen reader announcements (from ARCHITECTURE.md Section 6.3):
+  - On region focus: "{name}: {value} {unit}. Rank {rank} of {total}."
+  - On layer change: "Now showing {layer} layer with {count} features."
+
+  Table fallback requirements:
+  - Must have <caption> describing the table
+  - Must have <th> headers for columns
+  - Must be sortable by clicking headers
+  - Sort direction must be indicated visually and via aria-sort
+
+  Live region for announcements:
+  - Use aria-live="polite" for non-urgent announcements
+  - Use aria-live="assertive" for important state changes

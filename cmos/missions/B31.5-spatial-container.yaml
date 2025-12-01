@@ -1,0 +1,273 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B31.5
+name: SpatialContainer & Core Infrastructure
+sprint: Sprint 31
+status: Queued
+
+objective: >
+  Build the foundational React component infrastructure for spatial visualizations
+  including the SpatialContainer wrapper, projection management, and a11y context.
+
+context:
+  background: |
+    SpatialContainer is the root component that manages projection state, layer ordering,
+    and accessibility context for all spatial visualizations. It provides the foundation
+    that ChoroplethMap, BubbleMap, and other spatial components build upon.
+
+  research_basis:
+    - "RDS.10: Complex Schema Extension Research Mission"
+    - "RV.03: Gap Analysis"
+    - "RDV.4: Accessibility Equivalence Validation"
+
+  architecture_reference: "cmos/foundational-docs/data-viz-part2/spatial-module/ARCHITECTURE.md Section 4"
+
+  dependencies:
+    - B31.1  # Requires spatial schema types
+    - B31.2  # Requires Geocodable trait
+    - B31.3  # Requires HasProjection and LayeredOverlay traits
+    - B31.4  # Requires geo-data-resolver
+
+successCriteria:
+  - Container correctly manages projection state
+  - Layer ordering is deterministic and configurable
+  - A11y context properly propagates to child components
+  - useSpatialSpec hook provides correct data to components
+  - Storybook story renders container structure
+  - Tests pass with >90% coverage on new code
+
+constraints:
+  - Must work with both ECharts and Vega-Lite renderers
+  - Must be accessible (WCAG 2.1 AA)
+  - Must support all projection types from HasProjection trait
+  - Layer management must be renderer-agnostic
+
+deliverables:
+  components:
+    - path: src/components/viz/spatial/SpatialContainer.tsx
+      description: |
+        Root container component:
+
+        ```typescript
+        interface SpatialContainerProps {
+          spec: NormalizedVizSpec;
+          geoData: GeoJSON.FeatureCollection;
+          data?: DataRecord[];
+          width: number;
+          height: number;
+
+          // Projection
+          projection?: ProjectionType;
+          projectionConfig?: ProjectionConfig;
+
+          // Layers
+          layers?: LayerConfig[];
+
+          // Accessibility
+          a11y: {
+            description: string;
+            tableFallback?: { enabled: boolean; caption: string };
+            narrative?: { summary: string; keyFindings: string[] };
+          };
+
+          // Interactions
+          onFeatureClick?: (feature: GeoFeature, datum?: DataRecord) => void;
+          onFeatureHover?: (feature: GeoFeature, datum?: DataRecord) => void;
+
+          children?: React.ReactNode;
+        }
+        ```
+
+        Responsibilities:
+        - Initialize projection based on spec and dimensions
+        - Manage layer z-ordering
+        - Provide SpatialContext to children
+        - Handle keyboard navigation setup
+        - Render a11y fallback when needed
+
+    - path: src/components/viz/spatial/SpatialContext.tsx
+      description: |
+        React context for spatial components:
+
+        ```typescript
+        interface SpatialContextValue {
+          projection: ProjectionConfig;
+          dimensions: { width: number; height: number };
+          layers: OrderedLayerConfig[];
+          a11y: SpatialA11yConfig;
+          features: GeoJSON.Feature[];
+          joinedData?: Map<string, DataRecord>;
+
+          // Interaction handlers
+          handleFeatureClick: (featureId: string) => void;
+          handleFeatureHover: (featureId: string | null) => void;
+
+          // State
+          hoveredFeature: string | null;
+          selectedFeature: string | null;
+        }
+        ```
+
+  hooks:
+    - path: src/viz/hooks/useSpatialSpec.ts
+      description: |
+        Hook that processes spatial spec and provides render-ready data:
+
+        ```typescript
+        interface UseSpatialSpecOptions {
+          spec: NormalizedVizSpec;
+          geoSource: string | GeoJSON | TopoJSON;
+          data?: DataRecord[];
+          dimensions: { width: number; height: number };
+        }
+
+        interface UseSpatialSpecResult {
+          isLoading: boolean;
+          error: Error | null;
+          features: GeoJSON.Feature[];
+          joinedData: Map<string, DataRecord>;
+          projectionConfig: ProjectionConfig;
+          layerConfigs: LayerConfig[];
+        }
+
+        function useSpatialSpec(options: UseSpatialSpecOptions): UseSpatialSpecResult;
+        ```
+
+        Responsibilities:
+        - Call geo-data-resolver to fetch/parse/join data
+        - Generate projection config from spec
+        - Extract layer configurations
+        - Handle loading and error states
+
+    - path: src/viz/hooks/useSpatialProjection.ts
+      description: |
+        Hook that manages projection calculations:
+
+        ```typescript
+        function useSpatialProjection(
+          projectionType: ProjectionType,
+          config: ProjectionConfig,
+          dimensions: { width: number; height: number },
+          features: GeoJSON.Feature[]
+        ): {
+          project: (lon: number, lat: number) => [number, number];
+          fitToFeatures: () => ProjectionConfig;
+          bounds: [[number, number], [number, number]];
+        };
+        ```
+
+  utilities:
+    - path: src/components/viz/spatial/utils/projection-utils.ts
+      description: |
+        Projection utility functions:
+        - createProjection(type, config, dimensions): d3.GeoProjection
+        - fitProjectionToFeatures(projection, features): d3.GeoProjection
+        - projectCoordinates(projection, lon, lat): [x, y]
+
+    - path: src/components/viz/spatial/utils/layer-utils.ts
+      description: |
+        Layer utility functions:
+        - orderLayers(layers): OrderedLayerConfig[]
+        - validateLayerConfig(layer): ValidationResult
+        - mergeLayerDefaults(layer): LayerConfig
+
+  tests:
+    - path: tests/components/viz/spatial/SpatialContainer.test.tsx
+      description: |
+        Container tests:
+        - Renders without crashing
+        - Provides correct context to children
+        - Projection state updates on spec change
+        - Layer ordering is correct
+        - A11y context propagates
+        - Keyboard navigation initializes
+
+    - path: tests/viz/hooks/useSpatialSpec.test.ts
+      description: |
+        Hook tests:
+        - Returns loading state initially
+        - Returns features after resolution
+        - Joins data correctly
+        - Handles errors gracefully
+        - Recomputes on spec change
+
+    - path: tests/components/viz/spatial/SpatialContainer.a11y.test.tsx
+      description: |
+        A11y tests:
+        - No axe violations
+        - ARIA attributes present
+        - Keyboard navigation works
+        - Screen reader announcements fire
+
+  stories:
+    - path: src/components/viz/spatial/SpatialContainer.stories.tsx
+      description: |
+        Storybook stories:
+        - Default: Basic container with US states
+        - WithProjection: Different projection types
+        - WithLayers: Multiple layer configuration
+        - WithA11y: Accessibility features enabled
+        - Loading: Loading state
+        - Error: Error state
+
+  documentation:
+    - path: docs/components/spatial-container.md
+      description: |
+        Component documentation:
+        - Props reference
+        - Context value reference
+        - Usage patterns
+        - Accessibility features
+        - Examples
+
+technicalApproach:
+  - Review existing component patterns in src/components/
+  - Install d3-geo for projection calculations
+  - Implement SpatialContext with all required state
+  - Implement SpatialContainer as context provider
+  - Implement useSpatialSpec hook using geo-data-resolver
+  - Implement useSpatialProjection for projection math
+  - Build projection and layer utility functions
+  - Write comprehensive tests including a11y
+  - Create Storybook stories with US states sample data
+  - Document component usage
+
+qualityGates:
+  during_development:
+    - Context provides all required values
+    - Projection calculations are correct
+    - No TypeScript errors in strict mode
+
+  before_completion:
+    - pnpm test tests/components/viz/spatial/ passes
+    - pnpm test tests/viz/hooks/useSpatialSpec.test.ts passes
+    - pnpm a11y:diff passes
+    - Storybook stories render correctly
+    - Documentation reviewed
+    - Coverage >90% on new code
+
+estimatedEffort: "1 session (50-60k tokens)"
+
+notes: |
+  📋 FULL MISSION DETAILS: This YAML file contains complete implementation guidance.
+
+  Dependencies to install:
+  - d3-geo: For projection calculations
+  - @types/d3-geo: Type definitions
+
+  This component is the foundation - it doesn't render visualizations itself,
+  but provides the context and utilities that ChoroplethMap and BubbleMap
+  will use in Sprint 32.
+
+  Key design decisions:
+  - SpatialContext separates data/state management from rendering
+  - useSpatialSpec is async-aware (handles loading/error)
+  - Projection is calculated once and cached until spec changes
+  - Layer ordering uses stable sort for deterministic output
+
+  A11y requirements (from ARCHITECTURE.md Section 6):
+  - ARIA label describing the map
+  - Keyboard navigation through features
+  - Screen reader announcements for focus changes
+  - Table fallback option for non-visual access

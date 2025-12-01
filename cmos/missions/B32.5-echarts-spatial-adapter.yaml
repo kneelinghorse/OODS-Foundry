@@ -1,0 +1,268 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B32.5
+name: ECharts Spatial Adapter
+sprint: Sprint 32
+status: Queued
+
+objective: >
+  Generate valid ECharts options for spatial visualizations including
+  choropleth (map series with visualMap) and bubble map (scatter series with geo coordinate system).
+
+context:
+  background: |
+    The ECharts adapter translates OODS normalized spatial specs into valid ECharts
+    configurations. ECharts has robust built-in support for geographic visualizations
+    with its geo component and map/scatter series types.
+
+  research_basis:
+    - "RDS.10: Renderer capability analysis"
+    - "RDS.11.5: ECharts Native Support Research"
+    - "RV.05: Dual-renderer parity requirements"
+
+  architecture_reference: "cmos/foundational-docs/data-viz-part2/spatial-module/ARCHITECTURE.md Section 1.2"
+
+  dependencies:
+    - B31.1  # Spatial schema types
+    - B31.4  # Geo data resolver (for data preparation)
+
+successCriteria:
+  - Generated ECharts options are valid (render without errors)
+  - Choropleth renders map series with visualMap color encoding
+  - BubbleMap renders scatter series on geo coordinate system
+  - Projection/coordinate system configuration works correctly
+  - Visual output matches expected appearance
+  - Visual regression tests pass
+  - Tests pass with >90% coverage on new code
+
+constraints:
+  - Must produce valid ECharts v5 options
+  - Must register geo data correctly for map rendering
+  - Must handle ECharts-specific concepts (visualMap, geo component)
+  - Must not introduce ECharts-specific concepts into normalized spec
+
+deliverables:
+  adapters:
+    - path: src/viz/adapters/spatial/echarts-spatial-adapter.ts
+      description: |
+        Main ECharts spatial adapter:
+
+        ```typescript
+        interface EChartsSpatialAdapterInput {
+          spec: NormalizedVizSpec;
+          geoData: GeoJSON.FeatureCollection;
+          data?: DataRecord[];
+          dimensions: { width: number; height: number };
+        }
+
+        interface EChartsSpatialAdapterOutput {
+          echartsOption: EChartsOption;
+          geoRegistration?: {
+            name: string;
+            geoJson: GeoJSON.FeatureCollection;
+          };
+        }
+
+        function adaptToECharts(input: EChartsSpatialAdapterInput): EChartsSpatialAdapterOutput;
+        ```
+
+        Handles:
+        - vizType detection (choropleth vs bubble)
+        - Geo component configuration
+        - Data series generation
+        - visualMap configuration for color encoding
+
+    - path: src/viz/adapters/spatial/echarts-choropleth-adapter.ts
+      description: |
+        Choropleth-specific ECharts generation:
+
+        ```typescript
+        function adaptChoroplethToECharts(
+          spec: NormalizedVizSpec,
+          geoData: GeoJSON.FeatureCollection,
+          data: DataRecord[],
+          dimensions: Dimensions
+        ): EChartsOption;
+        ```
+
+        Output structure:
+        ```json
+        {
+          "geo": {
+            "map": "usa",
+            "roam": true,
+            "itemStyle": {
+              "areaColor": "#e8e8e8",
+              "borderColor": "#fff"
+            },
+            "emphasis": {
+              "itemStyle": {
+                "areaColor": "#b3d1ff"
+              }
+            }
+          },
+          "visualMap": {
+            "type": "continuous",
+            "min": 0,
+            "max": 1000000,
+            "text": ["High", "Low"],
+            "inRange": {
+              "color": ["#e0f3f8", "#023858"]
+            }
+          },
+          "series": [{
+            "type": "map",
+            "map": "usa",
+            "geoIndex": 0,
+            "data": [
+              { "name": "California", "value": 39538223 },
+              { "name": "Texas", "value": 29145505 }
+            ]
+          }],
+          "tooltip": {
+            "trigger": "item",
+            "formatter": "{b}: {c}"
+          }
+        }
+        ```
+
+    - path: src/viz/adapters/spatial/echarts-bubble-adapter.ts
+      description: |
+        Bubble map-specific ECharts generation:
+
+        ```typescript
+        function adaptBubbleToECharts(
+          spec: NormalizedVizSpec,
+          geoData: GeoJSON.FeatureCollection | null,
+          data: DataRecord[],
+          dimensions: Dimensions
+        ): EChartsOption;
+        ```
+
+        Output structure:
+        ```json
+        {
+          "geo": {
+            "map": "usa",
+            "roam": true,
+            "itemStyle": {
+              "areaColor": "#e8e8e8",
+              "borderColor": "#fff"
+            }
+          },
+          "series": [{
+            "type": "scatter",
+            "coordinateSystem": "geo",
+            "symbolSize": "function(val) { return Math.sqrt(val[2]) / 10; }",
+            "data": [
+              { "name": "Los Angeles", "value": [-118.24, 34.05, 3990456] },
+              { "name": "Chicago", "value": [-87.63, 41.88, 2693976] }
+            ],
+            "encode": {
+              "value": 2
+            }
+          }],
+          "tooltip": {
+            "trigger": "item",
+            "formatter": "{b}: {c[2]}"
+          }
+        }
+        ```
+
+  utilities:
+    - path: src/viz/adapters/spatial/echarts-geo-registration.ts
+      description: |
+        Geo data registration for ECharts:
+        - registerGeoJson(name, geoJson): void
+        - Uses echarts.registerMap()
+        - Caches registrations to avoid duplicates
+        - Handles TopoJSON conversion if needed
+
+    - path: src/viz/adapters/spatial/echarts-visualmap-generator.ts
+      description: |
+        VisualMap configuration generation:
+        - createContinuousVisualMap(domain, range): VisualMapOption
+        - createPiecewiseVisualMap(pieces, colors): VisualMapOption
+        - Maps OODS scale types to ECharts visualMap types
+
+  tests:
+    - path: tests/viz/adapters/spatial/echarts-spatial-adapter.test.ts
+      description: |
+        Adapter tests:
+        - Choropleth option structure is correct
+        - Bubble map option structure is correct
+        - Geo registration works
+        - visualMap configuration is correct
+        - Data format is correct for each series type
+        - Tooltip configuration works
+
+    - path: tests/viz/adapters/spatial/echarts-visual-regression.test.ts
+      description: |
+        Visual regression tests:
+        - US states choropleth renders correctly
+        - World countries choropleth renders correctly
+        - City bubble map renders correctly
+        - Hover interactions work
+
+  documentation:
+    - path: docs/viz/adapters/echarts-spatial.md
+      description: |
+        Adapter documentation:
+        - Supported viz types
+        - Geo registration requirements
+        - visualMap options
+        - Data format requirements
+        - Examples
+
+technicalApproach:
+  - Review ECharts geographic documentation
+  - Implement geo registration utility using echarts.registerMap
+  - Implement choropleth adapter using map series
+  - Implement bubble adapter using scatter series with geo coordinate system
+  - Implement visualMap generator for color encoding
+  - Handle symbolSize function for bubble sizing
+  - Write unit tests for option generation
+  - Set up visual regression testing
+  - Document adapter usage
+
+qualityGates:
+  during_development:
+    - Generated options render without errors in ECharts
+    - Geo registration succeeds
+
+  before_completion:
+    - pnpm test tests/viz/adapters/spatial/echarts*.test.ts passes
+    - Visual regression tests pass
+    - Documentation reviewed
+    - Coverage >90% on new code
+
+estimatedEffort: "1 session (50-60k tokens)"
+
+notes: |
+  📋 FULL MISSION DETAILS: This YAML file contains complete implementation guidance.
+
+  ECharts geo component notes:
+  - Must register GeoJSON before using map name
+  - echarts.registerMap(name, geoJson) is the registration API
+  - Map name must match between registration and series.map
+
+  ECharts series types for spatial:
+  - "map": For choropleth (fills regions with values)
+  - "scatter" with coordinateSystem: "geo": For bubble maps
+  - "lines" with coordinateSystem: "geo": For routes (future)
+
+  visualMap types:
+  - "continuous": Gradient color mapping (default)
+  - "piecewise": Discrete color categories
+
+  symbolSize for bubbles:
+  - Can be number (fixed size)
+  - Can be array [min, max] for range
+  - Can be function (val) => size for custom scaling
+  - Use sqrt for perceptually accurate area scaling
+
+  ECharts-specific considerations:
+  - Data format is { name: string, value: number } for map series
+  - Data format is { name: string, value: [lon, lat, value] } for geo scatter
+  - Tooltip formatter uses {b} for name, {c} for value, {c[2]} for array value

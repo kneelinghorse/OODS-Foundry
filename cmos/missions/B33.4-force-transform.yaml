@@ -1,0 +1,337 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B33.4
+name: Force Transform (Network Graph)
+sprint: Sprint 33
+status: Queued
+
+objective: >
+  Implement server-side D3-force transform for network graph layouts, producing
+  deterministic node positions that Vega-Lite can render as point + rule marks.
+
+context:
+  background: |
+    Force-directed graphs require iterative simulation to determine node positions.
+    Unlike ECharts (which handles this internally), Vega-Lite needs pre-computed
+    coordinates. This mission implements a deterministic batch-processing approach
+    using d3-force with controlled initialization and tick loops.
+
+  research_basis:
+    - "RDS.11.2: D3-Force Research (deterministic batch processing)"
+    - "RDS.11.4: Vega Transform Gap analysis"
+
+  architecture_reference: "cmos/foundational-docs/data-viz-part2/network-flow-module/ARCHITECTURE.md Section 4.2.2"
+
+  dependencies:
+    - B33.1  # Schemas (NetworkInput, ForceLayoutOutput)
+    - B33.2  # Resolver (routes to transform when Vega-Lite selected)
+
+successCriteria:
+  - computeForceLayout produces stable, deterministic positions
+  - Same input always produces same output (seeded random)
+  - Link denormalization works correctly (object refs → source/target coords)
+  - Performance acceptable for 200-node graphs (< 500ms)
+  - All force types configurable (center, charge, link, collide)
+  - Tests pass with >90% coverage on new code
+
+constraints:
+  - Must use d3-force for simulation
+  - Must be deterministic (no Math.random, use seeded PRNG)
+  - Must run in Node.js (no DOM required)
+  - Output must match ForceLayoutOutput schema
+  - Must handle disconnected components
+
+deliverables:
+  transforms:
+    - path: src/viz/transforms/force-transform.ts
+      description: |
+        Force layout transform implementation:
+
+        ```typescript
+        import * as d3 from 'd3-force';
+
+        interface ForceLayoutOptions {
+          width: number;
+          height: number;
+          iterations?: number;  // default 300
+          forces?: {
+            center?: { x?: number; y?: number };
+            charge?: { strength?: number; distanceMin?: number; distanceMax?: number };
+            link?: { distance?: number; strength?: number };
+            collide?: { radius?: number; strength?: number };
+          };
+          seed?: number;  // for deterministic initialization
+        }
+
+        function computeForceLayout(
+          input: NetworkInput,
+          options: ForceLayoutOptions
+        ): ForceLayoutOutput {
+          const { width, height, iterations = 300, forces = {}, seed = 12345 } = options;
+
+          // Clone nodes to avoid mutating input
+          const nodes = input.nodes.map(n => ({ ...n }));
+          const links = input.links.map(l => ({ ...l }));
+
+          // Deterministic initialization (spiral pattern)
+          const prng = seedrandom(seed);
+          initializePositions(nodes, width, height, prng);
+
+          // Create simulation
+          const simulation = d3.forceSimulation(nodes)
+            .force('center', d3.forceCenter(
+              forces.center?.x ?? width / 2,
+              forces.center?.y ?? height / 2
+            ))
+            .force('charge', d3.forceManyBody()
+              .strength(forces.charge?.strength ?? -30)
+              .distanceMin(forces.charge?.distanceMin ?? 1)
+              .distanceMax(forces.charge?.distanceMax ?? Infinity)
+            )
+            .force('link', d3.forceLink(links)
+              .id((d: any) => d.id)
+              .distance(forces.link?.distance ?? 30)
+              .strength(forces.link?.strength ?? 1)
+            )
+            .force('collide', d3.forceCollide()
+              .radius(forces.collide?.radius ?? 5)
+              .strength(forces.collide?.strength ?? 0.7)
+            )
+            .stop();  // Don't auto-start
+
+          // Batch processing: run all iterations synchronously
+          for (let i = 0; i < iterations; i++) {
+            simulation.tick();
+          }
+
+          // Denormalize links: add source/target coordinates
+          const denormalizedLinks = links.map(link => ({
+            sourceId: typeof link.source === 'object' ? link.source.id : link.source,
+            targetId: typeof link.target === 'object' ? link.target.id : link.target,
+            sourceX: (link.source as any).x,
+            sourceY: (link.source as any).y,
+            targetX: (link.target as any).x,
+            targetY: (link.target as any).y,
+            value: link.value,
+            ...preserveExtraFields(link, ['source', 'target', 'value', 'index'])
+          }));
+
+          return {
+            nodes: nodes.map(node => ({
+              id: node.id,
+              x: node.x,
+              y: node.y,
+              ...preserveExtraFields(node, ['id', 'x', 'y', 'vx', 'vy', 'fx', 'fy', 'index'])
+            })),
+            links: denormalizedLinks
+          };
+        }
+
+        // Deterministic spiral initialization
+        function initializePositions(
+          nodes: any[],
+          width: number,
+          height: number,
+          prng: () => number
+        ): void {
+          const centerX = width / 2;
+          const centerY = height / 2;
+          const goldenAngle = Math.PI * (3 - Math.sqrt(5));
+          const scale = Math.min(width, height) / 4;
+
+          nodes.forEach((node, i) => {
+            const theta = i * goldenAngle;
+            const r = scale * Math.sqrt(i / nodes.length);
+            // Add small jitter for stability
+            node.x = centerX + r * Math.cos(theta) + (prng() - 0.5) * 2;
+            node.y = centerY + r * Math.sin(theta) + (prng() - 0.5) * 2;
+          });
+        }
+        ```
+
+    - path: src/viz/transforms/force-validation.ts
+      description: |
+        Network data validation:
+
+        ```typescript
+        interface NetworkValidationResult {
+          valid: boolean;
+          errors: NetworkError[];
+          warnings: NetworkWarning[];
+          stats: {
+            nodeCount: number;
+            linkCount: number;
+            connectedComponents: number;
+            isolatedNodes: string[];
+          };
+        }
+
+        function validateNetworkData(input: NetworkInput): NetworkValidationResult {
+          // Check for missing node references in links
+          // Check for duplicate node IDs
+          // Check for self-loops
+          // Count connected components
+          // Identify isolated nodes
+        }
+        ```
+
+        Error types:
+        - NETWORK_MISSING_NODE: Link references non-existent node
+        - NETWORK_DUPLICATE_ID: Multiple nodes with same ID
+        - NETWORK_SELF_LOOP: Link where source === target
+
+        Warning types:
+        - NETWORK_ISOLATED_NODE: Node with no connections
+        - NETWORK_DISCONNECTED: Graph has multiple components
+
+    - path: src/viz/transforms/force-utils.ts
+      description: |
+        Utility functions:
+
+        ```typescript
+        // Seeded PRNG for deterministic initialization
+        function seedrandom(seed: number): () => number;
+
+        // Field preservation (exclude d3-force internal fields)
+        function preserveExtraFields(
+          data: Record<string, unknown>,
+          excludeFields: string[]
+        ): Record<string, unknown>;
+
+        // Connected component detection
+        function findConnectedComponents(
+          nodes: NetworkNode[],
+          links: NetworkLink[]
+        ): string[][];
+
+        // Isolated node detection
+        function findIsolatedNodes(
+          nodes: NetworkNode[],
+          links: NetworkLink[]
+        ): string[];
+        ```
+
+  tests:
+    - path: tests/viz/transforms/force-transform.test.ts
+      description: |
+        Transform tests:
+
+        Determinism tests:
+        - Same input + seed → identical output
+        - Different seed → different output
+        - Multiple runs produce stable results
+
+        Layout tests:
+        - Nodes positioned within bounds
+        - Connected nodes cluster together
+        - Disconnected components separate
+        - Isolated nodes handled correctly
+
+        Link denormalization tests:
+        - Source/target coords match node positions
+        - Original properties preserved
+        - Value field propagated
+
+        Force configuration tests:
+        - Center force adjusts center point
+        - Charge strength affects spread
+        - Link distance affects spacing
+        - Collide radius prevents overlap
+
+    - path: tests/viz/transforms/force-validation.test.ts
+      description: |
+        Validation tests:
+        - Detects missing node references
+        - Detects duplicate IDs
+        - Detects self-loops
+        - Counts connected components correctly
+        - Identifies isolated nodes
+        - Valid data passes without errors
+
+    - path: tests/viz/transforms/force-performance.test.ts
+      description: |
+        Performance benchmarks:
+        - 50 nodes: < 100ms
+        - 100 nodes: < 200ms
+        - 200 nodes: < 500ms
+        - 500 nodes: < 2000ms (with warning threshold)
+
+  sample_data:
+    - path: tests/fixtures/network-flow/valid-network.json
+    - path: tests/fixtures/network-flow/disconnected-network.json
+    - path: tests/fixtures/network-flow/isolated-nodes-network.json
+    - path: tests/fixtures/network-flow/self-loop-network.json
+    - path: tests/fixtures/network-flow/large-network-200.json
+
+  documentation:
+    - path: docs/viz/transforms/force-transform.md
+      description: |
+        Transform documentation:
+        - API reference
+        - Force configuration options
+        - Determinism guarantees
+        - Performance characteristics
+        - Link denormalization explained
+        - Examples with different force configs
+
+technicalApproach:
+  - Install d3-force and @types/d3-force
+  - Install seedrandom for deterministic PRNG
+  - Implement spiral initialization for stable starting positions
+  - Implement batch processing with .stop() + tick loop
+  - Implement link denormalization (extract coordinates from object refs)
+  - Build validation layer for network data
+  - Implement connected component detection
+  - Write comprehensive tests
+  - Run performance benchmarks
+  - Document APIs
+
+qualityGates:
+  during_development:
+    - Force layout produces reasonable positions
+    - Same input always produces same output
+    - No DOM dependencies (runs in Node)
+
+  before_completion:
+    - pnpm test tests/viz/transforms/force*.test.ts passes
+    - Performance benchmarks pass
+    - Documentation reviewed
+    - Coverage >90% on new code
+
+estimatedEffort: "1 session (65-75k tokens)"
+
+notes: |
+  📋 FULL MISSION DETAILS: This YAML file contains complete implementation guidance.
+
+  D3-force key concepts:
+  - d3.forceSimulation(): Creates simulation
+  - .force(name, force): Adds/configures forces
+  - .stop(): Prevents auto-start
+  - .tick(): Advances simulation one step
+  - After simulation, nodes have .x, .y, .vx, .vy properties
+  - Links are mutated: source/target become object refs
+
+  Force types:
+  - forceCenter: Pulls nodes toward center point
+  - forceManyBody: Charge simulation (negative = repel)
+  - forceLink: Spring force between linked nodes
+  - forceCollide: Prevents node overlap
+
+  Determinism requirements:
+  - Use seeded PRNG for all random operations
+  - Spiral initialization avoids random starting positions
+  - Fixed iteration count (not alpha threshold)
+  - Same seed + input = identical output
+
+  Link denormalization:
+  - D3 mutates links: source/target become node objects
+  - Extract .x, .y from those objects
+  - Output flat coords for Vega-Lite rule marks
+  - Preserve original IDs for reference
+
+  Performance considerations:
+  - O(n²) for charge force (can be optimized with quadtree)
+  - More iterations = better layout but slower
+  - 300 iterations is good default balance
+  - For 500+ nodes, consider reducing iterations or using web worker

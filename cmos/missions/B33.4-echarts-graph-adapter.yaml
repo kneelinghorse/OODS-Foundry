@@ -1,0 +1,308 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B33.4
+name: ECharts Graph Adapter (Force-Directed)
+sprint: Sprint 33
+status: Queued
+
+objective: >
+  Implement ECharts adapter for force-directed graph visualization.
+  Pass-through architecture leveraging ECharts native series-graph with force layout.
+
+context:
+  background: |
+    ECharts has native support for force-directed graphs via series-graph with
+    layout: 'force'. This adapter transforms normalized OODS network specs into
+    ECharts option objects. ECharts handles all force simulation client-side.
+
+    R33.0 documented significant differences between ECharts and D3 force defaults:
+    - ECharts repulsion: 50 (strong, fills canvas)
+    - D3 strength: -30 (weak, tight clusters)
+    - ECharts gravity: 0.1 (true centripetal force)
+    - D3 forceCenter: translation only (not gravity)
+
+    We use ECharts defaults which produce visually better results out of the box.
+
+  research_basis:
+    - "R33.0: Renderer Parameter Alignment (force parameters documented)"
+    - "RDS.11.5: ECharts Native Support Research"
+    - "cmos/foundational-docs/data-viz-part2/network-flow-module/ARCHITECTURE.md Section 5.1"
+
+  architecture_reference: "cmos/foundational-docs/data-viz-part2/network-flow-module/ARCHITECTURE.md Section 5.1"
+
+  dependencies:
+    - B33.1  # Schemas (NetworkInput type)
+    - B33.2  # Resolver (routes to ECharts)
+
+  blocks:
+    - B34.1  # Components depend on adapters
+
+successCriteria:
+  - Adapter produces valid ECharts GraphSeriesOption
+  - Force layout configuration works correctly
+  - Node sizing and coloring work
+  - Link width encoding works
+  - Category-based legend works
+  - Drag and zoom interactions work
+  - Adjacency highlighting on hover works
+  - Tests pass with >90% coverage
+
+constraints:
+  - Must follow existing adapter patterns in src/viz/adapters/echarts/
+  - Must apply OODS design tokens consistently
+  - Must use ECharts force defaults (repulsion: 50, gravity: 0.1)
+  - Must handle nodes with optional fixed positions
+
+deliverables:
+  adapters:
+    - path: src/viz/adapters/echarts/graph-adapter.ts
+      description: |
+        Force Graph ECharts adapter:
+
+        ```typescript
+        import type { GraphSeriesOption, EChartsOption } from 'echarts';
+        import type { NormalizedVizSpec, NetworkInput } from '../../types';
+        import { applyTokens, getColorScale } from '../utils/echarts-token-utils';
+
+        export function adaptGraphToECharts(
+          spec: NormalizedVizSpec,
+          input: NetworkInput
+        ): EChartsOption {
+          // Transform nodes for ECharts
+          const nodes = input.nodes.map(node => ({
+            id: node.id,
+            name: node.name ?? node.id,
+            value: node.value,
+            symbolSize: calculateNodeSize(node, spec),
+            category: node.group ?? node.category,
+            // Fixed position support
+            fixed: node.fixed ?? false,
+            x: node.x,
+            y: node.y,
+            // Custom styling per node
+            itemStyle: node.color ? { color: node.color } : undefined,
+            ...preserveExtraFields(node, ['id', 'name', 'value', 'group', 'category', 'fixed', 'x', 'y', 'color', 'radius'])
+          }));
+
+          // Transform links for ECharts
+          const links = input.links.map(link => ({
+            source: link.source,
+            target: link.target,
+            value: link.value,
+            lineStyle: {
+              width: calculateLinkWidth(link, spec)
+            }
+          }));
+
+          // Extract categories for legend
+          const categories = extractCategories(input.nodes, spec);
+
+          const series: GraphSeriesOption = {
+            type: 'graph',
+            layout: 'force',
+            data: nodes,
+            links,
+            categories,
+
+            // Interaction
+            roam: spec.interaction?.zoom ?? true,
+            draggable: spec.interaction?.drag ?? true,
+
+            // Labels
+            label: {
+              show: spec.encoding?.label?.show ?? true,
+              position: 'right',
+              formatter: '{b}',
+              ...applyTokens('viz.label')
+            },
+            labelLayout: {
+              hideOverlap: true  // Prevent label collision
+            },
+
+            // Force layout parameters (ECharts defaults from R33.0)
+            force: {
+              repulsion: spec.layout?.force?.repulsion ?? 100,  // Higher than D3 default
+              gravity: spec.layout?.force?.gravity ?? 0.1,      // True gravity
+              edgeLength: spec.layout?.force?.edgeLength ?? 30,
+              friction: spec.layout?.force?.friction ?? 0.6,
+              layoutAnimation: true  // Smooth animation
+            },
+
+            // Emphasis
+            emphasis: {
+              focus: 'adjacency',  // Highlight connected nodes/edges
+              lineStyle: { width: 4 }
+            },
+
+            // Edge styling
+            lineStyle: {
+              color: 'source',
+              curveness: 0.3,
+              ...applyTokens('viz.line')
+            },
+
+            // Edge labels (optional)
+            edgeLabel: {
+              show: spec.encoding?.edgeLabel?.show ?? false,
+              formatter: (params: any) => params.data.value ?? ''
+            }
+          };
+
+          return {
+            series: [series],
+            tooltip: generateGraphTooltip(spec),
+            legend: categories.length > 0 ? generateGraphLegend(categories, spec) : undefined,
+            ...applyBaseOptions(spec)
+          };
+        }
+
+        /**
+         * Calculate node size from value or spec encoding
+         */
+        function calculateNodeSize(node: any, spec: NormalizedVizSpec): number {
+          const baseSize = spec.encoding?.size?.base ?? 10;
+          const maxSize = spec.encoding?.size?.max ?? 50;
+
+          if (node.radius) return node.radius * 2;
+          if (node.value && spec.encoding?.size?.field === 'value') {
+            // Scale value to size range
+            return Math.max(baseSize, Math.min(maxSize, Math.sqrt(node.value) * 2));
+          }
+          return baseSize;
+        }
+
+        /**
+         * Calculate link width from value
+         */
+        function calculateLinkWidth(link: any, spec: NormalizedVizSpec): number {
+          const baseWidth = spec.encoding?.linkWidth?.base ?? 1;
+          const maxWidth = spec.encoding?.linkWidth?.max ?? 10;
+
+          if (link.value && spec.encoding?.linkWidth?.field === 'value') {
+            return Math.max(baseWidth, Math.min(maxWidth, Math.sqrt(link.value)));
+          }
+          return baseWidth;
+        }
+
+        /**
+         * Extract categories from nodes for legend
+         */
+        function extractCategories(nodes: any[], spec: NormalizedVizSpec): any[] {
+          const categoryField = spec.encoding?.color?.field ?? 'group';
+          const uniqueCategories = [...new Set(
+            nodes.map(n => n[categoryField]).filter(Boolean)
+          )];
+
+          return uniqueCategories.map(name => ({
+            name,
+            itemStyle: { color: getColorForCategory(name, spec) }
+          }));
+        }
+
+        /**
+         * Generate tooltip configuration
+         */
+        function generateGraphTooltip(spec: NormalizedVizSpec): any {
+          return {
+            trigger: 'item',
+            formatter: (params: any) => {
+              if (params.dataType === 'edge') {
+                return `${params.data.source} → ${params.data.target}` +
+                       (params.data.value ? `: ${params.data.value}` : '');
+              }
+              return `<strong>${params.name}</strong>` +
+                     (params.value ? `<br/>Value: ${params.value}` : '') +
+                     (params.data.category ? `<br/>Category: ${params.data.category}` : '');
+            }
+          };
+        }
+
+        /**
+         * Generate legend configuration
+         */
+        function generateGraphLegend(categories: any[], spec: NormalizedVizSpec): any {
+          return {
+            show: spec.legend?.show ?? true,
+            data: categories.map(c => c.name),
+            ...applyTokens('viz.legend')
+          };
+        }
+        ```
+
+  tests:
+    - path: tests/viz/adapters/echarts/graph-adapter.test.ts
+      description: |
+        Graph adapter tests:
+        - Produces valid ECharts GraphSeriesOption
+        - Force layout configuration correct
+        - Node sizes calculated correctly
+        - Link widths calculated correctly
+        - Categories extracted correctly
+        - Legend generated for categorized data
+        - Fixed position nodes work
+        - Drag and zoom enabled by default
+        - Emphasis focus set to 'adjacency'
+        - Default repulsion is 100 (not D3's -30)
+        - Default gravity is 0.1
+
+    - path: tests/viz/adapters/echarts/graph-adapter-interaction.test.ts
+      description: |
+        Interaction tests:
+        - Dragging nodes works
+        - Zooming works
+        - Adjacency highlighting on hover
+        - Tooltip shows correct info for nodes
+        - Tooltip shows correct info for edges
+        - Legend filtering works
+
+  storybook:
+    - path: stories/viz/echarts/Graph.stories.tsx
+      description: |
+        Graph stories:
+        - Basic force graph (10 nodes)
+        - Categorized graph with legend
+        - Graph with sized nodes (value encoding)
+        - Graph with sized edges
+        - Large graph (100+ nodes)
+        - Graph with fixed nodes
+        - Graph with custom force parameters
+
+technicalApproach:
+  - Review existing ECharts adapter patterns
+  - Implement graph adapter with ECharts force defaults
+  - Implement node/link transformations
+  - Implement category extraction for legend
+  - Implement size/width calculations
+  - Apply OODS tokens consistently
+  - Write comprehensive tests
+  - Create Storybook stories
+
+qualityGates:
+  during_development:
+    - Adapter produces valid ECharts options
+    - Force simulation runs correctly
+    - Interactions work in Storybook
+
+  before_completion:
+    - pnpm test tests/viz/adapters/echarts/*graph*.test.ts passes
+    - Storybook stories complete
+    - Force parameters match R33.0 documentation
+    - Coverage >90% on new code
+
+estimatedEffort: "1 session (50-65k tokens)"
+
+notes: |
+  ECharts force defaults (from R33.0):
+  - repulsion: 50 (we use 100 for better spread)
+  - gravity: 0.1 (true centripetal force, not just translation)
+  - edgeLength: 30 (same as D3)
+  - friction: 0.6 (higher = faster settling)
+
+  Key differences from D3:
+  - ECharts fills the canvas better (higher repulsion)
+  - ECharts nodes don't fly away (true gravity)
+  - ECharts animation is smoother (layoutAnimation: true)
+
+  Important: ECharts repulsion of 50 is roughly equivalent to D3 strength of -200 to -300.
+  This is intentional - ECharts produces better-looking graphs out of the box.

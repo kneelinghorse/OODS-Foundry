@@ -1,0 +1,79 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Separation of Duty (SoD) Policy",
+  "description": "A schema for defining SoD policies.",
+  "type": "object",
+  "properties": {
+    "static_sod_policies": {
+      "description": "A list of static SoD policies.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "conflicting_roles": {
+            "description": "A pair of conflicting roles.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "The name of a role."
+            },
+            "minItems": 2,
+            "maxItems": 2
+          }
+        },
+        "required": ["conflicting_roles"]
+      }
+    },
+    "dynamic_sod_policies": {
+      "description": "A list of dynamic SoD policies.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "conflicting_permissions": {
+            "description": "A pair of conflicting permissions.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "The name of a permission."
+            },
+            "minItems": 2,
+            "maxItems": 2
+          }
+        },
+        "required": ["conflicting_permissions"]
+      }
+    },
+    "quorum_based_policies": {
+      "description": "A list of quorum-based policies.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "The name of the quorum policy.",
+            "type": "string"
+          },
+          "description": {
+            "description": "A description of the quorum policy.",
+            "type": "string"
+          },
+          "quorum_threshold": {
+            "description": "The minimum number of approvals required.",
+            "type": "integer",
+            "minimum": 1
+          },
+          "permissions": {
+            "description": "A list of permissions that require quorum approval.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "The name of a permission."
+            }
+          }
+        },
+        "required": ["name", "quorum_threshold", "permissions"]
+      }
+    }
+  }
+}

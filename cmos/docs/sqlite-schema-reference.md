@@ -16,6 +16,7 @@ Quick reference for querying CMOS history using any SQLite client.
 | `mission_dependencies` | Edges between missions | `from_id`, `to_id`, `type` |
 | `contexts` | JSON payloads for PROJECT/MASTER context | `id`, `content`, `updated_at` |
 | `context_snapshots` | Historical context versions | `context_id`, `content`, `created_at`, `content_hash` |
+| `sessions` | Universal session registry | `id`, `type`, `sprint_id`, `started_at`, `status` |
 | `session_events` | Append-only session log | `ts`, `agent`, `mission`, `action`, `status`, `summary` |
 | `telemetry_events` | Runtime metrics and health signals | `source_path`, `event_data`, `created_at` |
 | `prompt_mappings` | Prompt → behavior mapping | `prompt`, `behavior` |
@@ -57,6 +58,15 @@ ORDER BY id;
 SELECT ts, mission, action, status, summary
 FROM session_events
 ORDER BY ts DESC
+LIMIT 10;
+```
+
+### Review Planning/Onboarding Sessions
+```sql
+SELECT id, type, title, started_at, completed_at, status
+FROM sessions
+WHERE type IN ('planning', 'onboarding')
+ORDER BY started_at DESC
 LIMIT 10;
 ```
 
@@ -158,6 +168,5 @@ ORDER BY name;
 
 ---
 
-**Last Updated**: 2025-11-08  
+**Last Updated**: 2025-11-13  
 **Replaces**: `sqlite-db-browser-guide.md` (tool-agnostic version)
-

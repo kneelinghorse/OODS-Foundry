@@ -1,0 +1,502 @@
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B28.2
+sprintId: Sprint 28
+name: "RBAC Database Foundations & SQL Migrations"
+
+# ============================================================================
+# OBJECTIVE
+# ============================================================================
+objective: |
+  Implement the PostgreSQL database schema for the Authorization Extension Pack,
+  translating the canonical 5-table RBAC model from R21.2 into production-ready
+  SQL migrations with proper constraints, indexes, and seed data utilities.
+
+  This mission establishes the data layer that B28.3-B28.7 will build upon,
+  ensuring multi-tenant isolation, referential integrity, and query performance.
+
+# ============================================================================
+# CONTEXT & BACKGROUND
+# ============================================================================
+context:
+  background: |
+    B28.1 delivered the schema definitions (Zod + JSON Schema). This mission
+    translates those schemas into PostgreSQL DDL with:
+    - Foreign key constraints to core.users and core.organizations
+    - Unique constraints for multi-tenant isolation
+    - Indexes for query performance
+    - Triggers for SoD enforcement (Static SoD from R28.1)
+
+  dependencies:
+    - "B28.1 complete (schemas and validators ready)"
+    - "R28.1 complete (SoD constraint patterns researched)"
+    - "PostgreSQL 14+ available (ltree, JSONB support assumed)"
+    - "Core User and Organization tables exist in 'core' schema"
+
+  constraints:
+    - "Use 'authz' schema namespace for all authorization tables"
+    - "All FKs must use ON DELETE CASCADE for clean tenant deletion"
+    - "Migrations must be idempotent (can run multiple times safely)"
+    - "Include rollback migrations for every forward migration"
+    - "Follow Preferenceable migration logging pattern"
+
+# ============================================================================
+# RESEARCH FINDINGS TO INCORPORATE
+# ============================================================================
+researchFindings:
+  coreModel:
+    source: "R21.2 Part 4.2 (SQL DDL)"
+    tables:
+      - table: "authz.roles"
+        citation: "R21.2 Part 4.2 TABLE 1"
+        columns:
+          - "id uuid PRIMARY KEY DEFAULT gen_random_uuid()"
+          - "name text NOT NULL UNIQUE"
+          - "description text"
+        notes: "Roles are global in v1.0, not org-specific"
+
+      - table: "authz.permissions"
+        citation: "R21.2 Part 4.2 TABLE 2"
+        columns:
+          - "id uuid PRIMARY KEY DEFAULT gen_random_uuid()"
+          - "name text NOT NULL UNIQUE (format: 'resource:action')"
+          - "description text"
+          - "resource_type text (optional, for UI grouping)"
+        notes: "Atomic operations like 'document:create', 'user:invite'"
+
+      - table: "authz.role_permissions"
+        citation: "R21.2 Part 4.2 TABLE 3"
+        columns:
+          - "role_id uuid NOT NULL REFERENCES authz.roles(id) ON DELETE CASCADE"
+          - "permission_id uuid NOT NULL REFERENCES authz.permissions(id) ON DELETE CASCADE"
+          - "PRIMARY KEY (role_id, permission_id)"
+        notes: "Junction table, relational storage (not JSON policies in v1.0)"
+
+      - table: "authz.memberships"
+        citation: "R21.2 Part 4.2 TABLE 4 - THE CRITICAL TABLE"
+        columns:
+          - "id uuid PRIMARY KEY DEFAULT gen_random_uuid()"
+          - "user_id uuid NOT NULL REFERENCES core.users(id) ON DELETE CASCADE"
+          - "organization_id uuid NOT NULL REFERENCES core.organizations(id) ON DELETE CASCADE"
+          - "role_id uuid NOT NULL REFERENCES authz.roles(id) ON DELETE CASCADE"
+          - "created_at timestamptz NOT NULL DEFAULT now()"
+          - "updated_at timestamptz NOT NULL DEFAULT now()"
+          - "UNIQUE(user_id, organization_id, role_id)"
+        notes: "Multi-tenant junction - user can have multiple roles per org"
+
+      - table: "authz.role_hierarchy"
+        citation: "R21.2 Part 4.2 TABLE 5"
+        columns:
+          - "parent_role_id uuid NOT NULL REFERENCES authz.roles(id) ON DELETE CASCADE"
+          - "child_role_id uuid NOT NULL REFERENCES authz.roles(id) ON DELETE CASCADE"
+          - "PRIMARY KEY (parent_role_id, child_role_id)"
+          - "CHECK (parent_role_id <> child_role_id)"
+        notes: "Adjacency list for role inheritance, prevents circular deps"
+
+  sodConstraints:
+    source: "R28.1 Part 2 (Database Schema Patterns)"
+    tables:
+      - table: "authz.sod_role_conflicts"
+        citation: "R28.1 Static SoD pattern"
+        columns:
+          - "id uuid PRIMARY KEY DEFAULT gen_random_uuid()"
+          - "role_a_id uuid NOT NULL REFERENCES authz.roles(id) ON DELETE CASCADE"
+          - "role_b_id uuid NOT NULL REFERENCES authz.roles(id) ON DELETE CASCADE"
+          - "reason text NOT NULL"
+          - "organization_id uuid REFERENCES core.organizations(id) ON DELETE CASCADE"
+          - "active boolean NOT NULL DEFAULT true"
+          - "created_at timestamptz NOT NULL DEFAULT now()"
+          - "UNIQUE(role_a_id, role_b_id, organization_id)"
+        notes: "org_id NULL = global conflict, non-NULL = org-specific"
+
+      - table: "authz.action_log"
+        citation: "R28.1 Dynamic SoD pattern (audit foundation)"
+        columns:
+          - "id uuid PRIMARY KEY DEFAULT gen_random_uuid()"
+          - "user_id uuid NOT NULL REFERENCES core.users(id) ON DELETE CASCADE"
+          - "organization_id uuid NOT NULL REFERENCES core.organizations(id) ON DELETE CASCADE"
+          - "action text NOT NULL"
+          - "resource_type text NOT NULL"
+          - "resource_id uuid NOT NULL"
+          - "performed_at timestamptz NOT NULL DEFAULT now()"
+        notes: "Foundation for dynamic SoD detection (v1.0 audit only)"
+
+  indexStrategy:
+    source: "R21.2 Part 3.1 (Performance), Preferenceable cache patterns"
+    indexes:
+      - index: "idx_memberships_user_org ON authz.memberships(user_id, organization_id)"
+        reason: "Primary query: fetch user's roles in an org"
+
+      - index: "idx_memberships_org_role ON authz.memberships(organization_id, role_id)"
+        reason: "Query: fetch all users with a role in an org"
+
+      - index: "idx_role_permissions_role ON authz.role_permissions(role_id)"
+        reason: "Query: fetch all permissions for a role"
+
+      - index: "idx_action_log_lookup ON authz.action_log(user_id, resource_type, resource_id)"
+        reason: "Dynamic SoD detection: check if user performed action on resource"
+
+# ============================================================================
+# DELIVERABLES
+# ============================================================================
+deliverables:
+  migrations:
+    - file: "database/migrations/20251119_001_create_authz_schema.sql"
+      description: "Create authz schema namespace"
+      content: |
+        CREATE SCHEMA IF NOT EXISTS authz;
+        COMMENT ON SCHEMA authz IS 'Authorization Extension Pack (RBAC) - Sprint 28';
+
+    - file: "database/migrations/20251119_002_create_roles_table.sql"
+      description: "Create authz.roles table (R21.2 TABLE 1)"
+      requirements:
+        - "id, name (UNIQUE), description columns"
+        - "Comment explaining global vs org-specific (v1.0 is global)"
+
+    - file: "database/migrations/20251119_003_create_permissions_table.sql"
+      description: "Create authz.permissions table (R21.2 TABLE 2)"
+      requirements:
+        - "id, name (UNIQUE), description, resource_type columns"
+        - "Comment explaining 'resource:action' format"
+        - "CHECK constraint on name format (contains ':')"
+
+    - file: "database/migrations/20251119_004_create_role_permissions_table.sql"
+      description: "Create authz.role_permissions junction (R21.2 TABLE 3)"
+      requirements:
+        - "Composite PK (role_id, permission_id)"
+        - "ON DELETE CASCADE for both FKs"
+        - "Index on role_id for permission lookups"
+
+    - file: "database/migrations/20251119_005_create_memberships_table.sql"
+      description: "Create authz.memberships table (R21.2 TABLE 4 - CRITICAL)"
+      requirements:
+        - "All columns per R21.2 spec"
+        - "UNIQUE(user_id, organization_id, role_id)"
+        - "FKs to core.users, core.organizations, authz.roles"
+        - "Composite indexes per indexStrategy above"
+        - "Comment explaining multi-tenant isolation"
+
+    - file: "database/migrations/20251119_006_create_role_hierarchy_table.sql"
+      description: "Create authz.role_hierarchy table (R21.2 TABLE 5)"
+      requirements:
+        - "Composite PK (parent_role_id, child_role_id)"
+        - "CHECK constraint: parent_role_id <> child_role_id"
+        - "Comment explaining adjacency list pattern"
+
+    - file: "database/migrations/20251119_007_create_sod_tables.sql"
+      description: "Create SoD tables (R28.1 patterns)"
+      requirements:
+        - "authz.sod_role_conflicts table"
+        - "authz.action_log table"
+        - "Indexes per indexStrategy"
+        - "Comments referencing R28.1 research"
+
+    - file: "database/migrations/20251119_008_create_sod_trigger.sql"
+      description: "Create trigger: prevent_conflicting_roles() (R28.1)"
+      requirements:
+        - "Trigger function in PL/pgSQL"
+        - "Checks authz.sod_role_conflicts before INSERT on authz.memberships"
+        - "RAISE EXCEPTION with clear message on violation"
+        - "Comment explaining Static SoD enforcement"
+
+  rollbacks:
+    - file: "database/migrations/rollback/20251119_001_drop_authz_schema.sql"
+      description: "Rollback: DROP SCHEMA authz CASCADE"
+
+    - file: "database/migrations/rollback/20251119_008_drop_sod_trigger.sql"
+      description: "Rollback: DROP TRIGGER + DROP FUNCTION"
+      note: "Rollbacks in reverse order of migrations"
+
+  seedScripts:
+    - file: "database/seeds/authz_seed_default_roles.sql"
+      description: "Seed default roles (Admin, Editor, Viewer)"
+      requirements:
+        - "INSERT INTO authz.roles default system roles"
+        - "Use ON CONFLICT DO NOTHING for idempotency"
+
+    - file: "database/seeds/authz_seed_default_permissions.sql"
+      description: "Seed default permissions"
+      requirements:
+        - "Common permissions: user:*, document:*, org:*"
+        - "Group by resource_type for organization"
+
+    - file: "database/seeds/authz_seed_role_permissions.sql"
+      description: "Seed role-permission mappings"
+      requirements:
+        - "Admin gets all permissions"
+        - "Editor gets create/read/update (no delete)"
+        - "Viewer gets read only"
+
+  cli:
+    - file: "src/cli/authz-migrate.ts"
+      description: "Migration runner CLI"
+      requirements:
+        - "Commands: migrate, rollback, status"
+        - "Uses node-pg-migrate or similar"
+        - "Validates FK references before migration"
+
+    - file: "src/cli/authz-seed.ts"
+      description: "Seed data CLI"
+      requirements:
+        - "Commands: seed-roles, seed-permissions, seed-all"
+        - "Dry-run mode for preview"
+        - "Validates seed data against B28.1 schemas"
+
+  tests:
+    - file: "tests/database/authz-migrations.test.ts"
+      description: "Migration integration tests"
+      requirements:
+        - "Test: fresh DB → all migrations → validate schema"
+        - "Test: migrate → rollback → migrate (idempotency)"
+        - "Test: FK constraint enforcement"
+        - "Test: UNIQUE constraint enforcement"
+        - "Test: SoD trigger prevents conflicts"
+
+    - file: "tests/database/authz-seeds.test.ts"
+      description: "Seed data tests"
+      requirements:
+        - "Test: seed creates default roles/permissions"
+        - "Test: seed is idempotent (run twice, same result)"
+        - "Test: role-permission mappings correct"
+
+  documentation:
+    - file: "docs/database/authz-schema-guide.md"
+      description: "Database schema documentation"
+      requirements:
+        - "Entity-Relationship diagram"
+        - "Table-by-table breakdown with R21.2 citations"
+        - "Index strategy explanation"
+        - "SoD trigger behavior documentation"
+
+    - file: "docs/database/authz-migration-runbook.md"
+      description: "Migration runbook for ops teams"
+      requirements:
+        - "How to run migrations in production"
+        - "Rollback procedures"
+        - "Troubleshooting common issues"
+        - "FK dependency order (core → authz)"
+
+# ============================================================================
+# SQL DDL EXAMPLES (for agent reference)
+# ============================================================================
+sqlExamples:
+  rolesTable: |
+    -- R21.2 Part 4.2 TABLE 1: Roles
+    CREATE TABLE authz.roles (
+      id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+      name text NOT NULL,
+      description text,
+      created_at timestamptz NOT NULL DEFAULT now(),
+      updated_at timestamptz NOT NULL DEFAULT now(),
+
+      CONSTRAINT roles_name_unique UNIQUE(name),
+      CONSTRAINT roles_name_not_empty CHECK(length(trim(name)) > 0)
+    );
+
+    COMMENT ON TABLE authz.roles IS
+      'Role definitions (Admin, Editor, Viewer, etc.). '
+      'v1.0: Roles are global. v2.0 may add organization_id for custom roles per tenant.';
+
+  membershipsTable: |
+    -- R21.2 Part 4.2 TABLE 4: Memberships (THE CRITICAL INTEGRATION POINT)
+    CREATE TABLE authz.memberships (
+      id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+
+      -- Integration Point 1: OODS User trait
+      user_id uuid NOT NULL REFERENCES core.users(id) ON DELETE CASCADE,
+
+      -- Integration Point 2: OODS Organization trait
+      organization_id uuid NOT NULL REFERENCES core.organizations(id) ON DELETE CASCADE,
+
+      -- Integration Point 3: Role from this extension pack
+      role_id uuid NOT NULL REFERENCES authz.roles(id) ON DELETE CASCADE,
+
+      created_at timestamptz NOT NULL DEFAULT now(),
+      updated_at timestamptz NOT NULL DEFAULT now(),
+
+      -- Multi-tenant isolation: user can have multiple roles in one org, but not same role twice
+      CONSTRAINT memberships_unique_assignment UNIQUE(user_id, organization_id, role_id)
+    );
+
+    -- Performance indexes
+    CREATE INDEX idx_memberships_user_org ON authz.memberships(user_id, organization_id);
+    CREATE INDEX idx_memberships_org_role ON authz.memberships(organization_id, role_id);
+
+    COMMENT ON TABLE authz.memberships IS
+      'Multi-tenant RBAC membership table. Links User + Organization + Role. '
+      'Replaces naive user_roles global junction with org-scoped assignment.';
+
+  sodTrigger: |
+    -- R28.1 Static SoD enforcement trigger
+    CREATE OR REPLACE FUNCTION authz.prevent_conflicting_roles()
+    RETURNS TRIGGER AS $$
+    BEGIN
+      -- Check if user already has a conflicting role in this org
+      IF EXISTS (
+        SELECT 1
+        FROM authz.memberships m
+        JOIN authz.sod_role_conflicts c ON (
+          (c.role_a_id = NEW.role_id AND c.role_b_id = m.role_id) OR
+          (c.role_b_id = NEW.role_id AND c.role_a_id = m.role_id)
+        )
+        WHERE m.user_id = NEW.user_id
+          AND m.organization_id = NEW.organization_id
+          AND c.active = true
+          AND (c.organization_id IS NULL OR c.organization_id = NEW.organization_id)
+      ) THEN
+        RAISE EXCEPTION 'SoD violation: User already has a conflicting role in this organization';
+      END IF;
+
+      RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql;
+
+    CREATE TRIGGER enforce_sod_on_membership
+      BEFORE INSERT OR UPDATE ON authz.memberships
+      FOR EACH ROW
+      EXECUTE FUNCTION authz.prevent_conflicting_roles();
+
+# ============================================================================
+# SUCCESS CRITERIA
+# ============================================================================
+successCriteria:
+  migrations:
+    - criterion: "All 8 migration files authored and tested"
+      validation: "Migrations run cleanly on fresh PostgreSQL 14+ database"
+      tables: "7 tables created (roles, permissions, role_permissions, memberships, role_hierarchy, sod_role_conflicts, action_log)"
+
+    - criterion: "Rollback migrations provided for all forward migrations"
+      validation: "migrate → rollback → migrate produces identical schema"
+
+    - criterion: "All FK constraints reference correct tables"
+      validation: "memberships FKs → core.users, core.organizations, authz.roles"
+
+    - criterion: "All indexes created per indexStrategy"
+      validation: "6 indexes minimum (memberships × 2, role_permissions × 1, action_log × 1, etc.)"
+
+  triggers:
+    - criterion: "SoD trigger prevents conflicting role assignments"
+      validation: "Attempt to assign conflicting roles raises exception"
+      testCase: "User has 'Accountant', assign 'Auditor' (conflict defined) → FAIL"
+
+  seeds:
+    - criterion: "Default roles seeded (Admin, Editor, Viewer)"
+      validation: "SELECT COUNT(*) FROM authz.roles returns >= 3"
+
+    - criterion: "Default permissions seeded"
+      validation: "Basic CRUD permissions for common resources exist"
+
+    - criterion: "Role-permission mappings seeded"
+      validation: "Admin has all permissions, Viewer has read-only"
+
+  testing:
+    - criterion: "Migration integration tests pass"
+      validation: "pnpm test tests/database/authz-migrations.test.ts"
+      coverage: "Test fresh migration, rollback, idempotency, constraints"
+
+    - criterion: "Seed tests pass"
+      validation: "pnpm test tests/database/authz-seeds.test.ts"
+
+  documentation:
+    - criterion: "Schema guide published with ER diagram"
+      validation: "docs/database/authz-schema-guide.md includes visual diagram"
+
+    - criterion: "Migration runbook published"
+      validation: "docs/database/authz-migration-runbook.md covers prod procedures"
+
+# ============================================================================
+# QUALITY GATES
+# ============================================================================
+qualityGates:
+  duringDevelopment:
+    - gate: "Test each migration individually"
+      cadence: "After each migration file"
+      commands:
+        - "psql -d test_db -f database/migrations/20251119_001_create_authz_schema.sql"
+        - "Verify table created with: \\d authz.roles"
+
+    - gate: "Test FK constraints"
+      cadence: "After FK-dependent migrations (memberships)"
+      commands:
+        - "INSERT test data with invalid FKs (should fail)"
+        - "INSERT valid data (should succeed)"
+
+    - gate: "Test SoD trigger"
+      cadence: "After trigger migration"
+      commands:
+        - "Create SoD conflict in sod_role_conflicts"
+        - "Attempt conflicting membership assignment (should fail)"
+
+  beforeCompletion:
+    - gate: "Full migration suite"
+      commands:
+        - "Drop test database"
+        - "Create fresh test database"
+        - "Run all migrations in order"
+        - "Validate schema with: pg_dump --schema-only"
+
+    - gate: "Rollback suite"
+      commands:
+        - "Run all rollbacks in reverse order"
+        - "Verify all tables dropped"
+        - "Re-migrate (test idempotency)"
+
+    - gate: "Seed suite"
+      commands:
+        - "Run seed scripts"
+        - "Validate row counts"
+        - "Run seeds again (test idempotency)"
+
+    - gate: "Integration tests"
+      commands:
+        - "pnpm test tests/database/authz-migrations.test.ts"
+        - "pnpm test tests/database/authz-seeds.test.ts"
+
+# ============================================================================
+# DIAGNOSTIC UPDATES
+# ============================================================================
+diagnosticUpdates:
+  location: "diagnostics.json"
+  updates:
+    - path: "database.authz"
+      value:
+        status: "migrated"
+        mission: "B28.2"
+        schema: "authz"
+        tables: 7
+        migrations: 8
+        indexes: 6
+        triggers: 1
+        lastMigration: "20251119_008_create_sod_trigger.sql"
+
+# ============================================================================
+# HANDOFF NOTES
+# ============================================================================
+handoffNotes:
+  forNextMission: "B28.3 - Role Graph & Entitlement Runtime"
+  keyOutputs:
+    - "Database schema ready for runtime queries"
+    - "Memberships table ready for User/Org integration"
+    - "Role hierarchy table ready for inheritance resolver"
+    - "SoD trigger enforces Static SoD at DB level"
+
+  integrationPoints:
+    - "B28.3 will query authz.memberships to resolve user permissions"
+    - "B28.3 will traverse authz.role_hierarchy for inherited permissions"
+    - "SoD trigger is passive enforcement - B28.3 may add app-layer checks"
+
+  blockers:
+    - "None if core.users and core.organizations exist"
+    - "If core tables missing: create stubs or adjust FK constraints to defer"
+
+# ============================================================================
+# METADATA
+# ============================================================================
+metadata:
+  estimatedEffort: "4-5 hours"
+  complexity: "Medium (SQL expertise required, well-specified)"
+  riskLevel: "Medium (FK dependencies on core tables)"
+  prerequisites:
+    - "PostgreSQL 14+ available"
+    - "core.users and core.organizations tables exist"
+    - "B28.1 schemas understood"

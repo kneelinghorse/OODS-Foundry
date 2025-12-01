@@ -1,0 +1,150 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B31.1
+name: Spatial Schema Extensions & Token Namespace
+sprint: Sprint 31
+status: Queued
+
+objective: >
+  Establish data contracts and design tokens for spatial visualizations by adding
+  geo-specific types to normalized-viz-spec schema and defining the viz.map.* token namespace.
+
+context:
+  background: |
+    Part of Spatial Module v1.1 - the first of two extension modules to bring OODS
+    visualization coverage from 87.4% to 95%+. This mission establishes the foundational
+    schemas and tokens that all subsequent spatial work depends on.
+
+  research_basis:
+    - "RDS.10: Complex Schema Extension Research Mission"
+    - "RV.03: Gap Analysis (15-20% of FTVV is Spatial)"
+    - "RV.05: Statistical Validation (REVISE recommendation)"
+
+  architecture_reference: "cmos/foundational-docs/data-viz-part2/spatial-module/ARCHITECTURE.md"
+
+  dependencies: []
+
+  blocks:
+    - B31.2
+    - B31.3
+    - B31.4
+    - B31.5
+
+successCriteria:
+  - Schema validates sample GeoJSON and TopoJSON data
+  - Tokens defined in DTCG format and pnpm build:tokens passes
+  - TypeScript types generated from schema
+  - pnpm tokens:guardrails passes with new map tokens
+  - Schema tests pass with >90% coverage on new code
+
+constraints:
+  - Follow existing normalized-viz-spec schema patterns
+  - Tokens must follow DTCG specification
+  - No breaking changes to existing schema
+  - Token values must use semantic references (not raw colors)
+
+deliverables:
+  schemas:
+    - path: src/schemas/viz/spatial-spec.schema.json
+      description: |
+        Extend normalized-viz-spec with spatial types:
+        - data.geo.join (dataset-level type for joined geo+data)
+        - field.geojson (inline GeoJSON geometry)
+        - field.topojson (reference to TopoJSON topology)
+        - field.geopoint (lat/lon coordinate pair)
+        - spec.projection (projection config: type, center, scale, rotate)
+        - spec.geo (geo source config: source, topology, feature)
+        - spec.layers (array of layer definitions: regionFill, symbol, route)
+
+      reference: "ARCHITECTURE.md Section 2: Schema Extensions"
+
+  tokens:
+    - path: packages/tokens/src/tokens/viz-map.json
+      description: |
+        Define viz.map.* token namespace in DTCG format:
+        - viz.map.basemap.fill (neutral.100)
+        - viz.map.basemap.stroke (neutral.300)
+        - viz.map.basemap.stroke-width (0.5px)
+        - viz.map.region.stroke (neutral.400)
+        - viz.map.region.stroke-width (1px)
+        - viz.map.region.hover-stroke (primary.500)
+        - viz.map.region.hover-stroke-width (2px)
+        - viz.map.symbol.stroke (neutral.0)
+        - viz.map.symbol.stroke-width (1px)
+        - viz.map.symbol.min-radius (4px)
+        - viz.map.symbol.max-radius (40px)
+        - viz.map.route.stroke-opacity (0.6)
+        - viz.map.route.min-width (1px)
+        - viz.map.route.max-width (10px)
+
+        Sequential color scales for choropleth:
+        - viz.scale.sequential.blue.1-7
+        - viz.scale.diverging.negative/neutral/positive
+
+      reference: "ARCHITECTURE.md Section 5: Token System"
+
+  types:
+    - path: src/types/viz/spatial.ts
+      description: |
+        TypeScript interfaces generated/derived from schema:
+        - SpatialSpec
+        - GeoJoinData
+        - GeoPointField
+        - ProjectionConfig
+        - GeoSourceConfig
+        - SpatialLayer (regionFill | symbol | route)
+
+  tests:
+    - path: tests/schemas/spatial-spec.test.ts
+      description: |
+        Schema validation tests:
+        - Valid GeoJSON input validates
+        - Valid TopoJSON input validates
+        - Invalid geo data fails with clear error
+        - Projection config validation
+        - Layer definition validation
+
+    - path: tests/tokens/viz-map.test.ts
+      description: |
+        Token validation tests:
+        - All tokens resolve correctly
+        - Semantic references are valid
+        - No direct color literals
+
+technicalApproach:
+  - Review existing normalized-viz-spec.schema.json structure
+  - Add spatial type definitions following established patterns
+  - Create viz-map.json token file in DTCG format
+  - Generate TypeScript types from schema
+  - Write comprehensive validation tests
+  - Run pnpm build:tokens and pnpm tokens:guardrails
+  - Update diagnostics.json with new schema/token counts
+
+qualityGates:
+  during_development:
+    - Schema validates against JSON Schema draft-07
+    - Token file passes DTCG linting
+    - No TypeScript errors in strict mode
+
+  before_completion:
+    - pnpm build:tokens passes
+    - pnpm tokens:guardrails passes
+    - pnpm test tests/schemas/spatial-spec.test.ts passes
+    - pnpm test tests/tokens/viz-map.test.ts passes
+    - Coverage >90% on new code
+
+estimatedEffort: "1 session (50-60k tokens)"
+
+notes: |
+  📋 FULL MISSION DETAILS: This YAML file contains complete implementation guidance.
+
+  Key schema patterns to follow:
+  - Look at existing viz-spec types for encoding patterns
+  - Projection types should match d3-geo projection names
+  - Layer types align with rendering marks (rect for regionFill, circle for symbol, line for route)
+
+  Token naming follows existing viz.* namespace:
+  - viz.chart.* exists for chart-specific tokens
+  - viz.map.* is new namespace for spatial tokens
+  - Use semantic references like {color.neutral.100} not raw hex values

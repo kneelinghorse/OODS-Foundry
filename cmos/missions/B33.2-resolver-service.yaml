@@ -1,0 +1,268 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B33.2
+name: Resolver Service (ECharts-First)
+sprint: Sprint 33
+status: Queued
+
+objective: >
+  Build the decision engine that routes Network & Flow visualizations to ECharts.
+  v1.0 implements a simplified resolver since ECharts is the only supported renderer.
+
+context:
+  background: |
+    Following R33.0 research on renderer parameter alignment, OODS adopts an ECharts-First
+    strategy for Network & Flow visualizations. The resolver in v1.0 is simplified:
+    - If ECharts is available: route to ECharts passthrough
+    - If ECharts is unavailable: return unsupported with actionable error
+
+    The resolver interface is designed for future extensibility (v1.1+ may add Vega paths).
+
+  research_basis:
+    - "R33.0: Renderer Parameter Alignment (ECharts-First decision)"
+    - "cmos/foundational-docs/data-viz-part2/network-flow-module/ARCHITECTURE.md Section 3"
+
+  architecture_reference: "cmos/foundational-docs/data-viz-part2/network-flow-module/ARCHITECTURE.md Section 3"
+
+  dependencies:
+    - B33.1  # Network & Flow schemas
+
+  blocks:
+    - B33.3
+    - B33.4
+    - B33.5
+
+successCriteria:
+  - Resolver returns echarts_passthrough when ECharts available
+  - Resolver returns unsupported with clear error when ECharts unavailable
+  - Error message includes actionable guidance
+  - Interface supports future Vega paths without breaking changes
+  - 100% test coverage on resolver logic
+  - Integration with existing renderer-selector.ts
+
+constraints:
+  - Must integrate with existing renderer selection system
+  - Decision logic must be deterministic
+  - Interface must be extensible for future v1.1+ Vega support
+  - Error messages must be actionable
+
+deliverables:
+  resolver:
+    - path: src/viz/resolver/network-flow-resolver.ts
+      description: |
+        Main resolver service (v1.0 - ECharts-First):
+
+        ```typescript
+        import type { HierarchyInput, NetworkInput, SankeyInput } from '../types';
+
+        type NetworkFlowVizType = 'treemap' | 'sunburst' | 'force_graph' | 'sankey';
+
+        interface ResolverInput {
+          vizType: NetworkFlowVizType;
+          data: HierarchyInput | NetworkInput | SankeyInput;
+          availableRenderers: ('echarts' | 'vega-lite' | 'vega')[];
+          dimensions: { width: number; height: number };
+        }
+
+        interface ResolverOutput {
+          path: 'echarts_passthrough' | 'unsupported';
+          renderer: 'echarts' | null;
+          requiresTransform: boolean;
+          reason: string;
+        }
+
+        /**
+         * Resolve rendering path for Network & Flow visualizations
+         *
+         * v1.0: ECharts-only implementation
+         * v1.1+: May add Vega paths based on user demand
+         */
+        export function resolveNetworkFlowPath(input: ResolverInput): ResolverOutput {
+          const { vizType, availableRenderers } = input;
+
+          // Validate viz type
+          const validTypes: NetworkFlowVizType[] = ['treemap', 'sunburst', 'force_graph', 'sankey'];
+          if (!validTypes.includes(vizType)) {
+            return {
+              path: 'unsupported',
+              renderer: null,
+              requiresTransform: false,
+              reason: `Unknown visualization type: ${vizType}. Valid types: ${validTypes.join(', ')}`
+            };
+          }
+
+          // v1.0: ECharts is required for all Network & Flow visualizations
+          if (availableRenderers.includes('echarts')) {
+            return {
+              path: 'echarts_passthrough',
+              renderer: 'echarts',
+              requiresTransform: false,
+              reason: 'ECharts native support for Network & Flow'
+            };
+          }
+
+          // ECharts not available - return actionable error
+          return {
+            path: 'unsupported',
+            renderer: null,
+            requiresTransform: false,
+            reason: `Network & Flow visualizations (${vizType}) require ECharts in OODS v1.0. ` +
+                    'Please ensure ECharts is included in your renderer configuration. ' +
+                    'Vega-Lite support is planned for v1.1+.'
+          };
+        }
+
+        /**
+         * Check if a viz type is a Network & Flow type
+         */
+        export function isNetworkFlowVizType(vizType: string): vizType is NetworkFlowVizType {
+          return ['treemap', 'sunburst', 'force_graph', 'sankey'].includes(vizType);
+        }
+        ```
+
+  integration:
+    - path: src/viz/adapters/renderer-selector.ts (update)
+      description: |
+        Integrate resolver with existing renderer selector:
+
+        ```typescript
+        import { resolveNetworkFlowPath, isNetworkFlowVizType } from '../resolver/network-flow-resolver';
+
+        export function selectRenderer(spec: NormalizedVizSpec): RendererSelection {
+          // Check if this is a Network & Flow viz type
+          if (isNetworkFlowVizType(spec.mark.type)) {
+            const result = resolveNetworkFlowPath({
+              vizType: spec.mark.type,
+              data: spec.data,
+              availableRenderers: getAvailableRenderers(),
+              dimensions: spec.dimensions
+            });
+
+            if (result.path === 'unsupported') {
+              throw new VisualizationError(result.reason, 'RENDERER_UNAVAILABLE');
+            }
+
+            return {
+              renderer: result.renderer,
+              adapter: getNetworkFlowAdapter(spec.mark.type, result.renderer)
+            };
+          }
+
+          // ... existing renderer selection logic for other viz types
+        }
+        ```
+
+  types:
+    - path: src/types/viz/resolver.ts
+      description: |
+        Resolver type definitions:
+
+        ```typescript
+        export type NetworkFlowVizType = 'treemap' | 'sunburst' | 'force_graph' | 'sankey';
+
+        export type RenderingPath =
+          | 'echarts_passthrough'
+          | 'vega_passthrough'      // v1.1+
+          | 'server_transform'       // v1.1+
+          | 'vega_escape_hatch'      // v1.1+
+          | 'unsupported';
+
+        export interface ResolverInput {
+          vizType: NetworkFlowVizType;
+          data: unknown;
+          availableRenderers: ('echarts' | 'vega-lite' | 'vega')[];
+          dimensions: { width: number; height: number };
+        }
+
+        export interface ResolverOutput {
+          path: RenderingPath;
+          renderer: 'echarts' | 'vega-lite' | 'vega' | null;
+          requiresTransform: boolean;
+          transformType?: 'd3-hierarchy' | 'd3-force' | 'd3-sankey';  // v1.1+
+          reason: string;
+        }
+        ```
+
+  tests:
+    - path: tests/viz/resolver/network-flow-resolver.test.ts
+      description: |
+        Comprehensive resolver tests:
+
+        ECharts available tests:
+        - treemap + [echarts] → echarts_passthrough
+        - sunburst + [echarts] → echarts_passthrough
+        - force_graph + [echarts] → echarts_passthrough
+        - sankey + [echarts] → echarts_passthrough
+        - treemap + [echarts, vega-lite] → echarts_passthrough (ECharts preferred)
+
+        ECharts unavailable tests:
+        - treemap + [vega-lite] → unsupported with clear error
+        - sunburst + [vega] → unsupported with clear error
+        - force_graph + [] → unsupported with clear error
+        - sankey + [vega-lite] → unsupported with clear error
+
+        Error message tests:
+        - Error includes viz type name
+        - Error mentions v1.0 constraint
+        - Error mentions v1.1+ Vega support
+        - Error is actionable (mentions ECharts configuration)
+
+        Edge cases:
+        - Invalid vizType → unsupported with type error
+        - Empty availableRenderers → unsupported
+
+        Integration tests:
+        - isNetworkFlowVizType correctly identifies types
+        - Resolver integrates with renderer-selector
+
+  documentation:
+    - path: docs/viz/network-flow-resolver.md
+      description: |
+        Resolver documentation:
+        - v1.0 ECharts-First strategy explanation
+        - Decision matrix (simple for v1.0)
+        - Error handling and troubleshooting
+        - Future v1.1+ Vega support roadmap
+        - How to ensure ECharts is available
+
+technicalApproach:
+  - Implement simplified resolver for v1.0 ECharts-only
+  - Design interface for future extensibility
+  - Write actionable error messages
+  - Integrate with existing renderer-selector
+  - Write comprehensive tests
+  - Document decision and future roadmap
+
+qualityGates:
+  during_development:
+    - Resolver returns correct output for all cases
+    - Error messages are actionable
+    - Integration with renderer-selector works
+
+  before_completion:
+    - pnpm test tests/viz/resolver/ passes
+    - 100% branch coverage on resolver logic
+    - Documentation reviewed
+    - Error messages reviewed for clarity
+
+estimatedEffort: "0.5 session (30-40k tokens)"
+
+notes: |
+  This is a simplified v1.0 implementation following the ECharts-First decision.
+
+  The resolver interface is designed for future extensibility:
+  - RenderingPath type includes future paths (vega_passthrough, server_transform, etc.)
+  - ResolverOutput includes optional transformType for future D3 transforms
+  - Documentation mentions v1.1+ Vega support
+
+  Key simplifications in v1.0:
+  - No preferredRenderer parameter (ECharts is always used)
+  - No transform routing (ECharts handles layout client-side)
+  - Simple binary decision: ECharts available → use it, not available → error
+
+  The error message is critical - it must:
+  1. Explain what's happening (ECharts required)
+  2. Explain why (v1.0 constraint)
+  3. Provide guidance (check renderer configuration)
+  4. Set expectations (Vega support in v1.1+)

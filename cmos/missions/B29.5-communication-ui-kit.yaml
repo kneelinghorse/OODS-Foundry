@@ -1,0 +1,389 @@
+---
+mission: B29.5
+name: "Communication UI Kit & Timeline Components"
+sprint: "Sprint 29"
+type: "Build"
+status: "Queued"
+estimatedEffort: "5-6 hours"
+complexity: "Medium"
+dependencies: ["B29.1", "B29.2", "B29.3", "B29.4"]
+tags: ["ui", "components", "react", "storybook", "a11y"]
+
+# ============================================================================
+# MISSION OVERVIEW
+# ============================================================================
+summary: |
+  Implement Communication UI kit: MessageTimeline (chronological message list),
+  ChannelPlanEditor (configure delivery policies), DeliveryHealthWidget
+  (SLA metrics visualization), ConversationThread (threaded messages), plus
+  hooks (useMessages, useConversations, useDeliveryStatus). Deliver Storybook
+  stories, a11y tests (WCAG 2.2 AA), and comprehensive documentation.
+
+objectives:
+  - Build 4 React components (Timeline, Editor, Widget, Thread)
+  - Implement 3 hooks for state management (messages, conversations, delivery)
+  - Deliver Storybook stories with light/dark/high-contrast variants
+  - Achieve WCAG 2.2 AA compliance (axe-core validation)
+  - Test coverage ≥90% for components + hooks
+
+# ============================================================================
+# RESEARCH FOUNDATIONS
+# ============================================================================
+researchFindings:
+  timelinePatterns:
+    source: "R20.6 Part 6.1 (Message Timeline UI)"
+    findings:
+      - key: "Chronological timeline with infinite scroll + virtualization"
+        citation: "R20.6 Part 6.1 PATTERN 1"
+        implication: "Use react-window for virtualized list (1000+ messages)"
+
+      - key: "Grouped by date (Today, Yesterday, Jan 15, etc.)"
+        citation: "R20.6 Part 6.2 (Temporal Grouping)"
+        implication: "MessageTimeline groups by date, renders date headers"
+
+      - key: "Read/unread visual distinction (bold vs regular)"
+        citation: "R20.6 Part 6.3 (Read State)"
+        implication: "Unread messages use bold text + accent color background"
+
+  conversationUI:
+    source: "R20.6 Part 6.4 (Threading Patterns)"
+    findings:
+      - key: "Indentation for threaded replies (max 3 levels)"
+        citation: "R20.6 Part 6.4 PATTERN 2"
+        implication: "ConversationThread indents replies, flattens after level 3"
+
+      - key: "Expand/collapse for long threads (>5 replies)"
+        citation: "R20.6 Part 6.5 (Thread Collapse)"
+        implication: "Show first 5 replies, 'Show N more' button for rest"
+
+a11yRequirements:
+  - "WCAG 2.2 AA compliance (contrast 4.5:1, keyboard nav, ARIA labels)"
+  - "Screen reader support: announce new messages, read state, delivery status"
+  - "Keyboard navigation: Tab/Shift+Tab, Enter to open message, Escape to close"
+  - "Focus management: trap focus in modals, restore focus on close"
+  - "High-contrast mode support: test with forced-colors media query"
+
+# ============================================================================
+# DELIVERABLES
+# ============================================================================
+deliverables:
+  components:
+    - file: "src/components/communication/MessageTimeline.tsx"
+      description: "Chronological message timeline with virtualization"
+      requirements:
+        - "Props: messages[], onLoadMore, onMarkAsRead, groupByDate (boolean)"
+        - "Virtualization via react-window (FixedSizeList)"
+        - "Date grouping headers (Today, Yesterday, Jan 15)"
+        - "Unread indicator (bold + accent background)"
+        - "Infinite scroll (IntersectionObserver for onLoadMore)"
+        - "ARIA: role='feed', aria-live='polite' for new messages"
+
+    - file: "src/components/communication/ChannelPlanEditor.tsx"
+      description: "Delivery policy configuration UI"
+      requirements:
+        - "Props: policy (DeliveryPolicy), onChange, channelTypes[]"
+        - "Sections: Retry config, Throttling config, Quiet hours"
+        - "Form validation: max_attempts > 0, throttling limits reasonable"
+        - "Presets dropdown: Standard, Urgent, Low Priority"
+        - "ARIA: fieldset/legend for grouped inputs, aria-describedby for help text"
+
+    - file: "src/components/communication/DeliveryHealthWidget.tsx"
+      description: "SLA metrics visualization widget"
+      requirements:
+        - "Props: metrics (SLAMetrics), timeWindow (1h | 24h | 7d)"
+        - "Display: Time-to-send p95, Success rate %, Retry exhaustion rate"
+        - "Visual: Progress bars for rates, sparkline for trends"
+        - "Color-coded: green (healthy), yellow (warning), red (critical)"
+        - "ARIA: aria-label for each metric, role='region' for widget"
+
+    - file: "src/components/communication/ConversationThread.tsx"
+      description: "Threaded message view with expand/collapse"
+      requirements:
+        - "Props: conversation (Conversation), onReply, maxDepth (default: 3)"
+        - "Indentation: 20px per level, flatten after maxDepth"
+        - "Expand/collapse: Show first 5 replies, 'Show N more' for rest"
+        - "Reply button: opens composer, sets parent_message_id"
+        - "ARIA: aria-level for thread depth, aria-expanded for collapse state"
+
+  hooks:
+    - file: "src/hooks/useMessages.ts"
+      description: "Hook for message state management"
+      requirements:
+        - "Returns: { messages, loading, error, loadMore, markAsRead }"
+        - "Fetches messages from API or local cache"
+        - "Pagination support (infinite scroll)"
+        - "Optimistic updates for markAsRead"
+
+    - file: "src/hooks/useConversations.ts"
+      description: "Hook for conversation state management"
+      requirements:
+        - "Returns: { conversations, loading, error, createConversation, addReply }"
+        - "Fetches conversations with participant metadata"
+        - "Real-time updates via WebSocket (optional)"
+        - "Optimistic updates for new replies"
+
+    - file: "src/hooks/useDeliveryStatus.ts"
+      description: "Hook for delivery status tracking"
+      requirements:
+        - "Returns: { status, loading, error, refresh }"
+        - "Polls delivery_attempts table for status updates"
+        - "Maps status to user-friendly labels (Sending, Delivered, Failed)"
+        - "Retry count display if retried > 0"
+
+  stories:
+    - file: "stories/communication/MessageTimeline.stories.tsx"
+      description: "Storybook stories for MessageTimeline"
+      requirements:
+        - "Story: Default (10 messages, mixed read/unread)"
+        - "Story: Grouped by date (messages from Today, Yesterday, last week)"
+        - "Story: Infinite scroll (100 messages, virtualized)"
+        - "Story: Empty state (no messages)"
+        - "Variants: light, dark, high-contrast"
+
+    - file: "stories/communication/ChannelPlanEditor.stories.tsx"
+      description: "Storybook stories for ChannelPlanEditor"
+      requirements:
+        - "Story: Standard policy (default config)"
+        - "Story: Urgent policy (aggressive retry, burst throttling)"
+        - "Story: Editing (form validation errors shown)"
+        - "Variants: light, dark, high-contrast"
+
+    - file: "stories/communication/DeliveryHealthWidget.stories.tsx"
+      description: "Storybook stories for DeliveryHealthWidget"
+      requirements:
+        - "Story: Healthy (all metrics green)"
+        - "Story: Warning (p95 time-to-send > 4min)"
+        - "Story: Critical (success rate < 95%)"
+        - "Story: Loading state"
+        - "Variants: light, dark, high-contrast"
+
+    - file: "stories/communication/ConversationThread.stories.tsx"
+      description: "Storybook stories for ConversationThread"
+      requirements:
+        - "Story: Simple thread (1 parent, 3 replies)"
+        - "Story: Deep thread (5 levels, flattened after 3)"
+        - "Story: Collapsed thread (>5 replies, expandable)"
+        - "Variants: light, dark, high-contrast"
+
+  tests:
+    - file: "tests/components/communication/MessageTimeline.test.tsx"
+      description: "Unit tests for MessageTimeline"
+      requirements:
+        - "Test: renders messages in chronological order"
+        - "Test: groups messages by date when groupByDate=true"
+        - "Test: calls onLoadMore when scrolled to bottom"
+        - "Test: calls onMarkAsRead when message clicked"
+        - "Coverage ≥90%"
+
+    - file: "tests/components/communication/ChannelPlanEditor.test.tsx"
+      description: "Unit tests for ChannelPlanEditor"
+      requirements:
+        - "Test: renders all form sections (retry, throttling, quiet hours)"
+        - "Test: calls onChange when policy edited"
+        - "Test: validation errors shown for invalid input"
+        - "Test: preset dropdown loads correct policy"
+        - "Coverage ≥90%"
+
+    - file: "tests/components/communication/DeliveryHealthWidget.test.tsx"
+      description: "Unit tests for DeliveryHealthWidget"
+      requirements:
+        - "Test: displays all metrics (p95, success rate, retry exhaustion)"
+        - "Test: color-codes metrics based on thresholds"
+        - "Test: time window filter changes metrics"
+        - "Coverage ≥90%"
+
+    - file: "tests/components/communication/ConversationThread.test.tsx"
+      description: "Unit tests for ConversationThread"
+      requirements:
+        - "Test: indents replies based on depth"
+        - "Test: flattens threads after maxDepth"
+        - "Test: expands/collapses long threads"
+        - "Test: reply button sets parent_message_id"
+        - "Coverage ≥90%"
+
+    - file: "tests/components/communication/MessageTimeline.a11y.test.tsx"
+      description: "Accessibility tests for MessageTimeline"
+      requirements:
+        - "Test: no axe violations (WCAG 2.2 AA)"
+        - "Test: keyboard navigation works (Tab, Enter)"
+        - "Test: screen reader announces new messages (aria-live)"
+        - "Test: focus management on mark as read"
+
+    - file: "tests/components/communication/ChannelPlanEditor.a11y.test.tsx"
+      description: "Accessibility tests for ChannelPlanEditor"
+      requirements:
+        - "Test: no axe violations"
+        - "Test: form inputs have labels (aria-label or <label>)"
+        - "Test: validation errors linked to inputs (aria-describedby)"
+        - "Test: keyboard navigation through form sections"
+
+  documentation:
+    - file: "docs/components/communication-ui-guide.md"
+      description: "Communication UI component documentation"
+      requirements:
+        - "Component reference: props, usage examples, variants"
+        - "Hook reference: return values, usage patterns"
+        - "Accessibility notes: keyboard shortcuts, ARIA labels, screen reader support"
+        - "Theming: token usage (--cmp-communication-*, --sys-communication-*)"
+        - "Integration examples: connecting components to backend APIs"
+
+# ============================================================================
+# SCAFFOLDING REUSE MAP
+# ============================================================================
+scaffoldingReuseMap:
+  - from: "src/components/authz/RolePermissionMatrix.tsx"
+    to: "src/components/communication/MessageTimeline.tsx"
+    pattern: "Virtualized list with react-window + infinite scroll"
+    adaptation: "Messages instead of roles/permissions"
+
+  - from: "src/components/authz/SoDPolicyEditor.tsx"
+    to: "src/components/communication/ChannelPlanEditor.tsx"
+    pattern: "Form-based editor with validation + presets"
+    adaptation: "Delivery policies instead of SoD policies"
+
+  - from: "src/hooks/useRolePermissions.ts"
+    to: "src/hooks/useMessages.ts"
+    pattern: "Data fetching hook with loading/error states + pagination"
+    adaptation: "Messages instead of role permissions"
+
+  - from: "stories/authz/RolePermissionMatrix.stories.tsx"
+    to: "stories/communication/MessageTimeline.stories.tsx"
+    pattern: "Storybook structure: multiple stories, theme variants, a11y addon"
+    adaptation: "Communication components instead of authz components"
+
+# ============================================================================
+# QUALITY GATES
+# ============================================================================
+qualityGates:
+  duringDevelopment:
+    - gate: "Components render without errors"
+      validation: "pnpm storybook, visually inspect all stories"
+      criterion: "All 4 components render in light/dark/high-contrast themes"
+
+    - gate: "Hooks fetch data correctly"
+      validation: "Test useMessages/useConversations/useDeliveryStatus with mock API"
+      criterion: "Data loaded, loading states shown, errors handled"
+
+    - gate: "Keyboard navigation works"
+      validation: "Tab through MessageTimeline, press Enter to open message"
+      criterion: "Focus visible, keyboard shortcuts functional"
+
+    - gate: "ARIA labels present"
+      validation: "Inspect DOM with React DevTools, verify aria-* attributes"
+      criterion: "All interactive elements have ARIA labels/roles"
+
+  beforeCompletion:
+    - gate: "No axe violations (WCAG 2.2 AA)"
+      validation: "pnpm test --run tests/components/communication/*.a11y.test.tsx"
+      criterion: "Zero axe violations in all components"
+
+    - gate: "Test coverage ≥90%"
+      validation: "pnpm test:coverage (filter: src/components/communication/, src/hooks/use*.ts)"
+      criterion: "Lines ≥90%, functions ≥90%, branches ≥90%"
+
+    - gate: "Storybook builds successfully"
+      validation: "pnpm build-storybook"
+      criterion: "Build completes without errors, all stories visible"
+
+    - gate: "High-contrast mode tested"
+      validation: "Enable forced-colors in browser, verify components readable"
+      criterion: "All text/icons visible, contrast ratios maintained"
+
+# ============================================================================
+# SUCCESS CRITERIA
+# ============================================================================
+successCriteria:
+  functional:
+    - "4 React components: MessageTimeline, ChannelPlanEditor, DeliveryHealthWidget, ConversationThread"
+    - "3 hooks: useMessages, useConversations, useDeliveryStatus"
+    - "Storybook stories for all components with theme variants"
+    - "WCAG 2.2 AA compliance (axe-core validation)"
+    - "Comprehensive documentation (component guide + hook reference)"
+
+  quality:
+    - "Test coverage ≥90% for components + hooks"
+    - "Zero axe violations in all components"
+    - "Keyboard navigation fully functional"
+    - "High-contrast mode support verified"
+    - "Storybook build succeeds"
+
+  validation:
+    - command: "pnpm test --run tests/components/communication/"
+      expectation: "All tests pass, coverage ≥90%"
+
+    - command: "pnpm test --run tests/components/communication/*.a11y.test.tsx"
+      expectation: "Zero axe violations, all a11y tests pass"
+
+    - command: "pnpm build-storybook"
+      expectation: "Build succeeds, all stories visible"
+
+# ============================================================================
+# DESIGN TOKENS
+# ============================================================================
+designTokens:
+  componentTokens:
+    - "--cmp-communication-timeline-bg (background for timeline)"
+    - "--cmp-communication-timeline-fg (text color)"
+    - "--cmp-communication-unread-bg (accent for unread messages)"
+    - "--cmp-communication-date-header-fg (date label color)"
+    - "--cmp-communication-policy-editor-border (form section borders)"
+    - "--cmp-communication-health-success (green for healthy metrics)"
+    - "--cmp-communication-health-warning (yellow for warnings)"
+    - "--cmp-communication-health-critical (red for critical)"
+    - "--cmp-communication-thread-indent (indentation per level)"
+
+  systemTokens:
+    - "--sys-communication-accent (primary accent color)"
+    - "--sys-communication-muted (muted text color)"
+    - "--sys-communication-success (success state)"
+    - "--sys-communication-error (error state)"
+
+# ============================================================================
+# EXAMPLES & PATTERNS
+# ============================================================================
+examples:
+  messageTimeline: |
+    <MessageTimeline
+      messages={messages}
+      groupByDate={true}
+      onLoadMore={() => loadMore()}
+      onMarkAsRead={(messageId) => markAsRead(messageId)}
+    />
+
+  channelPlanEditor: |
+    <ChannelPlanEditor
+      policy={deliveryPolicy}
+      channelTypes={['email', 'sms', 'push']}
+      onChange={(updatedPolicy) => savePolicy(updatedPolicy)}
+    />
+
+  deliveryHealthWidget: |
+    <DeliveryHealthWidget
+      metrics={slaMetrics}
+      timeWindow="24h"
+    />
+
+  conversationThread: |
+    <ConversationThread
+      conversation={conversation}
+      maxDepth={3}
+      onReply={(parentMessageId, body) => addReply(parentMessageId, body)}
+    />
+
+# ============================================================================
+# NOTES
+# ============================================================================
+notes:
+  - "MessageTimeline uses react-window for efficient rendering (1000+ messages)"
+  - "ChannelPlanEditor mirrors SoDPolicyEditor pattern from Sprint 28 (proven form structure)"
+  - "DeliveryHealthWidget provides at-a-glance SLA monitoring (ops teams use this)"
+  - "ConversationThread supports threaded discussions (Slack/Discord pattern)"
+  - "All components use --cmp-* tokens only (no direct --ref-* or --theme-* tokens)"
+
+blockers: []
+risks:
+  - risk: "Virtualized list performance with large datasets (>10K messages)"
+    mitigation: "react-window handles this, benchmark with 10K messages to verify"
+
+  - risk: "High-contrast mode may break custom UI (forced-colors overrides)"
+    mitigation: "Test with forced-colors media query, use system colors for critical UI"

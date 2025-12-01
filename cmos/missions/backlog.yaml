@@ -4,7 +4,7 @@ displayName: CMOS Backlog Export
 description: Backlog export generated from the CMOS SQLite database.
 author: CMOS
 schema: ./schemas/SprintPlan.v1.json
-generatedAt: '2025-11-14T18:44:57.884262+00:00'
+generatedAt: '2025-12-01T16:05:24.260280+00:00'
 ---
 domainFields:
   type: Planning.SprintPlan.v1
@@ -657,7 +657,7 @@ domainFields:
     title: Private Review Preparation
     focus: Assemble private release candidate, equip reviewers, and stage post-review
       follow-up.
-    status: Current
+    status: Completed
     startDate: null
     endDate: null
     totalMissions: null
@@ -724,7 +724,7 @@ domainFields:
     title: Visualization Foundation
     focus: 'Trait-based data viz: foundation, Vega-Lite renderer, atomic patterns,
       a11y baseline'
-    status: Queued
+    status: Completed
     startDate: null
     endDate: null
     totalMissions: 7
@@ -742,26 +742,1373 @@ domainFields:
         completed_at: '2025-11-14T17:39:45Z'
     - id: B21.2
       name: Normalized Viz Spec Implementation
-      status: In Progress
-      notes: Defined normalized viz spec schema + Ajv runtime validator, added 3 reference
-        specs + docs/tests to unblock Vega-Lite adapter.
+      status: Completed
+      completed_at: '2025-11-14T18:45:35Z'
+      notes: Added normalized-viz-spec.schema.json + generated TS types, Ajv validator
+        + exports, three curated example specs, docs, and Vitest coverage (pnpm vitest
+        run tests/viz/normalized-viz-spec.test.ts).
       metadata:
         started_at: '2025-11-14T18:24:06Z'
+        completed_at: '2025-11-14T18:45:35Z'
     - id: B21.3
       name: Vega-Lite Adapter
-      status: Queued
+      status: Completed
+      completed_at: '2025-11-14T20:01:28Z'
+      notes: 'Implemented the Vega-Lite adapter (src/viz/adapters/vega-lite-adapter.ts)
+        that converts normalized viz specs into schema-valid Vega-Lite payloads with
+        mark trait mapping, encoding inference, layer merging, metadata forwarding,
+        and calculate-transform handling. Added Vitest coverage in tests/viz/vega-lite-adapter.test.ts
+        exercising bar/line/scatter specs plus aggregate translation. Tests: pnpm
+        test tests/viz/vega-lite-adapter.test.ts.'
+      metadata:
+        started_at: '2025-11-14T19:42:04Z'
+        completed_at: '2025-11-14T20:01:28Z'
     - id: B21.4
       name: Bar Chart Component
-      status: Queued
+      status: Completed
+      completed_at: '2025-11-14T21:54:32Z'
+      notes: 'Shipped the viz foundation: new <BarChart> built on VizContainer, AccessibleTable,
+        and ChartDescription plus Vega-Lite embed, Storybook coverage (5 specs), docs,
+        and unit/a11y tests. Tests: pnpm vitest run tests/components/viz/BarChart.test.tsx
+        tests/components/viz/BarChart.a11y.test.tsx'
+      metadata:
+        started_at: '2025-11-14T21:21:10Z'
+        completed_at: '2025-11-14T21:54:32Z'
     - id: B21.5
       name: Line Chart Component (Temporal)
-      status: Queued
+      status: Completed
+      completed_at: '2025-11-14T23:00:12Z'
+      notes: Added src/components/viz/LineChart.tsx with ResizeObserver-driven sizing
+        + reduced-motion fade, exported via viz index, and documented usage in docs/components/line-chart.md.
+        Established Storybook coverage (stories/viz/LineChart.stories.tsx) and fixtures/tests
+        (tests/components/viz/__fixtures__, LineChart.test.tsx, LineChart.a11y.test.tsx)
+        with pnpm vitest run tests/components/viz/LineChart.test.tsx tests/components/viz/LineChart.a11y.test.tsx.
+        Updated spec helpers so BarChart fixture shares merge util.
+      metadata:
+        started_at: '2025-11-14T22:43:41Z'
+        completed_at: '2025-11-14T23:00:12Z'
     - id: B21.6
       name: Viz Token Integration
-      status: Queued
+      status: Completed
+      completed_at: '2025-11-15T01:37:38Z'
+      notes: Added viz-specific DTCG JSON (scales + sizing) plus tailwind build hooks,
+        shipped scripts/tokens/validate-viz-scales.ts and tests/tokens/viz-scales.test.ts,
+        exposed the helper module at src/viz/tokens/scale-token-mapper.ts, and documented
+        the namespace via docs/tokens/viz-token-guide.md + stories/foundations/VizTokens.stories.mdx.
+        pnpm tokens:validate-viz and pnpm vitest tests/tokens/viz-scales.test.ts both
+        pass; pnpm lint:tokens still fails in pre-existing brand alias files.
+      metadata:
+        started_at: '2025-11-15T01:15:10Z'
+        completed_at: '2025-11-15T01:37:38Z'
     - id: B21.7
       name: A11y & Validation Suite
+      status: Completed
+      completed_at: '2025-11-15T02:32:06Z'
+      notes: '- Added src/viz/a11y/ modules for dataset analysis, accessible table/narrative
+        generation, and 15 mission rules.
+
+        - Updated VizContainer companions (AccessibleTable + ChartDescription) to
+        consume generated data.
+
+        - Exported the a11y API via @oods/viz and added vitest coverage in tests/viz/a11y-equivalence.test.ts.
+
+        - Ran pnpm test tests/viz/a11y-equivalence.test.ts.'
+      metadata:
+        started_at: '2025-11-15T02:16:30Z'
+        completed_at: '2025-11-15T02:32:06Z'
+  - sprintId: Sprint 22
+    title: Visualization Scale-Out
+    focus: Dual-renderer architecture (ECharts), interactions, pattern variety (scatter/area/heatmap),
+      performance benchmarks
+    status: Completed
+    startDate: null
+    endDate: null
+    totalMissions: 8
+    completedMissions: 0
+    missions:
+    - id: B22.1
+      name: ECharts Adapter
+      status: Completed
+      completed_at: '2025-11-15T04:26:34Z'
+      notes: "- Added src/viz/adapters/echarts-adapter.ts with dataset + transform\
+        \ mapping, mark encoding merge, ARIA metadata, and option metadata wiring\
+        \ for NormalizedVizSpec \u2192 EChartsOption conversion.\n- Introduced src/viz/adapters/renderer-selector.ts\
+        \ plus exports to pick Vega-Lite vs ECharts using spec hints, data volume\
+        \ heuristics, and explicit overrides.\n- Created tests/viz/echarts-adapter.test.ts\
+        \ and tests/viz/renderer-selector.test.ts to cover adapter parity, layered\
+        \ marks, transform propagation, and selector logic (pnpm vitest tests/viz/echarts-adapter.test.ts\
+        \ tests/viz/renderer-selector.test.ts)."
+      metadata:
+        started_at: '2025-11-15T04:18:28Z'
+        completed_at: '2025-11-15T04:26:34Z'
+    - id: B22.2
+      name: Interaction Traits (Highlight + Tooltip)
+      status: Completed
+      completed_at: '2025-11-15T05:21:49Z'
+      notes: Normalized viz spec now models interactions, Vega-Lite/ECharts adapters
+        emit highlight + tooltip bindings (plus runtime helper), and new React hooks
+        + trait definitions cover the ergonomics/tests.
+      metadata:
+        started_at: '2025-11-15T04:56:12Z'
+        completed_at: '2025-11-15T05:21:49Z'
+    - id: B22.3
+      name: Scatter Chart Component
+      status: Completed
+      completed_at: '2025-11-15T07:02:24Z'
+      notes: 'Implemented ScatterChart and BubbleChart with auto Vega-Lite/ECharts
+        selection, interaction binding, and keyboard-focused table fallbacks; added
+        stories, docs, and exports.
+
+        Added scatter/bubble fixtures plus unit and a11y coverage; introduced echarts
+        dependency for runtime renderer.
+
+        Tests: pnpm test tests/components/viz/ScatterChart.test.tsx tests/components/viz/ScatterChart.a11y.test.tsx
+        (token build emits existing collision warnings).'
+      metadata:
+        started_at: '2025-11-15T06:38:45Z'
+        completed_at: '2025-11-15T07:02:24Z'
+    - id: B22.4
+      name: Area Chart Component
+      status: Completed
+      completed_at: '2025-11-15T16:19:52Z'
+      notes: Added stack-transform utility with runtime application + metadata, created
+        AreaChart React component with Vega-Lite/ECharts paths, zero-baseline logic,
+        and accessibility surfacing. Added fixtures, Storybook coverage, docs, and
+        unit/a11y tests verifying stack handling and reduced-motion behaviour.
+      metadata:
+        started_at: '2025-11-15T15:46:14Z'
+        completed_at: '2025-11-15T16:19:52Z'
+    - id: B22.5
+      name: Heatmap Component
+      status: Completed
+      completed_at: '2025-11-15T17:01:44Z'
+      notes: 'Implemented the Heatmap chart stack:
+
+        - Added color-intensity mapper that maps --viz-scale-sequential-* tokens (with
+        --oods-* fallbacks) to CSS gradients, resolved RGB palettes, and normalization
+        helpers.
+
+        - Built <Heatmap> component with sequential legend, matrix fallback table,
+        responsive renderer selection, and Vega-Lite + ECharts hooks (visualMap +
+        range overrides).
+
+        - Extended Vega-Lite and ECharts adapters to support MarkRect/heatmap marks.
+
+        - Added stories, docs, fixtures, unit + axe tests covering legend/table behavior
+        and ECharts wiring.'
+      metadata:
+        started_at: '2025-11-15T16:45:19Z'
+        completed_at: '2025-11-15T17:01:44Z'
+    - id: B22.6
+      name: Chart Pattern Library
+      status: Completed
+      completed_at: '2025-11-15T21:17:05Z'
+      notes: Added viz pattern registry, schema-driven suggestion logic + CLI, 11
+        normalized specs, docs (pattern library, selection guide, anti-patterns),
+        Storybook gallery, and unit tests.
+      metadata:
+        started_at: '2025-11-15T20:39:01Z'
+        completed_at: '2025-11-15T21:17:05Z'
+    - id: B22.7
+      name: Performance Benchmarks & Renderer Comparison
+      status: Completed
+      completed_at: '2025-11-15T22:58:12Z'
+      notes: Added src/viz/perf/viz-benchmarks.ts with shared spec generators, deterministic
+        mode, and renderer recommendations. Created tools/perf/viz-budget.json plus
+        CLI script scripts/perf/run-viz-benchmarks.mjs that writes artifacts/performance/viz-benchmark-results.json.
+        Added docs/viz/performance-guide.md and docs/viz/renderer-selection-guide.md,
+        and regression test tests/performance/viz-benchmarks.test.ts.
+      metadata:
+        started_at: '2025-11-15T22:25:49Z'
+        completed_at: '2025-11-15T22:58:12Z'
+    - id: B22.8
+      name: Sprint 22 Close & Review
+      status: Completed
+      completed_at: '2025-11-16T00:06:54Z'
+      notes: '- Authored cmos/planning/sprint-22-review.md with mission summary, learnings,
+        and readiness signals.
+
+        - Created cmos/planning/sprint-23-plan.md outlining the next nine layout/interaction
+        missions.
+
+        - Updated diagnostics.json helpers.vizBenchmarks with the viz benchmark artifact
+        summary and renderer insights.
+
+        - Refreshed project_context + master_context in SQLite (current sprint, mission
+        planning, roadmap, sprint completions, next-session hints).'
+      metadata:
+        started_at: '2025-11-16T00:01:15Z'
+        completed_at: '2025-11-16T00:06:54Z'
+  - sprintId: Sprint 23
+    title: Viz Complex Patterns & Layout Traits
+    focus: Layout traits (Facet/Layer/Concat), advanced interactions (Filter/Zoom/Brush),
+      composite patterns, dashboard integration, Figma handshake
+    status: Completed
+    startDate: null
+    endDate: null
+    totalMissions: 9
+    completedMissions: 0
+    missions:
+    - id: B23.1
+      name: Layout Trait Schema (Facet, Layer, Concat)
+      status: Completed
+      completed_at: '2025-11-16T01:01:20Z'
+      notes: '- Added LayoutFacet/LayoutLayer/LayoutConcat trait definitions (TS +
+        YAML) plus parameter schemas and validators.
+
+        - Extended normalized viz schema/types/docs with layout node, shared scale
+        config, and projection metadata; added facet example + tests.
+
+        - Generated updated types, new fixtures, and regression tests covering layout
+        validation + trait parameter payloads.'
+      metadata:
+        started_at: '2025-11-16T00:45:11Z'
+        completed_at: '2025-11-16T01:01:20Z'
+    - id: B23.2
+      name: Layout Adapter Support (VL + ECharts)
+      status: Completed
+      completed_at: '2025-11-16T02:02:03Z'
+      notes: '
+
+        Built shared layout infrastructure (scale resolver + interaction propagation)
+        and integrated it into both Vega-Lite and ECharts adapters. Added layout-aware
+        renderer selector heuristics, ECharts runtime propagation, Story/docs updates,
+        and new layout adapter/parity tests. Verified via pnpm vitest tests/viz/vega-lite-adapter.test.ts
+        tests/viz/echarts-adapter.test.ts tests/viz/renderer-selector.test.ts tests/viz/echarts-interactions.test.ts
+        tests/viz/adapters/layout-adapter.test.ts tests/viz/adapters/layout-parity.test.ts.
+
+        '
+      metadata:
+        started_at: '2025-11-16T01:32:54Z'
+        completed_at: '2025-11-16T02:02:03Z'
+    - id: B23.3
+      name: Viz Facet/Grid Components
+      status: Completed
+      completed_at: '2025-11-16T03:06:15Z'
+      notes: '
+
+        - Added VizFacetGrid + VizLayeredView components with SharedLegend, keyboard
+        navigation, and facet-aware fallbacks.
+
+        - Built SharedLegend, facet table generator, and grid navigation helpers plus
+        Storybook stories and docs.
+
+        - Added fixtures + unit/a11y tests and ran pnpm vitest run tests/viz/a11y/facet-table-generator.test.ts
+        tests/viz/layout/keyboard-nav.test.ts tests/components/viz/SharedLegend.test.tsx
+        tests/components/viz/VizFacetGrid.test.tsx tests/components/viz/VizFacetGrid.a11y.test.tsx
+        tests/components/viz/VizLayeredView.test.tsx tests/components/viz/VizLayeredView.a11y.test.tsx.
+
+        '
+      metadata:
+        started_at: '2025-11-16T02:36:04Z'
+        completed_at: '2025-11-16T03:06:15Z'
+    - id: B23.4
+      name: Advanced Interaction Traits (Filter, Zoom, Brush)
+      status: Completed
+      completed_at: '2025-11-16T04:18:28Z'
+      notes: Added schema support for zoom bindings, new useFilter/useBrush/useZoom
+        hooks, Vega-Lite + ECharts adapters/dataZoom/brush propagation updates, a11y
+        guidance/rule, documentation, and new tests (hooks + adapters + runtime).
+      metadata:
+        started_at: '2025-11-16T03:54:35Z'
+        completed_at: '2025-11-16T04:18:28Z'
+    - id: B23.5
+      name: Pattern Automation & CLI Upgrade
+      status: Completed
+      completed_at: '2025-11-16T06:14:46Z'
+      notes: 'Added trait-aware pattern metadata (layout/interactions), scoring modules,
+        and scaffold generator. CLI now exposes --layout/--interactions/--scaffold
+        flags and emits specs + React shells with docs + tests. Tests: pnpm vitest
+        run tests/viz/patterns.'
+      metadata:
+        started_at: '2025-11-16T05:50:57Z'
+        completed_at: '2025-11-16T06:14:46Z'
+    - id: B23.6
+      name: Responsive Pattern Library v2
+      status: Completed
+      completed_at: '2025-11-16T14:57:27Z'
+      notes: '- Added examples/viz/patterns-v2 with 20 responsive specs (new compositions
+        + high-density sparkline grid).
+
+        - Expanded chart pattern registry to 20 entries, wired responsive scorer +
+        Storybook gallery + docs.
+
+        - Authored pattern-library-v2/responsive-strategies guides, updated anti-patterns,
+        added Vitest coverage.'
+      metadata:
+        started_at: '2025-11-16T14:33:42Z'
+        completed_at: '2025-11-16T14:57:27Z'
+    - id: B23.7
+      name: Figma + Token Handshake for Viz
+      status: Completed
+      completed_at: '2025-11-16T16:39:40Z'
+      notes: Added viz Figma handshake script/export + docs updates. New pnpm viz:figma-handshake
+        command writes cmos/planning/figma/viz-handshake-library.json, docs/viz/figma-handshake.md
+        + roundtrip checklist describe workflow, and diagnostics log vizHandshake
+        coverage.
+      metadata:
+        started_at: '2025-11-16T16:29:24Z'
+        completed_at: '2025-11-16T16:39:40Z'
+    - id: B23.8
+      name: Dashboard Context Integration
+      status: Completed
+      completed_at: '2025-11-16T17:42:01Z'
+      notes: '- Added ChartView/DashboardView components, registry updates, and CSS/token
+        config so RenderObject can render new contexts.
+
+        - Delivered chart-regions helper plus user/subscription/product dashboard
+        examples and docs, updated diagnostics + tests.'
+      metadata:
+        started_at: '2025-11-16T17:07:50Z'
+        completed_at: '2025-11-16T17:42:01Z'
+    - id: B23.9
+      name: CI Guardrails & Telemetry for Layouts
+      status: Completed
+      completed_at: '2025-11-16T19:24:57Z'
+      notes: Expanded run-viz-benchmarks to cover facet/layer/concat layouts, grew
+        viz budgets, added Playwright layout snapshots + pipeline hook, and refreshed
+        diagnostics/alarms with new layout telemetry.
+      metadata:
+        started_at: '2025-11-16T18:58:34Z'
+        completed_at: '2025-11-16T19:24:57Z'
+  - sprintId: Sprint 24
+    title: Viz Polish & Documentation
+    focus: Viz system synthesis, Storybook improvements, best practices, real-world
+      examples, performance optimization, prepare for core trait expansion
+    status: Completed
+    startDate: null
+    endDate: null
+    totalMissions: 6
+    completedMissions: 0
+    missions:
+    - id: B24.1
+      name: Viz System Overview Documentation
+      status: Completed
+      completed_at: '2025-11-17T01:24:23Z'
+      notes: Created docs/viz system overview, quickstart, migration guide, ADRs,
+        sprint journey recap, README hub, and diagrams/viz-architecture.svg with cross-links
+        to existing resources.
+      metadata:
+        started_at: '2025-11-17T01:24:11Z'
+        completed_at: '2025-11-17T01:24:23Z'
+    - id: B24.2
+      name: Storybook Improvements & Polish
+      status: Completed
+      completed_at: '2025-11-17T02:04:08Z'
+      notes: Updated Explorer welcome splash copy/navigation, wired PatternGalleryV2
+        to auto-load every normalized viz spec via Vite glob + responsive recipes,
+        and capped Storybook chunk warnings via viteFinal patch. Ran pnpm typecheck.
+      metadata:
+        started_at: '2025-11-17T02:00:14Z'
+        completed_at: '2025-11-17T02:04:08Z'
+    - id: B24.3
+      name: Viz Best Practices Guide
+      status: Completed
+      completed_at: '2025-11-17T04:25:39Z'
+      notes: Published best-practices hub + chart decision tree + performance and
+        accessibility checklists, expanded anti-patterns, added the viz:best-practices
+        CLI, and captured before/after specs for layout, renderer, and a11y improvements.
+      metadata:
+        started_at: '2025-11-17T04:12:46Z'
+        completed_at: '2025-11-17T04:25:39Z'
+    - id: B24.4
+      name: Real-World Dashboard Examples
+      status: Completed
+      completed_at: '2025-11-17T05:13:40Z'
+      notes: 'Documented and centralized the three canonical dashboard examples. Added
+        examples/dashboards/index.ts registry used by Storybook proofs, authored docs/viz/real-world-dashboard-examples.md,
+        and linked the doc from docs/patterns/dashboard-composition.md. Storybook
+        now consumes the registry so new dashboards only require metadata in one place.
+        Tests: pnpm vitest tests/components/dashboard-context.integration.test.tsx'
+      metadata:
+        started_at: '2025-11-17T05:08:39Z'
+        completed_at: '2025-11-17T05:13:40Z'
+    - id: B24.5
+      name: Performance Optimization Pass
+      status: Completed
+      completed_at: '2025-11-17T08:49:13Z'
+      notes: "- Added src/viz/runtime/vega-embed-loader to lazily import/cache vega-embed\
+        \ so Vega charts only load that renderer when used and adopted it across Bar/Line/Area/Heatmap/Scatter/VizFacetGrid/VizLayeredView.\n\
+        - Marked CSS-only bundles as sideEffects in package.json to unlock tree shaking\
+        \ when consumers cherry-pick viz utilities.\n- Facet fallback now avoids retaining\
+        \ raw analysis payloads and lazily renders panel tables on demand, plus keyboard-friendly\
+        \ expand/collapse controls and tests covering the new behaviour.\n- Updated\
+        \ all viz component tests to mock the loader and exercised the affected specs\
+        \ via `pnpm test tests/components/viz/AreaChart.a11y.test.tsx tests/components/viz/ScatterChart.test.tsx\
+        \ tests/components/viz/VizFacetGrid.a11y.test.tsx` after the aggregate `pnpm\
+        \ test tests/components/viz` run timed out under vitest\u2019s 5s per-test\
+        \ cap."
+      metadata:
+        started_at: '2025-11-17T06:24:53Z'
+        completed_at: '2025-11-17T08:49:13Z'
+    - id: B24.6
+      name: Sprint 24 Close & Sprint 25-27 Prep
+      status: Completed
+      completed_at: '2025-11-17T17:05:01Z'
+      notes: "Sprint 24 completion captured:\n- Created sprint-24-retrospective.md\
+        \ synthesizing all 6 missions\n- Updated master_context with Sprint 24 completion\
+        \ (4 total sprint completions)\n- Documented learnings: polish sprints valuable,\
+        \ real-world examples drive adoption, performance optimization successful\n\
+        - Created docs/changelog/sprint-24.md for public reference\n- Sprint 25 missions\
+        \ ready to create (Addressable trait from R21.1 research)\n- Phase transition\
+        \ prepared: Viz complete \u2192 Core traits begin\n- Database: 88 context\
+        \ snapshots, 27 strategic decisions, all tracking properly\n\nAll Sprint 24\
+        \ deliverables complete and documented."
+      metadata:
+        started_at: '2025-11-17T17:03:55Z'
+        completed_at: '2025-11-17T17:05:01Z'
+  - sprintId: Sprint 25
+    title: Addressable Trait (Core Expansion)
+    focus: Multi-role address management, international format support (UPU S42),
+      validation lifecycle, geocoding integration, extends Universal Quintet to 4
+      core traits
+    status: Completed
+    startDate: null
+    endDate: '2025-11-18'
+    totalMissions: 7
+    completedMissions: 7
+    missions:
+    - id: B25.1
+      name: Addressable Trait Foundation & Schema
+      status: Completed
+      completed_at: '2025-11-17T20:07:09Z'
+      notes: 'Implemented Addressable trait foundation: Zod schemas for Address &
+        metadata, trait YAML/TS definitions, runtime helper + docs, generated types,
+        parameter schema, and test coverage (schemas + trait runtime). Validated via
+        pnpm vitest tests/schemas/address.test.ts tests/traits/addressable.test.ts.'
+      metadata:
+        started_at: '2025-11-17T19:43:37Z'
+        completed_at: '2025-11-17T20:07:09Z'
+    - id: B25.2
+      name: International Format Support (UPU S42)
+      status: Completed
+      completed_at: '2025-11-17T21:25:16Z'
+      notes: Added JSON-backed template catalog plus parser/registry, formatter +
+        extraction utilities with AddressableTrait integration, Storybook/docs, and
+        comprehensive tests for US/CA/JP formatting. Ran vitest on new suites.
+      metadata:
+        started_at: '2025-11-17T20:59:30Z'
+        completed_at: '2025-11-17T21:25:16Z'
+    - id: B25.3
+      name: Address Validation Lifecycle
+      status: Completed
+      completed_at: '2025-11-17T22:20:18Z'
+      notes: Added ValidationVerdict schema, lifecycle state machine, provider abstraction,
+        Google Address Validation adapter, geocode helpers, docs, examples, and comprehensive
+        tests (pnpm vitest tests/traits/addressable/validation-lifecycle.test.ts tests/traits/addressable/validation.test.ts).
+      metadata:
+        started_at: '2025-11-17T21:57:21Z'
+        completed_at: '2025-11-17T22:20:18Z'
+    - id: B25.4
+      name: Multi-Role Address Management
+      status: Completed
+      completed_at: '2025-11-17T23:23:36Z'
+      notes: Implemented role-manager, default-resolver, and address-store modules,
+        refactored AddressableTrait with setAddresses/setDefaultAddress APIs, added
+        docs/examples, and created multi-role + default management test suites (pnpm
+        vitest run tests/traits/addressable).
+      metadata:
+        started_at: '2025-11-17T23:06:14Z'
+        completed_at: '2025-11-17T23:23:36Z'
+    - id: B25.5
+      name: Address UI Components
+      status: Completed
+      completed_at: '2025-11-18T00:29:01Z'
+      notes: Implemented AddressForm suite (AddressFieldSet, RoleSelector, ValidationStatusBadge)
+        with dynamic UPU template layouts, role management, and validation corrections.
+        Added AddressDisplay presentation component, shared address styles, Storybook
+        stories, docs, and Vitest + axe coverage (address-form/display).
+      metadata:
+        started_at: '2025-11-17T23:38:47Z'
+        completed_at: '2025-11-18T00:29:01Z'
+    - id: B25.6
+      name: Object Integration (User, Organization)
+      status: Completed
+      completed_at: '2025-11-18T04:01:25Z'
+      notes: Added Addressable trait to User/Organization object definitions with
+        role presets, regenerated object typings, and documented migration guidance.
+        Created canonical examples + Storybook stories demonstrating multi-role addresses,
+        plus new integration coverage for Addressable composition and refreshed the
+        universal quintet test. Validated via pnpm vitest run tests/integration/addressable-composition.test.ts
+        tests/integration/universal-quintet-objects.integration.test.ts.
+      metadata:
+        started_at: '2025-11-18T03:42:03Z'
+        completed_at: '2025-11-18T04:01:25Z'
+    - id: B25.7
+      name: Sprint 25 Close & Sprint 26 Prep
+      status: Completed
+      completed_at: '2025-11-18T04:34:34Z'
+      notes: "Docs: sprint-25 retrospective + changelog recorded; sprint-26 Classifiable\
+        \ plan published. Diagnostics: addressable metrics added to diagnostics.json.\
+        \ Contexts: master/project contexts updated + exported; Sprint 25 completion\
+        \ logged. Backlog: Sprint 26 (B26.1\u2013B26.8) missions inserted with dependencies;\
+        \ Sprint 26 added to sprints table. Verification: targeted vitest suite for\
+        \ addressable trait/UI/integration passing."
+      metadata:
+        started_at: '2025-11-18T04:23:15Z'
+        completed_at: '2025-11-18T04:34:34Z'
+  - sprintId: Sprint 26
+    title: Classifiable Trait (Core Expansion)
+    focus: Category hierarchies with ltree storage (<3ms queries), tag/folksonomy
+      support, hybrid WordPress pattern, synonym mapping, governance workflows
+    status: Completed
+    startDate: null
+    endDate: null
+    totalMissions: 8
+    completedMissions: 0
+    missions:
+    - id: B26.1
+      name: Classifiable Trait Foundation & Schema
+      status: Completed
+      completed_at: '2025-11-18T05:27:41Z'
+      notes: '- Added canonical CategoryNode, Tag, and ClassificationMetadata value
+        objects with shared Zod + JSON Schema definitions plus normalization helpers.
+
+        - Introduced Classifiable trait (TS + YAML) with taxonomy/tag/hybrid parameters,
+        semantics, view extensions, and Identifiable dependency.
+
+        - Authored decision-table documentation for Classifiable trait referencing
+        R21.4 and covered new schemas with Vitest.'
+      metadata:
+        started_at: '2025-11-18T05:08:05Z'
+        completed_at: '2025-11-18T05:27:41Z'
+    - id: B26.2
+      name: ltree Infrastructure & Database Migrations
+      status: Completed
+      completed_at: '2025-11-18T14:08:53Z'
+      notes: Added Postgres migration with ltree + adjacency/closure projections,
+        introduced LtreeQueryService with sqlite-compatible helpers, built sql.js-backed
+        tests + benchmarking script and captured diagnostics metrics.
+      metadata:
+        started_at: '2025-11-18T13:38:27Z'
+        completed_at: '2025-11-18T14:08:53Z'
+    - id: B26.3
+      name: Category Hierarchy UI Components
+      status: Completed
+      completed_at: '2025-11-18T15:38:33Z'
+      notes: Implemented useCategoryTree hook, CategoryTree/Picker/Breadcrumb components,
+        and dedicated CSS. Added Storybook stories, docs, and unit/a11y tests (pnpm
+        test "CategoryTree").
+      metadata:
+        started_at: '2025-11-18T14:52:50Z'
+        completed_at: '2025-11-18T15:38:33Z'
+    - id: B26.4
+      name: Tag Management & Folksonomy Governance
+      status: Completed
+      completed_at: '2025-11-18T17:13:42Z'
+      notes: Added TagManager/SynonymMapper/SpamDetector services with vitest coverage;
+        authored tag governance migration + merge function; built TagGovernanceDashboard
+        component and folksonomy governance guide; docs + exports updated; tests run
+        via pnpm vitest run tests/traits/classifiable/tag-governance.test.ts tests/traits/classifiable/spam-detection.test.ts.
+      metadata:
+        started_at: '2025-11-18T16:51:40Z'
+        completed_at: '2025-11-18T17:13:42Z'
+    - id: B26.5
+      name: Hybrid Mode (WordPress 3-Table Pattern)
+      status: Completed
+      completed_at: '2025-11-18T18:12:56Z'
+      notes: "\u2022 Added migration 20251119_b26_5_hybrid_bridge.sql creating classification.terms/term_taxonomy/term_relationships\
+        \ with triggers.\n\u2022 Introduced canonical term schemas + HybridTermAdapter\
+        \ service with sqlite-friendly helpers and new Vitest coverage.\n\u2022 Documented\
+        \ hybrid bridge guidance, caching, and invalidation strategy in docs/traits/classifiable-trait.md.\n\
+        \u2022 Tests: pnpm test tests/services/classification/hybrid-term-adapter.spec.ts"
+      metadata:
+        started_at: '2025-11-18T17:52:28Z'
+        completed_at: '2025-11-18T18:12:56Z'
+    - id: B26.6
+      name: Tag UI Components & Tag Input
+      status: Completed
+      completed_at: '2025-11-18T19:39:26Z'
+      notes: Implemented TagInput/TagList/TagPill/TagAutocomplete React components
+        with shared tag-field CSS plus hooks (useTagAutocomplete/useTagSuggestions)
+        for canonical + contextual suggestions. Added docs, Storybook stories, unit
+        + axe tests (pnpm vitest run tests/components/classification/TagInput.test.tsx
+        tests/components/classification/TagInput.a11y.test.tsx).
+      metadata:
+        started_at: '2025-11-18T19:19:44Z'
+        completed_at: '2025-11-18T19:39:26Z'
+    - id: B26.7
+      name: Object Integration (Product, Content)
+      status: Completed
+      completed_at: '2025-11-18T21:27:52Z'
+      notes: '- Added Classifiable to Product (taxonomy) plus new Article+Media objects
+        with schema + metadata.
+
+        - Generated updated object typings, new classification examples, search helpers,
+        Storybook coverage, and migration doc.
+
+        - Added integration test (tests/integration/classifiable-composition.test.ts)
+        and ran `pnpm vitest run tests/integration/classifiable-composition.test.ts`.'
+      metadata:
+        started_at: '2025-11-18T21:03:58Z'
+        completed_at: '2025-11-18T21:27:52Z'
+    - id: B26.8
+      name: Sprint 26 Close & Sprint 27 Prep
+      status: Completed
+      completed_at: '2025-11-18T23:14:25Z'
+      notes: "Docs: cmos/planning/sprint-26-retrospective.md + docs/changelog/sprint-26.md\
+        \ capture Classifiable outcomes. Diagnostics: sprint26 block added to diagnostics.json\
+        \ with trait/schema/runtime/component coverage. Contexts: master/project contexts\
+        \ updated with Sprint 26 completion + Preferenceable next-session guidance.\
+        \ Backlog/DB: Sprint 27 missions (B27.1\u2013B27.8), dependencies, and Sprint\
+        \ 27 sprint row seeded in SQLite + backlog.yaml. Verification: pnpm vitest\
+        \ run tests/integration/classifiable-composition.test.ts succeeded (Style\
+        \ Dictionary warnings only)."
+      metadata:
+        started_at: '2025-11-18T23:00:38Z'
+        completed_at: '2025-11-18T23:14:25Z'
+  - sprintId: Sprint 27
+    title: Preferenceable Trait (Core Expansion)
+    focus: "User preferences with JSONB storage, JSON Schema-driven UI (react-jsonschema-form),\
+      \ schema evolution (lazy + eager migration), notification preferences (Channel\
+      \ \xD7 Event-Type matrix), performance optimization (Redis cache, GIN index)"
+    status: Completed
+    startDate: null
+    endDate: null
+    totalMissions: 8
+    completedMissions: null
+    missions:
+    - id: B27.1
+      name: Preferenceable Trait Foundation & Schema
+      status: Completed
+      completed_at: '2025-11-18T23:47:50Z'
+      notes: 'Added Preferenceable trait definitions (TS+YAML) plus parameter schema
+        and generated types.
+
+        Implemented PreferenceDocument/Metadata schemas, PreferenceStore runtime helper,
+        and PreferenceableTrait facade with namespace guardrails + migration tracking.
+
+        Created docs outlining trait usage/scope, generated preference types, and
+        added comprehensive schema + trait unit tests (pnpm vitest run tests/schemas/preferences.test.ts
+        tests/traits/preferenceable.test.ts).'
+      metadata:
+        started_at: '2025-11-18T23:30:32Z'
+        completed_at: '2025-11-18T23:47:50Z'
+    - id: B27.2
+      name: Preference Schema Registry & JSON Schema Integration
+      status: Completed
+      completed_at: '2025-11-19T01:09:48Z'
+      notes: Delivered JSON Schema registry with three versioned artifacts, schema
+        validator, compatibility report API, and type generation helpers. Added versioned
+        data and preference examples, shipped PreferenceForm with OODS RJSF theme
+        + toggle widget, and wrote registry + RJSF Vitest coverage (pnpm test -- tests/traits/preferenceable).
+      metadata:
+        started_at: '2025-11-19T00:44:58Z'
+        completed_at: '2025-11-19T01:09:48Z'
+    - id: B27.3
+      name: Schema Evolution & Dual-Migration Engine
+      status: Completed
+      completed_at: '2025-11-19T03:11:50Z'
+      notes: '- Added read-repair + dual-write utilities, migration logger, and version
+        tracker for Preferenceable.
+
+        - Shipped migration CLI, SQL log table, docs, and runnable examples.
+
+        - Added targeted tests via `pnpm vitest tests/traits/preferenceable/...` (tokens
+        build warnings only).'
+      metadata:
+        started_at: '2025-11-19T02:45:32Z'
+        completed_at: '2025-11-19T03:11:50Z'
+    - id: B27.4
+      name: Preference UI Components (JSON Schema-Driven)
+      status: Completed
+      completed_at: '2025-11-19T05:03:35Z'
+      notes: Built the PreferenceForm shell around a custom OODS RJSF theme, added
+        PreferencePreview + usePreferenceForm for resets/preview state, documented
+        JSON Schema UI patterns, and shipped Storybook coverage for six preference
+        scenarios. Added comprehensive rendering/a11y tests and verified legacy RJSF
+        integration.
+      metadata:
+        started_at: '2025-11-19T04:26:21Z'
+        completed_at: '2025-11-19T05:03:35Z'
+    - id: B27.5
+      name: "Notification Preferences Matrix (Channel \xD7 Event-Type)"
+      status: Completed
+      completed_at: '2025-11-19T06:00:35Z'
+      notes: Added JSON schema + normalization helpers, preference filter + channel
+        router, React matrix editor, docs, tests, and example usage. Ran pnpm vitest
+        on the new suites.
+      metadata:
+        started_at: '2025-11-19T05:37:29Z'
+        completed_at: '2025-11-19T06:00:35Z'
+    - id: B27.6
+      name: Preference Performance Optimization (Cache + GIN)
+      status: Completed
+      completed_at: '2025-11-19T07:13:30Z'
+      notes: '- Added cache transport + Redis adapter, warmers, and optimized query
+        service with @> enforcement.
+
+        - Added GIN index migration + cache telemetry table, perf benchmark script,
+        and documentation.
+
+        - Tests: pnpm vitest run tests/traits/preferenceable/cache.test.ts tests/traits/preferenceable/performance.test.ts'
+      metadata:
+        started_at: '2025-11-19T06:49:55Z'
+        completed_at: '2025-11-19T07:13:30Z'
+    - id: B27.7
+      name: User Integration & Preference CLI
+      status: Completed
+      completed_at: '2025-11-19T14:35:09Z'
+      notes: '- Added core/Preferenceable trait to objects/core/User.object.yaml,
+        regenerated User types, and updated fixtures/examples to include preference
+        payloads.
+
+        - Created data-backed preference CLI (pnpm user:prefs) with get/set/reset/export
+        commands plus docs and dataset.
+
+        - Added UserProfileSettings page + story, user-with-preferences example, migration
+        + examples docs, and integration tests covering Preferenceable composition.
+
+        - Ran pnpm vitest run tests/integration/preferenceable-composition.test.ts
+        and validated pnpm user:prefs get usr_1001.'
+      metadata:
+        started_at: '2025-11-19T14:09:05Z'
+        completed_at: '2025-11-19T14:35:09Z'
+    - id: B27.8
+      name: Sprint 27 Close & Extension Pack Prep
+      status: Completed
+      completed_at: '2025-11-19T15:38:55Z'
+      notes: Authored sprint-27 retrospective + changelog, refreshed diagnostics.json
+        and cmos/context/MASTER_CONTEXT.json, added sprint-28-30 overview, and ran
+        pnpm vitest run tests/traits/preferenceable.test.ts tests/schemas/preferences.test.ts
+        tests/integration/preferenceable-composition.test.ts to verify Preferenceable
+        stack.
+      metadata:
+        started_at: '2025-11-19T15:25:50Z'
+        completed_at: '2025-11-19T15:38:55Z'
+  - sprintId: Sprint 28
+    title: Authorization Extension Pack
+    focus: Core Trait Extension
+    status: Completed
+    startDate: null
+    endDate: null
+    totalMissions: 8
+    completedMissions: 0
+    missions:
+    - id: B28.1
+      name: Authable trait & schema registry
+      status: Completed
+      completed_at: '2025-11-19T20:17:43Z'
+      notes: "- Added Authable trait specs (TS + YAML) plus Zod schemas + JSON registry\
+        \ + runtime helpers and CLI generator.\n- Authz schema registry + validator\
+        \ + type generator + diagnostics/docs landed; generated types + new schema\
+        \ tests cover RBAC entities.\n- Docs: authable-trait.md, authz-membership-pattern.md,\
+        \ authz schema registry guide; diagnostics traits.authable + helpers.authzSchemas\
+        \ updated.\n- Tests: pnpm vitest run --coverage tests/schemas/authz.test.ts\
+        \ tests/schemas/authz-registry.test.ts tests/traits/authable.test.ts \u2705\
+        ; pnpm typecheck \u2705.\n- ./cmos/cli.py validate docs \u274C (fails before\
+        \ mission: MASTER_CONTEXT missing references to foundational templates)."
+      metadata:
+        started_at: '2025-11-19T19:49:37Z'
+        completed_at: '2025-11-19T20:17:43Z'
+    - id: B28.2
+      name: RBAC database foundations
+      status: Completed
+      completed_at: '2025-11-19T21:05:21Z'
+      notes: 'Implemented eight authz migrations plus rollbacks, SoD trigger, and
+        seed scripts; added CLI runners (migrate/rollback/status + seeding) with shared
+        RBAC defaults, wrote documentation + diagnostics entry, and shipped Vitest
+        coverage for SQL + seeds. Tests: pnpm vitest run tests/database/authz-migrations.test.ts
+        tests/database/authz-seeds.test.ts'
+      metadata:
+        started_at: '2025-11-19T20:52:52Z'
+        completed_at: '2025-11-19T21:05:21Z'
+    - id: B28.3
+      name: Role graph & entitlement runtime
+      status: Completed
+      completed_at: '2025-11-19T22:12:31Z'
+      notes: '- Added runtime services for role traversal, membership CRUD, and entitlement
+        caching.
+
+        - Documented APIs/perf targets (docs/traits/authz-runtime-api.md).
+
+        - Tests: pnpm test tests/traits/authz && pnpm test tests/performance/authz-benchmarks.test.ts.'
+      metadata:
+        started_at: '2025-11-19T21:53:26Z'
+        completed_at: '2025-11-19T22:12:31Z'
+    - id: B28.4
+      name: SoD policy builder & validator
+      status: Completed
+      completed_at: '2025-11-19T22:56:00Z'
+      notes: Implemented authz/sod-policy-builder + sod-validator, regression tests
+        for SSoD/DSoD cases, and SoD policy guide per mission requirements.
+      metadata:
+        started_at: '2025-11-19T22:46:02Z'
+        completed_at: '2025-11-19T22:56:00Z'
+    - id: B28.5
+      name: Permission cache & guardrails
+      status: Completed
+      completed_at: '2025-11-19T23:16:06Z'
+      notes: Implemented PermissionCache core APIs, Redis adapter, cache warmer utilities,
+        metrics migration, documentation, and perf benchmarks; integrated EntitlementService
+        with cache and verified <5ms p99 targets via Vitest.
+      metadata:
+        started_at: '2025-11-19T23:15:53Z'
+        completed_at: '2025-11-19T23:16:06Z'
+    - id: B28.6
+      name: Role matrix UI & policy editor
+      status: Completed
+      completed_at: '2025-11-20T00:04:35Z'
+      notes: 'Implemented RolePermissionMatrix, MembershipManager, SoDPolicyEditor,
+        and PermissionChecker components with WCAG-focused interactions plus companion
+        Storybook stories. Added useRolePermissions + useMemberships hooks (optimistic
+        updates, SoD validation, cache integration) and docs/components/authz-ui-guide.md.
+        Shipped authz-admin CLI (list roles/perms, assign-role, SoD policy ops) and
+        tests: pnpm vitest run tests/components/authz/RolePermissionMatrix.test.tsx
+        tests/components/authz/MembershipManager.a11y.test.tsx.'
+      metadata:
+        started_at: '2025-11-19T23:54:22Z'
+        completed_at: '2025-11-20T00:04:35Z'
+    - id: B28.7
+      name: Trait integration & entitlement export
+      status: Completed
+      completed_at: '2025-11-20T03:27:52Z'
+      notes: '- Added Authable trait to User/Organization objects plus regenerated
+        type declarations (helper methods, schema fields).
+
+        - Created sample dataset + examples, entitlement export/audit CLIs, integration
+        docs, Storybook stories, and multi-trait tests.
+
+        - Validated via pnpm test tests/integration/authable-composition.test.ts &&
+        pnpm test tests/integration/entitlement-export.test.ts, plus manual CLI exports/audits.'
+      metadata:
+        started_at: '2025-11-20T03:10:20Z'
+        completed_at: '2025-11-20T03:27:52Z'
+    - id: B28.8
+      name: Sprint 28 close-out
+      status: Completed
+      completed_at: '2025-11-20T04:14:19Z'
+      notes: '- Authored sprint retrospective (cmos/planning/sprint-28-retrospective.md)
+        + changelog (docs/changelog/sprint-28.md) detailing user-facing changes, APIs,
+        migration path.
+
+        - Updated diagnostics.json (traits.authable, helpers.authzSchemas, helpers.authzCache
+        metrics, database.authz counts, sprint28 artifact map) + synced MASTER_CONTEXT
+        decisions/constraints/next-session cues and captured SQLite snapshot (source
+        "Sprint 28 Complete").
+
+        - Added Sprint 29 prep brief (cmos/planning/sprint-29-prep.md) outlining objectives,
+        integration points, research references R20.1/R20.6.
+
+        - Quality gates: CI=1 pnpm test, pnpm vitest run tests/performance/permission-cache-benchmarks.test.ts,
+        ./cmos/cli.py validate health.'
+      metadata:
+        started_at: '2025-11-20T04:03:50Z'
+        completed_at: '2025-11-20T04:14:19Z'
+  - sprintId: Sprint 29
+    title: Communication Extension Pack
+    focus: Multi-channel messaging and notification system
+    status: Completed
+    startDate: null
+    endDate: null
+    totalMissions: 7
+    completedMissions: 0
+    missions:
+    - id: B29.1
+      name: Communicable Trait Foundation & Messaging Schema Registry
+      status: Completed
+      completed_at: '2025-11-20T05:43:53Z'
+      notes: '- Added TypeScript & YAML trait definitions for Communicable capability.
+
+        - Implemented communication schemas, JSON registry, Zod validators, and runtime
+        surface.
+
+        - Authored docs for trait + channel patterns and added coverage tests (pnpm
+        vitest run tests/traits/communication).'
+      metadata:
+        started_at: '2025-11-20T05:16:59Z'
+        completed_at: '2025-11-20T05:43:53Z'
+    - id: B29.2
+      name: Communication Database Foundations & Postgres Migrations
+      status: Completed
+      completed_at: '2025-11-20T07:07:02Z'
+      notes: '- Added nine communication schema migrations (channels/templates/policies/messages/recipients/delivery_attempts/conversations/participants
+        + schema ledger) with rollback coverage.
+
+        - Implemented communication migration CLI (migrate/rollback/status/reset,
+        dry-run, schema_migrations tracking) + package scripts.
+
+        - Authored seed scripts (channels/templates/policies) with reusable sample
+        data + CLI helpers, plus docs for schema + runbook.
+
+        - Created integration/unit tests (pg-mem harness, seed validation) and updated
+        package deps + pnpm lock.
+
+        - Verified pnpm test -- --run tests/database/communication-migrations.test.ts
+        tests/database/communication-seeds.test.ts.
+
+        '
+      metadata:
+        started_at: '2025-11-20T06:38:49Z'
+        completed_at: '2025-11-20T07:07:02Z'
+    - id: B29.3
+      name: Delivery Runtime & Channel Resolution Services
+      status: Completed
+      completed_at: '2025-11-20T14:42:08Z'
+      notes: Implemented delivery runtime (runtime types, queue adapters, retry +
+        quiet hours utilities, channel resolver, Authable/Preferenceable bridges,
+        MessageDeliveryService) plus docs, unit/integration/perf tests.
+      metadata:
+        started_at: '2025-11-20T14:02:56Z'
+        completed_at: '2025-11-20T14:42:08Z'
+    - id: B29.4
+      name: Communication Policy Builder & SLA Guardrails
+      status: Completed
+      completed_at: '2025-11-20T17:39:30Z'
+      notes: 'Implemented policy builder presets, Redis-backed throttling store/enforcer,
+        SLA monitor with metrics persistence, migration 010, diagnostics collector,
+        docs, and tests. Tests: pnpm vitest run tests/traits/communication/policy-builder.test.ts
+        tests/traits/communication/throttling-enforcer.test.ts tests/traits/communication/sla-monitor.test.ts
+        tests/integration/communication-throttling-integration.test.ts'
+      metadata:
+        started_at: '2025-11-20T17:23:35Z'
+        completed_at: '2025-11-20T17:39:30Z'
+    - id: B29.5
+      name: Communication UI Kit & Timeline Components
+      status: Completed
+      completed_at: '2025-11-20T21:32:29Z'
+      notes: '- Added @types/react-window to resolve missing module/types for build.
+
+        - Explicitly import JSX and ListOnItemsRenderedProps; typed onItemsRendered
+        arg.
+
+        - Normalized MessageTimeline subject rendering to a safe string to avoid JsonValue
+        ReactNode type errors.
+
+        - Tests: pnpm test -- --run tests/components/communication/MessageTimeline.test.tsx
+        (pass).'
+      metadata:
+        started_at: '2025-11-20T19:04:35Z'
+        completed_at: '2025-11-20T21:32:29Z'
+    - id: B29.6
+      name: Trait Integration & Message Export
+      status: Completed
+      completed_at: '2025-11-20T22:03:43Z'
+      notes: Added Communicable + Preferenceable composition to User/Organization,
+        generated helper methods, built communication export/audit/admin CLIs with
+        shared dataset, docs, and examples. Created integration tests for composition
+        and CLI exports/audits; ran pnpm vitest run tests/integration/communication-*.test.ts
+        and pnpm vitest run tests/integration/communicable-composition.test.ts (tokens
+        build emitted existing collision warnings).
+      metadata:
+        started_at: '2025-11-20T21:39:15Z'
+        completed_at: '2025-11-20T22:03:43Z'
+    - id: B29.7
+      name: Sprint 29 Close-out & Sprint 30 Preparation
+      status: Completed
+      completed_at: '2025-11-20T23:10:24Z'
+      notes: Added sprint-29 retrospective + changelog, updated diagnostics (communication
+        trait/database/helpers/artifacts), synced MASTER_CONTEXT with decisions/constraints/next
+        session, captured master_context snapshot (Sprint 29 Complete), added validation
+        test and Sprint 30 prep outline.
+      metadata:
+        started_at: '2025-11-20T22:52:23Z'
+        completed_at: '2025-11-20T23:10:24Z'
+  - sprintId: Sprint 30
+    title: Design Lab Features & DesignStudio Tool Extraction
+    focus: Validate and integrate Design Lab features, extract useful tools from designStudio
+      fork, and remove designStudio folder
+    status: completed
+    startDate: null
+    endDate: null
+    totalMissions: 7
+    completedMissions: 7
+    missions:
+    - id: B30.1.1
+      name: Extract & Validate Structured Data Refresh Tool
+      status: Completed
+      completed_at: '2025-11-25T15:13:52Z'
+      notes: Completed 2025-11-25T15:13:52Z. See cmos/planning/sprint-30-closeout.md
+        for full details.
+      metadata:
+        started_at: '2025-11-25T02:33:03Z'
+        completed_at: '2025-11-25T15:13:52Z'
+    - id: B30.1.2
+      name: Validate Semantic Protocol Implementation
+      status: Completed
+      completed_at: '2025-11-25T15:13:52Z'
+      notes: Completed 2025-11-25T15:13:52Z. See cmos/planning/sprint-30-closeout.md
+        for full details.
+      metadata:
+        started_at: '2025-11-25T03:45:40Z'
+        completed_at: '2025-11-25T15:13:52Z'
+    - id: B30.1.3
+      name: Validate Design Lab Shell Component
+      status: Completed
+      completed_at: '2025-11-25T15:13:52Z'
+      notes: Completed 2025-11-25T15:13:52Z. See cmos/planning/sprint-30-closeout.md
+        for full details.
+      metadata:
+        started_at: '2025-11-25T03:56:03Z'
+        completed_at: '2025-11-25T15:13:52Z'
+    - id: B30.1.4
+      name: Validate OODS Agent CLI
+      status: Completed
+      completed_at: '2025-11-25T15:13:52Z'
+      notes: Completed 2025-11-25T15:13:52Z. See cmos/planning/sprint-30-closeout.md
+        for full details.
+      metadata:
+        started_at: '2025-11-25T03:59:38Z'
+        completed_at: '2025-11-25T15:13:52Z'
+    - id: B30.1.5
+      name: Update Documentation
+      status: Completed
+      completed_at: '2025-11-25T15:13:52Z'
+      notes: Completed 2025-11-25T15:13:52Z. See cmos/planning/sprint-30-closeout.md
+        for full details.
+      metadata:
+        started_at: '2025-11-25T05:10:09Z'
+        completed_at: '2025-11-25T15:13:52Z'
+    - id: B30.1.6
+      name: Extract Remaining Tools & Remove DesignStudio
+      status: Completed
+      completed_at: '2025-11-25T15:13:52Z'
+      notes: Completed 2025-11-25T15:13:52Z. See cmos/planning/sprint-30-closeout.md
+        for full details.
+      metadata:
+        started_at: '2025-11-25T05:42:29Z'
+        completed_at: '2025-11-25T15:13:52Z'
+    - id: B30.1.7
+      name: Integration Testing and Sprint Closeout
+      status: Completed
+      completed_at: '2025-11-25T15:13:52Z'
+      notes: Completed 2025-11-25T15:13:52Z. See cmos/planning/sprint-30-closeout.md
+        for full details.
+      metadata:
+        started_at: '2025-11-25T05:55:04Z'
+        completed_at: '2025-11-25T15:13:52Z'
+  - sprintId: Sprint 31
+    title: Spatial Visualization Foundation
+    focus: Schemas, traits, geo resolver, and spatial container for choropleth and
+      bubble map support
+    status: Queued
+    startDate: null
+    endDate: null
+    totalMissions: 5
+    completedMissions: 0
+    missions:
+    - id: B31.1
+      name: Spatial Schema Extensions & Token Namespace
+      status: Completed
+      completed_at: '2025-11-29T02:49:48Z'
+      notes: 'Created: spatial-spec.schema.json (geo types, projection config, layer
+        definitions), viz-map.json (DTCG tokens for basemap/region/symbol/route +
+        sequential/diverging color scales), spatial.ts (TypeScript types). All 46
+        tests passing. build:tokens and tokens:guardrails pass.'
+      metadata:
+        started_at: '2025-11-29T02:29:16Z'
+        completed_at: '2025-11-29T02:49:48Z'
+    - id: B31.2
+      name: Geocodable Trait Implementation
+      status: Completed
+      completed_at: '2025-11-29T03:43:16Z'
+      notes: 'Delivered:
+
+        - traits/viz/spatial/geocodable.trait.ts - TypeScript trait definition with
+        field patterns
+
+        - traits/viz/spatial/geocodable.trait.yaml - YAML version for schema tooling
+
+        - src/traits/viz/spatial/geo-field-detector.ts - Utility for auto-detecting
+        geo fields
+
+        - src/traits/viz/spatial/index.ts - Module exports
+
+        - tests/traits/viz/spatial/geocodable.test.ts - 75 comprehensive tests (all
+        passing)
+
+        - docs/traits/geocodable.md - Complete trait documentation
+
+
+        Features:
+
+        - Auto-detects lat/lon coordinates, geographic identifiers (country, state,
+        city)
+
+        - Detects FIPS, ISO, geo_id code fields
+
+        - Returns geoResolution (point/boundary/both) and requiresLookup flag
+
+        - Value-based detection with decimal precision checks to prevent false positives
+
+        - Confidence scoring for detected fields
+
+        - Trait composition ready (no conflicts, no dependencies)'
+      metadata:
+        started_at: '2025-11-29T03:24:36Z'
+        completed_at: '2025-11-29T03:43:16Z'
+    - id: B31.3
+      name: HasProjection & LayeredOverlay Traits
+      status: Completed
+      completed_at: '2025-11-29T05:01:59Z'
+      notes: Implemented both traits (TS + YAML), projection-config-generator and
+        layer-compositor utilities, comprehensive tests (138 passing), and complete
+        documentation. All success criteria met.
+      metadata:
+        started_at: '2025-11-29T04:59:17Z'
+        completed_at: '2025-11-29T05:01:59Z'
+    - id: B31.4
+      name: Geo Data Resolver Utility
+      status: Completed
+      completed_at: '2025-11-29T05:18:42Z'
+      notes: 'All deliverables completed: geo-format-parser.ts, geo-fetch.ts, geo-data-joiner.ts,
+        geo-data-resolver.ts, comprehensive tests with fixtures, and documentation.
+        All tests passing.'
+      metadata:
+        started_at: '2025-11-29T05:14:50Z'
+        completed_at: '2025-11-29T05:18:42Z'
+    - id: B31.5
+      name: SpatialContainer & Core Infrastructure
+      status: Completed
+      completed_at: '2025-11-29T06:09:18Z'
+      notes: Implemented SpatialContainer component with projection management, layer
+        ordering, and accessibility context. Created useSpatialSpec and useSpatialProjection
+        hooks. Added comprehensive tests and Storybook stories. All deliverables completed.
+      metadata:
+        started_at: '2025-11-29T06:03:05Z'
+        completed_at: '2025-11-29T06:09:18Z'
+  - sprintId: Sprint 32
+    title: Spatial Visualization Components & Release
+    focus: ChoroplethMap, BubbleMap, adapters, dashboard integration, and v1.1 release
+    status: Queued
+    startDate: null
+    endDate: null
+    totalMissions: 7
+    completedMissions: 0
+    missions:
+    - id: B32.1
+      name: ChoroplethMap Component
+      status: Completed
+      completed_at: '2025-11-29T07:15:59Z'
+      notes: 'BLOCKED: Map regions not rendering. Token fix insufficient - underlying
+        render issue. See cmos/reports/B32.1-root-cause-analysis.md'
+      metadata:
+        started_at: '2025-11-29T06:55:21Z'
+        completed_at: '2025-11-29T07:15:59Z'
+    - id: B32.10
+      name: Spatial Storybook Polish
+      status: Completed
+      completed_at: '2025-12-01T01:11:44Z'
+      notes: Updated ChoroplethMap and BubbleMap stories to use real fixtures, full
+        controls, loading/error, and accessibility fallbacks. Enhanced supporting
+        MapLegend, MapControls, and AccessibleMapFallback stories with configurable
+        controls and new variants. Added spatial interaction demos plus MDX docs (ChoroplethMap,
+        BubbleMap, SpatialOverview) and included component MDX in Storybook config.
+      metadata:
+        description: Enrich stories with controls, realistic data, MDX docs, interaction
+          demos, a11y showcases
+        started_at: '2025-12-01T00:50:34Z'
+        completed_at: '2025-12-01T01:11:44Z'
+    - id: B32.2
+      name: BubbleMap Component
+      status: Completed
+      completed_at: '2025-11-29T19:06:45Z'
+      notes: 'Implemented BubbleMap component with point and cluster renderers, size
+        scale utilities, clustering utils, Storybook stories, and docs. Added comprehensive
+        Vitest coverage including a11y and renderer branches. Tests: pnpm test tests/components/viz/spatial/BubbleMap*.test.tsx.'
+      metadata:
+        started_at: '2025-11-29T18:43:51Z'
+        completed_at: '2025-11-29T19:06:45Z'
+    - id: B32.3
+      name: Supporting Components (Legend, Controls, A11y Fallback)
+      status: Completed
+      completed_at: '2025-11-29T20:24:33Z'
+      notes: Implemented MapLegend, MapControls, and AccessibleMapFallback with SpatialContext
+        integration; added keyboard navigation and screen reader utilities plus optional
+        context hook; authored stories and accessibility docs for spatial module;
+        added unit/integration tests and ran pnpm vitest targeted suite (MapLegend,
+        MapControls, AccessibleMapFallback, keyboard-nav, spatial-integration). Token
+        build emitted collision warnings during test run.
+      metadata:
+        started_at: '2025-11-29T19:56:28Z'
+        completed_at: '2025-11-29T20:24:33Z'
+    - id: B32.4
+      name: Vega-Lite Spatial Adapter
+      status: Completed
+      completed_at: '2025-11-29T20:55:48Z'
+      notes: 'Implemented Vega-Lite spatial adapter with choropleth and bubble layer
+        builders, added projection/color mapping utilities, schema validation + SVG
+        smoke tests, and docs. Tests: pnpm vitest run tests/viz/adapters/spatial/vega-lite-spatial-adapter.test.ts
+        tests/viz/adapters/spatial/vega-lite-visual-regression.test.ts.'
+      metadata:
+        started_at: '2025-11-29T20:38:11Z'
+        completed_at: '2025-11-29T20:55:48Z'
+    - id: B32.5
+      name: ECharts Spatial Adapter
+      status: Completed
+      completed_at: '2025-11-29T21:39:13Z'
+      notes: Added choropleth/bubble ECharts adapters, visualMap + geo registration
+        utilities, docs, and spatial adapter tests (unit + visual snapshots). Ran
+        pnpm test tests/viz/adapters/spatial/echarts-spatial-adapter.test.ts and pnpm
+        test tests/viz/adapters/spatial/echarts-visual-regression.test.ts.
+      metadata:
+        started_at: '2025-11-29T21:26:14Z'
+        completed_at: '2025-11-29T21:39:13Z'
+    - id: B32.6
+      name: Dashboard Integration & Renderer Selection
+      status: Completed
+      completed_at: '2025-11-29T22:32:24Z'
+      notes: 'Updated renderer selector with spatial heuristics; added dashboard spatial
+        context helpers, cross-filter actions/reducer, shared spatial tooltip config,
+        diagnostics, documentation, and spatial dashboard example with linked filters.
+        Tests: pnpm test tests/viz/integration/spatial-dashboard.test.tsx tests/viz/integration/spatial-crossfilter.test.ts
+        tests/viz/integration/renderer-selection-spatial.test.ts tests/components/dashboard-context.integration.test.tsx.'
+      metadata:
+        started_at: '2025-11-29T22:02:02Z'
+        completed_at: '2025-11-29T22:32:24Z'
+    - id: B32.7
+      name: Spatial CLI Support (viz:suggest + scaffold)
+      status: Completed
+      completed_at: '2025-11-30T23:00:10Z'
+      notes: 'Implemented spatial CLI support: detection + scaffold logic, new CLI
+        entrypoints, docs, and unit tests. Added spatial detection heuristics, scaffolds
+        for bubble/choropleth maps, wired viz:suggest and new viz:scaffold-spatial
+        script, updated shim and docs. Tests: pnpm test tests/cli/spatial-*.test.ts'
+      metadata:
+        started_at: '2025-11-30T22:48:53Z'
+        blocked_at: '2025-11-30T22:07:11Z'
+        blocked_reason: Mission requires new viz CLI commands, four docs sets, storybook
+          polish, adapter parity + performance + e2e tests, and release artifacts
+          (CHANGELOG/tag). None of these are implemented yet; building them properly
+          exceeds this session and risks incomplete delivery.
+        blocked_needs:
+        - Split B32.7 into smaller missions (CLI, docs, parity/perf tests, release
+          packaging)
+        - Confirm CLI entrypoint location (src/cli vs existing scripts/viz/suggest-chart.mjs)
+          for spatial support
+        - Provide perf test fixtures (500-region geo, 5k-point bubble) and acceptable
+          benchmark harness approach
+        - Share release versioning/tagging expectations and CHANGELOG date for v1.1.0
+        completed_at: '2025-11-30T23:00:10Z'
+    - id: B32.8
+      name: Spatial Documentation Set
+      status: Completed
+      completed_at: '2025-11-30T23:33:35Z'
+      notes: Created docs/viz/spatial-module.md with quick starts, component/trait/adapter
+        references, data/performance guardrails; authored docs/viz/spatial-patterns.md
+        covering choropleth vs bubble usage, projection/color guidance, anti-patterns;
+        added docs/viz/spatial-migration.md with audit steps, prop mapping tables,
+        accessibility + verification checklists; updated docs/viz/system-overview.md
+        to include spatial module row, dedicated v1.1 section, and spatial reference
+        links. Docs-only change; no automated tests run.
+      metadata:
+        description: Author docs/viz/spatial-module.md, spatial-patterns.md, spatial-migration.md,
+          update system-overview.md
+        started_at: '2025-11-30T23:26:38Z'
+        completed_at: '2025-11-30T23:33:35Z'
+    - id: B32.9
+      name: Spatial Validation Tests
+      status: Completed
+      completed_at: '2025-12-01T00:03:20Z'
+      notes: 'Generated deterministic geo and point fixtures, added adapter parity
+        coverage, performance benchmarks with budget thresholds, and end-to-end+a11y
+        integration tests for spatial components. Tests executed: pnpm test tests/viz/spatial/adapter-parity.test.ts
+        tests/viz/spatial/performance.test.tsx tests/viz/spatial/e2e-spatial.test.tsx
+        tests/viz/spatial/a11y-integration.test.tsx.'
+      metadata:
+        description: Parity tests (Vega-Lite vs ECharts), performance benchmarks,
+          e2e and a11y integration tests
+        started_at: '2025-11-30T23:39:57Z'
+        completed_at: '2025-12-01T00:03:20Z'
+  - sprintId: Sprint 33
+    title: Network & Flow Visualization Foundation
+    focus: Schemas, resolver service, and D3 transforms for treemap, sunburst, force
+      graph, and sankey
+    status: Queued
+    startDate: null
+    endDate: null
+    totalMissions: 5
+    completedMissions: 0
+    missions:
+    - id: B33.1
+      name: Network & Flow Schema Definitions
+      status: Current
+      notes: "\U0001F4CB FULL DETAILS: cmos/missions/B33.1-network-flow-schemas.yaml"
+    - id: B33.2
+      name: Resolver Service (ECharts-First)
       status: Queued
+      notes: "\U0001F4CB FULL DETAILS: cmos/missions/B33.2-resolver-service.yaml"
+      metadata:
+        description: Build the decision engine that routes Network & Flow visualizations
+          to ECharts. v1.0 implements a simplified resolver.
+    - id: B33.3
+      name: ECharts Hierarchy Adapters
+      status: Queued
+      notes: "\U0001F4CB FULL DETAILS: cmos/missions/B33.3-echarts-hierarchy-adapters.yaml"
+      metadata:
+        description: 'Implement ECharts adapters for hierarchy visualizations: Treemap
+          and Sunburst.'
+    - id: B33.4
+      name: ECharts Graph Adapter
+      status: Queued
+      notes: "\U0001F4CB FULL DETAILS: cmos/missions/B33.4-echarts-graph-adapter.yaml"
+      metadata:
+        description: Implement ECharts adapter for force-directed graph visualization.
+    - id: B33.5
+      name: ECharts Sankey Adapter
+      status: Queued
+      notes: "\U0001F4CB FULL DETAILS: cmos/missions/B33.5-echarts-sankey-adapter.yaml"
+      metadata:
+        description: Implement ECharts adapter for Sankey/flow diagram visualization.
+    - id: B33.6
+      name: Network & Flow Traits
+      status: Queued
+      notes: "\U0001F4CB FULL DETAILS: cmos/missions/B33.6-network-flow-traits.yaml"
+      metadata:
+        description: 'Implement OODS traits for Network & Flow visualizations: Hierarchical,
+          NetworkTopology, FlowConservation.'
+  - sprintId: Sprint 34
+    title: Network & Flow Visualization Components & Release
+    focus: Adapters, components, traits, dashboard integration, and v2.0 release
+    status: Queued
+    startDate: null
+    endDate: null
+    totalMissions: 7
+    completedMissions: 0
+    missions:
+    - id: B34.1
+      name: Network & Flow React Components
+      status: Queued
+      notes: "\U0001F4CB FULL DETAILS: cmos/missions/B34.1-network-flow-components.yaml"
+      metadata:
+        description: Implement React wrapper components for all four Network & Flow
+          visualization types. v1.0 uses ECharts exclusively.
+    - id: B34.2
+      name: Dashboard Integration & CLI Support
+      status: Queued
+      notes: "\U0001F4CB FULL DETAILS: cmos/missions/B34.2-dashboard-integration-cli.yaml"
+      metadata:
+        description: Integrate Network & Flow visualizations into dashboard context
+          with cross-filter support and CLI scaffolding.
+    - id: B34.3
+      name: Documentation & Storybook Polish
+      status: Queued
+      notes: "\U0001F4CB FULL DETAILS: cmos/missions/B34.3-documentation-storybook.yaml"
+      metadata:
+        description: Complete documentation and Storybook stories for the Network
+          & Flow module.
+    - id: B34.4
+      name: Network & Flow v1.0 Release
+      status: Queued
+      notes: "\U0001F4CB FULL DETAILS: cmos/missions/B34.4-network-flow-release.yaml"
+      metadata:
+        description: Final testing, release preparation, and deployment of the Network
+          & Flow module v1.0.
+    - id: B34.5
+      name: Network & Flow React Components
+      status: Blocked
+      notes: 'SUPERSEDED: Replaced by B34.1 (ECharts-first approach). Original content
+        archived in DEFERRED-vega-lite-path.yaml.'
+    - id: B34.6
+      name: Dashboard Integration & CLI Support
+      status: Blocked
+      notes: 'SUPERSEDED: Replaced by B34.2 (simplified). Original content archived
+        in DEFERRED-vega-lite-path.yaml.'
+    - id: B34.7
+      name: Documentation, Testing & v2.0 Release
+      status: Blocked
+      notes: 'SUPERSEDED: Replaced by B34.4 (v1.0 ECharts-only). Original content
+        archived in DEFERRED-vega-lite-path.yaml.'
   missionDependencies:
   - from: B10.1
     to: B13.9
@@ -907,5 +2254,323 @@ domainFields:
   - from: B21.6
     to: B21.7
     type: Requires
+  - from: B22.1
+    to: B22.2
+    type: Requires
+  - from: B22.1
+    to: B22.4
+    type: Requires
+  - from: B22.1
+    to: B22.5
+    type: Requires
+  - from: B22.2
+    to: B22.3
+    type: Requires
+  - from: B22.2
+    to: B23.4
+    type: Requires
+  - from: B22.3
+    to: B22.6
+    type: Requires
+  - from: B22.4
+    to: B22.6
+    type: Requires
+  - from: B22.5
+    to: B22.6
+    type: Requires
+  - from: B22.6
+    to: B22.7
+    type: Requires
+  - from: B22.6
+    to: B23.5
+    type: Informs
+  - from: B22.7
+    to: B22.8
+    type: Requires
+  - from: B23.1
+    to: B23.2
+    type: Requires
+  - from: B23.1
+    to: B23.5
+    type: Requires
+  - from: B23.2
+    to: B23.3
+    type: Requires
+  - from: B23.2
+    to: B23.4
+    type: Requires
+  - from: B23.3
+    to: B23.6
+    type: Requires
+  - from: B23.3
+    to: B23.8
+    type: Requires
+  - from: B23.3
+    to: B23.9
+    type: Requires
+  - from: B23.4
+    to: B23.5
+    type: Requires
+  - from: B23.4
+    to: B23.8
+    type: Requires
+  - from: B23.4
+    to: B23.9
+    type: Requires
+  - from: B23.5
+    to: B23.6
+    type: Requires
+  - from: B23.6
+    to: B23.7
+    type: Requires
+  - from: B23.8
+    to: B23.9
+    type: Requires
+  - from: B24.1
+    to: B24.2
+    type: Informs
+  - from: B24.1
+    to: B24.3
+    type: Requires
+  - from: B24.1
+    to: B24.6
+    type: Requires
+  - from: B24.2
+    to: B24.6
+    type: Requires
+  - from: B24.3
+    to: B24.4
+    type: Informs
+  - from: B24.3
+    to: B24.6
+    type: Requires
+  - from: B24.4
+    to: B24.5
+    type: Requires
+  - from: B24.4
+    to: B24.6
+    type: Requires
+  - from: B24.5
+    to: B24.6
+    type: Requires
+  - from: B25.1
+    to: B25.2
+    type: Requires
+  - from: B25.1
+    to: B25.3
+    type: Requires
+  - from: B25.1
+    to: B25.7
+    type: Requires
+  - from: B25.2
+    to: B25.3
+    type: Informs
+  - from: B25.2
+    to: B25.5
+    type: Requires
+  - from: B25.2
+    to: B25.7
+    type: Requires
+  - from: B25.3
+    to: B25.4
+    type: Requires
+  - from: B25.3
+    to: B25.7
+    type: Requires
+  - from: B25.4
+    to: B25.5
+    type: Requires
+  - from: B25.4
+    to: B25.7
+    type: Requires
+  - from: B25.5
+    to: B25.6
+    type: Requires
+  - from: B25.5
+    to: B25.7
+    type: Requires
+  - from: B25.6
+    to: B25.7
+    type: Requires
+  - from: B26.1
+    to: B26.2
+    type: Requires
+  - from: B26.1
+    to: B26.4
+    type: Requires
+  - from: B26.2
+    to: B26.3
+    type: Requires
+  - from: B26.2
+    to: B26.5
+    type: Requires
+  - from: B26.3
+    to: B26.7
+    type: Requires
+  - from: B26.4
+    to: B26.5
+    type: Requires
+  - from: B26.4
+    to: B26.6
+    type: Requires
+  - from: B26.6
+    to: B26.7
+    type: Requires
+  - from: B26.7
+    to: B26.8
+    type: Requires
+  - from: B27.1
+    to: B27.2
+    type: Requires
+  - from: B27.1
+    to: B27.8
+    type: Requires
+  - from: B27.2
+    to: B27.3
+    type: Requires
+  - from: B27.2
+    to: B27.4
+    type: Requires
+  - from: B27.2
+    to: B27.8
+    type: Requires
+  - from: B27.3
+    to: B27.6
+    type: Requires
+  - from: B27.3
+    to: B27.8
+    type: Requires
+  - from: B27.4
+    to: B27.5
+    type: Requires
+  - from: B27.4
+    to: B27.7
+    type: Requires
+  - from: B27.4
+    to: B27.8
+    type: Requires
+  - from: B27.5
+    to: B27.7
+    type: Requires
+  - from: B27.5
+    to: B27.8
+    type: Requires
+  - from: B27.6
+    to: B27.7
+    type: Requires
+  - from: B27.6
+    to: B27.8
+    type: Requires
+  - from: B27.7
+    to: B27.8
+    type: Requires
+  - from: B31.2
+    to: B31.1
+    type: requires
+  - from: B31.3
+    to: B31.1
+    type: requires
+  - from: B31.4
+    to: B31.1
+    type: requires
+  - from: B31.5
+    to: B31.2
+    type: requires
+  - from: B31.5
+    to: B31.3
+    type: requires
+  - from: B31.5
+    to: B31.4
+    type: requires
+  - from: B32.1
+    to: B31.5
+    type: requires
+  - from: B32.2
+    to: B31.5
+    type: requires
+  - from: B32.3
+    to: B32.1
+    type: requires
+  - from: B32.4
+    to: B32.1
+    type: requires
+  - from: B32.4
+    to: B32.2
+    type: requires
+  - from: B32.5
+    to: B32.1
+    type: requires
+  - from: B32.5
+    to: B32.2
+    type: requires
+  - from: B32.6
+    to: B32.4
+    type: requires
+  - from: B32.6
+    to: B32.5
+    type: requires
+  - from: B32.7
+    to: B32.6
+    type: requires
+  - from: B33.2
+    to: B33.1
+    type: requires
+  - from: B33.3
+    to: B33.1
+    type: requires
+  - from: B33.3
+    to: B33.2
+    type: requires
+  - from: B33.4
+    to: B33.1
+    type: requires
+  - from: B33.4
+    to: B33.2
+    type: requires
+  - from: B33.5
+    to: B33.1
+    type: requires
+  - from: B33.5
+    to: B33.2
+    type: requires
+  - from: B34.1
+    to: B33.1
+    type: requires
+  - from: B34.2
+    to: B33.1
+    type: requires
+  - from: B34.2
+    to: B33.3
+    type: requires
+  - from: B34.2
+    to: B33.4
+    type: requires
+  - from: B34.3
+    to: B33.1
+    type: requires
+  - from: B34.3
+    to: B33.5
+    type: requires
+  - from: B34.4
+    to: B33.1
+    type: requires
+  - from: B34.5
+    to: B34.1
+    type: requires
+  - from: B34.5
+    to: B34.2
+    type: requires
+  - from: B34.5
+    to: B34.3
+    type: requires
+  - from: B34.5
+    to: B34.4
+    type: requires
+  - from: B34.6
+    to: B34.5
+    type: requires
+  - from: B34.7
+    to: B34.6
+    type: requires
   promptMapping:
     prompts: []

@@ -1,0 +1,161 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B34.4
+name: Network & Flow v1.0 Release
+sprint: Sprint 34
+status: Queued
+
+objective: >
+  Final testing, release preparation, and deployment of the Network & Flow module v1.0.
+
+context:
+  background: |
+    This mission wraps up the Network & Flow module with:
+    1. Final integration testing
+    2. Performance validation
+    3. Release notes
+    4. Deployment preparation
+    5. Announcement
+
+  dependencies:
+    - B34.1  # Components
+    - B34.2  # Dashboard integration
+    - B34.3  # Documentation
+
+successCriteria:
+  - All tests pass (unit, integration, E2E)
+  - Performance benchmarks met
+  - Release notes complete
+  - Changelog updated
+  - Package published
+  - Announcement prepared
+
+constraints:
+  - Must not break existing functionality
+  - Must meet performance benchmarks
+  - Must have complete documentation
+
+deliverables:
+  testing:
+    - path: tests/integration/network-flow-full.test.ts
+      description: |
+        Full integration test suite:
+        - All components render
+        - All adapters produce valid output
+        - Cross-filter works end-to-end
+        - CLI commands work
+        - Example dashboards load
+
+    - path: tests/performance/network-flow-perf.test.ts
+      description: |
+        Performance benchmarks:
+        - Treemap render time (500 nodes < 200ms)
+        - Sunburst render time (300 nodes < 200ms)
+        - Force Graph render time (100 nodes < 500ms)
+        - Sankey render time (50 nodes < 100ms)
+        - Memory usage within limits
+        - No memory leaks on re-render
+
+  release:
+    - path: CHANGELOG.md
+      description: |
+        Update changelog with v1.0 release:
+
+        ```markdown
+        ## [X.X.X] - YYYY-MM-DD
+
+        ### Added
+
+        #### Network & Flow Module v1.0
+
+        New visualization types for hierarchical, network, and flow data:
+
+        - **Treemap**: Hierarchical rectangles with drill-down
+        - **Sunburst**: Radial hierarchy with ancestor highlighting
+        - **Force Graph**: Force-directed network layout
+        - **Sankey**: Flow diagram with gradient links
+
+        Key features:
+        - Native ECharts rendering for optimal performance
+        - Cross-filter integration for dashboards
+        - CLI scaffolding support
+        - Comprehensive accessibility fallbacks
+
+        **Note:** v1.0 requires ECharts. Vega-Lite support planned for v1.1+.
+        See docs/viz/network-flow/v1-constraints.md for details.
+
+        New components:
+        - `<Treemap>`
+        - `<Sunburst>`
+        - `<ForceGraph>`
+        - `<Sankey>`
+
+        New traits:
+        - `Hierarchical`
+        - `NetworkTopology`
+        - `FlowConservation`
+        - `CrossFilterableNetwork`
+        ```
+
+    - path: docs/releases/network-flow-v1.md
+      description: |
+        Detailed release notes:
+        - Feature overview
+        - Usage examples
+        - Known limitations
+        - Migration guide (if applicable)
+        - Future roadmap
+
+  deployment:
+    - description: |
+        Deployment checklist:
+        - [ ] All tests pass in CI
+        - [ ] Performance benchmarks pass
+        - [ ] Documentation published
+        - [ ] Storybook deployed
+        - [ ] Package version bumped
+        - [ ] Package published to registry
+        - [ ] Release tag created
+        - [ ] Announcement posted
+
+technicalApproach:
+  - Run full test suite
+  - Run performance benchmarks
+  - Fix any issues found
+  - Write release notes
+  - Update changelog
+  - Prepare deployment
+  - Execute deployment
+  - Post announcement
+
+qualityGates:
+  during_development:
+    - All tests pass locally
+    - Performance benchmarks pass
+
+  before_completion:
+    - CI passes
+    - Performance benchmarks pass
+    - Documentation complete
+    - Release notes reviewed
+    - Team sign-off obtained
+
+estimatedEffort: "0.5 session (30-40k tokens)"
+
+notes: |
+  Release checklist priorities:
+  1. Tests pass
+  2. Performance acceptable
+  3. Documentation complete
+  4. Clear communication of v1.0 constraints
+
+  Announcement should:
+  - Highlight new capabilities
+  - Be clear about ECharts requirement
+  - Set expectations for v1.1+
+  - Link to documentation
+
+  Performance targets based on R33.0 findings:
+  - ECharts handles these sizes well
+  - Larger datasets may need progressive rendering

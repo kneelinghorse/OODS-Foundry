@@ -1,0 +1,420 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B33.3
+name: ECharts Hierarchy Adapters (Treemap & Sunburst)
+sprint: Sprint 33
+status: Queued
+
+objective: >
+  Implement ECharts adapters for hierarchy visualizations: Treemap and Sunburst.
+  Pass-through architecture leveraging ECharts native series types.
+
+context:
+  background: |
+    ECharts has native support for hierarchy visualizations via series-treemap and
+    series-sunburst. These adapters transform normalized OODS viz specs into ECharts
+    option objects. No server-side transforms are needed - ECharts handles all
+    layout computation client-side.
+
+  research_basis:
+    - "R33.0: Renderer Parameter Alignment (ECharts defaults documented)"
+    - "RDS.11.5: ECharts Native Support Research"
+    - "cmos/foundational-docs/data-viz-part2/network-flow-module/ARCHITECTURE.md Section 5.1"
+
+  architecture_reference: "cmos/foundational-docs/data-viz-part2/network-flow-module/ARCHITECTURE.md Section 5.1"
+
+  dependencies:
+    - B33.1  # Schemas (HierarchyInput types)
+    - B33.2  # Resolver (routes to ECharts)
+
+  blocks:
+    - B34.1  # Components depend on adapters
+
+successCriteria:
+  - Treemap adapter produces valid ECharts TreemapSeriesOption
+  - Sunburst adapter produces valid ECharts SunburstSeriesOption
+  - Both handle nested and adjacency list input formats
+  - OODS design tokens applied correctly
+  - Drill-down interaction works (treemap)
+  - Focus/ancestor highlighting works (sunburst)
+  - Tests pass with >90% coverage
+
+constraints:
+  - Must follow existing adapter patterns in src/viz/adapters/echarts/
+  - Must apply OODS design tokens consistently
+  - Must handle both nested and adjacency list inputs
+  - Must use ECharts defaults aligned with R33.0 findings
+
+deliverables:
+  adapters:
+    - path: src/viz/adapters/echarts/treemap-adapter.ts
+      description: |
+        Treemap ECharts adapter:
+
+        ```typescript
+        import type { TreemapSeriesOption, EChartsOption } from 'echarts';
+        import type { NormalizedVizSpec, HierarchyInput } from '../../types';
+        import { applyTokens, getColorScale } from '../utils/echarts-token-utils';
+        import { convertToEChartsTreeData } from './hierarchy-utils';
+
+        export function adaptTreemapToECharts(
+          spec: NormalizedVizSpec,
+          input: HierarchyInput
+        ): EChartsOption {
+          const data = convertToEChartsTreeData(input);
+
+          const series: TreemapSeriesOption = {
+            type: 'treemap',
+            data,
+            width: spec.dimensions?.width ?? '100%',
+            height: spec.dimensions?.height ?? '100%',
+
+            // ECharts defaults (from R33.0)
+            squareRatio: 1.618,  // Golden ratio for label readability
+
+            // Interaction
+            roam: spec.interaction?.zoom ?? false,
+            nodeClick: spec.interaction?.drilldown ? 'zoomToNode' : false,
+
+            // Breadcrumb navigation
+            breadcrumb: {
+              show: spec.interaction?.breadcrumb ?? true,
+              ...applyTokens('viz.treemap.breadcrumb')
+            },
+
+            // Labels
+            label: {
+              show: true,
+              formatter: '{b}',
+              ...applyTokens('viz.label')
+            },
+            upperLabel: {
+              show: true,
+              height: 30,
+              ...applyTokens('viz.label.header')
+            },
+
+            // Styling
+            itemStyle: {
+              borderColor: applyTokens('viz.border.color'),
+              borderWidth: 1,
+              gapWidth: 1
+            },
+
+            // Level-specific styling
+            levels: generateTreemapLevels(spec),
+
+            // Emphasis
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowColor: 'rgba(0, 0, 0, 0.3)'
+              }
+            }
+          };
+
+          return {
+            series: [series],
+            tooltip: generateHierarchyTooltip(spec, 'treemap'),
+            ...applyBaseOptions(spec)
+          };
+        }
+
+        function generateTreemapLevels(spec: NormalizedVizSpec): any[] {
+          const colorScale = getColorScale(spec.encoding?.color);
+          return [
+            {
+              itemStyle: { borderWidth: 0, gapWidth: 5 },
+              upperLabel: { show: false }
+            },
+            {
+              itemStyle: { borderWidth: 5, gapWidth: 2, borderColorSaturation: 0.55 },
+              colorSaturation: [0.3, 0.7]
+            },
+            {
+              itemStyle: { borderWidth: 3, gapWidth: 1, borderColorSaturation: 0.6 },
+              colorSaturation: [0.3, 0.6]
+            },
+            {
+              itemStyle: { borderWidth: 1, gapWidth: 1, borderColorSaturation: 0.65 },
+              colorSaturation: [0.3, 0.5]
+            }
+          ];
+        }
+        ```
+
+    - path: src/viz/adapters/echarts/sunburst-adapter.ts
+      description: |
+        Sunburst ECharts adapter:
+
+        ```typescript
+        import type { SunburstSeriesOption, EChartsOption } from 'echarts';
+        import type { NormalizedVizSpec, HierarchyInput } from '../../types';
+        import { applyTokens, getColorScale } from '../utils/echarts-token-utils';
+        import { convertToEChartsTreeData } from './hierarchy-utils';
+
+        export function adaptSunburstToECharts(
+          spec: NormalizedVizSpec,
+          input: HierarchyInput
+        ): EChartsOption {
+          const data = convertToEChartsTreeData(input);
+
+          const series: SunburstSeriesOption = {
+            type: 'sunburst',
+            data,
+
+            // Radius configuration
+            radius: spec.dimensions?.radius ?? ['0%', '90%'],
+
+            // ECharts defaults (from R33.0)
+            startAngle: 90,  // 12 o'clock position
+            sort: spec.encoding?.sort ?? 'desc',
+
+            // Emphasis - descendant focus (ECharts default)
+            emphasis: {
+              focus: 'ancestor',
+              itemStyle: {
+                shadowBlur: 10,
+                shadowColor: 'rgba(0, 0, 0, 0.3)'
+              }
+            },
+
+            // Labels
+            label: {
+              rotate: 'radial',
+              ...applyTokens('viz.label')
+            },
+
+            // Styling
+            itemStyle: {
+              borderRadius: 4,
+              borderWidth: 2,
+              borderColor: applyTokens('viz.background')
+            },
+
+            // Level-specific styling
+            levels: generateSunburstLevels(spec)
+          };
+
+          return {
+            series: [series],
+            tooltip: generateHierarchyTooltip(spec, 'sunburst'),
+            ...applyBaseOptions(spec)
+          };
+        }
+
+        function generateSunburstLevels(spec: NormalizedVizSpec): any[] {
+          const colorScale = getColorScale(spec.encoding?.color);
+          return [
+            {},  // Root level - hidden or minimal
+            {
+              r0: '15%',
+              r: '35%',
+              label: { rotate: 'tangential' },
+              itemStyle: { borderWidth: 2 }
+            },
+            {
+              r0: '35%',
+              r: '70%',
+              label: { align: 'right' }
+            },
+            {
+              r0: '70%',
+              r: '72%',
+              label: { show: false },
+              itemStyle: { borderWidth: 3 }
+            }
+          ];
+        }
+        ```
+
+    - path: src/viz/adapters/echarts/hierarchy-utils.ts
+      description: |
+        Shared utilities for hierarchy adapters:
+
+        ```typescript
+        import type { HierarchyInput, HierarchyAdjacencyInput, HierarchyNestedInput } from '../../types';
+
+        /**
+         * Convert OODS hierarchy input to ECharts tree data format
+         * Handles both nested and adjacency list inputs
+         */
+        export function convertToEChartsTreeData(input: HierarchyInput): any[] {
+          if (isAdjacencyList(input)) {
+            return buildTreeFromAdjacency(input.data);
+          }
+          return normalizeNestedData(input.data);
+        }
+
+        export function isAdjacencyList(input: HierarchyInput): input is HierarchyAdjacencyInput {
+          return input.type === 'adjacency_list' ||
+                 (Array.isArray(input.data) && input.data.length > 0 && 'parentId' in input.data[0]);
+        }
+
+        /**
+         * Build tree structure from adjacency list
+         */
+        function buildTreeFromAdjacency(data: any[]): any[] {
+          const nodeMap = new Map<string, any>();
+          const roots: any[] = [];
+
+          // First pass: create all nodes
+          data.forEach(item => {
+            nodeMap.set(item.id, {
+              name: item.name ?? item.id,
+              value: item.value,
+              children: [],
+              ...preserveExtraFields(item, ['id', 'parentId', 'name', 'value'])
+            });
+          });
+
+          // Second pass: build tree structure
+          data.forEach(item => {
+            const node = nodeMap.get(item.id);
+            if (item.parentId === null || item.parentId === undefined) {
+              roots.push(node);
+            } else {
+              const parent = nodeMap.get(item.parentId);
+              if (parent) {
+                parent.children.push(node);
+              }
+            }
+          });
+
+          return roots;
+        }
+
+        /**
+         * Normalize nested data (ensure required fields)
+         */
+        function normalizeNestedData(data: any): any[] {
+          function normalize(node: any): any {
+            return {
+              name: node.name ?? node.id,
+              value: node.value,
+              children: node.children?.map(normalize) ?? [],
+              ...preserveExtraFields(node, ['name', 'id', 'value', 'children'])
+            };
+          }
+          return Array.isArray(data) ? data.map(normalize) : [normalize(data)];
+        }
+
+        /**
+         * Preserve extra fields from input data
+         */
+        function preserveExtraFields(data: Record<string, unknown>, exclude: string[]): Record<string, unknown> {
+          const result: Record<string, unknown> = {};
+          for (const [key, value] of Object.entries(data)) {
+            if (!exclude.includes(key)) {
+              result[key] = value;
+            }
+          }
+          return result;
+        }
+
+        /**
+         * Generate tooltip configuration for hierarchy charts
+         */
+        export function generateHierarchyTooltip(spec: NormalizedVizSpec, chartType: 'treemap' | 'sunburst'): any {
+          return {
+            trigger: 'item',
+            triggerOn: 'mousemove',
+            formatter: (params: any) => {
+              const { name, value, treePathInfo } = params;
+              const path = treePathInfo?.map((p: any) => p.name).join(' → ') ?? name;
+              return `<strong>${name}</strong><br/>Value: ${value}<br/>Path: ${path}`;
+            }
+          };
+        }
+        ```
+
+  tests:
+    - path: tests/viz/adapters/echarts/treemap-adapter.test.ts
+      description: |
+        Treemap adapter tests:
+        - Produces valid ECharts TreemapSeriesOption
+        - Handles nested input format
+        - Handles adjacency list input format
+        - Drilldown configuration works (nodeClick: 'zoomToNode')
+        - Breadcrumb configuration works
+        - OODS tokens applied correctly
+        - Level styles applied per depth
+        - squareRatio is 1.618 (Golden ratio)
+
+    - path: tests/viz/adapters/echarts/sunburst-adapter.test.ts
+      description: |
+        Sunburst adapter tests:
+        - Produces valid ECharts SunburstSeriesOption
+        - Handles nested input format
+        - Handles adjacency list input format
+        - Radius configuration works
+        - Radial labels configured correctly
+        - Level styles applied per depth
+        - Emphasis focus set to 'ancestor'
+        - startAngle is 90 (12 o'clock)
+
+    - path: tests/viz/adapters/echarts/hierarchy-utils.test.ts
+      description: |
+        Hierarchy utility tests:
+        - isAdjacencyList correctly detects format
+        - buildTreeFromAdjacency creates correct structure
+        - normalizeNestedData handles all cases
+        - preserveExtraFields works correctly
+        - generateHierarchyTooltip produces valid config
+
+  storybook:
+    - path: stories/viz/echarts/Treemap.stories.tsx
+      description: |
+        Treemap stories:
+        - Basic treemap with nested data
+        - Treemap with adjacency list data
+        - Treemap with drill-down enabled
+        - Large treemap (500+ nodes)
+        - Treemap with custom color scale
+
+    - path: stories/viz/echarts/Sunburst.stories.tsx
+      description: |
+        Sunburst stories:
+        - Basic sunburst with nested data
+        - Sunburst with adjacency list data
+        - Sunburst with custom radius
+        - Large sunburst (300+ nodes)
+        - Sunburst with ancestor highlighting
+
+technicalApproach:
+  - Review existing ECharts adapter patterns
+  - Implement treemap adapter with Golden ratio default
+  - Implement sunburst adapter with 12 o'clock start
+  - Create shared hierarchy utilities
+  - Apply OODS tokens consistently
+  - Write comprehensive tests
+  - Create Storybook stories
+
+qualityGates:
+  during_development:
+    - Adapters produce valid ECharts options
+    - Visualizations render correctly in Storybook
+    - Both input formats work
+
+  before_completion:
+    - pnpm test tests/viz/adapters/echarts/*treemap*.test.ts passes
+    - pnpm test tests/viz/adapters/echarts/*sunburst*.test.ts passes
+    - pnpm test tests/viz/adapters/echarts/*hierarchy*.test.ts passes
+    - Storybook stories complete
+    - Coverage >90% on new code
+
+estimatedEffort: "1 session (55-70k tokens)"
+
+notes: |
+  ECharts hierarchy defaults (from R33.0):
+  - Treemap squareRatio: 1.618 (Golden ratio) - better label readability
+  - Sunburst startAngle: 90 (12 o'clock position)
+  - Emphasis focus: 'ancestor' for path highlighting
+
+  Key ECharts features leveraged:
+  - Built-in drill-down for treemap (nodeClick: 'zoomToNode')
+  - Built-in breadcrumb navigation
+  - Automatic ancestor highlighting
+  - Level-specific styling
+  - Universal transitions between states

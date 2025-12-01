@@ -1,0 +1,263 @@
+apiVersion: mission-template.v1
+kind: MissionTemplate
+metadata:
+  name: six-component-augmented-prompt-stack
+  version: "1.0.0"
+  author: "UX Research Team"
+  description: "Master template for the Six-Component Augmented Prompt Stack framework for technical visual research using LMMs"
+  domain: "multimodal-prompt-engineering"
+  tags:
+    - "prompt-engineering"
+    - "multimodal"
+    - "design-systems"
+    - "lmm-optimization"
+    - "visual-research"
+
+spec:
+  parameters:
+    - name: "role_assignment"
+      type: "string"
+      description: "AI expert persona for domain filtering"
+      required: true
+      examples:
+        - "WCAG-certified UX Architect"
+        - "Senior Design System Analyst"
+        - "Brand Strategy Consultant"
+        - "Accessibility Compliance Auditor"
+    
+    - name: "context"
+      type: "string"
+      description: "Project background including brand tone, target audience, and JTBD narratives"
+      required: true
+      examples:
+        - "Enterprise SaaS platform targeting financial analysts, brand personality: trustworthy and innovative"
+        - "Consumer mobile app for fitness tracking, target audience: health-conscious millennials"
+    
+    - name: "specific_constraints"
+      type: "array"
+      description: "Non-negotiable technical parameters (pass/fail criteria)"
+      required: true
+      items:
+        type: "string"
+      examples:
+        - "WCAG 2.2 AA compliance"
+        - "8-point grid system adherence"
+        - "Specific color palette: #FF6B35, #004E89, #F7B801"
+        - "Responsive breakpoints: 320px, 768px, 1024px, 1440px"
+    
+    - name: "intent_task"
+      type: "string"
+      description: "Clear action-oriented directive"
+      required: true
+      enum: ["Analyze", "Extract", "Validate", "Compare", "Audit", "Generate"]
+      examples:
+        - "Extract all design tokens and validate against system constraints"
+        - "Analyze aesthetic alignment with brand personality traits"
+        - "Validate layout structure against technical constraints"
+    
+    - name: "creative_direction"
+      type: "string"
+      description: "Aesthetic baseline for validation (when applicable)"
+      required: false
+      examples:
+        - "Sleek, minimalist, high-contrast"
+        - "Trusted, playful, accessible"
+        - "Modern, data-dense, professional"
+    
+    - name: "response_format"
+      type: "object"
+      description: "Machine-readable output specification"
+      required: true
+      properties:
+        format_type:
+          type: "string"
+          enum: ["JSON", "XML", "Markdown Table"]
+        schema_definition:
+          type: "string"
+          description: "Reference to schema file or inline definition"
+        enforce_schema:
+          type: "boolean"
+          default: true
+    
+    - name: "lmm_optimization"
+      type: "object"
+      description: "Model-specific optimization parameters"
+      required: true
+      properties:
+        target_model:
+          type: "string"
+          enum: ["Gemini", "Claude", "GPT"]
+        chain_of_thought:
+          type: "boolean"
+          default: true
+        few_shot_examples:
+          type: "array"
+          items:
+            type: "object"
+            properties:
+              input: { type: "string" }
+              output: { type: "string" }
+        temperature:
+          type: "number"
+          minimum: 0.0
+          maximum: 1.0
+          default: 0.1
+    
+    - name: "visual_input"
+      type: "object"
+      description: "Visual artifact specifications"
+      required: true
+      properties:
+        input_type:
+          type: "string"
+          enum: ["screenshot", "mockup", "prototype", "diagram", "chart"]
+        image_placement:
+          type: "string"
+          enum: ["before_text", "after_text", "interleaved"]
+          default: "before_text"
+        multiple_images:
+          type: "boolean"
+          default: false
+
+  template: |
+    # Six-Component Augmented Prompt Stack
+    # Generated for {{target_model}} optimization
+    
+    ## 1. ROLE ASSIGNMENT
+    You are a {{role_assignment}} specializing in technical visual analysis and design system validation.
+    
+    ## 2. CONTEXT
+    {{context}}
+    
+    ## 3. SPECIFIC CONSTRAINTS (PASS/FAIL CRITERIA)
+    The following constraints are non-negotiable and must be validated:
+    {% for constraint in specific_constraints %}
+    - {{constraint}}
+    {% endfor %}
+    
+    ## 4. INTENT/TASK
+    {{intent_task}} the attached visual input according to the specified constraints and context.
+    
+    {% if creative_direction %}
+    ## 5. CREATIVE DIRECTION (AESTHETIC VALIDATION)
+    Evaluate alignment with the following aesthetic target: {{creative_direction}}
+    {% endif %}
+    
+    ## 6. RESPONSE FORMAT
+    Output must conform to the following specifications:
+    Format Type: {{response_format.format_type}}
+    {% if response_format.schema_definition %}
+    Schema: {{response_format.schema_definition}}
+    {% endif %}
+    Enforce Schema: {{response_format.enforce_schema}}
+    
+    {% if lmm_optimization.chain_of_thought %}
+    ## CHAIN-OF-THOOTH REQUIREMENT
+    Before providing your final analysis, you MUST:
+    1. Describe the visual input in detail
+    2. Reason through each constraint and requirement
+    3. Provide your structured output
+    
+    Place your reasoning in {{'<thinking>' if target_model == 'Claude' else '### Reasoning'}} tags.
+    {% endif %}
+    
+    {% if lmm_optimization.few_shot_examples %}
+    ## FEW-SHOT EXAMPLES
+    {% for example in lmm_optimization.few_shot_examples %}
+    Input: {{example.input}}
+    Output: {{example.output}}
+    
+    {% endfor %}
+    {% endif %}
+    
+    ## VISUAL INPUT SPECIFICATIONS
+    - Input Type: {{visual_input.input_type}}
+    - Image Placement: {{visual_input.image_placement}}
+    - Multiple Images: {{visual_input.multiple_images}}
+    
+    {% if target_model == 'Gemini' %}
+    ## GEMINI-SPECIFIC OPTIMIZATION
+    - Place image before text for optimal focus
+    - Use interleaved input for complex context
+    - Leverage JSON Schema enforcement for type-safe outputs
+    {% elif target_model == 'Claude' %}
+    ## CLAUDE-SPECIFIC OPTIMIZATION
+    - Use explicit action verbs and direct instructions
+    - Employ XML tags for structured output: <response_json>, <thinking>
+    - Leverage long-context capabilities for detailed analysis
+    {% elif target_model == 'GPT' %}
+    ## GPT-SPECIFIC OPTIMIZATION
+    - Request detailed image description before analysis
+    - Place image immediately before instructional text
+    - Use explicit format definitions and structural requirements
+    {% endif %}
+    
+    ## EXECUTION
+    Based on the above framework, perform your analysis and provide the structured output.
+
+  examples:
+    - name: "WCAG Compliance Audit"
+      parameters:
+        role_assignment: "WCAG 2.2 AA Certified Accessibility Auditor"
+        context: "Enterprise dashboard for financial data visualization targeting banking professionals"
+        specific_constraints:
+          - "WCAG 2.2 AA compliance for all text elements"
+          - "Minimum 4.5:1 contrast ratio for normal text"
+          - "Minimum 3:1 contrast ratio for large text"
+          - "Keyboard navigation focus indicators must be visible"
+        intent_task: "Validate"
+        response_format:
+          format_type: "JSON"
+          schema_definition: "AccessibilityAuditSchema"
+          enforce_schema: true
+        lmm_optimization:
+          target_model: "Gemini"
+          chain_of_thought: true
+          temperature: 0.1
+        visual_input:
+          input_type: "screenshot"
+          image_placement: "before_text"
+    
+    - name: "Brand Aesthetics Analysis"
+      parameters:
+        role_assignment: "Brand Strategy Consultant"
+        context: "Mobile fitness tracking app for health-conscious millennials"
+        specific_constraints:
+          - "Analyze visual clarity and minimal noise"
+          - "Evaluate emotional alignment with brand traits"
+        intent_task: "Analyze"
+        creative_direction: "Energetic, trustworthy, approachable"
+        response_format:
+          format_type: "XML"
+          enforce_schema: true
+        lmm_optimization:
+          target_model: "Claude"
+          chain_of_thought: true
+          temperature: 0.2
+        visual_input:
+          input_type: "mockup"
+          image_placement: "before_text"
+
+  validation:
+    required_parameters: ["role_assignment", "context", "specific_constraints", "intent_task", "response_format", "lmm_optimization", "visual_input"]
+    parameter_constraints:
+      - parameter: "lmm_optimization.temperature"
+        constraint: "value >= 0.0 and value <= 1.0"
+        message: "Temperature must be between 0.0 and 1.0"
+      - parameter: "specific_constraints"
+        constraint: "len(value) > 0"
+        message: "At least one specific constraint is required"
+
+  deployment:
+    recommended_models:
+      - "Gemini 1.5 Pro"
+      - "Claude 3.5 Sonnet"
+      - "GPT-4 Vision"
+    api_integration:
+      - "Direct API calls with parameter substitution"
+      - "Batch processing for multiple visual inputs"
+      - "Webhook callbacks for structured output processing"
+    environment_variables:
+      - "LMM_API_KEY"
+      - "LMM_MODEL_ENDPOINT"
+      - "SCHEMA_VALIDATION_ENABLED"

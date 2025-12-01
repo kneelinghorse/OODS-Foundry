@@ -1,0 +1,267 @@
+apiVersion: mission-template.v1
+kind: MissionTemplate
+metadata:
+  name: design-aesthetics-analysis-claude
+  version: "1.0.0"
+  author: "UX Research Team"
+  description: "Template for analyzing design aesthetics against brand persona and JTBD using Claude's XML tagging and long-context capabilities"
+  domain: "multimodal-prompt-engineering"
+  tags:
+    - "brand-analysis"
+    - "claude"
+    - "aesthetics"
+    - "qualitative-analysis"
+    - "xml-output"
+
+spec:
+  parameters:
+    - name: "ui_type"
+      type: "string"
+      description: "Type of user interface being analyzed"
+      required: true
+      enum: ["mobile_app", "web_app", "desktop_app", "dashboard", "marketing_site"]
+    
+    - name: "screen_name"
+      type: "string"
+      description: "Name of the screen or interface being analyzed"
+      required: true
+      example: "user_profile"
+    
+    - name: "brand_personality_traits"
+      type: "array"
+      description: "Brand personality traits to evaluate against"
+      required: true
+      items:
+        type: "string"
+      examples:
+        - "trustworthy"
+        - "efficient"
+        - "innovative"
+        - "playful"
+        - "professional"
+        - "approachable"
+    
+    - name: "target_audience"
+      type: "string"
+      description: "Primary user segment for the interface"
+      required: true
+      examples:
+        - "enterprise decision makers"
+        - "millennial consumers"
+        - "technical developers"
+        - "healthcare professionals"
+    
+    - name: "primary_jtbd"
+      type: "string"
+      description: "Main Job-to-be-Done that the interface supports"
+      required: true
+      examples:
+        - "Complete a purchase quickly and securely"
+        - "Analyze complex data to make business decisions"
+        - "Track fitness progress and stay motivated"
+    
+    - name: "evaluation_criteria"
+      type: "array"
+      description: "Specific criteria for aesthetic evaluation"
+      required: true
+      items:
+        type: "string"
+        enum: ["visual_clarity", "visual_noise", "emotional_fit", "hierarchy", "consistency"]
+      default: ["visual_clarity", "emotional_fit"]
+    
+    - name: "analysis_depth"
+      type: "string"
+      description: "Level of detail for qualitative analysis"
+      required: false
+      enum: ["high_level", "detailed", "comprehensive"]
+      default: "detailed"
+    
+    - name: "competitive_context"
+      type: "string"
+      description: "Competitive landscape or industry context"
+      required: false
+      example: "Competing with established fintech apps in the European market"
+
+  template: |
+    # DESIGN AESTHETICS ANALYSIS - CLAUDE OPTIMIZED
+    # Interface: {{screen_name}} ({{ui_type}})
+    
+    ## ROLE ASSIGNMENT
+    You are a Brand Strategy Consultant specializing in digital experiences and visual identity analysis.
+    
+    ## CONTEXT
+    Analyze the attached {{ui_type}} interface: "{{screen_name}}"
+    
+    Target Audience: {{target_audience}}
+    Primary Job-to-be-Done: {{primary_jtbd}}
+    {% if competitive_context %}
+    Competitive Context: {{competitive_context}}
+    {% endif %}
+    
+    ## SPECIFIC CONSTRAINTS
+    Evaluate the design against these brand personality traits:
+    {% for trait in brand_personality_traits %}
+    - **{{trait|capitalize}}**: Assess visual elements that contribute to or detract from this trait
+    {% endfor %}
+    
+    ## EVALUATION CRITERIA
+    {% if 'visual_clarity' in evaluation_criteria %}
+    - **Visual Clarity**: Assess minimal visual noise, clear information hierarchy
+    {% endif %}
+    {% if 'visual_noise' in evaluation_criteria %}
+    - **Visual Noise**: Identify elements that create cognitive load or distraction
+    {% endif %}
+    {% if 'emotional_fit' in evaluation_criteria %}
+    - **Emotional Fit**: Evaluate alignment with brand personality traits
+    {% endif %}
+    {% if 'hierarchy' in evaluation_criteria %}
+    - **Visual Hierarchy**: Assess effectiveness of information prioritization
+    {% endif %}
+    {% if 'consistency' in evaluation_criteria %}
+    - **Consistency**: Evaluate adherence to design patterns and system coherence
+    {% endif %}
+    
+    ## INTENT/TASK
+    Perform a {{analysis_depth}} qualitative analysis of the visual design, evaluating its effectiveness and alignment with the specified brand personality and user goals.
+    
+    ## CLAUDE-SPECIFIC OPTIMIZATION
+    - Use explicit action verbs and direct, professional language
+    - Leverage XML tags for structured output separation
+    - Employ <thinking> tags for detailed reasoning audit trail
+    - Take advantage of long-context capabilities for comprehensive analysis
+    
+    ## CHAIN-OF-THOUGHT REQUIREMENT
+    Provide step-by-step analysis in <thinking> tags before final recommendations:
+    
+    <thinking>
+    1. Describe the visual interface in detail, noting key elements
+    2. Analyze each brand personality trait separately:
+       {% for trait in brand_personality_traits %}
+       - {{trait|capitalize}}: [Detailed analysis of contributing/detrimental elements]
+       {% endfor %}
+    3. Evaluate each criterion:
+       {% for criterion in evaluation_criteria %}
+       - {{criterion|replace('_', ' ')|capitalize}}: [Detailed assessment]
+       {% endfor %}
+    4. Synthesize findings and identify key issues
+    5. Develop prioritized recommendations
+    </thinking>
+    
+    ## RESPONSE FORMAT
+    Provide your final analysis in the following structured XML format:
+    
+    <aesthetic_analysis>
+      <executive_summary>
+        <overall_assessment>[Brief overall evaluation]</overall_assessment>
+        <strengths>[Key visual strengths]</strengths>
+        <weaknesses>[Key visual weaknesses]</weaknesses>
+      </executive_summary>
+      
+      <brand_alignment>
+        {% for trait in brand_personality_traits %}
+        <trait name="{{trait}}">
+          <alignment_score>[1-10 rating]</alignment_score>
+          <supporting_elements>[Visual elements that support this trait]</supporting_elements>
+          <detracting_elements>[Visual elements that detract from this trait]</detracting_elements>
+          <rationale>[Detailed explanation]</rationale>
+        </trait>
+        {% endfor %}
+      </brand_alignment>
+      
+      <detailed_findings>
+        {% for criterion in evaluation_criteria %}
+        <criterion name="{{criterion}}">
+          <assessment>[Detailed evaluation]</assessment>
+          <evidence>[Specific visual examples]</evidence>
+          <impact>[Impact on user experience]</impact>
+        </criterion>
+        {% endfor %}
+      </detailed_findings>
+      
+      <recommendations>
+        <priority_high>
+          {% for trait in brand_personality_traits %}
+          <recommendation>
+            <element>[Component or element to change]</element>
+            <issue>[Specific issue identified]</issue>
+            <suggested_change>[Concrete recommendation]</suggested_change>
+            <expected_impact>[Impact on brand alignment]</expected_impact>
+          </recommendation>
+          {% endfor %}
+        </priority_high>
+        
+        <priority_medium>
+          <recommendation>
+            <element>[Component or element to change]</element>
+            <issue>[Specific issue identified]</issue>
+            <suggested_change>[Concrete recommendation]</suggested_change>
+            <expected_impact>[Impact on user experience]</expected_impact>
+          </recommendation>
+        </priority_medium>
+        
+        <priority_low>
+          <recommendation>
+            <element>[Component or element to change]</element>
+            <issue>[Specific issue identified]</issue>
+            <suggested_change>[Concrete recommendation]</suggested_change>
+            <expected_impact>[Long-term improvement]</expected_impact>
+          </recommendation>
+        </priority_low>
+      </recommendations>
+      
+      <jtbd_optimization>
+        <current_effectiveness>[Assessment of JTBD support]</current_effectiveness>
+        <friction_points>[User experience obstacles]</friction_points>
+        <optimization_suggestions>[Specific improvements for JTBD]</optimization_suggestions>
+      </jtbd_optimization>
+    </aesthetic_analysis>
+    
+    ## EXECUTION
+    Analyze the attached visual interface and provide comprehensive aesthetic analysis following the specified XML structure.
+
+  examples:
+    - name: "Mobile Banking App Analysis"
+      parameters:
+        ui_type: "mobile_app"
+        screen_name: "account_dashboard"
+        brand_personality_traits: ["trustworthy", "efficient", "professional"]
+        target_audience: "banking customers managing personal finances"
+        primary_jtbd: "Quickly check account balance and recent transactions"
+        evaluation_criteria: ["visual_clarity", "emotional_fit", "hierarchy"]
+        analysis_depth: "comprehensive"
+        competitive_context: "Competing with Chase, Bank of America mobile apps"
+    
+    - name: "Fitness Tracking Dashboard"
+      parameters:
+        ui_type: "dashboard"
+        screen_name: "weekly_progress"
+        brand_personality_traits: ["energetic", "approachable", "motivating"]
+        target_audience: "health-conscious millennials"
+        primary_jtbd: "Track fitness progress and stay motivated"
+        evaluation_criteria: ["visual_clarity", "emotional_fit", "consistency"]
+        analysis_depth: "detailed"
+
+  validation:
+    required_parameters: ["ui_type", "screen_name", "brand_personality_traits", "target_audience", "primary_jtbd", "evaluation_criteria"]
+    parameter_constraints:
+      - parameter: "brand_personality_traits"
+        constraint: "len(value) > 0"
+        message: "At least one brand personality trait is required"
+      - parameter: "evaluation_criteria"
+        constraint: "len(value) > 0"
+        message: "At least one evaluation criterion is required"
+
+  deployment:
+    recommended_models:
+      - "Claude 3.5 Sonnet"
+      - "Claude 3 Opus"
+    api_integration:
+      - "Anthropic API"
+      - "AWS Bedrock (Claude)"
+    environment_variables:
+      - "ANTHROPIC_API_KEY"
+      - "CLAUDE_MODEL_VERSION"
+    special_features:
+      - "XML tag support for structured output"
+      - "Long-context capabilities for detailed analysis"
+      - "Thinking tags for audit trail"

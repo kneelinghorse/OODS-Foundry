@@ -1,0 +1,245 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B32.4
+name: Vega-Lite Spatial Adapter
+sprint: Sprint 32
+status: Queued
+
+objective: >
+  Generate valid Vega-Lite specifications for spatial visualizations including
+  choropleth (geoshape mark) and bubble map (circle mark with projection).
+
+context:
+  background: |
+    The Vega-Lite adapter translates OODS normalized spatial specs into valid Vega-Lite
+    configurations. Vega-Lite has native support for geographic projections and geoshape
+    marks, making this a pass-through implementation (no server transforms needed).
+
+  research_basis:
+    - "RDS.10: Renderer capability analysis"
+    - "RV.05: Dual-renderer parity requirements"
+
+  architecture_reference: "cmos/foundational-docs/data-viz-part2/spatial-module/ARCHITECTURE.md Section 1.2"
+
+  dependencies:
+    - B31.1  # Spatial schema types
+    - B31.4  # Geo data resolver (for data preparation)
+
+successCriteria:
+  - Generated Vega-Lite specs are valid (pass Vega-Lite schema validation)
+  - Choropleth renders geoshape marks with color encoding
+  - BubbleMap renders circle marks with longitude/latitude encoding
+  - Projection configuration maps correctly to Vega-Lite projection spec
+  - Visual output matches expected appearance
+  - Visual regression tests pass
+  - Tests pass with >90% coverage on new code
+
+constraints:
+  - Must produce valid Vega-Lite v5 specifications
+  - Must map OODS projection types to Vega-Lite projection names
+  - Must handle all color scale types (quantize, quantile, threshold)
+  - Must not introduce Vega-Lite specific concepts into normalized spec
+
+deliverables:
+  adapters:
+    - path: src/viz/adapters/spatial/vega-lite-spatial-adapter.ts
+      description: |
+        Main Vega-Lite spatial adapter:
+
+        ```typescript
+        interface VegaLiteSpatialAdapterInput {
+          spec: NormalizedVizSpec;
+          geoData: GeoJSON.FeatureCollection;
+          data?: DataRecord[];
+          dimensions: { width: number; height: number };
+        }
+
+        interface VegaLiteSpatialAdapterOutput {
+          vegaLiteSpec: VegaLiteSpec;
+          dataUrls?: { geo: string; data: string };  // For external data
+        }
+
+        function adaptToVegaLite(input: VegaLiteSpatialAdapterInput): VegaLiteSpatialAdapterOutput;
+        ```
+
+        Handles:
+        - vizType detection (choropleth vs bubble)
+        - Projection mapping
+        - Data embedding or URL reference
+        - Mark type selection (geoshape vs circle)
+        - Encoding configuration
+
+    - path: src/viz/adapters/spatial/vega-lite-choropleth-adapter.ts
+      description: |
+        Choropleth-specific Vega-Lite generation:
+
+        ```typescript
+        function adaptChoroplethToVegaLite(
+          spec: NormalizedVizSpec,
+          geoData: GeoJSON.FeatureCollection,
+          data: DataRecord[],
+          dimensions: Dimensions
+        ): VegaLiteSpec;
+        ```
+
+        Output structure:
+        ```json
+        {
+          "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+          "width": 800,
+          "height": 500,
+          "projection": { "type": "albersUsa" },
+          "data": {
+            "values": "<<geojson features with joined data>>",
+            "format": { "type": "json", "property": "features" }
+          },
+          "mark": "geoshape",
+          "encoding": {
+            "color": {
+              "field": "properties.value",
+              "type": "quantitative",
+              "scale": { "scheme": "blues" }
+            },
+            "tooltip": [
+              { "field": "properties.name", "title": "Region" },
+              { "field": "properties.value", "title": "Value" }
+            ]
+          }
+        }
+        ```
+
+    - path: src/viz/adapters/spatial/vega-lite-bubble-adapter.ts
+      description: |
+        Bubble map-specific Vega-Lite generation:
+
+        ```typescript
+        function adaptBubbleToVegaLite(
+          spec: NormalizedVizSpec,
+          geoData: GeoJSON.FeatureCollection | null,
+          data: DataRecord[],
+          dimensions: Dimensions
+        ): VegaLiteSpec;
+        ```
+
+        Output structure (with optional basemap layer):
+        ```json
+        {
+          "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+          "width": 800,
+          "height": 500,
+          "projection": { "type": "mercator" },
+          "layer": [
+            {
+              "data": { "values": "<<basemap geojson>>" },
+              "mark": { "type": "geoshape", "fill": "#e8e8e8", "stroke": "#fff" }
+            },
+            {
+              "data": { "values": "<<point data>>" },
+              "mark": "circle",
+              "encoding": {
+                "longitude": { "field": "lon", "type": "quantitative" },
+                "latitude": { "field": "lat", "type": "quantitative" },
+                "size": { "field": "value", "type": "quantitative" },
+                "color": { "field": "category", "type": "nominal" }
+              }
+            }
+          ]
+        }
+        ```
+
+  utilities:
+    - path: src/viz/adapters/spatial/vega-lite-projection-map.ts
+      description: |
+        Projection type mapping:
+        - mapProjectionType(oodsType): VegaLiteProjectionType
+        - mapProjectionConfig(oodsConfig): VegaLiteProjectionConfig
+        - Handles center, scale, rotate, clipExtent
+
+    - path: src/viz/adapters/spatial/vega-lite-scale-map.ts
+      description: |
+        Scale type mapping:
+        - mapColorScale(oodsScale): VegaLiteScale
+        - Quantize → { type: "quantize", domain: [...], range: [...] }
+        - Quantile → { type: "quantile", ... }
+        - Threshold → { type: "threshold", domain: [...], range: [...] }
+
+  tests:
+    - path: tests/viz/adapters/spatial/vega-lite-spatial-adapter.test.ts
+      description: |
+        Adapter tests:
+        - Choropleth spec validates against Vega-Lite schema
+        - Bubble map spec validates against Vega-Lite schema
+        - Projection types map correctly
+        - Color scales map correctly
+        - Data embedding works
+        - Tooltip encoding works
+
+    - path: tests/viz/adapters/spatial/vega-lite-visual-regression.test.ts
+      description: |
+        Visual regression tests:
+        - US states choropleth renders correctly
+        - World countries choropleth renders correctly
+        - City bubble map renders correctly
+        - Different projections render correctly
+
+  documentation:
+    - path: docs/viz/adapters/vega-lite-spatial.md
+      description: |
+        Adapter documentation:
+        - Supported viz types
+        - Projection mapping reference
+        - Scale mapping reference
+        - Data format requirements
+        - Examples
+
+technicalApproach:
+  - Review Vega-Lite geographic documentation
+  - Map OODS projection types to Vega-Lite equivalents
+  - Implement choropleth adapter using geoshape mark
+  - Implement bubble adapter using circle mark with lon/lat encoding
+  - Handle layered specs for bubble map with basemap
+  - Map color scale types correctly
+  - Write schema validation tests
+  - Set up visual regression testing with Playwright
+  - Document adapter usage
+
+qualityGates:
+  during_development:
+    - Generated specs pass Vega-Lite schema validation
+    - Specs render without errors in Vega-Lite
+
+  before_completion:
+    - pnpm test tests/viz/adapters/spatial/vega-lite*.test.ts passes
+    - Visual regression tests pass
+    - Documentation reviewed
+    - Coverage >90% on new code
+
+estimatedEffort: "1 session (50-60k tokens)"
+
+notes: |
+  📋 FULL MISSION DETAILS: This YAML file contains complete implementation guidance.
+
+  Vega-Lite projection types (subset):
+  - "mercator" (OODS: mercator)
+  - "albersUsa" (OODS: albersUsa)
+  - "equalEarth" (OODS: equalEarth)
+  - "orthographic" (OODS: orthographic)
+  - "conicEqualArea" (OODS: conicEqualArea)
+
+  Vega-Lite scale types:
+  - quantize: Equal-interval numeric to ordinal
+  - quantile: Equal-frequency numeric to ordinal
+  - threshold: Custom breakpoints
+
+  Key Vega-Lite features for spatial:
+  - "mark": "geoshape" for polygons
+  - "mark": "circle" with longitude/latitude encoding for points
+  - "projection" at top level or within unit spec
+  - "layer" for composing basemap + points
+
+  Visual regression setup:
+  - Use Playwright to render Vega-Lite specs
+  - Capture screenshots
+  - Compare against baselines
+  - Run in CI

@@ -1,0 +1,456 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B34.1
+name: ECharts Network & Flow Adapters
+sprint: Sprint 34
+status: Queued
+
+objective: >
+  Implement ECharts adapters for all four Network & Flow visualization types:
+  Treemap, Sunburst, Force Graph, and Sankey. Pass-through architecture (no server transforms).
+
+context:
+  background: |
+    ECharts has native support for all four Network & Flow visualization types,
+    making it the preferred renderer for this module. These adapters transform
+    normalized viz specs into ECharts option objects. Unlike the Vega-Lite path,
+    no server-side D3 transforms are required.
+
+  research_basis:
+    - "RDS.11.5: ECharts Native Research"
+    - "cmos/foundational-docs/data-viz-part2/network-flow-module/ARCHITECTURE.md Section 5.1"
+
+  dependencies:
+    - B33.1  # Schemas (all input types defined)
+    - B33.2  # Resolver (routes to ECharts when available)
+
+successCriteria:
+  - All four adapters produce valid ECharts options
+  - Treemap renders with correct hierarchical rectangles
+  - Sunburst renders with correct radial segments
+  - Force graph renders with nodes and edges
+  - Sankey renders with flow paths
+  - OODS tokens applied correctly
+  - Tests pass with >90% coverage on new code
+
+constraints:
+  - Must follow existing adapter patterns in src/viz/adapters/echarts/
+  - Must apply OODS design tokens consistently
+  - Must support all documented configuration options
+  - Must handle both nested and adjacency list inputs
+
+deliverables:
+  adapters:
+    - path: src/viz/adapters/echarts/treemap-adapter.ts
+      description: |
+        Treemap ECharts adapter:
+
+        ```typescript
+        import type { TreemapSeriesOption, EChartsOption } from 'echarts';
+        import type { NormalizedVizSpec, HierarchyInput } from '../../types';
+        import { applyTokens, getColorScale } from '../utils/token-utils';
+
+        export function adaptTreemapToECharts(
+          spec: NormalizedVizSpec,
+          input: HierarchyInput
+        ): EChartsOption {
+          const data = convertToEChartsTreeData(input);
+
+          const series: TreemapSeriesOption = {
+            type: 'treemap',
+            data,
+            width: spec.dimensions?.width ?? '100%',
+            height: spec.dimensions?.height ?? '100%',
+            roam: spec.interaction?.zoom ?? false,
+            nodeClick: spec.interaction?.drilldown ? 'zoomToNode' : false,
+            breadcrumb: {
+              show: spec.interaction?.breadcrumb ?? true,
+              ...applyTokens('viz.map.breadcrumb')
+            },
+            label: {
+              show: true,
+              formatter: '{b}',
+              ...applyTokens('viz.label')
+            },
+            upperLabel: {
+              show: true,
+              height: 30,
+              ...applyTokens('viz.label.header')
+            },
+            itemStyle: {
+              borderColor: applyTokens('viz.border.color'),
+              borderWidth: 1,
+              gapWidth: 1
+            },
+            levels: generateLevelStyles(spec),
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowColor: 'rgba(0, 0, 0, 0.3)'
+              }
+            }
+          };
+
+          return {
+            series: [series],
+            tooltip: generateTooltip(spec),
+            ...applyBaseOptions(spec)
+          };
+        }
+
+        function convertToEChartsTreeData(input: HierarchyInput): any[] {
+          // Handle both nested and adjacency list formats
+          if (isAdjacencyList(input)) {
+            return buildTreeFromAdjacency(input.data);
+          }
+          return normalizeNestedData(input.data);
+        }
+
+        function generateLevelStyles(spec: NormalizedVizSpec): any[] {
+          // Generate color scales per depth level
+          // Apply OODS categorical/sequential tokens
+        }
+        ```
+
+    - path: src/viz/adapters/echarts/sunburst-adapter.ts
+      description: |
+        Sunburst ECharts adapter:
+
+        ```typescript
+        import type { SunburstSeriesOption, EChartsOption } from 'echarts';
+
+        export function adaptSunburstToECharts(
+          spec: NormalizedVizSpec,
+          input: HierarchyInput
+        ): EChartsOption {
+          const data = convertToEChartsTreeData(input);
+
+          const series: SunburstSeriesOption = {
+            type: 'sunburst',
+            data,
+            radius: spec.dimensions?.radius ?? ['0%', '90%'],
+            sort: spec.encoding?.sort ?? 'desc',
+            emphasis: {
+              focus: 'ancestor',
+              itemStyle: {
+                shadowBlur: 10,
+                shadowColor: 'rgba(0, 0, 0, 0.3)'
+              }
+            },
+            label: {
+              rotate: 'radial',
+              ...applyTokens('viz.label')
+            },
+            itemStyle: {
+              borderRadius: 4,
+              borderWidth: 2,
+              borderColor: applyTokens('viz.background')
+            },
+            levels: generateSunburstLevels(spec)
+          };
+
+          return {
+            series: [series],
+            tooltip: generateTooltip(spec),
+            ...applyBaseOptions(spec)
+          };
+        }
+
+        function generateSunburstLevels(spec: NormalizedVizSpec): any[] {
+          // Configure appearance per depth level
+          // Inner ring, middle rings, outer ring
+        }
+        ```
+
+    - path: src/viz/adapters/echarts/graph-adapter.ts
+      description: |
+        Force Graph ECharts adapter:
+
+        ```typescript
+        import type { GraphSeriesOption, EChartsOption } from 'echarts';
+
+        export function adaptGraphToECharts(
+          spec: NormalizedVizSpec,
+          input: NetworkInput
+        ): EChartsOption {
+          const nodes = input.nodes.map(node => ({
+            id: node.id,
+            name: node.name ?? node.id,
+            value: node.value,
+            symbolSize: calculateNodeSize(node, spec),
+            category: node.category,
+            itemStyle: node.color ? { color: node.color } : undefined,
+            ...preserveExtraFields(node)
+          }));
+
+          const links = input.links.map(link => ({
+            source: link.source,
+            target: link.target,
+            value: link.value,
+            lineStyle: {
+              width: calculateLinkWidth(link, spec)
+            }
+          }));
+
+          const categories = extractCategories(input.nodes, spec);
+
+          const series: GraphSeriesOption = {
+            type: 'graph',
+            layout: 'force',
+            data: nodes,
+            links,
+            categories,
+            roam: spec.interaction?.zoom ?? true,
+            draggable: spec.interaction?.drag ?? true,
+            label: {
+              show: spec.encoding?.label?.show ?? true,
+              position: 'right',
+              formatter: '{b}',
+              ...applyTokens('viz.label')
+            },
+            labelLayout: {
+              hideOverlap: true
+            },
+            force: {
+              repulsion: spec.layout?.force?.repulsion ?? 100,
+              gravity: spec.layout?.force?.gravity ?? 0.1,
+              edgeLength: spec.layout?.force?.edgeLength ?? 30,
+              friction: spec.layout?.force?.friction ?? 0.6
+            },
+            emphasis: {
+              focus: 'adjacency',
+              lineStyle: { width: 4 }
+            },
+            lineStyle: {
+              color: 'source',
+              curveness: 0.3,
+              ...applyTokens('viz.line')
+            }
+          };
+
+          return {
+            series: [series],
+            tooltip: generateTooltip(spec),
+            legend: categories.length > 0 ? generateLegend(categories, spec) : undefined,
+            ...applyBaseOptions(spec)
+          };
+        }
+        ```
+
+    - path: src/viz/adapters/echarts/sankey-adapter.ts
+      description: |
+        Sankey ECharts adapter:
+
+        ```typescript
+        import type { SankeySeriesOption, EChartsOption } from 'echarts';
+
+        export function adaptSankeyToECharts(
+          spec: NormalizedVizSpec,
+          input: SankeyInput
+        ): EChartsOption {
+          const nodes = input.nodes.map(node => ({
+            name: node.id,
+            value: node.value,
+            itemStyle: node.color ? { color: node.color } : undefined,
+            ...preserveExtraFields(node)
+          }));
+
+          const links = input.links.map(link => ({
+            source: typeof link.source === 'object' ? link.source.id : link.source,
+            target: typeof link.target === 'object' ? link.target.id : link.target,
+            value: link.value,
+            ...preserveExtraFields(link, ['source', 'target', 'value'])
+          }));
+
+          const series: SankeySeriesOption = {
+            type: 'sankey',
+            data: nodes,
+            links,
+            orient: spec.layout?.orientation ?? 'horizontal',
+            nodeAlign: spec.layout?.nodeAlign ?? 'justify',
+            nodeWidth: spec.layout?.nodeWidth ?? 20,
+            nodeGap: spec.layout?.nodeGap ?? 8,
+            layoutIterations: spec.layout?.iterations ?? 32,
+            emphasis: {
+              focus: 'adjacency'
+            },
+            label: {
+              show: true,
+              position: 'right',
+              ...applyTokens('viz.label')
+            },
+            lineStyle: {
+              color: 'gradient',
+              curveness: 0.5,
+              opacity: 0.5
+            },
+            itemStyle: {
+              borderWidth: 1,
+              borderColor: applyTokens('viz.border.color')
+            }
+          };
+
+          return {
+            series: [series],
+            tooltip: {
+              trigger: 'item',
+              triggerOn: 'mousemove',
+              formatter: (params: any) => {
+                if (params.dataType === 'edge') {
+                  return `${params.data.source} → ${params.data.target}: ${params.data.value}`;
+                }
+                return `${params.name}: ${params.value}`;
+              }
+            },
+            ...applyBaseOptions(spec)
+          };
+        }
+        ```
+
+    - path: src/viz/adapters/echarts/network-utils.ts
+      description: |
+        Shared utilities for network adapters:
+
+        ```typescript
+        // Convert adjacency list to nested tree structure
+        function buildTreeFromAdjacency(data: AdjacencyNode[]): any[];
+
+        // Normalize nested data (ensure required fields)
+        function normalizeNestedData(data: any): any[];
+
+        // Calculate node size from value or encoding
+        function calculateNodeSize(node: any, spec: NormalizedVizSpec): number;
+
+        // Calculate link width from value
+        function calculateLinkWidth(link: any, spec: NormalizedVizSpec): number;
+
+        // Extract categories from nodes
+        function extractCategories(nodes: any[], spec: NormalizedVizSpec): any[];
+
+        // Generate tooltip configuration
+        function generateTooltip(spec: NormalizedVizSpec): any;
+
+        // Generate legend configuration
+        function generateLegend(categories: any[], spec: NormalizedVizSpec): any;
+
+        // Apply base ECharts options (animation, theme, etc.)
+        function applyBaseOptions(spec: NormalizedVizSpec): Partial<EChartsOption>;
+        ```
+
+  tests:
+    - path: tests/viz/adapters/echarts/treemap-adapter.test.ts
+      description: |
+        Treemap adapter tests:
+        - Produces valid ECharts option
+        - Handles nested input format
+        - Handles adjacency list input format
+        - Drilldown configuration works
+        - Breadcrumb configuration works
+        - OODS tokens applied correctly
+
+    - path: tests/viz/adapters/echarts/sunburst-adapter.test.ts
+      description: |
+        Sunburst adapter tests:
+        - Produces valid ECharts option
+        - Radius configuration works
+        - Radial labels configured correctly
+        - Level styles applied per depth
+        - Emphasis focus works
+
+    - path: tests/viz/adapters/echarts/graph-adapter.test.ts
+      description: |
+        Graph adapter tests:
+        - Produces valid ECharts option
+        - Force layout configuration works
+        - Node sizes calculated correctly
+        - Link widths calculated correctly
+        - Categories extracted and legend generated
+        - Drag and zoom work
+
+    - path: tests/viz/adapters/echarts/sankey-adapter.test.ts
+      description: |
+        Sankey adapter tests:
+        - Produces valid ECharts option
+        - Horizontal orientation works
+        - Vertical orientation works
+        - Node alignment options work
+        - Gradient link colors work
+        - Tooltip shows flow values
+
+    - path: tests/viz/adapters/echarts/network-visual-regression.test.ts
+      description: |
+        Visual regression tests:
+        - Treemap snapshot matches
+        - Sunburst snapshot matches
+        - Graph snapshot matches
+        - Sankey snapshot matches
+        - Compare with reference renders
+
+  storybook:
+    - path: stories/viz/echarts/Treemap.stories.tsx
+    - path: stories/viz/echarts/Sunburst.stories.tsx
+    - path: stories/viz/echarts/Graph.stories.tsx
+    - path: stories/viz/echarts/Sankey.stories.tsx
+
+technicalApproach:
+  - Review existing ECharts adapter patterns
+  - Implement TreemapEChartsAdapter with nested/adjacency support
+  - Implement SunburstEChartsAdapter with radial configuration
+  - Implement GraphEChartsAdapter with force layout options
+  - Implement SankeyEChartsAdapter with flow rendering
+  - Create shared network utilities
+  - Apply OODS tokens consistently
+  - Write comprehensive tests
+  - Create Storybook stories for each
+
+qualityGates:
+  during_development:
+    - Adapters produce valid ECharts options
+    - Visualizations render correctly in Storybook
+    - Interactions work (zoom, drill, drag)
+
+  before_completion:
+    - pnpm test tests/viz/adapters/echarts/*network*.test.ts passes
+    - pnpm test tests/viz/adapters/echarts/*treemap*.test.ts passes
+    - pnpm test tests/viz/adapters/echarts/*sunburst*.test.ts passes
+    - pnpm test tests/viz/adapters/echarts/*graph*.test.ts passes
+    - pnpm test tests/viz/adapters/echarts/*sankey*.test.ts passes
+    - Visual regression tests pass
+    - Storybook stories complete
+    - Coverage >90% on new code
+
+estimatedEffort: "1-2 sessions (75-100k tokens)"
+
+notes: |
+  📋 FULL MISSION DETAILS: This YAML file contains complete implementation guidance.
+
+  ECharts series types:
+  - 'treemap': Hierarchical rectangles
+  - 'sunburst': Radial hierarchy
+  - 'graph': Node-link diagram
+  - 'sankey': Flow diagram
+
+  Key ECharts features to leverage:
+  - Built-in drill-down for treemap/sunburst
+  - Force layout simulation for graph
+  - Automatic link curve generation for sankey
+  - Category-based coloring
+  - Universal transition animations
+
+  Configuration mapping:
+  - spec.dimensions → series width/height/radius
+  - spec.interaction → roam, draggable, nodeClick
+  - spec.encoding → color scales, size scales
+  - spec.layout → force params, node alignment
+
+  Token integration:
+  - Use applyTokens() utility from existing adapters
+  - Map OODS viz.* tokens to ECharts style properties
+  - Ensure consistency with other OODS visualizations
+
+  Performance notes:
+  - ECharts handles layout internally
+  - No server-side transforms needed
+  - Large datasets handled efficiently by ECharts
+  - Consider progressive rendering for 1000+ nodes

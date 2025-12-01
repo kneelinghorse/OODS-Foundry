@@ -1,0 +1,180 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B34.3
+name: Network & Flow Documentation & Storybook Polish
+sprint: Sprint 34
+status: Queued
+
+objective: >
+  Complete documentation and Storybook stories for the Network & Flow module.
+  Ensure all examples are polished and all edge cases are documented.
+
+context:
+  background: |
+    Before release, the Network & Flow module needs:
+    1. Comprehensive user documentation
+    2. API reference documentation
+    3. Polished Storybook stories with controls
+    4. Example dashboards
+    5. Migration guide (for users upgrading)
+
+  dependencies:
+    - B34.1  # Components
+    - B34.2  # Dashboard integration
+
+successCriteria:
+  - User documentation complete and reviewed
+  - API reference generated and accurate
+  - All Storybook stories have controls
+  - Example dashboards work
+  - v1.0 constraints clearly documented
+  - Accessibility documentation complete
+
+constraints:
+  - Must follow existing documentation patterns
+  - Must clearly document ECharts requirement
+  - Must include performance guidance
+  - Must be accessible
+
+deliverables:
+  user_docs:
+    - path: docs/viz/network-flow/
+      description: |
+        User documentation:
+        - index.md (Overview)
+        - treemap.md (Treemap guide)
+        - sunburst.md (Sunburst guide)
+        - force-graph.md (Force Graph guide)
+        - sankey.md (Sankey guide)
+        - data-formats.md (Input data formats)
+        - cross-filter.md (Cross-filter patterns)
+        - accessibility.md (a11y features)
+        - faq.md (Common questions)
+
+    - path: docs/viz/network-flow/v1-constraints.md
+      description: |
+        v1.0 constraints documentation:
+
+        ```markdown
+        # Network & Flow v1.0 Constraints
+
+        ## ECharts Requirement
+
+        In OODS v1.0, all Network & Flow visualizations require ECharts.
+        This is a deliberate architectural decision, not a limitation.
+
+        ### Why ECharts Only?
+
+        Following R33.0 research, we found:
+        1. ECharts provides native, presentation-ready support
+        2. D3/Vega defaults differ significantly (6-10x force multipliers)
+        3. Achieving visual parity requires extensive parameter alignment
+        4. ECharts includes built-in interactivity that D3 lacks
+
+        ### What This Means for You
+
+        - Ensure ECharts is included in your bundle
+        - The `renderer` prop defaults to 'echarts'
+        - Other renderer values show a warning
+
+        ### Future Support
+
+        Vega-Lite support is planned for v1.1+ based on user demand.
+        If you need Vega-Lite for Network & Flow, please open an issue.
+        ```
+
+  api_docs:
+    - path: docs/api/network-flow/
+      description: |
+        API reference (generated from TypeScript + manual):
+        - Components API (props, types)
+        - Adapter API (for advanced users)
+        - Schema reference
+        - Trait definitions
+
+  storybook:
+    - path: stories/viz/network-flow/
+      description: |
+        Polished Storybook stories:
+
+        Treemap:
+        - Default (basic usage)
+        - With Drill-Down
+        - Large Dataset (500+ nodes)
+        - Custom Colors
+        - Adjacency List Input
+        - Responsive
+
+        Sunburst:
+        - Default
+        - With Ancestor Highlighting
+        - Partial Circle
+        - Deep Hierarchy
+
+        Force Graph:
+        - Default
+        - With Categories
+        - Large Network (100+ nodes)
+        - Custom Force Parameters
+        - Fixed Nodes
+        - Directed Graph
+
+        Sankey:
+        - Energy Flow (classic)
+        - Vertical Orientation
+        - Multi-Level
+        - Gradient vs Solid Links
+        - Large Flow
+
+        All stories should have:
+        - Controls for all props
+        - Clear descriptions
+        - Code examples
+        - Accessibility notes
+
+  examples:
+    - path: examples/dashboards/
+      description: |
+        Example dashboards:
+        - org-hierarchy/ (Treemap + Sunburst)
+        - social-network/ (Force Graph)
+        - budget-flow/ (Sankey)
+        - combined/ (Multiple viz types with cross-filter)
+
+technicalApproach:
+  - Write user documentation following existing patterns
+  - Generate API documentation from TypeScript
+  - Polish all Storybook stories with controls
+  - Create example dashboards
+  - Document v1.0 constraints clearly
+  - Add performance guidance
+  - Review all documentation
+
+qualityGates:
+  during_development:
+    - Documentation renders correctly
+    - Storybook stories work
+    - Examples run without errors
+
+  before_completion:
+    - Documentation reviewed by team
+    - All Storybook stories have controls
+    - Example dashboards work
+    - Links validated
+    - No broken images
+
+estimatedEffort: "1 session (50-60k tokens)"
+
+notes: |
+  Documentation priorities:
+  1. User guides (how to use)
+  2. v1.0 constraints (set expectations)
+  3. Data formats (how to prepare data)
+  4. Examples (learn by doing)
+
+  v1.0 constraint messaging:
+  - Frame as deliberate decision, not limitation
+  - Explain the research basis
+  - Set clear expectations for v1.1+
+  - Provide path to request features

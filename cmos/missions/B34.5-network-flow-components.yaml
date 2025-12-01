@@ -1,0 +1,591 @@
+---
+schemaType: Mission
+schemaVersion: "2.0"
+missionId: B34.5
+name: Network & Flow React Components
+sprint: Sprint 34
+status: Queued
+
+objective: >
+  Implement React wrapper components for all four Network & Flow visualization types:
+  Treemap, Sunburst, ForceGraph, and Sankey. Components integrate with viz pipeline
+  and provide consistent API across renderers.
+
+context:
+  background: |
+    OODS provides React components that wrap the underlying renderer adapters,
+    providing a consistent API regardless of whether ECharts or Vega is used.
+    These components handle:
+    - Data transformation (if needed for Vega path)
+    - Renderer selection and initialization
+    - Interaction handling (selections, tooltips)
+    - Accessibility features
+    - Loading and error states
+
+  research_basis:
+    - "cmos/foundational-docs/data-viz-part2/network-flow-module/ARCHITECTURE.md Section 6"
+
+  dependencies:
+    - B33.2  # Resolver (determines render path)
+    - B33.3  # Hierarchy transforms
+    - B33.4  # Force transform
+    - B33.5  # Sankey transform
+    - B34.1  # ECharts adapters
+    - B34.2  # Vega-Lite adapters
+    - B34.3  # Vega escape hatch
+    - B34.4  # Traits (for data validation)
+
+successCriteria:
+  - All four components render correctly
+  - Components work with both ECharts and Vega renderers
+  - Renderer auto-selected based on data/config
+  - Interactions work (selection, tooltip, drill-down)
+  - Accessibility features implemented
+  - Loading and error states handled
+  - Tests pass with >90% coverage
+
+constraints:
+  - Must follow existing component patterns in src/components/viz/
+  - Must use existing VizContainer infrastructure
+  - Must integrate with cross-filter system
+  - Must support responsive sizing
+
+deliverables:
+  components:
+    - path: src/components/viz/Treemap.tsx
+      description: |
+        Treemap React component:
+
+        ```typescript
+        import React, { useMemo } from 'react';
+        import { VizContainer, useVizPipeline, useVizInteraction } from '../viz-core';
+        import type { TreemapProps, HierarchyInput, NormalizedVizSpec } from '../../types';
+
+        export interface TreemapProps {
+          data: HierarchyInput;
+          width?: number;
+          height?: number;
+          colorField?: string;
+          colorScheme?: string;
+          labelField?: string;
+          tiling?: 'squarify' | 'binary' | 'slice' | 'dice' | 'sliceDice';
+          drilldown?: boolean;
+          breadcrumb?: boolean;
+          onSelect?: (node: TreemapNode) => void;
+          onDrillDown?: (path: string[]) => void;
+          renderer?: 'echarts' | 'vega-lite' | 'auto';
+          className?: string;
+          'aria-label'?: string;
+        }
+
+        export const Treemap: React.FC<TreemapProps> = ({
+          data,
+          width = 400,
+          height = 400,
+          colorField = 'depth',
+          colorScheme = 'blues',
+          labelField = 'name',
+          tiling = 'squarify',
+          drilldown = true,
+          breadcrumb = true,
+          onSelect,
+          onDrillDown,
+          renderer = 'auto',
+          className,
+          'aria-label': ariaLabel
+        }) => {
+          // Build normalized spec
+          const spec = useMemo<NormalizedVizSpec>(() => ({
+            vizType: 'treemap',
+            data: { source: data },
+            dimensions: { width, height },
+            encoding: {
+              color: { field: colorField, scheme: colorScheme },
+              label: { field: labelField }
+            },
+            layout: { tiling },
+            interaction: { drilldown, breadcrumb }
+          }), [data, width, height, colorField, colorScheme, labelField, tiling, drilldown, breadcrumb]);
+
+          // Use viz pipeline (handles resolver, transforms, adapters)
+          const { vizOutput, isLoading, error } = useVizPipeline(spec, renderer);
+
+          // Handle interactions
+          const { handleSelect, handleDrillDown } = useVizInteraction({
+            onSelect,
+            onDrillDown
+          });
+
+          if (error) {
+            return <VizContainer.Error error={error} />;
+          }
+
+          return (
+            <VizContainer
+              className={className}
+              width={width}
+              height={height}
+              isLoading={isLoading}
+              aria-label={ariaLabel ?? 'Treemap visualization'}
+              a11yFallback={<TreemapA11yFallback data={data} />}
+            >
+              <VizRenderer
+                output={vizOutput}
+                onSelect={handleSelect}
+                onDrillDown={handleDrillDown}
+              />
+            </VizContainer>
+          );
+        };
+
+        // Accessibility fallback
+        const TreemapA11yFallback: React.FC<{ data: HierarchyInput }> = ({ data }) => (
+          <table role="treegrid" aria-label="Treemap data as table">
+            {/* Render hierarchical data as accessible table */}
+          </table>
+        );
+        ```
+
+    - path: src/components/viz/Sunburst.tsx
+      description: |
+        Sunburst React component:
+
+        ```typescript
+        export interface SunburstProps {
+          data: HierarchyInput;
+          radius?: number;
+          colorField?: string;
+          colorScheme?: string;
+          labelField?: string;
+          startAngle?: number;  // radians
+          endAngle?: number;    // radians
+          onSelect?: (node: SunburstNode) => void;
+          onDrillDown?: (path: string[]) => void;
+          renderer?: 'echarts' | 'vega-lite' | 'auto';
+          className?: string;
+          'aria-label'?: string;
+        }
+
+        export const Sunburst: React.FC<SunburstProps> = ({
+          data,
+          radius = 200,
+          colorField = 'depth',
+          colorScheme = 'spectral',
+          labelField = 'name',
+          startAngle = 0,
+          endAngle = 2 * Math.PI,
+          onSelect,
+          onDrillDown,
+          renderer = 'auto',
+          className,
+          'aria-label': ariaLabel
+        }) => {
+          const spec = useMemo<NormalizedVizSpec>(() => ({
+            vizType: 'sunburst',
+            data: { source: data },
+            dimensions: { radius },
+            encoding: {
+              color: { field: colorField, scheme: colorScheme },
+              label: { field: labelField }
+            },
+            layout: { startAngle, endAngle }
+          }), [data, radius, colorField, colorScheme, labelField, startAngle, endAngle]);
+
+          const { vizOutput, isLoading, error } = useVizPipeline(spec, renderer);
+          const { handleSelect, handleDrillDown } = useVizInteraction({ onSelect, onDrillDown });
+
+          if (error) {
+            return <VizContainer.Error error={error} />;
+          }
+
+          return (
+            <VizContainer
+              className={className}
+              width={radius * 2}
+              height={radius * 2}
+              isLoading={isLoading}
+              aria-label={ariaLabel ?? 'Sunburst visualization'}
+              a11yFallback={<SunburstA11yFallback data={data} />}
+            >
+              <VizRenderer
+                output={vizOutput}
+                onSelect={handleSelect}
+                onDrillDown={handleDrillDown}
+              />
+            </VizContainer>
+          );
+        };
+        ```
+
+    - path: src/components/viz/ForceGraph.tsx
+      description: |
+        Force Graph React component:
+
+        ```typescript
+        export interface ForceGraphProps {
+          data: NetworkInput;
+          width?: number;
+          height?: number;
+          nodeSize?: number | string;  // field name for dynamic
+          nodeColor?: string;          // field name
+          edgeWidth?: number | string;
+          edgeColor?: string;
+          force?: {
+            repulsion?: number;
+            gravity?: number;
+            edgeLength?: number;
+          };
+          draggable?: boolean;
+          zoomable?: boolean;
+          labelVisible?: boolean;
+          onNodeSelect?: (node: NetworkNode) => void;
+          onEdgeSelect?: (edge: NetworkEdge) => void;
+          renderer?: 'echarts' | 'vega-lite' | 'auto';
+          className?: string;
+          'aria-label'?: string;
+        }
+
+        export const ForceGraph: React.FC<ForceGraphProps> = ({
+          data,
+          width = 600,
+          height = 400,
+          nodeSize = 10,
+          nodeColor,
+          edgeWidth = 1,
+          edgeColor,
+          force = {},
+          draggable = true,
+          zoomable = true,
+          labelVisible = true,
+          onNodeSelect,
+          onEdgeSelect,
+          renderer = 'auto',
+          className,
+          'aria-label': ariaLabel
+        }) => {
+          const spec = useMemo<NormalizedVizSpec>(() => ({
+            vizType: 'force-graph',
+            data: { source: data },
+            dimensions: { width, height },
+            encoding: {
+              size: typeof nodeSize === 'string' ? { field: nodeSize } : { value: nodeSize },
+              color: nodeColor ? { field: nodeColor } : undefined,
+              label: { show: labelVisible }
+            },
+            layout: {
+              force: {
+                repulsion: force.repulsion ?? 100,
+                gravity: force.gravity ?? 0.1,
+                edgeLength: force.edgeLength ?? 30
+              }
+            },
+            interaction: {
+              drag: draggable,
+              zoom: zoomable
+            }
+          }), [data, width, height, nodeSize, nodeColor, force, draggable, zoomable, labelVisible]);
+
+          const { vizOutput, isLoading, error } = useVizPipeline(spec, renderer);
+          const { handleNodeSelect, handleEdgeSelect } = useVizInteraction({
+            onNodeSelect,
+            onEdgeSelect
+          });
+
+          if (error) {
+            return <VizContainer.Error error={error} />;
+          }
+
+          return (
+            <VizContainer
+              className={className}
+              width={width}
+              height={height}
+              isLoading={isLoading}
+              aria-label={ariaLabel ?? 'Network graph visualization'}
+              a11yFallback={<GraphA11yFallback data={data} />}
+            >
+              <VizRenderer
+                output={vizOutput}
+                onNodeSelect={handleNodeSelect}
+                onEdgeSelect={handleEdgeSelect}
+              />
+            </VizContainer>
+          );
+        };
+
+        const GraphA11yFallback: React.FC<{ data: NetworkInput }> = ({ data }) => (
+          <div>
+            <h3>Network Graph Data</h3>
+            <h4>Nodes ({data.nodes.length})</h4>
+            <ul>
+              {data.nodes.map(n => <li key={n.id}>{n.name ?? n.id}</li>)}
+            </ul>
+            <h4>Connections ({data.links.length})</h4>
+            <ul>
+              {data.links.map((l, i) => (
+                <li key={i}>{l.source} → {l.target}</li>
+              ))}
+            </ul>
+          </div>
+        );
+        ```
+
+    - path: src/components/viz/Sankey.tsx
+      description: |
+        Sankey React component:
+
+        ```typescript
+        export interface SankeyProps {
+          data: SankeyInput;
+          width?: number;
+          height?: number;
+          nodeWidth?: number;
+          nodePadding?: number;
+          nodeAlign?: 'left' | 'right' | 'center' | 'justify';
+          orientation?: 'horizontal' | 'vertical';
+          linkColor?: 'source' | 'target' | 'gradient';
+          onNodeSelect?: (node: SankeyNode) => void;
+          onLinkSelect?: (link: SankeyLink) => void;
+          renderer?: 'echarts' | 'vega' | 'auto';  // Note: vega, not vega-lite
+          className?: string;
+          'aria-label'?: string;
+        }
+
+        export const Sankey: React.FC<SankeyProps> = ({
+          data,
+          width = 600,
+          height = 400,
+          nodeWidth = 20,
+          nodePadding = 8,
+          nodeAlign = 'justify',
+          orientation = 'horizontal',
+          linkColor = 'gradient',
+          onNodeSelect,
+          onLinkSelect,
+          renderer = 'auto',
+          className,
+          'aria-label': ariaLabel
+        }) => {
+          const spec = useMemo<NormalizedVizSpec>(() => ({
+            vizType: 'sankey',
+            data: { source: data },
+            dimensions: { width, height },
+            layout: {
+              nodeWidth,
+              nodePadding,
+              nodeAlign,
+              orientation
+            },
+            encoding: {
+              link: { color: linkColor }
+            }
+          }), [data, width, height, nodeWidth, nodePadding, nodeAlign, orientation, linkColor]);
+
+          // Note: Sankey uses 'vega' (Full Vega) not 'vega-lite' for non-ECharts
+          const { vizOutput, isLoading, error } = useVizPipeline(spec, renderer);
+          const { handleNodeSelect, handleLinkSelect } = useVizInteraction({
+            onNodeSelect,
+            onLinkSelect
+          });
+
+          if (error) {
+            return <VizContainer.Error error={error} />;
+          }
+
+          return (
+            <VizContainer
+              className={className}
+              width={width}
+              height={height}
+              isLoading={isLoading}
+              aria-label={ariaLabel ?? 'Sankey flow diagram'}
+              a11yFallback={<SankeyA11yFallback data={data} />}
+            >
+              <VizRenderer
+                output={vizOutput}
+                onNodeSelect={handleNodeSelect}
+                onLinkSelect={handleLinkSelect}
+              />
+            </VizContainer>
+          );
+        };
+
+        const SankeyA11yFallback: React.FC<{ data: SankeyInput }> = ({ data }) => (
+          <table role="grid" aria-label="Flow data as table">
+            <thead>
+              <tr>
+                <th>Source</th>
+                <th>Target</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.links.map((link, i) => (
+                <tr key={i}>
+                  <td>{typeof link.source === 'object' ? link.source.id : link.source}</td>
+                  <td>{typeof link.target === 'object' ? link.target.id : link.target}</td>
+                  <td>{link.value}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        );
+        ```
+
+    - path: src/components/viz/network-index.ts
+      description: |
+        Index file for network components:
+
+        ```typescript
+        export { Treemap } from './Treemap';
+        export type { TreemapProps } from './Treemap';
+
+        export { Sunburst } from './Sunburst';
+        export type { SunburstProps } from './Sunburst';
+
+        export { ForceGraph } from './ForceGraph';
+        export type { ForceGraphProps } from './ForceGraph';
+
+        export { Sankey } from './Sankey';
+        export type { SankeyProps } from './Sankey';
+        ```
+
+  hooks:
+    - path: src/hooks/useVizPipeline.ts
+      description: |
+        Update useVizPipeline for network viz types:
+
+        ```typescript
+        // Extend existing hook to handle:
+        // - Server transforms for Vega path
+        // - Escape hatch detection for Sankey
+        // - Transform caching for performance
+
+        export function useVizPipeline(
+          spec: NormalizedVizSpec,
+          preferredRenderer: 'echarts' | 'vega-lite' | 'vega' | 'auto' = 'auto'
+        ): VizPipelineResult {
+          // 1. Resolve renderer
+          const resolvedRenderer = useResolver(spec, preferredRenderer);
+
+          // 2. Apply transforms if needed (Vega path for network types)
+          const transformedData = useTransforms(spec, resolvedRenderer);
+
+          // 3. Generate renderer-specific spec
+          const vizOutput = useAdapter(spec, transformedData, resolvedRenderer);
+
+          return {
+            vizOutput,
+            renderer: resolvedRenderer,
+            isLoading: transformedData.isLoading || vizOutput.isLoading,
+            error: transformedData.error || vizOutput.error
+          };
+        }
+        ```
+
+  tests:
+    - path: tests/components/viz/Treemap.test.tsx
+      description: |
+        Treemap component tests:
+        - Renders with nested data
+        - Renders with adjacency data
+        - Drilldown interaction works
+        - Selection callback fires
+        - Accessibility fallback renders
+        - ECharts renderer works
+        - Vega-Lite renderer works
+
+    - path: tests/components/viz/Sunburst.test.tsx
+      description: |
+        Sunburst component tests:
+        - Renders with hierarchical data
+        - Drilldown interaction works
+        - Selection callback fires
+        - Custom angle range works
+        - Accessibility fallback renders
+
+    - path: tests/components/viz/ForceGraph.test.tsx
+      description: |
+        ForceGraph component tests:
+        - Renders with network data
+        - Drag interaction works
+        - Zoom interaction works
+        - Node selection works
+        - Edge selection works
+        - Force configuration applied
+        - Accessibility fallback renders
+
+    - path: tests/components/viz/Sankey.test.tsx
+      description: |
+        Sankey component tests:
+        - Renders with flow data
+        - Node selection works
+        - Link selection works
+        - Orientation options work
+        - Gradient links render
+        - ECharts renderer works
+        - Full Vega renderer works (escape hatch)
+        - Accessibility fallback renders
+
+  storybook:
+    - path: stories/components/Treemap.stories.tsx
+    - path: stories/components/Sunburst.stories.tsx
+    - path: stories/components/ForceGraph.stories.tsx
+    - path: stories/components/Sankey.stories.tsx
+
+technicalApproach:
+  - Review existing viz component patterns
+  - Implement Treemap component with drilldown support
+  - Implement Sunburst component with radial layout
+  - Implement ForceGraph component with drag/zoom
+  - Implement Sankey component with Full Vega escape hatch
+  - Update useVizPipeline hook for new viz types
+  - Implement accessibility fallbacks for each component
+  - Write comprehensive tests
+  - Create Storybook stories with all variants
+
+qualityGates:
+  during_development:
+    - Components render correctly
+    - Interactions work as expected
+    - Both renderers work for each component
+
+  before_completion:
+    - pnpm test tests/components/viz/*.test.tsx passes
+    - Storybook stories complete with controls
+    - Accessibility fallbacks render correctly
+    - a11y audit passes
+    - Coverage >90% on new code
+
+estimatedEffort: "1-2 sessions (75-100k tokens)"
+
+notes: |
+  📋 FULL MISSION DETAILS: This YAML file contains complete implementation guidance.
+
+  Component architecture:
+  - VizContainer: Handles sizing, loading, error, a11y
+  - VizRenderer: Renders ECharts/Vega output
+  - useVizPipeline: Orchestrates resolver → transforms → adapters
+  - useVizInteraction: Handles selections and callbacks
+
+  Renderer selection:
+  - 'auto': Resolver decides based on data size, features
+  - 'echarts': Force ECharts (native support for all types)
+  - 'vega-lite': Force Vega-Lite (requires transforms)
+  - 'vega': Force Full Vega (for Sankey escape hatch)
+
+  Accessibility requirements:
+  - All components must have aria-label
+  - All components must have table fallback
+  - Fallback must preserve data semantics
+  - Keyboard navigation where applicable
+
+  Performance considerations:
+  - Transforms are memoized
+  - Large data triggers progressive rendering
+  - Resolver may override renderer for large datasets
+
+  Sankey special case:
+  - ONLY component that uses Full Vega (not Vega-Lite)
+  - Renderer option is 'vega', not 'vega-lite'
+  - Uses escape hatch pattern from B34.3
