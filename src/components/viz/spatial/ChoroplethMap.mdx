@@ -1,0 +1,31 @@
+import { Meta, Canvas, Story, Controls } from '@storybook/blocks';
+import * as ChoroplethStories from './ChoroplethMap.stories';
+
+<Meta of={ChoroplethStories} />
+
+# ChoroplethMap
+
+Choropleth (filled region) map component for visualizing quantitative data across geographic boundaries. Supports multiple color scales (quantize, quantile, threshold), projections, and accessible table fallbacks.
+
+## Demos
+
+<Canvas>
+  <Story of={ChoroplethStories.Default} />
+</Canvas>
+
+<Canvas>
+  <Story of={ChoroplethStories.WorldMap} />
+</Canvas>
+
+## Controls & Props
+
+- Projection: `albersUsa`, `mercator`, `equalEarth`, `naturalEarth1`
+- Color scale: `quantize`, `quantile`, `threshold`
+- Legend toggle and selection/tooltip toggles exposed as Storybook controls
+
+<Controls of={ChoroplethStories.Default} />
+
+## Accessibility
+
+- `a11y.description` is required; include `tableFallback` and `narrative` for parity with the visual map.
+- Keyboard users can focus the `SpatialContainer` and use arrow keys to navigate regions; table fallback exposes the same metrics.

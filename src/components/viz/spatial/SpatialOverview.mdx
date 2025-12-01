@@ -1,0 +1,41 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Viz/Spatial/Overview" />
+
+# Spatial Overview
+
+Quick guide to the spatial components and interaction patterns available in this package.
+
+## When to Use
+
+- **Geographic comparisons across regions** — use ChoroplethMap
+- **Point-based metrics with clustering or categorical coloring** — use BubbleMap
+- **Dashboards that need cross-filtering** between region and point layers
+- **Accessibility contexts** that require table/narrative parity with maps
+
+## Components
+
+| Component | Purpose |
+|-----------|---------|
+| **ChoroplethMap** | Filled regions colored by quantitative data |
+| **BubbleMap** | Point symbols sized/colored by metrics |
+| **SpatialContainer** | Context provider for projection, data, and a11y |
+| **MapLegend** | Color and size scale legends |
+| **MapControls** | Zoom/pan controls |
+| **AccessibleMapFallback** | Table fallback for screen readers |
+
+## Patterns
+
+- **Controls-first**: Storybook exposes projection, scale, and legend toggles for rapid tweaking
+- **Data-realistic**: Stories rely on real TopoJSON/GeoJSON fixtures (US states, world countries)
+- **Accessibility**: Every story includes `a11y.description` plus table/narrative fallbacks
+- **Interactions**: Hover and click-to-select flows demonstrated in component stories
+
+## Quick Links
+
+Explore the individual component stories in the sidebar:
+
+- **ChoroplethMap** — color scale variants, projections, interactions
+- **BubbleMap** — clustering, categorical coloring, size legends, no-basemap mode
+- **SpatialContainer** — loading/error states, context management
+- **MapLegend**, **MapControls**, **AccessibleMapFallback** — supporting components

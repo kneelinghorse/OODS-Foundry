@@ -1,0 +1,32 @@
+import { Meta, Canvas, Story, Controls } from '@storybook/blocks';
+import * as BubbleStories from './BubbleMap.stories';
+
+<Meta of={BubbleStories} />
+
+# BubbleMap
+
+Symbol map component for displaying point data with size and color encoding. Supports clustering for dense datasets, categorical and continuous color scales, and accessible table fallbacks.
+
+## Demos
+
+<Canvas>
+  <Story of={BubbleStories.Default} />
+</Canvas>
+
+<Canvas>
+  <Story of={BubbleStories.Clustered} />
+</Canvas>
+
+## Controls & Props
+
+- Projection: `albersUsa`, `mercator`, `equalEarth`, `naturalEarth1`
+- Clustering: enable/disable plus radius/minPoints sliders
+- Sizing: `sizeField`, `sizeRange`, and optional continuous legends
+- Coloring: categorical or continuous via `colorField`/`colorType`
+
+<Controls of={BubbleStories.Default} />
+
+## Accessibility
+
+- Provide `a11y.description` and `tableFallback` captions so bubble data is reachable without the visual map.
+- Hover and click handlers emit the raw datum, enabling live region announcements or dashboard wiring.
