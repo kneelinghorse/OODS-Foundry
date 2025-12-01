@@ -1,4 +1,5 @@
 // Ensure design-token variables are present before any DS CSS consumes them.
+import '../packages/tokens/dist/css/tokens.css';
 import '../apps/explorer/src/styles/tokens.css';
 import '../apps/explorer/src/styles/overlays.css';
 import '../apps/explorer/src/styles/index.css';
@@ -138,7 +139,6 @@ const GlobalsWrapper: React.FC<GlobalsWrapperProps> = ({ theme, brand, children 
 const preview: Preview = {
   parameters: {
     layout: 'centered',
-    actions: { argTypesRegex: '^on[A-Z].*' },
     controls: {
       matchers: {
         color: /(background|color)$/i,

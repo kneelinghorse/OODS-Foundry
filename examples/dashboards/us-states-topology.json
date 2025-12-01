@@ -1,0 +1,56 @@
+{
+  "type": "Topology",
+  "objects": {
+    "states": {
+      "type": "GeometryCollection",
+      "geometries": [
+        {
+          "type": "Polygon",
+          "properties": { "name": "California", "abbrev": "CA" },
+          "id": "CA",
+          "arcs": [[0]]
+        },
+        {
+          "type": "Polygon",
+          "properties": { "name": "Texas", "abbrev": "TX" },
+          "id": "TX",
+          "arcs": [[1]]
+        },
+        {
+          "type": "Polygon",
+          "properties": { "name": "Florida", "abbrev": "FL" },
+          "id": "FL",
+          "arcs": [[2]]
+        },
+        {
+          "type": "Polygon",
+          "properties": { "name": "New York", "abbrev": "NY" },
+          "id": "NY",
+          "arcs": [[3]]
+        },
+        {
+          "type": "Polygon",
+          "properties": { "name": "Washington", "abbrev": "WA" },
+          "id": "WA",
+          "arcs": [[4]]
+        },
+        {
+          "type": "Polygon",
+          "properties": { "name": "Colorado", "abbrev": "CO" },
+          "id": "CO",
+          "arcs": [[5]]
+        }
+      ]
+    }
+  },
+  "arcs": [
+    [[-124, 32], [-114, 32], [-114, 42], [-124, 42], [-124, 32]],
+    [[-106, 26], [-93, 26], [-93, 36], [-106, 36], [-106, 26]],
+    [[-87, 25], [-80, 25], [-80, 31], [-87, 31], [-87, 25]],
+    [[-80, 40], [-72, 40], [-72, 45], [-80, 45], [-80, 40]],
+    [[-125, 46], [-117, 46], [-117, 49], [-125, 49], [-125, 46]],
+    [[-109, 37], [-102, 37], [-102, 41], [-109, 41], [-109, 37]]
+  ],
+  "bbox": [-125, 25, -72, 49]
+}
+

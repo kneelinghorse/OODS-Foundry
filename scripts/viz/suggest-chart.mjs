@@ -7,9 +7,9 @@ const tsconfigPath = path.resolve('tsconfig.json');
 const unregister = await register({ tsconfig: tsconfigPath });
 
 try {
-  const cliPath = new URL('../../src/viz/patterns/suggest-chart-cli.ts', import.meta.url);
-  const { runCli } = await import(fileURLToPath(cliPath));
-  await runCli(process.argv.slice(2));
+  const cliPath = new URL('../../src/cli/viz-suggest.ts', import.meta.url);
+  const { runVizSuggest } = await import(fileURLToPath(cliPath));
+  await runVizSuggest(process.argv.slice(2));
 } finally {
   await unregister();
 }

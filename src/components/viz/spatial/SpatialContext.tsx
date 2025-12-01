@@ -7,6 +7,7 @@
 
 import { createContext, useContext, type ReactNode, type JSX } from 'react';
 import type { Feature } from 'geojson';
+import type { GeoProjection } from 'd3-geo';
 import type { ProjectionConfig, SpatialA11yConfig } from '../../../types/viz/spatial.js';
 import type { DataRecord } from '../../../viz/adapters/spatial/geo-data-joiner.js';
 import type { OrderedLayerConfig } from './utils/layer-utils.js';
@@ -27,6 +28,7 @@ export interface SpatialContextValue {
   features: Feature[];
   joinedData: Map<string, DataRecord>;
   project?: (lon: number, lat: number) => [number, number] | null;
+  projectionInstance?: GeoProjection;
   bounds?: [[number, number], [number, number]];
 
   // Interaction handlers
@@ -52,6 +54,15 @@ export function useSpatialContext(): SpatialContextValue {
     throw new Error('useSpatialContext must be used within SpatialContextProvider');
   }
   return context;
+}
+
+/**
+ * Optional hook that returns null when no SpatialContext provider is present.
+ *
+ * Useful for components that can accept explicit props but prefer context defaults.
+ */
+export function useOptionalSpatialContext(): SpatialContextValue | null {
+  return useContext(SpatialContext);
 }
 
 /**

@@ -118,7 +118,12 @@ Divides data domain into equal-sized intervals.
   valueField="temperature"
   geoJoinKey="county"
   colorScale="quantize"
-  colorRange={['#f0f0f0', '#bdbdbd', '#737373', '#252525']}
+  colorRange={[
+    'var(--oods-viz-scale-sequential-01)',
+    'var(--oods-viz-scale-sequential-03)',
+    'var(--oods-viz-scale-sequential-05)',
+    'var(--oods-viz-scale-sequential-07)',
+  ]}
   a11y={{ description: 'Average temperature by county' }}
 />
 ```
@@ -133,7 +138,12 @@ Ensures equal number of data points in each color class. Good for skewed distrib
   valueField="income"
   geoJoinKey="zipcode"
   colorScale="quantile"
-  colorRange={['#edf8fb', '#b3cde3', '#8c96c6', '#88419d']}
+  colorRange={[
+    'var(--oods-viz-scale-sequential-01)',
+    'var(--oods-viz-scale-sequential-03)',
+    'var(--oods-viz-scale-sequential-05)',
+    'var(--oods-viz-scale-sequential-07)',
+  ]}
   a11y={{ description: 'Median household income by ZIP code' }}
 />
 ```
@@ -149,7 +159,12 @@ Uses custom thresholds for meaningful categories.
   geoJoinKey="state"
   colorScale="threshold"
   thresholds={[5, 7, 10]}
-  colorRange={['#feedde', '#fdbe85', '#fd8d3c', '#d94701']}
+  colorRange={[
+    'var(--oods-viz-scale-sequential-01)',
+    'var(--oods-viz-scale-sequential-03)',
+    'var(--oods-viz-scale-sequential-05)',
+    'var(--oods-viz-scale-sequential-07)',
+  ]}
   a11y={{ description: 'Unemployment rate by state' }}
 />
 ```
@@ -315,19 +330,19 @@ Use design tokens for color ranges:
 ```tsx
 // Sequential (single hue)
 colorRange={[
-  'var(--viz-scale-sequential-blue-1)',
-  'var(--viz-scale-sequential-blue-3)',
-  'var(--viz-scale-sequential-blue-5)',
-  'var(--viz-scale-sequential-blue-7)',
+  'var(--oods-viz-scale-sequential-01)',
+  'var(--oods-viz-scale-sequential-03)',
+  'var(--oods-viz-scale-sequential-05)',
+  'var(--oods-viz-scale-sequential-07)',
 ]}
 
 // Diverging (two hues)
 colorRange={[
-  'var(--viz-scale-diverging-red-4)',
-  'var(--viz-scale-diverging-red-2)',
-  'var(--viz-scale-diverging-neutral)',
-  'var(--viz-scale-diverging-blue-2)',
-  'var(--viz-scale-diverging-blue-4)',
+  'var(--oods-viz-scale-diverging-red-4)',
+  'var(--oods-viz-scale-diverging-red-2)',
+  'var(--oods-viz-scale-diverging-neutral)',
+  'var(--oods-viz-scale-diverging-blue-2)',
+  'var(--oods-viz-scale-diverging-blue-4)',
 ]}
 ```
 
@@ -341,7 +356,12 @@ colorRange={[
   valueField="metric"
   geoJoinKey="state"
   projection="albersUsa"
-  colorRange={['#fee5d9', '#fcae91', '#fb6a4a', '#de2d26']}
+  colorRange={[
+    'var(--oods-viz-scale-sequential-01)',
+    'var(--oods-viz-scale-sequential-03)',
+    'var(--oods-viz-scale-sequential-05)',
+    'var(--oods-viz-scale-sequential-07)',
+  ]}
   a11y={{ description: 'US states metric visualization' }}
 />
 ```
@@ -354,7 +374,12 @@ colorRange={[
   valueField="gdp"
   geoJoinKey="iso3"
   projection="equalEarth"
-  colorRange={['#fff7ec', '#fee8c8', '#fdd49e', '#fc8d59']}
+  colorRange={[
+    'var(--oods-viz-scale-sequential-01)',
+    'var(--oods-viz-scale-sequential-03)',
+    'var(--oods-viz-scale-sequential-05)',
+    'var(--oods-viz-scale-sequential-07)',
+  ]}
   a11y={{ description: 'World GDP by country' }}
 />
 ```
@@ -369,7 +394,12 @@ colorRange={[
   projection="mercator"
   fitToData={true}
   colorScale="quantile"
-  colorRange={['#f0f0f0', '#bdbdbd', '#737373', '#252525']}
+  colorRange={[
+    'var(--oods-viz-scale-sequential-01)',
+    'var(--oods-viz-scale-sequential-03)',
+    'var(--oods-viz-scale-sequential-05)',
+    'var(--oods-viz-scale-sequential-07)',
+  ]}
   a11y={{ description: 'Population density by county' }}
 />
 ```
@@ -408,11 +438,16 @@ const memoizedData = useMemo(() => processData(rawData), [rawData]);
 ```tsx
 // ❌ Wrong
 thresholds={[10, 20, 30]}
-colorRange={['#fff', '#ccc', '#999']}  // 3 colors, need 4
+colorRange={['var(--oods-viz-scale-sequential-01)', 'var(--oods-viz-scale-sequential-03)', 'var(--oods-viz-scale-sequential-05)']}  // 3 colors, need 4
 
 // ✓ Correct
 thresholds={[10, 20, 30]}
-colorRange={['#fff', '#ddd', '#999', '#666']}  // 4 colors
+colorRange={[
+  'var(--oods-viz-scale-sequential-01)',
+  'var(--oods-viz-scale-sequential-03)',
+  'var(--oods-viz-scale-sequential-05)',
+  'var(--oods-viz-scale-sequential-07)',
+]}  // 4 colors
 ```
 
 ## Related Components

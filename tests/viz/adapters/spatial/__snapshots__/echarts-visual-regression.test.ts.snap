@@ -1,0 +1,328 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ECharts spatial adapter (visual smoke) > produces stable bubble map option output 1`] = `
+{
+  "__registration": {
+    "features": [
+      {
+        "geometry": {
+          "coordinates": [
+            [
+              [
+                0,
+                0,
+              ],
+              [
+                3,
+                0,
+              ],
+              [
+                3,
+                2,
+              ],
+              [
+                0,
+                2,
+              ],
+              [
+                0,
+                0,
+              ],
+            ],
+          ],
+          "type": "Polygon",
+        },
+        "properties": {
+          "name": "Region A",
+        },
+        "type": "Feature",
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            [
+              [
+                0,
+                2,
+              ],
+              [
+                3,
+                2,
+              ],
+              [
+                3,
+                4,
+              ],
+              [
+                0,
+                4,
+              ],
+              [
+                0,
+                2,
+              ],
+            ],
+          ],
+          "type": "Polygon",
+        },
+        "properties": {
+          "name": "Region B",
+        },
+        "type": "Feature",
+      },
+    ],
+    "type": "FeatureCollection",
+  },
+  "aria": {
+    "description": "Bubble map smoke test",
+    "enabled": true,
+  },
+  "geo": {
+    "itemStyle": {
+      "areaColor": "var(--sys-surface-strong, #f2f2f2)",
+      "borderColor": "var(--sys-border-subtle, #e0e0e0)",
+    },
+    "label": {
+      "show": false,
+    },
+    "map": "custom-geo",
+    "roam": false,
+  },
+  "series": [
+    {
+      "coordinateSystem": "geo",
+      "data": [
+        {
+          "itemStyle": {
+            "color": "#2f4b7c",
+          },
+          "name": "-90",
+          "raw": {
+            "city": "Alpha",
+            "group": "east",
+            "lat": 35,
+            "lon": -90,
+            "magnitude": 15,
+          },
+          "value": [
+            -90,
+            35,
+            15,
+            null,
+          ],
+        },
+        {
+          "itemStyle": {
+            "color": "#ffa600",
+          },
+          "name": "-110",
+          "raw": {
+            "city": "Beta",
+            "group": "west",
+            "lat": 45,
+            "lon": -110,
+            "magnitude": 40,
+          },
+          "value": [
+            -110,
+            45,
+            40,
+            null,
+          ],
+        },
+      ],
+      "encode": {
+        "lat": 1,
+        "lng": 0,
+        "value": 3,
+      },
+      "geoIndex": 0,
+      "name": "Bubble Map",
+      "symbolSize": "[function]",
+      "tooltip": {
+        "formatter": "{b}: {c[2]}",
+      },
+      "type": "scatter",
+    },
+  ],
+  "tooltip": {
+    "trigger": "item",
+  },
+  "usermeta": {
+    "oods": {
+      "a11y": {
+        "description": "Bubble map smoke test",
+      },
+      "dimensions": {
+        "height": 280,
+        "width": 400,
+      },
+    },
+  },
+}
+`;
+
+exports[`ECharts spatial adapter (visual smoke) > produces stable choropleth option output 1`] = `
+{
+  "__registration": {
+    "features": [
+      {
+        "geometry": {
+          "coordinates": [
+            [
+              [
+                0,
+                0,
+              ],
+              [
+                3,
+                0,
+              ],
+              [
+                3,
+                2,
+              ],
+              [
+                0,
+                2,
+              ],
+              [
+                0,
+                0,
+              ],
+            ],
+          ],
+          "type": "Polygon",
+        },
+        "properties": {
+          "name": "Region A",
+          "value": 1,
+        },
+        "type": "Feature",
+      },
+      {
+        "geometry": {
+          "coordinates": [
+            [
+              [
+                0,
+                2,
+              ],
+              [
+                3,
+                2,
+              ],
+              [
+                3,
+                4,
+              ],
+              [
+                0,
+                4,
+              ],
+              [
+                0,
+                2,
+              ],
+            ],
+          ],
+          "type": "Polygon",
+        },
+        "properties": {
+          "name": "Region B",
+          "value": 2,
+        },
+        "type": "Feature",
+      },
+    ],
+    "type": "FeatureCollection",
+  },
+  "aria": {
+    "description": "Choropleth smoke test",
+    "enabled": true,
+  },
+  "geo": {
+    "emphasis": {
+      "itemStyle": {
+        "areaColor": "var(--sys-surface-raised, #dbeafe)",
+      },
+    },
+    "itemStyle": {
+      "areaColor": "var(--sys-surface-strong, #f2f2f2)",
+      "borderColor": "var(--sys-border-subtle, #e0e0e0)",
+    },
+    "label": {
+      "show": false,
+    },
+    "map": "choropleth-map",
+    "roam": false,
+  },
+  "series": [
+    {
+      "data": [
+        {
+          "name": "Region A",
+          "rawProperties": {
+            "name": "Region A",
+            "value": 1,
+          },
+          "value": 1,
+        },
+        {
+          "name": "Region B",
+          "rawProperties": {
+            "name": "Region B",
+            "value": 2,
+          },
+          "value": 2,
+        },
+      ],
+      "emphasis": {
+        "focus": "self",
+      },
+      "geoIndex": 0,
+      "map": "choropleth-map",
+      "name": "Choropleth",
+      "type": "map",
+    },
+  ],
+  "tooltip": {
+    "trigger": "item",
+  },
+  "usermeta": {
+    "oods": {
+      "a11y": {
+        "description": "Choropleth smoke test",
+      },
+      "dimensions": {
+        "height": 240,
+        "width": 360,
+      },
+    },
+  },
+  "visualMap": {
+    "pieces": [
+      {
+        "color": "#e0f3f8",
+        "label": "Bin 1",
+        "max": 1.3333333333333333,
+        "min": 1,
+      },
+      {
+        "color": "#abd9e9",
+        "label": "Bin 2",
+        "max": 1.6666666666666665,
+        "min": 1.3333333333333333,
+      },
+      {
+        "color": "#74add1",
+        "label": "Bin 3",
+        "max": 2,
+        "min": 1.6666666666666665,
+      },
+    ],
+    "splitNumber": 3,
+    "type": "piecewise",
+  },
+}
+`;

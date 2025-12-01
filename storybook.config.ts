@@ -48,6 +48,8 @@ const config: StorybookConfig = {
     `${storiesRoot}/**/*.stories.@(ts|tsx)`,
     `${explorerStoriesRoot}/**/*.mdx`,
     `${explorerStoriesRoot}/**/*.stories.@(ts|tsx)`,
+    './src/components/**/*.mdx',
+    './src/components/**/*.stories.@(ts|tsx)', // Component co-located stories
   ],
   addons: [
     '@storybook/addon-docs',

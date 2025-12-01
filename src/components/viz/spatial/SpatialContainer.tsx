@@ -21,6 +21,8 @@ import { useSpatialSpec } from '../../../viz/hooks/useSpatialSpec.js';
 import { useSpatialProjection } from '../../../viz/hooks/useSpatialProjection.js';
 import { SpatialContextProvider, type GeoFeature } from './SpatialContext.js';
 import { mergeLayerDefaults, orderLayers } from './utils/layer-utils.js';
+import { setupKeyboardNav, announceFeatureFocus } from './utils/keyboard-nav-utils.js';
+import { announce as announceToScreenReader } from './utils/screen-reader-utils.js';
 import type {
   ProjectionConfig,
   ProjectionType,
@@ -131,7 +133,12 @@ export function SpatialContainer({
     [features]
   );
 
-  const { project, bounds } = useSpatialProjection(projectionType, projectionConfig, { width, height }, featureCollection);
+  const { project, bounds, projection: projectionInstance } = useSpatialProjection(
+    projectionType,
+    projectionConfig,
+    { width, height },
+    featureCollection
+  );
 
   const spatialA11yConfig: SpatialA11yConfig = useMemo(
     () => ({
@@ -181,11 +188,14 @@ export function SpatialContainer({
     return [] as string[];
   }, [a11y.tableFallback, data, features]);
 
-  const announce = useCallback(
-    (message: string) => {
+  const setLiveAnnouncement = useCallback(
+    (message: string, announceSr: boolean = true) => {
       setLiveMessage(message);
+      if (announceSr) {
+        announceToScreenReader(message);
+      }
     },
-    [setLiveMessage]
+    []
   );
 
   const handleFeatureHover = useCallback(
@@ -193,7 +203,7 @@ export function SpatialContainer({
       if (featureId === null) {
         setHoveredFeature(null);
         setFocusedIndex(-1);
-        announce('Focus cleared');
+        setLiveAnnouncement('Focus cleared');
         onFeatureHover?.(null);
         return;
       }
@@ -207,9 +217,10 @@ export function SpatialContainer({
       setHoveredFeature(featureId);
       setFocusedIndex(featureIds.indexOf(featureId));
       onFeatureHover?.(feature as GeoFeature, datum);
-      announce(`Focused ${featureLabel(featureId, feature)}`);
+      const message = announceFeatureFocus(feature as GeoFeature, datum as DataRecord | undefined, featureIds.length);
+      setLiveAnnouncement(message, false);
     },
-    [announce, featureIds, featureMap, joinedDataMap, onFeatureHover]
+    [featureIds, featureMap, joinedDataMap, onFeatureHover, setLiveAnnouncement]
   );
 
   const handleFeatureClick = useCallback(
@@ -221,67 +232,46 @@ export function SpatialContainer({
       const datum = joinedDataMap.get(featureId);
       setSelectedFeature(featureId);
       onFeatureClick?.(feature as GeoFeature, datum);
-      announce(`Selected ${featureLabel(featureId, feature)}`);
+      setLiveAnnouncement(`Selected ${featureLabel(featureId, feature)}`);
     },
-    [announce, featureMap, joinedDataMap, onFeatureClick]
+    [featureMap, joinedDataMap, onFeatureClick, setLiveAnnouncement]
   );
 
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container || featureIds.length === 0) {
+    if (!containerRef.current || featureIds.length === 0) {
       return;
     }
 
-    const focusFeature = (index: number): void => {
-      const boundedIndex = ((index % featureIds.length) + featureIds.length) % featureIds.length;
-      const featureId = featureIds[boundedIndex];
-      setFocusedIndex(boundedIndex);
-      handleFeatureHover(featureId);
-    };
-
-    const handleKeyDown = (event: KeyboardEvent): void => {
-      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
-        event.preventDefault();
-        const delta = event.key === 'ArrowLeft' || event.key === 'ArrowUp' ? -1 : 1;
-        const nextIndex = focusedIndex === -1 ? 0 : focusedIndex + delta;
-        focusFeature(nextIndex);
-        return;
-      }
-
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        const targetIndex = focusedIndex === -1 ? 0 : focusedIndex;
-        const targetFeature = featureIds[targetIndex];
-        if (targetFeature) {
-          handleFeatureClick(targetFeature);
+    const cleanup = setupKeyboardNav(containerRef, featureIds, {
+      getCurrentFeatureId: () => (focusedIndex >= 0 ? featureIds[focusedIndex] : null),
+      onFocus: (featureId) => {
+        if (featureId === null) {
+          setSelectedFeature(null);
+          setHoveredFeature(null);
+          setFocusedIndex(-1);
+          setLiveAnnouncement('Focus cleared');
+          return;
         }
-        return;
-      }
-
-      if (event.key === 'Escape') {
-        event.preventDefault();
+        handleFeatureHover(featureId);
+      },
+      onSelect: (featureId) => {
+        if (featureId) {
+          handleFeatureClick(featureId);
+        }
+      },
+      onClear: () => {
         setSelectedFeature(null);
         setHoveredFeature(null);
         setFocusedIndex(-1);
-        announce('Selection cleared');
-        return;
-      }
+        setLiveAnnouncement('Selection cleared');
+      },
+      onZoomIn: () => setLiveAnnouncement('Zoom in'),
+      onZoomOut: () => setLiveAnnouncement('Zoom out'),
+      onPan: (direction) => setLiveAnnouncement(`Pan ${direction}`),
+    });
 
-      if (event.key === '+' || event.key === '=') {
-        announce('Zoom in');
-        return;
-      }
-
-      if (event.key === '-') {
-        announce('Zoom out');
-      }
-    };
-
-    container.addEventListener('keydown', handleKeyDown);
-    return () => {
-      container.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [announce, featureIds, focusedIndex, handleFeatureClick, handleFeatureHover]);
+    return cleanup;
+  }, [featureIds, focusedIndex, handleFeatureClick, handleFeatureHover, setLiveAnnouncement]);
 
   const contextValue = useMemo(
     () => ({
@@ -296,6 +286,7 @@ export function SpatialContainer({
       hoveredFeature,
       selectedFeature,
       project,
+      projectionInstance,
       bounds,
     }),
     [
@@ -311,6 +302,7 @@ export function SpatialContainer({
       hoveredFeature,
       selectedFeature,
       project,
+      projectionInstance,
       bounds,
     ]
   );

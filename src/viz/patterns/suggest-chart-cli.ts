@@ -7,6 +7,8 @@ import { scoreLayoutForPattern, type LayoutRecommendationBundle } from './layout
 import { recommendInteractions, type InteractionBundle } from './interaction-scorer.js';
 import { generateScaffold, type ScaffoldFormat } from './scaffold-generator.js';
 import { suggestPatterns, type PatternSuggestion, type SchemaIntent } from './suggest-chart.js';
+import { detectSpatialType, type SpatialDetectionResult } from './spatial-detection.js';
+import { generateSpatialScaffold, type SpatialScaffoldOptions } from './spatial-scaffold.js';
 import type { DensityPreference, IntentGoal } from './index.js';
 
 type MutableSchemaIntent = {
@@ -20,6 +22,8 @@ export async function runCli(argv: string[]): Promise<void> {
     args: argv,
     options: {
       help: { type: 'boolean', short: 'h' },
+      type: { type: 'string' },
+      data: { type: 'string' },
       measures: { type: 'string' },
       dimensions: { type: 'string' },
       temporals: { type: 'string' },
@@ -56,10 +60,30 @@ export async function runCli(argv: string[]): Promise<void> {
     return;
   }
 
+  const mode = parseSuggestType(values.type);
   const includeLayout = values.layout === true;
   const includeInteractions = values.interactions === true;
   const scaffoldRequested = values.scaffold === true;
   const scaffoldFormat = parseScaffoldFormat(values['scaffold-format']);
+
+  if (mode === 'spatial') {
+    try {
+      const spatialDataPath = typeof values.data === 'string' ? values.data : undefined;
+      const rows = readSpatialData(spatialDataPath);
+      const detection = detectSpatialType(rows);
+      printSpatialDetection(detection);
+      if (scaffoldRequested) {
+        const options = buildSpatialScaffoldOptions(detection, rows);
+        const scaffold = generateSpatialScaffold(options);
+        printSpatialScaffold(scaffold);
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(`spatial viz:suggest failed: ${message}`);
+      process.exitCode = 1;
+    }
+    return;
+  }
 
   try {
     const descriptorArg = typeof positionals[0] === 'string' ? positionals[0] : undefined;
@@ -375,6 +399,28 @@ function printSuggestions(suggestions: EnrichedSuggestion[], options: PrintOptio
   console.log('Docs → docs/viz/pattern-library.md | Decision guide → docs/viz/chart-selection-guide.md');
 }
 
+function printSpatialDetection(result: SpatialDetectionResult): void {
+  console.log('Spatial Suggestion');
+  console.log('==================');
+  console.log(`Type: ${result.type}`);
+  console.log(`Confidence: ${formatPercent(result.confidence)}`);
+  const fields = result.detectedFields;
+  if (fields.latField && fields.lonField) {
+    console.log(`Coordinates: ${fields.latField}/${fields.lonField}`);
+  }
+  if (fields.regionField) {
+    console.log(`Region field: ${fields.regionField}`);
+  }
+  if (fields.geoFields?.length) {
+    console.log(`Geometry fields: ${fields.geoFields.join(', ')}`);
+  }
+  if (fields.valueField) {
+    console.log(`Value field: ${fields.valueField}`);
+  }
+  console.log('Recommendations:');
+  result.recommendations.forEach((entry) => console.log(`  • ${entry}`));
+}
+
 function emitScaffold(entry: EnrichedSuggestion | undefined, schema: SchemaIntent, format: ScaffoldFormat): void {
   if (!entry) {
     console.log('Unable to scaffold without a suggestion.');
@@ -420,6 +466,102 @@ function formatPercent(value: number): string {
   return `${Math.round(bounded * 100)}%`;
 }
 
+function parseSuggestType(input: unknown): 'chart' | 'spatial' {
+  if (typeof input !== 'string') {
+    return 'chart';
+  }
+  const normalized = input.trim().toLowerCase();
+  return normalized === 'spatial' ? 'spatial' : 'chart';
+}
+
+function readSpatialData(filePath: string | undefined): Array<Record<string, unknown>> {
+  if (!filePath) {
+    throw new Error('Provide --data <path> when using --type spatial.');
+  }
+  const resolved = path.resolve(filePath);
+  const payload = JSON.parse(readFileSync(resolved, 'utf-8')) as unknown;
+  const rows = extractRows(payload);
+  if (!rows.length) {
+    throw new Error('Spatial data must contain at least one record object.');
+  }
+  return rows;
+}
+
+function extractRows(payload: unknown): Array<Record<string, unknown>> {
+  if (Array.isArray(payload)) {
+    return coerceRows(payload);
+  }
+  if (payload && typeof payload === 'object') {
+    const values = (payload as Record<string, unknown>).values;
+    const data = (payload as Record<string, unknown>).data;
+    if (Array.isArray(values)) {
+      return coerceRows(values);
+    }
+    if (Array.isArray(data)) {
+      return coerceRows(data);
+    }
+  }
+  throw new Error('Spatial data must be an array or an object with a values/data array.');
+}
+
+function coerceRows(input: unknown[]): Array<Record<string, unknown>> {
+  return input.filter((row): row is Record<string, unknown> => Boolean(row) && typeof row === 'object' && !Array.isArray(row));
+}
+
+function buildSpatialScaffoldOptions(
+  detection: SpatialDetectionResult,
+  rows: Array<Record<string, unknown>>,
+): SpatialScaffoldOptions {
+  const type: SpatialScaffoldOptions['type'] = detection.type === 'bubble' ? 'bubble' : 'choropleth';
+  const excluded = [detection.detectedFields.latField, detection.detectedFields.lonField, detection.detectedFields.regionField];
+  const valueField = detection.detectedFields.valueField ?? pickNumericField(rows, excluded);
+
+  if (type === 'bubble') {
+    return {
+      type,
+      latField: detection.detectedFields.latField ?? 'latitude',
+      lonField: detection.detectedFields.lonField ?? 'longitude',
+      sizeField: valueField ?? 'value',
+      colorField: detection.detectedFields.regionField ?? 'category',
+      valueField: valueField ?? 'value',
+    };
+  }
+
+  return {
+    type,
+    regionField: detection.detectedFields.regionField ?? 'region',
+    valueField: valueField ?? 'value',
+    geoSource: detection.detectedFields.geoFields?.[0] ?? 'geo.json',
+  };
+}
+
+function pickNumericField(
+  rows: Array<Record<string, unknown>>,
+  excluded: Array<string | undefined>,
+): string | undefined {
+  const excludedSet = new Set(excluded.filter(Boolean) as string[]);
+  const scores = new Map<string, number>();
+  rows.forEach((row) => {
+    Object.entries(row).forEach(([key, value]) => {
+      const normalized = key.trim().toLowerCase();
+      if (excludedSet.has(normalized)) {
+        return;
+      }
+      if (typeof value === 'number') {
+        scores.set(normalized, (scores.get(normalized) ?? 0) + 1);
+      }
+    });
+  });
+  const sorted = Array.from(scores.entries()).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+  return sorted[0]?.[0];
+}
+
+function printSpatialScaffold(scaffold: string): void {
+  console.log('\nSpatial Scaffold (TypeScript)');
+  console.log('============================');
+  console.log(scaffold);
+}
+
 function printHelp(): void {
   console.log(`Usage: pnpm viz:suggest [descriptor]
 
@@ -427,10 +569,13 @@ Examples:
   pnpm viz:suggest "1Q+2N goal=trend"
   pnpm viz:suggest --measures 1 --dimensions 3 --temporals 1 --goal composition
   pnpm viz:suggest --file schema.json
+  pnpm viz:suggest --type spatial --data ./my-geo-data.json --scaffold
 
 Flags:
   --help            Show this message
   --list            Print all patterns
+  --type            chart|spatial (default: chart)
+  --data            Path to JSON array for spatial detection
   --measures        Count of quantitative fields
   --dimensions      Count of discrete dimensions (includes temporal)
   --temporals       Count of temporal fields
