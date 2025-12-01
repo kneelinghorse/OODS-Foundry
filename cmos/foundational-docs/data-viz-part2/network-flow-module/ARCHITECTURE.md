@@ -642,6 +642,130 @@ For Sankey in Vega, we output a Full Vega spec with direct path binding:
 }
 ```
 
+### 5.2 OODS Token Usage in Adapters
+
+**CRITICAL:** Visualization adapters and stories must use the correct OODS CSS variable names.
+
+#### Token Naming Convention
+
+The OODS token system uses a three-tier hierarchy:
+
+| Tier | Prefix | Example | Use Case |
+|------|--------|---------|----------|
+| Reference | `--ref-` | `--ref-color-neutral-100` | Raw design values (don't use directly) |
+| System | `--sys-` | `--sys-surface-canvas` | Semantic tokens for theming |
+| Component | `--cmp-` | `--cmp-surface-canvas` | Component-specific mappings |
+
+#### Common Token Mistakes
+
+**Wrong:** `var(--sys-surface)` - This token doesn't exist!
+
+**Correct Surface Tokens:**
+```css
+/* Page background */
+--sys-surface-canvas
+
+/* Subtle panel background */
+--sys-surface-subtle
+
+/* Raised/elevated surfaces */
+--sys-surface-raised
+
+/* Interactive surfaces */
+--sys-surface-interactive-primary-default
+```
+
+**Correct Border Tokens:**
+```css
+--sys-border-subtle
+--sys-border-strong
+```
+
+**Correct Text Tokens:**
+```css
+--sys-text-primary
+--sys-text-secondary
+--sys-text-muted
+--sys-text-strong
+```
+
+#### ECharts Canvas Renderer Limitation
+
+**CRITICAL:** ECharts uses a canvas renderer that **cannot resolve CSS variables**. You must resolve tokens to actual color values (hex, rgb) at runtime.
+
+```typescript
+// WRONG - ECharts will show these as black (#000000)
+const palette = ['var(--viz-scale-categorical-01)', 'var(--viz-scale-categorical-02)'];
+
+// CORRECT - Use tokensBundle to resolve to actual colors
+import tokensBundle from '@oods/tokens';
+
+const CSS_VARIABLE_MAP = (tokensBundle?.cssVariables as Record<string, string>) ?? {};
+
+function resolveTokenToColor(token: string): string | undefined {
+  const normalized = token.startsWith('--') ? token : `--${token}`;
+  const value = CSS_VARIABLE_MAP[normalized];
+  if (!value) return undefined;
+
+  // OKLCH colors need conversion to RGB for canvas
+  if (value.toLowerCase().startsWith('oklch(')) {
+    return convertOklchToRgb(value);
+  }
+  return value;
+}
+```
+
+#### Fallback Palettes
+
+Always provide fallback colors in case tokens aren't available:
+
+```typescript
+const FALLBACK_PALETTE = [
+  '#5470c6', '#91cc75', '#fac858', '#ee6666',
+  '#73c0de', '#3ba272', '#fc8452', '#9a60b4',
+];
+
+function buildPalette(): readonly string[] {
+  const tokens = getVizScaleTokens('categorical', { count: 8 });
+  const resolved = tokens.map(resolveTokenToColor);
+
+  if (resolved.every((c) => c === undefined)) {
+    return FALLBACK_PALETTE;
+  }
+
+  return resolved.map((color, i) =>
+    color ?? FALLBACK_PALETTE[i % FALLBACK_PALETTE.length]
+  );
+}
+```
+
+#### UI Colors (Borders, Labels)
+
+For UI elements, use hardcoded fallbacks since ECharts canvas can't use CSS cascade:
+
+```typescript
+const BORDER_COLOR = '#e0e0e0';      // --sys-border-subtle
+const LABEL_COLOR = '#333333';        // --sys-text-primary
+const SURFACE_COLOR = '#ffffff';      // --sys-surface-canvas
+```
+
+#### Storybook Story Containers
+
+Stories should use fallback chains for container backgrounds:
+
+```tsx
+<div style={{
+  background: 'var(--sys-surface-canvas, var(--cmp-surface-canvas, transparent))',
+}}>
+  {/* Chart renders here */}
+</div>
+```
+
+The fallback chain ensures:
+1. Primary: System token (for theme switching)
+2. Fallback: Component token (if system not available)
+3. Final: Transparent (if no tokens loaded)
+
 ---
 
 ## 6. Trait Definitions
