@@ -1,0 +1,14 @@
+{
+  "nodes": [
+    { "name": "Coal" },
+    { "name": "Electricity" },
+    { "name": "Homes" },
+    { "name": "Industry" }
+  ],
+  "links": [
+    { "source": "Coal", "target": "Electricity", "value": 100 },
+    { "source": "Electricity", "target": "Homes", "value": 70 },
+    { "source": "Electricity", "target": "Industry", "value": 20 },
+    { "source": "Industry", "target": "Coal", "value": 5 }
+  ]
+}

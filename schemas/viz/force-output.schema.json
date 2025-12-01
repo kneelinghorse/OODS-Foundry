@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://oods.dev/schemas/viz/force-output.schema.json",
+  "title": "Force Layout Output",
+  "description": "Output structure for force-directed network layouts.",
+  "type": "object",
+  "required": ["nodes", "links"],
+  "properties": {
+    "nodes": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/ForceNode" },
+      "description": "Nodes with solved x/y positions."
+    },
+    "links": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/ForceLink" },
+      "description": "Links containing denormalized coordinates."
+    }
+  },
+  "definitions": {
+    "ForceNode": {
+      "type": "object",
+      "required": ["id", "x", "y"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Node identifier."
+        },
+        "x": { "type": "number", "description": "Solved x position." },
+        "y": { "type": "number", "description": "Solved y position." }
+      },
+      "additionalProperties": true
+    },
+    "ForceLink": {
+      "type": "object",
+      "required": ["source", "target", "x1", "y1", "x2", "y2"],
+      "properties": {
+        "source": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Source node ID."
+        },
+        "target": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Target node ID."
+        },
+        "x1": { "type": "number", "description": "Source x position." },
+        "y1": { "type": "number", "description": "Source y position." },
+        "x2": { "type": "number", "description": "Target x position." },
+        "y2": { "type": "number", "description": "Target y position." }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

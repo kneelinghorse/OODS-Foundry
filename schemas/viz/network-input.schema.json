@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://oods.dev/schemas/viz/network-input.schema.json",
+  "title": "Network Graph Input",
+  "description": "Node/link input contract for force-directed network graphs.",
+  "type": "object",
+  "required": ["nodes", "links"],
+  "properties": {
+    "nodes": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/NetworkNode" },
+      "description": "List of nodes for the network graph."
+    },
+    "links": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/NetworkLink" },
+      "description": "List of links connecting nodes by ID."
+    }
+  },
+  "definitions": {
+    "NetworkNode": {
+      "type": "object",
+      "required": ["id"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Unique node identifier."
+        },
+        "group": {
+          "type": "string",
+          "description": "Optional grouping key for color/legend encoding."
+        },
+        "radius": {
+          "type": "number",
+          "description": "Optional radius for size encoding."
+        },
+        "fixed": {
+          "type": "boolean",
+          "description": "If true, position remains fixed when provided."
+        },
+        "x": {
+          "type": "number",
+          "description": "Initial or fixed x position."
+        },
+        "y": {
+          "type": "number",
+          "description": "Initial or fixed y position."
+        }
+      },
+      "additionalProperties": true
+    },
+    "NetworkLink": {
+      "type": "object",
+      "required": ["source", "target"],
+      "properties": {
+        "source": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Source node ID."
+        },
+        "target": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Target node ID."
+        },
+        "value": {
+          "type": "number",
+          "description": "Optional weight for the link."
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}
