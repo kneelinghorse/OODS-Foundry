@@ -1,6 +1,6 @@
 # OODS Visualization System Overview
 
-Sprint 21–23 produced a production-ready visualization stack that now powers trait-driven specs, dual renderers, complex layouts, and context-aware dashboards. This overview stitches the full system together so Sprint 24+ builders can navigate architecture, capabilities, and guardrails without rereading every sprint artifact.
+Sprint 21–23 produced a production-ready visualization stack that now powers trait-driven specs, dual renderers, complex layouts, and context-aware dashboards. Sprint 32 added the Spatial extension with pass-through adapters. This overview stitches the full system together so Sprint 24+ builders can navigate architecture, capabilities, and guardrails without rereading every sprint artifact.
 
 ## Audience & Scope
 - Product engineers adding charts, layouts, or dashboards to OODS applications.
@@ -14,6 +14,7 @@ Sprint 21–23 produced a production-ready visualization stack that now powers t
 | Normalized Spec | Single schema and Ajv validator describing every chart, layout, transform, and interaction | [`docs/viz/normalized-viz-spec.md`](./normalized-viz-spec.md), `schemas/viz/normalized-viz-spec.schema.json`
 | Renderers | Dual adapters (Vega-Lite + ECharts) with selector heuristics and parity tests | `src/viz/adapters/*`, [`docs/viz/renderer-selection-guide.md`](./renderer-selection-guide.md)
 | Components | Bar, Line, Scatter/Bubble, Area, Heatmap, VizFacetGrid, VizLayeredView, SharedLegend, VizContainer | `src/components/viz/*`, `docs/components/*`
+| Spatial Module | ChoroplethMap, BubbleMap, MapLegend, MapControls, AccessibleMapFallback, SpatialContainer/Context | `src/components/viz/spatial/*`, [`docs/viz/spatial-module.md`](./spatial-module.md)
 | Layout & Contexts | Dashboard + Chart contexts in view engine, transforms for stack/facet concat | `src/contexts/dashboard`, `docs/views/context-styling.md`
 | Tooling | CLI scaffolds, pattern library, performance + a11y guardrails | `scripts/viz/*`, [`docs/viz/cli-guide.md`](./cli-guide.md), [`docs/viz/pattern-library.md`](./pattern-library.md), `scripts/perf/run-viz-benchmarks.mjs`
 | Quality Gates | RDV.4 accessibility suite, OKLCH token guardrails, benchmark budgets, CI hooks | `tests/viz/**`, `tests/components/viz/**`, `tools/perf/viz-budget.json`, `pnpm a11y:diff`
@@ -45,6 +46,12 @@ Sprint 21–23 produced a production-ready visualization stack that now powers t
 - Renderer selector (`src/viz/adapters/renderer-selector.ts`) applies explicit preferences, data volume thresholds, and temporal bias (documented in [`renderer-selection-guide.md`](./renderer-selection-guide.md)).
 - Interaction bridges keep highlight/tooltip/filter semantics identical across renderers.
 
+### Spatial Module (v1.1)
+- Components: `SpatialContainer`, `ChoroplethMap`, `BubbleMap`, `MapLegend`, `MapControls`, `AccessibleMapFallback` (see [`spatial-module.md`](./spatial-module.md)).
+- Adapters: `vega-lite-spatial-adapter.ts` and `echarts-spatial-adapter.ts` reuse normalized specs and renderer selection heuristics; ECharts preferred for >10k points or streaming data.
+- Traits: Geocodable, HasProjection, LayeredOverlay describe geo readiness, projection config, and multi-layer composition.
+- Guardrails: Use `projectionInstance` from SpatialContext (no per-layer projections), real GeoJSON/TopoJSON fixtures, normalized join keys, and `--oods-` token prefix.
+
 ### Component & Layout Library
 - Components wrap adapters inside `VizContainer`, manage lifecycles, register a11y fallbacks, and surface hooks for interactions.
 - Layout components (`VizFacetGrid`, `VizLayeredView`, `SharedLegend`) render small multiples, overlays, and dashboard-style compositions using the same spec building blocks.
@@ -75,6 +82,7 @@ Sprint 21–23 produced a production-ready visualization stack that now powers t
 ## Reference Map
 - Specs & validation → [`normalized-viz-spec.md`](./normalized-viz-spec.md)
 - Renderer heuristics → [`renderer-selection-guide.md`](./renderer-selection-guide.md)
+- Spatial → [`spatial-module.md`](./spatial-module.md), [`spatial-patterns.md`](./spatial-patterns.md), [`spatial-dashboard-integration.md`](./spatial-dashboard-integration.md), [`spatial-accessibility.md`](./spatial-accessibility.md), [`spatial-migration.md`](./spatial-migration.md)
 - Patterns & CLI → [`pattern-library.md`](./pattern-library.md), [`cli-guide.md`](./cli-guide.md)
 - Performance & rendering proof → `scripts/perf/run-viz-benchmarks.mjs`, `tools/perf/viz-budget.json`
 - Accessibility & responsive behavior → [`anti-patterns.md`](./anti-patterns.md), [`responsive-strategies.md`](./responsive-strategies.md)

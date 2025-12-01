@@ -14,6 +14,7 @@ expect.extend({ toHaveNoViolations });
 import { SpatialContainer } from '../../../../src/components/viz/spatial/SpatialContainer.js';
 import type { SpatialSpec } from '../../../../src/types/viz/spatial.js';
 import type { FeatureCollection, Point } from 'geojson';
+import * as d3Geo from 'd3-geo';
 
 // Mock the hooks
 vi.mock('../../../../src/viz/hooks/useSpatialSpec.js', () => ({
@@ -38,6 +39,7 @@ vi.mock('../../../../src/viz/hooks/useSpatialProjection.js', () => ({
   useSpatialProjection: () => ({
     project: (lon: number, lat: number) => [lon * 10, lat * 10] as [number, number],
     fitToFeatures: () => ({ type: 'mercator' }),
+    projection: d3Geo.geoMercator(),
     bounds: [
       [-180, -90],
       [180, 90],

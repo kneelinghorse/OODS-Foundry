@@ -80,7 +80,7 @@ describe('Spatial Spec Schema', () => {
                 range: [4, 40],
               },
               color: {
-                value: 'var(--viz-scale-sequential-blue-5)',
+                value: 'var(--viz-scale-sequential-05)',
               },
             },
           },

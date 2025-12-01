@@ -9,6 +9,8 @@ import {
 } from './subscription-mrr.js';
 import type { ProductDashboardRecord } from './product-analytics.js';
 import { createProductDashboardExample, ProductDashboardPreview } from './product-analytics.js';
+import type { SpatialDashboardRecord } from './spatial-dashboard.js';
+import { createSpatialDashboardExample, SpatialDashboardPreview } from './spatial-dashboard.js';
 
 export interface DashboardExampleDefinition<Data> {
   readonly id: string;
@@ -54,6 +56,16 @@ export const DASHBOARD_EXAMPLES = [
     create: createProductDashboardExample,
     Preview: ProductDashboardPreview,
   } satisfies DashboardExampleDefinition<ProductDashboardRecord>,
+  {
+    id: 'spatial-dashboard',
+    title: 'Spatial dashboard',
+    summary: 'Choropleth + bubble map with cross-filters and shared controls.',
+    repoPath: 'examples/dashboards/spatial-dashboard.tsx',
+    storyId: 'proofs-dashboard-contexts--spatial-dashboard',
+    contexts: ['dashboard'],
+    create: createSpatialDashboardExample,
+    Preview: SpatialDashboardPreview,
+  } satisfies DashboardExampleDefinition<SpatialDashboardRecord>,
 ] as const;
 
 export function listDashboardExamples(): readonly AnyDashboardExampleDefinition[] {

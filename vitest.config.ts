@@ -101,6 +101,17 @@ export default defineConfig({
         environment: 'node'
       }
     }, {
+      // Component tests with React (jsdom)
+      extends: true,
+      test: {
+        name: 'components',
+        include: [
+          'tests/components/**/*.test.tsx',
+          'tests/viz/hooks/**/*.test.ts'
+        ],
+        environment: 'jsdom'
+      }
+    }, {
       // Core Node tests: validation, integration, core/unit, etc.
       extends: true,
       test: {
@@ -111,7 +122,11 @@ export default defineConfig({
           'tests/**/*.spec.ts',
           'tests/**/*.spec.tsx'
         ],
-        exclude: ['tests/a11y/**'],
+        exclude: [
+          'tests/a11y/**',
+          'tests/components/**/*.test.tsx',
+          'tests/viz/hooks/**/*.test.ts'
+        ],
         environment: 'node'
       }
     }]

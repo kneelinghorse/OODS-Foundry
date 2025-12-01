@@ -3,12 +3,44 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ChoroplethMap } from '../../../../src/components/viz/spatial/ChoroplethMap.js';
 import { SpatialContextProvider } from '../../../../src/components/viz/spatial/SpatialContext.js';
 import type { Feature, FeatureCollection, Polygon } from 'geojson';
 import type { DataRecord } from '../../../../src/viz/adapters/spatial/geo-data-joiner.js';
 import * as d3Geo from 'd3-geo';
+import type { GeoProjection } from 'd3-geo';
+import * as projectionUtils from '../../../../src/components/viz/spatial/utils/projection-utils.js';
+
+const mockVegaEmbed = vi.fn(async () => ({
+  view: {
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    finalize: vi.fn(),
+  },
+}));
+
+const mockEchartsInstance = {
+  setOption: vi.fn(),
+  dispose: vi.fn(),
+  on: vi.fn(),
+  off: vi.fn(),
+};
+
+const mockEchartsInit = vi.fn(() => mockEchartsInstance);
+const mockRegisterMap = vi.fn();
+
+vi.mock('vega-embed', () => ({
+  __esModule: true,
+  default: mockVegaEmbed,
+}));
+
+vi.mock('echarts', () => ({
+  __esModule: true,
+  init: mockEchartsInit,
+  registerMap: mockRegisterMap,
+  default: { init: mockEchartsInit, registerMap: mockRegisterMap },
+}));
 
 // Mock geo data: US states
 const mockUSStates: FeatureCollection<Polygon> = {
@@ -109,9 +141,26 @@ const mockWorldCountries: FeatureCollection<Polygon> = {
   ],
 };
 
+const BLUE_RANGE = [
+  'var(--viz-scale-sequential-01)',
+  'var(--viz-scale-sequential-03)',
+  'var(--viz-scale-sequential-05)',
+  'var(--viz-scale-sequential-07)',
+];
+
+const BLUE_RANGE_SHORT = [
+  'var(--viz-scale-sequential-01)',
+  'var(--viz-scale-sequential-03)',
+  'var(--viz-scale-sequential-05)',
+];
+
 // Create a test context provider wrapper
-function createContextWrapper(features: Feature[], joinedData: Map<string, DataRecord>) {
-  const projection = d3Geo.geoMercator().scale(150).translate([400, 300]);
+function createContextWrapper(
+  features: Feature[],
+  joinedData: Map<string, DataRecord>,
+  projectionOverride?: GeoProjection
+) {
+  const projection = projectionOverride ?? d3Geo.geoMercator().scale(150).translate([400, 300]);
 
   return ({ children }: { children: React.ReactNode }) => (
     <SpatialContextProvider
@@ -123,6 +172,7 @@ function createContextWrapper(features: Feature[], joinedData: Map<string, DataR
         features,
         joinedData,
         project: (lon: number, lat: number) => projection([lon, lat]),
+        projectionInstance: projection,
         bounds: [
           [-180, -90],
           [180, 90],
@@ -223,7 +273,7 @@ describe('ChoroplethMap', () => {
           data={data}
           valueField="value"
           geoJoinKey="fips"
-          colorRange={['#fee5d9', '#fcae91', '#fb6a4a', '#de2d26']}
+          colorRange={BLUE_RANGE}
           a11y={{ description: 'Test choropleth' }}
         />,
         { wrapper: Wrapper }
@@ -260,7 +310,7 @@ describe('ChoroplethMap', () => {
           valueField="value"
           geoJoinKey="fips"
           colorScale="quantize"
-          colorRange={['#f0f0f0', '#bdbdbd', '#636363']}
+          colorRange={BLUE_RANGE_SHORT}
           a11y={{ description: 'Quantize scale test' }}
         />,
         { wrapper: Wrapper }
@@ -292,7 +342,7 @@ describe('ChoroplethMap', () => {
           valueField="value"
           geoJoinKey="fips"
           colorScale="quantile"
-          colorRange={['#f0f0f0', '#bdbdbd', '#636363']}
+          colorRange={BLUE_RANGE_SHORT}
           a11y={{ description: 'Quantile scale test' }}
         />,
         { wrapper: Wrapper }
@@ -324,7 +374,7 @@ describe('ChoroplethMap', () => {
           geoJoinKey="fips"
           colorScale="threshold"
           thresholds={[10, 20]}
-          colorRange={['#fee5d9', '#fcae91', '#fb6a4a']}
+          colorRange={BLUE_RANGE_SHORT}
           a11y={{ description: 'Threshold scale test' }}
         />,
         { wrapper: Wrapper }
@@ -395,6 +445,29 @@ describe('ChoroplethMap', () => {
     });
   });
 
+  describe('Projection', () => {
+    it('should use provided projection instance when available', () => {
+      const createProjectionSpy = vi.spyOn(projectionUtils, 'createProjection');
+      const customProjection = d3Geo.geoMercator().scale(200).translate([500, 400]);
+      const data: DataRecord[] = [{ fips: 'CA', population: 39538223 }];
+      const joinedData = new Map([['ca', { fips: 'CA', population: 39538223 }]]);
+      const Wrapper = createContextWrapper(mockUSStates.features, joinedData, customProjection);
+
+      render(
+        <ChoroplethMap
+          data={data}
+          valueField="population"
+          geoJoinKey="fips"
+          a11y={{ description: 'Projection reuse test' }}
+        />,
+        { wrapper: Wrapper }
+      );
+
+      expect(createProjectionSpy).not.toHaveBeenCalled();
+      createProjectionSpy.mockRestore();
+    });
+  });
+
   describe('Missing Data Handling', () => {
     it('should handle missing data gracefully (unmatched regions)', () => {
       // Only provide data for CA, not TX or NY
@@ -450,6 +523,72 @@ describe('ChoroplethMap', () => {
 
       const paths = container.querySelectorAll('path');
       expect(paths.length).toBe(3);
+    });
+  });
+
+  describe('Renderer integration', () => {
+    it('should render via Vega-Lite when requested', async () => {
+      const data: DataRecord[] = [
+        { fips: 'CA', population: 39538223 },
+        { fips: 'TX', population: 29145505 },
+      ];
+      const joinedData = new Map([
+        ['ca', { fips: 'CA', population: 39538223 }],
+        ['tx', { fips: 'TX', population: 29145505 }],
+      ]);
+      const Wrapper = createContextWrapper(mockUSStates.features, joinedData);
+
+      render(
+        <ChoroplethMap
+          data={data}
+          valueField="population"
+          geoJoinKey="fips"
+          preferredRenderer="vega-lite"
+          a11y={{ description: 'US Population by State' }}
+        />,
+        { wrapper: Wrapper }
+      );
+
+      await waitFor(() => {
+        expect(mockVegaEmbed).toHaveBeenCalled();
+      });
+
+      const [, spec] = mockVegaEmbed.mock.calls[0];
+      expect((spec as { mark?: string }).mark).toBe('geoshape');
+    });
+
+    it('should render via ECharts when requested', async () => {
+      const data: DataRecord[] = [
+        { fips: 'CA', population: 39538223 },
+        { fips: 'TX', population: 29145505 },
+      ];
+      const joinedData = new Map([
+        ['ca', { fips: 'CA', population: 39538223 }],
+        ['tx', { fips: 'TX', population: 29145505 }],
+      ]);
+      const Wrapper = createContextWrapper(mockUSStates.features, joinedData);
+
+      render(
+        <ChoroplethMap
+          data={data}
+          valueField="population"
+          geoJoinKey="fips"
+          preferredRenderer="echarts"
+          a11y={{ description: 'US Population by State' }}
+        />,
+        { wrapper: Wrapper }
+      );
+
+      await waitFor(() => {
+        expect(mockRegisterMap).toHaveBeenCalled();
+        expect(mockEchartsInit).toHaveBeenCalled();
+        expect(mockEchartsInstance.setOption).toHaveBeenCalled();
+      });
+
+      const option = mockEchartsInstance.setOption.mock.calls[0][0] as {
+        series: Array<{ data: Array<{ value: number | null }> }>;
+      };
+      expect(option.series[0].data).toHaveLength(mockUSStates.features.length);
     });
   });
 

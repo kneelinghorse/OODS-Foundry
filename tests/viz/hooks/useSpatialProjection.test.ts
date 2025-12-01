@@ -38,6 +38,7 @@ describe('useSpatialProjection', () => {
 
     expect(result.current.project).toBeDefined();
     expect(typeof result.current.project).toBe('function');
+    expect(result.current.projection).toBeDefined();
   });
 
   it('should project coordinates', () => {
@@ -105,4 +106,3 @@ describe('useSpatialProjection', () => {
     expect(bounds).toBeDefined();
   });
 });
-

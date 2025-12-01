@@ -7,6 +7,7 @@
 import { useMemo } from 'react';
 import { geoBounds } from 'd3-geo';
 import type { FeatureCollection, Geometry } from 'geojson';
+import type { GeoProjection } from 'd3-geo';
 import type { ProjectionConfig, ProjectionType } from '../../types/viz/spatial.js';
 import { createProjection, fitProjectionToFeatures, projectCoordinates } from '../../components/viz/spatial/utils/projection-utils.js';
 
@@ -18,6 +19,11 @@ export interface UseSpatialProjectionResult {
    * Projection function that converts [lon, lat] to [x, y] screen coordinates.
    */
   project: (lon: number, lat: number) => [number, number] | null;
+
+  /**
+   * Underlying d3 projection instance (fitted when requested).
+   */
+  projection: GeoProjection;
 
   /**
    * Fit projection to features and return updated config.
@@ -102,6 +108,7 @@ export function useSpatialProjection(
 
   return {
     project,
+    projection,
     fitToFeatures,
     bounds,
   };

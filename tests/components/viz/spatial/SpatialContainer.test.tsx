@@ -8,6 +8,7 @@ import { SpatialContainer } from '../../../../src/components/viz/spatial/Spatial
 import { useSpatialContext } from '../../../../src/components/viz/spatial/SpatialContext.js';
 import type { SpatialSpec } from '../../../../src/types/viz/spatial.js';
 import type { FeatureCollection, Point } from 'geojson';
+import * as d3Geo from 'd3-geo';
 
 // Mock the hooks
 const mockUseSpatialSpec = vi.fn(() => ({
@@ -39,6 +40,7 @@ vi.mock('../../../../src/viz/hooks/useSpatialProjection.js', () => ({
   useSpatialProjection: vi.fn(() => ({
     project: (lon: number, lat: number) => [lon * 10, lat * 10] as [number, number],
     fitToFeatures: () => ({ type: 'mercator' }),
+    projection: d3Geo.geoMercator(),
     bounds: [
       [-180, -90],
       [180, 90],
