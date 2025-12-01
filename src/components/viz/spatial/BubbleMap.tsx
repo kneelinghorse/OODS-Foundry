@@ -256,22 +256,22 @@ export function BubbleMap({
     const projectionType: ProjectionType =
       projectionOverride ?? contextProjection?.type ?? 'mercator';
     const projectionConfig = { ...contextProjection, type: projectionType };
-    const base =
-      (projectionInstance && typeof projectionInstance.copy === 'function'
-        ? projectionInstance.copy()
-        : projectionInstance) ?? createProjection(projectionType, projectionConfig, resolvedDimensions);
+    const projectionWithCopy = projectionInstance as unknown as { copy?: () => GeoProjection } | null;
+    const copiedProjection = projectionWithCopy?.copy ? projectionWithCopy.copy() : null;
+    const baseProjection =
+      copiedProjection ?? projectionInstance ?? createProjection(projectionType, projectionConfig, resolvedDimensions);
 
     if (geoData) {
-      return fitProjectionToFeatures(base, geoData, resolvedDimensions);
+      return fitProjectionToFeatures(baseProjection, geoData, resolvedDimensions);
     }
     if (contextFeatures && contextFeatures.length > 0) {
       return fitProjectionToFeatures(
-        base,
+        baseProjection,
         { type: 'FeatureCollection', features: contextFeatures } as FeatureCollection,
         resolvedDimensions
       );
     }
-    return base;
+    return baseProjection;
   }, [contextFeatures, contextProjection, geoData, projectionInstance, projectionOverride, resolvedDimensions]);
 
   const projectPoint = useCallback(
@@ -289,7 +289,7 @@ export function BubbleMap({
         : [],
     [data, sizeField]
   );
-  const sizeDomain = sizeField ? numericDomain(sizeValues) : [0, 1];
+  const sizeDomain: [number, number] = sizeField ? numericDomain(sizeValues) : [0, 1];
   const sizeScale: SizeScale = useMemo(() => {
     switch (sizeScaleType) {
       case 'linear':
@@ -684,9 +684,9 @@ export function BubbleMap({
           }
         };
 
-        instance.on('click', clickHandler);
+        instance.on('click', clickHandler as unknown as (event: unknown) => void);
         detach = () => {
-          instance.off('click', clickHandler);
+          instance.off('click', clickHandler as unknown as (event: unknown) => void);
           instance.dispose();
         };
       } catch (error) {

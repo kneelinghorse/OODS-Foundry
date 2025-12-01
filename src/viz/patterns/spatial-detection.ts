@@ -198,5 +198,4 @@ function selectNumericField(
 }
 
 // SpatialSpec import retained for tree-shaking friendliness when bundling CLI helpers
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-type _KeepSpatialSpec = SpatialSpec;
+export type SpatialSpecReference = SpatialSpec;

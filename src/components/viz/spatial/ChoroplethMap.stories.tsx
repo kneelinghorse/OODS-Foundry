@@ -7,7 +7,7 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 import { useMemo, useState, type JSX } from 'react';
-import type { FeatureCollection, Geometry } from 'geojson';
+import type { Feature, FeatureCollection, Geometry } from 'geojson';
 import { feature } from 'topojson-client';
 import type { Topology } from 'topojson-specification';
 import { ChoroplethMap, type ChoroplethMapProps } from './ChoroplethMap.js';
@@ -22,8 +22,6 @@ import type { ProjectionType, SpatialSpec } from '../../../types/viz/spatial.js'
 import type { DataRecord } from '../../../viz/adapters/spatial/geo-data-joiner.js';
 import usStatesTopology from './fixtures/us-states-10m.json';
 import worldCountriesTopology from './fixtures/world-countries-110m.json';
-
-type Story = StoryObj<typeof ChoroplethMap>;
 
 interface ChoroplethStoryArgs
   extends Omit<ChoroplethMapProps, 'data' | 'projection'> {
@@ -50,15 +48,24 @@ const DIVERGING_RANGE = [
   'var(--oods-viz-scale-diverging-pos-03)',
 ];
 
-const usStatesGeoData = feature(
-  usStatesTopology as unknown as Topology,
-  (usStatesTopology as { objects: { states: unknown } }).objects.states
-) as FeatureCollection<Geometry>;
+function toFeatureCollection(topology: Topology, objectKey: string): FeatureCollection<Geometry> {
+  const result = feature(
+    topology as unknown as Topology,
+    (topology as { objects: Record<string, unknown> }).objects[objectKey] as never
+  ) as Feature<Geometry> | FeatureCollection<Geometry>;
 
-const worldCountriesGeoData = feature(
-  worldCountriesTopology as unknown as Topology,
-  (worldCountriesTopology as { objects: { countries: unknown } }).objects.countries
-) as FeatureCollection<Geometry>;
+  if (result.type === 'FeatureCollection') {
+    return result;
+  }
+
+  return {
+    type: 'FeatureCollection',
+    features: [result],
+  };
+}
+
+const usStatesGeoData = toFeatureCollection(usStatesTopology as unknown as Topology, 'states');
+const worldCountriesGeoData = toFeatureCollection(worldCountriesTopology as unknown as Topology, 'countries');
 
 const salesByState: DataRecord[] = [
   { name: 'California', sales: 2_320_000, change: 0.12 },
@@ -240,7 +247,9 @@ function ChoroplethStory({
 
       {enableTooltip && hovered ? (
         <div className="rounded-md border border-[--cmp-border-muted] bg-[--cmp-surface] p-3 shadow-sm">
-          <p className="text-sm font-semibold">{hovered.name ?? 'Region'}</p>
+          <p className="text-sm font-semibold">
+            {typeof hovered.name === 'string' ? hovered.name : 'Region'}
+          </p>
           {mapArgs.valueField in hovered ? (
             <p className="text-sm">
               {mapArgs.valueField}: {(hovered[mapArgs.valueField] as number | string).toLocaleString()}
@@ -256,7 +265,7 @@ function ChoroplethStory({
         <div className="rounded-md border border-[--cmp-border-strong] bg-[--cmp-surface-strong] p-3 shadow-sm">
           <p className="text-sm font-semibold">Selected region</p>
           <p className="text-sm">
-            {selected.name ?? 'Unknown'} —{' '}
+            {typeof selected.name === 'string' ? selected.name : 'Unknown'} —{' '}
             {mapArgs.valueField in selected
               ? (selected[mapArgs.valueField] as number | string).toLocaleString()
               : 'No metric'}
@@ -275,9 +284,9 @@ function ChoroplethStory({
   );
 }
 
-const meta: Meta<typeof ChoroplethMap> = {
+const meta = {
   title: 'Viz/Spatial/ChoroplethMap',
-  component: ChoroplethMap,
+  component: ChoroplethStory,
   parameters: {
     layout: 'fullscreen',
     docs: {
@@ -301,9 +310,10 @@ const meta: Meta<typeof ChoroplethMap> = {
     valueField: { control: false },
     a11y: { control: false },
   },
-};
+} satisfies Meta<ChoroplethStoryArgs>;
 
 export default meta;
+type Story = StoryObj<ChoroplethStoryArgs>;
 
 export const Default: Story = {
   args: {

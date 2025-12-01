@@ -152,29 +152,31 @@ export function buildBubbleSeries(
   const symbolSize = buildSizeFunction(sizeDomain, sizeRange, sizeEncoding?.scale);
 
   const colorPalette = resolveColorPalette(colorEncoding?.range);
-  const colorValues = colorEncoding?.field
+  const colorField = colorEncoding?.field;
+  const colorValues = colorField
     ? data.map((datum) => {
-        const value = datum[colorEncoding.field];
+        const value = datum[colorField];
         return value === null || value === undefined ? null : String(value);
       })
     : [];
-  const colorMap = colorEncoding?.scale === 'ordinal' ? buildOrdinalColorMap(colorValues, colorPalette) : undefined;
+  const colorMap =
+    colorEncoding?.scale === 'ordinal' && colorField ? buildOrdinalColorMap(colorValues, colorPalette) : undefined;
 
   const seriesData = data.map((datum, index) => {
     const longitude = coerceNumber(datum[layer.encoding.longitude.field]);
     const latitude = coerceNumber(datum[layer.encoding.latitude.field]);
     const sizeValue = sizeEncoding?.field ? coerceNumber(datum[sizeEncoding.field]) : null;
-    const colorValue = colorEncoding?.field ? coerceNumber(datum[colorEncoding.field]) ?? null : sizeValue;
+    const colorValue = colorField ? coerceNumber(datum[colorField]) ?? null : sizeValue;
     const name = String(
       datum[layer.encoding.longitude.field] ??
         datum[layer.encoding.latitude.field] ??
-        datum[colorEncoding?.field ?? 'id'] ??
+        (colorField ? datum[colorField] : undefined) ??
         `point-${index}`
     );
 
     const itemColor =
-      colorEncoding?.scale === 'ordinal' && colorEncoding.field
-        ? colorMap?.get(String(datum[colorEncoding.field] ?? '')) ?? undefined
+      colorEncoding?.scale === 'ordinal' && colorField
+        ? colorMap?.get(String(datum[colorField] ?? '')) ?? undefined
         : undefined;
 
     return pruneUndefined({
@@ -196,7 +198,7 @@ export function buildBubbleSeries(
     })
   );
 
-  const series: ScatterSeriesOption = pruneUndefined({
+  const series = pruneUndefined({
     type: 'scatter',
     coordinateSystem: 'geo',
     geoIndex: 0,
@@ -209,7 +211,7 @@ export function buildBubbleSeries(
       value: colorEncoding?.field ? 3 : 2,
     },
     tooltip: { formatter: tooltipFormatter },
-  });
+  }) as unknown as ScatterSeriesOption;
 
   let visualMap: VisualMapComponentOption | undefined;
   if (colorEncoding?.field && colorEncoding.scale !== 'ordinal') {
@@ -252,7 +254,7 @@ export function adaptBubbleToECharts(
       colorField: symbolLayer.encoding.color?.field,
     })
   );
-  const option: EChartsOption = pruneUndefined({
+  const option = pruneUndefined({
     geo: result.geo,
     visualMap: result.visualMap,
     series: [result.series],
@@ -270,7 +272,7 @@ export function adaptBubbleToECharts(
         dimensions,
       }),
     },
-  });
+  }) as unknown as EChartsOption;
 
   if (result.registration) {
     (option as Record<string, unknown>).__registration = result.registration;

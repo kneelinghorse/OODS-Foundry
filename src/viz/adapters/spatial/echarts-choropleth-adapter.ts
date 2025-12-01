@@ -120,7 +120,7 @@ export function buildChoropleth(
     const rawValue = properties ? properties[layer.encoding.color.field] : null;
     return {
       name,
-      value: coerceNumber(rawValue),
+      value: coerceNumber(rawValue) ?? undefined,
       rawProperties: properties,
     };
   });
@@ -128,14 +128,14 @@ export function buildChoropleth(
   const geo = buildGeoComponent(mapName, Boolean(spec.interactions?.some((interaction) => interaction.type === 'panZoom')));
   const registration = registerGeoJson(mapName, { type: 'FeatureCollection', features: mergedFeatures });
 
-  const series: MapSeriesOption = pruneUndefined({
+  const series = pruneUndefined({
     type: 'map',
     map: mapName,
     geoIndex: 0,
     name: spec.name ?? 'Choropleth',
     data: seriesData,
     emphasis: { focus: 'self' },
-  });
+  }) as unknown as MapSeriesOption;
 
   return {
     series,
@@ -166,7 +166,7 @@ export function adaptChoroplethToECharts(
     createChoroplethTooltipFields({ regionField: nameField, valueField: regionLayer.encoding.color.field })
   );
 
-  const option: EChartsOption = pruneUndefined({
+  const option = pruneUndefined({
     geo: result.geo,
     visualMap: result.visualMap,
     series: [result.series],
@@ -184,7 +184,7 @@ export function adaptChoroplethToECharts(
         dimensions,
       }),
     },
-  });
+  }) as unknown as EChartsOption;
 
   // Expose registration info for callers who need manual map registration.
   (option as Record<string, unknown>).__registration = result.registration;

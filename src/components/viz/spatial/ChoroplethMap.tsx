@@ -16,6 +16,7 @@ import {
 } from 'react';
 import type { Feature, FeatureCollection } from 'geojson';
 import type { EChartsType } from 'echarts';
+import type { GeoProjection } from 'd3-geo';
 import type { DataRecord } from '../../../viz/adapters/spatial/geo-data-joiner.js';
 import type { ProjectionType, ColorScaleType } from '../../../types/viz/spatial.js';
 import { useSpatialContext } from './SpatialContext.js';
@@ -634,7 +635,9 @@ export function ChoroplethMap({
           ],
         });
 
-        const clickHandler = (params: { name?: string; data?: { __featureKey?: string } }): void => {
+        type MapEventParams = { name?: string; data?: { __featureKey?: string; name?: string } };
+
+        const clickHandler = (params: MapEventParams): void => {
           const key =
             normalizeJoinKey(params.data?.__featureKey) ??
             normalizeJoinKey(params.name) ??
@@ -649,7 +652,7 @@ export function ChoroplethMap({
           handleRegionClick(feature, datum);
         };
 
-        const hoverHandler = (params: { name?: string; data?: { __featureKey?: string } }): void => {
+        const hoverHandler = (params: MapEventParams): void => {
           const key =
             normalizeJoinKey(params.data?.__featureKey) ??
             normalizeJoinKey(params.name) ??
@@ -671,14 +674,14 @@ export function ChoroplethMap({
           }
         };
 
-        instance.on('click', clickHandler);
-        instance.on('mouseover', hoverHandler);
-        instance.on('mouseout', hoverEndHandler);
+        instance.on('click', clickHandler as unknown as (event: unknown) => void);
+        instance.on('mouseover', hoverHandler as unknown as (event: unknown) => void);
+        instance.on('mouseout', hoverEndHandler as unknown as (event: unknown) => void);
 
         detach = () => {
-          instance.off('click', clickHandler);
-          instance.off('mouseover', hoverHandler);
-          instance.off('mouseout', hoverEndHandler);
+          instance.off('click', clickHandler as unknown as (event: unknown) => void);
+          instance.off('mouseover', hoverHandler as unknown as (event: unknown) => void);
+          instance.off('mouseout', hoverEndHandler as unknown as (event: unknown) => void);
         };
       } catch (error: unknown) {
         if (cancelled) {
@@ -724,11 +727,10 @@ export function ChoroplethMap({
     const shouldFit = fitToData ?? projection.fitToData ?? false;
     const projectionType = projectionOverride ?? projection.type ?? 'mercator';
     const projectionConfig = { ...projection, type: projectionType, fitToData: shouldFit };
+    const projectionWithCopy = projectionInstance as unknown as { copy?: () => GeoProjection } | null;
+    const copiedProjection = projectionWithCopy?.copy ? projectionWithCopy.copy() : null;
     const baseProjection =
-      (projectionInstance && typeof projectionInstance.copy === 'function'
-        ? projectionInstance.copy()
-        : projectionInstance) ??
-      createProjection(projectionType, projectionConfig, dimensions);
+      copiedProjection ?? projectionInstance ?? createProjection(projectionType, projectionConfig, dimensions);
 
     if (shouldFit) {
       return fitProjectionToFeatures(baseProjection, featureCollection, dimensions);

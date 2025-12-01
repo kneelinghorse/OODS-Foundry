@@ -6,7 +6,7 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 import { useMemo, useState, type JSX } from 'react';
-import type { FeatureCollection } from 'geojson';
+import type { Feature, FeatureCollection, Geometry } from 'geojson';
 import { feature } from 'topojson-client';
 import type { Topology } from 'topojson-specification';
 import { BubbleMap, type BubbleMapProps } from './BubbleMap.js';
@@ -18,9 +18,6 @@ import type { ProjectionType, SpatialSpec } from '../../../types/viz/spatial.js'
 import type { NormalizedVizSpec } from '../../../viz/spec/normalized-viz-spec.js';
 import type { DataRecord } from '../../../viz/adapters/spatial/geo-data-joiner.js';
 import usStatesTopology from './fixtures/us-states-10m.json';
-import worldCountriesTopology from './fixtures/world-countries-110m.json';
-
-type Story = StoryObj<typeof BubbleMap>;
 
 interface BubbleStoryArgs
   extends Omit<
@@ -48,15 +45,23 @@ const CATEGORY_COLORS = [
 ];
 const EMPTY_GEOJSON: FeatureCollection = { type: 'FeatureCollection', features: [] };
 
-const usStatesGeoData = feature(
-  usStatesTopology as unknown as Topology,
-  (usStatesTopology as { objects: { states: unknown } }).objects.states
-) as FeatureCollection;
+function toFeatureCollection(topology: Topology, objectKey: string): FeatureCollection<Geometry> {
+  const result = feature(
+    topology as unknown as Topology,
+    (topology as { objects: Record<string, unknown> }).objects[objectKey] as never
+  ) as Feature<Geometry> | FeatureCollection<Geometry>;
 
-const worldCountriesGeoData = feature(
-  worldCountriesTopology as unknown as Topology,
-  (worldCountriesTopology as { objects: { countries: unknown } }).objects.countries
-) as FeatureCollection;
+  if (result.type === 'FeatureCollection') {
+    return result;
+  }
+
+  return {
+    type: 'FeatureCollection',
+    features: [result],
+  };
+}
+
+const usStatesGeoData = toFeatureCollection(usStatesTopology as unknown as Topology, 'states');
 
 const retailLocations: DataRecord[] = [
   { id: 'sf', store: 'San Francisco', region: 'West', lon: -122.4194, lat: 37.7749, sales: 2_300_000 },
@@ -168,6 +173,8 @@ function BubbleStory({
         {
           type: 'symbol',
           encoding: {
+            longitude: { field: longitudeField },
+            latitude: { field: latitudeField },
             size: sizeField ? { field: sizeField, range: sizeRange } : undefined,
             color: colorField ? { field: colorField, range: colorRange } : undefined,
           },
@@ -175,7 +182,7 @@ function BubbleStory({
       ],
       a11y,
     }),
-    [a11y, colorField, colorRange, data, sizeField, sizeRange, specProjection]
+    [a11y, colorField, colorRange, data, latitudeField, longitudeField, sizeField, sizeRange, specProjection]
   );
 
   const normalizedSpec = useMemo(() => asNormalized(spec), [spec]);
@@ -278,9 +285,9 @@ function BubbleStory({
   );
 }
 
-const meta: Meta<typeof BubbleMap> = {
+const meta = {
   title: 'Viz/Spatial/BubbleMap',
-  component: BubbleMap,
+  component: BubbleStory,
   parameters: {
     layout: 'fullscreen',
     docs: {
@@ -309,9 +316,10 @@ const meta: Meta<typeof BubbleMap> = {
     sizeField: { control: false },
     a11y: { control: false },
   },
-};
+} satisfies Meta<BubbleStoryArgs>;
 
 export default meta;
+type Story = StoryObj<BubbleStoryArgs>;
 
 export const Default: Story = {
   args: {

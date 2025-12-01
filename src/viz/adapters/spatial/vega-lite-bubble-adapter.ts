@@ -1,11 +1,10 @@
 import type { FeatureCollection } from 'geojson';
-import type { TopLevelSpec } from 'vega-lite';
 import type { SymbolLayer } from '@/types/viz/spatial.js';
 import { buildVegaLiteTooltip, createBubbleTooltipFields } from '../../tooltip/spatial-tooltip-config.js';
 import type { DataRecord } from './geo-data-joiner.js';
 import { mapColorScale } from './vega-lite-scale-map.js';
 
-export type VegaLiteLayer = NonNullable<TopLevelSpec['layer']>[number];
+export type VegaLiteLayer = Record<string, unknown>;
 
 const BASEMAP_FILL = 'var(--sys-surface-strong)';
 const BASEMAP_STROKE = 'var(--sys-border-subtle)';

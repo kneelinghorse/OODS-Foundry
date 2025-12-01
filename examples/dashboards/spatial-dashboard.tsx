@@ -1,5 +1,5 @@
 import { useMemo, useReducer, type FC, type JSX } from 'react';
-import type { FeatureCollection } from 'geojson';
+import type { Feature, FeatureCollection } from 'geojson';
 import { feature } from 'topojson-client';
 import { RenderObject } from '../../src/components/RenderObject.js';
 import type { RenderObjectProps } from '../../src/components/RenderObject.js';
@@ -158,10 +158,23 @@ const BUBBLE_SPEC: NormalizedVizSpec = {
   a11y: { description: 'Bubble map of hub volume by city.' },
 };
 
-const US_STATES_GEOJSON: FeatureCollection = feature(
-  usStatesTopo as never,
-  (usStatesTopo as { objects: Record<string, unknown> }).objects.states as never
-) as FeatureCollection;
+function toFeatureCollection(topology: typeof usStatesTopo, objectKey: string): FeatureCollection {
+  const result = feature(
+    topology as never,
+    (topology as { objects: Record<string, unknown> }).objects[objectKey] as never
+  ) as FeatureCollection | Feature;
+
+  if (result.type === 'FeatureCollection') {
+    return result;
+  }
+
+  return {
+    type: 'FeatureCollection',
+    features: [result],
+  };
+}
+
+const US_STATES_GEOJSON: FeatureCollection = toFeatureCollection(usStatesTopo, 'states');
 
 function normalizeState(value: string): string {
   return value.trim().toLowerCase();
@@ -283,25 +296,6 @@ function SpatialDashboardPanels({
     }),
     [hubRecords]
   );
-  const joinedByFeature = useMemo(() => {
-    const joined = new Map<string, Record<string, unknown>>();
-    US_STATES_GEOJSON.features.forEach((feature) => {
-      const name =
-        feature.properties && typeof feature.properties.name === 'string'
-          ? feature.properties.name
-          : undefined;
-      if (!name) {
-        return;
-      }
-      const match = data.states.find((row) => row.state === name);
-      if (match) {
-        const key = String(feature.id ?? name);
-        joined.set(key, match as Record<string, unknown>);
-      }
-    });
-    return joined;
-  }, [data.states]);
-
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       <div

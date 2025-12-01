@@ -30,7 +30,7 @@ export interface KeyboardNavHandlers {
 /**
  * Cycle focus based on arrow key presses.
  *
-+ * @param event - Keyboard event
+ * @param event - Keyboard event
  * @param currentFeatureId - Currently focused feature id (or null)
  * @param featureIds - Ordered list of feature ids to navigate
  * @returns Next feature id to focus, or null if no features
@@ -65,7 +65,7 @@ export function handleArrowKeys(
  * @returns Cleanup function to remove listeners
  */
 export function setupKeyboardNav(
-  containerRef: RefObject<HTMLElement>,
+  containerRef: RefObject<HTMLElement | null>,
   featureIds: string[],
   handlers: KeyboardNavHandlers
 ): () => void {

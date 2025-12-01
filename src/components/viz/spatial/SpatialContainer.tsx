@@ -40,12 +40,7 @@ export interface SpatialContainerProps {
   projection?: ProjectionType;
   projectionConfig?: ProjectionConfig;
   layers?: SpatialLayer[];
-  a11y: {
-    description: string;
-    ariaLabel?: string;
-    tableFallback?: { enabled: boolean; caption: string; columns?: string[] };
-    narrative?: { summary: string; keyFindings: string[] };
-  };
+  a11y: SpatialA11yConfig;
   onFeatureClick?: (feature: GeoFeature, datum?: DataRecord) => void;
   onFeatureHover?: (feature: GeoFeature | null, datum?: DataRecord) => void;
   children?: ReactNode;

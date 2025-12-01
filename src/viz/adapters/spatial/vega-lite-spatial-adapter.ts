@@ -113,10 +113,7 @@ function buildUserMeta(spec: SpatialSpec): TopLevelSpec['usermeta'] {
   };
 }
 
-function buildBaseSpec(spec: SpatialSpec, dimensions: { width: number; height: number }): Pick<
-  TopLevelSpec,
-  '$schema' | 'description' | 'title' | 'width' | 'height' | 'projection' | 'padding' | 'usermeta'
-> {
+function buildBaseSpec(spec: SpatialSpec, dimensions: { width: number; height: number }): Record<string, unknown> {
   const layout = spec.config?.layout;
 
   return pruneUndefined({
@@ -177,10 +174,10 @@ export function adaptToVegaLite(input: VegaLiteSpatialAdapterInput): VegaLiteSpa
 
   const baseSpec = buildBaseSpec(spec, input.dimensions);
 
-  const vegaLiteSpec: TopLevelSpec = {
+  const vegaLiteSpec = {
     ...baseSpec,
     layer: layers,
-  };
+  } as unknown as TopLevelSpec;
 
   return {
     vegaLiteSpec,

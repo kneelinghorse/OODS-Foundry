@@ -3,10 +3,9 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type JSX } from 'react';
 import { MapControls } from './MapControls.js';
 
-type Story = StoryObj<typeof MapControls>;
 type Position = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 
 interface ControlsStoryArgs {
@@ -78,9 +77,9 @@ function ControlsDemo({ showZoom, showReset, showLayerToggles, position }: Contr
   );
 }
 
-const meta: Meta<typeof MapControls> = {
+const meta = {
   title: 'Viz/Spatial/MapControls',
-  component: MapControls,
+  component: ControlsDemo,
   parameters: {
     layout: 'fullscreen',
     docs: {
@@ -96,9 +95,10 @@ const meta: Meta<typeof MapControls> = {
     showLayerToggles: { control: 'boolean' },
     position: { control: 'select', options: ['top-left', 'top-right', 'bottom-left', 'bottom-right'] },
   },
-};
+} satisfies Meta<ControlsStoryArgs>;
 
 export default meta;
+type Story = StoryObj<ControlsStoryArgs>;
 
 export const Default: Story = {
   args: {
