@@ -1,0 +1,90 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://oods.dev/schemas/viz/hierarchy-input.schema.json",
+  "title": "Hierarchy Input",
+  "description": "Input formats for hierarchy visualizations (treemap, sunburst). Supports adjacency lists and nested JSON structures.",
+  "type": "object",
+  "oneOf": [
+    { "$ref": "#/definitions/HierarchyAdjacencyInput" },
+    { "$ref": "#/definitions/HierarchyNestedInput" }
+  ],
+  "definitions": {
+    "HierarchyAdjacencyInput": {
+      "type": "object",
+      "required": ["type", "data"],
+      "properties": {
+        "type": {
+          "const": "adjacency_list",
+          "description": "Identifies the adjacency list format."
+        },
+        "data": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/definitions/AdjacencyNode" },
+          "description": "Flat list of nodes with parentId references."
+        }
+      },
+      "additionalProperties": false
+    },
+    "AdjacencyNode": {
+      "type": "object",
+      "required": ["id", "parentId", "value"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Unique identifier for the node."
+        },
+        "parentId": {
+          "type": ["string", "null"],
+          "description": "Parent node ID; null indicates the root."
+        },
+        "value": {
+          "type": "number",
+          "description": "Measure used for sizing the node."
+        },
+        "name": {
+          "type": "string",
+          "description": "Optional display label."
+        }
+      },
+      "additionalProperties": true
+    },
+    "HierarchyNestedInput": {
+      "type": "object",
+      "required": ["type", "data"],
+      "properties": {
+        "type": {
+          "const": "nested",
+          "description": "Identifies the nested JSON format."
+        },
+        "data": {
+          "$ref": "#/definitions/NestedNode",
+          "description": "Root node containing nested children."
+        }
+      },
+      "additionalProperties": false
+    },
+    "NestedNode": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Node label."
+        },
+        "value": {
+          "type": "number",
+          "description": "Measure used for sizing the node."
+        },
+        "children": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/NestedNode" },
+          "description": "Nested child nodes."
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

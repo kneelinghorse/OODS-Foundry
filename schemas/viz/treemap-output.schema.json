@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://oods.dev/schemas/viz/treemap-output.schema.json",
+  "title": "Treemap Transform Output",
+  "description": "Output structure for treemap layout calculations.",
+  "type": "object",
+  "required": ["nodes"],
+  "properties": {
+    "nodes": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/TreemapNode" },
+      "description": "Flattened list of treemap nodes with coordinates."
+    }
+  },
+  "definitions": {
+    "TreemapNode": {
+      "type": "object",
+      "required": ["id", "x0", "y0", "x1", "y1", "depth", "value"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Node identifier inherited from input."
+        },
+        "x0": { "type": "number", "description": "Left edge (pixels)." },
+        "y0": { "type": "number", "description": "Top edge (pixels)." },
+        "x1": { "type": "number", "description": "Right edge (pixels)." },
+        "y1": { "type": "number", "description": "Bottom edge (pixels)." },
+        "depth": { "type": "integer", "minimum": 0, "description": "Depth in the hierarchy." },
+        "value": { "type": "number", "description": "Aggregated value for the node." }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

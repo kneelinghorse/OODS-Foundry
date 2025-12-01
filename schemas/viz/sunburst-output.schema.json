@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://oods.dev/schemas/viz/sunburst-output.schema.json",
+  "title": "Sunburst Transform Output",
+  "description": "Output structure for sunburst/partition layouts.",
+  "type": "object",
+  "required": ["nodes"],
+  "properties": {
+    "nodes": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/SunburstNode" },
+      "description": "Flattened list of partition nodes."
+    }
+  },
+  "definitions": {
+    "SunburstNode": {
+      "type": "object",
+      "required": [
+        "id",
+        "startAngle",
+        "endAngle",
+        "innerRadius",
+        "outerRadius",
+        "depth",
+        "value"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Node identifier inherited from input."
+        },
+        "startAngle": { "type": "number", "description": "Arc start angle in radians." },
+        "endAngle": { "type": "number", "description": "Arc end angle in radians." },
+        "innerRadius": { "type": "number", "description": "Inner radius of the arc." },
+        "outerRadius": { "type": "number", "description": "Outer radius of the arc." },
+        "depth": { "type": "integer", "minimum": 0, "description": "Depth in the hierarchy." },
+        "value": { "type": "number", "description": "Aggregated value for the node." }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

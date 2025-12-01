@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://oods.dev/schemas/viz/sankey-output.schema.json",
+  "title": "Sankey Layout Output",
+  "description": "Output structure for Sankey flow layouts including SVG path data.",
+  "type": "object",
+  "required": ["nodes", "links"],
+  "properties": {
+    "nodes": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/SankeyNodeOutput" },
+      "description": "Nodes with positioned rectangles."
+    },
+    "links": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/SankeyLinkOutput" },
+      "description": "Links with width and SVG path information."
+    }
+  },
+  "definitions": {
+    "SankeyNodeOutput": {
+      "type": "object",
+      "required": ["name", "x0", "y0", "x1", "y1", "value"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Node label."
+        },
+        "x0": { "type": "number", "description": "Left edge." },
+        "y0": { "type": "number", "description": "Top edge." },
+        "x1": { "type": "number", "description": "Right edge." },
+        "y1": { "type": "number", "description": "Bottom edge." },
+        "value": { "type": "number", "description": "Aggregated flow through the node." }
+      },
+      "additionalProperties": true
+    },
+    "SankeyLinkOutput": {
+      "type": "object",
+      "required": ["source", "target", "value", "width", "y0", "y1", "svgPath"],
+      "properties": {
+        "source": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Source node name."
+        },
+        "target": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Target node name."
+        },
+        "value": { "type": "number", "description": "Flow magnitude." },
+        "width": { "type": "number", "description": "Visual width of the link." },
+        "y0": { "type": "number", "description": "Source offset." },
+        "y1": { "type": "number", "description": "Target offset." },
+        "svgPath": { "type": "string", "description": "SVG path string for the link." }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

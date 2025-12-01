@@ -1,0 +1,13 @@
+{
+  "nodes": [
+    { "id": "web-1", "group": "web", "radius": 8 },
+    { "id": "web-2", "group": "web", "radius": 8 },
+    { "id": "db-1", "group": "db", "fixed": true, "x": 100, "y": 50 },
+    { "id": "cache-1", "group": "cache", "radius": 6 }
+  ],
+  "links": [
+    { "source": "web-1", "target": "db-1", "value": 20 },
+    { "source": "web-2", "target": "db-1", "value": 18 },
+    { "source": "web-1", "target": "cache-1", "value": 5 }
+  ]
+}
