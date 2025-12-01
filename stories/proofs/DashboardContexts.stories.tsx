@@ -55,3 +55,5 @@ export const SubscriptionDashboard: Story = storyFromExample('subscription-mrr')
 export const ProductDashboard: Story = storyFromExample('product-analytics');
 
 export const SpatialDashboard: Story = storyFromExample('spatial-dashboard');
+
+export const NetworkFlowDashboard: Story = storyFromExample('network-flow');

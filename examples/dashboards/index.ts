@@ -11,6 +11,11 @@ import type { ProductDashboardRecord } from './product-analytics.js';
 import { createProductDashboardExample, ProductDashboardPreview } from './product-analytics.js';
 import type { SpatialDashboardRecord } from './spatial-dashboard.js';
 import { createSpatialDashboardExample, SpatialDashboardPreview } from './spatial-dashboard.js';
+import type { NetworkFlowDashboardRecord } from './network-flow-dashboard.js';
+import {
+  createNetworkFlowDashboardExample,
+  NetworkFlowDashboardPreview,
+} from './network-flow-dashboard.js';
 
 export interface DashboardExampleDefinition<Data> {
   readonly id: string;
@@ -66,6 +71,16 @@ export const DASHBOARD_EXAMPLES = [
     create: createSpatialDashboardExample,
     Preview: SpatialDashboardPreview,
   } satisfies DashboardExampleDefinition<SpatialDashboardRecord>,
+  {
+    id: 'network-flow',
+    title: 'Network & Flow dashboard',
+    summary: 'Org hierarchy (Treemap/Sunburst), team collaboration (ForceGraph), and budget flow (Sankey).',
+    repoPath: 'examples/dashboards/network-flow-dashboard.tsx',
+    storyId: 'proofs-dashboard-contexts--network-flow-dashboard',
+    contexts: ['dashboard'],
+    create: createNetworkFlowDashboardExample,
+    Preview: NetworkFlowDashboardPreview,
+  } satisfies DashboardExampleDefinition<NetworkFlowDashboardRecord>,
 ] as const;
 
 export function listDashboardExamples(): readonly AnyDashboardExampleDefinition[] {
