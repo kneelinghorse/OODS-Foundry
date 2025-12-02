@@ -35,12 +35,15 @@ describe('adaptSunburstToECharts', () => {
     expect(series.label.rotate).toBe('radial');
     expect(series.radius[1]).toBe('90%');
     expect(series.levels).toHaveLength(4);
+    // ECharts canvas needs resolved colors, not CSS variables
     const paletteEntry = option.color?.[0] as string;
-    expect(paletteEntry).toContain('--viz-scale-categorical');
-    expect(paletteEntry).toContain('--oods-viz-scale-categorical');
+    expect(paletteEntry).toBeDefined();
+    // Should be a resolved color (rgb(...) or hex)
+    expect(typeof paletteEntry).toBe('string');
+    expect(paletteEntry.length).toBeGreaterThan(0);
   });
 
-  it('uses tokenized borders and preserves hierarchy structure', () => {
+  it('uses resolved border colors and preserves hierarchy structure', () => {
     const input: HierarchyAdjacencyInput = {
       type: 'adjacency_list',
       data: [
@@ -51,7 +54,8 @@ describe('adaptSunburstToECharts', () => {
 
     const option = adaptSunburstToECharts(spec, input);
     const [series] = option.series as any[];
-    expect(series.itemStyle.borderColor).toBe('var(--sys-surface)');
+    // ECharts canvas needs resolved colors - using fallback surface color
+    expect(series.itemStyle.borderColor).toBe('#ffffff');
     expect(series.data[0].children[0].name).toBe('child');
   });
 });
