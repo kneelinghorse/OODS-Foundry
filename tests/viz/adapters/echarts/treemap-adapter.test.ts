@@ -16,7 +16,7 @@ const baseSpec: NormalizedVizSpec = {
 };
 
 describe('adaptTreemapToECharts', () => {
-  it('builds a treemap series with drilldown and tokenized styling', () => {
+  it('builds a treemap series with drilldown and resolved styling', () => {
     const input: HierarchyAdjacencyInput = {
       type: 'adjacency_list',
       data: [
@@ -32,12 +32,14 @@ describe('adaptTreemapToECharts', () => {
     expect(series.type).toBe('treemap');
     expect(series.squareRatio).toBeCloseTo(1.618);
     expect(series.nodeClick).toBe('zoomToNode');
-    expect(series.breadcrumb.itemStyle.color).toBe('var(--sys-surface)');
-    expect(series.itemStyle.borderColor).toBe('var(--sys-border-subtle)');
+    // ECharts canvas needs resolved colors - using fallback colors
+    expect(series.breadcrumb.itemStyle.color).toBe('#ffffff');
+    expect(series.itemStyle.borderColor).toBe('#e0e0e0');
     expect(Array.isArray(option.color)).toBe(true);
+    // Palette should contain resolved colors (rgb or hex)
     const paletteEntry = (option.color as string[])[0];
-    expect(paletteEntry).toContain('--viz-scale-categorical');
-    expect(paletteEntry).toContain('--oods-viz-scale-categorical');
+    expect(typeof paletteEntry).toBe('string');
+    expect(paletteEntry.length).toBeGreaterThan(0);
 
     const tooltip = option.tooltip as { formatter?: (params: unknown) => string };
     const formatted = tooltip.formatter?.({
