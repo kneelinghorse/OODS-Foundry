@@ -1,0 +1,241 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Understanding OODS/Getting Started" />
+
+# Getting Started with OODS
+
+**Quick paths for designers and developers**
+
+---
+
+## For Designers (5 minutes)
+
+OODS changes how you think about UI design. Instead of designing screens, you design **objects** that render in **contexts**.
+
+### What to Explore
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginTop: '1rem', marginBottom: '1.5rem' }}>
+  <div style={{ padding: '1rem', border: '1px solid var(--color-border-default)', borderRadius: '8px' }}>
+    <h4 style={{ margin: '0 0 0.5rem 0' }}>Objects</h4>
+    <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+      Browse User, Invoice, Subscription. See how business entities are structured.
+    </p>
+  </div>
+  <div style={{ padding: '1rem', border: '1px solid var(--color-border-default)', borderRadius: '8px' }}>
+    <h4 style={{ margin: '0 0 0.5rem 0' }}>Traits</h4>
+    <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+      See Addressable, Stateful, Billable. Understand reusable capabilities.
+    </p>
+  </div>
+  <div style={{ padding: '1rem', border: '1px solid var(--color-border-default)', borderRadius: '8px' }}>
+    <h4 style={{ margin: '0 0 0.5rem 0' }}>Contexts</h4>
+    <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+      See how the same object renders in List, Detail, Form, Card.
+    </p>
+  </div>
+</div>
+
+### Key Takeaway
+
+Design for **objects + contexts**, not pages. Ask:
+
+- "What object is the user looking at?" (User, Invoice, Subscription)
+- "What context are they in?" (browsing a list, viewing details, editing)
+- "What traits does this object have?" (Addressable, Stateful, Billable)
+
+The answers determine the UI automatically.
+
+---
+
+## For Developers (10 minutes)
+
+### Project Structure
+
+```
+OODS-Foundry/
+├── src/
+│   ├── core/           # Trait engine (compositor, resolver, registry)
+│   ├── components/     # React components (Badge, Toast, etc.)
+│   └── stories/        # Internal Storybook stories
+├── traits/             # Trait definitions (YAML)
+│   ├── core/           # Addressable, Authable, Classifiable
+│   ├── lifecycle/      # Stateful, Timestampable, Archivable
+│   └── viz/            # Visualization traits
+├── domains/
+│   └── saas-billing/   # Domain-specific traits and objects
+│       └── traits/     # Billable, Payable, Metered, Refundable
+├── stories/            # Public Storybook stories
+│   ├── docs/           # Philosophy and concept docs (you are here)
+│   ├── objects/        # Object demos
+│   ├── traits/         # Trait demos
+│   └── viz/            # Visualization demos
+└── packages/
+    └── tokens/         # Design tokens package
+```
+
+### Rendering an Object
+
+The simplest way to render an object is with `RenderObject`:
+
+```tsx
+import { RenderObject } from '@oods/core';
+import { user } from './fixtures/user';
+
+// Render in detail context
+<RenderObject object={user} context="detail" />
+
+// Render in list context
+<RenderObject object={user} context="list" />
+
+// Render in form context with edit mode
+<RenderObject object={user} context="form" mode="edit" />
+```
+
+The engine automatically selects the right components based on the object's traits and the rendering context.
+
+### Adding a Trait to an Object
+
+Objects compose traits. Here's how to add Addressable to a User:
+
+```yaml
+# objects/user.object.yaml
+object:
+  name: User
+  version: 1.0.0
+
+traits:
+  - Timestampable
+  - Addressable:
+      roles: [billing, shipping]
+      defaultRole: billing
+  - Authable:
+      roleStrategy: rbac
+
+schema:
+  id:
+    type: uuid
+    required: true
+  email:
+    type: email
+    required: true
+  display_name:
+    type: string
+    required: true
+```
+
+The `Addressable` trait adds:
+- `addresses` and `default_address_role` fields to the schema
+- Address display components for list/detail contexts
+- Address editor component for form context
+- Design tokens for address cards
+
+### Creating a New Trait
+
+Traits are YAML files that define a reusable capability:
+
+```yaml
+# traits/lifecycle/Archivable.trait.yaml
+trait:
+  name: Archivable
+  version: 1.0.0
+  description: Supports archiving and restoration
+  category: lifecycle
+
+dependencies:
+  - Timestampable  # Needs created_at/updated_at
+
+schema:
+  archived_at:
+    type: timestamp
+    required: false
+  archived_by:
+    type: uuid
+    required: false
+
+view_extensions:
+  list:
+    - component: ArchivedBadge
+      props:
+        field: archived_at
+  detail:
+    - component: ArchiveControls
+      position: actions
+      props:
+        field: archived_at
+```
+
+---
+
+## Key Commands
+
+```bash
+# Start Storybook development
+pnpm storybook
+
+# Run tests
+pnpm test
+
+# Build design tokens
+pnpm --filter @oods/tokens build
+
+# Pre-commit validation (lint, types, tests)
+pnpm local:pr-check
+
+# Build Storybook for production
+pnpm build-storybook
+```
+
+---
+
+## Quick Reference
+
+| Task | Command or Location |
+|------|---------------------|
+| Add a new trait | Create `traits/<category>/<Name>.trait.yaml` |
+| Add a trait to an object | Edit `objects/<name>.object.yaml`, add to `traits:` |
+| Create a new object | Create `objects/<name>.object.yaml` with `object:`, `traits:`, `schema:` |
+| Add a component story | Create `stories/<section>/<Name>.stories.tsx` |
+| Check trait YAML syntax | Run `pnpm validate:traits` |
+| Compose an object | Use `composeTraits()` from `@oods/trait-engine` |
+
+---
+
+## Next Steps
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', marginTop: '1rem' }}>
+  <div style={{ padding: '1rem', border: '1px solid var(--color-border-default)', borderRadius: '8px' }}>
+    <h4 style={{ margin: '0 0 0.5rem 0' }}>Explore Objects</h4>
+    <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+      See User, Invoice, Subscription in action.
+    </p>
+    <a href="/docs/objects-user-with-addressable--docs" style={{ fontSize: '0.875rem' }}>Browse Objects →</a>
+  </div>
+  <div style={{ padding: '1rem', border: '1px solid var(--color-border-default)', borderRadius: '8px' }}>
+    <h4 style={{ margin: '0 0 0.5rem 0' }}>Explore Traits</h4>
+    <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+      See Addressable, Stateful, and more.
+    </p>
+    <a href="/docs/traits-core-addressable--docs" style={{ fontSize: '0.875rem' }}>Browse Traits →</a>
+  </div>
+  <div style={{ padding: '1rem', border: '1px solid var(--color-border-default)', borderRadius: '8px' }}>
+    <h4 style={{ margin: '0 0 0.5rem 0' }}>Explore Contexts</h4>
+    <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+      See how objects render differently.
+    </p>
+    <a href="/docs/contexts-canonical-detail--docs" style={{ fontSize: '0.875rem' }}>Browse Contexts →</a>
+  </div>
+  <div style={{ padding: '1rem', border: '1px solid var(--color-border-default)', borderRadius: '8px' }}>
+    <h4 style={{ margin: '0 0 0.5rem 0' }}>Read the Trait Engine Docs</h4>
+    <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+      Understand composition mechanics.
+    </p>
+    <a href="/docs/understanding-oods-trait-engine--docs" style={{ fontSize: '0.875rem' }}>Trait Engine →</a>
+  </div>
+</div>
+
+---
+
+<div style={{ marginTop: '2rem', padding: '1rem', background: 'var(--color-bg-subtle)', borderRadius: '8px', fontSize: '0.875rem' }}>
+  <strong>Questions?</strong> Check the Storybook docs sidebar for component-level documentation.
+  For architectural questions, see <code>docs/compositor-readme.md</code> and <code>docs/authoring-traits.md</code>.
+</div>

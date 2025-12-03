@@ -1,0 +1,130 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Understanding OODS/Philosophy" />
+
+# Why Object-Oriented Design Systems?
+
+**The Problem Component Libraries Don't Solve**
+
+---
+
+## The Scaling Challenge
+
+Modern enterprise applications face a fundamental tension: UI component libraries give you *building blocks*, but they don't give you a *strategy* for building complex, consistent applications at scale.
+
+Consider a typical scenario. Your application has a `User` entity. That user appears in:
+- A list of team members
+- A detail view for the profile page
+- A form for editing account settings
+- A timeline showing activity history
+- A card in a dashboard widget
+- An inline mention in comments
+
+With a traditional component library, you'd build each of these separately. Each view makes its own decisions about what fields to show, how to format them, what actions to expose. Over time, inconsistencies creep in. The profile page shows "Last Active" but the list doesn't. The form validates emails differently than the backend. The timeline uses a different date format than the card.
+
+**You're not building an application. You're building six applications that happen to share a database.**
+
+---
+
+## The OODS Approach
+
+OODS (Object-Oriented Design System) inverts the model. Instead of starting with components, you start with your domain:
+
+<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginTop: '1.5rem', marginBottom: '1.5rem' }}>
+  <div style={{ padding: '1.5rem', border: '2px solid var(--color-border-default)', borderRadius: '8px', background: 'var(--color-bg-subtle)' }}>
+    <h4 style={{ margin: '0 0 1rem 0' }}>Traditional Approach</h4>
+    <div style={{ fontFamily: 'monospace', fontSize: '0.875rem' }}>
+      Component → Props → UI
+    </div>
+    <p style={{ marginTop: '1rem', marginBottom: 0, fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+      Each component decides how to render. Consistency is manual discipline.
+    </p>
+  </div>
+  <div style={{ padding: '1.5rem', border: '2px solid var(--color-primary-emphasis)', borderRadius: '8px', background: 'var(--color-bg-subtle)' }}>
+    <h4 style={{ margin: '0 0 1rem 0' }}>OODS Approach</h4>
+    <div style={{ fontFamily: 'monospace', fontSize: '0.875rem' }}>
+      Object → Traits → Context → UI
+    </div>
+    <p style={{ marginTop: '1rem', marginBottom: 0, fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+      Objects know how to render themselves. Consistency is automatic.
+    </p>
+  </div>
+</div>
+
+**Define once, render everywhere.** A User object knows it has an email, a status, addresses, and permissions. When you place that User in a List context, it renders appropriately for lists. Drop it in a Form context, and it renders form fields. The User object adapts; you don't rebuild it.
+
+---
+
+## Why This Matters
+
+### Consistency Without Effort
+
+Every instance of a User looks and behaves the same way in the same context. Not because developers remembered to copy-paste the same component props, but because the User *is* the same object with the same traits. Change how users display their status, and every list, card, and detail view updates automatically.
+
+### Composability Through Traits
+
+OODS models capabilities as **traits** that objects can have. A User is `Addressable` (has addresses), `Authable` (has permissions), and `Preferenceable` (has settings). An Organization is also `Addressable` and `Authable`. The address-handling logic isn't duplicated—it's the same `Addressable` trait, reused.
+
+This isn't inheritance. It's composition. Objects mix together whatever traits they need, and the Trait Engine automatically:
+- Merges schemas from multiple traits
+- Resolves conflicts when traits define overlapping fields
+- Tracks which trait contributed each capability
+
+### Context-Aware Rendering
+
+The same object renders differently based on where it appears. In a `List` context, show minimal information. In a `Detail` context, show everything. In a `Form` context, make fields editable. In a `Timeline` context, show history.
+
+You don't write six different components. You write one object definition with traits, and the context determines the output. This isn't magic—traits explicitly declare how they should appear in each context through **view extensions**.
+
+---
+
+## The Three Pillars
+
+OODS rests on three interconnected concepts:
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginTop: '1.5rem' }}>
+  <div style={{ padding: '1rem', border: '1px solid var(--color-border-default)', borderRadius: '8px', textAlign: 'center' }}>
+    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📦</div>
+    <h4 style={{ margin: '0 0 0.5rem 0' }}>Objects</h4>
+    <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+      Your business entities: User, Invoice, Product, Subscription
+    </p>
+  </div>
+  <div style={{ padding: '1rem', border: '1px solid var(--color-border-default)', borderRadius: '8px', textAlign: 'center' }}>
+    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🧬</div>
+    <h4 style={{ margin: '0 0 0.5rem 0' }}>Traits</h4>
+    <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+      Composable capabilities: Addressable, Stateful, Billable, Authable
+    </p>
+  </div>
+  <div style={{ padding: '1rem', border: '1px solid var(--color-border-default)', borderRadius: '8px', textAlign: 'center' }}>
+    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🎭</div>
+    <h4 style={{ margin: '0 0 0.5rem 0' }}>Contexts</h4>
+    <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+      Rendering situations: List, Detail, Form, Card, Timeline
+    </p>
+  </div>
+</div>
+
+**Objects** are your domain entities—the nouns of your application. They have identity, data, and behavior.
+
+**Traits** are the adjectives—capabilities that objects can have. An object becomes `Addressable` by composing the Addressable trait, which brings schema fields, validation rules, UI components, and design tokens.
+
+**Contexts** are the verbs—the actions or situations where objects appear. The same Invoice object behaves as a detail page, a list item, or a form, depending on context.
+
+---
+
+## Next Steps
+
+Ready to understand how these pieces fit together? Continue to:
+
+- **[Core Concepts](/docs/understanding-oods-core-concepts--docs)** — Deep dive into Objects, Traits, and Contexts
+- **[The Trait Engine](/docs/understanding-oods-trait-engine--docs)** — How composition actually works
+- **[Getting Started](/docs/understanding-oods-getting-started--docs)** — Begin building with OODS
+
+---
+
+<div style={{ marginTop: '2rem', padding: '1rem', background: 'var(--color-bg-subtle)', borderRadius: '8px', fontSize: '0.875rem' }}>
+  <strong>OODS Foundry</strong> is an open-source implementation of object-oriented design system principles.
+  This documentation covers the concepts and architecture—browse the Objects, Traits, and Contexts sections to see working examples.
+</div>
