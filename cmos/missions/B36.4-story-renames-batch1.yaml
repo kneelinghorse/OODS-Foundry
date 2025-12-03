@@ -1,0 +1,184 @@
+id: B36.4
+title: Story Title Renames - Objects, Traits, Contexts
+status: Queued
+sprint: Sprint 36
+created: 2025-12-03
+tags: [storybook, navigation, refactor, batch-rename]
+
+objective: |
+  Rename story titles for Objects, Traits, and Contexts sections to match
+  the new navigation hierarchy. This is a mechanical batch operation.
+
+context: |
+  Story navigation is controlled by the `title` property in each story's
+  default export. We need to update these to match our new hierarchy.
+
+  Reference: cmos/reports/oods-navigation-implementation-plan.md (Part 3)
+
+deliverables:
+  # ============================================
+  # OBJECTS SECTION
+  # ============================================
+  - path: stories/objects/UserWithAddresses.stories.tsx
+    action: update_title
+    old_title: (check file)
+    new_title: "Objects/Core Objects/User/With Addressable"
+
+  - path: stories/objects/UserWithAuthable.stories.tsx
+    action: update_title
+    new_title: "Objects/Core Objects/User/With Authable"
+
+  - path: stories/objects/UserPreferences.stories.tsx
+    action: update_title
+    new_title: "Objects/Core Objects/User/With Preferences"
+
+  - path: src/stories/user-stories/UserDetail.stories.tsx
+    action: update_title
+    new_title: "Objects/Core Objects/User/Detail View"
+
+  - path: stories/objects/OrganizationMembers.stories.tsx
+    action: update_title
+    new_title: "Objects/Core Objects/Organization/Members"
+
+  - path: stories/objects/OrganizationLocations.stories.tsx
+    action: update_title
+    new_title: "Objects/Core Objects/Organization/Locations"
+
+  - path: stories/objects/ProductCategoryBrowser.stories.tsx
+    action: update_title
+    new_title: "Objects/Core Objects/Product/Category Browser"
+
+  - path: stories/domains/Billing/Invoice.stories.tsx
+    action: update_title
+    new_title: "Objects/Domain Objects/Invoice"
+
+  - path: stories/domains/Billing/Invoice.lifecycle.stories.tsx
+    action: update_title
+    new_title: "Objects/Domain Objects/Invoice/Lifecycle"
+
+  - path: stories/domains/Billing/Subscription.stories.tsx
+    action: update_title
+    new_title: "Objects/Domain Objects/Subscription"
+
+  - path: stories/domains/Billing/Subscription.lifecycle.stories.tsx
+    action: update_title
+    new_title: "Objects/Domain Objects/Subscription/Lifecycle"
+
+  - path: stories/domains/Billing/Usage.metered.stories.tsx
+    action: update_title
+    new_title: "Objects/Domain Objects/Usage"
+
+  # ============================================
+  # TRAITS SECTION
+  # ============================================
+  - path: stories/traits/AddressFormatting.stories.tsx
+    action: update_title
+    new_title: "Traits/Core/Addressable"
+
+  - path: stories/components/AddressDisplay.stories.tsx
+    action: update_title
+    new_title: "Traits/Core/Addressable/Display"
+
+  - path: stories/components/AddressForm.stories.tsx
+    action: update_title
+    new_title: "Traits/Core/Addressable/Form"
+
+  - path: stories/components/classification/CategoryPicker.stories.tsx
+    action: update_title
+    new_title: "Traits/Core/Classifiable/Category Picker"
+
+  - path: stories/components/classification/CategoryTree.stories.tsx
+    action: update_title
+    new_title: "Traits/Core/Classifiable/Category Tree"
+
+  - path: stories/components/classification/TagInput.stories.tsx
+    action: update_title
+    new_title: "Traits/Core/Classifiable/Tag Input"
+
+  - path: stories/components/classification/TagList.stories.tsx
+    action: update_title
+    new_title: "Traits/Core/Classifiable/Tag List"
+
+  # ============================================
+  # CONTEXTS SECTION
+  # ============================================
+  - path: src/stories/proofs/view-profiles/Detail.stories.tsx
+    action: update_title
+    new_title: "Contexts/Canonical/Detail"
+
+  - path: src/stories/proofs/view-profiles/List.stories.tsx
+    action: update_title
+    new_title: "Contexts/Canonical/List"
+
+  - path: src/stories/proofs/view-profiles/Form.stories.tsx
+    action: update_title
+    new_title: "Contexts/Canonical/Form"
+
+  - path: src/stories/proofs/view-profiles/Timeline.stories.tsx
+    action: update_title
+    new_title: "Contexts/Canonical/Timeline"
+
+  - path: src/stories/proofs/view-profiles/Card.stories.tsx
+    action: update_title
+    new_title: "Contexts/Compound/Card"
+
+  - path: src/stories/proofs/view-profiles/Inline.stories.tsx
+    action: update_title
+    new_title: "Contexts/Compound/Inline"
+
+  - path: stories/proofs/DashboardContexts.stories.tsx
+    action: update_title
+    new_title: "Contexts/Compound/Dashboard"
+
+  - path: stories/proofs/context-gallery.stories.tsx
+    action: update_title
+    new_title: "Contexts/Domain Context Gallery"
+
+implementation_pattern: |
+  For each file, find the default export and update the title property:
+
+  BEFORE:
+  ```typescript
+  export default {
+    title: 'Components/SomeComponent',
+    component: SomeComponent,
+  } satisfies Meta<typeof SomeComponent>;
+  ```
+
+  AFTER:
+  ```typescript
+  export default {
+    title: 'Objects/Core Objects/User/With Addressable',
+    component: SomeComponent,
+  } satisfies Meta<typeof SomeComponent>;
+  ```
+
+  Some files may use different patterns (const meta = {...}). Handle accordingly.
+
+success_criteria:
+  - All listed files have updated titles
+  - Storybook builds without errors
+  - Stories appear in correct navigation sections
+  - No orphan stories in old locations
+
+validation:
+  - command: pnpm build-storybook
+    expected: Build succeeds
+  - manual: Start Storybook, verify Objects section populated
+  - manual: Verify Traits section has Addressable and Classifiable
+  - manual: Verify Contexts section has Canonical and Compound subsections
+
+dependencies:
+  - B36.1  # Nav config must be in place
+
+notes: |
+  This is a MECHANICAL operation. Do not:
+  - Change component imports
+  - Modify story content
+  - Add new stories
+  - Delete any files
+
+  Only change the `title` property in each file's default export.
+
+  If a file doesn't exist at the listed path, check for similar paths
+  and document in completion notes.

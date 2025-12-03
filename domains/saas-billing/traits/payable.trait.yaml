@@ -26,7 +26,7 @@ parameters:
   - name: paymentTerms
     type: string[]
     required: false
-    description: Supported payment term descriptors (ex: net_15, due_upon_receipt).
+    description: "Supported payment term descriptors (ex: net_15, due_upon_receipt)."
     default:
       - due_upon_receipt
       - net_15

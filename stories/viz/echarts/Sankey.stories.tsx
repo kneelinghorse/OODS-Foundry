@@ -76,6 +76,50 @@ const energyFlowInput: SankeyInput = {
   ],
 };
 
+// Data designed to show nodeAlign differences clearly
+// Has paths of different lengths: some nodes terminate early, others continue further
+// Left-align: terminal nodes stay at their natural depth (not pushed right)
+// Right-align: source nodes start at their natural depth (not pushed left)
+// Justify: spreads everything across full width
+const alignmentDemoInput: SankeyInput = {
+  nodes: [
+    // Sources (level 0)
+    { name: 'Source A' },
+    { name: 'Source B' },
+    { name: 'Source C' },
+    // Processing (level 1)
+    { name: 'Process 1' },
+    { name: 'Process 2' },
+    // Distribution (level 2)
+    { name: 'Distribute' },
+    // Final consumers (level 3)
+    { name: 'Consumer X' },
+    { name: 'Consumer Y' },
+    // Early terminal node (ends at level 1) - key for showing alignment diff
+    { name: 'Direct Use' },
+    // Another early terminal (ends at level 2)
+    { name: 'Storage' },
+  ],
+  links: [
+    // Source A flows through full pipeline (4 levels)
+    { source: 'Source A', target: 'Process 1', value: 100 },
+    { source: 'Process 1', target: 'Distribute', value: 80 },
+    { source: 'Distribute', target: 'Consumer X', value: 50 },
+    { source: 'Distribute', target: 'Consumer Y', value: 30 },
+
+    // Source B goes to Process 2, but some ends at Storage (3 levels)
+    { source: 'Source B', target: 'Process 2', value: 120 },
+    { source: 'Process 2', target: 'Distribute', value: 70 },
+    { source: 'Process 2', target: 'Storage', value: 50 },
+
+    // Source C goes DIRECTLY to consumers (bypasses processing - only 2 levels)
+    { source: 'Source C', target: 'Direct Use', value: 80 },
+
+    // Some Process 1 goes to Direct Use too
+    { source: 'Process 1', target: 'Direct Use', value: 20 },
+  ],
+};
+
 // Simple budget allocation flow
 const budgetInput: SankeyInput = {
   nodes: [
@@ -394,14 +438,15 @@ export const LeftAligned: Story = {
   name: 'Left-aligned nodes',
   render: () => (
     <SankeyPreview
-      input={budgetInput}
+      input={alignmentDemoInput}
       spec={{
         ...baseSpec,
         id: 'stories:sankey:left-align',
         name: 'Left-Aligned Sankey',
         layout: { nodeAlign: 'left' },
-        a11y: { description: 'Sankey with nodes aligned to the left.' },
+        a11y: { description: 'Sankey with nodes aligned to the left. Notice how "Direct Use" and "Storage" appear at their natural depth (not pushed to the right edge). Compare with Justify-aligned to see the difference.' },
       }}
+      height={450}
     />
   ),
 };
@@ -410,20 +455,38 @@ export const RightAligned: Story = {
   name: 'Right-aligned nodes',
   render: () => (
     <SankeyPreview
-      input={budgetInput}
+      input={alignmentDemoInput}
       spec={{
         ...baseSpec,
         id: 'stories:sankey:right-align',
         name: 'Right-Aligned Sankey',
         layout: { nodeAlign: 'right' },
-        a11y: { description: 'Sankey with nodes aligned to the right.' },
+        a11y: { description: 'Sankey with nodes aligned to the right. Notice how "Source C" is NOT at the left edge - it starts at its natural depth relative to other sources. Compare with Justify-aligned.' },
       }}
+      height={450}
+    />
+  ),
+};
+
+export const JustifyAligned: Story = {
+  name: 'Justify-aligned nodes (default)',
+  render: () => (
+    <SankeyPreview
+      input={alignmentDemoInput}
+      spec={{
+        ...baseSpec,
+        id: 'stories:sankey:justify-align',
+        name: 'Justify-Aligned Sankey',
+        layout: { nodeAlign: 'justify' },
+        a11y: { description: 'Sankey with nodes justified across full width. All sources are pushed to the left edge, all sinks to the right edge, regardless of actual path length. This is the default ECharts behavior.' },
+      }}
+      height={450}
     />
   ),
 };
 
 export const WideNodes: Story = {
-  name: 'Wide nodes',
+  name: 'Wide nodes (40px width, 20px gap)',
   render: () => (
     <SankeyPreview
       input={budgetInput}
@@ -431,8 +494,24 @@ export const WideNodes: Story = {
         ...baseSpec,
         id: 'stories:sankey:wide-nodes',
         name: 'Wide Node Sankey',
-        layout: { nodeWidth: 40, nodeGap: 15 },
-        a11y: { description: 'Sankey with wider nodes and larger gaps.' },
+        layout: { nodeWidth: 40, nodeGap: 20 },
+        a11y: { description: 'Sankey with wider nodes (40px vs default 20px) and larger gaps (20px vs default 8px). Compare with standard stories to see the difference.' },
+      }}
+    />
+  ),
+};
+
+export const NarrowNodes: Story = {
+  name: 'Narrow nodes (10px width, 4px gap)',
+  render: () => (
+    <SankeyPreview
+      input={budgetInput}
+      spec={{
+        ...baseSpec,
+        id: 'stories:sankey:narrow-nodes',
+        name: 'Narrow Node Sankey',
+        layout: { nodeWidth: 10, nodeGap: 4 },
+        a11y: { description: 'Sankey with narrower nodes (10px vs default 20px) and smaller gaps (4px vs default 8px). Creates a more compact, data-dense visualization.' },
       }}
     />
   ),

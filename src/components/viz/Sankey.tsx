@@ -295,7 +295,7 @@ export function Sankey({
 
   return (
     <div
-      className={className}
+      className={`min-w-0 w-full overflow-hidden ${className ?? ''}`}
       role="figure"
       aria-label={resolvedAriaLabel}
       {...props}
@@ -303,7 +303,7 @@ export function Sankey({
       {/* Chart container */}
       <div
         ref={containerRef}
-        style={{ width, height }}
+        style={{ width: '100%', maxWidth: width, height }}
         aria-hidden="true"
         data-testid="sankey-chart"
         data-status={status}
@@ -314,7 +314,7 @@ export function Sankey({
         <div
           role="alert"
           className="flex items-center justify-center rounded border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-600"
-          style={{ width, height }}
+          style={{ maxWidth: width, height }}
         >
           <p>Unable to render Sankey diagram: {errorMessage ?? 'Unknown error'}</p>
         </div>

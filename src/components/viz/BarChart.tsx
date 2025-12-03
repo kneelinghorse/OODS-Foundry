@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { HTMLAttributes, JSX } from 'react';
+import type { CSSProperties, HTMLAttributes, JSX } from 'react';
 import { loadVegaEmbed } from '../../viz/runtime/vega-embed-loader.js';
 import type { EmbedOptions, EmbedResult, VisualizationSpec } from '../../viz/runtime/vega-embed-loader.js';
 import type { NormalizedVizSpec } from '../../viz/spec/normalized-viz-spec.js';
@@ -8,31 +8,135 @@ import type { VegaLiteAdapterSpec } from '../../viz/adapters/vega-lite-adapter.j
 import { VizContainer } from './VizContainer.js';
 import { AccessibleTable } from './AccessibleTable.js';
 import { ChartDescription } from './ChartDescription.js';
+import { useReducedMotion } from '../../overlays/manager/hooks.js';
 
 export interface BarChartProps extends HTMLAttributes<HTMLElement> {
   readonly spec: NormalizedVizSpec;
   readonly renderer?: 'svg' | 'canvas';
   readonly showTable?: boolean;
   readonly showDescription?: boolean;
+  readonly responsive?: boolean;
+  readonly animate?: boolean;
+  readonly minHeight?: number;
 }
 
 type ChartStatus = 'idle' | 'loading' | 'ready' | 'error';
+
+const DEFAULT_WIDTH = 640;
+const DEFAULT_HEIGHT = 360;
+const DEFAULT_MIN_HEIGHT = 320;
 
 export function BarChart({
   spec,
   renderer = 'svg',
   showTable = true,
   showDescription = true,
+  responsive = true,
+  animate = true,
+  minHeight = DEFAULT_MIN_HEIGHT,
   className,
   ...props
 }: BarChartProps): JSX.Element {
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const chartRef = useRef<HTMLDivElement | null>(null);
   const embedHandle = useRef<EmbedResult | null>(null);
   const [status, setStatus] = useState<ChartStatus>('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [measuredWidth, setMeasuredWidth] = useState<number | null>(null);
+  const prefersReducedMotion = useReducedMotion();
+  const motionEnabled = animate && !prefersReducedMotion;
 
-  const vegaSpec = useMemo<VegaLiteAdapterSpec>(() => toVegaLiteSpec(spec), [spec]);
-  const embedOptions = useMemo<EmbedOptions>(() => ({ actions: false, renderer }), [renderer]);
+  const baseWidth = spec.config?.layout?.width ?? DEFAULT_WIDTH;
+  const baseHeight = spec.config?.layout?.height ?? DEFAULT_HEIGHT;
+  const aspectRatio =
+    baseWidth > 0 && baseHeight > 0 ? baseHeight / baseWidth : DEFAULT_HEIGHT / DEFAULT_WIDTH;
+
+  const resolvedWidth = responsive ? measuredWidth ?? baseWidth : baseWidth;
+  const resolvedHeight = responsive
+    ? Math.max(minHeight, Math.round(resolvedWidth * aspectRatio))
+    : Math.max(minHeight, baseHeight);
+
+  const baseSpec = useMemo<VegaLiteAdapterSpec>(() => toVegaLiteSpec(spec), [spec]);
+  const vegaSpec = useMemo<VegaLiteAdapterSpec>(() => {
+    return applyLayoutOverrides(baseSpec, resolvedWidth, resolvedHeight);
+  }, [baseSpec, resolvedHeight, resolvedWidth]);
+
+  const embedOptions = useMemo<EmbedOptions>(
+    () => ({
+      actions: false,
+      renderer,
+    }),
+    [renderer]
+  );
+
+  useEffect(() => {
+    if (!responsive) {
+      setMeasuredWidth(null);
+      return undefined;
+    }
+
+    const container = containerRef.current;
+    if (!container) {
+      return undefined;
+    }
+
+    let widthTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const scheduleWidth = (explicit?: number) => {
+      const measured = explicit ?? container.getBoundingClientRect().width ?? container.clientWidth;
+      if (!measured || Number.isNaN(measured) || measured <= 0) {
+        return;
+      }
+
+      if (widthTimer) {
+        clearTimeout(widthTimer);
+      }
+
+      widthTimer = setTimeout(() => {
+        widthTimer = null;
+        setMeasuredWidth((current) => {
+          if (current !== null && Math.abs(current - measured) < 1) {
+            return current;
+          }
+          return measured;
+        });
+      }, 16);
+    };
+
+    scheduleWidth();
+
+    if (typeof ResizeObserver === 'function') {
+      const observer = new ResizeObserver((entries) => {
+        const [entry] = entries;
+        scheduleWidth(entry?.contentRect?.width);
+      });
+
+      observer.observe(container);
+      return () => {
+        if (widthTimer) {
+          clearTimeout(widthTimer);
+        }
+        observer.disconnect();
+      };
+    }
+
+    if (typeof window !== 'undefined') {
+      const handleResize = () => scheduleWidth();
+      window.addEventListener('resize', handleResize);
+      return () => {
+        if (widthTimer) {
+          clearTimeout(widthTimer);
+        }
+        window.removeEventListener('resize', handleResize);
+      };
+    }
+
+    return () => {
+      if (widthTimer) {
+        clearTimeout(widthTimer);
+      }
+    };
+  }, [responsive]);
 
   useEffect(() => {
     const target = chartRef.current;
@@ -80,13 +184,30 @@ export function BarChart({
     };
   }, [embedOptions, vegaSpec]);
 
+  const chartClassName = [
+    status === 'error' ? 'hidden' : 'h-full w-full min-w-0',
+    motionEnabled ? 'transition-opacity duration-300 ease-out' : undefined,
+    motionEnabled ? (status === 'ready' ? 'opacity-100' : 'opacity-0') : undefined,
+  ]
+    .filter(Boolean)
+    .join(' ');
+
+  const surfaceStyle: CSSProperties = {
+    minHeight: `${resolvedHeight}px`,
+  };
+
   return (
     <VizContainer
       spec={spec}
       className={className}
       chart={
-        <div className="relative min-h-[320px]" data-testid="bar-chart-renderer">
-          <div ref={chartRef} className={status === 'error' ? 'hidden' : 'h-full w-full'} aria-hidden="true" />
+        <div className="relative w-full min-w-0 overflow-hidden" style={surfaceStyle} ref={containerRef} data-testid="bar-chart-surface">
+          <div
+            ref={chartRef}
+            aria-hidden="true"
+            data-testid="bar-chart-renderer"
+            className={chartClassName || 'h-full w-full'}
+          />
           {status === 'error' ? (
             <div
               role="alert"
@@ -103,4 +224,20 @@ export function BarChart({
       {...props}
     />
   );
+}
+
+function applyLayoutOverrides(
+  spec: VegaLiteAdapterSpec,
+  width?: number,
+  height?: number
+): VegaLiteAdapterSpec {
+  if (width === undefined && height === undefined) {
+    return spec;
+  }
+
+  return {
+    ...spec,
+    ...(width !== undefined ? { width: Math.round(width) } : {}),
+    ...(height !== undefined ? { height: Math.round(height) } : {}),
+  };
 }

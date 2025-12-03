@@ -1,0 +1,300 @@
+id: B36.5
+title: Story Title Renames - Viz, Primitives, Proofs
+status: Queued
+sprint: Sprint 36
+created: 2025-12-03
+tags: [storybook, navigation, refactor, batch-rename]
+
+objective: |
+  Rename story titles for Visualization, Primitives, and Proofs sections to match
+  the new navigation hierarchy. This is a mechanical batch operation.
+
+context: |
+  Continuation of B36.4. This batch covers the remaining sections.
+
+  Reference: cmos/reports/oods-navigation-implementation-plan.md (Part 3)
+
+deliverables:
+  # ============================================
+  # VISUALIZATION SECTION
+  # ============================================
+  - path: stories/viz/LineChart.stories.tsx
+    action: update_title
+    new_title: "Visualization/Standard/LineChart"
+
+  - path: stories/viz/BarChart.stories.tsx
+    action: update_title
+    new_title: "Visualization/Standard/BarChart"
+
+  - path: stories/viz/AreaChart.stories.tsx
+    action: update_title
+    new_title: "Visualization/Standard/AreaChart"
+
+  - path: stories/viz/ScatterChart.stories.tsx
+    action: update_title
+    new_title: "Visualization/Standard/ScatterChart"
+
+  - path: stories/viz/Heatmap.stories.tsx
+    action: update_title
+    new_title: "Visualization/Standard/Heatmap"
+
+  - path: stories/components/Treemap.stories.tsx
+    action: update_title
+    new_title: "Visualization/Hierarchical/Treemap"
+
+  - path: stories/components/Sunburst.stories.tsx
+    action: update_title
+    new_title: "Visualization/Hierarchical/Sunburst"
+
+  - path: stories/components/Sankey.stories.tsx
+    action: update_title
+    new_title: "Visualization/Network/Sankey"
+
+  - path: stories/components/ForceGraph.stories.tsx
+    action: update_title
+    new_title: "Visualization/Network/ForceGraph"
+
+  - path: src/components/viz/spatial/ChoroplethMap.stories.tsx
+    action: update_title
+    new_title: "Visualization/Spatial/Choropleth Map"
+
+  - path: src/components/viz/spatial/BubbleMap.stories.tsx
+    action: update_title
+    new_title: "Visualization/Spatial/Bubble Map"
+
+  - path: src/components/viz/spatial/MapControls.stories.tsx
+    action: update_title
+    new_title: "Visualization/Spatial/Map Controls"
+
+  - path: src/components/viz/spatial/MapLegend.stories.tsx
+    action: update_title
+    new_title: "Visualization/Spatial/Map Legend"
+
+  - path: src/components/viz/spatial/SpatialContainer.stories.tsx
+    action: update_title
+    new_title: "Visualization/Spatial/Spatial Container"
+
+  - path: stories/viz/FacetedCharts.stories.tsx
+    action: update_title
+    new_title: "Visualization/Composition/Faceted Charts"
+
+  - path: stories/viz/LayeredCharts.stories.tsx
+    action: update_title
+    new_title: "Visualization/Composition/Layered Charts"
+
+  - path: stories/patterns/PatternGalleryV2.stories.tsx
+    action: update_title
+    new_title: "Visualization/Patterns/Pattern Gallery V2"
+
+  # ============================================
+  # PRIMITIVES SECTION
+  # ============================================
+  # Forms
+  - path: src/stories/forms/TextField.stories.tsx
+    action: update_title
+    new_title: "Primitives/Forms/TextField"
+
+  - path: src/stories/forms/Select.stories.tsx
+    action: update_title
+    new_title: "Primitives/Forms/Select"
+
+  - path: src/stories/forms/Checkbox.stories.tsx
+    action: update_title
+    new_title: "Primitives/Forms/Checkbox"
+
+  - path: src/stories/forms/Radio.stories.tsx
+    action: update_title
+    new_title: "Primitives/Forms/Radio"
+
+  - path: src/stories/forms/TextArea.stories.tsx
+    action: update_title
+    new_title: "Primitives/Forms/TextArea"
+
+  - path: src/stories/forms/Toggle.stories.tsx
+    action: update_title
+    new_title: "Primitives/Forms/Toggle"
+
+  # Feedback
+  - path: src/stories/components/Dialog.stories.tsx
+    action: update_title
+    new_title: "Primitives/Feedback/Dialog"
+
+  - path: src/stories/components/Popover.stories.tsx
+    action: update_title
+    new_title: "Primitives/Feedback/Popover"
+
+  - path: src/stories/components/Sheet.stories.tsx
+    action: update_title
+    new_title: "Primitives/Feedback/Sheet"
+
+  - path: src/stories/base-stories/Badge.stories.tsx
+    action: update_title
+    new_title: "Primitives/Feedback/Badge"
+
+  - path: src/stories/statusables/Banner.stories.tsx
+    action: update_title
+    new_title: "Primitives/Feedback/Banner"
+
+  - path: src/stories/statusables/Toast.stories.tsx
+    action: update_title
+    new_title: "Primitives/Feedback/Toast"
+
+  # Navigation
+  - path: stories/components/Tabs.stories.tsx
+    action: update_title
+    new_title: "Primitives/Navigation/Tabs"
+
+  - path: stories/components/Breadcrumbs.stories.tsx
+    action: update_title
+    new_title: "Primitives/Navigation/Breadcrumbs"
+
+  - path: stories/components/Pagination.stories.tsx
+    action: update_title
+    new_title: "Primitives/Navigation/Pagination"
+
+  - path: stories/components/Stepper.stories.tsx
+    action: update_title
+    new_title: "Primitives/Navigation/Stepper"
+
+  # Data Display
+  - path: src/stories/table/Table.stories.tsx
+    action: update_title
+    new_title: "Primitives/Data Display/Table"
+
+  - path: stories/components/Progress.stories.tsx
+    action: update_title
+    new_title: "Primitives/Data Display/Progress"
+
+  - path: stories/components/EmptyState.stories.tsx
+    action: update_title
+    new_title: "Primitives/Data Display/EmptyState"
+
+  # Actions
+  - path: src/stories/base-stories/Button.stories.tsx
+    action: update_title
+    new_title: "Primitives/Actions/Button"
+
+  # ============================================
+  # ACCESSIBILITY SECTION
+  # ============================================
+  - path: src/stories/proofs/view-profiles/ForcedColors.stories.tsx
+    action: update_title
+    new_title: "Accessibility/High Contrast"
+
+  # ============================================
+  # TOKENS & THEMING SECTION
+  # ============================================
+  - path: stories/foundations/VizTokens.stories.mdx
+    action: update_title
+    new_title: "Tokens & Theming/Viz Tokens"
+
+  - path: stories/foundations/DesignTokens.stories.tsx
+    action: update_title
+    new_title: "Tokens & Theming/Design Tokens"
+
+  # ============================================
+  # DOMAIN PATTERNS SECTION
+  # ============================================
+  - path: stories/authz/MembershipManager.stories.tsx
+    action: update_title
+    new_title: "Domain Patterns/Authorization/Membership Manager"
+
+  - path: stories/authz/RolePermissionMatrix.stories.tsx
+    action: update_title
+    new_title: "Domain Patterns/Authorization/Role Permission Matrix"
+
+  - path: stories/authz/PermissionChecker.stories.tsx
+    action: update_title
+    new_title: "Domain Patterns/Authorization/Permission Checker"
+
+  - path: stories/authz/SoDPolicyEditor.stories.tsx
+    action: update_title
+    new_title: "Domain Patterns/Authorization/SoD Policy Editor"
+
+  - path: stories/components/Communication.MessageTimeline.stories.tsx
+    action: update_title
+    new_title: "Domain Patterns/Communication/Message Timeline"
+
+  - path: stories/components/Communication.ConversationThread.stories.tsx
+    action: update_title
+    new_title: "Domain Patterns/Communication/Conversation Thread"
+
+  - path: stories/components/Communication.DeliveryHealthWidget.stories.tsx
+    action: update_title
+    new_title: "Domain Patterns/Communication/Delivery Health Widget"
+
+  - path: stories/components/Communication.ChannelPlanEditor.stories.tsx
+    action: update_title
+    new_title: "Domain Patterns/Communication/Channel Plan Editor"
+
+  # ============================================
+  # PROOFS & INTERNALS SECTION
+  # ============================================
+  - path: stories/proofs/billing-acl.stories.tsx
+    action: update_title
+    new_title: "Proofs & Internals/Compliance/Billing ACL"
+
+  - path: stories/proofs/compliance.stories.tsx
+    action: update_title
+    new_title: "Proofs & Internals/Compliance/Core"
+
+  - path: stories/proofs/TemporalHygiene.stories.tsx
+    action: update_title
+    new_title: "Proofs & Internals/Temporal Hygiene"
+
+  - path: stories/performance/CompositorHarness.stories.tsx
+    action: update_title
+    new_title: "Proofs & Internals/Performance/Compositor Harness"
+
+  - path: stories/performance/ListHarness.stories.tsx
+    action: update_title
+    new_title: "Proofs & Internals/Performance/List Harness"
+
+  - path: stories/performance/TokenTransformHarness.stories.tsx
+    action: update_title
+    new_title: "Proofs & Internals/Performance/Token Transform Harness"
+
+  - path: stories/performance/UsageAggregationHarness.stories.tsx
+    action: update_title
+    new_title: "Proofs & Internals/Performance/Usage Aggregation Harness"
+
+implementation_pattern: |
+  Same as B36.4. For each file, update the title property in default export.
+
+  IMPORTANT: Some files may not exist at listed paths. Common variations:
+  - .stories.tsx vs .stories.ts
+  - Different directory structure
+  - File may have been renamed
+
+  If file not found, search for similar names and document in completion notes.
+
+success_criteria:
+  - All existing files have updated titles
+  - Storybook builds without errors
+  - Stories appear in correct navigation sections
+  - No orphan stories in old locations
+
+validation:
+  - command: pnpm build-storybook
+    expected: Build succeeds
+  - manual: Start Storybook, verify all sections populated
+  - manual: Walk through entire navigation, verify structure matches plan
+
+dependencies:
+  - B36.1  # Nav config
+  - B36.4  # First batch of renames
+
+notes: |
+  This is a MECHANICAL operation. Do not:
+  - Change component imports
+  - Modify story content
+  - Add new stories
+  - Delete any files
+
+  Only change the `title` property in each file's default export.
+
+  After this mission completes, the navigation skeleton will be fully
+  in place and ready for new content (Sprint 37+).
+
+  ECharts internal stories (stories/viz/echarts/) can remain with their
+  current titles as they're technical implementation details.

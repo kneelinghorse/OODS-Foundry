@@ -1,0 +1,100 @@
+id: B36.1
+title: Storybook Config + Navigation Skeleton
+status: Queued
+sprint: Sprint 36
+created: 2025-12-03
+tags: [storybook, navigation, config, foundation]
+
+objective: |
+  Configure Storybook to establish the new OODS navigation hierarchy.
+  This is the foundation that all other restructure work depends on.
+
+context: |
+  The current Storybook navigation obscures OODS's unique value proposition by
+  presenting it as a generic component library. We're restructuring to an
+  object-centric, trait-based architecture.
+
+  Reference: cmos/reports/oods-navigation-implementation-plan.md
+
+deliverables:
+  - path: .storybook/main.ts
+    action: update
+    details: |
+      Exclude Explorer app stories from main navigation.
+
+      CURRENT stories array includes apps/explorer paths.
+
+      UPDATE to:
+      ```typescript
+      const config: StorybookConfig = {
+        stories: [
+          '../stories/**/*.mdx',
+          '../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)',
+          '../src/stories/**/*.stories.@(js|jsx|mjs|ts|tsx)',
+          '../src/components/**/*.stories.@(js|jsx|mjs|ts|tsx)',
+          // NOTE: Explorer stories excluded - they duplicate canonical stories
+          // Explorer app has its own Storybook config if needed
+        ],
+        // ... rest of config unchanged
+      };
+      ```
+
+  - path: .storybook/preview.ts
+    action: update
+    details: |
+      Add storySort configuration to enforce navigation hierarchy.
+
+      ADD to parameters object:
+      ```typescript
+      parameters: {
+        options: {
+          storySort: {
+            order: [
+              'Understanding OODS',
+              ['Philosophy', 'Core Concepts', 'Trait Engine', 'Getting Started'],
+              'Objects',
+              ['Object Explorer', 'Core Objects', 'Domain Objects'],
+              'Traits',
+              ['How Traits Work', 'Core', 'Lifecycle', 'Statusable', 'Domain'],
+              'Contexts',
+              ['Same Object Different Contexts', 'Canonical', 'Compound'],
+              'Visualization',
+              ['How TEP Works', 'Standard', 'Hierarchical', 'Network', 'Spatial', 'Composition', 'Patterns'],
+              'Primitives',
+              ['Forms', 'Feedback', 'Navigation', 'Data Display', 'Actions'],
+              'Accessibility',
+              'Tokens & Theming',
+              'Domain Patterns',
+              'Proofs & Internals',
+            ],
+          },
+        },
+        // ... existing parameters
+      }
+      ```
+
+  - path: stories/docs/
+    action: create_directory
+    details: |
+      Create the docs directory for MDX philosophy content.
+      This will hold 1-philosophy.mdx, 2-core-concepts.mdx, etc.
+
+success_criteria:
+  - Storybook builds without errors
+  - Explorer stories no longer appear in main navigation
+  - Story sort order reflects new hierarchy (even if sections are empty)
+  - stories/docs/ directory exists
+
+validation:
+  - command: pnpm build-storybook
+    expected: Build succeeds
+  - manual: Start Storybook, verify Explorer stories are gone
+  - manual: Verify sort order in sidebar (sections may be empty but ordered correctly)
+
+dependencies: []
+
+notes: |
+  This mission MUST complete before B36.2-B36.5.
+  All subsequent story title renames depend on this config being in place.
+
+  DO NOT rename any story files yet - that's B36.4 and B36.5.

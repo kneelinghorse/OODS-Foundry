@@ -34,7 +34,7 @@ export function adaptSunburstToECharts(spec: NormalizedVizSpec, input: Hierarchy
   const series = pruneUndefined({
     type: 'sunburst' as const,
     name: spec.name ?? 'Sunburst',
-    data,
+    data: assignColorsToData(data, palette),
     radius: ['0%', '90%'],
     startAngle: START_ANGLE,
     sort: 'desc',
@@ -89,6 +89,39 @@ function buildPalette(): readonly string[] {
   }
 
   return resolved.map((color, i) => color ?? FALLBACK_PALETTE[i % FALLBACK_PALETTE.length]);
+}
+
+/**
+ * Assign colors from palette to the first visible level of data nodes.
+ * For hierarchical data with a single root, colors go on the root's children.
+ * For multiple roots, colors go on each root.
+ * ECharts inherits colors down the hierarchy from these nodes.
+ */
+function assignColorsToData(
+  data: Record<string, unknown>[],
+  palette: readonly string[]
+): Record<string, unknown>[] {
+  // If we have a single root with children, color the children
+  if (data.length === 1 && Array.isArray(data[0].children) && (data[0].children as unknown[]).length > 0) {
+    const root = data[0];
+    const coloredChildren = (root.children as Record<string, unknown>[]).map((child, index) => ({
+      ...child,
+      itemStyle: {
+        ...(child.itemStyle as Record<string, unknown> | undefined),
+        color: palette[index % palette.length],
+      },
+    }));
+    return [{ ...root, children: coloredChildren }];
+  }
+
+  // Multiple roots or flat data - color each top-level node
+  return data.map((node, index) => ({
+    ...node,
+    itemStyle: {
+      ...(node.itemStyle as Record<string, unknown> | undefined),
+      color: palette[index % palette.length],
+    },
+  }));
 }
 
 function resolveDimensions(spec: NormalizedVizSpec): { width?: number; height?: number } {

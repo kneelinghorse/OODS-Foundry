@@ -1,0 +1,207 @@
+id: RESEARCH-OODS-NAV
+title: "RESEARCH: OODS-Native Navigation Structure"
+status: Active
+type: Research
+created: 2025-12-03
+tags: [research, architecture, navigation, philosophy]
+
+# =============================================================================
+# THE PROBLEM
+# =============================================================================
+
+problem: |
+  We're trying to fit OODS into a traditional design system shell.
+
+  Current nav proposal has:
+  - "Components" as the biggest section
+  - 3 Objects when objects should be CENTRAL
+  - 1 Trait when traits should be FOUNDATIONAL
+  - "Domains" that are really just specialized objects
+
+  This is exactly backwards. OODS is NOT a component library.
+  OODS is about Objects, Traits, and Contexts.
+
+  We're telling the wrong story with what we have.
+
+# =============================================================================
+# RESEARCH OBJECTIVE
+# =============================================================================
+
+objective: |
+  Use OODS Foundry's actual philosophy to derive a navigation structure
+  that reflects what makes OODS different:
+
+  1. Objects are central (not components)
+  2. Traits are foundational building blocks
+  3. Contexts determine how objects render
+  4. Primitives support objects, not the other way around
+
+  The navigation should TEACH the OODS approach, not hide it.
+
+# =============================================================================
+# OODS CORE CONCEPTS TO REFLECT
+# =============================================================================
+
+core_concepts:
+
+  primitives:
+    definition: |
+      The raw UI building blocks. Buttons, inputs, tables.
+      These SUPPORT objects - they don't stand alone.
+    question: How do we present these as supporting cast, not stars?
+
+  traits:
+    definition: |
+      Behaviors and capabilities that objects can have.
+      Addressable, Classifiable, Statusable, Temporal, etc.
+    current_state: Only showing Addressable
+    question: |
+      What traits do we actually have implemented?
+      How do we showcase the trait ENGINE, not just one trait?
+
+  objects:
+    definition: |
+      The things users care about. User, Organization, Product, Invoice, Subscription.
+      Objects HAVE traits and RENDER in contexts.
+    current_state: Only 3 objects shown (User, Organization, Product)
+    question: |
+      What objects exist in the codebase?
+      How do we make objects the HERO of the navigation?
+
+  contexts:
+    definition: |
+      How objects appear based on where they are.
+      List, Detail, Form, Card, Timeline, Dashboard.
+    current_state: View Profiles exist but poorly explained
+    question: |
+      How do we show the same object in different contexts?
+      How do we demonstrate context-driven rendering?
+
+# =============================================================================
+# OODS DIFFERENTIATORS TO SHOWCASE
+# =============================================================================
+
+differentiators:
+
+  accessibility_approach:
+    what_we_have: |
+      - Semantic HTML foundation
+      - ARIA patterns
+      - High contrast mode support
+      - ForcedColors proof
+      - Status-aware announcements
+    where_its_shown: Buried, one useless report
+    question: How do we make a11y visible as a first-class concern?
+
+  trait_engine:
+    what_it_is: |
+      The system that composes traits onto objects.
+      statusRegistry, trait composition, capability checking.
+    where_its_shown: Nowhere obvious
+    question: How do we demonstrate trait composition?
+
+  tep_visualization:
+    what_it_is: |
+      Token-Expression Pipeline for data visualization.
+      Normalized specs, adapters, renderer selection.
+    where_its_shown: Scattered across viz stories
+    question: How do we show the VIZ SYSTEM, not just charts?
+
+  context_rendering:
+    what_it_is: |
+      RenderObject, ViewProfiles, context-aware display.
+      Same object → different presentation based on context.
+    where_its_shown: Proofs/view-profiles, Domain Context Gallery (mess)
+    question: How do we make this the central demo?
+
+  semantic_tokens:
+    what_it_is: |
+      Token architecture: Reference → Semantic → Component.
+      Theme-aware, accessible color system.
+    where_its_shown: Foundations/tokens
+    question: Is the token STORY clear?
+
+# =============================================================================
+# RESEARCH TASKS
+# =============================================================================
+
+tasks:
+
+  task_1_inventory_by_concept:
+    description: |
+      Re-inventory everything by OODS concept, not by file location.
+
+      For each story/component, ask:
+      - Is this a TRAIT demonstration?
+      - Is this an OBJECT demonstration?
+      - Is this a CONTEXT demonstration?
+      - Is this a PRIMITIVE (supporting)?
+      - Is this showing ACCESSIBILITY?
+      - Is this showing the VIZ SYSTEM?
+
+    output: List of what we have, categorized by OODS concept
+
+  task_2_identify_gaps:
+    description: |
+      What's MISSING from telling the OODS story?
+
+      - What traits exist but aren't shown?
+      - What objects exist but aren't demoed?
+      - What contexts exist but aren't clear?
+      - Where is accessibility hidden?
+      - Where is the trait engine demo?
+
+    output: Gap analysis
+
+  task_3_propose_oods_native_hierarchy:
+    description: |
+      Design a navigation that reflects OODS philosophy.
+
+      NOT: Components → Objects → ...
+      INSTEAD: Start with what makes OODS different.
+
+      Consider:
+      - "Understanding OODS" section that explains the approach
+      - Objects as the main section
+      - Traits shown as capabilities objects have
+      - Contexts shown as how objects render
+      - Primitives as supporting documentation
+      - Accessibility as visible throughout
+      - Viz system as a cohesive story
+
+    output: Proposed hierarchy based on OODS philosophy
+
+  task_4_story_mapping:
+    description: |
+      Map existing stories to the new OODS-native hierarchy.
+      Where does each story belong in the new structure?
+
+    output: Migration plan
+
+# =============================================================================
+# SUCCESS CRITERIA
+# =============================================================================
+
+success_criteria:
+  - Navigation reflects OODS philosophy, not generic DS structure
+  - Objects are central, not buried
+  - Traits are visible as composable capabilities
+  - Contexts demonstrate the rendering system
+  - Accessibility is first-class, not hidden
+  - Viz system tells a cohesive story
+  - A new user learns OODS concepts from the nav structure
+
+# =============================================================================
+# OUTPUT
+# =============================================================================
+
+output_file: cmos/reports/oods-navigation-philosophy.md
+
+notes: |
+  This is FOUNDATIONAL research.
+
+  We cannot organize the Storybook until we know what story we're telling.
+  The story is OODS - Objects, Traits, Contexts.
+  Not "here's another design system with components."
+
+  The navigation should be an embodiment of the OODS philosophy.

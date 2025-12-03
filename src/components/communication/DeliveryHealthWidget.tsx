@@ -78,7 +78,7 @@ export function DeliveryHealthWidget({
             return (
               <div
                 key={index}
-                className="flex-1 rounded-sm bg-[--cmp-communication-health-success]"
+                className="flex-1 rounded-sm bg-[--cmp-status-success-icon]"
                 style={{ height: `${heightRatio * 100}%` }}
               />
             );
@@ -147,21 +147,21 @@ function healthBadgeClass(tone: HealthTone): string {
   const base =
     'inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold';
   if (tone === 'success') {
-    return `${base} bg-[--cmp-communication-health-success] text-[--sys-surface-primary]`;
+    return `${base} bg-[--cmp-status-success-surface] text-[--cmp-status-success-text]`;
   }
   if (tone === 'warning') {
-    return `${base} bg-[--cmp-communication-health-warning] text-[--sys-surface-primary]`;
+    return `${base} bg-[--cmp-status-warning-surface] text-[--cmp-status-warning-text]`;
   }
-  return `${base} bg-[--cmp-communication-health-critical] text-[--sys-surface-primary]`;
+  return `${base} bg-[--cmp-status-critical-surface] text-[--cmp-status-critical-text]`;
 }
 
 function progressBarClass(tone: HealthTone): string {
   const base = 'h-full rounded-full';
   if (tone === 'success') {
-    return `${base} bg-[--cmp-communication-health-success]`;
+    return `${base} bg-[--cmp-status-success-icon]`;
   }
   if (tone === 'warning') {
-    return `${base} bg-[--cmp-communication-health-warning]`;
+    return `${base} bg-[--cmp-status-warning-icon]`;
   }
-  return `${base} bg-[--cmp-communication-health-critical]`;
+  return `${base} bg-[--cmp-status-critical-icon]`;
 }

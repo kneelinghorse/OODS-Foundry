@@ -236,7 +236,7 @@ export function Treemap({
 
   return (
     <div
-      className={className}
+      className={`min-w-0 w-full overflow-hidden ${className ?? ''}`}
       role="figure"
       aria-label={resolvedAriaLabel}
       {...props}
@@ -244,7 +244,7 @@ export function Treemap({
       {/* Chart container */}
       <div
         ref={containerRef}
-        style={{ width, height }}
+        style={{ width: '100%', maxWidth: width, height }}
         aria-hidden="true"
         data-testid="treemap-chart"
         data-status={status}

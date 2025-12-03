@@ -1,0 +1,216 @@
+id: B35.8
+title: "Storybook Navigation Restructure"
+status: Queued
+sprint: 35
+created: 2025-12-03
+tags: [storybook, navigation, implementation]
+
+objective: |
+  Implement the approved Storybook navigation structure.
+  Change story titles and storybook config to match the hierarchy below.
+
+# =============================================================================
+# PROPOSED NAVIGATION TREE
+# =============================================================================
+# Edit this tree as needed. This is what users will see in the sidebar.
+# =============================================================================
+
+proposed_hierarchy: |
+  1. Foundations
+     ├── Design Tokens
+     ├── Viz Tokens
+     └── (colors, typography, shadows, spacing - from token stories)
+
+  2. Components
+     ├── Primitives
+     │   ├── Button
+     │   ├── Badge (NOTE: may only exist in Explorer - needs migration)
+     │   ├── Banner (NOTE: may only exist in Explorer - needs migration)
+     │   └── Toast (NOTE: may only exist in Explorer - needs migration)
+     ├── Forms
+     │   ├── TextField
+     │   ├── Select
+     │   ├── Checkbox
+     │   ├── Radio
+     │   ├── TextArea
+     │   └── Toggle
+     ├── Feedback
+     │   ├── Dialog
+     │   ├── Popover
+     │   ├── Sheet
+     │   └── Tooltip
+     ├── Navigation
+     │   ├── Tabs
+     │   ├── Breadcrumbs
+     │   ├── Pagination
+     │   └── Stepper
+     ├── Data Display
+     │   ├── Table
+     │   ├── Progress
+     │   └── EmptyState
+     └── Classification
+         ├── CategoryPicker
+         ├── CategoryTree
+         ├── TagInput
+         └── TagList
+
+  3. Traits
+     └── Addressable
+         ├── AddressFormatting
+         ├── AddressDisplay
+         └── AddressForm
+
+  4. Objects
+     ├── User
+     │   ├── UserPreferences
+     │   ├── UserWithAddresses
+     │   ├── UserWithAuthable
+     │   └── UserDetail
+     ├── Organization
+     │   ├── OrganizationMembers
+     │   └── OrganizationLocations
+     └── Product
+         └── ProductCategoryBrowser
+
+  5. Contexts
+     ├── View Profiles
+     │   ├── Card
+     │   ├── Detail
+     │   ├── Form
+     │   ├── Inline
+     │   ├── List
+     │   └── Timeline
+     └── Domain Context Gallery (NEEDS MAJOR CLEANUP - currently a mess)
+
+  6. Visualizations
+     ├── Charts
+     │   ├── Line
+     │   ├── Bar
+     │   ├── Area
+     │   ├── Scatter
+     │   └── Heatmap
+     ├── Layouts
+     │   ├── Faceted Charts
+     │   └── Layered Charts
+     ├── Patterns
+     │   ├── Pattern Gallery V2
+     │   └── Responsive Patterns
+     ├── Network & Flow
+     │   ├── Sankey
+     │   ├── Treemap
+     │   ├── Sunburst
+     │   └── ForceGraph
+     └── Spatial
+         ├── Choropleth Map
+         ├── Bubble Map
+         ├── Map Controls
+         ├── Map Legend
+         └── Spatial Container
+
+  7. Domains
+     ├── Authz
+     │   ├── MembershipManager
+     │   ├── RolePermissionMatrix
+     │   ├── PermissionChecker
+     │   └── SoDPolicyEditor
+     ├── Billing
+     │   ├── Invoice
+     │   ├── Invoice Lifecycle
+     │   ├── Subscription
+     │   ├── Subscription Lifecycle
+     │   └── Usage Metered
+     └── Communication
+         ├── MessageTimeline
+         ├── ConversationThread
+         ├── DeliveryHealthWidget
+         └── ChannelPlanEditor
+
+  8. Dashboards
+     ├── User Dashboard
+     ├── Subscription Dashboard
+     ├── Product Dashboard
+     ├── Spatial Dashboard
+     └── Network Flow Dashboard
+
+  9. Proofs
+     ├── Billing ACL
+     ├── Compliance
+     ├── Temporal Hygiene
+     └── ForcedColors (High Contrast)
+
+  10. Performance (Internal)
+      ├── Compositor Harness
+      ├── List Harness
+      ├── Token Transform Harness
+      └── Usage Aggregation Harness
+
+  11. Brands
+      └── Brand A Theming
+
+  12. Explorer (App-Specific - LAST)
+      ├── Input
+      ├── Form Patterns
+      ├── StatusChip
+      ├── HighContrast Guardrails
+      └── (other explorer-specific stories)
+
+# =============================================================================
+# ISSUES TO RESOLVE BEFORE IMPLEMENTATION
+# =============================================================================
+
+blocking_issues:
+
+  missing_components:
+    description: |
+      Badge, Banner, Toast may ONLY exist in Explorer.
+      Main components folder may be MISSING these.
+    action: |
+      BEFORE reorganizing, verify if these components exist in src/components/.
+      If not, create mission to migrate Explorer components to main codebase.
+
+  shadow_tokens_broken:
+    description: |
+      Shadow token changes did not affect buttons.
+      Tokens may not be wired through correctly.
+    action: |
+      Investigate why foundational shadow settings are not applied to buttons.
+      May need separate mission to fix token inheritance.
+
+  domain_context_gallery:
+    description: |
+      Currently a jumbled mess with no clear purpose.
+    action: |
+      Either fix it to show clear domain context examples, or remove it.
+
+# =============================================================================
+# IMPLEMENTATION STEPS
+# =============================================================================
+
+implementation:
+
+  step_1_verify_components:
+    description: Confirm Badge/Banner/Toast exist in main codebase
+    if_missing: Create B35.9 mission to migrate from Explorer
+
+  step_2_update_story_titles:
+    description: |
+      For each story file, update the meta.title to match hierarchy.
+      Example: title: 'Components/Primitives/Button'
+
+  step_3_configure_storybook_sort:
+    description: |
+      Update .storybook/preview.ts with storySort config to enforce order.
+
+  step_4_fix_domain_context_gallery:
+    description: |
+      Either make it useful or remove it entirely.
+
+success_criteria:
+  - Storybook sidebar matches the approved hierarchy
+  - No orphan stories outside the structure
+  - Explorer section is at the END
+  - Domain Context Gallery is either fixed or removed
+
+notes: |
+  USER MUST APPROVE THE TREE ABOVE before implementation begins.
+  Edit the proposed_hierarchy section and confirm.

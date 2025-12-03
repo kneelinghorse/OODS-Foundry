@@ -1,0 +1,30 @@
+css tweaks
+
+1. shadows for buttons and cards is agressive
+Raised Card
+shadow.elevation.card
+current: 0px	16px	40px	-12px
+New:  0px 12px 20px  -8px
+
+High Overlay
+shadow.elevation.overlay
+current: 0px	24px	56px	-16px
+New: 0px 16px  28px  -12px
+
+2.oklch(0.9217 0.0052 248.88)  card edge color
+
+3. select menu down arrow/triangle- issue: has a vertical line running through the triangle/arrow
+4. domain context gallery, not sure what its showing? is this the correct display, its a collage of different things? 
+5 domains/invoice  - detail list and form all look the same, side panel is crashing
+6 proofs? evaluate, do we need this section? some stories are ok but are they represented elsewhere?,  remove preview wiring, overlay contract, overlay manager
+7.Authz section - Read Only story is the only correct "assign role" button, all other stories have display issue and do not show the button correctly, it only shows white text with not button for contrast.
+8. communication / delivery health widget colors are harsh, please make sure these are OODS viz colors
+9. organization / Role assignment same button issue for role assignment button in #7
+10 user preferences, do we want all the nested divs to be visible?
+11. user /check permissions another button issue just like assign role button, white text only no button showing. same as #7
+12. dashboard contexts for all have responsive issues, the columns are not consistent and the data viz is not displaying correctly. check all stories for grid/breakpoints 
+13.patterns/responsive library/ pattern gallery v 2 again has some responsive behaviour issues when i make the browser wider the data viz card gets smaller, edge of the data viz is cut off
+14. patterns /responsive / responsive pattern gallery all charts right edges are cut off, 
+15 sankey left alinged, right alinged and wide nodes are all the same right aligned view.
+16. using a monochromatic color scale for sunburst, is that correct?
+17 tree map using basic blocks, drop shadow is very dark and heavy, UX is not great, no real drilldown

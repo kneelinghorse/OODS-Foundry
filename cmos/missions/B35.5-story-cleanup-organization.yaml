@@ -1,0 +1,28 @@
+id: B35.5
+title: "COMPLETED: Storybook Structure Audit"
+status: Completed
+sprint: 35
+created: 2025-12-02
+completed: 2025-12-03
+tags: [storybook, investigation, documentation]
+
+objective: |
+  Investigate and document the current Storybook structure.
+
+deliverables:
+  - cmos/reports/storybook-inventory.md (COMPLETED)
+  - cmos/reports/storybook-cleanup-decisions.md (COMPLETED)
+
+outcome: |
+  Investigation completed. Key findings:
+  - 104 story files across 4 locations
+  - Explorer has UNIQUE components (Badge, Banner, Toast) not duplicated elsewhere
+  - Main codebase may be MISSING these components
+  - Shadow tokens not flowing through to buttons properly
+  - Domain Context Gallery is unclear/messy
+
+  Follow-up mission B35.8 will implement the navigation restructure.
+
+notes: |
+  This mission produced inventory reports but did NOT deliver an organizational plan.
+  B35.8 created to provide concrete navigation structure.

@@ -225,7 +225,7 @@ export function Sunburst({
 
   return (
     <div
-      className={className}
+      className={`min-w-0 w-full overflow-hidden ${className ?? ''}`}
       role="figure"
       aria-label={resolvedAriaLabel}
       {...props}
@@ -233,7 +233,7 @@ export function Sunburst({
       {/* Chart container */}
       <div
         ref={containerRef}
-        style={{ width, height }}
+        style={{ width: '100%', maxWidth: width, height }}
         aria-hidden="true"
         data-testid="sunburst-chart"
         data-status={status}
@@ -244,7 +244,7 @@ export function Sunburst({
         <div
           role="alert"
           className="flex items-center justify-center rounded border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-600"
-          style={{ width, height }}
+          style={{ maxWidth: width, height }}
         >
           <p>Unable to render sunburst: {errorMessage ?? 'Unknown error'}</p>
         </div>

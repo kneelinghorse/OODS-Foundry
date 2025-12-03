@@ -1,0 +1,141 @@
+id: B35.4
+title: BROKEN - All Visualizations Are Blue
+status: Queued
+sprint: 35
+created: 2025-12-02
+updated: 2025-12-03
+tags: [viz, colors, tokens, CRITICAL]
+
+objective: |
+  FIX THE VIZ COLOR SYSTEM. Every single visualization (Treemap, Sunburst, Sankey,
+  ForceGraph) renders in monochromatic BLUE. The categorical color palette is NOT
+  being applied.
+
+context: |
+  THIS IS NOT AN AUDIT. THE COLOR SYSTEM IS BROKEN.
+
+  Current state:
+  - Treemap: ALL BLUE (different shades, but all blue)
+  - Sunburst: ALL BLUE
+  - Sankey: ALL BLUE
+  - ForceGraph: ALL BLUE
+
+  ROOT CAUSE IDENTIFIED:
+  The blue is the DEFAULT ECHARTS BLUE. We are NOT passing a color palette to ECharts,
+  so it falls back to its default monochromatic blue theme.
+
+  Reference - ECharts default (all blue):
+  https://echarts.apache.org/examples/en/editor.html?c=sunburst-simple
+
+  Reference - ECharts WITH color (what we want):
+  https://echarts.apache.org/examples/en/editor.html?c=sunburst-visualMap
+
+  Expected state:
+  - Visualizations should use categorical colors (blues, greens, oranges, purples, etc.)
+  - Different nodes/segments should be visually distinguishable by COLOR not just shade
+
+  The fix: Our adapters must pass the `color` array to ECharts options.
+
+# =============================================================================
+# ROOT CAUSE INVESTIGATION
+# =============================================================================
+investigation:
+  question: Why is everything blue?
+
+  hypothesis_1_token_resolution:
+    description: Token resolution is failing, falling back to blue
+    files_to_check:
+      - src/viz/tokens/scale-token-mapper.ts (getVizScaleTokens function)
+      - packages/tokens/src/tokens/viz-map.json
+    check: |
+      The adapters call getVizScaleTokens('categorical', { count: 9 })
+      This should return 9 different colors. Is it returning 9 blues instead?
+
+  hypothesis_2_fallback_palette:
+    description: Fallback palette is all blue
+    files_to_check:
+      - src/viz/adapters/echarts/sankey-adapter.ts (line 15-17 FALLBACK_PALETTE)
+      - src/viz/adapters/echarts/treemap-adapter.ts
+      - src/viz/adapters/echarts/sunburst-adapter.ts
+      - src/viz/adapters/echarts/graph-adapter.ts
+    check: |
+      Each adapter has a FALLBACK_PALETTE constant. Are these all blue?
+      Or is the fallback never being used because resolution "succeeds" with blue?
+
+  hypothesis_3_token_definition:
+    description: The categorical tokens themselves are all blue
+    files_to_check:
+      - packages/tokens/src/tokens/viz-map.json
+      - Any file defining --viz-scale-categorical-*
+    check: |
+      Find where categorical viz colors are defined. Are they all blue hues?
+
+  hypothesis_4_echarts_override:
+    description: ECharts is overriding our colors with its default blue theme
+    check: |
+      When echarts.init() is called, is a theme being applied that forces blue?
+      Check if 'color' option in EChartsOption is being set correctly.
+
+# =============================================================================
+# SPECIFIC FILES TO FIX
+# =============================================================================
+files:
+  token_mapper:
+    path: src/viz/tokens/scale-token-mapper.ts
+    action: Verify getVizScaleTokens returns DIFFERENT colors, not 9 blues
+
+  viz_tokens:
+    path: packages/tokens/src/tokens/viz-map.json
+    action: Check categorical scale definition - should have diverse hues
+
+  adapters:
+    paths:
+      - src/viz/adapters/echarts/treemap-adapter.ts
+      - src/viz/adapters/echarts/sunburst-adapter.ts
+      - src/viz/adapters/echarts/sankey-adapter.ts
+      - src/viz/adapters/echarts/graph-adapter.ts
+    action: |
+      1. Log what colors are being passed to ECharts
+      2. Verify 'color' array in returned EChartsOption has diverse colors
+      3. Check if FALLBACK_PALETTE has diverse colors (not all blue)
+
+# =============================================================================
+# ALSO: DeliveryHealthWidget Colors
+# =============================================================================
+delivery_health_widget:
+  problem: Uses harsh colors not from OODS palette
+  file: src/components/communication/DeliveryHealthWidget.tsx
+  fix: Replace hardcoded colors with viz tokens or status tokens
+
+# =============================================================================
+# DEBUGGING STEPS
+# =============================================================================
+debugging: |
+  1. Open browser DevTools on any Treemap/Sunburst story
+  2. Find the ECharts canvas container
+  3. In console, get the chart instance and log: chart.getOption().color
+  4. This will show what colors ECharts is actually using
+  5. If it's all blue variants, the problem is in our adapter output
+  6. If it's diverse colors, the problem is ECharts ignoring them
+
+success_criteria:
+  - Treemap shows MULTIPLE DISTINCT COLORS (not shades of blue)
+  - Sunburst shows MULTIPLE DISTINCT COLORS (not shades of blue)
+  - Sankey nodes are DIFFERENT COLORS
+  - ForceGraph nodes are DIFFERENT COLORS
+  - DeliveryHealthWidget uses OODS tokens
+
+validation:
+  - manual: Open each viz story and verify colors are NOT all blue
+  - manual: Take screenshots before/after to prove the fix
+  - code: Log ECharts color array to verify diverse palette
+
+notes: |
+  Issue refs: CSS issues #8, #16
+
+  CRITICAL: This affects ALL network/flow visualizations.
+  Do not close this mission until you can SEE different colors in Storybook.
+
+  Reference - what categorical colors SHOULD look like:
+  - Blue, Green, Orange, Red, Purple, Teal, Yellow, Pink, Gray
+  - NOT: Light blue, Medium blue, Dark blue, Navy, Sky blue, etc.

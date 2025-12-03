@@ -12,7 +12,7 @@ parameters:
   - name: unit
     type: string
     required: true
-    description: Canonical usage unit label (ex: seats, credits, api_calls).
+    description: "Canonical usage unit label (ex: seats, credits, api_calls)."
     default: seats
   - name: rolloverStrategy
     type: string
@@ -34,7 +34,7 @@ schema:
   meter_name:
     type: string
     required: true
-    description: Friendly metered feature name shown in UI (ex: Analytics Seats).
+    description: "Friendly metered feature name shown in UI (ex: Analytics Seats)."
   included_quantity:
     type: integer
     required: true

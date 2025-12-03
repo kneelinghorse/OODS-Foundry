@@ -195,7 +195,7 @@ export function MembershipManager({
           </button>
           <button
             type="submit"
-            className="rounded-full border border-transparent bg-[--cmp-surface-strong] px-6 py-2 text-sm font-semibold text-white transition-colors hover:bg-[--cmp-surface-strong-hover] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[--sys-focus-ring] disabled:bg-[--cmp-surface-canvas] disabled:text-[--sys-text-primary] disabled:border-[--cmp-border-subtle]"
+            className="rounded-full border border-transparent bg-[--cmp-surface-strong] px-6 py-2 text-sm font-semibold text-white transition-colors hover:bg-[--cmp-surface-strong_hover] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[--sys-focus-ring] disabled:bg-[--cmp-surface-canvas] disabled:text-[--sys-text-primary] disabled:border-[--cmp-border-subtle]"
             disabled={readOnly || isSubmitting || !selectedUserId || !selectedRoleId}
           >
             {isSubmitting ? 'Assigning…' : 'Assign role'}

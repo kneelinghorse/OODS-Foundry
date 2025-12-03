@@ -1,0 +1,112 @@
+id: B36.2
+title: Philosophy MDX Documentation
+status: Queued
+sprint: Sprint 36
+created: 2025-12-03
+tags: [documentation, mdx, philosophy, foundation]
+
+objective: |
+  Create the foundational philosophy documentation that explains WHY OODS exists
+  and what makes it different from traditional component libraries.
+
+context: |
+  OODS's unique value is its object-centric, trait-based architecture.
+  Currently this is invisible to users. These docs will be the first thing
+  users see in Storybook navigation.
+
+  Reference: cmos/reports/oods-navigation-implementation-plan.md (Part 4.1)
+
+deliverables:
+  - path: stories/docs/1-philosophy.mdx
+    action: create
+    details: |
+      Title: "Understanding OODS/Philosophy"
+
+      CONTENT REQUIREMENTS:
+
+      1. Opening Hook (2-3 paragraphs)
+         - Problem: Component libraries don't scale for enterprise apps
+         - Traditional approach: Build components, wire them together ad-hoc
+         - OODS approach: Model your domain as Objects with Traits, render in Contexts
+
+      2. The OODS Difference (with diagram)
+         - Traditional: Component → Props → UI
+         - OODS: Object → Traits → Context → UI
+         - Show how a User object renders differently in List vs Detail vs Form
+
+      3. Why This Matters
+         - Consistency: Same object, same behavior, everywhere
+         - Composability: Traits are reusable capabilities
+         - Context-awareness: UI adapts to usage context automatically
+
+      4. Key Concepts (brief intro, links to deeper docs)
+         - Objects: Business entities (User, Invoice, Product)
+         - Traits: Composable capabilities (Addressable, Stateful, Billable)
+         - Contexts: Rendering situations (List, Detail, Form, Timeline)
+
+      FORMAT: MDX with Storybook Canvas blocks where appropriate
+      TONE: Conceptual, persuasive, not code-heavy
+      LENGTH: ~800-1200 words
+
+  - path: stories/docs/2-core-concepts.mdx
+    action: create
+    details: |
+      Title: "Understanding OODS/Core Concepts"
+
+      CONTENT REQUIREMENTS:
+
+      1. Objects Section
+         - Definition: Domain entities with identity and behavior
+         - Examples: User, Organization, Product, Invoice, Subscription
+         - Show object definition YAML snippet
+         - Explain: Objects COMPOSE traits, they don't inherit
+
+      2. Traits Section
+         - Definition: Reusable capabilities that objects can have
+         - Categories:
+           * Core: Addressable, Authable, Classifiable, Communicable
+           * Lifecycle: Stateful, Timestampable, Archivable, Cancellable
+           * Domain: Billable, Payable, Refundable, Metered
+         - Show trait definition YAML snippet
+         - Explain: Traits bring schema, UI hints, validation, tokens
+
+      3. Contexts Section
+         - Definition: The rendering situation for an object
+         - Canonical contexts: Detail, List, Form, Timeline
+         - Compound contexts: Card, Inline, Chart, Dashboard
+         - Show same User object in 4 different contexts (use images or Canvas)
+
+      4. How They Connect
+         - Diagram: Object + Traits → Compositor → Context → Rendered UI
+         - The magic: Change context, UI adapts automatically
+
+      FORMAT: MDX with code snippets and diagrams
+      TONE: Educational, concrete examples
+      LENGTH: ~1500-2000 words
+
+success_criteria:
+  - Both MDX files render correctly in Storybook
+  - Files appear under "Understanding OODS" in navigation
+  - Content explains OODS value proposition clearly
+  - No broken links or missing images
+
+validation:
+  - command: pnpm storybook --smoke-test
+    expected: Storybook starts without errors
+  - manual: Navigate to Understanding OODS section
+  - manual: Read through both docs, verify they make sense
+
+dependencies:
+  - B36.1  # Nav config must be in place first
+
+notes: |
+  These docs are the "front door" to OODS. They should make a user
+  understand WHY OODS exists within 5 minutes of reading.
+
+  Use placeholder diagrams if needed - we can enhance later.
+  The important thing is the content structure and messaging.
+
+  Reference existing docs:
+  - docs/compositor-readme.md
+  - docs/authoring-traits.md
+  - docs/architecture/trait-engine-spec.md

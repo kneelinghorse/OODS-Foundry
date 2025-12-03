@@ -35,13 +35,20 @@
         "durationMs": 15,
         "tokensCount": 309,
         "writtenAt": "2025-10-28T21:51:18.004Z"
+      },
+      {
+        "mission": "unspecified",
+        "phase": "transform",
+        "durationMs": 11,
+        "tokensCount": 326,
+        "writtenAt": "2025-12-03T02:15:34.952Z"
       }
     ],
     "lastRun": {
       "mission": "unspecified",
-      "durationMs": 15,
-      "tokensCount": 309,
-      "writtenAt": "2025-10-28T21:51:18.004Z"
+      "durationMs": 11,
+      "tokensCount": 326,
+      "writtenAt": "2025-12-03T02:15:34.952Z"
     },
     "guardrails": {
       "history": [
@@ -172,15 +179,23 @@
           "passes": 6,
           "failures": 0,
           "durationMs": 16
+        },
+        {
+          "mission": "unspecified",
+          "evaluatedAt": "2025-12-03T02:15:21.150Z",
+          "checks": 6,
+          "passes": 6,
+          "failures": 0,
+          "durationMs": 6
         }
       ],
       "lastRun": {
         "mission": "unspecified",
-        "evaluatedAt": "2025-11-29T04:54:00.219Z",
+        "evaluatedAt": "2025-12-03T02:15:21.150Z",
         "checks": 6,
         "passes": 6,
         "failures": 0,
-        "durationMs": 16
+        "durationMs": 6
       }
     },
     "governance": {
@@ -1706,6 +1721,96 @@
       },
       "avgFeatureCount": 0,
       "avgPointCount": 0
+    },
+    "networkFlow": {
+      "status": "complete",
+      "completedAt": "2025-12-01T23:02:08Z",
+      "components": [
+        "Treemap",
+        "Sunburst",
+        "ForceGraph",
+        "Sankey"
+      ],
+      "adapters": {
+        "echarts": {
+          "treemap": true,
+          "sunburst": true,
+          "graph": true,
+          "sankey": true
+        }
+      },
+      "schemas": {
+        "inputs": [
+          "hierarchy",
+          "network",
+          "sankey"
+        ],
+        "outputs": [
+          "treemap",
+          "sunburst",
+          "force",
+          "sankey"
+        ]
+      },
+      "tests": {
+        "adapterTests": 123,
+        "componentTests": 38,
+        "dashboardTests": 102,
+        "coverage": ">90%"
+      }
     }
+  },
+  "sprint31": {
+    "missionRange": "B31.1-B31.5",
+    "status": "Completed",
+    "completedAt": "2025-11-29T06:09:18Z",
+    "title": "Spatial Visualization Foundation",
+    "deliverables": [
+      "Spatial schema extensions and DTCG token namespace",
+      "Geocodable trait with auto-detection",
+      "HasProjection & LayeredOverlay traits",
+      "Geo data resolver with format parsing",
+      "SpatialContainer component infrastructure"
+    ]
+  },
+  "sprint32": {
+    "missionRange": "B32.1-B32.10",
+    "status": "Completed",
+    "completedAt": "2025-12-01T01:11:44Z",
+    "title": "Spatial Visualization Components & Release",
+    "deliverables": [
+      "ChoroplethMap and BubbleMap React components",
+      "MapLegend, MapControls, AccessibleMapFallback",
+      "Vega-Lite and ECharts spatial adapters",
+      "Dashboard integration with cross-filter",
+      "Spatial CLI support (viz:suggest, viz:scaffold-spatial)",
+      "Comprehensive documentation and Storybook polish"
+    ]
+  },
+  "sprint33": {
+    "missionRange": "B33.1-B33.6",
+    "status": "Completed",
+    "completedAt": "2025-12-01T20:20:29Z",
+    "title": "Network & Flow Visualization Foundation",
+    "deliverables": [
+      "Network & flow input schemas (hierarchy, network, sankey)",
+      "Transform output schemas (treemap, sunburst, force, sankey)",
+      "ECharts-first resolver service with format detection",
+      "ECharts hierarchy adapters (treemap, sunburst)",
+      "ECharts graph adapter with force layout (59 tests, 96.56% coverage)",
+      "ECharts sankey adapter with gradient/source/target coloring (64 tests)"
+    ]
+  },
+  "sprint34": {
+    "missionRange": "B34.1-B34.3",
+    "status": "Completed",
+    "completedAt": "2025-12-01T23:02:08Z",
+    "title": "Network & Flow Visualization Components & Release",
+    "deliverables": [
+      "Treemap, Sunburst, ForceGraph, Sankey React components (38 tests)",
+      "Dashboard widget definitions and cross-filter actions (102 tests)",
+      "CLI scaffold generator for network visualizations",
+      "Documentation and Storybook polish"
+    ]
   }
 }
