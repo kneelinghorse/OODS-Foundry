@@ -145,7 +145,7 @@ const ContextGallery: FC = () => (
 );
 
 const meta = {
-  title: 'Proofs & Internals/Contexts/Domain Context Gallery',
+  title: 'Objects/Object Explorer/Full Context Gallery',
   component: ContextGallery,
   parameters: {
     layout: 'fullscreen',

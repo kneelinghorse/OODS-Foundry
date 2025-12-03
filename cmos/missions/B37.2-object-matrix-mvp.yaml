@@ -1,0 +1,93 @@
+id: B37.2
+title: Object Matrix MVP
+status: Queued
+sprint: Sprint 37
+created: 2025-12-03
+tags: [hero-demo, objects, contexts, navigation-phase-2]
+
+objective: |
+  Create a prominent "Object Matrix" demo that proves OODS's core value proposition:
+  "The same object renders differently based on context, and traits add capabilities."
+
+context: |
+  INFRASTRUCTURE AUDIT FINDINGS:
+
+  1. RenderObject already exists (src/components/RenderObject.tsx)
+     - Takes object, context, data props
+     - Supports 6 contexts: detail, list, form, timeline, card, inline
+     - Auto-resolves trait extensions per context
+
+  2. Context Gallery already exists (stories/proofs/context-gallery.stories.tsx)
+     - Shows 3 objects × 6 contexts grid
+     - Currently buried at "Proofs & Internals/Contexts/Domain Context Gallery"
+
+  THIS IS A RELOCATION + ENHANCEMENT TASK, NOT BUILD-FROM-SCRATCH.
+
+  Reference: cmos/reports/oods-navigation-implementation-plan.md (Part 4.2)
+
+deliverables:
+  - path: stories/objects/ObjectMatrix.stories.tsx
+    action: create
+    details: |
+      Create a new story file that serves as the hero demo for Objects.
+
+      APPROACH: Static 3×3 matrix proving the concept:
+
+      ```
+                 | Detail Context | List Context | Card Context |
+      -----------+----------------+--------------+--------------+
+      User       | [rendered]     | [rendered]   | [rendered]   |
+      + Traits   | [rendered]     | [rendered]   | [rendered]   |
+      Invoice    | [rendered]     | [rendered]   | [rendered]   |
+      ```
+
+      IMPLEMENTATION:
+      1. Import RenderObject, existing object definitions, fixtures
+      2. Create a static grid layout (CSS Grid)
+      3. Show User, Subscription, Invoice across 3 contexts
+      4. Add row/column headers explaining what's being demonstrated
+      5. Optional: Show "User" vs "User with Addressable" comparison
+
+      STORY TITLE: "Objects/Object Explorer/Matrix View"
+
+      REFERENCE: stories/proofs/context-gallery.stories.tsx for patterns
+
+  - path: stories/proofs/context-gallery.stories.tsx
+    action: update
+    details: |
+      Update the title to relocate to the new hierarchy:
+
+      BEFORE: title: 'Proofs & Internals/Contexts/Domain Context Gallery'
+      AFTER:  title: 'Objects/Object Explorer/Full Context Gallery'
+
+      This keeps the existing implementation but makes it discoverable
+      in the Objects section.
+
+success_criteria:
+  - New ObjectMatrix.stories.tsx renders without errors
+  - Shows 3 objects × 3 contexts in a clear grid
+  - Context Gallery relocated to Objects section
+  - Both stories visible in Storybook nav under "Objects/Object Explorer"
+  - No regressions in existing functionality
+
+validation:
+  - command: pnpm storybook --smoke-test
+    expected: Stories load without errors
+  - manual: Navigate to Objects/Object Explorer in Storybook
+  - manual: Verify Matrix View and Full Context Gallery both appear
+  - manual: Verify grid renders correctly with all objects/contexts
+
+dependencies:
+  - B37.1 (verification must pass first)
+
+estimated_effort: 1-2 hours
+
+notes: |
+  SCOPE GUARD: Do NOT build full interactivity (dropdowns, dynamic switching).
+  The goal is visual proof of concept, not an interactive app.
+
+  If this MVP proves the concept, Sprint 38 can add interactivity.
+
+  DECISION FROM PLANNING SESSION:
+  "The insight we're selling is simpler than the implementation implies.
+   Start with static, prove the concept, then iterate."

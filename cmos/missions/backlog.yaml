@@ -4,7 +4,7 @@ displayName: CMOS Backlog Export
 description: Backlog export generated from the CMOS SQLite database.
 author: CMOS
 schema: ./schemas/SprintPlan.v1.json
-generatedAt: '2025-12-03T20:33:31.195442+00:00'
+generatedAt: '2025-12-03T23:11:04.102975+00:00'
 ---
 domainFields:
   type: Planning.SprintPlan.v1
@@ -2437,21 +2437,129 @@ domainFields:
         completed_at: '2025-12-03T20:32:07Z'
     - id: B36.4
       name: Story Title Renames - Batch 1
-      status: Current
-      notes: Ready for implementation after review of B36.1-B36.3
+      status: Completed
+      completed_at: '2025-12-03T20:43:35Z'
+      notes: "Renamed story titles in 26 files to match new navigation hierarchy:\n\
+        \nOBJECTS SECTION (12 files):\n- stories/objects/UserWithAddresses.stories.tsx\
+        \ \u2192 Objects/Core Objects/User/With Addressable\n- stories/objects/UserWithAuthable.stories.tsx\
+        \ \u2192 Objects/Core Objects/User/With Authable\n- stories/objects/UserPreferences.stories.tsx\
+        \ \u2192 Objects/Core Objects/User/With Preferences\n- src/stories/user-stories/UserDetail.stories.tsx\
+        \ \u2192 Objects/Core Objects/User/Detail View\n- stories/objects/OrganizationMembers.stories.tsx\
+        \ \u2192 Objects/Core Objects/Organization/Members\n- stories/objects/OrganizationLocations.stories.tsx\
+        \ \u2192 Objects/Core Objects/Organization/Locations\n- stories/objects/ProductCategoryBrowser.stories.tsx\
+        \ \u2192 Objects/Core Objects/Product/Category Browser\n- stories/domains/Billing/Invoice.stories.tsx\
+        \ \u2192 Objects/Domain Objects/Invoice\n- stories/domains/Billing/Invoice.lifecycle.stories.tsx\
+        \ \u2192 Objects/Domain Objects/Invoice/Lifecycle\n- stories/domains/Billing/Subscription.stories.tsx\
+        \ \u2192 Objects/Domain Objects/Subscription\n- stories/domains/Billing/Subscription.lifecycle.stories.tsx\
+        \ \u2192 Objects/Domain Objects/Subscription/Lifecycle\n- stories/domains/Billing/Usage.metered.stories.tsx\
+        \ \u2192 Objects/Domain Objects/Usage\n\nTRAITS SECTION (7 files):\n- stories/traits/AddressFormatting.stories.tsx\
+        \ \u2192 Traits/Core/Addressable\n- stories/components/AddressDisplay.stories.tsx\
+        \ \u2192 Traits/Core/Addressable/Display\n- stories/components/AddressForm.stories.tsx\
+        \ \u2192 Traits/Core/Addressable/Form\n- stories/components/classification/CategoryPicker.stories.tsx\
+        \ \u2192 Traits/Core/Classifiable/Category Picker\n- stories/components/classification/CategoryTree.stories.tsx\
+        \ \u2192 Traits/Core/Classifiable/Category Tree\n- stories/components/classification/TagInput.stories.tsx\
+        \ \u2192 Traits/Core/Classifiable/Tag Input\n- stories/components/classification/TagList.stories.tsx\
+        \ \u2192 Traits/Core/Classifiable/Tag List\n\nCONTEXTS SECTION (7 files +\
+        \ 1 unchanged):\n- src/stories/proofs/view-profiles/Detail.stories.tsx \u2192\
+        \ Contexts/Canonical/Detail\n- src/stories/proofs/view-profiles/List.stories.tsx\
+        \ \u2192 Contexts/Canonical/List\n- src/stories/proofs/view-profiles/Form.stories.tsx\
+        \ \u2192 Contexts/Canonical/Form\n- src/stories/proofs/view-profiles/Timeline.stories.tsx\
+        \ \u2192 Contexts/Canonical/Timeline\n- src/stories/proofs/view-profiles/Card.stories.tsx\
+        \ \u2192 Contexts/Compound/Card\n- src/stories/proofs/view-profiles/Inline.stories.tsx\
+        \ \u2192 Contexts/Compound/Inline\n- stories/proofs/DashboardContexts.stories.tsx\
+        \ \u2192 Contexts/Compound/Dashboard\n- stories/proofs/context-gallery.stories.tsx\
+        \ (already had correct title: Contexts/Domain Context Gallery)\n\nValidation:\
+        \ pnpm build-storybook succeeded (12.65s build time)."
       metadata:
         description: Rename story titles for Objects, Traits, Contexts sections
-        started_at: '2025-12-03T20:32:23Z'
+        started_at: '2025-12-03T20:36:54Z'
         blocked_at: '2025-12-03T20:33:21Z'
         blocked_reason: User requested pause to inspect completed work from B36.1-B36.3
         blocked_needs:
         - User review of completed missions
+        completed_at: '2025-12-03T20:43:35Z'
     - id: B36.5
       name: Story Title Renames - Batch 2
-      status: Queued
-      notes: 'Full details: cmos/missions/B36.5-story-renames-batch2.yaml'
+      status: Completed
+      completed_at: '2025-12-03T20:53:07Z'
+      notes: "Updated story titles across multiple sections:\n\nVisualization section:\n\
+        - Moved standard charts (LineChart, BarChart, AreaChart, ScatterChart, Heatmap)\
+        \ under Visualization/Standard/\n- Moved hierarchical viz (Treemap, Sunburst)\
+        \ under Visualization/Hierarchical/\n- Moved network viz (ForceGraph, Sankey)\
+        \ under Visualization/Network/\n- Moved composition viz (Faceted Charts, Layered\
+        \ Charts) under Visualization/Composition/\n- Moved spatial viz (ChoroplethMap,\
+        \ BubbleMap, MapControls, MapLegend, SpatialContainer) under Visualization/Spatial/\n\
+        - Updated PatternGalleryV2 under Visualization/Patterns/\n\nPrimitives section:\n\
+        - Moved forms (TextField, Select, Checkbox) under Primitives/Forms/\n- Moved\
+        \ feedback (Dialog, Popover, Sheet, Badge, Banner, Toast) under Primitives/Feedback/\n\
+        - Moved navigation (Tabs, Breadcrumbs, Pagination, Stepper) under Primitives/Navigation/\n\
+        - Moved data display (Table, Progress, EmptyState) under Primitives/Data Display/\n\
+        - Moved Button under Primitives/Actions/\n\nOther sections:\n- ForcedColors\
+        \ \u2192 Accessibility/High Contrast\n- VizTokens \u2192 Tokens & Theming/Viz\
+        \ Tokens\n- Authorization components \u2192 Domain Patterns/Authorization/\n\
+        - Communication components \u2192 Domain Patterns/Communication/\n- Compliance\
+        \ proofs \u2192 Proofs & Internals/Compliance/\n- Performance harnesses \u2192\
+        \ Proofs & Internals/Performance/\n- Context stories \u2192 Proofs & Internals/Contexts/\n\
+        - TemporalHygiene \u2192 Proofs & Internals/Temporal Hygiene\n\nTypeScript\
+        \ compiles without errors.\n"
       metadata:
         description: Rename story titles for Viz, Primitives, Proofs sections
+        started_at: '2025-12-03T20:47:03Z'
+        completed_at: '2025-12-03T20:53:07Z'
+  - sprintId: Sprint 37
+    title: Navigation Phase 2 - Hero Demos
+    focus: 'Hero demos proving OODS value: Object Matrix, Statusable Demo, Context
+      Comparison'
+    status: Active
+    startDate: '2025-12-03'
+    endDate: null
+    totalMissions: 5
+    completedMissions: 0
+    missions:
+    - id: B37.1
+      name: Verification & Stabilization
+      status: Completed
+      completed_at: '2025-12-03T23:05:41Z'
+      notes: Build passes, dev server starts, nav structure matches target. No critical
+        issues found. Report created at cmos/reports/sprint-37-verification.md. Sprint
+        37 Phase 2 can proceed.
+      metadata:
+        description: Verify Sprint 36 nav restructure is stable before Phase 2 hero
+          demos
+        started_at: '2025-12-03T23:02:51Z'
+        completed_at: '2025-12-03T23:05:41Z'
+    - id: B37.2
+      name: Object Matrix MVP
+      status: Current
+      completed_at: '2025-12-03T23:08:04Z'
+      notes: Reset to Current - work needs verification
+      metadata:
+        description: Create static Object Matrix hero demo proving OODS value proposition
+        started_at: '2025-12-03T23:06:03Z'
+        completed_at: '2025-12-03T23:08:04Z'
+    - id: B37.3
+      name: Statusable Demo
+      status: Queued
+      notes: Reset to Queued - B37.2 work needs verification
+      metadata:
+        description: Port StatusChip content to Badge, create visual gallery + How
+          It Works demo
+    - id: B37.4
+      name: Same Object Different Contexts
+      status: Queued
+      notes: "\U0001F4CB FULL MISSION DETAILS: Read cmos/missions/B37.4-same-object-different-contexts.yaml\
+        \ - Annotations are teaching content, don't skip them. Distinct from B37.2\
+        \ (depth vs breadth)."
+      metadata:
+        description: User object in all 8 contexts with annotations - the OODS aha
+          moment
+    - id: B37.5
+      name: Quick Wins
+      status: Queued
+      notes: "\U0001F4CB FULL MISSION DETAILS: Read cmos/missions/B37.5-quick-wins.yaml\
+        \ - Catch-all for small tasks. Only truly small items (<1hr) belong here."
+      metadata:
+        description: Tooltip story, Explorer nav verification, B37.1 minor issue fixes
   missionDependencies:
   - from: B10.1
     to: B13.9

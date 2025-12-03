@@ -1,0 +1,118 @@
+id: B37.5
+title: Quick Wins
+status: Queued
+sprint: Sprint 37
+created: 2025-12-03
+tags: [cleanup, polish, tooltip, quick-wins]
+
+objective: |
+  Complete quick cleanup tasks that improve the codebase without major effort.
+  These are small wins identified during planning that don't warrant full missions.
+
+context: |
+  From navigation audit and planning session, several small items surfaced:
+
+  1. Tooltip component exists but has no story
+  2. Explorer stories were excluded from nav but may need verification
+  3. Any issues found in B37.1 verification that are minor
+
+  This mission collects small tasks that can be batched together.
+
+deliverables:
+  - path: stories/primitives/Tooltip.stories.tsx
+    action: create
+    details: |
+      Create a Tooltip story for the existing component.
+
+      Component location: src/components/Tooltip/
+
+      Story structure:
+      ```typescript
+      // stories/primitives/Tooltip.stories.tsx
+
+      import { Tooltip } from '~/src/components/Tooltip';
+
+      export default {
+        title: 'Primitives/Feedback/Tooltip',
+        component: Tooltip,
+      };
+
+      export const Default: Story = {
+        args: {
+          content: 'Helpful information',
+          children: <button>Hover me</button>,
+        },
+      };
+
+      export const Positions: Story = {
+        // Show top, bottom, left, right positions
+      };
+
+      export const WithDelay: Story = {
+        // Show timing configuration
+      };
+
+      export const Accessibility: Story = {
+        // Show aria-describedby behavior
+      };
+      ```
+
+      Include docs showing:
+      - Basic usage
+      - Position options
+      - Timing configuration
+      - Accessibility considerations (described-by)
+
+  - path: .storybook/main.ts
+    action: verify
+    details: |
+      Verify Explorer stories are properly excluded.
+
+      After B36.1, Explorer stories should not appear in main nav.
+
+      CHECK:
+      1. Open Storybook
+      2. Search for "Explorer" in nav
+      3. Confirm no Explorer-specific stories appear
+
+      If issues found, update the stories array to ensure exclusion.
+
+  - path: cmos/reports/sprint-37-verification.md
+    action: update
+    details: |
+      Address any minor issues found in B37.1 verification.
+
+      Common fixes might include:
+      - Story title typos
+      - Missing imports
+      - Broken links in MDX
+      - Linting warnings
+
+      Document fixes applied.
+
+success_criteria:
+  - Tooltip.stories.tsx exists and renders correctly
+  - Explorer stories confirmed excluded from nav
+  - Any B37.1 minor issues resolved
+  - Verification report updated with fixes
+
+validation:
+  - command: pnpm storybook --smoke-test
+    expected: All stories load
+  - manual: Navigate to Primitives/Feedback/Tooltip
+  - manual: Confirm Explorer stories not in nav
+  - manual: Verify B37.1 issues addressed
+
+dependencies:
+  - B37.1 (provides list of minor issues to fix)
+
+estimated_effort: 1-2 hours
+
+notes: |
+  This is a catch-all mission for small tasks.
+
+  If during Sprint 37 execution other small issues surface,
+  they can be added to this mission rather than creating new ones.
+
+  SCOPE GUARD: Only truly small tasks belong here.
+  Anything >1 hour should be a separate mission.
