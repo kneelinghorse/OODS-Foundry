@@ -1,0 +1,75 @@
+id: B35.7
+title: Dark Mode Overlay Bug Fix
+status: Queued
+sprint: 35
+created: 2025-12-02
+tags: [dark-mode, overlay, css, bug]
+
+objective: |
+  Fix the dark overlay that incorrectly appears when switching to dark mode
+  in certain Storybook stories.
+
+context: |
+  When switching to dark mode in Storybook (Contexts/Dark), some stories show
+  a dark overlay covering the content. The overlay appears black/near-black
+  and obscures the actual component.
+
+  Investigation findings:
+  1. --cmp-surface-backdrop in dark mode resolves to neutral-900 (near black)
+     from layers.css line 102
+  2. .cmp-overlay__backdrop uses this token with 55% opacity (overlays.css:37)
+  3. Something may be incorrectly adding the backdrop element to the DOM
+     or a CSS selector may be applying backdrop styles to wrong elements
+
+  Components using .cmp-overlay__backdrop:
+  - src/components/Sheet/Sheet.tsx (line 69)
+  - src/components/Dialog/Dialog.tsx (line 88)
+  - src/stories/proofs/overlay-contract.stories.tsx
+
+deliverables:
+  - path: apps/explorer/src/styles/overlays.css
+    action: investigate
+    details: |
+      Check if .cmp-overlay__backdrop or .cmp-overlay__root has any
+      dark-mode-specific rules that might cause issues
+
+  - path: .storybook/preview.ts
+    action: investigate
+    details: |
+      Check if GlobalsWrapper or any decorator is adding overlay elements
+      when theme changes
+
+  - path: src/styles/globals.css
+    action: investigate
+    details: |
+      Check for any ::before/::after pseudo-elements or global rules
+      that might apply backdrop in dark mode
+
+  - path: apps/explorer/src/styles/layers.css
+    action: review
+    details: |
+      Consider if --theme-surface-backdrop should have a different
+      value in dark mode (currently neutral-900)
+
+      Possible fix: Use a semi-transparent value instead of solid dark
+
+investigation_steps:
+  - Run Storybook in dark mode
+  - Use DevTools to identify the element causing the dark overlay
+  - Check computed styles for background/backdrop properties
+  - Search for any z-index issues or stacking context problems
+  - Look for conditional rendering based on data-theme="dark"
+
+success_criteria:
+  - All stories render correctly in dark mode
+  - No unexpected overlays appear when switching themes
+  - Dialog/Sheet backdrops still work correctly when those components are used
+
+validation:
+  - manual: Switch all affected stories to dark mode and verify no overlay
+  - manual: Verify Dialog and Sheet components still show proper backdrops
+
+notes: |
+  User-reported issue - specific affected stories TBD.
+  Need to identify which exact stories/components trigger the issue
+  to narrow down the root cause.

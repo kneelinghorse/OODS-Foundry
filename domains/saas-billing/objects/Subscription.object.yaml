@@ -49,7 +49,7 @@ schema:
   provider:
     type: string
     required: true
-    description: Source system providing subscription data (ex: stripe, chargebee).
+    description: "Source system providing subscription data (ex: stripe, chargebee)."
   provider_subscription_id:
     type: string
     required: false
@@ -73,7 +73,7 @@ schema:
   status_note:
     type: string
     required: false
-    description: Short context on the current lifecycle status (ex: payment retrying).
+    description: "Short context on the current lifecycle status (ex: payment retrying)."
   current_period_start:
     type: datetime
     required: true
@@ -101,7 +101,7 @@ schema:
   risk_segment:
     type: string
     required: false
-    description: Customer stratification label (ex: at_risk, stable, expansion).
+    description: "Customer stratification label (ex: at_risk, stable, expansion)."
   notes:
     type: string
     required: false

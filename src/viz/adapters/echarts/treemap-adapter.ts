@@ -42,7 +42,7 @@ export function adaptTreemapToECharts(spec: NormalizedVizSpec, input: HierarchyI
   const series = pruneUndefined({
     type: 'treemap' as const,
     name: spec.name ?? 'Treemap',
-    data,
+    data: assignColorsToData(data, palette),
     width: dimensions.width,
     height: dimensions.height,
     squareRatio: TREEMAP_SQUARE_RATIO,
@@ -77,7 +77,8 @@ export function adaptTreemapToECharts(spec: NormalizedVizSpec, input: HierarchyI
       itemStyle: {
         borderColor: EMPHASIS_BORDER_COLOR,
         borderWidth: 2,
-        shadowBlur: 12,
+        shadowBlur: 2,
+        shadowColor: 'rgba(0, 0, 0, 0.05)',
       },
     },
   }) as TreemapSeriesOption;
@@ -111,6 +112,39 @@ function buildPalette(): readonly string[] {
   }
 
   return resolved.map((color, i) => color ?? FALLBACK_PALETTE[i % FALLBACK_PALETTE.length]);
+}
+
+/**
+ * Assign colors from palette to the first visible level of data nodes.
+ * For hierarchical data with a single root, colors go on the root's children.
+ * For multiple roots, colors go on each root.
+ * ECharts inherits colors down the hierarchy from these nodes.
+ */
+function assignColorsToData(
+  data: Record<string, unknown>[],
+  palette: readonly string[]
+): Record<string, unknown>[] {
+  // If we have a single root with children, color the children
+  if (data.length === 1 && Array.isArray(data[0].children) && (data[0].children as unknown[]).length > 0) {
+    const root = data[0];
+    const coloredChildren = (root.children as Record<string, unknown>[]).map((child, index) => ({
+      ...child,
+      itemStyle: {
+        ...(child.itemStyle as Record<string, unknown> | undefined),
+        color: palette[index % palette.length],
+      },
+    }));
+    return [{ ...root, children: coloredChildren }];
+  }
+
+  // Multiple roots or flat data - color each top-level node
+  return data.map((node, index) => ({
+    ...node,
+    itemStyle: {
+      ...(node.itemStyle as Record<string, unknown> | undefined),
+      color: palette[index % palette.length],
+    },
+  }));
 }
 
 function resolveDimensions(spec: NormalizedVizSpec): { width?: number; height?: number } {

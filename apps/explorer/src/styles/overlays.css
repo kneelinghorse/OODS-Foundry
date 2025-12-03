@@ -21,6 +21,7 @@
   display: grid;
   place-items: center;
   padding: clamp(1rem, 2vw, 2rem);
+  pointer-events: none; /* Allow click-through when no modal content */
 }
 
 .cmp-overlay__root[data-overlay-anchor] {

@@ -118,7 +118,7 @@ export function PermissionChecker({
         <div className="md:col-span-3">
           <button
             type="submit"
-            className="rounded-full bg-[--cmp-surface-strong] px-6 py-2 text-sm font-semibold text-white transition-colors hover:bg-[--cmp-surface-strong-hover] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[--sys-focus-ring] disabled:opacity-60"
+            className="rounded-full bg-[--cmp-surface-strong] px-6 py-2 text-sm font-semibold text-white transition-colors hover:bg-[--cmp-surface-strong_hover] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[--sys-focus-ring] disabled:opacity-60"
             disabled={readOnly}
           >
             {isChecking ? 'Checking…' : 'Check permission'}

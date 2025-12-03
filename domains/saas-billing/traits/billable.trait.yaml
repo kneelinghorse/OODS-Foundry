@@ -25,7 +25,7 @@ parameters:
   - name: decimalPrecision
     type: number
     required: false
-    description: Minor unit precision (ex: cents = 2, yen = 0).
+    description: "Minor unit precision (ex: cents = 2, yen = 0)."
     default: 2
 
 schema:
@@ -46,7 +46,7 @@ schema:
   interval_count:
     type: integer
     required: false
-    description: Multiplier for interval (ex: 12 with monthly => yearly cadence).
+    description: "Multiplier for interval (ex: 12 with monthly => yearly cadence)."
     default: 1
   amount_minor:
     type: integer

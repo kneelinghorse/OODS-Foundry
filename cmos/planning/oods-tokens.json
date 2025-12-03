@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2025-11-26T02:24:17Z",
+  "generatedAt": "2025-12-03T15:52:37Z",
   "sources": {
     "base": "tokens/base.json",
     "theme": "tokens/theme.json",
@@ -11,7 +11,7 @@
     "maps": [
       "saas-billing.status-map"
     ],
-    "traitOverlays": 32
+    "traitOverlays": 33
   },
   "layers": {
     "reference": {
@@ -33,6 +33,11 @@
               "$type": "color",
               "$value": "oklch(0.9417 0.0052 247.88)",
               "$description": "Neutral 200 subtle surface and soft border tone."
+            },
+            "250": {
+              "$type": "color",
+              "$value": "oklch(0.9217 0.0052 248.88)",
+              "$description": "Neutral 250 card edge and subtle divider tone."
             },
             "300": {
               "$type": "color",
@@ -302,6 +307,11 @@
             "$type": "color",
             "$value": "{ref.color.neutral.500}",
             "$description": "High contrast border tone."
+          },
+          "card": {
+            "$type": "color",
+            "$value": "{ref.color.neutral.250}",
+            "$description": "Soft card edge border tone."
           }
         },
         "text": {
@@ -1254,6 +1264,16 @@
             "$type": "color",
             "$value": "{sys.surface.interactive.primary.pressed}",
             "$description": "Primary action pressed surface."
+          },
+          "strong": {
+            "$type": "color",
+            "$value": "{sys.surface.inverse}",
+            "$description": "Strong/solid surface for high-contrast buttons and controls."
+          },
+          "strong_hover": {
+            "$type": "color",
+            "$value": "{sys.surface.interactive.primary.hover}",
+            "$description": "Strong surface hover state."
           }
         },
         "border": {
@@ -2329,15 +2349,27 @@
         "viz.scale.temporal.axis": "var(--cmp-viz-axis-line)",
         "viz.scale.temporal.tick": "var(--cmp-viz-axis-tick)"
       }
+    },
+    {
+      "trait": "Geocodable",
+      "tokens": {
+        "viz.spatial.geocodable.icon": "var(--cmp-viz-spatial-geocodable-icon)",
+        "viz.spatial.geocodable.badge.point": "var(--cmp-viz-spatial-badge-point)",
+        "viz.spatial.geocodable.badge.boundary": "var(--cmp-viz-spatial-badge-boundary)",
+        "viz.spatial.geocodable.badge.both": "var(--cmp-viz-spatial-badge-both)",
+        "viz.spatial.geocodable.confidence.high": "var(--cmp-viz-spatial-confidence-high)",
+        "viz.spatial.geocodable.confidence.medium": "var(--cmp-viz-spatial-confidence-medium)",
+        "viz.spatial.geocodable.confidence.low": "var(--cmp-viz-spatial-confidence-low)"
+      }
     }
   ],
   "stats": {
-    "referenceTokens": 39,
-    "themeTokens": 110,
+    "referenceTokens": 40,
+    "themeTokens": 111,
     "systemTokens": 59,
-    "componentTokens": 74,
+    "componentTokens": 76,
     "viewTokens": 40,
     "mapCount": 1,
-    "traitOverlayCount": 32
+    "traitOverlayCount": 33
   }
 }

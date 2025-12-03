@@ -1,0 +1,57 @@
+id: B35.1
+title: Token Refinements - Shadow & Surface
+status: Queued
+sprint: 35
+created: 2025-12-02
+tags: [tokens, design, polish]
+
+objective: |
+  Refine shadow elevation tokens to be less aggressive and add missing surface tokens
+  that are causing button contrast issues.
+
+context: |
+  Post-Sprint 34 review identified:
+  1. Shadow tokens (elevation.card, elevation.overlay) are too heavy/aggressive
+  2. Missing --cmp-surface-strong token causing white-on-white button issues
+  3. Card edge color needs refinement (oklch(0.9217 0.0052 248.88))
+
+deliverables:
+  - path: packages/tokens/src/tokens/shadow.json
+    action: update
+    details: |
+      Adjust elevation tokens:
+      - shadow.elevation.card: 0px 16px 40px -12px → 0px 12px 20px -8px
+      - shadow.elevation.overlay: 0px 24px 56px -16px → 0px 16px 28px -12px
+
+  - path: packages/tokens/src/tokens/base/shadow.json
+    action: update
+    details: Same adjustments as above for base tokens
+
+  - path: packages/tokens/src/tokens/component.json
+    action: update
+    details: |
+      Add missing surface tokens:
+      - --cmp-surface-strong (dark background for primary buttons)
+      - --cmp-surface-strong-hover (hover state)
+      Ensure proper contrast for white text
+
+  - path: packages/tokens/src/tokens/semantic.json
+    action: verify
+    details: Verify card edge color reference exists and is correct
+
+success_criteria:
+  - Shadow tokens render with softer, more subtle elevation
+  - All buttons using --cmp-surface-strong show proper background color
+  - Token build passes (pnpm --filter @oods/tokens run build)
+  - Token guardrails pass (pnpm tokens:guardrails)
+
+validation:
+  - command: pnpm --filter @oods/tokens run build
+  - command: pnpm tokens:guardrails
+  - manual: Visual check of shadow rendering in Storybook
+
+dependencies: []
+
+notes: |
+  Issue refs: CSS issues #1, #2
+  The shadow values are user-provided refinements based on visual review.

@@ -48,7 +48,7 @@ function ChartPanelGrid<Data>({
 }: ChartPanelGridProps<Data>): JSX.Element {
   const layoutClass =
     variant === 'dashboard'
-      ? 'grid gap-6 lg:grid-cols-2 xl:grid-cols-3'
+      ? 'grid gap-6 lg:grid-cols-2'
       : 'grid gap-6';
 
   return (
@@ -78,7 +78,7 @@ function ChartPanelGrid<Data>({
               ) : null}
             </div>
 
-            <div data-chart-panel-body>{panel.render(context)}</div>
+            <div data-chart-panel-body className="min-w-0 overflow-hidden">{panel.render(context)}</div>
             {footer ? (
               <div
                 data-chart-panel-footer

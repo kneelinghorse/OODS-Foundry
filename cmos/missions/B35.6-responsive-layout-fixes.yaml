@@ -1,0 +1,74 @@
+id: B35.6
+title: Responsive Layout Fixes - Dashboards & Pattern Gallery
+status: Queued
+sprint: 35
+created: 2025-12-02
+tags: [responsive, layout, grid, viz, css]
+
+objective: |
+  Fix responsive layout issues in dashboard contexts and pattern gallery stories
+  where visualizations don't scale properly or get clipped at edges.
+
+context: |
+  Post-Sprint 34 review identified responsive issues:
+  1. Dashboard contexts: columns inconsistent, data viz not displaying correctly
+     across breakpoints - check all dashboard stories for grid/breakpoints
+  2. Pattern Gallery V2: viz cards shrink when browser widens, edges get cut off
+  3. Responsive Pattern Gallery: all chart right edges are clipped
+
+  Root causes likely include:
+  - CSS grid/flex configuration issues
+  - Missing responsive breakpoints
+  - Fixed widths conflicting with container sizing
+  - ECharts/Vega-Lite resize handling not triggering
+
+deliverables:
+  - path: stories/proofs/DashboardContexts.stories.tsx
+    action: fix
+    details: |
+      Fix grid/column behavior:
+      - Review CSS grid template definitions
+      - Ensure consistent column counts at each breakpoint
+      - Verify viz containers resize correctly
+      - Test at: mobile (375px), tablet (768px), desktop (1024px), wide (1440px)
+
+  - path: stories/viz/PatternGalleryV2.stories.tsx
+    action: fix
+    details: |
+      Fix inverse scaling issue (cards shrink as browser widens):
+      - Review container width calculations
+      - Check for conflicting max-width or flex-shrink
+      - Ensure viz respects available space
+
+  - path: stories/viz/Patterns.stories.tsx
+    action: fix
+    details: |
+      Fix right-edge clipping:
+      - Check for overflow:hidden on parent containers
+      - Verify padding/margin doesn't consume chart space
+      - Ensure ECharts/Vega-Lite has correct resize observer
+
+  - path: src/components/dashboard/
+    action: investigate
+    details: |
+      Review dashboard grid system:
+      - Check grid gap and column definitions
+      - Verify breakpoint consistency
+      - Test cross-filter interactions don't break layout
+
+success_criteria:
+  - Dashboard grids maintain consistent columns at each breakpoint
+  - Pattern gallery cards scale proportionally with viewport
+  - No visualization edges are clipped
+  - Charts resize smoothly on window resize
+  - Mobile/tablet/desktop all render correctly
+
+validation:
+  - manual: Test each story at 375px, 768px, 1024px, 1440px viewports
+  - manual: Resize browser window and observe smooth scaling
+  - manual: Check no horizontal scrollbars appear unexpectedly
+
+notes: |
+  Issue refs: CSS issues #12, #13, #14
+  May need to add ResizeObserver handling for ECharts components.
+  Consider adding responsive viewport tests to Storybook.

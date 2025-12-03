@@ -1,0 +1,57 @@
+id: B35.2
+title: Button Contrast Fixes - Authz & User Components
+status: Queued
+sprint: 35
+created: 2025-12-02
+tags: [components, a11y, buttons, contrast]
+depends_on: [B35.1]
+
+objective: |
+  Fix button styling issues where "Assign Role", "Check Permissions", and similar
+  action buttons display white text with no visible background.
+
+context: |
+  Multiple components use --cmp-surface-strong for primary action buttons, but this
+  token doesn't exist or resolves incorrectly. Affected areas:
+  - Authz/MembershipManager: "Assign role" button (line 198)
+  - Organization/Role assignment components
+  - User/Check permissions flow
+
+  The ReadOnly story variant works correctly because it uses different disabled styles.
+
+deliverables:
+  - path: src/components/authz/MembershipManager.tsx
+    action: update
+    details: |
+      Update button styling at line 198 to use correct token or fallback:
+      - Replace bg-[--cmp-surface-strong] with working token
+      - Ensure hover state works correctly
+      - Verify disabled state contrast
+
+  - path: stories/objects/OrganizationMembers.stories.tsx
+    action: verify
+    details: Verify role assignment button renders correctly
+
+  - path: stories/objects/UserWithAuthable.stories.tsx
+    action: verify
+    details: Verify check permissions button renders correctly
+
+affected_stories:
+  - Authz/MembershipManager (DefaultManager, ConflictPrevention)
+  - Objects/OrganizationMembers
+  - User/CheckPermissions
+
+success_criteria:
+  - All action buttons show visible background color
+  - Text maintains AA contrast ratio (4.5:1 minimum)
+  - Hover and focus states are clearly visible
+  - Disabled states maintain proper styling
+
+validation:
+  - command: pnpm vitest run tests/components/authz/MembershipManager.a11y.test.tsx
+  - manual: Visual check all affected stories in Storybook
+
+notes: |
+  Issue refs: CSS issues #7, #9, #11
+  Root cause: Missing --cmp-surface-strong token (addressed in B35.1)
+  This mission applies the fix to components after token is available.

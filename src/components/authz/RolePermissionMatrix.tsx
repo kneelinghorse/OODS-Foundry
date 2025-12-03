@@ -230,7 +230,7 @@ function buildCellClasses(enabled: boolean, waiting: boolean, hasConflict: boole
     'role-permission-toggle inline-flex h-10 w-10 items-center justify-center rounded-full border text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[--sys-focus-ring]',
   ];
   if (enabled) {
-    base.push('border-[--cmp-border-strong] bg-[--cmp-surface-strong] text-[--sys-text-primary]');
+    base.push('border-[--cmp-border-strong] bg-[--cmp-surface-strong] text-[--sys-text-inverse]');
   } else {
     base.push('border-[--cmp-border-subtle] bg-[--cmp-surface-canvas] text-[--sys-text-muted]');
   }

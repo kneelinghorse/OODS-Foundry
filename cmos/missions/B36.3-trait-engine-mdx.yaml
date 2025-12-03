@@ -1,0 +1,137 @@
+id: B36.3
+title: Trait Engine + Getting Started MDX
+status: Queued
+sprint: Sprint 36
+created: 2025-12-03
+tags: [documentation, mdx, trait-engine, getting-started]
+
+objective: |
+  Create documentation explaining how the trait engine works (composition mechanics)
+  and a getting started guide for designers and developers.
+
+context: |
+  The trait engine is OODS's core innovation but it's currently invisible.
+  These docs will make the composition mechanism understandable and show
+  users how to get started.
+
+  Reference: cmos/reports/oods-navigation-implementation-plan.md (Part 4.1)
+
+deliverables:
+  - path: stories/docs/3-trait-engine.mdx
+    action: create
+    details: |
+      Title: "Understanding OODS/Trait Engine"
+
+      CONTENT REQUIREMENTS:
+
+      1. What is the Trait Engine?
+         - The system that composes objects from traits
+         - Handles dependency resolution, conflict resolution, schema merging
+         - Produces a unified object definition ready for rendering
+
+      2. Composition Process (with diagram)
+         Step 1: Parse object definition (YAML/TS)
+         Step 2: Resolve trait dependencies (topological sort)
+         Step 3: Apply trait parameters
+         Step 4: Merge schemas (5-layer cascade)
+         Step 5: Resolve conflicts (stricter type wins, enums union, required wins)
+         Step 6: Output composed object
+
+      3. The 5-Layer Merge Cascade
+         - Foundation (base types)
+         - Base Object (object definition)
+         - Traits (composed in dependency order)
+         - Object Overrides (object-specific customizations)
+         - Context (rendering-time adjustments)
+
+      4. Conflict Resolution Rules
+         - Same type: stricter wins
+         - Enums: union of values
+         - Required: required wins over optional
+         - Show example of conflict resolution
+
+      5. statusRegistry Deep Dive
+         - How status values map to tones
+         - How tones map to tokens
+         - How tokens map to visuals
+         - Interactive example (link to Statusable demo story)
+
+      FORMAT: MDX with code snippets, diagrams, and Canvas blocks
+      TONE: Technical but accessible
+      LENGTH: ~1500-2000 words
+
+      SOURCE MATERIAL:
+      - docs/compositor-readme.md
+      - src/core/compositor.ts
+      - src/core/collision-resolver.ts
+
+  - path: stories/docs/4-getting-started.mdx
+    action: create
+    details: |
+      Title: "Understanding OODS/Getting Started"
+
+      CONTENT REQUIREMENTS:
+
+      1. For Designers (5 min path)
+         - Browse Objects: See how business entities are modeled
+         - Browse Traits: Understand reusable capabilities
+         - Browse Contexts: See how rendering adapts
+         - Key takeaway: Design for objects + contexts, not pages
+
+      2. For Developers (10 min path)
+         - Quick tour of project structure:
+           * src/core/ - Trait engine
+           * objects/ - Object definitions
+           * traits/ - Trait definitions
+           * src/components/ - React components
+           * stories/ - Storybook documentation
+         - How to render an object:
+           ```tsx
+           import { RenderObject } from '@oods/core';
+
+           <RenderObject
+             object={user}
+             context="detail"
+           />
+           ```
+         - How to add a trait to an object (YAML example)
+         - How to create a new object (YAML example)
+
+      3. Key Commands
+         - pnpm storybook - Start development
+         - pnpm test - Run tests
+         - pnpm build:tokens - Build design tokens
+         - pnpm local:pr-check - Pre-commit validation
+
+      4. Next Steps
+         - Link to Object Explorer
+         - Link to Trait catalog
+         - Link to Context demos
+
+      FORMAT: MDX with code snippets
+      TONE: Quick, practical, action-oriented
+      LENGTH: ~800-1000 words
+
+success_criteria:
+  - Both MDX files render correctly in Storybook
+  - Files appear under "Understanding OODS" in correct order
+  - Trait engine explanation is technically accurate
+  - Getting started paths are actionable
+
+validation:
+  - command: pnpm storybook --smoke-test
+    expected: Storybook starts without errors
+  - manual: Navigate to Understanding OODS section
+  - manual: Verify all 4 philosophy docs appear in order
+  - manual: Test any code snippets are syntactically correct
+
+dependencies:
+  - B36.1  # Nav config
+  - B36.2  # Philosophy docs (for context)
+
+notes: |
+  For the trait engine doc, reference actual source code to ensure accuracy.
+  The statusRegistry section can reference the upcoming Statusable demo (B37.1).
+
+  Getting started should be achievable in the stated timeframes.
+  Don't over-promise complexity.

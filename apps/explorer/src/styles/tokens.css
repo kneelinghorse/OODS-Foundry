@@ -13,10 +13,10 @@
   --cmp-chip-focus-width: var(--sys-focus-width); /* Chip focus ring width. */
   --cmp-chip-foreground: var(--sys-status-neutral-text); /* Default chip text colour. */
   --cmp-chip-icon: var(--sys-status-neutral-icon); /* Default chip icon colour. */
-  --cmp-communication-date-header-fg: var(--sys-text-muted); /* Date header text colour (AA contrast on timeline bg). */
-  --cmp-communication-health-critical: var(--sys-status-critical-icon); /* Critical delivery state colour (high visibility). */
-  --cmp-communication-health-success: var(--sys-status-success-icon); /* Healthy delivery state colour (high visibility). */
-  --cmp-communication-health-warning: var(--sys-status-warning-icon); /* Warning delivery state colour (high visibility). */
+  --cmp-communication-date-header-fg: var(--sys-communication-muted); /* Date header text colour. */
+  --cmp-communication-health-critical: var(--sys-communication-error); /* Critical delivery state colour. */
+  --cmp-communication-health-success: var(--sys-communication-success); /* Healthy delivery state colour. */
+  --cmp-communication-health-warning: var(--sys-status-warning-surface); /* Warning delivery state colour. */
   --cmp-communication-policy-editor-border: var(--sys-border-subtle); /* Border tone for policy editor sections. */
   --cmp-communication-thread-indent: 20px; /* Indentation step per conversation depth. */
   --cmp-communication-timeline-bg: var(--sys-surface-subtle); /* Timeline background surface. */
@@ -66,6 +66,8 @@
   --cmp-surface-canvas: var(--sys-surface-canvas); /* Default page background surface. */
   --cmp-surface-disabled: var(--sys-surface-disabled); /* Disabled control surface. */
   --cmp-surface-panel: var(--sys-surface-raised); /* Raised panel surface. */
+  --cmp-surface-strong: var(--sys-surface-inverse); /* Strong/solid surface for high-contrast buttons and controls. */
+  --cmp-surface-strong_hover: var(--sys-surface-interactive-primary-hover); /* Strong surface hover state. */
   --cmp-surface-subtle: var(--sys-surface-subtle); /* Subtle panel surface. */
   --cmp-text-accent: var(--sys-text-accent); /* Accent text colour. */
   --cmp-text-body: var(--sys-text-primary); /* Primary body text colour. */
@@ -88,6 +90,7 @@
   --ref-color-info-900: oklch(0.3847 0.1344 263.74); /* Informational status text. */
   --ref-color-neutral-100: oklch(0.9816 0.0017 247.84); /* Neutral 100 raised surface tone. */
   --ref-color-neutral-200: oklch(0.9417 0.0052 247.88); /* Neutral 200 subtle surface and soft border tone. */
+  --ref-color-neutral-250: oklch(0.9217 0.0052 248.88); /* Neutral 250 card edge and subtle divider tone. */
   --ref-color-neutral-300: oklch(0.8875 0.0147 264.49); /* Neutral 300 structural border contrast. */
   --ref-color-neutral-400: oklch(0.7951 0.0148 268.46); /* Neutral 400 disabled text tone. */
   --ref-color-neutral-50: oklch(0.9913 0.0013 286.38); /* Neutral 50 canvas background for light theme. */
@@ -215,8 +218,8 @@
   --theme-dark-surface-canvas: oklch(0.18 0.05 45); /* Primary dark canvas tone. */
   --theme-dark-surface-disabled: oklch(0.32 0.04 45); /* Disabled component surface in dark theme. */
   --theme-dark-surface-interactive-primary-default: oklch(0.52 0.2 45); /* Primary interactive default surface for dark theme. */
-  --theme-dark-surface-interactive-primary-hover: oklch(0.48 0.20 45); /* Primary interactive hover surface for dark theme (darkened for contrast). */
-  --theme-dark-surface-interactive-primary-pressed: oklch(0.44 0.19 45); /* Primary interactive pressed surface for dark theme (darkened for contrast). */
+  --theme-dark-surface-interactive-primary-hover: oklch(0.60 0.215 45); /* Primary interactive hover surface for dark theme. */
+  --theme-dark-surface-interactive-primary-pressed: oklch(0.67 0.23 45); /* Primary interactive pressed surface for dark theme. */
   --theme-dark-surface-inverse: oklch(0.95 0.01 45); /* Inverse surface token for dark contexts. */
   --theme-dark-surface-raised: oklch(0.24 0.05 45); /* Raised panel surface for dark theme. */
   --theme-dark-surface-subtle: oklch(0.3 0.06 45); /* Secondary panel surface tone for dark theme. */
@@ -224,13 +227,14 @@
   --theme-dark-text-disabled: oklch(0.55 0.008 92); /* Disabled text on dark surfaces. */
   --theme-dark-text-inverse: oklch(0.24 0.05 265); /* Inverse text colour for dark theme. */
   --theme-dark-text-muted: oklch(0.7 0.01 92); /* Muted caption text on dark surfaces. */
-  --theme-dark-text-on_interactive: var(--ref-color-neutral-50); /* Text on dark interactive surfaces (raised for contrast). */
+  --theme-dark-text-on_interactive: oklch(0.16 0.04 45); /* Text on dark interactive surfaces. */
   --theme-dark-text-primary: oklch(0.92 0.02 92); /* Body text on dark surfaces. */
   --theme-dark-text-secondary: oklch(0.81 0.015 92); /* Secondary text on dark surfaces. */
+  --theme-border-card: var(--ref-color-neutral-250); /* Soft card edge border tone. */
   --theme-border-strong: var(--ref-color-neutral-500); /* High contrast border tone. */
   --theme-border-subtle: var(--ref-color-neutral-300); /* Default subtle border tone. */
   --theme-focus-ring-inner: var(--ref-color-neutral-100); /* Inner ring contrast colour for focus. */
-  --theme-focus-ring-outer: var(--ref-color-neutral-700); /* Outer halo colour for focus indicators (higher contrast on light). */
+  --theme-focus-ring-outer: var(--ref-color-neutral-900); /* Outer halo colour for focus indicators. */
   --theme-focus-text: var(--ref-color-primary-600); /* Text/icon accent used alongside focus. */
   --theme-focus-width: 2px; /* Default focus ring width. */
   --theme-icon-muted: var(--ref-color-neutral-500); /* Muted/secondary icon tone. */

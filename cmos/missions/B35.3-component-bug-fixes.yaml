@@ -1,0 +1,119 @@
+id: B35.3
+title: Sankey Alignment Stories & Treemap Drilldown Demo
+status: Queued
+sprint: 35
+created: 2025-12-02
+updated: 2025-12-03
+tags: [viz, stories, echarts]
+
+objective: |
+  1. Fix Sankey stories so LeftAligned/RightAligned/WideNodes actually look different
+  2. Create proper Treemap drilldown demo with DEEP ENOUGH data to actually drill
+
+context: |
+  Two issues from Sprint 34 review:
+
+  1. SANKEY: Three stories (LeftAligned, RightAligned, WideNodes) ALL LOOK IDENTICAL.
+     They should show visually distinct layouts. The adapter may be ignoring config,
+     or ECharts needs different settings. FIX IT - do not delete these stories.
+
+  2. TREEMAP: Drilldown "doesn't work" because the TEST DATA IS TOO SHALLOW.
+     Current data only has 1-2 levels - nothing to drill INTO.
+     Need deeper hierarchy (3-4 levels) to demonstrate drilldown properly.
+
+# =============================================================================
+# ISSUE 1: Sankey Alignment Must Look Different
+# =============================================================================
+sankey_alignment:
+  problem: |
+    LeftAligned, RightAligned, WideNodes stories all render identically.
+    They pass different config but output looks the same.
+
+  file: stories/viz/echarts/Sankey.stories.tsx
+
+  reference_examples:
+    nodeAlign_right: https://echarts.apache.org/examples/en/editor.html?c=sankey-nodeAlign-right
+    note: This example shows RIGHT alignment clearly different from default justify
+
+  what_left_aligned_should_look_like: |
+    Terminal/sink nodes appear at their NATURAL DEPTH (not pushed to right edge).
+    Source nodes start at left, flow ends wherever the data ends.
+
+  what_right_aligned_should_look_like: |
+    Source nodes appear at their NATURAL DEPTH (not pushed to left edge).
+    All flows converge toward the right side.
+
+  what_wide_nodes_should_look_like: |
+    Nodes are visibly WIDER (40px vs default 20px).
+    More gap between nodes (15px vs default 8px).
+
+  adapter_file: src/viz/adapters/echarts/sankey-adapter.ts
+
+  likely_cause: |
+    Our test data may be too linear/simple. The ECharts example uses data with
+    multiple source nodes and branching flows where alignment visibly matters.
+    With simple A->B->C->D data, all alignments look the same.
+
+  fix_requirements: |
+    1. Check if adapter is passing nodeAlign and nodeWidth to ECharts series
+    2. Compare our test data structure to the ECharts example data
+    3. If data is the issue: create better test data with branching/multiple sources
+    4. Make the three stories VISUALLY DISTINCT
+    5. DO NOT DELETE - these stories must exist and look different
+
+# =============================================================================
+# ISSUE 2: Treemap Needs Deep Data for Drilldown Demo
+# =============================================================================
+treemap_drilldown:
+  problem: |
+    Drilldown appears broken but the real issue is DATA DEPTH.
+    Current test data only has 1-2 levels. There's nothing to drill into.
+    ECharts treemap drilldown works fine - we just need better demo data.
+
+  file: stories/viz/echarts/Treemap.stories.tsx
+  adapter: src/viz/adapters/echarts/treemap-adapter.ts
+
+  reference_examples:
+    echarts_gallery: https://echarts.apache.org/examples/en/index.html#chart-type-treemap
+    disk_usage: https://echarts.apache.org/examples/en/editor.html?c=treemap-disk
+    obama_budget: https://echarts.apache.org/examples/en/editor.html?c=treemap-obama
+
+  what_good_demo_data_looks_like: |
+    - 3-4 levels deep minimum
+    - Root > Category > Subcategory > Item
+    - Example: Company > Department > Team > Project
+    - Example: Disk > Folder > Subfolder > File
+
+  fix_requirements: |
+    1. Create new test data with 3-4 levels of hierarchy
+    2. Ensure drilldown interaction config is properly wired in adapter
+    3. Add breadcrumb navigation for going back up
+    4. Demo story should clearly show: click region -> drills down -> breadcrumb -> back up
+    5. Look at ECharts examples above for proper data structure
+
+# =============================================================================
+# ALSO: Treemap Shadow
+# =============================================================================
+treemap_shadow:
+  problem: Drop shadow on treemap blocks is too heavy/dark
+  fix: Use lighter elevation token or reduce shadow opacity
+
+success_criteria:
+  - Sankey LeftAligned looks DIFFERENT from RightAligned looks DIFFERENT from WideNodes
+  - Treemap DrilldownDemo has 3+ levels of data
+  - Clicking a treemap region DRILLS DOWN to show children
+  - Breadcrumb appears and clicking it goes BACK UP
+  - Treemap shadow is subtle
+
+validation:
+  - manual: Sankey - screenshot all 3 alignment stories, they must look different
+  - manual: Treemap - click a region, verify it drills down
+  - manual: Treemap - click breadcrumb, verify it goes back up
+
+notes: |
+  Issue refs: CSS issues #15, #17
+
+  FOR AGENTS:
+  - Sankey stories MUST be fixed, not deleted
+  - Treemap data needs MORE DEPTH, the adapter is probably fine
+  - Check ECharts examples for reference implementations
