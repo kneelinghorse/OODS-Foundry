@@ -14,7 +14,7 @@ const roleLookup = new Map(authableTrait.listRoles().map((role) => [role.id, rol
 const userLookup = new Map(AUTHZ_SAMPLE_DATASET.users.map((user) => [user.id, user.name]));
 
 const meta: Meta<typeof OrgMemberList> = {
-  title: 'Objects/Organization/OrganizationMembers',
+  title: 'Objects/Core Objects/Organization/Members',
   component: OrgMemberList,
   parameters: {
     layout: 'fullscreen',

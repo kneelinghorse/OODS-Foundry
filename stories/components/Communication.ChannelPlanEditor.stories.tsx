@@ -8,7 +8,7 @@ import type { DeliveryPolicy } from '../../src/schemas/communication/delivery-po
 type Story = StoryObj<typeof ChannelPlanEditor>;
 
 const meta: Meta<typeof ChannelPlanEditor> = {
-  title: 'Communication/ChannelPlanEditor',
+  title: 'Domain Patterns/Communication/Channel Plan Editor',
   component: ChannelPlanEditor,
   parameters: {
     layout: 'centered',

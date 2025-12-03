@@ -6,7 +6,7 @@ import {
 } from './shared';
 
 const meta = {
-  title: 'Explorer/Proofs/View Profiles/List',
+  title: 'Contexts/Canonical/List',
   component: ViewProfileComponent,
   parameters: {
     ...viewStoryParameters,

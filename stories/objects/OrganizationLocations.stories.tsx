@@ -91,7 +91,7 @@ const locationEntries: AddressableEntry[] = [
 ];
 
 const meta: Meta<typeof AddressDisplay> = {
-  title: 'Objects/Organization/OrganizationLocations',
+  title: 'Objects/Core Objects/Organization/Locations',
   component: AddressDisplay,
   parameters: {
     layout: 'fullscreen',

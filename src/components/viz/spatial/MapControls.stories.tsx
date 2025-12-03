@@ -78,7 +78,7 @@ function ControlsDemo({ showZoom, showReset, showLayerToggles, position }: Contr
 }
 
 const meta = {
-  title: 'Viz/Spatial/MapControls',
+  title: 'Visualization/Spatial/Map Controls',
   component: ControlsDemo,
   parameters: {
     layout: 'fullscreen',

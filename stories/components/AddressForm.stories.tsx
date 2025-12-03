@@ -50,7 +50,7 @@ const validationComponents: ComponentValidationResult[] = [
 type Story = StoryObj<typeof AddressForm>;
 
 const meta: Meta<typeof AddressForm> = {
-  title: 'Components/Addresses/AddressForm',
+  title: 'Traits/Core/Addressable/Form',
   component: AddressForm,
   parameters: {
     layout: 'fullscreen',

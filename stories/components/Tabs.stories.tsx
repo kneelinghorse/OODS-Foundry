@@ -10,7 +10,7 @@ import { Tabs } from '~/src/components/tabs/Tabs.js';
 import type { TabItem, TabsProps } from '~/src/components/tabs/types.js';
 
 const meta = {
-  title: 'Components/Navigation/Tabs',
+  title: 'Primitives/Navigation/Tabs',
   component: Tabs,
   parameters: {
     layout: 'padded',

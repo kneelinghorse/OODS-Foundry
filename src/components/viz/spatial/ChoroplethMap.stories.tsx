@@ -285,7 +285,7 @@ function ChoroplethStory({
 }
 
 const meta = {
-  title: 'Viz/Spatial/ChoroplethMap',
+  title: 'Visualization/Spatial/Choropleth Map',
   component: ChoroplethStory,
   parameters: {
     layout: 'fullscreen',

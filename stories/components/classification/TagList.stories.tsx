@@ -62,7 +62,7 @@ const TAGS: Tag[] = [
 ];
 
 const meta: Meta<typeof TagList> = {
-  title: 'Components/Classification/TagList',
+  title: 'Traits/Core/Classifiable/Tag List',
   component: TagList,
   args: {
     tags: TAGS,

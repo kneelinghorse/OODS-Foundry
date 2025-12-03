@@ -86,7 +86,7 @@ const PICKER_CATEGORIES: CategoryNode[] = [
 ];
 
 const meta: Meta<typeof CategoryPicker> = {
-  title: 'Components/Classification/CategoryPicker',
+  title: 'Traits/Core/Classifiable/Category Picker',
   component: CategoryPicker,
   args: {
     id: 'stories-category-picker',

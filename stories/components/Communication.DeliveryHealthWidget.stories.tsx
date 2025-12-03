@@ -7,7 +7,7 @@ import type { DeliveryHealthMetrics } from '../../src/components/communication/D
 type Story = StoryObj<typeof DeliveryHealthWidget>;
 
 const meta: Meta<typeof DeliveryHealthWidget> = {
-  title: 'Communication/DeliveryHealthWidget',
+  title: 'Domain Patterns/Communication/Delivery Health Widget',
   component: DeliveryHealthWidget,
   parameters: {
     layout: 'centered',

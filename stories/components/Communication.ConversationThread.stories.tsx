@@ -8,7 +8,7 @@ import type { Message } from '../../src/schemas/communication/message.js';
 type Story = StoryObj<typeof ConversationThread>;
 
 const meta: Meta<typeof ConversationThread> = {
-  title: 'Communication/ConversationThread',
+  title: 'Domain Patterns/Communication/Conversation Thread',
   component: ConversationThread,
   parameters: {
     layout: 'centered',

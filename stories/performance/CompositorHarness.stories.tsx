@@ -11,7 +11,7 @@ import {
 import '~/src/styles/globals.css';
 
 const meta: Meta = {
-  title: 'Explorer/Performance/Compositor Harness',
+  title: 'Proofs & Internals/Performance/Compositor Harness',
   parameters: {
     layout: 'fullscreen',
     chromatic: { disableSnapshot: true },

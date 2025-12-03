@@ -8,7 +8,7 @@ import { useMessages } from '../../src/hooks/useMessages.js';
 type Story = StoryObj<typeof MessageTimeline>;
 
 const meta: Meta<typeof MessageTimeline> = {
-  title: 'Communication/MessageTimeline',
+  title: 'Domain Patterns/Communication/Message Timeline',
   component: MessageTimeline,
   parameters: {
     layout: 'fullscreen',

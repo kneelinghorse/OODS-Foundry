@@ -4,7 +4,7 @@ import type { SankeyInput } from '~/src/types/viz/network-flow';
 import { Sankey } from '~/src/components/viz/Sankey';
 
 const meta: Meta<typeof Sankey> = {
-  title: 'Components/Visualization/Sankey',
+  title: 'Visualization/Network/Sankey',
   component: Sankey,
   parameters: {
     layout: 'centered',

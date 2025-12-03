@@ -206,7 +206,7 @@ function VizTokensDoc(): JSX.Element {
 }
 
 const meta = {
-  title: 'Foundations/Viz Tokens',
+  title: 'Tokens & Theming/Viz Tokens',
   component: VizTokensDoc,
   parameters: {
     layout: 'fullscreen',

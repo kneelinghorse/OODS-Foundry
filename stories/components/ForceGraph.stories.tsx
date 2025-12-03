@@ -4,7 +4,7 @@ import type { NetworkInput } from '~/src/types/viz/network-flow';
 import { ForceGraph } from '~/src/components/viz/ForceGraph';
 
 const meta: Meta<typeof ForceGraph> = {
-  title: 'Components/Visualization/ForceGraph',
+  title: 'Visualization/Network/ForceGraph',
   component: ForceGraph,
   parameters: {
     layout: 'centered',

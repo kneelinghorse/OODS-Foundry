@@ -31,7 +31,7 @@ const buildArgs = (context: SubscriptionRenderProps['context'], data: Subscripti
   }) satisfies SubscriptionRenderProps;
 
 const meta = {
-  title: 'Domains/Billing/Subscription',
+  title: 'Objects/Domain Objects/Subscription',
   component: SubscriptionRenderObject,
   parameters: {
     layout: 'fullscreen',

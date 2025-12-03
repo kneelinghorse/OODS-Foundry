@@ -3,7 +3,7 @@ import type { NormalizedVizSpec } from '~/src/viz/spec/normalized-viz-spec';
 import { AreaChart } from '~/src/components/viz/AreaChart';
 
 const meta: Meta<typeof AreaChart> = {
-  title: 'Visualization/AreaChart',
+  title: 'Visualization/Standard/AreaChart',
   component: AreaChart,
   parameters: {
     layout: 'fullscreen',

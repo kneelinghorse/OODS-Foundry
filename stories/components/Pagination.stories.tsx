@@ -16,7 +16,7 @@ type PaginationStoryArgs = Omit<PaginationProps, 'page' | 'onChange'> & {
 type Story = StoryObj<PaginationStoryArgs>;
 
 const meta: Meta<PaginationStoryArgs> = {
-  title: 'Components/Navigation/Pagination',
+  title: 'Primitives/Navigation/Pagination',
   component: Pagination,
   parameters: {
     layout: 'centered',

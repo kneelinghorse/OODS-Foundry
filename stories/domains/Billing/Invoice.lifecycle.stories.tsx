@@ -125,7 +125,7 @@ const InvoiceLifecycle: React.FC<InvoiceLifecycleProps> = ({ state }) => {
 };
 
 const meta: Meta<typeof InvoiceLifecycle> = {
-  title: 'Domains/Billing/Invoice Lifecycle',
+  title: 'Objects/Domain Objects/Invoice/Lifecycle',
   component: InvoiceLifecycle,
   parameters: {
     layout: 'padded',

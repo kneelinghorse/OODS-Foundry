@@ -129,7 +129,7 @@ const SAMPLE_CATEGORIES: CategoryNode[] = [
 ];
 
 const meta: Meta<typeof CategoryTree> = {
-  title: 'Components/Classification/CategoryTree',
+  title: 'Traits/Core/Classifiable/Category Tree',
   component: CategoryTree,
   args: {
     nodes: SAMPLE_CATEGORIES,

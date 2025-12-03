@@ -13,7 +13,7 @@ import TimeService, { type Tenant } from '../../src/services/time';
 import type { CanonicalInvoice, CanonicalSubscription } from '../../src/domain/billing/core';
 
 const meta = {
-  title: 'Explorer/Proofs/Temporal Hygiene',
+  title: 'Proofs & Internals/Temporal Hygiene',
   parameters: {
     layout: 'padded',
     docs: {
