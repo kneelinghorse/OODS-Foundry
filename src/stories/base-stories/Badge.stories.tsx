@@ -9,7 +9,7 @@ import { listStatuses } from '../../components/statusables/statusRegistry.js';
 type BadgeStoryProps = ComponentProps<typeof Badge>;
 
 const meta: Meta<typeof Badge> = {
-  title: 'Components/Statusables/Badge',
+  title: 'Primitives/Feedback/Badge',
   component: Badge,
   decorators: [withPage()],
   args: {

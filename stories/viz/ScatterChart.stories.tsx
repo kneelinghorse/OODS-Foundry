@@ -7,7 +7,7 @@ import { BubbleChart } from '~/src/components/viz/BubbleChart';
 import { ScatterChart } from '~/src/components/viz/ScatterChart';
 
 const meta: Meta<typeof ScatterChart> = {
-  title: 'Visualization/ScatterChart',
+  title: 'Visualization/Standard/ScatterChart',
   component: ScatterChart,
   parameters: {
     layout: 'fullscreen',

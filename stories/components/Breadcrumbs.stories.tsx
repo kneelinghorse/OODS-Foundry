@@ -12,7 +12,7 @@ import type { BreadcrumbsProps, BreadcrumbItem } from '../../src/components/brea
 type Story = StoryObj<BreadcrumbsProps>;
 
 const meta: Meta<BreadcrumbsProps> = {
-  title: 'Components/Navigation/Breadcrumbs',
+  title: 'Primitives/Navigation/Breadcrumbs',
   component: Breadcrumbs,
   parameters: {
     layout: 'centered',

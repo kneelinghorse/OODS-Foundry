@@ -3,7 +3,7 @@ import type { NormalizedVizSpec } from '~/src/viz/spec/normalized-viz-spec';
 import { VizLayeredView } from '~/src/components/viz/VizLayeredView';
 
 const meta: Meta<typeof VizLayeredView> = {
-  title: 'Visualization/VizLayeredView',
+  title: 'Visualization/Composition/Layered Charts',
   component: VizLayeredView,
   parameters: {
     layout: 'fullscreen',

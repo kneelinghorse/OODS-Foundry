@@ -6,7 +6,7 @@ import {
 } from './shared';
 
 const meta = {
-  title: 'Explorer/Proofs/View Profiles/Forced Colors Detail',
+  title: 'Accessibility/High Contrast',
   component: ViewProfileComponent,
   parameters: {
     ...viewStoryParameters,

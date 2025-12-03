@@ -22,7 +22,7 @@ import usStatesTopology from './fixtures/us-states-10m.json';
 import worldCountriesTopology from './fixtures/world-countries-110m.json';
 
 const meta: Meta<typeof SpatialContainer> = {
-  title: 'Viz/Spatial/SpatialContainer',
+  title: 'Visualization/Spatial/Spatial Container',
   component: SpatialContainer,
   parameters: {
     layout: 'padded',

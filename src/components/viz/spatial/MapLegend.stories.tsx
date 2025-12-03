@@ -74,7 +74,7 @@ function LegendDemo({ legendType, position, title }: LegendStoryArgs): JSX.Eleme
 }
 
 const meta = {
-  title: 'Viz/Spatial/MapLegend',
+  title: 'Visualization/Spatial/Map Legend',
   component: LegendDemo,
   parameters: {
     layout: 'fullscreen',

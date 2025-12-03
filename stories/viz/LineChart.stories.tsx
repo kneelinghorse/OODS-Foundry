@@ -4,7 +4,7 @@ import type { NormalizedVizSpec } from '~/src/viz/spec/normalized-viz-spec';
 import { LineChart } from '~/src/components/viz/LineChart';
 
 const meta: Meta<typeof LineChart> = {
-  title: 'Visualization/LineChart',
+  title: 'Visualization/Standard/LineChart',
   component: LineChart,
   parameters: {
     layout: 'fullscreen',

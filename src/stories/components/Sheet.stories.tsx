@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Sheet } from '../../components/Sheet/Sheet';
 
 const meta: Meta = {
-  title: 'Components/Overlays/Sheet',
+  title: 'Primitives/Feedback/Sheet',
 };
 export default meta;
 type Story = StoryObj;

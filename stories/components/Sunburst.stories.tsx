@@ -4,7 +4,7 @@ import type { HierarchyInput } from '~/src/types/viz/network-flow';
 import { Sunburst } from '~/src/components/viz/Sunburst';
 
 const meta: Meta<typeof Sunburst> = {
-  title: 'Components/Visualization/Sunburst',
+  title: 'Visualization/Hierarchical/Sunburst',
   component: Sunburst,
   parameters: {
     layout: 'centered',

@@ -4,7 +4,7 @@ import type { HierarchyInput } from '~/src/types/viz/network-flow';
 import { Treemap } from '~/src/components/viz/Treemap';
 
 const meta: Meta<typeof Treemap> = {
-  title: 'Components/Visualization/Treemap',
+  title: 'Visualization/Hierarchical/Treemap',
   component: Treemap,
   parameters: {
     layout: 'centered',

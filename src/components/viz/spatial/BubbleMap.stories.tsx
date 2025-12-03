@@ -286,7 +286,7 @@ function BubbleStory({
 }
 
 const meta = {
-  title: 'Viz/Spatial/BubbleMap',
+  title: 'Visualization/Spatial/Bubble Map',
   component: BubbleStory,
   parameters: {
     layout: 'fullscreen',

@@ -9,7 +9,7 @@ import { listStatuses } from '../../components/statusables/statusRegistry.js';
 type BannerStoryProps = ComponentProps<typeof Banner>;
 
 const meta: Meta<typeof Banner> = {
-  title: 'Components/Statusables/Banner',
+  title: 'Primitives/Feedback/Banner',
   component: Banner,
   decorators: [withPage({ fullWidth: true })],
   args: {

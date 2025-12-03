@@ -13,7 +13,7 @@ const organizationLookup = new Map(AUTHZ_SAMPLE_DATASET.organizations.map((org) 
 const roleLookup = new Map(authableTrait.listRoles().map((role) => [role.id, role.name]));
 
 const meta: Meta<typeof UserMembershipPanel> = {
-  title: 'Objects/User/UserWithAuthable',
+  title: 'Objects/Core Objects/User/With Authable',
   component: UserMembershipPanel,
   parameters: {
     layout: 'fullscreen',

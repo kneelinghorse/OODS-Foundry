@@ -82,7 +82,7 @@ class MockRolePermissionClient implements RolePermissionClient {
 const mockClient = new MockRolePermissionClient();
 
 const meta: Meta<typeof RolePermissionMatrix> = {
-  title: 'Authz/RolePermissionMatrix',
+  title: 'Domain Patterns/Authorization/Role Permission Matrix',
   component: RolePermissionMatrix,
   parameters: {
     layout: 'fullscreen',

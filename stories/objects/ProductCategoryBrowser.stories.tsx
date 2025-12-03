@@ -61,7 +61,7 @@ const DATASET: CatalogEntry[] = [
 ];
 
 const meta: Meta<typeof ProductCategoryBrowser> = {
-  title: 'Objects/Product/ProductCategoryBrowser',
+  title: 'Objects/Core Objects/Product/Category Browser',
   component: ProductCategoryBrowser,
   parameters: {
     layout: 'fullscreen',

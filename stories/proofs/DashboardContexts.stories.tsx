@@ -14,7 +14,7 @@ const DASHBOARD_STORY_STYLE: React.CSSProperties = {
 } as React.CSSProperties;
 
 const meta: Meta<ComponentType> = {
-  title: 'Proofs/Dashboard Contexts',
+  title: 'Proofs & Internals/Contexts/Dashboard',
   component: DASHBOARD_EXAMPLES[0]!.Preview,
   parameters: {
     layout: 'fullscreen',

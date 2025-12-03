@@ -8,7 +8,7 @@ import { Stepper } from '~/src/components/stepper/Stepper';
 import type { StepDescriptor } from '~/src/components/stepper/types';
 
 const meta: Meta = {
-  title: 'Components/Progression/Stepper',
+  title: 'Primitives/Navigation/Stepper',
 };
 export default meta;
 

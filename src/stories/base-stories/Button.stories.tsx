@@ -16,7 +16,7 @@ const intents: ButtonStoryProps['intent'][] = [
 const sizes: ButtonStoryProps['size'][] = ['sm', 'md', 'lg'];
 
 const meta: Meta<typeof Button> = {
-  title: 'Components/Primitives/Button',
+  title: 'Primitives/Actions/Button',
   component: Button,
   parameters: {
     chromatic: { disableSnapshot: true },

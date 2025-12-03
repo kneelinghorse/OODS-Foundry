@@ -6,7 +6,7 @@ import { useTooltip } from '~/src/viz/hooks/useTooltip';
 import { Heatmap } from '~/src/components/viz/Heatmap';
 
 const meta: Meta<typeof Heatmap> = {
-  title: 'Visualization/Heatmap',
+  title: 'Visualization/Standard/Heatmap',
   component: Heatmap,
   parameters: {
     layout: 'fullscreen',

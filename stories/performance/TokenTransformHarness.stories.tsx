@@ -13,7 +13,7 @@ import { Button } from '~/src/components/base/Button';
 import '~/src/styles/globals.css';
 
 const meta: Meta = {
-  title: 'Explorer/Performance/Token Transform Harness',
+  title: 'Proofs & Internals/Performance/Token Transform Harness',
   parameters: {
     layout: 'padded',
     chromatic: { disableSnapshot: true },

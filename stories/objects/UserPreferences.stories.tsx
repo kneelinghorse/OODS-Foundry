@@ -7,7 +7,7 @@ import type { User } from '../../generated/objects/User';
 import { UserWithPreferencesExample } from '../../examples/objects/user-with-preferences';
 
 const meta: Meta<typeof UserProfileSettings> = {
-  title: 'Objects/User/UserPreferences',
+  title: 'Objects/Core Objects/User/With Preferences',
   component: UserProfileSettings,
   parameters: {
     layout: 'fullscreen',

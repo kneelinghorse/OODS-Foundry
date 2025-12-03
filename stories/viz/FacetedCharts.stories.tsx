@@ -3,7 +3,7 @@ import type { NormalizedVizSpec } from '~/src/viz/spec/normalized-viz-spec';
 import { VizFacetGrid } from '~/src/components/viz/VizFacetGrid';
 
 const meta: Meta<typeof VizFacetGrid> = {
-  title: 'Visualization/VizFacetGrid',
+  title: 'Visualization/Composition/Faceted Charts',
   component: VizFacetGrid,
   parameters: {
     layout: 'fullscreen',

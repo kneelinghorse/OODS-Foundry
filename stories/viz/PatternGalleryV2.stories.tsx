@@ -123,7 +123,7 @@ export function PatternGalleryV2({ viewport = 'desktop' }: PatternGalleryV2Props
 }
 
 const meta: Meta<typeof PatternGalleryV2> = {
-  title: 'Visualization/Patterns/Responsive Library',
+  title: 'Visualization/Patterns/Pattern Gallery V2',
   component: PatternGalleryV2,
   parameters: {
     layout: 'fullscreen',

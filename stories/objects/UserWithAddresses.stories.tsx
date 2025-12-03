@@ -72,7 +72,7 @@ const entries: AddressableEntry[] = [
 ];
 
 const meta: Meta<typeof AddressDisplay> = {
-  title: 'Objects/User/UserWithAddresses',
+  title: 'Objects/Core Objects/User/With Addressable',
   component: AddressDisplay,
   parameters: {
     layout: 'padded',

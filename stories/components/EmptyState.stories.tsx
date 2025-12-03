@@ -71,7 +71,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
 };
 
 const meta: Meta<EmptyStateProps> = {
-  title: 'Components/Feedback/EmptyState',
+  title: 'Primitives/Data Display/EmptyState',
   component: EmptyState,
   parameters: {
     layout: 'centered',

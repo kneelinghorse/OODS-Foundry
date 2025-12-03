@@ -61,7 +61,7 @@ const warehouseEntry: AddressableEntry = {
 type Story = StoryObj<typeof AddressDisplay>;
 
 const meta: Meta<typeof AddressDisplay> = {
-  title: 'Components/Addresses/AddressDisplay',
+  title: 'Traits/Core/Addressable/Display',
   component: AddressDisplay,
   parameters: {
     layout: 'centered',

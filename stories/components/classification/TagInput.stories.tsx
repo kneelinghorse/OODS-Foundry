@@ -60,7 +60,7 @@ const signals: TagUsageSignal[] = [
 ];
 
 const meta: Meta<typeof TagInput> = {
-  title: 'Components/Classification/TagInput',
+  title: 'Traits/Core/Classifiable/Tag Input',
   component: TagInput,
   args: {
     id: 'storybook-tag-input',

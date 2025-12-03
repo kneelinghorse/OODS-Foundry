@@ -122,7 +122,7 @@ const SubscriptionLifecycle: React.FC<SubscriptionLifecycleProps> = ({ state }) 
 };
 
 const meta: Meta<typeof SubscriptionLifecycle> = {
-  title: 'Domains/Billing/Subscription Lifecycle',
+  title: 'Objects/Domain Objects/Subscription/Lifecycle',
   component: SubscriptionLifecycle,
   parameters: {
     layout: 'padded',

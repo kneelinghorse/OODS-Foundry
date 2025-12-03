@@ -144,7 +144,7 @@ function renderField(label: string, value: string | undefined): JSX.Element {
 type Story = StoryObj<AddressFormattingPreviewProps>;
 
 const meta: Meta<AddressFormattingPreviewProps> = {
-  title: 'Traits/Addressable/International Formatting',
+  title: 'Traits/Core/Addressable',
   component: AddressFormattingPreview,
   args: {
     templateKey: 'US',

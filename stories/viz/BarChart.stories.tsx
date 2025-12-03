@@ -6,7 +6,7 @@ import { useTooltip } from '~/src/viz/hooks/useTooltip';
 import { BarChart } from '~/src/components/viz/BarChart';
 
 const meta: Meta<typeof BarChart> = {
-  title: 'Visualization/BarChart',
+  title: 'Visualization/Standard/BarChart',
   component: BarChart,
   parameters: {
     layout: 'fullscreen',

@@ -133,7 +133,7 @@ function MembershipPlayground({ validator, readOnly }: StoryContextProps): JSX.E
 }
 
 const meta: Meta<typeof MembershipManager> = {
-  title: 'Authz/MembershipManager',
+  title: 'Domain Patterns/Authorization/Membership Manager',
   component: MembershipManager,
   parameters: {
     layout: 'fullscreen',
