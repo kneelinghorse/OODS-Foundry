@@ -1,0 +1,116 @@
+id: B37.4
+title: Same Object Different Contexts
+status: Queued
+sprint: Sprint 37
+created: 2025-12-03
+tags: [hero-demo, contexts, user, navigation-phase-2]
+
+objective: |
+  Create a dedicated "Same Object, Different Contexts" hero demo showing
+  the User object rendered in all 8 contexts side-by-side. This is the
+  clearest "aha moment" for understanding OODS's context-aware rendering.
+
+context: |
+  INFRASTRUCTURE AUDIT FINDINGS:
+
+  1. RenderObject supports 6 contexts:
+     detail, list, form, timeline, card, inline
+
+  2. Chart and Dashboard contexts also exist (8 total):
+     chart, dashboard
+
+  3. Context Gallery (stories/proofs/context-gallery.stories.tsx) shows
+     multiple objects × contexts, but doesn't focus on the "same object"
+     insight with annotations.
+
+  THIS STORY FOCUSES ON ONE OBJECT (User) ACROSS ALL CONTEXTS
+  with clear annotations explaining what changes between each.
+
+  Reference: cmos/reports/oods-navigation-implementation-plan.md (Part 4.2)
+
+deliverables:
+  - path: stories/contexts/SameObjectDifferentContexts.stories.tsx
+    action: create
+    details: |
+      Create a focused demo showing User in all contexts:
+
+      ```typescript
+      // stories/contexts/SameObjectDifferentContexts.stories.tsx
+
+      import { RenderObject } from '~/src/components/RenderObject';
+      import { UserObject } from '~/src/objects/user/object';
+      import activeUser from '~/src/fixtures/user/active.json';
+
+      // Single story showing User in all 8 contexts
+      export const UserInAllContexts: Story = {
+        render: () => (
+          <div className="context-comparison-grid">
+            {/* Each context in a labeled section */}
+            <ContextPanel context="detail" label="Detail View">
+              <p className="context-description">
+                Full information display. Shows all traits, expanded fields.
+              </p>
+              <RenderObject object={UserObject} context="detail" data={activeUser} />
+            </ContextPanel>
+
+            <ContextPanel context="list" label="List View">
+              <p className="context-description">
+                Compact row format. Key fields only, optimized for scanning.
+              </p>
+              <RenderObject object={UserObject} context="list" data={activeUser} />
+            </ContextPanel>
+
+            {/* ... form, timeline, card, inline, chart, dashboard */}
+          </div>
+        ),
+      };
+      ```
+
+      LAYOUT:
+      - 2×4 or 4×2 grid (responsive)
+      - Each cell: label + description + rendered object
+      - Clear visual separation between contexts
+
+      ANNOTATIONS (key teaching content):
+      - Detail: "Full information display. Shows all traits."
+      - List: "Compact row format. Key fields only."
+      - Form: "Editable fields. Validation states visible."
+      - Timeline: "Activity-focused. Events and timestamps."
+      - Card: "Self-contained summary. Suitable for grids."
+      - Inline: "Minimal footprint. For embedding in text."
+      - Chart: "Data visualization context."
+      - Dashboard: "Widget-optimized. Key metrics prominent."
+
+      STORY TITLE: "Contexts/Same Object, Different Contexts"
+
+success_criteria:
+  - User object renders correctly in all 8 contexts
+  - Each context has clear label and description
+  - Layout is responsive and scannable
+  - Annotations explain the purpose of each context
+  - Appears prominently under "Contexts" section
+
+validation:
+  - command: pnpm storybook --smoke-test
+    expected: Story loads without errors
+  - manual: Navigate to Contexts section
+  - manual: Verify all 8 context panels render
+  - manual: Verify annotations are clear and helpful
+
+dependencies:
+  - B37.1 (verification)
+  - B37.2 (builds on Object Matrix learnings)
+
+estimated_effort: 2 hours
+
+notes: |
+  This is distinct from the Object Matrix (B37.2):
+  - Object Matrix: Multiple objects × few contexts (breadth)
+  - This story: One object × all contexts (depth)
+
+  Together they prove OODS's two key insights:
+  1. Same object → different contexts → different renderings
+  2. Different objects → same context → consistent patterns
+
+  The annotations are the teaching content - don't skip them.
+  They help users understand WHY each context exists.

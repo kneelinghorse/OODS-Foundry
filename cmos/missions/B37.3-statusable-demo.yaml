@@ -1,0 +1,133 @@
+id: B37.3
+title: Statusable Demo
+status: Queued
+sprint: Sprint 37
+created: 2025-12-03
+tags: [hero-demo, traits, statusable, status-registry, navigation-phase-2]
+
+objective: |
+  Create a Statusable demo that surfaces the hidden value of the status registry.
+  Lead with visual gallery (for designers), then explain the mechanics (for developers).
+
+context: |
+  INFRASTRUCTURE AUDIT FINDINGS:
+
+  1. StatusChip exists in Explorer (apps/explorer/src/components/StatusChip.tsx)
+     - 5 domains: subscription, invoice, payment_intent, ticket, user
+     - getStatusStyle(domain, status) → returns tone, label, icon
+     - Maps JSON status files → visual representation
+
+  2. StatusChip stories exist (apps/explorer/src/stories/StatusChip.stories.tsx)
+     - SubscriptionStates, InvoiceStates, PaymentIntentStates, TicketStates, UserStates
+     - Well-structured with named exports per domain
+     - Currently excluded from main nav (per B36.1)
+
+  3. Main Badge component exists (src/components/base/Badge.tsx)
+     - Uses statusRegistry for tone mapping
+     - This is the canonical component to use
+
+  TASK: Port StatusChip content to use main Badge, create visual gallery + API demo.
+
+  Reference: cmos/reports/oods-navigation-implementation-plan.md (Part 4.2)
+
+deliverables:
+  - path: stories/traits/Statusable.stories.tsx
+    action: create
+    details: |
+      Create a comprehensive Statusable demo with two parts:
+
+      PART 1: Visual Gallery (designers)
+      Show all status states per domain using Badge component.
+
+      Structure (single file, multiple exports):
+      ```typescript
+      // stories/traits/Statusable.stories.tsx
+
+      export const SubscriptionStates: Story = {
+        // Grid showing: future, trialing, active, paused,
+        //               pending_cancellation, delinquent, terminated
+      };
+
+      export const InvoiceStates: Story = {
+        // Grid showing: draft, posted, paid, past_due, void
+      };
+
+      export const PaymentIntentStates: Story = {
+        // Grid showing: requires_payment_method, requires_confirmation,
+        //               processing, requires_action, succeeded, canceled
+      };
+
+      export const TicketStates: Story = {
+        // Grid showing: new, open, pending, on_hold, solved, closed
+      };
+
+      export const UserStates: Story = {
+        // Grid showing: invited, active, suspended, locked, deactivated
+      };
+
+      export const HowItWorks: Story = {
+        // Interactive demo showing:
+        // 1. Pick a status from dropdown
+        // 2. See registry lookup: status → tone → tokens → visual
+        // 3. Show the mapping chain
+      };
+      ```
+
+      STORY TITLE: "Traits/Statusable System"
+
+      USE IMPORTS FROM:
+      - src/components/base/Badge.tsx (main component)
+      - Status mapping files from examples/mapping/ or tokens/maps/
+
+      DO NOT import from apps/explorer - that's the legacy location
+
+  - path: stories/traits/Statusable.docs.mdx
+    action: create
+    details: |
+      MDX documentation explaining the Statusable system:
+
+      1. What is Statusable?
+         - A trait that gives objects a status field
+         - Status → Tone → Token → Visual mapping
+
+      2. How statusRegistry Works
+         - Diagram of mapping chain
+         - Example lookup flow
+
+      3. Adding New Status Domains
+         - How to create a new mapping file
+         - How to register with the system
+
+      4. Customizing Appearance
+         - Override tokens per-status
+         - Context-specific rendering (chip vs banner)
+
+success_criteria:
+  - All 5 domain galleries render with correct status visuals
+  - Badge component used (not StatusChip from Explorer)
+  - HowItWorks story demonstrates the mapping mechanism
+  - MDX documentation explains the system
+  - Appears under "Traits/Statusable System" in nav
+
+validation:
+  - command: pnpm storybook --smoke-test
+    expected: All Statusable stories load
+  - manual: Verify each domain gallery shows correct states
+  - manual: Verify Badge styling matches expected tones
+  - manual: Verify HowItWorks demo is interactive and clear
+
+dependencies:
+  - B37.1 (verification must pass first)
+
+estimated_effort: 2-3 hours
+
+notes: |
+  DECISION FROM PLANNING SESSION:
+  "Visual gallery first, API docs second. Lead with what designers need
+   (what does 'delinquent' look like?), then explain the mechanics for devs."
+
+  The existing StatusChip stories are well-structured - we're porting the
+  content and presentation pattern, not the component itself.
+
+  SCOPE GUARD: Focus on the gallery + one explanatory story. Don't over-engineer
+  the "HowItWorks" demo - a simple dropdown → result display is sufficient.

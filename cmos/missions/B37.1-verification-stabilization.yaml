@@ -1,0 +1,88 @@
+id: B37.1
+title: Verification & Stabilization
+status: Queued
+sprint: Sprint 37
+created: 2025-12-03
+tags: [verification, stabilization, qa, foundation]
+
+objective: |
+  Verify that Sprint 36's navigation restructure work is stable before building
+  Phase 2 hero demos on top of it. This is Sprint 37's "Sprint 0" task.
+
+context: |
+  Sprint 36 renamed ~75 story titles and reconfigured Storybook navigation.
+  Before adding new content, we need confidence the foundation is solid.
+
+  This prevents building on unstable ground and catching issues early.
+
+deliverables:
+  - path: N/A
+    action: verify
+    details: |
+      Run verification checklist:
+
+      1. BUILD CHECK
+         - Run: pnpm build-storybook
+         - Expected: Build succeeds with no errors
+         - Document any warnings
+
+      2. DEV CHECK
+         - Run: pnpm storybook
+         - Expected: Dev server starts, navigation loads correctly
+         - Verify new hierarchy is visible (Understanding OODS at top, etc.)
+
+      3. CI CHECK
+         - Review any broken snapshot tests or link checks
+         - Check GitHub Actions if applicable
+
+      4. VISUAL SPOT-CHECK
+         - Verify 5-10 random stories render correctly:
+           * stories/docs/1-philosophy.mdx
+           * stories/docs/2-core-concepts.mdx
+           * One Object story
+           * One Trait story
+           * One Viz story
+           * One Primitives story
+         - Note any rendering issues
+
+      5. NAV STRUCTURE CHECK
+         - Screenshot or document current nav hierarchy
+         - Verify sections appear in correct order
+         - Note any stories appearing in wrong sections
+
+  - path: cmos/reports/sprint-37-verification.md
+    action: create
+    details: |
+      Document verification results:
+      - Build status (pass/fail + warnings)
+      - Dev server status
+      - CI status
+      - Visual spot-check results
+      - Nav structure verification
+      - List of any issues found
+      - Recommended fixes before proceeding
+
+success_criteria:
+  - pnpm build-storybook passes
+  - pnpm storybook dev server loads correctly
+  - Navigation hierarchy matches target structure
+  - No critical rendering issues in spot-checked stories
+  - Verification report created
+
+validation:
+  - command: pnpm build-storybook
+    expected: Exit code 0
+  - command: pnpm storybook --smoke-test
+    expected: Dev server starts without errors
+  - manual: Review verification report for blocking issues
+
+dependencies: []
+
+estimated_effort: 1-2 hours
+
+notes: |
+  If issues are found:
+  - Critical issues: Fix before proceeding to B37.2
+  - Minor issues: Log in report, can fix in B37.5 Quick Wins
+
+  This mission gates all other Sprint 37 work.
