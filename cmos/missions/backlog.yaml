@@ -4,7 +4,7 @@ displayName: CMOS Backlog Export
 description: Backlog export generated from the CMOS SQLite database.
 author: CMOS
 schema: ./schemas/SprintPlan.v1.json
-generatedAt: '2025-12-03T19:23:12.305643+00:00'
+generatedAt: '2025-12-03T20:33:31.195442+00:00'
 ---
 domainFields:
   type: Planning.SprintPlan.v1
@@ -2400,28 +2400,52 @@ domainFields:
     missions:
     - id: B36.1
       name: Storybook Config + Navigation Skeleton
-      status: Queued
-      notes: 'Full details: cmos/missions/B36.1-storybook-nav-config.yaml'
+      status: Completed
+      completed_at: '2025-12-03T20:23:27Z'
+      notes: Updated storybook.config.ts to remove Explorer story paths. Updated .storybook/preview.ts
+        with new storySort hierarchy for OODS navigation. stories/docs/ directory
+        already existed. Storybook build succeeds.
       metadata:
         description: Configure Storybook nav hierarchy, exclude Explorer stories
+        started_at: '2025-12-03T19:42:23Z'
+        completed_at: '2025-12-03T20:23:27Z'
     - id: B36.2
       name: Philosophy MDX Documentation
-      status: Queued
-      notes: 'Full details: cmos/missions/B36.2-philosophy-mdx.yaml'
+      status: Completed
+      completed_at: '2025-12-03T20:27:26Z'
+      notes: Created 1-philosophy.mdx (~1000 words) explaining OODS value proposition,
+        the scaling challenge, and three pillars (Objects, Traits, Contexts). Created
+        2-core-concepts.mdx (~1800 words) with detailed explanations, YAML examples,
+        trait categories, context descriptions, and visual examples. Both files build
+        successfully in Storybook.
       metadata:
         description: Create 1-philosophy.mdx and 2-core-concepts.mdx
+        started_at: '2025-12-03T20:23:48Z'
+        completed_at: '2025-12-03T20:27:26Z'
     - id: B36.3
       name: Trait Engine + Getting Started MDX
-      status: Queued
-      notes: 'Full details: cmos/missions/B36.3-trait-engine-mdx.yaml'
+      status: Completed
+      completed_at: '2025-12-03T20:32:07Z'
+      notes: Created 3-trait-engine.mdx (~1700 words) explaining composition process,
+        5-layer merge cascade, conflict resolution rules, statusRegistry system, and
+        provenance tracking. Created 4-getting-started.mdx (~900 words) with quick
+        paths for designers and developers, project structure, code examples, and
+        key commands. Both files build successfully.
       metadata:
         description: Create 3-trait-engine.mdx and 4-getting-started.mdx
+        started_at: '2025-12-03T20:27:35Z'
+        completed_at: '2025-12-03T20:32:07Z'
     - id: B36.4
       name: Story Title Renames - Batch 1
-      status: Queued
-      notes: 'Full details: cmos/missions/B36.4-story-renames-batch1.yaml'
+      status: Current
+      notes: Ready for implementation after review of B36.1-B36.3
       metadata:
         description: Rename story titles for Objects, Traits, Contexts sections
+        started_at: '2025-12-03T20:32:23Z'
+        blocked_at: '2025-12-03T20:33:21Z'
+        blocked_reason: User requested pause to inspect completed work from B36.1-B36.3
+        blocked_needs:
+        - User review of completed missions
     - id: B36.5
       name: Story Title Renames - Batch 2
       status: Queued

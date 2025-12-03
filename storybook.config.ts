@@ -10,8 +10,6 @@ const workspaceRoot = path.dirname(fileURLToPath(import.meta.url));
 
 const missionStoriesRoot = path.join(workspaceRoot, 'stories');
 const storiesRoot = path.join(workspaceRoot, 'src', 'stories');
-const explorerStoriesRoot = path.join(workspaceRoot, 'apps', 'explorer', 'src', 'stories');
-const explorerIntroRoot = path.join(workspaceRoot, 'apps', 'explorer', '.storybook');
 const tokensDistDir = path.resolve(workspaceRoot, 'packages', 'tokens', 'dist');
 const tokensTailwindPath = path.resolve(tokensDistDir, 'tailwind', 'tokens.json');
 const tokensCssPath = path.resolve(tokensDistDir, 'css', 'tokens.css');
@@ -41,15 +39,14 @@ let tokensBuilt = false;
 
 const config: StorybookConfig = {
   stories: [
-    `${explorerIntroRoot}/**/*.mdx`,
     `${missionStoriesRoot}/**/*.mdx`,
     `${missionStoriesRoot}/**/*.stories.@(ts|tsx)`,
     `${storiesRoot}/**/*.mdx`,
     `${storiesRoot}/**/*.stories.@(ts|tsx)`,
-    `${explorerStoriesRoot}/**/*.mdx`,
-    `${explorerStoriesRoot}/**/*.stories.@(ts|tsx)`,
     './src/components/**/*.mdx',
     './src/components/**/*.stories.@(ts|tsx)', // Component co-located stories
+    // NOTE: Explorer stories excluded - they duplicate canonical stories
+    // Explorer app has its own Storybook config if needed
   ],
   addons: [
     '@storybook/addon-docs',
