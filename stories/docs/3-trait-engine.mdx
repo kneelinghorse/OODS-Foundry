@@ -1,0 +1,347 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Understanding OODS/Trait Engine" />
+
+# The Trait Engine
+
+**How OODS Composes Objects from Traits**
+
+---
+
+## What is the Trait Engine?
+
+The Trait Engine is the core of OODS. It takes an object definition and its composed traits, then produces a unified, rendered result. Think of it as a compiler for domain objects:
+
+<div style={{ padding: '1.5rem', background: 'var(--color-bg-subtle)', borderRadius: '8px', marginTop: '1rem', marginBottom: '1.5rem' }}>
+  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', flexWrap: 'wrap', fontFamily: 'monospace', fontSize: '0.875rem' }}>
+    <span style={{ padding: '0.5rem 0.75rem', background: 'var(--color-bg-default)', borderRadius: '4px', border: '1px solid var(--color-border-default)' }}>Object YAML</span>
+    <span style={{ color: 'var(--color-text-muted)' }}>+</span>
+    <span style={{ padding: '0.5rem 0.75rem', background: 'var(--color-bg-default)', borderRadius: '4px', border: '1px solid var(--color-border-default)' }}>Trait YAMLs</span>
+    <span style={{ color: 'var(--color-text-muted)' }}>→</span>
+    <span style={{ padding: '0.5rem 0.75rem', background: 'var(--color-primary-subtle)', borderRadius: '4px', border: '1px solid var(--color-primary-emphasis)', fontWeight: 500 }}>Trait Engine</span>
+    <span style={{ color: 'var(--color-text-muted)' }}>→</span>
+    <span style={{ padding: '0.5rem 0.75rem', background: 'var(--color-success-subtle)', borderRadius: '4px', border: '1px solid var(--color-success-emphasis)' }}>Composed Object</span>
+  </div>
+</div>
+
+The engine handles:
+
+- **Dependency Resolution** — Traits can depend on other traits. The engine sorts them in the correct order.
+- **Schema Merging** — Multiple traits may define fields. The engine combines them into one schema.
+- **Conflict Resolution** — When traits disagree (same field name, different types), the engine applies deterministic rules.
+- **Provenance Tracking** — Know which trait contributed each field for debugging and documentation.
+
+---
+
+## The Composition Process
+
+When you compose an object, the engine follows six steps:
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginTop: '1.5rem', marginBottom: '1.5rem' }}>
+  <div style={{ padding: '1rem', border: '1px solid var(--color-border-default)', borderRadius: '8px', textAlign: 'center' }}>
+    <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--color-primary-emphasis)' }}>1</div>
+    <h4 style={{ margin: '0.5rem 0 0.25rem 0' }}>Parse</h4>
+    <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>Load object and trait definitions</p>
+  </div>
+  <div style={{ padding: '1rem', border: '1px solid var(--color-border-default)', borderRadius: '8px', textAlign: 'center' }}>
+    <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--color-primary-emphasis)' }}>2</div>
+    <h4 style={{ margin: '0.5rem 0 0.25rem 0' }}>Resolve Deps</h4>
+    <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>Topological sort by dependencies</p>
+  </div>
+  <div style={{ padding: '1rem', border: '1px solid var(--color-border-default)', borderRadius: '8px', textAlign: 'center' }}>
+    <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--color-primary-emphasis)' }}>3</div>
+    <h4 style={{ margin: '0.5rem 0 0.25rem 0' }}>Apply Params</h4>
+    <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>Expand trait parameters</p>
+  </div>
+  <div style={{ padding: '1rem', border: '1px solid var(--color-border-default)', borderRadius: '8px', textAlign: 'center' }}>
+    <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--color-primary-emphasis)' }}>4</div>
+    <h4 style={{ margin: '0.5rem 0 0.25rem 0' }}>Merge</h4>
+    <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>Apply 5-layer cascade</p>
+  </div>
+  <div style={{ padding: '1rem', border: '1px solid var(--color-border-default)', borderRadius: '8px', textAlign: 'center' }}>
+    <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--color-primary-emphasis)' }}>5</div>
+    <h4 style={{ margin: '0.5rem 0 0.25rem 0' }}>Resolve Conflicts</h4>
+    <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>Apply collision rules</p>
+  </div>
+  <div style={{ padding: '1rem', border: '1px solid var(--color-border-default)', borderRadius: '8px', textAlign: 'center' }}>
+    <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--color-primary-emphasis)' }}>6</div>
+    <h4 style={{ margin: '0.5rem 0 0.25rem 0' }}>Output</h4>
+    <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>Emit composed object</p>
+  </div>
+</div>
+
+### Step 2: Dependency Resolution
+
+Traits can declare dependencies on other traits. For example, `Cancellable` depends on `Stateful` because cancellation is a state transition.
+
+```yaml
+trait:
+  name: Cancellable
+  dependencies:
+    - Stateful  # Must be composed first
+```
+
+The engine builds a dependency graph and performs a **topological sort** to determine composition order. If there's a cycle (A depends on B, B depends on A), composition fails with an error.
+
+---
+
+## The 5-Layer Merge Cascade
+
+The engine merges data through five ordered layers. Each layer can override the previous:
+
+<div style={{ marginTop: '1.5rem', marginBottom: '1.5rem' }}>
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+      <div style={{ width: '120px', padding: '0.5rem', background: 'var(--color-bg-subtle)', borderRadius: '4px', fontWeight: 500, textAlign: 'center', fontSize: '0.875rem' }}>Foundation</div>
+      <div style={{ flex: 1, fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>Base types, universal defaults. The foundation layer.</div>
+    </div>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+      <div style={{ width: '120px', padding: '0.5rem', background: 'var(--color-bg-subtle)', borderRadius: '4px', fontWeight: 500, textAlign: 'center', fontSize: '0.875rem' }}>Base Object</div>
+      <div style={{ flex: 1, fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>Object's own schema before traits. Your User's <code>id</code> and <code>email</code>.</div>
+    </div>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+      <div style={{ width: '120px', padding: '0.5rem', background: 'var(--color-primary-subtle)', borderRadius: '4px', fontWeight: 500, textAlign: 'center', fontSize: '0.875rem', border: '1px solid var(--color-primary-muted)' }}>Traits</div>
+      <div style={{ flex: 1, fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>Applied in topological order. Addressable, then Stateful, etc.</div>
+    </div>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+      <div style={{ width: '120px', padding: '0.5rem', background: 'var(--color-bg-subtle)', borderRadius: '4px', fontWeight: 500, textAlign: 'center', fontSize: '0.875rem' }}>Overrides</div>
+      <div style={{ flex: 1, fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>Object-specific customizations. Change how a trait applies to this object.</div>
+    </div>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+      <div style={{ width: '120px', padding: '0.5rem', background: 'var(--color-bg-subtle)', borderRadius: '4px', fontWeight: 500, textAlign: 'center', fontSize: '0.875rem' }}>Context</div>
+      <div style={{ flex: 1, fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>Rendering-time adjustments. List context hides some fields.</div>
+    </div>
+  </div>
+</div>
+
+**Example:** A User object defines `email`. The Addressable trait adds `addresses`. The Stateful trait adds `status`. All three merge into one schema:
+
+```typescript
+// Final composed schema
+{
+  email: { type: 'email', required: true },     // From User
+  addresses: { type: 'AddressEntry[]' },         // From Addressable
+  status: { type: 'string', enum: [...] },       // From Stateful
+  state_history: { type: 'StateTransition[]' },  // From Stateful
+}
+```
+
+---
+
+## Conflict Resolution Rules
+
+What happens when two traits define the same field? The engine applies deterministic rules:
+
+<div style={{ marginTop: '1rem' }}>
+
+### 1. Same Type → Stricter Constraints Win
+
+```yaml
+# Trait A
+age: { type: number, validation: { min: 0 } }
+
+# Trait B
+age: { type: number, validation: { min: 18 } }
+
+# Result: min: 18 (stricter constraint wins)
+```
+
+### 2. Enums → Union of Values
+
+```yaml
+# Trait A
+status: { type: string, enum: [active, inactive] }
+
+# Trait B
+status: { type: string, enum: [pending, active] }
+
+# Result: enum: [active, inactive, pending]
+```
+
+### 3. Optional vs Required → Required Wins
+
+```yaml
+# Trait A
+email: { type: string, required: false }
+
+# Trait B
+email: { type: string, required: true }
+
+# Result: required: true
+```
+
+### 4. Different Types → Error
+
+```yaml
+# Trait A
+count: { type: number }
+
+# Trait B
+count: { type: string }
+
+# Result: CompositionError - type mismatch!
+```
+
+</div>
+
+The collision resolver tracks every resolution in the composed object's metadata, so you can see exactly how conflicts were resolved:
+
+```typescript
+const result = compositor.compose([traitA, traitB]);
+console.log(result.data.metadata.collisions);
+// [{ field: 'age', strategy: 'stricter_wins', from: ['TraitA', 'TraitB'] }]
+```
+
+---
+
+## The statusRegistry System
+
+One of the most powerful applications of the trait engine is the **statusRegistry**—a unified system for mapping status values to visual representations.
+
+<div style={{ padding: '1.5rem', background: 'var(--color-bg-subtle)', borderRadius: '8px', marginTop: '1rem', marginBottom: '1.5rem' }}>
+  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap', fontFamily: 'monospace', fontSize: '0.875rem' }}>
+    <span style={{ padding: '0.5rem 0.75rem', background: 'var(--color-bg-default)', borderRadius: '4px', border: '1px solid var(--color-border-default)' }}>Status Value<br/><span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>"active"</span></span>
+    <span>→</span>
+    <span style={{ padding: '0.5rem 0.75rem', background: 'var(--color-bg-default)', borderRadius: '4px', border: '1px solid var(--color-border-default)' }}>Tone<br/><span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>"success"</span></span>
+    <span>→</span>
+    <span style={{ padding: '0.5rem 0.75rem', background: 'var(--color-bg-default)', borderRadius: '4px', border: '1px solid var(--color-border-default)' }}>Tokens<br/><span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>bg, text, border</span></span>
+    <span>→</span>
+    <span style={{ padding: '0.5rem 0.75rem', background: 'var(--color-success-subtle)', color: 'var(--color-success-emphasis)', borderRadius: '4px', border: '1px solid var(--color-success-emphasis)' }}>Visual<br/><span style={{ fontSize: '0.75rem' }}>Green badge</span></span>
+  </div>
+</div>
+
+### How It Works
+
+1. **Status Value** — The raw data: `"active"`, `"pending"`, `"delinquent"`
+
+2. **Tone Mapping** — The registry maps values to semantic tones:
+   - `active`, `paid`, `succeeded` → **success**
+   - `pending`, `processing`, `trialing` → **info**
+   - `delinquent`, `past_due`, `failed` → **danger**
+   - `paused`, `on_hold` → **warning**
+   - `draft`, `new` → **neutral**
+
+3. **Token Resolution** — Each tone resolves to design tokens:
+   ```css
+   --status-success-bg: var(--color-success-subtle);
+   --status-success-text: var(--color-success-emphasis);
+   --status-success-border: var(--color-success-muted);
+   ```
+
+4. **Visual Rendering** — Components like Badge, Banner, and Toast read these tokens automatically.
+
+### Domain-Specific Registries
+
+Different domains define their own status maps:
+
+| Domain | Statuses | Example Mapping |
+|--------|----------|-----------------|
+| **Subscription** | future, trialing, active, paused, pending_cancellation, delinquent, terminated | `active → success`, `delinquent → danger` |
+| **Invoice** | draft, posted, paid, past_due, void | `paid → success`, `past_due → danger` |
+| **User** | invited, active, suspended, locked, deactivated | `active → success`, `suspended → warning` |
+| **Ticket** | new, open, pending, on_hold, solved, closed | `solved → success`, `on_hold → warning` |
+
+When you compose an object with the `Stateful` trait and provide a domain-specific status map, the statusRegistry ensures consistent visual treatment across your entire application.
+
+---
+
+## Provenance Tracking
+
+For debugging and documentation, the engine tracks which trait contributed each field:
+
+```typescript
+const result = compositor.compose([Addressable, Stateful, Timestampable]);
+
+// See where each field came from
+const provenance = result.data.metadata.provenance;
+for (const [field, source] of provenance.entries()) {
+  console.log(`${field}: contributed by ${source.trait}`);
+}
+
+// Output:
+// addresses: contributed by Addressable
+// status: contributed by Stateful
+// created_at: contributed by Timestampable
+```
+
+This is invaluable when debugging complex compositions with many traits.
+
+---
+
+## Performance
+
+The compositor is designed for efficiency:
+
+| Metric | Target | Typical |
+|--------|--------|---------|
+| Compose 10 traits | < 5ms | ~2ms |
+| Topological sort | O(V + E) | Constant for typical graphs |
+| Schema merge | O(fields) | Linear |
+
+Enable performance tracking to measure composition time:
+
+```typescript
+const compositor = new TraitCompositor({
+  trackPerformance: true,
+});
+
+const result = compositor.compose(traits);
+console.log(`Composed in ${result.data.metadata.performance.durationMs}ms`);
+```
+
+---
+
+## Using the Compositor
+
+### Basic Usage
+
+```typescript
+import { composeTraits } from '@oods/trait-engine';
+
+const result = composeTraits(
+  [AddressableTrait, StatefulTrait, TimestampableTrait],
+  {
+    id: 'user',
+    name: 'User',
+    schema: {
+      id: { type: 'uuid', required: true },
+      email: { type: 'email', required: true },
+    },
+  }
+);
+
+if (result.success) {
+  console.log('Composed schema:', result.data.schema);
+} else {
+  console.error('Composition failed:', result.errors);
+}
+```
+
+### With Manual Collision Resolution
+
+```typescript
+const compositor = new TraitCompositor({
+  collisionResolutions: {
+    status: {
+      strategy: 'prefer_trait',
+      traitName: 'CustomStateful',
+    },
+  },
+});
+```
+
+---
+
+## Next Steps
+
+- **[Getting Started](/docs/understanding-oods-getting-started--docs)** — Begin building with OODS
+- **[Traits](/docs/traits-how-traits-work--docs)** — Explore available traits
+- **[Objects](/docs/objects-object-explorer--docs)** — See composed objects in action
+
+---
+
+<div style={{ marginTop: '2rem', padding: '1rem', background: 'var(--color-bg-subtle)', borderRadius: '8px', fontSize: '0.875rem' }}>
+  <strong>Implementation:</strong> The compositor lives in <code>src/core/compositor.ts</code>.
+  Collision resolution is in <code>src/core/collision-resolver.ts</code>.
+  The statusRegistry is in <code>src/core/statusRegistry.ts</code>.
+</div>
