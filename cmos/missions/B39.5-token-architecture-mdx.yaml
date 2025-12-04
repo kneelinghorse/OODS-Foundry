@@ -1,0 +1,196 @@
+id: B39.5
+title: Token Architecture MDX
+status: Queued
+sprint: Sprint 39
+created: 2025-12-03
+tags: [documentation, tokens, theming, mdx, navigation-phase-4]
+
+objective: |
+  Create an MDX documentation page explaining OODS's design token architecture
+  and the Reference → Semantic → Component cascade.
+
+  This completes the "Understanding OODS" documentation section.
+
+context: |
+  EXISTING DOCUMENTATION STRUCTURE:
+
+  stories/docs/
+  ├── 1-philosophy.mdx          ✓ Done
+  ├── 2-core-concepts.mdx       ✓ Done
+  ├── 3-trait-engine.mdx        ✓ Done
+  ├── 4-getting-started.mdx     ✓ Done
+  ├── 5-visualization-system.mdx ✓ Done
+  ├── 6-accessibility-approach.mdx (Sprint 39.4)
+  └── 7-token-architecture.mdx  ← THIS MISSION
+
+  EXISTING TOKEN CONTENT TO REFERENCE:
+
+  - stories/docs/Foundations.Colors.mdx — Color token explorer
+  - stories/docs/Foundations.Typography.mdx — Type scale
+  - stories/docs/Foundations.Shadows.mdx — Elevation tokens
+  - stories/docs/Foundations.Borders.mdx — Border tokens
+  - tokens/ directory — DTCG token definitions
+  - statusRegistry token mappings — Status → tone → visual
+
+  TOKEN ARCHITECTURE OVERVIEW:
+
+  OODS uses a 4-layer token cascade:
+  1. Reference tokens (raw values: colors, sizes)
+  2. Semantic tokens (purpose: text-primary, surface-raised)
+  3. Component tokens (scoped: button-bg, card-border)
+  4. Context tokens (adaptive: list-density, form-spacing)
+
+  This enables:
+  - Theming (swap reference layer)
+  - Dark mode (swap semantic layer)
+  - Context adaptation (list vs detail density)
+
+deliverables:
+  - path: stories/docs/7-token-architecture.mdx
+    action: create
+    details: |
+      Create an MDX page explaining OODS's token architecture.
+
+      STORY TITLE: "Understanding OODS/Token Architecture"
+
+      STRUCTURE:
+
+      ```mdx
+      import { Meta } from '@storybook/blocks';
+
+      <Meta title="Understanding OODS/Token Architecture" />
+
+      # Token Architecture
+
+      **How OODS Uses Design Tokens for Theming and Adaptation**
+
+      ---
+
+      ## The 4-Layer Cascade
+
+      [Diagram showing the cascade]
+
+      ```
+      Reference → Semantic → Component → Context
+      ```
+
+      ### Layer 1: Reference Tokens
+      Raw values with no semantic meaning.
+      - `--ref-blue-500: oklch(0.65 0.19 240)`
+      - `--ref-spacing-4: 1rem`
+      - `--ref-font-size-md: 1rem`
+
+      ### Layer 2: Semantic Tokens
+      Purpose-driven aliases.
+      - `--sys-text-primary: var(--ref-gray-900)`
+      - `--sys-surface-raised: var(--ref-white)`
+      - `--sys-border-default: var(--ref-gray-200)`
+
+      ### Layer 3: Component Tokens
+      Scoped to specific components.
+      - `--cmp-button-bg: var(--sys-surface-accent)`
+      - `--cmp-card-border: var(--sys-border-subtle)`
+      - `--cmp-badge-text: var(--sys-text-inverse)`
+
+      ### Layer 4: Context Tokens
+      Adaptive based on view context.
+      - `--ctx-list-row-padding: var(--ref-spacing-2)`
+      - `--ctx-detail-section-gap: var(--ref-spacing-6)`
+      - `--ctx-form-field-gap: var(--ref-spacing-4)`
+
+      ---
+
+      ## Why This Matters
+
+      [Explain the benefits]
+
+      1. **Theming**: Swap reference layer → new brand
+      2. **Dark Mode**: Swap semantic layer → inverted colors
+      3. **Density**: Swap context layer → compact vs comfortable
+      4. **Consistency**: Same cascade everywhere
+
+      ---
+
+      ## statusRegistry Integration
+
+      [Explain how tokens connect to status system]
+
+      Status values flow through the token cascade:
+      ```
+      "delinquent" → danger tone → --status-danger-bg → rendered badge
+      ```
+
+      Link to: Trait Engine / statusRegistry section
+
+      ---
+
+      ## Token Files
+
+      [Brief overview of token organization]
+
+      ```
+      tokens/
+      ├── reference/       ← Raw values
+      ├── semantic/        ← Purpose aliases
+      ├── component/       ← Scoped tokens
+      └── context/         ← View-adaptive
+      ```
+
+      ---
+
+      ## Foundations
+
+      Links to detailed token explorers:
+      - [Colors](/docs/foundations-colors--docs)
+      - [Typography](/docs/foundations-typography--docs)
+      - [Spacing](/docs/foundations-spacing--docs)
+      - [Shadows](/docs/foundations-shadows--docs)
+      - [Borders](/docs/foundations-borders--docs)
+
+      ---
+
+      ## Resources
+
+      - DTCG Specification: https://design-tokens.github.io/community-group/format/
+      - Style Dictionary: https://amzn.github.io/style-dictionary/
+      ```
+
+      KEY PRINCIPLE: This page explains the ARCHITECTURE, not the individual tokens.
+      Link to Foundations pages for token explorers.
+
+      WORD COUNT TARGET: ~500 words
+
+success_criteria:
+  - MDX page renders at "Understanding OODS/Token Architecture"
+  - 4-layer cascade clearly explained with examples
+  - Links to Foundations token explorers work
+  - statusRegistry integration mentioned
+  - Consistent styling with other Understanding OODS pages
+
+validation:
+  - command: pnpm storybook --smoke-test
+    expected: MDX page loads without errors
+  - manual: Navigate to Understanding OODS/Token Architecture
+  - manual: Verify links to Foundations pages work
+  - manual: Cascade diagram is clear
+
+dependencies: []
+
+estimated_effort: 2 hours
+
+notes: |
+  ARCHITECTURE, NOT CATALOG.
+
+  The Foundations pages already provide token explorers (Colors, Typography, etc.).
+  This page explains WHY the cascade exists and HOW it enables theming/adaptation.
+
+  The key insight is the 4-layer cascade:
+  Reference → Semantic → Component → Context
+
+  Each layer serves a specific purpose, and swapping layers enables different
+  adaptations (theming, dark mode, density).
+
+  CONNECTION TO TRAIT ENGINE:
+  Traits declare token_mapping in their semantics. This page should connect
+  that concept to the token architecture — showing how traits use semantic
+  tokens and how the cascade resolves them.

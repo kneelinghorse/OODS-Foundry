@@ -1,0 +1,136 @@
+id: B39.1
+title: Archivable Trait Story
+status: Queued
+sprint: Sprint 39
+created: 2025-12-03
+tags: [trait-story, archivable, lifecycle, navigation-phase-3]
+
+objective: |
+  Create a comprehensive Archivable trait story following the consistent trait story pattern:
+  What is it? → What does it look like? → How does it work?
+
+  Archivable is a LIFECYCLE trait with binary state (archived/not) plus retention policy.
+  Visual proof: Archive state badge + retention timeline + restore window.
+
+context: |
+  TRAIT STORY PATTERN (established Sprint 38):
+
+  Every trait story answers three questions:
+  1. What is this? (Overview — 30 seconds)
+  2. What does it look like? (Gallery/Diagram — visual proof)
+  3. How does it work? (Mechanics — for developers)
+
+  ARCHIVABLE TRAIT DEFINITION (traits/lifecycle/Archivable.trait.yaml):
+
+  - Binary state: is_archived (boolean)
+  - Timestamps: archived_at, restored_at
+  - Retention: gracePeriodDays (0-365), retainHistory, restoreWindowDays
+  - Reason: archive_reason (max 160 chars)
+  - Dependencies: Stateful
+  - View extensions: detail (ArchiveSummary), timeline (ArchiveEvent), card (ArchivePill)
+
+  VISUAL PROOF APPROACH:
+
+  Simple lifecycle diagram showing:
+  ```
+  [ACTIVE] ──archive──→ [ARCHIVED] ──restore──→ [ACTIVE]
+                              │
+                              ↓ (after grace period)
+                        [PERMANENTLY DELETED]
+  ```
+
+  Plus retention timeline showing grace period countdown.
+
+  THIS IS A NEW BUILD - no existing story to reuse.
+
+deliverables:
+  - path: stories/traits/Archivable.stories.tsx
+    action: create
+    details: |
+      Create Archivable trait story with the following structure:
+
+      ```typescript
+      export default {
+        title: 'Traits/Archivable',
+        // ...
+      };
+
+      export const Overview: Story = { name: '1. Overview' };
+      export const ArchiveStates: Story = { name: '2. Archive States' };
+      export const RetentionPolicy: Story = { name: '3. Retention Policy' };
+      export const HowItWorks: Story = { name: '4. How It Works' };
+      ```
+
+      SECTION 1: Overview
+      - What is Archivable? (Soft delete with retention policy)
+      - Problem it solves (recoverable deletion, compliance, audit trails)
+      - Key fields: is_archived, archived_at, restored_at, archive_reason
+      - Dependency on Stateful trait
+
+      SECTION 2: Archive States
+      - Visual showing the two states: Active vs Archived
+      - Badge rendering for each state
+      - Show archived_at timestamp display
+      - Show archive_reason display
+
+      Layout:
+      ```
+      ┌─────────────────────┬─────────────────────┐
+      │      ACTIVE         │      ARCHIVED       │
+      │                     │                     │
+      │  [Active Badge]     │  [Archived Badge]   │
+      │                     │  Archived: Dec 1    │
+      │                     │  Reason: "Inactive" │
+      └─────────────────────┴─────────────────────┘
+      ```
+
+      SECTION 3: Retention Policy
+      - Show grace period configuration (gracePeriodDays)
+      - Show restore window (restoreWindowDays)
+      - Visual timeline showing:
+        - Archive date
+        - Restore window closing
+        - Permanent deletion date
+
+      ```
+      Archive ──────[Restore Window: 30 days]──────→ Permanent Delete
+         │                                                │
+         └── Can restore during this period ──────────────┘
+      ```
+
+      SECTION 4: How It Works
+      - Step 1: Archive action (sets is_archived=true, archived_at=now)
+      - Step 2: Grace period countdown
+      - Step 3: Restore action (sets is_archived=false, restored_at=now)
+      - Step 4: Permanent deletion (after grace period, if not restored)
+      - Show schema fields and their purposes
+
+      STYLING: Use same STYLES object pattern as other trait stories.
+
+success_criteria:
+  - Four stories in learning order (Overview, States, Policy, HowItWorks)
+  - Archive states show visual difference between active/archived
+  - Retention timeline clearly shows grace period and restore window
+  - Appears under "Traits/Archivable" in Storybook nav
+  - TypeScript compiles without errors
+
+validation:
+  - command: pnpm tsc --noEmit
+    expected: No TypeScript errors
+  - manual: Navigate to Traits/Archivable in Storybook
+  - manual: Verify archive states render correctly
+  - manual: Verify retention timeline is clear
+
+dependencies: []
+
+estimated_effort: 2 hours
+
+notes: |
+  SIMPLEST LIFECYCLE TRAIT.
+
+  Archivable is simpler than Stateful because it's binary (archived/not)
+  rather than a full state machine. This makes it a good "quick win" to
+  start the sprint.
+
+  The key visual is the retention timeline - showing when restore is
+  possible vs when permanent deletion occurs.

@@ -1,0 +1,131 @@
+id: B39.2
+title: Billable Trait Story
+status: Queued
+sprint: Sprint 39
+created: 2025-12-03
+tags: [trait-story, billable, domain, saas-billing, navigation-phase-3]
+
+objective: |
+  Create a comprehensive Billable trait story following the consistent trait story pattern:
+  What is it? → What does it look like? → How does it work?
+
+  Billable is a DOMAIN trait for SaaS pricing configuration.
+  Visual proof: Plan cards with price/interval/trial display.
+
+context: |
+  TRAIT STORY PATTERN (established Sprint 38):
+
+  Every trait story answers three questions:
+  1. What is this? (Overview — 30 seconds)
+  2. What does it look like? (Gallery — visual proof)
+  3. How does it work? (Mechanics — for developers)
+
+  BILLABLE TRAIT DEFINITION (domains/saas-billing/traits/billable.trait.yaml):
+
+  - Plan fields: plan_code, plan_name, billing_interval, interval_count
+  - Pricing: amount_minor, currency, pricing_model (flat/per_unit/tiered/package)
+  - Trial: trial_period_days
+  - Collection: collection_method, billing_anchor_day
+  - Parameters: defaultCurrency, supportedIntervals, decimalPrecision
+
+  REUSE STRATEGY:
+
+  Existing content in stories/domains/Billing/Subscription.stories.tsx shows
+  plan/price information. This story REFRAMES that content as a trait story,
+  not an object story.
+
+  CROSS-LINKING:
+
+  End with: "See how this trait works in context: [SaaS Billing Flow →]"
+
+deliverables:
+  - path: stories/traits/Billable.stories.tsx
+    action: create
+    details: |
+      Create Billable trait story with the following structure:
+
+      ```typescript
+      export default {
+        title: 'Traits/Domain/Billable',
+        // ...
+      };
+
+      export const Overview: Story = { name: '1. Overview' };
+      export const PlanGallery: Story = { name: '2. Plan Gallery' };
+      export const PricingModels: Story = { name: '3. Pricing Models' };
+      export const HowItWorks: Story = { name: '4. How It Works' };
+      ```
+
+      SECTION 1: Overview
+      - What is Billable? (SaaS pricing configuration trait)
+      - Problem it solves (consistent plan/price display across objects)
+      - Key fields: plan_name, amount_minor, currency, billing_interval
+      - Used by: Subscription, Plan objects
+
+      SECTION 2: Plan Gallery
+      - Show 3-4 example plans rendered as cards:
+
+      ```
+      ┌─────────────────┬─────────────────┬─────────────────┐
+      │    Starter      │      Pro        │   Enterprise    │
+      │                 │                 │                 │
+      │   $29/month     │   $99/month     │   $299/month    │
+      │                 │                 │                 │
+      │  14-day trial   │  14-day trial   │  30-day trial   │
+      │                 │                 │                 │
+      │  [Monthly ▾]    │  [Monthly ▾]    │  [Annual ▾]     │
+      └─────────────────┴─────────────────┴─────────────────┘
+      ```
+
+      - Show currency formatting (USD, EUR, JPY)
+      - Show interval variations (monthly, quarterly, annual)
+
+      SECTION 3: Pricing Models
+      - Show the 4 pricing models:
+        - Flat: Fixed price per period
+        - Per Unit: Price × quantity (seats)
+        - Tiered: Price varies by usage tier
+        - Package: Bundled pricing
+
+      Visual comparison of each model.
+
+      SECTION 4: How It Works
+      - Schema fields and their purposes
+      - Currency handling (minor units, decimalPrecision)
+      - Interval calculation (interval × interval_count)
+      - Cross-link: "See how Billable works with other traits in [SaaS Billing Flow →]"
+
+      REUSE: Import plan data from existing fixtures if available.
+
+success_criteria:
+  - Four stories in learning order
+  - Plan gallery shows realistic pricing cards
+  - Pricing models clearly differentiated
+  - Cross-link to SaaS Billing Flow included
+  - Appears under "Traits/Domain/Billable" in Storybook nav
+  - TypeScript compiles without errors
+
+validation:
+  - command: pnpm tsc --noEmit
+    expected: No TypeScript errors
+  - manual: Navigate to Traits/Domain/Billable in Storybook
+  - manual: Verify plan cards render with correct formatting
+  - manual: Verify cross-link to SaaS Billing Flow works
+
+dependencies: []
+
+estimated_effort: 1 hour
+
+notes: |
+  REFRAME, DON'T REBUILD.
+
+  Existing Subscription stories already show plan/pricing information.
+  This story provides the TRAIT framing - explaining what Billable provides
+  as a capability, not just showing it in context of a specific object.
+
+  The key addition is the Pricing Models section showing the 4 model types,
+  which isn't currently shown anywhere.
+
+  DOMAIN TRAIT GROUPING:
+  This is the first of the domain traits. They should all appear under
+  "Traits/Domain/" to distinguish them from core and lifecycle traits.

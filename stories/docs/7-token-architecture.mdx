@@ -1,0 +1,202 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Understanding OODS/Token Architecture" />
+
+# Token Architecture
+
+**How OODS Uses Design Tokens for Theming and Adaptation**
+
+---
+
+## The 4-Layer Cascade
+
+OODS organizes design tokens into four cascading layers. Each layer has a specific purpose, and by swapping layers, you enable different adaptations—theming, dark mode, density adjustments.
+
+<div style={{ padding: '1.5rem', background: 'var(--color-bg-subtle)', borderRadius: '8px', marginTop: '1.5rem', marginBottom: '1.5rem', fontFamily: 'monospace', textAlign: 'center' }}>
+  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+    <span style={{ padding: '0.5rem 1rem', background: '#dbeafe', borderRadius: '4px', color: '#1e40af' }}>Reference</span>
+    <span style={{ color: 'var(--color-text-muted)' }}>→</span>
+    <span style={{ padding: '0.5rem 1rem', background: '#dcfce7', borderRadius: '4px', color: '#166534' }}>Semantic</span>
+    <span style={{ color: 'var(--color-text-muted)' }}>→</span>
+    <span style={{ padding: '0.5rem 1rem', background: '#fef3c7', borderRadius: '4px', color: '#92400e' }}>Component</span>
+    <span style={{ color: 'var(--color-text-muted)' }}>→</span>
+    <span style={{ padding: '0.5rem 1rem', background: '#f3e8ff', borderRadius: '4px', color: '#7c3aed' }}>Context</span>
+  </div>
+</div>
+
+---
+
+### Layer 1: Reference Tokens
+
+Raw values with no semantic meaning. These are the foundational palette from which all other tokens derive.
+
+```css
+--ref-blue-500: oklch(0.65 0.19 240);
+--ref-gray-900: oklch(0.21 0.006 285);
+--ref-spacing-4: 1rem;
+--ref-font-size-md: 1rem;
+--ref-radius-md: 0.5rem;
+```
+
+**Prefix:** `--ref-*`
+
+**Purpose:** Define the raw material. Changing these values rebrands your entire system.
+
+---
+
+### Layer 2: Semantic Tokens
+
+Purpose-driven aliases that give meaning to reference values. These express intent, not appearance.
+
+```css
+--sys-text-primary: var(--ref-gray-900);
+--sys-text-muted: var(--ref-gray-600);
+--sys-surface-raised: var(--ref-white);
+--sys-border-default: var(--ref-gray-200);
+--sys-accent-emphasis: var(--ref-blue-600);
+```
+
+**Prefix:** `--sys-*`
+
+**Purpose:** Swap this layer for dark mode. `--sys-text-primary` becomes light text on dark surfaces.
+
+---
+
+### Layer 3: Component Tokens
+
+Scoped to specific components, referencing semantic tokens. This creates isolation—changing a button's token doesn't affect cards.
+
+```css
+--cmp-button-bg: var(--sys-surface-accent);
+--cmp-button-text: var(--sys-text-inverse);
+--cmp-card-border: var(--sys-border-subtle);
+--cmp-badge-bg-success: var(--sys-status-success);
+```
+
+**Prefix:** `--cmp-*`
+
+**Purpose:** Component-level customization without breaking the cascade.
+
+---
+
+### Layer 4: Context Tokens
+
+Adaptive tokens that change based on view context (list, detail, form). These control density and layout rhythm.
+
+```css
+--ctx-list-row-padding: var(--ref-spacing-2);
+--ctx-list-row-gap: var(--ref-spacing-1);
+--ctx-detail-section-gap: var(--ref-spacing-6);
+--ctx-form-field-gap: var(--ref-spacing-4);
+```
+
+**Prefix:** `--ctx-*`
+
+**Purpose:** The same component renders differently in list vs detail context without conditional code.
+
+---
+
+## Why This Matters
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', marginTop: '1.5rem', marginBottom: '1.5rem' }}>
+  <div style={{ padding: '1rem', border: '1px solid var(--color-border-default)', borderRadius: '8px' }}>
+    <strong>Theming</strong>
+    <p style={{ margin: '0.5rem 0 0', fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+      Swap the reference layer → new brand identity
+    </p>
+  </div>
+  <div style={{ padding: '1rem', border: '1px solid var(--color-border-default)', borderRadius: '8px' }}>
+    <strong>Dark Mode</strong>
+    <p style={{ margin: '0.5rem 0 0', fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+      Swap the semantic layer → inverted colors
+    </p>
+  </div>
+  <div style={{ padding: '1rem', border: '1px solid var(--color-border-default)', borderRadius: '8px' }}>
+    <strong>Density</strong>
+    <p style={{ margin: '0.5rem 0 0', fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+      Swap the context layer → compact vs comfortable
+    </p>
+  </div>
+  <div style={{ padding: '1rem', border: '1px solid var(--color-border-default)', borderRadius: '8px' }}>
+    <strong>Consistency</strong>
+    <p style={{ margin: '0.5rem 0 0', fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+      Same cascade everywhere → no special cases
+    </p>
+  </div>
+</div>
+
+---
+
+## Status Registry Integration
+
+The token architecture connects directly to OODS's status system. When an object has a status, the cascade resolves it to visual tokens:
+
+<div style={{ padding: '1rem', background: 'var(--color-bg-subtle)', borderRadius: '8px', fontFamily: 'monospace', fontSize: '0.875rem', marginTop: '1rem', marginBottom: '1rem' }}>
+  "delinquent" → danger tone → --sys-status-danger → --cmp-badge-bg-danger → rendered badge
+</div>
+
+This means status colors are centralized. Update the danger tone once, and every delinquent badge, warning banner, and error state updates system-wide.
+
+See the **[Trait Engine](?path=/docs/understanding-oods-trait-engine--docs)** documentation for how traits declare token mappings.
+
+---
+
+## Token Files
+
+Tokens are organized by layer in the codebase:
+
+```
+tokens/
+├── reference/       ← Raw color, spacing, type values
+├── semantic/        ← Purpose-driven aliases
+├── component/       ← Scoped to specific components
+└── context/         ← View-adaptive tokens
+```
+
+Token definitions follow the **DTCG (Design Tokens Community Group)** format for interoperability with design tools.
+
+---
+
+## Foundations
+
+Explore individual token categories:
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginTop: '1rem' }}>
+  <div style={{ padding: '1rem', background: 'var(--color-bg-subtle)', borderRadius: '8px', textAlign: 'center' }}>
+    <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>🎨</div>
+    <strong>Colors</strong>
+  </div>
+  <div style={{ padding: '1rem', background: 'var(--color-bg-subtle)', borderRadius: '8px', textAlign: 'center' }}>
+    <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>Aa</div>
+    <strong>Typography</strong>
+  </div>
+  <div style={{ padding: '1rem', background: 'var(--color-bg-subtle)', borderRadius: '8px', textAlign: 'center' }}>
+    <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>↔️</div>
+    <strong>Spacing</strong>
+  </div>
+  <div style={{ padding: '1rem', background: 'var(--color-bg-subtle)', borderRadius: '8px', textAlign: 'center' }}>
+    <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>▓</div>
+    <strong>Shadows</strong>
+  </div>
+  <div style={{ padding: '1rem', background: 'var(--color-bg-subtle)', borderRadius: '8px', textAlign: 'center' }}>
+    <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>▢</div>
+    <strong>Borders</strong>
+  </div>
+  <div style={{ padding: '1rem', background: 'var(--color-bg-subtle)', borderRadius: '8px', textAlign: 'center' }}>
+    <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>⏱️</div>
+    <strong>Motion</strong>
+  </div>
+</div>
+
+---
+
+## Resources
+
+- **[DTCG Specification](https://design-tokens.github.io/community-group/format/)** — Design Tokens Community Group format
+- **[Style Dictionary](https://amzn.github.io/style-dictionary/)** — Token build tooling
+
+---
+
+<div style={{ marginTop: '2rem', padding: '1rem', background: 'var(--color-bg-subtle)', borderRadius: '8px', fontSize: '0.875rem' }}>
+  <strong>Key Takeaway:</strong> The 4-layer cascade (Reference → Semantic → Component → Context) is what makes OODS themeable and adaptable. Swap a layer, change the entire system's behavior—without touching component code.
+</div>

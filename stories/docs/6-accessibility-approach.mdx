@@ -1,0 +1,175 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Understanding OODS/Accessibility Approach" />
+
+# Accessibility Approach
+
+**How OODS Makes Accessibility a First-Class Concern**
+
+---
+
+## Philosophy
+
+Accessibility in OODS isn't a checklist you run after building—it's woven into the architecture from the start. When you define a trait, you declare its accessibility requirements. When you compose an object from traits, those requirements propagate automatically. When the object renders in any context, accessible behavior follows.
+
+This means developers don't need to remember to add ARIA attributes, keyboard handlers, or screen reader announcements. The trait system handles it. Change how a status is announced to screen readers in one place, and every object with that trait updates across your entire application.
+
+**Accessibility is inherited, not implemented repeatedly.**
+
+---
+
+## The Three Pillars
+
+OODS follows WCAG 2.2 guidelines organized around three pillars:
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginTop: '1.5rem', marginBottom: '1.5rem' }}>
+  <div style={{ padding: '1rem', border: '1px solid var(--color-border-default)', borderRadius: '8px', textAlign: 'center' }}>
+    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>👁️</div>
+    <h4 style={{ margin: '0 0 0.5rem 0' }}>Perceivable</h4>
+    <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+      Users can perceive all content regardless of ability
+    </p>
+  </div>
+  <div style={{ padding: '1rem', border: '1px solid var(--color-border-default)', borderRadius: '8px', textAlign: 'center' }}>
+    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>⌨️</div>
+    <h4 style={{ margin: '0 0 0.5rem 0' }}>Operable</h4>
+    <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+      All interactions work with keyboard and assistive tech
+    </p>
+  </div>
+  <div style={{ padding: '1rem', border: '1px solid var(--color-border-default)', borderRadius: '8px', textAlign: 'center' }}>
+    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>💡</div>
+    <h4 style={{ margin: '0 0 0.5rem 0' }}>Understandable</h4>
+    <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+      Behavior is predictable and errors are clear
+    </p>
+  </div>
+</div>
+
+### Perceivable
+
+- **Color contrast**: WCAG 2.2 AA minimum (4.5:1 for text, 3:1 for UI)
+- **High contrast support**: Forced-colors mode adapts automatically via token cascade
+- **Status announcements**: Screen readers receive semantic status changes
+- **Visual indicators**: Never rely on color alone—icons and patterns supplement color
+
+### Operable
+
+- **Full keyboard navigation**: Tab through all interactive elements
+- **Focus management**: Composed views maintain logical focus order
+- **No keyboard traps**: Users can always escape modal or nested contexts
+- **Sufficient time**: Animations respect `prefers-reduced-motion`
+
+### Understandable
+
+- **Consistent patterns**: Same object types behave identically everywhere
+- **Predictable state changes**: Status transitions follow clear rules
+- **Clear error messages**: Validation feedback is specific and actionable
+- **Context in announcements**: Screen readers get full context, not just state names
+
+---
+
+## Accessibility in Traits
+
+Each trait definition includes accessibility metadata that declares how it should behave for assistive technology:
+
+```yaml
+metadata:
+  accessibility:
+    keyboard: "Tab to focus, Enter to activate, Escape to dismiss"
+    screenreader: "Announces status changes via aria-live region"
+    contrast: "All status colors meet WCAG AA contrast ratios"
+```
+
+When traits compose into objects, their accessibility requirements merge. The Trait Engine ensures:
+- Keyboard handlers don't conflict
+- ARIA attributes are applied correctly
+- Announcements don't overlap or interrupt each other
+
+This is why a `Subscription` object (composing Billable, Stateful, Cancellable) automatically announces status changes to screen readers—it inherits that behavior from the `Stateful` trait without any additional code.
+
+---
+
+## High Contrast Support
+
+OODS detects system-level high contrast (forced-colors) mode and adapts the entire token cascade. This isn't a separate theme—it's automatic:
+
+<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginTop: '1rem', marginBottom: '1rem' }}>
+  <div style={{ padding: '1rem', border: '1px solid var(--color-border-default)', borderRadius: '8px' }}>
+    <strong>Normal Mode</strong>
+    <p style={{ margin: '0.5rem 0 0', fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+      Full color palette with subtle distinctions
+    </p>
+  </div>
+  <div style={{ padding: '1rem', border: '2px solid currentColor', borderRadius: '8px', background: 'Canvas', color: 'CanvasText' }}>
+    <strong>Forced Colors</strong>
+    <p style={{ margin: '0.5rem 0 0', fontSize: '0.875rem' }}>
+      System colors, high contrast boundaries
+    </p>
+  </div>
+</div>
+
+See the **[High Contrast proofs](?path=/story/proofs-view-profiles-forcedcolors--docs)** for visual examples.
+
+---
+
+## Status Announcements
+
+The `statusRegistry` maps every status to a semantic announcement. When a subscription changes from "active" to "past_due", screen readers announce:
+
+> "Subscription status changed to past due. Payment retry scheduled."
+
+This happens automatically for any object with the `Statusable` trait. The announcement includes:
+- The object type
+- The new status
+- Contextual detail (when available)
+
+---
+
+## Testing & Compliance
+
+OODS accessibility is validated through:
+
+- **axe-core integration**: Automated accessibility audits in CI
+- **Contrast validation**: Token colors checked against WCAG ratios
+- **Keyboard testing**: Manual verification of tab order and focus
+- **Screen reader testing**: VoiceOver, NVDA, and JAWS coverage
+
+For the complete validation checklist, see **[docs/viz/accessibility-checklist.md](https://github.com/yourusername/oods-foundry/blob/main/docs/viz/accessibility-checklist.md)**.
+
+---
+
+## Resources
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', marginTop: '1rem' }}>
+  <div style={{ padding: '1rem', background: 'var(--color-bg-subtle)', borderRadius: '8px' }}>
+    <strong>High Contrast Proofs</strong>
+    <p style={{ margin: '0.5rem 0 0', fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+      Visual examples of forced-colors mode
+    </p>
+  </div>
+  <div style={{ padding: '1rem', background: 'var(--color-bg-subtle)', borderRadius: '8px' }}>
+    <strong>Accessibility Contract</strong>
+    <p style={{ margin: '0.5rem 0 0', fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+      Detailed implementation requirements
+    </p>
+  </div>
+  <div style={{ padding: '1rem', background: 'var(--color-bg-subtle)', borderRadius: '8px' }}>
+    <strong>Viz Accessibility Checklist</strong>
+    <p style={{ margin: '0.5rem 0 0', fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+      Validation steps for data visualizations
+    </p>
+  </div>
+  <div style={{ padding: '1rem', background: 'var(--color-bg-subtle)', borderRadius: '8px' }}>
+    <strong>WCAG 2.2 Guidelines</strong>
+    <p style={{ margin: '0.5rem 0 0', fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+      Official accessibility standards
+    </p>
+  </div>
+</div>
+
+---
+
+<div style={{ marginTop: '2rem', padding: '1rem', background: 'var(--color-bg-subtle)', borderRadius: '8px', fontSize: '0.875rem' }}>
+  <strong>Key Takeaway:</strong> In OODS, accessibility is designed into the trait system, not added as a separate concern. Define accessible behavior once in a trait, and every object that uses that trait inherits it automatically.
+</div>
