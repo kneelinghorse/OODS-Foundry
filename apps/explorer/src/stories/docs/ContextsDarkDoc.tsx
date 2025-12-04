@@ -19,7 +19,7 @@ const ContextsDarkDoc: React.FC = () => {
         color: 'var(--cmp-text-body, #f1f5f9)',
       }}
     >
-      <h1>Dark Theme Context</h1>
+      <h1 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '0.5rem' }}>Dark Theme Context</h1>
       <p style={{ marginBottom: '1.5rem', maxWidth: '65ch' }}>
         Dark mode is a pure theme-layer override. Components rely on the same <code>--cmp-*</code> slots
         they consume in light theme while <code>data-theme="dark"</code> remaps <code>--theme-*</code> tokens
@@ -33,7 +33,7 @@ const ContextsDarkDoc: React.FC = () => {
       </ul>
 
       <section style={{ marginBottom: '2rem' }}>
-        <h2>Status Chips</h2>
+        <h2 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.5rem' }}>Status Chips</h2>
         <p style={{ marginBottom: '1rem' }}>
           StatusChip picks up dark tokens automatically via its tone data attribute:
         </p>
@@ -54,7 +54,7 @@ const ContextsDarkDoc: React.FC = () => {
       </section>
 
       <section style={{ marginBottom: '2rem' }}>
-        <h2>Action Buttons</h2>
+        <h2 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.5rem' }}>Action Buttons</h2>
         <p style={{ marginBottom: '1rem' }}>
           Buttons read <code>--cmp-surface-action*</code> slots; the theme remaps them to dark values:
         </p>
@@ -70,7 +70,7 @@ const ContextsDarkDoc: React.FC = () => {
       </section>
 
       <section style={{ marginBottom: '2rem' }}>
-        <h2>Banners</h2>
+        <h2 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.5rem' }}>Banners</h2>
         <p style={{ marginBottom: '1rem' }}>
           Status banners reuse <code>--sys-status-*</code> tokens for colour and contrast:
         </p>
@@ -100,7 +100,7 @@ const ContextsDarkDoc: React.FC = () => {
       </section>
 
       <section style={{ marginBottom: '2rem' }}>
-        <h2>Key Token Overrides</h2>
+        <h2 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.5rem' }}>Key Token Overrides</h2>
         <table style={{ width: '100%', maxWidth: '600px', borderCollapse: 'collapse' }}>
           <thead>
             <tr>
@@ -130,7 +130,7 @@ const ContextsDarkDoc: React.FC = () => {
       </section>
 
       <section>
-        <h2>Usage</h2>
+        <h2 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.5rem' }}>Usage</h2>
         <p style={{ marginBottom: '0.75rem' }}>Set dark mode at document level:</p>
         <pre style={{ background: 'var(--cmp-surface-panel)', padding: '1rem', borderRadius: '0.5rem', overflow: 'auto' }}>
           <code>{`<html data-theme="dark">
