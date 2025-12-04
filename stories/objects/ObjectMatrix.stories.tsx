@@ -138,25 +138,22 @@ const renderContainer: CSSProperties = {
 
 const ContextRenderObject = RenderObject as FC<RenderObjectProps<unknown>>;
 
+const allContexts: readonly ViewContext[] = ['detail', 'list', 'card', 'timeline', 'form', 'inline'];
+
 /**
- * Object Context Explorer
+ * Object × Context Explorer
  *
  * Demonstrates the core OODS value proposition: the same object definition
  * renders appropriately for different view contexts.
  *
- * - Detail: Full page with all regions populated
- * - List: Compact row with essential information
- * - Timeline: Activity-focused with state history
+ * Two-axis exploration:
+ * - Object switcher: User / Subscription / Invoice
+ * - Context switcher: Detail / List / Card / Timeline / Form / Inline
  */
 const ObjectContextExplorer: FC = () => {
   const [selectedObjectId, setSelectedObjectId] = useState<string>('user');
+  const [selectedContext, setSelectedContext] = useState<ViewContext>('detail');
   const selectedObject = objects.find((o) => o.id === selectedObjectId) ?? objects[0];
-
-  // Show contexts that have the most visual difference:
-  // - detail: Full view with all panels
-  // - timeline: Activity-focused with state history events in main region
-  // Note: list also adds a compact row but currently shows all other content too
-  const demonstratedContexts: ViewContext[] = ['detail', 'timeline'];
 
   return (
     <div style={pageContainer}>
@@ -165,8 +162,8 @@ const ObjectContextExplorer: FC = () => {
           Object × Context Explorer
         </h1>
         <p style={{ margin: 0, color: 'var(--cmp-text-muted)', maxWidth: '65ch' }}>
-          Select an object to see how it renders across different view contexts.
-          Each context optimizes the layout and visible information for its use case.
+          Select an object and a view context to see how the same data renders differently.
+          Each context optimizes layout and visible information for its use case.
         </p>
 
         <div style={{ marginTop: '1rem' }}>
@@ -201,24 +198,56 @@ const ObjectContextExplorer: FC = () => {
             {selectedObject.description}
           </p>
         </div>
+
+        <div style={{ marginTop: '1rem' }}>
+          <p
+            style={{
+              margin: '0 0 0.5rem',
+              fontSize: 'var(--sys-font-size-sm)',
+              fontWeight: 500,
+            }}
+          >
+            Select Context:
+          </p>
+          <div style={objectSelector}>
+            {allContexts.map((ctx) => (
+              <button
+                key={ctx}
+                type="button"
+                style={selectorButton(ctx === selectedContext)}
+                onClick={() => setSelectedContext(ctx)}
+              >
+                {ctx.charAt(0).toUpperCase() + ctx.slice(1)}
+              </button>
+            ))}
+          </div>
+          <p
+            style={{
+              margin: '0.5rem 0 0',
+              fontSize: 'var(--sys-font-size-sm)',
+              color: 'var(--cmp-text-muted)',
+            }}
+          >
+            {contextDescriptions[selectedContext]}
+          </p>
+        </div>
       </header>
 
-      {demonstratedContexts.map((context) => (
-        <section key={context} style={contextSection}>
-          <div style={contextHeader}>
-            <h2 style={contextLabel}>{context} Context</h2>
-            <p style={contextDescription}>{contextDescriptions[context]}</p>
-          </div>
-          <div style={renderContainer}>
-            <ContextRenderObject
-              object={selectedObject.object}
-              context={context}
-              data={selectedObject.data}
-              className={contextClassName[context]}
-            />
-          </div>
-        </section>
-      ))}
+      <section style={contextSection}>
+        <div style={contextHeader}>
+          <h2 style={contextLabel}>
+            {selectedObject.label} — {selectedContext.charAt(0).toUpperCase() + selectedContext.slice(1)} Context
+          </h2>
+        </div>
+        <div style={renderContainer}>
+          <ContextRenderObject
+            object={selectedObject.object}
+            context={selectedContext}
+            data={selectedObject.data}
+            className={contextClassName[selectedContext]}
+          />
+        </div>
+      </section>
     </div>
   );
 };
@@ -232,7 +261,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Interactive demonstration of how a single object definition renders differently across Detail, List, and Timeline contexts. This is the core OODS value proposition: define once, render appropriately everywhere.',
+          'Two-axis exploration of the OODS rendering system. Select any object (User, Subscription, Invoice) and any view context (Detail, List, Card, Timeline, Form, Inline) to see how the same data adapts its presentation. This demonstrates the core OODS value proposition: define once, render appropriately everywhere.',
       },
     },
   },
