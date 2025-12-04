@@ -1,0 +1,155 @@
+id: B39.3
+title: Cancellable Trait Story
+status: Queued
+sprint: Sprint 39
+created: 2025-12-03
+tags: [trait-story, cancellable, lifecycle, navigation-phase-3]
+
+objective: |
+  Create a comprehensive Cancellable trait story following the consistent trait story pattern:
+  What is it? → What does it look like? → How does it work?
+
+  Cancellable is a LIFECYCLE trait for cancellation workflows with policy guardrails.
+  Visual proof: Cancellation flow diagram + reason picker + period-end toggle.
+
+context: |
+  TRAIT STORY PATTERN (established Sprint 38):
+
+  Every trait story answers three questions:
+  1. What is this? (Overview — 30 seconds)
+  2. What does it look like? (Gallery/Diagram — visual proof)
+  3. How does it work? (Mechanics — for developers)
+
+  CANCELLABLE TRAIT DEFINITION (traits/lifecycle/Cancellable.trait.yaml):
+
+  - Policy params: allowCancellationAfterStart, cancellationWindowHours, requireReason
+  - Reason handling: allowedReasons (enum), cancellation_reason, cancellation_reason_code
+  - Timing: cancel_at_period_end (immediate vs end-of-period), cancellation_requested_at
+  - Dependencies: Stateful
+  - View extensions: detail (CancellationSummary), timeline (CancellationEvent),
+                     form (CancellationForm), card (CancellationBadge)
+
+  VISUAL PROOF APPROACH:
+
+  Cancellation flow showing:
+  ```
+  [ACTIVE] ──request cancel──→ [PENDING CANCELLATION] ──period end──→ [CANCELED]
+                │
+                └── immediate ──→ [CANCELED]
+  ```
+
+  Plus reason picker UI and policy configuration.
+
+  THIS IS A NEW BUILD - no existing story to reuse.
+
+deliverables:
+  - path: stories/traits/Cancellable.stories.tsx
+    action: create
+    details: |
+      Create Cancellable trait story with the following structure:
+
+      ```typescript
+      export default {
+        title: 'Traits/Cancellable',
+        // ...
+      };
+
+      export const Overview: Story = { name: '1. Overview' };
+      export const CancellationFlow: Story = { name: '2. Cancellation Flow' };
+      export const ReasonPicker: Story = { name: '3. Reason Picker' };
+      export const HowItWorks: Story = { name: '4. How It Works' };
+      ```
+
+      SECTION 1: Overview
+      - What is Cancellable? (Cancellation workflow with policy guardrails)
+      - Problem it solves (consistent cancellation UX, retention data, compliance)
+      - Key fields: cancel_at_period_end, cancellation_reason, cancellation_reason_code
+      - Dependency on Stateful trait
+      - Used by: Subscription, Reservation
+
+      SECTION 2: Cancellation Flow
+      - Visual diagram showing two paths:
+
+      ```
+      ┌─────────────────────────────────────────────────────────────────┐
+      │                    CANCELLATION FLOW                            │
+      ├─────────────────────────────────────────────────────────────────┤
+      │                                                                 │
+      │   [ACTIVE]                                                      │
+      │      │                                                          │
+      │      ├── "Cancel at period end" ──→ [PENDING CANCELLATION]     │
+      │      │                                    │                     │
+      │      │                              (period ends)               │
+      │      │                                    ↓                     │
+      │      └── "Cancel immediately" ────────→ [CANCELED]             │
+      │                                                                 │
+      └─────────────────────────────────────────────────────────────────┘
+      ```
+
+      - Show the toggle: "Cancel at period end" vs "Cancel immediately"
+      - Show cancellation_requested_at timestamp
+      - Show the pending state badge
+
+      SECTION 3: Reason Picker
+      - Show the reason selection UI:
+
+      ```
+      ┌─────────────────────────────────────────┐
+      │  Why are you canceling?                 │
+      │                                         │
+      │  ○ Too expensive                        │
+      │  ○ Missing features                     │
+      │  ○ Switching to competitor              │
+      │  ○ No longer needed                     │
+      │  ● Other: [________________]            │
+      │                                         │
+      │  [Cancel Subscription]                  │
+      └─────────────────────────────────────────┘
+      ```
+
+      - Show allowedReasons parameter configuration
+      - Show requireReason enforcement
+      - Show both structured code and free-form reason
+
+      SECTION 4: How It Works
+      - Step 1: User initiates cancellation
+      - Step 2: Policy check (allowCancellationAfterStart, cancellationWindowHours)
+      - Step 3: Reason collection (if requireReason=true)
+      - Step 4: Period-end vs immediate execution
+      - Step 5: State transition to CANCELED
+      - Schema fields and their purposes
+
+      STYLING: Use same STYLES object pattern as other trait stories.
+
+success_criteria:
+  - Four stories in learning order
+  - Cancellation flow clearly shows both paths (immediate vs period-end)
+  - Reason picker demonstrates the UI pattern
+  - Policy parameters explained
+  - Appears under "Traits/Cancellable" in Storybook nav
+  - TypeScript compiles without errors
+
+validation:
+  - command: pnpm tsc --noEmit
+    expected: No TypeScript errors
+  - manual: Navigate to Traits/Cancellable in Storybook
+  - manual: Verify cancellation flow diagram is clear
+  - manual: Verify reason picker renders correctly
+
+dependencies: []
+
+estimated_effort: 2 hours
+
+notes: |
+  FORM-ORIENTED TRAIT.
+
+  Unlike Archivable (simple binary state), Cancellable has significant
+  form UI (reason picker, period-end toggle) and policy configuration.
+  This makes it slightly more complex.
+
+  The key visual is the two cancellation paths - immediate vs period-end.
+  This is a common SaaS pattern that users will recognize.
+
+  RETENTION DATA:
+  Cancellation reasons are valuable retention data. The story should
+  emphasize this business value, not just the technical implementation.

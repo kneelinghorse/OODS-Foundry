@@ -1,0 +1,188 @@
+id: B39.4
+title: Accessibility Approach MDX
+status: Queued
+sprint: Sprint 39
+created: 2025-12-03
+tags: [documentation, accessibility, mdx, navigation-phase-4]
+
+objective: |
+  Create an MDX documentation page explaining OODS's accessibility philosophy
+  and implementation approach.
+
+  This completes the "Understanding OODS" documentation section by adding
+  the accessibility perspective alongside Philosophy, Core Concepts, Trait Engine,
+  Getting Started, and Visualization System.
+
+context: |
+  EXISTING DOCUMENTATION STRUCTURE:
+
+  stories/docs/
+  ├── 1-philosophy.mdx          ✓ Done
+  ├── 2-core-concepts.mdx       ✓ Done
+  ├── 3-trait-engine.mdx        ✓ Done
+  ├── 4-getting-started.mdx     ✓ Done
+  ├── 5-visualization-system.mdx ✓ Done
+  ├── 6-accessibility-approach.mdx  ← THIS MISSION
+  └── 7-token-architecture.mdx  (Sprint 39.5)
+
+  EXISTING A11Y CONTENT TO REFERENCE:
+
+  - docs/viz/accessibility-checklist.md — Viz-specific checklist
+  - stories/docs/Accessibility.ContractA11y.mdx — Contract details
+  - stories/proofs/view-profiles/ForcedColors.stories.tsx — High contrast
+  - Trait definitions include accessibility metadata (keyboard, screenreader)
+
+  PHILOSOPHY ALIGNMENT:
+
+  OODS treats accessibility as a FIRST-CLASS CONCERN, not an afterthought:
+  - Traits declare a11y requirements in metadata
+  - statusRegistry includes semantic announcements
+  - High contrast / forced-colors supported throughout
+  - Keyboard navigation built into components
+
+deliverables:
+  - path: stories/docs/6-accessibility-approach.mdx
+    action: create
+    details: |
+      Create an MDX page explaining OODS's accessibility approach.
+
+      STORY TITLE: "Understanding OODS/Accessibility Approach"
+
+      STRUCTURE:
+
+      ```mdx
+      import { Meta } from '@storybook/blocks';
+
+      <Meta title="Understanding OODS/Accessibility Approach" />
+
+      # Accessibility Approach
+
+      **How OODS Makes Accessibility a First-Class Concern**
+
+      ---
+
+      ## Philosophy
+
+      [2-3 paragraphs on OODS accessibility philosophy]
+      - Accessibility is designed in, not bolted on
+      - Traits declare their a11y requirements
+      - Components inherit accessible behavior by default
+      - statusRegistry provides semantic announcements
+
+      ---
+
+      ## The Three Pillars
+
+      ### 1. Perceivable
+      - Color contrast (WCAG 2.2 AA baseline)
+      - High contrast / forced-colors support
+      - Status announcements for screen readers
+      - Visual indicators beyond color alone
+
+      ### 2. Operable
+      - Full keyboard navigation
+      - Focus management in composed views
+      - No keyboard traps
+      - Sufficient time for interactions
+
+      ### 3. Understandable
+      - Consistent patterns across objects
+      - Predictable state changes
+      - Clear error messages
+      - Status context in announcements
+
+      ---
+
+      ## Accessibility in Traits
+
+      [Explain how traits declare a11y requirements]
+
+      Each trait definition includes accessibility metadata:
+
+      ```yaml
+      metadata:
+        accessibility:
+          keyboard: "Supports tab navigation"
+          screenreader: "Announces status changes"
+      ```
+
+      The trait engine propagates these requirements to composed objects.
+
+      ---
+
+      ## High Contrast Support
+
+      [Brief explanation of forced-colors mode]
+      - System-level high contrast detection
+      - Token cascade adapts automatically
+      - Link to: Accessibility/High Contrast story
+
+      ---
+
+      ## Status Announcements
+
+      [Explain statusRegistry's a11y features]
+      - Status changes trigger ARIA live regions
+      - Tone mapping includes announcement text
+      - Link to: statusRegistry in Trait Engine docs
+
+      ---
+
+      ## Testing & Compliance
+
+      [Brief mention of testing approach]
+      - axe-core integration
+      - Contrast validation in CI
+      - Manual testing checklist
+      - Link to: docs/viz/accessibility-checklist.md
+
+      ---
+
+      ## Resources
+
+      Links to detailed documentation:
+      - High Contrast: stories/proofs/view-profiles/ForcedColors
+      - Viz Accessibility: docs/viz/accessibility-checklist.md
+      - Contract Details: stories/docs/Accessibility.ContractA11y.mdx
+      ```
+
+      KEY PRINCIPLE: This page is a PHILOSOPHY and NAVIGATION HUB.
+      It explains WHY accessibility matters in OODS and WHERE to find details.
+      Don't duplicate the detailed docs.
+
+      WORD COUNT TARGET: ~600 words (brief, scannable)
+
+success_criteria:
+  - MDX page renders in Storybook at "Understanding OODS/Accessibility Approach"
+  - Three pillars (Perceivable, Operable, Understandable) clearly explained
+  - Links to detailed a11y documentation work
+  - Consistent styling with other Understanding OODS pages
+  - No duplication of existing detailed docs
+
+validation:
+  - command: pnpm storybook --smoke-test
+    expected: MDX page loads without errors
+  - manual: Navigate to Understanding OODS/Accessibility Approach
+  - manual: Verify links work
+  - manual: Compare styling with other Understanding OODS pages
+
+dependencies: []
+
+estimated_effort: 2 hours
+
+notes: |
+  SUMMARIZE, DON'T DUPLICATE.
+
+  Detailed accessibility documentation already exists:
+  - Accessibility.ContractA11y.mdx
+  - docs/viz/accessibility-checklist.md
+  - High contrast proofs
+
+  This page provides the "front door" — explaining the philosophy and
+  pointing to detailed resources. It should NOT replicate the checklists
+  or detailed implementation guides.
+
+  OODS DIFFERENTIATOR:
+  The key message is that accessibility is DESIGNED INTO the trait system,
+  not added as a separate concern. Traits declare a11y requirements, and
+  the engine propagates them. This is different from most design systems.

@@ -4,7 +4,7 @@ displayName: CMOS Backlog Export
 description: Backlog export generated from the CMOS SQLite database.
 author: CMOS
 schema: ./schemas/SprintPlan.v1.json
-generatedAt: '2025-12-04T04:01:55.790497+00:00'
+generatedAt: '2025-12-04T05:11:25.127034+00:00'
 ---
 domainFields:
   type: Planning.SprintPlan.v1
@@ -2583,36 +2583,91 @@ domainFields:
   - sprintId: Sprint 38
     title: Phase 3 - Catalog Expansion
     focus: Trait stories, viz system docs, domain patterns
+    status: completed
+    startDate: '2025-12-04'
+    endDate: null
+    totalMissions: 5
+    completedMissions: 5
+    missions:
+    - id: B38.1
+      name: Authable Trait Story
+      status: Completed
+      completed_at: '2025-12-04T04:07:29Z'
+      notes: Completed. Created stories/traits/Authable.stories.tsx with Overview,
+        Permission Matrix, Role Examples, How It Works.
+      metadata:
+        started_at: '2025-12-04T04:04:25Z'
+        completed_at: '2025-12-04T04:07:29Z'
+    - id: B38.2
+      name: Stateful Trait Story
+      status: Completed
+      completed_at: '2025-12-04T04:13:19Z'
+      notes: Completed. Created stories/traits/Stateful.stories.tsx with Overview,
+        State Diagram, State Gallery, How It Works.
+      metadata:
+        started_at: '2025-12-04T04:10:21Z'
+        completed_at: '2025-12-04T04:13:19Z'
+    - id: B38.3
+      name: Timestampable Trait Story
+      status: Completed
+      completed_at: '2025-12-04T04:18:27Z'
+      notes: Completed. Created stories/traits/Timestampable.stories.tsx with Overview,
+        Format Gallery, Relative vs Absolute, Localization.
+      metadata:
+        started_at: '2025-12-04T04:18:06Z'
+        completed_at: '2025-12-04T04:18:27Z'
+    - id: B38.4
+      name: Visualization System MDX
+      status: Completed
+      completed_at: '2025-12-04T04:24:32Z'
+      notes: Completed. Created stories/docs/5-visualization-system.mdx as navigation
+        hub linking to docs/viz/.
+      metadata:
+        started_at: '2025-12-04T04:22:30Z'
+        completed_at: '2025-12-04T04:24:32Z'
+    - id: B38.5
+      name: SaaS Billing Flow
+      status: Completed
+      completed_at: '2025-12-04T04:35:00Z'
+      notes: Completed. Created stories/patterns/SaaSBillingFlow.stories.tsx with
+        happy path, failure path, and status cascade demos.
+      metadata:
+        started_at: '2025-12-04T04:28:19Z'
+        completed_at: '2025-12-04T04:35:00Z'
+  - sprintId: Sprint 39
+    title: Quick Wins + Docs
+    focus: Archivable, Billable, Cancellable traits + A11y and Token Architecture
+      MDX
     status: planning
     startDate: '2025-12-04'
     endDate: null
     totalMissions: 5
     completedMissions: 0
     missions:
-    - id: B38.1
-      name: Authable Trait Story
+    - id: B39.1
+      name: Archivable Trait Story
       status: Queued
-      notes: 'IMPORTANT: Read full mission details at cmos/missions/B38.1-authable-trait-story.yaml
+      notes: 'IMPORTANT: Read full mission details at cmos/missions/B39.1-archivable-trait-story.yaml
         before starting.'
-    - id: B38.2
-      name: Stateful Trait Story
+    - id: B39.2
+      name: Billable Trait Story
       status: Queued
-      notes: 'IMPORTANT: Read full mission details at cmos/missions/B38.2-stateful-trait-story.yaml
+      notes: 'IMPORTANT: Read full mission details at cmos/missions/B39.2-billable-trait-story.yaml
         before starting.'
-    - id: B38.3
-      name: Timestampable Trait Story
+    - id: B39.3
+      name: Cancellable Trait Story
       status: Queued
-      notes: 'IMPORTANT: Read full mission details at cmos/missions/B38.3-timestampable-trait-story.yaml
+      notes: 'IMPORTANT: Read full mission details at cmos/missions/B39.3-cancellable-trait-story.yaml
         before starting.'
-    - id: B38.4
-      name: Visualization System MDX
+    - id: B39.4
+      name: Accessibility Approach MDX
       status: Queued
-      notes: 'IMPORTANT: Read full mission details at cmos/missions/B38.4-visualization-system-mdx.yaml
+      notes: 'IMPORTANT: Read full mission details at cmos/missions/B39.4-accessibility-approach-mdx.yaml
         before starting.'
-    - id: B38.5
-      name: SaaS Billing Flow
+    - id: B39.5
+      name: Token Architecture MDX
       status: Queued
-      notes: 'IMPORTANT: Read full mission details at cmos/missions/B38.5-saas-billing-flow.yaml
+      notes: 'IMPORTANT: Read full mission details at cmos/missions/B39.5-token-architecture-mdx.yaml
         before starting.'
   missionDependencies:
   - from: B10.1
