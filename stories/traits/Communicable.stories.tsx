@@ -1229,7 +1229,7 @@ await communicate.send({
 type Story = StoryObj<Record<string, never>>;
 
 const meta: Meta = {
-  title: 'Traits/Communicable',
+  title: 'Traits/Core/Communicable',
   parameters: {
     layout: 'fullscreen',
   },

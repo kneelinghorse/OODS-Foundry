@@ -4,7 +4,7 @@ displayName: CMOS Backlog Export
 description: Backlog export generated from the CMOS SQLite database.
 author: CMOS
 schema: ./schemas/SprintPlan.v1.json
-generatedAt: '2025-12-04T12:51:20.215244+00:00'
+generatedAt: '2025-12-04T13:39:48.670691+00:00'
 ---
 domainFields:
   type: Planning.SprintPlan.v1
@@ -2812,7 +2812,7 @@ domainFields:
     status: planning
     startDate: '2025-12-04'
     endDate: null
-    totalMissions: 5
+    totalMissions: 6
     completedMissions: 0
     missions:
     - id: B41.1
@@ -2874,15 +2874,29 @@ domainFields:
         completed_at: '2025-12-04T12:41:03Z'
     - id: B41.5
       name: Object Stories & Final Polish
-      status: In Progress
-      notes: "\U0001F4CB FULL MISSION DETAILS: Read cmos/missions/B41.5-object-stories-final-polish.yaml"
+      status: Completed
+      completed_at: '2025-12-04T13:18:49Z'
+      notes: 'Created 4 domain object stories: Plan, Transaction, Article, Media.
+        All tests pass (1895), TypeScript clean, Storybook builds successfully. User
+        handling commits/merge.'
       metadata:
         description: Complete Plan, Transaction, Article, Media object stories and
           merge to main
         started_at: '2025-12-04T12:50:58Z'
+        completed_at: '2025-12-04T13:18:49Z'
     - id: B41.6
       name: Storybook Navigation Cleanup & Viz Sizing Fix
-      status: Queued
+      status: Completed
+      completed_at: '2025-12-04T13:25:58Z'
+      notes: "Fixed viz sizing regression in 4 components (Sunburst, Treemap, Sankey,\
+        \ ForceGraph):\n- Changed style={{ width: \"100%\", maxWidth: width, height\
+        \ }} to style={{ width, height }}\n\nConsolidated navigation from 16 to 10\
+        \ sections:\n- Components/ \u2192 Primitives/ (Toast, PreferenceForm)\n- Domains/\
+        \ \u2192 Objects/Domain Objects/ (Billing/Lifecycle, Subscription/Contexts,\
+        \ Accounts/Archetypes)\n- Foundations/ \u2192 Tokens & Theming/ (Tokens Roundtrip)\n\
+        - Patterns/ \u2192 Domain Patterns/ (Page Header)\n- Viz/ \u2192 Visualization/\
+        \ (Spatial/AccessibleMapFallback)\n\nExplorer app stories remain under Components/Patterns/\
+        \ as expected (separate navigation).\nTypeScript check passes."
       metadata:
         description: Consolidate Storybook nav from 16 to 10 sections per plan, fix
           viz sizing regression
@@ -2894,6 +2908,22 @@ domainFields:
         deliverables:
         - Updated story titles in ~20 files
         - Fixed container styling in 4 viz files
+        started_at: '2025-12-04T13:21:48Z'
+        completed_at: '2025-12-04T13:25:58Z'
+    - id: B41.7
+      name: Navigation Final Polish
+      status: Queued
+      metadata:
+        description: Dashboard move to Contexts, delete ECharts duplicates, fix Traits
+          nesting consistency
+        successCriteria:
+        - Dashboard and Context Gallery under Contexts/ not Proofs/
+        - ECharts/ subfolder eliminated (duplicates deleted)
+        - All Traits nested under Core/, Lifecycle/, or Domain/
+        deliverables:
+        - 2 story title updates (Dashboard, Context Gallery)
+        - 4 story files deleted (ECharts duplicates)
+        - 9 trait story title updates
   missionDependencies:
   - from: B10.1
     to: B13.9

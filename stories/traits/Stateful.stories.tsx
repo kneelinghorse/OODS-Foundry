@@ -726,7 +726,7 @@ function performTransition(entity: any, action: string, actor: string) {
 type Story = StoryObj<Record<string, never>>;
 
 const meta: Meta = {
-  title: 'Traits/Stateful',
+  title: 'Traits/Lifecycle/Stateful',
   parameters: {
     layout: 'fullscreen',
   },

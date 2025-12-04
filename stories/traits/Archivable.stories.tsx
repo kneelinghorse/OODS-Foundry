@@ -719,7 +719,7 @@ DELETE FROM projects WHERE id = 'proj_abc123';`}
 type Story = StoryObj<Record<string, never>>;
 
 const meta: Meta = {
-  title: 'Traits/Archivable',
+  title: 'Traits/Lifecycle/Archivable',
   parameters: {
     layout: 'fullscreen',
   },

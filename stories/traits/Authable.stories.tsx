@@ -708,7 +708,7 @@ const allPerms = authable.listPermissions();`}
 type Story = StoryObj<Record<string, never>>;
 
 const meta: Meta = {
-  title: 'Traits/Authable',
+  title: 'Traits/Core/Authable',
   parameters: {
     layout: 'fullscreen',
   },
