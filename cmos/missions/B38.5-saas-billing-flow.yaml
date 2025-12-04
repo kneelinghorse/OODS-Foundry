@@ -1,0 +1,173 @@
+id: B38.5
+title: SaaS Billing Flow Domain Pattern
+status: Queued
+sprint: Sprint 38
+created: 2025-12-03
+tags: [domain-pattern, billing, saas, status-cascade, navigation-phase-3]
+
+objective: |
+  Create a Domain Patterns story showing how OODS handles the SaaS billing flow:
+  Subscription → Invoice → PaymentIntent
+
+  This proves: "OODS handles real business complexity, not just isolated components."
+
+context: |
+  WHY DOMAIN PATTERNS EXIST:
+
+  This section shows that OODS handles real business complexity:
+  - Objects relate to each other (Subscription spawns Invoices spawns PaymentIntents)
+  - Status cascades (Delinquent subscription → Past Due invoice → Failed payment)
+  - Traits compose consistently (All three use Stateful, Timestampable, domain traits)
+  - statusRegistry handles cross-object consistency (same tone system everywhere)
+
+  SCOPED-DOWN APPROACH (from planning):
+
+  Static flow + state gallery. NOT interactive state machine simulation.
+
+  Two views:
+  1. Happy path: Active → Posted → Succeeded
+  2. Failure path: Delinquent ← Past Due ← Failed
+
+  Below the flow diagram, show the actual rendered objects.
+
+  EXISTING INFRASTRUCTURE:
+
+  1. Objects available:
+     - src/objects/subscription/object.ts + types.ts
+     - src/objects/invoice/object.ts + types.ts
+     - Fixtures in fixtures/billing/
+
+  2. Status rendering:
+     - Badge component with statusRegistry
+     - Already working in Statusable story
+
+  3. Object rendering:
+     - RenderObject component
+     - Already working in Object Explorer
+
+deliverables:
+  - path: stories/patterns/SaaSBillingFlow.stories.tsx
+    action: create
+    details: |
+      Create a Domain Patterns story for SaaS Billing.
+
+      STORY TITLE: "Domain Patterns/SaaS Billing Flow"
+
+      STRUCTURE:
+
+      ```typescript
+      export const Overview: Story = { name: '1. Overview' };
+      export const HappyPath: Story = { name: '2. Happy Path' };
+      export const FailurePath: Story = { name: '3. Failure Path' };
+      export const StatusCascade: Story = { name: '4. Status Cascade' };
+      ```
+
+      SECTION 1: Overview
+      - What this demonstrates (object relationships, status cascade)
+      - The three objects: Subscription, Invoice, PaymentIntent
+      - Brief explanation of how they relate
+
+      SECTION 2: Happy Path
+      - Static flow diagram showing successful payment:
+
+      ```
+      ┌──────────────┐      ┌──────────────┐      ┌──────────────┐
+      │ Subscription │ ───▶ │   Invoice    │ ───▶ │PaymentIntent │
+      │              │      │              │      │              │
+      │   [ACTIVE]   │      │   [POSTED]   │      │ [SUCCEEDED]  │
+      └──────────────┘      └──────────────┘      └──────────────┘
+
+      Subscription generates Invoice, Invoice initiates PaymentIntent.
+      All objects in healthy states.
+      ```
+
+      - Show Badge components with actual status rendering
+      - Brief explanation below
+
+      SECTION 3: Failure Path
+      - Static flow diagram showing payment failure:
+
+      ```
+      ┌──────────────┐      ┌──────────────┐      ┌──────────────┐
+      │ Subscription │ ◀─── │   Invoice    │ ◀─── │PaymentIntent │
+      │              │      │              │      │              │
+      │ [DELINQUENT] │      │  [PAST_DUE]  │      │   [FAILED]   │
+      └──────────────┘      └──────────────┘      └──────────────┘
+
+      When payment fails, status cascades backward through the chain.
+      ```
+
+      - Show Badge components with failure states
+      - Arrows point backward to show cascade direction
+
+      SECTION 4: Status Cascade
+      - Show the three objects rendered in their failure states
+      - Reuse RenderObject or just render status badges
+      - Explain: "statusRegistry ensures visual consistency across all three"
+      - Show that DELINQUENT, PAST_DUE, FAILED all map to critical/danger tone
+
+      IMPLEMENTATION NOTES:
+
+      Flow diagrams are CSS-ONLY:
+      - Flexbox for layout
+      - Border + CSS shapes for arrows
+      - NOT a graph library (no D3, no Mermaid)
+
+      Status badges use existing Badge component:
+      ```typescript
+      <Badge status="active" domain="subscription" showIcon />
+      <Badge status="posted" domain="invoice" showIcon />
+      <Badge status="delinquent" domain="subscription" showIcon />
+      ```
+
+      Object rendering can be simplified:
+      - Don't need full RenderObject if it's complex
+      - Just show the status Badge with object name label
+      - Keep it visual, not comprehensive
+
+      EFFORT: 2-3 hours because:
+      - Objects already exist
+      - Status badges already work
+      - Flow diagram is just styled divs
+
+success_criteria:
+  - Four stories in learning order
+  - Happy path diagram shows Subscription → Invoice → PaymentIntent
+  - Failure path diagram shows cascade with backward arrows
+  - Status badges render with correct tones (success vs critical)
+  - Appears under "Domain Patterns/SaaS Billing Flow" in Storybook nav
+  - TypeScript compiles without errors
+
+validation:
+  - command: pnpm storybook --smoke-test
+    expected: All stories load without errors
+  - command: pnpm tsc --noEmit
+    expected: No TypeScript errors
+  - manual: Navigate to Domain Patterns/SaaS Billing Flow
+  - manual: Verify flow diagrams render correctly
+  - manual: Verify status badges show correct colors
+
+dependencies: []
+
+estimated_effort: 2-3 hours
+
+notes: |
+  WHAT THIS IS:
+  - Visual proof that OODS handles real business domains
+  - Static diagrams (not interactive)
+  - Status cascade demonstration
+
+  WHAT THIS IS NOT:
+  - ❌ Integration guide (Stripe/Zuora mapping belongs in docs/, not Storybook)
+  - ❌ Fully interactive state machine (save for v2 if demand)
+  - ❌ Comprehensive billing documentation (separate docs effort)
+
+  THE STORY IT TELLS:
+  "Here's a real business domain. Three objects. Status relationships.
+   OODS handles all of it with the same trait system you've seen throughout.
+   The statusRegistry keeps everything consistent automatically."
+
+  SCOPE GUARD:
+  - Flow diagrams are CSS-only divs, not a graphing library
+  - No clickable state transitions
+  - No PaymentIntent object if it doesn't exist (use placeholder or skip)
