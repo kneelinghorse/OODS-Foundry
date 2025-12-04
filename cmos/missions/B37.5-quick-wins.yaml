@@ -1,22 +1,33 @@
 id: B37.5
-title: Quick Wins
+title: Quick Wins - Tooltip & Dark Foundations
 status: Queued
 sprint: Sprint 37
 created: 2025-12-03
-tags: [cleanup, polish, tooltip, quick-wins]
+updated: 2025-12-03
+tags: [cleanup, polish, tooltip, dark-mode, quick-wins]
 
 objective: |
-  Complete quick cleanup tasks that improve the codebase without major effort.
-  These are small wins identified during planning that don't warrant full missions.
+  Complete two focused cleanup tasks:
+  1. Create missing Tooltip story (component exists, no story)
+  2. Rebuild Dark Foundations page using proper decorator pattern
 
 context: |
-  From navigation audit and planning session, several small items surfaced:
+  TOOLTIP GAP:
+  The Tooltip component exists at src/components/Tooltip/ but has no story.
+  This was identified in the Explorer audit - component exists, story missing.
 
-  1. Tooltip component exists but has no story
-  2. Explorer stories were excluded from nav but may need verification
-  3. Any issues found in B37.1 verification that are minor
+  DARK FOUNDATIONS ISSUE:
+  The current dark mode page has accumulated custom CSS hacks that fight
+  against the token system. Rather than untangle the mess (1+ hour),
+  a clean rebuild using proper patterns should take 15-30 minutes.
 
-  This mission collects small tasks that can be batched together.
+  THE FIX:
+  Use a Storybook decorator that sets `data-theme="dark"` on the story root.
+  This lets the token cascade work naturally - no hacks needed.
+  If done correctly, the tokens just work.
+
+  B37.1 STATUS:
+  Verification passed with no issues. No fixes needed.
 
 deliverables:
   - path: stories/primitives/Tooltip.stories.tsx
@@ -25,94 +36,159 @@ deliverables:
       Create a Tooltip story for the existing component.
 
       Component location: src/components/Tooltip/
-
-      Story structure:
-      ```typescript
+```typescript
       // stories/primitives/Tooltip.stories.tsx
-
+      import type { Meta, StoryObj } from '@storybook/react';
       import { Tooltip } from '~/src/components/Tooltip';
 
-      export default {
+      const meta: Meta<typeof Tooltip> = {
         title: 'Primitives/Feedback/Tooltip',
         component: Tooltip,
-      };
-
-      export const Default: Story = {
-        args: {
-          content: 'Helpful information',
-          children: <button>Hover me</button>,
+        parameters: {
+          layout: 'centered',
         },
       };
 
+      export default meta;
+      type Story = StoryObj<typeof Tooltip>;
+
+      export const Default: Story = {
+        render: () => (
+          <Tooltip content="Helpful information">
+            <button type="button">Hover me</button>
+          </Tooltip>
+        ),
+      };
+
       export const Positions: Story = {
-        // Show top, bottom, left, right positions
+        render: () => (
+          <div style={{ display: 'flex', gap: '2rem', padding: '4rem' }}>
+            <Tooltip content="Top tooltip" position="top">
+              <button>Top</button>
+            </Tooltip>
+            <Tooltip content="Bottom tooltip" position="bottom">
+              <button>Bottom</button>
+            </Tooltip>
+            <Tooltip content="Left tooltip" position="left">
+              <button>Left</button>
+            </Tooltip>
+            <Tooltip content="Right tooltip" position="right">
+              <button>Right</button>
+            </Tooltip>
+          </div>
+        ),
       };
+```
 
-      export const WithDelay: Story = {
-        // Show timing configuration
-      };
+      Keep it simple. Match existing component API.
 
-      export const Accessibility: Story = {
-        // Show aria-describedby behavior
-      };
-      ```
-
-      Include docs showing:
-      - Basic usage
-      - Position options
-      - Timing configuration
-      - Accessibility considerations (described-by)
-
-  - path: .storybook/main.ts
-    action: verify
+  - path: stories/foundations/DarkMode.stories.tsx
+    action: create (replaces broken version)
     details: |
-      Verify Explorer stories are properly excluded.
+      Create a clean dark mode foundations page using decorator pattern.
 
-      After B36.1, Explorer stories should not appear in main nav.
+      THE KEY: Use a decorator that sets the theme attribute, then let
+      the token cascade do the work. No custom CSS.
+```typescript
+      // stories/foundations/DarkMode.stories.tsx
+      import type { Meta, StoryObj } from '@storybook/react';
+      import type { ReactNode } from 'react';
 
-      CHECK:
-      1. Open Storybook
-      2. Search for "Explorer" in nav
-      3. Confirm no Explorer-specific stories appear
+      // Decorator that enables dark theme via data attribute
+      const withDarkTheme = (Story: () => ReactNode) => (
+        <div data-theme="dark" style={{ padding: '2rem', backgroundColor: 'var(--color-surface-primary)' }}>
+          <Story />
+        </div>
+      );
 
-      If issues found, update the stories array to ensure exclusion.
+      const meta: Meta = {
+        title: 'Foundations/Dark Mode',
+        decorators: [withDarkTheme],
+        parameters: {
+          backgrounds: { disable: true }, // Let our theme control background
+        },
+      };
 
-  - path: cmos/reports/sprint-37-verification.md
-    action: update
+      export default meta;
+      type Story = StoryObj;
+
+      export const Overview: Story = {
+        render: () => (
+          <div className="dark-mode-showcase">
+            <h1>Dark Mode Foundations</h1>
+            <p>All components below inherit dark theme through token cascade.</p>
+
+            {/* Reuse content from existing page - just the markup, no custom CSS */}
+            <section>
+              <h2>Surface Colors</h2>
+              {/* Token swatches */}
+            </section>
+
+            <section>
+              <h2>Text Colors</h2>
+              {/* Typography samples */}
+            </section>
+
+            <section>
+              <h2>Component Examples</h2>
+              {/* Badge, Button, Card, etc. - they should just work */}
+            </section>
+          </div>
+        ),
+      };
+```
+
+      RULES:
+      1. NO custom CSS classes for dark overrides
+      2. NO inline color values
+      3. Only use CSS custom properties (tokens)
+      4. If something looks wrong, the token is wrong - fix the token, not the page
+
+      CONTENT TO INCLUDE:
+      - Surface color tokens
+      - Text color tokens
+      - Border/divider tokens
+      - A few component examples (Badge, Button, Card) to prove cascade works
+
+  - path: (old dark foundations file)
+    action: delete or archive
     details: |
-      Address any minor issues found in B37.1 verification.
-
-      Common fixes might include:
-      - Story title typos
-      - Missing imports
-      - Broken links in MDX
-      - Linting warnings
-
-      Document fixes applied.
+      Once new page is verified working, remove or archive the old broken version.
+      Don't leave two competing files.
 
 success_criteria:
-  - Tooltip.stories.tsx exists and renders correctly
-  - Explorer stories confirmed excluded from nav
-  - Any B37.1 minor issues resolved
-  - Verification report updated with fixes
+  - Tooltip.stories.tsx exists and renders in Primitives/Feedback/Tooltip
+  - Dark Mode page renders correctly with NO custom CSS hacks
+  - Components in dark mode page inherit theme through token cascade
+  - Old broken dark mode file removed
 
 validation:
   - command: pnpm storybook --smoke-test
     expected: All stories load
-  - manual: Navigate to Primitives/Feedback/Tooltip
-  - manual: Confirm Explorer stories not in nav
-  - manual: Verify B37.1 issues addressed
+  - manual: Navigate to Primitives/Feedback/Tooltip - verify renders
+  - manual: Navigate to Foundations/Dark Mode - verify dark theme applies
+  - manual: Inspect Dark Mode page - confirm no inline colors or custom classes
 
 dependencies:
-  - B37.1 (provides list of minor issues to fix)
+  - B37.1 (verification passed, no blockers)
 
-estimated_effort: 1-2 hours
+estimated_effort: 1 hour
+  # Tooltip: 20-30 min
+  # Dark Mode rebuild: 30 min
+  # Cleanup old file: 5 min
 
 notes: |
-  This is a catch-all mission for small tasks.
+  DARK MODE PHILOSOPHY:
 
-  If during Sprint 37 execution other small issues surface,
-  they can be added to this mission rather than creating new ones.
+  The token system should make dark mode "free". If you set
+  `data-theme="dark"` on a container, everything inside should
+  just work because:
 
-  SCOPE GUARD: Only truly small tasks belong here.
-  Anything >1 hour should be a separate mission.
+  1. Components reference semantic tokens (--color-surface-primary)
+  2. Semantic tokens resolve differently per theme
+  3. No component knows or cares what theme is active
+
+  If this ISN'T working, the bug is in the token definitions,
+  not in the page. Don't paper over it with CSS hacks.
+
+  This rebuild proves the token cascade works correctly.
