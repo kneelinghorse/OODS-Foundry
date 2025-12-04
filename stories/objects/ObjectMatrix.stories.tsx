@@ -1,4 +1,4 @@
-import type { CSSProperties, FC } from 'react';
+import { type CSSProperties, type FC, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { RenderObject } from '~/src/components/RenderObject';
 import type { RenderObjectProps } from '~/src/components/RenderObject';
@@ -19,6 +19,7 @@ type ViewContext = RenderObjectProps<SubscriptionRecord>['context'];
 interface ObjectEntry {
   readonly id: string;
   readonly label: string;
+  readonly description: string;
   readonly object: RenderObjectProps<unknown>['object'];
   readonly data: unknown;
 }
@@ -32,140 +33,218 @@ const contextClassName: Record<ViewContext, string> = {
   inline: 'explorer-view context-inline inline-view',
 };
 
-const matrixContexts: ViewContext[] = ['detail', 'list', 'card'];
+const contextDescriptions: Record<ViewContext, string> = {
+  detail: 'Full page view with all fields, actions, and supporting panels',
+  list: 'Compact row suitable for tables and lists with inline status',
+  form: 'Editable view optimized for data entry and updates',
+  timeline: 'Activity-focused view showing state history and events',
+  card: 'Summary card for dashboards and grid layouts',
+  inline: 'Minimal inline reference for embedding in text or compact spaces',
+};
 
-const matrixObjects: readonly ObjectEntry[] = [
+const objects: readonly ObjectEntry[] = [
   {
     id: 'user',
     label: 'User',
+    description: 'Identity record with status, tags, and activity history',
     object: UserObject,
     data: activeUser as UserRecord,
   },
   {
     id: 'subscription',
     label: 'Subscription',
+    description: 'Billing subscription with lifecycle state and payment status',
     object: SubscriptionObject,
     data: billingSubscription as SubscriptionRecord,
   },
   {
     id: 'invoice',
     label: 'Invoice',
+    description: 'Billing artifact with line items and collection state',
     object: InvoiceObject,
     data: billingInvoice as InvoiceRecord,
   },
 ] as const;
 
-const matrixContainer: CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: 'auto repeat(3, 1fr)',
-  gridTemplateRows: 'auto repeat(3, auto)',
-  gap: '1rem',
+const pageContainer: CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '2rem',
   padding: '1.5rem',
-  backgroundColor: 'var(--sys-surface-default)',
-  borderRadius: 'var(--sys-radius-lg)',
-  overflow: 'auto',
+  maxWidth: '1400px',
+  margin: '0 auto',
 };
 
-const headerCell: CSSProperties = {
+const headerStyles: CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.5rem',
+  borderBottom: '1px solid var(--sys-border-default)',
+  paddingBottom: '1.5rem',
+};
+
+const objectSelector: CSSProperties = {
+  display: 'flex',
+  gap: '0.5rem',
+  flexWrap: 'wrap',
+};
+
+const selectorButton = (isActive: boolean): CSSProperties => ({
+  padding: '0.5rem 1rem',
+  borderRadius: '6px',
+  border: '2px solid',
+  borderColor: isActive ? '#2563eb' : '#e2e8f0',
+  backgroundColor: isActive ? '#2563eb' : '#ffffff',
+  color: isActive ? '#ffffff' : '#1e293b',
+  cursor: 'pointer',
+  fontWeight: isActive ? 600 : 400,
+  fontSize: '0.875rem',
+  transition: 'all 0.15s ease',
+});
+
+const contextSection: CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '1rem',
+};
+
+const contextHeader: CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '0.25rem',
+};
+
+const contextLabel: CSSProperties = {
+  fontSize: 'var(--sys-font-size-lg)',
   fontWeight: 600,
+  color: 'var(--sys-text-default)',
+  margin: 0,
+  textTransform: 'capitalize',
+};
+
+const contextDescription: CSSProperties = {
   fontSize: 'var(--sys-font-size-sm)',
   color: 'var(--cmp-text-muted)',
-  textTransform: 'uppercase',
-  letterSpacing: '0.05em',
-  padding: '0.5rem',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
+  margin: 0,
 };
 
-const rowHeader: CSSProperties = {
-  ...headerCell,
-  justifyContent: 'flex-start',
-  borderRight: '1px solid var(--sys-border-default)',
-  paddingRight: '1rem',
-  minWidth: '120px',
-};
-
-const objectCell: CSSProperties = {
-  minWidth: '280px',
-  padding: '0.5rem',
+const renderContainer: CSSProperties = {
+  border: '1px solid var(--sys-border-default)',
+  borderRadius: 'var(--sys-radius-lg)',
   backgroundColor: 'var(--sys-surface-subtle)',
-  borderRadius: 'var(--sys-radius-md)',
-  overflow: 'hidden',
-};
-
-const cornerCell: CSSProperties = {
-  gridColumn: '1',
-  gridRow: '1',
+  padding: '1rem',
+  overflow: 'auto',
 };
 
 const ContextRenderObject = RenderObject as FC<RenderObjectProps<unknown>>;
 
-const ObjectMatrix: FC = () => (
-  <div>
-    <header style={{ marginBottom: '1.5rem' }}>
-      <h1 style={{ margin: 0, fontSize: 'var(--sys-font-size-2xl)', fontWeight: 700 }}>
-        Object × Context Matrix
-      </h1>
-      <p style={{ margin: '0.5rem 0 0', color: 'var(--cmp-text-muted)', maxWidth: '60ch' }}>
-        The same domain object renders differently based on context.
-        Each row is a single object definition; each column is a different view context.
-        This is the core OODS value proposition: define once, render everywhere.
-      </p>
-    </header>
+/**
+ * Object Context Explorer
+ *
+ * Demonstrates the core OODS value proposition: the same object definition
+ * renders appropriately for different view contexts.
+ *
+ * - Detail: Full page with all regions populated
+ * - List: Compact row with essential information
+ * - Timeline: Activity-focused with state history
+ */
+const ObjectContextExplorer: FC = () => {
+  const [selectedObjectId, setSelectedObjectId] = useState<string>('user');
+  const selectedObject = objects.find((o) => o.id === selectedObjectId) ?? objects[0];
 
-    <div style={matrixContainer}>
-      <div style={cornerCell} aria-hidden="true" />
+  // Show contexts that have the most visual difference:
+  // - detail: Full view with all panels
+  // - timeline: Activity-focused with state history events in main region
+  // Note: list also adds a compact row but currently shows all other content too
+  const demonstratedContexts: ViewContext[] = ['detail', 'timeline'];
 
-      {matrixContexts.map((ctx) => (
-        <div key={ctx} style={headerCell}>
-          {ctx.charAt(0).toUpperCase() + ctx.slice(1)}
-        </div>
-      ))}
+  return (
+    <div style={pageContainer}>
+      <header style={headerStyles}>
+        <h1 style={{ margin: 0, fontSize: 'var(--sys-font-size-2xl)', fontWeight: 700 }}>
+          Object × Context Explorer
+        </h1>
+        <p style={{ margin: 0, color: 'var(--cmp-text-muted)', maxWidth: '65ch' }}>
+          Select an object to see how it renders across different view contexts.
+          Each context optimizes the layout and visible information for its use case.
+        </p>
 
-      {matrixObjects.map((obj) => (
-        <>
-          <div key={`${obj.id}-label`} style={rowHeader}>
-            {obj.label}
+        <div style={{ marginTop: '1rem' }}>
+          <p
+            style={{
+              margin: '0 0 0.5rem',
+              fontSize: 'var(--sys-font-size-sm)',
+              fontWeight: 500,
+            }}
+          >
+            Select Object:
+          </p>
+          <div style={objectSelector}>
+            {objects.map((obj) => (
+              <button
+                key={obj.id}
+                type="button"
+                style={selectorButton(obj.id === selectedObjectId)}
+                onClick={() => setSelectedObjectId(obj.id)}
+              >
+                {obj.label}
+              </button>
+            ))}
           </div>
-          {matrixContexts.map((ctx) => (
-            <div key={`${obj.id}-${ctx}`} style={objectCell}>
-              <ContextRenderObject
-                object={obj.object}
-                context={ctx}
-                data={obj.data}
-                className={contextClassName[ctx]}
-              />
-            </div>
-          ))}
-        </>
+          <p
+            style={{
+              margin: '0.5rem 0 0',
+              fontSize: 'var(--sys-font-size-sm)',
+              color: 'var(--cmp-text-muted)',
+            }}
+          >
+            {selectedObject.description}
+          </p>
+        </div>
+      </header>
+
+      {demonstratedContexts.map((context) => (
+        <section key={context} style={contextSection}>
+          <div style={contextHeader}>
+            <h2 style={contextLabel}>{context} Context</h2>
+            <p style={contextDescription}>{contextDescriptions[context]}</p>
+          </div>
+          <div style={renderContainer}>
+            <ContextRenderObject
+              object={selectedObject.object}
+              context={context}
+              data={selectedObject.data}
+              className={contextClassName[context]}
+            />
+          </div>
+        </section>
       ))}
     </div>
-  </div>
-);
+  );
+};
 
 const meta = {
-  title: 'Objects/Object Explorer/Matrix View',
-  component: ObjectMatrix,
+  title: 'Objects/Object Explorer/Context Demo',
+  component: ObjectContextExplorer,
   parameters: {
-    layout: 'padded',
+    layout: 'fullscreen',
     chromatic: { disableSnapshot: false },
     docs: {
       description: {
         component:
-          'A 3×3 matrix demonstrating how User, Subscription, and Invoice objects render across Detail, List, and Card contexts. This is the hero demo for OODS core value proposition.',
+          'Interactive demonstration of how a single object definition renders differently across Detail, List, and Timeline contexts. This is the core OODS value proposition: define once, render appropriately everywhere.',
       },
     },
   },
   tags: ['hero', 'objects', 'contexts'],
-} satisfies Meta<typeof ObjectMatrix>;
+} satisfies Meta<typeof ObjectContextExplorer>;
 
 export default meta;
 
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  render: () => <ObjectMatrix />,
+  render: () => <ObjectContextExplorer />,
   parameters: {
     vrt: { tags: ['vrt-critical'] },
   },

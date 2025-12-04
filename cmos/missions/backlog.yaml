@@ -4,7 +4,7 @@ displayName: CMOS Backlog Export
 description: Backlog export generated from the CMOS SQLite database.
 author: CMOS
 schema: ./schemas/SprintPlan.v1.json
-generatedAt: '2025-12-03T23:11:04.102975+00:00'
+generatedAt: '2025-12-04T00:01:19.723775+00:00'
 ---
 domainFields:
   type: Planning.SprintPlan.v1
@@ -2518,11 +2518,8 @@ domainFields:
     missions:
     - id: B37.1
       name: Verification & Stabilization
-      status: Completed
+      status: Queued
       completed_at: '2025-12-03T23:05:41Z'
-      notes: Build passes, dev server starts, nav structure matches target. No critical
-        issues found. Report created at cmos/reports/sprint-37-verification.md. Sprint
-        37 Phase 2 can proceed.
       metadata:
         description: Verify Sprint 36 nav restructure is stable before Phase 2 hero
           demos
@@ -2531,35 +2528,37 @@ domainFields:
     - id: B37.2
       name: Object Matrix MVP
       status: Current
-      completed_at: '2025-12-03T23:08:04Z'
-      notes: Reset to Current - work needs verification
+      completed_at: '2025-12-03T23:30:26Z'
       metadata:
         description: Create static Object Matrix hero demo proving OODS value proposition
-        started_at: '2025-12-03T23:06:03Z'
-        completed_at: '2025-12-03T23:08:04Z'
+        started_at: '2025-12-03T23:30:21Z'
+        completed_at: '2025-12-03T23:30:26Z'
     - id: B37.3
       name: Statusable Demo
       status: Queued
-      notes: Reset to Queued - B37.2 work needs verification
+      completed_at: '2025-12-03T23:34:20Z'
       metadata:
         description: Port StatusChip content to Badge, create visual gallery + How
           It Works demo
+        started_at: '2025-12-03T23:31:42Z'
+        completed_at: '2025-12-03T23:34:20Z'
     - id: B37.4
       name: Same Object Different Contexts
       status: Queued
-      notes: "\U0001F4CB FULL MISSION DETAILS: Read cmos/missions/B37.4-same-object-different-contexts.yaml\
-        \ - Annotations are teaching content, don't skip them. Distinct from B37.2\
-        \ (depth vs breadth)."
+      completed_at: '2025-12-03T23:37:22Z'
       metadata:
         description: User object in all 8 contexts with annotations - the OODS aha
           moment
+        started_at: '2025-12-03T23:34:53Z'
+        completed_at: '2025-12-03T23:37:22Z'
     - id: B37.5
       name: Quick Wins
       status: Queued
-      notes: "\U0001F4CB FULL MISSION DETAILS: Read cmos/missions/B37.5-quick-wins.yaml\
-        \ - Catch-all for small tasks. Only truly small items (<1hr) belong here."
+      completed_at: '2025-12-03T23:39:57Z'
       metadata:
         description: Tooltip story, Explorer nav verification, B37.1 minor issue fixes
+        started_at: '2025-12-03T23:37:46Z'
+        completed_at: '2025-12-03T23:39:57Z'
   missionDependencies:
   - from: B10.1
     to: B13.9

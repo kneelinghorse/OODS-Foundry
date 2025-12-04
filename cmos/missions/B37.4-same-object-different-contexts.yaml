@@ -1,116 +1,127 @@
 id: B37.4
-title: Same Object Different Contexts
+title: Context Switcher for Object Explorer
 status: Queued
 sprint: Sprint 37
 created: 2025-12-03
-tags: [hero-demo, contexts, user, navigation-phase-2]
+updated: 2025-12-03
+tags: [hero-demo, contexts, navigation-phase-2]
 
 objective: |
-  Create a dedicated "Same Object, Different Contexts" hero demo showing
-  the User object rendered in all 8 contexts side-by-side. This is the
-  clearest "aha moment" for understanding OODS's context-aware rendering.
+  Add a context switcher to the existing Object × Context Explorer,
+  allowing users to see the same object rendered in different contexts
+  (Detail, List, Card, Timeline, Form, Inline).
+
+  This completes the "two-axis" demo:
+  - Object switcher (User / Subscription / Invoice) ← DONE in B37.2
+  - Context switcher (Detail / List / Card / ...) ← THIS MISSION
 
 context: |
-  INFRASTRUCTURE AUDIT FINDINGS:
-
-  1. RenderObject supports 6 contexts:
-     detail, list, form, timeline, card, inline
-
-  2. Chart and Dashboard contexts also exist (8 total):
-     chart, dashboard
-
-  3. Context Gallery (stories/proofs/context-gallery.stories.tsx) shows
-     multiple objects × contexts, but doesn't focus on the "same object"
-     insight with annotations.
-
-  THIS STORY FOCUSES ON ONE OBJECT (User) ACROSS ALL CONTEXTS
-  with clear annotations explaining what changes between each.
-
-  Reference: cmos/reports/oods-navigation-implementation-plan.md (Part 4.2)
+  WHAT WE LEARNED FROM B37.2:
+  
+  1. Side-by-side grids don't work
+     - Content gets clipped, looks cramped, breaks at various widths
+     - Full-page render with switcher is the right pattern
+  
+  2. The Object Explorer works well
+     - Object pill buttons + description line
+     - Full-page render below
+     - Clean, scannable, professional
+  
+  3. Content differentiation matters
+     - Showing the same User 8 times with different layouts isn't compelling
+     - Showing how Detail vs List vs Card display DIFFERENT information is
+  
+  INFRASTRUCTURE:
+  - RenderObject supports: detail, list, form, timeline, card, inline
+  - Chart/Dashboard contexts may not apply to User object (skip or stub)
+  
+  EXISTING STORY:
+  - stories/objects/ObjectExplorer.stories.tsx (or wherever B37.2 landed)
 
 deliverables:
-  - path: stories/contexts/SameObjectDifferentContexts.stories.tsx
-    action: create
+  - path: stories/objects/ObjectExplorer.stories.tsx
+    action: modify
     details: |
-      Create a focused demo showing User in all contexts:
+      Add a second row of toggle buttons for context selection:
+```
+      ┌─────────────────────────────────────────────────────────────┐
+      │ Object × Context Explorer                                   │
+      │ Select an object to see how it renders across view contexts │
+      │                                                             │
+      │ Select Object:                                              │
+      │ [User] [Subscription] [Invoice]                             │
+      │ Identity record with status, tags, and activity history     │
+      │                                                             │
+      │ Select Context:                                             │
+      │ [Detail] [List] [Card] [Timeline] [Form] [Inline]          │
+      │ Full page view with all fields, actions, and panels         │
+      │                                                             │
+      │ ┌─────────────────────────────────────────────────────────┐ │
+      │ │                                                         │ │
+      │ │  [Rendered object in selected context]                  │ │
+      │ │                                                         │ │
+      │ └─────────────────────────────────────────────────────────┘ │
+      └─────────────────────────────────────────────────────────────┘
+```
+      
+      CONTEXT DESCRIPTIONS (shown below context buttons):
+      - Detail: "Full page view with all fields, actions, and panels"
+      - List: "Compact row optimized for scanning tables"
+      - Card: "Self-contained summary for grid layouts"
+      - Timeline: "Activity-focused with events and timestamps"
+      - Form: "Editable fields with validation states"
+      - Inline: "Minimal footprint for embedding in content"
+      
+      STATE MANAGEMENT:
+      - selectedObject: 'user' | 'subscription' | 'invoice'
+      - selectedContext: 'detail' | 'list' | 'card' | 'timeline' | 'form' | 'inline'
+      - URL sync optional (nice-to-have for sharing)
 
-      ```typescript
-      // stories/contexts/SameObjectDifferentContexts.stories.tsx
-
-      import { RenderObject } from '~/src/components/RenderObject';
-      import { UserObject } from '~/src/objects/user/object';
-      import activeUser from '~/src/fixtures/user/active.json';
-
-      // Single story showing User in all 8 contexts
-      export const UserInAllContexts: Story = {
-        render: () => (
-          <div className="context-comparison-grid">
-            {/* Each context in a labeled section */}
-            <ContextPanel context="detail" label="Detail View">
-              <p className="context-description">
-                Full information display. Shows all traits, expanded fields.
-              </p>
-              <RenderObject object={UserObject} context="detail" data={activeUser} />
-            </ContextPanel>
-
-            <ContextPanel context="list" label="List View">
-              <p className="context-description">
-                Compact row format. Key fields only, optimized for scanning.
-              </p>
-              <RenderObject object={UserObject} context="list" data={activeUser} />
-            </ContextPanel>
-
-            {/* ... form, timeline, card, inline, chart, dashboard */}
-          </div>
-        ),
-      };
-      ```
-
-      LAYOUT:
-      - 2×4 or 4×2 grid (responsive)
-      - Each cell: label + description + rendered object
-      - Clear visual separation between contexts
-
-      ANNOTATIONS (key teaching content):
-      - Detail: "Full information display. Shows all traits."
-      - List: "Compact row format. Key fields only."
-      - Form: "Editable fields. Validation states visible."
-      - Timeline: "Activity-focused. Events and timestamps."
-      - Card: "Self-contained summary. Suitable for grids."
-      - Inline: "Minimal footprint. For embedding in text."
-      - Chart: "Data visualization context."
-      - Dashboard: "Widget-optimized. Key metrics prominent."
-
-      STORY TITLE: "Contexts/Same Object, Different Contexts"
+  - path: (optional) Context-specific fixture adjustments
+    action: evaluate
+    details: |
+      Some contexts may need adjusted content to be meaningful:
+      - List context: May need multiple items to show table behavior
+      - Timeline context: Needs activity/event data
+      - Form context: Needs editable field configuration
+      
+      Evaluate what exists. If a context renders empty or broken,
+      either fix the fixture or disable that context for that object.
 
 success_criteria:
-  - User object renders correctly in all 8 contexts
-  - Each context has clear label and description
-  - Layout is responsive and scannable
-  - Annotations explain the purpose of each context
-  - Appears prominently under "Contexts" section
+  - Context switcher appears below object switcher
+  - Switching contexts re-renders the object in new layout
+  - Each context has a description explaining its purpose
+  - At least 4 contexts work well for User object (Detail, List, Card, + one more)
+  - No layout breaking, clipping, or overflow issues
 
 validation:
   - command: pnpm storybook --smoke-test
     expected: Story loads without errors
-  - manual: Navigate to Contexts section
-  - manual: Verify all 8 context panels render
-  - manual: Verify annotations are clear and helpful
+  - manual: Switch between all context options
+  - manual: Switch between objects while in non-Detail context
+  - manual: Verify descriptions update with context selection
 
 dependencies:
-  - B37.1 (verification)
-  - B37.2 (builds on Object Matrix learnings)
+  - B37.2 (Object Explorer must be complete and working)
 
-estimated_effort: 2 hours
+estimated_effort: 3 hours
 
 notes: |
-  This is distinct from the Object Matrix (B37.2):
-  - Object Matrix: Multiple objects × few contexts (breadth)
-  - This story: One object × all contexts (depth)
-
-  Together they prove OODS's two key insights:
-  1. Same object → different contexts → different renderings
-  2. Different objects → same context → consistent patterns
-
-  The annotations are the teaching content - don't skip them.
-  They help users understand WHY each context exists.
+  DESIGN DECISION: Extend existing story vs. create new
+  
+  We chose to extend the Object Explorer rather than create a separate
+  "Same Object Different Contexts" story because:
+  1. Avoids duplicate navigation entries
+  2. Shows the full matrix in one place
+  3. Matches the toggle pattern that already works
+  4. Users can explore both dimensions freely
+  
+  WHAT NOT TO DO:
+  - Don't try side-by-side grid again (proven to fail)
+  - Don't show 8 tiny panels (unreadable)
+  - Don't force all contexts to work for all objects (some combos may not make sense)
+  
+  STRETCH GOAL (future sprint):
+  - "Compare" mode showing 2 contexts side-by-side at 50% width
+  - Only if both contexts render cleanly at that width
