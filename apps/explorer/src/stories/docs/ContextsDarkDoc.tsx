@@ -9,7 +9,16 @@ const ContextsDarkDoc: React.FC = () => {
   });
 
   return (
-    <div style={{ padding: '2rem', minHeight: '100vh' }}>
+    <div
+      className="sb-unstyled"
+      data-theme="dark"
+      style={{
+        padding: '2rem',
+        minHeight: '100vh',
+        background: 'var(--cmp-surface-canvas, #0f172a)',
+        color: 'var(--cmp-text-body, #f1f5f9)',
+      }}
+    >
       <h1>Dark Theme Context</h1>
       <p style={{ marginBottom: '1.5rem', maxWidth: '65ch' }}>
         Dark mode is a pure theme-layer override. Components rely on the same <code>--cmp-*</code> slots

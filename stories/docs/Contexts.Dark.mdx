@@ -5,7 +5,17 @@ import ContextsDarkDoc from '~/apps/explorer/src/stories/docs/ContextsDarkDoc';
   title="Contexts/Canonical/Dark"
   parameters={{
     layout: 'fullscreen',
-    docs: { source: { state: 'hidden' } },
+    backgrounds: { default: 'dark' },
+    docs: {
+      source: { state: 'hidden' },
+      theme: {
+        base: 'dark',
+        appBg: '#0f172a',
+        appContentBg: '#0f172a',
+        textColor: '#f1f5f9',
+        barBg: '#1e293b',
+      },
+    },
   }}
 />
 

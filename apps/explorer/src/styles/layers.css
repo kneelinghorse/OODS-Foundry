@@ -164,6 +164,9 @@ html[data-theme='dark'] {
   --theme-space-stack-default: var(--theme-dark-space-stack-default, var(--ref-space-stack-default));
   --theme-space-inline-xs: var(--theme-dark-space-inline-xs, var(--ref-space-inline-xs));
   --theme-space-inline-sm: var(--theme-dark-space-inline-sm, var(--ref-space-inline-sm));
+
+  /* Button shadow for dark theme - matches dark card elevation structure */
+  --cmp-button-shadow: 0 18px 48px -28px color-mix(in srgb, var(--cmp-surface-action, transparent) 35%, transparent);
 }
 
 /* System layer derives semantic values from theme */
@@ -386,7 +389,7 @@ html[data-theme='dark'] {
   --cmp-button-focus-outer: var(--ref-color-neutral-50);
   --cmp-button-focus-inner: var(--sys-focus-ring-inner);
   --cmp-button-focus-width: var(--sys-focus-width);
-  --cmp-button-shadow: 0 12px 24px color-mix(in srgb, var(--cmp-surface-action, transparent) 25%, transparent);
+  --cmp-button-shadow: 0 12px 20px -8px color-mix(in srgb, var(--cmp-surface-action, transparent) 25%, transparent);
 
   --cmp-badge-padding-inline: calc(var(--cmp-spacing-inline-xs) + 0.15rem);
   --cmp-badge-padding-block: 0.35rem;
