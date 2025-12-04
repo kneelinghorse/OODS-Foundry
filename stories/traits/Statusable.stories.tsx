@@ -434,7 +434,7 @@ function HowItWorksStory(): JSX.Element {
 type Story = StoryObj<typeof Badge>;
 
 const meta: Meta<typeof Badge> = {
-  title: 'Traits/Statusable',
+  title: 'Traits/Lifecycle/Statusable',
   component: Badge,
   parameters: {
     layout: 'fullscreen',

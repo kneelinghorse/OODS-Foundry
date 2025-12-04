@@ -668,7 +668,7 @@ new Intl.DateTimeFormat('en-US', {
 type Story = StoryObj<Record<string, never>>;
 
 const meta: Meta = {
-  title: 'Traits/Timestampable',
+  title: 'Traits/Lifecycle/Timestampable',
   parameters: {
     layout: 'fullscreen',
   },

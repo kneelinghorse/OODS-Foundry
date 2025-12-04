@@ -1364,7 +1364,7 @@ function usePreferences(userId) {
 type Story = StoryObj<Record<string, never>>;
 
 const meta: Meta = {
-  title: 'Traits/Preferenceable',
+  title: 'Traits/Core/Preferenceable',
   parameters: {
     layout: 'fullscreen',
   },

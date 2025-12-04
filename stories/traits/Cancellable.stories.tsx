@@ -738,7 +738,7 @@ if (policy.requireReason && !request.reason_code) {
 type Story = StoryObj<Record<string, never>>;
 
 const meta: Meta = {
-  title: 'Traits/Cancellable',
+  title: 'Traits/Lifecycle/Cancellable',
   parameters: {
     layout: 'fullscreen',
   },

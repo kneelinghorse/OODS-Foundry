@@ -1157,7 +1157,7 @@ WHERE primary_category_path <@ 'electronics.mobile'
 type Story = StoryObj<Record<string, never>>;
 
 const meta: Meta = {
-  title: 'Traits/Classifiable',
+  title: 'Traits/Core/Classifiable',
   parameters: {
     layout: 'fullscreen',
   },

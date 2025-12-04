@@ -1062,7 +1062,7 @@ ORDER BY score DESC;`}
 type Story = StoryObj<Record<string, never>>;
 
 const meta: Meta = {
-  title: 'Traits/Taggable',
+  title: 'Traits/Core/Taggable',
   parameters: {
     layout: 'fullscreen',
   },
