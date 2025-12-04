@@ -1,117 +1,136 @@
-import React from 'react';
+import React, { useLayoutEffect } from 'react';
 import '../../styles/index.css';
-import DarkModeDemo from '../../pages/DarkModeDemo';
+import { StatusChip } from '../../components/StatusChip';
 
-const summaryList = [
-  {
-    heading: 'Surface & Text',
-    copy:
-      'Canvas, panel, and subtle surfaces shift to cool neutrals with ≥4.5:1 contrast against primary text. Text tokens stay in sync so components keep reading --cmp-text-* without branching.'
-  },
-  {
-    heading: 'Status Ramps',
-    copy:
-      'All five status ramps (info, success, warning, critical, neutral) now provide dark surfaces, borders, text, and icons. StatusChip picks them up automatically via its tone data attribute.'
-  },
-  {
-    heading: 'Elevation',
-    copy:
-      'Shadow tokens pivot to outline-first rendering: lowered opacity glows pair with a stronger border mix so cards never bloom on black backgrounds.'
-  }
-];
+const ContextsDarkDoc: React.FC = () => {
+  useLayoutEffect(() => {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.body.setAttribute('data-theme', 'dark');
+  });
 
-const tokenRows = [
-  { token: 'theme-dark.surface.canvas', usage: 'Canvas & shell backgrounds' },
-  { token: 'theme-dark.text.primary', usage: 'Primary body text' },
-  { token: 'theme-dark.status.success.surface', usage: 'Positive banners & chips' },
-  { token: 'theme-dark.focus.ring.outer', usage: 'Focus outline contrast' },
-  { token: 'theme-dark.shadow.elevation.card.color', usage: 'Raised card glow colour' }
-];
-
-const tableStyle: React.CSSProperties = {
-  width: '100%',
-  borderCollapse: 'separate',
-  borderSpacing: '0 8px'
-};
-
-const headCellStyle: React.CSSProperties = {
-  textAlign: 'left',
-  fontSize: '0.75rem',
-  fontWeight: 600,
-  letterSpacing: '0.08em',
-  textTransform: 'uppercase',
-  color: 'var(--cmp-text-muted)',
-  padding: '0.45rem 0.75rem',
-  borderBottom: '1px solid color-mix(in srgb, var(--cmp-border-default) 55%, transparent)'
-};
-
-const cellStyle: React.CSSProperties = {
-  padding: '0.75rem 0.75rem',
-  background: 'var(--cmp-surface-panel)',
-  borderRadius: '0.8rem',
-  border: '1px solid color-mix(in srgb, var(--cmp-border-default) 45%, transparent)',
-  verticalAlign: 'top'
-};
-
-const ContextsDarkDoc: React.FC = () => (
-  <div className="docs-dark-surface" style={{ display: 'grid', gap: '1.8rem', paddingBottom: '2.5rem' }}>
-    <section style={{ display: 'grid', gap: '0.75rem' }}>
+  return (
+    <div style={{ padding: '2rem', minHeight: '100vh' }}>
       <h1>Dark Theme Context</h1>
-      <p>
-        Dark mode is a pure theme-layer override. Components rely on the same <code>--cmp-*</code> slots they consume in Theme 0
-        while <code>html[data-theme='dark']</code> remaps <code>--theme-*</code> tokens to dark OKLCH values. No conditional logic,
-        no duplicate component styling.
+      <p style={{ marginBottom: '1.5rem', maxWidth: '65ch' }}>
+        Dark mode is a pure theme-layer override. Components rely on the same <code>--cmp-*</code> slots
+        they consume in light theme while <code>data-theme="dark"</code> remaps <code>--theme-*</code> tokens
+        to dark OKLCH values. No conditional logic, no duplicate component styling.
       </p>
-      <ul>
-        {summaryList.map((entry) => (
-          <li key={entry.heading}>
-            <strong>{entry.heading}:</strong> {entry.copy}
-          </li>
-        ))}
+
+      <ul style={{ marginBottom: '2rem', paddingLeft: '1.5rem' }}>
+        <li><strong>Surface &amp; Text:</strong> Canvas, panel, and subtle surfaces shift to cool neutrals with ≥4.5:1 contrast.</li>
+        <li><strong>Status Ramps:</strong> All five status ramps provide dark surfaces, borders, text, and icons.</li>
+        <li><strong>Elevation:</strong> Shadow tokens pivot to outline-first rendering with lowered opacity glows.</li>
       </ul>
-    </section>
 
-    <DarkModeDemo />
+      <section style={{ marginBottom: '2rem' }}>
+        <h2>Status Chips</h2>
+        <p style={{ marginBottom: '1rem' }}>
+          StatusChip picks up dark tokens automatically via its tone data attribute:
+        </p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1rem' }}>
+          <StatusChip status="active" domain="subscription" />
+          <StatusChip status="trialing" domain="subscription" />
+          <StatusChip status="paused" domain="subscription" />
+          <StatusChip status="past_due" domain="subscription" />
+          <StatusChip status="canceled" domain="subscription" />
+        </div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+          <StatusChip status="draft" domain="invoice" />
+          <StatusChip status="open" domain="invoice" />
+          <StatusChip status="paid" domain="invoice" />
+          <StatusChip status="processing" domain="invoice" />
+          <StatusChip status="void" domain="invoice" />
+        </div>
+      </section>
 
-    <section style={{ display: 'grid', gap: '0.75rem' }}>
-      <h2>Key Token Overrides</h2>
-      <table style={tableStyle}>
-        <thead>
-          <tr>
-            <th style={{ ...headCellStyle, width: '40%' }}>Token</th>
-            <th style={headCellStyle}>Usage</th>
-          </tr>
-        </thead>
-        <tbody>
-          {tokenRows.map((row) => (
-            <tr key={row.token}>
-              <td style={cellStyle}>
-                <code>{row.token}</code>
-              </td>
-              <td style={cellStyle}>{row.usage}</td>
+      <section style={{ marginBottom: '2rem' }}>
+        <h2>Action Buttons</h2>
+        <p style={{ marginBottom: '1rem' }}>
+          Buttons read <code>--cmp-surface-action*</code> slots; the theme remaps them to dark values:
+        </p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+          <button type="button" className="demo-button">
+            <span>Primary Action</span>
+            <span className="demo-button__glyph">↗︎</span>
+          </button>
+          <button type="button" className="demo-button" data-variant="quiet">
+            <span>Secondary Action</span>
+          </button>
+        </div>
+      </section>
+
+      <section style={{ marginBottom: '2rem' }}>
+        <h2>Banners</h2>
+        <p style={{ marginBottom: '1rem' }}>
+          Status banners reuse <code>--sys-status-*</code> tokens for colour and contrast:
+        </p>
+        <div style={{ display: 'grid', gap: '0.75rem' }}>
+          <article className="demo-banner" data-banner-tone="info" data-has-action="false">
+            <span className="demo-banner__icon">ℹ︎</span>
+            <div className="demo-banner__content">
+              <strong>Scheduled maintenance</strong>
+              <p>API will be unavailable 22:00–23:00 UTC for schema updates.</p>
+            </div>
+          </article>
+          <article className="demo-banner" data-banner-tone="success" data-has-action="false">
+            <span className="demo-banner__icon">✔︎</span>
+            <div className="demo-banner__content">
+              <strong>Payment captured</strong>
+              <p>Invoice INV-20410 was paid successfully.</p>
+            </div>
+          </article>
+          <article className="demo-banner" data-banner-tone="critical" data-has-action="false">
+            <span className="demo-banner__icon">⨯</span>
+            <div className="demo-banner__content">
+              <strong>Certificate expiring</strong>
+              <p>SAML certificate expires in 3 days. Rotate now.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section style={{ marginBottom: '2rem' }}>
+        <h2>Key Token Overrides</h2>
+        <table style={{ width: '100%', maxWidth: '600px', borderCollapse: 'collapse' }}>
+          <thead>
+            <tr>
+              <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '1px solid var(--cmp-border-default)' }}>Token</th>
+              <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '1px solid var(--cmp-border-default)' }}>Usage</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </section>
+          </thead>
+          <tbody>
+            <tr>
+              <td style={{ padding: '0.75rem', borderBottom: '1px solid var(--cmp-border-default)' }}><code>--theme-surface-canvas</code></td>
+              <td style={{ padding: '0.75rem', borderBottom: '1px solid var(--cmp-border-default)' }}>Canvas backgrounds</td>
+            </tr>
+            <tr>
+              <td style={{ padding: '0.75rem', borderBottom: '1px solid var(--cmp-border-default)' }}><code>--theme-text-primary</code></td>
+              <td style={{ padding: '0.75rem', borderBottom: '1px solid var(--cmp-border-default)' }}>Primary body text</td>
+            </tr>
+            <tr>
+              <td style={{ padding: '0.75rem', borderBottom: '1px solid var(--cmp-border-default)' }}><code>--theme-status-success-surface</code></td>
+              <td style={{ padding: '0.75rem', borderBottom: '1px solid var(--cmp-border-default)' }}>Positive banners &amp; chips</td>
+            </tr>
+            <tr>
+              <td style={{ padding: '0.75rem' }}><code>--theme-focus-ring-outer</code></td>
+              <td style={{ padding: '0.75rem' }}>Focus outline contrast</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
 
-    <section style={{ display: 'grid', gap: '0.5rem' }}>
-      <h2>Validation Checklist</h2>
-      <ul>
-        <li>
-          Run <code>npm run build:tokens</code> after editing theme JSON to refresh CSS/TS/Tailwind outputs.
-        </li>
-        <li>
-          Ensure <code>html[data-theme='dark']</code> is set before executing <code>npm run a11y:check</code> or{' '}
-          <code>npm run a11y:diff</code>; both commands expect zero new critical/serious issues.
-        </li>
-        <li>
-          Keep hover/pressed states within the relative-colour guardrails; the new values add ≤ +0.08 ΔL to respect the established
-          bounds.
-        </li>
-      </ul>
-    </section>
-  </div>
-);
+      <section>
+        <h2>Usage</h2>
+        <p style={{ marginBottom: '0.75rem' }}>Set dark mode at document level:</p>
+        <pre style={{ background: 'var(--cmp-surface-panel)', padding: '1rem', borderRadius: '0.5rem', overflow: 'auto' }}>
+          <code>{`<html data-theme="dark">
+  {/* Entire app renders in dark mode */}
+</html>`}</code>
+        </pre>
+      </section>
+    </div>
+  );
+};
 
 export default ContextsDarkDoc;
