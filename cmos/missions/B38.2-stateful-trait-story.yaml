@@ -1,0 +1,158 @@
+id: B38.2
+title: Stateful Trait Story
+status: Queued
+sprint: Sprint 38
+created: 2025-12-03
+tags: [trait-story, stateful, lifecycle, state-machine, navigation-phase-3]
+
+objective: |
+  Create a comprehensive Stateful trait story following the consistent trait story pattern:
+  What is it? → What does it look like? → How does it work?
+
+  Stateful is a STATE MACHINE trait (current state → valid transitions), so the visual
+  proof is a State Diagram showing allowed transitions, not a gallery.
+
+context: |
+  TRAIT STORY PATTERN (from Sprint 37 planning):
+
+  Every trait story answers three questions:
+  1. What is this? (Overview — 30 seconds)
+  2. What does it look like? (Gallery/Matrix/Diagram — visual proof)
+  3. How does it work? (Mechanics — for developers)
+
+  For Stateful specifically:
+  - Overview → State Diagram → Lifecycle Gallery → Transition Actions
+  - The "gallery" is a state diagram showing valid transitions
+  - Then show each state's visual treatment
+  - "How It Works" shows how transitions are triggered
+
+  IMPORTANT: Stateful vs Statusable distinction:
+  - Statusable: Registry lookup (status string → tone → visual). About DISPLAY.
+  - Stateful: State machine (current state → valid transitions). About BEHAVIOR.
+
+  EXISTING INFRASTRUCTURE:
+
+  1. Stateful trait definition: traits/lifecycle/Stateful.trait.ts
+     - Default states: ['draft', 'active', 'paused', 'archived']
+     - Schema: status (current), state_history (transitions log)
+     - View extensions for list, detail, form, timeline, card
+
+  2. StatusBadge, StatusTimeline components referenced in trait
+
+  3. Objects using Stateful: Subscription, Invoice, Project, etc.
+
+deliverables:
+  - path: stories/traits/Stateful.stories.tsx
+    action: create
+    details: |
+      Create Stateful trait story with the following structure:
+
+      ```typescript
+      // Story order matches learning progression
+      export const Overview: Story = { name: '1. Overview' };
+      export const StateDiagram: Story = { name: '2. State Diagram' };
+      export const StateGallery: Story = { name: '3. State Gallery' };
+      export const HowItWorks: Story = { name: '4. How It Works' };
+      ```
+
+      STORY TITLE: "Traits/Stateful"
+
+      SECTION 1: Overview
+      - What is Stateful? (Lifecycle state machine for objects)
+      - Problem it solves (consistent state management, valid transitions)
+      - How it differs from Statusable (behavior vs display)
+      - Key concepts: states, transitions, history, initial state
+
+      Comparison box:
+      ```
+      ┌─────────────────────────┬─────────────────────────┐
+      │       Statusable        │        Stateful         │
+      ├─────────────────────────┼─────────────────────────┤
+      │ "How does it look?"     │ "What can it do next?"  │
+      │ status → tone → visual  │ state → transitions     │
+      │ Display concern         │ Behavior concern        │
+      │ Read-only mapping       │ Mutates via transitions │
+      └─────────────────────────┴─────────────────────────┘
+      ```
+
+      SECTION 2: State Diagram
+      - Visual diagram showing states as nodes, transitions as arrows
+      - Use the default states: draft → active ↔ paused → archived
+      - Show which transitions are valid from each state
+      - NOT a fancy graph library - styled divs with CSS arrows
+
+      Example layout:
+      ```
+          ┌─────────┐
+          │  DRAFT  │
+          └────┬────┘
+               │ activate
+               ▼
+          ┌─────────┐ pause  ┌─────────┐
+          │ ACTIVE  │◀──────▶│ PAUSED  │
+          └────┬────┘ resume └─────────┘
+               │ archive
+               ▼
+          ┌─────────┐
+          │ARCHIVED │
+          └─────────┘
+      ```
+
+      Show invalid transitions with X marks or dashed lines.
+
+      SECTION 3: State Gallery
+      - Each state rendered as a badge/chip
+      - Show the visual treatment per state (color, icon)
+      - Group by semantic meaning (Active states, Terminal states)
+      - Include state_history timeline example
+
+      SECTION 4: How It Works
+      - Step-by-step walkthrough of state transition
+      - Scene 1: Current state (object.status = 'draft')
+      - Scene 2: Transition request (object.transition('activate'))
+      - Scene 3: Validation (is 'activate' valid from 'draft'?)
+      - Scene 4: State update + history append
+      - Show state_history data structure
+
+      IMPLEMENTATION NOTES:
+      - Import Stateful trait from traits/lifecycle/Stateful.trait.ts
+      - Use Badge component for state rendering
+      - State diagram is CSS-only (flexbox/grid + borders), not a library
+
+success_criteria:
+  - Four stories in learning order (Overview, Diagram, Gallery, HowItWorks)
+  - State Diagram clearly shows valid transitions
+  - State Gallery shows visual treatment of each state
+  - Clear differentiation from Statusable explained
+  - Appears under "Traits/Stateful" in Storybook nav
+  - TypeScript compiles without errors
+
+validation:
+  - command: pnpm storybook --smoke-test
+    expected: All Stateful stories load without errors
+  - command: pnpm tsc --noEmit
+    expected: No TypeScript errors
+  - manual: Navigate to Traits/Stateful in Storybook
+  - manual: Verify State Diagram shows transition arrows
+  - manual: Verify State Gallery shows each state's visual
+
+dependencies: []
+
+estimated_effort: 3 hours
+
+notes: |
+  KEY DISTINCTION TO COMMUNICATE:
+
+  Statusable answers: "What does 'delinquent' LOOK like?"
+  Stateful answers: "What can a 'draft' object DO next?"
+
+  These are complementary - an object often has BOTH traits:
+  - Stateful defines the valid states and transitions
+  - Statusable maps those states to visual tones
+
+  The story should make this clear without being preachy about it.
+
+  SCOPE GUARD:
+  - State diagram is CSS, not D3/Mermaid/etc.
+  - No interactive state machine simulation
+  - No comprehensive lifecycle documentation

@@ -1,0 +1,154 @@
+id: B38.3
+title: Timestampable Trait Story
+status: Queued
+sprint: Sprint 38
+created: 2025-12-03
+tags: [trait-story, timestampable, temporal, formatting, navigation-phase-3]
+
+objective: |
+  Create a comprehensive Timestampable trait story following the consistent trait story pattern:
+  What is it? → What does it look like? → How does it work?
+
+  Timestampable is a FORMATTING trait (timestamp → display string), so the visual
+  proof is a Format Gallery showing different display modes.
+
+context: |
+  TRAIT STORY PATTERN (from Sprint 37 planning):
+
+  Every trait story answers three questions:
+  1. What is this? (Overview — 30 seconds)
+  2. What does it look like? (Gallery/Matrix/Diagram — visual proof)
+  3. How does it work? (Mechanics — for developers)
+
+  For Timestampable specifically:
+  - Overview → Format Gallery → Relative vs Absolute → Localization
+  - This one IS mostly a visual gallery
+  - Showing "2 days ago" vs "Dec 1, 2024" vs "12/1/24 3:45 PM"
+  - Simpler than Authable/Stateful
+
+  EXISTING INFRASTRUCTURE:
+
+  1. Timestampable trait definition: traits/lifecycle/Timestampable.trait.yaml
+     - Fields: created_at, updated_at, last_event, last_event_at
+     - Parameters: recordedEvents, timezone (UTC/LOCAL/OFFSET), allowNullUpdatedAt
+     - View extensions: detail (AuditTimeline), timeline (AuditEvent), list (RelativeTimestamp)
+
+  2. Components referenced:
+     - TimelineTimestamp
+     - AuditBadge
+     - AuditTimeline
+     - AuditEvent
+     - RelativeTimestamp
+
+deliverables:
+  - path: stories/traits/Timestampable.stories.tsx
+    action: create
+    details: |
+      Create Timestampable trait story with the following structure:
+
+      ```typescript
+      // Story order matches learning progression
+      export const Overview: Story = { name: '1. Overview' };
+      export const FormatGallery: Story = { name: '2. Format Gallery' };
+      export const RelativeVsAbsolute: Story = { name: '3. Relative vs Absolute' };
+      export const Localization: Story = { name: '4. Localization' };
+      ```
+
+      STORY TITLE: "Traits/Timestampable"
+
+      SECTION 1: Overview
+      - What is Timestampable? (Temporal metadata for objects)
+      - Problem it solves (consistent time display, audit trails)
+      - Fields it adds: created_at, updated_at, last_event, last_event_at
+      - When to use relative vs absolute timestamps
+
+      SECTION 2: Format Gallery
+      - Show the SAME timestamp in different formats:
+
+      ```
+      Timestamp: 2024-12-01T15:30:00Z
+
+      ┌─────────────────┬────────────────────────────┐
+      │ Format          │ Output                     │
+      ├─────────────────┼────────────────────────────┤
+      │ Relative        │ 2 days ago                 │
+      │ Short date      │ Dec 1, 2024                │
+      │ Long date       │ December 1, 2024           │
+      │ Date + time     │ Dec 1, 2024 3:30 PM        │
+      │ ISO             │ 2024-12-01T15:30:00Z       │
+      │ Compact         │ 12/1/24                    │
+      └─────────────────┴────────────────────────────┘
+      ```
+
+      - Visual cards showing each format
+      - Use actual date formatting (Intl.DateTimeFormat or date-fns)
+
+      SECTION 3: Relative vs Absolute
+      - When to use each:
+        - Relative: "Updated 5 minutes ago" (recency matters)
+        - Absolute: "Created Dec 1, 2024" (exactness matters)
+      - Show context examples:
+        - List view: relative timestamps (scanning)
+        - Detail view: absolute timestamps (precision)
+        - Timeline view: mixed (relative with absolute on hover)
+
+      Side-by-side comparison:
+      ```
+      ┌────────────────────────┬────────────────────────┐
+      │    List Context        │    Detail Context      │
+      │                        │                        │
+      │  Updated 5 min ago     │  Updated: Dec 3, 2024  │
+      │  Created 2 days ago    │  Created: Dec 1, 2024  │
+      │                        │  at 3:30 PM EST        │
+      └────────────────────────┴────────────────────────┘
+      ```
+
+      SECTION 4: Localization
+      - Timezone handling (UTC, LOCAL, OFFSET from trait params)
+      - Show same timestamp in different timezones:
+        - UTC: 2024-12-01T15:30:00Z
+        - PST: Dec 1, 2024 7:30 AM
+        - EST: Dec 1, 2024 10:30 AM
+        - JST: Dec 2, 2024 12:30 AM
+      - Brief note on Intl.DateTimeFormat usage
+
+      IMPLEMENTATION NOTES:
+      - Use JavaScript's Intl.DateTimeFormat for formatting
+      - Create a sample timestamp constant used throughout
+      - No external date library required (native JS is fine)
+      - Keep it visual - lots of examples, minimal prose
+
+success_criteria:
+  - Four stories in learning order
+  - Format Gallery shows 5+ formats of the same timestamp
+  - Clear guidance on relative vs absolute usage
+  - Timezone examples demonstrate localization
+  - Appears under "Traits/Timestampable" in Storybook nav
+  - TypeScript compiles without errors
+
+validation:
+  - command: pnpm storybook --smoke-test
+    expected: All Timestampable stories load without errors
+  - command: pnpm tsc --noEmit
+    expected: No TypeScript errors
+  - manual: Navigate to Traits/Timestampable in Storybook
+  - manual: Verify Format Gallery shows multiple formats
+  - manual: Verify timezone examples render correctly
+
+dependencies: []
+
+estimated_effort: 2 hours
+
+notes: |
+  THIS IS THE SIMPLEST TRAIT STORY.
+
+  Unlike Authable (permission matrix) or Stateful (state diagram),
+  Timestampable is fundamentally a formatting concern. The story
+  is mostly visual examples with brief explanations.
+
+  SCOPE GUARD:
+  - No interactive timezone picker
+  - No comprehensive Intl.DateTimeFormat documentation
+  - No moment.js/date-fns comparison (just use native JS)
+
+  The goal: Show what timestamps look like in OODS and when to use each format.

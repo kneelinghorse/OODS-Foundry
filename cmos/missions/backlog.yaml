@@ -4,7 +4,7 @@ displayName: CMOS Backlog Export
 description: Backlog export generated from the CMOS SQLite database.
 author: CMOS
 schema: ./schemas/SprintPlan.v1.json
-generatedAt: '2025-12-04T00:01:19.723775+00:00'
+generatedAt: '2025-12-04T04:01:55.790497+00:00'
 ---
 domainFields:
   type: Planning.SprintPlan.v1
@@ -2518,8 +2518,7 @@ domainFields:
     missions:
     - id: B37.1
       name: Verification & Stabilization
-      status: Queued
-      completed_at: '2025-12-03T23:05:41Z'
+      status: Completed
       metadata:
         description: Verify Sprint 36 nav restructure is stable before Phase 2 hero
           demos
@@ -2527,38 +2526,94 @@ domainFields:
         completed_at: '2025-12-03T23:05:41Z'
     - id: B37.2
       name: Object Matrix MVP
-      status: Current
-      completed_at: '2025-12-03T23:30:26Z'
+      status: Completed
+      completed_at: '2025-12-04T00:14:14Z'
+      notes: Fixed React Fragment key warning. ObjectMatrix.stories.tsx at Objects/Object
+        Explorer/Matrix View. Context Gallery already relocated to Objects/Object
+        Explorer/Full Context Gallery. TypeScript compiles clean.
       metadata:
         description: Create static Object Matrix hero demo proving OODS value proposition
-        started_at: '2025-12-03T23:30:21Z'
-        completed_at: '2025-12-03T23:30:26Z'
+        started_at: '2025-12-04T00:06:47Z'
+        completed_at: '2025-12-04T00:14:14Z'
     - id: B37.3
       name: Statusable Demo
-      status: Queued
-      completed_at: '2025-12-03T23:34:20Z'
+      status: Completed
+      completed_at: '2025-12-04T00:49:38Z'
+      notes: Created stories/traits/Statusable.stories.tsx with SubscriptionStates,
+        InvoiceStates, PaymentIntentStates, TicketStates, UserStates galleries plus
+        HowItWorks interactive demo and EmphasisComparison story. Created stories/traits/Statusable.docs.mdx
+        with comprehensive documentation. TypeScript compiles clean. Stories appear
+        under Traits/Statusable System navigation.
       metadata:
         description: Port StatusChip content to Badge, create visual gallery + How
           It Works demo
-        started_at: '2025-12-03T23:31:42Z'
-        completed_at: '2025-12-03T23:34:20Z'
+        completed_at: '2025-12-04T00:49:38Z'
+        started_at: '2025-12-04T00:42:42Z'
     - id: B37.4
       name: Same Object Different Contexts
-      status: Queued
-      completed_at: '2025-12-03T23:37:22Z'
+      status: Completed
+      completed_at: '2025-12-04T01:33:36Z'
+      notes: Modified ObjectMatrix.stories.tsx to add context switcher UI (Detail/List/Card/Timeline/Form/Inline)
+        below object switcher. Users can now explore any object in any context with
+        live descriptions. TypeScript and Storybook smoke test pass.
       metadata:
         description: User object in all 8 contexts with annotations - the OODS aha
           moment
-        started_at: '2025-12-03T23:34:53Z'
-        completed_at: '2025-12-03T23:37:22Z'
+        completed_at: '2025-12-04T01:33:36Z'
+        started_at: '2025-12-04T01:20:40Z'
     - id: B37.5
       name: Quick Wins
-      status: Queued
-      completed_at: '2025-12-03T23:39:57Z'
+      status: Completed
+      completed_at: '2025-12-04T01:56:51Z'
+      notes: "Deliverables completed:\n1. stories/components/Tooltip.stories.tsx -\
+        \ New story for existing Tooltip component\n   - Default, Sides, RichContent,\
+        \ and Controlled stories\n   - Located at Primitives/Feedback/Tooltip in Storybook\n\
+        \n2. stories/foundations/DarkMode.stories.tsx - Clean dark mode foundations\
+        \ page\n   - Uses decorator pattern with data-theme=\"dark\" attribute\n \
+        \  - No custom CSS hacks - pure token cascade\n   - Overview story with surface,\
+        \ text, status, and component examples\n   - TokenComparison story showing\
+        \ light vs dark side-by-side\n\n3. Old dark mode files (stories/docs/Contexts.Dark.mdx)\
+        \ kept as serves different purpose\n   - Different Storybook location (Docs/Contexts/Dark\
+        \ vs Foundations/Dark Mode)\n   - New page demonstrates proper token cascade\
+        \ pattern\n\nTypeScript compiles cleanly. Both stories validated."
       metadata:
         description: Tooltip story, Explorer nav verification, B37.1 minor issue fixes
-        started_at: '2025-12-03T23:37:46Z'
-        completed_at: '2025-12-03T23:39:57Z'
+        completed_at: '2025-12-04T01:56:51Z'
+        started_at: '2025-12-04T01:52:47Z'
+  - sprintId: Sprint 38
+    title: Phase 3 - Catalog Expansion
+    focus: Trait stories, viz system docs, domain patterns
+    status: planning
+    startDate: '2025-12-04'
+    endDate: null
+    totalMissions: 5
+    completedMissions: 0
+    missions:
+    - id: B38.1
+      name: Authable Trait Story
+      status: Queued
+      notes: 'IMPORTANT: Read full mission details at cmos/missions/B38.1-authable-trait-story.yaml
+        before starting.'
+    - id: B38.2
+      name: Stateful Trait Story
+      status: Queued
+      notes: 'IMPORTANT: Read full mission details at cmos/missions/B38.2-stateful-trait-story.yaml
+        before starting.'
+    - id: B38.3
+      name: Timestampable Trait Story
+      status: Queued
+      notes: 'IMPORTANT: Read full mission details at cmos/missions/B38.3-timestampable-trait-story.yaml
+        before starting.'
+    - id: B38.4
+      name: Visualization System MDX
+      status: Queued
+      notes: 'IMPORTANT: Read full mission details at cmos/missions/B38.4-visualization-system-mdx.yaml
+        before starting.'
+    - id: B38.5
+      name: SaaS Billing Flow
+      status: Queued
+      notes: 'IMPORTANT: Read full mission details at cmos/missions/B38.5-saas-billing-flow.yaml
+        before starting.'
   missionDependencies:
   - from: B10.1
     to: B13.9

@@ -1,0 +1,135 @@
+id: B38.1
+title: Authable Trait Story
+status: Queued
+sprint: Sprint 38
+created: 2025-12-03
+tags: [trait-story, authable, rbac, navigation-phase-3]
+
+objective: |
+  Create a comprehensive Authable trait story following the consistent trait story pattern:
+  What is it? → What does it look like? → How does it work?
+
+  Authable is an ACCESS CONTROL trait (role + resource → permission check), so the visual
+  proof is a Permission Matrix, not a status gallery.
+
+context: |
+  TRAIT STORY PATTERN (from Sprint 37 planning):
+
+  Every trait story answers three questions:
+  1. What is this? (Overview — 30 seconds)
+  2. What does it look like? (Gallery/Matrix/Diagram — visual proof)
+  3. How does it work? (Mechanics — for developers)
+
+  For Authable specifically:
+  - Overview → Permission Matrix → Role Examples → Integration Patterns
+  - The "gallery" equivalent is a permission matrix (role × action grid)
+  - "How It Works" shows the access check flow: canUser(user, 'subscription', 'cancel') → boolean
+
+  EXISTING INFRASTRUCTURE:
+
+  1. Authable trait definition: traits/core/Authable.trait.yaml
+     - Role catalog, permission catalog, membership records
+     - role_permissions junction map
+     - View extensions for list, detail, form, timeline
+
+  2. Existing story: stories/objects/UserWithAuthable.stories.tsx
+     - UserMembershipPanel showing org memberships
+     - PermissionCheckUi with interactive checker
+     - Located at "Objects/Core Objects/User/With Authable"
+
+  3. Components available:
+     - src/components/authz/PermissionChecker.tsx
+     - Sample data: src/data/authz/sample-entitlements.ts
+
+  THIS IS A NEW TRAIT SECTION STORY, not a modification of the Objects story.
+  The Objects story shows "User with Authable", this shows "Authable as a system".
+
+deliverables:
+  - path: stories/traits/Authable.stories.tsx
+    action: create
+    details: |
+      Create Authable trait story with the following structure:
+
+      ```typescript
+      // Story order matches learning progression
+      export const Overview: Story = { name: '1. Overview' };
+      export const PermissionMatrix: Story = { name: '2. Permission Matrix' };
+      export const RoleExamples: Story = { name: '3. Role Examples' };
+      export const HowItWorks: Story = { name: '4. How It Works' };
+      ```
+
+      STORY TITLE: "Traits/Authable"
+
+      SECTION 1: Overview
+      - What is Authable? (RBAC extension for objects)
+      - Problem it solves (consistent permission model across objects)
+      - Before/after comparison like Statusable has
+      - Key concepts: roles, permissions, memberships, organizations
+
+      SECTION 2: Permission Matrix
+      - Grid showing: roles (rows) × permissions (columns)
+      - Use data from sample-entitlements.ts
+      - Checkmarks/X marks showing which roles have which permissions
+      - Visual proof that the system works
+
+      Example layout:
+      ```
+                        | document:read | document:write | document:approve | subscription:manage |
+      ------------------+---------------+----------------+------------------+---------------------+
+      Viewer            |      ✓        |                |                  |                     |
+      Editor            |      ✓        |       ✓        |                  |                     |
+      Admin             |      ✓        |       ✓        |        ✓         |          ✓          |
+      ```
+
+      SECTION 3: Role Examples
+      - Show 3-4 concrete roles with their permissions
+      - For each role, show: name, description, permission count, membership context
+      - Use the actual role data from sample-entitlements
+
+      SECTION 4: How It Works
+      - Step-by-step walkthrough of permission check
+      - Scene 1: The check request (user, org, permission)
+      - Scene 2: Membership lookup (find user's role in org)
+      - Scene 3: Permission resolution (role → permissions)
+      - Scene 4: Result (allowed/denied with reason)
+      - Code snippets showing the actual API calls
+
+      USE IMPORTS FROM:
+      - src/data/authz/sample-entitlements.ts (AUTHZ_SAMPLE_DATASET, createSampleAuthableTrait)
+      - Do NOT duplicate the PermissionChecker component - reference it, don't rebuild
+
+success_criteria:
+  - Four stories in learning order (Overview, Matrix, Examples, HowItWorks)
+  - Permission Matrix renders as readable grid with actual data
+  - How It Works explains the permission check flow clearly
+  - Appears under "Traits/Authable" in Storybook nav
+  - Consistent styling with Statusable story (same STYLES object pattern)
+  - TypeScript compiles without errors
+
+validation:
+  - command: pnpm storybook --smoke-test
+    expected: All Authable stories load without errors
+  - command: pnpm tsc --noEmit
+    expected: No TypeScript errors
+  - manual: Navigate to Traits/Authable in Storybook
+  - manual: Verify Permission Matrix shows actual role/permission data
+  - manual: Verify How It Works explains the flow clearly
+
+dependencies: []
+
+estimated_effort: 3-4 hours
+
+notes: |
+  WHAT THIS IS:
+  - A TRAIT story explaining Authable as a system
+  - Visual proof via Permission Matrix
+  - Developer documentation via How It Works
+
+  WHAT THIS IS NOT:
+  - Not duplicating UserWithAuthable.stories.tsx (that's an Objects story)
+  - Not building new components (reuse what exists)
+  - Not comprehensive RBAC documentation (link to docs/ for that)
+
+  REFERENCE:
+  - stories/traits/Statusable.stories.tsx for styling patterns
+  - stories/objects/UserWithAuthable.stories.tsx for data patterns

@@ -1,0 +1,157 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Understanding OODS/Visualization System" />
+
+# The Visualization System
+
+**How OODS renders data as charts, maps, and dashboards**
+
+---
+
+## What is the Viz System?
+
+The Visualization System is OODS's declarative charting layer. Instead of writing imperative drawing code, you describe *what* to visualize—data mappings, mark types, interactions—and the system handles *how* to render it.
+
+The system is **renderer-agnostic**: the same specification can render via Vega-Lite (grammar of graphics) or ECharts (imperative charting) depending on data volume, chart type, and performance requirements. This portability means you define charts once and let OODS choose the optimal renderer.
+
+Key capabilities:
+
+- **Declarative specs** — Define charts with structured JSON, not code
+- **Dual renderers** — Vega-Lite for expressiveness, ECharts for performance
+- **Token-driven theming** — Charts automatically respect your design system
+- **Accessibility built-in** — RDV.4 compliance with descriptions, narratives, and table fallbacks
+
+---
+
+## The Pipeline
+
+<div style={{ padding: '1.5rem', background: 'var(--color-bg-subtle)', borderRadius: '8px', marginTop: '1.5rem', marginBottom: '1.5rem' }}>
+  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', flexWrap: 'wrap', fontFamily: 'monospace', fontSize: '0.875rem' }}>
+    <span style={{ padding: '0.5rem 0.75rem', background: 'var(--color-bg-default)', borderRadius: '4px', border: '1px solid var(--color-border-default)' }}>Viz Traits</span>
+    <span>→</span>
+    <span style={{ padding: '0.5rem 0.75rem', background: 'var(--color-bg-default)', borderRadius: '4px', border: '1px solid var(--color-border-default)' }}>Normalized Spec</span>
+    <span>→</span>
+    <span style={{ padding: '0.5rem 0.75rem', background: 'var(--color-bg-default)', borderRadius: '4px', border: '1px solid var(--color-border-default)' }}>Adapter</span>
+    <span>→</span>
+    <span style={{ padding: '0.5rem 0.75rem', background: 'var(--color-bg-default)', borderRadius: '4px', border: '1px solid var(--color-border-default)' }}>Component</span>
+    <span>→</span>
+    <span style={{ padding: '0.5rem 0.75rem', background: 'var(--color-primary-subtle)', borderRadius: '4px', border: '1px solid var(--color-primary-emphasis)' }}>Rendered Chart</span>
+  </div>
+</div>
+
+1. **Viz Traits** define reusable capabilities: `MarkBar`, `EncodingPositionX`, `LayoutFacet`, `InteractionTooltip`
+2. **Normalized Viz Spec** composes traits into a validated JSON contract
+3. **Adapters** translate the spec to Vega-Lite JSON or ECharts config
+4. **Components** wrap adapters, manage a11y fallbacks, and surface interaction hooks
+5. **View Contexts** (dashboard, chart) orchestrate viz within broader object renderings
+
+---
+
+## Normalized Viz Spec
+
+The spec is the heart of the system—a single schema describing every chart, regardless of renderer.
+
+```json
+{
+  "$schema": "https://oods.dev/viz-spec/v1",
+  "name": "MRR by Region",
+  "marks": [{ "trait": "MarkBar" }],
+  "encoding": {
+    "x": { "field": "region", "trait": "EncodingNominal" },
+    "y": { "field": "mrr", "trait": "EncodingQuantitative" },
+    "color": { "field": "segment", "trait": "EncodingColor" }
+  },
+  "a11y": {
+    "description": "Bar chart showing monthly recurring revenue by region"
+  }
+}
+```
+
+The spec defines: data source, transforms, marks, encodings, layout, interactions, accessibility, and portability hints.
+
+📖 **Full documentation**: [docs/viz/normalized-viz-spec.md](../../docs/viz/normalized-viz-spec.md)
+
+---
+
+## Adapters & Renderer Selection
+
+OODS automatically chooses the best renderer based on your data:
+
+| Scenario | Default Renderer | Why |
+|----------|------------------|-----|
+| ≤500 rows | Vega-Lite | Smaller bundle, better spec portability |
+| ≥500 rows | ECharts | Canvas rendering handles density better |
+| Time series | Vega-Lite | Superior temporal scale tooling |
+| Dense scatter | ECharts | Faster hover/highlight interactions |
+
+You can override with explicit preferences:
+
+```ts
+const { renderer, reason } = selectVizRenderer(spec, {
+  preferred: 'vega-lite',
+  minRowsForECharts: 800,
+});
+```
+
+📖 **Full documentation**: [docs/viz/renderer-selection-guide.md](../../docs/viz/renderer-selection-guide.md)
+
+---
+
+## Pattern Library
+
+20+ chart patterns available, from basic bars to small multiples:
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem', marginTop: '1rem', marginBottom: '1rem' }}>
+  <div style={{ padding: '0.75rem', background: 'var(--color-bg-default)', borderRadius: '4px', border: '1px solid var(--color-border-default)', textAlign: 'center', fontSize: '0.875rem' }}>Bar / Stacked Bar</div>
+  <div style={{ padding: '0.75rem', background: 'var(--color-bg-default)', borderRadius: '4px', border: '1px solid var(--color-border-default)', textAlign: 'center', fontSize: '0.875rem' }}>Line / Area</div>
+  <div style={{ padding: '0.75rem', background: 'var(--color-bg-default)', borderRadius: '4px', border: '1px solid var(--color-border-default)', textAlign: 'center', fontSize: '0.875rem' }}>Scatter / Bubble</div>
+  <div style={{ padding: '0.75rem', background: 'var(--color-bg-default)', borderRadius: '4px', border: '1px solid var(--color-border-default)', textAlign: 'center', fontSize: '0.875rem' }}>Heatmap</div>
+  <div style={{ padding: '0.75rem', background: 'var(--color-bg-default)', borderRadius: '4px', border: '1px solid var(--color-border-default)', textAlign: 'center', fontSize: '0.875rem' }}>Small Multiples</div>
+  <div style={{ padding: '0.75rem', background: 'var(--color-bg-default)', borderRadius: '4px', border: '1px solid var(--color-border-default)', textAlign: 'center', fontSize: '0.875rem' }}>Choropleth Maps</div>
+</div>
+
+📖 **Pattern library**: [docs/viz/pattern-library.md](../../docs/viz/pattern-library.md)
+
+---
+
+## Getting Started
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', marginTop: '1rem' }}>
+  <div style={{ padding: '1rem', border: '1px solid var(--color-border-default)', borderRadius: '8px' }}>
+    <h4 style={{ margin: '0 0 0.5rem 0' }}>30-Minute Prototype</h4>
+    <p style={{ margin: 0, fontSize: '0.875rem' }}>
+      Follow the getting-started guide to embed your first chart.
+    </p>
+    <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.875rem' }}>
+      📖 <a href="../../docs/viz/getting-started.md">docs/viz/getting-started.md</a>
+    </p>
+  </div>
+  <div style={{ padding: '1rem', border: '1px solid var(--color-border-default)', borderRadius: '8px' }}>
+    <h4 style={{ margin: '0 0 0.5rem 0' }}>CLI Scaffolding</h4>
+    <p style={{ margin: 0, fontSize: '0.875rem' }}>
+      Use <code>pnpm viz:suggest</code> to generate specs and components.
+    </p>
+    <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.875rem' }}>
+      📖 <a href="../../docs/viz/cli-guide.md">docs/viz/cli-guide.md</a>
+    </p>
+  </div>
+</div>
+
+---
+
+## Deep Dives
+
+| Topic | Documentation |
+|-------|---------------|
+| **System Overview** | [docs/viz/system-overview.md](../../docs/viz/system-overview.md) |
+| **Spatial/Maps** | [docs/viz/spatial-module.md](../../docs/viz/spatial-module.md) |
+| **Performance** | [docs/viz/performance-optimization.md](../../docs/viz/performance-optimization.md) |
+| **Accessibility** | [docs/viz/accessibility-checklist.md](../../docs/viz/accessibility-checklist.md) |
+| **Migration** | [docs/viz/migration-guide.md](../../docs/viz/migration-guide.md) |
+| **Architecture Decisions** | [docs/viz/architecture-decisions.md](../../docs/viz/architecture-decisions.md) |
+
+---
+
+<div style={{ marginTop: '2rem', padding: '1rem', background: 'var(--color-bg-subtle)', borderRadius: '8px', fontSize: '0.875rem' }}>
+  <strong>Summary:</strong> The Visualization System lets you define charts declaratively with a normalized spec. Traits provide reusable capabilities, adapters handle renderer-specific translation, and components manage the full lifecycle including accessibility. Start with the getting-started guide, then explore the pattern library for your use case.
+</div>

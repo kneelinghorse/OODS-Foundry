@@ -1,0 +1,176 @@
+id: B38.4
+title: Visualization System MDX
+status: Queued
+sprint: Sprint 38
+created: 2025-12-03
+tags: [documentation, viz, tep, mdx, navigation-phase-3]
+
+objective: |
+  Create an MDX documentation page explaining the OODS Visualization System.
+
+  NOTE: The original roadmap called this "TEP System" (Token-Expression Pipeline),
+  but the actual implementation is called "Visualization System" or "Normalized Viz Spec".
+  This doc should use the actual terminology from the codebase.
+
+context: |
+  TERMINOLOGY CLARIFICATION:
+
+  "TEP" was a conceptual name. The implemented system uses:
+  - "Visualization System" or "Viz System" — the overall architecture
+  - "Normalized Viz Spec" — the schema that defines all charts
+  - "Adapters" — translators for Vega-Lite and ECharts
+
+  The mapping from planning docs to implementation:
+  - "Token layer" → Normalized Viz Spec (schemas/viz/normalized-viz-spec.schema.json)
+  - "Expression layer" → Adapters (Vega-Lite + ECharts translators)
+  - "Pipeline" → Traits → Spec → Adapter → Component → Context
+
+  EXISTING DOCUMENTATION (in docs/viz/):
+
+  - system-overview.md — Architecture overview (START HERE)
+  - normalized-viz-spec.md — The actual schema
+  - renderer-selection-guide.md — How Vega-Lite vs ECharts is chosen
+  - pattern-library.md — 20+ chart patterns
+  - getting-started.md — 30-minute prototype guide
+  - cli-guide.md — `pnpm viz:suggest` scaffolding
+  - spatial-module.md — Geo/maps extension
+  - sprint-21-23-journey.md — History/rationale
+  - Plus 20+ more specialized docs
+
+  THE GOAL: Summarize and link to existing docs, NOT duplicate them.
+
+deliverables:
+  - path: stories/docs/5-visualization-system.mdx
+    action: create
+    details: |
+      Create an MDX page that serves as the Storybook entry point to the Viz System.
+
+      STORY TITLE: "Understanding OODS/Visualization System"
+
+      STRUCTURE:
+
+      ```mdx
+      import { Meta } from '@storybook/blocks';
+
+      <Meta title="Understanding OODS/Visualization System" />
+
+      # The Visualization System
+
+      **How OODS renders data as charts, maps, and dashboards**
+
+      ---
+
+      ## What is the Viz System?
+
+      [2-3 paragraphs explaining the purpose]
+      - Declarative chart definitions
+      - Renderer-agnostic (Vega-Lite, ECharts)
+      - Token-driven theming
+      - Accessibility built-in
+
+      ---
+
+      ## The Pipeline
+
+      [Diagram showing the flow]
+
+      ```
+      Trait Viz Extension → Normalized Viz Spec → Adapter → Component → View Context
+      ```
+
+      Brief explanation of each stage.
+
+      ---
+
+      ## Normalized Viz Spec
+
+      [Brief explanation of the schema]
+      - What it defines (chart type, data mapping, axes, colors)
+      - Why it exists (renderer independence)
+      - Link to full docs: docs/viz/normalized-viz-spec.md
+
+      Example snippet showing a simple spec.
+
+      ---
+
+      ## Adapters
+
+      [Brief explanation]
+      - Vega-Lite adapter (grammar of graphics)
+      - ECharts adapter (imperative charting)
+      - How OODS chooses which to use
+      - Link to: docs/viz/renderer-selection-guide.md
+
+      ---
+
+      ## Pattern Library
+
+      [Brief mention + links]
+      - 20+ chart patterns available
+      - Link to pattern library: docs/viz/pattern-library.md
+      - Link to Storybook viz stories: Visualization section
+
+      ---
+
+      ## Getting Started
+
+      [Point to resources]
+      - 30-minute prototype: docs/viz/getting-started.md
+      - CLI scaffolding: `pnpm viz:suggest`
+      - Full documentation: docs/viz/
+
+      ---
+
+      ## Deep Dives
+
+      Links to specialized docs:
+      - Spatial/Maps: docs/viz/spatial-module.md
+      - Performance: docs/viz/performance-optimization.md
+      - Accessibility: docs/viz/accessibility-checklist.md
+      - Migration: docs/viz/migration-guide.md
+      ```
+
+      KEY PRINCIPLE: This page is a SUMMARY and NAVIGATION HUB.
+      It should NOT duplicate the detailed documentation in docs/viz/.
+      Every section should link to the authoritative source.
+
+      WORD COUNT TARGET: ~500 words (brief, scannable)
+
+success_criteria:
+  - MDX page renders in Storybook at "Understanding OODS/Visualization System"
+  - Pipeline diagram clearly shows the flow
+  - Links to docs/viz/ files work (relative paths)
+  - No duplication of content from docs/viz/
+  - Consistent styling with other Understanding OODS pages
+  - TypeScript/MDX compiles without errors
+
+validation:
+  - command: pnpm storybook --smoke-test
+    expected: MDX page loads without errors
+  - manual: Navigate to Understanding OODS/Visualization System
+  - manual: Click links to verify they work
+  - manual: Compare styling with 1-philosophy.mdx, 2-core-concepts.mdx
+
+dependencies: []
+
+estimated_effort: 1.5 hours
+
+notes: |
+  WHY THIS EXISTS:
+
+  The docs/viz/ folder has 25+ files of detailed documentation.
+  But users browsing Storybook won't find it unless we surface it.
+
+  This page is the "front door" — it says:
+  "Here's what the Viz System does, here's how to get started,
+   here's where to learn more."
+
+  WHAT THIS IS NOT:
+  - Not comprehensive viz documentation (that's in docs/viz/)
+  - Not a tutorial (link to getting-started.md instead)
+  - Not API reference (that belongs in generated docs)
+
+  NAMING NOTE:
+  The roadmap called this "5-tep-system.mdx" but we're using
+  "5-visualization-system.mdx" since that matches the actual
+  implementation terminology.
