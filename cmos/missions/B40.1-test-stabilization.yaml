@@ -22,6 +22,24 @@ context: |
   These failures block release confidence and may indicate real issues
   or outdated test expectations.
 
+  ROOT CAUSE IDENTIFIED (2025-12-04):
+  Commit 12552d3 "Enhance chart components for improved responsiveness"
+  broke viz component sizing. All 4 hierarchy/network viz components have:
+
+    style={{ width: '100%', maxWidth: width, height }}
+
+  This causes charts to be tall/narrow when Storybook constrains width.
+  Charts render tiny in huge empty containers.
+
+  FIX: Change to explicit dimensions:
+    style={{ width, height }}
+
+  Affected files:
+  - src/components/viz/Sunburst.tsx (line 236)
+  - src/components/viz/Treemap.tsx
+  - src/components/viz/Sankey.tsx
+  - src/components/viz/ForceGraph.tsx
+
 deliverables:
   - path: tests/components/viz/ForceGraph.test.tsx
     action: fix
