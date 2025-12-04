@@ -40,7 +40,7 @@ const TONE_PRESETS = {
 type Story = StoryObj<typeof ToastPortal>;
 
 const meta: Meta<typeof ToastPortal> = {
-  title: 'Components/Feedback/Toast',
+  title: 'Primitives/Feedback/Toast',
   component: ToastPortal,
   parameters: {
     layout: 'fullscreen',

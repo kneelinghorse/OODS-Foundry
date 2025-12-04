@@ -16,7 +16,7 @@ import schemaV11 from '../../examples/preferences/schema-v1.1.json' with { type:
 import schemaV2 from '../../examples/preferences/schema-v2.json' with { type: 'json' };
 
 const meta: Meta<typeof PreferenceForm> = {
-  title: 'Components/Forms/PreferenceForm',
+  title: 'Primitives/Forms/PreferenceForm',
   component: PreferenceForm,
   parameters: {
     layout: 'fullscreen',

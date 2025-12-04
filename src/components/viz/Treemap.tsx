@@ -244,7 +244,7 @@ export function Treemap({
       {/* Chart container */}
       <div
         ref={containerRef}
-        style={{ width: '100%', maxWidth: width, height }}
+        style={{ width, height }}
         aria-hidden="true"
         data-testid="treemap-chart"
         data-status={status}

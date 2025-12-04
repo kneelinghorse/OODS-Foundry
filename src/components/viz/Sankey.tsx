@@ -303,7 +303,7 @@ export function Sankey({
       {/* Chart container */}
       <div
         ref={containerRef}
-        style={{ width: '100%', maxWidth: width, height }}
+        style={{ width, height }}
         aria-hidden="true"
         data-testid="sankey-chart"
         data-status={status}

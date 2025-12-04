@@ -93,7 +93,7 @@ function FallbackDemo({
 }
 
 const meta = {
-  title: 'Viz/Spatial/AccessibleMapFallback',
+  title: 'Visualization/Spatial/AccessibleMapFallback',
   component: FallbackDemo,
   parameters: {
     layout: 'padded',
