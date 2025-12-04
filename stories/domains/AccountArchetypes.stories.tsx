@@ -112,7 +112,7 @@ const AccountCard: React.FC<{ account: AccountPerson | AccountOrganization | Acc
 };
 
 const meta: Meta = {
-  title: 'Domains/Accounts/Archetypes',
+  title: 'Objects/Domain Objects/Accounts/Archetypes',
   parameters: {
     layout: 'padded',
   },

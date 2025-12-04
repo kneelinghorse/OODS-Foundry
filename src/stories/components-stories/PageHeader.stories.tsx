@@ -6,7 +6,7 @@ import { PageHeader } from '../../components/page/PageHeader';
 type StoryProps = ComponentProps<typeof PageHeader>;
 
 const meta: Meta<typeof PageHeader> = {
-  title: 'Patterns/Page Header',
+  title: 'Domain Patterns/Page Header',
   component: PageHeader,
   decorators: [withPage({ fullWidth: true })],
   parameters: {

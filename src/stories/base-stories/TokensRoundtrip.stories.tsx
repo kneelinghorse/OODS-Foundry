@@ -5,7 +5,7 @@ import { resolveTokenValue } from '../../../apps/explorer/src/utils/tokenResolve
 import { formatTokenReference } from '../../utils/token-values.js';
 
 const meta: Meta = {
-  title: 'Foundations/Tokens Roundtrip',
+  title: 'Tokens & Theming/Tokens Roundtrip',
   parameters: {
     layout: 'centered',
     docs: {
