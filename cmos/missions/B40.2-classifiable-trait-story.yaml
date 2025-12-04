@@ -1,0 +1,139 @@
+id: B40.2
+title: Classifiable Trait Story
+status: Queued
+sprint: Sprint 40
+created: 2025-12-04
+tags: [trait-story, classifiable, taxonomy, storybook]
+
+objective: |
+  Create a comprehensive Storybook story for the Classifiable trait that demonstrates
+  taxonomy/folksonomy classification modes, hierarchical categories, and tag governance.
+
+context: |
+  Classifiable is a core trait that unifies taxonomy (hierarchical) and folksonomy (tags)
+  classification patterns. It supports three modes: taxonomy-only, tag-only, and hybrid
+  (WordPress-style three-table pattern).
+
+  Reference: traits/core/Classifiable.trait.yaml
+
+  This is one of the most complex traits with:
+  - Multiple classification modes
+  - Hierarchical storage models (adjacency list, materialized path, closure table)
+  - Tag governance policies (locked, moderated, open)
+  - Primary category designation
+  - Synonym collapse for tags
+
+  Follow the established trait story pattern from Cancellable.stories.tsx.
+
+deliverables:
+  - path: stories/traits/Classifiable.stories.tsx
+    action: create
+    details: |
+      STRUCTURE (4 stories following pattern):
+
+      1. OVERVIEW STORY
+         Title: "1. Overview"
+         Content:
+         - Heading: "Classifiable"
+         - Subheading: "Canonical taxonomy + folksonomy with governance metadata"
+         - Problem/Solution cards:
+           * Without: Ad-hoc categories, no hierarchy, tag sprawl
+           * With: Unified classification, governance, synonym collapse
+         - Key Fields section:
+           * classification_mode (taxonomy/tag/hybrid)
+           * categories[] with primary_category_id
+           * tags[] with tag_count and tag_preview
+           * classification_metadata
+         - Used By: Product, Article, Ticket, KnowledgeBase, Media
+
+      2. CLASSIFICATION MODES STORY
+         Title: "2. Classification Modes"
+         Content:
+         - Interactive mode selector (taxonomy/tag/hybrid)
+         - Visual comparison of each mode:
+           * Taxonomy: Hierarchical tree with breadcrumbs
+           * Tag: Flat tag cloud with governance badges
+           * Hybrid: Both working together
+         - Show same Product classified in each mode
+         - Highlight when to use each mode
+
+      3. CATEGORY TREE STORY
+         Title: "3. Category Tree"
+         Content:
+         - Interactive hierarchical category picker
+         - Show ltree path visualization (Electronics > Mobile > Android)
+         - Primary category designation (star/pin icon)
+         - Breadcrumb display component
+         - Storage model comparison:
+           * Adjacency list: Simple, slow subtree queries
+           * Materialized path: ltree, fast subtree, moderate updates
+           * Closure table: Fast all operations, more storage
+
+      4. TAG GOVERNANCE STORY
+         Title: "4. Tag Governance"
+         Content:
+         - Policy selector (locked/moderated/open)
+         - Tag input with policy enforcement:
+           * Locked: Only pick from approved list
+           * Moderated: Suggest approved, allow new (pending review)
+           * Open: Free-form creation
+         - Synonym collapse demo (shows "JS" → "JavaScript")
+         - Tag cloud visualization with counts
+         - max_tags enforcement display
+
+      5. HOW IT WORKS STORY
+         Title: "5. How It Works"
+         Content:
+         - Schema definition code block
+         - Mode configuration examples
+         - Category assignment flow
+         - Tag assignment with governance check
+         - Sync with search/filtering systems
+
+      STYLE:
+      - Use consistent STYLES object from other trait stories
+      - Interactive elements where appropriate
+      - Code blocks for configuration examples
+      - Token-based colors (use CSS variables)
+
+      META CONFIGURATION:
+      ```typescript
+      const meta: Meta = {
+        title: 'Traits/Classifiable',
+        parameters: { layout: 'fullscreen' },
+      };
+      ```
+
+success_criteria:
+  - Story renders without errors in Storybook
+  - All 5 sub-stories appear in correct order
+  - Interactive elements work (mode switcher, tag input, tree)
+  - Visual style matches other trait stories
+  - TypeScript compiles without errors
+
+validation:
+  - command: pnpm tsc --noEmit
+    expected: No type errors
+  - command: pnpm storybook --smoke-test
+    expected: Storybook builds successfully
+  - manual: Navigate to Traits/Classifiable in Storybook
+  - manual: Test all interactive elements
+
+dependencies:
+  - B40.1  # Tests should be stable first
+
+notes: |
+  Reference materials:
+  - traits/core/Classifiable.trait.yaml (full schema)
+  - stories/traits/Cancellable.stories.tsx (pattern to follow)
+  - stories/components/classification/CategoryPicker.stories.tsx (existing component)
+  - stories/components/classification/CategoryTree.stories.tsx (existing component)
+
+  The existing classification component stories can be consolidated or
+  referenced from this trait story. Consider importing and wrapping them
+  rather than duplicating.
+
+  Sample data for demos:
+  - Product categories: Electronics > Mobile > Android/iOS
+  - Article tags: ["react", "typescript", "frontend", "tutorial"]
+  - Ticket classification: hybrid mode with priority categories + freeform tags

@@ -77,7 +77,7 @@ describe('Sankey', () => {
       render(<Sankey data={energyFlowData} width={1000} height={600} />);
 
       const chart = screen.getByTestId('sankey-chart');
-      expect(chart).toHaveStyle({ width: '1000px', height: '600px' });
+      expect(chart).toHaveStyle({ width: '100%', maxWidth: '1000px', height: '600px' });
     });
 
     it('renders with aria-label from name prop', async () => {
@@ -91,7 +91,7 @@ describe('Sankey', () => {
       render(<Sankey data={energyFlowData} />);
 
       const chart = screen.getByTestId('sankey-chart');
-      expect(chart).toHaveStyle({ width: '900px', height: '500px' });
+      expect(chart).toHaveStyle({ width: '100%', maxWidth: '900px', height: '500px' });
     });
   });
 

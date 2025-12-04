@@ -1,0 +1,126 @@
+id: B41.1
+title: Taggable Trait Story
+status: Queued
+sprint: Sprint 41
+created: 2025-12-04
+tags: [trait-story, taggable, taxonomy, storybook]
+
+objective: |
+  Create a comprehensive Storybook story for the Taggable trait that demonstrates
+  tag management with governance guardrails, custom tag creation, and UI components.
+
+context: |
+  Taggable is a behavioral trait focused on flat tag collections (vs. Classifiable's
+  hierarchical taxonomy). It provides configurable guardrails for tag authoring.
+
+  Reference: traits/behavioral/Taggable.trait.yaml
+
+  Key parameters:
+  - maxTags: Maximum tags per entity (1-64, default 10)
+  - allowCustomTags: Whether users can create new tags
+  - allowedTags: Curated allow list when custom disabled
+  - caseSensitive: Whether tag comparison is case-sensitive
+
+  This trait is simpler than Classifiable and focuses on the folksonomy pattern.
+
+deliverables:
+  - path: stories/traits/Taggable.stories.tsx
+    action: create
+    details: |
+      STRUCTURE (4 stories following established pattern):
+
+      1. OVERVIEW STORY
+         Title: "1. Overview"
+         Content:
+         - Heading: "Taggable"
+         - Subheading: "Configurable tag management with governance guardrails"
+         - Problem/Solution cards:
+           * Without: Uncontrolled tags, duplicates, no limits
+           * With: Governance, allow lists, max limits, case normalization
+         - Key Fields section:
+           * tags[] - Ordered list of assigned tags
+           * tag_count - Computed count for display
+         - Parameters section:
+           * maxTags, allowCustomTags, allowedTags, caseSensitive
+         - Used By: Article, Incident, KnowledgeBase, Media
+
+      2. TAG INPUT STORY
+         Title: "2. Tag Input"
+         Content:
+         - Interactive tag input component demo
+         - Show three modes:
+           * Open: Free-form tag creation
+           * Allow list: Autocomplete from approved tags
+           * Locked: Select only from dropdown
+         - maxTags enforcement (disable input when limit reached)
+         - Visual feedback for validation
+
+      3. TAG DISPLAY STORY
+         Title: "3. Tag Display"
+         Content:
+         - TagPills component for list context (max 3 visible + overflow)
+         - TagCloud visualization with sizes
+         - TagManager for detail view (add/remove/reorder)
+         - Case normalization demo ("React" vs "react" → same tag)
+
+      4. HOW IT WORKS STORY
+         Title: "4. How It Works"
+         Content:
+         - Trait schema code block
+         - Parameter configuration examples
+         - View extension mappings (list → TagPills, detail → TagManager)
+         - Token references for styling
+         - Integration with search/filtering
+
+      SAMPLE DATA:
+      ```typescript
+      const SAMPLE_TAGS = [
+        'react', 'typescript', 'frontend', 'tutorial',
+        'performance', 'accessibility', 'testing'
+      ];
+
+      const ALLOWED_TAGS = [
+        'bug', 'feature', 'enhancement', 'documentation',
+        'question', 'help-wanted', 'good-first-issue'
+      ];
+      ```
+
+      STYLE:
+      - Use consistent STYLES object from other trait stories
+      - Tag chips should use token-based colors
+      - Interactive tag input with proper a11y
+
+      META:
+      ```typescript
+      const meta: Meta = {
+        title: 'Traits/Taggable',
+        parameters: { layout: 'fullscreen' },
+      };
+      ```
+
+success_criteria:
+  - Story renders without errors
+  - All 4 sub-stories work correctly
+  - Tag input demonstrates all governance modes
+  - TypeScript compiles cleanly
+
+validation:
+  - command: pnpm tsc --noEmit
+    expected: No type errors
+  - command: pnpm storybook --smoke-test
+    expected: Build succeeds
+  - manual: Test tag input interactions
+
+dependencies: []
+
+notes: |
+  Taggable is simpler than Classifiable - focus on the UX of tag management
+  rather than complex hierarchies.
+
+  Consider reusing or referencing existing tag-related components if they exist.
+
+  The distinction from Classifiable:
+  - Taggable = flat tags only, behavioral trait
+  - Classifiable = taxonomy + tags, core trait with hierarchy support
+
+  Both can be used together on the same object.

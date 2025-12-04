@@ -1,0 +1,153 @@
+id: B40.3
+title: Context Consolidation & Duplicate Removal
+status: Queued
+sprint: Sprint 40
+created: 2025-12-04
+tags: [cleanup, consolidation, storybook, navigation]
+
+objective: |
+  Consolidate context-related stories into proper locations, remove duplicate
+  stories, and ensure clean Storybook navigation without orphans.
+
+context: |
+  The navigation restructure (Sprints 36-39) renamed many stories but some
+  duplicates and orphans may remain. This mission performs a final sweep.
+
+  Known issues from roadmap:
+  - Authz/Comm story relocation may be incomplete
+  - Potential duplicate viz/echarts stories
+  - Context stories scattered across locations
+
+  Current context story locations:
+  - stories/proofs/context-gallery.stories.tsx
+  - stories/proofs/DashboardContexts.stories.tsx
+  - stories/docs/Contexts.*.mdx files
+
+deliverables:
+  - path: (audit)
+    action: audit
+    details: |
+      STEP 1: AUDIT CURRENT STATE
+
+      Run these commands to identify issues:
+
+      ```bash
+      # Find all story files
+      find stories -name "*.stories.tsx" | wc -l
+
+      # Find potential duplicates (same component name)
+      grep -r "title:" stories --include="*.stories.tsx" | sort
+
+      # Find context-related stories
+      grep -r "Contexts/" stories --include="*.stories.tsx"
+      grep -r "context" stories --include="*.stories.tsx" -l
+
+      # Find orphan stories (not in expected sections)
+      grep -r "title:" stories --include="*.stories.tsx" | grep -v "Objects/" | grep -v "Traits/" | grep -v "Contexts/" | grep -v "Primitives/" | grep -v "Foundations/" | grep -v "Proofs/" | grep -v "Visualization/" | grep -v "Patterns/"
+      ```
+
+      Document findings in completion notes.
+
+  - path: stories/contexts/
+    action: organize
+    details: |
+      STEP 2: CONTEXT STORY ORGANIZATION
+
+      Ensure canonical context stories exist:
+
+      CANONICAL CONTEXTS (should have dedicated stories):
+      - Detail: Shows object with full information
+      - List: Shows object in table/list row format
+      - Form: Shows object in editable form
+      - Timeline: Shows object changes over time
+
+      COMPOUND CONTEXTS (may be demos within canonical):
+      - Card: Compact detail view
+      - Inline: Minimal inline display
+      - Chart: Data visualization context
+      - Dashboard: Multi-object dashboard
+
+      If stories/contexts/ doesn't exist as organized section,
+      verify context demos are accessible from:
+      - stories/proofs/context-gallery.stories.tsx
+      - ObjectMatrix story (B37.2) with context switcher
+
+  - path: (duplicates)
+    action: remove
+    details: |
+      STEP 3: REMOVE DUPLICATES
+
+      Known potential duplicates (verify before removing):
+
+      VIZ DUPLICATES:
+      - Keep: stories/components/viz/Treemap.stories.tsx
+      - Remove if exists: stories/viz/echarts/Treemap.stories.tsx
+
+      - Keep: stories/components/viz/Sankey.stories.tsx
+      - Remove if exists: stories/viz/echarts/Sankey.stories.tsx
+
+      - Keep: stories/components/viz/Sunburst.stories.tsx
+      - Remove if exists: stories/viz/echarts/Sunburst.stories.tsx
+
+      STATUSABLES:
+      - Keep: src/stories/statusables/Toast.stories.tsx
+      - Remove if duplicate: stories/components/Toast.stories.tsx
+
+      - Keep: src/stories/statusables/Banner.stories.tsx
+      - Remove any duplicates
+
+      VERIFICATION:
+      Before deleting, check that:
+      1. The "keep" file exists and is complete
+      2. No unique content in the "remove" file
+      3. No other files import from the "remove" file
+
+  - path: (authz-comm)
+    action: verify
+    details: |
+      STEP 4: VERIFY AUTHZ/COMM RELOCATION
+
+      These should be under Domain Patterns:
+      - MembershipManager → Domain Patterns/Authorization/Membership Manager
+      - RolePermissionMatrix → Domain Patterns/Authorization/Role Permission Matrix
+      - MessageTimeline → Domain Patterns/Communication/Message Timeline
+      - ConversationThread → Domain Patterns/Communication/Conversation Thread
+
+      If not correctly located, update their title meta.
+
+  - path: (navigation-verify)
+    action: verify
+    details: |
+      STEP 5: VERIFY NAVIGATION CLEANLINESS
+
+      Start Storybook and manually check:
+      1. No empty sections in sidebar
+      2. No duplicate entries
+      3. All stories have proper titles (Section/Subsection/Name)
+      4. No "Uncategorized" or orphan stories
+
+success_criteria:
+  - No duplicate stories in navigation
+  - All context stories accessible from logical locations
+  - Authz/Comm stories in Domain Patterns section
+  - Navigation is clean with no orphans
+  - Audit documented in completion notes
+
+validation:
+  - command: pnpm build-storybook 2>&1 | grep -i "warn\|error" | head -20
+    expected: No story-related warnings
+  - manual: Browse full Storybook navigation
+  - manual: Verify no empty sections
+
+dependencies:
+  - B40.2  # Classifiable story should be done first
+
+notes: |
+  This is primarily an audit and cleanup mission. It may result in:
+  - File deletions (duplicates)
+  - Title updates (relocations)
+  - No new files created
+
+  Document all changes in completion notes with before/after.
+
+  If significant issues found beyond scope, create follow-up missions.

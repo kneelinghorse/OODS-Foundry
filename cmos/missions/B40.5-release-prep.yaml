@@ -1,0 +1,214 @@
+id: B40.5
+title: Release Preparation
+status: Queued
+sprint: Sprint 40
+created: 2025-12-04
+tags: [release, documentation, snapshot, changelog]
+
+objective: |
+  Prepare for release by updating contexts, taking snapshots, updating
+  changelog, and ensuring all documentation is current.
+
+context: |
+  Sprint 40 completes the Navigation Restructure epic (Sprints 36-40).
+  This mission captures the final state and prepares release artifacts.
+
+  The Navigation Restructure delivers:
+  - Object-centric Storybook navigation
+  - 7 "Understanding OODS" documentation pages
+  - Trait stories with consistent patterns
+  - Consolidated and cleaned story organization
+
+deliverables:
+  - path: (context-update)
+    action: update
+    details: |
+      UPDATE PROJECT CONTEXT
+
+      Via CLI or Python runtime, update project_context:
+
+      ```python
+      from cmos.core.runtime import MissionRuntime
+      mr = MissionRuntime(db_path='cmos/db/cmos.sqlite')
+
+      # Update project context
+      ctx = mr.db.get_context('PROJECT_CONTEXT') or {}
+      ctx['current_sprint'] = 'Sprint 40'
+      ctx['last_mission'] = 'B40.5'
+      ctx['navigation_restructure'] = 'complete'
+      ctx['working_memory'] = {
+        'completed_epics': ['Navigation Restructure (S36-40)'],
+        'trait_story_coverage': '9/16 traits',
+        'next_focus': 'Sprint 41 - Trait Completion'
+      }
+      mr.db.set_context('PROJECT_CONTEXT', ctx)
+      ```
+
+  - path: (master-context-update)
+    action: update
+    details: |
+      UPDATE MASTER CONTEXT
+
+      Add navigation restructure to completed milestones:
+
+      ```python
+      master = mr.db.get_context('MASTER_CONTEXT') or {}
+      master.setdefault('milestones_completed', [])
+      master['milestones_completed'].append({
+        'name': 'Navigation Restructure',
+        'sprints': 'Sprint 36-40',
+        'date': '2025-12-04',
+        'deliverables': [
+          '7 Understanding OODS MDX docs',
+          '9 trait stories',
+          'Object Explorer with context switching',
+          'Consolidated story navigation'
+        ]
+      })
+      mr.db.set_context('MASTER_CONTEXT', master)
+      ```
+
+  - path: (context-snapshot)
+    action: snapshot
+    details: |
+      TAKE CONTEXT SNAPSHOT
+
+      ```bash
+      ./cmos/cli.py context snapshot master --source "Sprint 40 completion - Navigation Restructure complete"
+      ```
+
+      This creates a point-in-time backup of the master context.
+
+  - path: docs/releases/navigation-restructure-changelog.md
+    action: create
+    details: |
+      CHANGELOG ENTRY
+
+      # Navigation Restructure Changelog
+
+      **Sprints 36-40 | December 2025**
+
+      ## Overview
+
+      Transformed OODS Foundry's Storybook from component-centric navigation
+      to an object-centric, trait-based architecture that teaches the OODS
+      philosophy.
+
+      ## What Changed
+
+      ### New Documentation (Understanding OODS)
+      - Philosophy & value proposition
+      - Core concepts (Objects, Traits, Contexts)
+      - Trait engine deep-dive
+      - Getting started guides
+      - Visualization system overview
+      - Accessibility approach
+      - Token architecture
+
+      ### New Features
+      - Object Explorer with matrix view
+      - Context switcher (Detail/List/Card/Form/Timeline/Inline)
+      - Trait story pattern with consistent structure
+      - Status registry visualization
+
+      ### Trait Stories Added
+      - Addressable, Authable, Statusable (Core)
+      - Stateful, Timestampable, Archivable, Cancellable (Lifecycle)
+      - Billable (Domain)
+
+      ### Navigation Changes
+      - Stories reorganized into: Objects, Traits, Contexts, Visualization,
+        Primitives, Foundations, Domain Patterns, Proofs
+      - 26+ story files renamed for consistent hierarchy
+      - Duplicate stories consolidated
+
+      ## Migration Notes
+
+      If you have bookmarks to old story paths, they may need updating.
+      The story content is unchanged; only navigation paths changed.
+
+      ## Known Limitations
+
+      - Trait coverage at 9/16 (remaining in Sprint 41)
+      - Object stories partially complete
+      - Some context demos rely on Object Explorer rather than dedicated stories
+
+  - path: diagnostics.json
+    action: update
+    details: |
+      UPDATE DIAGNOSTICS
+
+      Run diagnostics refresh:
+      ```bash
+      pnpm diag:refresh
+      ```
+
+      Or manually update relevant sections:
+      - helpers.navigationRestructure: "complete"
+      - helpers.traitStoryCoverage: "9/16"
+      - meta.lastMission: "B40.5"
+      - meta.lastUpdated: "2025-12-04"
+
+  - path: (git-operations)
+    action: git
+    details: |
+      GIT OPERATIONS
+
+      1. Ensure all changes committed:
+         ```bash
+         git status
+         git add -A
+         git commit -m "feat(sprint40): Complete Navigation Restructure epic
+
+         - Fix 12 failing tests
+         - Add Classifiable trait story
+         - Consolidate context and duplicate stories
+         - Complete E2E verification
+         - Update contexts and changelog
+
+         Sprint 40 completes the Navigation Restructure (S36-40).
+         See docs/releases/navigation-restructure-changelog.md
+
+         Co-Authored-By: Claude <noreply@anthropic.com>"
+         ```
+
+      2. Consider tagging if releasing:
+         ```bash
+         git tag -a v1.1.0-nav-restructure -m "Navigation Restructure complete"
+         ```
+
+      3. Merge to main if appropriate:
+         ```bash
+         git checkout main
+         git merge sprint37/verification-and-object-matrix
+         git push origin main --tags
+         ```
+
+success_criteria:
+  - Project context updated with sprint completion
+  - Master context includes navigation restructure milestone
+  - Context snapshot taken
+  - Changelog created
+  - Diagnostics refreshed
+  - Changes committed (merge optional based on preference)
+
+validation:
+  - command: ./cmos/cli.py db show current
+    expected: Shows updated context
+  - file: docs/releases/navigation-restructure-changelog.md
+    expected: File exists
+  - command: git log -1 --oneline
+    expected: Shows Sprint 40 commit
+
+dependencies:
+  - B40.4  # Verification must be complete first
+
+notes: |
+  This mission marks the end of the Navigation Restructure epic.
+
+  After completion, Sprint 41 will focus on:
+  - Remaining trait stories (Taggable, Communicable, Preferenceable, etc.)
+  - Object stories (Plan, Transaction, Article, Media)
+  - Final polish before broader release
+
+  The merge to main is optional - can be deferred if more testing needed.

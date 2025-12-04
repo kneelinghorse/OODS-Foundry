@@ -4,7 +4,7 @@ displayName: CMOS Backlog Export
 description: Backlog export generated from the CMOS SQLite database.
 author: CMOS
 schema: ./schemas/SprintPlan.v1.json
-generatedAt: '2025-12-04T05:11:25.127034+00:00'
+generatedAt: '2025-12-04T06:31:28.591108+00:00'
 ---
 domainFields:
   type: Planning.SprintPlan.v1
@@ -2646,29 +2646,142 @@ domainFields:
     missions:
     - id: B39.1
       name: Archivable Trait Story
-      status: Queued
-      notes: 'IMPORTANT: Read full mission details at cmos/missions/B39.1-archivable-trait-story.yaml
-        before starting.'
+      status: Completed
+      completed_at: '2025-12-04T05:33:56Z'
+      notes: Created stories/traits/Archivable.stories.tsx with Overview, Archive
+        States, Retention Policy, and How It Works sections. Follows established trait
+        story pattern. TypeScript compiles without errors.
+      metadata:
+        started_at: '2025-12-04T05:22:33Z'
+        completed_at: '2025-12-04T05:33:56Z'
     - id: B39.2
       name: Billable Trait Story
-      status: Queued
-      notes: 'IMPORTANT: Read full mission details at cmos/missions/B39.2-billable-trait-story.yaml
-        before starting.'
+      status: Completed
+      completed_at: '2025-12-04T05:44:41Z'
+      notes: Created stories/traits/Billable.stories.tsx with Overview, Plan Gallery,
+        Pricing Models, and How It Works sections. Includes currency formatting helpers,
+        PlanCard component, 4 pricing model explanations, and cross-link to SaaS Billing
+        Flow. TypeScript compiles without errors.
+      metadata:
+        started_at: '2025-12-04T05:41:36Z'
+        completed_at: '2025-12-04T05:44:41Z'
     - id: B39.3
       name: Cancellable Trait Story
-      status: Queued
-      notes: 'IMPORTANT: Read full mission details at cmos/missions/B39.3-cancellable-trait-story.yaml
-        before starting.'
+      status: Completed
+      completed_at: '2025-12-04T05:50:13Z'
+      notes: Created stories/traits/Cancellable.stories.tsx with Overview, Cancellation
+        Flow, Reason Picker, and How It Works sections. Includes interactive flow
+        diagram, reason selection form with analytics preview, policy configuration
+        examples. TypeScript compiles without errors.
+      metadata:
+        started_at: '2025-12-04T05:47:20Z'
+        completed_at: '2025-12-04T05:50:13Z'
     - id: B39.4
       name: Accessibility Approach MDX
-      status: Queued
-      notes: 'IMPORTANT: Read full mission details at cmos/missions/B39.4-accessibility-approach-mdx.yaml
-        before starting.'
+      status: Completed
+      completed_at: '2025-12-04T05:51:36Z'
+      notes: Created stories/docs/6-accessibility-approach.mdx with Philosophy section,
+        Three Pillars (Perceivable/Operable/Understandable), Accessibility in Traits
+        explanation, High Contrast Support, Status Announcements, Testing & Compliance,
+        and Resources sections. Follows existing Understanding OODS styling conventions.
+      metadata:
+        started_at: '2025-12-04T05:50:26Z'
+        completed_at: '2025-12-04T05:51:36Z'
     - id: B39.5
       name: Token Architecture MDX
+      status: Completed
+      completed_at: '2025-12-04T05:52:59Z'
+      notes: Created stories/docs/7-token-architecture.mdx with 4-layer cascade explanation
+        (Reference/Semantic/Component/Context), visual cascade diagram, layer examples
+        with code blocks, theming/dark mode/density benefits, statusRegistry integration,
+        token file organization, and Foundations links. Completes the Understanding
+        OODS documentation section.
+      metadata:
+        started_at: '2025-12-04T05:51:52Z'
+        completed_at: '2025-12-04T05:52:59Z'
+  - sprintId: Sprint 40
+    title: Cleanup & Verification
+    focus: Test stabilization, Classifiable trait, context consolidation, E2E verification,
+      release prep
+    status: planning
+    startDate: '2025-12-04'
+    endDate: null
+    totalMissions: 5
+    completedMissions: 0
+    missions:
+    - id: B40.1
+      name: Test Stabilization
       status: Queued
-      notes: 'IMPORTANT: Read full mission details at cmos/missions/B39.5-token-architecture-mdx.yaml
-        before starting.'
+      notes: "\U0001F4CB FULL MISSION DETAILS: Read cmos/missions/B40.1-test-stabilization.yaml"
+      metadata:
+        description: Fix 12 failing tests to restore green CI
+    - id: B40.2
+      name: Classifiable Trait Story
+      status: Queued
+      notes: "\U0001F4CB FULL MISSION DETAILS: Read cmos/missions/B40.2-classifiable-trait-story.yaml"
+      metadata:
+        description: Create comprehensive Storybook story for Classifiable trait
+    - id: B40.3
+      name: Context Consolidation
+      status: Queued
+      notes: "\U0001F4CB FULL MISSION DETAILS: Read cmos/missions/B40.3-context-consolidation.yaml"
+      metadata:
+        description: Clean up context stories and remove duplicates
+    - id: B40.4
+      name: End-to-End Verification
+      status: Queued
+      notes: "\U0001F4CB FULL MISSION DETAILS: Read cmos/missions/B40.4-end-to-end-verification.yaml"
+      metadata:
+        description: Comprehensive verification of Storybook navigation restructure
+    - id: B40.5
+      name: Release Preparation
+      status: Queued
+      notes: "\U0001F4CB FULL MISSION DETAILS: Read cmos/missions/B40.5-release-prep.yaml"
+      metadata:
+        description: Update contexts, snapshots, changelog for Navigation Restructure
+          epic
+  - sprintId: Sprint 41
+    title: Trait Completion
+    focus: Taggable, Communicable, Preferenceable, Financial traits, Object stories,
+      merge to main
+    status: planning
+    startDate: '2025-12-04'
+    endDate: null
+    totalMissions: 5
+    completedMissions: 0
+    missions:
+    - id: B41.1
+      name: Taggable Trait Story
+      status: Queued
+      notes: "\U0001F4CB FULL MISSION DETAILS: Read cmos/missions/B41.1-taggable-trait-story.yaml"
+      metadata:
+        description: Create Storybook story for Taggable trait with tag governance
+          demos
+    - id: B41.2
+      name: Communicable Trait Story
+      status: Queued
+      notes: "\U0001F4CB FULL MISSION DETAILS: Read cmos/missions/B41.2-communicable-trait-story.yaml"
+      metadata:
+        description: Create Storybook story for multi-channel messaging and templates
+    - id: B41.3
+      name: Preferenceable Trait Story
+      status: Queued
+      notes: "\U0001F4CB FULL MISSION DETAILS: Read cmos/missions/B41.3-preferenceable-trait-story.yaml"
+      metadata:
+        description: Create Storybook story for user preferences and schema versioning
+    - id: B41.4
+      name: Financial Trait Stories
+      status: Queued
+      notes: "\U0001F4CB FULL MISSION DETAILS: Read cmos/missions/B41.4-financial-trait-stories.yaml"
+      metadata:
+        description: Create Payable and Metered trait stories for billing patterns
+    - id: B41.5
+      name: Object Stories & Final Polish
+      status: Queued
+      notes: "\U0001F4CB FULL MISSION DETAILS: Read cmos/missions/B41.5-object-stories-final-polish.yaml"
+      metadata:
+        description: Complete Plan, Transaction, Article, Media object stories and
+          merge to main
   missionDependencies:
   - from: B10.1
     to: B13.9

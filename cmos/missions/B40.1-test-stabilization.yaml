@@ -1,0 +1,149 @@
+id: B40.1
+title: Test Stabilization
+status: Queued
+sprint: Sprint 40
+created: 2025-12-04
+tags: [testing, stabilization, bug-fix, ci]
+
+objective: |
+  Fix the 12 failing tests to restore green CI and ensure reliable test suite
+  before release preparation.
+
+context: |
+  Current test status: 1883 passing, 12 failing (99.4% pass rate)
+
+  Failing test categories identified:
+  1. Viz component dimension tests (ForceGraph, Sankey, Sunburst, Treemap)
+  2. Button component styling tests
+  3. PageHeader component test
+  4. Schema contract test
+  5. Network flow performance test (scalability benchmark)
+
+  These failures block release confidence and may indicate real issues
+  or outdated test expectations.
+
+deliverables:
+  - path: tests/components/viz/ForceGraph.test.tsx
+    action: fix
+    details: |
+      FAILING TESTS:
+      - "renders with custom dimensions"
+      - "defaults to 800x600 dimensions"
+
+      INVESTIGATION:
+      1. Check if component API changed (width/height props)
+      2. Verify ResizeObserver mock is working correctly
+      3. Check if default dimensions changed in component
+
+      FIX APPROACH:
+      - Update test expectations if component behavior changed intentionally
+      - Fix component if dimensions are genuinely broken
+
+  - path: tests/components/viz/Sankey.test.tsx
+    action: fix
+    details: |
+      FAILING TESTS:
+      - "renders with custom dimensions"
+      - "defaults to 900x500 dimensions"
+
+      Same pattern as ForceGraph - likely same root cause.
+
+  - path: tests/components/viz/Sunburst.test.tsx
+    action: fix
+    details: |
+      FAILING TESTS:
+      - "renders with custom dimensions"
+      - "defaults to square aspect ratio"
+
+      Check aspectRatio handling and default sizing.
+
+  - path: tests/components/viz/Treemap.test.tsx
+    action: fix
+    details: |
+      FAILING TESTS:
+      - "renders with custom dimensions"
+
+      Same pattern - fix alongside other viz tests.
+
+  - path: tests/base/button.test.tsx
+    action: fix
+    details: |
+      FAILING TESTS:
+      - "applies intent and size classes for styling and focus visibility"
+      - "supports rendering as child and does not leak button attributes"
+
+      INVESTIGATION:
+      1. Check if Button API changed (intent/size prop names)
+      2. Verify class name generation matches expectations
+      3. Check asChild pattern implementation
+
+      FIX APPROACH:
+      - Update test selectors/expectations to match current API
+      - Ensure className composition is correct
+
+  - path: tests/components/page-header.test.tsx
+    action: fix
+    details: |
+      FAILING TEST:
+      - "renders text, badges, and actions with OODS primitives"
+
+      INVESTIGATION:
+      1. Check if PageHeader component structure changed
+      2. Verify test is querying correct elements
+      3. Check if OODS primitive imports changed
+
+  - path: tests/contracts/schema-types.contract.test.ts
+    action: fix
+    details: |
+      FAILING TEST:
+      - "exist for every schema file"
+
+      INVESTIGATION:
+      1. List all schema files and their corresponding types
+      2. Identify which schemas are missing type exports
+      3. Generate missing types or update test expectations
+
+      This is a contract test - if schemas exist without types,
+      we need to generate the types, not skip the test.
+
+  - path: tests/performance/network-flow-perf.test.ts
+    action: fix
+    details: |
+      FAILING TEST:
+      - "graph scales with node + edge count"
+      - Expected scale factor < 5, got 11.11
+
+      INVESTIGATION:
+      1. This is a performance regression - 2x nodes should not cause 11x slowdown
+      2. Check if test is flaky (run multiple times)
+      3. If consistent, investigate graph algorithm performance
+
+      OPTIONS:
+      - If flaky: increase tolerance or add retry logic
+      - If real regression: file issue for Sprint 41, adjust threshold for now
+      - If test is wrong: fix the benchmark methodology
+
+success_criteria:
+  - All 12 failing tests now pass
+  - No new test failures introduced
+  - CI would be green (simulated via pnpm test)
+  - Test changes documented in commit message
+
+validation:
+  - command: pnpm vitest run --reporter=verbose 2>&1 | grep -c "FAIL"
+    expected: "0"
+  - command: pnpm vitest run
+    expected: All tests pass
+
+dependencies: []
+
+notes: |
+  Priority order for fixing:
+  1. Schema contract test (may reveal missing exports)
+  2. Button tests (core component)
+  3. PageHeader test (UI component)
+  4. Viz dimension tests (likely same root cause)
+  5. Performance test (may need threshold adjustment)
+
+  If any fix requires significant refactoring, document in the
+  completion notes and consider splitting into separate mission.
