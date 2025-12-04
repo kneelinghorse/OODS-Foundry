@@ -18,9 +18,10 @@ describe('OODS.Button', () => {
       </Button>
     );
 
-    expect(markup).toContain('bg-rose-600');
-    expect(markup).toContain('h-12');
-    expect(markup).toContain('focus-visible');
+    expect(markup).toContain('class="cmp-button"');
+    expect(markup).toContain('data-tone="critical"');
+    expect(markup).toContain('data-size="lg"');
+    expect(markup).not.toContain('data-variant'); // solid is the default and should omit the attribute
   });
 
   it('supports rendering as child and does not leak button attributes', () => {
@@ -32,6 +33,8 @@ describe('OODS.Button', () => {
 
     expect(markup.startsWith('<a')).toBe(true);
     expect(markup).not.toContain('type="button"');
-    expect(markup).toContain('bg-emerald-600');
+    expect(markup).toContain('class="cmp-button"');
+    expect(markup).toContain('data-tone="success"');
+    expect(markup).toContain('data-size="md"');
   });
 });

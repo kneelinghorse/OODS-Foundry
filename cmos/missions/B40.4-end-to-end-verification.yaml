@@ -1,0 +1,154 @@
+id: B40.4
+title: End-to-End Verification
+status: Queued
+sprint: Sprint 40
+created: 2025-12-04
+tags: [verification, testing, qa, storybook]
+
+objective: |
+  Perform comprehensive end-to-end verification of the Storybook navigation
+  restructure, ensuring all sections are complete and properly organized.
+
+context: |
+  Sprints 36-39 restructured Storybook navigation from component-centric to
+  object-centric/trait-based architecture. This mission validates the result
+  against the original plan.
+
+  Reference: cmos/foundational-docs/Sprint-36-40-roadmap.md
+
+deliverables:
+  - path: cmos/reports/e2e-verification-sprint40.md
+    action: create
+    details: |
+      VERIFICATION CHECKLIST
+
+      Create a verification report documenting each section:
+
+      ## 1. Understanding OODS Section
+      Expected: 7 MDX docs in order
+      - [ ] 1-philosophy.mdx - Philosophy & value proposition
+      - [ ] 2-core-concepts.mdx - Objects, Traits, Contexts explained
+      - [ ] 3-trait-engine.mdx - Composition and registry
+      - [ ] 4-getting-started.mdx - Quick start guides
+      - [ ] 5-visualization-system.mdx - Viz system overview
+      - [ ] 6-accessibility-approach.mdx - A11y philosophy
+      - [ ] 7-token-architecture.mdx - Token cascade
+
+      ## 2. Objects Section
+      Expected: Object Explorer + all domain objects
+      - [ ] Object Explorer / Matrix View
+      - [ ] Object Explorer / Full Context Gallery
+      - [ ] Core Objects: User, Organization, Product
+      - [ ] Domain Objects: Invoice, Subscription, Usage, etc.
+
+      ## 3. Traits Section
+      Expected: All trait stories organized by category
+      Core:
+      - [ ] Addressable
+      - [ ] Authable
+      - [ ] Classifiable (B40.2)
+      - [ ] Statusable
+
+      Lifecycle:
+      - [ ] Stateful
+      - [ ] Timestampable
+      - [ ] Archivable
+      - [ ] Cancellable
+
+      Domain:
+      - [ ] Billable
+
+      ## 4. Contexts Section
+      - [ ] Context demos accessible (via Object Explorer or dedicated stories)
+      - [ ] Detail, List, Form, Timeline represented
+
+      ## 5. Visualization Section
+      - [ ] Chart components organized
+      - [ ] Pattern gallery accessible
+      - [ ] No duplicate echarts stories
+
+      ## 6. Primitives Section
+      - [ ] Organized by function (Feedback, Inputs, Navigation, etc.)
+      - [ ] Core components: Button, Badge, Toast, Banner, etc.
+
+      ## 7. Foundations Section
+      - [ ] Colors, Typography, Shadows, Borders, Motion
+      - [ ] Token Browser accessible
+      - [ ] Dark mode demonstration
+
+      ## 8. Domain Patterns Section
+      - [ ] SaaS Billing Flow
+      - [ ] Authorization patterns (if relocated)
+      - [ ] Communication patterns (if relocated)
+
+      ## 9. Proofs Section
+      - [ ] Accessibility proofs
+      - [ ] Performance proofs
+      - [ ] Brand/HC galleries
+
+      ## Issues Found
+      Document any issues discovered during verification.
+
+      ## Recommendations
+      List any improvements for future sprints.
+
+  - path: (manual-verification)
+    action: manual
+    details: |
+      MANUAL VERIFICATION STEPS
+
+      1. Start Storybook: pnpm storybook
+      2. Navigate through each top-level section
+      3. Verify stories load without errors
+      4. Check for console warnings
+      5. Verify interactive elements work
+      6. Test dark mode toggle
+      7. Test brand switcher (if applicable)
+      8. Check mobile/responsive behavior
+
+      Record any issues in the verification report.
+
+  - path: (a11y-spot-check)
+    action: verify
+    details: |
+      A11Y SPOT CHECK
+
+      Run axe on key stories:
+      ```bash
+      pnpm a11y:check
+      ```
+
+      Spot check keyboard navigation on:
+      - Object Explorer
+      - Trait story interactive elements
+      - Form components
+
+success_criteria:
+  - Verification report created with all checkboxes
+  - No critical issues blocking release
+  - All major sections have content
+  - Interactive elements functional
+  - A11y spot check passes
+
+validation:
+  - command: pnpm build-storybook
+    expected: Build succeeds without errors
+  - command: pnpm a11y:check 2>&1 | tail -5
+    expected: No critical violations
+  - file: cmos/reports/e2e-verification-sprint40.md
+    expected: File exists with completed checklist
+
+dependencies:
+  - B40.3  # Cleanup should be done first
+
+notes: |
+  This is a verification/documentation mission, not a fix-it mission.
+
+  If issues are found:
+  - Minor issues: Fix during this mission
+  - Major issues: Document and create Sprint 41 mission
+
+  The verification report becomes part of the release documentation
+  and can be referenced in release notes.
+
+  Time estimate: 1-2 hours of manual verification + documentation

@@ -72,7 +72,7 @@ describe('Treemap', () => {
       render(<Treemap data={nestedData} width={800} height={500} />);
 
       const chart = screen.getByTestId('treemap-chart');
-      expect(chart).toHaveStyle({ width: '800px', height: '500px' });
+      expect(chart).toHaveStyle({ width: '100%', maxWidth: '800px', height: '500px' });
     });
 
     it('renders with aria-label', async () => {

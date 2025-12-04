@@ -1,0 +1,233 @@
+id: B41.5
+title: Object Stories & Final Polish
+status: Queued
+sprint: Sprint 41
+created: 2025-12-04
+tags: [object-stories, polish, storybook, release]
+
+objective: |
+  Complete missing object stories, perform final polish, and prepare
+  for merge to main branch.
+
+context: |
+  The original roadmap (Sprint 38) planned object stories for:
+  - Plan, Transaction, Article, Media, Relationship
+
+  These demonstrate how traits compose into complete domain objects.
+
+  This mission also covers any remaining polish and the final merge.
+
+deliverables:
+  - path: stories/objects/domain/Plan.stories.tsx
+    action: create
+    details: |
+      PLAN OBJECT STORY
+
+      Plan represents a subscription/pricing plan with:
+      - Traits: Labelled, Stateful, Timestampable, Priceable
+
+      Content:
+      - Plan card display (name, price, features)
+      - Plan comparison grid
+      - Plan lifecycle (draft → active → deprecated → archived)
+      - Pricing tiers visualization
+      - Feature matrix
+
+      Title: 'Objects/Domain Objects/Plan'
+
+  - path: stories/objects/domain/Transaction.stories.tsx
+    action: create
+    details: |
+      TRANSACTION OBJECT STORY
+
+      Transaction represents a financial transaction with:
+      - Traits: Timestampable, Payable, Refundable, Stateful
+
+      Content:
+      - Transaction detail view (amount, status, parties)
+      - Transaction timeline (initiated → completed/failed)
+      - Refund flow demonstration
+      - Receipt generation
+      - Audit trail
+
+      Title: 'Objects/Domain Objects/Transaction'
+
+  - path: stories/objects/domain/Article.stories.tsx
+    action: create
+    details: |
+      ARTICLE OBJECT STORY
+
+      Article represents content with:
+      - Traits: Labelled, Stateful, Ownerable, Classifiable, Timestampable
+
+      Content:
+      - Article in different contexts (list, detail, card)
+      - Publishing workflow (draft → review → published → archived)
+      - Category/tag assignment
+      - Author attribution
+      - Version history
+
+      Title: 'Objects/Domain Objects/Article'
+
+  - path: stories/objects/domain/Media.stories.tsx
+    action: create
+    details: |
+      MEDIA OBJECT STORY
+
+      Media represents files/assets with:
+      - Traits: Labelled, Ownerable, Timestampable, Classifiable
+
+      Content:
+      - Media gallery view
+      - Media detail with metadata
+      - Upload flow
+      - Format/type badges
+      - Usage tracking
+
+      Title: 'Objects/Domain Objects/Media'
+
+  - path: (polish-sweep)
+    action: polish
+    details: |
+      POLISH SWEEP
+
+      Final checks before merge:
+
+      1. CONSOLE WARNINGS
+         - Start Storybook, check browser console
+         - Fix any React key warnings
+         - Fix any prop type warnings
+         - Fix any accessibility warnings
+
+      2. BROKEN IMPORTS
+         - Check for any 404s in network tab
+         - Verify all component imports resolve
+
+      3. STORY METADATA
+         - Ensure all stories have proper titles
+         - Verify chromatic parameters where appropriate
+         - Check layout parameters
+
+      4. VISUAL CONSISTENCY
+         - Spot check trait stories for style consistency
+         - Verify dark mode works on all new stories
+         - Check brand switcher if applicable
+
+  - path: (final-test-run)
+    action: verify
+    details: |
+      FINAL TEST RUN
+
+      ```bash
+      # Full test suite
+      pnpm vitest run
+
+      # Type check
+      pnpm tsc --noEmit
+
+      # Storybook build
+      pnpm build-storybook
+
+      # A11y check
+      pnpm a11y:check
+      ```
+
+      All must pass before merge.
+
+  - path: (merge-to-main)
+    action: git
+    details: |
+      MERGE TO MAIN
+
+      1. Ensure all Sprint 41 work committed:
+         ```bash
+         git add -A
+         git commit -m "feat(sprint41): Complete trait stories and object stories
+
+         Trait stories added:
+         - Taggable (tag management with governance)
+         - Communicable (multi-channel messaging)
+         - Preferenceable (user preferences)
+         - Payable (payment processing)
+         - Metered (usage-based billing)
+
+         Object stories added:
+         - Plan, Transaction, Article, Media
+
+         Sprint 41 completes trait story coverage.
+
+         Co-Authored-By: Claude <noreply@anthropic.com>"
+         ```
+
+      2. Rebase if needed:
+         ```bash
+         git fetch origin main
+         git rebase origin/main
+         ```
+
+      3. Create PR or direct merge:
+         ```bash
+         # If using PRs:
+         gh pr create --title "Sprint 41: Trait & Object Story Completion" \
+           --body "## Summary
+         - Added 5 trait stories
+         - Added 4 object stories
+         - Final polish and test fixes
+
+         ## Test Plan
+         - [x] pnpm vitest run passes
+         - [x] pnpm build-storybook succeeds
+         - [x] Manual Storybook review complete"
+
+         # Or direct merge:
+         git checkout main
+         git merge sprint37/verification-and-object-matrix
+         git push origin main
+         ```
+
+      4. Tag release:
+         ```bash
+         git tag -a v1.2.0-trait-complete -m "Trait story coverage complete"
+         git push origin --tags
+         ```
+
+success_criteria:
+  - 4 object stories created
+  - All console warnings resolved
+  - Full test suite passes
+  - Storybook builds successfully
+  - Branch merged to main
+  - Release tagged
+
+validation:
+  - command: pnpm vitest run 2>&1 | tail -3
+    expected: All tests pass
+  - command: pnpm build-storybook 2>&1 | tail -3
+    expected: Build succeeds
+  - command: git log main --oneline -1
+    expected: Shows merge commit
+
+dependencies:
+  - B41.4  # Financial traits should be done first
+
+notes: |
+  This is the final mission of the trait story epic.
+
+  After this sprint, trait story coverage will be:
+  - Core: Addressable, Authable, Classifiable, Statusable, Preferenceable
+  - Lifecycle: Stateful, Timestampable, Archivable, Cancellable
+  - Behavioral: Taggable
+  - Domain: Billable, Payable, Metered
+  - Communication: Communicable
+
+  Remaining traits for future sprints:
+  - Labelled (content)
+  - Colorized (visual)
+  - Ownerable (structural)
+  - Priceable (financial - partially covered by Billable)
+
+  Object stories bring the count to:
+  - User, Organization, Product (existing)
+  - Invoice, Subscription, Usage (existing)
+  - Plan, Transaction, Article, Media (new)
+  - Relationship (deferred - may be covered elsewhere)
