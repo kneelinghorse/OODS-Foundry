@@ -1,14 +1,23 @@
 trait:
   name: Taggable
-  version: 1.0.0
+  version: 2.0.0
   description: |
-    Adds configurable tag management with guardrails for custom authoring and taxonomy alignment.
+    Adds configurable tag management with guardrails for custom authoring, taxonomy alignment,
+    and tag governance. Taggable supports both open tagging (user-defined) and controlled
+    vocabularies (allow-list), with optional moderation workflows for tag quality control.
+
+    Tags are first-class metadata in OODS — they drive discovery, filtering, and cross-object
+    relationships. The trait provides per-tag governance metadata (creator, creation date,
+    usage count) for taxonomy health monitoring, and optional synonym resolution to prevent
+    tag fragmentation (e.g., "javascript" and "js" resolve to the same canonical tag).
   category: behavioral
   tags:
     - tagging
     - classification
     - metadata
     - discovery
+    - governance
+    - taxonomy
 
 parameters:
   - name: maxTags
@@ -19,26 +28,84 @@ parameters:
     validation:
       minimum: 1
       maximum: 64
+
   - name: allowCustomTags
     type: boolean
     required: false
-    description: Whether editors may author tags outside of the approved allow list.
+    description: |
+      Whether editors may author tags outside of the approved allow list. When false,
+      only tags from allowedTags are permitted. When true with allowedTags present,
+      the allow list serves as suggestions rather than a constraint.
     default: true
+
   - name: allowedTags
     type: string[]
     required: false
-    description: Curated allow list of permitted tags when custom creation is disabled.
+    description: |
+      Curated allow list of permitted tags. Behavior depends on allowCustomTags:
+      - allowCustomTags=false: Only these tags are permitted (strict mode).
+      - allowCustomTags=true: These tags appear as suggestions in TagInput autocomplete.
     validation:
       minItems: 1
       uniqueItems: true
       items:
         minLength: 1
         maxLength: 64
+
   - name: caseSensitive
     type: boolean
     required: false
     description: Whether tag comparisons should treat casing as significant.
     default: false
+
+  - name: tagMinLength
+    type: number
+    required: false
+    description: |
+      Minimum character length for a tag value. Prevents single-character or empty tags
+      that add noise to the taxonomy. Applied to both custom and allow-list tags.
+    default: 2
+    validation:
+      minimum: 1
+      maximum: 32
+
+  - name: tagMaxLength
+    type: number
+    required: false
+    description: |
+      Maximum character length for a tag value. Prevents excessively long tags that
+      break UI layouts and reduce readability.
+    default: 64
+    validation:
+      minimum: 1
+      maximum: 256
+
+  - name: allowTagModeration
+    type: boolean
+    required: false
+    description: |
+      When true, newly created custom tags enter a "pending" state and require approval
+      from a moderator before becoming visible to other users. Tags from the allowedTags
+      list are pre-approved and skip moderation. Useful for public-facing taxonomies where
+      tag quality matters.
+    default: false
+
+  - name: synonymResolution
+    type: string
+    required: false
+    description: |
+      Controls how synonym/alias tags are handled:
+      - none: No synonym resolution. Tags are stored as-is.
+      - suggest: When a tag matches a known synonym, the UI suggests the canonical form
+        but allows the original.
+      - auto: Tags matching known synonyms are automatically replaced with the canonical
+        form on save. Requires a synonym map in tag_metadata.
+    default: none
+    validation:
+      enum:
+        - none
+        - suggest
+        - auto
 
 schema:
   tags:
@@ -48,6 +115,7 @@ schema:
     default: []
     validation:
       maxItems: 64
+
   tag_count:
     type: number
     required: true
@@ -55,6 +123,22 @@ schema:
     default: 0
     validation:
       minimum: 0
+
+  tag_metadata:
+    type: object[]
+    required: false
+    description: |
+      Per-tag governance metadata. Each entry corresponds to a tag in the tags array and
+      tracks provenance and usage for taxonomy health monitoring.
+
+      Entry structure:
+        - tag: string (the tag value, matches entry in tags array)
+        - created_at: ISO 8601 datetime
+        - created_by: string (user ID or "system" for allow-list tags)
+        - usage_count: number (how many entities use this tag, computed)
+        - moderation_status: "approved" | "pending" | "rejected" (when allowTagModeration is true)
+        - canonical_form: string (resolved synonym target, when synonymResolution is enabled)
+    default: []
 
 semantics:
   tags:
@@ -71,6 +155,12 @@ semantics:
     ui_hints:
       component: MetricBadge
       format: integer
+  tag_metadata:
+    semantic_type: taxonomy.tag.governance
+    token_mapping: computed
+    ui_hints:
+      component: TagGovernancePanel
+      description: Admin panel for reviewing tag health, moderation queue, and synonym resolution.
 
 view_extensions:
   list:
@@ -87,6 +177,8 @@ view_extensions:
         allowCustomParameter: allowCustomTags
         allowListParameter: allowedTags
         maxTagsParameter: maxTags
+        moderationParameter: allowTagModeration
+        synonymParameter: synonymResolution
   form:
     - component: TagInput
       position: top
@@ -95,6 +187,9 @@ view_extensions:
         maxTagsParameter: maxTags
         allowCustomParameter: allowCustomTags
         allowListParameter: allowedTags
+        minLengthParameter: tagMinLength
+        maxLengthParameter: tagMaxLength
+        synonymParameter: synonymResolution
   card:
     - component: TagSummary
       position: after
@@ -105,26 +200,46 @@ view_extensions:
 tokens:
   taxonomy.tag.chip.bg: "var(--surface-tag-bg)"
   taxonomy.tag.chip.text: "var(--surface-tag-text)"
+  taxonomy.tag.chip.border: "var(--sys-border-default)"
+  taxonomy.tag.chip.hover.bg: "var(--sys-surface-hover)"
+  taxonomy.tag.chip.pending.bg: "var(--sys-status-warning-surface)"
+  taxonomy.tag.chip.pending.text: "var(--sys-status-warning-text)"
   taxonomy.tag.summary.count: "var(--text-subtle)"
+  taxonomy.tag.input.border: "var(--sys-border-default)"
+  taxonomy.tag.input.focus.border: "var(--sys-border-focus)"
 
 dependencies: []
 
 metadata:
   created: "2025-10-12"
+  updated: "2026-02-28"
   owners:
     - design@oods.systems
     - taxonomy@oods.systems
   maturity: stable
   accessibility:
-    keyboard: "n/a"
-    screenreader: "Tag list announced with counts."
+    keyboard: |
+      TagInput supports full keyboard navigation:
+      - Type to filter/create tags, Enter to confirm
+      - Backspace to remove the last tag when input is empty
+      - Arrow keys to navigate autocomplete suggestions
+      - Escape to dismiss the autocomplete dropdown
+      - Tab to move focus out of the tag input
+      TagPills in list view are not interactive (display only).
+    screenreader: |
+      Tag list is announced as a group with count (e.g., "Tags: 3 items").
+      Each tag chip is announced individually. When moderation is enabled,
+      pending tags are announced with their moderation status.
+      TagInput announces available suggestion count on keystroke.
   regionsUsed:
     - list
     - detail
-    - forms
+    - form
     - card
   examples:
     - Knowledge Article
     - Incident
+    - Product
+    - Media
   references:
-    - "Trait Engine Spec v0.1 §2"
+    - "Trait Engine Spec v0.1 section 2"

@@ -1,6 +1,6 @@
 trait:
   name: InteractionTooltip
-  version: 0.1.0
+  version: 0.2.0
   description: >-
     Shows contextual details-on-demand when focusing or hovering a specific datum.
   category: viz.interaction
@@ -89,3 +89,40 @@ state_machine:
     - from: visible
       to: hidden
       trigger: dismiss
+
+tokens:
+  viz.interaction.tooltip.bg: "var(--cmp-viz-tooltip-bg)"
+  viz.interaction.tooltip.text: "var(--cmp-viz-tooltip-text)"
+  viz.interaction.tooltip.border: "var(--cmp-viz-tooltip-border)"
+  viz.interaction.tooltip.shadow: "var(--cmp-viz-tooltip-shadow)"
+
+dependencies: []
+
+metadata:
+  created: "2025-11-15"
+  updated: "2026-02-28"
+  owners:
+    - viz@oods.systems
+    - accessibility@oods.systems
+  maturity: alpha
+  accessibility:
+    keyboard: |
+      Tooltip is triggered on focus (not just hover) to support keyboard-only users.
+      Escape dismisses the tooltip. Tooltip content is not focusable — it is read-only
+      supplementary information announced by the screen reader.
+    screenreader: |
+      Tooltip content is exposed via aria-describedby on the focused datum.
+      Screen readers announce the tooltip fields in declared order when the
+      datum receives focus.
+    focusManagement: |
+      Focus remains on the data mark, not the tooltip. The tooltip is a non-modal
+      overlay that follows the focused element. Dismissal returns no focus change.
+  regionsUsed:
+    - detail
+    - form
+  examples:
+    - RevenueByRegionTooltip
+    - UserActivityHoverDetail
+  references:
+    - "WCAG 2.1 SC 1.4.13 — Content on Hover or Focus"
+    - cmos/research/data-viz-oods/RDS.7_synthesis_Mission Completion Report- Trait-Driven Visualization System Specification (v0.1).md
