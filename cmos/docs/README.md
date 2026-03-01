@@ -8,8 +8,9 @@
 
 **New to CMOS?** Start here:
 1. 📘 [Getting Started](./getting-started.md) - Installation and setup
-2. 📖 [User Manual](./user-manual.md) - Complete guide from foundation to operations
-3. 💡 [Workflow Examples](./workflow-examples.md) - Practical examples of sessions and missions
+2. 🔌 [MCP Reference](./mcp-reference.md) - **MCP tools for AI agents** (recommended)
+3. 📖 [User Manual](./user-manual.md) - Complete guide from foundation to operations
+4. 💡 [Workflow Examples](./workflow-examples.md) - Practical examples of sessions and missions
 
 ---
 
@@ -20,9 +21,17 @@
 - **[agents.md Guide](./agents-md-guide.md)** - How to write effective AI instructions
 - **[Operations Guide](./operations-guide.md)** - Operational procedures and best practices
 
+### MCP Interface (Recommended for AI Agents)
+- **[MCP Reference](./mcp-reference.md)** - Complete MCP tool documentation with examples
+  - Sprint management: `cmos_sprint_add`, `cmos_sprint_list`, `cmos_sprint_show`, `cmos_sprint_update`
+  - Mission lifecycle: `cmos_mission_add`, `cmos_mission_start`, `cmos_mission_complete`, `cmos_mission_depends`
+  - Sessions: `cmos_session_start`, `cmos_session_capture`, `cmos_session_complete`
+  - Context & Decisions: `cmos_context_view`, `cmos_context_snapshot`, `cmos_decisions_search`
+  - Onboarding: `cmos_agent_onboard` - Quick context for agent cold-start
+
 ### Daily Usage
 - **[User Manual](./user-manual.md)** - Complete reference: phases, commands, workflows
-- **[Workflow Examples](./workflow-examples.md)** - Real-world examples of sessions + missions
+- **[Workflow Examples](./workflow-examples.md)** - Real-world examples of sessions + missions (MCP + CLI)
 - **[Session Management Guide](./session-management-guide.md)** - Planning, onboarding, reviews
 - **[Build Session Prompt](./build-session-prompt.md)** - Template for starting build sessions
 
@@ -51,9 +60,10 @@
 3. Check [Operations Guide - Mission Lifecycle](./operations-guide.md#mission-lifecycle) for details
 
 ### "I need to onboard a new agent/teammate"
-1. Run `./cmos/cli.py session onboard` for quick context
-2. Follow [Workflow Examples #4](./workflow-examples.md#example-4-onboarding-a-new-agent)
-3. See [Session Management Guide - Onboarding](./session-management-guide.md#agent-onboarding)
+1. **MCP**: Call `cmos_agent_onboard()` for quick context (recommended)
+2. **CLI**: Run `./cmos/cli.py session onboard`
+3. Follow [Workflow Examples #4](./workflow-examples.md#example-4-onboarding-a-new-agent)
+4. See [Session Management Guide - Onboarding](./session-management-guide.md#agent-onboarding)
 
 ### "I'm completing a sprint"
 1. Follow [User Manual Phase 4](./user-manual.md#phase-4-sprint-closure)
@@ -79,17 +89,20 @@ cmos/docs/
 ├── README.md (you are here)
 │
 ├── 📘 Getting Started
-│   ├── getting-started.md          # Day 0 setup
+│   ├── getting-started.md          # Day 0 setup (includes MCP setup)
 │   └── agents-md-guide.md          # Writing AI instructions
 │
-├── 📖 Usage Guides  
+├── 🔌 MCP Reference (NEW)
+│   └── mcp-reference.md            # Complete MCP tool documentation
+│
+├── 📖 Usage Guides
 │   ├── user-manual.md              # Complete reference guide
-│   ├── workflow-examples.md        # Practical examples
+│   ├── workflow-examples.md        # Practical examples (MCP + CLI)
 │   ├── session-management-guide.md # Sessions: planning, onboarding, reviews
 │   └── build-session-prompt.md     # Build session template
 │
 ├── 🔧 Operations
-│   └── operations-guide.md         # Procedures and best practices
+│   └── operations-guide.md         # Procedures and best practices (MCP + CLI)
 │
 ├── 📚 Technical Reference
 │   ├── sqlite-schema-reference.md  # Database structure
@@ -135,6 +148,27 @@ SQLite as source of truth. Export files on-demand for readability.
 
 ## Command Quick Reference
 
+### MCP Tools (Recommended for AI Agents)
+
+```
+cmos_agent_onboard()                              # Quick context
+cmos_db_health()                                  # Check database
+cmos_mission_status()                             # View work queue
+cmos_sprint_add(sprintId, title)                  # Create sprint
+cmos_mission_add(missionId, name, sprintId)       # Create mission
+cmos_mission_start(missionId)                     # Start mission
+cmos_mission_complete(missionId, notes)           # Complete mission
+cmos_session_start(type, title)                   # Start session
+cmos_session_capture(category, content)           # Capture insight
+cmos_session_complete(summary)                    # Complete session
+cmos_context_snapshot(contextType, source)        # Take snapshot
+cmos_decisions_search(query)                      # Search decisions
+```
+
+See [MCP Reference](./mcp-reference.md) for complete documentation.
+
+### CLI Commands (For Human Operators)
+
 ```bash
 # Database
 ./cmos/cli.py db show current        # View current mission
@@ -147,11 +181,10 @@ SQLite as source of truth. Export files on-demand for readability.
 ./cmos/cli.py session complete --summary "<summary>"
 ./cmos/cli.py session onboard        # Quick context report
 
-# Missions (via Python runtime)
-from context.mission_runtime import next_mission, start, complete
-candidate = next_mission()
-start(mission_id, agent="...", summary="...")
-complete(mission_id, agent="...", summary="...", notes="...")
+# Missions
+./cmos/cli.py mission add <id> "<name>" --sprint "<sprint>"
+./cmos/cli.py mission start <id>
+./cmos/cli.py mission complete <id> --notes "<notes>"
 
 # Context
 ./cmos/cli.py context snapshot master --source "<milestone>"
@@ -188,7 +221,7 @@ When updating CMOS documentation:
 
 ---
 
-**Last Updated**: 2025-11-13  
-**CMOS Version**: 2.0 (SQLite-first with session management)  
-**Status**: Complete documentation set
+**Last Updated**: 2025-12-10
+**CMOS Version**: 2.1 (MCP-enabled)
+**Status**: Complete documentation set with MCP reference
 

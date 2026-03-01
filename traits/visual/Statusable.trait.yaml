@@ -1,0 +1,259 @@
+trait:
+  name: Statusable
+  version: 1.0.0
+  description: |
+    Semantic status presentation layer that maps business statuses to visual tones,
+    design tokens, and badge/banner rendering. Statusable owns the status registry
+    pattern: a domain-scoped lookup table that translates raw status strings into
+    consistent visual output (tone, label, icon, token sets).
+
+    DISTINCT from Stateful — Stateful governs state machine transitions and guards;
+    Statusable governs how status LOOKS. Statusable is the bridge between data-layer
+    state and the component layer (Badge, Banner, StatusBadge).
+
+    Core concepts:
+    - Status Registry: Map<domain, Map<status, StatusPresentation>>
+    - Tone System: Six semantic tones (neutral, info, accent, success, warning, critical)
+    - Token Resolution: --cmp-status-{tone}-{surface|border|text} CSS variables
+    - Domain Scoping: Each domain (subscription, invoice, ticket, etc.) has its own status map
+    - Emphasis Variants: badge.subtle / badge.solid, banner.subtle / banner.solid
+  category: visual
+  tags:
+    - status
+    - presentation
+    - registry
+    - badge
+    - banner
+    - tone
+    - semantic
+    - saas
+
+parameters:
+  - name: domains
+    type: string[]
+    required: true
+    description: |
+      Domain identifiers whose statuses this object participates in.
+      Each domain resolves to a scoped status map in the registry
+      (e.g., "subscription", "invoice", "ticket", "user").
+    default:
+      - subscription
+  - name: toneAliases
+    type: Record<string, StatusTone>
+    required: false
+    description: |
+      Custom alias map for inferring tones from token path segments.
+      Merged with built-in aliases (info, positive→success, danger→critical, etc.).
+      Keys are token path segments; values are canonical StatusTone values.
+    default: {}
+  - name: defaultTone
+    type: StatusTone
+    required: false
+    description: |
+      Fallback tone applied when a status is not found in the registry
+      or when tone inference from token paths yields no match.
+    default: neutral
+    validation:
+      enum:
+        - neutral
+        - info
+        - accent
+        - success
+        - warning
+        - critical
+
+schema:
+  status:
+    type: string
+    required: true
+    description: |
+      Raw business status string (e.g., "active", "delinquent", "past_due").
+      Resolved against the domain's status map to derive presentation data.
+  domain:
+    type: StatusDomain
+    required: true
+    description: |
+      Domain scope for registry lookup. Determines which status map is consulted
+      (e.g., "subscription" statuses differ from "invoice" statuses).
+    validation:
+      enumFromParameter: domains
+  tone:
+    type: StatusTone
+    required: false
+    description: |
+      Semantic tone derived from the registry or inferred from token paths.
+      One of: neutral, info, accent, success, warning, critical.
+      Falls back to the defaultTone parameter when unresolvable.
+    validation:
+      enum:
+        - neutral
+        - info
+        - accent
+        - success
+        - warning
+        - critical
+  badge_tokens:
+    type: StatusTokenVariants
+    required: false
+    description: |
+      Resolved badge token sets with subtle and solid emphasis variants.
+      Each variant contains { background, border, foreground } CSS variable references.
+      Structure: { subtle: StatusTokenSet, solid: StatusTokenSet }
+  banner_tokens:
+    type: StatusTokenVariants
+    required: false
+    description: |
+      Resolved banner token sets with subtle and solid emphasis variants.
+      Subtle banners use domain-specific tokens when available; solid banners
+      use the tone-based component token set.
+      Structure: { subtle: StatusTokenSet, solid: StatusTokenSet }
+
+semantics:
+  status:
+    semantic_type: status.presentation.status
+    token_mapping: tokenMap(status.registry.*)
+    ui_hints:
+      component: StatusBadge
+      registryLookup: getStatusPresentation(domain, status)
+  domain:
+    semantic_type: status.presentation.domain
+    token_mapping: tokenMap(status.domains.*)
+    ui_hints:
+      component: DomainSelector
+      scopedTo: domains
+  tone:
+    semantic_type: status.presentation.tone
+    token_mapping: tokenMap(status.tone.*)
+    ui_hints:
+      component: ToneBadge
+      toneValues:
+        - neutral
+        - info
+        - accent
+        - success
+        - warning
+        - critical
+  badge_tokens:
+    semantic_type: status.presentation.badge
+    token_mapping: tokenMap(cmp.status.{tone}.*)
+    ui_hints:
+      component: Badge
+      emphasisVariants:
+        - subtle
+        - solid
+  banner_tokens:
+    semantic_type: status.presentation.banner
+    token_mapping: tokenMap(cmp.status.{tone}.*)
+    ui_hints:
+      component: Banner
+      emphasisVariants:
+        - subtle
+        - solid
+
+view_extensions:
+  list:
+    - component: Badge
+      position: after
+      props:
+        statusField: status
+        domainField: domain
+        emphasis: subtle
+        showIcon: true
+  detail:
+    - component: StatusBadge
+      position: main
+      priority: 80
+      props:
+        statusField: status
+        domainField: domain
+        emphasis: subtle
+        showIcon: true
+    - component: Banner
+      position: top
+      priority: 90
+      props:
+        statusField: status
+        domainField: domain
+        emphasis: subtle
+        showIcon: true
+      conditions:
+        tones:
+          - warning
+          - critical
+  form:
+    - component: StatusBadge
+      position: top
+      props:
+        statusField: status
+        domainField: domain
+        emphasis: subtle
+        readOnly: true
+  timeline:
+    - component: StatusBadge
+      props:
+        statusField: status
+        domainField: domain
+        emphasis: subtle
+        showIcon: true
+        compact: true
+
+tokens:
+  # Badge tone tokens — pattern: --cmp-status-{tone}-{surface|border|text}
+  cmp.status.neutral.surface: "var(--sys-surface-neutral)"
+  cmp.status.neutral.border: "var(--sys-border-neutral)"
+  cmp.status.neutral.text: "var(--sys-text-neutral)"
+  cmp.status.info.surface: "var(--sys-surface-info)"
+  cmp.status.info.border: "var(--sys-border-info)"
+  cmp.status.info.text: "var(--sys-text-info)"
+  cmp.status.accent.surface: "var(--sys-surface-accent)"
+  cmp.status.accent.border: "var(--sys-border-accent)"
+  cmp.status.accent.text: "var(--sys-text-accent)"
+  cmp.status.success.surface: "var(--sys-surface-success)"
+  cmp.status.success.border: "var(--sys-border-success)"
+  cmp.status.success.text: "var(--sys-text-success)"
+  cmp.status.warning.surface: "var(--sys-surface-warning)"
+  cmp.status.warning.border: "var(--sys-border-warning)"
+  cmp.status.warning.text: "var(--sys-text-warning)"
+  cmp.status.critical.surface: "var(--sys-surface-critical)"
+  cmp.status.critical.border: "var(--sys-border-critical)"
+  cmp.status.critical.text: "var(--sys-text-critical)"
+  # Banner fallback tokens
+  cmp.banner.background: "var(--sys-surface-raised)"
+  cmp.banner.border: "var(--sys-border-default)"
+  cmp.banner.text: "var(--sys-text-default)"
+
+dependencies:
+  - trait: Stateful
+    required: false
+    description: |
+      Statusable can work standalone with static status strings.
+      When composed with Stateful, status values are driven by the
+      state machine and transition events flow through state_history.
+
+metadata:
+  created: "2026-02-28"
+  owners:
+    - design@oods.systems
+    - engineering@oods.systems
+  maturity: experimental
+  accessibility:
+    keyboard: Badge and Banner elements are not interactive; no keyboard handling required.
+    screenreader: |
+      StatusBadge announces status label and tone as a live region.
+      Banner uses role="status" with aria-live="polite" for critical/warning tones.
+  regionsUsed:
+    - list
+    - detail
+    - form
+    - timeline
+  examples:
+    - Subscription
+    - Invoice
+    - Ticket
+    - User
+  references:
+    - "src/components/statusables/statusRegistry.ts — StatusPresentation, StatusTone, tone inference, domain maps"
+    - "stories/traits/Statusable.stories.tsx — 7 sub-stories across 5 domains"
+    - "tokens/maps/saas-billing.status-map.json — domain status token map consumed by registry"
+    - "src/traits/Statusable/types.ts — StatusableViewData, StatusTransitionEvent interfaces"
+    - "src/traits/Statusable/utils.ts — formatStatus, resolveDisplayName utilities"

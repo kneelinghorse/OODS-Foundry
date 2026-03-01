@@ -13,25 +13,45 @@ CMOS supports two complementary workflows:
 
 This guide shows how to combine both for maximum productivity.
 
+**Interface Options:**
+- **MCP** (Recommended for AI agents) - Direct database access, structured responses
+- **CLI** (For human operators) - Command-line interface
+- **Python API** (For automation) - Programmatic access
+
+Examples below show both MCP and CLI approaches.
+
 ---
 
 ## Example 1: Starting a New Project
 
 ### Step 1: Foundation Planning Session
 
-```bash
-# Start a planning session to design the first sprint
-./cmos/cli.py session start --type planning --title "Sprint 01 Planning" --sprint "Sprint 01"
+**MCP Approach (Recommended for AI Agents):**
+```
+# Start a planning session
+cmos_session_start(type="planning", title="Sprint 01 Planning", sprintId="sprint-01")
 
-# Capture decisions during the planning discussion
+# Capture decisions during planning
+cmos_session_capture(category="decision", content="Use PostgreSQL for data persistence")
+cmos_session_capture(category="decision", content="FastAPI for REST API framework")
+cmos_session_capture(category="constraint", content="Must deploy on AWS within 2 weeks")
+cmos_session_capture(category="next-step", content="Define database schema")
+cmos_session_capture(category="next-step", content="Set up CI/CD pipeline")
+cmos_session_capture(category="next-step", content="Implement authentication")
+
+# Complete the session
+cmos_session_complete(summary="Sprint 01 scoped: 8 missions covering infrastructure and core API")
+```
+
+**CLI Approach:**
+```bash
+./cmos/cli.py session start --type planning --title "Sprint 01 Planning" --sprint "Sprint 01"
 ./cmos/cli.py session capture decision "Use PostgreSQL for data persistence"
 ./cmos/cli.py session capture decision "FastAPI for REST API framework"
 ./cmos/cli.py session capture constraint "Must deploy on AWS within 2 weeks"
 ./cmos/cli.py session capture next-step "Define database schema"
 ./cmos/cli.py session capture next-step "Set up CI/CD pipeline"
 ./cmos/cli.py session capture next-step "Implement authentication"
-
-# Complete the session with summary
 ./cmos/cli.py session complete --summary "Sprint 01 scoped: 8 missions covering infrastructure and core API"
 ```
 
@@ -42,32 +62,57 @@ This guide shows how to combine both for maximum productivity.
 
 ### Step 2: Convert Planning to Missions
 
+**MCP Approach:**
+```
+# First, create the sprint
+cmos_sprint_add(sprintId="sprint-01", title="Sprint 01 - Infrastructure", focus="Core infrastructure and API foundation")
+
+# Add missions
+cmos_mission_add(missionId="B1.1", name="Database Schema Design", sprintId="sprint-01", objective="Design and implement PostgreSQL schema")
+cmos_mission_add(missionId="B1.2", name="CI/CD Pipeline Setup", sprintId="sprint-01", objective="Configure GitHub Actions for deployment")
+cmos_mission_add(missionId="B1.3", name="User Authentication", sprintId="sprint-01", objective="Implement JWT-based auth with FastAPI")
+
+# Define dependencies
+cmos_mission_depends(fromId="B1.3", toId="B1.1", type="Requires")
+
+# Verify
+cmos_sprint_show(sprintId="sprint-01")
+```
+
+**CLI Approach:**
 ```bash
-# Add missions based on the planning session
 ./cmos/cli.py mission add B1.1 "Database Schema Design" --sprint "Sprint 01"
 ./cmos/cli.py mission add B1.2 "CI/CD Pipeline Setup" --sprint "Sprint 01"
 ./cmos/cli.py mission add B1.3 "User Authentication" --sprint "Sprint 01"
-
-# Define dependencies
 ./cmos/cli.py mission depends B1.1 B1.3 --type "Blocks"
-
-# Verify backlog
 ./cmos/cli.py db show backlog
 ```
 
 ### Step 3: Execute Build Session
 
-```bash
-# Start with build session prompt (see cmos/docs/build-session-prompt.md)
-# AI agent will loop through missions using mission_runtime helpers
+**MCP Approach:**
+```
+# Check work queue
+cmos_mission_status()
+
+# Start first mission
+cmos_mission_start(missionId="B1.1")
+
+# ... do work ...
+
+# Complete mission
+cmos_mission_complete(missionId="B1.1", notes="Schema implemented with user, session, and audit tables")
+
+# Next mission auto-available
+cmos_mission_status()
 ```
 
 **In the build session, the agent:**
-1. Calls `next_mission()` to get B1.1
-2. Calls `start()` to mark it In Progress
-3. Implements the database schema
-4. Calls `complete()` with notes
-5. Moves to B1.2 automatically
+1. Calls `cmos_mission_status()` to see the queue
+2. Calls `cmos_mission_start(missionId)` to mark it In Progress
+3. Implements the feature
+4. Calls `cmos_mission_complete(missionId, notes)` with notes
+5. Moves to next mission automatically
 
 ---
 
@@ -171,29 +216,45 @@ python cmos/scripts/seed_sqlite.py
 
 ### Step 1: Quick Onboarding
 
+**MCP Approach (Recommended):**
+```
+# Get comprehensive context in one call
+cmos_agent_onboard()
+```
+
+Returns:
+- Project identity and current sprint
+- Active/blocked missions
+- Recent decisions
+- Suggested next actions
+
+**CLI Approach:**
 ```bash
-# Get comprehensive context report
 ./cmos/cli.py session onboard
 ```
 
-**Output shows:**
-- Latest master context decisions
-- Recent 5 sessions with summaries
-- Active/blocked missions
-- Recent strategic decisions
-
 ### Step 2: Start Onboarding Session
 
-```bash
-# Start formal onboarding for specific feature
-./cmos/cli.py session start --type onboarding --title "Onboarding for search feature"
+**MCP Approach:**
+```
+cmos_session_start(type="onboarding", title="Onboarding for search feature")
 
-# Capture context during handoff
+cmos_session_capture(category="context", content="Search must support full-text across user profiles")
+cmos_session_capture(category="context", content="Elasticsearch already provisioned in AWS")
+cmos_session_capture(category="decision", content="Use Elasticsearch Python client")
+
+cmos_session_complete(
+  summary="Onboarded to search implementation",
+  nextSteps=["Review Elasticsearch docs", "Start mission B2.3"]
+)
+```
+
+**CLI Approach:**
+```bash
+./cmos/cli.py session start --type onboarding --title "Onboarding for search feature"
 ./cmos/cli.py session capture context "Search must support full-text across user profiles"
 ./cmos/cli.py session capture context "Elasticsearch already provisioned in AWS"
 ./cmos/cli.py session capture decision "Use Elasticsearch Python client"
-
-# Complete onboarding
 ./cmos/cli.py session complete --summary "Onboarded to search implementation" \
   --next-steps "Review Elasticsearch docs" \
   --next-steps "Start mission B2.3"
@@ -201,9 +262,13 @@ python cmos/scripts/seed_sqlite.py
 
 ### Step 3: Begin Work
 
-```bash
-# Agent proceeds with build session
-# Uses next_mission() to get B2.3
+**MCP Approach:**
+```
+# Check available missions
+cmos_mission_status()
+
+# Start the mission
+cmos_mission_start(missionId="B2.3")
 ```
 
 ---
@@ -331,18 +396,64 @@ git commit -m "Research: Payment gateway evaluation"
 
 ## Command Quick Reference
 
-### Session Commands
+### MCP Tools (Recommended for AI Agents)
+
+```
+# Onboarding
+cmos_agent_onboard()                              # Get project context
+cmos_db_health()                                  # Check database
+
+# Sprints
+cmos_sprint_add(sprintId, title, focus, ...)     # Create sprint
+cmos_sprint_list()                                # List sprints
+cmos_sprint_show(sprintId)                        # Show sprint details
+
+# Missions
+cmos_mission_status()                             # View work queue
+cmos_mission_add(missionId, name, sprintId, ...) # Create mission
+cmos_mission_start(missionId)                     # Start mission
+cmos_mission_complete(missionId, notes)           # Complete mission
+cmos_mission_block(missionId, reason, blockers)   # Block mission
+cmos_mission_unblock(missionId, resolution)       # Unblock mission
+cmos_mission_depends(fromId, toId, type)          # Add dependency
+
+# Sessions
+cmos_session_start(type, title)                   # Start session
+cmos_session_capture(category, content)           # Capture insight
+cmos_session_complete(summary, nextSteps)         # Complete session
+cmos_session_list()                               # List sessions
+
+# Context
+cmos_context_view()                               # View context
+cmos_context_snapshot(contextType, source)        # Take snapshot
+cmos_decisions_search(query)                      # Search decisions
+```
+
+### CLI Commands (For Human Operators)
+
 ```bash
+# Sessions
 ./cmos/cli.py session start --type <type> --title "<title>" [--sprint "<sprint>"]
-./cmos/cli.py session capture <category> "<content>" [--context "<additional>"]
+./cmos/cli.py session capture <category> "<content>"
 ./cmos/cli.py session complete --summary "<summary>" [--next-steps "<step>"]
 ./cmos/cli.py session onboard
 ./cmos/cli.py session list [--limit N] [--type <type>]
-./cmos/cli.py session show <session-id>
-./cmos/cli.py session search "<query>"
+
+# Missions
+./cmos/cli.py mission add <id> "<name>" --sprint "<sprint>"
+./cmos/cli.py mission start <id>
+./cmos/cli.py mission complete <id> --notes "<notes>"
+./cmos/cli.py mission depends <from> <to> --type "<label>"
+
+# Context
+./cmos/cli.py context snapshot master --source "<milestone>"
+./cmos/cli.py context history master [--limit N]
+
+# Research
+./cmos/cli.py research export <mission-id>
 ```
 
-### Mission Commands (Python API)
+### Python API (For Automation)
 ```python
 from context.mission_runtime import next_mission, start, complete, block
 
@@ -352,23 +463,13 @@ complete(mission_id, agent="...", summary="...", notes="...")
 block(mission_id, agent="...", summary="...", reason="...", needs=[...])
 ```
 
-### Context Commands
-```bash
-./cmos/cli.py context snapshot master --source "<milestone>"
-./cmos/cli.py context history master [--limit N]
-./cmos/cli.py context view <snapshot-id>
-```
-
-### Research Commands
-```bash
-./cmos/cli.py research export <mission-id>
-```
-
 ---
 
-**Last Updated**: 2025-11-13  
-**Status**: Complete workflow examples  
-**See Also**: 
+**Last Updated**: 2025-12-10
+**CMOS Version**: 2.1 (MCP-enabled)
+**Status**: Complete workflow examples
+**See Also**:
+- `cmos/docs/mcp-reference.md` - Complete MCP tool reference
 - `cmos/docs/session-management-guide.md` - Session command details
 - `cmos/docs/build-session-prompt.md` - Build session template
 - `cmos/docs/user-manual.md` - Complete user manual
