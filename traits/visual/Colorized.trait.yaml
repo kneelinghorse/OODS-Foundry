@@ -1,34 +1,136 @@
 trait:
   name: Colorized
-  version: 1.0.0
+  version: 2.0.0
   description: |
-    Maps lifecycle states to semantic color tokens for consistent status theming.
+    Maps lifecycle states to semantic color tokens for consistent status theming across the
+    design system. Colorized is the visual bridge between the Stateful trait's data model and
+    the OODS token system's three-tier architecture (ref → theme → system → component).
+
+    Every object that composes Stateful should also compose Colorized so that status values
+    resolve to a deterministic set of surface, border, text, and icon tokens. The trait
+    encodes WCAG contrast enforcement, color-blind safety via redundant icon+text cues,
+    and theme-aware OKLCH token resolution — ensuring status communication never relies
+    on color alone.
   category: visual
   tags:
     - color
     - semantic
     - status
     - theming
+    - accessibility
+    - oklch
+    - tokens
 
 parameters:
   - name: colorStates
     type: string[]
     required: true
-    description: Semantic color keys applied to the status badge.
+    description: |
+      Semantic tone keys that define the palette of status colors available to this object.
+      Each key maps to a --cmp-status-{tone}-{surface|border|text|icon} token set.
+      Must be a subset of the canonical tones defined in the status token layer.
     default:
       - neutral
       - info
       - success
       - warning
-      - danger
+      - critical
+    validation:
+      items:
+        enum:
+          - neutral
+          - info
+          - accent
+          - success
+          - warning
+          - critical
+
+  - name: contrastLevel
+    type: string
+    required: false
+    description: |
+      WCAG contrast compliance target for all color pairings produced by this trait.
+      AA requires 4.5:1 for normal text and 3:1 for large text / UI components.
+      AAA requires 7:1 for normal text and 4.5:1 for large text.
+      Enforced at build time by pnpm tokens:guardrails (OKLCH delta-L >= 10, delta-C <= 0.04).
+    default: AA
+    validation:
+      enum:
+        - AA
+        - AAA
+
+  - name: colorMode
+    type: string
+    required: false
+    description: |
+      Controls how color_state values resolve to tokens.
+      - semantic: Tones map to the system status token layer (--sys-status-{tone}-*).
+        This is the default and recommended mode for most objects.
+      - custom: Tones map to object-specific component tokens (--cmp-{object}-status-{tone}-*).
+        Use when an object needs domain-specific color semantics (e.g., billing severity).
+    default: semantic
+    validation:
+      enum:
+        - semantic
+        - custom
+
+  - name: fallbackTone
+    type: string
+    required: false
+    description: |
+      Tone applied when a status value cannot be resolved to a known color state.
+      Prevents rendering blank or unstyled badges when status data is missing or unknown.
+    default: neutral
+    validation:
+      enum:
+        - neutral
+        - info
+        - accent
+        - success
+        - warning
+        - critical
 
 schema:
   color_state:
     type: string
     required: true
-    description: Semantic color token key derived from the provided color states.
+    description: |
+      Active semantic tone key derived from the object's current Stateful status.
+      Resolved at runtime by the statusRegistry via tone inference from token references.
+      Must be one of the values defined in the colorStates parameter.
     validation:
       enumFromParameter: colorStates
+
+  resolved_token_set:
+    type: object
+    required: false
+    computed: true
+    description: |
+      Materialized CSS custom property map for the active color_state. Populated at render
+      time by the statusRegistry (src/components/statusables/statusRegistry.ts).
+      Contains surface, border, text, and optional icon token references.
+    properties:
+      surface:
+        type: string
+        description: "Background token, e.g. var(--cmp-status-success-surface)"
+      border:
+        type: string
+        description: "Border token, e.g. var(--cmp-status-success-border)"
+      text:
+        type: string
+        description: "Foreground text token, e.g. var(--cmp-status-success-text)"
+      icon:
+        type: string
+        description: "Optional icon color token, e.g. var(--cmp-status-success-icon)"
+
+  accessibility_label:
+    type: string
+    required: false
+    computed: true
+    description: |
+      Human-readable status label announced by screen readers. Generated from the
+      color_state value via toLabel() (e.g., "past_due" → "Past Due"). Ensures status
+      meaning is communicated without reliance on color perception.
 
 semantics:
   color_state:
@@ -37,6 +139,12 @@ semantics:
     ui_hints:
       component: ColorTokenBadge
       parameterSource: colorStates
+  resolved_token_set:
+    semantic_type: status.visual.tokens
+    token_mapping: computed
+    ui_hints:
+      component: internal
+      description: Consumed by StatusBadge and ColorizedBadge at render time.
 
 view_extensions:
   list:
@@ -50,6 +158,7 @@ view_extensions:
       props:
         parameter: colorStates
         badgeField: color_state
+        showTokenReferences: true
   form:
     - component: ColorStatePicker
       position: top
@@ -62,29 +171,139 @@ view_extensions:
       props:
         field: color_state
         tone: status
+        showIcon: true
 
 tokens:
+  # ── Component-level layout tokens ──────────────────────────────────
   status.state.badge.radius: "var(--radius-md)"
   status.state.badge.gap: "var(--space-1)"
   status.state.badge.icon.size: "var(--size-2)"
 
+  # ── Per-tone semantic color tokens ─────────────────────────────────
+  # Pattern: --cmp-status-{tone}-{surface|border|text|icon}
+  # These resolve through the three-tier token cascade:
+  #   Component token → System token → Theme token → Reference OKLCH value
+  #
+  # Example resolution chain for "info" tone:
+  #   --cmp-status-info-surface
+  #     → var(--sys-status-info-surface)
+  #       → {theme.status.info.surface}
+  #         → {ref.color.info.100}
+  #           → oklch(0.9685 0.0148 260.73)
+  #
+  # ── Neutral ──
+  cmp-status-neutral-surface: "var(--sys-status-neutral-surface)"
+  cmp-status-neutral-border: "var(--sys-status-neutral-border)"
+  cmp-status-neutral-text: "var(--sys-status-neutral-text)"
+  cmp-status-neutral-icon: "var(--sys-status-neutral-icon)"
+
+  # ── Info ──
+  cmp-status-info-surface: "var(--sys-status-info-surface)"
+  cmp-status-info-border: "var(--sys-status-info-border)"
+  cmp-status-info-text: "var(--sys-status-info-text)"
+  cmp-status-info-icon: "var(--sys-status-info-icon)"
+
+  # ── Accent ──
+  cmp-status-accent-surface: "var(--sys-status-accent-surface)"
+  cmp-status-accent-border: "var(--sys-status-accent-border)"
+  cmp-status-accent-text: "var(--sys-status-accent-text)"
+  cmp-status-accent-icon: "var(--sys-status-accent-icon)"
+
+  # ── Success ──
+  cmp-status-success-surface: "var(--sys-status-success-surface)"
+  cmp-status-success-border: "var(--sys-status-success-border)"
+  cmp-status-success-text: "var(--sys-status-success-text)"
+  cmp-status-success-icon: "var(--sys-status-success-icon)"
+
+  # ── Warning ──
+  cmp-status-warning-surface: "var(--sys-status-warning-surface)"
+  cmp-status-warning-border: "var(--sys-status-warning-border)"
+  cmp-status-warning-text: "var(--sys-status-warning-text)"
+  cmp-status-warning-icon: "var(--sys-status-warning-icon)"
+
+  # ── Critical ──
+  cmp-status-critical-surface: "var(--sys-status-critical-surface)"
+  cmp-status-critical-border: "var(--sys-status-critical-border)"
+  cmp-status-critical-text: "var(--sys-status-critical-text)"
+  cmp-status-critical-icon: "var(--sys-status-critical-icon)"
+
+  # ── Banner variants ──
+  cmp-banner-background: "var(--sys-surface-neutral)"
+  cmp-banner-border: "var(--sys-border-neutral)"
+  cmp-banner-text: "var(--sys-text-neutral)"
+
 dependencies:
-  - Stateful
+  - trait: Stateful
+    relationship: required
+    description: |
+      Colorized consumes the status field produced by Stateful and maps it to a semantic tone.
+      The statusRegistry (src/components/statusables/statusRegistry.ts) performs this mapping
+      at runtime: it reads the Stateful status value, infers a tone via TOKEN_TONE_ALIASES
+      (e.g., "active" → success, "pending" → info, "terminated" → critical), and materializes
+      the resolved_token_set. Without Stateful, there is no status value to colorize.
+
+      Integration flow:
+        Stateful.status → TOKEN_TONE_ALIASES → StatusTone → resolved_token_set → CSS vars
 
 metadata:
   created: "2025-10-12"
+  updated: "2026-02-28"
   owners:
     - design@oods.systems
     - engineering@oods.systems
   maturity: stable
   accessibility:
-    keyboard: "n/a"
+    keyboard: "n/a — Colorized is a visual presentation trait with no interactive elements."
+    screenreader: |
+      StatusBadge announces the accessibility_label (human-readable status) and tone.
+      Color is never the sole channel for status information.
+    colorBlind: |
+      All status badges MUST include both an icon and text label alongside the color indicator.
+      This icon+text redundancy requirement ensures that deuteranopia, protanopia, and
+      tritanopia users can distinguish statuses without relying on hue perception.
+      The fallbackTone parameter provides a safe default when tone inference fails.
+    contrastEnforcement: |
+      WCAG compliance is enforced at two levels:
+        1. Build-time: pnpm tokens:guardrails checks OKLCH delta-L >= 10 and delta-C <= 0.04
+           for all interactive state transitions (hover, focus, active).
+        2. Design-time: All text-on-surface pairings in the status token layer meet the
+           contrast ratio specified by the contrastLevel parameter (4.5:1 for AA, 7:1 for AAA).
+      Dark theme tokens (themes/dark/status.json) use direct OKLCH values tuned to maintain
+      these ratios against dark surfaces.
   regionsUsed:
     - badges
     - forms
     - detail
+    - card
   examples:
     - Incident
     - Release
+    - Subscription
+    - Invoice
+  stateToToneMapping:
+    description: |
+      Canonical mapping from domain status strings to semantic tones, as implemented
+      in statusRegistry.ts TOKEN_TONE_ALIASES. Objects may define additional aliases
+      in their domain-specific status-map JSON files.
+    mappings:
+      - tone: info
+        aliases: [info, informational, pending]
+      - tone: accent
+        aliases: [accent, highlight]
+      - tone: success
+        aliases: [positive, success, ok, active]
+      - tone: warning
+        aliases: [warning, caution]
+      - tone: critical
+        aliases: [danger, critical, error, negative, terminated]
+      - tone: neutral
+        aliases: [neutral]
   references:
-    - "Trait Engine Spec v0.1 §2"
+    - "Trait Engine Spec v0.1 section 2"
+    - "WCAG 2.1 Success Criterion 1.4.1 — Use of Color"
+    - "WCAG 2.1 Success Criterion 1.4.3 — Contrast (Minimum)"
+    - "WCAG 2.1 Success Criterion 1.4.11 — Non-text Contrast"
+    - "src/components/statusables/statusRegistry.ts — runtime tone resolution"
+    - "packages/tokens/src/tokens/base/system/status.json — system status tokens"
+    - "packages/tokens/src/tokens/themes/dark/status.json — dark theme OKLCH values"
+    - "tokens/maps/saas-billing.status-map.json — domain status mapping example"

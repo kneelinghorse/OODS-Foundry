@@ -1,6 +1,6 @@
 trait:
   name: MarkBar
-  version: 0.1.0
+  version: 0.2.0
   description: |
     Canonical rectangular mark for magnitude comparisons. Supports stacked
     or grouped categories and enforces RDS.7 accessiblity requirements for
@@ -161,9 +161,23 @@ view_extensions:
         labelField: viz_mark_role
 
 tokens:
+  # Primary fill color for bar rectangles — maps to the active palette
   viz.mark.bar.fill.default: "var(--cmp-viz-mark-bar-fill)"
+  # Stroke outline for bar edges — provides contrast against adjacent bars
   viz.mark.bar.stroke.default: "var(--cmp-viz-mark-bar-stroke)"
+  # Spacing token governing gap between category bands
   viz.mark.bar.spacing: "var(--cmp-viz-mark-spacing)"
+
+events:
+  mark.hovered:
+    description: Fired when a bar is hovered. Payload includes datum values and bar index.
+    payload: [datum, index, tone]
+  mark.selected:
+    description: Fired when a bar is clicked/tapped. Used by InteractionHighlight.
+    payload: [datum, index]
+  mark.focused:
+    description: Fired when a bar receives keyboard focus for accessibility navigation.
+    payload: [datum, index]
 
 dependencies:
   - EncodingPositionX
@@ -171,6 +185,7 @@ dependencies:
 
 metadata:
   created: "2025-11-15"
+  updated: "2026-02-28"
   owners:
     - viz@oods.systems
     - design@oods.systems

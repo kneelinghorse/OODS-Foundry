@@ -1,6 +1,6 @@
 trait:
   name: ScaleTemporal
-  version: 0.1.0
+  version: 0.2.0
   description: |
     Temporal scale definition with timezone awareness and "nice" interval
     rounding. Powers chronological encodings across Position, Area, and Line
@@ -158,9 +158,13 @@ dependencies: []
 
 metadata:
   created: "2025-11-15"
+  updated: "2026-02-28"
   owners:
     - viz@oods.systems
   maturity: alpha
+  accessibility:
+    keyboard: Temporal scale controls are keyboard-operable in VizScaleControls form.
+    screenreader: Scale summary announces date range, timezone, and tick interval.
   regionsUsed:
     - detail
     - form

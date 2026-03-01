@@ -2,14 +2,17 @@ import type { TraitDefinition } from '../../src/core/trait-definition.ts';
 
 export const TAGGABLE_DEFAULT_MAX_TAGS = 10 as const;
 
+export type SynonymResolution = 'none' | 'suggest' | 'auto';
+
 const TaggableTrait = {
   trait: {
     name: 'Taggable',
-    version: '1.0.0',
+    version: '2.0.0',
     description:
-      'Adds configurable tag management with guardrails for custom authoring and taxonomy alignment.',
+      'Adds configurable tag management with guardrails for custom authoring, taxonomy alignment, ' +
+      'and tag governance. Supports moderation workflows and synonym resolution.',
     category: 'behavioral',
-    tags: ['tagging', 'classification', 'metadata', 'discovery'],
+    tags: ['tagging', 'classification', 'metadata', 'discovery', 'governance', 'taxonomy'],
   },
 
   parameters: [
@@ -28,7 +31,8 @@ const TaggableTrait = {
       name: 'allowCustomTags',
       type: 'boolean',
       required: false,
-      description: 'Whether editors may author tags outside of the approved allow list.',
+      description:
+        'Whether editors may author tags outside of the approved allow list.',
       default: true,
     },
     {
@@ -36,7 +40,7 @@ const TaggableTrait = {
       type: 'string[]',
       required: false,
       description:
-        'Curated allow list of permitted tags when custom creation is disabled.',
+        'Curated allow list of permitted tags. Strict when allowCustomTags=false, suggestive otherwise.',
       validation: {
         minItems: 1,
         uniqueItems: true,
@@ -52,6 +56,47 @@ const TaggableTrait = {
       required: false,
       description: 'Whether tag comparisons should treat casing as significant.',
       default: false,
+    },
+    {
+      name: 'tagMinLength',
+      type: 'number',
+      required: false,
+      description: 'Minimum character length for a tag value.',
+      default: 2,
+      validation: {
+        minimum: 1,
+        maximum: 32,
+      },
+    },
+    {
+      name: 'tagMaxLength',
+      type: 'number',
+      required: false,
+      description: 'Maximum character length for a tag value.',
+      default: 64,
+      validation: {
+        minimum: 1,
+        maximum: 256,
+      },
+    },
+    {
+      name: 'allowTagModeration',
+      type: 'boolean',
+      required: false,
+      description:
+        'When true, custom tags enter "pending" state and require moderator approval.',
+      default: false,
+    },
+    {
+      name: 'synonymResolution',
+      type: 'string',
+      required: false,
+      description:
+        'Synonym handling mode: "none", "suggest" (suggest canonical form), or "auto" (auto-replace).',
+      default: 'none',
+      validation: {
+        enum: ['none', 'suggest', 'auto'],
+      },
     },
   ] as const,
 
@@ -74,6 +119,14 @@ const TaggableTrait = {
         minimum: 0,
       },
     },
+    tag_metadata: {
+      type: 'string',
+      required: false,
+      description:
+        'Per-tag governance metadata (JSON array). Entries: tag, created_at, created_by, usage_count, ' +
+        'moderation_status, canonical_form.',
+      default: '[]',
+    },
   },
 
   semantics: {
@@ -93,6 +146,13 @@ const TaggableTrait = {
       ui_hints: {
         component: 'MetricBadge',
         format: 'integer',
+      },
+    },
+    tag_metadata: {
+      semantic_type: 'taxonomy.tag.governance',
+      token_mapping: 'computed',
+      ui_hints: {
+        component: 'TagGovernancePanel',
       },
     },
   },
@@ -117,6 +177,8 @@ const TaggableTrait = {
           allowCustomParameter: 'allowCustomTags',
           allowListParameter: 'allowedTags',
           maxTagsParameter: 'maxTags',
+          moderationParameter: 'allowTagModeration',
+          synonymParameter: 'synonymResolution',
         },
       },
     ],
@@ -129,6 +191,9 @@ const TaggableTrait = {
           maxTagsParameter: 'maxTags',
           allowCustomParameter: 'allowCustomTags',
           allowListParameter: 'allowedTags',
+          minLengthParameter: 'tagMinLength',
+          maxLengthParameter: 'tagMaxLength',
+          synonymParameter: 'synonymResolution',
         },
       },
     ],
@@ -147,22 +212,33 @@ const TaggableTrait = {
   tokens: {
     'taxonomy.tag.chip.bg': 'var(--surface-tag-bg)',
     'taxonomy.tag.chip.text': 'var(--surface-tag-text)',
+    'taxonomy.tag.chip.border': 'var(--sys-border-default)',
+    'taxonomy.tag.chip.hover.bg': 'var(--sys-surface-hover)',
+    'taxonomy.tag.chip.pending.bg': 'var(--sys-status-warning-surface)',
+    'taxonomy.tag.chip.pending.text': 'var(--sys-status-warning-text)',
     'taxonomy.tag.summary.count': 'var(--text-subtle)',
+    'taxonomy.tag.input.border': 'var(--sys-border-default)',
+    'taxonomy.tag.input.focus.border': 'var(--sys-border-focus)',
   },
 
   dependencies: [] as const,
 
   metadata: {
     created: '2025-10-12',
+    updated: '2026-02-28',
     owners: ['design@oods.systems', 'taxonomy@oods.systems'],
     maturity: 'stable',
     accessibility: {
-      keyboard: 'n/a',
-      screenreader: 'Tag list announced with counts.',
+      keyboard:
+        'TagInput: Type to filter, Enter to confirm, Backspace to remove last, ' +
+        'Arrow keys for autocomplete, Escape to dismiss, Tab to exit.',
+      screenreader:
+        'Tag list announced as group with count. Pending tags announce moderation status. ' +
+        'TagInput announces suggestion count on keystroke.',
     },
-    regionsUsed: ['list', 'detail', 'forms', 'card'],
-    examples: ['Knowledge Article', 'Incident'],
-    references: ['Trait Engine Spec v0.1 §2'],
+    regionsUsed: ['list', 'detail', 'form', 'card'],
+    examples: ['Knowledge Article', 'Incident', 'Product', 'Media'],
+    references: ['Trait Engine Spec v0.1 section 2'],
   },
 } as const satisfies TraitDefinition;
 

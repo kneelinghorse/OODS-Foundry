@@ -1,6 +1,6 @@
 trait:
   name: MarkArea
-  version: 0.1.0
+  version: 0.2.0
   description: |
     Canonical area mark for cumulative totals and ranges. Fills the region
     between the series baseline and value curve with configurable opacity and
@@ -155,9 +155,23 @@ view_extensions:
         labelField: viz_mark_role
 
 tokens:
+  # Fill color for the area band between baseline and value curve
   viz.mark.area.fill.default: "var(--cmp-viz-mark-area-fill)"
+  # Default opacity for the filled region — semi-transparent to allow layering
   viz.mark.area.opacity.default: "var(--cmp-viz-mark-area-opacity)"
+  # Stroke color for the baseline reference line
   viz.mark.area.baseline.stroke: "var(--cmp-viz-axis-base)"
+
+events:
+  mark.hovered:
+    description: Fired when the area band is hovered. Payload includes the nearest datum along the curve.
+    payload: [datum, index, curvePosition]
+  mark.selected:
+    description: Fired when the area band is clicked. Used by InteractionHighlight.
+    payload: [datum, index]
+  mark.focused:
+    description: Fired when the area receives keyboard focus via point-of-interest navigation.
+    payload: [datum, index]
 
 dependencies:
   - EncodingPositionX
@@ -165,6 +179,7 @@ dependencies:
 
 metadata:
   created: "2025-11-15"
+  updated: "2026-02-28"
   owners:
     - viz@oods.systems
     - design@oods.systems

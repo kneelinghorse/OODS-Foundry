@@ -1,6 +1,6 @@
 trait:
   name: LayoutFacet
-  version: 0.1.0
+  version: 0.2.0
   description: >
     Repeats a normalized visualization spec across a governed facet grid so row
     and column groupings stay synchronized with shared color/scale semantics.
@@ -144,11 +144,32 @@ semantics:
 tokens:
   viz.layout.facet.gap: var(--cmp-viz-layout-gap)
 
+dependencies:
+  - trait: MarkBar
+    optional: true
+  - trait: MarkLine
+    optional: true
+  - trait: MarkPoint
+    optional: true
+  - trait: MarkArea
+    optional: true
+
 metadata:
   created: '2025-11-16'
+  updated: '2026-02-28'
   owners:
     - viz@oods.systems
   maturity: beta
+  accessibility:
+    keyboard: Facet panels are navigable via arrow keys. Each panel is a tab stop.
+    screenreader: Announces facet field name and panel count (e.g., "Faceted by Region, 6 panels").
+  regionsUsed:
+    - detail
+    - form
+  examples:
+    - SalesByRegionFaceted
+    - ChurnByPlanType
+    - TicketVolumeByCategoryAndMonth
   references:
     - docs/viz/normalized-viz-spec.md
     - cmos/planning/sprint-23-plan.md

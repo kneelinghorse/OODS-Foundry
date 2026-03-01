@@ -1,44 +1,111 @@
 trait:
   name: Stateful
-  version: 1.0.0
+  version: 2.0.0
   description: |
-    Normalizes lifecycle state transitions and exposes canonical status semantics.
+    Normalizes lifecycle state transitions, exposes canonical status semantics, and provides
+    optional transition governance for production workflows. Stateful is the most-composed
+    trait in the system (used by 18 objects including User, Subscription, Product, Order)
+    and serves as the data source for the Colorized visual trait.
+
+    At its simplest, Stateful defines an ordered list of valid states and tracks the current
+    status. When governance is enabled via transitionRules, it additionally enforces which
+    transitions are allowed, records the actor and reason for each transition, and materializes
+    the set of valid next states — making it suitable for auditable workflows where arbitrary
+    state jumps are not permitted.
   category: lifecycle
   tags:
     - lifecycle
     - status
     - workflow
     - state
+    - governance
+    - audit
 
 parameters:
   - name: states
     type: string[]
     required: true
-    description: Ordered list of valid lifecycle states exposed to consumers.
+    description: |
+      Ordered list of valid lifecycle states exposed to consumers. The order is semantic —
+      it represents the typical forward progression (e.g., draft → active → archived).
+      All status values must be one of these states.
     default:
       - draft
       - active
       - paused
       - archived
+
   - name: initialState
     type: string
     required: true
-    description: State assigned when an entity is created.
+    description: |
+      State assigned when an entity is created. Must be a member of the states parameter.
+      Typically the first entry in the states list (e.g., "draft").
     default: draft
     validation:
       enumFromParameter: states
+
+  - name: transitionRules
+    type: "Record<string, string[]>"
+    required: false
+    description: |
+      Allowed state transition map. Keys are source states; values are arrays of permitted
+      target states. When provided, the system enforces that only declared transitions are
+      valid — any other transition is rejected. When omitted, all transitions between any
+      two states in the states parameter are allowed (open model).
+
+      Example for a subscription lifecycle:
+        draft: [active, archived]
+        active: [paused, archived]
+        paused: [active, archived]
+        archived: []
+    default: null
+
+  - name: requireTransitionReason
+    type: boolean
+    required: false
+    description: |
+      When true, every state transition must include a human-readable reason in the
+      state_history entry. Enforced at the application layer — transitions without a
+      reason field are rejected. Useful for compliance and audit trails.
+    default: false
 
 schema:
   status:
     type: string
     required: true
-    description: Canonical lifecycle state derived from the states parameter.
+    description: |
+      Canonical lifecycle state derived from the states parameter. This is the single source
+      of truth for the entity's current lifecycle position. Consumed by Colorized to resolve
+      visual tokens, and by view extensions to render StatusBadge and StatusTimeline.
     validation:
       enumFromParameter: states
+
   state_history:
     type: StateTransition[]
     required: false
-    description: Chronological log of state transitions.
+    description: |
+      Chronological log of state transitions. Each entry records the before/after states,
+      timestamp, and (when governance is enabled) the actor, reason, and transition metadata.
+      Rendered by StatusTimeline in the detail and timeline views.
+
+      Entry structure:
+        - from: string (previous state)
+        - to: string (new state)
+        - timestamp: ISO 8601 datetime
+        - actor_id: string (user/system who triggered the transition, optional)
+        - reason: string (human-readable justification, required when requireTransitionReason is true)
+        - transition_metadata: Record<string, unknown> (arbitrary context, optional)
+    default: []
+
+  allowed_transitions:
+    type: string[]
+    required: false
+    description: |
+      Materialized list of valid next states from the current status, computed from the
+      transitionRules parameter. When transitionRules is null (open model), this contains
+      all states except the current one. Used by StatusSelector to disable invalid options
+      and by StatusBadge to indicate available paths.
     default: []
 
 semantics:
@@ -54,6 +121,12 @@ semantics:
     ui_hints:
       component: StatusTimeline
       collapseWhenEmpty: true
+  allowed_transitions:
+    semantic_type: status.navigation
+    token_mapping: computed
+    ui_hints:
+      component: StatusSelector
+      description: Drives the set of enabled options in the state transition UI.
 
 view_extensions:
   list:
@@ -69,6 +142,8 @@ view_extensions:
         field: status
         historyField: state_history
         statesParameter: states
+        showActorId: true
+        showReason: true
   form:
     - component: StatusSelector
       position: top
@@ -76,11 +151,15 @@ view_extensions:
         field: status
         optionsParameter: states
         initialParameter: initialState
+        allowedTransitionsField: allowed_transitions
+        requireReasonParameter: requireTransitionReason
   timeline:
     - component: StateTransitionEvent
       props:
         historyField: state_history
         labelField: status
+        showActor: true
+        showReason: true
   card:
     - component: StatusBadge
       position: before
@@ -92,23 +171,67 @@ tokens:
   status.state.default.bg: "var(--status-neutral-bg)"
   status.state.default.text: "var(--status-neutral-text)"
   status.timeline.connector: "var(--border-subtle)"
+  status.timeline.node.bg: "var(--sys-surface-raised)"
+  status.timeline.node.border: "var(--sys-border-default)"
+  status.timeline.actor.text: "var(--sys-text-secondary)"
+  status.timeline.reason.text: "var(--sys-text-tertiary)"
+  status.timeline.reason.bg: "var(--sys-surface-neutral)"
 
 dependencies: []
 
 metadata:
   created: "2025-10-12"
+  updated: "2026-02-28"
   owners:
     - design@oods.systems
     - engineering@oods.systems
   maturity: stable
+  composedBy:
+    count: 18
+    notable:
+      - User
+      - Subscription
+      - Product
+      - Order
+      - Organization
+      - Article
   accessibility:
-    keyboard: "n/a"
+    keyboard: |
+      StatusSelector is keyboard-navigable (arrow keys to cycle states, Enter to confirm).
+      Disabled states (not in allowed_transitions) are skipped during keyboard navigation.
+    screenreader: |
+      StatusBadge announces the current state and, when allowed_transitions is populated,
+      the number of available next states (e.g., "Status: Active. 2 transitions available.").
+      StateTransitionEvent entries announce from-state, to-state, actor, and reason.
   regionsUsed:
     - badges
     - timeline
     - forms
+    - detail
+    - card
   examples:
     - Subscription
     - Project Workflow
+    - Order
+    - User
+    - Invoice
+  governanceExamples:
+    - name: Subscription lifecycle
+      transitionRules:
+        draft: [active, archived]
+        active: [paused, delinquent, terminated]
+        paused: [active, terminated]
+        delinquent: [active, terminated]
+        terminated: []
+      requireTransitionReason: true
+    - name: Content publishing
+      transitionRules:
+        draft: [review]
+        review: [draft, published]
+        published: [archived]
+        archived: [draft]
+      requireTransitionReason: false
   references:
-    - "Trait Engine Spec v0.1 §2"
+    - "Trait Engine Spec v0.1 section 2"
+    - "src/components/statusables/statusRegistry.ts — tone resolution for Colorized integration"
+    - "tokens/maps/saas-billing.status-map.json — domain status mapping"

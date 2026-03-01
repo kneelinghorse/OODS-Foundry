@@ -1,6 +1,6 @@
 trait:
   name: ScaleLinear
-  version: 0.1.0
+  version: 0.2.0
   description: |
     Shared linear/continuous scale definition used by positional, color, and
     size encodings. Provides normalized domain/range metadata plus zero baseline
@@ -151,10 +151,14 @@ dependencies: []
 
 metadata:
   created: "2025-11-15"
+  updated: "2026-02-28"
   owners:
     - viz@oods.systems
     - platform@oods.systems
   maturity: alpha
+  accessibility:
+    keyboard: Scale controls are keyboard-operable in VizScaleControls form component.
+    screenreader: Scale summary announces domain range and zero baseline status.
   regionsUsed:
     - detail
     - form

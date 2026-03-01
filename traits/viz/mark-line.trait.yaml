@@ -1,6 +1,6 @@
 trait:
   name: MarkLine
-  version: 0.1.0
+  version: 0.2.0
   description: |
     Canonical line mark for trends, rates, and progressions. Encodes values as
     connected segments with configurable curve smoothing and join policies.
@@ -156,9 +156,23 @@ view_extensions:
         labelField: viz_mark_role
 
 tokens:
+  # Primary stroke color for line segments
   viz.mark.line.stroke.default: "var(--cmp-viz-mark-line-stroke)"
+  # Highlighted stroke color for emphasized series
   viz.mark.line.stroke.highlight: "var(--cmp-viz-mark-line-highlight)"
+  # Fill color for optional point markers along the line
   viz.mark.line.marker.fill: "var(--cmp-viz-mark-point-fill)"
+
+events:
+  mark.hovered:
+    description: Fired when a line segment or marker is hovered. Payload includes nearest datum.
+    payload: [datum, index, seriesId]
+  mark.selected:
+    description: Fired when a line or marker is clicked. Used by InteractionHighlight.
+    payload: [datum, index, seriesId]
+  mark.focused:
+    description: Fired when a line marker receives keyboard focus.
+    payload: [datum, index]
 
 dependencies:
   - EncodingPositionX
@@ -166,6 +180,7 @@ dependencies:
 
 metadata:
   created: "2025-11-15"
+  updated: "2026-02-28"
   owners:
     - viz@oods.systems
     - design@oods.systems

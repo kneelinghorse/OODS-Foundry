@@ -1,6 +1,6 @@
 trait:
   name: InteractionHighlight
-  version: 0.1.0
+  version: 0.2.0
   description: >-
     Emphasizes hovered or selected points by adjusting a configurable visual property.
   category: viz.interaction
@@ -117,3 +117,38 @@ state_machine:
     - from: highlighted
       to: idle
       trigger: clear
+
+tokens:
+  viz.interaction.highlight.active.opacity: "var(--cmp-viz-highlight-active-opacity)"
+  viz.interaction.highlight.inactive.opacity: "var(--cmp-viz-highlight-inactive-opacity)"
+  viz.interaction.highlight.outline: "var(--cmp-viz-highlight-outline)"
+
+dependencies: []
+
+metadata:
+  created: "2025-11-15"
+  updated: "2026-02-28"
+  owners:
+    - viz@oods.systems
+    - accessibility@oods.systems
+  maturity: alpha
+  accessibility:
+    keyboard: |
+      Highlight is activatable via keyboard focus (trigger=focus) in addition to
+      hover and click. Arrow keys navigate between data points. Enter/Space
+      toggles persistent highlight on click-triggered interactions.
+    screenreader: |
+      When a mark is highlighted, the screen reader announces the datum values
+      and indicates it is selected. Non-highlighted marks are announced as
+      "dimmed" or "inactive" to convey the visual distinction.
+    focusManagement: |
+      Focus ring is rendered around the highlighted mark. When highlight clears,
+      focus remains on the last interacted mark.
+  regionsUsed:
+    - detail
+    - form
+  examples:
+    - ScatterplotBrushHighlight
+    - BarChartCategoryHighlight
+  references:
+    - cmos/research/data-viz-oods/RDS.7_synthesis_Mission Completion Report- Trait-Driven Visualization System Specification (v0.1).md

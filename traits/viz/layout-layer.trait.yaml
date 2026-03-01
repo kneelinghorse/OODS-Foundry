@@ -1,6 +1,6 @@
 trait:
   name: LayoutLayer
-  version: 0.1.0
+  version: 0.2.0
   description: >
     Governs sequencing, blending, and shared channel behavior for layered mark
     compositions.
@@ -108,10 +108,31 @@ semantics:
 tokens:
   viz.layout.layer.blend: var(--cmp-viz-layer-blend)
 
+dependencies:
+  - trait: MarkBar
+    optional: true
+  - trait: MarkLine
+    optional: true
+  - trait: MarkPoint
+    optional: true
+  - trait: MarkArea
+    optional: true
+
 metadata:
   created: '2025-11-16'
+  updated: '2026-02-28'
   owners:
     - viz@oods.systems
   maturity: beta
+  accessibility:
+    keyboard: Layer order is keyboard-traversable. Focus moves through layers bottom to top.
+    screenreader: Announces layer count and blend mode (e.g., "Layered visualization, 3 layers, normal blend").
+  regionsUsed:
+    - detail
+    - form
+  examples:
+    - LineWithConfidenceBand
+    - BarWithTrendOverlay
+    - ScatterWithRegressionLine
   references:
     - docs/viz/normalized-viz-spec.md

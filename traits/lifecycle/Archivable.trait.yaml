@@ -1,57 +1,131 @@
 trait:
   name: Archivable
-  version: 1.0.0
+  version: 2.0.0
   description: |
-    Provides archival lifecycle management with configurable retention, restoration, and semantic tokens.
+    Provides archival lifecycle management with configurable retention, restoration, audit
+    tracking, and compliance metadata. Archivable manages the full archive-restore-purge
+    lifecycle, including soft-delete with configurable duration before hard deletion,
+    partial restoration support, and per-archive compliance tagging.
+
+    Objects composing Archivable can be soft-deleted (moved to an "archived" state with
+    full data retention), restored within a configurable window, or permanently purged
+    after the retention period expires. The trait tracks who archived the entity, why,
+    and through what method (manual, automated, policy) for audit trail completeness.
   category: lifecycle
   tags:
     - lifecycle
     - archival
     - retention
     - compliance
+    - audit
+    - soft-delete
 
 parameters:
   - name: gracePeriodDays
     type: number
     required: false
-    description: Number of days after archival before permanent deletion occurs.
+    description: Number of days after archival before permanent deletion (hard-delete) occurs.
     default: 30
     validation:
       minimum: 0
       maximum: 365
+
   - name: retainHistory
     type: boolean
     required: false
     description: Whether archival retains a readable change history that can be restored.
     default: true
+
   - name: restoreWindowDays
     type: number
     required: false
-    description: Maximum number of days archived entities can be restored when history is retained.
+    description: |
+      Maximum number of days archived entities can be restored when history is retained.
+      After this window, restoration is no longer possible even if the entity hasn't been
+      hard-deleted yet.
     validation:
       minimum: 0
       maximum: 365
+
+  - name: softDeleteDuration
+    type: number
+    required: false
+    description: |
+      Days the entity remains in soft-deleted state before automatic hard deletion.
+      Distinct from gracePeriodDays: gracePeriodDays is the notification/warning window,
+      while softDeleteDuration is the total retention period. When set, a background
+      process purges entities where (archived_at + softDeleteDuration) has passed.
+    default: 90
+    validation:
+      minimum: 0
+      maximum: 3650
+
+  - name: allowPartialRestore
+    type: boolean
+    required: false
+    description: |
+      When true, archived entities can be partially restored — selecting which fields
+      or related data to bring back rather than restoring the entire entity. Useful for
+      large objects where only specific sections need to be recovered (e.g., restoring
+      a contract's terms but not its expired billing data).
+    default: false
 
 schema:
   is_archived:
     type: boolean
     required: true
-    description: Flag indicating whether the entity is currently archived.
+    description: Flag indicating whether the entity is currently archived (soft-deleted).
     default: false
+
   archived_at:
     type: datetime?
     required: false
     description: Timestamp for when the entity entered the archived state.
+
   restored_at:
     type: datetime?
     required: false
-    description: Timestamp for when the entity was restored from an archived state.
+    description: Timestamp for when the entity was most recently restored from an archived state.
+
   archive_reason:
     type: string
     required: false
-    description: Optional narrative describing why the entity was archived.
+    description: Human-readable narrative describing why the entity was archived.
     validation:
-      maxLength: 160
+      maxLength: 500
+
+  archived_by:
+    type: string
+    required: false
+    description: |
+      User ID or system identifier of the actor who archived this entity.
+      Set to "system" for automated/policy-driven archival. Supports audit trail queries
+      like "show all entities archived by user X" or "show all auto-archived entities".
+
+  archive_metadata:
+    type: object
+    required: false
+    description: |
+      Structured metadata about the archival action for compliance and audit purposes.
+
+      Properties:
+        - method: "manual" | "automated" | "policy" — how the archive was triggered
+        - compliance_tags: string[] — regulatory labels (e.g., ["GDPR", "SOX", "HIPAA"])
+        - retention_policy_id: string — reference to the retention policy that triggered archival
+        - original_status: string — the Stateful status before archival
+        - related_entity_count: number — count of related entities also archived (cascade)
+
+  restoration_metadata:
+    type: object
+    required: false
+    description: |
+      Metadata about the most recent restoration action.
+
+      Properties:
+        - restored_by: string — user ID or "system"
+        - restored_fields: string[] — when partial restore, which fields were restored
+        - restoration_reason: string — why the entity was restored
+        - restored_from_snapshot: boolean — whether restored from a point-in-time snapshot
 
 semantics:
   is_archived:
@@ -75,9 +149,32 @@ semantics:
     token_mapping: tokenMap(status.archive.reason)
     ui_hints:
       component: ArchiveReason
-      maxLength: 160
+      maxLength: 500
+  archived_by:
+    semantic_type: status.archive.actor
+    token_mapping: tokenMap(status.archive.actor)
+    ui_hints:
+      component: ActorLabel
+  archive_metadata:
+    semantic_type: status.archive.compliance
+    token_mapping: computed
+    ui_hints:
+      component: ArchiveCompliancePanel
+  restoration_metadata:
+    semantic_type: status.archive.restoration
+    token_mapping: computed
+    ui_hints:
+      component: RestorationSummary
 
 view_extensions:
+  list:
+    - component: ArchivedRowOverlay
+      props:
+        archivedField: is_archived
+        style: grayed
+        showBadge: true
+        separateTab: true
+        tabLabel: Archived
   detail:
     - component: ArchiveSummary
       position: top
@@ -86,14 +183,20 @@ view_extensions:
         archivedAtField: archived_at
         restoredAtField: restored_at
         reasonField: archive_reason
+        archivedByField: archived_by
+        metadataField: archive_metadata
         retainHistoryParameter: retainHistory
         restoreWindowParameter: restoreWindowDays
+        allowPartialRestoreParameter: allowPartialRestore
   timeline:
     - component: ArchiveEvent
       props:
         archivedAtField: archived_at
         restoredAtField: restored_at
         reasonField: archive_reason
+        archivedByField: archived_by
+        metadataField: archive_metadata
+        restorationMetadataField: restoration_metadata
   card:
     - component: ArchivePill
       position: before
@@ -104,27 +207,49 @@ view_extensions:
 tokens:
   status.archive.primary.bg: "var(--status-archive-bg)"
   status.archive.primary.text: "var(--status-archive-text)"
+  status.archive.primary.border: "var(--sys-border-default)"
   status.archive.timestamp.text: "var(--text-subtle)"
   status.archive.reason.text: "var(--text-default)"
+  status.archive.reason.bg: "var(--sys-surface-neutral)"
+  status.archive.overlay.bg: "var(--sys-surface-disabled)"
+  status.archive.overlay.opacity: "0.6"
+  status.archive.actor.text: "var(--sys-text-secondary)"
+  status.archive.compliance.badge.bg: "var(--sys-status-info-surface)"
+  status.archive.compliance.badge.text: "var(--sys-status-info-text)"
 
 dependencies:
   - Stateful
 
 metadata:
   created: "2025-10-12"
+  updated: "2026-02-28"
   owners:
     - lifecycle@oods.systems
     - compliance@oods.systems
   maturity: stable
   accessibility:
-    keyboard: "n/a"
-    screenreader: "Announces archival status and retention windows."
+    keyboard: |
+      Archive/Restore actions are triggered via buttons that are keyboard-focusable and
+      activated with Enter/Space. Confirmation dialogs trap focus until dismissed.
+    screenreader: |
+      ArchiveBadge announces "Archived" or "Active" state. ArchiveSummary announces
+      archive date, reason, actor, and remaining restore window. ArchivedRowOverlay
+      applies aria-hidden=false to ensure archived rows remain accessible but are
+      announced as "Archived: [entity name]" to screen readers.
+    listPresentation: |
+      Archived items in list view are visually dimmed (opacity: 0.6) and optionally
+      moved to a separate "Archived" tab. Both presentations maintain keyboard
+      navigability and screen reader access.
   regionsUsed:
+    - list
     - detail
     - timeline
     - card
   examples:
     - Contract
     - Product Listing
+    - User Account
+    - Subscription
   references:
-    - "Trait Engine Spec v0.1 §2"
+    - "Trait Engine Spec v0.1 section 2"
+    - "GDPR Article 17 — Right to Erasure (soft-delete as intermediate step)"

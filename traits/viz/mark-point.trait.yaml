@@ -1,6 +1,6 @@
 trait:
   name: MarkPoint
-  version: 0.1.0
+  version: 0.2.0
   description: |
     Canonical point mark for scatterplots and overlays. Encodes each datum as a
     discrete glyph with configurable shape, size, and fill semantics.
@@ -178,9 +178,23 @@ view_extensions:
         labelField: viz_mark_role
 
 tokens:
+  # Default fill color for point glyphs — varies by palette assignment
   viz.mark.point.fill.default: "var(--cmp-viz-mark-point-fill)"
+  # Stroke outline for hollow or outlined glyphs
   viz.mark.point.stroke.default: "var(--cmp-viz-mark-point-stroke)"
+  # Default opacity for overplotting mitigation in dense scatterplots
   viz.mark.point.opacity.default: "var(--cmp-viz-mark-point-opacity)"
+
+events:
+  mark.hovered:
+    description: Fired when a point glyph is hovered. Payload includes the datum and glyph coordinates.
+    payload: [datum, index, x, y]
+  mark.selected:
+    description: Fired when a point is clicked/tapped. Used by InteractionHighlight.
+    payload: [datum, index]
+  mark.focused:
+    description: Fired when a point receives keyboard focus for scatter navigation.
+    payload: [datum, index]
 
 dependencies:
   - EncodingPositionX
@@ -188,6 +202,7 @@ dependencies:
 
 metadata:
   created: "2025-11-15"
+  updated: "2026-02-28"
   owners:
     - viz@oods.systems
     - design@oods.systems

@@ -1828,7 +1828,149 @@
     ]
   },
   "meta": {
-    "lastMission": "B40.5",
-    "lastUpdated": "2025-12-04"
+    "lastMission": "B43.5",
+    "lastUpdated": "2026-02-28",
+    "lastSprint": "Sprint 43"
+  },
+  "inventory": {
+    "generatedAt": "2026-02-28T02:24:00Z",
+    "sprint": "Sprint 43",
+    "traits": {
+      "total": 33,
+      "breakdown": {
+        "core": {
+          "count": 5,
+          "traits": [
+            "Addressable",
+            "Authable",
+            "Classifiable",
+            "Communicable",
+            "Preferenceable"
+          ]
+        },
+        "lifecycle": {
+          "count": 5,
+          "traits": [
+            "Archivable",
+            "Auditable",
+            "Cancellable",
+            "Stateful",
+            "Timestampable"
+          ]
+        },
+        "visual": {
+          "count": 2,
+          "traits": [
+            "Colorized",
+            "Statusable"
+          ]
+        },
+        "behavioral": {
+          "count": 1,
+          "traits": [
+            "Taggable"
+          ]
+        },
+        "content": {
+          "count": 1,
+          "traits": [
+            "Labelled"
+          ]
+        },
+        "structural": {
+          "count": 1,
+          "traits": [
+            "Ownerable"
+          ]
+        },
+        "financial": {
+          "count": 2,
+          "traits": [
+            "Billable",
+            "Priceable"
+          ]
+        },
+        "viz": {
+          "count": 16,
+          "subcategories": {
+            "marks": {
+              "count": 4,
+              "traits": [
+                "MarkBar",
+                "MarkLine",
+                "MarkPoint",
+                "MarkArea"
+              ]
+            },
+            "encodings": {
+              "count": 4,
+              "traits": [
+                "EncodingColor",
+                "EncodingPositionX",
+                "EncodingPositionY",
+                "EncodingSize"
+              ]
+            },
+            "layouts": {
+              "count": 3,
+              "traits": [
+                "LayoutConcat",
+                "LayoutFacet",
+                "LayoutLayer"
+              ]
+            },
+            "interactions": {
+              "count": 2,
+              "traits": [
+                "InteractionHighlight",
+                "InteractionTooltip"
+              ]
+            },
+            "scales": {
+              "count": 2,
+              "traits": [
+                "ScaleLinear",
+                "ScaleTemporal"
+              ]
+            },
+            "spatial": {
+              "count": 1,
+              "traits": [
+                "Geocodable"
+              ]
+            }
+          }
+        }
+      },
+      "articleClaimReconciliation": {
+        "articleClaim": 35,
+        "actualCount": 33,
+        "discrepancy": -2,
+        "explanation": "Article counted 35 traits. Actual YAML count is 33. Delta likely from planned but not-yet-created traits (Identifiable and Subscribable were referenced in early design docs but were absorbed into other traits). The 33 count includes 17 core/behavioral/lifecycle/domain traits + 16 viz traits."
+      }
+    },
+    "components": {
+      "total": 80,
+      "source": "src/components/**/*.tsx (excluding .test. and .stories.)"
+    },
+    "stories": {
+      "total": 28,
+      "source": "src/**/*.stories.tsx"
+    },
+    "tests": {
+      "total": 566,
+      "source": "**/*.test.ts + **/*.test.tsx"
+    },
+    "objects": {
+      "core": 8,
+      "examples": 23,
+      "domain": 4,
+      "total": 35,
+      "source": "objects/ + examples/objects/ + domains/**/objects/"
+    },
+    "tokens": {
+      "count": 326,
+      "lastTransform": "2025-12-03T02:15:34.952Z"
+    }
   }
 }

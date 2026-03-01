@@ -1,6 +1,6 @@
 trait:
   name: LayoutConcat
-  version: 0.1.0
+  version: 0.2.0
   description: >
     Defines dashboard-style concatenation for coordinated multi-view
     experiences.
@@ -122,8 +122,31 @@ semantics:
 tokens:
   viz.layout.concat.gap: var(--cmp-viz-layout-gap)
 
+dependencies:
+  - trait: MarkBar
+    optional: true
+  - trait: MarkLine
+    optional: true
+  - trait: MarkPoint
+    optional: true
+  - trait: MarkArea
+    optional: true
+
 metadata:
   created: '2025-11-16'
+  updated: '2026-02-28'
   owners:
     - viz@oods.systems
   maturity: beta
+  accessibility:
+    keyboard: Concatenated sections are keyboard-navigable as a section group. Tab moves between sections.
+    screenreader: Announces section count and shared channels (e.g., "Dashboard with 3 sections, shared color scale").
+  regionsUsed:
+    - detail
+    - form
+  examples:
+    - RevenueDashboard
+    - SupportMetricsOverview
+    - SalesFunnelWithBreakdown
+  references:
+    - docs/viz/normalized-viz-spec.md
