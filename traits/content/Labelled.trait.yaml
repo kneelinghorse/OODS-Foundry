@@ -1,28 +1,79 @@
 trait:
   name: Labelled
-  version: 1.0.0
+  version: 2.0.0
   description: |
-    Provides canonical label, description, and placeholder copy for authored objects.
+    Canonical label, description, and placeholder copy for authored objects.
+    Labelled is a foundational content trait used by Organization, Product,
+    Relationship, and other core objects to provide consistent text display
+    across all view contexts.
+
+    Supports configurable length constraints, required/optional description,
+    and copy variants (e.g., primary, short, formal) for context-sensitive
+    text rendering.
   category: content
   tags:
     - label
     - description
     - copy
     - metadata
+    - content
+
+parameters:
+  - name: maxLabelLength
+    type: number
+    required: false
+    description: Maximum character length for the label field. Enforced at schema validation and echoed to UI components for truncation.
+    default: 80
+    validation:
+      minimum: 1
+      maximum: 255
+  - name: maxDescriptionLength
+    type: number
+    required: false
+    description: Maximum character length for the description field. Controls form input limits and detail view truncation.
+    default: 160
+    validation:
+      minimum: 1
+      maximum: 1000
+  - name: requireDescription
+    type: boolean
+    required: false
+    description: |
+      When true, description becomes a required field. Useful for objects
+      where supporting text is essential (e.g., Knowledge Articles).
+    default: false
+  - name: copyVariants
+    type: string[]
+    required: false
+    description: |
+      Named copy variants available for context-sensitive rendering.
+      "primary" is the default label. Additional variants (e.g., "short", "formal")
+      can be used for list truncation, exports, or formal documents.
+    default:
+      - primary
 
 schema:
   label:
     type: string
     required: true
     description: Human-readable display name rendered in primary surfaces.
+    validation:
+      minLength: 1
+      maxLengthFromParameter: maxLabelLength
+      pattern: "^\\S.*\\S$|^\\S$"
   description:
     type: string
     required: false
-    description: Supporting description used in detail contexts.
+    requiredFromParameter: requireDescription
+    description: Supporting description used in detail and card contexts.
+    validation:
+      maxLengthFromParameter: maxDescriptionLength
   placeholder:
     type: string
     required: false
-    description: Hint copy surfaced in form fields when empty.
+    description: Hint copy surfaced in form fields when the label is empty.
+    validation:
+      maxLength: 80
 
 semantics:
   label:
@@ -30,13 +81,14 @@ semantics:
     token_mapping: tokenMap(text.label.*)
     ui_hints:
       component: TextHeading
-      maxLength: 80
+      maxLengthParameter: maxLabelLength
+      headingLevel: 2
   description:
     semantic_type: text.description
     token_mapping: tokenMap(text.body.*)
     ui_hints:
       component: TextBody
-      maxLength: 160
+      maxLengthParameter: maxDescriptionLength
   placeholder:
     semantic_type: text.placeholder
     token_mapping: tokenMap(text.placeholder.*)
@@ -47,28 +99,43 @@ semantics:
 view_extensions:
   list:
     - component: LabelCell
+      priority: 100
       props:
         field: label
         descriptionField: description
         truncate: true
+        maxLengthParameter: maxLabelLength
   detail:
     - component: DetailHeader
       position: top
+      priority: 100
       props:
         titleField: label
         subtitleField: description
+        headingLevel: 1
   form:
     - component: FormLabelGroup
       position: before
+      priority: 100
       props:
         labelField: label
+        descriptionField: description
         placeholderField: placeholder
+        maxLabelLengthParameter: maxLabelLength
+        maxDescriptionLengthParameter: maxDescriptionLength
+        requireDescriptionParameter: requireDescription
   card:
     - component: CardHeader
       position: top
+      priority: 100
       props:
         titleField: label
         supportingField: description
+  timeline:
+    - component: TimelineEntryLabel
+      props:
+        field: label
+        compact: true
   inline:
     - component: InlineLabel
       props:
@@ -76,28 +143,52 @@ view_extensions:
         maxLength: 40
 
 tokens:
-  text.label.primary.color: "var(--text-strong)"
-  text.description.secondary.color: "var(--text-subtle)"
-  text.placeholder.default.color: "var(--text-muted)"
+  # Label (heading) tokens
+  cmp.text.label.color: "var(--sys-text-strong)"
+  cmp.text.label.font-weight: "var(--sys-font-weight-semibold)"
+  cmp.text.label.font-size: "var(--sys-font-size-lg)"
+  cmp.text.label.line-height: "var(--sys-line-height-tight)"
+  # Description (body) tokens
+  cmp.text.description.color: "var(--sys-text-subtle)"
+  cmp.text.description.font-weight: "var(--sys-font-weight-regular)"
+  cmp.text.description.font-size: "var(--sys-font-size-sm)"
+  cmp.text.description.line-height: "var(--sys-line-height-relaxed)"
+  # Placeholder (hint) tokens
+  cmp.text.placeholder.color: "var(--sys-text-muted)"
+  cmp.text.placeholder.font-weight: "var(--sys-font-weight-regular)"
+  cmp.text.placeholder.font-size: "var(--sys-font-size-sm)"
+  cmp.text.placeholder.line-height: "var(--sys-line-height-normal)"
 
 dependencies: []
 
 metadata:
   created: "2025-10-12"
+  updated: "2026-02-28"
   owners:
     - design@oods.systems
     - uxcopy@oods.systems
   maturity: stable
   accessibility:
-    keyboard: "n/a"
-    copy: required
+    keyboard: FormLabelGroup fields are focusable in reading order with standard tab navigation.
+    screenreader: |
+      Label is announced as a heading (level configurable via headingLevel prop).
+      Description is announced as supplementary text associated with the heading.
+      Placeholder is announced as input hint via aria-placeholder.
   regionsUsed:
     - list
     - detail
-    - forms
+    - form
+    - card
+    - timeline
     - inline
   examples:
+    - Organization
+    - Product
+    - Relationship
     - Ticket
     - Knowledge Article
   references:
-    - "Trait Engine Spec v0.1 §2"
+    - "Trait Engine Spec v0.1 §2 — foundational trait definitions"
+    - "objects/core/Organization.object.yaml — consumer"
+    - "objects/core/Product.object.yaml — consumer"
+    - "objects/core/Relationship.object.yaml — consumer"

@@ -1,0 +1,213 @@
+trait:
+  name: Auditable
+  version: 1.0.0
+  description: |
+    Compliance-grade audit trail trait that captures state transitions with actor,
+    reason, and timestamp metadata. Auditable observes Stateful transitions and
+    records them as an append-only audit log suitable for compliance review,
+    debugging, and timeline rendering.
+
+    Auditable defines the INTERFACE for audit data — the schema shape, parameters,
+    and view extensions that match the existing implementation. Advanced compliance
+    features (crypto-shredding, KMS integration, tamper-proof hashing) are documented
+    in R21.3 research and targeted for future enrichment.
+
+    Core concepts:
+    - Audit Log: append-only array of AuditEntry records
+    - Transition Capture: from_state → to_state with timestamp, actor, and reason
+    - Retention Policy: configurable retention period for log entries
+    - Actor Tracking: optional actor_id capture for accountability
+    - Reason Enforcement: optional requirement for transition justification
+  category: lifecycle
+  tags:
+    - audit
+    - compliance
+    - trail
+    - lifecycle
+    - transition
+    - accountability
+
+parameters:
+  - name: retentionDays
+    type: number
+    required: false
+    description: |
+      Number of days to retain audit log entries before archival eligibility.
+      Value of 0 means indefinite retention. Does not auto-delete — serves as
+      a policy signal for downstream archival processes.
+    default: 0
+    validation:
+      minimum: 0
+  - name: requireTransitionReason
+    type: boolean
+    required: false
+    description: |
+      When true, every state transition must include a reason string.
+      Enforces accountability by preventing silent status changes.
+    default: false
+  - name: trackActorId
+    type: boolean
+    required: false
+    description: |
+      When true, actor_id is captured on each transition. Enables
+      per-user audit trails and accountability reporting.
+    default: true
+
+schema:
+  audit_log:
+    type: AuditEntry[]
+    required: true
+    description: |
+      Append-only chronological log of state transition events.
+      Each entry captures the full context of a state change.
+    default: []
+    items:
+      type: object
+      properties:
+        from_state:
+          type: string
+          required: false
+          description: State before the transition. Null for initial state assignment.
+        to_state:
+          type: string
+          required: true
+          description: State after the transition.
+        transitioned_at:
+          type: datetime
+          required: true
+          description: UTC timestamp when the transition occurred.
+        actor_id:
+          type: string
+          required: false
+          requiredFromParameter: trackActorId
+          description: |
+            Identifier of the user or system that triggered the transition.
+            Required when trackActorId parameter is true.
+        reason:
+          type: string
+          required: false
+          requiredFromParameter: requireTransitionReason
+          description: |
+            Human-readable justification for the transition.
+            Required when requireTransitionReason parameter is true.
+        metadata:
+          type: Record<string, unknown>
+          required: false
+          description: |
+            Arbitrary key-value pairs for domain-specific context
+            (e.g., approval_id, ticket_number, automation_rule).
+          default: {}
+
+semantics:
+  audit_log:
+    semantic_type: timeline.audit
+    token_mapping: tokenMap(audit.timeline.*)
+    ui_hints:
+      component: AuditTimeline
+      maxVisible: 7
+      collapseWhenEmpty: true
+      entryComponent: AuditEntryCard
+  audit_log.from_state:
+    semantic_type: audit.transition.from
+    token_mapping: tokenMap(audit.state.from)
+    ui_hints:
+      component: StatusBadge
+      emphasis: subtle
+  audit_log.to_state:
+    semantic_type: audit.transition.to
+    token_mapping: tokenMap(audit.state.to)
+    ui_hints:
+      component: StatusBadge
+      emphasis: subtle
+  audit_log.transitioned_at:
+    semantic_type: audit.transition.timestamp
+    token_mapping: tokenMap(audit.timestamp.*)
+    ui_hints:
+      component: RelativeTimestamp
+  audit_log.actor_id:
+    semantic_type: audit.transition.actor
+    token_mapping: tokenMap(audit.actor.*)
+    ui_hints:
+      component: ActorBadge
+  audit_log.reason:
+    semantic_type: audit.transition.reason
+    token_mapping: tokenMap(audit.reason.*)
+    ui_hints:
+      component: TextBody
+
+view_extensions:
+  timeline:
+    - component: AuditTimeline
+      position: main
+      priority: 60
+      props:
+        auditLogField: audit_log
+        maxVisible: 7
+        showFromState: true
+        showActorId: true
+        showReason: true
+  detail:
+    - component: AuditSummaryCard
+      position: main
+      priority: 50
+      props:
+        auditLogField: audit_log
+        lastN: 5
+        showTransitionCount: true
+        showLastTransitionTime: true
+        showLastActor: true
+
+tokens:
+  # Timeline connector tokens
+  cmp.audit.timeline.connector.color: "var(--sys-border-default)"
+  cmp.audit.timeline.connector.width: "var(--space-px)"
+  cmp.audit.timeline.dot.color: "var(--sys-surface-accent)"
+  cmp.audit.timeline.dot.size: "var(--space-2)"
+  # Audit entry tokens
+  cmp.audit.entry.bg: "var(--sys-surface-raised)"
+  cmp.audit.entry.border: "var(--sys-border-default)"
+  cmp.audit.entry.radius: "var(--radius-md)"
+  cmp.audit.entry.padding: "var(--space-3)"
+  # Audit text tokens
+  cmp.audit.entry.state.text: "var(--sys-text-strong)"
+  cmp.audit.entry.reason.text: "var(--sys-text-default)"
+  cmp.audit.entry.timestamp.text: "var(--sys-text-subtle)"
+  cmp.audit.entry.actor.text: "var(--sys-text-subtle)"
+  # Summary card tokens
+  cmp.audit.summary.count.text: "var(--sys-text-strong)"
+  cmp.audit.summary.label.text: "var(--sys-text-subtle)"
+
+dependencies:
+  - trait: Stateful
+    required: true
+    description: |
+      Auditable observes state transitions managed by Stateful. The audit_log
+      entries are generated from Stateful's state_history transitions. Without
+      Stateful, there are no state transitions to audit.
+
+metadata:
+  created: "2026-02-28"
+  owners:
+    - compliance@oods.systems
+    - engineering@oods.systems
+  maturity: experimental
+  accessibility:
+    keyboard: |
+      AuditTimeline entries are not interactive. Summary card expand/collapse
+      is keyboard navigable via Enter/Space.
+    screenreader: |
+      AuditTimeline uses role="log" with aria-label="Audit trail".
+      Each entry announces: transition direction (from → to), timestamp,
+      actor, and reason as a single description.
+      AuditSummaryCard announces total transition count and last activity.
+  regionsUsed:
+    - timeline
+    - detail
+  examples:
+    - Subscription
+    - Invoice
+  references:
+    - "src/traits/Auditable/contrib/auditable-contributions.tsx — existing timeline renderer"
+    - "src/traits/Statusable/types.ts — StatusTransitionEvent interface (shared shape)"
+    - "R21.3 Canonical Audit Architecture — compliance-grade audit trail research (200+ pages)"
+    - "traits/lifecycle/Stateful.trait.yaml — required dependency (state transitions)"

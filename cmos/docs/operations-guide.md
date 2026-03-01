@@ -116,7 +116,41 @@ This guide consolidates operational procedures for both AI agents and human main
 
 ## Quick Reference
 
-### Commands
+### MCP Tools (Recommended for AI Agents)
+
+MCP provides direct database access without shell commands. Use these tools for agent-native workflows.
+
+| Purpose | MCP Tool |
+| --- | --- |
+| Agent onboarding | `cmos_agent_onboard()` |
+| Check DB health | `cmos_db_health()` |
+| View work queue | `cmos_mission_status(includeBlocked=true)` |
+| Create sprint | `cmos_sprint_add(sprintId, title, ...)` |
+| List sprints | `cmos_sprint_list()` |
+| Show sprint | `cmos_sprint_show(sprintId)` |
+| Update sprint | `cmos_sprint_update(sprintId, fields={...})` |
+| Create mission | `cmos_mission_add(missionId, name, sprintId, ...)` |
+| List missions | `cmos_mission_list(status, sprintId)` |
+| Show mission | `cmos_mission_show(missionId)` |
+| Start mission | `cmos_mission_start(missionId)` |
+| Complete mission | `cmos_mission_complete(missionId, notes)` |
+| Block mission | `cmos_mission_block(missionId, reason, blockers)` |
+| Unblock mission | `cmos_mission_unblock(missionId, resolution)` |
+| Update mission | `cmos_mission_update(missionId, fields={...})` |
+| Add dependency | `cmos_mission_depends(fromId, toId, type)` |
+| Start session | `cmos_session_start(type, title)` |
+| Capture insight | `cmos_session_capture(category, content)` |
+| Complete session | `cmos_session_complete(summary)` |
+| List sessions | `cmos_session_list(status, type)` |
+| View context | `cmos_context_view(contextType)` |
+| Take snapshot | `cmos_context_snapshot(contextType, source)` |
+| View history | `cmos_context_history(contextType)` |
+| List decisions | `cmos_decisions_list(domain, sprintId)` |
+| Search decisions | `cmos_decisions_search(query)` |
+
+See `cmos/docs/mcp-reference.md` for complete parameter documentation.
+
+### CLI Commands (For Human Operators)
 
 | Purpose | Command |
 | --- | --- |
@@ -160,6 +194,14 @@ This guide consolidates operational procedures for both AI agents and human main
 ## AI Agent Specific Instructions
 
 ### Pre-Flight Requirements
+
+**Using MCP (Recommended):**
+1. Load `cmos/agents.md` before starting any mission
+2. Get project context via `cmos_agent_onboard()`
+3. Review work queue via `cmos_mission_status()`
+4. Confirm database health via `cmos_db_health()`
+
+**Using CLI (Fallback):**
 1. Load `cmos/agents.md` before starting any mission
 2. Review the backlog entry for the candidate mission
 3. Confirm database health via `./cmos/cli.py validate health`
@@ -207,6 +249,7 @@ This guide consolidates operational procedures for both AI agents and human main
 
 ## Reference Links
 
+- **MCP reference**: `cmos/docs/mcp-reference.md`
 - **Core guidance**: `cmos/agents.md`, `cmos/README.md`
 - **Roadmap template**: `cmos/foundational-docs/roadmap_template.md`
 - **Technical architecture**: `cmos/foundational-docs/tech_arch_template.md`
@@ -217,5 +260,6 @@ This guide consolidates operational procedures for both AI agents and human main
 
 ---
 
-**Last Updated**: 2025-11-08  
+**Last Updated**: 2025-12-10
+**CMOS Version**: 2.1 (MCP-enabled)
 **Replaces**: `AI-coding-assistant-workflows.md`, `cmos_Playbook.md`, `packaging-guide.md`, `integration-testing-guide.md`

@@ -17,6 +17,30 @@ All types share the same lifecycle: start → capture → complete.
 
 ## Basic Workflow
 
+### Using MCP (Recommended for AI Agents)
+
+```
+# 1. Start a session
+cmos_session_start(
+  type="planning",
+  title="Sprint 17 planning",
+  sprintId="sprint-17"
+)
+
+# 2. Capture insights (repeat as needed)
+cmos_session_capture(category="decision", content="Focus on API performance")
+cmos_session_capture(category="constraint", content="Must maintain backward compatibility")
+cmos_session_capture(category="next-step", content="Profile current latency")
+
+# 3. Complete the session
+cmos_session_complete(
+  summary="Sprint 17 scoped and prioritized",
+  nextSteps=["Finalize API metrics", "Update backlog with perf missions"]
+)
+```
+
+### Using CLI (For Human Operators)
+
 ```bash
 # 1. Start a session
 ./cmos/cli.py session start --type planning --title "Sprint 17 planning" --sprint "Sprint 17"
@@ -41,33 +65,51 @@ Tips:
 
 ### Sprint Planning
 
-```bash
-# Start planning session
-./cmos/cli.py session start --type planning --title "Sprint 17 planning" --sprint "Sprint 17"
+**MCP:**
+```
+cmos_session_start(type="planning", title="Sprint 17 planning", sprintId="sprint-17")
 
-# Capture decisions during planning
+cmos_session_capture(category="decision", content="Focus on API performance optimization")
+cmos_session_capture(category="constraint", content="Must maintain backward compatibility")
+cmos_session_capture(category="next-step", content="Profile current API endpoints")
+
+cmos_session_complete(summary="Sprint 17 planned: 6 missions for API optimization")
+```
+
+**CLI:**
+```bash
+./cmos/cli.py session start --type planning --title "Sprint 17 planning" --sprint "Sprint 17"
 ./cmos/cli.py session capture decision "Focus on API performance optimization"
 ./cmos/cli.py session capture constraint "Must maintain backward compatibility"
 ./cmos/cli.py session capture next-step "Profile current API endpoints"
-
-# Complete with summary
 ./cmos/cli.py session complete --summary "Sprint 17 planned: 6 missions for API optimization"
 ```
 
 ### Agent Onboarding
 
+**MCP:**
+```
+# Get quick context (recommended first step)
+cmos_agent_onboard()
+
+# Start formal onboarding session
+cmos_session_start(type="onboarding", title="Onboarding for feature X")
+
+cmos_session_capture(category="context", content="Feature X requires real-time updates")
+cmos_session_capture(category="decision", content="Use WebSockets for real-time")
+
+cmos_session_complete(
+  summary="Onboarded to Feature X implementation",
+  nextSteps=["Review WebSocket library options", "Design message protocol"]
+)
+```
+
+**CLI:**
 ```bash
-# Check current state
 ./cmos/cli.py session onboard
-
-# Start onboarding
 ./cmos/cli.py session start --type onboarding --title "Onboarding for feature X"
-
-# Capture context
 ./cmos/cli.py session capture context "Feature X requires real-time updates"
 ./cmos/cli.py session capture decision "Use WebSockets for real-time"
-
-# Complete with handoff
 ./cmos/cli.py session complete --summary "Onboarded to Feature X implementation" \
   --next-steps "Review WebSocket library options" \
   --next-steps "Design message protocol"
@@ -75,15 +117,21 @@ Tips:
 
 ### Weekly Review
 
-```bash
-# Start review
-./cmos/cli.py session start --type review --title "Week 47 review"
+**MCP:**
+```
+cmos_session_start(type="review", title="Week 47 review")
 
-# Capture learnings
+cmos_session_capture(category="learning", content="CI/CD pipeline needs optimization")
+cmos_session_capture(category="learning", content="Team velocity improved with pair programming")
+
+cmos_session_complete(summary="Week 47: Good progress, CI/CD needs work")
+```
+
+**CLI:**
+```bash
+./cmos/cli.py session start --type review --title "Week 47 review"
 ./cmos/cli.py session capture learning "CI/CD pipeline needs optimization"
 ./cmos/cli.py session capture learning "Team velocity improved with pair programming"
-
-# Complete
 ./cmos/cli.py session complete --summary "Week 47: Good progress, CI/CD needs work"
 ```
 
@@ -95,9 +143,17 @@ See `templates/session-onboarding-template.md` for a checklist covering prerequi
 
 | Scenario | Resolution |
 | --- | --- |
-| Attempting to start while another session is active | CLI will show the active session ID; resume or complete it first |
+| Attempting to start while another session is active | Check `cmos_session_list(status="active")` or CLI; complete the active session first |
 | Invalid capture category | Use one of: decision, learning, constraint, context, next-step |
-| Long or empty content | Trim input; `session_runtime` enforces 1–1000 char body |
-| Missing session ID for capture/complete | Either pass `--session PS-YYYY-MM-DD-###` or ensure an active session exists |
+| Long or empty content | Trim input; enforces 1–1000 char body |
+| Missing session ID for capture/complete | MCP uses active session automatically; CLI requires `--session PS-YYYY-MM-DD-###` or active session |
 
-Use `./cmos/cli.py session list` and `./cmos/cli.py session show <ID>` to inspect results at any time.
+**Inspect sessions:**
+- MCP: `cmos_session_list()`
+- CLI: `./cmos/cli.py session list` and `./cmos/cli.py session show <ID>`
+
+---
+
+**Last Updated**: 2025-12-10
+**CMOS Version**: 2.1 (MCP-enabled)
+**See Also**: `cmos/docs/mcp-reference.md` for complete MCP tool documentation

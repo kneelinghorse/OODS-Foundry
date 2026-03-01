@@ -234,6 +234,71 @@ yourproject/                      # Project root
 
 ---
 
+## MCP Setup (Recommended for AI Agents)
+
+CMOS includes an MCP (Model Context Protocol) server that provides direct database access for AI agents. This is the recommended interface for agent-native workflows.
+
+### Configure MCP Server
+
+Add the CMOS MCP server to your Claude configuration:
+
+**For Claude Desktop** (`~/.claude/claude_desktop_config.json`):
+```json
+{
+  "mcpServers": {
+    "cmos-mcp": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/cmos-mcp"],
+      "env": {
+        "CMOS_PROJECT_ROOT": "/path/to/your/project"
+      }
+    }
+  }
+}
+```
+
+**For Claude Code** (`.claude/settings.json` in project root):
+```json
+{
+  "mcpServers": {
+    "cmos-mcp": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/cmos-mcp"]
+    }
+  }
+}
+```
+
+### Verify MCP Connection
+
+Once configured, verify the MCP server is working:
+
+```
+# In Claude conversation
+cmos_db_health()
+```
+
+Should return database stats including table counts and connection status.
+
+### MCP vs CLI
+
+| Use Case | Recommended Interface |
+|----------|----------------------|
+| AI agent workflows | **MCP** - Direct database access, no shell needed |
+| Human operators | **CLI** - Familiar command-line interface |
+| Automation scripts | **CLI** or **Python API** - Scriptable |
+| Quick debugging | **CLI** - Easy to run from terminal |
+
+**MCP Advantages:**
+- No shell command execution needed
+- Structured JSON responses
+- Optimized for agent context windows
+- Direct database operations
+
+See `cmos/docs/mcp-reference.md` for complete MCP tool documentation.
+
+---
+
 ## Verification Checklist
 
 After setup, verify everything works:
@@ -327,6 +392,26 @@ ls -la agents.md cmos/agents.md
 
 ## Quick Reference
 
+### MCP Tools (Recommended for AI Agents)
+
+| Task | MCP Tool |
+|------|----------|
+| Agent onboarding | `cmos_agent_onboard()` |
+| Database health | `cmos_db_health()` |
+| View work queue | `cmos_mission_status()` |
+| Create sprint | `cmos_sprint_add(sprintId, title, ...)` |
+| List sprints | `cmos_sprint_list()` |
+| Create mission | `cmos_mission_add(missionId, name, sprintId, ...)` |
+| Start mission | `cmos_mission_start(missionId)` |
+| Complete mission | `cmos_mission_complete(missionId, notes)` |
+| Start session | `cmos_session_start(type, title)` |
+| Capture insight | `cmos_session_capture(category, content)` |
+| Complete session | `cmos_session_complete(summary)` |
+| Take snapshot | `cmos_context_snapshot(contextType, source)` |
+| Search decisions | `cmos_decisions_search(query)` |
+
+### CLI Commands (For Human Operators)
+
 | Task | Command |
 |------|---------|
 | Initialize database | `python cmos/scripts/seed_sqlite.py` |
@@ -350,6 +435,7 @@ ls -la agents.md cmos/agents.md
 
 ## Getting Help
 
+- **MCP tools reference**: See `cmos/docs/mcp-reference.md`
 - **Setup issues**: Check `cmos/docs/operations-guide.md`
 - **Session management**: See `cmos/docs/session-management-guide.md`
 - **Migration from legacy**: See `cmos/docs/legacy-migration-guide.md`
@@ -359,6 +445,6 @@ ls -la agents.md cmos/agents.md
 
 ---
 
-**Last Updated**: 2025-11-08  
-**Status**: Ready for use  
+**Last Updated**: 2025-12-10
+**Status**: Ready for use (MCP-enabled)
 **Next**: Complete foundational docs, create backlog, start building!
