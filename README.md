@@ -1,3 +1,5 @@
+> **Archived 2026-09-22.** This repository is an older snapshot of OODS Foundry, kept read-only; it remains under the license it was published with. OODS Foundry is now developed privately, and the current version is licensed separately under PolyForm Noncommercial 1.0.0 by System Systems LLC (https://aquex.ai). Contact: derek@derekn.com.
+
 
 # OODS Foundry — Object-Oriented Design System
 
