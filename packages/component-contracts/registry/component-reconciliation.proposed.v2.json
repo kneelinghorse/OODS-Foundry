@@ -1,0 +1,2285 @@
+{
+  "schemaVersion": "2.0.0",
+  "kind": "component-reconciliation-proposal",
+  "baselineCommit": "a5638cf819bdadb86e2336c4aabe9b2184699c13",
+  "planningCommit": "8ce349076e7e3ba3f0b2f3f667d4fbb5c6a4b63b",
+  "status": "proposed-awaiting-approval",
+  "controllingObligationDenominator": 114,
+  "approvedRuntimeCensus": null,
+  "proposedRuntimeCensus": 114,
+  "rows": [
+    {
+      "id": "AddressCollectionPanel",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderAddressCollectionPanel",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:section",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderAddressCollectionPanel",
+        "traits/core/Addressable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#AddressCollectionPanel",
+        "packages/components-vue/evidence/vue-readiness.v1.json#AddressCollectionPanel",
+        "packages/component-contracts/src/contracts.ts#AddressCollectionPanel"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "AddressEditor",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderAddressEditor",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:form",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderAddressEditor",
+        "traits/core/Addressable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#AddressEditor",
+        "packages/components-vue/evidence/vue-readiness.v1.json#AddressEditor",
+        "packages/component-contracts/src/contracts.ts#AddressEditor"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "AddressSummaryBadge",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderAddressSummaryBadge",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:span",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderAddressSummaryBadge",
+        "traits/core/Addressable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#AddressSummaryBadge",
+        "packages/components-vue/evidence/vue-readiness.v1.json#AddressSummaryBadge",
+        "packages/component-contracts/src/contracts.ts#AddressSummaryBadge"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "AddressValidationTimeline",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderAddressValidationTimeline",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:div",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderAddressValidationTimeline",
+        "traits/core/Addressable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#AddressValidationTimeline",
+        "packages/components-vue/evidence/vue-readiness.v1.json#AddressValidationTimeline",
+        "packages/component-contracts/src/contracts.ts#AddressValidationTimeline"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "ArchiveEvent",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderArchiveEvent",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:article",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderArchiveEvent",
+        "traits/lifecycle/Archivable.trait.yaml"
+      ],
+      "implementationStatus": "pending",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    },
+    {
+      "id": "ArchivePill",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderArchivePill",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:span",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderArchivePill",
+        "traits/lifecycle/Archivable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#ArchivePill",
+        "packages/components-vue/evidence/vue-readiness.v1.json#ArchivePill",
+        "packages/component-contracts/src/contracts.ts#ArchivePill"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "ArchiveSummary",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderArchiveSummary",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:section",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderArchiveSummary",
+        "traits/lifecycle/Archivable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#ArchiveSummary",
+        "packages/components-vue/evidence/vue-readiness.v1.json#ArchiveSummary",
+        "packages/component-contracts/src/contracts.ts#ArchiveSummary"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "ArchivedRowOverlay",
+      "proposedClassification": "native",
+      "approvalState": "pending-approval",
+      "evidence": [
+        "traits/lifecycle/Archivable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#ArchivedRowOverlay",
+        "packages/components-vue/evidence/vue-readiness.v1.json#ArchivedRowOverlay",
+        "packages/component-contracts/src/contracts.ts#ArchivedRowOverlay"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "proposedResolution": {
+        "surface": "react+vue+html",
+        "implementation": "ArchivedRowOverlay",
+        "source": "packages/component-contracts/src/contracts.ts",
+        "publicIdRetained": true
+      },
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "AuditEvent",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderAuditEvent",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:article",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderAuditEvent",
+        "traits/lifecycle/Timestampable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#AuditEvent",
+        "packages/components-vue/evidence/vue-readiness.v1.json#AuditEvent",
+        "packages/component-contracts/src/contracts.ts#AuditEvent"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "AuditSummaryCard",
+      "proposedClassification": "native",
+      "approvalState": "pending-approval",
+      "evidence": [
+        "traits/lifecycle/Auditable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#AuditSummaryCard",
+        "packages/components-vue/evidence/vue-readiness.v1.json#AuditSummaryCard",
+        "packages/component-contracts/src/contracts.ts#AuditSummaryCard"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "proposedResolution": {
+        "surface": "react+vue+html",
+        "implementation": "AuditSummaryCard",
+        "source": "packages/component-contracts/src/contracts.ts",
+        "publicIdRetained": true
+      },
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "AuditTimeline",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderAuditTimeline",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:div",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderAuditTimeline",
+        "traits/lifecycle/Auditable.trait.yaml",
+        "traits/lifecycle/Timestampable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#AuditTimeline",
+        "packages/components-vue/evidence/vue-readiness.v1.json#AuditTimeline",
+        "packages/component-contracts/src/contracts.ts#AuditTimeline"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "Badge",
+      "proposedClassification": "native",
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderBadge",
+        "src/components/base/Badge.tsx",
+        "src/index.ts",
+        "traits/visual/Statusable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#Badge",
+        "packages/components-vue/evidence/vue-readiness.v1.json#Badge",
+        "packages/component-contracts/src/contracts.ts#Badge"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal.",
+      "proposedResolution": {
+        "action": "retain-native",
+        "surface": "html",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "implementation": "renderBadge",
+        "publicIdRetained": true
+      }
+    },
+    {
+      "id": "Banner",
+      "proposedClassification": "native",
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderBanner",
+        "src/components/base/Banner.tsx",
+        "src/index.ts",
+        "traits/visual/Statusable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#Banner",
+        "packages/components-vue/evidence/vue-readiness.v1.json#Banner",
+        "packages/component-contracts/src/contracts.ts#Banner"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal.",
+      "proposedResolution": {
+        "action": "retain-native",
+        "surface": "html",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "implementation": "renderBanner",
+        "publicIdRetained": true
+      }
+    },
+    {
+      "id": "BillingAmountInput",
+      "proposedClassification": "native",
+      "approvalState": "pending-approval",
+      "evidence": [
+        "traits/financial/Billable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#BillingAmountInput",
+        "packages/components-vue/evidence/vue-readiness.v1.json#BillingAmountInput",
+        "packages/component-contracts/src/contracts.ts#BillingAmountInput"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "proposedResolution": {
+        "surface": "react+vue+html",
+        "implementation": "BillingAmountInput",
+        "source": "packages/component-contracts/src/contracts.ts",
+        "publicIdRetained": true
+      },
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "BillingCardMeta",
+      "proposedClassification": "native",
+      "approvalState": "pending-approval",
+      "evidence": [
+        "traits/financial/Billable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#BillingCardMeta",
+        "packages/components-vue/evidence/vue-readiness.v1.json#BillingCardMeta",
+        "packages/component-contracts/src/contracts.ts#BillingCardMeta"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "proposedResolution": {
+        "surface": "react+vue+html",
+        "implementation": "BillingCardMeta",
+        "source": "packages/component-contracts/src/contracts.ts",
+        "publicIdRetained": true
+      },
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "BillingIntervalSelector",
+      "proposedClassification": "native",
+      "approvalState": "pending-approval",
+      "evidence": [
+        "traits/financial/Billable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#BillingIntervalSelector",
+        "packages/components-vue/evidence/vue-readiness.v1.json#BillingIntervalSelector",
+        "packages/component-contracts/src/contracts.ts#BillingIntervalSelector"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "proposedResolution": {
+        "surface": "react+vue+html",
+        "implementation": "BillingIntervalSelector",
+        "source": "packages/component-contracts/src/contracts.ts",
+        "publicIdRetained": true
+      },
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "BillingSummaryBadge",
+      "proposedClassification": "native",
+      "approvalState": "pending-approval",
+      "evidence": [
+        "traits/financial/Billable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#BillingSummaryBadge",
+        "packages/components-vue/evidence/vue-readiness.v1.json#BillingSummaryBadge",
+        "packages/component-contracts/src/contracts.ts#BillingSummaryBadge"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "proposedResolution": {
+        "surface": "react+vue+html",
+        "implementation": "BillingSummaryBadge",
+        "source": "packages/component-contracts/src/contracts.ts",
+        "publicIdRetained": true
+      },
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "Button",
+      "proposedClassification": "native",
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderButton",
+        "src/components/base/Button.tsx",
+        "src/index.ts",
+        "packages/components-react/evidence/react-readiness.v1.json#Button",
+        "packages/components-vue/evidence/vue-readiness.v1.json#Button",
+        "packages/component-contracts/src/contracts.ts#Button"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal.",
+      "proposedResolution": {
+        "action": "retain-native",
+        "surface": "html",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "implementation": "renderButton",
+        "publicIdRetained": true
+      }
+    },
+    {
+      "id": "CancellationBadge",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderCancellationBadge",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:span",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderCancellationBadge",
+        "traits/lifecycle/Cancellable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#CancellationBadge",
+        "packages/components-vue/evidence/vue-readiness.v1.json#CancellationBadge",
+        "packages/component-contracts/src/contracts.ts#CancellationBadge"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "CancellationEvent",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderCancellationEvent",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:article",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderCancellationEvent",
+        "traits/lifecycle/Cancellable.trait.yaml"
+      ],
+      "implementationStatus": "pending",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    },
+    {
+      "id": "CancellationForm",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderCancellationForm",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:form",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderCancellationForm",
+        "traits/lifecycle/Cancellable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#CancellationForm",
+        "packages/components-vue/evidence/vue-readiness.v1.json#CancellationForm",
+        "packages/component-contracts/src/contracts.ts#CancellationForm"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "CancellationSummary",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderCancellationSummary",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:section",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderCancellationSummary",
+        "traits/lifecycle/Cancellable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#CancellationSummary",
+        "packages/components-vue/evidence/vue-readiness.v1.json#CancellationSummary",
+        "packages/component-contracts/src/contracts.ts#CancellationSummary"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "Card",
+      "proposedClassification": "native",
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderCard",
+        "src/components/base/Card.tsx",
+        "src/index.ts",
+        "packages/components-react/evidence/react-readiness.v1.json#Card",
+        "packages/components-vue/evidence/vue-readiness.v1.json#Card",
+        "packages/component-contracts/src/contracts.ts#Card"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal.",
+      "proposedResolution": {
+        "action": "retain-native",
+        "surface": "html",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "implementation": "renderCard",
+        "publicIdRetained": true
+      }
+    },
+    {
+      "id": "CardHeader",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderCardHeader",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:header",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderCardHeader",
+        "traits/content/Labelled.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#CardHeader",
+        "packages/components-vue/evidence/vue-readiness.v1.json#CardHeader",
+        "packages/component-contracts/src/contracts.ts#CardHeader"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "Checkbox",
+      "proposedClassification": "native",
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderCheckbox",
+        "src/components/base/Checkbox.tsx",
+        "src/index.ts",
+        "packages/components-react/evidence/react-readiness.v1.json#Checkbox",
+        "packages/components-vue/evidence/vue-readiness.v1.json#Checkbox",
+        "packages/component-contracts/src/contracts.ts#Checkbox"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal.",
+      "proposedResolution": {
+        "action": "retain-native",
+        "surface": "html",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "implementation": "renderCheckbox",
+        "publicIdRetained": true
+      }
+    },
+    {
+      "id": "ClassificationBadge",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderClassificationBadge",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:span",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderClassificationBadge",
+        "traits/core/Classifiable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#ClassificationBadge",
+        "packages/components-vue/evidence/vue-readiness.v1.json#ClassificationBadge",
+        "packages/component-contracts/src/contracts.ts#ClassificationBadge"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "ClassificationEditor",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderClassificationEditor",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:form",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderClassificationEditor",
+        "traits/core/Classifiable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#ClassificationEditor",
+        "packages/components-vue/evidence/vue-readiness.v1.json#ClassificationEditor",
+        "packages/component-contracts/src/contracts.ts#ClassificationEditor"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "ClassificationPanel",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderClassificationPanel",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:section",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderClassificationPanel",
+        "traits/core/Classifiable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#ClassificationPanel",
+        "packages/components-vue/evidence/vue-readiness.v1.json#ClassificationPanel",
+        "packages/component-contracts/src/contracts.ts#ClassificationPanel"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "ColorStatePicker",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderColorStatePicker",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:fieldset",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderColorStatePicker",
+        "traits/visual/Colorized.trait.yaml"
+      ],
+      "implementationStatus": "pending",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    },
+    {
+      "id": "ColorSwatch",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderColorSwatch",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:span",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderColorSwatch",
+        "traits/visual/Colorized.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#ColorSwatch",
+        "packages/components-vue/evidence/vue-readiness.v1.json#ColorSwatch",
+        "packages/component-contracts/src/contracts.ts#ColorSwatch"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "ColorizedBadge",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderColorizedBadge",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:span",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderColorizedBadge",
+        "traits/visual/Colorized.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#ColorizedBadge",
+        "packages/components-vue/evidence/vue-readiness.v1.json#ColorizedBadge",
+        "packages/component-contracts/src/contracts.ts#ColorizedBadge"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "Combobox",
+      "proposedClassification": "native",
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderCombobox",
+        "packages/components-react/evidence/react-readiness.v1.json#Combobox",
+        "packages/components-vue/evidence/vue-readiness.v1.json#Combobox",
+        "packages/component-contracts/src/contracts.ts#Combobox"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "proposedResolution": {
+        "surface": "react+vue+html",
+        "implementation": "Combobox",
+        "source": "packages/component-contracts/src/contracts.ts",
+        "publicIdRetained": true
+      },
+      "compatibilityNote": "New public identity added by decision #2527 (ruling 11). Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "CommunicationDetailPanel",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderCommunicationDetailPanel",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:section",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderCommunicationDetailPanel",
+        "traits/core/Communicable.trait.yaml"
+      ],
+      "implementationStatus": "pending",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    },
+    {
+      "id": "CycleProgressCard",
+      "proposedClassification": "native",
+      "approvalState": "pending-approval",
+      "evidence": [
+        "traits/financial/Billable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#CycleProgressCard",
+        "packages/components-vue/evidence/vue-readiness.v1.json#CycleProgressCard",
+        "packages/component-contracts/src/contracts.ts#CycleProgressCard"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "proposedResolution": {
+        "surface": "react+vue+html",
+        "implementation": "CycleProgressCard",
+        "source": "packages/component-contracts/src/contracts.ts",
+        "publicIdRetained": true
+      },
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "DatePicker",
+      "proposedClassification": "native",
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderDatePicker",
+        "src/components/base/DatePicker.tsx",
+        "src/index.ts",
+        "packages/components-react/evidence/react-readiness.v1.json#DatePicker",
+        "packages/components-vue/evidence/vue-readiness.v1.json#DatePicker",
+        "packages/component-contracts/src/contracts.ts#DatePicker"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal.",
+      "proposedResolution": {
+        "action": "retain-native",
+        "surface": "html",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "implementation": "renderDatePicker",
+        "publicIdRetained": true
+      }
+    },
+    {
+      "id": "DetailHeader",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderDetailHeader",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:header",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderDetailHeader",
+        "traits/content/Labelled.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#DetailHeader",
+        "packages/components-vue/evidence/vue-readiness.v1.json#DetailHeader",
+        "packages/component-contracts/src/contracts.ts#DetailHeader"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "Dialog",
+      "proposedClassification": "native",
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderDialog",
+        "packages/components-react/evidence/react-readiness.v1.json#Dialog",
+        "packages/components-vue/evidence/vue-readiness.v1.json#Dialog",
+        "packages/component-contracts/src/contracts.ts#Dialog"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "proposedResolution": {
+        "surface": "react+vue+html",
+        "implementation": "Dialog",
+        "source": "packages/component-contracts/src/contracts.ts",
+        "publicIdRetained": true
+      },
+      "compatibilityNote": "New public identity added by decision #2502 (ruling 11). Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "FilterPanel",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderFilterPanel",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:aside",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderFilterPanel",
+        "traits/behavioral/Filterable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#FilterPanel",
+        "packages/components-vue/evidence/vue-readiness.v1.json#FilterPanel",
+        "packages/component-contracts/src/contracts.ts#FilterPanel"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "FormLabelGroup",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderFormLabelGroup",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:label",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderFormLabelGroup",
+        "traits/content/Labelled.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#FormLabelGroup",
+        "packages/components-vue/evidence/vue-readiness.v1.json#FormLabelGroup",
+        "packages/component-contracts/src/contracts.ts#FormLabelGroup"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "GeoFieldMappingForm",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderGeoFieldMappingForm",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:form",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderGeoFieldMappingForm",
+        "traits/viz/spatial/geocodable.trait.yaml"
+      ],
+      "implementationStatus": "pending",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    },
+    {
+      "id": "GeoResolutionBadge",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderGeoResolutionBadge",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:span",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderGeoResolutionBadge",
+        "traits/viz/spatial/geocodable.trait.yaml"
+      ],
+      "implementationStatus": "pending",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    },
+    {
+      "id": "GeocodablePreview",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderGeocodablePreview",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:section",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderGeocodablePreview",
+        "traits/viz/spatial/geocodable.trait.yaml"
+      ],
+      "implementationStatus": "pending",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    },
+    {
+      "id": "Grid",
+      "proposedClassification": "native",
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderGrid",
+        "packages/components-react/evidence/react-readiness.v1.json#Grid",
+        "packages/components-vue/evidence/vue-readiness.v1.json#Grid",
+        "packages/component-contracts/src/contracts.ts#Grid"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal.",
+      "proposedResolution": {
+        "action": "retain-native",
+        "surface": "html",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "implementation": "renderGrid",
+        "publicIdRetained": true
+      }
+    },
+    {
+      "id": "InlineLabel",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderInlineLabel",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:span",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderInlineLabel",
+        "traits/content/Labelled.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#InlineLabel",
+        "packages/components-vue/evidence/vue-readiness.v1.json#InlineLabel",
+        "packages/component-contracts/src/contracts.ts#InlineLabel"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "Input",
+      "proposedClassification": "native",
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderInput",
+        "packages/components-react/evidence/react-readiness.v1.json#Input",
+        "packages/components-vue/evidence/vue-readiness.v1.json#Input",
+        "packages/component-contracts/src/contracts.ts#Input"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal.",
+      "proposedResolution": {
+        "action": "retain-native",
+        "surface": "html",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "implementation": "renderInput",
+        "publicIdRetained": true
+      }
+    },
+    {
+      "id": "LabelCell",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderLabelCell",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:span",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderLabelCell",
+        "traits/content/Labelled.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#LabelCell",
+        "packages/components-vue/evidence/vue-readiness.v1.json#LabelCell",
+        "packages/component-contracts/src/contracts.ts#LabelCell"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "MembershipAuditTimeline",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderMembershipAuditTimeline",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:div",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderMembershipAuditTimeline",
+        "traits/core/Authable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#MembershipAuditTimeline",
+        "packages/components-vue/evidence/vue-readiness.v1.json#MembershipAuditTimeline",
+        "packages/component-contracts/src/contracts.ts#MembershipAuditTimeline"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "MembershipPanel",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderMembershipPanel",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:section",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderMembershipPanel",
+        "traits/core/Authable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#MembershipPanel",
+        "packages/components-vue/evidence/vue-readiness.v1.json#MembershipPanel",
+        "packages/component-contracts/src/contracts.ts#MembershipPanel"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "MessageEventTimeline",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderMessageEventTimeline",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:div",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderMessageEventTimeline",
+        "traits/core/Communicable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#MessageEventTimeline",
+        "packages/components-vue/evidence/vue-readiness.v1.json#MessageEventTimeline",
+        "packages/component-contracts/src/contracts.ts#MessageEventTimeline"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "MessageStatusBadge",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderMessageStatusBadge",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:span",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderMessageStatusBadge",
+        "traits/core/Communicable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#MessageStatusBadge",
+        "packages/components-vue/evidence/vue-readiness.v1.json#MessageStatusBadge",
+        "packages/component-contracts/src/contracts.ts#MessageStatusBadge"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "OwnerBadge",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderOwnerBadge",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:span",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderOwnerBadge",
+        "traits/structural/Ownerable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#OwnerBadge",
+        "packages/components-vue/evidence/vue-readiness.v1.json#OwnerBadge",
+        "packages/component-contracts/src/contracts.ts#OwnerBadge"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "OwnershipMeta",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderOwnershipMeta",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:div",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderOwnershipMeta",
+        "traits/structural/Ownerable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#OwnershipMeta",
+        "packages/components-vue/evidence/vue-readiness.v1.json#OwnershipMeta",
+        "packages/component-contracts/src/contracts.ts#OwnershipMeta"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "OwnershipSummary",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderOwnershipSummary",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:section",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderOwnershipSummary",
+        "traits/structural/Ownerable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#OwnershipSummary",
+        "packages/components-vue/evidence/vue-readiness.v1.json#OwnershipSummary",
+        "packages/component-contracts/src/contracts.ts#OwnershipSummary"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "PaginationBar",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderPaginationBar",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:nav",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderPaginationBar",
+        "traits/behavioral/Pageable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#PaginationBar",
+        "packages/components-vue/evidence/vue-readiness.v1.json#PaginationBar",
+        "packages/component-contracts/src/contracts.ts#PaginationBar"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "PaymentEventTimeline",
+      "proposedClassification": "alias",
+      "approvalState": "pending-approval",
+      "evidence": [
+        "traits/financial/Billable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#PaymentEventTimeline",
+        "packages/components-vue/evidence/vue-readiness.v1.json#PaymentEventTimeline",
+        "packages/component-contracts/src/contracts.ts#PaymentEventTimeline"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "proposedResolution": {
+        "target": "PaymentTimeline",
+        "source": "packages/components-react/src/billing-views.tsx",
+        "publicIdRetained": true
+      },
+      "compatibilityNote": "Shared payment primitive; the public event-view ID and its scenario remain. Proposing an alias does not remove either obligation."
+    },
+    {
+      "id": "PaymentTimeline",
+      "proposedClassification": "native",
+      "approvalState": "pending-approval",
+      "evidence": [
+        "traits/financial/Billable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#PaymentTimeline",
+        "packages/components-vue/evidence/vue-readiness.v1.json#PaymentTimeline",
+        "packages/component-contracts/src/contracts.ts#PaymentTimeline"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "proposedResolution": {
+        "surface": "react+vue+html",
+        "implementation": "PaymentTimeline",
+        "source": "packages/component-contracts/src/contracts.ts",
+        "publicIdRetained": true
+      },
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "PreferenceEditor",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderPreferenceEditor",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:form",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderPreferenceEditor",
+        "traits/core/Preferenceable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#PreferenceEditor",
+        "packages/components-vue/evidence/vue-readiness.v1.json#PreferenceEditor",
+        "packages/component-contracts/src/contracts.ts#PreferenceEditor"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "PreferencePanel",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderPreferencePanel",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:section",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderPreferencePanel",
+        "traits/core/Preferenceable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#PreferencePanel",
+        "packages/components-vue/evidence/vue-readiness.v1.json#PreferencePanel",
+        "packages/component-contracts/src/contracts.ts#PreferencePanel"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "PreferenceSummaryBadge",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderPreferenceSummaryBadge",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:span",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderPreferenceSummaryBadge",
+        "traits/core/Preferenceable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#PreferenceSummaryBadge",
+        "packages/components-vue/evidence/vue-readiness.v1.json#PreferenceSummaryBadge",
+        "packages/component-contracts/src/contracts.ts#PreferenceSummaryBadge"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "PreferenceTimeline",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderPreferenceTimeline",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:div",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderPreferenceTimeline",
+        "traits/core/Preferenceable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#PreferenceTimeline",
+        "packages/components-vue/evidence/vue-readiness.v1.json#PreferenceTimeline",
+        "packages/component-contracts/src/contracts.ts#PreferenceTimeline"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "PriceBadge",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderPriceBadge",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:span",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderPriceBadge",
+        "traits/financial/Priceable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#PriceBadge",
+        "packages/components-vue/evidence/vue-readiness.v1.json#PriceBadge",
+        "packages/component-contracts/src/contracts.ts#PriceBadge"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "PriceCardMeta",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderPriceCardMeta",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:div",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderPriceCardMeta",
+        "traits/financial/Priceable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#PriceCardMeta",
+        "packages/components-vue/evidence/vue-readiness.v1.json#PriceCardMeta",
+        "packages/component-contracts/src/contracts.ts#PriceCardMeta"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "PriceSummary",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderPriceSummary",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:section",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderPriceSummary",
+        "traits/financial/Priceable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#PriceSummary",
+        "packages/components-vue/evidence/vue-readiness.v1.json#PriceSummary",
+        "packages/component-contracts/src/contracts.ts#PriceSummary"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "RelativeTimestamp",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderRelativeTimestamp",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:time",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderRelativeTimestamp",
+        "traits/lifecycle/Timestampable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#RelativeTimestamp",
+        "packages/components-vue/evidence/vue-readiness.v1.json#RelativeTimestamp",
+        "packages/component-contracts/src/contracts.ts#RelativeTimestamp"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "RoleAssignmentForm",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderRoleAssignmentForm",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:form",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderRoleAssignmentForm",
+        "traits/core/Authable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#RoleAssignmentForm",
+        "packages/components-vue/evidence/vue-readiness.v1.json#RoleAssignmentForm",
+        "packages/component-contracts/src/contracts.ts#RoleAssignmentForm"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "RoleBadgeList",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderRoleBadgeList",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:span",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderRoleBadgeList",
+        "traits/core/Authable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#RoleBadgeList",
+        "packages/components-vue/evidence/vue-readiness.v1.json#RoleBadgeList",
+        "packages/component-contracts/src/contracts.ts#RoleBadgeList"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "SearchInput",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderSearchInput",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:div",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderSearchInput",
+        "traits/behavioral/Searchable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#SearchInput",
+        "packages/components-vue/evidence/vue-readiness.v1.json#SearchInput",
+        "packages/component-contracts/src/contracts.ts#SearchInput"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "SegmentedControl",
+      "proposedClassification": "native",
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderSegmentedControl",
+        "packages/components-react/evidence/react-readiness.v1.json#SegmentedControl",
+        "packages/components-vue/evidence/vue-readiness.v1.json#SegmentedControl",
+        "packages/component-contracts/src/contracts.ts#SegmentedControl"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "proposedResolution": {
+        "surface": "react+vue+html",
+        "implementation": "SegmentedControl",
+        "source": "packages/component-contracts/src/contracts.ts",
+        "publicIdRetained": true
+      },
+      "compatibilityNote": "New public identity added by decision #2527 (ruling 10). Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "Select",
+      "proposedClassification": "native",
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderSelect",
+        "src/components/base/Select.tsx",
+        "src/index.ts",
+        "packages/components-react/evidence/react-readiness.v1.json#Select",
+        "packages/components-vue/evidence/vue-readiness.v1.json#Select",
+        "packages/component-contracts/src/contracts.ts#Select"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal.",
+      "proposedResolution": {
+        "action": "retain-native",
+        "surface": "html",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "implementation": "renderSelect",
+        "publicIdRetained": true
+      }
+    },
+    {
+      "id": "SortIndicator",
+      "proposedClassification": "native",
+      "approvalState": "pending-approval",
+      "evidence": [
+        "traits/behavioral/Sortable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#SortIndicator",
+        "packages/components-vue/evidence/vue-readiness.v1.json#SortIndicator",
+        "packages/component-contracts/src/contracts.ts#SortIndicator"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "proposedResolution": {
+        "surface": "react+vue+html",
+        "implementation": "SortIndicator",
+        "source": "packages/component-contracts/src/contracts.ts",
+        "publicIdRetained": true
+      },
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "Stack",
+      "proposedClassification": "native",
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderStack",
+        "packages/components-react/evidence/react-readiness.v1.json#Stack",
+        "packages/components-vue/evidence/vue-readiness.v1.json#Stack",
+        "packages/component-contracts/src/contracts.ts#Stack"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal.",
+      "proposedResolution": {
+        "action": "retain-native",
+        "surface": "html",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "implementation": "renderStack",
+        "publicIdRetained": true
+      }
+    },
+    {
+      "id": "StateTransitionEvent",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderStateTransitionEvent",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:article",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderStateTransitionEvent",
+        "traits/lifecycle/Stateful.trait.yaml"
+      ],
+      "implementationStatus": "pending",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    },
+    {
+      "id": "StatusBadge",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderStatusBadge",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:span",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderStatusBadge",
+        "traits/lifecycle/Stateful.trait.yaml",
+        "traits/visual/Statusable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#StatusBadge",
+        "packages/components-vue/evidence/vue-readiness.v1.json#StatusBadge",
+        "packages/component-contracts/src/contracts.ts#StatusBadge"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "StatusColorLegend",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderStatusColorLegend",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:section",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderStatusColorLegend",
+        "traits/visual/Colorized.trait.yaml"
+      ],
+      "implementationStatus": "pending",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    },
+    {
+      "id": "StatusSelector",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderStatusSelector",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:div",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderStatusSelector",
+        "traits/lifecycle/Stateful.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#StatusSelector",
+        "packages/components-vue/evidence/vue-readiness.v1.json#StatusSelector",
+        "packages/component-contracts/src/contracts.ts#StatusSelector"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "StatusTimeline",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderStatusTimeline",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:div",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderStatusTimeline",
+        "traits/lifecycle/Stateful.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#StatusTimeline",
+        "packages/components-vue/evidence/vue-readiness.v1.json#StatusTimeline",
+        "packages/component-contracts/src/contracts.ts#StatusTimeline"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "Switch",
+      "proposedClassification": "native",
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderSwitch",
+        "packages/components-react/evidence/react-readiness.v1.json#Switch",
+        "packages/components-vue/evidence/vue-readiness.v1.json#Switch",
+        "packages/component-contracts/src/contracts.ts#Switch"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "proposedResolution": {
+        "surface": "react+vue+html",
+        "implementation": "Switch",
+        "source": "packages/component-contracts/src/contracts.ts",
+        "publicIdRetained": true
+      },
+      "compatibilityNote": "New public identity added by decision #2502 (ruling 11). Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "Table",
+      "proposedClassification": "native",
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderTable",
+        "src/components/base/Table.tsx",
+        "src/index.ts",
+        "packages/components-react/evidence/react-readiness.v1.json#Table",
+        "packages/components-vue/evidence/vue-readiness.v1.json#Table",
+        "packages/component-contracts/src/contracts.ts#Table"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal.",
+      "proposedResolution": {
+        "action": "retain-native",
+        "surface": "html",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "implementation": "renderTable",
+        "publicIdRetained": true
+      }
+    },
+    {
+      "id": "Tabs",
+      "proposedClassification": "native",
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderTabs",
+        "src/components/tabs/Tabs.tsx",
+        "src/index.ts",
+        "packages/components-react/evidence/react-readiness.v1.json#Tabs",
+        "packages/components-vue/evidence/vue-readiness.v1.json#Tabs",
+        "packages/component-contracts/src/contracts.ts#Tabs"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal.",
+      "proposedResolution": {
+        "action": "retain-native",
+        "surface": "html",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "implementation": "renderTabs",
+        "publicIdRetained": true
+      }
+    },
+    {
+      "id": "TagInput",
+      "proposedClassification": "native",
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderTagInput",
+        "src/components/classification/TagInput.tsx",
+        "src/index.ts",
+        "traits/behavioral/Taggable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#TagInput",
+        "packages/components-vue/evidence/vue-readiness.v1.json#TagInput",
+        "packages/component-contracts/src/contracts.ts#TagInput"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal.",
+      "proposedResolution": {
+        "action": "retain-native",
+        "surface": "html",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "implementation": "renderTagInput",
+        "publicIdRetained": true
+      }
+    },
+    {
+      "id": "TagManager",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderTagManager",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:form",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderTagManager",
+        "traits/behavioral/Taggable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#TagManager",
+        "packages/components-vue/evidence/vue-readiness.v1.json#TagManager",
+        "packages/component-contracts/src/contracts.ts#TagManager"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "TagPills",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderTagPills",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:div",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderTagPills",
+        "traits/behavioral/Taggable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#TagPills",
+        "packages/components-vue/evidence/vue-readiness.v1.json#TagPills",
+        "packages/component-contracts/src/contracts.ts#TagPills"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "TagSummary",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderTagSummary",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:section",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderTagSummary",
+        "traits/behavioral/Taggable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#TagSummary",
+        "packages/components-vue/evidence/vue-readiness.v1.json#TagSummary",
+        "packages/component-contracts/src/contracts.ts#TagSummary"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "TemplatePicker",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderTemplatePicker",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:fieldset",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderTemplatePicker",
+        "traits/core/Communicable.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#TemplatePicker",
+        "packages/components-vue/evidence/vue-readiness.v1.json#TemplatePicker",
+        "packages/component-contracts/src/contracts.ts#TemplatePicker"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "Text",
+      "proposedClassification": "native",
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderText",
+        "src/components/base/Text.tsx",
+        "src/index.ts",
+        "packages/components-react/evidence/react-readiness.v1.json#Text",
+        "packages/components-vue/evidence/vue-readiness.v1.json#Text",
+        "packages/component-contracts/src/contracts.ts#Text"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal.",
+      "proposedResolution": {
+        "action": "retain-native",
+        "surface": "html",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "implementation": "renderText",
+        "publicIdRetained": true
+      }
+    },
+    {
+      "id": "Textarea",
+      "proposedClassification": "native",
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderTextarea",
+        "src/components/base/Textarea.tsx",
+        "src/index.ts",
+        "packages/components-react/evidence/react-readiness.v1.json#Textarea",
+        "packages/components-vue/evidence/vue-readiness.v1.json#Textarea",
+        "packages/component-contracts/src/contracts.ts#Textarea"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal.",
+      "proposedResolution": {
+        "action": "retain-native",
+        "surface": "html",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "implementation": "renderTextarea",
+        "publicIdRetained": true
+      }
+    },
+    {
+      "id": "TimelineEntryLabel",
+      "proposedClassification": "recipe",
+      "approvalState": "pending-approval",
+      "evidence": [
+        "traits/content/Labelled.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#TimelineEntryLabel",
+        "packages/components-vue/evidence/vue-readiness.v1.json#TimelineEntryLabel",
+        "packages/component-contracts/src/contracts.ts#TimelineEntryLabel"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "proposedResolution": {
+        "primitive": "InlineLabel",
+        "source": "packages/components-react/src/disputed.tsx",
+        "publicIdRetained": true
+      },
+      "compatibilityNote": "Compact timeline recipe defaults truncation to 40; explicit maxLength, full mode and authored content preserve tested InlineLabel precedence."
+    },
+    {
+      "id": "VizAreaControls",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizAreaControls",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:fieldset",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizAreaControls",
+        "traits/viz/mark-area.trait.yaml"
+      ],
+      "implementationStatus": "pending",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    },
+    {
+      "id": "VizAreaPreview",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizAreaPreview",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:div",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizAreaPreview",
+        "traits/viz/mark-area.trait.yaml",
+        "packages/components-react/evidence/react-readiness.v1.json#VizAreaPreview",
+        "packages/components-vue/evidence/vue-readiness.v1.json#VizAreaPreview",
+        "packages/component-contracts/src/contracts.ts#VizAreaPreview"
+      ],
+      "implementationStatus": "implemented-evidence-complete",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Governed framework implementation and measurements are linked; classification remains a proposal."
+    },
+    {
+      "id": "VizAxisControls",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizAxisControls",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:fieldset",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizAxisControls",
+        "traits/viz/encoding-position-x.trait.yaml",
+        "traits/viz/encoding-position-y.trait.yaml"
+      ],
+      "implementationStatus": "pending",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    },
+    {
+      "id": "VizAxisSummary",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizAxisSummary",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:section",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizAxisSummary",
+        "traits/viz/encoding-position-x.trait.yaml",
+        "traits/viz/encoding-position-y.trait.yaml"
+      ],
+      "implementationStatus": "pending",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    },
+    {
+      "id": "VizColorControls",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizColorControls",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:fieldset",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizColorControls",
+        "traits/viz/encoding-color.trait.yaml"
+      ],
+      "implementationStatus": "pending",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    },
+    {
+      "id": "VizColorLegendConfig",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizColorLegendConfig",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:section",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizColorLegendConfig",
+        "traits/viz/encoding-color.trait.yaml"
+      ],
+      "implementationStatus": "pending",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    },
+    {
+      "id": "VizEncodingBadge",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizEncodingBadge",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:span",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizEncodingBadge",
+        "traits/viz/encoding-color.trait.yaml",
+        "traits/viz/encoding-position-x.trait.yaml",
+        "traits/viz/encoding-position-y.trait.yaml",
+        "traits/viz/encoding-size.trait.yaml"
+      ],
+      "implementationStatus": "pending",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    },
+    {
+      "id": "VizGraphPreview",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizGraphPreview",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:figure",
+        "primitiveBasis": "Named wrapper embeds the exact public force_graph SVG."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "traits/viz/mark-graph.trait.yaml",
+        "packages/component-contracts/src/contracts.ts#VizGraphPreview"
+      ],
+      "implementationStatus": "implemented",
+      "compatibilityNote": "New identity explicitly requested by s199-m06; classification remains a proposal independently of measured surfaces."
+    },
+    {
+      "id": "VizHeatmapControls",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizHeatmapControls",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:fieldset",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizHeatmapControls"
+      ],
+      "implementationStatus": "pending",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    },
+    {
+      "id": "VizHeatmapPreview",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizHeatmapPreview",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:div",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizHeatmapPreview"
+      ],
+      "implementationStatus": "pending",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    },
+    {
+      "id": "VizLineControls",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizLineControls",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:fieldset",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizLineControls",
+        "traits/viz/mark-line.trait.yaml"
+      ],
+      "implementationStatus": "pending",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    },
+    {
+      "id": "VizLinePreview",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizLinePreview",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:div",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizLinePreview",
+        "traits/viz/mark-line.trait.yaml"
+      ],
+      "implementationStatus": "pending",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    },
+    {
+      "id": "VizMarkControls",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizMarkControls",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:fieldset",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizMarkControls",
+        "traits/viz/mark-bar.trait.yaml"
+      ],
+      "implementationStatus": "pending",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    },
+    {
+      "id": "VizMarkPreview",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizMarkPreview",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:div",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizMarkPreview",
+        "traits/viz/mark-bar.trait.yaml"
+      ],
+      "implementationStatus": "pending",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    },
+    {
+      "id": "VizOpacityControls",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizOpacityControls",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:fieldset",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizOpacityControls"
+      ],
+      "implementationStatus": "pending",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    },
+    {
+      "id": "VizOpacitySummary",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizOpacitySummary",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:section",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizOpacitySummary"
+      ],
+      "implementationStatus": "pending",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    },
+    {
+      "id": "VizPointControls",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizPointControls",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:fieldset",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizPointControls",
+        "traits/viz/mark-point.trait.yaml"
+      ],
+      "implementationStatus": "pending",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    },
+    {
+      "id": "VizPointPreview",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizPointPreview",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:div",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizPointPreview",
+        "traits/viz/mark-point.trait.yaml"
+      ],
+      "implementationStatus": "pending",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    },
+    {
+      "id": "VizRoleBadge",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizRoleBadge",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:span",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizRoleBadge",
+        "traits/viz/mark-area.trait.yaml",
+        "traits/viz/mark-bar.trait.yaml",
+        "traits/viz/mark-line.trait.yaml",
+        "traits/viz/mark-point.trait.yaml"
+      ],
+      "implementationStatus": "pending",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    },
+    {
+      "id": "VizScaleControls",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizScaleControls",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:fieldset",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizScaleControls",
+        "traits/viz/scale-linear.trait.yaml",
+        "traits/viz/scale-temporal.trait.yaml"
+      ],
+      "implementationStatus": "pending",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    },
+    {
+      "id": "VizScaleSummary",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizScaleSummary",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:section",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizScaleSummary",
+        "traits/viz/scale-linear.trait.yaml",
+        "traits/viz/scale-temporal.trait.yaml"
+      ],
+      "implementationStatus": "pending",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    },
+    {
+      "id": "VizScatterControls",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizScatterControls",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:fieldset",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizScatterControls"
+      ],
+      "implementationStatus": "pending",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    },
+    {
+      "id": "VizScatterPreview",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizScatterPreview",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:div",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizScatterPreview"
+      ],
+      "implementationStatus": "pending",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    },
+    {
+      "id": "VizShapeControls",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizShapeControls",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:fieldset",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizShapeControls"
+      ],
+      "implementationStatus": "pending",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    },
+    {
+      "id": "VizShapeLegend",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizShapeLegend",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:section",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizShapeLegend"
+      ],
+      "implementationStatus": "pending",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    },
+    {
+      "id": "VizSizeControls",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizSizeControls",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:fieldset",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizSizeControls",
+        "traits/viz/encoding-size.trait.yaml"
+      ],
+      "implementationStatus": "pending",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    },
+    {
+      "id": "VizSizeSummary",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizSizeSummary",
+        "source": "packages/mcp-server/src/render/component-map.ts",
+        "primitive": "html:section",
+        "primitiveBasis": "Existing HTML renderer root; preserves recipe identity and does not claim a React/Vue implementation for pending rows."
+      },
+      "approvalState": "pending-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizSizeSummary",
+        "traits/viz/encoding-size.trait.yaml"
+      ],
+      "implementationStatus": "pending",
+      "compatibilityNote": "Retain the named public ID and existing HTML discovery contract. Runtime intent follows the retained trait/renderer evidence; React/Vue implementation and measurements are still pending, with no substitution, merger or retirement approved."
+    }
+  ]
+}

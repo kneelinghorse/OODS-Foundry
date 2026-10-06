@@ -66,7 +66,7 @@ describe('ForceGraph', () => {
       render(<ForceGraph data={networkData} width={1000} height={700} />);
 
       const chart = screen.getByTestId('force-graph-chart');
-      expect(chart).toHaveStyle({ width: '100%', maxWidth: '1000px', height: '700px' });
+      expect(chart).toHaveStyle({ width: '1000px', height: '700px' });
     });
 
     it('renders with aria-label from name prop', async () => {
@@ -80,7 +80,7 @@ describe('ForceGraph', () => {
       render(<ForceGraph data={networkData} />);
 
       const chart = screen.getByTestId('force-graph-chart');
-      expect(chart).toHaveStyle({ width: '100%', maxWidth: '800px', height: '600px' });
+      expect(chart).toHaveStyle({ width: '800px', height: '600px' });
     });
   });
 
@@ -140,7 +140,7 @@ describe('ForceGraph', () => {
 
   describe('v1.0 renderer constraint', () => {
     it('warns when non-echarts renderer is requested', async () => {
-      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => { });
 
       render(<ForceGraph data={networkData} renderer={'vega-lite' as 'echarts'} />);
 

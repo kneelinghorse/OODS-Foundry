@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import type { NormalizedVizSpec } from '~/src/viz/spec/normalized-viz-spec';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 import { VizFacetGrid } from '~/src/components/viz/VizFacetGrid';
 
 const meta: Meta<typeof VizFacetGrid> = {
-  title: 'Visualization/Composition/Faceted Charts',
+  title: 'Visualization/VizFacetGrid',
   component: VizFacetGrid,
   parameters: {
     layout: 'fullscreen',
@@ -15,7 +15,7 @@ export default meta;
 type Story = StoryObj<typeof VizFacetGrid>;
 
 const gridSpec: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/v1',
   id: 'stories:viz:facet:grid',
   name: 'MRR vs Pipeline by Region × Segment',
   data: {

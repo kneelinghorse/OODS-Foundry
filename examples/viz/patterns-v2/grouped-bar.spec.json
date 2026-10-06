@@ -1,5 +1,5 @@
 {
-  "$schema": "https://oods.dev/viz-spec/v1",
+  "$schema": "https://oods-foundry.com/viz-spec/v1",
   "id": "pattern:viz:grouped-bar",
   "name": "Pipeline Coverage by Segment",
   "data": {
@@ -22,7 +22,7 @@
     {
       "trait": "MarkBar",
       "encodings": {
-        "x": { "field": "quarter", "trait": "EncodingPositionX", "channel": "x", "title": "Quarter" },
+        "x": { "field": "segment", "trait": "EncodingPositionX", "channel": "x", "title": "Segment" },
         "y": {
           "field": "coverage",
           "trait": "EncodingPositionY",
@@ -35,7 +35,7 @@
     }
   ],
   "encoding": {
-    "x": { "field": "quarter", "trait": "EncodingPositionX", "channel": "x", "title": "Quarter" },
+    "x": { "field": "segment", "trait": "EncodingPositionX", "channel": "x", "title": "Segment" },
     "y": {
       "field": "coverage",
       "trait": "EncodingPositionY",
@@ -62,6 +62,14 @@
       "rule": { "bindTo": "tooltip", "fields": ["quarter", "segment", "coverage"] }
     }
   ],
+  "layout": {
+    "trait": "LayoutFacet",
+    "columns": { "field": "quarter", "title": "Quarter", "limit": 4 },
+    "maxPanels": 4,
+    "wrap": "row",
+    "gap": 16,
+    "sharedScales": { "x": "shared", "y": "shared" }
+  },
   "config": {
     "theme": "brand-a",
     "layout": { "width": 720, "height": 380, "padding": 24 }

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/style-library-artifact.schema.json",
+  "title": "Style-Library Key→Var Mapping",
+  "description": "Schema for the OODS Foundry-owned style-library mapping DATA artifact. Validated at load so a malformed library FAILS CLOSED instead of silently degrading to an empty map (which would V140 every measured colour key). It maps a logical style-library key — the FULL dotted leaf-path of a measured colour delta, e.g. 'color.surface.default' — to the target CSS custom-property on the --sys-/--ref- skin the consumer's measured colour should reach (padding already binds via the s121 tokenOverlay --oods- path; this is the colour-skin counterpart). Mirrors measure-registry.schema.json conventions: a DETERMINABLE ROOT TYPE (object, additionalProperties:false) so it survives Generator A's blind glob, and it is SKIP-LISTED from generated.ts (NON_SCHEMA_DATA_FILES in schemas-tools/generate-types.ts) so it never emits a type that collides with the hand-written StyleLibraryArtifact interface.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "$comment": { "type": "string" },
+    "schemaVersion": {
+      "type": "string",
+      "description": "Style-library artifact version (independent of the dashboard-spec schemaVersion)."
+    },
+    "mappings": {
+      "type": "object",
+      "description": "Map of logical style-library key (the FULL dotted leaf-path of a measured colour delta, e.g. 'color.surface.default') to its target CSS custom-property name. The value is the trust boundary for the unescaped <style> sink, so it is constrained to the --sys-/--ref- skin namespace by pattern.",
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^--(sys|ref)-[a-z0-9-]+$"
+      }
+    }
+  },
+  "required": ["mappings"]
+}

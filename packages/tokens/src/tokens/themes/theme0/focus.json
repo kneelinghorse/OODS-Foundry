@@ -4,24 +4,39 @@
       "ring": {
         "outer": {
           "$type": "color",
-          "$value": "{ref.color.neutral.900}",
-          "$description": "Outer glow of focus ring."
+          "$value": "oklch(0.543785 0.191021 267)",
+          "$description": "theme.focus.ring.outer; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#3E63DD"
+            }
+          }
         },
         "inner": {
           "$type": "color",
-          "$value": "{ref.color.neutral.100}",
-          "$description": "Inner contrast colour for focus outlines."
+          "$value": "oklch(1 0 286)",
+          "$description": "theme.focus.ring.inner; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#FFFFFF"
+            }
+          }
         }
       },
       "text": {
         "$type": "color",
-        "$value": "{ref.color.primary.600}",
-        "$description": "Focus text/indicator colour."
+        "$value": "oklch(0.509225 0.172497 267.161083)",
+        "$description": "theme.focus.text; generated from palette/seeds.json by generate-palette.ts.",
+        "$extensions": {
+          "ods": {
+            "fallback": "#3A5BC7"
+          }
+        }
       },
       "width": {
         "$type": "dimension",
         "$value": "2px",
-        "$description": "Standard focus outline width."
+        "$description": "Focus ring width, the same in every theme."
       }
     }
   }

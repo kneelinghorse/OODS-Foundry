@@ -1,12 +1,4 @@
-export type ToolName =
-  | 'a11y.scan'
-  | 'purity.audit'
-  | 'vrt.run'
-  | 'diag.snapshot'
-  | 'reviewKit.create'
-  | 'brand.apply'
-  | 'billing.reviewKit'
-  | 'billing.switchFixtures';
+export type ToolName = 'a11y.scan' | 'brand.apply';
 
 export type JsonSchema = {
   type?: string;

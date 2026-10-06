@@ -1,0 +1,113 @@
+{
+  "schemaVersion": "1.0.0",
+  "mission": "s184-m04",
+  "target": "vue",
+  "contractVersion": "1.0.0",
+  "derivation": "Each of the eight non-nucleus rows is independently resolved against the ported contract, package export, built declaration, dependency closure, and executable Vue scenario.",
+  "rows": [
+    {
+      "componentId": "AuditTimeline",
+      "state": "implemented-evidence-complete",
+      "emissionEligible": true,
+      "evidence": {
+        "versionedContract": { "status": "passed", "refs": ["packages/component-contracts/src/ported-contracts.ts#AuditTimeline"] },
+        "targetImplementation": { "status": "passed", "refs": ["packages/components-vue/src/ported.ts#AuditTimeline"] },
+        "packageExport": { "status": "passed", "refs": ["packages/components-vue/src/ported.ts#AuditTimeline"] },
+        "publicDeclaration": { "status": "passed", "refs": ["packages/components-vue/dist/ported.d.ts#AuditTimeline"] },
+        "dependencyClosure": { "status": "passed", "refs": ["packages/components-vue/test/ported-package-contract.spec.ts#dependency-closure"] },
+        "frameworkScenario": { "status": "passed", "refs": ["packages/components-vue/test/ported-scenarios.spec.ts#audit-timeline-transitions"] }
+      }
+    },
+    {
+      "componentId": "CancellationSummary",
+      "state": "implemented-evidence-complete",
+      "emissionEligible": true,
+      "evidence": {
+        "versionedContract": { "status": "passed", "refs": ["packages/component-contracts/src/ported-contracts.ts#CancellationSummary"] },
+        "targetImplementation": { "status": "passed", "refs": ["packages/components-vue/src/ported.ts#CancellationSummary"] },
+        "packageExport": { "status": "passed", "refs": ["packages/components-vue/src/ported.ts#CancellationSummary"] },
+        "publicDeclaration": { "status": "passed", "refs": ["packages/components-vue/dist/ported.d.ts#CancellationSummary"] },
+        "dependencyClosure": { "status": "passed", "refs": ["packages/components-vue/test/ported-package-contract.spec.ts#dependency-closure"] },
+        "frameworkScenario": { "status": "passed", "refs": ["packages/components-vue/test/ported-scenarios.spec.ts#cancellation-summary-boolean"] }
+      }
+    },
+    {
+      "componentId": "PaginationBar",
+      "state": "implemented-evidence-complete",
+      "emissionEligible": true,
+      "evidence": {
+        "versionedContract": { "status": "passed", "refs": ["packages/component-contracts/src/ported-contracts.ts#PaginationBar"] },
+        "targetImplementation": { "status": "passed", "refs": ["packages/components-vue/src/ported.ts#PaginationBar"] },
+        "packageExport": { "status": "passed", "refs": ["packages/components-vue/src/ported.ts#PaginationBar"] },
+        "publicDeclaration": { "status": "passed", "refs": ["packages/components-vue/dist/ported.d.ts#PaginationBar"] },
+        "dependencyClosure": { "status": "passed", "refs": ["packages/components-vue/test/ported-package-contract.spec.ts#dependency-closure"] },
+        "frameworkScenario": { "status": "passed", "refs": ["packages/components-vue/test/ported-scenarios.spec.ts#pagination-bar-navigation"] }
+      }
+    },
+    {
+      "componentId": "PriceBadge",
+      "state": "implemented-evidence-complete",
+      "emissionEligible": true,
+      "evidence": {
+        "versionedContract": { "status": "passed", "refs": ["packages/component-contracts/src/ported-contracts.ts#PriceBadge"] },
+        "targetImplementation": { "status": "passed", "refs": ["packages/components-vue/src/ported.ts#PriceBadge"] },
+        "packageExport": { "status": "passed", "refs": ["packages/components-vue/src/ported.ts#PriceBadge"] },
+        "publicDeclaration": { "status": "passed", "refs": ["packages/components-vue/dist/ported.d.ts#PriceBadge"] },
+        "dependencyClosure": { "status": "passed", "refs": ["packages/components-vue/test/ported-package-contract.spec.ts#dependency-closure"] },
+        "frameworkScenario": { "status": "passed", "refs": ["packages/components-vue/test/ported-scenarios.spec.ts#price-badge-currency"] }
+      }
+    },
+    {
+      "componentId": "RelativeTimestamp",
+      "state": "implemented-evidence-complete",
+      "emissionEligible": true,
+      "evidence": {
+        "versionedContract": { "status": "passed", "refs": ["packages/component-contracts/src/ported-contracts.ts#RelativeTimestamp"] },
+        "targetImplementation": { "status": "passed", "refs": ["packages/components-vue/src/ported.ts#RelativeTimestamp"] },
+        "packageExport": { "status": "passed", "refs": ["packages/components-vue/src/ported.ts#RelativeTimestamp"] },
+        "publicDeclaration": { "status": "passed", "refs": ["packages/components-vue/dist/ported.d.ts#RelativeTimestamp"] },
+        "dependencyClosure": { "status": "passed", "refs": ["packages/components-vue/test/ported-package-contract.spec.ts#dependency-closure"] },
+        "frameworkScenario": { "status": "passed", "refs": ["packages/components-vue/test/ported-scenarios.spec.ts#relative-timestamp-fixed"] }
+      }
+    },
+    {
+      "componentId": "SearchInput",
+      "state": "implemented-evidence-complete",
+      "emissionEligible": true,
+      "evidence": {
+        "versionedContract": { "status": "passed", "refs": ["packages/component-contracts/src/ported-contracts.ts#SearchInput"] },
+        "targetImplementation": { "status": "passed", "refs": ["packages/components-vue/src/ported.ts#SearchInput"] },
+        "packageExport": { "status": "passed", "refs": ["packages/components-vue/src/ported.ts#SearchInput"] },
+        "publicDeclaration": { "status": "passed", "refs": ["packages/components-vue/dist/ported.d.ts#SearchInput"] },
+        "dependencyClosure": { "status": "passed", "refs": ["packages/components-vue/test/ported-package-contract.spec.ts#dependency-closure"] },
+        "frameworkScenario": { "status": "passed", "refs": ["packages/components-vue/test/ported-scenarios.spec.ts#search-input-clear"] }
+      }
+    },
+    {
+      "componentId": "StatusBadge",
+      "state": "implemented-evidence-complete",
+      "emissionEligible": true,
+      "evidence": {
+        "versionedContract": { "status": "passed", "refs": ["packages/component-contracts/src/ported-contracts.ts#StatusBadge"] },
+        "targetImplementation": { "status": "passed", "refs": ["packages/components-vue/src/ported.ts#StatusBadge"] },
+        "packageExport": { "status": "passed", "refs": ["packages/components-vue/src/ported.ts#StatusBadge"] },
+        "publicDeclaration": { "status": "passed", "refs": ["packages/components-vue/dist/ported.d.ts#StatusBadge"] },
+        "dependencyClosure": { "status": "passed", "refs": ["packages/components-vue/test/ported-package-contract.spec.ts#dependency-closure"] },
+        "frameworkScenario": { "status": "passed", "refs": ["packages/components-vue/test/ported-scenarios.spec.ts#status-badge-mapped"] }
+      }
+    },
+    {
+      "componentId": "StatusTimeline",
+      "state": "implemented-evidence-complete",
+      "emissionEligible": true,
+      "evidence": {
+        "versionedContract": { "status": "passed", "refs": ["packages/component-contracts/src/ported-contracts.ts#StatusTimeline"] },
+        "targetImplementation": { "status": "passed", "refs": ["packages/components-vue/src/ported.ts#StatusTimeline"] },
+        "packageExport": { "status": "passed", "refs": ["packages/components-vue/src/ported.ts#StatusTimeline"] },
+        "publicDeclaration": { "status": "passed", "refs": ["packages/components-vue/dist/ported.d.ts#StatusTimeline"] },
+        "dependencyClosure": { "status": "passed", "refs": ["packages/components-vue/test/ported-package-contract.spec.ts#dependency-closure"] },
+        "frameworkScenario": { "status": "passed", "refs": ["packages/components-vue/test/ported-scenarios.spec.ts#status-timeline-history"] }
+      }
+    }
+  ]
+}

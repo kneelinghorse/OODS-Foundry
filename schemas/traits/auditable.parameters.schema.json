@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/07/schema",
+  "$id": "https://trait-engine.dev/schemas/traits/auditable",
+  "title": "Auditable Trait Parameters",
+  "description": "Configuration contract for the Auditable trait's audit trail.",
+  "type": "object",
+  "properties": {
+    "retentionDays": {
+      "type": "integer",
+      "description": "Number of days to retain audit log entries. 0 means indefinite.",
+      "minimum": 0,
+      "default": 0
+    },
+    "requireTransitionReason": {
+      "type": "boolean",
+      "description": "When true, every state transition must include a reason string.",
+      "default": false
+    },
+    "trackActorId": {
+      "type": "boolean",
+      "description": "When true, actor_id is captured on each transition.",
+      "default": true
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "retentionDays": 365,
+      "requireTransitionReason": true,
+      "trackActorId": true
+    }
+  ]
+}

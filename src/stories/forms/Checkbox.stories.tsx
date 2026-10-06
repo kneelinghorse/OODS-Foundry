@@ -4,7 +4,7 @@ import '../../styles/globals.css';
 import { Checkbox } from '../../components/base/Checkbox.js';
 
 const meta: Meta<typeof Checkbox> = {
-  title: 'Primitives/Forms/Checkbox',
+  title: 'Components/Primitives/Checkbox',
   component: Checkbox,
   args: {
     id: 'terms',

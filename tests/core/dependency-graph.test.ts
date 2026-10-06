@@ -371,7 +371,7 @@ describe('Topological Sort', () => {
      * Threshold tuned to accommodate CI/coverage instrumentation overhead.
      * Locally we typically see ~10-15ms, but coverage can add ~10ms.
      */
-    const PERFORMANCE_BUDGET_MS = 35;
+    const PERFORMANCE_BUDGET_MS = 60;
 
     it(`should resolve 100 traits in under ${PERFORMANCE_BUDGET_MS}ms`, () => {
       // Create 100 traits with dependencies

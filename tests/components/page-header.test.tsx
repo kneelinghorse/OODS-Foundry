@@ -24,8 +24,8 @@ describe('<PageHeader>', () => {
     expect(markup.startsWith('<header')).toBe(true);
     expect(markup).toContain('data-tone="success"'); // success badge tone
     expect(markup).toContain('data-tone="critical"'); // critical badge tone
-    expect(markup).toContain('--statusable-badge-background'); // CSS variables applied
-    expect(markup).toContain('class="cmp-button"'); // OODS button primitive
-    expect(markup).toContain('data-size="md"'); // default button sizing
+    expect(markup).toContain('--cmp-badge-background'); // s221-m02: the badge's own status variables applied
+    expect(markup).toContain('data-intent="success"'); // success button, painted by the shared stylesheet
+    expect(markup).toContain('data-intent="danger"'); // danger button
   });
 });

@@ -1,0 +1,55 @@
+{
+  "name": "@oods/viz-core",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Headless visualization engine for the OODS design system: NormalizedVizSpec IR + validator, Vega-Lite/ECharts spec adapters, chart recommender, and accessibility synthesis.",
+  "type": "module",
+  "license": "Apache-2.0",
+  "author": "Design System Team",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "visualization",
+    "vega-lite",
+    "echarts",
+    "design-system",
+    "charts",
+    "accessibility"
+  ],
+  "scripts": {
+    "build": "rimraf dist && tsup --config tsup.config.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "clean": "rimraf dist",
+    "prepack": "pnpm run build",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@oods/tokens": "workspace:*",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
+    "topojson-client": "^3.1.0",
+    "vega-format": "^2.1.0"
+  },
+  "devDependencies": {
+    "@types/geojson": "^7946.0.16",
+    "@types/topojson-client": "^3.1.5",
+    "@types/topojson-specification": "^1.0.5",
+    "echarts": "^6.1.0"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "packageManager": "pnpm@9.12.2"
+}

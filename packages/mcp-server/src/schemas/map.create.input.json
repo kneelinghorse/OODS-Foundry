@@ -1,0 +1,588 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/map.create.input.json",
+  "title": "map.create input",
+  "description": "Create one mapping, or a checked list inline or from an absolute JSON file path. List writes are all or nothing.",
+  "type": "object",
+  "allOf": [
+    {
+      "if": {
+        "anyOf": [
+          {
+            "required": ["mappings"]
+          },
+          {
+            "required": ["mappingsPath"]
+          }
+        ]
+      },
+      "then": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "apply": {
+            "type": "boolean",
+            "default": false,
+            "description": "When true, write changes to disk."
+          },
+          "mappings": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "description": "A single-create payload without action or apply; the handler checks every value against MappingEntry and returns OODS-V219 per-entry outcomes for invalid entries."
+            },
+            "description": "Create entries, each without apply. All entries are checked before one atomic write."
+          },
+          "mappingsPath": {
+            "type": "string",
+            "pattern": "^/[\\s\\S]*$",
+            "description": "Absolute path to a JSON document { mappings: [...] }, using the same entry shape."
+          }
+        },
+        "oneOf": [
+          {
+            "required": ["mappings"]
+          },
+          {
+            "required": ["mappingsPath"]
+          }
+        ]
+      },
+      "else": {
+        "allOf": [
+          {
+            "$ref": "#/$defs/SingleCreate"
+          }
+        ],
+        "properties": {
+          "apply": {
+            "default": false
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "SingleCreate": {
+      "type": "object",
+      "required": ["externalSystem", "externalComponent", "oodsTraits"],
+      "additionalProperties": false,
+      "properties": {
+        "substitution": {
+          "type": "object",
+          "required": [
+            "component"
+          ],
+          "additionalProperties": false,
+          "anyOf": [
+            {
+              "required": [
+                "react"
+              ]
+            },
+            {
+              "required": [
+                "vue"
+              ]
+            }
+          ],
+          "properties": {
+            "component": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The shipped OODS Foundry component id being replaced."
+            },
+            "react": {
+              "type": "object",
+              "required": [
+                "export"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "localPath": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Absolute built package directory used by preview; omitted from consumer source imports."
+                },
+                "package": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "export": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z_$][\\w$]*$"
+                },
+                "version": {
+                  "type": "string",
+                  "pattern": "^(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$",
+                  "description": "Exact team package version; code generation needs this or an installed package manifest."
+                },
+                "passthrough": {
+                  "type": "boolean",
+                  "default": true,
+                  "description": "Unlisted OODS Foundry props keep their names. False drops unlisted optional props; required props must be translated."
+                },
+                "props": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object",
+                    "required": [
+                      "name"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "pattern": "^[A-Za-z_$][\\w$]*$"
+                      },
+                      "values": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "description": "OODS Foundry prop to team prop, with optional scalar value map; values not in the map are preserved. Children, slots and event bindings keep their framework conventions."
+                },
+                "shadcn": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "project",
+                    "module"
+                  ],
+                  "properties": {
+                    "project": {
+                      "type": "string",
+                      "pattern": "^/[\\s\\S]*$",
+                      "description": "Absolute React shadcn project directory containing components.json and installed Tailwind 4 with Vite or PostCSS. Radix and Base UI bases are supported; React Aria and unknown styles are refused."
+                    },
+                    "module": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "Project import beginning with a components.json alias and resolved by TypeScript paths; React only."
+                    }
+                  }
+                }
+              },
+              "oneOf": [
+                {
+                  "required": [
+                    "package"
+                  ],
+                  "not": {
+                    "required": [
+                      "shadcn"
+                    ]
+                  }
+                },
+                {
+                  "required": [
+                    "shadcn"
+                  ],
+                  "not": {
+                    "anyOf": [
+                      {
+                        "required": [
+                          "package"
+                        ]
+                      },
+                      {
+                        "required": [
+                          "version"
+                        ]
+                      },
+                      {
+                        "required": [
+                          "localPath"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "vue": {
+              "type": "object",
+              "required": [
+                "export"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "localPath": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Absolute built package directory used by preview; omitted from consumer source imports."
+                },
+                "package": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "export": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z_$][\\w$]*$"
+                },
+                "version": {
+                  "type": "string",
+                  "pattern": "^(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$",
+                  "description": "Exact team package version; code generation needs this or an installed package manifest."
+                },
+                "passthrough": {
+                  "type": "boolean",
+                  "default": true,
+                  "description": "Unlisted OODS Foundry props keep their names. False drops unlisted optional props; required props must be translated."
+                },
+                "props": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object",
+                    "required": [
+                      "name"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "pattern": "^[A-Za-z_$][\\w$]*$"
+                      },
+                      "values": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "description": "OODS Foundry prop to team prop, with optional scalar value map; values not in the map are preserved. Children, slots and event bindings keep their framework conventions."
+                },
+                "shadcn": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "project",
+                    "module"
+                  ],
+                  "properties": {
+                    "project": {
+                      "type": "string",
+                      "pattern": "^/[\\s\\S]*$",
+                      "description": "Absolute React shadcn project directory containing components.json and installed Tailwind 4 with Vite or PostCSS. Radix and Base UI bases are supported; React Aria and unknown styles are refused."
+                    },
+                    "module": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "Project import beginning with a components.json alias and resolved by TypeScript paths; React only."
+                    }
+                  }
+                }
+              },
+              "oneOf": [
+                {
+                  "required": [
+                    "package"
+                  ],
+                  "not": {
+                    "required": [
+                      "shadcn"
+                    ]
+                  }
+                },
+                {
+                  "required": [
+                    "shadcn"
+                  ],
+                  "not": {
+                    "anyOf": [
+                      {
+                        "required": [
+                          "package"
+                        ]
+                      },
+                      {
+                        "required": [
+                          "version"
+                        ]
+                      },
+                      {
+                        "required": [
+                          "localPath"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "description": "Version 2 component substitution: a OODS Foundry id, React and/or Vue package exports, and OODS Foundry-to-team prop translations. Legacy trait-only mappings remain valid."
+        },
+        "apply": {
+          "type": "boolean",
+          "description": "When true, write changes to disk."
+        },
+        "externalSystem": {
+          "type": "string",
+          "minLength": 1,
+          "description": "External design system name (for example, 'team')."
+        },
+        "externalComponent": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Component name in the external system (e.g., 'Button', 'TextField')."
+        },
+        "oodsTraits": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1,
+          "description": "OODS trait names this component maps to."
+        },
+        "propMappings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["externalProp", "oodsProp"],
+            "additionalProperties": false,
+            "properties": {
+              "externalProp": { "type": "string", "minLength": 1 },
+              "oodsProp": { "type": "string", "minLength": 1 },
+              "coercion": {
+                "description": "Legacy external-to-OODS Foundry annotation: a structured hint, raw captured label, or null. Stored and resolved as data; use substitution.props for executable OODS Foundry-to-team translation.",
+                "oneOf": [
+                  { "type": "null" },
+                  { "type": "string", "minLength": 1 },
+                  {
+                    "type": "object",
+                    "required": ["type", "mapping"],
+                    "additionalProperties": false,
+                    "properties": {
+                      "type": { "const": "enum" },
+                      "mapping": { "type": "object", "additionalProperties": { "type": "string" } }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": ["type", "trueValue", "falseValue"],
+                    "additionalProperties": false,
+                    "properties": {
+                      "type": { "const": "boolean_to_string" },
+                      "trueValue": { "type": "string" },
+                      "falseValue": { "type": "string" }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": ["type", "pattern"],
+                    "additionalProperties": false,
+                    "properties": {
+                      "type": { "const": "template" },
+                      "pattern": { "type": "string" }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": ["type"],
+                    "additionalProperties": false,
+                    "properties": {
+                      "type": { "const": "identity" }
+                    }
+                  }
+                ],
+                "default": null
+              }
+            }
+          },
+          "description": "Property translations from external to OODS prop names."
+        },
+        "confidence": {
+          "type": "string",
+          "enum": ["auto", "manual"],
+          "default": "manual",
+          "description": "'auto' for machine-generated, 'manual' for human-curated."
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "author": { "type": "string" },
+            "notes": { "type": "string" }
+          }
+        },
+        "disambiguation_decisions": {
+          "type": "array",
+          "description": "Draft v1.4.0-gated review-decision events to APPEND to the registry's top-level disambiguation_decisions[]. Additive stub only; does not gate mapping creation. Each entry uses the Stage1 disambiguation_decision shape.",
+          "items": {
+            "type": "object",
+            "required": ["decision_id", "decision_type", "scope", "status", "target_kind", "target_id", "selected_value", "rationale", "decided_at"],
+            "additionalProperties": false,
+            "properties": {
+              "decision_id": { "type": "string", "minLength": 1 },
+              "decision_type": { "type": "string", "enum": ["preferred_name", "preferred_role", "mapping_rejection", "canonical_term"] },
+              "scope": { "type": "string", "enum": ["run", "target", "registry"] },
+              "status": { "type": "string", "enum": ["proposed", "accepted", "rejected", "promoted"] },
+              "target_kind": { "type": "string", "enum": ["candidate_object", "candidate_action", "preferred_term"] },
+              "target_id": { "type": "string", "minLength": 1 },
+              "selected_value": { "type": "string", "minLength": 1 },
+              "rationale": { "type": "string", "minLength": 1 },
+              "alternatives": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["value"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "value": { "type": "string", "minLength": 1 },
+                    "score": { "type": "number", "minimum": 0, "maximum": 1 },
+                    "reasoning": { "type": "string", "minLength": 1 }
+                  }
+                }
+              },
+              "preferred_term_id": { "type": "string", "minLength": 1 },
+              "decided_by": { "type": "string", "enum": ["human", "agent", "system"] },
+              "decided_at": { "type": "string", "format": "date-time" },
+              "metadata": { "type": "object", "additionalProperties": true }
+            }
+          }
+        },
+        "preferred_terms": {
+          "type": "array",
+          "description": "Draft v1.4.0-gated canonical-term entities to APPEND to the registry's top-level preferred_terms[]. Each entry uses the Stage1 preferred_term entity shape.",
+          "items": {
+            "type": "object",
+            "required": ["entity_type", "id", "slug", "label", "aliases", "scope"],
+            "additionalProperties": false,
+            "properties": {
+              "entity_type": { "const": "preferred_term" },
+              "id": { "type": "string", "minLength": 1 },
+              "slug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+              "label": { "type": "string", "minLength": 1 },
+              "aliases": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+              "scope": { "type": "string", "enum": ["target", "registry"] },
+              "domain": { "type": "string", "minLength": 1 },
+              "source_decision_ids": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+              "metadata": { "type": "object", "additionalProperties": true }
+            }
+          }
+        },
+        "capabilities": {
+          "type": "array",
+          "description": "Draft v1.4.0-gated first-class capability entities to APPEND to the registry's top-level capabilities[]. Each entry uses the Stage1 capability entity shape.",
+          "items": {
+            "type": "object",
+            "required": ["entity_type", "id", "slug", "name", "canonical_verb"],
+            "additionalProperties": false,
+            "properties": {
+              "entity_type": { "const": "capability" },
+              "id": { "type": "string", "minLength": 1 },
+              "slug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+              "name": { "type": "string", "minLength": 1 },
+              "canonical_verb": { "type": "string", "minLength": 1 },
+              "aliases": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+              "oods_traits": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+              "projection_variant_ids": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+              "preconditions": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["type"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "type": { "type": "string", "enum": ["auth", "role", "state", "data"] },
+                    "description": { "type": "string" },
+                    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+                    "evidence_chain": {
+                      "type": "array",
+                      "items": { "type": "object", "additionalProperties": true }
+                    }
+                  }
+                }
+              },
+              "metadata": { "type": "object", "additionalProperties": true }
+            }
+          }
+        },
+        "projection_variants": {
+          "type": "array",
+          "description": "Stage1 v1.5.0 cross-surface identity variants. Each element describes one surface-specific projection of this component mapping (desktop/mobile/modal/sidebar).",
+          "items": {
+            "type": "object",
+            "required": ["id", "surface"],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Stable identifier for the projection variant."
+              },
+              "surface": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Surface label such as desktop, mobile, modal, or sidebar."
+              },
+              "external_component": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Surface-specific component label when it differs from the canonical map name."
+              },
+              "capability_id": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Optional first-class capability entity linked to this projection."
+              },
+              "selector": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Representative selector or cluster signature."
+              },
+              "confidence": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "Confidence of the cross-surface identity merge."
+              },
+              "evidence_chain": {
+                "type": "array",
+                "items": { "type": "object", "additionalProperties": true },
+                "description": "Evidence supporting the identity-resolution link."
+              },
+              "metadata": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "Open metadata bag for future relation details."
+              }
+            }
+          }
+        }
+      }
+    },
+    "MappingEntry": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/SingleCreate"
+        },
+        {
+          "not": {
+            "anyOf": [
+              {
+                "required": ["apply"]
+              },
+              {
+                "required": ["action"]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

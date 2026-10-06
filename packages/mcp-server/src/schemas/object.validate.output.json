@@ -1,0 +1,101 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "kind": {
+      "enum": [
+        "object",
+        "trait",
+        null
+      ]
+    },
+    "name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "valid": {
+      "type": "boolean"
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "enum": [
+              "malformed",
+              "not-a-definition",
+              "invalid-name",
+              "invalid-version",
+              "trait-conflict",
+              "missing-header",
+              "invalid-trait-reference",
+              "unknown-trait",
+              "missing-parameter",
+              "invalid-field",
+              "unknown-context",
+              "unknown-component",
+              "invalid-view",
+              "invalid-state-machine",
+              "shipped-name",
+              "duplicate",
+              "compose-failed",
+              "money-units",
+              "invalid-relationship",
+              "unknown-relationship-target",
+              "unknown-relationship-field"
+            ]
+          },
+          "path": {
+            "type": "string",
+            "description": "Where in the definition, for example traits[1].name or schema.capacity."
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "message"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "contexts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "An object: the contexts it composes. A trait: the contexts its views extend."
+    },
+    "replaces": {
+      "type": "string",
+      "description": "The shipped object yours would be used in place of."
+    },
+    "folder": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Where register would write it; null when no folder is set."
+    }
+  },
+  "required": [
+    "kind",
+    "name",
+    "valid",
+    "errors",
+    "warnings",
+    "contexts",
+    "folder"
+  ],
+  "additionalProperties": false
+}

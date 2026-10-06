@@ -1,8 +1,8 @@
 import type { HTMLAttributes, JSX } from 'react';
-import type { NormalizedVizSpec, TraitBinding } from '../../viz/spec/normalized-viz-spec.js';
-import { analyzeVizSpec, getEncodingBinding } from '../../viz/a11y/data-analysis.js';
-import { formatDimension } from '../../viz/a11y/format.js';
-import { getVizScaleTokens } from '../../viz/tokens/scale-token-mapper.js';
+import type { NormalizedVizSpec, TraitBinding } from '@oods/viz-core';
+import { analyzeVizSpec, getEncodingBinding } from '@oods/viz-core';
+import { formatDimension } from '@oods/viz-core';
+import { getVizScaleTokens } from '@oods/viz-core';
 
 export interface SharedLegendProps extends HTMLAttributes<HTMLDivElement> {
   readonly spec: NormalizedVizSpec;

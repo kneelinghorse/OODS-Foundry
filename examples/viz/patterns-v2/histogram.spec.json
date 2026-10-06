@@ -1,0 +1,105 @@
+{
+  "$schema": "https://oods-foundry.com/viz-spec/v1",
+  "id": "pattern:viz:histogram",
+  "name": "Example pre-binned distribution",
+  "data": {
+    "values": [
+      {
+        "binStart": 0,
+        "binEnd": 10,
+        "count": 3
+      },
+      {
+        "binStart": 10,
+        "binEnd": 20,
+        "count": 8
+      },
+      {
+        "binStart": 20,
+        "binEnd": 30,
+        "count": 12
+      },
+      {
+        "binStart": 30,
+        "binEnd": 40,
+        "count": 6
+      },
+      {
+        "binStart": 40,
+        "binEnd": 50,
+        "count": 2
+      }
+    ]
+  },
+  "marks": [
+    {
+      "trait": "MarkBar",
+      "encodings": {
+        "x": {
+          "field": "binStart",
+          "trait": "EncodingPositionX",
+          "channel": "x",
+          "scale": "linear"
+        },
+        "x2": {
+          "field": "binEnd",
+          "trait": "EncodingPositionX",
+          "channel": "x2"
+        },
+        "y": {
+          "field": "count",
+          "trait": "EncodingPositionY",
+          "channel": "y",
+          "scale": "linear"
+        }
+      },
+      "options": {
+        "orientation": "vertical",
+        "baseline": "zero"
+      }
+    }
+  ],
+  "encoding": {
+    "x": {
+      "field": "binStart",
+      "trait": "EncodingPositionX",
+      "channel": "x",
+      "scale": "linear"
+    },
+    "x2": {
+      "field": "binEnd",
+      "trait": "EncodingPositionX",
+      "channel": "x2"
+    },
+    "y": {
+      "field": "count",
+      "trait": "EncodingPositionY",
+      "channel": "y",
+      "scale": "linear"
+    }
+  },
+  "config": {
+    "layout": {
+      "width": 720,
+      "height": 360,
+      "padding": 24
+    }
+  },
+  "a11y": {
+    "ariaLabel": "Example pre-binned distribution",
+    "description": "The supplied frequency bins peak at 20\u201330 with 12 observations; the bins are already computed and have equal widths.",
+    "tableFallback": {
+      "enabled": true,
+      "caption": "Example pre-binned distribution"
+    }
+  },
+  "portability": {
+    "fallbackType": "table",
+    "tableColumnOrder": [
+      "binStart",
+      "binEnd",
+      "count"
+    ],
+    "preferredRenderer": "vega-lite"
+  }
+}

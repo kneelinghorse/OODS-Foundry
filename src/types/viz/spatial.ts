@@ -362,7 +362,7 @@ export interface SpatialVizConfig {
  * Extends the normalized-viz-spec pattern for geographic visualizations.
  */
 export interface SpatialSpec {
-  $schema?: 'https://oods.dev/viz-spec/spatial/v1';
+  $schema?: 'https://oods-foundry.com/viz-spec/spatial/v1';
   id?: string;
   name?: string;
   type: 'spatial';

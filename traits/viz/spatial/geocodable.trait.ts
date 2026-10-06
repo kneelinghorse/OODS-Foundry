@@ -230,8 +230,8 @@ const GeocodableTrait = {
     regionsUsed: ['detail', 'form', 'list'],
     examples: ['SalesByState', 'StoreLocations', 'PopulationByCountry'],
       references: [
-        'cmos/foundational-docs/data-viz-part2/spatial-module/ARCHITECTURE.md',
-        'cmos/research/data-viz-oods/RV.03_Gap Analysis',
+        'Spatial module architecture (data-viz part 2)',
+        'RV.03 Gap Analysis',
       ],
     },
 } as const satisfies TraitDefinition & {

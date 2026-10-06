@@ -256,3 +256,9 @@
     color: CanvasText;
   }
 }
+
+/* HC token themes use Canvas for badges. The icon must follow that same text
+ * pair even when the operating system has not enabled forced colors. */
+[data-theme='hc'] .statusable-badge__icon {
+  color: CanvasText;
+}

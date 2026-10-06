@@ -1,0 +1,113 @@
+{
+  "$schema": "https://oods-foundry.com/viz-spec/v1",
+  "id": "pattern:viz:waterfall",
+  "name": "Example quarterly balance bridge",
+  "data": {
+    "values": [
+      {
+        "step": "1. Opening",
+        "start": 0,
+        "end": 100,
+        "kind": "Balance"
+      },
+      {
+        "step": "2. Revenue",
+        "start": 100,
+        "end": 160,
+        "kind": "Increase"
+      },
+      {
+        "step": "3. Costs",
+        "start": 160,
+        "end": 125,
+        "kind": "Decrease"
+      },
+      {
+        "step": "4. Closing",
+        "start": 0,
+        "end": 125,
+        "kind": "Balance"
+      }
+    ]
+  },
+  "marks": [
+    {
+      "trait": "MarkBar",
+      "encodings": {
+        "x": {
+          "field": "step",
+          "trait": "EncodingPositionX",
+          "channel": "x",
+          "scale": "band",
+          "sort": "ascending"
+        },
+        "y": {
+          "field": "start",
+          "trait": "EncodingPositionY",
+          "channel": "y",
+          "scale": "linear"
+        },
+        "y2": {
+          "field": "end",
+          "trait": "EncodingPositionY",
+          "channel": "y2"
+        },
+        "color": {
+          "field": "kind",
+          "trait": "EncodingColor",
+          "channel": "color"
+        }
+      }
+    }
+  ],
+  "encoding": {
+    "x": {
+      "field": "step",
+      "trait": "EncodingPositionX",
+      "channel": "x",
+      "scale": "band",
+      "sort": "ascending"
+    },
+    "y": {
+      "field": "start",
+      "trait": "EncodingPositionY",
+      "channel": "y",
+      "scale": "linear"
+    },
+    "y2": {
+      "field": "end",
+      "trait": "EncodingPositionY",
+      "channel": "y2"
+    },
+    "color": {
+      "field": "kind",
+      "trait": "EncodingColor",
+      "channel": "color"
+    }
+  },
+  "config": {
+    "layout": {
+      "width": 720,
+      "height": 360,
+      "padding": 24
+    }
+  },
+  "a11y": {
+    "ariaLabel": "Example quarterly balance bridge",
+    "description": "The example balance opens at 100, gains 60 in revenue, loses 35 in costs, and closes at 125.",
+    "tableFallback": {
+      "enabled": true,
+      "caption": "Example quarterly balance bridge"
+    }
+  },
+  "portability": {
+    "fallbackType": "table",
+    "tableColumnOrder": [
+      "step",
+      "start",
+      "end",
+      "kind"
+    ],
+    "preferredRenderer": "vega-lite"
+  }
+}

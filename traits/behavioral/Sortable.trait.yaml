@@ -1,0 +1,143 @@
+trait:
+  name: Sortable
+  version: 1.0.0
+  description: |
+    Adds column sorting controls to list and table views. Sortable injects sort indicators
+    into the header region near column headers, wires sort state to the data layer, and
+    provides semantic token mappings for consistent sort UI styling across brands.
+
+    The trait supports single-column sorting with ascending/descending/none cycle.
+    Sort state is managed via sortField and sortDirection props, which the consuming layout
+    binds to data ordering parameters or API sort queries.
+  category: behavioral
+  tags:
+    - sorting
+    - list-behavior
+    - table
+    - ordering
+
+parameters:
+  - name: defaultSortField
+    type: string
+    required: false
+    description: The field name to sort by on initial load. Empty means no default sort.
+    default: ""
+
+  - name: defaultSortDirection
+    type: string
+    required: false
+    description: Default sort direction on initial load.
+    default: asc
+    validation:
+      enum:
+        - asc
+        - desc
+
+  - name: sortableFields
+    type: string[]
+    required: false
+    description: |
+      List of field names that support sorting. When empty, all fields in the schema are
+      considered sortable. When specified, only these fields show sort controls in the header.
+    default: []
+    validation:
+      uniqueItems: true
+
+  - name: triStateSort
+    type: boolean
+    required: false
+    description: |
+      When true, sort cycles through ascending → descending → none (unsorted).
+      When false, sort toggles between ascending and descending only.
+    default: true
+
+schema:
+  sortField:
+    type: string
+    required: false
+    description: The currently active sort field name. Empty string means no active sort.
+    default: ""
+
+  sortDirection:
+    type: string
+    required: false
+    description: Current sort direction.
+    default: asc
+    validation:
+      enum:
+        - asc
+        - desc
+
+  sortActive:
+    type: boolean
+    required: false
+    description: Whether sorting is currently applied (sortField is non-empty).
+    default: false
+
+semantics:
+  sortField:
+    semantic_type: state.sort.field
+    token_mapping: computed
+    ui_hints:
+      component: SortIndicator
+      defaultParameter: defaultSortField
+  sortDirection:
+    semantic_type: state.sort.direction
+    token_mapping: computed
+    ui_hints:
+      component: SortIndicator
+      defaultParameter: defaultSortDirection
+  sortActive:
+    semantic_type: state.sort.active
+    token_mapping: computed
+    ui_hints:
+      component: SortIndicator
+      description: Drives visual highlight of the sorted column header.
+
+view_extensions:
+  list:
+    - component: SortIndicator
+      position: header
+      priority: 8
+      props:
+        sortFieldProp: sortField
+        sortDirectionProp: sortDirection
+        sortableFieldsParameter: sortableFields
+        triStateSortParameter: triStateSort
+        defaultSortFieldParameter: defaultSortField
+        defaultSortDirectionParameter: defaultSortDirection
+
+tokens:
+  sort.indicator.idle: "var(--sys-icon-subtle)"
+  sort.indicator.active: "var(--sys-icon-primary)"
+  sort.indicator.hover: "var(--sys-icon-hover)"
+  sort.header.hover.bg: "var(--sys-surface-hover)"
+  sort.header.active.bg: "var(--sys-surface-accent-subtle)"
+
+dependencies: []
+
+metadata:
+  created: "2026-03-05"
+  updated: "2026-03-05"
+  owners:
+    - design@oods.systems
+  maturity: stable
+  accessibility:
+    keyboard: |
+      Sort controls are activated via column header buttons:
+      - Enter/Space to cycle sort direction on the focused column
+      - Tab to move between sortable column headers
+      - Sort state change is announced immediately
+    screenreader: |
+      Sortable column headers use button role with aria-sort attribute
+      (ascending, descending, or none). On activation, the new sort state
+      is announced via aria-live region (e.g., "Sorted by Name, ascending").
+      Non-sortable columns do not have interactive sort controls.
+  regionsUsed:
+    - list
+  examples:
+    - Product catalog column sorting
+    - User directory sorting
+    - Invoice list sorting
+  references:
+    - "Trait Engine Spec v0.1 section 2"

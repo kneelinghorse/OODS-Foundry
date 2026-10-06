@@ -1,0 +1,74 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "objects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "domain": { "type": "string" },
+          "version": { "type": "string" },
+          "maturity": { "type": ["string", "null"] },
+          "description": { "type": "string" },
+          "traits": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "fieldCount": { "type": "integer" },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "visibility": { "enum": ["public", "internal"], "description": "public: a business object. internal: one of OODS Foundry's own non-business objects, listed only with includeInternal." },
+          "source": { "enum": ["shipped", "user"], "description": "shipped: OODS Foundry's own. user: from your folder." },
+          "replaces": { "type": "string", "description": "The shipped file your object is used in place of." }
+        },
+        "required": ["name", "domain", "version", "maturity", "description", "traits", "fieldCount", "tags", "visibility", "source"],
+        "additionalProperties": false
+      }
+    },
+    "totalCount": { "type": "integer" },
+    "hiddenInternal": { "type": "integer", "minimum": 0, "description": "Internal objects that match the filters but were left out because includeInternal was not set." },
+    "filters": {
+      "type": "object",
+      "properties": {
+        "domain": { "type": ["string", "null"] },
+        "maturity": { "type": ["string", "null"] },
+        "trait": { "type": ["string", "null"] }
+      },
+      "required": ["domain", "maturity", "trait"],
+      "additionalProperties": false
+    },
+    "folders": {
+      "type": "object",
+      "description": "Your objects and traits folders (OODS_OBJECTS_DIR, OODS_TRAITS_DIR); null when none is set.",
+      "properties": {
+        "objects": { "type": ["string", "null"] },
+        "traits": { "type": ["string", "null"] }
+      },
+      "required": ["objects", "traits"],
+      "additionalProperties": false
+    },
+    "issues": {
+      "type": "array",
+      "description": "Every file in the shipped folders or yours that is not in use, and every replacement, with the reason.",
+      "items": {
+        "type": "object",
+        "description": "A file that was not used, or something about one that is, and why.",
+        "properties": {
+          "kind": { "enum": ["malformed", "unnamed", "duplicate", "replaces-shipped", "shipped-name", "unknown-trait", "unreadable-folder"] },
+          "severity": { "enum": ["error", "notice"], "description": "error: the definition is not in use. notice: it is in use, and this is worth knowing." },
+          "file": { "type": "string", "description": "A shipped file relative to the runtime root; a file of yours as an absolute path." },
+          "name": { "type": "string" },
+          "message": { "type": "string" }
+        },
+        "required": ["kind", "severity", "file", "message"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["objects", "totalCount", "hiddenInternal", "filters", "folders", "issues"],
+  "additionalProperties": false
+}

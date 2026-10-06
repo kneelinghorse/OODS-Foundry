@@ -1,0 +1,96 @@
+{
+  "name": "@oods/components-react",
+  "version": "0.7.0",
+  "description": "React components for OODS Foundry: the controls, layouts and domain views its generated screens use.",
+  "homepage": "https://oods-foundry.com/",
+  "bugs": {
+    "url": "https://github.com/kneelinghorse/OODS-Foundry/issues"
+  },
+  "keywords": [
+    "oods",
+    "oods-foundry",
+    "react",
+    "components",
+    "design-system",
+    "accessibility"
+  ],
+  "type": "module",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "files": [
+    "dist",
+    "evidence",
+    "LICENSE",
+    "NOTICE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "rimraf dist && tsup --config tsup.config.ts",
+    "clean": "rimraf dist",
+    "typecheck": "tsc --noEmit --pretty false -p tsconfig.json",
+    "test": "vitest run --config vitest.config.ts",
+    "test:packed": "node test/packed-import-evidence.mjs",
+    "test:visual": "node test/visual-evidence.mjs",
+    "prepack": "pnpm run build"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./readiness": {
+      "default": "./evidence/react-readiness.v1.json"
+    },
+    "./status": {
+      "types": "./dist/status.d.ts",
+      "import": "./dist/status.js",
+      "require": "./dist/status.cjs"
+    },
+    "./table": {
+      "types": "./dist/table.d.ts",
+      "import": "./dist/table.js",
+      "require": "./dist/table.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "dependencies": {
+    "@radix-ui/react-slot": "^1.1.2",
+    "@oods/component-contracts": "0.7.0",
+    "@oods/component-styles": "0.7.0"
+  },
+  "peerDependencies": {
+    "react": ">=18 <20",
+    "react-dom": ">=18 <20"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.1",
+    "jsdom": "^24.0.0",
+    "playwright": "^1.56.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "vite": "^6.4.1",
+    "vitest": "^3.2.4",
+    "vitest-axe": "^0.1.0"
+  },
+  "packageManager": "pnpm@9.12.2",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kneelinghorse/OODS-Foundry.git",
+    "directory": "packages/components-react"
+  }
+}

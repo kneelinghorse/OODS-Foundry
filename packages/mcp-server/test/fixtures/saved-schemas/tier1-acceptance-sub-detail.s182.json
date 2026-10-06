@@ -1,0 +1,65 @@
+{
+  "name": "tier1-acceptance-sub-detail",
+  "schemaRef": "s182-tier1-bounded-foundation-v1",
+  "schema": {
+    "version": "2026.03",
+    "screens": [
+      {
+        "id": "tier1-card",
+        "component": "Card",
+        "children": [
+          {
+            "id": "tier1-stack",
+            "component": "Stack",
+            "layout": {
+              "type": "stack",
+              "gapToken": "stack-default"
+            },
+            "children": [
+              {
+                "id": "tier1-title",
+                "component": "Text",
+                "props": {
+                  "as": "h2",
+                  "content": "Subscription details"
+                }
+              },
+              {
+                "id": "tier1-tabs",
+                "component": "Tabs",
+                "children": [
+                  {
+                    "id": "tier1-overview",
+                    "component": "Stack",
+                    "props": {
+                      "label": "Overview",
+                      "content": "Current plan and renewal details"
+                    }
+                  },
+                  {
+                    "id": "tier1-billing",
+                    "component": "Stack",
+                    "props": {
+                      "label": "Billing",
+                      "content": "Invoices and payment method"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "object": "Subscription",
+  "context": "detail",
+  "version": 1,
+  "author": "s182-m04",
+  "createdAt": "2026-09-04T00:00:00.000Z",
+  "updatedAt": "2026-09-04T00:00:00.000Z",
+  "tags": [
+    "s182",
+    "bounded-foundation-v1"
+  ]
+}

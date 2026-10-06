@@ -2,7 +2,12 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
   "properties": {
-    "brand": { "type": "string", "enum": ["A"], "default": "A" },
+    "brand": {
+      "type": "string",
+      "format": "oods-brand",
+      "default": "A",
+      "description": "Selects values compiled from current source, returned inline as CSS variables, CSS and JSON and written on apply. Full CSS includes all registered scopes; TypeScript and Tailwind artifacts retain A/light defaults."
+    },
     "theme": { "type": "string", "enum": ["light", "dark", "hc"], "default": "dark" },
     "apply": { "type": "boolean", "default": false }
   },

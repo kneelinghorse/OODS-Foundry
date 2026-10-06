@@ -112,7 +112,7 @@ const AccountCard: React.FC<{ account: AccountPerson | AccountOrganization | Acc
 };
 
 const meta: Meta = {
-  title: 'Objects/Domain Objects/Accounts/Archetypes',
+  title: 'Domains/Accounts/Archetypes',
   parameters: {
     layout: 'padded',
   },
@@ -242,11 +242,9 @@ export const InvalidMetadataWithPII: StoryObj = {
       currency: 'USD',
       metadata: {
         theme: 'light',
-        // @ts-expect-error - intentional PII for demo
         email: 'bob@example.com', // ❌ PII!
-        // @ts-expect-error - intentional PII for demo
         phone: '555-123-4567', // ❌ PII!
-      },
+      } as unknown as AccountPerson['metadata'],
       business_time: now,
       system_time: now,
     };

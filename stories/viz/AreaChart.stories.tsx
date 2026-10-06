@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import type { NormalizedVizSpec } from '~/src/viz/spec/normalized-viz-spec';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 import { AreaChart } from '~/src/components/viz/AreaChart';
 
 const meta: Meta<typeof AreaChart> = {
-  title: 'Visualization/Standard/AreaChart',
+  title: 'Visualization/AreaChart',
   component: AreaChart,
   parameters: {
     layout: 'fullscreen',
@@ -15,7 +15,7 @@ export default meta;
 type Story = StoryObj<typeof AreaChart>;
 
 const singleSeriesSpec: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/v1',
   id: 'stories:viz:area:single',
   name: 'Net ARR Added',
   data: {
@@ -69,7 +69,7 @@ const singleSeriesSpec: NormalizedVizSpec = {
 };
 
 const stackedAreaSpec: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/v1',
   id: 'stories:viz:area:stacked',
   name: 'Pipeline Coverage by Segment',
   data: {
@@ -141,7 +141,7 @@ const stackedAreaSpec: NormalizedVizSpec = {
 };
 
 const overlappingSpec: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/v1',
   id: 'stories:viz:area:overlapping',
   name: 'Support Capacity vs Workload',
   data: {
@@ -201,7 +201,7 @@ const overlappingSpec: NormalizedVizSpec = {
 };
 
 const gapsSpec: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/v1',
   id: 'stories:viz:area:gaps',
   name: 'Content Production Velocity',
   data: {

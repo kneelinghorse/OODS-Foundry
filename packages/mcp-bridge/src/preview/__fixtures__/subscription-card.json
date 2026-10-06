@@ -1,0 +1,486 @@
+{
+  "compose": {
+    "object": "Subscription",
+    "context": "card"
+  },
+  "brand": "B",
+  "theme": "dark",
+  "schema": {
+    "version": "2026.02",
+    "theme": "dark",
+    "screens": [
+      {
+        "id": "screen-card-7",
+        "component": "Card",
+        "layout": {
+          "type": "stack",
+          "gapToken": "cluster-default"
+        },
+        "children": [
+          {
+            "id": "card-header-1",
+            "component": "Stack",
+            "layout": {
+              "type": "inline",
+              "align": "space-between"
+            },
+            "style": {
+              "spacingToken": "inset-squish"
+            },
+            "children": [
+              {
+                "id": "slot-header-2",
+                "component": "Stack",
+                "meta": {
+                  "intent": "slot:header",
+                  "label": "header"
+                },
+                "children": [
+                  {
+                    "id": "ve-header-8",
+                    "component": "StatusBadge",
+                    "props": {
+                      "field": "status",
+                      "variant": "subtle",
+                      "label": "Status"
+                    }
+                  },
+                  {
+                    "id": "ve-header-9",
+                    "component": "CancellationBadge",
+                    "props": {
+                      "field": "cancel_at_period_end"
+                    }
+                  },
+                  {
+                    "id": "ve-header-11",
+                    "component": "ArchivePill",
+                    "props": {
+                      "field": "is_archived",
+                      "archivedAtField": "archived_at"
+                    }
+                  }
+                ],
+                "layout": {
+                  "type": "stack",
+                  "gapToken": "cluster-default"
+                }
+              }
+            ]
+          },
+          {
+            "id": "card-body-3",
+            "component": "Stack",
+            "layout": {
+              "type": "stack",
+              "gapToken": "cluster-tight"
+            },
+            "style": {
+              "spacingToken": "inset-default"
+            },
+            "children": [
+              {
+                "id": "slot-body-4",
+                "component": "Card",
+                "meta": {
+                  "intent": "slot:body",
+                  "label": "body"
+                }
+              }
+            ]
+          },
+          {
+            "id": "card-footer-5",
+            "component": "Stack",
+            "layout": {
+              "type": "inline",
+              "align": "end"
+            },
+            "style": {
+              "spacingToken": "inset-squish"
+            },
+            "children": [
+              {
+                "id": "slot-footer-6",
+                "component": "BillingCardMeta",
+                "meta": {
+                  "intent": "slot:footer",
+                  "label": "footer"
+                },
+                "props": {
+                  "amountField": "amount",
+                  "currencyField": "currency",
+                  "intervalField": "billing_interval",
+                  "minorUnitsParameter": "minorUnits",
+                  "minorUnits": 100
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "objectSchema": {
+      "status": {
+        "type": "string",
+        "required": true,
+        "description": "Current lifecycle status of the subscription.",
+        "enum": [
+          "future",
+          "trialing",
+          "active",
+          "paused",
+          "pending_cancellation",
+          "past_due",
+          "unpaid",
+          "terminated"
+        ],
+        "semanticType": "billing.subscription.status"
+      },
+      "state_history": {
+        "type": "StateTransition[]",
+        "required": false,
+        "default": [],
+        "description": "Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n",
+        "semanticType": "timeline.state_transition"
+      },
+      "allowed_transitions": {
+        "type": "string[]",
+        "required": false,
+        "default": [],
+        "description": "Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n",
+        "semanticType": "status.navigation"
+      },
+      "cancel_at_period_end": {
+        "type": "boolean",
+        "required": true,
+        "description": "Whether the subscription will cancel at the natural billing period end.",
+        "semanticType": "billing.subscription.cancel_at_period_end"
+      },
+      "cancellation_reason": {
+        "type": "string",
+        "required": false,
+        "description": "Free-form explanation captured during cancellation workflows.",
+        "semanticType": "billing.subscription.cancellation_reason"
+      },
+      "cancellation_reason_code": {
+        "type": "string",
+        "required": false,
+        "description": "Structured reason code chosen from the allowedReasons parameter.",
+        "semanticType": "status.cancel.reason_code"
+      },
+      "cancellation_requested_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp when cancellation was initiated.",
+        "semanticType": "billing.subscription.cancellation_requested_at"
+      },
+      "created_at": {
+        "type": "datetime",
+        "required": true,
+        "description": "Timestamp recording when the entity was first created.",
+        "semanticType": "audit.created_at"
+      },
+      "updated_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the most recent modification, when available.",
+        "semanticType": "audit.updated_at"
+      },
+      "last_event": {
+        "type": "string",
+        "required": true,
+        "description": "Lifecycle event associated with the most recent timestamp mutation.",
+        "enum": [
+          "billing_cycle_started",
+          "billing_cycle_completed",
+          "payment_received",
+          "cancellation_requested"
+        ],
+        "semanticType": "audit.event.type"
+      },
+      "last_event_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp for the lifecycle event captured in last_event.",
+        "semanticType": "audit.event.timestamp"
+      },
+      "amount": {
+        "type": "integer",
+        "required": true,
+        "description": "Recurring price expressed in minor units (e.g., cents).",
+        "semanticType": "billing.plan.amount"
+      },
+      "currency": {
+        "type": "string",
+        "required": true,
+        "description": "ISO 4217 currency code used for billing.",
+        "semanticType": "billing.plan.currency"
+      },
+      "billing_interval": {
+        "type": "string",
+        "required": false,
+        "description": "Recurrence cadence (monthly, yearly, quarterly, etc.).",
+        "semanticType": "billing.subscription.interval"
+      },
+      "payment_status": {
+        "type": "string",
+        "required": false,
+        "default": "pending",
+        "description": "Outcome of the most recent collection attempt. Distinct from subscription\nlifecycle status — a subscription can be \"active\" with payment_status \"retrying\".\n",
+        "enum": [
+          "pending",
+          "succeeded",
+          "failed",
+          "retrying",
+          "refunded"
+        ],
+        "semanticType": "billing.cycle.payment_status"
+      },
+      "payment_method_type": {
+        "type": "string",
+        "required": false,
+        "description": "Payment instrument category used for collection.",
+        "enum": [
+          "card",
+          "ach",
+          "wire",
+          "invoice",
+          "other"
+        ],
+        "semanticType": "billing.cycle.payment_method"
+      },
+      "proration_amount": {
+        "type": "integer",
+        "required": false,
+        "default": 0,
+        "description": "Prorated credit or charge in minor currency units generated by a mid-cycle\nplan change. Positive values are charges; negative values are credits.\nOnly populated when the supportProration parameter is true.\n",
+        "semanticType": "billing.cycle.proration"
+      },
+      "proration_date": {
+        "type": "integer",
+        "required": false,
+        "description": "Unix timestamp (epoch SECONDS) at which proration is calculated. Pinned when an\nupcoming-invoice PREVIEW is requested and MUST be passed identically on commit so the\ncommitted charge equals the previewed amount. The preview is read-only and does NOT\nmutate the subscription. Stored as an integer (not a datetime) so the value round-trips\nbyte-identically between preview and commit — an ISO string normalization could shift it\nand desync the previewed vs charged amount. Only populated when supportProration is true.\nSource: docs.stripe.com/billing/subscriptions/prorations.\n",
+        "semanticType": "billing.cycle.proration_timestamp"
+      },
+      "last_payment_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp of the most recent successful payment.",
+        "semanticType": "billing.subscription.last_payment_at"
+      },
+      "next_payment_due_at": {
+        "type": "datetime",
+        "required": false,
+        "description": "Timestamp when the next payment attempt should occur.",
+        "semanticType": "billing.subscription.next_payment_due_at"
+      },
+      "current_period_start": {
+        "type": "datetime",
+        "required": true,
+        "description": "Start timestamp of the current billing cycle.",
+        "semanticType": "billing.subscription.current_period_start"
+      },
+      "current_period_end": {
+        "type": "datetime",
+        "required": true,
+        "description": "End timestamp of the current billing cycle.",
+        "semanticType": "billing.subscription.current_period_end"
+      },
+      "current_period_progress": {
+        "type": "number",
+        "required": false,
+        "description": "Decimal progress (0-1) through the active billing cycle.",
+        "semanticType": "billing.subscription.current_period_progress"
+      },
+      "is_archived": {
+        "type": "boolean",
+        "required": true,
+        "default": false,
+        "description": "Flag indicating whether the entity is currently archived (soft-deleted).",
+        "semanticType": "status.archive.state"
+      },
+      "archived_at": {
+        "type": "datetime?",
+        "required": false,
+        "description": "Timestamp for when the entity entered the archived state.",
+        "semanticType": "status.archive.timestamp"
+      },
+      "restored_at": {
+        "type": "datetime?",
+        "required": false,
+        "description": "Timestamp for when the entity was most recently restored from an archived state.",
+        "semanticType": "status.archive.restore_timestamp"
+      },
+      "archive_reason": {
+        "type": "string",
+        "required": false,
+        "description": "Human-readable narrative describing why the entity was archived.",
+        "semanticType": "status.archive.reason"
+      },
+      "archived_by": {
+        "type": "string",
+        "required": false,
+        "description": "User ID or system identifier of the actor who archived this entity.\nSet to \"system\" for automated/policy-driven archival. Supports audit trail queries\nlike \"show all entities archived by user X\" or \"show all auto-archived entities\".\n",
+        "semanticType": "status.archive.actor"
+      },
+      "archive_metadata": {
+        "type": "object",
+        "required": false,
+        "description": "Structured metadata about the archival action for compliance and audit purposes.\n\nProperties:\n  - method: \"manual\" | \"automated\" | \"policy\" — how the archive was triggered\n  - compliance_tags: string[] — regulatory labels (e.g., [\"GDPR\", \"SOX\", \"HIPAA\"])\n  - retention_policy_id: string — reference to the retention policy that triggered archival\n  - original_status: string — the Stateful status before archival\n  - related_entity_count: number — count of related entities also archived (cascade)\n",
+        "semanticType": "status.archive.compliance"
+      },
+      "restoration_metadata": {
+        "type": "object",
+        "required": false,
+        "description": "Metadata about the most recent restoration action.\n\nProperties:\n  - restored_by: string — user ID or \"system\"\n  - restored_fields: string[] — when partial restore, which fields were restored\n  - restoration_reason: string — why the entity was restored\n  - restored_from_snapshot: boolean — whether restored from a point-in-time snapshot\n",
+        "semanticType": "status.archive.restoration"
+      },
+      "subscription_id": {
+        "type": "string",
+        "required": true,
+        "description": "Primary identifier used across billing and lifecycle systems.",
+        "semanticType": "billing.subscription.id"
+      },
+      "plan_name": {
+        "type": "string",
+        "required": true,
+        "description": "Human-readable plan label shown in headers.",
+        "semanticType": "billing.plan.name"
+      },
+      "plan_code": {
+        "type": "string",
+        "required": false,
+        "description": "Internal plan code or price identifier.",
+        "semanticType": "billing.plan.code"
+      },
+      "plan_interval": {
+        "type": "string",
+        "required": false,
+        "description": "Billing interval descriptor (monthly, yearly, etc.).",
+        "semanticType": "billing.plan.interval"
+      },
+      "customer_name": {
+        "type": "string",
+        "required": false,
+        "description": "Customer or account name associated with the subscription.",
+        "semanticType": "customer.account.name"
+      },
+      "customer_email": {
+        "type": "email",
+        "required": false,
+        "description": "Billing contact email address.",
+        "semanticType": "customer.account.email"
+      }
+    }
+  },
+  "model": {
+    "allowedTransitions": [],
+    "amount": 1999,
+    "archiveMetadata": {},
+    "archiveReason": "Consumer archive reason",
+    "archivedAt": "2026-09-05T12:00:00.000Z",
+    "archivedBy": "Consumer archived by",
+    "billingInterval": "monthly",
+    "cancelAtPeriodEnd": false,
+    "cancellationReason": "Consumer cancellation reason",
+    "cancellationReasonCode": "Consumer cancellation reason code",
+    "cancellationRequestedAt": "2026-09-05T12:00:00.000Z",
+    "createdAt": "2026-09-05T12:00:00.000Z",
+    "currency": "usd",
+    "currentPeriodEnd": "2026-09-05T12:00:00.000Z",
+    "currentPeriodProgress": 0,
+    "currentPeriodStart": "2026-09-05T12:00:00.000Z",
+    "customerEmail": "consumer@example.test",
+    "customerName": "Consumer customer name",
+    "isArchived": false,
+    "lastEvent": "billing_cycle_started",
+    "lastEventAt": "2026-09-05T12:00:00.000Z",
+    "lastPaymentAt": "2026-09-05T12:00:00.000Z",
+    "nextPaymentDueAt": "2026-09-05T12:00:00.000Z",
+    "paymentMethodType": "card",
+    "paymentStatus": "pending",
+    "planCode": "Consumer plan code",
+    "planInterval": "Consumer plan interval",
+    "planName": "Consumer plan name",
+    "prorationAmount": 0,
+    "prorationDate": 0,
+    "restorationMetadata": {},
+    "restoredAt": "2026-09-05T12:00:00.000Z",
+    "stateHistory": [],
+    "status": "future",
+    "subscriptionId": "consumer-subscription-id",
+    "updatedAt": "2026-09-05T12:00:00.000Z"
+  },
+  "frameworks": {
+    "react": {
+      "artifact": {
+        "schemaVersion": "1.0.0",
+        "framework": "react",
+        "files": [
+          {
+            "path": "src/GeneratedUI.tsx",
+            "contents": "import React from 'react';\nimport { ArchivePill, BillingCardMeta, CancellationBadge, Card, Stack, StatusBadge } from '@oods/components-react';\nimport '@oods/component-styles/css';\n\nexport interface PageProps {\n  /** Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n */\n  allowedTransitions?: string[];\n  /** Recurring price expressed in minor units (e.g., cents). */\n  amount: number;\n  /** Structured metadata about the archival action for compliance and audit purposes.\n\nProperties:\n  - method: \"manual\" | \"automated\" | \"policy\" — how the archive was triggered\n  - compliance_tags: string[] — regulatory labels (e.g., [\"GDPR\", \"SOX\", \"HIPAA\"])\n  - retention_policy_id: string — reference to the retention policy that triggered archival\n  - original_status: string — the Stateful status before archival\n  - related_entity_count: number — count of related entities also archived (cascade)\n */\n  archiveMetadata?: Record<string, unknown>;\n  /** Human-readable narrative describing why the entity was archived. */\n  archiveReason?: string;\n  /** Timestamp for when the entity entered the archived state. */\n  archivedAt?: string | null;\n  /** User ID or system identifier of the actor who archived this entity.\nSet to \"system\" for automated/policy-driven archival. Supports audit trail queries\nlike \"show all entities archived by user X\" or \"show all auto-archived entities\".\n */\n  archivedBy?: string;\n  /** Recurrence cadence (monthly, yearly, quarterly, etc.). */\n  billingInterval?: string;\n  /** Whether the subscription will cancel at the natural billing period end. */\n  cancelAtPeriodEnd: boolean;\n  /** Free-form explanation captured during cancellation workflows. */\n  cancellationReason?: string;\n  /** Structured reason code chosen from the allowedReasons parameter. */\n  cancellationReasonCode?: string;\n  /** Timestamp when cancellation was initiated. */\n  cancellationRequestedAt?: string;\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** ISO 4217 currency code used for billing. */\n  currency: string;\n  /** End timestamp of the current billing cycle. */\n  currentPeriodEnd: string;\n  /** Decimal progress (0-1) through the active billing cycle. */\n  currentPeriodProgress?: number;\n  /** Start timestamp of the current billing cycle. */\n  currentPeriodStart: string;\n  /** Billing contact email address. */\n  customerEmail?: string;\n  /** Customer or account name associated with the subscription. */\n  customerName?: string;\n  /** Flag indicating whether the entity is currently archived (soft-deleted). */\n  isArchived: boolean;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: 'billing_cycle_started' | 'billing_cycle_completed' | 'payment_received' | 'cancellation_requested';\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Timestamp of the most recent successful payment. */\n  lastPaymentAt?: string;\n  /** Timestamp when the next payment attempt should occur. */\n  nextPaymentDueAt?: string;\n  /** Payment instrument category used for collection. */\n  paymentMethodType?: 'card' | 'ach' | 'wire' | 'invoice' | 'other';\n  /** Outcome of the most recent collection attempt. Distinct from subscription\nlifecycle status — a subscription can be \"active\" with payment_status \"retrying\".\n */\n  paymentStatus?: 'pending' | 'succeeded' | 'failed' | 'retrying' | 'refunded';\n  /** Internal plan code or price identifier. */\n  planCode?: string;\n  /** Billing interval descriptor (monthly, yearly, etc.). */\n  planInterval?: string;\n  /** Human-readable plan label shown in headers. */\n  planName: string;\n  /** Prorated credit or charge in minor currency units generated by a mid-cycle\nplan change. Positive values are charges; negative values are credits.\nOnly populated when the supportProration parameter is true.\n */\n  prorationAmount?: number;\n  /** Unix timestamp (epoch SECONDS) at which proration is calculated. Pinned when an\nupcoming-invoice PREVIEW is requested and MUST be passed identically on commit so the\ncommitted charge equals the previewed amount. The preview is read-only and does NOT\nmutate the subscription. Stored as an integer (not a datetime) so the value round-trips\nbyte-identically between preview and commit — an ISO string normalization could shift it\nand desync the previewed vs charged amount. Only populated when supportProration is true.\nSource: docs.stripe.com/billing/subscriptions/prorations.\n */\n  prorationDate?: number;\n  /** Metadata about the most recent restoration action.\n\nProperties:\n  - restored_by: string — user ID or \"system\"\n  - restored_fields: string[] — when partial restore, which fields were restored\n  - restoration_reason: string — why the entity was restored\n  - restored_from_snapshot: boolean — whether restored from a point-in-time snapshot\n */\n  restorationMetadata?: Record<string, unknown>;\n  /** Timestamp for when the entity was most recently restored from an archived state. */\n  restoredAt?: string | null;\n  /** Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n */\n  stateHistory?: unknown[];\n  /** Current lifecycle status of the subscription. */\n  status: 'future' | 'trialing' | 'active' | 'paused' | 'pending_cancellation' | 'past_due' | 'unpaid' | 'terminated';\n  /** Primary identifier used across billing and lifecycle systems. */\n  subscriptionId: string;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n}\n\ntype ArchivePillProps = React.ComponentPropsWithoutRef<typeof ArchivePill>;\ntype BillingCardMetaProps = React.ComponentPropsWithoutRef<typeof BillingCardMeta>;\ntype CancellationBadgeProps = React.ComponentPropsWithoutRef<typeof CancellationBadge>;\ntype CardProps = React.ComponentPropsWithoutRef<typeof Card>;\ntype StackProps = React.ComponentPropsWithoutRef<typeof Stack>;\ntype StatusBadgeProps = React.ComponentPropsWithoutRef<typeof StatusBadge>;\n\nexport const GeneratedUI: React.FC<PageProps> = ({ allowedTransitions, amount, archiveMetadata, archiveReason, archivedAt, archivedBy, billingInterval, cancelAtPeriodEnd, cancellationReason, cancellationReasonCode, cancellationRequestedAt, createdAt, currency, currentPeriodEnd, currentPeriodProgress, currentPeriodStart, customerEmail, customerName, isArchived, lastEvent, lastEventAt, lastPaymentAt, nextPaymentDueAt, paymentMethodType, paymentStatus, planCode, planInterval, planName, prorationAmount, prorationDate, restorationMetadata, restoredAt, stateHistory, status, subscriptionId, updatedAt }) => {\n  return (\n    <>\n      <Card id=\"screen-card-7\" data-oods-component=\"Card\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n            <Stack id=\"card-header-1\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: 'var(--ref-space-inset-squish)' }}>\n                    <Stack id=\"slot-header-2\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-default)' }}>\n                              <StatusBadge id=\"ve-header-8\" data-oods-component=\"StatusBadge\" label=\"Status\" variant=\"subtle\" status={status} />\n                              <CancellationBadge id=\"ve-header-9\" data-oods-component=\"CancellationBadge\" cancelAtPeriodEnd={cancelAtPeriodEnd} />\n                              <ArchivePill id=\"ve-header-11\" data-oods-component=\"ArchivePill\" isArchived={isArchived} />\n                            </Stack>\n                  </Stack>\n            <Stack id=\"card-body-3\" data-oods-component=\"Stack\" data-layout=\"stack\" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--ref-space-cluster-tight)', padding: 'var(--ref-space-inset-default)' }}>\n                    <Card id=\"slot-body-4\" data-oods-component=\"Card\" />\n                  </Stack>\n            <Stack id=\"card-footer-5\" data-oods-component=\"Stack\" data-layout=\"inline\" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', padding: 'var(--ref-space-inset-squish)' }}>\n                    <BillingCardMeta id=\"slot-footer-6\" data-oods-component=\"BillingCardMeta\" minorUnits={100} amount={amount} currency={currency} interval={billingInterval} />\n                  </Stack>\n          </Card>\n    </>\n  );\n};\n",
+            "contentHash": "sha256:c6bbae92c982b3d4250a43a13aaf715a0041b1e9a3f769a4d37b475981b3a94b"
+          }
+        ],
+        "dependencies": [
+          {
+            "name": "@oods/component-styles",
+            "version": "0.1.0",
+            "kind": "dependency"
+          },
+          {
+            "name": "@oods/components-react",
+            "version": "0.1.0",
+            "kind": "dependency"
+          },
+          {
+            "name": "react",
+            "version": "19.2.0",
+            "kind": "peerDependency"
+          },
+          {
+            "name": "react-dom",
+            "version": "19.2.0",
+            "kind": "peerDependency"
+          }
+        ],
+        "actions": [],
+        "contentHash": "sha256:a0d0320b8828db5b4a77f73e21303e3f8b1ba136e89ced8c8d976b1c6eb8d95a"
+      }
+    },
+    "vue": {
+      "artifact": {
+        "schemaVersion": "1.0.0",
+        "framework": "vue",
+        "files": [
+          {
+            "path": "src/GeneratedUI.vue",
+            "contents": "<template>\n  <Card id=\"screen-card-7\" data-oods-component=\"Card\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n      <Stack id=\"card-header-1\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: space-between; padding: var(--ref-space-inset-squish)\">\n            <Stack id=\"slot-header-2\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-default)\">\n                    <StatusBadge id=\"ve-header-8\" data-oods-component=\"StatusBadge\" label=\"Status\" variant=\"subtle\" :status=\"status\" />\n                    <CancellationBadge id=\"ve-header-9\" data-oods-component=\"CancellationBadge\" :cancelAtPeriodEnd=\"cancelAtPeriodEnd\" />\n                    <ArchivePill id=\"ve-header-11\" data-oods-component=\"ArchivePill\" :isArchived=\"isArchived\" />\n                  </Stack>\n          </Stack>\n      <Stack id=\"card-body-3\" data-oods-component=\"Stack\" data-layout=\"stack\" style=\"display: flex; flex-direction: column; gap: var(--ref-space-cluster-tight); padding: var(--ref-space-inset-default)\">\n            <Card id=\"slot-body-4\" data-oods-component=\"Card\" />\n          </Stack>\n      <Stack id=\"card-footer-5\" data-oods-component=\"Stack\" data-layout=\"inline\" style=\"display: flex; flex-direction: row; justify-content: flex-end; padding: var(--ref-space-inset-squish)\">\n            <BillingCardMeta id=\"slot-footer-6\" data-oods-component=\"BillingCardMeta\" :minorUnits=\"100\" :amount=\"amount\" :currency=\"currency\" :interval=\"billingInterval\" />\n          </Stack>\n    </Card>\n</template>\n\n<script setup lang=\"ts\">\nimport { ArchivePill, BillingCardMeta, CancellationBadge, Card, Stack, StatusBadge } from '@oods/components-vue';\nimport '@oods/component-styles/css';\n\ninterface Props {\n  /** Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n */\n  allowedTransitions?: string[];\n  /** Recurring price expressed in minor units (e.g., cents). */\n  amount: number;\n  /** Structured metadata about the archival action for compliance and audit purposes.\n\nProperties:\n  - method: \"manual\" | \"automated\" | \"policy\" — how the archive was triggered\n  - compliance_tags: string[] — regulatory labels (e.g., [\"GDPR\", \"SOX\", \"HIPAA\"])\n  - retention_policy_id: string — reference to the retention policy that triggered archival\n  - original_status: string — the Stateful status before archival\n  - related_entity_count: number — count of related entities also archived (cascade)\n */\n  archiveMetadata?: Record<string, unknown>;\n  /** Human-readable narrative describing why the entity was archived. */\n  archiveReason?: string;\n  /** Timestamp for when the entity entered the archived state. */\n  archivedAt?: string | null;\n  /** User ID or system identifier of the actor who archived this entity.\nSet to \"system\" for automated/policy-driven archival. Supports audit trail queries\nlike \"show all entities archived by user X\" or \"show all auto-archived entities\".\n */\n  archivedBy?: string;\n  /** Recurrence cadence (monthly, yearly, quarterly, etc.). */\n  billingInterval?: string;\n  /** Whether the subscription will cancel at the natural billing period end. */\n  cancelAtPeriodEnd: boolean;\n  /** Free-form explanation captured during cancellation workflows. */\n  cancellationReason?: string;\n  /** Structured reason code chosen from the allowedReasons parameter. */\n  cancellationReasonCode?: string;\n  /** Timestamp when cancellation was initiated. */\n  cancellationRequestedAt?: string;\n  /** Timestamp recording when the entity was first created. */\n  createdAt: string;\n  /** ISO 4217 currency code used for billing. */\n  currency: string;\n  /** End timestamp of the current billing cycle. */\n  currentPeriodEnd: string;\n  /** Decimal progress (0-1) through the active billing cycle. */\n  currentPeriodProgress?: number;\n  /** Start timestamp of the current billing cycle. */\n  currentPeriodStart: string;\n  /** Billing contact email address. */\n  customerEmail?: string;\n  /** Customer or account name associated with the subscription. */\n  customerName?: string;\n  /** Flag indicating whether the entity is currently archived (soft-deleted). */\n  isArchived: boolean;\n  /** Lifecycle event associated with the most recent timestamp mutation. */\n  lastEvent: 'billing_cycle_started' | 'billing_cycle_completed' | 'payment_received' | 'cancellation_requested';\n  /** Timestamp for the lifecycle event captured in last_event. */\n  lastEventAt?: string;\n  /** Timestamp of the most recent successful payment. */\n  lastPaymentAt?: string;\n  /** Timestamp when the next payment attempt should occur. */\n  nextPaymentDueAt?: string;\n  /** Payment instrument category used for collection. */\n  paymentMethodType?: 'card' | 'ach' | 'wire' | 'invoice' | 'other';\n  /** Outcome of the most recent collection attempt. Distinct from subscription\nlifecycle status — a subscription can be \"active\" with payment_status \"retrying\".\n */\n  paymentStatus?: 'pending' | 'succeeded' | 'failed' | 'retrying' | 'refunded';\n  /** Internal plan code or price identifier. */\n  planCode?: string;\n  /** Billing interval descriptor (monthly, yearly, etc.). */\n  planInterval?: string;\n  /** Human-readable plan label shown in headers. */\n  planName: string;\n  /** Prorated credit or charge in minor currency units generated by a mid-cycle\nplan change. Positive values are charges; negative values are credits.\nOnly populated when the supportProration parameter is true.\n */\n  prorationAmount?: number;\n  /** Unix timestamp (epoch SECONDS) at which proration is calculated. Pinned when an\nupcoming-invoice PREVIEW is requested and MUST be passed identically on commit so the\ncommitted charge equals the previewed amount. The preview is read-only and does NOT\nmutate the subscription. Stored as an integer (not a datetime) so the value round-trips\nbyte-identically between preview and commit — an ISO string normalization could shift it\nand desync the previewed vs charged amount. Only populated when supportProration is true.\nSource: docs.stripe.com/billing/subscriptions/prorations.\n */\n  prorationDate?: number;\n  /** Metadata about the most recent restoration action.\n\nProperties:\n  - restored_by: string — user ID or \"system\"\n  - restored_fields: string[] — when partial restore, which fields were restored\n  - restoration_reason: string — why the entity was restored\n  - restored_from_snapshot: boolean — whether restored from a point-in-time snapshot\n */\n  restorationMetadata?: Record<string, unknown>;\n  /** Timestamp for when the entity was most recently restored from an archived state. */\n  restoredAt?: string | null;\n  /** Chronological log of state transitions. Each entry records the before/after states,\ntimestamp, and (when governance is enabled) the actor, reason, and transition metadata.\nRendered by StatusTimeline in the detail and timeline views.\n\nEntry structure:\n  - from: string (previous state)\n  - to: string (new state)\n  - timestamp: ISO 8601 datetime\n  - actor_id: string (user/system who triggered the transition, optional)\n  - reason: string (human-readable justification, required when requireTransitionReason is true)\n  - transition_metadata: Record<string, unknown> (arbitrary context, optional)\n */\n  stateHistory?: unknown[];\n  /** Current lifecycle status of the subscription. */\n  status: 'future' | 'trialing' | 'active' | 'paused' | 'pending_cancellation' | 'past_due' | 'unpaid' | 'terminated';\n  /** Primary identifier used across billing and lifecycle systems. */\n  subscriptionId: string;\n  /** Timestamp for the most recent modification, when available. */\n  updatedAt?: string;\n}\n\nconst { allowedTransitions, amount, archiveMetadata, archiveReason, archivedAt, archivedBy, billingInterval, cancelAtPeriodEnd, cancellationReason, cancellationReasonCode, cancellationRequestedAt, createdAt, currency, currentPeriodEnd, currentPeriodProgress, currentPeriodStart, customerEmail, customerName, isArchived, lastEvent, lastEventAt, lastPaymentAt, nextPaymentDueAt, paymentMethodType, paymentStatus, planCode, planInterval, planName, prorationAmount, prorationDate, restorationMetadata, restoredAt, stateHistory, status, subscriptionId, updatedAt } = defineProps<Props>();\n</script>\n\n<style scoped>\n/* Token CSS variables are consumed via inline styles. */\n/* Add component-scoped overrides here as needed. */\n</style>\n",
+            "contentHash": "sha256:30fdac95a6681e7ba40ca264984c63d10374f44bd277ef608de636f7edc6e98d"
+          }
+        ],
+        "dependencies": [
+          {
+            "name": "@oods/component-styles",
+            "version": "0.1.0",
+            "kind": "dependency"
+          },
+          {
+            "name": "@oods/components-vue",
+            "version": "0.1.0",
+            "kind": "dependency"
+          },
+          {
+            "name": "vue",
+            "version": "3.5.42",
+            "kind": "peerDependency"
+          }
+        ],
+        "actions": [],
+        "contentHash": "sha256:c3f625d561b801057ce65e45a6dedbbf902be81fc760502079ad3350e87fac57"
+      }
+    }
+  }
+}

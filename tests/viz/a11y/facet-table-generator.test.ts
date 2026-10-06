@@ -2,8 +2,8 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { generateFacetTables } from '../../../src/viz/a11y/facet-table-generator.js';
-import type { NormalizedVizSpec } from '../../../src/viz/spec/normalized-viz-spec.js';
+import { generateFacetTables } from '@oods/viz-core';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 
 const ROOT = path.resolve(fileURLToPath(new URL('../../..', import.meta.url)));
 const SPEC_PATH = path.join(ROOT, 'examples', 'viz', 'facet-layout.spec.json');

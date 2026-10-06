@@ -3,7 +3,7 @@ import { RenderObject } from '../../src/components/RenderObject.js';
 import type { RenderObjectProps } from '../../src/components/RenderObject.js';
 import type { ObjectSpec, TraitAdapter } from '../../src/types/render-context.js';
 import type { SubscriptionRecord } from '../../src/objects/subscription/types.js';
-import type { NormalizedVizSpec } from '../../src/viz/spec/normalized-viz-spec.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 import { AreaChart } from '../../src/components/viz/AreaChart.js';
 import { LineChart } from '../../src/components/viz/LineChart.js';
 import { VizLayeredView } from '../../src/components/viz/VizLayeredView.js';
@@ -12,7 +12,7 @@ import {
   type ChartPanelDefinition,
 } from '../../src/contexts/regions/chart-regions.js';
 import { Text } from '../../src/components/base/Text.js';
-import activeSubscription from '../../src/fixtures/subscription/active.json' assert { type: 'json' };
+import activeSubscription from '../../src/fixtures/subscription/active.json';
 import type { DashboardExample } from './user-adoption.js';
 import { createSubscriptionStatefulTraitAdapter } from '../../src/traits/Stateful/view.js';
 import { createCancellableTraitAdapter } from '../../src/traits/Cancellable/view.js';
@@ -177,7 +177,7 @@ function SubscriptionInsights({ insights }: { readonly insights: readonly string
 }
 
 const revenueSpec: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/v1',
   id: 'dashboard:subscription:revenue-area',
   name: 'Recurring revenue',
   data: {
@@ -236,7 +236,7 @@ const revenueSpec: NormalizedVizSpec = {
 };
 
 const churnSpec: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/v1',
   id: 'dashboard:subscription:churn-layered',
   name: 'Churn outlook',
   data: {
@@ -288,7 +288,7 @@ const churnSpec: NormalizedVizSpec = {
 };
 
 const mixSpec: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/v1',
   id: 'dashboard:subscription:plan-mix',
   name: 'Plan mix trajectory',
   data: {

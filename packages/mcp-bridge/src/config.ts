@@ -3,7 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 export type CorsConfig = {
-  origin: string;
+  origin: string | string[];
   methods: readonly string[];
   allowHeaders: readonly string[];
   exposeHeaders: readonly string[];
@@ -79,49 +79,44 @@ type ToolPolicyState = {
   allow: string[];
 };
 
+// import.meta.url → file:///repo/packages/mcp-bridge/{src|dist}/config.{ts|js}
+// new URL('.', ...) → directory with trailing slash
+// path.dirname strips trailing slash → /repo/packages/mcp-bridge
+// So we go up 2 levels to reach the repo root.
 const CONFIG_DIR = path.dirname(fileURLToPath(new URL('.', import.meta.url)));
-const REPO_ROOT = path.resolve(CONFIG_DIR, '..', '..', '..');
+const REPO_ROOT = path.resolve(CONFIG_DIR, '..', '..');
 const POLICY_PATH = path.resolve(REPO_ROOT, 'configs/agent/policy.json');
 
-const FALLBACK_POLICY: AgentPolicyDoc = {
-  version: 0,
-  docs: {
-    rules: 'docs/mcp/Policy-Rules.md',
-    ux: 'docs/mcp/Policy-UX.md',
-  },
-  approvals: {
-    header: 'X-Bridge-Approval',
-    tokens: { granted: 'granted', denied: 'denied' },
-  },
-  defaults: {
-    modes: ['dry-run'],
-    approval: 'optional',
-  },
-  tools: [
-    { name: 'a11y.scan', modes: ['dry-run'], approval: 'optional' },
-    { name: 'purity.audit', modes: ['dry-run'], approval: 'optional' },
-    { name: 'vrt.run', modes: ['dry-run'], approval: 'optional' },
-    { name: 'diag.snapshot', modes: ['dry-run'], approval: 'optional' },
-    { name: 'reviewKit.create', modes: ['dry-run', 'apply'], approval: 'required' },
-    { name: 'brand.apply', modes: ['dry-run', 'apply'], approval: 'required' },
-    { name: 'billing.reviewKit', modes: ['dry-run', 'apply'], approval: 'required' },
-    { name: 'billing.switchFixtures', modes: ['dry-run', 'apply'], approval: 'required' },
-    { name: 'release.verify', modes: ['dry-run'], approval: 'optional', allow: ['maintainer'] },
-    { name: 'release.tag', modes: ['dry-run', 'apply'], approval: 'required', allow: ['maintainer'] },
-    { name: 'tokens.build', modes: ['dry-run'], approval: 'optional' },
-  ],
-};
+export class BridgeStartupError extends Error {
+  readonly retryable = false;
 
-function loadAgentPolicyDoc(): AgentPolicyDoc {
+  constructor(
+    readonly code: 'BRIDGE_POLICY_MISSING' | 'BRIDGE_POLICY_INVALID',
+    readonly policyPath: string,
+    cause?: unknown,
+  ) {
+    super(`${code}: Agent policy ${policyPath} is ${code === 'BRIDGE_POLICY_MISSING' ? 'missing' : 'invalid'}; bridge startup refused.`, { cause });
+    this.name = 'BridgeStartupError';
+  }
+}
+
+export function loadAgentPolicyDoc(policyPath = POLICY_PATH): AgentPolicyDoc {
+  let raw: string;
   try {
-    const raw = fs.readFileSync(POLICY_PATH, 'utf8');
+    raw = fs.readFileSync(policyPath, 'utf8');
+  } catch (error) {
+    throw new BridgeStartupError(
+      (error as NodeJS.ErrnoException).code === 'ENOENT' ? 'BRIDGE_POLICY_MISSING' : 'BRIDGE_POLICY_INVALID',
+      policyPath,
+      error,
+    );
+  }
+  try {
     const parsed = JSON.parse(raw) as AgentPolicyDoc;
-    if (!Array.isArray(parsed.tools)) {
-      parsed.tools = [];
-    }
+    if (!parsed || !Array.isArray(parsed.tools)) throw new Error('Agent policy must contain a tools array.');
     return parsed;
-  } catch {
-    return FALLBACK_POLICY;
+  } catch (error) {
+    throw new BridgeStartupError('BRIDGE_POLICY_INVALID', policyPath, error);
   }
 }
 
@@ -169,7 +164,9 @@ const allowedTools = Array.from(toolPolicyIndex.keys());
 const approvalRequiredList = allowedTools.filter((name) => toolPolicyIndex.get(name)?.approval === 'required');
 const applyCapableList = allowedTools.filter((name) => toolPolicyIndex.get(name)?.modes.includes('apply'));
 
-const corsOrigin = 'http://localhost:6006';
+const corsOrigin: string | string[] = process.env.MCP_BRIDGE_CORS_ORIGIN
+  ? process.env.MCP_BRIDGE_CORS_ORIGIN.split(',').map((o) => o.trim())
+  : ['http://localhost:6006', 'http://localhost:3000'];
 
 const approvalHeader = agentPolicyDoc.approvals?.header?.trim() || 'X-Bridge-Approval';
 

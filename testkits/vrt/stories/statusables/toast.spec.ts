@@ -1,6 +1,21 @@
 import { expect, test } from '@playwright/test';
+import { loadStoryIndex, resolveStoryId } from '../utils/storybook';
 
-const STORY_ID = 'statusables-toast--default';
+// s174 m03 — this spec's hard-coded `statusables-toast--default` id died in the 2025-10-21
+// taxonomy normalization (488191c); the
+// story is now under Components/Statusables/Toast, and nothing automated ran the desktop
+// project to notice.
+// Index resolution makes a future rename fail by NAME rather than by mystery locator.
+const STORY_TITLES = ['Components/Statusables/Toast', 'Statusables/Toast'] as const;
+const STORY_NAME = 'Default';
+const STORYBOOK_URL = process.env.STORYBOOK_URL ?? 'http://127.0.0.1:6006';
+
+let STORY_ID: string;
+
+test.beforeAll(async () => {
+  const entries = await loadStoryIndex(STORYBOOK_URL);
+  STORY_ID = resolveStoryId(entries, { title: [...STORY_TITLES], name: STORY_NAME });
+});
 
 test.describe('Statusables/Toast', () => {
   test('announces politely and restores focus on dismiss', async ({ page }) => {

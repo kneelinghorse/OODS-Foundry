@@ -1,0 +1,63 @@
+{
+  "color": {
+    "$type": "color",
+    "brand": {
+      "500": {
+        "$value": "oklch(0.56 0.15 145)"
+      },
+      "700": {
+        "$value": "oklch(0.38 0.12 148)"
+      }
+    },
+    "gray": {
+      "400": {
+        "$value": "oklch(0.68 0.012 140)"
+      },
+      "500": {
+        "$value": "oklch(0.52 0.018 150)"
+      }
+    },
+    "success": {
+      "$value": "oklch(0.55 0.14 145)"
+    },
+    "warning": {
+      "$value": "oklch(0.65 0.14 85)"
+    },
+    "danger": {
+      "$value": "oklch(0.52 0.18 25)"
+    },
+    "info": {
+      "$value": "oklch(0.52 0.12 240)"
+    },
+    "selected": {
+      "$value": "{color.brand.500}"
+    }
+  },
+  "radius": {
+    "$type": "dimension",
+    "sm": {
+      "$value": {
+        "value": 0.25,
+        "unit": "rem"
+      }
+    },
+    "md": {
+      "$value": "8px"
+    },
+    "lg": {
+      "$value": "12px"
+    }
+  },
+  "font": {
+    "$type": "fontFamily",
+    "sans": {
+      "$value": [
+        "Inter",
+        "sans-serif"
+      ]
+    },
+    "mono": {
+      "$value": "JetBrains Mono"
+    }
+  }
+}

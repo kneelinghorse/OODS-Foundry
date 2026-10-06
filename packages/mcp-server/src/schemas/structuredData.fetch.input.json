@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "structuredData.fetch.input.json",
+  "title": "structuredData.fetch input",
+  "description": "Read structured datasets or Stage1 rollups. listVersions and version are dataset-only; kind mode rejects these options with structuredData.fetch-specific OODS-V202.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "dataset": {
+      "type": "string",
+      "enum": ["components", "tokens", "manifest"],
+      "description": "Local structured dataset to return (components/tokens/manifest). Mutually exclusive with kind+runPath."
+    },
+    "kind": {
+      "type": "string",
+      "enum": ["identity_graph", "capability_rollup", "object_rollup", "drift_report", "derived_analysis", "a11y_report", "report_index", "a11y_evidence", "run_manifest"],
+      "description": "Stage1 structured artifact kind to read from runPath. Requires runPath; mutually exclusive with dataset. The rollups (identity_graph, capability_rollup, object_rollup, drift_report 1.0.0–1.4.0) and the run-view kinds at their pinned versions: a11y_report 2.2.0–2.5.0, report_index 1.0.0/1.1.0, a11y_evidence (evidence manifest 1.1.0–1.4.0, every per-page axe file read only when its sha256 matches the run manifest's attestation) and run_manifest (historical unstamped shape or schema_version 1.0.0 through 1.7.0; a suite's root, which records its targets, is refused). derived_analysis reads a directory containing manifest.analysis, admitting analysis 1.0.0/1.1.0, run_manifest 1.0.0–1.7.0, drift_report 1.0.0–1.4.0, report_index 1.1.0 and fig_local_tokens version 1.0.0/1.3.0/1.5.0 with retained-file attestation, lineage, realpath and JSON-pointer checks. Any other version is refused."
+    },
+    "runPath": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Filesystem path to a Stage1 run directory or its artifacts/ subdirectory. Required when kind is set."
+    },
+    "ifNoneMatch": {
+      "type": "string",
+      "minLength": 8,
+      "description": "Return matched=true without payload when the ETag matches."
+    },
+    "includePayload": {
+      "type": "boolean",
+      "default": true,
+      "description": "When false, omit payload even if no ETag match occurs."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "Request a specific date-stamped version (e.g., '2026-02-24'). Omit for latest. Applies to dataset mode only."
+    },
+    "listVersions": {
+      "type": "boolean",
+      "default": false,
+      "description": "When true, return available version dates instead of payload."
+    },
+    "includeInternal": {
+      "type": "boolean",
+      "default": false,
+      "description": "Live components dataset only: also list OODS Foundry's internal (non-business) objects, after the business objects. Without it they are left out and registry.hiddenInternal counts them; a dated export is served unchanged."
+    }
+  },
+  "oneOf": [
+    {
+      "required": ["dataset"],
+      "not": { "required": ["kind"] }
+    },
+    {
+      "required": ["kind", "runPath"],
+      "not": { "required": ["dataset"] }
+    }
+  ]
+}

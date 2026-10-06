@@ -1,0 +1,563 @@
+{
+  "rows": [
+    {
+      "period": "Jan",
+      "category": "A",
+      "value": 12,
+      "other": 7,
+      "size": 10,
+      "periodx": "Quarter Jan",
+      "categoryx": "Group A",
+      "valuex": 24,
+      "otherx": 21,
+      "sizex": 20
+    },
+    {
+      "period": "Jan",
+      "category": "B",
+      "value": 18,
+      "other": 13,
+      "size": 20,
+      "periodx": "Quarter Jan",
+      "categoryx": "Group B",
+      "valuex": 36,
+      "otherx": 39,
+      "sizex": 40
+    },
+    {
+      "period": "Feb",
+      "category": "A",
+      "value": 22,
+      "other": 12,
+      "size": 15,
+      "periodx": "Quarter Feb",
+      "categoryx": "Group A",
+      "valuex": 44,
+      "otherx": 36,
+      "sizex": 30
+    },
+    {
+      "period": "Feb",
+      "category": "B",
+      "value": 15,
+      "other": 20,
+      "size": 25,
+      "periodx": "Quarter Feb",
+      "categoryx": "Group B",
+      "valuex": 30,
+      "otherx": 60,
+      "sizex": 50
+    }
+  ],
+  "samples": {
+    "VizAreaPreview": {
+      "input": {
+        "chartType": "area",
+        "rows": [
+          {
+            "period": "Jan",
+            "category": "A",
+            "value": 12,
+            "other": 7,
+            "size": 10,
+            "periodx": "Quarter Jan",
+            "categoryx": "Group A",
+            "valuex": 24,
+            "otherx": 21,
+            "sizex": 20
+          },
+          {
+            "period": "Jan",
+            "category": "B",
+            "value": 18,
+            "other": 13,
+            "size": 20,
+            "periodx": "Quarter Jan",
+            "categoryx": "Group B",
+            "valuex": 36,
+            "otherx": 39,
+            "sizex": 40
+          },
+          {
+            "period": "Feb",
+            "category": "A",
+            "value": 22,
+            "other": 12,
+            "size": 15,
+            "periodx": "Quarter Feb",
+            "categoryx": "Group A",
+            "valuex": 44,
+            "otherx": 36,
+            "sizex": 30
+          },
+          {
+            "period": "Feb",
+            "category": "B",
+            "value": 15,
+            "other": 20,
+            "size": 25,
+            "periodx": "Quarter Feb",
+            "categoryx": "Group B",
+            "valuex": 30,
+            "otherx": 60,
+            "sizex": 50
+          }
+        ],
+        "name": "Area chart sample",
+        "description": "Four authored sample observations, grouped into category A and category B series.",
+        "brand": "A",
+        "theme": "light",
+        "encodings": {
+          "x": {
+            "field": "period",
+            "type": "nominal"
+          },
+          "y": {
+            "field": "value",
+            "type": "quantitative"
+          },
+          "color": {
+            "field": "category",
+            "type": "nominal"
+          }
+        },
+        "output": {
+          "svg": true,
+          "width": 360,
+          "height": 200
+        }
+      },
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"370\" height=\"210\" viewBox=\"0 0 370 210\" role=\"img\" aria-label=\"Area chart sample\" aria-description=\"Four authored sample observations, grouped into category A and category B series.\"><title>Area chart sample</title><desc>Four authored sample observations, grouped into category A and category B series.</desc><rect width=\"370\" height=\"210\" fill=\"#FFFFFF\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(43,38)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h234v121h-234Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,121)\" x2=\"234\" y2=\"0\" stroke=\"#E5E5E5\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,91)\" x2=\"234\" y2=\"0\" stroke=\"#E5E5E5\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,61)\" x2=\"234\" y2=\"0\" stroke=\"#E5E5E5\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,30)\" x2=\"234\" y2=\"0\" stroke=\"#E5E5E5\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"234\" y2=\"0\" stroke=\"#E5E5E5\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Period' for a discrete scale with 2 values: Jan, Feb\"><g transform=\"translate(0.5,121.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(59,0)\" x2=\"0\" y2=\"5\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(176,0)\" x2=\"0\" y2=\"5\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(58.5,7) rotate(270) translate(0,3)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">Jan</text><text text-anchor=\"end\" transform=\"translate(175.5,7) rotate(270) translate(0,3)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">Feb</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"234\" y2=\"0\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(117,44)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#0A0A0A\" opacity=\"1\">Period</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'Value' for a linear scale with values from 0 to 40\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,121)\" x2=\"-5\" y2=\"0\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,91)\" x2=\"-5\" y2=\"0\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,61)\" x2=\"-5\" y2=\"0\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,30)\" x2=\"-5\" y2=\"0\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"-5\" y2=\"0\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,124)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">0</text><text text-anchor=\"end\" transform=\"translate(-7,93.75)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">10</text><text text-anchor=\"end\" transform=\"translate(-7,63.5)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">20</text><text text-anchor=\"end\" transform=\"translate(-7,33.25)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">30</text><text text-anchor=\"end\" transform=\"translate(-7,3)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">40</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,121)\" x2=\"0\" y2=\"-121\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-27,60.5) rotate(-90) translate(0,-2)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#0A0A0A\" opacity=\"1\">Value</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-scope pathgroup\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h234v121h-234Z\"/><g><g class=\"mark-area role-mark marks\" role=\"graphics-object\" aria-roledescription=\"area mark container\"><path aria-label=\"Period: Jan; Value: 12; Category: A\" role=\"graphics-symbol\" aria-roledescription=\"area mark\" d=\"M58.5,30.25L175.5,9.075L175.5,75.625L58.5,66.55Z\" fill=\"#3E63DD\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h234v121h-234Z\"/><g><g class=\"mark-area role-mark marks\" role=\"graphics-object\" aria-roledescription=\"area mark container\"><path aria-label=\"Period: Jan; Value: 18; Category: B\" role=\"graphics-symbol\" aria-roledescription=\"area mark\" d=\"M58.5,66.55L175.5,75.625L175.5,121L58.5,121Z\" fill=\"#B98E00\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g><g class=\"mark-group role-legend\" role=\"graphics-symbol\" aria-roledescription=\"legend\" aria-label=\"Symbol legend titled 'Category' for fill color with 2 values: A, B\"><g transform=\"translate(252,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h70v40h-70Z\" pointer-events=\"none\"/><g><g class=\"mark-group role-legend-entry\"><g transform=\"translate(0,16)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-group role-scope\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h24v11h-24Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M5,0A5,5,0,1,1,-5,0A5,5,0,1,1,5,0\" fill=\"#3E63DD\" stroke-width=\"1.5\" opacity=\"1\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">A</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g><g transform=\"translate(0,13)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h24v11h-24Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M5,0A5,5,0,1,1,-5,0A5,5,0,1,1,5,0\" fill=\"#B98E00\" stroke-width=\"1.5\" opacity=\"1\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">B</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-text role-legend-title\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,9)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#0A0A0A\" opacity=\"1\">Category</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-title\"><g transform=\"translate(-38,-33)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Area chart sample'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"#0A0A0A\" opacity=\"1\">Area chart sample</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g></svg>",
+      "svgHash": "ce6e2a04f02cd7726bd3d226c99b0bfc4760508e99114bb88d2d77eb9ca8902e"
+    },
+    "VizHeatmapPreview": {
+      "input": {
+        "chartType": "heatmap",
+        "rows": [
+          {
+            "period": "Jan",
+            "category": "A",
+            "value": 12,
+            "other": 7,
+            "size": 10,
+            "periodx": "Quarter Jan",
+            "categoryx": "Group A",
+            "valuex": 24,
+            "otherx": 21,
+            "sizex": 20
+          },
+          {
+            "period": "Jan",
+            "category": "B",
+            "value": 18,
+            "other": 13,
+            "size": 20,
+            "periodx": "Quarter Jan",
+            "categoryx": "Group B",
+            "valuex": 36,
+            "otherx": 39,
+            "sizex": 40
+          },
+          {
+            "period": "Feb",
+            "category": "A",
+            "value": 22,
+            "other": 12,
+            "size": 15,
+            "periodx": "Quarter Feb",
+            "categoryx": "Group A",
+            "valuex": 44,
+            "otherx": 36,
+            "sizex": 30
+          },
+          {
+            "period": "Feb",
+            "category": "B",
+            "value": 15,
+            "other": 20,
+            "size": 25,
+            "periodx": "Quarter Feb",
+            "categoryx": "Group B",
+            "valuex": 30,
+            "otherx": 60,
+            "sizex": 50
+          }
+        ],
+        "name": "Heatmap chart sample",
+        "description": "Four authored sample observations.",
+        "brand": "A",
+        "theme": "light",
+        "encodings": {
+          "x": {
+            "field": "period",
+            "type": "nominal"
+          },
+          "y": {
+            "field": "category",
+            "type": "nominal"
+          },
+          "color": {
+            "field": "value",
+            "type": "quantitative"
+          }
+        },
+        "output": {
+          "svg": true,
+          "width": 360,
+          "height": 200
+        }
+      },
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"370\" height=\"210\" viewBox=\"0 0 370 210\" role=\"img\" aria-label=\"Heatmap chart sample\" aria-description=\"Four authored sample observations.\"><title>Heatmap chart sample</title><desc>Four authored sample observations.</desc><rect width=\"370\" height=\"210\" fill=\"#FFFFFF\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(35,33)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h268v126h-268Z\"/><g><g class=\"mark-rect role-mark marks\" role=\"graphics-object\" aria-roledescription=\"rect mark container\"><path aria-label=\"Period: Jan; Category: A; Value: 12\" role=\"graphics-symbol\" aria-roledescription=\"rect mark\" d=\"M134,0h134v63h-134Z\" fill=\"rgb(229, 235, 250)\"/><path aria-label=\"Period: Jan; Category: B; Value: 18\" role=\"graphics-symbol\" aria-roledescription=\"rect mark\" d=\"M134,63h134v63h-134Z\" fill=\"rgb(42, 73, 190)\"/><path aria-label=\"Period: Feb; Category: A; Value: 22\" role=\"graphics-symbol\" aria-roledescription=\"rect mark\" d=\"M0,0h134v63h-134Z\" fill=\"rgb(2, 5, 35)\"/><path aria-label=\"Period: Feb; Category: B; Value: 15\" role=\"graphics-symbol\" aria-roledescription=\"rect mark\" d=\"M0,63h134v63h-134Z\" fill=\"rgb(119, 154, 247)\"/></g><g class=\"mark-group role-legend\" role=\"graphics-symbol\" aria-roledescription=\"legend\" aria-label=\"Gradient legend titled 'Value' for fill color with values from 12 to 22\"><g transform=\"translate(286,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h44v142h-44Z\" pointer-events=\"none\"/><g><g class=\"mark-group role-legend-entry\"><g transform=\"translate(0,16)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rect role-legend-gradient\" pointer-events=\"none\"><path d=\"M0,0h16v126h-16Z\" fill=\"url(#oods-id-0)\" stroke=\"#ddd\" stroke-width=\"0\" opacity=\"1\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(18,124)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">12</text><text text-anchor=\"start\" transform=\"translate(18,8)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">22</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-text role-legend-title\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,9)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#0A0A0A\" opacity=\"1\">Value</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-title\"><g transform=\"translate(-30,-28)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Heatmap chart sample'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"#0A0A0A\" opacity=\"1\">Heatmap chart sample</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Period' for a discrete scale with 2 values: Feb, Jan\"><g transform=\"translate(0.5,126.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(67,0)\" x2=\"0\" y2=\"5\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(201,0)\" x2=\"0\" y2=\"5\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(66.5,7) rotate(270) translate(0,3)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">Feb</text><text text-anchor=\"end\" transform=\"translate(200.5,7) rotate(270) translate(0,3)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">Jan</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"268\" y2=\"0\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(134,44)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#0A0A0A\" opacity=\"1\">Period</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'Category' for a discrete scale with 2 values: A, B\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,31)\" x2=\"-5\" y2=\"0\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,94)\" x2=\"-5\" y2=\"0\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,34)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">A</text><text text-anchor=\"end\" transform=\"translate(-7,97)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">B</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"0\" y2=\"126\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-19,63) rotate(-90) translate(0,-2)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#0A0A0A\" opacity=\"1\">Category</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g><defs><linearGradient id=\"oods-id-0\" x1=\"0\" x2=\"0\" y1=\"1\" y2=\"0\"><stop offset=\"0\" stop-color=\"rgb(229, 235, 250)\"/><stop offset=\"0.05\" stop-color=\"rgb(210, 222, 251)\"/><stop offset=\"0.1\" stop-color=\"rgb(191, 209, 252)\"/><stop offset=\"0.15\" stop-color=\"rgb(172, 195, 252)\"/><stop offset=\"0.2\" stop-color=\"rgb(153, 182, 252)\"/><stop offset=\"0.25\" stop-color=\"rgb(135, 168, 251)\"/><stop offset=\"0.3\" stop-color=\"rgb(119, 154, 247)\"/><stop offset=\"0.35\" stop-color=\"rgb(102, 140, 243)\"/><stop offset=\"0.4\" stop-color=\"rgb(87, 126, 237)\"/><stop offset=\"0.45\" stop-color=\"rgb(74, 112, 228)\"/><stop offset=\"0.5\" stop-color=\"rgb(61, 98, 219)\"/><stop offset=\"0.55\" stop-color=\"rgb(52, 85, 205)\"/><stop offset=\"0.6\" stop-color=\"rgb(42, 73, 190)\"/><stop offset=\"0.65\" stop-color=\"rgb(34, 62, 174)\"/><stop offset=\"0.7\" stop-color=\"rgb(27, 51, 155)\"/><stop offset=\"0.75\" stop-color=\"rgb(20, 41, 137)\"/><stop offset=\"0.8\" stop-color=\"rgb(15, 33, 116)\"/><stop offset=\"0.85\" stop-color=\"rgb(10, 25, 95)\"/><stop offset=\"0.9\" stop-color=\"rgb(5, 20, 75)\"/><stop offset=\"0.95\" stop-color=\"rgb(5, 14, 55)\"/><stop offset=\"1\" stop-color=\"rgb(2, 5, 35)\"/></linearGradient></defs></svg>",
+      "svgHash": "e2776e7d244f2f124d16235ca2a44b80a2a8e7e5f46d5590e82e532b42f6963c"
+    },
+    "VizLinePreview": {
+      "input": {
+        "chartType": "line",
+        "rows": [
+          {
+            "period": "Jan",
+            "category": "A",
+            "value": 12,
+            "other": 7,
+            "size": 10,
+            "periodx": "Quarter Jan",
+            "categoryx": "Group A",
+            "valuex": 24,
+            "otherx": 21,
+            "sizex": 20
+          },
+          {
+            "period": "Jan",
+            "category": "B",
+            "value": 18,
+            "other": 13,
+            "size": 20,
+            "periodx": "Quarter Jan",
+            "categoryx": "Group B",
+            "valuex": 36,
+            "otherx": 39,
+            "sizex": 40
+          },
+          {
+            "period": "Feb",
+            "category": "A",
+            "value": 22,
+            "other": 12,
+            "size": 15,
+            "periodx": "Quarter Feb",
+            "categoryx": "Group A",
+            "valuex": 44,
+            "otherx": 36,
+            "sizex": 30
+          },
+          {
+            "period": "Feb",
+            "category": "B",
+            "value": 15,
+            "other": 20,
+            "size": 25,
+            "periodx": "Quarter Feb",
+            "categoryx": "Group B",
+            "valuex": 30,
+            "otherx": 60,
+            "sizex": 50
+          }
+        ],
+        "name": "Line chart sample",
+        "description": "Four authored sample observations, grouped into category A and category B series.",
+        "brand": "A",
+        "theme": "light",
+        "encodings": {
+          "x": {
+            "field": "period",
+            "type": "nominal"
+          },
+          "y": {
+            "field": "value",
+            "type": "quantitative"
+          },
+          "color": {
+            "field": "category",
+            "type": "nominal"
+          }
+        },
+        "output": {
+          "svg": true,
+          "width": 360,
+          "height": 200
+        }
+      },
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"370\" height=\"210\" viewBox=\"0 0 370 210\" role=\"img\" aria-label=\"Line chart sample\" aria-description=\"Four authored sample observations, grouped into category A and category B series.\"><title>Line chart sample</title><desc>Four authored sample observations, grouped into category A and category B series.</desc><rect width=\"370\" height=\"210\" fill=\"#FFFFFF\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(43,36)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h234v123h-234Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,123)\" x2=\"234\" y2=\"0\" stroke=\"#E5E5E5\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,95)\" x2=\"234\" y2=\"0\" stroke=\"#E5E5E5\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,67)\" x2=\"234\" y2=\"0\" stroke=\"#E5E5E5\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,39)\" x2=\"234\" y2=\"0\" stroke=\"#E5E5E5\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,11)\" x2=\"234\" y2=\"0\" stroke=\"#E5E5E5\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Period' for a discrete scale with 2 values: Jan, Feb\"><g transform=\"translate(0.5,123.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(59,0)\" x2=\"0\" y2=\"5\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(176,0)\" x2=\"0\" y2=\"5\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(58.5,7) rotate(270) translate(0,3)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">Jan</text><text text-anchor=\"end\" transform=\"translate(175.5,7) rotate(270) translate(0,3)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">Feb</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"234\" y2=\"0\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(117,44)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#0A0A0A\" opacity=\"1\">Period</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'Value' for a linear scale with values from 0 to 22\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,123)\" x2=\"-5\" y2=\"0\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,95)\" x2=\"-5\" y2=\"0\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,67)\" x2=\"-5\" y2=\"0\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,39)\" x2=\"-5\" y2=\"0\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,11)\" x2=\"-5\" y2=\"0\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,126)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">0</text><text text-anchor=\"end\" transform=\"translate(-7,98.04545454545455)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">5</text><text text-anchor=\"end\" transform=\"translate(-7,70.09090909090908)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">10</text><text text-anchor=\"end\" transform=\"translate(-7,42.13636363636364)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">15</text><text text-anchor=\"end\" transform=\"translate(-7,14.181818181818185)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">20</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,123)\" x2=\"0\" y2=\"-123\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-27,61.5) rotate(-90) translate(0,-2)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#0A0A0A\" opacity=\"1\">Value</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-scope pathgroup\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h234v123h-234Z\"/><g><g class=\"mark-line role-mark marks\" role=\"graphics-object\" aria-roledescription=\"line mark container\"><path aria-label=\"Period: Jan; Value: 12; Category: A\" role=\"graphics-symbol\" aria-roledescription=\"line mark\" d=\"M58.5,55.909L175.5,0\" stroke=\"#3E63DD\" stroke-width=\"2.5\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h234v123h-234Z\"/><g><g class=\"mark-line role-mark marks\" role=\"graphics-object\" aria-roledescription=\"line mark container\"><path aria-label=\"Period: Jan; Value: 18; Category: B\" role=\"graphics-symbol\" aria-roledescription=\"line mark\" d=\"M58.5,22.364L175.5,39.136\" stroke=\"#B98E00\" stroke-width=\"2.5\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g><g class=\"mark-group role-legend\" role=\"graphics-symbol\" aria-roledescription=\"legend\" aria-label=\"Symbol legend titled 'Category' for stroke color with 2 values: A, B\"><g transform=\"translate(252,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h70v40h-70Z\" pointer-events=\"none\"/><g><g class=\"mark-group role-legend-entry\"><g transform=\"translate(0,16)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-group role-scope\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h24v11h-24Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M-5,0L5,0\" stroke=\"#3E63DD\" stroke-width=\"1.5\" opacity=\"1\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">A</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g><g transform=\"translate(0,13)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h24v11h-24Z\" pointer-events=\"none\" opacity=\"1\"/><g><g class=\"mark-symbol role-legend-symbol\" pointer-events=\"none\"><path transform=\"translate(6,6)\" d=\"M-5,0L5,0\" stroke=\"#B98E00\" stroke-width=\"1.5\" opacity=\"1\"/></g><g class=\"mark-text role-legend-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(16,9)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">B</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-text role-legend-title\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,9)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#0A0A0A\" opacity=\"1\">Category</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-title\"><g transform=\"translate(-38,-30.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Line chart sample'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"#0A0A0A\" opacity=\"1\">Line chart sample</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g></svg>",
+      "svgHash": "e797e674539c5baeb689f22cb916333ddc5c09915d7778621dca1db6a8b22531"
+    },
+    "VizMarkPreview": {
+      "input": {
+        "chartType": "bar",
+        "rows": [
+          {
+            "period": "Jan",
+            "category": "A",
+            "value": 12,
+            "other": 7,
+            "size": 10,
+            "periodx": "Quarter Jan",
+            "categoryx": "Group A",
+            "valuex": 24,
+            "otherx": 21,
+            "sizex": 20
+          },
+          {
+            "period": "Jan",
+            "category": "B",
+            "value": 18,
+            "other": 13,
+            "size": 20,
+            "periodx": "Quarter Jan",
+            "categoryx": "Group B",
+            "valuex": 36,
+            "otherx": 39,
+            "sizex": 40
+          },
+          {
+            "period": "Feb",
+            "category": "A",
+            "value": 22,
+            "other": 12,
+            "size": 15,
+            "periodx": "Quarter Feb",
+            "categoryx": "Group A",
+            "valuex": 44,
+            "otherx": 36,
+            "sizex": 30
+          },
+          {
+            "period": "Feb",
+            "category": "B",
+            "value": 15,
+            "other": 20,
+            "size": 25,
+            "periodx": "Quarter Feb",
+            "categoryx": "Group B",
+            "valuex": 30,
+            "otherx": 60,
+            "sizex": 50
+          }
+        ],
+        "name": "Mark chart sample",
+        "description": "Four authored sample observations.",
+        "brand": "A",
+        "theme": "light",
+        "encodings": {
+          "x": {
+            "field": "period",
+            "type": "nominal"
+          },
+          "y": {
+            "field": "value",
+            "type": "quantitative"
+          }
+        },
+        "output": {
+          "svg": true,
+          "width": 360,
+          "height": 200
+        }
+      },
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"370\" height=\"210\" viewBox=\"0 0 370 210\" role=\"img\" aria-label=\"Mark chart sample\" aria-description=\"Four authored sample observations.\"><title>Mark chart sample</title><desc>Four authored sample observations.</desc><rect width=\"370\" height=\"210\" fill=\"#FFFFFF\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(43,38)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h322v135h-322Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,135)\" x2=\"322\" y2=\"0\" stroke=\"#E5E5E5\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,101)\" x2=\"322\" y2=\"0\" stroke=\"#E5E5E5\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,68)\" x2=\"322\" y2=\"0\" stroke=\"#E5E5E5\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,34)\" x2=\"322\" y2=\"0\" stroke=\"#E5E5E5\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"322\" y2=\"0\" stroke=\"#E5E5E5\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Period' for a discrete scale with 2 values: Feb, Jan\"><g transform=\"translate(0.5,135.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(80,0)\" x2=\"0\" y2=\"5\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(241,0)\" x2=\"0\" y2=\"5\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(80.00000000000001,15)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">Feb</text><text text-anchor=\"middle\" transform=\"translate(241,15)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">Jan</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"322\" y2=\"0\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(161,30)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#0A0A0A\" opacity=\"1\">Period</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'Value' for a linear scale with values from 0 to 40\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,135)\" x2=\"-5\" y2=\"0\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,101)\" x2=\"-5\" y2=\"0\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,68)\" x2=\"-5\" y2=\"0\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,34)\" x2=\"-5\" y2=\"0\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"-5\" y2=\"0\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,138)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">0</text><text text-anchor=\"end\" transform=\"translate(-7,104.25)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">10</text><text text-anchor=\"end\" transform=\"translate(-7,70.5)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">20</text><text text-anchor=\"end\" transform=\"translate(-7,36.75)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">30</text><text text-anchor=\"end\" transform=\"translate(-7,3)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">40</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,135)\" x2=\"0\" y2=\"-135\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-27,67.5) rotate(-90) translate(0,-2)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#0A0A0A\" opacity=\"1\">Value</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-rect role-mark marks\" role=\"graphics-object\" aria-roledescription=\"rect mark container\"><path aria-label=\"Period: Jan; Value: 12\" role=\"graphics-symbol\" aria-roledescription=\"bar\" d=\"M217.5,94.5h48v40.5h-48Z\" fill=\"#3E63DD\"/><path aria-label=\"Period: Jan; Value: 18\" role=\"graphics-symbol\" aria-roledescription=\"bar\" d=\"M217.5,33.75h48v60.75h-48Z\" fill=\"#3E63DD\"/><path aria-label=\"Period: Feb; Value: 22\" role=\"graphics-symbol\" aria-roledescription=\"bar\" d=\"M56.500000000000014,60.74999999999999h48v74.25h-48Z\" fill=\"#3E63DD\"/><path aria-label=\"Period: Feb; Value: 15\" role=\"graphics-symbol\" aria-roledescription=\"bar\" d=\"M56.500000000000014,10.124999999999995h48v50.625h-48Z\" fill=\"#3E63DD\"/></g><g class=\"mark-group role-title\"><g transform=\"translate(-38,-33)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Mark chart sample'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"#0A0A0A\" opacity=\"1\">Mark chart sample</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g></svg>",
+      "svgHash": "c2c0efd2d99717effd625d9492110e17b12d0781ef960bbf31135cb777cdcc97"
+    },
+    "VizPointPreview": {
+      "input": {
+        "chartType": "scatter",
+        "rows": [
+          {
+            "period": "Jan",
+            "category": "A",
+            "value": 12,
+            "other": 7,
+            "size": 10,
+            "periodx": "Quarter Jan",
+            "categoryx": "Group A",
+            "valuex": 24,
+            "otherx": 21,
+            "sizex": 20
+          },
+          {
+            "period": "Jan",
+            "category": "B",
+            "value": 18,
+            "other": 13,
+            "size": 20,
+            "periodx": "Quarter Jan",
+            "categoryx": "Group B",
+            "valuex": 36,
+            "otherx": 39,
+            "sizex": 40
+          },
+          {
+            "period": "Feb",
+            "category": "A",
+            "value": 22,
+            "other": 12,
+            "size": 15,
+            "periodx": "Quarter Feb",
+            "categoryx": "Group A",
+            "valuex": 44,
+            "otherx": 36,
+            "sizex": 30
+          },
+          {
+            "period": "Feb",
+            "category": "B",
+            "value": 15,
+            "other": 20,
+            "size": 25,
+            "periodx": "Quarter Feb",
+            "categoryx": "Group B",
+            "valuex": 30,
+            "otherx": 60,
+            "sizex": 50
+          }
+        ],
+        "name": "Point chart sample",
+        "description": "Four authored sample observations.",
+        "brand": "A",
+        "theme": "light",
+        "encodings": {
+          "x": {
+            "field": "value",
+            "type": "quantitative"
+          },
+          "y": {
+            "field": "other",
+            "type": "quantitative"
+          }
+        },
+        "output": {
+          "svg": true,
+          "width": 360,
+          "height": 200
+        }
+      },
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"370\" height=\"210\" viewBox=\"0 0 370 210\" role=\"img\" aria-label=\"Point chart sample\" aria-description=\"Four authored sample observations.\"><title>Point chart sample</title><desc>Four authored sample observations.</desc><rect width=\"370\" height=\"210\" fill=\"#FFFFFF\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(43,38)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h318v135h-318Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,135)\" x2=\"318\" y2=\"0\" stroke=\"#E5E5E5\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,101)\" x2=\"318\" y2=\"0\" stroke=\"#E5E5E5\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,68)\" x2=\"318\" y2=\"0\" stroke=\"#E5E5E5\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,34)\" x2=\"318\" y2=\"0\" stroke=\"#E5E5E5\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"318\" y2=\"0\" stroke=\"#E5E5E5\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Value' for a linear scale with values from 0 to 22\"><g transform=\"translate(0.5,135.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"0\" y2=\"5\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(29,0)\" x2=\"0\" y2=\"5\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(58,0)\" x2=\"0\" y2=\"5\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(87,0)\" x2=\"0\" y2=\"5\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(116,0)\" x2=\"0\" y2=\"5\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(145,0)\" x2=\"0\" y2=\"5\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(173,0)\" x2=\"0\" y2=\"5\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(202,0)\" x2=\"0\" y2=\"5\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(231,0)\" x2=\"0\" y2=\"5\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(260,0)\" x2=\"0\" y2=\"5\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(289,0)\" x2=\"0\" y2=\"5\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(318,0)\" x2=\"0\" y2=\"5\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,15)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">0</text><text text-anchor=\"middle\" transform=\"translate(28.90909090909091,15)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">2</text><text text-anchor=\"middle\" transform=\"translate(57.81818181818182,15)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">4</text><text text-anchor=\"middle\" transform=\"translate(86.72727272727272,15)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">6</text><text text-anchor=\"middle\" transform=\"translate(115.63636363636364,15)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">8</text><text text-anchor=\"middle\" transform=\"translate(144.54545454545453,15)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">10</text><text text-anchor=\"middle\" transform=\"translate(173.45454545454544,15)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">12</text><text text-anchor=\"middle\" transform=\"translate(202.36363636363637,15)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">14</text><text text-anchor=\"middle\" transform=\"translate(231.27272727272728,15)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">16</text><text text-anchor=\"middle\" transform=\"translate(260.1818181818182,15)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">18</text><text text-anchor=\"middle\" transform=\"translate(289.09090909090907,15)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">20</text><text text-anchor=\"end\" transform=\"translate(318,15)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">22</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"318\" y2=\"0\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(159,30)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#0A0A0A\" opacity=\"1\">Value</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'Other' for a linear scale with values from 0 to 20\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,135)\" x2=\"-5\" y2=\"0\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,101)\" x2=\"-5\" y2=\"0\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,68)\" x2=\"-5\" y2=\"0\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,34)\" x2=\"-5\" y2=\"0\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"-5\" y2=\"0\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,138)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">0</text><text text-anchor=\"end\" transform=\"translate(-7,104.25)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">5</text><text text-anchor=\"end\" transform=\"translate(-7,70.5)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">10</text><text text-anchor=\"end\" transform=\"translate(-7,36.75)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">15</text><text text-anchor=\"end\" transform=\"translate(-7,3)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">20</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,135)\" x2=\"0\" y2=\"-135\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-27,67.5) rotate(-90) translate(0,-2)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#0A0A0A\" opacity=\"1\">Other</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-symbol role-mark marks\" role=\"graphics-object\" aria-roledescription=\"symbol mark container\"><path aria-label=\"Value: 12; Other: 7\" role=\"graphics-symbol\" aria-roledescription=\"point\" transform=\"translate(173.45454545454544,87.75)\" d=\"M3.873,0A3.873,3.873,0,1,1,-3.873,0A3.873,3.873,0,1,1,3.873,0\" fill=\"#3E63DD\" stroke-width=\"2\" opacity=\"0.85\"/><path aria-label=\"Value: 18; Other: 13\" role=\"graphics-symbol\" aria-roledescription=\"point\" transform=\"translate(260.1818181818182,47.25)\" d=\"M3.873,0A3.873,3.873,0,1,1,-3.873,0A3.873,3.873,0,1,1,3.873,0\" fill=\"#3E63DD\" stroke-width=\"2\" opacity=\"0.85\"/><path aria-label=\"Value: 22; Other: 12\" role=\"graphics-symbol\" aria-roledescription=\"point\" transform=\"translate(318,54)\" d=\"M3.873,0A3.873,3.873,0,1,1,-3.873,0A3.873,3.873,0,1,1,3.873,0\" fill=\"#3E63DD\" stroke-width=\"2\" opacity=\"0.85\"/><path aria-label=\"Value: 15; Other: 20\" role=\"graphics-symbol\" aria-roledescription=\"point\" transform=\"translate(216.8181818181818,0)\" d=\"M3.873,0A3.873,3.873,0,1,1,-3.873,0A3.873,3.873,0,1,1,3.873,0\" fill=\"#3E63DD\" stroke-width=\"2\" opacity=\"0.85\"/></g><g class=\"mark-group role-title\"><g transform=\"translate(-38,-33)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Point chart sample'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"#0A0A0A\" opacity=\"1\">Point chart sample</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g></svg>",
+      "svgHash": "6e92397ad891a66388513601a394a0f4ea060dd0820485b32632cac92a32b96e"
+    },
+    "VizScatterPreview": {
+      "input": {
+        "chartType": "scatter",
+        "rows": [
+          {
+            "period": "Jan",
+            "category": "A",
+            "value": 12,
+            "other": 7,
+            "size": 10,
+            "periodx": "Quarter Jan",
+            "categoryx": "Group A",
+            "valuex": 24,
+            "otherx": 21,
+            "sizex": 20
+          },
+          {
+            "period": "Jan",
+            "category": "B",
+            "value": 18,
+            "other": 13,
+            "size": 20,
+            "periodx": "Quarter Jan",
+            "categoryx": "Group B",
+            "valuex": 36,
+            "otherx": 39,
+            "sizex": 40
+          },
+          {
+            "period": "Feb",
+            "category": "A",
+            "value": 22,
+            "other": 12,
+            "size": 15,
+            "periodx": "Quarter Feb",
+            "categoryx": "Group A",
+            "valuex": 44,
+            "otherx": 36,
+            "sizex": 30
+          },
+          {
+            "period": "Feb",
+            "category": "B",
+            "value": 15,
+            "other": 20,
+            "size": 25,
+            "periodx": "Quarter Feb",
+            "categoryx": "Group B",
+            "valuex": 30,
+            "otherx": 60,
+            "sizex": 50
+          }
+        ],
+        "name": "Scatter chart sample",
+        "description": "Four authored sample observations.",
+        "brand": "A",
+        "theme": "light",
+        "encodings": {
+          "x": {
+            "field": "value",
+            "type": "quantitative"
+          },
+          "y": {
+            "field": "other",
+            "type": "quantitative"
+          }
+        },
+        "output": {
+          "svg": true,
+          "width": 360,
+          "height": 200
+        }
+      },
+      "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" class=\"marks\" width=\"370\" height=\"210\" viewBox=\"0 0 370 210\" role=\"img\" aria-label=\"Scatter chart sample\" aria-description=\"Four authored sample observations.\"><title>Scatter chart sample</title><desc>Four authored sample observations.</desc><rect width=\"370\" height=\"210\" fill=\"#FFFFFF\"/><g fill=\"none\" stroke-miterlimit=\"10\" transform=\"translate(43,38)\"><g class=\"mark-group role-frame root\" role=\"graphics-object\" aria-roledescription=\"group mark container\"><g transform=\"translate(0,0)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h318v135h-318Z\"/><g><g class=\"mark-group role-axis\" aria-hidden=\"true\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-grid\" pointer-events=\"none\"><line transform=\"translate(0,135)\" x2=\"318\" y2=\"0\" stroke=\"#E5E5E5\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,101)\" x2=\"318\" y2=\"0\" stroke=\"#E5E5E5\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,68)\" x2=\"318\" y2=\"0\" stroke=\"#E5E5E5\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,34)\" x2=\"318\" y2=\"0\" stroke=\"#E5E5E5\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"318\" y2=\"0\" stroke=\"#E5E5E5\" stroke-width=\"1\" opacity=\"1\"/></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"X-axis titled 'Value' for a linear scale with values from 0 to 22\"><g transform=\"translate(0.5,135.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"0\" y2=\"5\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(29,0)\" x2=\"0\" y2=\"5\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(58,0)\" x2=\"0\" y2=\"5\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(87,0)\" x2=\"0\" y2=\"5\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(116,0)\" x2=\"0\" y2=\"5\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(145,0)\" x2=\"0\" y2=\"5\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(173,0)\" x2=\"0\" y2=\"5\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(202,0)\" x2=\"0\" y2=\"5\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(231,0)\" x2=\"0\" y2=\"5\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(260,0)\" x2=\"0\" y2=\"5\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(289,0)\" x2=\"0\" y2=\"5\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(318,0)\" x2=\"0\" y2=\"5\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,15)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">0</text><text text-anchor=\"middle\" transform=\"translate(28.90909090909091,15)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">2</text><text text-anchor=\"middle\" transform=\"translate(57.81818181818182,15)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">4</text><text text-anchor=\"middle\" transform=\"translate(86.72727272727272,15)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">6</text><text text-anchor=\"middle\" transform=\"translate(115.63636363636364,15)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">8</text><text text-anchor=\"middle\" transform=\"translate(144.54545454545453,15)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">10</text><text text-anchor=\"middle\" transform=\"translate(173.45454545454544,15)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">12</text><text text-anchor=\"middle\" transform=\"translate(202.36363636363637,15)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">14</text><text text-anchor=\"middle\" transform=\"translate(231.27272727272728,15)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">16</text><text text-anchor=\"middle\" transform=\"translate(260.1818181818182,15)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">18</text><text text-anchor=\"middle\" transform=\"translate(289.09090909090907,15)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">20</text><text text-anchor=\"end\" transform=\"translate(318,15)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">22</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,0)\" x2=\"318\" y2=\"0\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(159,30)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#0A0A0A\" opacity=\"1\">Value</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-group role-axis\" role=\"graphics-symbol\" aria-roledescription=\"axis\" aria-label=\"Y-axis titled 'Other' for a linear scale with values from 0 to 20\"><g transform=\"translate(0.5,0.5)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-rule role-axis-tick\" pointer-events=\"none\"><line transform=\"translate(0,135)\" x2=\"-5\" y2=\"0\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,101)\" x2=\"-5\" y2=\"0\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,68)\" x2=\"-5\" y2=\"0\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,34)\" x2=\"-5\" y2=\"0\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/><line transform=\"translate(0,0)\" x2=\"-5\" y2=\"0\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-label\" pointer-events=\"none\"><text text-anchor=\"end\" transform=\"translate(-7,138)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">0</text><text text-anchor=\"end\" transform=\"translate(-7,104.25)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">5</text><text text-anchor=\"end\" transform=\"translate(-7,70.5)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">10</text><text text-anchor=\"end\" transform=\"translate(-7,36.75)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">15</text><text text-anchor=\"end\" transform=\"translate(-7,3)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"10px\" fill=\"#525252\" opacity=\"1\">20</text></g><g class=\"mark-rule role-axis-domain\" pointer-events=\"none\"><line transform=\"translate(0,135)\" x2=\"0\" y2=\"-135\" stroke=\"#D4D4D4\" stroke-width=\"1\" opacity=\"1\"/></g><g class=\"mark-text role-axis-title\" pointer-events=\"none\"><text text-anchor=\"middle\" transform=\"translate(-27,67.5) rotate(-90) translate(0,-2)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"11px\" font-weight=\"bold\" fill=\"#0A0A0A\" opacity=\"1\">Other</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g><g class=\"mark-symbol role-mark marks\" role=\"graphics-object\" aria-roledescription=\"symbol mark container\"><path aria-label=\"Value: 12; Other: 7\" role=\"graphics-symbol\" aria-roledescription=\"point\" transform=\"translate(173.45454545454544,87.75)\" d=\"M3.873,0A3.873,3.873,0,1,1,-3.873,0A3.873,3.873,0,1,1,3.873,0\" fill=\"#3E63DD\" stroke-width=\"2\" opacity=\"0.85\"/><path aria-label=\"Value: 18; Other: 13\" role=\"graphics-symbol\" aria-roledescription=\"point\" transform=\"translate(260.1818181818182,47.25)\" d=\"M3.873,0A3.873,3.873,0,1,1,-3.873,0A3.873,3.873,0,1,1,3.873,0\" fill=\"#3E63DD\" stroke-width=\"2\" opacity=\"0.85\"/><path aria-label=\"Value: 22; Other: 12\" role=\"graphics-symbol\" aria-roledescription=\"point\" transform=\"translate(318,54)\" d=\"M3.873,0A3.873,3.873,0,1,1,-3.873,0A3.873,3.873,0,1,1,3.873,0\" fill=\"#3E63DD\" stroke-width=\"2\" opacity=\"0.85\"/><path aria-label=\"Value: 15; Other: 20\" role=\"graphics-symbol\" aria-roledescription=\"point\" transform=\"translate(216.8181818181818,0)\" d=\"M3.873,0A3.873,3.873,0,1,1,-3.873,0A3.873,3.873,0,1,1,3.873,0\" fill=\"#3E63DD\" stroke-width=\"2\" opacity=\"0.85\"/></g><g class=\"mark-group role-title\"><g transform=\"translate(-38,-33)\"><path class=\"background\" aria-hidden=\"true\" d=\"M0,0h0v0h0Z\" pointer-events=\"none\"/><g><g class=\"mark-text role-title-text\" role=\"graphics-symbol\" aria-roledescription=\"title\" aria-label=\"Title text 'Scatter chart sample'\" pointer-events=\"none\"><text text-anchor=\"start\" transform=\"translate(0,19)\" font-family=\"Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif\" font-size=\"24px\" font-weight=\"600\" fill=\"#0A0A0A\" opacity=\"1\">Scatter chart sample</text></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" pointer-events=\"none\" display=\"none\"/></g></g></g><path class=\"foreground\" aria-hidden=\"true\" d=\"\" display=\"none\"/></g></g></g></svg>",
+      "svgHash": "b02f181618ffdee96dc3b25a148862b491bc4fbb4451a2108bc30f89956ed601"
+    },
+    "VizGraphPreview": {
+      "input": {
+        "chartType": "force_graph",
+        "name": "Example connected relationships",
+        "description": "Synthetic neighborhood edges illustrating relationships that share an endpoint; these are examples, not live graph data.",
+        "network": {
+          "nodes": [
+            {
+              "id": "example-document"
+            },
+            {
+              "id": "example-project"
+            },
+            {
+              "id": "example-team"
+            }
+          ],
+          "links": [
+            {
+              "source": "example-team",
+              "target": "example-project"
+            },
+            {
+              "source": "example-project",
+              "target": "example-document"
+            },
+            {
+              "source": "example-document",
+              "target": "example-project"
+            }
+          ]
+        },
+        "output": {
+          "svg": true,
+          "width": 360,
+          "height": 200
+        }
+      },
+      "svg": "<svg width=\"360\" height=\"200\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" baseProfile=\"full\" viewBox=\"0 0 360 200\" role=\"img\" aria-label=\"Example connected relationships\" aria-description=\"Synthetic neighborhood edges illustrating relationships that share an endpoint; these are examples, not live graph data.\"><title>Example connected relationships</title><desc>Synthetic neighborhood edges illustrating relationships that share an endpoint; these are examples, not live graph data.</desc>\n<rect width=\"360\" height=\"200\" x=\"0\" y=\"0\" fill=\"#FFFFFF\"></rect>\n<path d=\"M239.2 59.3Q245.2 127.2 188.1 164.5\" fill=\"none\" pointer-events=\"visible\" stroke=\"rgb(62, 99, 221)\" stroke-opacity=\"0.75\" ecmeta_series_index=\"0\" ecmeta_data_index=\"0\" ecmeta_ssr_type=\"chart\" class=\"oods-zr-0\"></path>\n<path d=\"M188.1 164.5Q123.9 143 112.7 76.2\" fill=\"none\" pointer-events=\"visible\" stroke=\"rgb(62, 99, 221)\" stroke-opacity=\"0.75\" ecmeta_series_index=\"0\" ecmeta_data_index=\"1\" ecmeta_ssr_type=\"chart\" class=\"oods-zr-0\"></path>\n<path d=\"M112.7 76.2Q176.9 97.7 188.1 164.5\" fill=\"none\" pointer-events=\"visible\" stroke=\"rgb(62, 99, 221)\" stroke-opacity=\"0.75\" ecmeta_series_index=\"0\" ecmeta_data_index=\"2\" ecmeta_ssr_type=\"chart\" class=\"oods-zr-0\"></path>\n<path d=\"M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0\" transform=\"matrix(5,0,0,5,112.6711,76.2258)\" fill=\"rgb(62, 99, 221)\" ecmeta_series_index=\"0\" ecmeta_data_index=\"0\" ecmeta_ssr_type=\"chart\" class=\"oods-zr-1\"></path>\n<path d=\"M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0\" transform=\"matrix(5,0,0,5,188.0808,164.5013)\" fill=\"rgb(62, 99, 221)\" ecmeta_series_index=\"0\" ecmeta_data_index=\"1\" ecmeta_ssr_type=\"chart\" class=\"oods-zr-1\"></path>\n<path d=\"M1 0A1 1 0 1 1 1 -0.1A1 1 0 0 1 1 0\" transform=\"matrix(5,0,0,5,239.241,59.2736)\" fill=\"rgb(62, 99, 221)\" ecmeta_series_index=\"0\" ecmeta_data_index=\"2\" ecmeta_ssr_type=\"chart\" class=\"oods-zr-1\"></path>\n<text dominant-baseline=\"central\" text-anchor=\"start\" style=\"font-size:12px;font-family:sans-serif;\" transform=\"translate(122.6711 76.2258)\" fill=\"#0A0A0A\">example-document</text>\n<text dominant-baseline=\"central\" text-anchor=\"start\" style=\"font-size:12px;font-family:sans-serif;\" transform=\"translate(198.0808 164.5013)\" fill=\"#0A0A0A\">example-project</text>\n<text dominant-baseline=\"central\" text-anchor=\"start\" style=\"font-size:12px;font-family:sans-serif;\" transform=\"translate(249.241 59.2736)\" fill=\"#0A0A0A\">example-team</text>\n<path d=\"M-108.1 -5l216.2 0l0 24l-216.2 0Z\" transform=\"translate(180 13)\" fill=\"rgb(0,0,0)\" fill-opacity=\"0\" stroke=\"#3c3c41\" stroke-width=\"0\" class=\"oods-zr-2\"></path>\n<text dominant-baseline=\"central\" text-anchor=\"middle\" style=\"font-size:14px;font-family:sans-serif;font-weight:600;\" xml:space=\"preserve\" y=\"7\" transform=\"translate(180 13)\" fill=\"#0A0A0A\">Example connected relationships</text>\n<style ><![CDATA[\n.oods-zr-0:hover {\ncursor:pointer;\nstroke-width:4;\n}\n.oods-zr-1:hover {\ncursor:pointer;\nfill:rgba(68,108,243,1);\n}\n.oods-zr-2:hover {\npointer-events:none;\n}\n\n]]>\n\n</style>\n</svg>",
+      "svgHash": "01684fdd45ba546316a63ee4e8e39746ce6f15e447292c5eb542177e174335ea"
+    }
+  }
+}

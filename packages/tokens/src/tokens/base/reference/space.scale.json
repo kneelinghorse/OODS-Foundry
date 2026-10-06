@@ -21,8 +21,8 @@
         },
         "default": {
           "$type": "dimension",
-          "$value": "20px",
-          "$description": "Standard vertical spacing between sections."
+          "$value": "16px",
+          "$description": "Standard vertical spacing between sections. On the 4px scale since 0.4.0."
         }
       },
       "inline": {
@@ -33,8 +33,107 @@
         },
         "sm": {
           "$type": "dimension",
-          "$value": "14px",
-          "$description": "Small horizontal spacing used in chip contexts."
+          "$value": "12px",
+          "$description": "Small horizontal spacing used in chip contexts. On the 4px scale since 0.4.0."
+        }
+      },
+      "scale": {
+        "sm": {
+          "$type": "dimension",
+          "$value": "8px",
+          "$description": "Small geometry scalar (= 0.5rem); seeds the size.spacing contract."
+        },
+        "md": {
+          "$type": "dimension",
+          "$value": "12px",
+          "$description": "Medium geometry scalar (= 0.875rem); seeds the size.spacing contract. On the 4px scale since 0.4.0."
+        },
+        "lg": {
+          "$type": "dimension",
+          "$value": "24px",
+          "$description": "Large geometry scalar (= 1.25rem); continues the +0.375rem scale ramp (sm 8 / md 14 / lg 20). Completes the t-shirt set so emitter md/sm/lg all resolve (sprint-125 m03). On the 4px scale since 0.4.0."
+        }
+      },
+      "ramp": {
+        "050": {
+          "$type": "dimension",
+          "$value": "0.125rem",
+          "$description": "Component geometry ramp 050: 0.125rem (2px at the 16px root). 100 is the 4px unit; every sys component geometry role resolves to one ramp entry (Sprint 200 m02)."
+        },
+        "100": {
+          "$type": "dimension",
+          "$value": "0.25rem",
+          "$description": "Component geometry ramp 100: 0.25rem (4px at the 16px root). 100 is the 4px unit; every sys component geometry role resolves to one ramp entry (Sprint 200 m02)."
+        },
+        "150": {
+          "$type": "dimension",
+          "$value": "0.375rem",
+          "$description": "Component geometry ramp 150: 0.375rem (6px at the 16px root). 100 is the 4px unit; every sys component geometry role resolves to one ramp entry (Sprint 200 m02)."
+        },
+        "200": {
+          "$type": "dimension",
+          "$value": "0.5rem",
+          "$description": "Component geometry ramp 200: 0.5rem (8px at the 16px root). 100 is the 4px unit; every sys component geometry role resolves to one ramp entry (Sprint 200 m02). Equals ref.space.scale.sm."
+        },
+        "250": {
+          "$type": "dimension",
+          "$value": "0.625rem",
+          "$description": "Component geometry ramp 250: 0.625rem (10px at the 16px root). 100 is the 4px unit; every sys component geometry role resolves to one ramp entry (Sprint 200 m02)."
+        },
+        "300": {
+          "$type": "dimension",
+          "$value": "0.75rem",
+          "$description": "Component geometry ramp 300: 0.75rem (12px at the 16px root). 100 is the 4px unit; every sys component geometry role resolves to one ramp entry (Sprint 200 m02). Equals ref.space.stack.compact."
+        },
+        "400": {
+          "$type": "dimension",
+          "$value": "1rem",
+          "$description": "Component geometry ramp 400: 1rem (16px at the 16px root). 100 is the 4px unit; every sys component geometry role resolves to one ramp entry (Sprint 200 m02)."
+        },
+        "500": {
+          "$type": "dimension",
+          "$value": "1.25rem",
+          "$description": "Component geometry ramp 500: 1.25rem (20px at the 16px root). 100 is the 4px unit; every sys component geometry role resolves to one ramp entry (Sprint 200 m02). Equals ref.space.scale.lg."
+        },
+        "600": {
+          "$type": "dimension",
+          "$value": "1.5rem",
+          "$description": "Component geometry ramp 600: 1.5rem (24px at the 16px root). 100 is the 4px unit; every sys component geometry role resolves to one ramp entry (Sprint 200 m02). Equals ref.space.inset.default."
+        },
+        "700": {
+          "$type": "dimension",
+          "$value": "1.75rem",
+          "$description": "28px: the small control height."
+        },
+        "800": {
+          "$type": "dimension",
+          "$value": "2rem",
+          "$description": "Component geometry ramp 800: 2rem (32px at the 16px root). 100 is the 4px unit; every sys component geometry role resolves to one ramp entry (Sprint 200 m02)."
+        },
+        "900": {
+          "$type": "dimension",
+          "$value": "2.25rem",
+          "$description": "36px: the dense table row."
+        },
+        "1000": {
+          "$type": "dimension",
+          "$value": "2.5rem",
+          "$description": "Component geometry ramp 1000: 2.5rem (40px at the 16px root). 100 is the 4px unit; every sys component geometry role resolves to one ramp entry (Sprint 200 m02)."
+        },
+        "1100": {
+          "$type": "dimension",
+          "$value": "2.75rem",
+          "$description": "44px: the table row."
+        },
+        "1200": {
+          "$type": "dimension",
+          "$value": "3rem",
+          "$description": "Component geometry ramp 1200: 3rem (48px at the 16px root). 100 is the 4px unit; every sys component geometry role resolves to one ramp entry (Sprint 200 m02)."
+        },
+        "1600": {
+          "$type": "dimension",
+          "$value": "4rem",
+          "$description": "64px: the largest step of the 4px scale."
         }
       }
     }

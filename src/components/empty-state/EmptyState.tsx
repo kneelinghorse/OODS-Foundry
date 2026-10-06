@@ -5,7 +5,7 @@ import {
   type StatusDomain,
   type StatusTone,
 } from '../statusables/statusRegistry.js';
-import { resolveStatusGlyph } from '../statusables/statusGlyph.js';
+import { resolveStatusMark } from '../statusables/statusGlyph.js';
 import { resolveEmptyStateTokens } from './tokens.js';
 
 export type EmptyStateIntent = 'info' | 'success' | 'warning' | 'neutral';
@@ -65,7 +65,7 @@ export const EmptyState = React.forwardRef<EmptyStateElement, EmptyStateProps>(
     const tokens = React.useMemo(() => resolveEmptyStateTokens(tone), [tone]);
     const resolvedIcon =
       icon ??
-      (statusPresentation?.iconName ? resolveStatusGlyph(statusPresentation.iconName) : undefined);
+      (statusPresentation?.iconName ? resolveStatusMark(statusPresentation.iconName) : undefined);
     const rootClassName = className ? `empty-state ${className}` : 'empty-state';
     const styleVariables = React.useMemo<Record<string, string>>(
       () => ({

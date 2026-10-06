@@ -13,6 +13,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { compile } from 'json-schema-to-typescript';
 import type { JSONSchema } from 'json-schema-to-typescript';
+import { SCHEMA_ROUTES } from './schema-routes.js';
 
 const ROOT_DIR = path.resolve(fileURLToPath(new URL('../..', import.meta.url)));
 
@@ -35,6 +36,10 @@ const STATIC_EXPORTS: ReadonlyArray<{ modulePath: string; fileName: string }> = 
   { modulePath: './authz.d', fileName: 'authz.d.ts' },
   { modulePath: './preferences.d', fileName: 'preferences.d.ts' },
 ];
+
+// #681 retarget: per-schema output routing lives in ./schema-routes.ts — a
+// side-effect-free module shared with tests/contracts/schema-types.contract.test.ts
+// so generation and drift-verification can never diverge. See SCHEMA_ROUTES there.
 
 function parseArgs(argv: string[]): CliOptions {
   const options: CliOptions = {
@@ -167,8 +172,19 @@ async function generateTypes(options: CliOptions): Promise<GenerationResult[]> {
 
   for (const schemaPath of schemaFiles) {
     const relative = path.relative(options.schemaDir, schemaPath);
+    const routeKey = relative.split(path.sep).join('/');
+    const route = SCHEMA_ROUTES[routeKey];
+
+    if (route === 'skip') {
+      if (!options.silent) {
+        console.log(`• ${routeKey} — skipped (#681: hand-authored in @oods/viz-core)`);
+      }
+      continue;
+    }
+
     const outputRelative = relative.replace(/\.schema\.json$/i, '.ts');
-    const outputPath = path.join(options.outDir, outputRelative);
+    const outputPath = route ? path.resolve(ROOT_DIR, route.outFile) : path.join(options.outDir, outputRelative);
+    const banner = route ? route.banner : `// Auto-generated from ${relative}. Do not edit manually.\n`;
 
     const raw = await readFile(schemaPath, 'utf8');
     const parsed = JSON.parse(raw) as JSONSchema;
@@ -177,7 +193,7 @@ async function generateTypes(options: CliOptions): Promise<GenerationResult[]> {
 
     const compiled = await compile(sanitized, typeName, {
       cwd: ROOT_DIR,
-      bannerComment: `// Auto-generated from ${relative}. Do not edit manually.\n`,
+      bannerComment: banner,
       style: {
         singleQuote: true,
       },
@@ -195,14 +211,18 @@ async function generateTypes(options: CliOptions): Promise<GenerationResult[]> {
 
     if (!options.silent) {
       const label = status === 'skipped' ? 'would change' : status;
-      console.log(`• ${outputRelative} — ${label}`);
+      const where = route ? route.outFile : outputRelative;
+      console.log(`• ${where} — ${label}`);
     }
 
-    results.push({
-      file: outputPath,
-      relative: outputRelative,
-      status,
-    });
+    // Rerouted files (e.g. the viz-core IR) are NOT generated/types barrel members.
+    if (!route) {
+      results.push({
+        file: outputPath,
+        relative: outputRelative,
+        status,
+      });
+    }
   }
 
   const indexStatus = await writeIndex(results, options);

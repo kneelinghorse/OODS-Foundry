@@ -285,7 +285,7 @@ function formatAmount(amountMinor: number, currency: string): string {
 }
 
 const meta: Meta<typeof UsageDashboard> = {
-  title: 'Objects/Domain Objects/Usage',
+  title: 'Domains/Billing/Usage-Based',
   component: UsageDashboard,
   parameters: {
     layout: 'fullscreen',

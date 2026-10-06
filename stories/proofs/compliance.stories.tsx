@@ -5,17 +5,18 @@
  * and audit logging in Storybook.
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { DateTime } from 'luxon';
 import { RBACService } from '../../src/services/compliance/rbac-service';
 import { AuditLogService } from '../../src/services/compliance/audit-service';
 import TimeService from '../../src/services/time';
+import { AuditSeverity } from '../../src/domain/compliance/audit';
 import { BASELINE_PERMISSIONS } from '../../src/domain/compliance/rbac';
-import type { Role, Permission, RolePermission, AuditLogEntry } from '../../src/domain/compliance/rbac';
+import type { Role, Permission } from '../../src/domain/compliance/rbac';
 
 const meta: Meta = {
-  title: 'Proofs & Internals/Compliance/Core',
+  title: 'Explorer/Proofs/Compliance Core',
   parameters: {
     layout: 'padded',
     docs: {
@@ -76,7 +77,7 @@ export const PermissionCheckDemo: StoryObj = {
         action: `${resourceRef.split(':')[0]}.${selectedAction}`,
         resourceRef,
         payload: { check: true, timestamp: TimeService.nowSystem().toISO() },
-        severity: permResult.allowed ? 'INFO' : 'CRITICAL',
+        severity: permResult.allowed ? AuditSeverity.INFO : AuditSeverity.CRITICAL,
       });
 
       setResult(permResult);
@@ -180,10 +181,10 @@ export const AuditLogViewer: StoryObj = {
       
       // Seed some demo events
       const events = [
-        { actorId: 'user_1', action: 'subscription.create', ref: 'subscription:sub_1', severity: 'INFO' as const },
-        { actorId: 'user_1', action: 'subscription.pause', ref: 'subscription:sub_1', severity: 'WARNING' as const },
-        { actorId: 'user_2', action: 'token.approve', ref: 'token:color-primary', severity: 'CRITICAL' as const },
-        { actorId: 'agent_1', action: 'overlay.publish', ref: 'overlay:theme-v2', severity: 'CRITICAL' as const },
+        { actorId: 'user_1', action: 'subscription.create', ref: 'subscription:sub_1', severity: AuditSeverity.INFO },
+        { actorId: 'user_1', action: 'subscription.pause', ref: 'subscription:sub_1', severity: AuditSeverity.WARNING },
+        { actorId: 'user_2', action: 'token.approve', ref: 'token:color-primary', severity: AuditSeverity.CRITICAL },
+        { actorId: 'agent_1', action: 'overlay.publish', ref: 'overlay:theme-v2', severity: AuditSeverity.CRITICAL },
       ];
 
       events.forEach(e => {

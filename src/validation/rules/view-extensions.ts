@@ -34,6 +34,8 @@ export function validateViewExtensions(composed: ComposedObject): RuleIssue[] {
 
     const normalized = normalizeViewRegion(regionKey);
     if (!ALLOWED_VIEW_CONTEXTS.has(normalized)) {
+      // Find which traits contribute extensions to this unsupported region
+      const contributingTraits = findTraitsWithViewRegion(composed, regionKey);
       issues.push({
         code: ErrorCodes.VIEW_EXTENSION_INVALID,
         message: `View extension context "${regionKey}" is not supported (allowed: ${Array.from(ALLOWED_VIEW_CONTEXTS).join(', ')}).`,
@@ -41,6 +43,7 @@ export function validateViewExtensions(composed: ComposedObject): RuleIssue[] {
         severity: 'error',
         path: ['viewExtensions', regionKey],
         related: [regionKey],
+        traitPath: contributingTraits.length > 0 ? contributingTraits : undefined,
       });
       continue;
     }
@@ -54,6 +57,8 @@ export function validateViewExtensions(composed: ComposedObject): RuleIssue[] {
           FIELD_KEY_PATTERN.test(propKey) &&
           !schemaFields.has(value)
         ) {
+          // Find which trait contributed this specific extension component
+          const contributingTraits = findTraitsWithComponent(composed, extension.component);
           issues.push({
             code: ErrorCodes.VIEW_EXTENSION_INVALID,
             message: `View extension "${extension.component}" references field "${value}" via "${propKey}" but it does not exist in the composed schema.`,
@@ -61,6 +66,7 @@ export function validateViewExtensions(composed: ComposedObject): RuleIssue[] {
             severity: 'error',
             path: ['viewExtensions', regionKey, index, 'props', propKey],
             related: [extension.component || 'UnknownComponent', value, regionKey],
+            traitPath: contributingTraits.length > 0 ? contributingTraits : undefined,
           });
         }
       }
@@ -68,4 +74,23 @@ export function validateViewExtensions(composed: ComposedObject): RuleIssue[] {
   }
 
   return issues;
+}
+
+function findTraitsWithViewRegion(composed: ComposedObject, regionKey: string): string[] {
+  return (composed.traits ?? [])
+    .filter((t) => t.trait?.name && t.view_extensions && regionKey in t.view_extensions)
+    .map((t) => t.trait.name);
+}
+
+function findTraitsWithComponent(composed: ComposedObject, componentName: string | undefined): string[] {
+  if (!componentName) return [];
+  return (composed.traits ?? [])
+    .filter((t) => {
+      if (!t.trait?.name) return false;
+      for (const exts of Object.values(t.view_extensions ?? {})) {
+        if (Array.isArray(exts) && exts.some((ext) => ext.component === componentName)) return true;
+      }
+      return false;
+    })
+    .map((t) => t.trait.name);
 }

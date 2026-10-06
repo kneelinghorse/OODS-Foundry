@@ -1,0 +1,178 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "schema input (grouped)",
+  "description": "Grouped action-parameter tool for the schema family (save, load, list, delete). The `action` field selects the per-action handler; each branch reproduces the exact body of the corresponding per-action input schema plus the discriminator key. Uses plain JSON-Schema if/then (no AJV discriminator keyword).",
+  "type": "object",
+  "required": [
+    "action"
+  ],
+  "properties": {
+    "action": {
+      "enum": [
+        "save",
+        "load",
+        "list",
+        "delete"
+      ],
+      "description": "Selects the schema-family operation to dispatch."
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "save"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "then": {
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "schemaRef"
+        ],
+        "properties": {
+          "action": {
+            "const": "save"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9_-]+$",
+            "description": "Saved schema name in slug format (letters, numbers, hyphens, underscores)."
+          },
+          "schemaRef": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Reference to an in-memory schema produced by design.compose."
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Optional tags for filtering and discovery."
+          },
+          "author": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Optional author metadata."
+          },
+          "apply": {
+            "type": "boolean",
+            "description": "Accepted for bridge dry-run/apply mode parity and ignored: this action behaves the same with or without apply (save and delete always write)."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "load"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "then": {
+        "additionalProperties": false,
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "action": {
+            "const": "load"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9_-]+$",
+            "description": "Saved schema name in slug format."
+          },
+          "apply": {
+            "type": "boolean",
+            "description": "Accepted for bridge dry-run/apply mode parity and ignored: this action behaves the same with or without apply (save and delete always write)."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "list"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "then": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "const": "list"
+          },
+          "object": {
+            "type": "string",
+            "minLength": 1
+          },
+          "context": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "apply": {
+            "type": "boolean",
+            "description": "Accepted for bridge dry-run/apply mode parity and ignored: this action behaves the same with or without apply (save and delete always write)."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "delete"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "then": {
+        "additionalProperties": false,
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "action": {
+            "const": "delete"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9_-]+$"
+          },
+          "apply": {
+            "type": "boolean",
+            "description": "Accepted for bridge dry-run/apply mode parity and ignored: this action behaves the same with or without apply (save and delete always write)."
+          }
+        }
+      }
+    }
+  ]
+}

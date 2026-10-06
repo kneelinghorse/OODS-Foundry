@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Dialog } from '../../components/Dialog/Dialog';
 
 const meta: Meta = {
-  title: 'Primitives/Feedback/Dialog',
+  title: 'Components/Overlays/Dialog',
 };
 export default meta;
 type Story = StoryObj;

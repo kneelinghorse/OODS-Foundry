@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "Stage1 BridgeSummary exposes per-action targetEntity ids of the form `entity-<lowercase-name>` (Stage1 contract v1.2.4 §3). The OODS-side entity resolver maps those ids to OODS object names (the stem of <Name>.object.yaml) using, in priority: (1) Stage1-supplied `canonical_name` hint at `confidence ≥ 0.75` when present (§4 emission threshold, sum-with-cap of url_slug_match 0.40 + text_label_match 0.30 + schema_org_type 0.35 + recurrence_support 0.10), (2) this alias table for irregular mappings, (3) §3 narrow rule — strip `entity-` prefix and case-insensitively match the lowercase core against indexed OODS object names (do NOT singularize / PascalCase / strip punctuation — Stage1 handles that upstream of the slug). Unknown ids are retained on composed nodes as meta.unresolvedEntity so authors can fill gaps incrementally. See docs/integration/stage1-oods-contract.md §2c and the Stage1 repo's docs/contracts/stage1-oods-contract.md §3-§4.",
+  "version": "1.1.0",
+  "updated": "2026-04-15",
+  "aliases": {
+    "entity-customer": "User",
+    "entity-companies": "Organization",
+    "entity-account": "Organization",
+    "entity-changelog": "Article"
+  }
+}

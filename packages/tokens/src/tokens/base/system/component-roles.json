@@ -1,0 +1,324 @@
+{
+  "sys": {
+    "focus-ring": {
+      "$type": "color",
+      "$value": "{sys.focus.ring.outer}",
+      "$description": "Compatibility alias for component CSS; use sys.focus.ring.outer for new references."
+    },
+    "spacing-stack-compact": {
+      "$type": "dimension",
+      "$value": "{sys.space.stack.compact}",
+      "$description": "Compatibility alias for component CSS; use sys.space.stack.compact for new references."
+    },
+    "surface-accent": {
+      "$type": "color",
+      "$value": "{sys.surface.interactive.primary.default}",
+      "$description": "Compatibility alias for component CSS; use sys.surface.interactive.primary.default for new references."
+    },
+    "surface-default": {
+      "$type": "color",
+      "$value": "{sys.surface.canvas}",
+      "$description": "Compatibility alias for component CSS; use sys.surface.canvas for new references."
+    },
+    "text-default": {
+      "$type": "color",
+      "$value": "{sys.text.primary}",
+      "$description": "Compatibility alias for component CSS; use sys.text.primary for new references."
+    },
+    "text-subtle": {
+      "$type": "color",
+      "$value": "{sys.text.secondary}",
+      "$description": "Compatibility alias for component CSS; use sys.text.secondary for new references."
+    },
+    "control-gap": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.200}",
+      "$description": "Semantic component geometry: control gap; ramp 200."
+    },
+    "control-gap-compact": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.100}",
+      "$description": "Semantic component geometry: control gap compact; ramp 100."
+    },
+    "control-gap-tight": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.150}",
+      "$description": "Semantic component geometry: control gap tight; ramp 150."
+    },
+    "control-padding-block": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.100}",
+      "$description": "Block padding of a control, 4px; the control height sets its size."
+    },
+    "control-padding-inline": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.300}",
+      "$description": "Button padding at the default size, 12px."
+    },
+    "field-padding-inline": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.300}",
+      "$description": "Semantic component geometry: field padding inline; ramp 300."
+    },
+    "badge-padding-block": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.050}",
+      "$description": "Semantic component geometry: badge padding block; ramp 050."
+    },
+    "badge-padding-inline": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.200}",
+      "$description": "Semantic component geometry: badge padding inline; ramp 200."
+    },
+    "inset-sm": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.300}",
+      "$description": "Semantic component geometry: inset sm; ramp 300."
+    },
+    "inset-md": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.400}",
+      "$description": "Semantic component geometry: inset md; ramp 400."
+    },
+    "stack-xs": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.200}",
+      "$description": "Semantic component geometry: stack xs; ramp 200."
+    },
+    "stack-sm": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.300}",
+      "$description": "Semantic component geometry: stack sm; ramp 300."
+    },
+    "stack-md": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.400}",
+      "$description": "Semantic component geometry: stack md; ramp 400."
+    },
+    "inline-xs": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.200}",
+      "$description": "Semantic component geometry: inline xs; ramp 200."
+    },
+    "inline-sm": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.300}",
+      "$description": "Semantic component geometry: inline sm; ramp 300."
+    },
+    "inline-md": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.400}",
+      "$description": "Semantic component geometry: inline md; ramp 400."
+    },
+    "progress-height": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.200}",
+      "$description": "Semantic component geometry: progress height; ramp 200."
+    },
+    "radius-control": {
+      "$type": "dimension",
+      "$value": "{theme.radius.control}",
+      "$description": "Corner radius of a control at the default size: the brand recipe's radius."
+    },
+    "radius-pill": {
+      "$type": "dimension",
+      "$value": "{theme.radius.pill}",
+      "$description": "Fully rounded ends, for badges and pills."
+    },
+    "text-weight-semibold": {
+      "$type": "fontWeight",
+      "$value": "{ref.typography.weights.semibold}",
+      "$description": "Semibold control and badge emphasis."
+    },
+    "shadow-panel": {
+      "$type": "shadow",
+      "$value": "{shadow.elevation.card}",
+      "$description": "Raised-panel shadow; the card elevation from the reference shadow scale, expanded into its parts."
+    },
+    "control-height-sm": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.700}",
+      "$description": "Small control height, 28px."
+    },
+    "control-height-md": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.800}",
+      "$description": "Default control height, 32px."
+    },
+    "control-height-lg": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.1000}",
+      "$description": "Large control height, 40px."
+    },
+    "control-padding-block-sm": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.050}",
+      "$description": "Block padding of a small control, 2px."
+    },
+    "control-padding-block-lg": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.200}",
+      "$description": "Block padding of a large control, 8px."
+    },
+    "control-padding-inline-sm": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.250}",
+      "$description": "Button padding at the small size, 10px."
+    },
+    "control-padding-inline-lg": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.400}",
+      "$description": "Button padding at the large size, 16px."
+    },
+    "field-padding-block-compact": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.100}",
+      "$description": "Dense field block padding, 4px."
+    },
+    "field-padding-inline-compact": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.200}",
+      "$description": "Dense field padding, 8px."
+    },
+    "badge-height": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.500}",
+      "$description": "Badge height, 20px."
+    },
+    "stack-lg": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.600}",
+      "$description": "Semantic component geometry: stack lg; ramp 600."
+    },
+    "stack-xl": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.800}",
+      "$description": "Semantic component geometry: stack xl; ramp 800."
+    },
+    "page-gutter": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.600}",
+      "$description": "Semantic page geometry: the one left edge of a generated page, which every heading, control and card on it shares; ramp 600."
+    },
+    "tab-padding-block-sm": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.200}",
+      "$description": "Small tab padding block; ramp 200."
+    },
+    "tab-padding-block-md": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.250}",
+      "$description": "Default tab padding block; ramp 250."
+    },
+    "tab-padding-block-lg": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.300}",
+      "$description": "Large tab padding block; ramp 300."
+    },
+    "tab-padding-inline-sm": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.250}",
+      "$description": "Small tab padding inline; ramp 250."
+    },
+    "tab-padding-inline-md": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.300}",
+      "$description": "Default tab padding inline; ramp 300."
+    },
+    "tab-padding-inline-lg": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.400}",
+      "$description": "Large tab padding inline; ramp 400."
+    },
+    "tab-indicator-width": {
+      "$type": "dimension",
+      "$value": "{ref.border.width.bold}",
+      "$description": "Selected tab underline: 2px, the bold border width (s222-m02, #2502 ruling 11)."
+    },
+    "radius-card": {
+      "$type": "dimension",
+      "$value": "{theme.radius.card}",
+      "$description": "Corner radius of a card or panel: twice the brand radius."
+    },
+    "shadow-overlay": {
+      "$type": "shadow",
+      "$value": "{shadow.elevation.overlay}",
+      "$description": "Overlay shadow for menus and trays; the overlay elevation from the reference shadow scale, expanded into its parts."
+    },
+    "radius-control-sm": {
+      "$type": "dimension",
+      "$value": "{theme.radius.small}",
+      "$description": "Corner radius of a small control: the brand radius less 2px."
+    },
+    "radius-control-lg": {
+      "$type": "dimension",
+      "$value": "{theme.radius.large}",
+      "$description": "Corner radius of a large control: the brand radius plus 2px."
+    },
+    "control-height-xs": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.600}",
+      "$description": "Extra-small control height, 24px (button, input, select, segmented control and combobox alike)."
+    },
+    "control-padding-inline-xs": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.200}",
+      "$description": "Button padding at the extra-small size, 8px."
+    },
+    "control-icon-size": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.400}",
+      "$description": "Icon size inside a control."
+    },
+    "control-icon-gap-sm": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.150}",
+      "$description": "Gap between an icon and a label in a small control, 6px."
+    },
+    "control-icon-gap": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.200}",
+      "$description": "Gap between an icon and a label in a default control, 8px."
+    },
+    "control-group-gap": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.300}",
+      "$description": "Gap between groups of controls, 12px (controls within a group are 8px apart)."
+    },
+    "card-padding": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.600}",
+      "$description": "Card padding, 24px."
+    },
+    "card-padding-compact": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.400}",
+      "$description": "Dense card padding, 16px."
+    },
+    "table-row-height": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.1100}",
+      "$description": "Table row height."
+    },
+    "table-row-height-compact": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.900}",
+      "$description": "Dense table row height."
+    },
+    "table-cell-padding-inline": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.300}",
+      "$description": "Table cell padding, 12px."
+    },
+    "table-cell-padding-inline-compact": {
+      "$type": "dimension",
+      "$value": "{ref.space.ramp.200}",
+      "$description": "Dense table cell padding, 8px."
+    },
+    "text-weight-medium": {
+      "$type": "number",
+      "$value": "{ref.typography.weights.medium}",
+      "$description": "Medium weight: controls, labels and badges."
+    }
+  }
+}

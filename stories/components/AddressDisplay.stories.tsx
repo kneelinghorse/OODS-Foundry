@@ -1,4 +1,3 @@
-import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import '../../src/styles/globals.css';
@@ -61,7 +60,7 @@ const warehouseEntry: AddressableEntry = {
 type Story = StoryObj<typeof AddressDisplay>;
 
 const meta: Meta<typeof AddressDisplay> = {
-  title: 'Traits/Core/Addressable/Display',
+  title: 'Components/Addresses/AddressDisplay',
   component: AddressDisplay,
   parameters: {
     layout: 'centered',

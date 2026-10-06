@@ -1,0 +1,228 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/map.apply.output.json",
+  "title": "map.apply output",
+  "description": "Dry-run or apply report for Stage1 reconciliation verdict routing.",
+  "type": "object",
+  "required": ["applied", "skipped", "queued", "conflicted", "errors", "diff", "etag"],
+  "additionalProperties": false,
+  "properties": {
+    "applied": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/AppliedRoute" }
+    },
+    "skipped": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/SkippedRoute" }
+    },
+    "queued": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/QueuedRoute" }
+    },
+    "conflicted": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/ConflictRoute" }
+    },
+    "errors": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/ApplyError" }
+    },
+    "diff": { "$ref": "#/$defs/DiffSummary" },
+    "conflictArtifactPath": {
+      "type": "string",
+      "minLength": 1
+    },
+    "etag": {
+      "type": "string",
+      "pattern": "^[A-Fa-f0-9]{64}$"
+    }
+  },
+  "$defs": {
+    "CandidateDiffField": {
+      "type": "object",
+      "required": ["field"],
+      "additionalProperties": false,
+      "properties": {
+        "field": { "type": "string", "minLength": 1 },
+        "from": {},
+        "to": {}
+      }
+    },
+    "CandidateDiff": {
+      "type": "object",
+      "required": ["added_traits", "removed_traits", "changed_fields"],
+      "additionalProperties": false,
+      "properties": {
+        "added_traits": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "removed_traits": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "changed_fields": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/CandidateDiffField" }
+        }
+      }
+    },
+    "AppliedRoute": {
+      "type": "object",
+      "required": [
+        "objectId",
+        "name",
+        "action",
+        "confidence",
+        "recommendedOodsTraits",
+        "reason",
+        "persisted"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "objectId": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "action": {
+          "type": "string",
+          "enum": ["create", "patch"]
+        },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "recommendedOodsTraits": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1
+        },
+        "existingMapId": { "type": "string", "minLength": 1 },
+        "mappingId": { "type": "string", "minLength": 1 },
+        "reason": { "type": "string", "minLength": 1 },
+        "persisted": { "type": "boolean" },
+        "diff": { "$ref": "#/$defs/CandidateDiff" }
+      }
+    },
+    "SkippedRoute": {
+      "type": "object",
+      "required": [
+        "objectId",
+        "name",
+        "action",
+        "confidence",
+        "recommendedOodsTraits",
+        "reason",
+        "persisted"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "objectId": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "action": { "const": "skip" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "recommendedOodsTraits": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1
+        },
+        "existingMapId": { "type": "string", "minLength": 1 },
+        "mappingId": { "type": "string", "minLength": 1 },
+        "reason": { "type": "string", "minLength": 1 },
+        "persisted": { "type": "boolean" },
+        "diff": { "$ref": "#/$defs/CandidateDiff" }
+      }
+    },
+    "QueuedRoute": {
+      "type": "object",
+      "required": [
+        "objectId",
+        "name",
+        "action",
+        "confidence",
+        "threshold",
+        "queueReason",
+        "recommendedOodsTraits",
+        "reason"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "objectId": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "action": {
+          "type": "string",
+          "enum": ["create", "patch", "skip", "conflict"]
+        },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "threshold": { "type": "number", "minimum": 0, "maximum": 1 },
+        "queueReason": { "const": "below_confidence" },
+        "recommendedOodsTraits": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1
+        },
+        "existingMapId": { "type": "string", "minLength": 1 },
+        "reason": { "type": "string", "minLength": 1 },
+        "diff": { "$ref": "#/$defs/CandidateDiff" }
+      }
+    },
+    "ConflictRoute": {
+      "type": "object",
+      "required": ["objectId", "name", "action", "confidence", "reason"],
+      "additionalProperties": false,
+      "properties": {
+        "objectId": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "action": { "const": "conflict" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "existingMapId": { "type": "string", "minLength": 1 },
+        "reason": { "type": "string", "minLength": 1 }
+      }
+    },
+    "ApplyError": {
+      "type": "object",
+      "required": ["message"],
+      "additionalProperties": false,
+      "properties": {
+        "objectId": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "action": {
+          "type": "string",
+          "enum": ["create", "patch", "skip", "conflict"]
+        },
+        "message": { "type": "string", "minLength": 1 },
+        "details": {
+          "type": "object"
+        }
+      }
+    },
+    "DiffSummary": {
+      "type": "object",
+      "required": [
+        "create",
+        "patch",
+        "skip",
+        "conflict",
+        "queued",
+        "changedFields",
+        "addedTraits",
+        "removedTraits"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "create": { "type": "integer", "minimum": 0 },
+        "patch": { "type": "integer", "minimum": 0 },
+        "skip": { "type": "integer", "minimum": 0 },
+        "conflict": { "type": "integer", "minimum": 0 },
+        "queued": { "type": "integer", "minimum": 0 },
+        "changedFields": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "addedTraits": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "removedTraits": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}

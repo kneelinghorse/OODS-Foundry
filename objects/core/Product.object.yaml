@@ -53,6 +53,18 @@ traits:
       tag_policy: locked
       max_tags: 8
       require_primary_category: true
+  - name: behavioral/Searchable
+    parameters:
+      placeholder: "Search products..."
+      debounceMs: 300
+  - name: behavioral/Filterable
+    parameters:
+      filterMode: immediate
+      showFilterCount: true
+  - name: behavioral/Pageable
+    parameters:
+      defaultPageSize: 25
+      pageSizeOptions: [10, 25, 50, 100]
 
 schema:
   product_id:
@@ -107,6 +119,13 @@ schema:
       maxLength: 160
 
 semantics:
+  # The one-line summary under the product's name in lists (content/Labelled's description, marked as the summary).
+  description:
+    semantic_type: text.summary
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: TextBody
+      maxLengthParameter: maxDescriptionLength
   product_id:
     semantic_type: product.id
     token_mapping: tokenMap(product.id.primary)
@@ -140,3 +159,207 @@ metadata:
     - version: 1.0.0
       date: "2025-10-16"
       description: Initial Universal Quintet baseline.
+
+# Eight authored sample products from one point-of-sale catalog: card readers, printers, supplies, software and support.
+# Each follows the catalog lifecycle from draft through review; the last event is the latest recorded catalog change.
+samples:
+  - label: Counter Card Reader
+    description: Tap, chip and swipe reader for counters
+    sku: HW-CR-200
+    unit_amount_cents: 14900
+    currency: USD
+    pricing_model: one_time
+    billing_interval: one_time
+    tax_behavior: exclusive
+    inventory_status: in_stock
+    release_channel: general_availability
+    requires_subscription: true
+    support_level: standard
+    summary_blurb: Accepts contactless, chip and swipe payments and pairs with the till over Bluetooth.
+    primary_category_id: hardware-payments
+    primary_category_path: Hardware > Payments
+    tag_preview: contactless, bluetooth
+    status: active
+    state_history:
+      - { title: Created, from: null, to: draft, at: '2025-11-03T16:00:00Z', reason: Added from the supplier spec sheet }
+      - { title: In review, from: draft, to: in_review, at: '2025-11-17T16:00:00Z', reason: Submitted for launch review }
+      - { title: On sale, from: in_review, to: active, at: '2025-12-01T15:00:00Z', reason: Approved for sale }
+    created_at: '2025-11-03T16:00:00Z'
+    updated_at: '2026-06-01T15:00:00Z'
+    last_event: price_changed
+    last_event_at: '2026-06-01T15:00:00Z'
+  - label: Thermal Receipt Printer
+    description: 80 mm printer with an automatic cutter
+    sku: HW-RP-80
+    unit_amount_cents: 22900
+    currency: USD
+    pricing_model: one_time
+    billing_interval: one_time
+    tax_behavior: exclusive
+    inventory_status: low_stock
+    release_channel: general_availability
+    requires_subscription: false
+    support_level: standard
+    summary_blurb: Prints 250 mm of receipt a second over USB-C, Ethernet or Wi-Fi.
+    primary_category_id: hardware-printers
+    primary_category_path: Hardware > Printers
+    tag_preview: receipts, usb-c
+    status: active
+    state_history:
+      - { title: Created, from: null, to: draft, at: '2025-08-04T09:00:00Z', reason: Added from the supplier spec sheet }
+      - { title: In review, from: draft, to: in_review, at: '2025-08-18T09:00:00Z', reason: Submitted for launch review }
+      - { title: On sale, from: in_review, to: active, at: '2025-09-01T09:00:00Z', reason: Approved for sale }
+    created_at: '2025-08-04T09:00:00Z'
+    updated_at: '2026-08-12T09:00:00Z'
+    last_event: spec_updated
+    last_event_at: '2026-08-12T09:00:00Z'
+  - label: Label Printer K2
+    description: Shipping-label printer for UK carriers
+    sku: HW-LP-K2
+    unit_amount_cents: 18900
+    currency: GBP
+    pricing_model: one_time
+    billing_interval: one_time
+    tax_behavior: inclusive
+    inventory_status: backorder
+    release_channel: limited
+    requires_subscription: false
+    support_level: premium
+    summary_blurb: Prints Royal Mail and DPD labels from the order screen; back in stock in October.
+    primary_category_id: hardware-printers
+    primary_category_path: Hardware > Printers
+    tag_preview: labels, shipping
+    status: active
+    state_history:
+      - { title: Created, from: null, to: draft, at: '2026-03-02T10:00:00Z', reason: Added for the UK launch }
+      - { title: In review, from: draft, to: in_review, at: '2026-03-16T10:00:00Z', reason: Submitted for launch review }
+      - { title: On sale, from: in_review, to: active, at: '2026-04-01T09:00:00Z', reason: Approved for a limited UK release }
+    created_at: '2026-03-02T10:00:00Z'
+    updated_at: '2026-04-01T09:00:00Z'
+    last_event: price_changed
+    last_event_at: '2026-04-01T09:00:00Z'
+  - label: Thermal Paper Rolls (50 pack)
+    description: BPA-free 80 mm rolls, 50 per case
+    sku: SUP-TP-50
+    unit_amount_cents: 3900
+    currency: USD
+    pricing_model: one_time
+    billing_interval: one_time
+    tax_behavior: exclusive
+    inventory_status: in_stock
+    release_channel: general_availability
+    requires_subscription: false
+    support_level: null
+    summary_blurb: Fits every receipt printer we sell; ships in two days.
+    primary_category_id: supplies-paper
+    primary_category_path: Supplies > Paper
+    tag_preview: consumables
+    status: active
+    state_history:
+      - { title: Created, from: null, to: draft, at: '2025-08-04T09:30:00Z', reason: Added with the receipt printer }
+      - { title: In review, from: draft, to: in_review, at: '2025-08-18T09:30:00Z', reason: Submitted for launch review }
+      - { title: On sale, from: in_review, to: active, at: '2025-09-01T09:30:00Z', reason: Approved for sale }
+    created_at: '2025-08-04T09:30:00Z'
+    updated_at: '2026-02-02T09:30:00Z'
+    last_event: price_changed
+    last_event_at: '2026-02-02T09:30:00Z'
+  - label: Handheld Barcode Scanner
+    description: Wireless 2D scanner for stock counts
+    sku: HW-BS-10
+    unit_amount_cents: 7900
+    currency: EUR
+    pricing_model: one_time
+    billing_interval: one_time
+    tax_behavior: inclusive
+    inventory_status: in_stock
+    release_channel: beta
+    requires_subscription: false
+    support_level: standard
+    summary_blurb: Scans shelf labels and QR codes into stock counts, with a 12-hour battery.
+    primary_category_id: hardware-scanners
+    primary_category_path: Hardware > Scanners
+    tag_preview: inventory, wireless
+    status: in_review
+    state_history:
+      - { title: Created, from: null, to: draft, at: '2026-08-24T08:00:00Z', reason: Added for the beta programme }
+      - { title: In review, from: draft, to: in_review, at: '2026-09-14T08:00:00Z', reason: Spec updated with beta feedback }
+    created_at: '2026-08-24T08:00:00Z'
+    updated_at: '2026-09-14T08:00:00Z'
+    last_event: spec_updated
+    last_event_at: '2026-09-14T08:00:00Z'
+  - label: Point of Sale Software
+    description: Checkout, stock and reports in one app
+    sku: SW-POS-STD
+    unit_amount_cents: 4900
+    currency: USD
+    pricing_model: subscription
+    billing_interval: month
+    tax_behavior: exclusive
+    inventory_status: in_stock
+    release_channel: general_availability
+    requires_subscription: true
+    support_level: premium
+    summary_blurb: Runs checkout on any tablet, keeps stock in sync and emails the day's takings.
+    primary_category_id: software-point-of-sale
+    primary_category_path: Software > Point of sale
+    tag_preview: subscription, tablets
+    status: active
+    state_history:
+      - { title: Created, from: null, to: draft, at: '2025-06-02T09:00:00Z', reason: Packaged the checkout app for sale }
+      - { title: In review, from: draft, to: in_review, at: '2025-06-16T09:00:00Z', reason: Submitted for launch review }
+      - { title: On sale, from: in_review, to: active, at: '2025-07-01T09:00:00Z', reason: Approved for sale }
+    created_at: '2025-06-02T09:00:00Z'
+    updated_at: '2026-09-01T09:00:00Z'
+    last_event: spec_updated
+    last_event_at: '2026-09-01T09:00:00Z'
+  - label: Priority Support
+    description: 24/7 phone support, named engineer
+    sku: SVC-SUP-PRI
+    unit_amount_cents: 99000
+    currency: USD
+    pricing_model: subscription
+    billing_interval: year
+    tax_behavior: exclusive
+    inventory_status: in_stock
+    release_channel: limited
+    requires_subscription: true
+    support_level: enterprise
+    summary_blurb: A named support engineer, one-hour response and quarterly health checks.
+    primary_category_id: services-support
+    primary_category_path: Services > Support
+    tag_preview: services
+    status: draft
+    state_history:
+      - { title: Created, from: null, to: draft, at: '2026-09-01T14:00:00Z', reason: Drafted from the support team proposal }
+      - { title: In review, from: draft, to: in_review, at: '2026-09-15T14:00:00Z', reason: Submitted for pricing review }
+      - { title: Back to draft, from: in_review, to: draft, at: '2026-09-22T14:00:00Z', reason: Price sent back for a margin check }
+    created_at: '2026-09-01T14:00:00Z'
+    updated_at: '2026-09-22T14:00:00Z'
+    last_event: spec_updated
+    last_event_at: '2026-09-22T14:00:00Z'
+  - label: Cash Drawer CD-1
+    description: Steel cash drawer, replaced by the CD-2
+    sku: HW-CD-01
+    unit_amount_cents: 12900
+    currency: AUD
+    pricing_model: one_time
+    billing_interval: one_time
+    tax_behavior: inclusive
+    inventory_status: discontinued
+    release_channel: general_availability
+    requires_subscription: false
+    support_level: standard
+    summary_blurb: Five-note, eight-coin steel drawer that opens from the receipt printer.
+    primary_category_id: hardware-cash-handling
+    primary_category_path: Hardware > Cash handling
+    tag_preview: legacy
+    status: retired
+    state_history:
+      - { title: Created, from: null, to: draft, at: '2024-03-04T09:00:00Z', reason: Added from the supplier spec sheet }
+      - { title: In review, from: draft, to: in_review, at: '2024-03-18T09:00:00Z', reason: Submitted for launch review }
+      - { title: On sale, from: in_review, to: active, at: '2024-04-01T09:00:00Z', reason: Approved for sale }
+      - { title: Retired, from: active, to: retired, at: '2026-07-31T09:00:00Z', reason: Replaced by the CD-2 }
+    created_at: '2024-03-04T09:00:00Z'
+    updated_at: '2026-07-31T09:00:00Z'
+    last_event: retired
+    last_event_at: '2026-07-31T09:00:00Z'

@@ -10,8 +10,6 @@ import {
 import { styled } from 'storybook/theming';
 import genericInputSchema from '../../../../packages/mcp-server/src/schemas/generic.input.json' assert { type: 'json' };
 import brandApplyInputSchema from '../../../../packages/mcp-server/src/schemas/brand.apply.input.json' assert { type: 'json' };
-import billingReviewKitInputSchema from '../../../../packages/mcp-server/src/schemas/billing.reviewKit.input.json' assert { type: 'json' };
-import billingSwitchFixturesInputSchema from '../../../../packages/mcp-server/src/schemas/billing.switchFixtures.input.json' assert { type: 'json' };
 import { artifactHref, bridgeOrigin, fetchToolNames, runTool } from './bridge.js';
 import { ApproveDialog } from './components/ApproveDialog.js';
 import { ArtifactList } from './components/ArtifactList.js';
@@ -95,10 +93,7 @@ const CODE_ALIASES: Record<string, string> = {
 };
 
 const APPLY_CAPABLE_TOOLS: ReadonlySet<ToolName> = new Set<ToolName>([
-  'reviewKit.create',
   'brand.apply',
-  'billing.reviewKit',
-  'billing.switchFixtures',
 ]);
 
 type ProvenanceInfo = {
@@ -524,13 +519,7 @@ const SRStatus = styled.div`
 
 const TOOL_DESCRIPTIONS: Record<ToolName, string> = {
   'a11y.scan': 'Run accessibility scan diagnostics (read-only).',
-  'purity.audit': 'Run purity guard audit against tokens usage.',
-  'vrt.run': 'Trigger visual regression summary capture.',
-  'diag.snapshot': 'Collect project diagnostics snapshot.',
-  'reviewKit.create': 'Generate review kit artifacts (write-capable).',
-  'brand.apply': 'Preview and apply Brand A palette updates via alias or patch strategies.',
-  'billing.reviewKit': 'Generate billing review kit bundles across provider fixtures.',
-  'billing.switchFixtures': 'Preview and apply billing fixture switches for Storybook contexts.',
+  'brand.apply': 'Preview and apply brand palette updates via alias or patch strategies.',
 };
 
 function schemaDefaults(schema: JsonSchema): Record<string, unknown> {
@@ -570,24 +559,6 @@ function buildDescriptor(tool: ToolName): ToolDescriptor {
     case 'a11y.scan':
       label = 'Accessibility Scan';
       break;
-    case 'purity.audit':
-      label = 'Purity Audit';
-      break;
-    case 'vrt.run':
-      label = 'Visual Regression';
-      break;
-    case 'diag.snapshot':
-      label = 'Diagnostics Snapshot';
-      break;
-    case 'reviewKit.create':
-      label = 'Review Kit';
-      break;
-    case 'billing.reviewKit':
-      label = 'Billing Review Kit';
-      break;
-    case 'billing.switchFixtures':
-      label = 'Billing Fixture Switch';
-      break;
     default:
       label = 'Brand Apply';
       break;
@@ -596,10 +567,6 @@ function buildDescriptor(tool: ToolName): ToolDescriptor {
   let inputSchema: JsonSchema;
   if (tool === 'brand.apply') {
     inputSchema = brandApplyInputSchema as JsonSchema;
-  } else if (tool === 'billing.reviewKit') {
-    inputSchema = billingReviewKitInputSchema as JsonSchema;
-  } else if (tool === 'billing.switchFixtures') {
-    inputSchema = billingSwitchFixturesInputSchema as JsonSchema;
   } else {
     inputSchema = genericInputSchema as JsonSchema;
   }

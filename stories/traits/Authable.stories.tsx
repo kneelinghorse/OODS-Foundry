@@ -14,13 +14,10 @@
  * 4. How It Works - The permission check flow
  */
 
-import React from 'react';
+// @types/react 19 no longer declares a global JSX namespace; it is exported from 'react'.
+import type { JSX } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import {
-  AUTHZ_SAMPLE_DATASET,
-  createSampleAuthableTrait,
-  AUTHZ_SAMPLE_IDS,
-} from '../../src/data/authz/sample-entitlements.js';
+import { AUTHZ_SAMPLE_DATASET } from '../../src/data/authz/sample-entitlements.js';
 
 /* ─────────────────────────────────────────────────────────────────────────────
  * Style constants (consistent with Statusable.stories.tsx)
@@ -70,12 +67,6 @@ const STYLES = {
     overflow: 'auto' as const,
   },
 } as const;
-
-/* ─────────────────────────────────────────────────────────────────────────────
- * Initialize the Authable trait for demos
- * ───────────────────────────────────────────────────────────────────────────── */
-
-const authableTrait = createSampleAuthableTrait();
 
 /* ─────────────────────────────────────────────────────────────────────────────
  * 1. OVERVIEW — What is Authable? Why does it exist?

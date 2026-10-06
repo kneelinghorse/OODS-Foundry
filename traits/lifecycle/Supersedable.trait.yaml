@@ -1,0 +1,219 @@
+trait:
+  name: Supersedable
+  version: 1.0.0
+  description: |
+    Records that one record replaces another of the same kind, and which of them still stands.
+
+    Supersession is a self-referencing lineage, not a workflow: a record does not move through
+    supersession, it is replaced by a later record, and the pair stays readable afterwards. That is
+    why it is its own trait rather than a Stateful state set — Stateful governs transitions between
+    states of one record, while Supersedable relates two records and keeps both.
+
+    Two stores already hold that shape and they record it from opposite ends. A decision store writes
+    the forward pointer (`superseded_by`, the replacement's id) beside a status of
+    active | superseded | archived | stale. OODS Foundry's own composition acceptances write the
+    backward pointer (`supersedes`, the acceptance this one replaced, with the time it was accepted)
+    and leave the standing acceptance implicit. The trait therefore declares both pointers and a
+    `recordedDirection` parameter naming which one the source of truth actually writes; the other is
+    derived where the store can derive it and left absent where it cannot. An absent pointer means
+    unknown, never "nothing was superseded".
+
+    The field is `supersession_status`, not `status`, so an object can carry its own lifecycle
+    through Stateful and its supersession through this trait without the two colliding.
+  category: lifecycle
+  tags:
+    - lifecycle
+    - supersession
+    - lineage
+    - provenance
+    - versioning
+
+parameters:
+  - name: states
+    type: string[]
+    required: true
+    description: |
+      The supersession states this store can actually write. A store that only ever distinguishes a
+      standing record from a replaced one declares two; a decision store declares four because it also
+      retires a decision without replacing it (archived) and marks one as needing review (stale).
+    default:
+      - active
+      - superseded
+      - archived
+      - stale
+
+  - name: initialState
+    type: string
+    required: true
+    description: The state a newly recorded entry holds before anything replaces it.
+    default: active
+    validation:
+      enumFromParameter: states
+
+  - name: recordedDirection
+    type: string
+    required: true
+    description: |
+      Which pointer the source of truth writes: `forward` stores `superseded_by` on the record that
+      was replaced (a decision store), `backward` stores `supersedes` on the record that replaced it (OODS Foundry's
+      composition acceptances), `both` stores each. The pointer that is not recorded is derived only
+      when the store can derive it, and is otherwise absent — the screen says unknown rather than
+      claiming the record supersedes nothing.
+    default: forward
+    validation:
+      enum:
+        - forward
+        - backward
+        - both
+
+  - name: supersededLabel
+    type: string
+    required: false
+    description: Visible wording for a record that has been replaced, so the screen never relies on colour alone.
+    default: Superseded
+
+schema:
+  supersession_status:
+    type: string
+    required: true
+    default: active
+    description: |
+      Whether this record still stands. Named apart from Stateful's `status` so an object can carry
+      both a lifecycle and a supersession lineage.
+
+  superseded_by:
+    type: string
+    required: false
+    description: |
+      Identifier of the record that replaced this one. Present when the store records the forward
+      pointer. Absent means not replaced, or not known — the two are distinguished by
+      supersession_status, never by the pointer alone.
+
+  supersedes:
+    type: string
+    required: false
+    description: |
+      Identifier of the record this one replaced. Present when the store records the backward
+      pointer. Never inferred from ordering.
+
+  superseded_at:
+    type: datetime?
+    required: false
+    description: |
+      When the replacement happened, when the store records it. A store that does not record it leaves
+      it absent rather than borrowing the replacement's creation time.
+
+  supersession_reason:
+    type: string
+    required: false
+    description: Why the record was replaced, when the store carries a reason.
+    validation:
+      maxLength: 500
+
+semantics:
+  supersession_status:
+    semantic_type: lifecycle.supersession.state
+    token_mapping: tokenMap(lifecycle.supersession.*)
+    ui_hints:
+      component: StatusBadge
+      showIcon: false
+  superseded_by:
+    semantic_type: lifecycle.supersession.replacement
+    token_mapping: tokenMap(lifecycle.supersession.link)
+    ui_hints:
+      component: Text
+  supersedes:
+    semantic_type: lifecycle.supersession.replaced
+    token_mapping: tokenMap(lifecycle.supersession.link)
+    ui_hints:
+      component: Text
+  superseded_at:
+    semantic_type: lifecycle.supersession.timestamp
+    token_mapping: tokenMap(lifecycle.supersession.timestamp)
+    ui_hints:
+      component: RelativeTimestamp
+  supersession_reason:
+    semantic_type: lifecycle.supersession.reason
+    token_mapping: tokenMap(lifecycle.supersession.reason)
+    ui_hints:
+      component: Text
+      maxLength: 500
+
+view_extensions:
+  # StatusBadge rather than Badge: the canonical Badge contract has no field directive, so a Badge
+  # authored with statusField is refused by the target contracts (OODS-V007). StatusBadge carries the
+  # directive and lowers it to the bound status.
+  list:
+    - component: StatusBadge
+      position: after
+      props:
+        statusField: supersession_status
+        emphasis: subtle
+        showIcon: false
+  card:
+    - component: StatusBadge
+      position: after
+      props:
+        statusField: supersession_status
+        emphasis: subtle
+        showIcon: false
+  detail:
+    - component: StatusBadge
+      position: main
+      priority: 70
+      props:
+        statusField: supersession_status
+        emphasis: subtle
+        showIcon: false
+    # The composer's detail placement drops optional fields, so the lineage itself — the whole point
+    # of the trait — is surfaced here rather than left to that budget. Both pointers are shown: with
+    # the status beside them, an empty one reads as "nothing replaced this", which is what it means.
+    - component: Text
+      position: main
+      priority: 69
+      props:
+        field: superseded_by
+    - component: Text
+      position: main
+      priority: 68
+      props:
+        field: supersedes
+    - component: Text
+      position: main
+      priority: 67
+      props:
+        field: supersession_reason
+
+tokens:
+  lifecycle.supersession.active.bg: "var(--sys-status-success-surface)"
+  lifecycle.supersession.active.text: "var(--sys-status-success-text)"
+  lifecycle.supersession.superseded.bg: "var(--sys-surface-neutral)"
+  lifecycle.supersession.superseded.text: "var(--sys-text-secondary)"
+  lifecycle.supersession.link.text: "var(--text-strong)"
+  lifecycle.supersession.timestamp.text: "var(--text-subtle)"
+  lifecycle.supersession.reason.text: "var(--text-default)"
+
+dependencies: []
+
+metadata:
+  created: "2026-09-16"
+  updated: "2026-09-16"
+  owners:
+    - lifecycle@oods.systems
+  maturity: alpha
+  accessibility:
+    keyboard: |
+      Supersession adds no interactive control of its own; the pointer renders as text beside the
+      record it names.
+    screenreader: |
+      The supersession state is announced as visible text through StatusBadge, not by colour alone, and
+      the pointer fields read as "Superseded by <id>" / "Supersedes <id>".
+  regionsUsed:
+    - list
+    - card
+    - detail
+  examples:
+    - Decision
+  references:
+    - "objects/provenance.v1.json#/references/ref-d6670b6a0f62 — CompositionAcceptance.supersedes, the backward-recording consumer"
+    - "A CMOS store's strategic_decisions.superseded_by + status, the forward-recording consumer"

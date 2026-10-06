@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import '../../src/styles/globals.css';
@@ -50,7 +50,7 @@ const validationComponents: ComponentValidationResult[] = [
 type Story = StoryObj<typeof AddressForm>;
 
 const meta: Meta<typeof AddressForm> = {
-  title: 'Traits/Core/Addressable/Form',
+  title: 'Components/Addresses/AddressForm',
   component: AddressForm,
   parameters: {
     layout: 'fullscreen',

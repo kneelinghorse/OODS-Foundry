@@ -1,0 +1,166 @@
+trait:
+  name: Filterable
+  version: 1.0.0
+  description: |
+    Adds multi-facet filtering to list and collection views. Filterable injects a filter panel
+    into the sidebar or header region, wires filter state to the data layer, and provides
+    semantic token mappings for consistent filter UI styling across brands.
+
+    Filters are defined as an array of filter descriptors, each specifying a field, operator,
+    and available values. Active filters are tracked separately for apply/clear lifecycle.
+    The trait supports both immediate-apply and batch-apply modes for UX flexibility.
+  category: behavioral
+  tags:
+    - filtering
+    - facets
+    - list-behavior
+    - data-refinement
+
+parameters:
+  - name: filterMode
+    type: string
+    required: false
+    description: |
+      Controls when filter changes take effect:
+      - immediate: Filters apply as soon as the user changes a value.
+      - batch: Filters accumulate until the user clicks an explicit "Apply" button.
+    default: immediate
+    validation:
+      enum:
+        - immediate
+        - batch
+
+  - name: maxActiveFilters
+    type: number
+    required: false
+    description: Maximum number of simultaneous active filters. 0 means unlimited.
+    default: 0
+    validation:
+      minimum: 0
+      maximum: 50
+
+  - name: showFilterCount
+    type: boolean
+    required: false
+    description: Whether to display a badge showing the number of active filters.
+    default: true
+
+  - name: collapsible
+    type: boolean
+    required: false
+    description: Whether filter panel sections can be collapsed individually.
+    default: true
+
+schema:
+  filters:
+    type: object[]
+    required: false
+    description: |
+      Array of available filter descriptors. Each entry defines a filterable dimension:
+        - field: string (the schema field to filter on)
+        - label: string (display label)
+        - type: "select" | "multi-select" | "range" | "boolean" | "date-range"
+        - options: array of { value, label } for select/multi-select types
+    default: []
+
+  activeFilters:
+    type: object[]
+    required: false
+    description: |
+      Array of currently applied filter values:
+        - field: string (matches a filter descriptor field)
+        - operator: "eq" | "in" | "range" | "gt" | "lt" | "between"
+        - value: unknown (the selected filter value or values)
+    default: []
+
+  filterCount:
+    type: number
+    required: true
+    description: Computed count of currently active filters.
+    default: 0
+    validation:
+      minimum: 0
+
+semantics:
+  filters:
+    semantic_type: input.filter.descriptors
+    token_mapping: tokenMap(filter.panel.*)
+    ui_hints:
+      component: FilterPanel
+      modeParameter: filterMode
+  activeFilters:
+    semantic_type: state.filter.active
+    token_mapping: computed
+    ui_hints:
+      component: FilterPanel
+      description: Drives active filter chip display and clear actions.
+  filterCount:
+    semantic_type: metric.filter.count
+    token_mapping: tokenMap(filter.badge.*)
+    ui_hints:
+      component: MetricBadge
+      format: integer
+
+view_extensions:
+  list:
+    - component: FilterPanel
+      position: sidebar
+      priority: 8
+      props:
+        field: filters
+        activeField: activeFilters
+        modeParameter: filterMode
+        maxActiveParameter: maxActiveFilters
+        collapsibleParameter: collapsible
+  detail:
+    - component: FilterPanel
+      position: sidebar
+      priority: 8
+      props:
+        field: filters
+        activeField: activeFilters
+        modeParameter: filterMode
+        collapsibleParameter: collapsible
+
+tokens:
+  filter.panel.bg: "var(--sys-surface-secondary)"
+  filter.panel.border: "var(--sys-border-default)"
+  filter.panel.header.text: "var(--sys-text-primary)"
+  filter.panel.section.divider: "var(--sys-border-subtle)"
+  filter.chip.bg: "var(--sys-surface-accent)"
+  filter.chip.text: "var(--sys-text-on-accent)"
+  filter.chip.remove.hover: "var(--sys-surface-hover)"
+  filter.badge.bg: "var(--sys-surface-accent)"
+  filter.badge.text: "var(--sys-text-on-accent)"
+  filter.apply.bg: "var(--sys-action-primary)"
+  filter.apply.text: "var(--sys-text-on-action)"
+  filter.clear.text: "var(--sys-text-subtle)"
+
+dependencies: []
+
+metadata:
+  created: "2026-03-05"
+  updated: "2026-03-06"
+  owners:
+    - design@oods.systems
+  maturity: stable
+  accessibility:
+    keyboard: |
+      FilterPanel supports full keyboard navigation:
+      - Tab to move between filter controls
+      - Enter/Space to toggle selections
+      - Escape to collapse an open dropdown
+      - In batch mode, Tab to Apply button, Enter to submit
+    screenreader: |
+      Filter panel is announced with role="region" and aria-label="Filters".
+      Active filter changes are announced via aria-live when filters change.
+      Clear-all button is announced as "Clear all filters".
+  regionsUsed:
+    - list
+    - detail
+  examples:
+    - Product catalog filtering
+    - Invoice list filtering
+    - User management filtering
+  references:
+    - "Trait Engine Spec v0.1 section 2"

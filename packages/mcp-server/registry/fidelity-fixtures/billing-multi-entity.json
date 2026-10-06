@@ -1,0 +1,191 @@
+{
+  "manifest_version": "4.0",
+  "schema_version": "1.1.0",
+  "source": {
+    "agent": "external-billing-team",
+    "stage": "manual-author",
+    "captured_at": "2026-05-16T00:00:00.000Z",
+    "oods_catalog_version": "1.0.0"
+  },
+  "entities": [
+    {
+      "urn": "urn:proto:semantic:billing-account-card@1.0.0",
+      "element": {
+        "type": "ui.surface.card",
+        "name": "Billing account card",
+        "object": "BillingAccount"
+      },
+      "semantics": {
+        "purpose": "summarize billing account",
+        "human_meaning": "Top-level container that owns one or more payment methods and is referenced by every invoice.",
+        "tags": ["billing", "account"]
+      },
+      "pragmatic_role": "informational",
+      "states": ["active", "unpaid"],
+      "preconditions": ["account.exists"],
+      "effects": [],
+      "traits": ["Identifiable"],
+      "context": { "domain": "billing" },
+      "locations": [{ "type": "code", "path": "components/billing/BillingAccountCard.tsx" }],
+      "evidence_refs": [
+        {
+          "id": "ev_billing_account_001",
+          "protocol": "semantic",
+          "kind": "manifest_declaration",
+          "locator": "self",
+          "matched": null,
+          "weight": 1.0,
+          "provenance": "declared",
+          "captured_at": "2026-05-16T00:00:00.000Z"
+        }
+      ],
+      "oods": {
+        "catalog": { "version": "1.0.0" },
+        "render": {
+          "ui_schema_ref": "compose-billing-account",
+          "slots": [
+            { "name": "title", "binding": { "field": "account.name" } },
+            { "name": "subtitle", "binding": { "field": "account.email" } },
+            { "name": "status", "binding": { "field": "account.status" } }
+          ],
+          "brand_overlay": "brand-default"
+        }
+      },
+      "relationships": {
+        "edges": [
+          {
+            "type": "owns",
+            "from": "urn:proto:semantic:billing-account-card@1.0.0",
+            "to": "urn:proto:semantic:payment-method-row@1.0.0",
+            "direction": "out",
+            "provenance": "declared",
+            "weight": 0.95,
+            "reason": "Each billing account collects one or more payment methods."
+          }
+        ]
+      }
+    },
+    {
+      "urn": "urn:proto:semantic:payment-method-row@1.0.0",
+      "element": {
+        "type": "ui.surface.row",
+        "name": "Payment method row",
+        "object": "PaymentMethod"
+      },
+      "semantics": {
+        "purpose": "summarize payment method",
+        "human_meaning": "Single payment method (card or bank) attached to a billing account; charged when invoices issue.",
+        "tags": ["billing", "payment"]
+      },
+      "pragmatic_role": "informational",
+      "states": ["active", "expired"],
+      "preconditions": ["account.exists"],
+      "effects": [],
+      "traits": ["Identifiable", "Datable"],
+      "context": { "domain": "billing" },
+      "locations": [{ "type": "code", "path": "components/billing/PaymentMethodRow.tsx" }],
+      "evidence_refs": [
+        {
+          "id": "ev_payment_method_001",
+          "protocol": "semantic",
+          "kind": "manifest_declaration",
+          "locator": "self",
+          "matched": null,
+          "weight": 1.0,
+          "provenance": "declared",
+          "captured_at": "2026-05-16T00:00:00.000Z"
+        }
+      ],
+      "oods": {
+        "catalog": { "version": "1.0.0" },
+        "render": {
+          "ui_schema_ref": "compose-payment-method",
+          "slots": [
+            { "name": "title", "binding": { "field": "payment_method.label" } },
+            { "name": "subtitle", "binding": { "field": "payment_method.expires_at" } },
+            { "name": "status", "binding": { "field": "payment_method.state" } }
+          ]
+        }
+      },
+      "relationships": {
+        "edges": [
+          {
+            "type": "charges",
+            "from": "urn:proto:semantic:payment-method-row@1.0.0",
+            "to": "urn:proto:semantic:invoice-detail-card@1.0.0",
+            "direction": "out",
+            "provenance": "declared",
+            "weight": 0.85,
+            "via": "billing",
+            "reason": "Active payment methods are charged when invoices are issued."
+          }
+        ]
+      }
+    },
+    {
+      "urn": "urn:proto:semantic:invoice-detail-card@1.0.0",
+      "element": {
+        "type": "ui.surface.card",
+        "name": "Invoice detail card",
+        "object": "Invoice",
+        "action": "pay_now"
+      },
+      "semantics": {
+        "purpose": "display invoice and offer payment",
+        "human_meaning": "Itemized invoice for a billing period with a primary action to pay using the account's default payment method.",
+        "tags": ["billing", "invoice", "primary"]
+      },
+      "pragmatic_role": "primary_action",
+      "states": ["enabled", "disabled", "paid", "overdue"],
+      "preconditions": ["invoice.issued"],
+      "effects": ["invoice.marked_paid", "payment.captured"],
+      "traits": ["Actionable", "Pricable"],
+      "context": { "domain": "billing" },
+      "locations": [{ "type": "code", "path": "components/billing/InvoiceDetailCard.tsx" }],
+      "evidence_refs": [
+        {
+          "id": "ev_invoice_001",
+          "protocol": "pragmatic",
+          "kind": "manifest_declaration",
+          "locator": "self",
+          "matched": null,
+          "weight": 1.0,
+          "provenance": "declared",
+          "captured_at": "2026-05-16T00:00:00.000Z"
+        }
+      ],
+      "oods": {
+        "catalog": { "version": "1.0.0" },
+        "render": {
+          "ui_schema_ref": "compose-invoice-detail",
+          "slots": [
+            { "name": "title", "binding": { "field": "invoice.number" } },
+            { "name": "price", "binding": { "field": "invoice.total_display" } },
+            { "name": "subtitle", "binding": { "field": "invoice.issued_at" } },
+            { "name": "primary_action", "binding": { "field": "invoice.pay_now_label" } }
+          ],
+          "brand_overlay": "brand-default"
+        },
+        "confidence_decomposition": {
+          "total": 0.88,
+          "signals": [
+            { "name": "trait_membership", "score": 0.9, "hint": "Actionable + Pricable" },
+            { "name": "manifest_declaration", "score": 0.86, "hint": "Authored manifest" }
+          ]
+        }
+      },
+      "relationships": {
+        "edges": [
+          {
+            "type": "billed_to",
+            "from": "urn:proto:semantic:invoice-detail-card@1.0.0",
+            "to": "urn:proto:semantic:billing-account-card@1.0.0",
+            "direction": "out",
+            "provenance": "declared",
+            "weight": 0.9
+          }
+        ]
+      }
+    }
+  ]
+}

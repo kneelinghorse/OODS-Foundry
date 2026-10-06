@@ -1,0 +1,43 @@
+{
+  "$schema": "https://oods-foundry.com/viz-spec/v1",
+  "id": "pattern:viz:simple-bar",
+  "name": "Headcount by Department",
+  "data": {
+    "values": [
+      { "department": "Engineering", "headcount": 45 },
+      { "department": "Sales", "headcount": 30 },
+      { "department": "Support", "headcount": 22 },
+      { "department": "Marketing", "headcount": 18 }
+    ]
+  },
+  "marks": [
+    {
+      "trait": "MarkBar",
+      "encodings": {
+        "x": { "field": "department", "trait": "EncodingPositionX", "channel": "x", "title": "Department" },
+        "y": { "field": "headcount", "trait": "EncodingPositionY", "channel": "y", "scale": "linear", "title": "Headcount" }
+      }
+    }
+  ],
+  "encoding": {
+    "x": { "field": "department", "trait": "EncodingPositionX", "channel": "x", "title": "Department" },
+    "y": { "field": "headcount", "trait": "EncodingPositionY", "channel": "y", "scale": "linear", "title": "Headcount" }
+  },
+  "config": {
+    "layout": { "width": 720, "height": 360, "padding": 24 }
+  },
+  "a11y": {
+    "ariaLabel": "Bar chart of headcount by department",
+    "description": "Engineering leads at 45, followed by Sales at 30; Marketing is smallest at 18.",
+    "narrative": {
+      "summary": "Headcount concentrates in Engineering and Sales, which together hold the majority of staff.",
+      "keyFindings": ["Engineering is the largest team", "Marketing is the smallest team"]
+    },
+    "tableFallback": { "enabled": true, "caption": "Headcount by department" }
+  },
+  "portability": {
+    "fallbackType": "table",
+    "tableColumnOrder": ["department", "headcount"],
+    "preferredRenderer": "vega-lite"
+  }
+}

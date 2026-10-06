@@ -11,9 +11,12 @@ import {
   SubscriptionStateMachine,
   InvoiceStateMachine,
   SUBSCRIPTION_STATES,
+  SUBSCRIPTION_EVENTS,
+  SUBSCRIPTION_TRANSITIONS,
   INVOICE_STATES,
   isRevenueGenerating,
   isTerminalState,
+  hasServiceAccess,
   isCollectible,
   isFinalized,
   type SubscriptionState,
@@ -71,14 +74,28 @@ describe('SubscriptionStateMachine', () => {
       expect(nextState).toBe('pending_cancellation');
     });
 
-    it('should transition from active to delinquent on payment_failed', () => {
+    it('should transition from active to past_due on payment_failed', () => {
       const nextState = SubscriptionStateMachine.transition('active', 'payment_failed');
-      expect(nextState).toBe('delinquent');
+      expect(nextState).toBe('past_due');
     });
 
-    it('should transition from delinquent to active on payment_succeeded', () => {
-      const nextState = SubscriptionStateMachine.transition('delinquent', 'payment_succeeded');
+    it('should transition from past_due to active on payment_succeeded', () => {
+      const nextState = SubscriptionStateMachine.transition('past_due', 'payment_succeeded');
       expect(nextState).toBe('active');
+    });
+
+    it('should transition from past_due to unpaid on retries_exhausted', () => {
+      const nextState = SubscriptionStateMachine.transition('past_due', 'retries_exhausted');
+      expect(nextState).toBe('unpaid');
+    });
+
+    it('should transition from unpaid to terminated on cancel_immediately', () => {
+      const nextState = SubscriptionStateMachine.transition('unpaid', 'cancel_immediately');
+      expect(nextState).toBe('terminated');
+    });
+
+    it('should NOT allow unpaid to recover via payment_succeeded (retries are exhausted)', () => {
+      expect(SubscriptionStateMachine.canTransition('unpaid', 'payment_succeeded')).toBe(false);
     });
 
     it('should transition from pending_cancellation to terminated on period_end', () => {
@@ -87,7 +104,7 @@ describe('SubscriptionStateMachine', () => {
     });
 
     it('should transition any state to terminated on cancel_immediately', () => {
-      const states: SubscriptionState[] = ['trialing', 'active', 'paused', 'pending_cancellation', 'delinquent'];
+      const states: SubscriptionState[] = ['trialing', 'active', 'paused', 'pending_cancellation', 'past_due', 'unpaid'];
       
       states.forEach((state) => {
         const nextState = SubscriptionStateMachine.transition(state, 'cancel_immediately');
@@ -146,7 +163,11 @@ describe('SubscriptionStateMachine', () => {
     it('should identify revenue-generating states', () => {
       expect(isRevenueGenerating('active')).toBe(true);
       expect(isRevenueGenerating('trialing')).toBe(true);
-      expect(isRevenueGenerating('delinquent')).toBe(true);
+      // past_due = retries ongoing → still revenue-generating (with collection risk).
+      expect(isRevenueGenerating('past_due')).toBe(true);
+      // MRR/ARR semantic flip (s126-m02): unpaid = retries exhausted, access revoked →
+      // NOT revenue-generating, unlike the former consolidated `delinquent`.
+      expect(isRevenueGenerating('unpaid')).toBe(false);
       expect(isRevenueGenerating('terminated')).toBe(false);
       expect(isRevenueGenerating('paused')).toBe(false);
     });
@@ -154,6 +175,78 @@ describe('SubscriptionStateMachine', () => {
     it('should identify terminal states', () => {
       expect(isTerminalState('terminated')).toBe(true);
       expect(isTerminalState('active')).toBe(false);
+    });
+
+    it('should drive status-based service access (dunning grace vs revoke)', () => {
+      // Keep access
+      expect(hasServiceAccess('active')).toBe(true);
+      expect(hasServiceAccess('trialing')).toBe(true);
+      expect(hasServiceAccess('pending_cancellation')).toBe(true);
+      // GRACE: retries ongoing → keep access
+      expect(hasServiceAccess('past_due')).toBe(true);
+      // REVOKE: retries exhausted (Stripe guidance)
+      expect(hasServiceAccess('unpaid')).toBe(false);
+      // No access
+      expect(hasServiceAccess('paused')).toBe(false);
+      expect(hasServiceAccess('future')).toBe(false);
+      expect(hasServiceAccess('terminated')).toBe(false);
+    });
+
+    it('access decision is defined for every canonical state (exhaustive)', () => {
+      for (const state of SUBSCRIPTION_STATES) {
+        expect(typeof hasServiceAccess(state)).toBe('boolean');
+      }
+    });
+  });
+
+  describe('cancellation terminality (Stripe cancel semantics)', () => {
+    it('terminated is terminal — NO outbound transition exists in the machine', () => {
+      const fromTerminated = SUBSCRIPTION_TRANSITIONS.filter((t) => t.from === 'terminated');
+      expect(fromTerminated).toEqual([]);
+      expect(SubscriptionStateMachine.getValidTransitions('terminated')).toEqual([]);
+      expect(isTerminalState('terminated')).toBe(true);
+    });
+
+    it('a terminated subscription cannot be reactivated by any event', () => {
+      for (const event of SUBSCRIPTION_EVENTS) {
+        expect(SubscriptionStateMachine.canTransition('terminated', event)).toBe(false);
+      }
+    });
+
+    it('pending_cancellation is reversible to active (Stripe: cancel_at_period_end=false)', () => {
+      expect(
+        SubscriptionStateMachine.transition('pending_cancellation', 'unschedule_cancellation')
+      ).toBe('active');
+    });
+
+    it('a scheduled cancellation can still terminate at period end or immediately', () => {
+      expect(SubscriptionStateMachine.transition('pending_cancellation', 'period_end')).toBe(
+        'terminated'
+      );
+      expect(
+        SubscriptionStateMachine.transition('pending_cancellation', 'cancel_immediately')
+      ).toBe('terminated');
+    });
+  });
+
+  describe('extend-8 canonical state set', () => {
+    it('is the exact Stripe-literal 8-state set in canonical order', () => {
+      expect([...SUBSCRIPTION_STATES]).toEqual([
+        'future',
+        'trialing',
+        'active',
+        'paused',
+        'pending_cancellation',
+        'past_due',
+        'unpaid',
+        'terminated',
+      ]);
+    });
+
+    it('replaces the consolidated `delinquent` with the past_due/unpaid split', () => {
+      expect(SUBSCRIPTION_STATES).toContain('past_due');
+      expect(SUBSCRIPTION_STATES).toContain('unpaid');
+      expect(SUBSCRIPTION_STATES as readonly string[]).not.toContain('delinquent');
     });
   });
 });
@@ -253,12 +346,12 @@ describe('deriveDelinquency', () => {
     system_time: DateTime.fromISO('2025-10-01T00:00:00Z'),
   });
 
-  it('should derive delinquent when active subscription has past_due invoices', () => {
+  it('should derive past_due when active subscription has past_due invoices', () => {
     const subscription = createSubscription('active');
     const invoices = [createInvoice('past_due', 9900)];
 
     const result = deriveDelinquency(subscription, invoices);
-    expect(result).toBe('delinquent');
+    expect(result).toBe('past_due');
   });
 
   it('should keep active when no past_due invoices', () => {
@@ -269,15 +362,15 @@ describe('deriveDelinquency', () => {
     expect(result).toBe('active');
   });
 
-  it('should preserve delinquent status', () => {
-    const subscription = createSubscription('delinquent');
+  it('should preserve past_due status', () => {
+    const subscription = createSubscription('past_due');
     const invoices: CanonicalInvoice[] = [];
 
     const result = deriveDelinquency(subscription, invoices);
-    expect(result).toBe('delinquent');
+    expect(result).toBe('past_due');
   });
 
-  it('should not derive delinquent for non-active states', () => {
+  it('should not derive past_due for non-active states', () => {
     const subscription = createSubscription('paused');
     const invoices = [createInvoice('past_due', 9900)];
 
@@ -326,7 +419,7 @@ describe('state presentation helpers', () => {
     it('should return human-readable labels for subscription states', () => {
       expect(getStateLabel('active')).toBe('Active');
       expect(getStateLabel('pending_cancellation')).toBe('Pending Cancellation');
-      expect(getStateLabel('delinquent')).toBe('Delinquent');
+      expect(getStateLabel('unpaid')).toBe('Unpaid');
     });
 
     it('should return human-readable labels for invoice states', () => {
@@ -339,7 +432,8 @@ describe('state presentation helpers', () => {
     it('should map subscription states to severity levels', () => {
       expect(getStateSeverity('active')).toBe('success');
       expect(getStateSeverity('trialing')).toBe('success');
-      expect(getStateSeverity('delinquent')).toBe('error');
+      expect(getStateSeverity('past_due')).toBe('error');
+      expect(getStateSeverity('unpaid')).toBe('error');
       expect(getStateSeverity('terminated')).toBe('error');
       expect(getStateSeverity('pending_cancellation')).toBe('warning');
       expect(getStateSeverity('paused')).toBe('warning');

@@ -1,0 +1,2225 @@
+[
+  {
+    "chartType": "bar",
+    "specEngine": "vega-lite",
+    "publicSvg": true,
+    "dashboardDrawn": true,
+    "themes": {
+      "light": true,
+      "dark": true,
+      "hc": true
+    },
+    "brands": [
+      "A",
+      "B"
+    ],
+    "a11yDescription": true,
+    "accuracyRules": [
+      "OODS-V150",
+      "OODS-V151",
+      "OODS-V152",
+      "OODS-V153"
+    ],
+    "certifyCoverage": "certified",
+    "certifyProfile": "cartesian",
+    "renderScopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "939c2c1a67224e22992cf6fced2aba52a2fc1fc6f457ffc16b037e6a1a0a5113"
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "4483417eb1dc134955ace98630668ecc7c9f49d3436488499a419bd599c38e2f"
+      },
+      {
+        "theme": "hc",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "5fa2308e6f96823d97218ce7c6174043a63a2c6cac50e4532ef315e8201b6b9a"
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "f9e3f821647f5316aac3e94b0c204fcc633c6474370daf3600c02573ddd6977a"
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "e0e8f5e918202217d1beb3b75f3c350132b01e7b3a5d7255cade2a33ef16dc4d"
+      },
+      {
+        "theme": "hc",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "b293f0ab3d6a51a1a990d3db37dc02be4b11ca04c265ef54b09bfd03c6357c1c"
+      }
+    ],
+    "certifyScopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 4,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 4,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "hc",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 4,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 4,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 4,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "hc",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 4,
+          "failing": 0
+        }
+      }
+    ],
+    "contrastMeasured": [
+      "light",
+      "dark"
+    ],
+    "contrastPassed": [
+      "light",
+      "dark"
+    ],
+    "chartInApp": "placed",
+    "notes": [
+      "HC paints are emitted from the declared token scope; contrast is forced-colors exempt and requires browser evidence.",
+      "Categorical contrast passes both brands in: light, dark.",
+      "Composed chart declarations: Invoice/detail, Invoice/workflow, Invoice/layout:dashboard, Subscription/detail, Subscription/workflow, Subscription/layout:dashboard. This census observes placement; generated React/Vue runtime proof is retained separately. Edited form data does not regenerate the static sample SVG."
+    ]
+  },
+  {
+    "chartType": "line",
+    "specEngine": "vega-lite",
+    "publicSvg": true,
+    "dashboardDrawn": true,
+    "themes": {
+      "light": true,
+      "dark": true,
+      "hc": true
+    },
+    "brands": [
+      "A",
+      "B"
+    ],
+    "a11yDescription": true,
+    "accuracyRules": [
+      "OODS-V150",
+      "OODS-V151",
+      "OODS-V152",
+      "OODS-V153"
+    ],
+    "certifyCoverage": "certified",
+    "certifyProfile": "cartesian",
+    "renderScopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "2e7f3901e39d1c64ae15ede29519f02f41488902bbb78c9d293e146c810e3276"
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "8cda8bb512e135bea96fa72b7c09b833092f36ef7d6a81d8a14068dc8d971268"
+      },
+      {
+        "theme": "hc",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "02df29a4daede6be4a942a528d01cf105bdd5eeeb6c49dff2472121aa549f597"
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "4857d8a552ddf892f9bd310c12291b52fcdb15618e01cc579f996134bf4d058b"
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "d5878b616fad4bf0b98915ae26d235d5b2bc395525633cb72cb13b6125a38efa"
+      },
+      {
+        "theme": "hc",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "8a5eea8357fdd519819584bcca76cf63672eedda35d005ac4dd36c9030cc21da"
+      }
+    ],
+    "certifyScopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 4,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 4,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "hc",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 4,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 4,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 4,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "hc",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 4,
+          "failing": 0
+        }
+      }
+    ],
+    "contrastMeasured": [
+      "light",
+      "dark"
+    ],
+    "contrastPassed": [
+      "light",
+      "dark"
+    ],
+    "chartInApp": "placed",
+    "notes": [
+      "HC paints are emitted from the declared token scope; contrast is forced-colors exempt and requires browser evidence.",
+      "Categorical contrast passes both brands in: light, dark.",
+      "Composed chart declarations: Usage/detail, Usage/workflow, Usage/layout:dashboard. This census observes placement; generated React/Vue runtime proof is retained separately. Edited form data does not regenerate the static sample SVG."
+    ]
+  },
+  {
+    "chartType": "area",
+    "specEngine": "vega-lite",
+    "publicSvg": true,
+    "dashboardDrawn": true,
+    "themes": {
+      "light": true,
+      "dark": true,
+      "hc": true
+    },
+    "brands": [
+      "A",
+      "B"
+    ],
+    "a11yDescription": true,
+    "accuracyRules": [
+      "OODS-V150",
+      "OODS-V151",
+      "OODS-V152",
+      "OODS-V153"
+    ],
+    "certifyCoverage": "certified",
+    "certifyProfile": "cartesian",
+    "renderScopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "43616fa13a7d7b19063f1f70b8ea6b3c10e371458c99b7c11f95d5bf9c89c17a"
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "b0563a17f15ed9094e9f8c092cba9a6285b3c4c295b9ab7912a67aed1cf376f9"
+      },
+      {
+        "theme": "hc",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "23a4a349f5f0cd65e1ae9a83f136ad5af08262d9f1e95908ea5f0cd6fcedde45"
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "99c7a830c48bad01e81e5f688460d40cc1ba237a43622fbd5c42ad7bd829d419"
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "3392af9da86d70f4abe571a27b3f9286f3f515d77606ad6da6d22520654bce70"
+      },
+      {
+        "theme": "hc",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "032f5a6ae40f2ff8b97e55e08db01dfec0e525de034b41b5a45958524a8c8d97"
+      }
+    ],
+    "certifyScopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 4,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 4,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "hc",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 4,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 4,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 4,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "hc",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 4,
+          "failing": 0
+        }
+      }
+    ],
+    "contrastMeasured": [
+      "light",
+      "dark"
+    ],
+    "contrastPassed": [
+      "light",
+      "dark"
+    ],
+    "chartInApp": "not-placed",
+    "notes": [
+      "HC paints are emitted from the declared token scope; contrast is forced-colors exempt and requires browser evidence.",
+      "Categorical contrast passes both brands in: light, dark.",
+      "Not placed: no public object binds this chart type through a canonical Mark chart declaration; standalone authoring preview support is separate."
+    ]
+  },
+  {
+    "chartType": "scatter",
+    "specEngine": "vega-lite",
+    "publicSvg": true,
+    "dashboardDrawn": true,
+    "themes": {
+      "light": true,
+      "dark": true,
+      "hc": true
+    },
+    "brands": [
+      "A",
+      "B"
+    ],
+    "a11yDescription": true,
+    "accuracyRules": [
+      "OODS-V150",
+      "OODS-V151",
+      "OODS-V152",
+      "OODS-V153"
+    ],
+    "certifyCoverage": "certified",
+    "certifyProfile": "cartesian",
+    "renderScopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "8a6ffbb122165a76ebc8fecb24d8356a920b259449958a634b33da2e86582d03"
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "31af28e139715b6298bb22d0475b0ef0e3a572006f389f10590de56bbaf269f3"
+      },
+      {
+        "theme": "hc",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "49ebb91fd11975e2f4e31e851602c01b4cf07715975a2292a3b7df4c001920c6"
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "5fbb85aaac62cb3acc077a079a78c16cbd8b59c670b84a8877d0fe07efd8d4c6"
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "76b69576e8b1d14c04a00aecb8e729c85008d238195c062df3322cdac7e7287e"
+      },
+      {
+        "theme": "hc",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "350bc999f4b9387c84867381ffca9e322332ef111a16df74602a97940c07465a"
+      }
+    ],
+    "certifyScopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 4,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 4,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "hc",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 4,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 4,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 4,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "hc",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 4,
+          "failing": 0
+        }
+      }
+    ],
+    "contrastMeasured": [
+      "light",
+      "dark"
+    ],
+    "contrastPassed": [
+      "light",
+      "dark"
+    ],
+    "chartInApp": "not-placed",
+    "notes": [
+      "HC paints are emitted from the declared token scope; contrast is forced-colors exempt and requires browser evidence.",
+      "Categorical contrast passes both brands in: light, dark.",
+      "Not placed: no public object binds this chart type through a canonical Mark chart declaration; standalone authoring preview support is separate."
+    ]
+  },
+  {
+    "chartType": "heatmap",
+    "specEngine": "vega-lite",
+    "publicSvg": true,
+    "dashboardDrawn": true,
+    "themes": {
+      "light": true,
+      "dark": true,
+      "hc": true
+    },
+    "brands": [
+      "A",
+      "B"
+    ],
+    "a11yDescription": true,
+    "accuracyRules": [
+      "OODS-V150",
+      "OODS-V151",
+      "OODS-V152",
+      "OODS-V153"
+    ],
+    "certifyCoverage": "certified",
+    "certifyProfile": "cartesian",
+    "renderScopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "d60b2af590d6e7ccfe23014a5dc6a30d939f34866fcaaaa48f5dbfbfae29a80c"
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "0011d8dbf236b9d17ca3f3a3714d3731176ad95df2fc7d5f76b6ac62ea0df641"
+      },
+      {
+        "theme": "hc",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "65537a6053c582a05f959349548ffec679f041718d7ba38a16d77103688022f1"
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "0e07c387fd11327fe055e0b6057ee8b8b1d60d771f5b3de470086da05ed989ea"
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "f60a89eea3cf01df7cdb163993dbb61852c7e5ff259605db4841428678dcbd4b"
+      },
+      {
+        "theme": "hc",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "7b296b432ff725a342f54e11626615a4b97a697938e2d33019b6a86ad78c4ba1"
+      }
+    ],
+    "certifyScopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "unchecked",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 4,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "unchecked",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 4,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "hc",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 4,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "unchecked",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 4,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "unchecked",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 4,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "hc",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 4,
+          "failing": 0
+        }
+      }
+    ],
+    "contrastMeasured": [],
+    "contrastPassed": [],
+    "chartInApp": "not-placed",
+    "notes": [
+      "HC paints are emitted from the declared token scope; contrast is forced-colors exempt and requires browser evidence.",
+      "Contrast verdict unchecked; no categorical canvas-ratio measurement claimed.",
+      "Not placed: no public object binds this chart type through a canonical Mark chart declaration; standalone authoring preview support is separate."
+    ]
+  },
+  {
+    "chartType": "treemap",
+    "specEngine": "echarts",
+    "publicSvg": true,
+    "dashboardDrawn": true,
+    "themes": {
+      "light": true,
+      "dark": true,
+      "hc": true
+    },
+    "brands": [
+      "A",
+      "B"
+    ],
+    "a11yDescription": true,
+    "accuracyRules": [
+      "OODS-V154",
+      "OODS-V155"
+    ],
+    "certifyCoverage": "certified",
+    "certifyProfile": "echarts-data",
+    "renderScopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "080a108d6176a4c9a7fc086ad48bb02de04cf54588dee1327b43731dab074d54"
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "d920070d3757ae43e13fe771bb96bdd1095f382b13d08170bc0dcc29438a4552"
+      },
+      {
+        "theme": "hc",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "b84b6a452dc96a9d4bfda113709ac4ce94b5758a8c54bd9797b7272711508412"
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "89a4d7d4d43d3a5c3b56014bf5403f32fd5e2d824cd87c7ba7000671c38bb4b3"
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "3d76668f2cf8a980a2cbd057476d5b97f89c4ba465e45b6a74fec40ebc2ba09d"
+      },
+      {
+        "theme": "hc",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "b84b6a452dc96a9d4bfda113709ac4ce94b5758a8c54bd9797b7272711508412"
+      }
+    ],
+    "certifyScopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 2,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 2,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "hc",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 2,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 2,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 2,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "hc",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 2,
+          "failing": 0
+        }
+      }
+    ],
+    "contrastMeasured": [
+      "light",
+      "dark"
+    ],
+    "contrastPassed": [
+      "light",
+      "dark"
+    ],
+    "chartInApp": "not-placed",
+    "notes": [
+      "HC paints are emitted from the declared token scope; contrast is forced-colors exempt and requires browser evidence.",
+      "Categorical contrast passes both brands in: light, dark.",
+      "Not placed: treemap requires a hierarchy array; no public object declares one."
+    ]
+  },
+  {
+    "chartType": "sunburst",
+    "specEngine": "echarts",
+    "publicSvg": true,
+    "dashboardDrawn": true,
+    "themes": {
+      "light": true,
+      "dark": true,
+      "hc": true
+    },
+    "brands": [
+      "A",
+      "B"
+    ],
+    "a11yDescription": true,
+    "accuracyRules": [
+      "OODS-V154",
+      "OODS-V155"
+    ],
+    "certifyCoverage": "certified",
+    "certifyProfile": "echarts-data",
+    "renderScopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "dbb63ab43eea2a18f60714872d124efdc8319a77c7ca77c6d6d37c3bdca164bc"
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "d319efad79e7da73cb9ee63ae39afe94d649bca84c77532cc3ab2b3be8a91f78"
+      },
+      {
+        "theme": "hc",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "4a077d80bceab5f4f191073812bde7807afb963b182a1ace5e639247e37bfa29"
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "00838082e347ac9e67ca73f24168766b140ccad633ef534cf97e1a7373326d49"
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "93928c353f5f333257179d00aeb2239ba0f99990c5ba22e814cbcda66407ef70"
+      },
+      {
+        "theme": "hc",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "4a077d80bceab5f4f191073812bde7807afb963b182a1ace5e639247e37bfa29"
+      }
+    ],
+    "certifyScopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 2,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 2,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "hc",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 2,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 2,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 2,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "hc",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 2,
+          "failing": 0
+        }
+      }
+    ],
+    "contrastMeasured": [
+      "light",
+      "dark"
+    ],
+    "contrastPassed": [
+      "light",
+      "dark"
+    ],
+    "chartInApp": "not-placed",
+    "notes": [
+      "HC paints are emitted from the declared token scope; contrast is forced-colors exempt and requires browser evidence.",
+      "Categorical contrast passes both brands in: light, dark.",
+      "Not placed: sunburst requires a hierarchy array; no public object declares one."
+    ]
+  },
+  {
+    "chartType": "sankey",
+    "specEngine": "echarts",
+    "publicSvg": true,
+    "dashboardDrawn": true,
+    "themes": {
+      "light": true,
+      "dark": true,
+      "hc": true
+    },
+    "brands": [
+      "A",
+      "B"
+    ],
+    "a11yDescription": true,
+    "accuracyRules": [
+      "OODS-V156",
+      "OODS-V157",
+      "OODS-V158"
+    ],
+    "certifyCoverage": "certified",
+    "certifyProfile": "echarts-data",
+    "renderScopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "b5a2624a9d9cc7d9910098d7a7d8fd553c0f53899b8e5e01846f4ef9d7c0293e"
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "668d9439e3cd6317cd45d82c899e0cff80f33fda514e75b231627decef26ab2a"
+      },
+      {
+        "theme": "hc",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "2fbb66b8866c12cec1421e5fab46afed5b512de7142b3ca32aacee7548992377"
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "65040a36bd58ecfbe92969ca1e0634e3a9e7dfde1fb4abfeb1acf62696c6e6de"
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "ddba307b1bd22ceb07c149ecc0828945a38f514990dc58b1f670da5781052d02"
+      },
+      {
+        "theme": "hc",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "2fbb66b8866c12cec1421e5fab46afed5b512de7142b3ca32aacee7548992377"
+      }
+    ],
+    "certifyScopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 3,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 3,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "hc",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 3,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 3,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 3,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "hc",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 3,
+          "failing": 0
+        }
+      }
+    ],
+    "contrastMeasured": [
+      "light",
+      "dark"
+    ],
+    "contrastPassed": [
+      "light",
+      "dark"
+    ],
+    "chartInApp": "not-placed",
+    "notes": [
+      "HC paints are emitted from the declared token scope; contrast is forced-colors exempt and requires browser evidence.",
+      "Categorical contrast passes both brands in: light, dark.",
+      "Not placed: sankey requires numeric link values; Relationship neighborhood edges do not declare them."
+    ]
+  },
+  {
+    "chartType": "chord",
+    "specEngine": "echarts",
+    "publicSvg": true,
+    "dashboardDrawn": "excluded (#881)",
+    "themes": {
+      "light": true,
+      "dark": true,
+      "hc": true
+    },
+    "brands": [
+      "A",
+      "B"
+    ],
+    "a11yDescription": true,
+    "accuracyRules": [
+      "OODS-V156"
+    ],
+    "certifyCoverage": "certified",
+    "certifyProfile": "echarts-data",
+    "renderScopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "5e786f4b999ec0d612635d900e91aedd87077b82fc410b2e09d37f07893b6ccf"
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "43a72ee4ae01f0fe87215ae55bfa1db72c21afd89f387e6c28d66c02eda22b54"
+      },
+      {
+        "theme": "hc",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "b6a2c3ddcf3e457f8dc4bfad2e97aaf3d59dc843a7f8d963c72c1418347789ec"
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "6eb6c5aeb48b9058ce30aa8e93965d6b8caf05bcd46ebe94b1de63e9bbd3ca8e"
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "c6e1d25a7a0c32b0e41ab44a03fd1199acba138bbd9a6c8e12704be52bad008c"
+      },
+      {
+        "theme": "hc",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "b6a2c3ddcf3e457f8dc4bfad2e97aaf3d59dc843a7f8d963c72c1418347789ec"
+      }
+    ],
+    "certifyScopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 1,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 1,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "hc",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 1,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 1,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 1,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "hc",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 1,
+          "failing": 0
+        }
+      }
+    ],
+    "contrastMeasured": [
+      "light",
+      "dark"
+    ],
+    "contrastPassed": [
+      "light",
+      "dark"
+    ],
+    "chartInApp": "not-placed",
+    "notes": [
+      "HC paints are emitted from the declared token scope; contrast is forced-colors exempt and requires browser evidence.",
+      "Categorical contrast passes both brands in: light, dark.",
+      "Dashboard exclusion (#881): the public panel schema does not admit this type.",
+      "Not placed: chord requires numeric link values; Relationship neighborhood edges do not declare them."
+    ]
+  },
+  {
+    "chartType": "force_graph",
+    "specEngine": "echarts",
+    "publicSvg": true,
+    "dashboardDrawn": true,
+    "themes": {
+      "light": true,
+      "dark": true,
+      "hc": true
+    },
+    "brands": [
+      "A",
+      "B"
+    ],
+    "a11yDescription": true,
+    "accuracyRules": [
+      "OODS-V173"
+    ],
+    "certifyCoverage": "certified",
+    "certifyProfile": "echarts-data",
+    "renderScopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "cb86be8c59eb264b819a17b9ec94cd61385002f6b03468dca8821029e1807e53"
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "f71330021eb342983d8d0a3f1292bbc258c2b5a08e159c15386a4b42ce114e07"
+      },
+      {
+        "theme": "hc",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "d15860dd2eb8e945f50ffd4eb11f4bfd117793b7d2f583ffe5a567195fd3262d"
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "1453896d7060f36163fd85fd42ec54d55132f91239754fe8159ea1f211af2435"
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "5ed697eff0d56162dbff1a77d21659529e335f12f22fe2ec0666dac193d1c438"
+      },
+      {
+        "theme": "hc",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "d15860dd2eb8e945f50ffd4eb11f4bfd117793b7d2f583ffe5a567195fd3262d"
+      }
+    ],
+    "certifyScopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 1,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 1,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "hc",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 1,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 1,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "pass",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 1,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "hc",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 1,
+          "failing": 0
+        }
+      }
+    ],
+    "contrastMeasured": [
+      "light",
+      "dark"
+    ],
+    "contrastPassed": [
+      "light",
+      "dark"
+    ],
+    "chartInApp": "placed",
+    "notes": [
+      "HC paints are emitted from the declared token scope; contrast is forced-colors exempt and requires browser evidence.",
+      "Categorical contrast passes both brands in: light, dark.",
+      "Composed chart declarations: Relationship/detail, Relationship/workflow. This census observes placement; generated React/Vue runtime proof is retained separately. Edited form data does not regenerate the static sample SVG."
+    ]
+  },
+  {
+    "chartType": "choropleth",
+    "specEngine": "echarts",
+    "publicSvg": true,
+    "dashboardDrawn": true,
+    "themes": {
+      "light": true,
+      "dark": true,
+      "hc": true
+    },
+    "brands": [
+      "A",
+      "B"
+    ],
+    "a11yDescription": true,
+    "accuracyRules": [
+      "OODS-V159"
+    ],
+    "certifyCoverage": "certified",
+    "certifyProfile": "echarts-data",
+    "renderScopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "a7d458fc93a97653616e6fa343ee4d97e66dd43c5fe4b4df4cd7652272a819a9"
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "ad5bf00122ed09cab940884c27ed751b6b43a68122c28bd6a6e1156897af723e"
+      },
+      {
+        "theme": "hc",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "730ab6e8f662dcb6b1fc6b125b0bac711a6798e65d346c025533ac6f449d7bfb"
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "105e70e393c97595af873499094d02defc8f342129455b2959e36fba08117ffe"
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "51a9723284489a0df23eacc6848f5da4462648129ee50587dd55f63c72bf7764"
+      },
+      {
+        "theme": "hc",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "730ab6e8f662dcb6b1fc6b125b0bac711a6798e65d346c025533ac6f449d7bfb"
+      }
+    ],
+    "certifyScopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 1,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 1,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "hc",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 1,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 1,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 1,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "hc",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 1,
+          "failing": 0
+        }
+      }
+    ],
+    "contrastMeasured": [],
+    "contrastPassed": [],
+    "chartInApp": "not-placed",
+    "notes": [
+      "HC paints are emitted from the declared token scope; contrast is forced-colors exempt and requires browser evidence.",
+      "Contrast verdict exempt; no categorical canvas-ratio measurement claimed.",
+      "Not placed: choropleth requires inline geometry and matched region values; no public object declares that operand."
+    ]
+  },
+  {
+    "chartType": "bubble_map",
+    "specEngine": "echarts",
+    "publicSvg": true,
+    "dashboardDrawn": true,
+    "themes": {
+      "light": true,
+      "dark": true,
+      "hc": true
+    },
+    "brands": [
+      "A",
+      "B"
+    ],
+    "a11yDescription": true,
+    "accuracyRules": [
+      "OODS-V168",
+      "OODS-V169",
+      "OODS-V170"
+    ],
+    "certifyCoverage": "certified",
+    "certifyProfile": "echarts-data",
+    "renderScopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "bff25a01b32ffdc2f2d5f975363c69cd576f0c6d7849d3da2907a72fa0cec0cc"
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "735dcb87b98d71018e2cdc49b9edb5a1e7f5a58232d6c35cc5b4459ca52cc880"
+      },
+      {
+        "theme": "hc",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "56a6cf309a4dd0cb420e3788ad8e2a2ec817ecee7dde50f70aed1ab872790e69"
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "ce680208d37d4e5bfb19eddc5b602f57f17f8eca8519c39ce0d4e90ba5ef3332"
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "087d55fadc2e29f090ab51b7e55cdc467ce46c8628373bb464c7f7f9e333c990"
+      },
+      {
+        "theme": "hc",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "56a6cf309a4dd0cb420e3788ad8e2a2ec817ecee7dde50f70aed1ab872790e69"
+      }
+    ],
+    "certifyScopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 3,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 3,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "hc",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 3,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 3,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 3,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "hc",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 3,
+          "failing": 0
+        }
+      }
+    ],
+    "contrastMeasured": [],
+    "contrastPassed": [],
+    "chartInApp": "not-placed",
+    "notes": [
+      "HC paints are emitted from the declared token scope; contrast is forced-colors exempt and requires browser evidence.",
+      "Contrast verdict exempt; no categorical canvas-ratio measurement claimed.",
+      "Not placed: bubble_map requires inline geometry and size-bound point values; no public object declares that operand."
+    ]
+  },
+  {
+    "chartType": "flow_map",
+    "specEngine": "echarts",
+    "publicSvg": true,
+    "dashboardDrawn": "excluded (#881)",
+    "themes": {
+      "light": true,
+      "dark": true,
+      "hc": true
+    },
+    "brands": [
+      "A",
+      "B"
+    ],
+    "a11yDescription": true,
+    "accuracyRules": [
+      "OODS-V171",
+      "OODS-V172"
+    ],
+    "certifyCoverage": "certified",
+    "certifyProfile": "echarts-data",
+    "renderScopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "27a81f9d9e8d79249eb3dc2160748fdc0e65bdae102b075c761852d425878a6b"
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "3e926de16b4cfc7543a9fcd6b5d65e8caa355bb34a01639185ab0855e5ace656"
+      },
+      {
+        "theme": "hc",
+        "brand": "A",
+        "status": "rendered",
+        "svgHash": "8b7e8dcb7f8bf9245099503ffa623e226dea01a79c1f7d679985f1fca4b216dc"
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "3cd73bbe2b571d6ff650970025dd5efd05aadd9cabec39e6beb9fe27613b6bdf"
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "fcae0e2adb79b72f85b4faefa5327995c4aecfec47ed89a0802ab0283d06e72a"
+      },
+      {
+        "theme": "hc",
+        "brand": "B",
+        "status": "rendered",
+        "svgHash": "8b7e8dcb7f8bf9245099503ffa623e226dea01a79c1f7d679985f1fca4b216dc"
+      }
+    ],
+    "certifyScopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 2,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 2,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "hc",
+        "brand": "A",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 2,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 2,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 2,
+          "failing": 0
+        }
+      },
+      {
+        "theme": "hc",
+        "brand": "B",
+        "coverage": "certified",
+        "conformant": true,
+        "pillars": {
+          "a11yEquivalence": "pass",
+          "determinism": "pass",
+          "contrast": "exempt",
+          "accuracy": "pass"
+        },
+        "accuracySummary": {
+          "rulesEvaluated": 2,
+          "failing": 0
+        }
+      }
+    ],
+    "contrastMeasured": [],
+    "contrastPassed": [],
+    "chartInApp": "not-placed",
+    "notes": [
+      "HC paints are emitted from the declared token scope; contrast is forced-colors exempt and requires browser evidence.",
+      "Dashboard exclusion (#881): the public panel schema does not admit this type.",
+      "Contrast verdict exempt; no categorical canvas-ratio measurement claimed.",
+      "Not placed: flow_map requires inline geometry and origin/destination flows; no public object declares that operand."
+    ]
+  }
+]

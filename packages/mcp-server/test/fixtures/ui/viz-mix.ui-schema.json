@@ -1,0 +1,27 @@
+{
+  "version": "2026.02",
+  "dsVersion": "2026-02-24",
+  "theme": "light",
+  "screens": [
+    {
+      "id": "viz-screen",
+      "component": "Stack",
+      "children": [
+        { "id": "viz-area-controls", "component": "VizAreaControls", "props": { "title": "Area Controls", "curve": "linear", "opacity": "0.6" } },
+        { "id": "viz-area-preview", "component": "VizAreaPreview", "props": { "width": 800, "height": 400 } },
+        { "id": "viz-line-controls", "component": "VizLineControls", "props": { "title": "Line Controls", "curve": "monotone", "markers": "auto" } },
+        { "id": "viz-line-preview", "component": "VizLinePreview", "props": { "width": 800, "height": 400 } },
+        { "id": "viz-axis-controls", "component": "VizAxisControls", "props": { "title": "Axis Controls", "xField": "date", "yField": "revenue" } },
+        { "id": "viz-axis-summary", "component": "VizAxisSummary", "props": { "title": "Axis Summary", "axis": "x", "scale": "linear", "zero": true } },
+        { "id": "viz-color-controls", "component": "VizColorControls", "props": { "title": "Color Controls", "scheme": "viridis", "channel": "fill" } },
+        { "id": "viz-color-legend", "component": "VizColorLegendConfig", "props": { "title": "Legend", "field": "segment", "scheme": "viridis", "redundancy": "shape" } },
+        { "id": "viz-size-controls", "component": "VizSizeControls", "props": { "title": "Size Controls", "strategy": "range", "min": "8", "max": "42" } },
+        { "id": "viz-size-summary", "component": "VizSizeSummary", "props": { "title": "Size Summary", "field": "revenue", "strategy": "range", "min": 8, "max": 42 } },
+        { "id": "viz-scale-controls", "component": "VizScaleControls", "props": { "title": "Scale Controls", "type": "linear", "domainMin": "0", "domainMax": "100" } },
+        { "id": "viz-scale-summary", "component": "VizScaleSummary", "props": { "title": "Scale Summary", "type": "linear", "domainMin": 0, "domainMax": 100, "mode": "fit" } },
+        { "id": "viz-encoding-badge", "component": "VizEncodingBadge", "props": { "axis": "x", "field": "revenue" } },
+        { "id": "viz-role-badge", "component": "VizRoleBadge", "props": { "role": "mark" } }
+      ]
+    }
+  ]
+}

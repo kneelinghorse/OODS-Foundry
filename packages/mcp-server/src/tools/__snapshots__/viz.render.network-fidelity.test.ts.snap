@@ -1,0 +1,638 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`viz.render network/hierarchy render-fidelity goldens > chord: the produced echartsSpec matches the committed golden 1`] = `
+{
+  "aria": {
+    "description": "Chord diagram of category↔category weighted flows.",
+    "enabled": true,
+  },
+  "backgroundColor": "#FFFFFF",
+  "color": [
+    "rgb(62, 99, 221)",
+    "rgb(185, 142, 0)",
+    "rgb(128, 8, 131)",
+    "rgb(12, 123, 45)",
+    "rgb(123, 0, 8)",
+    "rgb(0, 163, 179)",
+  ],
+  "series": [
+    {
+      "clockwise": true,
+      "coordinateSystem": "none",
+      "emphasis": {
+        "focus": "adjacency",
+      },
+      "itemStyle": {
+        "borderColor": "#D4D4D4",
+        "borderWidth": 1,
+      },
+      "label": {
+        "color": "#0A0A0A",
+        "position": "outside",
+        "show": true,
+      },
+      "lineStyle": {
+        "color": "source",
+        "curveness": 0.5,
+        "opacity": 0.5,
+      },
+      "links": [
+        {
+          "source": "AMER",
+          "target": "EMEA",
+          "value": 42,
+        },
+        {
+          "source": "EMEA",
+          "target": "APAC",
+          "value": 31,
+        },
+        {
+          "source": "APAC",
+          "target": "AMER",
+          "value": 25,
+        },
+      ],
+      "minAngle": 0,
+      "name": "Chord",
+      "nodes": [
+        {
+          "itemStyle": {
+            "color": "rgb(62, 99, 221)",
+          },
+          "name": "AMER",
+        },
+        {
+          "itemStyle": {
+            "color": "rgb(185, 142, 0)",
+          },
+          "name": "EMEA",
+        },
+        {
+          "itemStyle": {
+            "color": "rgb(128, 8, 131)",
+          },
+          "name": "APAC",
+        },
+      ],
+      "padAngle": 3,
+      "startAngle": 90,
+      "type": "chord",
+    },
+  ],
+  "tooltip": {
+    "formatter": "{b}: {c}",
+    "trigger": "item",
+  },
+  "usermeta": {
+    "oods": {
+      "a11y": {
+        "ariaLabel": "Chord diagram",
+        "description": "Chord diagram of category↔category weighted flows.",
+      },
+      "specId": "viz:chord",
+    },
+  },
+}
+`;
+
+exports[`viz.render network/hierarchy render-fidelity goldens > force_graph: the produced echartsSpec matches the committed golden 1`] = `
+{
+  "aria": {
+    "description": "Force-directed graph of network data.",
+    "enabled": true,
+  },
+  "backgroundColor": "#FFFFFF",
+  "color": [
+    "rgb(62, 99, 221)",
+    "rgb(185, 142, 0)",
+    "rgb(128, 8, 131)",
+    "rgb(12, 123, 45)",
+    "rgb(123, 0, 8)",
+    "rgb(0, 163, 179)",
+  ],
+  "legend": {
+    "data": [
+      "backend",
+      "data",
+      "frontend",
+    ],
+    "show": true,
+    "textStyle": {
+      "color": "#525252",
+    },
+  },
+  "series": [
+    {
+      "categories": [
+        {
+          "itemStyle": {
+            "color": "rgb(62, 99, 221)",
+          },
+          "name": "backend",
+        },
+        {
+          "itemStyle": {
+            "color": "rgb(185, 142, 0)",
+          },
+          "name": "data",
+        },
+        {
+          "itemStyle": {
+            "color": "rgb(128, 8, 131)",
+          },
+          "name": "frontend",
+        },
+      ],
+      "data": [
+        {
+          "category": 2,
+          "fixed": false,
+          "id": "web",
+          "name": "web",
+          "symbolSize": 10,
+          "value": 9,
+        },
+        {
+          "category": 0,
+          "fixed": false,
+          "id": "api",
+          "name": "api",
+          "symbolSize": 10,
+          "value": 6,
+        },
+        {
+          "category": 1,
+          "fixed": false,
+          "id": "db",
+          "name": "db",
+          "symbolSize": 10,
+          "value": 4,
+        },
+      ],
+      "draggable": true,
+      "edgeLabel": {
+        "show": false,
+      },
+      "emphasis": {
+        "focus": "adjacency",
+        "lineStyle": {
+          "width": 4,
+        },
+      },
+      "force": {
+        "edgeLength": 115,
+        "friction": 0.6,
+        "gravity": 0.1,
+        "layoutAnimation": true,
+        "repulsion": 288,
+      },
+      "label": {
+        "color": "#0A0A0A",
+        "formatter": "{b}",
+        "position": "right",
+        "show": true,
+      },
+      "labelLayout": {
+        "hideOverlap": true,
+      },
+      "layout": "force",
+      "lineStyle": {
+        "color": "source",
+        "curveness": 0.3,
+        "opacity": 1,
+      },
+      "links": [
+        {
+          "lineStyle": {
+            "width": 1,
+          },
+          "source": "web",
+          "target": "api",
+          "value": 3,
+        },
+        {
+          "lineStyle": {
+            "width": 1,
+          },
+          "source": "api",
+          "target": "db",
+          "value": 2,
+        },
+      ],
+      "name": "Graph",
+      "roam": true,
+      "type": "graph",
+    },
+  ],
+  "tooltip": {
+    "trigger": "item",
+  },
+  "usermeta": {
+    "oods": {
+      "a11y": {
+        "ariaLabel": "Force-directed graph",
+        "description": "Force-directed graph of network data.",
+      },
+      "specId": "viz:force_graph",
+    },
+  },
+}
+`;
+
+exports[`viz.render network/hierarchy render-fidelity goldens > sankey: the produced echartsSpec matches the committed golden 1`] = `
+{
+  "aria": {
+    "description": "Sankey diagram of flow data.",
+    "enabled": true,
+  },
+  "backgroundColor": "#FFFFFF",
+  "color": [
+    "rgb(62, 99, 221)",
+    "rgb(185, 142, 0)",
+    "rgb(128, 8, 131)",
+    "rgb(12, 123, 45)",
+    "rgb(123, 0, 8)",
+    "rgb(0, 163, 179)",
+  ],
+  "series": [
+    {
+      "data": [
+        {
+          "itemStyle": {
+            "color": "rgb(62, 99, 221)",
+          },
+          "name": "Coal",
+          "value": 100,
+        },
+        {
+          "itemStyle": {
+            "color": "rgb(185, 142, 0)",
+          },
+          "name": "Grid",
+          "value": 100,
+        },
+        {
+          "itemStyle": {
+            "color": "rgb(128, 8, 131)",
+          },
+          "name": "Homes",
+          "value": 60,
+        },
+        {
+          "itemStyle": {
+            "color": "rgb(12, 123, 45)",
+          },
+          "name": "Industry",
+          "value": 40,
+        },
+      ],
+      "emphasis": {
+        "focus": "adjacency",
+        "lineStyle": {
+          "color": "source",
+        },
+      },
+      "itemStyle": {
+        "borderColor": "#D4D4D4",
+        "borderWidth": 1,
+      },
+      "label": {
+        "color": "#0A0A0A",
+        "position": "right",
+        "show": true,
+      },
+      "layoutIterations": 32,
+      "lineStyle": {
+        "color": "gradient",
+        "curveness": 0.5,
+        "opacity": 0.5,
+      },
+      "links": [
+        {
+          "source": "Coal",
+          "target": "Grid",
+          "value": 100,
+        },
+        {
+          "source": "Grid",
+          "target": "Homes",
+          "value": 60,
+        },
+        {
+          "source": "Grid",
+          "target": "Industry",
+          "value": 40,
+        },
+      ],
+      "name": "Sankey",
+      "nodeAlign": "justify",
+      "nodeGap": 8,
+      "nodeWidth": 20,
+      "orient": "horizontal",
+      "type": "sankey",
+    },
+  ],
+  "tooltip": {
+    "trigger": "item",
+  },
+  "usermeta": {
+    "oods": {
+      "a11y": {
+        "ariaLabel": "Sankey diagram",
+        "description": "Sankey diagram of flow data.",
+      },
+      "specId": "viz:sankey",
+    },
+  },
+}
+`;
+
+exports[`viz.render network/hierarchy render-fidelity goldens > sunburst: the produced echartsSpec matches the committed golden 1`] = `
+{
+  "aria": {
+    "description": "Sunburst of hierarchical data.",
+    "enabled": true,
+  },
+  "backgroundColor": "#FFFFFF",
+  "color": [
+    "rgb(62, 99, 221)",
+    "rgb(185, 142, 0)",
+    "rgb(128, 8, 131)",
+    "rgb(12, 123, 45)",
+    "rgb(123, 0, 8)",
+    "rgb(0, 163, 179)",
+  ],
+  "series": [
+    {
+      "data": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "itemStyle": {
+                    "color": "rgb(62, 99, 221)",
+                  },
+                  "name": "Frontend",
+                  "value": 25,
+                },
+                {
+                  "children": [],
+                  "itemStyle": {
+                    "color": "rgb(62, 99, 221)",
+                  },
+                  "name": "Backend",
+                  "value": 35,
+                },
+              ],
+              "itemStyle": {
+                "color": "rgb(62, 99, 221)",
+              },
+              "name": "Engineering",
+              "value": 60,
+            },
+            {
+              "children": [],
+              "itemStyle": {
+                "color": "rgb(185, 142, 0)",
+              },
+              "name": "Sales",
+              "value": 40,
+            },
+          ],
+          "name": "Org",
+          "value": 100,
+        },
+      ],
+      "emphasis": {
+        "focus": "ancestor",
+        "itemStyle": {
+          "borderColor": "#525252",
+          "borderWidth": 3,
+          "shadowBlur": 10,
+        },
+      },
+      "itemStyle": {
+        "borderColor": "#FFFFFF",
+        "borderRadius": 4,
+        "borderWidth": 2,
+      },
+      "label": {
+        "color": "#0A0A0A",
+        "rotate": "radial",
+        "textBorderColor": "#FFFFFF",
+        "textBorderWidth": 2,
+      },
+      "levels": [
+        {},
+        {
+          "itemStyle": {
+            "borderColor": "#D4D4D4",
+            "borderWidth": 1,
+          },
+          "label": {
+            "rotate": "tangential",
+          },
+          "r": "32%",
+          "r0": "12%",
+        },
+        {
+          "itemStyle": {
+            "borderColor": "#D4D4D4",
+            "borderWidth": 1,
+          },
+          "label": {
+            "align": "right",
+          },
+          "r": "68%",
+          "r0": "32%",
+        },
+        {
+          "itemStyle": {
+            "borderColor": "#D4D4D4",
+            "borderWidth": 2,
+          },
+          "label": {
+            "show": false,
+          },
+          "r": "72%",
+          "r0": "68%",
+        },
+      ],
+      "name": "Sunburst",
+      "radius": [
+        "0%",
+        "90%",
+      ],
+      "sort": "desc",
+      "startAngle": 90,
+      "type": "sunburst",
+    },
+  ],
+  "tooltip": {
+    "trigger": "item",
+    "triggerOn": "mousemove",
+  },
+  "usermeta": {
+    "oods": {
+      "a11y": {
+        "ariaLabel": "Sunburst",
+        "description": "Sunburst of hierarchical data.",
+      },
+      "specId": "viz:sunburst",
+    },
+  },
+}
+`;
+
+exports[`viz.render network/hierarchy render-fidelity goldens > treemap: the produced echartsSpec matches the committed golden 1`] = `
+{
+  "aria": {
+    "description": "Treemap of hierarchical data.",
+    "enabled": true,
+  },
+  "backgroundColor": "#FFFFFF",
+  "color": [
+    "rgb(62, 99, 221)",
+    "rgb(185, 142, 0)",
+    "rgb(128, 8, 131)",
+    "rgb(12, 123, 45)",
+    "rgb(123, 0, 8)",
+    "rgb(0, 163, 179)",
+  ],
+  "series": [
+    {
+      "breadcrumb": {
+        "emphasis": {
+          "itemStyle": {
+            "borderColor": "#D4D4D4",
+            "color": "#FFFFFF",
+            "textStyle": {
+              "color": "#0A0A0A",
+            },
+          },
+        },
+        "itemStyle": {
+          "borderColor": "#D4D4D4",
+          "color": "#FFFFFF",
+          "textStyle": {
+            "color": "#0A0A0A",
+          },
+        },
+        "show": true,
+        "textStyle": {
+          "color": "#0A0A0A",
+        },
+      },
+      "data": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "Frontend",
+                  "value": 25,
+                },
+                {
+                  "children": [],
+                  "name": "Backend",
+                  "value": 35,
+                },
+              ],
+              "itemStyle": {
+                "color": "rgb(62, 99, 221)",
+              },
+              "name": "Engineering",
+              "value": 60,
+            },
+            {
+              "children": [],
+              "itemStyle": {
+                "color": "rgb(185, 142, 0)",
+              },
+              "name": "Sales",
+              "value": 40,
+            },
+          ],
+          "name": "Org",
+          "value": 100,
+        },
+      ],
+      "emphasis": {
+        "focus": "ancestor",
+        "itemStyle": {
+          "borderColor": "#525252",
+          "borderWidth": 2,
+          "shadowBlur": 2,
+          "shadowColor": "rgba(0, 0, 0, 0.05)",
+        },
+      },
+      "itemStyle": {
+        "borderColor": "#D4D4D4",
+        "borderWidth": 1,
+        "gapWidth": 1,
+      },
+      "label": {
+        "color": "#0A0A0A",
+        "formatter": "{b}",
+        "show": true,
+        "textBorderColor": "#FFFFFF",
+        "textBorderWidth": 2,
+      },
+      "levels": [
+        {
+          "itemStyle": {
+            "borderWidth": 0,
+            "gapWidth": 4,
+          },
+          "upperLabel": {
+            "show": false,
+          },
+        },
+        {
+          "itemStyle": {
+            "borderColor": "#D4D4D4",
+            "borderWidth": 2,
+            "gapWidth": 2,
+          },
+        },
+        {
+          "itemStyle": {
+            "borderColor": "#D4D4D4",
+            "borderWidth": 1,
+            "gapWidth": 1,
+          },
+        },
+      ],
+      "name": "Treemap",
+      "nodeClick": "zoomToNode",
+      "roam": false,
+      "squareRatio": 1.618,
+      "type": "treemap",
+      "upperLabel": {
+        "color": "#0A0A0A",
+        "height": 28,
+        "show": true,
+        "textBorderColor": "#FFFFFF",
+        "textBorderWidth": 2,
+      },
+    },
+  ],
+  "tooltip": {
+    "trigger": "item",
+    "triggerOn": "mousemove",
+  },
+  "usermeta": {
+    "oods": {
+      "a11y": {
+        "ariaLabel": "Treemap",
+        "description": "Treemap of hierarchical data.",
+      },
+      "specId": "viz:treemap",
+    },
+  },
+}
+`;

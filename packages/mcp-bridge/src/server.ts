@@ -1,3 +1,4 @@
+import './load-env.js';
 import cors from '@fastify/cors';
 import rateLimit from '@fastify/rate-limit';
 import fastifyStatic from '@fastify/static';
@@ -17,8 +18,15 @@ import {
 } from './config.js';
 import { registerArtifactEndpoints } from './endpoints/artifacts.js';
 import { buildErrorPayload, normalizeRunErrorCode, sendError, statusForCode } from './middleware/errors.js';
+import { rateLimitOptions } from './middleware/rate-limit.js';
+import { listenOnLoopback, PortInUseError, refuseForeignHosts } from './listen.js';
+import { buildToolNameMaps, legacyToolWarning, resolveInternalToolName } from './tool-names.js';
+import { resolveBridgeToolSurface } from './tool-surface.js';
+import { registerBridgeHealth } from './health.js';
+import { resolveBridgeArtifacts, activeTokenPackageRoot, resolveTokenPackageRoot } from './runtime-paths.js';
+import { registerPreviewHost } from './preview/host.js';
+import { resolveCompositionsDir } from './preview/store.js';
 
-const ALLOWED_TOOLS = new Set(bridgeConfig.tools.allowed);
 const APPROVAL_REQUIRED_TOOLS = approvalRequiredTools;
 const APPLY_CAPABLE_TOOLS = applyCapableTools;
 const POLICY_UX_DOC = policyDocs.ux;
@@ -42,6 +50,8 @@ class McpClient {
     { resolve: (v: any) => void; reject: (e: any) => void }
   >();
   private buffer = '';
+  /** Where the preview host listens; sent with every request so design.preview can hand back URLs. */
+  previewHostUrl: string | undefined;
 
   constructor(private serverCwd: string) {}
 
@@ -86,11 +96,23 @@ class McpClient {
     });
   }
 
+  async close(): Promise<void> {
+    const child = this.child;
+    if (!child) return;
+    await new Promise<void>((resolve) => {
+      const timeout = setTimeout(() => child.kill('SIGKILL'), 2_000);
+      timeout.unref();
+      child.once('exit', () => { clearTimeout(timeout); resolve(); });
+      child.kill('SIGTERM');
+    });
+  }
+
   async run(tool: string, input: any, role?: string): Promise<any> {
     this.ensure();
     const id = ++this.seq;
-    const envelope: { id: number; tool: string; input: any; role?: string } = { id, tool, input };
+    const envelope: { id: number; tool: string; input: any; role?: string; context?: { previewHostUrl: string } } = { id, tool, input };
     if (role) envelope.role = role;
+    if (this.previewHostUrl) envelope.context = { previewHostUrl: this.previewHostUrl };
     const payload = JSON.stringify(envelope) + '\n';
     return new Promise((resolve, reject) => {
       this.pending.set(id, { resolve, reject });
@@ -164,22 +186,10 @@ function resolveApprovalState(request: FastifyRequest): ApprovalState {
 
 async function main() {
   const fastify = Fastify({ logger: false });
+  // First, before any route: a request naming another site's host is a rebinding page, not a client (s211-m01).
+  refuseForeignHosts(fastify);
 
-  await fastify.register(rateLimit, {
-    global: false,
-    addHeaders: {
-      'x-ratelimit-limit': true,
-      'x-ratelimit-remaining': true,
-      'x-ratelimit-reset': true,
-    },
-    errorResponseBuilder: (_request, context) =>
-      buildErrorPayload('RATE_LIMITED', 'Too many requests - please slow down.', {
-        details: {
-          limit: context.max,
-          resetInSeconds: Math.ceil(context.ttl / 1000),
-        },
-      }),
-  });
+  await fastify.register(rateLimit, rateLimitOptions);
 
   fastify.addHook('onRoute', (routeOptions) => {
     if (routeOptions.url?.startsWith('/artifacts')) {
@@ -203,8 +213,21 @@ async function main() {
   // Resolve MCP server cwd relative to this file location (works in dev and dist)
   const resolvedServerDir = fileURLToPath(new URL('../../mcp-server/', import.meta.url));
   const mcpServerCwd = resolvedServerDir;
+  const toolSurface = resolveBridgeToolSurface(mcpServerCwd, bridgeConfig.tools.allowed, process.env);
+  const {
+    externalToInternal: EXTERNAL_TO_INTERNAL,
+    internalToExternal: INTERNAL_TO_EXTERNAL,
+    allowedExternalTools: ALLOWED_EXTERNAL_TOOLS,
+  } = buildToolNameMaps(toolSurface.enabled);
   const client = new McpClient(mcpServerCwd);
-  const artifactsRoot = path.join(mcpServerCwd, 'artifacts');
+  const { artifactsRoot, artifactsBase } = resolveBridgeArtifacts(mcpServerCwd);
+  fastify.addHook('onClose', () => client.close());
+  const registrySource = path.relative(mcpServerCwd, toolSurface.registrySource).split(path.sep).join('/');
+
+  if (toolSurface.unknownExtras.length > 0) {
+    // eslint-disable-next-line no-console
+    console.warn(`[mcp-bridge] unknown MCP_EXTRA_TOOLS entries ignored: ${toolSurface.unknownExtras.join(', ')}`);
+  }
 
   await fastify.register(fastifyStatic, {
     root: artifactsRoot,
@@ -214,17 +237,35 @@ async function main() {
     decorateReply: false,
   });
 
+  // The running-app preview: composition versions design.compose writes beside the saved-schema
+  // store are compiled at request time and served with the prebuilt host runtimes under /preview/.
+  const compositionsDir = resolveCompositionsDir(mcpServerCwd);
+  const shippedTokens = resolveTokenPackageRoot(mcpServerCwd);
+  // s213-m06: the preview follows the server to a team's token build when one becomes active.
+  await registerPreviewHost(fastify, { compositionsDir, tokensRoot: () => activeTokenPackageRoot(shippedTokens), runTool: (tool, input) => client.run(tool, input) });
+
   await registerArtifactEndpoints(fastify, artifactsRoot, {
     list: bridgeConfig.rateLimit.artifacts,
     detail: bridgeConfig.rateLimit.artifacts,
     files: bridgeConfig.rateLimit.artifacts,
     open: bridgeConfig.rateLimit.artifacts,
+  }, artifactsBase);
+
+  registerBridgeHealth(fastify, {
+    mode: toolSurface.toolsetMode,
+    enabledCount: toolSurface.enabled.length,
+    registrySource,
   });
 
-  fastify.get('/health', async () => ({ status: 'ok', bridge: 'ready' }));
-
   fastify.get('/tools', { config: { rateLimit: bridgeConfig.rateLimit.tools } }, async () => ({
-    tools: Array.from(ALLOWED_TOOLS),
+    tools: Array.from(ALLOWED_EXTERNAL_TOOLS),
+    toolset: {
+      mode: toolSurface.toolsetMode,
+      enabledInternal: toolSurface.enabled,
+      extras: toolSurface.extraTools,
+      unknownExtras: toolSurface.unknownExtras,
+      registrySource,
+    },
   }));
 
   fastify.post<{ Body: RunRequestBody }>('/run', { config: { rateLimit: bridgeConfig.rateLimit.run } }, async (request, reply) => {
@@ -232,19 +273,23 @@ async function main() {
     if (!ensureAuthToken(request, reply)) return;
 
     const body = request.body ?? {};
-    const tool = body.tool;
-    if (!tool || typeof tool !== 'string') {
+    const externalTool = body.tool;
+    if (!externalTool || typeof externalTool !== 'string') {
       sendError(reply, 400, 'VALIDATION_ERROR', 'Tool name is required.', {
         details: { reason: 'MISSING_TOOL' },
       });
       return;
     }
-    if (!ALLOWED_TOOLS.has(tool)) {
-      sendError(reply, 403, 'POLICY_DENIED', `Tool not allowed: ${tool}`, {
-        details: { reason: 'FORBIDDEN_TOOL', tool, docs: POLICY_RULES_DOC },
+    // Accept both external (underscore) and internal (dot) names for backward compatibility
+    const internalTool = resolveInternalToolName(externalTool, EXTERNAL_TO_INTERNAL);
+    if (!internalTool) {
+      sendError(reply, 403, 'POLICY_DENIED', `Tool not allowed: ${externalTool}`, {
+        details: { reason: 'FORBIDDEN_TOOL', tool: externalTool, docs: POLICY_RULES_DOC },
       });
       return;
     }
+    const tool = internalTool; // Use internal name for all downstream operations
+    const aliasWarning = legacyToolWarning(externalTool, internalTool);
 
     const input = { ...(body.input ?? {}) };
     const role = typeof body.role === 'string' && body.role.trim().length ? body.role.trim() : undefined;
@@ -280,7 +325,11 @@ async function main() {
     }
 
     const applyMode = applyRequested && (!APPROVAL_REQUIRED_TOOLS.has(tool) || approvalState === 'granted');
-    input.apply = applyMode;
+    // Normalize an explicit flag only. Families such as object and brand.intake have
+    // write-capable actions whose schemas do not accept apply; omitted flags use native defaults.
+    if (APPLY_CAPABLE_TOOLS.has(tool) && Object.hasOwn(input, 'apply')) {
+      input.apply = applyMode;
+    }
 
     try {
       const result = await client.run(tool, input, role);
@@ -288,7 +337,7 @@ async function main() {
         typeof result?.incidentId === 'string' && result.incidentId.length > 0 ? result.incidentId : randomUUID();
       const normalized = {
         ok: true as const,
-        tool,
+        tool: INTERNAL_TO_EXTERNAL.get(tool) ?? tool, // Return external name in response
         role: role ?? null,
         mode: applyMode ? 'apply' : 'dry-run',
         incidentId,
@@ -298,6 +347,8 @@ async function main() {
         diagnosticsPath: result?.diagnosticsPath ?? null,
         preview: result?.preview ?? null,
         artifactsDetail: result?.artifactsDetail ?? null,
+        result: result ?? null,
+        ...(aliasWarning ? { warnings: [aliasWarning] } : {}),
       };
       return normalized;
     } catch (err: any) {
@@ -311,35 +362,40 @@ async function main() {
       const status = inferredStatus ?? statusForCode(normalizedCode);
       const message = typeof err?.message === 'string' && err.message.length ? err.message : 'Failed to run tool.';
       const details = err?.details ?? err?.messages;
-      return sendError(reply, status, normalizedCode, message, {
-        details,
-        incidentId: typeof err?.incidentId === 'string' ? err.incidentId : undefined,
+      return reply.code(status).send({
+        ...buildErrorPayload(normalizedCode, message, {
+          details,
+          incidentId: typeof err?.incidentId === 'string' ? err.incidentId : undefined,
+        }),
+        ...(aliasWarning ? { warnings: [aliasWarning] } : {}),
       });
     }
   });
 
-  async function listenWithFallback() {
-    try {
-      await fastify.listen({ port: bridgePort, host: '127.0.0.1' });
-    } catch (err: any) {
-      if (err?.code === 'EADDRINUSE' && !process.env.MCP_BRIDGE_PORT) {
-        // If default port is busy and no explicit port set, pick ephemeral
-        await fastify.listen({ port: 0, host: '127.0.0.1' });
-      } else {
-        throw err;
-      }
-    }
-    const addr = fastify.server.address();
-    const actualPort = typeof addr === 'object' && addr ? (addr as any).port : bridgePort;
+  // A taken default port falls back to a free one; a port chosen with MCP_BRIDGE_PORT is refused plainly (s206-m03).
+  const actualPort = await listenOnLoopback(fastify, {
+    port: bridgePort,
+    ...(process.env.MCP_BRIDGE_PORT ? { chosenBy: `MCP_BRIDGE_PORT=${process.env.MCP_BRIDGE_PORT}` } : {}),
     // eslint-disable-next-line no-console
-    console.log(`[mcp-bridge] listening on :${actualPort}`);
-  }
-
-  await listenWithFallback();
+    note: (line) => console.log(`[mcp-bridge] ${line} (set MCP_BRIDGE_PORT to choose one)`),
+  });
+  client.previewHostUrl = `http://127.0.0.1:${actualPort}`;
+  // eslint-disable-next-line no-console
+  console.log(`[mcp-bridge] listening on :${actualPort}`);
+  const stop = () => {
+    fastify.close().then(() => process.exit(0)).catch((error) => {
+      console.error('[mcp-bridge] shutdown failed', error);
+      process.exit(1);
+    });
+  };
+  process.once('SIGINT', stop);
+  process.once('SIGTERM', stop);
 }
 
 main().catch((err) => {
   // eslint-disable-next-line no-console
-  console.error('[mcp-bridge] fatal', err);
+  if (err instanceof PortInUseError) console.error(`[mcp-bridge] ${err.message}`);
+  // eslint-disable-next-line no-console
+  else console.error('[mcp-bridge] fatal', err);
   process.exit(1);
 });

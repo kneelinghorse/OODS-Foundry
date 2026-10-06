@@ -1,0 +1,56 @@
+{
+  "$comment": "Governed-measure REGISTRY. A standalone DATA artifact — NOT a JSON Schema. It is auto-bundled to dist/schemas/ by the wildcard `cp -f src/schemas/*.json dist/schemas/` in packages/mcp-server/package.json, and SKIP-LISTED in packages/schemas-tools/src/generate-types.ts (collectSchemaFiles) so Generator A never tries to compile it into generated.ts (a plain data file has no root type and would red generate:check). Each entry maps a governed-measure key (the value of KpiPanel.measureRef, e.g. 'gm.revenue.total') to its AUTHORITATIVE compute inputs (entityField + aggregate) plus optional default comparison/threshold and provenance metadata. The mcp-server resolver (tools/measure-resolver.ts) expands measureRef -> field/aggregate BEFORE computeKpi, gated behind dashboard.render's `resolveMeasures` flag (default false; absent/false path is byte-identical to s116). DISCLAIMER on `measureRole`: it classifies the measure (metric vs dimension) for governance/provenance ONLY. It is DELIBERATELY NOT the overloaded `role` (PatternField.role in patterns/index.ts, pragmatic_role in object-catalog/types.ts) NOR `semantics` (SemanticMapping in objects/types.ts) — none of those meanings apply here.",
+  "schemaVersion": "v0.1",
+  "measures": {
+    "gm.revenue.total": {
+      "name": "Total Revenue",
+      "entityField": "revenue",
+      "aggregate": "sum",
+      "measureRole": "metric",
+      "displayName": "Total Revenue",
+      "format": "currency",
+      "defaultComparison": { "basis": "target", "value": 300 },
+      "defaultThreshold": { "direction": "above", "value": 350 },
+      "provenance": "OODS governed measure; reproduces the s113 metric-overview golden KPI panel (entityField 'revenue', aggregate 'sum', target 300, threshold above 350) byte-for-byte."
+    },
+    "gm.revenue.latest": {
+      "name": "Latest Revenue",
+      "entityField": "revenue",
+      "aggregate": "latest",
+      "measureRole": "metric",
+      "displayName": "Latest Revenue",
+      "format": "currency",
+      "provenance": "OODS governed measure; point-in-time revenue (most recent value by dataset row order, or by an explicit periodField when the panel sets one)."
+    },
+    "gm.revenue.distinct": {
+      "name": "Distinct Revenue Points",
+      "entityField": "revenue",
+      "aggregate": "distinct",
+      "measureRole": "dimension",
+      "displayName": "Distinct Revenue Points",
+      "provenance": "OODS governed measure; cardinality of distinct revenue values. NOTE: computeKpi aggregates only NUMERIC cells (numericSeries drops non-numerics), so a distinct/count measure MUST target a numeric entityField — a categorical field (e.g. region) would compute to 0. Exercises the 'distinct' aggregate and the 'dimension' measureRole classifier."
+    },
+    "gm.export.value.total": {
+      "name": "Total Export Value",
+      "entityField": "value",
+      "aggregate": "sum",
+      "measureRole": "metric",
+      "additive": true,
+      "displayName": "Total Export Value",
+      "format": "currency",
+      "unit": "1000 USD",
+      "provenance": "FAOSTAT TradeFlow export value (element 5922). ADDITIVE across corridors/commodities — the positive additivity case (sprint-118 m03). Mirrors the m01 fixture GOVERNED_MEASURES."
+    },
+    "gm.export.unit_price": {
+      "name": "Export Unit Price",
+      "entityField": "unit_price",
+      "aggregate": "sum",
+      "measureRole": "metric",
+      "additive": false,
+      "displayName": "Export Unit Price",
+      "format": "number",
+      "unit": "1000 USD/t",
+      "provenance": "value / quantity, a per-corridor ratio. NON-additive — SUM(unit_price) is meaningless, so the m03 additivity gate BLOCKS a sum rollup with OODS-V133 (the negative case; flips m01 bug-shaker #2 green). Mirrors the m01 fixture GOVERNED_MEASURES."
+    }
+  }
+}

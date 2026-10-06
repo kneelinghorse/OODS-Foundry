@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { CategoryPicker } from '../../../src/components/classification/CategoryPicker.js';
-import type { CategoryNode } from '../../../src/schemas/classification/category-node.ts';
+import type { CategoryNode } from '../../../src/schemas/classification/category-node.js';
 
 const PICKER_CATEGORIES: CategoryNode[] = [
   {
@@ -30,6 +30,7 @@ const PICKER_CATEGORIES: CategoryNode[] = [
     isSelectable: true,
     synonyms: [],
     mode: 'taxonomy',
+    metadata: undefined,
   },
   {
     id: 'android',
@@ -43,6 +44,7 @@ const PICKER_CATEGORIES: CategoryNode[] = [
     isSelectable: true,
     synonyms: [],
     mode: 'taxonomy',
+    metadata: undefined,
   },
   {
     id: 'ios',
@@ -56,6 +58,7 @@ const PICKER_CATEGORIES: CategoryNode[] = [
     isSelectable: true,
     synonyms: [],
     mode: 'taxonomy',
+    metadata: undefined,
   },
   {
     id: 'audio',
@@ -69,6 +72,7 @@ const PICKER_CATEGORIES: CategoryNode[] = [
     isSelectable: true,
     synonyms: [],
     mode: 'taxonomy',
+    metadata: undefined,
   },
   {
     id: 'wireless-audio',
@@ -82,11 +86,12 @@ const PICKER_CATEGORIES: CategoryNode[] = [
     isSelectable: true,
     synonyms: [],
     mode: 'taxonomy',
+    metadata: undefined,
   },
 ];
 
 const meta: Meta<typeof CategoryPicker> = {
-  title: 'Traits/Core/Classifiable/Category Picker',
+  title: 'Components/Classification/CategoryPicker',
   component: CategoryPicker,
   args: {
     id: 'stories-category-picker',
@@ -97,7 +102,10 @@ const meta: Meta<typeof CategoryPicker> = {
   },
   parameters: {
     layout: 'centered',
-    viewport: { defaultViewport: 'responsive' },
+    // s173 m04: `viewport: { defaultViewport: … }` is the Storybook 8 shape. SB9 reads the
+    // viewport from GLOBALS, so this parameter selected nothing — and 'responsive' is the
+    // default anyway. Removing a parameter that was never read renders nothing differently;
+    // this file is vrt-critical, and its captures are expected to be byte-identical.
   },
   tags: ['vrt', 'vrt-critical'],
 };

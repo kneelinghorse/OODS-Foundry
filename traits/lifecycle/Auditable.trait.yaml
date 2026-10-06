@@ -178,12 +178,9 @@ tokens:
   cmp.audit.summary.label.text: "var(--sys-text-subtle)"
 
 dependencies:
-  - trait: Stateful
-    required: true
-    description: |
-      Auditable observes state transitions managed by Stateful. The audit_log
-      entries are generated from Stateful's state_history transitions. Without
-      Stateful, there are no state transitions to audit.
+  # Auditable observes Stateful state transitions to generate audit_log entries.
+  # Without Stateful, there are no transitions to audit.
+  - Stateful
 
 metadata:
   created: "2026-02-28"
@@ -207,7 +204,7 @@ metadata:
     - Subscription
     - Invoice
   references:
-    - "src/traits/Auditable/contrib/auditable-contributions.tsx — existing timeline renderer"
-    - "src/traits/Statusable/types.ts — StatusTransitionEvent interface (shared shape)"
+    - "objects/provenance.v1.json#/references/ref-abca58b6f92b — existing timeline renderer"
+    - "objects/provenance.v1.json#/references/ref-c373015a9045 — StatusTransitionEvent interface (shared shape)"
     - "R21.3 Canonical Audit Architecture — compliance-grade audit trail research (200+ pages)"
     - "traits/lifecycle/Stateful.trait.yaml — required dependency (state transitions)"

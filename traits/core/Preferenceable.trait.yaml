@@ -73,12 +73,14 @@ schema:
     required: true
     description: Tracks schema version, lastUpdated timestamp, migration records, and source.
   preference_version:
+    defaultFromParameter: schemaVersion
     type: string
     required: true
     description: SemVer mirror of preference_document.version for indexing and analytics.
     validation:
       pattern: "^\\d+\\.\\d+\\.\\d+$"
   preference_namespaces:
+    defaultFromParameter: namespaces
     type: string[]
     required: true
     description: Materialized namespace list resolved from parameters/registry for auditing.
@@ -139,10 +141,6 @@ view_extensions:
         namespacesField: preference_namespaces
         documentField: preference_document
         registryNamespaceParameter: registryNamespace
-  timeline:
-    - component: PreferenceTimeline
-      props:
-        metadataField: preference_metadata
 
 tokens:
   preferences.panel.bg: "var(--sys-surface-raised)"
@@ -165,10 +163,9 @@ metadata:
     - list
     - detail
     - form
-    - timeline
   examples:
     - User
     - Subscription
   references:
     - "R21.5 Preferenceable Trait Implementation"
-    - "docs/traits/preference-scope-boundaries.md"
+    - "objects/provenance.v1.json#/references/ref-2181d6411382"

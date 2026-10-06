@@ -7,7 +7,7 @@
   "properties": {
     "colorStates": {
       "type": "array",
-      "description": "Semantic color keys applied to statuses.",
+      "description": "Semantic tone keys defining the palette of status colors. Maps to --cmp-status-{tone}-* tokens.",
       "minItems": 1,
       "maxItems": 8,
       "uniqueItems": true,
@@ -16,8 +16,27 @@
         "minLength": 1,
         "maxLength": 24,
         "pattern": "^[a-z0-9_-]+$",
-        "description": "Token namespace suffix without the status.* prefix."
-      }
+        "enum": ["neutral", "info", "accent", "success", "warning", "critical"]
+      },
+      "default": ["neutral", "info", "success", "warning", "critical"]
+    },
+    "contrastLevel": {
+      "type": "string",
+      "description": "WCAG contrast compliance target for all color pairings.",
+      "enum": ["AA", "AAA"],
+      "default": "AA"
+    },
+    "colorMode": {
+      "type": "string",
+      "description": "How color_state values resolve to tokens: semantic (system layer) or custom (object-specific).",
+      "enum": ["semantic", "custom"],
+      "default": "semantic"
+    },
+    "fallbackTone": {
+      "type": "string",
+      "description": "Tone applied when a status value cannot be resolved to a known color state.",
+      "enum": ["neutral", "info"],
+      "default": "neutral"
     }
   },
   "required": ["colorStates"],

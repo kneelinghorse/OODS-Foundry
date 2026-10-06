@@ -15,7 +15,8 @@
  * 4. Localization - Timezone handling
  */
 
-import React from 'react';
+// @types/react 19 no longer declares a global JSX namespace; it is exported from 'react'.
+import type { JSX } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -335,11 +336,6 @@ date.toISOString()
  * ───────────────────────────────────────────────────────────────────────────── */
 
 function RelativeVsAbsoluteStory(): JSX.Element {
-  const now = new Date();
-  const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);
-  const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000);
-  const twoDaysAgo = new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000);
-
   return (
     <div style={STYLES.page}>
       <h1 style={STYLES.heading}>Relative vs Absolute</h1>

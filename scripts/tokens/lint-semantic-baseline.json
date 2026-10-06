@@ -1,0 +1,140 @@
+{
+  "note": "Entry-granular baseline of KNOWN pre-existing literal-colour usages (sprint-125 m04). Keyed on file+trimmed-snippet (stable, line-independent). A new literal not listed here still fails. Regenerate with: pnpm exec tsx scripts/tokens/lint-semantic.ts --write-baseline",
+  "entries": [
+    {
+      "file": "apps/explorer/src/stories/proofs/preview-wiring-sanity.stories.tsx",
+      "snippet": "'0 12px 32px color-mix(in srgb, var(--sys-focus-ring-outer, rgba(0,0,0,0.2)) 18%, transparent)',",
+      "reason": "Literal colour in an explorer proof/demo story preview; pre-existing, baselined sprint-125 m04. New literals still fail."
+    },
+    {
+      "file": "apps/explorer/src/stories/proofs/preview-wiring-sanity.stories.tsx",
+      "snippet": "'0 18px 40px color-mix(in srgb, var(--sys-focus-ring-outer, rgba(0,0,0,0.2)) 20%, transparent)',",
+      "reason": "Literal colour in an explorer proof/demo story preview; pre-existing, baselined sprint-125 m04. New literals still fail."
+    },
+    {
+      "file": "apps/explorer/src/stories/proofs/preview-wiring-sanity.stories.tsx",
+      "snippet": "<p style={{ margin: 0, color: 'var(--cmp-text-muted, #4f4f4f)' }}>",
+      "reason": "Literal colour in an explorer proof/demo story preview; pre-existing, baselined sprint-125 m04. New literals still fail."
+    },
+    {
+      "file": "apps/explorer/src/stories/proofs/preview-wiring-sanity.stories.tsx",
+      "snippet": "background: 'var(--cmp-surface-action, #0047ff)',",
+      "reason": "Literal colour in an explorer proof/demo story preview; pre-existing, baselined sprint-125 m04. New literals still fail."
+    },
+    {
+      "file": "apps/explorer/src/stories/proofs/preview-wiring-sanity.stories.tsx",
+      "snippet": "background: 'var(--cmp-surface-panel, #ffffff)',",
+      "reason": "Literal colour in an explorer proof/demo story preview; pre-existing, baselined sprint-125 m04. New literals still fail."
+    },
+    {
+      "file": "apps/explorer/src/stories/proofs/preview-wiring-sanity.stories.tsx",
+      "snippet": "color: 'var(--cmp-text-body, #111111)',",
+      "reason": "Literal colour in an explorer proof/demo story preview; pre-existing, baselined sprint-125 m04. New literals still fail."
+    },
+    {
+      "file": "apps/explorer/src/stories/proofs/preview-wiring-sanity.stories.tsx",
+      "snippet": "color: 'var(--cmp-text-on_action, #ffffff)',",
+      "reason": "Literal colour in an explorer proof/demo story preview; pre-existing, baselined sprint-125 m04. New literals still fail."
+    },
+    {
+      "file": "apps/explorer/src/styles/index.css",
+      "snippet": "--cmp-border-default: color-mix(in srgb, var(--theme-dark-text-primary, #f6f8ff) 18%, transparent);",
+      "reason": "Literal colour used as a var() fallback or color-mix input in an explorer style; pre-existing, baselined sprint-125 m04. New literals still fail."
+    },
+    {
+      "file": "apps/explorer/src/styles/index.css",
+      "snippet": "--cmp-border-default: color-mix(in srgb, var(--theme-dark-text-primary, #f6f8ff) 26%, transparent);",
+      "reason": "Literal colour used as a var() fallback or color-mix input in an explorer style; pre-existing, baselined sprint-125 m04. New literals still fail."
+    },
+    {
+      "file": "apps/explorer/src/styles/index.css",
+      "snippet": "--cmp-border-strong: color-mix(in srgb, var(--theme-dark-text-primary, #f6f8ff) 32%, transparent);",
+      "reason": "Literal colour used as a var() fallback or color-mix input in an explorer style; pre-existing, baselined sprint-125 m04. New literals still fail."
+    },
+    {
+      "file": "apps/explorer/src/styles/index.css",
+      "snippet": "--cmp-surface-action_hover: color-mix(in srgb, var(--theme-dark-status-accent-surface, #24315a) 88%, black 12%);",
+      "reason": "Literal colour used as a var() fallback or color-mix input in an explorer style; pre-existing, baselined sprint-125 m04. New literals still fail."
+    },
+    {
+      "file": "apps/explorer/src/styles/index.css",
+      "snippet": "--cmp-surface-action_pressed: color-mix(in srgb, var(--theme-dark-status-accent-surface, #24315a) 80%, black 20%);",
+      "reason": "Literal colour used as a var() fallback or color-mix input in an explorer style; pre-existing, baselined sprint-125 m04. New literals still fail."
+    },
+    {
+      "file": "apps/explorer/src/styles/index.css",
+      "snippet": "--cmp-surface-action: color-mix(in srgb, var(--theme-dark-status-accent-surface, #24315a) 94%, transparent);",
+      "reason": "Literal colour used as a var() fallback or color-mix input in an explorer style; pre-existing, baselined sprint-125 m04. New literals still fail."
+    },
+    {
+      "file": "apps/explorer/src/styles/index.css",
+      "snippet": "--cmp-surface-panel: color-mix(in srgb, var(--theme-dark-surface-canvas, #0f1117) 86%, black 14%);",
+      "reason": "Literal colour used as a var() fallback or color-mix input in an explorer style; pre-existing, baselined sprint-125 m04. New literals still fail."
+    },
+    {
+      "file": "apps/explorer/src/styles/index.css",
+      "snippet": "--cmp-surface-panel: color-mix(in srgb, var(--theme-dark-surface-canvas, #0f1117) 88%, transparent);",
+      "reason": "Literal colour used as a var() fallback or color-mix input in an explorer style; pre-existing, baselined sprint-125 m04. New literals still fail."
+    },
+    {
+      "file": "apps/explorer/src/styles/index.css",
+      "snippet": "--cmp-surface-subtle: color-mix(in srgb, var(--theme-dark-surface-canvas, #0f1117) 92%, black 8%);",
+      "reason": "Literal colour used as a var() fallback or color-mix input in an explorer style; pre-existing, baselined sprint-125 m04. New literals still fail."
+    },
+    {
+      "file": "apps/explorer/src/styles/index.css",
+      "snippet": "--cmp-surface-subtle: color-mix(in srgb, var(--theme-dark-surface-canvas, #0f1117) 94%, transparent);",
+      "reason": "Literal colour used as a var() fallback or color-mix input in an explorer style; pre-existing, baselined sprint-125 m04. New literals still fail."
+    },
+    {
+      "file": "apps/explorer/src/styles/index.css",
+      "snippet": "--cmp-text-body: var(--theme-dark-text-primary, #f6f8ff);",
+      "reason": "Literal colour used as a var() fallback or color-mix input in an explorer style; pre-existing, baselined sprint-125 m04. New literals still fail."
+    },
+    {
+      "file": "apps/explorer/src/styles/index.css",
+      "snippet": "--cmp-text-muted: color-mix(in srgb, var(--theme-dark-text-primary, #f6f8ff) 60%, transparent);",
+      "reason": "Literal colour used as a var() fallback or color-mix input in an explorer style; pre-existing, baselined sprint-125 m04. New literals still fail."
+    },
+    {
+      "file": "apps/explorer/src/styles/index.css",
+      "snippet": "--cmp-text-muted: color-mix(in srgb, var(--theme-dark-text-primary, #f6f8ff) 62%, transparent);",
+      "reason": "Literal colour used as a var() fallback or color-mix input in an explorer style; pre-existing, baselined sprint-125 m04. New literals still fail."
+    },
+    {
+      "file": "apps/explorer/src/styles/index.css",
+      "snippet": "0 0 0 1px color-mix(in srgb, var(--theme-dark-text-primary, #f6f8ff) 8%, transparent),",
+      "reason": "Literal colour used as a var() fallback or color-mix input in an explorer style; pre-existing, baselined sprint-125 m04. New literals still fail."
+    },
+    {
+      "file": "apps/explorer/src/styles/index.css",
+      "snippet": "0 32px 64px -40px color-mix(in srgb, var(--theme-dark-text-primary, #f6f8ff) 35%, transparent);",
+      "reason": "Literal colour used as a var() fallback or color-mix input in an explorer style; pre-existing, baselined sprint-125 m04. New literals still fail."
+    },
+    {
+      "file": "apps/explorer/src/styles/index.css",
+      "snippet": "background: color-mix(in srgb, var(--theme-dark-surface-canvas, #0f1117) 92%, transparent);",
+      "reason": "Literal colour used as a var() fallback or color-mix input in an explorer style; pre-existing, baselined sprint-125 m04. New literals still fail."
+    },
+    {
+      "file": "apps/explorer/src/styles/index.css",
+      "snippet": "background: var(--theme-dark-surface-canvas, #0f1117);",
+      "reason": "Literal colour used as a var() fallback or color-mix input in an explorer style; pre-existing, baselined sprint-125 m04. New literals still fail."
+    },
+    {
+      "file": "apps/explorer/src/styles/index.css",
+      "snippet": "border: 1px solid color-mix(in srgb, var(--theme-dark-text-primary, #f6f8ff) 18%, transparent);",
+      "reason": "Literal colour used as a var() fallback or color-mix input in an explorer style; pre-existing, baselined sprint-125 m04. New literals still fail."
+    },
+    {
+      "file": "apps/explorer/src/styles/index.css",
+      "snippet": "color: var(--theme-dark-text-primary, #f6f8ff);",
+      "reason": "Literal colour used as a var() fallback or color-mix input in an explorer style; pre-existing, baselined sprint-125 m04. New literals still fail."
+    },
+    {
+      "file": "apps/explorer/src/styles/overlays.css",
+      "snippet": "background: color-mix(in srgb, var(--cmp-surface-backdrop, rgba(15, 17, 23, 0.78)) 55%, transparent);",
+      "reason": "Literal colour used as a var() fallback or color-mix input in an explorer style; pre-existing, baselined sprint-125 m04. New literals still fail."
+    }
+  ]
+}

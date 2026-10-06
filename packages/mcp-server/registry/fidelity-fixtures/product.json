@@ -1,0 +1,82 @@
+{
+  "manifest_version": "4.0",
+  "schema_version": "1.1.0",
+  "source": {
+    "agent": "oods-forge",
+    "stage": "compose",
+    "captured_at": "2026-05-15T00:00:00.000Z",
+    "oods_catalog_version": "1.0.0"
+  },
+  "entities": [
+    {
+      "urn": "urn:proto:semantic:product-detail-card@1.0.0",
+      "element": {
+        "type": "ui.surface.card",
+        "name": "Product detail card",
+        "object": "Product",
+        "action": "add_to_cart"
+      },
+      "semantics": {
+        "purpose": "present product and add to cart",
+        "human_meaning": "Shows product imagery, price, and a primary action that commits the product to the shopper's cart.",
+        "tags": ["catalog", "commerce", "primary"],
+        "keywords": ["product", "cart", "purchase"]
+      },
+      "pragmatic_role": "primary_action",
+      "states": ["enabled", "disabled", "loading", "error"],
+      "preconditions": ["product.inStock"],
+      "effects": ["cart.item_added", "cart.totals_recomputed"],
+      "traits": ["Actionable", "Pricable"],
+      "context": { "domain": "commerce", "surface": "desktop" },
+      "locations": [
+        { "type": "code", "path": "components/commerce/ProductDetailCard.tsx" },
+        { "type": "test", "path": "tests/commerce/product-detail.spec.ts" }
+      ],
+      "evidence_refs": [
+        {
+          "id": "ev_product_001",
+          "protocol": "pragmatic",
+          "kind": "manifest_declaration",
+          "locator": "self",
+          "matched": null,
+          "weight": 1.0,
+          "provenance": "declared",
+          "captured_at": "2026-05-15T00:00:00.000Z"
+        }
+      ],
+      "oods": {
+        "catalog": { "version": "1.0.0" },
+        "render": {
+          "ui_schema_ref": "compose-product-detail-desktop",
+          "slots": [
+            { "name": "media", "binding": { "field": "product.hero_image_url" } },
+            { "name": "title", "binding": { "field": "product.name" } },
+            { "name": "price", "binding": { "field": "product.price_display" } },
+            { "name": "primary_action", "binding": { "field": "product.add_to_cart_label" } }
+          ],
+          "brand_overlay": "brand-a"
+        },
+        "projection_variants": [
+          {
+            "surface": "desktop",
+            "ui_schema_ref": "compose-product-detail-desktop",
+            "slots": [
+              { "name": "media", "binding": { "field": "product.hero_image_url" } },
+              { "name": "title", "binding": { "field": "product.name" } },
+              { "name": "price", "binding": { "field": "product.price_display" } },
+              { "name": "primary_action", "binding": { "field": "product.add_to_cart_label" } }
+            ],
+            "brand_overlay": "brand-a"
+          }
+        ],
+        "confidence_decomposition": {
+          "total": 0.92,
+          "signals": [
+            { "name": "trait_membership", "score": 0.91, "hint": "Actionable" },
+            { "name": "evidence_chain", "score": 0.95, "hint": "Stage1 run a0300dc0" }
+          ]
+        }
+      }
+    }
+  ]
+}

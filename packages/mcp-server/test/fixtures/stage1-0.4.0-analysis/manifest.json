@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.7.0",
+  "run_id": "22500000-0000-4000-8000-000000000004",
+  "mode": "app",
+  "project_id": "synthetic-analysis",
+  "targets": [
+    {
+      "name": "Synthetic comparison",
+      "url": "https://example.org"
+    }
+  ],
+  "environment": {
+    "timestamp": "2026-10-02T00:00:00Z"
+  },
+  "auth": {
+    "type": "none",
+    "redaction": {
+      "applied": false
+    }
+  },
+  "passes": [
+    {
+      "id": "semantic.drift_compare",
+      "version": "1.3.0",
+      "status": "ok"
+    }
+  ],
+  "hashes": {
+    "artifacts/fig_local_tokens.json": "d511b9cbaa58ee0a0c21ea8948222575d85e64fa98e12cf24b5eb46a3a1058f9",
+    "artifacts/style_fingerprint.json": "162a3f26bddfbf2fccc6d4e718f010d2461e565db181f36f83fe693e943314c1",
+    "artifacts/drift_report.json": "ec0811b047af8132ba1c81f465849043c3fed023eff1d5ae8b412ee0adb202de",
+    "artifacts/report-index.json": "9e1ed33031201eff88f43bcfc51c11f68e836f7f916bc7ed608e8314b8da7c73",
+    "evidence/lineage/source-manifest.json": "c70a5ab66da5bc9a1503bb8ef541ced1459588e0833ed03ccd74012d929b21ac"
+  },
+  "analysis": {
+    "kind": "redrift",
+    "schema_version": "1.1.0",
+    "stage1_version": "0.4.0",
+    "analysis_run_id": "22500000-0000-4000-8000-000000000004",
+    "analyzed_at": "2026-10-02T00:10:00Z",
+    "capture_performed": false,
+    "authentication_performed": false,
+    "redaction_performed": false,
+    "passes_rerun": [
+      "style.fingerprint",
+      "semantic.drift_compare"
+    ],
+    "source": {
+      "run_id": "synthetic-source",
+      "run_path": "/not-opened",
+      "manifest_path": "evidence/lineage/source-manifest.json",
+      "manifest_sha256": "c70a5ab66da5bc9a1503bb8ef541ced1459588e0833ed03ccd74012d929b21ac",
+      "captured_at": "2026-10-02T00:00:00Z",
+      "target_id": null
+    },
+    "inputs": [
+      {
+        "path": "artifacts/fig_local_tokens.json",
+        "sha256": "d511b9cbaa58ee0a0c21ea8948222575d85e64fa98e12cf24b5eb46a3a1058f9",
+        "origin": "injected_comparand"
+      }
+    ],
+    "outputs": [
+      "artifacts/drift_report.json",
+      "artifacts/report-index.json",
+      "artifacts/style_fingerprint.json"
+    ],
+    "recomputed_from": [
+      {
+        "source_path": "evidence/computed_styles/styles.json",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ]
+  }
+}

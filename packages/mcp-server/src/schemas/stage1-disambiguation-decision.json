@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/stage1-disambiguation-decision.json",
+  "title": "Stage1 disambiguation decision",
+  "description": "Draft v1.4.0-gated review-decision shape for reconciliation_report.disambiguation_decisions[]. Additive stub only; current OODS handlers do not consume it.",
+  "type": "object",
+  "required": [
+    "decision_id",
+    "decision_type",
+    "scope",
+    "status",
+    "target_kind",
+    "target_id",
+    "selected_value",
+    "rationale",
+    "decided_at"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "decision_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Stable identifier for the decision event."
+    },
+    "decision_type": {
+      "type": "string",
+      "enum": [
+        "preferred_name",
+        "preferred_role",
+        "mapping_rejection",
+        "canonical_term"
+      ],
+      "description": "Kind of disambiguation outcome produced during review."
+    },
+    "scope": {
+      "type": "string",
+      "enum": ["run", "target", "registry"],
+      "description": "Decision lifetime. Registry scope means the decision is eligible for OODS promotion."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["proposed", "accepted", "rejected", "promoted"],
+      "description": "Lifecycle state of the decision."
+    },
+    "target_kind": {
+      "type": "string",
+      "enum": ["candidate_object", "candidate_action", "preferred_term"],
+      "description": "Which Stage1 surface the decision applies to."
+    },
+    "target_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Identifier of the reviewed object/action/term."
+    },
+    "selected_value": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Canonical value selected by the reviewer."
+    },
+    "rationale": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human-readable explanation for the selection."
+    },
+    "alternatives": {
+      "type": "array",
+      "description": "Competing interpretations considered during review.",
+      "items": {
+        "type": "object",
+        "required": ["value"],
+        "additionalProperties": false,
+        "properties": {
+          "value": { "type": "string", "minLength": 1 },
+          "score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "reasoning": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "preferred_term_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Optional promoted preferred_term/disambiguation entity id once the decision graduates from run-scoped state."
+    },
+    "decided_by": {
+      "type": "string",
+      "enum": ["human", "agent", "system"],
+      "description": "Actor that finalized the decision."
+    },
+    "decided_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the decision was made."
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Open metadata bag reserved for future v1.4.0+ contract details."
+    }
+  }
+}

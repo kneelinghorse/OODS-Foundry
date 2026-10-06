@@ -9,7 +9,7 @@ import type { HTMLAttributes, JSX } from 'react';
 import type { EChartsType } from 'echarts';
 
 import type { NetworkInput } from '../../types/viz/network-flow.js';
-import type { NormalizedVizSpec } from '../../viz/spec/normalized-viz-spec.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 import { adaptGraphToECharts } from '../../viz/adapters/echarts/graph-adapter.js';
 import { GraphA11yFallback } from './a11y/GraphA11yFallback.js';
 
@@ -77,7 +77,7 @@ const DEFAULT_HEIGHT = 600;
  */
 function buildSpec(props: ForceGraphProps): NormalizedVizSpec {
   const base: NormalizedVizSpec = {
-    $schema: 'https://oods.dev/viz-spec/v1',
+    $schema: 'https://oods-foundry.com/viz-spec/v1',
     id: 'component:force-graph',
     name: props.name ?? 'Force Graph',
     data: { values: [] },

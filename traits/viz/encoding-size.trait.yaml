@@ -11,6 +11,7 @@ trait:
     - size
 
 parameters:
+  - {"name": "renderIntent", "type": "string", "required": false, "default": "{}", "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."}
   - name: rangeMin
     type: number
     required: true
@@ -122,6 +123,7 @@ view_extensions:
     - component: VizSizeSummary
       position: sidebar
       props:
+        intentParameter: renderIntent
         field: viz_encoding_size_field
         strategyField: viz_encoding_size_strategy
         minField: viz_encoding_size_range_min
@@ -130,6 +132,7 @@ view_extensions:
     - component: VizSizeControls
       position: top
       props:
+        intentParameter: renderIntent
         strategyField: viz_encoding_size_strategy
         minField: viz_encoding_size_range_min
         maxField: viz_encoding_size_range_max
@@ -138,6 +141,8 @@ view_extensions:
   list:
     - component: VizEncodingBadge
       props:
+        intentParameter: renderIntent
+        channel: size
         axis: size
         fieldField: viz_encoding_size_field
 
@@ -164,4 +169,4 @@ metadata:
     - form
     - list
   references:
-    - cmos/research/data-viz-oods/RDS.7_synthesis_Mission Completion Report- Trait-Driven Visualization System Specification (v0.1).md
+    - RDS.7 Trait-Driven Visualization System Specification (v0.1)

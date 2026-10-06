@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/map.list.input.json",
+  "title": "map.list input",
+  "description": "List component-to-trait mappings, optionally filtered by external system.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "externalSystem": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Filter mappings to a specific external system (e.g., 'team')."
+    },
+    "cursor": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Pagination cursor. Use the previous page's nextCursor to continue. When cursor or limit is provided, pagination defaults to 100 items per page."
+    },
+    "limit": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 500,
+      "description": "Page size for pagination. Omitting both cursor and limit preserves the legacy full-list response."
+    }
+  }
+}

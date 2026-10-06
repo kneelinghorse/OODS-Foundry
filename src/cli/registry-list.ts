@@ -50,7 +50,6 @@ function parseArgs(argv: string[]): CliOptions {
     const cwd = process.cwd();
     const canonicalRoot = resolve(cwd, 'objects');
     const coreRoot = resolve(canonicalRoot, 'core');
-    const examplesRoot = resolve(cwd, 'examples/objects');
 
     let canonicalAdded = false;
     if (existsSync(coreRoot)) {
@@ -61,11 +60,7 @@ function parseArgs(argv: string[]): CliOptions {
       canonicalAdded = true;
     }
 
-    if (existsSync(examplesRoot)) {
-      roots.push(examplesRoot);
-    } else if (!canonicalAdded) {
-      roots.push(examplesRoot);
-    }
+    if (!canonicalAdded) roots.push(canonicalRoot);
   }
 
   return { roots, format };
@@ -79,7 +74,7 @@ Options:
       --json          Output results as JSON instead of a table.
   -h, --help          Show this help message.
 
-If no roots are provided, the command defaults to ./objects/core (when present) and ./examples/objects relative to the current working directory.
+If no roots are provided, the command defaults to ./objects/core (when present), otherwise ./objects relative to the current working directory.
 `);
 }
 

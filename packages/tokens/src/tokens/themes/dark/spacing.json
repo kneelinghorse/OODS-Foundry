@@ -36,6 +36,23 @@
           "$value": "{ref.space.inline.sm}",
           "$description": "Small inline spacing retained for dark layouts."
         }
+      },
+      "scale": {
+        "sm": {
+          "$type": "dimension",
+          "$value": "{ref.space.scale.sm}",
+          "$description": "Small geometry scalar at dark parity (mirrors Theme 0)."
+        },
+        "md": {
+          "$type": "dimension",
+          "$value": "{ref.space.scale.md}",
+          "$description": "Medium geometry scalar at dark parity (mirrors Theme 0)."
+        },
+        "lg": {
+          "$type": "dimension",
+          "$value": "{ref.space.scale.lg}",
+          "$description": "Large geometry scalar at dark parity (mirrors Theme 0)."
+        }
       }
     }
   }

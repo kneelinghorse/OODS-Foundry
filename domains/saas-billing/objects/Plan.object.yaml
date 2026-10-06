@@ -67,14 +67,27 @@ schema:
     type: string
     required: false
     description: Internal commentary for packaging or finance teams.
+  owner_name:
+    type: string
+    required: false
+    description: Display name of the team that owns the plan.
 
 semantics:
   plan_id:
     semantic_type: billing.plan.id
     token_mapping: tokenMap(billing.plan.id)
+  # The one-line summary under the plan's name in lists: the product family it belongs to.
   product_family:
-    semantic_type: billing.plan.product_family
+    semantic_type: text.summary
     token_mapping: tokenMap(billing.plan.product_family)
+  # structural/Ownerable's owner reference, named by owner_name.
+  owner_id:
+    semantic_type: ownership.owner.id
+    token_mapping: tokenMap(ownership.owner.id)
+    ui_hints:
+      component: OwnerReference
+      ownerTypeField: owner_type
+      displayLabelField: owner_name
   status:
     semantic_type: billing.plan.status
     token_mapping: tokenMap(billing.plan.status)
@@ -105,4 +118,212 @@ metadata:
     - pricing@oods.systems
   maturity: beta
   references:
-    - cmos/missions/research/R13.5_Canonical-Model-Subscription-and-Invoice.md
+    - R13.5 Canonical Model: Subscription and Invoice
+
+# Authored type associations; no record join or referential-integrity claim.
+relationships:
+  - target: Plan
+    via: upgrade_targets
+    cardinality: many-to-many
+    label: Upgrade destinations
+  - target: Plan
+    via: downgrade_targets
+    cardinality: many-to-many
+    label: Downgrade destinations
+
+# Eight authored sample plans: the price book the sample subscriptions are on (their plan_code), plus a deprecated, a
+# legacy and a private-beta plan. Prices are list prices in US dollars; the period is the price book the price belongs
+# to, and each plan is owned by the team that prices it.
+samples:
+  - plan_id: plan_starter_monthly
+    plan_code: starter-monthly
+    plan_name: Starter
+    product_family: Workspace plans
+    status: active
+    billing_interval: monthly
+    interval_count: 1
+    amount_minor: 1900
+    currency: USD
+    trial_period_days: 0
+    collection_method: charge_automatically
+    pricing_model: flat
+    meter_name: Seats
+    included_quantity: 3
+    overage_rate_minor: 500
+    period_start: '2026-01-01'
+    period_end: '2026-12-31'
+    upgrade_targets: [team-monthly]
+    downgrade_targets: []
+    add_on_ids: []
+    owner_id: team_pricing
+    owner_type: team
+    owner_name: Pricing and packaging
+    notes: Entry plan for single-location shops.
+  - plan_id: plan_team_monthly
+    plan_code: team-monthly
+    plan_name: Team
+    product_family: Workspace plans
+    status: active
+    billing_interval: monthly
+    interval_count: 1
+    amount_minor: 4900
+    currency: USD
+    trial_period_days: 14
+    collection_method: charge_automatically
+    pricing_model: flat
+    meter_name: Seats
+    included_quantity: 10
+    overage_rate_minor: 500
+    period_start: '2026-01-01'
+    period_end: '2026-12-31'
+    upgrade_targets: [business-monthly]
+    downgrade_targets: [starter-monthly]
+    add_on_ids: [analytics-addon-monthly]
+    owner_id: team_pricing
+    owner_type: team
+    owner_name: Pricing and packaging
+    notes: Most trials start here.
+  - plan_id: plan_business_monthly
+    plan_code: business-monthly
+    plan_name: Business
+    product_family: Workspace plans
+    status: active
+    billing_interval: monthly
+    interval_count: 1
+    amount_minor: 14900
+    currency: USD
+    trial_period_days: 14
+    collection_method: charge_automatically
+    pricing_model: flat
+    meter_name: Seats
+    included_quantity: 25
+    overage_rate_minor: 400
+    period_start: '2026-01-01'
+    period_end: '2026-12-31'
+    upgrade_targets: [enterprise-annual]
+    downgrade_targets: [team-monthly]
+    add_on_ids: [analytics-addon-monthly]
+    owner_id: team_pricing
+    owner_type: team
+    owner_name: Pricing and packaging
+    notes: Upgrades from Team are prorated and charged at once.
+  - plan_id: plan_team_annual
+    plan_code: team-annual
+    plan_name: Team (annual)
+    product_family: Workspace plans
+    status: deprecated
+    billing_interval: annual
+    interval_count: 1
+    amount_minor: 49000
+    currency: USD
+    trial_period_days: 14
+    collection_method: charge_automatically
+    pricing_model: flat
+    meter_name: Seats
+    included_quantity: 10
+    overage_rate_minor: 500
+    period_start: '2025-01-01'
+    period_end: '2025-12-31'
+    upgrade_targets: [business-monthly]
+    downgrade_targets: [team-monthly]
+    add_on_ids: []
+    owner_id: team_pricing
+    owner_type: team
+    owner_name: Pricing and packaging
+    notes: No longer sold; annual Team customers renew monthly from January 2026.
+  - plan_id: plan_enterprise_annual
+    plan_code: enterprise-annual
+    plan_name: Enterprise
+    product_family: Workspace plans
+    status: active
+    billing_interval: annual
+    interval_count: 1
+    amount_minor: 1200000
+    currency: USD
+    trial_period_days: 30
+    collection_method: send_invoice
+    pricing_model: flat
+    meter_name: Seats
+    included_quantity: 250
+    overage_rate_minor: 300
+    period_start: '2026-01-01'
+    period_end: '2026-12-31'
+    upgrade_targets: []
+    downgrade_targets: [business-monthly]
+    add_on_ids: [analytics-addon-monthly]
+    owner_id: team_enterprise_sales
+    owner_type: team
+    owner_name: Enterprise sales
+    notes: Invoiced yearly on net 30 terms; includes premium support.
+  - plan_id: plan_analytics_addon_monthly
+    plan_code: analytics-addon-monthly
+    plan_name: Analytics add-on
+    product_family: Add-ons
+    status: active
+    billing_interval: monthly
+    interval_count: 1
+    amount_minor: 3900
+    currency: USD
+    trial_period_days: 0
+    collection_method: charge_automatically
+    pricing_model: flat
+    meter_name: Dashboards
+    included_quantity: 20
+    overage_rate_minor: 200
+    period_start: '2026-01-01'
+    period_end: '2026-12-31'
+    upgrade_targets: []
+    downgrade_targets: []
+    add_on_ids: []
+    owner_id: team_analytics
+    owner_type: team
+    owner_name: Analytics product
+    notes: Sold with Team, Business and Enterprise.
+  - plan_id: plan_pro_monthly_2025
+    plan_code: pro-monthly
+    plan_name: Pro
+    product_family: Workspace plans
+    status: legacy
+    billing_interval: monthly
+    interval_count: 1
+    amount_minor: 9900
+    currency: USD
+    trial_period_days: 0
+    collection_method: charge_automatically
+    pricing_model: flat
+    meter_name: Seats
+    included_quantity: 15
+    overage_rate_minor: 500
+    period_start: '2025-01-01'
+    period_end: '2025-12-31'
+    upgrade_targets: [business-monthly]
+    downgrade_targets: [team-monthly]
+    add_on_ids: []
+    owner_id: team_pricing
+    owner_type: team
+    owner_name: Pricing and packaging
+    notes: Closed to new customers in October 2025; every Pro subscription moved to Business by April 2026.
+  - plan_id: plan_business_plus_monthly
+    plan_code: business-plus-monthly
+    plan_name: Business Plus
+    product_family: Workspace plans
+    status: private_beta
+    billing_interval: monthly
+    interval_count: 1
+    amount_minor: 24900
+    currency: USD
+    trial_period_days: 14
+    collection_method: charge_automatically
+    pricing_model: per_unit
+    meter_name: Seats
+    included_quantity: 50
+    overage_rate_minor: 350
+    period_start: '2026-09-01'
+    period_end: '2026-12-31'
+    upgrade_targets: [enterprise-annual]
+    downgrade_targets: [business-monthly]
+    add_on_ids: [analytics-addon-monthly]
+    owner_id: team_pricing
+    owner_type: team
+    owner_name: Pricing and packaging
+    notes: Invite-only beta for multi-location retailers.

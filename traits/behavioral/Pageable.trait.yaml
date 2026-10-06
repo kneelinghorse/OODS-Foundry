@@ -1,0 +1,175 @@
+trait:
+  name: Pageable
+  version: 1.0.0
+  description: |
+    Adds pagination controls to list and collection views. Pageable injects a pagination bar
+    into the footer region, wires page state to the data layer, and provides semantic token
+    mappings for consistent pagination UI styling across brands.
+
+    The trait supports configurable page sizes, total item counts for page calculation,
+    and both simple (prev/next) and full (goto page) navigation modes. Page state is managed
+    via the page and pageSize props, which the consuming layout binds to data offset/limit
+    parameters or API pagination cursors.
+  category: behavioral
+  tags:
+    - pagination
+    - list-behavior
+    - navigation
+    - data-loading
+
+parameters:
+  - name: defaultPageSize
+    type: number
+    required: false
+    description: Default number of items per page.
+    default: 25
+    validation:
+      minimum: 1
+      maximum: 500
+
+  - name: pageSizeOptions
+    type: number[]
+    required: false
+    description: |
+      Available page size choices for the user. Displayed as a dropdown in the pagination bar.
+      Must be sorted ascending.
+    default: [10, 25, 50, 100]
+    validation:
+      minItems: 1
+      uniqueItems: true
+
+  - name: showPageSizeSelector
+    type: boolean
+    required: false
+    description: Whether to display the page size dropdown selector.
+    default: true
+
+  - name: showGotoPage
+    type: boolean
+    required: false
+    description: Whether to display a "go to page" input for direct page navigation.
+    default: false
+
+  - name: showItemRange
+    type: boolean
+    required: false
+    description: |
+      Whether to display the item range indicator (e.g., "Showing 26-50 of 312").
+    default: true
+
+schema:
+  page:
+    type: number
+    required: true
+    description: Current page number (1-based).
+    default: 1
+    validation:
+      minimum: 1
+
+  pageSize:
+    type: number
+    required: true
+    description: Number of items displayed per page.
+    default: 25
+    validation:
+      minimum: 1
+      maximum: 500
+
+  totalItems:
+    type: number
+    required: false
+    description: Total number of items across all pages. Used to compute total page count.
+    default: 0
+    validation:
+      minimum: 0
+
+  totalPages:
+    type: number
+    required: false
+    description: Computed total number of pages (ceil(totalItems / pageSize)).
+    default: 0
+    validation:
+      minimum: 0
+
+semantics:
+  page:
+    semantic_type: state.pagination.page
+    token_mapping: computed
+    ui_hints:
+      component: PaginationBar
+      description: Current active page, drives page button highlight state.
+  pageSize:
+    semantic_type: state.pagination.pageSize
+    token_mapping: computed
+    ui_hints:
+      component: PaginationBar
+      defaultParameter: defaultPageSize
+  totalItems:
+    semantic_type: metric.pagination.totalItems
+    token_mapping: tokenMap(pagination.info.*)
+    ui_hints:
+      component: PaginationBar
+      format: integer
+  totalPages:
+    semantic_type: metric.pagination.totalPages
+    token_mapping: computed
+    ui_hints:
+      component: PaginationBar
+      description: Computed from totalItems and pageSize.
+
+view_extensions:
+  list:
+    - component: PaginationBar
+      position: footer
+      priority: 10
+      props:
+        pageField: page
+        pageSizeField: pageSize
+        totalItemsField: totalItems
+        totalPagesField: totalPages
+        pageSizeOptionsParameter: pageSizeOptions
+        showPageSizeSelectorParameter: showPageSizeSelector
+        showGotoPageParameter: showGotoPage
+        showItemRangeParameter: showItemRange
+
+tokens:
+  pagination.bar.bg: "var(--sys-surface-secondary)"
+  pagination.bar.border: "var(--sys-border-default)"
+  pagination.button.bg: "var(--sys-surface-default)"
+  pagination.button.text: "var(--sys-text-primary)"
+  pagination.button.hover.bg: "var(--sys-surface-hover)"
+  pagination.button.active.bg: "var(--sys-surface-accent)"
+  pagination.button.active.text: "var(--sys-text-on-accent)"
+  pagination.button.disabled.text: "var(--sys-text-disabled)"
+  pagination.info.text: "var(--sys-text-subtle)"
+  pagination.selector.border: "var(--sys-border-default)"
+
+dependencies: []
+
+metadata:
+  created: "2026-03-05"
+  updated: "2026-03-05"
+  owners:
+    - design@oods.systems
+  maturity: stable
+  accessibility:
+    keyboard: |
+      PaginationBar supports full keyboard navigation:
+      - Tab to move between page buttons, page size selector, and goto input
+      - Enter/Space to activate a page button
+      - Arrow keys to increment/decrement page in goto input
+      - Home/End to jump to first/last page
+    screenreader: |
+      Pagination bar uses nav role with aria-label="Pagination".
+      Current page announced via aria-current="page".
+      Page buttons announce their page number.
+      Item range indicator reads "Showing X to Y of Z items".
+      Disabled prev/next buttons announce as disabled.
+  regionsUsed:
+    - list
+  examples:
+    - Product catalog pagination
+    - User directory pagination
+    - Invoice list pagination
+  references:
+    - "Trait Engine Spec v0.1 section 2"

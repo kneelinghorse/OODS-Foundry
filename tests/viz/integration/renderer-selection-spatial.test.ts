@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { SpatialSpec } from '../../../src/types/viz/spatial.js';
-import { selectVizRenderer } from '../../../src/viz/adapters/renderer-selector.js';
+import { selectVizRenderer } from '@oods/viz-core';
 
 const BASE_SPATIAL_SPEC: SpatialSpec = {
   type: 'spatial',

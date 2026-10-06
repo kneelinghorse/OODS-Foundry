@@ -72,9 +72,17 @@ semantics:
   total_refunded_minor:
     semantic_type: billing.refund.total_minor
     token_mapping: tokenMap(billing.refund.total_minor)
+    ui_hints:
+      component: CurrencyAmount
+      currencyField: currency
+      minorUnits: 100
   credit_memo_balance_minor:
     semantic_type: billing.refund.credit_memo_balance_minor
     token_mapping: tokenMap(billing.refund.credit_memo_balance_minor)
+    ui_hints:
+      component: CurrencyAmount
+      currencyField: currency
+      minorUnits: 100
   credit_memo_type:
     semantic_type: billing.refund.credit_memo_type
     token_mapping: tokenMap(billing.refund.credit_memo_type)

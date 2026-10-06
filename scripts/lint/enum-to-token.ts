@@ -7,6 +7,7 @@
  */
 
 import { readFile, readdir } from 'node:fs/promises';
+import type { Dirent } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -28,7 +29,7 @@ type TokensStatusManifest = {
 
 const ROOT = path.resolve(fileURLToPath(new URL('../..', import.meta.url)));
 const CONFIG_PATH = path.join(ROOT, 'configs/ui/status-map.json');
-const TOKENS_PATH = path.join(ROOT, 'tokens/maps/saas-billing.status-map.json');
+const TOKENS_PATH = path.join(ROOT, 'packages/tokens/src/maps/saas-billing.status-map.json');
 const TARGETS = [
   { kind: 'dir', path: 'apps/explorer/src/pages' },
   { kind: 'dir', path: 'apps/explorer/src/stories/Billing' },
@@ -84,7 +85,18 @@ async function validateStatusConfig(): Promise<string[]> {
 async function collectSourceFiles(relativeDir: string): Promise<string[]> {
   const files: string[] = [];
   const absoluteDir = path.join(ROOT, relativeDir);
-  const entries = await readdir(absoluteDir, { withFileTypes: true });
+  let entries: Dirent[];
+  try {
+    entries = await readdir(absoluteDir, { withFileTypes: true });
+  } catch (error) {
+    // A configured target directory may not exist in every checkout (e.g. domain
+    // story folders that were removed or never scaffolded). Skip it rather than
+    // crash the whole lint — there are simply no source files to scan there.
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+      return files;
+    }
+    throw error;
+  }
 
   for (const entry of entries) {
     if (entry.name.startsWith('.')) {

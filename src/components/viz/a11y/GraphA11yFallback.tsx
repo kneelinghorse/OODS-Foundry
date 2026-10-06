@@ -7,6 +7,7 @@
 import type { JSX } from 'react';
 
 import type { NetworkInput } from '../../../types/viz/network-flow.js';
+import { formatCompactValue } from './format-compact.js';
 
 export interface GraphA11yFallbackProps {
   /** Network data (nodes and links) */
@@ -17,18 +18,9 @@ export interface GraphA11yFallbackProps {
   readonly className?: string;
 }
 
-/**
- * Format number for display
- */
+/** Edge-value display: the shared compact formatter, with an em-dash for absent values. */
 function formatValue(value: number | undefined): string {
-  if (value === undefined) return '—';
-  if (value >= 1_000_000) {
-    return `${(value / 1_000_000).toFixed(1)}M`;
-  }
-  if (value >= 1_000) {
-    return `${(value / 1_000).toFixed(1)}K`;
-  }
-  return value.toLocaleString();
+  return value === undefined ? '—' : formatCompactValue(value);
 }
 
 /**

@@ -1,4 +1,3 @@
-import React from 'react';
 import type { JSX } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -13,7 +12,7 @@ const organizationLookup = new Map(AUTHZ_SAMPLE_DATASET.organizations.map((org) 
 const roleLookup = new Map(authableTrait.listRoles().map((role) => [role.id, role.name]));
 
 const meta: Meta<typeof UserMembershipPanel> = {
-  title: 'Objects/Core Objects/User/With Authable',
+  title: 'Objects/User/UserWithAuthable',
   component: UserMembershipPanel,
   parameters: {
     layout: 'fullscreen',

@@ -1,7 +1,7 @@
 import { Meta, Canvas } from '@storybook/blocks';
 import * as ProgressStories from './Progress.stories';
 
-<Meta of={ProgressStories} title="Primitives/Data Display/Progress/Guidelines" />
+<Meta of={ProgressStories} title="Components/Progression/Progress/Guidelines" />
 
 # Progress Indicators
 
@@ -40,9 +40,9 @@ The track color is anchored to the neutral palette: `var(--cmp-status-neutral-ba
 
 | Size | Token | Height |
 | --- | --- | --- |
-| `sm` | `--progress-linear-height` | 4px |
-| `md` (default) | `--progress-linear-height` | 6px |
-| `lg` | `--progress-linear-height` | 8px |
+| `sm` | `--progress-linear-height` | half of `--sys-progress-height` (4px) |
+| `md` (default) | `--progress-linear-height` | `--sys-progress-height` (8px) |
+| `lg` | `--progress-linear-height` | 1.5 × `--sys-progress-height` (12px) |
 
 Circular indicators inherit `diameter` and `strokeWidth` props, with sensible defaults (40px / 4px). Use smaller diameters inside buttons or cards, and the default for full-screen loading states.
 
@@ -58,4 +58,4 @@ Circular indicators inherit `diameter` and `strokeWidth` props, with sensible de
 
 - API surface: `~/src/components/progress/types.ts`  
 - Tokens: `resolveProgressTokens` → `getToneTokenSet(intent)`  
-- Reference guide: `docs/components/progression.md`
+- Reference guide: [historical progression guide](../../docs/history/components/progression.md)

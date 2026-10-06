@@ -178,11 +178,13 @@ const ArchivableTrait = {
         },
       },
     ],
+    // s224-m01 (#2542 ruling 6): a record that is not archived shows no card; "Archived: No" only states the default.
     detail: [
       {
         component: 'ArchiveSummary',
         position: 'top',
         props: {
+          hideWhenDefault: true,
           archivedField: 'is_archived',
           archivedAtField: 'archived_at',
           restoredAtField: 'restored_at',
@@ -195,19 +197,6 @@ const ArchivableTrait = {
         },
       },
     ],
-    timeline: [
-      {
-        component: 'ArchiveEvent',
-        props: {
-          archivedAtField: 'archived_at',
-          restoredAtField: 'restored_at',
-          reasonField: 'archive_reason',
-          archivedByField: 'archived_by',
-          metadataField: 'archive_metadata',
-          restorationMetadataField: 'restoration_metadata',
-        },
-      },
-    ],
     card: [
       {
         component: 'ArchivePill',
@@ -215,6 +204,7 @@ const ArchivableTrait = {
         props: {
           field: 'is_archived',
           archivedAtField: 'archived_at',
+          hideWhenFalse: true,
         },
       },
     ],
@@ -253,7 +243,7 @@ const ArchivableTrait = {
         'ArchiveBadge announces archived/active state. ArchiveSummary announces date, reason, actor, restore window. ' +
         'ArchivedRowOverlay announced as "Archived: [entity name]".',
     },
-    regionsUsed: ['list', 'detail', 'timeline', 'card'],
+    regionsUsed: ['list', 'detail', 'card'],
     examples: ['Contract', 'Product Listing', 'User Account', 'Subscription'],
     references: [
       'Trait Engine Spec v0.1 section 2',

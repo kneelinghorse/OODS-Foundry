@@ -1,0 +1,31 @@
+{
+  "sys": {
+    "breakpoint": {
+      "sm": {
+        "$type": "number",
+        "$value": 640,
+        "$description": "640px. Number-typed so every platform emits a bare literal; a dimension would emit an invalid raw string into Swift and Kotlin. Value adopted from the installed Tailwind default, not invented — the repo already renders against it."
+      },
+      "md": {
+        "$type": "number",
+        "$value": 768,
+        "$description": "768px. Tablet-portrait class, and the width the view-context rail collapses at (authored as a 48rem @container threshold)."
+      },
+      "lg": {
+        "$type": "number",
+        "$value": 1024,
+        "$description": "1024px. Tablet-landscape / small-laptop class."
+      },
+      "xl": {
+        "$type": "number",
+        "$value": 1280,
+        "$description": "1280px. The viewport the VRT and a11y-contract capture suites run at."
+      },
+      "2xl": {
+        "$type": "number",
+        "$value": 1536,
+        "$description": "1536px. Zero 2xl: usages in the repo today; it ships so the scale is complete and the generated Tailwind screens map stays identical to the framework default it replaces. Keys are authored ascending sm -> 2xl because Tailwind emits @media blocks in config order."
+      }
+    }
+  }
+}

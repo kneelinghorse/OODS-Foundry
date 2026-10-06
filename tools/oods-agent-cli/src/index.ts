@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import { spawn, type ChildProcessWithoutNullStreams } from 'node:child_process';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { classifyError, type ResolvedErrorDescriptor } from './errors.js';
 import type { BundleIndexEntryInput } from '@oods/artifacts';
 import { prepareReplay, type TranscriptReader } from './replay.js';
@@ -205,8 +205,15 @@ function normalizeError(err: any): ToolError {
 }
 
 async function loadArtifacts(): Promise<{ writer: WriterApi; readTranscript: TranscriptReader; schemaVersion: string }> {
-  const artifactsUrl = new URL('../../../packages/artifacts/dist/index.js', import.meta.url);
-  const mod = (await import(artifactsUrl.href)) as any;
+  const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
+  const distPath = path.join(repoRoot, 'packages', 'artifacts', 'dist', 'index.js');
+  const srcPath = path.join(repoRoot, 'packages', 'artifacts', 'src', 'index.ts');
+  const chosen = fs.existsSync(distPath) ? distPath : fs.existsSync(srcPath) ? srcPath : null;
+  if (!chosen) {
+    throw new Error('Artifacts package not found. Build @oods/artifacts or ensure sources exist.');
+  }
+
+  const mod = (await import(pathToFileURL(chosen).href)) as any;
   const writer: WriterApi | undefined = mod.writer;
   const readTranscript: TranscriptReader | undefined =
     typeof mod.readTranscriptFile === 'function'
@@ -391,7 +398,11 @@ async function runTool(
 ) {
   const apply = command === 'apply';
   const payload = { ...(args ?? {}) };
-  payload.apply = apply;
+  if (apply) {
+    payload.apply = true;
+  } else if ('apply' in payload) {
+    delete (payload as any).apply;
+  }
 
   const startedAt = new Date();
   const user = detectUser();
@@ -621,6 +632,11 @@ async function main(argv: string[]) {
   }
 }
 
-const argv = process.argv.slice(2);
-const exit = await main(argv);
-process.exit(exit);
+export async function runCli(argv: string[]): Promise<number> {
+  return await main(argv);
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  const exit = await runCli(process.argv.slice(2));
+  process.exit(exit);
+}

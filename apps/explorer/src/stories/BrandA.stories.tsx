@@ -1,7 +1,6 @@
 import type { CSSProperties } from 'react';
 import type { Meta, StoryObj, StoryContext } from '@storybook/react';
 import '../styles/index.css';
-import '../styles/brand.css';
 import { Button } from '../components/Button';
 import { Badge } from '../components/Badge';
 import { StatusChip } from '../components/StatusChip';

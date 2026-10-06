@@ -93,6 +93,7 @@ const PreferenceableTrait = {
       description: 'Tracks schema version, lastUpdated timestamp, migration records, and source.',
     },
     preference_version: {
+      defaultFromParameter: 'schemaVersion',
       type: 'string',
       required: true,
       description: 'SemVer mirror of preference_document.version for indexing and analytics.',
@@ -101,6 +102,7 @@ const PreferenceableTrait = {
       },
     },
     preference_namespaces: {
+      defaultFromParameter: 'namespaces',
       type: 'string[]',
       required: true,
       description: 'Materialized namespace list resolved from parameters/registry for auditing.',
@@ -183,14 +185,6 @@ const PreferenceableTrait = {
         },
       },
     ],
-    timeline: [
-      {
-        component: 'PreferenceTimeline',
-        props: {
-          metadataField: 'preference_metadata',
-        },
-      },
-    ],
   },
 
   tokens: {
@@ -211,7 +205,7 @@ const PreferenceableTrait = {
       screenreader:
         'PreferencePanel announces namespace and control labels via JSON Schema-provided titles + aria-describedby links.',
     },
-    regionsUsed: ['list', 'detail', 'form', 'timeline'],
+    regionsUsed: ['list', 'detail', 'form'],
     examples: ['User', 'Subscription'],
     references: ['R21.5 Preferenceable Trait Implementation', 'docs/traits/preference-scope-boundaries.md'],
   },

@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import type { NormalizedVizSpec } from '~/src/viz/spec/normalized-viz-spec';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 import { useHighlight } from '~/src/viz/hooks/useHighlight';
 import { useTooltip } from '~/src/viz/hooks/useTooltip';
 import { Heatmap } from '~/src/components/viz/Heatmap';
 
 const meta: Meta<typeof Heatmap> = {
-  title: 'Visualization/Standard/Heatmap',
+  title: 'Visualization/Heatmap',
   component: Heatmap,
   parameters: {
     layout: 'fullscreen',
@@ -18,7 +18,7 @@ export default meta;
 type Story = StoryObj<typeof Heatmap>;
 
 const timeOfDaySpec: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/v1',
   id: 'stories:viz:heatmap:time-of-day',
   name: 'Support Load by Day + Hour',
   data: {

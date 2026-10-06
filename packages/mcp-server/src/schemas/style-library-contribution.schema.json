@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/style-library-contribution.schema.json",
+  "title": "Style-Library Contribution (divergent-inspector → OODS Foundry)",
+  "description": "DRAFT. The INBOUND format divergent-inspector uses to send a measured style fingerprint BACK to OODS Foundry: the counterpart to the s123 OODS Foundry-owned style-library-artifact.schema.json (the key→var SKIN map). This is a DISTINCT artifact with a DISTINCT name — the artifact is the MAPPING OODS Foundry owns; this is the CONTRIBUTION a consumer sends in. NO runtime ingestion loader/validator exists yet: per the s123 'lock the pipe at n=8 first' posture, ingestion is deferred until the format is ratified. SKIP-LISTED from generated.ts (NON_SCHEMA_DATA_FILES in schemas-tools/generate-types.ts) so this draft never emits a type for an unratified format — generated.ts stays byte-identical; the file still bundles to dist/ via the package.json wildcard cp. Three blocks: (1) brand_apply — a measured DTCG delta shaped like brand.apply.input.json so it can round-trip through the live apply path; (2) confidence — per-path confidence + evidence gates; (3) signatures — measured surface fingerprints shaped like the map.create projection_variant. Root is intentionally permissive (no required block) for the co-author pass — see OPEN QUESTION (a).",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "$comment": { "type": "string" },
+    "schemaVersion": {
+      "type": "string",
+      "description": "Contribution format version, independent of the style-library-artifact schemaVersion. Carries a draft tag while the format is unratified."
+    },
+    "source": {
+      "type": "object",
+      "description": "Provenance of the contribution. PROPOSED ANSWER to OPEN QUESTION (d) [collision/re-run disambiguation]: run_id + measured_at disambiguate two runs that return the same signature id+surface+selector. Flagged for co-author sanity-check.",
+      "additionalProperties": false,
+      "properties": {
+        "tool": { "type": "string", "minLength": 1, "description": "Emitting tool, e.g. 'divergent-inspector'." },
+        "run_id": { "type": "string", "minLength": 1, "description": "Stable id of the measurement run — the re-run disambiguator." },
+        "measured_at": { "type": "string", "format": "date-time", "description": "When the fingerprint was measured." }
+      }
+    },
+    "brand_apply": {
+      "type": "object",
+      "description": "Measured token delta, shaped to drop into brand.apply (mirrors brand.apply.input.json so a contribution can round-trip the live apply path). OPEN QUESTION (a): one brand+delta per invocation (what brand.apply takes today) vs a BATCH (array of these) when divergent measures many surfaces in one run — root is left permissive pending this call. OPEN QUESTION (c): does divergent's measured delta match brand.apply's delta EXACTLY — object-only (alias) here, or must OODS Foundry also accept the RFC-6902 patch-array form plus a normalization step?",
+      "additionalProperties": false,
+      "required": ["delta"],
+      "properties": {
+        "brand": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Target brand identifier: a brand in the brand registry (the brands folder the token build reads). Left as a free string so the contribution format does not pin a brand list."
+        },
+        "strategy": {
+          "type": "string",
+          "enum": ["alias", "patch"],
+          "default": "alias",
+          "description": "alias = DTCG dot-path→value object; patch = RFC-6902 ops. brand.apply gates the delta shape on this exact enum."
+        },
+        "delta": {
+          "description": "Measured token changes. alias form = a map of DTCG dot-path (e.g. 'color.surface.default') to value; patch form = RFC-6902 ops. Matches brand.apply.input.json's delta oneOf so it round-trips.",
+          "oneOf": [
+            {
+              "type": "object",
+              "description": "alias strategy: DTCG dot-path → measured value."
+            },
+            {
+              "type": "array",
+              "description": "patch strategy: RFC-6902 operations.",
+              "items": {
+                "type": "object",
+                "required": ["op", "path"],
+                "additionalProperties": false,
+                "properties": {
+                  "op": { "type": "string", "enum": ["add", "remove", "replace"] },
+                  "path": { "type": "string" },
+                  "value": {}
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "confidence": {
+      "type": "object",
+      "description": "Per-path measurement confidence + evidence, keyed by the SAME DTCG dot-path used in brand_apply.delta (alias form). Lets OODS Foundry gate which measured deltas it trusts before they reach the skin. Record<path, {confidence, evidence}>.",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["confidence"],
+        "properties": {
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Measurement confidence for this path."
+          },
+          "evidence": {
+            "type": "array",
+            "description": "Evidence supporting the measured value (selector hits, sample counts, screenshot refs, …).",
+            "items": { "type": "object", "additionalProperties": true }
+          }
+        }
+      }
+    },
+    "signatures": {
+      "type": "array",
+      "description": "Measured surface fingerprints, each shaped like a map.create projection_variant (id, surface, external_component?, capability_id?, selector?, confidence?, evidence_chain?, metadata). metadata is additionalProperties:true and LOAD-BEARING — it carries the measured fingerprint payload. OPEN QUESTION (b): which of these fields does divergent actually populate? external_component / capability_id / selector are all optional in the live projection_variant shape.",
+      "items": {
+        "type": "object",
+        "required": ["id", "surface"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "minLength": 1, "description": "Stable identifier for the measured signature." },
+          "surface": { "type": "string", "minLength": 1, "description": "Surface label such as desktop, mobile, modal, or sidebar." },
+          "external_component": { "type": "string", "minLength": 1, "description": "Surface-specific component label when it differs from the canonical name (optional)." },
+          "capability_id": { "type": "string", "minLength": 1, "description": "Optional first-class capability entity linked to this signature." },
+          "selector": { "type": "string", "minLength": 1, "description": "Representative selector or cluster signature (optional)." },
+          "confidence": { "type": "number", "minimum": 0, "maximum": 1, "description": "Confidence of the measured identity." },
+          "evidence_chain": {
+            "type": "array",
+            "items": { "type": "object", "additionalProperties": true },
+            "description": "Evidence supporting the identity-resolution measurement."
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "LOAD-BEARING open bag — carries the measured style fingerprint payload (the reason this block is shaped like projection_variant)."
+          }
+        }
+      }
+    }
+  }
+}

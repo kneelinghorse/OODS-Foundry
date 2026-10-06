@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/map.list.output.json",
+  "title": "map.list output",
+  "description": "List of component-to-trait mappings.",
+  "type": "object",
+  "required": ["mappings", "totalCount", "stats", "etag"],
+  "additionalProperties": false,
+  "properties": {
+    "mappings": {
+      "type": "array",
+      "items": { "type": "object" },
+      "description": "Matching mapping records."
+    },
+    "totalCount": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of mappings returned."
+    },
+    "stats": {
+      "type": "object",
+      "required": ["mappingCount", "systemCount"],
+      "additionalProperties": false,
+      "properties": {
+        "mappingCount": { "type": "integer", "minimum": 0 },
+        "systemCount": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "etag": {
+      "type": "string",
+      "pattern": "^[A-Fa-f0-9]{64}$",
+      "description": "Current ETag of the mappings file."
+    },
+    "nextCursor": {
+      "type": "string",
+      "description": "Pagination cursor for the next page when additional mappings remain."
+    }
+  }
+}

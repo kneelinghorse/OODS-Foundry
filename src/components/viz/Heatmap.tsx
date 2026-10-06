@@ -3,17 +3,17 @@ import type { HTMLAttributes, JSX, MutableRefObject } from 'react';
 import { loadVegaEmbed } from '../../viz/runtime/vega-embed-loader.js';
 import type { EmbedOptions, EmbedResult, VisualizationSpec } from '../../viz/runtime/vega-embed-loader.js';
 import type { EChartsType } from 'echarts';
-import type { NormalizedVizSpec, TraitBinding } from '../../viz/spec/normalized-viz-spec.js';
-import { toVegaLiteSpec, type VegaLiteAdapterSpec } from '../../viz/adapters/vega-lite-adapter.js';
-import { toEChartsOption, type EChartsOption } from '../../viz/adapters/echarts-adapter.js';
-import { bindEChartsInteractions } from '../../viz/adapters/echarts-interactions.js';
-import type { EChartsRuntime } from '../../viz/adapters/echarts-interactions.js';
-import { selectVizRenderer, type VizRendererId } from '../../viz/adapters/renderer-selector.js';
-import { createColorIntensityMapper, type ColorIntensityMapper } from '../../viz/encoding/color-intensity-mapper.js';
+import type { NormalizedVizSpec, TraitBinding } from '@oods/viz-core';
+import { toVegaLiteSpec, type VegaLiteAdapterSpec } from '@oods/viz-core';
+import { toEChartsOption, type EChartsOption } from '@oods/viz-core';
+import { bindEChartsInteractions } from '@oods/viz-core';
+import type { EChartsRuntime } from '@oods/viz-core';
+import { selectVizRenderer, type VizRendererId } from '@oods/viz-core';
+import { createColorIntensityMapper, type ColorIntensityMapper } from '@oods/viz-core';
 import { VizContainer } from './VizContainer.js';
 import { ChartDescription } from './ChartDescription.js';
 import { AccessibleTable } from './AccessibleTable.js';
-import { formatDimension, formatValue } from '../../viz/a11y/format.js';
+import { formatDimension, formatValue } from '@oods/viz-core';
 
 export interface HeatmapProps extends HTMLAttributes<HTMLElement> {
   readonly spec: NormalizedVizSpec;
@@ -425,6 +425,7 @@ interface HeatmapMatrix {
   readonly xLabel: string;
   readonly yLabel: string;
   readonly valueLabel: string;
+  readonly valueField: string;
   readonly caption: string;
 }
 
@@ -508,6 +509,7 @@ function buildHeatmapMatrix(spec: NormalizedVizSpec): HeatmapMatrix | null {
     xLabel: xInfo.label,
     yLabel: yInfo.label,
     valueLabel: valueInfo.label,
+    valueField: valueInfo.field,
     caption: resolveHeatmapCaption(spec),
   };
 }
@@ -732,6 +734,10 @@ function applyHeatmapVisualMap(
   return {
     ...option,
     visualMap: {
+      // s166 m01 (FF#23): this override REPLACES the adapter's visualMap, so it must
+      // carry its own dimension — a dimensionless visualMap binds to the LAST dataset
+      // dimension, blanking every cell when a non-measure field trails the measure.
+      dimension: matrix.valueField,
       min: mapper.min,
       max: mapper.max,
       calculable: false,

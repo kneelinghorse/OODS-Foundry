@@ -2,6 +2,8 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import ts from 'typescript';
+import { SCHEMA_ROUTES } from '../../scripts/types/schema-routes.js';
 
 const ROOT = path.resolve(fileURLToPath(new URL('../../', import.meta.url)));
 const SCHEMA_DIR = path.join(ROOT, 'schemas');
@@ -28,6 +30,18 @@ function collectSchemaFiles(dir: string): string[] {
 }
 
 describe('Schema-derived types', () => {
+  it('can be consumed from one barrel without ambiguous chart parameter type exports', () => {
+    const program = ts.createProgram([path.join(GENERATED_DIR, 'index.ts')], {
+      noEmit: true,
+      skipLibCheck: true,
+      target: ts.ScriptTarget.ES2022,
+      module: ts.ModuleKind.ESNext,
+      moduleResolution: ts.ModuleResolutionKind.Bundler,
+    });
+    const errors = ts.getPreEmitDiagnostics(program).filter((diagnostic) => diagnostic.category === ts.DiagnosticCategory.Error);
+    expect(errors.map((diagnostic) => ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n'))).toEqual([]);
+  });
+
   it('exist for every schema file', () => {
     const schemas = collectSchemaFiles(SCHEMA_DIR);
     expect(schemas.length, 'Expected to find JSON Schemas under schemas/').toBeGreaterThan(0);
@@ -36,7 +50,19 @@ describe('Schema-derived types', () => {
 
     for (const schema of schemas) {
       const relative = path.relative(SCHEMA_DIR, schema);
-      const expected = path.join(GENERATED_DIR, relative.replace(/\.schema\.json$/i, '.ts'));
+      const routeKey = relative.split(path.sep).join('/');
+      const route = SCHEMA_ROUTES[routeKey];
+
+      // #681: schemas hand-authored in @oods/viz-core are intentionally never generated.
+      if (route === 'skip') {
+        continue;
+      }
+
+      // Routed schemas (e.g. the viz-core IR) generate INTO their package, not generated/types/.
+      const expected = route
+        ? path.join(ROOT, route.outFile)
+        : path.join(GENERATED_DIR, relative.replace(/\.schema\.json$/i, '.ts'));
+
       if (!existsSync(expected)) {
         missing.push(`${relative} → ${path.relative(ROOT, expected)}`);
       }

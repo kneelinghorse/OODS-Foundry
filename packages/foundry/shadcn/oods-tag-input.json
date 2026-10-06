@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "oods-tag-input",
+  "type": "registry:component",
+  "title": "OODS Foundry TagInput",
+  "description": "React adapter for OODS TagInput on shadcn/ui's Radix and Base UI bases. Preserves the OODS text-value callbacks and displayed tag list, including record labels and authored children. The OODS contract does not create or remove tags; this adapter does not add those behaviours.",
+  "dependencies": [
+    "@oods/components-react@0.7.0"
+  ],
+  "registryDependencies": [
+    "input-group",
+    "badge"
+  ],
+  "files": [
+    {
+      "path": "components/oods/tag-input.tsx",
+      "target": "components/oods/tag-input.tsx",
+      "type": "registry:component",
+      "content": "import * as React from 'react';\nimport type { TagInputProps } from '@oods/components-react';\nimport { InputGroup, InputGroupInput } from '@/registry/new-york-v4/ui/input-group';\nimport { Badge } from '@/registry/new-york-v4/ui/badge';\n\nexport const OodsTagInput = React.forwardRef<HTMLFieldSetElement, TagInputProps>(function OodsTagInput(\n  { title, label, heading, name, description, subtitle, hint, tags, value, placeholder, children, className, onChange, onValueChange, onUpdate, ...props }, ref,\n) {\n  const firstText = (...values: Array<string | undefined>) => values.find(value => value?.trim());\n  const titleText = firstText(title, label, heading, name) ?? 'Tag Input';\n  const details = firstText(description, subtitle, hint);\n  const inputId = React.useId();\n  const items = (tags ?? []).flatMap(entry => {\n    if (entry === undefined || entry === null) return [];\n    if (typeof entry === 'object' && !Array.isArray(entry)) {\n      const record = entry as Record<string, unknown>;\n      const value = ['label', 'name', 'role', 'value', 'id'].map(key => record[key]).find(value => ['string', 'number', 'boolean'].includes(typeof value) && String(value).length > 0);\n      return value === undefined ? [] : [String(value)];\n    }\n    const value = typeof entry === 'object' ? JSON.stringify(entry) : String(entry);\n    return value ? [value] : [];\n  });\n  const authored = React.Children.toArray(children).some(node => typeof node !== 'string' || node.trim().length > 0);\n  return <fieldset {...props} ref={ref} className={className} data-oods-component={undefined} data-oods-adapter=\"TagInput\" data-form-type=\"tag-input\">\n    <legend className=\"font-medium\">{titleText}</legend>\n    {details ? <p className=\"text-sm text-muted-foreground\">{details}</p> : null}\n    {authored ? children : <>\n      <label htmlFor={inputId} className=\"text-sm font-medium\">Tag</label>\n      <InputGroup><InputGroupInput id={inputId} type=\"text\" name=\"tag\" placeholder={firstText(placeholder)} value={value}\n        onChange={event => { onChange?.(event); if (!event.defaultPrevented) { onValueChange?.(event.currentTarget.value); onUpdate?.(event.currentTarget.value); } }} /></InputGroup>\n      {items.length ? <div data-tag-list=\"true\" className=\"mt-2 flex flex-wrap gap-1\">{items.map((tag, index) => <Badge key={index} variant=\"secondary\" data-tag-item=\"true\">{tag}</Badge>)}</div> : null}\n    </>}\n  </fieldset>;\n});\n"
+    }
+  ]
+}

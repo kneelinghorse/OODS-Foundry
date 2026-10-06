@@ -1,0 +1,22 @@
+{
+  "id": "shopify-forge-d3-certification-bar",
+  "name": "D3 certification bar",
+  "description": "Synthetic counts by status.",
+  "rows": [
+    { "status": "active", "count": 17 },
+    { "status": "draft", "count": 5 },
+    { "status": "archived", "count": 3 }
+  ],
+  "chartType": "bar",
+  "encodings": {
+    "x": { "field": "status", "type": "nominal" },
+    "y": { "field": "count", "type": "quantitative", "aggregate": "sum" }
+  },
+  "strictFields": true,
+  "a11yEquivalence": true,
+  "output": {
+    "compact": true,
+    "includeNormalizedSpec": true,
+    "includeA11y": true
+  }
+}

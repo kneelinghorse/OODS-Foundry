@@ -335,9 +335,9 @@ type ArtifactEndpointRateLimit = {
 export async function registerArtifactEndpoints(
   fastify: FastifyInstance,
   artifactsRoot: string,
-  rateLimit: ArtifactEndpointRateLimit
+  rateLimit: ArtifactEndpointRateLimit,
+  currentStateRoot = path.join(artifactsRoot, CURRENT_STATE_DIR),
 ) {
-  const currentStateRoot = path.join(artifactsRoot, CURRENT_STATE_DIR);
 
   fastify.get(
     '/runs',

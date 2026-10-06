@@ -1,0 +1,430 @@
+object:
+  name: Finding
+  version: 0.3.0
+  domain: capture.finding
+  visibility: internal
+  description: >-
+    One accessibility rule's result on one captured page, with the engine that reported it and the evidence the
+    run attests. Violations and needs-review items carry their reasons; page-level counts alone never become
+    findings.
+  tags:
+    - capture
+    - finding
+    - accessibility
+traits:
+  - name: behavioral/Searchable
+    parameters:
+      placeholder: Search findings
+  - name: behavioral/Filterable
+  - name: behavioral/Pageable
+    parameters:
+      defaultPageSize: 20
+      pageSizeOptions:
+        - 10
+        - 20
+        - 50
+  - name: core/Assessable
+    parameters:
+      recordedStates:
+        - violation
+        - needs_review
+  - name: core/Provenanced
+    parameters:
+      source: Capture tool
+schema:
+  finding_id:
+    type: string
+    required: true
+    description: 'The route and rule for a violation; needs-review appends "#needs_review" so both results have distinct stable identities.'
+    examples:
+      - /about/monthly-calls#aria-allowed-attr
+      - /about/monthly-calls#aria-prohibited-attr
+      - /about/monthly-calls#button-name
+      - /components#aria-allowed-role
+      - /components/banner#landmark-unique
+      - /components/data-visualizations#empty-table-header
+  title:
+    type: string
+    required: true
+    description: The rule's one-line statement of what must hold (axe `help`), which names the finding.
+    examples:
+      - Elements must only use supported ARIA attributes
+      - Elements must only use permitted ARIA attributes
+      - Buttons must have discernible text
+      - ARIA role should be appropriate for the element
+      - Landmarks should have a unique role or role/label/title (i.e. accessible name) combination
+      - Table header text should not be empty
+  description:
+    type: string
+    required: true
+    description: What the rule checks, in the engine's words.
+    examples:
+      - Ensure an element's role supports its ARIA attributes
+      - Ensure ARIA attributes are not prohibited for an element's role
+      - Ensure buttons have discernible text
+      - Ensure role attribute has an appropriate value for the element
+      - Ensure landmarks are unique
+      - Ensure table headers have discernible text
+  impact:
+    type: string
+    required: true
+    description: The engine's impact for the rule. The capture keeps an unknown bucket beside axe's four.
+    validation:
+      enum:
+        - critical
+        - serious
+        - moderate
+        - minor
+        - unknown
+    examples:
+      - critical
+      - serious
+      - critical
+      - minor
+      - moderate
+      - minor
+  rule_id:
+    type: string
+    required: true
+    description: The engine's rule id.
+    examples:
+      - aria-allowed-attr
+      - aria-prohibited-attr
+      - button-name
+      - aria-allowed-role
+      - landmark-unique
+      - empty-table-header
+  route:
+    type: string
+    required: true
+    description: The page the finding is on, as a route.
+    examples:
+      - /about/monthly-calls
+      - /about/monthly-calls
+      - /about/monthly-calls
+      - /components
+      - /components/banner
+      - /components/data-visualizations
+  page_url:
+    type: string
+    required: true
+    description: The page's full URL.
+    examples:
+      - https://designsystem.digital.gov/about/monthly-calls
+      - https://designsystem.digital.gov/about/monthly-calls
+      - https://designsystem.digital.gov/about/monthly-calls
+      - https://designsystem.digital.gov/components
+      - https://designsystem.digital.gov/components/banner
+      - https://designsystem.digital.gov/components/data-visualizations
+  node_count:
+    type: integer
+    required: true
+    description: How many elements on the page fail the rule.
+    validation:
+      minimum: 1
+    examples:
+      - 21
+      - 21
+      - 21
+      - 47
+      - 2
+      - 1
+  selectors:
+    type: string[]
+    required: true
+    description: The failing elements, as the engine's selectors.
+    examples:
+      - - .usa-embed-container.margin-top-4:nth-child(9) > iframe
+        - .ytmVideoInfoVideoTitle
+        - .usa-embed-container.margin-top-4:nth-child(14) > iframe
+        - iframe[title="Engineering values"]
+        - .usa-embed-container.margin-top-4:nth-child(24) > iframe
+        - iframe[title="A look at beta Web Components"]
+        - .usa-embed-container.margin-top-4:nth-child(34) > iframe
+        - .usa-embed-container.margin-top-4:nth-child(39) > iframe
+        - iframe[title="Introduction to Web Components"]
+        - iframe[title="Building with USWDS tools"]
+        - iframe[title="USWDS component lifecycle"]
+        - .usa-embed-container.margin-top-4:nth-child(59) > iframe
+        - .usa-embed-container.margin-top-4:nth-child(64) > iframe
+        - .usa-embed-container.margin-top-4:nth-child(69) > iframe
+        - iframe[title="Mission, vision, and polestar"]
+        - iframe[title="Product roadmap"]
+        - .usa-embed-container.margin-top-4:nth-child(84) > iframe
+        - iframe[title="Real-world accessibility"]
+        - iframe[title="Top tasks"]
+        - .usa-embed-container.margin-top-4:nth-child(99) > iframe
+      - - .usa-embed-container.margin-top-4:nth-child(9) > iframe
+        - '#movie_player'
+        - .usa-embed-container.margin-top-4:nth-child(14) > iframe
+        - iframe[title="Engineering values"]
+        - .usa-embed-container.margin-top-4:nth-child(24) > iframe
+        - iframe[title="A look at beta Web Components"]
+        - .usa-embed-container.margin-top-4:nth-child(34) > iframe
+        - .usa-embed-container.margin-top-4:nth-child(39) > iframe
+        - iframe[title="Introduction to Web Components"]
+        - iframe[title="Building with USWDS tools"]
+        - iframe[title="USWDS component lifecycle"]
+        - .usa-embed-container.margin-top-4:nth-child(59) > iframe
+        - .usa-embed-container.margin-top-4:nth-child(64) > iframe
+        - .usa-embed-container.margin-top-4:nth-child(69) > iframe
+        - iframe[title="Mission, vision, and polestar"]
+        - iframe[title="Product roadmap"]
+        - .usa-embed-container.margin-top-4:nth-child(84) > iframe
+        - iframe[title="Real-world accessibility"]
+        - iframe[title="Top tasks"]
+        - .usa-embed-container.margin-top-4:nth-child(99) > iframe
+      - - .usa-embed-container.margin-top-4:nth-child(9) > iframe
+        - .ytmVideoInfoChannelAvatar
+        - .usa-embed-container.margin-top-4:nth-child(14) > iframe
+        - iframe[title="Engineering values"]
+        - .usa-embed-container.margin-top-4:nth-child(24) > iframe
+        - iframe[title="A look at beta Web Components"]
+        - .usa-embed-container.margin-top-4:nth-child(34) > iframe
+        - .usa-embed-container.margin-top-4:nth-child(39) > iframe
+        - iframe[title="Introduction to Web Components"]
+        - iframe[title="Building with USWDS tools"]
+        - iframe[title="USWDS component lifecycle"]
+        - .usa-embed-container.margin-top-4:nth-child(59) > iframe
+        - .usa-embed-container.margin-top-4:nth-child(64) > iframe
+        - .usa-embed-container.margin-top-4:nth-child(69) > iframe
+        - iframe[title="Mission, vision, and polestar"]
+        - iframe[title="Product roadmap"]
+        - .usa-embed-container.margin-top-4:nth-child(84) > iframe
+        - iframe[title="Real-world accessibility"]
+        - iframe[title="Top tasks"]
+        - .usa-embed-container.margin-top-4:nth-child(99) > iframe
+      - - li[aria-label="Accordion"]
+        - li[aria-label="Alert"]
+        - li[aria-label="Banner"]
+        - li[aria-label="Breadcrumb"]
+        - li[aria-label="Button"]
+        - li[aria-label="Button group"]
+        - li[aria-label="Card"]
+        - li[aria-label="Character count"]
+        - li[aria-label="Checkbox"]
+        - li[aria-label="Collection"]
+        - li[aria-label="Combo box"]
+        - li[aria-label="Data visualizations"]
+        - li[aria-label="Date picker"]
+        - li[aria-label="Date range picker"]
+        - li[aria-label="File input"]
+        - li[aria-label="Footer"]
+        - li[aria-label="Form"]
+        - li[aria-label="Header"]
+        - li[aria-label="Icon"]
+        - li[aria-label="Icon list"]
+      - - '#banner--default-preview-content > .usa-banner:nth-child(2)'
+        - .usa-banner:nth-child(6)
+      - - table[aria-describedby="source_line"] > thead > tr > th[scope="col"]:nth-child(1)
+  criteria:
+    type: string[]
+    required: false
+    description: 'The rule''s tags: WCAG criteria, best-practice and the standards it maps to.'
+    examples:
+      - - cat.aria
+        - wcag2a
+        - wcag412
+        - EN-301-549
+        - EN-9.4.1.2
+        - RGAAv4
+        - RGAA-7.1.1
+      - - cat.aria
+        - wcag2a
+        - wcag412
+        - EN-301-549
+        - EN-9.4.1.2
+        - RGAAv4
+        - RGAA-7.1.1
+      - - cat.name-role-value
+        - wcag2a
+        - wcag412
+        - section508
+        - section508.22.a
+        - TTv5
+        - TT6.a
+        - EN-301-549
+        - EN-9.4.1.2
+        - ACT
+        - RGAAv4
+        - RGAA-11.9.1
+      - - cat.aria
+        - best-practice
+      - - cat.semantics
+        - best-practice
+      - - cat.name-role-value
+        - best-practice
+  help_url:
+    type: string
+    required: false
+    description: The engine's page for the rule.
+    examples:
+      - https://dequeuniversity.com/rules/axe/4.11/aria-allowed-attr?application=playwright
+      - https://dequeuniversity.com/rules/axe/4.11/aria-prohibited-attr?application=playwright
+      - https://dequeuniversity.com/rules/axe/4.11/button-name?application=playwright
+      - https://dequeuniversity.com/rules/axe/4.11/aria-allowed-role?application=playwright
+      - https://dequeuniversity.com/rules/axe/4.11/landmark-unique?application=playwright
+      - https://dequeuniversity.com/rules/axe/4.11/empty-table-header?application=playwright
+  provenance_source:
+    type: string
+    required: true
+    description: The system that produced the record.
+    examples:
+      - Capture tool
+      - Capture tool
+      - Capture tool
+      - Capture tool
+      - Capture tool
+      - Capture tool
+  provenance_record:
+    type: uuid
+    required: true
+    description: Which record there, the capture run's uuid.
+    examples:
+      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
+      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
+      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
+      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
+      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
+      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
+  provenance_record_name:
+    type: string
+    required: false
+    description: That run's name as the Run records it (target_name), shown in place of its uuid.
+    examples:
+      - uswds-designsystem
+      - uswds-designsystem
+      - uswds-designsystem
+      - uswds-designsystem
+      - uswds-designsystem
+      - uswds-designsystem
+  provenance_locator:
+    type: string
+    required: false
+    description: Where in that record the values were read.
+    examples:
+      - evidence/a11y/about_monthly-calls--5f548cfd.json
+      - evidence/a11y/about_monthly-calls--5f548cfd.json
+      - evidence/a11y/about_monthly-calls--5f548cfd.json
+      - evidence/a11y/components--e49bf947.json
+      - evidence/a11y/components_banner--60c71ed2.json
+      - evidence/a11y/components_data-visualizations--df1931f8.json
+  provenance_method:
+    type: string
+    required: true
+    description: How the values were obtained.
+    examples:
+      - axe-core 4.11.0
+      - axe-core 4.11.0
+      - axe-core 4.11.0
+      - axe-core 4.11.0
+      - axe-core 4.11.0
+      - axe-core 4.11.0
+  provenance_at:
+    type: datetime
+    required: true
+    description: When they were obtained.
+    validation:
+      format: date-time
+    examples:
+      - '2026-09-17T00:46:39.300Z'
+      - '2026-09-17T00:46:39.300Z'
+      - '2026-09-17T00:46:39.300Z'
+      - '2026-09-17T00:48:19.238Z'
+      - '2026-09-17T00:49:30.540Z'
+      - '2026-09-17T00:51:01.072Z'
+  reasons:
+    type: string
+    required: false
+    description: The engine's recorded reasons a person needs to review this finding.
+  result_state:
+    type: string
+    required: true
+    description: >-
+      What the engine recorded as an item: violation or needs_review. Review items never increase violation counts.
+    validation:
+      enum:
+        - violation
+        - passed
+        - needs_review
+        - not_applicable
+        - not_measured
+    examples:
+      - violation
+      - violation
+      - violation
+      - violation
+      - violation
+      - violation
+semantics:
+  # The run is named by its title; its uuid stays in Reference details.
+  provenance_record:
+    semantic_type: provenance.record
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      displayLabelField: provenance_record_name
+  finding_id:
+    semantic_type: capture.finding.finding_id
+    token_mapping: tokenMap(text.body.*)
+  title:
+    semantic_type: text.label
+    token_mapping: tokenMap(text.label.*)
+  description:
+    semantic_type: capture.finding.description
+    token_mapping: tokenMap(text.body.*)
+  impact:
+    semantic_type: capture.finding.impact
+    token_mapping: tokenMap(text.body.*)
+  rule_id:
+    semantic_type: capture.finding.rule_id
+    token_mapping: tokenMap(text.body.*)
+  route:
+    semantic_type: capture.finding.route
+    token_mapping: tokenMap(text.body.*)
+  page_url:
+    semantic_type: capture.finding.page_url
+    token_mapping: tokenMap(text.body.*)
+  node_count:
+    semantic_type: capture.finding.node_count
+    token_mapping: tokenMap(text.body.*)
+  selectors:
+    semantic_type: capture.finding.selectors
+    token_mapping: tokenMap(text.body.*)
+  criteria:
+    semantic_type: capture.finding.criteria
+    token_mapping: tokenMap(text.body.*)
+  help_url:
+    semantic_type: capture.finding.help_url
+    token_mapping: tokenMap(text.body.*)
+metadata:
+  maturity: alpha
+  owners:
+    - OODS Foundry
+  references:
+    - objects/provenance.v1.json#/references/ref-b9c43cb31221
+  changelog:
+    - version: 0.1.0
+      date: '2026-09-18'
+      description: Born from the 6 findings of capture run 6e435ce7; sample records are those findings.
+    - version: 0.2.0
+      date: '2026-09-18'
+      description: >-
+        Read-only in OODS Foundry: its records are shown, never edited, so it composes no form and no
+        workflow, and its detail offers no Edit or Delete.
+    - version: 0.3.0
+      date: '2026-09-20'
+      description: Current capture result semantics and historical uncertainty, retaining read-only contexts.
+  supportedContexts:
+    - card
+    - detail
+    - inline
+    - list
+    - timeline
+
+# Authored type associations; no record join or referential-integrity claim.
+relationships:
+  - target: Run
+    via: provenance_record
+    cardinality: many-to-one
+    label: Observed in run

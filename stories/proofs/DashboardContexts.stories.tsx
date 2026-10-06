@@ -5,16 +5,8 @@ import { listDashboardExamples } from '~/examples/dashboards';
 
 const DASHBOARD_EXAMPLES = listDashboardExamples();
 
-// Storybook canvas constrains width more than the Explorer shell; widen the view shell
-// so dashboard grids can render multiple columns without clipping.
-const DASHBOARD_STORY_STYLE: React.CSSProperties = {
-  '--view-shell-max-width': 'min(96rem, 100vw - 2rem)',
-  '--view-main-gap-default': 'clamp(1.25rem, 1vw + 1rem, 1.75rem)',
-  '--view-section-gap-detail': 'clamp(1.25rem, 1vw + 1rem, 1.75rem)',
-} as React.CSSProperties;
-
 const meta: Meta<ComponentType> = {
-  title: 'Contexts/Compound/Dashboard',
+  title: 'Proofs/Dashboard Contexts',
   component: DASHBOARD_EXAMPLES[0]!.Preview,
   parameters: {
     layout: 'fullscreen',
@@ -40,11 +32,7 @@ function storyFromExample(id: string): Story {
         },
       },
     },
-    render: () => (
-      <div style={DASHBOARD_STORY_STYLE}>
-        <Preview />
-      </div>
-    ),
+    render: () => <Preview />,
   };
 }
 
@@ -53,7 +41,3 @@ export const UserDashboard: Story = storyFromExample('user-adoption');
 export const SubscriptionDashboard: Story = storyFromExample('subscription-mrr');
 
 export const ProductDashboard: Story = storyFromExample('product-analytics');
-
-export const SpatialDashboard: Story = storyFromExample('spatial-dashboard');
-
-export const NetworkFlowDashboard: Story = storyFromExample('network-flow');

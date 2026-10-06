@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { CategoryTree, CategoryTreeView } from '../../../src/components/classification/CategoryTree.js';
 import { CategoryBreadcrumb } from '../../../src/components/classification/CategoryBreadcrumb.js';
 import { useCategoryTree } from '../../../src/hooks/useCategoryTree.js';
-import type { CategoryNode } from '../../../src/schemas/classification/category-node.ts';
+import type { CategoryNode } from '../../../src/schemas/classification/category-node.js';
 
 const SAMPLE_CATEGORIES: CategoryNode[] = [
   {
@@ -47,6 +47,7 @@ const SAMPLE_CATEGORIES: CategoryNode[] = [
     isSelectable: true,
     synonyms: ['google-os'],
     mode: 'taxonomy',
+    metadata: undefined,
   },
   {
     id: 'ios',
@@ -60,6 +61,7 @@ const SAMPLE_CATEGORIES: CategoryNode[] = [
     isSelectable: true,
     synonyms: [],
     mode: 'taxonomy',
+    metadata: undefined,
   },
   {
     id: 'audio',
@@ -73,6 +75,7 @@ const SAMPLE_CATEGORIES: CategoryNode[] = [
     isSelectable: true,
     synonyms: [],
     mode: 'taxonomy',
+    metadata: undefined,
   },
   {
     id: 'wireless-audio',
@@ -86,6 +89,7 @@ const SAMPLE_CATEGORIES: CategoryNode[] = [
     isSelectable: true,
     synonyms: [],
     mode: 'taxonomy',
+    metadata: undefined,
   },
   {
     id: 'wired-audio',
@@ -99,6 +103,7 @@ const SAMPLE_CATEGORIES: CategoryNode[] = [
     isSelectable: true,
     synonyms: [],
     mode: 'taxonomy',
+    metadata: undefined,
   },
   {
     id: 'home-office',
@@ -112,6 +117,7 @@ const SAMPLE_CATEGORIES: CategoryNode[] = [
     isSelectable: true,
     synonyms: [],
     mode: 'taxonomy',
+    metadata: undefined,
   },
   {
     id: 'chairs',
@@ -125,11 +131,12 @@ const SAMPLE_CATEGORIES: CategoryNode[] = [
     isSelectable: true,
     synonyms: [],
     mode: 'taxonomy',
+    metadata: undefined,
   },
 ];
 
 const meta: Meta<typeof CategoryTree> = {
-  title: 'Traits/Core/Classifiable/Category Tree',
+  title: 'Components/Classification/CategoryTree',
   component: CategoryTree,
   args: {
     nodes: SAMPLE_CATEGORIES,

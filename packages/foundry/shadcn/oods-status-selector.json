@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "oods-status-selector",
+  "type": "registry:component",
+  "title": "OODS Foundry StatusSelector",
+  "description": "React adapter for OODS StatusSelector on shadcn/ui's Radix and Base UI bases. Preserves status/value, normalized options/states, authored children, help and native change callbacks. The visible control uses shadcn combobox keyboard interaction rather than a native select.",
+  "dependencies": [
+    "@oods/components-react@0.7.0",
+    "@oods/component-contracts@0.7.0"
+  ],
+  "registryDependencies": [
+    "select"
+  ],
+  "files": [
+    {
+      "path": "components/oods/status-selector.tsx",
+      "target": "components/oods/status-selector.tsx",
+      "type": "registry:component",
+      "content": "import * as React from 'react';\nimport type { StatusSelectorProps } from '@oods/components-react';\nimport { formatReadOnlyValue } from '@oods/component-contracts';\nimport { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/registry/new-york-v4/ui/select';\n\nexport const OodsStatusSelector = React.forwardRef<HTMLDivElement, StatusSelectorProps>(function OodsStatusSelector(\n  { label, title, help, options, states, value, status, children, className, onChange, onValueChange, onUpdate, ...props }, ref,\n) {\n  const instance = React.useId();\n  const native = React.useRef<HTMLSelectElement>(null);\n  const choices = (options ?? states ?? ['draft', 'active', 'inactive']).flatMap(entry => {\n    if (entry === undefined || entry === null) return [];\n    if (typeof entry === 'object' && !Array.isArray(entry)) {\n      const record = entry as Record<string, unknown>;\n      const text = (key: string) => typeof record[key] === 'string' && record[key].length > 0 ? record[key] as string : undefined;\n      const value = text('value') ?? text('id') ?? text('label') ?? '';\n      const label = text('label') ?? text('name') ?? formatReadOnlyValue(value, 'string', true);\n      return value || label ? [{ value, label }] : [];\n    }\n    const value = typeof entry === 'object' ? JSON.stringify(entry) : String(entry);\n    return value ? [{ value, label: formatReadOnlyValue(value, 'string', true) }] : [];\n  });\n  const [local, setLocal] = React.useState(status?.trim() ? status : choices[0]?.value ?? '');\n  const selected = value ?? local;\n  const empty = '__oods_empty_option__';\n  const labelText = [label, title].find(value => value?.trim()) ?? 'Status';\n  const authored = React.Children.toArray(children).some(node => typeof node !== 'string' || node.trim().length > 0);\n  return <div {...props} ref={ref} className={className} data-oods-component={undefined} data-oods-adapter=\"StatusSelector\" data-summary-type=\"status-selector\">\n    {authored ? children : <>\n      <label id={`${instance}-label`} htmlFor={instance} className=\"text-sm font-medium\">{labelText}</label>\n      <select ref={native} name=\"status\" value={selected} tabIndex={-1} aria-hidden=\"true\" style={{ display: 'none' }}\n        onChange={event => { onChange?.(event); if (!event.defaultPrevented) { const next = event.currentTarget.value; if (value === undefined) setLocal(next); onValueChange?.(next); onUpdate?.(next); } }}>\n        {choices.length ? choices.map((choice, index) => <option key={index} value={choice.value}>{choice.label}</option>) : <option value=\"\">Select...</option>}\n      </select>\n      <Select value={selected || empty} onValueChange={next => { if (native.current) { native.current.value = next === empty ? '' : next ?? ''; native.current.dispatchEvent(new Event('change', { bubbles: true })); } }}>\n        <SelectTrigger id={instance} aria-labelledby={`${instance}-label`} aria-describedby={help ? `${instance}-help` : undefined}><SelectValue>{choices.find(choice => choice.value === selected)?.label ?? 'Select...'}</SelectValue></SelectTrigger>\n        <SelectContent>{choices.length ? choices.map((choice, index) => <SelectItem key={index} value={choice.value || empty}>{choice.label}</SelectItem>) : <SelectItem value={empty}>Select...</SelectItem>}</SelectContent>\n      </Select>\n    </>}\n    {help ? <p id={`${instance}-help`} className=\"text-sm text-muted-foreground\">{help}</p> : null}\n  </div>;\n});\n"
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "name": "@harbor/example-components",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "license": "Apache-2.0",
+  "files": [
+    "react.js",
+    "react.d.ts",
+    "vue.js",
+    "vue.d.ts",
+    "README.md",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "exports": {
+    "./react": {
+      "types": "./react.d.ts",
+      "import": "./react.js"
+    },
+    "./vue": {
+      "types": "./vue.d.ts",
+      "import": "./vue.js"
+    }
+  },
+  "peerDependencies": {
+    "react": ">=18 <20",
+    "vue": ">=3 <4"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "vue": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "react": "19.2.0",
+    "vue": "3.5.42"
+  }
+}

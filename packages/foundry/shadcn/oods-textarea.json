@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "oods-textarea",
+  "type": "registry:component",
+  "title": "OODS Foundry Textarea",
+  "description": "React adapter for OODS Textarea on shadcn/ui's Radix and Base UI bases. Native textarea props, four-row default, label, help, validation and value callbacks retain their meanings; density uses team spacing rather than OODS pixel dimensions.",
+  "dependencies": [
+    "@oods/components-react@0.7.0"
+  ],
+  "registryDependencies": [
+    "textarea",
+    "label"
+  ],
+  "files": [
+    {
+      "path": "components/oods/textarea.tsx",
+      "target": "components/oods/textarea.tsx",
+      "type": "registry:component",
+      "content": "import * as React from 'react';\nimport type { TextareaProps } from '@oods/components-react';\nimport { Textarea } from '@/registry/new-york-v4/ui/textarea';\nimport { Label } from '@/registry/new-york-v4/ui/label';\n\nexport const OodsTextarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(function OodsTextarea(\n  { id, label, help, description, validation, density = 'comfortable', requiredIndicator, className, style,\n    textareaClassName, textareaStyle, onChange, onValueChange, onUpdate, required, rows = 4, 'aria-describedby': describedBy, ...props }, ref,\n) {\n\n  const details = help ?? description;\n  const validationId = validation?.id ?? `${id}-validation`;\n  const descriptions = [describedBy, details ? `${id}-description` : '', validation?.message ? validationId : ''].filter(Boolean).join(' ') || undefined;\n  return <div className={className} style={style} data-density={density} data-validation-state={validation?.state} data-oods-component={undefined} data-oods-adapter=\"Textarea\">\n    <Label htmlFor={id}>{label}{required && requiredIndicator !== null ? requiredIndicator ?? <span aria-hidden=\"true\"> *</span> : null}</Label>\n    <Textarea {...props} ref={ref} id={id} rows={rows} required={required} className={[density === 'compact' ? 'py-1' : '', textareaClassName].filter(Boolean).join(' ')} style={textareaStyle}\n      data-oods-component={undefined} data-validation-state={validation?.state} aria-describedby={descriptions} aria-invalid={props['aria-invalid'] ?? (validation?.state === 'error' || undefined)}\n      onChange={event => { onChange?.(event); if (!event.defaultPrevented) { onValueChange?.(event.currentTarget.value); onUpdate?.(event.currentTarget.value); } }} />\n    {details ? <p id={`${id}-description`} className=\"text-sm text-muted-foreground\">{details}</p> : null}\n    {validation?.message ? <p id={validationId} role={validation.state === 'error' ? 'alert' : 'status'} aria-live={validation.state === 'error' ? 'assertive' : 'polite'}>{validation.message}</p> : null}\n  </div>;\n});\n"
+    }
+  ]
+}

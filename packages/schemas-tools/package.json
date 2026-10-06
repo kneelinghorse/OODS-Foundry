@@ -2,6 +2,7 @@
   "name": "@oods/schemas-tools",
   "version": "0.1.0",
   "private": true,
+  "license": "Apache-2.0",
   "type": "module",
   "description": "Utility scripts for generating TypeScript types from JSON Schemas.",
   "main": "dist/index.js",
@@ -9,7 +10,8 @@
     "src"
   ],
   "scripts": {
-    "generate": "tsx src/generate-types.ts"
+    "generate": "tsx src/generate-types.ts",
+    "generate:check": "tsx src/generate-types.ts --check"
   },
   "dependencies": {
     "json-schema-to-typescript": "^13.1.1"

@@ -1,0 +1,976 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`dashboard.render a11yContrast output block (sprint-119 m03) > contrastScan=true emits a structured block whose findings mirror the OODS-V135 warning pairs 1`] = `
+{
+  "findings": [],
+  "summary": {
+    "failing": 0,
+    "gradedPairs": 4,
+  },
+}
+`;
+
+exports[`dashboard.render output.html export goldens (sprint-115 m05) > the output.html=true HTML export matches the committed golden (SVG panels + KPI + geo chart + inlined tokens + narrative) 1`] = `
+"<!DOCTYPE html>
+<html lang="en" data-theme="light" data-brand="A">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Revenue Overview</title>
+<style>:root{--oods-color-fg:rgb(10, 10, 10);--oods-color-muted:rgb(112, 112, 112);--oods-color-bg:rgb(255, 255, 255);--oods-color-panel-bg:rgb(255, 255, 255);--oods-color-panel-border:rgb(229, 229, 229);--oods-color-accent:rgb(10, 10, 10);--oods-color-positive:rgb(24, 125, 82);--oods-color-negative:rgb(206, 44, 49)}body{margin:0;background:var(--oods-color-bg,#ffffff)}.oods-dashboard{font-family:var(--oods-font-sans,system-ui,-apple-system,sans-serif);color:var(--oods-color-fg,#1a1a1a);background:var(--oods-color-bg,#ffffff);margin:0;padding:16px}.oods-dashboard-title{font-size:18px;margin:0 0 4px}.oods-dashboard-summary{margin:0 0 12px;font-size:14px;color:var(--oods-color-muted,#555)}.oods-dashboard-narrative{margin:0 0 12px;font-size:13px;color:var(--oods-color-muted,#555)}.oods-dashboard-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}@media(max-width:600px){.oods-dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.oods-dashboard-grid>.oods-panel{grid-column:1/-1!important;grid-row:auto!important;min-width:0;margin:0}.oods-dashboard-grid>.oods-kpi{grid-column:auto!important}}.oods-panel{background:var(--oods-color-panel-bg,#ffffff);border:1px solid var(--oods-color-panel-border,#e2e2e2);border-radius:8px;padding:12px;box-sizing:border-box}.oods-dashboard-links{grid-column:1/-1;font-size:13px}.oods-dashboard-links h2{font-size:16px}.oods-kpi-sparkline{display:block;width:100%;max-width:200px;height:48px;color:var(--oods-color-accent)}.oods-kpi-breach,.oods-kpi-anomaly{color:var(--oods-color-negative);font-size:13px;margin:4px 0}.oods-kpi-title{margin:0 0 4px;font-size:13px;color:var(--oods-color-muted,#555)}.oods-kpi-value{margin:0;font-size:28px;font-weight:600;color:var(--oods-color-accent,#1a1a1a)}.oods-kpi-delta{margin:4px 0 0;font-size:13px}.oods-trend-increasing{color:var(--oods-color-positive,#1a7f37)}.oods-trend-decreasing{color:var(--oods-color-negative,#b42318)}.oods-trend-flat{color:var(--oods-color-muted,#555)}.oods-chart figcaption{font-size:13px;color:var(--oods-color-muted,#555);margin-bottom:8px}.oods-chart>svg{display:block;max-width:100%;height:auto}.oods-chart-phone{display:none}.oods-chart-phone>svg{display:block;max-width:100%;height:auto}@media(max-width:600px){.oods-chart-phone{display:block}.oods-chart-phone+svg{display:none}}.oods-placeholder-title{margin:0 0 4px;font-size:13px}.oods-placeholder-note{margin:0;font-size:13px;color:var(--oods-color-muted,#555)}.oods-visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}</style>
+</head>
+<body>
+<main class="oods-dashboard" role="region" aria-label="Revenue Overview">
+<h1 class="oods-dashboard-title">Revenue Overview</h1>
+<p class="oods-dashboard-summary">Revenue overview dashboard.</p>
+<section class="oods-dashboard-narrative" aria-label="Key findings">
+<p class="oods-narrative-summary">1 key metric tracked. 1 metric breached threshold.</p>
+<ul class="oods-narrative-findings">
+<li>Total Revenue: 390 (increasing, delta 90) — threshold breached</li>
+</ul>
+</section>
+<div class="oods-dashboard-grid">
+<section class="oods-panel oods-kpi" style="grid-column:1/span 3;grid-row:1/span 1" aria-label="Total Revenue"><h3 class="oods-kpi-title">Total Revenue</h3><p class="oods-kpi-value">390</p><p class="oods-kpi-delta oods-trend-increasing">+90 (increasing)</p><svg class="oods-kpi-sparkline" role="img" viewBox="0 0 200 48"><title>Total Revenue series: 100, 80, 120, 90</title><polyline points="4,24 68,44 132,4 196,34" fill="none" stroke="currentColor" stroke-width="2" vector-effect="non-scaling-stroke"/></svg><p class="oods-kpi-breach"><span aria-hidden="true">▲</span> Threshold breached</p><p class="oods-visually-hidden">Total Revenue: 390 (increasing, delta 90).</p></section>
+<figure class="oods-panel oods-chart" role="figure" style="grid-column:4/span 6;grid-row:1/span 2" aria-label="Line chart of sum of revenue by month."><div class="oods-chart-phone"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="marks" width="332" height="180" viewBox="0 0 332 180" role="img" aria-label="Line chart" aria-description="Line chart of sum of revenue by month."><title>Line chart</title><desc>Line chart of sum of revenue by month.</desc><rect width="332" height="180" fill="#FFFFFF"/><g fill="none" stroke-miterlimit="10" transform="translate(51,33)"><g class="mark-group role-frame root" role="graphics-object" aria-roledescription="group mark container"><g transform="translate(0,0)"><path class="background" aria-hidden="true" d="M0,0h276v110h-276Z"/><g><g class="mark-group role-axis" aria-hidden="true"><g transform="translate(0.5,0.5)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-rule role-axis-grid" pointer-events="none"><line transform="translate(0,110)" x2="276" y2="0" stroke="#E5E5E5" stroke-width="1" opacity="1"/><line transform="translate(0,60)" x2="276" y2="0" stroke="#E5E5E5" stroke-width="1" opacity="1"/><line transform="translate(0,10)" x2="276" y2="0" stroke="#E5E5E5" stroke-width="1" opacity="1"/></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g><g class="mark-group role-axis" role="graphics-symbol" aria-roledescription="axis" aria-label="X-axis titled 'Month' for a discrete scale with 2 values: Jan, Feb"><g transform="translate(0.5,110.5)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-rule role-axis-tick" pointer-events="none"><line transform="translate(69,0)" x2="0" y2="5" stroke="#D4D4D4" stroke-width="1" opacity="1"/><line transform="translate(207,0)" x2="0" y2="5" stroke="#D4D4D4" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-label" pointer-events="none"><text text-anchor="middle" transform="translate(69,15)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10px" fill="#525252" opacity="1">Jan</text><text text-anchor="middle" transform="translate(207,15)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10px" fill="#525252" opacity="1">Feb</text></g><g class="mark-rule role-axis-domain" pointer-events="none"><line transform="translate(0,0)" x2="276" y2="0" stroke="#D4D4D4" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-title" pointer-events="none"><text text-anchor="middle" transform="translate(138,30)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11px" font-weight="bold" fill="#0A0A0A" opacity="1">Month</text></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g><g class="mark-group role-axis" role="graphics-symbol" aria-roledescription="axis" aria-label="Y-axis titled 'Revenue' for a linear scale with values from 0 to 220"><g transform="translate(0.5,0.5)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-rule role-axis-tick" pointer-events="none"><line transform="translate(0,110)" x2="-5" y2="0" stroke="#D4D4D4" stroke-width="1" opacity="1"/><line transform="translate(0,60)" x2="-5" y2="0" stroke="#D4D4D4" stroke-width="1" opacity="1"/><line transform="translate(0,10)" x2="-5" y2="0" stroke="#D4D4D4" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-label" pointer-events="none"><text text-anchor="end" transform="translate(-7,113)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10px" fill="#525252" opacity="1">0</text><text text-anchor="end" transform="translate(-7,62.99999999999999)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10px" fill="#525252" opacity="1">100</text><text text-anchor="end" transform="translate(-7,13.000000000000004)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10px" fill="#525252" opacity="1">200</text></g><g class="mark-rule role-axis-domain" pointer-events="none"><line transform="translate(0,110)" x2="0" y2="-110" stroke="#D4D4D4" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-title" pointer-events="none"><text text-anchor="middle" transform="translate(-35,55) rotate(-90) translate(0,-2)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11px" font-weight="bold" fill="#0A0A0A" opacity="1">Revenue</text></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g><g class="mark-line role-mark marks" role="graphics-object" aria-roledescription="line mark container"><path aria-label="Month: Jan; Revenue: 180" role="graphics-symbol" aria-roledescription="line mark" d="M69,20L207,5" stroke="#3E63DD" stroke-width="2.5"/></g><g class="mark-group role-title"><g transform="translate(-46.00000000000001,-28)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-text role-title-text" role="graphics-symbol" aria-roledescription="title" aria-label="Title text 'Line chart'" pointer-events="none"><text text-anchor="start" transform="translate(0,19)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="24px" font-weight="600" fill="#0A0A0A" opacity="1">Line chart</text></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g></g><path class="foreground" aria-hidden="true" d="" display="none"/></g></g></g></svg></div><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="marks" width="600" height="320" viewBox="0 0 600 320" role="img" aria-label="Line chart" aria-description="Line chart of sum of revenue by month."><title>Line chart</title><desc>Line chart of sum of revenue by month.</desc><rect width="600" height="320" fill="#FFFFFF"/><g fill="none" stroke-miterlimit="10" transform="translate(51,33)"><g class="mark-group role-frame root" role="graphics-object" aria-roledescription="group mark container"><g transform="translate(0,0)"><path class="background" aria-hidden="true" d="M0,0h544v250h-544Z"/><g><g class="mark-group role-axis" aria-hidden="true"><g transform="translate(0.5,0.5)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-rule role-axis-grid" pointer-events="none"><line transform="translate(0,250)" x2="544" y2="0" stroke="#E5E5E5" stroke-width="1" opacity="1"/><line transform="translate(0,193)" x2="544" y2="0" stroke="#E5E5E5" stroke-width="1" opacity="1"/><line transform="translate(0,136)" x2="544" y2="0" stroke="#E5E5E5" stroke-width="1" opacity="1"/><line transform="translate(0,80)" x2="544" y2="0" stroke="#E5E5E5" stroke-width="1" opacity="1"/><line transform="translate(0,23)" x2="544" y2="0" stroke="#E5E5E5" stroke-width="1" opacity="1"/></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g><g class="mark-group role-axis" role="graphics-symbol" aria-roledescription="axis" aria-label="X-axis titled 'Month' for a discrete scale with 2 values: Jan, Feb"><g transform="translate(0.5,250.5)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-rule role-axis-tick" pointer-events="none"><line transform="translate(136,0)" x2="0" y2="5" stroke="#D4D4D4" stroke-width="1" opacity="1"/><line transform="translate(408,0)" x2="0" y2="5" stroke="#D4D4D4" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-label" pointer-events="none"><text text-anchor="middle" transform="translate(136,15)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10px" fill="#525252" opacity="1">Jan</text><text text-anchor="middle" transform="translate(408,15)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10px" fill="#525252" opacity="1">Feb</text></g><g class="mark-rule role-axis-domain" pointer-events="none"><line transform="translate(0,0)" x2="544" y2="0" stroke="#D4D4D4" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-title" pointer-events="none"><text text-anchor="middle" transform="translate(272,30)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11px" font-weight="bold" fill="#0A0A0A" opacity="1">Month</text></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g><g class="mark-group role-axis" role="graphics-symbol" aria-roledescription="axis" aria-label="Y-axis titled 'Revenue' for a linear scale with values from 0 to 220"><g transform="translate(0.5,0.5)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-rule role-axis-tick" pointer-events="none"><line transform="translate(0,250)" x2="-5" y2="0" stroke="#D4D4D4" stroke-width="1" opacity="1"/><line transform="translate(0,193)" x2="-5" y2="0" stroke="#D4D4D4" stroke-width="1" opacity="1"/><line transform="translate(0,136)" x2="-5" y2="0" stroke="#D4D4D4" stroke-width="1" opacity="1"/><line transform="translate(0,80)" x2="-5" y2="0" stroke="#D4D4D4" stroke-width="1" opacity="1"/><line transform="translate(0,23)" x2="-5" y2="0" stroke="#D4D4D4" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-label" pointer-events="none"><text text-anchor="end" transform="translate(-7,253)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10px" fill="#525252" opacity="1">0</text><text text-anchor="end" transform="translate(-7,196.1818181818182)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10px" fill="#525252" opacity="1">50</text><text text-anchor="end" transform="translate(-7,139.36363636363635)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10px" fill="#525252" opacity="1">100</text><text text-anchor="end" transform="translate(-7,82.54545454545456)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10px" fill="#525252" opacity="1">150</text><text text-anchor="end" transform="translate(-7,25.727272727272734)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10px" fill="#525252" opacity="1">200</text></g><g class="mark-rule role-axis-domain" pointer-events="none"><line transform="translate(0,250)" x2="0" y2="-250" stroke="#D4D4D4" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-title" pointer-events="none"><text text-anchor="middle" transform="translate(-35,125) rotate(-90) translate(0,-2)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11px" font-weight="bold" fill="#0A0A0A" opacity="1">Revenue</text></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g><g class="mark-line role-mark marks" role="graphics-object" aria-roledescription="line mark container"><path aria-label="Month: Jan; Revenue: 180" role="graphics-symbol" aria-roledescription="line mark" d="M136,45.455L408,11.364" stroke="#3E63DD" stroke-width="2.5"/></g><g class="mark-group role-title"><g transform="translate(-46,-28)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-text role-title-text" role="graphics-symbol" aria-roledescription="title" aria-label="Title text 'Line chart'" pointer-events="none"><text text-anchor="start" transform="translate(0,19)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="24px" font-weight="600" fill="#0A0A0A" opacity="1">Line chart</text></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g></g><path class="foreground" aria-hidden="true" d="" display="none"/></g></g></g></svg></figure>
+<figure class="oods-panel oods-chart" role="figure" style="grid-column:1/span 6;grid-row:3/span 2" aria-label="Bar chart of sum of revenue by region."><div class="oods-chart-phone"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="marks" width="332" height="180" viewBox="0 0 332 180" role="img" aria-label="Bar chart" aria-description="Bar chart of sum of revenue by region."><title>Bar chart</title><desc>Bar chart of sum of revenue by region.</desc><rect width="332" height="180" fill="#FFFFFF"/><g fill="none" stroke-miterlimit="10" transform="translate(51,33)"><g class="mark-group role-frame root" role="graphics-object" aria-roledescription="group mark container"><g transform="translate(0,0)"><path class="background" aria-hidden="true" d="M0,0h276v110h-276Z"/><g><g class="mark-group role-axis" aria-hidden="true"><g transform="translate(0.5,0.5)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-rule role-axis-grid" pointer-events="none"><line transform="translate(0,110)" x2="276" y2="0" stroke="#E5E5E5" stroke-width="1" opacity="1"/><line transform="translate(0,60)" x2="276" y2="0" stroke="#E5E5E5" stroke-width="1" opacity="1"/><line transform="translate(0,10)" x2="276" y2="0" stroke="#E5E5E5" stroke-width="1" opacity="1"/></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g><g class="mark-group role-axis" role="graphics-symbol" aria-roledescription="axis" aria-label="X-axis titled 'Region' for a discrete scale with 2 values: East, West"><g transform="translate(0.5,110.5)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-rule role-axis-tick" pointer-events="none"><line transform="translate(69,0)" x2="0" y2="5" stroke="#D4D4D4" stroke-width="1" opacity="1"/><line transform="translate(207,0)" x2="0" y2="5" stroke="#D4D4D4" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-label" pointer-events="none"><text text-anchor="middle" transform="translate(68.5,15)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10px" fill="#525252" opacity="1">East</text><text text-anchor="middle" transform="translate(206.5,15)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10px" fill="#525252" opacity="1">West</text></g><g class="mark-rule role-axis-domain" pointer-events="none"><line transform="translate(0,0)" x2="276" y2="0" stroke="#D4D4D4" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-title" pointer-events="none"><text text-anchor="middle" transform="translate(138,30)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11px" font-weight="bold" fill="#0A0A0A" opacity="1">Region</text></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g><g class="mark-group role-axis" role="graphics-symbol" aria-roledescription="axis" aria-label="Y-axis titled 'Revenue' for a linear scale with values from 0 to 220"><g transform="translate(0.5,0.5)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-rule role-axis-tick" pointer-events="none"><line transform="translate(0,110)" x2="-5" y2="0" stroke="#D4D4D4" stroke-width="1" opacity="1"/><line transform="translate(0,60)" x2="-5" y2="0" stroke="#D4D4D4" stroke-width="1" opacity="1"/><line transform="translate(0,10)" x2="-5" y2="0" stroke="#D4D4D4" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-label" pointer-events="none"><text text-anchor="end" transform="translate(-7,113)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10px" fill="#525252" opacity="1">0</text><text text-anchor="end" transform="translate(-7,62.99999999999999)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10px" fill="#525252" opacity="1">100</text><text text-anchor="end" transform="translate(-7,13.000000000000004)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10px" fill="#525252" opacity="1">200</text></g><g class="mark-rule role-axis-domain" pointer-events="none"><line transform="translate(0,110)" x2="0" y2="-110" stroke="#D4D4D4" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-title" pointer-events="none"><text text-anchor="middle" transform="translate(-35,55) rotate(-90) translate(0,-2)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11px" font-weight="bold" fill="#0A0A0A" opacity="1">Revenue</text></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g><g class="mark-rect role-mark marks" role="graphics-object" aria-roledescription="rect mark container"><path aria-label="Region: West; Revenue: 220" role="graphics-symbol" aria-roledescription="bar" d="M183,0h48v110h-48Z" fill="#3E63DD"/><path aria-label="Region: East; Revenue: 170" role="graphics-symbol" aria-roledescription="bar" d="M45,25.000000000000004h48v85h-48Z" fill="#3E63DD"/></g><g class="mark-group role-title"><g transform="translate(-46.00000000000001,-28)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-text role-title-text" role="graphics-symbol" aria-roledescription="title" aria-label="Title text 'Bar chart'" pointer-events="none"><text text-anchor="start" transform="translate(0,19)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="24px" font-weight="600" fill="#0A0A0A" opacity="1">Bar chart</text></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g></g><path class="foreground" aria-hidden="true" d="" display="none"/></g></g></g></svg></div><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="marks" width="600" height="320" viewBox="0 0 600 320" role="img" aria-label="Bar chart" aria-description="Bar chart of sum of revenue by region."><title>Bar chart</title><desc>Bar chart of sum of revenue by region.</desc><rect width="600" height="320" fill="#FFFFFF"/><g fill="none" stroke-miterlimit="10" transform="translate(51,33)"><g class="mark-group role-frame root" role="graphics-object" aria-roledescription="group mark container"><g transform="translate(0,0)"><path class="background" aria-hidden="true" d="M0,0h544v250h-544Z"/><g><g class="mark-group role-axis" aria-hidden="true"><g transform="translate(0.5,0.5)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-rule role-axis-grid" pointer-events="none"><line transform="translate(0,250)" x2="544" y2="0" stroke="#E5E5E5" stroke-width="1" opacity="1"/><line transform="translate(0,193)" x2="544" y2="0" stroke="#E5E5E5" stroke-width="1" opacity="1"/><line transform="translate(0,136)" x2="544" y2="0" stroke="#E5E5E5" stroke-width="1" opacity="1"/><line transform="translate(0,80)" x2="544" y2="0" stroke="#E5E5E5" stroke-width="1" opacity="1"/><line transform="translate(0,23)" x2="544" y2="0" stroke="#E5E5E5" stroke-width="1" opacity="1"/></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g><g class="mark-group role-axis" role="graphics-symbol" aria-roledescription="axis" aria-label="X-axis titled 'Region' for a discrete scale with 2 values: East, West"><g transform="translate(0.5,250.5)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-rule role-axis-tick" pointer-events="none"><line transform="translate(136,0)" x2="0" y2="5" stroke="#D4D4D4" stroke-width="1" opacity="1"/><line transform="translate(408,0)" x2="0" y2="5" stroke="#D4D4D4" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-label" pointer-events="none"><text text-anchor="middle" transform="translate(135.50000000000003,15)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10px" fill="#525252" opacity="1">East</text><text text-anchor="middle" transform="translate(407.5,15)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10px" fill="#525252" opacity="1">West</text></g><g class="mark-rule role-axis-domain" pointer-events="none"><line transform="translate(0,0)" x2="544" y2="0" stroke="#D4D4D4" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-title" pointer-events="none"><text text-anchor="middle" transform="translate(272,30)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11px" font-weight="bold" fill="#0A0A0A" opacity="1">Region</text></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g><g class="mark-group role-axis" role="graphics-symbol" aria-roledescription="axis" aria-label="Y-axis titled 'Revenue' for a linear scale with values from 0 to 220"><g transform="translate(0.5,0.5)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-rule role-axis-tick" pointer-events="none"><line transform="translate(0,250)" x2="-5" y2="0" stroke="#D4D4D4" stroke-width="1" opacity="1"/><line transform="translate(0,193)" x2="-5" y2="0" stroke="#D4D4D4" stroke-width="1" opacity="1"/><line transform="translate(0,136)" x2="-5" y2="0" stroke="#D4D4D4" stroke-width="1" opacity="1"/><line transform="translate(0,80)" x2="-5" y2="0" stroke="#D4D4D4" stroke-width="1" opacity="1"/><line transform="translate(0,23)" x2="-5" y2="0" stroke="#D4D4D4" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-label" pointer-events="none"><text text-anchor="end" transform="translate(-7,253)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10px" fill="#525252" opacity="1">0</text><text text-anchor="end" transform="translate(-7,196.1818181818182)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10px" fill="#525252" opacity="1">50</text><text text-anchor="end" transform="translate(-7,139.36363636363635)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10px" fill="#525252" opacity="1">100</text><text text-anchor="end" transform="translate(-7,82.54545454545456)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10px" fill="#525252" opacity="1">150</text><text text-anchor="end" transform="translate(-7,25.727272727272734)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="10px" fill="#525252" opacity="1">200</text></g><g class="mark-rule role-axis-domain" pointer-events="none"><line transform="translate(0,250)" x2="0" y2="-250" stroke="#D4D4D4" stroke-width="1" opacity="1"/></g><g class="mark-text role-axis-title" pointer-events="none"><text text-anchor="middle" transform="translate(-35,125) rotate(-90) translate(0,-2)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="11px" font-weight="bold" fill="#0A0A0A" opacity="1">Revenue</text></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g><g class="mark-rect role-mark marks" role="graphics-object" aria-roledescription="rect mark container"><path aria-label="Region: West; Revenue: 220" role="graphics-symbol" aria-roledescription="bar" d="M384,0h48v250h-48Z" fill="#3E63DD"/><path aria-label="Region: East; Revenue: 170" role="graphics-symbol" aria-roledescription="bar" d="M112.00000000000003,56.81818181818182h48v193.1818181818182h-48Z" fill="#3E63DD"/></g><g class="mark-group role-title"><g transform="translate(-46,-28)"><path class="background" aria-hidden="true" d="M0,0h0v0h0Z" pointer-events="none"/><g><g class="mark-text role-title-text" role="graphics-symbol" aria-roledescription="title" aria-label="Title text 'Bar chart'" pointer-events="none"><text text-anchor="start" transform="translate(0,19)" font-family="Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="24px" font-weight="600" fill="#0A0A0A" opacity="1">Bar chart</text></g></g><path class="foreground" aria-hidden="true" d="" pointer-events="none" display="none"/></g></g></g><path class="foreground" aria-hidden="true" d="" display="none"/></g></g></g></svg></figure>
+<figure class="oods-panel oods-chart" role="figure" style="grid-column:7/span 6;grid-row:3/span 2" aria-label="Choropleth map of regional values."><svg width="600" height="320" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" baseProfile="full" viewBox="0 0 600 320" role="img" aria-label="Choropleth map of regional values." aria-description="Choropleth map of regional values."><title>Choropleth map of regional values.</title><desc>Choropleth map of regional values.</desc>
+<rect width="600" height="320" x="0" y="0" fill="#FFFFFF"></rect>
+<path d="M108 288L300 288L300 32L108 32L108 288Z" fill="rgb(20,41,137)" stroke="rgb(229, 229, 229)" stroke-width="0.5" ecmeta_series_index="0" ecmeta_data_index="0" ecmeta_ssr_type="chart" class="oods-zr-panel-3-span-0"></path>
+<path d="M300 288L492 288L492 32L300 32L300 288Z" fill="rgb(229,235,250)" stroke="rgb(229, 229, 229)" stroke-width="0.5" ecmeta_series_index="0" ecmeta_data_index="1" ecmeta_ssr_type="chart" class="oods-zr-panel-3-span-0"></path>
+<path d="M-18 -161l87.2 0l0 182l-87.2 0Z" transform="translate(18 299)" fill="rgb(0,0,0)" fill-opacity="0" stroke="#cfd2d7" stroke-width="0" class="oods-zr-panel-3-span-1"></path>
+<text dominant-baseline="central" text-anchor="start" style="font-size:12px;font-family:sans-serif;" x="34" transform="translate(18 299)" fill="#525252">170</text>
+<text dominant-baseline="central" text-anchor="start" style="font-size:12px;font-family:sans-serif;" x="34" y="-140" transform="translate(18 299)" fill="#525252">220</text>
+<g clip-path="url(#oods-zr-panel-3-span-2)">
+<polygon points="0 0 20 0 20 140 0 140" transform="matrix(1,0,0,-1,18,299)" fill="url(#oods-zr-panel-3-span-3)" class="oods-zr-panel-3-span-4"></polygon>
+<polygon points="0 0 20 0 20 140 0 140" transform="matrix(1,0,0,-1,18,299)" fill="url(#oods-zr-panel-3-span-5)" class="oods-zr-panel-3-span-6"></polygon>
+</g>
+<path d="M12 0A2.9 2.9 0 0 1 9.1 2.9L-9.1 2.9A2.9 2.9 0 0 1 -12 0L-12 0A2.9 2.9 0 0 1 -9.1 -2.9L9.1 -2.9A2.9 2.9 0 0 1 12 0Z" transform="matrix(1,0,0,-1,28,299)" fill="rgb(229,235,250)" stroke="#fff" stroke-width="2" paint-order="stroke" class="oods-zr-panel-3-span-7"></path>
+<path d="M12 0A2.9 2.9 0 0 1 9.1 2.9L-9.1 2.9A2.9 2.9 0 0 1 -12 0L-12 0A2.9 2.9 0 0 1 -9.1 -2.9L9.1 -2.9A2.9 2.9 0 0 1 12 0Z" transform="matrix(1,0,0,-1,28,159)" fill="rgb(20,41,137)" stroke="#fff" stroke-width="2" paint-order="stroke" class="oods-zr-panel-3-span-8"></path>
+<defs >
+<clipPath id="oods-zr-panel-3-span-2">
+<path d="M3 0L17 0A3 3 0 0 1 20 3L20 137A3 3 0 0 1 17 140L3 140A3 3 0 0 1 0 137L0 3A3 3 0 0 1 3 0Z" transform="matrix(1,0,0,-1,18,299)" fill="#000" class="oods-zr-panel-3-span-9"></path>
+</clipPath>
+<linearGradient gradientUnits="objectBoundingBox" x1="0" y1="0" x2="0" y2="1" id="oods-zr-panel-3-span-3">
+<stop offset="0%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="1%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="2%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="3%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="4%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="5%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="6%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="7.000000000000001%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="8%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="9%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="10%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="11%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="12%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="13%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="14.000000000000002%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="15%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="16%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="17%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="18%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="19%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="20%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="21%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="22%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="23%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="24%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="25%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="26%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="27%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="28.000000000000004%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="28.999999999999996%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="30%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="31%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="32%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="33%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="34%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="35%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="36%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="37%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="38%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="39%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="40%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="41%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="42%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="43%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="44%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="45%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="46%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="47%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="48%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="49%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="50%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="51%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="52%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="53%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="54%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="55.00000000000001%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="56.00000000000001%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="56.99999999999999%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="57.99999999999999%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="59%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="60%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="61%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="62%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="63%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="64%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="65%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="66%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="67%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="68%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="69%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="70%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="71%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="72%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="73%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="74%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="75%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="76%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="77%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="78%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="79%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="80%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="81%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="82%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="83%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="84%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="85%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="86%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="87%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="88%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="89%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="90%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="91%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="92%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="93%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="94%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="95%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="96%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="97%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="98%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="99%" stop-color="rgb(207,210,215)"></stop>
+<stop offset="100%" stop-color="rgb(207,210,215)"></stop>
+</linearGradient>
+<linearGradient gradientUnits="objectBoundingBox" x1="0" y1="0" x2="0" y2="1" id="oods-zr-panel-3-span-5">
+<stop offset="0%" stop-color="rgb(229,235,250)"></stop>
+<stop offset="1%" stop-color="rgb(226,232,249)"></stop>
+<stop offset="2%" stop-color="rgb(222,230,249)"></stop>
+<stop offset="3%" stop-color="rgb(219,227,248)"></stop>
+<stop offset="4%" stop-color="rgb(216,224,248)"></stop>
+<stop offset="5%" stop-color="rgb(212,221,247)"></stop>
+<stop offset="6%" stop-color="rgb(209,219,246)"></stop>
+<stop offset="7.000000000000001%" stop-color="rgb(205,216,246)"></stop>
+<stop offset="8%" stop-color="rgb(202,213,245)"></stop>
+<stop offset="9%" stop-color="rgb(199,210,244)"></stop>
+<stop offset="10%" stop-color="rgb(195,208,244)"></stop>
+<stop offset="11%" stop-color="rgb(192,205,243)"></stop>
+<stop offset="12%" stop-color="rgb(189,202,243)"></stop>
+<stop offset="13%" stop-color="rgb(185,199,242)"></stop>
+<stop offset="14.000000000000002%" stop-color="rgb(182,197,241)"></stop>
+<stop offset="15%" stop-color="rgb(179,194,241)"></stop>
+<stop offset="16%" stop-color="rgb(175,191,240)"></stop>
+<stop offset="17%" stop-color="rgb(172,188,239)"></stop>
+<stop offset="18%" stop-color="rgb(169,186,239)"></stop>
+<stop offset="19%" stop-color="rgb(165,183,238)"></stop>
+<stop offset="20%" stop-color="rgb(162,180,238)"></stop>
+<stop offset="21%" stop-color="rgb(158,177,237)"></stop>
+<stop offset="22%" stop-color="rgb(155,175,236)"></stop>
+<stop offset="23%" stop-color="rgb(152,172,236)"></stop>
+<stop offset="24%" stop-color="rgb(148,169,235)"></stop>
+<stop offset="25%" stop-color="rgb(145,167,235)"></stop>
+<stop offset="26%" stop-color="rgb(142,164,234)"></stop>
+<stop offset="27%" stop-color="rgb(138,161,233)"></stop>
+<stop offset="28.000000000000004%" stop-color="rgb(135,158,233)"></stop>
+<stop offset="28.999999999999996%" stop-color="rgb(132,156,232)"></stop>
+<stop offset="30%" stop-color="rgb(128,153,231)"></stop>
+<stop offset="31%" stop-color="rgb(125,150,231)"></stop>
+<stop offset="32%" stop-color="rgb(121,147,230)"></stop>
+<stop offset="33%" stop-color="rgb(118,145,230)"></stop>
+<stop offset="34%" stop-color="rgb(115,142,229)"></stop>
+<stop offset="35%" stop-color="rgb(111,139,228)"></stop>
+<stop offset="36%" stop-color="rgb(108,136,228)"></stop>
+<stop offset="37%" stop-color="rgb(105,134,227)"></stop>
+<stop offset="38%" stop-color="rgb(101,131,226)"></stop>
+<stop offset="39%" stop-color="rgb(98,128,226)"></stop>
+<stop offset="40%" stop-color="rgb(95,125,225)"></stop>
+<stop offset="41%" stop-color="rgb(91,123,225)"></stop>
+<stop offset="42%" stop-color="rgb(88,120,224)"></stop>
+<stop offset="43%" stop-color="rgb(85,117,223)"></stop>
+<stop offset="44%" stop-color="rgb(81,114,223)"></stop>
+<stop offset="45%" stop-color="rgb(78,112,222)"></stop>
+<stop offset="46%" stop-color="rgb(74,109,221)"></stop>
+<stop offset="47%" stop-color="rgb(71,106,221)"></stop>
+<stop offset="48%" stop-color="rgb(68,103,220)"></stop>
+<stop offset="49%" stop-color="rgb(64,101,220)"></stop>
+<stop offset="50%" stop-color="rgb(61,98,219)"></stop>
+<stop offset="51%" stop-color="rgb(60,97,217)"></stop>
+<stop offset="52%" stop-color="rgb(59,96,216)"></stop>
+<stop offset="53%" stop-color="rgb(59,95,214)"></stop>
+<stop offset="54%" stop-color="rgb(58,93,212)"></stop>
+<stop offset="55.00000000000001%" stop-color="rgb(57,92,211)"></stop>
+<stop offset="56.00000000000001%" stop-color="rgb(56,91,209)"></stop>
+<stop offset="56.99999999999999%" stop-color="rgb(55,90,208)"></stop>
+<stop offset="57.99999999999999%" stop-color="rgb(54,89,206)"></stop>
+<stop offset="59%" stop-color="rgb(54,88,204)"></stop>
+<stop offset="60%" stop-color="rgb(53,87,203)"></stop>
+<stop offset="61%" stop-color="rgb(52,85,201)"></stop>
+<stop offset="62%" stop-color="rgb(51,84,199)"></stop>
+<stop offset="63%" stop-color="rgb(50,83,198)"></stop>
+<stop offset="64%" stop-color="rgb(50,82,196)"></stop>
+<stop offset="65%" stop-color="rgb(49,81,194)"></stop>
+<stop offset="66%" stop-color="rgb(48,80,193)"></stop>
+<stop offset="67%" stop-color="rgb(47,79,191)"></stop>
+<stop offset="68%" stop-color="rgb(46,77,189)"></stop>
+<stop offset="69%" stop-color="rgb(45,76,188)"></stop>
+<stop offset="70%" stop-color="rgb(45,75,186)"></stop>
+<stop offset="71%" stop-color="rgb(44,74,185)"></stop>
+<stop offset="72%" stop-color="rgb(43,73,183)"></stop>
+<stop offset="73%" stop-color="rgb(42,72,181)"></stop>
+<stop offset="74%" stop-color="rgb(41,71,180)"></stop>
+<stop offset="75%" stop-color="rgb(41,70,178)"></stop>
+<stop offset="76%" stop-color="rgb(40,68,176)"></stop>
+<stop offset="77%" stop-color="rgb(39,67,175)"></stop>
+<stop offset="78%" stop-color="rgb(38,66,173)"></stop>
+<stop offset="79%" stop-color="rgb(37,65,171)"></stop>
+<stop offset="80%" stop-color="rgb(36,64,170)"></stop>
+<stop offset="81%" stop-color="rgb(36,63,168)"></stop>
+<stop offset="82%" stop-color="rgb(35,62,167)"></stop>
+<stop offset="83%" stop-color="rgb(34,60,165)"></stop>
+<stop offset="84%" stop-color="rgb(33,59,163)"></stop>
+<stop offset="85%" stop-color="rgb(32,58,162)"></stop>
+<stop offset="86%" stop-color="rgb(31,57,160)"></stop>
+<stop offset="87%" stop-color="rgb(31,56,158)"></stop>
+<stop offset="88%" stop-color="rgb(30,55,157)"></stop>
+<stop offset="89%" stop-color="rgb(29,54,155)"></stop>
+<stop offset="90%" stop-color="rgb(28,52,153)"></stop>
+<stop offset="91%" stop-color="rgb(27,51,152)"></stop>
+<stop offset="92%" stop-color="rgb(27,50,150)"></stop>
+<stop offset="93%" stop-color="rgb(26,49,148)"></stop>
+<stop offset="94%" stop-color="rgb(25,48,147)"></stop>
+<stop offset="95%" stop-color="rgb(24,47,145)"></stop>
+<stop offset="96%" stop-color="rgb(23,46,144)"></stop>
+<stop offset="97%" stop-color="rgb(22,44,142)"></stop>
+<stop offset="98%" stop-color="rgb(22,43,140)"></stop>
+<stop offset="99%" stop-color="rgb(21,42,139)"></stop>
+<stop offset="100%" stop-color="rgb(20,41,137)"></stop>
+</linearGradient>
+</defs>
+<style ><![CDATA[
+.oods-zr-panel-3-span-0:hover {
+cursor:pointer;
+fill:rgb(255, 255, 255);
+}
+.oods-zr-panel-3-span-1:hover {
+pointer-events:none;
+}
+.oods-zr-panel-3-span-9:hover {
+cursor:pointer;
+fill:rgba(0,0,0,1);
+}
+.oods-zr-panel-3-span-4:hover {
+cursor:pointer;
+fill:[object Object];
+}
+.oods-zr-panel-3-span-6:hover {
+cursor:pointer;
+fill:[object Object];
+}
+.oods-zr-panel-3-span-7:hover {
+cursor:pointer;
+fill:rgba(251,255,255,1);
+}
+.oods-zr-panel-3-span-8:hover {
+cursor:pointer;
+fill:rgba(22,45,150,1);
+}
+
+]]>
+
+</style>
+</svg></figure>
+</div>
+<section class="oods-dashboard-links" aria-label="Declared panel links"><h2>Declared panel links</h2><p>Reference relationships. This static export does not apply filters when clicked.</p><ul>
+<li>breakdown → trend: breakdown.region in trend.region</li>
+</ul></section>
+</main>
+</body>
+</html>
+"
+`;
+
+exports[`dashboard.render render-fidelity goldens (sprint-113 m06) > the metric-overview composed payload matches the committed golden 1`] = `
+{
+  "a11y": {
+    "description": "Revenue overview dashboard.",
+    "panelOrder": [
+      "kpi-rev",
+      "trend",
+      "breakdown",
+      "geo",
+    ],
+    "readingOrder": "kpi-first",
+  },
+  "contentHash": "f320343bf49b40f6956c0a0881ac30d03a169ab64ec9fd3eefd99e7bb962b6b8",
+  "layout": [
+    {
+      "h": 1,
+      "id": "kpi-rev",
+      "w": 3,
+      "x": 0,
+      "y": 0,
+    },
+    {
+      "h": 2,
+      "id": "trend",
+      "w": 6,
+      "x": 3,
+      "y": 0,
+    },
+    {
+      "h": 2,
+      "id": "breakdown",
+      "w": 6,
+      "x": 0,
+      "y": 2,
+    },
+    {
+      "h": 2,
+      "id": "geo",
+      "w": 6,
+      "x": 6,
+      "y": 2,
+    },
+  ],
+  "links": [
+    {
+      "operator": "in",
+      "source": "breakdown",
+      "sourceField": "region",
+      "target": "trend",
+    },
+  ],
+  "meta": {
+    "crossFiltered": false,
+    "datasetCount": 1,
+    "errorPanelCount": 0,
+    "panelCount": 4,
+  },
+  "output": {
+    "compact": true,
+  },
+  "panels": [
+    {
+      "a11yDescription": "Total Revenue: 390 (increasing, delta 90).",
+      "delta": 90,
+      "deltaPct": 0.3,
+      "formatted": "390",
+      "id": "kpi-rev",
+      "kind": "kpi",
+      "sparkline": [
+        100,
+        80,
+        120,
+        90,
+      ],
+      "thresholdBreached": true,
+      "title": "Total Revenue",
+      "trendDirection": "increasing",
+      "value": 390,
+    },
+    {
+      "a11yDescription": "Line chart of sum of revenue by month.",
+      "chartType": "line",
+      "contentHash": "a2308804eb655754b5a0297ee72fb45761bde7d7051fd67b89b642d0cde260a5",
+      "id": "trend",
+      "kind": "chart",
+      "renderer": "vega-lite",
+      "spec": {
+        "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+        "autosize": {
+          "contains": "padding",
+          "type": "fit-y",
+        },
+        "config": {
+          "axis": {
+            "domainColor": "#D4D4D4",
+            "gridColor": "#E5E5E5",
+            "labelColor": "#525252",
+            "labelFont": "Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+            "tickColor": "#D4D4D4",
+            "titleColor": "#0A0A0A",
+            "titleFont": "Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+          },
+          "axisX": {
+            "grid": false,
+          },
+          "axisY": {
+            "grid": true,
+            "tickCount": {
+              "expr": "min(5, ceil(height / 40))",
+            },
+          },
+          "background": "#FFFFFF",
+          "font": "Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+          "legend": {
+            "labelColor": "#525252",
+            "labelFont": "Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+            "titleColor": "#0A0A0A",
+            "titleFont": "Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+          },
+          "title": {
+            "anchor": "start",
+            "color": "#0A0A0A",
+            "font": "Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+            "fontSize": 24,
+            "fontWeight": 600,
+          },
+          "view": {
+            "stroke": null,
+          },
+        },
+        "data": {
+          "values": [
+            {
+              "month": "Jan",
+              "region": "West",
+              "revenue": 100,
+            },
+            {
+              "month": "Jan",
+              "region": "East",
+              "revenue": 80,
+            },
+            {
+              "month": "Feb",
+              "region": "West",
+              "revenue": 120,
+            },
+            {
+              "month": "Feb",
+              "region": "East",
+              "revenue": 90,
+            },
+          ],
+        },
+        "description": "Line chart of sum of revenue by month.",
+        "encoding": {
+          "x": {
+            "field": "month",
+            "sort": null,
+            "title": "Month",
+            "type": "nominal",
+          },
+          "y": {
+            "aggregate": "sum",
+            "field": "revenue",
+            "title": "Revenue",
+            "type": "quantitative",
+          },
+        },
+        "height": 300,
+        "mark": {
+          "color": "#3E63DD",
+          "strokeWidth": 2.5,
+          "type": "line",
+        },
+        "title": "Line chart",
+        "usermeta": {
+          "oods": {
+            "a11y": {
+              "ariaLabel": "Line chart of Revenue by Month",
+              "description": "Line chart of sum of revenue by month.",
+            },
+            "name": "Line chart",
+            "portability": {
+              "tableColumnOrder": [
+                "month",
+                "revenue",
+                "region",
+              ],
+            },
+            "specId": "trend",
+          },
+        },
+      },
+    },
+    {
+      "a11yDescription": "Bar chart of sum of revenue by region.",
+      "chartType": "bar",
+      "contentHash": "0ebca2fd9d167544af6aabe0f441fa2bc86e269bd44f4cdc20e836dbd7780e38",
+      "id": "breakdown",
+      "kind": "chart",
+      "renderer": "vega-lite",
+      "spec": {
+        "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+        "autosize": {
+          "contains": "padding",
+          "type": "fit-y",
+        },
+        "config": {
+          "axis": {
+            "domainColor": "#D4D4D4",
+            "gridColor": "#E5E5E5",
+            "labelColor": "#525252",
+            "labelFont": "Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+            "tickColor": "#D4D4D4",
+            "titleColor": "#0A0A0A",
+            "titleFont": "Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+          },
+          "axisX": {
+            "grid": false,
+            "labelAngle": 0,
+          },
+          "axisY": {
+            "grid": true,
+            "tickCount": {
+              "expr": "min(5, ceil(height / 40))",
+            },
+          },
+          "background": "#FFFFFF",
+          "font": "Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+          "legend": {
+            "labelColor": "#525252",
+            "labelFont": "Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+            "titleColor": "#0A0A0A",
+            "titleFont": "Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+          },
+          "title": {
+            "anchor": "start",
+            "color": "#0A0A0A",
+            "font": "Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+            "fontSize": 24,
+            "fontWeight": 600,
+          },
+          "view": {
+            "stroke": null,
+          },
+        },
+        "data": {
+          "values": [
+            {
+              "month": "Jan",
+              "region": "West",
+              "revenue": 100,
+            },
+            {
+              "month": "Jan",
+              "region": "East",
+              "revenue": 80,
+            },
+            {
+              "month": "Feb",
+              "region": "West",
+              "revenue": 120,
+            },
+            {
+              "month": "Feb",
+              "region": "East",
+              "revenue": 90,
+            },
+          ],
+        },
+        "description": "Bar chart of sum of revenue by region.",
+        "encoding": {
+          "x": {
+            "field": "region",
+            "title": "Region",
+            "type": "nominal",
+          },
+          "y": {
+            "aggregate": "sum",
+            "field": "revenue",
+            "title": "Revenue",
+            "type": "quantitative",
+          },
+        },
+        "height": 300,
+        "mark": {
+          "color": "#3E63DD",
+          "type": "bar",
+          "width": {
+            "expr": "min(48, bandwidth('x'))",
+          },
+        },
+        "title": "Bar chart",
+        "usermeta": {
+          "oods": {
+            "a11y": {
+              "ariaLabel": "Bar chart of Revenue by Region",
+              "description": "Bar chart of sum of revenue by region.",
+            },
+            "name": "Bar chart",
+            "portability": {
+              "tableColumnOrder": [
+                "region",
+                "revenue",
+                "month",
+              ],
+            },
+            "specId": "breakdown",
+          },
+        },
+        "width": 400,
+      },
+    },
+    {
+      "a11yDescription": "Choropleth map of regional values.",
+      "chartType": "choropleth",
+      "contentHash": "8b2fcefc7f66e870a6b165240915364f7719a2cf2a8d144b7963edc960c28bbf",
+      "echartsSpec": {
+        "__registration": {
+          "geoJson": {
+            "features": [
+              {
+                "geometry": {
+                  "coordinates": [
+                    [
+                      [
+                        0,
+                        0,
+                      ],
+                      [
+                        2,
+                        0,
+                      ],
+                      [
+                        2,
+                        2,
+                      ],
+                      [
+                        0,
+                        2,
+                      ],
+                      [
+                        0,
+                        0,
+                      ],
+                    ],
+                  ],
+                  "type": "Polygon",
+                },
+                "properties": {
+                  "name": "West",
+                  "region": "West",
+                  "revenue": 220,
+                },
+                "type": "Feature",
+              },
+              {
+                "geometry": {
+                  "coordinates": [
+                    [
+                      [
+                        2,
+                        0,
+                      ],
+                      [
+                        4,
+                        0,
+                      ],
+                      [
+                        4,
+                        2,
+                      ],
+                      [
+                        2,
+                        2,
+                      ],
+                      [
+                        2,
+                        0,
+                      ],
+                    ],
+                  ],
+                  "type": "Polygon",
+                },
+                "properties": {
+                  "name": "East",
+                  "region": "East",
+                  "revenue": 170,
+                },
+                "type": "Feature",
+              },
+            ],
+            "type": "FeatureCollection",
+          },
+          "name": "map-geo",
+        },
+        "aria": {
+          "description": "Choropleth map of regional values.",
+          "enabled": true,
+        },
+        "backgroundColor": "#FFFFFF",
+        "geo": {
+          "emphasis": {
+            "itemStyle": {
+              "areaColor": "rgb(255, 255, 255)",
+            },
+          },
+          "itemStyle": {
+            "areaColor": "rgb(245, 245, 245)",
+            "borderColor": "rgb(229, 229, 229)",
+          },
+          "label": {
+            "show": false,
+          },
+          "map": "map-geo",
+          "nameProperty": "name",
+          "roam": false,
+        },
+        "series": [
+          {
+            "data": [
+              {
+                "name": "West",
+                "rawProperties": {
+                  "name": "West",
+                  "region": "West",
+                  "revenue": 220,
+                },
+                "value": 220,
+              },
+              {
+                "name": "East",
+                "rawProperties": {
+                  "name": "East",
+                  "region": "East",
+                  "revenue": 170,
+                },
+                "value": 170,
+              },
+            ],
+            "emphasis": {
+              "focus": "self",
+              "itemStyle": {
+                "areaColor": "rgb(255, 255, 255)",
+              },
+            },
+            "geoIndex": 0,
+            "map": "map-geo",
+            "name": "Choropleth",
+            "type": "map",
+          },
+        ],
+        "tooltip": {
+          "trigger": "item",
+        },
+        "usermeta": {
+          "oods": {
+            "a11y": {
+              "description": "Choropleth map of regional values.",
+            },
+            "dimensions": {
+              "height": 520,
+              "width": 860,
+            },
+            "specId": "geo",
+          },
+        },
+        "visualMap": {
+          "calculable": true,
+          "inRange": {
+            "color": [
+              "rgb(229, 235, 250)",
+              "rgb(61, 98, 219)",
+              "rgb(20, 41, 137)",
+            ],
+          },
+          "max": 220,
+          "min": 170,
+          "textStyle": {
+            "color": "#525252",
+          },
+          "type": "continuous",
+        },
+      },
+      "id": "geo",
+      "kind": "chart",
+      "renderer": "echarts",
+    },
+  ],
+  "schemaVersion": "v0.1",
+  "status": "ok",
+  "tokenCssRef": "tokens.build",
+  "warnings": [],
+}
+`;
+
+exports[`dashboard.render render-fidelity goldens (sprint-113 m06) > the period-axis composed payload matches the committed golden (v0.2) 1`] = `
+{
+  "a11y": {
+    "description": "Monthly revenue with an explicit period axis.",
+    "panelOrder": [
+      "kpi-rev",
+      "trend",
+    ],
+    "readingOrder": "kpi-first",
+  },
+  "contentHash": "a8f5ba3cc7d5f2fc1dfc3faf2e2bd55e34c5aec7e6742c15257e0324cd36efb6",
+  "layout": [
+    {
+      "h": 1,
+      "id": "kpi-rev",
+      "w": 3,
+      "x": 0,
+      "y": 0,
+    },
+    {
+      "h": 2,
+      "id": "trend",
+      "w": 6,
+      "x": 3,
+      "y": 0,
+    },
+  ],
+  "links": [],
+  "meta": {
+    "crossFiltered": false,
+    "datasetCount": 1,
+    "errorPanelCount": 0,
+    "panelCount": 2,
+  },
+  "output": {
+    "compact": true,
+  },
+  "panels": [
+    {
+      "a11yDescription": "Latest Revenue: 120 (increasing, delta 10 vs prior period).",
+      "delta": 10,
+      "deltaPct": 0.090909,
+      "formatted": "120",
+      "id": "kpi-rev",
+      "kind": "kpi",
+      "sparkline": [
+        100,
+        110,
+        120,
+      ],
+      "title": "Latest Revenue",
+      "trendDirection": "increasing",
+      "value": 120,
+    },
+    {
+      "a11yDescription": "Line chart of sum of revenue by month.",
+      "chartType": "line",
+      "contentHash": "331a3ef41fce0018150bb29a37b3685ff78caac32a2216316451180e3c396bba",
+      "id": "trend",
+      "kind": "chart",
+      "renderer": "vega-lite",
+      "spec": {
+        "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+        "autosize": {
+          "contains": "padding",
+          "type": "fit-y",
+        },
+        "config": {
+          "axis": {
+            "domainColor": "#D4D4D4",
+            "gridColor": "#E5E5E5",
+            "labelColor": "#525252",
+            "labelFont": "Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+            "tickColor": "#D4D4D4",
+            "titleColor": "#0A0A0A",
+            "titleFont": "Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+          },
+          "axisX": {
+            "grid": false,
+          },
+          "axisY": {
+            "grid": true,
+            "tickCount": {
+              "expr": "min(5, ceil(height / 40))",
+            },
+          },
+          "background": "#FFFFFF",
+          "font": "Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+          "legend": {
+            "labelColor": "#525252",
+            "labelFont": "Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+            "titleColor": "#0A0A0A",
+            "titleFont": "Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+          },
+          "title": {
+            "anchor": "start",
+            "color": "#0A0A0A",
+            "font": "Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+            "fontSize": 24,
+            "fontWeight": 600,
+          },
+          "view": {
+            "stroke": null,
+          },
+        },
+        "data": {
+          "values": [
+            {
+              "month": "2024-03",
+              "region": "West",
+              "revenue": 120,
+            },
+            {
+              "month": "2024-01",
+              "region": "West",
+              "revenue": 100,
+            },
+            {
+              "month": "2024-02",
+              "region": "West",
+              "revenue": 110,
+            },
+          ],
+        },
+        "description": "Line chart of sum of revenue by month.",
+        "encoding": {
+          "x": {
+            "axis": {
+              "labelExpr": "utcFormat(datum.value, {date: '%b %d'})",
+            },
+            "field": "month",
+            "scale": {
+              "type": "utc",
+            },
+            "title": "Month",
+            "type": "temporal",
+          },
+          "y": {
+            "aggregate": "sum",
+            "field": "revenue",
+            "title": "Revenue",
+            "type": "quantitative",
+          },
+        },
+        "height": 300,
+        "mark": {
+          "color": "#3E63DD",
+          "strokeWidth": 2.5,
+          "type": "line",
+        },
+        "title": "Line chart",
+        "usermeta": {
+          "oods": {
+            "a11y": {
+              "ariaLabel": "Line chart of Revenue by Month",
+              "description": "Line chart of sum of revenue by month.",
+            },
+            "name": "Line chart",
+            "portability": {
+              "tableColumnOrder": [
+                "month",
+                "revenue",
+                "region",
+              ],
+            },
+            "specId": "trend",
+          },
+        },
+      },
+    },
+  ],
+  "schemaVersion": "v0.1",
+  "status": "ok",
+  "tokenCssRef": "tokens.build",
+  "warnings": [],
+}
+`;

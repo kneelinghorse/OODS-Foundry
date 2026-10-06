@@ -4,39 +4,39 @@
       "ring": {
         "outer": {
           "$type": "color",
-          "$value": "oklch(0.85 0.13 274.55)",
-          "$description": "Outer focus ring tuned for dark surfaces.",
+          "$value": "oklch(0.543785 0.191021 267)",
+          "$description": "theme-dark.focus.ring.outer; generated from palette/seeds.json by generate-palette.ts.",
           "$extensions": {
             "ods": {
-              "fallback": "#BBC9FF"
+              "fallback": "#3E63DD"
             }
           }
         },
         "inner": {
           "$type": "color",
-          "$value": "oklch(0.16 0.015 260)",
-          "$description": "Inner focus contrast colour that nests against the outer ring.",
+          "$value": "oklch(0.145 0 286)",
+          "$description": "theme-dark.focus.ring.inner; generated from palette/seeds.json by generate-palette.ts.",
           "$extensions": {
             "ods": {
-              "fallback": "#090D14"
+              "fallback": "#0A0A0A"
             }
           }
         }
       },
       "text": {
         "$type": "color",
-        "$value": "oklch(0.77 0.16 274.55)",
-        "$description": "Text and indicator colour used within focus treatments.",
+        "$value": "oklch(0.775866 0.113802 273.011264)",
+        "$description": "theme-dark.focus.text; generated from palette/seeds.json by generate-palette.ts.",
         "$extensions": {
           "ods": {
-            "fallback": "#9AACFF"
+            "fallback": "#9EB1FF"
           }
         }
       },
       "width": {
         "$type": "dimension",
         "$value": "2px",
-        "$description": "Focus ring width shared with light theme."
+        "$description": "Focus ring width, the same in every theme."
       }
     }
   }

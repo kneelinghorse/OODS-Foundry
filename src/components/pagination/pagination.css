@@ -3,27 +3,27 @@
  */
 
 .pagination {
-  --pagination-font-size: 0.875rem;
-  --pagination-font-weight: 500;
-  --pagination-gap: 0.25rem;
-  --pagination-padding-block: 0.375rem;
-  --pagination-padding-inline: 0.75rem;
-  --pagination-border-radius: 0.25rem;
+  --pagination-font-size: var(--sys-text-scale-label-font-size);
+  --pagination-font-weight: var(--sys-text-scale-label-font-weight);
+  --pagination-gap: var(--sys-control-gap-compact);
+  --pagination-padding-block: var(--sys-control-padding-block);
+  --pagination-padding-inline: var(--sys-control-padding-inline);
+  --pagination-border-radius: var(--sys-radius-control);
 
   /* Colors - hooked to design tokens */
-  --pagination-color-text: var(--cmp-text-body, var(--sys-text-primary));
-  --pagination-color-text-disabled: var(--cmp-text-disabled, var(--sys-text-disabled));
-  --pagination-color-text-selected: var(--cmp-text-on_action, var(--sys-text-on_interactive));
-  --pagination-color-background: var(--cmp-surface-canvas, transparent);
-  --pagination-color-background-hover: var(--cmp-surface-action_hover, var(--sys-surface-interactive-primary-hover));
-  --pagination-color-background-selected: var(--cmp-surface-action, var(--sys-surface-interactive-primary-default));
-  --pagination-color-border: var(--cmp-border-default, var(--sys-border-subtle));
-  --pagination-color-border-hover: var(--cmp-border-strong, var(--sys-border-strong));
-  --pagination-focus-outline-color: var(--cmp-focus-text, var(--sys-focus-text));
-  --pagination-focus-outline-width: var(--cmp-focus-width, var(--sys-focus-width, 2px));
+  --pagination-color-text: var(--sys-text-primary);
+  --pagination-color-text-disabled: var(--sys-text-disabled);
+  --pagination-color-text-selected: var(--sys-text-on-interactive);
+  --pagination-color-background: transparent;
+  --pagination-color-background-hover: var(--sys-surface-interactive-secondary-default);
+  --pagination-color-background-selected: var(--sys-surface-interactive-primary-default);
+  --pagination-color-border: var(--sys-border-subtle);
+  --pagination-color-border-hover: var(--sys-border-strong);
+  --pagination-focus-outline-color: var(--sys-focus-ring-outer);
+  --pagination-focus-outline-width: var(--sys-focus-width);
 
   display: block;
-  font-family: var(--font-family-base, system-ui, sans-serif);
+  font-family: var(--sys-text-scale-label-font-family);
 }
 
 .pagination__list {
@@ -45,12 +45,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 2.5rem;
-  height: 2.5rem;
+  min-width: var(--sys-control-height-md);
+  height: var(--sys-control-height-md);
   padding: var(--pagination-padding-block) var(--pagination-padding-inline);
   font-size: var(--pagination-font-size);
   font-weight: var(--pagination-font-weight);
-  line-height: 1;
+  line-height: var(--sys-text-scale-label-line-height);
   color: var(--pagination-color-text);
   background-color: var(--pagination-color-background);
   border: 1px solid var(--pagination-color-border);
@@ -67,7 +67,7 @@
 
 .pagination__button:focus-visible {
   outline: var(--pagination-focus-outline-width) solid var(--pagination-focus-outline-color);
-  outline-offset: 2px;
+  outline-offset: var(--sys-focus-offset);
 }
 
 .pagination__button:disabled {
@@ -95,8 +95,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 2.5rem;
-  height: 2.5rem;
+  min-width: var(--sys-control-height-md);
+  height: var(--sys-control-height-md);
   padding: var(--pagination-padding-block);
   font-size: var(--pagination-font-size);
   color: var(--pagination-color-text);
@@ -106,7 +106,7 @@
 /* Mobile responsive behavior */
 @media (max-width: 480px) {
   .pagination {
-    --pagination-gap: 0.125rem;
+    --pagination-gap: var(--sys-control-padding-block-sm);
   }
 
   .pagination__list {
@@ -114,12 +114,12 @@
   }
 
   .pagination__button--page {
-    min-width: 2rem;
-    padding-inline: 0.5rem;
+    min-width: var(--sys-control-height-sm);
+    padding-inline: var(--sys-control-padding-inline-xs);
   }
 
   .pagination__ellipsis {
-    min-width: 2rem;
+    min-width: var(--sys-control-height-sm);
   }
 }
 
@@ -130,14 +130,14 @@
   }
 
   .pagination__button:focus-visible {
-    outline: 2px solid Highlight;
+    outline: var(--sys-focus-width) solid Highlight;
   }
 
   .pagination__button--selected {
     background-color: Highlight;
     color: HighlightText;
     border-color: Highlight;
-    font-weight: 700;
+    font-weight: var(--sys-text-weight-semibold);
   }
 
   .pagination__button:disabled {

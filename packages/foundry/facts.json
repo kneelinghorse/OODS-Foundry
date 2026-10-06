@@ -1,0 +1,157 @@
+{
+  "schema": "oods-foundry-facts/v1",
+  "package": "@oods/foundry",
+  "version": "0.7.0",
+  "facts": {
+    "objects": {
+      "value": 16,
+      "public": 11,
+      "internalCapture": 5,
+      "source": {
+        "file": "runtime/oods-foundry-runtime.tar.gz",
+        "path": "objects",
+        "also": "domains",
+        "suffix": ".object.yaml"
+      }
+    },
+    "platforms": {
+      "value": [
+        "macOS",
+        "Linux"
+      ],
+      "source": {
+        "file": "README.md",
+        "section": "Requirements"
+      }
+    },
+    "clients": {
+      "value": [
+        "Claude Desktop",
+        "Claude Code",
+        "Cursor"
+      ],
+      "source": {
+        "file": "README.md",
+        "section": "Requirements"
+      }
+    },
+    "installCommand": {
+      "value": "npx -y @oods/foundry",
+      "source": {
+        "file": "README.md",
+        "section": "Install"
+      }
+    },
+    "installKey": {
+      "value": "oods-foundry",
+      "source": {
+        "file": "package.json",
+        "field": "bin"
+      }
+    },
+    "plugin": {
+      "value": {
+        "marketplaceUrl": "https://github.com/kneelinghorse/oods-foundry-claude-plugin.git",
+        "id": "oods-foundry@oods-foundry",
+        "installCommands": [
+          "claude plugin marketplace add https://github.com/kneelinghorse/oods-foundry-claude-plugin.git",
+          "claude plugin install oods-foundry@oods-foundry"
+        ]
+      },
+      "source": {
+        "file": "README.md",
+        "section": "Agent skill, plugin and registry entry"
+      }
+    },
+    "mcpRegistryName": {
+      "value": "com.oods-foundry/foundry",
+      "source": {
+        "file": "server.json",
+        "field": "name"
+      }
+    },
+    "accuracyRuleCodes": {
+      "value": [
+        "OODS-V150",
+        "OODS-V151",
+        "OODS-V152",
+        "OODS-V153",
+        "OODS-V154",
+        "OODS-V155",
+        "OODS-V156",
+        "OODS-V157",
+        "OODS-V158",
+        "OODS-V159",
+        "OODS-V168",
+        "OODS-V169",
+        "OODS-V170",
+        "OODS-V171",
+        "OODS-V172",
+        "OODS-V173"
+      ],
+      "count": 16,
+      "source": {
+        "file": "runtime/oods-foundry-runtime.tar.gz",
+        "path": "packages/viz-core/dist/index.js",
+        "exports": [
+          "ACCURACY_RULES",
+          "ECHARTS_ACCURACY_RULES"
+        ]
+      }
+    },
+    "equivalenceRules": {
+      "value": [
+        "A11Y-R-01",
+        "A11Y-R-02",
+        "A11Y-R-03",
+        "A11Y-R-04",
+        "A11Y-R-05",
+        "A11Y-R-06",
+        "A11Y-R-07",
+        "A11Y-R-08",
+        "A11Y-R-09",
+        "A11Y-R-10",
+        "A11Y-R-11",
+        "A11Y-R-12",
+        "A11Y-R-13",
+        "A11Y-R-14",
+        "A11Y-R-15",
+        "A11Y-R-16"
+      ],
+      "count": 16,
+      "source": {
+        "file": "runtime/oods-foundry-runtime.tar.gz",
+        "path": "packages/viz-core/dist/index.js",
+        "exports": [
+          "VIZ_EQUIVALENCE_RULE_IDS"
+        ]
+      }
+    },
+    "certifiedChartScopes": {
+      "value": 78,
+      "chartTypes": 13,
+      "themes": [
+        "light",
+        "dark",
+        "hc"
+      ],
+      "brands": [
+        "A",
+        "B"
+      ],
+      "source": {
+        "file": "runtime/oods-foundry-runtime.tar.gz",
+        "path": "packages/viz-core/dist/index.js",
+        "exports": [
+          "VIZ_RECIPES",
+          "VIZ_RECIPES_CENSUS"
+        ]
+      },
+      "measuredOn": {
+        "version": "0.6.2",
+        "sourceHead": "1e6e024a3524ff475bc12cdb50215a42fe0e3ac5",
+        "archiveSha256": null
+      }
+    }
+  }
+}

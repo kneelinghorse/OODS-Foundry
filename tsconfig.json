@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "ESNext",
-    "lib": ["ES2022", "DOM"],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "moduleResolution": "Bundler",
     "resolveJsonModule": true,
     "jsx": "react-jsx",
@@ -33,8 +33,18 @@
     "src/**/*",
     "scripts/**/*.ts",
     "scripts/**/*.tsx",
+    "packages/viz-core/src/vega-format.d.ts",
     "examples/**/*.ts",
     "examples/**/*.tsx"
   ],
-  "exclude": ["node_modules", "dist", "**/*.test.ts"]
+  "exclude": [
+    "node_modules", "dist", "**/*.test.ts",
+    // Adapter sources compile inside a shadcn project and are proven in both shadcn fixtures.
+    "scripts/runtime/shadcn/**",
+    "scripts/product-reality/s215-html-measure.ts", // retained producer of sprint-215 receipts
+    "scripts/product-reality/s217-chart-brand-proof.ts", // retained producer of sprint-217 receipts
+    "scripts/product-reality/s218-older-carries.ts", // retained producer of sprint-218 receipts
+    "scripts/product-reality/s219-currency-help-proof.ts", // retained producer of sprint-219 receipts
+    "scripts/product-reality/s226-m01-screens.ts" // retained producer of sprint-226 receipts
+  ]
 }

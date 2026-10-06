@@ -27,4 +27,20 @@ export interface TaggableTraitParameters2 {
    * Whether tag comparisons should be case sensitive.
    */
   caseSensitive?: boolean;
+  /**
+   * Minimum character length for a tag value.
+   */
+  tagMinLength?: number;
+  /**
+   * Maximum character length for a tag value.
+   */
+  tagMaxLength?: number;
+  /**
+   * When true, custom tags enter pending state and require moderator approval.
+   */
+  allowTagModeration?: boolean;
+  /**
+   * Synonym handling mode: none, suggest (suggest canonical form), or auto (auto-replace).
+   */
+  synonymResolution?: 'none' | 'suggest' | 'auto';
 }

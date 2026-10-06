@@ -2,14 +2,14 @@ import { useEffect, useMemo, useRef, useState, createRef, forwardRef } from 'rea
 import type { HTMLAttributes, JSX, KeyboardEvent as ReactKeyboardEvent, RefObject } from 'react';
 import { loadVegaEmbed } from '../../viz/runtime/vega-embed-loader.js';
 import type { EmbedOptions, EmbedResult, VisualizationSpec } from '../../viz/runtime/vega-embed-loader.js';
-import type { NormalizedVizSpec } from '../../viz/spec/normalized-viz-spec.js';
-import type { VegaLiteAdapterSpec } from '../../viz/adapters/vega-lite-adapter.js';
-import { toVegaLiteSpec } from '../../viz/adapters/vega-lite-adapter.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
+import type { VegaLiteAdapterSpec } from '@oods/viz-core';
+import { toVegaLiteSpec } from '@oods/viz-core';
 import { VizContainer } from './VizContainer.js';
 import { ChartDescription } from './ChartDescription.js';
 import { SharedLegend } from './SharedLegend.js';
-import { generateFacetTables, type FacetTableResult, type FacetTableGroup } from '../../viz/a11y/facet-table-generator.js';
-import type { AccessibleTableColumn } from '../../viz/a11y/table-generator.js';
+import { generateFacetTables, type FacetTableResult, type FacetTableGroup } from '@oods/viz-core';
+import type { AccessibleTableColumn } from '@oods/viz-core';
 import { handleGridNavigationEvent } from '../../viz/layout/keyboard-nav.js';
 
 export interface VizFacetGridProps extends HTMLAttributes<HTMLElement> {

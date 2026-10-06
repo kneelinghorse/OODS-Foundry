@@ -1,6 +1,6 @@
 object:
   name: Subscription
-  version: 1.0.0
+  version: 2.0.0
   domain: core.billing
   description: Canonical subscription record composing lifecycle, billing, and cancellation semantics.
   tags:
@@ -18,7 +18,8 @@ traits:
         - active
         - paused
         - pending_cancellation
-        - delinquent
+        - past_due
+        - unpaid
         - terminated
       initialState: future
   - name: lifecycle/Cancellable
@@ -43,6 +44,28 @@ traits:
         - monthly
         - yearly
       minorUnits: 100
+      # A plan change mid-cycle is charged at once as a prorated payment (Northwind Traders' upgrade to Business).
+      supportProration: true
+      prorationBehavior: always_invoice
+  - name: lifecycle/Archivable
+    alias: SubscriptionArchive
+    parameters:
+      gracePeriodDays: 30
+      retainHistory: true
+      restoreWindowDays: 30
+
+  # One bar per recorded payment (s220-m01, #2461): an area over a steady price filled its plot as one block.
+  - name: viz/MarkBar
+    parameters:
+      title: Payment amounts
+      description: Payments recorded for this subscription, in its currency.
+      chart:
+        chartType: bar
+        source: payment-events
+        dateFields: [last_payment_at, next_payment_due_at]
+        amountField: amount
+        minorUnits: 100
+        currencyField: currency
 
 schema:
   subscription_id:
@@ -80,7 +103,8 @@ schema:
         - active
         - paused
         - pending_cancellation
-        - delinquent
+        - past_due
+        - unpaid
         - terminated
   cancel_at_period_end:
     type: boolean
@@ -118,14 +142,14 @@ schema:
     type: number
     required: false
     description: Decimal progress (0-1) through the active billing cycle.
-  last_payment_at:
-    type: datetime
-    required: false
-    description: Timestamp of the most recent successful payment.
   next_payment_due_at:
     type: datetime
     required: false
     description: Timestamp when the next payment attempt should occur.
+  payment_history:
+    type: PaymentRecord[]
+    required: false
+    description: Recorded payments, oldest first, each with its time and amount in minor units. Drawn by the payment chart.
 
 semantics:
   subscription_id:
@@ -140,8 +164,9 @@ semantics:
   plan_interval:
     semantic_type: billing.plan.interval
     token_mapping: tokenMap(billing.plan.interval)
+  # The one-line summary under the plan's name in lists: whose subscription it is.
   customer_name:
-    semantic_type: customer.account.name
+    semantic_type: text.summary
     token_mapping: tokenMap(customer.account.name)
   customer_email:
     semantic_type: customer.account.email
@@ -161,6 +186,10 @@ semantics:
   amount:
     semantic_type: billing.plan.amount
     token_mapping: tokenMap(billing.plan.amount)
+    ui_hints:
+      component: CurrencyAmount
+      currencyField: currency
+      minorUnitsParameter: minorUnits
   currency:
     semantic_type: billing.plan.currency
     token_mapping: tokenMap(billing.plan.currency)
@@ -189,7 +218,8 @@ tokens:
   billing.subscription.status.active: "var(--semantic-success)"
   billing.subscription.status.paused: "var(--semantic-warning)"
   billing.subscription.status.pending_cancellation: "var(--semantic-info)"
-  billing.subscription.status.delinquent: "var(--semantic-danger)"
+  billing.subscription.status.past_due: "var(--semantic-danger)"
+  billing.subscription.status.unpaid: "var(--semantic-danger)"
   billing.subscription.status.terminated: "var(--semantic-neutral)"
   billing.subscription.interval.monthly: "var(--text-subtle)"
   billing.plan.amount: "var(--text-strong)"
@@ -201,6 +231,302 @@ metadata:
   steward: design@oods.systems
   maturity: beta
   changelog:
+    - version: 2.0.0
+      date: "2026-06-24"
+      description: >-
+        Converge status onto the canonical Stripe-literal extend-8 state set.
+        Replace the consolidated `delinquent` with `past_due` (retries ongoing →
+        grace access) + `unpaid` (retries exhausted → access revoked). BREAKING:
+        `delinquent` is removed from the status enum. Source: docs.stripe.com/api/subscriptions/object.
     - version: 1.0.0
       date: "2025-10-21"
       description: Initial subscription composition integrating State, Cancellation, Billing, and Timeline traits.
+
+# Authored type associations; no record join or referential-integrity claim.
+relationships:
+  - target: Plan
+    via: plan_code
+    cardinality: many-to-one
+    label: Plan code
+
+# Eight authored sample subscriptions, one coherent record each: plan, price, billing period, payments, payment status,
+# events, history and cancellation agree, and each customer is a sample Organization. Payments vary: Northwind Traders
+# upgrades from Team to Business with a prorated charge, Lindqvist Bakery is refunded a duplicate charge, and
+# Tidewater Co-op pays a yearly price by bank transfer. Progress is authored so a period's position does not depend on
+# the day a screen is opened. The state history starts in the lifecycle's initial state (future) and follows the
+# subscription transitions.
+samples:
+  - subscription_id: sub_northwind_business
+    plan_name: Business
+    plan_code: business-monthly
+    plan_interval: monthly
+    billing_interval: monthly
+    customer_name: Northwind Traders
+    customer_email: billing@northwind.example
+    status: active
+    state_history:
+      - { title: Trial started, from: future, to: trialing, at: '2026-02-16T15:00:00Z', reason: Started a 14-day Team trial }
+      - { title: Trial converted, from: trialing, to: active, at: '2026-03-02T15:00:00Z', reason: First Team payment collected }
+    amount: 14900
+    currency: USD
+    payment_history:
+      - { at: '2026-03-02T15:00:00Z', amount: 4900 }
+      - { at: '2026-04-02T15:00:00Z', amount: 4900 }
+      - { at: '2026-05-02T15:00:00Z', amount: 4900 }
+      - { at: '2026-06-02T15:00:00Z', amount: 4900 }
+      - { at: '2026-06-16T15:00:00Z', amount: 5333 }
+      - { at: '2026-07-02T15:00:00Z', amount: 14900 }
+      - { at: '2026-08-02T15:00:00Z', amount: 14900 }
+      - { at: '2026-09-02T15:00:00Z', amount: 14900 }
+    proration_amount: 5333
+    payment_status: succeeded
+    payment_method_type: card
+    last_payment_at: '2026-09-02T15:00:00Z'
+    next_payment_due_at: '2026-10-02T15:00:00Z'
+    current_period_start: '2026-09-02T15:00:00Z'
+    current_period_end: '2026-10-02T15:00:00Z'
+    current_period_progress: 0.93
+    cancel_at_period_end: false
+    cancellation_reason: null
+    cancellation_requested_at: null
+    created_at: '2026-02-16T15:00:00Z'
+    updated_at: '2026-09-02T15:00:00Z'
+    last_event: payment_received
+    last_event_at: '2026-09-02T15:00:00Z'
+  - subscription_id: sub_northwind_analytics
+    plan_name: Analytics add-on
+    plan_code: analytics-addon-monthly
+    plan_interval: monthly
+    billing_interval: monthly
+    customer_name: Northwind Traders
+    customer_email: billing@northwind.example
+    status: paused
+    state_history:
+      - { title: Started, from: future, to: active, at: '2026-04-10T15:00:00Z', reason: Analytics add-on purchased }
+      - { title: Paused, from: active, to: paused, at: '2026-08-20T14:00:00Z', reason: Paused during the ERP migration }
+    amount: 3900
+    currency: USD
+    payment_history:
+      - { at: '2026-04-10T15:00:00Z', amount: 3900 }
+      - { at: '2026-05-10T15:00:00Z', amount: 3900 }
+      - { at: '2026-06-10T15:00:00Z', amount: 3900 }
+      - { at: '2026-07-10T15:00:00Z', amount: 3900 }
+      - { at: '2026-08-10T15:00:00Z', amount: 3900 }
+    payment_status: succeeded
+    payment_method_type: card
+    last_payment_at: '2026-08-10T15:00:00Z'
+    next_payment_due_at: null
+    current_period_start: '2026-08-10T15:00:00Z'
+    current_period_end: '2026-09-10T15:00:00Z'
+    current_period_progress: 1
+    cancel_at_period_end: false
+    cancellation_reason: null
+    cancellation_requested_at: null
+    created_at: '2026-04-10T15:00:00Z'
+    updated_at: '2026-09-10T15:00:00Z'
+    last_event: billing_cycle_completed
+    last_event_at: '2026-09-10T15:00:00Z'
+  - subscription_id: sub_lindqvist_starter
+    plan_name: Starter
+    plan_code: starter-monthly
+    plan_interval: monthly
+    billing_interval: monthly
+    customer_name: Lindqvist Bakery
+    customer_email: finance@lindqvist.example
+    status: active
+    state_history:
+      - { title: Started, from: future, to: active, at: '2026-01-15T08:00:00Z', reason: Subscribed to the Starter plan }
+      - { title: Payment failed, from: active, to: past_due, at: '2026-05-15T08:00:00Z', reason: Card expired; retrying }
+      - { title: Recovered, from: past_due, to: active, at: '2026-05-17T08:00:00Z', reason: New card charged }
+    amount: 1900
+    currency: EUR
+    payment_history:
+      - { at: '2026-01-15T08:00:00Z', amount: 1900 }
+      - { at: '2026-02-15T08:00:00Z', amount: 1900 }
+      - { at: '2026-03-15T08:00:00Z', amount: 1900 }
+      - { at: '2026-04-15T08:00:00Z', amount: 1900 }
+      - { at: '2026-05-17T08:00:00Z', amount: 1900 }
+      - { at: '2026-06-15T08:00:00Z', amount: 1900 }
+      - { at: '2026-07-15T08:00:00Z', amount: 1900 }
+      - { at: '2026-08-15T08:00:00Z', amount: 1900 }
+      - { at: '2026-08-16T08:00:00Z', amount: 1900 }
+      - { at: '2026-08-19T11:30:00Z', amount: -1900 }
+      - { at: '2026-09-15T08:00:00Z', amount: 1900 }
+    payment_status: succeeded
+    payment_method_type: card
+    last_payment_at: '2026-09-15T08:00:00Z'
+    next_payment_due_at: '2026-10-15T08:00:00Z'
+    current_period_start: '2026-09-15T08:00:00Z'
+    current_period_end: '2026-10-15T08:00:00Z'
+    current_period_progress: 0.5
+    cancel_at_period_end: false
+    cancellation_reason: null
+    cancellation_requested_at: null
+    created_at: '2026-01-15T08:00:00Z'
+    updated_at: '2026-09-15T08:00:00Z'
+    last_event: payment_received
+    last_event_at: '2026-09-15T08:00:00Z'
+  - subscription_id: sub_blueharbor_team
+    plan_name: Team
+    plan_code: team-monthly
+    plan_interval: monthly
+    billing_interval: monthly
+    customer_name: Blue Harbor Studio
+    customer_email: accounts@blueharbor.example
+    status: trialing
+    state_history:
+      - { title: Scheduled, from: null, to: future, at: '2026-09-19T10:00:00Z', reason: Trial starts once a card is verified }
+      - { title: Trial started, from: future, to: trialing, at: '2026-09-21T09:00:00Z', reason: Card verified; 14-day trial started }
+    amount: 4900
+    currency: USD
+    payment_history: []
+    payment_status: pending
+    payment_method_type: card
+    last_payment_at: null
+    next_payment_due_at: '2026-10-05T09:00:00Z'
+    current_period_start: '2026-09-21T09:00:00Z'
+    current_period_end: '2026-10-05T09:00:00Z'
+    current_period_progress: 0.64
+    cancel_at_period_end: false
+    cancellation_reason: null
+    cancellation_requested_at: null
+    created_at: '2026-09-19T10:00:00Z'
+    updated_at: '2026-09-21T09:00:00Z'
+    last_event: billing_cycle_started
+    last_event_at: '2026-09-21T09:00:00Z'
+  - subscription_id: sub_kestrel_team
+    plan_name: Team
+    plan_code: team-monthly
+    plan_interval: monthly
+    billing_interval: monthly
+    customer_name: Kestrel Print Co.
+    customer_email: hello@kestrelprint.example
+    status: past_due
+    state_history:
+      - { title: Trial started, from: future, to: trialing, at: '2026-01-20T10:30:00Z', reason: Started a 14-day Team trial }
+      - { title: Trial converted, from: trialing, to: active, at: '2026-02-03T10:00:00Z', reason: First payment collected }
+      - { title: Payment failed, from: active, to: past_due, at: '2026-09-03T10:00:00Z', reason: Card declined; retrying }
+    amount: 4900
+    currency: GBP
+    payment_history:
+      - { at: '2026-02-03T10:00:00Z', amount: 4900 }
+      - { at: '2026-03-03T10:00:00Z', amount: 4900 }
+      - { at: '2026-04-03T10:00:00Z', amount: 4900 }
+      - { at: '2026-05-03T10:00:00Z', amount: 4900 }
+      - { at: '2026-06-03T10:00:00Z', amount: 4900 }
+      - { at: '2026-07-03T10:00:00Z', amount: 4900 }
+      - { at: '2026-08-03T10:00:00Z', amount: 4900 }
+    payment_status: retrying
+    payment_method_type: card
+    last_payment_at: '2026-08-03T10:00:00Z'
+    next_payment_due_at: '2026-10-01T10:00:00Z'
+    current_period_start: '2026-09-03T10:00:00Z'
+    current_period_end: '2026-10-03T10:00:00Z'
+    current_period_progress: 0.9
+    cancel_at_period_end: false
+    cancellation_reason: null
+    cancellation_requested_at: null
+    created_at: '2026-01-20T10:30:00Z'
+    updated_at: '2026-09-03T10:00:00Z'
+    last_event: billing_cycle_started
+    last_event_at: '2026-09-03T10:00:00Z'
+  - subscription_id: sub_tidewater_enterprise
+    plan_name: Enterprise
+    plan_code: enterprise-annual
+    plan_interval: yearly
+    billing_interval: yearly
+    customer_name: Tidewater Co-op
+    customer_email: treasurer@tidewater.example
+    status: active
+    state_history:
+      - { title: Started, from: future, to: active, at: '2024-10-30T14:00:00Z', reason: Annual Enterprise agreement signed }
+      - { title: Invoice overdue, from: active, to: past_due, at: '2025-11-14T14:00:00Z', reason: Renewal invoice unpaid after 15 days }
+      - { title: Recovered, from: past_due, to: active, at: '2025-11-20T02:00:00Z', reason: Paid by bank transfer }
+    amount: 1200000
+    currency: USD
+    payment_history:
+      - { at: '2024-10-30T14:00:00Z', amount: 1200000 }
+      - { at: '2025-11-20T02:00:00Z', amount: 1200000 }
+    payment_status: succeeded
+    payment_method_type: wire
+    last_payment_at: '2025-11-20T02:00:00Z'
+    next_payment_due_at: '2026-10-30T14:00:00Z'
+    current_period_start: '2025-10-30T14:00:00Z'
+    current_period_end: '2026-10-30T14:00:00Z'
+    current_period_progress: 0.92
+    cancel_at_period_end: false
+    cancellation_reason: null
+    cancellation_requested_at: null
+    created_at: '2024-10-30T14:00:00Z'
+    updated_at: '2025-11-20T02:00:00Z'
+    last_event: payment_received
+    last_event_at: '2025-11-20T02:00:00Z'
+  - subscription_id: sub_marlow_starter
+    plan_name: Starter
+    plan_code: starter-monthly
+    plan_interval: monthly
+    billing_interval: monthly
+    customer_name: Marlow Yoga
+    customer_email: studio@marlowyoga.example
+    status: terminated
+    state_history:
+      - { title: Started, from: future, to: active, at: '2026-01-09T10:15:00Z', reason: Subscribed to the Starter plan }
+      - { title: Cancellation requested, from: active, to: pending_cancellation, at: '2026-06-20T09:00:00Z', reason: Closing the studio in July }
+      - { title: Ended, from: pending_cancellation, to: terminated, at: '2026-07-09T10:15:00Z', reason: Cancelled at the end of the billing period }
+    amount: 1900
+    currency: USD
+    payment_history:
+      - { at: '2026-01-09T10:15:00Z', amount: 1900 }
+      - { at: '2026-02-09T10:15:00Z', amount: 1900 }
+      - { at: '2026-03-09T10:15:00Z', amount: 1900 }
+      - { at: '2026-04-09T10:15:00Z', amount: 1900 }
+      - { at: '2026-05-09T10:15:00Z', amount: 1900 }
+      - { at: '2026-06-09T10:15:00Z', amount: 1900 }
+    payment_status: succeeded
+    payment_method_type: card
+    last_payment_at: '2026-06-09T10:15:00Z'
+    next_payment_due_at: null
+    current_period_start: '2026-06-09T10:15:00Z'
+    current_period_end: '2026-07-09T10:15:00Z'
+    current_period_progress: 1
+    cancel_at_period_end: true
+    cancellation_reason: Closing the studio in July
+    cancellation_requested_at: '2026-06-20T09:00:00Z'
+    created_at: '2026-01-09T10:15:00Z'
+    updated_at: '2026-07-09T10:15:00Z'
+    last_event: billing_cycle_completed
+    last_event_at: '2026-07-09T10:15:00Z'
+  - subscription_id: sub_summit_business
+    plan_name: Business
+    plan_code: business-monthly
+    plan_interval: monthly
+    billing_interval: monthly
+    customer_name: Summit Outfitters
+    customer_email: ap@summit.example
+    status: pending_cancellation
+    state_history:
+      - { title: Trial started, from: future, to: trialing, at: '2026-04-23T12:30:00Z', reason: Started a 14-day Business trial }
+      - { title: Trial converted, from: trialing, to: active, at: '2026-05-07T12:00:00Z', reason: First payment collected }
+      - { title: Cancellation requested, from: active, to: pending_cancellation, at: '2026-09-21T16:40:00Z', reason: Moving to an annual contract elsewhere }
+    amount: 14900
+    currency: USD
+    payment_history:
+      - { at: '2026-05-07T12:00:00Z', amount: 14900 }
+      - { at: '2026-06-07T12:00:00Z', amount: 14900 }
+      - { at: '2026-07-07T12:00:00Z', amount: 14900 }
+      - { at: '2026-08-07T12:00:00Z', amount: 14900 }
+      - { at: '2026-09-07T12:00:00Z', amount: 14900 }
+    payment_status: succeeded
+    payment_method_type: card
+    last_payment_at: '2026-09-07T12:00:00Z'
+    next_payment_due_at: null
+    current_period_start: '2026-09-07T12:00:00Z'
+    current_period_end: '2026-10-07T12:00:00Z'
+    current_period_progress: 0.77
+    cancel_at_period_end: true
+    cancellation_reason: Moving to an annual contract elsewhere
+    cancellation_requested_at: '2026-09-21T16:40:00Z'
+    created_at: '2026-04-23T12:30:00Z'
+    updated_at: '2026-09-21T16:40:00Z'
+    last_event: cancellation_requested
+    last_event_at: '2026-09-21T16:40:00Z'

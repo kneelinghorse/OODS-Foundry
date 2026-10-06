@@ -1,0 +1,163 @@
+{
+  "schemaVersion": 1,
+  "description": "Props React or Vue declares beyond a component's contract props and directives (framework plumbing and event handlers aside). Decision #2482 ruling 5 found more than ten such components beyond Stack; they are reported here for review, not fixed in 0.3.3. scripts/product-reality/s221-contract-props.mjs --check fails when this record and the packages disagree.",
+  "components": {
+    "ArchiveEvent": {
+      "react": [
+        "code",
+        "history",
+        "status",
+        "timestamp"
+      ],
+      "vue": [
+        "code",
+        "history",
+        "status",
+        "timestamp"
+      ]
+    },
+    "AuditTimeline": {
+      "react": [
+        "stateHistory"
+      ],
+      "vue": [
+        "allowedTransitions",
+        "source",
+        "stateHistory",
+        "status"
+      ]
+    },
+    "Badge": {
+      "react": [
+        "iconPosition",
+        "showIcon"
+      ],
+      "vue": []
+    },
+    "Banner": {
+      "react": [
+        "actions",
+        "description",
+        "icon",
+        "showIcon"
+      ],
+      "vue": []
+    },
+    "BillingAmountInput": {
+      "react": [
+        "showInterval"
+      ],
+      "vue": []
+    },
+    "CancellationEvent": {
+      "react": [
+        "archivedAt",
+        "archivedBy",
+        "history",
+        "restoredAt",
+        "showActor",
+        "status"
+      ],
+      "vue": [
+        "archivedAt",
+        "archivedBy",
+        "history",
+        "restoredAt",
+        "showActor",
+        "status"
+      ]
+    },
+    "Checkbox": {
+      "react": [
+        "density",
+        "description",
+        "requiredIndicator"
+      ],
+      "vue": [
+        "name"
+      ]
+    },
+    "DatePicker": {
+      "react": [
+        "density",
+        "description",
+        "requiredIndicator"
+      ],
+      "vue": [
+        "name",
+        "placeholder"
+      ]
+    },
+    "Input": {
+      "react": [
+        "density",
+        "description",
+        "requiredIndicator"
+      ],
+      "vue": [
+        "max",
+        "min",
+        "name",
+        "step"
+      ]
+    },
+    "Select": {
+      "react": [
+        "density",
+        "description",
+        "requiredIndicator"
+      ],
+      "vue": [
+        "name"
+      ]
+    },
+    "StateTransitionEvent": {
+      "react": [
+        "archivedAt",
+        "archivedBy",
+        "code",
+        "reason",
+        "restoredAt",
+        "timestamp"
+      ],
+      "vue": [
+        "archivedAt",
+        "archivedBy",
+        "code",
+        "reason",
+        "restoredAt",
+        "timestamp"
+      ]
+    },
+    "StatusBadge": {
+      "react": [
+        "icon",
+        "iconPosition"
+      ],
+      "vue": []
+    },
+    "StatusTimeline": {
+      "react": [
+        "showFromState"
+      ],
+      "vue": [
+        "auditLog",
+        "showFromState",
+        "source"
+      ]
+    },
+    "Textarea": {
+      "react": [
+        "density",
+        "description",
+        "requiredIndicator"
+      ],
+      "vue": [
+        "max",
+        "min",
+        "name",
+        "step"
+      ]
+    }
+  }
+}

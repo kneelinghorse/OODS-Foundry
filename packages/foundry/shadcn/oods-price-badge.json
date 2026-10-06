@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "oods-price-badge",
+  "type": "registry:component",
+  "title": "OODS Foundry PriceBadge",
+  "description": "React adapter for OODS PriceBadge on shadcn/ui's Radix and Base UI bases. Preserves amount and currency precedence, currency minor units, label/children/value fallback and emphasis. Binding metadata props field, amountField, currencyField, intervalField and minorUnitsParameter retain the OODS no-op behavior.",
+  "dependencies": [
+    "@oods/components-react@0.7.0",
+    "@oods/component-contracts@0.7.0"
+  ],
+  "registryDependencies": [
+    "badge"
+  ],
+  "files": [
+    {
+      "path": "components/oods/price-badge.tsx",
+      "target": "components/oods/price-badge.tsx",
+      "type": "registry:component",
+      "content": "import * as React from 'react';\nimport type { PriceBadgeProps } from '@oods/components-react';\nimport { currencyMinorUnits } from '@oods/component-contracts';\nimport { Badge } from '@/registry/new-york-v4/ui/badge';\n\nexport const OodsPriceBadge = React.forwardRef<HTMLSpanElement, PriceBadgeProps>(function OodsPriceBadge(\n  { amountCents, unitAmountCents, minorUnits, amount, unitAmount, currency, currencyCode, label, value, children,\n    emphasis = 'subtle', field, amountField, currencyField, intervalField, minorUnitsParameter, ...props }, ref,\n) {\n  void [field, amountField, currencyField, intervalField, minorUnitsParameter];\n  const cents = amountCents ?? unitAmountCents;\n  const code = currency ?? currencyCode;\n  const price = cents === undefined ? amount ?? unitAmount : cents / currencyMinorUnits(code, minorUnits);\n  let formatted: React.ReactNode = value ?? 'Price';\n  if (price !== undefined && Number.isFinite(price)) {\n    if (!code) formatted = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(price);\n    else try { formatted = new Intl.NumberFormat(undefined, { style: 'currency', currency: code.toUpperCase() }).format(price); }\n    catch { formatted = `${code.toUpperCase()} ${price.toFixed(2)}`; }\n  }\n  return <Badge {...props} ref={ref} variant={emphasis === 'solid' ? 'default' : 'secondary'}\n    data-oods-component={undefined} data-oods-adapter=\"PriceBadge\" data-badge-variant=\"price\" data-price=\"true\" data-currency={code?.toUpperCase()}>\n    {label ?? children ?? formatted}\n  </Badge>;\n});\n"
+    }
+  ]
+}

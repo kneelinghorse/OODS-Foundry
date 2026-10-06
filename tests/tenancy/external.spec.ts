@@ -19,7 +19,7 @@ const EXTERNAL_REGISTRY: TenantDatabaseConfig[] = [
   {
     tenantId: 'tenant-alice',
     displayName: 'Alice Corp',
-    host: 'alice.db.internal',
+    host: 'alice.db.example.invalid',
     port: 5432,
     database: 'oods_alice',
     username: 'alice_svc',
@@ -33,7 +33,7 @@ const EXTERNAL_REGISTRY: TenantDatabaseConfig[] = [
   {
     tenantId: 'tenant-bob',
     displayName: 'Bob Industries',
-    host: 'bob.db.internal',
+    host: 'bob.db.example.invalid',
     port: 5432,
     database: 'oods_bob',
     username: 'bob_svc',

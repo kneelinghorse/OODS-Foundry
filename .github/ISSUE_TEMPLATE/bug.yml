@@ -1,0 +1,31 @@
+name: Bug report
+description: Report unexpected behavior in OODS Foundry.
+title: "[Bug]: "
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Package version
+      description: Include the version returned by health_check when available.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Operating system, Node.js version and MCP client.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps and smallest reproducing input
+      description: Remove credentials and private data before posting.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and actual result
+    validations:
+      required: true

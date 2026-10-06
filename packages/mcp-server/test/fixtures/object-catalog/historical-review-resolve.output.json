@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/review.resolve.output.json",
+  "title": "review.resolve output",
+  "description": "Per-entity resolutions + audit trail produced by applying a policy bundle to an Object Catalog manifest.",
+  "type": "object",
+  "required": ["resolutions", "auditTrail", "warnings", "diagnostics"],
+  "properties": {
+    "resolutions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/resolution" }
+    },
+    "auditTrail": {
+      "type": "object",
+      "required": ["evaluatedAt", "defaultAction", "entityCount", "policyBundle", "matchedPolicyIds"],
+      "properties": {
+        "evaluatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO timestamp of evaluation. Echoed for reproducibility."
+        },
+        "defaultAction": { "$ref": "#/$defs/decision" },
+        "entityCount": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of entities that produced a resolution (entities without a urn are skipped and counted in warnings)."
+        },
+        "policyBundle": {
+          "type": "object",
+          "description": "Verbatim echo of the input policy bundle for reproducibility."
+        },
+        "matchedPolicyIds": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Sorted unique policy IDs that matched at least one entity."
+        }
+      },
+      "additionalProperties": false
+    },
+    "warnings": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "diagnostics": {
+      "type": "object",
+      "required": ["source", "manifestPath"],
+      "properties": {
+        "source": {
+          "type": "string",
+          "enum": ["inline", "file"]
+        },
+        "manifestPath": {
+          "type": ["string", "null"],
+          "description": "Resolved manifest path when source=file. Always relative to projectRoot."
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "decision": {
+      "type": "string",
+      "enum": ["accept", "patch", "defer", "dismiss"]
+    },
+    "tier": {
+      "type": "string",
+      "enum": ["high", "medium", "low", "unknown"]
+    },
+    "resolution": {
+      "type": "object",
+      "required": ["urn", "decision", "reason", "policyId", "evaluatedScore", "evaluatedTier"],
+      "properties": {
+        "urn": { "type": "string" },
+        "decision": { "$ref": "#/$defs/decision" },
+        "reason": { "type": "string" },
+        "policyId": {
+          "type": "string",
+          "description": "ID of the matching policy, or 'default' when no policy matched."
+        },
+        "evaluatedScore": {
+          "type": ["number", "null"],
+          "description": "Total score from confidence_decomposition. Null when the field is absent."
+        },
+        "evaluatedTier": { "$ref": "#/$defs/tier" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

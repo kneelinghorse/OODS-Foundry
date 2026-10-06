@@ -31,26 +31,28 @@ export interface EmptyStateTokenSet {
   readonly actionsGap: string;
 }
 
+// The layout widths (36rem, 16rem) and the fixed icon geometry (a 48px disc, a 24px glyph, round) stay literal: they are
+// structure, on the 4px ramp, not chrome.
 const BASE_TOKENS = {
-  containerPadding: 'var(--cmp-spacing-inset-spacious, var(--sys-spacing-inset-xl, 2rem))',
-  containerPaddingMobile: 'var(--cmp-spacing-inset-default, var(--sys-spacing-inset-md, 1.5rem))',
+  containerPadding: 'var(--sys-stack-xl)',
+  containerPaddingMobile: 'var(--sys-inset-md)',
   containerMaxWidth: '36rem',
-  containerGap: 'var(--cmp-spacing-stack-default, 1.5rem)',
-  contentGap: 'var(--cmp-spacing-stack-compact, 0.75rem)',
-  illustrationGap: 'var(--cmp-spacing-stack-default, 1.5rem)',
+  containerGap: 'var(--sys-stack-md)',
+  contentGap: 'var(--sys-stack-sm)',
+  illustrationGap: 'var(--sys-stack-md)',
   illustrationMaxWidth: '16rem',
   iconSize: '3rem',
-  iconGap: 'var(--cmp-spacing-stack-compact, 1rem)',
-  iconBorderRadius: 'var(--sys-shape-radius-circle, 50%)',
+  iconGap: 'var(--sys-stack-md)',
+  iconBorderRadius: '50%',
   iconGlyphSize: '1.5rem',
-  headlineColor: 'var(--cmp-text-body, var(--sys-color-text-primary))',
-  headlineFontSize: 'var(--sys-font-size-heading-md, 1.25rem)',
-  headlineFontWeight: 'var(--sys-font-weight-semibold, 600)',
-  headlineLineHeight: 'var(--sys-font-lineheight-heading, 1.3)',
-  bodyColor: 'var(--cmp-text-muted, var(--sys-color-text-secondary))',
-  bodyFontSize: 'var(--sys-font-size-body-md, 0.875rem)',
-  bodyLineHeight: 'var(--sys-font-lineheight-body, 1.5)',
-  actionsGap: 'var(--cmp-spacing-inline-sm, 0.75rem)',
+  headlineColor: 'var(--sys-text-primary)',
+  headlineFontSize: 'var(--sys-text-scale-heading-md-font-size)',
+  headlineFontWeight: 'var(--sys-text-scale-heading-md-font-weight)',
+  headlineLineHeight: 'var(--sys-text-scale-heading-md-line-height)',
+  bodyColor: 'var(--sys-text-muted)',
+  bodyFontSize: 'var(--sys-text-scale-body-sm-font-size)',
+  bodyLineHeight: 'var(--sys-text-scale-body-sm-line-height)',
+  actionsGap: 'var(--sys-control-gap)',
 } as const;
 
 /**

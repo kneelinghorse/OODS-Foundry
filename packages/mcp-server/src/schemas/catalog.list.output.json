@@ -1,0 +1,346 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["components", "totalCount", "returnedCount", "page", "pageSize", "hasMore", "detail", "generatedAt", "stats", "availableCategories"],
+  "properties": {
+    "registry": { "type": "object", "description": "Live object and trait names, source and any unused/shadowed definitions.", "additionalProperties": true },
+    "obligationScope": {
+      "type": "object",
+      "description": "Current accepted catalog scope ruling, independent of historical row classification proposals and target capability evidence. Retained obligations are not implementation or maturity claims.",
+      "required": [
+        "schemaVersion",
+        "decisionId",
+        "disposition",
+        "controllingObligationDenominator",
+        "approvedRuntimeCensus",
+        "classificationStatus"
+      ],
+      "properties": {
+        "runtimeEvidence": {
+          "type": "string",
+          "description": "Current validated packed-runtime ratio and recorded head, or an explicit unavailable reason; independent of component scope and approval."
+        },
+        "schemaVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "decisionId": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "disposition": {
+          "type": "string",
+          "enum": [
+            "retain-all-obligations"
+          ]
+        },
+        "controllingObligationDenominator": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "approvedRuntimeCensus": {
+          "type": "null"
+        },
+        "classificationStatus": {
+          "type": "string",
+          "enum": [
+            "historical-proposals-unapproved", "proposed-awaiting-approval"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "components": {
+      "type": "array",
+      "description": "Array of component catalog entries: brief entries by default for an unfiltered call, summary or full entries on request.",
+      "items": {
+        "anyOf": [
+          {
+            "type": "object",
+            "description": "A brief entry (detail brief, the unfiltered default).",
+            "required": ["name", "categories", "readiness"],
+            "properties": {
+              "name": { "type": "string" },
+              "description": { "type": "string", "minLength": 1 },
+              "categories": { "type": "array", "items": { "type": "string" } },
+              "readiness": { "$ref": "#/$defs/componentReadiness" }
+            },
+            "additionalProperties": false
+          },
+          { "$ref": "#/$defs/componentEntry" }
+        ]
+      }
+    },
+    "totalCount": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total number of components that match the filters (before pagination)."
+    },
+    "returnedCount": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of components returned in this page."
+    },
+    "page": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "1-based page index used for pagination."
+    },
+    "pageSize": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Page size used for pagination. 0 when there are no results."
+    },
+    "hasMore": {
+      "type": "boolean",
+      "description": "Whether more components are available after this page."
+    },
+    "detail": {
+      "type": "string",
+      "enum": ["brief", "summary", "full"],
+      "description": "Detail level applied to component entries."
+    },
+    "generatedAt": {
+      "type": "string",
+      "description": "ISO timestamp when catalog was generated"
+    },
+    "stats": {
+      "type": "object",
+      "required": ["componentCount", "traitCount"],
+      "properties": {
+        "componentCount": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total components in catalog"
+        },
+        "traitCount": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total traits available"
+        },
+        "filteredCount": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total components matching the active filters"
+        }
+      },
+      "additionalProperties": false
+    },
+    "availableCategories": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "All available category values that can be used for filtering. Sorted alphabetically."
+    },
+    "suggestions": {
+      "type": "object",
+      "description": "Suggested filter values when a query returns zero results.",
+      "properties": {
+        "traits": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Closest matching trait names."
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "targetPropTypes": {
+      "type": "object",
+      "description": "Each prop by name: its TypeScript type as the declaration writes it, and whether it is optional.",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["type", "optional"],
+        "additionalProperties": false,
+        "properties": {
+          "type": { "type": "string" },
+          "optional": { "type": "boolean" }
+        }
+      }
+    },
+    "componentReadiness": {
+      "type": "string",
+      "enum": ["proven-in-generated-apps", "react-and-vue", "incomplete"],
+      "description": "One label from the measured surfaces: proven-in-generated-apps = React and Vue implementations with evidence, placed in a generated app that passed the runtime gates; react-and-vue = implemented in both with evidence, not yet placed in a generated app; incomplete = a framework implementation or its evidence is missing. The evidence is productReality, in detail full."
+    },
+    "componentEntry": {
+      "type": "object",
+      "required": ["name", "displayName", "categories", "tags", "contexts", "regions", "traits", "status"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Component name (e.g., 'Button', 'Card')"
+        },
+        "description": { "type": "string", "minLength": 1 },
+        "displayName": {
+          "type": "string",
+          "description": "Human-readable display name"
+        },
+        "categories": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Component categories (e.g., ['core'], ['data'])"
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Component tags for search and discovery"
+        },
+        "contexts": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Rendering contexts where component can be used"
+        },
+        "regions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "UI regions where component can appear"
+        },
+        "traits": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of trait capabilities (e.g., ['Editable', 'Searchable'])"
+        },
+        "productReality": {
+          "$ref": "#/$defs/componentProductReality",
+          "description": "Additive target-specific capability and evidence ledger. Use this instead of legacy status for React, Vue, generated-consumer, accessibility, theme, and interaction claims; row classifications/reconciliationState are historical proposals, subject to the current obligationScope ruling."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["stable", "beta", "planned"],
+          "description": "Legacy static-HTML renderer status only. 'stable' = has a mapped HTML renderer; 'planned' = the HTML renderer falls back. This is not a React, Vue, code-generation, or release-readiness claim."
+        },
+        "maturity": {
+          "type": "string",
+          "description": "Maturity indicator derived from the source trait (e.g., 'stable', 'beta', 'draft')."
+        },
+        "readiness": { "$ref": "#/$defs/componentReadiness" },
+        "deprecated_since": {
+          "type": "string",
+          "description": "DSL version since which this component is deprecated. When set, tools surface deprecation warnings in meta.warnings."
+        },
+        "propSchema": {
+          "type": "object",
+          "description": "Component prop schema with types and defaults (detail=full only). It describes the static HTML renderer (see propSchemaTarget); a React or Vue component's props are in propTypes.",
+          "additionalProperties": true
+        },
+        "propSchemaTarget": {
+          "const": "html",
+          "description": "The target propSchema describes: the static HTML renderer, whose prop names can differ from the React and Vue components' (detail=full only)."
+        },
+        "propTypes": {
+          "type": "object",
+          "description": "The React and Vue components' props, with their types, from the published declarations of @oods/components-react and @oods/components-vue (detail=full only).",
+          "required": ["react", "vue"],
+          "additionalProperties": false,
+          "properties": {
+            "react": { "$ref": "#/$defs/targetPropTypes" },
+            "vue": { "$ref": "#/$defs/targetPropTypes" }
+          }
+        },
+        "slots": {
+          "type": "object",
+          "description": "Slot definitions with accepted types and roles (detail=full only).",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "accept": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "role": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "codeReferences": {
+          "type": "array",
+          "description": "References into Storybook `.stories.tsx` files (usage patterns + minimal snippets, detail=full only).",
+          "items": {
+            "type": "object",
+            "required": ["kind", "path", "snippet"],
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": ["storybook", "code-connect"],
+                "description": "Reference kind."
+              },
+              "path": {
+                "type": "string",
+                "description": "Repo-relative POSIX path to a source file containing a usage example."
+              },
+              "title": {
+                "type": "string",
+                "description": "Storybook title when available."
+              },
+              "snippet": {
+                "type": "string",
+                "description": "Concise usage snippet extracted from the story file."
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "codeSnippet": {
+          "type": "string",
+          "description": "Convenience: best single snippet picked from codeReferences (detail=full only)."
+        }
+      },
+      "additionalProperties": false
+    },
+    "capabilityEvidence": {
+      "type": "object",
+      "required": ["state", "evidence"],
+      "properties": {
+        "state": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Evidence-derived state for this specific capability surface."
+        },
+        "evidence": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true,
+          "description": "Repo-relative evidence references supporting the state."
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Explicit explanation for an unavailable, failed, or not-applicable capability surface."
+        }
+      },
+      "additionalProperties": false
+    },
+    "componentProductReality": {
+      "type": "object",
+      "required": ["schemaVersion", "proposedClassification", "reconciliationState", "surfaces"],
+      "properties": {
+        "schemaVersion": { "type": "string", "minLength": 1 },
+        "proposedClassification": {
+          "type": "string",
+          "enum": ["native", "recipe", "alias", "authoring-only", "merged", "retired"]
+        },
+        "reconciliationState": { "type": "string", "minLength": 1 },
+        "surfaces": {
+          "type": "object",
+          "required": ["contract", "metadata", "html", "react", "vue", "generatedConsumer", "accessibility", "theme", "interaction"],
+          "properties": {
+            "contract": { "$ref": "#/$defs/capabilityEvidence" },
+            "metadata": { "$ref": "#/$defs/capabilityEvidence" },
+            "html": { "$ref": "#/$defs/capabilityEvidence" },
+            "react": { "$ref": "#/$defs/capabilityEvidence" },
+            "vue": { "$ref": "#/$defs/capabilityEvidence" },
+            "generatedConsumer": { "$ref": "#/$defs/capabilityEvidence" },
+            "accessibility": { "$ref": "#/$defs/capabilityEvidence" },
+            "theme": { "$ref": "#/$defs/capabilityEvidence" },
+            "interaction": { "$ref": "#/$defs/capabilityEvidence" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

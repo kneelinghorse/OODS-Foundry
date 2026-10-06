@@ -14,4 +14,17 @@ export interface StatefulTraitParameters {
    * State assigned when an entity is created.
    */
   initialState: string;
+  /**
+   * Allowed state transition map. Keys are source states; values are arrays of permitted target states. Null means open model (all transitions allowed).
+   */
+  transitionRules?: {
+    /**
+     * @minItems 1
+     */
+    [k: string]: [string, ...string[]];
+  } | null;
+  /**
+   * When true, every state transition must include a human-readable reason.
+   */
+  requireTransitionReason?: boolean;
 }

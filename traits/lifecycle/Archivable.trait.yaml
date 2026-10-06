@@ -175,10 +175,12 @@ view_extensions:
         showBadge: true
         separateTab: true
         tabLabel: Archived
+  # s224-m01 (#2542 ruling 6): a record that is not archived shows no card; "Archived: No" only states the default.
   detail:
     - component: ArchiveSummary
       position: top
       props:
+        hideWhenDefault: true
         archivedField: is_archived
         archivedAtField: archived_at
         restoredAtField: restored_at
@@ -188,21 +190,15 @@ view_extensions:
         retainHistoryParameter: retainHistory
         restoreWindowParameter: restoreWindowDays
         allowPartialRestoreParameter: allowPartialRestore
-  timeline:
-    - component: ArchiveEvent
-      props:
-        archivedAtField: archived_at
-        restoredAtField: restored_at
-        reasonField: archive_reason
-        archivedByField: archived_by
-        metadataField: archive_metadata
-        restorationMetadataField: restoration_metadata
+  # s222-m03: no timeline recipe. A timeline's rail lists the archive and restore (recordCollectionEvents).
+  # s223-m01 (#2527 ruling 7): an archived record shows it on its card; "Not archived" only states the default.
   card:
     - component: ArchivePill
       position: before
       props:
         field: is_archived
         archivedAtField: archived_at
+        hideWhenFalse: true
 
 tokens:
   status.archive.primary.bg: "var(--status-archive-bg)"
@@ -243,7 +239,6 @@ metadata:
   regionsUsed:
     - list
     - detail
-    - timeline
     - card
   examples:
     - Contract

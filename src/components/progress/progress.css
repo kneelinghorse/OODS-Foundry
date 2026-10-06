@@ -13,16 +13,16 @@
 
 .progress-linear__track {
   width: 100%;
-  height: var(--progress-linear-height, 6px);
+  height: var(--progress-linear-height, var(--sys-progress-height));
   background-color: var(--progress-linear-track);
-  border-radius: 999px;
+  border-radius: var(--sys-radius-pill);
   overflow: hidden;
 }
 
 .progress-linear__fill {
   height: 100%;
   background-color: var(--progress-linear-fill);
-  border-radius: 999px;
+  border-radius: var(--sys-radius-pill);
   transition: width 0.3s ease-out;
 }
 
@@ -98,7 +98,7 @@
     stroke-dashoffset: 0;
   }
   50% {
-    stroke-dashoffset: calc(var(--progress-circular-diameter, 40px) * 3.14159 * 0.5);
+    stroke-dashoffset: calc(var(--progress-circular-diameter) * 3.14159 * 0.5);
   }
   100% {
     stroke-dashoffset: 0;

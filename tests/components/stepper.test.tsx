@@ -142,8 +142,8 @@ describe('<Stepper>', () => {
       <Stepper steps={basicSteps} activeStepId="2" />
     );
 
-    expect(markup).toMatch(/--stepper-step-border-color:\s*var\(--cmp-status-success-border\)/);
-    expect(markup).toMatch(/--stepper-connector-active-color:\s*var\(--cmp-status-info-border\)/);
+    expect(markup).toMatch(/--stepper-step-border-color:\s*var\(--sys-status-success-border\)/);
+    expect(markup).toMatch(/--stepper-connector-active-color:\s*var\(--sys-status-info-border\)/);
     expect(markup).toMatch(/data-step-tone="success"/);
     expect(markup).not.toContain('#');
   });

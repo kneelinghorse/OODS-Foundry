@@ -1,0 +1,202 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "kind": {
+      "enum": [
+        "object",
+        "trait"
+      ]
+    },
+    "name": {
+      "type": "string"
+    },
+    "file": {
+      "type": "string",
+      "description": "The file in your folder that now holds the definition."
+    },
+    "status": {
+      "enum": [
+        "created",
+        "updated"
+      ]
+    },
+    "replaces": {
+      "type": "string",
+      "description": "The shipped file your object is used in place of."
+    },
+    "contexts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "context": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "ok",
+              "error"
+            ]
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "context",
+          "status",
+          "messages"
+        ],
+        "additionalProperties": false
+      },
+      "description": "An object composed through design.compose in every context it declares (empty for a trait)."
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "registry": {
+      "type": "object",
+      "properties": {
+        "folders": {
+          "type": "object",
+          "description": "Your objects and traits folders (OODS_OBJECTS_DIR, OODS_TRAITS_DIR); null when none is set.",
+          "properties": {
+            "objects": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "traits": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "objects",
+            "traits"
+          ],
+          "additionalProperties": false
+        },
+        "objects": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "integer"
+            },
+            "shipped": {
+              "type": "integer"
+            },
+            "user": {
+              "type": "integer"
+            },
+            "replacingShipped": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Your objects used in place of a shipped object of the same name."
+            }
+          },
+          "required": [
+            "total",
+            "shipped",
+            "user",
+            "replacingShipped"
+          ],
+          "additionalProperties": false
+        },
+        "traits": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "integer"
+            },
+            "shipped": {
+              "type": "integer"
+            },
+            "user": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "total",
+            "shipped",
+            "user"
+          ],
+          "additionalProperties": false
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "description": "A file that was not used, or something about one that is, and why.",
+            "properties": {
+              "kind": {
+                "enum": [
+                  "malformed",
+                  "unnamed",
+                  "duplicate",
+                  "replaces-shipped",
+                  "shipped-name",
+                  "unknown-trait",
+                  "unreadable-folder"
+                ]
+              },
+              "severity": {
+                "enum": [
+                  "error",
+                  "notice"
+                ],
+                "description": "error: the definition is not in use. notice: it is in use, and this is worth knowing."
+              },
+              "file": {
+                "type": "string",
+                "description": "A shipped file relative to the runtime root; a file of yours as an absolute path."
+              },
+              "name": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind",
+              "severity",
+              "file",
+              "message"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "folders",
+        "objects",
+        "traits",
+        "issues"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "kind",
+    "name",
+    "file",
+    "status",
+    "contexts",
+    "warnings",
+    "registry"
+  ],
+  "additionalProperties": false
+}

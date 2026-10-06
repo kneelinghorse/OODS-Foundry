@@ -1,0 +1,37 @@
+{
+  "test_engine": {
+    "name": "axe-core",
+    "version": "4.11.0"
+  },
+  "timestamp": "2026-10-02T00:01:00Z",
+  "violations": [],
+  "incomplete": [
+    {
+      "id": "color-contrast",
+      "help": "Check contrast",
+      "description": "Contrast needs manual review",
+      "impact": null,
+      "node_count": 1,
+      "selectors": [
+        ".hero"
+      ],
+      "targets": [
+        [
+          ".hero"
+        ]
+      ],
+      "tags": [
+        "wcag2aa"
+      ],
+      "reasons": [
+        "Background image prevents a decision."
+      ]
+    }
+  ],
+  "passes": [
+    "image-alt"
+  ],
+  "inapplicable": [
+    "video-caption"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "oods-tabs",
+  "type": "registry:component",
+  "title": "OODS Foundry Tabs",
+  "description": "React adapter for OODS Tabs on shadcn/ui's Radix and Base UI bases. The tab list scrolls horizontally. overflowLabel and the OODS overflow menu are not implemented.",
+  "dependencies": [
+    "@oods/components-react@0.7.0"
+  ],
+  "registryDependencies": [
+    "tabs"
+  ],
+  "files": [
+    {
+      "path": "components/oods/tabs.tsx",
+      "target": "components/oods/tabs.tsx",
+      "type": "registry:component",
+      "content": "import * as React from 'react';\nimport type { TabsProps } from '@oods/components-react';\nimport { Tabs, TabsList, TabsTrigger, TabsContent } from '@/registry/new-york-v4/ui/tabs';\n\nexport const OodsTabs = React.forwardRef<HTMLDivElement, TabsProps>(function OodsTabs(\n  { items, selectedId, defaultSelectedId, size = 'md', overflowLabel, ariaLabel, onChange, onUpdate, dir, 'aria-label': nativeLabel, ...props }, ref,\n) {\n  void overflowLabel; // This adapter scrolls the tab list; it has no overflow menu.\n  const [local, setLocal] = React.useState(defaultSelectedId ?? items.find(item => !item.disabled && !item.isDisabled)?.id);\n  const selected = selectedId ?? local;\n  const notified = React.useRef(selected); notified.current = selected;\n  const select = (id: string) => {\n    if (id === notified.current) return;\n    notified.current = id;\n    if (selectedId === undefined) setLocal(id);\n    onChange?.(id); onUpdate?.(id);\n  };\n  return <Tabs {...props} ref={ref} value={selected} defaultValue={defaultSelectedId} dir={dir === 'ltr' || dir === 'rtl' ? dir : undefined}\n    data-oods-component={undefined} data-oods-adapter=\"Tabs\" data-size={size} onValueChange={select}>\n    <div className=\"max-w-full overflow-x-auto\"><TabsList aria-label={ariaLabel ?? nativeLabel}>\n      {items.map(item => <TabsTrigger key={item.id} data-tab-id={item.id} value={item.id} disabled={item.disabled || item.isDisabled} onFocus={item.disabled || item.isDisabled ? undefined : () => select(item.id)}\n        className={size === 'sm' ? 'text-xs' : size === 'lg' ? 'text-base' : undefined}>{item.label}</TabsTrigger>)}\n    </TabsList></div>\n    {items.map(item => <TabsContent key={item.id} value={item.id}>{item.panel}</TabsContent>)}\n  </Tabs>;\n});\n"
+    }
+  ]
+}

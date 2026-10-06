@@ -8,10 +8,11 @@ import type { ProgressLinearProps } from './types.js';
 import { resolveProgressTokens } from './tokens.js';
 import './progress.css';
 
+// The track heights come from the progress role: half of it, the role itself, and half again.
 const SIZE_HEIGHT_MAP = {
-  sm: '4px',
-  md: '6px',
-  lg: '8px',
+  sm: 'calc(var(--sys-progress-height) / 2)',
+  md: 'var(--sys-progress-height)',
+  lg: 'calc(var(--sys-progress-height) * 1.5)',
 } as const;
 
 type ProgressLinearElement = React.ElementRef<'div'>;

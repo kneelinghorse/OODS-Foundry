@@ -1,5 +1,5 @@
 {
-  "$schema": "https://oods.dev/viz-spec/v1",
+  "$schema": "https://oods-foundry.com/viz-spec/v1",
   "id": "pattern:viz:linked-brush-scatter",
   "name": "Engagement vs retention with linked brush",
   "data": {
@@ -33,7 +33,7 @@
   "interactions": [
     {
       "id": "segment-brush",
-      "select": { "type": "interval", "on": "drag", "fields": ["pctEngaged", "pctRetained"] },
+      "select": { "type": "interval", "on": "drag", "encodings": ["x", "y"] },
       "rule": { "bindTo": "visual", "property": "strokeWidth", "condition": { "value": 2 }, "else": { "value": 0 } }
     },
     {

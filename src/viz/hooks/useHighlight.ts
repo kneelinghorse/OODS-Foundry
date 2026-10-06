@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { InteractionTrait } from '@/viz/spec/normalized-viz-spec.js';
+import type { InteractionTrait } from '@oods/viz-core';
 
 export interface UseHighlightOptions {
   readonly id?: string;

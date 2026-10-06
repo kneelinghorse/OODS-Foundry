@@ -91,6 +91,25 @@ schema:
     type: integer
     required: false
     description: Number of days outstanding grouped for aging reports.
+  attempt_count:
+    type: integer
+    required: false
+    description: >-
+      Number of automatic payment attempts made on this invoice (Stripe smart-retries
+      attempt_count). Increments on each retry in the dunning window. Source:
+      docs.stripe.com/billing/revenue-recovery/smart-retries.
+    default: 0
+    validation:
+      minimum: 0
+  next_payment_attempt:
+    type: datetime
+    required: false
+    description: >-
+      When the next automatic payment retry is scheduled (Stripe smart-retries
+      next_payment_attempt). Defines the open end of the retry window — modeled on the
+      Refundable.refundable_until datetime-window precedent. Absent/null when no further
+      attempts are scheduled (retries exhausted → invoice goes uncollectible, mirroring
+      the subscription `unpaid` state). Source: docs.stripe.com/billing/revenue-recovery/smart-retries.
   memo:
     type: string
     required: false
@@ -118,9 +137,17 @@ semantics:
   total_minor:
     semantic_type: billing.invoice.total_minor
     token_mapping: tokenMap(billing.invoice.total_minor)
+    ui_hints:
+      component: CurrencyAmount
+      currencyField: currency
+      minorUnits: 100
   balance_minor:
     semantic_type: billing.invoice.balance_minor
     token_mapping: tokenMap(billing.invoice.balance_minor)
+    ui_hints:
+      component: CurrencyAmount
+      currencyField: currency
+      minorUnits: 100
   currency:
     semantic_type: billing.invoice.currency
     token_mapping: tokenMap(billing.invoice.currency)
@@ -136,9 +163,34 @@ semantics:
   aging_bucket_days:
     semantic_type: billing.invoice.aging_bucket_days
     token_mapping: tokenMap(billing.invoice.aging_bucket_days)
+  attempt_count:
+    semantic_type: billing.invoice.attempt_count
+    token_mapping: tokenMap(billing.invoice.attempt_count)
+  next_payment_attempt:
+    semantic_type: billing.invoice.next_payment_attempt
+    token_mapping: tokenMap(billing.invoice.next_payment_attempt)
   memo:
     semantic_type: billing.invoice.memo
     token_mapping: tokenMap(billing.invoice.memo)
+
+view_extensions:
+  # s222-m03 (#2502 ruling 13): an invoice's row, page header and card show its total, as a financial trait's recipes do.
+  list:
+    - component: BillingSummaryBadge
+      position: after
+      props:
+        amountField: total_minor
+        currencyField: currency
+        minorUnits: 100
+        showInterval: false
+  card:
+    - component: BillingSummaryBadge
+      position: after
+      props:
+        amountField: total_minor
+        currencyField: currency
+        minorUnits: 100
+        showInterval: false
 
 tokens:
   billing.invoice.number: "var(--cmp-text-strong)"
@@ -151,5 +203,18 @@ metadata:
   owners:
     - revenue-ops@oods.systems
   maturity: beta
+  regionsUsed:
+    - list
+    - card
   notes:
     - Canonical status options sourced from r4.5 mapping research.
+    - >-
+      Dunning/access reconciliation (s126-m05, scoped to the access-revocation need):
+      the 9-value statusEnum is a SUPERSET of the canonical 5-state invoice model
+      (draft, posted, paid, past_due, void — see docs/billing/lifecycle-states.md).
+      Dunning-relevant mapping: `open`/`processing` = pre-dunning (awaiting/settling
+      payment); `past_due` = overdue, retries ongoing → subscription past_due (GRACE,
+      keep access); `uncollectible` = retries exhausted → mirrors subscription `unpaid`
+      (REVOKE access). The retry window is carried by attempt_count + next_payment_attempt.
+      The subscription-status → access decision is encoded in
+      src/domain/billing/states.ts hasServiceAccess().

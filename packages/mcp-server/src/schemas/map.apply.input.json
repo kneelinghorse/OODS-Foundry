@@ -1,0 +1,421 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/map.apply.input.json",
+  "title": "map.apply input",
+  "description": "Apply Stage1 reconciliation verdicts to the component-mapping registry. Accepts exactly one of inline report or reportPath.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "apply": {
+      "type": "boolean",
+      "default": false,
+      "description": "When true, persist registry mutations. Defaults to dry-run."
+    },
+    "minConfidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0.75,
+      "description": "Candidates below this threshold are routed to queued instead of being applied."
+    },
+    "reportPath": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Filesystem path to a reconciliation_report.json artifact."
+    },
+    "report": {
+      "$ref": "#/$defs/ReconciliationReport"
+    }
+  },
+  "oneOf": [
+    {
+      "required": ["report"],
+      "not": { "required": ["reportPath"] }
+    },
+    {
+      "required": ["reportPath"],
+      "not": { "required": ["report"] }
+    }
+  ],
+  "$defs": {
+    "EvidenceRef": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "AlternateInterpretation": {
+      "oneOf": [
+        { "type": "string" },
+        {
+          "type": "object",
+          "required": ["role", "score", "reasoning"],
+          "additionalProperties": false,
+          "properties": {
+            "role": { "type": "string", "minLength": 1 },
+            "score": { "type": "number", "minimum": 0, "maximum": 1 },
+            "reasoning": { "type": "string", "minLength": 1 }
+          }
+        }
+      ]
+    },
+    "AlternateVerb": {
+      "oneOf": [
+        { "type": "string" },
+        {
+          "type": "object",
+          "required": ["verb_id", "score", "reasoning"],
+          "additionalProperties": false,
+          "properties": {
+            "verb_id": { "type": "string", "minLength": 1 },
+            "score": { "type": "number", "minimum": 0, "maximum": 1 },
+            "reasoning": { "type": "string", "minLength": 1 }
+          }
+        }
+      ]
+    },
+    "CandidateDiffField": {
+      "type": "object",
+      "required": ["field"],
+      "additionalProperties": false,
+      "properties": {
+        "field": { "type": "string", "minLength": 1 },
+        "from": {},
+        "to": {}
+      }
+    },
+    "CandidateDiff": {
+      "type": "object",
+      "required": ["added_traits", "removed_traits", "changed_fields"],
+      "additionalProperties": false,
+      "properties": {
+        "added_traits": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "removed_traits": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "changed_fields": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/CandidateDiffField" }
+        }
+      }
+    },
+    "CandidateObject": {
+      "type": "object",
+      "required": [
+        "object_id",
+        "name",
+        "role",
+        "confidence",
+        "recommended_oods_traits",
+        "action",
+        "reasoning"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "object_id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "role": { "type": "string", "minLength": 1 },
+        "inferred_role": { "type": "string", "minLength": 1 },
+        "inferred_role_score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "recommended_oods_traits": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1
+        },
+        "recommended_domain": { "type": "string", "minLength": 1 },
+        "action": {
+          "type": "string",
+          "enum": ["create", "patch", "skip", "conflict"]
+        },
+        "reasoning": { "type": "string", "minLength": 1 },
+        "verdict_reasoning": { "type": "string", "minLength": 1 },
+        "existing_map_id": { "type": "string", "minLength": 1 },
+        "external_component": { "type": "string", "minLength": 1 },
+        "diff": { "$ref": "#/$defs/CandidateDiff" },
+        "alternate_interpretations": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/AlternateInterpretation" }
+        },
+        "evidence_chain": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/EvidenceRef" }
+        },
+        "projection_variants": {
+          "type": "array",
+          "description": "Stage1 v1.5.0 cross-surface identity variants. When present on a candidate_object, map.apply threads them through to the persisted mapping on both create and patch verdicts.",
+          "items": {
+            "type": "object",
+            "required": ["id", "surface"],
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "surface": { "type": "string", "minLength": 1 },
+              "external_component": { "type": "string", "minLength": 1 },
+              "capability_id": { "type": "string", "minLength": 1 },
+              "selector": { "type": "string", "minLength": 1 },
+              "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+              "evidence_chain": {
+                "type": "array",
+                "items": { "type": "object", "additionalProperties": true }
+              },
+              "metadata": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "action": { "const": "patch" } } },
+          "then": {
+            "required": ["existing_map_id", "diff", "verdict_reasoning"]
+          }
+        },
+        {
+          "if": { "properties": { "action": { "const": "skip" } } },
+          "then": { "required": ["existing_map_id", "verdict_reasoning"] }
+        },
+        {
+          "if": { "properties": { "action": { "const": "conflict" } } },
+          "then": { "required": ["existing_map_id", "verdict_reasoning"] }
+        }
+      ]
+    },
+    "ActionPrecondition": {
+      "type": "object",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["auth", "role", "state", "data"]
+        },
+        "description": { "type": "string" },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "evidence_chain": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/EvidenceRef" }
+        }
+      }
+    },
+    "DisambiguationAlternative": {
+      "type": "object",
+      "required": ["value"],
+      "additionalProperties": false,
+      "properties": {
+        "value": { "type": "string", "minLength": 1 },
+        "score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "reasoning": { "type": "string", "minLength": 1 }
+      }
+    },
+    "DisambiguationDecision": {
+      "type": "object",
+      "required": [
+        "decision_id",
+        "decision_type",
+        "scope",
+        "status",
+        "target_kind",
+        "target_id",
+        "selected_value",
+        "rationale",
+        "decided_at"
+      ],
+      "additionalProperties": false,
+      "description": "Draft v1.4.0-gated review-decision payload. OODS accepts the shape but current map.apply handlers ignore it.",
+      "properties": {
+        "decision_id": { "type": "string", "minLength": 1 },
+        "decision_type": {
+          "type": "string",
+          "enum": [
+            "preferred_name",
+            "preferred_role",
+            "mapping_rejection",
+            "canonical_term"
+          ]
+        },
+        "scope": {
+          "type": "string",
+          "enum": ["run", "target", "registry"]
+        },
+        "status": {
+          "type": "string",
+          "enum": ["proposed", "accepted", "rejected", "promoted"]
+        },
+        "target_kind": {
+          "type": "string",
+          "enum": ["candidate_object", "candidate_action", "preferred_term"]
+        },
+        "target_id": { "type": "string", "minLength": 1 },
+        "selected_value": { "type": "string", "minLength": 1 },
+        "rationale": { "type": "string", "minLength": 1 },
+        "alternatives": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/DisambiguationAlternative" }
+        },
+        "preferred_term_id": { "type": "string", "minLength": 1 },
+        "decided_by": {
+          "type": "string",
+          "enum": ["human", "agent", "system"]
+        },
+        "decided_at": { "type": "string", "format": "date-time" },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "CandidateAction": {
+      "type": "object",
+      "required": ["action_id", "name", "verb"],
+      "additionalProperties": false,
+      "properties": {
+        "action_id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "verb": { "type": "string", "minLength": 1 },
+        "source_object_id": { "type": "string", "minLength": 1 },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "suggested_oods_trait": { "type": "string", "minLength": 1 },
+        "suggested_action": { "type": "string", "minLength": 1 },
+        "reasoning": { "type": "string", "minLength": 1 },
+        "alternate_verbs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/AlternateVerb" }
+        },
+        "preconditions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/ActionPrecondition" }
+        }
+      }
+    },
+    "Conflict": {
+      "type": "object",
+      "required": ["type", "description", "severity"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "type": "string", "minLength": 1 },
+        "description": { "type": "string", "minLength": 1 },
+        "severity": {
+          "type": "string",
+          "enum": ["info", "warning", "error"]
+        },
+        "action_id": { "type": "string", "minLength": 1 },
+        "object_id": { "type": "string", "minLength": 1 },
+        "existing_map_id": { "type": "string", "minLength": 1 }
+      }
+    },
+    "RegistryFetchTelemetry": {
+      "type": "object",
+      "required": ["source", "entries_count"],
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "type": "string",
+          "enum": ["pre-supplied", "transport", "empty-fallback"]
+        },
+        "entries_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "warnings": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "Manifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "inputs": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "oods_registry_fetch": { "$ref": "#/$defs/RegistryFetchTelemetry" }
+          }
+        }
+      }
+    },
+    "ReconciliationSummary": {
+      "type": "object",
+      "required": ["mode", "existing_map_count", "verdict_counts"],
+      "additionalProperties": false,
+      "properties": {
+        "mode": { "type": "string", "minLength": 1 },
+        "existing_map_count": { "type": "integer", "minimum": 0 },
+        "verdict_counts": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "create": { "type": "integer", "minimum": 0 },
+            "patch": { "type": "integer", "minimum": 0 },
+            "skip": { "type": "integer", "minimum": 0 },
+            "conflict": { "type": "integer", "minimum": 0 }
+          }
+        }
+      }
+    },
+    "ReconciliationReport": {
+      "type": "object",
+      "required": [
+        "kind",
+        "schema_version",
+        "generated_at",
+        "target",
+        "candidate_objects"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "const": "reconciliation_report" },
+        "schema_version": { "type": "string", "minLength": 1 },
+        "generated_at": { "type": "string", "format": "date-time" },
+        "target": {
+          "type": "object",
+          "required": ["id"],
+          "additionalProperties": false,
+          "properties": {
+            "id": { "type": "string", "minLength": 1 },
+            "url": { "type": "string", "format": "uri" }
+          }
+        },
+        "candidate_objects": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/CandidateObject" },
+          "minItems": 1
+        },
+        "candidate_actions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/CandidateAction" }
+        },
+        "candidate_traits": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "conflicts": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/Conflict" }
+        },
+        "coverage_gaps": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "validation_failures": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "disambiguation_decisions": {
+          "type": "array",
+          "description": "Draft v1.4.0-gated review-decision ingress. Optional and ignored by current v1.3.x write-side behavior.",
+          "items": { "$ref": "#/$defs/DisambiguationDecision" }
+        },
+        "manifest": { "$ref": "#/$defs/Manifest" },
+        "reconciliation_summary": { "$ref": "#/$defs/ReconciliationSummary" }
+      }
+    }
+  }
+}

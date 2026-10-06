@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import {
   measureAsync,
-  measureSync,
   markStart,
   markEnd,
   PerfProfiler,
@@ -13,7 +12,7 @@ import { Button } from '~/src/components/base/Button';
 import '~/src/styles/globals.css';
 
 const meta: Meta = {
-  title: 'Proofs & Internals/Performance/Token Transform Harness',
+  title: 'Explorer/Performance/Token Transform Harness',
   parameters: {
     layout: 'padded',
     chromatic: { disableSnapshot: true },

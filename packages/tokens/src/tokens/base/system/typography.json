@@ -21,39 +21,113 @@
           "$type": "dimension",
           "$value": "{text.line-height.loose}",
           "$description": "System line-height for long-form reading."
+        },
+        "root": {
+          "$type": "number",
+          "$value": 1.5,
+          "$description": "The document root's line height, unitless so every font size inherits a proportional line (16px text gets 24px); type roles set their own."
         }
       },
       "scale": {
-        "caption": {
+        "display-lg": {
           "$type": "typography",
-          "$value": "{text.scale.caption}",
-          "$description": "System caption scale."
+          "$value": "{text.scale.display-lg}",
+          "$description": "System display-lg type role."
         },
-        "label-md": {
+        "display-md": {
           "$type": "typography",
-          "$value": "{text.scale.label-md}",
-          "$description": "System label medium scale."
+          "$value": "{text.scale.display-md}",
+          "$description": "System display-md type role."
         },
-        "body-sm": {
+        "display-sm": {
           "$type": "typography",
-          "$value": "{text.scale.body-sm}",
-          "$description": "System compact body scale."
-        },
-        "body-md": {
-          "$type": "typography",
-          "$value": "{text.scale.body-md}",
-          "$description": "System default body scale."
-        },
-        "heading-lg": {
-          "$type": "typography",
-          "$value": "{text.scale.heading-lg}",
-          "$description": "System large heading scale."
+          "$value": "{text.scale.display-sm}",
+          "$description": "System display-sm type role."
         },
         "heading-xl": {
           "$type": "typography",
           "$value": "{text.scale.heading-xl}",
-          "$description": "System extra-large heading scale."
+          "$description": "System heading-xl type role."
+        },
+        "heading-lg": {
+          "$type": "typography",
+          "$value": "{text.scale.heading-lg}",
+          "$description": "System heading-lg type role."
+        },
+        "heading-md": {
+          "$type": "typography",
+          "$value": "{text.scale.heading-md}",
+          "$description": "System heading-md type role."
+        },
+        "heading-sm": {
+          "$type": "typography",
+          "$value": "{text.scale.heading-sm}",
+          "$description": "System heading-sm type role."
+        },
+        "body-md": {
+          "$type": "typography",
+          "$value": "{text.scale.body-md}",
+          "$description": "System body-md type role."
+        },
+        "body-sm": {
+          "$type": "typography",
+          "$value": "{text.scale.body-sm}",
+          "$description": "System body-sm type role."
+        },
+        "label": {
+          "$type": "typography",
+          "$value": "{text.scale.label}",
+          "$description": "System label type role."
+        },
+        "label-md": {
+          "$type": "typography",
+          "$value": "{text.scale.label-md}",
+          "$description": "System label-md type role."
+        },
+        "caption": {
+          "$type": "typography",
+          "$value": "{text.scale.caption}",
+          "$description": "System caption type role."
+        },
+        "mono": {
+          "$type": "typography",
+          "$value": "{text.scale.mono}",
+          "$description": "System mono type role."
         }
+      },
+      "size": {
+        "xs": {
+          "$type": "dimension",
+          "$value": "{ref.typography.sizes.xs}",
+          "$description": "Extra-small font scalar (12px): badges and captions."
+        },
+        "sm": {
+          "$type": "dimension",
+          "$value": "{ref.typography.sizes.sm}",
+          "$description": "Small font scalar; seeds the size.font contract. Intentionally aliases ref directly (no theme/text mid-tier) — accepted asymmetry vs the spacing chain because font is seeded-not-consumed (Button-only). Do not 'fix' into a break."
+        },
+        "md": {
+          "$type": "dimension",
+          "$value": "{ref.typography.sizes.md}",
+          "$description": "Medium font scalar; seeds the size.font contract. Intentionally aliases ref directly (no theme/text mid-tier) — accepted asymmetry vs the spacing chain because font is seeded-not-consumed (Button-only). Do not 'fix' into a break."
+        },
+        "lg": {
+          "$type": "dimension",
+          "$value": "{ref.typography.sizes.lg}",
+          "$description": "Large font scalar (18px); seeds the size.font contract. Intentionally aliases ref directly (no theme/text mid-tier) — accepted asymmetry vs the spacing chain because font is seeded-not-consumed (Button-only). Do not 'fix' into a break."
+        }
+      }
+    },
+    "font": {
+      "sans": {
+        "$type": "fontFamily",
+        "$value": "{theme.font.sans}",
+        "$description": "The brand's sans family (the brand recipe's font)."
+      },
+      "mono": {
+        "$type": "fontFamily",
+        "$value": "{theme.font.mono}",
+        "$description": "The brand's mono family."
       }
     }
   }

@@ -35,6 +35,26 @@
         "$type": "color",
         "$value": "{theme.text.disabled}",
         "$description": "Disabled or de-emphasised text."
+      },
+      "strong": {
+        "$type": "color",
+        "$value": "{theme.text.primary}",
+        "$description": "Strong emphasis text. Used by Labelled trait headings."
+      },
+      "tertiary": {
+        "$type": "color",
+        "$value": "{theme.text.muted}",
+        "$description": "Tertiary text for supplementary information. Used by Stateful timeline."
+      },
+      "neutral": {
+        "$type": "color",
+        "$value": "{theme.status.neutral.text}",
+        "$description": "Neutral status text for banners and status-agnostic contexts."
+      },
+      "on-destructive": {
+        "$type": "color",
+        "$value": "{theme.text.on-destructive}",
+        "$description": "Text and icons on the destructive action."
       }
     },
     "icon": {

@@ -1,0 +1,1449 @@
+{
+  "schemaVersion": "1.0.0",
+  "kind": "component-reconciliation-proposal",
+  "baselineCommit": "ae560bc22969c1fd81336730be4330c9115fc316",
+  "planningCommit": "8ce349076e7e3ba3f0b2f3f667d4fbb5c6a4b63b",
+  "status": "proposed-awaiting-derek-approval",
+  "controllingObligationDenominator": 109,
+  "approvedRuntimeCensus": null,
+  "proposedRuntimeCensus": {
+    "byClassification": {
+      "recipe": 83,
+      "authoring-only": 11,
+      "native": 15
+    },
+    "runtimeRows": 98,
+    "nonRuntimeRows": 11
+  },
+  "rows": [
+    {
+      "id": "AddressCollectionPanel",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderAddressCollectionPanel",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderAddressCollectionPanel",
+        "traits/core/Addressable.trait.yaml"
+      ]
+    },
+    {
+      "id": "AddressEditor",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderAddressEditor",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderAddressEditor",
+        "traits/core/Addressable.trait.yaml"
+      ]
+    },
+    {
+      "id": "AddressSummaryBadge",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderAddressSummaryBadge",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderAddressSummaryBadge",
+        "traits/core/Addressable.trait.yaml"
+      ]
+    },
+    {
+      "id": "AddressValidationTimeline",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderAddressValidationTimeline",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderAddressValidationTimeline",
+        "traits/core/Addressable.trait.yaml"
+      ]
+    },
+    {
+      "id": "ArchiveEvent",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderArchiveEvent",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderArchiveEvent",
+        "traits/lifecycle/Archivable.trait.yaml"
+      ]
+    },
+    {
+      "id": "ArchivePill",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderArchivePill",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderArchivePill",
+        "traits/lifecycle/Archivable.trait.yaml"
+      ]
+    },
+    {
+      "id": "ArchiveSummary",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderArchiveSummary",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderArchiveSummary",
+        "traits/lifecycle/Archivable.trait.yaml"
+      ]
+    },
+    {
+      "id": "ArchivedRowOverlay",
+      "proposedClassification": "authoring-only",
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "traits/lifecycle/Archivable.trait.yaml"
+      ]
+    },
+    {
+      "id": "AuditEvent",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderAuditEvent",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderAuditEvent",
+        "traits/lifecycle/Timestampable.trait.yaml"
+      ]
+    },
+    {
+      "id": "AuditSummaryCard",
+      "proposedClassification": "authoring-only",
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "traits/lifecycle/Auditable.trait.yaml"
+      ]
+    },
+    {
+      "id": "AuditTimeline",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderAuditTimeline",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderAuditTimeline",
+        "traits/lifecycle/Auditable.trait.yaml",
+        "traits/lifecycle/Timestampable.trait.yaml"
+      ]
+    },
+    {
+      "id": "Badge",
+      "proposedClassification": "native",
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "cmos/planning/forge-s182-product-reality-foundation-decision-memo.md#43-exact-primitive-nucleus",
+        "cmos/scripts/refresh_structured_data.py",
+        "packages/mcp-server/src/render/component-map.ts#renderBadge",
+        "src/components/base/Badge.tsx",
+        "src/index.ts",
+        "traits/visual/Statusable.trait.yaml"
+      ]
+    },
+    {
+      "id": "Banner",
+      "proposedClassification": "native",
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "cmos/planning/forge-s182-product-reality-foundation-decision-memo.md#43-exact-primitive-nucleus",
+        "cmos/scripts/refresh_structured_data.py",
+        "packages/mcp-server/src/render/component-map.ts#renderBanner",
+        "src/components/base/Banner.tsx",
+        "src/index.ts",
+        "traits/visual/Statusable.trait.yaml"
+      ]
+    },
+    {
+      "id": "BillingAmountInput",
+      "proposedClassification": "authoring-only",
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "traits/financial/Billable.trait.yaml"
+      ]
+    },
+    {
+      "id": "BillingCardMeta",
+      "proposedClassification": "authoring-only",
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "traits/financial/Billable.trait.yaml"
+      ]
+    },
+    {
+      "id": "BillingIntervalSelector",
+      "proposedClassification": "authoring-only",
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "traits/financial/Billable.trait.yaml"
+      ]
+    },
+    {
+      "id": "BillingSummaryBadge",
+      "proposedClassification": "authoring-only",
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "traits/financial/Billable.trait.yaml"
+      ]
+    },
+    {
+      "id": "Button",
+      "proposedClassification": "native",
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "cmos/planning/forge-s182-product-reality-foundation-decision-memo.md#43-exact-primitive-nucleus",
+        "cmos/scripts/refresh_structured_data.py",
+        "packages/mcp-server/src/render/component-map.ts#renderButton",
+        "src/components/base/Button.tsx",
+        "src/index.ts"
+      ]
+    },
+    {
+      "id": "CancellationBadge",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderCancellationBadge",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderCancellationBadge",
+        "traits/lifecycle/Cancellable.trait.yaml"
+      ]
+    },
+    {
+      "id": "CancellationEvent",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderCancellationEvent",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderCancellationEvent",
+        "traits/lifecycle/Cancellable.trait.yaml"
+      ]
+    },
+    {
+      "id": "CancellationForm",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderCancellationForm",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderCancellationForm",
+        "traits/lifecycle/Cancellable.trait.yaml"
+      ]
+    },
+    {
+      "id": "CancellationSummary",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderCancellationSummary",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderCancellationSummary",
+        "traits/lifecycle/Cancellable.trait.yaml"
+      ]
+    },
+    {
+      "id": "Card",
+      "proposedClassification": "native",
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "cmos/planning/forge-s182-product-reality-foundation-decision-memo.md#43-exact-primitive-nucleus",
+        "cmos/scripts/refresh_structured_data.py",
+        "packages/mcp-server/src/render/component-map.ts#renderCard",
+        "src/components/base/Card.tsx",
+        "src/index.ts"
+      ]
+    },
+    {
+      "id": "CardHeader",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderCardHeader",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderCardHeader",
+        "traits/content/Labelled.trait.yaml"
+      ]
+    },
+    {
+      "id": "Checkbox",
+      "proposedClassification": "native",
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "cmos/planning/forge-s182-product-reality-foundation-decision-memo.md#43-exact-primitive-nucleus",
+        "cmos/scripts/refresh_structured_data.py",
+        "packages/mcp-server/src/render/component-map.ts#renderCheckbox",
+        "src/components/base/Checkbox.tsx",
+        "src/index.ts"
+      ]
+    },
+    {
+      "id": "ClassificationBadge",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderClassificationBadge",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderClassificationBadge",
+        "traits/core/Classifiable.trait.yaml"
+      ]
+    },
+    {
+      "id": "ClassificationEditor",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderClassificationEditor",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderClassificationEditor",
+        "traits/core/Classifiable.trait.yaml"
+      ]
+    },
+    {
+      "id": "ClassificationPanel",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderClassificationPanel",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderClassificationPanel",
+        "traits/core/Classifiable.trait.yaml"
+      ]
+    },
+    {
+      "id": "ColorStatePicker",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderColorStatePicker",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderColorStatePicker",
+        "traits/visual/Colorized.trait.yaml"
+      ]
+    },
+    {
+      "id": "ColorSwatch",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderColorSwatch",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderColorSwatch",
+        "traits/visual/Colorized.trait.yaml"
+      ]
+    },
+    {
+      "id": "ColorizedBadge",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderColorizedBadge",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderColorizedBadge",
+        "traits/visual/Colorized.trait.yaml"
+      ]
+    },
+    {
+      "id": "CommunicationDetailPanel",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderCommunicationDetailPanel",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderCommunicationDetailPanel",
+        "traits/core/Communicable.trait.yaml"
+      ]
+    },
+    {
+      "id": "CycleProgressCard",
+      "proposedClassification": "authoring-only",
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "traits/financial/Billable.trait.yaml"
+      ]
+    },
+    {
+      "id": "DatePicker",
+      "proposedClassification": "native",
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "cmos/planning/forge-s182-product-reality-foundation-decision-memo.md#43-exact-primitive-nucleus",
+        "cmos/scripts/refresh_structured_data.py",
+        "packages/mcp-server/src/render/component-map.ts#renderDatePicker",
+        "src/components/base/DatePicker.tsx",
+        "src/index.ts"
+      ]
+    },
+    {
+      "id": "DetailHeader",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderDetailHeader",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderDetailHeader",
+        "traits/content/Labelled.trait.yaml"
+      ]
+    },
+    {
+      "id": "FilterPanel",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderFilterPanel",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderFilterPanel",
+        "traits/behavioral/Filterable.trait.yaml"
+      ]
+    },
+    {
+      "id": "FormLabelGroup",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderFormLabelGroup",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderFormLabelGroup",
+        "traits/content/Labelled.trait.yaml"
+      ]
+    },
+    {
+      "id": "GeoFieldMappingForm",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderGeoFieldMappingForm",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderGeoFieldMappingForm",
+        "traits/viz/spatial/geocodable.trait.yaml"
+      ]
+    },
+    {
+      "id": "GeoResolutionBadge",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderGeoResolutionBadge",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderGeoResolutionBadge",
+        "traits/viz/spatial/geocodable.trait.yaml"
+      ]
+    },
+    {
+      "id": "GeocodablePreview",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderGeocodablePreview",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderGeocodablePreview",
+        "traits/viz/spatial/geocodable.trait.yaml"
+      ]
+    },
+    {
+      "id": "Grid",
+      "proposedClassification": "native",
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "cmos/planning/forge-s182-product-reality-foundation-decision-memo.md#43-exact-primitive-nucleus",
+        "cmos/scripts/refresh_structured_data.py",
+        "packages/mcp-server/src/render/component-map.ts#renderGrid"
+      ]
+    },
+    {
+      "id": "InlineLabel",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderInlineLabel",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderInlineLabel",
+        "traits/content/Labelled.trait.yaml"
+      ]
+    },
+    {
+      "id": "Input",
+      "proposedClassification": "native",
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "cmos/planning/forge-s182-product-reality-foundation-decision-memo.md#43-exact-primitive-nucleus",
+        "cmos/scripts/refresh_structured_data.py",
+        "packages/mcp-server/src/render/component-map.ts#renderInput"
+      ]
+    },
+    {
+      "id": "LabelCell",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderLabelCell",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderLabelCell",
+        "traits/content/Labelled.trait.yaml"
+      ]
+    },
+    {
+      "id": "MembershipAuditTimeline",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderMembershipAuditTimeline",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderMembershipAuditTimeline",
+        "traits/core/Authable.trait.yaml"
+      ]
+    },
+    {
+      "id": "MembershipPanel",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderMembershipPanel",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderMembershipPanel",
+        "traits/core/Authable.trait.yaml"
+      ]
+    },
+    {
+      "id": "MessageEventTimeline",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderMessageEventTimeline",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderMessageEventTimeline",
+        "traits/core/Communicable.trait.yaml"
+      ]
+    },
+    {
+      "id": "MessageStatusBadge",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderMessageStatusBadge",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderMessageStatusBadge",
+        "traits/core/Communicable.trait.yaml"
+      ]
+    },
+    {
+      "id": "OwnerBadge",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderOwnerBadge",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderOwnerBadge",
+        "traits/structural/Ownerable.trait.yaml"
+      ]
+    },
+    {
+      "id": "OwnershipMeta",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderOwnershipMeta",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderOwnershipMeta",
+        "traits/structural/Ownerable.trait.yaml"
+      ]
+    },
+    {
+      "id": "OwnershipSummary",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderOwnershipSummary",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderOwnershipSummary",
+        "traits/structural/Ownerable.trait.yaml"
+      ]
+    },
+    {
+      "id": "PaginationBar",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderPaginationBar",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderPaginationBar",
+        "traits/behavioral/Pageable.trait.yaml"
+      ]
+    },
+    {
+      "id": "PaymentEventTimeline",
+      "proposedClassification": "authoring-only",
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "traits/financial/Billable.trait.yaml"
+      ]
+    },
+    {
+      "id": "PaymentTimeline",
+      "proposedClassification": "authoring-only",
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "traits/financial/Billable.trait.yaml"
+      ]
+    },
+    {
+      "id": "PreferenceEditor",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderPreferenceEditor",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderPreferenceEditor",
+        "traits/core/Preferenceable.trait.yaml"
+      ]
+    },
+    {
+      "id": "PreferencePanel",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderPreferencePanel",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderPreferencePanel",
+        "traits/core/Preferenceable.trait.yaml"
+      ]
+    },
+    {
+      "id": "PreferenceSummaryBadge",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderPreferenceSummaryBadge",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderPreferenceSummaryBadge",
+        "traits/core/Preferenceable.trait.yaml"
+      ]
+    },
+    {
+      "id": "PreferenceTimeline",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderPreferenceTimeline",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderPreferenceTimeline",
+        "traits/core/Preferenceable.trait.yaml"
+      ]
+    },
+    {
+      "id": "PriceBadge",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderPriceBadge",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderPriceBadge",
+        "traits/financial/Priceable.trait.yaml"
+      ]
+    },
+    {
+      "id": "PriceCardMeta",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderPriceCardMeta",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderPriceCardMeta",
+        "traits/financial/Priceable.trait.yaml"
+      ]
+    },
+    {
+      "id": "PriceSummary",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderPriceSummary",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderPriceSummary",
+        "traits/financial/Priceable.trait.yaml"
+      ]
+    },
+    {
+      "id": "RelativeTimestamp",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderRelativeTimestamp",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderRelativeTimestamp",
+        "traits/lifecycle/Timestampable.trait.yaml"
+      ]
+    },
+    {
+      "id": "RoleAssignmentForm",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderRoleAssignmentForm",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderRoleAssignmentForm",
+        "traits/core/Authable.trait.yaml"
+      ]
+    },
+    {
+      "id": "RoleBadgeList",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderRoleBadgeList",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderRoleBadgeList",
+        "traits/core/Authable.trait.yaml"
+      ]
+    },
+    {
+      "id": "SearchInput",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderSearchInput",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderSearchInput",
+        "traits/behavioral/Searchable.trait.yaml"
+      ]
+    },
+    {
+      "id": "Select",
+      "proposedClassification": "native",
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "cmos/planning/forge-s182-product-reality-foundation-decision-memo.md#43-exact-primitive-nucleus",
+        "cmos/scripts/refresh_structured_data.py",
+        "packages/mcp-server/src/render/component-map.ts#renderSelect",
+        "src/components/base/Select.tsx",
+        "src/index.ts"
+      ]
+    },
+    {
+      "id": "SortIndicator",
+      "proposedClassification": "authoring-only",
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "traits/behavioral/Sortable.trait.yaml"
+      ]
+    },
+    {
+      "id": "Stack",
+      "proposedClassification": "native",
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "cmos/planning/forge-s182-product-reality-foundation-decision-memo.md#43-exact-primitive-nucleus",
+        "cmos/scripts/refresh_structured_data.py",
+        "packages/mcp-server/src/render/component-map.ts#renderStack"
+      ]
+    },
+    {
+      "id": "StateTransitionEvent",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderStateTransitionEvent",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderStateTransitionEvent",
+        "traits/lifecycle/Stateful.trait.yaml"
+      ]
+    },
+    {
+      "id": "StatusBadge",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderStatusBadge",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderStatusBadge",
+        "traits/lifecycle/Stateful.trait.yaml",
+        "traits/visual/Statusable.trait.yaml"
+      ]
+    },
+    {
+      "id": "StatusColorLegend",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderStatusColorLegend",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderStatusColorLegend",
+        "traits/visual/Colorized.trait.yaml"
+      ]
+    },
+    {
+      "id": "StatusSelector",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderStatusSelector",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderStatusSelector",
+        "traits/lifecycle/Stateful.trait.yaml"
+      ]
+    },
+    {
+      "id": "StatusTimeline",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderStatusTimeline",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderStatusTimeline",
+        "traits/lifecycle/Stateful.trait.yaml"
+      ]
+    },
+    {
+      "id": "Table",
+      "proposedClassification": "native",
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "cmos/planning/forge-s182-product-reality-foundation-decision-memo.md#43-exact-primitive-nucleus",
+        "cmos/scripts/refresh_structured_data.py",
+        "packages/mcp-server/src/render/component-map.ts#renderTable",
+        "src/components/base/Table.tsx",
+        "src/index.ts"
+      ]
+    },
+    {
+      "id": "Tabs",
+      "proposedClassification": "native",
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "cmos/planning/forge-s182-product-reality-foundation-decision-memo.md#43-exact-primitive-nucleus",
+        "cmos/scripts/refresh_structured_data.py",
+        "packages/mcp-server/src/render/component-map.ts#renderTabs",
+        "src/components/tabs/Tabs.tsx",
+        "src/index.ts"
+      ]
+    },
+    {
+      "id": "TagInput",
+      "proposedClassification": "native",
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderTagInput",
+        "src/components/classification/TagInput.tsx",
+        "src/index.ts",
+        "traits/behavioral/Taggable.trait.yaml"
+      ]
+    },
+    {
+      "id": "TagManager",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderTagManager",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderTagManager",
+        "traits/behavioral/Taggable.trait.yaml"
+      ]
+    },
+    {
+      "id": "TagPills",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderTagPills",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderTagPills",
+        "traits/behavioral/Taggable.trait.yaml"
+      ]
+    },
+    {
+      "id": "TagSummary",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderTagSummary",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderTagSummary",
+        "traits/behavioral/Taggable.trait.yaml"
+      ]
+    },
+    {
+      "id": "TemplatePicker",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderTemplatePicker",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderTemplatePicker",
+        "traits/core/Communicable.trait.yaml"
+      ]
+    },
+    {
+      "id": "Text",
+      "proposedClassification": "native",
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "cmos/planning/forge-s182-product-reality-foundation-decision-memo.md#43-exact-primitive-nucleus",
+        "cmos/scripts/refresh_structured_data.py",
+        "packages/mcp-server/src/render/component-map.ts#renderText",
+        "src/components/base/Text.tsx",
+        "src/index.ts"
+      ]
+    },
+    {
+      "id": "Textarea",
+      "proposedClassification": "native",
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "cmos/planning/forge-s182-product-reality-foundation-decision-memo.md#43-exact-primitive-nucleus",
+        "cmos/scripts/refresh_structured_data.py",
+        "packages/mcp-server/src/render/component-map.ts#renderTextarea",
+        "src/components/base/Textarea.tsx",
+        "src/index.ts"
+      ]
+    },
+    {
+      "id": "TimelineEntryLabel",
+      "proposedClassification": "authoring-only",
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "traits/content/Labelled.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizAreaControls",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizAreaControls",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizAreaControls",
+        "traits/viz/mark-area.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizAreaPreview",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizAreaPreview",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizAreaPreview",
+        "traits/viz/mark-area.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizAxisControls",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizAxisControls",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizAxisControls",
+        "traits/viz/encoding-position-x.trait.yaml",
+        "traits/viz/encoding-position-y.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizAxisSummary",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizAxisSummary",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizAxisSummary",
+        "traits/viz/encoding-position-x.trait.yaml",
+        "traits/viz/encoding-position-y.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizColorControls",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizColorControls",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizColorControls",
+        "traits/viz/encoding-color.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizColorLegendConfig",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizColorLegendConfig",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizColorLegendConfig",
+        "traits/viz/encoding-color.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizEncodingBadge",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizEncodingBadge",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizEncodingBadge",
+        "traits/viz/encoding-color.trait.yaml",
+        "traits/viz/encoding-position-x.trait.yaml",
+        "traits/viz/encoding-position-y.trait.yaml",
+        "traits/viz/encoding-size.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizHeatmapControls",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizHeatmapControls",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizHeatmapControls"
+      ]
+    },
+    {
+      "id": "VizHeatmapPreview",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizHeatmapPreview",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizHeatmapPreview"
+      ]
+    },
+    {
+      "id": "VizLineControls",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizLineControls",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizLineControls",
+        "traits/viz/mark-line.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizLinePreview",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizLinePreview",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizLinePreview",
+        "traits/viz/mark-line.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizMarkControls",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizMarkControls",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizMarkControls",
+        "traits/viz/mark-bar.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizMarkPreview",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizMarkPreview",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizMarkPreview",
+        "traits/viz/mark-bar.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizOpacityControls",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizOpacityControls",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizOpacityControls"
+      ]
+    },
+    {
+      "id": "VizOpacitySummary",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizOpacitySummary",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizOpacitySummary"
+      ]
+    },
+    {
+      "id": "VizPointControls",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizPointControls",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizPointControls",
+        "traits/viz/mark-point.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizPointPreview",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizPointPreview",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizPointPreview",
+        "traits/viz/mark-point.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizRoleBadge",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizRoleBadge",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizRoleBadge",
+        "traits/viz/mark-area.trait.yaml",
+        "traits/viz/mark-bar.trait.yaml",
+        "traits/viz/mark-line.trait.yaml",
+        "traits/viz/mark-point.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizScaleControls",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizScaleControls",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizScaleControls",
+        "traits/viz/scale-linear.trait.yaml",
+        "traits/viz/scale-temporal.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizScaleSummary",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizScaleSummary",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizScaleSummary",
+        "traits/viz/scale-linear.trait.yaml",
+        "traits/viz/scale-temporal.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizScatterControls",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizScatterControls",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizScatterControls"
+      ]
+    },
+    {
+      "id": "VizScatterPreview",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizScatterPreview",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizScatterPreview"
+      ]
+    },
+    {
+      "id": "VizShapeControls",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizShapeControls",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizShapeControls"
+      ]
+    },
+    {
+      "id": "VizShapeLegend",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizShapeLegend",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizShapeLegend"
+      ]
+    },
+    {
+      "id": "VizSizeControls",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizSizeControls",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizSizeControls",
+        "traits/viz/encoding-size.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizSizeSummary",
+      "proposedClassification": "recipe",
+      "proposedResolution": {
+        "surface": "html",
+        "implementation": "renderVizSizeSummary",
+        "source": "packages/mcp-server/src/render/component-map.ts"
+      },
+      "approvalState": "pending-derek-approval",
+      "evidence": [
+        "packages/mcp-server/src/render/component-map.ts#renderVizSizeSummary",
+        "traits/viz/encoding-size.trait.yaml"
+      ]
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://oods.dev/viz-spec/v1",
+  "$schema": "https://oods-foundry.com/viz-spec/v1",
   "id": "pattern:viz:focus-context-line",
   "name": "Revenue focus + context",
   "data": {
@@ -72,7 +72,7 @@
   },
   "portability": {
     "fallbackType": "table",
-    "preferredRenderer": "echarts",
+    "preferredRenderer": "vega-lite",
     "tableColumnOrder": ["week", "region", "revenue"]
   }
 }

@@ -1,6 +1,6 @@
 object:
   name: Relationship
-  version: 1.0.0
+  version: 1.1.0
   domain: core.graph
   description: Canonical graph edge linking two entities with lifecycle, ownership, and tagging semantics.
   tags:
@@ -49,7 +49,27 @@ traits:
         - pending_review
       caseSensitive: false
 
+  - name: viz/MarkGraph
+    parameters:
+      title: Connected relationships
+      description: This relationship and the others that share one of its endpoints.
+      chart:
+        chartType: force_graph
+        source: edge-array
+        dataField: neighborhood
+        edges:
+          source: source_id
+          target: target_id
+          bidirectionalField: is_bidirectional
+        sampleRows:
+          - { source_id: example-team, target_id: example-project, is_bidirectional: false }
+          - { source_id: example-project, target_id: example-document, is_bidirectional: true }
+
 schema:
+  neighborhood:
+    type: array
+    required: false
+    description: This relationship's edge and the edges that share one of its endpoints, each containing source_id and target_id strings and an is_bidirectional boolean.
   relationship_id:
     type: uuid
     required: true
@@ -58,10 +78,18 @@ schema:
     type: uuid
     required: true
     description: Identifier of the source node in the relationship.
+  source_name:
+    type: string
+    required: false
+    description: Display name of the source node.
   target_id:
     type: uuid
     required: true
     description: Identifier of the target node in the relationship.
+  target_name:
+    type: string
+    required: false
+    description: Display name of the target node.
   relationship_type:
     type: string
     required: true
@@ -106,11 +134,40 @@ schema:
     required: true
     default: true
     description: Flag indicating whether the relationship is symmetric.
+  owner_name:
+    type: string
+    required: false
+    description: Display name of the organization, team or platform that owns the relationship.
 
 semantics:
+  # The one-line summary under the relationship's name in lists (content/Labelled's description, marked as the summary).
+  description:
+    semantic_type: text.summary
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: TextBody
+      maxLengthParameter: maxDescriptionLength
   relationship_id:
     semantic_type: graph.relationship.id
     token_mapping: tokenMap(graph.relationship.id)
+  source_id:
+    semantic_type: graph.relationship.source_id
+    token_mapping: tokenMap(graph.relationship.id)
+    ui_hints:
+      displayLabelField: source_name
+  target_id:
+    semantic_type: graph.relationship.target_id
+    token_mapping: tokenMap(graph.relationship.id)
+    ui_hints:
+      displayLabelField: target_name
+  # structural/Ownerable's owner reference, named by owner_name.
+  owner_id:
+    semantic_type: ownership.owner.id
+    token_mapping: tokenMap(ownership.owner.id)
+    ui_hints:
+      component: OwnerReference
+      ownerTypeField: owner_type
+      displayLabelField: owner_name
   relationship_type:
     semantic_type: graph.relationship.type
     token_mapping: tokenMap(graph.relationship.type)
@@ -135,6 +192,236 @@ metadata:
     - platform@oods.systems
   steward: graph@oods.systems
   changelog:
+    - version: 1.1.0
+      date: "2026-09-14"
+      description: Declared neighborhood edge array and a read-only graph of explicitly synthetic connected relationship examples.
     - version: 1.0.0
       date: "2025-10-16"
       description: Initial Universal Quintet baseline.
+
+# Eight authored sample relationships between the sample users, organizations and services. Each is proposed, then
+# confirmed (the lifecycle's initial state is proposed); its direction and bidirectional flag agree, and the last event
+# is the latest recorded change.
+samples:
+  - label: Dana Whitfield — Northwind Traders
+    description: Workspace owner membership
+    relationship_type: membership
+    source_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d01
+    source_name: Dana Whitfield
+    target_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a01
+    target_name: Northwind Traders
+    direction: unidirectional
+    is_bidirectional: false
+    neighborhood:
+      - { source_id: Dana Whitfield, target_id: Northwind Traders, is_bidirectional: false }
+      - { source_id: Northwind Group, target_id: Northwind Traders, is_bidirectional: false }
+      - { source_id: Tidewater Co-op, target_id: Northwind Traders, is_bidirectional: false }
+    strength: high
+    origin_source: manual
+    owner_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a01
+    owner_type: organization
+    owner_name: Northwind Traders
+    tags: [primary, manual]
+    tag_count: 2
+    status: active
+    state_history:
+      - { title: Created, from: null, to: proposed, at: '2026-02-02T15:00:00Z', reason: Created with the workspace }
+      - { title: Confirmed, from: proposed, to: active, at: '2026-02-02T15:00:30Z', reason: Confirmed by the workspace owner }
+    created_at: '2026-02-02T15:00:00Z'
+    updated_at: '2026-02-02T15:00:30Z'
+    last_event: activated
+    last_event_at: '2026-02-02T15:00:30Z'
+  - label: Northwind Group — Northwind Traders
+    description: Parent company owns the account
+    relationship_type: ownership
+    source_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a09
+    source_name: Northwind Group
+    target_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a01
+    target_name: Northwind Traders
+    direction: unidirectional
+    is_bidirectional: false
+    neighborhood:
+      - { source_id: Northwind Group, target_id: Northwind Traders, is_bidirectional: false }
+      - { source_id: Dana Whitfield, target_id: Northwind Traders, is_bidirectional: false }
+      - { source_id: Tidewater Co-op, target_id: Northwind Traders, is_bidirectional: false }
+    strength: high
+    origin_source: integration
+    owner_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a09
+    owner_type: organization
+    owner_name: Northwind Group
+    tags: [primary]
+    tag_count: 1
+    status: active
+    state_history:
+      - { title: Created, from: null, to: proposed, at: '2026-02-03T09:00:00Z', reason: Imported from the CRM }
+      - { title: Confirmed, from: proposed, to: active, at: '2026-02-04T16:00:00Z', reason: Confirmed by Northwind's legal team }
+    created_at: '2026-02-03T09:00:00Z'
+    updated_at: '2026-02-04T16:00:00Z'
+    last_event: activated
+    last_event_at: '2026-02-04T16:00:00Z'
+  - label: Harbor Channel — Summit Outfitters
+    description: Reseller of record since April
+    relationship_type: ownership
+    source_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a10
+    source_name: Harbor Channel Partners
+    target_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a07
+    target_name: Summit Outfitters
+    direction: unidirectional
+    is_bidirectional: false
+    neighborhood:
+      - { source_id: Harbor Channel Partners, target_id: Summit Outfitters, is_bidirectional: false }
+      - { source_id: Summit Outfitters, target_id: Tidewater Co-op, is_bidirectional: true }
+    strength: medium
+    origin_source: manual
+    owner_id: team_partnerships
+    owner_type: team
+    owner_name: Partnerships
+    tags: [secondary]
+    tag_count: 1
+    status: active
+    state_history:
+      - { title: Created, from: null, to: proposed, at: '2026-04-23T12:00:00Z', reason: Registered by the reseller }
+      - { title: Confirmed, from: proposed, to: active, at: '2026-04-24T10:00:00Z', reason: Approved by the partnerships team }
+    created_at: '2026-04-23T12:00:00Z'
+    updated_at: '2026-04-24T10:00:00Z'
+    last_event: activated
+    last_event_at: '2026-04-24T10:00:00Z'
+  - label: Orders API — Billing Service
+    description: Orders API calls Billing to charge
+    relationship_type: depends_on
+    source_id: 7e0b1c2d-3e4f-4a5b-8c6d-9e0f1a2b3c01
+    source_name: Orders API
+    target_id: 7e0b1c2d-3e4f-4a5b-8c6d-9e0f1a2b3c02
+    target_name: Billing Service
+    direction: unidirectional
+    is_bidirectional: false
+    neighborhood:
+      - { source_id: Orders API, target_id: Billing Service, is_bidirectional: false }
+    strength: high
+    origin_source: integration
+    owner_id: team_platform_engineering
+    owner_type: team
+    owner_name: Platform engineering
+    tags: [primary]
+    tag_count: 1
+    status: active
+    state_history:
+      - { title: Created, from: null, to: proposed, at: '2025-11-10T09:00:00Z', reason: Found in service tracing }
+      - { title: Confirmed, from: proposed, to: active, at: '2025-11-12T09:00:00Z', reason: Confirmed by Platform engineering }
+    created_at: '2025-11-10T09:00:00Z'
+    updated_at: '2025-11-12T09:00:00Z'
+    last_event: activated
+    last_event_at: '2025-11-12T09:00:00Z'
+  - label: Summit Outfitters — Tidewater Co-op
+    description: Co-marketing referral partnership
+    relationship_type: references
+    source_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a07
+    source_name: Summit Outfitters
+    target_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05
+    target_name: Tidewater Co-op
+    direction: bidirectional
+    is_bidirectional: true
+    neighborhood:
+      - { source_id: Summit Outfitters, target_id: Tidewater Co-op, is_bidirectional: true }
+      - { source_id: Harbor Channel Partners, target_id: Summit Outfitters, is_bidirectional: false }
+      - { source_id: Tidewater Co-op, target_id: Northwind Traders, is_bidirectional: false }
+    strength: low
+    origin_source: manual
+    owner_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a07
+    owner_type: organization
+    owner_name: Summit Outfitters
+    tags: [secondary]
+    tag_count: 1
+    status: paused
+    state_history:
+      - { title: Created, from: null, to: proposed, at: '2026-06-01T17:00:00Z', reason: Proposed at the partner summit }
+      - { title: Confirmed, from: proposed, to: active, at: '2026-06-15T17:00:00Z', reason: Both teams signed off }
+      - { title: Paused, from: active, to: paused, at: '2026-09-01T17:00:00Z', reason: Paused for the harvest season }
+    created_at: '2026-06-01T17:00:00Z'
+    updated_at: '2026-09-01T17:00:00Z'
+    last_event: paused
+    last_event_at: '2026-09-01T17:00:00Z'
+  - label: Tidewater Co-op — Northwind Traders
+    description: Follows supplier price updates
+    relationship_type: follows
+    source_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05
+    source_name: Tidewater Co-op
+    target_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a01
+    target_name: Northwind Traders
+    direction: unidirectional
+    is_bidirectional: false
+    neighborhood:
+      - { source_id: Tidewater Co-op, target_id: Northwind Traders, is_bidirectional: false }
+      - { source_id: Dana Whitfield, target_id: Northwind Traders, is_bidirectional: false }
+      - { source_id: Northwind Group, target_id: Northwind Traders, is_bidirectional: false }
+      - { source_id: Summit Outfitters, target_id: Tidewater Co-op, is_bidirectional: true }
+    strength: medium
+    origin_source: analytics
+    owner_id: team_data_platform
+    owner_type: team
+    owner_name: Data platform
+    tags: [inferred]
+    tag_count: 1
+    status: active
+    state_history:
+      - { title: Created, from: null, to: proposed, at: '2025-12-01T00:00:00Z', reason: Inferred from order history }
+      - { title: Confirmed, from: proposed, to: active, at: '2025-12-03T20:00:00Z', reason: Accepted by Tidewater }
+      - { title: Paused, from: active, to: paused, at: '2026-02-10T20:00:00Z', reason: Supplier feed paused }
+      - { title: Reactivated, from: paused, to: active, at: '2026-03-02T20:00:00Z', reason: Supplier feed restored }
+    created_at: '2025-12-01T00:00:00Z'
+    updated_at: '2026-03-02T20:00:00Z'
+    last_event: reactivated
+    last_event_at: '2026-03-02T20:00:00Z'
+  - label: Jonah Marlow — Marlow Yoga
+    description: Former workspace owner membership
+    relationship_type: membership
+    source_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d07
+    source_name: Jonah Marlow
+    target_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a06
+    target_name: Marlow Yoga
+    direction: unidirectional
+    is_bidirectional: false
+    neighborhood:
+      - { source_id: Jonah Marlow, target_id: Marlow Yoga, is_bidirectional: false }
+    strength: high
+    origin_source: manual
+    owner_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a06
+    owner_type: organization
+    owner_name: Marlow Yoga
+    tags: [primary]
+    tag_count: 1
+    status: terminated
+    state_history:
+      - { title: Created, from: null, to: proposed, at: '2026-01-05T10:15:00Z', reason: Created with the workspace }
+      - { title: Confirmed, from: proposed, to: active, at: '2026-01-05T10:15:30Z', reason: Confirmed by the workspace owner }
+      - { title: Ended, from: active, to: terminated, at: '2026-07-10T09:00:00Z', reason: Studio closed }
+    created_at: '2026-01-05T10:15:00Z'
+    updated_at: '2026-07-10T09:00:00Z'
+    last_event: terminated
+    last_event_at: '2026-07-10T09:00:00Z'
+  - label: Priya Raman — Blue Harbor Studio
+    description: Workspace admin membership
+    relationship_type: membership
+    source_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d03
+    source_name: Priya Raman
+    target_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a02
+    target_name: Blue Harbor Studio
+    direction: unidirectional
+    is_bidirectional: false
+    neighborhood:
+      - { source_id: Priya Raman, target_id: Blue Harbor Studio, is_bidirectional: false }
+    strength: high
+    origin_source: manual
+    owner_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a02
+    owner_type: organization
+    owner_name: Blue Harbor Studio
+    tags: [primary, manual]
+    tag_count: 2
+    status: active
+    state_history:
+      - { title: Created, from: null, to: proposed, at: '2026-09-19T10:00:00Z', reason: Created with the workspace }
+      - { title: Confirmed, from: proposed, to: active, at: '2026-09-19T10:00:30Z', reason: Confirmed by the workspace owner }
+    created_at: '2026-09-19T10:00:00Z'
+    updated_at: '2026-09-19T10:00:30Z'
+    last_event: activated
+    last_event_at: '2026-09-19T10:00:30Z'

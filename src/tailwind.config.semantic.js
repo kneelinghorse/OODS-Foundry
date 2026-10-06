@@ -56,7 +56,8 @@ module.exports = {
         'subscription-status-active': 'var(--colors-semantic-success)',
         'subscription-status-paused': 'var(--colors-semantic-neutral)',
         'subscription-status-pending-cancellation': 'var(--colors-semantic-info)',
-        'subscription-status-delinquent': 'var(--colors-semantic-error)',
+        'subscription-status-past-due': 'var(--colors-semantic-warning)',
+        'subscription-status-unpaid': 'var(--colors-semantic-error)',
         'subscription-status-terminated': 'var(--colors-semantic-neutral)',
         
         // User Domain
@@ -220,7 +221,8 @@ module.exports = {
             'active': theme('colors.subscription-status-active'),
             'paused': theme('colors.subscription-status-paused'),
             'pending-cancellation': theme('colors.subscription-status-pending-cancellation'),
-            'delinquent': theme('colors.subscription-status-delinquent'),
+            'past-due': theme('colors.subscription-status-past-due'),
+            'unpaid': theme('colors.subscription-status-unpaid'),
             'terminated': theme('colors.subscription-status-terminated'),
           },
         }

@@ -1,0 +1,129 @@
+{
+  "tool": "fidelity.preview",
+  "arguments": {
+    "fidelityKind": "branded-mockup",
+    "manifest": {
+      "manifest_version": "4.0",
+      "schema_version": "1.1.0",
+      "source": {
+        "agent": "oods-forge",
+        "stage": "compose",
+        "captured_at": "2026-05-15T00:00:00.000Z",
+        "oods_catalog_version": "1.0.0"
+      },
+      "entities": [
+        {
+          "urn": "urn:proto:semantic:subscription-summary-row@1.0.0",
+          "element": {
+            "type": "ui.surface.row",
+            "name": "Subscription summary row"
+          },
+          "semantics": {
+            "purpose": "summarize subscription",
+            "human_meaning": "One-line summary of an active subscription with renewal date, billing source, and lifecycle state.",
+            "tags": [
+              "billing",
+              "subscription"
+            ],
+            "keywords": [
+              "subscription",
+              "renews",
+              "billing"
+            ]
+          },
+          "pragmatic_role": "informational",
+          "states": [
+            "active",
+            "paused",
+            "cancelled"
+          ],
+          "preconditions": [
+            "subscription.exists"
+          ],
+          "effects": [],
+          "traits": [
+            "Identifiable",
+            "Datable"
+          ],
+          "context": {
+            "domain": "billing",
+            "surface": "desktop"
+          },
+          "locations": [
+            {
+              "type": "code",
+              "path": "components/billing/SubscriptionSummaryRow.tsx"
+            }
+          ],
+          "evidence_refs": [
+            {
+              "id": "ev_subscription_001",
+              "protocol": "pragmatic",
+              "kind": "manifest_declaration",
+              "locator": "self",
+              "matched": null,
+              "weight": 1.0,
+              "provenance": "declared",
+              "captured_at": "2026-05-15T00:00:00.000Z"
+            }
+          ],
+          "relationships": {
+            "edges": [
+              {
+                "type": "renews_to",
+                "from": "urn:proto:semantic:subscription-summary-row@1.0.0",
+                "to": "urn:proto:semantic:subscription-renewal-confirmation@1.0.0",
+                "direction": "out",
+                "provenance": "declared",
+                "weight": 0.9
+              },
+              {
+                "type": "depends_on",
+                "from": "urn:proto:semantic:subscription-summary-row@1.0.0",
+                "to": "urn:proto:semantic:billing-source-card@1.0.0",
+                "direction": "out",
+                "provenance": "declared",
+                "weight": 0.8,
+                "via": "billing",
+                "reason": "Subscription renewals are charged against the linked billing source."
+              }
+            ]
+          },
+          "oods": {
+            "catalog": {
+              "version": "1.0.0"
+            },
+            "render": {
+              "ui_schema_ref": "compose-subscription-summary",
+              "slots": [
+                {
+                  "name": "title",
+                  "binding": {
+                    "field": "subscription.plan_name"
+                  }
+                },
+                {
+                  "name": "subtitle",
+                  "binding": {
+                    "field": "subscription.renews_at"
+                  }
+                },
+                {
+                  "name": "status",
+                  "binding": {
+                    "field": "subscription.state"
+                  }
+                }
+              ],
+              "brand_overlay": "brand-a"
+            }
+          }
+        }
+      ]
+    },
+    "options": {
+      "brandOverlay": "B"
+    }
+  },
+  "bindings": {}
+}

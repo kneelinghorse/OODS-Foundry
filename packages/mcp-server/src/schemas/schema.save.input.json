@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["name", "schemaRef"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-zA-Z0-9_-]+$",
+      "description": "Saved schema name in slug format (letters, numbers, hyphens, underscores)."
+    },
+    "schemaRef": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Reference to an in-memory schema produced by design.compose."
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Optional tags for filtering and discovery."
+    },
+    "author": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Optional author metadata."
+    }
+  }
+}

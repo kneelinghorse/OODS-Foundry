@@ -1,4 +1,3 @@
-import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import '../../src/styles/globals.css';
@@ -7,7 +6,7 @@ import type { User } from '../../generated/objects/User';
 import { UserWithPreferencesExample } from '../../examples/objects/user-with-preferences';
 
 const meta: Meta<typeof UserProfileSettings> = {
-  title: 'Objects/Core Objects/User/With Preferences',
+  title: 'Objects/User/UserPreferences',
   component: UserProfileSettings,
   parameters: {
     layout: 'fullscreen',

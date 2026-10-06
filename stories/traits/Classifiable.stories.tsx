@@ -17,7 +17,9 @@
  * 5. How It Works - Schema and configuration examples
  */
 
-import React, { useState } from 'react';
+// @types/react 19 no longer declares a global JSX namespace; it is exported from 'react'.
+import type { JSX } from 'react';
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 
 /* ─────────────────────────────────────────────────────────────────────────────

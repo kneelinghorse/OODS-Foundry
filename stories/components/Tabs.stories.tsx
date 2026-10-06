@@ -10,7 +10,7 @@ import { Tabs } from '~/src/components/tabs/Tabs.js';
 import type { TabItem, TabsProps } from '~/src/components/tabs/types.js';
 
 const meta = {
-  title: 'Primitives/Navigation/Tabs',
+  title: 'Components/Navigation/Tabs',
   component: Tabs,
   parameters: {
     layout: 'padded',
@@ -180,18 +180,12 @@ export const WithOverflow: Story = {
     overflowLabel: 'More',
     'aria-label': 'Product settings navigation',
   },
-  render: (args) => (
-    <div
-      style={{
-        maxWidth: '360px',
-        border: '1px dashed var(--color-border-subtle, #d1d5db)',
-        padding: '12px',
-        borderRadius: '8px',
-      }}
-    >
-      <Tabs {...args} />
-    </div>
-  ),
+  // s173 m04 — a REAL narrow canvas. This story is the one where the fake box was closest to
+  // load-bearing: useOverflowMenu measures its CONTAINER, so a 360px div did trigger the
+  // overflow. A viewport preset triggers it for the honest reason instead, and the story's own
+  // docs ("resize the viewport") stop being a lie.
+  globals: { viewport: { value: 'oods-mobile', isRotated: false } },
+  render: (args) => <Tabs {...args} />,
   parameters: {
     docs: {
       description: {

@@ -1,17 +1,24 @@
 /**
  * Canonical Billing State Machines
- * 
- * Defines the lifecycle state machines for Subscription (7-state) and Invoice (5-state)
+ *
+ * Defines the lifecycle state machines for Subscription (8-state) and Invoice (5-state)
  * with explicit transitions, guards, and event-driven logic.
- * 
+ *
  * @module domain/billing/states
  */
 
 /**
- * Canonical subscription states (7-state model)
- * 
+ * Canonical subscription states (8-state model — Stripe-literal split)
+ *
  * State flow:
- * - future → trialing → active → [paused/pending_cancellation/delinquent] → terminated
+ * - future → trialing → active → [paused/pending_cancellation/past_due → unpaid] → terminated
+ *
+ * `past_due` and `unpaid` are the Stripe-literal split of the former consolidated
+ * `delinquent` state: `past_due` = payment failing but retries ongoing (recoverable,
+ * keep access during the grace window); `unpaid` = retries exhausted, no further
+ * attempts (access revoked). The distinction is load-bearing — the access-revocation
+ * rule cannot be expressed from a status that collapses the two. `terminated` covers
+ * Stripe `canceled` + `incomplete_expired`.
  */
 export type SubscriptionState =
   | 'future' // Scheduled to start in the future
@@ -19,7 +26,8 @@ export type SubscriptionState =
   | 'active' // Active and current
   | 'paused' // Temporarily suspended
   | 'pending_cancellation' // Cancellation scheduled at period end
-  | 'delinquent' // Past due with failed payments
+  | 'past_due' // Payment failed, retries ongoing (recoverable, grace access)
+  | 'unpaid' // Retries exhausted, access revoked
   | 'terminated'; // Permanently ended
 
 export const SUBSCRIPTION_STATES = [
@@ -28,7 +36,8 @@ export const SUBSCRIPTION_STATES = [
   'active',
   'paused',
   'pending_cancellation',
-  'delinquent',
+  'past_due',
+  'unpaid',
   'terminated',
 ] as const satisfies ReadonlyArray<SubscriptionState>;
 
@@ -62,8 +71,10 @@ export type SubscriptionEvent =
   | 'pause' // Pause subscription (active → paused)
   | 'resume' // Resume subscription (paused → active)
   | 'schedule_cancellation' // Schedule cancellation (active → pending_cancellation)
-  | 'payment_failed' // Payment failed (active → delinquent)
-  | 'payment_succeeded' // Payment succeeded (delinquent → active)
+  | 'unschedule_cancellation' // Reverse a scheduled cancellation (pending_cancellation → active)
+  | 'payment_failed' // Payment failed (active → past_due)
+  | 'payment_succeeded' // Payment succeeded (past_due → active)
+  | 'retries_exhausted' // Smart retries exhausted (past_due → unpaid)
   | 'cancel_immediately' // Immediate cancellation (any → terminated)
   | 'period_end'; // Period end (pending_cancellation → terminated)
 
@@ -73,8 +84,10 @@ export const SUBSCRIPTION_EVENTS = [
   'pause',
   'resume',
   'schedule_cancellation',
+  'unschedule_cancellation',
   'payment_failed',
   'payment_succeeded',
+  'retries_exhausted',
   'cancel_immediately',
   'period_end',
 ] as const satisfies ReadonlyArray<SubscriptionEvent>;
@@ -156,28 +169,43 @@ export const SUBSCRIPTION_TRANSITIONS: StateTransition<SubscriptionState, Subscr
     description: 'Resume paused subscription',
   },
   
-  // Active → Pending Cancellation
+  // Active ↔ Pending Cancellation (reversible until period end)
   {
     from: 'active',
     event: 'schedule_cancellation',
     to: 'pending_cancellation',
     description: 'Schedule cancellation at period end',
   },
+  {
+    from: 'pending_cancellation',
+    event: 'unschedule_cancellation',
+    to: 'active',
+    description:
+      'Reverse a scheduled cancellation before period end (set cancel_at_period_end=false). Reversible only while pending — a terminated subscription cannot be reactivated.',
+  },
   
-  // Active ↔ Delinquent
+  // Active ↔ Past Due (retries ongoing, recoverable)
   {
     from: 'active',
     event: 'payment_failed',
-    to: 'delinquent',
-    description: 'Payment failure triggers delinquency',
+    to: 'past_due',
+    description: 'Payment failure starts the dunning/retry window',
   },
   {
-    from: 'delinquent',
+    from: 'past_due',
     event: 'payment_succeeded',
     to: 'active',
-    description: 'Successful payment clears delinquency',
+    description: 'Successful retry recovers the subscription to active',
   },
-  
+
+  // Past Due → Unpaid (retries exhausted, access revoked)
+  {
+    from: 'past_due',
+    event: 'retries_exhausted',
+    to: 'unpaid',
+    description: 'Smart retries exhausted — no further attempts, access revoked',
+  },
+
   // Pending Cancellation → Terminated
   {
     from: 'pending_cancellation',
@@ -212,10 +240,16 @@ export const SUBSCRIPTION_TRANSITIONS: StateTransition<SubscriptionState, Subscr
     description: 'Cancel immediately instead of at period end',
   },
   {
-    from: 'delinquent',
+    from: 'past_due',
     event: 'cancel_immediately',
     to: 'terminated',
-    description: 'Immediate cancellation of delinquent subscription',
+    description: 'Immediate cancellation of a past-due subscription',
+  },
+  {
+    from: 'unpaid',
+    event: 'cancel_immediately',
+    to: 'terminated',
+    description: 'Immediate cancellation of an unpaid subscription',
   },
   {
     from: 'future',
@@ -438,9 +472,19 @@ export class InvoiceStateMachine {
 
 /**
  * Check if subscription is in a revenue-generating state
+ *
+ * `past_due` (retries ongoing) remains revenue-generating with collection risk;
+ * `unpaid` (retries exhausted → access revoked) is NOT revenue-generating.
+ *
+ * MIGRATION (MRR/ARR SEMANTIC FLIP, s126-m02): the former consolidated `delinquent`
+ * was entirely revenue-generating. Splitting it into past_due + unpaid moves the
+ * "retries exhausted / access revoked" portion OUT of the revenue-generating set.
+ * Any MRR/ARR dashboard consuming isRevenueGenerating will see subscriptions that
+ * reach `unpaid` drop out of recognized revenue — this is intentional and matches
+ * Stripe's access-revocation guidance (docs.stripe.com/billing/revenue-recovery/smart-retries).
  */
 export function isRevenueGenerating(state: SubscriptionState): boolean {
-  return state === 'active' || state === 'trialing' || state === 'delinquent';
+  return state === 'active' || state === 'trialing' || state === 'past_due';
 }
 
 /**
@@ -448,6 +492,40 @@ export function isRevenueGenerating(state: SubscriptionState): boolean {
  */
 export function isTerminalState(state: SubscriptionState): boolean {
   return state === 'terminated';
+}
+
+/**
+ * Status-driven service-access decision (dunning lifecycle).
+ *
+ * Encodes Stripe's smart-retries access guidance: keep service access while payment
+ * retries are still ongoing (`past_due` = GRACE window), and REVOKE access once retries
+ * are exhausted (`unpaid`). This rule is the reason the consolidated `delinquent` had to
+ * be split into past_due + unpaid (s126-m01): a status that collapses the two cannot
+ * express it.
+ *
+ * - active / trialing: full access
+ * - pending_cancellation: still within the paid period → keep access until period end
+ * - past_due: GRACE — retries ongoing, keep access
+ * - unpaid: REVOKE — retries exhausted (Stripe explicit guidance)
+ * - paused: suspended → no access
+ * - future: not yet started → no access
+ * - terminated: ended → no access
+ *
+ * Source: docs.stripe.com/billing/revenue-recovery/smart-retries.
+ */
+export function hasServiceAccess(state: SubscriptionState): boolean {
+  switch (state) {
+    case 'active':
+    case 'trialing':
+    case 'pending_cancellation':
+    case 'past_due':
+      return true;
+    case 'unpaid':
+    case 'paused':
+    case 'future':
+    case 'terminated':
+      return false;
+  }
 }
 
 /**

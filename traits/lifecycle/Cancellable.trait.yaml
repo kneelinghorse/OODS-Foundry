@@ -44,7 +44,13 @@ schema:
   cancel_at_period_end:
     type: boolean
     required: true
-    description: Indicates whether cancellation occurs at the natural period end instead of immediately.
+    description: >-
+      Whether cancellation occurs at the natural period end instead of immediately.
+      When true the entity is in a REVERSIBLE pending-cancellation state: the schedule
+      can be undone (set back to false) any time before period end, returning the entity
+      to active. This is distinct from a terminal cancellation (a `terminated`/canceled
+      subscription), which is irreversible and non-reactivatable. Mirrors Stripe's
+      cancel_at_period_end flag (docs.stripe.com/billing/subscriptions/cancel).
     default: false
   cancellation_reason:
     type: string
@@ -90,20 +96,18 @@ semantics:
       component: TimelineTimestamp
 
 view_extensions:
+  # s224-m01 (#2542 ruling 6): a record with no cancellation scheduled or recorded shows no card; "Cancel at period end:
+  # No" only states the default.
   detail:
     - component: CancellationSummary
       position: top
       props:
+        hideWhenDefault: true
         cancelAtPeriodEndField: cancel_at_period_end
         reasonField: cancellation_reason
         codeField: cancellation_reason_code
         requestedAtField: cancellation_requested_at
-  timeline:
-    - component: CancellationEvent
-      props:
-        timestampField: cancellation_requested_at
-        labelField: cancellation_reason
-        codeField: cancellation_reason_code
+  # s222-m03: no timeline recipe. A timeline's rail lists the cancellation request (recordCollectionEvents).
   form:
     - component: CancellationForm
       position: top
@@ -113,11 +117,13 @@ view_extensions:
         requireReasonParameter: requireReason
         allowedReasonsParameter: allowedReasons
         windowParameter: cancellationWindowHours
+  # s223-m01 (#2527 ruling 7): a scheduled cancellation shows on the card; "No cancellation scheduled" only states the default.
   card:
     - component: CancellationBadge
       position: before
       props:
         field: cancel_at_period_end
+        hideWhenFalse: true
 
 tokens:
   status.cancel.primary.bg: "var(--status-cancel-bg)"
@@ -139,8 +145,7 @@ metadata:
     screenreader: "Announces cancellation state and reason."
   regionsUsed:
     - detail
-    - timeline
-    - forms
+    - form
     - card
   examples:
     - Subscription

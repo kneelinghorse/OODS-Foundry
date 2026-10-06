@@ -46,7 +46,8 @@
 }
 
 .form-field__input,
-.form-field__select {
+.form-field__select,
+.form-field__textarea {
   display: block;
   width: 100%;
   border-radius: 0.75rem;
@@ -62,13 +63,15 @@
     background-color 120ms ease;
 }
 
-.form-field__input::placeholder {
+.form-field__input::placeholder,
+.form-field__textarea::placeholder {
   color: var(--form-field-placeholder);
   opacity: 1;
 }
 
 .form-field__input:focus-visible,
-.form-field__select:focus-visible {
+.form-field__select:focus-visible,
+.form-field__textarea:focus-visible {
   outline: none;
   border-color: var(--form-field-border-active);
   box-shadow:
@@ -80,10 +83,24 @@
 .form-field__select {
   appearance: none;
   padding-right: calc(var(--form-field-control-padding-inline) + 1.5rem);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23666666' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  background-position: right var(--form-field-control-padding-inline) center;
-  background-size: 12px 8px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--sys-text-secondary, currentColor) 50%),
+    linear-gradient(135deg, var(--sys-text-secondary, currentColor) 50%, transparent 50%),
+    linear-gradient(to right, color-mix(in srgb, var(--sys-text-secondary, currentColor) 30%, transparent), color-mix(in srgb, var(--sys-text-secondary, currentColor) 30%, transparent));
+  background-position:
+    right calc(var(--form-field-control-padding-inline) + 0.35rem) center,
+    right calc(var(--form-field-control-padding-inline) - 0.15rem) center,
+    right calc(var(--form-field-control-padding-inline) + 0.4rem) center;
+  background-size:
+    8px 8px,
+    8px 8px,
+    1px calc(60%);
   background-repeat: no-repeat;
+}
+
+.form-field__textarea {
+  min-height: calc(var(--form-field-control-padding-block) * 6 + 3.5rem);
+  resize: vertical;
 }
 
 .form-field__description,

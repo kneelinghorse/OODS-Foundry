@@ -22,6 +22,18 @@
       "description": "Maximum number of days archived entities can be restored.",
       "minimum": 0,
       "maximum": 365
+    },
+    "softDeleteDuration": {
+      "type": "integer",
+      "description": "Days the entity remains in soft-deleted state before automatic hard deletion.",
+      "minimum": 0,
+      "maximum": 3650,
+      "default": 90
+    },
+    "allowPartialRestore": {
+      "type": "boolean",
+      "description": "Whether archived entities can be partially restored.",
+      "default": false
     }
   },
   "additionalProperties": false,

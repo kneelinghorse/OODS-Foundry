@@ -1,0 +1,353 @@
+object:
+  name: Comparison
+  version: 0.3.0
+  domain: capture.comparison
+  visibility: internal
+  description: >-
+    A read-only drift analysis of one captured product: how its live values compare with its
+    design's values, with the capture's and the analysis's identities and times kept apart.
+  tags:
+    - comparison
+    - read-only
+traits:
+  - name: core/Assessable
+    parameters:
+      recordedStates:
+        - measured
+        - measured_zero
+        - not_measured
+        - not_applicable
+        - needs_review
+        - unknown
+  - name: core/Provenanced
+    parameters:
+      source: Capture tool
+schema:
+  comparison_id:
+    type: string
+    required: true
+    description: comparison id as recorded in the admitted derived analysis.
+    examples:
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff
+  title:
+    type: string
+    required: true
+    description: title as recorded in the admitted derived analysis.
+    examples:
+      - Comparison · uswds-designsystem
+  description:
+    type: string
+    required: true
+    description: what was compared and what came of it, in one sentence a person reads first; the page header says when.
+    examples:
+      - >-
+        The capture compared the live uswds-designsystem site with its design values (uswds-design-kit-beta): 30 of 31
+        colors match; all 4 radii match; 14 font sizes need review (type comparand incomplete). 15 signals.
+  measurement_basis:
+    type: string
+    required: false
+    description: The report version and value basis; ratios across the raw-value boundary are different measurements.
+  other_families:
+    type: string
+    required: false
+    description: Recorded spacing, border colour, shadow and font weight outcomes with their own comparison limits.
+  explained_values:
+    type: string
+    required: false
+    description: Categories the report explains separately from exact token matches and drift.
+  colors:
+    type: string
+    required: true
+    description: "the color value join in words: the report's own counts, the off-system values named, the alpha exclusions stated."
+    examples:
+      - >-
+        30 of 31 live colors match the 467 design values; 1 is off-system (#545454). 4 live and 21 design alpha
+        values were excluded from the comparison.
+  radius:
+    type: string
+    required: true
+    description: the radius value join in words.
+    examples:
+      - All 4 live radii match the 5 design values; none is off-system.
+  font_size:
+    type: string
+    required: true
+    description: >-
+      the font-size value join in words, with the recorded per-typeface comparands for raw-value reports and
+      the historical type limitation when that older measurement applies.
+    examples:
+      - >-
+        16 of 18 live font sizes have no design match: 14 match no size the design declares for their typeface, and
+        the 2 set in Merriweather Web had no design size to compare with. The face-specific type comparand is
+        incomplete, so no type conformance ratio exists and font sizes need review.
+  signals:
+    type: string
+    required: true
+    description: how many signals the report emitted, by family.
+    examples:
+      - '15 signals: 1 color, 14 font size.'
+  design_comparand:
+    type: string
+    required: true
+    description: the design comparand the values were joined against, or that none was retained.
+    examples:
+      - uswds-design-kit-beta (Figma local tokens); retained capture inputs were copied, not rerun.
+  result_state:
+    type: string
+    required: true
+    description: result state as recorded in the admitted derived analysis.
+    examples:
+      - measured
+  target_name:
+    type: string
+    required: true
+    description: target name as recorded in the admitted derived analysis.
+    examples:
+      - uswds-designsystem
+  source_capture_id:
+    type: string
+    required: true
+    description: source capture id as recorded in the admitted derived analysis.
+    examples:
+      - 09d5af73-f8ae-4778-ad47-7b30fa53dbb4
+  captured_at:
+    type: string
+    required: true
+    description: captured at as recorded in the admitted derived analysis.
+    examples:
+      - '2026-09-18T19:01:16.803Z'
+  source_manifest_at:
+    type: string
+    required: true
+    description: source manifest at as recorded in the admitted derived analysis.
+    examples:
+      - '2026-09-18T19:00:08.983Z'
+  analyzed_at:
+    type: string
+    required: true
+    description: analyzed at as recorded in the admitted derived analysis.
+    examples:
+      - '2026-09-20T13:55:39.382Z'
+  result_note:
+    type: string
+    required: true
+    description: result note as recorded in the admitted derived analysis.
+    examples:
+      - 'Compared against fig tokens (value axis): signals[15].'
+  copied_inputs:
+    type: integer
+    required: true
+    description: copied inputs as recorded in the admitted derived analysis.
+    examples:
+      - 26
+  execution_note:
+    type: string
+    required: true
+    description: execution note as recorded in the admitted derived analysis.
+    examples:
+      - Only semantic.drift_compare reran. Capture, authentication and redaction were not performed.
+  provenance_source:
+    type: string
+    required: true
+    description: provenance source as recorded in the admitted derived analysis.
+    examples:
+      - Capture tool
+  provenance_record:
+    type: string
+    required: true
+    description: provenance record as recorded in the admitted derived analysis.
+    examples:
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff
+  provenance_method:
+    type: string
+    required: true
+    description: provenance method as recorded in the admitted derived analysis.
+    examples:
+      - semantic.drift_compare; retained capture inputs copied, not rerun
+  provenance_at:
+    type: string
+    required: true
+    description: provenance at as recorded in the admitted derived analysis.
+    examples:
+      - '2026-09-20T13:55:39.382Z'
+  provenance_locator:
+    type: string
+    required: true
+    description: provenance locator as recorded in the admitted derived analysis.
+    examples:
+      - manifest.json#/analysis
+semantics:
+  comparison_id:
+    semantic_type: comparison.comparison_id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      detail_group: Identity and provenance
+  title:
+    semantic_type: text.label
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+  description:
+    semantic_type: text.summary
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+  measurement_basis:
+    semantic_type: comparison.measurement_basis
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+  other_families:
+    semantic_type: comparison.other_families
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+  explained_values:
+    semantic_type: comparison.explained_values
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+  colors:
+    semantic_type: comparison.colors
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+  radius:
+    semantic_type: comparison.radius
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+  font_size:
+    semantic_type: comparison.font_size
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+  signals:
+    semantic_type: comparison.signals
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+  design_comparand:
+    semantic_type: comparison.design_comparand
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+  target_name:
+    semantic_type: comparison.target_name
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      detail_group: Identity and provenance
+  source_capture_id:
+    semantic_type: comparison.source_capture_id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      detail_group: Identity and provenance
+  captured_at:
+    semantic_type: comparison.captured_at
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      detail_group: Identity and provenance
+  source_manifest_at:
+    semantic_type: comparison.source_manifest_at
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      detail_group: Identity and provenance
+  analyzed_at:
+    semantic_type: comparison.analyzed_at
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      detail_group: Identity and provenance
+  result_state:
+    semantic_type: assessment.result.state
+    token_mapping: tokenMap(assessment.result.*)
+    ui_hints:
+      component: StatusBadge
+      showIcon: false
+      detail_group: Result
+  result_note:
+    semantic_type: comparison.result_note
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      detail_group: Identity and provenance
+  copied_inputs:
+    semantic_type: comparison.copied_inputs
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      detail_group: Identity and provenance
+  execution_note:
+    semantic_type: comparison.execution_note
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      detail_group: Identity and provenance
+  provenance_source:
+    semantic_type: provenance.source
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      detail_group: Identity and provenance
+  provenance_record:
+    semantic_type: provenance.record
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      detail_group: Identity and provenance
+  provenance_method:
+    semantic_type: provenance.method
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      detail_group: Identity and provenance
+  provenance_at:
+    semantic_type: provenance.at
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: RelativeTimestamp
+      detail_group: Identity and provenance
+  provenance_locator:
+    semantic_type: provenance.locator
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      detail_group: Identity and provenance
+metadata:
+  maturity: alpha
+  detailTab: Result
+  owners:
+    - OODS Foundry
+  supportedContexts:
+    - list
+    - detail
+    - card
+    - inline
+  references:
+    - objects/provenance.v1.json#/references/ref-2988db1b1980
+  changelog:
+    - version: 0.1.0
+      date: '2026-09-21'
+      description: Born from the retained capture analysis and its 15 real signals.
+    - version: 0.2.0
+      date: '2026-09-22'
+      description: >-
+        Reads as a result first: a one-line description, the value joins in sentences, and the identifiers,
+        digests and provenance on the Identity and provenance tab. Nothing new is measured.
+    - version: 0.3.0
+      date: '2026-09-23'
+      description: >-
+        The first tab is named Result, and the state the capture recorded is its last labelled row instead of a chip on its
+        own above the result. Nothing new is measured.
+
+# Authored type associations; no record join or referential-integrity claim.
+relationships:
+  - target: Run
+    via: source_capture_id
+    cardinality: many-to-one
+    label: Source capture

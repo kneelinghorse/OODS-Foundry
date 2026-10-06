@@ -1,11 +1,11 @@
 import { describe, expect, it, vi } from 'vitest';
-import { bindEChartsInteractions } from '../../src/viz/adapters/echarts-interactions.js';
-import type { EChartsRuntime } from '../../src/viz/adapters/echarts-interactions.js';
-import type { NormalizedVizSpec } from '../../src/viz/spec/normalized-viz-spec.js';
+import { bindEChartsInteractions } from '@oods/viz-core';
+import type { EChartsRuntime } from '@oods/viz-core';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 
 function createSpec(): NormalizedVizSpec {
   return {
-    $schema: 'https://oods.dev/viz-spec/v1',
+    $schema: 'https://oods-foundry.com/viz-spec/v1',
     id: 'spec:echarts:runtime',
     name: 'Runtime Highlight',
     data: {

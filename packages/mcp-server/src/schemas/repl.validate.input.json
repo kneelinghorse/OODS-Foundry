@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/repl.validate.input.json",
+  "title": "Agentic REPL validate input",
+  "type": "object",
+  "properties": {
+    "mode": { "type": "string", "enum": ["full", "patch"], "default": "full" },
+    "schema": { "$ref": "./repl.ui.schema.json" },
+    "schemaRef": {
+      "type": "string",
+      "description": "Reference to a cached UiSchema returned by design.compose."
+    },
+    "patch": {
+      "$ref": "./repl.patch.json",
+      "description": "Required when mode='patch'. Accepts JSON Patch array or node patch object(s)."
+    },
+    "baseTree": {
+      "$ref": "./repl.ui.schema.json",
+      "description": "Required when mode='patch' to provide the base UiSchema to patch."
+    },
+    "options": {
+      "type": "object",
+      "properties": {
+        "includeNormalized": { "type": "boolean", "default": true },
+        "checkComponents": { "type": "boolean", "default": true },
+        "checkA11y": { "type": "boolean", "default": false, "description": "Checks declared foreground/background pairs derived from shared component CSS against current built tokens for every registered brand and theme, including team brands. With a UiSchema, renders through the shared HTML renderer and checks document language/title, one main landmark, unique IDs, ARIA reference targets, control names/labels, image alternatives, chart SVG name/description, and heading names/order. Reports unresolved inherited surfaces, dynamic CSS, alpha compositing and OS colours as unmeasured. Does not check browser-computed colour/layout, keyboard/focus interaction or screen-reader behavior; no complete WCAG conformance claim." }
+      },
+      "additionalProperties": false,
+      "default": {}
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "mode": { "const": "full" } }, "required": ["mode"] },
+      "then": { "anyOf": [{ "required": ["schema"] }, { "required": ["schemaRef"] }] }
+    },
+    {
+      "if": { "not": { "required": ["mode"] } },
+      "then": { "anyOf": [{ "required": ["schema"] }, { "required": ["schemaRef"] }] }
+    },
+    { "if": { "properties": { "mode": { "const": "patch" } }, "required": ["mode"] }, "then": { "required": ["patch"] } }
+  ],
+  "additionalProperties": false
+}

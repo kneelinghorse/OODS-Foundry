@@ -233,17 +233,10 @@ tokens:
   cmp-banner-text: "var(--sys-text-neutral)"
 
 dependencies:
-  - trait: Stateful
-    relationship: required
-    description: |
-      Colorized consumes the status field produced by Stateful and maps it to a semantic tone.
-      The statusRegistry (src/components/statusables/statusRegistry.ts) performs this mapping
-      at runtime: it reads the Stateful status value, infers a tone via TOKEN_TONE_ALIASES
-      (e.g., "active" → success, "pending" → info, "terminated" → critical), and materializes
-      the resolved_token_set. Without Stateful, there is no status value to colorize.
-
-      Integration flow:
-        Stateful.status → TOKEN_TONE_ALIASES → StatusTone → resolved_token_set → CSS vars
+  # Colorized requires Stateful: it consumes the status field and maps it to a semantic tone
+  # via statusRegistry TOKEN_TONE_ALIASES (e.g., "active" → success, "pending" → info).
+  # Flow: Stateful.status → TOKEN_TONE_ALIASES → StatusTone → resolved_token_set → CSS vars
+  - Stateful
 
 metadata:
   created: "2025-10-12"
@@ -271,9 +264,9 @@ metadata:
       Dark theme tokens (themes/dark/status.json) use direct OKLCH values tuned to maintain
       these ratios against dark surfaces.
   regionsUsed:
-    - badges
-    - forms
+    - list
     - detail
+    - form
     - card
   examples:
     - Incident
@@ -303,7 +296,7 @@ metadata:
     - "WCAG 2.1 Success Criterion 1.4.1 — Use of Color"
     - "WCAG 2.1 Success Criterion 1.4.3 — Contrast (Minimum)"
     - "WCAG 2.1 Success Criterion 1.4.11 — Non-text Contrast"
-    - "src/components/statusables/statusRegistry.ts — runtime tone resolution"
-    - "packages/tokens/src/tokens/base/system/status.json — system status tokens"
-    - "packages/tokens/src/tokens/themes/dark/status.json — dark theme OKLCH values"
-    - "tokens/maps/saas-billing.status-map.json — domain status mapping example"
+    - "objects/provenance.v1.json#/references/ref-ca663a7c5731 — runtime tone resolution"
+    - "objects/provenance.v1.json#/references/ref-a6f66bd53aac — system status tokens"
+    - "objects/provenance.v1.json#/references/ref-559f1f5ebb77 — dark theme OKLCH values"
+    - "objects/provenance.v1.json#/references/ref-be33a98177f7 — domain status mapping example"

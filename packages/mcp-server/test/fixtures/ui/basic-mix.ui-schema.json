@@ -1,0 +1,52 @@
+{
+  "version": "2026.02",
+  "dsVersion": "2026-02-24",
+  "theme": "light",
+  "screens": [
+    {
+      "id": "basic-screen",
+      "component": "Stack",
+      "children": [
+        { "id": "basic-button", "component": "Button", "props": { "label": "Save", "type": "submit" } },
+        { "id": "basic-card", "component": "Card", "props": { "body": "Card body" } },
+        { "id": "basic-text", "component": "Text", "props": { "text": "Hello world" } },
+        { "id": "basic-input", "component": "Input", "props": { "name": "email", "type": "email" } },
+        {
+          "id": "basic-select",
+          "component": "Select",
+          "props": {
+            "name": "status",
+            "value": "active",
+            "options": [
+              { "value": "draft", "label": "Draft" },
+              { "value": "active", "label": "Active" }
+            ]
+          }
+        },
+        { "id": "basic-badge", "component": "Badge", "props": { "label": "New" } },
+        { "id": "basic-banner", "component": "Banner", "props": { "message": "Updated" } },
+        {
+          "id": "basic-table",
+          "component": "Table",
+          "props": {
+            "columns": [
+              { "key": "name", "label": "Name" },
+              { "key": "value", "label": "Value" }
+            ],
+            "rows": [{ "name": "Latency", "value": "120ms" }]
+          }
+        },
+        {
+          "id": "basic-tabs",
+          "component": "Tabs",
+          "props": {
+            "tabs": [
+              { "id": "overview", "label": "Overview", "content": "Overview panel", "active": true },
+              { "id": "details", "label": "Details", "content": "Details panel", "active": false }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

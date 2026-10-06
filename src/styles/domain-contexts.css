@@ -17,6 +17,26 @@
     justify-items: center;
     width: 100%;
     box-sizing: border-box;
+
+    /*
+     * s173 m03 (crawl 2) — the view shell is a QUERY CONTAINER.
+     *
+     * The collapse is keyed to the shell's own inline size, not the viewport, because a
+     * view is a component: it renders inside an explorer page, a Storybook canvas, a
+     * split pane. A viewport media query would collapse a wide view sitting in a narrow
+     * pane not at all, and a narrow view on a wide screen wrongly.
+     *
+     * `container-name` is explicit so the queries below can only ever match THIS
+     * container — a future nested container cannot silently capture them.
+     *
+     * Containment interaction, checked rather than assumed: this element's own inline
+     * size still comes from `width: 100%` (its parent), not from its contents, so
+     * inline-size containment introduces no cycle; and the child rule below resolves
+     * `min(75rem, 100%)` against this container's inline size, which is exactly what it
+     * resolved against before. Asserted in tests/styles/view-context-collapse.test.ts.
+     */
+    container-type: inline-size;
+    container-name: view-shell;
   }
 
   /* Shell constraint — tokens: --view-shell-max-width */
@@ -74,13 +94,7 @@
   }
 
   [data-view] [data-chart-grid='dashboard'] {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  @media (max-width: 1023px) {
-    [data-view] [data-chart-grid='dashboard'] {
-      grid-template-columns: minmax(0, 1fr);
-    }
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
   }
 
   /* List main rhythm — tokens: --view-main-gap-list */
@@ -298,18 +312,6 @@
     grid-template-columns: var(--view-columns-two-column-standard);
   }
 
-  @media (max-width: 1200px) {
-    [data-view-context='dashboard'][data-view-has-contextpanel='true']
-      [data-region-group='dashboard-content'] {
-      grid-template-columns: minmax(0, 1fr);
-    }
-
-    [data-view-context='dashboard'][data-view-has-contextpanel='true']
-      aside[data-region='contextPanel'] {
-      grid-column: 1 / -1;
-    }
-  }
-
   /* Card view layout — tokens: --cmp-surface-panel, --view-card-radius, --view-card-padding, --cmp-shadow-panel, --view-border-thin, --cmp-border-default, --view-card-gap, --view-card-max-width */
   [data-view-context='card'] {
     background: var(--cmp-surface-panel);
@@ -335,6 +337,51 @@
     padding: 0;
     box-shadow: none;
     background: transparent;
+  }
+
+  /* ------------------------------------------------------------------------
+   * NARROW-CONTAINER COLLAPSE (s173 m03, crawl 2)
+   *
+   * At 48rem of CONTAINER width — the same number as sys.breakpoint.md (768px), kept in
+   * step by tests/tokens/breakpoint-keep-in-step.test.ts, because @container cannot read a
+   * custom property in its condition — every view context becomes a single column and the
+   * context rail stops being a fixed-width rail.
+   *
+   * WHY A LITERAL AND NOT A TOKEN: the browser resolves container/media conditions before
+   * custom properties exist. `@custom-media` was evaluated and dropped (no chain here
+   * processes it). The test is the binding.
+   *
+   * ALL EIGHT CONTEXTS ARE COVERED, and the coverage is not five plus three left out:
+   *   - detail, list, form, chart, dashboard each pin a two-column template when a
+   *     contextPanel is present — all five are released here;
+   *   - timeline, inline and card have no two-column template and are already single
+   *     column, so their collapse IS the rail release. Timeline is the one that looks
+   *     exempt and is not: it shares the STANDARD rail sizing with detail, so without the
+   *     release its panel keeps an 18rem floor inside a 375px viewport.
+   *
+   * CSS-ONLY. No markup moves: `data-view-has-contextpanel` is untouched (its selectors
+   * are load-bearing), no region is added or removed, and the context snapshots are a
+   * zero-movement control for this mission.
+   * ------------------------------------------------------------------------ */
+  @container view-shell (max-width: 48rem) {
+    /* Every two-column template releases to the single-column default. Written at the
+     * same [context][has-contextpanel] specificity as the rules they override, so the
+     * cascade is decided by source order here rather than by a specificity bump. */
+    [data-view-context='detail'][data-view-has-contextpanel='true'] [data-region-group='detail-content'],
+    [data-view-context='list'][data-view-has-contextpanel='true'] [data-region-group='list-content'],
+    [data-view-context='form'][data-view-has-contextpanel='true'] [data-region-group='form-content'],
+    [data-view-context='chart'][data-view-has-contextpanel='true'] [data-region-group='chart-content'],
+    [data-view-context='dashboard'][data-view-has-contextpanel='true'] [data-region-group='dashboard-content'] {
+      grid-template-columns: var(--view-columns-default);
+    }
+
+    /* The rail stops being a rail. This covers the standard pair (detail, timeline), the
+     * narrow pair (list, form) and — harmlessly, with the same values it already has —
+     * card. At 375px the standard floor alone would leave main about 23px wide. */
+    [data-view] aside[data-region='contextPanel'] {
+      inline-size: auto;
+      min-inline-size: 0;
+    }
   }
 
   /* Forced colours — tokens: --view-border-thin, --view-border-medium, --view-border-strong, --cmp-spacing-inset-compact, --cmp-focus-width, --view-accessibility-outline-offset */

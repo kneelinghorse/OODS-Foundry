@@ -29,4 +29,8 @@ export interface ScaleLinearTraitParameters {
    * Distinguishes continuous vs band heuristics.
    */
   mode?: 'continuous' | 'band';
+  /**
+   * JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand.
+   */
+  renderIntent?: string;
 }

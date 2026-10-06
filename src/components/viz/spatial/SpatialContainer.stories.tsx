@@ -14,7 +14,7 @@ import { SpatialContainer } from './SpatialContainer.js';
 import { ChoroplethMap } from './ChoroplethMap.js';
 import { BubbleMap } from './BubbleMap.js';
 import type { SpatialSpec } from '../../../types/viz/spatial.js';
-import type { NormalizedVizSpec } from '../../../viz/spec/normalized-viz-spec.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 import type { Feature, FeatureCollection, Geometry } from 'geojson';
 import { feature } from 'topojson-client';
 import type { Topology } from 'topojson-specification';

@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "structuredData.fetch.output.json",
+  "title": "structuredData.fetch output",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "etag",
+    "matched",
+    "payloadIncluded",
+    "path",
+    "sizeBytes",
+    "schemaValidated"
+  ],
+  "properties": {
+    "dataset": {
+      "type": "string",
+      "enum": ["components", "tokens", "manifest"],
+      "description": "Dataset that was requested (dataset mode only)."
+    },
+    "kind": {
+      "type": "string",
+      "enum": ["identity_graph", "capability_rollup", "object_rollup", "drift_report", "derived_analysis", "a11y_report", "report_index", "a11y_evidence", "run_manifest"],
+      "description": "Stage1 structured artifact kind that was requested (kind mode only)."
+    },
+    "schemaVersion": {
+      "type": "string",
+      "description": "Stage1 artifact schema_version (kind mode only)."
+    },
+    "runId": {
+      "type": "string",
+      "description": "Stage1 run_id extracted from the artifact (kind mode only)."
+    },
+    "version": {
+      "type": ["string", "null"],
+      "description": "Version tag (usually the YYYY-MM-DD stamp from the manifest)."
+    },
+    "generatedAt": {
+      "type": ["string", "null"],
+      "description": "Timestamp recorded in the payload."
+    },
+    "etag": {
+      "type": "string",
+      "pattern": "^[A-Fa-f0-9]{64}$",
+      "description": "Stable hash of the payload (generatedAt excluded)."
+    },
+    "matched": {
+      "type": "boolean",
+      "description": "True when ifNoneMatch matched the current ETag and payload was skipped."
+    },
+    "payloadIncluded": {
+      "type": "boolean",
+      "description": "True when the payload field is returned."
+    },
+    "path": {
+      "type": "string",
+      "description": "Resolved export path. For the live components projection, this supplies historical evidence and annotations; the returned definitions come from the live registry."
+    },
+    "manifestPath": {
+      "type": ["string", "null"],
+      "description": "Manifest path when available."
+    },
+    "sizeBytes": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Serialized payload byte size for the live projection; file size for committed exports."
+    },
+    "schemaValidated": {
+      "type": "boolean",
+      "description": "True when the payload was validated against a schema."
+    },
+    "validationErrors": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Optional validation error messages."
+    },
+    "warnings": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Non-fatal warnings encountered during resolution."
+    },
+    "meta": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Lightweight summary for the payload.",
+      "properties": {
+        "componentCount": { "type": "integer", "minimum": 0 },
+        "traitCount": { "type": "integer", "minimum": 0 },
+        "objectCount": { "type": "integer", "minimum": 0 },
+        "domainCount": { "type": "integer", "minimum": 0 },
+        "patternCount": { "type": "integer", "minimum": 0 },
+        "traitOverlayCount": { "type": "integer", "minimum": 0 },
+        "nodeCount": { "type": "integer", "minimum": 0 },
+        "capabilityCount": { "type": "integer", "minimum": 0 },
+        "projectionVariantCount": { "type": "integer", "minimum": 0 },
+        "signalCount": { "type": "integer", "minimum": 0 },
+        "tokenCounts": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "referenceTokens": { "type": "integer", "minimum": 0 },
+            "themeTokens": { "type": "integer", "minimum": 0 },
+            "systemTokens": { "type": "integer", "minimum": 0 },
+            "componentTokens": { "type": "integer", "minimum": 0 },
+            "viewTokens": { "type": "integer", "minimum": 0 },
+            "mapCount": { "type": "integer", "minimum": 0 },
+            "traitOverlayCount": { "type": "integer", "minimum": 0 }
+          }
+        }
+      }
+    },
+    "payload": {
+      "type": "object",
+      "description": "Payload contents when payloadIncluded=true."
+    },
+    "availableVersions": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+      "description": "Available version dates when listVersions=true."
+    },
+    "requestedVersion": {
+      "type": ["string", "null"],
+      "description": "The version that was requested (null if latest)."
+    },
+    "resolvedVersion": {
+      "type": ["string", "null"],
+      "description": "The version that was actually resolved (may differ from requested if nearest match used)."
+    }
+  }
+}

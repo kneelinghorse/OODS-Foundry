@@ -28,6 +28,8 @@ export function validateDependencies(composed: ComposedObject): RuleIssue[] {
             severity: 'warning',
             path: ['traits', traitIndex, 'dependencies', depIndex],
             related: [trait.trait.name, dependency.name],
+            traitPath: [trait.trait.name],
+            impactedTraits: findOtherDependents(traits, dependency.name, trait.trait.name),
           });
         }
         return;
@@ -41,10 +43,27 @@ export function validateDependencies(composed: ComposedObject): RuleIssue[] {
           severity: 'error',
           path: ['traits', traitIndex, 'dependencies', depIndex],
           related: [trait.trait.name, dependency.name],
+          traitPath: [trait.trait.name, dependency.name],
+          impactedTraits: findOtherDependents(traits, dependency.name, trait.trait.name),
         });
       }
     });
   });
 
   return issues;
+}
+
+function findOtherDependents(
+  traits: ComposedObject['traits'],
+  depName: string,
+  excludeTrait: string
+): string[] | undefined {
+  const others = traits
+    .filter((t) => t.trait?.name && t.trait.name !== excludeTrait)
+    .filter((t) => {
+      const deps = extractTraitDependencies(t);
+      return deps.some((d) => d.name === depName);
+    })
+    .map((t) => t.trait.name);
+  return others.length > 0 ? others : undefined;
 }

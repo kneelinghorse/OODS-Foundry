@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "v0.1",
+  "id": "shopify-forge-d3-preflight-2026-08-28",
+  "title": "D3 Contract Preflight",
+  "tokenCssRef": "tokens.build",
+  "brand": "B",
+  "strictDatasets": true,
+  "strictFields": true,
+  "a11yEquivalence": true,
+  "datasets": [
+    {
+      "id": "commerce",
+      "rows": [
+        { "period": "2026-08-26", "kind": "products", "count": 150 },
+        { "period": "2026-08-27", "kind": "orders", "count": 12 },
+        { "period": "2026-08-28", "kind": "products", "count": 151 }
+      ]
+    }
+  ],
+  "panels": [
+    {
+      "id": "total",
+      "kind": "kpi",
+      "datasetId": "commerce",
+      "field": "count",
+      "aggregate": "sum"
+    },
+    {
+      "id": "breakdown",
+      "kind": "chart",
+      "chartType": "bar",
+      "datasetId": "commerce",
+      "encodings": {
+        "x": "kind",
+        "y": { "field": "count", "aggregate": "sum" }
+      }
+    }
+  ],
+  "a11y": {
+    "description": "Read-only D3 render contract preflight.",
+    "readingOrder": "kpi-first"
+  },
+  "output": {
+    "compact": true,
+    "html": true,
+    "contrastScan": true,
+    "dataTable": true,
+    "includeA11y": true
+  }
+}

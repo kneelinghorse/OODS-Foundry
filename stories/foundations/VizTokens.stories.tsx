@@ -1,8 +1,10 @@
+// @types/react 19 no longer declares a global JSX namespace; it is exported from 'react'.
+import type { JSX } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import '~/apps/explorer/src/styles/index.css';
 import tokensBundle, { prefix as exportedPrefix } from '@oods/tokens';
-import { getVizScaleTokens, getVizSizeTokens, getVizMarginToken } from '@/viz/tokens/scale-token-mapper.js';
+import { getVizScaleTokens, getVizSizeTokens, getVizMarginToken } from '@oods/viz-core';
 
 const sequentialTokens = getVizScaleTokens('sequential');
 const divergingTokens = getVizScaleTokens('diverging');
@@ -111,7 +113,6 @@ const ColorSwatch = ({ token }: { token: string }): JSX.Element => (
       boxShadow: '0 1px 2px rgba(15, 23, 42, 0.08)',
       background: `var(${resolveCssVariable(token)})`,
     }}
-    role="img"
     aria-label={token}
   />
 );
@@ -206,7 +207,7 @@ function VizTokensDoc(): JSX.Element {
 }
 
 const meta = {
-  title: 'Tokens & Theming/Viz Tokens',
+  title: 'Foundations/Viz Tokens',
   component: VizTokensDoc,
   parameters: {
     layout: 'fullscreen',

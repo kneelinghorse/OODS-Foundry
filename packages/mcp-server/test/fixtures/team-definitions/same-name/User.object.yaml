@@ -1,0 +1,45 @@
+# A team's own User (s213-m03, #2352): used in place of the shipped User, and reported.
+object:
+  name: User
+  version: 1.0.0
+  domain: acme.identity
+  description: A person who signs in to the team's warehouse console.
+  tags:
+    - identity
+
+traits:
+  - name: lifecycle/Stateful
+    parameters:
+      states:
+        - invited
+        - active
+        - suspended
+      initialState: invited
+  - name: lifecycle/Timestampable
+    parameters:
+      recordedEvents:
+        - invited
+        - activated
+        - suspended
+
+schema:
+  user_id:
+    type: uuid
+    required: true
+    description: Unique identifier for the user.
+  name:
+    type: string
+    required: true
+    description: The person's name.
+    examples:
+      - Ada Park
+      - Luis Ortega
+      - Mei Chen
+  email:
+    type: email
+    required: true
+    description: Where sign-in links are sent.
+  home_warehouse:
+    type: string
+    required: false
+    description: The site code of the warehouse the person works at.

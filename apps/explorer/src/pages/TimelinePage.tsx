@@ -1,3 +1,5 @@
+// @types/react 19 no longer declares a global JSX namespace; it is exported from 'react'.
+import type { JSX } from 'react';
 import '../styles/index.css';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { DateTime } from 'luxon';
@@ -260,7 +262,7 @@ function CommunicationPanel(): JSX.Element {
         const snapshot = {
           status: nextStatus,
           retryCount: existing.retryCount,
-          updatedAt: TimeService.nowSystem().toISO(),
+          updatedAt: TimeService.toIsoString(TimeService.nowSystem()),
         };
         statusStore.current.set(messageId, snapshot);
         return snapshot;
@@ -286,7 +288,10 @@ function CommunicationPanel(): JSX.Element {
         return conversationStore.current.map(cloneConversation);
       },
       async createConversation(conversation) {
-        const created = { ...conversation, created_at: conversation.created_at ?? TimeService.nowSystem().toISO() };
+        const created = {
+          ...conversation,
+          created_at: conversation.created_at ?? TimeService.toIsoString(TimeService.nowSystem()),
+        };
         conversationStore.current = [created, ...conversationStore.current];
         return cloneConversation(created);
       },
@@ -383,7 +388,7 @@ function CommunicationPanel(): JSX.Element {
 function buildDemoMessages(): Message[] {
   const base = DateTime.fromISO('2025-11-20T08:00:00Z');
   return Array.from({ length: 14 }).map((_, index) => {
-    const created_at = base.plus({ minutes: index * 12 }).toISO() ?? TimeService.nowSystem().toISO();
+    const created_at = TimeService.toIsoString(base.plus({ minutes: index * 12 }));
     return {
       id: `comm-msg-${index + 1}`,
       sender_id: index % 3 === 0 ? 'ops-bot' : 'notifications',
@@ -395,6 +400,7 @@ function buildDemoMessages(): Message[] {
       priority: index % 5 === 0 ? 'urgent' : 'normal',
       status: index % 4 === 0 ? 'queued' : 'sent',
       status_history: [],
+      attachments: [],
       created_at,
     };
   });
@@ -412,7 +418,7 @@ function buildBasePolicy(): DeliveryPolicy {
 }
 
 function seedConversations(messages: readonly Message[]): Conversation[] {
-  const createdAt = DateTime.fromISO('2025-11-19T15:55:00Z').toISO() ?? TimeService.nowSystem().toISO();
+  const createdAt = TimeService.toIsoString(DateTime.fromISO('2025-11-19T15:55:00Z'));
   const conversationId = 'conv-seed';
   const threadMessages: Message[] = [
     {
@@ -420,7 +426,7 @@ function seedConversations(messages: readonly Message[]): Conversation[] {
       id: 'conv-seed-1',
       metadata: { ...messages[0].metadata, subject: 'Kickoff: SLA readiness' },
       conversation_id: conversationId,
-      created_at: DateTime.fromISO('2025-11-19T16:00:00Z').toISO() ?? createdAt,
+      created_at: TimeService.toIsoString(DateTime.fromISO('2025-11-19T16:00:00Z')),
       status: 'sent',
     },
     {
@@ -428,7 +434,7 @@ function seedConversations(messages: readonly Message[]): Conversation[] {
       id: 'conv-seed-2',
       metadata: { ...messages[1].metadata, subject: 'Provider selected', parent_message_id: 'conv-seed-1' },
       conversation_id: conversationId,
-      created_at: DateTime.fromISO('2025-11-19T16:12:00Z').toISO() ?? createdAt,
+      created_at: TimeService.toIsoString(DateTime.fromISO('2025-11-19T16:12:00Z')),
       status: 'sent',
     },
     {
@@ -436,7 +442,7 @@ function seedConversations(messages: readonly Message[]): Conversation[] {
       id: 'conv-seed-3',
       metadata: { ...messages[2].metadata, subject: 'SPF/DKIM configured', parent_message_id: 'conv-seed-1' },
       conversation_id: conversationId,
-      created_at: DateTime.fromISO('2025-11-19T16:24:00Z').toISO() ?? createdAt,
+      created_at: TimeService.toIsoString(DateTime.fromISO('2025-11-19T16:24:00Z')),
       status: 'delivered',
     },
   ];
@@ -479,7 +485,8 @@ function buildThreadReply(conversationId: string, parentId: string): Message {
     status: 'sent',
     status_history: [],
     conversation_id: conversationId,
-    created_at: TimeService.nowSystem().toISO(),
+    attachments: [],
+    created_at: TimeService.toIsoString(TimeService.nowSystem()),
   };
 }
 

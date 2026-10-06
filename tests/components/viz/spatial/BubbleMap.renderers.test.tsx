@@ -1,3 +1,5 @@
+/* @vitest-environment jsdom */
+
 /**
  * Renderer-specific tests for BubbleMap (vega-lite & echarts branches).
  */
@@ -6,7 +8,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, waitFor } from '@testing-library/react';
 import * as d3Geo from 'd3-geo';
 import { SpatialContextProvider } from '../../../../src/components/viz/spatial/SpatialContext.js';
-import type { NormalizedVizSpec } from '../../../../src/viz/spec/normalized-viz-spec.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 import type { DataRecord } from '../../../../src/viz/adapters/spatial/geo-data-joiner.js';
 import type { FeatureCollection, Point } from 'geojson';
 import { loadVegaEmbed } from '../../../../src/viz/runtime/vega-embed-loader.js';
@@ -48,7 +50,7 @@ vi.mock('echarts', () => ({
 import { BubbleMap } from '../../../../src/components/viz/spatial/BubbleMap.js';
 
 const mockSpec: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/spatial/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/spatial/v1',
   type: 'spatial',
   data: { values: [] },
   projection: { type: 'mercator' },

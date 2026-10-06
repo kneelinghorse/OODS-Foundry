@@ -1,0 +1,166 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/code.generate.input.json",
+  "title": "Code export input",
+  "description": "Generate framework-specific code from a validated UiSchema. A workflow schema generates a runnable React or Vue application with navigation, local store and deterministic sample data.",
+  "type": "object",
+  "required": [
+    "framework"
+  ],
+  "properties": {
+    "schema": {
+      "$ref": "./repl.ui.schema.json",
+      "description": "A structurally valid UiSchema tree to generate code from. UiElement.state branches are checked against the canonical workflow-state vocabulary by the state-contract gate."
+    },
+    "schemaRef": {
+      "type": "string",
+      "description": "Reference to a cached UiSchema returned by design.compose."
+    },
+    "framework": {
+      "type": "string",
+      "enum": [
+        "react",
+        "vue",
+        "html"
+      ],
+      "description": "Target framework. HTML uses the same record document renderer as repl render; build checks are static and do not execute a browser."
+    },
+    "profile": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "build",
+        "release"
+      ],
+      "description": "Validation profile. draft reports non-structural target/contract gaps, including workflow-state contract gaps, as warnings; build is the default blocking gate of static checks (schema, registry, readiness, contracts, dependencies, fallbacks; the static gate does not install or run the generated application); release additionally requires six local JSON evidence files with matching SHA-256 contentHash, passed status and artifactContentHash."
+    },
+    "releaseEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Evidence for release. All six named classes are required by the release gate and must bind to the generated artifact contentHash. The server opens each local JSON reference and checks its SHA-256 against contentHash, its passed status and its artifactContentHash. It does not re-execute the evidence.",
+      "properties": {
+        "rendered": {
+          "$ref": "#/$defs/releaseEvidenceItem"
+        },
+        "interaction": {
+          "$ref": "#/$defs/releaseEvidenceItem"
+        },
+        "accessibility": {
+          "$ref": "#/$defs/releaseEvidenceItem"
+        },
+        "theme": {
+          "$ref": "#/$defs/releaseEvidenceItem"
+        },
+        "determinism": {
+          "$ref": "#/$defs/releaseEvidenceItem"
+        },
+        "performance": {
+          "$ref": "#/$defs/releaseEvidenceItem"
+        }
+      }
+    },
+    "options": {
+      "type": "object",
+      "properties": {
+        "theme": {
+          "type": "string",
+          "enum": [
+            "light",
+            "dark",
+            "hc"
+          ],
+          "description": "Application and embedded chart theme. Preserves a composed theme unless explicitly overridden; otherwise defaults to light."
+        },
+        "brand": {
+          "type": "string",
+          "format": "oods-brand",
+          "description": "Token brand shared by the generated shell and embedded charts. React/Vue app shells default to A. Unscoped HTML preserves the existing document default brand; an explicit HTML theme without a brand selects A."
+        },
+        "typescript": {
+          "type": "boolean",
+          "default": true,
+          "description": "When true, emit TypeScript prop types (React) or typed defineProps (Vue). Ignored for HTML."
+        },
+        "styling": {
+          "type": "string",
+          "enum": [
+            "inline",
+            "tokens",
+            "tailwind"
+          ],
+          "default": "tokens",
+          "description": "React/Vue styling strategy: inline style objects, design-token CSS variables, or Tailwind utility classes. HTML uses document CSS; requesting Tailwind reports OODS-N018 as a draft warning or a build/release error."
+        },
+        "payloadMode": {
+          "type": "string",
+          "enum": [
+            "inline",
+            "file"
+          ],
+          "default": "inline",
+          "description": "inline (default) returns the artifact in the response. file writes every artifact file plus artifact.json beside the saved-schema store (<store>/../payloads/code.generate-<digest>/) and returns a payload block of file references; the artifact is then omitted from the response and code is empty."
+        },
+        "output": {
+          "type": "string",
+          "enum": [
+            "component",
+            "application"
+          ],
+          "default": "component",
+          "description": "React/Vue: component output by default, or a runnable single-screen application. Workflows emit applications. HTML always emits a standalone static sample document, including when application is requested."
+        }
+      },
+      "additionalProperties": false,
+      "default": {}
+    }
+  },
+  "allOf": [
+    {
+      "anyOf": [
+        {
+          "required": [
+            "schema"
+          ]
+        },
+        {
+          "required": [
+            "schemaRef"
+          ]
+        }
+      ]
+    }
+  ],
+  "$defs": {
+    "releaseEvidenceItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "artifactContentHash",
+        "reference",
+        "contentHash"
+      ],
+      "properties": {
+        "status": {
+          "const": "passed"
+        },
+        "artifactContentHash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$",
+          "description": "Exact generated artifact hash inspected by this evidence."
+        },
+        "reference": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Local JSON evidence file, absolute or relative to the server working directory. Opened during release validation."
+        },
+        "contentHash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$",
+          "description": "SHA-256 of the local JSON evidence file bytes. The file must contain status: passed and this artifactContentHash."
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

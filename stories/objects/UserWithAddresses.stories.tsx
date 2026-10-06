@@ -1,4 +1,3 @@
-import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import '../../src/styles/globals.css';
@@ -72,7 +71,7 @@ const entries: AddressableEntry[] = [
 ];
 
 const meta: Meta<typeof AddressDisplay> = {
-  title: 'Objects/Core Objects/User/With Addressable',
+  title: 'Objects/User/UserWithAddresses',
   component: AddressDisplay,
   parameters: {
     layout: 'padded',

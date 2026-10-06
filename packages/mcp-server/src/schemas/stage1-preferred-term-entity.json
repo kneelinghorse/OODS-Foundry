@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/stage1-preferred-term-entity.json",
+  "title": "Stage1 preferred term entity",
+  "description": "Draft v1.4.0-gated OODS registry entity for promoted disambiguation/canonical-term decisions. Additive stub only.",
+  "type": "object",
+  "required": ["entity_type", "id", "slug", "label", "aliases", "scope"],
+  "additionalProperties": false,
+  "properties": {
+    "entity_type": {
+      "const": "preferred_term"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Stable registry identifier for the promoted term entity."
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "description": "Kebab-case canonical slug."
+    },
+    "label": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human-readable canonical label."
+    },
+    "aliases": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Alternate labels that collapse into the canonical term."
+    },
+    "scope": {
+      "type": "string",
+      "enum": ["target", "registry"],
+      "description": "Target-scoped during incubation, registry-scoped once promoted."
+    },
+    "domain": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Optional domain or namespace for the term."
+    },
+    "source_decision_ids": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Decision ids that promoted this term into the registry."
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Open metadata bag reserved for future registry-side term semantics."
+    }
+  }
+}

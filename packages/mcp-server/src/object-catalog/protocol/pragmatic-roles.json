@@ -1,0 +1,28 @@
+{
+  "$comment": "OODS Foundry-owned (decision #634; relocated from concordance/ in s106-m02). Originally single-sourced from protocols/SEMANTIC_PROTOCOL.md §3.4 (6 values). Expanded in s106-m03 with 4 non-action page/IA roles (page, landing, section, index) so site-map entities are not forced into navigation/informational. Reference data only — the live enum is hardcoded in ../schema.json, ../types.ts, and ./manifest.schema.json (see README.md). Action-shaped roles trigger the element.object_action_present validator; page/IA roles do not.",
+  "version": "4.1",
+  "values": [
+    "primary_action",
+    "secondary_action",
+    "destructive_action",
+    "recovery_action",
+    "navigation",
+    "informational",
+    "page",
+    "landing",
+    "section",
+    "index"
+  ],
+  "action_shaped": [
+    "primary_action",
+    "secondary_action",
+    "destructive_action",
+    "recovery_action"
+  ],
+  "page_ia": [
+    "page",
+    "landing",
+    "section",
+    "index"
+  ]
+}

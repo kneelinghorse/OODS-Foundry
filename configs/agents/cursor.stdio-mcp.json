@@ -1,0 +1,49 @@
+{
+  "name": "OODS Foundry — Cursor (stdio)",
+  "summary": "Connect Cursor to OODS Foundry; the client starts it with npx.",
+  "transport": {
+    "type": "stdio",
+    "command": "npx",
+    "args": [
+      "-y",
+      "@oods/foundry"
+    ]
+  },
+  "placement": {
+    "file": ".cursor/mcp.json (project) or ~/.cursor/mcp.json (all projects)",
+    "key": "mcpServers.oods-foundry"
+  },
+  "cursorConfig": {
+    "mcpServers": {
+      "oods-foundry": {
+        "type": "stdio",
+        "command": "npx",
+        "args": [
+          "-y",
+          "@oods/foundry"
+        ]
+      }
+    }
+  },
+  "env": {
+    "MCP_TOOLSET": "default (19 tools) | all (20 tools)",
+    "MCP_EXTRA_TOOLS": "comma-separated on-demand tools to add to the default surface, for example a11y.scan",
+    "MCP_ROLE": "designer (default) | maintainer",
+    "MCP_SCHEMA_STORE_ROOT": "where saved schemas, composed versions and file-mode output are kept; default ~/.oods-foundry from npm, the extracted directory from the archive",
+    "OODS_NODE_PATH": "absolute path of the Node binary the adapter should start the server with; default: the Node running the adapter",
+    "OODS_MCP_APPS_UI": "1 offers the design preview app to a client that did not negotiate the MCP Apps extension; default: unset, only clients that negotiated it",
+    "OODS_OBJECTS_DIR": "folder your own objects are read from, after the ones OODS Foundry ships; default ~/.oods-foundry/objects from npm, unset from the archive",
+    "OODS_TRAITS_DIR": "folder your own traits are read from, after the ones OODS Foundry ships; default ~/.oods-foundry/traits from npm, unset from the archive",
+    "OODS_BRANDS_DIR": "folder your own brands are kept and built in, outside the runtime; default ~/.oods-foundry/brands from npm, unset from the archive"
+  },
+  "notes": [
+    "The client runs npx -y @oods/foundry. The first start downloads the package and unpacks its runtime once into ~/.oods-foundry/runtime/; later starts reuse it.",
+    "The node and npx the client starts must be Node 22.0.0 or newer; if the client cannot find npx, put its full path (what which npx prints) in command and give the client an env PATH that includes the directory of node.",
+    "Default surface: 19 tools. MCP_TOOLSET=all adds the 1 on-demand tools (20 in all).",
+    "Sent the runtime archive instead of using npm: use command node with args [\"/path/to/oods-foundry-runtime/packages/mcp-adapter/index.js\"], where /path/to/oods-foundry-runtime is the absolute path you extracted oods-foundry-runtime.tar.gz into (install.md beside the archive).",
+    "Cursor reads the file on start; reload the window after saving.",
+    "Cursor's documentation says version 2.6 and later render MCP Apps, so design_preview could show the running app inside the chat; this has not been tried with OODS Foundry, and otherwise the result is text with links to the preview in the browser, served on 127.0.0.1.",
+    "Register oods-foundry directly, beside any other entry such as an MCP hub, not behind it: the preview app reaches the conversation only when the client talks to the server itself or a hub passes the MCP Apps extension, the tool's _meta.ui and resources/read through.",
+    "Reload the window after a newer version installs."
+  ]
+}

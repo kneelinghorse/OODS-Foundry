@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/07/schema",
+  "$id": "https://trait-engine.dev/schemas/traits/provenanced",
+  "title": "Provenanced Trait Parameters",
+  "description": "Configuration contract for the Provenanced trait: the producing system every record of the object comes from, and the wording shown beside the method.",
+  "type": "object",
+  "properties": {
+    "source": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "description": "The producing system, shown as recorded (e.g. Stage1)."
+    },
+    "methodLabel": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 48,
+      "description": "Visible wording beside the method, so the screen says how rather than showing a bare token."
+    }
+  },
+  "required": ["source"],
+  "additionalProperties": false,
+  "examples": [
+    { "source": "Stage1" },
+    { "source": "TraceLab", "methodLabel": "Found by" }
+  ]
+}

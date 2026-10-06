@@ -39,13 +39,29 @@
         }
       }
     },
-    "delinquent": {
-      "description": "Payment has failed and the subscription is in collection.",
+    "past_due": {
+      "description": "Renewal payment failed; smart retries ongoing and access retained during the grace window.",
       "default": {
         "foregroundColor": "color.text.danger",
         "backgroundColor": "color.background.danger.subtle",
         "borderColor": "color.border.danger",
         "iconName": "icon.status.warning"
+      },
+      "contexts": {
+        "banner": {
+          "foregroundColor": "color.text.onbold",
+          "backgroundColor": "color.background.danger.bold",
+          "borderColor": "color.border.danger"
+        }
+      }
+    },
+    "unpaid": {
+      "description": "Payment retries exhausted; service access revoked.",
+      "default": {
+        "foregroundColor": "color.text.danger",
+        "backgroundColor": "color.background.danger.subtle",
+        "borderColor": "color.border.danger",
+        "iconName": "icon.status.error"
       },
       "contexts": {
         "banner": {

@@ -8,6 +8,7 @@
 
 import Ajv, { type ValidateFunction } from 'ajv';
 import addFormats from 'ajv-formats';
+import tokens from '@oods/tokens';
 
 import type {
   ValidationIssue,
@@ -48,6 +49,11 @@ export class ParameterValidator {
 
     if (!options.ajvInstance) {
       addFormats(this.ajv);
+      // s213-m04: a chart declaration's brand is one the token build produced (packages/tokens brand registry).
+      this.ajv.addFormat('oods-brand', {
+        type: 'string',
+        validate: (value: string) => Object.hasOwn(tokens.cssVariablesByScope, value),
+      });
     }
 
     this.loader = new SchemaLoader({ schemaDir: options.schemaDir });

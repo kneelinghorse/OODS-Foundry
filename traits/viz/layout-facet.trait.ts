@@ -194,7 +194,7 @@ const LayoutFacetTrait: TraitDefinition = {
     maturity: 'beta',
     references: [
       'docs/viz/normalized-viz-spec.md',
-      'cmos/planning/sprint-23-plan.md',
+      'Sprint 23 plan',
     ],
   },
 };

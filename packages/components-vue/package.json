@@ -1,0 +1,85 @@
+{
+  "name": "@oods/components-vue",
+  "version": "0.7.0",
+  "description": "Vue 3 components for OODS Foundry: the controls, layouts and domain views its generated screens use.",
+  "homepage": "https://oods-foundry.com/",
+  "bugs": {
+    "url": "https://github.com/kneelinghorse/OODS-Foundry/issues"
+  },
+  "keywords": [
+    "oods",
+    "oods-foundry",
+    "vue",
+    "components",
+    "design-system",
+    "accessibility"
+  ],
+  "type": "module",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "files": [
+    "dist",
+    "evidence",
+    "LICENSE",
+    "NOTICE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "rimraf dist && tsup --config tsup.config.ts && tsup --config tsup.ported.config.ts",
+    "clean": "rimraf dist",
+    "typecheck": "vue-tsc --noEmit --pretty false -p tsconfig.json",
+    "test": "vitest run --config vitest.config.ts",
+    "test:pack": "node test/packed-import.mjs",
+    "test:visual": "node test/visual-evidence.mjs",
+    "prepack": "pnpm run build"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./readiness": {
+      "default": "./evidence/vue-readiness.v1.json"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "dependencies": {
+    "@oods/component-contracts": "0.7.0",
+    "@oods/component-styles": "0.7.0"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.4",
+    "@vue/compiler-sfc": "^3.5.42",
+    "@vue/server-renderer": "^3.5.42",
+    "@vue/test-utils": "^2.5.0",
+    "jsdom": "^24.0.0",
+    "playwright": "^1.56.1",
+    "typescript": "^5.9.3",
+    "vite": "^6.4.1",
+    "vitest": "^3.2.4",
+    "vitest-axe": "^0.1.0",
+    "vue": "^3.5.42",
+    "vue-tsc": "^3.3.11"
+  },
+  "packageManager": "pnpm@9.12.2",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kneelinghorse/OODS-Foundry.git",
+    "directory": "packages/components-vue"
+  }
+}

@@ -60,8 +60,8 @@ describe('StripeAdapter', () => {
         ['incomplete_expired', 'terminated'],
         ['trialing', 'trialing'],
         ['active', 'active'],
-        ['past_due', 'delinquent'],
-        ['unpaid', 'delinquent'],
+        ['past_due', 'past_due'],
+        ['unpaid', 'unpaid'],
         ['canceled', 'terminated'],
         ['paused', 'paused'],
       ];

@@ -42,7 +42,7 @@ import type {
   SizeScaleType,
   SpatialA11yConfig,
 } from '../../../types/viz/spatial.js';
-import type { NormalizedVizSpec } from '../../../viz/spec/normalized-viz-spec.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 import {
   loadVegaEmbed,
   type EmbedOptions,

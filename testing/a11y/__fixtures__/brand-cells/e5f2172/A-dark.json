@@ -1,0 +1,239 @@
+{
+  "$source": "e5f2172:packages/tokens/src/tokens/brands/A/dark.json",
+  "$schema": "https://design-tokens.org/dtcg/schema.json",
+  "color": {
+    "brand": {
+      "A": {
+        "surface": {
+          "canvas": {
+            "$type": "color",
+            "$value": "oklch(0.14 0.008 200)",
+            "$description": "Dark canvas — deep teal-tinged charcoal for brand A."
+          },
+          "raised": {
+            "$type": "color",
+            "$value": "oklch(0.18 0.007 200)",
+            "$description": "Raised panel surface separating cards from canvas."
+          },
+          "subtle": {
+            "$type": "color",
+            "$value": "oklch(0.22 0.008 200)",
+            "$description": "Secondary surface for sidebars and panels."
+          },
+          "disabled": {
+            "$type": "color",
+            "$value": "oklch(0.28 0.006 200)",
+            "$description": "Disabled surface maintaining ≥3:1 against disabled text."
+          },
+          "backdrop": {
+            "$type": "color",
+            "$value": "oklch(0.09 0.006 200)",
+            "$description": "Backdrop scrim — near-black with cool teal undertone."
+          },
+          "inverse": {
+            "$type": "color",
+            "$value": "oklch(0.96 0.004 80)",
+            "$description": "Inverse surface — warm off-white for light-on-dark overlays."
+          },
+          "interactive": {
+            "primary": {
+              "default": {
+                "$type": "color",
+                "$value": "oklch(0.72 0.16 183)",
+                "$description": "Electric teal primary interactive — brand A accent."
+              },
+              "hover": {
+                "$type": "color",
+                "$value": "oklch(0.78 0.17 183)",
+                "$description": "Hover brightens teal by ΔL +0.06 / ΔC +0.01."
+              },
+              "pressed": {
+                "$type": "color",
+                "$value": "oklch(0.68 0.15 183)",
+                "$description": "Pressed deepens teal by ΔL −0.04 / ΔC −0.01."
+              }
+            }
+          }
+        },
+        "border": {
+          "subtle": {
+            "$type": "color",
+            "$value": "oklch(0.30 0.01 200)",
+            "$description": "Subtle border — cool dark mid-tone for cards and inputs."
+          },
+          "strong": {
+            "$type": "color",
+            "$value": "oklch(0.50 0.02 200)",
+            "$description": "Strong border — brighter cool mid-tone for focus and separators."
+          }
+        },
+        "text": {
+          "primary": {
+            "$type": "color",
+            "$value": "oklch(0.96 0.005 80)",
+            "$description": "Primary body text — warm near-white on dark canvas."
+          },
+          "secondary": {
+            "$type": "color",
+            "$value": "oklch(0.80 0.012 200)",
+            "$description": "Secondary copy — cool mid-light for supporting detail."
+          },
+          "muted": {
+            "$type": "color",
+            "$value": "oklch(0.62 0.012 200)",
+            "$description": "Muted captions with ≥4.5:1 on subtle surfaces."
+          },
+          "inverse": {
+            "$type": "color",
+            "$value": "oklch(0.14 0.008 200)",
+            "$description": "Inverse text — dark canvas tone for light-surface contexts."
+          },
+          "accent": {
+            "$type": "color",
+            "$value": "oklch(0.78 0.18 183)",
+            "$description": "Accent text — bright electric teal for inline highlights and links."
+          },
+          "onInteractive": {
+            "$type": "color",
+            "$value": "oklch(0.12 0.01 200)",
+            "$description": "Foreground on teal interactive surfaces — near-black for contrast."
+          },
+          "disabled": {
+            "$type": "color",
+            "$value": "oklch(0.45 0.008 200)",
+            "$description": "Disabled text with 3:1 contrast on disabled surface."
+          }
+        },
+        "accent": {
+          "background": {
+            "$type": "color",
+            "$value": "oklch(0.22 0.06 183)",
+            "$description": "Teal-tinted accent background panel for callouts and banners."
+          },
+          "border": {
+            "$type": "color",
+            "$value": "oklch(0.72 0.16 183)",
+            "$description": "Full-chroma teal accent border."
+          },
+          "text": {
+            "$type": "color",
+            "$value": "oklch(0.78 0.18 183)",
+            "$description": "Bright teal accent text on dark accent backgrounds."
+          }
+        },
+        "status": {
+          "info": {
+            "surface": {
+              "$type": "color",
+              "$value": "oklch(0.31 0.08 262)",
+              "$description": "Informational surface for dark shells."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "oklch(0.43 0.11 262)",
+              "$description": "Informational border tone."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "oklch(0.88 0.06 262)",
+              "$description": "Informational text across Brand A dark."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "oklch(0.8 0.1 262)",
+              "$description": "Informational icon tone."
+            }
+          },
+          "success": {
+            "surface": {
+              "$type": "color",
+              "$value": "oklch(0.32 0.09 161)",
+              "$description": "Success surface tuned for dark contexts."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "oklch(0.43 0.11 161)",
+              "$description": "Success border maintaining AA."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "oklch(0.88 0.07 165)",
+              "$description": "Success text with ≥4.5:1 contrast."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "oklch(0.78 0.1 163)",
+              "$description": "Success icon colour."
+            }
+          },
+          "warning": {
+            "surface": {
+              "$type": "color",
+              "$value": "oklch(0.34 0.09 85)",
+              "$description": "Warning surface for dark UI."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "oklch(0.46 0.12 85)",
+              "$description": "Warning border preserving separation."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "oklch(0.9 0.08 87)",
+              "$description": "Warning text meeting AA on warning surface."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "oklch(0.81 0.11 85)",
+              "$description": "Warning icon tone."
+            }
+          },
+          "critical": {
+            "surface": {
+              "$type": "color",
+              "$value": "oklch(0.31 0.12 25)",
+              "$description": "Critical alert surface avoiding bloom."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "oklch(0.43 0.15 25)",
+              "$description": "Critical outline with strong presence."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "oklch(0.88 0.09 23)",
+              "$description": "Critical text above AA thresholds."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "oklch(0.79 0.13 24)",
+              "$description": "Critical icon colour."
+            }
+          },
+          "neutral": {
+            "surface": {
+              "$type": "color",
+              "$value": "oklch(0.32 0.02 260)",
+              "$description": "Neutral banner surface."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "oklch(0.41 0.025 260)",
+              "$description": "Neutral border tone."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "oklch(0.86 0.02 260)",
+              "$description": "Neutral text for dark banners."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "oklch(0.74 0.02 260)",
+              "$description": "Neutral icon tone."
+            }
+          }
+        }
+      }
+    }
+  }
+}

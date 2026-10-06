@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Object name to look up (e.g. 'User', 'Product', 'Invoice')"
+    },
+    "context": {
+      "type": "string",
+      "description": "Optional: filter view_extensions to a single context (e.g. 'detail', 'list', 'form', 'timeline', 'card', 'inline')"
+    }
+  },
+  "required": ["name"],
+  "additionalProperties": false
+}

@@ -1,0 +1,22 @@
+{
+  "$comment": "s178-m01 capture-attribution control. These paths remain in every 152-image capture; only byte comparison excludes them. Adding an exclusion requires a recorded disagreement between captures of the same source tree.",
+  "expectedCorpusSize": 152,
+  "expectedPerMode": 76,
+  "exclusions": [
+    {
+      "path": "dark/brand-showcase--dark.png",
+      "decision": "#1469",
+      "reason": "Intermittent byte disagreement measured between pristine e5bf2f6 captures of an unchanged tree."
+    },
+    {
+      "path": "dark/brand-showcase--light.png",
+      "decision": "#1469",
+      "reason": "Intermittent byte disagreement measured between pristine e5bf2f6 captures of an unchanged tree."
+    },
+    {
+      "path": "dark/contexts-domain-context-gallery--gallery.png",
+      "decision": "#1469",
+      "reason": "Intermittent byte disagreement measured between same-HEAD captures of an unchanged tree."
+    }
+  ]
+}

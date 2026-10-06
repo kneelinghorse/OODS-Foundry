@@ -1,6 +1,6 @@
 import { useId } from 'react';
 import type { JSX, ReactNode } from 'react';
-import type { NormalizedVizSpec } from '../../viz/spec/normalized-viz-spec.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 
 export interface VizContainerProps extends React.HTMLAttributes<HTMLElement> {
   readonly spec: NormalizedVizSpec;
@@ -39,7 +39,7 @@ export function VizContainer({
       aria-describedby={describedBy}
       data-viz-spec={spec.id ?? undefined}
       className={mergeClassNames(
-        'flex min-w-0 w-full flex-col gap-6 overflow-hidden rounded-2xl border border-slate-200 bg-surface-raised px-6 py-6 shadow-card dark:border-slate-700 dark:bg-slate-900/60',
+        'flex flex-col gap-6 rounded-2xl border border-slate-200 bg-surface-raised px-6 py-6 shadow-card dark:border-slate-700 dark:bg-slate-900/60',
         className
       )}
       {...props}
@@ -51,24 +51,22 @@ export function VizContainer({
         {themeLabel ? <p className="text-xs uppercase tracking-wide text-text-muted">{themeLabel}</p> : null}
       </header>
 
-      <div className="grid gap-6">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
         <div className="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-600 dark:bg-slate-900" aria-hidden="true">
           {chart}
         </div>
-        {(description || fallback) ? (
-          <div className="flex min-w-0 flex-col gap-4">
-            {description ? (
-              <div id={descriptionId} className="space-y-3">
-                {description}
-              </div>
-            ) : null}
-            {fallback ? (
-              <div id={fallbackId} className="space-y-3">
-                {fallback}
-              </div>
-            ) : null}
-          </div>
-        ) : null}
+        <div className="flex min-w-0 flex-col gap-4">
+          {description ? (
+            <div id={descriptionId} className="space-y-3">
+              {description}
+            </div>
+          ) : null}
+          {fallback ? (
+            <div id={fallbackId} className="space-y-3">
+              {fallback}
+            </div>
+          ) : null}
+        </div>
       </div>
     </section>
   );

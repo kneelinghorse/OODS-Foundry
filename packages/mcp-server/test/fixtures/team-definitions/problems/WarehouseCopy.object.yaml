@@ -1,0 +1,11 @@
+# A second file declaring Warehouse: with the fixture's Warehouse in one folder, neither is used.
+object:
+  name: Warehouse
+  version: 1.0.1
+  domain: acme.logistics
+  description: A second definition of the same name.
+schema:
+  warehouse_id:
+    type: uuid
+    required: true
+    description: Unique identifier.

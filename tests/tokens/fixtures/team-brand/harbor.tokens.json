@@ -1,0 +1,1625 @@
+{
+  "base": {
+    "surface": {
+      "canvas": {
+        "$type": "color",
+        "$value": "oklch(1 0.000007 205)",
+        "$description": "Primary application canvas."
+      },
+      "raised": {
+        "$type": "color",
+        "$value": "oklch(1 0.000007 205)",
+        "$description": "Raised card surface."
+      },
+      "subtle": {
+        "$type": "color",
+        "$value": "oklch(0.97 0.00288 205)",
+        "$description": "Subtle secondary surface."
+      },
+      "disabled": {
+        "$type": "color",
+        "$value": "oklch(0.97 0.00288 205)",
+        "$description": "Surface colour for disabled or inactive UI."
+      },
+      "backdrop": {
+        "$type": "color",
+        "$value": "oklch(0.145 0.00708 205)",
+        "$description": "Backdrop scrim surface."
+      },
+      "inverse": {
+        "$type": "color",
+        "$value": "oklch(0.145 0.00708 205)",
+        "$description": "Inverse surface for dark-on-light treatments."
+      },
+      "interactive": {
+        "primary": {
+          "default": {
+            "$type": "color",
+            "$value": "oklch(0.555682 0.098165 215)",
+            "$description": "Primary interactive surface default state."
+          },
+          "hover": {
+            "$type": "color",
+            "$value": "oklch(0.525682 0.092719 214.68812)",
+            "$description": "Primary interactive surface hover state."
+          },
+          "pressed": {
+            "$type": "color",
+            "$value": "oklch(0.495682 0.087428 214.68812)",
+            "$description": "Primary interactive surface pressed state."
+          }
+        },
+        "secondary": {
+          "default": {
+            "$type": "color",
+            "$value": "oklch(0.97 0.00288 205)",
+            "$description": "The secondary action (a subtle fill), at rest."
+          },
+          "hover": {
+            "$type": "color",
+            "$value": "oklch(0.95 0.00348 205)",
+            "$description": "The secondary action (a subtle fill), hovered."
+          },
+          "pressed": {
+            "$type": "color",
+            "$value": "oklch(0.935 0.00492 205)",
+            "$description": "The secondary action (a subtle fill), pressed."
+          }
+        },
+        "destructive": {
+          "default": {
+            "$type": "color",
+            "$value": "oklch(0.590577 0.193344 23)",
+            "$description": "The destructive action, at rest."
+          },
+          "hover": {
+            "$type": "color",
+            "$value": "oklch(0.560577 0.194665 24.00731)",
+            "$description": "The destructive action, hovered."
+          },
+          "pressed": {
+            "$type": "color",
+            "$value": "oklch(0.530577 0.194665 24.00731)",
+            "$description": "The destructive action, pressed."
+          }
+        }
+      }
+    },
+    "border": {
+      "subtle": {
+        "$type": "color",
+        "$value": "oklch(0.922 0.00636 205)",
+        "$description": "Default border for surfaces."
+      },
+      "strong": {
+        "$type": "color",
+        "$value": "oklch(0.871 0.0078 205)",
+        "$description": "High-emphasis border."
+      },
+      "interactive": {
+        "$type": "color",
+        "$value": "oklch(0.643 0.012 205)",
+        "$description": "Border of a control (input, select, checkbox, outline button), at least 3:1 against the surface it sits on."
+      },
+      "interactiveHover": {
+        "$type": "color",
+        "$value": "oklch(0.545 0.01056 205)",
+        "$description": "Border of a hovered control."
+      }
+    },
+    "text": {
+      "primary": {
+        "$type": "color",
+        "$value": "oklch(0.145 0.00708 205)",
+        "$description": "Primary reading text."
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": "oklch(0.439 0.00984 205)",
+        "$description": "Secondary supporting text."
+      },
+      "muted": {
+        "$type": "color",
+        "$value": "oklch(0.66 0.02 225)",
+        "$description": "Muted caption text."
+      },
+      "inverse": {
+        "$type": "color",
+        "$value": "oklch(1 0.000007 205)",
+        "$description": "Text on inverse surfaces."
+      },
+      "onInteractive": {
+        "$type": "color",
+        "$value": "oklch(1 0.000007 205)",
+        "$description": "Text and icons on the primary interactive surface (buttons and selected controls)."
+      },
+      "onDestructive": {
+        "$type": "color",
+        "$value": "oklch(1 0.000007 205)",
+        "$description": "Text and icons on the destructive action."
+      },
+      "disabled": {
+        "$type": "color",
+        "$value": "oklch(0.643 0.012 205)",
+        "$description": "Disabled or de-emphasised text."
+      },
+      "accent": {
+        "$type": "color",
+        "$value": "oklch(0.535335 0.093945 213.638937)",
+        "$description": "Accent text colour."
+      }
+    },
+    "focus": {
+      "ring": {
+        "outer": {
+          "$type": "color",
+          "$value": "oklch(0.145 0.00708 205)",
+          "$description": "Outer focus ring colour."
+        },
+        "inner": {
+          "$type": "color",
+          "$value": "oklch(1 0.000007 205)",
+          "$description": "Inner focus ring colour."
+        }
+      },
+      "text": {
+        "$type": "color",
+        "$value": "oklch(0.535335 0.093945 213.638937)",
+        "$description": "Focus foreground colour."
+      }
+    },
+    "accent": {
+      "background": {
+        "$type": "color",
+        "$value": "oklch(0.958855 0.026204 199.053276)",
+        "$description": "Background of an accent panel."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "oklch(0.803112 0.080672 205.167512)",
+        "$description": "Border of an accent panel."
+      },
+      "text": {
+        "$type": "color",
+        "$value": "oklch(0.530335 0.093067 213.638937)",
+        "$description": "Text on an accent panel."
+      }
+    },
+    "status": {
+      "info": {
+        "surface": {
+          "$type": "color",
+          "$value": "oklch(0.959682 0.020056 238.701263)",
+          "$description": "Informational background surface."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "oklch(0.809755 0.088669 243.091253)",
+          "$description": "Informational border colour."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "oklch(0.540689 0.162234 252.214666)",
+          "$description": "Informational text colour."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "oklch(0.622153 0.183136 251.723539)",
+          "$description": "Informational icon colour."
+        },
+        "solid": {
+          "$type": "color",
+          "$value": "oklch(0.566651 0.168568 251.8)",
+          "$description": "Solid info fill, for emphasis (a solid badge or banner)."
+        },
+        "onSolid": {
+          "$type": "color",
+          "$value": "oklch(1 0.000007 205)",
+          "$description": "Text and icons on the solid info fill."
+        }
+      },
+      "success": {
+        "surface": {
+          "$type": "color",
+          "$value": "oklch(0.958254 0.02227 155.931601)",
+          "$description": "Success feedback background."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "oklch(0.798152 0.08315 159.165466)",
+          "$description": "Success border colour."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "oklch(0.523466 0.11158 159.513172)",
+          "$description": "Success text colour."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "oklch(0.611472 0.126614 158.247346)",
+          "$description": "Success icon colour."
+        },
+        "solid": {
+          "$type": "color",
+          "$value": "oklch(0.548102 0.128886 157.7)",
+          "$description": "Solid success fill, for emphasis (a solid badge or banner)."
+        },
+        "onSolid": {
+          "$type": "color",
+          "$value": "oklch(1 0.000007 205)",
+          "$description": "Text and icons on the solid success fill."
+        }
+      },
+      "warning": {
+        "surface": {
+          "$type": "color",
+          "$value": "oklch(0.969531 0.068378 100.371682)",
+          "$description": "Warning feedback background."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "oklch(0.827254 0.122422 86.674497)",
+          "$description": "Warning border colour."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "oklch(0.555661 0.125763 63.921739)",
+          "$description": "Warning text colour."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "oklch(0.570661 0.129157 63.921739)",
+          "$description": "Warning icon colour."
+        },
+        "solid": {
+          "$type": "color",
+          "$value": "oklch(0.853575 0.15722 84.1)",
+          "$description": "Solid warning fill, for emphasis (a solid badge or banner)."
+        },
+        "onSolid": {
+          "$type": "color",
+          "$value": "oklch(0.145 0.00708 205)",
+          "$description": "Text and icons on the solid warning fill."
+        }
+      },
+      "critical": {
+        "surface": {
+          "$type": "color",
+          "$value": "oklch(0.955466 0.020724 13.839409)",
+          "$description": "Critical feedback background."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "oklch(0.807 0.088767 18.290593)",
+          "$description": "Critical border colour."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "oklch(0.556979 0.197433 25.13833)",
+          "$description": "Critical text colour."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "oklch(0.625577 0.193344 23)",
+          "$description": "Critical icon colour."
+        },
+        "solid": {
+          "$type": "color",
+          "$value": "oklch(0.590577 0.193344 23)",
+          "$description": "Solid critical fill, for emphasis (a solid badge or banner)."
+        },
+        "onSolid": {
+          "$type": "color",
+          "$value": "oklch(1 0.000007 205)",
+          "$description": "Text and icons on the solid critical fill."
+        }
+      },
+      "neutral": {
+        "surface": {
+          "$type": "color",
+          "$value": "oklch(0.97 0.00288 205)",
+          "$description": "Neutral feedback background."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "oklch(0.871 0.0078 205)",
+          "$description": "Neutral border colour."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "oklch(0.439 0.00984 205)",
+          "$description": "Neutral text colour."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "oklch(0.643 0.012 205)",
+          "$description": "Neutral icon colour."
+        },
+        "solid": {
+          "$type": "color",
+          "$value": "oklch(0.145 0.00708 205)",
+          "$description": "Solid neutral fill, for emphasis (a solid badge or banner)."
+        },
+        "onSolid": {
+          "$type": "color",
+          "$value": "oklch(1 0.000007 205)",
+          "$description": "Text and icons on the solid neutral fill."
+        }
+      },
+      "accent": {
+        "surface": {
+          "$type": "color",
+          "$value": "oklch(0.958855 0.026204 199.053276)",
+          "$description": "Accent feedback background."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "oklch(0.803112 0.080672 205.167512)",
+          "$description": "Accent border colour."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "oklch(0.530335 0.093067 213.638937)",
+          "$description": "Accent text colour."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "oklch(0.62569 0.110358 214.68812)",
+          "$description": "Accent icon colour."
+        },
+        "solid": {
+          "$type": "color",
+          "$value": "oklch(0.555682 0.098165 215)",
+          "$description": "Solid accent fill, for emphasis (a solid badge or banner)."
+        },
+        "onSolid": {
+          "$type": "color",
+          "$value": "oklch(1 0.000007 205)",
+          "$description": "Text and icons on the solid accent fill."
+        }
+      }
+    },
+    "radius": {
+      "control": {
+        "$type": "dimension",
+        "$value": "8px",
+        "$description": "Corner radius of a control at the default size: the brand recipe's radius."
+      },
+      "small": {
+        "$type": "dimension",
+        "$value": "6px",
+        "$description": "Corner radius of a small control: the brand radius less 2px."
+      },
+      "large": {
+        "$type": "dimension",
+        "$value": "10px",
+        "$description": "Corner radius of a large control: the brand radius plus 2px."
+      },
+      "card": {
+        "$type": "dimension",
+        "$value": "16px",
+        "$description": "Corner radius of a card or panel: twice the brand radius."
+      },
+      "pill": {
+        "$type": "dimension",
+        "$value": "999px",
+        "$description": "Fully rounded ends, for badges and pills."
+      }
+    },
+    "font": {
+      "sans": {
+        "$type": "fontFamily",
+        "$value": "'DM Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+        "$description": "The brand's sans family (the brand recipe's font)."
+      },
+      "mono": {
+        "$type": "fontFamily",
+        "$value": "'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
+        "$description": "The brand's mono family."
+      }
+    },
+    "viz": {
+      "mark": {
+        "single": {
+          "$type": "color",
+          "$value": "oklch(0.655682 0.115831 215)",
+          "$description": "Colour of a chart that draws a single series."
+        }
+      },
+      "scale": {
+        "categorical": {
+          "01": {
+            "$type": "color",
+            "$value": "oklch(0.655682 0.115831 215)",
+            "$description": "Series colour 1 of 6, for categories that have no order."
+          },
+          "02": {
+            "$type": "color",
+            "$value": "oklch(0.536145 0.18808 35)",
+            "$description": "Series colour 2 of 6, for categories that have no order."
+          },
+          "03": {
+            "$type": "color",
+            "$value": "oklch(0.581312 0.186129 275)",
+            "$description": "Series colour 3 of 6, for categories that have no order."
+          },
+          "04": {
+            "$type": "color",
+            "$value": "oklch(0.667517 0.137061 95)",
+            "$description": "Series colour 4 of 6, for categories that have no order."
+          },
+          "05": {
+            "$type": "color",
+            "$value": "oklch(0.539264 0.198452 335)",
+            "$description": "Series colour 5 of 6, for categories that have no order."
+          },
+          "06": {
+            "$type": "color",
+            "$value": "oklch(0.563372 0.136501 155)",
+            "$description": "Series colour 6 of 6, for categories that have no order."
+          }
+        },
+        "sequential": {
+          "01": {
+            "$type": "color",
+            "$value": "oklch(0.94 0.013183 215)",
+            "$description": "Step 1 of 9 of the ordered scale (01 is the low end)."
+          },
+          "02": {
+            "$type": "color",
+            "$value": "oklch(0.84 0.044993 215)",
+            "$description": "Step 2 of 9 of the ordered scale (01 is the low end)."
+          },
+          "03": {
+            "$type": "color",
+            "$value": "oklch(0.74 0.07709 215)",
+            "$description": "Step 3 of 9 of the ordered scale (01 is the low end)."
+          },
+          "04": {
+            "$type": "color",
+            "$value": "oklch(0.64 0.102096 215)",
+            "$description": "Step 4 of 9 of the ordered scale (01 is the low end)."
+          },
+          "05": {
+            "$type": "color",
+            "$value": "oklch(0.54 0.095395 215)",
+            "$description": "Step 5 of 9 of the ordered scale (01 is the low end)."
+          },
+          "06": {
+            "$type": "color",
+            "$value": "oklch(0.44 0.077729 215)",
+            "$description": "Step 6 of 9 of the ordered scale (01 is the low end)."
+          },
+          "07": {
+            "$type": "color",
+            "$value": "oklch(0.34 0.060064 215)",
+            "$description": "Step 7 of 9 of the ordered scale (01 is the low end)."
+          },
+          "08": {
+            "$type": "color",
+            "$value": "oklch(0.24 0.0424 215)",
+            "$description": "Step 8 of 9 of the ordered scale (01 is the low end)."
+          },
+          "09": {
+            "$type": "color",
+            "$value": "oklch(0.14 0.024739 215)",
+            "$description": "Step 9 of 9 of the ordered scale (01 is the low end)."
+          }
+        },
+        "diverging": {
+          "neg-01": {
+            "$type": "color",
+            "$value": "oklch(0.7 0.088271 215)",
+            "$description": "Step 1 of 5 below the midpoint of the diverging scale."
+          },
+          "pos-01": {
+            "$type": "color",
+            "$value": "oklch(0.7 0.088271 23)",
+            "$description": "Step 1 of 5 above the midpoint of the diverging scale."
+          },
+          "neg-02": {
+            "$type": "color",
+            "$value": "oklch(0.58 0.102461 215)",
+            "$description": "Step 2 of 5 below the midpoint of the diverging scale."
+          },
+          "pos-02": {
+            "$type": "color",
+            "$value": "oklch(0.58 0.102461 23)",
+            "$description": "Step 2 of 5 above the midpoint of the diverging scale."
+          },
+          "neg-03": {
+            "$type": "color",
+            "$value": "oklch(0.46 0.081262 215)",
+            "$description": "Step 3 of 5 below the midpoint of the diverging scale."
+          },
+          "pos-03": {
+            "$type": "color",
+            "$value": "oklch(0.46 0.081262 23)",
+            "$description": "Step 3 of 5 above the midpoint of the diverging scale."
+          },
+          "neg-04": {
+            "$type": "color",
+            "$value": "oklch(0.34 0.060064 215)",
+            "$description": "Step 4 of 5 below the midpoint of the diverging scale."
+          },
+          "pos-04": {
+            "$type": "color",
+            "$value": "oklch(0.34 0.060064 23)",
+            "$description": "Step 4 of 5 above the midpoint of the diverging scale."
+          },
+          "neg-05": {
+            "$type": "color",
+            "$value": "oklch(0.22 0.038867 215)",
+            "$description": "Step 5 of 5 below the midpoint of the diverging scale."
+          },
+          "pos-05": {
+            "$type": "color",
+            "$value": "oklch(0.22 0.038867 23)",
+            "$description": "Step 5 of 5 above the midpoint of the diverging scale."
+          },
+          "neutral": {
+            "$type": "color",
+            "$value": "oklch(0.82 0.01128 205)",
+            "$description": "Midpoint of the diverging scale."
+          }
+        }
+      }
+    }
+  },
+  "dark": {
+    "surface": {
+      "canvas": {
+        "$type": "color",
+        "$value": "oklch(0.145 0.00324 205)",
+        "$description": "Primary application canvas."
+      },
+      "raised": {
+        "$type": "color",
+        "$value": "oklch(0.205 0.00324 205)",
+        "$description": "Raised card surface."
+      },
+      "subtle": {
+        "$type": "color",
+        "$value": "oklch(0.269 0.0048 205)",
+        "$description": "Subtle secondary surface."
+      },
+      "disabled": {
+        "$type": "color",
+        "$value": "oklch(0.269 0.0048 205)",
+        "$description": "Surface colour for disabled or inactive UI."
+      },
+      "backdrop": {
+        "$type": "color",
+        "$value": "oklch(0.145 0.00324 205)",
+        "$description": "Backdrop scrim surface."
+      },
+      "inverse": {
+        "$type": "color",
+        "$value": "oklch(0.985 0.0024 205)",
+        "$description": "Inverse surface for dark-on-light treatments."
+      },
+      "interactive": {
+        "primary": {
+          "default": {
+            "$type": "color",
+            "$value": "oklch(0.555682 0.098165 215)",
+            "$description": "Primary interactive surface default state."
+          },
+          "hover": {
+            "$type": "color",
+            "$value": "oklch(0.525682 0.091718 212.324842)",
+            "$description": "Primary interactive surface hover state."
+          },
+          "pressed": {
+            "$type": "color",
+            "$value": "oklch(0.495682 0.086484 212.324842)",
+            "$description": "Primary interactive surface pressed state."
+          }
+        },
+        "secondary": {
+          "default": {
+            "$type": "color",
+            "$value": "oklch(0.269 0.0048 205)",
+            "$description": "The secondary action (a subtle fill), at rest."
+          },
+          "hover": {
+            "$type": "color",
+            "$value": "oklch(0.29 0.00564 205)",
+            "$description": "The secondary action (a subtle fill), hovered."
+          },
+          "pressed": {
+            "$type": "color",
+            "$value": "oklch(0.31 0.00636 205)",
+            "$description": "The secondary action (a subtle fill), pressed."
+          }
+        },
+        "destructive": {
+          "default": {
+            "$type": "color",
+            "$value": "oklch(0.590577 0.193344 23)",
+            "$description": "The destructive action, at rest."
+          },
+          "hover": {
+            "$type": "color",
+            "$value": "oklch(0.560577 0.177398 22.826714)",
+            "$description": "The destructive action, hovered."
+          },
+          "pressed": {
+            "$type": "color",
+            "$value": "oklch(0.530577 0.177398 22.826714)",
+            "$description": "The destructive action, pressed."
+          }
+        }
+      }
+    },
+    "border": {
+      "subtle": {
+        "$type": "color",
+        "$value": "oklch(0.325 0.00804 205)",
+        "$description": "Default border for surfaces."
+      },
+      "strong": {
+        "$type": "color",
+        "$value": "oklch(0.37 0.0096 205)",
+        "$description": "High-emphasis border."
+      },
+      "interactive": {
+        "$type": "color",
+        "$value": "oklch(0.538 0.012 205)",
+        "$description": "Border of a control (input, select, checkbox, outline button), at least 3:1 against the surface it sits on."
+      },
+      "interactiveHover": {
+        "$type": "color",
+        "$value": "oklch(0.708 0.012 205)",
+        "$description": "Border of a hovered control."
+      }
+    },
+    "text": {
+      "primary": {
+        "$type": "color",
+        "$value": "oklch(0.985 0.0024 205)",
+        "$description": "Primary reading text."
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": "oklch(0.769 0.00804 205)",
+        "$description": "Secondary supporting text."
+      },
+      "muted": {
+        "$type": "color",
+        "$value": "oklch(0.708 0.012 205)",
+        "$description": "Muted caption text."
+      },
+      "inverse": {
+        "$type": "color",
+        "$value": "oklch(0.145 0.00708 205)",
+        "$description": "Text on inverse surfaces."
+      },
+      "onInteractive": {
+        "$type": "color",
+        "$value": "oklch(1 0.000007 205)",
+        "$description": "Text and icons on the primary interactive surface (buttons and selected controls)."
+      },
+      "onDestructive": {
+        "$type": "color",
+        "$value": "oklch(1 0.000007 205)",
+        "$description": "Text and icons on the destructive action."
+      },
+      "disabled": {
+        "$type": "color",
+        "$value": "oklch(0.538 0.012 205)",
+        "$description": "Disabled or de-emphasised text."
+      },
+      "accent": {
+        "$type": "color",
+        "$value": "oklch(0.785911 0.121055 207.347215)",
+        "$description": "Accent text colour."
+      }
+    },
+    "focus": {
+      "ring": {
+        "outer": {
+          "$type": "color",
+          "$value": "oklch(0.908792 0.059482 205.331752)",
+          "$description": "Outer focus ring colour."
+        },
+        "inner": {
+          "$type": "color",
+          "$value": "oklch(0.145 0.00324 205)",
+          "$description": "Inner focus ring colour."
+        }
+      },
+      "text": {
+        "$type": "color",
+        "$value": "oklch(0.785911 0.121055 207.347215)",
+        "$description": "Focus foreground colour."
+      }
+    },
+    "accent": {
+      "background": {
+        "$type": "color",
+        "$value": "oklch(0.273171 0.042467 214.683107)",
+        "$description": "Background of an accent panel."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "oklch(0.47691 0.081156 215.422842)",
+        "$description": "Border of an accent panel."
+      },
+      "text": {
+        "$type": "color",
+        "$value": "oklch(0.785911 0.121055 207.347215)",
+        "$description": "Text on an accent panel."
+      }
+    },
+    "status": {
+      "info": {
+        "surface": {
+          "$type": "color",
+          "$value": "oklch(0.274466 0.066296 253.950454)",
+          "$description": "Informational background surface."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "oklch(0.474077 0.121868 253.108822)",
+          "$description": "Informational border colour."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "oklch(0.764235 0.125721 249.494943)",
+          "$description": "Informational text colour."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "oklch(0.649151 0.193037 251.8)",
+          "$description": "Informational icon colour."
+        },
+        "solid": {
+          "$type": "color",
+          "$value": "oklch(0.566651 0.168568 251.8)",
+          "$description": "Solid info fill, for emphasis (a solid badge or banner)."
+        },
+        "onSolid": {
+          "$type": "color",
+          "$value": "oklch(1 0.000007 205)",
+          "$description": "Text and icons on the solid info fill."
+        }
+      },
+      "success": {
+        "surface": {
+          "$type": "color",
+          "$value": "oklch(0.272142 0.039586 162.175631)",
+          "$description": "Success feedback background."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "oklch(0.466982 0.08231 160.25737)",
+          "$description": "Success border colour."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "oklch(0.779439 0.165465 157.301059)",
+          "$description": "Success text colour."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "oklch(0.640602 0.132853 157.7)",
+          "$description": "Success icon colour."
+        },
+        "solid": {
+          "$type": "color",
+          "$value": "oklch(0.548102 0.128886 157.7)",
+          "$description": "Solid success fill, for emphasis (a solid badge or banner)."
+        },
+        "onSolid": {
+          "$type": "color",
+          "$value": "oklch(1 0.000007 205)",
+          "$description": "Text and icons on the solid success fill."
+        }
+      },
+      "warning": {
+        "surface": {
+          "$type": "color",
+          "$value": "oklch(0.25781 0.04422 74.467502)",
+          "$description": "Warning feedback background."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "oklch(0.454239 0.082359 74.940897)",
+          "$description": "Warning border colour."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "oklch(0.861614 0.172903 88.99284)",
+          "$description": "Warning text colour."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "oklch(0.853575 0.15722 84.1)",
+          "$description": "Warning icon colour."
+        },
+        "solid": {
+          "$type": "color",
+          "$value": "oklch(0.853575 0.15722 84.1)",
+          "$description": "Solid warning fill, for emphasis (a solid badge or banner)."
+        },
+        "onSolid": {
+          "$type": "color",
+          "$value": "oklch(0.145 0.00708 205)",
+          "$description": "Text and icons on the solid warning fill."
+        }
+      },
+      "critical": {
+        "surface": {
+          "$type": "color",
+          "$value": "oklch(0.251058 0.06493 12.674503)",
+          "$description": "Critical feedback background."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "oklch(0.450175 0.121046 18.748598)",
+          "$description": "Critical border colour."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "oklch(0.780413 0.128122 22.121461)",
+          "$description": "Critical text colour."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "oklch(0.625577 0.193344 23)",
+          "$description": "Critical icon colour."
+        },
+        "solid": {
+          "$type": "color",
+          "$value": "oklch(0.590577 0.193344 23)",
+          "$description": "Solid critical fill, for emphasis (a solid badge or banner)."
+        },
+        "onSolid": {
+          "$type": "color",
+          "$value": "oklch(1 0.000007 205)",
+          "$description": "Text and icons on the solid critical fill."
+        }
+      },
+      "neutral": {
+        "surface": {
+          "$type": "color",
+          "$value": "oklch(0.269 0.0048 205)",
+          "$description": "Neutral feedback background."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "oklch(0.37 0.0096 205)",
+          "$description": "Neutral border colour."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "oklch(0.769 0.00804 205)",
+          "$description": "Neutral text colour."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "oklch(0.708 0.012 205)",
+          "$description": "Neutral icon colour."
+        },
+        "solid": {
+          "$type": "color",
+          "$value": "oklch(0.985 0.0024 205)",
+          "$description": "Solid neutral fill, for emphasis (a solid badge or banner)."
+        },
+        "onSolid": {
+          "$type": "color",
+          "$value": "oklch(0.145 0.00708 205)",
+          "$description": "Text and icons on the solid neutral fill."
+        }
+      },
+      "accent": {
+        "surface": {
+          "$type": "color",
+          "$value": "oklch(0.273171 0.042467 214.683107)",
+          "$description": "Accent feedback background."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "oklch(0.47691 0.081156 215.422842)",
+          "$description": "Accent border colour."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "oklch(0.785911 0.121055 207.347215)",
+          "$description": "Accent text colour."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "oklch(0.658182 0.116272 215)",
+          "$description": "Accent icon colour."
+        },
+        "solid": {
+          "$type": "color",
+          "$value": "oklch(0.555682 0.098165 215)",
+          "$description": "Solid accent fill, for emphasis (a solid badge or banner)."
+        },
+        "onSolid": {
+          "$type": "color",
+          "$value": "oklch(1 0.000007 205)",
+          "$description": "Text and icons on the solid accent fill."
+        }
+      }
+    },
+    "viz": {
+      "mark": {
+        "single": {
+          "$type": "color",
+          "$value": "oklch(0.658182 0.116272 215)",
+          "$description": "Colour of a chart that draws a single series."
+        }
+      },
+      "scale": {
+        "categorical": {
+          "01": {
+            "$type": "color",
+            "$value": "oklch(0.658182 0.116272 215)",
+            "$description": "Series colour 1 of 6, for categories that have no order."
+          },
+          "02": {
+            "$type": "color",
+            "$value": "oklch(0.596145 0.1932 35)",
+            "$description": "Series colour 2 of 6, for categories that have no order."
+          },
+          "03": {
+            "$type": "color",
+            "$value": "oklch(0.581312 0.186129 275)",
+            "$description": "Series colour 3 of 6, for categories that have no order."
+          },
+          "04": {
+            "$type": "color",
+            "$value": "oklch(0.895017 0.166367 95)",
+            "$description": "Series colour 4 of 6, for categories that have no order."
+          },
+          "05": {
+            "$type": "color",
+            "$value": "oklch(0.539264 0.198452 335)",
+            "$description": "Series colour 5 of 6, for categories that have no order."
+          },
+          "06": {
+            "$type": "color",
+            "$value": "oklch(0.563372 0.136501 155)",
+            "$description": "Series colour 6 of 6, for categories that have no order."
+          }
+        },
+        "sequential": {
+          "01": {
+            "$type": "color",
+            "$value": "oklch(0.2 0.035335 215)",
+            "$description": "Step 1 of 9 of the ordered scale (01 is the low end)."
+          },
+          "02": {
+            "$type": "color",
+            "$value": "oklch(0.3 0.052998 215)",
+            "$description": "Step 2 of 9 of the ordered scale (01 is the low end)."
+          },
+          "03": {
+            "$type": "color",
+            "$value": "oklch(0.4 0.070663 215)",
+            "$description": "Step 3 of 9 of the ordered scale (01 is the low end)."
+          },
+          "04": {
+            "$type": "color",
+            "$value": "oklch(0.5 0.088329 215)",
+            "$description": "Step 4 of 9 of the ordered scale (01 is the low end)."
+          },
+          "05": {
+            "$type": "color",
+            "$value": "oklch(0.6 0.087143 215)",
+            "$description": "Step 5 of 9 of the ordered scale (01 is the low end)."
+          },
+          "06": {
+            "$type": "color",
+            "$value": "oklch(0.7 0.070617 215)",
+            "$description": "Step 6 of 9 of the ordered scale (01 is the low end)."
+          },
+          "07": {
+            "$type": "color",
+            "$value": "oklch(0.8 0.046618 215)",
+            "$description": "Step 7 of 9 of the ordered scale (01 is the low end)."
+          },
+          "08": {
+            "$type": "color",
+            "$value": "oklch(0.9 0.020209 215)",
+            "$description": "Step 8 of 9 of the ordered scale (01 is the low end)."
+          },
+          "09": {
+            "$type": "color",
+            "$value": "oklch(1 0 215)",
+            "$description": "Step 9 of 9 of the ordered scale (01 is the low end)."
+          }
+        },
+        "diverging": {
+          "neg-01": {
+            "$type": "color",
+            "$value": "oklch(0.46 0.081262 215)",
+            "$description": "Step 1 of 5 below the midpoint of the diverging scale."
+          },
+          "pos-01": {
+            "$type": "color",
+            "$value": "oklch(0.46 0.081262 23)",
+            "$description": "Step 1 of 5 above the midpoint of the diverging scale."
+          },
+          "neg-02": {
+            "$type": "color",
+            "$value": "oklch(0.56 0.098928 215)",
+            "$description": "Step 2 of 5 below the midpoint of the diverging scale."
+          },
+          "pos-02": {
+            "$type": "color",
+            "$value": "oklch(0.56 0.098928 23)",
+            "$description": "Step 2 of 5 above the midpoint of the diverging scale."
+          },
+          "neg-03": {
+            "$type": "color",
+            "$value": "oklch(0.66 0.097933 215)",
+            "$description": "Step 3 of 5 below the midpoint of the diverging scale."
+          },
+          "pos-03": {
+            "$type": "color",
+            "$value": "oklch(0.66 0.097933 23)",
+            "$description": "Step 3 of 5 above the midpoint of the diverging scale."
+          },
+          "neg-04": {
+            "$type": "color",
+            "$value": "oklch(0.76 0.071039 215)",
+            "$description": "Step 4 of 5 below the midpoint of the diverging scale."
+          },
+          "pos-04": {
+            "$type": "color",
+            "$value": "oklch(0.76 0.071039 23)",
+            "$description": "Step 4 of 5 above the midpoint of the diverging scale."
+          },
+          "neg-05": {
+            "$type": "color",
+            "$value": "oklch(0.86 0.038319 215)",
+            "$description": "Step 5 of 5 below the midpoint of the diverging scale."
+          },
+          "pos-05": {
+            "$type": "color",
+            "$value": "oklch(0.86 0.038319 23)",
+            "$description": "Step 5 of 5 above the midpoint of the diverging scale."
+          },
+          "neutral": {
+            "$type": "color",
+            "$value": "oklch(0.36 0.012 205)",
+            "$description": "Midpoint of the diverging scale."
+          }
+        }
+      }
+    }
+  },
+  "hc": {
+    "surface": {
+      "canvas": {
+        "$type": "color",
+        "$value": "Canvas",
+        "$description": "Primary application canvas."
+      },
+      "raised": {
+        "$type": "color",
+        "$value": "Canvas",
+        "$description": "Raised card surface."
+      },
+      "subtle": {
+        "$type": "color",
+        "$value": "Canvas",
+        "$description": "Subtle secondary surface."
+      },
+      "disabled": {
+        "$type": "color",
+        "$value": "Canvas",
+        "$description": "Surface colour for disabled or inactive UI."
+      },
+      "backdrop": {
+        "$type": "color",
+        "$value": "Canvas",
+        "$description": "Backdrop scrim surface."
+      },
+      "inverse": {
+        "$type": "color",
+        "$value": "CanvasText",
+        "$description": "Inverse surface for dark-on-light treatments."
+      },
+      "interactive": {
+        "primary": {
+          "default": {
+            "$type": "color",
+            "$value": "Highlight",
+            "$description": "Primary interactive surface default state."
+          },
+          "hover": {
+            "$type": "color",
+            "$value": "Highlight",
+            "$description": "Primary interactive surface hover state."
+          },
+          "pressed": {
+            "$type": "color",
+            "$value": "Highlight",
+            "$description": "Primary interactive surface pressed state."
+          }
+        },
+        "secondary": {
+          "default": {
+            "$type": "color",
+            "$value": "Canvas",
+            "$description": "The secondary action (a subtle fill), at rest."
+          },
+          "hover": {
+            "$type": "color",
+            "$value": "Canvas",
+            "$description": "The secondary action (a subtle fill), hovered."
+          },
+          "pressed": {
+            "$type": "color",
+            "$value": "Canvas",
+            "$description": "The secondary action (a subtle fill), pressed."
+          }
+        },
+        "destructive": {
+          "default": {
+            "$type": "color",
+            "$value": "Canvas",
+            "$description": "The destructive action, at rest."
+          },
+          "hover": {
+            "$type": "color",
+            "$value": "Canvas",
+            "$description": "The destructive action, hovered."
+          },
+          "pressed": {
+            "$type": "color",
+            "$value": "Canvas",
+            "$description": "The destructive action, pressed."
+          }
+        }
+      }
+    },
+    "border": {
+      "subtle": {
+        "$type": "color",
+        "$value": "CanvasText",
+        "$description": "Default border for surfaces."
+      },
+      "strong": {
+        "$type": "color",
+        "$value": "CanvasText",
+        "$description": "High-emphasis border."
+      },
+      "interactive": {
+        "$type": "color",
+        "$value": "CanvasText",
+        "$description": "Border of a control (input, select, checkbox, outline button), at least 3:1 against the surface it sits on."
+      },
+      "interactiveHover": {
+        "$type": "color",
+        "$value": "CanvasText",
+        "$description": "Border of a hovered control."
+      }
+    },
+    "text": {
+      "primary": {
+        "$type": "color",
+        "$value": "CanvasText",
+        "$description": "Primary reading text."
+      },
+      "secondary": {
+        "$type": "color",
+        "$value": "CanvasText",
+        "$description": "Secondary supporting text."
+      },
+      "muted": {
+        "$type": "color",
+        "$value": "CanvasText",
+        "$description": "Muted caption text."
+      },
+      "inverse": {
+        "$type": "color",
+        "$value": "Canvas",
+        "$description": "Text on inverse surfaces."
+      },
+      "onInteractive": {
+        "$type": "color",
+        "$value": "HighlightText",
+        "$description": "Text and icons on the primary interactive surface (buttons and selected controls)."
+      },
+      "onDestructive": {
+        "$type": "color",
+        "$value": "CanvasText",
+        "$description": "Text and icons on the destructive action."
+      },
+      "disabled": {
+        "$type": "color",
+        "$value": "GrayText",
+        "$description": "Disabled or de-emphasised text."
+      },
+      "accent": {
+        "$type": "color",
+        "$value": "LinkText",
+        "$description": "Accent text colour."
+      }
+    },
+    "focus": {
+      "ring": {
+        "outer": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "Outer focus ring colour."
+        },
+        "inner": {
+          "$type": "color",
+          "$value": "Canvas",
+          "$description": "Inner focus ring colour."
+        }
+      },
+      "text": {
+        "$type": "color",
+        "$value": "CanvasText",
+        "$description": "Focus foreground colour."
+      }
+    },
+    "accent": {
+      "background": {
+        "$type": "color",
+        "$value": "Canvas",
+        "$description": "Background of an accent panel."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "CanvasText",
+        "$description": "Border of an accent panel."
+      },
+      "text": {
+        "$type": "color",
+        "$value": "CanvasText",
+        "$description": "Text on an accent panel."
+      }
+    },
+    "status": {
+      "info": {
+        "surface": {
+          "$type": "color",
+          "$value": "Canvas",
+          "$description": "Informational background surface."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "Informational border colour."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "Informational text colour."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "Informational icon colour."
+        },
+        "solid": {
+          "$type": "color",
+          "$value": "Canvas",
+          "$description": "Solid info fill, for emphasis (a solid badge or banner)."
+        },
+        "onSolid": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "Text and icons on the solid info fill."
+        }
+      },
+      "success": {
+        "surface": {
+          "$type": "color",
+          "$value": "Canvas",
+          "$description": "Success feedback background."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "Success border colour."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "Success text colour."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "Success icon colour."
+        },
+        "solid": {
+          "$type": "color",
+          "$value": "Canvas",
+          "$description": "Solid success fill, for emphasis (a solid badge or banner)."
+        },
+        "onSolid": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "Text and icons on the solid success fill."
+        }
+      },
+      "warning": {
+        "surface": {
+          "$type": "color",
+          "$value": "Canvas",
+          "$description": "Warning feedback background."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "Warning border colour."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "Warning text colour."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "Warning icon colour."
+        },
+        "solid": {
+          "$type": "color",
+          "$value": "Canvas",
+          "$description": "Solid warning fill, for emphasis (a solid badge or banner)."
+        },
+        "onSolid": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "Text and icons on the solid warning fill."
+        }
+      },
+      "critical": {
+        "surface": {
+          "$type": "color",
+          "$value": "Canvas",
+          "$description": "Critical feedback background."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "Critical border colour."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "Critical text colour."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "Critical icon colour."
+        },
+        "solid": {
+          "$type": "color",
+          "$value": "Canvas",
+          "$description": "Solid critical fill, for emphasis (a solid badge or banner)."
+        },
+        "onSolid": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "Text and icons on the solid critical fill."
+        }
+      },
+      "neutral": {
+        "surface": {
+          "$type": "color",
+          "$value": "Canvas",
+          "$description": "Neutral feedback background."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "Neutral border colour."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "Neutral text colour."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "Neutral icon colour."
+        },
+        "solid": {
+          "$type": "color",
+          "$value": "Canvas",
+          "$description": "Solid neutral fill, for emphasis (a solid badge or banner)."
+        },
+        "onSolid": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "Text and icons on the solid neutral fill."
+        }
+      },
+      "accent": {
+        "surface": {
+          "$type": "color",
+          "$value": "Canvas",
+          "$description": "Accent feedback background."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "Accent border colour."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "Accent text colour."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "Accent icon colour."
+        },
+        "solid": {
+          "$type": "color",
+          "$value": "Canvas",
+          "$description": "Solid accent fill, for emphasis (a solid badge or banner)."
+        },
+        "onSolid": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "Text and icons on the solid accent fill."
+        }
+      }
+    },
+    "viz": {
+      "mark": {
+        "single": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "Colour of a chart that draws a single series."
+        }
+      },
+      "scale": {
+        "categorical": {
+          "01": {
+            "$type": "color",
+            "$value": "CanvasText",
+            "$description": "Series colour 1 of 6, for categories that have no order."
+          },
+          "02": {
+            "$type": "color",
+            "$value": "CanvasText",
+            "$description": "Series colour 2 of 6, for categories that have no order."
+          },
+          "03": {
+            "$type": "color",
+            "$value": "CanvasText",
+            "$description": "Series colour 3 of 6, for categories that have no order."
+          },
+          "04": {
+            "$type": "color",
+            "$value": "CanvasText",
+            "$description": "Series colour 4 of 6, for categories that have no order."
+          },
+          "05": {
+            "$type": "color",
+            "$value": "CanvasText",
+            "$description": "Series colour 5 of 6, for categories that have no order."
+          },
+          "06": {
+            "$type": "color",
+            "$value": "CanvasText",
+            "$description": "Series colour 6 of 6, for categories that have no order."
+          }
+        },
+        "sequential": {
+          "01": {
+            "$type": "color",
+            "$value": "oklch(0.94 0 265)",
+            "$description": "Step 1 of 9 of the ordered scale (01 is the low end)."
+          },
+          "02": {
+            "$type": "color",
+            "$value": "oklch(0.84 0 265)",
+            "$description": "Step 2 of 9 of the ordered scale (01 is the low end)."
+          },
+          "03": {
+            "$type": "color",
+            "$value": "oklch(0.74 0 265)",
+            "$description": "Step 3 of 9 of the ordered scale (01 is the low end)."
+          },
+          "04": {
+            "$type": "color",
+            "$value": "oklch(0.64 0 265)",
+            "$description": "Step 4 of 9 of the ordered scale (01 is the low end)."
+          },
+          "05": {
+            "$type": "color",
+            "$value": "oklch(0.54 0 265)",
+            "$description": "Step 5 of 9 of the ordered scale (01 is the low end)."
+          },
+          "06": {
+            "$type": "color",
+            "$value": "oklch(0.44 0 265)",
+            "$description": "Step 6 of 9 of the ordered scale (01 is the low end)."
+          },
+          "07": {
+            "$type": "color",
+            "$value": "oklch(0.34 0 265)",
+            "$description": "Step 7 of 9 of the ordered scale (01 is the low end)."
+          },
+          "08": {
+            "$type": "color",
+            "$value": "oklch(0.24 0 265)",
+            "$description": "Step 8 of 9 of the ordered scale (01 is the low end)."
+          },
+          "09": {
+            "$type": "color",
+            "$value": "oklch(0.14 0 265)",
+            "$description": "Step 9 of 9 of the ordered scale (01 is the low end)."
+          }
+        },
+        "diverging": {
+          "neg-01": {
+            "$type": "color",
+            "$value": "oklch(0.7 0 197.5)",
+            "$description": "Step 1 of 5 below the midpoint of the diverging scale."
+          },
+          "pos-01": {
+            "$type": "color",
+            "$value": "oklch(0.7 0 17.5)",
+            "$description": "Step 1 of 5 above the midpoint of the diverging scale."
+          },
+          "neg-02": {
+            "$type": "color",
+            "$value": "oklch(0.58 0 197.5)",
+            "$description": "Step 2 of 5 below the midpoint of the diverging scale."
+          },
+          "pos-02": {
+            "$type": "color",
+            "$value": "oklch(0.58 0 17.5)",
+            "$description": "Step 2 of 5 above the midpoint of the diverging scale."
+          },
+          "neg-03": {
+            "$type": "color",
+            "$value": "oklch(0.46 0 197.5)",
+            "$description": "Step 3 of 5 below the midpoint of the diverging scale."
+          },
+          "pos-03": {
+            "$type": "color",
+            "$value": "oklch(0.46 0 17.5)",
+            "$description": "Step 3 of 5 above the midpoint of the diverging scale."
+          },
+          "neg-04": {
+            "$type": "color",
+            "$value": "oklch(0.34 0 197.5)",
+            "$description": "Step 4 of 5 below the midpoint of the diverging scale."
+          },
+          "pos-04": {
+            "$type": "color",
+            "$value": "oklch(0.34 0 17.5)",
+            "$description": "Step 4 of 5 above the midpoint of the diverging scale."
+          },
+          "neg-05": {
+            "$type": "color",
+            "$value": "oklch(0.22 0 197.5)",
+            "$description": "Step 5 of 5 below the midpoint of the diverging scale."
+          },
+          "pos-05": {
+            "$type": "color",
+            "$value": "oklch(0.22 0 17.5)",
+            "$description": "Step 5 of 5 above the midpoint of the diverging scale."
+          },
+          "neutral": {
+            "$type": "color",
+            "$value": "oklch(0.82 0 265)",
+            "$description": "Midpoint of the diverging scale."
+          }
+        }
+      }
+    }
+  }
+}

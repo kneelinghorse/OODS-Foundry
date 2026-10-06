@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forge design preview</title>
+<style>
+/* The panel follows the host (its theme and, when offered, its style variables); the running app keeps its own tokens. */
+:root{--preview-fg:#18181b;--preview-muted:#52525b;--preview-border:#d4d4d8;--preview-rule:#e4e4e7;--preview-surface:#ffffff;--preview-pressed:#18181b;--preview-on-pressed:#ffffff;--preview-link:#1d4ed8;--preview-danger:#b91c1c;--preview-added:#166534}
+html[data-host-theme="dark"]{color-scheme:dark;--preview-fg:#f4f4f5;--preview-muted:#a1a1aa;--preview-border:#52525b;--preview-rule:#3f3f46;--preview-surface:#27272a;--preview-pressed:#f4f4f5;--preview-on-pressed:#18181b;--preview-link:#93c5fd;--preview-danger:#fca5a5;--preview-added:#86efac}
+html,body{margin:0;background:transparent}
+[data-oods-toolbar],[data-oods-panel],[data-oods-compare],[data-oods-preview-errors]{font:14px/1.45 var(--font-sans, system-ui, -apple-system, "Segoe UI", sans-serif);color:var(--color-text-primary, var(--preview-fg))}
+[data-oods-toolbar]{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:8px 12px;border-bottom:1px solid var(--color-border-primary, var(--preview-border))}
+[data-oods-preview-status]{flex:1 1 100%;margin:0;font-size:12px;color:var(--color-text-secondary, var(--preview-muted))}
+[data-oods-toolbar] .controls{display:flex;flex-wrap:wrap;align-items:center;gap:4px}
+[data-oods-toolbar] .label{margin-right:2px;font-size:12px;color:var(--color-text-secondary, var(--preview-muted))}
+[data-oods-toolbar] button,[data-oods-panel] button:not(.link):not(.move),[data-oods-compare] button{font:inherit;font-size:12px;padding:2px 8px;border:1px solid var(--color-border-primary, var(--preview-border));border-radius:var(--border-radius-sm, 6px);background:var(--color-background-primary, var(--preview-surface));color:inherit;cursor:pointer}
+[data-oods-toolbar] button[aria-pressed="true"]{background:var(--color-background-inverse, var(--preview-pressed));border-color:var(--color-background-inverse, var(--preview-pressed));color:var(--color-text-inverse, var(--preview-on-pressed))}
+[data-oods-panel] button:disabled{opacity:.5;cursor:default}
+/* The running app: canvas and text as on the Sprint 201 page (the scope is set on the document), its width queries answered by its frame (the build rewrites them to the oods-app container). */
+[data-oods-stage]{overflow-x:auto}
+[data-oods-app-frame],[data-oods-side-frame]{container:oods-app / inline-size;color:var(--sys-text-primary);background:var(--sys-surface-canvas);font-family:var(--sys-text-scale-body-md-font-family);font-size:var(--sys-text-scale-body-md-font-size);line-height:var(--sys-text-scale-body-md-line-height)}
+/* Side by side: two running apps in one scope, what changed, both measurement panels. */
+[data-oods-compare] .compare-bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:8px 12px}
+[data-oods-compare-title]{margin:0;font-weight:600}
+[data-oods-compare] .sides{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:0 12px}
+[data-oods-compare] .side{min-width:0}
+[data-oods-compare] .side h2{margin:0 0 6px;font-size:13px;font-weight:500;color:var(--color-text-secondary, var(--preview-muted))}
+[data-oods-side-frame]{border:1px solid var(--color-border-primary, var(--preview-border))}
+[data-oods-what-changed],[data-oods-compare-panels]{margin:12px;padding:8px 10px;border:1px solid var(--color-border-primary, var(--preview-border));border-radius:var(--border-radius-md, 8px)}
+[data-oods-what-changed] h2{margin:0 0 6px;font-size:13px}
+[data-oods-what-changed] h3,[data-oods-compare-panels] h3{margin:10px 0 4px;font-size:12px}
+[data-oods-what-changed] ul,[data-oods-compare-panels] ul{margin:0;padding-left:18px}
+[data-oods-what-changed] li{margin:0 0 6px;word-break:break-all}
+[data-oods-what-changed] code,[data-oods-compare-panels] code{font:12px var(--font-mono, ui-monospace, monospace)}
+[data-oods-what-changed] em{color:var(--color-text-secondary, var(--preview-muted))}
+[data-oods-what-changed] .before{color:var(--preview-danger)}
+[data-oods-what-changed] .after{color:var(--preview-added)}
+[data-oods-compare-panels]{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+[data-oods-compare-panels] h4{margin:10px 0 4px;font-size:12px;color:var(--color-text-secondary, var(--preview-muted))}
+[data-oods-compare-panels] li{margin:0 0 4px;word-break:break-word}
+[data-oods-panel]{padding:8px 12px}
+[data-oods-panel] details{margin:0 0 8px;padding:6px 10px;border:1px solid var(--color-border-primary, var(--preview-border));border-radius:var(--border-radius-md, 8px)}
+[data-oods-panel] summary{cursor:pointer;font-weight:600}
+[data-oods-panel] dl{margin:6px 0 0}
+[data-oods-panel] .row{display:grid;grid-template-columns:110px 1fr;gap:6px;padding:3px 0;border-bottom:1px solid var(--color-border-secondary, var(--preview-rule))}
+[data-oods-panel] dt{color:var(--color-text-secondary, var(--preview-muted))}
+[data-oods-panel] dd{margin:0;word-break:break-all}
+[data-oods-panel] code{font:12px var(--font-mono, ui-monospace, monospace)}
+[data-oods-panel] ul{margin:6px 0 0;padding-left:18px}
+[data-oods-panel] li{margin:0 0 4px;word-break:break-word}
+[data-oods-panel] li[aria-current="true"]{list-style:"▸ "}
+[data-oods-panel] button.link{font:inherit;padding:0;border:0;background:none;color:var(--color-text-info, var(--preview-link));text-decoration:underline;cursor:pointer}
+[data-oods-panel] h3{margin:6px 0;font-size:13px}
+[data-oods-panel] h4{margin:10px 0 4px;font-size:12px;color:var(--color-text-secondary, var(--preview-muted))}
+[data-oods-panel] .count{font-weight:400;color:var(--color-text-secondary, var(--preview-muted))}
+[data-oods-panel] .note{margin:8px 0 2px;font-size:12px;color:var(--color-text-secondary, var(--preview-muted))}
+[data-oods-panel] .act{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:8px 0}
+[data-oods-panel] .act label{font-size:12px}
+[data-oods-panel] .status{font-size:12px;color:var(--color-text-secondary, var(--preview-muted))}
+[data-oods-panel] textarea{flex:1 1 100%;min-height:3em;font:inherit;padding:4px 6px;border:1px solid var(--color-border-primary, var(--preview-border));border-radius:6px;background:var(--color-background-primary, var(--preview-surface));color:inherit}
+[data-oods-panel] select,[data-oods-panel] input{max-width:100%;font:inherit;padding:2px 6px;border:1px solid var(--color-border-primary, var(--preview-border));border-radius:6px;background:var(--color-background-primary, var(--preview-surface));color:inherit}
+[data-oods-panel] .edit ol{margin:0 0 8px;padding-left:18px}
+[data-oods-panel] .edit button.move{font:inherit;font-size:11px;padding:0 6px;border:1px solid var(--color-border-primary, var(--preview-border));border-radius:4px;background:var(--color-background-primary, var(--preview-surface));color:inherit;cursor:pointer}
+[data-oods-panel] .edit form{margin:0 0 6px}
+[data-oods-preview-errors]{margin:8px 12px;padding:8px 10px;border:1px solid var(--preview-danger);border-radius:6px;color:var(--preview-danger);white-space:pre-wrap}
+</style>
+<!-- OODS_PREVIEW_RUNTIME_STYLES -->
+</head>
+<body>
+<div id="oods-preview" data-oods-preview-app="true">
+<header data-oods-toolbar="true"><p data-oods-preview-status="true" aria-live="polite">Connecting to the host…</p></header>
+<div data-oods-stage="true">
+<div data-oods-app-frame="true"><div id="app"></div></div>
+<div data-oods-compare="true" hidden>
+<div class="compare-bar"><p data-oods-compare-title="true"></p><button type="button" data-act="close-compare">Close side by side</button></div>
+<div class="sides">
+<section class="side"><h2 data-oods-side-title="left"></h2><div data-oods-side-frame="left"></div></section>
+<section class="side"><h2 data-oods-side-title="right"></h2><div data-oods-side-frame="right"></div></section>
+</div>
+<section data-oods-what-changed="true"></section>
+<div data-oods-compare-panels="true"></div>
+</div>
+</div>
+<div data-oods-panel="true"></div>
+<div data-oods-preview-errors="true" role="alert" hidden></div>
+</div>
+<!-- OODS_PREVIEW_RUNTIME_SCRIPT -->
+<!-- OODS_PREVIEW_APP_SCRIPT -->
+</body>
+</html>

@@ -1,0 +1,185 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/design.compose.input.json",
+  "title": "Design compose input",
+  "description": "Generate a UiSchema from an object definition and/or an intent sentence (matched against fixed keyword and phrase tables) using layout templates and component selection. Provide at least one of 'intent' or 'object'. context=workflow assembles a routed, stateful application from the object's list/detail/form/timeline compositions. Every successful composition is recorded as a durable version beside the saved-schema store (compositions/<compositionId>/versions/<n>.json); pass compositionId to record the result as that composition's next version.",
+  "type": "object",
+  "anyOf": [
+    {
+      "required": [
+        "intent"
+      ]
+    },
+    {
+      "required": [
+        "object"
+      ]
+    }
+  ],
+  "properties": {
+    "intent": {
+      "type": "string",
+      "minLength": 1,
+      "description": "A short intent sentence (e.g., 'dashboard with metrics and sidebar', 'user registration form'), matched against fixed keyword and phrase tables, not understood; a sentence with no layout keyword becomes a low-confidence dashboard (OODS-V116). Naming an object and a context is the reliable input."
+    },
+    "object": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Object name from the OODS registry (e.g., 'Subscription', 'User'). When provided, composition uses trait-driven component placement via view_extensions."
+    },
+    "context": {
+      "type": "string",
+      "enum": [
+        "detail",
+        "list",
+        "form",
+        "timeline",
+        "card",
+        "inline",
+        "workflow"
+      ],
+      "description": "View context for object-aware composition. Determines which view_extensions are applied. When object is provided without layout, context infers the layout (detail→detail, list→list, form→form). workflow assembles list/detail/form/timeline screens with trait actions, routes, four UI states and generated application data."
+    },
+    "layout": {
+      "type": "string",
+      "enum": [
+        "dashboard",
+        "form",
+        "detail",
+        "list",
+        "card",
+        "timeline",
+        "landing",
+        "auto"
+      ],
+      "default": "auto",
+      "description": "Layout template to use. 'landing' is a content/marketing page (hero + sections + CTA), not bound to a data object. 'auto' infers the best template from intent keywords."
+    },
+    "preferences": {
+      "type": "object",
+      "properties": {
+        "brand": {
+          "type": "string",
+          "format": "oods-brand",
+          "description": "Brand scope for data-bound charts; defaults to A."
+        },
+        "theme": {
+          "type": "string",
+          "description": "Theme token (e.g., 'light', 'dark')."
+        },
+        "metricColumns": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 12,
+          "description": "Number of metric columns for dashboard layout."
+        },
+        "fieldGroups": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20,
+          "description": "Number of field groups for form layout."
+        },
+        "tabCount": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Number of tabs for detail layout."
+        },
+        "tabLabels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Custom tab labels for detail layout."
+        },
+        "componentOverrides": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Slot-name → component-name overrides (e.g., { 'items': 'Table' })."
+        },
+        "regionOrder": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "uniqueItems": true,
+          "description": "The screen's regions (its direct children) by id in the desired order; regions not listed keep their relative order after the listed ones. Applied after composition; the composer never edits a schema by hand."
+        },
+        "fieldOrder": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "description": "Region id → field names in the desired order among sibling field nodes of that region (a field editor, a read-only row, or a slot placing a field component); fields not listed keep their relative order after the listed ones."
+        },
+        "seed": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "description": "Sample-data seed. Rotates the deterministic sample records (labels, names and derived values) generated for previews and workflow apps; recorded on the schema as `seed` and nothing else in the schema changes."
+        }
+      },
+      "additionalProperties": false
+    },
+    "options": {
+      "type": "object",
+      "properties": {
+        "validate": {
+          "type": "boolean",
+          "default": true,
+          "description": "Auto-validate the generated schema via the `repl` tool's `validate` action."
+        },
+        "topN": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "default": 3,
+          "description": "Number of component candidates to return per slot."
+        },
+        "transient": {
+          "type": "boolean",
+          "default": false,
+          "description": "Do not record a composition version; the result then carries no compositionId. For scratch compositions only."
+        },
+        "operation": {
+          "type": "string",
+          "enum": [
+            "recompose",
+            "reorder-region",
+            "swap-slot",
+            "reorder-fields",
+            "seed"
+          ],
+          "description": "With compositionId: the lineage operation recorded on the new version; default recompose. design.preview action edit sets it."
+        }
+      },
+      "additionalProperties": false
+    },
+    "compositionId": {
+      "type": "string",
+      "pattern": "^cmp-[a-f0-9]{12}$",
+      "description": "Record this composition as the next version of an existing composition (operation \"recompose\") instead of creating a new one."
+    },
+    "parentVersion": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "With compositionId: the version the new one derives from; default the latest."
+    },
+    "presentation": {
+      "type": "string",
+      "enum": [
+        "stage1-inspection"
+      ],
+      "description": "Named Stage1 inspection presentation: omit the accessibility score and prominently show measurement limits. Source records remain unchanged."
+    }
+  },
+  "additionalProperties": false
+}

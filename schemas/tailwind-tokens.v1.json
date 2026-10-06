@@ -1,0 +1,121 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://oods-foundry.com/schemas/tailwind-tokens.v1.json",
+  "title": "Tailwind Token Export v1",
+  "description": "Structural contract for the Style Dictionary Tailwind export. Newly defined for package 0.2.1 at the existing identifier. Does not assert cross-map equality or validate the opaque token tree as DTCG.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "meta",
+    "prefix",
+    "tokens",
+    "flat",
+    "cssVariables"
+  ],
+  "properties": {
+    "$schema": {
+      "const": "https://oods-foundry.com/schemas/tailwind-tokens.v1.json"
+    },
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "generatedAt",
+        "tool",
+        "version",
+        "platform"
+      ],
+      "properties": {
+        "generatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "tool": {
+          "const": "style-dictionary"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "platform": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "prefix": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tokens": {
+      "type": "object",
+      "description": "Native Style Dictionary tree, including token leaves and passthrough metadata. Kept open because the producer carries non-token schema, description and mapping nodes."
+    },
+    "flat": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1
+      },
+      "additionalProperties": {
+        "$ref": "#/definitions/flatToken"
+      }
+    },
+    "cssVariables": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^--[A-Za-z0-9_-]+$"
+      },
+      "additionalProperties": {
+        "description": "A JSON token value retained from Style Dictionary; semantic DTCG type/value validation is outside this export-envelope contract."
+      }
+    }
+  },
+  "definitions": {
+    "flatToken": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "value",
+        "path",
+        "cssVariable",
+        "originalValue",
+        "description"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "description": "A JSON token value retained from Style Dictionary; semantic DTCG type/value validation is outside this export-envelope contract."
+        },
+        "type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "path": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "cssVariable": {
+          "type": "string",
+          "pattern": "^--[A-Za-z0-9_-]+$"
+        },
+        "originalValue": {
+          "description": "Original value or null when the producer has no original value."
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

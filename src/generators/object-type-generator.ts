@@ -1,3 +1,4 @@
+import { posix } from 'node:path';
 import type { ResolvedObject } from '../registry/object-composer.js';
 import type { FieldProvenance } from '../core/composed-object.js';
 import type { SchemaField } from '../core/trait-definition.js';
@@ -64,7 +65,9 @@ export function generateObjectInterface(
     };
   });
 
-  const sourcePath = resolved.record.source.path;
+  // Generated declarations travel between machines; retain the source filename,
+  // never the registry's absolute path or the author's home directory.
+  const sourcePath = posix.basename(resolved.record.source.path.replaceAll('\\', '/'));
   const traits = resolved.resolvedTraits.map((trait) => trait.definition.trait.name);
 
   const code = renderObjectInterfaceFile({

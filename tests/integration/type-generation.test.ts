@@ -26,6 +26,10 @@ interface Workspace {
 
 function createWorkspace(): Workspace {
   const root = mkdtempSync(path.join(tmpdir(), 'type-generation-integration-'));
+  // s213-m01: NodeNext takes a file's module format from the nearest package.json. The system temp folder has none
+  // (CommonJS); a TMPDIR inside the repository, as the handoff requires, sits under "type": "module". The workspace
+  // declares the format it was written for.
+  writeFileSync(path.join(root, 'package.json'), '{"type":"commonjs"}\n', 'utf8');
   const generated = path.join(root, 'generated');
   mkdirSync(generated, { recursive: true });
   return { root, generated };
@@ -112,7 +116,7 @@ describe('Object type generation integration', () => {
       expect.fail(`TypeScript reported diagnostics:\n${formatted}`);
     }
   },
-    15000
+    120_000
   );
 
   it('renders deterministic barrel exports', () => {

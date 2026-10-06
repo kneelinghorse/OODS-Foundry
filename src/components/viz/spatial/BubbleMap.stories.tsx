@@ -15,7 +15,7 @@ import { SpatialContainer } from './SpatialContainer.js';
 import { createLinearScale } from './utils/color-scale-utils.js';
 import { createSqrtSizeScale } from './utils/size-scale-utils.js';
 import type { ProjectionType, SpatialSpec } from '../../../types/viz/spatial.js';
-import type { NormalizedVizSpec } from '../../../viz/spec/normalized-viz-spec.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 import type { DataRecord } from '../../../viz/adapters/spatial/geo-data-joiner.js';
 import usStatesTopology from './fixtures/us-states-10m.json';
 

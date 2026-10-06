@@ -1,0 +1,3792 @@
+{
+  "schema": "oods-foundry-errors/v1",
+  "version": "0.7.0",
+  "codes": [
+    {
+      "code": "OODS-A11Y-R-01",
+      "aliases": [
+        "OODS-A11Y-A11Y-R-01"
+      ],
+      "family": "A11Y",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": true,
+      "message": "Color encodings must have redundant channels per RDV.4 Section 4.1.",
+      "cause": "A color field has neither a redundant shape or detail channel nor a ready table column.",
+      "fix": "Add a redundant channel or a ready table fallback containing the color field.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-A11Y-R-02",
+      "aliases": [
+        "OODS-A11Y-A11Y-R-02"
+      ],
+      "family": "A11Y",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": true,
+      "message": "Size channels must remain perceptible (Δarea ≥ 1.5×) to satisfy RDV.4 glyph guidance.",
+      "cause": "A size channel lacks enough numeric values or a perceptible positive magnitude range.",
+      "fix": "Use a different encoding when the data cannot support a positive size range of at least 1.5 times.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-A11Y-R-03",
+      "aliases": [
+        "OODS-A11Y-A11Y-R-03"
+      ],
+      "family": "A11Y",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": true,
+      "message": "Accessible table fallback must be available for every spec.",
+      "cause": "No ready accessible table can be generated for the chart.",
+      "fix": "Provide readable rows and a supported table fallback for the chart data.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-A11Y-R-04",
+      "aliases": [
+        "OODS-A11Y-A11Y-R-04"
+      ],
+      "family": "A11Y",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": true,
+      "message": "Category comparisons (bar/stacked) require narrative summaries of extrema.",
+      "cause": "A bar chart has no narrative summary or no finding describing its extrema.",
+      "fix": "Provide a narrative summary and at least one finding describing the bar values.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-A11Y-R-05",
+      "aliases": [
+        "OODS-A11Y-A11Y-R-05"
+      ],
+      "family": "A11Y",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": true,
+      "message": "Positional encodings must expose axis titles for assistive tech.",
+      "cause": "An x or y encoding has no non-empty axis title.",
+      "fix": "Set a meaningful title on every bound x and y channel.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-A11Y-R-06",
+      "aliases": [
+        "OODS-A11Y-A11Y-R-06"
+      ],
+      "family": "A11Y",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": true,
+      "message": "Area charts must describe baselines/ranges (requires valid extrema + table fallback).",
+      "cause": "An area chart lacks a ready table or numeric minimum and maximum.",
+      "fix": "Provide numeric area data and a table fallback that covers its range.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-A11Y-R-07",
+      "aliases": [
+        "OODS-A11Y-A11Y-R-07"
+      ],
+      "family": "A11Y",
+      "category": "validation",
+      "severity": "warning",
+      "retryable": true,
+      "message": "Accessible tables require captions tied to the chart title.",
+      "cause": "The accessible table is unavailable or has an empty caption.",
+      "fix": "Provide a ready table fallback with a non-empty caption tied to the chart.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-A11Y-R-08",
+      "aliases": [
+        "OODS-A11Y-A11Y-R-08"
+      ],
+      "family": "A11Y",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": true,
+      "message": "Long-form description must exceed 25 characters to convey context.",
+      "cause": "The chart description is shorter than 25 characters.",
+      "fix": "Write a meaningful a11y.description of at least 25 characters.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-A11Y-R-09",
+      "aliases": [
+        "OODS-A11Y-A11Y-R-09"
+      ],
+      "family": "A11Y",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": true,
+      "message": "Charts must expose an aria-label or visible name.",
+      "cause": "The chart has neither a non-empty ariaLabel nor a visible name.",
+      "fix": "Provide a11y.ariaLabel or a non-empty chart name.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-A11Y-R-10",
+      "aliases": [
+        "OODS-A11Y-A11Y-R-10"
+      ],
+      "family": "A11Y",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": true,
+      "message": "Trend-based charts (line/area) need generated narratives.",
+      "cause": "A line or area chart has no generated narrative summary.",
+      "fix": "Provide readable trend data and a narrative summary for the chart.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-A11Y-R-11",
+      "aliases": [
+        "OODS-A11Y-A11Y-R-11"
+      ],
+      "family": "A11Y",
+      "category": "validation",
+      "severity": "warning",
+      "retryable": true,
+      "message": "Datasets with ≥3 rows must surface at least two key findings.",
+      "cause": "A dataset with at least three rows has fewer than two narrative findings.",
+      "fix": "Provide at least two findings that describe the dataset's extrema or trends.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-A11Y-R-12",
+      "aliases": [
+        "OODS-A11Y-A11Y-R-12"
+      ],
+      "family": "A11Y",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": true,
+      "message": "Every encoding field must appear in each data row.",
+      "cause": "An x, y or color encoding field is absent from one or more data rows.",
+      "fix": "Supply each bound encoding field in every row or correct the field binding.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-A11Y-R-13",
+      "aliases": [
+        "OODS-A11Y-A11Y-R-13"
+      ],
+      "family": "A11Y",
+      "category": "validation",
+      "severity": "warning",
+      "retryable": true,
+      "message": "Dense datasets (>12 rows) require narrative aggregation.",
+      "cause": "A dataset with more than twelve rows has no narrative findings.",
+      "fix": "Summarize the dense dataset with meaningful narrative key findings.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-A11Y-R-14",
+      "aliases": [
+        "OODS-A11Y-A11Y-R-14"
+      ],
+      "family": "A11Y",
+      "category": "validation",
+      "severity": "warning",
+      "retryable": true,
+      "message": "Deterministic column ordering must be declared when >2 columns exist.",
+      "cause": "The accessible table is missing or a table with more than two columns has no declared column order.",
+      "fix": "Provide a ready table and set portability.tableColumnOrder when it has more than two columns.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-A11Y-R-15",
+      "aliases": [
+        "OODS-A11Y-A11Y-R-15"
+      ],
+      "family": "A11Y",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": true,
+      "message": "Narrative generator must produce a ready status (three-pronged equivalence requirement).",
+      "cause": "The narrative generator did not produce a ready result.",
+      "fix": "Correct the chart data or narrative settings until narrative generation is ready.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-A11Y-R-16",
+      "aliases": [
+        "OODS-A11Y-A11Y-R-16"
+      ],
+      "family": "A11Y",
+      "category": "validation",
+      "severity": "warning",
+      "retryable": true,
+      "message": "Filter/zoom interactions must describe their announce workflow.",
+      "cause": "A filter or zoom interaction has no narrative explaining announcements.",
+      "fix": "Set a11y.narrative.summary to describe how filter or zoom results are announced.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-BA-001",
+      "family": "BA",
+      "category": "validation",
+      "severity": "warning",
+      "retryable": true,
+      "message": "Entity lacks catalog annotations",
+      "cause": "The boxes-and-arrows pre-emitter produced no catalog annotations for an entity, so it was skipped.",
+      "fix": "Supply the entity's Object Catalog annotations and render again.",
+      "tools": [
+        "fidelity_preview"
+      ]
+    },
+    {
+      "code": "OODS-BA-002",
+      "family": "BA",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Boxes-and-arrows entity rendering failed",
+      "cause": "Rendering a manifest entity as boxes and arrows threw an exception.",
+      "fix": "Correct the entity issue named in the rendering error.",
+      "tools": [
+        "fidelity_preview"
+      ]
+    },
+    {
+      "code": "OODS-BM-001",
+      "family": "BM",
+      "category": "validation",
+      "severity": "warning",
+      "retryable": true,
+      "message": "Entity lacks catalog annotations",
+      "cause": "The branded-mockup pre-emitter produced no catalog annotations for an entity, so it was skipped.",
+      "fix": "Supply the entity's Object Catalog annotations and render again.",
+      "tools": [
+        "fidelity_preview"
+      ]
+    },
+    {
+      "code": "OODS-BM-002",
+      "family": "BM",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Unknown branded-mockup brand overlay",
+      "cause": "A manifest entity or override names a brand overlay outside the supported A and B brands.",
+      "fix": "Use A or B for the manifest-based branded mockup.",
+      "tools": [
+        "fidelity_preview"
+      ]
+    },
+    {
+      "code": "OODS-BM-003",
+      "family": "BM",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Branded-mockup entity rendering failed",
+      "cause": "Rendering a manifest entity as a branded mockup threw an exception.",
+      "fix": "Correct the entity or brand-token issue named in the rendering error.",
+      "tools": [
+        "fidelity_preview"
+      ]
+    },
+    {
+      "code": "OODS-BM-004",
+      "family": "BM",
+      "category": "validation",
+      "severity": "warning",
+      "retryable": true,
+      "message": "Deprecated branded-mockup brand alias",
+      "cause": "A manifest uses a deprecated brand-prefixed alias that is accepted for one release.",
+      "fix": "Replace the alias with its returned canonical brand id.",
+      "tools": [
+        "fidelity_preview"
+      ]
+    },
+    {
+      "code": "OODS-C001",
+      "family": "C",
+      "category": "conflict",
+      "severity": "error",
+      "retryable": false,
+      "message": "Schema ref missing after compose",
+      "cause": "The compose step completed without a schemaRef required by the pipeline.",
+      "fix": "Report the missing compose reference and retry after the compose failure is corrected.",
+      "tools": [
+        "pipeline_run"
+      ]
+    },
+    {
+      "code": "OODS-C003",
+      "family": "C",
+      "category": "conflict",
+      "severity": "error",
+      "retryable": false,
+      "message": "Duplicate panel id",
+      "cause": "Two dashboard panels have the same id.",
+      "fix": "Give every dashboard panel a unique id.",
+      "tools": [
+        "dashboard_render"
+      ]
+    },
+    {
+      "code": "OODS-C004",
+      "family": "C",
+      "category": "conflict",
+      "severity": "error",
+      "retryable": true,
+      "message": "A definition of this name is already registered; pass overwrite: true to replace it",
+      "cause": "A definition name or its destination file is already occupied.",
+      "fix": "Use overwrite only for an intended replacement, or rename the conflicting definition or file.",
+      "tools": [
+        "object_registry"
+      ]
+    },
+    {
+      "code": "OODS-C005",
+      "family": "C",
+      "category": "conflict",
+      "severity": "error",
+      "retryable": false,
+      "message": "A brand with this id already exists; create never replaces a brand",
+      "cause": "Brand creation requested an id already held by a brand.",
+      "fix": "Choose a new brand id; brand creation never replaces an existing brand.",
+      "tools": [
+        "brand_create"
+      ]
+    },
+    {
+      "code": "OODS-FP-001",
+      "family": "FP",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Unknown fidelity fixture",
+      "cause": "The requested fidelity fixture is not in the named fixture allowlist.",
+      "fix": "Choose a named fixture from the tool schema or pass an inline manifest.",
+      "tools": [
+        "fidelity_preview"
+      ]
+    },
+    {
+      "code": "OODS-FP-002",
+      "family": "FP",
+      "category": "validation",
+      "severity": "error",
+      "retryable": false,
+      "message": "Fidelity fixture file missing",
+      "cause": "A named fidelity fixture has no file in the installed runtime.",
+      "fix": "Restore the runtime fixture files or pass a valid inline manifest.",
+      "tools": [
+        "fidelity_preview"
+      ]
+    },
+    {
+      "code": "OODS-FP-003",
+      "family": "FP",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Unsupported fidelity kind",
+      "cause": "The request names a fidelity renderer the tool does not support.",
+      "fix": "Use boxes-arrows, wireframe, review or branded-mockup.",
+      "tools": [
+        "fidelity_preview"
+      ]
+    },
+    {
+      "code": "OODS-FP-004",
+      "family": "FP",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Fidelity source selection is ambiguous",
+      "cause": "The request supplies no source or more than one source.",
+      "fix": "Supply exactly one of object, objects, schema, schemaRef, fixture or manifest.",
+      "tools": [
+        "fidelity_preview"
+      ]
+    },
+    {
+      "code": "OODS-FP-005",
+      "family": "FP",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Invalid inline fidelity manifest",
+      "cause": "The inline manifest is not an object with an entities array.",
+      "fix": "Pass an Object Catalog manifest containing an entities array.",
+      "tools": [
+        "fidelity_preview"
+      ]
+    },
+    {
+      "code": "OODS-FP-006",
+      "family": "FP",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Fidelity diagram input is unsupported",
+      "cause": "The diagram source, object set, depth, theme or built brand fails its declared limits or token requirements.",
+      "fix": "Use supported inputs, reduce diagram depth or size, and restore the named built brand tokens.",
+      "tools": [
+        "fidelity_preview"
+      ]
+    },
+    {
+      "code": "OODS-FP-007",
+      "family": "FP",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Fidelity relationship contract failed",
+      "cause": "An object relationship declaration fails the relationship contract checks.",
+      "fix": "Correct the reported object relationship fields before generating the diagram.",
+      "tools": [
+        "fidelity_preview"
+      ]
+    },
+    {
+      "code": "OODS-FP-008",
+      "family": "FP",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Composed fidelity rendering failed",
+      "cause": "The composed schema exceeds diagram limits, duplicates node ids or raises an unexpected rendering error.",
+      "fix": "Correct duplicate ids or the reported rendering issue and reduce the composition to the named size limit.",
+      "tools": [
+        "fidelity_preview"
+      ]
+    },
+    {
+      "code": "OODS-N001",
+      "family": "N",
+      "category": "not_found",
+      "severity": "error",
+      "retryable": false,
+      "message": "Unknown tool",
+      "cause": "The dispatch request names no registered tool.",
+      "fix": "Select a tool from the client's advertised tool list.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "brand_apply",
+        "brand_create",
+        "catalog_list",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "component_map",
+        "object_registry",
+        "pipeline_run",
+        "registry_snapshot",
+        "schema_render",
+        "schema_store",
+        "structured_data_fetch",
+        "tokens_build",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-N002",
+      "family": "N",
+      "category": "not_found",
+      "severity": "error",
+      "retryable": false,
+      "message": "Schema not found",
+      "cause": "No saved schema exists under the requested name.",
+      "fix": "List saved schemas and load an existing name, or save the schema first.",
+      "tools": [
+        "schema_store"
+      ]
+    },
+    {
+      "code": "OODS-N003",
+      "family": "N",
+      "category": "not_found",
+      "severity": "error",
+      "retryable": true,
+      "message": "SchemaRef not found",
+      "cause": "The schemaRef is not held by this runtime session.",
+      "fix": "Compose or load the schema again and use its new schemaRef.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "schema_store",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-N004",
+      "family": "N",
+      "category": "not_found",
+      "severity": "error",
+      "retryable": true,
+      "message": "SchemaRef expired",
+      "cause": "The schemaRef has expired.",
+      "fix": "Compose or load the schema again and use its fresh schemaRef.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "schema_store",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-N005",
+      "family": "N",
+      "category": "not_found",
+      "severity": "error",
+      "retryable": false,
+      "message": "Object not found",
+      "cause": "The requested object name is absent from the object registry.",
+      "fix": "Use the suggested or listed object name, or register the intended object first.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-N006",
+      "family": "N",
+      "category": "not_found",
+      "severity": "error",
+      "retryable": true,
+      "message": "Patch node not found",
+      "cause": "The nodeId targeted by a patch is absent from the base tree.",
+      "fix": "Inspect the current tree and target an existing node id.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-N007",
+      "family": "N",
+      "category": "not_found",
+      "severity": "error",
+      "retryable": false,
+      "message": "Artifact not found",
+      "cause": "An artifact is missing, outside an admitted contract or fails its manifest attestation.",
+      "fix": "Inspect the returned kind, path and accepted contract, then supply a complete compatible artifact.",
+      "tools": [
+        "a11y_scan",
+        "catalog_list",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "registry_snapshot",
+        "schema_render",
+        "structured_data_fetch"
+      ]
+    },
+    {
+      "code": "OODS-N009",
+      "family": "N",
+      "category": "not_found",
+      "severity": "warning",
+      "retryable": false,
+      "message": "Registry manifest missing",
+      "cause": "The structured-data component manifest is missing or unreadable during validation.",
+      "fix": "Restore or rebuild the structured-data manifest before relying on registry validation.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-N010",
+      "family": "N",
+      "category": "not_found",
+      "severity": "warning",
+      "retryable": false,
+      "message": "Registry unavailable",
+      "cause": "No component registry is available to validate the schema.",
+      "fix": "Restore the component registry and validate again.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-N011",
+      "family": "N",
+      "category": "not_found",
+      "severity": "error",
+      "retryable": false,
+      "message": "Token data missing",
+      "cause": "Required token data, token CSS or the shipped token compiler kit is unavailable.",
+      "fix": "Restore the runtime's token assets or run the supported token build and retry.",
+      "tools": [
+        "a11y_scan",
+        "brand_apply",
+        "brand_create",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "tokens_build"
+      ]
+    },
+    {
+      "code": "OODS-N013",
+      "family": "N",
+      "category": "not_found",
+      "severity": "error-or-warning",
+      "retryable": false,
+      "message": "HTML renderer unavailable; fallback output is forbidden at build or release confidence",
+      "cause": "The HTML renderer is unavailable and the requested confidence forbids fallback output.",
+      "fix": "Restore the HTML renderer or choose an available target before requesting build or release confidence.",
+      "tools": [
+        "code_generate",
+        "design_preview",
+        "fidelity_preview",
+        "pipeline_run"
+      ]
+    },
+    {
+      "code": "OODS-N014",
+      "family": "N",
+      "category": "not_found",
+      "severity": "error",
+      "retryable": false,
+      "message": "Registry snapshot payload missing",
+      "cause": "The structured-data fetch returned no components payload for a registry snapshot.",
+      "fix": "Restore the components structured-data payload and retry the snapshot.",
+      "tools": [
+        "registry_snapshot"
+      ]
+    },
+    {
+      "code": "OODS-N015",
+      "family": "N",
+      "category": "not_found",
+      "severity": "error-or-warning",
+      "retryable": false,
+      "message": "Component target unavailable",
+      "cause": "A component is unavailable for the requested target or its release attestation is invalid.",
+      "fix": "Use a supported target and component, or reinstall the sealed runtime if its attestation is invalid.",
+      "tools": [
+        "a11y_scan",
+        "catalog_list",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-N016",
+      "family": "N",
+      "category": "not_found",
+      "severity": "error",
+      "retryable": false,
+      "message": "Generated artifact dependency closure is invalid",
+      "cause": "The generated artifact's dependencies, runtime support or application options are invalid.",
+      "fix": "Correct the reported dependency or application option; runnable React and Vue applications require TypeScript output.",
+      "tools": [
+        "code_generate",
+        "design_preview",
+        "fidelity_preview",
+        "pipeline_run"
+      ]
+    },
+    {
+      "code": "OODS-N017",
+      "family": "N",
+      "category": "not_found",
+      "severity": "error",
+      "retryable": false,
+      "message": "Generated artifact envelope missing",
+      "cause": "Code generation reported success without the required artifact envelope.",
+      "fix": "Report the missing artifact envelope and do not treat the pipeline as successful.",
+      "tools": [
+        "pipeline_run"
+      ]
+    },
+    {
+      "code": "OODS-N018",
+      "family": "N",
+      "category": "not_found",
+      "severity": "error-or-warning",
+      "retryable": false,
+      "message": "HTML Tailwind styling unavailable",
+      "cause": "HTML generation was requested with Tailwind styling that the HTML target does not support.",
+      "fix": "Use the HTML target's supported styling or choose a React or Vue target for Tailwind output.",
+      "tools": [
+        "code_generate",
+        "design_preview",
+        "fidelity_preview",
+        "pipeline_run"
+      ]
+    },
+    {
+      "code": "OODS-N020",
+      "family": "N",
+      "category": "not_found",
+      "severity": "error",
+      "retryable": false,
+      "message": "brand.apply: canonical brand source is not shipped in this runtime",
+      "cause": "The runtime lacks the canonical brand source required by brand.apply.",
+      "fix": "Use a runtime containing the token compiler kit and brand source, or restore those assets.",
+      "tools": [
+        "brand_apply",
+        "health_check"
+      ]
+    },
+    {
+      "code": "OODS-N021",
+      "family": "N",
+      "category": "not_found",
+      "severity": "error",
+      "retryable": true,
+      "message": "design.preview: no preview host is reachable; call through the HTTP bridge or the stdio adapter, or set OODS_PREVIEW_HOST_URL",
+      "cause": "No preview host is reachable for design.preview.",
+      "fix": "Call through the HTTP bridge or stdio adapter, or configure a reachable OODS_PREVIEW_HOST_URL.",
+      "tools": [
+        "design_preview"
+      ]
+    },
+    {
+      "code": "OODS-N022",
+      "family": "N",
+      "category": "not_found",
+      "severity": "error",
+      "retryable": false,
+      "message": "Composition or version not found in the store",
+      "cause": "The requested composition or version is absent from the composition store.",
+      "fix": "Use an existing composition version or compose a fresh view.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-N023",
+      "family": "N",
+      "category": "not_found",
+      "severity": "error",
+      "retryable": false,
+      "message": "No folder is set for your objects or traits (OODS_OBJECTS_DIR, OODS_TRAITS_DIR)",
+      "cause": "No destination folder is configured for team objects or traits.",
+      "fix": "Set OODS_OBJECTS_DIR or OODS_TRAITS_DIR to a writable team folder.",
+      "tools": [
+        "object_registry"
+      ]
+    },
+    {
+      "code": "OODS-N024",
+      "family": "N",
+      "category": "not_found",
+      "severity": "error",
+      "retryable": false,
+      "message": "The brand template is not built; run the token build",
+      "cause": "The brand template has not been built.",
+      "fix": "Run the token build before requesting a brand template.",
+      "tools": [
+        "brand_apply",
+        "brand_create"
+      ]
+    },
+    {
+      "code": "OODS-N025",
+      "family": "N",
+      "category": "not_found",
+      "severity": "error",
+      "retryable": false,
+      "message": "Creating a brand needs a brands folder (OODS_BRANDS_DIR) or a source checkout, and the token build",
+      "cause": "Brand creation lacks a usable brands folder or source checkout and token build.",
+      "fix": "Configure a writable OODS_BRANDS_DIR with the supported token build available.",
+      "tools": [
+        "brand_create"
+      ]
+    },
+    {
+      "code": "OODS-R001",
+      "family": "R",
+      "category": "rate_limit",
+      "severity": "error",
+      "retryable": true,
+      "message": "Rate limit exceeded",
+      "cause": "The tool's request rate limit has been exhausted.",
+      "fix": "Wait for the rate limit to refill and reduce the request rate.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "brand_apply",
+        "brand_create",
+        "catalog_list",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "component_map",
+        "object_registry",
+        "pipeline_run",
+        "registry_snapshot",
+        "schema_render",
+        "schema_store",
+        "structured_data_fetch",
+        "tokens_build",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-R002",
+      "family": "R",
+      "category": "rate_limit",
+      "severity": "error",
+      "retryable": true,
+      "message": "Concurrency limit exceeded",
+      "cause": "The tool already has its maximum permitted concurrent requests.",
+      "fix": "Wait for in-flight requests to finish before retrying.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "brand_apply",
+        "brand_create",
+        "catalog_list",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "component_map",
+        "object_registry",
+        "pipeline_run",
+        "registry_snapshot",
+        "schema_render",
+        "schema_store",
+        "structured_data_fetch",
+        "tokens_build",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-REV-001",
+      "family": "REV",
+      "category": "validation",
+      "severity": "warning",
+      "retryable": true,
+      "message": "Entity lacks catalog annotations",
+      "cause": "The review pre-emitter produced no catalog annotations for an entity, so it was skipped.",
+      "fix": "Supply the entity's Object Catalog annotations and render again.",
+      "tools": [
+        "fidelity_preview"
+      ]
+    },
+    {
+      "code": "OODS-REV-002",
+      "family": "REV",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Review entity rendering failed",
+      "cause": "Rendering a manifest entity for review threw an exception.",
+      "fix": "Correct the entity issue named in the rendering error.",
+      "tools": [
+        "fidelity_preview"
+      ]
+    },
+    {
+      "code": "OODS-S001",
+      "family": "S",
+      "category": "server_error",
+      "severity": "error",
+      "retryable": false,
+      "message": "Policy denied",
+      "cause": "The caller's role is not allowed to invoke the tool.",
+      "fix": "Use an authorized role or ask the operator to review the tool policy.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "brand_apply",
+        "brand_create",
+        "catalog_list",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "component_map",
+        "object_registry",
+        "pipeline_run",
+        "registry_snapshot",
+        "schema_render",
+        "schema_store",
+        "structured_data_fetch",
+        "tokens_build",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-S002",
+      "family": "S",
+      "category": "server_error",
+      "severity": "error",
+      "retryable": true,
+      "message": "Execution timeout",
+      "cause": "The tool handler exceeded its execution time limit.",
+      "fix": "Retry after reducing the request size or resolving the slow dependency.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "brand_apply",
+        "brand_create",
+        "catalog_list",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "component_map",
+        "object_registry",
+        "pipeline_run",
+        "registry_snapshot",
+        "schema_render",
+        "schema_store",
+        "structured_data_fetch",
+        "tokens_build",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-S003",
+      "family": "S",
+      "category": "server_error",
+      "severity": "error",
+      "retryable": false,
+      "message": "Bad request",
+      "cause": "An unexpected exception or malformed dispatch request reached the server boundary.",
+      "fix": "Correct malformed request data or report the incident and exception details to the runtime maintainer.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "brand_apply",
+        "brand_create",
+        "catalog_list",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "component_map",
+        "object_registry",
+        "pipeline_run",
+        "registry_snapshot",
+        "schema_render",
+        "schema_store",
+        "structured_data_fetch",
+        "tokens_build",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-S005",
+      "family": "S",
+      "category": "server_error",
+      "severity": "error",
+      "retryable": true,
+      "message": "Catalog load failed",
+      "cause": "The component catalog or structured-data manifest could not be loaded.",
+      "fix": "Restore the catalog and manifest assets and retry the operation.",
+      "tools": [
+        "a11y_scan",
+        "catalog_list",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "registry_snapshot",
+        "schema_render",
+        "structured_data_fetch"
+      ]
+    },
+    {
+      "code": "OODS-S006",
+      "family": "S",
+      "category": "server_error",
+      "severity": "error",
+      "retryable": false,
+      "message": "HTML render failed",
+      "cause": "The HTML emitter failed to render the schema.",
+      "fix": "Inspect the rendering error and correct the schema or renderer dependency.",
+      "tools": [
+        "code_generate",
+        "design_preview",
+        "fidelity_preview",
+        "pipeline_run"
+      ]
+    },
+    {
+      "code": "OODS-S007",
+      "family": "S",
+      "category": "server_error",
+      "severity": "error",
+      "retryable": false,
+      "message": "Fragment render failed",
+      "cause": "Rendering an individual UI fragment threw an exception.",
+      "fix": "Inspect that fragment's error and correct its node or component before rendering again.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-S009",
+      "family": "S",
+      "category": "server_error",
+      "severity": "error",
+      "retryable": false,
+      "message": "Pipeline step failed",
+      "cause": "A pipeline step failed without a usable issue or returned an invalid artifact or validation receipt.",
+      "fix": "Inspect the failed step and correct its reported artifact or receipt mismatch before rerunning the pipeline.",
+      "tools": [
+        "pipeline_run"
+      ]
+    },
+    {
+      "code": "OODS-S010",
+      "family": "S",
+      "category": "server_error",
+      "severity": "error",
+      "retryable": false,
+      "message": "Compose step exception",
+      "cause": "The pipeline compose step threw an unexpected exception.",
+      "fix": "Inspect the compose exception and correct its cause before rerunning the pipeline.",
+      "tools": [
+        "pipeline_run"
+      ]
+    },
+    {
+      "code": "OODS-S011",
+      "family": "S",
+      "category": "server_error",
+      "severity": "error",
+      "retryable": false,
+      "message": "Validate step exception",
+      "cause": "The pipeline validation step threw an unexpected exception.",
+      "fix": "Inspect the validation exception and correct its cause before rerunning the pipeline.",
+      "tools": [
+        "pipeline_run"
+      ]
+    },
+    {
+      "code": "OODS-S012",
+      "family": "S",
+      "category": "server_error",
+      "severity": "error",
+      "retryable": false,
+      "message": "Render step exception",
+      "cause": "Screen rendering or the pipeline render step threw an exception.",
+      "fix": "Inspect the render error and correct its cause before retrying the operation.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-S013",
+      "family": "S",
+      "category": "server_error",
+      "severity": "error",
+      "retryable": false,
+      "message": "Codegen step exception",
+      "cause": "The pipeline code-generation step threw an unexpected exception.",
+      "fix": "Inspect the code-generation exception and correct its cause before rerunning the pipeline.",
+      "tools": [
+        "pipeline_run"
+      ]
+    },
+    {
+      "code": "OODS-S014",
+      "family": "S",
+      "category": "server_error",
+      "severity": "error",
+      "retryable": false,
+      "message": "Save step exception",
+      "cause": "The pipeline save step threw an unexpected exception.",
+      "fix": "Inspect the save error and restore a writable schema store before retrying.",
+      "tools": [
+        "pipeline_run"
+      ]
+    },
+    {
+      "code": "OODS-S015",
+      "family": "S",
+      "category": "server_error",
+      "severity": "error",
+      "retryable": false,
+      "message": "Path not allowed",
+      "cause": "An artifact or token path falls outside the policy's allowed location.",
+      "fix": "Choose a path under the allowed artifact or token directory.",
+      "tools": [
+        "a11y_scan",
+        "brand_apply",
+        "catalog_list",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "tokens_build"
+      ]
+    },
+    {
+      "code": "OODS-S016",
+      "family": "S",
+      "category": "server_error",
+      "severity": "error",
+      "retryable": false,
+      "message": "Artifact filename empty",
+      "cause": "An artifact manifest entry has an empty filename.",
+      "fix": "Repair the manifest entry with a non-empty safe filename.",
+      "tools": [
+        "a11y_scan",
+        "catalog_list",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-S017",
+      "family": "S",
+      "category": "server_error",
+      "severity": "error",
+      "retryable": false,
+      "message": "Artifact filename unsafe",
+      "cause": "An artifact manifest entry is not a safe filename.",
+      "fix": "Use a filename without traversal or path separators in the artifact manifest.",
+      "tools": [
+        "a11y_scan",
+        "catalog_list",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-S019",
+      "family": "S",
+      "category": "server_error",
+      "severity": "error",
+      "retryable": true,
+      "message": "Token build failed; source writes remain in place",
+      "cause": "The token build failed and any source writes remain in place.",
+      "fix": "Inspect the build output, fix the source or build environment and run the token build again.",
+      "tools": [
+        "brand_apply",
+        "tokens_build"
+      ]
+    },
+    {
+      "code": "OODS-S020",
+      "family": "S",
+      "category": "server_error",
+      "severity": "error",
+      "retryable": true,
+      "message": "Payload directory is not writable; the response carries no payload",
+      "cause": "Generated payload files could not be written to the payload directory.",
+      "fix": "Choose a writable payload directory and retry generation.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-S021",
+      "family": "S",
+      "category": "server_error",
+      "severity": "error",
+      "retryable": true,
+      "message": "Your objects or traits folder is not writable; nothing was registered",
+      "cause": "The configured team object or trait folder could not be written.",
+      "fix": "Restore write access to the configured folder and register the definition again.",
+      "tools": [
+        "object_registry"
+      ]
+    },
+    {
+      "code": "OODS-S022",
+      "family": "S",
+      "category": "server_error",
+      "severity": "error",
+      "retryable": true,
+      "message": "Token build failed after a brand was created; the brand was removed",
+      "cause": "The token build failed after brand creation, so the new brand was removed.",
+      "fix": "Fix the token-build error and create the brand again.",
+      "tools": [
+        "brand_create"
+      ]
+    },
+    {
+      "code": "OODS-V001",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Input validation failed",
+      "cause": "The input does not satisfy the tool schema or a declared input constraint.",
+      "fix": "Correct the named fields using the tool schema and the returned details.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "brand_apply",
+        "brand_create",
+        "catalog_list",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "component_map",
+        "object_registry",
+        "pipeline_run",
+        "registry_snapshot",
+        "schema_render",
+        "schema_store",
+        "structured_data_fetch",
+        "tokens_build",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V002",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": false,
+      "message": "Output validation failed",
+      "cause": "The handler returned a value that does not satisfy its output schema.",
+      "fix": "Report the incident and output-validation details to the runtime maintainer.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "brand_apply",
+        "brand_create",
+        "catalog_list",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "component_map",
+        "object_registry",
+        "pipeline_run",
+        "registry_snapshot",
+        "schema_render",
+        "schema_store",
+        "structured_data_fetch",
+        "tokens_build",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V003",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Missing required field",
+      "cause": "A required input is absent, or the object does not support the requested context.",
+      "fix": "Supply the named input or choose one of the object's supported contexts.",
+      "tools": [
+        "a11y_scan",
+        "brand_apply",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "schema_store"
+      ]
+    },
+    {
+      "code": "OODS-V004",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Invalid slug format",
+      "cause": "A saved schema name contains characters outside the accepted slug format.",
+      "fix": "Use only letters, numbers, hyphens and underscores in the schema name.",
+      "tools": [
+        "pipeline_run",
+        "schema_store"
+      ]
+    },
+    {
+      "code": "OODS-V005",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Unknown framework",
+      "cause": "No code emitter is registered for the requested framework.",
+      "fix": "Choose a supported framework from the code.generate input schema.",
+      "tools": [
+        "code_generate",
+        "design_preview",
+        "fidelity_preview",
+        "pipeline_run"
+      ]
+    },
+    {
+      "code": "OODS-V006",
+      "family": "V",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": true,
+      "message": "Unknown component",
+      "cause": "A UI node or selected slot names a component outside the component registry.",
+      "fix": "Choose a component returned by catalog.list and update the node or slot.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V007",
+      "family": "V",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": true,
+      "message": "DSL schema validation failed",
+      "cause": "The UI schema, patch result or generated target violates a structural or component contract.",
+      "fix": "Correct the reported schema, binding, prop, slot, event or syntax issue and generate again.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V008",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Duplicate node ID",
+      "cause": "Two UI nodes use the same id.",
+      "fix": "Give every node a unique id before validating or patching the schema.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V009",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Missing schema",
+      "cause": "Neither a usable schema nor a schemaRef was supplied for the operation.",
+      "fix": "Pass an inline schema or obtain a fresh schemaRef by composing or loading a schema.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V010",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Missing base tree",
+      "cause": "A patch operation needs a base tree but none was supplied.",
+      "fix": "Pass the tree to patch as baseTree, or supply the schema reference accepted by the tool.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V011",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Missing patch",
+      "cause": "Patch mode was selected without a patch payload.",
+      "fix": "Supply a supported patch object or array.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V100",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Invalid JSON pointer",
+      "cause": "A patch path is not a valid JSON pointer.",
+      "fix": "Use a slash-prefixed JSON pointer with valid escape sequences.",
+      "tools": [
+        "a11y_scan",
+        "brand_apply",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V101",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": false,
+      "message": "Unsafe path segment",
+      "cause": "A patch path contains a prohibited prototype-related segment.",
+      "fix": "Remove prototype-related path segments and target an ordinary data field.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V102",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Invalid patch operation",
+      "cause": "A JSON patch operation is malformed or lacks its required members.",
+      "fix": "Supply a supported operation with a valid path and the value it requires.",
+      "tools": [
+        "a11y_scan",
+        "brand_apply",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V103",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": false,
+      "message": "Cannot patch document root",
+      "cause": "A patch attempts to replace or remove the document root.",
+      "fix": "Patch a child path or provide a replacement schema through the full-schema route.",
+      "tools": [
+        "a11y_scan",
+        "brand_apply",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V104",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Patch path not found",
+      "cause": "The patch path is missing or cannot be resolved in the base document.",
+      "fix": "Inspect the current tree and use an existing path appropriate to the operation.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V105",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Invalid array index",
+      "cause": "A patch uses an invalid array index.",
+      "fix": "Use a valid in-range array index, or the supported append position for add.",
+      "tools": [
+        "a11y_scan",
+        "brand_apply",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V106",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": false,
+      "message": "Patch apply failed",
+      "cause": "Applying a validated patch threw an exception.",
+      "fix": "Inspect the returned path and exception, then correct the patch and base tree.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V107",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Invalid patch entry",
+      "cause": "A patch entry is not a supported object or does not describe a valid patch shape.",
+      "fix": "Use either the documented JSON Patch shape or the documented node-patch shape.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V108",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Node patch missing nodeId",
+      "cause": "A node-targeted patch does not name a nodeId.",
+      "fix": "Set nodeId to an id present in the base tree.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V109",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Empty patch array",
+      "cause": "The patch array contains no operations.",
+      "fix": "Supply at least one patch operation.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V110",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Invalid patch type",
+      "cause": "The patch payload is neither an object nor an array.",
+      "fix": "Pass a patch object or an array of supported patch operations.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V111",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Unsupported patch op",
+      "cause": "A brand patch uses an operation other than the supported add, replace or remove operations.",
+      "fix": "Use an operation supported by brand.apply.",
+      "tools": [
+        "brand_apply"
+      ]
+    },
+    {
+      "code": "OODS-V112",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Invalid remove target",
+      "cause": "A brand patch tries to remove a non-index array path.",
+      "fix": "Target an existing numeric array index for removal.",
+      "tools": [
+        "brand_apply"
+      ]
+    },
+    {
+      "code": "OODS-V113",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": false,
+      "message": "Unsafe key",
+      "cause": "A token delta or patch contains a prohibited prototype-related key.",
+      "fix": "Remove the unsafe key and use ordinary token keys.",
+      "tools": [
+        "a11y_scan",
+        "brand_apply",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V114",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Mixed patch formats",
+      "cause": "One patch array mixes JSON Patch entries and node-targeted entries.",
+      "fix": "Split the request or use one patch format throughout the array.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V115",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "JSON Patch array required",
+      "cause": "JSON Patch mode received an object instead of an array of operations.",
+      "fix": "Wrap the JSON Patch operations in an array.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V116",
+      "family": "V",
+      "category": "validation",
+      "severity": "warning",
+      "retryable": true,
+      "message": "Low layout confidence",
+      "cause": "The layout resolver has low confidence in the inferred layout.",
+      "fix": "Specify the intended layout or provide a clearer composition intent.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V117",
+      "family": "V",
+      "category": "validation",
+      "severity": "warning",
+      "retryable": false,
+      "message": "Object composition warning",
+      "cause": "Composing an object reported a non-fatal trait or composition warning.",
+      "fix": "Read the warning and correct the named object or trait declaration if unintended.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V118",
+      "family": "V",
+      "category": "validation",
+      "severity": "warning",
+      "retryable": false,
+      "message": "Resolution warning",
+      "cause": "Layout or slot resolution reported an ambiguity or fallback.",
+      "fix": "Specify the intended layout or component selection using the returned warning.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V119",
+      "family": "V",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": true,
+      "message": "Component registry or object view-extension issue",
+      "cause": "The generated schema names unregistered components, or the object has no view extensions for the requested context.",
+      "fix": "Use registered components and a context with the intended object view extensions.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V120",
+      "family": "V",
+      "category": "validation",
+      "severity": "warning",
+      "retryable": true,
+      "message": "Object view extension could not fill a slot",
+      "cause": "A trait view extension names an unregistered component or has no matching slot in the chosen layout.",
+      "fix": "Use a registered component and a slot or position supported by the chosen layout.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V121",
+      "family": "V",
+      "category": "validation",
+      "severity": "warning",
+      "retryable": true,
+      "message": "Object maturity is not stable",
+      "cause": "The composed object declares a maturity other than stable, so its output may change.",
+      "fix": "Use a stable object for production compositions or explicitly accept the declared maturity.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V122",
+      "family": "V",
+      "category": "validation",
+      "severity": "warning",
+      "retryable": true,
+      "message": "Detail tab labels are unavailable or need only one group",
+      "cause": "The detail context has no trait category with view extensions, or has only one category group.",
+      "fix": "Provide view extensions for the context or use a single-section layout when only one group exists.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V123",
+      "family": "V",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": true,
+      "message": "Missing or invalid viz data source",
+      "cause": "The visualization data source, operand or a related input option is missing or invalid.",
+      "fix": "Provide the required rows or typed operand and correct the field or option named in the message.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V124",
+      "family": "V",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": true,
+      "message": "Dataset reference expired",
+      "cause": "The dataset reference has expired.",
+      "fix": "Fetch the dataset again and retry with the new reference or inline rows.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V125",
+      "family": "V",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": true,
+      "message": "Dataset reference resolved to empty or non-array rows",
+      "cause": "The dataset reference resolves to empty data or a value that is not a row array.",
+      "fix": "Provide a non-empty row array or fetch a dataset that contains rows.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V126",
+      "family": "V",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": true,
+      "message": "Invalid viz spec input",
+      "cause": "The chart spec or typed data operand fails its supported input contract.",
+      "fix": "Correct the chart spec or operand according to the returned validation message.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V127",
+      "family": "V",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": false,
+      "message": "Vega-Lite spec compilation failed",
+      "cause": "The Vega-Lite adapter could not compile the chart spec.",
+      "fix": "Correct the unsupported spec structure reported by the compiler and render again.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V128",
+      "family": "V",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": false,
+      "message": "ECharts option compilation failed",
+      "cause": "The ECharts adapter could not compile the chart operand.",
+      "fix": "Correct the operand or unsupported chart structure reported by the adapter.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V129",
+      "family": "V",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": false,
+      "message": "Viz render failed",
+      "cause": "Chart rendering or certification failed after input handling.",
+      "fix": "Inspect the returned rendering error and retry after correcting its cause.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V130",
+      "family": "V",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": false,
+      "message": "Unresolved governed measure",
+      "cause": "A governed measure reference does not resolve in the measure registry.",
+      "fix": "Use an existing measure reference or register the intended governed measure.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V131",
+      "family": "V",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": true,
+      "message": "Referenced field absent from dataset",
+      "cause": "With strict field checks enabled, a referenced field is absent from every dataset row.",
+      "fix": "Correct the field name or supply rows containing that field.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V132",
+      "family": "V",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": false,
+      "message": "Malformed measure registry",
+      "cause": "The governed measure registry cannot be read as a valid registry.",
+      "fix": "Repair the measure registry using its schema before rendering governed panels.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V133",
+      "family": "V",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": false,
+      "message": "Non-additive measure rollup blocked",
+      "cause": "A non-additive governed measure was requested with a sum rollup.",
+      "fix": "Use the governed measure's supported aggregate instead of summing it.",
+      "tools": [
+        "dashboard_render"
+      ]
+    },
+    {
+      "code": "OODS-V134",
+      "family": "V",
+      "category": "validation",
+      "severity": "warning",
+      "retryable": true,
+      "message": "Geo join: corridor has no matching map feature",
+      "cause": "A geographic join key has no matching map feature under strict field checks.",
+      "fix": "Correct the join key or crosswalk so each intended row matches a map feature.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V135",
+      "family": "V",
+      "category": "validation",
+      "severity": "warning",
+      "retryable": false,
+      "message": "Brand token pair fails WCAG contrast",
+      "cause": "An enabled contrast scan found a brand-token color pair below its required contrast.",
+      "fix": "Adjust the named brand-token pair and rerun the contrast scan.",
+      "tools": [
+        "dashboard_render"
+      ]
+    },
+    {
+      "code": "OODS-V136",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": false,
+      "message": "Unsafe token-overlay value",
+      "cause": "A token overlay value is empty, malformed or contains unsafe CSS or HTML characters.",
+      "fix": "Supply a safe CSS color, length or number without forbidden syntax.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V137",
+      "family": "V",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": true,
+      "message": "KPI panel has no resolvable field (measureRef unresolved)",
+      "cause": "A KPI panel has no field after governed-measure resolution.",
+      "fix": "Set a field or enable measure resolution with a valid measureRef.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V138",
+      "family": "V",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": false,
+      "message": "Measure time-grain mismatch",
+      "cause": "A governed measure's expected time grain differs from the panel data or cannot be checked.",
+      "fix": "Provide the required periodField and data at the governed measure's expected grain.",
+      "tools": [
+        "dashboard_render"
+      ]
+    },
+    {
+      "code": "OODS-V139",
+      "family": "V",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": true,
+      "message": "KPI panel references unknown dataset",
+      "cause": "With strict dataset checks enabled, a KPI panel names an unknown dataset.",
+      "fix": "Use a datasetId present in the request's datasets array.",
+      "tools": [
+        "dashboard_render"
+      ]
+    },
+    {
+      "code": "OODS-V140",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": false,
+      "message": "Unmapped style-library logical key",
+      "cause": "A measured style delta names a logical key absent from the style-library mapping.",
+      "fix": "Use a registered logical key or add its supported mapping in the style library.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V141",
+      "family": "V",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": true,
+      "message": "Measure-narrative context drifts from the resolved governed measure",
+      "cause": "The panel's threshold value differs from the governed threshold described by its narrative.",
+      "fix": "Align or remove the threshold override, or omit the governed narrative.",
+      "tools": [
+        "dashboard_render"
+      ]
+    },
+    {
+      "code": "OODS-V142",
+      "family": "V",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": true,
+      "message": "Measure-narrative threshold direction drifts from the resolved governed measure",
+      "cause": "The panel's threshold direction differs from the governed direction described by its narrative.",
+      "fix": "Align or remove the direction override, or omit the governed narrative.",
+      "tools": [
+        "dashboard_render"
+      ]
+    },
+    {
+      "code": "OODS-V143",
+      "family": "V",
+      "category": "validation",
+      "severity": "warning",
+      "retryable": true,
+      "message": "Color range is shorter than the number of series (colors will recycle)",
+      "cause": "The explicit categorical color range has fewer colors than distinct series.",
+      "fix": "Provide enough distinct colors or reduce the number of series.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V144",
+      "family": "V",
+      "category": "validation",
+      "severity": "warning",
+      "retryable": true,
+      "message": "Color range contains a non-hex color",
+      "cause": "An explicit color-range entry is not a valid hexadecimal color.",
+      "fix": "Replace each invalid range entry with a valid hexadecimal color.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V145",
+      "family": "V",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": false,
+      "message": "Color range is not supported on this chart type (cartesian color channel only)",
+      "cause": "An explicit cartesian color range was supplied to a chart type that cannot consume it.",
+      "fix": "Remove the range or choose a chart type that supports a cartesian color channel.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V146",
+      "family": "V",
+      "category": "validation",
+      "severity": "warning",
+      "retryable": true,
+      "message": "Categorical palette recycles: more distinct color groups than the 6-slot OODS palette",
+      "cause": "An ECharts categorical chart has more groups than the six available palette slots.",
+      "fix": "Reduce or group the categories before relying on color to distinguish them.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V147",
+      "family": "V",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": true,
+      "message": "Link references a non-existent node",
+      "cause": "A chord or force-graph link names a node absent from the node set.",
+      "fix": "Add the missing node or correct the link endpoint.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V148",
+      "family": "V",
+      "category": "validation",
+      "severity": "warning",
+      "retryable": true,
+      "message": "Duplicate link",
+      "cause": "A chord or force-graph operand repeats a directed source-target link.",
+      "fix": "Merge duplicate directed links while retaining intentional reciprocal links.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V149",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Delta addresses a different brand than the one being applied",
+      "cause": "A measured token delta names a different brand from the brand being applied.",
+      "fix": "Apply the delta to its recorded brand or supply a delta for the intended brand.",
+      "tools": [
+        "brand_apply"
+      ]
+    },
+    {
+      "code": "OODS-V150",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "A bar's value axis is not a linear zero-anchored scale",
+      "cause": "A bar's value axis is not linear and anchored at zero.",
+      "fix": "Use a linear zero-anchored scale for a bar's value axis.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V151",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Layered marks resolve a positional scale independently (dual axis)",
+      "cause": "Layers sharing one plot frame resolve a positional scale independently.",
+      "fix": "Share the positional scale or put the series into separate panels.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V152",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "An area's value axis is not a linear zero-anchored scale",
+      "cause": "A non-ranged area's value axis is not linear and anchored at zero.",
+      "fix": "Use a linear zero-anchored scale for the area value axis.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V153",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "A row-collapsing aggregation is not disclosed on any declared text surface",
+      "cause": "An aggregation merges rows without disclosure in the chart description, title or aggregated-axis title.",
+      "fix": "Name the aggregation on at least one of those text surfaces.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V154",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "A treemap/sunburst node value cannot be encoded as area or angle",
+      "cause": "A treemap or sunburst node has a negative or non-finite value that area cannot represent.",
+      "fix": "Supply finite non-negative magnitude values for hierarchy nodes.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V155",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "An explicit treemap/sunburst parent value is not the sum of its children",
+      "cause": "An explicit treemap or sunburst parent value differs from the sum of its children.",
+      "fix": "Make the parent total equal its children or omit the explicit parent value.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V156",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "A sankey/chord link value is negative or non-finite",
+      "cause": "A sankey or chord link has a negative or non-finite magnitude.",
+      "fix": "Supply finite non-negative link values.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V157",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "A sankey node's height does not match the flow its links carry",
+      "cause": "A sankey node's drawn height does not agree with the flow carried by its links.",
+      "fix": "Correct the explicit node value or the incoming and outgoing flow totals.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V158",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "A sankey directed flow appears more than once",
+      "cause": "A sankey operand repeats a directed source-target link.",
+      "fix": "Merge duplicate directed links so each route is represented once.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V159",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "A choropleth region matched rows with conflicting joined values",
+      "cause": "Multiple choropleth rows join to the same region with conflicting encoded values.",
+      "fix": "Aggregate or reconcile the rows to one encoded value per region.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V160",
+      "family": "V",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": true,
+      "message": "KPI numeric aggregate over a field with no numeric cells",
+      "cause": "A numeric KPI aggregate received non-null values but none are numeric.",
+      "fix": "Provide numeric cells or use count or distinct for non-numeric data.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V161",
+      "family": "V",
+      "category": "validation",
+      "severity": "warning",
+      "retryable": true,
+      "message": "Baked categorical palette recycles: more distinct series than palette slots",
+      "cause": "The applied default categorical palette has fewer slots than distinct series.",
+      "fix": "Supply a sufficiently long explicit color range or reduce the series count.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V162",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Required hash-bound release evidence is missing; references are not re-executed",
+      "cause": "The release profile is missing readable passed evidence bound to the generated artifact.",
+      "fix": "Provide each required local JSON evidence file with its passed status and matching hashes.",
+      "tools": [
+        "code_generate",
+        "design_preview",
+        "fidelity_preview",
+        "pipeline_run"
+      ]
+    },
+    {
+      "code": "OODS-V163",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Release evidence artifact hash mismatch; references are not re-executed",
+      "cause": "A release evidence file or its declared artifact hash does not match the generated artifact.",
+      "fix": "Regenerate the evidence for these exact artifact bytes and update both hashes.",
+      "tools": [
+        "code_generate",
+        "design_preview",
+        "fidelity_preview",
+        "pipeline_run"
+      ]
+    },
+    {
+      "code": "OODS-V164",
+      "family": "V",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": true,
+      "message": "Unknown UI workflow state",
+      "cause": "A UI node declares a workflow state outside the canonical state vocabulary.",
+      "fix": "Use a supported UI workflow state in the node's state field.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V165",
+      "family": "V",
+      "category": "validation",
+      "severity": "error-or-warning",
+      "retryable": true,
+      "message": "SVG rendering failed",
+      "cause": "Rendering the compiled chart to SVG failed.",
+      "fix": "Inspect the SVG rendering error and correct the spec or rendering environment.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V166",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "viz.render pattern conflicts with explicit data or source identity/presentation overrides",
+      "cause": "A pattern request overrides data, identity or presentation owned by the source pattern.",
+      "fix": "Remove the conflicting options or render an explicit chart instead of a pattern.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V167",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": false,
+      "message": "viz.render pattern is authoring-only because its source structure is not supported by the public renderer",
+      "cause": "The selected pattern has source structure the public renderer does not support.",
+      "fix": "Use its authoring source or select a publicly renderable pattern.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V168",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "artifact.certify: bubble-map size is negative or non-finite",
+      "cause": "A bubble-map row has a negative or non-finite size magnitude.",
+      "fix": "Supply finite non-negative size values.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V169",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "artifact.certify: bubble-map magnitudes use radius rather than area scaling",
+      "cause": "The emitted bubble diameter scales with magnitude instead of its area doing so.",
+      "fix": "Choose an encoding that preserves magnitude by area; the current public bubble builder exposes no size-scale override.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V170",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "artifact.certify: overlapping bubble-map rows have conflicting encoded values",
+      "cause": "Bubble-map rows at the same coordinates have conflicting encoded values.",
+      "fix": "Aggregate or separate the rows so one point does not conceal a different value.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V171",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "artifact.certify: flow-map strength is negative or non-finite",
+      "cause": "A flow-map route has a negative or non-finite strength.",
+      "fix": "Supply finite non-negative route strengths.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V172",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "artifact.certify: a directed geographic flow appears more than once",
+      "cause": "The geographic operand repeats the same directed route between coordinates.",
+      "fix": "Merge duplicate directed routes while retaining intentional reciprocal flows.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V173",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "artifact.certify: a force-graph directed edge appears more than once",
+      "cause": "A force-graph operand repeats a directed source-target edge.",
+      "fix": "Merge duplicate directed edges while retaining intentional reciprocal edges.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V174",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": false,
+      "message": "viz.render: pattern retired; use the named supported alternative",
+      "cause": "The requested pattern has been retired from public rendering.",
+      "fix": "Use the supported alternative named in the returned message.",
+      "tools": [
+        "a11y_scan",
+        "artifact_certify",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "health_check",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V175",
+      "family": "V",
+      "category": "validation",
+      "severity": "warning",
+      "retryable": false,
+      "message": "viz.render: static SVG shows the default selection state",
+      "cause": "A chart with interactions was rendered to static SVG in its default selection state.",
+      "fix": "Use a client renderer to provide the declared interactive behavior.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "dashboard_render",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render",
+        "viz_render"
+      ]
+    },
+    {
+      "code": "OODS-V201",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "map.apply input invalid",
+      "cause": "map.apply received neither or both of report and reportPath.",
+      "fix": "Provide exactly one of report or reportPath.",
+      "tools": [
+        "component_map"
+      ]
+    },
+    {
+      "code": "OODS-V202",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "structuredData.fetch input invalid",
+      "cause": "The structured-data request combines unsupported options or omits a required runPath.",
+      "fix": "Use the reported fetch-kind contract and provide its required path and supported options.",
+      "tools": [
+        "design_preview",
+        "registry_snapshot",
+        "structured_data_fetch"
+      ]
+    },
+    {
+      "code": "OODS-V203",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": false,
+      "message": "Composition id or version is not well-formed",
+      "cause": "A composition id, version or required composition selector is missing or malformed.",
+      "fix": "Use an existing cmp- identifier and a positive integer version, or provide the required fresh composition inputs.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V204",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": false,
+      "message": "Composition edit not applicable to this version",
+      "cause": "An edit or ordering preference cannot apply to the stored composition version.",
+      "fix": "Read that version's recorded choices and submit an edit valid for its regions, fields and components.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V205",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": false,
+      "message": "Composition version cannot be accepted",
+      "cause": "The requested composition version cannot be accepted under the acceptance checks.",
+      "fix": "Correct the acceptance issue named in the response before accepting the version.",
+      "tools": [
+        "design_preview"
+      ]
+    },
+    {
+      "code": "OODS-V206",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": false,
+      "message": "Context item is malformed or cannot state its provenance",
+      "cause": "A context item or search record lacks required content or valid provenance.",
+      "fix": "Supply the named provenance fields, valid timestamps and readable body or excerpt within the item limit.",
+      "tools": [
+        "design_preview"
+      ]
+    },
+    {
+      "code": "OODS-V207",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": false,
+      "message": "Context item names a different object from the one on screen",
+      "cause": "A context item names an object other than the one shown by the composition.",
+      "fix": "Attach context for the displayed object or compose the intended object.",
+      "tools": [
+        "design_preview"
+      ]
+    },
+    {
+      "code": "OODS-V208",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": false,
+      "message": "Observation run path is not one Stage1 run",
+      "cause": "The observation path does not identify one Stage1 capture run.",
+      "fix": "Point the observation path at the directory containing one run's manifest.json.",
+      "tools": [
+        "design_preview"
+      ]
+    },
+    {
+      "code": "OODS-V209",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": false,
+      "message": "Observation artifact schema_version is outside the accepted contract",
+      "cause": "An observation artifact declares a version outside OODS Foundry's admitted contract.",
+      "fix": "Use an admitted artifact version or wait for its contract to be reviewed and supported.",
+      "tools": [
+        "design_preview"
+      ]
+    },
+    {
+      "code": "OODS-V210",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": false,
+      "message": "Observation names an object the registry does not hold",
+      "cause": "The observation comparison names an object absent from the object registry.",
+      "fix": "Register the intended object or use an object already held by the registry.",
+      "tools": [
+        "design_preview"
+      ]
+    },
+    {
+      "code": "OODS-V211",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": false,
+      "message": "Result state bound to a component that cannot be held to the result family",
+      "cause": "A result-state field is bound to a component that cannot preserve the result visual family.",
+      "fix": "Use a Badge or StatusBadge with the result tone, or render the value as plain text.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V212",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": false,
+      "message": "Run view path is not one Stage1 run",
+      "cause": "The run-view path does not identify a Stage1 run with the required manifest shape.",
+      "fix": "Point runPath at one capture's manifest directory rather than a suite or analysis directory.",
+      "tools": [
+        "design_preview"
+      ]
+    },
+    {
+      "code": "OODS-V213",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": false,
+      "message": "Run view artifact is outside the admitted contract",
+      "cause": "A run-view artifact is outside the admitted contract or changed during reading.",
+      "fix": "Use a complete unchanged run with admitted versions and matching manifest attestations.",
+      "tools": [
+        "design_preview"
+      ]
+    },
+    {
+      "code": "OODS-V214",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": false,
+      "message": "Run does not match the composition it is shown in",
+      "cause": "The requested run, analysis, record or presentation does not match the composition being shown.",
+      "fix": "Compose a fresh supported view for that source and use a record id belonging to it.",
+      "tools": [
+        "design_preview"
+      ]
+    },
+    {
+      "code": "OODS-V215",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Definition not registered: it does not validate or compose",
+      "cause": "An object or trait definition does not validate or compose, including a declared unbound trait conflict or an invalid semantic version.",
+      "fix": "Fix the reported problems before registering again: remove one conflicting unbound trait or use a semantic version such as 1.2.3 when those checks fail.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V216",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Brand does not validate; nothing was written",
+      "cause": "The proposed brand fails validation, including its required color contrast.",
+      "fix": "Correct the reported brand fields and contrast pairs before applying or creating it.",
+      "tools": [
+        "brand_apply",
+        "brand_create"
+      ]
+    },
+    {
+      "code": "OODS-V217",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Mapped component package cannot be previewed",
+      "cause": "The preview host cannot resolve, compile or freeze a mapped component package.",
+      "fix": "Install a compatible mapped package in the preview environment and correct its imports or build errors.",
+      "tools": [
+        "design_preview"
+      ]
+    },
+    {
+      "code": "OODS-V218",
+      "family": "V",
+      "category": "validation",
+      "severity": "warning",
+      "retryable": false,
+      "message": "Team component mapping has advisory limits",
+      "cause": "A mapped team component has unmet shared contract obligations, or a React-only shadcn mapping does not apply to Vue or HTML output, which keeps the OODS Foundry component.",
+      "fix": "For unmet obligations, read the component-contract report and address them before shipping. For a React-only shadcn mapping, generate React output to use the mapping or keep the OODS Foundry component in Vue or HTML output.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V219",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Mapping creation refused",
+      "cause": "A mapping entry conflicts with another mapping or its local package does not resolve at the pinned name, version and export.",
+      "fix": "Correct the named entry using its index, id and reason, then submit the complete list again. No mapping was written.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "component_map",
+        "object_registry",
+        "pipeline_run",
+        "registry_snapshot",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-W001",
+      "family": "W",
+      "category": "validation",
+      "severity": "warning",
+      "retryable": false,
+      "message": "Fragment output ignores document scope options",
+      "cause": "Fragment output was requested with document-only options.",
+      "fix": "Request document output to apply those options, or remove them for fragments.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-W002",
+      "family": "W",
+      "category": "validation",
+      "severity": "warning",
+      "retryable": false,
+      "message": "Non-strict fragments reclassify unknown-component errors per node",
+      "cause": "Non-strict fragment rendering moved unknown-component failures to individual nodes.",
+      "fix": "Replace the unknown components or inspect each fragment error before using the output.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-W003",
+      "family": "W",
+      "category": "validation",
+      "severity": "warning",
+      "retryable": false,
+      "message": "A dry-run render returns no HTML",
+      "cause": "The render ran as a dry run and returned validation without HTML.",
+      "fix": "Set apply to true to receive rendered HTML.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-WF-001",
+      "family": "WF",
+      "category": "validation",
+      "severity": "warning",
+      "retryable": true,
+      "message": "Entity lacks catalog annotations",
+      "cause": "The wireframe pre-emitter produced no catalog annotations for an entity, so it was skipped.",
+      "fix": "Supply the entity's Object Catalog annotations and render again.",
+      "tools": [
+        "fidelity_preview"
+      ]
+    },
+    {
+      "code": "OODS-WF-002",
+      "family": "WF",
+      "category": "validation",
+      "severity": "error",
+      "retryable": true,
+      "message": "Wireframe entity rendering failed",
+      "cause": "Rendering a manifest entity as a wireframe threw an exception.",
+      "fix": "Correct the entity issue named in the rendering error.",
+      "tools": [
+        "fidelity_preview"
+      ]
+    }
+  ],
+  "reserved": [
+    {
+      "code": "OODS-C002",
+      "reason": "Reserved for the retired duplicate-tag check; no current emitter."
+    },
+    {
+      "code": "OODS-N008",
+      "reason": "Reserved for the retired fixture-object lookup; no current emitter."
+    },
+    {
+      "code": "OODS-N012",
+      "reason": "Reserved for the retired accessibility-token lookup; no current emitter."
+    },
+    {
+      "code": "OODS-N019",
+      "reason": "Retired design-loop-server refusal; retained only in historical tool-ledger evidence, replaced by the preview host route."
+    },
+    {
+      "code": "OODS-S004",
+      "reason": "Reserved object-load failure; current object loading returns its specific diagnostics."
+    },
+    {
+      "code": "OODS-S008",
+      "reason": "Reserved fixture-load failure; fidelity preview uses its FP codes."
+    },
+    {
+      "code": "OODS-S018",
+      "reason": "Reserved for the retired fixture-provider mismatch; no current emitter."
+    },
+    {
+      "code": "OODS-V012",
+      "reason": "Reserved for the retired billing fixture validation; no current emitter."
+    },
+    {
+      "code": "OODS-V013",
+      "reason": "Reserved for the retired fixture-provider validation; no current emitter."
+    },
+    {
+      "code": "OODS-V014",
+      "reason": "Reserved for the retired fixture-provider selection check; no current emitter."
+    },
+    {
+      "code": "OODS-V015",
+      "reason": "Reserved for the retired release-verification package check; no current emitter."
+    },
+    {
+      "code": "OODS-V200",
+      "reason": "Reserved map-validation code; the current map tool does not emit it."
+    }
+  ],
+  "notes": [
+    "Aliases list historical spellings for lookup and migration only; results emit the canonical code, never its aliases.",
+    "Tools lists which tools can return a code, by static analysis of the shipped built module graph, including transitive tool calls; shared modules may make the list broader than an individual call path. It includes the on-demand a11y_scan tool.",
+    "Message is the canonical registry message (or accessibility rule summary); the runtime adds request-specific details at the emitting call site.",
+    "Severity is error-or-warning where a code has both outcomes, including dashboard panel omission and advisory code-generation profiles; accessibility rules retain their intrinsic evaluator severity, while their returned-code severity includes panel omission.",
+    "Reserved codes have no current emitter. OODS-N019 is retired and occurs only in historical tool-ledger evidence.",
+    "The optional HTTP bridge has its own transport codes outside this MCP glossary: POLICY_DENIED, RATE_LIMITED, TIMEOUT, VALIDATION_ERROR and RUN_ERROR; legacy bridge aliases are normalized to those codes."
+  ]
+}

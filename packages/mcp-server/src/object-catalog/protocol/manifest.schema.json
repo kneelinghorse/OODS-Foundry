@@ -1,0 +1,184 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oods-forge.local/object-catalog/protocol/manifest.schema.json",
+  "version": "1.0.0",
+  "title": "SemanticManifest",
+  "description": "OODS Foundry-owned SemanticManifest envelope. Frozen from the (now-sunset) Concordance wire contract v1.0.0 and relocated here in s106-m02 when the Concordance integration was torn down; OODS Foundry owns the semantic protocol (decision #634). Structural validation only — used by the Object Catalog G1 gate via manifest-validator.ts. Version semantics retained: x.y bump = additive non-breaking, x bump = breaking.",
+  "type": "object",
+  "required": ["manifest_version", "source", "entities"],
+  "additionalProperties": false,
+  "properties": {
+    "manifest_version": {
+      "type": "string",
+      "const": "4.0"
+    },
+    "source": {
+      "type": "object",
+      "required": ["agent", "captured_at"],
+      "additionalProperties": true,
+      "properties": {
+        "agent": { "type": "string", "description": "Producing agent, e.g. 'divergent-inspector'" },
+        "stage": { "type": "string", "description": "Producing stage within the agent, e.g. 'Stage1'" },
+        "url": { "type": "string", "description": "Source URL when capturing a live application" },
+        "run_id": { "type": "string", "description": "Producer-side run identifier" },
+        "stratum": { "type": "string", "description": "Sampling stratum for Canon Compass" },
+        "captured_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "entities": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/SemanticEntity" }
+    },
+    "relationships": {
+      "type": "array",
+      "description": "Top-level (cross-entity) typed relationships. Per-entity edges may also live inside entity.relationships.edges[].",
+      "items": { "$ref": "#/$defs/TypedRelationship" }
+    }
+  },
+  "$defs": {
+    "URN": {
+      "type": "string",
+      "pattern": "^urn:proto:(semantic|api|data|event|workflow|ui):[a-z0-9._\\-]+@[0-9]+\\.[0-9]+(\\.[0-9]+)?$",
+      "description": "urn:proto:<protocol>:<id>@<version>. Per SEMANTIC §1."
+    },
+    "PragmaticRole": {
+      "type": "string",
+      "enum": [
+        "primary_action",
+        "secondary_action",
+        "destructive_action",
+        "recovery_action",
+        "navigation",
+        "informational",
+        "page",
+        "landing",
+        "section",
+        "index"
+      ]
+    },
+    "Provenance": {
+      "type": "string",
+      "enum": ["declared", "inferred", "candidate", "verified"]
+    },
+    "Protocol": {
+      "type": "string",
+      "enum": ["syntactic", "semantic", "pragmatic", "relational"]
+    },
+    "LocationType": {
+      "type": "string",
+      "enum": ["code", "docs", "test", "api", "figma", "route", "event", "other"]
+    },
+    "EvidenceRef": {
+      "type": "object",
+      "required": ["id", "protocol", "kind", "locator", "weight", "provenance"],
+      "additionalProperties": true,
+      "properties": {
+        "id": { "type": "string" },
+        "protocol": { "$ref": "#/$defs/Protocol" },
+        "kind": { "type": "string" },
+        "locator": { "type": "string" },
+        "matched": { "type": ["string", "null"] },
+        "weight": { "type": "number", "minimum": 0, "maximum": 1 },
+        "provenance": { "$ref": "#/$defs/Provenance" },
+        "captured_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Location": {
+      "type": "object",
+      "required": ["type", "path"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "$ref": "#/$defs/LocationType" },
+        "path": { "type": "string" }
+      }
+    },
+    "TypedRelationship": {
+      "type": "object",
+      "required": ["type", "from", "to", "provenance"],
+      "additionalProperties": true,
+      "properties": {
+        "type": { "type": "string", "description": "Edge type. Lowercase = semantic, UPPERCASE = operational. Closed lists in contracts/edge-types.json." },
+        "from": { "$ref": "#/$defs/URN" },
+        "to": { "$ref": "#/$defs/URN" },
+        "direction": { "type": "string", "enum": ["out", "in", "undirected"], "default": "out" },
+        "provenance": { "$ref": "#/$defs/Provenance" },
+        "weight": { "type": "number", "minimum": 0, "maximum": 1 },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "via": { "type": "string" },
+        "reason": { "type": "string" },
+        "evidence_refs": {
+          "type": "array",
+          "items": { "type": "string", "description": "References EvidenceRef.id from the same or a connected manifest" }
+        },
+        "captured_at": { "type": "string", "format": "date-time" },
+        "metadata": { "type": "object", "additionalProperties": true }
+      }
+    },
+    "SemanticEntity": {
+      "type": "object",
+      "required": ["urn", "element", "semantics"],
+      "additionalProperties": true,
+      "properties": {
+        "urn": { "$ref": "#/$defs/URN" },
+        "element": {
+          "type": "object",
+          "required": ["type", "name"],
+          "additionalProperties": true,
+          "properties": {
+            "type": { "type": "string", "description": "Dotted kind, e.g. ui.control.button, object, action" },
+            "name": { "type": "string" },
+            "object": { "type": "string", "description": "Domain noun (Order, Cart, Subscription)" },
+            "action": { "type": "string", "description": "Verb (submit_order, retry_payment)" }
+          }
+        },
+        "semantics": {
+          "type": "object",
+          "required": ["purpose", "human_meaning"],
+          "additionalProperties": true,
+          "properties": {
+            "purpose": { "type": "string", "description": "Verb-form short label" },
+            "human_meaning": { "type": "string", "description": "Sentence-form description" },
+            "tags": { "type": "array", "items": { "type": "string" } },
+            "synonyms": { "type": "array", "items": { "type": "string" } },
+            "keywords": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "pragmatic_role": { "$ref": "#/$defs/PragmaticRole" },
+        "states": { "type": "array", "items": { "type": "string" } },
+        "preconditions": { "type": "array", "items": { "type": "string" } },
+        "effects": { "type": "array", "items": { "type": "string" } },
+        "traits": { "type": "array", "items": { "type": "string" } },
+        "context": { "type": "object", "additionalProperties": true },
+        "locations": { "type": "array", "items": { "$ref": "#/$defs/Location" } },
+        "evidence_refs": { "type": "array", "items": { "$ref": "#/$defs/EvidenceRef" } },
+        "relationships": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "edges": { "type": "array", "items": { "$ref": "#/$defs/TypedRelationship" } }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "$comment": "SEMANTIC §6: element.object_action_present — action-shaped roles require object+action.",
+          "if": {
+            "properties": {
+              "pragmatic_role": {
+                "enum": ["primary_action", "secondary_action", "destructive_action", "recovery_action"]
+              }
+            },
+            "required": ["pragmatic_role"]
+          },
+          "then": {
+            "properties": {
+              "element": {
+                "required": ["type", "name", "object", "action"]
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

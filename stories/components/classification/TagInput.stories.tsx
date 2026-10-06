@@ -14,6 +14,7 @@ const TAGS: Tag[] = [
     state: 'active',
     synonyms: ['js'],
     isCanonical: true,
+    metadata: undefined,
   },
   {
     id: 'typescript',
@@ -23,6 +24,7 @@ const TAGS: Tag[] = [
     state: 'active',
     synonyms: ['ts'],
     isCanonical: true,
+    metadata: undefined,
   },
   {
     id: 'python',
@@ -32,6 +34,7 @@ const TAGS: Tag[] = [
     state: 'active',
     synonyms: [],
     isCanonical: true,
+    metadata: undefined,
   },
   {
     id: 'react',
@@ -41,6 +44,7 @@ const TAGS: Tag[] = [
     state: 'active',
     synonyms: [],
     isCanonical: true,
+    metadata: undefined,
   },
 ];
 
@@ -60,7 +64,7 @@ const signals: TagUsageSignal[] = [
 ];
 
 const meta: Meta<typeof TagInput> = {
-  title: 'Traits/Core/Classifiable/Tag Input',
+  title: 'Components/Classification/TagInput',
   component: TagInput,
   args: {
     id: 'storybook-tag-input',
@@ -100,6 +104,7 @@ export const CreationFlow: Story = {
         state: 'active',
         synonyms: [],
         isCanonical: true,
+        metadata: undefined,
       },
     }),
   },

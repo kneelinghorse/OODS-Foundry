@@ -13,7 +13,10 @@ export function validateStateMachineOwnership(composed: ComposedObject): RuleIss
   const providers = collectStateMachineProviders(traits);
   const providerNames = providers.map((provider) => provider.name);
 
+  const allTraitNames = traits.map((t) => t.trait?.name).filter(Boolean) as string[];
+
   if (providers.length > 1) {
+    const nonProviders = allTraitNames.filter((n) => !providerNames.includes(n));
     issues.push({
       code: ErrorCodes.STATE_OWNERSHIP_CONFLICT,
       message: `Multiple traits declare a state machine (${providerNames.join(', ')}); only one owner is permitted.`,
@@ -21,6 +24,8 @@ export function validateStateMachineOwnership(composed: ComposedObject): RuleIss
       severity: 'error',
       path: ['traits'],
       related: providerNames,
+      traitPath: providerNames,
+      impactedTraits: nonProviders.length > 0 ? nonProviders : undefined,
     });
   }
 
@@ -33,6 +38,10 @@ export function validateStateMachineOwnership(composed: ComposedObject): RuleIss
       severity: 'error',
       path: ['stateMachine'],
       related: [owner.name],
+      traitPath: [owner.name],
+      impactedTraits: allTraitNames.filter((n) => n !== owner.name).length > 0
+        ? allTraitNames.filter((n) => n !== owner.name)
+        : undefined,
     });
   }
 
@@ -49,6 +58,7 @@ export function validateStateMachineOwnership(composed: ComposedObject): RuleIss
         severity: 'error',
         path: ['stateMachine', 'ownerTrait'],
         related: [ownerTrait, ...providerNames],
+        traitPath: [ownerTrait, ...providerNames],
       });
     }
 
@@ -73,6 +83,7 @@ function validateStateMachineDefinition(
       severity: 'error',
       path: ['stateMachine', 'definition', 'initial'],
       related: [ownerTrait, definition.initial],
+      traitPath: [ownerTrait],
     });
   }
 
@@ -85,6 +96,7 @@ function validateStateMachineDefinition(
         severity: 'error',
         path: ['stateMachine', 'definition', 'transitions', index, 'from'],
         related: [ownerTrait, transition.from],
+        traitPath: [ownerTrait],
       });
     }
 
@@ -96,6 +108,7 @@ function validateStateMachineDefinition(
         severity: 'error',
         path: ['stateMachine', 'definition', 'transitions', index, 'to'],
         related: [ownerTrait, transition.to],
+        traitPath: [ownerTrait],
       });
     }
   });

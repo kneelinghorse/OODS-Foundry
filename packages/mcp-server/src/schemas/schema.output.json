@@ -1,0 +1,85 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "schema output (grouped)",
+  "description": "Grouped output for the schema family. anyOf (NOT oneOf) of each per-action output body — per-action object outputs share fields (name/version/createdAt/tags) and would match more than one oneOf branch. The list branch is a bare array; the delete branch wraps in { deleted, schema }.",
+  "anyOf": [
+    {
+      "$comment": "schema.save.output",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "createdAt", "updatedAt", "tags"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "integer", "minimum": 1 },
+        "object": { "type": "string" },
+        "context": { "type": "string" },
+        "author": { "type": "string" },
+        "createdAt": { "type": "string", "minLength": 1 },
+        "updatedAt": { "type": "string", "minLength": 1 },
+        "tags": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    {
+      "$comment": "schema.load.output",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaRef", "name", "version", "createdAt", "updatedAt", "tags"],
+      "properties": {
+        "schemaRef": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "integer", "minimum": 1 },
+        "object": { "type": "string" },
+        "context": { "type": "string" },
+        "author": { "type": "string" },
+        "createdAt": { "type": "string", "minLength": 1 },
+        "updatedAt": { "type": "string", "minLength": 1 },
+        "tags": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    {
+      "$comment": "schema.list.output (bare array)",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "schemaRef", "version", "createdAt", "updatedAt", "tags"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "schemaRef": { "type": "string", "minLength": 1 },
+          "version": { "type": "integer", "minimum": 1 },
+          "object": { "type": "string" },
+          "context": { "type": "string" },
+          "author": { "type": "string" },
+          "createdAt": { "type": "string", "minLength": 1 },
+          "updatedAt": { "type": "string", "minLength": 1 },
+          "tags": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    {
+      "$comment": "schema.delete.output",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["deleted", "schema"],
+      "properties": {
+        "deleted": { "const": true },
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "schemaRef", "version", "createdAt", "updatedAt", "tags"],
+          "properties": {
+            "name": { "type": "string", "minLength": 1 },
+            "schemaRef": { "type": "string", "minLength": 1 },
+            "version": { "type": "integer", "minimum": 1 },
+            "object": { "type": "string" },
+            "context": { "type": "string" },
+            "author": { "type": "string" },
+            "createdAt": { "type": "string", "minLength": 1 },
+            "updatedAt": { "type": "string", "minLength": 1 },
+            "tags": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      }
+    }
+  ]
+}

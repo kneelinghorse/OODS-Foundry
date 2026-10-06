@@ -145,17 +145,6 @@ const StatefulTrait = {
         },
       },
     ],
-    timeline: [
-      {
-        component: 'StateTransitionEvent',
-        props: {
-          historyField: 'state_history',
-          labelField: 'status',
-          showActor: true,
-          showReason: true,
-        },
-      },
-    ],
     card: [
       {
         component: 'StatusBadge',
@@ -193,7 +182,7 @@ const StatefulTrait = {
         'StatusBadge announces current state and available transition count. ' +
         'StateTransitionEvent entries announce from-state, to-state, actor, and reason.',
     },
-    regionsUsed: ['badges', 'timeline', 'forms', 'detail', 'card'],
+    regionsUsed: ['list', 'detail', 'form', 'card'],
     examples: ['Subscription', 'Project Workflow', 'Order', 'User', 'Invoice'],
     references: [
       'Trait Engine Spec v0.1 section 2',

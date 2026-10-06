@@ -22,6 +22,11 @@
         "$type": "dimension",
         "$value": "{theme.focus.width}",
         "$description": "Focus ring width."
+      },
+      "offset": {
+        "$type": "dimension",
+        "$value": "{ref.border.width.bold}",
+        "$description": "Focus ring offset; the bold border width, so the ring clears a hairline border on every control."
       }
     }
   }

@@ -92,12 +92,6 @@ view_extensions:
         eventField: last_event
         eventTimestampField: last_event_at
         eventOptionsParameter: recordedEvents
-  timeline:
-    - component: AuditEvent
-      props:
-        typeField: last_event
-        timestampField: last_event_at
-        timezoneParameter: timezone
   list:
     - component: RelativeTimestamp
       props:
@@ -123,7 +117,6 @@ metadata:
     screenreader: "Announces creation and last update information with lifecycle context."
   regionsUsed:
     - detail
-    - timeline
     - list
   examples:
     - User

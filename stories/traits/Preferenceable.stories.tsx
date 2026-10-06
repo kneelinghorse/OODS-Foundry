@@ -17,8 +17,31 @@
  * Research: R21.5 Preferenceable Trait Implementation
  */
 
-import React, { useState } from 'react';
+// @types/react 19 no longer declares a global JSX namespace; it is exported from 'react'.
+import type { JSX } from 'react';
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+
+type ThemeMode = 'light' | 'dark' | 'system';
+type ThemeDensity = 'compact' | 'comfortable' | 'spacious';
+
+type NamespaceField =
+  | {
+      readonly key: string;
+      readonly type: 'enum';
+      readonly options: readonly string[];
+      readonly value: string;
+    }
+  | { readonly key: string; readonly type: 'boolean'; readonly value: boolean }
+  | { readonly key: string; readonly type: 'string'; readonly value: string };
+
+interface PreferenceNamespace {
+  readonly id: string;
+  readonly name: string;
+  readonly icon: string;
+  readonly description: string;
+  readonly fields: readonly NamespaceField[];
+}
 
 /* ─────────────────────────────────────────────────────────────────────────────
  * Style constants (consistent with other trait stories)
@@ -155,6 +178,13 @@ const SAMPLE_PREFERENCES = {
     source: 'user' as const,
     migrationApplied: [] as string[],
   },
+};
+
+type EditablePreferences = Omit<typeof SAMPLE_PREFERENCES.preferences, 'theme'> & {
+  theme: Omit<typeof SAMPLE_PREFERENCES.preferences.theme, 'mode' | 'density'> & {
+    mode: ThemeMode;
+    density: ThemeDensity;
+  };
 };
 
 const SCHEMA_VERSIONS = [
@@ -322,7 +352,7 @@ function NamespaceExplorerStory(): JSX.Element {
   const [expandedNamespace, setExpandedNamespace] = useState<string | null>('theme');
   const [allowUnknown, setAllowUnknown] = useState(false);
 
-  const namespaces = [
+  const namespaces: readonly PreferenceNamespace[] = [
     {
       id: 'theme',
       name: 'Theme',
@@ -564,20 +594,20 @@ function NamespaceExplorerStory(): JSX.Element {
  * ───────────────────────────────────────────────────────────────────────────── */
 
 function PreferenceEditorStory(): JSX.Element {
-  const [preferences, setPreferences] = useState(SAMPLE_PREFERENCES.preferences);
+  const [preferences, setPreferences] = useState<EditablePreferences>(SAMPLE_PREFERENCES.preferences);
   const [showDiff, setShowDiff] = useState(false);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
   const originalPreferences = SAMPLE_PREFERENCES.preferences;
 
-  const handleThemeModeChange = (mode: 'light' | 'dark' | 'system') => {
+  const handleThemeModeChange = (mode: ThemeMode) => {
     setPreferences({
       ...preferences,
       theme: { ...preferences.theme, mode },
     });
   };
 
-  const handleDensityChange = (density: 'compact' | 'comfortable' | 'spacious') => {
+  const handleDensityChange = (density: ThemeDensity) => {
     setPreferences({
       ...preferences,
       theme: { ...preferences.theme, density },

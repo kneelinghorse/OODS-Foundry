@@ -42,6 +42,25 @@ const AuthableTrait = {
       required: true,
       description:
         'Canonical RBAC role entries mirroring R21.2 Part 4.2 TABLE 1. Serves as the "roles" table for the extension pack.',
+      examples: [
+        [
+          {
+            "id": "11111111-1111-4111-8111-111111111111",
+            "name": "Owner",
+            "description": "Full tenant access + invoice approval (R21.2 Table 1)."
+          },
+          {
+            "id": "22222222-2222-4222-8222-222222222222",
+            "name": "Approver",
+            "description": "Workflow approver for compliance-sensitive documents."
+          },
+          {
+            "id": "33333333-3333-4333-8333-333333333333",
+            "name": "Editor",
+            "description": "Contributor allowed to create + update documents in scope."
+          }
+        ]
+      ],
       default: [],
     },
     permission_catalog: {
@@ -137,14 +156,6 @@ const AuthableTrait = {
         },
       },
     ],
-    timeline: [
-      {
-        component: 'MembershipAuditTimeline',
-        props: {
-          field: 'membership_records',
-        },
-      },
-    ],
   },
 
   tokens: {
@@ -164,7 +175,7 @@ const AuthableTrait = {
       keyboard: 'RoleAssignmentForm keeps role filter + add/remove buttons in a linear tab order.',
       screenreader: 'MembershipPanel announces role counts per organization and surfaces unique constraint violations.',
     },
-    regionsUsed: ['list', 'detail', 'form', 'timeline'],
+    regionsUsed: ['list', 'detail', 'form'],
     examples: ['User', 'Organization'],
     references: ['R21.2 Canonical Data Models for Authorization Systems'],
   },

@@ -2,7 +2,7 @@ import type { FC, JSX } from 'react';
 import { RenderObject } from '../../src/components/RenderObject.js';
 import type { RenderObjectProps } from '../../src/components/RenderObject.js';
 import type { ObjectSpec, TraitAdapter } from '../../src/types/render-context.js';
-import type { NormalizedVizSpec } from '../../src/viz/spec/normalized-viz-spec.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 import { Heatmap } from '../../src/components/viz/Heatmap.js';
 import { ScatterChart } from '../../src/components/viz/ScatterChart.js';
 import { VizFacetGrid } from '../../src/components/viz/VizFacetGrid.js';
@@ -159,7 +159,7 @@ function ProductInsights({ insights }: { readonly insights: readonly string[] })
 }
 
 const usageSpec: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/v1',
   id: 'dashboard:product:usage-heatmap',
   name: 'Feature usage',
   data: {
@@ -211,7 +211,7 @@ const usageSpec: NormalizedVizSpec = {
 };
 
 const satisfactionSpec: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/v1',
   id: 'dashboard:product:satisfaction-scatter',
   name: 'Usage vs satisfaction',
   data: {
@@ -271,7 +271,7 @@ const satisfactionSpec: NormalizedVizSpec = {
 };
 
 const pipelineSpec: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/v1',
   id: 'dashboard:product:pipeline-facet',
   name: 'Release readiness',
   data: {

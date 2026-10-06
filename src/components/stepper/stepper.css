@@ -7,6 +7,10 @@
    ========================================================================== */
 
 .stepper {
+  /* The step marker is a medium control's height; the connector rail and the marker ring are one 2px stroke.
+     The rail's offsets below are derived from these two, so it always runs through the marker's centre. */
+  --stepper-marker-size: var(--sys-control-height-md);
+  --stepper-stroke-width: 2px;
   display: flex;
   padding: 0;
   margin: 0;
@@ -71,10 +75,10 @@
 }
 
 .stepper__step--clickable .stepper__step-header:focus {
-  outline: var(--stepper-focus-outline-width, var(--sys-focus-width, 2px))
-    solid var(--stepper-focus-outline-color, var(--sys-focus-text));
-  outline-offset: 2px;
-  border-radius: 4px;
+  outline: var(--stepper-focus-outline-width, var(--sys-focus-width))
+    solid var(--stepper-focus-outline-color, var(--sys-focus-ring-outer));
+  outline-offset: var(--sys-focus-offset);
+  border-radius: var(--sys-radius-control-sm);
 }
 
 /* ============================================================================
@@ -89,27 +93,27 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: var(--stepper-marker-size);
+  height: var(--stepper-marker-size);
   border-radius: 50%;
-  border: 2px solid var(--stepper-step-border-color);
+  border: var(--stepper-stroke-width) solid var(--stepper-step-border-color);
   background-color: var(--stepper-step-icon-surface, var(--sys-surface-raised));
   color: var(--stepper-step-icon-color);
-  font-size: 14px;
-  font-weight: 600;
+  font-size: var(--sys-text-scale-label-font-size);
+  font-weight: var(--sys-text-weight-semibold);
   transition: transform 0.2s ease-out;
 }
 
 /* Current step styling */
 .stepper__step--current .stepper__step-icon {
   background-color: var(--stepper-step-fill-color, var(--stepper-step-border-color));
-  color: var(--stepper-step-fill-contrast, var(--sys-text-on_interactive));
+  color: var(--stepper-step-fill-contrast, var(--sys-text-on-interactive));
 }
 
 /* Completed step styling */
 .stepper__step--completed .stepper__step-icon {
   background-color: var(--stepper-step-fill-color, var(--stepper-step-border-color));
-  color: var(--stepper-step-fill-contrast, var(--sys-text-on_interactive));
+  color: var(--stepper-step-fill-contrast, var(--sys-text-on-interactive));
 }
 
 /* ============================================================================
@@ -117,30 +121,30 @@
    ========================================================================== */
 
 .stepper__step-content {
-  margin-top: 8px;
+  margin-top: var(--sys-stack-xs);
 }
 
 .stepper--vertical .stepper__step-content {
   margin-top: 0;
-  margin-left: 12px;
+  margin-left: var(--sys-inline-sm);
 }
 
 .stepper__step-label {
-  font-size: 14px;
-  font-weight: 500;
+  font-size: var(--sys-text-scale-label-font-size);
+  font-weight: var(--sys-text-scale-label-font-weight);
   color: var(--stepper-step-text-color);
   margin: 0;
 }
 
 .stepper__step-description {
-  font-size: 12px;
+  font-size: var(--sys-text-scale-caption-font-size);
   color: var(--stepper-step-description-color, var(--sys-text-secondary));
-  margin-top: 4px;
+  margin-top: var(--sys-control-gap-compact);
 }
 
 .stepper__step-optional {
-  font-size: 12px;
-  font-weight: 400;
+  font-size: var(--sys-text-scale-caption-font-size);
+  font-weight: var(--sys-text-scale-body-sm-font-weight);
   color: var(--stepper-step-optional-color, var(--sys-text-secondary));
 }
 
@@ -154,24 +158,24 @@
 }
 
 .stepper__connector--horizontal {
-  height: 2px;
+  height: var(--stepper-stroke-width);
   flex: 1;
-  margin: 16px 8px 0 8px;
+  margin: calc(var(--stepper-marker-size) / 2) var(--sys-control-gap) 0 var(--sys-control-gap);
   align-self: flex-start;
 }
 
 .stepper__connector--vertical {
-  width: 2px;
-  height: 32px;
-  margin-left: 15px;
-  margin-top: 4px;
-  margin-bottom: 4px;
+  width: var(--stepper-stroke-width);
+  height: var(--sys-stack-xl);
+  margin-left: calc((var(--stepper-marker-size) - var(--stepper-stroke-width)) / 2);
+  margin-top: var(--sys-control-gap-compact);
+  margin-bottom: var(--sys-control-gap-compact);
 }
 
 /* Connector for completed steps */
 .stepper__step--completed + .stepper__step .stepper__connector,
 .stepper__step--completed .stepper__connector {
-  background-color: var(--stepper-connector-active-color, var(--cmp-status-info-border));
+  background-color: var(--stepper-connector-active-color, var(--sys-status-info-border));
 }
 
 /* ============================================================================
@@ -217,12 +221,13 @@
 
   .stepper--horizontal .stepper__step-content {
     margin-top: 0;
-    margin-left: 12px;
+    margin-left: var(--sys-inline-sm);
   }
 
   .stepper__connector--horizontal {
-    width: 2px;
-    height: 32px;
-    margin: 4px 0 4px 15px;
+    width: var(--stepper-stroke-width);
+    height: var(--sys-stack-xl);
+    margin: var(--sys-control-gap-compact) 0 var(--sys-control-gap-compact)
+      calc((var(--stepper-marker-size) - var(--stepper-stroke-width)) / 2);
   }
 }

@@ -1,0 +1,2237 @@
+{
+  "capabilityRollup": {
+    "kind": "capability_rollup",
+    "schema_version": "1.2.0",
+    "generated_at": "2026-04-17T06:17:39.679Z",
+    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+    "target": {
+      "id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+      "url": "https://linear.app/"
+    },
+    "capabilities": [
+      {
+        "canonical_id": "capability:build-input-va-dqi",
+        "display_label": "Build Input Va Dqi",
+        "presentations": [
+          {
+            "surface": "dom",
+            "label": "Build Input Va Dqi",
+            "confidence": {
+              "total": 0.4,
+              "method": "threshold_gate_v1",
+              "signals": [
+                {
+                  "type": "composition_pattern",
+                  "raw_score": 1,
+                  "weight": 0.4,
+                  "weighted_contribution": 0.4,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/60/role",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "observation_type": "action_source_role"
+                  },
+                  "hint": "Source object 'cluster-cluster-54' exposes actionable role"
+                }
+              ]
+            },
+            "preconditions": [],
+            "role_hints": [],
+            "state_hints": [],
+            "member_instances": [
+              {
+                "artifact_ref": "orca_candidates.json",
+                "json_pointer": "/action_candidates/2",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "orca_action"
+              }
+            ]
+          }
+        ],
+        "minimum_preconditions": [],
+        "lifecycle_hints": [],
+        "conflicts": [],
+        "resolution_strategy": "identity_node",
+        "derived_from_runs": [
+          "a0300dc0-c10f-4821-b648-48556da43ef7"
+        ]
+      },
+      {
+        "canonical_id": "capability:flex-root-doqcw",
+        "display_label": "Flex Root Doqcw",
+        "presentations": [
+          {
+            "surface": "dom",
+            "label": "Flex Root Doqcw",
+            "confidence": {
+              "total": 0.4,
+              "method": "threshold_gate_v1",
+              "signals": [
+                {
+                  "type": "composition_pattern",
+                  "raw_score": 1,
+                  "weight": 0.4,
+                  "weighted_contribution": 0.4,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/58/role",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "observation_type": "action_source_role"
+                  },
+                  "hint": "Source object 'cluster-cluster-48' exposes actionable role"
+                }
+              ]
+            },
+            "preconditions": [],
+            "role_hints": [],
+            "state_hints": [],
+            "member_instances": [
+              {
+                "artifact_ref": "orca_candidates.json",
+                "json_pointer": "/action_candidates/0",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "orca_action"
+              }
+            ]
+          }
+        ],
+        "minimum_preconditions": [],
+        "lifecycle_hints": [],
+        "conflicts": [],
+        "resolution_strategy": "identity_node",
+        "derived_from_runs": [
+          "a0300dc0-c10f-4821-b648-48556da43ef7"
+        ]
+      },
+      {
+        "canonical_id": "capability:input",
+        "display_label": "Input",
+        "presentations": [
+          {
+            "surface": "dom",
+            "label": "Input",
+            "confidence": {
+              "total": 0.55,
+              "method": "weighted_blend_v1",
+              "signals": [
+                {
+                  "type": "composition_pattern",
+                  "raw_score": 1,
+                  "weight": 0.4,
+                  "weighted_contribution": 0.4,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/63/inferred_role",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "observation_type": "action_source_role"
+                  },
+                  "hint": "Source object 'cluster-cluster-53' exposes actionable role"
+                },
+                {
+                  "type": "a11y_attribute",
+                  "raw_score": 1,
+                  "weight": 0.15,
+                  "weighted_contribution": 0.15,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/63/inferred_role",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "observation_type": "action_role_confirmation"
+                  },
+                  "hint": "Source object inferred_role 'form-control' confirmed actionability"
+                }
+              ]
+            },
+            "preconditions": [],
+            "role_hints": [],
+            "state_hints": [],
+            "member_instances": [
+              {
+                "artifact_ref": "orca_candidates.json",
+                "json_pointer": "/action_candidates/4",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "orca_action"
+              }
+            ]
+          }
+        ],
+        "minimum_preconditions": [],
+        "lifecycle_hints": [],
+        "conflicts": [],
+        "resolution_strategy": "identity_node",
+        "derived_from_runs": [
+          "a0300dc0-c10f-4821-b648-48556da43ef7"
+        ]
+      },
+      {
+        "canonical_id": "capability:issue-view-comment-box-v-dr9",
+        "display_label": "Issue View Comment Box V Dr9",
+        "presentations": [
+          {
+            "surface": "dom",
+            "label": "Issue View Comment Box V Dr9",
+            "confidence": {
+              "total": 0.4,
+              "method": "threshold_gate_v1",
+              "signals": [
+                {
+                  "type": "composition_pattern",
+                  "raw_score": 1,
+                  "weight": 0.4,
+                  "weighted_contribution": 0.4,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/59/role",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "observation_type": "action_source_role"
+                  },
+                  "hint": "Source object 'cluster-cluster-52' exposes actionable role"
+                }
+              ]
+            },
+            "preconditions": [],
+            "role_hints": [],
+            "state_hints": [],
+            "member_instances": [
+              {
+                "artifact_ref": "orca_candidates.json",
+                "json_pointer": "/action_candidates/1",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "orca_action"
+              }
+            ]
+          }
+        ],
+        "minimum_preconditions": [],
+        "lifecycle_hints": [],
+        "conflicts": [],
+        "resolution_strategy": "identity_node",
+        "derived_from_runs": [
+          "a0300dc0-c10f-4821-b648-48556da43ef7"
+        ]
+      },
+      {
+        "canonical_id": "capability:slack-issue-chat-input-y9wpf",
+        "display_label": "Slack Issue Chat Input Y9wpf",
+        "presentations": [
+          {
+            "surface": "dom",
+            "label": "Slack Issue Chat Input Y9wpf",
+            "confidence": {
+              "total": 0.4,
+              "method": "threshold_gate_v1",
+              "signals": [
+                {
+                  "type": "composition_pattern",
+                  "raw_score": 1,
+                  "weight": 0.4,
+                  "weighted_contribution": 0.4,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/61/role",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "observation_type": "action_source_role"
+                  },
+                  "hint": "Source object 'cluster-cluster-56' exposes actionable role"
+                }
+              ]
+            },
+            "preconditions": [],
+            "role_hints": [],
+            "state_hints": [],
+            "member_instances": [
+              {
+                "artifact_ref": "orca_candidates.json",
+                "json_pointer": "/action_candidates/3",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "orca_action"
+              }
+            ]
+          }
+        ],
+        "minimum_preconditions": [],
+        "lifecycle_hints": [],
+        "conflicts": [],
+        "resolution_strategy": "identity_node",
+        "derived_from_runs": [
+          "a0300dc0-c10f-4821-b648-48556da43ef7"
+        ]
+      },
+      {
+        "canonical_id": "capability:slack-issue-send-button-divider-jo-tlb",
+        "display_label": "Slack Issue Send Button Divider Jo Tlb",
+        "presentations": [
+          {
+            "surface": "dom",
+            "label": "Slack Issue Send Button Divider Jo Tlb",
+            "confidence": {
+              "total": 0.55,
+              "method": "weighted_blend_v1",
+              "signals": [
+                {
+                  "type": "composition_pattern",
+                  "raw_score": 1,
+                  "weight": 0.4,
+                  "weighted_contribution": 0.4,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/65/role",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "observation_type": "action_source_role"
+                  },
+                  "hint": "Source object 'cluster-cluster-61' exposes actionable role"
+                },
+                {
+                  "type": "label_alias",
+                  "raw_score": 1,
+                  "weight": 0.15,
+                  "weighted_contribution": 0.15,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/action_candidates/5/name",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "observation_type": "action_label_match"
+                  },
+                  "hint": "Action label 'Slack Issue Send Button Divider Jo Tlb' matched verb 'submit'"
+                }
+              ]
+            },
+            "preconditions": [],
+            "role_hints": [],
+            "state_hints": [],
+            "member_instances": [
+              {
+                "artifact_ref": "orca_candidates.json",
+                "json_pointer": "/action_candidates/5",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "orca_action"
+              }
+            ]
+          }
+        ],
+        "minimum_preconditions": [],
+        "lifecycle_hints": [],
+        "conflicts": [],
+        "resolution_strategy": "identity_node",
+        "derived_from_runs": [
+          "a0300dc0-c10f-4821-b648-48556da43ef7"
+        ]
+      },
+      {
+        "canonical_id": "capability:video-player-playback-rate-j1bf",
+        "display_label": "Video Player Playback Rate J1bf",
+        "presentations": [
+          {
+            "surface": "dom",
+            "label": "Video Player Playback Rate J1bf",
+            "confidence": {
+              "total": 0.4,
+              "method": "threshold_gate_v1",
+              "signals": [
+                {
+                  "type": "composition_pattern",
+                  "raw_score": 1,
+                  "weight": 0.4,
+                  "weighted_contribution": 0.4,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/66/role",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "observation_type": "action_source_role"
+                  },
+                  "hint": "Source object 'cluster-cluster-65' exposes actionable role"
+                }
+              ]
+            },
+            "preconditions": [],
+            "role_hints": [],
+            "state_hints": [],
+            "member_instances": [
+              {
+                "artifact_ref": "orca_candidates.json",
+                "json_pointer": "/action_candidates/6",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "orca_action"
+              }
+            ]
+          }
+        ],
+        "minimum_preconditions": [],
+        "lifecycle_hints": [],
+        "conflicts": [],
+        "resolution_strategy": "identity_node",
+        "derived_from_runs": [
+          "a0300dc0-c10f-4821-b648-48556da43ef7"
+        ]
+      }
+    ]
+  },
+  "objectRollup": {
+    "kind": "object_rollup",
+    "schema_version": "1.1.0",
+    "generated_at": "2026-04-17T06:17:39.702Z",
+    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+    "target": {
+      "id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+      "url": "https://linear.app/"
+    },
+    "objects": [
+      {
+        "canonical_id": "canonical:object:agent-list-card-euuz1",
+        "canonical_label": "Agent List Card Euuz1",
+        "representative_object_id": "cluster-cluster-67",
+        "source_object_ids": [
+          "cluster-cluster-67"
+        ],
+        "external_component": "Agent List Card Euuz1",
+        "oods_traits": [
+          "border",
+          "color",
+          "composable",
+          "spacing",
+          "visual"
+        ],
+        "projection_variants": [
+          {
+            "id": "agent-list-card-euuz1-desktop",
+            "surface": "desktop",
+            "confidence": {
+              "total": 0.95,
+              "method": "weighted_blend_v1",
+              "signals": [
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.5714285714285714,
+                  "weighted_contribution": 0.5428571428571428,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/26",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Target 'Agent List Card Euuz1' is supported by 2/2 member label(s)"
+                },
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.028571428571428574,
+                  "weighted_contribution": 0.027142857142857146,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/26",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Target 'Agent List Card Euuz1' matches every member label"
+                },
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.39999999999999997,
+                  "weighted_contribution": 0.37999999999999995,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/26",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Exact label match on 'Agent List Card Euuz1'"
+                }
+              ]
+            },
+            "evidence_chain": [
+              {
+                "artifact_ref": "orca_candidates.json",
+                "json_pointer": "/objects/26",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "orca_object"
+              },
+              {
+                "artifact_ref": "component_clusters.json",
+                "json_pointer": "/clusters/27",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "component_cluster"
+              }
+            ],
+            "metadata": {
+              "source_surface": "dom",
+              "candidate_type": "component_cluster",
+              "source_surface_id": "cluster:cluster-67",
+              "routes": [
+                "/agents",
+                "/asks",
+                "/blog"
+              ],
+              "candidate_types": [
+                "orca_object",
+                "component_cluster"
+              ],
+              "source_surfaces": [
+                "dom"
+              ]
+            },
+            "selector": "cluster-67",
+            "confidence_summary": {
+              "total": 0.95,
+              "top_signal_types": [
+                "label_alias"
+              ],
+              "method": "weighted_blend_v1",
+              "evidence_ref": {
+                "artifact_ref": "object_rollup.json",
+                "json_pointer": "/objects/0/projection_variants/0/confidence",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "projection_variant_decomposition"
+              }
+            }
+          }
+        ],
+        "conflicts": [],
+        "reconciliation": {
+          "action": "create"
+        }
+      },
+      {
+        "canonical_id": "canonical:object:agent-list-coming-soon-xdxf9",
+        "canonical_label": "Agent List Coming Soon Xdxf9",
+        "representative_object_id": "cluster-cluster-69",
+        "source_object_ids": [
+          "cluster-cluster-69"
+        ],
+        "external_component": "Agent List Coming Soon Xdxf9",
+        "oods_traits": [
+          "data-bound",
+          "layout",
+          "spacing",
+          "visual"
+        ],
+        "projection_variants": [
+          {
+            "id": "agent-list-coming-soon-xdxf9-desktop",
+            "surface": "desktop",
+            "confidence": {
+              "total": 0.95,
+              "method": "weighted_blend_v1",
+              "signals": [
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.5714285714285714,
+                  "weighted_contribution": 0.5428571428571428,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/68",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Target 'Agent List Coming Soon Xdxf9' is supported by 2/2 member label(s)"
+                },
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.028571428571428574,
+                  "weighted_contribution": 0.027142857142857146,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/68",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Target 'Agent List Coming Soon Xdxf9' matches every member label"
+                },
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.39999999999999997,
+                  "weighted_contribution": 0.37999999999999995,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/68",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Exact label match on 'Agent List Coming Soon Xdxf9'"
+                }
+              ]
+            },
+            "evidence_chain": [
+              {
+                "artifact_ref": "orca_candidates.json",
+                "json_pointer": "/objects/68",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "orca_object"
+              },
+              {
+                "artifact_ref": "component_clusters.json",
+                "json_pointer": "/clusters/70",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "component_cluster"
+              }
+            ],
+            "metadata": {
+              "source_surface": "dom",
+              "candidate_type": "component_cluster",
+              "source_surface_id": "cluster:cluster-69",
+              "routes": [
+                "/agents"
+              ],
+              "candidate_types": [
+                "orca_object",
+                "component_cluster"
+              ],
+              "source_surfaces": [
+                "dom"
+              ]
+            },
+            "selector": "cluster-69",
+            "confidence_summary": {
+              "total": 0.95,
+              "top_signal_types": [
+                "label_alias"
+              ],
+              "method": "weighted_blend_v1",
+              "evidence_ref": {
+                "artifact_ref": "object_rollup.json",
+                "json_pointer": "/objects/1/projection_variants/0/confidence",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "projection_variant_decomposition"
+              }
+            }
+          }
+        ],
+        "conflicts": [],
+        "reconciliation": {
+          "action": "create"
+        }
+      },
+      {
+        "canonical_id": "canonical:object:benefits-carousel-card-fjt3f",
+        "canonical_label": "Benefits Carousel Card Fjt3f",
+        "representative_object_id": "cluster-cluster-31",
+        "source_object_ids": [
+          "cluster-cluster-31"
+        ],
+        "external_component": "Benefits Carousel Card Fjt3f",
+        "oods_traits": [
+          "border",
+          "color",
+          "composable",
+          "spacing",
+          "visual"
+        ],
+        "projection_variants": [
+          {
+            "id": "benefits-carousel-card-fjt3f-desktop",
+            "surface": "desktop",
+            "confidence": {
+              "total": 0.95,
+              "method": "weighted_blend_v1",
+              "signals": [
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.5714285714285714,
+                  "weighted_contribution": 0.5428571428571428,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/24",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Target 'Benefits Carousel Card Fjt3f' is supported by 2/2 member label(s)"
+                },
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.028571428571428574,
+                  "weighted_contribution": 0.027142857142857146,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/24",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Target 'Benefits Carousel Card Fjt3f' matches every member label"
+                },
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.39999999999999997,
+                  "weighted_contribution": 0.37999999999999995,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/24",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Exact label match on 'Benefits Carousel Card Fjt3f'"
+                }
+              ]
+            },
+            "evidence_chain": [
+              {
+                "artifact_ref": "orca_candidates.json",
+                "json_pointer": "/objects/24",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "orca_object"
+              },
+              {
+                "artifact_ref": "component_clusters.json",
+                "json_pointer": "/clusters/25",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "component_cluster"
+              }
+            ],
+            "metadata": {
+              "source_surface": "dom",
+              "candidate_type": "component_cluster",
+              "source_surface_id": "cluster:cluster-31",
+              "routes": [
+                "/",
+                "/about",
+                "/agents",
+                "/asks",
+                "/blog"
+              ],
+              "candidate_types": [
+                "orca_object",
+                "component_cluster"
+              ],
+              "source_surfaces": [
+                "dom"
+              ]
+            },
+            "selector": "cluster-31",
+            "confidence_summary": {
+              "total": 0.95,
+              "top_signal_types": [
+                "label_alias"
+              ],
+              "method": "weighted_blend_v1",
+              "evidence_ref": {
+                "artifact_ref": "object_rollup.json",
+                "json_pointer": "/objects/2/projection_variants/0/confidence",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "projection_variant_decomposition"
+              }
+            }
+          }
+        ],
+        "conflicts": [],
+        "reconciliation": {
+          "action": "create"
+        }
+      },
+      {
+        "canonical_id": "canonical:object:build-list-container-e3qk6",
+        "canonical_label": "Build List Container E3qk6",
+        "representative_object_id": "cluster-cluster-49",
+        "source_object_ids": [
+          "cluster-cluster-49"
+        ],
+        "external_component": "Build List Container E3qk6",
+        "oods_traits": [
+          "data-bound",
+          "layout",
+          "spacing",
+          "visual"
+        ],
+        "projection_variants": [
+          {
+            "id": "build-list-container-e3qk6-desktop",
+            "surface": "desktop",
+            "confidence": {
+              "total": 0.95,
+              "method": "weighted_blend_v1",
+              "signals": [
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.5714285714285714,
+                  "weighted_contribution": 0.5428571428571428,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/42",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Target 'Build List Container E3qk6' is supported by 2/2 member label(s)"
+                },
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.028571428571428574,
+                  "weighted_contribution": 0.027142857142857146,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/42",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Target 'Build List Container E3qk6' matches every member label"
+                },
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.39999999999999997,
+                  "weighted_contribution": 0.37999999999999995,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/42",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Exact label match on 'Build List Container E3qk6'"
+                }
+              ]
+            },
+            "evidence_chain": [
+              {
+                "artifact_ref": "orca_candidates.json",
+                "json_pointer": "/objects/42",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "orca_object"
+              },
+              {
+                "artifact_ref": "component_clusters.json",
+                "json_pointer": "/clusters/44",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "component_cluster"
+              }
+            ],
+            "metadata": {
+              "source_surface": "dom",
+              "candidate_type": "component_cluster",
+              "source_surface_id": "cluster:cluster-49",
+              "routes": [
+                "/",
+                "/agents"
+              ],
+              "candidate_types": [
+                "orca_object",
+                "component_cluster"
+              ],
+              "source_surfaces": [
+                "dom"
+              ]
+            },
+            "selector": "cluster-49",
+            "confidence_summary": {
+              "total": 0.95,
+              "top_signal_types": [
+                "label_alias"
+              ],
+              "method": "weighted_blend_v1",
+              "evidence_ref": {
+                "artifact_ref": "object_rollup.json",
+                "json_pointer": "/objects/3/projection_variants/0/confidence",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "projection_variant_decomposition"
+              }
+            }
+          }
+        ],
+        "conflicts": [],
+        "reconciliation": {
+          "action": "create"
+        }
+      },
+      {
+        "canonical_id": "canonical:object:clippath",
+        "canonical_label": "Clippath",
+        "representative_object_id": "cluster-cluster-24",
+        "source_object_ids": [
+          "cluster-cluster-24"
+        ],
+        "external_component": "Clippath",
+        "oods_traits": [
+          "border",
+          "color",
+          "interactive",
+          "spacing",
+          "typography",
+          "visual"
+        ],
+        "projection_variants": [
+          {
+            "id": "clippath-desktop",
+            "surface": "desktop",
+            "confidence": {
+              "total": 0.95,
+              "method": "weighted_blend_v1",
+              "signals": [
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.5714285714285714,
+                  "weighted_contribution": 0.5428571428571428,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/32",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Target 'Clippath' is supported by 2/2 member label(s)"
+                },
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.028571428571428574,
+                  "weighted_contribution": 0.027142857142857146,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/32",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Target 'Clippath' matches every member label"
+                },
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.39999999999999997,
+                  "weighted_contribution": 0.37999999999999995,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/32",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Exact label match on 'Clippath'"
+                }
+              ]
+            },
+            "evidence_chain": [
+              {
+                "artifact_ref": "orca_candidates.json",
+                "json_pointer": "/objects/32",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "orca_object"
+              },
+              {
+                "artifact_ref": "component_clusters.json",
+                "json_pointer": "/clusters/34",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "component_cluster"
+              }
+            ],
+            "metadata": {
+              "source_surface": "dom",
+              "candidate_type": "component_cluster",
+              "source_surface_id": "cluster:cluster-24",
+              "routes": [
+                "/",
+                "/about",
+                "/agents",
+                "/asks",
+                "/blog"
+              ],
+              "candidate_types": [
+                "orca_object",
+                "component_cluster"
+              ],
+              "source_surfaces": [
+                "dom"
+              ]
+            },
+            "selector": "cluster-24",
+            "confidence_summary": {
+              "total": 0.95,
+              "top_signal_types": [
+                "label_alias"
+              ],
+              "method": "weighted_blend_v1",
+              "evidence_ref": {
+                "artifact_ref": "object_rollup.json",
+                "json_pointer": "/objects/4/projection_variants/0/confidence",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "projection_variant_decomposition"
+              }
+            }
+          }
+        ],
+        "conflicts": [],
+        "reconciliation": {
+          "action": "create"
+        }
+      },
+      {
+        "canonical_id": "canonical:object:symbol",
+        "canonical_label": "Symbol",
+        "representative_object_id": "cluster-cluster-3",
+        "source_object_ids": [
+          "cluster-cluster-3"
+        ],
+        "external_component": "Component",
+        "oods_traits": [
+          "border",
+          "color",
+          "interactive",
+          "spacing",
+          "typography",
+          "visual"
+        ],
+        "projection_variants": [
+          {
+            "id": "component-desktop",
+            "surface": "desktop",
+            "confidence": {
+              "total": 0.95,
+              "method": "weighted_blend_v1",
+              "signals": [
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.5714285714285714,
+                  "weighted_contribution": 0.5428571428571428,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/1",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Target 'Symbol' is supported by 2/2 member label(s)"
+                },
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.028571428571428574,
+                  "weighted_contribution": 0.027142857142857146,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/1",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Target 'Symbol' matches every member label"
+                },
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.39999999999999997,
+                  "weighted_contribution": 0.37999999999999995,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/1",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Exact label match on 'Symbol'"
+                }
+              ]
+            },
+            "evidence_chain": [
+              {
+                "artifact_ref": "orca_candidates.json",
+                "json_pointer": "/objects/1",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "orca_object"
+              },
+              {
+                "artifact_ref": "component_clusters.json",
+                "json_pointer": "/clusters/1",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "component_cluster"
+              }
+            ],
+            "metadata": {
+              "source_surface": "dom",
+              "candidate_type": "component_cluster",
+              "source_surface_id": "cluster:cluster-3",
+              "routes": [
+                "/",
+                "/about",
+                "/agents",
+                "/asks",
+                "/blog"
+              ],
+              "candidate_types": [
+                "orca_object",
+                "component_cluster"
+              ],
+              "source_surfaces": [
+                "dom"
+              ]
+            },
+            "external_component": "Symbol",
+            "selector": "cluster-3",
+            "confidence_summary": {
+              "total": 0.95,
+              "top_signal_types": [
+                "label_alias"
+              ],
+              "method": "weighted_blend_v1",
+              "evidence_ref": {
+                "artifact_ref": "object_rollup.json",
+                "json_pointer": "/objects/5/projection_variants/0/confidence",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "projection_variant_decomposition"
+              }
+            }
+          }
+        ],
+        "conflicts": [],
+        "reconciliation": {
+          "action": "create"
+        }
+      }
+    ]
+  },
+  "identityGraph": {
+    "kind": "identity_graph",
+    "schema_version": "1.2.0",
+    "generated_at": "2026-04-17T06:17:39.571Z",
+    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+    "target": {
+      "id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+      "url": "https://linear.app/"
+    },
+    "nodes": [
+      {
+        "canonical_id": "canonical:object:plan-dashed-path-psc-xi",
+        "canonical_label": "Plan Dashed Path Psc Xi",
+        "identity_class": "object",
+        "candidate_mappings": [
+          {
+            "target": "Plan Dashed Path Psc Xi",
+            "confidence": {
+              "total": 0.95,
+              "method": "weighted_blend_v1",
+              "signals": [
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.5714285714285714,
+                  "weighted_contribution": 0.5428571428571428,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/0",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Target 'Plan Dashed Path Psc Xi' is supported by 2/2 member label(s)"
+                },
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.028571428571428574,
+                  "weighted_contribution": 0.027142857142857146,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/0",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Target 'Plan Dashed Path Psc Xi' matches every member label"
+                },
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.39999999999999997,
+                  "weighted_contribution": 0.37999999999999995,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/0",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Exact label match on 'Plan Dashed Path Psc Xi'"
+                }
+              ]
+            }
+          }
+        ],
+        "review_status": "certain",
+        "member_candidates": [
+          {
+            "surface_id": "orca-object:cluster-cluster-0",
+            "source_surface": "dom",
+            "label": "Plan Dashed Path Psc Xi",
+            "aliases": [],
+            "attributes": {
+              "candidate_type": "orca_object",
+              "orca_object_id": "cluster-cluster-0",
+              "category": "component",
+              "role": "unknown",
+              "inferred_role": "svg-primitive",
+              "inferred_role_score": null,
+              "recurrence_count": 2764,
+              "domain_hints": [],
+              "alternate_interpretations": []
+            },
+            "evidence_refs": [
+              {
+                "artifact_ref": "orca_candidates.json",
+                "json_pointer": "/objects/0",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "orca_object"
+              }
+            ]
+          },
+          {
+            "surface_id": "cluster:cluster-0",
+            "source_surface": "dom",
+            "label": "Plan Dashed Path Psc Xi",
+            "aliases": [],
+            "attributes": {
+              "candidate_type": "component_cluster",
+              "cluster_id": "cluster-0",
+              "semantic_role": "unknown",
+              "tag_name": "path",
+              "selectors": {
+                "css": "path"
+              },
+              "parent_cluster": "cluster-13",
+              "variants": [],
+              "props": {},
+              "avg_depth": 1.6,
+              "avg_child_count": 461.8,
+              "common_attributes": [
+                "d"
+              ],
+              "routes": [
+                "/",
+                "/about",
+                "/agents",
+                "/asks",
+                "/blog"
+              ],
+              "total_instances": 2764,
+              "confidence": 0.87
+            },
+            "evidence_refs": [
+              {
+                "artifact_ref": "component_clusters.json",
+                "json_pointer": "/clusters/0",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "component_cluster"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "canonical_id": "canonical:object:symbol",
+        "canonical_label": "Symbol",
+        "identity_class": "object",
+        "candidate_mappings": [
+          {
+            "target": "Symbol",
+            "confidence": {
+              "total": 0.95,
+              "method": "weighted_blend_v1",
+              "signals": [
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.5714285714285714,
+                  "weighted_contribution": 0.5428571428571428,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/1",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Target 'Symbol' is supported by 2/2 member label(s)"
+                },
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.028571428571428574,
+                  "weighted_contribution": 0.027142857142857146,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/1",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Target 'Symbol' matches every member label"
+                },
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.39999999999999997,
+                  "weighted_contribution": 0.37999999999999995,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/1",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Exact label match on 'Symbol'"
+                }
+              ]
+            }
+          }
+        ],
+        "review_status": "certain",
+        "member_candidates": [
+          {
+            "surface_id": "orca-object:cluster-cluster-3",
+            "source_surface": "dom",
+            "label": "Symbol",
+            "aliases": [],
+            "attributes": {
+              "candidate_type": "orca_object",
+              "orca_object_id": "cluster-cluster-3",
+              "category": "component",
+              "role": "unknown",
+              "inferred_role": null,
+              "inferred_role_score": null,
+              "recurrence_count": 1520,
+              "domain_hints": [],
+              "alternate_interpretations": []
+            },
+            "evidence_refs": [
+              {
+                "artifact_ref": "orca_candidates.json",
+                "json_pointer": "/objects/1",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "orca_object"
+              }
+            ]
+          },
+          {
+            "surface_id": "cluster:cluster-3",
+            "source_surface": "dom",
+            "label": "Symbol",
+            "aliases": [],
+            "attributes": {
+              "candidate_type": "component_cluster",
+              "cluster_id": "cluster-3",
+              "semantic_role": "unknown",
+              "tag_name": "symbol",
+              "selectors": {
+                "css": "#Attachment",
+                "testId": "Attachment"
+              },
+              "parent_cluster": "cluster-15",
+              "variants": [],
+              "props": {},
+              "avg_depth": 1.8,
+              "avg_child_count": 470.6,
+              "common_attributes": [
+                "id",
+                "viewbox"
+              ],
+              "routes": [
+                "/",
+                "/about",
+                "/agents",
+                "/asks",
+                "/blog"
+              ],
+              "total_instances": 1520,
+              "confidence": 0.93
+            },
+            "evidence_refs": [
+              {
+                "artifact_ref": "component_clusters.json",
+                "json_pointer": "/clusters/1",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "component_cluster"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "canonical_id": "canonical:object:show-mobile",
+        "canonical_label": "Show Mobile",
+        "identity_class": "object",
+        "candidate_mappings": [
+          {
+            "target": "Show Mobile",
+            "confidence": {
+              "total": 0.95,
+              "method": "weighted_blend_v1",
+              "signals": [
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.5714285714285714,
+                  "weighted_contribution": 0.5428571428571428,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/2",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Target 'Show Mobile' is supported by 2/2 member label(s)"
+                },
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.028571428571428574,
+                  "weighted_contribution": 0.027142857142857146,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/2",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Target 'Show Mobile' matches every member label"
+                },
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.39999999999999997,
+                  "weighted_contribution": 0.37999999999999995,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/2",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Exact label match on 'Show Mobile'"
+                }
+              ]
+            }
+          }
+        ],
+        "review_status": "certain",
+        "member_candidates": [
+          {
+            "surface_id": "orca-object:cluster-cluster-1",
+            "source_surface": "dom",
+            "label": "Show Mobile",
+            "aliases": [],
+            "attributes": {
+              "candidate_type": "orca_object",
+              "orca_object_id": "cluster-cluster-1",
+              "category": "component",
+              "role": "unknown",
+              "inferred_role": null,
+              "inferred_role_score": null,
+              "recurrence_count": 1138,
+              "domain_hints": [],
+              "alternate_interpretations": []
+            },
+            "evidence_refs": [
+              {
+                "artifact_ref": "orca_candidates.json",
+                "json_pointer": "/objects/2",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "orca_object"
+              }
+            ]
+          },
+          {
+            "surface_id": "cluster:cluster-1",
+            "source_surface": "dom",
+            "label": "Show Mobile",
+            "aliases": [],
+            "attributes": {
+              "candidate_type": "component_cluster",
+              "cluster_id": "cluster-1",
+              "semantic_role": "unknown",
+              "tag_name": "span",
+              "selectors": {
+                "css": "span"
+              },
+              "parent_cluster": "cluster-17",
+              "variants": [
+                "mobile",
+                "DKfc"
+              ],
+              "props": {
+                "variant": {
+                  "type": "enum",
+                  "required": false,
+                  "values": [
+                    "mobile",
+                    "DKfc"
+                  ]
+                }
+              },
+              "avg_depth": 0.8,
+              "avg_child_count": 634.6,
+              "common_attributes": [],
+              "routes": [
+                "/",
+                "/about",
+                "/agents",
+                "/asks",
+                "/blog"
+              ],
+              "total_instances": 1138,
+              "confidence": 0.8
+            },
+            "evidence_refs": [
+              {
+                "artifact_ref": "component_clusters.json",
+                "json_pointer": "/clusters/2",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "component_cluster"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "canonical_id": "canonical:object:show-laptop",
+        "canonical_label": "Show Laptop",
+        "identity_class": "object",
+        "candidate_mappings": [
+          {
+            "target": "Show Laptop",
+            "confidence": {
+              "total": 0.95,
+              "method": "weighted_blend_v1",
+              "signals": [
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.5714285714285714,
+                  "weighted_contribution": 0.5428571428571428,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/3",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Target 'Show Laptop' is supported by 2/2 member label(s)"
+                },
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.028571428571428574,
+                  "weighted_contribution": 0.027142857142857146,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/3",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Target 'Show Laptop' matches every member label"
+                },
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.39999999999999997,
+                  "weighted_contribution": 0.37999999999999995,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/3",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Exact label match on 'Show Laptop'"
+                }
+              ]
+            }
+          }
+        ],
+        "review_status": "certain",
+        "member_candidates": [
+          {
+            "surface_id": "orca-object:cluster-cluster-2",
+            "source_surface": "dom",
+            "label": "Show Laptop",
+            "aliases": [],
+            "attributes": {
+              "candidate_type": "orca_object",
+              "orca_object_id": "cluster-cluster-2",
+              "category": "component",
+              "role": "unknown",
+              "inferred_role": null,
+              "inferred_role_score": null,
+              "recurrence_count": 1125,
+              "domain_hints": [],
+              "alternate_interpretations": []
+            },
+            "evidence_refs": [
+              {
+                "artifact_ref": "orca_candidates.json",
+                "json_pointer": "/objects/3",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "orca_object"
+              }
+            ]
+          },
+          {
+            "surface_id": "cluster:cluster-2",
+            "source_surface": "dom",
+            "label": "Show Laptop",
+            "aliases": [],
+            "attributes": {
+              "candidate_type": "component_cluster",
+              "cluster_id": "cluster-2",
+              "semantic_role": "unknown",
+              "tag_name": "div",
+              "selectors": {
+                "css": "div"
+              },
+              "parent_cluster": "cluster-5",
+              "variants": [
+                "laptop",
+                "desktop",
+                "mobile"
+              ],
+              "props": {
+                "variant": {
+                  "type": "enum",
+                  "required": false,
+                  "values": [
+                    "laptop",
+                    "desktop",
+                    "mobile"
+                  ]
+                }
+              },
+              "avg_depth": 1.2,
+              "avg_child_count": 787.2,
+              "common_attributes": [],
+              "routes": [
+                "/",
+                "/about",
+                "/agents",
+                "/asks",
+                "/blog"
+              ],
+              "total_instances": 1125,
+              "confidence": 0.8
+            },
+            "evidence_refs": [
+              {
+                "artifact_ref": "component_clusters.json",
+                "json_pointer": "/clusters/3",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "component_cluster"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "canonical_id": "canonical:object:icon-logotype-qx-i2t",
+        "canonical_label": "Icon Logotype Qx I2t",
+        "identity_class": "object",
+        "candidate_mappings": [
+          {
+            "target": "Icon Logotype Qx I2t",
+            "confidence": {
+              "total": 0.95,
+              "method": "weighted_blend_v1",
+              "signals": [
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.5714285714285714,
+                  "weighted_contribution": 0.5428571428571428,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/4",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Target 'Icon Logotype Qx I2t' is supported by 2/2 member label(s)"
+                },
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.028571428571428574,
+                  "weighted_contribution": 0.027142857142857146,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/4",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Target 'Icon Logotype Qx I2t' matches every member label"
+                },
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.39999999999999997,
+                  "weighted_contribution": 0.37999999999999995,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/4",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Exact label match on 'Icon Logotype Qx I2t'"
+                }
+              ]
+            }
+          }
+        ],
+        "review_status": "certain",
+        "member_candidates": [
+          {
+            "surface_id": "orca-object:cluster-cluster-6",
+            "source_surface": "dom",
+            "label": "Icon Logotype Qx I2t",
+            "aliases": [],
+            "attributes": {
+              "candidate_type": "orca_object",
+              "orca_object_id": "cluster-cluster-6",
+              "category": "component",
+              "role": "unknown",
+              "inferred_role": "svg-primitive",
+              "inferred_role_score": null,
+              "recurrence_count": 316,
+              "domain_hints": [],
+              "alternate_interpretations": []
+            },
+            "evidence_refs": [
+              {
+                "artifact_ref": "orca_candidates.json",
+                "json_pointer": "/objects/4",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "orca_object"
+              }
+            ]
+          },
+          {
+            "surface_id": "cluster:cluster-6",
+            "source_surface": "dom",
+            "label": "Icon Logotype Qx I2t",
+            "aliases": [],
+            "attributes": {
+              "candidate_type": "component_cluster",
+              "cluster_id": "cluster-6",
+              "semantic_role": "unknown",
+              "tag_name": "svg",
+              "selectors": {
+                "css": "svg"
+              },
+              "parent_cluster": "cluster-2",
+              "variants": [
+                "1so62im",
+                "1a64m5y",
+                "1iffjtl"
+              ],
+              "props": {
+                "variant": {
+                  "type": "enum",
+                  "required": false,
+                  "values": [
+                    "1so62im",
+                    "1a64m5y",
+                    "1iffjtl"
+                  ]
+                }
+              },
+              "avg_depth": 1.4,
+              "avg_child_count": 719.6,
+              "common_attributes": [],
+              "routes": [
+                "/",
+                "/about",
+                "/agents",
+                "/asks",
+                "/blog"
+              ],
+              "total_instances": 316,
+              "confidence": 0.8
+            },
+            "evidence_refs": [
+              {
+                "artifact_ref": "component_clusters.json",
+                "json_pointer": "/clusters/4",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "component_cluster"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "canonical_id": "canonical:object:circle",
+        "canonical_label": "Circle",
+        "identity_class": "object",
+        "candidate_mappings": [
+          {
+            "target": "Circle",
+            "confidence": {
+              "total": 0.95,
+              "method": "weighted_blend_v1",
+              "signals": [
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.5714285714285714,
+                  "weighted_contribution": 0.5428571428571428,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/5",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Target 'Circle' is supported by 2/2 member label(s)"
+                },
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.028571428571428574,
+                  "weighted_contribution": 0.027142857142857146,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/5",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Target 'Circle' matches every member label"
+                },
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.39999999999999997,
+                  "weighted_contribution": 0.37999999999999995,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/5",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Exact label match on 'Circle'"
+                }
+              ]
+            }
+          }
+        ],
+        "review_status": "certain",
+        "member_candidates": [
+          {
+            "surface_id": "orca-object:cluster-cluster-4",
+            "source_surface": "dom",
+            "label": "Circle",
+            "aliases": [],
+            "attributes": {
+              "candidate_type": "orca_object",
+              "orca_object_id": "cluster-cluster-4",
+              "category": "component",
+              "role": "unknown",
+              "inferred_role": "svg-primitive",
+              "inferred_role_score": null,
+              "recurrence_count": 304,
+              "domain_hints": [],
+              "alternate_interpretations": []
+            },
+            "evidence_refs": [
+              {
+                "artifact_ref": "orca_candidates.json",
+                "json_pointer": "/objects/5",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "orca_object"
+              }
+            ]
+          },
+          {
+            "surface_id": "cluster:cluster-4",
+            "source_surface": "dom",
+            "label": "Circle",
+            "aliases": [],
+            "attributes": {
+              "candidate_type": "component_cluster",
+              "cluster_id": "cluster-4",
+              "semantic_role": "unknown",
+              "tag_name": "circle",
+              "selectors": {
+                "css": "circle"
+              },
+              "parent_cluster": "cluster-15",
+              "variants": [],
+              "props": {},
+              "avg_depth": 1.8,
+              "avg_child_count": 494.6,
+              "common_attributes": [
+                "cx",
+                "cy",
+                "r"
+              ],
+              "routes": [
+                "/",
+                "/about",
+                "/agents",
+                "/asks",
+                "/blog"
+              ],
+              "total_instances": 304,
+              "confidence": 1
+            },
+            "evidence_refs": [
+              {
+                "artifact_ref": "component_clusters.json",
+                "json_pointer": "/clusters/5",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "component_cluster"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "canonical_id": "canonical:object:layout-container-bvtm-p",
+        "canonical_label": "Layout Container Bvtm P",
+        "identity_class": "object",
+        "candidate_mappings": [
+          {
+            "target": "Layout Container Bvtm P",
+            "confidence": {
+              "total": 0.95,
+              "method": "weighted_blend_v1",
+              "signals": [
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.5714285714285714,
+                  "weighted_contribution": 0.5428571428571428,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/6",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Target 'Layout Container Bvtm P' is supported by 2/2 member label(s)"
+                },
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.028571428571428574,
+                  "weighted_contribution": 0.027142857142857146,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/6",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Target 'Layout Container Bvtm P' matches every member label"
+                },
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.39999999999999997,
+                  "weighted_contribution": 0.37999999999999995,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/6",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Exact label match on 'Layout Container Bvtm P'"
+                }
+              ]
+            }
+          }
+        ],
+        "review_status": "certain",
+        "member_candidates": [
+          {
+            "surface_id": "orca-object:cluster-cluster-7",
+            "source_surface": "dom",
+            "label": "Layout Container Bvtm P",
+            "aliases": [],
+            "attributes": {
+              "candidate_type": "orca_object",
+              "orca_object_id": "cluster-cluster-7",
+              "category": "component",
+              "role": "unknown",
+              "inferred_role": null,
+              "inferred_role_score": null,
+              "recurrence_count": 252,
+              "domain_hints": [],
+              "alternate_interpretations": []
+            },
+            "evidence_refs": [
+              {
+                "artifact_ref": "orca_candidates.json",
+                "json_pointer": "/objects/6",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "orca_object"
+              }
+            ]
+          },
+          {
+            "surface_id": "cluster:cluster-7",
+            "source_surface": "dom",
+            "label": "Layout Container Bvtm P",
+            "aliases": [],
+            "attributes": {
+              "candidate_type": "component_cluster",
+              "cluster_id": "cluster-7",
+              "semantic_role": "unknown",
+              "tag_name": "div",
+              "selectors": {
+                "css": "div.Layout_container__BVtmP"
+              },
+              "parent_cluster": "cluster-5",
+              "variants": [
+                "tablet",
+                "mobile",
+                "laptop"
+              ],
+              "props": {
+                "variant": {
+                  "type": "enum",
+                  "required": false,
+                  "values": [
+                    "tablet",
+                    "mobile",
+                    "laptop"
+                  ]
+                }
+              },
+              "avg_depth": 1.2,
+              "avg_child_count": 739,
+              "common_attributes": [
+                "class"
+              ],
+              "routes": [
+                "/",
+                "/about",
+                "/agents",
+                "/asks",
+                "/blog"
+              ],
+              "total_instances": 252,
+              "confidence": 0.87
+            },
+            "evidence_refs": [
+              {
+                "artifact_ref": "component_clusters.json",
+                "json_pointer": "/clusters/6",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "component_cluster"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "canonical_id": "canonical:object:hero-new-feature-link-pht6b",
+        "canonical_label": "Hero New Feature Link Pht6b",
+        "identity_class": "object",
+        "candidate_mappings": [
+          {
+            "target": "Hero New Feature Link Pht6b",
+            "confidence": {
+              "total": 0.95,
+              "method": "weighted_blend_v1",
+              "signals": [
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.5714285714285714,
+                  "weighted_contribution": 0.5428571428571428,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/7",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Target 'Hero New Feature Link Pht6b' is supported by 2/2 member label(s)"
+                },
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.028571428571428574,
+                  "weighted_contribution": 0.027142857142857146,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/7",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Target 'Hero New Feature Link Pht6b' matches every member label"
+                },
+                {
+                  "type": "label_alias",
+                  "raw_score": 0.95,
+                  "weight": 0.39999999999999997,
+                  "weighted_contribution": 0.37999999999999995,
+                  "evidence_ref": {
+                    "artifact_ref": "orca_candidates.json",
+                    "json_pointer": "/objects/7",
+                    "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                    "source_surface": "dom",
+                    "observation_type": "orca_object"
+                  },
+                  "hint": "Exact label match on 'Hero New Feature Link Pht6b'"
+                }
+              ]
+            }
+          }
+        ],
+        "review_status": "certain",
+        "member_candidates": [
+          {
+            "surface_id": "orca-object:cluster-cluster-10",
+            "source_surface": "dom",
+            "label": "Hero New Feature Link Pht6b",
+            "aliases": [],
+            "attributes": {
+              "candidate_type": "orca_object",
+              "orca_object_id": "cluster-cluster-10",
+              "category": "component",
+              "role": "unknown",
+              "inferred_role": "header",
+              "inferred_role_score": 0.6499999999999999,
+              "recurrence_count": 244,
+              "domain_hints": [
+                "layout"
+              ],
+              "alternate_interpretations": []
+            },
+            "evidence_refs": [
+              {
+                "artifact_ref": "orca_candidates.json",
+                "json_pointer": "/objects/7",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "orca_object"
+              }
+            ]
+          },
+          {
+            "surface_id": "cluster:cluster-10",
+            "source_surface": "dom",
+            "label": "Hero New Feature Link Pht6b",
+            "aliases": [],
+            "attributes": {
+              "candidate_type": "component_cluster",
+              "cluster_id": "cluster-10",
+              "semantic_role": "unknown",
+              "tag_name": "a",
+              "selectors": {
+                "css": "a.hide-mobile"
+              },
+              "parent_cluster": "cluster-15",
+              "variants": [
+                "mobile",
+                "U2YWc"
+              ],
+              "props": {
+                "variant": {
+                  "type": "enum",
+                  "required": false,
+                  "values": [
+                    "mobile",
+                    "U2YWc"
+                  ]
+                },
+                "href": {
+                  "type": "string",
+                  "required": true
+                }
+              },
+              "avg_depth": 1.8,
+              "avg_child_count": 948.2,
+              "common_attributes": [
+                "class",
+                "href",
+                "rel"
+              ],
+              "routes": [
+                "/",
+                "/about",
+                "/agents",
+                "/asks",
+                "/blog"
+              ],
+              "total_instances": 244,
+              "confidence": 1
+            },
+            "evidence_refs": [
+              {
+                "artifact_ref": "component_clusters.json",
+                "json_pointer": "/clusters/7",
+                "run_id": "a0300dc0-c10f-4821-b648-48556da43ef7",
+                "source_surface": "dom",
+                "observation_type": "component_cluster"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "sourceCounts": {
+    "capabilities": 7,
+    "objects": 73,
+    "nodes": 80
+  }
+}

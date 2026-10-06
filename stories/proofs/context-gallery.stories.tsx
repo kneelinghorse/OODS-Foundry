@@ -31,6 +31,8 @@ const contextClassName: Record<ViewContext, string> = {
   timeline: 'explorer-view context-timeline timeline-view',
   card: 'explorer-view context-card card-view',
   inline: 'explorer-view context-inline inline-view',
+  chart: 'explorer-view context-chart chart-view',
+  dashboard: 'explorer-view context-dashboard dashboard-view',
 };
 
 const contextLabel: Record<ViewContext, string> = {
@@ -40,9 +42,20 @@ const contextLabel: Record<ViewContext, string> = {
   timeline: 'Timeline',
   card: 'Card',
   inline: 'Inline',
+  chart: 'Chart',
+  dashboard: 'Dashboard',
 };
 
-const contexts: ViewContext[] = ['detail', 'list', 'form', 'timeline', 'card', 'inline'];
+const contexts: ViewContext[] = [
+  'detail',
+  'list',
+  'form',
+  'timeline',
+  'card',
+  'inline',
+  'chart',
+  'dashboard',
+];
 
 const domains: readonly DomainGalleryEntry[] = [
   {
@@ -145,7 +158,7 @@ const ContextGallery: FC = () => (
 );
 
 const meta = {
-  title: 'Contexts/Overview',
+  title: 'Contexts/Domain Context Gallery',
   component: ContextGallery,
   parameters: {
     layout: 'fullscreen',

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oods.systems/schemas/traits/encoding-opacity",
+  "title": "EncodingOpacity Trait Parameters",
+  "type": "object",
+  "properties": {
+    "renderIntent": {
+      "type": "string",
+      "description": "JSON-encoded Cartesian viz.render input fragment; data rows are supplied by the consumer.",
+      "default": "{}"
+    }
+  },
+  "required": [],
+  "additionalProperties": false
+}

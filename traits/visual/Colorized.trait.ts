@@ -186,7 +186,7 @@ const ColorizedTrait = {
         'Build-time: tokens:guardrails checks OKLCH delta-L >= 10, delta-C <= 0.04. ' +
         'Design-time: text-on-surface meets contrastLevel (4.5:1 AA, 7:1 AAA).',
     },
-    regionsUsed: ['badges', 'forms', 'detail', 'card'],
+    regionsUsed: ['list', 'detail', 'form', 'card'],
     examples: ['Incident', 'Release', 'Subscription', 'Invoice'],
     references: [
       'Trait Engine Spec v0.1 section 2',

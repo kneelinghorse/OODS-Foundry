@@ -33,7 +33,7 @@ const buildArgs = (context: UserRenderProps['context'], data: UserRecord, object
   }) satisfies UserRenderProps;
 
 const meta = {
-  title: 'Objects/Core Objects/User/Detail View',
+  title: 'Domains/User/Contexts',
   component: UserRenderObject,
   parameters: {
     layout: 'fullscreen',

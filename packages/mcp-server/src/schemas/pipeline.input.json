@@ -1,0 +1,215 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/pipeline.input.json",
+  "title": "Pipeline input",
+  "description": "Execute the full design pipeline (compose -> validate -> render -> codegen) in a single call. A workflow schema generates a runnable React or Vue application with navigation, local store and deterministic sample data.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "object": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Object name from the OODS registry (e.g., Subscription, User)."
+    },
+    "intent": {
+      "type": "string",
+      "minLength": 1,
+      "description": "A short intent sentence, matched against fixed keyword and phrase tables (a sentence that matches no layout keyword becomes a low-confidence dashboard). Prefer object and context."
+    },
+    "context": {
+      "type": "string",
+      "enum": ["detail", "list", "form", "timeline", "card", "inline", "workflow"],
+      "description": "View context for object-aware composition."
+    },
+    "layout": {
+      "type": "string",
+      "enum": ["dashboard", "form", "detail", "list", "card", "timeline", "landing", "auto"],
+      "description": "Layout template to use. 'landing' is a content/marketing page (hero + sections + CTA), not bound to a data object. 'auto' infers the best template from intent keywords."
+    },
+    "preferences": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "theme": {
+          "type": "string",
+          "description": "Theme token (e.g., 'light', 'dark')."
+        },
+        "metricColumns": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 12,
+          "description": "Number of metric columns for dashboard layout."
+        },
+        "fieldGroups": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20,
+          "description": "Number of field groups for form layout."
+        },
+        "tabCount": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Number of tabs for detail layout."
+        },
+        "tabLabels": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Custom tab labels for detail layout."
+        },
+        "componentOverrides": {
+          "type": "object",
+          "description": "Slot-name to component-name overrides (e.g., { 'items': 'Table' }).",
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "actionMappings": {
+      "type": "array",
+      "description": "Stage1 BridgeSummary action_mappings, flat verb-keyed entries. See docs/integration/stage1-oods-contract.md §2c.",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["verb"],
+        "properties": {
+          "verb": { "type": "string", "minLength": 1 },
+          "oodsTrait": { "type": "string" },
+          "trait": { "type": "string" },
+          "object": { "type": "string" },
+          "component": { "type": "string" },
+          "slot": { "type": "string" },
+          "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+        }
+      }
+    },
+    "framework": {
+      "type": "string",
+      "enum": ["react", "vue", "html"],
+      "description": "Target framework for code generation."
+    },
+    "styling": {
+      "type": "string",
+      "enum": ["inline", "tokens", "tailwind"],
+      "description": "Styling strategy for code generation."
+    },
+    "profile": {
+      "type": "string",
+      "enum": ["draft", "build", "release"],
+      "description": "Validation profile forwarded unchanged to code.generate, including its workflow-state contract gate. build is the default blocking gate of static checks; the static gate does not install or run the generated application."
+    },
+    "releaseEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Hash-bound release evidence forwarded unchanged to code.generate.",
+      "properties": {
+        "rendered": { "$ref": "#/$defs/releaseEvidenceItem" },
+        "interaction": { "$ref": "#/$defs/releaseEvidenceItem" },
+        "accessibility": { "$ref": "#/$defs/releaseEvidenceItem" },
+        "theme": { "$ref": "#/$defs/releaseEvidenceItem" },
+        "determinism": { "$ref": "#/$defs/releaseEvidenceItem" },
+        "performance": { "$ref": "#/$defs/releaseEvidenceItem" }
+      }
+    },
+    "save": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "description": "Schema name to persist (shorthand)."
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name"],
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Schema name to persist."
+            },
+            "tags": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Tags to attach to the saved schema."
+            }
+          }
+        }
+      ],
+      "description": "Optional schema save config. String for name-only, or { name, tags } for full control."
+    },
+    "options": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "skipValidation": {
+          "type": "boolean",
+          "description": "Skip the validate step (default false)."
+        },
+        "skipRender": {
+          "type": "boolean",
+          "description": "Skip the render step (default false)."
+        },
+        "checkA11y": {
+          "type": "boolean",
+          "description": "Checks declared foreground/background pairs derived from shared component CSS against current built tokens for every registered brand and theme, including team brands. With a UiSchema, renders through the shared HTML renderer and checks document language/title, one main landmark, unique IDs, ARIA reference targets, control names/labels, image alternatives, chart SVG name/description, and heading names/order. Reports unresolved inherited surfaces, dynamic CSS, alpha compositing and OS colours as unmeasured. Does not check browser-computed colour/layout, keyboard/focus interaction or screen-reader behavior; no complete WCAG conformance claim."
+        },
+        "renderApply": {
+          "type": "boolean",
+          "description": "Render with apply=true to include HTML output (default true)."
+        },
+        "compact": {
+          "type": "boolean",
+          "description": "When true (default), omit token CSS from render output and return tokenCssRef instead. Reduces response size by ~40%.",
+          "default": true
+        },
+        "typescript": {
+          "type": "boolean",
+          "description": "Alias: enable TypeScript output in code generation."
+        },
+        "styling": {
+          "type": "string",
+          "enum": ["inline", "tokens", "tailwind"],
+          "description": "Alias: styling strategy. Overridden by top-level styling if both provided."
+        },
+        "framework": {
+          "type": "string",
+          "enum": ["react", "vue", "html"],
+          "description": "Alias: target framework. Overridden by top-level framework if both provided."
+        }
+      }
+    }
+  },
+  "$defs": {
+    "releaseEvidenceItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "artifactContentHash",
+        "reference",
+        "contentHash"
+      ],
+      "properties": {
+        "status": { "const": "passed" },
+        "artifactContentHash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$",
+          "description": "Exact generated artifact hash inspected by this evidence."
+        },
+        "reference": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Local JSON evidence file, absolute or relative to the server working directory. Opened during release validation."
+        },
+        "contentHash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$",
+          "description": "SHA-256 of the local JSON evidence file bytes. The file must contain status: passed and this artifactContentHash."
+        }
+      }
+    }
+  }
+}

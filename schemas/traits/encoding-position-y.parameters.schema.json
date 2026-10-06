@@ -9,16 +9,27 @@
       "description": "Data categories that can map to the Y axis.",
       "items": {
         "type": "string",
-        "enum": ["quantitative", "temporal", "ordinal"]
+        "enum": [
+          "quantitative",
+          "temporal",
+          "ordinal"
+        ]
       },
       "minItems": 1,
       "uniqueItems": true,
-      "default": ["quantitative", "temporal", "ordinal"]
+      "default": [
+        "quantitative",
+        "temporal",
+        "ordinal"
+      ]
     },
     "defaultScale": {
       "type": "string",
       "description": "Default scale used when not specified explicitly.",
-      "enum": ["linear", "temporal"],
+      "enum": [
+        "linear",
+        "temporal"
+      ],
       "default": "linear"
     },
     "includeZero": {
@@ -34,15 +45,30 @@
     "aggregate": {
       "type": "string",
       "description": "Default aggregation applied when spec omits one.",
-      "enum": ["sum", "mean", "median", "count"],
+      "enum": [
+        "sum",
+        "mean",
+        "median",
+        "count"
+      ],
       "default": "sum"
+    },
+    "renderIntent": {
+      "type": "string",
+      "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand.",
+      "default": "{}"
     }
   },
-  "required": ["fieldKinds", "defaultScale"],
+  "required": [
+    "fieldKinds",
+    "defaultScale"
+  ],
   "additionalProperties": false,
   "examples": [
     {
-      "fieldKinds": ["quantitative"],
+      "fieldKinds": [
+        "quantitative"
+      ],
       "defaultScale": "linear",
       "axisTitle": "Revenue",
       "aggregate": "sum"

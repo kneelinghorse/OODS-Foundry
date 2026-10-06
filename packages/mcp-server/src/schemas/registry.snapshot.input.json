@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/registry.snapshot.input.json",
+  "title": "registry.snapshot input",
+  "description": "Bulk-read recorded mappings plus live shipped and registered team traits and objects. Reports definition loader issues, including shadowed names. Draft preferred_terms, disambiguation_decisions and capabilities are not snapshot outputs.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "includeInternal": {
+      "type": "boolean",
+      "default": false,
+      "description": "Also list OODS Foundry's internal (non-business) objects, after the business objects. Without it they are left out and registry.hiddenInternal counts them."
+    }
+  }
+}

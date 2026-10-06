@@ -24,6 +24,11 @@
       "pattern": "src/examples/**",
       "skip": ["forbidden-vars", "color-literals"],
       "reason": "Example sandboxes can include raw color references."
+    },
+    {
+      "pattern": "src/components/viz/spatial/**",
+      "skip": ["color-literals"],
+      "reason": "Spatial viz needs CSS var() fallbacks where no semantic token exists, sRGB-from-channels template literals (`rgb(${...})`), and OKLCH prefix string checks (`startsWith('oklch(')`) — all flagged as literals but none are hardcoded design colors."
     }
   ]
 }

@@ -3,15 +3,26 @@
     "elevation": {
       "card": {
         "$type": "shadow",
-        "$value": { "offsetX": "0px", "offsetY": "12px", "blur": "20px", "spread": "-8px", "color": "rgba(15, 23, 42, 0.12)" },
-        "$description": "Baseline elevation shadow for cards and raised panels."
+        "$value": {
+          "offsetX": "0px",
+          "offsetY": "4px",
+          "blur": "8px",
+          "spread": "-4px",
+          "color": "rgba(0, 0, 0, 0.06)"
+        },
+        "$description": "A raised card (Card elevated): a soft drop. Cards are border-only by default."
       },
       "overlay": {
         "$type": "shadow",
-        "$value": { "offsetX": "0px", "offsetY": "16px", "blur": "28px", "spread": "-12px", "color": "rgba(15, 23, 42, 0.24)" },
-        "$description": "High elevation shadow used for overlays and dialogs."
+        "$value": {
+          "offsetX": "0px",
+          "offsetY": "8px",
+          "blur": "16px",
+          "spread": "-4px",
+          "color": "rgba(0, 0, 0, 0.1)"
+        },
+        "$description": "Dialogs, popovers and menus: a soft drop under their 1px border."
       }
     }
   }
 }
-

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "oods-card-header",
+  "type": "registry:component",
+  "title": "OODS Foundry CardHeader",
+  "description": "React adapter for OODS CardHeader on shadcn/ui's Radix and Base UI bases. Preserves the semantic header, heading level/as, title aliases, scalar/authored children and non-duplicated supporting copy. The team CardTitle and CardDescription supply the visual parts.",
+  "dependencies": [
+    "@oods/components-react@0.7.0"
+  ],
+  "registryDependencies": [
+    "card"
+  ],
+  "files": [
+    {
+      "path": "components/oods/card-header.tsx",
+      "target": "components/oods/card-header.tsx",
+      "type": "registry:component",
+      "content": "import * as React from 'react';\nimport type { CardHeaderProps, HeaderElement } from '@oods/components-react';\nimport { CardHeader, CardTitle, CardDescription } from '@/registry/new-york-v4/ui/card';\n\nexport const OodsCardHeader = React.forwardRef<HTMLElement, CardHeaderProps>(function OodsCardHeader(\n  { title, label, text, supporting, supportingText, subtitle, description, level, as, children, className, ...props }, ref,\n) {\n  const firstText = (...values: Array<string | undefined>) => values.find(value => value?.trim());\n  const flatten = (value: React.ReactNode): React.ReactNode[] => React.Children.toArray(value).flatMap(node => React.isValidElement<{ children?: React.ReactNode }>(node) && node.type === React.Fragment ? flatten(node.props.children) : [node]);\n  const nodes = flatten(children);\n  const authored = nodes.some(node => typeof node !== 'string' && typeof node !== 'number');\n  const scalar = authored ? undefined : nodes.join('');\n  const heading = scalar?.trim() ? scalar : firstText(title, label, text) ?? 'Card';\n  const details = firstText(supporting, supportingText, subtitle, description);\n  const Heading = (as && /^h[1-6]$/.test(as) ? as : `h${Number.isFinite(level) ? Math.max(1, Math.min(6, Math.trunc(level!))) : 2}`) as HeaderElement;\n  return <header {...props} ref={ref} className={className} data-oods-component={undefined} data-oods-adapter=\"CardHeader\">\n    <CardHeader>{authored ? children : <>\n      <CardTitle><Heading>{heading}</Heading></CardTitle>\n      {details && details.trim() !== heading.trim() ? <CardDescription data-oods-supporting=\"true\">{details}</CardDescription> : null}\n    </>}</CardHeader>\n  </header>;\n});\n"
+    }
+  ]
+}

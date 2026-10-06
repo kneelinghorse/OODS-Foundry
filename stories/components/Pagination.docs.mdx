@@ -1,7 +1,7 @@
 import { Meta, Canvas } from '@storybook/blocks';
 import * as PaginationStories from './Pagination.stories';
 
-<Meta of={PaginationStories} title="Primitives/Navigation/Pagination/Guidelines" />
+<Meta of={PaginationStories} title="Components/Navigation/Pagination/Guidelines" />
 
 # Pagination
 
@@ -35,13 +35,13 @@ const [page, setPage] = useState(1);
 
 | Element | Token | Purpose |
 | --- | --- | --- |
-| Button text | `var(--cmp-text-body)` | Default page numbers |
-| Selected text | `var(--cmp-text-on_action)` | Contrast over the selected chip |
-| Hover background | `var(--cmp-surface-action_hover)` | Rollover feedback |
-| Selected background | `var(--cmp-surface-action)` | Active page chip |
-| Disabled text | `var(--cmp-text-disabled)` | Previous/next guard rails |
-| Focus outline | `var(--cmp-focus-text)` / `var(--cmp-focus-width)` | Keyboard focus visibility |
-| Radius & spacing | `var(--border-radius-md)`, `var(--spacing-squish-inline-sm)` | Chip shape and hit target |
+| Button text | `var(--sys-text-primary)` | Default page numbers |
+| Selected text | `var(--sys-text-on-interactive)` | Contrast over the selected chip |
+| Hover background | `var(--sys-surface-interactive-secondary-default)` | Rollover feedback |
+| Selected background | `var(--sys-surface-interactive-primary-default)` | Active page chip |
+| Disabled text | `var(--sys-text-disabled)` | Previous/next guard rails |
+| Focus outline | `var(--sys-focus-ring-outer)` / `var(--sys-focus-width)` | Keyboard focus visibility |
+| Radius & spacing | `var(--sys-radius-control)`, `var(--sys-control-padding-inline)` | Chip shape and hit target |
 
 All values flow from `resolvePaginationTokens()` so derivatives (ghost buttons, high-contrast mode) inherit the correct semantics.
 
@@ -65,4 +65,4 @@ All values flow from `resolvePaginationTokens()` so derivatives (ghost buttons, 
 
 - Hook API: `~/src/components/pagination/usePagination.ts`  
 - Token helper: `~/src/components/pagination/tokens.ts`  
-- Content design: `docs/components/navigation.md`
+- Content design: [historical navigation guide](../../docs/history/components/navigation.md)

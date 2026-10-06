@@ -27,6 +27,24 @@
       "enum": {
         "$data": "1/states"
       }
+    },
+    "transitionRules": {
+      "type": ["object", "null"],
+      "description": "Allowed state transition map. Keys are source states; values are arrays of permitted target states. Null means open model (all transitions allowed).",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32
+        },
+        "minItems": 1
+      }
+    },
+    "requireTransitionReason": {
+      "type": "boolean",
+      "description": "When true, every state transition must include a human-readable reason.",
+      "default": false
     }
   },
   "required": ["states", "initialState"],

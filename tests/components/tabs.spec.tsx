@@ -192,7 +192,8 @@ describe('Tabs', () => {
   });
 
   describe('keyboard navigation', () => {
-    it('uses manual activation with Arrow keys and Enter', async () => {
+    // Sprint 182 locks automatic activation: keyboard movement updates focus and selection together.
+    it('automatically activates the next tab with ArrowRight', async () => {
       const user = userEvent.setup();
       render(<Tabs items={basicItems} defaultSelectedId="tab1" />);
 
@@ -203,16 +204,12 @@ describe('Tabs', () => {
       await user.keyboard('{ArrowRight}');
 
       expect(tab2).toHaveFocus();
-      expect(tab1).toHaveAttribute('aria-selected', 'true');
-      expect(tab2).toHaveAttribute('aria-selected', 'false');
-
-      await user.keyboard('{Enter}');
-
+      expect(tab1).toHaveAttribute('aria-selected', 'false');
       expect(tab2).toHaveAttribute('aria-selected', 'true');
       expect(screen.getByRole('tabpanel', { hidden: false })).toHaveTextContent('Panel 2 content');
     });
 
-    it('wraps focus at ends without changing selection until activated', async () => {
+    it('wraps focus and automatic selection at the end', async () => {
       const user = userEvent.setup();
       render(<Tabs items={basicItems} defaultSelectedId="tab3" />);
 
@@ -223,14 +220,11 @@ describe('Tabs', () => {
       await user.keyboard('{ArrowRight}');
 
       expect(tab1).toHaveFocus();
-      expect(tab3).toHaveAttribute('aria-selected', 'true');
-      expect(tab1).toHaveAttribute('aria-selected', 'false');
-
-      await user.keyboard(' ');
+      expect(tab3).toHaveAttribute('aria-selected', 'false');
       expect(tab1).toHaveAttribute('aria-selected', 'true');
     });
 
-    it('moves focus with Home and End keys while keeping current selection', async () => {
+    it('moves focus and automatic selection with Home and End', async () => {
       const user = userEvent.setup();
       render(<Tabs items={basicItems} defaultSelectedId="tab2" />);
 
@@ -242,11 +236,13 @@ describe('Tabs', () => {
       await user.keyboard('{End}');
 
       expect(tab3).toHaveFocus();
-      expect(tab2).toHaveAttribute('aria-selected', 'true');
+      expect(tab2).toHaveAttribute('aria-selected', 'false');
+      expect(tab3).toHaveAttribute('aria-selected', 'true');
 
       await user.keyboard('{Home}');
       expect(tab1).toHaveFocus();
-      expect(tab2).toHaveAttribute('aria-selected', 'true');
+      expect(tab1).toHaveAttribute('aria-selected', 'true');
+      expect(tab3).toHaveAttribute('aria-selected', 'false');
     });
 
     it('skips disabled tabs when moving focus', async () => {
@@ -266,8 +262,8 @@ describe('Tabs', () => {
       await user.keyboard('{ArrowRight}');
 
       expect(tab3).toHaveFocus();
-      expect(tab1).toHaveAttribute('aria-selected', 'true');
-      expect(tab3).toHaveAttribute('aria-selected', 'false');
+      expect(tab1).toHaveAttribute('aria-selected', 'false');
+      expect(tab3).toHaveAttribute('aria-selected', 'true');
     });
 
     it('updates roving tabindex to follow the focused tab', async () => {

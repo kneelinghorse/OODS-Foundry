@@ -123,7 +123,6 @@ export const messageSchema = messageBase.extend(timestampSchemaShape).superRefin
 export type Message = z.infer<typeof messageSchema>;
 export type MessageVariables = z.infer<typeof variableMapSchema>;
 export type MessageAttachment = Message['attachments'][number];
-export type { MessageStatusEntry } from './message-status.js';
 
 export function parseMessage(data: unknown): Message {
   return messageSchema.parse(data);

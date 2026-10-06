@@ -1,0 +1,3282 @@
+{
+  "schemaVersion": "1.0.0",
+  "kind": "component-intake",
+  "baselineCommit": "ae560bc22969c1fd81336730be4330c9115fc316",
+  "planningCommit": "8ce349076e7e3ba3f0b2f3f667d4fbb5c6a4b63b",
+  "controllingObligationDenominator": 114,
+  "countRule": "Derived from the unique, deterministically sorted rows array; never from an independent counter.",
+  "rows": [
+    {
+      "id": "AddressCollectionPanel",
+      "displayName": "AddressCollectionPanel",
+      "baselineMetadata": {
+        "categories": [
+          "core"
+        ],
+        "tags": [
+          "address",
+          "delivery",
+          "location",
+          "validation"
+        ],
+        "contexts": [
+          "detail"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/core/Addressable.trait.yaml"
+      ]
+    },
+    {
+      "id": "AddressEditor",
+      "displayName": "AddressEditor",
+      "baselineMetadata": {
+        "categories": [
+          "core"
+        ],
+        "tags": [
+          "address",
+          "delivery",
+          "location",
+          "validation"
+        ],
+        "contexts": [
+          "form"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/core/Addressable.trait.yaml"
+      ]
+    },
+    {
+      "id": "AddressSummaryBadge",
+      "displayName": "AddressSummaryBadge",
+      "baselineMetadata": {
+        "categories": [
+          "core"
+        ],
+        "tags": [
+          "address",
+          "delivery",
+          "location",
+          "validation"
+        ],
+        "contexts": [
+          "list"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/core/Addressable.trait.yaml"
+      ]
+    },
+    {
+      "id": "AddressValidationTimeline",
+      "displayName": "AddressValidationTimeline",
+      "baselineMetadata": {
+        "categories": [
+          "core"
+        ],
+        "tags": [
+          "address",
+          "delivery",
+          "location",
+          "validation"
+        ],
+        "contexts": [
+          "timeline"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/core/Addressable.trait.yaml"
+      ]
+    },
+    {
+      "id": "ArchiveEvent",
+      "displayName": "ArchiveEvent",
+      "baselineMetadata": {
+        "categories": [
+          "lifecycle"
+        ],
+        "tags": [
+          "archival",
+          "audit",
+          "compliance",
+          "lifecycle",
+          "retention",
+          "soft-delete"
+        ],
+        "contexts": [
+          "timeline"
+        ],
+        "regions": [
+          "card",
+          "detail",
+          "list",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/lifecycle/Archivable.trait.yaml"
+      ]
+    },
+    {
+      "id": "ArchivePill",
+      "displayName": "ArchivePill",
+      "baselineMetadata": {
+        "categories": [
+          "lifecycle"
+        ],
+        "tags": [
+          "archival",
+          "audit",
+          "compliance",
+          "lifecycle",
+          "retention",
+          "soft-delete"
+        ],
+        "contexts": [
+          "card"
+        ],
+        "regions": [
+          "card",
+          "detail",
+          "list",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/lifecycle/Archivable.trait.yaml"
+      ]
+    },
+    {
+      "id": "ArchiveSummary",
+      "displayName": "ArchiveSummary",
+      "baselineMetadata": {
+        "categories": [
+          "lifecycle"
+        ],
+        "tags": [
+          "archival",
+          "audit",
+          "compliance",
+          "lifecycle",
+          "retention",
+          "soft-delete"
+        ],
+        "contexts": [
+          "detail"
+        ],
+        "regions": [
+          "card",
+          "detail",
+          "list",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/lifecycle/Archivable.trait.yaml"
+      ]
+    },
+    {
+      "id": "ArchivedRowOverlay",
+      "displayName": "ArchivedRowOverlay",
+      "baselineMetadata": {
+        "categories": [
+          "lifecycle"
+        ],
+        "tags": [
+          "archival",
+          "audit",
+          "compliance",
+          "lifecycle",
+          "retention",
+          "soft-delete"
+        ],
+        "contexts": [
+          "list"
+        ],
+        "regions": [
+          "card",
+          "detail",
+          "list",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/lifecycle/Archivable.trait.yaml"
+      ]
+    },
+    {
+      "id": "AuditEvent",
+      "displayName": "AuditEvent",
+      "baselineMetadata": {
+        "categories": [
+          "lifecycle"
+        ],
+        "tags": [
+          "audit",
+          "lifecycle",
+          "metadata",
+          "timestamp"
+        ],
+        "contexts": [
+          "timeline"
+        ],
+        "regions": [
+          "detail",
+          "list",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/lifecycle/Timestampable.trait.yaml"
+      ]
+    },
+    {
+      "id": "AuditSummaryCard",
+      "displayName": "AuditSummaryCard",
+      "baselineMetadata": {
+        "categories": [
+          "lifecycle"
+        ],
+        "tags": [
+          "accountability",
+          "audit",
+          "compliance",
+          "lifecycle",
+          "trail",
+          "transition"
+        ],
+        "contexts": [
+          "detail"
+        ],
+        "regions": [
+          "detail",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/lifecycle/Auditable.trait.yaml"
+      ]
+    },
+    {
+      "id": "AuditTimeline",
+      "displayName": "AuditTimeline",
+      "baselineMetadata": {
+        "categories": [
+          "lifecycle"
+        ],
+        "tags": [
+          "accountability",
+          "audit",
+          "compliance",
+          "lifecycle",
+          "metadata",
+          "timestamp",
+          "trail",
+          "transition"
+        ],
+        "contexts": [
+          "detail",
+          "timeline"
+        ],
+        "regions": [
+          "detail",
+          "list",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/lifecycle/Auditable.trait.yaml",
+        "traits/lifecycle/Timestampable.trait.yaml"
+      ]
+    },
+    {
+      "id": "Badge",
+      "displayName": "Badge",
+      "baselineMetadata": {
+        "categories": [
+          "primitive",
+          "visual"
+        ],
+        "tags": [
+          "badge",
+          "banner",
+          "presentation",
+          "primitive",
+          "registry",
+          "saas",
+          "semantic",
+          "status",
+          "tone"
+        ],
+        "contexts": [
+          "card",
+          "detail",
+          "list"
+        ],
+        "regions": [
+          "card",
+          "contextPanel",
+          "detail",
+          "form",
+          "list",
+          "main",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "refresh_structured_data.py",
+        "traits/visual/Statusable.trait.yaml"
+      ]
+    },
+    {
+      "id": "Banner",
+      "displayName": "Banner",
+      "baselineMetadata": {
+        "categories": [
+          "primitive",
+          "visual"
+        ],
+        "tags": [
+          "badge",
+          "banner",
+          "feedback",
+          "notice",
+          "presentation",
+          "primitive",
+          "registry",
+          "saas",
+          "semantic",
+          "status",
+          "tone"
+        ],
+        "contexts": [
+          "detail",
+          "form",
+          "list"
+        ],
+        "regions": [
+          "contextPanel",
+          "detail",
+          "form",
+          "list",
+          "main",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "refresh_structured_data.py",
+        "traits/visual/Statusable.trait.yaml"
+      ]
+    },
+    {
+      "id": "BillingAmountInput",
+      "displayName": "BillingAmountInput",
+      "baselineMetadata": {
+        "categories": [
+          "financial"
+        ],
+        "tags": [
+          "billing",
+          "cycle",
+          "financial",
+          "payment",
+          "recurring",
+          "subscription"
+        ],
+        "contexts": [
+          "form"
+        ],
+        "regions": [
+          "card",
+          "detail",
+          "form",
+          "list",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/financial/Billable.trait.yaml"
+      ]
+    },
+    {
+      "id": "BillingCardMeta",
+      "displayName": "BillingCardMeta",
+      "baselineMetadata": {
+        "categories": [
+          "financial"
+        ],
+        "tags": [
+          "billing",
+          "cycle",
+          "financial",
+          "payment",
+          "recurring",
+          "subscription"
+        ],
+        "contexts": [
+          "card"
+        ],
+        "regions": [
+          "card",
+          "detail",
+          "form",
+          "list",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/financial/Billable.trait.yaml"
+      ]
+    },
+    {
+      "id": "BillingIntervalSelector",
+      "displayName": "BillingIntervalSelector",
+      "baselineMetadata": {
+        "categories": [
+          "financial"
+        ],
+        "tags": [
+          "billing",
+          "cycle",
+          "financial",
+          "payment",
+          "recurring",
+          "subscription"
+        ],
+        "contexts": [
+          "form"
+        ],
+        "regions": [
+          "card",
+          "detail",
+          "form",
+          "list",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/financial/Billable.trait.yaml"
+      ]
+    },
+    {
+      "id": "BillingSummaryBadge",
+      "displayName": "BillingSummaryBadge",
+      "baselineMetadata": {
+        "categories": [
+          "financial"
+        ],
+        "tags": [
+          "billing",
+          "cycle",
+          "financial",
+          "payment",
+          "recurring",
+          "subscription"
+        ],
+        "contexts": [
+          "list"
+        ],
+        "regions": [
+          "card",
+          "detail",
+          "form",
+          "list",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/financial/Billable.trait.yaml"
+      ]
+    },
+    {
+      "id": "Button",
+      "displayName": "Button",
+      "baselineMetadata": {
+        "categories": [
+          "primitive"
+        ],
+        "tags": [
+          "action",
+          "interactive",
+          "primitive"
+        ],
+        "contexts": [
+          "detail",
+          "form",
+          "list"
+        ],
+        "regions": [
+          "actions",
+          "main"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "refresh_structured_data.py"
+      ]
+    },
+    {
+      "id": "CancellationBadge",
+      "displayName": "CancellationBadge",
+      "baselineMetadata": {
+        "categories": [
+          "lifecycle"
+        ],
+        "tags": [
+          "cancellation",
+          "lifecycle",
+          "retention",
+          "workflow"
+        ],
+        "contexts": [
+          "card"
+        ],
+        "regions": [
+          "card",
+          "detail",
+          "forms",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/lifecycle/Cancellable.trait.yaml"
+      ]
+    },
+    {
+      "id": "CancellationEvent",
+      "displayName": "CancellationEvent",
+      "baselineMetadata": {
+        "categories": [
+          "lifecycle"
+        ],
+        "tags": [
+          "cancellation",
+          "lifecycle",
+          "retention",
+          "workflow"
+        ],
+        "contexts": [
+          "timeline"
+        ],
+        "regions": [
+          "card",
+          "detail",
+          "forms",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/lifecycle/Cancellable.trait.yaml"
+      ]
+    },
+    {
+      "id": "CancellationForm",
+      "displayName": "CancellationForm",
+      "baselineMetadata": {
+        "categories": [
+          "lifecycle"
+        ],
+        "tags": [
+          "cancellation",
+          "lifecycle",
+          "retention",
+          "workflow"
+        ],
+        "contexts": [
+          "form"
+        ],
+        "regions": [
+          "card",
+          "detail",
+          "forms",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/lifecycle/Cancellable.trait.yaml"
+      ]
+    },
+    {
+      "id": "CancellationSummary",
+      "displayName": "CancellationSummary",
+      "baselineMetadata": {
+        "categories": [
+          "lifecycle"
+        ],
+        "tags": [
+          "cancellation",
+          "lifecycle",
+          "retention",
+          "workflow"
+        ],
+        "contexts": [
+          "detail"
+        ],
+        "regions": [
+          "card",
+          "detail",
+          "forms",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/lifecycle/Cancellable.trait.yaml"
+      ]
+    },
+    {
+      "id": "Card",
+      "displayName": "Card",
+      "baselineMetadata": {
+        "categories": [
+          "primitive"
+        ],
+        "tags": [
+          "container",
+          "primitive",
+          "surface"
+        ],
+        "contexts": [
+          "card",
+          "detail",
+          "list"
+        ],
+        "regions": [
+          "card",
+          "main"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "refresh_structured_data.py"
+      ]
+    },
+    {
+      "id": "CardHeader",
+      "displayName": "CardHeader",
+      "baselineMetadata": {
+        "categories": [
+          "content"
+        ],
+        "tags": [
+          "content",
+          "copy",
+          "description",
+          "label",
+          "metadata"
+        ],
+        "contexts": [
+          "card"
+        ],
+        "regions": [
+          "card",
+          "detail",
+          "form",
+          "inline",
+          "list",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/content/Labelled.trait.yaml"
+      ]
+    },
+    {
+      "id": "Checkbox",
+      "displayName": "Checkbox",
+      "baselineMetadata": {
+        "categories": [
+          "primitive"
+        ],
+        "tags": [
+          "boolean",
+          "field",
+          "form",
+          "input",
+          "interactive",
+          "primitive"
+        ],
+        "contexts": [
+          "form"
+        ],
+        "regions": [
+          "form",
+          "main"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "refresh_structured_data.py",
+        "src/components/base/Checkbox.tsx"
+      ]
+    },
+    {
+      "id": "ClassificationBadge",
+      "displayName": "ClassificationBadge",
+      "baselineMetadata": {
+        "categories": [
+          "core"
+        ],
+        "tags": [
+          "classification",
+          "governance",
+          "ltree",
+          "tags",
+          "taxonomy"
+        ],
+        "contexts": [
+          "list"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/core/Classifiable.trait.yaml"
+      ]
+    },
+    {
+      "id": "ClassificationEditor",
+      "displayName": "ClassificationEditor",
+      "baselineMetadata": {
+        "categories": [
+          "core"
+        ],
+        "tags": [
+          "classification",
+          "governance",
+          "ltree",
+          "tags",
+          "taxonomy"
+        ],
+        "contexts": [
+          "form"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/core/Classifiable.trait.yaml"
+      ]
+    },
+    {
+      "id": "ClassificationPanel",
+      "displayName": "ClassificationPanel",
+      "baselineMetadata": {
+        "categories": [
+          "core"
+        ],
+        "tags": [
+          "classification",
+          "governance",
+          "ltree",
+          "tags",
+          "taxonomy"
+        ],
+        "contexts": [
+          "detail"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/core/Classifiable.trait.yaml"
+      ]
+    },
+    {
+      "id": "ColorStatePicker",
+      "displayName": "ColorStatePicker",
+      "baselineMetadata": {
+        "categories": [
+          "visual"
+        ],
+        "tags": [
+          "accessibility",
+          "color",
+          "oklch",
+          "semantic",
+          "status",
+          "theming",
+          "tokens"
+        ],
+        "contexts": [
+          "form"
+        ],
+        "regions": [
+          "badges",
+          "card",
+          "detail",
+          "forms"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/visual/Colorized.trait.yaml"
+      ]
+    },
+    {
+      "id": "ColorSwatch",
+      "displayName": "ColorSwatch",
+      "baselineMetadata": {
+        "categories": [
+          "visual"
+        ],
+        "tags": [
+          "accessibility",
+          "color",
+          "oklch",
+          "semantic",
+          "status",
+          "theming",
+          "tokens"
+        ],
+        "contexts": [
+          "list"
+        ],
+        "regions": [
+          "badges",
+          "card",
+          "detail",
+          "forms"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/visual/Colorized.trait.yaml"
+      ]
+    },
+    {
+      "id": "ColorizedBadge",
+      "displayName": "ColorizedBadge",
+      "baselineMetadata": {
+        "categories": [
+          "visual"
+        ],
+        "tags": [
+          "accessibility",
+          "color",
+          "oklch",
+          "semantic",
+          "status",
+          "theming",
+          "tokens"
+        ],
+        "contexts": [
+          "card"
+        ],
+        "regions": [
+          "badges",
+          "card",
+          "detail",
+          "forms"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/visual/Colorized.trait.yaml"
+      ]
+    },
+    {
+      "id": "Combobox",
+      "displayName": "Combobox",
+      "baselineMetadata": {
+        "categories": [
+          "primitive"
+        ],
+        "tags": [
+          "autocomplete",
+          "combobox",
+          "field",
+          "filter",
+          "form",
+          "input",
+          "interactive",
+          "primitive",
+          "select"
+        ],
+        "contexts": [
+          "form"
+        ],
+        "regions": [
+          "form",
+          "main"
+        ]
+      },
+      "intakeEvidence": [
+        "packages/component-contracts/src/contracts.ts#Combobox",
+        "packages/mcp-server/src/render/component-map.ts#renderCombobox"
+      ],
+      "addedBy": "s223-m02; decision #2527 ruling 11"
+    },
+    {
+      "id": "CommunicationDetailPanel",
+      "displayName": "CommunicationDetailPanel",
+      "baselineMetadata": {
+        "categories": [
+          "communication"
+        ],
+        "tags": [
+          "conversation",
+          "delivery",
+          "messaging",
+          "notification",
+          "template"
+        ],
+        "contexts": [
+          "detail"
+        ],
+        "regions": []
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/core/Communicable.trait.yaml"
+      ]
+    },
+    {
+      "id": "CycleProgressCard",
+      "displayName": "CycleProgressCard",
+      "baselineMetadata": {
+        "categories": [
+          "financial"
+        ],
+        "tags": [
+          "billing",
+          "cycle",
+          "financial",
+          "payment",
+          "recurring",
+          "subscription"
+        ],
+        "contexts": [
+          "detail"
+        ],
+        "regions": [
+          "card",
+          "detail",
+          "form",
+          "list",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/financial/Billable.trait.yaml"
+      ]
+    },
+    {
+      "id": "DatePicker",
+      "displayName": "DatePicker",
+      "baselineMetadata": {
+        "categories": [
+          "primitive"
+        ],
+        "tags": [
+          "date",
+          "field",
+          "form",
+          "input",
+          "interactive",
+          "primitive"
+        ],
+        "contexts": [
+          "form"
+        ],
+        "regions": [
+          "form",
+          "main"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "refresh_structured_data.py",
+        "src/components/base/DatePicker.tsx"
+      ]
+    },
+    {
+      "id": "DetailHeader",
+      "displayName": "DetailHeader",
+      "baselineMetadata": {
+        "categories": [
+          "content"
+        ],
+        "tags": [
+          "content",
+          "copy",
+          "description",
+          "label",
+          "metadata"
+        ],
+        "contexts": [
+          "detail"
+        ],
+        "regions": [
+          "card",
+          "detail",
+          "form",
+          "inline",
+          "list",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/content/Labelled.trait.yaml"
+      ]
+    },
+    {
+      "id": "Dialog",
+      "displayName": "Dialog",
+      "baselineMetadata": {
+        "categories": [
+          "primitive"
+        ],
+        "tags": [
+          "dialog",
+          "modal",
+          "overlay",
+          "primitive"
+        ],
+        "contexts": [],
+        "regions": []
+      },
+      "intakeEvidence": [
+        "packages/component-contracts/src/contracts.ts#Dialog",
+        "packages/mcp-server/src/render/component-map.ts#renderDialog"
+      ],
+      "addedBy": "s222-m02; decision #2502 ruling 11"
+    },
+    {
+      "id": "FilterPanel",
+      "displayName": "FilterPanel",
+      "baselineMetadata": {
+        "categories": [
+          "behavioral"
+        ],
+        "tags": [
+          "data-refinement",
+          "facets",
+          "filtering",
+          "list-behavior"
+        ],
+        "contexts": [
+          "detail",
+          "list"
+        ],
+        "regions": [
+          "detail",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/behavioral/Filterable.trait.yaml"
+      ]
+    },
+    {
+      "id": "FormLabelGroup",
+      "displayName": "FormLabelGroup",
+      "baselineMetadata": {
+        "categories": [
+          "content"
+        ],
+        "tags": [
+          "content",
+          "copy",
+          "description",
+          "label",
+          "metadata"
+        ],
+        "contexts": [
+          "form"
+        ],
+        "regions": [
+          "card",
+          "detail",
+          "form",
+          "inline",
+          "list",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/content/Labelled.trait.yaml"
+      ]
+    },
+    {
+      "id": "GeoFieldMappingForm",
+      "displayName": "GeoFieldMappingForm",
+      "baselineMetadata": {
+        "categories": [
+          "viz.spatial"
+        ],
+        "tags": [
+          "geo",
+          "location",
+          "map",
+          "spatial",
+          "viz"
+        ],
+        "contexts": [
+          "form"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/viz/spatial/geocodable.trait.yaml"
+      ]
+    },
+    {
+      "id": "GeoResolutionBadge",
+      "displayName": "GeoResolutionBadge",
+      "baselineMetadata": {
+        "categories": [
+          "viz.spatial"
+        ],
+        "tags": [
+          "geo",
+          "location",
+          "map",
+          "spatial",
+          "viz"
+        ],
+        "contexts": [
+          "list"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/viz/spatial/geocodable.trait.yaml"
+      ]
+    },
+    {
+      "id": "GeocodablePreview",
+      "displayName": "GeocodablePreview",
+      "baselineMetadata": {
+        "categories": [
+          "viz.spatial"
+        ],
+        "tags": [
+          "geo",
+          "location",
+          "map",
+          "spatial",
+          "viz"
+        ],
+        "contexts": [
+          "detail"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/viz/spatial/geocodable.trait.yaml"
+      ]
+    },
+    {
+      "id": "Grid",
+      "displayName": "Grid",
+      "baselineMetadata": {
+        "categories": [
+          "primitive"
+        ],
+        "tags": [
+          "layout",
+          "primitive",
+          "structure"
+        ],
+        "contexts": [
+          "card",
+          "detail",
+          "form",
+          "list",
+          "timeline"
+        ],
+        "regions": [
+          "card",
+          "contextPanel",
+          "detail",
+          "form",
+          "list",
+          "main",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "refresh_structured_data.py"
+      ]
+    },
+    {
+      "id": "InlineLabel",
+      "displayName": "InlineLabel",
+      "baselineMetadata": {
+        "categories": [
+          "content"
+        ],
+        "tags": [
+          "content",
+          "copy",
+          "description",
+          "label",
+          "metadata"
+        ],
+        "contexts": [
+          "inline"
+        ],
+        "regions": [
+          "card",
+          "detail",
+          "form",
+          "inline",
+          "list",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/content/Labelled.trait.yaml"
+      ]
+    },
+    {
+      "id": "Input",
+      "displayName": "Input",
+      "baselineMetadata": {
+        "categories": [
+          "primitive"
+        ],
+        "tags": [
+          "field",
+          "form",
+          "input",
+          "interactive",
+          "primitive"
+        ],
+        "contexts": [
+          "form"
+        ],
+        "regions": [
+          "form",
+          "main"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "refresh_structured_data.py"
+      ]
+    },
+    {
+      "id": "LabelCell",
+      "displayName": "LabelCell",
+      "baselineMetadata": {
+        "categories": [
+          "content"
+        ],
+        "tags": [
+          "content",
+          "copy",
+          "description",
+          "label",
+          "metadata"
+        ],
+        "contexts": [
+          "list"
+        ],
+        "regions": [
+          "card",
+          "detail",
+          "form",
+          "inline",
+          "list",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/content/Labelled.trait.yaml"
+      ]
+    },
+    {
+      "id": "MembershipAuditTimeline",
+      "displayName": "MembershipAuditTimeline",
+      "baselineMetadata": {
+        "categories": [
+          "core"
+        ],
+        "tags": [
+          "authorization",
+          "membership",
+          "rbac",
+          "saas",
+          "security"
+        ],
+        "contexts": [
+          "timeline"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/core/Authable.trait.yaml"
+      ]
+    },
+    {
+      "id": "MembershipPanel",
+      "displayName": "MembershipPanel",
+      "baselineMetadata": {
+        "categories": [
+          "core"
+        ],
+        "tags": [
+          "authorization",
+          "membership",
+          "rbac",
+          "saas",
+          "security"
+        ],
+        "contexts": [
+          "detail"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/core/Authable.trait.yaml"
+      ]
+    },
+    {
+      "id": "MessageEventTimeline",
+      "displayName": "MessageEventTimeline",
+      "baselineMetadata": {
+        "categories": [
+          "communication"
+        ],
+        "tags": [
+          "conversation",
+          "delivery",
+          "messaging",
+          "notification",
+          "template"
+        ],
+        "contexts": [
+          "timeline"
+        ],
+        "regions": []
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/core/Communicable.trait.yaml"
+      ]
+    },
+    {
+      "id": "MessageStatusBadge",
+      "displayName": "MessageStatusBadge",
+      "baselineMetadata": {
+        "categories": [
+          "communication"
+        ],
+        "tags": [
+          "conversation",
+          "delivery",
+          "messaging",
+          "notification",
+          "template"
+        ],
+        "contexts": [
+          "list"
+        ],
+        "regions": []
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/core/Communicable.trait.yaml"
+      ]
+    },
+    {
+      "id": "OwnerBadge",
+      "displayName": "OwnerBadge",
+      "baselineMetadata": {
+        "categories": [
+          "structural"
+        ],
+        "tags": [
+          "access",
+          "governance",
+          "ownership",
+          "relationships"
+        ],
+        "contexts": [
+          "list"
+        ],
+        "regions": [
+          "card",
+          "detail",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/structural/Ownerable.trait.yaml"
+      ]
+    },
+    {
+      "id": "OwnershipMeta",
+      "displayName": "OwnershipMeta",
+      "baselineMetadata": {
+        "categories": [
+          "structural"
+        ],
+        "tags": [
+          "access",
+          "governance",
+          "ownership",
+          "relationships"
+        ],
+        "contexts": [
+          "card"
+        ],
+        "regions": [
+          "card",
+          "detail",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/structural/Ownerable.trait.yaml"
+      ]
+    },
+    {
+      "id": "OwnershipSummary",
+      "displayName": "OwnershipSummary",
+      "baselineMetadata": {
+        "categories": [
+          "structural"
+        ],
+        "tags": [
+          "access",
+          "governance",
+          "ownership",
+          "relationships"
+        ],
+        "contexts": [
+          "detail"
+        ],
+        "regions": [
+          "card",
+          "detail",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/structural/Ownerable.trait.yaml"
+      ]
+    },
+    {
+      "id": "PaginationBar",
+      "displayName": "PaginationBar",
+      "baselineMetadata": {
+        "categories": [
+          "behavioral"
+        ],
+        "tags": [
+          "data-loading",
+          "list-behavior",
+          "navigation",
+          "pagination"
+        ],
+        "contexts": [
+          "list"
+        ],
+        "regions": [
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/behavioral/Pageable.trait.yaml"
+      ]
+    },
+    {
+      "id": "PaymentEventTimeline",
+      "displayName": "PaymentEventTimeline",
+      "baselineMetadata": {
+        "categories": [
+          "financial"
+        ],
+        "tags": [
+          "billing",
+          "cycle",
+          "financial",
+          "payment",
+          "recurring",
+          "subscription"
+        ],
+        "contexts": [
+          "timeline"
+        ],
+        "regions": [
+          "card",
+          "detail",
+          "form",
+          "list",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/financial/Billable.trait.yaml"
+      ]
+    },
+    {
+      "id": "PaymentTimeline",
+      "displayName": "PaymentTimeline",
+      "baselineMetadata": {
+        "categories": [
+          "financial"
+        ],
+        "tags": [
+          "billing",
+          "cycle",
+          "financial",
+          "payment",
+          "recurring",
+          "subscription"
+        ],
+        "contexts": [
+          "detail"
+        ],
+        "regions": [
+          "card",
+          "detail",
+          "form",
+          "list",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/financial/Billable.trait.yaml"
+      ]
+    },
+    {
+      "id": "PreferenceEditor",
+      "displayName": "PreferenceEditor",
+      "baselineMetadata": {
+        "categories": [
+          "core"
+        ],
+        "tags": [
+          "jsonb",
+          "notification",
+          "preferences",
+          "schema-evolution",
+          "user-settings"
+        ],
+        "contexts": [
+          "form"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/core/Preferenceable.trait.yaml"
+      ]
+    },
+    {
+      "id": "PreferencePanel",
+      "displayName": "PreferencePanel",
+      "baselineMetadata": {
+        "categories": [
+          "core"
+        ],
+        "tags": [
+          "jsonb",
+          "notification",
+          "preferences",
+          "schema-evolution",
+          "user-settings"
+        ],
+        "contexts": [
+          "detail"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/core/Preferenceable.trait.yaml"
+      ]
+    },
+    {
+      "id": "PreferenceSummaryBadge",
+      "displayName": "PreferenceSummaryBadge",
+      "baselineMetadata": {
+        "categories": [
+          "core"
+        ],
+        "tags": [
+          "jsonb",
+          "notification",
+          "preferences",
+          "schema-evolution",
+          "user-settings"
+        ],
+        "contexts": [
+          "list"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/core/Preferenceable.trait.yaml"
+      ]
+    },
+    {
+      "id": "PreferenceTimeline",
+      "displayName": "PreferenceTimeline",
+      "baselineMetadata": {
+        "categories": [
+          "core"
+        ],
+        "tags": [
+          "jsonb",
+          "notification",
+          "preferences",
+          "schema-evolution",
+          "user-settings"
+        ],
+        "contexts": [
+          "timeline"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/core/Preferenceable.trait.yaml"
+      ]
+    },
+    {
+      "id": "PriceBadge",
+      "displayName": "PriceBadge",
+      "baselineMetadata": {
+        "categories": [
+          "financial"
+        ],
+        "tags": [
+          "billing",
+          "commerce",
+          "monetization",
+          "pricing"
+        ],
+        "contexts": [
+          "list"
+        ],
+        "regions": [
+          "card",
+          "detail",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/financial/Priceable.trait.yaml"
+      ]
+    },
+    {
+      "id": "PriceCardMeta",
+      "displayName": "PriceCardMeta",
+      "baselineMetadata": {
+        "categories": [
+          "financial"
+        ],
+        "tags": [
+          "billing",
+          "commerce",
+          "monetization",
+          "pricing"
+        ],
+        "contexts": [
+          "card"
+        ],
+        "regions": [
+          "card",
+          "detail",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/financial/Priceable.trait.yaml"
+      ]
+    },
+    {
+      "id": "PriceSummary",
+      "displayName": "PriceSummary",
+      "baselineMetadata": {
+        "categories": [
+          "financial"
+        ],
+        "tags": [
+          "billing",
+          "commerce",
+          "monetization",
+          "pricing"
+        ],
+        "contexts": [
+          "detail"
+        ],
+        "regions": [
+          "card",
+          "detail",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/financial/Priceable.trait.yaml"
+      ]
+    },
+    {
+      "id": "RelativeTimestamp",
+      "displayName": "RelativeTimestamp",
+      "baselineMetadata": {
+        "categories": [
+          "lifecycle"
+        ],
+        "tags": [
+          "audit",
+          "lifecycle",
+          "metadata",
+          "timestamp"
+        ],
+        "contexts": [
+          "list"
+        ],
+        "regions": [
+          "detail",
+          "list",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/lifecycle/Timestampable.trait.yaml"
+      ]
+    },
+    {
+      "id": "RoleAssignmentForm",
+      "displayName": "RoleAssignmentForm",
+      "baselineMetadata": {
+        "categories": [
+          "core"
+        ],
+        "tags": [
+          "authorization",
+          "membership",
+          "rbac",
+          "saas",
+          "security"
+        ],
+        "contexts": [
+          "form"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/core/Authable.trait.yaml"
+      ]
+    },
+    {
+      "id": "RoleBadgeList",
+      "displayName": "RoleBadgeList",
+      "baselineMetadata": {
+        "categories": [
+          "core"
+        ],
+        "tags": [
+          "authorization",
+          "membership",
+          "rbac",
+          "saas",
+          "security"
+        ],
+        "contexts": [
+          "list"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/core/Authable.trait.yaml"
+      ]
+    },
+    {
+      "id": "SearchInput",
+      "displayName": "SearchInput",
+      "baselineMetadata": {
+        "categories": [
+          "behavioral"
+        ],
+        "tags": [
+          "discovery",
+          "filtering",
+          "list-behavior",
+          "search"
+        ],
+        "contexts": [
+          "detail",
+          "list"
+        ],
+        "regions": [
+          "detail",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/behavioral/Searchable.trait.yaml"
+      ]
+    },
+    {
+      "id": "SegmentedControl",
+      "displayName": "SegmentedControl",
+      "baselineMetadata": {
+        "categories": [
+          "primitive"
+        ],
+        "tags": [
+          "choice",
+          "field",
+          "form",
+          "input",
+          "interactive",
+          "primitive",
+          "radio",
+          "segmented-control"
+        ],
+        "contexts": [
+          "form"
+        ],
+        "regions": [
+          "form",
+          "main"
+        ]
+      },
+      "intakeEvidence": [
+        "packages/component-contracts/src/contracts.ts#SegmentedControl",
+        "packages/mcp-server/src/render/component-map.ts#renderSegmentedControl"
+      ],
+      "addedBy": "s223-m02; decision #2527 ruling 10"
+    },
+    {
+      "id": "Select",
+      "displayName": "Select",
+      "baselineMetadata": {
+        "categories": [
+          "primitive"
+        ],
+        "tags": [
+          "field",
+          "form",
+          "input",
+          "interactive",
+          "primitive",
+          "select"
+        ],
+        "contexts": [
+          "form"
+        ],
+        "regions": [
+          "form",
+          "main"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "refresh_structured_data.py"
+      ]
+    },
+    {
+      "id": "SortIndicator",
+      "displayName": "SortIndicator",
+      "baselineMetadata": {
+        "categories": [
+          "behavioral"
+        ],
+        "tags": [
+          "list-behavior",
+          "ordering",
+          "sorting",
+          "table"
+        ],
+        "contexts": [
+          "list"
+        ],
+        "regions": [
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/behavioral/Sortable.trait.yaml"
+      ]
+    },
+    {
+      "id": "Stack",
+      "displayName": "Stack",
+      "baselineMetadata": {
+        "categories": [
+          "primitive"
+        ],
+        "tags": [
+          "layout",
+          "primitive",
+          "structure"
+        ],
+        "contexts": [
+          "card",
+          "detail",
+          "form",
+          "list",
+          "timeline"
+        ],
+        "regions": [
+          "card",
+          "contextPanel",
+          "detail",
+          "form",
+          "list",
+          "main",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "refresh_structured_data.py"
+      ]
+    },
+    {
+      "id": "StateTransitionEvent",
+      "displayName": "StateTransitionEvent",
+      "baselineMetadata": {
+        "categories": [
+          "lifecycle"
+        ],
+        "tags": [
+          "audit",
+          "governance",
+          "lifecycle",
+          "state",
+          "status",
+          "workflow"
+        ],
+        "contexts": [
+          "timeline"
+        ],
+        "regions": [
+          "badges",
+          "card",
+          "detail",
+          "forms",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/lifecycle/Stateful.trait.yaml"
+      ]
+    },
+    {
+      "id": "StatusBadge",
+      "displayName": "StatusBadge",
+      "baselineMetadata": {
+        "categories": [
+          "lifecycle",
+          "visual"
+        ],
+        "tags": [
+          "audit",
+          "badge",
+          "banner",
+          "governance",
+          "lifecycle",
+          "presentation",
+          "registry",
+          "saas",
+          "semantic",
+          "state",
+          "status",
+          "tone",
+          "workflow"
+        ],
+        "contexts": [
+          "card",
+          "detail",
+          "form",
+          "list",
+          "timeline"
+        ],
+        "regions": [
+          "badges",
+          "card",
+          "detail",
+          "form",
+          "forms",
+          "list",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/lifecycle/Stateful.trait.yaml",
+        "traits/visual/Statusable.trait.yaml"
+      ]
+    },
+    {
+      "id": "StatusColorLegend",
+      "displayName": "StatusColorLegend",
+      "baselineMetadata": {
+        "categories": [
+          "visual"
+        ],
+        "tags": [
+          "accessibility",
+          "color",
+          "oklch",
+          "semantic",
+          "status",
+          "theming",
+          "tokens"
+        ],
+        "contexts": [
+          "detail"
+        ],
+        "regions": [
+          "badges",
+          "card",
+          "detail",
+          "forms"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/visual/Colorized.trait.yaml"
+      ]
+    },
+    {
+      "id": "StatusSelector",
+      "displayName": "StatusSelector",
+      "baselineMetadata": {
+        "categories": [
+          "lifecycle"
+        ],
+        "tags": [
+          "audit",
+          "governance",
+          "lifecycle",
+          "state",
+          "status",
+          "workflow"
+        ],
+        "contexts": [
+          "form"
+        ],
+        "regions": [
+          "badges",
+          "card",
+          "detail",
+          "forms",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/lifecycle/Stateful.trait.yaml"
+      ]
+    },
+    {
+      "id": "StatusTimeline",
+      "displayName": "StatusTimeline",
+      "baselineMetadata": {
+        "categories": [
+          "lifecycle"
+        ],
+        "tags": [
+          "audit",
+          "governance",
+          "lifecycle",
+          "state",
+          "status",
+          "workflow"
+        ],
+        "contexts": [
+          "detail"
+        ],
+        "regions": [
+          "badges",
+          "card",
+          "detail",
+          "forms",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/lifecycle/Stateful.trait.yaml"
+      ]
+    },
+    {
+      "id": "Switch",
+      "displayName": "Switch",
+      "baselineMetadata": {
+        "categories": [
+          "primitive"
+        ],
+        "tags": [
+          "boolean",
+          "field",
+          "form",
+          "input",
+          "interactive",
+          "primitive",
+          "switch"
+        ],
+        "contexts": [
+          "form"
+        ],
+        "regions": [
+          "form",
+          "main"
+        ]
+      },
+      "intakeEvidence": [
+        "packages/component-contracts/src/contracts.ts#Switch",
+        "packages/mcp-server/src/render/component-map.ts#renderSwitch"
+      ],
+      "addedBy": "s222-m02; decision #2502 ruling 11"
+    },
+    {
+      "id": "Table",
+      "displayName": "Table",
+      "baselineMetadata": {
+        "categories": [
+          "primitive"
+        ],
+        "tags": [
+          "data",
+          "primitive",
+          "table"
+        ],
+        "contexts": [
+          "detail",
+          "list"
+        ],
+        "regions": [
+          "detail",
+          "list",
+          "main"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "refresh_structured_data.py"
+      ]
+    },
+    {
+      "id": "Tabs",
+      "displayName": "Tabs",
+      "baselineMetadata": {
+        "categories": [
+          "primitive"
+        ],
+        "tags": [
+          "navigation",
+          "primitive",
+          "tabs"
+        ],
+        "contexts": [
+          "detail",
+          "form"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "main"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "refresh_structured_data.py"
+      ]
+    },
+    {
+      "id": "TagInput",
+      "displayName": "TagInput",
+      "baselineMetadata": {
+        "categories": [
+          "behavioral"
+        ],
+        "tags": [
+          "classification",
+          "discovery",
+          "governance",
+          "metadata",
+          "tagging",
+          "taxonomy"
+        ],
+        "contexts": [
+          "form"
+        ],
+        "regions": [
+          "card",
+          "detail",
+          "form",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/behavioral/Taggable.trait.yaml"
+      ]
+    },
+    {
+      "id": "TagManager",
+      "displayName": "TagManager",
+      "baselineMetadata": {
+        "categories": [
+          "behavioral"
+        ],
+        "tags": [
+          "classification",
+          "discovery",
+          "governance",
+          "metadata",
+          "tagging",
+          "taxonomy"
+        ],
+        "contexts": [
+          "detail"
+        ],
+        "regions": [
+          "card",
+          "detail",
+          "form",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/behavioral/Taggable.trait.yaml"
+      ]
+    },
+    {
+      "id": "TagPills",
+      "displayName": "TagPills",
+      "baselineMetadata": {
+        "categories": [
+          "behavioral"
+        ],
+        "tags": [
+          "classification",
+          "discovery",
+          "governance",
+          "metadata",
+          "tagging",
+          "taxonomy"
+        ],
+        "contexts": [
+          "list"
+        ],
+        "regions": [
+          "card",
+          "detail",
+          "form",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/behavioral/Taggable.trait.yaml"
+      ]
+    },
+    {
+      "id": "TagSummary",
+      "displayName": "TagSummary",
+      "baselineMetadata": {
+        "categories": [
+          "behavioral"
+        ],
+        "tags": [
+          "classification",
+          "discovery",
+          "governance",
+          "metadata",
+          "tagging",
+          "taxonomy"
+        ],
+        "contexts": [
+          "card"
+        ],
+        "regions": [
+          "card",
+          "detail",
+          "form",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/behavioral/Taggable.trait.yaml"
+      ]
+    },
+    {
+      "id": "TemplatePicker",
+      "displayName": "TemplatePicker",
+      "baselineMetadata": {
+        "categories": [
+          "communication"
+        ],
+        "tags": [
+          "conversation",
+          "delivery",
+          "messaging",
+          "notification",
+          "template"
+        ],
+        "contexts": [
+          "form"
+        ],
+        "regions": []
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/core/Communicable.trait.yaml"
+      ]
+    },
+    {
+      "id": "Text",
+      "displayName": "Text",
+      "baselineMetadata": {
+        "categories": [
+          "primitive"
+        ],
+        "tags": [
+          "content",
+          "primitive",
+          "typography"
+        ],
+        "contexts": [
+          "card",
+          "detail",
+          "form",
+          "list",
+          "timeline"
+        ],
+        "regions": [
+          "card",
+          "contextPanel",
+          "detail",
+          "form",
+          "list",
+          "main",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "refresh_structured_data.py"
+      ]
+    },
+    {
+      "id": "Textarea",
+      "displayName": "Textarea",
+      "baselineMetadata": {
+        "categories": [
+          "primitive"
+        ],
+        "tags": [
+          "field",
+          "form",
+          "input",
+          "interactive",
+          "multiline",
+          "primitive",
+          "text"
+        ],
+        "contexts": [
+          "form"
+        ],
+        "regions": [
+          "form",
+          "main"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "refresh_structured_data.py",
+        "src/components/base/Textarea.tsx"
+      ]
+    },
+    {
+      "id": "TimelineEntryLabel",
+      "displayName": "TimelineEntryLabel",
+      "baselineMetadata": {
+        "categories": [
+          "content"
+        ],
+        "tags": [
+          "content",
+          "copy",
+          "description",
+          "label",
+          "metadata"
+        ],
+        "contexts": [
+          "timeline"
+        ],
+        "regions": [
+          "card",
+          "detail",
+          "form",
+          "inline",
+          "list",
+          "timeline"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/content/Labelled.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizAreaControls",
+      "displayName": "VizAreaControls",
+      "baselineMetadata": {
+        "categories": [
+          "viz.mark"
+        ],
+        "tags": [
+          "area",
+          "band",
+          "mark",
+          "viz"
+        ],
+        "contexts": [
+          "form"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/viz/mark-area.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizAreaPreview",
+      "displayName": "VizAreaPreview",
+      "baselineMetadata": {
+        "categories": [
+          "viz.mark"
+        ],
+        "tags": [
+          "area",
+          "band",
+          "mark",
+          "viz"
+        ],
+        "contexts": [
+          "detail"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/viz/mark-area.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizAxisControls",
+      "displayName": "VizAxisControls",
+      "baselineMetadata": {
+        "categories": [
+          "viz.encoding"
+        ],
+        "tags": [
+          "encoding",
+          "position",
+          "viz",
+          "x-axis",
+          "y-axis"
+        ],
+        "contexts": [
+          "form"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/viz/encoding-position-x.trait.yaml",
+        "traits/viz/encoding-position-y.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizAxisSummary",
+      "displayName": "VizAxisSummary",
+      "baselineMetadata": {
+        "categories": [
+          "viz.encoding"
+        ],
+        "tags": [
+          "encoding",
+          "position",
+          "viz",
+          "x-axis",
+          "y-axis"
+        ],
+        "contexts": [
+          "detail"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/viz/encoding-position-x.trait.yaml",
+        "traits/viz/encoding-position-y.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizColorControls",
+      "displayName": "VizColorControls",
+      "baselineMetadata": {
+        "categories": [
+          "viz.encoding"
+        ],
+        "tags": [
+          "color",
+          "encoding",
+          "viz"
+        ],
+        "contexts": [
+          "form"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/viz/encoding-color.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizColorLegendConfig",
+      "displayName": "VizColorLegendConfig",
+      "baselineMetadata": {
+        "categories": [
+          "viz.encoding"
+        ],
+        "tags": [
+          "color",
+          "encoding",
+          "viz"
+        ],
+        "contexts": [
+          "detail"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/viz/encoding-color.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizEncodingBadge",
+      "displayName": "VizEncodingBadge",
+      "baselineMetadata": {
+        "categories": [
+          "viz.encoding"
+        ],
+        "tags": [
+          "color",
+          "encoding",
+          "position",
+          "size",
+          "viz",
+          "x-axis",
+          "y-axis"
+        ],
+        "contexts": [
+          "list"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/viz/encoding-color.trait.yaml",
+        "traits/viz/encoding-position-x.trait.yaml",
+        "traits/viz/encoding-position-y.trait.yaml",
+        "traits/viz/encoding-size.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizGraphPreview",
+      "displayName": "VizGraphPreview",
+      "baselineMetadata": {
+        "categories": [
+          "viz.mark"
+        ],
+        "tags": [
+          "graph",
+          "mark",
+          "network",
+          "viz"
+        ],
+        "contexts": [
+          "detail"
+        ],
+        "regions": [
+          "detail"
+        ]
+      },
+      "intakeEvidence": [
+        "traits/viz/mark-graph.trait.yaml",
+        "objects/core/Relationship.object.yaml"
+      ],
+      "addedBy": "s199-m06; decision #2054"
+    },
+    {
+      "id": "VizHeatmapControls",
+      "displayName": "VizHeatmapControls",
+      "baselineMetadata": {
+        "categories": [
+          "viz.mark"
+        ],
+        "tags": [
+          "heatmap",
+          "mark",
+          "viz"
+        ],
+        "contexts": [
+          "form"
+        ],
+        "regions": [
+          "form"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json"
+      ]
+    },
+    {
+      "id": "VizHeatmapPreview",
+      "displayName": "VizHeatmapPreview",
+      "baselineMetadata": {
+        "categories": [
+          "viz.mark"
+        ],
+        "tags": [
+          "heatmap",
+          "mark",
+          "viz"
+        ],
+        "contexts": [
+          "detail"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json"
+      ]
+    },
+    {
+      "id": "VizLineControls",
+      "displayName": "VizLineControls",
+      "baselineMetadata": {
+        "categories": [
+          "viz.mark"
+        ],
+        "tags": [
+          "line",
+          "mark",
+          "trend",
+          "viz"
+        ],
+        "contexts": [
+          "form"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/viz/mark-line.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizLinePreview",
+      "displayName": "VizLinePreview",
+      "baselineMetadata": {
+        "categories": [
+          "viz.mark"
+        ],
+        "tags": [
+          "line",
+          "mark",
+          "trend",
+          "viz"
+        ],
+        "contexts": [
+          "detail"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/viz/mark-line.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizMarkControls",
+      "displayName": "VizMarkControls",
+      "baselineMetadata": {
+        "categories": [
+          "viz.mark"
+        ],
+        "tags": [
+          "bar",
+          "comparison",
+          "mark",
+          "viz"
+        ],
+        "contexts": [
+          "form"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/viz/mark-bar.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizMarkPreview",
+      "displayName": "VizMarkPreview",
+      "baselineMetadata": {
+        "categories": [
+          "viz.mark"
+        ],
+        "tags": [
+          "bar",
+          "comparison",
+          "mark",
+          "viz"
+        ],
+        "contexts": [
+          "detail"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/viz/mark-bar.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizOpacityControls",
+      "displayName": "VizOpacityControls",
+      "baselineMetadata": {
+        "categories": [
+          "viz.encoding"
+        ],
+        "tags": [
+          "opacity",
+          "encoding",
+          "viz"
+        ],
+        "contexts": [
+          "form"
+        ],
+        "regions": [
+          "form"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json"
+      ]
+    },
+    {
+      "id": "VizOpacitySummary",
+      "displayName": "VizOpacitySummary",
+      "baselineMetadata": {
+        "categories": [
+          "viz.encoding"
+        ],
+        "tags": [
+          "opacity",
+          "encoding",
+          "viz"
+        ],
+        "contexts": [
+          "detail"
+        ],
+        "regions": [
+          "detail"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json"
+      ]
+    },
+    {
+      "id": "VizPointControls",
+      "displayName": "VizPointControls",
+      "baselineMetadata": {
+        "categories": [
+          "viz.mark"
+        ],
+        "tags": [
+          "distribution",
+          "mark",
+          "point",
+          "viz"
+        ],
+        "contexts": [
+          "form"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/viz/mark-point.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizPointPreview",
+      "displayName": "VizPointPreview",
+      "baselineMetadata": {
+        "categories": [
+          "viz.mark"
+        ],
+        "tags": [
+          "distribution",
+          "mark",
+          "point",
+          "viz"
+        ],
+        "contexts": [
+          "detail"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/viz/mark-point.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizRoleBadge",
+      "displayName": "VizRoleBadge",
+      "baselineMetadata": {
+        "categories": [
+          "viz.mark"
+        ],
+        "tags": [
+          "area",
+          "band",
+          "bar",
+          "comparison",
+          "distribution",
+          "line",
+          "mark",
+          "point",
+          "trend",
+          "viz"
+        ],
+        "contexts": [
+          "list"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/viz/mark-area.trait.yaml",
+        "traits/viz/mark-bar.trait.yaml",
+        "traits/viz/mark-line.trait.yaml",
+        "traits/viz/mark-point.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizScaleControls",
+      "displayName": "VizScaleControls",
+      "baselineMetadata": {
+        "categories": [
+          "viz.scale"
+        ],
+        "tags": [
+          "linear",
+          "scale",
+          "temporal",
+          "viz"
+        ],
+        "contexts": [
+          "form"
+        ],
+        "regions": [
+          "detail",
+          "form"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/viz/scale-linear.trait.yaml",
+        "traits/viz/scale-temporal.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizScaleSummary",
+      "displayName": "VizScaleSummary",
+      "baselineMetadata": {
+        "categories": [
+          "viz.scale"
+        ],
+        "tags": [
+          "linear",
+          "scale",
+          "temporal",
+          "viz"
+        ],
+        "contexts": [
+          "detail"
+        ],
+        "regions": [
+          "detail",
+          "form"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/viz/scale-linear.trait.yaml",
+        "traits/viz/scale-temporal.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizScatterControls",
+      "displayName": "VizScatterControls",
+      "baselineMetadata": {
+        "categories": [
+          "viz.mark"
+        ],
+        "tags": [
+          "scatter",
+          "mark",
+          "viz"
+        ],
+        "contexts": [
+          "form"
+        ],
+        "regions": [
+          "form"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json"
+      ]
+    },
+    {
+      "id": "VizScatterPreview",
+      "displayName": "VizScatterPreview",
+      "baselineMetadata": {
+        "categories": [
+          "viz.mark"
+        ],
+        "tags": [
+          "scatter",
+          "mark",
+          "viz"
+        ],
+        "contexts": [
+          "detail"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json"
+      ]
+    },
+    {
+      "id": "VizShapeControls",
+      "displayName": "VizShapeControls",
+      "baselineMetadata": {
+        "categories": [
+          "viz.encoding"
+        ],
+        "tags": [
+          "shape",
+          "encoding",
+          "viz"
+        ],
+        "contexts": [
+          "form"
+        ],
+        "regions": [
+          "form"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json"
+      ]
+    },
+    {
+      "id": "VizShapeLegend",
+      "displayName": "VizShapeLegend",
+      "baselineMetadata": {
+        "categories": [
+          "viz.encoding"
+        ],
+        "tags": [
+          "shape",
+          "encoding",
+          "viz",
+          "legend"
+        ],
+        "contexts": [
+          "detail"
+        ],
+        "regions": [
+          "detail"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json"
+      ]
+    },
+    {
+      "id": "VizSizeControls",
+      "displayName": "VizSizeControls",
+      "baselineMetadata": {
+        "categories": [
+          "viz.encoding"
+        ],
+        "tags": [
+          "encoding",
+          "size",
+          "viz"
+        ],
+        "contexts": [
+          "form"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/viz/encoding-size.trait.yaml"
+      ]
+    },
+    {
+      "id": "VizSizeSummary",
+      "displayName": "VizSizeSummary",
+      "baselineMetadata": {
+        "categories": [
+          "viz.encoding"
+        ],
+        "tags": [
+          "encoding",
+          "size",
+          "viz"
+        ],
+        "contexts": [
+          "detail"
+        ],
+        "regions": [
+          "detail",
+          "form",
+          "list"
+        ]
+      },
+      "intakeEvidence": [
+        "artifacts/structured-data/oods-components-2026-03-06.json",
+        "traits/viz/encoding-size.trait.yaml"
+      ]
+    }
+  ]
+}

@@ -3,32 +3,25 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { performance } from 'node:perf_hooks';
+import { fileURLToPath } from 'node:url';
 import Color from 'colorjs.io';
 import { contrastRatio } from '@oods/a11y-tools';
 
 import { loadDtcgTokens, type DtcgToken } from '../../src/tooling/tokens/dtcg.js';
 
+import { loadGuardrails, type GuardrailSpec } from '../../tools/a11y/guardrails/read.mjs';
+import { loadCanonicalColorTokens } from './canonical-colors.js';
+
+import { checkPalette, selectRamp, summarizeChecks } from './palette-checks.js';
+
+export { loadGuardrails };
+export type { GuardrailSpec };
+
 interface CliOptions {
   mission: string;
   diagnostics: boolean;
   quiet: boolean;
-}
-
-interface GuardrailSpec {
-  id: string;
-  usage: string;
-  theme: string;
-  state: string;
-  baseToken: string;
-  derivedToken: string;
-  deltaLMin: number | null;
-  deltaLMax: number | null;
-  deltaCMin: number | null;
-  deltaCMax: number | null;
-  deltaHMax: number | null;
-  contrastForeground: string | null;
-  contrastBackground: string | null;
-  contrastThreshold: number | null;
+  json?: string;
 }
 
 interface GuardrailCheck {
@@ -69,7 +62,6 @@ const DEFAULT_OPTIONS: CliOptions = {
 };
 
 const projectRoot = process.cwd();
-const tokensRoot = path.resolve(projectRoot, 'tokens');
 const guardrailCsvPath = path.resolve(projectRoot, 'tools/a11y/guardrails/relative-color.csv');
 const diagnosticsPath = path.resolve(projectRoot, 'diagnostics.json');
 
@@ -85,13 +77,28 @@ async function main(): Promise<void> {
     throw new Error(`No guardrails defined in ${path.relative(projectRoot, guardrailCsvPath)}.`);
   }
 
-  const tokens = await loadDtcgTokens(tokensRoot);
+  const tokens = await loadCanonicalColorTokens(projectRoot);
   const tokenMap = new Map<string, DtcgToken>(tokens.map((token) => [token.path.join('.'), token]));
 
-  const results = guardrails.map((spec) => evaluateGuardrail(spec, tokenMap));
+  const results = guardrails.filter((spec) => spec.checkType === 'relative-color')
+    .map((spec) => evaluateGuardrail(spec, tokenMap));
+  const paletteResults = await evaluatePaletteGuardrails(guardrails);
+  const allChecks = [
+    ...results.flatMap((row) => row.checks.map((check) => ({ type: check.type, ok: check.pass, scope: row.spec.id }))),
+    ...paletteResults,
+  ];
+  const summary = summarizeChecks(allChecks);
+  if (options.json) {
+    await fs.writeFile(path.resolve(options.json), `${JSON.stringify({ summary, checks: allChecks }, null, 2)}\n`);
+  }
+  for (const result of paletteResults) {
+    if (!options.quiet || !result.ok) {
+      console[result.ok ? 'log' : 'error'](`${result.ok ? '✓' : '✖'} ${result.type} ${result.scope} — ${result.detail}`);
+    }
+  }
+  console.log(`Color check counts: ${JSON.stringify(summary)}`);
 
   const failures = results.filter((result) => result.failures.length > 0);
-  const passes = results.length - failures.length;
   const durationMs = Math.round(performance.now() - start);
 
   if (!options.quiet) {
@@ -115,9 +122,10 @@ async function main(): Promise<void> {
       }
     }
 
-    const outcome = failures.length === 0 ? '✔︎ Color guardrails pass' : '⚠︎ Color guardrails failed';
-    console[failures.length === 0 ? 'log' : 'error'](
-      `${outcome} (${passes}/${results.length} checks, ${durationMs}ms)`,
+    const failedChecks = allChecks.filter((check) => !check.ok).length;
+    const outcome = failedChecks === 0 ? '✔︎ Color guardrails pass' : '⚠︎ Color guardrails failed';
+    console[failedChecks === 0 ? 'log' : 'error'](
+      `${outcome} (${allChecks.length - failedChecks}/${allChecks.length} checks, ${durationMs}ms)`,
     );
   }
 
@@ -125,14 +133,14 @@ async function main(): Promise<void> {
     await appendDiagnostics({
       mission: options.mission,
       evaluatedAt: new Date().toISOString(),
-      checks: results.length,
-      passes,
-      failures: failures.length,
+      checks: allChecks.length,
+      passes: allChecks.filter((check) => check.ok).length,
+      failures: allChecks.filter((check) => !check.ok).length,
       durationMs,
     });
   }
 
-  if (failures.length > 0) {
+  if (failures.length > 0 || paletteResults.some((result) => !result.ok)) {
     process.exitCode = 1;
   }
 }
@@ -155,6 +163,10 @@ function parseArgs(argv: string[]): CliOptions {
         i += 1;
         break;
       }
+      case '--json':
+        if (!argv[i + 1] || argv[i + 1].startsWith('--')) throw new Error('Expected path after --json');
+        options.json = argv[++i];
+        break;
       case '--no-diagnostics':
         options.diagnostics = false;
         break;
@@ -172,72 +184,7 @@ function parseArgs(argv: string[]): CliOptions {
   return options;
 }
 
-async function loadGuardrails(filePath: string): Promise<GuardrailSpec[]> {
-  const content = await fs.readFile(filePath, 'utf8');
-  const lines = content
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter((line) => line.length > 0 && !line.startsWith('#'));
-
-  if (lines.length === 0) {
-    return [];
-  }
-
-  const [headerLine, ...rows] = lines;
-  const headers = headerLine.split(',').map((header) => header.trim());
-
-  return rows.map((row, index) => {
-    const columns = row.split(',').map((column) => column.trim());
-    if (columns.length !== headers.length) {
-      throw new Error(
-        `Guardrail csv row ${index + 2} expected ${headers.length} columns but received ${columns.length}.`,
-      );
-    }
-
-    const entry: Record<string, string> = {};
-    headers.forEach((header, columnIndex) => {
-      entry[header] = columns[columnIndex];
-    });
-
-    const numeric = (key: string): number | null => {
-      const raw = entry[key];
-      if (!raw) {
-        return null;
-      }
-      const value = Number(raw);
-      if (Number.isNaN(value)) {
-        throw new Error(
-          `Guardrail csv row ${index + 2} column "${key}" must be numeric. Received "${raw}".`,
-        );
-      }
-      return value;
-    };
-
-    const text = (key: string): string | null => {
-      const raw = entry[key];
-      return raw ? raw : null;
-    };
-
-    return {
-      id: entry.id ?? `guardrail-${index + 1}`,
-      usage: entry.usage ?? 'unknown',
-      theme: entry.theme ?? 'default',
-      state: entry.state ?? 'state',
-      baseToken: entry.base_token,
-      derivedToken: entry.derived_token,
-      deltaLMin: numeric('delta_l_min'),
-      deltaLMax: numeric('delta_l_max'),
-      deltaCMin: numeric('delta_c_min'),
-      deltaCMax: numeric('delta_c_max'),
-      deltaHMax: numeric('delta_h_max'),
-      contrastForeground: text('contrast_foreground_token'),
-      contrastBackground: text('contrast_background_token'),
-      contrastThreshold: numeric('contrast_threshold'),
-    };
-  });
-}
-
-function evaluateGuardrail(spec: GuardrailSpec, tokens: Map<string, DtcgToken>): GuardrailResult {
+export function evaluateGuardrail(spec: GuardrailSpec, tokens: Map<string, DtcgToken>): GuardrailResult {
   const baseValue = resolveTokenValue(spec.baseToken, tokens);
   const derivedValue = resolveTokenValue(spec.derivedToken, tokens);
 
@@ -346,7 +293,7 @@ function resolveTokenValue(pathExpression: string, tokens: Map<string, DtcgToken
       throw new Error(`Circular token reference detected while resolving "${pathExpression}".`);
     }
 
-    const token = tokens.get(current);
+    const token = tokens.get(current) ?? tokens.get(current.replaceAll('_', '-'));
     if (!token) {
       throw new Error(`Token "${pathExpression}" references unknown token "${current}".`);
     }
@@ -467,4 +414,24 @@ function ensureArray<T>(container: Record<string, unknown>, key: string): T[] {
   return value;
 }
 
-await main();
+export async function evaluatePaletteGuardrails(specs: readonly GuardrailSpec[], root = projectRoot) {
+  const cache = new Map<string, DtcgToken[]>();
+  const results = [];
+  for (const spec of specs) {
+    if (spec.checkType === 'relative-color') continue;
+    const source = path.resolve(root, spec.source!);
+    if (!cache.has(source)) cache.set(source, await loadDtcgTokens(source));
+    const tokens = cache.get(source)!;
+    const required = spec.checkType === 'dark-coverage' ? spec.target!.split('|') : [];
+    const entries = required.length ? tokens : selectRamp(tokens, spec.target!);
+    results.push(...checkPalette(spec.checkType, spec.id, entries, tokens, required));
+  }
+  return results;
+}
+
+if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
+  void main().catch((error: unknown) => {
+    console.error(error instanceof Error ? error.stack ?? error.message : error);
+    process.exitCode = 1;
+  });
+}

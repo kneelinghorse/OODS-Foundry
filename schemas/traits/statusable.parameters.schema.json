@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/07/schema",
+  "$id": "https://trait-engine.dev/schemas/traits/statusable",
+  "title": "Statusable Trait Parameters",
+  "description": "Configuration contract for the Statusable visual presentation trait.",
+  "type": "object",
+  "properties": {
+    "domains": {
+      "type": "array",
+      "description": "Domain identifiers whose statuses this object participates in.",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 32,
+        "pattern": "^[a-z0-9_-]+$"
+      }
+    },
+    "toneAliases": {
+      "type": ["object", "null"],
+      "description": "Custom alias map for inferring tones from token path segments.",
+      "additionalProperties": {
+        "type": "string",
+        "enum": ["neutral", "info", "accent", "success", "warning", "critical"]
+      }
+    },
+    "defaultTone": {
+      "type": "string",
+      "description": "Fallback tone when a status cannot be resolved in the registry.",
+      "enum": ["neutral", "info", "accent", "success", "warning", "critical"],
+      "default": "neutral"
+    }
+  },
+  "required": ["domains"],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "domains": ["subscription"],
+      "defaultTone": "neutral"
+    }
+  ]
+}

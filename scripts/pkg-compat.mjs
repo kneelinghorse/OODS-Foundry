@@ -1,38 +1,52 @@
 #!/usr/bin/env node
 
 import { spawn } from 'node:child_process';
+import { realpathSync } from 'node:fs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { performance } from 'node:perf_hooks';
 import process from 'node:process';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const MISSION_ID = 'B16.6';
 const PNPM_CMD = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm';
 const DIAGNOSTICS_PATH = path.resolve(process.cwd(), 'diagnostics.json');
 
-async function run() {
+/**
+ * Compatibility checks are read-only by default. Historical diagnostics can still be
+ * refreshed deliberately with `pnpm pkg:compat -- --record-diagnostics`.
+ */
+export function shouldRecordDiagnostics(argv = process.argv.slice(2)) {
+  return argv.includes('--record-diagnostics');
+}
+
+export async function run({ recordDiagnostics = shouldRecordDiagnostics() } = {}) {
   const startedAt = performance.now();
   try {
     await runCommand(['exec', 'tsx', 'scripts/pkg/compat.ts']);
     const durationMs = Math.round(performance.now() - startedAt);
-    await updateDiagnostics({
-      mission: MISSION_ID,
-      runAt: new Date().toISOString(),
-      status: 'passed',
-      durationMs,
-    });
+    if (recordDiagnostics) {
+      await updateDiagnostics({
+        mission: MISSION_ID,
+        runAt: new Date().toISOString(),
+        status: 'passed',
+        durationMs,
+      });
+    }
   } catch (error) {
     const durationMs = Math.round(performance.now() - startedAt);
     const exitCode = typeof error.exitCode === 'number' ? error.exitCode : 1;
     const message = error instanceof Error ? error.message : String(error);
-    await updateDiagnostics({
-      mission: MISSION_ID,
-      runAt: new Date().toISOString(),
-      status: 'failed',
-      durationMs,
-      error: message,
-      exitCode,
-    });
+    if (recordDiagnostics) {
+      await updateDiagnostics({
+        mission: MISSION_ID,
+        runAt: new Date().toISOString(),
+        status: 'failed',
+        durationMs,
+        error: message,
+        exitCode,
+      });
+    }
     process.exitCode = exitCode;
   }
 }
@@ -95,7 +109,22 @@ async function loadDiagnostics() {
   }
 }
 
-run().catch((error) => {
-  console.error('pkg:compat helper failed', error);
-  process.exitCode = error?.exitCode ?? 1;
-});
+function resolveInvocationPath(targetPath) {
+  try {
+    return realpathSync(targetPath);
+  } catch {
+    return path.resolve(targetPath);
+  }
+}
+
+const invokedPath = process.argv[1];
+const isDirectInvocation =
+  typeof invokedPath === 'string' &&
+  resolveInvocationPath(fileURLToPath(import.meta.url)) === resolveInvocationPath(invokedPath);
+
+if (isDirectInvocation || pathToFileURL(invokedPath ?? '').href === import.meta.url) {
+  run().catch((error) => {
+    console.error('pkg:compat helper failed', error);
+    process.exitCode = error?.exitCode ?? 1;
+  });
+}

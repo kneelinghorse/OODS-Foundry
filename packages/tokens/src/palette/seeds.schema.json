@@ -1,0 +1,245 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "brands",
+    "presets"
+  ],
+  "properties": {
+    "version": {
+      "const": 2
+    },
+    "brands": {
+      "type": "object",
+      "required": [
+        "A",
+        "B"
+      ],
+      "propertyNames": {
+        "pattern": "^[A-Za-z][A-Za-z0-9]{0,15}$"
+      },
+      "properties": {
+        "A": {
+          "$ref": "#/definitions/recipe"
+        },
+        "B": {
+          "$ref": "#/definitions/recipe"
+        }
+      },
+      "additionalProperties": {
+        "$ref": "#/definitions/recipe"
+      }
+    },
+    "presets": {
+      "type": "object",
+      "description": "Shipped brand presets (src/presets/<id>.json): each is a recipe's colour roles in one mode, written as a brand-relative delta over brand A's themes.",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "description",
+          "mode",
+          "themes",
+          "recipe"
+        ],
+        "properties": {
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "mode": {
+            "enum": [
+              "light",
+              "dark"
+            ]
+          },
+          "themes": {
+            "type": "object",
+            "additionalProperties": false,
+            "minProperties": 1,
+            "properties": {
+              "base": {
+                "enum": [
+                  "base",
+                  "dark",
+                  "hc"
+                ]
+              },
+              "dark": {
+                "enum": [
+                  "base",
+                  "dark",
+                  "hc"
+                ]
+              },
+              "hc": {
+                "enum": [
+                  "base",
+                  "dark",
+                  "hc"
+                ]
+              }
+            }
+          },
+          "recipe": {
+            "$ref": "#/definitions/recipe"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "recipe": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "neutralHue",
+        "neutralChroma",
+        "accentHue",
+        "primary",
+        "radius",
+        "font"
+      ],
+      "description": "A brand recipe (packages/tokens/src/palette/recipe.mjs): the neutral, the accent, which one the primary action takes, the control radius and the font.",
+      "properties": {
+        "neutralHue": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 360
+        },
+        "neutralChroma": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.03
+        },
+        "accentHue": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 360
+        },
+        "primary": {
+          "enum": [
+            "neutral",
+            "accent"
+          ]
+        },
+        "radius": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 16
+        },
+        "font": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9 \\-]{0,63}$"
+        },
+        "fontMono": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9 \\-]{0,63}$"
+        },
+        "status": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "info": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "hue"
+              ],
+              "properties": {
+                "hue": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 360
+                },
+                "chroma": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1.5
+                }
+              }
+            },
+            "success": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "hue"
+              ],
+              "properties": {
+                "hue": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 360
+                },
+                "chroma": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1.5
+                }
+              }
+            },
+            "warning": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "hue"
+              ],
+              "properties": {
+                "hue": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 360
+                },
+                "chroma": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1.5
+                }
+              }
+            },
+            "critical": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "hue"
+              ],
+              "properties": {
+                "hue": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 360
+                },
+                "chroma": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1.5
+                }
+              }
+            },
+            "archive": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "hue"
+              ],
+              "properties": {
+                "hue": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 360
+                },
+                "chroma": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1.5
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

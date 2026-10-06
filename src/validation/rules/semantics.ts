@@ -16,19 +16,27 @@ export function validateSemanticMappings(composed: ComposedObject): RuleIssue[] 
     ? composed.semantics
     : {};
 
+  const provenanceEntries = extractProvenanceEntries(composed);
+  const provenanceMap = new Map(provenanceEntries);
+
   for (const [fieldName, semantic] of Object.entries(semanticEntries)) {
     if (!semantic || typeof semantic !== 'object') {
       continue;
     }
 
+    const sourceTrait = provenanceMap.get(fieldName)?.source;
+    const traitPath = sourceTrait ? [sourceTrait] : undefined;
+
     if (!schemaFields.has(fieldName)) {
       issues.push({
         code: ErrorCodes.SEMANTIC_MAPPING_INCOMPLETE,
         message: `Semantic mapping references "${fieldName}" but the field is not present in the composed schema.`,
-        hint: `Remove the semantic mapping or add "${fieldName}" to the schema.`,
+        hint: `Remove the semantic mapping or add "${fieldName}" to the schema${sourceTrait ? ` via trait "${sourceTrait}"` : ''}.`,
         severity: 'error',
         path: ['semantics', fieldName],
         related: [fieldName],
+        traitPath,
+        impactedTraits: findTraitsUsingField(composed, fieldName),
       });
       continue;
     }
@@ -41,12 +49,12 @@ export function validateSemanticMappings(composed: ComposedObject): RuleIssue[] 
         severity: 'warning',
         path: ['semantics', fieldName],
         related: [fieldName],
+        traitPath,
       });
     }
   }
 
   const semanticsFields = new Set(Object.keys(semanticEntries));
-  const provenanceEntries = extractProvenanceEntries(composed);
 
   provenanceEntries.forEach(([fieldName, provenance]) => {
     if (provenance.layer !== 'trait') {
@@ -61,9 +69,24 @@ export function validateSemanticMappings(composed: ComposedObject): RuleIssue[] 
         severity: 'warning',
         path: ['semantics', fieldName],
         related: [provenance.source, fieldName],
+        traitPath: [provenance.source],
+        impactedTraits: findTraitsUsingField(composed, fieldName),
       });
     }
   });
 
   return issues;
+}
+
+function findTraitsUsingField(composed: ComposedObject, fieldName: string): string[] | undefined {
+  const users = (composed.traits ?? [])
+    .filter((t) => {
+      if (!t.trait?.name) return false;
+      for (const exts of Object.values(t.view_extensions ?? {})) {
+        if (Array.isArray(exts) && exts.some((ext) => Object.values(ext.props ?? {}).includes(fieldName))) return true;
+      }
+      return false;
+    })
+    .map((t) => t.trait.name);
+  return users.length > 0 ? users : undefined;
 }

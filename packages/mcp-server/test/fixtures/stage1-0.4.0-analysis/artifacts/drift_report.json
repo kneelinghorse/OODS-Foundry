@@ -1,0 +1,158 @@
+{
+  "kind": "drift_report",
+  "schema_version": "1.4.0",
+  "generated_at": "2026-10-02T00:10:00Z",
+  "current_run": {
+    "id": "22500000-0000-4000-8000-000000000004"
+  },
+  "signals": [
+    {
+      "class": "value_drift",
+      "value_family": "spacing",
+      "live_value": "13px",
+      "live_occurrences": 2,
+      "severity_level": "medium",
+      "severity_basis": [
+        "off_system_value"
+      ],
+      "tolerance": {
+        "source": "registry_default",
+        "effective": {
+          "kind": "exact_value",
+          "case_sensitive": false,
+          "include_alpha_forms": false
+        }
+      },
+      "evidence_ref": {
+        "artifact_ref": "drift_report.json",
+        "json_pointer": "/signals/0",
+        "run_id": "22500000-0000-4000-8000-000000000004"
+      },
+      "comparands": [
+        {
+          "surface": "live",
+          "ref": {
+            "artifact_ref": "style_fingerprint.json",
+            "json_pointer": "/raw_values/spacing/0",
+            "run_id": "22500000-0000-4000-8000-000000000004"
+          }
+        },
+        {
+          "surface": "fig_local",
+          "ref": {
+            "artifact_ref": "fig_local_tokens.json",
+            "json_pointer": "/tokens",
+            "run_id": "22500000-0000-4000-8000-000000000004"
+          }
+        }
+      ]
+    },
+    {
+      "class": "value_drift",
+      "value_family": "shadow",
+      "live_value": "0px 2px 4px #000000",
+      "live_occurrences": 1,
+      "severity_level": "medium",
+      "severity_basis": [
+        "off_system_value"
+      ],
+      "tolerance": {
+        "source": "registry_default",
+        "effective": {
+          "kind": "exact_value",
+          "case_sensitive": false,
+          "include_alpha_forms": false
+        }
+      },
+      "evidence_ref": {
+        "artifact_ref": "drift_report.json",
+        "json_pointer": "/signals/1",
+        "run_id": "22500000-0000-4000-8000-000000000004"
+      },
+      "comparands": [
+        {
+          "surface": "live",
+          "ref": {
+            "artifact_ref": "style_fingerprint.json",
+            "json_pointer": "/raw_values/shadow/0",
+            "run_id": "22500000-0000-4000-8000-000000000004"
+          }
+        },
+        {
+          "surface": "fig_local",
+          "ref": {
+            "artifact_ref": "fig_local_tokens.json",
+            "json_pointer": "/tokens",
+            "run_id": "22500000-0000-4000-8000-000000000004"
+          }
+        }
+      ]
+    }
+  ],
+  "value_join": {
+    "families": [
+      {
+        "family": "spacing",
+        "verdict": "joined",
+        "live_basis": "raw_values",
+        "live_distinct_values": 3,
+        "ds_token_values": 1,
+        "conformant": 1,
+        "explained_values": 1,
+        "off_system": 1,
+        "excluded_values": 0,
+        "occurrences": {
+          "total": 6,
+          "compared": 6,
+          "not_painted": 0,
+          "third_party": null,
+          "browser_default": null
+        }
+      },
+      {
+        "family": "shadow",
+        "verdict": "disjoint",
+        "live_basis": "raw_values",
+        "live_distinct_values": 1,
+        "ds_token_values": 1,
+        "conformant": 0,
+        "explained_values": 0,
+        "off_system": 1,
+        "excluded_values": 0
+      },
+      {
+        "family": "font_size",
+        "verdict": "joined",
+        "live_basis": "raw_values",
+        "live_distinct_values": 2,
+        "ds_token_values": 1,
+        "conformant": 1,
+        "explained_values": 1,
+        "off_system": 0,
+        "excluded_values": 0,
+        "by_typeface": [
+          {
+            "typeface": "Example Sans",
+            "comparand": "typeface_modes",
+            "conformant": 1,
+            "explained_values": 1,
+            "off_system": 0,
+            "no_comparand_values": 0
+          }
+        ]
+      }
+    ],
+    "explained": [
+      {
+        "value_family": "spacing",
+        "live_value": "-8px",
+        "category": "negated_token"
+      },
+      {
+        "value_family": "font_size",
+        "live_value": "15.999px",
+        "category": "normalized_type"
+      }
+    ]
+  }
+}

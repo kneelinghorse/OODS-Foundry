@@ -4,12 +4,12 @@
   "properties": {
     "brand": {
       "type": "string",
-      "enum": ["A"],
+      "format": "oods-brand",
       "default": "A",
-      "description": "Target brand identifier."
+      "description": "Target brand identifier. Must name a brand directory under packages/tokens/src/tokens/brands."
     },
     "delta": {
-      "description": "Alias changes (object) or RFC 6902 patch array when strategy=patch.",
+      "description": "Alias changes (object) or an array using the supported add/remove/replace subset of RFC 6902 when strategy=patch.",
       "oneOf": [
         { "type": "object" },
         {
@@ -17,10 +17,12 @@
           "items": {
             "type": "object",
             "properties": {
-              "op": { "type": "string" },
-              "path": { "type": "string" }
+              "op": { "type": "string", "enum": ["add", "remove", "replace"] },
+              "path": { "type": "string" },
+              "value": {}
             },
-            "required": ["op", "path"]
+            "required": ["op", "path"],
+            "additionalProperties": false
           }
         }
       ]
@@ -29,7 +31,20 @@
       "type": "string",
       "enum": ["alias", "patch"],
       "default": "alias",
-      "description": "Alias strategy rewrites token values; patch applies RFC 6902 operations."
+      "description": "Alias strategy rewrites token values; patch applies the supported add/remove/replace subset of RFC 6902."
+    },
+    "preview": {
+      "type": "object",
+      "description": "Preview response controls (apply=false).",
+      "properties": {
+        "verbosity": {
+          "type": "string",
+          "enum": ["full", "compact"],
+          "default": "full",
+          "description": "full includes structured before/after payloads; compact returns summary + hunks only."
+        }
+      },
+      "additionalProperties": false
     },
     "apply": {
       "type": "boolean",
@@ -37,5 +52,27 @@
     }
   },
   "required": ["delta"],
+  "allOf": [
+    {
+      "if": {
+        "properties": { "strategy": { "const": "patch" } },
+        "required": ["strategy"]
+      },
+      "then": {
+        "properties": {
+          "delta": {
+            "type": "array"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "delta": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  ],
   "additionalProperties": false
 }

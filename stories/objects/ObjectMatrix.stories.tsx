@@ -24,6 +24,12 @@ interface ObjectEntry {
   readonly data: unknown;
 }
 
+function eraseObjectData<Data>(
+  object: RenderObjectProps<Data>['object']
+): RenderObjectProps<unknown>['object'] {
+  return object as unknown as RenderObjectProps<unknown>['object'];
+}
+
 const contextClassName: Record<ViewContext, string> = {
   detail: 'explorer-view context-detail detail-view',
   list: 'explorer-view context-list list-view',
@@ -31,6 +37,8 @@ const contextClassName: Record<ViewContext, string> = {
   timeline: 'explorer-view context-timeline timeline-view',
   card: 'explorer-view context-card card-view',
   inline: 'explorer-view context-inline inline-view',
+  chart: 'explorer-view context-chart chart-view',
+  dashboard: 'explorer-view context-dashboard dashboard-view',
 };
 
 const contextDescriptions: Record<ViewContext, string> = {
@@ -40,6 +48,8 @@ const contextDescriptions: Record<ViewContext, string> = {
   timeline: 'Activity-focused view showing state history and events',
   card: 'Summary card for dashboards and grid layouts',
   inline: 'Minimal inline reference for embedding in text or compact spaces',
+  chart: 'Data-focused view for plotting object contributions and measures',
+  dashboard: 'Composite view for operational summaries and key metrics',
 };
 
 const objects: readonly ObjectEntry[] = [
@@ -47,21 +57,21 @@ const objects: readonly ObjectEntry[] = [
     id: 'user',
     label: 'User',
     description: 'Identity record with status, tags, and activity history',
-    object: UserObject,
+    object: eraseObjectData(UserObject),
     data: activeUser as UserRecord,
   },
   {
     id: 'subscription',
     label: 'Subscription',
     description: 'Billing subscription with lifecycle state and payment status',
-    object: SubscriptionObject,
+    object: eraseObjectData(SubscriptionObject),
     data: billingSubscription as SubscriptionRecord,
   },
   {
     id: 'invoice',
     label: 'Invoice',
     description: 'Billing artifact with line items and collection state',
-    object: InvoiceObject,
+    object: eraseObjectData(InvoiceObject),
     data: billingInvoice as InvoiceRecord,
   },
 ] as const;
@@ -122,12 +132,6 @@ const contextLabel: CSSProperties = {
   textTransform: 'capitalize',
 };
 
-const contextDescription: CSSProperties = {
-  fontSize: 'var(--sys-font-size-sm)',
-  color: 'var(--cmp-text-muted)',
-  margin: 0,
-};
-
 const renderContainer: CSSProperties = {
   border: '1px solid var(--sys-border-default)',
   borderRadius: 'var(--sys-radius-lg)',
@@ -138,7 +142,16 @@ const renderContainer: CSSProperties = {
 
 const ContextRenderObject = RenderObject as FC<RenderObjectProps<unknown>>;
 
-const allContexts: readonly ViewContext[] = ['detail', 'list', 'card', 'timeline', 'form', 'inline'];
+const allContexts: readonly ViewContext[] = [
+  'detail',
+  'list',
+  'card',
+  'timeline',
+  'form',
+  'inline',
+  'chart',
+  'dashboard',
+];
 
 /**
  * Object × Context Explorer
@@ -148,7 +161,7 @@ const allContexts: readonly ViewContext[] = ['detail', 'list', 'card', 'timeline
  *
  * Two-axis exploration:
  * - Object switcher: User / Subscription / Invoice
- * - Context switcher: Detail / List / Card / Timeline / Form / Inline
+ * - Context switcher: Detail / List / Card / Timeline / Form / Inline / Chart / Dashboard
  */
 const ObjectContextExplorer: FC = () => {
   const [selectedObjectId, setSelectedObjectId] = useState<string>('user');
@@ -261,7 +274,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Two-axis exploration of the OODS rendering system. Select any object (User, Subscription, Invoice) and any view context (Detail, List, Card, Timeline, Form, Inline) to see how the same data adapts its presentation. This demonstrates the core OODS value proposition: define once, render appropriately everywhere.',
+          'Two-axis exploration of the OODS rendering system. Select any object (User, Subscription, Invoice) and any view context (Detail, List, Card, Timeline, Form, Inline, Chart, Dashboard) to see how the same data adapts its presentation. This demonstrates the core OODS value proposition: define once, render appropriately everywhere.',
       },
     },
   },

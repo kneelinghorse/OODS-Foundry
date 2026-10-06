@@ -21,4 +21,12 @@ export interface ArchivableTraitParameters2 {
    * Maximum number of days archived entities can be restored.
    */
   restoreWindowDays?: number;
+  /**
+   * Days the entity remains in soft-deleted state before automatic hard deletion.
+   */
+  softDeleteDuration?: number;
+  /**
+   * Whether archived entities can be partially restored.
+   */
+  allowPartialRestore?: boolean;
 }

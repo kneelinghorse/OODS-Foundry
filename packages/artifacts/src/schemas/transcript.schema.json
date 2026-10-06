@@ -1,0 +1,87 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "OODS Transcript",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schemaVersion",
+    "source",
+    "command",
+    "tool",
+    "args",
+    "user",
+    "hostname",
+    "startTime",
+    "endTime",
+    "exitCode",
+    "artifacts",
+    "redactions",
+    "signature"
+  ],
+  "properties": {
+    "schemaVersion": { "type": "string" },
+    "source": { "type": "string" },
+    "command": { "type": "string", "enum": ["plan", "apply", "replay", "preview"] },
+    "tool": { "type": "string" },
+    "args": {
+      "type": "object",
+      "required": ["apply", "options"],
+      "additionalProperties": true,
+      "properties": {
+        "payload": {},
+        "apply": { "type": "boolean" },
+        "options": {
+          "type": "object",
+          "required": ["approve"],
+          "additionalProperties": true,
+          "properties": {
+            "approve": { "type": "boolean" },
+            "role": { "type": ["string", "null"] }
+          }
+        },
+        "replaySource": { "type": ["string", "null"] }
+      }
+    },
+    "user": { "type": "string" },
+    "hostname": { "type": "string" },
+    "startTime": { "type": "string" },
+    "endTime": { "type": "string" },
+    "exitCode": { "type": "integer" },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "sha256", "role"],
+        "additionalProperties": true,
+        "properties": {
+          "path": { "type": "string" },
+          "sha256": { "type": "string" },
+          "role": { "type": "string", "enum": ["input", "output"] },
+          "name": { "type": "string" },
+          "sizeBytes": { "type": ["integer", "null"] },
+          "purpose": { "type": "string" }
+        }
+      }
+    },
+    "redactions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["field", "reason"],
+        "properties": {
+          "field": { "type": "string" },
+          "reason": { "type": "string" }
+        }
+      }
+    },
+    "signature": {
+      "type": "object",
+      "required": ["algo", "hash"],
+      "properties": {
+        "algo": { "type": "string" },
+        "hash": { "type": "string" }
+      }
+    },
+    "meta": { "type": "object", "additionalProperties": true }
+  }
+}

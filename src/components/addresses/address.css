@@ -1,12 +1,12 @@
 .address-form {
-  --address-form-surface: var(--cmp-surface-raised, var(--sys-surface-raised, Canvas));
-  --address-form-border: var(--cmp-border-subtle, var(--sys-border-subtle, CanvasText));
-  --address-form-radius: var(--cmp-radius-card, 1rem);
-  --address-form-spacing: var(--sys-space-stack-lg, 1.5rem);
+  --address-form-surface: var(--sys-surface-raised);
+  --address-form-border: var(--sys-border-subtle);
+  --address-form-radius: var(--sys-radius-card);
+  --address-form-spacing: var(--sys-stack-lg);
   background: var(--address-form-surface);
   border: 1px solid var(--address-form-border);
   border-radius: var(--address-form-radius);
-  padding: var(--sys-space-inset-lg, 1.5rem);
+  padding: var(--sys-card-padding);
   display: grid;
   gap: var(--address-form-spacing);
 }
@@ -18,7 +18,7 @@
 .address-form__header {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--sys-space-inline-md, 1rem);
+  gap: var(--sys-inline-md);
   justify-content: space-between;
   align-items: flex-start;
 }
@@ -26,7 +26,7 @@
 .address-form__row {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--sys-space-inline-md, 1rem);
+  gap: var(--sys-inline-md);
 }
 
 .address-form__status {
@@ -34,47 +34,49 @@
 }
 
 .address-form__validation {
-  border: 1px dashed var(--cmp-border-accent, var(--sys-border-strong, CanvasText));
-  border-radius: 0.75rem;
-  padding: var(--sys-space-inset-md, 1rem);
-  background: color-mix(in srgb, var(--sys-surface-subtle, Canvas) 80%, transparent);
+  border: 1px dashed var(--sys-border-strong);
+  border-radius: var(--sys-radius-control-lg);
+  padding: var(--sys-inset-md);
+  background: var(--sys-surface-subtle);
 }
 
 .address-form__validation h3 {
-  margin: 0 0 0.5rem;
-  font-size: 0.95rem;
-  color: var(--sys-text-secondary, CanvasText);
+  margin: 0 0 var(--sys-stack-xs);
+  font-size: var(--sys-text-scale-heading-sm-font-size);
+  font-weight: var(--sys-text-scale-heading-sm-font-weight);
+  line-height: var(--sys-text-scale-heading-sm-line-height);
+  color: var(--sys-text-secondary);
 }
 
 .address-form__validation ul {
   margin: 0;
-  padding-left: 1.25rem;
+  padding-left: var(--sys-inline-md);
   display: grid;
-  gap: 0.25rem;
+  gap: var(--sys-control-gap-compact);
 }
 
 .address-form__validation li {
-  font-size: 0.9rem;
+  font-size: var(--sys-text-scale-body-sm-font-size);
 }
 
 .address-form__actions {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--sys-space-inline-md, 1rem);
+  gap: var(--sys-inline-md);
   align-items: center;
 }
 
+/* The form's submit: the primary fill with its on-primary text, as the shared primary button has. */
 .address-form__action {
   appearance: none;
   border: none;
-  border-radius: 999px;
-  padding: 0.75rem 1.5rem;
-  font-weight: 600;
+  border-radius: var(--sys-radius-pill);
+  padding: var(--sys-inset-sm) var(--sys-space-inset-default);
+  font-weight: var(--sys-text-scale-label-font-weight);
   cursor: pointer;
-  background: var(--cmp-button-primary-bg, var(--sys-status-info-surface, Highlight));
-  color: var(--cmp-button-primary-text, var(--sys-text-on_accent, HighlightText));
-  box-shadow: 0 1px 2px color-mix(in srgb, var(--sys-text-primary, CanvasText) 20%, transparent);
-  transition: filter 0.15s ease;
+  background: var(--sys-surface-interactive-primary-default);
+  color: var(--sys-text-on-interactive);
+  transition: background-color 0.15s ease;
 }
 
 .address-form__action:disabled {
@@ -84,35 +86,35 @@
 }
 
 .address-form__action:not(:disabled):hover {
-  filter: brightness(1.05);
+  background: var(--sys-surface-interactive-primary-hover);
 }
 
 .address-form__geocode {
-  font-size: 0.9rem;
-  color: var(--sys-text-secondary, CanvasText);
+  font-size: var(--sys-text-scale-body-sm-font-size);
+  color: var(--sys-text-secondary);
 }
 
 .address-role-selector {
   display: flex;
   flex-direction: column;
-  gap: var(--sys-space-stack-sm, 0.75rem);
+  gap: var(--sys-stack-sm);
   min-width: min(320px, 100%);
 }
 
 .address-role-selector__custom {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--sys-space-inline-sm, 0.5rem);
+  gap: var(--sys-control-gap);
   align-items: flex-end;
 }
 
 .address-role-selector__add {
   appearance: none;
-  border: 1px solid var(--cmp-border-default, var(--sys-border-strong, CanvasText));
-  border-radius: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: var(--cmp-surface-subtle, var(--sys-surface-subtle, Canvas));
-  color: var(--sys-text-primary, CanvasText);
+  border: 1px solid var(--sys-border-subtle);
+  border-radius: var(--sys-radius-control);
+  padding: var(--sys-control-padding-block-lg) var(--sys-control-padding-inline-lg);
+  background: var(--sys-surface-subtle);
+  color: var(--sys-text-primary);
   cursor: pointer;
 }
 
@@ -124,8 +126,8 @@
 .address-role-selector__error {
   flex-basis: 100%;
   margin: 0;
-  color: var(--sys-status-critical-text, var(--sys-text-critical, currentColor));
-  font-size: 0.85rem;
+  color: var(--sys-status-critical-text);
+  font-size: var(--sys-text-scale-body-sm-font-size);
 }
 
 .address-field-set {
@@ -136,28 +138,28 @@
 }
 
 .address-field-set__legend {
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
+  font-size: var(--sys-text-scale-heading-sm-font-size);
+  font-weight: var(--sys-text-scale-heading-sm-font-weight);
+  margin-bottom: var(--sys-stack-xs);
 }
 
 .address-field-set__grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: var(--sys-space-inline-md, 1rem);
+  gap: var(--sys-inline-md);
 }
 
 .address-field-set__group {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--sys-stack-xs);
 }
 
 .address-field-set__line {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: var(--sys-control-gap-tight);
 }
 
 .address-field-set__line-remove {
@@ -165,49 +167,49 @@
   appearance: none;
   border: none;
   background: transparent;
-  color: var(--sys-text-secondary, CanvasText);
+  color: var(--sys-text-secondary);
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: var(--sys-text-scale-body-sm-font-size);
 }
 
 .address-field-set__line-add {
   appearance: none;
-  border: 1px dashed var(--cmp-border-default, var(--sys-border-subtle, CanvasText));
+  border: 1px dashed var(--sys-border-subtle);
   background: transparent;
-  color: var(--sys-text-secondary, CanvasText);
-  border-radius: 0.5rem;
-  padding: 0.5rem 0.75rem;
+  color: var(--sys-text-secondary);
+  border-radius: var(--sys-radius-control);
+  padding: var(--sys-control-padding-block-lg) var(--sys-control-padding-inline);
   cursor: pointer;
 }
 
 .address-field-set__line-add[data-variant='ghost'] {
-  font-weight: 600;
+  font-weight: var(--sys-text-weight-semibold);
 }
 
 .address-field-set__helper {
   margin: 0;
-  font-size: 0.85rem;
-  color: var(--sys-text-secondary, CanvasText);
+  font-size: var(--sys-text-scale-body-sm-font-size);
+  color: var(--sys-text-secondary);
 }
 
 .address-field-set__helper[data-variant='correction'] {
-  color: var(--sys-status-accent-text, var(--sys-text-accent, currentColor));
+  color: var(--sys-status-accent-text);
 }
 
 .address-field-set__helper[data-variant='warning'] {
-  color: var(--sys-status-warning-text, var(--sys-text-warning, currentColor));
+  color: var(--sys-status-warning-text);
 }
 
 .address-field-set__helper[data-variant='critical'] {
-  color: var(--sys-status-critical-text, var(--sys-text-critical, currentColor));
+  color: var(--sys-status-critical-text);
 }
 
 .validation-status-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 0.85rem;
-  color: var(--sys-text-secondary, CanvasText);
+  gap: var(--sys-control-gap);
+  font-size: var(--sys-text-scale-body-sm-font-size);
+  color: var(--sys-text-secondary);
 }
 
 .validation-status-badge__meta {
@@ -219,19 +221,19 @@
 }
 
 .address-display {
-  border: 1px solid var(--cmp-border-subtle, var(--sys-border-subtle, CanvasText));
-  border-radius: 1rem;
-  padding: var(--sys-space-inset-md, 1rem);
-  background: var(--cmp-surface-subtle, var(--sys-surface-subtle, Canvas));
+  border: 1px solid var(--sys-border-subtle);
+  border-radius: var(--sys-radius-card);
+  padding: var(--sys-inset-md);
+  background: var(--sys-surface-subtle);
   display: flex;
   flex-direction: column;
-  gap: var(--sys-space-stack-md, 1rem);
+  gap: var(--sys-stack-md);
 }
 
 .address-display__header {
   display: flex;
   align-items: center;
-  gap: var(--sys-space-inline-sm, 0.5rem);
+  gap: var(--sys-inline-sm);
   flex-wrap: wrap;
   justify-content: space-between;
 }
@@ -239,53 +241,53 @@
 .address-display__title {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--sys-control-gap);
 }
 
 .address-display__default {
-  font-size: 0.85rem;
-  color: var(--sys-text-secondary, CanvasText);
+  font-size: var(--sys-text-scale-body-sm-font-size);
+  color: var(--sys-text-secondary);
 }
 
 .address-display__actions {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--sys-control-gap);
   flex-wrap: wrap;
 }
 
 .address-display__action {
   appearance: none;
-  border: 1px solid var(--cmp-border-default, var(--sys-border-subtle, CanvasText));
-  border-radius: 999px;
-  padding: 0.35rem 0.9rem;
+  border: 1px solid var(--sys-border-subtle);
+  border-radius: var(--sys-radius-pill);
+  padding: var(--sys-control-padding-block) var(--sys-control-padding-inline);
   background: transparent;
   cursor: pointer;
 }
 
 .address-display__action[data-variant='danger'] {
-  border-color: var(--sys-status-critical-border, var(--sys-status-critical-text, currentColor));
-  color: var(--sys-status-critical-text, var(--sys-text-critical, currentColor));
+  border-color: var(--sys-status-critical-border);
+  color: var(--sys-status-critical-text);
 }
 
 .address-display__body {
   display: grid;
-  gap: 0.75rem;
+  gap: var(--sys-stack-sm);
 }
 
 .address-display__lines {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: var(--sys-control-gap-compact);
 }
 
 .address-display__line {
-  font-size: 0.95rem;
+  font-size: var(--sys-text-scale-body-md-font-size);
 }
 
 .address-display__map {
-  padding: 0.75rem;
-  border: 1px dashed var(--cmp-border-default, var(--sys-border-subtle, CanvasText));
-  border-radius: 0.75rem;
-  font-size: 0.85rem;
-  color: var(--sys-text-secondary, CanvasText);
+  padding: var(--sys-inset-sm);
+  border: 1px dashed var(--sys-border-subtle);
+  border-radius: var(--sys-radius-control-lg);
+  font-size: var(--sys-text-scale-body-sm-font-size);
+  color: var(--sys-text-secondary);
 }

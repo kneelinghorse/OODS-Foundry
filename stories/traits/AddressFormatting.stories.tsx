@@ -6,7 +6,8 @@
  * next to the formatted multiline output.
  */
 
-import React from 'react';
+// @types/react 19 no longer declares a global JSX namespace; it is exported from 'react'.
+import type { JSX } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { normalizeAddress } from '../../src/schemas/address.js';
@@ -144,7 +145,7 @@ function renderField(label: string, value: string | undefined): JSX.Element {
 type Story = StoryObj<AddressFormattingPreviewProps>;
 
 const meta: Meta<AddressFormattingPreviewProps> = {
-  title: 'Traits/Core/Addressable',
+  title: 'Traits/Addressable/International Formatting',
   component: AddressFormattingPreview,
   args: {
     templateKey: 'US',

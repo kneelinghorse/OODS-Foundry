@@ -1,8 +1,8 @@
-import type { NormalizedVizSpec } from '../../../src/viz/spec/normalized-viz-spec.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 import { mergeSpec } from './mergeSpec.js';
 
 const BASE_SCATTER_SPEC: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/v1',
   id: 'tests:viz:scatter-chart',
   name: 'Win Rate vs. Lead Time',
   data: {

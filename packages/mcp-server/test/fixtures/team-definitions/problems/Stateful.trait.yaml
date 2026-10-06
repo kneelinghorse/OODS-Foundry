@@ -1,0 +1,11 @@
+# A team trait reusing a shipped trait's name: refused, because shipped objects compose Stateful by name.
+trait:
+  name: Stateful
+  version: 1.0.0
+  description: A team's own idea of state.
+  category: lifecycle
+schema:
+  phase:
+    type: string
+    required: true
+    description: The phase.

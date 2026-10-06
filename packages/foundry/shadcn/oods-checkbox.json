@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "oods-checkbox",
+  "type": "registry:component",
+  "title": "OODS Foundry Checkbox",
+  "description": "React adapter for OODS Checkbox on shadcn/ui's Radix and Base UI bases. The visible control is the team checkbox. A visually hidden native checkbox preserves the input ref, native onChange and form values. Native input event handlers other than onChange apply to that hidden input, not the visible control; density is metadata only.",
+  "dependencies": [
+    "@oods/components-react@0.7.0"
+  ],
+  "registryDependencies": [
+    "checkbox",
+    "label"
+  ],
+  "files": [
+    {
+      "path": "components/oods/checkbox.tsx",
+      "target": "components/oods/checkbox.tsx",
+      "type": "registry:component",
+      "content": "import * as React from 'react';\nimport type { CheckboxProps } from '@oods/components-react';\nimport { Checkbox } from '@/registry/new-york-v4/ui/checkbox';\nimport { Label } from '@/registry/new-york-v4/ui/label';\n\nexport const OodsCheckbox = React.forwardRef<HTMLInputElement, CheckboxProps>(function OodsCheckbox(\n  { id, label, help, description, validation, density = 'comfortable', requiredIndicator, className, style,\n    checkboxClassName, checkboxStyle, onChange, onCheckedChange, onUpdate, required, checked, defaultChecked,\n    disabled, readOnly, 'aria-describedby': describedBy, 'aria-label': ariaLabel, ...props }, ref,\n) {\n  const native = React.useRef<HTMLInputElement>(null);\n  React.useImperativeHandle(ref, () => native.current!);\n  const [local, setLocal] = React.useState(defaultChecked ?? false);\n  const selected = checked ?? local;\n  const resetting = React.useRef(false);\n  React.useEffect(() => {\n    const input = native.current;\n    const form = input?.form;\n    if (!input || !form) return;\n    const reset = (event: Event) => {\n      // Team checkbox primitives also observe reset. Preserve native reset's lack of change events.\n      resetting.current = true;\n      queueMicrotask(() => {\n        resetting.current = false;\n        if (!event.defaultPrevented && checked === undefined) {\n          // The browser resets the property without running React's native value setter.\n          input.checked = input.checked;\n          setLocal(input.checked);\n        }\n      });\n    };\n    form.addEventListener('reset', reset, true);\n    return () => form.removeEventListener('reset', reset, true);\n  }, [checked, props.form]);\n  const details = help ?? description;\n  const validationId = validation?.id ?? `${id}-validation`;\n  const descriptions = [describedBy, details ? `${id}-description` : '', validation?.message ? validationId : ''].filter(Boolean).join(' ') || undefined;\n  return <div className={className} style={style} data-density={density} data-validation-state={validation?.state} data-oods-component={undefined} data-oods-adapter=\"Checkbox\">\n    <input {...props} ref={native} type=\"checkbox\" checked={checked} defaultChecked={checked === undefined ? defaultChecked : undefined} disabled={disabled} readOnly={readOnly} required={required}\n      className=\"sr-only\" tabIndex={-1} aria-hidden=\"true\" data-oods-component={undefined}\n      onChange={event => { onChange?.(event); if (!event.defaultPrevented) { const next = event.currentTarget.checked; if (checked === undefined) setLocal(next); onCheckedChange?.(next); onUpdate?.(next); } }} />\n    <div className=\"flex items-center gap-2\">\n      <Checkbox id={id} checked={selected} disabled={disabled} required={required} aria-readonly={readOnly || undefined}\n        className={checkboxClassName} style={checkboxStyle} aria-label={ariaLabel} aria-describedby={descriptions} aria-invalid={props['aria-invalid'] ?? (validation?.state === 'error' || undefined)}\n        onCheckedChange={() => { if (!readOnly && !resetting.current) native.current?.click(); }} />\n      <Label htmlFor={id}>{label}{required && requiredIndicator !== null ? requiredIndicator ?? <span aria-hidden=\"true\"> *</span> : null}</Label>\n    </div>\n    {details ? <p id={`${id}-description`} className=\"text-sm text-muted-foreground\">{details}</p> : null}\n    {validation?.message ? <p id={validationId} role={validation.state === 'error' ? 'alert' : 'status'} aria-live={validation.state === 'error' ? 'assertive' : 'polite'}>{validation.message}</p> : null}\n  </div>;\n});\n"
+    }
+  ]
+}

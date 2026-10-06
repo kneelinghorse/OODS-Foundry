@@ -1,0 +1,114 @@
+{
+  "version": "2026.02",
+  "dsVersion": "2026-02-24",
+  "theme": "light",
+  "screens": [
+    {
+      "id": "form-page-screen",
+      "component": "Stack",
+      "children": [
+        {
+          "id": "form-contact-card",
+          "component": "Card",
+          "children": [
+            {
+              "id": "form-contact-header",
+              "component": "CardHeader",
+              "props": { "title": "Contact Details" }
+            },
+            {
+              "id": "form-contact-label",
+              "component": "FormLabelGroup",
+              "props": {
+                "label": "Email",
+                "placeholder": "owner@company.com",
+                "htmlFor": "contact-email-input"
+              }
+            },
+            {
+              "id": "form-contact-input",
+              "component": "Input",
+              "props": {
+                "id": "contact-email-input",
+                "name": "email",
+                "type": "email",
+                "placeholder": "owner@company.com"
+              }
+            },
+            {
+              "id": "form-contact-select",
+              "component": "Select",
+              "props": {
+                "name": "locale",
+                "value": "en-US",
+                "options": [
+                  { "value": "en-US", "label": "English (US)" },
+                  { "value": "fr-FR", "label": "French (FR)" }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "form-preferences-card",
+          "component": "Card",
+          "children": [
+            {
+              "id": "form-preferences-header",
+              "component": "CardHeader",
+              "props": { "title": "Preferences" }
+            },
+            {
+              "id": "form-preferences-text",
+              "component": "Text",
+              "props": { "text": "Configure delivery and billing preferences." }
+            },
+            {
+              "id": "form-preferences-input",
+              "component": "Input",
+              "props": { "name": "projectName", "placeholder": "Project Name" }
+            },
+            {
+              "id": "form-preferences-select",
+              "component": "Select",
+              "props": {
+                "name": "plan",
+                "value": "pro",
+                "options": [
+                  { "value": "starter", "label": "Starter" },
+                  { "value": "pro", "label": "Pro" }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "form-actions-card",
+          "component": "Card",
+          "children": [
+            {
+              "id": "form-actions-header",
+              "component": "CardHeader",
+              "props": { "title": "Actions" }
+            },
+            {
+              "id": "form-actions-save",
+              "component": "Button",
+              "props": { "label": "Save Changes", "type": "submit" }
+            },
+            {
+              "id": "form-actions-cancel",
+              "component": "Button",
+              "props": { "label": "Cancel", "type": "button" }
+            },
+            {
+              "id": "form-actions-banner",
+              "component": "Banner",
+              "props": { "message": "Unsaved changes will be lost." }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

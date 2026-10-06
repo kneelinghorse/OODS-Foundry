@@ -1,0 +1,145 @@
+trait:
+  name: Assessable
+  version: 1.1.0
+  description: |
+    Records what an assessment concluded about a record — its result state — as something other than a
+    verdict colour.
+
+    A result is not binary. An accessibility engine returns four kinds of answer for every rule on every
+    page: it found a violation, it found nothing wrong, it could not decide and a person must look, or the
+    rule does not apply there. A fifth is the one engines drop: the check never ran. Lighthouse carries the
+    same shape as score display modes (binary, manual, notApplicable, error). A real capture run records
+    all four axe answers — violations as items, and needs-review, passing and not-applicable as page-level
+    counts (28, 2,029 and 1,531) — and Deque warns that implementations drop the incomplete ones. That is
+    why this is its own trait rather than a Stateful state set: it is not a lifecycle a record moves
+    through, it is what one reading concluded, and the non-verdicts are the part most often lost.
+
+    The rule that matters is visual. A result state renders as its OWN visual family, never the severity
+    family: never red, never green, never scored. The moment "needs review" looks like a failure, someone
+    reports it as one; the moment "passed" looks like a success badge, a count of 2,029 passes reads as a
+    grade. The composer enforces it (`enforceResultStateFamily`): every StatusBadge or Badge bound to
+    `result_state` carries the result tone from @oods/component-contracts, and a component that cannot
+    carry a tone is refused (OODS-V211). A spec fails if any theme scope resolves that tone to a severity
+    colour.
+
+    The field is `result_state`, not `status`, so an object can carry a lifecycle through Stateful and a
+    result through this trait without the two colliding (the Supersedable precedent). Severity is a
+    separate fact about a violation (Finding.impact) and is never folded into the result state.
+
+    Artifact assessments also record measured (the measurement ran), measured_zero (it ran and found
+    none) and unknown (the historical record contains no result). A zero is evidence of measurement,
+    never a missing check. These states use the same neutral family and carry no inferred grade.
+
+    Not adopted, with the reason: low-confidence (no capture artifact carries a confidence for a result; the
+    Confidence-bearing trait is not authored until a screen needs it); Lighthouse's informative (it states
+    no verdict and no capture record carries one); any numeric score (a score is a verdict colour in another
+    form).
+  category: core
+  tags:
+    - assessment
+    - result
+    - non-verdict
+    - accessibility
+    - evidence
+
+parameters:
+  - name: recordedStates
+    type: string[]
+    required: true
+    description: |
+      The result states the source of truth writes as items. Current capture evidence writes violations
+      and needs-review items; historical counts alone never become invented findings. Artifact indices
+      declare measured results separately from their absence.
+    default:
+      - violation
+      - passed
+      - needs_review
+      - not_applicable
+      - not_measured
+      - measured
+      - measured_zero
+      - unknown
+
+schema:
+  result_state:
+    type: string
+    required: true
+    description: |
+      What the assessment concluded for this record: violation (it measured a failure), passed (it measured
+      and found none), needs_review (it could not decide — axe incomplete, Lighthouse manual), not_applicable
+      (the rule does not apply here), not_measured (the check did not run). An absent value is never read as
+      passed. Measured_zero means a completed measurement found none; unknown means no recorded result.
+    validation:
+      enum:
+        - violation
+        - passed
+        - needs_review
+        - not_applicable
+        - not_measured
+        - measured
+        - measured_zero
+        - unknown
+
+semantics:
+  result_state:
+    semantic_type: assessment.result.state
+    token_mapping: tokenMap(assessment.result.*)
+    ui_hints:
+      component: StatusBadge
+      showIcon: false
+
+view_extensions:
+  # StatusBadge carries the field directive; the composer pins its tone to the result family, so the lifecycle
+  # status-to-tone table (which would colour "passed" green) is never consulted for a result.
+  list:
+    - component: StatusBadge
+      position: after
+      props:
+        statusField: result_state
+        domain: result
+        emphasis: subtle
+        showIcon: false
+  card:
+    - component: StatusBadge
+      position: after
+      props:
+        statusField: result_state
+        domain: result
+        emphasis: subtle
+        showIcon: false
+  detail:
+    - component: StatusBadge
+      position: main
+      priority: 72
+      props:
+        statusField: result_state
+        domain: result
+        emphasis: subtle
+        showIcon: false
+
+tokens:
+  assessment.result.tone: neutral
+
+dependencies: []
+
+metadata:
+  created: "2026-09-18"
+  updated: "2026-09-20"
+  owners:
+    - core@oods.systems
+  maturity: alpha
+  accessibility:
+    keyboard: The result state adds no interactive control; it renders as text beside the record.
+    screenreader: |
+      Announced as its visible wording ("Needs review", "Not applicable"), never by colour, and never as a
+      status of the record's lifecycle.
+  regionsUsed:
+    - list
+    - card
+    - detail
+  examples:
+    - Finding
+  references:
+    - "objects/provenance.v1.json#/references/ref-b9c43cb31221 — the four axe answers on run 6e435ce7, three of them as counts only"
+    - "https://github.com/dequelabs/axe-core/blob/develop/doc/API.md#results-object — passes, violations, incomplete, inapplicable"
+    - "https://github.com/GoogleChrome/lighthouse/blob/main/docs/understanding-results.md — scoreDisplayMode"

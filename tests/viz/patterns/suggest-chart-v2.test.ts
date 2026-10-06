@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { scoreLayoutForPattern } from '@/viz/patterns/layout-scorer.js';
-import { recommendInteractions } from '@/viz/patterns/interaction-scorer.js';
-import type { SchemaIntent } from '@/viz/patterns/suggest-chart.js';
+import { scoreLayoutForPattern } from '@oods/viz-core';
+import { recommendInteractions } from '@oods/viz-core';
+import type { SchemaIntent } from '@oods/viz-core';
 
 describe('layout scorers', () => {
   it('prefers facet layout for multi-dimensional grouped schemas', () => {

@@ -23,7 +23,7 @@ describe('Colorized trait', () => {
   it('parses TypeScript definition exposing readonly color state tokens', () => {
     const def = ColorizedTraitModule;
 
-    expect(def.parameters?.[0]?.default).toEqual(['neutral', 'info', 'success', 'warning', 'danger']);
+    expect(def.parameters?.[0]?.default).toEqual(['neutral', 'info', 'accent', 'success', 'warning', 'critical']);
     expect(def.tokens).toHaveProperty('status.state.badge.radius');
   });
 

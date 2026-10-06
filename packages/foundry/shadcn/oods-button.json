@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "oods-button",
+  "type": "registry:component",
+  "title": "OODS Foundry Button",
+  "description": "React adapter for OODS Button on shadcn/ui's Radix and Base UI bases. Danger/destructive uses solid bg-destructive and text-background, including hover and dark, to preserve text contrast with the team’s tokens. Primary preserves the team’s primary/primary-foreground token pair. Success and warning intents use the secondary variant; shadcn has no distinct success/warning palettes.",
+  "dependencies": [
+    "@oods/components-react@0.7.0"
+  ],
+  "registryDependencies": [
+    "button"
+  ],
+  "files": [
+    {
+      "path": "components/oods/button.tsx",
+      "target": "components/oods/button.tsx",
+      "type": "registry:component",
+      "content": "import * as React from 'react';\nimport type { ButtonProps } from '@oods/components-react';\nimport { Button } from '@/registry/new-york-v4/ui/button';\n\nexport const OodsButton = React.forwardRef<HTMLButtonElement, ButtonProps>(function OodsButton(\n  { content, children, intent = 'neutral', size = 'md', type, asChild = false, className, onClick, onActivate, ...props }, ref,\n) {\n  const variant = intent === 'danger' || intent === 'destructive' ? 'destructive'\n    : intent === 'primary' ? 'default'\n    : intent === 'neutral' ? 'secondary'\n    : intent === 'success' || intent === 'warning' ? 'secondary' : intent;\n  // Keep normal-size destructive text readable using the team's solid tokens in both themes.\n  const destructiveClass = variant === 'destructive' ? 'bg-destructive text-background hover:bg-destructive dark:bg-destructive dark:hover:bg-destructive' : undefined;\n  return <Button {...props} ref={ref} className={[destructiveClass, className].filter(Boolean).join(' ')} variant={variant} size={size === 'md' ? 'default' : size}\n    asChild={asChild} {...(asChild ? {} : { type: type ?? 'button' })} data-oods-component={undefined} data-oods-adapter=\"Button\"\n    data-intent={intent} onClick={event => { onClick?.(event); if (!event.defaultPrevented) onActivate?.(event); }}>\n    {children ?? content}\n  </Button>;\n});\n"
+    }
+  ]
+}

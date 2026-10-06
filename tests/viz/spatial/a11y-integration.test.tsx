@@ -133,6 +133,33 @@ describe('Spatial accessibility integration', () => {
     expect(results).toHaveNoViolations();
   });
 
+  it('derives the screen-reader narrative from the shared engine path (FD#10, no author narrative)', async () => {
+    // The spec carries NO a11y.narrative, so any narrative present must come from
+    // the shared analyzeSpatial → generateNarrativeSummary path (sprint-128 m02),
+    // not a hand-authored prop.
+    const spec = buildSpec('a11y-narrative', 'Shared-path narrative', data);
+
+    const { container } = render(
+      <SpatialContainer
+        spec={spec}
+        geoData={geoSlice}
+        data={data}
+        width={720}
+        height={480}
+        a11y={{ description: spec.a11y.description, tableFallback: spec.a11y.tableFallback }}
+      >
+        <ChoroplethMap data={data} valueField="value" geoJoinKey="region" a11y={{ description: 'Shared narrative' }} />
+      </SpatialContainer>
+    );
+
+    await waitFor(() => expect(container.querySelectorAll('path').length).toBe(geoSlice.features.length));
+    const description = container.querySelector('[id$="-description"]') ?? container.querySelector('[id*="description"]');
+    await waitFor(() => {
+      // The data-derived summary the engine produces for an unknown-mark analysis.
+      expect(description?.textContent ?? '').toMatch(/covers \d+ data points/);
+    });
+  });
+
   it('keeps live region updates stable across navigation resets', async () => {
     const spec = buildSpec('a11y-live', 'Live region stability', data);
     const view = render(

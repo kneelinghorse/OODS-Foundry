@@ -36,9 +36,9 @@ const STRIPE_SUBSCRIPTION_STATUS_MAP: Record<string, SubscriptionStatus> = {
   'incomplete_expired': 'terminated',
   'trialing': 'trialing',
   'active': 'active',
-  'past_due': 'delinquent',
+  'past_due': 'past_due', // retries ongoing → recoverable, keep access
   'canceled': 'terminated',
-  'unpaid': 'delinquent',
+  'unpaid': 'unpaid', // retries exhausted → access revoked
   'paused': 'paused',
 };
 

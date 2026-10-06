@@ -120,25 +120,18 @@ const CancellableTrait = {
   },
 
   view_extensions: {
+    // s224-m01 (#2542 ruling 6): a record with no cancellation scheduled or recorded shows no card; "Cancel at period end:
+    // No" only states the default.
     detail: [
       {
         component: 'CancellationSummary',
         position: 'top',
         props: {
+          hideWhenDefault: true,
           cancelAtPeriodEndField: 'cancel_at_period_end',
           reasonField: 'cancellation_reason',
           codeField: 'cancellation_reason_code',
           requestedAtField: 'cancellation_requested_at',
-        },
-      },
-    ],
-    timeline: [
-      {
-        component: 'CancellationEvent',
-        props: {
-          timestampField: 'cancellation_requested_at',
-          labelField: 'cancellation_reason',
-          codeField: 'cancellation_reason_code',
         },
       },
     ],
@@ -161,6 +154,7 @@ const CancellableTrait = {
         position: 'before',
         props: {
           field: 'cancel_at_period_end',
+          hideWhenFalse: true,
         },
       },
     ],
@@ -183,7 +177,7 @@ const CancellableTrait = {
       keyboard: 'Supports toggling of cancellation switches.',
       screenreader: 'Announces cancellation state and reason.',
     },
-    regionsUsed: ['detail', 'timeline', 'forms', 'card'],
+    regionsUsed: ['detail', 'form', 'card'],
     examples: ['Subscription', 'Reservation'],
     references: ['Trait Engine Spec v0.1 §2'],
   },

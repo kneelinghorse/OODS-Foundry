@@ -1,119 +1,126 @@
 .tag-governance-dashboard {
-  border: 1px solid var(--cmp-border-subtle, var(--sys-border-subtle));
-  border-radius: 1rem;
-  background: var(--cmp-surface-raised, var(--sys-surface-raised));
-  padding: 1.5rem;
+  border: 1px solid var(--sys-border-subtle);
+  border-radius: var(--sys-radius-card);
+  background: var(--sys-surface-raised);
+  padding: var(--sys-card-padding);
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  color: var(--cmp-text-body, var(--sys-text-primary));
+  gap: var(--sys-stack-lg);
+  color: var(--sys-text-primary);
 }
 
 .tag-governance-dashboard__header h2 {
   margin: 0;
-  font-size: 1.5rem;
-  color: var(--cmp-text-strong, var(--sys-text-primary));
+  font-size: var(--sys-text-scale-heading-lg-font-size);
+  font-weight: var(--sys-text-scale-heading-lg-font-weight);
+  line-height: var(--sys-text-scale-heading-lg-line-height);
+  color: var(--sys-text-primary);
 }
 
+/* The caption role: 12/16 at 500, in sentence case (Sprint 222 ruling 8). */
 .tag-governance-dashboard__eyebrow {
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: 0.75rem;
+  text-transform: var(--sys-text-scale-caption-text-case);
+  letter-spacing: var(--sys-text-scale-caption-letter-spacing);
+  font-size: var(--sys-text-scale-caption-font-size);
   margin: 0;
-  color: var(--cmp-text-muted, var(--sys-text-muted));
+  color: var(--sys-text-muted);
 }
 
 .tag-governance-dashboard__subtitle {
-  margin: 0.25rem 0 0;
-  color: var(--cmp-text-muted, var(--sys-text-secondary));
+  margin: var(--sys-control-gap-compact) 0 0;
+  color: var(--sys-text-muted);
 }
 
 .tag-governance-dashboard__summary {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
-  gap: 1rem;
+  gap: var(--sys-stack-md);
 }
 
 .tag-governance-dashboard__summary-card {
-  border-radius: 0.75rem;
-  padding: 1rem;
-  background: var(--cmp-surface, var(--sys-surface));
-  border: 1px solid var(--cmp-border-subtle, var(--sys-border-subtle));
+  border-radius: var(--sys-radius-control-lg);
+  padding: var(--sys-inset-md);
+  background: var(--sys-surface-raised);
+  border: 1px solid var(--sys-border-subtle);
 }
 
 .tag-governance-dashboard__summary-label {
   margin: 0;
-  font-size: 0.85rem;
-  color: var(--cmp-text-muted, var(--sys-text-secondary));
+  font-size: var(--sys-text-scale-body-sm-font-size);
+  color: var(--sys-text-muted);
 }
 
 .tag-governance-dashboard__summary-value {
-  margin: 0.5rem 0 0;
-  font-size: 1.8rem;
-  font-weight: 600;
-  color: var(--cmp-text-strong, var(--sys-text-primary));
+  margin: var(--sys-stack-xs) 0 0;
+  font-size: var(--sys-text-scale-heading-xl-font-size);
+  font-weight: var(--sys-text-scale-heading-xl-font-weight);
+  color: var(--sys-text-primary);
 }
 
 .tag-governance-dashboard__summary-trend {
-  margin: 0.25rem 0 0;
-  font-size: 0.85rem;
-  color: var(--cmp-text-muted, var(--sys-text-secondary));
+  margin: var(--sys-control-gap-compact) 0 0;
+  font-size: var(--sys-text-scale-body-sm-font-size);
+  color: var(--sys-text-muted);
 }
 
 .tag-governance-dashboard__panel {
-  border-radius: 0.75rem;
-  border: 1px solid var(--cmp-border-subtle, var(--sys-border-subtle));
-  background: var(--cmp-surface, var(--sys-surface));
-  padding: 1rem;
+  border-radius: var(--sys-radius-control-lg);
+  border: 1px solid var(--sys-border-subtle);
+  background: var(--sys-surface-raised);
+  padding: var(--sys-inset-md);
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--sys-stack-md);
 }
 
 .tag-governance-dashboard__panel-header h3 {
   margin: 0;
-  font-size: 1rem;
-  color: var(--cmp-text-strong, var(--sys-text-primary));
+  font-size: var(--sys-text-scale-heading-sm-font-size);
+  font-weight: var(--sys-text-scale-heading-sm-font-weight);
+  line-height: var(--sys-text-scale-heading-sm-line-height);
+  color: var(--sys-text-primary);
 }
 
 .tag-governance-dashboard__panel-header p {
-  margin: 0.25rem 0 0;
-  color: var(--cmp-text-muted, var(--sys-text-secondary));
+  margin: var(--sys-control-gap-compact) 0 0;
+  color: var(--sys-text-muted);
 }
 
 .tag-governance-dashboard__table {
   width: 100%;
   display: flex;
   flex-direction: column;
-  border-radius: 0.5rem;
-  border: 1px solid var(--cmp-border-subtle, var(--sys-border-subtle));
+  border-radius: var(--sys-radius-control-lg);
+  border: 1px solid var(--sys-border-subtle);
 }
 
 .tag-governance-dashboard__table-row {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
-  gap: 0.5rem;
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--cmp-border-subtle, var(--sys-border-subtle));
+  gap: var(--sys-control-gap);
+  padding: var(--sys-inset-sm) var(--sys-inset-md);
+  border-bottom: 1px solid var(--sys-border-subtle);
 }
 
 .tag-governance-dashboard__table-row:last-of-type {
   border-bottom: none;
 }
 
+/* A table header is the label role in the muted colour (Sprint 222 ruling 11). */
 .tag-governance-dashboard__table-row--head {
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--cmp-text-muted, var(--sys-text-secondary));
-  background: var(--cmp-surface-muted, var(--sys-surface-neutral));
-  border-radius: 0.5rem 0.5rem 0 0;
+  font-size: var(--sys-text-scale-label-font-size);
+  font-weight: var(--sys-text-scale-label-font-weight);
+  text-transform: var(--sys-text-scale-label-text-case);
+  letter-spacing: var(--sys-text-scale-label-letter-spacing);
+  color: var(--sys-text-muted);
+  background: var(--sys-surface-subtle);
+  border-radius: var(--sys-radius-control-lg) var(--sys-radius-control-lg) 0 0;
 }
 
 .tag-governance-dashboard__slug {
-  margin-left: 0.25rem;
-  font-size: 0.85rem;
-  color: var(--cmp-text-muted, var(--sys-text-secondary));
+  margin-left: var(--sys-control-gap-compact);
+  font-size: var(--sys-text-scale-body-sm-font-size);
+  color: var(--sys-text-muted);
 }
 
 .tag-governance-dashboard__list {
@@ -122,54 +129,54 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--sys-stack-sm);
 }
 
 .tag-governance-dashboard__list-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--cmp-border-subtle, var(--sys-border-subtle));
+  gap: var(--sys-inline-md);
+  padding: var(--sys-inset-sm);
+  border-radius: var(--sys-radius-control-lg);
+  border: 1px solid var(--sys-border-subtle);
 }
 
 .tag-governance-dashboard__list-title {
   margin: 0;
-  font-weight: 600;
+  font-weight: var(--sys-text-weight-semibold);
 }
 
 .tag-governance-dashboard__list-meta {
-  margin: 0.1rem 0 0;
-  color: var(--cmp-text-muted, var(--sys-text-secondary));
-  font-size: 0.85rem;
+  margin: var(--sys-control-padding-block-sm) 0 0;
+  color: var(--sys-text-muted);
+  font-size: var(--sys-text-scale-body-sm-font-size);
 }
 
 .tag-governance-dashboard__actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: var(--sys-control-gap);
 }
 
 .tag-governance-dashboard__actions button {
-  border: 1px solid var(--cmp-button-border, var(--sys-border-accent));
-  background: var(--cmp-button-surface, var(--sys-surface-accent));
-  color: var(--cmp-button-text, var(--sys-text-on-accent));
-  border-radius: 999px;
-  padding: 0.25rem 0.9rem;
-  font-size: 0.85rem;
+  border: 1px solid var(--sys-border-subtle);
+  background: var(--sys-surface-interactive-primary-default);
+  color: var(--sys-text-on-interactive);
+  border-radius: var(--sys-radius-pill);
+  padding: var(--sys-control-padding-block) var(--sys-control-padding-inline);
+  font-size: var(--sys-text-scale-label-font-size);
   cursor: pointer;
   transition: box-shadow 150ms ease;
 }
 
 .tag-governance-dashboard__actions button:last-child {
   background: transparent;
-  color: var(--cmp-text-strong, var(--sys-text-primary));
-  border-color: var(--cmp-border-strong, var(--sys-border-strong));
+  color: var(--sys-text-primary);
+  border-color: var(--sys-border-strong);
 }
 
 .tag-governance-dashboard__actions button:focus-visible {
-  outline: 2px solid var(--cmp-focus-ring, var(--sys-focus-ring));
-  outline-offset: 2px;
+  outline: var(--sys-focus-width) solid var(--sys-focus-ring-outer);
+  outline-offset: var(--sys-focus-offset);
 }

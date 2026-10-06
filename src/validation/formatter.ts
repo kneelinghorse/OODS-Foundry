@@ -373,6 +373,16 @@ export function formatZodIssue(
       ? params.related.map((value) => String(value))
       : undefined;
 
+  const traitPath =
+    params && Array.isArray(params.traitPath)
+      ? params.traitPath.map((value) => String(value))
+      : undefined;
+
+  const impactedTraits =
+    params && Array.isArray(params.impactedTraits)
+      ? params.impactedTraits.map((value) => String(value))
+      : undefined;
+
   return {
     code,
     message: mapping.generateMessage(issue),
@@ -384,6 +394,8 @@ export function formatZodIssue(
     docsUrl,
     related,
     at: issue.path.length ? issue.path.join('.') : undefined,
+    traitPath,
+    impactedTraits,
   };
 }
 
@@ -418,7 +430,7 @@ export function createCompositionIssue(
   filePath: string = 'unknown',
   fixHint: string | null = null,
   severity: ValidationSeverity = 'error',
-  extras: Partial<Pick<ValidationIssue, 'domain' | 'source' | 'docsUrl' | 'related' | 'details'>> = {}
+  extras: Partial<Pick<ValidationIssue, 'domain' | 'source' | 'docsUrl' | 'related' | 'details' | 'traitPath' | 'impactedTraits'>> = {}
 ): ValidationIssue {
   return {
     code,
@@ -434,5 +446,7 @@ export function createCompositionIssue(
     docsUrl: extras.docsUrl,
     related: extras.related,
     details: extras.details,
+    traitPath: extras.traitPath,
+    impactedTraits: extras.impactedTraits,
   };
 }

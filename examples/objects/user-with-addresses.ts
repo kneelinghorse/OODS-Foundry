@@ -1,10 +1,4 @@
 import type { User } from '../../generated/objects/User';
-import type { Channel } from '@/schemas/communication/channel.js';
-import type { Conversation } from '@/schemas/communication/conversation.js';
-import type { DeliveryPolicy } from '@/schemas/communication/delivery-policy.js';
-import type { Message } from '@/schemas/communication/message.js';
-import type { MessageStatusEntry } from '@/schemas/communication/message-status.js';
-import type { Template } from '@/schemas/communication/template.js';
 import type { PreferenceMetadata } from '@/schemas/preferences/preference-metadata.js';
 import type { PreferenceDocument } from '@/schemas/preferences/preference-document.js';
 import type { AddressableEntry } from '@/traits/addressable/address-entry.js';
@@ -154,6 +148,8 @@ export const UserWithAddressesExample: User = {
   preference_version: '2.0.0',
   preference_namespaces: ['theme', 'notifications', 'display', 'privacy'],
   preference_mutations: 3,
+  channel_catalog: [],
+  delivery_policies: [],
   membership_records: [],
   permission_catalog: [],
   role_catalog: [],
@@ -163,10 +159,5 @@ export const UserWithAddressesExample: User = {
   address_roles: ['home', 'billing', 'shipping'],
   default_address_role: 'home',
   addresses: userAddressEntries,
-  channel_catalog: [] as Channel[],
-  template_catalog: [] as Template[],
-  delivery_policies: [] as DeliveryPolicy[],
-  messages: [] as Message[],
-  conversations: [] as Conversation[],
-  message_statuses: [] as MessageStatusEntry[],
+  template_catalog: [],
 };

@@ -15,6 +15,7 @@ declare module '@oods/tokens' {
   export const tokens: TokenTree;
   export const flatTokens: Record<string, FlatTokenRecord>;
   export const cssVariables: Record<string, string>;
+  export const cssVariablesByScope: Record<string, Record<'light' | 'dark' | 'hc', Record<string, string>>>;
   export const meta: Record<string, unknown>;
   export const prefix: string;
 
@@ -22,6 +23,7 @@ declare module '@oods/tokens' {
     tokens: typeof tokens;
     flatTokens: typeof flatTokens;
     cssVariables: typeof cssVariables;
+    cssVariablesByScope: typeof cssVariablesByScope;
     meta: typeof meta;
     prefix: typeof prefix;
   };

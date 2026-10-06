@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.7.0",
+  "run_id": "22500000-0000-4000-8000-000000000003",
+  "mode": "app",
+  "targets": [
+    {
+      "name": "Synthetic 0.4.0 capture",
+      "url": "https://example.org"
+    }
+  ],
+  "passes": [
+    {
+      "id": "a11y.scan",
+      "version": "1.0.0",
+      "status": "ok"
+    }
+  ],
+  "auth": {
+    "type": "none",
+    "redaction": {
+      "applied": true
+    }
+  },
+  "environment": {
+    "timestamp": "2026-10-02T00:00:00Z",
+    "stage": "release",
+    "stage1_version": "0.4.0",
+    "sampling": "full",
+    "capture": {
+      "passes": {
+        "a11y.scan": {
+          "tier": "stealth",
+          "browser": {
+            "version": "153.0.8010.36",
+            "color_scheme": "light"
+          }
+        }
+      }
+    }
+  },
+  "hashes": {
+    "artifacts/a11y_report.json": "bb56060b6f2cbb91d6ff15c0bf6a68aa999a225055e042b8c3e050aea7d0fa0e",
+    "artifacts/report-index.json": "7317c39a26402937e08a6a94afc59bacdda47acfdb076d52e2f631964fc3c9fc",
+    "evidence/a11y/a11y_manifest.json": "198f94d6d9e06777b8c333b9ee3b86ecd8f396320d02e0822bc651853f8ab6d5",
+    "evidence/a11y/root.json": "88cec0008e0c67c63b995ed2bc671d5613f8ec5ea0ff17ea6788f24c287a288d"
+  }
+}

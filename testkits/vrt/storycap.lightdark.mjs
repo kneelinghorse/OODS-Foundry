@@ -19,6 +19,28 @@ const STORY_TAG = 'vrt-critical';
 const log = (...args) => console.log('[ld-storycap]', ...args);
 const warn = (...args) => console.warn('[ld-storycap]', ...args);
 
+/**
+ * The only stabiliser this harness has. It MUST be re-applied after every navigation.
+ *
+ * s173 m03: it used to be injected once, before the capture loop, with `page.addStyleTag`.
+ * A style tag lives in the document, and every `page.goto` replaces the document — so from
+ * the second story onward the tag was gone and every capture after the first was taken with
+ * animations and transitions running. That is not a small detail for a comparison harness:
+ * it is the difference between "these two runs differ because the code changed" and "these
+ * two runs differ because a fade was 3ms further along". The control had never been
+ * validated (no sprint record shows two runs compared), so it was fixed and then the
+ * twice-run identity experiment was run against it before anything relied on it.
+ */
+async function injectStabilizers(page) {
+  // The CONTENT is unchanged from the original — only the timing moves. Widening the
+  // stabiliser at the same time would have made the change unattributable: 26 of 152 images
+  // move from injecting it per-navigation, and it must be possible to say that those 26 are
+  // the animation/transition suppression finally taking effect, not a new rule of mine.
+  await page.addStyleTag({
+    content: '*{animation: none !important; transition: none !important;} html,body{scroll-behavior:auto !important;}',
+  });
+}
+
 const sanitize = (value) =>
   String(value)
     .replace(/\s+/g, '-')
@@ -131,11 +153,6 @@ async function main() {
   const context = await browser.newContext({ viewport: { width: 1280, height: 800 } });
   const page = await context.newPage();
 
-  // Disable animations for stability
-  await page.addStyleTag({
-    content: '*{animation: none !important; transition: none !important;} html,body{scroll-behavior:auto !important;}',
-  });
-
   const modes = [
     { name: 'light', globals: 'theme:light', outDir: outLight },
     { name: 'dark', globals: 'theme:dark', outDir: outDark },
@@ -156,6 +173,8 @@ async function main() {
       log(`[${m.name}] → Navigating`, url);
       await page.goto(url, { waitUntil: 'load', timeout: 30000 });
       await page.waitForLoadState('networkidle', { timeout: 30000 });
+      // Per NAVIGATION, not once per run — see injectStabilizers.
+      await injectStabilizers(page);
 
       const root = page.locator('#storybook-root');
       const hasRoot = await root.count();

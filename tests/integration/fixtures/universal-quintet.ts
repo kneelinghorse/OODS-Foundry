@@ -31,6 +31,7 @@ const FOUNDATION_TOKENS: Record<string, string> = {
   'status.archive.timestamp': 'var(--status-archive-timestamp)',
   'status.archive.restore': 'var(--status-archive-restore)',
   'status.archive.reason': 'var(--status-archive-reason)',
+  'status.archive.actor': 'var(--status-archive-actor)',
   'status.cancel.reason': 'var(--status-cancel-reason)',
   'status.cancel.code.primary': 'var(--status-cancel-code)',
   'status.cancel.timestamp': 'var(--status-cancel-timestamp)',
@@ -63,7 +64,7 @@ const SHARED_PARAMETERS: Record<string, TraitParameterSet> = {
   Colorized: {
     trait: 'Colorized',
     values: {
-      colorStates: ['neutral', 'info', 'success', 'warning', 'danger'],
+      colorStates: ['neutral', 'info', 'success', 'warning', 'critical'],
     },
   },
   Taggable: {

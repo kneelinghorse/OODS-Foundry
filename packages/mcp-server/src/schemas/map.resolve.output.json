@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/map.resolve.output.json",
+  "title": "map.resolve output",
+  "description": "Resolved OODS trait mapping for an external component.",
+  "type": "object",
+  "required": ["status"],
+  "additionalProperties": false,
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["ok", "not_found"]
+    },
+    "mapping": {
+      "type": "object",
+      "description": "The resolved mapping record (present when status=ok)."
+    },
+    "propTranslations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["externalProp", "oodsProp"],
+        "additionalProperties": true,
+        "properties": {
+          "externalProp": { "type": "string" },
+          "oodsProp": { "type": "string" },
+          "coercionType": { "type": ["string", "null"] },
+          "coercionDetail": { "type": ["object", "null"] }
+        }
+      },
+      "description": "Flattened prop translations with coercion details."
+    },
+    "message": {
+      "type": "string",
+      "description": "Explanation when status=not_found."
+    }
+  }
+}

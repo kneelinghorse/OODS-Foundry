@@ -42,7 +42,7 @@
   padding-inline: var(--breadcrumbs-padding-inline);
   color: var(--breadcrumbs-color-text);
   text-decoration: none;
-  border-radius: 0.25rem;
+  border-radius: var(--sys-radius-control-sm);
   transition: color 150ms ease-in-out, background-color 150ms ease-in-out;
 }
 
@@ -58,22 +58,22 @@
   font-weight: inherit;
   padding-block: var(--breadcrumbs-padding-block);
   padding-inline: var(--breadcrumbs-padding-inline);
-  border-radius: 0.25rem;
+  border-radius: var(--sys-radius-control-sm);
 }
 
 .breadcrumbs__link:hover {
   color: var(--breadcrumbs-color-link-hover);
-  background-color: color-mix(in srgb, currentColor 5%, transparent);
+  background-color: var(--sys-surface-interactive-secondary-default);
 }
 
 .breadcrumbs__link:focus-visible {
   outline: var(--breadcrumbs-focus-outline-width) solid
     var(--breadcrumbs-focus-outline-color);
-  outline-offset: 2px;
+  outline-offset: var(--sys-focus-offset);
 }
 
 .breadcrumbs__item--current {
-  font-weight: var(--font-weight-medium, 500);
+  font-weight: var(--sys-text-scale-label-font-weight);
   color: var(--breadcrumbs-color-text-current);
 }
 
@@ -96,28 +96,28 @@
   color: var(--breadcrumbs-color-link);
   font-family: inherit;
   font-size: inherit;
-  font-weight: var(--font-weight-bold, 700);
+  font-weight: var(--sys-text-weight-semibold);
   padding-block: var(--breadcrumbs-padding-block);
   padding-inline: var(--breadcrumbs-padding-inline);
-  border-radius: 0.25rem;
-  letter-spacing: 0.05em;
+  border-radius: var(--sys-radius-control-sm);
+  letter-spacing: var(--sys-text-scale-label-letter-spacing);
 }
 
 .breadcrumbs__overflow-trigger:hover {
   color: var(--breadcrumbs-color-link-hover);
-  background-color: color-mix(in srgb, currentColor 5%, transparent);
+  background-color: var(--sys-surface-interactive-secondary-default);
 }
 
 .breadcrumbs__overflow-trigger:focus-visible {
   outline: var(--breadcrumbs-focus-outline-width) solid
     var(--breadcrumbs-focus-outline-color);
-  outline-offset: 2px;
+  outline-offset: var(--sys-focus-offset);
 }
 
 .breadcrumbs__overflow-menu {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: var(--sys-control-gap-compact);
   min-width: 180px;
 }
 
@@ -126,10 +126,10 @@
   border: none;
   cursor: pointer;
   text-align: left;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.25rem;
+  padding: var(--sys-control-padding-block-lg) var(--sys-control-padding-inline);
+  border-radius: var(--sys-radius-control-sm);
   font-family: inherit;
-  font-size: var(--font-size-body-md, 0.875rem);
+  font-size: var(--sys-text-scale-body-sm-font-size);
   color: var(--breadcrumbs-color-link);
   transition: background-color 150ms ease-in-out;
   text-decoration: none;
@@ -138,13 +138,14 @@
 }
 
 .breadcrumbs__overflow-item:hover:not(:disabled) {
-  background-color: color-mix(in srgb, currentColor 8%, transparent);
+  background-color: var(--sys-surface-interactive-secondary-default);
 }
 
+/* Drawn inside the item, so the menu's edge does not clip it. */
 .breadcrumbs__overflow-item:focus-visible {
   outline: var(--breadcrumbs-focus-outline-width) solid
     var(--breadcrumbs-focus-outline-color);
-  outline-offset: -2px;
+  outline-offset: calc(var(--sys-focus-width) * -1);
 }
 
 .breadcrumbs__overflow-item--disabled {
@@ -163,7 +164,7 @@
   .breadcrumbs__link:focus-visible,
   .breadcrumbs__overflow-trigger:focus-visible,
   .breadcrumbs__overflow-item:focus-visible {
-    outline: 2px solid CanvasText;
+    outline: var(--sys-focus-width) solid CanvasText;
   }
 
   .breadcrumbs__separator {

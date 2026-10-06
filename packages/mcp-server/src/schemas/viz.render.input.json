@@ -1,0 +1,1166 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/viz.render.input.json",
+  "title": "Viz render input",
+  "description": "Render a real, data-bound visualization. Supply a registered pattern identity to preserve its source data and presentation, chartType + encodings for explicit mode, or rows/datasetRef for suggest or structured-intent mode. Retired patterns are not offered; structurally unsupported patterns return OODS-V167; pattern conflicts with explicit data, intent, or source identity/presentation overrides return OODS-V166. Brand, theme and output controls remain available.",
+  "type": "object",
+  "properties": {
+    "theme": {
+      "type": "string",
+      "enum": [
+        "light",
+        "dark",
+        "hc"
+      ],
+      "default": "light",
+      "description": "CSS token theme for chart pixels, default light. HC emits the declared scope colors verbatim, including CSS system colors; their computed paints require a forced-colors browser. A renderer that substitutes undeclared paints is typed-deferred instead of returning misleading HC pixels. No server-side system-color hex palette is invented."
+    },
+    "brand": {
+      "type": "string",
+      "format": "oods-brand",
+      "default": "A",
+      "description": "CSS token brand for chart pixels. Omission resolves light/A."
+    },
+    "opacity": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Optional constant mark opacity for the five Cartesian chart families. Preserved in normalized mark options and applied to both Vega-Lite and ECharts pixels. Omission preserves renderer defaults. Unsupported for hierarchy, network and geographic chart families."
+    },
+    "rows": {
+      "type": "array",
+      "description": "Inline data rows — the primary data path. Bounded: a few hundred rows is the sweet spot. Each row is a flat object mapping field name to value.",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "minItems": 1,
+      "maxItems": 5000
+    },
+    "datasetRef": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Reference to a previously cached dataset (schemaRef-style TTL cache) to use instead of inline rows. Provide exactly one of 'rows' or 'datasetRef'."
+    },
+    "hierarchy": {
+      "description": "Hierarchy data for chartType 'treemap' or 'sunburst' (explicit-only) — used INSTEAD of rows/datasetRef + x/y encodings. A discriminated union on 'type': 'adjacency_list' (flat nodes linked by parentId; a node whose parent is missing becomes its own root) or 'nested' (a single root node with children).",
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "data"
+          ],
+          "properties": {
+            "type": {
+              "const": "adjacency_list"
+            },
+            "data": {
+              "type": "array",
+              "minItems": 1,
+              "description": "Flat node list. Each node carries id, parentId (null for roots), and a numeric value.",
+              "items": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "parentId",
+                  "value"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "parentId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "value": {
+                    "type": "number"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": true
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "data"
+          ],
+          "properties": {
+            "type": {
+              "const": "nested"
+            },
+            "data": {
+              "$ref": "#/$defs/hierarchyNode"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "sankey": {
+      "type": "object",
+      "description": "Flow data for chartType 'sankey' (explicit-only) — used INSTEAD of rows/datasetRef + x/y encodings. Nodes plus value-weighted links; every link MUST carry a numeric 'value' (the link width IS the flow magnitude) and reference existing node names.",
+      "required": [
+        "nodes",
+        "links"
+      ],
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Flow nodes. Each carries a unique 'name'; an optional numeric 'value' overrides the computed throughput.",
+          "items": {
+            "type": "object",
+            "required": [
+              "name"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "value": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "links": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Directed, value-weighted flows between nodes. Each (source, target) pair should be unique — a duplicate directed flow double-counts the link width. (Uniqueness is advisory for sankey; it is not warning-enforced.)",
+          "items": {
+            "type": "object",
+            "required": [
+              "source",
+              "target",
+              "value"
+            ],
+            "properties": {
+              "source": {
+                "type": "string",
+                "minLength": 1
+              },
+              "target": {
+                "type": "string",
+                "minLength": 1
+              },
+              "value": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "chord": {
+      "type": "object",
+      "description": "Chord data for chartType 'chord' (explicit-only) — used INSTEAD of rows/datasetRef + x/y encodings. A native ECharts ribbon diagram: a ring of category arcs connected by weighted ribbons. Sankey-shaped — nodes plus value-weighted links; every link MUST carry a numeric 'value' (the ribbon width IS the flow magnitude) and reference existing node names — a link naming a node absent from 'nodes' fails loud (OODS-V147).",
+      "required": [
+        "nodes",
+        "links"
+      ],
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Ring arcs. Each carries a unique 'name'.",
+          "items": {
+            "type": "object",
+            "required": [
+              "name"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "value": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "links": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Directed, value-weighted ribbons between ring arcs (matched to arcs by name). Directed: source→target and target→source are distinct ribbons (a reciprocal pair is valid data). Each (source, target) pair should be unique — a duplicate directed link double-counts the ribbon and is flagged with a warning (OODS-V148).",
+          "items": {
+            "type": "object",
+            "required": [
+              "source",
+              "target",
+              "value"
+            ],
+            "properties": {
+              "source": {
+                "type": "string",
+                "minLength": 1
+              },
+              "target": {
+                "type": "string",
+                "minLength": 1
+              },
+              "value": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "network": {
+      "type": "object",
+      "description": "Network data for chartType 'force_graph' (explicit-only) — used INSTEAD of rows/datasetRef + x/y encodings. Nodes (each with a unique 'id'; an optional 'group' drives category colour) and directed links (optional numeric 'value'). Every link MUST reference existing node ids — a link naming a node absent from 'nodes' fails loud (OODS-V147).",
+      "required": [
+        "nodes",
+        "links"
+      ],
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Graph nodes. Each carries a unique 'id'; optional 'group' (category) and 'value' (sizing).",
+          "items": {
+            "type": "object",
+            "required": [
+              "id"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "group": {
+                "type": "string"
+              },
+              "value": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "links": {
+          "type": "array",
+          "description": "Directed edges between nodes (an empty array is allowed for an all-isolated-nodes graph). Each 'source'/'target' MUST match a node 'id' (a dangling ref fails loud, OODS-V147). Directed: source→target and target→source are distinct edges. Each (source, target) pair should be unique — a duplicate directed edge double-counts and is flagged with a warning (OODS-V148).",
+          "items": {
+            "type": "object",
+            "required": [
+              "source",
+              "target"
+            ],
+            "properties": {
+              "source": {
+                "type": "string",
+                "minLength": 1
+              },
+              "target": {
+                "type": "string",
+                "minLength": 1
+              },
+              "value": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "geo": {
+      "type": "object",
+      "description": "Geo data for chartType 'choropleth', 'bubble_map', or 'flow_map' (explicit-only) — used INSTEAD of rows/datasetRef + x/y encodings. Carries INLINE geometry (a GeoJSON FeatureCollection in 'geojson', or a TopoJSON Topology in 'topojson' + 'topoObjectName'), an optional 'join' that merges tabular 'rows' into features by key, and the per-type encoding: 'valueField' colours regions for choropleth; 'longitudeField'/'latitudeField' (+ optional 'sizeField'/'colorField') place points for bubble_map; 'originLongitudeField'/'originLatitudeField'/'destinationLongitudeField'/'destinationLatitudeField' (+ optional 'strengthField'/'curvature') draw origin→destination ARCS for flow_map. Geometry is supplied INLINE — it is never fetched over the network. NOTE: geo specs are NOT self-contained (unlike treemap/sankey): the resolved FeatureCollection rides back on echartsSpec.__registration and the client re-registers the map by name before rendering. Geometry payloads can be large (a world atlas is ~100KB) — prefer a pre-simplified TopoJSON.",
+      "properties": {
+        "geojson": {
+          "type": "object",
+          "description": "Inline GeoJSON FeatureCollection (type:'FeatureCollection', features:[...]). Required for choropleth (the regions); optional base map for bubble_map.",
+          "additionalProperties": true
+        },
+        "topojson": {
+          "type": "object",
+          "description": "Inline TopoJSON Topology (type:'Topology'); converted to a GeoJSON FeatureCollection. Set 'topoObjectName' when the topology holds more than one object.",
+          "additionalProperties": true
+        },
+        "topoObjectName": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Which TopoJSON object to extract (defaults to the sole object when there is exactly one)."
+        },
+        "rows": {
+          "type": "array",
+          "description": "Tabular records: for choropleth, the values joined into features (paired with 'join'); for bubble_map, the points to plot.",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "maxItems": 5000
+        },
+        "join": {
+          "type": "object",
+          "description": "Choropleth join: merge each row into the feature whose 'featureProperty' equals the row's 'dataKey' value.",
+          "required": [
+            "dataKey",
+            "featureProperty"
+          ],
+          "properties": {
+            "dataKey": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Key in each tabular row."
+            },
+            "featureProperty": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Matching property name in each feature's properties."
+            }
+          },
+          "additionalProperties": false
+        },
+        "valueField": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Choropleth: the numeric field — in feature properties, or merged in via 'join' — whose value colours each region. Required for choropleth."
+        },
+        "longitudeField": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Bubble map: the row field holding longitude. Required for bubble_map."
+        },
+        "latitudeField": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Bubble map: the row field holding latitude. Required for bubble_map."
+        },
+        "sizeField": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Bubble map: optional row field driving bubble size."
+        },
+        "colorField": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Bubble map: optional row field driving bubble colour."
+        },
+        "colorScale": {
+          "type": "string",
+          "enum": [
+            "linear",
+            "quantize",
+            "quantile",
+            "threshold",
+            "ordinal",
+            "diverging"
+          ],
+          "description": "Optional colour scale (defaults to a continuous linear ramp). 'ordinal' paints discrete per-category colours; 'diverging' ramps two hues about a neutral midpoint (zero)."
+        },
+        "originLongitudeField": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Flow map: the row field holding the ORIGIN longitude. Required for flow_map."
+        },
+        "originLatitudeField": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Flow map: the row field holding the ORIGIN latitude. Required for flow_map."
+        },
+        "destinationLongitudeField": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Flow map: the row field holding the DESTINATION longitude. Required for flow_map."
+        },
+        "destinationLatitudeField": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Flow map: the row field holding the DESTINATION latitude. Required for flow_map."
+        },
+        "strengthField": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Flow map: optional numeric row field whose magnitude drives each arc's line width (via a continuous visualMap)."
+        },
+        "curvature": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Flow map: optional arc curveness (0 = straight, ~0.3 default). Bends each origin→destination line into an arc."
+        }
+      },
+      "additionalProperties": false
+    },
+    "chartType": {
+      "type": "string",
+      "enum": [
+        "bar",
+        "line",
+        "area",
+        "scatter",
+        "heatmap",
+        "treemap",
+        "sunburst",
+        "sankey",
+        "force_graph",
+        "choropleth",
+        "bubble_map",
+        "flow_map",
+        "chord"
+      ],
+      "description": "Chart type. The tabular marks (bar->MarkBar, line->MarkLine, area->MarkArea, scatter->MarkPoint, heatmap->MarkRect) bind inline rows/datasetRef with x/y encodings. The hierarchy/flow/network/geo charts are explicit-only and return an ECharts option as the primary spec (no Vega-Lite equivalent): 'treemap' and 'sunburst' take the 'hierarchy' data branch; 'sankey' takes the 'sankey' data branch (nodes + value-weighted links); 'force_graph' takes the 'network' data branch (nodes + links); 'choropleth', 'bubble_map', and 'flow_map' take the 'geo' data branch (inline geometry + per-type encoding — flow_map draws origin→destination arcs); 'chord' takes the 'chord' data branch (sankey-shaped nodes + value-weighted links — a ring of category arcs joined by ribbons whose width is the value). Omit chartType to enter suggest mode (the recommender chooses a tabular type from the inferred field profiles)."
+    },
+    "encodings": {
+      "type": "object",
+      "description": "Channel -> field bindings. Required, with at least x and y, when chartType is supplied (explicit mode).",
+      "properties": {
+        "x": {
+          "$ref": "#/$defs/encodingBinding"
+        },
+        "y": {
+          "$ref": "#/$defs/encodingBinding"
+        },
+        "color": {
+          "$ref": "#/$defs/colorEncodingBinding"
+        },
+        "size": {
+          "$ref": "#/$defs/encodingBinding"
+        },
+        "shape": {
+          "$ref": "#/$defs/encodingBinding"
+        },
+        "detail": {
+          "$ref": "#/$defs/encodingBinding"
+        }
+      },
+      "additionalProperties": false
+    },
+    "id": {
+      "type": "string",
+      "description": "Optional stable identifier for the produced spec."
+    },
+    "name": {
+      "type": "string",
+      "description": "Optional human-friendly chart title."
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional override for the synthesized accessibility description. When omitted, a non-empty description is generated from the encodings."
+    },
+    "strictFields": {
+      "type": "boolean",
+      "default": false,
+      "description": "Field/key-presence STRICT switch. When true, a referenced data key that does not resolve is surfaced in `warnings` instead of a silent confident-wrong result: (m05) an explicit tabular chart whose encoding references a field ABSENT from every (non-empty) row → OODS-V131; (m06) a choropleth corridor whose join key has NO matching map feature → OODS-V134 (per unmatched corridor). DEFAULT false keeps today's behavior byte-identical (the geo silent-drop preserved). The dashboard.render strict check (its own `strictFields`) escalates V131 to an error panel via `onPanelError`."
+    },
+    "a11yEquivalence": {
+      "type": "boolean",
+      "default": true,
+      "description": "A11y equivalence CERTIFY-AT-EMISSION switch. DEFAULT ON. The cartesian (Vega-Lite) emission is checked against the accessible-equivalence engine (validateVizEquivalenceRules): error-severity rules BLOCK (status:'error' with per-rule OODS-<rule.id> codes in `errors`), warn-severity failures surface in `warnings` as OODS-<rule.id>. Default builder output is conformant-BY-CONSTRUCTION , so generated specs pass; set false to opt out for agent-supplied non-conformant specs. Scoped to the cartesian path (the ECharts-primary scaffold has empty data and would spuriously fail data-equivalence rules)."
+    },
+    "output": {
+      "type": "object",
+      "description": "Optional render output controls. Omitting this object preserves compact, Vega-Lite-only behavior.",
+      "properties": {
+        "svg": {
+          "type": "boolean",
+          "default": false,
+          "description": "Return deterministic server-rendered SVG for the resolved chart type. Renderer failure is OODS-V165; default false keeps spec-only output."
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "SVG width override in pixels. Omit for intrinsic Vega-Lite dimensions or 600px for ECharts. An override changes svgHash. Vega-Lite may add its configured padding; render reports the actual outer SVG size."
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "SVG height override in pixels. Omit for intrinsic Vega-Lite dimensions or 400px for ECharts. An override changes svgHash. Vega-Lite may add its configured padding; render reports the actual outer SVG size."
+        },
+        "compact": {
+          "type": "boolean",
+          "default": true,
+          "description": "When true, omit the full token CSS from the response and return a tokenCssRef instead (use tokens.build to fetch it). Mirrors repl.render; keeps MCP responses within result-size caps."
+        },
+        "echarts": {
+          "type": "boolean",
+          "default": false,
+          "description": "Opt in to ALSO compiling and returning an ECharts option (echartsSpec) alongside the default Vega-Lite spec. Decision 3: Vega-Lite is compact-default, ECharts is opt-in full."
+        },
+        "includeNormalizedSpec": {
+          "type": "boolean",
+          "default": false,
+          "description": "When true, also return the intermediate NormalizedVizSpec IR alongside the compiled renderer spec (useful for debugging and round-trip)."
+        },
+        "titlePlacement": {
+          "type": "string",
+          "enum": [
+            "chart",
+            "figure"
+          ],
+          "default": "chart",
+          "description": "Where the chart's name is painted. chart (the default) paints it inside the SVG as today. figure records config.title.placement=figure on the normalized spec so the SVG carries no painted title and the figure that places the chart shows the name as its heading; the accessible name (spec.name) is unchanged and artifact.certify replays the same placement from the normalized spec. Placed charts in generated screens use figure."
+        },
+        "includeA11y": {
+          "type": "boolean",
+          "default": false,
+          "description": "When true, also return a STRUCTURED two-part text alternative (accessible data table + narrative summary) derived from the SAME data source the chart renders from — for every chart type, cartesian and non-cartesian alike. For a heatmap (MarkRect grid, where X and Y are both dimensions) the accessible narrative describes the COLOR-channel measure — its maxima/minima/total — when color is a real quantitative measure; when color is categorical or absent the narrative falls back to the Y measure. DEFAULT false keeps the wire byte-identical (only a11yDescription)."
+        },
+        "includeVegaSpec": {
+          "type": "boolean",
+          "default": false,
+          "description": "Return the exact compiled Vega spec used by the renderer, including high-contrast quantized symbol legends and output.width/height sizing adjustments. Renders the chart once even when svg is false; ECharts-primary charts are unchanged."
+        }
+      },
+      "additionalProperties": false
+    },
+    "intent": {
+      "type": "object",
+      "description": "STRUCTURED (typed, NOT free-text) visualization intent — the deterministic half of the NL→viz hand-off. Supply it INSTEAD of chartType/encodings (mutually exclusive with chartType): the named measures/dimensions drive ENCODING, `goal` + the data drive the recommender's chartType pick, an optional `chartFamily` post-filters that pick, and an optional governed `measureRef` lights the governed-measure narrative overlay (only when output.includeA11y=true). Requires `rows` (or a `datasetRef`).",
+      "required": [
+        "goal",
+        "measures",
+        "dimensions"
+      ],
+      "properties": {
+        "goal": {
+          "type": "string",
+          "enum": [
+            "comparison",
+            "trend",
+            "composition",
+            "part-to-whole",
+            "relationship",
+            "intensity",
+            "distribution"
+          ],
+          "description": "The analytical goal that steers the recommender (the live 7-value goal vocabulary)."
+        },
+        "measures": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Named measure fields (the metrics to plot). Each name MUST exist among the data rows' fields. `type` is RESERVED in v0.1 (field types infer from the data).",
+          "items": {
+            "type": "object",
+            "required": [
+              "name"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "quantitative",
+                  "temporal",
+                  "nominal",
+                  "ordinal"
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "dimensions": {
+          "type": "array",
+          "description": "Named dimension fields (the breakdowns/axes); may be empty (e.g. a two-measure scatter). Each name MUST exist among the data rows' fields. `type` is RESERVED in v0.1 (field types infer from the data).",
+          "items": {
+            "type": "object",
+            "required": [
+              "name"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "quantitative",
+                  "temporal",
+                  "nominal",
+                  "ordinal"
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "chartFamily": {
+          "type": "string",
+          "enum": [
+            "bar",
+            "line",
+            "area",
+            "scatter",
+            "heatmap"
+          ],
+          "description": "Optional preferred chart family. Post-filters the recommender ranking (NOT a scorer term) to this family, flagged lowConfidence when it was not the recommender's top pick. Constrained to the 5 TABULAR marks — the 8 explicit-only types are not recommender-rankable."
+        },
+        "measureRef": {
+          "type": "string",
+          "pattern": "^gm\\..*$",
+          "description": "Optional governed-measure reference (e.g. 'gm.revenue.total'). NARRATIVE-ONLY: it does NOT drive encoding. When set, its resolved measure context decorates the chart's a11y narrative ('unit …', 'vs target …') — but only when output.includeA11y=true. An unknown reference is a hard error (OODS-V130)."
+        }
+      },
+      "additionalProperties": false
+    },
+    "pattern": {
+      "type": "string",
+      "enum": [
+        "pattern:viz:bubble-distribution",
+        "pattern:viz:correlation-matrix",
+        "pattern:viz:correlation-scatter",
+        "pattern:viz:detail-overview-bar",
+        "pattern:viz:diverging-bar",
+        "pattern:viz:drilldown-stacked-bar",
+        "pattern:viz:facet-small-multiples-line",
+        "pattern:viz:facet-target-band",
+        "pattern:viz:focus-context-line",
+        "pattern:viz:grouped-bar",
+        "pattern:viz:histogram",
+        "pattern:viz:layered-line-area",
+        "pattern:viz:multi-series-line",
+        "pattern:viz:running-total-area",
+        "pattern:viz:simple-bar",
+        "pattern:viz:sparkline-grid",
+        "pattern:viz:stacked-100-bar",
+        "pattern:viz:stacked-area-projection",
+        "pattern:viz:stacked-bar",
+        "pattern:viz:target-band-line",
+        "pattern:viz:time-grid-heatmap",
+        "pattern:viz:waterfall"
+      ],
+      "description": "Exact versioned pattern source identity. Renderable patterns preserve source rows, identity, presentation and accessibility metadata. Retired identities are not offered (their reasons are in the viz taxonomy). Structurally unsupported scenes return OODS-V167. Static SVG shows the default selection state (OODS-V175). Cannot be combined with chartType, encodings, rows, datasetRef, intent, hierarchy, sankey, chord, network, geo, id, name, description or opacity (OODS-V166)."
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "not": {
+          "required": [
+            "pattern"
+          ]
+        }
+      },
+      "then": {
+        "$ref": "#/$defs/nonPatternInput"
+      }
+    }
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "hierarchyNode": {
+      "type": "object",
+      "description": "A nested-hierarchy node: a name, an optional numeric value, and optional children (recursive). Extra fields are preserved for tooltips.",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "number"
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/hierarchyNode"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "encodingBinding": {
+      "description": "An encoding binding: either a bare field-name string, or an object with the field plus optional aggregate/scale/timeUnit/sort/title.",
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "object",
+          "required": [
+            "field"
+          ],
+          "properties": {
+            "field": {
+              "type": "string",
+              "minLength": 1
+            },
+            "aggregate": {
+              "type": "string",
+              "enum": [
+                "sum",
+                "count",
+                "average",
+                "median",
+                "min",
+                "max",
+                "distinct"
+              ]
+            },
+            "scale": {
+              "type": "string",
+              "enum": [
+                "linear",
+                "temporal",
+                "log",
+                "sqrt",
+                "band",
+                "point",
+                "diverging"
+              ]
+            },
+            "type": {
+              "type": "string",
+              "description": "Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference. Overrides the inferred field type.",
+              "enum": [
+                "quantitative",
+                "temporal",
+                "ordinal",
+                "nominal"
+              ]
+            },
+            "timeUnit": {
+              "type": "string",
+              "enum": [
+                "year",
+                "quarter",
+                "month",
+                "week",
+                "day",
+                "hour",
+                "minute",
+                "second"
+              ]
+            },
+            "sort": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "none",
+                    "ascending",
+                    "descending"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "field",
+                    "order"
+                  ],
+                  "properties": {
+                    "field": {
+                      "type": "string"
+                    },
+                    "order": {
+                      "type": "string",
+                      "enum": [
+                        "ascending",
+                        "descending"
+                      ]
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "title": {
+              "type": "string"
+            },
+            "format": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64,
+              "description": "Label format of this channel's axis (x, y) or legend: a d3-format specifier such as \"$,f\" or \",.0f\" (d3-time-format for a temporal field). \"$\" prints the currency symbol: the currency's, else $. Without a precision, labels take the precision of the tick step, so neighbouring ticks never print the same text. Carried in the normalized spec, so artifact.certify replays it."
+            },
+            "currency": {
+              "type": "string",
+              "pattern": "^[A-Za-z]{3}$",
+              "description": "ISO 4217 code of the amounts this channel encodes, for example EUR. The labels print its en-US symbol where the format has \"$\" (EUR €, GBP £); without a format they read \"$,f\" ($12,000). One currency per chart."
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "colorEncodingBinding": {
+      "description": "A color-channel encoding binding: like encodingBinding, plus an optional explicit `range` (hex colors) that overrides the baked OODS categorical palette on a nominal/ordinal color scale. `range` is only valid on the color channel.",
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "object",
+          "required": [
+            "field"
+          ],
+          "properties": {
+            "field": {
+              "type": "string",
+              "minLength": 1
+            },
+            "aggregate": {
+              "type": "string",
+              "enum": [
+                "sum",
+                "count",
+                "average",
+                "median",
+                "min",
+                "max",
+                "distinct"
+              ]
+            },
+            "scale": {
+              "type": "string",
+              "enum": [
+                "linear",
+                "temporal",
+                "log",
+                "sqrt",
+                "band",
+                "point",
+                "diverging"
+              ]
+            },
+            "type": {
+              "type": "string",
+              "description": "Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference. Overrides the inferred field type.",
+              "enum": [
+                "quantitative",
+                "temporal",
+                "ordinal",
+                "nominal"
+              ]
+            },
+            "timeUnit": {
+              "type": "string",
+              "enum": [
+                "year",
+                "quarter",
+                "month",
+                "week",
+                "day",
+                "hour",
+                "minute",
+                "second"
+              ]
+            },
+            "sort": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "none",
+                    "ascending",
+                    "descending"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "field",
+                    "order"
+                  ],
+                  "properties": {
+                    "field": {
+                      "type": "string"
+                    },
+                    "order": {
+                      "type": "string",
+                      "enum": [
+                        "ascending",
+                        "descending"
+                      ]
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "title": {
+              "type": "string"
+            },
+            "range": {
+              "type": "array",
+              "description": "Explicit hex colors for a nominal/ordinal color scale. Overrides the baked OODS categorical palette so an agent can supply its own scale (e.g. a 2-color presence scale). Applied in array order to the distinct series; a shorter range recycles (Vega domain[i]->range[i] mod len). Cartesian color only.",
+              "items": {
+                "type": "string",
+                "pattern": "^#(?:[0-9a-fA-F]{3}){1,2}$"
+              },
+              "minItems": 2
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "nonPatternInput": {
+      "oneOf": [
+        {
+          "required": [
+            "rows"
+          ]
+        },
+        {
+          "required": [
+            "datasetRef"
+          ]
+        },
+        {
+          "required": [
+            "hierarchy"
+          ]
+        },
+        {
+          "required": [
+            "sankey"
+          ]
+        },
+        {
+          "required": [
+            "chord"
+          ]
+        },
+        {
+          "required": [
+            "network"
+          ]
+        },
+        {
+          "required": [
+            "geo"
+          ]
+        }
+      ],
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "chartType"
+            ],
+            "properties": {
+              "chartType": {
+                "enum": [
+                  "bar",
+                  "line",
+                  "area",
+                  "scatter",
+                  "heatmap"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "encodings"
+            ],
+            "properties": {
+              "encodings": {
+                "required": [
+                  "x",
+                  "y"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "chartType"
+            ],
+            "properties": {
+              "chartType": {
+                "enum": [
+                  "treemap",
+                  "sunburst"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "hierarchy"
+            ]
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "chartType"
+            ],
+            "properties": {
+              "chartType": {
+                "const": "sankey"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "sankey"
+            ]
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "chartType"
+            ],
+            "properties": {
+              "chartType": {
+                "const": "force_graph"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "network"
+            ]
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "chartType"
+            ],
+            "properties": {
+              "chartType": {
+                "const": "choropleth"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "geo"
+            ],
+            "properties": {
+              "geo": {
+                "required": [
+                  "valueField"
+                ],
+                "anyOf": [
+                  {
+                    "required": [
+                      "geojson"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "topojson"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "chartType"
+            ],
+            "properties": {
+              "chartType": {
+                "const": "bubble_map"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "geo"
+            ],
+            "properties": {
+              "geo": {
+                "required": [
+                  "longitudeField",
+                  "latitudeField",
+                  "rows"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "chartType"
+            ],
+            "properties": {
+              "chartType": {
+                "const": "flow_map"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "geo"
+            ],
+            "properties": {
+              "geo": {
+                "required": [
+                  "originLongitudeField",
+                  "originLatitudeField",
+                  "destinationLongitudeField",
+                  "destinationLatitudeField",
+                  "rows"
+                ],
+                "anyOf": [
+                  {
+                    "required": [
+                      "geojson"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "topojson"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "chartType"
+            ],
+            "properties": {
+              "chartType": {
+                "const": "chord"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "chord"
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,1017 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/design.preview.output.json",
+  "title": "Design preview output",
+  "description": "The URL of the composition version running in the preview host, one per compiled framework, with its lineage (composition, version, parent, operation, head), the schema hash and the compiled module digests. An unreachable host throws OODS-N021 before any record is written; an unknown composition or version throws OODS-N022. action compare returns the what-changed between two versions instead. action edit records a new version from one operation and opens it; action versions lists a composition's versions and the accepted one; action accept records a version as accepted and returns the acceptance.",
+  "anyOf": [
+    {
+      "type": "object",
+      "required": [
+        "status",
+        "action",
+        "compositionId",
+        "version",
+        "parentVersion",
+        "operation",
+        "head",
+        "schemaHash",
+        "object",
+        "context",
+        "previewUrl",
+        "previews",
+        "host",
+        "brand",
+        "theme",
+        "recordPath",
+        "durationMs",
+        "measured",
+        "editable"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "warnings": {"type": "array", "description": "Advisory warnings for unmet team component contract obligations; preview remains available.", "items": {"type": "object", "required": ["code", "component", "message"], "additionalProperties": false, "properties": {"code": {"type": "string"}, "component": {"type": "string"}, "message": {"type": "string"}}}},
+        "componentContracts": {"type": "array", "description": "Advisory shared-scenario component reports. Each declared obligation is met, unmet or not checked with a reason; browser availability never blocks generation.", "items": {"type": "object", "required": ["schemaVersion", "framework", "mappingId", "component", "source", "contractVersion", "scenarioId", "obligations", "summary"], "additionalProperties": false, "properties": {"schemaVersion": {"const": "1"}, "framework": {"enum": ["react", "vue"]}, "mappingId": {"type": "string"}, "component": {"type": "string"}, "contractVersion": {"type": "string"}, "scenarioId": {"type": ["string", "null"]}, "source": {"type": "object", "required": ["export"], "additionalProperties": false, "properties": {"package": {"type": "string"}, "export": {"type": "string"}, "version": {"type": "string"}, "packageContentHash": {"type": "string"}, "shadcn": {"type": "object", "additionalProperties": false, "required": ["module", "file", "closureHash"], "properties": {"module": {"type": "string"}, "file": {"type": "string"}, "closureHash": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"}}}}, "oneOf": [{"required": ["package", "version"], "not": {"required": ["shadcn"]}}, {"required": ["shadcn"], "not": {"anyOf": [{"required": ["package"]}, {"required": ["version"]}]}}]}, "checkedAt": {"type": "string"}, "browser": {"type": "string"}, "adapterContentHash": {"type": "string"}, "contractContentHash": {"type": "string"}, "obligations": {"type": "array", "items": {"type": "object", "required": ["id", "requirement", "status", "reason"], "additionalProperties": false, "properties": {"id": {"type": "string"}, "requirement": {"type": "string"}, "status": {"enum": ["met", "unmet", "not-checked"]}, "reason": {"type": "string", "minLength": 1}}}}, "summary": {"type": "object", "required": ["met", "unmet", "not-checked"], "additionalProperties": false, "properties": {"met": {"type": "integer", "minimum": 0}, "unmet": {"type": "integer", "minimum": 0}, "not-checked": {"type": "integer", "minimum": 0}}}}}},
+        "status": {
+          "const": "ok"
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "render",
+            "edit"
+          ]
+        },
+        "compositionId": {
+          "type": "string",
+          "pattern": "^cmp-[a-f0-9]{12}$"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "parentVersion": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "operation": {
+          "type": "string",
+          "enum": [
+            "compose",
+            "recompose",
+            "reorder-region",
+            "swap-slot",
+            "reorder-fields",
+            "seed"
+          ]
+        },
+        "head": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "schemaHash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$",
+          "description": "Canonical hash of the version's composed schema."
+        },
+        "object": {
+          "type": "string"
+        },
+        "context": {
+          "type": "string"
+        },
+        "previewUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "The first compiled framework's page with lineage and controls; open it in a browser."
+        },
+        "previews": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 2,
+          "items": {
+            "type": "object",
+            "required": [
+              "framework",
+              "url",
+              "appUrl",
+              "moduleUrl",
+              "artifactContentHash",
+              "generatedFor",
+              "compiled"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "framework": {
+                "type": "string",
+                "enum": [
+                  "react",
+                  "vue"
+                ]
+              },
+              "url": {
+                "type": "string",
+                "format": "uri",
+                "description": "The page with the lineage panel and the brand, theme and width controls around the running app."
+              },
+              "appUrl": {
+                "type": "string",
+                "format": "uri",
+                "description": "The bare running app the page frames; it re-mounts on brand and theme messages."
+              },
+              "moduleUrl": {
+                "type": "string",
+                "format": "uri",
+                "description": "The artifact compiled to one ESM module; fetched once here so a compile failure fails this call."
+              },
+              "artifactContentHash": {
+                "type": "string",
+                "pattern": "^sha256:[a-f0-9]{64}$"
+              },
+              "generatedFor": {
+                "type": "object",
+                "required": ["brand", "theme", "chartScoped"],
+                "additionalProperties": false,
+                "description": "The brand and theme the served artifact was generated for. A version that places a chart renders its SVG per scope: asking for another brand or theme generates and certifies for that scope (chartScoped true), so generatedFor equals the mounted scope; a version without a placed chart mounts the same artifact in every scope.",
+                "properties": {
+                  "brand": { "type": "string", "format": "oods-brand" },
+                  "theme": { "type": "string", "enum": ["light", "dark", "hc"] },
+                  "chartScoped": { "type": "boolean" }
+                }
+              },
+              "compiled": {
+                "type": "object",
+                "required": [
+                  "bytes",
+                  "sha256"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "bytes": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "sha256": {
+                    "type": "string",
+                    "pattern": "^sha256:[a-f0-9]{64}$"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "host": {
+          "type": "object",
+          "required": [
+            "url",
+            "port",
+            "compositionsDir"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "url": {
+              "type": "string",
+              "format": "uri"
+            },
+            "port": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 65535
+            },
+            "compositionsDir": {
+              "type": "string",
+              "description": "Where the version files live and where the host reads them; beside the saved-schema store."
+            }
+          }
+        },
+        "brand": {
+          "type": "string",
+          "format": "oods-brand"
+        },
+        "theme": {
+          "type": "string",
+          "enum": [
+            "light",
+            "dark",
+            "hc"
+          ]
+        },
+        "recordPath": {
+          "type": "string"
+        },
+        "durationMs": {
+          "type": "number",
+          "minimum": 0
+        },
+        "measured": {
+          "type": "object",
+          "required": [
+            "validation",
+            "charts",
+            "axe",
+            "notMeasured"
+          ],
+          "additionalProperties": false,
+          "description": "What this version carries as measured and what it does not: the code.generate validation receipt per framework, artifact.certify for every placed chart, axe-core per framework and brand/theme scope run inside the running page. The page's measurement panel says the same; nothing is claimed that did not run.",
+          "properties": {
+            "validation": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "react",
+                  "vue"
+                ]
+              },
+              "description": "Frameworks whose generation receipt is stored."
+            },
+            "charts": {
+              "type": "object",
+              "required": [
+                "placed",
+                "conformant",
+                "notConformant",
+                "uncertified",
+                "scopes"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "placed": {
+                  "type": "integer"
+                },
+                "scopes": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "brand/theme scopes the placed charts are certified for: the version's own first, then every scope a brand or theme switch generated (empty until the charts are certified)."
+                },
+                "conformant": {
+                  "type": "integer"
+                },
+                "notConformant": {
+                  "type": "integer"
+                },
+                "uncertified": {
+                  "type": "integer"
+                }
+              }
+            },
+            "axe": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "framework:brand/theme scopes with axe-core results stored, e.g. react:A/light."
+            },
+            "notMeasured": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Measurements this version does not carry (validation:<framework>, charts, axe:<framework>:<brand>/<theme>)."
+            }
+          }
+        },
+        "edit": {
+          "type": "object",
+          "required": [
+            "operation",
+            "parentVersion"
+          ],
+          "additionalProperties": false,
+          "description": "action edit only: the operation that produced this version and the version it derives from.",
+          "properties": {
+            "operation": {
+              "type": "string",
+              "enum": [
+                "reorder-region",
+                "swap-slot",
+                "reorder-fields",
+                "seed"
+              ]
+            },
+            "parentVersion": {
+              "type": "integer"
+            }
+          }
+        },
+        "editable": {
+          "type": "object",
+          "required": [
+            "regions",
+            "slots",
+            "fields",
+            "seed"
+          ],
+          "additionalProperties": false,
+          "description": "What an edit can name on this version: the regions in order, each slot with the composer's candidates, the field order per region, the current seed.",
+          "properties": {
+            "regions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "component"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "component": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "slots": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "slotName",
+                  "selectedComponent",
+                  "candidates"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "slotName": {
+                    "type": "string"
+                  },
+                  "selectedComponent": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "candidates": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "fields": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "description": "Region id → field names in their current order."
+            },
+            "seed": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "object",
+      "required": [
+        "status",
+        "action",
+        "left",
+        "right",
+        "compareUrl",
+        "diffUrl",
+        "frameworks",
+        "identical",
+        "differenceCount",
+        "diff",
+        "host",
+        "durationMs"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "const": "ok"
+        },
+        "action": {
+          "const": "compare"
+        },
+        "left": {
+          "type": "object",
+          "required": [
+            "compositionId",
+            "version",
+            "schemaHash",
+            "parentVersion",
+            "operation",
+            "object",
+            "context"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "compositionId": {
+              "type": "string"
+            },
+            "version": {
+              "type": "integer"
+            },
+            "schemaHash": {
+              "type": "string"
+            },
+            "parentVersion": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "operation": {
+              "type": "string"
+            },
+            "object": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "context": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "right": {
+          "type": "object",
+          "required": [
+            "compositionId",
+            "version",
+            "schemaHash",
+            "parentVersion",
+            "operation",
+            "object",
+            "context"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "compositionId": {
+              "type": "string"
+            },
+            "version": {
+              "type": "integer"
+            },
+            "schemaHash": {
+              "type": "string"
+            },
+            "parentVersion": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "operation": {
+              "type": "string"
+            },
+            "object": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "context": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "compareUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "Both running apps side by side with the what-changed and both measurement panels."
+        },
+        "diffUrl": {
+          "type": "string",
+          "format": "uri"
+        },
+        "frameworks": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "react",
+              "vue"
+            ]
+          },
+          "description": "Frameworks both versions carry, shown side by side."
+        },
+        "identical": {
+          "type": "boolean"
+        },
+        "differenceCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "diff": {
+          "type": "object",
+          "required": [
+            "left",
+            "right",
+            "identical",
+            "differenceCount",
+            "summary",
+            "differences"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "left": {
+              "type": "object",
+              "required": [
+                "compositionId",
+                "version",
+                "schemaHash",
+                "parentVersion",
+                "operation",
+                "object",
+                "context"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "compositionId": {
+                  "type": "string"
+                },
+                "version": {
+                  "type": "integer"
+                },
+                "schemaHash": {
+                  "type": "string"
+                },
+                "parentVersion": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "operation": {
+                  "type": "string"
+                },
+                "object": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "context": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "right": {
+              "type": "object",
+              "required": [
+                "compositionId",
+                "version",
+                "schemaHash",
+                "parentVersion",
+                "operation",
+                "object",
+                "context"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "compositionId": {
+                  "type": "string"
+                },
+                "version": {
+                  "type": "integer"
+                },
+                "schemaHash": {
+                  "type": "string"
+                },
+                "parentVersion": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "operation": {
+                  "type": "string"
+                },
+                "object": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "context": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "identical": {
+              "type": "boolean"
+            },
+            "differenceCount": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "summary": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer"
+              }
+            },
+            "differences": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "category",
+                  "field",
+                  "before",
+                  "after",
+                  "note"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "category": {
+                    "type": "string",
+                    "enum": [
+                      "regions",
+                      "slots",
+                      "nodes",
+                      "props",
+                      "fieldOrder",
+                      "seed",
+                      "artifacts",
+                      "definition"
+                    ]
+                  },
+                  "field": {
+                    "type": "string"
+                  },
+                  "before": {},
+                  "after": {},
+                  "note": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "description": "The structural what-changed the preview host computes over the two version records: regions added/removed/reordered, slot components, nodes including slot subtrees, props of matched nodes, field order per region, the seed, and artifact files whose hash moved per framework both versions carry. Definition rows name objectSchema fields added, removed or changed, with a schemaHash fallback for unitemized changes. Identical versions have equal schema hashes and zero differences."
+        },
+        "host": {
+          "type": "object",
+          "required": [
+            "url",
+            "port",
+            "compositionsDir"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "url": {
+              "type": "string",
+              "format": "uri"
+            },
+            "port": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 65535
+            },
+            "compositionsDir": {
+              "type": "string",
+              "description": "Where the version files live and where the host reads them; beside the saved-schema store."
+            }
+          }
+        },
+        "durationMs": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    {
+      "type": "object",
+      "required": [
+        "status",
+        "action",
+        "compositionId",
+        "latest",
+        "versions",
+        "accepted",
+        "host",
+        "durationMs"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "const": "ok"
+        },
+        "action": {
+          "const": "versions"
+        },
+        "compositionId": {
+          "type": "string"
+        },
+        "latest": {
+          "type": "integer"
+        },
+        "versions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "version",
+              "parentVersion",
+              "operation",
+              "createdAt",
+              "schemaHash",
+              "head",
+              "artifacts",
+              "url"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "version": {
+                "type": "integer"
+              },
+              "parentVersion": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "operation": {
+                "type": "string"
+              },
+              "createdAt": {
+                "type": "string"
+              },
+              "schemaHash": {
+                "type": "string"
+              },
+              "head": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "artifacts": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "url": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "accepted": {
+          "description": "The standing acceptance (the last one in accepted.json), or null when no version was accepted.",
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "required": [
+                "version",
+                "acceptedAt",
+                "acceptances"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "version": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "acceptedAt": {
+                  "type": "string"
+                },
+                "acceptances": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            }
+          ]
+        },
+        "host": {
+          "type": "object",
+          "required": [
+            "url",
+            "port",
+            "compositionsDir"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "url": {
+              "type": "string",
+              "format": "uri"
+            },
+            "port": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 65535
+            },
+            "compositionsDir": {
+              "type": "string",
+              "description": "Where the version files live and where the host reads them; beside the saved-schema store."
+            }
+          }
+        },
+        "durationMs": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    {
+      "type": "object",
+      "required": [
+        "status",
+        "action",
+        "compositionId",
+        "version",
+        "parentVersion",
+        "operation",
+        "object",
+        "context",
+        "accepted",
+        "acceptances",
+        "acceptedPath",
+        "previewUrl",
+        "host",
+        "durationMs"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "const": "ok"
+        },
+        "action": {
+          "const": "accept"
+        },
+        "compositionId": {
+          "type": "string",
+          "pattern": "^cmp-[a-f0-9]{12}$"
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "parentVersion": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "operation": {
+          "type": "string"
+        },
+        "object": {
+          "type": "string"
+        },
+        "context": {
+          "type": "string"
+        },
+        "accepted": {
+          "type": "object",
+          "description": "The acceptance just recorded in accepted.json.",
+          "required": [
+            "version",
+            "acceptedAt",
+            "head",
+            "versionHead",
+            "schemaHash",
+            "measurements",
+            "scopeCharts",
+            "measured",
+            "supersedes"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "version": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "acceptedAt": {
+              "type": "string"
+            },
+            "head": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The OODS Foundry head that recorded the acceptance; null from a source run."
+            },
+            "versionHead": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The OODS Foundry head that produced the version."
+            },
+            "schemaHash": {
+              "type": "string"
+            },
+            "measurements": {
+              "type": "object",
+              "description": "The version's stored measurements at acceptance: generation receipts, placed-chart certifications and axe-core per framework and scope."
+            },
+            "scopeCharts": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array"
+              },
+              "description": "Placed-chart certifications stored for scopes other than the version's own, keyed brand/theme."
+            },
+            "measured": {
+              "type": "object",
+              "description": "The summary a render result gives as measured, taken at acceptance."
+            },
+            "supersedes": {
+              "description": "The acceptance this one supersedes; null for the first.",
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "version",
+                    "acceptedAt"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "version": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "acceptedAt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "acceptances": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "How many acceptances accepted.json holds now; the last is the standing one."
+        },
+        "acceptedPath": {
+          "type": "string"
+        },
+        "previewUrl": {
+          "type": "string",
+          "format": "uri"
+        },
+        "host": {
+          "type": "object",
+          "required": [
+            "url",
+            "port",
+            "compositionsDir"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "url": {
+              "type": "string",
+              "format": "uri"
+            },
+            "port": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 65535
+            },
+            "compositionsDir": {
+              "type": "string",
+              "description": "Where the version files live and where the host reads them; beside the saved-schema store."
+            }
+          }
+        },
+        "durationMs": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    }
+  ]
+}

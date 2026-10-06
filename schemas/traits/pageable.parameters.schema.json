@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/07/schema",
+  "$id": "https://trait-engine.dev/schemas/traits/pageable",
+  "title": "Pageable Trait Parameters",
+  "description": "Controls pagination behavior in list and collection views.",
+  "type": "object",
+  "properties": {
+    "defaultPageSize": {
+      "type": "integer",
+      "description": "Default number of items per page.",
+      "minimum": 1,
+      "maximum": 500,
+      "default": 25
+    },
+    "pageSizeOptions": {
+      "type": "array",
+      "description": "Available page size choices displayed as a dropdown. Must be sorted ascending.",
+      "items": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "default": [10, 25, 50, 100]
+    },
+    "showPageSizeSelector": {
+      "type": "boolean",
+      "description": "Whether to display the page size dropdown selector.",
+      "default": true
+    },
+    "showGotoPage": {
+      "type": "boolean",
+      "description": "Whether to display a go-to-page input for direct page navigation.",
+      "default": false
+    },
+    "showItemRange": {
+      "type": "boolean",
+      "description": "Whether to display the item range indicator (e.g., Showing 26-50 of 312).",
+      "default": true
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "defaultPageSize": 25,
+      "showPageSizeSelector": true
+    },
+    {
+      "defaultPageSize": 50,
+      "pageSizeOptions": [25, 50, 100, 200],
+      "showGotoPage": true,
+      "showItemRange": true
+    }
+  ]
+}

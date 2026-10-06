@@ -7,7 +7,7 @@ import {
   type StatusPresentation,
   type StatusTone,
 } from '../statusables/statusRegistry.js';
-import { resolveStatusGlyph } from '../statusables/statusGlyph.js';
+import { resolveStatusMark } from '../statusables/statusGlyph.js';
 
 type ToastElement = React.ElementRef<'div'>;
 
@@ -114,7 +114,7 @@ export const Toast = React.forwardRef<ToastElement, ToastProps>(
     const palette = getToneTokenSet(tone);
     const resolvedShowIcon = showIcon ?? Boolean(icon || presentation?.iconName);
     const glyph =
-      icon ?? (resolvedShowIcon ? resolveStatusGlyph(presentation?.iconName) : undefined);
+      icon ?? (resolvedShowIcon ? resolveStatusMark(presentation?.iconName) : undefined);
     const heading = title ?? presentation?.label ?? status;
     const detail = description ?? presentation?.description ?? children;
 

@@ -3,58 +3,157 @@
     "surface": {
       "canvas": {
         "$type": "color",
-        "$value": "{ref.color.neutral.50}",
-        "$description": "Primary page background for Theme 0."
+        "$value": "oklch(1 0 286)",
+        "$description": "theme.surface.canvas; generated from palette/seeds.json by generate-palette.ts.",
+        "$extensions": {
+          "ods": {
+            "fallback": "#FFFFFF"
+          }
+        }
       },
       "raised": {
         "$type": "color",
-        "$value": "{ref.color.neutral.100}",
-        "$description": "Raised card surface with soft separation."
+        "$value": "oklch(1 0 286)",
+        "$description": "theme.surface.raised; generated from palette/seeds.json by generate-palette.ts.",
+        "$extensions": {
+          "ods": {
+            "fallback": "#FFFFFF"
+          }
+        }
       },
       "subtle": {
         "$type": "color",
-        "$value": "{ref.color.neutral.200}",
-        "$description": "Secondary panel surface tone."
-      },
-      "backdrop": {
-        "$type": "color",
-        "$value": "{ref.color.neutral.900}",
-        "$description": "Backdrop scrim for overlays."
-      },
-      "inverse": {
-        "$type": "color",
-        "$value": "{ref.color.neutral.900}",
-        "$description": "Inverse surface for dark elements on light UI."
+        "$value": "oklch(0.97 0 286)",
+        "$description": "theme.surface.subtle; generated from palette/seeds.json by generate-palette.ts.",
+        "$extensions": {
+          "ods": {
+            "fallback": "#F5F5F5"
+          }
+        }
       },
       "disabled": {
         "$type": "color",
-        "$value": "{ref.color.neutral.200}",
-        "$description": "Surface colour for disabled components."
+        "$value": "oklch(0.97 0 286)",
+        "$description": "theme.surface.disabled; generated from palette/seeds.json by generate-palette.ts.",
+        "$extensions": {
+          "ods": {
+            "fallback": "#F5F5F5"
+          }
+        }
+      },
+      "backdrop": {
+        "$type": "color",
+        "$value": "oklch(0.145 0 286)",
+        "$description": "theme.surface.backdrop; generated from palette/seeds.json by generate-palette.ts.",
+        "$extensions": {
+          "ods": {
+            "fallback": "#0A0A0A"
+          }
+        }
+      },
+      "inverse": {
+        "$type": "color",
+        "$value": "oklch(0.145 0 286)",
+        "$description": "theme.surface.inverse; generated from palette/seeds.json by generate-palette.ts.",
+        "$extensions": {
+          "ods": {
+            "fallback": "#0A0A0A"
+          }
+        }
       },
       "interactive": {
         "primary": {
           "default": {
             "$type": "color",
-            "$value": "{ref.color.primary.500}",
-            "$description": "Primary action surface default state."
+            "$value": "oklch(0.145 0 286)",
+            "$description": "theme.surface.interactive.primary.default; generated from palette/seeds.json by generate-palette.ts.",
+            "$extensions": {
+              "ods": {
+                "fallback": "#0A0A0A"
+              }
+            }
           },
           "hover": {
             "$type": "color",
-            "$value": "{ref.color.primary.600}",
-            "$description": "Primary action hover surface.",
+            "$value": "oklch(0.3361 0 286)",
+            "$description": "theme.surface.interactive.primary.hover; generated from palette/seeds.json by generate-palette.ts.",
             "$extensions": {
               "ods": {
-                "relative": "oklch(from var(--theme-surface-interactive-primary-default) calc(l - 0.10) calc(c + 0.015) h)"
+                "fallback": "#373737"
               }
             }
           },
           "pressed": {
             "$type": "color",
-            "$value": "{ref.color.primary.700}",
-            "$description": "Primary action pressed surface.",
+            "$value": "oklch(0.2626 0 286)",
+            "$description": "theme.surface.interactive.primary.pressed; generated from palette/seeds.json by generate-palette.ts.",
             "$extensions": {
               "ods": {
-                "relative": "oklch(from var(--theme-surface-interactive-primary-default) calc(l - 0.14) calc(c + 0.025) h)"
+                "fallback": "#252525"
+              }
+            }
+          }
+        },
+        "secondary": {
+          "default": {
+            "$type": "color",
+            "$value": "oklch(0.97 0 286)",
+            "$description": "theme.surface.interactive.secondary.default; generated from palette/seeds.json by generate-palette.ts.",
+            "$extensions": {
+              "ods": {
+                "fallback": "#F5F5F5"
+              }
+            }
+          },
+          "hover": {
+            "$type": "color",
+            "$value": "oklch(0.95 0 286)",
+            "$description": "theme.surface.interactive.secondary.hover; generated from palette/seeds.json by generate-palette.ts.",
+            "$extensions": {
+              "ods": {
+                "fallback": "#EEEEEE"
+              }
+            }
+          },
+          "pressed": {
+            "$type": "color",
+            "$value": "oklch(0.935 0 286)",
+            "$description": "theme.surface.interactive.secondary.pressed; generated from palette/seeds.json by generate-palette.ts.",
+            "$extensions": {
+              "ods": {
+                "fallback": "#E9E9E9"
+              }
+            }
+          }
+        },
+        "destructive": {
+          "default": {
+            "$type": "color",
+            "$value": "oklch(0.590577 0.193344 23)",
+            "$description": "theme.surface.interactive.destructive.default; generated from palette/seeds.json by generate-palette.ts.",
+            "$extensions": {
+              "ods": {
+                "fallback": "#D83B43"
+              }
+            }
+          },
+          "hover": {
+            "$type": "color",
+            "$value": "oklch(0.560577 0.194665 24.00731)",
+            "$description": "theme.surface.interactive.destructive.hover; generated from palette/seeds.json by generate-palette.ts.",
+            "$extensions": {
+              "ods": {
+                "fallback": "#CE2F37"
+              }
+            }
+          },
+          "pressed": {
+            "$type": "color",
+            "$value": "oklch(0.530577 0.194665 24.00731)",
+            "$description": "theme.surface.interactive.destructive.pressed; generated from palette/seeds.json by generate-palette.ts.",
+            "$extensions": {
+              "ods": {
+                "fallback": "#C3222E"
               }
             }
           }
@@ -64,13 +163,43 @@
     "border": {
       "subtle": {
         "$type": "color",
-        "$value": "{ref.color.neutral.200}",
-        "$description": "Subtle border colour for cards and panels."
+        "$value": "oklch(0.922 0 286)",
+        "$description": "theme.border.subtle; generated from palette/seeds.json by generate-palette.ts.",
+        "$extensions": {
+          "ods": {
+            "fallback": "#E5E5E5"
+          }
+        }
       },
       "strong": {
         "$type": "color",
-        "$value": "{ref.color.neutral.300}",
-        "$description": "Strong border for dividers and outlines."
+        "$value": "oklch(0.871 0 286)",
+        "$description": "theme.border.strong; generated from palette/seeds.json by generate-palette.ts.",
+        "$extensions": {
+          "ods": {
+            "fallback": "#D4D4D4"
+          }
+        }
+      },
+      "interactive": {
+        "$type": "color",
+        "$value": "oklch(0.643 0 286)",
+        "$description": "theme.border.interactive; generated from palette/seeds.json by generate-palette.ts.",
+        "$extensions": {
+          "ods": {
+            "fallback": "#8D8D8D"
+          }
+        }
+      },
+      "interactive-hover": {
+        "$type": "color",
+        "$value": "oklch(0.545 0 286)",
+        "$description": "theme.border.interactive-hover; generated from palette/seeds.json by generate-palette.ts.",
+        "$extensions": {
+          "ods": {
+            "fallback": "#707070"
+          }
+        }
       }
     }
   }

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://oods.dev/viz-spec/v1",
+  "$schema": "https://oods-foundry.com/viz-spec/v1",
   "id": "pattern:viz:drilldown-stacked-bar",
   "name": "Quarterly pipeline drill-down",
   "data": {
@@ -48,8 +48,7 @@
       "select": { "type": "point", "on": "click", "fields": ["quarter", "region", "stage"] },
       "rule": {
         "bindTo": "tooltip",
-        "fields": ["region", "quarter", "stage", "value"],
-        "else": { "value": null }
+        "fields": ["region", "quarter", "stage", "value"]
       }
     }
   ],
@@ -64,7 +63,7 @@
   },
   "portability": {
     "fallbackType": "table",
-    "preferredRenderer": "echarts",
+    "preferredRenderer": "vega-lite",
     "tableColumnOrder": ["region", "quarter", "stage", "value"]
   }
 }

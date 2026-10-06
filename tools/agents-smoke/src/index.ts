@@ -34,7 +34,7 @@ type BridgeError = {
 
 type HttpMethod = 'GET' | 'POST';
 
-const DEFAULT_TOOL = 'diag.snapshot';
+const DEFAULT_TOOL = 'health';
 const DEFAULT_TIMEOUT_MS = 120_000;
 
 function parseArgs(): { tool: string; apply: boolean } {
@@ -152,8 +152,27 @@ function formatDetails(details: RunSuccess['artifactsDetail']): string {
   return lines.join('\n');
 }
 
+function normalizeToolName(tool: string): string {
+  return tool.replace(/\./g, '_');
+}
+
+function buildToolInput(tool: string, apply: boolean): Record<string, unknown> {
+  const input: Record<string, unknown> = {};
+
+  if (normalizeToolName(tool) === 'structuredData_fetch') {
+    input.dataset = 'components';
+  }
+
+  if (apply) {
+    input.apply = true;
+  }
+
+  return input;
+}
+
 async function main() {
   const { tool, apply } = parseArgs();
+  const bridgeTool = normalizeToolName(tool);
   const baseUrl = sanitizeBaseUrl(readEnv('BRIDGE_URL') ?? 'http://127.0.0.1:4466');
   const timeoutMs = Number.parseInt(process.env.BRIDGE_TIMEOUT ?? '', 10) || DEFAULT_TIMEOUT_MS;
 
@@ -179,18 +198,16 @@ async function main() {
   for (const item of list.tools) {
     process.stdout.write(`• ${item}\n`);
   }
-  if (!list.tools.includes(tool)) {
+  if (!list.tools.includes(bridgeTool)) {
     process.stdout.write(`\nWARNING: Tool "${tool}" is not allowlisted; continuing anyway.\n`);
   }
 
   const payload = {
-    tool,
-    input: {
-      apply,
-    },
+    tool: bridgeTool,
+    input: buildToolInput(bridgeTool, apply),
   };
 
-  printHeader(`Run ${tool}`);
+  printHeader(`Run ${bridgeTool}`);
   const result = await requestJson<RunSuccess>('POST', baseUrl, '/run', {
     body: payload,
     apply,

@@ -1,0 +1,54 @@
+import type { TraitDefinition } from '../../src/core/trait-definition.ts';
+
+const EncodingOpacityTrait = {
+  "trait": {
+    "name": "EncodingOpacity",
+    "version": "0.1.0",
+    "description": "Constant Cartesian mark opacity",
+    "category": "viz.encoding",
+    "tags": [
+      "viz",
+      "authoring"
+    ]
+  },
+  "parameters": [
+    {
+      "name": "renderIntent",
+      "type": "string",
+      "required": false,
+      "default": "{}",
+      "description": "JSON-encoded Cartesian viz.render input fragment; data rows are supplied by the consumer."
+    }
+  ],
+  "schema": {},
+  "semantics": {},
+  "view_extensions": {
+    "form": [
+      {
+        "component": "VizOpacityControls",
+        "position": "top",
+        "props": {
+          "intentParameter": "renderIntent"
+        }
+      }
+    ],
+    "detail": [
+      {
+        "component": "VizOpacitySummary",
+        "position": "top",
+        "props": {
+          "intentParameter": "renderIntent"
+        }
+      }
+    ]
+  },
+  "tokens": {},
+  "metadata": {
+    "regionsUsed": [
+      "form",
+      "detail"
+    ]
+  }
+} as const satisfies TraitDefinition;
+
+export default EncodingOpacityTrait;

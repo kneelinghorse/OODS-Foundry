@@ -1,0 +1,23 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "oods-banner",
+  "type": "registry:component",
+  "title": "OODS Foundry Banner",
+  "description": "React adapter for OODS Banner on shadcn/ui's Radix and Base UI bases. Critical/danger uses destructive with solid bg-destructive and text-background in both themes, with its description inheriting the foreground; other tones use the team's default Alert palette. Distinct success/warning/info colours and solid emphasis are not implemented.",
+  "dependencies": [
+    "@oods/components-react@0.7.0",
+    "@oods/component-contracts@0.7.0"
+  ],
+  "registryDependencies": [
+    "alert",
+    "button"
+  ],
+  "files": [
+    {
+      "path": "components/oods/banner.tsx",
+      "target": "components/oods/banner.tsx",
+      "type": "registry:component",
+      "content": "import * as React from 'react';\nimport type { BannerProps } from '@oods/components-react';\nimport { getStatusPresentation, resolveStatusIcon, statusIconMarkup } from '@oods/component-contracts';\nimport { Alert, AlertTitle, AlertDescription } from '@/registry/new-york-v4/ui/alert';\nimport { Button } from '@/registry/new-york-v4/ui/button';\n\nexport const OodsBanner = React.forwardRef<HTMLDivElement, BannerProps>(function OodsBanner(\n  { title, detail, description, content, children, status, domain = 'subscription', tone, emphasis = 'subtle', icon,\n    showIcon, actions, onDismiss, dismissLabel = 'Dismiss notification', className, ...props }, ref,\n) {\n  const presentation = status ? getStatusPresentation(domain, status) : undefined;\n  const resolvedTone = tone ?? presentation?.tone ?? 'neutral';\n  const critical = resolvedTone === 'critical' || resolvedTone === 'danger';\n  const heading = title ?? presentation?.label ?? status;\n  const body = detail ?? description ?? children ?? content ?? presentation?.description;\n  const name = resolveStatusIcon(presentation?.iconName);\n  const mark = icon ?? (name ? <span aria-hidden=\"true\" dangerouslySetInnerHTML={{ __html: statusIconMarkup(name) }} /> : null);\n  const destructiveClass = critical ? 'bg-destructive text-background *:data-[slot=alert-description]:text-inherit' : undefined;\n  return <Alert {...props} ref={ref} className={[destructiveClass, className].filter(Boolean).join(' ')} variant={critical ? 'destructive' : 'default'} role={critical ? 'alert' : 'status'}\n    aria-live={critical ? 'assertive' : 'polite'} data-oods-component={undefined} data-oods-adapter=\"Banner\" data-tone={resolvedTone} data-emphasis={emphasis}>\n    {(showIcon ?? Boolean(mark)) ? mark : null}{heading ? <AlertTitle>{heading}</AlertTitle> : null}\n    {body ? <AlertDescription>{body}</AlertDescription> : null}{actions}\n    {onDismiss ? <Button type=\"button\" variant=\"ghost\" aria-label={dismissLabel} onClick={onDismiss}>×</Button> : null}\n  </Alert>;\n});\n"
+    }
+  ]
+}

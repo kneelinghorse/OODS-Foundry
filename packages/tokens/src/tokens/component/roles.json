@@ -1,0 +1,649 @@
+{
+  "cmp": {
+    "badge-background": {
+      "$type": "color",
+      "$value": "{sys.status.neutral.surface}",
+      "$description": "Default badge background role; component rules may override it."
+    },
+    "badge-border": {
+      "$type": "color",
+      "$value": "{sys.border.subtle}",
+      "$description": "Default badge border role; component rules may override it."
+    },
+    "badge-color": {
+      "$type": "color",
+      "$value": "{sys.text.primary}",
+      "$description": "Default badge color role; component rules may override it."
+    },
+    "badge-font-size": {
+      "$type": "dimension",
+      "$value": "{sys.text.size.xs}",
+      "$description": "Default badge font size role; component rules may override it."
+    },
+    "badge-font-weight": {
+      "$type": "fontWeight",
+      "$value": "{sys.text-weight-medium}",
+      "$description": "Default badge font weight role; component rules may override it."
+    },
+    "badge-gap": {
+      "$type": "dimension",
+      "$value": "{sys.control-gap-compact}",
+      "$description": "Default badge gap role; component rules may override it."
+    },
+    "badge-height": {
+      "$type": "dimension",
+      "$value": "{sys.badge-height}",
+      "$description": "Default badge height role; component rules may override it."
+    },
+    "badge-icon": {
+      "$type": "color",
+      "$value": "{sys.text.primary}",
+      "$description": "Default badge icon role; component rules may override it."
+    },
+    "badge-padding-block": {
+      "$type": "dimension",
+      "$value": "{sys.badge-padding-block}",
+      "$description": "Default badge padding block role; component rules may override it."
+    },
+    "badge-padding-inline": {
+      "$type": "dimension",
+      "$value": "{sys.badge-padding-inline}",
+      "$description": "Default badge padding inline role; component rules may override it."
+    },
+    "badge-radius": {
+      "$type": "dimension",
+      "$value": "{sys.radius-pill}",
+      "$description": "Default badge radius role; component rules may override it."
+    },
+    "badge-text": {
+      "$type": "color",
+      "$value": "{sys.text.primary}",
+      "$description": "Default badge text role; component rules may override it."
+    },
+    "banner-background": {
+      "$type": "color",
+      "$value": "{sys.status.neutral.surface}",
+      "$description": "Default banner background role; component rules may override it."
+    },
+    "banner-border": {
+      "$type": "color",
+      "$value": "{sys.border.subtle}",
+      "$description": "Default banner border role; component rules may override it."
+    },
+    "banner-text": {
+      "$type": "color",
+      "$value": "{sys.text.primary}",
+      "$description": "Default banner text role; component rules may override it."
+    },
+    "billing-amount-text": {
+      "$type": "color",
+      "$value": "{sys.text.strong}",
+      "$description": "Default billing amount text role; component rules may override it."
+    },
+    "billing-currency-text": {
+      "$type": "color",
+      "$value": "{sys.text.secondary}",
+      "$description": "Default billing currency text role; component rules may override it."
+    },
+    "billing-cycle-progress-fill": {
+      "$type": "color",
+      "$value": "{sys.text.accent}",
+      "$description": "Default billing cycle progress fill role; component rules may override it."
+    },
+    "billing-cycle-progress-height": {
+      "$type": "dimension",
+      "$value": "{sys.progress-height}",
+      "$description": "Default billing cycle progress height role; component rules may override it."
+    },
+    "billing-interval-text": {
+      "$type": "color",
+      "$value": "{sys.text.secondary}",
+      "$description": "Default billing interval text role; component rules may override it."
+    },
+    "billing-timeline-text": {
+      "$type": "color",
+      "$value": "{sys.text.primary}",
+      "$description": "Default billing timeline text role; component rules may override it."
+    },
+    "border-default": {
+      "$type": "color",
+      "$value": "{sys.border.subtle}",
+      "$description": "Default border default role; component rules may override it."
+    },
+    "border-subtle": {
+      "$type": "color",
+      "$value": "{sys.border.subtle}",
+      "$description": "Default border subtle role; component rules may override it."
+    },
+    "button-background": {
+      "$type": "color",
+      "$value": "{sys.surface.inverse}",
+      "$description": "Default button background role; component rules may override it."
+    },
+    "button-background-disabled": {
+      "$type": "color",
+      "$value": "{sys.surface.disabled}",
+      "$description": "Default button background disabled role; component rules may override it."
+    },
+    "button-background-hover": {
+      "$type": "color",
+      "$value": "{sys.surface.interactive.primary.hover}",
+      "$description": "Default button background hover role; component rules may override it."
+    },
+    "button-border": {
+      "$type": "color",
+      "$value": "{sys.border.subtle}",
+      "$description": "Default button border role; component rules may override it."
+    },
+    "button-border-disabled": {
+      "$type": "color",
+      "$value": "{sys.border.subtle}",
+      "$description": "Default button border disabled role; component rules may override it."
+    },
+    "button-focus-outer": {
+      "$type": "color",
+      "$value": "{sys.focus.ring.outer}",
+      "$description": "Default button focus outer role; component rules may override it."
+    },
+    "button-focus-width": {
+      "$type": "dimension",
+      "$value": "{sys.focus.width}",
+      "$description": "Default button focus width role; component rules may override it."
+    },
+    "button-font-weight": {
+      "$type": "fontWeight",
+      "$value": "{sys.text-weight-medium}",
+      "$description": "Default button font weight role; component rules may override it."
+    },
+    "button-gap": {
+      "$type": "dimension",
+      "$value": "{sys.control-gap}",
+      "$description": "Default button gap role; component rules may override it."
+    },
+    "button-height": {
+      "$type": "dimension",
+      "$value": "{sys.control-height-md}",
+      "$description": "Default button height role; component rules may override it."
+    },
+    "button-height-lg": {
+      "$type": "dimension",
+      "$value": "{sys.control-height-lg}",
+      "$description": "Large button height role; component rules may override it."
+    },
+    "button-height-sm": {
+      "$type": "dimension",
+      "$value": "{sys.control-height-sm}",
+      "$description": "Small button height role; component rules may override it."
+    },
+    "button-padding-block": {
+      "$type": "dimension",
+      "$value": "{sys.control-padding-block}",
+      "$description": "Default button padding block role; component rules may override it."
+    },
+    "button-padding-block-lg": {
+      "$type": "dimension",
+      "$value": "{sys.control-padding-block-lg}",
+      "$description": "Large button padding block role; component rules may override it."
+    },
+    "button-padding-block-sm": {
+      "$type": "dimension",
+      "$value": "{sys.control-padding-block-sm}",
+      "$description": "Small button padding block role; component rules may override it."
+    },
+    "button-padding-inline": {
+      "$type": "dimension",
+      "$value": "{sys.control-padding-inline}",
+      "$description": "Default button padding inline role; component rules may override it."
+    },
+    "button-padding-inline-lg": {
+      "$type": "dimension",
+      "$value": "{sys.control-padding-inline-lg}",
+      "$description": "Large button padding inline role; component rules may override it."
+    },
+    "button-padding-inline-sm": {
+      "$type": "dimension",
+      "$value": "{sys.control-padding-inline-sm}",
+      "$description": "Small button padding inline role; component rules may override it."
+    },
+    "button-radius": {
+      "$type": "dimension",
+      "$value": "{sys.radius-control}",
+      "$description": "Default button radius role; component rules may override it."
+    },
+    "button-text": {
+      "$type": "color",
+      "$value": "{sys.text.inverse}",
+      "$description": "Default button text role; component rules may override it."
+    },
+    "button-text-disabled": {
+      "$type": "color",
+      "$value": "{sys.text.disabled}",
+      "$description": "Default button text disabled role; component rules may override it."
+    },
+    "card-radius": {
+      "$type": "dimension",
+      "$value": "{sys.radius-card}",
+      "$description": "Default card radius role; component rules may override it."
+    },
+    "card-shadow": {
+      "$type": "shadow",
+      "$value": "{sys.shadow-panel}",
+      "$description": "Default card shadow role, expanded into its parts; component rules may override it."
+    },
+    "checkbox-background-checked": {
+      "$type": "color",
+      "$value": "{sys.surface.interactive.primary.default}",
+      "$description": "Default checkbox background checked role; component rules may override it."
+    },
+    "checkbox-gap": {
+      "$type": "dimension",
+      "$value": "{sys.control-gap}",
+      "$description": "Default checkbox gap role; component rules may override it."
+    },
+    "checkbox-text": {
+      "$type": "color",
+      "$value": "{sys.text.primary}",
+      "$description": "Default checkbox text role; component rules may override it."
+    },
+    "event-background": {
+      "$type": "color",
+      "$value": "{sys.surface.raised}",
+      "$description": "Default event background role; component rules may override it."
+    },
+    "event-border": {
+      "$type": "color",
+      "$value": "{sys.border.subtle}",
+      "$description": "Default event border role; component rules may override it."
+    },
+    "event-text": {
+      "$type": "color",
+      "$value": "{sys.text.primary}",
+      "$description": "Default event text role; component rules may override it."
+    },
+    "filter-background": {
+      "$type": "color",
+      "$value": "{sys.surface.raised}",
+      "$description": "Default filter background role; component rules may override it."
+    },
+    "filter-border": {
+      "$type": "color",
+      "$value": "{sys.border.subtle}",
+      "$description": "Default filter border role; component rules may override it."
+    },
+    "filter-legend": {
+      "$type": "color",
+      "$value": "{sys.text.secondary}",
+      "$description": "Default filter legend role; component rules may override it."
+    },
+    "filter-text": {
+      "$type": "color",
+      "$value": "{sys.text.primary}",
+      "$description": "Default filter text role; component rules may override it."
+    },
+    "focus-offset": {
+      "$type": "dimension",
+      "$value": "{sys.focus.offset}",
+      "$description": "Default focus offset role; component rules may override it."
+    },
+    "focus-outer": {
+      "$type": "color",
+      "$value": "{sys.focus.ring.outer}",
+      "$description": "Default focus outer role; component rules may override it."
+    },
+    "focus-width": {
+      "$type": "dimension",
+      "$value": "{sys.focus.width}",
+      "$description": "Default focus width role; component rules may override it."
+    },
+    "form-background": {
+      "$type": "color",
+      "$value": "{sys.surface.raised}",
+      "$description": "Default form background role; component rules may override it."
+    },
+    "form-border": {
+      "$type": "color",
+      "$value": "{sys.border.subtle}",
+      "$description": "Default form border role; component rules may override it."
+    },
+    "form-hint": {
+      "$type": "color",
+      "$value": "{sys.text.secondary}",
+      "$description": "Default form hint role; component rules may override it."
+    },
+    "form-text": {
+      "$type": "color",
+      "$value": "{sys.text.primary}",
+      "$description": "Default form text role; component rules may override it."
+    },
+    "header-metadata": {
+      "$type": "color",
+      "$value": "{sys.text.secondary}",
+      "$description": "Default header metadata role; component rules may override it."
+    },
+    "header-subtitle": {
+      "$type": "color",
+      "$value": "{sys.text.secondary}",
+      "$description": "Default header subtitle role; component rules may override it."
+    },
+    "header-title": {
+      "$type": "color",
+      "$value": "{sys.text.primary}",
+      "$description": "Default header title role; component rules may override it."
+    },
+    "input-background": {
+      "$type": "color",
+      "$value": "{sys.surface.raised}",
+      "$description": "Default input background role; component rules may override it."
+    },
+    "input-border": {
+      "$type": "color",
+      "$value": "{sys.border.interactive}",
+      "$description": "Default input border role; component rules may override it."
+    },
+    "input-focus": {
+      "$type": "color",
+      "$value": "{sys.focus.ring.outer}",
+      "$description": "Default input focus role; component rules may override it."
+    },
+    "input-gap": {
+      "$type": "dimension",
+      "$value": "{sys.control-gap-tight}",
+      "$description": "Default input gap role; component rules may override it."
+    },
+    "input-message-border": {
+      "$type": "color",
+      "$value": "{sys.status.warning.border}",
+      "$description": "Default input message border role; component rules may override it."
+    },
+    "input-message-text": {
+      "$type": "color",
+      "$value": "{sys.status.warning.text}",
+      "$description": "Default input message text role; component rules may override it."
+    },
+    "input-padding-block": {
+      "$type": "dimension",
+      "$value": "{sys.control-padding-block}",
+      "$description": "Default input padding block role; component rules may override it."
+    },
+    "input-padding-block-compact": {
+      "$type": "dimension",
+      "$value": "{sys.field-padding-block-compact}",
+      "$description": "Compact input padding block role; component rules may override it."
+    },
+    "input-padding-inline": {
+      "$type": "dimension",
+      "$value": "{sys.field-padding-inline}",
+      "$description": "Default input padding inline role; component rules may override it."
+    },
+    "input-padding-inline-compact": {
+      "$type": "dimension",
+      "$value": "{sys.field-padding-inline-compact}",
+      "$description": "Compact input padding inline role; component rules may override it."
+    },
+    "input-placeholder": {
+      "$type": "color",
+      "$value": "{sys.text.muted}",
+      "$description": "Default input placeholder role; component rules may override it."
+    },
+    "input-radius": {
+      "$type": "dimension",
+      "$value": "{sys.radius-control}",
+      "$description": "Default input radius role; component rules may override it."
+    },
+    "input-support-text": {
+      "$type": "color",
+      "$value": "{sys.text.muted}",
+      "$description": "Default input support text role; component rules may override it."
+    },
+    "input-text": {
+      "$type": "color",
+      "$value": "{sys.text.primary}",
+      "$description": "Default input text role; component rules may override it."
+    },
+    "meta-label": {
+      "$type": "color",
+      "$value": "{sys.text.secondary}",
+      "$description": "Default meta label role; component rules may override it."
+    },
+    "meta-text": {
+      "$type": "color",
+      "$value": "{sys.text.primary}",
+      "$description": "Default meta text role; component rules may override it."
+    },
+    "panel-background": {
+      "$type": "color",
+      "$value": "{sys.surface.raised}",
+      "$description": "Default panel background role; component rules may override it."
+    },
+    "panel-border": {
+      "$type": "color",
+      "$value": "{sys.border.subtle}",
+      "$description": "Default panel border role; component rules may override it."
+    },
+    "panel-subtitle": {
+      "$type": "color",
+      "$value": "{sys.text.secondary}",
+      "$description": "Default panel subtitle role; component rules may override it."
+    },
+    "panel-title": {
+      "$type": "color",
+      "$value": "{sys.text.primary}",
+      "$description": "Default panel title role; component rules may override it."
+    },
+    "preview-frame": {
+      "$type": "color",
+      "$value": "{sys.border.subtle}",
+      "$description": "Default preview frame role; component rules may override it."
+    },
+    "preview-placeholder": {
+      "$type": "color",
+      "$value": "{sys.text.secondary}",
+      "$description": "Default preview placeholder role; component rules may override it."
+    },
+    "shadow-overlay": {
+      "$type": "shadow",
+      "$value": "{sys.shadow-overlay}",
+      "$description": "Default overlay shadow role, expanded into its parts; component rules may override it."
+    },
+    "shadow-panel": {
+      "$type": "shadow",
+      "$value": "{sys.shadow-panel}",
+      "$description": "Default shadow panel role, expanded into its parts; component rules may override it."
+    },
+    "spacing-inline-md": {
+      "$type": "dimension",
+      "$value": "{sys.inline-md}",
+      "$description": "Default spacing inline md role; component rules may override it."
+    },
+    "spacing-inline-sm": {
+      "$type": "dimension",
+      "$value": "{sys.inline-sm}",
+      "$description": "Default spacing inline sm role; component rules may override it."
+    },
+    "spacing-inline-xs": {
+      "$type": "dimension",
+      "$value": "{sys.inline-xs}",
+      "$description": "Default spacing inline xs role; component rules may override it."
+    },
+    "spacing-inset-compact": {
+      "$type": "dimension",
+      "$value": "{sys.inset-sm}",
+      "$description": "Default spacing inset compact role; component rules may override it."
+    },
+    "spacing-inset-default": {
+      "$type": "dimension",
+      "$value": "{sys.inset-md}",
+      "$description": "Default spacing inset default role; component rules may override it."
+    },
+    "spacing-inset-sm": {
+      "$type": "dimension",
+      "$value": "{sys.inset-sm}",
+      "$description": "Default spacing inset sm role; component rules may override it."
+    },
+    "spacing-stack-default": {
+      "$type": "dimension",
+      "$value": "{sys.stack-md}",
+      "$description": "Default spacing stack default role; component rules may override it."
+    },
+    "spacing-stack-lg": {
+      "$type": "dimension",
+      "$value": "{sys.stack-lg}",
+      "$description": "Default spacing stack lg role; component rules may override it."
+    },
+    "spacing-stack-md": {
+      "$type": "dimension",
+      "$value": "{sys.stack-md}",
+      "$description": "Default spacing stack md role; component rules may override it."
+    },
+    "spacing-stack-sm": {
+      "$type": "dimension",
+      "$value": "{sys.stack-sm}",
+      "$description": "Default spacing stack sm role; component rules may override it."
+    },
+    "spacing-stack-xl": {
+      "$type": "dimension",
+      "$value": "{sys.stack-xl}",
+      "$description": "Default spacing stack xl role; component rules may override it."
+    },
+    "spacing-stack-xs": {
+      "$type": "dimension",
+      "$value": "{sys.stack-xs}",
+      "$description": "Default spacing stack xs role; component rules may override it."
+    },
+    "summary-background": {
+      "$type": "color",
+      "$value": "{sys.surface.raised}",
+      "$description": "Default summary background role; component rules may override it."
+    },
+    "summary-border": {
+      "$type": "color",
+      "$value": "{sys.border.subtle}",
+      "$description": "Default summary border role; component rules may override it."
+    },
+    "summary-label": {
+      "$type": "color",
+      "$value": "{sys.text.secondary}",
+      "$description": "Default summary label role; component rules may override it."
+    },
+    "summary-text": {
+      "$type": "color",
+      "$value": "{sys.text.primary}",
+      "$description": "Default summary text role; component rules may override it."
+    },
+    "surface-action": {
+      "$type": "color",
+      "$value": "{sys.surface.inverse}",
+      "$description": "Default surface action role; component rules may override it."
+    },
+    "surface-action-hover": {
+      "$type": "color",
+      "$value": "{sys.surface.interactive.primary.hover}",
+      "$description": "Default surface action hover role; component rules may override it."
+    },
+    "surface-panel": {
+      "$type": "color",
+      "$value": "{sys.surface.raised}",
+      "$description": "Default surface panel role; component rules may override it."
+    },
+    "surface-subtle": {
+      "$type": "color",
+      "$value": "{sys.surface.subtle}",
+      "$description": "Default surface subtle role; component rules may override it."
+    },
+    "swatch-border": {
+      "$type": "color",
+      "$value": "{sys.border.subtle}",
+      "$description": "Default swatch border role; component rules may override it."
+    },
+    "swatch-chip": {
+      "$type": "color",
+      "$value": "{sys.surface.interactive.primary.default}",
+      "$description": "Default swatch chip role; component rules may override it."
+    },
+    "tabs-indicator-width": {
+      "$type": "dimension",
+      "$value": "{sys.tab-indicator-width}",
+      "$description": "Default tabs indicator width role; component rules may override it."
+    },
+    "tabs-padding-block": {
+      "$type": "dimension",
+      "$value": "{sys.tab-padding-block-md}",
+      "$description": "Default tabs padding block role; component rules may override it."
+    },
+    "tabs-padding-block-lg": {
+      "$type": "dimension",
+      "$value": "{sys.tab-padding-block-lg}",
+      "$description": "Large tabs padding block role; component rules may override it."
+    },
+    "tabs-padding-block-sm": {
+      "$type": "dimension",
+      "$value": "{sys.tab-padding-block-sm}",
+      "$description": "Small tabs padding block role; component rules may override it."
+    },
+    "tabs-padding-inline": {
+      "$type": "dimension",
+      "$value": "{sys.tab-padding-inline-md}",
+      "$description": "Default tabs padding inline role; component rules may override it."
+    },
+    "tabs-padding-inline-lg": {
+      "$type": "dimension",
+      "$value": "{sys.tab-padding-inline-lg}",
+      "$description": "Large tabs padding inline role; component rules may override it."
+    },
+    "tabs-padding-inline-sm": {
+      "$type": "dimension",
+      "$value": "{sys.tab-padding-inline-sm}",
+      "$description": "Small tabs padding inline role; component rules may override it."
+    },
+    "text-accent": {
+      "$type": "color",
+      "$value": "{sys.text.accent}",
+      "$description": "Default text accent role; component rules may override it."
+    },
+    "text-body": {
+      "$type": "color",
+      "$value": "{sys.text.primary}",
+      "$description": "Default text body role; component rules may override it."
+    },
+    "text-muted": {
+      "$type": "color",
+      "$value": "{sys.text.muted}",
+      "$description": "Default text muted role; component rules may override it."
+    },
+    "text-on-action": {
+      "$type": "color",
+      "$value": "{sys.text.inverse}",
+      "$description": "Default text on action role; component rules may override it."
+    },
+    "text-primary": {
+      "$type": "color",
+      "$value": "{sys.text.primary}",
+      "$description": "Default text primary role; component rules may override it."
+    },
+    "text-secondary": {
+      "$type": "color",
+      "$value": "{sys.text.secondary}",
+      "$description": "Default text secondary role; component rules may override it."
+    },
+    "timeline-background": {
+      "$type": "color",
+      "$value": "{sys.surface.raised}",
+      "$description": "Default timeline background role; component rules may override it."
+    },
+    "timeline-border": {
+      "$type": "color",
+      "$value": "{sys.border.subtle}",
+      "$description": "Default timeline border role; component rules may override it."
+    },
+    "timeline-marker": {
+      "$type": "color",
+      "$value": "{sys.text.primary}",
+      "$description": "Default timeline marker role; component rules may override it."
+    },
+    "timeline-text": {
+      "$type": "color",
+      "$value": "{sys.text.primary}",
+      "$description": "Default timeline text role; component rules may override it."
+    }
+  }
+}

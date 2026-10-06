@@ -1,5 +1,5 @@
 import React from 'react';
-import { CONTEXT_MATRIX } from '~/packages/tw-variants/dist/context-matrix.js';
+import { CONTEXT_MATRIX } from '~/packages/tw-variants/src/context-matrix.js';
 import '../../styles/index.css';
 
 const tableStyle: React.CSSProperties = {

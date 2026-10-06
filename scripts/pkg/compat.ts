@@ -61,6 +61,10 @@ async function main(): Promise<void> {
   await run('pnpm', ['run', 'pkg:build']);
   await run('pnpm', ['--filter', '@oods/tokens', 'run', 'build']);
   await run('pnpm', ['--filter', '@oods/tw-variants', 'run', 'build']);
+  // Storybook stories import @oods/components-react, whose source imports the built
+  // @oods/component-contracts entry (dist/index.js). The a11y-contract CI job builds it
+  // before build-storybook; the compat runner must too (Sprint 189 review, PR #90).
+  await run('pnpm', ['--filter', '@oods/component-contracts', 'run', 'build']);
   await run(
     'pnpm',
     ['run', 'build-storybook', '--quiet'],

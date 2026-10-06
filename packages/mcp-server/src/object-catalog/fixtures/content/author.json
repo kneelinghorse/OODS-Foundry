@@ -1,0 +1,102 @@
+{
+  "manifest_version": "4.0",
+  "schema_version": "1.1.0",
+  "source": {
+    "agent": "oods-forge",
+    "stage": "compose",
+    "captured_at": "2026-05-20T00:00:00.000Z",
+    "oods_catalog_version": "1.0.0"
+  },
+  "entities": [
+    {
+      "urn": "urn:proto:semantic:author-profile@1.0.0",
+      "element": {
+        "type": "ui.surface.profile",
+        "name": "Author profile view"
+      },
+      "semantics": {
+        "purpose": "show author identity",
+        "human_meaning": "Author presentation surface — full profile, inline byline, or compact mini-mention — for the person credited with authoring content.",
+        "tags": ["content", "publishing", "person"],
+        "synonyms": ["writer card", "contributor profile"],
+        "keywords": ["author", "byline", "profile", "person"]
+      },
+      "pragmatic_role": "informational",
+      "states": ["active", "inactive"],
+      "preconditions": [],
+      "effects": [],
+      "traits": ["Identifiable", "Avatarable"],
+      "context": {
+        "domain": "publishing",
+        "surface": "desktop",
+        "schemaorg": "https://schema.org/Person"
+      },
+      "locations": [
+        { "type": "code", "path": "components/content/AuthorProfile.tsx" }
+      ],
+      "evidence_refs": [
+        {
+          "id": "ev_author_001",
+          "protocol": "semantic",
+          "kind": "manifest_declaration",
+          "locator": "self",
+          "matched": null,
+          "weight": 1.0,
+          "provenance": "declared",
+          "captured_at": "2026-05-20T00:00:00.000Z"
+        }
+      ],
+      "oods": {
+        "catalog": { "version": "1.0.0" },
+        "render": {
+          "ui_schema_ref": "compose-author-profile",
+          "slots": [
+            { "name": "avatar", "binding": { "field": "author.avatar_url" } },
+            { "name": "title", "binding": { "field": "author.display_name" } },
+            { "name": "subtitle", "binding": { "field": "author.tagline" } },
+            { "name": "body", "binding": { "field": "author.bio" } }
+          ],
+          "brand_overlay": "brand-a"
+        },
+        "projection_variants": [
+          {
+            "surface": "profile",
+            "ui_schema_ref": "compose-author-profile",
+            "slots": [
+              { "name": "avatar", "binding": { "field": "author.avatar_url" } },
+              { "name": "title", "binding": { "field": "author.display_name" } },
+              { "name": "subtitle", "binding": { "field": "author.tagline" } },
+              { "name": "body", "binding": { "field": "author.bio" } }
+            ],
+            "brand_overlay": "brand-a"
+          },
+          {
+            "surface": "byline",
+            "ui_schema_ref": "compose-author-byline",
+            "slots": [
+              { "name": "avatar", "binding": { "field": "author.avatar_url" } },
+              { "name": "title", "binding": { "field": "author.display_name" } },
+              { "name": "subtitle", "binding": { "field": "author.byline_role" } }
+            ],
+            "brand_overlay": "brand-a"
+          },
+          {
+            "surface": "mini",
+            "ui_schema_ref": "compose-author-mini",
+            "slots": [
+              { "name": "title", "binding": { "field": "author.display_name" } }
+            ],
+            "brand_overlay": "brand-a"
+          }
+        ],
+        "confidence_decomposition": {
+          "total": 0.88,
+          "signals": [
+            { "name": "trait_membership", "score": 0.9, "hint": "Identifiable + Avatarable" },
+            { "name": "manifest_declaration", "score": 0.86, "hint": "Domain-author-supplied content pack" }
+          ]
+        }
+      }
+    }
+  ]
+}

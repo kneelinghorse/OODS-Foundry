@@ -1,0 +1,748 @@
+[
+  {
+    "chartType": "bar",
+    "rows": [
+      {
+        "region": "North",
+        "quarter": "2024-01",
+        "revenue": 120000,
+        "units": 340
+      },
+      {
+        "region": "South",
+        "quarter": "2024-01",
+        "revenue": 135000,
+        "units": 410
+      },
+      {
+        "region": "North",
+        "quarter": "2024-02",
+        "revenue": 128000,
+        "units": 360
+      },
+      {
+        "region": "South",
+        "quarter": "2024-02",
+        "revenue": 142000,
+        "units": 430
+      },
+      {
+        "region": "North",
+        "quarter": "2024-03",
+        "revenue": 131000,
+        "units": 372
+      },
+      {
+        "region": "South",
+        "quarter": "2024-03",
+        "revenue": 150000,
+        "units": 455
+      }
+    ],
+    "encodings": {
+      "x": {
+        "field": "region",
+        "scale": "band"
+      },
+      "y": {
+        "field": "revenue",
+        "aggregate": "sum"
+      }
+    }
+  },
+  {
+    "chartType": "line",
+    "rows": [
+      {
+        "region": "North",
+        "quarter": "2024-01",
+        "revenue": 120000,
+        "units": 340
+      },
+      {
+        "region": "South",
+        "quarter": "2024-01",
+        "revenue": 135000,
+        "units": 410
+      },
+      {
+        "region": "North",
+        "quarter": "2024-02",
+        "revenue": 128000,
+        "units": 360
+      },
+      {
+        "region": "South",
+        "quarter": "2024-02",
+        "revenue": 142000,
+        "units": 430
+      },
+      {
+        "region": "North",
+        "quarter": "2024-03",
+        "revenue": 131000,
+        "units": 372
+      },
+      {
+        "region": "South",
+        "quarter": "2024-03",
+        "revenue": 150000,
+        "units": 455
+      }
+    ],
+    "encodings": {
+      "x": {
+        "field": "quarter",
+        "scale": "temporal"
+      },
+      "y": {
+        "field": "revenue",
+        "aggregate": "sum"
+      },
+      "color": {
+        "field": "region"
+      }
+    }
+  },
+  {
+    "chartType": "area",
+    "rows": [
+      {
+        "region": "North",
+        "quarter": "2024-01",
+        "revenue": 120000,
+        "units": 340
+      },
+      {
+        "region": "South",
+        "quarter": "2024-01",
+        "revenue": 135000,
+        "units": 410
+      },
+      {
+        "region": "North",
+        "quarter": "2024-02",
+        "revenue": 128000,
+        "units": 360
+      },
+      {
+        "region": "South",
+        "quarter": "2024-02",
+        "revenue": 142000,
+        "units": 430
+      },
+      {
+        "region": "North",
+        "quarter": "2024-03",
+        "revenue": 131000,
+        "units": 372
+      },
+      {
+        "region": "South",
+        "quarter": "2024-03",
+        "revenue": 150000,
+        "units": 455
+      }
+    ],
+    "encodings": {
+      "x": {
+        "field": "quarter",
+        "scale": "temporal"
+      },
+      "y": {
+        "field": "revenue",
+        "aggregate": "sum"
+      }
+    }
+  },
+  {
+    "chartType": "scatter",
+    "rows": [
+      {
+        "region": "North",
+        "quarter": "2024-01",
+        "revenue": 120000,
+        "units": 340
+      },
+      {
+        "region": "South",
+        "quarter": "2024-01",
+        "revenue": 135000,
+        "units": 410
+      },
+      {
+        "region": "North",
+        "quarter": "2024-02",
+        "revenue": 128000,
+        "units": 360
+      },
+      {
+        "region": "South",
+        "quarter": "2024-02",
+        "revenue": 142000,
+        "units": 430
+      },
+      {
+        "region": "North",
+        "quarter": "2024-03",
+        "revenue": 131000,
+        "units": 372
+      },
+      {
+        "region": "South",
+        "quarter": "2024-03",
+        "revenue": 150000,
+        "units": 455
+      }
+    ],
+    "encodings": {
+      "x": {
+        "field": "revenue",
+        "scale": "linear"
+      },
+      "y": {
+        "field": "units",
+        "scale": "linear"
+      },
+      "color": {
+        "field": "region"
+      }
+    }
+  },
+  {
+    "chartType": "heatmap",
+    "rows": [
+      {
+        "region": "North",
+        "quarter": "2024-01",
+        "revenue": 120000,
+        "units": 340
+      },
+      {
+        "region": "South",
+        "quarter": "2024-01",
+        "revenue": 135000,
+        "units": 410
+      },
+      {
+        "region": "North",
+        "quarter": "2024-02",
+        "revenue": 128000,
+        "units": 360
+      },
+      {
+        "region": "South",
+        "quarter": "2024-02",
+        "revenue": 142000,
+        "units": 430
+      },
+      {
+        "region": "North",
+        "quarter": "2024-03",
+        "revenue": 131000,
+        "units": 372
+      },
+      {
+        "region": "South",
+        "quarter": "2024-03",
+        "revenue": 150000,
+        "units": 455
+      }
+    ],
+    "encodings": {
+      "x": {
+        "field": "region",
+        "scale": "band"
+      },
+      "y": {
+        "field": "quarter",
+        "scale": "band"
+      },
+      "color": {
+        "field": "revenue",
+        "scale": "linear"
+      }
+    }
+  },
+  {
+    "chartType": "treemap",
+    "hierarchy": {
+      "type": "nested",
+      "data": {
+        "name": "Total",
+        "value": 100,
+        "children": [
+          {
+            "name": "Alpha",
+            "value": 40
+          },
+          {
+            "name": "Beta",
+            "value": 35
+          },
+          {
+            "name": "Gamma",
+            "value": 25
+          }
+        ]
+      }
+    },
+    "name": "Revenue split",
+    "output": {
+      "echarts": true,
+      "includeNormalizedSpec": true
+    }
+  },
+  {
+    "chartType": "sunburst",
+    "hierarchy": {
+      "type": "nested",
+      "data": {
+        "name": "Total",
+        "value": 100,
+        "children": [
+          {
+            "name": "Alpha",
+            "value": 40
+          },
+          {
+            "name": "Beta",
+            "value": 35
+          },
+          {
+            "name": "Gamma",
+            "value": 25
+          }
+        ]
+      }
+    },
+    "name": "Revenue split",
+    "output": {
+      "echarts": true,
+      "includeNormalizedSpec": true
+    }
+  },
+  {
+    "chartType": "sankey",
+    "sankey": {
+      "nodes": [
+        {
+          "name": "Source"
+        },
+        {
+          "name": "Middle"
+        },
+        {
+          "name": "Sink"
+        }
+      ],
+      "links": [
+        {
+          "source": "Source",
+          "target": "Middle",
+          "value": 60
+        },
+        {
+          "source": "Middle",
+          "target": "Sink",
+          "value": 60
+        }
+      ]
+    },
+    "name": "Pipeline flow",
+    "output": {
+      "echarts": true,
+      "includeNormalizedSpec": true
+    }
+  },
+  {
+    "chartType": "chord",
+    "chord": {
+      "nodes": [
+        {
+          "name": "North"
+        },
+        {
+          "name": "South"
+        },
+        {
+          "name": "East"
+        }
+      ],
+      "links": [
+        {
+          "source": "North",
+          "target": "South",
+          "value": 12
+        },
+        {
+          "source": "South",
+          "target": "East",
+          "value": 8
+        },
+        {
+          "source": "East",
+          "target": "North",
+          "value": 5
+        }
+      ]
+    },
+    "name": "Regional trade",
+    "output": {
+      "echarts": true,
+      "includeNormalizedSpec": true
+    }
+  },
+  {
+    "chartType": "force_graph",
+    "network": {
+      "nodes": [
+        {
+          "id": "a",
+          "group": "core"
+        },
+        {
+          "id": "b",
+          "group": "core"
+        },
+        {
+          "id": "c",
+          "group": "edge"
+        }
+      ],
+      "links": [
+        {
+          "source": "a",
+          "target": "b",
+          "value": 3
+        },
+        {
+          "source": "b",
+          "target": "c",
+          "value": 1
+        }
+      ]
+    },
+    "name": "Service graph",
+    "output": {
+      "echarts": true,
+      "includeNormalizedSpec": true
+    }
+  },
+  {
+    "chartType": "choropleth",
+    "geo": {
+      "geojson": {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "id": "CA",
+            "properties": {
+              "region": "CA",
+              "state_name": "California"
+            },
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    -124,
+                    32
+                  ],
+                  [
+                    -114,
+                    32
+                  ],
+                  [
+                    -114,
+                    42
+                  ],
+                  [
+                    -124,
+                    42
+                  ],
+                  [
+                    -124,
+                    32
+                  ]
+                ]
+              ]
+            }
+          },
+          {
+            "type": "Feature",
+            "id": "NV",
+            "properties": {
+              "region": "NV",
+              "state_name": "Nevada"
+            },
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    -120,
+                    35
+                  ],
+                  [
+                    -114,
+                    35
+                  ],
+                  [
+                    -114,
+                    42
+                  ],
+                  [
+                    -120,
+                    42
+                  ],
+                  [
+                    -120,
+                    35
+                  ]
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "rows": [
+        {
+          "state": "CA",
+          "sales": 580
+        },
+        {
+          "state": "NV",
+          "sales": 96
+        }
+      ],
+      "join": {
+        "dataKey": "state",
+        "featureProperty": "region"
+      },
+      "valueField": "sales",
+      "colorScale": "linear"
+    },
+    "name": "State sales",
+    "output": {
+      "echarts": true,
+      "includeNormalizedSpec": true
+    }
+  },
+  {
+    "chartType": "bubble_map",
+    "geo": {
+      "geojson": {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "id": "CA",
+            "properties": {
+              "region": "CA",
+              "state_name": "California"
+            },
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    -124,
+                    32
+                  ],
+                  [
+                    -114,
+                    32
+                  ],
+                  [
+                    -114,
+                    42
+                  ],
+                  [
+                    -124,
+                    42
+                  ],
+                  [
+                    -124,
+                    32
+                  ]
+                ]
+              ]
+            }
+          },
+          {
+            "type": "Feature",
+            "id": "NV",
+            "properties": {
+              "region": "NV",
+              "state_name": "Nevada"
+            },
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    -120,
+                    35
+                  ],
+                  [
+                    -114,
+                    35
+                  ],
+                  [
+                    -114,
+                    42
+                  ],
+                  [
+                    -120,
+                    42
+                  ],
+                  [
+                    -120,
+                    35
+                  ]
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "rows": [
+        {
+          "city": "San Francisco",
+          "lng": -122.4,
+          "lat": 37.8,
+          "pop": 874
+        },
+        {
+          "city": "Las Vegas",
+          "lng": -115.1,
+          "lat": 36.2,
+          "pop": 646
+        }
+      ],
+      "longitudeField": "lng",
+      "latitudeField": "lat",
+      "sizeField": "pop",
+      "colorField": "pop",
+      "colorScale": "linear"
+    },
+    "name": "City population",
+    "output": {
+      "echarts": true,
+      "includeNormalizedSpec": true
+    }
+  },
+  {
+    "chartType": "flow_map",
+    "geo": {
+      "geojson": {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "id": "CA",
+            "properties": {
+              "region": "CA",
+              "state_name": "California"
+            },
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    -124,
+                    32
+                  ],
+                  [
+                    -114,
+                    32
+                  ],
+                  [
+                    -114,
+                    42
+                  ],
+                  [
+                    -124,
+                    42
+                  ],
+                  [
+                    -124,
+                    32
+                  ]
+                ]
+              ]
+            }
+          },
+          {
+            "type": "Feature",
+            "id": "NV",
+            "properties": {
+              "region": "NV",
+              "state_name": "Nevada"
+            },
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    -120,
+                    35
+                  ],
+                  [
+                    -114,
+                    35
+                  ],
+                  [
+                    -114,
+                    42
+                  ],
+                  [
+                    -120,
+                    42
+                  ],
+                  [
+                    -120,
+                    35
+                  ]
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "rows": [
+        {
+          "from": "CA",
+          "to": "NV",
+          "oLng": -120,
+          "oLat": 37,
+          "dLng": -116,
+          "dLat": 39,
+          "volume": 540
+        },
+        {
+          "from": "NV",
+          "to": "CA",
+          "oLng": -116,
+          "oLat": 39,
+          "dLng": -120,
+          "dLat": 37,
+          "volume": 210
+        }
+      ],
+      "originLongitudeField": "oLng",
+      "originLatitudeField": "oLat",
+      "destinationLongitudeField": "dLng",
+      "destinationLatitudeField": "dLat",
+      "strengthField": "volume",
+      "curvature": 0.3
+    },
+    "name": "Trade corridors",
+    "output": {
+      "echarts": true,
+      "includeNormalizedSpec": true
+    }
+  }
+]

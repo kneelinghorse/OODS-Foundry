@@ -1,0 +1,526 @@
+{
+  "$schema": "https://design-tokens.org/dtcg/schema.json",
+  "color": {
+    "brand": {
+      "C": {
+        "surface": {
+          "canvas": {
+            "$type": "color",
+            "$value": "Canvas",
+            "$description": "color.brand.C.surface.canvas; generated from palette/seeds.json by generate-palette.ts."
+          },
+          "raised": {
+            "$type": "color",
+            "$value": "Canvas",
+            "$description": "color.brand.C.surface.raised; generated from palette/seeds.json by generate-palette.ts."
+          },
+          "subtle": {
+            "$type": "color",
+            "$value": "Canvas",
+            "$description": "color.brand.C.surface.subtle; generated from palette/seeds.json by generate-palette.ts."
+          },
+          "disabled": {
+            "$type": "color",
+            "$value": "Canvas",
+            "$description": "color.brand.C.surface.disabled; generated from palette/seeds.json by generate-palette.ts."
+          },
+          "backdrop": {
+            "$type": "color",
+            "$value": "Canvas",
+            "$description": "color.brand.C.surface.backdrop; generated from palette/seeds.json by generate-palette.ts."
+          },
+          "inverse": {
+            "$type": "color",
+            "$value": "CanvasText",
+            "$description": "color.brand.C.surface.inverse; generated from palette/seeds.json by generate-palette.ts."
+          },
+          "interactive": {
+            "primary": {
+              "default": {
+                "$type": "color",
+                "$value": "Highlight",
+                "$description": "color.brand.C.surface.interactive.primary.default; generated from palette/seeds.json by generate-palette.ts."
+              },
+              "hover": {
+                "$type": "color",
+                "$value": "Highlight",
+                "$description": "color.brand.C.surface.interactive.primary.hover; generated from palette/seeds.json by generate-palette.ts."
+              },
+              "pressed": {
+                "$type": "color",
+                "$value": "Highlight",
+                "$description": "color.brand.C.surface.interactive.primary.pressed; generated from palette/seeds.json by generate-palette.ts."
+              }
+            }
+          }
+        },
+        "border": {
+          "subtle": {
+            "$type": "color",
+            "$value": "CanvasText",
+            "$description": "color.brand.C.border.subtle; generated from palette/seeds.json by generate-palette.ts."
+          },
+          "strong": {
+            "$type": "color",
+            "$value": "Highlight",
+            "$description": "color.brand.C.border.strong; generated from palette/seeds.json by generate-palette.ts."
+          }
+        },
+        "focus": {
+          "ring": {
+            "outer": {
+              "$type": "color",
+              "$value": "CanvasText",
+              "$description": "color.brand.C.focus.ring.outer; generated from palette/seeds.json by generate-palette.ts."
+            },
+            "inner": {
+              "$type": "color",
+              "$value": "Canvas",
+              "$description": "color.brand.C.focus.ring.inner; generated from palette/seeds.json by generate-palette.ts."
+            }
+          },
+          "text": {
+            "$type": "color",
+            "$value": "CanvasText",
+            "$description": "color.brand.C.focus.text; generated from palette/seeds.json by generate-palette.ts."
+          }
+        },
+        "text": {
+          "primary": {
+            "$type": "color",
+            "$value": "CanvasText",
+            "$description": "color.brand.C.text.primary; generated from palette/seeds.json by generate-palette.ts."
+          },
+          "secondary": {
+            "$type": "color",
+            "$value": "CanvasText",
+            "$description": "color.brand.C.text.secondary; generated from palette/seeds.json by generate-palette.ts."
+          },
+          "muted": {
+            "$type": "color",
+            "$value": "CanvasText",
+            "$description": "color.brand.C.text.muted; generated from palette/seeds.json by generate-palette.ts."
+          },
+          "inverse": {
+            "$type": "color",
+            "$value": "Canvas",
+            "$description": "color.brand.C.text.inverse; generated from palette/seeds.json by generate-palette.ts."
+          },
+          "onInteractive": {
+            "$type": "color",
+            "$value": "HighlightText",
+            "$description": "color.brand.C.text.onInteractive; generated from palette/seeds.json by generate-palette.ts."
+          },
+          "disabled": {
+            "$type": "color",
+            "$value": "GrayText",
+            "$description": "color.brand.C.text.disabled; generated from palette/seeds.json by generate-palette.ts."
+          },
+          "accent": {
+            "$type": "color",
+            "$value": "LinkText",
+            "$description": "color.brand.C.text.accent; generated from palette/seeds.json by generate-palette.ts."
+          }
+        },
+        "accent": {
+          "background": {
+            "$type": "color",
+            "$value": "Canvas",
+            "$description": "color.brand.C.accent.background; generated from palette/seeds.json by generate-palette.ts."
+          },
+          "border": {
+            "$type": "color",
+            "$value": "Highlight",
+            "$description": "color.brand.C.accent.border; generated from palette/seeds.json by generate-palette.ts."
+          },
+          "text": {
+            "$type": "color",
+            "$value": "CanvasText",
+            "$description": "color.brand.C.accent.text; generated from palette/seeds.json by generate-palette.ts."
+          }
+        },
+        "status": {
+          "info": {
+            "surface": {
+              "$type": "color",
+              "$value": "Canvas",
+              "$description": "color.brand.C.status.info.surface; generated from palette/seeds.json by generate-palette.ts."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "Highlight",
+              "$description": "color.brand.C.status.info.border; generated from palette/seeds.json by generate-palette.ts."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "CanvasText",
+              "$description": "color.brand.C.status.info.text; generated from palette/seeds.json by generate-palette.ts."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "CanvasText",
+              "$description": "color.brand.C.status.info.icon; generated from palette/seeds.json by generate-palette.ts."
+            }
+          },
+          "success": {
+            "surface": {
+              "$type": "color",
+              "$value": "Canvas",
+              "$description": "color.brand.C.status.success.surface; generated from palette/seeds.json by generate-palette.ts."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "Highlight",
+              "$description": "color.brand.C.status.success.border; generated from palette/seeds.json by generate-palette.ts."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "CanvasText",
+              "$description": "color.brand.C.status.success.text; generated from palette/seeds.json by generate-palette.ts."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "CanvasText",
+              "$description": "color.brand.C.status.success.icon; generated from palette/seeds.json by generate-palette.ts."
+            }
+          },
+          "warning": {
+            "surface": {
+              "$type": "color",
+              "$value": "Canvas",
+              "$description": "color.brand.C.status.warning.surface; generated from palette/seeds.json by generate-palette.ts."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "Highlight",
+              "$description": "color.brand.C.status.warning.border; generated from palette/seeds.json by generate-palette.ts."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "CanvasText",
+              "$description": "color.brand.C.status.warning.text; generated from palette/seeds.json by generate-palette.ts."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "CanvasText",
+              "$description": "color.brand.C.status.warning.icon; generated from palette/seeds.json by generate-palette.ts."
+            }
+          },
+          "critical": {
+            "surface": {
+              "$type": "color",
+              "$value": "Canvas",
+              "$description": "color.brand.C.status.critical.surface; generated from palette/seeds.json by generate-palette.ts."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "Highlight",
+              "$description": "color.brand.C.status.critical.border; generated from palette/seeds.json by generate-palette.ts."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "CanvasText",
+              "$description": "color.brand.C.status.critical.text; generated from palette/seeds.json by generate-palette.ts."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "CanvasText",
+              "$description": "color.brand.C.status.critical.icon; generated from palette/seeds.json by generate-palette.ts."
+            }
+          },
+          "neutral": {
+            "surface": {
+              "$type": "color",
+              "$value": "Canvas",
+              "$description": "color.brand.C.status.neutral.surface; generated from palette/seeds.json by generate-palette.ts."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "CanvasText",
+              "$description": "color.brand.C.status.neutral.border; generated from palette/seeds.json by generate-palette.ts."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "CanvasText",
+              "$description": "color.brand.C.status.neutral.text; generated from palette/seeds.json by generate-palette.ts."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "CanvasText",
+              "$description": "color.brand.C.status.neutral.icon; generated from palette/seeds.json by generate-palette.ts."
+            }
+          },
+          "accent": {
+            "surface": {
+              "$type": "color",
+              "$value": "Canvas",
+              "$description": "color.brand.C.status.accent.surface; generated from palette/seeds.json by generate-palette.ts."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "Highlight",
+              "$description": "color.brand.C.status.accent.border; generated from palette/seeds.json by generate-palette.ts."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "CanvasText",
+              "$description": "color.brand.C.status.accent.text; generated from palette/seeds.json by generate-palette.ts."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "CanvasText",
+              "$description": "color.brand.C.status.accent.icon; generated from palette/seeds.json by generate-palette.ts."
+            }
+          }
+        }
+      }
+    }
+  },
+  "viz": {
+    "mark": {
+      "single": {
+        "$type": "color",
+        "$value": "CanvasText",
+        "$description": "mark.single; generated from palette/seeds.json by generate-palette.ts."
+      }
+    },
+    "scale": {
+      "categorical": {
+        "01": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "scale.categorical.01; generated from palette/seeds.json by generate-palette.ts."
+        },
+        "02": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "scale.categorical.02; generated from palette/seeds.json by generate-palette.ts."
+        },
+        "03": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "scale.categorical.03; generated from palette/seeds.json by generate-palette.ts."
+        },
+        "04": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "scale.categorical.04; generated from palette/seeds.json by generate-palette.ts."
+        },
+        "05": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "scale.categorical.05; generated from palette/seeds.json by generate-palette.ts."
+        },
+        "06": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "scale.categorical.06; generated from palette/seeds.json by generate-palette.ts."
+        }
+      },
+      "sequential": {
+        "01": {
+          "$type": "color",
+          "$value": "oklch(0.94 0 265)",
+          "$description": "scale.sequential.01; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#EBEBEB"
+            }
+          }
+        },
+        "02": {
+          "$type": "color",
+          "$value": "oklch(0.84 0 265)",
+          "$description": "scale.sequential.02; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#CACACA"
+            }
+          }
+        },
+        "03": {
+          "$type": "color",
+          "$value": "oklch(0.74 0 265)",
+          "$description": "scale.sequential.03; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#ABABAB"
+            }
+          }
+        },
+        "04": {
+          "$type": "color",
+          "$value": "oklch(0.64 0 265)",
+          "$description": "scale.sequential.04; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#8C8C8C"
+            }
+          }
+        },
+        "05": {
+          "$type": "color",
+          "$value": "oklch(0.54 0 265)",
+          "$description": "scale.sequential.05; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#6F6F6F"
+            }
+          }
+        },
+        "06": {
+          "$type": "color",
+          "$value": "oklch(0.44 0 265)",
+          "$description": "scale.sequential.06; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#525252"
+            }
+          }
+        },
+        "07": {
+          "$type": "color",
+          "$value": "oklch(0.34 0 265)",
+          "$description": "scale.sequential.07; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#383838"
+            }
+          }
+        },
+        "08": {
+          "$type": "color",
+          "$value": "oklch(0.24 0 265)",
+          "$description": "scale.sequential.08; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#1F1F1F"
+            }
+          }
+        },
+        "09": {
+          "$type": "color",
+          "$value": "oklch(0.14 0 265)",
+          "$description": "scale.sequential.09; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#090909"
+            }
+          }
+        }
+      },
+      "diverging": {
+        "neg-01": {
+          "$type": "color",
+          "$value": "oklch(0.7 0 197.5)",
+          "$description": "scale.diverging.neg-01; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#9E9E9E"
+            }
+          }
+        },
+        "pos-01": {
+          "$type": "color",
+          "$value": "oklch(0.7 0 17.5)",
+          "$description": "scale.diverging.pos-01; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#9E9E9E"
+            }
+          }
+        },
+        "neg-02": {
+          "$type": "color",
+          "$value": "oklch(0.58 0 197.5)",
+          "$description": "scale.diverging.neg-02; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#7A7A7A"
+            }
+          }
+        },
+        "pos-02": {
+          "$type": "color",
+          "$value": "oklch(0.58 0 17.5)",
+          "$description": "scale.diverging.pos-02; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#7A7A7A"
+            }
+          }
+        },
+        "neg-03": {
+          "$type": "color",
+          "$value": "oklch(0.46 0 197.5)",
+          "$description": "scale.diverging.neg-03; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#585858"
+            }
+          }
+        },
+        "pos-03": {
+          "$type": "color",
+          "$value": "oklch(0.46 0 17.5)",
+          "$description": "scale.diverging.pos-03; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#585858"
+            }
+          }
+        },
+        "neg-04": {
+          "$type": "color",
+          "$value": "oklch(0.34 0 197.5)",
+          "$description": "scale.diverging.neg-04; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#383838"
+            }
+          }
+        },
+        "pos-04": {
+          "$type": "color",
+          "$value": "oklch(0.34 0 17.5)",
+          "$description": "scale.diverging.pos-04; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#383838"
+            }
+          }
+        },
+        "neg-05": {
+          "$type": "color",
+          "$value": "oklch(0.22 0 197.5)",
+          "$description": "scale.diverging.neg-05; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#1B1B1B"
+            }
+          }
+        },
+        "pos-05": {
+          "$type": "color",
+          "$value": "oklch(0.22 0 17.5)",
+          "$description": "scale.diverging.pos-05; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#1B1B1B"
+            }
+          }
+        },
+        "neutral": {
+          "$type": "color",
+          "$value": "oklch(0.82 0 265)",
+          "$description": "scale.diverging.neutral; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#C4C4C4"
+            }
+          }
+        }
+      }
+    }
+  }
+}

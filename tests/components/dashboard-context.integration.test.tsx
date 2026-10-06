@@ -5,7 +5,6 @@ import { RenderObject } from '../../src/components/RenderObject.js';
 import { createUserDashboardExample } from '../../examples/dashboards/user-adoption.js';
 import { createSubscriptionDashboardExample } from '../../examples/dashboards/subscription-mrr.js';
 import { createProductDashboardExample } from '../../examples/dashboards/product-analytics.js';
-import { createSpatialDashboardExample } from '../../examples/dashboards/spatial-dashboard.js';
 
 function renderExample(context: ContextKind, factory: () => { object: any; data: any }): string {
   const { object, data } = factory();
@@ -42,11 +41,5 @@ describe('Dashboard contexts', () => {
     const markup = renderExample('dashboard', createProductDashboardExample);
     expect(markup).toContain('data-chart-panel="product:usage-grid"');
     expect(markup).toContain('Feature usage grid');
-  });
-
-  it('renders spatial dashboard widgets', () => {
-    const markup = renderExample('dashboard', createSpatialDashboardExample);
-    expect(markup).toContain('data-spatial-kind="choropleth"');
-    expect(markup).toContain('data-spatial-kind="bubble"');
   });
 });

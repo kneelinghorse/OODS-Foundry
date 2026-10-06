@@ -26,6 +26,27 @@ traits:
         - written_off
       timezone: UTC
       allowNullUpdatedAt: true
+  # s223-m01 (#2527 ruling 2): line items are money, so the chart plots major units in the invoice's currency
+  # (amount_minor / 100, the y axis reading $12,000, £1,234 or €19), not minor units.
+  - name: viz/MarkBar
+    parameters:
+      title: Invoice line item amounts
+      description: Line-item amounts in the invoice's currency; line items with the same description are summed.
+      chart:
+        chartType: bar
+        source: record-array
+        dataField: line_items
+        encodings:
+          x: {field: description, title: Line item}
+          y: {field: amount_minor, aggregate: sum, title: Amount}
+        minorUnits: 100
+        currencyField: currency
+        # Copied from domains/saas-billing/examples/stripe.json invoice.line_items.
+        sampleRows:
+          - description: Scale plan
+            quantity: 1
+            amount_minor: 284000
+            unit_amount_minor: 284000
 
 schema:
   invoice_id:
@@ -81,7 +102,10 @@ schema:
   dunning_step:
     type: string
     required: false
-    description: "Current dunning playbook step (ex: reminder_1, reminder_final, collections)."
+    description: >-
+      Current dunning playbook step label (ex: reminder_1, reminder_final, collections).
+      The structured retry window (attempt_count + next_payment_attempt) is provided by
+      the composed SaaSBillingPayable trait; this field is the human-readable step name.
   payment_source:
     type: string
     required: false
@@ -100,8 +124,9 @@ semantics:
   provider_invoice_id:
     semantic_type: billing.invoice.provider_id
     token_mapping: tokenMap(billing.invoice.provider_id)
+  # The one-line summary under the invoice number in lists: who is billed.
   billing_contact_name:
-    semantic_type: billing.invoice.billing_contact_name
+    semantic_type: text.summary
     token_mapping: tokenMap(billing.invoice.billing_contact_name)
   billing_contact_email:
     semantic_type: billing.invoice.billing_contact_email
@@ -109,12 +134,24 @@ semantics:
   tax_minor:
     semantic_type: billing.invoice.tax_minor
     token_mapping: tokenMap(billing.invoice.tax_minor)
+    ui_hints:
+      component: CurrencyAmount
+      currencyField: currency
+      minorUnits: 100
   discount_minor:
     semantic_type: billing.invoice.discount_minor
     token_mapping: tokenMap(billing.invoice.discount_minor)
+    ui_hints:
+      component: CurrencyAmount
+      currencyField: currency
+      minorUnits: 100
   subtotal_minor:
     semantic_type: billing.invoice.subtotal_minor
     token_mapping: tokenMap(billing.invoice.subtotal_minor)
+    ui_hints:
+      component: CurrencyAmount
+      currencyField: currency
+      minorUnits: 100
   line_items:
     semantic_type: billing.invoice.line_items
     token_mapping: tokenMap(billing.invoice.line_items)
@@ -143,5 +180,259 @@ metadata:
     - finance@oods.systems
   maturity: beta
   references:
-    - cmos/missions/research/R13.5_Canonical-Model-Subscription-and-Invoice.md
-    - cmos/missions/research/r4.5_SaaS-Enum-to-Token-Mapping-Schema.md
+    - R13.5 Canonical Model: Subscription and Invoice
+    - R4.5 SaaS Enum-to-Token Mapping Schema
+
+# Authored type associations; no record join or referential-integrity claim.
+relationships:
+  - target: Subscription
+    via: subscription_id
+    cardinality: many-to-one
+    label: Subscription
+
+# Eight authored sample invoices for the sample subscriptions; each is billed to a sample Organization by name. Line
+# items sum to the subtotal, the balance is what remains unpaid, and the last event is the latest recorded change (a
+# refund is not a recorded event).
+samples:
+  - invoice_id: inv_2026_0142
+    invoice_number: INV-2026-0142
+    subscription_id: sub_northwind_business
+    provider: Stripe
+    provider_invoice_id: in_1RkT2nNw8aQ5bC01
+    provider_status: paid
+    billing_contact_name: Northwind Traders
+    billing_contact_email: billing@northwind.example
+    status: paid
+    currency: USD
+    payment_terms: due_upon_receipt
+    line_items:
+      - { description: Business plan, quantity: 1, unit_amount_minor: 14900, amount_minor: 14900 }
+    subtotal_minor: 14900
+    discount_minor: 0
+    tax_minor: 0
+    total_minor: 14900
+    balance_minor: 0
+    attempt_count: 1
+    payment_source: card
+    portal_url: https://pay.example/invoices/INV-2026-0142
+    memo: Business plan, Sep 2 to Oct 2
+    issued_at: '2026-09-02T15:00:00Z'
+    due_at: '2026-09-02T15:00:00Z'
+    paid_at: '2026-09-02T15:01:00Z'
+    created_at: '2026-09-02T15:00:00Z'
+    updated_at: '2026-09-02T15:01:00Z'
+    last_event: payment_cleared
+    last_event_at: '2026-09-02T15:01:00Z'
+  - invoice_id: inv_2026_0118
+    invoice_number: INV-2026-0118
+    subscription_id: sub_marlow_starter
+    provider: Stripe
+    provider_invoice_id: in_1QwE8rMa2lYo9gV7
+    provider_status: void
+    billing_contact_name: Marlow Yoga
+    billing_contact_email: studio@marlowyoga.example
+    status: void
+    currency: USD
+    payment_terms: due_upon_receipt
+    line_items:
+      - { description: Starter plan, quantity: 1, unit_amount_minor: 1900, amount_minor: 1900 }
+    subtotal_minor: 1900
+    discount_minor: 0
+    tax_minor: 0
+    total_minor: 1900
+    balance_minor: 0
+    attempt_count: 0
+    payment_source: card
+    portal_url: https://pay.example/invoices/INV-2026-0118
+    memo: Renewal issued before the cancellation took effect; voided
+    issued_at: '2026-07-09T10:15:00Z'
+    due_at: '2026-07-09T10:15:00Z'
+    paid_at: null
+    created_at: '2026-07-09T10:15:00Z'
+    updated_at: '2026-07-09T10:20:00Z'
+    last_event: voided
+    last_event_at: '2026-07-09T10:20:00Z'
+  - invoice_id: inv_2026_0155
+    invoice_number: INV-2026-0155
+    subscription_id: sub_tidewater_enterprise
+    provider: Stripe
+    provider_invoice_id: in_1SkV7cRx1nTd8qJ4
+    provider_status: open
+    billing_contact_name: Tidewater Co-op
+    billing_contact_email: treasurer@tidewater.example
+    status: processing
+    currency: USD
+    payment_terms: net_45
+    line_items:
+      - { description: Enterprise plan, quantity: 1, unit_amount_minor: 1080000, amount_minor: 1080000 }
+      - { description: Premium support, quantity: 1, unit_amount_minor: 120000, amount_minor: 120000 }
+    subtotal_minor: 1200000
+    discount_minor: 0
+    tax_minor: 0
+    total_minor: 1200000
+    balance_minor: 1200000
+    attempt_count: 0
+    payment_source: wire
+    portal_url: https://pay.example/invoices/INV-2026-0155
+    memo: Annual renewal, Oct 30 2026 to Oct 30 2027; bank transfer in progress
+    issued_at: '2026-09-15T21:00:00Z'
+    due_at: '2026-10-30T14:00:00Z'
+    paid_at: null
+    created_at: '2026-09-15T21:00:00Z'
+    updated_at: '2026-09-28T21:00:00Z'
+    last_event: payment_initiated
+    last_event_at: '2026-09-28T21:00:00Z'
+  - invoice_id: inv_2026_0139
+    invoice_number: INV-2026-0139
+    subscription_id: sub_kestrel_team
+    provider: Stripe
+    provider_invoice_id: in_1S8mQ2Kt5oPz4rN6
+    provider_status: open
+    billing_contact_name: Kestrel Print Co.
+    billing_contact_email: hello@kestrelprint.example
+    status: past_due
+    currency: GBP
+    payment_terms: due_upon_receipt
+    line_items:
+      - { description: Team plan, quantity: 1, unit_amount_minor: 4900, amount_minor: 4900 }
+    subtotal_minor: 4900
+    discount_minor: 0
+    tax_minor: 0
+    total_minor: 4900
+    balance_minor: 4900
+    collection_state: Automatic retries
+    dunning_step: reminder_2
+    last_reminder_at: '2026-09-24T09:00:00Z'
+    aging_bucket_days: 27
+    attempt_count: 3
+    next_payment_attempt: '2026-10-01T10:00:00Z'
+    payment_source: card
+    portal_url: https://pay.example/invoices/INV-2026-0139
+    memo: Team plan, Sep 3 to Oct 3; card declined three times
+    issued_at: '2026-09-03T10:00:00Z'
+    due_at: '2026-09-03T10:00:00Z'
+    paid_at: null
+    created_at: '2026-09-03T10:00:00Z'
+    updated_at: '2026-09-24T09:00:00Z'
+    last_event: payment_failed
+    last_event_at: '2026-09-24T09:00:00Z'
+  - invoice_id: inv_2026_0151
+    invoice_number: INV-2026-0151
+    subscription_id: sub_lindqvist_starter
+    provider: Stripe
+    provider_invoice_id: in_1SaP4dLq7uWe3hK2
+    provider_status: paid
+    billing_contact_name: Lindqvist Bakery
+    billing_contact_email: finance@lindqvist.example
+    status: paid
+    currency: EUR
+    payment_terms: due_upon_receipt
+    line_items:
+      - { description: Starter plan, quantity: 1, unit_amount_minor: 1900, amount_minor: 1900 }
+    subtotal_minor: 1900
+    discount_minor: 0
+    tax_minor: 0
+    total_minor: 1900
+    balance_minor: 0
+    attempt_count: 1
+    payment_source: card
+    portal_url: https://pay.example/invoices/INV-2026-0151
+    memo: Starter plan, Sep 15 to Oct 15
+    issued_at: '2026-09-15T08:00:00Z'
+    due_at: '2026-09-15T08:00:00Z'
+    paid_at: '2026-09-15T08:01:00Z'
+    created_at: '2026-09-15T08:00:00Z'
+    updated_at: '2026-09-15T08:01:00Z'
+    last_event: payment_cleared
+    last_event_at: '2026-09-15T08:01:00Z'
+  - invoice_id: inv_2026_0133
+    invoice_number: INV-2026-0133
+    subscription_id: sub_lindqvist_starter
+    provider: Stripe
+    provider_invoice_id: in_1RzH6bJw3sXv2mE9
+    provider_status: refunded
+    billing_contact_name: Lindqvist Bakery
+    billing_contact_email: finance@lindqvist.example
+    status: refunded
+    currency: EUR
+    payment_terms: due_upon_receipt
+    line_items:
+      - { description: Starter plan, quantity: 1, unit_amount_minor: 1900, amount_minor: 1900 }
+    subtotal_minor: 1900
+    discount_minor: 0
+    tax_minor: 0
+    total_minor: 1900
+    balance_minor: 0
+    total_refunded_minor: 1900
+    last_refund_at: '2026-08-19T11:30:00Z'
+    refundable_until: '2026-09-15T08:00:00Z'
+    notes: Duplicate of INV-2026-0132 for the same period; refunded in full.
+    attempt_count: 1
+    payment_source: card
+    portal_url: https://pay.example/invoices/INV-2026-0133
+    memo: Starter plan, Aug 15 to Sep 15 (charged twice)
+    issued_at: '2026-08-16T08:00:00Z'
+    due_at: '2026-08-16T08:00:00Z'
+    paid_at: '2026-08-16T08:01:00Z'
+    created_at: '2026-08-16T08:00:00Z'
+    updated_at: '2026-08-19T11:30:00Z'
+    last_event: payment_cleared
+    last_event_at: '2026-08-16T08:01:00Z'
+  - invoice_id: inv_2026_0149
+    invoice_number: INV-2026-0149
+    subscription_id: sub_summit_business
+    provider: Stripe
+    provider_invoice_id: in_1ScN9fTy6pRb1wL3
+    provider_status: paid
+    billing_contact_name: Summit Outfitters
+    billing_contact_email: ap@summit.example
+    status: paid
+    currency: USD
+    payment_terms: due_upon_receipt
+    line_items:
+      - { description: Business plan, quantity: 1, unit_amount_minor: 14900, amount_minor: 14900 }
+    subtotal_minor: 14900
+    discount_minor: 0
+    tax_minor: 0
+    total_minor: 14900
+    balance_minor: 0
+    attempt_count: 1
+    payment_source: card
+    portal_url: https://pay.example/invoices/INV-2026-0149
+    memo: Business plan, Sep 7 to Oct 7
+    issued_at: '2026-09-07T12:00:00Z'
+    due_at: '2026-09-07T12:00:00Z'
+    paid_at: '2026-09-07T12:01:00Z'
+    created_at: '2026-09-07T12:00:00Z'
+    updated_at: '2026-09-07T12:01:00Z'
+    last_event: payment_cleared
+    last_event_at: '2026-09-07T12:01:00Z'
+  - invoice_id: inv_2026_0160
+    invoice_number: INV-2026-0160
+    subscription_id: sub_blueharbor_team
+    provider: Stripe
+    provider_invoice_id: in_1SmB3gUz8qNc5xP1
+    provider_status: draft
+    billing_contact_name: Blue Harbor Studio
+    billing_contact_email: accounts@blueharbor.example
+    status: draft
+    currency: USD
+    payment_terms: due_upon_receipt
+    line_items:
+      - { description: Team plan, quantity: 1, unit_amount_minor: 4900, amount_minor: 4900 }
+    subtotal_minor: 4900
+    discount_minor: 0
+    tax_minor: 0
+    total_minor: 4900
+    balance_minor: 4900
+    attempt_count: 0
+    payment_source: card
+    portal_url: https://pay.example/invoices/INV-2026-0160
+    memo: First Team invoice; finalises when the trial ends on Oct 5
+    issued_at: '2026-10-05T09:00:00Z'
+    due_at: '2026-10-05T09:00:00Z'
+    paid_at: null
+    created_at: '2026-09-28T09:00:00Z'
+    updated_at: '2026-09-28T09:00:00Z'
+    last_event: created
+    last_event_at: '2026-09-28T09:00:00Z'

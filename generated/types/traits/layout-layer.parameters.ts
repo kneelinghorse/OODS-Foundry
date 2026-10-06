@@ -14,7 +14,7 @@ export interface LayoutLayerTraitParameters {
    */
   sharedChannels?: ('x' | 'y' | 'color' | 'size' | 'shape' | 'detail')[];
   /**
-   * Optional explicit bottom→top ordering for marks.
+   * Optional explicit bottom→top ordering for marks. Entries name layers by mark options.id when set (preferred — repeated same-trait marks need distinct ids to be addressable), else by mark trait; duplicates cannot address distinct layers.
    */
   orderHint?: string[];
   /**

@@ -10,7 +10,8 @@
  * 3. How It Works - How does the system produce this?
  */
 
-import React from 'react';
+// @types/react 19 no longer declares a global JSX namespace; it is exported from 'react'.
+import type { JSX } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Badge } from '../../src/components/base/Badge.js';
 import {
@@ -74,7 +75,7 @@ const TONE_GROUPS: ToneGroup[] = [
   { label: 'Inactive', description: 'Ended, paused, or neutral states', tones: ['neutral'] },
 ];
 
-function groupByTone<T extends { tone: StatusTone }>(items: T[]): Map<string, T[]> {
+function groupByTone<T extends { tone: StatusTone }>(items: readonly T[]): Map<string, T[]> {
   const grouped = new Map<string, T[]>();
 
   for (const group of TONE_GROUPS) {
@@ -215,7 +216,7 @@ interface DomainGalleryProps {
   title: string;
   subtitle: string;
   domain: string;
-  statuses: Array<StatusPresentation | ExtendedStatus>;
+  statuses: readonly (StatusPresentation | ExtendedStatus)[];
 }
 
 function DomainGallery({ title, subtitle, domain, statuses }: DomainGalleryProps): JSX.Element {

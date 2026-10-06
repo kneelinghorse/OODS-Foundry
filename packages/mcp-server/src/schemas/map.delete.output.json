@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/map.delete.output.json",
+  "title": "map.delete output",
+  "description": "Result of deleting a component-to-trait mapping.",
+  "type": "object",
+  "required": ["status"],
+  "additionalProperties": false,
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["ok", "error"]
+    },
+    "deleted": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "externalSystem": { "type": "string" },
+        "externalComponent": { "type": "string" }
+      },
+      "description": "Summary of the deleted mapping."
+    },
+    "etag": {
+      "type": "string",
+      "description": "SHA256 etag of the mappings file after deletion."
+    },
+    "message": {
+      "type": "string",
+      "description": "Error message when status=error."
+    }
+  }
+}

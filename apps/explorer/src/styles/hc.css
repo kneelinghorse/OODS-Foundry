@@ -3,6 +3,11 @@
     color-scheme: light;
   }
 
+  [data-brand='A'],
+  [data-brand='B'] {
+    forced-color-adjust: none;
+  }
+
   :root,
   html[data-theme='dark'] {
     /* System token overrides sourced from packages/tokens high-contrast map */

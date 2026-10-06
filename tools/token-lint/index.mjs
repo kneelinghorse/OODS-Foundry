@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { readdir, readFile } from 'node:fs/promises';
+import { readdir, readFile, writeFile, stat } from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
@@ -10,6 +10,43 @@ const __dirname = path.dirname(__filename);
 
 const DEFAULT_TARGET = 'packages/tokens/src';
 const CONFIG_NAME = 'dtcg-guardrails.config.yaml';
+const BASELINE_NAME = 'baseline.json';
+
+// Stable identity for a baselined issue: ruleId + file + token-path. Deliberately
+// NOT line-based (token JSON has no lines here) so the entry survives reordering;
+// an UNKNOWN error (new ruleId/file/path) is never matched and still flips exit 1.
+function baselineKey(ruleId, file, location) {
+  return `${ruleId}\u0000${file}\u0000${location}`;
+}
+
+// Per-rule justification stamped onto generated baseline entries (each suppression
+// carries a reason — entry-granular allowlist, not a global rule-relax).
+const BASELINE_REASONS = {
+  'dtcg/alias-is-full-value':
+    'Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail.',
+  'dtcg/token-name-kebab-case':
+    'Multi-brand A/B namespace key or camelCase semantic slot; pre-existing brand-pack naming baselined in sprint-125 m04. New kebab-case violations still fail.'
+};
+
+function reasonFor(ruleId) {
+  return (
+    BASELINE_REASONS[ruleId] ??
+    `Pre-existing ${ruleId} violation baselined in sprint-125 m04. New violations of this rule still fail.`
+  );
+}
+
+async function loadBaseline() {
+  const baselinePath = path.resolve(__dirname, BASELINE_NAME);
+  try {
+    const raw = await readFile(baselinePath, 'utf8');
+    const parsed = JSON.parse(raw);
+    const entries = Array.isArray(parsed.entries) ? parsed.entries : [];
+    return new Set(entries.map((e) => baselineKey(e.ruleId, e.file, e.location)));
+  } catch {
+    // A missing/unreadable baseline suppresses nothing — the gate stays strict.
+    return new Set();
+  }
+}
 
 /**
  * Load and normalise the guardrail configuration.
@@ -40,6 +77,7 @@ async function loadConfig() {
  * Collect JSON file paths recursively from provided directories.
  */
 async function collectJsonFiles(targetDir) {
+  if ((await stat(targetDir)).isFile()) return targetDir.endsWith('.json') ? [targetDir] : [];
   const entries = await readdir(targetDir, { withFileTypes: true });
   const files = [];
 
@@ -64,8 +102,9 @@ const ALIAS_PATTERN = /^\{([a-z0-9]+(?:-[a-z0-9]+)*(?:\.[a-z0-9]+(?:-[a-z0-9]+)*
  * Utility for building error objects.
  */
 class IssueCollector {
-  constructor(rules) {
+  constructor(rules, baseline = new Set()) {
     this.rules = rules;
+    this.baseline = baseline;
     this.issues = [];
   }
 
@@ -78,9 +117,16 @@ class IssueCollector {
     if (!message) {
       return;
     }
+    let level = rule.level ?? 'error';
+    // sprint-125 m04: demote a KNOWN, baselined error to level 'baseline' so
+    // hasErrors() ignores it while any NEW error still flips exit 1. Only
+    // error-level issues are baselineable — WARN are never suppressed.
+    if (level === 'error' && this.baseline.has(baselineKey(ruleId, ctx.file, location))) {
+      level = 'baseline';
+    }
     this.issues.push({
       ruleId,
-      level: rule.level ?? 'error',
+      level,
       file: ctx.file,
       location,
       message,
@@ -92,8 +138,31 @@ class IssueCollector {
     return this.issues.some((issue) => issue.level === 'error');
   }
 
+  baselineCount() {
+    return this.issues.filter((issue) => issue.level === 'baseline').length;
+  }
+
+  // Current error-level issues as committable baseline entries (deterministic order).
+  toBaselineEntries() {
+    return this.issues
+      .filter((issue) => issue.level === 'error')
+      .map((issue) => ({
+        ruleId: issue.ruleId,
+        file: issue.file,
+        location: issue.location,
+        reason: reasonFor(issue.ruleId)
+      }))
+      .sort(
+        (a, b) =>
+          a.ruleId.localeCompare(b.ruleId) ||
+          a.file.localeCompare(b.file) ||
+          a.location.localeCompare(b.location)
+      );
+  }
+
   format() {
     return this.issues
+      .filter((issue) => issue.level !== 'baseline')
       .sort((a, b) => {
         if (a.level === b.level) {
           return a.file.localeCompare(b.file) || a.location.localeCompare(b.location);
@@ -297,8 +366,8 @@ function validateAliasGraph(tokens, collector) {
   }
 }
 
-async function lintTargets(targets, config) {
-  const collector = new IssueCollector(config.rules);
+async function lintTargets(targets, config, baseline = new Set()) {
+  const collector = new IssueCollector(config.rules, baseline);
   const acc = { tokens: new Map() };
 
   for (const target of targets) {
@@ -333,13 +402,42 @@ async function lintTargets(targets, config) {
 
 async function main() {
   const args = process.argv.slice(2);
-  const targets = args.length ? args : [DEFAULT_TARGET];
+  const writeBaseline = args.includes('--write-baseline');
+  const targets = args.filter((arg) => !arg.startsWith('--'));
+  const finalTargets = targets.length ? targets : [DEFAULT_TARGET];
   const config = await loadConfig();
-  const collector = await lintTargets(targets, config);
 
-  if (collector.issues.length > 0) {
-    console.log(collector.format());
-  } else {
+  // --write-baseline regenerates the committed baseline from ACTUAL output, so it
+  // runs with NO suppression to capture the full current error set; normal runs
+  // load the committed baseline to suppress known debt.
+  const baseline = writeBaseline ? new Set() : await loadBaseline();
+  const collector = await lintTargets(finalTargets, config, baseline);
+
+  if (writeBaseline) {
+    const entries = collector.toBaselineEntries();
+    const baselinePath = path.resolve(__dirname, BASELINE_NAME);
+    const payload = {
+      note:
+        'Entry-granular baseline of KNOWN-pre-existing token-lint errors (sprint-125 m04). Keyed on ruleId+file+token-path (stable, line-independent). A new error not listed here still fails the gate. Regenerate with: node tools/token-lint/index.mjs --write-baseline packages/tokens/src',
+      entries
+    };
+    await writeFile(baselinePath, `${JSON.stringify(payload, null, 2)}\n`, 'utf8');
+    console.log(`✔ Wrote ${entries.length} baseline entr${entries.length === 1 ? 'y' : 'ies'} to ${path.relative(process.cwd(), baselinePath)}.`);
+    process.exitCode = 0;
+    return;
+  }
+
+  const formatted = collector.format();
+  if (formatted) {
+    console.log(formatted);
+  }
+
+  const suppressed = collector.baselineCount();
+  if (suppressed > 0) {
+    console.log(`\nℹ ${suppressed} pre-existing issue(s) suppressed by ${BASELINE_NAME} (refresh with --write-baseline).`);
+  }
+
+  if (!formatted) {
     console.log('✔ Design tokens lint passed.');
   }
 

@@ -13,10 +13,14 @@ const EXTERNAL_DEPENDENCIES = [
   '@oods/tokens/tailwind',
 ];
 
+const BUNDLED_DEPENDENCIES = ['@oods/viz-core'];
+
 export default defineConfig({
   entry: ['src/index.ts'],
   format: ['esm', 'cjs'],
-  dts: true,
+  dts: {
+    resolve: BUNDLED_DEPENDENCIES,
+  },
   sourcemap: true,
   clean: false,
   target: 'es2022',
@@ -26,4 +30,5 @@ export default defineConfig({
   minify: false,
   shims: false,
   external: EXTERNAL_DEPENDENCIES,
+  noExternal: BUNDLED_DEPENDENCIES,
 });

@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "yaml": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The whole definition as YAML: an object file starts with \"object:\", a trait file with \"trait:\" (the same format as OODS Foundry's own objects/ and traits/). Validate and register require semantic object.version or trait.version (for example 1.2.3), refuse declared conflicts between unbound traits (bound charts are exempt), and warn on unknown top-level keys with the nearest known spelling. Definitions already on disk keep loading as before."
+    },
+    "overwrite": {
+      "type": "boolean",
+      "default": false,
+      "description": "Replace a definition of yours with this name; without it a name you already registered is refused (OODS-C004)."
+    }
+  },
+  "required": [
+    "yaml"
+  ],
+  "additionalProperties": false
+}

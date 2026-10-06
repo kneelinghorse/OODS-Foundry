@@ -1,0 +1,52 @@
+{
+  "mappings": [
+    {
+      "externalSystem": "harbor",
+      "externalComponent": "TeamButton",
+      "oodsTraits": [
+        "Stateful"
+      ],
+      "substitution": {
+        "component": "Button",
+        "react": {
+          "package": "@harbor/example-components/react",
+          "version": "1.0.0",
+          "export": "TeamButton",
+          "localPath": "<team-components>",
+          "props": {
+            "content": {
+              "name": "caption"
+            },
+            "intent": {
+              "name": "appearance",
+              "values": {
+                "neutral": "quiet",
+                "primary": "prominent",
+                "danger": "danger"
+              }
+            }
+          }
+        },
+        "vue": {
+          "package": "@harbor/example-components/vue",
+          "version": "1.0.0",
+          "export": "TeamButton",
+          "localPath": "<team-components>",
+          "props": {
+            "content": {
+              "name": "caption"
+            },
+            "intent": {
+              "name": "appearance",
+              "values": {
+                "neutral": "quiet",
+                "primary": "prominent",
+                "danger": "danger"
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

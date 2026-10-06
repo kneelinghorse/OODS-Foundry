@@ -21,6 +21,16 @@
           "$type": "color",
           "$value": "{theme.status.info.icon}",
           "$description": "Informational icon colour."
+        },
+        "solid": {
+          "$type": "color",
+          "$value": "{theme.status.info.solid}",
+          "$description": "Solid info fill, for emphasis (a solid badge or banner)."
+        },
+        "on-solid": {
+          "$type": "color",
+          "$value": "{theme.status.info.on-solid}",
+          "$description": "Text and icons on the solid info fill."
         }
       },
       "success": {
@@ -43,6 +53,16 @@
           "$type": "color",
           "$value": "{theme.status.success.icon}",
           "$description": "Success icon colour."
+        },
+        "solid": {
+          "$type": "color",
+          "$value": "{theme.status.success.solid}",
+          "$description": "Solid success fill, for emphasis (a solid badge or banner)."
+        },
+        "on-solid": {
+          "$type": "color",
+          "$value": "{theme.status.success.on-solid}",
+          "$description": "Text and icons on the solid success fill."
         }
       },
       "warning": {
@@ -65,6 +85,16 @@
           "$type": "color",
           "$value": "{theme.status.warning.icon}",
           "$description": "Warning icon colour."
+        },
+        "solid": {
+          "$type": "color",
+          "$value": "{theme.status.warning.solid}",
+          "$description": "Solid warning fill, for emphasis (a solid badge or banner)."
+        },
+        "on-solid": {
+          "$type": "color",
+          "$value": "{theme.status.warning.on-solid}",
+          "$description": "Text and icons on the solid warning fill."
         }
       },
       "accent": {
@@ -87,6 +117,16 @@
           "$type": "color",
           "$value": "{theme.status.accent.icon}",
           "$description": "Accent icon colour."
+        },
+        "solid": {
+          "$type": "color",
+          "$value": "{theme.status.accent.solid}",
+          "$description": "Solid accent fill, for emphasis (a solid badge or banner)."
+        },
+        "on-solid": {
+          "$type": "color",
+          "$value": "{theme.status.accent.on-solid}",
+          "$description": "Text and icons on the solid accent fill."
         }
       },
       "critical": {
@@ -109,6 +149,16 @@
           "$type": "color",
           "$value": "{theme.status.critical.icon}",
           "$description": "Critical icon colour."
+        },
+        "solid": {
+          "$type": "color",
+          "$value": "{theme.status.critical.solid}",
+          "$description": "Solid critical fill, for emphasis (a solid badge or banner)."
+        },
+        "on-solid": {
+          "$type": "color",
+          "$value": "{theme.status.critical.on-solid}",
+          "$description": "Text and icons on the solid critical fill."
         }
       },
       "neutral": {
@@ -131,6 +181,71 @@
           "$type": "color",
           "$value": "{theme.status.neutral.icon}",
           "$description": "Neutral icon colour."
+        },
+        "solid": {
+          "$type": "color",
+          "$value": "{theme.status.neutral.solid}",
+          "$description": "Solid neutral fill, for emphasis (a solid badge or banner)."
+        },
+        "on-solid": {
+          "$type": "color",
+          "$value": "{theme.status.neutral.on-solid}",
+          "$description": "Text and icons on the solid neutral fill."
+        }
+      },
+      "archive": {
+        "surface": {
+          "$type": "color",
+          "$value": "{theme.status.archive.surface}",
+          "$description": "Archive feedback background."
+        },
+        "border": {
+          "$type": "color",
+          "$value": "{theme.status.archive.border}",
+          "$description": "Archive border colour."
+        },
+        "text": {
+          "$type": "color",
+          "$value": "{theme.status.archive.text}",
+          "$description": "Archive text colour."
+        },
+        "icon": {
+          "$type": "color",
+          "$value": "{theme.status.archive.icon}",
+          "$description": "Archive icon colour."
+        }
+      },
+      "timeline": {
+        "node": {
+          "surface": {
+            "$type": "color",
+            "$value": "{theme.surface.subtle}",
+            "$description": "Timeline node background."
+          },
+          "border": {
+            "$type": "color",
+            "$value": "{sys.border.subtle}",
+            "$description": "Timeline node border."
+          }
+        },
+        "actor": {
+          "text": {
+            "$type": "color",
+            "$value": "{theme.text.secondary}",
+            "$description": "Actor name text in timeline entries."
+          }
+        },
+        "reason": {
+          "text": {
+            "$type": "color",
+            "$value": "{theme.text.primary}",
+            "$description": "Reason text in timeline entries."
+          }
+        },
+        "connector": {
+          "$type": "color",
+          "$value": "{sys.border.subtle}",
+          "$description": "Vertical connector line between timeline nodes."
         }
       }
     }

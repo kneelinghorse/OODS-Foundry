@@ -170,15 +170,11 @@ const TaggableTrait = {
     ],
     detail: [
       {
-        component: 'TagManager',
+        component: 'TagSummary',
         position: 'top',
         props: {
           field: 'tags',
-          allowCustomParameter: 'allowCustomTags',
-          allowListParameter: 'allowedTags',
-          maxTagsParameter: 'maxTags',
-          moderationParameter: 'allowTagModeration',
-          synonymParameter: 'synonymResolution',
+          countField: 'tag_count',
         },
       },
     ],
@@ -199,11 +195,12 @@ const TaggableTrait = {
     ],
     card: [
       {
-        component: 'TagSummary',
+        component: 'TagPills',
         position: 'after',
         props: {
           field: 'tags',
-          countField: 'tag_count',
+          maxVisible: 3,
+          overflowLabel: '+{{ tag_count }}',
         },
       },
     ],

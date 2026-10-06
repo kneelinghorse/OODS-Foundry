@@ -1,0 +1,23 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "oods-input",
+  "type": "registry:component",
+  "title": "OODS Foundry Input",
+  "description": "React adapter for OODS Input on shadcn/ui's Radix and Base UI bases. Native input props, datetime-local normalization, label, help, validation and value callbacks retain their meanings; density uses team spacing rather than OODS pixel dimensions.",
+  "dependencies": [
+    "@oods/components-react@0.7.0",
+    "@oods/component-contracts@0.7.0"
+  ],
+  "registryDependencies": [
+    "input",
+    "label"
+  ],
+  "files": [
+    {
+      "path": "components/oods/input.tsx",
+      "target": "components/oods/input.tsx",
+      "type": "registry:component",
+      "content": "import * as React from 'react';\nimport type { InputProps } from '@oods/components-react';\nimport { dateTimeInputValue } from '@oods/component-contracts';\nimport { Input } from '@/registry/new-york-v4/ui/input';\nimport { Label } from '@/registry/new-york-v4/ui/label';\n\nexport const OodsInput = React.forwardRef<HTMLInputElement, InputProps>(function OodsInput(\n  { id, label, help, description, validation, density = 'comfortable', requiredIndicator, className, style,\n    inputClassName, inputStyle, onChange, onValueChange, onUpdate, required, type = 'text', 'aria-describedby': describedBy, ...props }, ref,\n) {\n  if (type === 'datetime-local') {\n    if (props.value !== undefined) props.value = dateTimeInputValue(props.value);\n    if (props.defaultValue !== undefined) props.defaultValue = dateTimeInputValue(props.defaultValue);\n  }\n  const details = help ?? description;\n  const validationId = validation?.id ?? `${id}-validation`;\n  const descriptions = [describedBy, details ? `${id}-description` : '', validation?.message ? validationId : ''].filter(Boolean).join(' ') || undefined;\n  return <div className={className} style={style} data-density={density} data-validation-state={validation?.state} data-oods-component={undefined} data-oods-adapter=\"Input\">\n    <Label htmlFor={id}>{label}{required && requiredIndicator !== null ? requiredIndicator ?? <span aria-hidden=\"true\"> *</span> : null}</Label>\n    <Input {...props} ref={ref} id={id} type={type} required={required} className={[density === 'compact' ? 'py-1' : '', inputClassName].filter(Boolean).join(' ')} style={inputStyle}\n      data-oods-component={undefined} data-validation-state={validation?.state} aria-describedby={descriptions} aria-invalid={props['aria-invalid'] ?? (validation?.state === 'error' || undefined)}\n      onChange={event => { onChange?.(event); if (!event.defaultPrevented) { onValueChange?.(event.currentTarget.value); onUpdate?.(event.currentTarget.value); } }} />\n    {details ? <p id={`${id}-description`} className=\"text-sm text-muted-foreground\">{details}</p> : null}\n    {validation?.message ? <p id={validationId} role={validation.state === 'error' ? 'alert' : 'status'} aria-live={validation.state === 'error' ? 'assertive' : 'polite'}>{validation.message}</p> : null}\n  </div>;\n});\n"
+    }
+  ]
+}

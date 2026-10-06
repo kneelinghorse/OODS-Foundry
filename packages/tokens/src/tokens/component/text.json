@@ -1,0 +1,28 @@
+{
+  "cmp": {
+    "text": {
+      "placeholder": {
+        "color": {
+          "$type": "color",
+          "$value": "{sys.text.muted}",
+          "$description": "Default placeholder text colour."
+        },
+        "focus": {
+          "$type": "color",
+          "$value": "{sys.text.secondary}",
+          "$description": "Placeholder text colour when the input is focused."
+        },
+        "disabled": {
+          "$type": "color",
+          "$value": "{sys.text.disabled}",
+          "$description": "Placeholder text colour when the input is disabled."
+        },
+        "error": {
+          "$type": "color",
+          "$value": "{sys.status.critical.text}",
+          "$description": "Placeholder text colour in error state."
+        }
+      }
+    }
+  }
+}

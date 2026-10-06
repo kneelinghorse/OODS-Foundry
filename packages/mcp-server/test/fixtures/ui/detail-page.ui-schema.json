@@ -1,0 +1,67 @@
+{
+  "version": "2026.02",
+  "dsVersion": "2026-02-24",
+  "theme": "light",
+  "screens": [
+    {
+      "id": "detail-page-screen",
+      "component": "Stack",
+      "children": [
+        {
+          "id": "detail-card",
+          "component": "Card",
+          "layout": { "type": "sidebar", "gapToken": "lg" },
+          "children": [
+            {
+              "id": "detail-main-stack",
+              "component": "Stack",
+              "children": [
+                {
+                  "id": "detail-header",
+                  "component": "DetailHeader",
+                  "props": {
+                    "title": "Account 2049",
+                    "subtitle": "Enterprise",
+                    "status": "Active"
+                  }
+                },
+                {
+                  "id": "detail-ownership",
+                  "component": "OwnershipSummary",
+                  "props": { "owner": "Renee Li", "team": "Customer Ops" }
+                },
+                {
+                  "id": "detail-tags",
+                  "component": "TagSummary",
+                  "props": { "tags": ["priority", "enterprise", "renewal"] }
+                }
+              ]
+            },
+            {
+              "id": "detail-aside-stack",
+              "component": "Stack",
+              "children": [
+                {
+                  "id": "detail-status-timeline",
+                  "component": "StatusTimeline",
+                  "props": {
+                    "steps": [
+                      { "id": "lead", "label": "Lead", "state": "complete" },
+                      { "id": "trial", "label": "Trial", "state": "current" },
+                      { "id": "contract", "label": "Contract", "state": "upcoming" }
+                    ]
+                  }
+                },
+                {
+                  "id": "detail-archive-summary",
+                  "component": "ArchiveSummary",
+                  "props": { "status": "Active", "lastUpdated": "2026-02-24" }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

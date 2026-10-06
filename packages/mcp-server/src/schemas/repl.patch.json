@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/repl.patch.json",
+  "title": "Agentic REPL Patch",
+  "description": "Patch input can be either a JSON Patch array using the supported add/remove/replace subset of RFC 6902, a single node patch object, or an array of node patch objects.",
+  "examples": [
+    [
+      {
+        "op": "replace",
+        "path": "/screens/0/children/0/props/label",
+        "value": "Save"
+      }
+    ],
+    {
+      "nodeId": "basic-button",
+      "path": "props.label",
+      "value": "Save"
+    }
+  ],
+  "oneOf": [
+    { "$ref": "#/$defs/jsonPatchArray" },
+    { "$ref": "#/$defs/nodePatch" },
+    {
+      "type": "array",
+      "items": { "$ref": "#/$defs/nodePatch" },
+      "minItems": 1
+    }
+  ],
+  "$defs": {
+    "jsonPatchOp": {
+      "type": "object",
+      "description": "JSON Patch operation from the supported add/remove/replace subset of RFC 6902. Must be used inside an array.",
+      "required": ["op", "path"],
+      "properties": {
+        "op": { "type": "string", "enum": ["add", "remove", "replace"] },
+        "path": { "type": "string", "minLength": 1 },
+        "value": {}
+      },
+      "additionalProperties": false
+    },
+    "jsonPatchArray": {
+      "type": "array",
+      "description": "Array of JSON Patch operations.",
+      "items": { "$ref": "#/$defs/jsonPatchOp" },
+      "minItems": 1
+    },
+    "nodePatch": {
+      "type": "object",
+      "description": "Node patch referencing a nodeId plus a relative path within that node.",
+      "required": ["nodeId", "path"],
+      "properties": {
+        "nodeId": { "type": "string", "minLength": 1 },
+        "path": { "type": "string", "minLength": 1 },
+        "value": {},
+        "op": { "type": "string", "enum": ["add", "remove", "replace"], "default": "replace" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

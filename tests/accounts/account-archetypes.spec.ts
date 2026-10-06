@@ -207,7 +207,7 @@ describe('Account Archetypes', () => {
         contactId: 'contact_erasure_999',
         accountId: 'acc_person_999',
         fullName: '[ERASED]',
-        email: 'erased_999@privacy.local',
+        email: 'erased_999@privacy.example.invalid',
         contactType: 'primary',
         retentionPolicyId: 'policy_gdpr_2y',
         erasureRequestedAt: now.minus({ days: 7 }),

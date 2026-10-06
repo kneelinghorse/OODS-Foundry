@@ -143,7 +143,7 @@ function recommendLayout(ctx) {
   }
   if (layout === 'dashboard') {
     return {
-      summary: 'Mix concat + facet strategically and capture responsive plans (`pnpm vrt:layouts`).',
+      summary: 'Mix concat + facet strategically and document the responsive plan alongside the layout.',
       exampleRef: 'docs/viz/layout-adapter-guide.md'
     };
   }

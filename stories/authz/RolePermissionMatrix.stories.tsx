@@ -1,3 +1,5 @@
+// @types/react 19 no longer declares a global JSX namespace; it is exported from 'react'.
+import type { JSX } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useMemo } from 'react';
 import '../../src/styles/globals.css';
@@ -11,7 +13,6 @@ import { useRolePermissions } from '../../src/hooks/useRolePermissions.js';
 import type {
   PermissionDescriptor,
   RoleDescriptor,
-  RolePermissionCellKey,
   RolePermissionClient,
   RolePermissionMatrixSnapshot,
 } from '../../src/hooks/useRolePermissions.js';
@@ -82,7 +83,7 @@ class MockRolePermissionClient implements RolePermissionClient {
 const mockClient = new MockRolePermissionClient();
 
 const meta: Meta<typeof RolePermissionMatrix> = {
-  title: 'Domain Patterns/Authorization/Role Permission Matrix',
+  title: 'Authz/RolePermissionMatrix',
   component: RolePermissionMatrix,
   parameters: {
     layout: 'fullscreen',

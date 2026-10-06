@@ -1,5 +1,5 @@
 {
-  "$schema": "https://open-oods.dev/schemas/high-contrast-map.v1.json",
+  "$schema": "https://oods-foundry.com/schemas/high-contrast-map.v1.json",
   "description": "Mapping from semantic system tokens to CSS system colors for forced-colors (high contrast) rendering.",
   "mappings": {
     "sys": {
@@ -24,8 +24,8 @@
       },
       "text": {
         "primary": "CanvasText",
-        "secondary": "GrayText",
-        "muted": "GrayText",
+        "secondary": "CanvasText",
+        "muted": "CanvasText",
         "inverse": "Canvas",
         "accent": "LinkText",
         "on-interactive": "HighlightText",
@@ -33,39 +33,39 @@
       },
       "icon": {
         "primary": "CanvasText",
-        "muted": "GrayText",
+        "muted": "CanvasText",
         "on-interactive": "HighlightText"
       },
       "status": {
         "info": {
           "surface": "Canvas",
           "border": "Highlight",
-          "text": "HighlightText",
-          "icon": "HighlightText"
+          "text": "CanvasText",
+          "icon": "CanvasText"
         },
         "success": {
           "surface": "Canvas",
           "border": "Highlight",
-          "text": "HighlightText",
-          "icon": "HighlightText"
+          "text": "CanvasText",
+          "icon": "CanvasText"
         },
         "warning": {
           "surface": "Canvas",
           "border": "Highlight",
-          "text": "HighlightText",
-          "icon": "HighlightText"
+          "text": "CanvasText",
+          "icon": "CanvasText"
         },
         "accent": {
           "surface": "Canvas",
           "border": "Highlight",
-          "text": "HighlightText",
-          "icon": "HighlightText"
+          "text": "CanvasText",
+          "icon": "CanvasText"
         },
         "critical": {
           "surface": "Canvas",
           "border": "Highlight",
-          "text": "HighlightText",
-          "icon": "HighlightText"
+          "text": "CanvasText",
+          "icon": "CanvasText"
         },
         "neutral": {
           "surface": "Canvas",
@@ -76,10 +76,10 @@
       },
       "focus": {
         "ring": {
-          "outer": "Highlight",
+          "outer": "CanvasText",
           "inner": "Canvas"
         },
-        "text": "HighlightText",
+        "text": "CanvasText",
         "width": "2px"
       }
     }

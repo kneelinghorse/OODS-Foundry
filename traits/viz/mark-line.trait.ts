@@ -10,6 +10,12 @@ const MarkLineTrait = {
   },
 
   parameters: [
+    {"name": "chart", "type": "object", "required": false, "description": "Optional read-only chart declaration binding existing domain fields; projects into supported detail and dashboard views."},
+    {"name": "title", "type": "string", "required": false, "description": "Title for the bound chart and its accessible figure."},
+    {"name": "description", "type": "string", "required": false, "description": "Description of the bound chart measurements and units."},
+    {"name": "renderIntent", "type": "string", "required": false, "default": "{}", "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."},
+    {"name": "previewSvg", "type": "string", "required": false, "description": "Static SVG returned by viz.render for the authored sample; omitted until a chart is rendered."},
+
     {
       name: 'curve',
       type: 'string',
@@ -161,6 +167,20 @@ const MarkLineTrait = {
         position: 'top',
         priority: 60,
         props: {
+          svgParameter: 'previewSvg',
+          curveField: 'viz_line_curve',
+          strokeWidthField: 'viz_line_stroke_width',
+          markersField: 'viz_line_markers',
+        },
+      },
+    ],
+    dashboard: [
+      {
+        component: 'VizLinePreview',
+        position: 'top',
+        priority: 60,
+        props: {
+          svgParameter: 'previewSvg',
           curveField: 'viz_line_curve',
           strokeWidthField: 'viz_line_stroke_width',
           markersField: 'viz_line_markers',
@@ -172,6 +192,7 @@ const MarkLineTrait = {
         component: 'VizLineControls',
         position: 'top',
         props: {
+          intentParameter: 'renderIntent',
           curveField: 'viz_line_curve',
           strokeField: 'viz_line_stroke_width',
           joinField: 'viz_line_join',
@@ -183,6 +204,7 @@ const MarkLineTrait = {
       {
         component: 'VizRoleBadge',
         props: {
+          intentParameter: 'renderIntent',
           labelField: 'viz_mark_role',
         },
       },
@@ -206,10 +228,10 @@ const MarkLineTrait = {
       rule_reference: 'A11Y-R-05',
       notes: 'Provide textual summary for trend direction and extrema.',
     },
-    regionsUsed: ['detail', 'form', 'list'],
+    regionsUsed: ['detail', 'dashboard', 'form', 'list'],
     examples: ['ActiveUsersTrend', 'ConversionRateTimeline'],
     references: [
-      'cmos/research/data-viz-oods/RDS.7_synthesis_Mission Completion Report- Trait-Driven Visualization System Specification (v0.1).md',
+      'RDS.7 Trait-Driven Visualization System Specification (v0.1)',
     ],
   },
 } as const satisfies TraitDefinition;

@@ -1,7 +1,7 @@
 /**
  * Subscription Lifecycle Stories
  * 
- * Demonstrates the 7-state subscription lifecycle with transitions,
+ * Demonstrates the 8-state subscription lifecycle with transitions,
  * guards, and visual representation of state machines.
  */
 
@@ -122,14 +122,14 @@ const SubscriptionLifecycle: React.FC<SubscriptionLifecycleProps> = ({ state }) 
 };
 
 const meta: Meta<typeof SubscriptionLifecycle> = {
-  title: 'Objects/Domain Objects/Subscription/Lifecycle',
+  title: 'Domains/Billing/Subscription Lifecycle',
   component: SubscriptionLifecycle,
   parameters: {
     layout: 'padded',
     docs: {
       description: {
         component: `
-## Subscription State Machine (7-state model)
+## Subscription State Machine (8-state model)
 
 The canonical subscription lifecycle models the full journey from future scheduling through termination:
 
@@ -140,7 +140,8 @@ The canonical subscription lifecycle models the full journey from future schedul
 - **active**: Active and current
 - **paused**: Temporarily suspended
 - **pending_cancellation**: Cancellation scheduled at period end
-- **delinquent**: Past due with failed payments
+- **past_due**: Payment failed while collection retries continue and grace access remains
+- **unpaid**: Collection retries exhausted and access revoked
 - **terminated**: Permanently ended
 
 ### Transition Rules
@@ -148,9 +149,10 @@ The canonical subscription lifecycle models the full journey from future schedul
 1. **Future → Trialing/Active**: Depends on trial period configuration
 2. **Trialing → Active**: Trial period ends successfully
 3. **Active ↔ Paused**: Bidirectional pause/resume
-4. **Active → Delinquent**: Payment failures trigger delinquency
-5. **Delinquent → Active**: Successful payment clears delinquency
-6. **Any → Terminated**: Immediate cancellation available from most states
+4. **Active → Past Due**: Payment failure starts the recoverable retry window
+5. **Past Due → Active**: Successful payment clears the failed-payment state
+6. **Past Due → Unpaid**: Exhausted retries revoke access
+7. **Any → Terminated**: Immediate cancellation available from most states
 
 ### Guards
 
@@ -169,7 +171,8 @@ The canonical subscription lifecycle models the full journey from future schedul
         'active',
         'paused',
         'pending_cancellation',
-        'delinquent',
+        'past_due',
+        'unpaid',
         'terminated',
       ] as SubscriptionState[],
       description: 'Current subscription state',
@@ -230,11 +233,20 @@ export const PendingCancellation: Story = {
 };
 
 /**
- * Delinquent subscription - past due with failed payments
+ * Past-due subscription - payment failed while retries continue
  */
-export const Delinquent: Story = {
+export const PastDue: Story = {
   args: {
-    state: 'delinquent',
+    state: 'past_due',
+  },
+};
+
+/**
+ * Unpaid subscription - retries exhausted and access revoked
+ */
+export const Unpaid: Story = {
+  args: {
+    state: 'unpaid',
   },
 };
 
@@ -258,7 +270,8 @@ export const AllStates: Story = {
       'active',
       'paused',
       'pending_cancellation',
-      'delinquent',
+      'past_due',
+      'unpaid',
       'terminated',
     ];
 
@@ -294,45 +307,23 @@ export const TransitionFlow: Story = {
           }}
         >
           {`
-┌──────────┐
-│  future  │
-└────┬─────┘
-     │ activate
-     ├──────────┐
-     │          │
-     │ (trial)  │ (no trial)
-     ▼          ▼
-┌──────────┐  ┌──────────┐
-│ trialing │  │  active  │
-└────┬─────┘  └────┬─────┘
-     │             │
-     │ trial_end   ├─────────────┐
-     └─────────────►             │
-                   │             │ pause
-                   │             ▼
-                   │        ┌──────────┐
-                   │        │  paused  │
-                   │        └────┬─────┘
-                   │             │
-                   │ resume      │
-                   ◄─────────────┘
-                   │
-     ┌─────────────┼─────────────┐
-     │             │             │
-     │ payment_    │ schedule_   │
-     │ failed      │ cancel      │
-     ▼             ▼             │
-┌──────────┐  ┌──────────────────┐
-│delinquent│  │pending_cancel    │
-└────┬─────┘  └────┬─────────────┘
-     │             │
-     │ payment_    │ period_end
-     │ succeeded   │
-     │             │
-     │             ▼
-     │        ┌──────────┐
-     └────────► terminated│◄─── cancel_immediately (from any)
-              └──────────┘
+future
+  ├─ activate [trial] ──► trialing ── trial_end ──► active
+  └─ activate [no trial] ─────────────────────────► active
+
+active ── pause ──► paused
+active ◄─ resume ── paused
+
+active ── schedule_cancellation ──► pending_cancellation
+active ◄─ unschedule_cancellation ─ pending_cancellation
+pending_cancellation ── period_end ──► terminated
+
+active ── payment_failed ──► past_due
+active ◄─ payment_succeeded ─ past_due
+past_due ── retries_exhausted ──► unpaid
+
+future | trialing | active | paused | pending_cancellation | past_due | unpaid
+  └─ cancel_immediately ──► terminated
           `}
         </div>
         <div style={{ marginTop: '1rem', fontSize: '0.875rem', color: 'var(--sys-color-text-secondary)' }}>

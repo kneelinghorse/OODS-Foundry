@@ -7,6 +7,7 @@
 import type { JSX } from 'react';
 
 import type { SankeyInput } from '../../../types/viz/network-flow.js';
+import { formatCompactValue } from './format-compact.js';
 
 export interface SankeyA11yFallbackProps {
   /** Flow data (nodes and links) */
@@ -61,19 +62,6 @@ function calculateNodeSummaries(data: SankeyInput): NodeSummary[] {
 }
 
 /**
- * Format number for display
- */
-function formatValue(value: number): string {
-  if (value >= 1_000_000) {
-    return `${(value / 1_000_000).toFixed(1)}M`;
-  }
-  if (value >= 1_000) {
-    return `${(value / 1_000).toFixed(1)}K`;
-  }
-  return value.toLocaleString();
-}
-
-/**
  * Calculate percentage of total flow
  */
 function calculatePercentage(value: number, total: number): string {
@@ -121,7 +109,7 @@ export function SankeyA11yFallback({
             <strong>Flows:</strong> {data.links.length}
           </span>
           <span className="text-slate-600 dark:text-slate-400">
-            <strong>Total Volume:</strong> {formatValue(totalFlow)}
+            <strong>Total Volume:</strong> {formatCompactValue(totalFlow)}
           </span>
         </div>
 
@@ -170,13 +158,13 @@ export function SankeyA11yFallback({
                     {node.name}
                   </td>
                   <td className="px-3 py-2 text-right font-mono text-slate-700 dark:text-slate-300">
-                    {node.inflow > 0 ? formatValue(node.inflow) : '—'}
+                    {node.inflow > 0 ? formatCompactValue(node.inflow) : '—'}
                   </td>
                   <td className="px-3 py-2 text-right font-mono text-slate-700 dark:text-slate-300">
-                    {node.outflow > 0 ? formatValue(node.outflow) : '—'}
+                    {node.outflow > 0 ? formatCompactValue(node.outflow) : '—'}
                   </td>
                   <td className="px-3 py-2 text-right font-mono font-semibold text-slate-800 dark:text-slate-200">
-                    {formatValue(node.total)}
+                    {formatCompactValue(node.total)}
                   </td>
                 </tr>
               ))}
@@ -232,7 +220,7 @@ export function SankeyA11yFallback({
                     {link.target}
                   </td>
                   <td className="px-3 py-2 text-right font-mono text-slate-700 dark:text-slate-300">
-                    {formatValue(link.value)}
+                    {formatCompactValue(link.value)}
                   </td>
                   <td className="px-3 py-2 text-right font-mono text-slate-600 dark:text-slate-400">
                     {calculatePercentage(link.value, totalFlow)}

@@ -1,0 +1,90 @@
+trait:
+  name: Stockable
+  version: 1.0.0
+  description: How full a storage location is, counted in the unit the team stores goods in.
+  category: inventory
+  tags:
+    - inventory
+    - capacity
+
+parameters:
+  - name: capacityUnit
+    type: string
+    required: false
+    description: The unit capacity and stock are counted in.
+    default: pallets
+
+schema:
+  stock_level:
+    type: string
+    required: true
+    description: Whether the location has room, is nearly full, or is full.
+    validation:
+      enum:
+        - room_available
+        - nearly_full
+        - full
+  capacity_units:
+    type: integer
+    required: true
+    description: How many units the location holds when it is full.
+    examples:
+      - 1200
+      - 800
+      - 2400
+  units_on_hand:
+    type: integer
+    required: true
+    description: How many units are stored there now.
+    examples:
+      - 640
+      - 760
+      - 2400
+
+semantics:
+  stock_level:
+    semantic_type: inventory.stock.level
+    token_mapping: tokenMap(inventory.stock.*)
+    ui_hints:
+      component: StatusBadge
+
+view_extensions:
+  list:
+    - component: StatusBadge
+      position: after
+      props:
+        statusField: stock_level
+        emphasis: subtle
+        showIcon: false
+  card:
+    - component: StatusBadge
+      position: after
+      props:
+        statusField: stock_level
+        emphasis: subtle
+        showIcon: false
+  detail:
+    - component: StatusBadge
+      position: main
+      priority: 70
+      props:
+        statusField: stock_level
+        emphasis: subtle
+        showIcon: false
+    # Like the shipped Supersedable trait: the fields the trait is about are placed explicitly, so the detail
+    # composer's field budget never leaves them out.
+    - component: Text
+      position: main
+      priority: 69
+      props:
+        field: units_on_hand
+    - component: Text
+      position: main
+      priority: 68
+      props:
+        field: capacity_units
+
+tokens:
+  inventory.stock.tone: neutral
+
+dependencies: []

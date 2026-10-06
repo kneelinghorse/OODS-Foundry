@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "v0.1",
+  "id": "shopify-forge-d3-four-panel-2026-08-28",
+  "title": "Denied Art aggregate overview",
+  "tokenCssRef": "tokens.build",
+  "brand": "B",
+  "strictDatasets": true,
+  "strictFields": true,
+  "a11yEquivalence": true,
+  "datasets": [
+    {
+      "id": "product-total",
+      "rows": [{ "cell": "product.total", "count": 173 }]
+    },
+    {
+      "id": "product-status",
+      "rows": [
+        { "status": "active", "count": 107 },
+        { "status": "draft", "count": 29 },
+        { "status": "archived", "count": 37 }
+      ]
+    },
+    {
+      "id": "order-total",
+      "rows": [{ "cell": "order.api_accessible_total", "count": 91 }]
+    },
+    {
+      "id": "order-status",
+      "rows": [
+        { "status": "open", "count": 19 },
+        { "status": "closed", "count": 47 },
+        { "status": "cancelled", "count": 11 }
+      ]
+    }
+  ],
+  "panels": [
+    {
+      "id": "product-total-kpi",
+      "kind": "kpi",
+      "title": "Products",
+      "datasetId": "product-total",
+      "field": "count",
+      "aggregate": "sum"
+    },
+    {
+      "id": "order-total-kpi",
+      "kind": "kpi",
+      "title": "API-accessible orders",
+      "datasetId": "order-total",
+      "field": "count",
+      "aggregate": "sum"
+    },
+    {
+      "id": "product-status-chart",
+      "kind": "chart",
+      "title": "Products by status",
+      "chartType": "bar",
+      "datasetId": "product-status",
+      "encodings": {
+        "x": "status",
+        "y": { "field": "count", "aggregate": "sum" }
+      }
+    },
+    {
+      "id": "order-status-chart",
+      "kind": "chart",
+      "title": "API-accessible orders by status",
+      "chartType": "bar",
+      "datasetId": "order-status",
+      "encodings": {
+        "x": "status",
+        "y": { "field": "count", "aggregate": "sum" }
+      }
+    }
+  ],
+  "a11y": {
+    "description": "Aggregate products and API-accessible orders dashboard.",
+    "readingOrder": "kpi-first"
+  },
+  "output": {
+    "compact": true,
+    "html": true,
+    "contrastScan": true,
+    "dataTable": true,
+    "includeA11y": true
+  }
+}

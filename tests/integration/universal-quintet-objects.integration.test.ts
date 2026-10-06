@@ -37,15 +37,7 @@ describe('Canonical object registry integration', () => {
         { name: 'preference_document', layer: 'trait' },
         { name: 'preference_version', layer: 'trait' },
       ],
-      expectedTraits: [
-        'Addressable',
-        'Stateful',
-        'Timestampable',
-        'Taggable',
-        'Preferenceable',
-        'Authable',
-        'Communicable',
-      ],
+      expectedTraits: ['Addressable', 'Stateful', 'Timestampable', 'Taggable', 'Preferenceable', 'Authable', 'Communicable'],
       unionSnippet: "role: 'end_user' | 'admin' | 'owner' | 'billing';",
     },
     {
@@ -56,23 +48,13 @@ describe('Canonical object registry integration', () => {
         { name: 'organization_id' },
         { name: 'address_roles', layer: 'trait' },
       ],
-      expectedTraits: [
-        'Addressable',
-        'Labelled',
-        'Stateful',
-        'Ownerable',
-        'Timestampable',
-        'Taggable',
-        'Authable',
-        'Preferenceable',
-        'Communicable',
-      ],
+      expectedTraits: ['Addressable', 'Labelled', 'Stateful', 'Ownerable', 'Timestampable', 'Taggable', 'Authable', 'Preferenceable', 'Communicable'],
       unionSnippet: "plan_tier: 'free' | 'growth' | 'enterprise';",
     },
     {
       name: 'Product',
       expectedFields: ['product_id', 'sku', 'inventory_status'],
-      expectedTraits: ['Labelled', 'Stateful', 'Timestampable', 'Priceable', 'Classifiable'],
+      expectedTraits: ['Labelled', 'Stateful', 'Timestampable', 'Priceable', 'Classifiable', 'Searchable', 'Filterable', 'Pageable'],
       unionSnippet: "inventory_status: 'in_stock' | 'low_stock' | 'backorder' | 'discontinued';",
     },
     {
@@ -83,16 +65,18 @@ describe('Canonical object registry integration', () => {
     },
     {
       name: 'Relationship',
-      expectedFields: ['relationship_type', 'source_id', 'direction'],
-      expectedTraits: ['Labelled', 'Stateful', 'Timestampable', 'Ownerable', 'Taggable'],
+      expectedFields: ['relationship_type', 'source_id', 'direction', 'neighborhood'],
+      expectedTraits: ['Labelled', 'Stateful', 'Timestampable', 'Ownerable', 'Taggable', 'MarkGraph'],
       unionSnippet: "relationship_type: 'membership' | 'ownership' | 'follows' | 'depends_on' | 'references';",
     },
     {
       name: 'Subscription',
       expectedFields: ['subscription_id', 'status', 'current_period_end'],
-      expectedTraits: ['Stateful', 'Cancellable', 'Timestampable', 'Billable'],
+      // s220-m01 made the payment chart a bar (one bar per recorded payment); this spec kept MarkArea because the root
+      // engine refused Subscription's bar until s222-m03 gave MarkBar its payment-events declaration.
+      expectedTraits: ['Stateful', 'Cancellable', 'Timestampable', 'Billable', 'Archivable', 'MarkBar'],
       unionSnippet:
-        "status: 'future' | 'trialing' | 'active' | 'paused' | 'pending_cancellation' | 'delinquent' | 'terminated';",
+        "status: 'future' | 'trialing' | 'active' | 'paused' | 'pending_cancellation' | 'past_due' | 'unpaid' | 'terminated';",
     },
   ];
 
@@ -114,10 +98,10 @@ describe('Canonical object registry integration', () => {
         traitRoots: TRAIT_ROOTS,
       });
 
-      const resolvedTraits = new Set(resolved.composed.metadata.traitOrder);
-      for (const trait of testCase.expectedTraits) {
-        expect(resolvedTraits.has(trait)).toBe(true);
-      }
+      expect(resolved.composed.metadata.traitCount).toBe(testCase.expectedTraits.length);
+      expect(
+        new Set(resolved.composed.metadata.traitOrder)
+      ).toEqual(new Set(testCase.expectedTraits));
 
       for (const fieldExpectation of testCase.expectedFields) {
         const fieldName = typeof fieldExpectation === 'string' ? fieldExpectation : fieldExpectation.name;
@@ -134,10 +118,7 @@ describe('Canonical object registry integration', () => {
       const generated = generateObjectInterface(resolved, { includeJsDoc: false });
 
       expect(generated.interfaceName).toBe(testCase.name);
-      const generatedTraits = new Set(generated.traits);
-      for (const trait of testCase.expectedTraits) {
-        expect(generatedTraits.has(trait)).toBe(true);
-      }
+      expect(new Set(generated.traits)).toEqual(new Set(testCase.expectedTraits));
       if (testCase.unionSnippet) {
         expect(
           generated.code.includes(testCase.unionSnippet),

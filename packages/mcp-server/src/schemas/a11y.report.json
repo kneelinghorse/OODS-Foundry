@@ -1,0 +1,304 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/a11y.report.json",
+  "title": "a11y scan report",
+  "description": "Declared component CSS token-pair grades for every built brand/theme, plus optional static shared-renderer HTML checks. No browser-computed colour or complete WCAG conformance claim.",
+  "type": "object",
+  "required": [
+    "generatedAt",
+    "tokenSource",
+    "summary",
+    "rules",
+    "pairSource",
+    "scopes",
+    "notChecked"
+  ],
+  "properties": {
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "tokenSource": {
+      "type": "string",
+      "description": "Path to the token data used for evaluation."
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "totalChecks",
+        "passed",
+        "failed",
+        "screenFindings",
+        "unmeasured",
+        "notApplicable",
+        "complianceStatus"
+      ],
+      "properties": {
+        "totalChecks": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "passed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "screenFindings": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unmeasured": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "notApplicable": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "complianceStatus": {
+          "enum": [
+            "issues-found",
+            "partial",
+            "checks-passed"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "ruleId",
+          "brand",
+          "theme",
+          "selector",
+          "target",
+          "passed",
+          "status",
+          "threshold",
+          "ratio",
+          "foreground",
+          "background"
+        ],
+        "properties": {
+          "ruleId": {
+            "type": "string"
+          },
+          "brand": {
+            "type": "string"
+          },
+          "theme": {
+            "type": "string"
+          },
+          "selector": {
+            "type": "string"
+          },
+          "target": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "passed": {
+            "type": "boolean"
+          },
+          "status": {
+            "enum": [
+              "pass",
+              "fail",
+              "unmeasured",
+              "not-applicable"
+            ]
+          },
+          "ratio": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "threshold": {
+            "type": "number"
+          },
+          "foreground": {
+            "type": "object",
+            "required": [
+              "token",
+              "value",
+              "hex"
+            ],
+            "properties": {
+              "token": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "value": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "hex": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "additionalProperties": false
+          },
+          "background": {
+            "type": "object",
+            "required": [
+              "token",
+              "value",
+              "hex"
+            ],
+            "properties": {
+              "token": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "value": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "hex": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "components": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Component names from the scanned UiSchema, if provided."
+    },
+    "pairSource": {
+      "type": "object",
+      "required": [
+        "source",
+        "sha256",
+        "selection"
+      ],
+      "properties": {
+        "source": {
+          "type": "string"
+        },
+        "sha256": {
+          "type": "string"
+        },
+        "selection": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "scopes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "brand",
+          "theme",
+          "checks"
+        ],
+        "properties": {
+          "brand": {
+            "type": "string"
+          },
+          "theme": {
+            "type": "string"
+          },
+          "checks": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "notChecked": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "screen": {
+      "type": "object",
+      "required": [
+        "renderer",
+        "htmlSha256",
+        "rulesChecked",
+        "findings"
+      ],
+      "properties": {
+        "renderer": {
+          "type": "string"
+        },
+        "htmlSha256": {
+          "type": "string"
+        },
+        "rulesChecked": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "code",
+              "message"
+            ],
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              },
+              "hint": {
+                "type": "string"
+              },
+              "severity": {
+                "enum": [
+                  "warning",
+                  "error",
+                  "info"
+                ]
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

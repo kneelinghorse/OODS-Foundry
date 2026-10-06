@@ -1,0 +1,2276 @@
+[
+  {
+    "id": "pattern:viz:bubble-distribution",
+    "family": "statistical",
+    "baseChartType": "scatter",
+    "specPath": "examples/viz/patterns-v2/bubble-distribution.spec.json",
+    "specSha256": "5dec8c5930efde90f29a3676855869bb766c02c69b35095335b6259eee1a3aef",
+    "portability": {
+      "fallbackType": "table",
+      "tableColumnOrder": [
+        "initiative",
+        "impact",
+        "effort",
+        "customers"
+      ],
+      "preferredRenderer": "vega-lite"
+    },
+    "publicSvg": true,
+    "status": "public",
+    "scopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "fb2b7f70028f148d1b932389790598d30a2c4f475860af702879464f7a3e0faa",
+        "normalizedSpecSha256": "28b61e20c0b3ec5bced98bc97ec42bd50fd049797556631fdd99f2cf10daa2e3",
+        "a11yDescription": "AI Assist has the highest impact but also the highest effort, while Usage Alerts offers a quick win.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "fb2b7f70028f148d1b932389790598d30a2c4f475860af702879464f7a3e0faa"
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "a67bd92970a2a94e9acc046e282c48cdabb2790c2b3442bdea2bf5929c0f74a5",
+        "normalizedSpecSha256": "28b61e20c0b3ec5bced98bc97ec42bd50fd049797556631fdd99f2cf10daa2e3",
+        "a11yDescription": "AI Assist has the highest impact but also the highest effort, while Usage Alerts offers a quick win.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "a67bd92970a2a94e9acc046e282c48cdabb2790c2b3442bdea2bf5929c0f74a5"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "d70329096ab27ed49a838db8f465cca244408c9e3c7b32741cc7233dca612da6",
+        "normalizedSpecSha256": "28b61e20c0b3ec5bced98bc97ec42bd50fd049797556631fdd99f2cf10daa2e3",
+        "a11yDescription": "AI Assist has the highest impact but also the highest effort, while Usage Alerts offers a quick win.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "d70329096ab27ed49a838db8f465cca244408c9e3c7b32741cc7233dca612da6"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "cdc4a165179a3aaa77b963aa5a78293859d6563355829eaef30aebe36c6fb95d",
+        "normalizedSpecSha256": "28b61e20c0b3ec5bced98bc97ec42bd50fd049797556631fdd99f2cf10daa2e3",
+        "a11yDescription": "AI Assist has the highest impact but also the highest effort, while Usage Alerts offers a quick win.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "cdc4a165179a3aaa77b963aa5a78293859d6563355829eaef30aebe36c6fb95d"
+        }
+      }
+    ]
+  },
+  {
+    "id": "pattern:viz:correlation-matrix",
+    "family": "statistical",
+    "baseChartType": "heatmap",
+    "specPath": "examples/viz/patterns-v2/correlation-matrix.spec.json",
+    "specSha256": "966719ee04d5307fb414931f7a2d22d1e1f4cecc21b35ef40be6888a4bd0989e",
+    "portability": {
+      "fallbackType": "table",
+      "tableColumnOrder": [
+        "featureX",
+        "featureY",
+        "correlation"
+      ],
+      "preferredRenderer": "vega-lite"
+    },
+    "publicSvg": true,
+    "status": "public",
+    "scopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "de6a32e631472c91b5d6c57b2e5f8584bbf12b69a629f11dded7175693176de6",
+        "normalizedSpecSha256": "f27bbad709eeab4b82769d8bd72383a4a2276e5036f7eb2ed3730c563c589b70",
+        "a11yDescription": "Usage and retention correlate strongly, while support tickets are inversely related to every metric.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "unchecked",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "de6a32e631472c91b5d6c57b2e5f8584bbf12b69a629f11dded7175693176de6"
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "614b9f209fe6c138fd39cd8a10c1e2e44990f9675d9b898ac9a8f4c4f3d023d1",
+        "normalizedSpecSha256": "f27bbad709eeab4b82769d8bd72383a4a2276e5036f7eb2ed3730c563c589b70",
+        "a11yDescription": "Usage and retention correlate strongly, while support tickets are inversely related to every metric.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "unchecked",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "614b9f209fe6c138fd39cd8a10c1e2e44990f9675d9b898ac9a8f4c4f3d023d1"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "5b076b9320f086feabd0255d3423c8aecb1ad76cd1cc24ccc505d31f2e18f90e",
+        "normalizedSpecSha256": "f27bbad709eeab4b82769d8bd72383a4a2276e5036f7eb2ed3730c563c589b70",
+        "a11yDescription": "Usage and retention correlate strongly, while support tickets are inversely related to every metric.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "unchecked",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "5b076b9320f086feabd0255d3423c8aecb1ad76cd1cc24ccc505d31f2e18f90e"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "268b3f12567b07212b09331bc7afe5cf16112de2ee0527b5d3bc9af08d33ffc3",
+        "normalizedSpecSha256": "f27bbad709eeab4b82769d8bd72383a4a2276e5036f7eb2ed3730c563c589b70",
+        "a11yDescription": "Usage and retention correlate strongly, while support tickets are inversely related to every metric.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "unchecked",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "268b3f12567b07212b09331bc7afe5cf16112de2ee0527b5d3bc9af08d33ffc3"
+        }
+      }
+    ]
+  },
+  {
+    "id": "pattern:viz:correlation-scatter",
+    "family": "statistical",
+    "baseChartType": "scatter",
+    "specPath": "examples/viz/patterns-v2/correlation-scatter.spec.json",
+    "specSha256": "852079ef36ceaa7d327879c3a4aa8b505ceec489014a62fb867e153aba4f5dec",
+    "portability": {
+      "fallbackType": "table",
+      "tableColumnOrder": [
+        "segment",
+        "latency",
+        "conversion"
+      ],
+      "preferredRenderer": "vega-lite"
+    },
+    "publicSvg": true,
+    "status": "public",
+    "scopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "96ef8daf328d1b82f07473b67bc667ee6efe91023866a697e89dd085018e7565",
+        "normalizedSpecSha256": "32097916080a4d9538a7fda41533a3bf6dd84609a2da334d0cf230b6e33277b0",
+        "a11yDescription": "Conversion increases as latency drops below 100 ms, especially for enterprise customers.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "96ef8daf328d1b82f07473b67bc667ee6efe91023866a697e89dd085018e7565"
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "c43febe55c09463be96f1c9645706a527547af03c5e04dd83f11335a16ec4302",
+        "normalizedSpecSha256": "32097916080a4d9538a7fda41533a3bf6dd84609a2da334d0cf230b6e33277b0",
+        "a11yDescription": "Conversion increases as latency drops below 100 ms, especially for enterprise customers.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "c43febe55c09463be96f1c9645706a527547af03c5e04dd83f11335a16ec4302"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "421eb023eb865751110b2f904f4c8d0fd5c3560736caf5865c0343f04a959928",
+        "normalizedSpecSha256": "32097916080a4d9538a7fda41533a3bf6dd84609a2da334d0cf230b6e33277b0",
+        "a11yDescription": "Conversion increases as latency drops below 100 ms, especially for enterprise customers.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "421eb023eb865751110b2f904f4c8d0fd5c3560736caf5865c0343f04a959928"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "462ae5c796ea7bd700746c8d33c28f748bacf9c2d0f1a4b50ce562b0374c2bd4",
+        "normalizedSpecSha256": "32097916080a4d9538a7fda41533a3bf6dd84609a2da334d0cf230b6e33277b0",
+        "a11yDescription": "Conversion increases as latency drops below 100 ms, especially for enterprise customers.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "462ae5c796ea7bd700746c8d33c28f748bacf9c2d0f1a4b50ce562b0374c2bd4"
+        }
+      }
+    ]
+  },
+  {
+    "id": "pattern:viz:detail-overview-bar",
+    "family": "statistical",
+    "baseChartType": "bar",
+    "specPath": "examples/viz/patterns-v2/detail-overview-bar.spec.json",
+    "specSha256": "84433e710b7eceb222bf81d597fcca0f5882b5e29c96a2e38f16c8b88bc8fc5f",
+    "portability": {
+      "fallbackType": "table",
+      "preferredRenderer": "vega-lite",
+      "tableColumnOrder": [
+        "product",
+        "segment",
+        "bookings",
+        "target"
+      ]
+    },
+    "publicSvg": true,
+    "status": "public",
+    "scopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "099d785d0163e721497a00761b657abb1202a470f2f287cb7f2fd76db17ce764",
+        "normalizedSpecSha256": "13ea8b6cc21507e0ff8a09c6056b6726483e11a02efae2c16827cd6445af4ce4",
+        "a11yDescription": "Core outperforms targets across all segments while Plus trails only in SMB",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "099d785d0163e721497a00761b657abb1202a470f2f287cb7f2fd76db17ce764"
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "1aae401127198e00505c9b0c5cb331a762d6074a3487bad5599af5060ce0c727",
+        "normalizedSpecSha256": "13ea8b6cc21507e0ff8a09c6056b6726483e11a02efae2c16827cd6445af4ce4",
+        "a11yDescription": "Core outperforms targets across all segments while Plus trails only in SMB",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "1aae401127198e00505c9b0c5cb331a762d6074a3487bad5599af5060ce0c727"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "4c481f50e8de7ebf53aaea1ca9bb409b86c9ed13505b3876afc46d2929206045",
+        "normalizedSpecSha256": "13ea8b6cc21507e0ff8a09c6056b6726483e11a02efae2c16827cd6445af4ce4",
+        "a11yDescription": "Core outperforms targets across all segments while Plus trails only in SMB",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "4c481f50e8de7ebf53aaea1ca9bb409b86c9ed13505b3876afc46d2929206045"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "00cef1e17c020d2368f2d7e1d0ce4aa675510b5e25265d2c36dbca6876703fa7",
+        "normalizedSpecSha256": "13ea8b6cc21507e0ff8a09c6056b6726483e11a02efae2c16827cd6445af4ce4",
+        "a11yDescription": "Core outperforms targets across all segments while Plus trails only in SMB",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "00cef1e17c020d2368f2d7e1d0ce4aa675510b5e25265d2c36dbca6876703fa7"
+        }
+      }
+    ]
+  },
+  {
+    "id": "pattern:viz:diverging-bar",
+    "family": "statistical",
+    "baseChartType": "bar",
+    "specPath": "examples/viz/patterns-v2/diverging-bar.spec.json",
+    "specSha256": "14253a37c62634da3dd2043455f55643166ed1a0fa2f0afc45becf2ab7cc4ab9",
+    "portability": {
+      "fallbackType": "table",
+      "tableColumnOrder": [
+        "driver",
+        "delta"
+      ],
+      "preferredRenderer": "vega-lite"
+    },
+    "publicSvg": true,
+    "status": "public",
+    "scopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "70c244e3110bdfbe99edd006aa6e1dd33d462af4c1f73ee09240f8c6ba35e47d",
+        "normalizedSpecSha256": "ae24f90c9997124578920b98bb4f7303a29e9450763af11a739662a23bcaef82",
+        "a11yDescription": "Onboarding contributes +18 points while Reporting drags the score by 12 points.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "unchecked",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "70c244e3110bdfbe99edd006aa6e1dd33d462af4c1f73ee09240f8c6ba35e47d"
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "b06618e6b93f6d230e397518071673b78a878396b430329cc128d3be72d9a8b5",
+        "normalizedSpecSha256": "ae24f90c9997124578920b98bb4f7303a29e9450763af11a739662a23bcaef82",
+        "a11yDescription": "Onboarding contributes +18 points while Reporting drags the score by 12 points.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "unchecked",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "b06618e6b93f6d230e397518071673b78a878396b430329cc128d3be72d9a8b5"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "22b33325d962bd1abf2a254c65db0b13ddf4ed4e86952e1db4d0cec95cfe153e",
+        "normalizedSpecSha256": "ae24f90c9997124578920b98bb4f7303a29e9450763af11a739662a23bcaef82",
+        "a11yDescription": "Onboarding contributes +18 points while Reporting drags the score by 12 points.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "unchecked",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "22b33325d962bd1abf2a254c65db0b13ddf4ed4e86952e1db4d0cec95cfe153e"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "0f8b694a36b07ee6a7e5d130cccb052b69140bbd2342d0a89b6771e4be311dfa",
+        "normalizedSpecSha256": "ae24f90c9997124578920b98bb4f7303a29e9450763af11a739662a23bcaef82",
+        "a11yDescription": "Onboarding contributes +18 points while Reporting drags the score by 12 points.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "unchecked",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "0f8b694a36b07ee6a7e5d130cccb052b69140bbd2342d0a89b6771e4be311dfa"
+        }
+      }
+    ]
+  },
+  {
+    "id": "pattern:viz:drilldown-stacked-bar",
+    "family": "statistical",
+    "baseChartType": "bar",
+    "specPath": "examples/viz/patterns-v2/drilldown-stacked-bar.spec.json",
+    "specSha256": "7930a3b53cc0094397b4a006e9971ced6bfee5e7e1cf6dba67995c5089c2fdbd",
+    "portability": {
+      "fallbackType": "table",
+      "preferredRenderer": "vega-lite",
+      "tableColumnOrder": [
+        "region",
+        "quarter",
+        "stage",
+        "value"
+      ]
+    },
+    "publicSvg": true,
+    "status": "public",
+    "scopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "65f3d5ee64ce190a8f3b5965a88cb35e369b5bd2c7c1154aca3da9c44ab7c7b6",
+        "normalizedSpecSha256": "af1c62e0ca10b1e9c15ab7fa1002e276aa87be2d7c00beb6da22147a313f209a",
+        "a11yDescription": "Americas pipeline grows faster in Sales stage across both quarters",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "65f3d5ee64ce190a8f3b5965a88cb35e369b5bd2c7c1154aca3da9c44ab7c7b6"
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "a9f8488bedcac6d19ee5ad542847515603e2cad308ae296599f4793e452b449e",
+        "normalizedSpecSha256": "af1c62e0ca10b1e9c15ab7fa1002e276aa87be2d7c00beb6da22147a313f209a",
+        "a11yDescription": "Americas pipeline grows faster in Sales stage across both quarters",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "a9f8488bedcac6d19ee5ad542847515603e2cad308ae296599f4793e452b449e"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "282d85aecdbf229251ee2592d839726e95bd171b067315eec5a2ebbfaac29e86",
+        "normalizedSpecSha256": "af1c62e0ca10b1e9c15ab7fa1002e276aa87be2d7c00beb6da22147a313f209a",
+        "a11yDescription": "Americas pipeline grows faster in Sales stage across both quarters",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "282d85aecdbf229251ee2592d839726e95bd171b067315eec5a2ebbfaac29e86"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "be01477d3d88b921fb3448bfa959063d582e0e3f33ce4c98a9bd1305b8786219",
+        "normalizedSpecSha256": "af1c62e0ca10b1e9c15ab7fa1002e276aa87be2d7c00beb6da22147a313f209a",
+        "a11yDescription": "Americas pipeline grows faster in Sales stage across both quarters",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "be01477d3d88b921fb3448bfa959063d582e0e3f33ce4c98a9bd1305b8786219"
+        }
+      }
+    ]
+  },
+  {
+    "id": "pattern:viz:facet-small-multiples-line",
+    "family": "temporal",
+    "baseChartType": "line",
+    "specPath": "examples/viz/patterns-v2/facet-small-multiples-line.spec.json",
+    "specSha256": "4ca77b37cdabf4aa3e5442121c4e1821185a1ef255e6efcbb9623214dc7e3029",
+    "portability": {
+      "fallbackType": "table",
+      "preferredRenderer": "vega-lite",
+      "tableColumnOrder": [
+        "week",
+        "region",
+        "segment",
+        "active"
+      ]
+    },
+    "publicSvg": true,
+    "status": "public",
+    "scopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "3fbd986c9a2fffc0c74ffe5d566269939cf7498fad2183c53e8e5f2bb1f14c81",
+        "normalizedSpecSha256": "a954cfee4e37665ac1e48b57d455ea6bc46172546cee508c6fc41199cc996d61",
+        "a11yDescription": "Enterprise lines run higher than growth cohorts, and the North region accelerates fastest by week three",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "3fbd986c9a2fffc0c74ffe5d566269939cf7498fad2183c53e8e5f2bb1f14c81"
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "1daf7e9a834be7abd966964348ff7d6cac648d9c480b55f82cf3511c3b425e25",
+        "normalizedSpecSha256": "a954cfee4e37665ac1e48b57d455ea6bc46172546cee508c6fc41199cc996d61",
+        "a11yDescription": "Enterprise lines run higher than growth cohorts, and the North region accelerates fastest by week three",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "1daf7e9a834be7abd966964348ff7d6cac648d9c480b55f82cf3511c3b425e25"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "3722ceb85d8d5ddf96a2075d9cb5c939edc8442dde7d5a5d401bc468bab2dddd",
+        "normalizedSpecSha256": "a954cfee4e37665ac1e48b57d455ea6bc46172546cee508c6fc41199cc996d61",
+        "a11yDescription": "Enterprise lines run higher than growth cohorts, and the North region accelerates fastest by week three",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "3722ceb85d8d5ddf96a2075d9cb5c939edc8442dde7d5a5d401bc468bab2dddd"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "4da69eb27381ff34cb413b045cb45b357dc130496490c4153256d6c1da47e55d",
+        "normalizedSpecSha256": "a954cfee4e37665ac1e48b57d455ea6bc46172546cee508c6fc41199cc996d61",
+        "a11yDescription": "Enterprise lines run higher than growth cohorts, and the North region accelerates fastest by week three",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "4da69eb27381ff34cb413b045cb45b357dc130496490c4153256d6c1da47e55d"
+        }
+      }
+    ]
+  },
+  {
+    "id": "pattern:viz:facet-target-band",
+    "family": "temporal",
+    "baseChartType": "line",
+    "specPath": "examples/viz/patterns-v2/facet-target-band.spec.json",
+    "specSha256": "bcb0009857ba20cba85cf3e70501b5a02112c4397bca0f96c9385cdfd3eea0d1",
+    "portability": {
+      "fallbackType": "table",
+      "preferredRenderer": "vega-lite",
+      "tableColumnOrder": [
+        "region",
+        "week",
+        "actual",
+        "lower",
+        "upper"
+      ]
+    },
+    "publicSvg": true,
+    "status": "public",
+    "scopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "1d6dced2588f9f727855150c0726064e605fb1ec0ab9bb6643ad7da8d58df2c4",
+        "normalizedSpecSha256": "5cb43ce4b0ababb9f12fa8d49c39b14910920c859cc664f3a42e3282860e0022",
+        "a11yDescription": "Amer stays inside the band; APAC flirts with the upper bound by week three",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "1d6dced2588f9f727855150c0726064e605fb1ec0ab9bb6643ad7da8d58df2c4"
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "e9eaa49256d6a40f27431ffb8e5ba51390f33ae2c80158646ace671ad930960d",
+        "normalizedSpecSha256": "5cb43ce4b0ababb9f12fa8d49c39b14910920c859cc664f3a42e3282860e0022",
+        "a11yDescription": "Amer stays inside the band; APAC flirts with the upper bound by week three",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "e9eaa49256d6a40f27431ffb8e5ba51390f33ae2c80158646ace671ad930960d"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "0a2838a81734da8a6de73aeaf77f51bfbe6cabe561c95d9af9a4e35dffdc0be6",
+        "normalizedSpecSha256": "5cb43ce4b0ababb9f12fa8d49c39b14910920c859cc664f3a42e3282860e0022",
+        "a11yDescription": "Amer stays inside the band; APAC flirts with the upper bound by week three",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "0a2838a81734da8a6de73aeaf77f51bfbe6cabe561c95d9af9a4e35dffdc0be6"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "8f98b6eadf7f141ef61afdc377056aeeaa3665928f5e59e19f24aa568116aeaf",
+        "normalizedSpecSha256": "5cb43ce4b0ababb9f12fa8d49c39b14910920c859cc664f3a42e3282860e0022",
+        "a11yDescription": "Amer stays inside the band; APAC flirts with the upper bound by week three",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "8f98b6eadf7f141ef61afdc377056aeeaa3665928f5e59e19f24aa568116aeaf"
+        }
+      }
+    ]
+  },
+  {
+    "id": "pattern:viz:focus-context-line",
+    "family": "temporal",
+    "baseChartType": "line",
+    "specPath": "examples/viz/patterns-v2/focus-context-line.spec.json",
+    "specSha256": "0ee905cc4457de44f443e4a2e3d6dae5c8c408c9946d3a0fbc78a3a9efdb3e85",
+    "portability": {
+      "fallbackType": "table",
+      "preferredRenderer": "vega-lite",
+      "tableColumnOrder": [
+        "week",
+        "region",
+        "revenue"
+      ]
+    },
+    "publicSvg": true,
+    "status": "public",
+    "scopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "d988f669a03cb3686c8114f785f9c820f79e58c8b6990a37682f052c1c8073a7",
+        "normalizedSpecSha256": "96bc9270bc4b4ee3bf388d9c91a2bab0969ca1ccce0d2a49be376bb80fc02a52",
+        "a11yDescription": "The Americas line stays well above other regions and accelerates sharply in week four",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "d988f669a03cb3686c8114f785f9c820f79e58c8b6990a37682f052c1c8073a7"
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "c04d2b377c2486a53f17e252d5b955dc17262b0d2d51d134878a99ac6bba94b7",
+        "normalizedSpecSha256": "96bc9270bc4b4ee3bf388d9c91a2bab0969ca1ccce0d2a49be376bb80fc02a52",
+        "a11yDescription": "The Americas line stays well above other regions and accelerates sharply in week four",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "c04d2b377c2486a53f17e252d5b955dc17262b0d2d51d134878a99ac6bba94b7"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "1d34960c983a65228b22fb1b2c192494b54c84b0e41992c469cfd428fc2bdcdb",
+        "normalizedSpecSha256": "96bc9270bc4b4ee3bf388d9c91a2bab0969ca1ccce0d2a49be376bb80fc02a52",
+        "a11yDescription": "The Americas line stays well above other regions and accelerates sharply in week four",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "1d34960c983a65228b22fb1b2c192494b54c84b0e41992c469cfd428fc2bdcdb"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "62dc3981f0c76d53dc059f7ddf4479222a82f621da5d514bdaf2b131fd9f85b1",
+        "normalizedSpecSha256": "96bc9270bc4b4ee3bf388d9c91a2bab0969ca1ccce0d2a49be376bb80fc02a52",
+        "a11yDescription": "The Americas line stays well above other regions and accelerates sharply in week four",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "62dc3981f0c76d53dc059f7ddf4479222a82f621da5d514bdaf2b131fd9f85b1"
+        }
+      }
+    ]
+  },
+  {
+    "id": "pattern:viz:grouped-bar",
+    "family": "statistical",
+    "baseChartType": "bar",
+    "specPath": "examples/viz/patterns-v2/grouped-bar.spec.json",
+    "specSha256": "a314add77eecc911a727321da852e5fd8724cfe036bd77fe7856040f38abd366",
+    "portability": {
+      "fallbackType": "table",
+      "tableColumnOrder": [
+        "quarter",
+        "segment",
+        "coverage"
+      ],
+      "preferredRenderer": "vega-lite"
+    },
+    "publicSvg": true,
+    "status": "public",
+    "scopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "b4a7748ae3e61bd13e2126a7088b4f283be2543a45b4fcc3c7fdc8a665793d8c",
+        "normalizedSpecSha256": "42eebcf69cefed1d4dd9a6998a10b1d41bc9ba08d22d11179852fc523568cf2a",
+        "a11yDescription": "Enterprise coverage leads every quarter while Growth closes the gap by Q4.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "b4a7748ae3e61bd13e2126a7088b4f283be2543a45b4fcc3c7fdc8a665793d8c"
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "b4029f1cd371e1239602b686364c4a3684c90bca1ccded8190d417ffcc6d801f",
+        "normalizedSpecSha256": "42eebcf69cefed1d4dd9a6998a10b1d41bc9ba08d22d11179852fc523568cf2a",
+        "a11yDescription": "Enterprise coverage leads every quarter while Growth closes the gap by Q4.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "b4029f1cd371e1239602b686364c4a3684c90bca1ccded8190d417ffcc6d801f"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "3a0a1c3865584b9269cd46da183d20664145c0655a55cd83f88e54598043a944",
+        "normalizedSpecSha256": "42eebcf69cefed1d4dd9a6998a10b1d41bc9ba08d22d11179852fc523568cf2a",
+        "a11yDescription": "Enterprise coverage leads every quarter while Growth closes the gap by Q4.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "3a0a1c3865584b9269cd46da183d20664145c0655a55cd83f88e54598043a944"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "f6fbeb90c39da312cbc2e9e15f837ffe2f4df0da00781664f3c164dcc45fd75e",
+        "normalizedSpecSha256": "42eebcf69cefed1d4dd9a6998a10b1d41bc9ba08d22d11179852fc523568cf2a",
+        "a11yDescription": "Enterprise coverage leads every quarter while Growth closes the gap by Q4.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "f6fbeb90c39da312cbc2e9e15f837ffe2f4df0da00781664f3c164dcc45fd75e"
+        }
+      }
+    ]
+  },
+  {
+    "id": "pattern:viz:histogram",
+    "family": "scientific",
+    "baseChartType": "bar",
+    "specPath": "examples/viz/patterns-v2/histogram.spec.json",
+    "specSha256": "b32f733ce684217c7aeae28b7e5489d4e5e7675de887fd809b32540e1231bb48",
+    "portability": {
+      "fallbackType": "table",
+      "tableColumnOrder": [
+        "binStart",
+        "binEnd",
+        "count"
+      ],
+      "preferredRenderer": "vega-lite"
+    },
+    "publicSvg": true,
+    "status": "public",
+    "scopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "1cb13abd260b66f448d76dbd07768e74ff562e2b79741b5720e69254d28a0356",
+        "normalizedSpecSha256": "7d93ca74ef679a77193be25f7282e3ac64de2d33fed6071927f0201ea406acf2",
+        "a11yDescription": "The supplied frequency bins peak at 20–30 with 12 observations; the bins are already computed and have equal widths.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "1cb13abd260b66f448d76dbd07768e74ff562e2b79741b5720e69254d28a0356"
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "018b730b2783d39ab617a060f410f18d35a7380b40c5cf21370feaba75dc63eb",
+        "normalizedSpecSha256": "7d93ca74ef679a77193be25f7282e3ac64de2d33fed6071927f0201ea406acf2",
+        "a11yDescription": "The supplied frequency bins peak at 20–30 with 12 observations; the bins are already computed and have equal widths.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "018b730b2783d39ab617a060f410f18d35a7380b40c5cf21370feaba75dc63eb"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "c5e4003e5918047b657ef066d343630c7edf14afd042cec38c266cbd3dc9d05b",
+        "normalizedSpecSha256": "7d93ca74ef679a77193be25f7282e3ac64de2d33fed6071927f0201ea406acf2",
+        "a11yDescription": "The supplied frequency bins peak at 20–30 with 12 observations; the bins are already computed and have equal widths.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "c5e4003e5918047b657ef066d343630c7edf14afd042cec38c266cbd3dc9d05b"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "426e047d14f94f86310777d4051d6420287dec53360b8ff232da5380ba151d64",
+        "normalizedSpecSha256": "7d93ca74ef679a77193be25f7282e3ac64de2d33fed6071927f0201ea406acf2",
+        "a11yDescription": "The supplied frequency bins peak at 20–30 with 12 observations; the bins are already computed and have equal widths.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "426e047d14f94f86310777d4051d6420287dec53360b8ff232da5380ba151d64"
+        }
+      }
+    ]
+  },
+  {
+    "id": "pattern:viz:layered-line-area",
+    "family": "temporal",
+    "baseChartType": "area",
+    "specPath": "examples/viz/patterns-v2/layered-line-area.spec.json",
+    "specSha256": "37a5bbdd75eea6efaa9437ae723e8b2afb8a0c2f3e44d7b4e400a07c6bf50c4a",
+    "portability": {
+      "fallbackType": "table",
+      "preferredRenderer": "echarts",
+      "tableColumnOrder": [
+        "week",
+        "actual",
+        "target",
+        "capacity"
+      ]
+    },
+    "publicSvg": true,
+    "status": "public",
+    "scopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "48809474123ff849cc7f163b5af13f5a3147bf157f13f9480255719b54e01711",
+        "normalizedSpecSha256": "154baf2864a6572bef77d7f4cbdadf8c29bdf7a59974792d4e4d22c8e95b39da",
+        "a11yDescription": "Actual retention remains above both target and capacity thresholds for five consecutive weeks",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "48809474123ff849cc7f163b5af13f5a3147bf157f13f9480255719b54e01711"
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "fc7360a8c7a2c6066046f2d3dda841c90c6010477a2c0082e404662608a2eb4b",
+        "normalizedSpecSha256": "154baf2864a6572bef77d7f4cbdadf8c29bdf7a59974792d4e4d22c8e95b39da",
+        "a11yDescription": "Actual retention remains above both target and capacity thresholds for five consecutive weeks",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "fc7360a8c7a2c6066046f2d3dda841c90c6010477a2c0082e404662608a2eb4b"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "bce308c3a8e512c26403bf3abc013b65a4204f53bab0de7919d4477520bf7827",
+        "normalizedSpecSha256": "154baf2864a6572bef77d7f4cbdadf8c29bdf7a59974792d4e4d22c8e95b39da",
+        "a11yDescription": "Actual retention remains above both target and capacity thresholds for five consecutive weeks",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "bce308c3a8e512c26403bf3abc013b65a4204f53bab0de7919d4477520bf7827"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "fa6638f7dbd513131906b5cf3f32dd40a07f867e5f390c00cd1e37dd4837073c",
+        "normalizedSpecSha256": "154baf2864a6572bef77d7f4cbdadf8c29bdf7a59974792d4e4d22c8e95b39da",
+        "a11yDescription": "Actual retention remains above both target and capacity thresholds for five consecutive weeks",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "fa6638f7dbd513131906b5cf3f32dd40a07f867e5f390c00cd1e37dd4837073c"
+        }
+      }
+    ]
+  },
+  {
+    "id": "pattern:viz:linked-brush-scatter",
+    "family": "statistical",
+    "baseChartType": "scatter",
+    "specPath": "examples/viz/patterns-v2/linked-brush-scatter.spec.json",
+    "specSha256": "bc036d0132a99e11b8508de928d0157575af750410f69f54050635ecf76cc524",
+    "portability": {
+      "fallbackType": "table",
+      "preferredRenderer": "echarts",
+      "tableColumnOrder": [
+        "cohort",
+        "segment",
+        "pctEngaged",
+        "pctRetained"
+      ]
+    },
+    "publicSvg": false,
+    "status": "retired",
+    "reasons": [
+      "viz.render: pattern \"pattern:viz:linked-brush-scatter\" is retired: Drag brushing has no keyboard-equivalent interaction and duplicates correlation-scatter; use pattern:viz:correlation-scatter."
+    ],
+    "scopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "retired",
+        "errors": [
+          {
+            "code": "OODS-V174",
+            "message": "viz.render: pattern \"pattern:viz:linked-brush-scatter\" is retired: Drag brushing has no keyboard-equivalent interaction and duplicates correlation-scatter; use pattern:viz:correlation-scatter."
+          }
+        ]
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "retired",
+        "errors": [
+          {
+            "code": "OODS-V174",
+            "message": "viz.render: pattern \"pattern:viz:linked-brush-scatter\" is retired: Drag brushing has no keyboard-equivalent interaction and duplicates correlation-scatter; use pattern:viz:correlation-scatter."
+          }
+        ]
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "retired",
+        "errors": [
+          {
+            "code": "OODS-V174",
+            "message": "viz.render: pattern \"pattern:viz:linked-brush-scatter\" is retired: Drag brushing has no keyboard-equivalent interaction and duplicates correlation-scatter; use pattern:viz:correlation-scatter."
+          }
+        ]
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "retired",
+        "errors": [
+          {
+            "code": "OODS-V174",
+            "message": "viz.render: pattern \"pattern:viz:linked-brush-scatter\" is retired: Drag brushing has no keyboard-equivalent interaction and duplicates correlation-scatter; use pattern:viz:correlation-scatter."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "pattern:viz:multi-series-line",
+    "family": "temporal",
+    "baseChartType": "line",
+    "specPath": "examples/viz/patterns-v2/multi-series-line.spec.json",
+    "specSha256": "5f8cf6106fcde1d28d3a7e85803fe9418e13732abe2b49473472b4587a010a7e",
+    "portability": {
+      "fallbackType": "table",
+      "tableColumnOrder": [
+        "week",
+        "plan",
+        "wau"
+      ],
+      "preferredRenderer": "vega-lite"
+    },
+    "publicSvg": true,
+    "status": "public",
+    "scopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "6be6daa7d39a7109a51cea8649268375780eea0f16dcdc085fe35ec2b3beb145",
+        "normalizedSpecSha256": "0060b366ce9232957e3d772a62cb7bd4473380d537b8599df21798b4ca218752",
+        "a11yDescription": "Growth customers accelerate fastest, with Enterprise catching up in late September.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "6be6daa7d39a7109a51cea8649268375780eea0f16dcdc085fe35ec2b3beb145"
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "94c10cd2badd041ca5694cbf41f4a179bc07e6fb80499b68c404d01feddd7da1",
+        "normalizedSpecSha256": "0060b366ce9232957e3d772a62cb7bd4473380d537b8599df21798b4ca218752",
+        "a11yDescription": "Growth customers accelerate fastest, with Enterprise catching up in late September.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "94c10cd2badd041ca5694cbf41f4a179bc07e6fb80499b68c404d01feddd7da1"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "294b200b73227e9f2e77e33893e63e588d9975fff02141e29ba3b86cb460587c",
+        "normalizedSpecSha256": "0060b366ce9232957e3d772a62cb7bd4473380d537b8599df21798b4ca218752",
+        "a11yDescription": "Growth customers accelerate fastest, with Enterprise catching up in late September.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "294b200b73227e9f2e77e33893e63e588d9975fff02141e29ba3b86cb460587c"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "7c0fbdbd886b920f8813cf69f9611b09fb0c8cc64b7a0bb41b1609ce895e000f",
+        "normalizedSpecSha256": "0060b366ce9232957e3d772a62cb7bd4473380d537b8599df21798b4ca218752",
+        "a11yDescription": "Growth customers accelerate fastest, with Enterprise catching up in late September.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "7c0fbdbd886b920f8813cf69f9611b09fb0c8cc64b7a0bb41b1609ce895e000f"
+        }
+      }
+    ]
+  },
+  {
+    "id": "pattern:viz:running-total-area",
+    "family": "temporal",
+    "baseChartType": "area",
+    "specPath": "examples/viz/patterns-v2/running-total-area.spec.json",
+    "specSha256": "c32e3d4bf79554963264debd85400b309238c6d46e3ec673619e136996eb8f35",
+    "portability": {
+      "fallbackType": "table",
+      "tableColumnOrder": [
+        "month",
+        "arr"
+      ],
+      "preferredRenderer": "vega-lite"
+    },
+    "publicSvg": true,
+    "status": "public",
+    "scopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "3765719af3af49bce14d49c183b14af3348d3d6cb28ed24a3346ff3fa6a32154",
+        "normalizedSpecSha256": "cf4f8f174beaeddc89fd199de63452edd5738d446c74174f2938319b7b3bbfb8",
+        "a11yDescription": "ARR steadily increases with a sharper slope entering Q3.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "3765719af3af49bce14d49c183b14af3348d3d6cb28ed24a3346ff3fa6a32154"
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "d6bcd72da6924984a9c52bc8d144d8bd31c1d61b4bf7ecca9144491351a457bd",
+        "normalizedSpecSha256": "cf4f8f174beaeddc89fd199de63452edd5738d446c74174f2938319b7b3bbfb8",
+        "a11yDescription": "ARR steadily increases with a sharper slope entering Q3.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "d6bcd72da6924984a9c52bc8d144d8bd31c1d61b4bf7ecca9144491351a457bd"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "8ae59a044bd04828079ce55cef0e20cdd91d2fb8bf6a98be7cbe3eb81e2d38e9",
+        "normalizedSpecSha256": "cf4f8f174beaeddc89fd199de63452edd5738d446c74174f2938319b7b3bbfb8",
+        "a11yDescription": "ARR steadily increases with a sharper slope entering Q3.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "8ae59a044bd04828079ce55cef0e20cdd91d2fb8bf6a98be7cbe3eb81e2d38e9"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "f050cb0dc51d5a549c1f7c41fed43ff073e9efd5335c5323c03e066b54db3487",
+        "normalizedSpecSha256": "cf4f8f174beaeddc89fd199de63452edd5738d446c74174f2938319b7b3bbfb8",
+        "a11yDescription": "ARR steadily increases with a sharper slope entering Q3.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "f050cb0dc51d5a549c1f7c41fed43ff073e9efd5335c5323c03e066b54db3487"
+        }
+      }
+    ]
+  },
+  {
+    "id": "pattern:viz:simple-bar",
+    "family": "statistical",
+    "baseChartType": "bar",
+    "specPath": "examples/viz/patterns-v2/simple-bar.spec.json",
+    "specSha256": "a9198d81ea0e445b5f110098d6cdb93ec62d861514f362e36a6fffe178e217ab",
+    "portability": {
+      "fallbackType": "table",
+      "tableColumnOrder": [
+        "department",
+        "headcount"
+      ],
+      "preferredRenderer": "vega-lite"
+    },
+    "publicSvg": true,
+    "status": "public",
+    "scopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "6b82a9f6d9212a0c5e2eba5f83511d43c0c470393c50c32a10c1ec6e8f67fc6f",
+        "normalizedSpecSha256": "b76ee112449f837722d03ef47ca86b037b1b60c10fa6a6d947665c75cbee50b0",
+        "a11yDescription": "Engineering leads at 45, followed by Sales at 30; Marketing is smallest at 18.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "6b82a9f6d9212a0c5e2eba5f83511d43c0c470393c50c32a10c1ec6e8f67fc6f"
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "09deb053611cd8a6c36b73bdf817e995a098b2c9c25874c6efe4cdc73a2054c1",
+        "normalizedSpecSha256": "b76ee112449f837722d03ef47ca86b037b1b60c10fa6a6d947665c75cbee50b0",
+        "a11yDescription": "Engineering leads at 45, followed by Sales at 30; Marketing is smallest at 18.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "09deb053611cd8a6c36b73bdf817e995a098b2c9c25874c6efe4cdc73a2054c1"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "e06d212d826d69db7fbc9ae67dbba7832dd9080113edd83e662e33e5006fbc08",
+        "normalizedSpecSha256": "b76ee112449f837722d03ef47ca86b037b1b60c10fa6a6d947665c75cbee50b0",
+        "a11yDescription": "Engineering leads at 45, followed by Sales at 30; Marketing is smallest at 18.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "e06d212d826d69db7fbc9ae67dbba7832dd9080113edd83e662e33e5006fbc08"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "d4a8c01aec4e544413eb8ab6787994f2e6c1a2a26649a373c5b3dcfd8150d8cb",
+        "normalizedSpecSha256": "b76ee112449f837722d03ef47ca86b037b1b60c10fa6a6d947665c75cbee50b0",
+        "a11yDescription": "Engineering leads at 45, followed by Sales at 30; Marketing is smallest at 18.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "d4a8c01aec4e544413eb8ab6787994f2e6c1a2a26649a373c5b3dcfd8150d8cb"
+        }
+      }
+    ]
+  },
+  {
+    "id": "pattern:viz:sparkline-grid",
+    "family": "temporal",
+    "baseChartType": "line",
+    "specPath": "examples/viz/patterns-v2/sparkline-grid.spec.json",
+    "specSha256": "f28e92ca39e4fb68650142ed69e7f576ef5beeae20c48076caf0a09b7e75fd64",
+    "portability": {
+      "fallbackType": "table",
+      "preferredRenderer": "vega-lite",
+      "tableColumnOrder": [
+        "metric",
+        "week",
+        "value"
+      ]
+    },
+    "publicSvg": true,
+    "status": "public",
+    "scopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "8b6ac52cca72e887cba402040c47fca3082c212b9a7e5e4570c1fe254a6dcd8d",
+        "normalizedSpecSha256": "c26e348e8ffaa2431bd6087b06fc1344144650b158007c5624affe97877e7f09",
+        "a11yDescription": "Each KPI sparkline shares an aligned time axis for rapid comparison across more than 1k data points.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "8b6ac52cca72e887cba402040c47fca3082c212b9a7e5e4570c1fe254a6dcd8d"
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "dc25dcd65c106b4e79523595fedd535b7d58543c6baa6b787c0341ae85748f48",
+        "normalizedSpecSha256": "c26e348e8ffaa2431bd6087b06fc1344144650b158007c5624affe97877e7f09",
+        "a11yDescription": "Each KPI sparkline shares an aligned time axis for rapid comparison across more than 1k data points.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "dc25dcd65c106b4e79523595fedd535b7d58543c6baa6b787c0341ae85748f48"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "2b4eb75bd194606db9756943cf7da424b31eecd36006d60f20cd69c7758a4b2d",
+        "normalizedSpecSha256": "c26e348e8ffaa2431bd6087b06fc1344144650b158007c5624affe97877e7f09",
+        "a11yDescription": "Each KPI sparkline shares an aligned time axis for rapid comparison across more than 1k data points.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "2b4eb75bd194606db9756943cf7da424b31eecd36006d60f20cd69c7758a4b2d"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "17c5d8c8d217d1f18bd2ebf148203ce2600d8ccdac278dc49621294c9313c82e",
+        "normalizedSpecSha256": "c26e348e8ffaa2431bd6087b06fc1344144650b158007c5624affe97877e7f09",
+        "a11yDescription": "Each KPI sparkline shares an aligned time axis for rapid comparison across more than 1k data points.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "17c5d8c8d217d1f18bd2ebf148203ce2600d8ccdac278dc49621294c9313c82e"
+        }
+      }
+    ]
+  },
+  {
+    "id": "pattern:viz:stacked-100-bar",
+    "family": "statistical",
+    "baseChartType": "bar",
+    "specPath": "examples/viz/patterns-v2/stacked-100-bar.spec.json",
+    "specSha256": "0285b6fe66362ede81c0afca347d1ca153dfe13e3e4868b393b7ea962c1792bf",
+    "portability": {
+      "fallbackType": "table",
+      "tableColumnOrder": [
+        "region",
+        "channel",
+        "share"
+      ],
+      "preferredRenderer": "vega-lite"
+    },
+    "publicSvg": true,
+    "status": "public",
+    "scopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "64cee9483c88b9ce6bdedcc68a8e42a30f4d8b0c646b2f69e608c74ec8925379",
+        "normalizedSpecSha256": "ca8321e8b36ae10388f836c733fe16a22212d2adb1e7fc7e2365ef26a4baa7ec",
+        "a11yDescription": "Partners dominate APAC, while the Americas lean heavily into direct acquisition.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "64cee9483c88b9ce6bdedcc68a8e42a30f4d8b0c646b2f69e608c74ec8925379"
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "67f386c7e9edc5b2f5a2c88d73b46471ec9153e34f82b45e4b4ab99769679a0f",
+        "normalizedSpecSha256": "ca8321e8b36ae10388f836c733fe16a22212d2adb1e7fc7e2365ef26a4baa7ec",
+        "a11yDescription": "Partners dominate APAC, while the Americas lean heavily into direct acquisition.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "67f386c7e9edc5b2f5a2c88d73b46471ec9153e34f82b45e4b4ab99769679a0f"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "432395a3935f7fdd3d6f5c7436d383788728f65bcc7eb120c8baa33b2ccbce0e",
+        "normalizedSpecSha256": "ca8321e8b36ae10388f836c733fe16a22212d2adb1e7fc7e2365ef26a4baa7ec",
+        "a11yDescription": "Partners dominate APAC, while the Americas lean heavily into direct acquisition.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "432395a3935f7fdd3d6f5c7436d383788728f65bcc7eb120c8baa33b2ccbce0e"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "d771065ce7ed10ac2653e114e3e2a428703bc10bc2baf2ee43bc014e4fccb54c",
+        "normalizedSpecSha256": "ca8321e8b36ae10388f836c733fe16a22212d2adb1e7fc7e2365ef26a4baa7ec",
+        "a11yDescription": "Partners dominate APAC, while the Americas lean heavily into direct acquisition.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "d771065ce7ed10ac2653e114e3e2a428703bc10bc2baf2ee43bc014e4fccb54c"
+        }
+      }
+    ]
+  },
+  {
+    "id": "pattern:viz:stacked-area-projection",
+    "family": "temporal",
+    "baseChartType": "area",
+    "specPath": "examples/viz/patterns-v2/stacked-area-projection.spec.json",
+    "specSha256": "9ed892cce2f47cf966915af9fb454e7386081261a4cb525e8925ece01a6aef81",
+    "portability": {
+      "fallbackType": "table",
+      "preferredRenderer": "echarts",
+      "tableColumnOrder": [
+        "month",
+        "channel",
+        "value"
+      ]
+    },
+    "publicSvg": true,
+    "status": "public",
+    "scopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "16461c5a9264b8a49e05d0b4b2e81391436c62bb8fb9a030a766b76464fa707c",
+        "normalizedSpecSha256": "4cde3c8c4a74b7ede00c7a6e013429be7a4b4f8a2e987b3384f148b150f736ca",
+        "a11yDescription": "Paid media drives most of the ARR growth, but organic gains 0.5M share over the period",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "16461c5a9264b8a49e05d0b4b2e81391436c62bb8fb9a030a766b76464fa707c"
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "9d039d8b72cdcd3a0456639ecf9147397cc73d67672bd98e72346e8cf5f02967",
+        "normalizedSpecSha256": "4cde3c8c4a74b7ede00c7a6e013429be7a4b4f8a2e987b3384f148b150f736ca",
+        "a11yDescription": "Paid media drives most of the ARR growth, but organic gains 0.5M share over the period",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "9d039d8b72cdcd3a0456639ecf9147397cc73d67672bd98e72346e8cf5f02967"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "a9f12c3b6be817569e68446641b50b7471500750904f39c70b77ae2df180f875",
+        "normalizedSpecSha256": "4cde3c8c4a74b7ede00c7a6e013429be7a4b4f8a2e987b3384f148b150f736ca",
+        "a11yDescription": "Paid media drives most of the ARR growth, but organic gains 0.5M share over the period",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "a9f12c3b6be817569e68446641b50b7471500750904f39c70b77ae2df180f875"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "63b06478e04eeb2b703d8c713f1c1a6cba381c9fe19403f545c963929d3073fc",
+        "normalizedSpecSha256": "4cde3c8c4a74b7ede00c7a6e013429be7a4b4f8a2e987b3384f148b150f736ca",
+        "a11yDescription": "Paid media drives most of the ARR growth, but organic gains 0.5M share over the period",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "63b06478e04eeb2b703d8c713f1c1a6cba381c9fe19403f545c963929d3073fc"
+        }
+      }
+    ]
+  },
+  {
+    "id": "pattern:viz:stacked-bar",
+    "family": "statistical",
+    "baseChartType": "bar",
+    "specPath": "examples/viz/patterns-v2/stacked-bar.spec.json",
+    "specSha256": "6b7bb28c05b46b580d6f83eedbd56128da336be55658ca584417a1b6d2d08972",
+    "portability": {
+      "fallbackType": "table",
+      "tableColumnOrder": [
+        "month",
+        "category",
+        "hours"
+      ],
+      "preferredRenderer": "vega-lite"
+    },
+    "publicSvg": true,
+    "status": "public",
+    "scopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "d8d0fa2b998d20de9eb7459769d205c21e1539ee96f28729f2b6cedef0494c1e",
+        "normalizedSpecSha256": "7c683e951e9ac3995cfafd72de2ec59a74ef9fab9857910da842729a8f7e161b",
+        "a11yDescription": "Bug fixes dominate the workload, but feature work ramps by March.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "d8d0fa2b998d20de9eb7459769d205c21e1539ee96f28729f2b6cedef0494c1e"
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "0d5c553c2922e49f5241aa00d941a920506f995b72bec91d0abd84fa94a8b4cf",
+        "normalizedSpecSha256": "7c683e951e9ac3995cfafd72de2ec59a74ef9fab9857910da842729a8f7e161b",
+        "a11yDescription": "Bug fixes dominate the workload, but feature work ramps by March.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "0d5c553c2922e49f5241aa00d941a920506f995b72bec91d0abd84fa94a8b4cf"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "693bc003055dada99ac941a949f7d70b9913f7e295b3021bb8f3aea74529d3f3",
+        "normalizedSpecSha256": "7c683e951e9ac3995cfafd72de2ec59a74ef9fab9857910da842729a8f7e161b",
+        "a11yDescription": "Bug fixes dominate the workload, but feature work ramps by March.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "693bc003055dada99ac941a949f7d70b9913f7e295b3021bb8f3aea74529d3f3"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "b1dbfafa11672909efa7dd97d04a34cf7013a52a7c722a0efa835656ba23df67",
+        "normalizedSpecSha256": "7c683e951e9ac3995cfafd72de2ec59a74ef9fab9857910da842729a8f7e161b",
+        "a11yDescription": "Bug fixes dominate the workload, but feature work ramps by March.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "b1dbfafa11672909efa7dd97d04a34cf7013a52a7c722a0efa835656ba23df67"
+        }
+      }
+    ]
+  },
+  {
+    "id": "pattern:viz:target-band-line",
+    "family": "temporal",
+    "baseChartType": "line",
+    "specPath": "examples/viz/patterns-v2/target-band-line.spec.json",
+    "specSha256": "1982975cd81143e56e47c1e85ee71980778858192af2b16b3780130bc94f3822",
+    "portability": {
+      "fallbackType": "table",
+      "tableColumnOrder": [
+        "week",
+        "leadTime",
+        "slaLow",
+        "slaHigh"
+      ],
+      "preferredRenderer": "vega-lite"
+    },
+    "publicSvg": true,
+    "status": "public",
+    "scopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "b6f8fe65d4e51589a2b8d320cbbe0447ab0f35aadb747d73e088df5d6b222c8d",
+        "normalizedSpecSha256": "0ed021b860316b9067c09d317088563a5ef4daf5dc4a2bc0efa16f4b008080ae",
+        "a11yDescription": "Lead time briefly exceeds the SLA band mid-May before falling back inside the shaded zone.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "b6f8fe65d4e51589a2b8d320cbbe0447ab0f35aadb747d73e088df5d6b222c8d"
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "a5855ae3b198ce37f73a6ecd0f61917040606fbbcd24f2d2efa059049720a019",
+        "normalizedSpecSha256": "0ed021b860316b9067c09d317088563a5ef4daf5dc4a2bc0efa16f4b008080ae",
+        "a11yDescription": "Lead time briefly exceeds the SLA band mid-May before falling back inside the shaded zone.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "a5855ae3b198ce37f73a6ecd0f61917040606fbbcd24f2d2efa059049720a019"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "1dae14fc9ec078b727b9c1170c12a777b7a8d129d45d7225a93bc88617c24323",
+        "normalizedSpecSha256": "0ed021b860316b9067c09d317088563a5ef4daf5dc4a2bc0efa16f4b008080ae",
+        "a11yDescription": "Lead time briefly exceeds the SLA band mid-May before falling back inside the shaded zone.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "1dae14fc9ec078b727b9c1170c12a777b7a8d129d45d7225a93bc88617c24323"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "66d1c5f3f9ff03294ee6449ba8ac3a43f41237e918dc8ea7a36ca233da0f86bb",
+        "normalizedSpecSha256": "0ed021b860316b9067c09d317088563a5ef4daf5dc4a2bc0efa16f4b008080ae",
+        "a11yDescription": "Lead time briefly exceeds the SLA band mid-May before falling back inside the shaded zone.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "66d1c5f3f9ff03294ee6449ba8ac3a43f41237e918dc8ea7a36ca233da0f86bb"
+        }
+      }
+    ]
+  },
+  {
+    "id": "pattern:viz:time-grid-heatmap",
+    "family": "statistical",
+    "baseChartType": "heatmap",
+    "specPath": "examples/viz/patterns-v2/time-grid-heatmap.spec.json",
+    "specSha256": "5dac1613ed71be404c2884b0193d28265b06643dc637c169b0b4413df418e7a0",
+    "portability": {
+      "fallbackType": "table",
+      "tableColumnOrder": [
+        "day",
+        "hour",
+        "tickets"
+      ],
+      "preferredRenderer": "vega-lite"
+    },
+    "publicSvg": true,
+    "status": "public",
+    "scopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "6deab9d419bdcf017ff380ad8beadfae5a2018dfdae4c3e105c666f34fa5e21d",
+        "normalizedSpecSha256": "5c12c8064d7f8795bf1dc2ed94bdfe60b572d8d4e124566ec677dcd9939b7cdd",
+        "a11yDescription": "Lunch blocks mid-week trend hottest, with lighter mornings and Friday tapering off.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "exempt",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "6deab9d419bdcf017ff380ad8beadfae5a2018dfdae4c3e105c666f34fa5e21d"
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "2ffd3e749f1dd4d7f8af9c501c000a41e7b0821bdd473d9eb7e60a57e67abe7e",
+        "normalizedSpecSha256": "5c12c8064d7f8795bf1dc2ed94bdfe60b572d8d4e124566ec677dcd9939b7cdd",
+        "a11yDescription": "Lunch blocks mid-week trend hottest, with lighter mornings and Friday tapering off.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "exempt",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "2ffd3e749f1dd4d7f8af9c501c000a41e7b0821bdd473d9eb7e60a57e67abe7e"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "8bdba04d0168eb1859902a9d7bf7efde557a65a7df85ae64cb289d3ec7a52cd8",
+        "normalizedSpecSha256": "5c12c8064d7f8795bf1dc2ed94bdfe60b572d8d4e124566ec677dcd9939b7cdd",
+        "a11yDescription": "Lunch blocks mid-week trend hottest, with lighter mornings and Friday tapering off.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "exempt",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "8bdba04d0168eb1859902a9d7bf7efde557a65a7df85ae64cb289d3ec7a52cd8"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "e2c7105fcb9d05528f024e4d2cbafd385d2d788a2652a7a7d2d087b634aff45b",
+        "normalizedSpecSha256": "5c12c8064d7f8795bf1dc2ed94bdfe60b572d8d4e124566ec677dcd9939b7cdd",
+        "a11yDescription": "Lunch blocks mid-week trend hottest, with lighter mornings and Friday tapering off.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "exempt",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "e2c7105fcb9d05528f024e4d2cbafd385d2d788a2652a7a7d2d087b634aff45b"
+        }
+      }
+    ]
+  },
+  {
+    "id": "pattern:viz:waterfall",
+    "family": "financial",
+    "baseChartType": "bar",
+    "specPath": "examples/viz/patterns-v2/waterfall.spec.json",
+    "specSha256": "612ae6a61495a4940f1216b9a52f9430cd730e5b82e2270bbce3fddb03a39894",
+    "portability": {
+      "fallbackType": "table",
+      "tableColumnOrder": [
+        "step",
+        "start",
+        "end",
+        "kind"
+      ],
+      "preferredRenderer": "vega-lite"
+    },
+    "publicSvg": true,
+    "status": "public",
+    "scopes": [
+      {
+        "theme": "light",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "b12eb831ccd0eea977ff08268f15b528d9872bbf1a5291661dcb83102ec9ba41",
+        "normalizedSpecSha256": "35436decaa61abba76a638365f0f4f486d06588acbb0568b1267bf24b132243a",
+        "a11yDescription": "The example balance opens at 100, gains 60 in revenue, loses 35 in costs, and closes at 125.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "b12eb831ccd0eea977ff08268f15b528d9872bbf1a5291661dcb83102ec9ba41"
+        }
+      },
+      {
+        "theme": "light",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "3bc34eeede82be2a44155ece7af2e7fa293d38409c146debc426b3a38bc10af7",
+        "normalizedSpecSha256": "35436decaa61abba76a638365f0f4f486d06588acbb0568b1267bf24b132243a",
+        "a11yDescription": "The example balance opens at 100, gains 60 in revenue, loses 35 in costs, and closes at 125.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "3bc34eeede82be2a44155ece7af2e7fa293d38409c146debc426b3a38bc10af7"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "A",
+        "status": "public",
+        "svgHash": "ac088d6de9106944234a2aacbc6c891a8ba995735af22ad6654394a52483d9a4",
+        "normalizedSpecSha256": "35436decaa61abba76a638365f0f4f486d06588acbb0568b1267bf24b132243a",
+        "a11yDescription": "The example balance opens at 100, gains 60 in revenue, loses 35 in costs, and closes at 125.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "ac088d6de9106944234a2aacbc6c891a8ba995735af22ad6654394a52483d9a4"
+        }
+      },
+      {
+        "theme": "dark",
+        "brand": "B",
+        "status": "public",
+        "svgHash": "9cadfd3929ebfda37c1efa841d5d45f187b7eef0cc4ce09e044a7a2ec5e67166",
+        "normalizedSpecSha256": "35436decaa61abba76a638365f0f4f486d06588acbb0568b1267bf24b132243a",
+        "a11yDescription": "The example balance opens at 100, gains 60 in revenue, loses 35 in costs, and closes at 125.",
+        "certify": {
+          "coverage": "certified",
+          "conformant": true,
+          "pillars": {
+            "a11yEquivalence": "pass",
+            "determinism": "pass",
+            "contrast": "pass",
+            "accuracy": "pass"
+          },
+          "stable": true,
+          "renderHash": "9cadfd3929ebfda37c1efa841d5d45f187b7eef0cc4ce09e044a7a2ec5e67166"
+        }
+      }
+    ]
+  }
+]

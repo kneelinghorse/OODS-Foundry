@@ -6,12 +6,11 @@ import { ToastPortal } from '~/src/components/toast/ToastPortal.js';
 import {
   ToastProvider,
   useToast,
-  type ToastAPI,
 } from '~/src/components/toast/toastService.js';
 import '~/src/styles/globals.css';
 
 const meta: Meta = {
-  title: 'Proofs & Internals/Performance/Compositor Harness',
+  title: 'Explorer/Performance/Compositor Harness',
   parameters: {
     layout: 'fullscreen',
     chromatic: { disableSnapshot: true },

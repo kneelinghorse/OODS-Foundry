@@ -5,8 +5,8 @@
 
 const brandBleedExample = `
 .canary-badge {
-  background: var(--brandB-surface-canvas);
-  color: var(--brandB-text-primary);
+  background: var(--oods-color-brand-b-surface-canvas);
+  color: var(--oods-color-brand-b-text-primary);
 }
 `;
 

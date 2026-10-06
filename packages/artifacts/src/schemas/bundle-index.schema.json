@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "OODS Bundle Index",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["schemaVersion", "generatedAt", "files"],
+  "properties": {
+    "schemaVersion": { "type": "string" },
+    "generatedAt": { "type": "string" },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "sha256"],
+        "additionalProperties": true,
+        "properties": {
+          "path": { "type": "string" },
+          "name": { "type": "string" },
+          "purpose": { "type": ["string", "null"] },
+          "sizeBytes": { "type": ["integer", "null"] },
+          "sha256": { "type": "string" },
+          "openUrl": { "type": "string" },
+          "role": { "type": "string", "enum": ["input", "output"] }
+        }
+      }
+    }
+  }
+}

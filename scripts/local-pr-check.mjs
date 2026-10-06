@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
 import { spawn } from 'node:child_process';
+import { access } from 'node:fs/promises';
+import path from 'node:path';
 import { performance } from 'node:perf_hooks';
 
 const args = process.argv.slice(2);
@@ -26,6 +28,7 @@ for (const arg of args) {
 }
 
 const pnpmCmd = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm';
+const storybookIndexPath = path.join(process.cwd(), 'storybook-static', 'index.json');
 
 const tasks = [
   { id: 'lint', label: 'Lint', command: ['lint'] },
@@ -38,6 +41,8 @@ const tasks = [
 const results = [];
 
 (async () => {
+  let storybookPrepared = false;
+
   for (const task of tasks) {
     if (skip.has(task.id)) {
       results.push({ ...task, status: 'skipped' });
@@ -47,6 +52,11 @@ const results = [];
     const start = performance.now();
 
     try {
+      if ((task.id === 'a11y' || task.id === 'vr') && !storybookPrepared) {
+        await ensureStorybookBuild();
+        storybookPrepared = true;
+      }
+
       const meta =
         task.id === 'vr'
           ? await runVisualRegression()
@@ -69,9 +79,29 @@ const results = [];
   process.exit(1);
 });
 
+async function ensureStorybookBuild() {
+  try {
+    await access(storybookIndexPath);
+  } catch {
+    console.log('storybook-static missing — building Storybook before accessibility/VR checks.');
+    await runCommand(['build-storybook']);
+  }
+}
+
 function runCommand(command) {
+  return runPnpmCommand(command);
+}
+
+function runPnpmCommand(command, options = {}) {
   return new Promise((resolve, reject) => {
-    const proc = spawn(pnpmCmd, ['run', ...command, ...passthrough], { stdio: 'inherit' });
+    const proc = spawn(pnpmCmd, ['run', ...command, ...passthrough], {
+      stdio: 'inherit',
+      ...options,
+      env: {
+        ...process.env,
+        ...(options.env ?? {}),
+      },
+    });
 
     proc.on('error', (error) => reject(error));
 
@@ -101,8 +131,59 @@ async function runVisualRegression() {
     console.log('CHROMATIC_PROJECT_TOKEN not set — using local VRT smoke harness.');
   }
 
-  await runCommand(['vrt:lightdark', '--ci']);
-  return { meta: 'vrt:lightdark --ci' };
+  const storybookUrl = process.env.STORYBOOK_URL ?? 'http://127.0.0.1:6006';
+  return withStaticStorybookServer(storybookUrl, async (baseUrl) => {
+    await runPnpmCommand(['vrt:lightdark', '--ci'], {
+      env: { STORYBOOK_URL: baseUrl },
+    });
+    return { meta: `vrt:lightdark --ci (${baseUrl})` };
+  });
+}
+
+async function withStaticStorybookServer(baseUrl, run) {
+  if (await waitForServer(baseUrl, 1000)) {
+    return run(baseUrl);
+  }
+
+  if (process.env.STORYBOOK_URL) {
+    throw new Error(`Configured STORYBOOK_URL is not reachable: ${baseUrl}`);
+  }
+
+  const port = new URL(baseUrl).port || '6006';
+  console.log(`storybook-static not being served — starting temporary server on ${baseUrl}.`);
+  const server = spawn(pnpmCmd, ['dlx', 'serve', 'storybook-static', '-l', port], {
+    stdio: 'ignore',
+    env: process.env,
+  });
+
+  try {
+    const ready = await waitForServer(baseUrl, 20000);
+    if (!ready) {
+      throw new Error(`Temporary Storybook server did not become ready at ${baseUrl}`);
+    }
+    return await run(baseUrl);
+  } finally {
+    server.kill('SIGTERM');
+  }
+}
+
+async function waitForServer(baseUrl, timeoutMs) {
+  const deadline = Date.now() + timeoutMs;
+
+  while (Date.now() < deadline) {
+    try {
+      const response = await fetch(new URL('/', baseUrl));
+      if (response.ok) {
+        return true;
+      }
+    } catch {
+      // Keep polling until timeout.
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 500));
+  }
+
+  return false;
 }
 
 function printSummary(items) {
@@ -154,5 +235,8 @@ Options:
 
 Environment:
   CHROMATIC_PROJECT_TOKEN   When set, runs chromatic:dry-run. Falls back to vrt:lightdark otherwise.
+
+Behavior:
+  Builds Storybook automatically before accessibility or VR checks when storybook-static is missing.
 `);
 }

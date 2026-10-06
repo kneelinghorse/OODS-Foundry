@@ -15,9 +15,12 @@ type ProvenanceRecord = {
 
 const WORKSPACE_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const PACKAGE_DIST_DIR = path.join(WORKSPACE_ROOT, 'dist', 'pkg');
+/** Terms files copied beside the packed manifest when present; the manifest inherits the workspace license id. */
+export const TERMS_FILES = ['LICENSE', 'NOTICE', 'THIRD-PARTY-NOTICES.md'] as const;
 
 const STORYBOOK_PROJECT = path.join(WORKSPACE_ROOT, 'storybook-static', 'project.json');
 const VRT_ROOT = path.join(WORKSPACE_ROOT, 'artifacts', 'vrt');
+const BUNDLED_DEPENDENCIES = new Set(['@oods/viz-core']);
 
 async function ensureCleanDist(): Promise<void> {
   await fsp.rm(PACKAGE_DIST_DIR, { recursive: true, force: true });
@@ -157,16 +160,59 @@ async function createDistPackage(provenance: ProvenanceRecord): Promise<void> {
   const rawPackage = await fsp.readFile(packagePath, 'utf8');
   const parsedPackage = JSON.parse(rawPackage) as Record<string, unknown>;
   const rawDependencies = (parsedPackage.dependencies as Record<string, string> | undefined) ?? {};
+  const rawPeerDependencies =
+    (parsedPackage.peerDependencies as Record<string, string> | undefined) ?? {};
+  const rawPeerDependenciesMeta =
+    (parsedPackage.peerDependenciesMeta as Record<string, Record<string, unknown>> | undefined) ?? {};
 
   const dependencies: Record<string, string> = {};
-  const peerDependencies: Record<string, string> = {};
+  const peerDependencies: Record<string, string> = { ...rawPeerDependencies };
+  const peerDependenciesMeta: Record<string, Record<string, unknown>> = {
+    ...rawPeerDependenciesMeta,
+  };
+
+  for (const bundledDependency of BUNDLED_DEPENDENCIES) {
+    delete peerDependencies[bundledDependency];
+    delete peerDependenciesMeta[bundledDependency];
+  }
 
   for (const [name, version] of Object.entries(rawDependencies)) {
+    if (BUNDLED_DEPENDENCIES.has(name)) {
+      continue;
+    }
     if (name === 'react' || name === 'react-dom') {
-      peerDependencies[name] = version;
+      peerDependencies[name] ??= version;
       continue;
     }
     dependencies[name] = version;
+  }
+
+  const invalidPeerMetadata = Object.entries(peerDependenciesMeta)
+    .filter(
+      ([name, metadata]) =>
+        !(name in peerDependencies) ||
+        typeof metadata !== 'object' ||
+        metadata === null ||
+        Array.isArray(metadata) ||
+        ('optional' in metadata && typeof metadata.optional !== 'boolean')
+    )
+    .map(([name]) => name);
+  if (invalidPeerMetadata.length > 0) {
+    throw new Error(
+      `peerDependenciesMeta entries must name a shipped peer and use boolean optional flags: ${invalidPeerMetadata.join(', ')}`
+    );
+  }
+
+  const workspaceDependencies = [
+    ...Object.entries(dependencies),
+    ...Object.entries(peerDependencies),
+  ]
+    .filter(([, version]) => version.startsWith('workspace:'))
+    .map(([name, version]) => `${name}@${version}`);
+  if (workspaceDependencies.length > 0) {
+    throw new Error(
+      `Installable package dependencies must not use the workspace protocol: ${workspaceDependencies.join(', ')}`
+    );
   }
 
   const files = ['index.js', 'index.cjs', 'index.d.ts', 'provenance.json'];
@@ -184,8 +230,11 @@ async function createDistPackage(provenance: ProvenanceRecord): Promise<void> {
   if (await copyIfExists('CHANGELOG.md', PACKAGE_DIST_DIR)) {
     files.push('CHANGELOG.md');
   }
-  if (await copyIfExists('LICENSE', PACKAGE_DIST_DIR)) {
-    files.push('LICENSE');
+  // The terms travel with the package: the license, its NOTICE and (once generated) the third-party notices.
+  for (const terms of TERMS_FILES) {
+    if (await copyIfExists(terms, PACKAGE_DIST_DIR)) {
+      files.push(terms);
+    }
   }
 
   const distPackage = {
@@ -211,6 +260,7 @@ async function createDistPackage(provenance: ProvenanceRecord): Promise<void> {
     files,
     dependencies,
     peerDependencies,
+    peerDependenciesMeta,
     oodsProvenance: provenance,
   };
 

@@ -16,7 +16,7 @@ import schemaV11 from '../../examples/preferences/schema-v1.1.json' with { type:
 import schemaV2 from '../../examples/preferences/schema-v2.json' with { type: 'json' };
 
 const meta: Meta<typeof PreferenceForm> = {
-  title: 'Primitives/Forms/PreferenceForm',
+  title: 'Components/Forms/PreferenceForm',
   component: PreferenceForm,
   parameters: {
     layout: 'fullscreen',
@@ -34,7 +34,7 @@ interface PlaygroundProps {
   readonly formOptions?: UsePreferenceFormOptions;
   readonly density?: 'comfortable' | 'compact';
   readonly previewSections?: readonly PreferencePreviewSection[];
-  readonly extras?: React.ReactNode;
+  readonly extras?: ReactNode;
 }
 
 const Playground = ({ heading, description, formOptions, density, previewSections, extras }: PlaygroundProps) => {

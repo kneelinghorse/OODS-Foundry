@@ -23,4 +23,8 @@ export interface EncodingPositionYTraitParameters {
    * Default aggregation applied when spec omits one.
    */
   aggregate?: 'sum' | 'mean' | 'median' | 'count';
+  /**
+   * JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand.
+   */
+  renderIntent?: string;
 }

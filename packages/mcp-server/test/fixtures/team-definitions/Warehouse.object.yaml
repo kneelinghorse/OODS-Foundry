@@ -1,0 +1,217 @@
+# A team's own object: a storage site the team ships orders from. It composes the team's Stockable trait beside two
+# shipped ones. monthly_rent is a money amount in major units (12500.50 means 12,500.50), declared by its
+# semantics; nothing is inferred from its name.
+object:
+  name: Warehouse
+  version: 1.0.0
+  domain: acme.logistics
+  description: A storage site the team ships orders from.
+  tags:
+    - logistics
+    - inventory
+
+traits:
+  - name: lifecycle/Stateful
+    parameters:
+      states:
+        - planned
+        - active
+        - closed
+      initialState: planned
+  - name: lifecycle/Timestampable
+    parameters:
+      recordedEvents:
+        - opened
+        - restocked
+        - closed
+      timezone: UTC
+  - name: Stockable
+    parameters:
+      capacityUnit: pallets
+
+schema:
+  # These examples describe operating sites with stock on hand. Independent enum
+  # rotation paired a closed site with the trait's full-stock example.
+  status:
+    type: string
+    required: true
+    description: Current operating state of the warehouse.
+    validation:
+      enum:
+        - planned
+        - active
+        - closed
+    examples:
+      - active
+  last_event:
+    type: string
+    required: false
+    description: Most recent recorded warehouse event.
+    validation:
+      enum:
+        - opened
+        - restocked
+        - closed
+    examples:
+      - restocked
+  last_event_at:
+    type: datetime
+    required: false
+    description: When the sample warehouse was last restocked.
+    examples:
+      - '2026-09-15T12:00:00Z'
+  # One history for every sample site: registered as planned, opened on 2 March, restocked since. The status
+  # timeline reads state_history, not last_event, so the example authors the transition that made each site active.
+  created_at:
+    type: datetime
+    required: true
+    description: When the site was registered.
+    examples:
+      - '2026-01-12T09:00:00Z'
+  updated_at:
+    type: datetime
+    required: false
+    description: When the site's record last changed.
+    examples:
+      - '2026-09-15T12:00:00Z'
+  state_history:
+    type: StateTransition[]
+    required: false
+    description: The site's operating-state changes, oldest first.
+    examples:
+      - - title: Opened
+          from: planned
+          to: active
+          at: '2026-03-02T08:00:00Z'
+          reason: Site opened for orders
+  warehouse_id:
+    type: uuid
+    required: true
+    description: Unique identifier for the warehouse.
+  name:
+    type: string
+    required: true
+    description: The warehouse's name.
+    examples:
+      - Lakeside Distribution
+      - North Yard
+      - Harbor Cold Store
+      - Prairie Crossdock
+      - Riverbend Fulfillment
+      - Summit Parts Depot
+      - Bayview Returns Center
+      - Canal Street Annex
+      - Maple Grove Storage
+      - Eastgate Freight Hub
+  code:
+    type: string
+    required: true
+    description: Short site code printed on shipping labels.
+    examples:
+      - MKE-01
+      - CHI-02
+      - DET-03
+      - DSM-04
+      - STL-05
+      - DEN-06
+      - OAK-07
+      - IND-08
+      - MSP-09
+      - CLE-10
+  city:
+    type: string
+    required: true
+    description: City the warehouse is in.
+    examples:
+      - Milwaukee
+      - Chicago
+      - Detroit
+      - Des Moines
+      - St. Louis
+      - Denver
+      - Oakland
+      - Indianapolis
+      - Minneapolis
+      - Cleveland
+  manager_email:
+    type: email
+    required: false
+    description: Who runs the site day to day.
+    examples:
+      - mke-01.manager@harbor.example
+      - chi-02.manager@harbor.example
+      - det-03.manager@harbor.example
+      - dsm-04.manager@harbor.example
+      - stl-05.manager@harbor.example
+      - den-06.manager@harbor.example
+      - oak-07.manager@harbor.example
+      - ind-08.manager@harbor.example
+      - msp-09.manager@harbor.example
+      - cle-10.manager@harbor.example
+  monthly_rent:
+    type: number
+    required: true
+    description: What the site costs each month, in major units of its currency.
+    examples:
+      - 12500.5
+      - 9800
+      - 15250.75
+      - 7400
+      - 11850.25
+      - 21000
+      - 18990.99
+      - 6250
+      - 9975.5
+      - 14300
+  currency:
+    type: string
+    required: true
+    description: Currency the rent is paid in.
+    validation:
+      enum:
+        - USD
+        - EUR
+        - GBP
+
+  organization_id:
+    type: uuid
+    required: false
+    description: The organization operating this warehouse.
+    examples:
+      - 5d0c6a2e-8f41-4b7a-9c3e-2a6f1b8d4e90
+  organization_name:
+    type: string
+    required: false
+    description: The operating organization's name, shown in place of its id.
+    examples:
+      - Harbor Logistics
+
+relationships:
+  - target: Organization
+    via: organization_id
+    cardinality: many-to-one
+    label: Operated by
+
+semantics:
+  name:
+    semantic_type: logistics.warehouse.name
+    token_mapping: tokenMap(text.primary)
+  monthly_rent:
+    semantic_type: logistics.warehouse.rent
+    token_mapping: tokenMap(commerce.price.primary)
+    ui_hints:
+      component: CurrencyAmount
+      currencyField: currency
+  currency:
+    semantic_type: logistics.warehouse.currency
+    token_mapping: tokenMap(commerce.currency.primary)
+  organization_id:
+    semantic_type: logistics.warehouse.operator
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      displayLabelField: organization_name
+
+metadata:
+  owners:
+    - logistics-team
+  maturity: beta

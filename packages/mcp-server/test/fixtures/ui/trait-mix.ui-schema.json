@@ -1,0 +1,31 @@
+{
+  "version": "2026.02",
+  "dsVersion": "2026-02-24",
+  "theme": "light",
+  "screens": [
+    {
+      "id": "trait-screen",
+      "component": "Stack",
+      "children": [
+        { "id": "trait-card-header", "component": "CardHeader", "props": { "title": "Account", "supporting": "Tier 2" } },
+        { "id": "trait-status-badge", "component": "StatusBadge", "props": { "status": "active", "variant": "subtle" } },
+        {
+          "id": "trait-address-panel",
+          "component": "AddressCollectionPanel",
+          "props": { "title": "Addresses", "field": "addresses" },
+          "children": [{ "id": "trait-address-panel-text", "component": "Text", "props": { "text": "2 addresses on file" } }]
+        },
+        { "id": "trait-preference-editor", "component": "PreferenceEditor", "props": { "title": "Preferences", "namespaces": ["billing"], "namespace": "billing" } },
+        {
+          "id": "trait-audit-timeline",
+          "component": "AuditTimeline",
+          "props": { "title": "Audit", "events": [{ "label": "Created", "timestamp": "2026-02-26T00:00:00Z" }] }
+        },
+        { "id": "trait-archive-summary", "component": "ArchiveSummary", "props": { "title": "Archive", "isArchived": true, "reason": "retention-policy" } },
+        { "id": "trait-ownership-meta", "component": "OwnershipMeta", "props": { "title": "Ownership", "ownerType": "team", "role": "admin" } },
+        { "id": "trait-tag-pills", "component": "TagPills", "props": { "tags": ["core", "urgent", "finance"], "maxVisible": 2 } },
+        { "id": "trait-relative-time", "component": "RelativeTimestamp", "props": { "datetime": "2026-02-26T03:00:00Z", "relative": "2 minutes ago" } }
+      ]
+    }
+  ]
+}

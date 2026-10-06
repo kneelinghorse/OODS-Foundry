@@ -1,5 +1,5 @@
 {
-  "$schema": "https://oods.dev/viz-spec/v1",
+  "$schema": "https://oods-foundry.com/viz-spec/v1",
   "id": "pattern:viz:sparkline-grid",
   "name": "KPI sparkline grid",
   "data": {
@@ -5782,14 +5782,6 @@
           "channel": "y",
           "scale": "linear",
           "title": "Score"
-        },
-        "color": {
-          "field": "metric",
-          "trait": "EncodingColor",
-          "channel": "color",
-          "legend": {
-            "title": "Metric"
-          }
         }
       }
     }
@@ -5804,11 +5796,6 @@
       "field": "value",
       "trait": "EncodingPositionY",
       "channel": "y"
-    },
-    "color": {
-      "field": "metric",
-      "trait": "EncodingColor",
-      "channel": "color"
     }
   },
   "layout": {
@@ -5869,7 +5856,7 @@
   },
   "portability": {
     "fallbackType": "table",
-    "preferredRenderer": "echarts",
+    "preferredRenderer": "vega-lite",
     "tableColumnOrder": [
       "metric",
       "week",

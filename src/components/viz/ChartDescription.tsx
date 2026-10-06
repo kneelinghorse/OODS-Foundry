@@ -1,6 +1,6 @@
 import type { HTMLAttributes, JSX } from 'react';
-import type { NormalizedVizSpec } from '../../viz/spec/normalized-viz-spec.js';
-import { generateNarrativeSummary } from '../../viz/a11y/narrative-generator.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
+import { generateNarrativeSummary } from '@oods/viz-core';
 
 export interface ChartDescriptionProps extends HTMLAttributes<HTMLDivElement> {
   readonly spec: NormalizedVizSpec;

@@ -10,6 +10,8 @@ const EncodingPositionXTrait = {
   },
 
   parameters: [
+    {"name": "renderIntent", "type": "string", "required": false, "default": "{}", "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."},
+
     {
       name: 'fieldKinds',
       type: 'string[]',
@@ -143,6 +145,8 @@ const EncodingPositionXTrait = {
         component: 'VizAxisSummary',
         position: 'sidebar',
         props: {
+          intentParameter: 'renderIntent',
+          channel: 'x',
           axis: 'x',
           titleField: 'viz_encoding_x_axis_title',
           scaleField: 'viz_encoding_x_scale',
@@ -155,6 +159,8 @@ const EncodingPositionXTrait = {
         component: 'VizAxisControls',
         position: 'top',
         props: {
+          intentParameter: 'renderIntent',
+          channel: 'x',
           axis: 'x',
           fieldField: 'viz_encoding_x_field',
           kindField: 'viz_encoding_x_field_kind',
@@ -169,6 +175,8 @@ const EncodingPositionXTrait = {
       {
         component: 'VizEncodingBadge',
         props: {
+          intentParameter: 'renderIntent',
+          channel: 'x',
           axis: 'x',
           fieldField: 'viz_encoding_x_field',
         },
@@ -195,7 +203,7 @@ const EncodingPositionXTrait = {
     regionsUsed: ['detail', 'form', 'list'],
     allows: ['MarkBar', 'MarkLine', 'MarkPoint', 'MarkArea'],
     references: [
-      'cmos/research/data-viz-oods/RDS.7_synthesis_Mission Completion Report- Trait-Driven Visualization System Specification (v0.1).md',
+      'RDS.7 Trait-Driven Visualization System Specification (v0.1)',
     ],
   },
 } as const satisfies TraitDefinition;

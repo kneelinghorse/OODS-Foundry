@@ -1,0 +1,26 @@
+{
+  "$comment": "Single-sourced from protocols/SEMANTIC_PROTOCOL.md §5. Default resolver weights per task type. v0 stores these but does not yet apply them — the resolver is post-v0 work.",
+  "version": "4.0",
+  "task_types": [
+    {
+      "name": "semantic_location",
+      "weights": { "syntactic": 0.20, "semantic": 0.35, "pragmatic": 0.25, "relational": 0.20 }
+    },
+    {
+      "name": "debug_or_explain",
+      "weights": { "syntactic": 0.15, "semantic": 0.25, "pragmatic": 0.25, "relational": 0.35 }
+    },
+    {
+      "name": "modify_ui_copy",
+      "weights": { "syntactic": 0.25, "semantic": 0.25, "pragmatic": 0.25, "relational": 0.25 }
+    },
+    {
+      "name": "action_eligibility",
+      "weights": { "syntactic": 0.10, "semantic": 0.20, "pragmatic": 0.30, "relational": 0.40 }
+    },
+    {
+      "name": "capability_resolution",
+      "weights": { "syntactic": 0.15, "semantic": 0.30, "pragmatic": 0.30, "relational": 0.25 }
+    }
+  ]
+}

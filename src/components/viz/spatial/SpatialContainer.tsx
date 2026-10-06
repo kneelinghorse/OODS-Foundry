@@ -23,6 +23,7 @@ import { SpatialContextProvider, type GeoFeature } from './SpatialContext.js';
 import { mergeLayerDefaults, orderLayers } from './utils/layer-utils.js';
 import { setupKeyboardNav, announceFeatureFocus } from './utils/keyboard-nav-utils.js';
 import { announce as announceToScreenReader } from './utils/screen-reader-utils.js';
+import { analyzeSpatial, generateNarrativeSummary, type SpatialFeatureRow } from '@oods/viz-core';
 import type {
   ProjectionConfig,
   ProjectionType,
@@ -182,6 +183,26 @@ export function SpatialContainer({
     }
     return [] as string[];
   }, [a11y.tableFallback, data, features]);
+
+  // FD#10 (sprint-128 m02): route the spatial narrative through the SAME engine
+  // path (analyzeSpatial → generateNarrativeSummary) as every other chart type,
+  // feeding in the per-feature rows this container already derives — instead of
+  // the author-supplied narrative prop being the only source. An author-supplied
+  // narrative still wins via the shared applyNarrativeOverride precedence.
+  const resolvedNarrative = useMemo(() => {
+    const featureRows: SpatialFeatureRow[] = featureIds.map((id) => ({
+      id,
+      featureLabel: featureLabel(id, featureMap.get(id)),
+      values: (joinedDataMap.get(id) ?? {}) as Record<string, unknown>,
+    }));
+    const analysis = analyzeSpatial({ features: featureRows });
+    const { summary, keyFindings } = generateNarrativeSummary({
+      analysis,
+      chartLabel: spatialA11yConfig.ariaLabel ?? spec.name,
+      narrative: spatialA11yConfig.narrative,
+    });
+    return summary ? { summary, keyFindings } : undefined;
+  }, [featureIds, featureMap, joinedDataMap, spatialA11yConfig.ariaLabel, spatialA11yConfig.narrative, spec.name]);
 
   const setLiveAnnouncement = useCallback(
     (message: string, announceSr: boolean = true) => {
@@ -354,10 +375,10 @@ export function SpatialContainer({
 
         <div id={descriptionId} className="sr-only">
           {spatialA11yConfig.description}
-          {spatialA11yConfig.narrative?.summary && <p>{spatialA11yConfig.narrative.summary}</p>}
-          {spatialA11yConfig.narrative?.keyFindings && spatialA11yConfig.narrative.keyFindings.length > 0 && (
+          {resolvedNarrative?.summary && <p>{resolvedNarrative.summary}</p>}
+          {resolvedNarrative?.keyFindings && resolvedNarrative.keyFindings.length > 0 && (
             <ul>
-              {spatialA11yConfig.narrative.keyFindings.map((finding, index) => (
+              {resolvedNarrative.keyFindings.map((finding, index) => (
                 <li key={index}>{finding}</li>
               ))}
             </ul>

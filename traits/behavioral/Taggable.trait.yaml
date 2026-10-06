@@ -170,15 +170,11 @@ view_extensions:
         maxVisible: 3
         overflowLabel: "+{{ tag_count }}"
   detail:
-    - component: TagManager
+    - component: TagSummary
       position: top
       props:
         field: tags
-        allowCustomParameter: allowCustomTags
-        allowListParameter: allowedTags
-        maxTagsParameter: maxTags
-        moderationParameter: allowTagModeration
-        synonymParameter: synonymResolution
+        countField: tag_count
   form:
     - component: TagInput
       position: top
@@ -190,12 +186,15 @@ view_extensions:
         minLengthParameter: tagMinLength
         maxLengthParameter: tagMaxLength
         synonymParameter: synonymResolution
+  # s223-m01 (#2527 rulings 6-7): a card shows its tags as the list row does, as pills; a "Tags" heading over a
+  # "Tag Count 1" row restated what the pills show.
   card:
-    - component: TagSummary
+    - component: TagPills
       position: after
       props:
         field: tags
-        countField: tag_count
+        maxVisible: 3
+        overflowLabel: "+{{ tag_count }}"
 
 tokens:
   taxonomy.tag.chip.bg: "var(--surface-tag-bg)"

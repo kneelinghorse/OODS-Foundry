@@ -1,10 +1,10 @@
-import { extractFieldBlueprint } from './pattern-field-helpers.js';
-import type { LayoutStrategy } from './chart-patterns-v2.js';
-import type { ChartPattern } from './index.js';
-import type { LayoutRecommendationBundle } from './layout-scorer.js';
-import type { InteractionBundle, InteractionScoreEntry } from './interaction-scorer.js';
-import type { PatternSuggestion, SchemaIntent } from './suggest-chart.js';
-import type { InteractionTrait, LayoutDefinition, NormalizedVizSpec, TraitBinding } from '@/viz/spec/normalized-viz-spec.js';
+import { extractFieldBlueprint } from '@oods/viz-core';
+import type { LayoutStrategy } from '@oods/viz-core';
+import type { ChartPattern } from '@oods/viz-core';
+import type { LayoutRecommendationBundle } from '@oods/viz-core';
+import type { InteractionBundle, InteractionScoreEntry } from '@oods/viz-core';
+import type { PatternSuggestion, SchemaIntent } from '@oods/viz-core';
+import type { InteractionTrait, LayoutDefinition, NormalizedVizSpec, TraitBinding } from '@oods/viz-core';
 
 type EncodingMap = NormalizedVizSpec['encoding'];
 type MarkSpec = NormalizedVizSpec['marks'][number];
@@ -55,7 +55,7 @@ function buildSpec(
   const layoutFrame = layoutFrameByChartType[pattern.chartType] ?? layoutFrameByChartType.bar;
 
   const spec: NormalizedVizSpec = {
-    $schema: 'https://oods.dev/viz-spec/v1',
+    $schema: 'https://oods-foundry.com/viz-spec/v1',
     id: `scaffold:${pattern.id}`,
     name: `${pattern.name} Scaffold`,
     data: {
@@ -400,7 +400,7 @@ function buildComponentSource(
       : `const interactions = useMemo(() => BASE_SPEC.interactions ?? [], []);`;
 
   return `import { useMemo, type JSX } from 'react';
-import type { NormalizedVizSpec } from '@/viz/spec/normalized-viz-spec.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 import { ${componentMeta.component} } from '${componentMeta.importPath}';
 ${hookImports ? `${hookImports}\n` : ''}
 
@@ -495,6 +495,23 @@ const chartMarkByType: Record<ChartPattern['chartType'], MarkSpec['trait']> = {
   area: 'MarkArea',
   scatter: 'MarkPoint',
   heatmap: 'MarkRect',
+  // sprint-111 network/hierarchy types (explicit-only; rendered via the dedicated
+  // ECharts adapters, not the tabular GoG path) — entries keep this map total.
+  treemap: 'MarkTreemap',
+  sunburst: 'MarkSunburst',
+  sankey: 'MarkSankey',
+  force_graph: 'MarkGraph',
+  // sprint-112 geo types (explicit-only; rendered via the headless spatial ECharts
+  // adapters in @oods/viz-core, not the tabular GoG path) — entries keep this map
+  // total now that ChartType widened (the #740 root-typecheck coupling).
+  choropleth: 'MarkChoropleth',
+  bubble_map: 'MarkBubble',
+  // sprint-119 m01 flow_map (origin→destination ARC; explicit-only via the headless
+  // spatial flow-line adapter) — keeps this map total now that ChartType widened.
+  flow_map: 'MarkFlow',
+  // sprint-120 m01 chord (native ECharts-6 ribbon diagram; explicit-only via the
+  // headless chord adapter) — keeps this map total now that ChartType widened.
+  chord: 'MarkChord',
 };
 
 const layoutFrameByChartType: Record<ChartPattern['chartType'], { width: number; height: number; padding: number }> = {
@@ -503,6 +520,14 @@ const layoutFrameByChartType: Record<ChartPattern['chartType'], { width: number;
   area: { width: 720, height: 360, padding: 24 },
   scatter: { width: 720, height: 420, padding: 24 },
   heatmap: { width: 720, height: 420, padding: 24 },
+  treemap: { width: 720, height: 480, padding: 24 },
+  sunburst: { width: 560, height: 560, padding: 24 },
+  sankey: { width: 860, height: 480, padding: 24 },
+  force_graph: { width: 760, height: 560, padding: 24 },
+  choropleth: { width: 860, height: 520, padding: 24 },
+  bubble_map: { width: 860, height: 520, padding: 24 },
+  flow_map: { width: 860, height: 520, padding: 24 },
+  chord: { width: 560, height: 560, padding: 24 },
 };
 
 const componentByChartType: Record<
@@ -514,6 +539,14 @@ const componentByChartType: Record<
   area: { component: 'AreaChart', importPath: '@/components/viz/AreaChart.js' },
   scatter: { component: 'ScatterChart', importPath: '@/components/viz/ScatterChart.js' },
   heatmap: { component: 'Heatmap', importPath: '@/components/viz/Heatmap.js' },
+  treemap: { component: 'Treemap', importPath: '@/components/viz/Treemap.js' },
+  sunburst: { component: 'Sunburst', importPath: '@/components/viz/Sunburst.js' },
+  sankey: { component: 'Sankey', importPath: '@/components/viz/Sankey.js' },
+  force_graph: { component: 'ForceGraph', importPath: '@/components/viz/ForceGraph.js' },
+  choropleth: { component: 'ChoroplethMap', importPath: '@/components/viz/spatial/ChoroplethMap.js' },
+  bubble_map: { component: 'BubbleMap', importPath: '@/components/viz/spatial/BubbleMap.js' },
+  flow_map: { component: 'FlowMap', importPath: '@/components/viz/spatial/FlowMap.js' },
+  chord: { component: 'ChordDiagram', importPath: '@/components/viz/ChordDiagram.js' },
 };
 
 const hookImportPaths = new Map<string, string>([

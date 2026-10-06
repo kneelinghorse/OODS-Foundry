@@ -1,0 +1,397 @@
+object:
+  name: Run
+  version: 0.3.0
+  domain: capture.run
+  visibility: internal
+  description: >-
+    One capture of one product: when it ran, what it read and what it found, as the run's manifest,
+    accessibility report and artifact index record them.
+  tags:
+    - capture
+    - run
+traits:
+  - name: behavioral/Searchable
+    parameters:
+      placeholder: Search runs
+  - name: behavioral/Filterable
+  - name: behavioral/Pageable
+    parameters:
+      defaultPageSize: 20
+      pageSizeOptions:
+        - 10
+        - 20
+        - 50
+  - name: core/Provenanced
+    parameters:
+      source: Capture tool
+schema:
+  run_id:
+    type: uuid
+    required: true
+    description: The capture's own id, a uuid the capture tool assigns; the name of the run's directory.
+    examples:
+      - d0a43821-5730-4bf3-8b40-20f6fcb6b69c
+      - edb8954d-44a6-4e48-b9d9-aad676f2bf18
+      - 924005a5-e31e-4430-80ca-84c5b974fd86
+      - 2af80ee6-d74f-4922-8c9e-1763b4f7c2d2
+      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
+      - b78461bc-2138-49ae-a82a-188d9d01ff78
+  target_name:
+    type: string
+    required: true
+    description: >-
+      What was captured, as the run names it (targets[0].name). Every run read carries exactly one target, so
+      the subject is two fields here rather than an object of its own.
+    examples:
+      - example-app-production-infer
+      - example-app-production
+      - example-app-production
+      - example-app-production
+      - uswds-designsystem
+      - uswds-designsystem
+  target_url:
+    type: string
+    required: true
+    description: Where the capture started (targets[0].url).
+    examples:
+      - https://app.example.com/
+      - https://app.example.com/
+      - https://app.example.com/
+      - https://preview.app.example.com/
+      - https://designsystem.digital.gov/
+      - https://designsystem.digital.gov/
+  mode:
+    type: string
+    required: true
+    description: >-
+      The capture mode. Every run a run view reads is app; suite runs aggregate targets and carry no a11y
+      report of their own.
+    validation:
+      enum:
+        - app
+        - suite
+    examples:
+      - app
+      - app
+      - app
+      - app
+      - app
+      - app
+  auth_provenance_note:
+    type: string
+    required: false
+    unavailable: true
+    description: Historical capture note retained for existing readers; use capture_note.
+  capture_note:
+    type: string
+    required: false
+    description: Recorded capture stage, sampling depth, build, browser and tiers; absent facts stay unknown. Authentication is shown as recorded.
+  auth_mechanisms:
+    type: string
+    required: false
+    description: Authentication mechanisms recorded by the capture, without credentials.
+  auth_api_kind:
+    type: string
+    required: false
+    description: The API authentication kind as recorded; absent remains unknown.
+  auth_redaction_applied:
+    type: boolean
+    required: false
+    description: Whether the manifest records redaction as applied; false is meaningful.
+  needs_review_count:
+    type: integer
+    required: false
+    description: Recorded review items, counted separately from violations; absent historical totals remain unknown.
+    validation:
+      minimum: 0
+  accessibility_score:
+    type: number
+    required: false
+    description: The source's recorded accessibility score, never recomputed from review items.
+  auth_type:
+    type: string
+    required: true
+    description: >-
+      The authentication the manifest RECORDS. Shown as recorded, never inferred: a capture that was
+      authenticated has recorded "none", which is the capture tool's to correct.
+    examples:
+      - none
+      - none
+      - none
+      - none
+      - none
+      - none
+  page_count:
+    type: integer
+    required: true
+    description: How many pages the accessibility pass read.
+    validation:
+      minimum: 0
+    examples:
+      - 25
+      - 25
+      - 25
+      - 10
+      - 40
+      - 40
+  finding_count:
+    type: integer
+    required: true
+    description: How many rule failures the run found across its pages (a11y rollup.violation_count).
+    validation:
+      minimum: 0
+    examples:
+      - 0
+      - 0
+      - 0
+      - 0
+      - 6
+      - 6
+  critical_count:
+    type: integer
+    required: true
+    description: Findings of critical impact.
+    validation:
+      minimum: 0
+    examples:
+      - 0
+      - 0
+      - 0
+      - 0
+      - 2
+      - 2
+  serious_count:
+    type: integer
+    required: true
+    description: Findings of serious impact.
+    validation:
+      minimum: 0
+    examples:
+      - 0
+      - 0
+      - 0
+      - 0
+      - 1
+      - 1
+  moderate_count:
+    type: integer
+    required: true
+    description: Findings of moderate impact.
+    validation:
+      minimum: 0
+    examples:
+      - 0
+      - 0
+      - 0
+      - 0
+      - 1
+      - 1
+  minor_count:
+    type: integer
+    required: true
+    description: Findings of minor impact.
+    validation:
+      minimum: 0
+    examples:
+      - 0
+      - 0
+      - 0
+      - 0
+      - 2
+      - 2
+  unknown_count:
+    type: integer
+    required: true
+    description: 'Findings whose impact the engine did not state. Its own bucket: never folded into minor.'
+    validation:
+      minimum: 0
+    examples:
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+  pass_count:
+    type: integer
+    required: true
+    description: How many capture passes ran.
+    validation:
+      minimum: 0
+    examples:
+      - 28
+      - 18
+      - 20
+      - 16
+      - 30
+      - 20
+  passes_failed:
+    type: integer
+    required: true
+    description: How many of those passes did not finish ok.
+    validation:
+      minimum: 0
+    examples:
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+      - 0
+  artifact_count:
+    type: integer
+    required: true
+    description: How many artifacts the run's index lists.
+    validation:
+      minimum: 0
+    examples:
+      - 25
+      - 18
+      - 20
+      - 16
+      - 27
+      - 20
+  evidence_retained:
+    type: boolean
+    required: false
+    description: Whether the run kept its evidence directory (evidence_retention.retained).
+    examples:
+      - true
+      - true
+      - null
+      - null
+      - true
+      - null
+  provenance_source:
+    type: string
+    required: true
+    description: The system that produced the record.
+    examples:
+      - Capture tool
+      - Capture tool
+      - Capture tool
+      - Capture tool
+      - Capture tool
+      - Capture tool
+  provenance_record:
+    type: string
+    required: true
+    description: Which record there.
+    examples:
+      - capture-app.example.com-2026-09-18
+      - capture-app.example.com-2026-09-17
+      - capture-app.example.com-2026-09-17
+      - capture-preview.app.example.com-2026-09-17
+      - capture-designsystem.digital.gov-2026-09-17
+      - capture-designsystem.digital.gov-2026-09-16
+  provenance_locator:
+    type: string
+    required: false
+    description: Where in that record the values were read.
+    examples:
+      - manifest.json
+      - manifest.json
+      - manifest.json
+      - manifest.json
+      - manifest.json
+      - manifest.json
+  provenance_method:
+    type: string
+    required: true
+    description: How the values were obtained.
+    examples:
+      - App capture, 28 passes
+      - App capture, 18 passes
+      - App capture, 20 passes
+      - App capture, 16 passes
+      - App capture, 30 passes
+      - App capture, 20 passes
+  provenance_at:
+    type: datetime
+    required: true
+    description: When they were obtained.
+    validation:
+      format: date-time
+    examples:
+      - '2026-09-18T00:34:54.671Z'
+      - '2026-09-17T21:55:36.491Z'
+      - '2026-09-17T21:53:41.439Z'
+      - '2026-09-17T21:52:21.293Z'
+      - '2026-09-17T00:44:54.052Z'
+      - '2026-09-16T03:40:54.031Z'
+semantics:
+  capture_note:
+    semantic_type: text.body
+    token_mapping: tokenMap(text.body.*)
+  run_id:
+    semantic_type: capture.run.run_id
+    token_mapping: tokenMap(text.body.*)
+  target_name:
+    semantic_type: text.label
+    token_mapping: tokenMap(text.label.*)
+  target_url:
+    semantic_type: capture.run.target_url
+    token_mapping: tokenMap(text.body.*)
+  mode:
+    semantic_type: capture.run.mode
+    token_mapping: tokenMap(text.body.*)
+  auth_type:
+    semantic_type: capture.run.auth_type
+    token_mapping: tokenMap(text.body.*)
+  page_count:
+    semantic_type: capture.run.page_count
+    token_mapping: tokenMap(text.body.*)
+  finding_count:
+    semantic_type: capture.run.finding_count
+    token_mapping: tokenMap(text.body.*)
+  critical_count:
+    semantic_type: capture.run.critical_count
+    token_mapping: tokenMap(text.body.*)
+  serious_count:
+    semantic_type: capture.run.serious_count
+    token_mapping: tokenMap(text.body.*)
+  moderate_count:
+    semantic_type: capture.run.moderate_count
+    token_mapping: tokenMap(text.body.*)
+  minor_count:
+    semantic_type: capture.run.minor_count
+    token_mapping: tokenMap(text.body.*)
+  unknown_count:
+    semantic_type: capture.run.unknown_count
+    token_mapping: tokenMap(text.body.*)
+  pass_count:
+    semantic_type: capture.run.pass_count
+    token_mapping: tokenMap(text.body.*)
+  passes_failed:
+    semantic_type: capture.run.passes_failed
+    token_mapping: tokenMap(text.body.*)
+  artifact_count:
+    semantic_type: capture.run.artifact_count
+    token_mapping: tokenMap(text.body.*)
+  evidence_retained:
+    semantic_type: capture.run.evidence_retained
+    token_mapping: tokenMap(text.body.*)
+metadata:
+  maturity: alpha
+  owners:
+    - OODS Foundry
+  references:
+    - objects/provenance.v1.json#/references/ref-b9c43cb31221
+  changelog:
+    - version: 0.1.0
+      date: '2026-09-18'
+      description: Born from 6 real capture runs; sample records are those runs.
+    - version: 0.2.0
+      date: '2026-09-18'
+      description: >-
+        Read-only in OODS Foundry: its records are shown, never edited, so it composes no form and no
+        workflow, and its detail offers no Edit or Delete.
+    - version: 0.3.0
+      date: '2026-09-20'
+      description: Current capture result semantics and historical uncertainty, retaining read-only contexts.
+  supportedContexts:
+    - card
+    - detail
+    - inline
+    - list
+    - timeline

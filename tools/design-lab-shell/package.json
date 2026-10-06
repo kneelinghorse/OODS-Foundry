@@ -1,0 +1,25 @@
+{
+  "name": "@oods/design-lab-shell",
+  "version": "0.1.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "type": "module",
+  "description": "Three-pane Agentic Design Lab shell wired to the MCP renderer.",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.0.0",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.1",
+    "jsdom": "^24.0.0",
+    "typescript": "~5.3.3",
+    "vitest": "^3.2.4"
+  }
+}

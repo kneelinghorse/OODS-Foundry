@@ -2,31 +2,71 @@
   "name": "@oods/mcp-server",
   "version": "0.1.0",
   "private": true,
+  "license": "Apache-2.0",
   "description": "Minimal MCP server (stdio + health) with sandboxed artifacts",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./types": {
+      "types": "./dist/public-types.d.ts",
+      "import": "./dist/public-types.js"
+    }
+  },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json && mkdir -p dist/schemas dist/security && cp -f src/schemas/*.json dist/schemas/ 2>/dev/null || true && cp -f src/security/*.json dist/security/ 2>/dev/null || true",
+    "build": "pnpm --filter @oods/schemas-tools run generate && node ../../scripts/runtime/retained-proofs.mjs && rimraf dist && tsc -p tsconfig.json && mkdir -p dist/schemas dist/security dist/tools && (cp -f src/schemas/*.json dist/schemas/ 2>/dev/null || true) && (cp -f src/security/*.json dist/security/ 2>/dev/null || true) && (cp -f src/tools/registry.json dist/tools/ 2>/dev/null || true) && cp -R registry dist/registry && cp ../viz-core/src/registry/viz-taxonomy.v1.json ../viz-core/src/registry/viz-classification.v1.json ../viz-core/src/registry/viz-patterns.v1.json dist/registry/ && node ../../scripts/runtime/retained-proofs.mjs --output packages/mcp-server/dist/registry/tool-capability-ledger.v1.json && node ../../scripts/build-revision.mjs dist/build-revision.json",
     "start": "node dist/index.js",
-    "dev": "tsx src/index.ts"
+    "dev": "tsx src/index.ts",
+    "test": "vitest run",
+    "test:scale": "vitest run --config vitest.scale.config.ts",
+    "test:gates": "vitest run --config vitest.gates.config.ts",
+    "test:echarts-soak": "node --expose-gc ../../node_modules/vitest/vitest.mjs run --config vitest.echarts-soak.config.ts"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.0.0"
   },
   "dependencies": {
+    "@dagrejs/dagre": "3.1.1",
+    "@oods/a11y-tools": "workspace:*",
     "@oods/artifacts": "workspace:*",
+    "@oods/component-contracts": "workspace:*",
+    "@oods/components-react": "workspace:*",
+    "@oods/components-vue": "workspace:*",
     "@oods/release-utils": "workspace:*",
-    "ajv": "^8.17.1",
+    "@oods/tokens": "workspace:*",
+    "@oods/viz-core": "workspace:*",
+    "@oods/viz-render": "workspace:*",
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.222.0",
+    "@opentelemetry/resources": "^2.11.0",
+    "@opentelemetry/sdk-trace-node": "^2.11.0",
+    "@tokens-studio/sd-transforms": "2.0.3",
+    "acorn": "8.15.0",
+    "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",
-    "fastify": "^4.28.1"
+    "colorjs.io": "0.5.2",
+    "dotenv": "^17.4.2",
+    "fastify": "^5.12.5",
+    "js-yaml": "^4.3.2",
+    "lit-html": "^3.2.1",
+    "parse5": "7.3.0",
+    "postcss": "8.5.28",
+    "style-dictionary": "5.5.5",
+    "esbuild": "0.25.10"
   },
   "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
     "@types/node": "^20.10.0",
-    "typescript": "^5.3.3",
-    "tsx": "^4.20.6"
+    "class-variance-authority": "0.7.1",
+    "happy-dom": "^15.11.7",
+    "tsx": "^4.20.6",
+    "typescript": "^5.3.3"
   }
 }

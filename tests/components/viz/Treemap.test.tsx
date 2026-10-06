@@ -72,7 +72,7 @@ describe('Treemap', () => {
       render(<Treemap data={nestedData} width={800} height={500} />);
 
       const chart = screen.getByTestId('treemap-chart');
-      expect(chart).toHaveStyle({ width: '100%', maxWidth: '800px', height: '500px' });
+      expect(chart).toHaveStyle({ width: '800px', height: '500px' });
     });
 
     it('renders with aria-label', async () => {
@@ -129,7 +129,7 @@ describe('Treemap', () => {
 
   describe('v1.0 renderer constraint', () => {
     it('warns when non-echarts renderer is requested', async () => {
-      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => { });
 
       render(<Treemap data={nestedData} renderer={'vega-lite' as 'echarts'} />);
 

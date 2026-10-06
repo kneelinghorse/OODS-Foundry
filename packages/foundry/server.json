@@ -1,0 +1,23 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "com.oods-foundry/foundry",
+  "description": "OODS Foundry is an object-oriented design system that extends the one you already have.",
+  "version": "0.7.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@oods/foundry",
+      "version": "0.7.0",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ],
+  "websiteUrl": "https://oods-foundry.com/",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://oods-foundry.com/mcp"
+    }
+  ]
+}

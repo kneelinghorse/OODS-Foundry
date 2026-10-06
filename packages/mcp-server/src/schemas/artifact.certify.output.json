@@ -1,0 +1,322 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/artifact.certify.output.json",
+  "title": "Artifact certify output",
+  "description": "Certification of a OODS Foundry NormalizedVizSpec. Cartesian charts use the existing Vega-Lite profile; ECharts-primary charts with matching data use the declared operand profile without a Vega compile leg. Both report coverage certified and a boolean folded conformance verdict. The operand profile requires passing a11y-equivalence, stable determinism, contrast neither fail nor ungradeable, and at least one evaluated clean accuracy rule. Spec-only ECharts calls remain uncertified with conformant null and explicit missing-operand notes. Findings, not-applicable rules, rule counts and per-pillar verdicts expose what actually ran; evaluator or render faults never become a passing operand verdict. Render determinism identifies the projected option and independently repeated normalized SVG where available, within the certified runtime matrix; a geometry-free bubble map retains only its option proof with its stated limitation.",
+  "type": "object",
+  "required": [
+    "status"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "ok",
+        "error"
+      ],
+      "description": "Whether certification ran. 'error' means the input was not a valid NormalizedVizSpec IR."
+    },
+    "coverage": {
+      "type": "string",
+      "enum": [
+        "certified",
+        "uncertified"
+      ],
+      "description": "Certified identifies the Cartesian or declared ECharts data-operand profile, not a passing result: read conformant and the pillars. Uncertified identifies a spec-only ECharts call or an unmodeled mark. Spec-only ECharts contrast may still be reconstructed or exempt, while data-dependent a11y, determinism and accuracy remain unchecked. Absent on error."
+    },
+    "conformant": {
+      "type": [
+        "boolean",
+        "null"
+      ],
+      "description": "Boolean for a certified profile; null for uncertified calls; absent on error. The ECharts operand profile is true only when a11y-equivalence passes, determinism is stable, contrast is neither fail nor ungradeable, and accuracy passes with rulesEvaluated greater than zero and no accuracy findings. Error-severity a11y findings and evaluation faults fail that pillar; ordinary warning findings and not-applicable rules do not. Cartesian behavior is unchanged: its four pillars fold together, with contrast/accuracy fail or ungradeable preventing conformance. Accuracy unchecked cannot pass the operand profile. A measured false is retained, never converted into uncertified."
+    },
+    "findings": {
+      "type": "array",
+      "description": "One entry per failing a11y-equivalence or accuracy rule, at native severity. A11y codes use OODS-<rule.id>; accuracy codes use their registered OODS-V codes. Warnings remain visible without failing a11y, while error-severity a11y findings and any accuracy findings prevent operand conformance. An evaluator fault is reported separately in the pillar and notes, so empty findings alone never imply a pass.",
+      "items": {
+        "$ref": "#/$defs/finding"
+      }
+    },
+    "a11yNotApplicable": {
+      "type": "array",
+      "description": "One entry per a11y-equivalence rule whose declared precondition was absent, in rule order with the precondition named. Present, possibly empty, when the ECharts operand engine returns the complete rule population; absent without data, on Cartesian calls, on tool error, or when the engine throws or returns an incomplete population. An individual rule evaluator fault retains the completed engine population and native findings, while failing the a11y pillar. Not-applicable rules never enter findings and are not counted as failures.",
+      "items": {
+        "type": "object",
+        "required": [
+          "rule",
+          "preconditionAbsent"
+        ],
+        "properties": {
+          "rule": {
+            "type": "string",
+            "description": "The engine's rule id (A11Y-R-01 .. A11Y-R-16) — the same id findings[] prefixes with OODS-."
+          },
+          "preconditionAbsent": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The DECLARED positive precondition the chart lacked, e.g. 'an x or y positional encoding binding'. Never empty: not-applicable is never a bare assertion."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "accuracySummary": {
+      "type": "object",
+      "description": "How the accuracy pillar was reached. Present when rules completed: on Cartesian calls and ECharts calls with data. Absent without an ECharts operand or on an evaluator fault. rulesEvaluated counts resolved rule operands; a rule whose precondition is absent is not counted and explains why in notes. The ECharts operand profile requires at least one evaluated rule and zero failing rules.",
+      "required": [
+        "rulesEvaluated",
+        "failing"
+      ],
+      "properties": {
+        "rulesEvaluated": {
+          "type": "integer",
+          "description": "How many offered rules resolved their operand and ran. Cartesian charts offer four rules; each ECharts-primary type offers one to three. An unresolved precondition is excluded from this count and explained in notes. Always read accuracy pass together with this number."
+        },
+        "failing": {
+          "type": "integer",
+          "description": "How many evaluated accuracy rules positively detected a distortion. Equals the number of accuracy-rule findings, excluding a11y findings; offered accuracy codes are listed in accuracyRules."
+        }
+      },
+      "additionalProperties": false
+    },
+    "determinism": {
+      "type": "object",
+      "description": "Re-emit and render determinism proof. Cartesian results identify the canonical Vega-Lite compile with contentHash and, when rendering occurred, the first normalized SVG with renderHash. ECharts-primary results are present when the `data` operand was supplied: contentHash identifies the retained projected option, and renderHash is present whenever that projected option was rendered successfully. In both families `stable` folds two independent emissions and, when renderHash is present, two independent normalized renders. A typed first-render fault keeps contentHash, omits renderHash, and makes stable false; bubble_map without inline geometry keeps the option proof and names the no-server-map limitation. Absent on the error path and on an ECharts verdict with no operand.",
+      "required": [
+        "stable",
+        "contentHash"
+      ],
+      "properties": {
+        "stable": {
+          "type": "boolean",
+          "description": "True when two independent emissions canonicalize byte-identically and every render that was attempted also normalizes byte-identically across two independent renders. On the cartesian path the emissions are Vega-Lite compiles. On the ECharts data-backed path they are retained projected options, and the two renders use the first and second projections respectively. A failed or nondeterministic render makes this false."
+        },
+        "contentHash": {
+          "type": "string",
+          "description": "SHA-256 (hex) of the canonicalized emission. Cartesian: the canonicalized Vega-Lite compile — the same contentHash viz.render emits for this IR; the render never feeds this hash (render↔certify hash identity is a shipped invariant). ECharts-primary (s172): the canonicalized JSON-projected ECharts option, replaying viz.render's exact projection (the tooltip formatter closure dropped, __joinDiagnostics stripped, __registration KEPT) — so it equals viz.render's contentHash FOR THE SAME (spec, data) PAIR GIVEN TO BOTH TOOLS. certify asserts nothing about what the CALLER rendered (the renderHash leg is certify's own render), and hash identity across processes assumes one installed @oods/tokens bundle version."
+        },
+        "renderHash": {
+          "type": "string",
+          "description": "OPTIONAL SHA-256 (hex) of the first normalized SVG certify rendered through @oods/viz-render. Present exactly when server-side rendering succeeded: on cartesian charts (including contrast-exempt charts) and on renderable ECharts-primary calls with `data`. The second independent render is the stability proof. Absent on spec-only ECharts calls, a typed first-render fault, ECharts bubble_map without inline geometry. contentHash remains the emitted artifact identity; renderHash is the rendered-picture witness. The normalization/runtime contract and render-hash epoch are pinned in packages/viz-render/certified-matrix.json."
+        }
+      },
+      "additionalProperties": false
+    },
+    "pillars": {
+      "type": "object",
+      "description": "Per-pillar verdicts on successful tool responses, including nonconformant results. Data-backed ECharts calls grade a11y over the shared operand-built table/narrative, repeat option emission and available rendering for determinism, measure or exempt contrast, and run the per-type accuracy rules. Spec-only ECharts calls keep data-dependent pillars unchecked and retain legacy contrast behavior. A fault cannot silently produce a passing profile.",
+      "required": [
+        "a11yEquivalence",
+        "determinism",
+        "contrast",
+        "accuracy"
+      ],
+      "properties": {
+        "a11yEquivalence": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "unchecked"
+          ],
+          "description": "Pass when the complete rule evaluation has no error-severity failure or evaluator fault; fail otherwise. Ordinary warnings and declared not-applicable rules retain their channels without failing the pillar. ECharts evaluates the same operand-built table and narrative as viz.render; without data it stays unchecked. A whole-engine fault or incomplete rule population is fail with a note, never unchecked or pass."
+        },
+        "determinism": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "unchecked"
+          ],
+          "description": "Re-emit determinism: 'pass' iff two independent emissions are byte-stable and, whenever a server render occurred, two independent normalized SVG renders are byte-stable too. renderHash identifies the first normalized render. 'unchecked' on the ECharts-primary path means no `data` operand was supplied and notes[] names that absence. A typed render fault is a failed proof, not an unchecked one. force_graph option and render stability are both evaluated inside the isolated deterministic renderer."
+        },
+        "contrast": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "ungradeable",
+            "unchecked",
+            "exempt"
+          ],
+          "description": "Rendered-reality contrast at the requested theme and brand. Cartesian charts grade actual rendered OODS series paints, retaining assignment duplicates for real palette recycling; a continuous/default color scale remains WCAG-exempt and author chrome remains excluded. ECharts contrast is render-measured when `data` is supplied: exact ecmeta_ssr_type=chart fills and strokes form Role C, semantic family cardinality forms the N-long Role-A assignment, and their independently graded WCAG/CIEDE2000/CVD results combine by worst verdict. The five categorical families are graded; choropleth, bubble_map, and flow_map remain geo-exempt while still retaining render evidence. Pattern-only, unreadable metadata, or a render fault is ungradeable rather than pass/unchecked. spec-only calls retain the reconstructed baked-palette verdict because no render operand exists. Ordinal bubble color remains under the standing all-geo exemption and needs a governance change before it can be graded. HC contrast is exempt with contrastResults reason forced-colors; the server preserves declared colors and makes no numeric contrast claim."
+        },
+        "accuracy": {
+          "type": "string",
+          "enum": [
+            "pass",
+            "fail",
+            "ungradeable",
+            "unchecked"
+          ],
+          "description": "Structural accuracy from the four Cartesian rules or the per-type ECharts data rules. Fail means a registered rule found a distortion; ungradeable means evaluation faulted; unchecked means no operand or no resolved rule. ECharts pass requires at least one evaluated rule with no findings. Its operand profile fails on fail, ungradeable or unchecked. Cartesian zero-rule semantics remain unchanged. Offered rules and evaluated rules are distinct; pass does not claim complete chart accuracy."
+        }
+      },
+      "additionalProperties": false
+    },
+    "contrastNote": {
+      "type": "string",
+      "description": "Contrast rationale naming the exact theme/brand. Cartesian and data-backed categorical ECharts results grade rendered paints against that CSS scope canvas; geo and continuous heatmap results remain exempt. Spec-only ECharts calls reconstruct scoped baked colors and make no rendered-carrier measurement claim. For exempt results, no canvas ratio is graded."
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Path-specific scope and missing-operand explanations, runtime-matrix limits, unmet rule preconditions and evaluator faults. The operand note describes the enforced profile; the spec-only note explains why coverage remains uncertified and conformant null. Empty offered/resolved rule sets remain explicit and cannot pass the operand profile."
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/finding"
+      },
+      "description": "Present and non-empty when status is 'error' (the input was not a valid NormalizedVizSpec IR)."
+    },
+    "contrastResults": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1,
+      "description": "The contrast row for this call's requested theme/brand. Collect rows from separate scope calls to compare themes. measured is true only for a successful render-backed categorical evaluation (pass or fail); exempt, unchecked, ungradeable and spec-only palette reconstruction do not claim a completed canvas ratio measurement.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "theme",
+          "brand",
+          "verdict",
+          "measured",
+          "evidence",
+          "note"
+        ],
+        "properties": {
+          "theme": {
+            "enum": [
+              "light",
+              "dark",
+              "hc"
+            ]
+          },
+          "brand": {
+            "type": "string",
+            "format": "oods-brand"
+          },
+          "verdict": {
+            "enum": [
+              "pass",
+              "fail",
+              "ungradeable",
+              "unchecked",
+              "exempt"
+            ]
+          },
+          "measured": {
+            "type": "boolean"
+          },
+          "evidence": {
+            "enum": [
+              "render",
+              "baked-palette",
+              "none"
+            ]
+          },
+          "note": {
+            "type": "string"
+          },
+          "reason": {
+            "const": "forced-colors",
+            "description": "HC contrast is delegated to the user agent forced-colors palette; no numeric server grade is claimed."
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "theme": {
+                  "const": "hc"
+                }
+              },
+              "required": [
+                "theme"
+              ]
+            },
+            "then": {
+              "required": [
+                "reason"
+              ],
+              "properties": {
+                "verdict": {
+                  "const": "exempt"
+                },
+                "measured": {
+                  "const": false
+                }
+              }
+            },
+            "else": {
+              "not": {
+                "required": [
+                  "reason"
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    "accuracyRules": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "OODS-V150",
+          "OODS-V151",
+          "OODS-V152",
+          "OODS-V153",
+          "OODS-V154",
+          "OODS-V155",
+          "OODS-V156",
+          "OODS-V157",
+          "OODS-V158",
+          "OODS-V159",
+          "OODS-V168",
+          "OODS-V169",
+          "OODS-V170",
+          "OODS-V171",
+          "OODS-V172",
+          "OODS-V173"
+        ]
+      },
+      "uniqueItems": true,
+      "description": "Offered accuracy rule codes for this chart type. This closed set is distinct from accuracySummary.rulesEvaluated, which counts resolved operands; an empty array means no rule is offered."
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "finding": {
+      "type": "object",
+      "required": [
+        "code",
+        "message"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "A per-rule equivalence code OODS-<rule.id>, a registered accuracy-rule code listed in accuracyRules, or an OODS-V error code on the error path. The literal OODS-A11Y-R-12 retains the full rule identity."
+        },
+        "message": {
+          "type": "string"
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "error",
+            "warn"
+          ],
+          "description": "The rule's intrinsic severity (native VizA11yRuleResult severity — not remapped)."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

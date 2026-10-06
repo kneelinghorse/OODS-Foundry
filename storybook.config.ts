@@ -10,10 +10,16 @@ const workspaceRoot = path.dirname(fileURLToPath(import.meta.url));
 
 const missionStoriesRoot = path.join(workspaceRoot, 'stories');
 const storiesRoot = path.join(workspaceRoot, 'src', 'stories');
+const explorerStoriesRoot = path.join(workspaceRoot, 'apps', 'explorer', 'src', 'stories');
+const explorerIntroRoot = path.join(workspaceRoot, 'apps', 'explorer', '.storybook');
 const tokensDistDir = path.resolve(workspaceRoot, 'packages', 'tokens', 'dist');
 const tokensTailwindPath = path.resolve(tokensDistDir, 'tailwind', 'tokens.json');
 const tokensCssPath = path.resolve(tokensDistDir, 'css', 'tokens.css');
 const tokensModulePath = path.resolve(tokensDistDir, 'index.js');
+// s223-m02: preview.ts imports @oods/tokens/brands (s213-m04). The bare '@oods/tokens' alias below points at a file, so
+// without its own entry that import resolved to "<dist>/index.js/brands" and the preview failed to load.
+const tokensBrandsPath = path.resolve(tokensDistDir, 'brands.js');
+const vizCoreModulePath = path.resolve(workspaceRoot, 'packages', 'viz-core', 'src', 'index.ts');
 const provenanceCandidate = path.resolve(workspaceRoot, 'dist', 'pkg', 'provenance.json');
 const provenanceFallback = path.resolve(workspaceRoot, 'configs', 'provenance.placeholder.json');
 let provenancePayload: Record<string, unknown> = {
@@ -39,20 +45,18 @@ let tokensBuilt = false;
 
 const config: StorybookConfig = {
   stories: [
+    `${explorerIntroRoot}/**/*.mdx`,
     `${missionStoriesRoot}/**/*.mdx`,
     `${missionStoriesRoot}/**/*.stories.@(ts|tsx)`,
     `${storiesRoot}/**/*.mdx`,
     `${storiesRoot}/**/*.stories.@(ts|tsx)`,
-    './src/components/**/*.mdx',
-    './src/components/**/*.stories.@(ts|tsx)', // Component co-located stories
-    // NOTE: Explorer stories excluded - they duplicate canonical stories
-    // Explorer app has its own Storybook config if needed
+    `${explorerStoriesRoot}/**/*.mdx`,
+    `${explorerStoriesRoot}/**/*.stories.@(ts|tsx)`,
   ],
   addons: [
     '@storybook/addon-docs',
     '@storybook/addon-a11y',
     '@storybook/addon-onboarding',
-    '@storybook/addon-vitest',
     '@chromatic-com/storybook',
     './apps/explorer/addons/storybook-addon-agent/register.tsx',
   ],
@@ -87,8 +91,10 @@ const config: StorybookConfig = {
         '~': workspaceRoot,
         '@': path.join(workspaceRoot, 'src'),
         '@storybook/blocks': '@storybook/addon-docs/blocks',
+        '@oods/viz-core': vizCoreModulePath,
         '@oods/tokens/css': tokensCssPath,
         '@oods/tokens/tailwind': tokensTailwindPath,
+        '@oods/tokens/brands': tokensBrandsPath,
         '@oods/tokens': tokensModulePath,
       },
     };

@@ -9,7 +9,7 @@ import type { HTMLAttributes, JSX } from 'react';
 import type { EChartsType } from 'echarts';
 
 import type { HierarchyInput } from '../../types/viz/network-flow.js';
-import type { NormalizedVizSpec } from '../../viz/spec/normalized-viz-spec.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 import { adaptTreemapToECharts } from '../../viz/adapters/echarts/treemap-adapter.js';
 import { TreemapA11yFallback } from './a11y/TreemapA11yFallback.js';
 
@@ -57,7 +57,7 @@ const DEFAULT_HEIGHT = 400;
  */
 function buildSpec(props: TreemapProps): NormalizedVizSpec & { interaction?: Record<string, boolean> } {
   return {
-    $schema: 'https://oods.dev/viz-spec/v1',
+    $schema: 'https://oods-foundry.com/viz-spec/v1',
     id: 'component:treemap',
     name: props.name ?? 'Treemap',
     data: { values: [] },

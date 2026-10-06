@@ -10,13 +10,13 @@ import { REGION_ORDER } from '../../src/types/regions.js';
 import { createSubscriptionObjectSpec } from '../../src/objects/subscription/object.js';
 import type { SubscriptionRecord } from '../../src/objects/subscription/types.js';
 import activeSubscription from '../../src/fixtures/subscription/active.json';
-import delinquentSubscription from '../../src/fixtures/subscription/past_due.json';
+import pastDueSubscription from '../../src/fixtures/subscription/past_due.json';
 import cancelSubscription from '../../src/fixtures/subscription/active_cancel_at_period_end.json';
 import type { ContextKind } from '../../src/contexts/index.js';
 import { collectContributionExtensions } from '../../src/engine/contributions/index.js';
 
 const Active = activeSubscription as SubscriptionRecord;
-const Delinquent = delinquentSubscription as SubscriptionRecord;
+const PastDue = pastDueSubscription as SubscriptionRecord;
 const CancelAtPeriodEnd = cancelSubscription as SubscriptionRecord;
 
 const SubscriptionObject = createSubscriptionObjectSpec();
@@ -69,23 +69,23 @@ describe('Subscription view integration', () => {
 
   it('renders expected status badges per fixture', () => {
     const activeMarkup = renderContextMarkup(Active);
-    const delinquentMarkup = renderContextMarkup(Delinquent);
+    const pastDueMarkup = renderContextMarkup(PastDue);
     const cancelMarkup = renderContextMarkup(CancelAtPeriodEnd);
 
     expect(activeMarkup.pageHeader).toContain('data-status="active"');
     expect(activeMarkup.pageHeader).toContain('Active');
-    expect(delinquentMarkup.pageHeader).toContain('data-status="delinquent"');
-    expect(delinquentMarkup.pageHeader).toContain('Delinquent');
+    expect(pastDueMarkup.pageHeader).toContain('data-status="past_due"');
+    expect(pastDueMarkup.pageHeader).toContain('Past Due');
     expect(cancelMarkup.pageHeader).toContain('data-status="pending_cancellation"');
     expect(cancelMarkup.pageHeader).toContain('Pending Cancellation');
   });
 
-  it('shows update payment action only for delinquent subscriptions', () => {
+  it('shows update payment action only for past-due/unpaid subscriptions', () => {
     const activeMarkup = renderContextMarkup(Active);
-    const delinquentMarkup = renderContextMarkup(Delinquent);
+    const pastDueMarkup = renderContextMarkup(PastDue);
     const cancelMarkup = renderContextMarkup(CancelAtPeriodEnd);
 
-    expect(delinquentMarkup.viewToolbar).toContain('Update payment');
+    expect(pastDueMarkup.viewToolbar).toContain('Update payment');
     expect(activeMarkup.viewToolbar).not.toContain('Update payment');
     expect(cancelMarkup.viewToolbar).not.toContain('Update payment');
 

@@ -1,6 +1,27 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
+import { loadStoryIndex, resolveStoryId } from '../utils/storybook';
 
-const STORY_ID = 'forms-text-field--form-example';
+// s174 m03 — this spec hard-coded `forms-text-field--form-example`, but its title was
+// `Forms/TextField` when both landed in d6f2567; that title generates
+// `forms-textfield--form-example`. The id was invalid from inception, then 488191c moved the
+// story to Components/Primitives/Text Field. No CI job ran the desktop project to expose it.
+//
+// Resolving through the story index does NOT make the spec rot-proof — brand-a.spec.ts used
+// this same resolver and rotted anyway when its titles were deleted. What it buys is a LOUD
+// AND NAMED failure ("Story not found for titles: ...") instead of a goto that renders the
+// Storybook 404 page and then fails on some unrelated missing locator, and it survives
+// changes to the id scheme. The alias list carries the known former title so a checkout
+// mid-reorg resolves either way.
+const STORY_TITLES = ['Components/Primitives/Text Field', 'Forms/TextField'] as const;
+const STORY_NAME = 'Form Example';
+const STORYBOOK_URL = process.env.STORYBOOK_URL ?? 'http://127.0.0.1:6006';
+
+let STORY_ID: string;
+
+test.beforeAll(async () => {
+  const entries = await loadStoryIndex(STORYBOOK_URL);
+  STORY_ID = resolveStoryId(entries, { title: [...STORY_TITLES], name: STORY_NAME });
+});
 
 async function getDescribedText(page: Page, locator: Locator): Promise<string[]> {
   const describedBy = await locator.getAttribute('aria-describedby');

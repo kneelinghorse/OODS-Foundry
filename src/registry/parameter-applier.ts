@@ -36,6 +36,14 @@ export class TraitParameterValidationError extends Error {
 }
 
 const defaultValidator = new ParameterValidator();
+const BOUND_MARK_PREVIEWS: Readonly<Record<string, { chartType: string; component: string }>> = {
+  MarkArea: { chartType: 'area', component: 'VizAreaPreview' },
+  MarkBar: { chartType: 'bar', component: 'VizMarkPreview' },
+  MarkLine: { chartType: 'line', component: 'VizLinePreview' },
+  MarkGraph: { chartType: 'force_graph', component: 'VizGraphPreview' },
+  MarkPoint: { chartType: 'scatter', component: 'VizPointPreview' },
+  MarkRect: { chartType: 'heatmap', component: 'VizHeatmapPreview' },
+};
 
 export function applyTraitParameters(
   definition: TraitDefinition,
@@ -59,6 +67,30 @@ export function applyTraitParameters(
   }
 
   const clone = cloneTraitDefinition(definition);
+
+  // A bound chart projects existing domain fields. Standalone mark
+  // controls and encoding-trait dependencies do not belong to the host object.
+  if (clone.trait.name.startsWith('Mark') && resolvedParameters.chart) {
+    const preview = BOUND_MARK_PREVIEWS[clone.trait.name];
+    if (!preview) {
+      throw new Error(`Bound chart trait "${clone.trait.name}" has no supported preview projection.`);
+    }
+    const chart = resolvedParameters.chart;
+    if (typeof chart !== 'object' || Array.isArray(chart) || !('chartType' in chart) || chart.chartType !== preview.chartType) {
+      throw new Error(`Bound chart trait "${clone.trait.name}" requires chartType "${preview.chartType}".`);
+    }
+    const contexts = clone.view_extensions?.dashboard ? ['detail', 'dashboard'] : ['detail'];
+    clone.schema = {};
+    clone.semantics = {};
+    clone.dependencies = [];
+    clone.view_extensions = Object.fromEntries(contexts.map((context) => [context, [{
+      component: preview.component, position: 'top', priority: 55, props: {
+        chart,
+        ...(resolvedParameters.title !== undefined ? { title: resolvedParameters.title } : {}),
+        ...(resolvedParameters.description !== undefined ? { description: resolvedParameters.description } : {}),
+      },
+    }]]));
+  }
 
   if (!clone.metadata) {
     clone.metadata = {};

@@ -45,7 +45,7 @@ const SUBSCRIPTIONS: readonly SubscriptionRow[] = [
 ];
 
 const meta: Meta<typeof Table> = {
-  title: 'Primitives/Data Display/Table',
+  title: 'Components/Data/Table',
   component: Table,
   parameters: {
     layout: 'padded',

@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/07/schema",
+  "$id": "https://trait-engine.dev/schemas/traits/sortable",
+  "title": "Sortable Trait Parameters",
+  "description": "Controls column sorting behavior in list and table views.",
+  "type": "object",
+  "properties": {
+    "defaultSortField": {
+      "type": "string",
+      "description": "The field name to sort by on initial load. Empty means no default sort.",
+      "default": ""
+    },
+    "defaultSortDirection": {
+      "type": "string",
+      "description": "Default sort direction on initial load.",
+      "enum": ["asc", "desc"],
+      "default": "asc"
+    },
+    "sortableFields": {
+      "type": "array",
+      "description": "List of field names that support sorting. When empty, all fields are sortable.",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true,
+      "default": []
+    },
+    "triStateSort": {
+      "type": "boolean",
+      "description": "When true, sort cycles through ascending, descending, none. When false, toggles between ascending and descending only.",
+      "default": true
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "defaultSortField": "name",
+      "defaultSortDirection": "asc"
+    },
+    {
+      "sortableFields": ["name", "price", "createdAt"],
+      "triStateSort": false,
+      "defaultSortDirection": "desc"
+    }
+  ]
+}

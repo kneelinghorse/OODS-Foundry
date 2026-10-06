@@ -1,69 +1,285 @@
 {
   "artifactsBase": "artifacts/current-state",
-  "roles": ["designer", "maintainer"],
+  "roles": [
+    "designer",
+    "maintainer"
+  ],
   "rules": [
     {
-      "tool": "brand.apply",
-      "allow": ["designer", "maintainer"],
-      "writes": ["${BASE}/${DATE}/**"],
-      "timeoutMs": 120000,
-      "ratePerMinute": 12,
-      "concurrency": 1
-    },
-    {
-      "tool": "diag.snapshot",
-      "allow": ["designer", "maintainer"],
-      "writes": ["${BASE}/${DATE}/**"],
-      "timeoutMs": 120000,
-      "ratePerMinute": 12,
-      "concurrency": 1
-    },
-    {
-      "tool": "release.verify",
-      "allow": ["maintainer"],
-      "writes": ["${BASE}/${DATE}/**"],
-      "timeoutMs": 180000,
-      "ratePerMinute": 6,
-      "concurrency": 1
-    },
-    {
-      "tool": "release.tag",
-      "allow": ["maintainer"],
-      "writes": ["${BASE}/${DATE}/**"],
+      "tool": "tokens.build",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "writes": [
+        "${BASE}/${DATE}/**"
+      ],
       "timeoutMs": 60000,
-      "ratePerMinute": 6,
+      "ratePerMinute": 30,
+      "concurrency": 1,
+      "description": "apply compiles source in isolated artifact storage with server dependencies; preview writes nothing"
+    },
+    {
+      "tool": "brand.apply",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "writes": [
+        "${BASE}/${DATE}/**",
+        "${OODS_BRANDS_DIR}/**"
+      ],
+      "timeoutMs": 120000,
+      "ratePerMinute": 12,
       "concurrency": 1
     },
     {
-      "tool": "reviewKit.create",
-      "allow": ["designer", "maintainer"],
-      "writes": ["${BASE}/${DATE}/**"],
+      "tool": "catalog.list",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "readOnly": true,
+      "timeoutMs": 30000,
+      "ratePerMinute": 60,
+      "concurrency": 4,
+      "description": "Reads live registered definitions; explicitly requested historical exports stay historical"
+    },
+    {
+      "tool": "structuredData.fetch",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "readOnly": true,
+      "timeoutMs": 30000,
+      "ratePerMinute": 60,
+      "concurrency": 4,
+      "description": "Reads live registered definitions; explicitly requested historical exports stay historical"
+    },
+    {
+      "tool": "a11y.scan",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "writes": [
+        "${BASE}/${DATE}/**"
+      ],
+      "timeoutMs": 120000,
+      "ratePerMinute": 12,
+      "concurrency": 1
+    },
+    {
+      "tool": "code.generate",
+      "description": "Generation includes React/Vue workflow artifacts and mapped team imports. With a preview host, shared component scenarios run through the generated adapter in a real browser, without package installation. Unmet obligations warn; unavailable or unmeasured checks are disclosed. File payload mode writes the artifact to a new directory under payloads beside the saved schemas; inline mode writes nothing. options.output=application adds a runnable single-screen React/Vue app with sample data and visible integration notices for unwired domain actions; the app installs its @oods packages from npm.",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "writes": [
+        ".oods/payloads/**"
+      ],
+      "additive": true,
       "timeoutMs": 90000,
+      "ratePerMinute": 60,
+      "concurrency": 4
+    },
+    {
+      "tool": "design.compose",
+      "description": "Composition includes workflow context: four screens, routes, states and trait actions. Selected OODS Foundry nodes snapshot their team substitution mappings. Every successful composition that is not transient is recorded as a new version in the compositions store beside the saved schemas; nothing is overwritten.",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "writes": [
+        ".oods/compositions/**"
+      ],
+      "additive": true,
+      "timeoutMs": 30000,
+      "ratePerMinute": 60,
+      "concurrency": 4
+    },
+    {
+      "tool": "pipeline",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "writes": [
+        ".oods/schemas/**",
+        ".oods/compositions/**"
+      ],
+      "timeoutMs": 60000,
+      "ratePerMinute": 40,
+      "concurrency": 2
+    },
+    {
+      "tool": "registry.snapshot",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "readOnly": true,
+      "timeoutMs": 30000,
+      "ratePerMinute": 60,
+      "concurrency": 4,
+      "description": "Reads live registered definitions; explicitly requested historical exports stay historical"
+    },
+    {
+      "tool": "health",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "readOnly": true,
+      "timeoutMs": 30000,
+      "ratePerMinute": 60,
+      "concurrency": 4
+    },
+    {
+      "tool": "viz.render",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "readOnly": true,
+      "timeoutMs": 30000,
+      "ratePerMinute": 60,
+      "concurrency": 4
+    },
+    {
+      "tool": "artifact.certify",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "readOnly": true,
+      "timeoutMs": 30000,
+      "ratePerMinute": 60,
+      "concurrency": 4
+    },
+    {
+      "tool": "brand.intake",
+      "description": "derive reads a team DTCG document or shadcn theme CSS (css or absolute cssPath), with optional token-path or custom-property hints, into a partial recipe, per-value provenance, gaps and warnings; it only reads and writes nothing. template and validate also write nothing. create writes a new brand only after validation and builds it in OODS_BRANDS_DIR (from npm ~/.oods-foundry/brands), or a source token package; it never replaces a brand and removes a failed build.",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "writes": [
+        "${OODS_BRANDS_DIR}/**",
+        "${MCP_BRAND_SOURCE_ROOT}/src/tokens/brands/*/*.json",
+        "${MCP_BRAND_SOURCE_ROOT}/dist/**"
+      ],
+      "timeoutMs": 120000,
       "ratePerMinute": 30,
       "concurrency": 1
     },
     {
-      "tool": "billing.reviewKit",
-      "allow": ["designer", "maintainer"],
-      "writes": ["${BASE}/${DATE}/**"],
-      "timeoutMs": 120000,
-      "ratePerMinute": 20,
+      "tool": "dashboard.render",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "readOnly": true,
+      "timeoutMs": 30000,
+      "ratePerMinute": 60,
+      "concurrency": 4
+    },
+    {
+      "tool": "design.preview",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "description": "Opens, compares and lists composition versions; compare generates missing artifacts for both sides before returning a usable link; edit and accept record a new version and accepted.json in the compositions store. Team packages or checked React shadcn project closures are read and bundled. The project's installed Tailwind 4 compiles its CSS in a timed child process; aliases resolve explicitly. Closure or mapping changes record a new version and compiled snapshots stay in the composition store. No package scripts run and runtime files are not written. Never saves or edits a schema.",
+      "writes": [
+        ".oods/compositions/**"
+      ],
+      "additive": true,
+      "timeoutMs": 150000,
+      "ratePerMinute": 10,
       "concurrency": 1
     },
     {
-      "tool": "billing.switchFixtures",
-      "allow": ["designer", "maintainer"],
-      "writes": ["${BASE}/${DATE}/**"],
-      "timeoutMs": 90000,
-      "ratePerMinute": 20,
+      "tool": "fidelity.preview",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "readOnly": true,
+      "timeoutMs": 30000,
+      "ratePerMinute": 30,
+      "concurrency": 4,
+      "description": "Render OODS Foundry objects or compositions at four fidelity levels. boxes-arrows draws declared object relationships as dagre SVG (object/depth or objects set); schema/schemaRef draws explicitly labelled component containment. wireframe draws the composed tree, regions, component names and field bindings in responsive grayscale; review adds recorded node confidence, never invented scores. branded-mockup uses static sample HTML in the chosen built brand and light/dark/hc theme. Object+context composes a screen; schemaRef or inline schema uses an existing UiSchema. Legacy Object Catalog manifest input and nine packaged registry fixtures remain supported. Legacy branded mockups use light tokens; Unknown brands return OODS-BM-002 on that legacy path. Drawings are not live applications or referential-integrity checks."
+    },
+    {
+      "tool": "map",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "writes": [
+        "${OODS_MAPPINGS_DIR}/component-mappings.json",
+        "${MCP_MAPPINGS_PATH}",
+        ".oods/conflicts/**"
+      ],
+      "timeoutMs": 60000,
+      "ratePerMinute": 30,
+      "concurrency": 1,
+      "description": "create accepts one mapping, mappings (a list), or mappingsPath (an absolute JSON file path). It checks the entire input, duplicate identities and shipped components, and local package name, exact version and exports before one all-or-nothing write. React substitutions may instead name shadcn project/module; create and update check its TypeScript export, aliases, local import closure, installed dependencies and Tailwind 4 before saving. apply false is a dry run; list calls return per-entry outcomes. Package mappings keep their shape."
+    },
+    {
+      "tool": "schema",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "writes": [
+        ".oods/schemas/**"
+      ],
+      "timeoutMs": 30000,
+      "ratePerMinute": 30,
       "concurrency": 1
     },
-    { "tool": "*", "allow": ["designer", "maintainer"], "writes": ["${BASE}/${DATE}/**"], "readOnly": false }
+    {
+      "tool": "object",
+      "description": "Run one object-registry operation. Set `action` to list (the objects in use, shipped or your own, business objects first; OODS Foundry's internal objects are listed only when includeInternal is true, each entry carries its visibility and hiddenInternal counts the ones left out; and every definition file not in use with the reason), show (full object definition incl. composed traits and view extensions), validate (check an object or trait definition given as YAML, and compose it, without writing), register (write it into your folder, OODS_OBJECTS_DIR or OODS_TRAITS_DIR, from npm ~/.oods-foundry/objects and traits, once it validates and composes in every context it declares; overwrite: true replaces one of yours) or reload (read the folders again without a restart). Your object with a shipped object's name is used in its place and reported; your trait cannot reuse a shipped trait's name. A trait of yours places only components OODS Foundry ships. Consolidates the former object.* tools. Optional relationships declare target, via field, cardinality and label; validate/register return typed errors for unknown targets or fields, and show exposes the declarations.",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "writes": [
+        "${OODS_OBJECTS_DIR}/*.object.yaml",
+        "${OODS_TRAITS_DIR}/*.trait.yaml"
+      ],
+      "timeoutMs": 30000,
+      "ratePerMinute": 60,
+      "concurrency": 1
+    },
+    {
+      "tool": "repl",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "writes": [
+        "${BASE}/${DATE}/**"
+      ],
+      "timeoutMs": 30000,
+      "ratePerMinute": 60,
+      "concurrency": 4
+    }
   ],
   "limits": {
     "defaultTimeoutMs": 120000,
     "concurrency": 1,
     "ratePerMinute": 60
   },
-  "redactions": ["$HOME", "GITHUB_TOKEN", "/Users/*/secrets/*", "CHROMATIC_PROJECT_TOKEN"]
+  "redactions": [
+    "$HOME",
+    "GITHUB_TOKEN",
+    "/Users/*/secrets/*",
+    "CHROMATIC_PROJECT_TOKEN"
+  ]
 }

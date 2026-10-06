@@ -1,0 +1,112 @@
+{
+  "$schema": "../../../src/schemas/component-mapping.schema.json",
+  "generatedAt": "2026-05-21T00:00:00.000Z",
+  "version": "2026-05-21",
+  "stats": {
+    "mappingCount": 2,
+    "systemCount": 1
+  },
+  "mappings": [
+    {
+      "id": "synthetic-button",
+      "externalSystem": "synthetic-system",
+      "externalComponent": "Button",
+      "oodsTraits": ["Stateful", "Taggable"],
+      "confidence": "manual",
+      "metadata": {
+        "createdAt": "2026-05-21T00:00:00.000Z",
+        "author": "s103-m02 fixture"
+      },
+      "projection_variants": [
+        {
+          "id": "synthetic-button-desktop",
+          "surface": "desktop",
+          "external_component": "PrimaryButton",
+          "capability_id": "cap-save-record",
+          "selector": ".btn-primary",
+          "confidence": 0.92,
+          "evidence_chain": [
+            { "source": "synthetic", "match_score": 0.92 }
+          ]
+        },
+        {
+          "id": "synthetic-button-mobile",
+          "surface": "mobile",
+          "external_component": "MobileButton",
+          "capability_id": "cap-save-record",
+          "selector": "[data-action='save']",
+          "confidence": 0.81
+        }
+      ]
+    },
+    {
+      "id": "synthetic-text-field",
+      "externalSystem": "synthetic-system",
+      "externalComponent": "TextField",
+      "oodsTraits": ["Stateful"],
+      "confidence": "manual",
+      "metadata": {
+        "createdAt": "2026-05-21T00:00:00.000Z",
+        "author": "s103-m02 fixture"
+      }
+    }
+  ],
+  "disambiguation_decisions": [
+    {
+      "decision_id": "dec-001",
+      "decision_type": "preferred_name",
+      "scope": "registry",
+      "status": "promoted",
+      "target_kind": "preferred_term",
+      "target_id": "term-save-record",
+      "selected_value": "Save Record",
+      "rationale": "Reviewer canonicalized 'Save', 'Store', 'Persist' as 'Save Record'.",
+      "alternatives": [
+        { "value": "Store Record", "score": 0.55, "reasoning": "more general; less domain-clear" },
+        { "value": "Persist Record", "score": 0.31, "reasoning": "technical; less user-facing" }
+      ],
+      "preferred_term_id": "term-save-record",
+      "decided_by": "human",
+      "decided_at": "2026-05-20T16:00:00.000Z"
+    },
+    {
+      "decision_id": "dec-002",
+      "decision_type": "mapping_rejection",
+      "scope": "registry",
+      "status": "accepted",
+      "target_kind": "candidate_object",
+      "target_id": "candidate-form-banner",
+      "selected_value": "rejected",
+      "rationale": "Candidate was visual chrome, not a domain object.",
+      "decided_by": "agent",
+      "decided_at": "2026-05-20T16:05:00.000Z"
+    }
+  ],
+  "preferred_terms": [
+    {
+      "entity_type": "preferred_term",
+      "id": "term-save-record",
+      "slug": "save-record",
+      "label": "Save Record",
+      "aliases": ["Save", "Store", "Persist"],
+      "scope": "registry",
+      "domain": "data-management",
+      "source_decision_ids": ["dec-001"]
+    }
+  ],
+  "capabilities": [
+    {
+      "entity_type": "capability",
+      "id": "cap-save-record",
+      "slug": "save-record",
+      "name": "Save Record",
+      "canonical_verb": "save",
+      "aliases": ["store", "persist"],
+      "oods_traits": ["Stateful"],
+      "projection_variant_ids": ["synthetic-button-desktop", "synthetic-button-mobile"],
+      "preconditions": [
+        { "type": "auth", "description": "User must be signed in.", "confidence": 0.95 }
+      ]
+    }
+  ]
+}

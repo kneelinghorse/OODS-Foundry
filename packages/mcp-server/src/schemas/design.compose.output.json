@@ -1,0 +1,242 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/design.compose.output.json",
+  "title": "Design compose output",
+  "description": "Generated UiSchema with component selections and validation result.",
+  "type": "object",
+  "required": ["status", "layout", "schema", "selections", "warnings"],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["ok", "error"],
+      "description": "Whether composition succeeded."
+    },
+    "layout": {
+      "type": "string",
+      "description": "The layout template that was used."
+    },
+    "schema": {
+      "$ref": "./repl.ui.schema.json",
+      "description": "The generated UiSchema (with slot placeholders intact for agent customization)."
+    },
+    "schemaRef": {
+      "type": "string",
+      "description": "Server-managed reference to the generated schema for reuse in validate/render/code.generate."
+    },
+    "schemaRefCreatedAt": {
+      "type": "string",
+      "description": "ISO timestamp when the schemaRef was created."
+    },
+    "schemaRefExpiresAt": {
+      "type": "string",
+      "description": "ISO timestamp when the schemaRef expires."
+    },
+    "compositionId": {
+      "type": "string",
+      "pattern": "^cmp-[a-f0-9]{12}$",
+      "description": "The durable composition this result was recorded as; absent for transient compositions. Every version opens at /preview/<compositionId>/<version> on the preview host."
+    },
+    "version": { "type": "integer", "minimum": 1, "description": "The recorded version number (1 for a new composition)." },
+    "parentVersion": { "type": ["integer", "null"], "description": "The version this one derives from; null for the first." },
+    "operation": { "type": "string", "enum": ["compose", "recompose", "reorder-region", "swap-slot", "reorder-fields", "seed"], "description": "How this version was produced." },
+    "head": { "type": ["string", "null"], "description": "The OODS Foundry build head that produced it; null from a source checkout." },
+    "selections": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/slotSelection" },
+      "description": "Component selection results per slot."
+    },
+    "validation": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["ok", "invalid", "skipped"]
+        },
+        "errors": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/issue" }
+        },
+        "warnings": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/issue" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "warnings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/issue" },
+      "description": "Non-fatal issues during composition."
+    },
+    "errors": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/issue" },
+      "description": "Fatal issues that prevented composition."
+    },
+    "objectUsed": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Object name from the registry." },
+        "version": { "type": "string", "description": "Object version." },
+        "traits": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Trait names composed into this object."
+        },
+        "fieldsComposed": { "type": "number", "description": "Total fields from merged trait schemas." },
+        "viewExtensionsApplied": {
+          "type": "object",
+          "additionalProperties": { "type": "number" },
+          "description": "Count of view_extensions applied per context."
+        }
+      },
+      "required": ["name", "version", "traits", "fieldsComposed", "viewExtensionsApplied"],
+      "additionalProperties": false
+    },
+    "meta": {
+      "type": "object",
+      "properties": {
+        "substitutions": { "type": "array", "items": { "type": "object", "required": ["nodeId", "mappingId", "component"], "additionalProperties": false, "properties": { "nodeId": { "type": "string" }, "mappingId": { "type": "string" }, "component": { "type": "string" } } } },
+        "intentParsed": { "type": "string" },
+        "layoutDetected": { "type": "string" },
+        "slotCount": { "type": "number" },
+        "nodeCount": { "type": "number" },
+        "objectAutoDetected": { "type": "string", "description": "Object name auto-detected from intent string." },
+        "contextAutoDetected": { "type": "string", "description": "Context auto-detected from intent string." },
+        "intentSynthetic": { "type": "boolean", "description": "True when intent was synthetically generated from object + context." },
+        "warnings": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Human-readable warning messages from composition."
+        },
+        "intelligence": {
+          "type": "object",
+          "description": "Compositor intelligence indicators.",
+          "properties": {
+            "fieldsExpanded": { "type": "boolean", "description": "Whether template slots were dynamically expanded." },
+            "slotsExpanded": { "type": "number", "description": "Number of slots added by expansion." },
+            "expansionReason": { "type": "string", "description": "Reason for slot expansion." },
+            "patternsApplied": { "type": "number", "description": "Number of composite slot patterns applied." },
+            "patternGroups": {
+              "type": "array",
+              "description": "Detected multi-field pattern groups applied to slots (s83-m01).",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "slotName": { "type": "string" },
+                  "patternId": { "type": "string" },
+                  "compositeComponent": { "type": "string" },
+                  "matchedFields": { "type": "array", "items": { "type": "string" } },
+                  "confidence": { "type": "number" }
+                },
+                "additionalProperties": false
+              }
+            },
+            "positionAffinityUsed": { "type": "boolean", "description": "Whether position-aware scoring was used." },
+            "fieldAffinityUsed": { "type": "boolean", "description": "Whether field-type-aware scoring was used." },
+            "intentSectionsParsed": { "type": "integer", "description": "Number of intent sections parsed from multi-section prompts." },
+            "sectionContextUsed": { "type": "boolean", "description": "Whether section context influenced slot composition." },
+            "compositionConfidence": { "type": "number", "description": "Aggregated composition confidence (0-1, average of per-slot raw confidences)." },
+            "lowConfidenceSlots": { "type": "number", "description": "Count of slots with confidence below 0.5 that have alternative candidates." },
+            "lowConfidenceSlotNames": {
+              "type": "array",
+              "description": "Slot names whose selected component scored below the low-confidence threshold.",
+              "items": { "type": "string" }
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "slotSelection": {
+      "type": "object",
+      "required": [
+        "slotName",
+        "intent",
+        "candidates",
+        "explanation"
+      ],
+      "properties": {
+        "slotName": { "type": "string" },
+        "intent": { "type": "string" },
+        "selectedComponent": { "type": "string" },
+        "confidence": { "type": "number", "description": "The slot's selection confidence (0-1, raw). Not the same number as candidates[].score, which ranks each candidate." },
+        "confidenceLevel": {
+          "type": "string",
+          "enum": ["high", "medium", "low"],
+          "description": "Human-readable confidence band for quick review."
+        },
+        "explanation": {
+          "type": "string",
+          "description": "One-line rationale describing why this component was selected."
+        },
+        "reviewHint": {
+          "type": "string",
+          "description": "Follow-up guidance when a low-confidence slot should be reviewed or overridden."
+        },
+        "candidates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "reason"
+            ],
+            "properties": {
+              "name": { "type": "string" },
+              "score": { "type": "number", "description": "The candidate's ranking score (0-1) within this slot; the slot's own confidence is reported beside it." },
+              "reason": { "type": "string" },
+              "keywordTagMatches": { "type": "number" },
+              "keywordTraitMatches": { "type": "number" },
+              "contextTagMatches": { "type": "number" },
+              "contextTraitMatches": { "type": "number" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "placedComponents": {
+          "type": "array",
+          "description": "Every component the layout or a view extension placed in this slot, in render order; the first is selectedComponent.",
+          "items": { "type": "string" }
+        },
+        "alternativeCandidates": {
+          "type": "array",
+          "description": "Alternative candidates surfaced when confidence < 0.5.",
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "reason"
+            ],
+            "properties": {
+              "name": { "type": "string" },
+              "score": { "type": "number", "description": "The candidate's ranking score (0-1) within this slot; the slot's own confidence is reported beside it." },
+              "reason": { "type": "string" },
+              "keywordTagMatches": { "type": "number" },
+              "keywordTraitMatches": { "type": "number" },
+              "contextTagMatches": { "type": "number" },
+              "contextTraitMatches": { "type": "number" }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "issue": {
+      "type": "object",
+      "required": ["code", "message"],
+      "properties": {
+        "code": { "type": "string" },
+        "message": { "type": "string" },
+        "path": { "type": "string" },
+        "hint": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

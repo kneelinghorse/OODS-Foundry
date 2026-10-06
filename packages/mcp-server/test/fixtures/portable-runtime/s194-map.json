@@ -1,0 +1,25 @@
+{
+  "tool": "map",
+  "arguments": {
+    "action": "create",
+    "externalSystem": "s194-portable",
+    "externalComponent": "SaveButton",
+    "oodsTraits": [
+      "Stateful"
+    ],
+    "apply": true
+  },
+  "bindings": {},
+  "followups": [
+    {
+      "action": "resolve",
+      "externalSystem": "s194-portable",
+      "externalComponent": "SaveButton"
+    },
+    {
+      "action": "delete",
+      "id": "$createdMappingId",
+      "apply": true
+    }
+  ]
+}

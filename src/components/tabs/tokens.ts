@@ -6,23 +6,23 @@
 import type { TabsSize } from './types.js';
 
 const FONT_SIZE_MAP: Record<TabsSize, string> = {
-  sm: 'var(--sys-text-scale-body-sm-font-size, 0.875rem)',
-  md: 'var(--sys-text-scale-label-md-font-size, 0.9375rem)',
-  lg: 'var(--sys-text-scale-body-md-font-size, 1rem)',
+  sm: 'var(--sys-text-scale-body-sm-font-size)',
+  md: 'var(--sys-text-scale-label-md-font-size)',
+  lg: 'var(--sys-text-scale-body-md-font-size)',
 } as const;
 
-const FONT_WEIGHT = 'var(--sys-text-scale-label-md-font-weight, 600)';
+const FONT_WEIGHT = 'var(--sys-text-scale-label-md-font-weight)';
 
 const PADDING_BLOCK_MAP: Record<TabsSize, string> = {
-  sm: 'calc(var(--sys-space-stack-compact, 0.5rem) * 0.6)',
-  md: 'var(--sys-space-stack-compact, 0.5rem)',
-  lg: 'calc(var(--sys-space-stack-compact, 0.5rem) * 1.2)',
+  sm: 'var(--sys-tab-padding-block-sm)',
+  md: 'var(--sys-tab-padding-block-md)',
+  lg: 'var(--sys-tab-padding-block-lg)',
 } as const;
 
 const PADDING_INLINE_MAP: Record<TabsSize, string> = {
-  sm: 'var(--sys-space-inline-xs, 0.75rem)',
-  md: 'var(--sys-space-inline-sm, 1rem)',
-  lg: 'calc(var(--sys-space-inline-sm, 1rem) * 1.2)',
+  sm: 'var(--sys-tab-padding-inline-sm)',
+  md: 'var(--sys-tab-padding-inline-md)',
+  lg: 'var(--sys-tab-padding-inline-lg)',
 } as const;
 
 /** Resolve CSS custom properties for tabs */

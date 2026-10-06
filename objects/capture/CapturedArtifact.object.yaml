@@ -1,0 +1,265 @@
+object:
+  name: CapturedArtifact
+  version: 0.3.0
+  domain: capture.artifact
+  visibility: internal
+  description: >-
+    A file a capture run wrote, with the attestation its run manifest records: the file's kind, path, size,
+    when it was written and its sha256.
+  tags:
+    - capture
+    - artifact
+    - attestation
+traits:
+  - name: behavioral/Searchable
+    parameters:
+      placeholder: Search artifacts
+  - name: behavioral/Filterable
+  - name: behavioral/Pageable
+    parameters:
+      defaultPageSize: 20
+      pageSizeOptions:
+        - 10
+        - 20
+        - 50
+  - name: core/Assessable
+    parameters:
+      recordedStates:
+        - measured
+        - measured_zero
+        - not_measured
+        - not_applicable
+        - needs_review
+        - unknown
+  - name: core/Provenanced
+    parameters:
+      source: Capture tool
+schema:
+  result_state:
+    type: string
+    required: true
+    description: The index's recorded result; unknown when historical records contain no result state.
+    validation:
+      enum: [measured, measured_zero, not_measured, not_applicable, needs_review, unknown]
+    examples: [unknown, unknown, unknown, unknown, unknown, unknown]
+  result_note:
+    type: string
+    required: false
+    description: The index's own explanation of the measurement, preserved verbatim.
+  artifact_id:
+    type: string
+    required: true
+    description: The run id and the path, "<run_id>:<path>".
+    examples:
+      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6:a11y_report.json
+      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6:capability_rollup.json
+      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6:drift_report.json
+      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6:identity_graph.json
+      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6:object_rollup.json
+      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6:perf_report.json
+  path:
+    type: string
+    required: true
+    description: The file under the run's artifacts/ directory, which names the artifact.
+    examples:
+      - a11y_report.json
+      - capability_rollup.json
+      - drift_report.json
+      - identity_graph.json
+      - object_rollup.json
+      - perf_report.json
+  artifact_kind:
+    type: string
+    required: true
+    description: What kind of artifact it is, as the run's index types it.
+    examples:
+      - a11y_report
+      - capability_rollup
+      - drift_report
+      - identity_graph
+      - object_rollup
+      - perf_report
+  description:
+    type: string
+    required: true
+    description: What the artifact holds, in the index's words.
+    examples:
+      - Accessibility scan findings and compliance details.
+      - What the site lets a user DO, per capability, rolled up across surfaces with the evidence for each.
+      - >-
+        Where the live site and the design system disagree — by value (colours, radii, type), by presence
+        (components), and by naming.
+      - >-
+        Which entities on different surfaces are the SAME entity — the resolved cross-surface identity, with
+        the evidence for each join.
+      - >-
+        Per-object summary across the run: where each object appears, what it is called on each surface, and
+        what evidence supports it.
+      - Performance audit results and lighthouse metrics.
+  sha256:
+    type: string
+    required: true
+    description: >-
+      The digest the run manifest attests for this file (manifest.hashes). All 27 on run 6e435ce7 match the
+      bytes on disk.
+    examples:
+      - c5380edf4946c1c177632a0583303d770feafff05f532c244e63ecc74fc71805
+      - 4ee00ce3eaacf9d604da34b352292eb1371be5028e4c756fae8a8b457a74aedc
+      - d1042e91a632c89b39bc6db7d961eeee284c2b7afd86b76cbe5ca38d19059216
+      - 5f003ae93c175af26a8733d17d389c4a1a248376c4ec1b822b934af3b64a0d6f
+      - 44ea63e0356713fd9517589592cc4153f11ad339ed039402648dceda1890f291
+      - dd3c1846b960cca28b0d90b8d2cdc83c62d783e9ab80cb52b1807e33672c8f12
+  schema_version:
+    type: string
+    required: false
+    description: >-
+      The artifact's own schema_version. Absent on entity_catalog, style_fingerprint and stylesheet_rules,
+      which the capture tool does not stamp.
+    examples:
+      - 2.2.0
+      - 1.2.0
+      - 1.0.0
+      - 1.2.0
+      - 1.2.0
+      - 1.0.0
+  bytes:
+    type: integer
+    required: false
+    description: Its size. The index lists itself without one.
+    validation:
+      minimum: 0
+    examples:
+      - 22663
+      - 81259
+      - 393
+      - 778823
+      - 652133
+      - 40592
+  provenance_source:
+    type: string
+    required: true
+    description: The system that produced the record.
+    examples:
+      - Capture tool
+      - Capture tool
+      - Capture tool
+      - Capture tool
+      - Capture tool
+      - Capture tool
+  provenance_record:
+    type: uuid
+    required: true
+    description: Which record there, the capture run's uuid.
+    examples:
+      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
+      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
+      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
+      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
+      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
+      - 6e435ce7-eaab-46b4-be6b-cea9b80defa6
+  provenance_record_name:
+    type: string
+    required: false
+    description: That run's name as the Run records it (target_name), shown in place of its uuid.
+    examples:
+      - uswds-designsystem
+      - uswds-designsystem
+      - uswds-designsystem
+      - uswds-designsystem
+      - uswds-designsystem
+      - uswds-designsystem
+  provenance_locator:
+    type: string
+    required: false
+    description: Where in that record the values were read.
+    examples:
+      - artifacts/a11y_report.json
+      - artifacts/capability_rollup.json
+      - artifacts/drift_report.json
+      - artifacts/identity_graph.json
+      - artifacts/object_rollup.json
+      - artifacts/perf_report.json
+  provenance_method:
+    type: string
+    required: true
+    description: How the values were obtained.
+    examples:
+      - sha256 attested by the run manifest
+      - sha256 attested by the run manifest
+      - sha256 attested by the run manifest
+      - sha256 attested by the run manifest
+      - sha256 attested by the run manifest
+      - sha256 attested by the run manifest
+  provenance_at:
+    type: datetime
+    required: true
+    description: When they were obtained.
+    validation:
+      format: date-time
+    examples:
+      - '2026-09-17T00:52:23.174Z'
+      - '2026-09-17T00:53:54.434Z'
+      - '2026-09-17T00:53:54.225Z'
+      - '2026-09-17T00:53:53.907Z'
+      - '2026-09-17T00:53:54.424Z'
+      - '2026-09-17T00:53:47.709Z'
+semantics:
+  # The run is named by its title; its uuid stays in Reference details.
+  provenance_record:
+    semantic_type: provenance.record
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      displayLabelField: provenance_record_name
+  artifact_id:
+    semantic_type: capture.artifact.artifact_id
+    token_mapping: tokenMap(text.body.*)
+  path:
+    semantic_type: text.label
+    token_mapping: tokenMap(text.label.*)
+  artifact_kind:
+    semantic_type: capture.artifact.artifact_kind
+    token_mapping: tokenMap(text.body.*)
+  description:
+    semantic_type: capture.artifact.description
+    token_mapping: tokenMap(text.body.*)
+  sha256:
+    semantic_type: capture.artifact.sha256
+    token_mapping: tokenMap(text.body.*)
+  schema_version:
+    semantic_type: capture.artifact.schema_version
+    token_mapping: tokenMap(text.body.*)
+  bytes:
+    semantic_type: capture.artifact.bytes
+    token_mapping: tokenMap(text.body.*)
+metadata:
+  maturity: alpha
+  owners:
+    - OODS Foundry
+  references:
+    - objects/provenance.v1.json#/references/ref-b9c43cb31221
+  changelog:
+    - version: 0.1.0
+      date: '2026-09-18'
+      description: Born from the 27-artifact index of capture run 6e435ce7; sample records are six of them.
+    - version: 0.2.0
+      date: '2026-09-18'
+      description: >-
+        Read-only in OODS Foundry: its records are shown, never edited, so it composes no form and no
+        workflow, and its detail offers no Edit or Delete.
+    - version: 0.3.0
+      date: '2026-09-20'
+      description: Current capture result semantics and historical uncertainty, retaining read-only contexts.
+  supportedContexts:
+    - card
+    - detail
+    - inline
+    - list
+    - timeline
+
+# Authored type associations; no record join or referential-integrity claim.
+relationships:
+  - target: Run
+    via: provenance_record
+    cardinality: many-to-one
+    label: Captured in run

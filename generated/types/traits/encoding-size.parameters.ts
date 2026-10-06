@@ -21,4 +21,8 @@ export interface EncodingSizeTraitParameters {
    * Maximum accessible area to avoid dominating layout.
    */
   maxPixelArea?: number;
+  /**
+   * JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand.
+   */
+  renderIntent?: string;
 }

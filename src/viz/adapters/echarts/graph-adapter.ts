@@ -3,8 +3,8 @@ import type { EChartsOption, GraphSeriesOption } from 'echarts';
 import tokensBundle from '@oods/tokens';
 
 import type { NetworkInput, NetworkLink, NetworkNode } from '@/types/viz/network-flow.js';
-import type { NormalizedVizSpec } from '@/viz/spec/normalized-viz-spec.js';
-import { getVizScaleTokens } from '@/viz/tokens/scale-token-mapper.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
+import { getVizScaleTokens } from '@oods/viz-core';
 
 // ECharts needs resolved colors, not CSS variables (canvas renderer can't use CSS cascade)
 // Token resolution map from @oods/tokens bundle

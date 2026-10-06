@@ -9,22 +9,38 @@
       "description": "Palette categories this encoding may leverage.",
       "items": {
         "type": "string",
-        "enum": ["categorical", "sequential", "diverging"]
+        "enum": [
+          "categorical",
+          "sequential",
+          "diverging"
+        ]
       },
       "minItems": 1,
       "uniqueItems": true,
-      "default": ["categorical", "sequential", "diverging"]
+      "default": [
+        "categorical",
+        "sequential",
+        "diverging"
+      ]
     },
     "defaultScheme": {
       "type": "string",
       "description": "Palette category used when unspecified.",
-      "enum": ["categorical", "sequential", "diverging"],
+      "enum": [
+        "categorical",
+        "sequential",
+        "diverging"
+      ],
       "default": "categorical"
     },
     "redundancyMechanism": {
       "type": "string",
       "description": "Non-color fallback used to satisfy equivalence rules.",
-      "enum": ["texture", "shape", "label"],
+      "enum": [
+        "texture",
+        "shape",
+        "label"
+      ],
       "default": "texture"
     },
     "minContrast": {
@@ -37,15 +53,30 @@
     "channel": {
       "type": "string",
       "description": "Graphical channel color touches (fill vs stroke).",
-      "enum": ["fill", "stroke"],
+      "enum": [
+        "fill",
+        "stroke"
+      ],
       "default": "fill"
+    },
+    "renderIntent": {
+      "type": "string",
+      "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand.",
+      "default": "{}"
     }
   },
-  "required": ["supportedSchemes", "defaultScheme", "redundancyMechanism"],
+  "required": [
+    "supportedSchemes",
+    "defaultScheme",
+    "redundancyMechanism"
+  ],
   "additionalProperties": false,
   "examples": [
     {
-      "supportedSchemes": ["categorical", "sequential"],
+      "supportedSchemes": [
+        "categorical",
+        "sequential"
+      ],
       "defaultScheme": "categorical",
       "redundancyMechanism": "texture",
       "minContrast": 5

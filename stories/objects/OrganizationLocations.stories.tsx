@@ -1,4 +1,3 @@
-import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import '../../src/styles/globals.css';
@@ -91,7 +90,7 @@ const locationEntries: AddressableEntry[] = [
 ];
 
 const meta: Meta<typeof AddressDisplay> = {
-  title: 'Objects/Core Objects/Organization/Locations',
+  title: 'Objects/Organization/OrganizationLocations',
   component: AddressDisplay,
   parameters: {
     layout: 'fullscreen',

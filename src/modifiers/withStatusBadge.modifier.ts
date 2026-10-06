@@ -49,6 +49,9 @@ const STATUS_MAP: Readonly<Record<string, StatusBadgeDescriptor>> = Object.freez
     label: 'Pending Cancellation',
     tone: 'warning',
   }),
+  // Legacy alias: the canonical model split `delinquent` into past_due + unpaid
+  // (see src/domain/billing/states.ts). Retained so historical/provider strings
+  // still resolve to a badge.
   delinquent: Object.freeze({
     id: 'status-delinquent',
     label: 'Delinquent',
@@ -64,6 +67,11 @@ const STATUS_MAP: Readonly<Record<string, StatusBadgeDescriptor>> = Object.freez
     id: 'status-past-due',
     label: 'Past Due',
     tone: 'warning',
+  }),
+  unpaid: Object.freeze({
+    id: 'status-unpaid',
+    label: 'Unpaid',
+    tone: 'critical',
   }),
   canceled: TERMINATED_DESCRIPTOR,
   cancelled: TERMINATED_DESCRIPTOR,

@@ -1,0 +1,15 @@
+{
+  "$comment": "The EXACT-PIN ratchet for `pnpm build:stories` (tsc -p tsconfig.stories.json). This is the only type lens over stories/** and apps/explorer/**. The ratchet reds when the count EXCEEDS this pin AND when it DROPS below it (with a 'lower the pin' message), so headroom cannot accumulate and every improvement lands with its pin. Re-measure with `node scripts/quality/build-stories-ratchet.mjs --print`; never copy a number from a memo.",
+  "errors": 0,
+  "measuredAt": "s178 m01 build tree based on 4e999de, after the capture-controlled full-census repair",
+  "history": [
+    "268 — the count s174 m04 first measured, before any fix",
+    "138 — after the mechanical JSX-namespace sweep (130 x TS2503, @types/react 19 stopped declaring a global JSX namespace; the 28 affected files now `import type { JSX } from 'react'`). Capture-safe by construction — a type-only import erases at compile — and proven so by a build-storybook index.json parity check, byte-identical pre and post.",
+    "0 — s178 m01 repaired the fresh 47-mechanical + 91-semantic census under two-run pre/post Storycap control, with full error-list snapshots and the pin lowered in the same change."
+  ],
+  "resolvedComposition": {
+    "mechanical": "42 TS6133 + 5 TS6196 unused symbols removed without runtime behavior.",
+    "semantic": "91 drift errors repaired at fixture, callback, app-data, and story-local type boundaries; production unions and the story tsconfig lens were not widened."
+  },
+  "zeroPinEffect": "At pin 0, any new TypeScript diagnostic raises the count and reds. The runner also fails loud when tsc exits nonzero without a parseable diagnostic, so a crashed or mis-invoked compiler cannot masquerade as zero."
+}

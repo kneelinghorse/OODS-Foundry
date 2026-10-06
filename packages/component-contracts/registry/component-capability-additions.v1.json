@@ -1,0 +1,369 @@
+{
+  "schemaVersion": "1.0.0",
+  "kind": "component-capability-additions",
+  "decisionId": 2054,
+  "rows": [
+    {
+      "id": "Combobox",
+      "proposedClassification": "native",
+      "reconciliationState": "proposed-awaiting-approval",
+      "surfaces": {
+        "contract": {
+          "state": "versioned-v1",
+          "evidence": [
+            "packages/component-contracts/src/contracts.ts#Combobox"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "packages/component-contracts/registry/component-intake.v1.json#Combobox"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderCombobox"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#Combobox"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#Combobox"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": [
+            "artifacts/product-reality/sprint-193/m07/runtime/runtime-cells.v1.json"
+          ],
+          "reason": "No current runtime cell places this component; historical receipts do not establish current coverage."
+        },
+        "accessibility": {
+          "state": "verified",
+          "evidence": [
+            "artifacts/product-reality/sprint-223/m02/combobox/react-measured.json#Combobox",
+            "artifacts/product-reality/sprint-223/m02/combobox/vue-measured.json#Combobox",
+            "packages/components-react/evidence/react-readiness.v1.json#Combobox",
+            "packages/components-vue/evidence/vue-readiness.v1.json#Combobox"
+          ]
+        },
+        "theme": {
+          "state": "verified",
+          "evidence": [
+            "artifacts/product-reality/sprint-223/m02/combobox/react-theme/report.json#Combobox",
+            "artifacts/product-reality/sprint-223/m02/combobox/vue-theme/report.json#Combobox",
+            "packages/components-react/evidence/react-readiness.v1.json#Combobox",
+            "packages/components-vue/evidence/vue-readiness.v1.json#Combobox"
+          ]
+        },
+        "interaction": {
+          "state": "verified",
+          "evidence": [
+            "artifacts/product-reality/sprint-223/m02/combobox/react-measured.json#Combobox",
+            "artifacts/product-reality/sprint-223/m02/combobox/vue-measured.json#Combobox",
+            "packages/components-react/evidence/react-readiness.v1.json#Combobox",
+            "packages/components-vue/evidence/vue-readiness.v1.json#Combobox"
+          ]
+        }
+      },
+      "decisionId": 2527
+    },
+    {
+      "id": "Dialog",
+      "proposedClassification": "native",
+      "reconciliationState": "proposed-awaiting-approval",
+      "surfaces": {
+        "contract": {
+          "state": "versioned-v1",
+          "evidence": [
+            "packages/component-contracts/src/contracts.ts#Dialog"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "packages/component-contracts/registry/component-intake.v1.json#Dialog"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderDialog"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#Dialog"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#Dialog"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": [
+            "artifacts/product-reality/sprint-193/m07/runtime/runtime-cells.v1.json"
+          ],
+          "reason": "No current runtime cell places this component; historical receipts do not establish current coverage."
+        },
+        "accessibility": {
+          "state": "verified",
+          "evidence": [
+            "artifacts/product-reality/sprint-222/m02/switch-dialog/react-measured.json#Dialog",
+            "artifacts/product-reality/sprint-222/m02/switch-dialog/vue-measured.json#Dialog",
+            "packages/components-react/evidence/react-readiness.v1.json#Dialog",
+            "packages/components-vue/evidence/vue-readiness.v1.json#Dialog"
+          ]
+        },
+        "theme": {
+          "state": "verified",
+          "evidence": [
+            "artifacts/product-reality/sprint-222/m02/switch-dialog/react-theme/report.json#Dialog",
+            "artifacts/product-reality/sprint-222/m02/switch-dialog/vue-theme/report.json#Dialog",
+            "packages/components-react/evidence/react-readiness.v1.json#Dialog",
+            "packages/components-vue/evidence/vue-readiness.v1.json#Dialog"
+          ]
+        },
+        "interaction": {
+          "state": "verified",
+          "evidence": [
+            "artifacts/product-reality/sprint-222/m02/switch-dialog/react-measured.json#Dialog",
+            "artifacts/product-reality/sprint-222/m02/switch-dialog/vue-measured.json#Dialog",
+            "packages/components-react/evidence/react-readiness.v1.json#Dialog",
+            "packages/components-vue/evidence/vue-readiness.v1.json#Dialog"
+          ]
+        }
+      },
+      "decisionId": 2502
+    },
+    {
+      "id": "SegmentedControl",
+      "proposedClassification": "native",
+      "reconciliationState": "proposed-awaiting-approval",
+      "surfaces": {
+        "contract": {
+          "state": "versioned-v1",
+          "evidence": [
+            "packages/component-contracts/src/contracts.ts#SegmentedControl"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "packages/component-contracts/registry/component-intake.v1.json#SegmentedControl"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderSegmentedControl"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#SegmentedControl"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#SegmentedControl"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": [
+            "artifacts/product-reality/sprint-193/m07/runtime/runtime-cells.v1.json"
+          ],
+          "reason": "No current runtime cell places this component; historical receipts do not establish current coverage."
+        },
+        "accessibility": {
+          "state": "verified",
+          "evidence": [
+            "artifacts/product-reality/sprint-223/m02/segmented-control/react-measured.json#SegmentedControl",
+            "artifacts/product-reality/sprint-223/m02/segmented-control/vue-measured.json#SegmentedControl",
+            "packages/components-react/evidence/react-readiness.v1.json#SegmentedControl",
+            "packages/components-vue/evidence/vue-readiness.v1.json#SegmentedControl"
+          ]
+        },
+        "theme": {
+          "state": "verified",
+          "evidence": [
+            "artifacts/product-reality/sprint-223/m02/segmented-control/react-theme/report.json#SegmentedControl",
+            "artifacts/product-reality/sprint-223/m02/segmented-control/vue-theme/report.json#SegmentedControl",
+            "packages/components-react/evidence/react-readiness.v1.json#SegmentedControl",
+            "packages/components-vue/evidence/vue-readiness.v1.json#SegmentedControl"
+          ]
+        },
+        "interaction": {
+          "state": "verified",
+          "evidence": [
+            "artifacts/product-reality/sprint-223/m02/segmented-control/react-measured.json#SegmentedControl",
+            "artifacts/product-reality/sprint-223/m02/segmented-control/vue-measured.json#SegmentedControl",
+            "packages/components-react/evidence/react-readiness.v1.json#SegmentedControl",
+            "packages/components-vue/evidence/vue-readiness.v1.json#SegmentedControl"
+          ]
+        }
+      },
+      "decisionId": 2527
+    },
+    {
+      "id": "Switch",
+      "proposedClassification": "native",
+      "reconciliationState": "proposed-awaiting-approval",
+      "surfaces": {
+        "contract": {
+          "state": "versioned-v1",
+          "evidence": [
+            "packages/component-contracts/src/contracts.ts#Switch"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "packages/component-contracts/registry/component-intake.v1.json#Switch"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderSwitch"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#Switch"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#Switch"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": [
+            "artifacts/product-reality/sprint-193/m07/runtime/runtime-cells.v1.json"
+          ],
+          "reason": "No current runtime cell places this component; historical receipts do not establish current coverage."
+        },
+        "accessibility": {
+          "state": "verified",
+          "evidence": [
+            "artifacts/product-reality/sprint-222/m02/switch-dialog/react-measured.json#Switch",
+            "artifacts/product-reality/sprint-222/m02/switch-dialog/vue-measured.json#Switch",
+            "packages/components-react/evidence/react-readiness.v1.json#Switch",
+            "packages/components-vue/evidence/vue-readiness.v1.json#Switch"
+          ]
+        },
+        "theme": {
+          "state": "verified",
+          "evidence": [
+            "artifacts/product-reality/sprint-222/m02/switch-dialog/react-theme/report.json#Switch",
+            "artifacts/product-reality/sprint-222/m02/switch-dialog/vue-theme/report.json#Switch",
+            "packages/components-react/evidence/react-readiness.v1.json#Switch",
+            "packages/components-vue/evidence/vue-readiness.v1.json#Switch"
+          ]
+        },
+        "interaction": {
+          "state": "verified",
+          "evidence": [
+            "artifacts/product-reality/sprint-222/m02/switch-dialog/react-measured.json#Switch",
+            "artifacts/product-reality/sprint-222/m02/switch-dialog/vue-measured.json#Switch",
+            "packages/components-react/evidence/react-readiness.v1.json#Switch",
+            "packages/components-vue/evidence/vue-readiness.v1.json#Switch"
+          ]
+        }
+      },
+      "decisionId": 2502
+    },
+    {
+      "id": "VizGraphPreview",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "versioned-v1",
+          "evidence": [
+            "packages/component-contracts/src/contracts.ts#VizGraphPreview"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "traits/viz/mark-graph.trait.yaml"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderVizGraphPreview"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#VizGraphPreview"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#VizGraphPreview"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-199/m07/graph-correction/runtime-final/runtime-cells.v1.json#/rows/2",
+            "artifacts/product-reality/sprint-199/m07/graph-correction/runtime-final/runtime-cells.v1.json#/rows/3",
+            "artifacts/product-reality/sprint-199/m07/graph-correction/runtime-final/runtime-cells.v1.json#/rows/12",
+            "artifacts/product-reality/sprint-199/m07/graph-correction/runtime-final/runtime-cells.v1.json#/rows/13"
+          ]
+        },
+        "accessibility": {
+          "state": "verified",
+          "evidence": [
+            "artifacts/product-reality/sprint-199/m07/graph-correction/react-measured.json#VizGraphPreview",
+            "artifacts/product-reality/sprint-199/m07/graph-correction/vue-measured.json#VizGraphPreview",
+            "packages/components-react/evidence/react-readiness.v1.json#VizGraphPreview",
+            "packages/components-vue/evidence/vue-readiness.v1.json#VizGraphPreview"
+          ]
+        },
+        "theme": {
+          "state": "verified",
+          "evidence": [
+            "artifacts/product-reality/sprint-199/m07/graph-correction/react-theme/report.json#VizGraphPreview",
+            "artifacts/product-reality/sprint-199/m07/graph-correction/vue-theme/report.json#VizGraphPreview",
+            "packages/components-react/evidence/react-readiness.v1.json#VizGraphPreview",
+            "packages/components-vue/evidence/vue-readiness.v1.json#VizGraphPreview"
+          ]
+        },
+        "interaction": {
+          "state": "not-applicable",
+          "evidence": [
+            "artifacts/product-reality/sprint-199/m07/graph-correction/react-measured.json#VizGraphPreview",
+            "artifacts/product-reality/sprint-199/m07/graph-correction/vue-measured.json#VizGraphPreview",
+            "packages/components-react/evidence/react-readiness.v1.json#VizGraphPreview",
+            "packages/components-vue/evidence/vue-readiness.v1.json#VizGraphPreview"
+          ],
+          "reason": "VizGraphPreview displays an authored chart input or rendered static SVG and owns no focusable control or consumer action."
+        }
+      }
+    }
+  ]
+}

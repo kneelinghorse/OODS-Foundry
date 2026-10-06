@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/measure-registry.schema.json",
+  "title": "Governed Measure Registry",
+  "description": "Schema for the governed-measure registry DATA artifact (measure-registry.json). Validated at load so a malformed registry FAILS CLOSED (OODS-V132) instead of silently degrading to an empty Map. This schema file is SKIP-LISTED from Generator A (NON_SCHEMA_DATA_FILES in schemas-tools/generate-types.ts) so it never emits a generated type that would collide with the hand-written MeasureEntry interface.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "$comment": { "type": "string" },
+    "schemaVersion": {
+      "type": "string",
+      "description": "Registry artifact version (independent of the dashboard-spec schemaVersion)."
+    },
+    "measures": {
+      "type": "object",
+      "description": "Map of governed-measure reference (the value of KpiPanel.measureRef) to its compute inputs + governance metadata. Keys are namespaced under 'gm.'.",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^gm\\.": { "$ref": "#/$defs/MeasureEntry" }
+      }
+    }
+  },
+  "$defs": {
+    "MeasureEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "entityField", "aggregate", "measureRole"],
+      "properties": {
+        "name": { "type": "string", "description": "Canonical measure name." },
+        "entityField": { "type": "string", "description": "The dataset column the measure aggregates (overrides KpiPanel.field)." },
+        "aggregate": {
+          "type": "string",
+          "description": "The aggregate (overrides KpiPanel.aggregate). Mirrors the KpiPanel aggregate set (dashboard.types.ts:327).",
+          "enum": ["sum", "count", "average", "median", "min", "max", "distinct", "latest"]
+        },
+        "measureRole": { "type": "string", "description": "Governance classifier (e.g. 'metric' | 'dimension') — provenance only, NOT additivity." },
+        "additive": {
+          "type": "boolean",
+          "description": "Whether the measure is additive across rows. Absent === true (back-compat). When false, a `sum` rollup is BLOCKED at the resolver boundary with OODS-V133 (a summed ratio/price is meaningless)."
+        },
+        "expectedGrain": {
+          "type": "string",
+          "enum": ["year", "quarter", "month", "day", "time"],
+          "description": "Optional declared time-grain. When set AND resolveMeasures=true, the panel's actual period data (its periodField cells) is validated against this grain at resolve time: the finest observed granularity must equal expectedGrain, else the panel is routed through onPanelError as OODS-V138. Mirrors the analysis/temporal.ts TemporalGranularity members. ABSENT = no grain check (back-compat; the 5 s117/s118 entries stay unseeded so faostat-e2e/fidelity goldens are 0-diff)."
+        },
+        "displayName": { "type": "string", "description": "Optional UI label." },
+        "format": { "type": "string", "description": "Optional renderer-agnostic number-format hint." },
+        "unit": { "type": "string", "description": "Optional unit label." },
+        "defaultComparison": {
+          "type": "object",
+          "description": "Author-overridable default KPI comparison (filled only when the panel omits comparison)."
+        },
+        "defaultThreshold": {
+          "type": "object",
+          "description": "Author-overridable default KPI threshold (filled only when the panel omits threshold)."
+        },
+        "provenance": { "type": "string", "description": "Free-text provenance note." }
+      }
+    }
+  }
+}

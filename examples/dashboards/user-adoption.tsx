@@ -3,7 +3,7 @@ import { RenderObject } from '../../src/components/RenderObject.js';
 import type { RenderObjectProps } from '../../src/components/RenderObject.js';
 import type { ObjectSpec, TraitAdapter } from '../../src/types/render-context.js';
 import type { UserRecord } from '../../src/objects/user/types.js';
-import type { NormalizedVizSpec } from '../../src/viz/spec/normalized-viz-spec.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 import { VizFacetGrid } from '../../src/components/viz/VizFacetGrid.js';
 import { LineChart } from '../../src/components/viz/LineChart.js';
 import { BarChart } from '../../src/components/viz/BarChart.js';
@@ -12,7 +12,7 @@ import {
   type ChartPanelDefinition,
 } from '../../src/contexts/regions/chart-regions.js';
 import { Text } from '../../src/components/base/Text.js';
-import activeUser from '../../src/fixtures/user/active.json' assert { type: 'json' };
+import activeUser from '../../src/fixtures/user/active.json';
 import { createStatefulTraitAdapter } from '../../src/traits/Stateful/view.js';
 import { createTimestampableTraitAdapter } from '../../src/traits/Timestampable/view.js';
 import { createTaggableTraitAdapter } from '../../src/traits/Taggable/view.js';
@@ -182,7 +182,7 @@ function InsightList({ insights }: { readonly insights: readonly string[] }): JS
 }
 
 const adoptionSpec: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/v1',
   id: 'dashboard:user:adoption-facet',
   name: 'Activation coverage by region and segment',
   data: {
@@ -257,7 +257,7 @@ const adoptionSpec: NormalizedVizSpec = {
 };
 
 const retentionSpec: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/v1',
   id: 'dashboard:user:retention-line',
   name: 'Weekly retention trend',
   data: {
@@ -310,7 +310,7 @@ const retentionSpec: NormalizedVizSpec = {
 };
 
 const sentimentSpec: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/v1',
   id: 'dashboard:user:sentiment-bars',
   name: 'Channel sentiment',
   data: {

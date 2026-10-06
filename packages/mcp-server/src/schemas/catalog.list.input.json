@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "category": {
+      "type": "string",
+      "description": "Filter components by category (e.g., 'core', 'data')"
+    },
+    "trait": {
+      "type": "string",
+      "description": "Filter components by trait (e.g., 'Editable', 'Searchable')"
+    },
+    "context": {
+      "type": "string",
+      "description": "Filter components by context (e.g., 'detail', 'list')"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["stable", "beta", "planned"],
+      "description": "Filter by legacy static-HTML status only: 'stable' = mapped HTML renderer; 'planned' = HTML fallback. Consult productReality.surfaces for React/Vue, generated-consumer and maturity evidence."
+    },
+    "detail": {
+      "type": "string",
+      "enum": ["brief", "summary", "full"],
+      "description": "Response detail level. Defaults to brief for unfiltered calls (each component's name, categories and one readiness label) and to full when filters are provided. summary adds tags, contexts, regions, traits and status; the evidence behind the readiness label is only in full."
+    },
+    "page": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "1-based page index for pagination."
+    },
+    "pageSize": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Number of components per page."
+    },
+    "includeInternal": {
+      "type": "boolean",
+      "default": false,
+      "description": "Also list OODS Foundry's internal (non-business) objects in registry.objects, after the business objects. Without it they are left out and registry.hiddenInternal counts them."
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/07/schema",
+  "$id": "https://trait-engine.dev/schemas/traits/searchable",
+  "title": "Searchable Trait Parameters",
+  "description": "Controls search input behavior in list and collection views.",
+  "type": "object",
+  "properties": {
+    "placeholder": {
+      "type": "string",
+      "description": "Placeholder text shown in the search input when empty.",
+      "default": "Search..."
+    },
+    "debounceMs": {
+      "type": "integer",
+      "description": "Debounce delay in milliseconds before the search query is emitted.",
+      "minimum": 0,
+      "maximum": 2000,
+      "default": 300
+    },
+    "minQueryLength": {
+      "type": "integer",
+      "description": "Minimum number of characters before the search triggers.",
+      "minimum": 0,
+      "maximum": 10,
+      "default": 1
+    },
+    "clearable": {
+      "type": "boolean",
+      "description": "Whether the search input shows a clear button when non-empty.",
+      "default": true
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "placeholder": "Search products...",
+      "debounceMs": 300
+    },
+    {
+      "placeholder": "Find...",
+      "debounceMs": 150,
+      "minQueryLength": 3,
+      "clearable": true
+    }
+  ]
+}

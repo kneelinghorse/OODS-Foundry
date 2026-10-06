@@ -3,13 +3,15 @@ import type { TraitDefinition } from '../../src/core/trait-definition.ts';
 const ScaleTemporalTrait = {
   trait: {
     name: 'ScaleTemporal',
-    version: '0.1.0',
-    description: 'Temporal scale definition with timezone awareness.',
+    version: '0.3.0',
+    description: 'Temporal scale metadata with UTC rendering. Version 0.3.0 removes the unused timezone parameter (breaking).',
     category: 'viz.scale',
     tags: ['viz', 'scale', 'temporal'],
   },
 
   parameters: [
+    {"name": "renderIntent", "type": "string", "required": false, "default": "{}", "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."},
+
     {
       name: 'domainStart',
       type: 'string',
@@ -37,13 +39,6 @@ const ScaleTemporalTrait = {
       required: true,
       description: 'Normalized upper range bound (0-1).',
       default: 1,
-    },
-    {
-      name: 'timezone',
-      type: 'string',
-      required: false,
-      description: 'Olson/IANA timezone identifier used when formatting ticks.',
-      default: 'UTC',
     },
     {
       name: 'nice',
@@ -89,12 +84,6 @@ const ScaleTemporalTrait = {
       description: 'Normalized upper range bound.',
       default: 1,
     },
-    viz_scale_temporal_timezone: {
-      type: 'string',
-      required: false,
-      description: 'Olson/IANA timezone identifier for ticks + tooltips.',
-      default: 'UTC',
-    },
     viz_scale_temporal_nice: {
       type: 'string',
       required: false,
@@ -114,7 +103,7 @@ const ScaleTemporalTrait = {
       type: 'string',
       required: false,
       description: 'Narrative summary for fallback contexts.',
-      default: 'Temporal scale honoring timezone + "nice" intervals.',
+      default: 'Temporal scale rendered in UTC.',
     },
   },
 
@@ -133,13 +122,6 @@ const ScaleTemporalTrait = {
         component: 'TimestampPreview',
       },
     },
-    viz_scale_temporal_timezone: {
-      semantic_type: 'viz.scale.timezone',
-      token_mapping: 'tokenMap(viz.scale.timezone)',
-      ui_hints: {
-        component: 'TextBadge',
-      },
-    },
     viz_scale_temporal_nice: {
       semantic_type: 'viz.scale.nice',
       token_mapping: 'tokenMap(viz.scale.nice)',
@@ -155,10 +137,10 @@ const ScaleTemporalTrait = {
         component: 'VizScaleSummary',
         position: 'sidebar',
         props: {
+          intentParameter: 'renderIntent',
           type: 'temporal',
           domainMinField: 'viz_scale_temporal_domain_start',
           domainMaxField: 'viz_scale_temporal_domain_end',
-          timezoneField: 'viz_scale_temporal_timezone',
           niceField: 'viz_scale_temporal_nice',
         },
       },
@@ -168,12 +150,12 @@ const ScaleTemporalTrait = {
         component: 'VizScaleControls',
         position: 'top',
         props: {
+          intentParameter: 'renderIntent',
           type: 'temporal',
           domainMinField: 'viz_scale_temporal_domain_start',
           domainMaxField: 'viz_scale_temporal_domain_end',
           rangeMinField: 'viz_scale_temporal_range_min',
           rangeMaxField: 'viz_scale_temporal_range_max',
-          timezoneField: 'viz_scale_temporal_timezone',
           niceField: 'viz_scale_temporal_nice',
           formatField: 'viz_scale_temporal_output_format',
         },
@@ -196,7 +178,7 @@ const ScaleTemporalTrait = {
     regionsUsed: ['detail', 'form'],
     allows: ['EncodingPositionX', 'EncodingPositionY'],
     references: [
-      'cmos/research/data-viz-oods/RDS.7_synthesis_Mission Completion Report- Trait-Driven Visualization System Specification (v0.1).md',
+      'RDS.7 Trait-Driven Visualization System Specification (v0.1)',
     ],
   },
 } as const satisfies TraitDefinition;

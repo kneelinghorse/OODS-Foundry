@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "v0.1",
+  "id": "s181-duplicate-panel-id-red-baseline",
+  "datasets": [
+    {
+      "id": "west",
+      "rows": [
+        { "region": "Coast", "revenue": 10 },
+        { "region": "Mountain", "revenue": 20 }
+      ]
+    },
+    {
+      "id": "east",
+      "rows": [
+        { "region": "Atlantic", "revenue": 30 },
+        { "region": "Lakes", "revenue": 40 }
+      ]
+    }
+  ],
+  "panels": [
+    {
+      "id": "dup",
+      "kind": "chart",
+      "title": "West revenue",
+      "chartType": "bar",
+      "datasetId": "west",
+      "encodings": {
+        "x": { "field": "region", "scale": "band" },
+        "y": { "field": "revenue", "aggregate": "sum" }
+      }
+    },
+    {
+      "id": "dup",
+      "kind": "chart",
+      "title": "East revenue",
+      "chartType": "bar",
+      "datasetId": "east",
+      "encodings": {
+        "x": { "field": "region", "scale": "band" },
+        "y": { "field": "revenue", "aggregate": "sum" }
+      }
+    }
+  ],
+  "a11y": {
+    "description": "Two independently bound revenue panels used to expose duplicate-id receipt collapse."
+  },
+  "output": {
+    "includeNormalizedSpec": true
+  }
+}

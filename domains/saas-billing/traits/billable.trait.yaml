@@ -1,7 +1,13 @@
 trait:
   name: SaaSBillingBillable
   version: 1.0.0
-  description: Normalizes recurring price configuration for SaaS plans including cadence, currency, and trial policy.
+  description: >-
+    Normalizes recurring price configuration for SaaS plans including cadence, currency,
+    and trial policy. NOTE (trait-split gap): this domain trait does NOT model
+    proration — no supportProration/proration_amount/proration_date/prorationBehavior. A
+    Subscription composing only SaaSBillingBillable silently cannot prorate. To enable
+    proration, compose the CORE financial/Billable trait (which owns the proration
+    semantics). See traits/financial/Billable.trait.yaml.
   category: domain
   tags:
     - billing
@@ -94,6 +100,10 @@ semantics:
   amount_minor:
     semantic_type: billing.plan.amount_minor
     token_mapping: tokenMap(billing.plan.amount_minor)
+    ui_hints:
+      component: CurrencyAmount
+      currencyField: currency
+      minorUnits: 100
   currency:
     semantic_type: billing.plan.currency
     token_mapping: tokenMap(billing.plan.currency)
@@ -110,6 +120,25 @@ semantics:
     semantic_type: billing.plan.pricing_model
     token_mapping: tokenMap(billing.plan.pricing_model)
 
+view_extensions:
+  # s222-m03 (#2502 ruling 13): a plan's row, page header and card show its price and interval, as a financial trait's recipes do.
+  list:
+    - component: BillingSummaryBadge
+      position: after
+      props:
+        amountField: amount_minor
+        currencyField: currency
+        intervalField: billing_interval
+        minorUnits: 100
+  card:
+    - component: BillingCardMeta
+      position: after
+      props:
+        amountField: amount_minor
+        currencyField: currency
+        intervalField: billing_interval
+        minorUnits: 100
+
 tokens:
   billing.plan.name: "var(--cmp-text-strong)"
   billing.plan.amount_minor: "var(--cmp-text-body-strong)"
@@ -122,6 +151,9 @@ metadata:
     - billing@oods.systems
     - design@oods.systems
   maturity: beta
+  regionsUsed:
+    - list
+    - card
   references:
-    - cmos/missions/research/R13.5_Canonical-Model-Subscription-and-Invoice.md
-    - cmos/missions/research/r4.5_SaaS-Enum-to-Token-Mapping-Schema.md
+    - R13.5 Canonical Model: Subscription and Invoice
+    - R4.5 SaaS Enum-to-Token Mapping Schema

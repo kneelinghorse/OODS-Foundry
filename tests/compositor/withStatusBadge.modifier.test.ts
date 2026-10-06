@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { RenderContext } from '../../src/types/render-context.js';
 import type { PageHeaderProps } from '../../src/modifiers/withStatusBadge.modifier.js';
 import { withStatusBadge } from '../../src/modifiers/withStatusBadge.modifier.js';
+import { getStatusPresentation } from '../../src/components/statusables/statusRegistry.js';
 import { validateModifierPurity } from '../../src/compositor/tests/purityHarness.js';
 
 type StatusData = { readonly status?: string };
@@ -91,5 +92,31 @@ describe('withStatusBadge modifier', () => {
         }
       )
     ).toEqual({});
+  });
+});
+
+// sprint-128 m04 (Derek-ratified option C, #939(4)): the legacy `delinquent` status
+// must read 'critical' on BOTH layers. Before this, the modifier said 'critical'
+// but the statusRegistry neutral-fell-back after s127 retired the token — a
+// cross-layer tone divergence. This regression pins the convergence.
+describe('delinquent tone convergence (option C)', () => {
+  function modifierTone(status: string): string | undefined {
+    const out = withStatusBadge({}, { renderContext: createRenderContext({ status }) });
+    return out.badges?.find((badge) => badge.id === 'status-delinquent')?.tone;
+  }
+
+  it('the withStatusBadge modifier maps delinquent → critical', () => {
+    expect(modifierTone('delinquent')).toBe('critical');
+  });
+
+  it('the statusRegistry resolves delinquent → critical (no neutral fallback)', () => {
+    const presentation = getStatusPresentation('subscription', 'delinquent');
+    expect(presentation.tone).toBe('critical');
+    // relabeled to the requested status, at the successor's (unpaid) critical tone.
+    expect(presentation.label).toBe('Delinquent');
+  });
+
+  it('both layers AGREE on the delinquent tone', () => {
+    expect(modifierTone('delinquent')).toBe(getStatusPresentation('subscription', 'delinquent').tone);
   });
 });

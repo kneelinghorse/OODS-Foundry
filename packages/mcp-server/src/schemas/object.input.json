@@ -1,0 +1,152 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "object input",
+  "description": "Grouped action-parameter tool for the object registry (list, show, validate, register, reload). The top-level `action` selects which per-action contract applies; each branch reproduces the exact body of the per-action input schema (object.<action>.input.json) with the discriminator key `action` added to its allowed properties.",
+  "type": "object",
+  "required": ["action"],
+  "properties": {
+    "action": {
+      "enum": ["list", "show", "validate", "register", "reload"],
+      "description": "Selects the per-action contract: 'list' returns the objects in use with their source, business objects first and internal ones only with includeInternal, and every file not in use; 'show' returns the full composed definition for one object; 'validate' checks an object or trait definition without writing; 'register' writes one into your folder once it validates and composes; 'reload' re-reads the folders without a restart."
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "action": { "const": "list" } },
+        "required": ["action"]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "action": { "const": "list" },
+          "domain": {
+            "type": "string",
+            "description": "Filter to objects in a specific domain (e.g. 'core.identity', 'saas.billing')"
+          },
+          "maturity": {
+            "type": "string",
+            "enum": ["draft", "alpha", "beta", "stable"],
+            "description": "Filter by metadata maturity level"
+          },
+          "trait": {
+            "type": "string",
+            "description": "Filter to objects composing a given trait (e.g. 'Priceable', 'lifecycle/Stateful')"
+          },
+          "includeInternal": {
+            "type": "boolean",
+            "default": false,
+            "description": "Also list OODS Foundry's internal (non-business) objects, after the business objects. Without it they are left out and hiddenInternal counts them."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "if": {
+        "properties": { "action": { "const": "show" } },
+        "required": ["action"]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "action": { "const": "show" },
+          "name": {
+            "type": "string",
+            "description": "Object name to look up (e.g. 'User', 'Product', 'Invoice')"
+          },
+          "context": {
+            "type": "string",
+            "description": "Optional: filter view_extensions to a single context (e.g. 'detail', 'list', 'form', 'timeline', 'card', 'inline')"
+          }
+        },
+        "required": ["name"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "validate"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "const": "validate"
+          },
+          "yaml": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The whole definition as YAML: an object file starts with \"object:\", a trait file with \"trait:\" (the same format as OODS Foundry's own objects/ and traits/). Validate and register require semantic object.version or trait.version (for example 1.2.3), refuse declared conflicts between unbound traits (bound charts are exempt), and warn on unknown top-level keys with the nearest known spelling. Definitions already on disk keep loading as before."
+          }
+        },
+        "required": [
+          "yaml"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "register"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "const": "register"
+          },
+          "yaml": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The whole definition as YAML: an object file starts with \"object:\", a trait file with \"trait:\" (the same format as OODS Foundry's own objects/ and traits/). Validate and register require semantic object.version or trait.version (for example 1.2.3), refuse declared conflicts between unbound traits (bound charts are exempt), and warn on unknown top-level keys with the nearest known spelling. Definitions already on disk keep loading as before."
+          },
+          "overwrite": {
+            "type": "boolean",
+            "default": false,
+            "description": "Replace a definition of yours with this name; without it a name you already registered is refused (OODS-C004)."
+          }
+        },
+        "required": [
+          "yaml"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "reload"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "const": "reload"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ]
+}

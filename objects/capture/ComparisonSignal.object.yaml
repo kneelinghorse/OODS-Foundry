@@ -1,0 +1,763 @@
+object:
+  name: ComparisonSignal
+  version: 0.3.0
+  domain: capture.comparison
+  visibility: internal
+  description: >-
+    One difference a drift analysis recorded between a captured product's live value and its design's values, with
+    both comparands retained. It is not an accessibility finding.
+  tags:
+    - comparison
+    - read-only
+traits:
+  - name: behavioral/Searchable
+    parameters:
+      placeholder: Search signals
+  - name: behavioral/Filterable
+  - name: behavioral/Pageable
+    parameters:
+      defaultPageSize: 20
+      pageSizeOptions:
+        - 10
+        - 20
+        - 50
+  - name: core/Assessable
+    parameters:
+      recordedStates:
+        - measured
+        - measured_zero
+        - not_measured
+        - not_applicable
+        - needs_review
+        - unknown
+  - name: core/Provenanced
+    parameters:
+      source: Capture tool
+schema:
+  signal_id:
+    type: string
+    required: true
+    description: signal id as recorded in the admitted derived analysis.
+    examples:
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff#/signals/0
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff#/signals/1
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff#/signals/2
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff#/signals/3
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff#/signals/4
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff#/signals/5
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff#/signals/6
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff#/signals/7
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff#/signals/8
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff#/signals/9
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff#/signals/10
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff#/signals/11
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff#/signals/12
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff#/signals/13
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff#/signals/14
+  title:
+    type: string
+    required: true
+    description: title as recorded in the admitted derived analysis.
+    examples:
+      - 'Color #545454'
+      - 'Font size 12px'
+      - 'Font size 14.08px'
+      - 'Font size 18.72px'
+      - 'Font size 20px'
+      - 'Font size 24px'
+      - 'Font size 28px'
+      - 'Font size 36px'
+      - 'Font size 12.8px'
+      - 'Font size 13.92px'
+      - 'Font size 16.96px'
+      - 'Font size 18.08px'
+      - 'Font size 21.28px'
+      - 'Font size 23.36px'
+      - 'Font size 29.76px'
+
+  description:
+    type: string
+    required: true
+    description: "what this signal means for a person: how often the live value occurs, that no design value matches it, the comparison version and its recorded typeface when available, and for historical font sizes the type caveat beside the recorded state."
+    examples:
+      - 'Used 2 times on the live site; no design color matches it (30 of 31 live colors do).'
+      - >-
+        Used 280 times on the live site; no design size matches it; the face-specific type comparand is incomplete, so
+        it needs review.
+  value_family:
+    type: string
+    required: true
+    description: value family as recorded in the admitted derived analysis.
+    examples:
+      - color
+      - font_size
+      - font_size
+      - font_size
+      - font_size
+      - font_size
+      - font_size
+      - font_size
+      - font_size
+      - font_size
+      - font_size
+      - font_size
+      - font_size
+      - font_size
+      - font_size
+    validation:
+      enum:
+        - color
+        - font_size
+        - radius
+        - spacing
+        - border_color
+        - shadow
+        - font_weight
+        - Not applicable
+  live_value:
+    type: string
+    required: true
+    description: live value as recorded in the admitted derived analysis.
+    examples:
+      - '#545454'
+      - 12px
+      - 14.08px
+      - 18.72px
+      - 20px
+      - 24px
+      - 28px
+      - 36px
+      - 12.8px
+      - 13.92px
+      - 16.96px
+      - 18.08px
+      - 21.28px
+      - 23.36px
+      - 29.76px
+  live_occurrences:
+    type: integer
+    required: false
+    description: live occurrences as recorded in the admitted derived analysis.
+    examples:
+      - 2
+      - 280
+      - 3168
+      - 14
+      - 406
+      - 1
+      - 120
+      - 1
+      - 25
+      - 80
+      - 897
+      - 14
+      - 5
+      - 31
+      - 12
+  severity:
+    type: string
+    required: true
+    description: severity as recorded in the admitted derived analysis.
+    examples:
+      - Medium
+      - Medium
+      - Medium
+      - Medium
+      - Medium
+      - Medium
+      - Medium
+      - Medium
+      - Medium
+      - Medium
+      - Medium
+      - Medium
+      - Medium
+      - Medium
+      - Medium
+
+  severity_basis:
+    type: string
+    required: true
+    description: severity basis as recorded in the admitted derived analysis.
+    examples:
+      - Off-system value
+      - Off-system value
+      - Off-system value
+      - Off-system value
+      - Off-system value
+      - Off-system value
+      - Off-system value
+      - Off-system value
+      - Off-system value
+      - Off-system value
+      - Off-system value
+      - Off-system value
+      - Off-system value
+      - Off-system value
+      - Off-system value
+
+  tolerance:
+    type: string
+    required: true
+    description: tolerance as recorded in the admitted derived analysis.
+    examples:
+      - Exact value match; case-insensitive; alpha forms excluded (registry default).
+      - Exact value match; case-insensitive; alpha forms excluded (registry default).
+      - Exact value match; case-insensitive; alpha forms excluded (registry default).
+      - Exact value match; case-insensitive; alpha forms excluded (registry default).
+      - Exact value match; case-insensitive; alpha forms excluded (registry default).
+      - Exact value match; case-insensitive; alpha forms excluded (registry default).
+      - Exact value match; case-insensitive; alpha forms excluded (registry default).
+      - Exact value match; case-insensitive; alpha forms excluded (registry default).
+      - Exact value match; case-insensitive; alpha forms excluded (registry default).
+      - Exact value match; case-insensitive; alpha forms excluded (registry default).
+      - Exact value match; case-insensitive; alpha forms excluded (registry default).
+      - Exact value match; case-insensitive; alpha forms excluded (registry default).
+      - Exact value match; case-insensitive; alpha forms excluded (registry default).
+      - Exact value match; case-insensitive; alpha forms excluded (registry default).
+      - Exact value match; case-insensitive; alpha forms excluded (registry default).
+
+  measurement_limit:
+    type: string
+    required: true
+    description: measurement limit as recorded in the admitted derived analysis.
+    examples:
+      - Exact recorded comparison; sampled occurrences are weight, not proof of broader coverage.
+      - >-
+        The face-specific type comparand is incomplete, so no type conformance ratio exists and font sizes need
+        review.
+      - >-
+        The face-specific type comparand is incomplete, so no type conformance ratio exists and font sizes need
+        review.
+      - >-
+        The face-specific type comparand is incomplete, so no type conformance ratio exists and font sizes need
+        review.
+      - >-
+        The face-specific type comparand is incomplete, so no type conformance ratio exists and font sizes need
+        review.
+      - >-
+        The face-specific type comparand is incomplete, so no type conformance ratio exists and font sizes need
+        review.
+      - >-
+        The face-specific type comparand is incomplete, so no type conformance ratio exists and font sizes need
+        review.
+      - >-
+        The face-specific type comparand is incomplete, so no type conformance ratio exists and font sizes need
+        review.
+      - >-
+        The face-specific type comparand is incomplete, so no type conformance ratio exists and font sizes need
+        review.
+      - >-
+        The face-specific type comparand is incomplete, so no type conformance ratio exists and font sizes need
+        review.
+      - >-
+        The face-specific type comparand is incomplete, so no type conformance ratio exists and font sizes need
+        review.
+      - >-
+        The face-specific type comparand is incomplete, so no type conformance ratio exists and font sizes need
+        review.
+      - >-
+        The face-specific type comparand is incomplete, so no type conformance ratio exists and font sizes need
+        review.
+      - >-
+        The face-specific type comparand is incomplete, so no type conformance ratio exists and font sizes need
+        review.
+      - >-
+        The face-specific type comparand is incomplete, so no type conformance ratio exists and font sizes need
+        review.
+  result_state:
+    type: string
+    required: true
+    description: result state as recorded in the admitted derived analysis.
+    examples:
+      - measured
+      - measured
+      - measured
+      - measured
+      - measured
+      - measured
+      - measured
+      - measured
+      - measured
+      - measured
+      - measured
+      - measured
+      - measured
+      - measured
+      - measured
+
+  signal_class:
+    type: string
+    required: true
+    description: signal class as recorded in the admitted derived analysis.
+    examples:
+      - Value drift
+      - Value drift
+      - Value drift
+      - Value drift
+      - Value drift
+      - Value drift
+      - Value drift
+      - Value drift
+      - Value drift
+      - Value drift
+      - Value drift
+      - Value drift
+      - Value drift
+      - Value drift
+      - Value drift
+
+  comparison_id:
+    type: string
+    required: true
+    description: comparison id as recorded in the admitted derived analysis.
+    examples:
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff
+  source_capture_id:
+    type: string
+    required: true
+    description: source capture id as recorded in the admitted derived analysis.
+    examples:
+      - 09d5af73-f8ae-4778-ad47-7b30fa53dbb4
+      - 09d5af73-f8ae-4778-ad47-7b30fa53dbb4
+      - 09d5af73-f8ae-4778-ad47-7b30fa53dbb4
+      - 09d5af73-f8ae-4778-ad47-7b30fa53dbb4
+      - 09d5af73-f8ae-4778-ad47-7b30fa53dbb4
+      - 09d5af73-f8ae-4778-ad47-7b30fa53dbb4
+      - 09d5af73-f8ae-4778-ad47-7b30fa53dbb4
+      - 09d5af73-f8ae-4778-ad47-7b30fa53dbb4
+      - 09d5af73-f8ae-4778-ad47-7b30fa53dbb4
+      - 09d5af73-f8ae-4778-ad47-7b30fa53dbb4
+      - 09d5af73-f8ae-4778-ad47-7b30fa53dbb4
+      - 09d5af73-f8ae-4778-ad47-7b30fa53dbb4
+      - 09d5af73-f8ae-4778-ad47-7b30fa53dbb4
+      - 09d5af73-f8ae-4778-ad47-7b30fa53dbb4
+      - 09d5af73-f8ae-4778-ad47-7b30fa53dbb4
+  live_comparand:
+    type: string
+    required: true
+    description: live comparand as recorded in the admitted derived analysis.
+    examples:
+      - |-
+        live: artifacts/style_fingerprint.json#/colors/text/10
+        SHA-256 bad743982a7380db6387d93534b4c51a23c5226b4acceb082ba443c3a741fd57
+        Copied source capture; not rerun
+      - |-
+        live: artifacts/style_fingerprint.json#/type_scale/font_sizes_by_family/1/sizes/0
+        SHA-256 bad743982a7380db6387d93534b4c51a23c5226b4acceb082ba443c3a741fd57
+        Copied source capture; not rerun
+      - |-
+        live: artifacts/style_fingerprint.json#/type_scale/font_sizes_by_family/1/sizes/1
+        SHA-256 bad743982a7380db6387d93534b4c51a23c5226b4acceb082ba443c3a741fd57
+        Copied source capture; not rerun
+      - |-
+        live: artifacts/style_fingerprint.json#/type_scale/font_sizes_by_family/1/sizes/2
+        SHA-256 bad743982a7380db6387d93534b4c51a23c5226b4acceb082ba443c3a741fd57
+        Copied source capture; not rerun
+      - |-
+        live: artifacts/style_fingerprint.json#/type_scale/font_sizes_by_family/1/sizes/3
+        SHA-256 bad743982a7380db6387d93534b4c51a23c5226b4acceb082ba443c3a741fd57
+        Copied source capture; not rerun
+      - |-
+        live: artifacts/style_fingerprint.json#/type_scale/font_sizes_by_family/1/sizes/4
+        SHA-256 bad743982a7380db6387d93534b4c51a23c5226b4acceb082ba443c3a741fd57
+        Copied source capture; not rerun
+      - |-
+        live: artifacts/style_fingerprint.json#/type_scale/font_sizes_by_family/1/sizes/5
+        SHA-256 bad743982a7380db6387d93534b4c51a23c5226b4acceb082ba443c3a741fd57
+        Copied source capture; not rerun
+      - |-
+        live: artifacts/style_fingerprint.json#/type_scale/font_sizes_by_family/1/sizes/6
+        SHA-256 bad743982a7380db6387d93534b4c51a23c5226b4acceb082ba443c3a741fd57
+        Copied source capture; not rerun
+      - |-
+        live: artifacts/style_fingerprint.json#/type_scale/font_sizes_by_family/2/sizes/0
+        SHA-256 bad743982a7380db6387d93534b4c51a23c5226b4acceb082ba443c3a741fd57
+        Copied source capture; not rerun
+      - |-
+        live: artifacts/style_fingerprint.json#/type_scale/font_sizes_by_family/2/sizes/1
+        SHA-256 bad743982a7380db6387d93534b4c51a23c5226b4acceb082ba443c3a741fd57
+        Copied source capture; not rerun
+      - |-
+        live: artifacts/style_fingerprint.json#/type_scale/font_sizes_by_family/2/sizes/2
+        SHA-256 bad743982a7380db6387d93534b4c51a23c5226b4acceb082ba443c3a741fd57
+        Copied source capture; not rerun
+      - |-
+        live: artifacts/style_fingerprint.json#/type_scale/font_sizes_by_family/2/sizes/3
+        SHA-256 bad743982a7380db6387d93534b4c51a23c5226b4acceb082ba443c3a741fd57
+        Copied source capture; not rerun
+      - |-
+        live: artifacts/style_fingerprint.json#/type_scale/font_sizes_by_family/2/sizes/4
+        SHA-256 bad743982a7380db6387d93534b4c51a23c5226b4acceb082ba443c3a741fd57
+        Copied source capture; not rerun
+      - |-
+        live: artifacts/style_fingerprint.json#/type_scale/font_sizes_by_family/2/sizes/5
+        SHA-256 bad743982a7380db6387d93534b4c51a23c5226b4acceb082ba443c3a741fd57
+        Copied source capture; not rerun
+      - |-
+        live: artifacts/style_fingerprint.json#/type_scale/font_sizes_by_family/2/sizes/6
+        SHA-256 bad743982a7380db6387d93534b4c51a23c5226b4acceb082ba443c3a741fd57
+        Copied source capture; not rerun
+  design_comparand:
+    type: string
+    required: true
+    description: design comparand as recorded in the admitted derived analysis.
+    examples:
+      - |-
+        fig_local: artifacts/fig_local_tokens.json#/tokens
+        SHA-256 1e33dbb9d4fd26b85dde97ee9ffe2117f52d4a8a6e5253c46d00e72a3b4284b2
+        Injected design comparand
+      - |-
+        fig_local: artifacts/fig_local_tokens.json#/tokens
+        SHA-256 1e33dbb9d4fd26b85dde97ee9ffe2117f52d4a8a6e5253c46d00e72a3b4284b2
+        Injected design comparand
+      - |-
+        fig_local: artifacts/fig_local_tokens.json#/tokens
+        SHA-256 1e33dbb9d4fd26b85dde97ee9ffe2117f52d4a8a6e5253c46d00e72a3b4284b2
+        Injected design comparand
+      - |-
+        fig_local: artifacts/fig_local_tokens.json#/tokens
+        SHA-256 1e33dbb9d4fd26b85dde97ee9ffe2117f52d4a8a6e5253c46d00e72a3b4284b2
+        Injected design comparand
+      - |-
+        fig_local: artifacts/fig_local_tokens.json#/tokens
+        SHA-256 1e33dbb9d4fd26b85dde97ee9ffe2117f52d4a8a6e5253c46d00e72a3b4284b2
+        Injected design comparand
+      - |-
+        fig_local: artifacts/fig_local_tokens.json#/tokens
+        SHA-256 1e33dbb9d4fd26b85dde97ee9ffe2117f52d4a8a6e5253c46d00e72a3b4284b2
+        Injected design comparand
+      - |-
+        fig_local: artifacts/fig_local_tokens.json#/tokens
+        SHA-256 1e33dbb9d4fd26b85dde97ee9ffe2117f52d4a8a6e5253c46d00e72a3b4284b2
+        Injected design comparand
+      - |-
+        fig_local: artifacts/fig_local_tokens.json#/tokens
+        SHA-256 1e33dbb9d4fd26b85dde97ee9ffe2117f52d4a8a6e5253c46d00e72a3b4284b2
+        Injected design comparand
+      - |-
+        fig_local: artifacts/fig_local_tokens.json#/tokens
+        SHA-256 1e33dbb9d4fd26b85dde97ee9ffe2117f52d4a8a6e5253c46d00e72a3b4284b2
+        Injected design comparand
+      - |-
+        fig_local: artifacts/fig_local_tokens.json#/tokens
+        SHA-256 1e33dbb9d4fd26b85dde97ee9ffe2117f52d4a8a6e5253c46d00e72a3b4284b2
+        Injected design comparand
+      - |-
+        fig_local: artifacts/fig_local_tokens.json#/tokens
+        SHA-256 1e33dbb9d4fd26b85dde97ee9ffe2117f52d4a8a6e5253c46d00e72a3b4284b2
+        Injected design comparand
+      - |-
+        fig_local: artifacts/fig_local_tokens.json#/tokens
+        SHA-256 1e33dbb9d4fd26b85dde97ee9ffe2117f52d4a8a6e5253c46d00e72a3b4284b2
+        Injected design comparand
+      - |-
+        fig_local: artifacts/fig_local_tokens.json#/tokens
+        SHA-256 1e33dbb9d4fd26b85dde97ee9ffe2117f52d4a8a6e5253c46d00e72a3b4284b2
+        Injected design comparand
+      - |-
+        fig_local: artifacts/fig_local_tokens.json#/tokens
+        SHA-256 1e33dbb9d4fd26b85dde97ee9ffe2117f52d4a8a6e5253c46d00e72a3b4284b2
+        Injected design comparand
+      - |-
+        fig_local: artifacts/fig_local_tokens.json#/tokens
+        SHA-256 1e33dbb9d4fd26b85dde97ee9ffe2117f52d4a8a6e5253c46d00e72a3b4284b2
+        Injected design comparand
+  kit_label:
+    type: string
+    required: true
+    description: kit label as recorded in the admitted derived analysis.
+    examples:
+      - uswds-design-kit-beta
+      - uswds-design-kit-beta
+      - uswds-design-kit-beta
+      - uswds-design-kit-beta
+      - uswds-design-kit-beta
+      - uswds-design-kit-beta
+      - uswds-design-kit-beta
+      - uswds-design-kit-beta
+      - uswds-design-kit-beta
+      - uswds-design-kit-beta
+      - uswds-design-kit-beta
+      - uswds-design-kit-beta
+      - uswds-design-kit-beta
+      - uswds-design-kit-beta
+      - uswds-design-kit-beta
+  provenance_source:
+    type: string
+    required: true
+    description: provenance source as recorded in the admitted derived analysis.
+    examples:
+      - Capture tool
+      - Capture tool
+      - Capture tool
+      - Capture tool
+      - Capture tool
+      - Capture tool
+      - Capture tool
+      - Capture tool
+      - Capture tool
+      - Capture tool
+      - Capture tool
+      - Capture tool
+      - Capture tool
+      - Capture tool
+      - Capture tool
+  provenance_record:
+    type: string
+    required: true
+    description: provenance record as recorded in the admitted derived analysis.
+    examples:
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff
+      - 64c871d1-4f6e-4369-bdc8-a4c341b7c1ff
+  provenance_method:
+    type: string
+    required: true
+    description: provenance method as recorded in the admitted derived analysis.
+    examples:
+      - semantic.drift_compare; retained capture inputs copied, not rerun
+      - semantic.drift_compare; retained capture inputs copied, not rerun
+      - semantic.drift_compare; retained capture inputs copied, not rerun
+      - semantic.drift_compare; retained capture inputs copied, not rerun
+      - semantic.drift_compare; retained capture inputs copied, not rerun
+      - semantic.drift_compare; retained capture inputs copied, not rerun
+      - semantic.drift_compare; retained capture inputs copied, not rerun
+      - semantic.drift_compare; retained capture inputs copied, not rerun
+      - semantic.drift_compare; retained capture inputs copied, not rerun
+      - semantic.drift_compare; retained capture inputs copied, not rerun
+      - semantic.drift_compare; retained capture inputs copied, not rerun
+      - semantic.drift_compare; retained capture inputs copied, not rerun
+      - semantic.drift_compare; retained capture inputs copied, not rerun
+      - semantic.drift_compare; retained capture inputs copied, not rerun
+      - semantic.drift_compare; retained capture inputs copied, not rerun
+  provenance_at:
+    type: string
+    required: true
+    description: provenance at as recorded in the admitted derived analysis.
+    examples:
+      - '2026-09-20T13:55:39.382Z'
+      - '2026-09-20T13:55:39.382Z'
+      - '2026-09-20T13:55:39.382Z'
+      - '2026-09-20T13:55:39.382Z'
+      - '2026-09-20T13:55:39.382Z'
+      - '2026-09-20T13:55:39.382Z'
+      - '2026-09-20T13:55:39.382Z'
+      - '2026-09-20T13:55:39.382Z'
+      - '2026-09-20T13:55:39.382Z'
+      - '2026-09-20T13:55:39.382Z'
+      - '2026-09-20T13:55:39.382Z'
+      - '2026-09-20T13:55:39.382Z'
+      - '2026-09-20T13:55:39.382Z'
+      - '2026-09-20T13:55:39.382Z'
+      - '2026-09-20T13:55:39.382Z'
+  provenance_locator:
+    type: string
+    required: true
+    description: provenance locator as recorded in the admitted derived analysis.
+    examples:
+      - artifacts/drift_report.json#/signals/0
+      - artifacts/drift_report.json#/signals/1
+      - artifacts/drift_report.json#/signals/2
+      - artifacts/drift_report.json#/signals/3
+      - artifacts/drift_report.json#/signals/4
+      - artifacts/drift_report.json#/signals/5
+      - artifacts/drift_report.json#/signals/6
+      - artifacts/drift_report.json#/signals/7
+      - artifacts/drift_report.json#/signals/8
+      - artifacts/drift_report.json#/signals/9
+      - artifacts/drift_report.json#/signals/10
+      - artifacts/drift_report.json#/signals/11
+      - artifacts/drift_report.json#/signals/12
+      - artifacts/drift_report.json#/signals/13
+      - artifacts/drift_report.json#/signals/14
+semantics:
+  signal_id:
+    semantic_type: comparison.signal_id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      detail_group: Identity and provenance
+  title:
+    semantic_type: text.label
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+  description:
+    semantic_type: text.summary
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+  value_family:
+    semantic_type: comparison.value_family
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+  live_value:
+    semantic_type: comparison.live_value
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+  live_occurrences:
+    semantic_type: comparison.live_occurrences
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+  severity:
+    semantic_type: comparison.severity
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+  severity_basis:
+    semantic_type: comparison.severity_basis
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+  tolerance:
+    semantic_type: comparison.tolerance
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+  measurement_limit:
+    semantic_type: comparison.measurement_limit
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+  result_state:
+    semantic_type: assessment.result.state
+    token_mapping: tokenMap(assessment.result.*)
+    ui_hints:
+      component: StatusBadge
+      showIcon: false
+      detail_group: Signal
+  signal_class:
+    semantic_type: comparison.signal_class
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      detail_group: Identity and provenance
+  comparison_id:
+    semantic_type: comparison.comparison_id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      detail_group: Identity and provenance
+  source_capture_id:
+    semantic_type: comparison.source_capture_id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      detail_group: Identity and provenance
+  live_comparand:
+    semantic_type: comparison.live_comparand
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      detail_group: Identity and provenance
+  design_comparand:
+    semantic_type: comparison.design_comparand
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      detail_group: Identity and provenance
+  kit_label:
+    semantic_type: comparison.kit_label
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      detail_group: Identity and provenance
+  provenance_source:
+    semantic_type: provenance.source
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      detail_group: Identity and provenance
+  provenance_record:
+    semantic_type: provenance.record
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      detail_group: Identity and provenance
+  provenance_method:
+    semantic_type: provenance.method
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      detail_group: Identity and provenance
+  provenance_at:
+    semantic_type: provenance.at
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: RelativeTimestamp
+      detail_group: Identity and provenance
+  provenance_locator:
+    semantic_type: provenance.locator
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      detail_group: Identity and provenance
+metadata:
+  maturity: alpha
+  detailTab: Signal
+  owners:
+    - OODS Foundry
+  supportedContexts:
+    - list
+    - detail
+    - card
+    - inline
+  references:
+    - objects/provenance.v1.json#/references/ref-2988db1b1980
+  changelog:
+    - version: 0.1.0
+      date: '2026-09-21'
+      description: Born from the retained capture analysis and its 15 real signals.
+    - version: 0.2.0
+      date: '2026-09-22'
+      description: >-
+        Reads as a result first: a title in words, a one-line description under it, humanised severity,
+        basis and tolerance, needs_review on font-size signals whose design comparand is incomplete, and the
+        identifiers, comparand paths and provenance on the Identity and provenance tab. Nothing new is measured.
+    - version: 0.3.0
+      date: '2026-09-23'
+      description: >-
+        Every signal shows the state the capture recorded; a font-size signal carries the type
+        caveat in its description and measurement limit, the first tab is named Signal, and the state is its last
+        labelled row, after the measurement limit, instead of a chip on its own. Nothing new is measured.
+
+# Authored type associations; no record join or referential-integrity claim.
+relationships:
+  - target: Comparison
+    via: comparison_id
+    cardinality: many-to-one
+    label: Comparison
+  - target: Run
+    via: source_capture_id
+    cardinality: many-to-one
+    label: Source capture

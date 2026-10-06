@@ -1,0 +1,63 @@
+# s223-m02 (#2527 ruling 12): a team's object whose field asks for the control that edits it. enabled asks for a Switch
+# (its semantics' ui_hints.component); severity is an enum that asks for nothing, so it stays the composer's default Select.
+# NotificationRoute.object.yaml asks for the two Select-like controls.
+object:
+  name: AlertRule
+  version: 1.0.0
+  domain: acme.monitoring
+  description: A rule that tells a team when a metric crosses its threshold.
+  tags:
+    - monitoring
+
+traits: []
+
+schema:
+  alert_rule_id:
+    type: uuid
+    required: true
+    description: Unique identifier for the alert rule.
+  name:
+    type: string
+    required: true
+    description: The rule's name.
+    examples:
+      - Checkout errors above 2%
+      - Queue depth over 500
+  enabled:
+    type: boolean
+    required: true
+    description: Whether the rule sends alerts.
+    examples:
+      - true
+      - false
+  severity:
+    type: string
+    required: true
+    description: How urgent an alert from this rule is.
+    validation:
+      enum:
+        - low
+        - medium
+        - high
+  created_at:
+    type: datetime
+    required: true
+    description: When the rule was created.
+    examples:
+      - '2026-09-01T09:00:00Z'
+      - '2026-09-02T09:00:00Z'
+
+semantics:
+  name:
+    semantic_type: monitoring.alert.name
+    token_mapping: tokenMap(text.primary)
+  enabled:
+    semantic_type: monitoring.alert.enabled
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Switch
+
+metadata:
+  owners:
+    - monitoring-team
+  maturity: beta

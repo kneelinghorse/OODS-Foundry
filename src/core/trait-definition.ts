@@ -23,7 +23,7 @@ export interface TraitMetadata {
  */
 export interface TraitParameter {
   name: string;
-  type: 'string' | 'number' | 'boolean' | 'string[]' | 'number[]' | 'enum';
+  type: 'string' | 'number' | 'boolean' | 'string[]' | 'number[]' | 'enum' | 'object';
   required: boolean;
   default?: unknown;
   description?: string;
@@ -40,6 +40,8 @@ export interface SchemaField {
   default?: unknown;
   description?: string;
   validation?: Record<string, unknown>;
+  examples?: readonly unknown[];
+  defaultFromParameter?: string;
 }
 
 /**

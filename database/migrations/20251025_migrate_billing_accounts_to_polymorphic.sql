@@ -145,7 +145,7 @@ SELECT
   'contact_' || billing_accounts.account_id AS contact_id,
   'acc_org_' || billing_accounts.account_id AS account_id,
   COALESCE(billing_accounts.billing_contact->>'name', 'Unknown') AS full_name,
-  COALESCE(billing_accounts.account_owner_email, billing_accounts.billing_contact->>'email', 'unknown@migration.local') AS email,
+  COALESCE(billing_accounts.account_owner_email, billing_accounts.billing_contact->>'email', 'unknown@migration.example.invalid') AS email,
   NULL AS phone,
   billing_accounts.billing_contact->>'title' AS title,
   'billing' AS contact_type,

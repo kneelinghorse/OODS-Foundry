@@ -1,0 +1,2046 @@
+@import "@oods/tokens/css";
+@import "./statusables.css";
+@import "./components-overlay.css";
+@import "./components-combobox.css";
+@import "./components-segmented-control.css";
+
+/* Legacy unprefixed geometry used by billing recipes. Values come from the
+ * semantic layer; preserve these names until their authored callers migrate. */
+:root {
+  --space-1: var(--sys-control-gap-compact);
+  --space-2: var(--sys-control-gap);
+  --space-3: var(--sys-field-padding-inline);
+  --space-4: var(--sys-inset-md);
+  --radius-sm: var(--sys-radius-control);
+  --radius-md: var(--sys-radius-control);
+}
+
+/* s222-m01 (#2502 ruling 8): the document root and every brand scope carry the brand's sans and a line height, so no
+ * element falls back to the browser's font or its `normal` line height. */
+:where(:root, [data-brand][data-theme]) {
+  font-family: var(--sys-font-sans);
+  line-height: var(--sys-text-line-height-root);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* s222-m02 (#2502 ruling 8): a heading inside a component reads on the type scale, never at the browser's default (a
+ * bold 24px h2). A component's own rule places its title on a role; any other h1 or h2 is heading-md and h3 to h6
+ * heading-sm. The :where() keeps this below every component rule. */
+:where([data-oods-component]) :where(h1, h2) {
+  font-size: var(--sys-text-scale-heading-md-font-size, 18px);
+  font-weight: var(--sys-text-scale-heading-md-font-weight, 600);
+  line-height: var(--sys-text-scale-heading-md-line-height, 24px);
+}
+
+:where([data-oods-component]) :where(h3, h4, h5, h6) {
+  font-size: var(--sys-text-scale-heading-sm-font-size, 16px);
+  font-weight: var(--sys-text-scale-heading-sm-font-weight, 600);
+  line-height: var(--sys-text-scale-heading-sm-line-height, 24px);
+}
+
+/* s222-m02 (#2502 ruling 11): a badge is a 20px pill, 12/500 with 2px 8px padding, tinted (the tone's step-3 surface
+ * and step-11 text) with no border. */
+:where(.oods-badge, [data-oods-component='Badge']) {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cmp-badge-gap, 0.25rem);
+  padding: var(--cmp-badge-padding-block, 0.125rem) var(--cmp-badge-padding-inline, 0.5rem);
+  border: 0;
+  border-radius: var(--cmp-badge-radius, 999px);
+  background: var(--cmp-badge-background, var(--cmp-surface-subtle, transparent));
+  color: var(--cmp-badge-text, var(--cmp-text-body, currentColor));
+  font-size: var(--cmp-badge-font-size, 12px);
+  font-weight: var(--cmp-badge-font-weight, 500);
+}
+
+/* Every governed Badge uses the same geometry, including React's legacy statusable class: the caption role's 16px line
+ * and the 2px block padding make the 20px height. */
+.oods-badge {
+  min-block-size: var(--cmp-badge-height, 1.25rem);
+  box-sizing: border-box;
+  /* s222-m03: a badge hugs its label, also as the item of a stacked (column) layout, which would otherwise stretch it. */
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  font-size: var(--cmp-badge-font-size, 12px);
+  line-height: var(--sys-text-scale-caption-line-height, 16px);
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  gap: var(--cmp-badge-gap, 0.25rem);
+}
+/* s221-m02 (#2482 ruling 2): React and Vue render one Badge markup, an icon slot and a label span, styled here; React's
+ * former statusable-badge classes no longer apply. s222-m02: a status mark is an SVG drawn in the text colour at the
+ * text's size. */
+.oods-badge__label { display: inline-flex; align-items: center; line-height: inherit; }
+.oods-badge__icon { display: inline-flex; align-items: center; }
+:where(.oods-badge__icon, .oods-banner__icon) > svg { display: block; inline-size: 1em; block-size: 1em; }
+
+/* s222-m02 (#2502 ruling 11): a tone paints its tint (step-3 surface, step-11 text; a banner also its step-7 border) and,
+ * for emphasis, its solid fill (step 9, darkened until its text passes) with the graded text colour, for badges and banners
+ * alike. The tone names are the ones every renderer writes to data-tone, so HTML output needs no inline colours; React and
+ * Vue also write the same values inline. */
+:where(.oods-badge, [data-oods-component='Badge'], .oods-banner, [data-oods-component='Banner'])[data-tone='neutral'] {
+  --cmp-badge-background: var(--sys-status-neutral-surface);
+  --cmp-badge-text: var(--sys-status-neutral-text);
+  --cmp-banner-background: var(--sys-status-neutral-surface);
+  --cmp-banner-border: var(--sys-status-neutral-border);
+  --cmp-banner-text: var(--sys-status-neutral-text);
+  --oods-tone-solid: var(--sys-status-neutral-solid);
+  --oods-tone-on-solid: var(--sys-status-neutral-on-solid);
+}
+
+:where(.oods-badge, [data-oods-component='Badge'], .oods-banner, [data-oods-component='Banner'])[data-tone='info'] {
+  --cmp-badge-background: var(--sys-status-info-surface);
+  --cmp-badge-text: var(--sys-status-info-text);
+  --cmp-banner-background: var(--sys-status-info-surface);
+  --cmp-banner-border: var(--sys-status-info-border);
+  --cmp-banner-text: var(--sys-status-info-text);
+  --oods-tone-solid: var(--sys-status-info-solid);
+  --oods-tone-on-solid: var(--sys-status-info-on-solid);
+}
+
+:where(.oods-badge, [data-oods-component='Badge'], .oods-banner, [data-oods-component='Banner'])[data-tone='accent'] {
+  --cmp-badge-background: var(--sys-status-accent-surface);
+  --cmp-badge-text: var(--sys-status-accent-text);
+  --cmp-banner-background: var(--sys-status-accent-surface);
+  --cmp-banner-border: var(--sys-status-accent-border);
+  --cmp-banner-text: var(--sys-status-accent-text);
+  --oods-tone-solid: var(--sys-status-accent-solid);
+  --oods-tone-on-solid: var(--sys-status-accent-on-solid);
+}
+
+:where(.oods-badge, [data-oods-component='Badge'], .oods-banner, [data-oods-component='Banner']):is([data-tone='success'], [data-tone='positive']) {
+  --cmp-badge-background: var(--sys-status-success-surface);
+  --cmp-badge-text: var(--sys-status-success-text);
+  --cmp-banner-background: var(--sys-status-success-surface);
+  --cmp-banner-border: var(--sys-status-success-border);
+  --cmp-banner-text: var(--sys-status-success-text);
+  --oods-tone-solid: var(--sys-status-success-solid);
+  --oods-tone-on-solid: var(--sys-status-success-on-solid);
+}
+
+:where(.oods-badge, [data-oods-component='Badge'], .oods-banner, [data-oods-component='Banner'])[data-tone='warning'] {
+  --cmp-badge-background: var(--sys-status-warning-surface);
+  --cmp-badge-text: var(--sys-status-warning-text);
+  --cmp-banner-background: var(--sys-status-warning-surface);
+  --cmp-banner-border: var(--sys-status-warning-border);
+  --cmp-banner-text: var(--sys-status-warning-text);
+  --oods-tone-solid: var(--sys-status-warning-solid);
+  --oods-tone-on-solid: var(--sys-status-warning-on-solid);
+}
+
+:where(.oods-badge, [data-oods-component='Badge'], .oods-banner, [data-oods-component='Banner']):is([data-tone='critical'], [data-tone='danger']) {
+  --cmp-badge-background: var(--sys-status-critical-surface);
+  --cmp-badge-text: var(--sys-status-critical-text);
+  --cmp-banner-background: var(--sys-status-critical-surface);
+  --cmp-banner-border: var(--sys-status-critical-border);
+  --cmp-banner-text: var(--sys-status-critical-text);
+  --oods-tone-solid: var(--sys-status-critical-solid);
+  --oods-tone-on-solid: var(--sys-status-critical-on-solid);
+}
+
+:where(.oods-badge, [data-oods-component='Badge'])[data-emphasis='solid'] {
+  background: var(--oods-tone-solid, var(--sys-status-neutral-solid, CanvasText));
+  color: var(--oods-tone-on-solid, var(--sys-status-neutral-on-solid, Canvas));
+}
+
+:where(.oods-banner, [data-oods-component='Banner'])[data-emphasis='solid'] {
+  border-color: transparent;
+  background: var(--oods-tone-solid, var(--sys-status-neutral-solid, CanvasText));
+  color: var(--oods-tone-on-solid, var(--sys-status-neutral-on-solid, Canvas));
+}
+
+/* s222-m02 (#2502 ruling 11): a banner reads at the small body size (14/20) with 12px by 16px padding and the large
+ * control radius; the tone paints its surface, border and text. */
+:where(.oods-banner, [data-oods-component='Banner']) {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--cmp-spacing-inline-sm, 0.75rem);
+  padding: var(--sys-inset-sm, 0.75rem) var(--sys-inset-md, 1rem);
+  border: 1px solid var(--cmp-banner-border, var(--cmp-border-default, currentColor));
+  border-radius: var(--sys-radius-control-lg, 8px);
+  background: var(--cmp-banner-background, var(--cmp-surface-subtle, transparent));
+  color: var(--cmp-banner-text, var(--cmp-text-body, currentColor));
+  font-size: var(--sys-text-scale-body-sm-font-size, 14px);
+  line-height: var(--sys-text-scale-body-sm-line-height, 20px);
+}
+
+/* s221-m02 (#2482 ruling 2): the one Banner markup React and Vue share. A status icon takes its own column; the content
+ * stacks the title, detail, body and actions without paragraph margins. React's former statusable-banner classes, which
+ * gave React alone a three-column grid, no longer apply. s222-m02: the icon is a 16px SVG on the title's line. */
+:where(.oods-banner:has(> .oods-banner__icon)) { grid-template-columns: auto 1fr auto; }
+.oods-banner__icon { display: inline-flex; align-items: center; justify-content: center; block-size: var(--sys-text-scale-body-sm-line-height, 20px); font-size: var(--sys-control-icon-size, 1rem); }
+.oods-banner__content { display: grid; align-content: start; gap: var(--sys-control-gap-compact, 0.25rem); min-inline-size: 0; }
+/* The title is the heading weight in both the current and the earlier Vue class names. */
+:is(.oods-banner__title, .oods-banner-title) { font-weight: var(--sys-text-scale-heading-sm-font-weight, 600); }
+:is(.oods-banner__detail, .oods-banner__body) { margin: 0; }
+.oods-banner__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--cmp-spacing-inline-sm, 0.75rem); margin-block-start: var(--sys-control-gap-compact, 0.25rem); }
+
+/* s222-m02 (#2502 rulings 9 and 11): a button is its control height at every size (xs 24, sm 28, md 32, lg 40), the same
+ * block size as the input, select and segmented control beside it, with 8/10/12/16px side padding and the label role's
+ * type (12/16 at xs, 14/20 at sm and md, 16/24 at lg; weight 500). The height centres the line, so no block padding sets
+ * it. */
+:where(.oods-button, [data-oods-component='Button']) {
+  --oods-button-block-size: var(--cmp-button-height, 2rem);
+  --oods-button-padding-inline: var(--cmp-button-padding-inline, 0.75rem);
+  --oods-button-font-size: var(--sys-text-scale-label-font-size, 14px);
+  --oods-button-line-height: var(--sys-text-scale-label-line-height, 20px);
+  --oods-button-gap: var(--cmp-button-gap, 0.5rem);
+  display: inline-flex;
+  min-block-size: var(--oods-button-block-size);
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  gap: var(--oods-button-gap);
+  padding: var(--oods-button-padding-block, 0) var(--oods-button-padding-inline);
+  border: 1px solid var(--oods-button-border, var(--cmp-button-border, transparent));
+  border-radius: var(--cmp-button-radius, 6px);
+  background: var(--oods-button-background, var(--cmp-button-background, var(--cmp-surface-action, CanvasText)));
+  color: var(--oods-button-text, var(--cmp-button-text, var(--cmp-text-on-action, Canvas)));
+  font: inherit;
+  font-size: var(--oods-button-font-size);
+  font-weight: var(--cmp-button-font-weight, 500);
+  line-height: var(--oods-button-line-height);
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+:where(.oods-button, [data-oods-component='Button']) > svg {
+  flex: none;
+  inline-size: var(--sys-control-icon-size, 1rem);
+  block-size: var(--sys-control-icon-size, 1rem);
+}
+
+/* s222-m02 (#2502 ruling 11): the variants. neutral, which a button without an intent also gets, is the outline look, so a
+ * screen's primary action is its one solid fill; secondary is the subtle fill (neutral steps 3 to 5); ghost and link carry
+ * no fill until hovered; destructive and danger share the destructive fill with its graded text; success and warning keep
+ * their status solids. */
+:where(.oods-button, [data-oods-component='Button']):is([data-intent='neutral'], [data-intent='outline'], :not([data-intent])) {
+  --oods-button-background: var(--sys-surface-raised, Canvas);
+  --oods-button-background-hover: var(--sys-surface-interactive-secondary-default, Canvas);
+  --oods-button-background-pressed: var(--sys-surface-interactive-secondary-hover, Canvas);
+  --oods-button-border: var(--sys-border-strong, CanvasText);
+  --oods-button-text: var(--sys-text-primary, CanvasText);
+}
+
+:where(.oods-button, [data-oods-component='Button'])[data-intent='primary'] {
+  --oods-button-background: var(--sys-surface-interactive-primary-default, CanvasText);
+  --oods-button-background-hover: var(--sys-surface-interactive-primary-hover, CanvasText);
+  --oods-button-background-pressed: var(--sys-surface-interactive-primary-pressed, CanvasText);
+  --oods-button-border: transparent;
+  --oods-button-text: var(--sys-text-on-interactive, Canvas);
+}
+
+:where(.oods-button, [data-oods-component='Button'])[data-intent='secondary'] {
+  --oods-button-background: var(--sys-surface-interactive-secondary-default, Canvas);
+  --oods-button-background-hover: var(--sys-surface-interactive-secondary-hover, Canvas);
+  --oods-button-background-pressed: var(--sys-surface-interactive-secondary-pressed, Canvas);
+  --oods-button-border: transparent;
+  --oods-button-text: var(--sys-text-primary, CanvasText);
+}
+
+:where(.oods-button, [data-oods-component='Button'])[data-intent='ghost'] {
+  --oods-button-background: transparent;
+  --oods-button-background-hover: var(--sys-surface-interactive-secondary-default, Canvas);
+  --oods-button-background-pressed: var(--sys-surface-interactive-secondary-hover, Canvas);
+  --oods-button-border: transparent;
+  --oods-button-text: var(--sys-text-primary, CanvasText);
+}
+
+:where(.oods-button, [data-oods-component='Button'])[data-intent='link'] {
+  --oods-button-background: transparent;
+  --oods-button-background-hover: transparent;
+  --oods-button-background-pressed: transparent;
+  --oods-button-border: transparent;
+  --oods-button-text: var(--sys-text-accent, LinkText);
+  text-underline-offset: 0.25em;
+}
+
+:where(.oods-button, [data-oods-component='Button'])[data-intent='link']:hover:not(:disabled) { text-decoration: underline; }
+
+:where(.oods-button, [data-oods-component='Button']):is([data-intent='destructive'], [data-intent='danger']) {
+  --oods-button-background: var(--sys-surface-interactive-destructive-default, CanvasText);
+  --oods-button-background-hover: var(--sys-surface-interactive-destructive-hover, CanvasText);
+  --oods-button-background-pressed: var(--sys-surface-interactive-destructive-pressed, CanvasText);
+  --oods-button-border: transparent;
+  --oods-button-text: var(--sys-text-on-destructive, Canvas);
+}
+
+:where(.oods-button, [data-oods-component='Button'])[data-intent='success'] {
+  --oods-button-background: var(--sys-status-success-solid, CanvasText);
+  --oods-button-border: transparent;
+  --oods-button-text: var(--sys-status-success-on-solid, Canvas);
+}
+
+:where(.oods-button, [data-oods-component='Button'])[data-intent='warning'] {
+  --oods-button-background: var(--sys-status-warning-solid, CanvasText);
+  --oods-button-border: transparent;
+  --oods-button-text: var(--sys-status-warning-on-solid, Canvas);
+}
+
+/* Each size rule also sets the type, so a page's own reset (button { font: inherit }, at element specificity) cannot undo
+ * the size's label role; the base rule's declarations sit at zero specificity. */
+:where(.oods-button, [data-oods-component='Button'])[data-size='xs'] {
+  --oods-button-block-size: var(--sys-control-height-xs, 1.5rem);
+  --oods-button-padding-inline: var(--sys-control-padding-inline-xs, 0.5rem);
+  --oods-button-font-size: var(--sys-text-scale-caption-font-size, 12px);
+  --oods-button-line-height: var(--sys-text-scale-caption-line-height, 16px);
+  --oods-button-gap: var(--sys-control-icon-gap-sm, 0.375rem);
+  font-size: var(--oods-button-font-size);
+  line-height: var(--oods-button-line-height);
+}
+
+:where(.oods-button, [data-oods-component='Button'])[data-size='sm'] {
+  --oods-button-block-size: var(--cmp-button-height-sm, 1.75rem);
+  --oods-button-padding-inline: var(--cmp-button-padding-inline-sm, 0.625rem);
+  --oods-button-gap: var(--sys-control-icon-gap-sm, 0.375rem);
+  font-size: var(--oods-button-font-size);
+  line-height: var(--oods-button-line-height);
+}
+
+:where(.oods-button, [data-oods-component='Button'])[data-size='md'] {
+  --oods-button-block-size: var(--cmp-button-height, 2rem);
+  --oods-button-padding-inline: var(--cmp-button-padding-inline, 0.75rem);
+  font-size: var(--oods-button-font-size);
+  line-height: var(--oods-button-line-height);
+}
+
+:where(.oods-button, [data-oods-component='Button'])[data-size='lg'] {
+  --oods-button-block-size: var(--cmp-button-height-lg, 2.5rem);
+  --oods-button-padding-inline: var(--cmp-button-padding-inline-lg, 1rem);
+  --oods-button-font-size: var(--sys-text-scale-body-md-font-size, 16px);
+  --oods-button-line-height: var(--sys-text-scale-body-md-line-height, 24px);
+  font-size: var(--oods-button-font-size);
+  line-height: var(--oods-button-line-height);
+}
+
+:where(.oods-button, [data-oods-component='Button']):hover:not(:disabled) {
+  background: var(--oods-button-background-hover, var(--oods-button-background, var(--cmp-button-background-hover, CanvasText)));
+}
+
+:where(.oods-button, [data-oods-component='Button']):active:not(:disabled) {
+  background: var(--oods-button-background-pressed, var(--oods-button-background-hover, var(--oods-button-background, var(--cmp-button-background-hover, CanvasText))));
+}
+
+:where(.oods-button, [data-oods-component='Button']):disabled {
+  border-color: var(--cmp-button-border-disabled, var(--sys-border-subtle, GrayText));
+  background: var(--cmp-button-background-disabled, var(--sys-surface-disabled, Canvas));
+  color: var(--cmp-button-text-disabled, var(--sys-text-disabled, GrayText));
+  cursor: not-allowed;
+}
+
+/* A disabled ghost or link button keeps no fill, as it has none at rest. */
+:where(.oods-button, [data-oods-component='Button']):is([data-intent='ghost'], [data-intent='link']):disabled {
+  border-color: transparent;
+  background: transparent;
+}
+
+/* One focus treatment for every interactive element, native controls included:
+ * token width, colour and offset. Nothing else in this stylesheet paints focus. */
+:where(.oods-button, [data-oods-component='Button'], .oods-field-control, .oods-tab, .oods-table-row-action, .oods-collection-row,
+  .oods-banner-dismiss, .tabs__overflow-trigger, .oods-tabs-overflow-trigger,
+  [data-oods-component] input, [data-oods-component] textarea, [data-oods-component] select,
+  [data-oods-component] button, [data-oods-component] a[href], [data-oods-component] [role='menuitem'],
+  [data-oods-component='Checkbox']):focus-visible {
+  outline: var(--cmp-focus-width, 2px) solid var(--cmp-focus-outer, Highlight);
+  outline-offset: var(--cmp-focus-offset, 2px);
+}
+
+/* s222-m02 (#2502 rulings 9 and 10): a card is border-only on the raised surface with the card radius and 24px padding;
+ * its children stack 16px apart with no browser margins, so its header, body and actions sit on the card's own rhythm. */
+:where(.oods-card, [data-oods-component='Card']) {
+  display: grid;
+  align-content: start;
+  gap: var(--sys-stack-md, 1rem);
+  padding: var(--sys-card-padding, 1.5rem);
+  border: 1px solid var(--cmp-border-default, var(--sys-border-subtle));
+  border-radius: var(--cmp-card-radius, 0.75rem);
+  background: var(--cmp-surface-panel, var(--sys-surface-raised));
+  color: var(--cmp-text-body, var(--sys-text-primary));
+}
+
+:where(.oods-card, [data-oods-component='Card']) > :where(p, h1, h2, h3, h4, h5, h6, ul, ol, dl) { margin: 0; }
+
+:where(.oods-card[data-elevated='true'], [data-oods-component='Card'][data-elevated='true']) {
+  box-shadow: var(--cmp-card-shadow-offset-x, 0px) var(--cmp-card-shadow-offset-y, 4px) var(--cmp-card-shadow-blur, 8px) var(--cmp-card-shadow-spread, -4px) var(--cmp-card-shadow-color, rgba(15, 23, 42, 0.12));
+}
+
+/* The tokens build scopes colour per brand and theme; the dark elevation tokens are
+ * emitted at :root, so the dark scope takes its shadow roles from them here. */
+[data-theme='dark'] {
+  --cmp-card-shadow-offset-x: var(--theme-dark-shadow-elevation-card-offset-x);
+  --cmp-card-shadow-offset-y: var(--theme-dark-shadow-elevation-card-offset-y);
+  --cmp-card-shadow-blur: var(--theme-dark-shadow-elevation-card-blur);
+  --cmp-card-shadow-spread: var(--theme-dark-shadow-elevation-card-spread);
+  --cmp-card-shadow-color: var(--theme-dark-shadow-elevation-card-color);
+  --cmp-shadow-overlay-offset-x: var(--theme-dark-shadow-elevation-overlay-offset-x);
+  --cmp-shadow-overlay-offset-y: var(--theme-dark-shadow-elevation-overlay-offset-y);
+  --cmp-shadow-overlay-blur: var(--theme-dark-shadow-elevation-overlay-blur);
+  --cmp-shadow-overlay-spread: var(--theme-dark-shadow-elevation-overlay-spread);
+  --cmp-shadow-overlay-color: var(--theme-dark-shadow-elevation-overlay-color);
+}
+
+/* s222-m02 (#2502 ruling 8): headings sit on the type roles. A detail header's title is the page title (heading-xl,
+ * 30/36 600) over a 16/24 subtitle and 14/20 metadata; a card header's title is heading-sm (16/24 600) over 14/20
+ * supporting text. */
+:where([data-oods-component='DetailHeader'], [data-oods-component='CardHeader']) {
+  --cmp-header-title: var(--sys-text-primary);
+  --cmp-header-subtitle: var(--sys-text-secondary);
+  --cmp-header-metadata: var(--sys-text-muted);
+  display: grid;
+  gap: var(--sys-control-gap-compact, 0.25rem);
+}
+
+:where([data-oods-component='DetailHeader']) { gap: var(--sys-stack-xs, 0.5rem); }
+
+:where([data-oods-component='DetailHeader'], [data-oods-component='CardHeader']) > :is(h1, h2, h3, h4, h5, h6) {
+  margin: 0;
+  color: var(--cmp-header-title, CanvasText);
+}
+
+:where([data-oods-component='DetailHeader']) > :is(h1, h2, h3, h4, h5, h6) {
+  font-size: var(--sys-text-scale-heading-xl-font-size, 30px);
+  font-weight: var(--sys-text-scale-heading-xl-font-weight, 600);
+  line-height: var(--sys-text-scale-heading-xl-line-height, 36px);
+  letter-spacing: var(--sys-text-scale-heading-xl-letter-spacing);
+}
+
+:where([data-oods-component='CardHeader']) > :is(h1, h2, h3, h4, h5, h6) {
+  font-size: var(--sys-text-scale-heading-sm-font-size, 16px);
+  font-weight: var(--sys-text-scale-heading-sm-font-weight, 600);
+  line-height: var(--sys-text-scale-heading-sm-line-height, 24px);
+}
+
+:where([data-oods-component='DetailHeader']) > [data-oods-subtitle],
+:where([data-oods-component='CardHeader']) > [data-oods-supporting] {
+  margin: 0;
+  color: var(--cmp-header-subtitle, CanvasText);
+}
+
+:where([data-oods-component='DetailHeader']) > [data-oods-subtitle] {
+  font-size: var(--sys-text-scale-body-md-font-size, 16px);
+  line-height: var(--sys-text-scale-body-md-line-height, 24px);
+}
+
+:where([data-oods-component='CardHeader']) > [data-oods-supporting] {
+  font-size: var(--sys-text-scale-body-sm-font-size, 14px);
+  line-height: var(--sys-text-scale-body-sm-line-height, 20px);
+}
+
+:where([data-oods-component='DetailHeader']) > [data-oods-metadata] {
+  margin: 0;
+  color: var(--cmp-header-metadata, CanvasText);
+  font-size: var(--sys-text-scale-body-sm-font-size, 14px);
+  line-height: var(--sys-text-scale-body-sm-line-height, 20px);
+}
+
+:where([data-oods-component='ColorSwatch']) {
+  --cmp-swatch-chip: var(--sys-surface-interactive-primary-default);
+  --cmp-swatch-border: var(--sys-border-strong);
+  --cmp-text-body: var(--sys-text-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cmp-spacing-inline-sm, 0.75rem);
+  color: var(--cmp-text-body, CanvasText);
+}
+
+:where([data-oods-component='ColorSwatch']) > [data-oods-swatch-chip] {
+  flex: none;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  border: 1px solid var(--cmp-swatch-border, CanvasText);
+  border-radius: var(--cmp-input-radius, 6px);
+  background: var(--oods-swatch-color, var(--cmp-swatch-chip, CanvasText));
+}
+
+:where([data-oods-component='ColorizedBadge']) {
+  --cmp-badge-background: var(--sys-status-neutral-surface);
+  --cmp-badge-border: var(--sys-status-neutral-border);
+  --cmp-badge-text: var(--sys-status-neutral-text);
+  --cmp-badge-icon: var(--sys-status-neutral-icon);
+  --cmp-badge-color: var(--sys-surface-interactive-primary-default);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cmp-badge-gap, 0.25rem);
+  min-block-size: var(--cmp-badge-height, 1.25rem);
+  box-sizing: border-box;
+  padding: var(--cmp-badge-padding-block, 0.125rem) var(--cmp-badge-padding-inline, 0.5rem);
+  border: 0;
+  border-radius: var(--cmp-badge-radius, 999px);
+  background: var(--cmp-badge-background, Canvas);
+  color: var(--cmp-badge-text, CanvasText);
+  font-size: var(--cmp-badge-font-size, 12px);
+  font-weight: var(--cmp-badge-font-weight, 500);
+  line-height: var(--sys-text-scale-caption-line-height, 16px);
+  white-space: nowrap;
+}
+
+:where([data-oods-component='ColorizedBadge'])[data-emphasis='solid'] {
+  background: var(--oods-tone-solid, var(--sys-status-neutral-solid, CanvasText));
+  color: var(--oods-tone-on-solid, var(--sys-status-neutral-on-solid, Canvas));
+}
+
+:where([data-oods-component='ColorizedBadge']) [data-oods-badge-marker] {
+  display: inline-block;
+  flex: none;
+  inline-size: 0.75rem;
+  block-size: 0.75rem;
+  border: 1px solid var(--cmp-badge-icon, CanvasText);
+  border-radius: 50%;
+  background: var(--oods-badge-color, var(--cmp-badge-color, CanvasText));
+}
+
+/* The decorative color marker always has an adjacent, visible text label. */
+:where([data-oods-component='ColorSwatch']) > [data-oods-swatch-label],
+:where([data-oods-component='ColorizedBadge']) [data-oods-badge-label] {
+  display: inline;
+  visibility: visible;
+  color: inherit;
+}
+
+/* This is a frame for authored content; it renders no chart pixels. */
+:where([data-oods-component='VizAreaPreview'], [data-oods-component='VizGraphPreview'], [data-oods-component='VizHeatmapPreview'], [data-oods-component='VizLinePreview'], [data-oods-component='VizMarkPreview'], [data-oods-component='VizPointPreview'], [data-oods-component='VizScatterPreview']) {
+  --cmp-preview-frame: var(--sys-border-subtle);
+  --cmp-preview-placeholder: var(--sys-text-muted);
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  inline-size: min(100%, var(--oods-viz-width, 640px));
+  min-block-size: var(--oods-viz-height, 360px);
+  padding: var(--cmp-spacing-inset-default, 1rem);
+  border: 1px dashed var(--cmp-preview-frame, CanvasText);
+  border-radius: var(--cmp-input-radius, 6px);
+  background: var(--sys-surface-canvas, Canvas);
+}
+
+:where([data-oods-component='VizAreaPreview'], [data-oods-component='VizGraphPreview'], [data-oods-component='VizHeatmapPreview'], [data-oods-component='VizLinePreview'], [data-oods-component='VizMarkPreview'], [data-oods-component='VizPointPreview'], [data-oods-component='VizScatterPreview']) > [data-viz-preview-placeholder] {
+  color: var(--cmp-preview-placeholder, CanvasText);
+  text-align: center;
+}
+
+:where([data-oods-component='VizAreaPreview'][data-viz-rendered='true'], [data-oods-component='VizGraphPreview'][data-viz-rendered='true'], [data-oods-component='VizHeatmapPreview'][data-viz-rendered='true'], [data-oods-component='VizLinePreview'][data-viz-rendered='true'], [data-oods-component='VizMarkPreview'][data-viz-rendered='true'], [data-oods-component='VizPointPreview'][data-viz-rendered='true'], [data-oods-component='VizScatterPreview'][data-viz-rendered='true']) {
+  margin: 0;
+  padding: 0;
+  min-block-size: 0;
+  inline-size: 100%;
+  border: 0;
+  place-items: stretch;
+}
+/* s222-m02 (#2502 ruling 8): a placed chart's caption is heading-sm (16/24 600). It was an undocumented min() with a
+ * 1.25rem literal. */
+:where([data-viz-rendered='true']) > figcaption {
+  font-size: var(--sys-text-scale-heading-sm-font-size, 16px);
+  font-weight: var(--sys-text-scale-heading-sm-font-weight, 600);
+  line-height: var(--sys-text-scale-heading-sm-line-height, 24px);
+}
+:where([data-viz-svg]) { min-inline-size: 0; }
+:where([data-viz-svg]) > svg { display: block; inline-size: 100%; max-inline-size: var(--oods-viz-width, 100%); block-size: auto; }
+/* A placed chart carries a narrow render beside the design-size one; the figure measures its own inline size and shows the narrow render at 600px or less, so axis text keeps its size on a phone column instead of scaling with the SVG (Sprint 202 m01). */
+:where([data-viz-rendered='true'][data-viz-narrow='true']) { container-type: inline-size; }
+:where([data-viz-svg-narrow]) { display: none; min-inline-size: 0; }
+:where([data-viz-svg-narrow]) > svg { display: block; inline-size: 100%; block-size: auto; }
+@container (max-width: 600px) {
+  :where([data-viz-narrow='true']) > [data-viz-svg] { display: none; }
+  :where([data-viz-narrow='true']) > [data-viz-svg-narrow] { display: block; }
+}
+/* s213-m01 (Sprint 212 review finding 5): a figure with a wide render fills its column. The design render grows until
+ * the figure is 900px wide, then the render drawn for a desktop column takes over, so the chart spans the screen near
+ * design scale; it used to stop at its design width, half of a 1440 detail screen. */
+:where([data-viz-rendered='true'][data-viz-wide='true']) { container-type: inline-size; }
+:where([data-viz-svg-wide]) { display: none; min-inline-size: 0; }
+:where([data-viz-svg-wide]) > svg { display: block; inline-size: 100%; block-size: auto; }
+/* Each render is drawn at most 1.25 times its own size, so a 10px axis label never passes 12.5px (#2347): the design
+ * render reaches about 1.23 times before the wide one takes over, and the wide render, 1130px wide, stops growing here. */
+:where([data-viz-svg-wide]) > svg { max-inline-size: calc(1130px * 1.25); }
+:where([data-viz-wide='true']) > [data-viz-svg] > svg { max-inline-size: none; }
+@container (min-width: 900px) {
+  :where([data-viz-wide='true']) > [data-viz-svg] { display: none; }
+  :where([data-viz-wide='true']) > [data-viz-svg-wide] { display: block; }
+}
+:where([data-viz-description]) { color: var(--sys-text-neutral); font-size: var(--sys-text-size-sm, 0.875rem); }
+
+/* Timeline-family logs and the audit event article mirror renderTimelineContainer and renderEventArticle. */
+:where([data-oods-component='AddressValidationTimeline'], [data-oods-component='MembershipAuditTimeline'], [data-oods-component='MessageEventTimeline'], [data-oods-component='PreferenceTimeline']) {
+  --cmp-timeline-background: var(--sys-surface-raised);
+  --cmp-timeline-border: var(--sys-border-subtle);
+  --cmp-timeline-text: var(--sys-text-primary);
+  --cmp-timeline-marker: var(--sys-border-strong);
+  display: grid;
+  gap: var(--cmp-spacing-stack-sm, 0.75rem);
+  padding: var(--sys-card-padding, 1.5rem);
+  border: 1px solid var(--cmp-timeline-border, CanvasText);
+  border-radius: var(--cmp-card-radius, 0.75rem);
+  background: var(--cmp-timeline-background, Canvas);
+  color: var(--cmp-timeline-text, CanvasText);
+}
+
+:where([data-oods-component='AddressValidationTimeline'], [data-oods-component='MembershipAuditTimeline'], [data-oods-component='MessageEventTimeline'], [data-oods-component='PreferenceTimeline']) > [data-timeline-title] {
+  margin: 0;
+  font-size: var(--sys-text-scale-heading-md-font-size, 18px);
+  font-weight: var(--sys-text-scale-heading-md-font-weight, 600);
+  line-height: var(--sys-text-scale-heading-md-line-height, 24px);
+}
+
+:where([data-oods-component='AddressValidationTimeline'], [data-oods-component='MembershipAuditTimeline'], [data-oods-component='MessageEventTimeline'], [data-oods-component='PreferenceTimeline']) > [data-timeline-events] {
+  display: grid;
+  gap: var(--cmp-spacing-stack-sm, 0.75rem);
+  margin: 0;
+  padding-inline-start: var(--cmp-spacing-stack-lg, 1.5rem);
+}
+
+:where([data-oods-component='AddressValidationTimeline'], [data-oods-component='MembershipAuditTimeline'], [data-oods-component='MessageEventTimeline'], [data-oods-component='PreferenceTimeline']) > [data-timeline-events] > li {
+  border-inline-start: var(--ref-border-width-bold, 2px) solid var(--cmp-timeline-marker, CanvasText);
+  padding-inline-start: var(--cmp-spacing-inline-sm, 0.75rem);
+}
+
+:where([data-oods-component='AddressValidationTimeline'], [data-oods-component='MembershipAuditTimeline'], [data-oods-component='MessageEventTimeline'], [data-oods-component='PreferenceTimeline']) [data-timeline-label],
+:where([data-oods-component='AddressValidationTimeline'], [data-oods-component='MembershipAuditTimeline'], [data-oods-component='MessageEventTimeline'], [data-oods-component='PreferenceTimeline']) [data-timeline-detail] {
+  margin: 0;
+}
+
+:where([data-oods-component='AddressValidationTimeline'], [data-oods-component='MembershipAuditTimeline'], [data-oods-component='MessageEventTimeline'], [data-oods-component='PreferenceTimeline']) [data-timeline-time],
+:where([data-oods-component='AddressValidationTimeline'], [data-oods-component='MembershipAuditTimeline'], [data-oods-component='MessageEventTimeline'], [data-oods-component='PreferenceTimeline']) [data-timeline-detail],
+:where([data-oods-component='AddressValidationTimeline'], [data-oods-component='MembershipAuditTimeline'], [data-oods-component='MessageEventTimeline'], [data-oods-component='PreferenceTimeline']) [data-timeline-empty] {
+  color: var(--sys-text-muted, GrayText);
+  font-size: var(--sys-text-size-sm, 0.875rem);
+}
+
+:where([data-oods-component='AuditEvent']) {
+  --cmp-event-background: var(--sys-surface-raised);
+  --cmp-event-border: var(--sys-border-subtle);
+  --cmp-event-text: var(--sys-text-primary);
+  display: grid;
+  gap: var(--sys-spacing-stack-compact, 0.75rem);
+  padding: var(--cmp-spacing-inset-sm, 0.75rem);
+  border: 1px solid var(--cmp-event-border, CanvasText);
+  border-radius: var(--cmp-input-radius, 6px);
+  background: var(--cmp-event-background, Canvas);
+  color: var(--cmp-event-text, CanvasText);
+}
+
+:where([data-oods-component='AuditEvent']) > [data-event-label],
+:where([data-oods-component='AuditEvent']) > [data-event-detail] {
+  margin: 0;
+}
+
+:where([data-oods-component='AuditEvent']) > [data-event-label] {
+  font-weight: var(--ref-typography-weights-semibold, 600);
+}
+
+:where([data-oods-component='AuditEvent']) > [data-event-time],
+:where([data-oods-component='AuditEvent']) > [data-event-detail] {
+  color: var(--sys-text-muted, GrayText);
+  font-size: var(--sys-text-size-sm, 0.875rem);
+}
+
+/* Badge-family summaries reuse the governed Badge substrate; the pill groups mirror their plain-span HTML renderers. */
+:where([data-oods-component='ArchivePill'], [data-oods-component='CancellationBadge'], [data-oods-component='OwnerBadge'], [data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge']) {
+  --cmp-badge-background: var(--sys-status-neutral-surface);
+  --cmp-badge-border: var(--sys-status-neutral-border);
+  --cmp-badge-text: var(--sys-status-neutral-text);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cmp-badge-gap, 0.25rem);
+  min-block-size: var(--cmp-badge-height, 1.25rem);
+  box-sizing: border-box;
+  padding: var(--cmp-badge-padding-block, 0.125rem) var(--cmp-badge-padding-inline, 0.5rem);
+  border: 0;
+  border-radius: var(--cmp-badge-radius, 999px);
+  background: var(--cmp-badge-background, Canvas);
+  color: var(--cmp-badge-text, CanvasText);
+  font-size: var(--cmp-badge-font-size, 12px);
+  font-weight: var(--cmp-badge-font-weight, 500);
+  line-height: var(--sys-text-scale-caption-line-height, 16px);
+  white-space: nowrap;
+}
+
+:where([data-oods-component='ArchivePill'], [data-oods-component='CancellationBadge'], [data-oods-component='OwnerBadge'], [data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge'])[data-emphasis='solid'] {
+  background: var(--oods-tone-solid, var(--sys-status-neutral-solid, CanvasText));
+  color: var(--oods-tone-on-solid, var(--sys-status-neutral-on-solid, Canvas));
+}
+
+:where([data-oods-component='ArchivePill'], [data-oods-component='CancellationBadge'], [data-oods-component='OwnerBadge'], [data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge']) [data-oods-badge-label] {
+  display: inline;
+  visibility: visible;
+  color: inherit;
+}
+
+:where([data-oods-component='RoleBadgeList'], [data-oods-component='TagPills']) {
+  --cmp-badge-background: var(--sys-status-neutral-surface);
+  --cmp-badge-border: var(--sys-status-neutral-border);
+  --cmp-badge-text: var(--sys-status-neutral-text);
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--cmp-spacing-inline-xs, 0.5rem);
+  color: var(--cmp-badge-text, CanvasText);
+}
+
+:where([data-oods-component='RoleBadgeList']) [data-role-badge],
+:where([data-oods-component='TagPills']) [data-tag-pill],
+:where([data-oods-component='TagPills']) [data-tag-overflow] {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--cmp-badge-height, 1.25rem);
+  box-sizing: border-box;
+  padding: var(--cmp-badge-padding-block, 0.125rem) var(--cmp-badge-padding-inline, 0.5rem);
+  border: 0;
+  border-radius: var(--cmp-badge-radius, 999px);
+  background: var(--cmp-badge-background, Canvas);
+  color: var(--cmp-badge-text, CanvasText);
+  font-size: var(--cmp-badge-font-size, 12px);
+  font-weight: var(--cmp-badge-font-weight, 500);
+  line-height: var(--sys-text-scale-caption-line-height, 16px);
+  white-space: nowrap;
+}
+
+/* Panel, filter and summary sections mirror their HTML renderers; controls stay unwired. */
+:where([data-oods-component='AddressCollectionPanel'], [data-oods-component='ClassificationPanel'], [data-oods-component='MembershipPanel'], [data-oods-component='PreferencePanel']) {
+  --cmp-panel-background: var(--sys-surface-raised);
+  --cmp-panel-border: var(--sys-border-subtle);
+  --cmp-panel-title: var(--sys-text-primary);
+  --cmp-panel-subtitle: var(--sys-text-secondary);
+  display: grid;
+  gap: var(--cmp-spacing-stack-sm, 0.75rem);
+  padding: var(--sys-card-padding, 1.5rem);
+  border: 1px solid var(--cmp-panel-border, CanvasText);
+  border-radius: var(--cmp-card-radius, 0.75rem);
+  background: var(--cmp-panel-background, Canvas);
+  color: var(--cmp-panel-title, CanvasText);
+}
+
+:where([data-oods-component='AddressCollectionPanel'], [data-oods-component='ClassificationPanel'], [data-oods-component='MembershipPanel'], [data-oods-component='PreferencePanel']) > [data-panel-header] {
+  display: grid;
+  gap: var(--sys-spacing-stack-compact, 0.75rem);
+}
+
+:where([data-oods-component='AddressCollectionPanel'], [data-oods-component='ClassificationPanel'], [data-oods-component='MembershipPanel'], [data-oods-component='PreferencePanel']) > [data-panel-header] > h2 {
+  margin: 0;
+  color: var(--cmp-panel-title, CanvasText);
+  font-size: var(--sys-text-scale-heading-md-font-size, 18px);
+  font-weight: var(--sys-text-scale-heading-md-font-weight, 600);
+  line-height: var(--sys-text-scale-heading-md-line-height, 24px);
+}
+
+:where([data-oods-component='AddressCollectionPanel'], [data-oods-component='ClassificationPanel'], [data-oods-component='MembershipPanel'], [data-oods-component='PreferencePanel']) > [data-panel-header] > [data-panel-subtitle] {
+  color: var(--cmp-panel-subtitle, CanvasText);
+  font-size: var(--sys-text-size-sm, 0.875rem);
+}
+
+:where([data-oods-component='AddressCollectionPanel'], [data-oods-component='ClassificationPanel'], [data-oods-component='MembershipPanel'], [data-oods-component='PreferencePanel']) > [data-panel-content] > [data-panel-summary] {
+  color: var(--cmp-panel-subtitle, CanvasText);
+}
+
+:where([data-oods-component='FilterPanel']) {
+  --cmp-filter-background: var(--sys-surface-raised);
+  --cmp-filter-border: var(--sys-border-subtle);
+  --cmp-filter-text: var(--sys-text-primary);
+  --cmp-filter-legend: var(--sys-text-secondary);
+  display: grid;
+  gap: var(--cmp-spacing-stack-sm, 0.75rem);
+  padding: var(--sys-card-padding, 1.5rem);
+  border: 1px solid var(--cmp-filter-border, CanvasText);
+  border-radius: var(--cmp-card-radius, 0.75rem);
+  background: var(--cmp-filter-background, Canvas);
+  color: var(--cmp-filter-text, CanvasText);
+}
+
+:where([data-oods-component='FilterPanel']) > [data-filter-section] {
+  margin: 0;
+  padding: var(--cmp-spacing-inset-sm, 0.75rem);
+  border: 1px solid var(--cmp-filter-border, CanvasText);
+  border-radius: var(--cmp-input-radius, 6px);
+}
+
+:where([data-oods-component='FilterPanel']) > [data-filter-section] > legend {
+  padding-inline: var(--sys-control-gap-compact, 0.25rem);
+  color: var(--cmp-filter-legend, CanvasText);
+  font-weight: var(--ref-typography-weights-semibold, 600);
+}
+
+:where([data-oods-component='FilterPanel']) > [data-active-filters] {
+  display: flex;
+  align-items: center;
+  gap: var(--cmp-spacing-inline-sm, 0.75rem);
+}
+
+/* s222-m02 (#2502 ruling 11): a filter's button is the small outline button. */
+:where([data-oods-component='FilterPanel']) button {
+  box-sizing: border-box;
+  min-block-size: var(--cmp-button-height-sm, 1.75rem);
+  padding: 0 var(--cmp-button-padding-inline-sm, 0.625rem);
+  border: 1px solid var(--sys-border-strong, CanvasText);
+  border-radius: var(--cmp-button-radius, 6px);
+  background: var(--sys-surface-raised, Canvas);
+  color: var(--cmp-filter-text, CanvasText);
+  font: inherit;
+  font-size: var(--sys-text-scale-label-font-size, 14px);
+  font-weight: var(--sys-text-scale-label-font-weight, 500);
+  line-height: var(--sys-text-scale-label-line-height, 20px);
+}
+
+:where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) {
+  --cmp-form-background: var(--sys-surface-raised);
+  --cmp-form-border: var(--sys-border-subtle);
+  --cmp-form-text: var(--sys-text-primary);
+  --cmp-form-hint: var(--sys-text-secondary);
+  display: grid;
+  gap: var(--cmp-spacing-stack-sm, 0.75rem);
+  margin: 0;
+  padding: var(--sys-card-padding, 1.5rem);
+  border: 1px solid var(--cmp-form-border, CanvasText);
+  border-radius: var(--cmp-card-radius, 0.75rem);
+  background: var(--cmp-form-background, Canvas);
+  color: var(--cmp-form-text, CanvasText);
+}
+
+:where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) > [data-form-header] {
+  display: grid;
+  gap: var(--sys-spacing-stack-compact, 0.75rem);
+}
+
+:where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) > [data-form-header] > h2 {
+  margin: 0;
+  color: var(--cmp-form-text, CanvasText);
+  font-size: var(--sys-text-scale-heading-md-font-size, 18px);
+  font-weight: var(--sys-text-scale-heading-md-font-weight, 600);
+  line-height: var(--sys-text-scale-heading-md-line-height, 24px);
+}
+
+:where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) > [data-form-header] > [data-form-subtitle] {
+  color: var(--cmp-form-hint, CanvasText);
+  font-size: var(--sys-text-size-sm, 0.875rem);
+}
+
+:where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-tag-list] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--cmp-spacing-inline-xs, 0.5rem);
+}
+
+:where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-tag-item] {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--cmp-badge-height, 1.25rem);
+  box-sizing: border-box;
+  padding: var(--cmp-badge-padding-block, 0.125rem) var(--cmp-badge-padding-inline, 0.5rem);
+  border: 0;
+  border-radius: var(--cmp-badge-radius, 999px);
+  background: var(--sys-status-neutral-surface, Canvas);
+  color: var(--sys-status-neutral-text, CanvasText);
+  font-size: var(--cmp-badge-font-size, 12px);
+  font-weight: var(--cmp-badge-font-weight, 500);
+  line-height: var(--sys-text-scale-caption-line-height, 16px);
+}
+
+:where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-form-control='input'] {
+  display: grid;
+  gap: var(--sys-control-gap-compact, 0.25rem);
+}
+
+:where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-form-control='input'] > span {
+  color: var(--cmp-form-hint, CanvasText);
+  font-size: var(--sys-text-size-sm, 0.875rem);
+}
+
+:where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) input:not([type='checkbox'], [type='radio']) {
+  box-sizing: border-box;
+  min-block-size: var(--sys-control-height-md, 2rem);
+  padding: 0 var(--cmp-input-padding-inline, 0.75rem);
+  border: 1px solid var(--cmp-input-border, CanvasText);
+  border-radius: var(--cmp-input-radius, 6px);
+  background: var(--cmp-input-background, Canvas);
+  color: var(--cmp-input-text, CanvasText);
+  font: inherit;
+  font-size: var(--sys-text-scale-body-sm-font-size, 14px);
+  line-height: var(--sys-text-scale-body-sm-line-height, 20px);
+}
+
+:where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) > legend {
+  padding-inline: var(--sys-control-gap-compact, 0.25rem);
+  font-size: var(--sys-text-scale-heading-md-font-size, 18px);
+  font-weight: var(--sys-text-scale-heading-md-font-weight, 600);
+  line-height: var(--sys-text-scale-heading-md-line-height, 24px);
+}
+
+:where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) > [data-form-subtitle] {
+  color: var(--cmp-form-hint, CanvasText);
+  font-size: var(--sys-text-size-sm, 0.875rem);
+}
+
+:where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-form-content] {
+  display: grid;
+  gap: var(--cmp-spacing-stack-sm, 0.75rem);
+}
+
+:where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-form-control] {
+  display: grid;
+  gap: var(--sys-control-gap-compact, 0.25rem);
+}
+
+:where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) [data-form-control] > span {
+  color: var(--cmp-form-hint, CanvasText);
+  font-size: var(--sys-text-size-sm, 0.875rem);
+}
+
+:where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) select,
+:where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) textarea {
+  box-sizing: border-box;
+  min-block-size: var(--sys-control-height-md, 2rem);
+  padding: 0 var(--cmp-input-padding-inline, 0.75rem);
+  border: 1px solid var(--cmp-input-border, CanvasText);
+  border-radius: var(--cmp-input-radius, 6px);
+  background: var(--cmp-input-background, Canvas);
+  color: var(--cmp-input-text, CanvasText);
+  font: inherit;
+  font-size: var(--sys-text-scale-body-sm-font-size, 14px);
+  line-height: var(--sys-text-scale-body-sm-line-height, 20px);
+}
+
+:where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) textarea { padding-block: var(--sys-control-padding-block-lg, 0.5rem); }
+
+:where([data-oods-component='StatusSelector']) {
+  --cmp-input-background: var(--sys-surface-raised);
+  --cmp-input-border: var(--sys-border-interactive);
+  --cmp-input-text: var(--sys-text-primary);
+  --cmp-input-focus: var(--sys-border-interactive-hover);
+  display: grid;
+  gap: var(--sys-control-gap-compact, 0.25rem);
+  color: var(--cmp-input-text, CanvasText);
+}
+
+:where([data-oods-component='StatusSelector']) [data-form-control='select'] {
+  display: grid;
+  gap: var(--sys-control-gap-compact, 0.25rem);
+}
+
+:where([data-oods-component='StatusSelector']) select {
+  box-sizing: border-box;
+  min-block-size: var(--sys-control-height-md, 2rem);
+  padding: 0 var(--cmp-input-padding-inline, 0.75rem);
+  border: 1px solid var(--cmp-input-border, CanvasText);
+  border-radius: var(--cmp-input-radius, 6px);
+  background: var(--cmp-input-background, Canvas);
+  color: var(--cmp-input-text, CanvasText);
+  font: inherit;
+  font-size: var(--sys-text-scale-body-sm-font-size, 14px);
+  line-height: var(--sys-text-scale-body-sm-line-height, 20px);
+}
+
+/* The focus ring is the shared rule above; the focused field also takes the input focus colour on its border. */
+:where([data-oods-component='StatusSelector']) select:focus-visible {
+  border-color: var(--cmp-input-focus, Highlight);
+}
+
+
+:where([data-oods-component='ArchiveSummary'], [data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) {
+  --cmp-summary-background: var(--sys-surface-raised);
+  --cmp-summary-border: var(--sys-border-subtle);
+  --cmp-summary-text: var(--sys-text-primary);
+  --cmp-summary-label: var(--sys-text-secondary);
+  display: grid;
+  gap: var(--cmp-spacing-stack-sm, 0.75rem);
+  padding: var(--sys-card-padding, 1.5rem);
+  border: 1px solid var(--cmp-summary-border, CanvasText);
+  border-radius: var(--cmp-card-radius, 0.75rem);
+  background: var(--cmp-summary-background, Canvas);
+  color: var(--cmp-summary-text, CanvasText);
+}
+
+:where([data-oods-component='ArchiveSummary'], [data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) > [data-summary-title] {
+  margin: 0;
+  font-size: var(--sys-text-scale-heading-md-font-size, 18px);
+  font-weight: var(--sys-text-scale-heading-md-font-weight, 600);
+  line-height: var(--sys-text-scale-heading-md-line-height, 24px);
+}
+
+:where([data-oods-component='ArchiveSummary'], [data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) > dl {
+  display: grid;
+  grid-template-columns: minmax(max-content, 1fr) minmax(0, 2fr);
+  gap: var(--cmp-spacing-stack-xs, 0.5rem) var(--cmp-spacing-inline-md, 1rem);
+  margin: 0;
+}
+
+:where([data-oods-component='ArchiveSummary'], [data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) [data-summary-item] {
+  display: contents;
+}
+
+:where([data-oods-component='ArchiveSummary'], [data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) dt {
+  color: var(--cmp-summary-label, CanvasText);
+  font-weight: var(--ref-typography-weights-semibold, 600);
+}
+
+:where([data-oods-component='ArchiveSummary'], [data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) dd {
+  margin: 0;
+}
+
+:where([data-oods-component='ArchiveSummary'], [data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary']) > [data-summary-fallback] {
+  margin: 0;
+  color: var(--cmp-summary-label, CanvasText);
+}
+
+/* s222-m02 (#2502 rulings 9 and 11): a field's label is the label role (14/20 500); its control sits on the raised
+ * surface with the 3:1 control border and the md control height (32), the same as the button beside it; help text is
+ * muted and an error takes the critical text colour, both at 14/20. A textarea grows by its rows. */
+.oods-field {
+  display: grid;
+  /* A field stretched by its row keeps its label on its control instead of spreading the rows apart. */
+  align-content: start;
+  gap: var(--cmp-input-gap, 0.375rem);
+  color: var(--cmp-text-body, CanvasText);
+}
+
+.oods-field-label {
+  color: var(--sys-text-primary, CanvasText);
+  font-size: var(--sys-text-scale-label-font-size, 14px);
+  font-weight: var(--sys-text-scale-label-font-weight, 500);
+  line-height: var(--sys-text-scale-label-line-height, 20px);
+}
+
+.oods-field-control,
+:where(
+  input[data-oods-component='Input'],
+  input[data-oods-component='DatePicker'],
+  select[data-oods-component='Select'],
+  textarea[data-oods-component='Textarea']
+) {
+  inline-size: 100%;
+  box-sizing: border-box;
+  min-block-size: var(--sys-control-height-md, 2rem);
+  padding: 0 var(--cmp-input-padding-inline, 0.75rem);
+  border: 1px solid var(--cmp-input-border, var(--cmp-border-default, currentColor));
+  border-radius: var(--cmp-input-radius, 6px);
+  background: var(--cmp-input-background, Canvas);
+  color: var(--cmp-input-text, CanvasText);
+  font: inherit;
+  font-size: var(--sys-text-scale-body-sm-font-size, 14px);
+  line-height: var(--sys-text-scale-body-sm-line-height, 20px);
+}
+
+/* A compact field's control is the sm control height (28), the small button's. */
+.oods-field[data-density='compact'] .oods-field-control { min-block-size: var(--sys-control-height-sm, 1.75rem); }
+:is(textarea.oods-field-control, textarea[data-oods-component='Textarea']) { padding-block: var(--sys-control-padding-block-lg, 0.5rem); }
+.oods-field-control:hover:not(:disabled, [aria-invalid='true']) { border-color: var(--sys-border-interactive-hover, CanvasText); }
+.oods-field-control:disabled { background: var(--sys-surface-disabled, Canvas); color: var(--sys-text-disabled, GrayText); cursor: not-allowed; }
+/* Native trait controls keep the same readable placeholder role as Input when a host's reset uses half-opacity text. */
+.oods-field-control::placeholder,
+:where([data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TagInput'], [data-oods-component='TagManager'], [data-oods-component='TemplatePicker']) :is(input, textarea)::placeholder {
+  color: var(--cmp-input-placeholder, GrayText);
+  opacity: 1;
+}
+/* An invalid control's border takes the critical icon role, the status step that reaches 3:1 on the surface. */
+.oods-field-control[aria-invalid='true'] { border-color: var(--sys-status-critical-icon, Mark); }
+.oods-field-help { color: var(--cmp-input-support-text, var(--cmp-text-muted, GrayText)); }
+.oods-field-error { color: var(--cmp-input-message-text, MarkText); font-size: var(--sys-text-scale-body-sm-font-size, 14px); line-height: var(--sys-text-scale-body-sm-line-height, 20px); margin: 0; }
+
+/* s222-m02 (#2502 ruling 11): the banner's dismiss is a ghost icon button, square at the small control height, centred
+ * on the title's line; its hover tints the banner's own text colour. */
+.oods-banner-dismiss {
+  display: inline-flex;
+  inline-size: var(--cmp-button-height-sm, 1.75rem);
+  block-size: var(--cmp-button-height-sm, 1.75rem);
+  align-items: center;
+  justify-content: center;
+  align-self: start;
+  box-sizing: border-box;
+  margin-block: calc(-1 * var(--sys-control-gap-compact, 0.25rem));
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--cmp-button-radius, 6px);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.oods-banner-dismiss:hover { background: color-mix(in oklab, currentColor 12%, transparent); }
+.oods-banner-dismiss > svg { inline-size: var(--sys-control-icon-size, 1rem); block-size: var(--sys-control-icon-size, 1rem); }
+
+:where(.oods-checkbox, [data-oods-component='Checkbox']) {
+  display: inline-grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: var(--cmp-checkbox-gap, 0.5rem);
+  color: var(--cmp-checkbox-text, var(--cmp-text-body, CanvasText));
+}
+
+:where(.oods-checkbox input, [data-oods-component='Checkbox']) {
+  accent-color: var(--cmp-checkbox-background-checked, Highlight);
+}
+
+:where(.oods-grid, [data-oods-component='Grid']) {
+  display: grid;
+  grid-template-columns: repeat(var(--oods-grid-columns, auto-fit), minmax(min(100%, var(--oods-grid-min-column, 16rem)), 1fr));
+  gap: var(--oods-layout-gap, var(--cmp-spacing-stack-default, 1rem));
+  align-items: var(--oods-layout-align, stretch);
+  justify-content: var(--oods-layout-justify, normal);
+}
+
+/*
+ * s206-m01: a numeric column count is a MAXIMUM. The grid keeps that many columns while each still fits its minimum
+ * width and wraps to fewer below that, so it never overflows its container (four fixed 16rem columns made thirteen
+ * dashboards 1,024px wide at 390 and 820). auto-fill keeps a lone item one column wide on a wide screen.
+ */
+:where(.oods-grid[data-max-columns], [data-oods-component='Grid'][data-max-columns]) {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, max(var(--oods-grid-min-column, 16rem), (100% - (var(--oods-grid-columns) - 1) * var(--oods-layout-gap, var(--cmp-spacing-stack-default, 1rem))) / var(--oods-grid-columns))), 1fr));
+}
+
+:where(.oods-stack, [data-oods-component='Stack']) {
+  display: flex;
+  flex-direction: var(--oods-stack-direction, column);
+  flex-wrap: var(--oods-stack-wrap, nowrap);
+  gap: var(--oods-layout-gap, var(--cmp-spacing-stack-default, 1rem));
+  align-items: var(--oods-layout-align, stretch);
+  justify-content: var(--oods-layout-justify, flex-start);
+}
+
+/* s222-m02 (#2502 rulings 9 and 11): a table sits in a bordered container with the large control radius on the raised
+ * surface. Rows are 44px (36 dense) with 12px (8) cell padding at the small body size (14/20); the header is 500 in the
+ * muted colour; numbers align at the end in tabular figures; the caption is left-aligned above the header, or visually
+ * hidden when its table asks. */
+.oods-table__container {
+  box-sizing: border-box;
+  max-inline-size: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--sys-border-subtle, CanvasText);
+  border-radius: var(--sys-radius-control-lg, 8px);
+  background: var(--sys-surface-raised, Canvas);
+}
+
+:where(.oods-table, [data-oods-component='Table']) {
+  --oods-table-row-height: var(--sys-table-row-height, 2.75rem);
+  --oods-table-cell-padding-inline: var(--sys-table-cell-padding-inline, 0.75rem);
+  inline-size: 100%;
+  border-collapse: collapse;
+  background: var(--cmp-surface-panel, Canvas);
+  color: var(--cmp-text-body, CanvasText);
+  font-size: var(--sys-text-scale-body-sm-font-size, 14px);
+  line-height: var(--sys-text-scale-body-sm-line-height, 20px);
+}
+
+:where(.oods-table, [data-oods-component='Table'])[data-density='compact'] {
+  --oods-table-row-height: var(--sys-table-row-height-compact, 2.25rem);
+  --oods-table-cell-padding-inline: var(--sys-table-cell-padding-inline-compact, 0.5rem);
+}
+
+:where(.oods-table, [data-oods-component='Table'])[data-density='default'],
+:where(.oods-table, [data-oods-component='Table'])[data-density='comfortable'] {
+  --oods-table-row-height: var(--sys-table-row-height, 2.75rem);
+  --oods-table-cell-padding-inline: var(--sys-table-cell-padding-inline, 0.75rem);
+}
+
+:where(.oods-table, [data-oods-component='Table']) :is(th, td) {
+  box-sizing: border-box;
+  block-size: var(--oods-table-row-height);
+  padding: 0 var(--oods-table-cell-padding-inline);
+  border-block-end: 1px solid var(--cmp-border-default, currentColor);
+  text-align: start;
+  vertical-align: middle;
+}
+
+:where(.oods-table, [data-oods-component='Table']) th {
+  color: var(--sys-text-muted, GrayText);
+  font-weight: var(--sys-text-scale-label-font-weight, 500);
+}
+
+:where(.oods-table, [data-oods-component='Table']) :is(th, td)[data-numeric='true'] { text-align: end; font-variant-numeric: tabular-nums; }
+:where(.oods-table, [data-oods-component='Table']) tbody > tr:last-child > :is(th, td) { border-block-end: 0; }
+:where(.oods-table, [data-oods-component='Table']) tbody > tr[data-selectable='true']:hover { background: var(--sys-surface-subtle, Canvas); }
+
+/* A caption hidden on request stays the table's accessible name. */
+:where(.oods-table, [data-oods-component='Table']) > caption[data-visually-hidden='true'] { position: absolute; inline-size: 1px; block-size: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+
+:where(.oods-table, [data-oods-component='Table']) > caption {
+  padding: var(--sys-inset-sm, 0.75rem) var(--oods-table-cell-padding-inline);
+  border-block-end: 1px solid var(--cmp-border-default, currentColor);
+  color: var(--sys-text-primary, CanvasText);
+  font-weight: var(--sys-text-scale-heading-sm-font-weight, 600);
+  text-align: start;
+}
+
+/* A row's action is its first cell's text as a ghost button: no fill and no border, 500 weight, underlined on hover; the
+ * shared rule paints its focus. */
+:where(.oods-table-row-action) {
+  padding: 0;
+  border: 0;
+  border-radius: var(--sys-radius-control-sm, 4px);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: var(--sys-text-scale-label-font-weight, 500);
+  text-align: start;
+  text-underline-offset: 0.25em;
+  cursor: pointer;
+}
+
+:where(.oods-table-row-action):hover { text-decoration: underline; }
+
+/* s222-m02 (#2502 rulings 8 and 11): a tab is the label role (14/20 500; 16/24 at lg) in the secondary text colour; the
+ * selected tab takes the primary text and a 2px indicator in the brand's primary fill, laid over the list's hairline. */
+:where(.oods-tabs, [data-oods-component='Tabs']) {
+  --oods-tabs-font-size: var(--sys-text-scale-label-font-size, 14px);
+  --oods-tabs-line-height: var(--sys-text-scale-label-line-height, 20px);
+  --oods-tabs-padding-block: var(--cmp-tabs-padding-block, 0.625rem);
+  --oods-tabs-padding-inline: var(--cmp-tabs-padding-inline, 0.75rem);
+  color: var(--cmp-text-body, CanvasText);
+}
+
+:where(.oods-tabs, [data-oods-component='Tabs'])[data-size='sm'] {
+  --oods-tabs-padding-block: var(--cmp-tabs-padding-block-sm, 0.5rem);
+  --oods-tabs-padding-inline: var(--cmp-tabs-padding-inline-sm, 0.625rem);
+}
+
+:where(.oods-tabs, [data-oods-component='Tabs'])[data-size='md'] {
+  --oods-tabs-padding-block: var(--cmp-tabs-padding-block, 0.625rem);
+  --oods-tabs-padding-inline: var(--cmp-tabs-padding-inline, 0.75rem);
+}
+
+:where(.oods-tabs, [data-oods-component='Tabs'])[data-size='lg'] {
+  --oods-tabs-font-size: var(--sys-text-scale-body-md-font-size, 16px);
+  --oods-tabs-line-height: var(--sys-text-scale-body-md-line-height, 24px);
+  --oods-tabs-padding-block: var(--cmp-tabs-padding-block-lg, 0.75rem);
+  --oods-tabs-padding-inline: var(--cmp-tabs-padding-inline-lg, 1rem);
+}
+
+:where(.oods-tabs, [data-oods-component='Tabs']) [role='menu'] {
+  display: grid;
+  gap: var(--sys-control-gap-compact, 0.25rem);
+  padding: var(--sys-control-gap-compact, 0.25rem);
+  border: 1px solid var(--cmp-border-default, currentColor);
+  border-radius: var(--sys-radius-control-lg, 8px);
+  background: var(--cmp-surface-panel, Canvas);
+  box-shadow: var(--cmp-shadow-overlay-offset-x, 0px) var(--cmp-shadow-overlay-offset-y, 8px) var(--cmp-shadow-overlay-blur, 16px) var(--cmp-shadow-overlay-spread, -4px) var(--cmp-shadow-overlay-color, rgba(15, 23, 42, 0.24));
+}
+
+.oods-tab-list { display: flex; gap: 0; overflow-x: auto; border-block-end: 1px solid var(--cmp-border-default, currentColor); }
+.oods-tab { margin-block-end: -1px; padding: var(--oods-tabs-padding-block) var(--oods-tabs-padding-inline); border: 0; border-block-end: var(--cmp-tabs-indicator-width, 0.125rem) solid transparent; background: transparent; color: var(--sys-text-secondary, CanvasText); font: inherit; font-size: var(--oods-tabs-font-size); font-weight: var(--sys-text-scale-label-font-weight, 500); line-height: var(--oods-tabs-line-height); cursor: pointer; }
+.oods-tab:hover:not(:disabled) { color: var(--sys-text-primary, CanvasText); }
+.oods-tab:disabled { color: var(--sys-text-disabled, GrayText); cursor: not-allowed; }
+/* s224-m01 (#2542 ruling 2): the "More" trigger and its menu's items are tabs, not browser buttons: no border but the
+ * transparent indicator, no fill, the secondary text that hover raises to primary, and a pointer; the shared focus ring
+ * above covers both. The open menu overlays the panel under the trigger instead of growing the row: a list that holds
+ * the menu lets it out (its tabs were measured to fit), and a list without one still scrolls. */
+.tabs__overflow-trigger, .oods-tabs-overflow-trigger, :where(.oods-tabs__overflow, .oods-tabs-overflow) > [role='menu'] > [role='menuitem'] { padding: var(--oods-tabs-padding-block) var(--oods-tabs-padding-inline); border: 0; border-block-end: var(--cmp-tabs-indicator-width, 0.125rem) solid transparent; background: transparent; color: var(--sys-text-secondary, CanvasText); font: inherit; font-size: var(--oods-tabs-font-size); font-weight: var(--sys-text-scale-label-font-weight, 500); line-height: var(--oods-tabs-line-height); cursor: pointer; }
+.tabs__overflow-trigger, .oods-tabs-overflow-trigger { margin-block-end: -1px; }
+:where(.oods-tabs__overflow, .oods-tabs-overflow) > [role='menu'] > [role='menuitem'] { text-align: start; }
+:is(.tabs__overflow-trigger, .oods-tabs-overflow-trigger, :where(.oods-tabs__overflow, .oods-tabs-overflow) > [role='menu'] > [role='menuitem']):hover:not(:disabled) { color: var(--sys-text-primary, CanvasText); }
+:where(.oods-tabs__overflow, .oods-tabs-overflow) > [role='menu'] > [role='menuitem']:disabled { color: var(--sys-text-disabled, GrayText); cursor: not-allowed; }
+.oods-tab-list:has(> :is(.oods-tabs__overflow, .oods-tabs-overflow)) { overflow: visible; }
+:where(.oods-tabs__overflow, .oods-tabs-overflow) { position: relative; display: flex; flex: none; }
+:where(.oods-tabs__overflow, .oods-tabs-overflow) > [role='menu'] {
+  position: absolute;
+  inset-block-start: 100%;
+  inset-inline-end: 0;
+  z-index: var(--oods-z-overlay);
+  min-inline-size: max-content;
+  margin-block-start: var(--sys-control-gap-compact, 0.25rem);
+}
+.oods-tab[aria-selected='true'] { border-block-end-color: var(--sys-surface-interactive-primary-default, Highlight); color: var(--sys-text-primary, CanvasText); }
+.oods-tab-panel { padding-block: var(--cmp-spacing-stack-default, 1rem); }
+
+:where(.oods-text, [data-oods-component='Text']) {
+  color: var(--cmp-text-body, CanvasText);
+  font: inherit;
+}
+
+/* s222-m02 (#2502 ruling 8): the small and medium text sizes are the body roles, 14/20 and 16/24. */
+:where(.oods-text, [data-oods-component='Text'])[data-size='sm'] {
+  font-size: var(--sys-text-scale-body-sm-font-size, 14px);
+  line-height: var(--sys-text-scale-body-sm-line-height, 20px);
+}
+
+:where(.oods-text, [data-oods-component='Text'])[data-size='md'] {
+  font-size: var(--sys-text-scale-body-md-font-size, 16px);
+  line-height: var(--sys-text-scale-body-md-line-height, 24px);
+}
+
+:where(.oods-text, [data-oods-component='Text'])[data-size='lg'] {
+  font-size: var(--sys-text-size-lg, 18px);
+  line-height: var(--sys-text-line-height-standard, 1.4);
+}
+
+:where(.oods-text, [data-oods-component='Text'])[data-weight='regular'],
+:where(.oods-text, [data-oods-component='Text'])[data-weight='normal'] {
+  font-weight: var(--ref-typography-weights-regular, 400);
+}
+
+:where(.oods-text, [data-oods-component='Text'])[data-weight='medium'] {
+  font-weight: var(--ref-typography-weights-medium, 500);
+}
+
+:where(.oods-text, [data-oods-component='Text'])[data-weight='semibold'] {
+  font-weight: var(--ref-typography-weights-semibold, 600);
+}
+
+@media (max-width: 40rem) {
+  /* Generated single-screen layouts also need the workflow's phone reflow. */
+  [data-layout='sidebar'] { grid-template-columns: minmax(0, 1fr) !important; }
+  :where(.oods-banner, [data-oods-component='Banner']) { grid-template-columns: 1fr; }
+  :where(.oods-table, [data-oods-component='Table']):not([data-density]) { font-size: var(--sys-text-size-sm, 0.875rem); }
+}
+
+@media (forced-colors: active) {
+  /* s224-m01 (#2542 ruling 2): the "More" trigger and its menu's items keep the tab's colours, as the tab does. */
+  :where(.oods-badge, .oods-banner, .oods-button, .oods-card, .oods-field-control, .oods-tab, .oods-table,
+    .tabs__overflow-trigger, .oods-tabs-overflow-trigger, :is(.oods-tabs__overflow, .oods-tabs-overflow) > [role='menu'] > [role='menuitem']) {
+    forced-color-adjust: none;
+  }
+
+  :is([data-oods-component='ColorSwatch'], [data-oods-component='ColorizedBadge'], [data-oods-component='ArchivePill'], [data-oods-component='CancellationBadge'], [data-oods-component='OwnerBadge'], [data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge'], [data-oods-component='RoleBadgeList'], [data-oods-component='TagPills']) {
+    forced-color-adjust: none;
+    border-color: CanvasText;
+    background: Canvas;
+    color: CanvasText;
+  }
+
+  :where([data-oods-component='ColorSwatch']) > [data-oods-swatch-chip],
+  :where([data-oods-component='ColorizedBadge']) [data-oods-badge-marker] {
+    border-color: CanvasText;
+    background: CanvasText;
+  }
+
+  :where([data-oods-component='ColorizedBadge'], [data-oods-component='ArchivePill'], [data-oods-component='CancellationBadge'], [data-oods-component='OwnerBadge'], [data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge'], .oods-badge, [data-oods-component='RoleBadgeList'] [data-role-badge], [data-oods-component='TagPills'] :is([data-tag-pill], [data-tag-overflow])) {
+    box-shadow: inset 0 0 0 1px CanvasText;
+  }
+}
+
+/* s221-m02 (#2482 ruling 4): a theme works in any element, so an hc rule reaches only what hc themes most closely:
+ * never the inside of a panel that sets another theme within an hc page. The :where() adds no specificity. */
+[data-theme='hc'] :where([data-oods-component='ColorSwatch'], [data-oods-component='ColorizedBadge'], [data-oods-component='ArchivePill'], [data-oods-component='CancellationBadge'], [data-oods-component='OwnerBadge'], [data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge'], [data-oods-component='RoleBadgeList'], [data-oods-component='TagPills']):not(:where([data-theme='hc'] [data-theme]:not([data-theme='hc']) *)) {
+  border-color: CanvasText;
+  background: Canvas;
+  color: CanvasText;
+}
+
+/* s222-m02 (#2502 ruling 11): the badge families have no border, so their high-contrast outline is drawn inside the
+ * pill, as the Badge's is. */
+[data-theme='hc'] :where([data-oods-component='ColorizedBadge'], [data-oods-component='ArchivePill'], [data-oods-component='CancellationBadge'], [data-oods-component='OwnerBadge'], [data-oods-component='ClassificationBadge'], [data-oods-component='AddressSummaryBadge'], [data-oods-component='MessageStatusBadge'], [data-oods-component='PreferenceSummaryBadge'], [data-oods-component='RoleBadgeList'] [data-role-badge], [data-oods-component='TagPills'] :is([data-tag-pill], [data-tag-overflow]), [data-oods-component='StatusBadge'], [data-oods-component='PriceBadge']):not(:where([data-theme='hc'] [data-theme]:not([data-theme='hc']) *)) {
+  box-shadow: inset 0 0 0 1px CanvasText;
+}
+
+[data-theme='hc'] :where([data-oods-component='ColorSwatch']) > [data-oods-swatch-chip]:not(:where([data-theme='hc'] [data-theme]:not([data-theme='hc']) *)),
+[data-theme='hc'] :where([data-oods-component='ColorizedBadge']) [data-oods-badge-marker]:not(:where([data-theme='hc'] [data-theme]:not([data-theme='hc']) *)) {
+  border-color: CanvasText;
+  background: CanvasText;
+}
+
+/*
+ * High-contrast brand tokens intentionally flatten status surfaces to Canvas.
+ * Keep their foreground on the matching CanvasText system colour rather than
+ * HighlightText (which is only guaranteed against a Highlight background).
+ */
+[data-theme='hc'] :where(
+  .oods-banner,
+  [data-oods-component='Banner']
+):not(:where([data-theme='hc'] [data-theme]:not([data-theme='hc']) *)) {
+  border-color: CanvasText;
+  background: Canvas;
+  color: CanvasText;
+}
+
+/* s222-m02 (#2502 rulings 6 and 11): a badge has no border, so in high contrast its outline is drawn inside its box and
+ * the 20px height holds; subtle and solid both read CanvasText on Canvas. */
+[data-theme='hc'] :where(
+  .oods-badge,
+  [data-oods-component='Badge']
+):not(:where([data-theme='hc'] [data-theme]:not([data-theme='hc']) *)) {
+  background: Canvas;
+  color: CanvasText;
+  box-shadow: inset 0 0 0 1px CanvasText;
+}
+
+[data-theme='hc'] .oods-field-error:not(:where([data-theme='hc'] [data-theme]:not([data-theme='hc']) *)) {
+  color: CanvasText;
+}
+
+/* s222-m02: the banner's ghost dismiss takes the CanvasText outline every non-primary action has in high contrast. */
+[data-theme='hc'] .oods-banner-dismiss:not(:where([data-theme='hc'] [data-theme]:not([data-theme='hc']) *)) { border-color: CanvasText; }
+
+/* s222-m01 (#2502 ruling 6): in high contrast only the primary action is Highlight on HighlightText; every other intent is
+ * Canvas and CanvasText with a 1px CanvasText border, so the intents stay apart. */
+[data-theme='hc'] :where(.oods-button, [data-oods-component='Button']):not(:disabled):not(:where([data-theme='hc'] [data-theme]:not([data-theme='hc']) *)) {
+  border-color: CanvasText;
+  background: Canvas;
+  color: CanvasText;
+}
+
+[data-theme='hc'] :where(.oods-button, [data-oods-component='Button'])[data-intent='primary']:not(:disabled):not(:where([data-theme='hc'] [data-theme]:not([data-theme='hc']) *)) {
+  border-color: Highlight;
+  background: Highlight;
+  color: HighlightText;
+}
+
+[data-theme='hc'] :where(.oods-button, [data-oods-component='Button']):disabled:not(:where([data-theme='hc'] [data-theme]:not([data-theme='hc']) *)) {
+  border-color: GrayText;
+  background: Canvas;
+  color: GrayText;
+}
+
+@media (forced-colors: active) {
+  :is([data-oods-component='AddressCollectionPanel'], [data-oods-component='ClassificationPanel'], [data-oods-component='MembershipPanel'], [data-oods-component='PreferencePanel'], [data-oods-component='FilterPanel'], [data-oods-component='ArchiveSummary'], [data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary'], [data-oods-component='TagManager'], [data-oods-component='AddressValidationTimeline'], [data-oods-component='MembershipAuditTimeline'], [data-oods-component='MessageEventTimeline'], [data-oods-component='PreferenceTimeline'], [data-oods-component='AuditEvent'], [data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='StatusSelector'], [data-oods-component='TagInput'], [data-oods-component='TemplatePicker']) {
+    forced-color-adjust: none;
+    border-color: CanvasText;
+    background: Canvas;
+    color: CanvasText;
+  }
+}
+
+[data-theme='hc'] :where([data-oods-component='AddressCollectionPanel'], [data-oods-component='ClassificationPanel'], [data-oods-component='MembershipPanel'], [data-oods-component='PreferencePanel'], [data-oods-component='FilterPanel'], [data-oods-component='ArchiveSummary'], [data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary'], [data-oods-component='TagManager'], [data-oods-component='AddressValidationTimeline'], [data-oods-component='MembershipAuditTimeline'], [data-oods-component='MessageEventTimeline'], [data-oods-component='PreferenceTimeline'], [data-oods-component='AuditEvent'], [data-oods-component='AddressEditor'], [data-oods-component='CancellationForm'], [data-oods-component='ClassificationEditor'], [data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='StatusSelector'], [data-oods-component='TagInput'], [data-oods-component='TemplatePicker']):not(:where([data-theme='hc'] [data-theme]:not([data-theme='hc']) *)) {
+  border-color: CanvasText;
+  background: Canvas;
+  color: CanvasText;
+}
+
+/* Former ported families share the canonical root stylesheet. */
+:where(
+  [data-oods-component='StatusBadge'],
+  [data-oods-component='PriceBadge']
+) {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cmp-badge-gap, 0.25rem);
+  min-block-size: var(--cmp-badge-height, 1.25rem);
+  box-sizing: border-box;
+  padding: var(--cmp-badge-padding-block, 0.125rem) var(--cmp-badge-padding-inline, 0.5rem);
+  border: 0;
+  border-radius: var(--cmp-badge-radius, 999px);
+  background: var(--cmp-badge-background, var(--cmp-surface-subtle, transparent));
+  color: var(--cmp-badge-text, var(--cmp-text-body, currentColor));
+  font-size: var(--cmp-badge-font-size, 12px);
+  font-weight: var(--cmp-badge-font-weight, 500);
+  line-height: var(--sys-text-scale-caption-line-height, 16px);
+  white-space: nowrap;
+}
+
+:where([data-oods-component='StatusBadge'])[data-status='active']:not([data-tone]),
+:where([data-oods-component='StatusBadge'])[data-status='success']:not([data-tone]) {
+  --cmp-badge-background: var(--sys-status-success-surface, Canvas);
+  --cmp-badge-border: var(--sys-status-success-border, currentColor);
+  --cmp-badge-text: var(--sys-status-success-text, CanvasText);
+}
+
+:where([data-oods-component='StatusBadge'])[data-status='past_due']:not([data-tone]),
+:where([data-oods-component='StatusBadge'])[data-status='warning']:not([data-tone]) {
+  --cmp-badge-background: var(--sys-status-warning-surface, Canvas);
+  --cmp-badge-border: var(--sys-status-warning-border, currentColor);
+  --cmp-badge-text: var(--sys-status-warning-text, CanvasText);
+}
+
+:where([data-oods-component='StatusBadge'])[data-status='cancelled']:not([data-tone]),
+:where([data-oods-component='StatusBadge'])[data-status='error']:not([data-tone]) {
+  --cmp-badge-background: var(--sys-status-critical-surface, Canvas);
+  --cmp-badge-border: var(--sys-status-critical-border, currentColor);
+  --cmp-badge-text: var(--sys-status-critical-text, CanvasText);
+}
+
+:where(
+  [data-oods-component='StatusTimeline'],
+  [data-oods-component='AuditTimeline']
+) {
+  display: grid;
+  gap: var(--cmp-spacing-stack-md, 1rem);
+  color: var(--cmp-text-body, CanvasText);
+}
+
+:where(
+  [data-oods-component='StatusTimeline'],
+  [data-oods-component='AuditTimeline']
+) :where(ol, ul) {
+  display: grid;
+  gap: var(--cmp-spacing-stack-sm, 0.75rem);
+  margin: 0;
+  padding-inline-start: var(--cmp-spacing-stack-lg, 1.5rem);
+}
+
+:where(
+  [data-oods-component='StatusTimeline'],
+  [data-oods-component='AuditTimeline']
+) :where(article, li) {
+  border-inline-start: var(--ref-border-width-bold, 2px) solid var(--cmp-border-subtle, currentColor);
+  padding-inline-start: var(--cmp-spacing-inline-sm, 0.75rem);
+}
+
+:where([data-oods-component='CancellationSummary']) {
+  display: grid;
+  gap: var(--cmp-spacing-stack-sm, 0.75rem);
+  padding: var(--sys-card-padding, 1.5rem);
+  border: 1px solid var(--cmp-border-default, currentColor);
+  border-radius: var(--cmp-card-radius, 0.75rem);
+  background: var(--cmp-surface-panel, Canvas);
+  color: var(--cmp-text-body, CanvasText);
+}
+
+:where([data-oods-component='CancellationSummary']) :where(dl, [data-summary-fields]) {
+  display: grid;
+  grid-template-columns: minmax(max-content, 1fr) minmax(0, 2fr);
+  gap: var(--cmp-spacing-stack-xs, 0.5rem) var(--cmp-spacing-inline-md, 1rem);
+  margin: 0;
+}
+
+:where([data-oods-component='CancellationSummary']) :where(dt, [data-summary-term]) {
+  font-weight: var(--ref-typography-weights-semibold, 600);
+}
+
+:where([data-oods-component='CancellationSummary']) :where(dd, [data-summary-value]) {
+  margin: 0;
+}
+
+:where([data-oods-component='SearchInput']) {
+  display: flex;
+  align-items: center;
+  gap: var(--cmp-spacing-inline-xs, 0.5rem);
+}
+
+:where([data-oods-component='SearchInput']) input[type='search'] {
+  inline-size: 100%;
+  box-sizing: border-box;
+  min-block-size: var(--sys-control-height-md, 2rem);
+  padding: 0 var(--cmp-input-padding-inline, 0.75rem);
+  border: 1px solid var(--cmp-input-border, var(--cmp-border-default, currentColor));
+  border-radius: var(--cmp-input-radius, 6px);
+  background: var(--cmp-input-background, Canvas);
+  color: var(--cmp-input-text, CanvasText);
+  font: inherit;
+  font-size: var(--sys-text-scale-body-sm-font-size, 14px);
+  line-height: var(--sys-text-scale-body-sm-line-height, 20px);
+}
+
+/* s222-m02 (#2502 ruling 11): search and pagination buttons are the outline button at the control height; a page
+ * number is square. */
+:where([data-oods-component='SearchInput']) button,
+:where([data-oods-component='PaginationBar']) button {
+  display: inline-flex;
+  box-sizing: border-box;
+  min-inline-size: var(--cmp-button-height, 2rem);
+  min-block-size: var(--cmp-button-height, 2rem);
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--cmp-button-padding-inline-sm, 0.625rem);
+  border: 1px solid var(--sys-border-strong, CanvasText);
+  border-radius: var(--cmp-button-radius, 6px);
+  background: var(--sys-surface-raised, Canvas);
+  color: var(--sys-text-primary, CanvasText);
+  font: inherit;
+  font-size: var(--sys-text-scale-label-font-size, 14px);
+  font-weight: var(--sys-text-scale-label-font-weight, 500);
+  line-height: var(--sys-text-scale-label-line-height, 20px);
+  cursor: pointer;
+}
+
+:where([data-oods-component='SearchInput'], [data-oods-component='PaginationBar']) button:hover:not(:disabled) { background: var(--sys-surface-interactive-secondary-default, Canvas); }
+:where([data-oods-component='SearchInput'], [data-oods-component='PaginationBar']) button > svg { flex: none; inline-size: var(--sys-control-icon-size, 1rem); block-size: var(--sys-control-icon-size, 1rem); }
+:where([data-oods-component='PaginationBar']) button[aria-current='page'] {
+  border-color: transparent;
+  background: var(--sys-surface-interactive-primary-default, Highlight);
+  color: var(--sys-text-on-interactive, HighlightText);
+}
+
+:where([data-oods-component='PaginationBar']) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--cmp-spacing-inline-sm, 0.75rem);
+  color: var(--cmp-text-body, CanvasText);
+}
+
+:where([data-oods-component='PaginationBar']) button:disabled {
+  border-color: var(--sys-border-subtle, GrayText);
+  background: var(--sys-surface-disabled, Canvas);
+  color: var(--cmp-button-text-disabled, GrayText);
+  cursor: not-allowed;
+}
+
+/* Narrow widths: the record count and range share the first line; the page controls stay together on the second. */
+@media (max-width: 600px) {
+  :where([data-oods-component='PaginationBar']) {
+    display: grid;
+    grid-template-columns: auto auto auto minmax(0, 1fr);
+    grid-template-areas: 'count count range range' 'prev pages next current';
+    align-items: center;
+    justify-items: start;
+    row-gap: var(--cmp-spacing-stack-xs, 0.5rem);
+  }
+  :where([data-oods-component='PaginationBar']) [data-pagination-count] { grid-area: count; }
+  :where([data-oods-component='PaginationBar']) [data-pagination-range] { grid-area: range; justify-self: end; }
+  :where([data-oods-component='PaginationBar']) [data-pagination-prev] { grid-area: prev; }
+  :where([data-oods-component='PaginationBar']) .oods-pagination-bar__pages { grid-area: pages; }
+  :where([data-oods-component='PaginationBar']) [data-pagination-next] { grid-area: next; }
+  :where([data-oods-component='PaginationBar']) [data-pagination-current] { grid-area: current; }
+  :where([data-oods-component='PaginationBar']) label { grid-column: 1 / -1; }
+}
+
+:where([data-oods-component='RelativeTimestamp']) {
+  color: var(--cmp-text-muted, GrayText);
+  font-size: var(--sys-text-size-sm, 0.875rem);
+}
+
+
+@media (forced-colors: active) {
+  :where(
+    [data-oods-component='StatusBadge'],
+    [data-oods-component='PriceBadge'],
+    [data-oods-component='CancellationSummary'],
+    [data-oods-component='SearchInput'] input,
+    [data-oods-component='PaginationBar'] button
+  ) {
+    forced-color-adjust: none;
+    border-color: CanvasText;
+    background: Canvas;
+    color: CanvasText;
+  }
+}
+
+/* Fresh composition naming families share the same semantic token cascade. */
+:where([data-oods-component='LabelCell'], [data-oods-component='InlineLabel'], [data-oods-component='FormLabelGroup']) {
+  --cmp-text-primary: var(--sys-text-primary);
+  color: var(--cmp-text-primary, CanvasText);
+  font: inherit;
+}
+:where([data-oods-component='LabelCell'], [data-oods-component='FormLabelGroup']) {
+  display: inline-flex;
+  flex-direction: column;
+  gap: var(--sys-spacing-stack-compact, 0.75rem);
+}
+:where([data-oods-component='LabelCell']) [data-oods-label-cell-description],
+:where([data-oods-component='FormLabelGroup']) [data-oods-form-hint] {
+  color: var(--cmp-text-secondary, GrayText);
+  font-size: var(--sys-text-size-sm, 0.875rem);
+}
+:where([data-oods-form-label]) { font-weight: var(--ref-typography-weights-medium, 500); }
+
+:where([data-oods-component='LabelCell'], [data-oods-component='FormLabelGroup']) {
+  --cmp-text-secondary: var(--sys-text-secondary);
+}
+
+:where([data-oods-component='PriceCardMeta'], [data-oods-component='OwnershipMeta']) {
+  --cmp-meta-text: var(--sys-text-primary);
+  --cmp-meta-label: var(--sys-text-secondary);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--cmp-spacing-inline-sm, 0.75rem);
+  color: var(--cmp-meta-text, CanvasText);
+}
+:where([data-oods-component='PriceCardMeta'], [data-oods-component='OwnershipMeta']) [data-meta-title],
+:where([data-oods-component='PriceCardMeta'], [data-oods-component='OwnershipMeta']) strong {
+  color: var(--cmp-meta-label, CanvasText);
+  font-weight: var(--ref-typography-weights-semibold, 600);
+}
+/* Billable list/form surfaces share the trait's semantic token roles. */
+[data-oods-component='BillingSummaryBadge'] {
+  display: inline-block;
+  flex-shrink: 0;
+  white-space: nowrap;
+  color: var(--cmp-billing-amount-text, var(--sys-text-strong));
+  font-variant-numeric: tabular-nums;
+}
+:where([data-oods-component='BillingAmountInput'], [data-oods-component='BillingIntervalSelector']) {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+  color: var(--cmp-billing-amount-text, var(--sys-text-strong));
+}
+:where([data-oods-component='BillingAmountInput'], [data-oods-component='BillingIntervalSelector']) > span {
+  color: var(--cmp-billing-currency-text, var(--sys-text-subtle));
+}
+:where([data-oods-component='BillingAmountInput'], [data-oods-component='BillingIntervalSelector']) > input,
+:where([data-oods-component='BillingAmountInput'], [data-oods-component='BillingIntervalSelector']) > select {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  min-block-size: var(--sys-control-height-md);
+  padding: 0 var(--space-3);
+  font: inherit;
+  font-size: var(--sys-text-scale-body-sm-font-size);
+  line-height: var(--sys-text-scale-body-sm-line-height);
+  color: inherit;
+  background: var(--sys-surface-raised);
+  border: 1px solid var(--sys-border-interactive);
+  border-radius: var(--radius-md);
+}
+:where([data-oods-component='BillingAmountInput'], [data-oods-component='BillingIntervalSelector']) > select {
+  color: var(--cmp-billing-interval-text, var(--sys-text-subtle));
+}
+:where([data-oods-component='BillingAmountInput'], [data-oods-component='BillingIntervalSelector']) > [aria-invalid='true'] {
+  border-color: var(--sys-status-critical-icon);
+}
+:where([data-oods-component='BillingAmountInput'], [data-oods-component='BillingIntervalSelector']) > [role='alert'] {
+  color: var(--sys-status-critical-text);
+  margin: 0;
+}
+
+/* Billable cycle/payment and Archivable row surfaces. */
+[data-oods-component='CycleProgressCard'],
+:where([data-oods-component='PaymentTimeline'], [data-oods-component='PaymentEventTimeline']) {
+  min-width: 0;
+  padding: var(--sys-card-padding, 1.5rem);
+  border: 1px solid var(--sys-border-default, GrayText);
+  border-radius: var(--cmp-card-radius, 0.75rem);
+  background: var(--sys-surface-default, Canvas);
+  color: var(--cmp-billing-timeline-text, var(--sys-text-default, CanvasText));
+}
+[data-oods-component='CycleProgressCard'] h2,
+:where([data-oods-component='PaymentTimeline'], [data-oods-component='PaymentEventTimeline']) h2 { margin: 0 0 var(--space-3, 0.75rem); font-size: var(--sys-text-scale-heading-md-font-size, 18px); font-weight: var(--sys-text-scale-heading-md-font-weight, 600); line-height: var(--sys-text-scale-heading-md-line-height, 24px); }
+[data-oods-component='CycleProgressCard'] p,
+:where([data-oods-component='PaymentTimeline'], [data-oods-component='PaymentEventTimeline']) p { margin: var(--space-2, 0.5rem) 0; }
+/* s213-m01: the track takes the border role, so the whole cycle reads against the card in both themes (raised surface
+   was whiter than the light card, 1.04:1) while the accent fill keeps at least 3:1 against it. s222-m01: the strong
+   border, since the neutral-first subtle border (#e5e5e5) is 1.26:1 on a white card. */
+[data-oods-component='CycleProgressCard'] progress {
+  width: 100%;
+  height: var(--cmp-billing-cycle-progress-height, 0.5rem);
+  appearance: none;
+  border: 0;
+  border-radius: var(--sys-radius-control, 6px);
+  overflow: hidden;
+  background: var(--sys-border-strong, Canvas);
+  color: var(--cmp-billing-cycle-progress-fill, var(--sys-text-accent, Highlight));
+}
+[data-oods-component='CycleProgressCard'] progress::-webkit-progress-bar {
+  background: var(--sys-border-strong, Canvas);
+}
+[data-oods-component='CycleProgressCard'] progress::-webkit-progress-value {
+  background: var(--cmp-billing-cycle-progress-fill, var(--sys-text-accent, Highlight));
+}
+[data-oods-component='CycleProgressCard'] progress::-moz-progress-bar {
+  background: var(--cmp-billing-cycle-progress-fill, var(--sys-text-accent, Highlight));
+}
+@media (forced-colors: active) {
+  [data-oods-component='CycleProgressCard'] progress { background: Canvas; color: Highlight; border: 1px solid CanvasText; forced-color-adjust: none; }
+  [data-oods-component='CycleProgressCard'] progress::-webkit-progress-bar { background: Canvas; }
+  [data-oods-component='CycleProgressCard'] progress::-webkit-progress-value { background: Highlight; }
+  [data-oods-component='CycleProgressCard'] progress::-moz-progress-bar { background: Highlight; }
+}
+.oods-billing-muted { color: var(--sys-text-subtle, GrayText); }
+:where([data-oods-component='PaymentTimeline'], [data-oods-component='PaymentEventTimeline']) ol { list-style: decimal outside; margin: var(--space-4, 1rem) 0 0; padding-left: var(--space-4, 1rem); }
+:where([data-oods-component='PaymentTimeline'], [data-oods-component='PaymentEventTimeline']) li { padding: var(--space-2, 0.5rem) 0; }
+:where([data-oods-component='PaymentTimeline'], [data-oods-component='PaymentEventTimeline']) li > strong { display: block; }
+[data-oods-component='BillingCardMeta'] {
+  color: var(--cmp-billing-amount-text, var(--sys-text-strong, CanvasText));
+  font-variant-numeric: tabular-nums;
+}
+[data-oods-component='ArchivedRowOverlay'] { display: contents; }
+[data-oods-component='ArchivedRowOverlay'][data-archived='true'] {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: var(--space-2, 0.5rem);
+  /* Retain archived dimming without dropping its label below 4.5:1. */
+  opacity: var(--status-archive-overlay-opacity, 0.7);
+}
+[data-oods-component='ArchivedRowOverlay'] > .oods-collection-row { flex: 1; min-width: 0; }
+/* The archived card owns both the interactive row and its status badge. */
+[data-oods-component='ArchivedRowOverlay'][data-archived='true']:has(> .oods-collection-row) {
+  box-sizing: border-box;
+  border: 1px solid var(--sys-border-strong, CanvasText);
+  border-radius: var(--cmp-button-radius, 6px);
+  background: var(--sys-surface-raised, Canvas);
+  padding-inline-end: var(--space-4, 1rem);
+}
+[data-oods-component='ArchivedRowOverlay'][data-archived='true'] > .oods-collection-row { border: 0; background: transparent; }
+/* s222-m02 (#2502 ruling 11): the archive mark is a badge: a 20px pill at 12/500. */
+.oods-archive-badge {
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-block-size: var(--cmp-badge-height, 1.25rem);
+  white-space: nowrap;
+  flex-shrink: 0;
+  padding: var(--cmp-badge-padding-block, 0.125rem) var(--cmp-badge-padding-inline, 0.5rem);
+  border-radius: var(--cmp-badge-radius, 999px);
+  font-size: var(--cmp-badge-font-size, 12px);
+  font-weight: var(--cmp-badge-font-weight, 500);
+  line-height: var(--sys-text-scale-caption-line-height, 16px);
+  color: var(--status-archive-text, var(--sys-text-primary));
+  background: var(--status-archive-bg, var(--sys-surface-raised));
+}
+
+[data-oods-component='CancellationSummary'] dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: var(--space-4, 1rem);
+}
+[data-oods-component='CancellationSummary'] [data-summary-item] { min-width: 0; }
+[data-oods-component='CancellationSummary'] dd { margin: 0; overflow-wrap: break-word; }
+/* s222-m02 (#2502 ruling 11): help text is muted at 14/20 and spaced by its field's gap, not by margins of its own. */
+.oods-field-help { display: block; margin: 0; font-size: var(--sys-text-scale-body-sm-font-size, 14px); line-height: var(--sys-text-scale-body-sm-line-height, 20px); color: var(--sys-text-muted, GrayText); }
+.oods-cancellation-form { margin: 0; min-width: 0; }
+.oods-field:has(input[type='checkbox']) { display: block; }
+.oods-field label:has(input[type='checkbox']) { display: flex; flex-direction: row; align-items: center; gap: var(--cmp-checkbox-gap, 0.5rem); }
+
+/* Generated collection screens share one row/event presentation in both frameworks. */
+.oods-collection { list-style: none; margin: var(--cmp-spacing-stack-md, 1rem) 0; padding: 0; display: grid; gap: var(--cmp-spacing-stack-xs, 0.5rem); }
+[data-oods-collection-toolbar] { flex-wrap: wrap; min-width: 0; }
+[data-oods-collection-toolbar] > [data-oods-component='SearchInput'],
+[data-oods-collection-toolbar] > [data-oods-component='Select'],
+[data-oods-collection-toolbar] > .oods-field:has(select),
+.workflow-content [data-oods-collection-toolbar] > [data-oods-component='SearchInput'],
+.workflow-content [data-oods-collection-toolbar] > [data-oods-component='Select'],
+.workflow-content [data-oods-collection-toolbar] > .oods-field:has(select) { flex: 1 1 180px; min-width: min(180px, 100%); }
+[data-oods-collection-toolbar] select { width: 100%; box-sizing: border-box; }
+/* s222-m02: the toolbar's stack reads in the brand's own sans (it named the shared reference family, which is not brand B's). */
+[data-oods-component='Stack']:has(> [data-oods-collection-toolbar]) { font-family: var(--sys-font-sans); }
+.oods-collection-row { --oods-button-background: var(--sys-surface-raised); --oods-button-background-hover: var(--sys-surface-subtle); --oods-button-border: var(--sys-border-subtle); --oods-button-text: var(--sys-text-primary); width: 100%; display: flex; flex-wrap: wrap; white-space: normal; align-items: center; gap: var(--cmp-spacing-inline-sm, 0.75rem); text-align: left; padding: var(--cmp-spacing-inset-default, 1rem); }
+[data-theme='hc'] .oods-collection-row:not(:disabled):not(:where([data-theme='hc'] [data-theme]:not([data-theme='hc']) *)) { background: var(--sys-surface-raised); color: var(--sys-text-primary); }
+.oods-collection-row > :first-child { min-width: 0; flex: 1 1 140px; font-weight: var(--ref-typography-weights-semibold, 600); }
+.oods-collection-row .oods-badge { max-width: 100%; width: fit-content; flex: 0 0 auto; text-transform: none; letter-spacing: normal; }
+[data-oods-collection="events"] time { display: block; margin-top: var(--cmp-spacing-stack-xs, 0.5rem); font-size: var(--sys-text-size-sm, 0.875rem); }
+.oods-pagination-bar__pages { display: flex; gap: var(--sys-control-gap-tight, 0.375rem); list-style: none; margin: 0; padding: 0; }
+@media (max-width: 600px) { .oods-collection-row { flex-direction: column; align-items: flex-start; } .oods-collection-row > :first-child { flex-basis: auto; width: 100%; } }
+
+:where(.oods-audit-summary, [data-oods-component='AuditSummaryCard']) { padding: var(--sys-card-padding); border: 1px solid var(--cmp-border-default); border-radius: var(--cmp-card-radius); background: var(--cmp-surface-panel); color: var(--cmp-text-body); }
+.oods-audit-summary h2 { margin-top: 0; font-size: var(--sys-text-scale-heading-md-font-size); font-weight: var(--sys-text-scale-heading-md-font-weight); line-height: var(--sys-text-scale-heading-md-line-height); }
+.oods-audit-summary dl { display: grid; grid-template-columns: auto 1fr; gap: var(--cmp-spacing-inline-sm); }
+.oods-audit-summary dd { margin: 0; }
+:where(.oods-sort-indicator, [data-oods-component='SortIndicator']) { border-collapse: collapse; color: var(--cmp-text-body); }
+.oods-sort-indicator button { box-sizing: border-box; min-block-size: var(--cmp-button-height-sm); padding: 0 var(--cmp-button-padding-inline-sm); background: var(--sys-surface-raised); color: var(--cmp-text-body); border: 1px solid var(--sys-border-strong); border-radius: var(--cmp-button-radius); font: inherit; font-size: var(--sys-text-scale-label-font-size); font-weight: var(--sys-text-scale-label-font-weight); line-height: var(--sys-text-scale-label-line-height); cursor: pointer; }
+[data-oods-component='TimelineEntryLabel'] { color: var(--cmp-text-body); }
+
+.oods-trait-recipe, :where([data-oods-component='ArchiveEvent'], [data-oods-component='CancellationEvent'], [data-oods-component='ColorStatePicker'], [data-oods-component='CommunicationDetailPanel'], [data-oods-component='GeoFieldMappingForm'], [data-oods-component='GeocodablePreview'], [data-oods-component='StateTransitionEvent'], [data-oods-component='StatusColorLegend'], [data-oods-component='VizAreaControls'], [data-oods-component='VizAxisControls'], [data-oods-component='VizAxisSummary'], [data-oods-component='VizColorControls'], [data-oods-component='VizColorLegendConfig'], [data-oods-component='VizHeatmapControls'], [data-oods-component='VizLineControls'], [data-oods-component='VizMarkControls'], [data-oods-component='VizOpacityControls'], [data-oods-component='VizOpacitySummary'], [data-oods-component='VizPointControls'], [data-oods-component='VizScaleControls'], [data-oods-component='VizScaleSummary'], [data-oods-component='VizScatterControls'], [data-oods-component='VizShapeControls'], [data-oods-component='VizShapeLegend'], [data-oods-component='VizSizeControls'], [data-oods-component='VizSizeSummary']) { min-width: 0; margin: 0; padding: var(--sys-card-padding); border: 1px solid var(--cmp-border-default); border-radius: var(--cmp-card-radius); background: var(--cmp-surface-panel); color: var(--cmp-text-body); overflow-wrap: anywhere; }
+.oods-trait-recipe h2 { margin-top: 0; font-size: var(--sys-text-scale-heading-md-font-size); font-weight: var(--sys-text-scale-heading-md-font-weight); line-height: var(--sys-text-scale-heading-md-line-height); }
+.oods-trait-recipe dd { margin: 0 0 var(--cmp-spacing-inline-sm); }
+.oods-trait-recipe dt { font-weight: var(--ref-typography-weights-semibold, 600); }
+.oods-trait-recipe .oods-field { margin-block: var(--cmp-spacing-inline-sm); }
+.oods-geo-resolution, :where([data-oods-component='GeoResolutionBadge'], [data-oods-component='VizEncodingBadge'], [data-oods-component='VizRoleBadge']) { color: var(--cmp-text-body); }
+
+.oods-viz-swatches { display: flex; flex-wrap: wrap; gap: var(--cmp-spacing-inline-sm) var(--cmp-spacing-inset-default); }
+
+/* Producer-owned read fields stay labelled and readable in every context. */
+[data-oods-component='Stack'][id$='-read-field'] { gap: var(--sys-control-gap-compact, 0.25rem); min-width: 0; }
+[data-oods-component='Stack'][id$='-read-fields'] { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: var(--sys-space-scale-lg, 24px); }
+[data-oods-component='Stack'][id$='-read-fields'] > :not([id$='-read-field']) { grid-column: 1 / -1; }
+[data-oods-component='Stack'][id$='-read-field'] > :first-child { color: var(--sys-text-secondary); }
+[data-oods-component='Stack'][id$='-read-field'] > :last-child { overflow-wrap: anywhere; align-self: flex-start; max-width: 100%; }
+/* s213-m03: a declared major-unit amount reads through PriceBadge in a detail row; its pill hugs the amount instead of
+   stretching across the row. */
+[data-oods-component='Stack'][id$='-read-field'] > [data-oods-component='PriceBadge'] { align-self: flex-start; }
+/* s221-m02 (#2482 ruling 7; the website's Warehouse, message dfc707d1): at desktop width a panel of read-only rows uses
+ * the room, in two columns. The panel's stack layout is inline in the generated source, so display is overridden here
+ * and the generated source does not move. */
+@media (min-width: 48rem) {
+  [data-oods-component='Stack']:has(> [data-oods-component='Stack'][id$='-read-field']):not([id$='-read-fields']) {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+  [data-oods-component='Stack']:has(> [data-oods-component='Stack'][id$='-read-field']):not([id$='-read-fields']) > :not([id$='-read-field']) { grid-column: 1 / -1; }
+}
+[data-oods-component='StatusBadge'] { text-transform: none; letter-spacing: normal; width: fit-content; }
+
+/* Keep the frozen ported block intact; current recipe roles follow semantic fallbacks. */
+:where([data-oods-component='CancellationSummary']) {
+  display: grid;
+  gap: var(--cmp-spacing-stack-sm, 0.75rem);
+  padding: var(--sys-card-padding, 1.5rem);
+  border: 1px solid var(--cmp-border-default, var(--sys-border-subtle));
+  border-radius: var(--cmp-card-radius, 0.75rem);
+  background: var(--cmp-surface-panel, var(--sys-surface-raised));
+  color: var(--cmp-text-body, var(--sys-text-primary));
+}
+
+/* Form labels and required marks share one line in both framework field frames. */
+.form-field__label,
+.oods-field > .oods-field-label {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sys-control-gap-compact, 0.25rem);
+}
+.oods-field.oods-checkbox,
+div.oods-field[data-oods-component='Checkbox'] { display: grid; grid-template-columns: minmax(0, 1fr); }
+.oods-field.oods-checkbox > label,
+.oods-field > label.oods-checkbox { display: flex; align-items: center; gap: var(--cmp-checkbox-gap, 0.5rem); }
+/* s222-m02 (#2502 ruling 9): a checkbox or radio is 16px, the control icon size, in every component; its help text lines up
+ * with its label. (It read an undefined --cmp-input-height and fell back to 48px.) */
+:is(input[data-oods-component='Checkbox'], [data-oods-component] input:is([type='checkbox'], [type='radio']), .oods-field input:is([type='checkbox'], [type='radio'])) {
+  margin: 0;
+  flex: 0 0 auto;
+  inline-size: var(--sys-control-icon-size, 1rem);
+  block-size: var(--sys-control-icon-size, 1rem);
+  accent-color: var(--cmp-checkbox-background-checked, Highlight);
+}
+.oods-field.oods-checkbox > .oods-field-help,
+.oods-field.oods-checkbox > .oods-field-error { padding-inline-start: calc(var(--sys-control-icon-size, 1rem) + var(--cmp-checkbox-gap, 0.5rem)); }
+.workflow-field > input { width: 100%; min-width: 0; box-sizing: border-box; font: inherit; }
+
+/* Catalog choices may have long labels; form grids must shrink with their screen. */
+:where([data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TemplatePicker']) { min-inline-size: 0; max-inline-size: 100%; box-sizing: border-box; }
+:where([data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TemplatePicker']) :is([data-form-content], [data-form-control]) { min-inline-size: 0; }
+:where([data-oods-component='PreferenceEditor'], [data-oods-component='RoleAssignmentForm'], [data-oods-component='TemplatePicker']) :is(select, input, textarea) { min-inline-size: 0; inline-size: 100%; max-inline-size: 100%; box-sizing: border-box; }
+
+/* s211-m02: one left edge. A generated page (the main landmark a standalone screen renders in) insets everything it
+ * places by the page gutter, and the composer's page-level regions carry no side padding of their own, so a heading,
+ * the controls under it and the cards below share one edge. The page's own heading reads as a detail page's does. */
+[data-oods-shell] { display: block; box-sizing: border-box; padding: var(--sys-page-gutter, 1.5rem); }
+/* s222-m02 (#2502 ruling 8): the page title is heading-xl (30/36 600), as a detail page's is. */
+[data-oods-shell-heading] {
+  margin: 0 0 var(--sys-stack-lg, 1.5rem);
+  font-size: var(--sys-text-scale-heading-xl-font-size, 30px);
+  font-weight: var(--sys-text-scale-heading-xl-font-weight, 600);
+  line-height: var(--sys-text-scale-heading-xl-line-height, 36px);
+  letter-spacing: var(--sys-text-scale-heading-xl-letter-spacing);
+}
+
+/* s211-m02: a tab label never breaks inside a word ("Ru/n" at 390); a list with more tabs than fit scrolls instead, and
+ * the tabs never widen the flex or grid container they sit in. */
+.oods-tab { white-space: nowrap; flex: none; }
+:where(.oods-tabs, [data-oods-component='Tabs']) { min-inline-size: 0; }
+
+/* s211-m02: a status or audit timeline reads as one compact list: no browser paragraph margins, one rule beside each
+ * event (on the event, not also on its list item) and a quieter time under its label. The frozen block above stays. */
+:where([data-oods-component='StatusTimeline'], [data-oods-component='AuditTimeline']) { gap: var(--sys-stack-sm, 0.75rem); }
+:where([data-oods-component='StatusTimeline'], [data-oods-component='AuditTimeline']) > :is(h2, p) { margin: 0; }
+:where([data-oods-component='StatusTimeline'], [data-oods-component='AuditTimeline']) > h2 { font-size: var(--sys-text-scale-heading-md-font-size, 18px); font-weight: var(--sys-text-scale-heading-md-font-weight, 600); line-height: var(--sys-text-scale-heading-md-line-height, 24px); }
+:where([data-oods-component='StatusTimeline'], [data-oods-component='AuditTimeline']) ol { list-style: none; padding-inline-start: 0; }
+:where([data-oods-component='StatusTimeline'], [data-oods-component='AuditTimeline']) li { border-inline-start: 0; padding-inline-start: 0; }
+:where([data-oods-component='StatusTimeline'], [data-oods-component='AuditTimeline']) article {
+  display: grid;
+  gap: var(--sys-stack-xs, 0.5rem);
+  border-inline-start: var(--ref-border-width-bold, 2px) solid var(--sys-border-subtle, currentColor);
+  padding-inline-start: var(--cmp-spacing-inline-sm, 0.75rem);
+}
+:where([data-oods-component='StatusTimeline'], [data-oods-component='AuditTimeline']) article p { margin: 0; }
+:where([data-oods-component='StatusTimeline'], [data-oods-component='AuditTimeline']) article time { color: var(--sys-text-secondary, GrayText); font-size: var(--sys-text-size-sm, 0.875rem); }
+
+/* s211-m02: a screen's actions sit together in one bar of design-system buttons. */
+.oods-action-bar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sys-control-gap, 0.5rem); }
+
+/* s211-m02: a search field fills the room its toolbar gives it, as the selects beside it do. */
+:where([data-oods-component='SearchInput']) > :not(button) { flex: 1 1 auto; min-inline-size: 0; }
+
+/* s211-m02: the summary's heading sits on the card's own inset, not on the browser's heading margins. */
+:where([data-oods-component='CancellationSummary']) > :is(h2, h3) { margin: 0; }
+
+/* Reference values remain inspectable without making UUIDs the primary labels. */
+[data-oods-reference-inspection] { margin-block-start: var(--cmp-spacing-stack-md, 1rem); }
+[data-oods-reference-inspection] summary { cursor: pointer; font-weight: var(--ref-typography-weights-semibold, 600); }
+[data-oods-reference-inspection] dl { display: grid; gap: var(--cmp-spacing-stack-sm, 0.75rem); }
+[data-oods-reference-inspection] dt { font-weight: var(--ref-typography-weights-semibold, 600); }
+[data-oods-reference-inspection] dd { margin: 0; }
+[data-oods-reference-inspection] code { overflow-wrap: anywhere; }
+
+/* A destructive action remains distinguishable when every action uses the
+ * user's HC system colors: a warning glyph carries the distinction (s222-m01: with the 1px CanvasText border every
+ * non-primary intent has; s222-m02: the destructive variant too, which shares danger's fill). */
+[data-theme='hc'] :where(.oods-button, [data-oods-component='Button']):is([data-intent='danger'], [data-intent='destructive']):not(:disabled):not(:where([data-theme='hc'] [data-theme]:not([data-theme='hc']) *)) {
+  border: 1px solid CanvasText;
+  background: Canvas;
+  color: CanvasText;
+}
+[data-theme='hc'] :where(.oods-button, [data-oods-component='Button']):is([data-intent='danger'], [data-intent='destructive']):not(:where([data-theme='hc'] [data-theme]:not([data-theme='hc']) *))::before {
+  content: "⚠" / "";
+}
+
+/* ─── s222-m02 F7 (#2502 ruling 12): a placed chart follows the theme ─────────────────────────────────────────────────
+ * A placed chart carries its renders in each theme, each set in a [data-viz-theme] wrapper (vizPreviewLayers in
+ * @oods/component-contracts; the wrapper repeats data-viz-narrow and data-viz-wide, so the size rules above apply inside
+ * it). Each [data-theme] names its theme for the charts under it, and custom properties inherit, so the nearest
+ * [data-theme] decides: dark shows the dark renders, hc the hc ones, any other theme the light ones. With no [data-theme]
+ * on the page the light renders show. A chart without dark or hc renders has no wrapper and shows in every theme. */
+:where([data-theme]) { --oods-viz-show-light: block; --oods-viz-show-dark: none; --oods-viz-show-hc: none; }
+:where([data-theme='dark']) { --oods-viz-show-light: none; --oods-viz-show-dark: block; }
+:where([data-theme='hc']) { --oods-viz-show-light: none; --oods-viz-show-hc: block; }
+:where([data-viz-theme]) { min-inline-size: 0; }
+:where([data-viz-theme='light']) { display: var(--oods-viz-show-light, block); }
+:where([data-viz-theme='dark']) { display: var(--oods-viz-show-dark, none); }
+:where([data-viz-theme='hc']) { display: var(--oods-viz-show-hc, none); }
+/* ─── end s222-m02 F7 ──────────────────────────────────────────────────────────────────────────────────────────────── */
+
+/* ─── s222-m03 (#2502 ruling 13): screens read as a product ──────────────────────────────────────────────────────────
+ * A detail page's header: the record's title and its summary (status and key meta) on the left and the screen's actions
+ * on the right, on one row from 48rem; the sections below it take the full width. The generated stack sets its own
+ * display inline, so the grid is set here with !important, as the read-only rows' columns are (s221-m02). */
+@media (min-width: 48rem) {
+  [data-oods-component='Stack']:has(> [data-oods-component='DetailHeader']):has(> .oods-action-bar) {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+  }
+  [data-oods-component='Stack']:has(> [data-oods-component='DetailHeader']):has(> .oods-action-bar) > * { grid-column: 1 / -1; }
+  [data-oods-component='Stack']:has(> [data-oods-component='DetailHeader']):has(> .oods-action-bar) > [data-oods-component='DetailHeader'] { grid-column: 1; grid-row: 1; }
+  [data-oods-component='Stack']:has(> [data-oods-component='DetailHeader']):has(> .oods-action-bar) > [data-oods-component='Stack'][id$='-record-summary'] { grid-column: 1; grid-row: 2; }
+  [data-oods-component='Stack']:has(> [data-oods-component='DetailHeader']):has(> .oods-action-bar) > .oods-action-bar { grid-column: 2; grid-row: 1 / span 2; justify-self: end; }
+}
+
+/* Never a card inside a card: a panel placed inside a card (a tab panel's billing cycle or payments, a summary in a
+ * card's body) is a section of that card. It keeps its heading and content and drops its own border, fill, radius and
+ * inset; the card's gap separates it from its neighbours. */
+:where(.oods-card, [data-oods-component='Card']) :is(.oods-card, [data-oods-component='Card'], [data-oods-component='AddressCollectionPanel'], [data-oods-component='ClassificationPanel'], [data-oods-component='MembershipPanel'], [data-oods-component='PreferencePanel'], [data-oods-component='FilterPanel'], [data-oods-component='ArchiveSummary'], [data-oods-component='OwnershipSummary'], [data-oods-component='TagSummary'], [data-oods-component='PriceSummary'], [data-oods-component='CancellationSummary'], [data-oods-component='AuditSummaryCard'], [data-oods-component='CycleProgressCard'], [data-oods-component='PaymentTimeline'], [data-oods-component='PaymentEventTimeline'], [data-oods-component='AddressValidationTimeline'], [data-oods-component='MembershipAuditTimeline'], [data-oods-component='MessageEventTimeline'], [data-oods-component='PreferenceTimeline'], .oods-trait-recipe) {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* A list reads as one list: its rows sit in one bordered container on the raised surface, divided by hairlines. A row
+ * is the record's title (500) over its muted secondary line on the left, then its status, meta and time, which the
+ * title's growth pushes to the right. */
+[data-oods-collection='rows'] > .oods-collection {
+  gap: 0;
+  border: 1px solid var(--sys-border-subtle, CanvasText);
+  border-radius: var(--sys-radius-control-lg, 8px);
+  background: var(--sys-surface-raised, Canvas);
+  overflow: hidden;
+}
+[data-oods-collection='rows'] > .oods-collection > li:not(:last-child) { border-block-end: 1px solid var(--sys-border-subtle, CanvasText); }
+[data-oods-collection='rows'] > .oods-collection .oods-collection-row {
+  --oods-button-border: transparent;
+  --oods-button-background: transparent;
+  --oods-button-background-hover: var(--sys-surface-subtle, Canvas);
+  --oods-button-background-pressed: var(--sys-surface-interactive-secondary-default, Canvas);
+  /* A mapped button may have a fixed control height; a record row must grow with its wrapped fields. */
+  height: auto;
+  justify-content: flex-start;
+  padding: var(--sys-inset-sm, 0.75rem) var(--sys-inset-md, 1rem);
+  border-radius: 0;
+  font-weight: var(--sys-text-scale-body-sm-font-weight, 400);
+}
+[data-oods-collection='rows'] > .oods-collection .oods-collection-row > :first-child {
+  gap: var(--sys-control-gap-compact, 0.25rem);
+  font-size: var(--sys-text-scale-body-sm-font-size, 14px);
+  line-height: var(--sys-text-scale-body-sm-line-height, 20px);
+  font-weight: var(--sys-text-scale-label-font-weight, 500);
+}
+[data-oods-collection='rows'] > .oods-collection .oods-collection-row > :first-child > * { margin: 0; font-size: inherit; line-height: inherit; }
+/* Money in a row reads as text beside the status, as the time does, not as a tag. */
+[data-oods-collection='rows'] > .oods-collection .oods-collection-row > :is([data-oods-component='PriceBadge'], [data-oods-component='BillingSummaryBadge']) {
+  padding: 0;
+  background: transparent;
+  color: var(--sys-text-primary, CanvasText);
+  font-size: var(--sys-text-scale-body-sm-font-size, 14px);
+  line-height: var(--sys-text-scale-body-sm-line-height, 20px);
+  font-variant-numeric: tabular-nums;
+}
+[data-oods-collection='rows'] > .oods-collection .oods-collection-row > :first-child :is([data-size='sm'], [data-oods-component='Text'] + [data-oods-component='Text']) { color: var(--sys-text-muted, GrayText); font-weight: var(--sys-text-scale-body-sm-font-weight, 400); }
+[data-oods-collection='rows'] > .oods-collection .oods-collection-row :is(time, [data-oods-component='RelativeTimestamp']) { color: var(--sys-text-muted, GrayText); font-size: var(--sys-text-scale-body-sm-font-size, 14px); }
+/* The time reads last, after the status and meta. On a phone the title takes the first line and the status, meta and time
+ * wrap together under it, instead of one line each. */
+[data-oods-collection='rows'] > .oods-collection .oods-collection-row > :is(time, [data-oods-component='RelativeTimestamp']) { order: 1; }
+@media (max-width: 600px) {
+  [data-oods-collection='rows'] > .oods-collection .oods-collection-row { flex-direction: row; align-items: center; column-gap: var(--sys-control-gap, 0.5rem); row-gap: var(--sys-control-gap-compact, 0.25rem); }
+  [data-oods-collection='rows'] > .oods-collection .oods-collection-row > :first-child { flex: none; inline-size: 100%; }
+}
+/* An archived row inside the list keeps its dimming and badge; the list's container and dividers are its border. */
+[data-oods-collection='rows'] > .oods-collection [data-oods-component='ArchivedRowOverlay'][data-archived='true']:has(> .oods-collection-row) { border: 0; border-radius: 0; background: transparent; }
+/* A section of a card that holds nothing (an unfilled body slot) takes no room, so the card's own spacing is all there is
+ * between its header and footer. */
+:where(.oods-card, [data-oods-component='Card']) [data-oods-component='Stack']:not(:has(:not([data-oods-component='Stack']))) { display: none !important; }
+
+/* A record's events read as one timeline: each event sits on a rail at the left instead of in a card of its own. */
+[data-oods-collection='events'] > .oods-collection { gap: 0; }
+[data-oods-collection='events'] > .oods-collection > li > :is(.oods-card, [data-oods-component='Card']) {
+  gap: var(--sys-control-gap-compact, 0.25rem);
+  padding: 0 0 var(--sys-stack-md, 1rem) var(--sys-inset-md, 1rem);
+  border: 0;
+  border-inline-start: var(--ref-border-width-bold, 2px) solid var(--sys-border-strong, CanvasText);
+  border-radius: 0;
+  background: transparent;
+}
+[data-oods-collection='events'] > .oods-collection > li:last-child > :is(.oods-card, [data-oods-component='Card']) { padding-block-end: 0; }
+[data-oods-collection='events'] > .oods-collection time { color: var(--sys-text-muted, GrayText); font-size: var(--sys-text-scale-body-sm-font-size, 14px); }
+/* An event's title reads at the list title's weight in every renderer (React and Vue write a plain strong; HTML's Text
+ * inherits its weight). */
+[data-oods-collection='events'] > .oods-collection > li > :is(.oods-card, [data-oods-component='Card']) > strong { font-weight: var(--sys-text-scale-label-font-weight, 500); }
+
+/* ─── end s222-m03 ──────────────────────────────────────────────────────────────────────────────────────────────── */

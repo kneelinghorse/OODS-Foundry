@@ -1,0 +1,76 @@
+{
+  "consumer_repository": {
+    "path": "Design-Tools/Shopify-Forge",
+    "commit": "97e9aa8317bdfdf3cf6d85d81e90112c5e5789ff",
+    "source_introduction_commit": "bb56c5a33fc096062b859cdaaf46e50e643ec1cd"
+  },
+  "delivered_envelope": {
+    "path": "src/token-brand/forge/polaris-brand-definition.json",
+    "sha256": "f9672ed678f249c3e8180e0b24c9ddeb3b4903a418d8d1f6f97ddbf081c0d3d1",
+    "bytes": 668543,
+    "integrity_fields": "proposed_request.theme_documents.members[].source_file_sha256 and source_file_bytes"
+  },
+  "source_manifest": {
+    "path": "src/token-brand/published/manifest.json",
+    "sha256": "4b8409f69f161064e12b8917ef5115055c8562f694d2fcb6697bc56e23588fea",
+    "bytes": 280120
+  },
+  "documents": [
+    {
+      "source_theme_id": "light",
+      "target_theme": "light",
+      "target_brand_document": "base",
+      "mapping_status": "PROPOSED-NOT-EXECUTABLE",
+      "source_path": "src/token-brand/published/polaris-light.tokens.json",
+      "fixture": "polaris-light.tokens.json",
+      "sha256": "46b8dd3b0a4385ecae2ed671eed9ad8d7f62f2f1d04da1d21c89e1b3c77d048c",
+      "bytes": 56165,
+      "source_order_compact_json_sha256": "6339240ed895c87f48de686ae89d336de4f070fe97039148336ac251ce089a7a",
+      "source_order_compact_json_bytes": 36459,
+      "member_count": 453
+    },
+    {
+      "source_theme_id": "light-mobile",
+      "target_theme": null,
+      "target_brand_document": null,
+      "mapping_status": "UNMAPPED-REQUIRES-VARIANT-SUPPORT",
+      "source_path": "src/token-brand/published/polaris-light-mobile.tokens.json",
+      "fixture": "polaris-light-mobile.tokens.json",
+      "sha256": "f2ac4c0ecc320fb63f87607b967a6355cb185cd82752db0684080e85184bb13b",
+      "bytes": 53975,
+      "source_order_compact_json_sha256": "3b64092ac81034fb564d4d5b12a16f57169a013b2d570aba4d77faf66a195f2f",
+      "source_order_compact_json_bytes": 34269,
+      "member_count": 453
+    },
+    {
+      "source_theme_id": "light-high-contrast-experimental",
+      "target_theme": "hc",
+      "target_brand_document": "hc",
+      "mapping_status": "PROPOSED-NOT-EXECUTABLE",
+      "source_path": "src/token-brand/published/polaris-light-high-contrast-experimental.tokens.json",
+      "fixture": "polaris-light-high-contrast-experimental.tokens.json",
+      "sha256": "008a9ef5bd1212c30aef813de2d88034ce3895e607dbf396547c94aedc64274f",
+      "bytes": 56191,
+      "source_order_compact_json_sha256": "1101fd0641e8f21e23d94e0bf3f1bbfa91f86a72cfc8dae93d7cd742ddb7abd9",
+      "source_order_compact_json_bytes": 36485,
+      "member_count": 453
+    },
+    {
+      "source_theme_id": "dark-experimental",
+      "target_theme": "dark",
+      "target_brand_document": "dark",
+      "mapping_status": "PROPOSED-NOT-EXECUTABLE",
+      "source_path": "src/token-brand/published/polaris-dark-experimental.tokens.json",
+      "fixture": "polaris-dark-experimental.tokens.json",
+      "sha256": "7b453ee4ea0c20a4227c82f5e08b905dbad13b0344c6e52f93fe5b5e93987f41",
+      "bytes": 56225,
+      "source_order_compact_json_sha256": "16b4fbe8190e49171c483b311016c6ada2d8a31e76f29ffc99ba7c9f6f7e4404",
+      "source_order_compact_json_bytes": 36519,
+      "member_count": 453
+    }
+  ],
+  "totals": {
+    "documents": 4,
+    "members": 1812
+  }
+}

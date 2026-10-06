@@ -1,22 +1,27 @@
 // Ensure design-token variables are present before any DS CSS consumes them.
-import '../packages/tokens/dist/css/tokens.css';
 import '../apps/explorer/src/styles/tokens.css';
 import '../apps/explorer/src/styles/overlays.css';
 import '../apps/explorer/src/styles/index.css';
 import '../src/styles/globals.css';
+// The component chrome the generated apps and the Explorer ship with (Sprint 200 residue: the root Storybook loaded tokens but no component styles).
+import '@oods/component-styles/css';
 import type { Decorator, Preview } from '@storybook/react';
+import { INITIAL_VIEWPORTS } from 'storybook/viewport';
 import React, { useEffect } from 'react';
 import * as ReactDOM from 'react-dom';
+// s213-m04: the brands are the token build's (the brand registry), so a brand added there appears in the toolbar.
+import { brands } from '@oods/tokens/brands';
 
 type ThemeSetting = 'light' | 'dark';
-type BrandSetting = 'default' | 'brand-a' | 'brand-b';
+type BrandSetting = 'default' | `brand-${string}`;
 
 const BRAND_STORAGE_KEY = 'oods:storybook:brand';
 
-const DOM_BRAND_BY_SETTING: Record<BrandSetting, 'A' | 'B' | null> = {
+const brandSetting = (brand: string): BrandSetting => `brand-${brand.toLowerCase()}`;
+
+const DOM_BRAND_BY_SETTING: Record<BrandSetting, string | null> = {
   default: null,
-  'brand-a': 'A',
-  'brand-b': 'B',
+  ...Object.fromEntries(brands.map((brand) => [brandSetting(brand), brand])),
 };
 
 function normaliseBrand(value: unknown): BrandSetting | undefined {
@@ -24,11 +29,11 @@ function normaliseBrand(value: unknown): BrandSetting | undefined {
     return undefined;
   }
   const token = value.trim().toLowerCase().replace(/[\s_]/g, '-');
-  if (token === 'brand-a' || token === 'a' || token === 'branda') {
-    return 'brand-a';
-  }
-  if (token === 'brand-b' || token === 'b' || token === 'brandb') {
-    return 'brand-b';
+  for (const brand of brands) {
+    const id = brand.toLowerCase();
+    if (token === `brand-${id}` || token === id || token === `brand${id}`) {
+      return brandSetting(brand);
+    }
   }
   if (token === '' || token === 'default' || token === 'unset' || token === 'base') {
     return 'default';
@@ -139,6 +144,7 @@ const GlobalsWrapper: React.FC<GlobalsWrapperProps> = ({ theme, brand, children 
 const preview: Preview = {
   parameters: {
     layout: 'centered',
+    actions: { argTypesRegex: '^on[A-Z].*' },
     controls: {
       matchers: {
         color: /(background|color)$/i,
@@ -147,33 +153,48 @@ const preview: Preview = {
     },
     options: {
       storySort: {
-        order: [
-          'Understanding OODS',
-          ['Philosophy', 'Core Concepts', 'Trait Engine', 'Getting Started'],
-          'Objects',
-          ['Object Explorer', 'Core Objects', 'Domain Objects'],
-          'Traits',
-          ['How Traits Work', 'Core', 'Lifecycle', 'Statusable', 'Domain'],
-          'Contexts',
-          ['Same Object Different Contexts', 'Canonical', 'Compound'],
-          'Visualization',
-          ['How TEP Works', 'Standard', 'Hierarchical', 'Network', 'Spatial', 'Composition', 'Patterns'],
-          'Primitives',
-          ['Forms', 'Feedback', 'Navigation', 'Data Display', 'Actions'],
-          'Accessibility',
-          'Tokens & Theming',
-          'Domain Patterns',
-          'Proofs & Internals',
-        ],
+        order: ['Intro', 'Docs', 'Foundations', 'Components', 'Contexts', 'Domains', 'Patterns', 'Explorer', 'Brand'],
       },
       panelPosition: 'right',
     },
     chromatic: {
-      modes: {
-        'brand-a-light': { globals: { theme: 'light', brand: 'brand-a' } },
-        'brand-a-dark': { globals: { theme: 'dark', brand: 'brand-a' } },
-        'brand-b-light': { globals: { theme: 'light', brand: 'brand-b' } },
-        'brand-b-dark': { globals: { theme: 'dark', brand: 'brand-b' } },
+      modes: Object.fromEntries(brands.flatMap((brand) => (['light', 'dark'] as const).map((theme) => [
+        `${brandSetting(brand)}-${theme}`, { globals: { theme, brand: brandSetting(brand) } },
+      ]))),
+    },
+    /**
+     * s173 m04 — REAL viewport presets, replacing hand-drawn boxes.
+     *
+     * Several stories used to "show a narrow viewport" by wrapping their content in a div of
+     * a fixed width. That is a picture of a narrow screen, not a narrow screen: the story
+     * still renders at the canvas width, `100vw` still means the canvas, and — the reason it
+     * matters for this sprint — a CONTAINER QUERY sees whatever the wrapper happens to be
+     * rather than the device. Storybook 9 resizes the canvas itself, so a preset changes the
+     * thing under test instead of drawing a frame around it.
+     *
+     * The set is deliberately small and named after this design system's own scale rather
+     * than after phones: `oods-mobile` and `oods-tablet` are sys.breakpoint-derived widths,
+     * so a story pinned to one of them is pinned to the same number the CSS collapses at.
+     * INITIAL_VIEWPORTS stays available for anyone who genuinely wants an iPhone.
+     */
+    viewport: {
+      options: {
+        ...INITIAL_VIEWPORTS,
+        'oods-mobile': {
+          name: 'OODS mobile (375)',
+          styles: { width: '375px', height: '812px' },
+          type: 'mobile',
+        },
+        'oods-tablet': {
+          name: 'OODS tablet (768 = sys.breakpoint.md)',
+          styles: { width: '768px', height: '1024px' },
+          type: 'tablet',
+        },
+        'oods-desktop': {
+          name: 'OODS desktop (1280 = sys.breakpoint.xl)',
+          styles: { width: '1280px', height: '800px' },
+          type: 'desktop',
+        },
       },
     },
   },
@@ -200,8 +221,7 @@ const preview: Preview = {
         icon: 'paintbrush',
         items: [
           { value: 'default', title: 'Default' },
-          { value: 'brand-a', title: 'Brand A' },
-          { value: 'brand-b', title: 'Brand B' },
+          ...brands.map((brand) => ({ value: brandSetting(brand), title: `Brand ${brand}` })),
         ],
         dynamicTitle: true,
         hidden: true,
@@ -218,6 +238,10 @@ const preview: Preview = {
   globals: {
     brand: initialBrand,
     theme: initialTheme,
+    // 'responsive' = the canvas follows its own size, which is Storybook's default and what
+    // every existing story (and every 1280 capture) already renders at. Stated explicitly so
+    // adding the presets above changes nothing for stories that do not opt in.
+    viewport: { value: 'responsive', isRotated: false },
   },
 };
 

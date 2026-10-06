@@ -2,6 +2,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
+import { fileURLToPath } from 'node:url';
 import { compile, type Options } from 'json-schema-to-typescript';
 
 type CliArgs = {
@@ -10,7 +11,12 @@ type CliArgs = {
   check: boolean;
 };
 
-const DEFAULT_SCHEMAS_DIR = path.resolve(process.cwd(), 'packages/mcp-server/src/schemas');
+// Resolve defaults from this file's location (repo-root-relative), NOT the
+// current working directory — running the generator from packages/schemas-tools
+// used to nest a stray copy at packages/schemas-tools/packages/mcp-server/...
+// (s106 review). Explicit --schemas/--out overrides still resolve against cwd.
+const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
+const DEFAULT_SCHEMAS_DIR = path.resolve(REPO_ROOT, 'packages/mcp-server/src/schemas');
 const DEFAULT_OUT_FILE = path.resolve(DEFAULT_SCHEMAS_DIR, 'generated.ts');
 
 function printUsage(): void {
@@ -78,6 +84,36 @@ async function readJson(file: string): Promise<Record<string, unknown>> {
   return JSON.parse(raw) as Record<string, unknown>;
 }
 
+// Data artifacts that live alongside the JSON SCHEMAS but must never be compiled
+// into generated.ts. measure-registry.json (sprint-117) is a governed-measure DATA
+// file; compiling it throws 'Unable to determine root type' and reds generate:check.
+// measure-registry.schema.json (sprint-118 m03) IS a valid schema but is used ONLY
+// for runtime AJV-validate-at-load — generating a MeasureRegistrySchema type would
+// collide with the hand-written MeasureEntry interface (a dual-source-of-truth smell),
+// so it is skip-listed too. style-library.json + style-library-artifact.schema.json
+// (sprint-123 A1) are the colour-skin counterpart and follow the same recipe: the data
+// file has no root type (would red generate:check) and the schema is runtime-validate-
+// only (a generated type would collide with the hand-written StyleLibraryArtifact
+// interface). Both still bundle to dist/ via the package.json wildcard cp — only the
+// type generator skips them; generated.ts stays byte-identical.
+// style-library-contribution.schema.json (sprint-124 m02) is the INBOUND counterpart —
+// the DRAFT format divergent-inspector sends measured fingerprints back in. It is SPEC-
+// ONLY this sprint (no runtime ingestion loader yet; ingestion is deferred until the
+// format is ratified with darryl), so it is skip-listed to keep generated.ts a NO-OP for
+// an unratified format — emitting a type now would lock a shape that is still being
+// co-authored. Same wildcard cp bundles it to dist/.
+// component-schema.json is runtime DATA compiled by
+// structuredData.fetch at module load, not a tool wire contract. It is copied to
+// dist/schemas with the other JSON assets but must not emit a generated type.
+const NON_SCHEMA_DATA_FILES = new Set([
+  'component-schema.json',
+  'measure-registry.json',
+  'measure-registry.schema.json',
+  'style-library-artifact.schema.json',
+  'style-library.json',
+  'style-library-contribution.schema.json',
+]);
+
 async function collectSchemaFiles(dir: string): Promise<string[]> {
   const entries = await fs.readdir(dir, { withFileTypes: true });
   const files: string[] = [];
@@ -89,7 +125,7 @@ async function collectSchemaFiles(dir: string): Promise<string[]> {
         files.push(...nested);
         return;
       }
-      if (entry.isFile() && entry.name.endsWith('.json')) {
+      if (entry.isFile() && entry.name.endsWith('.json') && !NON_SCHEMA_DATA_FILES.has(entry.name)) {
         files.push(fullPath);
       }
     })
@@ -115,6 +151,38 @@ async function ensureDirectory(filePath: string): Promise<void> {
   await fs.mkdir(dir, { recursive: true });
 }
 
+const TYPE_OVERRIDES: Record<string, string> = {
+  'repl.ui.schema.json': 'UiSchema',
+  'repl.patch.json': 'ReplPatch',
+  'repl.render.input.json': 'ReplRenderInput',
+  'repl.render.output.json': 'ReplRenderOutput',
+  'repl.validate.input.json': 'ReplValidateInput',
+  'repl.validate.output.json': 'ReplValidateOutput',
+};
+
+function rootNameFor(relative: string): string {
+  return TYPE_OVERRIDES[relative] ?? toPascalCase(relative);
+}
+
+function indentBlock(block: string, spaces = 2): string {
+  const pad = ' '.repeat(spaces);
+  return block
+    .split('\n')
+    .map((line) => (line.length ? `${pad}${line}` : line))
+    .join('\n');
+}
+
+function findRootExportName(contents: string, preferredName: string, relative: string): string {
+  const matches = Array.from(contents.matchAll(/export\s+(?:interface|type|enum)\s+([A-Za-z0-9_]+)/g));
+  if (matches.length === 0) {
+    throw new Error(`Unable to determine root type for ${relative}.`);
+  }
+  const exportNames = matches.map((match) => match[1]).filter(Boolean);
+  const preferredLower = preferredName.toLowerCase();
+  const preferred = exportNames.find((name) => name.toLowerCase() === preferredLower);
+  return preferred ?? exportNames[0] ?? preferredName;
+}
+
 async function generateTypes({ schemasDir, outFile, check }: CliArgs): Promise<void> {
   const stat = await fs.stat(schemasDir).catch(() => {
     throw new Error(`Schema directory not found: ${schemasDir}`);
@@ -126,6 +194,12 @@ async function generateTypes({ schemasDir, outFile, check }: CliArgs): Promise<v
   const files = await collectSchemaFiles(schemasDir);
   if (!files.length) {
     throw new Error(`No schema files found under ${schemasDir}`);
+  }
+
+  const rootNames = new Map<string, string>();
+  for (const file of files) {
+    const relative = path.relative(schemasDir, file).replace(/\\/g, '/');
+    rootNames.set(relative, rootNameFor(relative));
   }
 
   const options: Partial<Options> = {
@@ -142,7 +216,8 @@ async function generateTypes({ schemasDir, outFile, check }: CliArgs): Promise<v
   for (const file of files) {
     const schema = await readJson(file);
     const relative = path.relative(schemasDir, file).replace(/\\/g, '/');
-    const typeName = toPascalCase(relative);
+    const typeName = rootNames.get(relative) ?? rootNameFor(relative);
+    const namespaceName = `${typeName}Schema`;
 
     const schemaKeys = Object.keys(schema).filter((key) => key !== '$schema');
     if (schemaKeys.length === 1 && typeof schema.$ref === 'string') {
@@ -152,17 +227,26 @@ async function generateTypes({ schemasDir, outFile, check }: CliArgs): Promise<v
       }
       const resolvedTarget = path.resolve(path.dirname(file), targetPath);
       const targetRelative = path.relative(schemasDir, resolvedTarget).replace(/\\/g, '/');
-      const refTypeName = toPascalCase(targetRelative);
+      const refTypeName = rootNames.get(targetRelative) ?? rootNameFor(targetRelative);
       declarations.push(`// Source: ${relative}
-export type ${typeName} = ${refTypeName};
+export namespace ${namespaceName} {
+  export type ${typeName} = ${refTypeName};
+}
+export type ${typeName} = ${namespaceName}.${typeName};
 `);
       continue;
     }
 
-    const contents = await compile(schema, typeName, options);
+    const schemaCopy = JSON.parse(JSON.stringify(schema)) as Record<string, unknown>;
+    schemaCopy.title = typeName;
+    const contents = await compile(schemaCopy, typeName, options);
+    const rootExport = findRootExportName(contents, typeName, relative);
     declarations.push(
       `// Source: ${relative}
-${contents.trim()}
+export namespace ${namespaceName} {
+${indentBlock(contents.trim(), 2)}
+}
+export type ${typeName} = ${namespaceName}.${rootExport};
 `
     );
   }
@@ -173,7 +257,26 @@ ${contents.trim()}
 
 `;
 
-  const nextContent = `${header}${declarations.join('\n')}`.trimEnd() + '\n';
+  const aliases = `
+// Canonical aliases for shared REPL/UI schema shapes.
+export type UiElement = UiSchemaSchema.UiElement;
+export type UiLayout = UiSchemaSchema.Layout;
+export type UiStyle = UiSchemaSchema.Style;
+export type UiProps = UiSchemaSchema.Props;
+export type UiBindings = UiSchemaSchema.Bindings;
+export type UiMeta = UiSchemaSchema.Meta;
+export type FieldSchemaEntry = UiSchemaSchema.FieldSchemaEntry;
+
+export type ReplJsonPatchOperation = ReplPatchSchema.JsonPatchOp;
+export type ReplNodePatch = ReplPatchSchema.NodePatch;
+
+export type ReplIssue = ReplRenderOutputSchema.Issue;
+export type ReplRenderPreview = NonNullable<ReplRenderOutput['preview']>;
+export type ReplValidationMeta = NonNullable<ReplRenderOutput['meta']>;
+export type ReplRenderFormat = NonNullable<NonNullable<ReplRenderOutput['output']>['format']>;
+`;
+
+  const nextContent = `${header}${declarations.join('\n')}${aliases}`.trimEnd() + '\n';
 
   const existingContent = await fs.readFile(outFile, 'utf8').catch(() => null);
 

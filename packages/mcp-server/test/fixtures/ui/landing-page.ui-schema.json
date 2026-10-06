@@ -1,0 +1,105 @@
+{
+  "version": "2026.02",
+  "dsVersion": "2026-02-24",
+  "theme": "light",
+  "screens": [
+    {
+      "id": "landing-page-screen",
+      "component": "Stack",
+      "children": [
+        {
+          "id": "landing-hero-card",
+          "component": "Card",
+          "children": [
+            {
+              "id": "landing-hero-header",
+              "component": "CardHeader",
+              "props": { "title": "Design Faster", "supporting": "Ship coherent UI in days" }
+            },
+            {
+              "id": "landing-hero-copy",
+              "component": "Text",
+              "props": { "text": "OODS Foundry gives your team schema-driven composition and validation." }
+            },
+            {
+              "id": "landing-hero-cta",
+              "component": "Button",
+              "props": { "label": "Start Building" }
+            },
+            {
+              "id": "landing-hero-badge",
+              "component": "Badge",
+              "props": { "label": "Trusted by teams" }
+            }
+          ]
+        },
+        {
+          "id": "landing-features-card",
+          "component": "Card",
+          "children": [
+            {
+              "id": "landing-features-header",
+              "component": "CardHeader",
+              "props": { "title": "Features" }
+            },
+            {
+              "id": "landing-features-table",
+              "component": "Table",
+              "props": {
+                "columns": [
+                  { "key": "feature", "label": "Feature" },
+                  { "key": "benefit", "label": "Benefit" }
+                ],
+                "rows": [
+                  { "feature": "Traits", "benefit": "Composable capabilities" },
+                  { "feature": "Tokens", "benefit": "Consistent styling" }
+                ]
+              }
+            },
+            {
+              "id": "landing-features-tabs",
+              "component": "Tabs",
+              "props": {
+                "tabs": [
+                  { "id": "designers", "label": "Designers", "content": "Visual parity", "active": true },
+                  { "id": "engineers", "label": "Engineers", "content": "Type-safe contracts", "active": false }
+                ]
+              }
+            },
+            {
+              "id": "landing-features-copy",
+              "component": "Text",
+              "props": { "text": "Every feature is validated before apply mode." }
+            }
+          ]
+        },
+        {
+          "id": "landing-cta-card",
+          "component": "Card",
+          "children": [
+            {
+              "id": "landing-cta-header",
+              "component": "CardHeader",
+              "props": { "title": "Stay Updated" }
+            },
+            {
+              "id": "landing-cta-banner",
+              "component": "Banner",
+              "props": { "message": "Join product updates and release notes." }
+            },
+            {
+              "id": "landing-cta-button",
+              "component": "Button",
+              "props": { "label": "Subscribe" }
+            },
+            {
+              "id": "landing-cta-input",
+              "component": "Input",
+              "props": { "name": "email", "type": "email", "placeholder": "you@company.com" }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

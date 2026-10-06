@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/07/schema",
+  "$id": "https://trait-engine.dev/schemas/traits/assessable",
+  "title": "Assessable Trait Parameters",
+  "description": "Configuration contract for the Assessable trait: which result states the source of truth writes as items rather than only as counts.",
+  "type": "object",
+  "properties": {
+    "recordedStates": {
+      "type": "array",
+      "description": "The result states the source writes as items. Stage1's a11y evidence writes violations as items and needs-review, passed and not-applicable only as page-level counts.",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": ["violation", "passed", "needs_review", "not_applicable", "not_measured"],
+        "description": "A result state: violation, passed, needs_review, not_applicable or not_measured."
+      }
+    }
+  },
+  "required": ["recordedStates"],
+  "additionalProperties": false,
+  "examples": [
+    { "recordedStates": ["violation"] },
+    { "recordedStates": ["violation", "passed", "needs_review", "not_applicable", "not_measured"] }
+  ]
+}

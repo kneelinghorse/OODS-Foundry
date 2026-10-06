@@ -1,0 +1,4 @@
+{
+  "note": "Entry-granular baseline of KNOWN pre-existing viz trait↔schema-mirror enum divergences (s127-m03), following the tools/token-lint/baseline.json pattern. Keyed on ruleId + file + parameter location (stable, line-independent). Currently EMPTY: all 15 viz trait↔schema mirror pairs converge byte-identically, so nothing is grandfathered. A genuine pre-existing divergence may be added here as { ruleId, file, location, reason }; a NEW divergence not listed still fails the gate. Does NOT cover billing/status enums (s127-m01 reconciled those; they have no schema mirror and are guarded by tests/domain/billing/state-set-convergence.spec.ts + the manual checklist). Regenerate intent by running: pnpm run lint:enum-convergence",
+  "entries": []
+}

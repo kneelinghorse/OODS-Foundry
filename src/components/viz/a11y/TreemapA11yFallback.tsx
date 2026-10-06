@@ -13,6 +13,7 @@ import type {
   HierarchyNestedNode,
   HierarchyAdjacencyNode,
 } from '../../../types/viz/network-flow.js';
+import { formatCompactValue } from './format-compact.js';
 
 export interface TreemapA11yFallbackProps {
   /** Hierarchical data (nested or adjacency list format) */
@@ -106,19 +107,6 @@ function flattenHierarchy(input: HierarchyInput): FlatNode[] {
 }
 
 /**
- * Format number for display
- */
-function formatValue(value: number): string {
-  if (value >= 1_000_000) {
-    return `${(value / 1_000_000).toFixed(1)}M`;
-  }
-  if (value >= 1_000) {
-    return `${(value / 1_000).toFixed(1)}K`;
-  }
-  return value.toLocaleString();
-}
-
-/**
  * TreemapA11yFallback Component
  *
  * Renders hierarchical treemap data as an accessible table.
@@ -178,7 +166,7 @@ export function TreemapA11yFallback({
                   {node.name}
                 </td>
                 <td className="px-3 py-2 text-right font-mono text-slate-700 dark:text-slate-300">
-                  {formatValue(node.value)}
+                  {formatCompactValue(node.value)}
                 </td>
                 <td className="px-3 py-2 text-slate-500 dark:text-slate-400">
                   {node.path}

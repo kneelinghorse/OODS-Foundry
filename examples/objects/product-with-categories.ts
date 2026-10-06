@@ -69,6 +69,12 @@ const productClassificationMetadata = normalizeClassificationMetadata({
 
 export const ProductWithCategoriesExample: Product = {
   product_id: 'prod_classifiable_001',
+  // s176 m04 (C9 regen): the tracked Product.d.ts caught up with its YAML (Searchable/
+  // Filterable/Pageable landed on the object after the last generation), so the
+  // interface's required Filterable/Pageable state fields appear here at their defaults.
+  filterCount: 0,
+  page: 1,
+  pageSize: 20,
   sku: 'SKU-CLASS-ANDROID',
   label: 'Axiom X2 Mobile Platform',
   description: 'Flagship Android hardware bundle with telemetry + warranty services.',

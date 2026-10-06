@@ -1,0 +1,25 @@
+{
+  "kind": "a11y_evidence_manifest",
+  "version": "1.4.0",
+  "capture": {
+    "tier": "stealth",
+    "first_party_hosts": {
+      "hosts": [
+        "example.org"
+      ]
+    },
+    "renewals": []
+  },
+  "pages": [
+    {
+      "route": "/",
+      "url": "https://example.org",
+      "axe_results_path": "evidence/a11y/root.json",
+      "first_party": {
+        "requests": 1,
+        "failed": 0,
+        "http_errors": 0
+      }
+    }
+  ]
+}

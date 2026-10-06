@@ -1,0 +1,81 @@
+{
+  "$schema": "https://oods-foundry.com/viz-spec/v1",
+  "id": "viz:bar",
+  "name": "Payment amounts",
+  "data": {
+    "values": [
+      {
+        "payment": "Jan 15, 2026",
+        "amount": 19
+      },
+      {
+        "payment": "Feb 15, 2026",
+        "amount": 19
+      },
+      {
+        "payment": "Mar 15, 2026",
+        "amount": 19
+      },
+      {
+        "payment": "Apr 15, 2026",
+        "amount": 19
+      },
+      {
+        "payment": "May 17, 2026",
+        "amount": 19
+      },
+      {
+        "payment": "Jun 15, 2026",
+        "amount": 19
+      },
+      {
+        "payment": "Jul 15, 2026",
+        "amount": 19
+      },
+      {
+        "payment": "Aug 15, 2026",
+        "amount": 19
+      },
+      {
+        "payment": "Aug 16, 2026",
+        "amount": 19
+      },
+      {
+        "payment": "Aug 19, 2026",
+        "amount": -19
+      },
+      {
+        "payment": "Sep 15, 2026",
+        "amount": 19
+      }
+    ]
+  },
+  "marks": [
+    {
+      "trait": "MarkBar"
+    }
+  ],
+  "encoding": {
+    "x": {
+      "field": "payment",
+      "trait": "EncodingPositionX",
+      "channel": "x",
+      "sort": "none",
+      "title": "Payment date",
+      "type": "ordinal"
+    },
+    "y": {
+      "field": "amount",
+      "trait": "EncodingPositionY",
+      "channel": "y",
+      "aggregate": "sum",
+      "title": "Amount",
+      "format": "$,f",
+      "currency": "EUR"
+    }
+  },
+  "a11y": {
+    "description": "Payments recorded for this subscription, in EUR.",
+    "ariaLabel": "Bar chart of Amount by Payment"
+  }
+}

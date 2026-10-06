@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/stage1-capability-entity.json",
+  "title": "Stage1 capability entity",
+  "description": "Draft v1.4.0-gated first-class capability entity for Stage1 capability rollup output. Additive stub only; no current OODS handler consumes it.",
+  "type": "object",
+  "required": ["entity_type", "id", "slug", "name", "canonical_verb"],
+  "additionalProperties": false,
+  "properties": {
+    "entity_type": {
+      "const": "capability"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Stable identifier for the rolled-up capability."
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "description": "Kebab-case capability slug."
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Display label for the capability."
+    },
+    "canonical_verb": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Verb that anchors the capability across surfaces."
+    },
+    "aliases": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Alternate verbs or labels that resolve to the same capability."
+    },
+    "oods_traits": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Canonical OODS traits associated with the capability."
+    },
+    "projection_variant_ids": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Map-side projection_variants that present this capability."
+    },
+    "preconditions": {
+      "type": "array",
+      "description": "Optional preconditions aggregated across action exposures.",
+      "items": {
+        "type": "object",
+        "required": ["type"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["auth", "role", "state", "data"]
+          },
+          "description": { "type": "string" },
+          "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+          "evidence_chain": {
+            "type": "array",
+            "items": { "type": "object", "additionalProperties": true }
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Open metadata bag reserved for future capability/API linkage."
+    }
+  }
+}

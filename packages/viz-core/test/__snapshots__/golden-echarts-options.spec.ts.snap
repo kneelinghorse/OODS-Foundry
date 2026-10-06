@@ -1,0 +1,1254 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > bubble_map (points): JSON-safe option matches the committed golden 1`] = `
+{
+  "__registration": {
+    "geoJson": {
+      "features": [
+        {
+          "geometry": {
+            "coordinates": [
+              [
+                [
+                  -124,
+                  32,
+                ],
+                [
+                  -114,
+                  32,
+                ],
+                [
+                  -114,
+                  42,
+                ],
+                [
+                  -124,
+                  42,
+                ],
+                [
+                  -124,
+                  32,
+                ],
+              ],
+            ],
+            "type": "Polygon",
+          },
+          "id": "CA",
+          "properties": {
+            "region": "CA",
+            "state_name": "California",
+          },
+          "type": "Feature",
+        },
+        {
+          "geometry": {
+            "coordinates": [
+              [
+                [
+                  -120,
+                  35,
+                ],
+                [
+                  -114,
+                  35,
+                ],
+                [
+                  -114,
+                  42,
+                ],
+                [
+                  -120,
+                  42,
+                ],
+                [
+                  -120,
+                  35,
+                ],
+              ],
+            ],
+            "type": "Polygon",
+          },
+          "id": "NV",
+          "properties": {
+            "region": "NV",
+            "state_name": "Nevada",
+          },
+          "type": "Feature",
+        },
+      ],
+      "type": "FeatureCollection",
+    },
+    "name": "map-viz:bubble",
+  },
+  "aria": {
+    "description": "Bubble map of city population.",
+    "enabled": true,
+  },
+  "backgroundColor": "#FFFFFF",
+  "geo": {
+    "bottom": 16,
+    "emphasis": {
+      "itemStyle": {
+        "areaColor": "rgb(245, 245, 245)",
+      },
+    },
+    "itemStyle": {
+      "areaColor": "rgb(245, 245, 245)",
+      "borderColor": "rgb(229, 229, 229)",
+    },
+    "label": {
+      "show": false,
+    },
+    "map": "map-viz:bubble",
+    "roam": false,
+    "top": 40,
+  },
+  "series": [
+    {
+      "coordinateSystem": "geo",
+      "data": [
+        {
+          "name": "874",
+          "raw": {
+            "city": "San Francisco",
+            "lat": 37.8,
+            "lng": -122.4,
+            "pop": 874,
+          },
+          "symbolSize": 28,
+          "value": [
+            -122.4,
+            37.8,
+            874,
+            874,
+          ],
+        },
+        {
+          "name": "646",
+          "raw": {
+            "city": "Las Vegas",
+            "lat": 36.2,
+            "lng": -115.1,
+            "pop": 646,
+          },
+          "symbolSize": 24.072354701390662,
+          "value": [
+            -115.1,
+            36.2,
+            646,
+            646,
+          ],
+        },
+      ],
+      "encode": {
+        "lat": 1,
+        "lng": 0,
+        "value": 3,
+      },
+      "geoIndex": 0,
+      "name": "City population",
+      "tooltip": {},
+      "type": "scatter",
+    },
+  ],
+  "title": {
+    "text": "City population",
+    "textStyle": {
+      "color": "#0A0A0A",
+    },
+  },
+  "tooltip": {
+    "trigger": "item",
+  },
+  "usermeta": {
+    "oods": {
+      "a11y": {
+        "description": "Bubble map of city population.",
+      },
+      "dimensions": {
+        "height": 520,
+        "width": 860,
+      },
+      "name": "City population",
+      "specId": "viz:bubble",
+    },
+  },
+  "visualMap": {
+    "calculable": true,
+    "dimension": 3,
+    "inRange": {
+      "color": [
+        "rgb(94, 133, 241)",
+        "rgb(37, 67, 183)",
+        "rgb(20, 41, 137)",
+      ],
+    },
+    "max": 874,
+    "min": 646,
+    "textStyle": {
+      "color": "#525252",
+    },
+    "type": "continuous",
+  },
+}
+`;
+
+exports[`golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > chord (ring): JSON-safe option matches the committed golden 1`] = `
+{
+  "aria": {
+    "description": "Chord of regional trade.",
+    "enabled": true,
+  },
+  "backgroundColor": "#FFFFFF",
+  "color": [
+    "rgb(62, 99, 221)",
+    "rgb(185, 142, 0)",
+    "rgb(128, 8, 131)",
+    "rgb(12, 123, 45)",
+    "rgb(123, 0, 8)",
+    "rgb(0, 163, 179)",
+  ],
+  "series": [
+    {
+      "clockwise": true,
+      "coordinateSystem": "none",
+      "emphasis": {
+        "focus": "adjacency",
+      },
+      "itemStyle": {
+        "borderColor": "#D4D4D4",
+        "borderWidth": 1,
+      },
+      "label": {
+        "color": "#0A0A0A",
+        "position": "outside",
+        "show": true,
+      },
+      "lineStyle": {
+        "color": "source",
+        "curveness": 0.5,
+        "opacity": 0.5,
+      },
+      "links": [
+        {
+          "source": "AMER",
+          "target": "EMEA",
+          "value": 42,
+        },
+        {
+          "source": "EMEA",
+          "target": "APAC",
+          "value": 31,
+        },
+        {
+          "source": "APAC",
+          "target": "AMER",
+          "value": 25,
+        },
+      ],
+      "minAngle": 0,
+      "name": "Trade corridors",
+      "nodes": [
+        {
+          "itemStyle": {
+            "color": "rgb(62, 99, 221)",
+          },
+          "name": "AMER",
+        },
+        {
+          "itemStyle": {
+            "color": "rgb(185, 142, 0)",
+          },
+          "name": "EMEA",
+        },
+        {
+          "itemStyle": {
+            "color": "rgb(128, 8, 131)",
+          },
+          "name": "APAC",
+        },
+      ],
+      "padAngle": 3,
+      "startAngle": 90,
+      "top": 40,
+      "type": "chord",
+    },
+  ],
+  "title": {
+    "left": "center",
+    "text": "Trade corridors",
+    "textStyle": {
+      "color": "#0A0A0A",
+      "fontSize": 14,
+      "fontWeight": 600,
+    },
+    "top": 8,
+  },
+  "tooltip": {
+    "formatter": "{b}: {c}",
+    "trigger": "item",
+  },
+  "usermeta": {
+    "oods": {
+      "a11y": {
+        "description": "Chord of regional trade.",
+      },
+      "name": "Trade corridors",
+      "specId": "viz:chord",
+    },
+  },
+}
+`;
+
+exports[`golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > choropleth (join): JSON-safe option matches the committed golden 1`] = `
+{
+  "__registration": {
+    "geoJson": {
+      "features": [
+        {
+          "geometry": {
+            "coordinates": [
+              [
+                [
+                  -124,
+                  32,
+                ],
+                [
+                  -114,
+                  32,
+                ],
+                [
+                  -114,
+                  42,
+                ],
+                [
+                  -124,
+                  42,
+                ],
+                [
+                  -124,
+                  32,
+                ],
+              ],
+            ],
+            "type": "Polygon",
+          },
+          "id": "CA",
+          "properties": {
+            "region": "CA",
+            "sales": 580,
+            "state": "CA",
+            "state_name": "California",
+          },
+          "type": "Feature",
+        },
+        {
+          "geometry": {
+            "coordinates": [
+              [
+                [
+                  -120,
+                  35,
+                ],
+                [
+                  -114,
+                  35,
+                ],
+                [
+                  -114,
+                  42,
+                ],
+                [
+                  -120,
+                  42,
+                ],
+                [
+                  -120,
+                  35,
+                ],
+              ],
+            ],
+            "type": "Polygon",
+          },
+          "id": "NV",
+          "properties": {
+            "region": "NV",
+            "sales": 96,
+            "state": "NV",
+            "state_name": "Nevada",
+          },
+          "type": "Feature",
+        },
+      ],
+      "type": "FeatureCollection",
+    },
+    "name": "map-viz:choropleth",
+  },
+  "aria": {
+    "description": "Choropleth of state sales.",
+    "enabled": true,
+  },
+  "backgroundColor": "#FFFFFF",
+  "geo": {
+    "bottom": 16,
+    "emphasis": {
+      "itemStyle": {
+        "areaColor": "rgb(255, 255, 255)",
+      },
+    },
+    "itemStyle": {
+      "areaColor": "rgb(245, 245, 245)",
+      "borderColor": "rgb(229, 229, 229)",
+    },
+    "label": {
+      "show": false,
+    },
+    "map": "map-viz:choropleth",
+    "nameProperty": "region",
+    "roam": false,
+    "top": 40,
+  },
+  "series": [
+    {
+      "data": [
+        {
+          "name": "CA",
+          "rawProperties": {
+            "region": "CA",
+            "sales": 580,
+            "state": "CA",
+            "state_name": "California",
+          },
+          "value": 580,
+        },
+        {
+          "name": "NV",
+          "rawProperties": {
+            "region": "NV",
+            "sales": 96,
+            "state": "NV",
+            "state_name": "Nevada",
+          },
+          "value": 96,
+        },
+      ],
+      "emphasis": {
+        "focus": "self",
+        "itemStyle": {
+          "areaColor": "rgb(255, 255, 255)",
+        },
+      },
+      "geoIndex": 0,
+      "map": "map-viz:choropleth",
+      "name": "State sales",
+      "type": "map",
+    },
+  ],
+  "title": {
+    "text": "State sales",
+    "textStyle": {
+      "color": "#0A0A0A",
+    },
+  },
+  "tooltip": {
+    "trigger": "item",
+  },
+  "usermeta": {
+    "oods": {
+      "a11y": {
+        "description": "Choropleth of state sales.",
+      },
+      "dimensions": {
+        "height": 520,
+        "width": 860,
+      },
+      "name": "State sales",
+      "specId": "viz:choropleth",
+    },
+  },
+  "visualMap": {
+    "calculable": true,
+    "inRange": {
+      "color": [
+        "rgb(229, 235, 250)",
+        "rgb(61, 98, 219)",
+        "rgb(20, 41, 137)",
+      ],
+    },
+    "max": 580,
+    "min": 96,
+    "textStyle": {
+      "color": "#525252",
+    },
+    "type": "continuous",
+  },
+}
+`;
+
+exports[`golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > force_graph (network): JSON-safe option matches the committed golden 1`] = `
+{
+  "aria": {
+    "description": "Force graph of services.",
+    "enabled": true,
+  },
+  "backgroundColor": "#FFFFFF",
+  "color": [
+    "rgb(62, 99, 221)",
+    "rgb(185, 142, 0)",
+    "rgb(128, 8, 131)",
+    "rgb(12, 123, 45)",
+    "rgb(123, 0, 8)",
+    "rgb(0, 163, 179)",
+  ],
+  "legend": {
+    "data": [
+      "backend",
+      "data",
+      "frontend",
+    ],
+    "show": true,
+    "textStyle": {
+      "color": "#525252",
+    },
+  },
+  "series": [
+    {
+      "categories": [
+        {
+          "itemStyle": {
+            "color": "rgb(62, 99, 221)",
+          },
+          "name": "backend",
+        },
+        {
+          "itemStyle": {
+            "color": "rgb(185, 142, 0)",
+          },
+          "name": "data",
+        },
+        {
+          "itemStyle": {
+            "color": "rgb(128, 8, 131)",
+          },
+          "name": "frontend",
+        },
+      ],
+      "data": [
+        {
+          "category": 2,
+          "fixed": false,
+          "id": "web",
+          "name": "web",
+          "symbolSize": 10,
+          "value": 9,
+        },
+        {
+          "category": 0,
+          "fixed": false,
+          "id": "api",
+          "name": "api",
+          "symbolSize": 10,
+          "value": 6,
+        },
+        {
+          "category": 1,
+          "fixed": false,
+          "id": "db",
+          "name": "db",
+          "symbolSize": 10,
+          "value": 4,
+        },
+        {
+          "category": 1,
+          "fixed": false,
+          "id": "cache",
+          "name": "cache",
+          "symbolSize": 10,
+        },
+      ],
+      "draggable": true,
+      "edgeLabel": {
+        "show": false,
+      },
+      "emphasis": {
+        "focus": "adjacency",
+        "lineStyle": {
+          "width": 4,
+        },
+      },
+      "force": {
+        "edgeLength": 100,
+        "friction": 0.6,
+        "gravity": 0.1,
+        "layoutAnimation": true,
+        "repulsion": 250,
+      },
+      "label": {
+        "color": "#0A0A0A",
+        "formatter": "{b}",
+        "position": "right",
+        "show": true,
+      },
+      "labelLayout": {
+        "hideOverlap": true,
+      },
+      "layout": "force",
+      "lineStyle": {
+        "color": "source",
+        "curveness": 0.3,
+        "opacity": 1,
+      },
+      "links": [
+        {
+          "lineStyle": {
+            "width": 1,
+          },
+          "source": "web",
+          "target": "api",
+          "value": 3,
+        },
+        {
+          "lineStyle": {
+            "width": 1,
+          },
+          "source": "api",
+          "target": "db",
+          "value": 2,
+        },
+        {
+          "lineStyle": {
+            "width": 1,
+          },
+          "source": "api",
+          "target": "cache",
+          "value": 1,
+        },
+      ],
+      "name": "Service map",
+      "roam": true,
+      "type": "graph",
+    },
+  ],
+  "title": {
+    "left": "center",
+    "text": "Service map",
+    "textStyle": {
+      "color": "#0A0A0A",
+      "fontSize": 14,
+      "fontWeight": 600,
+    },
+    "top": 8,
+  },
+  "tooltip": {
+    "trigger": "item",
+  },
+  "usermeta": {
+    "oods": {
+      "a11y": {
+        "description": "Force graph of services.",
+      },
+      "name": "Service map",
+      "specId": "viz:graph",
+    },
+  },
+}
+`;
+
+exports[`golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > sankey (flow): JSON-safe option matches the committed golden 1`] = `
+{
+  "aria": {
+    "description": "Sankey of energy flow.",
+    "enabled": true,
+  },
+  "backgroundColor": "#FFFFFF",
+  "color": [
+    "rgb(62, 99, 221)",
+    "rgb(185, 142, 0)",
+    "rgb(128, 8, 131)",
+    "rgb(12, 123, 45)",
+    "rgb(123, 0, 8)",
+    "rgb(0, 163, 179)",
+  ],
+  "series": [
+    {
+      "data": [
+        {
+          "itemStyle": {
+            "color": "rgb(62, 99, 221)",
+          },
+          "name": "Coal",
+          "value": 100,
+        },
+        {
+          "itemStyle": {
+            "color": "rgb(185, 142, 0)",
+          },
+          "name": "Grid",
+          "value": 100,
+        },
+        {
+          "itemStyle": {
+            "color": "rgb(128, 8, 131)",
+          },
+          "name": "Homes",
+          "value": 60,
+        },
+        {
+          "itemStyle": {
+            "color": "rgb(12, 123, 45)",
+          },
+          "name": "Industry",
+          "value": 40,
+        },
+      ],
+      "emphasis": {
+        "focus": "adjacency",
+        "lineStyle": {
+          "color": "source",
+        },
+      },
+      "itemStyle": {
+        "borderColor": "#D4D4D4",
+        "borderWidth": 1,
+      },
+      "label": {
+        "color": "#0A0A0A",
+        "position": "right",
+        "show": true,
+      },
+      "layoutIterations": 32,
+      "lineStyle": {
+        "color": "gradient",
+        "curveness": 0.5,
+        "opacity": 0.5,
+      },
+      "links": [
+        {
+          "source": "Coal",
+          "target": "Grid",
+          "value": 100,
+        },
+        {
+          "source": "Grid",
+          "target": "Homes",
+          "value": 60,
+        },
+        {
+          "source": "Grid",
+          "target": "Industry",
+          "value": 40,
+        },
+      ],
+      "name": "Energy",
+      "nodeAlign": "justify",
+      "nodeGap": 8,
+      "nodeWidth": 20,
+      "orient": "horizontal",
+      "top": 40,
+      "type": "sankey",
+    },
+  ],
+  "title": {
+    "left": "center",
+    "text": "Energy",
+    "textStyle": {
+      "color": "#0A0A0A",
+      "fontSize": 14,
+      "fontWeight": 600,
+    },
+    "top": 8,
+  },
+  "tooltip": {
+    "trigger": "item",
+  },
+  "usermeta": {
+    "oods": {
+      "a11y": {
+        "description": "Sankey of energy flow.",
+      },
+      "name": "Energy",
+      "specId": "viz:sankey",
+    },
+  },
+}
+`;
+
+exports[`golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > sunburst (nested): JSON-safe option matches the committed golden 1`] = `
+{
+  "aria": {
+    "description": "Sunburst of org headcount.",
+    "enabled": true,
+  },
+  "backgroundColor": "#FFFFFF",
+  "color": [
+    "rgb(62, 99, 221)",
+    "rgb(185, 142, 0)",
+    "rgb(128, 8, 131)",
+    "rgb(12, 123, 45)",
+    "rgb(123, 0, 8)",
+    "rgb(0, 163, 179)",
+  ],
+  "series": [
+    {
+      "data": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "itemStyle": {
+                    "color": "rgb(62, 99, 221)",
+                  },
+                  "name": "Frontend",
+                  "value": 25,
+                },
+                {
+                  "children": [],
+                  "itemStyle": {
+                    "color": "rgb(62, 99, 221)",
+                  },
+                  "name": "Backend",
+                  "value": 35,
+                },
+              ],
+              "itemStyle": {
+                "color": "rgb(62, 99, 221)",
+              },
+              "name": "Engineering",
+              "value": 60,
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "itemStyle": {
+                    "color": "rgb(185, 142, 0)",
+                  },
+                  "name": "AMER",
+                  "value": 24,
+                },
+                {
+                  "children": [],
+                  "itemStyle": {
+                    "color": "rgb(185, 142, 0)",
+                  },
+                  "name": "EMEA",
+                  "value": 16,
+                },
+              ],
+              "itemStyle": {
+                "color": "rgb(185, 142, 0)",
+              },
+              "name": "Sales",
+              "value": 40,
+            },
+          ],
+          "name": "Org",
+          "value": 100,
+        },
+      ],
+      "emphasis": {
+        "focus": "ancestor",
+        "itemStyle": {
+          "borderColor": "#525252",
+          "borderWidth": 3,
+          "shadowBlur": 10,
+        },
+      },
+      "itemStyle": {
+        "borderColor": "#FFFFFF",
+        "borderRadius": 4,
+        "borderWidth": 2,
+      },
+      "label": {
+        "color": "#0A0A0A",
+        "rotate": "radial",
+        "textBorderColor": "#FFFFFF",
+        "textBorderWidth": 2,
+      },
+      "levels": [
+        {},
+        {
+          "itemStyle": {
+            "borderColor": "#D4D4D4",
+            "borderWidth": 1,
+          },
+          "label": {
+            "rotate": "tangential",
+          },
+          "r": "32%",
+          "r0": "12%",
+        },
+        {
+          "itemStyle": {
+            "borderColor": "#D4D4D4",
+            "borderWidth": 1,
+          },
+          "label": {
+            "align": "right",
+          },
+          "r": "68%",
+          "r0": "32%",
+        },
+        {
+          "itemStyle": {
+            "borderColor": "#D4D4D4",
+            "borderWidth": 2,
+          },
+          "label": {
+            "show": false,
+          },
+          "r": "72%",
+          "r0": "68%",
+        },
+      ],
+      "name": "Org",
+      "radius": [
+        "0%",
+        "90%",
+      ],
+      "sort": "desc",
+      "startAngle": 90,
+      "type": "sunburst",
+    },
+  ],
+  "title": {
+    "text": "Org",
+    "textStyle": {
+      "color": "#0A0A0A",
+    },
+  },
+  "tooltip": {
+    "trigger": "item",
+    "triggerOn": "mousemove",
+  },
+  "usermeta": {
+    "oods": {
+      "a11y": {
+        "description": "Sunburst of org headcount.",
+      },
+      "name": "Org",
+      "specId": "viz:sunburst",
+    },
+  },
+}
+`;
+
+exports[`golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > treemap (adjacency): JSON-safe option matches the committed golden 1`] = `
+{
+  "aria": {
+    "description": "Treemap from adjacency list.",
+    "enabled": true,
+  },
+  "backgroundColor": "#FFFFFF",
+  "color": [
+    "rgb(62, 99, 221)",
+    "rgb(185, 142, 0)",
+    "rgb(128, 8, 131)",
+    "rgb(12, 123, 45)",
+    "rgb(123, 0, 8)",
+    "rgb(0, 163, 179)",
+  ],
+  "series": [
+    {
+      "breadcrumb": {
+        "emphasis": {
+          "itemStyle": {
+            "borderColor": "#D4D4D4",
+            "color": "#FFFFFF",
+            "textStyle": {
+              "color": "#0A0A0A",
+            },
+          },
+        },
+        "itemStyle": {
+          "borderColor": "#D4D4D4",
+          "color": "#FFFFFF",
+          "textStyle": {
+            "color": "#0A0A0A",
+          },
+        },
+        "show": true,
+        "textStyle": {
+          "color": "#0A0A0A",
+        },
+      },
+      "data": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "Alpha-1",
+                  "value": 7,
+                },
+              ],
+              "itemStyle": {
+                "color": "rgb(62, 99, 221)",
+              },
+              "name": "Alpha",
+              "value": 12,
+            },
+            {
+              "children": [],
+              "itemStyle": {
+                "color": "rgb(185, 142, 0)",
+              },
+              "name": "Beta",
+              "value": 18,
+            },
+          ],
+          "name": "Company",
+          "value": 0,
+        },
+      ],
+      "emphasis": {
+        "focus": "ancestor",
+        "itemStyle": {
+          "borderColor": "#525252",
+          "borderWidth": 2,
+          "shadowBlur": 2,
+          "shadowColor": "rgba(0, 0, 0, 0.05)",
+        },
+      },
+      "itemStyle": {
+        "borderColor": "#D4D4D4",
+        "borderWidth": 1,
+        "gapWidth": 1,
+      },
+      "label": {
+        "color": "#0A0A0A",
+        "formatter": "{b}",
+        "show": true,
+        "textBorderColor": "#FFFFFF",
+        "textBorderWidth": 2,
+      },
+      "levels": [
+        {
+          "itemStyle": {
+            "borderWidth": 0,
+            "gapWidth": 4,
+          },
+          "upperLabel": {
+            "show": false,
+          },
+        },
+        {
+          "itemStyle": {
+            "borderColor": "#D4D4D4",
+            "borderWidth": 2,
+            "gapWidth": 2,
+          },
+        },
+        {
+          "itemStyle": {
+            "borderColor": "#D4D4D4",
+            "borderWidth": 1,
+            "gapWidth": 1,
+          },
+        },
+      ],
+      "name": "Company",
+      "nodeClick": "zoomToNode",
+      "roam": false,
+      "squareRatio": 1.618,
+      "type": "treemap",
+      "upperLabel": {
+        "color": "#0A0A0A",
+        "height": 28,
+        "show": true,
+        "textBorderColor": "#FFFFFF",
+        "textBorderWidth": 2,
+      },
+    },
+  ],
+  "title": {
+    "text": "Company",
+    "textStyle": {
+      "color": "#0A0A0A",
+    },
+  },
+  "tooltip": {
+    "trigger": "item",
+    "triggerOn": "mousemove",
+  },
+  "usermeta": {
+    "oods": {
+      "a11y": {
+        "description": "Treemap from adjacency list.",
+      },
+      "name": "Company",
+      "specId": "viz:treemap-adj",
+    },
+  },
+}
+`;
+
+exports[`golden ECharts options — treemap / sunburst / sankey / force_graph / choropleth / bubble_map > treemap (nested): JSON-safe option matches the committed golden 1`] = `
+{
+  "aria": {
+    "description": "Treemap of org headcount.",
+    "enabled": true,
+  },
+  "backgroundColor": "#FFFFFF",
+  "color": [
+    "rgb(62, 99, 221)",
+    "rgb(185, 142, 0)",
+    "rgb(128, 8, 131)",
+    "rgb(12, 123, 45)",
+    "rgb(123, 0, 8)",
+    "rgb(0, 163, 179)",
+  ],
+  "series": [
+    {
+      "breadcrumb": {
+        "emphasis": {
+          "itemStyle": {
+            "borderColor": "#D4D4D4",
+            "color": "#FFFFFF",
+            "textStyle": {
+              "color": "#0A0A0A",
+            },
+          },
+        },
+        "itemStyle": {
+          "borderColor": "#D4D4D4",
+          "color": "#FFFFFF",
+          "textStyle": {
+            "color": "#0A0A0A",
+          },
+        },
+        "show": true,
+        "textStyle": {
+          "color": "#0A0A0A",
+        },
+      },
+      "data": [
+        {
+          "children": [
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "Frontend",
+                  "value": 25,
+                },
+                {
+                  "children": [],
+                  "name": "Backend",
+                  "value": 35,
+                },
+              ],
+              "itemStyle": {
+                "color": "rgb(62, 99, 221)",
+              },
+              "name": "Engineering",
+              "value": 60,
+            },
+            {
+              "children": [
+                {
+                  "children": [],
+                  "name": "AMER",
+                  "value": 24,
+                },
+                {
+                  "children": [],
+                  "name": "EMEA",
+                  "value": 16,
+                },
+              ],
+              "itemStyle": {
+                "color": "rgb(185, 142, 0)",
+              },
+              "name": "Sales",
+              "value": 40,
+            },
+          ],
+          "name": "Org",
+          "value": 100,
+        },
+      ],
+      "emphasis": {
+        "focus": "ancestor",
+        "itemStyle": {
+          "borderColor": "#525252",
+          "borderWidth": 2,
+          "shadowBlur": 2,
+          "shadowColor": "rgba(0, 0, 0, 0.05)",
+        },
+      },
+      "itemStyle": {
+        "borderColor": "#D4D4D4",
+        "borderWidth": 1,
+        "gapWidth": 1,
+      },
+      "label": {
+        "color": "#0A0A0A",
+        "formatter": "{b}",
+        "show": true,
+        "textBorderColor": "#FFFFFF",
+        "textBorderWidth": 2,
+      },
+      "levels": [
+        {
+          "itemStyle": {
+            "borderWidth": 0,
+            "gapWidth": 4,
+          },
+          "upperLabel": {
+            "show": false,
+          },
+        },
+        {
+          "itemStyle": {
+            "borderColor": "#D4D4D4",
+            "borderWidth": 2,
+            "gapWidth": 2,
+          },
+        },
+        {
+          "itemStyle": {
+            "borderColor": "#D4D4D4",
+            "borderWidth": 1,
+            "gapWidth": 1,
+          },
+        },
+      ],
+      "name": "Org",
+      "nodeClick": "zoomToNode",
+      "roam": false,
+      "squareRatio": 1.618,
+      "type": "treemap",
+      "upperLabel": {
+        "color": "#0A0A0A",
+        "height": 28,
+        "show": true,
+        "textBorderColor": "#FFFFFF",
+        "textBorderWidth": 2,
+      },
+    },
+  ],
+  "title": {
+    "text": "Org",
+    "textStyle": {
+      "color": "#0A0A0A",
+    },
+  },
+  "tooltip": {
+    "trigger": "item",
+    "triggerOn": "mousemove",
+  },
+  "usermeta": {
+    "oods": {
+      "a11y": {
+        "description": "Treemap of org headcount.",
+      },
+      "name": "Org",
+      "specId": "viz:treemap",
+    },
+  },
+}
+`;

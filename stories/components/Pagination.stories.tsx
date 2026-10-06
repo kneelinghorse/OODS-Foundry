@@ -16,8 +16,7 @@ type PaginationStoryArgs = Omit<PaginationProps, 'page' | 'onChange'> & {
 type Story = StoryObj<PaginationStoryArgs>;
 
 const meta: Meta<PaginationStoryArgs> = {
-  title: 'Primitives/Navigation/Pagination',
-  component: Pagination,
+  title: 'Components/Navigation/Pagination',
   parameters: {
     layout: 'centered',
   },
@@ -26,9 +25,6 @@ const meta: Meta<PaginationStoryArgs> = {
     siblingCount: 1,
     showFirstLast: false,
     'aria-label': 'Pagination navigation',
-  },
-  argTypes: {
-    onChange: { control: false },
   },
 };
 
@@ -139,23 +135,16 @@ export const MobileCollapsed: Story = {
   parameters: {
     layout: 'centered',
   },
+  // s173 m04: a REAL narrow canvas, not a 320px box drawn on a wide one. The wrapper this
+  // replaces styled a div and left the story rendering at full canvas width, so nothing
+  // width-dependent — media queries, container queries, the component's own overflow logic —
+  // actually saw a phone.
+  globals: { viewport: { value: 'oods-mobile', isRotated: false } },
   render: ({ initialPage, ...rest }) => {
     const { page, setPage } = useStoryPagination(initialPage);
 
     return (
-      <div
-        style={{
-          width: 'min(320px, 100%)',
-          padding: 'var(--cmp-spacing-inset-default, 1rem)',
-          border: '1px solid var(--cmp-border-default, var(--sys-border-subtle))',
-          borderRadius: 'var(--cmp-spacing-inline-xs, 0.5rem)',
-          background: 'var(--cmp-surface-panel, var(--sys-surface-raised))',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 'var(--cmp-spacing-stack-compact, 0.5rem)',
-        }}
-      >
-        <span style={MUTED_TEXT_STYLE}>320px viewport preview</span>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--cmp-spacing-stack-compact, 0.5rem)' }}>
         <Pagination {...rest} page={page} onChange={setPage} />
         <span style={MUTED_TEXT_STYLE}>
           Page {page} of {rest.count}

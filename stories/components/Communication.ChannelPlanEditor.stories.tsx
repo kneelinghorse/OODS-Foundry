@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+// @types/react 19 no longer declares a global JSX namespace; it is exported from 'react'.
+import type { JSX } from 'react';
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { ChannelPlanEditor } from '../../src/components/communication/ChannelPlanEditor.js';
@@ -61,4 +63,3 @@ function buildBasePolicy(): DeliveryPolicy {
     metadata: { channel_types: ['email', 'sms', 'push'] },
   };
 }
-

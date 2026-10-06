@@ -93,10 +93,12 @@ view_extensions:
       props:
         ownerIdField: owner_id
         ownerTypeField: owner_type
+  # s223-m01 (#2527 ruling 6): the card names the owner in one phrase, "Owned by Pricing and packaging · team".
   card:
     - component: OwnershipMeta
       position: after
       props:
+        ownerIdField: owner_id
         ownerTypeField: owner_type
         roleField: ownership_role
 

@@ -26,24 +26,35 @@
       "description": "Normalized upper range bound (0-1).",
       "default": 1
     },
-    "timezone": {
-      "type": "string",
-      "description": "Olson/IANA timezone identifier used when formatting ticks.",
-      "default": "UTC"
-    },
     "nice": {
       "type": "string",
       "description": "Interval used when rounding ticks.",
-      "enum": ["day", "week", "month", "quarter", "year"],
+      "enum": [
+        "day",
+        "week",
+        "month",
+        "quarter",
+        "year"
+      ],
       "default": "month"
     },
     "outputFormat": {
       "type": "string",
       "description": "Default date format string for axes + fallbacks.",
       "default": "YYYY-MM-DD"
+    },
+    "renderIntent": {
+      "type": "string",
+      "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand.",
+      "default": "{}"
     }
   },
-  "required": ["domainStart", "domainEnd", "rangeMin", "rangeMax"],
+  "required": [
+    "domainStart",
+    "domainEnd",
+    "rangeMin",
+    "rangeMax"
+  ],
   "additionalProperties": false,
   "examples": [
     {
@@ -51,7 +62,6 @@
       "domainEnd": "2025-03-31T23:59:59Z",
       "rangeMin": 0,
       "rangeMax": 1,
-      "timezone": "America/Los_Angeles",
       "nice": "week",
       "outputFormat": "MMM d"
     }

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oods.systems/schemas/traits/scatter-plot",
+  "title": "ScatterPlot Trait Parameters",
+  "type": "object",
+  "properties": {
+    "renderIntent": {
+      "type": "string",
+      "description": "JSON-encoded Cartesian viz.render input fragment; data rows are supplied by the consumer.",
+      "default": "{}"
+    },
+    "previewSvg": {
+      "type": "string",
+      "description": "Static SVG returned by viz.render for the authored sample."
+    }
+  },
+  "required": [],
+  "additionalProperties": false
+}

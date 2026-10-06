@@ -1,0 +1,97 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`dashboard headless determinism goldens (sprint-113 m06) > KPI compute matches the committed golden 1`] = `
+{
+  "delta": 90,
+  "deltaPct": 0.3,
+  "formatted": "390",
+  "sparkline": [
+    100,
+    80,
+    120,
+    90,
+  ],
+  "thresholdBreached": true,
+  "trendDirection": "increasing",
+  "value": 390,
+}
+`;
+
+exports[`dashboard headless determinism goldens (sprint-113 m06) > auto-layout {x,y,w,h} matches the committed golden 1`] = `
+[
+  {
+    "h": 1,
+    "id": "kpi-rev",
+    "w": 3,
+    "x": 0,
+    "y": 0,
+  },
+  {
+    "h": 1,
+    "id": "kpi-units",
+    "w": 3,
+    "x": 3,
+    "y": 0,
+  },
+  {
+    "h": 2,
+    "id": "trend",
+    "w": 6,
+    "x": 6,
+    "y": 0,
+  },
+  {
+    "h": 2,
+    "id": "breakdown",
+    "w": 6,
+    "x": 0,
+    "y": 2,
+  },
+  {
+    "h": 2,
+    "id": "geo",
+    "w": 12,
+    "x": 0,
+    "y": 4,
+  },
+]
+`;
+
+exports[`dashboard headless determinism goldens (sprint-113 m06) > reduceSelections replay -> byte-stable SelectionState + derived filter (golden) 1`] = `
+{
+  "filtered": [
+    {
+      "month": "Jan",
+      "region": "West",
+      "revenue": 100,
+      "units": 10,
+    },
+    {
+      "month": "Feb",
+      "region": "West",
+      "revenue": 120,
+      "units": 12,
+    },
+  ],
+  "predicates": [
+    {
+      "dimension": "region",
+      "operator": "in",
+      "sourceWidgetId": "breakdown",
+      "values": [
+        "West",
+      ],
+    },
+  ],
+  "state": {
+    "breakdown": {
+      "dimension": "region",
+      "kind": "categorical",
+      "sourceWidgetId": "breakdown",
+      "values": [
+        "West",
+      ],
+    },
+  },
+}
+`;

@@ -1,0 +1,88 @@
+{
+  "$schema": "../../../src/schemas/component-mapping.schema.json",
+  "generatedAt": "2026-05-21T00:00:00.000Z",
+  "version": "2026-05-21",
+  "stats": {
+    "mappingCount": 1,
+    "systemCount": 1
+  },
+  "mappings": [
+    {
+      "id": "stage1-payment-method-row",
+      "externalSystem": "stage1",
+      "externalComponent": "PaymentMethodRow",
+      "oodsTraits": ["Identifiable", "Statusable"],
+      "propMappings": [
+        { "externalProp": "lastFour", "oodsProp": "card_last4", "coercion": { "type": "identity" } },
+        { "externalProp": "brand", "oodsProp": "card_brand", "coercion": { "type": "enum", "mapping": { "VISA": "visa", "MC": "mastercard" } } }
+      ],
+      "confidence": "auto",
+      "metadata": {
+        "createdAt": "2026-05-20T20:00:00.000Z",
+        "author": "stage1-orca-mapper"
+      },
+      "projection_variants": [
+        {
+          "id": "pmr-list",
+          "surface": "list",
+          "external_component": "PaymentMethodRowList",
+          "capability_id": "cap-show-payment-method",
+          "selector": "tr[data-payment-method]",
+          "confidence": 0.78,
+          "evidence_chain": [
+            { "source": "stage1", "run_id": "run-2026-05-20-abc", "match_score": 0.78 }
+          ]
+        },
+        {
+          "id": "pmr-detail",
+          "surface": "detail",
+          "external_component": "PaymentMethodDetailCard",
+          "capability_id": "cap-show-payment-method",
+          "selector": ".payment-method-detail",
+          "confidence": 0.86
+        }
+      ]
+    }
+  ],
+  "disambiguation_decisions": [
+    {
+      "decision_id": "stage1-disamb-pmr-001",
+      "decision_type": "preferred_role",
+      "scope": "registry",
+      "status": "promoted",
+      "target_kind": "candidate_action",
+      "target_id": "candidate-show-payment-method",
+      "selected_value": "informational",
+      "rationale": "Stage1 reconciliation review promoted 'informational' over 'navigation' based on usage patterns.",
+      "alternatives": [
+        { "value": "navigation", "score": 0.45, "reasoning": "row click history showed mostly read intent" }
+      ],
+      "decided_by": "agent",
+      "decided_at": "2026-05-20T20:10:00.000Z"
+    }
+  ],
+  "preferred_terms": [
+    {
+      "entity_type": "preferred_term",
+      "id": "stage1-term-payment-method",
+      "slug": "payment-method",
+      "label": "Payment Method",
+      "aliases": ["card", "credit card", "billing instrument"],
+      "scope": "registry",
+      "domain": "billing",
+      "source_decision_ids": ["stage1-disamb-pmr-001"]
+    }
+  ],
+  "capabilities": [
+    {
+      "entity_type": "capability",
+      "id": "cap-show-payment-method",
+      "slug": "show-payment-method",
+      "name": "Show payment method",
+      "canonical_verb": "show",
+      "aliases": ["view", "display"],
+      "oods_traits": ["Identifiable", "Statusable"],
+      "projection_variant_ids": ["pmr-list", "pmr-detail"]
+    }
+  ]
+}

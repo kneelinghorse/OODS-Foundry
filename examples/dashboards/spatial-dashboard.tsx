@@ -10,7 +10,7 @@ import { MapLegend } from '../../src/components/viz/spatial/MapLegend.js';
 import { SpatialContainer } from '../../src/components/viz/spatial/SpatialContainer.js';
 import { createQuantizeScale } from '../../src/components/viz/spatial/utils/color-scale-utils.js';
 import { createSqrtSizeScale } from '../../src/components/viz/spatial/utils/size-scale-utils.js';
-import { selectVizRenderer } from '../../src/viz/adapters/renderer-selector.js';
+import { selectVizRenderer } from '@oods/viz-core';
 import { createSpatialInteractionBindings, resolveGridSpan } from '../../src/viz/contexts/dashboard-spatial-context.js';
 import {
   DEFAULT_SPATIAL_FILTER_STATE,
@@ -20,7 +20,7 @@ import {
 import type { ObjectSpec, TraitAdapter } from '../../src/types/render-context.js';
 import type { DashboardExample } from './user-adoption.js';
 import type { SpatialSpec } from '../../src/types/viz/spatial.js';
-import type { NormalizedVizSpec } from '../../src/viz/spec/normalized-viz-spec.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 import usStatesTopo from '../../src/components/viz/spatial/fixtures/us-states-10m.json';
 
 interface StateMetric {
@@ -132,7 +132,7 @@ const BUBBLE_SPATIAL_SPEC: SpatialSpec = {
 };
 
 const BUBBLE_SPEC: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/v1',
   id: 'dashboard:spatial:hub-bubbles',
   name: 'Logistics hubs',
   data: {

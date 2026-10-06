@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["name", "schemaRef", "version", "createdAt", "updatedAt", "tags"],
+    "properties": {
+      "name": { "type": "string", "minLength": 1 },
+      "schemaRef": { "type": "string", "minLength": 1 },
+      "version": { "type": "integer", "minimum": 1 },
+      "object": { "type": "string" },
+      "context": { "type": "string" },
+      "author": { "type": "string" },
+      "createdAt": { "type": "string", "minLength": 1 },
+      "updatedAt": { "type": "string", "minLength": 1 },
+      "tags": {
+        "type": "array",
+        "items": { "type": "string" }
+      }
+    }
+  }
+}

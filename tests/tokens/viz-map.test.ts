@@ -209,13 +209,14 @@ describe('viz-map tokens', () => {
       expect(stroke.$value).toContain('neutral');
     });
 
-    it('region hover stroke uses semantic primary reference', () => {
+    // s222-m01 (#2502 ruling 4): brand A's primary is its neutral, so the map's hover stroke takes the accent's solid step.
+    it('region hover stroke uses the accent reference', () => {
       const mapTokens = (tokens.viz as TokenNode).map as TokenNode;
       const region = mapTokens.region as TokenNode;
       const hoverStroke = region['hover-stroke'] as DtcgToken;
 
       expect(isSemanticReference(hoverStroke.$value as string)).toBe(true);
-      expect(hoverStroke.$value).toContain('primary');
+      expect(hoverStroke.$value).toBe('{ref.color.accent.9}');
     });
 
     it('symbol stroke uses semantic neutral reference', () => {

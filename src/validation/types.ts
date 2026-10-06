@@ -66,6 +66,12 @@ export interface ValidationIssue {
 
   /** Raw pointer used by legacy tooling (e.g., AJV schema path) */
   at?: string;
+
+  /** Chain of trait names that led to this error (e.g., ['Commentable', 'ReviewableTrait']) */
+  traitPath?: string[];
+
+  /** Trait names that would be affected downstream by this issue */
+  impactedTraits?: string[];
 }
 
 /**

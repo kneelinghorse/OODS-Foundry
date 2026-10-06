@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/map.delete.input.json",
+  "title": "map.delete input",
+  "description": "Delete a component-to-trait mapping by ID.",
+  "type": "object",
+  "required": ["id"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Mapping ID to delete (e.g., 'team-button')."
+    }
+  }
+}

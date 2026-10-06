@@ -1,12 +1,15 @@
 #!/usr/bin/env tsx
 
 import { readdir, readFile } from 'node:fs/promises';
+import { createRequire } from 'node:module';
 import path from 'node:path';
 
 const ROOT = process.cwd();
 const STORIES_ROOT = path.join(ROOT, 'apps', 'explorer', 'src', 'stories');
 const CANARY_RELATIVE = path.join('apps', 'explorer', 'src', 'stories', '__canary__', 'BrandBleed.canary.tsx');
 const CANARY_ABSOLUTE = path.join(ROOT, CANARY_RELATIVE);
+/** s213-m04: every brand in the brand registry (the brands folder), so a new brand's stories are linted too. */
+const BRANDS: readonly string[] = createRequire(import.meta.url)('../../packages/tokens/scripts/brand-registry.cjs').readBrandRegistry();
 
 interface Violation {
   file: string;
@@ -33,15 +36,24 @@ async function collectStoryFiles(directory: string): Promise<string[]> {
   return results;
 }
 
-function hasBrandAttribute(content: string, brand: 'A' | 'B'): boolean {
+function hasBrandAttribute(content: string, brand: string): boolean {
   const pattern = new RegExp(`data-brand\\s*=\\s*["']${brand}["']`, 'i');
   return pattern.test(content);
 }
 
-function referencesBrandTokens(content: string, brand: 'A' | 'B'): boolean {
-  const cssVarPattern = new RegExp(`--brand${brand}[\\w-]*`, 'i');
-  const tokenPattern = new RegExp(`color\\.brand\\.${brand}`, 'i');
-  return cssVarPattern.test(content) || tokenPattern.test(content);
+// A brand's names end where its id ends, so brand A's patterns never match a brand whose id starts with A.
+function referencesBrandTokens(content: string, brand: string): boolean {
+  const legacyCssVarPattern = new RegExp(`--brand${brand}(?![a-z0-9])[\\w-]*`, 'i');
+  const generatedCssVarPattern = new RegExp(
+    `--oods-(?:color-)?brand-${brand.toLowerCase()}-[\\w-]*`,
+    'i',
+  );
+  const tokenPattern = new RegExp(`color\\.brand\\.${brand}(?![a-z0-9])`, 'i');
+  return (
+    legacyCssVarPattern.test(content) ||
+    generatedCssVarPattern.test(content) ||
+    tokenPattern.test(content)
+  );
 }
 
 async function main(): Promise<void> {
@@ -58,18 +70,14 @@ async function main(): Promise<void> {
     const content = await readFile(filePath, 'utf8');
     const relativePath = path.relative(ROOT, filePath);
 
-    const brandAContext = hasBrandAttribute(content, 'A');
-    const brandBContext = hasBrandAttribute(content, 'B');
-    const usesBrandATokens = referencesBrandTokens(content, 'A');
-    const usesBrandBTokens = referencesBrandTokens(content, 'B');
+    // The first brand (registry order) whose data-brand context holds another brand's tokens names the bleed.
+    let reason: string | undefined;
+    for (const context of BRANDS.filter((brand) => hasBrandAttribute(content, brand))) {
+      const other = BRANDS.find((brand) => brand !== context && referencesBrandTokens(content, brand));
+      if (other) { reason = `Found Brand ${other} tokens within a Brand ${context} data-brand context.`; break; }
+    }
 
-    const crossFromA = brandAContext && usesBrandBTokens;
-    const crossFromB = brandBContext && usesBrandATokens;
-
-    if (crossFromA || crossFromB) {
-      const reason = crossFromA
-        ? 'Found Brand B tokens within a Brand A data-brand context.'
-        : 'Found Brand A tokens within a Brand B data-brand context.';
+    if (reason) {
 
       if (filePath === CANARY_ABSOLUTE) {
         canaryDetected = true;

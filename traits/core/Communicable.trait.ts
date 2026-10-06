@@ -34,12 +34,78 @@ const CommunicableTrait = {
       type: 'Channel[]',
       required: true,
       description: 'Registered delivery channels with provider configuration (email/SMS/push/in_app/webhook).',
+      examples: [
+        [
+          {
+            "id": "44444444-dddd-4ddd-8ddd-dddddddddddd",
+            "name": "Primary Email (SMTP)",
+            "type": "email"
+          },
+          {
+            "id": "55555555-eeee-4eee-8eee-eeeeeeeeeeee",
+            "name": "Twilio SMS",
+            "type": "sms"
+          },
+          {
+            "id": "66666666-ffff-4fff-8fff-ffffffffffff",
+            "name": "FCM Push",
+            "type": "push"
+          },
+          {
+            "id": "77777777-0000-4000-8000-000000000000",
+            "name": "Realtime In-App",
+            "type": "in_app"
+          }
+        ]
+      ],
       default: [],
     },
     template_catalog: {
       type: 'Template[]',
       required: true,
       description: 'Localized message templates with subject/body/variable metadata.',
+      examples: [
+        [
+          {
+            "id": "88888888-1111-4111-8111-111111111111",
+            "name": "Welcome Email",
+            "channelType": "email",
+            "subject": "Welcome to OODS Foundry, {{firstName}}!",
+            "body": "Hi {{firstName}},\n\nThanks for joining {{workspaceName}}. Activate your account using {{activationLink}}.",
+            "variables": [
+              "firstName",
+              "workspaceName",
+              "activationLink"
+            ],
+            "locale": "en-US"
+          },
+          {
+            "id": "99999999-2222-4222-8222-222222222222",
+            "name": "Password Reset Email",
+            "channelType": "email",
+            "subject": "Reset your OODS Foundry password",
+            "body": "Hello {{firstName}},\n\nWe received a request to reset your password. Use this code: {{resetCode}}.",
+            "variables": [
+              "firstName",
+              "resetCode"
+            ],
+            "locale": "en-US"
+          },
+          {
+            "id": "aaaaaaa1-3333-4333-8333-333333333333",
+            "name": "In-App Notification",
+            "channelType": "in_app",
+            "subject": "New document shared with you",
+            "body": "{{actorName}} shared \"{{documentName}}\" with you. Review it before {{dueDate}}.",
+            "variables": [
+              "actorName",
+              "documentName",
+              "dueDate"
+            ],
+            "locale": "en-US"
+          }
+        ]
+      ],
       default: [],
     },
     delivery_policies: {
@@ -142,15 +208,6 @@ const CommunicableTrait = {
         },
       },
     ],
-    timeline: [
-      {
-        component: 'MessageEventTimeline',
-        props: {
-          messagesField: 'messages',
-          statusesField: 'message_statuses',
-        },
-      },
-    ],
   },
 
   tokens: {
@@ -160,10 +217,10 @@ const CommunicableTrait = {
     'communication.status.error': 'var(--sys-communication-error)',
   },
 
+  // Classifiable is optional upstream enrichment — not yet defined in this system.
   dependencies: [
     { trait: 'Preferenceable', version: '>=1.0.0' },
     { trait: 'Authable', version: '>=1.0.0' },
-    { trait: 'Classifiable', version: '>=1.0.0', optional: true },
   ] as const,
 
   metadata: {
@@ -175,6 +232,7 @@ const CommunicableTrait = {
       screenreader:
         'CommunicationDetailPanel exposes ARIA live regions for delivery status transitions referencing R20.6 guidance.',
     },
+    regionsUsed: ['list', 'detail', 'form'],
     references: ['R20.1 Canonical Notification Model', 'R20.6 Modern Messaging Systems'],
   },
 } as const satisfies TraitDefinition;

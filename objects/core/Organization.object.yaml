@@ -1,8 +1,8 @@
 object:
   name: Organization
-  version: 1.3.0
+  version: 1.2.0
   domain: core.account
-  description: Canonical account record for tenant and workspace governance across the platform, now supporting broadcast messaging via Communicable and preference governance for delivery controls.
+  description: Canonical account record for tenant and workspace governance across the platform.
   tags:
     - universal
     - organization
@@ -55,29 +55,21 @@ traits:
         - warehouse
         - branch
       defaultRole: headquarters
-  - name: core/Authable
-    alias: OrganizationAuthz
-    parameters:
-      hierarchyDepthLimit: 5
   - name: core/Preferenceable
     alias: OrganizationPreferences
     parameters:
       namespaces:
         - notifications
-        - delivery
-        - governance
-      schemaVersion: 1.0.0
-      registryNamespace: organization-preferences
-  - name: core/Communicable
-    alias: OrganizationCommunication
+        - display
+        - privacy
+      schemaVersion: 2.0.0
+      registryNamespace: org-preferences
+  - name: core/Authable
+    alias: OrganizationAuthz
     parameters:
-      channelTypes:
-        - email
-        - sms
-        - push
-        - in_app
-        - webhook
-      supportConversations: true
+      hierarchyDepthLimit: 5
+  - name: core/Communicable
+    alias: OrganizationCommunications
 
 schema:
   organization_id:
@@ -103,12 +95,16 @@ schema:
     type: string
     required: true
     default: good_standing
-    description: Financial standing used by the billing subsystem.
+    description: >-
+      Coarse account-level financial standing used by the billing subsystem.
+      Intentionally coarser than the subscription lifecycle: this is a 4-state
+      account vocabulary {good_standing, past_due, unpaid, suspended}, NOT the
+      8-state billing.subscription.status set. See docs/billing/lifecycle-states.md.
     validation:
       enum:
         - good_standing
         - past_due
-        - delinquent
+        - unpaid
         - suspended
   industry:
     type: string
@@ -134,8 +130,27 @@ schema:
         - eu
         - apac
         - latam
+  owner_name:
+    type: string
+    required: false
+    description: Display name of the owning principal (parent organization, reseller or platform team).
 
 semantics:
+  # The one-line summary under the organization's name in lists (content/Labelled's description, marked as the summary).
+  description:
+    semantic_type: text.summary
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: TextBody
+      maxLengthParameter: maxDescriptionLength
+  # structural/Ownerable's owner reference, named by owner_name.
+  owner_id:
+    semantic_type: ownership.owner.id
+    token_mapping: tokenMap(ownership.owner.id)
+    ui_hints:
+      component: OwnerReference
+      ownerTypeField: owner_type
+      displayLabelField: owner_name
   organization_id:
     semantic_type: organization.id
     token_mapping: tokenMap(organization.id.primary)
@@ -164,9 +179,6 @@ metadata:
     - billing@oods.systems
   steward: platform@oods.systems
   changelog:
-    - version: 1.3.0
-      date: "2025-11-20"
-      description: Added Communicable trait for multi-channel broadcast messaging with conversation support and Preferenceable for org-scoped delivery controls.
     - version: 1.2.0
       date: "2025-11-20"
       description: Added Authable trait to expose membership and entitlement exports for tenant governance.
@@ -176,3 +188,208 @@ metadata:
     - version: 1.0.0
       date: "2025-10-16"
       description: Initial Universal Quintet baseline.
+
+# Eight authored sample organizations. Each is one coherent account: the same names appear as the customers on the
+# Subscription, Invoice, Transaction and Usage samples. Its lifecycle follows its plan: a prospect is on Free, an
+# onboarding account is trialling a paid plan, an active account pays, and a churned account is back on Free.
+samples:
+  - organization_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a01
+    label: Northwind Traders
+    description: Wholesale food distributor in Chicago
+    domain: northwind.example
+    plan_tier: growth
+    billing_status: good_standing
+    industry: Wholesale trade
+    employee_count: 85
+    billing_contact_email: billing@northwind.example
+    data_residency: us
+    owner_id: org_northwind_group
+    owner_type: parent_organization
+    owner_name: Northwind Group
+    ownership_role: Parent account
+    tags: [strategic]
+    tag_count: 1
+    status: active
+    state_history:
+      - { title: Signed up, from: null, to: prospect, at: '2026-02-02T15:00:00Z', reason: Created a workspace on the Free plan }
+      - { title: Trial started, from: prospect, to: onboarding, at: '2026-02-16T15:00:00Z', reason: Started a 14-day Team trial }
+      - { title: Went live, from: onboarding, to: active, at: '2026-03-02T15:00:00Z', reason: Trial converted to the Team plan }
+    created_at: '2026-02-02T15:00:00Z'
+    updated_at: '2026-06-16T15:00:00Z'
+    last_event: plan_upgraded
+    last_event_at: '2026-06-16T15:00:00Z'
+  - organization_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a02
+    label: Blue Harbor Studio
+    description: Packaging design studio in Portland
+    domain: blueharbor.example
+    plan_tier: growth
+    billing_status: good_standing
+    industry: Design services
+    employee_count: 12
+    billing_contact_email: accounts@blueharbor.example
+    data_residency: us
+    owner_id: platform_self_serve
+    owner_type: platform
+    owner_name: Self-serve
+    ownership_role: Direct customer
+    tags: [smb, startup]
+    tag_count: 2
+    status: onboarding
+    state_history:
+      - { title: Signed up, from: null, to: prospect, at: '2026-09-19T10:00:00Z', reason: Signed up from the pricing page }
+      - { title: Trial started, from: prospect, to: onboarding, at: '2026-09-21T09:00:00Z', reason: Started a 14-day Team trial }
+    created_at: '2026-09-19T10:00:00Z'
+    updated_at: '2026-09-21T09:00:00Z'
+    last_event: plan_upgraded
+    last_event_at: '2026-09-21T09:00:00Z'
+  - organization_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a03
+    label: Lindqvist Bakery
+    description: Bakery with three shops in Gothenburg
+    domain: lindqvist.example
+    plan_tier: growth
+    billing_status: good_standing
+    industry: Food and beverage
+    employee_count: 18
+    billing_contact_email: finance@lindqvist.example
+    data_residency: eu
+    owner_id: reseller_nordic_commerce
+    owner_type: reseller
+    owner_name: Nordic Commerce Partners
+    ownership_role: Reseller of record
+    tags: [smb]
+    tag_count: 1
+    status: active
+    state_history:
+      - { title: Signed up, from: null, to: prospect, at: '2026-01-12T08:00:00Z', reason: Referred by Nordic Commerce Partners }
+      - { title: Onboarding, from: prospect, to: onboarding, at: '2026-01-13T08:00:00Z', reason: Reseller set up the shops and card readers }
+      - { title: Went live, from: onboarding, to: active, at: '2026-01-15T08:00:00Z', reason: Subscribed to the Starter plan }
+    created_at: '2026-01-12T08:00:00Z'
+    updated_at: '2026-01-15T08:00:00Z'
+    last_event: plan_upgraded
+    last_event_at: '2026-01-15T08:00:00Z'
+  - organization_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a04
+    label: Kestrel Print Co.
+    description: Commercial print shop in Leeds
+    domain: kestrelprint.example
+    plan_tier: growth
+    billing_status: past_due
+    industry: Commercial printing
+    employee_count: 34
+    billing_contact_email: hello@kestrelprint.example
+    data_residency: eu
+    owner_id: platform_self_serve
+    owner_type: platform
+    owner_name: Self-serve
+    ownership_role: Direct customer
+    tags: [smb]
+    tag_count: 1
+    status: active
+    state_history:
+      - { title: Signed up, from: null, to: prospect, at: '2026-01-20T10:00:00Z', reason: Created a workspace on the Free plan }
+      - { title: Trial started, from: prospect, to: onboarding, at: '2026-01-20T10:30:00Z', reason: Started a 14-day Team trial }
+      - { title: Went live, from: onboarding, to: active, at: '2026-02-03T10:00:00Z', reason: Trial converted to the Team plan }
+    created_at: '2026-01-20T10:00:00Z'
+    updated_at: '2026-02-03T10:00:00Z'
+    last_event: plan_upgraded
+    last_event_at: '2026-02-03T10:00:00Z'
+  - organization_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05
+    label: Tidewater Co-op
+    description: Farmers' cooperative in Tauranga, NZ
+    domain: tidewater.example
+    plan_tier: enterprise
+    billing_status: good_standing
+    industry: Agricultural cooperative
+    employee_count: 640
+    billing_contact_email: treasurer@tidewater.example
+    data_residency: apac
+    owner_id: platform_enterprise_sales
+    owner_type: platform
+    owner_name: Enterprise accounts
+    ownership_role: Account team
+    ownership_transferred_at: '2025-06-02T09:00:00Z'
+    tags: [enterprise, strategic]
+    tag_count: 2
+    status: active
+    state_history:
+      - { title: Signed up, from: null, to: prospect, at: '2024-09-16T21:00:00Z', reason: Requested an Enterprise demo }
+      - { title: Pilot started, from: prospect, to: onboarding, at: '2024-10-01T21:00:00Z', reason: Started a 30-day Enterprise pilot }
+      - { title: Went live, from: onboarding, to: active, at: '2024-10-30T14:00:00Z', reason: Signed the annual Enterprise agreement }
+    created_at: '2024-09-16T21:00:00Z'
+    updated_at: '2025-06-02T09:00:00Z'
+    last_event: ownership_transferred
+    last_event_at: '2025-06-02T09:00:00Z'
+  - organization_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a06
+    label: Marlow Yoga
+    description: Yoga studio in Austin, closed in July
+    domain: marlowyoga.example
+    plan_tier: free
+    billing_status: good_standing
+    industry: Fitness studio
+    employee_count: 6
+    billing_contact_email: studio@marlowyoga.example
+    data_residency: us
+    owner_id: platform_self_serve
+    owner_type: platform
+    owner_name: Self-serve
+    ownership_role: Direct customer
+    tags: [smb]
+    tag_count: 1
+    status: churned
+    state_history:
+      - { title: Signed up, from: null, to: prospect, at: '2026-01-05T10:15:00Z', reason: Created a workspace on the Free plan }
+      - { title: Went live, from: prospect, to: active, at: '2026-01-09T10:15:00Z', reason: Subscribed to the Starter plan }
+      - { title: Churned, from: active, to: churned, at: '2026-07-09T10:15:00Z', reason: Studio closed; back on the Free plan }
+    created_at: '2026-01-05T10:15:00Z'
+    updated_at: '2026-07-09T10:15:00Z'
+    last_event: plan_downgraded
+    last_event_at: '2026-07-09T10:15:00Z'
+  - organization_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a07
+    label: Summit Outfitters
+    description: Outdoor gear retailer in Denver
+    domain: summit.example
+    plan_tier: growth
+    billing_status: good_standing
+    industry: Outdoor retail
+    employee_count: 120
+    billing_contact_email: ap@summit.example
+    data_residency: us
+    owner_id: reseller_harbor_channel
+    owner_type: reseller
+    owner_name: Harbor Channel Partners
+    ownership_role: Reseller of record
+    tags: []
+    tag_count: 0
+    status: active
+    state_history:
+      - { title: Signed up, from: null, to: prospect, at: '2026-04-23T12:00:00Z', reason: Referred by Harbor Channel Partners }
+      - { title: Trial started, from: prospect, to: onboarding, at: '2026-04-23T12:30:00Z', reason: Started a 14-day Business trial }
+      - { title: Went live, from: onboarding, to: active, at: '2026-05-07T12:00:00Z', reason: Trial converted to the Business plan }
+    created_at: '2026-04-23T12:00:00Z'
+    updated_at: '2026-05-07T12:00:00Z'
+    last_event: plan_upgraded
+    last_event_at: '2026-05-07T12:00:00Z'
+  - organization_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a08
+    label: Gale & Rowe Legal
+    description: Employment law practice in Boston
+    domain: galerowe.example
+    plan_tier: free
+    billing_status: good_standing
+    industry: Legal services
+    employee_count: 22
+    billing_contact_email: office@galerowe.example
+    data_residency: us
+    owner_id: platform_self_serve
+    owner_type: platform
+    owner_name: Self-serve
+    ownership_role: Direct customer
+    tags: [smb]
+    tag_count: 1
+    status: prospect
+    state_history:
+      - { title: Signed up, from: null, to: prospect, at: '2026-08-11T13:00:00Z', reason: Requested a demo }
+      - { title: Trial started, from: prospect, to: onboarding, at: '2026-08-25T13:00:00Z', reason: Started a 14-day Team trial }
+      - { title: Trial ended, from: onboarding, to: prospect, at: '2026-09-08T13:00:00Z', reason: Trial ended without a purchase }
+    created_at: '2026-08-11T13:00:00Z'
+    updated_at: '2026-09-08T13:00:00Z'
+    last_event: plan_downgraded
+    last_event_at: '2026-09-08T13:00:00Z'

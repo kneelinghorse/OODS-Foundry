@@ -2,11 +2,46 @@
   "$schema": "https://json-schema.org/draft/07/schema",
   "$id": "https://trait-engine.dev/schemas/traits/labelled",
   "title": "Labelled Trait Parameters",
-  "description": "Labelled trait does not expose configurable parameters.",
+  "description": "Configures label, description, and copy variant constraints for authored objects.",
   "type": "object",
-  "properties": {},
+  "properties": {
+    "maxLabelLength": {
+      "type": "integer",
+      "description": "Maximum character length for the label field.",
+      "minimum": 1,
+      "maximum": 255,
+      "default": 80
+    },
+    "maxDescriptionLength": {
+      "type": "integer",
+      "description": "Maximum character length for the description field.",
+      "minimum": 1,
+      "maximum": 1000,
+      "default": 160
+    },
+    "requireDescription": {
+      "type": "boolean",
+      "description": "When true, description becomes a required field.",
+      "default": false
+    },
+    "copyVariants": {
+      "type": "array",
+      "description": "Named copy variants for context-sensitive rendering.",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "default": ["primary"]
+    }
+  },
   "additionalProperties": false,
   "examples": [
-    {}
+    {},
+    {
+      "maxLabelLength": 120,
+      "requireDescription": true
+    }
   ]
 }

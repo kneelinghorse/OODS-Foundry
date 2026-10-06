@@ -94,6 +94,7 @@ semantics:
     semantic_type: commerce.price.amount
     token_mapping: tokenMap(commerce.price.primary)
     ui_hints:
+      minorUnits: 100
       component: CurrencyAmount
       currencyField: currency
   currency:
@@ -135,12 +136,14 @@ view_extensions:
       props:
         amountField: unit_amount_cents
         currencyField: currency
+  # s222-m03 (#2502 ruling 13): a card shows the price, as the row does. PriceCardMeta carries no amount (its contract),
+  # so a Product card read "Price  Model: One Time  Interval: One Time" with no price.
   card:
-    - component: PriceCardMeta
+    - component: PriceBadge
       position: after
       props:
-        modelField: pricing_model
-        intervalField: billing_interval
+        amountField: unit_amount_cents
+        currencyField: currency
 
 tokens:
   commerce.price.text: "var(--text-strong)"

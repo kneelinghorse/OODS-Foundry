@@ -10,6 +10,8 @@ const ScaleLinearTrait = {
   },
 
   parameters: [
+    {"name": "renderIntent", "type": "string", "required": false, "default": "{}", "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."},
+
     {
       name: 'domainMin',
       type: 'number',
@@ -155,6 +157,7 @@ const ScaleLinearTrait = {
         component: 'VizScaleSummary',
         position: 'sidebar',
         props: {
+          intentParameter: 'renderIntent',
           type: 'linear',
           domainMinField: 'viz_scale_linear_domain_min',
           domainMaxField: 'viz_scale_linear_domain_max',
@@ -168,6 +171,7 @@ const ScaleLinearTrait = {
         component: 'VizScaleControls',
         position: 'top',
         props: {
+          intentParameter: 'renderIntent',
           type: 'linear',
           domainMinField: 'viz_scale_linear_domain_min',
           domainMaxField: 'viz_scale_linear_domain_max',
@@ -195,7 +199,7 @@ const ScaleLinearTrait = {
     regionsUsed: ['detail', 'form'],
     allows: ['EncodingPositionX', 'EncodingPositionY', 'EncodingSize', 'EncodingColor'],
     references: [
-      'cmos/research/data-viz-oods/RDS.7_synthesis_Mission Completion Report- Trait-Driven Visualization System Specification (v0.1).md',
+      'RDS.7 Trait-Driven Visualization System Specification (v0.1)',
     ],
   },
 } as const satisfies TraitDefinition;

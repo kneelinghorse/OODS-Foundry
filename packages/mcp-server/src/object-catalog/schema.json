@@ -1,0 +1,308 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oods-forge.local/object-catalog/schema.json",
+  "title": "OODS Object Catalog v1.0.0",
+  "description": "OODS Foundry-emitted Object Catalog. A strict SemanticManifest envelope (OODS Foundry-owned, frozen from the former Concordance wire 1.1.0) with typed oods.* extensions on each SemanticEntity. The top-level manifest closes (additionalProperties:false); SemanticEntity stays open (additionalProperties:true) — that affordance is where oods.* lives. Implements D1.",
+  "type": "object",
+  "required": ["manifest_version", "source", "entities"],
+  "additionalProperties": false,
+  "properties": {
+    "manifest_version": {
+      "type": "string",
+      "const": "4.0",
+      "description": "SemanticManifest protocol version (OODS Foundry-owned). Pinned to 4.0 for catalog v1.0.0."
+    },
+    "schema_version": {
+      "type": "string",
+      "const": "1.1.0",
+      "description": "SemanticManifest schema_version (OODS Foundry-owned envelope). OODS Foundry pins 1.1.0."
+    },
+    "source": {
+      "type": "object",
+      "required": ["agent", "captured_at"],
+      "additionalProperties": true,
+      "properties": {
+        "agent": { "type": "string" },
+        "stage": { "type": "string" },
+        "url": { "type": "string" },
+        "run_id": { "type": "string" },
+        "stratum": { "type": "string" },
+        "captured_at": { "type": "string", "format": "date-time" },
+        "oods_catalog_version": {
+          "type": "string",
+          "const": "1.0.0",
+          "description": "OODS Object Catalog version. Load-bearing pin: a single catalog stamps its version once at source level."
+        }
+      }
+    },
+    "entities": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/SemanticEntity" }
+    },
+    "relationships": {
+      "type": "array",
+      "description": "Top-level cross-entity TypedRelationships. Per-entity edges may also live under entity.relationships.edges[].",
+      "items": { "$ref": "#/$defs/TypedRelationship" }
+    }
+  },
+  "$defs": {
+    "URN": {
+      "type": "string",
+      "pattern": "^urn:proto:(semantic|api|data|event|workflow|ui):[a-z0-9._\\-]+@[0-9]+\\.[0-9]+(\\.[0-9]+)?$",
+      "description": "urn:proto:<protocol>:<id>@<version>"
+    },
+    "PragmaticRole": {
+      "type": "string",
+      "description": "Functional/structural role of a semantic entity. Action-shaped roles (the first four) trigger element.object_action_present. The page/IA roles (page, landing, section, index; s106-m03) are page-level, non-action roles for site-map entities.",
+      "enum": [
+        "primary_action",
+        "secondary_action",
+        "destructive_action",
+        "recovery_action",
+        "navigation",
+        "informational",
+        "page",
+        "landing",
+        "section",
+        "index"
+      ]
+    },
+    "Provenance": {
+      "type": "string",
+      "enum": ["declared", "inferred", "candidate", "verified"]
+    },
+    "Protocol": {
+      "type": "string",
+      "enum": ["syntactic", "semantic", "pragmatic", "relational"]
+    },
+    "LocationType": {
+      "type": "string",
+      "enum": ["code", "docs", "test", "api", "figma", "route", "event", "other"]
+    },
+    "EvidenceRef": {
+      "type": "object",
+      "required": ["id", "protocol", "kind", "locator", "weight", "provenance"],
+      "additionalProperties": true,
+      "properties": {
+        "id": { "type": "string" },
+        "protocol": { "$ref": "#/$defs/Protocol" },
+        "kind": { "type": "string" },
+        "locator": { "type": "string" },
+        "matched": { "type": ["string", "null"] },
+        "weight": { "type": "number", "minimum": 0, "maximum": 1 },
+        "provenance": { "$ref": "#/$defs/Provenance" },
+        "captured_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Location": {
+      "type": "object",
+      "required": ["type", "path"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "$ref": "#/$defs/LocationType" },
+        "path": { "type": "string" }
+      }
+    },
+    "TypedRelationship": {
+      "type": "object",
+      "required": ["type", "from", "to", "provenance"],
+      "additionalProperties": true,
+      "properties": {
+        "type": { "type": "string", "description": "Lowercase = semantic, UPPERCASE = operational. Closed lists in contracts/edge-types.json." },
+        "from": { "$ref": "#/$defs/URN" },
+        "to": { "$ref": "#/$defs/URN" },
+        "direction": { "type": "string", "enum": ["out", "in", "undirected"], "default": "out" },
+        "provenance": { "$ref": "#/$defs/Provenance" },
+        "weight": { "type": "number", "minimum": 0, "maximum": 1 },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "via": { "type": "string" },
+        "reason": { "type": "string" },
+        "evidence_refs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "captured_at": { "type": "string", "format": "date-time" },
+        "metadata": { "type": "object", "additionalProperties": true }
+      }
+    },
+    "SemanticEntity": {
+      "type": "object",
+      "required": ["urn", "element", "semantics"],
+      "additionalProperties": true,
+      "properties": {
+        "urn": { "$ref": "#/$defs/URN" },
+        "element": {
+          "type": "object",
+          "required": ["type", "name"],
+          "additionalProperties": true,
+          "properties": {
+            "type": { "type": "string" },
+            "name": { "type": "string" },
+            "object": { "type": "string" },
+            "action": { "type": "string" }
+          }
+        },
+        "semantics": {
+          "type": "object",
+          "required": ["purpose", "human_meaning"],
+          "additionalProperties": true,
+          "properties": {
+            "purpose": { "type": "string" },
+            "human_meaning": { "type": "string" },
+            "tags": { "type": "array", "items": { "type": "string" } },
+            "synonyms": { "type": "array", "items": { "type": "string" } },
+            "keywords": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "pragmatic_role": { "$ref": "#/$defs/PragmaticRole" },
+        "states": { "type": "array", "items": { "type": "string" } },
+        "preconditions": { "type": "array", "items": { "type": "string" } },
+        "effects": { "type": "array", "items": { "type": "string" } },
+        "traits": { "type": "array", "items": { "type": "string" } },
+        "context": { "type": "object", "additionalProperties": true },
+        "locations": { "type": "array", "items": { "$ref": "#/$defs/Location" } },
+        "evidence_refs": { "type": "array", "items": { "$ref": "#/$defs/EvidenceRef" } },
+        "relationships": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "edges": { "type": "array", "items": { "$ref": "#/$defs/TypedRelationship" } }
+          }
+        },
+        "oods": { "$ref": "#/$defs/OodsExtension" }
+      },
+      "allOf": [
+        {
+          "$comment": "SEMANTIC §6 element.object_action_present — action-shaped pragmatic_role requires element.object + element.action.",
+          "if": {
+            "properties": {
+              "pragmatic_role": {
+                "enum": ["primary_action", "secondary_action", "destructive_action", "recovery_action"]
+              }
+            },
+            "required": ["pragmatic_role"]
+          },
+          "then": {
+            "properties": {
+              "element": {
+                "required": ["type", "name", "object", "action"]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "OodsExtension": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "OODS Foundry-authored entity-level extension. Carried on SemanticEntity via additionalProperties:true.",
+      "properties": {
+        "catalog": { "$ref": "#/$defs/OodsCatalog" },
+        "render": { "$ref": "#/$defs/OodsRender" },
+        "projection_variants": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/OodsProjectionVariant" }
+        },
+        "confidence_decomposition": { "$ref": "#/$defs/OodsConfidenceDecomposition" },
+        "evidence_chain": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/OodsEvidenceChainEntry" }
+        }
+      }
+    },
+    "OodsCatalog": {
+      "type": "object",
+      "required": ["version"],
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "type": "string",
+          "const": "1.0.0",
+          "description": "Entity-level repetition of source.oods_catalog_version. Used for cross-version assemblies."
+        }
+      }
+    },
+    "OodsSlotBinding": {
+      "type": "object",
+      "required": ["field"],
+      "additionalProperties": true,
+      "properties": {
+        "field": { "type": "string", "description": "Dotted path into the host data shape (e.g. 'user.email')." }
+      }
+    },
+    "OodsSlot": {
+      "type": "object",
+      "required": ["name", "binding"],
+      "additionalProperties": true,
+      "properties": {
+        "name": { "type": "string" },
+        "binding": { "$ref": "#/$defs/OodsSlotBinding" }
+      }
+    },
+    "OodsRender": {
+      "type": "object",
+      "required": ["ui_schema_ref", "slots"],
+      "additionalProperties": true,
+      "description": "Load-bearing input contract for D2 runPreEmit(). ui_schema_ref + slots[].name + slots[].binding.field + brand_overlay are non-discretionary; other properties are renderer-discretionary.",
+      "properties": {
+        "ui_schema_ref": { "type": "string", "description": "OODS Foundry UiSchema persistence ref (.oods/schemas/)." },
+        "slots": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/OodsSlot" }
+        },
+        "brand_overlay": { "type": "string", "description": "Brand identifier resolved at pre-emit time to a token map." }
+      }
+    },
+    "OodsProjectionVariant": {
+      "type": "object",
+      "required": ["surface", "ui_schema_ref", "slots"],
+      "additionalProperties": true,
+      "description": "Surface/brand/role/density variant of the same canonical concept. Load-bearing fields for runPreEmit(): surface, ui_schema_ref, slots, brand_overlay.",
+      "properties": {
+        "surface": { "type": "string" },
+        "ui_schema_ref": { "type": "string" },
+        "slots": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/OodsSlot" }
+        },
+        "brand_overlay": { "type": "string" }
+      }
+    },
+    "OodsConfidenceSignal": {
+      "type": "object",
+      "required": ["name", "score"],
+      "additionalProperties": true,
+      "properties": {
+        "name": { "type": "string" },
+        "score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "hint": { "type": "string" }
+      }
+    },
+    "OodsConfidenceDecomposition": {
+      "type": "object",
+      "required": ["total", "signals"],
+      "additionalProperties": true,
+      "description": "Stage1 v1.6.0 shape. Total is a scalar (post-unwrapConfidenceTotal). Consumed by C3 review/recovery, not runPreEmit().",
+      "properties": {
+        "total": { "type": "number", "minimum": 0, "maximum": 1 },
+        "signals": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/OodsConfidenceSignal" }
+        }
+      }
+    },
+    "OodsEvidenceChainEntry": {
+      "type": "object",
+      "required": ["source"],
+      "additionalProperties": true,
+      "description": "Per-source rollup of the cross-source evidence trail. Summarizes; per-observation records still live in entity.evidence_refs[].",
+      "properties": {
+        "source": { "type": "string" },
+        "run_id": { "type": "string" },
+        "urn": { "type": "string" },
+        "match_score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "context_pack_recipe": { "type": "string" }
+      }
+    }
+  }
+}

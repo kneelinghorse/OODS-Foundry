@@ -26,4 +26,8 @@ export interface EncodingPositionXTraitParameters {
    * Default sort applied to discrete categories.
    */
   sorting?: 'none' | 'ascending' | 'descending';
+  /**
+   * JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand.
+   */
+  renderIntent?: string;
 }

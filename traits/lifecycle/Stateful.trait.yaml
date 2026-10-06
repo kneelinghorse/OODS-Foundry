@@ -3,9 +3,9 @@ trait:
   version: 2.0.0
   description: |
     Normalizes lifecycle state transitions, exposes canonical status semantics, and provides
-    optional transition governance for production workflows. Stateful is the most-composed
-    trait in the system (used by 18 objects including User, Subscription, Product, Order)
-    and serves as the data source for the Colorized visual trait.
+    optional transition governance for production workflows. Many objects compose Stateful
+    (User, Subscription and Product among them), and it serves as the data source for the
+    Colorized visual trait.
 
     At its simplest, Stateful defines an ordered list of valid states and tracks the current
     status. When governance is enabled via transitionRules, it additionally enforces which
@@ -153,13 +153,7 @@ view_extensions:
         initialParameter: initialState
         allowedTransitionsField: allowed_transitions
         requireReasonParameter: requireTransitionReason
-  timeline:
-    - component: StateTransitionEvent
-      props:
-        historyField: state_history
-        labelField: status
-        showActor: true
-        showReason: true
+  # s222-m03: no timeline recipe. A timeline's rail lists the state history itself (recordCollectionEvents).
   card:
     - component: StatusBadge
       position: before
@@ -204,10 +198,9 @@ metadata:
       the number of available next states (e.g., "Status: Active. 2 transitions available.").
       StateTransitionEvent entries announce from-state, to-state, actor, and reason.
   regionsUsed:
-    - badges
-    - timeline
-    - forms
+    - list
     - detail
+    - form
     - card
   examples:
     - Subscription
@@ -216,12 +209,21 @@ metadata:
     - User
     - Invoice
   governanceExamples:
+    # Illustrative only. The LIVE authority for the subscription machine is
+    # src/domain/billing/states.ts (SUBSCRIPTION_TRANSITIONS); transitionRules here
+    # is documentation and is intentionally NOT wired into the runtime machine, to
+    # avoid a second source of truth (see the s126-m01 single-source guard). Mirrors
+    # the extend-8 set: terminated is terminal ([]) and pending_cancellation is
+    # reversible back to active.
     - name: Subscription lifecycle
       transitionRules:
-        draft: [active, archived]
-        active: [paused, delinquent, terminated]
+        future: [trialing, active, terminated]
+        trialing: [active, terminated]
+        active: [paused, pending_cancellation, past_due, terminated]
         paused: [active, terminated]
-        delinquent: [active, terminated]
+        pending_cancellation: [active, terminated]
+        past_due: [active, unpaid, terminated]
+        unpaid: [terminated]
         terminated: []
       requireTransitionReason: true
     - name: Content publishing
@@ -233,5 +235,5 @@ metadata:
       requireTransitionReason: false
   references:
     - "Trait Engine Spec v0.1 section 2"
-    - "src/components/statusables/statusRegistry.ts — tone resolution for Colorized integration"
-    - "tokens/maps/saas-billing.status-map.json — domain status mapping"
+    - "objects/provenance.v1.json#/references/ref-ca663a7c5731 — tone resolution for Colorized integration"
+    - "objects/provenance.v1.json#/references/ref-be33a98177f7 — domain status mapping"

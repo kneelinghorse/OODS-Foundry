@@ -19,7 +19,9 @@
  * 5. How It Works - Schema fields and performance considerations
  */
 
-import React, { useState } from 'react';
+// @types/react 19 no longer declares a global JSX namespace; it is exported from 'react'.
+import type { JSX } from 'react';
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -84,14 +86,6 @@ const METER_TYPES = [
   { id: 'messages_sent', label: 'Messages', unit: 'messages', icon: '💬', color: '#06b6d4' },
   { id: 'seats', label: 'Seats', unit: 'licenses', icon: '🪑', color: '#6366f1' },
   { id: 'records', label: 'Records', unit: 'records', icon: '📊', color: '#84cc16' },
-];
-
-const USAGE_EVENTS = [
-  { meter: 'api_calls', value: 1523, timestamp: '2025-12-04T10:00:00Z' },
-  { meter: 'api_calls', value: 2104, timestamp: '2025-12-04T11:00:00Z' },
-  { meter: 'api_calls', value: 1876, timestamp: '2025-12-04T12:00:00Z' },
-  { meter: 'storage_bytes', value: 1024000000, timestamp: '2025-12-04T10:00:00Z' },
-  { meter: 'bandwidth_gb', value: 5.2, timestamp: '2025-12-04T10:00:00Z' },
 ];
 
 const USAGE_SUMMARY = {

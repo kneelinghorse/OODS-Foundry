@@ -10,7 +10,9 @@
     "concurrency": 1
   },
   "defaults": {
-    "modes": ["dry-run"],
+    "modes": [
+      "dry-run"
+    ],
     "approval": "optional",
     "ratePerMinute": 12,
     "concurrency": 1
@@ -25,92 +27,271 @@
   },
   "tools": [
     {
-      "name": "diag.snapshot",
-      "description": "Diagnostics snapshot (artifacts + bundle index)",
-      "modes": ["dry-run"],
-      "approval": "optional",
-      "allow": ["designer", "maintainer"],
-      "ratePerMinute": 12
-    },
-    {
-      "name": "reviewKit.create",
-      "description": "Creates review kit bundle for stories or contexts",
-      "modes": ["dry-run", "apply"],
-      "approval": "required",
-      "allow": ["designer", "maintainer"],
-      "ratePerMinute": 20
-    },
-    {
       "name": "brand.apply",
-      "description": "Applies brand tokens to repository artifacts",
-      "modes": ["dry-run", "apply"],
+      "description": "Preview or apply changes to an existing brand's canonical token source. Use it when editing a brand; use brand_create to create one. Returns validation, changed slots, before/after hashes and build evidence. delta is required and supports aliases or add/remove/replace patches. apply defaults to a dry run that writes nothing. apply:true validates first, then writes source and rebuilds; build failure leaves source edits in place. For shipped brands in the portable runtime, apply emits a review kit and reports source/build steps as skipped. User brands rebuild in their own folder. Reference: TOOL-REFERENCE.md#brand_apply; full schema: oods://schemas/brand_apply.input.json.",
+      "modes": [
+        "dry-run",
+        "apply"
+      ],
       "approval": "required",
-      "allow": ["designer", "maintainer"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
       "ratePerMinute": 12
     },
     {
-      "name": "billing.reviewKit",
-      "description": "Builds billing review kit bundle",
-      "modes": ["dry-run", "apply"],
-      "approval": "required",
-      "allow": ["designer", "maintainer"],
-      "ratePerMinute": 20
-    },
-    {
-      "name": "billing.switchFixtures",
-      "description": "Switches billing fixtures in repo contexts",
-      "modes": ["dry-run", "apply"],
-      "approval": "required",
-      "allow": ["designer", "maintainer"],
-      "ratePerMinute": 20
-    },
-    {
-      "name": "purity.audit",
-      "description": "Runs UI purity audit",
-      "modes": ["dry-run"],
+      "name": "brand.intake",
+      "description": "Create and inspect brands from token documents or a six-value recipe. Use it when adding a brand; use brand_apply to edit an existing brand or tokens_build to compile current sources. Returns templates, validation reports, derived recipes with provenance/gaps, or a created brand and build results. action selects template, validate, derive or create. derive accepts exactly one of tokens, css or cssPath; review gaps before creating. create validates every theme, refuses replacement, writes into your brands folder and builds tokens. Template and validation calls write nothing. Reference: TOOL-REFERENCE.md#brand_create; full schema: oods://schemas/brand_create.input.json.",
+      "modes": [
+        "dry-run",
+        "apply"
+      ],
       "approval": "optional",
-      "allow": ["designer", "maintainer"],
-      "ratePerMinute": 6
-    },
-    {
-      "name": "vrt.run",
-      "description": "Runs Chromatic/VR test harness",
-      "modes": ["dry-run"],
-      "approval": "optional",
-      "allow": ["designer", "maintainer"],
-      "ratePerMinute": 6
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "ratePerMinute": 30
     },
     {
       "name": "a11y.scan",
-      "description": "Runs accessibility scans on curated stories",
-      "modes": ["dry-run"],
+      "description": "Grade built token contrast and optional static screen accessibility. Use it when checking component token pairs and HTML structure; use artifact_certify for chart pillars or design_preview for measured browser evidence. Returns measured pairs, document findings and explicit unmeasured cases. Without a schema it checks every built brand/theme; a UiSchema scopes pairs to its components and adds static HTML checks. Dynamic/inherited/system paints remain unmeasured. Browser layout, keyboard/focus and screen-reader behavior are not tested. apply:true writes the report, transcript and bundle index; omission writes nothing. Reference: TOOL-REFERENCE.md#a11y_scan; full schema: oods://schemas/a11y_scan.input.json.",
+      "modes": [
+        "dry-run"
+      ],
       "approval": "optional",
-      "allow": ["designer", "maintainer"],
-      "ratePerMinute": 6
-    },
-    {
-      "name": "release.verify",
-      "description": "Pre-release verification checks",
-      "modes": ["dry-run"],
-      "approval": "optional",
-      "allow": ["maintainer"],
-      "ratePerMinute": 6
-    },
-    {
-      "name": "release.tag",
-      "description": "Tags release candidate",
-      "modes": ["dry-run", "apply"],
-      "approval": "required",
-      "allow": ["maintainer"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
       "ratePerMinute": 6
     },
     {
       "name": "tokens.build",
-      "description": "Builds token artifacts for storybook",
-      "modes": ["dry-run"],
+      "description": "Compile registered brand tokens with the shipped compiler. Use it when you need fresh CSS and JSON; use brand_create to create a brand or brand_apply to change its source. Returns inline CSS variables, CSS and JSON plus artifact paths, hashes and sizes. apply:true builds in isolated artifact storage; omission previews the artifacts without writing. Requested brand/theme selects the inline scope; full CSS includes every registered scope. Source and shipped runtime files stay unchanged. Reference: TOOL-REFERENCE.md#tokens_build; full schema: oods://schemas/tokens_build.input.json.",
+      "modes": [
+        "dry-run",
+        "apply"
+      ],
       "approval": "optional",
-      "allow": ["designer", "maintainer"],
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
       "ratePerMinute": 12
+    },
+    {
+      "name": "structuredData.fetch",
+      "description": "Fetch live registry datasets, archived token/export data, or captured-run artifacts. Use it when you need complete machine-readable data; use catalog_list instead for component selection, object_registry for one object's definition, or registry_snapshot for mappings together with traits and objects. Returns data with provenance, version and cache metadata. dataset selects registry/export mode; version pins an archived export and listVersions lists dates. kind plus runPath selects captured artifacts, while derived_analysis reads an analysis directory via runPath; version/listVersions are refused in kind mode. includeInternal exposes hidden objects, and ifNoneMatch checks the canonical payload ETag. Reference: TOOL-REFERENCE.md#structured_data_fetch; full schema: oods://schemas/structured_data_fetch.input.json.",
+      "modes": [
+        "dry-run"
+      ],
+      "approval": "optional",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "ratePerMinute": 20
+    },
+    {
+      "name": "catalog.list",
+      "description": "List components from the live component-contract registry. Use it when choosing components by category, trait or rendering context; use structured_data_fetch instead for complete datasets, object_registry for full object definitions, or registry_snapshot for mappings together with traits and objects. Returns component names, categories, readiness labels and availableCategories; detail controls added tags, contexts, regions, traits and evidence. includeInternal exposes hidden registry objects. Readiness evidence retains the build it measured and does not certify a new composition. Reference: TOOL-REFERENCE.md#catalog_list; full schema: oods://schemas/catalog_list.input.json.",
+      "modes": [
+        "dry-run"
+      ],
+      "approval": "optional",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "ratePerMinute": 20
+    },
+    {
+      "name": "code.generate",
+      "description": "Generate React/Vue file sets or a standalone static HTML document from a validated UiSchema. Use it when a schema already exists; use design_compose instead to choose a layout or pipeline_run to compose, validate, render and generate together. Returns versioned artifacts, exact dependencies, required domain handlers and validationReceipt. Supply schema or schemaRef before its 30-minute expiry. profile selects draft/build/release; build performs static checks, while release verifies supplied evidence without rerunning it. options.output selects component/application and options.payloadMode:file returns file references. Domain actions require consumer handlers. React shadcn mappings support components/apps; workflows refuse them. Reference: TOOL-REFERENCE.md#code_generate; full schema: oods://schemas/code_generate.input.json.",
+      "modes": [
+        "dry-run"
+      ],
+      "approval": "optional",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "ratePerMinute": 20
+    },
+    {
+      "name": "design.compose",
+      "description": "Compose an object screen or workflow into a UiSchema. Use it when choosing layout and components; use pipeline_run instead for the complete generation flow or code_generate when you already have a schema. Returns schema, a 30-minute process-local schemaRef and durable compositionId/version lineage. Prefer explicit object and context over keyword-based intent. preferences controls region/field order and sample seed; compositionId appends a version, while options.transient records none. Save schemas with schema_store to reuse across sessions. Selected nodes snapshot component mappings; composition does not generate or run an app. Reference: TOOL-REFERENCE.md#design_compose; full schema: oods://schemas/design_compose.input.json.",
+      "modes": [
+        "dry-run"
+      ],
+      "approval": "optional",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "ratePerMinute": 20
+    },
+    {
+      "name": "pipeline",
+      "description": "Run composition, validation, rendering and code generation in one call. Use it when starting from an object/context or intent and needing generated output; use design_compose instead to inspect layout first or code_generate for an existing schema. Returns step results, schemaRef with expiry, versioned artifacts, dependencies and validationReceipt. options controls validation/render skipping and optional static accessibility checks; save persists the schema beyond its process-local 30-minute reference. Generation validation forwards draft/build/release without downgrade. Release verifies supplied evidence without rerunning it; unresolved accessibility pairs stay unmeasured. Calls may write composition and saved-schema records. Reference: TOOL-REFERENCE.md#pipeline_run; full schema: oods://schemas/pipeline_run.input.json.",
+      "modes": [
+        "dry-run"
+      ],
+      "approval": "optional",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "ratePerMinute": 20
+    },
+    {
+      "name": "viz.render",
+      "description": "Render one data-bound chart from rows or a structured data operand. Use it when creating chart output; use artifact_certify instead to grade a normalized chart or dashboard_render for multiple panels and KPIs. Returns Vega-Lite or ECharts specs, chart identities and requested SVG/accessibility output. pattern uses bundled data and forbids explicit data/encoding/presentation overrides. Otherwise use chartType plus encodings, omit chartType for recommendations, or supply structured intent. ECharts-primary families require their matching hierarchy/network/geo operand. brand/theme controls pixels; output.includeNormalizedSpec returns the IR required by artifact_certify. Temporal rendering uses UTC. Reference: TOOL-REFERENCE.md#viz_render; full schema: oods://schemas/viz_render.input.json.",
+      "modes": [
+        "dry-run"
+      ],
+      "approval": "optional",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "ratePerMinute": 20
+    },
+    {
+      "name": "artifact.certify",
+      "description": "Grade a normalized chart's accessibility equivalence, determinism, contrast and accuracy. Use it when checking the IR returned by viz_render or dashboard_render; use viz_render instead to create chart output and dashboard_render to compose panels. Returns coverage, conformant, findings and four pillar verdicts. Pass spec alone for Cartesian charts; ECharts-primary charts need the same matching data branch used for rendering. Spec-only ECharts remains uncertified. brand/theme must match rendering; high contrast reports forced-colors exemption without a numeric contrast grade. A certified chart may still be nonconformant; inspect all verdicts. This read-only check does not repair charts. Reference: TOOL-REFERENCE.md#artifact_certify; full schema: oods://schemas/artifact_certify.input.json.",
+      "modes": [
+        "dry-run"
+      ],
+      "approval": "optional",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "ratePerMinute": 60
+    },
+    {
+      "name": "dashboard.render",
+      "description": "Render coordinated charts and KPIs from shared datasets and panel definitions. Use it when composing a dashboard; use viz_render instead for one chart or artifact_certify to grade each returned normalized chart. Returns layout, per-panel specs/hashes, computed KPI values, accessibility data and a reusable specRef. output.includeNormalizedSpec includes panel IR; output.html adds rendered HTML. brand/theme controls emitted pixels; selection and crossFilter apply caller-supplied filtering. resolveMeasures defaults true for governed measure references. output.contrastScan is a four-pair token preflight, not whole-document certification. Chord and flow_map are excluded from dashboards. Reference: TOOL-REFERENCE.md#dashboard_render; full schema: oods://schemas/dashboard_render.input.json.",
+      "modes": [
+        "dry-run"
+      ],
+      "approval": "optional",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "ratePerMinute": 20
+    },
+    {
+      "name": "health",
+      "description": "Read server readiness, live registry/store counts and retained proof summaries. Use it when checking availability and built brand/theme scopes; use object_registry for definitions or registry_snapshot for mappings. Returns status, server uptime, registry counts, token scopes and productReality evidence. status:ok means sources were readable; retained proofs identify their measured build and do not automatically certify this one. includeChangelog and sinceVersion filter the reported DSL changelog. tokens.defaultScope is configured metadata rather than an observed consumer scope; missing scope data is unavailable. Reference: TOOL-REFERENCE.md#health_check; full schema: oods://schemas/health_check.input.json.",
+      "modes": [
+        "dry-run"
+      ],
+      "approval": "optional",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "ratePerMinute": 30
+    },
+    {
+      "name": "registry.snapshot",
+      "description": "Read mappings together with active traits and objects in one snapshot. Use it when needing a combined registry view and canonical ETag; use catalog_list instead to choose components, structured_data_fetch for an individual dataset, or object_registry to inspect/register a definition. Returns mappings, traits, objects, generatedAt, ETag and registry loader issues. includeInternal exposes hidden objects; otherwise hiddenInternal counts omitted entries. Team definitions and shadowing are reported from live sources. This read-only call writes no snapshot file. Historical mapping fields remain stored data and do not imply current capabilities. Reference: TOOL-REFERENCE.md#registry_snapshot; full schema: oods://schemas/registry_snapshot.input.json.",
+      "modes": [
+        "dry-run"
+      ],
+      "approval": "optional",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "ratePerMinute": 30
+    },
+    {
+      "name": "design.preview",
+      "description": "Open a versioned composition as a running React/Vue app with recorded measurements. Use it when reviewing generated behavior or edits; use fidelity_preview instead for static diagrams, wireframes or mockups. Returns preview URLs, composition lineage, editable fields and measured/notMeasured evidence. Supply compositionId/version or object/context; action selects render, edit, compare or versions. Edits create a new version. framework and preferences select rendering; contextItems attach fetched evidence. runPath selects captured-run records, analysisPath selects derived comparisons, and recordId chooses an exact record. Writes version artifacts and measurements; domain actions still require consumer integration. Reference: TOOL-REFERENCE.md#design_preview; full schema: oods://schemas/design_preview.input.json.",
+      "modes": [
+        "dry-run"
+      ],
+      "approval": "optional",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "ratePerMinute": 10
+    },
+    {
+      "name": "fidelity.preview",
+      "description": "Draw object relationships or compositions at four fidelity levels. Use it when reviewing static structure or appearance; use design_preview instead to run generated React/Vue behavior. Returns SVG or HTML with fidelity-specific structure and provenance. fidelityKind selects boxes-arrows, wireframe, review or branded-mockup. Supply exactly one object, objects set, schema/schemaRef, fixture or legacy manifest; object/context composes a screen. Object diagrams show declared relationships; schema diagrams show containment. Wireframe/review show component bindings and recorded confidence, and branded mockups use static sample data. options.brandOverlay/theme selects built tokens. These drawings do not certify usability or referential integrity. Reference: TOOL-REFERENCE.md#fidelity_preview; full schema: oods://schemas/fidelity_preview.input.json.",
+      "modes": [
+        "dry-run"
+      ],
+      "approval": "optional",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "ratePerMinute": 30
+    },
+    {
+      "name": "map",
+      "description": "Manage component substitutions in your user mapping store. Use it when connecting your React/Vue component exports or React shadcn source to OODS components; use catalog_list to find OODS component names. Returns mapping entries, resolved matches or per-entry write outcomes. action selects apply/create/list/resolve/update/delete. create accepts a single entry, mappings list or mappingsPath; lists validate completely before one write. substitution supplies exports and prop translations with exact package versions or installed localPath. React shadcn mappings use an installed project and module instead. Compose snapshots mappings; generation/preview apply them. apply controls mutation where supported. Reference: TOOL-REFERENCE.md#component_map; full schema: oods://schemas/component_map.input.json.",
+      "modes": [
+        "dry-run",
+        "apply"
+      ],
+      "approval": "optional",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "ratePerMinute": 20
+    },
+    {
+      "name": "schema",
+      "description": "Save, load, list or delete named composition schemas. Use it when retaining a UiSchema across sessions or past its 30-minute reference expiry; use schema_render to validate/render it or object_registry to manage object definitions. Returns the selected stored schema, listing or write result. action selects the operation; save/load/delete use name. Every save overwrites that name and increments its version; only the latest is loadable. apply is accepted but ignored: save and delete always write. Full tool JSON schemas are separate MCP resources, not entries in this store. Reference: TOOL-REFERENCE.md#schema_store; full schema: oods://schemas/schema_store.input.json.",
+      "modes": [
+        "dry-run",
+        "apply"
+      ],
+      "approval": "optional",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "ratePerMinute": 20
+    },
+    {
+      "name": "object",
+      "description": "Inspect, validate or register object and trait definitions. Use it when exploring object shapes with list/show; use catalog_list instead to choose components, structured_data_fetch for complete datasets, or registry_snapshot for mappings together with definitions. Returns definitions, composed traits/view extensions, validation findings or registry write/reload results. action selects list/show/validate/register/reload. includeInternal reveals hidden objects. validate/register accept YAML; register writes your configured folder after checking declared contexts, and overwrite replaces your own definition. Team objects may shadow shipped objects; traits cannot reuse shipped names. Relationships validate their target and field. Reload reads folders without restarting. Reference: TOOL-REFERENCE.md#object_registry; full schema: oods://schemas/object_registry.input.json.",
+      "modes": [
+        "dry-run",
+        "apply"
+      ],
+      "approval": "optional",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "ratePerMinute": 20
+    },
+    {
+      "name": "repl",
+      "description": "Validate a UiSchema or render it as static HTML/fragments. Use it when checking schema/patch contracts or exporting static output; use design_preview for a running React/Vue app, code_generate for file sets, or schema_store for persistence. Returns validation diagnostics or rendered output with warnings and artifact references. action selects validate/render; mode selects full schema or patch, with schemaRef available for reuse. Render defaults to a document with token CSS; output.compact omits CSS. brand and output scope options affect documents; ignored fragment options are diagnosed. apply:true emits render artifacts; output.payloadMode:file writes payloads and returns paths. Reference: TOOL-REFERENCE.md#schema_render; full schema: oods://schemas/schema_render.input.json.",
+      "modes": [
+        "dry-run",
+        "apply"
+      ],
+      "approval": "optional",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "ratePerMinute": 20
     }
   ],
   "connectors": [
@@ -119,7 +300,21 @@
       "provider": "anthropic",
       "role": "designer",
       "defaultMode": "dry-run",
-      "tools": ["diag.snapshot", "reviewKit.create", "brand.apply", "billing.reviewKit", "billing.switchFixtures"],
+      "tools": [
+        "health",
+        "brand.apply",
+        "structuredData.fetch",
+        "catalog.list",
+        "code.generate",
+        "design.compose",
+        "pipeline",
+        "viz.render",
+        "dashboard.render",
+        "map",
+        "schema",
+        "object",
+        "repl"
+      ],
       "notes": "Apply requests must include the approval header value defined above."
     },
     {
@@ -127,7 +322,21 @@
       "provider": "openai",
       "role": "designer",
       "defaultMode": "dry-run",
-      "tools": ["diag.snapshot", "brand.apply", "reviewKit.create"],
+      "tools": [
+        "health",
+        "brand.apply",
+        "structuredData.fetch",
+        "catalog.list",
+        "code.generate",
+        "design.compose",
+        "pipeline",
+        "viz.render",
+        "dashboard.render",
+        "map",
+        "schema",
+        "object",
+        "repl"
+      ],
       "notes": "Apply requires approval token and is rate limited to prevent context overrun."
     }
   ]

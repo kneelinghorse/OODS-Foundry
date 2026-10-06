@@ -10,6 +10,12 @@ const MarkPointTrait = {
   },
 
   parameters: [
+    {"name": "chart", "type": "object", "required": false, "description": "Optional read-only chart declaration binding existing domain fields; projects into supported detail and dashboard views."},
+    {"name": "title", "type": "string", "required": false, "description": "Title for the bound chart and its accessible figure."},
+    {"name": "description", "type": "string", "required": false, "description": "Description of the bound chart measurements and units."},
+    {"name": "renderIntent", "type": "string", "required": false, "default": "{}", "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."},
+    {"name": "previewSvg", "type": "string", "required": false, "description": "Static SVG returned by viz.render for the authored sample; omitted until a chart is rendered."},
+
     {
       name: 'shape',
       type: 'string',
@@ -191,6 +197,7 @@ const MarkPointTrait = {
         position: 'top',
         priority: 55,
         props: {
+          svgParameter: 'previewSvg',
           shapeField: 'viz_point_shape',
           sizeField: 'viz_point_size',
           fillField: 'viz_point_fill',
@@ -202,6 +209,7 @@ const MarkPointTrait = {
         component: 'VizPointControls',
         position: 'top',
         props: {
+          intentParameter: 'renderIntent',
           shapeField: 'viz_point_shape',
           sizeField: 'viz_point_size',
           opacityField: 'viz_point_opacity',
@@ -213,6 +221,7 @@ const MarkPointTrait = {
       {
         component: 'VizRoleBadge',
         props: {
+          intentParameter: 'renderIntent',
           labelField: 'viz_mark_role',
         },
       },
@@ -239,7 +248,7 @@ const MarkPointTrait = {
     regionsUsed: ['detail', 'form', 'list'],
     examples: ['ProfitVsRevenue', 'SLAHeatScatter'],
     references: [
-      'cmos/research/data-viz-oods/RDS.7_synthesis_Mission Completion Report- Trait-Driven Visualization System Specification (v0.1).md',
+      'RDS.7 Trait-Driven Visualization System Specification (v0.1)',
     ],
   },
 } as const satisfies TraitDefinition;

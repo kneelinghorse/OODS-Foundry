@@ -1,0 +1,597 @@
+{
+  "treemap": {
+    "renderedContentHash": "0f1887380e087bbd5e15b9bc926ddb7a887eed5cddcca5f052895e4a291fa10a",
+    "certified": {
+      "status": "ok",
+      "coverage": "uncertified",
+      "conformant": null,
+      "findings": [
+        {
+          "code": "OODS-A11Y-A11Y-R-14",
+          "severity": "warn",
+          "message": "Set portability.tableColumnOrder when rendering tables with more than two columns."
+        }
+      ],
+      "a11yNotApplicable": [
+        {
+          "rule": "A11Y-R-01",
+          "preconditionAbsent": "a color encoding bound to a field"
+        },
+        {
+          "rule": "A11Y-R-02",
+          "preconditionAbsent": "a size encoding binding"
+        },
+        {
+          "rule": "A11Y-R-04",
+          "preconditionAbsent": "a bar mark"
+        },
+        {
+          "rule": "A11Y-R-05",
+          "preconditionAbsent": "an x or y positional encoding binding"
+        },
+        {
+          "rule": "A11Y-R-06",
+          "preconditionAbsent": "an area mark"
+        },
+        {
+          "rule": "A11Y-R-10",
+          "preconditionAbsent": "a line or area mark"
+        },
+        {
+          "rule": "A11Y-R-12",
+          "preconditionAbsent": "an x, y or color encoding bound to a field"
+        },
+        {
+          "rule": "A11Y-R-13",
+          "preconditionAbsent": "more than 12 data rows"
+        },
+        {
+          "rule": "A11Y-R-16",
+          "preconditionAbsent": "a filter or zoom interaction"
+        }
+      ],
+      "pillars": {
+        "a11yEquivalence": "unchecked",
+        "determinism": "pass",
+        "contrast": "pass",
+        "accuracy": "pass"
+      },
+      "determinism": {
+        "stable": true,
+        "contentHash": "0f1887380e087bbd5e15b9bc926ddb7a887eed5cddcca5f052895e4a291fa10a"
+      },
+      "accuracySummary": {
+        "rulesEvaluated": 2,
+        "failing": 0
+      },
+      "notes": [
+        "MarkTreemap is an ECharts-primary mark. A11y-equivalence runs WARN-FIRST here: when the `data` operand is supplied, the 16-rule equivalence engine evaluates over the operand-built table and narrative, each rule reporting pass, fail, or not-applicable; failures surface in findings[] at their native severity, not-applicable rules in a11yNotApplicable[] with the absent precondition named, the remainder passed — and none of it moves the pillar. Without the operand there is nothing to evaluate and no a11y findings appear. pillars.a11yEquivalence stays 'unchecked' in both cases; the verdict flip to pass/fail is a future enforce step, not scheduled here. The accessible table and narrative are generated on the data-backed path.",
+        "This determinism verdict is over the emitted ECharts OPTION for the (spec, data) pair supplied to THIS call — certify makes no claim about what the caller actually rendered. Hash identity across processes assumes one installed @oods/tokens bundle version: palette and chrome are resolved from that bundle at module load."
+      ],
+      "contrastNote": "certify measures the categorical color bytes Forge baked into the compiled spec, on the light theme; dark-theme contrast is not verified. This grades the fixed OODS categorical palette the ECharts adapter bakes into itemStyle (reconstructed from the shared viz-scale tokens; data-independent, so the verdict is a per-palette constant — a weaker claim than a cartesian, cardinality-sliced verdict). touching-mark/adjacency contrast not graded; relies on the separating stroke. Per-node data-color overrides are ungraded — the grade reflects the default baked palette."
+    }
+  },
+  "sunburst": {
+    "renderedContentHash": "510b357978de88f2001e9b227033da4c6e7cc0dd920cd4a1e9c20cb0414c018b",
+    "certified": {
+      "status": "ok",
+      "coverage": "uncertified",
+      "conformant": null,
+      "findings": [
+        {
+          "code": "OODS-A11Y-A11Y-R-14",
+          "severity": "warn",
+          "message": "Set portability.tableColumnOrder when rendering tables with more than two columns."
+        }
+      ],
+      "a11yNotApplicable": [
+        {
+          "rule": "A11Y-R-01",
+          "preconditionAbsent": "a color encoding bound to a field"
+        },
+        {
+          "rule": "A11Y-R-02",
+          "preconditionAbsent": "a size encoding binding"
+        },
+        {
+          "rule": "A11Y-R-04",
+          "preconditionAbsent": "a bar mark"
+        },
+        {
+          "rule": "A11Y-R-05",
+          "preconditionAbsent": "an x or y positional encoding binding"
+        },
+        {
+          "rule": "A11Y-R-06",
+          "preconditionAbsent": "an area mark"
+        },
+        {
+          "rule": "A11Y-R-10",
+          "preconditionAbsent": "a line or area mark"
+        },
+        {
+          "rule": "A11Y-R-12",
+          "preconditionAbsent": "an x, y or color encoding bound to a field"
+        },
+        {
+          "rule": "A11Y-R-13",
+          "preconditionAbsent": "more than 12 data rows"
+        },
+        {
+          "rule": "A11Y-R-16",
+          "preconditionAbsent": "a filter or zoom interaction"
+        }
+      ],
+      "pillars": {
+        "a11yEquivalence": "unchecked",
+        "determinism": "pass",
+        "contrast": "pass",
+        "accuracy": "pass"
+      },
+      "determinism": {
+        "stable": true,
+        "contentHash": "510b357978de88f2001e9b227033da4c6e7cc0dd920cd4a1e9c20cb0414c018b"
+      },
+      "accuracySummary": {
+        "rulesEvaluated": 2,
+        "failing": 0
+      },
+      "notes": [
+        "MarkSunburst is an ECharts-primary mark. A11y-equivalence runs WARN-FIRST here: when the `data` operand is supplied, the 16-rule equivalence engine evaluates over the operand-built table and narrative, each rule reporting pass, fail, or not-applicable; failures surface in findings[] at their native severity, not-applicable rules in a11yNotApplicable[] with the absent precondition named, the remainder passed — and none of it moves the pillar. Without the operand there is nothing to evaluate and no a11y findings appear. pillars.a11yEquivalence stays 'unchecked' in both cases; the verdict flip to pass/fail is a future enforce step, not scheduled here. The accessible table and narrative are generated on the data-backed path.",
+        "This determinism verdict is over the emitted ECharts OPTION for the (spec, data) pair supplied to THIS call — certify makes no claim about what the caller actually rendered. Hash identity across processes assumes one installed @oods/tokens bundle version: palette and chrome are resolved from that bundle at module load."
+      ],
+      "contrastNote": "certify measures the categorical color bytes Forge baked into the compiled spec, on the light theme; dark-theme contrast is not verified. This grades the fixed OODS categorical palette the ECharts adapter bakes into itemStyle (reconstructed from the shared viz-scale tokens; data-independent, so the verdict is a per-palette constant — a weaker claim than a cartesian, cardinality-sliced verdict). touching-mark/adjacency contrast not graded; relies on the separating stroke. Per-node data-color overrides are ungraded — the grade reflects the default baked palette."
+    }
+  },
+  "sankey": {
+    "renderedContentHash": "346b1675f25761bc4352b6f38ba89d66bbbaf11360800d525ade905b19832a15",
+    "certified": {
+      "status": "ok",
+      "coverage": "uncertified",
+      "conformant": null,
+      "findings": [
+        {
+          "code": "OODS-A11Y-A11Y-R-14",
+          "severity": "warn",
+          "message": "Set portability.tableColumnOrder when rendering tables with more than two columns."
+        }
+      ],
+      "a11yNotApplicable": [
+        {
+          "rule": "A11Y-R-01",
+          "preconditionAbsent": "a color encoding bound to a field"
+        },
+        {
+          "rule": "A11Y-R-02",
+          "preconditionAbsent": "a size encoding binding"
+        },
+        {
+          "rule": "A11Y-R-04",
+          "preconditionAbsent": "a bar mark"
+        },
+        {
+          "rule": "A11Y-R-05",
+          "preconditionAbsent": "an x or y positional encoding binding"
+        },
+        {
+          "rule": "A11Y-R-06",
+          "preconditionAbsent": "an area mark"
+        },
+        {
+          "rule": "A11Y-R-10",
+          "preconditionAbsent": "a line or area mark"
+        },
+        {
+          "rule": "A11Y-R-11",
+          "preconditionAbsent": "at least 3 data rows"
+        },
+        {
+          "rule": "A11Y-R-12",
+          "preconditionAbsent": "an x, y or color encoding bound to a field"
+        },
+        {
+          "rule": "A11Y-R-13",
+          "preconditionAbsent": "more than 12 data rows"
+        },
+        {
+          "rule": "A11Y-R-16",
+          "preconditionAbsent": "a filter or zoom interaction"
+        }
+      ],
+      "pillars": {
+        "a11yEquivalence": "unchecked",
+        "determinism": "pass",
+        "contrast": "pass",
+        "accuracy": "pass"
+      },
+      "determinism": {
+        "stable": true,
+        "contentHash": "346b1675f25761bc4352b6f38ba89d66bbbaf11360800d525ade905b19832a15"
+      },
+      "accuracySummary": {
+        "rulesEvaluated": 3,
+        "failing": 0
+      },
+      "notes": [
+        "MarkSankey is an ECharts-primary mark. A11y-equivalence runs WARN-FIRST here: when the `data` operand is supplied, the 16-rule equivalence engine evaluates over the operand-built table and narrative, each rule reporting pass, fail, or not-applicable; failures surface in findings[] at their native severity, not-applicable rules in a11yNotApplicable[] with the absent precondition named, the remainder passed — and none of it moves the pillar. Without the operand there is nothing to evaluate and no a11y findings appear. pillars.a11yEquivalence stays 'unchecked' in both cases; the verdict flip to pass/fail is a future enforce step, not scheduled here. The accessible table and narrative are generated on the data-backed path.",
+        "This determinism verdict is over the emitted ECharts OPTION for the (spec, data) pair supplied to THIS call — certify makes no claim about what the caller actually rendered. Hash identity across processes assumes one installed @oods/tokens bundle version: palette and chrome are resolved from that bundle at module load."
+      ],
+      "contrastNote": "certify measures the categorical color bytes Forge baked into the compiled spec, on the light theme; dark-theme contrast is not verified. This grades the fixed OODS categorical palette the ECharts adapter bakes into itemStyle (reconstructed from the shared viz-scale tokens; data-independent, so the verdict is a per-palette constant — a weaker claim than a cartesian, cardinality-sliced verdict). touching-mark/adjacency contrast not graded; relies on the separating stroke. Per-node data-color overrides are ungraded — the grade reflects the default baked palette."
+    }
+  },
+  "chord": {
+    "renderedContentHash": "6d844d7a48c2f7d897eee10b31cb0f78dcdd6677937651293077a1dcc701fb53",
+    "certified": {
+      "status": "ok",
+      "coverage": "uncertified",
+      "conformant": null,
+      "findings": [
+        {
+          "code": "OODS-A11Y-A11Y-R-14",
+          "severity": "warn",
+          "message": "Set portability.tableColumnOrder when rendering tables with more than two columns."
+        }
+      ],
+      "a11yNotApplicable": [
+        {
+          "rule": "A11Y-R-01",
+          "preconditionAbsent": "a color encoding bound to a field"
+        },
+        {
+          "rule": "A11Y-R-02",
+          "preconditionAbsent": "a size encoding binding"
+        },
+        {
+          "rule": "A11Y-R-04",
+          "preconditionAbsent": "a bar mark"
+        },
+        {
+          "rule": "A11Y-R-05",
+          "preconditionAbsent": "an x or y positional encoding binding"
+        },
+        {
+          "rule": "A11Y-R-06",
+          "preconditionAbsent": "an area mark"
+        },
+        {
+          "rule": "A11Y-R-10",
+          "preconditionAbsent": "a line or area mark"
+        },
+        {
+          "rule": "A11Y-R-12",
+          "preconditionAbsent": "an x, y or color encoding bound to a field"
+        },
+        {
+          "rule": "A11Y-R-13",
+          "preconditionAbsent": "more than 12 data rows"
+        },
+        {
+          "rule": "A11Y-R-16",
+          "preconditionAbsent": "a filter or zoom interaction"
+        }
+      ],
+      "pillars": {
+        "a11yEquivalence": "unchecked",
+        "determinism": "pass",
+        "contrast": "pass",
+        "accuracy": "pass"
+      },
+      "determinism": {
+        "stable": true,
+        "contentHash": "6d844d7a48c2f7d897eee10b31cb0f78dcdd6677937651293077a1dcc701fb53"
+      },
+      "accuracySummary": {
+        "rulesEvaluated": 1,
+        "failing": 0
+      },
+      "notes": [
+        "MarkChord is an ECharts-primary mark. A11y-equivalence runs WARN-FIRST here: when the `data` operand is supplied, the 16-rule equivalence engine evaluates over the operand-built table and narrative, each rule reporting pass, fail, or not-applicable; failures surface in findings[] at their native severity, not-applicable rules in a11yNotApplicable[] with the absent precondition named, the remainder passed — and none of it moves the pillar. Without the operand there is nothing to evaluate and no a11y findings appear. pillars.a11yEquivalence stays 'unchecked' in both cases; the verdict flip to pass/fail is a future enforce step, not scheduled here. The accessible table and narrative are generated on the data-backed path.",
+        "This determinism verdict is over the emitted ECharts OPTION for the (spec, data) pair supplied to THIS call — certify makes no claim about what the caller actually rendered. Hash identity across processes assumes one installed @oods/tokens bundle version: palette and chrome are resolved from that bundle at module load."
+      ],
+      "contrastNote": "certify measures the categorical color bytes Forge baked into the compiled spec, on the light theme; dark-theme contrast is not verified. This grades the fixed OODS categorical palette the ECharts adapter bakes into itemStyle (reconstructed from the shared viz-scale tokens; data-independent, so the verdict is a per-palette constant — a weaker claim than a cartesian, cardinality-sliced verdict). touching-mark/adjacency contrast not graded; relies on the separating stroke. Per-node data-color overrides are ungraded — the grade reflects the default baked palette."
+    }
+  },
+  "force_graph": {
+    "renderedContentHash": "cfdb9cfb3dfd021318f0a42232fe63fb8bd6042806bc3f4e29fbebf648045519",
+    "certified": {
+      "status": "ok",
+      "coverage": "uncertified",
+      "conformant": null,
+      "findings": [
+        {
+          "code": "OODS-A11Y-A11Y-R-14",
+          "severity": "warn",
+          "message": "Set portability.tableColumnOrder when rendering tables with more than two columns."
+        }
+      ],
+      "a11yNotApplicable": [
+        {
+          "rule": "A11Y-R-01",
+          "preconditionAbsent": "a color encoding bound to a field"
+        },
+        {
+          "rule": "A11Y-R-02",
+          "preconditionAbsent": "a size encoding binding"
+        },
+        {
+          "rule": "A11Y-R-04",
+          "preconditionAbsent": "a bar mark"
+        },
+        {
+          "rule": "A11Y-R-05",
+          "preconditionAbsent": "an x or y positional encoding binding"
+        },
+        {
+          "rule": "A11Y-R-06",
+          "preconditionAbsent": "an area mark"
+        },
+        {
+          "rule": "A11Y-R-10",
+          "preconditionAbsent": "a line or area mark"
+        },
+        {
+          "rule": "A11Y-R-12",
+          "preconditionAbsent": "an x, y or color encoding bound to a field"
+        },
+        {
+          "rule": "A11Y-R-13",
+          "preconditionAbsent": "more than 12 data rows"
+        },
+        {
+          "rule": "A11Y-R-16",
+          "preconditionAbsent": "a filter or zoom interaction"
+        }
+      ],
+      "pillars": {
+        "a11yEquivalence": "unchecked",
+        "determinism": "pass",
+        "contrast": "pass",
+        "accuracy": "unchecked"
+      },
+      "determinism": {
+        "stable": true,
+        "contentHash": "cfdb9cfb3dfd021318f0a42232fe63fb8bd6042806bc3f4e29fbebf648045519"
+      },
+      "accuracySummary": {
+        "rulesEvaluated": 0,
+        "failing": 0
+      },
+      "notes": [
+        "MarkGraph is an ECharts-primary mark. A11y-equivalence runs WARN-FIRST here: when the `data` operand is supplied, the 16-rule equivalence engine evaluates over the operand-built table and narrative, each rule reporting pass, fail, or not-applicable; failures surface in findings[] at their native severity, not-applicable rules in a11yNotApplicable[] with the absent precondition named, the remainder passed — and none of it moves the pillar. Without the operand there is nothing to evaluate and no a11y findings appear. pillars.a11yEquivalence stays 'unchecked' in both cases; the verdict flip to pass/fail is a future enforce step, not scheduled here. The accessible table and narrative are generated on the data-backed path.",
+        "This determinism verdict is over the emitted ECharts OPTION for the (spec, data) pair supplied to THIS call — certify makes no claim about what the caller actually rendered. Hash identity across processes assumes one installed @oods/tokens bundle version: palette and chrome are resolved from that bundle at module load. force_graph additionally: the option is deterministic, but the rendered layout is runtime force physics with no baked seed, so the picture is not covered by this verdict.",
+        "No accuracy rule is offered for force_graph: its distortion candidates (node sizing, edge curvature, layout repulsion) are adapter constants rather than authoring choices, so there is nothing in the data branch a caller could get wrong. rulesEvaluated is 0 because the offered set is empty, not because a rule failed to resolve its operand."
+      ],
+      "contrastNote": "certify measures the categorical color bytes Forge baked into the compiled spec, on the light theme; dark-theme contrast is not verified. This grades the fixed OODS categorical palette the ECharts adapter bakes into itemStyle (reconstructed from the shared viz-scale tokens; data-independent, so the verdict is a per-palette constant — a weaker claim than a cartesian, cardinality-sliced verdict). touching-mark/adjacency contrast not graded; relies on the separating stroke. Per-node data-color overrides are ungraded — the grade reflects the default baked palette."
+    }
+  },
+  "choropleth": {
+    "renderedContentHash": "178534c597318a742fae67e2fe6c9a24ea1cc75306bf736d6332ccef476ef5c1",
+    "certified": {
+      "status": "ok",
+      "coverage": "uncertified",
+      "conformant": null,
+      "findings": [
+        {
+          "code": "OODS-A11Y-A11Y-R-14",
+          "severity": "warn",
+          "message": "Set portability.tableColumnOrder when rendering tables with more than two columns."
+        }
+      ],
+      "a11yNotApplicable": [
+        {
+          "rule": "A11Y-R-01",
+          "preconditionAbsent": "a color encoding bound to a field"
+        },
+        {
+          "rule": "A11Y-R-02",
+          "preconditionAbsent": "a size encoding binding"
+        },
+        {
+          "rule": "A11Y-R-04",
+          "preconditionAbsent": "a bar mark"
+        },
+        {
+          "rule": "A11Y-R-05",
+          "preconditionAbsent": "an x or y positional encoding binding"
+        },
+        {
+          "rule": "A11Y-R-06",
+          "preconditionAbsent": "an area mark"
+        },
+        {
+          "rule": "A11Y-R-10",
+          "preconditionAbsent": "a line or area mark"
+        },
+        {
+          "rule": "A11Y-R-11",
+          "preconditionAbsent": "at least 3 data rows"
+        },
+        {
+          "rule": "A11Y-R-12",
+          "preconditionAbsent": "an x, y or color encoding bound to a field"
+        },
+        {
+          "rule": "A11Y-R-13",
+          "preconditionAbsent": "more than 12 data rows"
+        },
+        {
+          "rule": "A11Y-R-16",
+          "preconditionAbsent": "a filter or zoom interaction"
+        }
+      ],
+      "pillars": {
+        "a11yEquivalence": "unchecked",
+        "determinism": "pass",
+        "contrast": "exempt",
+        "accuracy": "pass"
+      },
+      "determinism": {
+        "stable": true,
+        "contentHash": "178534c597318a742fae67e2fe6c9a24ea1cc75306bf736d6332ccef476ef5c1"
+      },
+      "accuracySummary": {
+        "rulesEvaluated": 1,
+        "failing": 0
+      },
+      "notes": [
+        "MarkChoropleth is an ECharts-primary mark. A11y-equivalence runs WARN-FIRST here: when the `data` operand is supplied, the 16-rule equivalence engine evaluates over the operand-built table and narrative, each rule reporting pass, fail, or not-applicable; failures surface in findings[] at their native severity, not-applicable rules in a11yNotApplicable[] with the absent precondition named, the remainder passed — and none of it moves the pillar. Without the operand there is nothing to evaluate and no a11y findings appear. pillars.a11yEquivalence stays 'unchecked' in both cases; the verdict flip to pass/fail is a future enforce step, not scheduled here. The accessible table and narrative are generated on the data-backed path.",
+        "This determinism verdict is over the emitted ECharts OPTION for the (spec, data) pair supplied to THIS call — certify makes no claim about what the caller actually rendered. Hash identity across processes assumes one installed @oods/tokens bundle version: palette and chrome are resolved from that bundle at module load."
+      ],
+      "contrastNote": "Geo color renders as a sequential/continuous scale (choropleth visualMap ramp, flow_map single-hue line, bubble_map visualMap) — WCAG 1.4.11 gradient essential exception, so there is no discrete categorical palette to contrast-check; Forge's generated accessible data table is the guarantee. An author-supplied ordinal-categorical bubble_map color is still NOT graded, and as of s172 the reason is the s141 exempt-all-geo RULING rather than invisibility: certify can now see the geo data branch (the optional `data` operand), so that colorField and the colorScale it renders on are reachable — grading them would be a new scope decision, not a bug fix. The palette itself stays out of reach either way: the branch has no range field, so an ordinal bubble_map paints from Forge's own categorical list, cycling it when the categories outnumber it. certify measures the categorical color bytes Forge baked into the compiled spec, on the light theme; dark-theme contrast is not verified."
+    }
+  },
+  "bubble_map": {
+    "renderedContentHash": "68580817ceab383b158c33fa62eaa36e40af8741725210ce4246f6822ad235e3",
+    "certified": {
+      "status": "ok",
+      "coverage": "uncertified",
+      "conformant": null,
+      "findings": [
+        {
+          "code": "OODS-A11Y-A11Y-R-14",
+          "severity": "warn",
+          "message": "Set portability.tableColumnOrder when rendering tables with more than two columns."
+        }
+      ],
+      "a11yNotApplicable": [
+        {
+          "rule": "A11Y-R-01",
+          "preconditionAbsent": "a color encoding bound to a field"
+        },
+        {
+          "rule": "A11Y-R-02",
+          "preconditionAbsent": "a size encoding binding"
+        },
+        {
+          "rule": "A11Y-R-04",
+          "preconditionAbsent": "a bar mark"
+        },
+        {
+          "rule": "A11Y-R-05",
+          "preconditionAbsent": "an x or y positional encoding binding"
+        },
+        {
+          "rule": "A11Y-R-06",
+          "preconditionAbsent": "an area mark"
+        },
+        {
+          "rule": "A11Y-R-10",
+          "preconditionAbsent": "a line or area mark"
+        },
+        {
+          "rule": "A11Y-R-11",
+          "preconditionAbsent": "at least 3 data rows"
+        },
+        {
+          "rule": "A11Y-R-12",
+          "preconditionAbsent": "an x, y or color encoding bound to a field"
+        },
+        {
+          "rule": "A11Y-R-13",
+          "preconditionAbsent": "more than 12 data rows"
+        },
+        {
+          "rule": "A11Y-R-16",
+          "preconditionAbsent": "a filter or zoom interaction"
+        }
+      ],
+      "pillars": {
+        "a11yEquivalence": "unchecked",
+        "determinism": "pass",
+        "contrast": "exempt",
+        "accuracy": "unchecked"
+      },
+      "determinism": {
+        "stable": true,
+        "contentHash": "68580817ceab383b158c33fa62eaa36e40af8741725210ce4246f6822ad235e3"
+      },
+      "accuracySummary": {
+        "rulesEvaluated": 0,
+        "failing": 0
+      },
+      "notes": [
+        "MarkBubble is an ECharts-primary mark. A11y-equivalence runs WARN-FIRST here: when the `data` operand is supplied, the 16-rule equivalence engine evaluates over the operand-built table and narrative, each rule reporting pass, fail, or not-applicable; failures surface in findings[] at their native severity, not-applicable rules in a11yNotApplicable[] with the absent precondition named, the remainder passed — and none of it moves the pillar. Without the operand there is nothing to evaluate and no a11y findings appear. pillars.a11yEquivalence stays 'unchecked' in both cases; the verdict flip to pass/fail is a future enforce step, not scheduled here. The accessible table and narrative are generated on the data-backed path.",
+        "This determinism verdict is over the emitted ECharts OPTION for the (spec, data) pair supplied to THIS call — certify makes no claim about what the caller actually rendered. Hash identity across processes assumes one installed @oods/tokens bundle version: palette and chrome are resolved from that bundle at module load.",
+        "No accuracy rule is offered for bubble_map: no rule has been WRITTEN for its authorable distortions yet — a recorded scope decision, not a limit of the branch. bubble_map takes a colorScale (an ordinal palette CYCLES once the categories outnumber it, drawing two categories the same hue) and flow_map takes a strengthField that drives arc width, so both distortions are expressible here and a future rule could read them. rulesEvaluated is 0 because the offered set is empty, not because a rule failed to resolve its operand."
+      ],
+      "contrastNote": "Geo color renders as a sequential/continuous scale (choropleth visualMap ramp, flow_map single-hue line, bubble_map visualMap) — WCAG 1.4.11 gradient essential exception, so there is no discrete categorical palette to contrast-check; Forge's generated accessible data table is the guarantee. An author-supplied ordinal-categorical bubble_map color is still NOT graded, and as of s172 the reason is the s141 exempt-all-geo RULING rather than invisibility: certify can now see the geo data branch (the optional `data` operand), so that colorField and the colorScale it renders on are reachable — grading them would be a new scope decision, not a bug fix. The palette itself stays out of reach either way: the branch has no range field, so an ordinal bubble_map paints from Forge's own categorical list, cycling it when the categories outnumber it. certify measures the categorical color bytes Forge baked into the compiled spec, on the light theme; dark-theme contrast is not verified."
+    }
+  },
+  "flow_map": {
+    "renderedContentHash": "d02900062bbf0fa0f983e60de987a8919316032b74099366d90dfa464e4f7cd5",
+    "certified": {
+      "status": "ok",
+      "coverage": "uncertified",
+      "conformant": null,
+      "findings": [
+        {
+          "code": "OODS-A11Y-A11Y-R-14",
+          "severity": "warn",
+          "message": "Set portability.tableColumnOrder when rendering tables with more than two columns."
+        }
+      ],
+      "a11yNotApplicable": [
+        {
+          "rule": "A11Y-R-01",
+          "preconditionAbsent": "a color encoding bound to a field"
+        },
+        {
+          "rule": "A11Y-R-02",
+          "preconditionAbsent": "a size encoding binding"
+        },
+        {
+          "rule": "A11Y-R-04",
+          "preconditionAbsent": "a bar mark"
+        },
+        {
+          "rule": "A11Y-R-05",
+          "preconditionAbsent": "an x or y positional encoding binding"
+        },
+        {
+          "rule": "A11Y-R-06",
+          "preconditionAbsent": "an area mark"
+        },
+        {
+          "rule": "A11Y-R-10",
+          "preconditionAbsent": "a line or area mark"
+        },
+        {
+          "rule": "A11Y-R-11",
+          "preconditionAbsent": "at least 3 data rows"
+        },
+        {
+          "rule": "A11Y-R-12",
+          "preconditionAbsent": "an x, y or color encoding bound to a field"
+        },
+        {
+          "rule": "A11Y-R-13",
+          "preconditionAbsent": "more than 12 data rows"
+        },
+        {
+          "rule": "A11Y-R-16",
+          "preconditionAbsent": "a filter or zoom interaction"
+        }
+      ],
+      "pillars": {
+        "a11yEquivalence": "unchecked",
+        "determinism": "pass",
+        "contrast": "exempt",
+        "accuracy": "unchecked"
+      },
+      "determinism": {
+        "stable": true,
+        "contentHash": "d02900062bbf0fa0f983e60de987a8919316032b74099366d90dfa464e4f7cd5"
+      },
+      "accuracySummary": {
+        "rulesEvaluated": 0,
+        "failing": 0
+      },
+      "notes": [
+        "MarkFlow is an ECharts-primary mark. A11y-equivalence runs WARN-FIRST here: when the `data` operand is supplied, the 16-rule equivalence engine evaluates over the operand-built table and narrative, each rule reporting pass, fail, or not-applicable; failures surface in findings[] at their native severity, not-applicable rules in a11yNotApplicable[] with the absent precondition named, the remainder passed — and none of it moves the pillar. Without the operand there is nothing to evaluate and no a11y findings appear. pillars.a11yEquivalence stays 'unchecked' in both cases; the verdict flip to pass/fail is a future enforce step, not scheduled here. The accessible table and narrative are generated on the data-backed path.",
+        "This determinism verdict is over the emitted ECharts OPTION for the (spec, data) pair supplied to THIS call — certify makes no claim about what the caller actually rendered. Hash identity across processes assumes one installed @oods/tokens bundle version: palette and chrome are resolved from that bundle at module load.",
+        "No accuracy rule is offered for flow_map: no rule has been WRITTEN for its authorable distortions yet — a recorded scope decision, not a limit of the branch. bubble_map takes a colorScale (an ordinal palette CYCLES once the categories outnumber it, drawing two categories the same hue) and flow_map takes a strengthField that drives arc width, so both distortions are expressible here and a future rule could read them. rulesEvaluated is 0 because the offered set is empty, not because a rule failed to resolve its operand."
+      ],
+      "contrastNote": "Geo color renders as a sequential/continuous scale (choropleth visualMap ramp, flow_map single-hue line, bubble_map visualMap) — WCAG 1.4.11 gradient essential exception, so there is no discrete categorical palette to contrast-check; Forge's generated accessible data table is the guarantee. An author-supplied ordinal-categorical bubble_map color is still NOT graded, and as of s172 the reason is the s141 exempt-all-geo RULING rather than invisibility: certify can now see the geo data branch (the optional `data` operand), so that colorField and the colorScale it renders on are reachable — grading them would be a new scope decision, not a bug fix. The palette itself stays out of reach either way: the branch has no range field, so an ordinal bubble_map paints from Forge's own categorical list, cycling it when the categories outnumber it. certify measures the categorical color bytes Forge baked into the compiled spec, on the light theme; dark-theme contrast is not verified."
+    }
+  }
+}

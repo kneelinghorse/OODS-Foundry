@@ -79,12 +79,17 @@ semantics:
   meter_name:
     semantic_type: billing.usage.meter_name
     token_mapping: tokenMap(billing.usage.meter_name)
+  # s223-m01 (#2527 ruling 4): quantities read grouped (86,420).
   included_quantity:
     semantic_type: billing.usage.included_quantity
     token_mapping: tokenMap(billing.usage.included_quantity)
+    ui_hints:
+      format: quantity
   consumed_quantity:
     semantic_type: billing.usage.consumed_quantity
     token_mapping: tokenMap(billing.usage.consumed_quantity)
+    ui_hints:
+      format: quantity
   unit_label:
     semantic_type: billing.usage.unit_label
     token_mapping: tokenMap(billing.usage.unit_label)
@@ -100,9 +105,17 @@ semantics:
   overage_rate_minor:
     semantic_type: billing.usage.overage_rate_minor
     token_mapping: tokenMap(billing.usage.overage_rate_minor)
+    ui_hints:
+      component: CurrencyAmount
+      currencyField: currency
+      minorUnits: 100
   projected_overage_minor:
     semantic_type: billing.usage.projected_overage_minor
     token_mapping: tokenMap(billing.usage.projected_overage_minor)
+    ui_hints:
+      component: CurrencyAmount
+      currencyField: currency
+      minorUnits: 100
   samples:
     semantic_type: billing.usage.samples
     token_mapping: tokenMap(billing.usage.samples)
@@ -117,4 +130,4 @@ metadata:
     - product-analytics@oods.systems
   maturity: beta
   references:
-    - cmos/missions/research/R13.5_Canonical-Model-Subscription-and-Invoice.md
+    - R13.5 Canonical Model: Subscription and Invoice

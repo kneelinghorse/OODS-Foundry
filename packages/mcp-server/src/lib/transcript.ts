@@ -10,6 +10,7 @@ import {
 } from '@oods/artifacts';
 import type { TranscriptArtifact, TranscriptRedaction, TranscriptDraft, TranscriptArgs } from '@oods/artifacts';
 import { loadRedactions, type Redactions } from './security.js';
+import { isUnsafeKey } from './safety.js';
 
 export type WriteTranscriptOptions = {
   tool: string;
@@ -45,9 +46,10 @@ function sanitizeValue(value: unknown, redactions: Redactions): unknown {
     return value.map((entry) => sanitizeValue(entry, redactions));
   }
   if (value && typeof value === 'object') {
-    const result: Record<string, unknown> = {};
+    const result: Record<string, unknown> = Object.create(null);
     for (const [key, val] of Object.entries(value as Record<string, unknown>)) {
       if (key === 'apply') continue;
+      if (isUnsafeKey(key)) continue;
       result[key] = sanitizeValue(val, redactions);
     }
     return result;

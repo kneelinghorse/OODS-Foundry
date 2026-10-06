@@ -12,7 +12,7 @@ import type {
 } from '~/src/components/progress/types';
 
 const meta: Meta = {
-  title: 'Primitives/Data Display/Progress',
+  title: 'Components/Progression/Progress',
 };
 export default meta;
 

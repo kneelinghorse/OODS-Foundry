@@ -11,6 +11,10 @@ export interface RuleIssue {
   severity?: ValidationSeverity;
   related?: string[];
   docsUrl?: string;
+  /** Chain of trait names that led to this error (e.g., ['Commentable', 'ReviewableTrait']) */
+  traitPath?: string[];
+  /** Trait names that would be affected downstream by this issue */
+  impactedTraits?: string[];
 }
 
 /**

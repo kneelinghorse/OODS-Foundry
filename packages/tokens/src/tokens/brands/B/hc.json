@@ -7,49 +7,83 @@
           "canvas": {
             "$type": "color",
             "$value": "Canvas",
-            "$description": "Forced-colors canvas maps to system Canvas."
+            "$description": "color.brand.B.surface.canvas; generated from the brand recipe by @oods/tokens recipe.mjs."
           },
           "raised": {
             "$type": "color",
             "$value": "Canvas",
-            "$description": "Raised surfaces mirror Canvas in HC mode."
+            "$description": "color.brand.B.surface.raised; generated from the brand recipe by @oods/tokens recipe.mjs."
           },
           "subtle": {
             "$type": "color",
             "$value": "Canvas",
-            "$description": "Subtle surfaces flatten to Canvas for predictability."
+            "$description": "color.brand.B.surface.subtle; generated from the brand recipe by @oods/tokens recipe.mjs."
           },
           "disabled": {
             "$type": "color",
             "$value": "Canvas",
-            "$description": "Disabled surfaces stay on Canvas to preserve outlines."
+            "$description": "color.brand.B.surface.disabled; generated from the brand recipe by @oods/tokens recipe.mjs."
           },
           "backdrop": {
             "$type": "color",
             "$value": "Canvas",
-            "$description": "Backdrop scrims fall back to Canvas in HC mode."
+            "$description": "color.brand.B.surface.backdrop; generated from the brand recipe by @oods/tokens recipe.mjs."
           },
           "inverse": {
             "$type": "color",
             "$value": "CanvasText",
-            "$description": "Inverse surfaces flip to CanvasText for contrast."
+            "$description": "color.brand.B.surface.inverse; generated from the brand recipe by @oods/tokens recipe.mjs."
           },
           "interactive": {
             "primary": {
               "default": {
                 "$type": "color",
                 "$value": "Highlight",
-                "$description": "Primary action aligns to Highlight in HC."
+                "$description": "color.brand.B.surface.interactive.primary.default; generated from the brand recipe by @oods/tokens recipe.mjs."
               },
               "hover": {
                 "$type": "color",
                 "$value": "Highlight",
-                "$description": "Hover remains Highlight to avoid flicker."
+                "$description": "color.brand.B.surface.interactive.primary.hover; generated from the brand recipe by @oods/tokens recipe.mjs."
               },
               "pressed": {
                 "$type": "color",
                 "$value": "Highlight",
-                "$description": "Pressed state remains Highlight."
+                "$description": "color.brand.B.surface.interactive.primary.pressed; generated from the brand recipe by @oods/tokens recipe.mjs."
+              }
+            },
+            "secondary": {
+              "default": {
+                "$type": "color",
+                "$value": "Canvas",
+                "$description": "color.brand.B.surface.interactive.secondary.default; generated from the brand recipe by @oods/tokens recipe.mjs."
+              },
+              "hover": {
+                "$type": "color",
+                "$value": "Canvas",
+                "$description": "color.brand.B.surface.interactive.secondary.hover; generated from the brand recipe by @oods/tokens recipe.mjs."
+              },
+              "pressed": {
+                "$type": "color",
+                "$value": "Canvas",
+                "$description": "color.brand.B.surface.interactive.secondary.pressed; generated from the brand recipe by @oods/tokens recipe.mjs."
+              }
+            },
+            "destructive": {
+              "default": {
+                "$type": "color",
+                "$value": "Canvas",
+                "$description": "color.brand.B.surface.interactive.destructive.default; generated from the brand recipe by @oods/tokens recipe.mjs."
+              },
+              "hover": {
+                "$type": "color",
+                "$value": "Canvas",
+                "$description": "color.brand.B.surface.interactive.destructive.hover; generated from the brand recipe by @oods/tokens recipe.mjs."
+              },
+              "pressed": {
+                "$type": "color",
+                "$value": "Canvas",
+                "$description": "color.brand.B.surface.interactive.destructive.pressed; generated from the brand recipe by @oods/tokens recipe.mjs."
               }
             }
           }
@@ -58,66 +92,100 @@
           "subtle": {
             "$type": "color",
             "$value": "CanvasText",
-            "$description": "Default border maps to CanvasText."
+            "$description": "color.brand.B.border.subtle; generated from the brand recipe by @oods/tokens recipe.mjs."
           },
           "strong": {
             "$type": "color",
-            "$value": "Highlight",
-            "$description": "High-emphasis border uses Highlight for visibility."
+            "$value": "CanvasText",
+            "$description": "color.brand.B.border.strong; generated from the brand recipe by @oods/tokens recipe.mjs."
+          },
+          "interactive": {
+            "$type": "color",
+            "$value": "CanvasText",
+            "$description": "color.brand.B.border.interactive; generated from the brand recipe by @oods/tokens recipe.mjs."
+          },
+          "interactiveHover": {
+            "$type": "color",
+            "$value": "CanvasText",
+            "$description": "color.brand.B.border.interactiveHover; generated from the brand recipe by @oods/tokens recipe.mjs."
           }
         },
         "text": {
           "primary": {
             "$type": "color",
             "$value": "CanvasText",
-            "$description": "Primary text uses CanvasText for HC compliance."
+            "$description": "color.brand.B.text.primary; generated from the brand recipe by @oods/tokens recipe.mjs."
           },
           "secondary": {
             "$type": "color",
-            "$value": "GrayText",
-            "$description": "Secondary copy falls back to GrayText."
+            "$value": "CanvasText",
+            "$description": "color.brand.B.text.secondary; generated from the brand recipe by @oods/tokens recipe.mjs."
           },
           "muted": {
             "$type": "color",
-            "$value": "GrayText",
-            "$description": "Muted copy also maps to GrayText."
+            "$value": "CanvasText",
+            "$description": "color.brand.B.text.muted; generated from the brand recipe by @oods/tokens recipe.mjs."
           },
           "inverse": {
             "$type": "color",
             "$value": "Canvas",
-            "$description": "Inverse text uses Canvas to contrast CanvasText surfaces."
-          },
-          "accent": {
-            "$type": "color",
-            "$value": "LinkText",
-            "$description": "Accent inline text maps to LinkText in HC."
+            "$description": "color.brand.B.text.inverse; generated from the brand recipe by @oods/tokens recipe.mjs."
           },
           "onInteractive": {
             "$type": "color",
             "$value": "HighlightText",
-            "$description": "Interactive foreground uses HighlightText."
+            "$description": "color.brand.B.text.onInteractive; generated from the brand recipe by @oods/tokens recipe.mjs."
+          },
+          "onDestructive": {
+            "$type": "color",
+            "$value": "CanvasText",
+            "$description": "color.brand.B.text.onDestructive; generated from the brand recipe by @oods/tokens recipe.mjs."
           },
           "disabled": {
             "$type": "color",
             "$value": "GrayText",
-            "$description": "Disabled text uses GrayText baseline."
+            "$description": "color.brand.B.text.disabled; generated from the brand recipe by @oods/tokens recipe.mjs."
+          },
+          "accent": {
+            "$type": "color",
+            "$value": "LinkText",
+            "$description": "color.brand.B.text.accent; generated from the brand recipe by @oods/tokens recipe.mjs."
+          }
+        },
+        "focus": {
+          "ring": {
+            "outer": {
+              "$type": "color",
+              "$value": "CanvasText",
+              "$description": "color.brand.B.focus.ring.outer; generated from the brand recipe by @oods/tokens recipe.mjs."
+            },
+            "inner": {
+              "$type": "color",
+              "$value": "Canvas",
+              "$description": "color.brand.B.focus.ring.inner; generated from the brand recipe by @oods/tokens recipe.mjs."
+            }
+          },
+          "text": {
+            "$type": "color",
+            "$value": "CanvasText",
+            "$description": "color.brand.B.focus.text; generated from the brand recipe by @oods/tokens recipe.mjs."
           }
         },
         "accent": {
           "background": {
             "$type": "color",
             "$value": "Canvas",
-            "$description": "Accent surfaces resolve to Canvas."
+            "$description": "color.brand.B.accent.background; generated from the brand recipe by @oods/tokens recipe.mjs."
           },
           "border": {
             "$type": "color",
-            "$value": "Highlight",
-            "$description": "Accent border leverages Highlight."
+            "$value": "CanvasText",
+            "$description": "color.brand.B.accent.border; generated from the brand recipe by @oods/tokens recipe.mjs."
           },
           "text": {
             "$type": "color",
-            "$value": "HighlightText",
-            "$description": "Accent text maps to HighlightText."
+            "$value": "CanvasText",
+            "$description": "color.brand.B.accent.text; generated from the brand recipe by @oods/tokens recipe.mjs."
           }
         },
         "status": {
@@ -125,110 +193,439 @@
             "surface": {
               "$type": "color",
               "$value": "Canvas",
-              "$description": "Info backgrounds map to Canvas."
+              "$description": "color.brand.B.status.info.surface; generated from the brand recipe by @oods/tokens recipe.mjs."
             },
             "border": {
               "$type": "color",
-              "$value": "Highlight",
-              "$description": "Info borders use Highlight."
+              "$value": "CanvasText",
+              "$description": "color.brand.B.status.info.border; generated from the brand recipe by @oods/tokens recipe.mjs."
             },
             "text": {
               "$type": "color",
-              "$value": "HighlightText",
-              "$description": "Info text uses HighlightText."
+              "$value": "CanvasText",
+              "$description": "color.brand.B.status.info.text; generated from the brand recipe by @oods/tokens recipe.mjs."
             },
             "icon": {
               "$type": "color",
-              "$value": "HighlightText",
-              "$description": "Info icon uses HighlightText."
+              "$value": "CanvasText",
+              "$description": "color.brand.B.status.info.icon; generated from the brand recipe by @oods/tokens recipe.mjs."
+            },
+            "solid": {
+              "$type": "color",
+              "$value": "Canvas",
+              "$description": "color.brand.B.status.info.solid; generated from the brand recipe by @oods/tokens recipe.mjs."
+            },
+            "onSolid": {
+              "$type": "color",
+              "$value": "CanvasText",
+              "$description": "color.brand.B.status.info.onSolid; generated from the brand recipe by @oods/tokens recipe.mjs."
             }
           },
           "success": {
             "surface": {
               "$type": "color",
               "$value": "Canvas",
-              "$description": "Success surfaces map to Canvas."
+              "$description": "color.brand.B.status.success.surface; generated from the brand recipe by @oods/tokens recipe.mjs."
             },
             "border": {
               "$type": "color",
-              "$value": "Highlight",
-              "$description": "Success border uses Highlight."
+              "$value": "CanvasText",
+              "$description": "color.brand.B.status.success.border; generated from the brand recipe by @oods/tokens recipe.mjs."
             },
             "text": {
               "$type": "color",
-              "$value": "HighlightText",
-              "$description": "Success text uses HighlightText."
+              "$value": "CanvasText",
+              "$description": "color.brand.B.status.success.text; generated from the brand recipe by @oods/tokens recipe.mjs."
             },
             "icon": {
               "$type": "color",
-              "$value": "HighlightText",
-              "$description": "Success icon uses HighlightText."
+              "$value": "CanvasText",
+              "$description": "color.brand.B.status.success.icon; generated from the brand recipe by @oods/tokens recipe.mjs."
+            },
+            "solid": {
+              "$type": "color",
+              "$value": "Canvas",
+              "$description": "color.brand.B.status.success.solid; generated from the brand recipe by @oods/tokens recipe.mjs."
+            },
+            "onSolid": {
+              "$type": "color",
+              "$value": "CanvasText",
+              "$description": "color.brand.B.status.success.onSolid; generated from the brand recipe by @oods/tokens recipe.mjs."
             }
           },
           "warning": {
             "surface": {
               "$type": "color",
               "$value": "Canvas",
-              "$description": "Warning surfaces map to Canvas."
+              "$description": "color.brand.B.status.warning.surface; generated from the brand recipe by @oods/tokens recipe.mjs."
             },
             "border": {
               "$type": "color",
-              "$value": "Highlight",
-              "$description": "Warning border uses Highlight."
+              "$value": "CanvasText",
+              "$description": "color.brand.B.status.warning.border; generated from the brand recipe by @oods/tokens recipe.mjs."
             },
             "text": {
               "$type": "color",
-              "$value": "HighlightText",
-              "$description": "Warning text uses HighlightText."
+              "$value": "CanvasText",
+              "$description": "color.brand.B.status.warning.text; generated from the brand recipe by @oods/tokens recipe.mjs."
             },
             "icon": {
               "$type": "color",
-              "$value": "HighlightText",
-              "$description": "Warning icon uses HighlightText."
+              "$value": "CanvasText",
+              "$description": "color.brand.B.status.warning.icon; generated from the brand recipe by @oods/tokens recipe.mjs."
+            },
+            "solid": {
+              "$type": "color",
+              "$value": "Canvas",
+              "$description": "color.brand.B.status.warning.solid; generated from the brand recipe by @oods/tokens recipe.mjs."
+            },
+            "onSolid": {
+              "$type": "color",
+              "$value": "CanvasText",
+              "$description": "color.brand.B.status.warning.onSolid; generated from the brand recipe by @oods/tokens recipe.mjs."
             }
           },
           "critical": {
             "surface": {
               "$type": "color",
               "$value": "Canvas",
-              "$description": "Critical surfaces flatten to Canvas."
+              "$description": "color.brand.B.status.critical.surface; generated from the brand recipe by @oods/tokens recipe.mjs."
             },
             "border": {
               "$type": "color",
-              "$value": "Highlight",
-              "$description": "Critical border uses Highlight."
+              "$value": "CanvasText",
+              "$description": "color.brand.B.status.critical.border; generated from the brand recipe by @oods/tokens recipe.mjs."
             },
             "text": {
               "$type": "color",
-              "$value": "HighlightText",
-              "$description": "Critical text uses HighlightText."
+              "$value": "CanvasText",
+              "$description": "color.brand.B.status.critical.text; generated from the brand recipe by @oods/tokens recipe.mjs."
             },
             "icon": {
               "$type": "color",
-              "$value": "HighlightText",
-              "$description": "Critical icon uses HighlightText."
+              "$value": "CanvasText",
+              "$description": "color.brand.B.status.critical.icon; generated from the brand recipe by @oods/tokens recipe.mjs."
+            },
+            "solid": {
+              "$type": "color",
+              "$value": "Canvas",
+              "$description": "color.brand.B.status.critical.solid; generated from the brand recipe by @oods/tokens recipe.mjs."
+            },
+            "onSolid": {
+              "$type": "color",
+              "$value": "CanvasText",
+              "$description": "color.brand.B.status.critical.onSolid; generated from the brand recipe by @oods/tokens recipe.mjs."
             }
           },
           "neutral": {
             "surface": {
               "$type": "color",
               "$value": "Canvas",
-              "$description": "Neutral surface maps to Canvas."
+              "$description": "color.brand.B.status.neutral.surface; generated from the brand recipe by @oods/tokens recipe.mjs."
             },
             "border": {
               "$type": "color",
               "$value": "CanvasText",
-              "$description": "Neutral border uses CanvasText."
+              "$description": "color.brand.B.status.neutral.border; generated from the brand recipe by @oods/tokens recipe.mjs."
             },
             "text": {
               "$type": "color",
               "$value": "CanvasText",
-              "$description": "Neutral text uses CanvasText."
+              "$description": "color.brand.B.status.neutral.text; generated from the brand recipe by @oods/tokens recipe.mjs."
             },
             "icon": {
               "$type": "color",
               "$value": "CanvasText",
-              "$description": "Neutral icon uses CanvasText."
+              "$description": "color.brand.B.status.neutral.icon; generated from the brand recipe by @oods/tokens recipe.mjs."
+            },
+            "solid": {
+              "$type": "color",
+              "$value": "Canvas",
+              "$description": "color.brand.B.status.neutral.solid; generated from the brand recipe by @oods/tokens recipe.mjs."
+            },
+            "onSolid": {
+              "$type": "color",
+              "$value": "CanvasText",
+              "$description": "color.brand.B.status.neutral.onSolid; generated from the brand recipe by @oods/tokens recipe.mjs."
+            }
+          },
+          "accent": {
+            "surface": {
+              "$type": "color",
+              "$value": "Canvas",
+              "$description": "color.brand.B.status.accent.surface; generated from the brand recipe by @oods/tokens recipe.mjs."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "CanvasText",
+              "$description": "color.brand.B.status.accent.border; generated from the brand recipe by @oods/tokens recipe.mjs."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "CanvasText",
+              "$description": "color.brand.B.status.accent.text; generated from the brand recipe by @oods/tokens recipe.mjs."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "CanvasText",
+              "$description": "color.brand.B.status.accent.icon; generated from the brand recipe by @oods/tokens recipe.mjs."
+            },
+            "solid": {
+              "$type": "color",
+              "$value": "Canvas",
+              "$description": "color.brand.B.status.accent.solid; generated from the brand recipe by @oods/tokens recipe.mjs."
+            },
+            "onSolid": {
+              "$type": "color",
+              "$value": "CanvasText",
+              "$description": "color.brand.B.status.accent.onSolid; generated from the brand recipe by @oods/tokens recipe.mjs."
+            }
+          }
+        }
+      }
+    }
+  },
+  "viz": {
+    "mark": {
+      "single": {
+        "$type": "color",
+        "$value": "CanvasText",
+        "$description": "viz.mark.single; generated from the brand recipe by @oods/tokens recipe.mjs."
+      }
+    },
+    "scale": {
+      "categorical": {
+        "01": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "viz.scale.categorical.01; generated from the brand recipe by @oods/tokens recipe.mjs."
+        },
+        "02": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "viz.scale.categorical.02; generated from the brand recipe by @oods/tokens recipe.mjs."
+        },
+        "03": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "viz.scale.categorical.03; generated from the brand recipe by @oods/tokens recipe.mjs."
+        },
+        "04": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "viz.scale.categorical.04; generated from the brand recipe by @oods/tokens recipe.mjs."
+        },
+        "05": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "viz.scale.categorical.05; generated from the brand recipe by @oods/tokens recipe.mjs."
+        },
+        "06": {
+          "$type": "color",
+          "$value": "CanvasText",
+          "$description": "viz.scale.categorical.06; generated from the brand recipe by @oods/tokens recipe.mjs."
+        }
+      },
+      "sequential": {
+        "01": {
+          "$type": "color",
+          "$value": "oklch(0.94 0 265)",
+          "$description": "viz.scale.sequential.01; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#EBEBEB"
+            }
+          }
+        },
+        "02": {
+          "$type": "color",
+          "$value": "oklch(0.84 0 265)",
+          "$description": "viz.scale.sequential.02; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#CACACA"
+            }
+          }
+        },
+        "03": {
+          "$type": "color",
+          "$value": "oklch(0.74 0 265)",
+          "$description": "viz.scale.sequential.03; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#ABABAB"
+            }
+          }
+        },
+        "04": {
+          "$type": "color",
+          "$value": "oklch(0.64 0 265)",
+          "$description": "viz.scale.sequential.04; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#8C8C8C"
+            }
+          }
+        },
+        "05": {
+          "$type": "color",
+          "$value": "oklch(0.54 0 265)",
+          "$description": "viz.scale.sequential.05; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#6F6F6F"
+            }
+          }
+        },
+        "06": {
+          "$type": "color",
+          "$value": "oklch(0.44 0 265)",
+          "$description": "viz.scale.sequential.06; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#525252"
+            }
+          }
+        },
+        "07": {
+          "$type": "color",
+          "$value": "oklch(0.34 0 265)",
+          "$description": "viz.scale.sequential.07; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#383838"
+            }
+          }
+        },
+        "08": {
+          "$type": "color",
+          "$value": "oklch(0.24 0 265)",
+          "$description": "viz.scale.sequential.08; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#1F1F1F"
+            }
+          }
+        },
+        "09": {
+          "$type": "color",
+          "$value": "oklch(0.14 0 265)",
+          "$description": "viz.scale.sequential.09; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#090909"
+            }
+          }
+        }
+      },
+      "diverging": {
+        "neg-01": {
+          "$type": "color",
+          "$value": "oklch(0.7 0 197.5)",
+          "$description": "viz.scale.diverging.neg-01; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#9E9E9E"
+            }
+          }
+        },
+        "pos-01": {
+          "$type": "color",
+          "$value": "oklch(0.7 0 17.5)",
+          "$description": "viz.scale.diverging.pos-01; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#9E9E9E"
+            }
+          }
+        },
+        "neg-02": {
+          "$type": "color",
+          "$value": "oklch(0.58 0 197.5)",
+          "$description": "viz.scale.diverging.neg-02; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#7A7A7A"
+            }
+          }
+        },
+        "pos-02": {
+          "$type": "color",
+          "$value": "oklch(0.58 0 17.5)",
+          "$description": "viz.scale.diverging.pos-02; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#7A7A7A"
+            }
+          }
+        },
+        "neg-03": {
+          "$type": "color",
+          "$value": "oklch(0.46 0 197.5)",
+          "$description": "viz.scale.diverging.neg-03; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#585858"
+            }
+          }
+        },
+        "pos-03": {
+          "$type": "color",
+          "$value": "oklch(0.46 0 17.5)",
+          "$description": "viz.scale.diverging.pos-03; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#585858"
+            }
+          }
+        },
+        "neg-04": {
+          "$type": "color",
+          "$value": "oklch(0.34 0 197.5)",
+          "$description": "viz.scale.diverging.neg-04; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#383838"
+            }
+          }
+        },
+        "pos-04": {
+          "$type": "color",
+          "$value": "oklch(0.34 0 17.5)",
+          "$description": "viz.scale.diverging.pos-04; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#383838"
+            }
+          }
+        },
+        "neg-05": {
+          "$type": "color",
+          "$value": "oklch(0.22 0 197.5)",
+          "$description": "viz.scale.diverging.neg-05; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#1B1B1B"
+            }
+          }
+        },
+        "pos-05": {
+          "$type": "color",
+          "$value": "oklch(0.22 0 17.5)",
+          "$description": "viz.scale.diverging.pos-05; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#1B1B1B"
+            }
+          }
+        },
+        "neutral": {
+          "$type": "color",
+          "$value": "oklch(0.82 0 265)",
+          "$description": "viz.scale.diverging.neutral; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#C4C4C4"
             }
           }
         }

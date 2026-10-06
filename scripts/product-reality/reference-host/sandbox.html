@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>OODS reference host sandbox</title><style>html,body,iframe{margin:0;border:0;width:100%;height:100%}iframe{display:block}</style></head>
+<body>
+<script>
+// The sandbox proxy of the reference host (MCP Apps 2026-01-26): a different origin from the host page, loaded with the
+// Content-Security-Policy header the inner document inherits. It announces itself, writes the app's HTML into the
+// inner iframe when the host says the resource is ready, relays JSON-RPC between the two windows, and reports every
+// securitypolicyviolation the inner document raises.
+(function () {
+  const HOST_ORIGIN = new URL(location.href).searchParams.get('host') || new URL(document.referrer || location.href).origin;
+  const inner = document.createElement('iframe');
+  inner.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms');
+  inner.setAttribute('title', 'MCP App');
+  let innerWindow = null;
+  window.addEventListener('message', function (event) {
+    if (event.source === window.parent && event.origin === HOST_ORIGIN) {
+      const data = event.data;
+      if (data && data.method === 'ui/notifications/sandbox-resource-ready') {
+        const params = data.params || {};
+        if (typeof params.sandbox === 'string') inner.setAttribute('sandbox', params.sandbox);
+        document.body.appendChild(inner);
+        innerWindow = inner.contentWindow;
+        const doc = inner.contentDocument || innerWindow.document;
+        doc.addEventListener('securitypolicyviolation', function (violation) {
+          window.parent.postMessage({ type: 'oods-csp-violation', blockedURI: violation.blockedURI, violatedDirective: violation.violatedDirective, effectiveDirective: violation.effectiveDirective, sourceFile: violation.sourceFile, lineNumber: violation.lineNumber, sample: violation.sample }, HOST_ORIGIN);
+        });
+        doc.open();
+        doc.write(String(params.html || ''));
+        doc.close();
+        return;
+      }
+      if (innerWindow) innerWindow.postMessage(data, '*');
+      return;
+    }
+    if (innerWindow && event.source === innerWindow) window.parent.postMessage(event.data, HOST_ORIGIN);
+  });
+  window.parent.postMessage({ jsonrpc: '2.0', method: 'ui/notifications/sandbox-proxy-ready', params: {} }, HOST_ORIGIN);
+})();
+</script>
+</body>
+</html>

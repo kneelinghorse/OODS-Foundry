@@ -3,11 +3,11 @@ import {
   RendererSelectionError,
   selectVizRenderer,
   type VizRendererId,
-} from '../../src/viz/adapters/renderer-selector.js';
-import type { NormalizedVizSpec } from '../../src/viz/spec/normalized-viz-spec.js';
+} from '@oods/viz-core';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 
 const BASE_SPEC: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/v1',
   id: 'test:viz:selector',
   name: 'Renderer selector fixture',
   data: {

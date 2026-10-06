@@ -1,8 +1,8 @@
 object:
   name: User
-  version: 1.5.0
+  version: 1.4.0
   domain: core.identity
-  description: Canonical identity record representing a platform user across lifecycle contexts, now including messaging capabilities via Communicable.
+  description: Canonical identity record representing a platform user across lifecycle contexts.
   tags:
     - universal
     - identity
@@ -62,12 +62,7 @@ traits:
     parameters:
       hierarchyDepthLimit: 5
   - name: core/Communicable
-    alias: UserCommunication
-    parameters:
-      channelTypes:
-        - email
-        - in_app
-      supportConversations: true
+    alias: UserCommunications
 
 schema:
   user_id:
@@ -122,8 +117,9 @@ semantics:
   preferred_name:
     semantic_type: identity.user.name_preferred
     token_mapping: tokenMap(identity.name.preferred)
+  # The one-line summary under the user's name in lists.
   description:
-    semantic_type: identity.user.description
+    semantic_type: text.summary
     token_mapping: tokenMap(identity.description.summary)
   primary_email:
     semantic_type: identity.user.email
@@ -150,9 +146,6 @@ metadata:
   steward: design@oods.systems
   maturity: stable
   changelog:
-    - version: 1.5.0
-      date: "2025-11-20"
-      description: Added Communicable trait for messaging (email/in-app), exposing helper methods for sending, conversations, and unread management.
     - version: 1.4.0
       date: "2025-11-20"
       description: Composed Authable trait to attach RBAC memberships and entitlement exports.
@@ -168,3 +161,150 @@ metadata:
     - version: 1.0.0
       date: "2025-10-16"
       description: Initial Universal Quintet baseline.
+
+# Eight authored sample users, each a person at one of the sample organizations. A user is created active (the
+# lifecycle's initial state), so an invited user is one invited back after leaving; each history ends in the user's
+# status, and the last event is the latest recorded change.
+samples:
+  - user_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d01
+    name: Dana Whitfield
+    preferred_name: Dana
+    description: Operations director, Northwind Traders
+    primary_email: dana.whitfield@northwind.example
+    role: owner
+    timezone: America/Chicago
+    tags: [admin]
+    tag_count: 1
+    status: active
+    state_history:
+      - { title: Joined, from: null, to: active, at: '2026-02-02T15:00:00Z', reason: Created the Northwind Traders workspace }
+      - { title: Suspended, from: active, to: suspended, at: '2026-05-11T08:20:00Z', reason: Sign-in from an unrecognised device }
+      - { title: Reactivated, from: suspended, to: active, at: '2026-05-11T09:05:00Z', reason: Identity verified and password reset }
+    created_at: '2026-02-02T15:00:00Z'
+    updated_at: '2026-05-11T09:05:00Z'
+    last_event: status_changed
+    last_event_at: '2026-05-11T09:05:00Z'
+  - user_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02
+    name: Ruth Adeyemi
+    preferred_name: Ruth
+    description: Finance manager, Tidewater Co-op
+    primary_email: ruth.adeyemi@tidewater.example
+    role: billing
+    timezone: Pacific/Auckland
+    tags: [vip]
+    tag_count: 1
+    status: active
+    state_history:
+      - { title: Joined, from: null, to: active, at: '2024-10-02T21:00:00Z', reason: Invited by the Tidewater account team }
+      - { title: Deactivated, from: active, to: deactivated, at: '2025-03-14T20:00:00Z', reason: On parental leave }
+      - { title: Reactivated, from: deactivated, to: active, at: '2025-09-01T20:00:00Z', reason: Returned from leave }
+    created_at: '2024-10-02T21:00:00Z'
+    updated_at: '2026-01-12T20:00:00Z'
+    last_event: role_updated
+    last_event_at: '2026-01-12T20:00:00Z'
+  - user_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d03
+    name: Priya Raman
+    preferred_name: Priya
+    description: Studio manager, Blue Harbor Studio
+    primary_email: priya@blueharbor.example
+    role: admin
+    timezone: America/Los_Angeles
+    tags: [admin, beta_tester]
+    tag_count: 2
+    status: active
+    state_history:
+      - { title: Joined, from: null, to: active, at: '2026-09-19T10:00:00Z', reason: Created the Blue Harbor Studio workspace }
+      - { title: Suspended, from: active, to: suspended, at: '2026-09-20T02:10:00Z', reason: Card check failed at trial start }
+      - { title: Reactivated, from: suspended, to: active, at: '2026-09-21T09:00:00Z', reason: Card verified and trial started }
+    created_at: '2026-09-19T10:00:00Z'
+    updated_at: '2026-09-21T09:00:00Z'
+    last_event: status_changed
+    last_event_at: '2026-09-21T09:00:00Z'
+  - user_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d04
+    name: Tomas Lindqvist
+    preferred_name: Tomas
+    description: Owner, Lindqvist Bakery
+    primary_email: tomas@lindqvist.example
+    role: owner
+    timezone: Europe/Stockholm
+    tags: []
+    tag_count: 0
+    status: active
+    state_history:
+      - { title: Joined, from: null, to: active, at: '2026-01-12T08:00:00Z', reason: Created the Lindqvist Bakery workspace }
+      - { title: Suspended, from: active, to: suspended, at: '2026-05-15T08:05:00Z', reason: Workspace locked after the card expired }
+      - { title: Reactivated, from: suspended, to: active, at: '2026-05-17T08:00:00Z', reason: New card added }
+    created_at: '2026-01-12T08:00:00Z'
+    updated_at: '2026-05-17T08:00:00Z'
+    last_event: status_changed
+    last_event_at: '2026-05-17T08:00:00Z'
+  - user_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d05
+    name: Grace Okafor
+    preferred_name: Grace
+    description: Accounts lead, Kestrel Print Co.
+    primary_email: grace.okafor@kestrelprint.example
+    role: billing
+    timezone: Europe/London
+    tags: [suspended]
+    tag_count: 1
+    status: suspended
+    state_history:
+      - { title: Joined, from: null, to: active, at: '2026-01-20T10:00:00Z', reason: Created the Kestrel Print Co. workspace }
+      - { title: Suspended, from: active, to: suspended, at: '2026-09-24T07:45:00Z', reason: Locked after repeated failed sign-ins }
+    created_at: '2026-01-20T10:00:00Z'
+    updated_at: '2026-09-24T07:45:00Z'
+    last_event: status_changed
+    last_event_at: '2026-09-24T07:45:00Z'
+  - user_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d06
+    name: Mei Chen
+    preferred_name: Mei
+    description: Field coordinator, Tidewater Co-op
+    primary_email: mei.chen@tidewater.example
+    role: end_user
+    timezone: Pacific/Auckland
+    tags: []
+    tag_count: 0
+    status: invited
+    state_history:
+      - { title: Joined, from: null, to: active, at: '2025-02-10T01:00:00Z', reason: Added by Ruth Adeyemi }
+      - { title: Deactivated, from: active, to: deactivated, at: '2025-12-19T03:00:00Z', reason: Left the co-op }
+      - { title: Invited back, from: deactivated, to: invited, at: '2026-09-23T22:30:00Z', reason: Rejoined the co-op; invitation sent }
+    created_at: '2025-02-10T01:00:00Z'
+    updated_at: '2026-09-23T22:30:00Z'
+    last_event: status_changed
+    last_event_at: '2026-09-23T22:30:00Z'
+  - user_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d07
+    name: Jonah Marlow
+    preferred_name: Jonah
+    description: Founder, Marlow Yoga
+    primary_email: jonah@marlowyoga.example
+    role: owner
+    timezone: America/Chicago
+    tags: []
+    tag_count: 0
+    status: deactivated
+    state_history:
+      - { title: Joined, from: null, to: active, at: '2026-01-05T10:15:00Z', reason: Created the Marlow Yoga workspace }
+      - { title: Deactivated, from: active, to: deactivated, at: '2026-07-10T09:00:00Z', reason: Studio closed }
+    created_at: '2026-01-05T10:15:00Z'
+    updated_at: '2026-07-10T09:00:00Z'
+    last_event: status_changed
+    last_event_at: '2026-07-10T09:00:00Z'
+  - user_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d08
+    name: Arjun Mehta
+    preferred_name: Arjun
+    description: E-commerce manager, Summit Outfitters
+    primary_email: arjun.mehta@summit.example
+    role: admin
+    timezone: America/Denver
+    tags: [admin]
+    tag_count: 1
+    status: active
+    state_history:
+      - { title: Joined, from: null, to: active, at: '2026-04-23T12:00:00Z', reason: Created the Summit Outfitters workspace }
+      - { title: Suspended, from: active, to: suspended, at: '2026-06-30T18:00:00Z', reason: Paused while single sign-on was reset }
+      - { title: Reactivated, from: suspended, to: active, at: '2026-07-01T15:00:00Z', reason: Single sign-on restored }
+    created_at: '2026-04-23T12:00:00Z'
+    updated_at: '2026-07-01T15:00:00Z'
+    last_event: status_changed
+    last_event_at: '2026-07-01T15:00:00Z'

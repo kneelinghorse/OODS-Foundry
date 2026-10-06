@@ -1,0 +1,33 @@
+{
+  "size": {
+    "spacing": {
+      "sm": {
+        "$type": "dimension",
+        "$value": "{sys.space.scale.sm}",
+        "$description": "Small geometry scalar; emits --oods-size-spacing-sm. Matches divergent-inspector's measured size.spacing key."
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "{sys.space.scale.md}",
+        "$description": "Medium geometry scalar; emits --oods-size-spacing-md. Matches divergent-inspector's measured size.spacing key."
+      }
+    },
+    "font": {
+      "sm": {
+        "$type": "dimension",
+        "$value": "{sys.text.size.sm}",
+        "$description": "Small font scalar; emits --oods-size-font-sm. Seeded NOT consumed (Button-only seed has no font-size)."
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "{sys.text.size.md}",
+        "$description": "Medium font scalar; emits --oods-size-font-md. Seeded NOT consumed (Button-only seed has no font-size)."
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "{sys.text.size.lg}",
+        "$description": "Large font scalar; emits --oods-size-font-lg. Seeded NOT consumed (Button-only seed has no font-size)."
+      }
+    }
+  }
+}

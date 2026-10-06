@@ -1,0 +1,125 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://oods-foundry.com/schemas/high-contrast-map.v1.json",
+  "title": "High Contrast Semantic Map v1",
+  "description": "Complete semantic system-token map using the six system colors admitted by the current palette producer. Newly defined for package 0.2.1 at the existing identifier. Focus width is a nonnegative pixel dimension (or unitless zero), not a color. This map is not a general CSS validator.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "description",
+    "mappings"
+  ],
+  "properties": {
+    "$schema": {
+      "const": "https://oods-foundry.com/schemas/high-contrast-map.v1.json"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "mappings": {
+      "type": "object",
+      "required": [
+        "sys"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "sys": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "surface",
+            "border",
+            "text",
+            "icon",
+            "status",
+            "focus"
+          ],
+          "properties": {
+            "surface": {
+              "$ref": "#/definitions/colorGroup"
+            },
+            "border": {
+              "$ref": "#/definitions/colorGroup"
+            },
+            "text": {
+              "$ref": "#/definitions/colorGroup"
+            },
+            "icon": {
+              "$ref": "#/definitions/colorGroup"
+            },
+            "status": {
+              "$ref": "#/definitions/colorGroup"
+            },
+            "focus": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "ring",
+                "text",
+                "width"
+              ],
+              "properties": {
+                "ring": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "outer",
+                    "inner"
+                  ],
+                  "properties": {
+                    "outer": {
+                      "$ref": "#/definitions/systemColor"
+                    },
+                    "inner": {
+                      "$ref": "#/definitions/systemColor"
+                    }
+                  }
+                },
+                "text": {
+                  "$ref": "#/definitions/systemColor"
+                },
+                "width": {
+                  "type": "string",
+                  "pattern": "^(?:0|[0-9]+(?:\\.[0-9]+)?px)$"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "systemColor": {
+      "type": "string",
+      "enum": [
+        "Canvas",
+        "CanvasText",
+        "GrayText",
+        "Highlight",
+        "HighlightText",
+        "LinkText"
+      ]
+    },
+    "colorGroup": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9-]*$"
+      },
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "$ref": "#/definitions/systemColor"
+          },
+          {
+            "$ref": "#/definitions/colorGroup"
+          }
+        ]
+      }
+    }
+  }
+}

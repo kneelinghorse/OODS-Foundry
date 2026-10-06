@@ -1,0 +1,585 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`viz.render geo render-fidelity goldens > bubble_map: the produced echartsSpec matches the committed golden 1`] = `
+{
+  "__registration": {
+    "geoJson": {
+      "features": [
+        {
+          "geometry": {
+            "coordinates": [
+              [
+                [
+                  -124,
+                  32,
+                ],
+                [
+                  -114,
+                  32,
+                ],
+                [
+                  -114,
+                  42,
+                ],
+                [
+                  -124,
+                  42,
+                ],
+                [
+                  -124,
+                  32,
+                ],
+              ],
+            ],
+            "type": "Polygon",
+          },
+          "id": "CA",
+          "properties": {
+            "region": "CA",
+            "state_name": "California",
+          },
+          "type": "Feature",
+        },
+        {
+          "geometry": {
+            "coordinates": [
+              [
+                [
+                  -120,
+                  35,
+                ],
+                [
+                  -114,
+                  35,
+                ],
+                [
+                  -114,
+                  42,
+                ],
+                [
+                  -120,
+                  42,
+                ],
+                [
+                  -120,
+                  35,
+                ],
+              ],
+            ],
+            "type": "Polygon",
+          },
+          "id": "NV",
+          "properties": {
+            "region": "NV",
+            "state_name": "Nevada",
+          },
+          "type": "Feature",
+        },
+      ],
+      "type": "FeatureCollection",
+    },
+    "name": "map-viz:bubble_map",
+  },
+  "aria": {
+    "description": "Bubble map of City population.",
+    "enabled": true,
+  },
+  "backgroundColor": "#FFFFFF",
+  "geo": {
+    "bottom": 16,
+    "emphasis": {
+      "itemStyle": {
+        "areaColor": "rgb(245, 245, 245)",
+      },
+    },
+    "itemStyle": {
+      "areaColor": "rgb(245, 245, 245)",
+      "borderColor": "rgb(229, 229, 229)",
+    },
+    "label": {
+      "show": false,
+    },
+    "map": "map-viz:bubble_map",
+    "roam": false,
+    "top": 40,
+  },
+  "series": [
+    {
+      "coordinateSystem": "geo",
+      "data": [
+        {
+          "name": "874",
+          "raw": {
+            "city": "San Francisco",
+            "lat": 37.8,
+            "lng": -122.4,
+            "pop": 874,
+          },
+          "symbolSize": 28,
+          "value": [
+            -122.4,
+            37.8,
+            874,
+            874,
+          ],
+        },
+        {
+          "name": "646",
+          "raw": {
+            "city": "Las Vegas",
+            "lat": 36.2,
+            "lng": -115.1,
+            "pop": 646,
+          },
+          "symbolSize": 24.072354701390662,
+          "value": [
+            -115.1,
+            36.2,
+            646,
+            646,
+          ],
+        },
+      ],
+      "encode": {
+        "lat": 1,
+        "lng": 0,
+        "value": 3,
+      },
+      "geoIndex": 0,
+      "name": "City population",
+      "tooltip": {},
+      "type": "scatter",
+    },
+  ],
+  "title": {
+    "text": "City population",
+    "textStyle": {
+      "color": "#0A0A0A",
+    },
+  },
+  "tooltip": {
+    "trigger": "item",
+  },
+  "usermeta": {
+    "oods": {
+      "a11y": {
+        "description": "Bubble map of City population.",
+      },
+      "dimensions": {
+        "height": 520,
+        "width": 860,
+      },
+      "name": "City population",
+      "specId": "viz:bubble_map",
+    },
+  },
+  "visualMap": {
+    "calculable": true,
+    "dimension": 3,
+    "inRange": {
+      "color": [
+        "rgb(94, 133, 241)",
+        "rgb(37, 67, 183)",
+        "rgb(20, 41, 137)",
+      ],
+    },
+    "max": 874,
+    "min": 646,
+    "textStyle": {
+      "color": "#525252",
+    },
+    "type": "continuous",
+  },
+}
+`;
+
+exports[`viz.render geo render-fidelity goldens > choropleth: the produced echartsSpec matches the committed golden 1`] = `
+{
+  "__registration": {
+    "geoJson": {
+      "features": [
+        {
+          "geometry": {
+            "coordinates": [
+              [
+                [
+                  -124,
+                  32,
+                ],
+                [
+                  -114,
+                  32,
+                ],
+                [
+                  -114,
+                  42,
+                ],
+                [
+                  -124,
+                  42,
+                ],
+                [
+                  -124,
+                  32,
+                ],
+              ],
+            ],
+            "type": "Polygon",
+          },
+          "id": "CA",
+          "properties": {
+            "region": "CA",
+            "sales": 580,
+            "state": "CA",
+            "state_name": "California",
+          },
+          "type": "Feature",
+        },
+        {
+          "geometry": {
+            "coordinates": [
+              [
+                [
+                  -120,
+                  35,
+                ],
+                [
+                  -114,
+                  35,
+                ],
+                [
+                  -114,
+                  42,
+                ],
+                [
+                  -120,
+                  42,
+                ],
+                [
+                  -120,
+                  35,
+                ],
+              ],
+            ],
+            "type": "Polygon",
+          },
+          "id": "NV",
+          "properties": {
+            "region": "NV",
+            "sales": 96,
+            "state": "NV",
+            "state_name": "Nevada",
+          },
+          "type": "Feature",
+        },
+      ],
+      "type": "FeatureCollection",
+    },
+    "name": "map-viz:choropleth",
+  },
+  "aria": {
+    "description": "Choropleth map of State sales.",
+    "enabled": true,
+  },
+  "backgroundColor": "#FFFFFF",
+  "geo": {
+    "bottom": 16,
+    "emphasis": {
+      "itemStyle": {
+        "areaColor": "rgb(255, 255, 255)",
+      },
+    },
+    "itemStyle": {
+      "areaColor": "rgb(245, 245, 245)",
+      "borderColor": "rgb(229, 229, 229)",
+    },
+    "label": {
+      "show": false,
+    },
+    "map": "map-viz:choropleth",
+    "nameProperty": "region",
+    "roam": false,
+    "top": 40,
+  },
+  "series": [
+    {
+      "data": [
+        {
+          "name": "CA",
+          "rawProperties": {
+            "region": "CA",
+            "sales": 580,
+            "state": "CA",
+            "state_name": "California",
+          },
+          "value": 580,
+        },
+        {
+          "name": "NV",
+          "rawProperties": {
+            "region": "NV",
+            "sales": 96,
+            "state": "NV",
+            "state_name": "Nevada",
+          },
+          "value": 96,
+        },
+      ],
+      "emphasis": {
+        "focus": "self",
+        "itemStyle": {
+          "areaColor": "rgb(255, 255, 255)",
+        },
+      },
+      "geoIndex": 0,
+      "map": "map-viz:choropleth",
+      "name": "State sales",
+      "type": "map",
+    },
+  ],
+  "title": {
+    "text": "State sales",
+    "textStyle": {
+      "color": "#0A0A0A",
+    },
+  },
+  "tooltip": {
+    "trigger": "item",
+  },
+  "usermeta": {
+    "oods": {
+      "a11y": {
+        "description": "Choropleth map of State sales.",
+      },
+      "dimensions": {
+        "height": 520,
+        "width": 860,
+      },
+      "name": "State sales",
+      "specId": "viz:choropleth",
+    },
+  },
+  "visualMap": {
+    "calculable": true,
+    "inRange": {
+      "color": [
+        "rgb(229, 235, 250)",
+        "rgb(61, 98, 219)",
+        "rgb(20, 41, 137)",
+      ],
+    },
+    "max": 580,
+    "min": 96,
+    "textStyle": {
+      "color": "#525252",
+    },
+    "type": "continuous",
+  },
+}
+`;
+
+exports[`viz.render geo render-fidelity goldens > flow_map: the produced echartsSpec matches the committed golden 1`] = `
+{
+  "__registration": {
+    "geoJson": {
+      "features": [
+        {
+          "geometry": {
+            "coordinates": [
+              [
+                [
+                  -124,
+                  32,
+                ],
+                [
+                  -114,
+                  32,
+                ],
+                [
+                  -114,
+                  42,
+                ],
+                [
+                  -124,
+                  42,
+                ],
+                [
+                  -124,
+                  32,
+                ],
+              ],
+            ],
+            "type": "Polygon",
+          },
+          "id": "CA",
+          "properties": {
+            "region": "CA",
+            "state_name": "California",
+          },
+          "type": "Feature",
+        },
+        {
+          "geometry": {
+            "coordinates": [
+              [
+                [
+                  -120,
+                  35,
+                ],
+                [
+                  -114,
+                  35,
+                ],
+                [
+                  -114,
+                  42,
+                ],
+                [
+                  -120,
+                  42,
+                ],
+                [
+                  -120,
+                  35,
+                ],
+              ],
+            ],
+            "type": "Polygon",
+          },
+          "id": "NV",
+          "properties": {
+            "region": "NV",
+            "state_name": "Nevada",
+          },
+          "type": "Feature",
+        },
+      ],
+      "type": "FeatureCollection",
+    },
+    "name": "map-viz:flow_map",
+  },
+  "aria": {
+    "description": "Flow map of Trade flows.",
+    "enabled": true,
+  },
+  "backgroundColor": "#FFFFFF",
+  "geo": {
+    "bottom": 16,
+    "emphasis": {
+      "itemStyle": {
+        "areaColor": "rgb(245, 245, 245)",
+      },
+    },
+    "itemStyle": {
+      "areaColor": "rgb(245, 245, 245)",
+      "borderColor": "rgb(229, 229, 229)",
+    },
+    "label": {
+      "show": false,
+    },
+    "map": "map-viz:flow_map",
+    "roam": false,
+    "top": 40,
+  },
+  "series": [
+    {
+      "coordinateSystem": "geo",
+      "data": [
+        {
+          "coords": [
+            [
+              -120,
+              37,
+            ],
+            [
+              -116,
+              39,
+            ],
+          ],
+          "raw": {
+            "dLat": 39,
+            "dLng": -116,
+            "from": "CA",
+            "oLat": 37,
+            "oLng": -120,
+            "to": "NV",
+            "volume": 540,
+          },
+          "value": 540,
+        },
+        {
+          "coords": [
+            [
+              -116,
+              39,
+            ],
+            [
+              -120,
+              37,
+            ],
+          ],
+          "raw": {
+            "dLat": 37,
+            "dLng": -120,
+            "from": "NV",
+            "oLat": 39,
+            "oLng": -116,
+            "to": "CA",
+            "volume": 210,
+          },
+          "value": 210,
+        },
+      ],
+      "geoIndex": 0,
+      "lineStyle": {
+        "color": "rgb(37, 67, 183)",
+        "curveness": 0.3,
+        "opacity": 0.6,
+      },
+      "name": "Trade flows",
+      "polyline": false,
+      "tooltip": {},
+      "type": "lines",
+    },
+  ],
+  "title": {
+    "text": "Trade flows",
+    "textStyle": {
+      "color": "#0A0A0A",
+    },
+  },
+  "tooltip": {
+    "trigger": "item",
+  },
+  "usermeta": {
+    "oods": {
+      "a11y": {
+        "description": "Flow map of Trade flows.",
+      },
+      "dimensions": {
+        "height": 520,
+        "width": 860,
+      },
+      "name": "Trade flows",
+      "specId": "viz:flow_map",
+    },
+  },
+  "visualMap": {
+    "calculable": true,
+    "inRange": {
+      "lineWidth": [
+        1,
+        6,
+      ],
+    },
+    "max": 540,
+    "min": 210,
+    "seriesIndex": 0,
+    "show": false,
+    "textStyle": {
+      "color": "#525252",
+    },
+    "type": "continuous",
+  },
+}
+`;

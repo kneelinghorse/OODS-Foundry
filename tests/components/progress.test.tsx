@@ -46,8 +46,8 @@ describe('<ProgressLinear>', () => {
       <ProgressLinear value={40} intent="warning" />
     );
 
-    expect(markup).toMatch(/--progress-linear-fill:\s*var\(--cmp-status-warning-border\)/);
-    expect(markup).toMatch(/--progress-linear-track:\s*var\(--cmp-status-neutral-surface\)/);
+    expect(markup).toMatch(/--progress-linear-fill:\s*var\(--sys-status-warning-border\)/);
+    expect(markup).toMatch(/--progress-linear-track:\s*var\(--sys-status-neutral-surface\)/);
     expect(markup).not.toContain('#');
   });
 
@@ -162,8 +162,8 @@ describe('<ProgressCircular>', () => {
       <ProgressCircular value={55} intent="error" />
     );
 
-    expect(markup).toMatch(/--progress-circular-fill:\s*var\(--cmp-status-critical-border\)/);
-    expect(markup).toMatch(/--progress-circular-track:\s*var\(--cmp-status-neutral-surface\)/);
+    expect(markup).toMatch(/--progress-circular-fill:\s*var\(--sys-status-critical-border\)/);
+    expect(markup).toMatch(/--progress-circular-track:\s*var\(--sys-status-neutral-surface\)/);
   });
 });
 

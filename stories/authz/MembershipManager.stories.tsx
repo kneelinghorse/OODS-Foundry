@@ -1,3 +1,5 @@
+// @types/react 19 no longer declares a global JSX namespace; it is exported from 'react'.
+import type { JSX } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { useMemo } from 'react';
 import '../../src/styles/globals.css';
@@ -117,8 +119,12 @@ function MembershipPlayground({ validator, readOnly }: StoryContextProps): JSX.E
     roles: ROLE_OPTIONS,
     users: USER_OPTIONS,
     members: result.memberships,
-    onAssignRole: result.assignRole,
-    onRevokeRole: (member) => result.revokeRole(member.userId, member.roleId),
+    onAssignRole: async (userId, roleId) => {
+      await result.assignRole(userId, roleId);
+    },
+    onRevokeRole: async (member) => {
+      await result.revokeRole(member.userId, member.roleId);
+    },
     onValidateAssignment: result.validateAssignment,
     validationState: result.validationState,
     pendingMembers: result.pendingMembers,
@@ -133,7 +139,7 @@ function MembershipPlayground({ validator, readOnly }: StoryContextProps): JSX.E
 }
 
 const meta: Meta<typeof MembershipManager> = {
-  title: 'Domain Patterns/Authorization/Membership Manager',
+  title: 'Authz/MembershipManager',
   component: MembershipManager,
   parameters: {
     layout: 'fullscreen',

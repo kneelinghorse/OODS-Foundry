@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { stackTransform } from '../../src/viz/transforms/stack-transform.js';
+import { stackTransform } from '@oods/viz-core';
 
 describe('stackTransform', () => {
   it('computes cumulative ranges per group using zero offset', () => {

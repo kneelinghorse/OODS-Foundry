@@ -37,13 +37,19 @@ const articleVariant: Article = {
     normalizeTag({
       id: 'tag_taxonomy',
       name: 'Taxonomy',
+      slug: 'taxonomy',
       usageCount: 215,
+      state: 'active',
+      isCanonical: true,
       synonyms: ['category-tree'],
     }),
     normalizeTag({
       id: 'tag-governance',
       name: 'Governance',
+      slug: 'governance',
       usageCount: 87,
+      state: 'active',
+      isCanonical: true,
       synonyms: ['moderation'],
     }),
   ],
@@ -61,7 +67,7 @@ const DATASET: CatalogEntry[] = [
 ];
 
 const meta: Meta<typeof ProductCategoryBrowser> = {
-  title: 'Objects/Core Objects/Product/Category Browser',
+  title: 'Objects/Product/ProductCategoryBrowser',
   component: ProductCategoryBrowser,
   parameters: {
     layout: 'fullscreen',

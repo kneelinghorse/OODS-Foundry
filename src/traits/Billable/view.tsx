@@ -109,7 +109,10 @@ function buildPastDueAction<Data extends BillableViewData>(
     type: 'action',
     priority,
     render: ({ data }) => {
-      if (normalizeStatus(data.status) !== 'delinquent') {
+      const status = normalizeStatus(data.status);
+      // Both halves of the Stripe-literal split surface the update-payment action:
+      // past_due (retries ongoing) and unpaid (retries exhausted).
+      if (status !== 'past_due' && status !== 'unpaid') {
         return null;
       }
 

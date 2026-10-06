@@ -1,0 +1,239 @@
+{
+  "$source": "00ae5b3:packages/tokens/src/tokens/brands/A/dark.json",
+  "$schema": "https://design-tokens.org/dtcg/schema.json",
+  "color": {
+    "brand": {
+      "A": {
+        "surface": {
+          "canvas": {
+            "$type": "color",
+            "$value": "oklch(0.18 0.05 45)",
+            "$description": "Dark canvas — deep warm charcoal with an orange undertone."
+          },
+          "raised": {
+            "$type": "color",
+            "$value": "oklch(0.24 0.05 45)",
+            "$description": "Raised panel surface separating cards from canvas."
+          },
+          "subtle": {
+            "$type": "color",
+            "$value": "oklch(0.3 0.06 45)",
+            "$description": "Secondary surface for sidebars and panels."
+          },
+          "disabled": {
+            "$type": "color",
+            "$value": "oklch(0.32 0.04 45)",
+            "$description": "Disabled surface — desaturated warm mid-tone."
+          },
+          "backdrop": {
+            "$type": "color",
+            "$value": "oklch(0.12 0.04 45)",
+            "$description": "Backdrop scrim — near-black with a warm undertone."
+          },
+          "inverse": {
+            "$type": "color",
+            "$value": "oklch(0.95 0.01 45)",
+            "$description": "Inverse surface — warm off-white for light-on-dark overlays."
+          },
+          "interactive": {
+            "primary": {
+              "default": {
+                "$type": "color",
+                "$value": "oklch(0.52 0.2 45)",
+                "$description": "Primary interactive surface — brand orange."
+              },
+              "hover": {
+                "$type": "color",
+                "$value": "oklch(0.54 0.21 45)",
+                "$description": "Hover brightens orange by ΔL +0.02. Capped so near-white text.onInteractive holds AA (the ratified 0.57 measured 4.41:1)."
+              },
+              "pressed": {
+                "$type": "color",
+                "$value": "oklch(0.56 0.22 45)",
+                "$description": "Pressed brightens orange by ΔL +0.04. Capped so near-white text.onInteractive holds AA (the ratified 0.62 measured 3.59:1)."
+              }
+            }
+          }
+        },
+        "border": {
+          "subtle": {
+            "$type": "color",
+            "$value": "oklch(0.44 0.04 45)",
+            "$description": "Subtle border — warm dark mid-tone for cards and inputs."
+          },
+          "strong": {
+            "$type": "color",
+            "$value": "oklch(0.53 0.05 45)",
+            "$description": "Strong border — brighter warm mid-tone for separation."
+          }
+        },
+        "text": {
+          "primary": {
+            "$type": "color",
+            "$value": "oklch(0.92 0.02 92)",
+            "$description": "Primary body text — warm near-white on dark canvas."
+          },
+          "secondary": {
+            "$type": "color",
+            "$value": "oklch(0.81 0.015 92)",
+            "$description": "Secondary copy — warm mid-light for supporting detail."
+          },
+          "muted": {
+            "$type": "color",
+            "$value": "oklch(0.7 0.01 92)",
+            "$description": "Muted captions on dark surfaces."
+          },
+          "inverse": {
+            "$type": "color",
+            "$value": "oklch(0.24 0.05 265)",
+            "$description": "Inverse text — dark tone for light-surface contexts."
+          },
+          "accent": {
+            "$type": "color",
+            "$value": "oklch(0.79 0.17 45)",
+            "$description": "Accent text — bright orange for inline highlights and links."
+          },
+          "onInteractive": {
+            "$type": "color",
+            "$value": "oklch(0.97 0.01 95)",
+            "$description": "Foreground on orange interactive surfaces."
+          },
+          "disabled": {
+            "$type": "color",
+            "$value": "oklch(0.55 0.008 92)",
+            "$description": "Disabled text — deliberately low-contrast; WCAG 1.4.3 exempts inactive controls."
+          }
+        },
+        "accent": {
+          "background": {
+            "$type": "color",
+            "$value": "oklch(0.26 0.09 45)",
+            "$description": "Accent background panel — canvas +ΔL 0.08 at the accent hue."
+          },
+          "border": {
+            "$type": "color",
+            "$value": "oklch(0.52 0.2 45)",
+            "$description": "Full-chroma orange accent border (mirrors the interactive primary)."
+          },
+          "text": {
+            "$type": "color",
+            "$value": "oklch(0.79 0.17 45)",
+            "$description": "Bright orange accent text on dark accent backgrounds (mirrors text.accent)."
+          }
+        },
+        "status": {
+          "info": {
+            "surface": {
+              "$type": "color",
+              "$value": "oklch(0.31 0.08 270)",
+              "$description": "Informational surface for dark shells."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "oklch(0.43 0.11 270)",
+              "$description": "Informational border tone."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "oklch(0.88 0.06 270)",
+              "$description": "Informational text across Brand A dark."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "oklch(0.8 0.1 270)",
+              "$description": "Informational icon tone."
+            }
+          },
+          "success": {
+            "surface": {
+              "$type": "color",
+              "$value": "oklch(0.32 0.09 153)",
+              "$description": "Success surface tuned for dark contexts."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "oklch(0.43 0.11 153)",
+              "$description": "Success border maintaining AA."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "oklch(0.88 0.07 157)",
+              "$description": "Success text with ≥4.5:1 contrast."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "oklch(0.78 0.1 155)",
+              "$description": "Success icon colour."
+            }
+          },
+          "warning": {
+            "surface": {
+              "$type": "color",
+              "$value": "oklch(0.34 0.09 77)",
+              "$description": "Warning surface for dark UI."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "oklch(0.46 0.12 77)",
+              "$description": "Warning border preserving separation."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "oklch(0.9 0.08 79)",
+              "$description": "Warning text meeting AA on warning surface."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "oklch(0.81 0.11 77)",
+              "$description": "Warning icon tone."
+            }
+          },
+          "critical": {
+            "surface": {
+              "$type": "color",
+              "$value": "oklch(0.31 0.12 33)",
+              "$description": "Critical alert surface avoiding bloom."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "oklch(0.43 0.15 33)",
+              "$description": "Critical outline with strong presence."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "oklch(0.88 0.09 31)",
+              "$description": "Critical text above AA thresholds."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "oklch(0.79 0.13 32)",
+              "$description": "Critical icon colour."
+            }
+          },
+          "neutral": {
+            "surface": {
+              "$type": "color",
+              "$value": "oklch(0.32 0.02 268)",
+              "$description": "Neutral banner surface."
+            },
+            "border": {
+              "$type": "color",
+              "$value": "oklch(0.41 0.025 268)",
+              "$description": "Neutral border tone."
+            },
+            "text": {
+              "$type": "color",
+              "$value": "oklch(0.86 0.02 268)",
+              "$description": "Neutral text for dark banners."
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "oklch(0.74 0.02 268)",
+              "$description": "Neutral icon tone."
+            }
+          }
+        }
+      }
+    }
+  }
+}

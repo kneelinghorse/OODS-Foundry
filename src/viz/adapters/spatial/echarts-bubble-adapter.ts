@@ -167,12 +167,12 @@ export function buildBubbleSeries(
     const latitude = coerceNumber(datum[layer.encoding.latitude.field]);
     const sizeValue = sizeEncoding?.field ? coerceNumber(datum[sizeEncoding.field]) : null;
     const colorValue = colorField ? coerceNumber(datum[colorField]) ?? null : sizeValue;
-    const name = String(
-      datum[layer.encoding.longitude.field] ??
-        datum[layer.encoding.latitude.field] ??
-        (colorField ? datum[colorField] : undefined) ??
-        `point-${index}`
-    );
+    // sprint-125 m06: a coordinate is never a label — drop the longitude/latitude
+    // fallbacks that named every bubble after its own coordinate (e.g. '-115.1').
+    // Fall back to a non-coordinate encoded dimension (colorField) if present, else
+    // a stable point-index. With a numeric colorField (e.g. 'pop') the label is the
+    // value, not a place name — honest given the data, no schema change.
+    const name = String((colorField ? datum[colorField] : undefined) ?? `point-${index}`);
 
     const itemColor =
       colorEncoding?.scale === 'ordinal' && colorField

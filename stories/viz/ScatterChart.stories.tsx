@@ -1,13 +1,13 @@
 import { useMemo } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import type { NormalizedVizSpec } from '~/src/viz/spec/normalized-viz-spec';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 import { useHighlight } from '~/src/viz/hooks/useHighlight';
 import { useTooltip } from '~/src/viz/hooks/useTooltip';
 import { BubbleChart } from '~/src/components/viz/BubbleChart';
 import { ScatterChart } from '~/src/components/viz/ScatterChart';
 
 const meta: Meta<typeof ScatterChart> = {
-  title: 'Visualization/Standard/ScatterChart',
+  title: 'Visualization/ScatterChart',
   component: ScatterChart,
   parameters: {
     layout: 'fullscreen',
@@ -30,7 +30,7 @@ const baseData = [
 const interactionFields = ['leadTime', 'winRate', 'pipeline'] as const;
 
 const scatterSpec: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/v1',
   id: 'stories:viz:scatter:simple',
   name: 'Win Rate vs Lead Time',
   data: { values: baseData },

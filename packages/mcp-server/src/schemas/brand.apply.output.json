@@ -2,6 +2,177 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
   "properties": {
+    "receipt": {
+      "type": "object",
+      "properties": {
+        "sourceWritten": {
+          "type": "boolean"
+        },
+        "sourceFiles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "sha256Before": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "sha256After": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "bytesBefore": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "bytesAfter": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "path",
+              "sha256Before",
+              "sha256After",
+              "bytesBefore",
+              "bytesAfter"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "build": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "exitCode": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "commands": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "command": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "exitCode": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "stdout": {
+                        "type": "string"
+                      },
+                      "stderr": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "command",
+                      "exitCode",
+                      "stdout",
+                      "stderr"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "durationMs": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "exitCode",
+                "commands",
+                "durationMs"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "portable": {
+          "type": "object",
+          "properties": {
+            "sourceWrites": { "const": "skipped" },
+            "tokenBuild": { "const": "skipped" },
+            "reason": { "type": "string" }
+          },
+          "required": ["sourceWrites", "tokenBuild", "reason"],
+          "additionalProperties": false
+        },
+        "changes": {
+          "type": "array",
+          "description": "Every slot whose value changes, by theme.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "theme": { "enum": ["base", "dark", "hc"] },
+              "slot": { "type": "string" },
+              "before": {},
+              "after": {}
+            },
+            "required": ["theme", "slot", "before", "after"],
+            "additionalProperties": false
+          }
+        },
+        "metadataChanges": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Changed $description or $extensions entries, which change no value."
+        },
+        "validation": {
+          "type": "object",
+          "description": "The brand as the change would leave it, checked like brand.intake validate (slots, colours, the fixed slots, the brand contrast rules). apply writes nothing unless valid is true.",
+          "properties": {
+            "valid": { "type": "boolean" },
+            "brand_id": { "type": ["string", "null"] },
+            "themes": { "type": "object" },
+            "issues": { "type": "array", "items": { "type": "object", "required": ["rule", "message"] } },
+            "contrast": { "type": "object" },
+            "files": { "type": "array" }
+          },
+          "required": ["valid", "brand_id", "themes", "issues", "contrast"]
+        },
+        "emitted": {
+          "type": "array",
+          "description": "After a successful token build: every CSS variable the build emitted differently, under the selector it is written in. The review kit's variables.css holds the same rules.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "selector": { "type": "string" },
+              "variable": { "type": "string" },
+              "before": { "type": ["string", "null"] },
+              "after": { "type": ["string", "null"] }
+            },
+            "required": ["selector", "variable", "before", "after"],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "sourceWritten",
+        "sourceFiles",
+        "build",
+        "changes",
+        "metadataChanges",
+        "validation"
+      ],
+      "additionalProperties": false
+    },
     "artifacts": {
       "type": "array",
       "items": { "type": "string" }
@@ -33,7 +204,7 @@
       "items": { "$ref": "#/$defs/artifactDetail" }
     }
   },
-  "required": ["artifacts", "transcriptPath", "bundleIndexPath"],
+  "required": ["artifacts", "receipt"],
   "additionalProperties": false,
   "$defs": {
     "planDiffChange": {

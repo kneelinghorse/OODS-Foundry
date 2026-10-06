@@ -10,6 +10,8 @@ const EncodingSizeTrait = {
   },
 
   parameters: [
+    {"name": "renderIntent", "type": "string", "required": false, "default": "{}", "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."},
+
     {
       name: 'rangeMin',
       type: 'number',
@@ -152,6 +154,7 @@ const EncodingSizeTrait = {
         component: 'VizSizeSummary',
         position: 'sidebar',
         props: {
+          intentParameter: 'renderIntent',
           field: 'viz_encoding_size_field',
           strategyField: 'viz_encoding_size_strategy',
           minField: 'viz_encoding_size_range_min',
@@ -164,6 +167,7 @@ const EncodingSizeTrait = {
         component: 'VizSizeControls',
         position: 'top',
         props: {
+          intentParameter: 'renderIntent',
           strategyField: 'viz_encoding_size_strategy',
           minField: 'viz_encoding_size_range_min',
           maxField: 'viz_encoding_size_range_max',
@@ -176,6 +180,8 @@ const EncodingSizeTrait = {
       {
         component: 'VizEncodingBadge',
         props: {
+          intentParameter: 'renderIntent',
+          channel: 'size',
           axis: 'size',
           fieldField: 'viz_encoding_size_field',
         },
@@ -201,7 +207,7 @@ const EncodingSizeTrait = {
     },
     regionsUsed: ['detail', 'form', 'list'],
     references: [
-      'cmos/research/data-viz-oods/RDS.7_synthesis_Mission Completion Report- Trait-Driven Visualization System Specification (v0.1).md',
+      'RDS.7 Trait-Driven Visualization System Specification (v0.1)',
     ],
   },
 } as const satisfies TraitDefinition;

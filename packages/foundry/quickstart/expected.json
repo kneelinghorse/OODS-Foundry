@@ -1,0 +1,27 @@
+{
+  "schema": "oods-foundry-quickstart-expected/v1",
+  "version": "0.7.0",
+  "react": {
+    "contentHash": "sha256:12bbef15335c058288d4e26ace58232d86d831627b6155c2066a328b4293a6c3"
+  },
+  "vue": {
+    "contentHash": "sha256:711d6e063181ad9c3d1a0676b9136c51c8b0a8d36201d8c8df29f6436876a27a"
+  },
+  "chart": {
+    "contentHash": "746f8e9673217fc6b24f4441db7ababcc269eb84555aac1a9af9960d6e1f360a"
+  },
+  "runs": [
+    {
+      "node": "24.6.0",
+      "source": "release-candidate tarballs"
+    },
+    {
+      "node": "22.0.0",
+      "source": "release-candidate tarballs"
+    }
+  ],
+  "notes": [
+    "react and vue are the generated applications' contentHash; chart is viz_render's contentHash of the quickstart chart.",
+    "Preview hashes are not listed: they differ between Node versions."
+  ]
+}

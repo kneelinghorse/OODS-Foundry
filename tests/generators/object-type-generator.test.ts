@@ -86,6 +86,18 @@ schema:
       expect(generated.code).toContain('Source: StatusTrait (trait)');
       expect(generated.code).toContain("notes?: string;");
       expect(generated.code).toContain('Source: Ticket (object override)');
+      expect(generated.code).toContain('Source: Ticket.object.yaml');
+      expect(generated.code).not.toContain(workspace.root);
+      // Moving a registry, including across OS path conventions, must not
+      // disclose machine identity or change a distributable declaration.
+      const relocated = {
+        ...resolved,
+        record: {
+          ...resolved.record,
+          source: { ...resolved.record.source, path: 'C:\\workspace\\objects\\Ticket.object.yaml' },
+        },
+      };
+      expect(generateObjectInterface(relocated).code).toBe(generated.code);
     } finally {
       registry.close();
     }

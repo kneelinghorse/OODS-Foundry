@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { listPatterns } from '@/viz/patterns/index.js';
-import { scorePattern, suggestPatterns, type SchemaIntent } from '@/viz/patterns/suggest-chart.js';
+import { listPatterns } from '@oods/viz-core';
+import { scorePattern, suggestPatterns, type SchemaIntent } from '@oods/viz-core';
 
 const patterns = listPatterns();
 
@@ -33,8 +33,13 @@ describe('viz pattern suggestion', () => {
       stacking: 'required',
       partToWhole: true,
     };
-    const results = suggestPatterns(schema, { limit: 2 });
+    // stacked-100-bar is the decisive part-to-whole pick (score 17). stacked-bar and
+    // stacked-area-projection then tie (score 9), and the sprint-110 deterministic
+    // tie-break (score desc, then pattern.id asc) orders stacked-area-projection ahead
+    // of stacked-bar — pushing stacked-bar to #3 — so widen the window to 3.
+    const results = suggestPatterns(schema, { limit: 3 });
     const ids = results.map((entry) => entry.pattern.id);
+    expect(ids[0]).toBe('stacked-100-bar');
     expect(ids).toEqual(expect.arrayContaining(['stacked-bar', 'stacked-100-bar']));
   });
 

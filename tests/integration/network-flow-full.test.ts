@@ -22,7 +22,7 @@ import { adaptSankeyToECharts } from '@/viz/adapters/echarts/sankey-adapter.js';
 import type { HierarchyAdjacencyInput, HierarchyNestedInput } from '@/types/viz/network-flow.js';
 import type { SankeyInput } from '@/types/viz/sankey-types.js';
 import type { GraphInput } from '@/types/viz/graph-types.js';
-import type { NormalizedVizSpec } from '@/viz/spec/normalized-viz-spec.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 
 // Cross-filter
 import {
@@ -117,7 +117,7 @@ const GRAPH_DATA: GraphInput = {
 
 function createBaseSpec(id: string, name: string): NormalizedVizSpec {
   return {
-    $schema: 'https://oods.dev/viz-spec/v1',
+    $schema: 'https://oods-foundry.com/viz-spec/v1',
     id,
     name,
     data: { values: [] },

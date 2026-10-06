@@ -30,7 +30,7 @@ describe('viz token scales', () => {
     expect(sequentialComparisons).toHaveLength(8);
   });
 
-  it('flags invalid categorical aliases', async () => {
+  it('flags categorical values that are not inline oklch literals or sit below the chroma floor', async () => {
     const tokens = await loadDtcgTokens(VIZ_SCALE_FILE);
     const collections = collectVizScaleCollections(tokens);
 
@@ -43,10 +43,20 @@ describe('viz token scales', () => {
           path: ['viz', 'scale', 'categorical', 'invalid'],
           value: 'rgb(0, 0, 0)',
         },
+        {
+          ...collections.categorical[0],
+          path: ['viz', 'scale', 'categorical', 'gray'],
+          value: 'oklch(0.5 0.01 200)',
+        },
       ],
     });
 
     const invalidResult = results.find((result) => result.scope === 'categorical/invalid');
     expect(invalidResult?.ok).toBe(false);
+    expect(invalidResult?.detail).toContain('inline oklch');
+
+    const grayResult = results.find((result) => result.scope === 'categorical/gray');
+    expect(grayResult?.ok).toBe(false);
+    expect(grayResult?.detail).toContain('chroma floor');
   });
 });

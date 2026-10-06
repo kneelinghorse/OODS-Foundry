@@ -12,26 +12,25 @@
  * - High-contrast mode support
  */
 export const PAGINATION_TOKENS = {
-  fontSize: 'var(--font-size-body-md, 0.875rem)',
-  fontWeight: 'var(--font-weight-medium, 500)',
-  gap: 'var(--spacing-inline-xs, 0.25rem)',
-  paddingBlock: 'var(--spacing-squish-block-sm, 0.375rem)',
-  paddingInline: 'var(--spacing-squish-inline-sm, 0.75rem)',
-  borderRadius: 'var(--border-radius-md, 0.25rem)',
+  fontSize: 'var(--sys-text-scale-label-font-size)',
+  fontWeight: 'var(--sys-text-scale-label-font-weight)',
+  gap: 'var(--sys-control-gap-compact)',
+  paddingBlock: 'var(--sys-control-padding-block)',
+  paddingInline: 'var(--sys-control-padding-inline)',
+  borderRadius: 'var(--sys-radius-control)',
 
   // Colors
-  colorText: 'var(--cmp-text-body, var(--sys-text-primary))',
-  colorTextDisabled: 'var(--cmp-text-disabled, var(--sys-text-disabled))',
-  colorTextSelected: 'var(--cmp-text-on_action, var(--sys-text-on_interactive))',
-  colorBackground: 'var(--cmp-surface-canvas, transparent)',
-  colorBackgroundHover:
-    'var(--cmp-surface-action_hover, var(--sys-surface-interactive-primary-hover))',
-  colorBackgroundSelected:
-    'var(--cmp-surface-action, var(--sys-surface-interactive-primary-default))',
-  colorBorder: 'var(--cmp-border-default, var(--sys-border-subtle))',
-  colorBorderHover: 'var(--cmp-border-strong, var(--sys-border-strong))',
-  focusOutlineColor: 'var(--cmp-focus-text, var(--sys-focus-text))',
-  focusOutlineWidth: 'var(--cmp-focus-width, var(--sys-focus-width))',
+  colorText: 'var(--sys-text-primary)',
+  colorTextDisabled: 'var(--sys-text-disabled)',
+  colorTextSelected: 'var(--sys-text-on-interactive)',
+  colorBackground: 'transparent',
+  // A page button keeps its primary text on hover, so the hover is the subtle fill, not the primary one.
+  colorBackgroundHover: 'var(--sys-surface-interactive-secondary-default)',
+  colorBackgroundSelected: 'var(--sys-surface-interactive-primary-default)',
+  colorBorder: 'var(--sys-border-subtle)',
+  colorBorderHover: 'var(--sys-border-strong)',
+  focusOutlineColor: 'var(--sys-focus-ring-outer)',
+  focusOutlineWidth: 'var(--sys-focus-width)',
 } as const;
 
 /**

@@ -56,6 +56,10 @@ schema:
     type: uuid
     required: true
     description: Reference to the authoring user.
+  author_name:
+    type: string
+    required: false
+    description: Display name of the authoring user.
   content_type:
     type: string
     required: true
@@ -99,6 +103,13 @@ schema:
     description: Timestamp when the article was published live.
 
 semantics:
+  # The one-line summary under the headline in lists (content/Labelled's description, marked as the summary).
+  description:
+    semantic_type: text.summary
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: TextBody
+      maxLengthParameter: maxDescriptionLength
   article_id:
     semantic_type: content.article.id
     token_mapping: tokenMap(content.article.id)
@@ -108,6 +119,8 @@ semantics:
   author_id:
     semantic_type: content.article.author
     token_mapping: tokenMap(identity.user.id)
+    ui_hints:
+      displayLabelField: author_name
   content_type:
     semantic_type: content.article.type
     token_mapping: tokenMap(content.article.type)
@@ -138,3 +151,233 @@ metadata:
     - version: 1.0.0
       date: "2025-11-18"
       description: Initial article object composing hybrid Classifiable mode for taxonomy + tags.
+
+# Authored type associations; no record join or referential-integrity claim.
+relationships:
+  - target: User
+    via: author_id
+    cardinality: many-to-one
+    label: Author
+  - target: Media
+    via: hero_media_id
+    cardinality: many-to-one
+    label: Hero media
+
+# Eight authored sample help-centre articles about the billing product, written by three editors. Each follows the
+# editorial lifecycle from draft (its initial state); only published and archived articles carry a publication date, and
+# the heroes are sample Media assets.
+samples:
+  - label: September 2026 release notes
+    description: What changed in billing this month
+    slug: september-2026-release-notes
+    author_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e01
+    author_name: Elena Park
+    content_type: release_notes
+    excerpt: A preview of usage-based pricing, smarter payment retries and faster invoice search.
+    body_markdown: |
+      ## Payment retries
+      Failed card payments now retry on the schedule you choose, and each retry is listed on the invoice.
+
+      ## Invoice search
+      Search finds invoices by number, customer or amount in under a second.
+    hero_media_id: 5a7c9e1b-3d5f-4a6c-8e0a-2b4d6f8a0c03
+    reading_time_minutes: 5
+    locale: en-US
+    primary_category_id: updates-release-notes
+    primary_category_path: Updates > Release notes
+    tag_preview: releases
+    status: published
+    state_history:
+      - { title: Drafted, from: null, to: draft, at: '2026-09-22T09:00:00Z', reason: Drafted from the release checklist }
+      - { title: In review, from: draft, to: in_review, at: '2026-09-26T15:00:00Z', reason: Sent to product review }
+      - { title: Published, from: in_review, to: published, at: '2026-09-29T16:00:00Z', reason: Published with the release }
+    published_at: '2026-09-29T16:00:00Z'
+    created_at: '2026-09-22T09:00:00Z'
+    updated_at: '2026-09-29T16:00:00Z'
+    last_event: published
+    last_event_at: '2026-09-29T16:00:00Z'
+  - label: How prorations work when plans change
+    description: Why an upgrade adds a prorated charge
+    slug: how-prorations-work
+    author_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e02
+    author_name: Marcus Hale
+    content_type: knowledge_base
+    excerpt: When a customer upgrades mid-cycle, they pay the difference for the days left in the period.
+    body_markdown: |
+      An upgrade takes effect straight away. The customer is charged the new price minus the old one, for the days left
+      in the current billing period, and the next renewal is at the new price.
+
+      A downgrade takes effect at the end of the period, so no credit is issued.
+    hero_media_id: 5a7c9e1b-3d5f-4a6c-8e0a-2b4d6f8a0c01
+    reading_time_minutes: 6
+    locale: en-US
+    primary_category_id: billing-plans
+    primary_category_path: Billing > Plans
+    tag_preview: prorations, upgrades
+    status: published
+    state_history:
+      - { title: Drafted, from: null, to: draft, at: '2026-06-22T10:00:00Z', reason: Requested by the support team }
+      - { title: In review, from: draft, to: in_review, at: '2026-07-01T10:00:00Z', reason: Sent to the billing lead }
+      - { title: Published, from: in_review, to: published, at: '2026-07-08T14:00:00Z', reason: Approved and published }
+    published_at: '2026-07-08T14:00:00Z'
+    created_at: '2026-06-22T10:00:00Z'
+    updated_at: '2026-07-08T14:00:00Z'
+    last_event: published
+    last_event_at: '2026-07-08T14:00:00Z'
+  - label: Set up automatic payment retries
+    description: Recover failed payments on a schedule
+    slug: set-up-automatic-payment-retries
+    author_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e03
+    author_name: Ines Duarte
+    content_type: how_to
+    excerpt: Choose how often a declined card is retried and when the customer is reminded.
+    body_markdown: |
+      1. Open Settings, then Payments.
+      2. Under Retries, choose up to four attempts over 21 days.
+      3. Turn on reminder emails so the customer can update their card before the last retry.
+    hero_media_id: 5a7c9e1b-3d5f-4a6c-8e0a-2b4d6f8a0c02
+    reading_time_minutes: 4
+    locale: en-US
+    primary_category_id: billing-payments
+    primary_category_path: Billing > Payments
+    tag_preview: retries, dunning
+    status: published
+    state_history:
+      - { title: Drafted, from: null, to: draft, at: '2026-08-05T09:00:00Z', reason: Drafted for the retries launch }
+      - { title: In review, from: draft, to: in_review, at: '2026-08-12T09:00:00Z', reason: Sent to the support lead }
+      - { title: Published, from: in_review, to: published, at: '2026-08-19T13:00:00Z', reason: Approved and published }
+    published_at: '2026-08-19T13:00:00Z'
+    created_at: '2026-08-05T09:00:00Z'
+    updated_at: '2026-08-19T13:00:00Z'
+    last_event: published
+    last_event_at: '2026-08-19T13:00:00Z'
+  - label: Introducing usage-based billing
+    description: Charge for what customers use
+    slug: introducing-usage-based-billing
+    author_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e01
+    author_name: Elena Park
+    content_type: announcement
+    excerpt: Meter API calls or seats, include an allowance in each plan and bill the overage automatically.
+    body_markdown: |
+      Usage-based billing arrives on October 6. Each plan can include an allowance, and anything above it is billed at
+      the rate you set, on the same invoice as the subscription.
+    hero_media_id: 5a7c9e1b-3d5f-4a6c-8e0a-2b4d6f8a0c04
+    reading_time_minutes: 3
+    locale: en-US
+    primary_category_id: updates-announcements
+    primary_category_path: Updates > Announcements
+    tag_preview: usage, launch
+    status: scheduled
+    state_history:
+      - { title: Drafted, from: null, to: draft, at: '2026-09-01T09:00:00Z', reason: Drafted for the October launch }
+      - { title: In review, from: draft, to: in_review, at: '2026-09-15T09:00:00Z', reason: Sent to product marketing }
+      - { title: Scheduled, from: in_review, to: scheduled, at: '2026-09-24T16:00:00Z', reason: Scheduled for October 6 }
+    published_at: null
+    created_at: '2026-09-01T09:00:00Z'
+    updated_at: '2026-09-24T16:00:00Z'
+    last_event: scheduled
+    last_event_at: '2026-09-24T16:00:00Z'
+  - label: Refund a duplicate charge
+    description: Find and refund a charge made twice
+    slug: refund-a-duplicate-charge
+    author_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e03
+    author_name: Ines Duarte
+    content_type: how_to
+    excerpt: Spot two charges for the same period and refund one of them in full.
+    body_markdown: |
+      Open the customer's payments and look for two charges on consecutive days for the same amount. Open the later one
+      and choose Refund; the refund appears on the invoice and in the customer's payment history.
+    hero_media_id: null
+    reading_time_minutes: 3
+    locale: en-US
+    primary_category_id: billing-payments
+    primary_category_path: Billing > Payments
+    tag_preview: refunds
+    status: in_review
+    state_history:
+      - { title: Drafted, from: null, to: draft, at: '2026-09-17T11:00:00Z', reason: Written after a support ticket }
+      - { title: In review, from: draft, to: in_review, at: '2026-09-25T11:00:00Z', reason: Sent to the support lead }
+    published_at: null
+    created_at: '2026-09-17T11:00:00Z'
+    updated_at: '2026-09-25T11:00:00Z'
+    last_event: updated
+    last_event_at: '2026-09-25T11:00:00Z'
+  - label: Invoice numbers, tax IDs and legal names
+    description: What each invoice must show, by region
+    slug: invoice-numbers-tax-ids
+    author_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e02
+    author_name: Marcus Hale
+    content_type: knowledge_base
+    excerpt: The details an invoice needs in the US, the UK and the EU, and where to set them.
+    body_markdown: |
+      Every invoice shows a unique number, your legal name and address, and the customer's. In the UK and the EU it also
+      shows your VAT number and, for business customers, theirs.
+    hero_media_id: 5a7c9e1b-3d5f-4a6c-8e0a-2b4d6f8a0c06
+    reading_time_minutes: 7
+    locale: en-GB
+    primary_category_id: billing-invoices
+    primary_category_path: Billing > Invoices
+    tag_preview: invoices, tax
+    status: draft
+    state_history:
+      - { title: Drafted, from: null, to: draft, at: '2026-09-08T08:00:00Z', reason: Drafted for the tax settings page }
+      - { title: In review, from: draft, to: in_review, at: '2026-09-16T08:00:00Z', reason: Sent to the finance team }
+      - { title: Changes requested, from: in_review, to: draft, at: '2026-09-18T08:00:00Z', reason: Needs the EU VAT section }
+    published_at: null
+    created_at: '2026-09-08T08:00:00Z'
+    updated_at: '2026-09-18T08:00:00Z'
+    last_event: updated
+    last_event_at: '2026-09-18T08:00:00Z'
+  - label: Moving from the Pro plan
+    description: Pro customers moved to Business in 2026
+    slug: moving-from-the-pro-plan
+    author_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e01
+    author_name: Elena Park
+    content_type: announcement
+    excerpt: The Pro plan closed to new customers; existing Pro subscriptions moved to Business at the same price.
+    body_markdown: |
+      Pro subscriptions moved to the Business plan at their next renewal, at the Pro price for the first year. Nothing
+      changed for customers already on Business.
+    hero_media_id: 5a7c9e1b-3d5f-4a6c-8e0a-2b4d6f8a0c07
+    reading_time_minutes: 2
+    locale: en-US
+    primary_category_id: updates-announcements
+    primary_category_path: Updates > Announcements
+    tag_preview: plans
+    status: archived
+    state_history:
+      - { title: Drafted, from: null, to: draft, at: '2025-10-01T09:00:00Z', reason: Drafted with the pricing change }
+      - { title: In review, from: draft, to: in_review, at: '2025-10-06T09:00:00Z', reason: Sent to product marketing }
+      - { title: Published, from: in_review, to: published, at: '2025-10-09T14:00:00Z', reason: Published with the pricing change }
+      - { title: Archived, from: published, to: archived, at: '2026-04-30T09:00:00Z', reason: Migration complete }
+    published_at: '2025-10-09T14:00:00Z'
+    created_at: '2025-10-01T09:00:00Z'
+    updated_at: '2026-04-30T09:00:00Z'
+    last_event: archived
+    last_event_at: '2026-04-30T09:00:00Z'
+  - label: Pause a subscription for the off-season
+    description: Stop billing without losing your data
+    slug: pause-a-subscription
+    author_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e03
+    author_name: Ines Duarte
+    content_type: how_to
+    excerpt: Pause billing for up to three months and resume from the same place.
+    body_markdown: |
+      Open the subscription and choose Pause. Billing stops at the end of the current period, and nothing is deleted.
+      Choose Resume at any time to start the next period straight away.
+    hero_media_id: null
+    reading_time_minutes: 3
+    locale: en-US
+    primary_category_id: billing-subscriptions
+    primary_category_path: Billing > Subscriptions
+    tag_preview: subscriptions
+    status: published
+    state_history:
+      - { title: Drafted, from: null, to: draft, at: '2026-05-11T10:00:00Z', reason: Requested by seasonal customers }
+      - { title: In review, from: draft, to: in_review, at: '2026-05-19T10:00:00Z', reason: Sent to the support lead }
+      - { title: Published, from: in_review, to: published, at: '2026-05-26T12:00:00Z', reason: Approved and published }
+    published_at: '2026-05-26T12:00:00Z'
+    created_at: '2026-05-11T10:00:00Z'
+    updated_at: '2026-05-26T12:00:00Z'
+    last_event: published
+    last_event_at: '2026-05-26T12:00:00Z'

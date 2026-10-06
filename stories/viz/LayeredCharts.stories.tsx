@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import type { NormalizedVizSpec } from '~/src/viz/spec/normalized-viz-spec';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 import { VizLayeredView } from '~/src/components/viz/VizLayeredView';
 
 const meta: Meta<typeof VizLayeredView> = {
-  title: 'Visualization/Composition/Layered Charts',
+  title: 'Visualization/VizLayeredView',
   component: VizLayeredView,
   parameters: {
     layout: 'fullscreen',
@@ -15,7 +15,7 @@ export default meta;
 type Story = StoryObj<typeof VizLayeredView>;
 
 const layeredSpec: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/v1',
   id: 'stories:viz:layered:actuals',
   name: 'Actuals vs Target Index',
   data: {

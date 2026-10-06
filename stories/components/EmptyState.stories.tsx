@@ -71,7 +71,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({
 };
 
 const meta: Meta<EmptyStateProps> = {
-  title: 'Primitives/Data Display/EmptyState',
+  title: 'Components/Feedback/EmptyState',
   component: EmptyState,
   parameters: {
     layout: 'centered',
@@ -194,13 +194,6 @@ const CheckIcon: React.FC = () => (
       strokeLinejoin="round"
     />
     <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
-  </svg>
-);
-
-const SearchIcon: React.FC = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" role="presentation">
-    <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2" />
-    <path d="M21 21l-4.35-4.35" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
   </svg>
 );
 

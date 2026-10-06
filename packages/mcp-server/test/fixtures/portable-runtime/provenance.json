@@ -1,0 +1,152 @@
+{
+  "consumer_repository": {
+    "path": "Design-Tools/Shopify-Forge",
+    "commit": "97e9aa8317bdfdf3cf6d85d81e90112c5e5789ff",
+    "source_introduction_commit": "94c84197b9b17add2c4e7f113852258169f96c7c"
+  },
+  "fixtures": [
+    {
+      "id": "twoPanel",
+      "source_path": "tests/admin-app/fixtures/d3-preflight-dashboard.json",
+      "fixture": "d3-preflight-dashboard.json",
+      "sha256": "c3e2c12b61e599f970070cf4af7d3262640a5e48c0cfc58616954cdb8c17d62a",
+      "bytes": 1145
+    },
+    {
+      "id": "fourPanel",
+      "source_path": "tests/admin-app/fixtures/d3-four-panel-dashboard.json",
+      "fixture": "d3-four-panel-dashboard.json",
+      "sha256": "3901489a7e3bfa703c0a1db4b4dde9611f6ddf02edaa8dcb50dd1bb8b9a5ca04",
+      "bytes": 2091
+    },
+    {
+      "id": "viz",
+      "source_path": "tests/admin-app/fixtures/d3-viz-bar.json",
+      "fixture": "d3-viz-bar.json",
+      "sha256": "be19ebf524bdcedb0baebec6f4a84a7076bdd563a2da3226b6d646da57464fed",
+      "bytes": 588
+    }
+  ],
+  "s194_tool_fixtures": {
+    "source_repository": "OODS-Forge",
+    "source_head": "973e5260",
+    "mission": "s194-m06",
+    "purpose": "One recipe per advertised tool; bindings substitute untouched live output operands. Inline fidelity data copied from the existing Subscription manifest. Map/schema followups prove persistence then delete only test state.",
+    "fixtures": [
+      {
+        "tool": "health",
+        "fixture": "s194-health.json",
+        "sha256": "edae244bb0ec90acec8538028f5735e1591d1e9aa3bb6ee0f4cfcd3364f5ac59",
+        "bytes": 60
+      },
+      {
+        "tool": "tokens.build",
+        "fixture": "s194-tokens-build.json",
+        "sha256": "262634f01345c74f9fe4d09dded5fe7b85cda4ffe417161cb20d7b067ac7fb46",
+        "bytes": 127
+      },
+      {
+        "tool": "structuredData.fetch",
+        "fixture": "s194-structuredData-fetch.json",
+        "sha256": "25cb7457d33291a4cee539358c3673cfc305c1ba11c3eff71fd9e31efe35b437",
+        "bytes": 105
+      },
+      {
+        "tool": "brand.apply",
+        "fixture": "s194-brand-apply.json",
+        "sha256": "7bd21cd811cb7e11a171be6ba10383ac3c90ffc574bbe890c8174d02c7d68b47",
+        "bytes": 122
+      },
+      {
+        "tool": "brand.intake",
+        "fixture": "s194-brand-intake.json",
+        "sha256": "839ced48ab0acb29ad45d7fecb228f059265e8739ee2b20b8045eb202b7507be",
+        "bytes": 148
+      },
+      {
+        "tool": "catalog.list",
+        "fixture": "s194-catalog-list.json",
+        "sha256": "1fe037984ba4864821d3545a1d2d4d828570bb25a2839d88af7dc0fc6f87428d",
+        "bytes": 111
+      },
+      {
+        "tool": "design.compose",
+        "fixture": "s194-design-compose.json",
+        "sha256": "0224a94436ee2a8e13a7a1b28a89aff6fcd4ff0548cc00d3bbf321e038ddee00",
+        "bytes": 123
+      },
+      {
+        "tool": "design.preview",
+        "fixture": "s194-design-preview.json",
+        "sha256": "b0d35ed84035b22aa164e4e26821fb4b30e7f4be2e81947dc78d0055f76c790c",
+        "bytes": 123
+      },
+      {
+        "tool": "pipeline",
+        "fixture": "s194-pipeline.json",
+        "sha256": "04022a6046c39f0bec88c42cf71a59afa8ed5dd39ec7909b392faa7a2b0b47cb",
+        "bytes": 143
+      },
+      {
+        "tool": "registry.snapshot",
+        "fixture": "s194-registry-snapshot.json",
+        "sha256": "1979a3750c28176cbcbdb56b73f2add4c650b3cde4b6ce3f3841fbff5795e3ed",
+        "bytes": 71
+      },
+      {
+        "tool": "viz.render",
+        "fixture": "s194-viz-render.json",
+        "sha256": "2a850687881667f403f5a554ce2baa462bcefc4dc88e4d7f3e67d8873b7b8286",
+        "bytes": 809
+      },
+      {
+        "tool": "dashboard.render",
+        "fixture": "s194-dashboard-render.json",
+        "sha256": "1e66463fa39c7da75b9a017dcf0d7a357b6f3a0a184f2231d64118b3e639a854",
+        "bytes": 1482
+      },
+      {
+        "tool": "artifact.certify",
+        "fixture": "s194-artifact-certify.json",
+        "sha256": "de6959711792d74b068724bd860effaabe73d96b29f5fd64bc2105f2a6253a91",
+        "bytes": 106
+      },
+      {
+        "tool": "code.generate",
+        "fixture": "s194-code-generate.json",
+        "sha256": "7257a1995526a8aaeeed8002ce592b052e6e6c417b34f918bb9fb4d992921a9a",
+        "bytes": 159
+      },
+      {
+        "tool": "fidelity.preview",
+        "fixture": "s194-fidelity-preview.json",
+        "sha256": "79a38181c6b593d3e14adc9bc9462493f27045167d2934ae616c87bfe8ab05dc",
+        "bytes": 3777
+      },
+      {
+        "tool": "map",
+        "fixture": "s194-map.json",
+        "sha256": "8d3350cc21ddf3ad1fa1658850b0e4918ba584cabe108ad5dd0b54d3c548a6c0",
+        "bytes": 458
+      },
+      {
+        "tool": "schema",
+        "fixture": "s194-schema.json",
+        "sha256": "0d4c4b37fbae4e653a4492cf7a1fe47905bc2c5821a188cd3c10b605afb2277f",
+        "bytes": 393
+      },
+      {
+        "tool": "object",
+        "fixture": "s194-object.json",
+        "sha256": "0cdd899351e9bd9a6fa3ee7a21d5a33dce16c9d2c2c44c9a482f2022e3df9e9c",
+        "bytes": 135
+      },
+      {
+        "tool": "repl",
+        "fixture": "s194-repl.json",
+        "sha256": "73dbeaafc7be460a95e3d63bfdb18d17a25ab373af44416a84e5e14ca5ba2fe1",
+        "bytes": 193
+      }
+    ]
+  }
+}

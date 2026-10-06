@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
 import type { HierarchyAdjacencyInput } from '../../../../src/types/viz/network-flow.js';
-import type { NormalizedVizSpec } from '../../../../src/viz/spec/normalized-viz-spec.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 import { adaptSunburstToECharts } from '../../../../src/viz/adapters/echarts/sunburst-adapter.js';
 
 const spec: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/v1',
   id: 'stories:hierarchy:sunburst',
   name: 'Sunburst Allocation',
   data: { values: [] },

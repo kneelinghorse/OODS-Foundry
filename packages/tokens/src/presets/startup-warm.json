@@ -1,0 +1,674 @@
+{
+  "$schema": "https://design-tokens.org/dtcg/schema.json",
+  "$description": "Startup Warm preset — friendly, approachable palette with a coral primary and warm neutrals. Suitable for consumer apps, onboarding flows, and creative tools. It sets all 69 colour slots and all 27 chart slots from one brand recipe (light roles and charts) over brand A's light theme; every other slot starts from brand A. Load it as a starting point with brand.intake (action \"template\", from { \"preset\": \"startup-warm\" }), then validate and create the brand. Brand-relative: no color.brand.<id> wrapper, so it serves any brand.",
+  "$extensions": {
+    "ods": {
+      "preset": {
+        "themes": {
+          "base": "base"
+        }
+      }
+    }
+  },
+  "surface": {
+    "canvas": {
+      "$type": "color",
+      "$value": "oklch(1 0.000004 60)",
+      "$description": "surface.canvas; generated from palette/seeds.json by generate-palette.ts."
+    },
+    "raised": {
+      "$type": "color",
+      "$value": "oklch(1 0.000004 60)",
+      "$description": "surface.raised; generated from palette/seeds.json by generate-palette.ts."
+    },
+    "subtle": {
+      "$type": "color",
+      "$value": "oklch(0.97 0.00288 60)",
+      "$description": "surface.subtle; generated from palette/seeds.json by generate-palette.ts."
+    },
+    "disabled": {
+      "$type": "color",
+      "$value": "oklch(0.97 0.00288 60)",
+      "$description": "surface.disabled; generated from palette/seeds.json by generate-palette.ts."
+    },
+    "backdrop": {
+      "$type": "color",
+      "$value": "oklch(0.145 0.00708 60)",
+      "$description": "surface.backdrop; generated from palette/seeds.json by generate-palette.ts."
+    },
+    "inverse": {
+      "$type": "color",
+      "$value": "oklch(0.145 0.00708 60)",
+      "$description": "surface.inverse; generated from palette/seeds.json by generate-palette.ts."
+    },
+    "interactive": {
+      "primary": {
+        "default": {
+          "$type": "color",
+          "$value": "oklch(0.587074 0.193579 33.3)",
+          "$description": "surface.interactive.primary.default; generated from palette/seeds.json by generate-palette.ts."
+        },
+        "hover": {
+          "$type": "color",
+          "$value": "oklch(0.557074 0.19475 33.185266)",
+          "$description": "surface.interactive.primary.hover; generated from palette/seeds.json by generate-palette.ts."
+        },
+        "pressed": {
+          "$type": "color",
+          "$value": "oklch(0.527074 0.193541 33.185266)",
+          "$description": "surface.interactive.primary.pressed; generated from palette/seeds.json by generate-palette.ts."
+        }
+      },
+      "secondary": {
+        "default": {
+          "$type": "color",
+          "$value": "oklch(0.97 0.00288 60)",
+          "$description": "surface.interactive.secondary.default; generated from palette/seeds.json by generate-palette.ts."
+        },
+        "hover": {
+          "$type": "color",
+          "$value": "oklch(0.95 0.00348 60)",
+          "$description": "surface.interactive.secondary.hover; generated from palette/seeds.json by generate-palette.ts."
+        },
+        "pressed": {
+          "$type": "color",
+          "$value": "oklch(0.935 0.00492 60)",
+          "$description": "surface.interactive.secondary.pressed; generated from palette/seeds.json by generate-palette.ts."
+        }
+      },
+      "destructive": {
+        "default": {
+          "$type": "color",
+          "$value": "oklch(0.590577 0.193344 23)",
+          "$description": "surface.interactive.destructive.default; generated from palette/seeds.json by generate-palette.ts."
+        },
+        "hover": {
+          "$type": "color",
+          "$value": "oklch(0.560577 0.194665 24.00731)",
+          "$description": "surface.interactive.destructive.hover; generated from palette/seeds.json by generate-palette.ts."
+        },
+        "pressed": {
+          "$type": "color",
+          "$value": "oklch(0.530577 0.194665 24.00731)",
+          "$description": "surface.interactive.destructive.pressed; generated from palette/seeds.json by generate-palette.ts."
+        }
+      }
+    }
+  },
+  "border": {
+    "subtle": {
+      "$type": "color",
+      "$value": "oklch(0.922 0.00636 60)",
+      "$description": "border.subtle; generated from palette/seeds.json by generate-palette.ts."
+    },
+    "strong": {
+      "$type": "color",
+      "$value": "oklch(0.871 0.0078 60)",
+      "$description": "border.strong; generated from palette/seeds.json by generate-palette.ts."
+    },
+    "interactive": {
+      "$type": "color",
+      "$value": "oklch(0.643 0.012 60)",
+      "$description": "border.interactive; generated from palette/seeds.json by generate-palette.ts."
+    },
+    "interactiveHover": {
+      "$type": "color",
+      "$value": "oklch(0.545 0.01056 60)",
+      "$description": "border.interactiveHover; generated from palette/seeds.json by generate-palette.ts."
+    }
+  },
+  "text": {
+    "primary": {
+      "$type": "color",
+      "$value": "oklch(0.145 0.00708 60)",
+      "$description": "text.primary; generated from palette/seeds.json by generate-palette.ts."
+    },
+    "secondary": {
+      "$type": "color",
+      "$value": "oklch(0.439 0.00984 60)",
+      "$description": "text.secondary; generated from palette/seeds.json by generate-palette.ts."
+    },
+    "muted": {
+      "$type": "color",
+      "$value": "oklch(0.545 0.01056 60)",
+      "$description": "text.muted; generated from palette/seeds.json by generate-palette.ts."
+    },
+    "inverse": {
+      "$type": "color",
+      "$value": "oklch(1 0.000004 60)",
+      "$description": "text.inverse; generated from palette/seeds.json by generate-palette.ts."
+    },
+    "onInteractive": {
+      "$type": "color",
+      "$value": "oklch(1 0.000004 60)",
+      "$description": "text.onInteractive; generated from palette/seeds.json by generate-palette.ts."
+    },
+    "onDestructive": {
+      "$type": "color",
+      "$value": "oklch(1 0.000004 60)",
+      "$description": "text.onDestructive; generated from palette/seeds.json by generate-palette.ts."
+    },
+    "disabled": {
+      "$type": "color",
+      "$value": "oklch(0.643 0.012 60)",
+      "$description": "text.disabled; generated from palette/seeds.json by generate-palette.ts."
+    },
+    "accent": {
+      "$type": "color",
+      "$value": "oklch(0.566434 0.197769 32.697418)",
+      "$description": "text.accent; generated from palette/seeds.json by generate-palette.ts."
+    }
+  },
+  "focus": {
+    "ring": {
+      "outer": {
+        "$type": "color",
+        "$value": "oklch(0.145 0.00708 60)",
+        "$description": "focus.ring.outer; generated from palette/seeds.json by generate-palette.ts."
+      },
+      "inner": {
+        "$type": "color",
+        "$value": "oklch(1 0.000004 60)",
+        "$description": "focus.ring.inner; generated from palette/seeds.json by generate-palette.ts."
+      }
+    },
+    "text": {
+      "$type": "color",
+      "$value": "oklch(0.566434 0.197769 32.697418)",
+      "$description": "focus.text; generated from palette/seeds.json by generate-palette.ts."
+    }
+  },
+  "accent": {
+    "background": {
+      "$type": "color",
+      "$value": "oklch(0.954115 0.021457 31.712222)",
+      "$description": "accent.background; generated from palette/seeds.json by generate-palette.ts."
+    },
+    "border": {
+      "$type": "color",
+      "$value": "oklch(0.802069 0.094538 32.13456)",
+      "$description": "accent.border; generated from palette/seeds.json by generate-palette.ts."
+    },
+    "text": {
+      "$type": "color",
+      "$value": "oklch(0.556434 0.197769 32.697418)",
+      "$description": "accent.text; generated from palette/seeds.json by generate-palette.ts."
+    }
+  },
+  "status": {
+    "info": {
+      "surface": {
+        "$type": "color",
+        "$value": "oklch(0.959682 0.020056 238.701263)",
+        "$description": "status.info.surface; generated from palette/seeds.json by generate-palette.ts."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "oklch(0.809755 0.088669 243.091253)",
+        "$description": "status.info.border; generated from palette/seeds.json by generate-palette.ts."
+      },
+      "text": {
+        "$type": "color",
+        "$value": "oklch(0.540689 0.162234 252.214666)",
+        "$description": "status.info.text; generated from palette/seeds.json by generate-palette.ts."
+      },
+      "icon": {
+        "$type": "color",
+        "$value": "oklch(0.622153 0.183136 251.723539)",
+        "$description": "status.info.icon; generated from palette/seeds.json by generate-palette.ts."
+      },
+      "solid": {
+        "$type": "color",
+        "$value": "oklch(0.566651 0.168568 251.8)",
+        "$description": "status.info.solid; generated from palette/seeds.json by generate-palette.ts."
+      },
+      "onSolid": {
+        "$type": "color",
+        "$value": "oklch(1 0.000004 60)",
+        "$description": "status.info.onSolid; generated from palette/seeds.json by generate-palette.ts."
+      }
+    },
+    "success": {
+      "surface": {
+        "$type": "color",
+        "$value": "oklch(0.958254 0.02227 155.931601)",
+        "$description": "status.success.surface; generated from palette/seeds.json by generate-palette.ts."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "oklch(0.798152 0.08315 159.165466)",
+        "$description": "status.success.border; generated from palette/seeds.json by generate-palette.ts."
+      },
+      "text": {
+        "$type": "color",
+        "$value": "oklch(0.523466 0.11158 159.513172)",
+        "$description": "status.success.text; generated from palette/seeds.json by generate-palette.ts."
+      },
+      "icon": {
+        "$type": "color",
+        "$value": "oklch(0.611472 0.126614 158.247346)",
+        "$description": "status.success.icon; generated from palette/seeds.json by generate-palette.ts."
+      },
+      "solid": {
+        "$type": "color",
+        "$value": "oklch(0.548102 0.128886 157.7)",
+        "$description": "status.success.solid; generated from palette/seeds.json by generate-palette.ts."
+      },
+      "onSolid": {
+        "$type": "color",
+        "$value": "oklch(1 0.000004 60)",
+        "$description": "status.success.onSolid; generated from palette/seeds.json by generate-palette.ts."
+      }
+    },
+    "warning": {
+      "surface": {
+        "$type": "color",
+        "$value": "oklch(0.969531 0.068378 100.371682)",
+        "$description": "status.warning.surface; generated from palette/seeds.json by generate-palette.ts."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "oklch(0.827254 0.122422 86.674497)",
+        "$description": "status.warning.border; generated from palette/seeds.json by generate-palette.ts."
+      },
+      "text": {
+        "$type": "color",
+        "$value": "oklch(0.553161 0.125197 63.921739)",
+        "$description": "status.warning.text; generated from palette/seeds.json by generate-palette.ts."
+      },
+      "icon": {
+        "$type": "color",
+        "$value": "oklch(0.570661 0.129157 63.921739)",
+        "$description": "status.warning.icon; generated from palette/seeds.json by generate-palette.ts."
+      },
+      "solid": {
+        "$type": "color",
+        "$value": "oklch(0.853575 0.15722 84.1)",
+        "$description": "status.warning.solid; generated from palette/seeds.json by generate-palette.ts."
+      },
+      "onSolid": {
+        "$type": "color",
+        "$value": "oklch(0.145 0.00708 60)",
+        "$description": "status.warning.onSolid; generated from palette/seeds.json by generate-palette.ts."
+      }
+    },
+    "critical": {
+      "surface": {
+        "$type": "color",
+        "$value": "oklch(0.955466 0.020724 13.839409)",
+        "$description": "status.critical.surface; generated from palette/seeds.json by generate-palette.ts."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "oklch(0.807 0.088767 18.290593)",
+        "$description": "status.critical.border; generated from palette/seeds.json by generate-palette.ts."
+      },
+      "text": {
+        "$type": "color",
+        "$value": "oklch(0.556979 0.197433 25.13833)",
+        "$description": "status.critical.text; generated from palette/seeds.json by generate-palette.ts."
+      },
+      "icon": {
+        "$type": "color",
+        "$value": "oklch(0.625577 0.193344 23)",
+        "$description": "status.critical.icon; generated from palette/seeds.json by generate-palette.ts."
+      },
+      "solid": {
+        "$type": "color",
+        "$value": "oklch(0.590577 0.193344 23)",
+        "$description": "status.critical.solid; generated from palette/seeds.json by generate-palette.ts."
+      },
+      "onSolid": {
+        "$type": "color",
+        "$value": "oklch(1 0.000004 60)",
+        "$description": "status.critical.onSolid; generated from palette/seeds.json by generate-palette.ts."
+      }
+    },
+    "neutral": {
+      "surface": {
+        "$type": "color",
+        "$value": "oklch(0.97 0.00288 60)",
+        "$description": "status.neutral.surface; generated from palette/seeds.json by generate-palette.ts."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "oklch(0.871 0.0078 60)",
+        "$description": "status.neutral.border; generated from palette/seeds.json by generate-palette.ts."
+      },
+      "text": {
+        "$type": "color",
+        "$value": "oklch(0.439 0.00984 60)",
+        "$description": "status.neutral.text; generated from palette/seeds.json by generate-palette.ts."
+      },
+      "icon": {
+        "$type": "color",
+        "$value": "oklch(0.643 0.012 60)",
+        "$description": "status.neutral.icon; generated from palette/seeds.json by generate-palette.ts."
+      },
+      "solid": {
+        "$type": "color",
+        "$value": "oklch(0.145 0.00708 60)",
+        "$description": "status.neutral.solid; generated from palette/seeds.json by generate-palette.ts."
+      },
+      "onSolid": {
+        "$type": "color",
+        "$value": "oklch(1 0.000004 60)",
+        "$description": "status.neutral.onSolid; generated from palette/seeds.json by generate-palette.ts."
+      }
+    },
+    "accent": {
+      "surface": {
+        "$type": "color",
+        "$value": "oklch(0.954115 0.021457 31.712222)",
+        "$description": "status.accent.surface; generated from palette/seeds.json by generate-palette.ts."
+      },
+      "border": {
+        "$type": "color",
+        "$value": "oklch(0.802069 0.094538 32.13456)",
+        "$description": "status.accent.border; generated from palette/seeds.json by generate-palette.ts."
+      },
+      "text": {
+        "$type": "color",
+        "$value": "oklch(0.556434 0.197769 32.697418)",
+        "$description": "status.accent.text; generated from palette/seeds.json by generate-palette.ts."
+      },
+      "icon": {
+        "$type": "color",
+        "$value": "oklch(0.627074 0.193579 33.3)",
+        "$description": "status.accent.icon; generated from palette/seeds.json by generate-palette.ts."
+      },
+      "solid": {
+        "$type": "color",
+        "$value": "oklch(0.587074 0.193579 33.3)",
+        "$description": "status.accent.solid; generated from palette/seeds.json by generate-palette.ts."
+      },
+      "onSolid": {
+        "$type": "color",
+        "$value": "oklch(1 0.000004 60)",
+        "$description": "status.accent.onSolid; generated from palette/seeds.json by generate-palette.ts."
+      }
+    }
+  },
+  "viz": {
+    "mark": {
+      "single": {
+        "$type": "color",
+        "$value": "oklch(0.627074 0.193579 33.3)",
+        "$description": "viz.mark.single; generated from the brand recipe by @oods/tokens recipe.mjs.",
+        "$extensions": {
+          "ods": {
+            "fallback": "#E54D2E"
+          }
+        }
+      }
+    },
+    "scale": {
+      "categorical": {
+        "01": {
+          "$type": "color",
+          "$value": "oklch(0.627074 0.193579 33.3)",
+          "$description": "viz.scale.categorical.01; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#E54D2E"
+            }
+          }
+        },
+        "02": {
+          "$type": "color",
+          "$value": "oklch(0.495214 0.086769 213.3)",
+          "$description": "viz.scale.categorical.02; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#006E7F"
+            }
+          }
+        },
+        "03": {
+          "$type": "color",
+          "$value": "oklch(0.406055 0.08317 93.3)",
+          "$description": "viz.scale.categorical.03; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#594800"
+            }
+          }
+        },
+        "04": {
+          "$type": "color",
+          "$value": "oklch(0.62183 0.187169 273.3)",
+          "$description": "viz.scale.categorical.04; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#6578F5"
+            }
+          }
+        },
+        "05": {
+          "$type": "color",
+          "$value": "oklch(0.60513 0.138798 153.3)",
+          "$description": "viz.scale.categorical.05; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#299958"
+            }
+          }
+        },
+        "06": {
+          "$type": "color",
+          "$value": "oklch(0.596558 0.197037 333.3)",
+          "$description": "viz.scale.categorical.06; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#C045B0"
+            }
+          }
+        }
+      },
+      "sequential": {
+        "01": {
+          "$type": "color",
+          "$value": "oklch(0.94 0.021948 33.3)",
+          "$description": "viz.scale.sequential.01; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#FAE6E2"
+            }
+          }
+        },
+        "02": {
+          "$type": "color",
+          "$value": "oklch(0.84 0.074908 33.3)",
+          "$description": "viz.scale.sequential.02; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#F7B9AB"
+            }
+          }
+        },
+        "03": {
+          "$type": "color",
+          "$value": "oklch(0.74 0.128345 33.3)",
+          "$description": "viz.scale.sequential.03; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#F08B75"
+            }
+          }
+        },
+        "04": {
+          "$type": "color",
+          "$value": "oklch(0.64 0.169978 33.3)",
+          "$description": "viz.scale.sequential.04; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#E05C42"
+            }
+          }
+        },
+        "05": {
+          "$type": "color",
+          "$value": "oklch(0.54 0.191597 33.3)",
+          "$description": "viz.scale.sequential.05; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#C52E0B"
+            }
+          }
+        },
+        "06": {
+          "$type": "color",
+          "$value": "oklch(0.44 0.161087 33.3)",
+          "$description": "viz.scale.sequential.06; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#971D00"
+            }
+          }
+        },
+        "07": {
+          "$type": "color",
+          "$value": "oklch(0.34 0.124479 33.3)",
+          "$description": "viz.scale.sequential.07; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#6A1100"
+            }
+          }
+        },
+        "08": {
+          "$type": "color",
+          "$value": "oklch(0.24 0.087872 33.3)",
+          "$description": "viz.scale.sequential.08; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#3F0700"
+            }
+          }
+        },
+        "09": {
+          "$type": "color",
+          "$value": "oklch(0.14 0.051276 33.3)",
+          "$description": "viz.scale.sequential.09; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#190100"
+            }
+          }
+        }
+      },
+      "diverging": {
+        "neg-01": {
+          "$type": "color",
+          "$value": "oklch(0.7 0.146783 33.3)",
+          "$description": "viz.scale.diverging.neg-01; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#EB7860"
+            }
+          }
+        },
+        "pos-01": {
+          "$type": "color",
+          "$value": "oklch(0.7 0.146783 23)",
+          "$description": "viz.scale.diverging.pos-01; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#EC7573"
+            }
+          }
+        },
+        "neg-02": {
+          "$type": "color",
+          "$value": "oklch(0.58 0.185485 33.3)",
+          "$description": "viz.scale.diverging.neg-02; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#D14124"
+            }
+          }
+        },
+        "pos-02": {
+          "$type": "color",
+          "$value": "oklch(0.58 0.185485 23)",
+          "$description": "viz.scale.diverging.pos-02; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#D23D43"
+            }
+          }
+        },
+        "neg-03": {
+          "$type": "color",
+          "$value": "oklch(0.46 0.168409 33.3)",
+          "$description": "viz.scale.diverging.neg-03; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#A11F00"
+            }
+          }
+        },
+        "pos-03": {
+          "$type": "color",
+          "$value": "oklch(0.46 0.168409 23)",
+          "$description": "viz.scale.diverging.pos-03; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#A11A27"
+            }
+          }
+        },
+        "neg-04": {
+          "$type": "color",
+          "$value": "oklch(0.34 0.124479 33.3)",
+          "$description": "viz.scale.diverging.neg-04; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#6A1100"
+            }
+          }
+        },
+        "pos-04": {
+          "$type": "color",
+          "$value": "oklch(0.34 0.124479 23)",
+          "$description": "viz.scale.diverging.pos-04; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#6A0E16"
+            }
+          }
+        },
+        "neg-05": {
+          "$type": "color",
+          "$value": "oklch(0.22 0.080551 33.3)",
+          "$description": "viz.scale.diverging.neg-05; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#370500"
+            }
+          }
+        },
+        "pos-05": {
+          "$type": "color",
+          "$value": "oklch(0.22 0.080551 23)",
+          "$description": "viz.scale.diverging.pos-05; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#380407"
+            }
+          }
+        },
+        "neutral": {
+          "$type": "color",
+          "$value": "oklch(0.82 0.01128 60)",
+          "$description": "viz.scale.diverging.neutral; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#CAC3BD"
+            }
+          }
+        }
+      }
+    }
+  }
+}

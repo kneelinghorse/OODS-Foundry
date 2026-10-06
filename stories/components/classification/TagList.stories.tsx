@@ -13,6 +13,7 @@ const TAGS: Tag[] = [
     state: 'active',
     synonyms: ['js'],
     isCanonical: true,
+    metadata: undefined,
   },
   {
     id: 'typescript',
@@ -22,6 +23,7 @@ const TAGS: Tag[] = [
     state: 'active',
     synonyms: ['ts'],
     isCanonical: true,
+    metadata: undefined,
   },
   {
     id: 'python',
@@ -31,6 +33,7 @@ const TAGS: Tag[] = [
     state: 'active',
     synonyms: [],
     isCanonical: true,
+    metadata: undefined,
   },
   {
     id: 'react',
@@ -40,6 +43,7 @@ const TAGS: Tag[] = [
     state: 'active',
     synonyms: [],
     isCanonical: true,
+    metadata: undefined,
   },
   {
     id: 'graphql',
@@ -49,6 +53,7 @@ const TAGS: Tag[] = [
     state: 'active',
     synonyms: [],
     isCanonical: true,
+    metadata: undefined,
   },
   {
     id: 'design-systems',
@@ -58,11 +63,12 @@ const TAGS: Tag[] = [
     state: 'active',
     synonyms: [],
     isCanonical: true,
+    metadata: undefined,
   },
 ];
 
 const meta: Meta<typeof TagList> = {
-  title: 'Traits/Core/Classifiable/Tag List',
+  title: 'Components/Classification/TagList',
   component: TagList,
   args: {
     tags: TAGS,
@@ -83,7 +89,7 @@ export const Default: Story = {
 
 export const Interactive: Story = {
   render: (storyArgs) => {
-    const [filters, setFilters] = React.useState<string[]>([]);
+    const [, setFilters] = React.useState<string[]>([]);
     return (
       <TagList
         {...storyArgs}

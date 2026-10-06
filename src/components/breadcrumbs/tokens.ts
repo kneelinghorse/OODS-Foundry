@@ -13,22 +13,21 @@
  * - High-contrast mode support
  */
 export const BREADCRUMBS_TOKENS = {
-  fontSize: 'var(--font-size-body-sm, 0.813rem)',
-  fontWeight: 'var(--font-weight-regular, 400)',
-  gap: 'var(--spacing-inline-xs, 0.25rem)',
-  paddingBlock: 'var(--spacing-squish-block-xs, 0.25rem)',
-  paddingInline: 'var(--spacing-squish-inline-xs, 0.5rem)',
+  fontSize: 'var(--sys-text-scale-body-sm-font-size)',
+  fontWeight: 'var(--sys-text-scale-body-sm-font-weight)',
+  gap: 'var(--sys-control-gap-compact)',
+  paddingBlock: 'var(--sys-control-padding-block)',
+  paddingInline: 'var(--sys-control-padding-inline-xs)',
 
   // Colors
-  colorText: 'var(--cmp-text-body, var(--sys-text-primary))',
-  colorTextDisabled: 'var(--cmp-text-disabled, var(--sys-text-disabled))',
-  colorTextCurrent: 'var(--cmp-text-body, var(--sys-text-primary))',
-  colorLink: 'var(--cmp-text-action, var(--sys-text-interactive-primary))',
-  colorLinkHover:
-    'var(--cmp-text-action_hover, var(--sys-text-interactive-primary-hover))',
-  colorSeparator: 'var(--cmp-text-subtle, var(--sys-text-secondary))',
-  focusOutlineColor: 'var(--cmp-focus-text, var(--sys-focus-text))',
-  focusOutlineWidth: 'var(--cmp-focus-width, var(--sys-focus-width))',
+  colorText: 'var(--sys-text-primary)',
+  colorTextDisabled: 'var(--sys-text-disabled)',
+  colorTextCurrent: 'var(--sys-text-primary)',
+  colorLink: 'var(--sys-text-accent)',
+  colorLinkHover: 'var(--sys-text-accent)',
+  colorSeparator: 'var(--sys-text-secondary)',
+  focusOutlineColor: 'var(--sys-focus-ring-outer)',
+  focusOutlineWidth: 'var(--sys-focus-width)',
 } as const;
 
 /**

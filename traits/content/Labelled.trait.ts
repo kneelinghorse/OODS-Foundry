@@ -122,7 +122,7 @@ const LabelledTrait = {
       keyboard: 'n/a',
       copy: 'required',
     },
-    regionsUsed: ['list', 'detail', 'forms', 'inline'],
+    regionsUsed: ['list', 'detail', 'form', 'card', 'timeline', 'inline'],
     examples: ['Ticket', 'Knowledge Article'],
     references: ['Trait Engine Spec v0.1 §2'],
   },

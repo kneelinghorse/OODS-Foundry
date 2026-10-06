@@ -6,7 +6,7 @@ import type {
   HierarchyInput,
   HierarchyNestedInput,
 } from '@/types/viz/network-flow.js';
-import type { NormalizedVizSpec } from '@/viz/spec/normalized-viz-spec.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 
 interface HierarchyTooltipParams {
   readonly name?: string;

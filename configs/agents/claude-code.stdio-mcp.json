@@ -1,0 +1,54 @@
+{
+  "name": "OODS Foundry — Claude Code (stdio)",
+  "summary": "Register OODS Foundry with Claude Code as a local stdio MCP server; the client starts it with npx.",
+  "transport": {
+    "type": "stdio",
+    "command": "npx",
+    "args": [
+      "-y",
+      "@oods/foundry"
+    ]
+  },
+  "placement": {
+    "scope": "local (the project you run the command in); add -s user to make it available everywhere",
+    "key": "mcpServers.oods-foundry"
+  },
+  "claudeCodeCommands": {
+    "add": "claude mcp add oods-foundry -- npx -y @oods/foundry",
+    "addWithOptions": "claude mcp add oods-foundry -s user -e MCP_TOOLSET=all -- npx -y @oods/foundry",
+    "get": "claude mcp get oods-foundry",
+    "remove": "claude mcp remove oods-foundry"
+  },
+  "claudeCodeConfig": {
+    "mcpServers": {
+      "oods-foundry": {
+        "type": "stdio",
+        "command": "npx",
+        "args": [
+          "-y",
+          "@oods/foundry"
+        ],
+        "env": {}
+      }
+    }
+  },
+  "env": {
+    "MCP_TOOLSET": "default (19 tools) | all (20 tools)",
+    "MCP_EXTRA_TOOLS": "comma-separated on-demand tools to add to the default surface, for example a11y.scan",
+    "MCP_ROLE": "designer (default) | maintainer",
+    "MCP_SCHEMA_STORE_ROOT": "where saved schemas, composed versions and file-mode output are kept; default ~/.oods-foundry from npm, the extracted directory from the archive",
+    "OODS_NODE_PATH": "absolute path of the Node binary the adapter should start the server with; default: the Node running the adapter",
+    "OODS_MCP_APPS_UI": "1 offers the design preview app to a client that did not negotiate the MCP Apps extension; default: unset, only clients that negotiated it",
+    "OODS_OBJECTS_DIR": "folder your own objects are read from, after the ones OODS Foundry ships; default ~/.oods-foundry/objects from npm, unset from the archive",
+    "OODS_TRAITS_DIR": "folder your own traits are read from, after the ones OODS Foundry ships; default ~/.oods-foundry/traits from npm, unset from the archive",
+    "OODS_BRANDS_DIR": "folder your own brands are kept and built in, outside the runtime; default ~/.oods-foundry/brands from npm, unset from the archive"
+  },
+  "notes": [
+    "The client runs npx -y @oods/foundry. The first start downloads the package and unpacks its runtime once into ~/.oods-foundry/runtime/; later starts reuse it.",
+    "The node and npx the client starts must be Node 22.0.0 or newer; if the client cannot find npx, put its full path (what which npx prints) in command and give the client an env PATH that includes the directory of node.",
+    "Default surface: 19 tools. MCP_TOOLSET=all adds the 1 on-demand tools (20 in all).",
+    "Sent the runtime archive instead of using npm: use command node with args [\"/path/to/oods-foundry-runtime/packages/mcp-adapter/index.js\"], where /path/to/oods-foundry-runtime is the absolute path you extracted oods-foundry-runtime.tar.gz into (install.md beside the archive).",
+    "Pass environment with -e, for example: claude mcp add oods-foundry -e MCP_TOOLSET=all -- npx -y @oods/foundry",
+    "Claude Code does not render MCP Apps: design_preview answers with text and links to the preview in the browser, served on 127.0.0.1."
+  ]
+}

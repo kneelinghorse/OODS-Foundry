@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/map.create.output.json",
+  "title": "map.create output",
+  "description": "The existing single mapping result, or the per-entry validation and application outcomes of one list.",
+  "anyOf": [
+    {
+      "type": "object",
+      "required": ["status", "mapping", "etag"],
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["ok", "error"]
+        },
+        "mapping": {
+          "type": "object",
+          "description": "The created mapping record."
+        },
+        "etag": {
+          "type": "string",
+          "pattern": "^[A-Fa-f0-9]{64}$",
+          "description": "SHA256 ETag of the updated mappings file."
+        },
+        "applied": {
+          "type": "boolean",
+          "description": "Whether the mapping was persisted to disk."
+        },
+        "warnings": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Non-fatal warnings (e.g., unknown traits)."
+        },
+        "errors": {
+          "type": "object",
+          "required": ["message", "details"],
+          "additionalProperties": false,
+          "properties": {
+            "message": { "type": "string" },
+            "details": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["field", "message", "keyword"],
+                "additionalProperties": false,
+                "properties": {
+                  "field": { "type": "string" },
+                  "message": { "type": "string" },
+                  "keyword": { "type": "string" }
+                }
+              }
+            }
+          },
+          "description": "Agent-friendly error details following formatValidationErrors()."
+        }
+      }
+    },
+    {
+      "type": "object",
+      "required": ["status", "entries", "etag", "applied"],
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": ["ok", "error"]
+        },
+        "etag": {
+          "type": "string",
+          "pattern": "^[A-Fa-f0-9]{64}$",
+          "description": "SHA256 ETag of the updated mappings file."
+        },
+        "applied": {
+          "type": "boolean"
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["code", "message"],
+            "additionalProperties": false,
+            "properties": {
+              "code": {
+                "const": "OODS-V219"
+              },
+              "message": { "type": "string" },
+              "field": { "type": "string" }
+            }
+          }
+        },
+        "entries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["index", "id", "status", "applied"],
+            "properties": {
+              "index": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "id": { "type": "string" },
+              "status": {
+                "enum": ["valid", "invalid"]
+              },
+              "applied": {
+                "type": "boolean"
+              },
+              "mapping": {
+                "type": "object"
+              },
+              "warnings": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "errors": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["code", "message"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "code": {
+                      "const": "OODS-V219"
+                    },
+                    "message": { "type": "string" },
+                    "field": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

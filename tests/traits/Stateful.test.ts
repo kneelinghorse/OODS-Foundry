@@ -23,7 +23,8 @@ describe('Stateful trait', () => {
 
     expect(def.schema.status.validation).toMatchObject({ enumFromParameter: 'states' });
     expect(def.semantics?.status?.token_mapping).toBe('tokenMap(status.state.*)');
-    expect(def.view_extensions?.timeline?.[0]?.component).toBe('StateTransitionEvent');
+    // s222-m03 (#2502 ruling 13): no timeline recipe; a timeline's rail lists the state history itself.
+    expect(def.view_extensions?.timeline).toBeUndefined();
   });
 
   it('parses TypeScript definition preserving `as const` defaults', () => {

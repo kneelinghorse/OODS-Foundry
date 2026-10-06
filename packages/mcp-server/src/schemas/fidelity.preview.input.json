@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/fidelity.preview.input.json",
+  "title": "Fidelity preview input",
+  "description": "Render OODS Foundry object relationships or composed component trees. Exactly one object, objects set, schemaRef, UiSchema, fixture or legacy manifest. Wireframes follow regions/components/field bindings; composition diagrams show containment. Named fixtures are packaged registry data.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "fidelityKind"
+  ],
+  "oneOf": [
+    {
+      "required": [
+        "fixture"
+      ]
+    },
+    {
+      "required": [
+        "manifest"
+      ]
+    },
+    {
+      "required": [
+        "object"
+      ]
+    },
+    {
+      "required": [
+        "objects"
+      ]
+    },
+    {
+      "required": [
+        "schemaRef"
+      ]
+    },
+    {
+      "required": [
+        "schema"
+      ]
+    }
+  ],
+  "properties": {
+    "fidelityKind": {
+      "type": "string",
+      "enum": [
+        "boxes-arrows",
+        "wireframe",
+        "review",
+        "branded-mockup"
+      ],
+      "description": "Which HTML fidelity emitter to invoke."
+    },
+    "fixture": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Named allow-listed Object Catalog fixture shipped in registry data; unknown names return OODS-FP-001."
+    },
+    "manifest": {
+      "type": "object",
+      "required": [
+        "entities"
+      ],
+      "description": "Inline Object Catalog manifest to render \u2014 an alternative to `fixture`. Data only; no file path is accepted, so this does not reopen the traversal surface the fixture allow-list closes. Must contain an `entities` array. Mutually exclusive with `fixture`. Malformed input returns OODS-FP-005.",
+      "properties": {
+        "entities": {
+          "type": "array",
+          "description": "Object Catalog entities to render."
+        }
+      }
+    },
+    "options": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "variant": {
+          "type": "string",
+          "description": "Projection-variant selector passed through to the emitter / runPreEmit())."
+        },
+        "brandOverlay": {
+          "type": "string",
+          "description": "Built brand for object relationship diagrams, composed wireframes, reviews, component containment and branded mockups in the chosen theme; legacy branded-mockup uses light."
+        },
+        "reviewThreshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Recorded confidence below this threshold is flagged in review. Missing composition scores say Not recorded; no confidence is inferred."
+        },
+        "includeStyles": {
+          "type": "boolean",
+          "default": true,
+          "description": "Omit HTML style blocks when false. Diagram SVG retains its explicit paint attributes."
+        },
+        "depth": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3,
+          "default": 1,
+          "description": "Outgoing relationship depth for a single object. An explicit objects set is never expanded."
+        },
+        "theme": {
+          "type": "string",
+          "enum": [
+            "light",
+            "dark",
+            "hc"
+          ],
+          "default": "light",
+          "description": "Built token scope for object relationship diagrams and composed branded mockups."
+        }
+      }
+    },
+    "object": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Registered object. boxes-arrows draws its declared relationships; other views compose it in context."
+    },
+    "objects": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Explicit object set; draw only declared edges within this set. boxes-arrows only."
+    },
+    "schema": {
+      "$ref": "./repl.ui.schema.json",
+      "description": "Inline composed screen tree; validated as UiSchema."
+    },
+    "schemaRef": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Cached UiSchema from design.compose or schema load; missing/expired refs return a typed error."
+    },
+    "context": {
+      "type": "string",
+      "enum": [
+        "list",
+        "detail",
+        "form",
+        "timeline",
+        "card",
+        "inline",
+        "workflow",
+        "dashboard"
+      ],
+      "default": "detail",
+      "description": "Context to compose for a single object in wireframe, review or branded-mockup."
+    }
+  }
+}

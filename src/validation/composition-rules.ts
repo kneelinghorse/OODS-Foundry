@@ -60,6 +60,8 @@ export function createCompositionSchema(): z.ZodType<ComposedObject> {
             docsUrl: issue.docsUrl,
             domain: 'composition',
             source: 'composition-validator',
+            traitPath: issue.traitPath,
+            impactedTraits: issue.impactedTraits,
           },
         });
       }

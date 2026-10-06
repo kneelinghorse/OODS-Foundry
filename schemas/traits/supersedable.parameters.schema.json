@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/07/schema",
+  "$id": "https://trait-engine.dev/schemas/traits/supersedable",
+  "title": "Supersedable Trait Parameters",
+  "description": "Configuration contract for the Supersedable trait: which supersession states a store can write, and which direction it records the lineage pointer in.",
+  "type": "object",
+  "properties": {
+    "states": {
+      "type": "array",
+      "description": "The supersession states the source of truth can actually write.",
+      "minItems": 2,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 32,
+        "pattern": "^[a-z0-9_]+$",
+        "description": "Supersession state identifier such as active, superseded, archived or stale."
+      }
+    },
+    "initialState": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32,
+      "pattern": "^[a-z0-9_]+$",
+      "description": "The state a newly recorded entry holds before anything replaces it. Must be a member of states."
+    },
+    "recordedDirection": {
+      "type": "string",
+      "description": "Which pointer the source of truth writes: forward stores superseded_by on the replaced record, backward stores supersedes on the replacing record, both stores each.",
+      "enum": ["forward", "backward", "both"]
+    },
+    "supersededLabel": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 48,
+      "description": "Visible wording for a record that has been replaced, so the state never rests on colour alone."
+    }
+  },
+  "required": ["states", "initialState", "recordedDirection"],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "states": ["active", "superseded", "archived", "stale"],
+      "initialState": "active",
+      "recordedDirection": "forward"
+    },
+    {
+      "states": ["active", "superseded"],
+      "initialState": "active",
+      "recordedDirection": "backward",
+      "supersededLabel": "Replaced"
+    }
+  ]
+}

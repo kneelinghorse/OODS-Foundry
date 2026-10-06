@@ -1,0 +1,25 @@
+{
+  "tool": "schema",
+  "arguments": {
+    "action": "save",
+    "name": "s194-portable",
+    "tags": [
+      "s194-portable"
+    ],
+    "apply": true
+  },
+  "bindings": {
+    "schemaRef": "compose.schemaRef"
+  },
+  "followups": [
+    {
+      "action": "load",
+      "name": "s194-portable"
+    },
+    {
+      "action": "delete",
+      "name": "s194-portable",
+      "apply": true
+    }
+  ]
+}

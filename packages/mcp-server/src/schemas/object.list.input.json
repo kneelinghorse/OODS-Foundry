@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "domain": {
+      "type": "string",
+      "description": "Filter to objects in a specific domain (e.g. 'core.identity', 'saas.billing')"
+    },
+    "maturity": {
+      "type": "string",
+      "enum": ["draft", "alpha", "beta", "stable"],
+      "description": "Filter by metadata maturity level"
+    },
+    "trait": {
+      "type": "string",
+      "description": "Filter to objects composing a given trait (e.g. 'Priceable', 'lifecycle/Stateful')"
+    },
+    "includeInternal": {
+      "type": "boolean",
+      "default": false,
+      "description": "Also list OODS Foundry's internal (non-business) objects, after the business objects. Without it they are left out and hiddenInternal counts them."
+    }
+  },
+  "additionalProperties": false
+}

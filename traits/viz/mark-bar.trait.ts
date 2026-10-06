@@ -11,6 +11,12 @@ const MarkBarTrait = {
   },
 
   parameters: [
+    {"name": "chart", "type": "object", "required": false, "description": "Optional read-only chart declaration binding existing domain fields; projects into supported detail and dashboard views."},
+    {"name": "title", "type": "string", "required": false, "description": "Title for the bound chart and its accessible figure."},
+    {"name": "description", "type": "string", "required": false, "description": "Description of the bound chart measurements and units."},
+    {"name": "renderIntent", "type": "string", "required": false, "default": "{}", "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."},
+    {"name": "previewSvg", "type": "string", "required": false, "description": "Static SVG returned by viz.render for the authored sample; omitted until a chart is rendered."},
+
     {
       name: 'orientation',
       type: 'string',
@@ -171,6 +177,20 @@ const MarkBarTrait = {
         position: 'top',
         priority: 60,
         props: {
+          svgParameter: 'previewSvg',
+          typeField: 'viz_mark_type',
+          orientationField: 'viz_mark_orientation',
+          stackingField: 'viz_mark_stacking',
+        },
+      },
+    ],
+    dashboard: [
+      {
+        component: 'VizMarkPreview',
+        position: 'top',
+        priority: 60,
+        props: {
+          svgParameter: 'previewSvg',
           typeField: 'viz_mark_type',
           orientationField: 'viz_mark_orientation',
           stackingField: 'viz_mark_stacking',
@@ -182,6 +202,7 @@ const MarkBarTrait = {
         component: 'VizMarkControls',
         position: 'top',
         props: {
+          intentParameter: 'renderIntent',
           orientationField: 'viz_mark_orientation',
           paddingField: 'viz_mark_band_padding',
           stackingField: 'viz_mark_stacking',
@@ -193,6 +214,7 @@ const MarkBarTrait = {
       {
         component: 'VizRoleBadge',
         props: {
+          intentParameter: 'renderIntent',
           labelField: 'viz_mark_role',
         },
       },
@@ -216,10 +238,10 @@ const MarkBarTrait = {
       rule_reference: 'A11Y-R-04',
       notes: 'Requires redundant text/table fallback in paired specs.',
     },
-    regionsUsed: ['detail', 'form', 'list'],
+    regionsUsed: ['detail', 'dashboard', 'form', 'list'],
     examples: ['RevenueByRegion', 'TicketVolumeByQueue'],
     references: [
-      'cmos/research/data-viz-oods/RDS.7_synthesis_Mission Completion Report- Trait-Driven Visualization System Specification (v0.1).md',
+      'RDS.7 Trait-Driven Visualization System Specification (v0.1)',
     ],
   },
 } as const satisfies TraitDefinition;

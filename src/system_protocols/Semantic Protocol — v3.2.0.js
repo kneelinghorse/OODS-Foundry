@@ -113,20 +113,36 @@ class SemanticProtocolV32 {
     const tokens = text.match(/\b(\w+)\b/g) || [];
     const vector = new Array(64).fill(0.0);
     if (tokens.length === 0) return vector;
-    tokens.forEach(token => vector[hash(token) % 64] += 1.0);
+    const bucketFor = (token) => {
+      const hashed = hash(token);
+      const hex = (hashed.split('-')[1] || hashed).replace(/[^0-9a-f]/gi, '');
+      try {
+        const value = BigInt(`0x${hex || '0'}`);
+        return Number(value % 64n);
+      } catch {
+        return Math.abs(token.length % 64);
+      }
+    };
+    for (const token of tokens) {
+      const bucket = bucketFor(token);
+      vector[bucket] = (vector[bucket] || 0) + 1.0;
+    }
     const mag = Math.sqrt(vector.reduce((s, v) => s + v * v, 0));
     return mag > 0 ? vector.map(v => v / mag) : vector;
   }
   
   _normalizeBindings(bindings = {}) {
     const norm = {};
+    const asArray = (value) => value == null ? [] : Array.isArray(value) ? value : [value];
     for (const key of ['api', 'event', 'workflow', 'data']) {
-        norm[key] = (bindings[key] || []).map(b => ({
-            urn: b.urn,
-            purpose: b.purpose || undefined,
-            requires: b.requires || undefined,
-            provides: b.provides || undefined
-        })).filter(b => isURN(b.urn));
+        const entries = bindings[key];
+        const list = Array.isArray(entries) ? entries : (entries ? [entries] : []);
+        norm[key] = list.map(b => ({
+            urn: b?.urn,
+            purpose: b?.purpose || undefined,
+            requires: asArray(b?.requires),
+            provides: asArray(b?.provides)
+        }));
     }
     return norm;
   }
@@ -143,6 +159,7 @@ class SemanticProtocolV32 {
   _registerBuiltIns(){
     this.registerValidator('core.shape', m=>{ const i=[];if(!isURN(m?.urn))i.push({p:'urn',msg:'required'});if(!m?.element?.type)i.push({p:'element.type',msg:'required'});return{ok:i.length==0,issues:i}; });
     this.registerValidator('bindings.urns', m=>{ const i=[],p=m?.context?.protocolBindings||{};for(const k of Object.keys(p)){for(const[idx,x]of(p[k]||[]).entries())if(!isURN(x.urn))i.push({p:`bindings.${k}[${idx}]`,msg:'invalid URN'});}return{ok:i.length==0,issues:i}; });
+    this.registerValidator('bindings.contracts', m=>{ const i=[],p=m?.context?.protocolBindings||{};for(const k of Object.keys(p)){for(const[idx,x]of(p[k]||[]).entries()){const req=Array.isArray(x?.requires)?x.requires:[];const prov=Array.isArray(x?.provides)?x.provides:[];req.forEach((urn,ri)=>{if(!isURN(urn))i.push({p:`bindings.${k}[${idx}].requires[${ri}]`,msg:'invalid URN'});});prov.forEach((urn,pi)=>{if(!isURN(urn))i.push({p:`bindings.${k}[${idx}].provides[${pi}]`,msg:'invalid URN'});});}}return{ok:i.length==0,issues:i}; });
   }
 
   generateDocs(m){

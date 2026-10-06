@@ -1,0 +1,92 @@
+{
+  "manifest_version": "4.0",
+  "schema_version": "1.1.0",
+  "source": {
+    "agent": "oods-forge",
+    "stage": "compose",
+    "captured_at": "2026-05-15T00:00:00.000Z",
+    "oods_catalog_version": "1.0.0"
+  },
+  "entities": [
+    {
+      "urn": "urn:proto:semantic:user-profile-card@1.0.0",
+      "element": {
+        "type": "ui.surface.card",
+        "name": "User profile card"
+      },
+      "semantics": {
+        "purpose": "show profile",
+        "human_meaning": "Displays the authenticated user's identity summary with avatar, display name, and contact email.",
+        "tags": ["profile", "identity"],
+        "synonyms": ["account card", "identity tile"],
+        "keywords": ["user", "profile", "avatar"]
+      },
+      "pragmatic_role": "informational",
+      "states": ["enabled", "loading", "error"],
+      "preconditions": ["user.authenticated"],
+      "effects": [],
+      "traits": ["Identifiable", "Avatarable"],
+      "context": { "domain": "account", "surface": "desktop" },
+      "locations": [
+        { "type": "code", "path": "components/account/UserProfileCard.tsx" }
+      ],
+      "evidence_refs": [
+        {
+          "id": "ev_user_001",
+          "protocol": "pragmatic",
+          "kind": "manifest_declaration",
+          "locator": "self",
+          "matched": null,
+          "weight": 1.0,
+          "provenance": "declared",
+          "captured_at": "2026-05-15T00:00:00.000Z"
+        }
+      ],
+      "oods": {
+        "catalog": { "version": "1.0.0" },
+        "render": {
+          "ui_schema_ref": "compose-user-profile-desktop",
+          "slots": [
+            { "name": "avatar", "binding": { "field": "user.photo_url" } },
+            { "name": "title", "binding": { "field": "user.display_name" } },
+            { "name": "subtitle", "binding": { "field": "user.email" } }
+          ],
+          "brand_overlay": "brand-a"
+        },
+        "projection_variants": [
+          {
+            "surface": "desktop",
+            "ui_schema_ref": "compose-user-profile-desktop",
+            "slots": [
+              { "name": "avatar", "binding": { "field": "user.photo_url" } },
+              { "name": "title", "binding": { "field": "user.display_name" } },
+              { "name": "subtitle", "binding": { "field": "user.email" } }
+            ],
+            "brand_overlay": "brand-a"
+          },
+          {
+            "surface": "mobile",
+            "ui_schema_ref": "compose-user-profile-mobile",
+            "slots": [
+              { "name": "avatar", "binding": { "field": "user.photo_url" } },
+              { "name": "title", "binding": { "field": "user.display_name" } }
+            ],
+            "brand_overlay": "brand-a"
+          }
+        ],
+        "evidence_chain": [
+          {
+            "source": "stage1",
+            "run_id": "a0300dc0",
+            "match_score": 0.88
+          },
+          {
+            "source": "concordance",
+            "urn": "urn:proto:semantic:user-profile-card@1.0.0",
+            "context_pack_recipe": "semantic_location"
+          }
+        ]
+      }
+    }
+  ]
+}

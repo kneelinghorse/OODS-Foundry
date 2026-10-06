@@ -1,0 +1,368 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/design.preview.input.json",
+  "title": "Design preview input",
+  "description": "Open a composition version as the generated React or Vue app actually running in a browser: either an existing compositionId (and optional version) or an object and context composed now as a new composition. The preview host (in the HTTP bridge, or started by the stdio adapter) compiles the artifact and serves it at one URL per version with its lineage and brand, theme and width controls. action \"compare\" prepares missing generated artifacts for both versions in the requested frameworks, then returns the structural what-changed (including props on and inside slots and objectSchema fields in the definition category; identical requires equal schema hashes) between this version and `against` (regions, slots, nodes, props, field order, seed, artifact file hashes) with the side-by-side URL. action \"accept\" records the version as the composition's accepted version with a snapshot of its measurements.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "render",
+        "compare",
+        "edit",
+        "versions",
+        "accept"
+      ],
+      "default": "render",
+      "description": "render (default): open the version as the running app. compare: the what-changed between compositionId@version and against. edit: apply one operation to compositionId@version by re-composing through the override surface and re-generating, recording a new version with its parent, then open it. versions: list the composition's versions and the accepted one. accept: record compositionId@version (default its latest) in the composition's accepted.json with when, the OODS Foundry head, the schema hash and a snapshot of the version's measurements; a later accept supersedes it with lineage, and a version not generated yet or already the accepted one is refused with OODS-V205."
+    },
+    "compositionId": {
+      "type": "string",
+      "pattern": "^cmp-[a-f0-9]{12}$",
+      "description": "An existing composition from design.compose; with no version, its latest version opens."
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "The version of compositionId to open."
+    },
+    "object": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Object name from the OODS registry (e.g., 'Subscription', 'User'); with context, composes a new composition (version 1) and opens it."
+    },
+    "context": {
+      "type": "string",
+      "enum": [
+        "detail",
+        "list",
+        "form",
+        "timeline",
+        "card",
+        "inline",
+        "workflow"
+      ],
+      "description": "View context for object-aware composition. Determines which view_extensions are applied. When object is provided without layout, context infers the layout (detail\u2192detail, list\u2192list, form\u2192form). workflow assembles list/detail/form/timeline screens with trait actions, routes, four UI states and generated application data."
+    },
+    "framework": {
+      "type": "string",
+      "enum": [
+        "react",
+        "vue",
+        "both"
+      ],
+      "default": "both",
+      "description": "Which generated app to compile and serve; both frameworks by default, each at its own URL."
+    },
+    "preferences": {
+      "type": "object",
+      "properties": {
+        "theme": {
+          "type": "string",
+          "enum": [
+            "light",
+            "dark",
+            "hc"
+          ],
+          "default": "light",
+          "description": "Theme the page mounts with (data-theme and the matching token CSS scope)."
+        },
+        "brand": {
+          "type": "string",
+          "format": "oods-brand",
+          "default": "A",
+          "description": "Brand the page mounts with (data-brand and the matching token CSS scope)."
+        },
+        "metricColumns": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 12,
+          "description": "Number of metric columns for dashboard layout."
+        },
+        "fieldGroups": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20,
+          "description": "Number of field groups for form layout."
+        },
+        "tabCount": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Number of tabs for detail layout."
+        },
+        "tabLabels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Custom tab labels for detail layout."
+        },
+        "componentOverrides": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Slot-name \u2192 component-name overrides (e.g., { 'items': 'Table' })."
+        }
+      },
+      "additionalProperties": false
+    },
+    "against": {
+      "type": "object",
+      "required": [
+        "version"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "compositionId": {
+          "type": "string",
+          "pattern": "^cmp-[a-f0-9]{12}$",
+          "description": "The other composition; default the same composition."
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "description": "action compare: the version on the right; the left is compositionId@version."
+    },
+    "edit": {
+      "type": "object",
+      "required": [
+        "operation"
+      ],
+      "additionalProperties": false,
+      "description": "action edit: the one operation to apply to compositionId@version. The parent version is never changed.",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "reorder-region",
+            "swap-slot",
+            "reorder-fields",
+            "seed"
+          ]
+        },
+        "regionOrder": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "uniqueItems": true,
+          "description": "reorder-region: the screen's region ids in the desired order (the version record lists them)."
+        },
+        "slot": {
+          "type": "string",
+          "description": "swap-slot: the slot name."
+        },
+        "component": {
+          "type": "string",
+          "description": "swap-slot: one of the composer's own candidates for that slot on the parent version (the version record lists them)."
+        },
+        "region": {
+          "type": "string",
+          "description": "reorder-fields: the region id."
+        },
+        "fieldOrder": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "uniqueItems": true,
+          "description": "reorder-fields: the region's field names in the desired order."
+        },
+        "seed": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "description": "seed: the new sample-data seed."
+        }
+      }
+    },
+    "contextItems": {
+      "type": "array",
+      "maxItems": 200,
+      "description": "Decisions and evidence about this object that YOU already fetched, shown beside the running preview and stored on the version. OODS Foundry opens no database, store or network connection belonging to CMOS, TraceLab or Hive and never will: a direct reader would couple the portable bundle to another product's schema. Every item must carry its own provenance \u2014 source, id, title, the query that produced it and when you fetched it \u2014 because OODS Foundry cannot re-run your search to check it. An item naming a different object from the one on screen is refused with OODS-V207 and nothing is written; a malformed item is refused with OODS-V206.",
+      "items": {
+        "type": "object",
+        "required": [
+          "source",
+          "id",
+          "title",
+          "query",
+          "fetchedAt"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "source": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Where it came from, as your own tool names it: cmos.decisions, tracelab.evidence, hive.person."
+          },
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Its identifier in that source, so a reader can go and find it."
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "body": {
+            "type": "string",
+            "description": "What it says, in full. Supply this or excerpt."
+          },
+          "excerpt": {
+            "type": "string",
+            "description": "Your own shortening of it; OODS Foundry never shortens content itself."
+          },
+          "url": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "The time the item itself carries \u2014 when the decision was taken, not when you fetched it."
+          },
+          "query": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The query that produced it. Without this the panel cannot say why the item is here."
+          },
+          "fetchedAt": {
+            "type": "string",
+            "minLength": 1,
+            "description": "When you fetched it, ISO-8601. Items fetched before this version was composed are marked on the panel rather than hidden."
+          },
+          "object": {
+            "type": "string",
+            "description": "The object it is about; must be the composition's object."
+          },
+          "urn": {
+            "type": "string",
+            "description": "Alternatively its OODS Foundry URN, urn:oods:object:<Name>@<version>."
+          }
+        }
+      }
+    },
+    "contextSearched": {
+      "type": "array",
+      "maxItems": 50,
+      "description": "What you searched that returned nothing, so an empty panel is a statement rather than a silence: the reader can tell 'nothing was found' from 'nobody asked'.",
+      "items": {
+        "type": "object",
+        "required": [
+          "source",
+          "query",
+          "fetchedAt",
+          "found"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "source": {
+            "type": "string",
+            "minLength": 1
+          },
+          "query": {
+            "type": "string",
+            "minLength": 1
+          },
+          "fetchedAt": {
+            "type": "string",
+            "minLength": 1
+          },
+          "found": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "runPath": {
+      "type": "string",
+      "minLength": 1,
+      "description": "A Stage1 run directory on this machine (out/stage1/<suite>/<run-uuid>) whose REAL records this version shows: the run itself for Run, its findings for Finding, its attested artifacts for CapturedArtifact. OODS Foundry reads the run only through structuredData.fetch's admitted run-view kinds (run_manifest, a11y_report 2.2.0/2.3.0, report_index 1.0.0/1.1.0, a11y_evidence 1.1.0/1.2.0), every file under the run manifest's sha256 attestation, and never calls Stage1 or writes into the run. A path that is not one Stage1 run is refused with OODS-V212, an artifact outside the admitted contract with OODS-V213, and a composition that is not Run, Finding or CapturedArtifact, or a version already showing a different capture identity or manifest, with OODS-V214; each refusal writes nothing. Nothing is proposed, applied or queued: a person reads the run view."
+    },
+    "observationRunPath": {
+      "type": "string",
+      "minLength": 1,
+      "description": "A Stage1 run directory on this machine (out/stage1/<suite>/<run-uuid>). OODS Foundry reads its identity_graph and object_rollup through structuredData.fetch, compares them with this version's own schema for the object on screen, and stores the rows beside the running app on both surfaces: observed-only, composed-only, agreeing and disagreeing, each disagreement naming its axis (entity, input, data-bound), and every row naming the Stage1 run, target, artifact and capture time beside the OODS Foundry object, context and URN. The rows are evidence a person judges; nothing is proposed, applied or queued. OODS Foundry opens no other product's store and writes nothing into the run. A path that is not one Stage1 run is refused with OODS-V208, an artifact outside the accepted schema_version with OODS-V209, and a composition whose object the registry does not hold with OODS-V210; each refusal writes nothing. An edit carries the rows onto the new version and marks every one, because they compared the design as it was."
+    },
+    "presentation": {
+      "type": "string",
+      "enum": [
+        "stage1-inspection"
+      ],
+      "description": "Named Stage1 inspection presentation: omit the accessibility score and prominently show measurement limits. Source records remain unchanged."
+    },
+    "recordId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Exact record ID for a fresh runPath or analysisPath detail/card/inline view. Unknown IDs refuse before composition; existing versions retain their selected record."
+    },
+    "analysisPath": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Portable Stage1 derived-analysis directory. Composes Comparison or ComparisonSignal from attested retained bytes, separate from runPath. Only read-only contexts; recordId selects an exact signal."
+    }
+  },
+  "examples": [
+    {
+      "object": "Subscription",
+      "context": "detail",
+      "preferences": {
+        "theme": "dark",
+        "brand": "B"
+      }
+    },
+    {
+      "compositionId": "cmp-0123456789ab",
+      "version": 2,
+      "framework": "vue"
+    },
+    {
+      "action": "compare",
+      "compositionId": "cmp-0123456789ab",
+      "version": 1,
+      "against": {
+        "version": 2
+      }
+    },
+    {
+      "action": "edit",
+      "compositionId": "cmp-0123456789ab",
+      "version": 2,
+      "edit": {
+        "operation": "swap-slot",
+        "slot": "metadata",
+        "component": "TagSummary"
+      }
+    },
+    {
+      "action": "versions",
+      "compositionId": "cmp-0123456789ab"
+    },
+    {
+      "action": "accept",
+      "compositionId": "cmp-0123456789ab",
+      "version": 2
+    }
+  ],
+  "anyOf": [
+    {
+      "required": [
+        "compositionId"
+      ]
+    },
+    {
+      "required": [
+        "object",
+        "context"
+      ]
+    }
+  ]
+}

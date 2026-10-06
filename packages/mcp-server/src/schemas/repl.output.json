@@ -1,0 +1,283 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/repl.output.json",
+  "title": "Agentic REPL (grouped) output",
+  "description": "Grouped output for the repl action-parameter tool. anyOf (NOT oneOf) of the exact per-action output bodies — repl.render and repl.validate outputs share fields (status/mode/dslVersion/errors/warnings) and would match more than one oneOf branch. Each branch keeps additionalProperties:false so a render payload validates only against the render branch and a validate payload only against the validate branch.",
+  "anyOf": [
+    {
+      "title": "Agentic REPL render output",
+      "type": "object",
+      "required": [
+        "status",
+        "mode",
+        "dslVersion",
+        "errors",
+        "warnings"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "ok",
+            "error"
+          ]
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "full",
+            "patch"
+          ]
+        },
+        "dslVersion": {
+          "type": "string"
+        },
+        "registryVersion": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/issue"
+          }
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/issue"
+          }
+        },
+        "renderedTree": {
+          "$ref": "./repl.ui.schema.json"
+        },
+        "normalizedPatch": {
+          "$ref": "./repl.patch.json"
+        },
+        "appliedPatch": {
+          "type": "boolean"
+        },
+        "preview": {
+          "type": "object",
+          "properties": {
+            "screens": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "routes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "activeScreen": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "summary": {
+              "type": "string"
+            },
+            "notes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "html": {
+          "type": "string",
+          "description": "Standalone HTML5 document generated when apply=true, output.format=document (or omitted), and render validation passes."
+        },
+        "tokenCssRef": {
+          "type": "string",
+          "description": "Reference to the token CSS artifact when compact mode is enabled. Use tokens.build to obtain the full CSS."
+        },
+        "fragments": {
+          "type": "object",
+          "description": "Fragment payload keyed by canonical node id when output.format=fragments.",
+          "additionalProperties": {
+            "type": "object",
+            "required": [
+              "nodeId",
+              "component",
+              "html",
+              "cssRefs"
+            ],
+            "properties": {
+              "nodeId": {
+                "type": "string"
+              },
+              "component": {
+                "type": "string"
+              },
+              "html": {
+                "type": "string"
+              },
+              "cssRefs": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "css": {
+          "type": "object",
+          "description": "Resolved CSS map keyed by cssRef identifier.",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "payload": {
+          "type": "object",
+          "description": "payloadMode file: where the large output was written instead of being returned inline; the directory is beside the saved-schema store (<store>/../payloads/<tool>-<digest>).",
+          "required": ["mode", "directory", "bytes", "files"],
+          "properties": {
+            "mode": { "const": "file" },
+            "directory": { "type": "string", "description": "Absolute directory holding the written files." },
+            "bytes": { "type": "integer", "minimum": 0, "description": "Total bytes written." },
+            "files": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["path", "bytes", "sha256"],
+                "properties": {
+                  "path": { "type": "string", "description": "Relative POSIX path inside the directory." },
+                  "bytes": { "type": "integer", "minimum": 0 },
+                  "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+                },
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "output": {
+          "type": "object",
+          "description": "Echoes normalized output controls used by the renderer.",
+          "required": [
+            "format",
+            "strict"
+          ],
+          "properties": {
+            "format": {
+              "type": "string",
+              "enum": [
+                "document",
+                "fragments"
+              ]
+            },
+            "strict": {
+              "type": "boolean"
+            },
+            "compact": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        },
+        "meta": {
+          "type": "object",
+          "properties": {
+            "screenCount": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "nodeCount": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "duplicateIds": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "missingComponents": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "title": "Agentic REPL validate output",
+      "type": "object",
+      "required": ["status", "mode", "dslVersion", "errors", "warnings"],
+      "properties": {
+        "status": { "type": "string", "enum": ["ok", "invalid"] },
+        "mode": { "type": "string", "enum": ["full", "patch"] },
+        "dslVersion": { "type": "string" },
+        "registryVersion": { "type": ["string", "null"] },
+        "errors": { "type": "array", "items": { "$ref": "#/$defs/issue" } },
+        "warnings": { "type": "array", "items": { "$ref": "#/$defs/issue" } },
+        "normalizedTree": { "$ref": "./repl.ui.schema.json" },
+        "normalizedPatch": { "$ref": "./repl.patch.json" },
+        "appliedPatch": { "type": "boolean" },
+        "meta": {
+          "type": "object",
+          "properties": {
+            "screenCount": { "type": "integer", "minimum": 0 },
+            "nodeCount": { "type": "integer", "minimum": 0 },
+            "duplicateIds": { "type": "array", "items": { "type": "string" } },
+            "missingComponents": { "type": "array", "items": { "type": "string" } }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  ],
+  "$defs": {
+    "issue": {
+      "type": "object",
+      "required": [
+        "code",
+        "message"
+      ],
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "hint": {
+          "type": "string"
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "error",
+            "warning"
+          ]
+        },
+        "component": {
+          "type": "string"
+        },
+        "nodeId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "includeChangelog": {
+      "type": "boolean",
+      "default": false,
+      "description": "When true, include DSL version changelog in the response."
+    },
+    "sinceVersion": {
+      "type": "string",
+      "description": "When provided with includeChangelog, only return changelog entries since this version."
+    }
+  }
+}

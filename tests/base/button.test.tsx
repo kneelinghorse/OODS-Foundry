@@ -11,17 +11,18 @@ describe('OODS.Button', () => {
     expect(markup).toContain('Submit');
   });
 
-  it('applies intent and size classes for styling and focus visibility', () => {
+  it('carries intent and size for the shared stylesheet instead of utility classes', () => {
     const markup = renderToStaticMarkup(
       <Button intent="danger" size="lg">
         Delete
       </Button>
     );
 
-    expect(markup).toContain('class="cmp-button"');
-    expect(markup).toContain('data-tone="critical"');
+    // Sprint 200 m02: chrome comes from @oods/component-styles through the cmp roles, keyed on these attributes.
+    expect(markup).toContain('class="oods-button"');
+    expect(markup).toContain('data-intent="danger"');
     expect(markup).toContain('data-size="lg"');
-    expect(markup).not.toContain('data-variant'); // solid is the default and should omit the attribute
+    expect(markup.match(/class="([^"]*)"/)![1]).toBe('oods-button');
   });
 
   it('supports rendering as child and does not leak button attributes', () => {
@@ -33,8 +34,6 @@ describe('OODS.Button', () => {
 
     expect(markup.startsWith('<a')).toBe(true);
     expect(markup).not.toContain('type="button"');
-    expect(markup).toContain('class="cmp-button"');
-    expect(markup).toContain('data-tone="success"');
-    expect(markup).toContain('data-size="md"');
+    expect(markup).toContain('data-intent="success"');
   });
 });

@@ -1,0 +1,576 @@
+{
+  "schemaVersion": 1,
+  "families": [
+    {
+      "id": "statistical",
+      "definition": "Compare values, show their distribution and composition, or examine relationships between measures."
+    },
+    {
+      "id": "temporal",
+      "definition": "Show ordered change over time, multiple series, reference targets, and cumulative progress."
+    },
+    {
+      "id": "financial",
+      "definition": "Show changes in financial balances through sequential contributions."
+    },
+    {
+      "id": "hierarchy",
+      "definition": "Show nested containment and ancestor-descendant structure."
+    },
+    {
+      "id": "network",
+      "definition": "Show entities and their pairwise relationships or weighted adjacency."
+    },
+    {
+      "id": "flow",
+      "definition": "Show directed transfers and their magnitudes between stages or entities."
+    },
+    {
+      "id": "geo",
+      "definition": "Encode quantities and relationships using geographic positions or regions."
+    },
+    {
+      "id": "scientific",
+      "definition": "Show distributions with supplied frequency bins; unsupported statistical geometries are recorded as retired."
+    }
+  ],
+  "identities": [
+    {
+      "id": "bar",
+      "family": "statistical",
+      "role": "core",
+      "coreCell": "comparison",
+      "kind": "type",
+      "publicSvg": true
+    },
+    {
+      "id": "line",
+      "family": "temporal",
+      "role": "core",
+      "coreCell": "trend",
+      "kind": "type",
+      "publicSvg": true
+    },
+    {
+      "id": "area",
+      "family": "temporal",
+      "role": "core",
+      "coreCell": "cumulative",
+      "kind": "type",
+      "publicSvg": true
+    },
+    {
+      "id": "scatter",
+      "family": "statistical",
+      "role": "core",
+      "coreCell": "correlation",
+      "kind": "type",
+      "publicSvg": true
+    },
+    {
+      "id": "heatmap",
+      "family": "statistical",
+      "role": "extension",
+      "coreCell": null,
+      "kind": "type",
+      "publicSvg": true
+    },
+    {
+      "id": "treemap",
+      "family": "hierarchy",
+      "role": "core",
+      "coreCell": "containment",
+      "kind": "type",
+      "publicSvg": true
+    },
+    {
+      "id": "sunburst",
+      "family": "hierarchy",
+      "role": "core",
+      "coreCell": "radial",
+      "kind": "type",
+      "publicSvg": true
+    },
+    {
+      "id": "sankey",
+      "family": "flow",
+      "role": "core",
+      "coreCell": "directed-flow",
+      "kind": "type",
+      "publicSvg": true
+    },
+    {
+      "id": "chord",
+      "family": "network",
+      "role": "core",
+      "coreCell": "adjacency",
+      "kind": "type",
+      "publicSvg": true
+    },
+    {
+      "id": "force_graph",
+      "family": "network",
+      "role": "core",
+      "coreCell": "relation",
+      "kind": "type",
+      "publicSvg": true
+    },
+    {
+      "id": "choropleth",
+      "family": "geo",
+      "role": "core",
+      "coreCell": "choropleth",
+      "kind": "type",
+      "publicSvg": true
+    },
+    {
+      "id": "bubble_map",
+      "family": "geo",
+      "role": "core",
+      "coreCell": "proportional-symbol",
+      "kind": "type",
+      "publicSvg": true
+    },
+    {
+      "id": "flow_map",
+      "family": "geo",
+      "role": "extension",
+      "coreCell": null,
+      "kind": "type",
+      "publicSvg": true
+    },
+    {
+      "id": "pattern:viz:bubble-distribution",
+      "family": "statistical",
+      "role": "core",
+      "coreCell": "distribution",
+      "kind": "pattern",
+      "publicSvg": true,
+      "specPath": "examples/viz/patterns-v2/bubble-distribution.spec.json",
+      "specSha256": "5dec8c5930efde90f29a3676855869bb766c02c69b35095335b6259eee1a3aef"
+    },
+    {
+      "id": "pattern:viz:correlation-matrix",
+      "family": "statistical",
+      "role": "core",
+      "coreCell": "correlation",
+      "kind": "pattern",
+      "publicSvg": true,
+      "specPath": "examples/viz/patterns-v2/correlation-matrix.spec.json",
+      "specSha256": "966719ee04d5307fb414931f7a2d22d1e1f4cecc21b35ef40be6888a4bd0989e"
+    },
+    {
+      "id": "pattern:viz:correlation-scatter",
+      "family": "statistical",
+      "role": "core",
+      "coreCell": "correlation",
+      "kind": "pattern",
+      "publicSvg": true,
+      "specPath": "examples/viz/patterns-v2/correlation-scatter.spec.json",
+      "specSha256": "852079ef36ceaa7d327879c3a4aa8b505ceec489014a62fb867e153aba4f5dec"
+    },
+    {
+      "id": "pattern:viz:detail-overview-bar",
+      "family": "statistical",
+      "role": "extension",
+      "coreCell": "comparison",
+      "kind": "pattern",
+      "publicSvg": true,
+      "specPath": "examples/viz/patterns-v2/detail-overview-bar.spec.json",
+      "specSha256": "84433e710b7eceb222bf81d597fcca0f5882b5e29c96a2e38f16c8b88bc8fc5f"
+    },
+    {
+      "id": "pattern:viz:diverging-bar",
+      "family": "statistical",
+      "role": "core",
+      "coreCell": "comparison",
+      "kind": "pattern",
+      "publicSvg": true,
+      "specPath": "examples/viz/patterns-v2/diverging-bar.spec.json",
+      "specSha256": "14253a37c62634da3dd2043455f55643166ed1a0fa2f0afc45becf2ab7cc4ab9"
+    },
+    {
+      "id": "pattern:viz:drilldown-stacked-bar",
+      "family": "statistical",
+      "role": "extension",
+      "coreCell": "part-to-whole",
+      "kind": "pattern",
+      "publicSvg": true,
+      "specPath": "examples/viz/patterns-v2/drilldown-stacked-bar.spec.json",
+      "specSha256": "7930a3b53cc0094397b4a006e9971ced6bfee5e7e1cf6dba67995c5089c2fdbd"
+    },
+    {
+      "id": "pattern:viz:facet-small-multiples-line",
+      "family": "temporal",
+      "role": "extension",
+      "coreCell": "multi-series",
+      "kind": "pattern",
+      "publicSvg": true,
+      "specPath": "examples/viz/patterns-v2/facet-small-multiples-line.spec.json",
+      "specSha256": "4ca77b37cdabf4aa3e5442121c4e1821185a1ef255e6efcbb9623214dc7e3029"
+    },
+    {
+      "id": "pattern:viz:facet-target-band",
+      "family": "temporal",
+      "role": "extension",
+      "coreCell": "target",
+      "kind": "pattern",
+      "publicSvg": true,
+      "specPath": "examples/viz/patterns-v2/facet-target-band.spec.json",
+      "specSha256": "bcb0009857ba20cba85cf3e70501b5a02112c4397bca0f96c9385cdfd3eea0d1"
+    },
+    {
+      "id": "pattern:viz:focus-context-line",
+      "family": "temporal",
+      "role": "extension",
+      "coreCell": "trend",
+      "kind": "pattern",
+      "publicSvg": true,
+      "specPath": "examples/viz/patterns-v2/focus-context-line.spec.json",
+      "specSha256": "0ee905cc4457de44f443e4a2e3d6dae5c8c408c9946d3a0fbc78a3a9efdb3e85"
+    },
+    {
+      "id": "pattern:viz:grouped-bar",
+      "family": "statistical",
+      "role": "core",
+      "coreCell": "comparison",
+      "kind": "pattern",
+      "publicSvg": true,
+      "specPath": "examples/viz/patterns-v2/grouped-bar.spec.json",
+      "specSha256": "a314add77eecc911a727321da852e5fd8724cfe036bd77fe7856040f38abd366"
+    },
+    {
+      "id": "pattern:viz:histogram",
+      "family": "scientific",
+      "role": "core",
+      "coreCell": "histogram",
+      "kind": "pattern",
+      "publicSvg": true,
+      "specPath": "examples/viz/patterns-v2/histogram.spec.json",
+      "specSha256": "b32f733ce684217c7aeae28b7e5489d4e5e7675de887fd809b32540e1231bb48"
+    },
+    {
+      "id": "pattern:viz:layered-line-area",
+      "family": "temporal",
+      "role": "extension",
+      "coreCell": "target",
+      "kind": "pattern",
+      "publicSvg": true,
+      "specPath": "examples/viz/patterns-v2/layered-line-area.spec.json",
+      "specSha256": "37a5bbdd75eea6efaa9437ae723e8b2afb8a0c2f3e44d7b4e400a07c6bf50c4a"
+    },
+    {
+      "id": "pattern:viz:linked-brush-scatter",
+      "family": "statistical",
+      "role": "extension",
+      "coreCell": "correlation",
+      "kind": "pattern",
+      "publicSvg": false,
+      "specPath": "examples/viz/patterns-v2/linked-brush-scatter.spec.json",
+      "specSha256": "bc036d0132a99e11b8508de928d0157575af750410f69f54050635ecf76cc524"
+    },
+    {
+      "id": "pattern:viz:multi-series-line",
+      "family": "temporal",
+      "role": "core",
+      "coreCell": "multi-series",
+      "kind": "pattern",
+      "publicSvg": true,
+      "specPath": "examples/viz/patterns-v2/multi-series-line.spec.json",
+      "specSha256": "5f8cf6106fcde1d28d3a7e85803fe9418e13732abe2b49473472b4587a010a7e"
+    },
+    {
+      "id": "pattern:viz:running-total-area",
+      "family": "temporal",
+      "role": "core",
+      "coreCell": "cumulative",
+      "kind": "pattern",
+      "publicSvg": true,
+      "specPath": "examples/viz/patterns-v2/running-total-area.spec.json",
+      "specSha256": "c32e3d4bf79554963264debd85400b309238c6d46e3ec673619e136996eb8f35"
+    },
+    {
+      "id": "pattern:viz:simple-bar",
+      "family": "statistical",
+      "role": "core",
+      "coreCell": "comparison",
+      "kind": "pattern",
+      "publicSvg": true,
+      "specPath": "examples/viz/patterns-v2/simple-bar.spec.json",
+      "specSha256": "a9198d81ea0e445b5f110098d6cdb93ec62d861514f362e36a6fffe178e217ab"
+    },
+    {
+      "id": "pattern:viz:sparkline-grid",
+      "family": "temporal",
+      "role": "extension",
+      "coreCell": "trend",
+      "kind": "pattern",
+      "publicSvg": true,
+      "specPath": "examples/viz/patterns-v2/sparkline-grid.spec.json",
+      "specSha256": "f28e92ca39e4fb68650142ed69e7f576ef5beeae20c48076caf0a09b7e75fd64"
+    },
+    {
+      "id": "pattern:viz:stacked-100-bar",
+      "family": "statistical",
+      "role": "core",
+      "coreCell": "part-to-whole",
+      "kind": "pattern",
+      "publicSvg": true,
+      "specPath": "examples/viz/patterns-v2/stacked-100-bar.spec.json",
+      "specSha256": "0285b6fe66362ede81c0afca347d1ca153dfe13e3e4868b393b7ea962c1792bf"
+    },
+    {
+      "id": "pattern:viz:stacked-area-projection",
+      "family": "temporal",
+      "role": "extension",
+      "coreCell": "cumulative",
+      "kind": "pattern",
+      "publicSvg": true,
+      "specPath": "examples/viz/patterns-v2/stacked-area-projection.spec.json",
+      "specSha256": "9ed892cce2f47cf966915af9fb454e7386081261a4cb525e8925ece01a6aef81"
+    },
+    {
+      "id": "pattern:viz:stacked-bar",
+      "family": "statistical",
+      "role": "core",
+      "coreCell": "part-to-whole",
+      "kind": "pattern",
+      "publicSvg": true,
+      "specPath": "examples/viz/patterns-v2/stacked-bar.spec.json",
+      "specSha256": "6b7bb28c05b46b580d6f83eedbd56128da336be55658ca584417a1b6d2d08972"
+    },
+    {
+      "id": "pattern:viz:target-band-line",
+      "family": "temporal",
+      "role": "core",
+      "coreCell": "target",
+      "kind": "pattern",
+      "publicSvg": true,
+      "specPath": "examples/viz/patterns-v2/target-band-line.spec.json",
+      "specSha256": "1982975cd81143e56e47c1e85ee71980778858192af2b16b3780130bc94f3822"
+    },
+    {
+      "id": "pattern:viz:time-grid-heatmap",
+      "family": "statistical",
+      "role": "core",
+      "coreCell": "distribution",
+      "kind": "pattern",
+      "publicSvg": true,
+      "specPath": "examples/viz/patterns-v2/time-grid-heatmap.spec.json",
+      "specSha256": "5dac1613ed71be404c2884b0193d28265b06643dc637c169b0b4413df418e7a0"
+    },
+    {
+      "id": "pattern:viz:waterfall",
+      "family": "financial",
+      "role": "core",
+      "coreCell": "waterfall",
+      "kind": "pattern",
+      "publicSvg": true,
+      "specPath": "examples/viz/patterns-v2/waterfall.spec.json",
+      "specSha256": "612ae6a61495a4940f1216b9a52f9430cd730e5b82e2270bbce3fddb03a39894"
+    }
+  ],
+  "coreCells": [
+    {
+      "family": "statistical",
+      "cell": "distribution",
+      "definition": "Show the spread or concentration of observations or frequencies.",
+      "status": "surface-complete",
+      "identities": [
+        "pattern:viz:bubble-distribution",
+        "pattern:viz:time-grid-heatmap"
+      ]
+    },
+    {
+      "family": "statistical",
+      "cell": "comparison",
+      "definition": "Compare quantitative values across categories.",
+      "status": "surface-complete",
+      "identities": [
+        "bar",
+        "pattern:viz:detail-overview-bar",
+        "pattern:viz:diverging-bar",
+        "pattern:viz:grouped-bar",
+        "pattern:viz:simple-bar"
+      ]
+    },
+    {
+      "family": "statistical",
+      "cell": "part-to-whole",
+      "definition": "Show how components contribute to a total.",
+      "status": "surface-complete",
+      "identities": [
+        "pattern:viz:drilldown-stacked-bar",
+        "pattern:viz:stacked-100-bar",
+        "pattern:viz:stacked-bar"
+      ]
+    },
+    {
+      "family": "statistical",
+      "cell": "correlation",
+      "definition": "Show relationships between quantitative measures.",
+      "status": "surface-complete",
+      "identities": [
+        "scatter",
+        "pattern:viz:correlation-matrix",
+        "pattern:viz:correlation-scatter",
+        "pattern:viz:linked-brush-scatter"
+      ]
+    },
+    {
+      "family": "temporal",
+      "cell": "trend",
+      "definition": "Show the trajectory of a measure over an ordered time axis.",
+      "status": "surface-complete",
+      "identities": [
+        "line",
+        "pattern:viz:focus-context-line",
+        "pattern:viz:sparkline-grid"
+      ]
+    },
+    {
+      "family": "temporal",
+      "cell": "multi-series",
+      "definition": "Compare multiple named trajectories on a common time axis.",
+      "status": "surface-complete",
+      "identities": [
+        "pattern:viz:facet-small-multiples-line",
+        "pattern:viz:multi-series-line"
+      ]
+    },
+    {
+      "family": "temporal",
+      "cell": "target",
+      "definition": "Compare a temporal trajectory against a reference target or band.",
+      "status": "surface-complete",
+      "identities": [
+        "pattern:viz:facet-target-band",
+        "pattern:viz:layered-line-area",
+        "pattern:viz:target-band-line"
+      ]
+    },
+    {
+      "family": "temporal",
+      "cell": "cumulative",
+      "definition": "Show an accumulated measure over time; supplied values must already encode the accumulation.",
+      "status": "surface-complete",
+      "identities": [
+        "area",
+        "pattern:viz:running-total-area",
+        "pattern:viz:stacked-area-projection"
+      ]
+    },
+    {
+      "family": "financial",
+      "cell": "waterfall",
+      "definition": "Show sequential positive and negative contributions to a financial balance.",
+      "status": "surface-complete",
+      "identities": [
+        "pattern:viz:waterfall"
+      ]
+    },
+    {
+      "family": "hierarchy",
+      "cell": "containment",
+      "definition": "Show hierarchy through nested rectangular containment.",
+      "status": "surface-complete",
+      "identities": [
+        "treemap"
+      ]
+    },
+    {
+      "family": "hierarchy",
+      "cell": "radial",
+      "definition": "Show hierarchy through concentric radial partitioning.",
+      "status": "surface-complete",
+      "identities": [
+        "sunburst"
+      ]
+    },
+    {
+      "family": "network",
+      "cell": "relation",
+      "definition": "Show entities connected by explicit relationships.",
+      "status": "surface-complete",
+      "identities": [
+        "force_graph"
+      ]
+    },
+    {
+      "family": "network",
+      "cell": "adjacency",
+      "definition": "Show weighted pairwise connections; this cell does not require a matrix layout.",
+      "status": "surface-complete",
+      "identities": [
+        "chord"
+      ]
+    },
+    {
+      "family": "flow",
+      "cell": "directed-flow",
+      "definition": "Show the direction and magnitude of transfers between stages or entities.",
+      "status": "surface-complete",
+      "identities": [
+        "sankey"
+      ]
+    },
+    {
+      "family": "geo",
+      "cell": "choropleth",
+      "definition": "Encode a quantitative value through the fill of a geographic region.",
+      "status": "surface-complete",
+      "identities": [
+        "choropleth"
+      ]
+    },
+    {
+      "family": "geo",
+      "cell": "proportional-symbol",
+      "definition": "Encode a quantitative value through symbol size at a geographic position.",
+      "status": "surface-complete",
+      "identities": [
+        "bubble_map"
+      ]
+    },
+    {
+      "family": "scientific",
+      "cell": "histogram",
+      "definition": "Show frequencies in explicitly defined quantitative bins.",
+      "status": "surface-complete",
+      "identities": [
+        "pattern:viz:histogram"
+      ]
+    }
+  ],
+  "retiredCells": [
+    {
+      "family": "financial",
+      "cell": "candlestick",
+      "definition": "Show open, high, low, and close values per time interval.",
+      "reason": "The IR has no rule or tick marks for honest OHLC wicks; no registered type supplies candlestick pixels. Retired from the Core Analytics Profile."
+    },
+    {
+      "family": "scientific",
+      "cell": "box",
+      "definition": "Show quartiles, median, and whiskers of a quantitative distribution.",
+      "reason": "The IR has no rule or tick marks for whiskers and outliers; a ranged rectangle alone would misrepresent a box plot. Retired from the Core Analytics Profile."
+    },
+    {
+      "family": "scientific",
+      "cell": "contour",
+      "definition": "Show level sets of a continuous quantitative field.",
+      "reason": "Neither renderer adapter has a contour path or density transform. Retired from the Core Analytics Profile."
+    }
+  ],
+  "summary": {
+    "types": 13,
+    "patterns": 22,
+    "retiredPatterns": 1,
+    "families": 8,
+    "classified": 36,
+    "coreCells": 17,
+    "coreSurfaceComplete": 17,
+    "typedGaps": 0,
+    "retiredCells": 3
+  }
+}

@@ -11,7 +11,8 @@ describe('OODS.Banner', () => {
     expect(markup.startsWith('<div')).toBe(true);
     expect(markup).toContain('role="status"');
     expect(markup).toContain('Trialing');
-    expect(markup).toContain('--statusable-banner-background');
+    // s221-m02 (#2482 ruling 2): the mapped status paints through the banner's own component variables.
+    expect(markup).toContain('--cmp-banner-background:var(--sys-status-accent-surface)');
   });
 
   it('escalates negative tone to role="alert"', () => {

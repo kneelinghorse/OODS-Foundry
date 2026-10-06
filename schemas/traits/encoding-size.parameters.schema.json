@@ -21,7 +21,10 @@
     "strategy": {
       "type": "string",
       "description": "Interprets values as area or radius for perceptual scaling.",
-      "enum": ["area", "radius"],
+      "enum": [
+        "area",
+        "radius"
+      ],
       "default": "area"
     },
     "minPixelArea": {
@@ -33,9 +36,18 @@
       "type": "number",
       "description": "Maximum accessible area to avoid dominating layout.",
       "default": 576
+    },
+    "renderIntent": {
+      "type": "string",
+      "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand.",
+      "default": "{}"
     }
   },
-  "required": ["rangeMin", "rangeMax", "strategy"],
+  "required": [
+    "rangeMin",
+    "rangeMax",
+    "strategy"
+  ],
   "additionalProperties": false,
   "examples": [
     {

@@ -1,0 +1,57 @@
+{
+  "version": "2026.02",
+  "dsVersion": "2026-02-26",
+  "theme": "light",
+  "screens": [
+    {
+      "id": "workbench-screen",
+      "component": "Stack",
+      "children": [
+        {
+          "id": "header-banner",
+          "component": "Banner",
+          "props": { "message": "Workbench S44 Integration Fixture", "variant": "info" }
+        },
+        {
+          "id": "main-grid",
+          "component": "Grid",
+          "props": { "columns": 3, "gap": "md" },
+          "children": [
+            {
+              "id": "card-profile",
+              "component": "Card",
+              "props": { "body": "User Profile" },
+              "children": [
+                { "id": "profile-text", "component": "Text", "props": { "text": "John Doe" } },
+                { "id": "status-badge", "component": "Badge", "props": { "label": "Active" } }
+              ]
+            },
+            {
+              "id": "card-settings",
+              "component": "Card",
+              "props": { "body": "Settings" },
+              "children": [
+                { "id": "name-input", "component": "Input", "props": { "placeholder": "Name", "name": "name" } },
+                { "id": "role-select", "component": "Select", "props": { "options": [{"value": "admin", "label": "Admin"}, {"value": "user", "label": "User"}], "value": "user" } }
+              ]
+            },
+            {
+              "id": "card-data",
+              "component": "Card",
+              "props": { "body": "Data" },
+              "children": [
+                { "id": "data-table", "component": "Table", "props": { "columns": [{"key": "name", "label": "Name"}, {"key": "value", "label": "Value"}], "rows": [{"name": "Revenue", "value": "$1.2M"}, {"name": "Users", "value": "12,500"}] } },
+                { "id": "view-tabs", "component": "Tabs", "props": { "tabs": [{"id": "tab-chart", "label": "Chart", "content": "Chart view", "active": true}, {"id": "tab-list", "label": "List", "content": "List view", "active": false}] } }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "save-button",
+          "component": "Button",
+          "props": { "label": "Save Changes" }
+        }
+      ]
+    }
+  ]
+}

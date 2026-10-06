@@ -19,13 +19,13 @@ export function loadRedactions(): Redactions {
   return JSON.parse(raw) as Redactions;
 }
 
-export function todayDir(base: string): string {
+export function todayDir(base: string, create = true): string {
   const d = new Date();
   const y = d.getUTCFullYear();
   const m = String(d.getUTCMonth() + 1).padStart(2, '0');
   const day = String(d.getUTCDate()).padStart(2, '0');
   const dir = path.join(base, `${y}-${m}-${day}`);
-  fs.mkdirSync(dir, {recursive: true});
+  if (create) fs.mkdirSync(dir, {recursive: true});
   return dir;
 }
 

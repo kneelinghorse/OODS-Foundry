@@ -1,0 +1,904 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "status",
+    "server",
+    "registry",
+    "tokens",
+    "schemas",
+    "latency",
+    "productReality"
+  ],
+  "properties": {
+    "productReality": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runtime",
+        "release",
+        "tools",
+        "viz",
+        "html",
+        "fidelity"
+      ],
+      "properties": {
+        "tools": {
+          "description": "Registered source-test locations plus the latest bound archive execution. head identifies the measured archive; sourceHead identifies the census. thisBuild compares the clean archive head with the running build.",
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "required": [
+            "entries",
+            "byTestImportLocation",
+            "head",
+            "thisBuild",
+            "sourceHead",
+            "portable",
+            "measuredOn"
+          ],
+          "properties": {
+            "entries": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Registered tool population derived from the tool registry and validated ledger."
+            },
+            "byTestImportLocation": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "test/product-reality",
+                "test/contracts",
+                "other-spec",
+                "none"
+              ],
+              "properties": {
+                "test/product-reality": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "test/contracts": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "other-spec": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "none": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            },
+            "head": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "thisBuild": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether this proof measured the stamped build; null when no build stamp is available."
+            },
+            "sourceHead": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "portable": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "additionalProperties": true
+            },
+            "measuredOn": {
+              "$ref": "#/$defs/measuredOn"
+            }
+          }
+        },
+        "runtime": {
+          "description": "Measured complete current population; null when its ledger is missing or invalid. Counts do not imply craft or classification approval.",
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "required": [
+            "cells",
+            "pass",
+            "typedGap",
+            "fail",
+            "head",
+            "thisBuild",
+            "measuredOn",
+            "archiveSha256"
+          ],
+          "properties": {
+            "cells": {
+              "type": "integer",
+              "description": "Cell count derived from the validated current runtime ledger.",
+              "minimum": 0
+            },
+            "pass": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "typedGap": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "fail": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "head": {
+              "type": "string",
+              "minLength": 1
+            },
+            "thisBuild": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether this proof measured the stamped build; null when no build stamp is available."
+            },
+            "measuredOn": {
+              "$ref": "#/$defs/measuredOn"
+            },
+            "archiveSha256": {
+              "description": "s223-m03: the runtime archive the measured run executed, when its ledger recorded one.",
+              "type": [
+                "string",
+                "null"
+              ],
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "viz": {
+          "description": "Generated visualization taxonomy and Core Analytics Profile census. patterns counts the patterns viz.render offers and retiredPatterns the retired ones. Surface-complete cells have public SVG backing; typed gaps, retired cells and retired patterns retain reasons in the taxonomy. Counts do not imply certification. Null when the taxonomy is missing or invalid.",
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "required": [
+            "types",
+            "patterns",
+            "retiredPatterns",
+            "families",
+            "classified",
+            "coreCells",
+            "coreSurfaceComplete",
+            "typedGaps",
+            "retiredCells",
+            "measuredOn",
+            "certifiedChartTypes",
+            "certifiedScopes"
+          ],
+          "properties": {
+            "types": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "patterns": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "retiredPatterns": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "families": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "classified": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "coreCells": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "coreSurfaceComplete": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "typedGaps": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "retiredCells": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "measuredOn": {
+              "$ref": "#/$defs/measuredOn"
+            },
+            "certifiedChartTypes": {
+              "description": "s223-m03: chart types the census certified (VIZ_RECIPES_CENSUS).",
+              "type": "integer",
+              "minimum": 0
+            },
+            "certifiedScopes": {
+              "description": "s223-m03: light/dark/hc and A/B scopes the census measured as certified and conformant; measuredOn says what it ran on.",
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "release": {
+          "description": "Measured extracted-bundle reference applications, with exact generated-artifact equality to the host and the pinned runtime gates. The bundle head and archive hash identify the archive that was measured, and thisBuild says whether that is the build answering: a shipped proof is measured before the archive that carries it. Null when the ledger is missing or invalid.",
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "required": [
+            "bundleHead",
+            "archiveSha256",
+            "apps",
+            "frameworks",
+            "cells",
+            "pass",
+            "typedGap",
+            "fail",
+            "thisBuild",
+            "head",
+            "measuredOn"
+          ],
+          "properties": {
+            "bundleHead": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "archiveSha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "apps": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "Organization",
+                  "Subscription",
+                  "User"
+                ]
+              },
+              "minItems": 3,
+              "maxItems": 3,
+              "uniqueItems": true
+            },
+            "frameworks": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "react",
+                  "vue"
+                ]
+              },
+              "minItems": 2,
+              "maxItems": 2,
+              "uniqueItems": true
+            },
+            "cells": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "pass": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "typedGap": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "fail": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "thisBuild": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether this proof measured the stamped build; null when no build stamp is available."
+            },
+            "head": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "measuredOn": {
+              "$ref": "#/$defs/measuredOn"
+            }
+          }
+        },
+        "html": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "description": "Measured browser rows and their retained heads; mixed or unrecorded heads have head null and cannot establish this build. Independent certification is separate.",
+          "required": [
+            "head",
+            "heads",
+            "cells",
+            "pass",
+            "fail",
+            "receipt",
+            "sha256",
+            "thisBuild",
+            "measuredOn"
+          ],
+          "properties": {
+            "head": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "heads": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{40}$"
+              }
+            },
+            "cells": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "pass": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "fail": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "receipt": {
+              "type": "string"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            },
+            "thisBuild": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether this proof measured the stamped build; null when no build stamp is available."
+            },
+            "measuredOn": {
+              "$ref": "#/$defs/measuredOn"
+            }
+          }
+        },
+        "fidelity": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "description": "Measured browser rows and their retained heads; mixed or unrecorded heads have head null and cannot establish this build. Independent certification is separate.",
+          "required": [
+            "head",
+            "heads",
+            "cells",
+            "pass",
+            "fail",
+            "receipt",
+            "sha256",
+            "thisBuild",
+            "files",
+            "measuredOn"
+          ],
+          "properties": {
+            "head": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "heads": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{40}$"
+              }
+            },
+            "cells": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "pass": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "fail": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "receipt": {
+              "type": "string"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            },
+            "thisBuild": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether this proof measured the stamped build; null when no build stamp is available."
+            },
+            "files": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "measuredOn": {
+              "$ref": "#/$defs/measuredOn"
+            }
+          }
+        }
+      },
+      "description": "Runtime, portable release, tool and visualization evidence summaries. Release identifies the measured bundle archive and 42 reference-application cells with artifact parity to the host; unavailable ledgers are null."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "ok",
+        "degraded"
+      ]
+    },
+    "server": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "uptime"
+      ],
+      "properties": {
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "uptime": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Milliseconds since the native server process started."
+        }
+      }
+    },
+    "registry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "components",
+        "traits",
+        "objects",
+        "lastSync",
+        "countsFrom"
+      ],
+      "properties": {
+        "components": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "traits": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "objects": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "lastSync": {
+          "type": "string",
+          "minLength": 1
+        },
+        "countsFrom": {
+          "type": "object",
+          "description": "Where each count above was read from on this call. \"live\" is computed from the registry itself and moves when the registry moves; \"snapshot\" is read from the structured-data export named in the manifest and stays frozen at lastSync until that export is regenerated; \"unavailable\" means neither source could be read and warnings state the failure.",
+          "additionalProperties": false,
+          "required": [
+            "components",
+            "traits",
+            "objects"
+          ],
+          "properties": {
+            "components": {
+              "type": "string",
+              "enum": [
+                "live",
+                "snapshot",
+                "unavailable"
+              ]
+            },
+            "traits": {
+              "type": "string",
+              "enum": [
+                "live",
+                "snapshot",
+                "unavailable"
+              ]
+            },
+            "objects": {
+              "type": "string",
+              "enum": [
+                "live",
+                "snapshot",
+                "unavailable"
+              ]
+            }
+          }
+        },
+        "definitions": {
+          "type": "object",
+          "properties": {
+            "folders": {
+              "type": "object",
+              "description": "Your objects and traits folders (OODS_OBJECTS_DIR, OODS_TRAITS_DIR); null when none is set.",
+              "properties": {
+                "objects": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "traits": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "objects",
+                "traits"
+              ],
+              "additionalProperties": false
+            },
+            "objects": {
+              "type": "object",
+              "properties": {
+                "total": {
+                  "type": "integer"
+                },
+                "shipped": {
+                  "type": "integer"
+                },
+                "user": {
+                  "type": "integer"
+                },
+                "replacingShipped": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Your objects used in place of a shipped object of the same name."
+                }
+              },
+              "required": [
+                "total",
+                "shipped",
+                "user",
+                "replacingShipped"
+              ],
+              "additionalProperties": false
+            },
+            "traits": {
+              "type": "object",
+              "properties": {
+                "total": {
+                  "type": "integer"
+                },
+                "shipped": {
+                  "type": "integer"
+                },
+                "user": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "total",
+                "shipped",
+                "user"
+              ],
+              "additionalProperties": false
+            },
+            "issues": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "description": "A file that was not used, or something about one that is, and why.",
+                "properties": {
+                  "kind": {
+                    "enum": [
+                      "malformed",
+                      "unnamed",
+                      "duplicate",
+                      "replaces-shipped",
+                      "shipped-name",
+                      "unknown-trait",
+                      "unreadable-folder"
+                    ]
+                  },
+                  "severity": {
+                    "enum": [
+                      "error",
+                      "notice"
+                    ],
+                    "description": "error: the definition is not in use. notice: it is in use, and this is worth knowing."
+                  },
+                  "file": {
+                    "type": "string",
+                    "description": "A shipped file relative to the runtime root; a file of yours as an absolute path."
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "message": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "kind",
+                  "severity",
+                  "file",
+                  "message"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "folders",
+            "objects",
+            "traits",
+            "issues"
+          ],
+          "additionalProperties": false,
+          "description": "Where objects and traits are read from, how many are yours, and every file that is not in use or replaces a shipped one, with the reason. Absent when the counts above fell back to the snapshot."
+        }
+      }
+    },
+    "tokens": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "built",
+        "brands",
+        "themes",
+        "scopes",
+        "defaultScope"
+      ],
+      "properties": {
+        "built": {
+          "type": "boolean"
+        },
+        "brands": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "themes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "scopes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "defaultScope": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "required": [
+            "brand",
+            "theme",
+            "source"
+          ],
+          "properties": {
+            "brand": {
+              "type": "string"
+            },
+            "theme": {
+              "type": "string"
+            },
+            "source": {
+              "enum": [
+                "env",
+                "default"
+              ]
+            }
+          },
+          "description": "Configured default chosen from built scopes; never an observed active consumer scope. Null when no scopes are built."
+        },
+        "registry": {
+          "description": "The brand registry : the brands this server can use, read from the token build, and the brand folders the build reads (the shipped package's, and the team's since s213-m06), compared with the build. Every issue is also a warning.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "brands",
+            "default",
+            "folder",
+            "teamFolder",
+            "issues"
+          ],
+          "properties": {
+            "brands": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "default": {
+              "type": "string"
+            },
+            "folder": {
+              "type": "string"
+            },
+            "teamFolder": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The team's brands folder (OODS_BRANDS_DIR; from npm ~/.oods-foundry/brands), built outside the runtime; null when unset."
+            },
+            "issues": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "brand",
+                  "kind",
+                  "message"
+                ],
+                "properties": {
+                  "brand": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "kind": {
+                    "enum": [
+                      "no-brand-list",
+                      "not-built",
+                      "changed-since-build",
+                      "built-after-start",
+                      "no-source-folder",
+                      "team-build-failed"
+                    ]
+                  },
+                  "message": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "savedCount",
+        "storeDir"
+      ],
+      "properties": {
+        "savedCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "storeDir": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "latency": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "dslVersion": {
+      "type": "string",
+      "description": "Current DSL version of this server."
+    },
+    "changelog": {
+      "type": "array",
+      "description": "DSL version changelog entries, included when requested via includeChangelog input.",
+      "items": {
+        "type": "object",
+        "required": [
+          "version",
+          "date",
+          "changes",
+          "breaking"
+        ],
+        "properties": {
+          "version": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "changes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "breaking": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "$defs": {
+    "measuredOn": {
+      "description": "s223-m03: what this measurement was made on: the release version the measured source declared, the head it was measured at, and the archive it ran from (null when it measured the source or recorded no archive). Null when the stamp does not match the head this block reports.",
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "sourceHead",
+        "archiveSha256"
+      ],
+      "properties": {
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "sourceHead": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "archiveSha256": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    }
+  }
+}

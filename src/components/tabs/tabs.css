@@ -5,32 +5,30 @@
 
 
 .tabs {
-  --tabs-font-size: var(--sys-text-scale-label-md-font-size, 0.9375rem);
-  --tabs-font-weight: var(--sys-text-scale-label-md-font-weight, 600);
-  --tabs-padding-block: var(--sys-space-stack-compact, 0.5rem);
-  --tabs-padding-inline: var(--sys-space-inline-sm, 1rem);
+  --tabs-font-size: var(--sys-text-scale-label-md-font-size);
+  --tabs-font-weight: var(--sys-text-scale-label-md-font-weight);
+  --tabs-padding-block: var(--sys-tab-padding-block-md);
+  --tabs-padding-inline: var(--sys-tab-padding-inline-md);
 
-  --tabs-color-text-default: var(--sys-text-primary, CanvasText);
-  --tabs-color-text-selected: var(--sys-text-accent, Highlight);
-  --tabs-color-text-disabled: var(--sys-text-muted, GrayText);
-  --tabs-color-bg-hover: var(--sys-surface-subtle, Canvas);
-  --tabs-color-border-base: var(--sys-border-subtle, CanvasText);
-  --tabs-color-border-selected: var(--sys-border-strong, Highlight);
-  --tabs-focus-outer: var(--sys-focus-ring-outer, Highlight);
-  --tabs-shadow-offset-y: var(--sys-space-stack-default, 1.5rem);
-  --tabs-shadow-blur: calc(var(--sys-space-stack-default, 1.5rem) * 2.5);
-  --tabs-border-width: 2px;
+  --tabs-color-text-default: var(--sys-text-primary);
+  --tabs-color-text-selected: var(--sys-text-accent);
+  --tabs-color-text-disabled: var(--sys-text-muted);
+  --tabs-color-bg-hover: var(--sys-surface-subtle);
+  --tabs-color-border-base: var(--sys-border-subtle);
+  --tabs-color-border-selected: var(--sys-border-strong);
+  --tabs-focus-outer: var(--sys-focus-ring-outer);
+  --tabs-border-width: var(--sys-tab-indicator-width);
 
   display: flex;
   flex-direction: column;
-  gap: var(--sys-space-stack-default, 1rem);
+  gap: var(--sys-stack-md);
   font-weight: var(--tabs-font-weight);
 }
 
 .tabs__list {
   display: flex;
   align-items: center;
-  gap: var(--sys-space-inline-xs, 0.5rem);
+  gap: var(--sys-inline-xs);
   border-bottom: 1px solid var(--tabs-color-border-base);
   position: relative;
   overflow-x: auto;
@@ -68,15 +66,15 @@
 }
 
 .tabs__tab:focus-visible {
-  outline: 2px solid var(--tabs-focus-outer);
-  outline-offset: 2px;
-  border-radius: 2px;
+  outline: var(--sys-focus-width) solid var(--tabs-focus-outer);
+  outline-offset: var(--sys-focus-offset);
+  border-radius: var(--sys-radius-control-sm);
 }
 
 .tabs__tab--selected {
   color: var(--tabs-color-text-selected);
   border-bottom-color: var(--tabs-color-border-selected);
-  font-weight: 600;
+  font-weight: var(--sys-text-weight-semibold);
 }
 
 .tabs__tab--disabled {
@@ -96,14 +94,14 @@
   box-sizing: border-box;
   display: inline-flex;
   align-items: center;
-  gap: var(--sys-space-inline-xs, 0.5rem);
+  gap: var(--sys-control-icon-gap);
   cursor: pointer;
   font-size: var(--tabs-font-size);
   padding: var(--tabs-padding-block) var(--tabs-padding-inline);
   color: var(--tabs-color-text-default);
   background: transparent;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--sys-radius-control-sm);
   transition: background-color 0.2s ease;
 }
 
@@ -112,37 +110,36 @@
 }
 
 .tabs__overflow-trigger:focus-visible {
-  outline: 2px solid var(--tabs-focus-outer);
-  outline-offset: 2px;
+  outline: var(--sys-focus-width) solid var(--tabs-focus-outer);
+  outline-offset: var(--sys-focus-offset);
 }
 
 .tabs__overflow-trigger svg {
-  width: 16px;
-  height: 16px;
+  width: var(--sys-control-icon-size);
+  height: var(--sys-control-icon-size);
 }
 
+/* An overlay: its 1px ring and the soft overlay drop (Sprint 222 ruling 10). */
 .tabs__overflow-menu {
   display: flex;
   flex-direction: column;
   min-width: 160px;
-  padding: var(--sys-space-inset-compact, 0.5rem);
-  background: var(--sys-surface-raised, Canvas);
+  padding: var(--sys-space-inset-compact);
+  background: var(--sys-surface-raised);
   border: 1px solid var(--tabs-color-border-base);
-  border-radius: 4px;
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--tabs-color-border-base) 35%, transparent),
-    0 var(--tabs-shadow-offset-y) var(--tabs-shadow-blur)
-      color-mix(in srgb, var(--sys-text-primary, CanvasText) 18%, transparent);
+  border-radius: var(--sys-radius-control-lg);
+  box-shadow: var(--cmp-shadow-overlay-offset-x) var(--cmp-shadow-overlay-offset-y) var(--cmp-shadow-overlay-blur)
+    var(--cmp-shadow-overlay-spread) var(--cmp-shadow-overlay-color);
 }
 
 .tabs__overflow-item {
   all: unset;
   box-sizing: border-box;
   display: block;
-  padding: var(--sys-space-inset-compact, 0.5rem);
+  padding: var(--sys-space-inset-compact);
   cursor: pointer;
   color: var(--tabs-color-text-default);
-  border-radius: 4px;
+  border-radius: var(--sys-radius-control-sm);
   transition: background-color 0.2s ease;
 }
 
@@ -150,14 +147,15 @@
   background-color: var(--tabs-color-bg-hover);
 }
 
+/* Drawn inside the item, so the menu's edge does not clip it. */
 .tabs__overflow-item:focus-visible {
-  outline: 2px solid var(--tabs-focus-outer);
-  outline-offset: -2px;
+  outline: var(--sys-focus-width) solid var(--tabs-focus-outer);
+  outline-offset: calc(var(--sys-focus-width) * -1);
 }
 
 .tabs__overflow-item--selected {
   color: var(--tabs-color-text-selected);
-  font-weight: 600;
+  font-weight: var(--sys-text-weight-semibold);
 }
 
 .tabs__overflow-item[disabled] {
@@ -172,9 +170,9 @@
 }
 
 .tabs__panel:focus-visible {
-  outline: 2px solid var(--tabs-focus-outer);
-  outline-offset: 4px;
-  border-radius: 4px;
+  outline: var(--sys-focus-width) solid var(--tabs-focus-outer);
+  outline-offset: var(--sys-focus-offset);
+  border-radius: var(--sys-radius-control-sm);
 }
 
 /* High-contrast mode support */
@@ -189,7 +187,7 @@
   }
 
   .tabs__tab:focus-visible {
-    outline: 2px solid ButtonText;
+    outline: var(--sys-focus-width) solid ButtonText;
   }
 
   .tabs__list {

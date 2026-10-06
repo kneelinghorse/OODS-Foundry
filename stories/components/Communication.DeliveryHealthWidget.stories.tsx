@@ -1,4 +1,3 @@
-import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { DeliveryHealthWidget } from '../../src/components/communication/DeliveryHealthWidget.js';
@@ -53,4 +52,3 @@ function buildMetrics(): DeliveryHealthMetrics {
     trend: [120_000, 95_000, 110_000, 90_000, 132_000],
   };
 }
-

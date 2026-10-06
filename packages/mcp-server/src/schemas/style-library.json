@@ -1,0 +1,10 @@
+{
+  "$comment": "OODS Foundry-owned STYLE-LIBRARY key→var mapping. A standalone DATA artifact — NOT a JSON Schema. It is auto-bundled to dist/schemas/ by the wildcard `cp -f src/schemas/*.json dist/schemas/` in packages/mcp-server/package.json, and SKIP-LISTED in packages/schemas-tools/src/generate-types.ts (NON_SCHEMA_DATA_FILES) so Generator A never tries to compile it into generated.ts (a plain data file has no root type and would red generate:check). Each entry maps a logical style-library key (the FULL dotted leaf-path of a measured colour delta, e.g. 'color.surface.default') to the target CSS custom-property on the --sys-/--ref- skin. The render-path resolver (render/brand-overlay.ts resolveSkinOverlay) walks a measured colour delta, looks each FULL leaf-path key up here, and emits the mapped --sys-* declaration into the components <style> block. An UNMAPPED logical key FAILS LOUD with OODS-V140 (closed table → config error). brand.primary maps to the FILL var only; the optional text.on-brand carries the label colour (absent → token default, no contrast collapse).",
+  "schemaVersion": "v1",
+  "mappings": {
+    "color.brand.primary": "--sys-surface-interactive-primary-default",
+    "color.surface.default": "--sys-surface-canvas",
+    "color.text.default": "--sys-text-primary",
+    "color.text.on-brand": "--sys-text-on-interactive"
+  }
+}

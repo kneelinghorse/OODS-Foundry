@@ -6,8 +6,8 @@ import {
   assertNormalizedVizSpec,
   NormalizedVizSpecError,
   validateNormalizedVizSpec,
-} from '../../src/viz/spec/normalized-viz-spec.js';
-import type { NormalizedVizSpec } from '../../src/viz/spec/normalized-viz-spec.js';
+} from '@oods/viz-core';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 
 const ROOT = path.resolve(fileURLToPath(new URL('../..', import.meta.url)));
 const EXAMPLES_DIR = path.join(ROOT, 'examples', 'viz');

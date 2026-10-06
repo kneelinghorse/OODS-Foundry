@@ -1,10 +1,12 @@
+// @types/react 19 no longer declares a global JSX namespace; it is exported from 'react'.
+import type { JSX } from 'react';
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import type { NormalizedVizSpec } from '~/src/viz/spec/normalized-viz-spec';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 import { LineChart } from '~/src/components/viz/LineChart';
 
 const meta: Meta<typeof LineChart> = {
-  title: 'Visualization/Standard/LineChart',
+  title: 'Visualization/LineChart',
   component: LineChart,
   parameters: {
     layout: 'fullscreen',
@@ -16,7 +18,7 @@ export default meta;
 type Story = StoryObj<typeof LineChart>;
 
 const simpleTrendSpec: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/v1',
   id: 'stories:viz:line:simple',
   name: 'Active Subscribers',
   data: {
@@ -89,7 +91,7 @@ const simpleTrendSpec: NormalizedVizSpec = {
 };
 
 const segmentedTrendSpec: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/v1',
   id: 'stories:viz:line:segments',
   name: 'Pipeline Velocity by Segment',
   data: {
@@ -171,7 +173,7 @@ const segmentedTrendSpec: NormalizedVizSpec = {
 };
 
 const benchmarkTrendSpec: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/v1',
   id: 'stories:viz:line:benchmark',
   name: 'Deployment Frequency vs Target',
   data: {
@@ -258,7 +260,7 @@ const benchmarkTrendSpec: NormalizedVizSpec = {
 };
 
 const denseTemporalSpec: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/v1',
   id: 'stories:viz:line:dense',
   name: 'Latency P95 (24h)',
   data: {

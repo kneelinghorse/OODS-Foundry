@@ -1,0 +1,194 @@
+{
+  "kind": "reconciliation_report",
+  "schema_version": "1.1.0",
+  "generated_at": "2026-04-16T15:06:35.268Z",
+  "target": {
+    "id": "stage1-linear-smoke",
+    "url": "https://linear.app/"
+  },
+  "candidate_objects": [
+    {
+      "object_id": "obj-command-menu",
+      "name": "Command Menu Trigger",
+      "role": "button",
+      "inferred_role": "action",
+      "inferred_role_score": 0.91,
+      "confidence": 0.94,
+      "recommended_oods_traits": ["Stateful", "Labelled"],
+      "recommended_domain": "navigation",
+      "action": "create",
+      "reasoning": "No existing registry entry matched the trigger component and Stage1 classified it as a labeled interactive control.",
+      "verdict_reasoning": "No matching external component in the OODS registry snapshot."
+    },
+    {
+      "object_id": "obj-issue-row",
+      "name": "Issue Row",
+      "role": "row",
+      "inferred_role": "data-display",
+      "inferred_role_score": 0.84,
+      "confidence": 0.88,
+      "recommended_oods_traits": ["Listable", "Sortable"],
+      "recommended_domain": "issues",
+      "action": "patch",
+      "reasoning": "Existing row mapping is close but missing sorting capability.",
+      "verdict_reasoning": "Existing map lacks Sortable and needs notes updated for the current evidence set.",
+      "existing_map_id": "linear-issue-row",
+      "diff": {
+        "added_traits": ["Sortable"],
+        "removed_traits": [],
+        "changed_fields": [
+          {
+            "field": "oodsTraits",
+            "from": ["Listable"],
+            "to": ["Listable", "Sortable"]
+          },
+          {
+            "field": "metadata.notes",
+            "from": "Imported from sprint-52 fixture",
+            "to": "Patched from Stage1 reconciliation report v1.1.0"
+          }
+        ]
+      },
+      "alternate_interpretations": [
+        {
+          "role": "table-row",
+          "score": 0.79,
+          "reasoning": "Alternate DOM cluster could also be treated as a tabular row."
+        }
+      ]
+    },
+    {
+      "object_id": "obj-billing-plan-card",
+      "name": "Billing Plan Card",
+      "role": "card",
+      "inferred_role": "data-display",
+      "inferred_role_score": 0.86,
+      "confidence": 0.97,
+      "recommended_oods_traits": ["Priceable", "Stateful"],
+      "recommended_domain": "billing",
+      "action": "skip",
+      "reasoning": "Observed plan card still matches the canonical registry mapping.",
+      "verdict_reasoning": "Existing mapping already matches name, system, and trait set.",
+      "existing_map_id": "linear-billing-plan-card"
+    },
+    {
+      "object_id": "obj-workspace-switcher",
+      "name": "Workspace Switcher",
+      "role": "menu",
+      "inferred_role": "navigation",
+      "inferred_role_score": 0.81,
+      "confidence": 0.82,
+      "recommended_oods_traits": ["Navigable", "Labelled"],
+      "recommended_domain": "navigation",
+      "action": "conflict",
+      "reasoning": "Observed behavior conflicts with the current registry mapping.",
+      "verdict_reasoning": "Existing mapping classifies this control as Stateful rather than Navigable, and the trait sets are incompatible without review.",
+      "existing_map_id": "linear-workspace-switcher",
+      "alternate_interpretations": [
+        {
+          "role": "select",
+          "score": 0.74,
+          "reasoning": "Dropdown mechanics overlap with select-like controls."
+        },
+        {
+          "role": "action",
+          "score": 0.68,
+          "reasoning": "The trigger can also be interpreted as an action launcher."
+        }
+      ]
+    },
+    {
+      "object_id": "obj-experimental-badge",
+      "name": "Experimental Badge",
+      "role": "badge",
+      "inferred_role": "status",
+      "inferred_role_score": 0.64,
+      "confidence": 0.61,
+      "recommended_oods_traits": ["Labelled", "Stateful"],
+      "recommended_domain": "status",
+      "action": "create",
+      "reasoning": "Stage1 found a new badge-like status marker, but confidence is below the default OODS apply threshold.",
+      "verdict_reasoning": "Candidate remains actionable but should queue for review at the default minConfidence."
+    }
+  ],
+  "candidate_actions": [
+    {
+      "action_id": "action-submit-issue-form",
+      "name": "Issue Form Submit",
+      "verb": "submit",
+      "source_object_id": "obj-issue-row",
+      "confidence": 0.77,
+      "suggested_oods_trait": "Editable",
+      "suggested_action": "Submit issue form",
+      "reasoning": "DOM listeners indicate a form submit action tied to issue creation.",
+      "alternate_verbs": [
+        {
+          "verb_id": "save",
+          "score": 0.69,
+          "reasoning": "The same button may be interpreted as a save action."
+        }
+      ],
+      "preconditions": [
+        {
+          "type": "auth",
+          "description": "Requires authenticated workspace session.",
+          "confidence": 0.83,
+          "evidence_chain": [
+            {
+              "pass": "dom.components",
+              "artifact": "component_clusters.json",
+              "selector": "[data-testid=\"issue-form\"]"
+            }
+          ]
+        },
+        {
+          "type": "role",
+          "description": "Visible to members with issue-create permissions.",
+          "confidence": 0.71
+        }
+      ]
+    }
+  ],
+  "candidate_traits": [],
+  "conflicts": [
+    {
+      "type": "registry_conflict",
+      "object_id": "obj-workspace-switcher",
+      "existing_map_id": "linear-workspace-switcher",
+      "description": "Workspace Switcher maps to a different canonical trait set in the current registry.",
+      "severity": "error"
+    },
+    {
+      "type": "low_confidence",
+      "object_id": "obj-experimental-badge",
+      "description": "Experimental Badge scored 0.61 and will queue at the default 0.75 threshold.",
+      "severity": "warning"
+    }
+  ],
+  "coverage_gaps": [
+    {
+      "type": "interaction-gap",
+      "description": "Keyboard shortcut affordances were not visible in the captured DOM."
+    }
+  ],
+  "validation_failures": [],
+  "manifest": {
+    "inputs": {
+      "oods_registry_fetch": {
+        "source": "transport",
+        "entries_count": 42,
+        "warnings": []
+      }
+    }
+  },
+  "reconciliation_summary": {
+    "mode": "reconciliation",
+    "existing_map_count": 42,
+    "verdict_counts": {
+      "create": 2,
+      "patch": 1,
+      "skip": 1,
+      "conflict": 1
+    }
+  }
+}

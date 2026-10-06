@@ -3,8 +3,8 @@ import type { EChartsOption, SunburstSeriesOption } from 'echarts';
 import tokensBundle from '@oods/tokens';
 
 import type { HierarchyInput } from '@/types/viz/network-flow.js';
-import type { NormalizedVizSpec } from '@/viz/spec/normalized-viz-spec.js';
-import { getVizScaleTokens } from '@/viz/tokens/scale-token-mapper.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
+import { getVizScaleTokens } from '@oods/viz-core';
 
 import { convertToEChartsTreeData, generateHierarchyTooltip } from './hierarchy-utils.js';
 

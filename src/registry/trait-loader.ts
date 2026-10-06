@@ -87,12 +87,17 @@ function candidatePaths(
   extensions: readonly TraitFileExtension[]
 ): string[] {
   const paths: string[] = [];
-  roots.forEach((root) => {
-    const baseDir = resolve(root, ...segments);
-    extensions.forEach((extension) => {
-      paths.push(join(baseDir, `${traitName}${extension}`));
+  // Visualization traits use kebab-case filenames with PascalCase identities.
+  // Preserve exact-name resolution precedence across all roots.
+  const kebabName = traitName.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+  for (const name of new Set([traitName, kebabName])) {
+    roots.forEach((root) => {
+      const baseDir = resolve(root, ...segments);
+      extensions.forEach((extension) => {
+        paths.push(join(baseDir, `${name}${extension}`));
+      });
     });
-  });
+  }
   return paths;
 }
 

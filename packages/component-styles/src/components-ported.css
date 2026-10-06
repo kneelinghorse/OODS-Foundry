@@ -1,0 +1,200 @@
+@import "@oods/tokens/css";
+@import "./statusables.css";
+
+:where(
+  [data-oods-component='StatusBadge'],
+  [data-oods-component='PriceBadge']
+) {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--cmp-badge-gap, 0.25rem);
+  min-block-size: var(--cmp-badge-height, 1.25rem);
+  box-sizing: border-box;
+  padding: var(--cmp-badge-padding-block, 0.125rem) var(--cmp-badge-padding-inline, 0.5rem);
+  border: 0;
+  border-radius: var(--cmp-badge-radius, 999px);
+  background: var(--cmp-badge-background, var(--cmp-surface-subtle, transparent));
+  color: var(--cmp-badge-text, var(--cmp-text-body, currentColor));
+  font-size: var(--cmp-badge-font-size, 12px);
+  font-weight: var(--cmp-badge-font-weight, 500);
+  line-height: var(--sys-text-scale-caption-line-height, 16px);
+  white-space: nowrap;
+}
+
+:where([data-oods-component='StatusBadge'])[data-status='active']:not([data-tone]),
+:where([data-oods-component='StatusBadge'])[data-status='success']:not([data-tone]) {
+  --cmp-badge-background: var(--sys-status-success-surface, Canvas);
+  --cmp-badge-border: var(--sys-status-success-border, currentColor);
+  --cmp-badge-text: var(--sys-status-success-text, CanvasText);
+}
+
+:where([data-oods-component='StatusBadge'])[data-status='past_due']:not([data-tone]),
+:where([data-oods-component='StatusBadge'])[data-status='warning']:not([data-tone]) {
+  --cmp-badge-background: var(--sys-status-warning-surface, Canvas);
+  --cmp-badge-border: var(--sys-status-warning-border, currentColor);
+  --cmp-badge-text: var(--sys-status-warning-text, CanvasText);
+}
+
+:where([data-oods-component='StatusBadge'])[data-status='cancelled']:not([data-tone]),
+:where([data-oods-component='StatusBadge'])[data-status='error']:not([data-tone]) {
+  --cmp-badge-background: var(--sys-status-critical-surface, Canvas);
+  --cmp-badge-border: var(--sys-status-critical-border, currentColor);
+  --cmp-badge-text: var(--sys-status-critical-text, CanvasText);
+}
+
+:where(
+  [data-oods-component='StatusTimeline'],
+  [data-oods-component='AuditTimeline']
+) {
+  display: grid;
+  gap: var(--cmp-spacing-stack-md, 1rem);
+  color: var(--cmp-text-body, CanvasText);
+}
+
+:where(
+  [data-oods-component='StatusTimeline'],
+  [data-oods-component='AuditTimeline']
+) :where(ol, ul) {
+  display: grid;
+  gap: var(--cmp-spacing-stack-sm, 0.75rem);
+  margin: 0;
+  padding-inline-start: var(--cmp-spacing-stack-lg, 1.5rem);
+}
+
+:where(
+  [data-oods-component='StatusTimeline'],
+  [data-oods-component='AuditTimeline']
+) :where(article, li) {
+  border-inline-start: var(--ref-border-width-bold, 2px) solid var(--cmp-border-subtle, currentColor);
+  padding-inline-start: var(--cmp-spacing-inline-sm, 0.75rem);
+}
+
+:where([data-oods-component='CancellationSummary']) {
+  display: grid;
+  gap: var(--cmp-spacing-stack-sm, 0.75rem);
+  padding: var(--sys-card-padding, 1.5rem);
+  border: 1px solid var(--cmp-border-default, currentColor);
+  border-radius: var(--cmp-card-radius, 0.75rem);
+  background: var(--cmp-surface-panel, Canvas);
+  color: var(--cmp-text-body, CanvasText);
+}
+
+:where([data-oods-component='CancellationSummary']) :where(dl, [data-summary-fields]) {
+  display: grid;
+  grid-template-columns: minmax(max-content, 1fr) minmax(0, 2fr);
+  gap: var(--cmp-spacing-stack-xs, 0.5rem) var(--cmp-spacing-inline-md, 1rem);
+  margin: 0;
+}
+
+:where([data-oods-component='CancellationSummary']) :where(dt, [data-summary-term]) {
+  font-weight: var(--ref-typography-weights-semibold, 600);
+}
+
+:where([data-oods-component='CancellationSummary']) :where(dd, [data-summary-value]) {
+  margin: 0;
+}
+
+:where([data-oods-component='SearchInput']) {
+  display: flex;
+  align-items: center;
+  gap: var(--cmp-spacing-inline-xs, 0.5rem);
+}
+
+:where([data-oods-component='SearchInput']) input[type='search'] {
+  inline-size: 100%;
+  box-sizing: border-box;
+  min-block-size: var(--sys-control-height-md, 2rem);
+  padding: 0 var(--cmp-input-padding-inline, 0.75rem);
+  border: 1px solid var(--cmp-input-border, var(--cmp-border-default, currentColor));
+  border-radius: var(--cmp-input-radius, 6px);
+  background: var(--cmp-input-background, Canvas);
+  color: var(--cmp-input-text, CanvasText);
+  font: inherit;
+  font-size: var(--sys-text-scale-body-sm-font-size, 14px);
+  line-height: var(--sys-text-scale-body-sm-line-height, 20px);
+}
+
+/* s222-m02 (#2502 ruling 11): search and pagination buttons are the outline button at the control height; a page
+ * number is square. */
+:where([data-oods-component='SearchInput']) button,
+:where([data-oods-component='PaginationBar']) button {
+  display: inline-flex;
+  box-sizing: border-box;
+  min-inline-size: var(--cmp-button-height, 2rem);
+  min-block-size: var(--cmp-button-height, 2rem);
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--cmp-button-padding-inline-sm, 0.625rem);
+  border: 1px solid var(--sys-border-strong, CanvasText);
+  border-radius: var(--cmp-button-radius, 6px);
+  background: var(--sys-surface-raised, Canvas);
+  color: var(--sys-text-primary, CanvasText);
+  font: inherit;
+  font-size: var(--sys-text-scale-label-font-size, 14px);
+  font-weight: var(--sys-text-scale-label-font-weight, 500);
+  line-height: var(--sys-text-scale-label-line-height, 20px);
+  cursor: pointer;
+}
+
+:where([data-oods-component='SearchInput'], [data-oods-component='PaginationBar']) button:hover:not(:disabled) { background: var(--sys-surface-interactive-secondary-default, Canvas); }
+:where([data-oods-component='SearchInput'], [data-oods-component='PaginationBar']) button > svg { flex: none; inline-size: var(--sys-control-icon-size, 1rem); block-size: var(--sys-control-icon-size, 1rem); }
+:where([data-oods-component='PaginationBar']) button[aria-current='page'] {
+  border-color: transparent;
+  background: var(--sys-surface-interactive-primary-default, Highlight);
+  color: var(--sys-text-on-interactive, HighlightText);
+}
+
+:where([data-oods-component='PaginationBar']) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--cmp-spacing-inline-sm, 0.75rem);
+  color: var(--cmp-text-body, CanvasText);
+}
+
+:where([data-oods-component='PaginationBar']) button:disabled {
+  border-color: var(--sys-border-subtle, GrayText);
+  background: var(--sys-surface-disabled, Canvas);
+  color: var(--cmp-button-text-disabled, GrayText);
+  cursor: not-allowed;
+}
+
+/* Narrow widths: the record count and range share the first line; the page controls stay together on the second. */
+@media (max-width: 600px) {
+  :where([data-oods-component='PaginationBar']) {
+    display: grid;
+    grid-template-columns: auto auto auto minmax(0, 1fr);
+    grid-template-areas: 'count count range range' 'prev pages next current';
+    align-items: center;
+    justify-items: start;
+    row-gap: var(--cmp-spacing-stack-xs, 0.5rem);
+  }
+  :where([data-oods-component='PaginationBar']) [data-pagination-count] { grid-area: count; }
+  :where([data-oods-component='PaginationBar']) [data-pagination-range] { grid-area: range; justify-self: end; }
+  :where([data-oods-component='PaginationBar']) [data-pagination-prev] { grid-area: prev; }
+  :where([data-oods-component='PaginationBar']) .oods-pagination-bar__pages { grid-area: pages; }
+  :where([data-oods-component='PaginationBar']) [data-pagination-next] { grid-area: next; }
+  :where([data-oods-component='PaginationBar']) [data-pagination-current] { grid-area: current; }
+  :where([data-oods-component='PaginationBar']) label { grid-column: 1 / -1; }
+}
+
+:where([data-oods-component='RelativeTimestamp']) {
+  color: var(--cmp-text-muted, GrayText);
+  font-size: var(--sys-text-size-sm, 0.875rem);
+}
+
+
+@media (forced-colors: active) {
+  :where(
+    [data-oods-component='StatusBadge'],
+    [data-oods-component='PriceBadge'],
+    [data-oods-component='CancellationSummary'],
+    [data-oods-component='SearchInput'] input,
+    [data-oods-component='PaginationBar'] button
+  ) {
+    forced-color-adjust: none;
+    border-color: CanvasText;
+    background: Canvas;
+    color: CanvasText;
+  }
+}

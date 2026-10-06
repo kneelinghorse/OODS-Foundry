@@ -1,0 +1,23 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "oods-search-input",
+  "type": "registry:component",
+  "title": "OODS Foundry SearchInput",
+  "description": "React adapter for OODS SearchInput on shadcn/ui's Radix and Base UI bases. Search value, debounce, minimum query length and clear events retain their meanings.",
+  "dependencies": [
+    "@oods/components-react@0.7.0"
+  ],
+  "registryDependencies": [
+    "input",
+    "label",
+    "button"
+  ],
+  "files": [
+    {
+      "path": "components/oods/search-input.tsx",
+      "target": "components/oods/search-input.tsx",
+      "type": "registry:component",
+      "content": "import * as React from 'react';\nimport type { SearchInputProps } from '@oods/components-react';\nimport { Input } from '@/registry/new-york-v4/ui/input';\nimport { Label } from '@/registry/new-york-v4/ui/label';\nimport { Button } from '@/registry/new-york-v4/ui/button';\n\nexport const OodsSearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(function OodsSearchInput(\n  { id, label = 'Search', value, defaultValue = '', placeholder = 'Search…', clearable = true, debounceMs, debounce,\n    minQueryLength = 0, field, placeholderParameter, debounceParameter, minQueryLengthParameter, clearableParameter,\n    onChange, onValueChange, onUpdate, onSearch, onClear, onKeyDown, className, disabled, ...props }, ref,\n) {\n  void [field, placeholderParameter, debounceParameter, minQueryLengthParameter, clearableParameter];\n  const instance = React.useId();\n  const inputId = id ?? `oods-search-${instance.replaceAll(':', '')}`;\n  const [local, setLocal] = React.useState(defaultValue);\n  const current = value ?? local;\n  const timer = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);\n  React.useEffect(() => () => clearTimeout(timer.current), []);\n  const update = (next: string) => {\n    if (value === undefined) setLocal(next);\n    clearTimeout(timer.current);\n    const emit = () => { if (next.length >= minQueryLength || next === '') { onValueChange?.(next); onUpdate?.(next); onSearch?.(next); } };\n    const delay = Math.max(0, debounceMs ?? debounce ?? 0);\n    if (delay) timer.current = setTimeout(emit, delay); else emit();\n  };\n  const clear = () => { onClear?.(); update(''); };\n  return <div role=\"search\" aria-label={label} className={className} data-oods-component={undefined} data-oods-adapter=\"SearchInput\">\n    <Label htmlFor={inputId}>{label}</Label><div className=\"flex gap-2\">\n      <Input {...props} ref={ref} id={inputId} type=\"search\" placeholder={placeholder} disabled={disabled} value={current}\n        onChange={event => { onChange?.(event); if (!event.defaultPrevented) update(event.currentTarget.value); }}\n        onKeyDown={event => { onKeyDown?.(event); if (!event.defaultPrevented && event.key === 'Escape' && current) clear(); }} />\n      {clearable && current ? <Button type=\"button\" variant=\"ghost\" disabled={disabled} aria-label=\"Clear search\" onClick={clear}>×</Button> : null}\n    </div>\n  </div>;\n});\n"
+    }
+  ]
+}

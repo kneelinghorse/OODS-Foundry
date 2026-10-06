@@ -66,7 +66,7 @@ describe('Geocodable trait', () => {
 
       expect(def.trait.name).toBe('Geocodable');
       expect(def.trait.category).toBe('viz.spatial');
-      expect(def.trait.version).toBe('1.0.0');
+      expect(def.trait.version).toBe('1.0.1');
     });
 
     it('has required schema fields', async () => {

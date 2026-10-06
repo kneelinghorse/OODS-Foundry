@@ -217,10 +217,6 @@ function defaultObjectRoots(): string[] {
   } else if (pathExists(parent)) {
     roots.push(parent);
   }
-  const examples = path.resolve(cwd, 'examples', 'objects');
-  if (roots.length === 0 && pathExists(examples)) {
-    roots.push(examples);
-  }
   if (roots.length === 0) {
     roots.push(canonical);
   }
@@ -534,7 +530,7 @@ function parseCreateOptions(args: string[]): CreateOptions {
   let directory: string | undefined;
   let trait = 'content/Labelled';
   let domain = 'custom.drafts';
-  let description = 'TODO: Describe this object.';
+  let description = '';
   let force = false;
   while (queue.length > 0) {
     const token = queue.shift();
@@ -726,7 +722,7 @@ function registerCommands(): void {
     examples: [
       'yarn object:list',
       'yarn object:list --root ./objects/core --json',
-      'yarn object:list --root ./examples/objects',
+      'yarn object:list --root ./objects/content',
     ],
     handler: async (args) => {
       const options = parseListOptions(args);
@@ -766,7 +762,7 @@ function registerCommands(): void {
       'yarn object:resolve User',
       'yarn object:resolve Product --json',
       'yarn object:resolve Relationship --traits ./traits --traits ./examples/traits',
-      'yarn object:resolve User --root ./examples/objects',
+      'yarn object:resolve Article --root ./objects/content',
     ],
     handler: async (args) => {
       const options = parseResolveOptions(args, { includeSchema: false });
@@ -1082,7 +1078,7 @@ function registerCommands(): void {
         `  name: ${pascalName}`,
         '  version: 0.1.0',
         `  domain: ${options.domain}`,
-        `  description: ${options.description}`,
+        `  description: ${options.description || `${pascalName} object.`}`,
         '  tags:',
         '    - draft',
         '    - experimental',
@@ -1101,8 +1097,7 @@ function registerCommands(): void {
         '    description: Human-readable label shown in UI contexts.',
         '',
         'metadata:',
-        '  owners:',
-        '    - TODO: add owner emails',
+        '  owners: []',
         '  changelog:',
         '    - version: 0.1.0',
         `      date: "${todayIso()}"`,

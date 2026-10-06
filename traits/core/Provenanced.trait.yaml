@@ -1,0 +1,167 @@
+trait:
+  name: Provenanced
+  version: 1.0.0
+  description: |
+    Carries how a record's values were obtained, beside the values, wherever the record travels.
+
+    Two values obtained differently are not comparable: a route an agent inferred from a URL and a route an
+    OpenAPI document declares can hold the same string and mean different things, and a screen that shows
+    one beside the other unlabelled publishes a false equivalence. A captured finding is only as good as the
+    engine, the version, the file and the moment behind it.
+
+    OODS Foundry already carries this shape twice, and this trait is factored from them rather than inventing a
+    third. The observation rows name the capture run, the target, the artifact kind and read path, and the
+    capture time beside each row; the preview's context panel names each item's source, id, the query that
+    found it and when it was fetched. What both say is the same five things: which source, which record
+    in it, where in that record, how, and when. Those are the five fields here:
+
+      provenance_source   who produced it            observation: the capture tool  context: source
+      provenance_record   which record there         observation: runId           context: id
+      provenance_locator  where in that record       observation: readPath        context: query
+      provenance_method   how the value was obtained  observation: artifactKind   context: (the search)
+      provenance_at       when                        observation: capturedAt      context: fetchedAt
+
+    The method is the field that separates this from a citation: "axe-core 4.11.0", "route_derived",
+    "openapi_declared", "sha256 attested by the run manifest". The observation rows and context items keep
+    their own stored shapes for now.
+
+    An absent value means not recorded, never "no provenance needed". A record with no provenance_source
+    is not shown as sourced.
+  category: core
+  tags:
+    - provenance
+    - evidence
+    - lineage
+    - citation
+
+parameters:
+  - name: source
+    type: string
+    required: true
+    description: The producing system every record of this object comes from, shown as recorded (e.g. a capture tool).
+  - name: methodLabel
+    type: string
+    required: false
+    description: Visible wording beside the method, so the screen says how rather than showing a bare token.
+    default: Obtained by
+
+schema:
+  provenance_source:
+    type: string
+    required: true
+    description: The system that produced the record, such as a capture tool.
+  provenance_record:
+    type: string
+    required: true
+    description: Which record in that system — a run id, an item id.
+  provenance_locator:
+    type: string
+    required: false
+    description: Where in that record the value was read — a file path under the run, a query.
+  provenance_method:
+    type: string
+    required: true
+    description: |
+      How the value was obtained — the engine and its version, the inference, the declaration, the
+      attestation. Two values with different methods are not presented as the same kind of fact.
+  provenance_at:
+    type: datetime
+    required: true
+    description: When it was obtained.
+    validation:
+      format: date-time
+
+semantics:
+  provenance_source:
+    semantic_type: provenance.source
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+  provenance_record:
+    semantic_type: provenance.record
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+  provenance_locator:
+    semantic_type: provenance.locator
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+  provenance_method:
+    semantic_type: provenance.method
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+  provenance_at:
+    semantic_type: provenance.at
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: RelativeTimestamp
+
+view_extensions:
+  # The provenance travels with the record on every surface: how and when on the card and the row, all five on
+  # the detail. Each renders as labelled text, so a method never reads as part of the value it qualifies.
+  card:
+    - component: Text
+      position: after
+      props:
+        field: provenance_method
+        label: Obtained by
+    - component: RelativeTimestamp
+      position: after
+      props:
+        field: provenance_at
+        label: Obtained
+  list:
+    - component: RelativeTimestamp
+      position: after
+      props:
+        field: provenance_at
+  detail:
+    - component: Text
+      position: main
+      priority: 66
+      props:
+        field: provenance_source
+        label: Source
+    - component: Text
+      position: main
+      priority: 65
+      props:
+        field: provenance_method
+        label: Obtained by
+    - component: Text
+      position: main
+      priority: 64
+      props:
+        field: provenance_locator
+        label: Read from
+    - component: Text
+      position: main
+      priority: 63
+      props:
+        field: provenance_record
+        label: Record
+
+dependencies: []
+
+metadata:
+  created: "2026-09-18"
+  updated: "2026-09-18"
+  owners:
+    - core@oods.systems
+  maturity: alpha
+  accessibility:
+    keyboard: Provenance adds no interactive control; it renders as labelled text.
+    screenreader: Each value is read with its visible label ("Obtained by axe-core 4.11.0").
+  regionsUsed:
+    - list
+    - card
+    - detail
+  examples:
+    - Finding
+    - Run
+    - CapturedArtifact
+  references:
+    - "objects/provenance.v1.json#/references/ref-55ab62519302 — observation rows: runId, target, artifactKind, readPath, capturedAt"
+    - "objects/provenance.v1.json#/references/ref-38c48888c8fe — context items: source, id, query, fetchedAt"

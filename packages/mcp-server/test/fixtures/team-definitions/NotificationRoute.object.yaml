@@ -1,0 +1,78 @@
+# s223-m02 (#2527 ruling 12): a team's object whose fields ask for the Select-like controls that edit them (their semantics'
+# ui_hints.component): severity (three options) asks for a SegmentedControl and channel (six) for a Combobox.
+object:
+  name: NotificationRoute
+  version: 1.0.0
+  domain: acme.monitoring
+  description: Where and how urgently a team's alerts are delivered.
+  tags:
+    - monitoring
+
+traits: []
+
+schema:
+  notification_route_id:
+    type: uuid
+    required: true
+    description: Unique identifier for the route.
+  name:
+    type: string
+    required: true
+    description: The route's name.
+    examples:
+      - Checkout on-call
+      - Billing escalations
+  severity:
+    type: string
+    required: true
+    description: How urgent the alerts on this route are.
+    validation:
+      enum:
+        - low
+        - medium
+        - high
+    examples:
+      - medium
+      - high
+  channel:
+    type: string
+    required: true
+    description: Where the route's alerts are sent.
+    validation:
+      enum:
+        - email
+        - slack
+        - pagerduty
+        - sms
+        - webhook
+        - teams
+    examples:
+      - slack
+      - pagerduty
+  created_at:
+    type: datetime
+    required: true
+    description: When the route was created.
+    examples:
+      - '2026-09-01T09:00:00Z'
+      - '2026-09-02T09:00:00Z'
+
+semantics:
+  name:
+    semantic_type: monitoring.route.name
+    token_mapping: tokenMap(text.primary)
+  severity:
+    semantic_type: monitoring.route.severity
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: SegmentedControl
+  channel:
+    semantic_type: monitoring.route.channel
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Combobox
+
+metadata:
+  owners:
+    - monitoring-team
+  maturity: beta

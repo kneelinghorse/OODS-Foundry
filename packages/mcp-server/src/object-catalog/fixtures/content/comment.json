@@ -1,0 +1,131 @@
+{
+  "manifest_version": "4.0",
+  "schema_version": "1.1.0",
+  "source": {
+    "agent": "oods-forge",
+    "stage": "compose",
+    "captured_at": "2026-05-20T00:00:00.000Z",
+    "oods_catalog_version": "1.0.0"
+  },
+  "entities": [
+    {
+      "urn": "urn:proto:semantic:comment-threaded@1.0.0",
+      "element": {
+        "type": "ui.surface.thread",
+        "name": "Comment thread view"
+      },
+      "semantics": {
+        "purpose": "show reader discussion",
+        "human_meaning": "Reader-contributed comment with an author byline, body text, and optional reply-to pointer; renderable threaded, flat, or deeply nested.",
+        "tags": ["content", "publishing", "discussion"],
+        "synonyms": ["reply", "discussion thread"],
+        "keywords": ["comment", "thread", "reply", "discussion"]
+      },
+      "pragmatic_role": "informational",
+      "states": ["visible", "hidden", "flagged"],
+      "preconditions": ["article.published"],
+      "effects": [],
+      "traits": ["Identifiable", "Datable", "Authored"],
+      "context": {
+        "domain": "publishing",
+        "surface": "desktop",
+        "schemaorg": "https://schema.org/Comment"
+      },
+      "locations": [
+        { "type": "code", "path": "components/content/CommentThread.tsx" }
+      ],
+      "evidence_refs": [
+        {
+          "id": "ev_comment_001",
+          "protocol": "semantic",
+          "kind": "manifest_declaration",
+          "locator": "self",
+          "matched": null,
+          "weight": 1.0,
+          "provenance": "declared",
+          "captured_at": "2026-05-20T00:00:00.000Z"
+        }
+      ],
+      "relationships": {
+        "edges": [
+          {
+            "type": "authored_by",
+            "from": "urn:proto:semantic:comment-threaded@1.0.0",
+            "to": "urn:proto:semantic:author-profile@1.0.0",
+            "direction": "out",
+            "provenance": "declared",
+            "weight": 0.95,
+            "reason": "Each comment carries a byline pointing to its author."
+          },
+          {
+            "type": "reply_to",
+            "from": "urn:proto:semantic:comment-threaded@1.0.0",
+            "to": "urn:proto:semantic:comment-threaded@1.0.0",
+            "direction": "out",
+            "provenance": "declared",
+            "weight": 0.85,
+            "reason": "Threaded comments may reply to other comments — self-referential edge."
+          }
+        ]
+      },
+      "oods": {
+        "catalog": { "version": "1.0.0" },
+        "render": {
+          "ui_schema_ref": "compose-comment-threaded",
+          "slots": [
+            { "name": "avatar", "binding": { "field": "comment.author_avatar_url" } },
+            { "name": "byline", "binding": { "field": "comment.author_label" } },
+            { "name": "body", "binding": { "field": "comment.body_text" } },
+            { "name": "timestamp", "binding": { "field": "comment.posted_at" } },
+            { "name": "replies", "binding": { "field": "comment.reply_thread" } }
+          ],
+          "brand_overlay": "brand-a"
+        },
+        "projection_variants": [
+          {
+            "surface": "threaded",
+            "ui_schema_ref": "compose-comment-threaded",
+            "slots": [
+              { "name": "avatar", "binding": { "field": "comment.author_avatar_url" } },
+              { "name": "byline", "binding": { "field": "comment.author_label" } },
+              { "name": "body", "binding": { "field": "comment.body_text" } },
+              { "name": "timestamp", "binding": { "field": "comment.posted_at" } },
+              { "name": "replies", "binding": { "field": "comment.reply_thread" } }
+            ],
+            "brand_overlay": "brand-a"
+          },
+          {
+            "surface": "flat",
+            "ui_schema_ref": "compose-comment-flat",
+            "slots": [
+              { "name": "byline", "binding": { "field": "comment.author_label" } },
+              { "name": "body", "binding": { "field": "comment.body_text" } },
+              { "name": "timestamp", "binding": { "field": "comment.posted_at" } }
+            ],
+            "brand_overlay": "brand-a"
+          },
+          {
+            "surface": "nested",
+            "ui_schema_ref": "compose-comment-nested",
+            "slots": [
+              { "name": "avatar", "binding": { "field": "comment.author_avatar_url" } },
+              { "name": "byline", "binding": { "field": "comment.author_label" } },
+              { "name": "body", "binding": { "field": "comment.body_text" } },
+              { "name": "timestamp", "binding": { "field": "comment.posted_at" } },
+              { "name": "replies", "binding": { "field": "comment.reply_thread" } },
+              { "name": "nested_depth_indicator", "binding": { "field": "comment.depth_level" } }
+            ],
+            "brand_overlay": "brand-a"
+          }
+        ],
+        "confidence_decomposition": {
+          "total": 0.85,
+          "signals": [
+            { "name": "trait_membership", "score": 0.87, "hint": "Identifiable + Authored + Datable" },
+            { "name": "manifest_declaration", "score": 0.83, "hint": "Domain-author-supplied content pack" }
+          ]
+        }
+      }
+    }
+  ]
+}

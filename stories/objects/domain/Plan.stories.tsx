@@ -15,6 +15,8 @@
  * 4. Plan Lifecycle - State transitions for plans
  */
 
+// @types/react 19 no longer declares a global JSX namespace; it is exported from 'react'.
+import type { JSX } from 'react';
 import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 

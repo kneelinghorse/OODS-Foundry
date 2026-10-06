@@ -101,14 +101,13 @@ function parseArgs(argv: string[]): CliOptions {
     ];
     const objectsRoot = objectsRootCandidates.find((candidate) => existsSync(candidate));
     const coreRoot = coreRootCandidates.find((candidate) => existsSync(candidate));
-    const examplesRoot = resolve(cwd, 'examples/objects');
 
     if (objectsRoot) {
       objectRoots.push(objectsRoot);
     } else if (coreRoot) {
       objectRoots.push(coreRoot);
     } else {
-      objectRoots.push(examplesRoot);
+      objectRoots.push(resolve(cwd, 'objects'));
     }
   }
 

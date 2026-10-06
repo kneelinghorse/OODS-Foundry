@@ -1,0 +1,165 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oods-foundry.com/schemas/viz-classification.v1.schema.json",
+  "title": "Visualization classification v1",
+  "description": "The sole authored family and primary core-cell assignments for registered chart types and pattern specifications.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "families",
+    "assignments",
+    "retiredCells"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "families": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "definition",
+          "coreCells"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/name"
+          },
+          "definition": {
+            "$ref": "#/$defs/prose"
+          },
+          "coreCells": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "cell",
+                "definition",
+                "gapReason"
+              ],
+              "properties": {
+                "cell": {
+                  "$ref": "#/$defs/name"
+                },
+                "definition": {
+                  "$ref": "#/$defs/prose"
+                },
+                "gapReason": {
+                  "$ref": "#/$defs/prose"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "assignments": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "family",
+          "role",
+          "coreCell"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-z][a-z0-9_:-]*$"
+          },
+          "family": {
+            "$ref": "#/$defs/name"
+          },
+          "role": {
+            "enum": [
+              "core",
+              "extension"
+            ]
+          },
+          "coreCell": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/name"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "role": {
+                  "const": "core"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "coreCell": {
+                  "$ref": "#/$defs/name"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "retiredCells": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "family",
+          "cell",
+          "definition",
+          "reason"
+        ],
+        "properties": {
+          "family": {
+            "$ref": "#/$defs/name"
+          },
+          "cell": {
+            "$ref": "#/$defs/name"
+          },
+          "definition": {
+            "$ref": "#/$defs/prose"
+          },
+          "reason": {
+            "$ref": "#/$defs/prose"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "prose": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    }
+  }
+}

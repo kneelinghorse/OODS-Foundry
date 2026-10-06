@@ -1,0 +1,801 @@
+{
+  "$schema": "https://design-tokens.org/dtcg/schema.json",
+  "color": {
+    "brand": {
+      "C": {
+        "surface": {
+          "canvas": {
+            "$type": "color",
+            "$value": "oklch(0.18 0.008 265)",
+            "$description": "color.brand.C.surface.canvas; generated from palette/seeds.json by generate-palette.ts.",
+            "$extensions": {
+              "ods": {
+                "fallback": "#101215"
+              }
+            }
+          },
+          "raised": {
+            "$type": "color",
+            "$value": "oklch(0.215 0.008 265)",
+            "$description": "color.brand.C.surface.raised; generated from palette/seeds.json by generate-palette.ts.",
+            "$extensions": {
+              "ods": {
+                "fallback": "#18191D"
+              }
+            }
+          },
+          "subtle": {
+            "$type": "color",
+            "$value": "oklch(0.25 0.008 265)",
+            "$description": "color.brand.C.surface.subtle; generated from palette/seeds.json by generate-palette.ts.",
+            "$extensions": {
+              "ods": {
+                "fallback": "#202226"
+              }
+            }
+          },
+          "disabled": {
+            "$type": "color",
+            "$value": "oklch(0.285 0.008 265)",
+            "$description": "color.brand.C.surface.disabled; generated from palette/seeds.json by generate-palette.ts.",
+            "$extensions": {
+              "ods": {
+                "fallback": "#282A2E"
+              }
+            }
+          },
+          "backdrop": {
+            "$type": "color",
+            "$value": "oklch(0.145 0.008 265)",
+            "$description": "color.brand.C.surface.backdrop; generated from palette/seeds.json by generate-palette.ts.",
+            "$extensions": {
+              "ods": {
+                "fallback": "#090A0E"
+              }
+            }
+          },
+          "inverse": {
+            "$type": "color",
+            "$value": "oklch(0.96 0.008 265)",
+            "$description": "color.brand.C.surface.inverse; generated from palette/seeds.json by generate-palette.ts.",
+            "$extensions": {
+              "ods": {
+                "fallback": "#EFF2F7"
+              }
+            }
+          },
+          "interactive": {
+            "primary": {
+              "default": {
+                "$type": "color",
+                "$value": "oklch(0.4 0.06 150)",
+                "$description": "color.brand.C.surface.interactive.primary.default; generated from palette/seeds.json by generate-palette.ts.",
+                "$extensions": {
+                  "ods": {
+                    "fallback": "#2F5136"
+                  }
+                }
+              },
+              "hover": {
+                "$type": "color",
+                "$value": "oklch(0.5 0.075 150)",
+                "$description": "color.brand.C.surface.interactive.primary.hover; generated from palette/seeds.json by generate-palette.ts.",
+                "$extensions": {
+                  "ods": {
+                    "fallback": "#426F4C"
+                  }
+                }
+              },
+              "pressed": {
+                "$type": "color",
+                "$value": "oklch(0.54 0.085 150)",
+                "$description": "color.brand.C.surface.interactive.primary.pressed; generated from palette/seeds.json by generate-palette.ts.",
+                "$extensions": {
+                  "ods": {
+                    "fallback": "#487D54"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "border": {
+          "subtle": {
+            "$type": "color",
+            "$value": "oklch(0.4 0.008 265)",
+            "$description": "color.brand.C.border.subtle; generated from palette/seeds.json by generate-palette.ts.",
+            "$extensions": {
+              "ods": {
+                "fallback": "#45484C"
+              }
+            }
+          },
+          "strong": {
+            "$type": "color",
+            "$value": "oklch(0.56 0.008 265)",
+            "$description": "color.brand.C.border.strong; generated from palette/seeds.json by generate-palette.ts.",
+            "$extensions": {
+              "ods": {
+                "fallback": "#727479"
+              }
+            }
+          }
+        },
+        "focus": {
+          "ring": {
+            "outer": {
+              "$type": "color",
+              "$value": "oklch(0.85 0.046426 150)",
+              "$description": "color.brand.C.focus.ring.outer; generated from palette/seeds.json by generate-palette.ts.",
+              "$extensions": {
+                "ods": {
+                  "fallback": "#B9D7BE"
+                }
+              }
+            },
+            "inner": {
+              "$type": "color",
+              "$value": "oklch(0.18 0.008 265)",
+              "$description": "color.brand.C.focus.ring.inner; generated from palette/seeds.json by generate-palette.ts.",
+              "$extensions": {
+                "ods": {
+                  "fallback": "#101215"
+                }
+              }
+            }
+          },
+          "text": {
+            "$type": "color",
+            "$value": "oklch(0.82 0.047991 305)",
+            "$description": "color.brand.C.focus.text; generated from palette/seeds.json by generate-palette.ts.",
+            "$extensions": {
+              "ods": {
+                "fallback": "#CBBDDE"
+              }
+            }
+          }
+        },
+        "text": {
+          "primary": {
+            "$type": "color",
+            "$value": "oklch(0.94 0.008 265)",
+            "$description": "color.brand.C.text.primary; generated from palette/seeds.json by generate-palette.ts.",
+            "$extensions": {
+              "ods": {
+                "fallback": "#E8EBF1"
+              }
+            }
+          },
+          "secondary": {
+            "$type": "color",
+            "$value": "oklch(0.83 0.008 265)",
+            "$description": "color.brand.C.text.secondary; generated from palette/seeds.json by generate-palette.ts.",
+            "$extensions": {
+              "ods": {
+                "fallback": "#C5C7CD"
+              }
+            }
+          },
+          "muted": {
+            "$type": "color",
+            "$value": "oklch(0.73 0.008 265)",
+            "$description": "color.brand.C.text.muted; generated from palette/seeds.json by generate-palette.ts.",
+            "$extensions": {
+              "ods": {
+                "fallback": "#A5A8AD"
+              }
+            }
+          },
+          "inverse": {
+            "$type": "color",
+            "$value": "oklch(0.23 0.008 265)",
+            "$description": "color.brand.C.text.inverse; generated from palette/seeds.json by generate-palette.ts.",
+            "$extensions": {
+              "ods": {
+                "fallback": "#1B1D21"
+              }
+            }
+          },
+          "onInteractive": {
+            "$type": "color",
+            "$value": "oklch(0.985 0.006988 265)",
+            "$description": "color.brand.C.text.onInteractive; generated from palette/seeds.json by generate-palette.ts.",
+            "$extensions": {
+              "ods": {
+                "fallback": "#F8FAFF"
+              }
+            }
+          },
+          "disabled": {
+            "$type": "color",
+            "$value": "oklch(0.55 0.008 265)",
+            "$description": "color.brand.C.text.disabled; generated from palette/seeds.json by generate-palette.ts.",
+            "$extensions": {
+              "ods": {
+                "fallback": "#6F7276"
+              }
+            }
+          },
+          "accent": {
+            "$type": "color",
+            "$value": "oklch(0.82 0.047991 305)",
+            "$description": "color.brand.C.text.accent; generated from palette/seeds.json by generate-palette.ts.",
+            "$extensions": {
+              "ods": {
+                "fallback": "#CBBDDE"
+              }
+            }
+          }
+        },
+        "accent": {
+          "background": {
+            "$type": "color",
+            "$value": "oklch(0.29 0.044175 305)",
+            "$description": "color.brand.C.accent.background; generated from palette/seeds.json by generate-palette.ts.",
+            "$extensions": {
+              "ods": {
+                "fallback": "#30263D"
+              }
+            }
+          },
+          "border": {
+            "$type": "color",
+            "$value": "oklch(0.54 0.118771 305)",
+            "$description": "color.brand.C.accent.border; generated from palette/seeds.json by generate-palette.ts.",
+            "$extensions": {
+              "ods": {
+                "fallback": "#7F5BA6"
+              }
+            }
+          },
+          "text": {
+            "$type": "color",
+            "$value": "oklch(0.82 0.047991 305)",
+            "$description": "color.brand.C.accent.text; generated from palette/seeds.json by generate-palette.ts.",
+            "$extensions": {
+              "ods": {
+                "fallback": "#CBBDDE"
+              }
+            }
+          }
+        },
+        "status": {
+          "info": {
+            "surface": {
+              "$type": "color",
+              "$value": "oklch(0.28 0.070481 245)",
+              "$description": "color.brand.C.status.info.surface; generated from palette/seeds.json by generate-palette.ts.",
+              "$extensions": {
+                "ods": {
+                  "fallback": "#002B49"
+                }
+              }
+            },
+            "border": {
+              "$type": "color",
+              "$value": "oklch(0.45 0.106275 245)",
+              "$description": "color.brand.C.status.info.border; generated from palette/seeds.json by generate-palette.ts.",
+              "$extensions": {
+                "ods": {
+                  "fallback": "#0F5A8C"
+                }
+              }
+            },
+            "text": {
+              "$type": "color",
+              "$value": "oklch(0.88 0.029459 245)",
+              "$description": "color.brand.C.status.info.text; generated from palette/seeds.json by generate-palette.ts.",
+              "$extensions": {
+                "ods": {
+                  "fallback": "#C8DAEA"
+                }
+              }
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "oklch(0.8 0.054126 245)",
+              "$description": "color.brand.C.status.info.icon; generated from palette/seeds.json by generate-palette.ts.",
+              "$extensions": {
+                "ods": {
+                  "fallback": "#A1C2DF"
+                }
+              }
+            }
+          },
+          "success": {
+            "surface": {
+              "$type": "color",
+              "$value": "oklch(0.28 0.069224 155)",
+              "$description": "color.brand.C.status.success.surface; generated from palette/seeds.json by generate-palette.ts.",
+              "$extensions": {
+                "ods": {
+                  "fallback": "#003219"
+                }
+              }
+            },
+            "border": {
+              "$type": "color",
+              "$value": "oklch(0.45 0.09919 155)",
+              "$description": "color.brand.C.status.success.border; generated from palette/seeds.json by generate-palette.ts.",
+              "$extensions": {
+                "ods": {
+                  "fallback": "#18653C"
+                }
+              }
+            },
+            "text": {
+              "$type": "color",
+              "$value": "oklch(0.88 0.027495 155)",
+              "$description": "color.brand.C.status.success.text; generated from palette/seeds.json by generate-palette.ts.",
+              "$extensions": {
+                "ods": {
+                  "fallback": "#CADDD0"
+                }
+              }
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "oklch(0.8 0.050518 155)",
+              "$description": "color.brand.C.status.success.icon; generated from palette/seeds.json by generate-palette.ts.",
+              "$extensions": {
+                "ods": {
+                  "fallback": "#A5C8B0"
+                }
+              }
+            }
+          },
+          "warning": {
+            "surface": {
+              "$type": "color",
+              "$value": "oklch(0.28 0.057387 85)",
+              "$description": "color.brand.C.status.warning.surface; generated from palette/seeds.json by generate-palette.ts.",
+              "$extensions": {
+                "ods": {
+                  "fallback": "#362600"
+                }
+              }
+            },
+            "border": {
+              "$type": "color",
+              "$value": "oklch(0.45 0.092227 85)",
+              "$description": "color.brand.C.status.warning.border; generated from palette/seeds.json by generate-palette.ts.",
+              "$extensions": {
+                "ods": {
+                  "fallback": "#6D5000"
+                }
+              }
+            },
+            "text": {
+              "$type": "color",
+              "$value": "oklch(0.88 0.029459 85)",
+              "$description": "color.brand.C.status.warning.text; generated from palette/seeds.json by generate-palette.ts.",
+              "$extensions": {
+                "ods": {
+                  "fallback": "#E0D6C2"
+                }
+              }
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "oklch(0.8 0.054126 85)",
+              "$description": "color.brand.C.status.warning.icon; generated from palette/seeds.json by generate-palette.ts.",
+              "$extensions": {
+                "ods": {
+                  "fallback": "#CEBC96"
+                }
+              }
+            }
+          },
+          "critical": {
+            "surface": {
+              "$type": "color",
+              "$value": "oklch(0.28 0.092346 25)",
+              "$description": "color.brand.C.status.critical.surface; generated from palette/seeds.json by generate-palette.ts.",
+              "$extensions": {
+                "ods": {
+                  "fallback": "#4D0F0F"
+                }
+              }
+            },
+            "border": {
+              "$type": "color",
+              "$value": "oklch(0.45 0.12753 25)",
+              "$description": "color.brand.C.status.critical.border; generated from palette/seeds.json by generate-palette.ts.",
+              "$extensions": {
+                "ods": {
+                  "fallback": "#8F312F"
+                }
+              }
+            },
+            "text": {
+              "$type": "color",
+              "$value": "oklch(0.88 0.035351 25)",
+              "$description": "color.brand.C.status.critical.text; generated from palette/seeds.json by generate-palette.ts.",
+              "$extensions": {
+                "ods": {
+                  "fallback": "#EECFCC"
+                }
+              }
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "oklch(0.8 0.064952 25)",
+              "$description": "color.brand.C.status.critical.icon; generated from palette/seeds.json by generate-palette.ts.",
+              "$extensions": {
+                "ods": {
+                  "fallback": "#E5AEA9"
+                }
+              }
+            }
+          },
+          "neutral": {
+            "surface": {
+              "$type": "color",
+              "$value": "oklch(0.28 0.010261 265)",
+              "$description": "color.brand.C.status.neutral.surface; generated from palette/seeds.json by generate-palette.ts.",
+              "$extensions": {
+                "ods": {
+                  "fallback": "#26292E"
+                }
+              }
+            },
+            "border": {
+              "$type": "color",
+              "$value": "oklch(0.45 0.01417 265)",
+              "$description": "color.brand.C.status.neutral.border; generated from palette/seeds.json by generate-palette.ts.",
+              "$extensions": {
+                "ods": {
+                  "fallback": "#51555D"
+                }
+              }
+            },
+            "text": {
+              "$type": "color",
+              "$value": "oklch(0.88 0.003928 265)",
+              "$description": "color.brand.C.status.neutral.text; generated from palette/seeds.json by generate-palette.ts.",
+              "$extensions": {
+                "ods": {
+                  "fallback": "#D6D7DA"
+                }
+              }
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "oklch(0.8 0.007217 265)",
+              "$description": "color.brand.C.status.neutral.icon; generated from palette/seeds.json by generate-palette.ts.",
+              "$extensions": {
+                "ods": {
+                  "fallback": "#BBBEC2"
+                }
+              }
+            }
+          },
+          "accent": {
+            "surface": {
+              "$type": "color",
+              "$value": "oklch(0.28 0.076955 305)",
+              "$description": "color.brand.C.status.accent.surface; generated from palette/seeds.json by generate-palette.ts.",
+              "$extensions": {
+                "ods": {
+                  "fallback": "#321D47"
+                }
+              }
+            },
+            "border": {
+              "$type": "color",
+              "$value": "oklch(0.45 0.106275 305)",
+              "$description": "color.brand.C.status.accent.border; generated from palette/seeds.json by generate-palette.ts.",
+              "$extensions": {
+                "ods": {
+                  "fallback": "#634484"
+                }
+              }
+            },
+            "text": {
+              "$type": "color",
+              "$value": "oklch(0.88 0.029459 305)",
+              "$description": "color.brand.C.status.accent.text; generated from palette/seeds.json by generate-palette.ts.",
+              "$extensions": {
+                "ods": {
+                  "fallback": "#DCD3E8"
+                }
+              }
+            },
+            "icon": {
+              "$type": "color",
+              "$value": "oklch(0.8 0.054126 305)",
+              "$description": "color.brand.C.status.accent.icon; generated from palette/seeds.json by generate-palette.ts.",
+              "$extensions": {
+                "ods": {
+                  "fallback": "#C6B5DA"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "viz": {
+    "mark": {
+      "single": {
+        "$type": "color",
+        "$value": "oklch(0.72 0.065 250)",
+        "$description": "mark.single; generated from palette/seeds.json by generate-palette.ts.",
+        "$extensions": {
+          "ods": {
+            "fallback": "#86A8CC"
+          }
+        }
+      }
+    },
+    "scale": {
+      "categorical": {
+        "01": {
+          "$type": "color",
+          "$value": "oklch(0.57 0.228252 17.5)",
+          "$description": "scale.categorical.01; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#DD0042"
+            }
+          }
+        },
+        "02": {
+          "$type": "color",
+          "$value": "oklch(0.78 0.162882 77.5)",
+          "$description": "scale.categorical.02; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#F0A800"
+            }
+          }
+        },
+        "03": {
+          "$type": "color",
+          "$value": "oklch(0.85 0.05 137.5)",
+          "$description": "scale.categorical.03; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#BFD6B6"
+            }
+          }
+        },
+        "04": {
+          "$type": "color",
+          "$value": "oklch(0.9 0.13 197.5)",
+          "$description": "scale.categorical.04; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#5BF8FC"
+            }
+          }
+        },
+        "05": {
+          "$type": "color",
+          "$value": "oklch(0.54 0.195666 257.5)",
+          "$description": "scale.categorical.05; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#0068DD"
+            }
+          }
+        },
+        "06": {
+          "$type": "color",
+          "$value": "oklch(0.66 0.05 317.5)",
+          "$description": "scale.categorical.06; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#9F89A7"
+            }
+          }
+        }
+      },
+      "sequential": {
+        "01": {
+          "$type": "color",
+          "$value": "oklch(0.96 0.007528 257.5)",
+          "$description": "scale.sequential.01; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#EFF2F7"
+            }
+          }
+        },
+        "02": {
+          "$type": "color",
+          "$value": "oklch(0.86 0.036911 257.5)",
+          "$description": "scale.sequential.02; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#C2D2EA"
+            }
+          }
+        },
+        "03": {
+          "$type": "color",
+          "$value": "oklch(0.76 0.068429 257.5)",
+          "$description": "scale.sequential.03; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#96B3DD"
+            }
+          }
+        },
+        "04": {
+          "$type": "color",
+          "$value": "oklch(0.66 0.094335 257.5)",
+          "$description": "scale.sequential.04; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#6D94CC"
+            }
+          }
+        },
+        "05": {
+          "$type": "color",
+          "$value": "oklch(0.56 0.109428 257.5)",
+          "$description": "scale.sequential.05; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#4975B4"
+            }
+          }
+        },
+        "06": {
+          "$type": "color",
+          "$value": "oklch(0.46 0.110853 257.5)",
+          "$description": "scale.sequential.06; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#2D5895"
+            }
+          }
+        },
+        "07": {
+          "$type": "color",
+          "$value": "oklch(0.36 0.098345 257.5)",
+          "$description": "scale.sequential.07; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#173C70"
+            }
+          }
+        },
+        "08": {
+          "$type": "color",
+          "$value": "oklch(0.26 0.074257 257.5)",
+          "$description": "scale.sequential.08; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#092347"
+            }
+          }
+        },
+        "09": {
+          "$type": "color",
+          "$value": "oklch(0.16 0.04334 257.5)",
+          "$description": "scale.sequential.09; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#030D1F"
+            }
+          }
+        }
+      },
+      "diverging": {
+        "neg-01": {
+          "$type": "color",
+          "$value": "oklch(0.74 0.066301 197.5)",
+          "$description": "scale.diverging.neg-01; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#77B8B9"
+            }
+          }
+        },
+        "pos-01": {
+          "$type": "color",
+          "$value": "oklch(0.74 0.066301 17.5)",
+          "$description": "scale.diverging.pos-01; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#D29A9B"
+            }
+          }
+        },
+        "neg-02": {
+          "$type": "color",
+          "$value": "oklch(0.62 0.090969 197.5)",
+          "$description": "scale.diverging.neg-02; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#319799"
+            }
+          }
+        },
+        "pos-02": {
+          "$type": "color",
+          "$value": "oklch(0.62 0.090969 17.5)",
+          "$description": "scale.diverging.pos-02; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#B66F72"
+            }
+          }
+        },
+        "neg-03": {
+          "$type": "color",
+          "$value": "oklch(0.5 0.085073 197.5)",
+          "$description": "scale.diverging.neg-03; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#007274"
+            }
+          }
+        },
+        "pos-03": {
+          "$type": "color",
+          "$value": "oklch(0.5 0.085073 17.5)",
+          "$description": "scale.diverging.pos-03; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#8D4E51"
+            }
+          }
+        },
+        "neg-04": {
+          "$type": "color",
+          "$value": "oklch(0.38 0.064656 197.5)",
+          "$description": "scale.diverging.neg-04; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#004D4E"
+            }
+          }
+        },
+        "pos-04": {
+          "$type": "color",
+          "$value": "oklch(0.38 0.064656 17.5)",
+          "$description": "scale.diverging.pos-04; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#603336"
+            }
+          }
+        },
+        "neg-05": {
+          "$type": "color",
+          "$value": "oklch(0.26 0.04424 197.5)",
+          "$description": "scale.diverging.neg-05; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#002A2C"
+            }
+          }
+        },
+        "pos-05": {
+          "$type": "color",
+          "$value": "oklch(0.26 0.04424 17.5)",
+          "$description": "scale.diverging.pos-05; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#371B1C"
+            }
+          }
+        },
+        "neutral": {
+          "$type": "color",
+          "$value": "oklch(0.86 0 265)",
+          "$description": "scale.diverging.neutral; generated from palette/seeds.json by generate-palette.ts.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#D1D1D1"
+            }
+          }
+        }
+      }
+    }
+  }
+}

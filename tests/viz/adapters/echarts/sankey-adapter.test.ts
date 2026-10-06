@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
 import type { SankeyInput } from '../../../../src/types/viz/network-flow.js';
-import type { NormalizedVizSpec } from '../../../../src/viz/spec/normalized-viz-spec.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 import { adaptSankeyToECharts, SankeyValidationError } from '../../../../src/viz/adapters/echarts/sankey-adapter.js';
 
 const baseSpec: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/v1',
   id: 'test:sankey:basic',
   name: 'Test Sankey',
   data: { values: [] },

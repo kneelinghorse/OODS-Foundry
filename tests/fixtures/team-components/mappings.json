@@ -1,0 +1,117 @@
+[
+  {
+    "apply": true,
+    "externalSystem": "fixture-team",
+    "externalComponent": "TeamButton",
+    "oodsTraits": [
+      "Stateful"
+    ],
+    "substitution": {
+      "component": "Button",
+      "react": {
+        "package": "@forge-test/team-components/react",
+        "export": "TeamButton",
+        "props": {
+          "content": {
+            "name": "caption"
+          },
+          "intent": {
+            "name": "appearance",
+            "values": {
+              "neutral": "quiet",
+              "primary": "prominent",
+              "danger": "danger"
+            }
+          }
+        },
+        "version": "1.0.0"
+      },
+      "vue": {
+        "package": "@forge-test/team-components/vue",
+        "export": "TeamButton",
+        "props": {
+          "content": {
+            "name": "caption"
+          },
+          "intent": {
+            "name": "appearance",
+            "values": {
+              "neutral": "quiet",
+              "primary": "prominent",
+              "danger": "danger"
+            }
+          }
+        },
+        "version": "1.0.0"
+      }
+    }
+  },
+  {
+    "apply": true,
+    "externalSystem": "fixture-team",
+    "externalComponent": "TeamStatusBadge",
+    "oodsTraits": [
+      "Stateful"
+    ],
+    "substitution": {
+      "component": "StatusBadge",
+      "react": {
+        "package": "@forge-test/team-components/react",
+        "export": "TeamStatusBadge",
+        "props": {
+          "status": {
+            "name": "state"
+          }
+        },
+        "version": "1.0.0"
+      },
+      "vue": {
+        "package": "@forge-test/team-components/vue",
+        "export": "TeamStatusBadge",
+        "props": {
+          "status": {
+            "name": "state"
+          }
+        },
+        "version": "1.0.0"
+      }
+    }
+  },
+  {
+    "apply": true,
+    "externalSystem": "fixture-team",
+    "externalComponent": "TeamInput",
+    "oodsTraits": [
+      "Stateful"
+    ],
+    "substitution": {
+      "component": "Input",
+      "react": {
+        "package": "@forge-test/team-components/react",
+        "export": "TeamInput",
+        "props": {
+          "label": {
+            "name": "caption"
+          },
+          "value": {
+            "name": "currentValue"
+          }
+        },
+        "version": "1.0.0"
+      },
+      "vue": {
+        "package": "@forge-test/team-components/vue",
+        "export": "TeamInput",
+        "props": {
+          "label": {
+            "name": "caption"
+          },
+          "value": {
+            "name": "currentValue"
+          }
+        },
+        "version": "1.0.0"
+      }
+    }
+  }
+]

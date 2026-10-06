@@ -2,6 +2,7 @@
   "name": "@oods/release-utils",
   "version": "0.1.0",
   "private": true,
+  "license": "Apache-2.0",
   "description": "Utilities for internal release verification and tagging workflows.",
   "type": "module",
   "main": "dist/index.js",
@@ -10,7 +11,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "rimraf dist && tsc -p tsconfig.json",
     "clean": "rimraf dist"
   },
   "dependencies": {

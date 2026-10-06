@@ -1,4 +1,4 @@
-import { PropsWithChildren, useId, useMemo, useRef } from 'react';
+import { PropsWithChildren, useCallback, useId, useMemo, useRef, useState } from 'react';
 import { OverlayRoot } from '../../overlays/manager/OverlayRoot';
 import { useEscapeRoutes, useFocusManagement, useInertOutside } from '../../overlays/manager/hooks';
 
@@ -33,8 +33,32 @@ export function Dialog({
   const backdropRef = useRef<HTMLButtonElement | null>(null);
 
   // Manage outside inertness and focus trapping
-  useInertOutside(open, panelRef.current);
-  useFocusManagement(open, panelRef);
+  /*
+   * s173 m04 — THE PANEL ARRIVES A RENDER LATE, and both overlay hooks used to miss it.
+   *
+   * The panel mounts inside `OverlayRoot`, whose portal host is created in an EFFECT. So on
+   * the render that opens the overlay there is no panel yet: `panelRef.current` is null when
+   * `useInertOutside` reads it, and `useFocusManagement`'s effect — keyed on `[open,
+   * panelRef]`, neither of which changes when the panel finally mounts — never re-runs. The
+   * measured consequence was that the FIRST open of any Sheet or Dialog moved no focus, trapped
+   * no focus and inerted nothing; the second open worked, because by then the portal host
+   * existed. Found by the mobile drawer's Playwright leg: after tapping the trigger, focus
+   * stayed on the trigger and two Tabs walked out of the dialog into the page behind it.
+   *
+   * A CALLBACK REF fixes it deterministically, with no timer and no retry: the element becomes
+   * STATE the moment React attaches it, and the memoised ref object handed to the hooks changes
+   * identity at that point, so the effect re-runs exactly once, when there is something to act
+   * on. `panelRef` is kept in step for any imperative reader.
+   */
+  const [panelElement, setPanelElement] = useState<HTMLDivElement | null>(null);
+  const attachPanel = useCallback((node: HTMLDivElement | null) => {
+    panelRef.current = node;
+    setPanelElement(node);
+  }, []);
+  const attachedPanelRef = useMemo(() => ({ current: panelElement }), [panelElement]);
+
+  useInertOutside(open, panelElement);
+  useFocusManagement(open, attachedPanelRef);
   useEscapeRoutes(
     () => {
       if (closeOnEsc) onOpenChange(false);
@@ -64,7 +88,7 @@ export function Dialog({
           aria-modal="true"
           aria-labelledby={aria.ariaLabelledBy}
           aria-describedby={aria.ariaDescribedBy}
-          ref={panelRef}
+          ref={attachPanel}
           tabIndex={-1}
           className={panelClassName}
           data-overlay="dialog"

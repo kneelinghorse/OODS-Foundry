@@ -1,14 +1,7 @@
 import type { Organization } from '../../generated/objects/Organization';
-import type { Channel } from '@/schemas/communication/channel.js';
-import type { Conversation } from '@/schemas/communication/conversation.js';
-import type { DeliveryPolicy } from '@/schemas/communication/delivery-policy.js';
-import type { Message } from '@/schemas/communication/message.js';
-import type { MessageStatusEntry } from '@/schemas/communication/message-status.js';
-import type { Template } from '@/schemas/communication/template.js';
-import type { PreferenceMetadata } from '@/schemas/preferences/preference-metadata.js';
-import type { PreferenceDocument } from '@/schemas/preferences/preference-document.js';
 import type { AddressableEntry } from '@/traits/addressable/address-entry.js';
 import { normalizeAddress } from '@/schemas/address.js';
+import { PreferenceStore } from '@/traits/preferenceable/preference-store.js';
 
 const locationEntries: AddressableEntry[] = [
   {
@@ -94,27 +87,23 @@ const locationEntries: AddressableEntry[] = [
   },
 ];
 
-const preferenceDocument: PreferenceDocument = {
-  version: '1.0.0',
-  preferences: {
-    notifications: {},
-    delivery: {},
-    governance: {},
-  },
-  metadata: {
-    schemaVersion: '1.0.0',
-    lastUpdated: '2025-11-19T00:00:00Z',
-    source: 'system',
-    migrationApplied: [],
-  },
-};
+const organizationPreferenceStore = new PreferenceStore(
+  {},
+  {
+    namespaces: ['theme', 'notifications', 'display', 'privacy'],
+    schemaVersion: '2.0.0',
+  }
+);
 
-const preferenceMetadata: PreferenceMetadata = {
-  schemaVersion: preferenceDocument.metadata.schemaVersion,
-  lastUpdated: preferenceDocument.metadata.lastUpdated,
-  source: preferenceDocument.metadata.source,
-  migrationApplied: preferenceDocument.metadata.migrationApplied,
-};
+organizationPreferenceStore.setPreference(['theme', 'mode'], 'light');
+organizationPreferenceStore.setPreference(['notifications', 'digest'], {
+  enabled: true,
+  frequency: 'daily',
+});
+organizationPreferenceStore.setPreference(['display', 'timezone'], 'America/Chicago');
+organizationPreferenceStore.setPreference(['privacy', 'region'], 'us');
+
+const organizationPreferenceDocument = organizationPreferenceStore.toDocument();
 
 /**
  * Example organization snapshot showing core + Addressable trait parity.
@@ -145,24 +134,20 @@ export const OrganizationWithLocationsExample: Organization = {
   billing_contact_email: 'billing@oods-foundry.example',
   data_residency: 'us',
   employee_count: 950,
-  channel_catalog: [] as Channel[],
-  template_catalog: [] as Template[],
-  delivery_policies: [] as DeliveryPolicy[],
-  messages: [] as Message[],
-  conversations: [] as Conversation[],
-  message_statuses: [] as MessageStatusEntry[],
   address_roles: ['headquarters', 'office', 'warehouse', 'branch'],
   default_address_role: 'headquarters',
   addresses: locationEntries,
-  preference_document: preferenceDocument,
-  preference_metadata: preferenceMetadata,
-  preference_version: preferenceDocument.version,
-  preference_namespaces: ['notifications', 'delivery', 'governance'],
-  preference_mutations: 0,
+  channel_catalog: [],
+  delivery_policies: [],
+  preference_document: organizationPreferenceDocument,
+  preference_metadata: organizationPreferenceDocument.metadata,
+  preference_version: organizationPreferenceDocument.version,
+  preference_namespaces: [...organizationPreferenceStore.getNamespaces()],
   membership_records: [],
   role_catalog: [],
   permission_catalog: [],
   role_permissions: {},
   role_hierarchy_edges: [],
   session_roles: [],
+  template_catalog: [],
 };

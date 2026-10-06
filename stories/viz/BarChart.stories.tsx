@@ -1,12 +1,14 @@
+// @types/react 19 no longer declares a global JSX namespace; it is exported from 'react'.
+import type { JSX } from 'react';
 import { useMemo } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import type { NormalizedVizSpec } from '~/src/viz/spec/normalized-viz-spec';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 import { useHighlight } from '~/src/viz/hooks/useHighlight';
 import { useTooltip } from '~/src/viz/hooks/useTooltip';
 import { BarChart } from '~/src/components/viz/BarChart';
 
 const meta: Meta<typeof BarChart> = {
-  title: 'Visualization/Standard/BarChart',
+  title: 'Visualization/BarChart',
   component: BarChart,
   parameters: {
     layout: 'fullscreen',
@@ -18,7 +20,7 @@ export default meta;
 type Story = StoryObj<typeof BarChart>;
 
 const simpleSpec: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/v1',
   id: 'stories:viz:bar:simple',
   name: 'Monthly Recurring Revenue by Region',
   data: {
@@ -73,7 +75,7 @@ const interactiveBaseSpec: NormalizedVizSpec = {
 };
 
 const groupedSpec: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/v1',
   id: 'stories:viz:bar:grouped',
   name: 'Pipeline Coverage by Segment',
   data: {
@@ -149,7 +151,7 @@ const groupedSpec: NormalizedVizSpec = {
 };
 
 const stackedSpec: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/v1',
   id: 'stories:viz:bar:stacked',
   name: 'Support Hours by Category',
   data: {
@@ -231,7 +233,7 @@ const stackedSpec: NormalizedVizSpec = {
 };
 
 const temporalSpec: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/v1',
   id: 'stories:viz:bar:temporal',
   name: 'Weekly Deployments',
   data: {
@@ -320,7 +322,7 @@ const temporalSpec: NormalizedVizSpec = {
 };
 
 const sortedSpec: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/v1',
   id: 'stories:viz:bar:sorted',
   name: 'Top Performing Reps',
   data: {

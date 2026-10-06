@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/fidelity.preview.output.json",
+  "title": "Fidelity preview output",
+  "description": "Rendered HTML for a non-production fidelity emitter, plus warnings, errors, and metadata.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "status",
+    "fidelityKind",
+    "fixture",
+    "html",
+    "warnings",
+    "errors",
+    "meta"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "ok",
+        "warning",
+        "error"
+      ],
+      "description": "ok = clean run; warning = non-fatal issues but html is valid; error = errors[] populated and html may be empty/partial."
+    },
+    "fidelityKind": {
+      "type": "string",
+      "enum": [
+        "boxes-arrows",
+        "wireframe",
+        "review",
+        "branded-mockup"
+      ]
+    },
+    "fixture": {
+      "type": "string",
+      "minLength": 1
+    },
+    "html": {
+      "type": "string",
+      "description": "Complete HTML output ready to insert into a preview surface (may include a <style> block when includeStyles is true)."
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "entity": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "entity": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entityCount"
+      ],
+      "properties": {
+        "entityCount": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Manifest entity count, diagram object count or composition screen count."
+        },
+        "appliedBrandOverlay": {
+          "type": "string",
+          "description": "Applied brand for object relationship diagrams or branded mockups."
+        },
+        "edgeCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "theme": {
+          "type": "string"
+        },
+        "width": {
+          "type": "number",
+          "minimum": 0
+        },
+        "height": {
+          "type": "number",
+          "minimum": 0
+        },
+        "componentCount": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "svg": {
+      "type": "string",
+      "description": "Accessible standalone SVG for object relationships or component containment."
+    }
+  }
+}

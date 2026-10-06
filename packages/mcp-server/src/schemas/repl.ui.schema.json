@@ -1,0 +1,1216 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/repl.ui.schema.json",
+  "title": "Agentic REPL UI Schema",
+  "type": "object",
+  "required": [
+    "version",
+    "screens"
+  ],
+  "properties": {
+    "workflow": {
+      "$ref": "#/$defs/workflow"
+    },
+    "$schema": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "dsVersion": {
+      "type": "string"
+    },
+    "theme": {
+      "type": "string"
+    },
+    "screens": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/uiElement"
+      }
+    },
+    "tokenOverrides": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Object-level semantic token overrides. Keys are token paths (e.g., 'billing.subscription.status.active'), values are CSS variable references (e.g., 'var(--semantic-success)')."
+    },
+    "objectSchema": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/fieldSchemaEntry"
+      },
+      "description": "Object field schema for codegen. Maps field names to type metadata from composed object traits."
+    },
+    "seed": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "description": "Sample-data seed recorded by design.compose (preferences.seed): rotates the deterministic sample records generated for previews and workflow apps. Absent: the authored order."
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "chartDeclaration": {
+      "title": "ChartDeclaration",
+      "description": "Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Edge-array charts bind a declared neighborhood array: sorted distinct node ids, row-ordered directed links, optional bidirectional reverse links deduplicated by ordered pair, without numeric values or groups. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.",
+      "oneOf": [
+        {
+          "description": "Read-only payment chart rendered by public viz.render during code generation. A bar chart draws one bar per recorded payment on an axis of payment dates; an area chart draws the payments as one series over time. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "chartType",
+            "source",
+            "dateFields",
+            "amountField",
+            "minorUnits",
+            "currencyField"
+          ],
+          "properties": {
+            "chartType": {
+              "enum": [
+                "bar",
+                "area"
+              ]
+            },
+            "source": {
+              "const": "payment-events"
+            },
+            "dateFields": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniqueItems": true
+            },
+            "amountField": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minorUnits": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "currencyField": {
+              "type": "string",
+              "minLength": 1
+            },
+            "brand": {
+              "type": "string",
+              "format": "oods-brand"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "chartType",
+            "source",
+            "dataField",
+            "encodings",
+            "sampleRows"
+          ],
+          "properties": {
+            "chartType": {
+              "enum": [
+                "bar",
+                "line",
+                "area",
+                "scatter",
+                "heatmap"
+              ]
+            },
+            "source": {
+              "const": "record-array"
+            },
+            "dataField": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Declared objectSchema array field containing the chart rows."
+            },
+            "encodings": {
+              "type": "object",
+              "description": "Channel -> field bindings. Required, with at least x and y, when chartType is supplied (explicit mode).",
+              "properties": {
+                "x": {
+                  "$ref": "#/$defs/chartEncodingBinding"
+                },
+                "y": {
+                  "$ref": "#/$defs/chartEncodingBinding"
+                },
+                "color": {
+                  "$ref": "#/$defs/chartColorEncodingBinding"
+                },
+                "size": {
+                  "$ref": "#/$defs/chartEncodingBinding"
+                },
+                "shape": {
+                  "$ref": "#/$defs/chartEncodingBinding"
+                },
+                "detail": {
+                  "$ref": "#/$defs/chartEncodingBinding"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "x",
+                "y"
+              ]
+            },
+            "sampleRows": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "minProperties": 1,
+                "additionalProperties": true
+              },
+              "description": "Authored sample rows, including explicitly labelled synthetic examples, copied into the declared array field of generated sample records. These exact records supply public viz.render; no separate synthetic chart series is invented."
+            },
+            "minorUnits": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "Money (s223-m01), declared with currencyField: the y encoding's field holds amounts in minor units. Generation divides each row's value by minorUnits, as the payment-events source does, and formats the y axis in the record's currency (\"$,f\": $12,000 for USD, £12,000 for GBP)."
+            },
+            "currencyField": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Money (s223-m01), declared with minorUnits: the charted record's field holding its ISO 4217 currency code (Invoice's currency). Its symbol prints on the y axis and the code in the chart's accessible description."
+            },
+            "brand": {
+              "type": "string",
+              "format": "oods-brand"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "chartType",
+            "source",
+            "dataField",
+            "edges",
+            "sampleRows"
+          ],
+          "properties": {
+            "chartType": {
+              "const": "force_graph"
+            },
+            "source": {
+              "const": "edge-array"
+            },
+            "dataField": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Declared objectSchema neighborhood array containing edge records."
+            },
+            "edges": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "source",
+                "target"
+              ],
+              "properties": {
+                "source": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "target": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "bidirectionalField": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "When declared, every row must contain this boolean; true also emits the reverse directed link."
+                }
+              }
+            },
+            "sampleRows": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "minProperties": 1,
+                "additionalProperties": true
+              },
+              "description": "Authored, explicitly labelled synthetic neighborhood examples copied to the declared object field."
+            },
+            "brand": {
+              "type": "string",
+              "format": "oods-brand"
+            }
+          }
+        }
+      ]
+    },
+    "workflow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "object",
+        "screens",
+        "transitions",
+        "states",
+        "data"
+      ],
+      "properties": {
+        "object": {
+          "type": "string",
+          "minLength": 1
+        },
+        "screens": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "context",
+              "route"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "context": {
+                "type": "string",
+                "enum": [
+                  "list",
+                  "detail",
+                  "form",
+                  "timeline"
+                ]
+              },
+              "route": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "transitions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "action",
+              "from",
+              "to",
+              "effect"
+            ],
+            "properties": {
+              "action": {
+                "type": "string",
+                "minLength": 1
+              },
+              "from": {
+                "type": "string",
+                "enum": [
+                  "list",
+                  "detail",
+                  "form",
+                  "timeline"
+                ]
+              },
+              "to": {
+                "type": "string",
+                "enum": [
+                  "list",
+                  "detail",
+                  "form",
+                  "timeline"
+                ]
+              },
+              "effect": {
+                "type": "string",
+                "enum": [
+                  "navigate",
+                  "save",
+                  "pending_cancellation",
+                  "archive"
+                ]
+              }
+            }
+          }
+        },
+        "states": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "loading",
+              "empty",
+              "error",
+              "success"
+            ]
+          }
+        },
+        "data": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "idField",
+            "traits",
+            "sampleCount",
+            "lifecycleStates",
+            "billingIntervals",
+            "currency",
+            "minorUnits"
+          ],
+          "properties": {
+            "addressRoles": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "defaultAddressRole": {
+              "type": "string"
+            },
+            "recordedEvents": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "cancellationRequiresReason": {
+              "type": "boolean"
+            },
+            "cancellationReasonCodes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "idField": {
+              "type": "string",
+              "minLength": 1
+            },
+            "traits": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "sampleCount": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            },
+            "lifecycleStates": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "billingIntervals": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "currency": {
+              "type": "string",
+              "minLength": 1
+            },
+            "minorUnits": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        }
+      }
+    },
+    "fieldSchemaEntry": {
+      "type": "object",
+      "required": [
+        "type",
+        "required"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Field data type (string, integer, number, boolean, datetime, email, etc.)."
+        },
+        "required": {
+          "type": "boolean",
+          "description": "Whether the field is required."
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable field description."
+        },
+        "enum": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Allowed values for enum-constrained fields."
+        },
+        "displayLabelField": {
+          "type": "string",
+          "description": "Explicit related-name field in this record. Display-only; requires the reference value and never replaces its identifier."
+        },
+        "displayFallbackField": {
+          "type": "string",
+          "description": "Authored field to display when this string label is absent or blank. Display-only, one level; never changes the stored value or form input."
+        },
+        "unavailable": {
+          "type": "boolean",
+          "description": "The object's data contract never supplies this field (for example, its API does not expose it yet). It keeps its place in the record's shape; no view places it and sample records leave it absent."
+        },
+        "money": {
+          "type": "object",
+          "description": "Declared by the field's semantics (ui_hints.component: CurrencyAmount): the value is an amount of money, in the currency the record's currencyField holds. minorUnits is present only when the amount is stored in minor units (100 means cents); without it the amount is in major units. A field's name never makes it money or minor units.",
+          "properties": {
+            "currencyField": {
+              "type": "string",
+              "description": "The record field holding the ISO 4217 currency code."
+            },
+            "minorUnits": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Stored units per major unit (100 means the value is in cents)."
+            }
+          },
+          "additionalProperties": false
+        },
+        "format": {
+          "enum": [
+            "percent",
+            "quantity"
+          ],
+          "description": "Declared by the field's semantics (ui_hints.format): how a number reads. percent holds percent units and reads with its sign (12.5 reads 12.5%); quantity reads grouped (86420 reads 86,420). A field without it prints its number as stored."
+        },
+        "semanticType": {
+          "type": "string",
+          "description": "Semantic type from the object's semantic mapping (e.g., 'billing.subscription.status')."
+        },
+        "default": {
+          "description": "Declared field default, with trait parameter defaults resolved during composition.",
+          "tsType": "unknown"
+        },
+        "examples": {
+          "type": "array",
+          "items": {
+            "tsType": "unknown"
+          },
+          "description": "Authored example values for deterministic previews; does not change the production default."
+        }
+      },
+      "additionalProperties": false
+    },
+    "layout": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "stack",
+            "grid",
+            "inline",
+            "section",
+            "sidebar"
+          ]
+        },
+        "align": {
+          "type": "string",
+          "enum": [
+            "start",
+            "center",
+            "end",
+            "space-between"
+          ]
+        },
+        "gapToken": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "style": {
+      "type": "object",
+      "properties": {
+        "spacingToken": {
+          "type": "string"
+        },
+        "radiusToken": {
+          "type": "string"
+        },
+        "shadowToken": {
+          "type": "string"
+        },
+        "colorToken": {
+          "type": "string"
+        },
+        "typographyToken": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "meta": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "intent": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "confidenceLevel": {
+          "type": "string",
+          "enum": [
+            "high",
+            "medium",
+            "low"
+          ]
+        },
+        "unresolvedEntity": {
+          "type": "string",
+          "description": "Raw Stage1 `entity-<slug>` id retained on a composed node when the OODS entity resolver could not map it to an indexed object. Consumers surface this so authors can fill the alias table incrementally."
+        },
+        "headingExcerpt": {
+          "type": "boolean",
+          "description": "Set on a slot-bound Text that stands in as a heading for a record whose object carries no title field, so the generated artifact shows the field's FIRST LINE rather than the whole value. A CMOS Decision is the case this exists for: its only content is decision_text, up to 8,418 characters, and a card header that printed all of it — or printed a stored timestamp instead, which is what it did — says nothing about the record. Scoped to the heading on purpose: the same field must still render IN FULL on a detail, which previous verification certified at 390 in both frameworks."
+        },
+        "substitution": {
+          "type": "object",
+          "required": [
+            "mappingId",
+            "substitution"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "mappingId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "substitution": {
+              "type": "object",
+              "required": [
+                "component"
+              ],
+              "additionalProperties": false,
+              "anyOf": [
+                {
+                  "required": [
+                    "react"
+                  ]
+                },
+                {
+                  "required": [
+                    "vue"
+                  ]
+                }
+              ],
+              "properties": {
+                "component": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "The shipped OODS Foundry component id being replaced."
+                },
+                "react": {
+                  "type": "object",
+                  "required": [
+                    "export"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "localPath": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "Absolute built package directory used by preview; omitted from consumer source imports."
+                    },
+                    "package": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "export": {
+                      "type": "string",
+                      "pattern": "^[A-Za-z_$][\\w$]*$"
+                    },
+                    "passthrough": {
+                      "type": "boolean",
+                      "default": true,
+                      "description": "Unlisted OODS Foundry props keep their names. False drops unlisted optional props; required props must be translated."
+                    },
+                    "props": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "name"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                          "name": {
+                            "type": "string",
+                            "pattern": "^[A-Za-z_$][\\w$]*$"
+                          },
+                          "values": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": [
+                                "string",
+                                "number",
+                                "boolean",
+                                "null"
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "description": "OODS Foundry prop to team prop, with optional scalar value map; values not in the map are preserved. Children, slots and event bindings keep their framework conventions."
+                    },
+                    "version": {
+                      "type": "string",
+                      "pattern": "^(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$",
+                      "description": "Exact team package version; code generation needs this or an installed package manifest."
+                    },
+                    "shadcn": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "project",
+                        "module"
+                      ],
+                      "properties": {
+                        "project": {
+                          "type": "string",
+                          "pattern": "^/[\\s\\S]*$",
+                          "description": "Absolute React shadcn project directory containing components.json and installed Tailwind 4."
+                        },
+                        "module": {
+                          "type": "string",
+                          "minLength": 1,
+                          "description": "Project import beginning with a components.json alias and resolved by TypeScript paths; React only."
+                        }
+                      }
+                    }
+                  },
+                  "oneOf": [
+                    {
+                      "required": [
+                        "package"
+                      ],
+                      "not": {
+                        "required": [
+                          "shadcn"
+                        ]
+                      }
+                    },
+                    {
+                      "required": [
+                        "shadcn"
+                      ],
+                      "not": {
+                        "anyOf": [
+                          {
+                            "required": [
+                              "package"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "version"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "localPath"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "vue": {
+                  "type": "object",
+                  "required": [
+                    "export"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "localPath": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "Absolute built package directory used by preview; omitted from consumer source imports."
+                    },
+                    "package": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "export": {
+                      "type": "string",
+                      "pattern": "^[A-Za-z_$][\\w$]*$"
+                    },
+                    "passthrough": {
+                      "type": "boolean",
+                      "default": true,
+                      "description": "Unlisted OODS Foundry props keep their names. False drops unlisted optional props; required props must be translated."
+                    },
+                    "props": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "name"
+                        ],
+                        "additionalProperties": false,
+                        "properties": {
+                          "name": {
+                            "type": "string",
+                            "pattern": "^[A-Za-z_$][\\w$]*$"
+                          },
+                          "values": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": [
+                                "string",
+                                "number",
+                                "boolean",
+                                "null"
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "description": "OODS Foundry prop to team prop, with optional scalar value map; values not in the map are preserved. Children, slots and event bindings keep their framework conventions."
+                    },
+                    "version": {
+                      "type": "string",
+                      "pattern": "^(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$",
+                      "description": "Exact team package version; code generation needs this or an installed package manifest."
+                    },
+                    "shadcn": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "project",
+                        "module"
+                      ],
+                      "properties": {
+                        "project": {
+                          "type": "string",
+                          "pattern": "^/[\\s\\S]*$",
+                          "description": "Absolute React shadcn project directory containing components.json and installed Tailwind 4."
+                        },
+                        "module": {
+                          "type": "string",
+                          "minLength": 1,
+                          "description": "Project import beginning with a components.json alias and resolved by TypeScript paths; React only."
+                        }
+                      }
+                    }
+                  },
+                  "oneOf": [
+                    {
+                      "required": [
+                        "package"
+                      ],
+                      "not": {
+                        "required": [
+                          "shadcn"
+                        ]
+                      }
+                    },
+                    {
+                      "required": [
+                        "shadcn"
+                      ],
+                      "not": {
+                        "anyOf": [
+                          {
+                            "required": [
+                              "package"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "version"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "localPath"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              "description": "Version 2 component substitution: a OODS Foundry id, React and/or Vue package exports, and OODS Foundry-to-team prop translations. Legacy trait-only mappings remain valid."
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "bindings": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "props": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "uiElement": {
+      "type": "object",
+      "required": [
+        "id",
+        "component"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "component": {
+          "type": "string",
+          "minLength": 1
+        },
+        "state": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Workflow-state branch name. Canonical names are checked semantically so draft generation can preserve an unknown name as a warning."
+        },
+        "route": {
+          "type": "string"
+        },
+        "layout": {
+          "$ref": "#/$defs/layout"
+        },
+        "style": {
+          "$ref": "#/$defs/style"
+        },
+        "props": {
+          "$ref": "#/$defs/props"
+        },
+        "chart": {
+          "$ref": "#/$defs/chartDeclaration"
+        },
+        "bindings": {
+          "$ref": "#/$defs/bindings"
+        },
+        "collection": {
+          "type": "object",
+          "required": [
+            "source",
+            "keyField",
+            "labelField"
+          ],
+          "properties": {
+            "source": {
+              "enum": [
+                "rows",
+                "events"
+              ]
+            },
+            "keyField": {
+              "type": "string",
+              "minLength": 1
+            },
+            "labelField": {
+              "type": "string",
+              "minLength": 1
+            },
+            "historyField": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "collectionControl": {
+          "enum": [
+            "search",
+            "filter",
+            "sort",
+            "page",
+            "archive",
+            "open",
+            "event",
+            "payment-event",
+            "empty"
+          ]
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/uiElement"
+          }
+        },
+        "meta": {
+          "$ref": "#/$defs/meta"
+        }
+      },
+      "additionalProperties": false
+    },
+    "chartEncodingBinding": {
+      "title": "ChartEncodingBinding",
+      "description": "An encoding binding: either a bare field-name string, or an object with the field plus optional aggregate/scale/timeUnit/sort/title.",
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "object",
+          "required": [
+            "field"
+          ],
+          "properties": {
+            "field": {
+              "type": "string",
+              "minLength": 1
+            },
+            "aggregate": {
+              "type": "string",
+              "enum": [
+                "sum",
+                "count",
+                "average",
+                "median",
+                "min",
+                "max",
+                "distinct"
+              ]
+            },
+            "scale": {
+              "type": "string",
+              "enum": [
+                "linear",
+                "temporal",
+                "log",
+                "sqrt",
+                "band",
+                "point",
+                "diverging"
+              ]
+            },
+            "type": {
+              "type": "string",
+              "description": "Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference. Overrides the inferred field type.",
+              "enum": [
+                "quantitative",
+                "temporal",
+                "ordinal",
+                "nominal"
+              ]
+            },
+            "timeUnit": {
+              "type": "string",
+              "enum": [
+                "year",
+                "quarter",
+                "month",
+                "week",
+                "day",
+                "hour",
+                "minute",
+                "second"
+              ]
+            },
+            "sort": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "none",
+                    "ascending",
+                    "descending"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "field",
+                    "order"
+                  ],
+                  "properties": {
+                    "field": {
+                      "type": "string"
+                    },
+                    "order": {
+                      "type": "string",
+                      "enum": [
+                        "ascending",
+                        "descending"
+                      ]
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "title": {
+              "type": "string"
+            },
+            "format": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64,
+              "description": "Label format of this channel's axis (x, y) or legend: a d3-format specifier such as \"$,f\" or \",.0f\" (d3-time-format for a temporal field). \"$\" prints the currency symbol: the currency's, else $. Without a precision, labels take the precision of the tick step, so neighbouring ticks never print the same text. Carried in the normalized spec, so artifact.certify replays it."
+            },
+            "currency": {
+              "type": "string",
+              "pattern": "^[A-Za-z]{3}$",
+              "description": "ISO 4217 code of the amounts this channel encodes, for example EUR. The labels print its en-US symbol where the format has \"$\" (EUR €, GBP £); without a format they read \"$,f\" ($12,000). One currency per chart. A record-array declaration's money (minorUnits and currencyField) sets it from each record."
+            },
+            "titleField": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Declared charts only: a field of the charted record whose text titles this axis, so each record's chart names its own unit (Usage's y axis reads the record's unit_label, \"API calls\"). Generation resolves it into title before viz.render; a record without that text takes title, and a chart with neither fails."
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "chartColorEncodingBinding": {
+      "title": "ChartColorEncodingBinding",
+      "description": "A color-channel encoding binding: like encodingBinding, plus an optional explicit `range` (hex colors) that overrides the baked OODS categorical palette on a nominal/ordinal color scale. `range` is only valid on the color channel.",
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "object",
+          "required": [
+            "field"
+          ],
+          "properties": {
+            "field": {
+              "type": "string",
+              "minLength": 1
+            },
+            "aggregate": {
+              "type": "string",
+              "enum": [
+                "sum",
+                "count",
+                "average",
+                "median",
+                "min",
+                "max",
+                "distinct"
+              ]
+            },
+            "scale": {
+              "type": "string",
+              "enum": [
+                "linear",
+                "temporal",
+                "log",
+                "sqrt",
+                "band",
+                "point",
+                "diverging"
+              ]
+            },
+            "type": {
+              "type": "string",
+              "description": "Force the Vega-Lite/ECharts field type, overriding the engine's data-aware inference. Overrides the inferred field type.",
+              "enum": [
+                "quantitative",
+                "temporal",
+                "ordinal",
+                "nominal"
+              ]
+            },
+            "timeUnit": {
+              "type": "string",
+              "enum": [
+                "year",
+                "quarter",
+                "month",
+                "week",
+                "day",
+                "hour",
+                "minute",
+                "second"
+              ]
+            },
+            "sort": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "none",
+                    "ascending",
+                    "descending"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "required": [
+                    "field",
+                    "order"
+                  ],
+                  "properties": {
+                    "field": {
+                      "type": "string"
+                    },
+                    "order": {
+                      "type": "string",
+                      "enum": [
+                        "ascending",
+                        "descending"
+                      ]
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ]
+            },
+            "title": {
+              "type": "string"
+            },
+            "range": {
+              "type": "array",
+              "description": "Explicit hex colors for a nominal/ordinal color scale. Overrides the baked OODS categorical palette so an agent can supply its own scale (e.g. a 2-color presence scale). Applied in array order to the distinct series; a shorter range recycles (Vega domain[i]->range[i] mod len). Cartesian color only.",
+              "items": {
+                "type": "string",
+                "pattern": "^#(?:[0-9a-fA-F]{3}){1,2}$"
+              },
+              "minItems": 2
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    }
+  }
+}

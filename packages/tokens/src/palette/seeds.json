@@ -1,0 +1,71 @@
+{
+  "version": 2,
+  "brands": {
+    "A": {
+      "neutralHue": 286,
+      "neutralChroma": 0,
+      "accentHue": 267,
+      "primary": "neutral",
+      "radius": 6,
+      "font": "Geist",
+      "fontMono": "Geist Mono"
+    },
+    "B": {
+      "neutralHue": 286,
+      "neutralChroma": 0,
+      "accentHue": 288,
+      "primary": "accent",
+      "radius": 8,
+      "font": "DM Sans",
+      "fontMono": "Geist Mono"
+    }
+  },
+  "presets": {
+    "corporate-blue": {
+      "description": "Corporate Blue preset \u2014 professional, trust-forward palette with a deep blue primary and cool neutral greys. Suitable for B2B dashboards, enterprise tools, and financial interfaces.",
+      "mode": "light",
+      "themes": {
+        "base": "base"
+      },
+      "recipe": {
+        "neutralHue": 250,
+        "neutralChroma": 0.012,
+        "accentHue": 251.8,
+        "primary": "accent",
+        "radius": 6,
+        "font": "Geist"
+      }
+    },
+    "dark-minimal": {
+      "description": "Dark Minimal preset \u2014 sleek dark-mode palette with a green accent and low-chroma slate neutrals. Suitable for developer tools, code editors, terminal UIs, and monitoring dashboards.",
+      "mode": "dark",
+      "themes": {
+        "base": "dark",
+        "dark": "dark"
+      },
+      "recipe": {
+        "neutralHue": 260,
+        "neutralChroma": 0.008,
+        "accentHue": 157.7,
+        "primary": "accent",
+        "radius": 4,
+        "font": "Geist"
+      }
+    },
+    "startup-warm": {
+      "description": "Startup Warm preset \u2014 friendly, approachable palette with a coral primary and warm neutrals. Suitable for consumer apps, onboarding flows, and creative tools.",
+      "mode": "light",
+      "themes": {
+        "base": "base"
+      },
+      "recipe": {
+        "neutralHue": 60,
+        "neutralChroma": 0.012,
+        "accentHue": 33.3,
+        "primary": "accent",
+        "radius": 10,
+        "font": "DM Sans"
+      }
+    }
+  }
+}

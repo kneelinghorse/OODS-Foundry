@@ -4,14 +4,14 @@ import { statSync } from 'node:fs';
 import path from 'node:path';
 
 import TimeService from '@/services/time/index.js';
-import { bindEChartsInteractions } from '@/viz/adapters/echarts-interactions.js';
-import type { EChartsRuntime } from '@/viz/adapters/echarts-interactions.js';
-import type { VizRendererId } from '@/viz/adapters/renderer-selector.js';
-import { toEChartsOption } from '@/viz/adapters/echarts-adapter.js';
-import type { EChartsOption } from '@/viz/adapters/echarts-adapter.js';
-import { toVegaLiteSpec } from '@/viz/adapters/vega-lite-adapter.js';
-import type { VegaLiteAdapterSpec } from '@/viz/adapters/vega-lite-adapter.js';
-import type { NormalizedVizSpec } from '@/viz/spec/normalized-viz-spec.js';
+import { bindEChartsInteractions } from '@oods/viz-core';
+import type { EChartsRuntime } from '@oods/viz-core';
+import type { VizRendererId } from '@oods/viz-core';
+import { toEChartsOption } from '@oods/viz-core';
+import type { EChartsOption } from '@oods/viz-core';
+import { toVegaLiteSpec } from '@oods/viz-core';
+import type { VegaLiteAdapterSpec } from '@oods/viz-core';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 
 import barExample from '../../../examples/viz/bar-chart.spec.json' assert { type: 'json' };
 import lineExample from '../../../examples/viz/line-chart.spec.json' assert { type: 'json' };
@@ -29,7 +29,7 @@ type MetricKind = 'render' | 'update' | 'interaction';
 export interface VizBenchmarkScenario {
   readonly id: string;
   readonly chartType: VizBenchmarkChartType;
-  readonly renderer: BenchmarkRenderer;
+  readonly renderer: VizRendererId;
   readonly dataPoints: number;
 }
 
@@ -64,10 +64,8 @@ export interface VizRendererRecommendation {
   };
 }
 
-type BenchmarkRenderer = Exclude<VizRendererId, 'vega'>;
-
 const DEFAULT_DATA_POINTS: readonly number[] = [10, 100, 1000, 10000] as const;
-const RENDERERS: readonly BenchmarkRenderer[] = ['vega-lite', 'echarts'];
+const RENDERERS: readonly VizRendererId[] = ['vega-lite', 'echarts'];
 const DETERMINISTIC_MODE = process.env.VIZ_BENCHMARK_MODE === 'deterministic';
 
 const BAR_BASE_SPEC = barExample as unknown as NormalizedVizSpec;
@@ -76,7 +74,7 @@ const SCATTER_BASE_SPEC = scatterExample as unknown as NormalizedVizSpec;
 const AREA_BASE_SPEC = areaExample as unknown as NormalizedVizSpec;
 const HEATMAP_BASE_SPEC = heatmapExample as unknown as NormalizedVizSpec;
 const FACET_SCATTER_BASE_SPEC: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/v1',
   id: 'benchmark:layout:facet-scatter',
   name: 'Facet scatter with linked brush',
   data: { values: [] },
@@ -139,7 +137,7 @@ const FACET_SCATTER_BASE_SPEC: NormalizedVizSpec = {
   },
 };
 const LAYERED_TARGET_BASE_SPEC: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/v1',
   id: 'benchmark:layout:layered-target',
   name: 'Layered actual vs target band',
   data: { values: [] },
@@ -196,7 +194,7 @@ const LAYERED_TARGET_BASE_SPEC: NormalizedVizSpec = {
   },
 };
 const CONCAT_DETAIL_BASE_SPEC: NormalizedVizSpec = {
-  $schema: 'https://oods.dev/viz-spec/v1',
+  $schema: 'https://oods-foundry.com/viz-spec/v1',
   id: 'benchmark:layout:concat-detail',
   name: 'Detail-overview bookings',
   data: { values: [] },
@@ -387,7 +385,7 @@ function runScenario(scenario: VizBenchmarkScenario, seed: number): VizBenchmark
 function buildSpec(
   chartType: VizBenchmarkChartType,
   dataPoints: number,
-  renderer: BenchmarkRenderer,
+  renderer: VizRendererId,
   seed: number
 ): NormalizedVizSpec {
   const blueprint = CHART_BLUEPRINTS[chartType];
@@ -413,7 +411,7 @@ function buildSpec(
 
 function measureRender(
   spec: NormalizedVizSpec,
-  renderer: BenchmarkRenderer
+  renderer: VizRendererId
 ): { renderTimeMs: number; product: VegaLiteAdapterSpec | EChartsOption } {
   let product: VegaLiteAdapterSpec | EChartsOption =
     renderer === 'vega-lite' ? toVegaLiteSpec(spec) : toEChartsOption(spec);
@@ -442,7 +440,7 @@ function measureRender(
   };
 }
 
-function measureUpdate(spec: NormalizedVizSpec, renderer: BenchmarkRenderer): number {
+function measureUpdate(spec: NormalizedVizSpec, renderer: VizRendererId): number {
   if (DETERMINISTIC_MODE) {
     return simulateMetric('update', spec, renderer);
   }
@@ -465,7 +463,7 @@ function measureUpdate(spec: NormalizedVizSpec, renderer: BenchmarkRenderer): nu
   return Math.min(...samples);
 }
 
-function measureInteractions(spec: NormalizedVizSpec, renderer: BenchmarkRenderer): number {
+function measureInteractions(spec: NormalizedVizSpec, renderer: VizRendererId): number {
   if (!spec.interactions || spec.interactions.length === 0) {
     return 0;
   }
@@ -504,7 +502,7 @@ function measureMemory(product: VegaLiteAdapterSpec | EChartsOption): number {
   return Buffer.byteLength(serialized, 'utf8');
 }
 
-function resolveBundleFootprint(renderer: BenchmarkRenderer): number {
+function resolveBundleFootprint(renderer: VizRendererId): number {
   const cached = bundleFootprintCache.get(renderer);
   if (typeof cached === 'number') {
     return cached;

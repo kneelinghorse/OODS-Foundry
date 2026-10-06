@@ -24,6 +24,23 @@ traits:
         - reset
       timezone: UTC
       allowNullUpdatedAt: true
+  # s223-m01 (#2527 ruling 5): the chart is the record's own readings, its y axis titled with the record's unit label.
+  - name: viz/MarkLine
+    parameters:
+      title: Usage readings
+      description: Readings recorded for this meter, by the time each was taken.
+      chart:
+        chartType: line
+        source: record-array
+        dataField: samples
+        encodings:
+          x: {field: timestamp, scale: temporal, title: Recorded at}
+          y: {field: value, titleField: unit_label}
+        # Synthetic examples from domains/saas-billing/examples/usage-api-calls.json.
+        sampleRows:
+          - {timestamp: "2025-06-15T00:00:00Z", value: 1200}
+          - {timestamp: "2025-06-20T00:00:00Z", value: 1800}
+          - {timestamp: "2025-06-25T00:00:00Z", value: 1500}
 
 schema:
   usage_id:
@@ -34,6 +51,10 @@ schema:
     type: string
     required: true
     description: Subscription the usage belongs to.
+  customer_name:
+    type: string
+    required: false
+    description: Customer account the usage is billed to.
   meter_id:
     type: string
     required: true
@@ -56,6 +77,10 @@ schema:
     type: number
     required: false
     description: Percent delta compared to previous window.
+  currency:
+    type: string
+    required: false
+    description: ISO 4217 currency the usage is billed in, the subscription's currency.
   variance_minor:
     type: integer
     required: false
@@ -71,12 +96,20 @@ schema:
     default: []
 
 semantics:
+  # The meter names the record (SaaSBillingMetered's meter_name, marked as the label), ahead of the customer it bills.
+  meter_name:
+    semantic_type: text.label
+    token_mapping: tokenMap(billing.usage.meter_name)
   usage_id:
     semantic_type: billing.usage.id
     token_mapping: tokenMap(billing.usage.id)
   subscription_id:
     semantic_type: billing.usage.subscription_id
     token_mapping: tokenMap(billing.usage.subscription_id)
+  # The one-line summary under the meter's name in lists: whose usage it is.
+  customer_name:
+    semantic_type: text.summary
+    token_mapping: tokenMap(billing.usage.customer_name)
   meter_id:
     semantic_type: billing.usage.meter_id
     token_mapping: tokenMap(billing.usage.meter_id)
@@ -89,9 +122,19 @@ semantics:
   trend_percent:
     semantic_type: billing.usage.trend_percent
     token_mapping: tokenMap(billing.usage.trend_percent)
+    # s223-m01 (#2527 ruling 4): a percent reads with its sign (12.5%).
+    ui_hints:
+      format: percent
+  currency:
+    semantic_type: billing.usage.currency
+    token_mapping: tokenMap(billing.usage.currency)
   variance_minor:
     semantic_type: billing.usage.variance_minor
     token_mapping: tokenMap(billing.usage.variance_minor)
+    ui_hints:
+      component: CurrencyAmount
+      currencyField: currency
+      minorUnits: 100
   last_reported_at:
     semantic_type: billing.usage.last_reported_at
     token_mapping: tokenMap(billing.usage.last_reported_at)
@@ -111,4 +154,241 @@ metadata:
     - product-ops@oods.systems
   maturity: beta
   references:
-    - cmos/missions/research/R13.5_Canonical-Model-Subscription-and-Invoice.md
+    - R13.5 Canonical Model: Subscription and Invoice
+
+# Authored type associations; no record join or referential-integrity claim.
+relationships:
+  - target: Subscription
+    via: subscription_id
+    cardinality: many-to-one
+    label: Subscription
+
+# Eight authored sample meter readings for the sample subscriptions, in API calls. Each reading's samples sum to its
+# consumed quantity, the period is the subscription's billing period, and the last event is the latest recorded one.
+# s223-m01 (#2527 ruling 4): each reading is billed in its subscription's currency, at an authored overage rate per unit.
+# Its variance is the overage so far ((consumed - included) x rate, zero while within the included quantity), and its
+# projected overage extends the period's pace to its end; only Kestrel's print jobs is over, and Lindqvist's catalog is
+# on pace to pass its 10,000.
+samples:
+  - usage_id: use_northwind_orders_2026_09
+    subscription_id: sub_northwind_business
+    customer_name: Northwind Traders
+    meter_id: mtr_orders_api
+    meter_name: Orders API
+    provider: Stripe
+    status: ok
+    trend_percent: 12.5
+    included_quantity: 100000
+    consumed_quantity: 86420
+    currency: USD
+    overage_rate_minor: 1
+    variance_minor: 0
+    projected_overage_minor: 0
+    unit_label: API calls
+    period_start: '2026-09-01'
+    period_end: '2026-09-30'
+    last_reported_at: '2026-09-29T23:00:00Z'
+    samples:
+      - { timestamp: '2026-09-07T00:00:00Z', value: 18200 }
+      - { timestamp: '2026-09-14T00:00:00Z', value: 21900 }
+      - { timestamp: '2026-09-21T00:00:00Z', value: 23400 }
+      - { timestamp: '2026-09-28T00:00:00Z', value: 22920 }
+    anomalies: []
+    created_at: '2026-09-01T00:00:00Z'
+    updated_at: '2026-09-29T23:00:00Z'
+    last_event: reading_captured
+    last_event_at: '2026-09-29T23:00:00Z'
+  - usage_id: use_northwind_dashboards_2026_08
+    subscription_id: sub_northwind_analytics
+    customer_name: Northwind Traders
+    meter_id: mtr_dashboard_queries
+    meter_name: Dashboard queries
+    provider: Stripe
+    status: ok
+    trend_percent: -41
+    included_quantity: 50000
+    consumed_quantity: 12480
+    currency: USD
+    overage_rate_minor: 2
+    variance_minor: 0
+    projected_overage_minor: 0
+    unit_label: API calls
+    period_start: '2026-08-01'
+    period_end: '2026-08-31'
+    last_reported_at: '2026-08-20T14:00:00Z'
+    samples:
+      - { timestamp: '2026-08-03T00:00:00Z', value: 4210 }
+      - { timestamp: '2026-08-10T00:00:00Z', value: 4380 }
+      - { timestamp: '2026-08-17T00:00:00Z', value: 3890 }
+    anomalies: []
+    created_at: '2026-08-01T00:00:00Z'
+    updated_at: '2026-08-20T14:00:00Z'
+    last_event: reading_captured
+    last_event_at: '2026-08-20T14:00:00Z'
+  - usage_id: use_lindqvist_catalog_2026_09
+    subscription_id: sub_lindqvist_starter
+    customer_name: Lindqvist Bakery
+    meter_id: mtr_catalog_api
+    meter_name: Catalog API
+    provider: Stripe
+    status: ok
+    trend_percent: 38.2
+    included_quantity: 10000
+    consumed_quantity: 9860
+    currency: EUR
+    overage_rate_minor: 1
+    variance_minor: 0
+    projected_overage_minor: 9700
+    unit_label: API calls
+    period_start: '2026-09-15'
+    period_end: '2026-10-14'
+    last_reported_at: '2026-09-29T20:00:00Z'
+    samples:
+      - { timestamp: '2026-09-17T00:00:00Z', value: 2140 }
+      - { timestamp: '2026-09-21T00:00:00Z', value: 2380 }
+      - { timestamp: '2026-09-25T00:00:00Z', value: 2560 }
+      - { timestamp: '2026-09-29T00:00:00Z', value: 2780 }
+    anomalies: []
+    created_at: '2026-09-15T08:00:00Z'
+    updated_at: '2026-09-29T20:00:00Z'
+    last_event: reading_captured
+    last_event_at: '2026-09-29T20:00:00Z'
+  - usage_id: use_blueharbor_webhooks_2026_09
+    subscription_id: sub_blueharbor_team
+    customer_name: Blue Harbor Studio
+    meter_id: mtr_webhooks
+    meter_name: Webhook deliveries
+    provider: Stripe
+    status: ok
+    trend_percent: null
+    included_quantity: 25000
+    consumed_quantity: 3140
+    currency: USD
+    overage_rate_minor: 1
+    variance_minor: 0
+    projected_overage_minor: 0
+    unit_label: API calls
+    period_start: '2026-09-21'
+    period_end: '2026-10-05'
+    last_reported_at: '2026-09-29T22:00:00Z'
+    samples:
+      - { timestamp: '2026-09-22T00:00:00Z', value: 610 }
+      - { timestamp: '2026-09-24T00:00:00Z', value: 880 }
+      - { timestamp: '2026-09-26T00:00:00Z', value: 790 }
+      - { timestamp: '2026-09-28T00:00:00Z', value: 860 }
+    anomalies: []
+    created_at: '2026-09-21T09:00:00Z'
+    updated_at: '2026-09-29T22:00:00Z'
+    last_event: reading_captured
+    last_event_at: '2026-09-29T22:00:00Z'
+  - usage_id: use_kestrel_printjobs_2026_09
+    subscription_id: sub_kestrel_team
+    customer_name: Kestrel Print Co.
+    meter_id: mtr_print_jobs_api
+    meter_name: Print jobs API
+    provider: Stripe
+    status: investigating
+    trend_percent: 214
+    included_quantity: 25000
+    consumed_quantity: 41200
+    currency: GBP
+    overage_rate_minor: 5
+    variance_minor: 81000
+    projected_overage_minor: 159500
+    unit_label: API calls
+    period_start: '2026-09-03'
+    period_end: '2026-10-02'
+    last_reported_at: '2026-09-24T03:00:00Z'
+    samples:
+      - { timestamp: '2026-09-07T00:00:00Z', value: 4100 }
+      - { timestamp: '2026-09-14T00:00:00Z', value: 4700 }
+      - { timestamp: '2026-09-21T00:00:00Z', value: 5200 }
+      - { timestamp: '2026-09-24T00:00:00Z', value: 27200 }
+    anomalies:
+      - { detected_at: '2026-09-24T03:00:00Z', kind: spike, description: Calls rose six-fold overnight from one API key }
+    created_at: '2026-09-03T10:00:00Z'
+    updated_at: '2026-09-24T03:00:00Z'
+    last_event: anomaly_detected
+    last_event_at: '2026-09-24T03:00:00Z'
+  - usage_id: use_tidewater_reporting_2026_09
+    subscription_id: sub_tidewater_enterprise
+    customer_name: Tidewater Co-op
+    meter_id: mtr_reporting_api
+    meter_name: Reporting API
+    provider: Stripe
+    status: ok
+    trend_percent: 4.1
+    included_quantity: 1000000
+    consumed_quantity: 612340
+    currency: USD
+    overage_rate_minor: 1
+    variance_minor: 0
+    projected_overage_minor: 0
+    unit_label: API calls
+    period_start: '2026-09-01'
+    period_end: '2026-09-30'
+    last_reported_at: '2026-09-29T11:00:00Z'
+    samples:
+      - { timestamp: '2026-09-07T00:00:00Z', value: 148200 }
+      - { timestamp: '2026-09-14T00:00:00Z', value: 151900 }
+      - { timestamp: '2026-09-21T00:00:00Z', value: 156300 }
+      - { timestamp: '2026-09-28T00:00:00Z', value: 155940 }
+    anomalies: []
+    created_at: '2026-09-01T00:00:00Z'
+    updated_at: '2026-09-29T11:00:00Z'
+    last_event: reading_captured
+    last_event_at: '2026-09-29T11:00:00Z'
+  - usage_id: use_summit_inventory_2026_09
+    subscription_id: sub_summit_business
+    customer_name: Summit Outfitters
+    meter_id: mtr_inventory_sync
+    meter_name: Inventory sync
+    provider: Stripe
+    status: delayed
+    trend_percent: -6.3
+    included_quantity: 100000
+    consumed_quantity: 48900
+    currency: USD
+    overage_rate_minor: 1
+    variance_minor: 0
+    projected_overage_minor: 0
+    unit_label: API calls
+    period_start: '2026-09-07'
+    period_end: '2026-10-06'
+    last_reported_at: '2026-09-27T06:00:00Z'
+    samples:
+      - { timestamp: '2026-09-10T00:00:00Z', value: 16100 }
+      - { timestamp: '2026-09-17T00:00:00Z', value: 16800 }
+      - { timestamp: '2026-09-24T00:00:00Z', value: 16000 }
+    anomalies: []
+    created_at: '2026-09-07T12:00:00Z'
+    updated_at: '2026-09-27T06:00:00Z'
+    last_event: reading_captured
+    last_event_at: '2026-09-27T06:00:00Z'
+  - usage_id: use_tidewater_search_2026_09
+    subscription_id: sub_tidewater_enterprise
+    customer_name: Tidewater Co-op
+    meter_id: mtr_search_api
+    meter_name: Search API
+    provider: Stripe
+    status: ok
+    trend_percent: -2.4
+    included_quantity: 500000
+    consumed_quantity: 128400
+    currency: USD
+    overage_rate_minor: 1
+    variance_minor: 0
+    projected_overage_minor: 0
+    unit_label: API calls
+    period_start: '2026-09-01'
+    period_end: '2026-09-30'
+    last_reported_at: '2026-09-28T00:00:00Z'
+    samples:
+      - { timestamp: '2026-09-06T00:00:00Z', value: 42800 }
+      - { timestamp: '2026-09-13T00:00:00Z', value: 43100 }
+      - { timestamp: '2026-09-20T00:00:00Z', value: 42500 }
+    anomalies: []
+    created_at: '2026-09-01T00:00:00Z'
+    updated_at: '2026-09-28T00:00:00Z'
+    last_event: reset
+    last_event_at: '2026-09-28T00:00:00Z'

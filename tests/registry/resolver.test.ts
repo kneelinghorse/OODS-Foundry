@@ -92,6 +92,17 @@ schema:
     expect(resolved.definition.metadata?.appliedParameters).toEqual(resolved.parameters);
   });
 
+  it('resolves kebab-case trait files while preserving exact-name precedence', async () => {
+    const traitDir = createTempDir('trait-resolver-kebab-');
+    const contents = (version: string) => `trait:\n  name: MarkArea\n  version: ${version}\nschema:\n  value:\n    type: number`;
+    writeTrait(traitDir, 'mark-area', contents('1.0.0'));
+    const fallback = await new TraitLoader({ roots: [traitDir] }).load({ name: 'MarkArea' });
+    expect(fallback.path).toBe(join(traitDir, 'mark-area.trait.yaml'));
+    writeTrait(traitDir, 'MarkArea', contents('2.0.0'));
+    const exact = await new TraitLoader({ roots: [traitDir] }).load({ name: 'MarkArea' });
+    expect(exact.definition.trait.version).toBe('2.0.0');
+  });
+
   it('wraps parameter validation failures with actionable errors', async () => {
     const traitDir = createTempDir('trait-resolver-validation-');
 

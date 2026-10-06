@@ -29,6 +29,13 @@ export function validateCollisions(composed: ComposedObject): RuleIssue[] {
     const severity =
       collision.resolution === 'manual' ? 'info' : 'warning';
 
+    // Identify traits beyond the colliders whose view extensions or semantics
+    // reference the colliding field — they are downstream impacted.
+    const allTraitNames = (composed.traits ?? []).map((t) => t.trait?.name).filter(Boolean) as string[];
+    const impactedTraits = allTraitNames.filter(
+      (name) => !conflictingTraitsArray.includes(name) && fieldReferencedByTrait(composed, collision.fieldName, name)
+    );
+
     return {
       code: ErrorCodes.PROPERTY_COLLISION,
       message,
@@ -36,6 +43,18 @@ export function validateCollisions(composed: ComposedObject): RuleIssue[] {
       severity,
       path: ['metadata', 'collisions', index],
       related: [collision.fieldName, ...conflictingTraitsArray],
+      traitPath: conflictingTraitsArray,
+      impactedTraits: impactedTraits.length > 0 ? impactedTraits : undefined,
     };
   });
+}
+
+function fieldReferencedByTrait(composed: ComposedObject, fieldName: string, traitName: string): boolean {
+  const trait = (composed.traits ?? []).find((t) => t.trait?.name === traitName);
+  if (!trait) return false;
+  if (trait.semantics && fieldName in trait.semantics) return true;
+  for (const exts of Object.values(trait.view_extensions ?? {})) {
+    if (Array.isArray(exts) && exts.some((ext) => Object.values(ext.props ?? {}).includes(fieldName))) return true;
+  }
+  return false;
 }

@@ -34,9 +34,9 @@ const DISABLED_TEXT_COLOR = 'var(--sys-text-disabled)';
 const SECONDARY_TEXT_COLOR = 'var(--sys-text-secondary)';
 const ICON_SURFACE_DEFAULT = 'var(--sys-surface-raised)';
 const DISABLED_SURFACE = 'var(--sys-surface-disabled)';
-const FILL_CONTRAST_COLOR = 'var(--sys-text-on_interactive)';
-const FOCUS_OUTLINE_COLOR = 'var(--sys-focus-text)';
-const FOCUS_OUTLINE_WIDTH = 'var(--sys-focus-width, 2px)';
+const FILL_CONTRAST_COLOR = 'var(--sys-text-on-interactive)';
+const FOCUS_OUTLINE_COLOR = 'var(--sys-focus-ring-outer)';
+const FOCUS_OUTLINE_WIDTH = 'var(--sys-focus-width)';
 const OPTIONAL_LABEL_COLOR = ACCENT_TOKENS.foreground;
 
 function resolveStepCssVariables(step: StepDescriptor): React.CSSProperties {

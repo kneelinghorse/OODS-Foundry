@@ -1,13 +1,54 @@
 #!/usr/bin/env tsx
+/**
+ * Token governance diff — the PR gate that reports what a change did to the token graph.
+ *
+ * ── s169 m03: WHY THIS FILE WAS RESTRUCTURED ──
+ * The gate reported **Δ0** for a sprint that modified 63 brand-A token leaves. Two
+ * independent defects, both measured:
+ *
+ *   1. COLLIDING MAP KEYS. The flat map was keyed by dotted token PATH alone. 1140
+ *      (file, path) leaf pairs across the source tree collapse into 727 unique paths —
+ *      **413 shadowed pairs across 280 collided paths**. Whichever file was walked last
+ *      won, so a real edit in one file was erased by an unrelated file declaring the same
+ *      path. This was never brand-specific: root `tokens/base.json` shadowed 39 entries of
+ *      `base/reference/*`, `tokens/semantic/system.json` shadowed 53 of `base/system/*`,
+ *      and `tokens/theme.json` shadowed 53 each of `themes/dark/*` and `themes/theme0/*`.
+ *      Keys are now FILE-SCOPED (`<file>::<path>`), which subsumes brand × theme scoping.
+ *
+ *   2. A DIST FAST-PATH THAT ONLY EXISTED LOCALLY. `tryLoadDistPayload` special-cased the
+ *      literal string `'HEAD'` and read the workspace's built `tokens.json`; for any other
+ *      ref it ran `git show <ref>:…dist…`, which ALWAYS failed because `dist/` is
+ *      gitignored and has never been tracked. So a local `--head HEAD` diffed
+ *      dist-against-sources (235 of its 312 "modified" rows were `{ref}` alias strings vs
+ *      resolved literals) while CI — which passes commit SHAs for BOTH refs (ci.yml:290-296)
+ *      — diffed sources against sources. The two answers disagreed on identical content.
+ *      The fast-path is DELETED and every ref, including `HEAD`, now goes through git.
+ *
+ * TRADE, DISCLOSED: uncommitted local edits are now invisible to a local run, because a
+ * local run and the CI job take byte-identically the same path. That is the point.
+ *
+ * ── WHAT WAS DELIBERATELY NOT TOUCHED ──
+ * The RISK RULES (`determineRisk`, `determineNamespace`) are byte-unchanged. Making the
+ * gate SEE changes and re-tuning what it thinks of them are two different missions, and
+ * doing both at once would make neither reviewable. One consequence is immediate and
+ * expected: a truthful gate now genuinely demands the `token-change:breaking` label on
+ * token-touching PRs, because `text.*`/`surface.*` segments are high-risk by those
+ * untouched rules. That is the gate working.
+ */
 
 import { execFile as execFileCallback } from 'node:child_process';
-import { promises as fs } from 'node:fs';
+import { promises as fs, realpathSync } from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { promisify } from 'node:util';
 
 import { contrastRatio, normaliseColor } from '@oods/a11y-tools';
 import Color from 'colorjs.io';
+import { createRequire } from 'node:module';
+
+/** s213-m04: the brands are the brand registry's (the brands folder), read once per run. */
+const BRANDS: readonly string[] = createRequire(import.meta.url)('../../packages/tokens/scripts/brand-registry.cjs').readBrandRegistry();
 
 const execFile = promisify(execFileCallback);
 
@@ -38,6 +79,8 @@ interface TokenChange {
   risk: RiskLevel;
   reasons: string[];
   sourceHint: string;
+  /** Only set on removals. See `classifyRemoval`. Reporting only — never feeds risk. */
+  removalClass?: 'duplicate-removed' | 'plain';
 }
 
 interface OrphanFinding {
@@ -98,6 +141,7 @@ interface GovernanceReport {
     lowRisk: number;
     orphans: number;
     leaks: number;
+    duplicateRemoved: number;
   };
   changes: {
     added: TokenChange[];
@@ -115,7 +159,14 @@ interface GovernanceReport {
 
 interface CliOptions {
   command: Command;
-  baseRef: string;
+  /**
+   * s174 m02 — NO DEFAULT. This used to default to 'main', a branch frozen since sprint-95
+   * that does not exist in a PR checkout, so the diff resolved nothing, the subprocess died,
+   * and the caller reported green over zero reports. An unresolvable default is worse than
+   * no default: it makes a broken gate look like a passing one. Resolution now runs in
+   * runDiff — explicit --base, else origin/OODS-pro, else a throw that names the flag.
+   */
+  baseRef?: string;
   headRef: string;
   brand: string;
   jsonPath?: string;
@@ -135,8 +186,6 @@ interface CodeownersEntry {
 }
 
 const PROJECT_ROOT = process.cwd();
-const TOKEN_DIST_PATH = 'packages/tokens/dist/tailwind/tokens.json';
-const STATUS_MAP_PATH = 'tokens/maps/saas-billing.status-map.json';
 const REQUIRE_BREAKING_LABEL = 'token-change:breaking';
 
 const TEXT_FILE_EXTENSIONS = new Set([
@@ -210,7 +259,6 @@ function parseArgs(argv: string[]): CliOptions {
 
   const options: CliOptions = {
     command,
-    baseRef: 'main',
     headRef: 'HEAD',
     brand: '',
     labels: [],
@@ -238,9 +286,9 @@ function parseArgs(argv: string[]): CliOptions {
         break;
       case 'brand':
         ensureValue(flag, next);
-        options.brand = next.toUpperCase();
-        if (!['A', 'B'].includes(options.brand)) {
-          throw new Error('Brand must be either "A" or "B".');
+        options.brand = BRANDS.find((brand) => brand.toLowerCase() === next.toLowerCase()) ?? '';
+        if (!options.brand) {
+          throw new Error(`Brand must be one of ${BRANDS.map((brand) => `"${brand}"`).join(', ')} (the brand registry).`);
         }
         index += 1;
         break;
@@ -255,7 +303,9 @@ function parseArgs(argv: string[]): CliOptions {
         index += 1;
         break;
       case 'labels':
-        ensureValue(flag, next);
+        if (next === undefined || next.startsWith('--')) {
+          throw new Error(`Expected a value after --${flag}`);
+        }
         options.labels = next
           .split(',')
           .map((label) => label.trim())
@@ -280,8 +330,35 @@ function ensureValue(flag: string, value: string | undefined): asserts value {
   }
 }
 
+/**
+ * s174 m02 — resolve the base ref, fail-closed.
+ *
+ * Order: an explicit --base wins; otherwise the repo's real default branch, origin/OODS-pro;
+ * otherwise THROW naming the flag. There is deliberately no fallback that "works" without
+ * resolving — the whole vacuity this replaces came from a default ref that silently could not
+ * be resolved.
+ */
+const FALLBACK_BASE_REF = 'origin/OODS-pro';
+
+async function resolveBaseRef(explicit: string | undefined): Promise<string> {
+  if (explicit) {
+    return explicit;
+  }
+  try {
+    await execFile('git', ['rev-parse', '--verify', '--quiet', `${FALLBACK_BASE_REF}^{commit}`], {
+      cwd: PROJECT_ROOT,
+    });
+    return FALLBACK_BASE_REF;
+  } catch {
+    throw new Error(
+      `No --base given and ${FALLBACK_BASE_REF} does not resolve in this checkout. Pass --base <ref> explicitly (in CI, the merge-base of the PR base branch and HEAD).`,
+    );
+  }
+}
+
 async function runDiff(options: CliOptions): Promise<void> {
-  const { baseRef, headRef, brand } = options;
+  const { headRef, brand } = options;
+  const baseRef = await resolveBaseRef(options.baseRef);
 
   const [baseTokens, headTokens] = await Promise.all([
     loadFlatTokens(baseRef),
@@ -345,81 +422,16 @@ async function runDiff(options: CliOptions): Promise<void> {
   }
 }
 
-async function loadFlatTokens(ref: string): Promise<Map<string, FlatTokenEntry>> {
-  const distPayload = await tryLoadDistPayload(ref);
-  if (distPayload) {
-    return buildFlatTokenMapFromDist(distPayload);
-  }
-
-  return loadTokensFromSources(ref);
-}
-
-async function tryLoadDistPayload(ref: string): Promise<Record<string, unknown> | null> {
-  if (ref === 'HEAD') {
-    const headPath = path.resolve(PROJECT_ROOT, TOKEN_DIST_PATH);
-    try {
-      const raw = await fs.readFile(headPath, 'utf8');
-      return JSON.parse(raw) as Record<string, unknown>;
-    } catch {
-      // Fall back to git history if workspace artefact missing.
-    }
-  }
-
-  try {
-    const json = await loadJsonFromGit(ref, TOKEN_DIST_PATH);
-    if (json && typeof json === 'object' && !Array.isArray(json)) {
-      return json as Record<string, unknown>;
-    }
-  } catch {
-    // Ignore; we will fall back to source files.
-  }
-
-  return null;
-}
-
-function buildFlatTokenMapFromDist(payload: Record<string, unknown>): Map<string, FlatTokenEntry> {
-  const flat = payload.flat;
-  if (!flat || typeof flat !== 'object') {
-    throw new Error('Malformed token dist payload: missing flat map.');
-  }
-
-  const entries = flat as Record<string, FlatTokenRawEntry>;
-  const result = new Map<string, FlatTokenEntry>();
-
-  for (const [key, rawEntry] of Object.entries(entries)) {
-    if (!rawEntry || typeof rawEntry !== 'object') {
-      continue;
-    }
-    const pathSegments = rawEntry.path;
-    if (!Array.isArray(pathSegments) || pathSegments.some((segment) => typeof segment !== 'string')) {
-      continue;
-    }
-
-    const entry: FlatTokenEntry = {
-      key,
-      path: pathSegments.join('.'),
-      segments: pathSegments,
-      value: rawEntry.value,
-      cssVariable: rawEntry.cssVariable ?? null,
-      description: typeof rawEntry.description === 'string' ? rawEntry.description : null,
-      sourceHint: approximateSourceHint(pathSegments),
-    };
-
-    result.set(entry.path, entry);
-  }
-
-  return result;
-}
-
-async function loadTokensFromSources(ref: string): Promise<Map<string, FlatTokenEntry>> {
-  const filePaths = ref === 'HEAD'
-    ? await listSourceFilesFromWorkspace()
-    : await listSourceFilesFromGit(ref);
-
+/**
+ * EVERY ref goes through git — `HEAD` included. See the dist fast-path note in the file
+ * header for what this replaced and why the two code paths had to become one.
+ */
+export async function loadFlatTokens(ref: string): Promise<Map<string, FlatTokenEntry>> {
+  const filePaths = await listSourceFilesFromGit(ref);
   const result = new Map<string, FlatTokenEntry>();
 
   for (const filePath of filePaths) {
-    const content = await readSourceFile(ref, filePath);
+    const content = await loadFileFromGit(ref, filePath);
     try {
       const parsed = JSON.parse(content) as DtcgNode;
       collectDtcgTokens(parsed, [], {
@@ -435,26 +447,50 @@ async function loadTokensFromSources(ref: string): Promise<Map<string, FlatToken
   return result;
 }
 
-interface FlatTokenRawEntry {
-  name?: string;
-  value: string | number;
-  path: string[];
-  cssVariable?: string;
-  originalValue?: string | number;
-  description?: string;
-}
-
 type DtcgNode = Record<string, unknown>;
+
+/**
+ * The map key. FILE-SCOPED so two files declaring the same dotted path are two entries
+ * rather than one silently overwriting the other — the defect that produced Δ0.
+ *
+ * `entry.path`, `entry.key` and `entry.cssVariable` stay UNSCOPED on purpose:
+ * `buildSearchStrings` greps the codebase with them, and `packages/…/x.json::color.brand.A…`
+ * matches nothing on disk. The scope belongs to the map, not to the token's identity.
+ */
+export function scopedTokenKey(filePath: string, tokenPath: string): string {
+  return `${filePath}::${tokenPath}`;
+}
 
 interface CollectState {
   tokens: Map<string, FlatTokenEntry>;
   filePath: string;
 }
 
-const SOURCE_DIRECTORIES = ['packages/tokens/src', 'tokens'];
+/**
+ * THE UNIVERSE, ALIGNED WITH THE BUILD (s169 m03).
+ *
+ * The gate used to walk `packages/tokens/src` AND the repo-root `tokens/` directory, but
+ * `packages/tokens/scripts/build.mjs` reads NEITHER root-`tokens/` nor `src/presets/`.
+ * Governing files the build never compiles produced two kinds of noise: root `tokens/`
+ * supplied most of the shadowing described in the file header, and the presets collided
+ * with `brands/A` on 21 paths. Narrowing to what actually ships is a scope correction, not
+ * a loosening — nothing the build consumes left the universe.
+ */
+const SOURCE_DIRECTORIES = ['packages/tokens/src'];
+const EXCLUDED_SOURCE_PREFIXES = ['packages/tokens/src/presets/'];
 const MAX_TOKEN_DEPTH = 32;
 
-function collectDtcgTokens(
+export function isGovernedSourceFile(filePath: string): boolean {
+  if (!filePath.endsWith('.json')) {
+    return false;
+  }
+  if (!SOURCE_DIRECTORIES.some((directory) => filePath.startsWith(`${directory}/`))) {
+    return false;
+  }
+  return !EXCLUDED_SOURCE_PREFIXES.some((prefix) => filePath.startsWith(prefix));
+}
+
+export function collectDtcgTokens(
   node: DtcgNode,
   trail: string[],
   state: CollectState,
@@ -495,7 +531,7 @@ function collectDtcgTokens(
           sourceHint: state.filePath,
         };
 
-        state.tokens.set(entry.path, entry);
+        state.tokens.set(scopedTokenKey(state.filePath, entry.path), entry);
       } else {
         collectDtcgTokens(nested as DtcgNode, [...trail, key], state, depth + 1);
       }
@@ -521,56 +557,6 @@ function slugSegments(segments: readonly string[]): string {
     .replace(/^-|-$/g, '');
 }
 
-async function listSourceFilesFromWorkspace(): Promise<string[]> {
-  const files: string[] = [];
-  for (const directory of SOURCE_DIRECTORIES) {
-    const absolute = path.resolve(PROJECT_ROOT, directory);
-    try {
-      await walkWorkspaceDirectory(absolute, (filePath) => {
-        if (filePath.endsWith('.json')) {
-          files.push(path.relative(PROJECT_ROOT, filePath));
-        }
-      });
-    } catch (error) {
-      if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
-        throw error;
-      }
-    }
-  }
-  return files.sort();
-}
-
-async function walkWorkspaceDirectory(
-  currentPath: string,
-  onFile: (filePath: string) => void,
-): Promise<void> {
-  const stats = await fs.stat(currentPath).catch((error: NodeJS.ErrnoException) => {
-    if (error.code === 'ENOENT') {
-      return null;
-    }
-    throw error;
-  });
-  if (!stats) {
-    return;
-  }
-  if (!stats.isDirectory()) {
-    return;
-  }
-
-  const contents = await fs.readdir(currentPath, { withFileTypes: true });
-  for (const entry of contents) {
-    const entryPath = path.join(currentPath, entry.name);
-    if (entry.isDirectory()) {
-      if (IGNORED_DIRECTORIES.has(entry.name) || entry.name === '__fixtures__') {
-        continue;
-      }
-      await walkWorkspaceDirectory(entryPath, onFile);
-    } else if (entry.isFile()) {
-      onFile(entryPath);
-    }
-  }
-}
-
 async function listSourceFilesFromGit(ref: string): Promise<string[]> {
   const args = ['ls-tree', '-r', ref, '--name-only', '--', ...SOURCE_DIRECTORIES];
   const { stdout } = await execFile('git', args, {
@@ -580,17 +566,8 @@ async function listSourceFilesFromGit(ref: string): Promise<string[]> {
   return stdout
     .split('\n')
     .map((line) => line.trim())
-    .filter((line) => line.endsWith('.json'))
+    .filter((line) => isGovernedSourceFile(line))
     .sort();
-}
-
-async function readSourceFile(ref: string, filePath: string): Promise<string> {
-  if (ref === 'HEAD') {
-    const absolute = path.resolve(PROJECT_ROOT, filePath);
-    return fs.readFile(absolute, 'utf8');
-  }
-  const content = await loadFileFromGit(ref, filePath);
-  return content;
 }
 
 async function loadFileFromGit(ref: string, filePath: string): Promise<string> {
@@ -601,43 +578,73 @@ async function loadFileFromGit(ref: string, filePath: string): Promise<string> {
   return stdout;
 }
 
-async function loadJsonFromGit(ref: string, filePath: string): Promise<unknown> {
-  try {
-    const { stdout } = await execFile('git', ['show', `${ref}:${filePath}`], {
-      cwd: PROJECT_ROOT,
-      maxBuffer: 10 * 1024 * 1024,
-    });
-    return JSON.parse(stdout);
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    throw new Error(`Unable to load ${filePath} from ${ref}: ${message}`);
-  }
-}
-
-function filterTokensForBrand(map: Map<string, FlatTokenEntry>, brand: string): Map<string, FlatTokenEntry> {
-  const brandUpper = brand.toUpperCase();
-  const brandLetters = new Set(['A', 'B']);
+export function filterTokensForBrand(map: Map<string, FlatTokenEntry>, brand: string): Map<string, FlatTokenEntry> {
+  // A brand segment is a registry id, spelled as the brands folder spells it; the requested brand matches in any case.
+  const target = BRANDS.find((id) => id.toLowerCase() === brand.toLowerCase()) ?? brand;
+  const brandIds = new Set(BRANDS);
   const result = new Map<string, FlatTokenEntry>();
 
-  for (const [pathString, entry] of map.entries()) {
-    const containsBrandToken = entry.segments.some((segment) => brandLetters.has(segment));
+  for (const [mapKey, entry] of map.entries()) {
+    const containsBrandToken = entry.segments.some((segment) => brandIds.has(segment));
     if (containsBrandToken) {
-      if (entry.segments.includes(brandUpper)) {
-        result.set(pathString, entry);
+      if (entry.segments.includes(target)) {
+        result.set(mapKey, entry);
       }
     } else {
-      result.set(pathString, entry);
+      result.set(mapKey, entry);
     }
   }
 
   return result;
 }
 
-function computeTokenDiff(
+/**
+ * DUPLICATE-REMOVED vs PLAIN REMOVED (s169 m03).
+ *
+ * File-scoped keys make removals legible for the first time, and immediately show that two
+ * very different events were being reported identically. A path can disappear from one file
+ * while an IDENTICAL path/value pair still exists in another — a de-duplication, where
+ * nothing a consumer resolves has changed. That is not the same event as a value vanishing
+ * from the graph entirely, and a reviewer reading "39 removed" deserves to know which.
+ *
+ * MEASURED on the acceptance range: of 39 brand-A removals, exactly **18** are
+ * duplicate-removed (`brands/A` `ref.typography.*` entries that survive elsewhere at head).
+ * The other 21 — 19 from `base/motion.json`, 2 from `base/shadow.json`, both files deleted
+ * in that range — carried `{alias}` string values that survive NOWHERE at head, so they are
+ * plain removals. A classifier answering 39/39 or 21/39 is wrong in a way this comment
+ * exists to make catchable.
+ *
+ * Classification is REPORTING ONLY: it does not touch `determineRisk`.
+ */
+export function classifyRemoval(
+  removedEntry: FlatTokenEntry,
+  headMap: Map<string, FlatTokenEntry>,
+): 'duplicate-removed' | 'plain' {
+  for (const survivor of headMap.values()) {
+    if (
+      survivor.path === removedEntry.path &&
+      survivor.sourceHint !== removedEntry.sourceHint &&
+      areTokenValuesEqual(survivor.value, removedEntry.value)
+    ) {
+      return 'duplicate-removed';
+    }
+  }
+  return 'plain';
+}
+
+export function computeTokenDiff(
   baseMap: Map<string, FlatTokenEntry>,
   headMap: Map<string, FlatTokenEntry>,
 ): {
-  summary: { added: number; removed: number; modified: number; highRisk: number; mediumRisk: number; lowRisk: number };
+  summary: {
+    added: number;
+    removed: number;
+    modified: number;
+    highRisk: number;
+    mediumRisk: number;
+    lowRisk: number;
+    duplicateRemoved: number;
+  };
   changes: { added: TokenChange[]; removed: TokenChange[]; modified: TokenChange[] };
 } {
   const added: TokenChange[] = [];
@@ -646,12 +653,12 @@ function computeTokenDiff(
 
   const processed = new Set<string>();
 
-  for (const [path, headEntry] of headMap.entries()) {
-    const baseEntry = baseMap.get(path);
+  for (const [mapKey, headEntry] of headMap.entries()) {
+    const baseEntry = baseMap.get(mapKey);
     if (!baseEntry) {
       const change = buildTokenChange('added', null, headEntry);
       added.push(change);
-      processed.add(path);
+      processed.add(mapKey);
       continue;
     }
 
@@ -659,14 +666,15 @@ function computeTokenDiff(
       const change = buildTokenChange('modified', baseEntry, headEntry);
       modified.push(change);
     }
-    processed.add(path);
+    processed.add(mapKey);
   }
 
-  for (const [path, baseEntry] of baseMap.entries()) {
-    if (processed.has(path)) {
+  for (const [mapKey, baseEntry] of baseMap.entries()) {
+    if (processed.has(mapKey)) {
       continue;
     }
     const change = buildTokenChange('removed', baseEntry, null);
+    change.removalClass = classifyRemoval(baseEntry, headMap);
     removed.push(change);
   }
 
@@ -720,7 +728,15 @@ function buildSummary(
   added: TokenChange[],
   removed: TokenChange[],
   modified: TokenChange[],
-): { added: number; removed: number; modified: number; highRisk: number; mediumRisk: number; lowRisk: number } {
+): {
+  added: number;
+  removed: number;
+  modified: number;
+  highRisk: number;
+  mediumRisk: number;
+  lowRisk: number;
+  duplicateRemoved: number;
+} {
   const counts = { added: added.length, removed: removed.length, modified: modified.length };
   let highRisk = 0;
   let mediumRisk = 0;
@@ -737,7 +753,9 @@ function buildSummary(
     }
   }
 
-  return { ...counts, highRisk, mediumRisk, lowRisk };
+  const duplicateRemoved = removed.filter((entry) => entry.removalClass === 'duplicate-removed').length;
+
+  return { ...counts, highRisk, mediumRisk, lowRisk, duplicateRemoved };
 }
 
 function determineNamespace(segments: readonly string[]): TokenNamespace {
@@ -802,26 +820,6 @@ function determineRisk(namespace: TokenNamespace, segments: readonly string[]): 
 function elevateRisk(current: RiskLevel, candidate: RiskLevel): RiskLevel {
   const order: RiskLevel[] = ['low', 'medium', 'high'];
   return order.indexOf(candidate) > order.indexOf(current) ? candidate : current;
-}
-
-function approximateSourceHint(segments: readonly string[]): string {
-  const [first, second] = segments;
-  if (first === 'brand' && typeof second === 'string') {
-    return `packages/tokens/src/tokens/aliases/brand-${second}.json`;
-  }
-  if (first === 'color' && segments[1] === 'brand' && typeof segments[2] === 'string') {
-    return `packages/tokens/src/tokens/brands/${segments[2]}`;
-  }
-  if (first === 'theme') {
-    return 'packages/tokens/src/tokens/theme.json';
-  }
-  if (first === 'sys') {
-    return 'packages/tokens/src/tokens/base/system';
-  }
-  if (first === 'ref') {
-    return 'packages/tokens/src/tokens/base/reference';
-  }
-  return 'packages/tokens/src/tokens';
 }
 
 function collectTokensForSearch(diff: {
@@ -953,15 +951,27 @@ async function traverse(
   }
 }
 
+/**
+ * DEDUPED BY PATH (s169 m03). File-scoped keys mean the same dotted path can now produce
+ * several changes — one per declaring file. But an orphan/leak finding is a statement about
+ * whether the CODEBASE references that path, and `findTokenReferences` greps by the
+ * unscoped path, so every copy would yield a byte-identical finding. Reporting the same
+ * "unreferenced token" three times is noise that makes a real list look bigger than it is.
+ */
 function identifyOrphans(changes: TokenChange[], references: Map<string, TokenReferenceHits>): OrphanFinding[] {
   const orphans: OrphanFinding[] = [];
+  const seenPaths = new Set<string>();
   for (const change of changes) {
     if (change.namespace !== 'brand' && change.namespace !== 'alias') {
+      continue;
+    }
+    if (seenPaths.has(change.path)) {
       continue;
     }
     const hits = references.get(change.path);
     if (!hits || (hits.packages.size === 0 && hits.stories.size === 0)) {
       const searchStrings = buildSearchStrings(change);
+      seenPaths.add(change.path);
       orphans.push({
         path: change.path,
         cssVariable: change.cssVariable,
@@ -975,10 +985,15 @@ function identifyOrphans(changes: TokenChange[], references: Map<string, TokenRe
   return orphans;
 }
 
+/** Deduped by path for the same reason as `identifyOrphans` — see there. */
 function identifyLeaks(changes: TokenChange[], references: Map<string, TokenReferenceHits>): LeakFinding[] {
   const leaks: LeakFinding[] = [];
+  const seenPaths = new Set<string>();
   for (const change of changes) {
     if (change.namespace !== 'brand' && change.namespace !== 'alias') {
+      continue;
+    }
+    if (seenPaths.has(change.path)) {
       continue;
     }
     const hits = references.get(change.path);
@@ -986,6 +1001,7 @@ function identifyLeaks(changes: TokenChange[], references: Map<string, TokenRefe
       continue;
     }
     if (hits.packages.size > 0 || hits.stories.size > 0) {
+      seenPaths.add(change.path);
       leaks.push({
         path: change.path,
         cssVariable: change.cssVariable,
@@ -1038,7 +1054,7 @@ function buildSearchStrings(change: TokenChange): string[] {
   return Array.from(result);
 }
 
-async function computeContrastDeltas(
+export async function computeContrastDeltas(
   diff: {
     changes: { added: TokenChange[]; removed: TokenChange[]; modified: TokenChange[] };
   },
@@ -1046,9 +1062,12 @@ async function computeContrastDeltas(
   headTokens: Map<string, FlatTokenEntry>,
   brand: string,
 ): Promise<ContrastFinding[]> {
-  const changedPaths = new Set<string>();
+  // SCOPED, like the map key: a change in `brands/A/base.json` must not mark the
+  // same-named token in `brands/A/dark.json` as changed. Before file-scoping there was no
+  // way to tell them apart, so this set could not have been anything else.
+  const changedKeys = new Set<string>();
   const allChanges = [...diff.changes.added, ...diff.changes.removed, ...diff.changes.modified];
-  allChanges.forEach((change) => changedPaths.add(change.path));
+  allChanges.forEach((change) => changedKeys.add(scopedTokenKey(change.sourceHint, change.path)));
 
   const groups = new Map<string, {
     foregroundHead?: FlatTokenEntry;
@@ -1070,7 +1089,11 @@ async function computeContrastDeltas(
       return;
     }
 
-    const groupKey = token.segments.slice(0, -1).join('.');
+    // CELL-SCOPED (s169 m03). Grouping by dot-prefix alone put `brands/A/base.json`'s
+    // `…status.info.text` and `brands/A/dark.json`'s into the SAME group, so a foreground
+    // from one cell could be contrast-checked against a background from another — a ratio
+    // no rendered surface ever shows. The source file is what distinguishes a cell.
+    const groupKey = `${token.sourceHint}::${token.segments.slice(0, -1).join('.')}`;
     if (!groups.has(groupKey)) {
       groups.set(groupKey, {});
     }
@@ -1091,13 +1114,13 @@ async function computeContrastDeltas(
   };
 
   for (const token of headTokens.values()) {
-    if (changedPaths.has(token.path)) {
+    if (changedKeys.has(scopedTokenKey(token.sourceHint, token.path))) {
       considerToken(token, 'head');
     }
   }
 
   for (const token of baseTokens.values()) {
-    if (changedPaths.has(token.path)) {
+    if (changedKeys.has(scopedTokenKey(token.sourceHint, token.path))) {
       considerToken(token, 'base');
     }
   }
@@ -1148,7 +1171,7 @@ function isTokenEligibleForContrast(token: FlatTokenEntry, brand: string): boole
   if (!['text', 'foreground', 'surface', 'background'].includes(last ?? '')) {
     return false;
   }
-  const brandLetters = new Set(['A', 'B']);
+  const brandLetters = new Set(BRANDS);
   if (segments.some((segment) => brandLetters.has(segment))) {
     return segments.includes(brand);
   }
@@ -1267,6 +1290,8 @@ function renderConsoleSummary(report: GovernanceReport): void {
     `Token Governance (Brand ${report.brand})`,
     `  base: ${report.baseRef}  →  head: ${report.headRef}`,
     `  changes: +${report.summary.added} / -${report.summary.removed} / Δ${report.summary.modified}`,
+    `  removals: ${report.summary.duplicateRemoved} duplicate-removed / ` +
+      `${report.summary.removed - report.summary.duplicateRemoved} plain`,
     `  risk: high=${report.summary.highRisk} medium=${report.summary.mediumRisk} low=${report.summary.lowRisk}`,
     `  orphans: ${report.summary.orphans}  leaks: ${report.summary.leaks}`,
   ];
@@ -1317,6 +1342,11 @@ async function writeComment(targetPath: string, report: GovernanceReport): Promi
   lines.push(
     [
       `• Changes: +${report.summary.added} / -${report.summary.removed} / Δ${report.summary.modified}`,
+      // The split belongs in the PR comment, not just the console: the comment is what a
+      // reviewer actually reads, and "-39" means something different when 18 of them are
+      // de-duplications that changed nothing a consumer resolves.
+      `• Removals: ${report.summary.duplicateRemoved} duplicate-removed, ` +
+        `${report.summary.removed - report.summary.duplicateRemoved} plain`,
       `• Risk: high ${report.summary.highRisk}, medium ${report.summary.mediumRisk}, low ${report.summary.lowRisk}`,
       `• Orphans: ${report.summary.orphans}`,
       `• Leaks: ${report.summary.leaks}`,
@@ -1381,4 +1411,31 @@ async function writeComment(targetPath: string, report: GovernanceReport): Promi
   await fs.writeFile(targetPath, comment, 'utf8');
 }
 
-await main();
+/**
+ * ENTRY GUARD (s169 m03). This used to be a bare top-level `await main()`, which meant
+ * `import`ing the module RAN THE CLI — so the pure functions above could not be unit-tested
+ * at all. That is why a tool whose entire job is policing token changes shipped with zero
+ * tests. CLI behaviour is byte-identical: invoked as a script, `process.argv[1]` is this
+ * file and `main()` runs exactly as before.
+ */
+const invokedPath = process.argv[1];
+// s176 m04 (#1250 — decision #1506's carried edge): compare REAL paths, not lexical ones.
+// The package bin table maps `tokens-governance` to this file, and a bin shim is a
+// SYMLINK — invoked through it, argv[1] carries the symlink path, so the s169 lexical
+// path.resolve comparison misses and the CLI silently no-ops. realpath resolves the
+// symlink; the catch falls back to the lexical resolve (argv[1] may name nothing on
+// disk under embedding), preserving the s169 semantics for every non-symlink case.
+const realOrResolvedPath = (candidate: string): string => {
+  try {
+    return realpathSync(candidate);
+  } catch {
+    return path.resolve(candidate);
+  }
+};
+const isDirectInvocation =
+  typeof invokedPath === 'string' &&
+  realOrResolvedPath(fileURLToPath(import.meta.url)) === realOrResolvedPath(invokedPath);
+
+if (isDirectInvocation || pathToFileURL(invokedPath ?? '').href === import.meta.url) {
+  await main();
+}

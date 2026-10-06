@@ -1,5 +1,5 @@
 {
-  "$schema": "https://oods.dev/viz-spec/v1",
+  "$schema": "https://oods-foundry.com/viz-spec/v1",
   "id": "pattern:viz:facet-small-multiples-line",
   "name": "Weekly active users by region × segment",
   "data": {
@@ -82,7 +82,7 @@
   },
   "portability": {
     "fallbackType": "table",
-    "preferredRenderer": "echarts",
+    "preferredRenderer": "vega-lite",
     "tableColumnOrder": ["week", "region", "segment", "active"]
   }
 }

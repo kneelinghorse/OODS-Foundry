@@ -19,12 +19,17 @@ import {
 } from '../../domain/billing/states.js';
 
 /**
- * Derive delinquency status from subscription and invoice history
- * 
- * When a provider doesn't expose delinquency status directly, we derive it:
- * - If subscription is 'active' but has past_due invoices → derive 'delinquent'
+ * Derive past-due status from subscription and invoice history
+ *
+ * When a provider doesn't expose a past-due status directly, we derive it:
+ * - If subscription is 'active' but has past_due invoices → derive 'past_due'
  * - Otherwise, preserve the subscription's current state
- * 
+ *
+ * Produces the recoverable `past_due` state only; the transition to `unpaid`
+ * (retries exhausted → access revoked) is driven by the dunning retry window
+ * (s126-m05), not by invoice derivation. Retains the historical export name
+ * `deriveDelinquency` for callers.
+ *
  * @param subscription Current subscription state
  * @param invoices Recent invoices for this subscription
  * @returns Corrected subscription state
@@ -35,12 +40,12 @@ export function deriveDelinquency(
 ): SubscriptionState {
   const currentStatus = subscription.status as SubscriptionState;
 
-  // If already delinquent, keep it
-  if (currentStatus === 'delinquent') {
-    return 'delinquent';
+  // If already past_due, keep it
+  if (currentStatus === 'past_due') {
+    return 'past_due';
   }
 
-  // If not active, can't be delinquent
+  // If not active, can't derive past_due
   if (currentStatus !== 'active') {
     return currentStatus;
   }
@@ -51,7 +56,7 @@ export function deriveDelinquency(
   );
 
   if (hasPastDueInvoices) {
-    return 'delinquent';
+    return 'past_due';
   }
 
   return currentStatus;
@@ -113,9 +118,9 @@ export function getStateLabel(state: SubscriptionState | InvoiceState): string {
     active: 'Active',
     paused: 'Paused',
     pending_cancellation: 'Pending Cancellation',
-    delinquent: 'Delinquent',
+    unpaid: 'Unpaid',
     terminated: 'Terminated',
-    // Invoice states
+    // Invoice states (past_due is shared with the subscription state set)
     draft: 'Draft',
     posted: 'Posted',
     paid: 'Paid',
@@ -141,7 +146,7 @@ export function getStateSeverity(
   if (state === 'active' || state === 'trialing') {
     return 'success';
   }
-  if (state === 'delinquent' || state === 'terminated') {
+  if (state === 'unpaid' || state === 'terminated') {
     return 'error';
   }
   if (state === 'pending_cancellation' || state === 'paused') {
@@ -151,10 +156,11 @@ export function getStateSeverity(
     return 'info';
   }
 
-  // Invoice severity mapping
+  // Invoice + subscription shared severity mapping
   if (state === 'paid') {
     return 'success';
   }
+  // `past_due` is both an invoice state and a subscription state — error in both
   if (state === 'past_due') {
     return 'error';
   }
@@ -203,8 +209,10 @@ export function getAvailableSubscriptionActions(state: SubscriptionState): strin
     pause: 'Pause',
     resume: 'Resume',
     schedule_cancellation: 'Schedule Cancellation',
+    unschedule_cancellation: 'Resume Subscription',
     payment_failed: 'Mark Payment Failed',
     payment_succeeded: 'Mark Payment Succeeded',
+    retries_exhausted: 'Mark Retries Exhausted',
     cancel_immediately: 'Cancel Immediately',
     period_end: 'Apply Period End',
   };

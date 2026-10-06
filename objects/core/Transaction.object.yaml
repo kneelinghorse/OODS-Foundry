@@ -1,6 +1,6 @@
 object:
   name: Transaction
-  version: 1.0.0
+  version: 1.1.0
   domain: core.commerce
   description: Canonical transaction record tracking monetary movement, lifecycle, and audit metadata.
   tags:
@@ -17,6 +17,7 @@ traits:
         - settled
         - failed
         - refunded
+        - cancelled
       initialState: pending
   - name: lifecycle/Timestampable
     parameters:
@@ -67,10 +68,18 @@ schema:
     type: uuid
     required: true
     description: Identifier of the user associated with the transaction.
+  user_name:
+    type: string
+    required: false
+    description: Display name of the user associated with the transaction.
   organization_id:
     type: uuid
     required: false
     description: Tenant organization responsible for the transaction.
+  organization_name:
+    type: string
+    required: false
+    description: Display name of the tenant organization responsible for the transaction.
   occurred_at:
     type: datetime
     required: true
@@ -100,6 +109,12 @@ schema:
     type: string
     required: false
     description: Provider reference code linking to the payment processor.
+  description:
+    type: string
+    required: false
+    description: What the payment was for, as it appears on the customer's statement.
+    validation:
+      maxLength: 160
   risk_score:
     type: number
     required: false
@@ -115,9 +130,23 @@ semantics:
   user_id:
     semantic_type: identity.user.id
     token_mapping: tokenMap(identity.id.primary)
+    ui_hints:
+      displayLabelField: user_name
+  user_name:
+    semantic_type: identity.user.name
+    token_mapping: tokenMap(identity.name.primary)
   organization_id:
     semantic_type: organization.id
     token_mapping: tokenMap(organization.id.primary)
+    ui_hints:
+      displayLabelField: organization_name
+  organization_name:
+    semantic_type: organization.name
+    token_mapping: tokenMap(organization.name.primary)
+  # The one-line summary under the payment reference in lists: what the payment was for.
+  description:
+    semantic_type: text.summary
+    token_mapping: tokenMap(commerce.transaction.description)
   occurred_at:
     semantic_type: commerce.transaction.timestamp
     token_mapping: tokenMap(commerce.transaction.timestamp)
@@ -127,6 +156,11 @@ semantics:
   channel:
     semantic_type: commerce.transaction.channel
     token_mapping: tokenMap(commerce.transaction.channel)
+  payment_reference:
+    semantic_type: text.label
+    token_mapping: tokenMap(commerce.transaction.id)
+    ui_hints:
+      displayFallbackField: transaction_id
   risk_score:
     semantic_type: risk.transaction.score
     token_mapping: tokenMap(risk.score.primary)
@@ -142,6 +176,223 @@ metadata:
     - risk@oods.systems
   steward: platform@oods.systems
   changelog:
+    - version: 1.1.0
+      date: "2026-09-20"
+      description: Name transactions by the optional payment reference, falling back to transaction_id for display only.
     - version: 1.0.0
       date: "2025-10-16"
       description: Initial Universal Quintet baseline.
+
+# Authored type associations; no record join or referential-integrity claim.
+relationships:
+  - target: User
+    via: user_id
+    cardinality: many-to-one
+    label: User
+  - target: Organization
+    via: organization_id
+    cardinality: many-to-one
+    label: Tenant organization
+
+# Eight authored sample transactions: the sample subscriptions' payments (one a bank transfer still in progress), a
+# card-verification hold and a cancelled checkout, each by a sample organization's user. Amounts are stored at Priceable's factor of 100 per currency unit.
+# Cancellation is not a recorded event, so the cancelled checkout's last event is its initiation.
+samples:
+  - payment_reference: PAY-2026-0412
+    description: Business plan, Sep 2 to Oct 2
+    user_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d01
+    user_name: Dana Whitfield
+    organization_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a01
+    organization_name: Northwind Traders
+    occurred_at: '2026-09-02T15:00:00Z'
+    unit_amount_cents: 14900
+    currency: USD
+    pricing_model: one_time
+    payment_method: card
+    channel: online
+    risk_score: 8
+    status: settled
+    state_history:
+      - { title: Initiated, from: null, to: pending, at: '2026-09-02T15:00:00Z', reason: Business plan renewal charge }
+      - { title: Authorized, from: pending, to: authorized, at: '2026-09-02T15:01:00Z', reason: Approved by the card issuer }
+      - { title: Settled, from: authorized, to: settled, at: '2026-09-03T02:00:00Z', reason: Included in the nightly payout }
+    cancellation_reason: null
+    cancellation_reason_code: null
+    cancellation_requested_at: null
+    created_at: '2026-09-02T15:00:00Z'
+    updated_at: '2026-09-03T02:00:00Z'
+    last_event: settled
+    last_event_at: '2026-09-03T02:00:00Z'
+  - payment_reference: PAY-2026-0388
+    description: Upgrade to Business, prorated
+    user_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d01
+    user_name: Dana Whitfield
+    organization_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a01
+    organization_name: Northwind Traders
+    occurred_at: '2026-06-16T15:00:00Z'
+    unit_amount_cents: 5333
+    currency: USD
+    pricing_model: one_time
+    payment_method: card
+    channel: online
+    risk_score: 6
+    status: settled
+    state_history:
+      - { title: Initiated, from: null, to: pending, at: '2026-06-16T15:00:00Z', reason: Prorated charge for the upgrade to Business }
+      - { title: Authorized, from: pending, to: authorized, at: '2026-06-16T15:01:00Z', reason: Approved by the card issuer }
+      - { title: Settled, from: authorized, to: settled, at: '2026-06-17T02:00:00Z', reason: Included in the nightly payout }
+    cancellation_reason: null
+    cancellation_reason_code: null
+    cancellation_requested_at: null
+    created_at: '2026-06-16T15:00:00Z'
+    updated_at: '2026-06-17T02:00:00Z'
+    last_event: settled
+    last_event_at: '2026-06-17T02:00:00Z'
+  - payment_reference: PAY-2026-0417
+    description: Starter plan, Sep 15 to Oct 15
+    user_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d04
+    user_name: Tomas Lindqvist
+    organization_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a03
+    organization_name: Lindqvist Bakery
+    occurred_at: '2026-09-15T08:00:00Z'
+    unit_amount_cents: 1900
+    currency: EUR
+    pricing_model: one_time
+    payment_method: card
+    channel: online
+    risk_score: 4
+    status: settled
+    state_history:
+      - { title: Initiated, from: null, to: pending, at: '2026-09-15T08:00:00Z', reason: Starter plan renewal charge }
+      - { title: Authorized, from: pending, to: authorized, at: '2026-09-15T08:01:00Z', reason: Approved by the card issuer }
+      - { title: Settled, from: authorized, to: settled, at: '2026-09-16T02:00:00Z', reason: Included in the nightly payout }
+    cancellation_reason: null
+    cancellation_reason_code: null
+    cancellation_requested_at: null
+    created_at: '2026-09-15T08:00:00Z'
+    updated_at: '2026-09-16T02:00:00Z'
+    last_event: settled
+    last_event_at: '2026-09-16T02:00:00Z'
+  - payment_reference: PAY-2026-0395
+    description: Starter plan, charged twice in August
+    user_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d04
+    user_name: Tomas Lindqvist
+    organization_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a03
+    organization_name: Lindqvist Bakery
+    occurred_at: '2026-08-16T08:00:00Z'
+    unit_amount_cents: 1900
+    currency: EUR
+    pricing_model: one_time
+    payment_method: card
+    channel: online
+    risk_score: 11
+    status: refunded
+    state_history:
+      - { title: Initiated, from: null, to: pending, at: '2026-08-16T08:00:00Z', reason: August renewal charged a second time }
+      - { title: Authorized, from: pending, to: authorized, at: '2026-08-16T08:01:00Z', reason: Approved by the card issuer }
+      - { title: Settled, from: authorized, to: settled, at: '2026-08-17T02:00:00Z', reason: Included in the nightly payout }
+      - { title: Refunded, from: settled, to: refunded, at: '2026-08-19T11:30:00Z', reason: Duplicate charge refunded in full }
+    cancellation_reason: null
+    cancellation_reason_code: null
+    cancellation_requested_at: null
+    created_at: '2026-08-16T08:00:00Z'
+    updated_at: '2026-08-19T11:30:00Z'
+    last_event: refunded
+    last_event_at: '2026-08-19T11:30:00Z'
+  - payment_reference: PAY-2026-0409
+    description: Team plan, Sep 3 to Oct 3
+    user_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d05
+    user_name: Grace Okafor
+    organization_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a04
+    organization_name: Kestrel Print Co.
+    occurred_at: '2026-09-03T10:00:00Z'
+    unit_amount_cents: 4900
+    currency: GBP
+    pricing_model: one_time
+    payment_method: card
+    channel: online
+    risk_score: 64
+    status: failed
+    state_history:
+      - { title: Initiated, from: null, to: pending, at: '2026-09-03T10:00:00Z', reason: Team plan renewal charge }
+      - { title: Failed, from: pending, to: failed, at: '2026-09-03T10:01:00Z', reason: Card declined by the issuer }
+    cancellation_reason: null
+    cancellation_reason_code: null
+    cancellation_requested_at: null
+    created_at: '2026-09-03T10:00:00Z'
+    updated_at: '2026-09-03T10:01:00Z'
+    last_event: failed
+    last_event_at: '2026-09-03T10:01:00Z'
+  - payment_reference: PAY-2026-0425
+    description: Card check before the Team trial
+    user_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d03
+    user_name: Priya Raman
+    organization_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a02
+    organization_name: Blue Harbor Studio
+    occurred_at: '2026-09-21T08:58:00Z'
+    unit_amount_cents: 100
+    currency: USD
+    pricing_model: one_time
+    payment_method: card
+    channel: in_app
+    risk_score: 9
+    status: authorized
+    state_history:
+      - { title: Initiated, from: null, to: pending, at: '2026-09-21T08:58:00Z', reason: Card check before the Team trial }
+      - { title: Authorized, from: pending, to: authorized, at: '2026-09-21T08:58:30Z', reason: Hold approved; it is released without capture }
+    cancellation_reason: null
+    cancellation_reason_code: null
+    cancellation_requested_at: null
+    created_at: '2026-09-21T08:58:00Z'
+    updated_at: '2026-09-21T08:58:30Z'
+    last_event: authorized
+    last_event_at: '2026-09-21T08:58:30Z'
+  - payment_reference: PAY-2026-0429
+    description: Enterprise renewal, 2026 to 2027
+    user_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02
+    user_name: Ruth Adeyemi
+    organization_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05
+    organization_name: Tidewater Co-op
+    occurred_at: '2026-09-24T21:00:00Z'
+    unit_amount_cents: 1200000
+    currency: USD
+    pricing_model: one_time
+    payment_method: bank_transfer
+    channel: online
+    risk_score: 3
+    status: pending
+    state_history:
+      - { title: Initiated, from: null, to: pending, at: '2026-09-24T21:00:00Z', reason: Bank transfer sent for INV-2026-0155 }
+      - { title: Returned, from: pending, to: failed, at: '2026-09-25T02:00:00Z', reason: The reference had no invoice number }
+      - { title: Sent again, from: failed, to: pending, at: '2026-09-28T21:00:00Z', reason: Sent again with the invoice number }
+    cancellation_reason: null
+    cancellation_reason_code: null
+    cancellation_requested_at: null
+    created_at: '2026-09-24T21:00:00Z'
+    updated_at: '2026-09-28T21:00:00Z'
+    last_event: initiated
+    last_event_at: '2026-09-28T21:00:00Z'
+  - payment_reference: PAY-2026-0404
+    description: Team plan purchase at trial end
+    user_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d09
+    user_name: Helen Rowe
+    organization_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a08
+    organization_name: Gale & Rowe Legal
+    occurred_at: '2026-09-08T12:50:00Z'
+    unit_amount_cents: 4900
+    currency: USD
+    pricing_model: one_time
+    payment_method: card
+    channel: online
+    risk_score: 12
+    status: cancelled
+    state_history:
+      - { title: Initiated, from: null, to: pending, at: '2026-09-08T12:50:00Z', reason: Team plan checkout at the end of the trial }
+      - { title: Cancelled, from: pending, to: cancelled, at: '2026-09-08T12:58:00Z', reason: Customer cancelled before capture }
+    cancellation_reason: Customer cancelled the Team plan purchase before capture
+    cancellation_reason_code: customer_request
+    cancellation_requested_at: '2026-09-08T12:58:00Z'
+    created_at: '2026-09-08T12:50:00Z'
+    updated_at: '2026-09-08T12:58:00Z'
+    last_event: initiated
+    last_event_at: '2026-09-08T12:50:00Z'

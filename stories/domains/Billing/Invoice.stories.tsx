@@ -33,7 +33,7 @@ const buildArgs = (context: InvoiceContext, data: InvoiceRecord) =>
   }) satisfies InvoiceRenderProps;
 
 const meta = {
-  title: 'Objects/Domain Objects/Invoice',
+  title: 'Domains/Billing/Invoice',
   component: InvoiceRenderObject,
   parameters: {
     layout: 'fullscreen',

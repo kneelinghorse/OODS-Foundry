@@ -1,3 +1,5 @@
+/* @vitest-environment jsdom */
+
 /**
  * Integration tests for spatial components composition.
  */

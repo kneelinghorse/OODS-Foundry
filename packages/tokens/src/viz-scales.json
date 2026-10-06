@@ -1,140 +1,282 @@
 {
   "viz": {
+    "mark": {
+      "single": {
+        "$type": "color",
+        "$value": "oklch(0.543785 0.191021 267)",
+        "$description": "viz.mark.single; generated from the brand recipe by @oods/tokens recipe.mjs.",
+        "$extensions": {
+          "ods": {
+            "fallback": "#3E63DD"
+          }
+        }
+      }
+    },
     "scale": {
-      "sequential": {
-        "01": {
-          "$type": "color",
-          "$value": "oklch(0.94 0.025 250)",
-          "$description": "Sequential scale step 01 – lightest tint for subtle backgrounds."
-        },
-        "02": {
-          "$type": "color",
-          "$value": "oklch(0.84 0.04 250)",
-          "$description": "Sequential scale step 02 – hover states on pale data regions."
-        },
-        "03": {
-          "$type": "color",
-          "$value": "oklch(0.74 0.055 250)",
-          "$description": "Sequential scale step 03 – low-emphasis series fills."
-        },
-        "04": {
-          "$type": "color",
-          "$value": "oklch(0.64 0.07 250)",
-          "$description": "Sequential scale step 04 – balanced fill for stacked charts."
-        },
-        "05": {
-          "$type": "color",
-          "$value": "oklch(0.54 0.09 250)",
-          "$description": "Sequential scale step 05 – baseline data hue."
-        },
-        "06": {
-          "$type": "color",
-          "$value": "oklch(0.44 0.11 250)",
-          "$description": "Sequential scale step 06 – hover/highlight overlay."
-        },
-        "07": {
-          "$type": "color",
-          "$value": "oklch(0.34 0.13 250)",
-          "$description": "Sequential scale step 07 – saturated accent for dense marks."
-        },
-        "08": {
-          "$type": "color",
-          "$value": "oklch(0.24 0.14 250)",
-          "$description": "Sequential scale step 08 – darker focus for dense data."
-        },
-        "09": {
-          "$type": "color",
-          "$value": "oklch(0.14 0.15 250)",
-          "$description": "Sequential scale step 09 – highest contrast extreme."
-        }
-      },
-      "diverging": {
-        "neg-05": {
-          "$type": "color",
-          "$value": "oklch(0.22 0.09 210)",
-          "$description": "Diverging scale far-negative anchor."
-        },
-        "neg-04": {
-          "$type": "color",
-          "$value": "oklch(0.32 0.08 210)",
-          "$description": "Diverging scale negative level 4."
-        },
-        "neg-03": {
-          "$type": "color",
-          "$value": "oklch(0.42 0.07 210)",
-          "$description": "Diverging scale negative level 3."
-        },
-        "neg-02": {
-          "$type": "color",
-          "$value": "oklch(0.52 0.06 210)",
-          "$description": "Diverging scale negative level 2."
-        },
-        "neg-01": {
-          "$type": "color",
-          "$value": "oklch(0.62 0.05 210)",
-          "$description": "Diverging scale near-neutral negative."
-        },
-        "neutral": {
-          "$type": "color",
-          "$value": "oklch(0.82 0.01 260)",
-          "$description": "Diverging scale midpoint neutral."
-        },
-        "pos-01": {
-          "$type": "color",
-          "$value": "oklch(0.62 0.06 25)",
-          "$description": "Diverging scale near-neutral positive."
-        },
-        "pos-02": {
-          "$type": "color",
-          "$value": "oklch(0.52 0.07 25)",
-          "$description": "Diverging scale positive level 2."
-        },
-        "pos-03": {
-          "$type": "color",
-          "$value": "oklch(0.42 0.08 25)",
-          "$description": "Diverging scale positive level 3."
-        },
-        "pos-04": {
-          "$type": "color",
-          "$value": "oklch(0.32 0.09 25)",
-          "$description": "Diverging scale positive level 4."
-        },
-        "pos-05": {
-          "$type": "color",
-          "$value": "oklch(0.22 0.11 25)",
-          "$description": "Diverging scale far-positive anchor."
-        }
-      },
       "categorical": {
         "01": {
           "$type": "color",
-          "$value": "{sys.status.info.icon}",
-          "$description": "Categorical slot 01 derived from info tone."
+          "$value": "oklch(0.543785 0.191021 267)",
+          "$description": "viz.scale.categorical.01; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#3E63DD"
+            }
+          }
         },
         "02": {
           "$type": "color",
-          "$value": "{sys.status.accent.icon}",
-          "$description": "Categorical slot 02 derived from accent tone."
+          "$value": "oklch(0.669609 0.136951 87)",
+          "$description": "viz.scale.categorical.02; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#B98E00"
+            }
+          }
         },
         "03": {
           "$type": "color",
-          "$value": "{sys.status.success.icon}",
-          "$description": "Categorical slot 03 derived from success tone."
+          "$value": "oklch(0.426529 0.191793 327)",
+          "$description": "viz.scale.categorical.03; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#800883"
+            }
+          }
         },
         "04": {
           "$type": "color",
-          "$value": "{sys.status.warning.icon}",
-          "$description": "Categorical slot 04 derived from warning tone."
+          "$value": "oklch(0.510586 0.147294 147)",
+          "$description": "viz.scale.categorical.04; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#0C7B2D"
+            }
+          }
         },
         "05": {
           "$type": "color",
-          "$value": "{sys.status.critical.icon}",
-          "$description": "Categorical slot 05 derived from critical tone."
+          "$value": "oklch(0.366152 0.149221 27)",
+          "$description": "viz.scale.categorical.05; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#7B0008"
+            }
+          }
         },
         "06": {
           "$type": "color",
-          "$value": "{sys.status.neutral.icon}",
-          "$description": "Categorical slot 06 derived from neutral tone."
+          "$value": "oklch(0.653478 0.112047 207)",
+          "$description": "viz.scale.categorical.06; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#00A3B3"
+            }
+          }
+        }
+      },
+      "sequential": {
+        "01": {
+          "$type": "color",
+          "$value": "oklch(0.94 0.021658 267)",
+          "$description": "viz.scale.sequential.01; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#E5EBFA"
+            }
+          }
+        },
+        "02": {
+          "$type": "color",
+          "$value": "oklch(0.84 0.073919 267)",
+          "$description": "viz.scale.sequential.02; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#B5CAFC"
+            }
+          }
+        },
+        "03": {
+          "$type": "color",
+          "$value": "oklch(0.74 0.126649 267)",
+          "$description": "viz.scale.sequential.03; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#87A8FB"
+            }
+          }
+        },
+        "04": {
+          "$type": "color",
+          "$value": "oklch(0.64 0.167732 267)",
+          "$description": "viz.scale.sequential.04; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#5E85F1"
+            }
+          }
+        },
+        "05": {
+          "$type": "color",
+          "$value": "oklch(0.54 0.189065 267)",
+          "$description": "viz.scale.sequential.05; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#3D62DB"
+            }
+          }
+        },
+        "06": {
+          "$type": "color",
+          "$value": "oklch(0.44 0.186634 267)",
+          "$description": "viz.scale.sequential.06; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#2543B7"
+            }
+          }
+        },
+        "07": {
+          "$type": "color",
+          "$value": "oklch(0.34 0.160892 267)",
+          "$description": "viz.scale.sequential.07; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#142989"
+            }
+          }
+        },
+        "08": {
+          "$type": "color",
+          "$value": "oklch(0.24 0.116709 267)",
+          "$description": "viz.scale.sequential.08; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#081555"
+            }
+          }
+        },
+        "09": {
+          "$type": "color",
+          "$value": "oklch(0.14 0.062954 267)",
+          "$description": "viz.scale.sequential.09; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#020523"
+            }
+          }
+        }
+      },
+      "diverging": {
+        "neg-01": {
+          "$type": "color",
+          "$value": "oklch(0.7 0.145019 267)",
+          "$description": "viz.scale.diverging.neg-01; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#769AF8"
+            }
+          }
+        },
+        "pos-01": {
+          "$type": "color",
+          "$value": "oklch(0.7 0.145019 23)",
+          "$description": "viz.scale.diverging.pos-01; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#EB7673"
+            }
+          }
+        },
+        "neg-02": {
+          "$type": "color",
+          "$value": "oklch(0.58 0.183256 267)",
+          "$description": "viz.scale.diverging.neg-02; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#4A70E5"
+            }
+          }
+        },
+        "pos-02": {
+          "$type": "color",
+          "$value": "oklch(0.58 0.183256 23)",
+          "$description": "viz.scale.diverging.pos-02; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#D13E43"
+            }
+          }
+        },
+        "neg-03": {
+          "$type": "color",
+          "$value": "oklch(0.46 0.185665 267)",
+          "$description": "viz.scale.diverging.neg-03; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#2A49BD"
+            }
+          }
+        },
+        "pos-03": {
+          "$type": "color",
+          "$value": "oklch(0.46 0.185665 23)",
+          "$description": "viz.scale.diverging.pos-03; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#A70020"
+            }
+          }
+        },
+        "neg-04": {
+          "$type": "color",
+          "$value": "oklch(0.34 0.137232 267)",
+          "$description": "viz.scale.diverging.neg-04; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#192E7D"
+            }
+          }
+        },
+        "pos-04": {
+          "$type": "color",
+          "$value": "oklch(0.34 0.137232 23)",
+          "$description": "viz.scale.diverging.pos-04; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#6E0011"
+            }
+          }
+        },
+        "neg-05": {
+          "$type": "color",
+          "$value": "oklch(0.22 0.088801 267)",
+          "$description": "viz.scale.diverging.neg-05; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#081543"
+            }
+          }
+        },
+        "pos-05": {
+          "$type": "color",
+          "$value": "oklch(0.22 0.088801 23)",
+          "$description": "viz.scale.diverging.pos-05; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#3A0005"
+            }
+          }
+        },
+        "neutral": {
+          "$type": "color",
+          "$value": "oklch(0.82 0 286)",
+          "$description": "viz.scale.diverging.neutral; generated from the brand recipe by @oods/tokens recipe.mjs.",
+          "$extensions": {
+            "ods": {
+              "fallback": "#C4C4C4"
+            }
+          }
         }
       }
     }

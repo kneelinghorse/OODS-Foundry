@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/map.resolve.input.json",
+  "title": "map.resolve input",
+  "description": "Resolve an external component to its OODS trait mapping with prop translations.",
+  "type": "object",
+  "required": ["externalSystem", "externalComponent"],
+  "additionalProperties": false,
+  "properties": {
+    "externalSystem": {
+      "type": "string",
+      "minLength": 1,
+      "description": "External design system name (e.g., 'team')."
+    },
+    "externalComponent": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Component name in the external system (e.g., 'Button')."
+    }
+  }
+}

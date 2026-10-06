@@ -10,6 +10,12 @@ const MarkAreaTrait = {
   },
 
   parameters: [
+    {"name": "chart", "type": "object", "required": false, "description": "Optional read-only chart declaration binding existing domain fields; projects into supported detail and dashboard views."},
+    {"name": "title", "type": "string", "required": false, "description": "Title for the bound chart and its accessible figure.", "default": "Payment amounts"},
+    {"name": "description", "type": "string", "required": false, "description": "Description of the bound chart measurements and units.", "default": "Values recorded for this record."},
+    { name: 'previewSvg', type: 'string', required: false, description: 'Static SVG returned by viz.render for the authored sample.' },
+    {"name": "renderIntent", "type": "string", "required": false, "default": "{}", "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."},
+
     {
       name: 'curve',
       type: 'string',
@@ -164,6 +170,7 @@ const MarkAreaTrait = {
         props: {
           curveField: 'viz_area_curve',
           opacityField: 'viz_area_opacity',
+          svgParameter: 'previewSvg',
           baselineField: 'viz_area_baseline',
         },
       },
@@ -173,6 +180,7 @@ const MarkAreaTrait = {
         component: 'VizAreaControls',
         position: 'top',
         props: {
+          intentParameter: 'renderIntent',
           curveField: 'viz_area_curve',
           opacityField: 'viz_area_opacity',
           baselineField: 'viz_area_baseline',
@@ -184,6 +192,7 @@ const MarkAreaTrait = {
       {
         component: 'VizRoleBadge',
         props: {
+          intentParameter: 'renderIntent',
           labelField: 'viz_mark_role',
         },
       },
@@ -210,7 +219,7 @@ const MarkAreaTrait = {
     regionsUsed: ['detail', 'form', 'list'],
     examples: ['ForecastRange', 'BurnDownVariance'],
     references: [
-      'cmos/research/data-viz-oods/RDS.7_synthesis_Mission Completion Report- Trait-Driven Visualization System Specification (v0.1).md',
+      'RDS.7 Trait-Driven Visualization System Specification (v0.1)',
     ],
   },
 } as const satisfies TraitDefinition;

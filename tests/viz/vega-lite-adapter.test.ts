@@ -2,8 +2,8 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { toVegaLiteSpec, VegaLiteAdapterError } from '../../src/viz/adapters/vega-lite-adapter.js';
-import type { NormalizedVizSpec } from '../../src/viz/spec/normalized-viz-spec.js';
+import { toVegaLiteSpec, VegaLiteAdapterError } from '@oods/viz-core';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 
 const ROOT = path.resolve(fileURLToPath(new URL('../..', import.meta.url)));
 const EXAMPLES_DIR = path.join(ROOT, 'examples', 'viz');
@@ -90,7 +90,7 @@ describe('Vega-Lite adapter', () => {
     const result = toVegaLiteSpec(spec);
 
     expect(result.transform?.[0]).toMatchObject({
-      calculate: 'timeParse(datum["month"], "%Y-%m")',
+      calculate: 'utcParse(datum["month"], "%Y-%m")',
       as: 'month',
     });
     expect(result.encoding?.x).toMatchObject({ type: 'temporal' });
@@ -120,7 +120,7 @@ describe('Vega-Lite adapter', () => {
 
   it('maps average aggregates to Vega-Lite mean operations', () => {
     const spec: NormalizedVizSpec = {
-      $schema: 'https://oods.dev/viz-spec/v1',
+      $schema: 'https://oods-foundry.com/viz-spec/v1',
       id: 'avg-example',
       name: 'Average Example',
       data: {
@@ -151,7 +151,7 @@ describe('Vega-Lite adapter', () => {
 
   it('treats y-position without quantitative hints as ordinal', () => {
     const spec: NormalizedVizSpec = {
-      $schema: 'https://oods.dev/viz-spec/v1',
+      $schema: 'https://oods-foundry.com/viz-spec/v1',
       id: 'horizontal-bars',
       name: 'Horizontal Bars',
       data: {

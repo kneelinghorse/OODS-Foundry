@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/stage1-projection-variant.json",
+  "title": "Stage1 projection variant",
+  "description": "Draft v1.4.0-gated cross-surface identity relation for component mappings. Represents one surface-specific projection of a canonical map/capability.",
+  "type": "object",
+  "required": ["id", "surface"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Stable identifier for the projection variant."
+    },
+    "surface": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Surface label such as desktop, mobile, modal, or sidebar."
+    },
+    "external_component": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Observed surface-specific component label when it differs from the canonical map name."
+    },
+    "capability_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Optional first-class capability entity linked to this surface projection."
+    },
+    "selector": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Representative selector or cluster signature for the surface projection."
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Confidence score for the identity-resolution link."
+    },
+    "evidence_chain": {
+      "type": "array",
+      "items": { "type": "object", "additionalProperties": true },
+      "description": "Evidence supporting the cross-surface identity merge."
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Open metadata bag reserved for future cross-surface identity details."
+    }
+  }
+}

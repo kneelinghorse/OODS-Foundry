@@ -32,7 +32,40 @@ const FUNCTION_PATTERNS: Array<{ label: string; regex: RegExp }> = [
   { label: 'hsla()', regex: /\bhsla\s*\(/g }
 ];
 
+// sprint-125 m04: entry-granular baseline of KNOWN literal-colour usages so the
+// gate passes on pre-existing debt while still failing on any NEW literal.
+const BASELINE_PATH = path.resolve(process.cwd(), 'scripts/tokens/lint-semantic-baseline.json');
+
+type BaselineEntry = { file: string; snippet: string; reason: string };
+
+// Stable identity: file + trimmed source line. Deliberately NOT line/column
+// (those drift on edit); a new literal on a new line yields a new snippet and
+// is therefore NOT matched, so it still fails.
+function baselineKey(filePath: string, snippet: string): string {
+  return `${filePath}\u0000${snippet.trim()}`;
+}
+
+function baselineReasonFor(filePath: string): string {
+  if (filePath.includes('stories')) {
+    return 'Literal colour in an explorer proof/demo story preview; pre-existing, baselined sprint-125 m04. New literals still fail.';
+  }
+  return 'Literal colour used as a var() fallback or color-mix input in an explorer style; pre-existing, baselined sprint-125 m04. New literals still fail.';
+}
+
+async function loadBaselineKeys(): Promise<Set<string>> {
+  try {
+    const raw = await fs.readFile(BASELINE_PATH, 'utf8');
+    const parsed = JSON.parse(raw) as { entries?: BaselineEntry[] };
+    const entries = Array.isArray(parsed.entries) ? parsed.entries : [];
+    return new Set(entries.map((e) => baselineKey(e.file, e.snippet)));
+  } catch {
+    // Missing/unreadable baseline suppresses nothing — the gate stays strict.
+    return new Set();
+  }
+}
+
 async function main(): Promise<void> {
+  const writeBaseline = process.argv.slice(2).includes('--write-baseline');
   const files = await collectTargetFiles();
   const violations: Violation[] = [];
 
@@ -46,17 +79,44 @@ async function main(): Promise<void> {
     });
   }
 
-  if (violations.length > 0) {
-    for (const violation of violations) {
+  if (writeBaseline) {
+    // Regenerate the committed baseline from ACTUAL output (dedup by stable key).
+    const byKey = new Map<string, BaselineEntry>();
+    for (const v of violations) {
+      const key = baselineKey(v.filePath, v.snippet);
+      if (!byKey.has(key)) {
+        byKey.set(key, { file: v.filePath, snippet: v.snippet.trim(), reason: baselineReasonFor(v.filePath) });
+      }
+    }
+    const entries = Array.from(byKey.values()).sort(
+      (a, b) => a.file.localeCompare(b.file) || a.snippet.localeCompare(b.snippet)
+    );
+    const payload = {
+      note:
+        'Entry-granular baseline of KNOWN pre-existing literal-colour usages (sprint-125 m04). Keyed on file+trimmed-snippet (stable, line-independent). A new literal not listed here still fails. Regenerate with: pnpm exec tsx scripts/tokens/lint-semantic.ts --write-baseline',
+      entries
+    };
+    await fs.writeFile(BASELINE_PATH, `${JSON.stringify(payload, null, 2)}\n`, 'utf8');
+    console.log(`✔ Wrote ${entries.length} baseline entr${entries.length === 1 ? 'y' : 'ies'} to ${path.relative(process.cwd(), BASELINE_PATH)}.`);
+    return;
+  }
+
+  const baseline = await loadBaselineKeys();
+  const fresh = violations.filter((v) => !baseline.has(baselineKey(v.filePath, v.snippet)));
+  const suppressed = violations.length - fresh.length;
+
+  if (fresh.length > 0) {
+    for (const violation of fresh) {
       const location = `${violation.filePath}:${violation.line}:${violation.column}`;
       console.error(`${location}  ${violation.reason}`);
       console.error(`    ${violation.snippet.trim()}`);
     }
-    console.error(`\n❌ Found ${violations.length} literal colour violation(s).`);
+    console.error(`\n❌ Found ${fresh.length} NEW literal colour violation(s) (${suppressed} pre-existing suppressed by baseline).`);
     process.exit(1);
   }
 
-  console.log('✔ Semantic lint passed (no literal colour usage detected).');
+  const tail = suppressed > 0 ? ` (${suppressed} pre-existing suppressed by baseline)` : '';
+  console.log(`✔ Semantic lint passed (no NEW literal colour usage detected)${tail}.`);
 }
 
 async function collectTargetFiles(): Promise<string[]> {

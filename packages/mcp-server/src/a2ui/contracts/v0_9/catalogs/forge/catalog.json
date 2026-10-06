@@ -1,0 +1,231 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oods-forge.local/a2ui/v0_9/catalogs/forge/catalog.json",
+  "title": "OODS Foundry A2UI Catalog v1 (extends minimal with Image)",
+  "description": "OODS Foundry-published A2UI v0.9 catalog. Strict superset of the upstream minimal catalog (Text/Row/Column/Button/TextField) with one additional component: Image, used for slot.kind='image' emission instead of falling back to Text via DataBinding. Hosts that load this catalog by catalogId can render image slots natively.",
+  "catalogId": "oods-forge:catalog/v1",
+  "components": {
+    "Text": {
+      "type": "object",
+      "allOf": [
+        {"$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/ComponentCommon"},
+        {"$ref": "#/$defs/CatalogComponentCommon"},
+        {
+          "type": "object",
+          "properties": {
+            "component": {"const": "Text"},
+            "text": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+            },
+            "variant": {
+              "type": "string",
+              "enum": ["h1", "h2", "h3", "h4", "h5", "caption", "body"]
+            }
+          },
+          "required": ["component", "text"]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "Row": {
+      "type": "object",
+      "allOf": [
+        {"$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/ComponentCommon"},
+        {"$ref": "#/$defs/CatalogComponentCommon"},
+        {
+          "type": "object",
+          "properties": {
+            "component": {"const": "Row"},
+            "children": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/ChildList"
+            },
+            "justify": {
+              "type": "string",
+              "enum": [
+                "center",
+                "end",
+                "spaceAround",
+                "spaceBetween",
+                "spaceEvenly",
+                "start",
+                "stretch"
+              ]
+            },
+            "align": {
+              "type": "string",
+              "enum": ["start", "center", "end", "stretch"]
+            }
+          },
+          "required": ["component", "children"]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "Column": {
+      "type": "object",
+      "allOf": [
+        {"$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/ComponentCommon"},
+        {"$ref": "#/$defs/CatalogComponentCommon"},
+        {
+          "type": "object",
+          "properties": {
+            "component": {"const": "Column"},
+            "children": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/ChildList"
+            },
+            "justify": {
+              "type": "string",
+              "enum": [
+                "start",
+                "center",
+                "end",
+                "spaceBetween",
+                "spaceAround",
+                "spaceEvenly",
+                "stretch"
+              ]
+            },
+            "align": {
+              "type": "string",
+              "enum": ["center", "end", "start", "stretch"]
+            }
+          },
+          "required": ["component", "children"]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "Button": {
+      "type": "object",
+      "allOf": [
+        {"$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/ComponentCommon"},
+        {"$ref": "#/$defs/CatalogComponentCommon"},
+        {"$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Checkable"},
+        {
+          "type": "object",
+          "properties": {
+            "component": {"const": "Button"},
+            "child": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/ComponentId"
+            },
+            "variant": {
+              "type": "string",
+              "enum": ["primary", "borderless"]
+            },
+            "action": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Action"
+            }
+          },
+          "required": ["component", "child", "action"]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "TextField": {
+      "type": "object",
+      "allOf": [
+        {"$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/ComponentCommon"},
+        {"$ref": "#/$defs/CatalogComponentCommon"},
+        {"$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/Checkable"},
+        {
+          "type": "object",
+          "properties": {
+            "component": {"const": "TextField"},
+            "label": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+            },
+            "value": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+            },
+            "variant": {
+              "type": "string",
+              "enum": ["longText", "number", "shortText", "obscured"]
+            },
+            "validationRegexp": {"type": "string"}
+          },
+          "required": ["component", "label"]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "Image": {
+      "type": "object",
+      "description": "Image component published by OODS Foundry for v0.9. Renders an image whose URL is sourced from a DynamicString (typically a DataBinding pointing into the data model). The minimal upstream catalog has no native image surface; this is the OODS Foundry extension closing OODS-A2UI-IMAGE-FALLBACK from sprint-102.",
+      "allOf": [
+        {"$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/ComponentCommon"},
+        {"$ref": "#/$defs/CatalogComponentCommon"},
+        {
+          "type": "object",
+          "properties": {
+            "component": {"const": "Image"},
+            "url": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+            },
+            "alt": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString",
+              "description": "Accessible alternative text. Hosts that cannot render the image should surface this via assistive technology."
+            },
+            "fit": {
+              "type": "string",
+              "enum": ["cover", "contain", "fill"],
+              "description": "How the image should be scaled to fit its bounding box."
+            }
+          },
+          "required": ["component", "url"]
+        }
+      ],
+      "unevaluatedProperties": false
+    }
+  },
+  "functions": {
+    "capitalize": {
+      "type": "object",
+      "description": "Converts an input string to a capitalized version.",
+      "properties": {
+        "call": {"const": "capitalize"},
+        "args": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "$ref": "https://a2ui.org/specification/v0_9/common_types.json#/$defs/DynamicString"
+            }
+          },
+          "required": ["value"],
+          "unevaluatedProperties": false
+        },
+        "returnType": {"const": "string"}
+      },
+      "required": ["call", "args"],
+      "unevaluatedProperties": false
+    }
+  },
+  "$defs": {
+    "CatalogComponentCommon": {
+      "type": "object",
+      "properties": {
+        "weight": {"type": "number"}
+      }
+    },
+    "theme": {
+      "type": "object",
+      "properties": {
+        "primaryColor": {"type": "string", "pattern": "^#[0-9a-fA-F]{6}$"}
+      },
+      "additionalProperties": true
+    },
+    "anyComponent": {
+      "oneOf": [
+        {"$ref": "#/components/Text"},
+        {"$ref": "#/components/Row"},
+        {"$ref": "#/components/Column"},
+        {"$ref": "#/components/Button"},
+        {"$ref": "#/components/TextField"},
+        {"$ref": "#/components/Image"}
+      ],
+      "discriminator": {"propertyName": "component"}
+    },
+    "anyFunction": {
+      "oneOf": [{"$ref": "#/functions/capitalize"}]
+    }
+  }
+}

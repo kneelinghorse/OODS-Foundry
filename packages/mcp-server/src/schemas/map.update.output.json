@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://designlab.local/schemas/map.update.output.json",
+  "title": "map.update output",
+  "description": "Result of updating a component-to-trait mapping.",
+  "type": "object",
+  "required": ["status"],
+  "additionalProperties": false,
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["ok", "error"]
+    },
+    "mapping": {
+      "type": "object",
+      "description": "The updated mapping record (present when status=ok)."
+    },
+    "etag": {
+      "type": "string",
+      "description": "SHA256 etag of the mappings file after update."
+    },
+    "changes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of fields that were changed."
+    },
+    "message": {
+      "type": "string",
+      "description": "Error or informational message."
+    }
+  }
+}

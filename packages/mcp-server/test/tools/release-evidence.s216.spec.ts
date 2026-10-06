@@ -1,0 +1,30 @@
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { createHash } from 'node:crypto';
+import { afterEach, expect, it } from 'vitest';
+import { bindReleaseEvidence, createValidationReceipt, RELEASE_EVIDENCE_CLASSES } from '../../src/codegen/validation-profile.js';
+const dirs: string[] = [];
+afterEach(() => dirs.splice(0).forEach(dir => fs.rmSync(dir, { recursive: true, force: true })));
+const hash = (bytes: string) => `sha256:${createHash('sha256').update(bytes).digest('hex')}`;
+const artifactContentHash = `sha256:${'a'.repeat(64)}`;
+it.each(['missing', 'tampered', 'failed', 'wrong-artifact', 'invalid-json'])('release refuses %s evidence instead of accepting a caller assertion', (fault) => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-evidence-')); dirs.push(dir);
+  const reference = path.join(dir, 'proof.json');
+  const bytes = JSON.stringify({ status: fault === 'failed' ? 'failed' : 'passed', artifactContentHash: fault === 'wrong-artifact' ? 'wrong' : artifactContentHash });
+  if (fault !== 'missing') fs.writeFileSync(reference, fault === 'invalid-json' ? '{' : bytes);
+  const evidence = Object.fromEntries(RELEASE_EVIDENCE_CLASSES.map(key => [key, { status: 'passed' as const, artifactContentHash, reference, contentHash: hash(fault === 'tampered' ? 'different' : fault === 'invalid-json' ? '{' : bytes) }]));
+  const result = bindReleaseEvidence(createValidationReceipt('release', 'react'), evidence, artifactContentHash);
+  expect(result.errors.length).toBeGreaterThan(0);
+  expect(result.receipt.evidence.accepted).toEqual([]);
+});
+it('accepts only the actual opened bytes, passed status and matching generated artifact', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'release-evidence-')); dirs.push(dir);
+  const reference = path.join(dir, 'proof.json');
+  const bytes = JSON.stringify({ status: 'passed', artifactContentHash }); fs.writeFileSync(reference, bytes);
+  const evidence = Object.fromEntries(RELEASE_EVIDENCE_CLASSES.map(key => [key, { status: 'passed' as const, artifactContentHash, reference, contentHash: hash(bytes) }]));
+  const result = bindReleaseEvidence(createValidationReceipt('release', 'react'), evidence, artifactContentHash);
+  expect(result.errors).toEqual([]);
+  expect(result.receipt.evidence.accepted).toHaveLength(6);
+  expect(result.receipt.evidence.accepted[0]).toHaveProperty('contentHash', hash(bytes));
+});

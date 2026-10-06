@@ -2,9 +2,9 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { toVegaLiteSpec } from '../../../src/viz/adapters/vega-lite-adapter.js';
-import { toEChartsOption } from '../../../src/viz/adapters/echarts-adapter.js';
-import type { NormalizedVizSpec } from '../../../src/viz/spec/normalized-viz-spec.js';
+import { toVegaLiteSpec } from '@oods/viz-core';
+import { toEChartsOption } from '@oods/viz-core';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 
 const ROOT = path.resolve(fileURLToPath(new URL('../../..', import.meta.url)));
 const EXAMPLES_DIR = path.join(ROOT, 'examples', 'viz');
@@ -20,17 +20,18 @@ describe('Layout adapters', () => {
     const vlSpec = toVegaLiteSpec(spec);
 
     expect('facet' in vlSpec).toBe(true);
-    const facet = (vlSpec as { facet?: { row?: { field?: string }; column?: { field?: string } } }).facet;
-    expect(facet?.row?.field).toBe('region');
-    expect(facet?.column?.field).toBe('segment');
+    const facet = (vlSpec as { facet?: { field?: string; sort?: string[] } }).facet;
+    expect(facet?.field).toBe('__oods_facet');
+    expect(facet?.sort).toEqual(['North / Enterprise', 'North / Growth', 'South / Enterprise', 'South / Growth']);
+    expect((vlSpec as { columns?: number }).columns).toBe(3);
 
     const resolve = (vlSpec as { resolve?: { scale?: Record<string, string> } }).resolve;
     expect(resolve?.scale?.x).toBe('shared');
     expect(resolve?.scale?.y).toBe('shared');
 
     const innerSpec = (vlSpec as { spec?: { width?: number; height?: number } }).spec;
-    expect(innerSpec?.width).toBe(360);
-    expect(innerSpec?.height).toBe(260);
+    expect(innerSpec?.width).toBe((360 - 12 * 2) / 3);
+    expect(innerSpec?.height).toBe((260 - 12) / 2);
   });
 
   it('creates multi-grid ECharts options with derived datasets for each facet cell', () => {
@@ -46,7 +47,7 @@ describe('Layout adapters', () => {
 
     const derivedDataset = option.dataset[1];
     expect(derivedDataset.fromDatasetId).toBe(option.dataset[0]?.id);
-    expect(derivedDataset.transform?.[0]?.config).toMatchObject({ field: 'region' });
+    expect(derivedDataset.transform?.[0]?.config).toMatchObject({ dimension: 'region', eq: 'North' });
 
     const layoutMeta = option.usermeta?.oods.layoutRuntime;
     expect(layoutMeta?.trait).toBe('LayoutFacet');

@@ -1,23 +1,31 @@
 {
   "name": "@oods/tokens",
-  "version": "0.1.0",
-  "description": "Design token source of truth for the OODS design system.",
+  "version": "0.7.0",
+  "description": "Design tokens for OODS Foundry: CSS variables and JavaScript values for its brands in light, dark and high-contrast themes.",
+  "homepage": "https://oods-foundry.com/",
+  "bugs": {
+    "url": "https://github.com/kneelinghorse/OODS-Foundry/issues"
+  },
   "type": "module",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "author": "Design System Team",
   "engines": {
-    "node": ">=20.11.1"
+    "node": ">=22.0.0"
   },
   "files": [
     "dist",
     "CHANGELOG.md",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "NOTICE"
   ],
   "keywords": [
+    "oods",
+    "oods-foundry",
     "design-tokens",
     "dtcg",
-    "oods"
+    "css-variables",
+    "design-system"
   ],
   "scripts": {
     "build": "rimraf dist && node ./scripts/build.mjs && node ./scripts/build-entry.mjs",
@@ -40,6 +48,17 @@
       "require": "./dist/css/tokens.css",
       "default": "./dist/css/tokens.css"
     },
+    "./brands": {
+      "types": "./dist/brands.d.ts",
+      "import": "./dist/brands.js",
+      "require": "./dist/brands.cjs",
+      "default": "./dist/brands.js"
+    },
+    "./recipe": {
+      "types": "./dist/recipe.d.ts",
+      "import": "./dist/recipe.js",
+      "default": "./dist/recipe.js"
+    },
     "./tailwind": {
       "import": "./dist/tailwind/tokens.json",
       "require": "./dist/tailwind/tokens.json",
@@ -51,12 +70,16 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "sideEffects": false,
-  "publishConfig": {
-    "access": "public",
-    "provenance": true
-  },
   "packageManager": "pnpm@9.12.2",
   "devDependencies": {
     "rimraf": "^5.0.7"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kneelinghorse/OODS-Foundry.git",
+    "directory": "packages/tokens"
   }
 }

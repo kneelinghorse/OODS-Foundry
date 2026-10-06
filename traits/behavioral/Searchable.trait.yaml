@@ -1,0 +1,140 @@
+trait:
+  name: Searchable
+  version: 1.0.0
+  description: |
+    Adds full-text search capability to list and collection views. Searchable injects a search
+    input into the header region, wires query state to the data layer, and provides semantic
+    token mappings for consistent search UI styling across brands.
+
+    The trait supports placeholder text customization, debounce control for performance,
+    and clear-on-escape behavior. Search state is managed via the searchQuery prop, which
+    the consuming layout binds to a data filter or API parameter.
+  category: behavioral
+  tags:
+    - search
+    - filtering
+    - discovery
+    - list-behavior
+
+parameters:
+  - name: placeholder
+    type: string
+    required: false
+    description: Placeholder text shown in the search input when empty.
+    default: "Search..."
+
+  - name: debounceMs
+    type: number
+    required: false
+    description: |
+      Debounce delay in milliseconds before the search query is emitted.
+      Prevents excessive re-renders or API calls while the user is typing.
+    default: 300
+    validation:
+      minimum: 0
+      maximum: 2000
+
+  - name: minQueryLength
+    type: number
+    required: false
+    description: |
+      Minimum number of characters before the search triggers.
+      Prevents overly broad queries on large datasets.
+    default: 1
+    validation:
+      minimum: 0
+      maximum: 10
+
+  - name: clearable
+    type: boolean
+    required: false
+    description: Whether the search input shows a clear button when non-empty.
+    default: true
+
+schema:
+  searchQuery:
+    type: string
+    required: false
+    description: The current search query string entered by the user.
+    default: ""
+    validation:
+      maxLength: 256
+
+  searchActive:
+    type: boolean
+    required: false
+    description: Whether the search input is currently focused or has a non-empty query.
+    default: false
+
+semantics:
+  searchQuery:
+    semantic_type: input.search.query
+    token_mapping: tokenMap(search.input.*)
+    ui_hints:
+      component: SearchInput
+      placeholderParameter: placeholder
+      debounceParameter: debounceMs
+  searchActive:
+    semantic_type: state.search.active
+    token_mapping: computed
+    ui_hints:
+      component: SearchInput
+      description: Drives visual active/inactive state of the search region.
+
+view_extensions:
+  list:
+    - component: SearchInput
+      position: header
+      priority: 10
+      props:
+        field: searchQuery
+        placeholderParameter: placeholder
+        debounceParameter: debounceMs
+        minQueryLengthParameter: minQueryLength
+        clearableParameter: clearable
+  detail:
+    - component: SearchInput
+      position: header
+      priority: 10
+      props:
+        field: searchQuery
+        placeholderParameter: placeholder
+        clearableParameter: clearable
+
+tokens:
+  search.input.bg: "var(--sys-surface-default)"
+  search.input.text: "var(--sys-text-primary)"
+  search.input.placeholder: "var(--sys-text-subtle)"
+  search.input.border: "var(--sys-border-default)"
+  search.input.focus.border: "var(--sys-border-focus)"
+  search.input.focus.ring: "var(--sys-focus-ring)"
+  search.input.icon: "var(--sys-icon-subtle)"
+  search.input.clear.hover: "var(--sys-surface-hover)"
+
+dependencies: []
+
+metadata:
+  created: "2026-03-05"
+  updated: "2026-03-05"
+  owners:
+    - design@oods.systems
+  maturity: stable
+  accessibility:
+    keyboard: |
+      SearchInput supports full keyboard navigation:
+      - Type to enter search query
+      - Escape to clear the search input
+      - Tab to move focus out of the search input
+    screenreader: |
+      Search input is labelled with role="search" and an accessible name.
+      Current query state is announced via aria-live region on debounce completion.
+      Clear button is announced as "Clear search".
+  regionsUsed:
+    - list
+    - detail
+  examples:
+    - Product catalog search
+    - User directory search
+    - Knowledge base search
+  references:
+    - "Trait Engine Spec v0.1 section 2"

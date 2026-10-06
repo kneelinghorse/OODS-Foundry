@@ -1,0 +1,371 @@
+{
+  "note": "Entry-granular baseline of KNOWN-pre-existing token-lint errors (sprint-125 m04). Keyed on ruleId+file+token-path (stable, line-independent). A new error not listed here still fails the gate. Regenerate with: node tools/token-lint/index.mjs --write-baseline packages/tokens/src",
+  "entries": [
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-A.json",
+      "location": "brand.A.border.strong",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-A.json",
+      "location": "brand.A.border.subtle",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-A.json",
+      "location": "brand.A.status.critical.surface",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-A.json",
+      "location": "brand.A.status.critical.text",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-A.json",
+      "location": "brand.A.status.info.surface",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-A.json",
+      "location": "brand.A.status.info.text",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-A.json",
+      "location": "brand.A.status.neutral.surface",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-A.json",
+      "location": "brand.A.status.neutral.text",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-A.json",
+      "location": "brand.A.status.success.surface",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-A.json",
+      "location": "brand.A.status.success.text",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-A.json",
+      "location": "brand.A.status.warning.surface",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-A.json",
+      "location": "brand.A.status.warning.text",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-A.json",
+      "location": "brand.A.surface.canvas",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-A.json",
+      "location": "brand.A.surface.interactivePrimary",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-A.json",
+      "location": "brand.A.surface.raised",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-A.json",
+      "location": "brand.A.surface.subtle",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-A.json",
+      "location": "brand.A.text.muted",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-A.json",
+      "location": "brand.A.text.onInteractive",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-A.json",
+      "location": "brand.A.text.primary",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-A.json",
+      "location": "brand.A.text.secondary",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-B.json",
+      "location": "brand.B.border.strong",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-B.json",
+      "location": "brand.B.border.subtle",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-B.json",
+      "location": "brand.B.status.critical.surface",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-B.json",
+      "location": "brand.B.status.critical.text",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-B.json",
+      "location": "brand.B.status.info.surface",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-B.json",
+      "location": "brand.B.status.info.text",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-B.json",
+      "location": "brand.B.status.neutral.surface",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-B.json",
+      "location": "brand.B.status.neutral.text",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-B.json",
+      "location": "brand.B.status.success.surface",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-B.json",
+      "location": "brand.B.status.success.text",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-B.json",
+      "location": "brand.B.status.warning.surface",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-B.json",
+      "location": "brand.B.status.warning.text",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-B.json",
+      "location": "brand.B.surface.canvas",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-B.json",
+      "location": "brand.B.surface.interactivePrimary",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-B.json",
+      "location": "brand.B.surface.raised",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-B.json",
+      "location": "brand.B.surface.subtle",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-B.json",
+      "location": "brand.B.text.muted",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-B.json",
+      "location": "brand.B.text.onInteractive",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-B.json",
+      "location": "brand.B.text.primary",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/alias-is-full-value",
+      "file": "packages/tokens/src/tokens/aliases/brand-B.json",
+      "location": "brand.B.text.secondary",
+      "reason": "Multi-brand A/B alias pack uses a structured/partial alias value; pre-existing brand-pack debt baselined in sprint-125 m04. New alias-is-full-value violations still fail."
+    },
+    {
+      "ruleId": "dtcg/token-name-kebab-case",
+      "file": "packages/tokens/src/presets/corporate-blue.json",
+      "location": "text.onInteractive",
+      "reason": "Pre-existing camelCase token name, baselined in sprint-125 m04. RE-ADDRESSED in s169 m05: the presets were re-keyed brand-relative, so this same debt moved from color.brand.A.text.onInteractive to text.onInteractive. Same token, same issue, new path — not a new suppression."
+    },
+    {
+      "ruleId": "dtcg/token-name-kebab-case",
+      "file": "packages/tokens/src/presets/dark-minimal.json",
+      "location": "text.onInteractive",
+      "reason": "Pre-existing camelCase token name, baselined in sprint-125 m04. RE-ADDRESSED in s169 m05: the presets were re-keyed brand-relative, so this same debt moved from color.brand.A.text.onInteractive to text.onInteractive. Same token, same issue, new path — not a new suppression."
+    },
+    {
+      "ruleId": "dtcg/token-name-kebab-case",
+      "file": "packages/tokens/src/presets/startup-warm.json",
+      "location": "text.onInteractive",
+      "reason": "Pre-existing camelCase token name, baselined in sprint-125 m04. RE-ADDRESSED in s169 m05: the presets were re-keyed brand-relative, so this same debt moved from color.brand.A.text.onInteractive to text.onInteractive. Same token, same issue, new path — not a new suppression."
+    },
+    {
+      "ruleId": "dtcg/token-name-kebab-case",
+      "file": "packages/tokens/src/tokens/aliases/brand-A.json",
+      "location": "brand.A",
+      "reason": "Multi-brand A/B namespace key or camelCase semantic slot; pre-existing brand-pack naming baselined in sprint-125 m04. New kebab-case violations still fail."
+    },
+    {
+      "ruleId": "dtcg/token-name-kebab-case",
+      "file": "packages/tokens/src/tokens/aliases/brand-A.json",
+      "location": "brand.A.surface.interactivePrimary",
+      "reason": "Multi-brand A/B namespace key or camelCase semantic slot; pre-existing brand-pack naming baselined in sprint-125 m04. New kebab-case violations still fail."
+    },
+    {
+      "ruleId": "dtcg/token-name-kebab-case",
+      "file": "packages/tokens/src/tokens/aliases/brand-A.json",
+      "location": "brand.A.text.onInteractive",
+      "reason": "Multi-brand A/B namespace key or camelCase semantic slot; pre-existing brand-pack naming baselined in sprint-125 m04. New kebab-case violations still fail."
+    },
+    {
+      "ruleId": "dtcg/token-name-kebab-case",
+      "file": "packages/tokens/src/tokens/aliases/brand-B.json",
+      "location": "brand.B",
+      "reason": "Multi-brand A/B namespace key or camelCase semantic slot; pre-existing brand-pack naming baselined in sprint-125 m04. New kebab-case violations still fail."
+    },
+    {
+      "ruleId": "dtcg/token-name-kebab-case",
+      "file": "packages/tokens/src/tokens/aliases/brand-B.json",
+      "location": "brand.B.surface.interactivePrimary",
+      "reason": "Multi-brand A/B namespace key or camelCase semantic slot; pre-existing brand-pack naming baselined in sprint-125 m04. New kebab-case violations still fail."
+    },
+    {
+      "ruleId": "dtcg/token-name-kebab-case",
+      "file": "packages/tokens/src/tokens/aliases/brand-B.json",
+      "location": "brand.B.text.onInteractive",
+      "reason": "Multi-brand A/B namespace key or camelCase semantic slot; pre-existing brand-pack naming baselined in sprint-125 m04. New kebab-case violations still fail."
+    },
+    {
+      "ruleId": "dtcg/token-name-kebab-case",
+      "file": "packages/tokens/src/tokens/brands/A/base.json",
+      "location": "color.brand.A",
+      "reason": "Multi-brand A/B namespace key or camelCase semantic slot; pre-existing brand-pack naming baselined in sprint-125 m04. New kebab-case violations still fail."
+    },
+    {
+      "ruleId": "dtcg/token-name-kebab-case",
+      "file": "packages/tokens/src/tokens/brands/A/base.json",
+      "location": "color.brand.A.text.onInteractive",
+      "reason": "Multi-brand A/B namespace key or camelCase semantic slot; pre-existing brand-pack naming baselined in sprint-125 m04. New kebab-case violations still fail."
+    },
+    {
+      "ruleId": "dtcg/token-name-kebab-case",
+      "file": "packages/tokens/src/tokens/brands/A/dark.json",
+      "location": "color.brand.A",
+      "reason": "Multi-brand A/B namespace key or camelCase semantic slot; pre-existing brand-pack naming baselined in sprint-125 m04. New kebab-case violations still fail."
+    },
+    {
+      "ruleId": "dtcg/token-name-kebab-case",
+      "file": "packages/tokens/src/tokens/brands/A/dark.json",
+      "location": "color.brand.A.text.onInteractive",
+      "reason": "Multi-brand A/B namespace key or camelCase semantic slot; pre-existing brand-pack naming baselined in sprint-125 m04. New kebab-case violations still fail."
+    },
+    {
+      "ruleId": "dtcg/token-name-kebab-case",
+      "file": "packages/tokens/src/tokens/brands/A/hc.json",
+      "location": "color.brand.A",
+      "reason": "Multi-brand A/B namespace key or camelCase semantic slot; pre-existing brand-pack naming baselined in sprint-125 m04. New kebab-case violations still fail."
+    },
+    {
+      "ruleId": "dtcg/token-name-kebab-case",
+      "file": "packages/tokens/src/tokens/brands/A/hc.json",
+      "location": "color.brand.A.text.onInteractive",
+      "reason": "Multi-brand A/B namespace key or camelCase semantic slot; pre-existing brand-pack naming baselined in sprint-125 m04. New kebab-case violations still fail."
+    },
+    {
+      "ruleId": "dtcg/token-name-kebab-case",
+      "file": "packages/tokens/src/tokens/brands/B/base.json",
+      "location": "color.brand.B",
+      "reason": "Multi-brand A/B namespace key or camelCase semantic slot; pre-existing brand-pack naming baselined in sprint-125 m04. New kebab-case violations still fail."
+    },
+    {
+      "ruleId": "dtcg/token-name-kebab-case",
+      "file": "packages/tokens/src/tokens/brands/B/base.json",
+      "location": "color.brand.B.text.onInteractive",
+      "reason": "Multi-brand A/B namespace key or camelCase semantic slot; pre-existing brand-pack naming baselined in sprint-125 m04. New kebab-case violations still fail."
+    },
+    {
+      "ruleId": "dtcg/token-name-kebab-case",
+      "file": "packages/tokens/src/tokens/brands/B/dark.json",
+      "location": "color.brand.B",
+      "reason": "Multi-brand A/B namespace key or camelCase semantic slot; pre-existing brand-pack naming baselined in sprint-125 m04. New kebab-case violations still fail."
+    },
+    {
+      "ruleId": "dtcg/token-name-kebab-case",
+      "file": "packages/tokens/src/tokens/brands/B/dark.json",
+      "location": "color.brand.B.text.onInteractive",
+      "reason": "Multi-brand A/B namespace key or camelCase semantic slot; pre-existing brand-pack naming baselined in sprint-125 m04. New kebab-case violations still fail."
+    },
+    {
+      "ruleId": "dtcg/token-name-kebab-case",
+      "file": "packages/tokens/src/tokens/brands/B/hc.json",
+      "location": "color.brand.B",
+      "reason": "Multi-brand A/B namespace key or camelCase semantic slot; pre-existing brand-pack naming baselined in sprint-125 m04. New kebab-case violations still fail."
+    },
+    {
+      "ruleId": "dtcg/token-name-kebab-case",
+      "file": "packages/tokens/src/tokens/brands/B/hc.json",
+      "location": "color.brand.B.text.onInteractive",
+      "reason": "Multi-brand A/B namespace key or camelCase semantic slot; pre-existing brand-pack naming baselined in sprint-125 m04. New kebab-case violations still fail."
+    }
+  ]
+}

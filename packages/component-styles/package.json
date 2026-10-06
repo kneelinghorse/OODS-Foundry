@@ -1,0 +1,68 @@
+{
+  "name": "@oods/component-styles",
+  "version": "0.7.0",
+  "description": "Shared CSS for the OODS Foundry React and Vue components, driven by its design tokens.",
+  "homepage": "https://oods-foundry.com/",
+  "bugs": {
+    "url": "https://github.com/kneelinghorse/OODS-Foundry/issues"
+  },
+  "keywords": [
+    "oods",
+    "oods-foundry",
+    "css",
+    "design-tokens",
+    "design-system"
+  ],
+  "type": "module",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "NOTICE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "rimraf dist && tsup --config tsup.config.ts && node scripts/copy-css.mjs",
+    "clean": "rimraf dist",
+    "typecheck": "tsc --noEmit --pretty false -p tsconfig.json",
+    "test": "vitest run --config vitest.config.ts",
+    "prepack": "pnpm run build"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./css": {
+      "types": "./dist/css.d.ts",
+      "default": "./dist/components.css"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "dependencies": {
+    "@oods/tokens": "0.7.0"
+  },
+  "devDependencies": {
+    "@oods/component-contracts": "0.7.0",
+    "playwright": "^1.56.1"
+  },
+  "packageManager": "pnpm@9.12.2",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kneelinghorse/OODS-Foundry.git",
+    "directory": "packages/component-styles"
+  }
+}

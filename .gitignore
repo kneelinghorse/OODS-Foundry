@@ -9,14 +9,32 @@ yarn.lock
 # Build outputs
 dist/
 coverage/
+# The token build's generated brand alias files (s213-m04)
+packages/tokens/src/tokens/aliases/
 # Storybook static builds
 storybook-static/
 **/storybook-static/
+# Artifacts are generally generated (don't commit), but keep:
+# - `/artifacts/structured-data/**` (structured data snapshots + manifest)
+# - `/artifacts/tokens/**` (the s167 brand-css drift note and the s178 brand evidence)
+# - `/artifacts/product-reality/**` (Sprint-182 reproducible evidence reports and inventories)
+# - `packages/artifacts/` (workspace package; name collides with this rule)
 artifacts/
+!/artifacts/
+/artifacts/*
+!/artifacts/structured-data/
+!/artifacts/structured-data/**
+!/artifacts/tokens/
+!/artifacts/tokens/**
+!/artifacts/product-reality/
+!/artifacts/product-reality/**
+!packages/artifacts/
 
 # Temp and logs
 tmp/
+.tmp/
 *.log
+!/artifacts/product-reality/**/*.log
 
 # IDE/editor
 .idea/
@@ -24,12 +42,72 @@ tmp/
 
 # CMOS Runtime Data (session-specific, don't commit)
 cmos/db/cmos.sqlite
+cmos/db/snapshots/*.sqlite
 cmos/SESSIONS.jsonl
 cmos/dist/
 cmos/telemetry/events/*.jsonl
 cmos/runtime/boomerang/
 cmos/**/__pycache__/
+
+# Disposable packed-component proof bundles are not repository source.
+packages/components-react/.cache/
+packages/components-vue/.cache/
 cmos/**/*.pyc
+cmos/scripts/*-info.txt
+
+# TypeScript incremental build artifacts
+*.tsbuildinfo
+
+# OODS schema store (per-project design artifacts, not source)
+**/.oods/
 
 # Local environment secrets
-.env.local
+.env
+.env.*
+!.env.example
+
+# DB backups/cutover dumps in cmos/db can exceed GitHub's 100MB limit — never track them
+cmos/db/*.sqlite
+
+# SQLite WAL/SHM journals (transient)
+cmos/db/*.sqlite-shm
+cmos/db/*.sqlite-wal
+
+# scratchpad/ is working space, not deliverable (s170 m04). 214 files had accumulated in the
+# index. NINETEEN of them stay tracked because a committed test or memo cites them BY PATH as
+# the provenance of a claim — an untracked provenance citation is a dangling reference, which is
+# worse than an extra tracked file. They are re-included by name below so the exemption is
+# legible rather than implicit. Everything else drops from the index and stays on disk.
+scratchpad/*
+!scratchpad/REVIEW_size_asym_independent.mjs
+!scratchpad/S163REV_detail_agg.mjs
+!scratchpad/S163REV_detail_size_generalization.mjs
+!scratchpad/S163REV_skeptic_detail.mjs
+!scratchpad/S164CRIT_claimscope.mjs
+!scratchpad/S164CRIT_fallback_regression.mjs
+!scratchpad/S164V2_cascade_middle.mjs
+!scratchpad/S165M4_audit.mts
+!scratchpad/S165M4_bubblegen.ts
+!scratchpad/S165M4_record.mts
+!scratchpad/s161_corr_asymmetry.mjs
+!scratchpad/s161_horiz_raw.mjs
+!scratchpad/s169-m04-live-verify.mjs
+!scratchpad/s169-m05-primitive-census.mjs
+!scratchpad/s169-m02/
+scratchpad/s169-m02/*
+!scratchpad/s169-m02/extended-browser-proof.mjs
+!scratchpad/s169-m02/head-mutated.test.ts
+!scratchpad/s169-m02/rewired-mutated.test.ts
+!scratchpad/s169-m02/rewired.test.ts
+!scratchpad/s169-m02/tie-invariant-repo-wide.mjs
+
+# Playwright run outputs (s173 m04 — the mobile behavioural leg is the first playwright run
+# anyone executes locally or in CI; neither directory is an artifact anyone should commit).
+/test-results/
+/playwright-report/
+
+# Sprint 201: transient esbuild shims while building the bridge preview runtime
+.preview-runtime-shims-*/
+
+# Sprint build checkouts (git worktrees of THIS repo, kept inside it by rule — see agents.md Rule 5b)
+.worktrees/

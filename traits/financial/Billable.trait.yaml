@@ -1,6 +1,6 @@
 trait:
   name: Billable
-  version: 2.0.0
+  version: 2.1.0
   description: |
     Recurring billing mechanics trait that normalizes cycle tracking, payment timing,
     and period management for subscription-based entities. Billable owns the billing
@@ -13,9 +13,18 @@ trait:
     Core concepts:
     - Billing Cycle: current_period_start → current_period_end with progress tracking
     - Payment Timing: prepaid (charge at period start) vs postpaid (charge at period end)
-    - Proration: fractional billing when mid-cycle changes occur
+    - Proration: fractional billing when mid-cycle changes occur, with preview/commit
+      timing (proration_date), a charge-timing policy (prorationBehavior), and
+      billing-anchor-reset disclosure
     - Payment Status: tracks the outcome of the most recent collection attempt
     - Cycle Anchoring: fixed day-of-month for consistent renewal dates
+
+    PRORATION SCOPE (trait-split gap): proration semantics live ONLY on this CORE
+    financial/Billable trait. The saas-billing domain trait SaaSBillingBillable
+    (domains/saas-billing/traits/billable.trait.yaml) does NOT expose proration, so a
+    Subscription composing only SaaSBillingBillable silently CANNOT prorate. To enable
+    proration for a SaaS subscription, compose financial/Billable (as the core
+    Subscription object does, alias SubscriptionBilling).
   category: financial
   tags:
     - billing
@@ -67,6 +76,23 @@ parameters:
       Whether mid-cycle plan changes generate prorated charges or credits.
       When true, proration_amount is computed on plan upgrades/downgrades.
     default: false
+  - name: prorationBehavior
+    type: string
+    required: false
+    description: |
+      Default policy for how mid-cycle plan changes are billed, mirroring Stripe's
+      proration_behavior on subscription updates. Drives charge TIMING, not the
+      proration math, and is only meaningful when supportProration is true:
+      - create_prorations: generate prorated line items, billed on the next invoice (default)
+      - always_invoice: generate prorations AND invoice them immediately
+      - none: apply the change with no proration line items / no immediate adjustment
+      Source: docs.stripe.com/billing/subscriptions/prorations.
+    default: create_prorations
+    validation:
+      enum:
+        - create_prorations
+        - always_invoice
+        - none
   - name: cycleAnchorDay
     type: number
     required: false
@@ -74,6 +100,13 @@ parameters:
       Day of the month used to anchor renewal dates. When set, all billing
       periods align to this day regardless of subscription start date.
       Value of 0 means no anchoring (period starts from subscription creation).
+
+      BILLING-ANCHOR-RESET DISCLOSURE: changing the billing interval — or otherwise
+      resetting the billing cycle anchor (e.g. Stripe billing_cycle_anchor=now) — RESETS
+      the anchor and starts a new billing period immediately. This interacts with
+      proration: the reset can itself trigger proration for the current period and shifts
+      the renewal date. Surface this consequence to the user BEFORE applying an interval
+      change. Source: docs.stripe.com/billing/subscriptions/prorations.
     default: 0
     validation:
       minimum: 0
@@ -131,6 +164,19 @@ schema:
       plan change. Positive values are charges; negative values are credits.
       Only populated when the supportProration parameter is true.
     default: 0
+  proration_date:
+    type: integer
+    required: false
+    description: |
+      Unix timestamp (epoch SECONDS) at which proration is calculated. Pinned when an
+      upcoming-invoice PREVIEW is requested and MUST be passed identically on commit so the
+      committed charge equals the previewed amount. The preview is read-only and does NOT
+      mutate the subscription. Stored as an integer (not a datetime) so the value round-trips
+      byte-identically between preview and commit — an ISO string normalization could shift it
+      and desync the previewed vs charged amount. Only populated when supportProration is true.
+      Source: docs.stripe.com/billing/subscriptions/prorations.
+    validation:
+      minimum: 0
   last_payment_at:
     type: datetime
     required: false
@@ -188,9 +234,19 @@ semantics:
     semantic_type: billing.cycle.proration
     token_mapping: tokenMap(billing.proration.*)
     ui_hints:
+      minorUnitsParameter: minorUnits
       component: CurrencyAmount
       currencyField: currency
       signIndicator: true
+  proration_date:
+    # `timestamp` semantic: this field is a Unix-seconds point-in-time, so it groups with
+    # the temporal/date fields (slot-expander categorizes on the `timestamp` token) rather
+    # than landing uncategorized in an unrelated slot. ui_hints render it as a timestamp.
+    semantic_type: billing.cycle.proration_timestamp
+    token_mapping: tokenMap(billing.timestamp.proration)
+    ui_hints:
+      component: Timestamp
+      unixSeconds: true
   last_payment_at:
     semantic_type: billing.cycle.last_payment_at
     token_mapping: tokenMap(billing.timestamp.last_payment)
@@ -302,22 +358,15 @@ tokens:
   cmp.billing.timeline.dot: "var(--sys-surface-accent)"
   cmp.billing.timeline.text: "var(--sys-text-default)"
 
-dependencies:
-  - trait: Priceable
-    required: false
-    description: |
-      Priceable provides pricing metadata (unit amount, pricing model, tax behavior).
-      Billable provides billing cycle mechanics. They are complementary — a Subscription
-      composes both. When used together, amount inherits from Priceable's unit_amount_cents.
-  - trait: Timestampable
-    required: false
-    description: |
-      Recommended for enriching payment timestamps (last_payment_at, next_payment_due_at)
-      with relative formatting and timezone-aware display.
+dependencies: []
+  # Recommended companions (not required):
+  # - Priceable: provides pricing metadata (unit amount, pricing model, tax behavior).
+  #   Billable provides billing cycle mechanics. A Subscription composes both.
+  # - Timestampable: enriches payment timestamps with relative formatting.
 
 metadata:
   created: "2025-10-16"
-  updated: "2026-02-28"
+  updated: "2026-06-24"
   owners:
     - billing@oods.systems
     - finance@oods.systems
@@ -340,8 +389,8 @@ metadata:
     - Subscription
     - Plan
   references:
-    - "src/traits/Billable/view.tsx — BillableViewData, BillingSummary, PastDueAction"
-    - "src/domain/billing/core.ts — CanonicalSubscription, BillingInterval, BillingAccount"
+    - "objects/provenance.v1.json#/references/ref-0d9aaa77f987 — BillableViewData, BillingSummary, PastDueAction"
+    - "objects/provenance.v1.json#/references/ref-374e980524b1 — CanonicalSubscription, BillingInterval, BillingAccount"
     - "domains/saas-billing/traits/billable.trait.yaml — SaaS domain extension"
-    - "domains/saas-billing/objects/Subscription.object.yaml — Subscription object composition"
-    - "tokens/maps/saas-billing.status-map.json — billing domain status tokens"
+    - "objects/core/Subscription.object.yaml — Subscription object composition"
+    - "objects/provenance.v1.json#/references/ref-be33a98177f7 — billing domain status tokens"

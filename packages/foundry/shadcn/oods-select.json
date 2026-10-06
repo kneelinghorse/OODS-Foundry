@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "oods-select",
+  "type": "registry:component",
+  "title": "OODS Foundry Select",
+  "description": "React adapter for OODS Select on shadcn/ui's Radix and Base UI bases. The visible control is a shadcn combobox, not a native select. A hidden native select preserves form values and native onChange events. Native option children, multiple, native size and native-select keyboard contracts are not supported; pass options.",
+  "dependencies": [
+    "@oods/components-react@0.7.0"
+  ],
+  "registryDependencies": [
+    "select",
+    "label"
+  ],
+  "files": [
+    {
+      "path": "components/oods/select.tsx",
+      "target": "components/oods/select.tsx",
+      "type": "registry:component",
+      "content": "import * as React from 'react';\nimport type { SelectProps } from '@oods/components-react';\nimport { Label } from '@/registry/new-york-v4/ui/label';\nimport { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/registry/new-york-v4/ui/select';\n\nexport const OodsSelect = React.forwardRef<HTMLSelectElement, SelectProps>(function OodsSelect(\n  { id, label, options = [], value, defaultValue, placeholder, required, disabled, name, help, description, validation,\n    onChange, onValueChange, onUpdate, className, style, selectClassName, selectStyle, density, requiredIndicator,\n    children, 'aria-describedby': describedBy, 'aria-label': ariaLabel }, ref,\n) {\n  const native = React.useRef<HTMLSelectElement>(null);\n  React.useImperativeHandle(ref, () => native.current!);\n  const [local, setLocal] = React.useState(String(defaultValue ?? ''));\n  const selected = value === undefined ? local : String(value);\n  const empty = '__oods_empty_option__';\n  const details = help ?? description;\n  const helpId = `${id}-help`, validationId = validation?.id ?? `${id}-validation`;\n  const descriptions = [describedBy, details ? helpId : '', validation?.message ? validationId : ''].filter(Boolean).join(' ') || undefined;\n  // Keep a real native change event for generated OODS handlers and native form submission.\n  const change = (next: string | null) => {\n    if (!native.current) return;\n    native.current.value = next === empty ? '' : next ?? '';\n    native.current.dispatchEvent(new Event('change', { bubbles: true }));\n  };\n  return <div className={className} style={style} data-oods-component={undefined} data-oods-adapter=\"Select\">\n    <Label htmlFor={id}>{label}{required && requiredIndicator !== false ? <span aria-hidden=\"true\"> *</span> : null}</Label>\n    <select ref={native} name={name} value={selected} disabled={disabled} tabIndex={-1} aria-hidden=\"true\" style={{ display: 'none' }}\n      onChange={event => { onChange?.(event); if (!event.defaultPrevented) { const next = event.currentTarget.value; if (value === undefined) setLocal(next); onValueChange?.(next); onUpdate?.(next); } }}>\n      <option value=\"\">{placeholder}</option>{options.map(option => <option key={option.value} value={option.value} disabled={option.disabled}>{option.label}</option>)}\n    </select>\n    <Select value={selected || (options.some(option => option.value === '') ? empty : '')} disabled={disabled} required={required} onValueChange={change}>\n      <SelectTrigger id={id} aria-label={ariaLabel} aria-describedby={descriptions} aria-invalid={validation?.state === 'error' || undefined}\n        size={density === 'compact' ? 'sm' : 'default'} className={selectClassName} style={selectStyle}><SelectValue placeholder={placeholder}>{options.find(option => String(option.value) === selected)?.label ?? placeholder}</SelectValue></SelectTrigger>\n      <SelectContent>{children ?? options.map(option => <SelectItem key={option.value} value={option.value || empty} disabled={option.disabled}>{option.label}</SelectItem>)}</SelectContent>\n    </Select>\n    {details ? <p id={helpId} className=\"text-sm text-muted-foreground\">{details}</p> : null}\n    {validation?.message ? <p id={validationId} role={validation.state === 'error' ? 'alert' : undefined}>{validation.message}</p> : null}\n  </div>;\n});\n"
+    }
+  ]
+}

@@ -1,14 +1,15 @@
 #!/usr/bin/env node
-import { createReadStream } from 'node:fs';
+import { createReadStream, realpathSync } from 'node:fs';
 import { mkdir, readFile, writeFile, stat } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import path from 'node:path';
 import process from 'node:process';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import Color from 'colorjs.io';
 import { chromium } from 'playwright';
 import { contrastRatio } from './contrast.js';
+import { loadGuardrails } from './guardrails/read.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -408,69 +409,12 @@ function titleCase(value) {
     .join(' ');
 }
 
-async function loadGuardrailConfig() {
-  let raw;
-  try {
-    raw = await readFile(GUARDRAILS_PATH, 'utf8');
-  } catch (error) {
-    throw new Error(`Unable to read guardrail dataset at ${GUARDRAILS_PATH}: ${error instanceof Error ? error.message : String(error)}`);
-  }
-
-  const lines = raw.split(/\r?\n/).map((line) => line.trim());
-  const rows = lines.filter((line) => line.length > 0 && !line.startsWith('#'));
-
-  if (rows.length === 0) {
-    return [];
-  }
-
-  const headers = rows[0].split(',').map((header) => header.trim());
-  return rows.slice(1).map((line, index) => {
-    const columns = line.split(',').map((column) => column.trim());
-    if (columns.length !== headers.length) {
-      throw new Error(`Guardrail CSV row ${index + 2} expected ${headers.length} columns but received ${columns.length}.`);
-    }
-
-    const entry = {};
-    headers.forEach((header, columnIndex) => {
-      entry[header] = columns[columnIndex];
-    });
-
-    const numeric = (fieldName) => {
-      const value = entry[fieldName];
-      if (value === undefined || value === '') {
-        return null;
-      }
-      const asNumber = Number(value);
-      if (Number.isNaN(asNumber)) {
-        throw new Error(`Guardrail CSV row ${index + 2} column "${fieldName}" must be numeric. Received "${value}".`);
-      }
-      return asNumber;
-    };
-
-    if (!entry.base_token) {
-      throw new Error(`Guardrail CSV row ${index + 2} is missing "base_token".`);
-    }
-    if (!entry.derived_token) {
-      throw new Error(`Guardrail CSV row ${index + 2} is missing "derived_token".`);
-    }
-
-    return {
-      id: entry.id ?? `${entry.usage ?? 'guardrail'}-${entry.theme ?? 'default'}-${entry.state ?? 'state'}`,
-      usage: entry.usage ?? 'unknown',
-      theme: entry.theme ?? 'default',
-      state: entry.state ?? 'state',
-      baseToken: entry.base_token,
-      derivedToken: entry.derived_token,
-      deltaLMin: numeric('delta_l_min'),
-      deltaLMax: numeric('delta_l_max'),
-      deltaCMin: numeric('delta_c_min'),
-      deltaCMax: numeric('delta_c_max'),
-      deltaHMax: numeric('delta_h_max'),
-      contrastForeground: entry.contrast_foreground_token ? entry.contrast_foreground_token : null,
-      contrastBackground: entry.contrast_background_token ? entry.contrast_background_token : null,
-      contrastThreshold: numeric('contrast_threshold')
-    };
-  });
+export async function loadGuardrailConfig(csvPath = GUARDRAILS_PATH) {
+  const rows = await loadGuardrails(csvPath);
+  const relativeRows = rows.filter(row => row.checkType === 'relative-color');
+  const paletteRows = rows.length - relativeRows.length;
+  if (paletteRows > 0) console.log(`[a11y] ${paletteRows} palette rows are owned by tokens-validate (scripts/tokens/color-guardrails.ts); evaluating ${relativeRows.length} relative-color rows here.`);
+  return relativeRows;
 }
 
 async function loadContractDefinition() {
@@ -989,13 +933,19 @@ async function generateReport() {
   };
 }
 
-async function ensureReportDir() {
-  await mkdir(path.dirname(REPORT_PATH), { recursive: true });
-}
+/**
+ * Check commands are read-only gates. Only the explicit baseline command may refresh the
+ * tracked report; otherwise generatedAt, contract durations, and the ephemeral Storybook
+ * port dirty a clean checkout on every invocation.
+ */
+export async function persistReportForCommand(command, report, reportPath = REPORT_PATH) {
+  if (command !== 'baseline') {
+    return false;
+  }
 
-async function writeReport(report) {
-  await ensureReportDir();
-  await writeFile(REPORT_PATH, JSON.stringify(report, null, 2) + '\n', 'utf8');
+  await mkdir(path.dirname(reportPath), { recursive: true });
+  await writeFile(reportPath, JSON.stringify(report, null, 2) + '\n', 'utf8');
+  return true;
 }
 
 function fingerprint(entry) {
@@ -1014,7 +964,7 @@ async function loadBaseline() {
 
 async function runCheck() {
   const report = await generateReport();
-  await writeReport(report);
+  await persistReportForCommand('check', report);
 
   const contrastResults = Array.isArray(report.sections?.contrast) ? report.sections.contrast : [];
   const guardrailResults = Array.isArray(report.sections?.guardrails) ? report.sections.guardrails : [];
@@ -1038,7 +988,7 @@ async function runCheck() {
   }
   summaryParts.push(`total ${totalPasses}/${report.results.length}`);
 
-  console.log(`[a11y] Report written to ${path.relative(process.cwd(), REPORT_PATH)} (${summaryParts.join(', ')}).`);
+  console.log(`[a11y] Check completed without modifying ${path.relative(process.cwd(), REPORT_PATH)} (${summaryParts.join(', ')}).`);
 
   if (totalFailures > 0) {
     console.warn('[a11y] Accessibility contrast/guardrail/contract violations detected. Run "pnpm run a11y:diff" to compare against the baseline.');
@@ -1047,7 +997,7 @@ async function runCheck() {
 
 async function runDiff() {
   const report = await generateReport();
-  await writeReport(report);
+  await persistReportForCommand('diff', report);
 
   let baseline;
   try {
@@ -1100,7 +1050,7 @@ async function runDiff() {
 
 async function runBaselineUpdate() {
   const report = await generateReport();
-  await writeReport(report);
+  await persistReportForCommand('baseline', report);
 
   const violations = report.results.filter((item) => !item.pass);
   const baseline = {
@@ -1142,4 +1092,19 @@ async function main() {
   }
 }
 
-await main();
+function resolveInvocationPath(targetPath) {
+  try {
+    return realpathSync(targetPath);
+  } catch {
+    return path.resolve(targetPath);
+  }
+}
+
+const invokedPath = process.argv[1];
+const isDirectInvocation =
+  typeof invokedPath === 'string' &&
+  resolveInvocationPath(fileURLToPath(import.meta.url)) === resolveInvocationPath(invokedPath);
+
+if (isDirectInvocation || pathToFileURL(invokedPath ?? '').href === import.meta.url) {
+  await main();
+}

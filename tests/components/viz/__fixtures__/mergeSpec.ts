@@ -1,4 +1,4 @@
-import type { NormalizedVizSpec } from '../../../src/viz/spec/normalized-viz-spec.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 
 export function mergeSpec(
   base: NormalizedVizSpec,
@@ -13,7 +13,6 @@ export function mergeSpec(
       continue;
     }
 
-    // @ts-expect-error -- assignment is safe for normalized spec overrides
     merged[key] = value as never;
   }
 

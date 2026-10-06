@@ -100,10 +100,6 @@ view_extensions:
         roleParameter: roles
         allowDynamicParameter: allowDynamicRoles
         defaultRoleField: default_address_role
-  timeline:
-    - component: AddressValidationTimeline
-      props:
-        field: addresses
 
 tokens:
   location.address.card.bg: "var(--sys-surface-raised)"
@@ -125,7 +121,6 @@ metadata:
     - list
     - detail
     - form
-    - timeline
   examples:
     - User
     - Organization

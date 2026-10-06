@@ -1,0 +1,112 @@
+{
+  "version": "2026.02",
+  "dsVersion": "2026-02-24",
+  "theme": "light",
+  "screens": [
+    {
+      "id": "dashboard-screen",
+      "component": "Stack",
+      "children": [
+        {
+          "id": "dashboard-overview-card",
+          "component": "Card",
+          "children": [
+            {
+              "id": "dashboard-overview-header",
+              "component": "CardHeader",
+              "props": { "title": "Overview", "supporting": "Live KPI" }
+            },
+            {
+              "id": "dashboard-overview-status",
+              "component": "Badge",
+              "props": { "label": "Stable" }
+            },
+            {
+              "id": "dashboard-overview-text",
+              "component": "Text",
+              "props": { "text": "Revenue up 12%" }
+            },
+            {
+              "id": "dashboard-overview-action",
+              "component": "Button",
+              "props": { "label": "View details" }
+            }
+          ]
+        },
+        {
+          "id": "dashboard-activity-card",
+          "component": "Card",
+          "children": [
+            {
+              "id": "dashboard-activity-header",
+              "component": "CardHeader",
+              "props": { "title": "Activity" }
+            },
+            {
+              "id": "dashboard-activity-table",
+              "component": "Table",
+              "props": {
+                "columns": [
+                  { "key": "event", "label": "Event" },
+                  { "key": "time", "label": "Time" }
+                ],
+                "rows": [
+                  { "event": "Invoice paid", "time": "2m ago" },
+                  { "event": "Seat added", "time": "10m ago" }
+                ]
+              }
+            },
+            {
+              "id": "dashboard-activity-banner",
+              "component": "Banner",
+              "props": { "message": "No alerts" }
+            },
+            {
+              "id": "dashboard-activity-tabs",
+              "component": "Tabs",
+              "props": {
+                "tabs": [
+                  { "id": "recent", "label": "Recent", "content": "24 events", "active": true },
+                  { "id": "all", "label": "All", "content": "128 events", "active": false }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "dashboard-insights-card",
+          "component": "Card",
+          "children": [
+            {
+              "id": "dashboard-insights-header",
+              "component": "CardHeader",
+              "props": { "title": "Insights" }
+            },
+            {
+              "id": "dashboard-insights-input",
+              "component": "Input",
+              "props": { "name": "query", "placeholder": "Search insights" }
+            },
+            {
+              "id": "dashboard-insights-select",
+              "component": "Select",
+              "props": {
+                "name": "range",
+                "value": "7d",
+                "options": [
+                  { "value": "24h", "label": "Last 24h" },
+                  { "value": "7d", "label": "Last 7d" }
+                ]
+              }
+            },
+            {
+              "id": "dashboard-insights-role",
+              "component": "RoleBadgeList",
+              "props": { "roles": ["analyst", "owner"] }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

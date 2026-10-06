@@ -1,0 +1,270 @@
+/* s222-m02 (#2502 ruling 11): Switch and Dialog. components.css imports this sheet ahead of its own rules and the HTML
+ * renderer inlines it in the same place, so the three renderers paint one markup from the same rules. Both controls are
+ * buttons inside a component, so the shared focus rule in components.css paints their focus; nothing here does. */
+
+/* Switch: a button with role switch beside its label. The track is 36x20 at md and 32x18 at sm, the thumb 16 and 14,
+ * held 2px inside the track's edge (its hairline border and a hairline of padding). */
+:where(.oods-switch, [data-oods-component='Switch']) {
+  --oods-switch-track-inline: var(--ref-space-ramp-900);
+  --oods-switch-track-block: var(--ref-space-ramp-500);
+  --oods-switch-thumb-size: var(--ref-space-ramp-400);
+  --oods-switch-travel: var(--ref-space-ramp-400);
+}
+
+:where(.oods-switch, [data-oods-component='Switch'])[data-size='sm'] {
+  --oods-switch-track-inline: var(--ref-space-ramp-800);
+  --oods-switch-track-block: calc(var(--ref-space-ramp-500) - var(--ref-space-ramp-050));
+  --oods-switch-thumb-size: calc(var(--ref-space-ramp-400) - var(--ref-space-ramp-050));
+  --oods-switch-travel: calc(var(--ref-space-ramp-400) - var(--ref-space-ramp-050));
+}
+
+/* The off thumb is the raised surface; dark's raised surface is darker than its off track, so there it is the muted
+ * text colour. Each theme scope sets it, so a panel themed inside another reads its own. */
+:where([data-theme]) { --oods-switch-thumb-off: var(--sys-surface-raised); }
+:where([data-theme='dark']) { --oods-switch-thumb-off: var(--sys-text-muted); }
+
+.oods-switch__row {
+  display: flex;
+  align-items: center;
+  gap: var(--sys-control-gap);
+}
+
+.oods-switch__control {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  box-sizing: border-box;
+  inline-size: var(--oods-switch-track-inline);
+  block-size: var(--oods-switch-track-block);
+  margin: 0;
+  padding: 0 var(--ref-border-width-hairline);
+  border: 1px solid var(--sys-border-interactive);
+  border-radius: var(--sys-radius-pill);
+  background: var(--sys-surface-interactive-secondary-hover);
+  color: inherit;
+  cursor: pointer;
+}
+
+.oods-switch__thumb {
+  display: block;
+  inline-size: var(--oods-switch-thumb-size);
+  block-size: var(--oods-switch-thumb-size);
+  border-radius: var(--sys-radius-pill);
+  background: var(--oods-switch-thumb-off, var(--sys-surface-raised));
+  transition: transform var(--oods-motion-duration-fast) var(--oods-motion-easing-standard);
+}
+
+/* On: the primary fill, and a thumb in the colour of text on that fill, so it reads in every brand and theme. */
+.oods-switch__control[aria-checked='true'] {
+  border-color: var(--sys-surface-interactive-primary-default);
+  background: var(--sys-surface-interactive-primary-default);
+}
+
+.oods-switch__control[aria-checked='true'] > .oods-switch__thumb {
+  background: var(--sys-text-on-interactive);
+  transform: translateX(var(--oods-switch-travel));
+}
+
+.oods-switch__control[aria-invalid='true'] { border-color: var(--sys-status-critical-icon); }
+
+.oods-switch__control:disabled {
+  border-color: var(--sys-border-subtle);
+  background: var(--sys-surface-disabled);
+  cursor: not-allowed;
+}
+
+.oods-switch__control:disabled > .oods-switch__thumb { background: var(--sys-text-disabled); }
+
+.oods-switch__control:disabled[aria-checked='true'] {
+  border-color: var(--sys-text-disabled);
+  background: var(--sys-text-disabled);
+}
+
+.oods-switch__control:disabled[aria-checked='true'] > .oods-switch__thumb { background: var(--sys-surface-disabled); }
+
+.oods-switch__label { cursor: pointer; }
+.oods-switch:has(.oods-switch__control:disabled) .oods-switch__label { color: var(--sys-text-disabled); cursor: not-allowed; }
+
+/* Help and error text line up with the label, past the track. */
+.oods-switch > :is(.oods-field-help, .oods-field-error) {
+  padding-inline-start: calc(var(--oods-switch-track-inline) + var(--sys-control-gap));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .oods-switch__thumb { transition: none; }
+}
+
+/* s222-m02 (#2502 ruling 6): in high contrast the off track is Canvas with a 1px CanvasText border and a CanvasText
+ * thumb; the on track is Highlight with a HighlightText thumb. */
+[data-theme='hc'] .oods-switch__control:not(:where([data-theme='hc'] [data-theme]:not([data-theme='hc']) *)) {
+  forced-color-adjust: none;
+  border-color: CanvasText;
+  background: Canvas;
+}
+
+[data-theme='hc'] .oods-switch__control[aria-checked='true']:not(:where([data-theme='hc'] [data-theme]:not([data-theme='hc']) *)) {
+  border-color: Highlight;
+  background: Highlight;
+}
+
+[data-theme='hc'] .oods-switch__control:disabled:not(:where([data-theme='hc'] [data-theme]:not([data-theme='hc']) *)) {
+  border-color: GrayText;
+  background: Canvas;
+}
+
+[data-theme='hc'] .oods-switch__thumb:not(:where([data-theme='hc'] [data-theme]:not([data-theme='hc']) *)) {
+  forced-color-adjust: none;
+  background: CanvasText;
+}
+
+[data-theme='hc'] .oods-switch__control[aria-checked='true'] > .oods-switch__thumb:not(:where([data-theme='hc'] [data-theme]:not([data-theme='hc']) *)) {
+  background: HighlightText;
+}
+
+[data-theme='hc'] .oods-switch__control:disabled > .oods-switch__thumb:not(:where([data-theme='hc'] [data-theme]:not([data-theme='hc']) *)) {
+  background: GrayText;
+}
+
+@media (forced-colors: active) {
+  .oods-switch__control,
+  .oods-switch__thumb { forced-color-adjust: none; }
+  .oods-switch__control { border-color: CanvasText; background: Canvas; }
+  .oods-switch__control[aria-checked='true'] { border-color: Highlight; background: Highlight; }
+  .oods-switch__control:disabled,
+  .oods-switch__control:disabled[aria-checked='true'] { border-color: GrayText; background: Canvas; }
+  .oods-switch__thumb { background: CanvasText; }
+  .oods-switch__control[aria-checked='true'] > .oods-switch__thumb { background: HighlightText; }
+  .oods-switch__control:disabled > .oods-switch__thumb,
+  .oods-switch__control:disabled[aria-checked='true'] > .oods-switch__thumb { background: GrayText; }
+}
+
+/* Dialog: a native dialog on the raised surface with the card radius, a 1px border and the overlay drop (a ring in dark,
+ * where the overlay shadow parts become one), 24px padding and 16px between its header, body and footer; the size sets
+ * the largest inline size (sm 400px, md 512px, lg 640px). Shown in place (open, not modal) it sits in the flow, as the
+ * gallery and a static page show it; opened modally it is centred over the backdrop at the overlay opacity. */
+:where(.oods-dialog, [data-oods-component='Dialog']) {
+  --oods-dialog-max-inline-size: 32rem;
+  position: relative;
+  inset: auto;
+  box-sizing: border-box;
+  inline-size: min(100%, var(--oods-dialog-max-inline-size));
+  max-inline-size: 100%;
+  margin: 0;
+  padding: var(--sys-card-padding);
+  border: 1px solid var(--sys-border-subtle);
+  border-radius: var(--sys-radius-card);
+  background: var(--sys-surface-raised);
+  color: var(--sys-text-primary);
+  box-shadow: var(--cmp-shadow-overlay-offset-x) var(--cmp-shadow-overlay-offset-y) var(--cmp-shadow-overlay-blur) var(--cmp-shadow-overlay-spread) var(--cmp-shadow-overlay-color);
+  font-size: var(--sys-text-scale-body-sm-font-size);
+  line-height: var(--sys-text-scale-body-sm-line-height);
+}
+
+:where(.oods-dialog, [data-oods-component='Dialog'])[data-size='sm'] { --oods-dialog-max-inline-size: 25rem; }
+:where(.oods-dialog, [data-oods-component='Dialog'])[data-size='lg'] { --oods-dialog-max-inline-size: 40rem; }
+
+/* Only an open dialog is laid out; a closed one keeps the browser's display: none. */
+:where(.oods-dialog, [data-oods-component='Dialog'])[open] {
+  display: grid;
+  gap: var(--sys-inset-md);
+}
+
+:where(.oods-dialog, [data-oods-component='Dialog']):modal {
+  position: fixed;
+  inset: 0;
+  inline-size: min(100% - 2 * var(--sys-inset-md), var(--oods-dialog-max-inline-size));
+  max-block-size: calc(100% - 2 * var(--sys-inset-md));
+  margin: auto;
+  overflow: auto;
+}
+
+:where(.oods-dialog, [data-oods-component='Dialog'])::backdrop {
+  background: var(--sys-surface-backdrop, CanvasText);
+  opacity: var(--oods-overlay-backdrop-opacity, 0.5);
+}
+
+.oods-dialog__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--sys-inset-md);
+}
+
+.oods-dialog__heading {
+  display: grid;
+  flex: 1 1 auto;
+  gap: var(--sys-control-gap-compact);
+  min-inline-size: 0;
+}
+
+/* The title is the heading-md role (18/24 600); the description is muted body-sm (14/20). */
+.oods-dialog__title {
+  margin: 0;
+  color: var(--sys-text-primary);
+  font-size: var(--sys-text-scale-heading-md-font-size);
+  font-weight: var(--sys-text-scale-heading-md-font-weight);
+  line-height: var(--sys-text-scale-heading-md-line-height);
+  letter-spacing: var(--sys-text-scale-heading-md-letter-spacing);
+}
+
+.oods-dialog__description {
+  margin: 0;
+  color: var(--sys-text-muted);
+}
+
+.oods-dialog__body { min-inline-size: 0; }
+.oods-dialog__body > :first-child { margin-block-start: 0; }
+.oods-dialog__body > :last-child { margin-block-end: 0; }
+
+.oods-dialog__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--sys-control-gap);
+}
+
+/* The close control is a ghost icon button, square at the small control height and centred on the title's line. */
+.oods-dialog__close {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--sys-control-height-sm);
+  block-size: var(--sys-control-height-sm);
+  margin-block-start: calc(-1 * var(--ref-space-ramp-050));
+  margin-inline-end: calc(-1 * var(--sys-control-gap-compact));
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--sys-radius-control);
+  background: transparent;
+  color: var(--sys-text-secondary);
+  font: inherit;
+  cursor: pointer;
+}
+
+.oods-dialog__close:hover {
+  background: var(--sys-surface-interactive-secondary-default);
+  color: var(--sys-text-primary);
+}
+
+.oods-dialog__close > svg {
+  display: block;
+  inline-size: var(--sys-control-icon-size);
+  block-size: var(--sys-control-icon-size);
+}
+
+/* s222-m02 (#2502 ruling 6): in high contrast the dialog is Canvas with a CanvasText border and no drop, and its close
+ * button is Canvas on CanvasText with a 1px CanvasText border, like every non-primary action. */
+[data-theme='hc'] :where(.oods-dialog, [data-oods-component='Dialog']):not(:where([data-theme='hc'] [data-theme]:not([data-theme='hc']) *)) {
+  border-color: CanvasText;
+  background: Canvas;
+  color: CanvasText;
+  box-shadow: none;
+}
+
+[data-theme='hc'] .oods-dialog__close:not(:where([data-theme='hc'] [data-theme]:not([data-theme='hc']) *)) {
+  border-color: CanvasText;
+  background: Canvas;
+  color: CanvasText;
+}

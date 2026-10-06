@@ -133,14 +133,6 @@ const AddressableTrait = {
         },
       },
     ],
-    timeline: [
-      {
-        component: 'AddressValidationTimeline',
-        props: {
-          field: 'addresses',
-        },
-      },
-    ],
   },
 
   tokens: {
@@ -159,7 +151,7 @@ const AddressableTrait = {
       keyboard: 'AddressEditor keeps focus order aligned with field order.',
       screenreader: 'AddressCollection exposes headings per role with validation hints.',
     },
-    regionsUsed: ['list', 'detail', 'form', 'timeline'],
+    regionsUsed: ['list', 'detail', 'form'],
     examples: ['User', 'Organization'],
     references: ['R21.1 Canonical Model for Address/Location Systems'],
   },

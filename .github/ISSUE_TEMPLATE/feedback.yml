@@ -1,0 +1,16 @@
+name: Feedback
+description: Tell us what was useful, confusing or missing.
+body:
+  - type: textarea
+    id: task
+    attributes:
+      label: What were you trying to do?
+    validations:
+      required: true
+  - type: textarea
+    id: feedback
+    attributes:
+      label: What did you notice?
+      description: Include the package version if relevant. Remove private data before posting.
+    validations:
+      required: true

@@ -103,6 +103,13 @@ schema:
     default: []
 
 semantics:
+  # The one-line summary under the asset's name in lists (content/Labelled's description, marked as the summary).
+  description:
+    semantic_type: text.summary
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: TextBody
+      maxLengthParameter: maxDescriptionLength
   media_id:
     semantic_type: media.asset.id
     token_mapping: tokenMap(media.asset.id)
@@ -135,3 +142,200 @@ metadata:
     - version: 1.0.0
       date: "2025-11-18"
       description: Initial Media object with tag-mode Classifiable integration for asset folksonomy.
+
+# Eight authored sample assets from the help-centre media library: diagrams, a release video, a webinar recording and
+# PDFs. Each follows the asset lifecycle from ingestion (its initial state); sizes, dimensions and durations fit the
+# asset type, and the last event is the latest recorded change.
+samples:
+  - media_id: 5a7c9e1b-3d5f-4a6c-8e0a-2b4d6f8a0c01
+    label: Proration timeline diagram
+    description: A mid-cycle upgrade, day by day
+    asset_type: image
+    mime_type: image/png
+    storage_bucket: help-centre-assets
+    object_key: articles/prorations/proration-timeline.png
+    source_url: https://cdn.example/help-centre/articles/prorations/proration-timeline.png
+    checksum: 9f2c4e6a8b0d1f3e5a7c9e1b3d5f7a9c2e4a6c8e0b2d4f6a8c0e2b4d6f8a0c1e
+    file_size_bytes: 214380
+    width_px: 1600
+    height_px: 900
+    duration_seconds: null
+    transcoding_profiles: [webp-1600, webp-800]
+    tag_preview: diagram, billing
+    status: available
+    state_history:
+      - { title: Uploaded, from: null, to: ingested, at: '2026-07-01T10:00:00Z', reason: Uploaded by Marcus Hale }
+      - { title: Processing, from: ingested, to: processing, at: '2026-07-01T10:00:10Z', reason: Generating web sizes }
+      - { title: Available, from: processing, to: available, at: '2026-07-01T10:01:00Z', reason: Published to the CDN }
+    created_at: '2026-07-01T10:00:00Z'
+    updated_at: '2026-07-01T10:01:00Z'
+    last_event: published
+    last_event_at: '2026-07-01T10:01:00Z'
+  - media_id: 5a7c9e1b-3d5f-4a6c-8e0a-2b4d6f8a0c02
+    label: Payment retry schedule
+    description: Four retries over 21 days
+    asset_type: image
+    mime_type: image/svg+xml
+    storage_bucket: help-centre-assets
+    object_key: articles/retries/retry-schedule.svg
+    source_url: https://cdn.example/help-centre/articles/retries/retry-schedule.svg
+    checksum: 1b3d5f7a9c2e4a6c8e0b2d4f6a8c0e2b4d6f8a0c1e9f2c4e6a8b0d1f3e5a7c9e
+    file_size_bytes: 18944
+    width_px: 1200
+    height_px: 675
+    duration_seconds: null
+    transcoding_profiles: []
+    tag_preview: diagram, payments
+    status: available
+    state_history:
+      - { title: Uploaded, from: null, to: ingested, at: '2026-08-12T09:30:00Z', reason: Uploaded by Ines Duarte }
+      - { title: Processing, from: ingested, to: processing, at: '2026-08-12T09:30:05Z', reason: Checking the SVG }
+      - { title: Available, from: processing, to: available, at: '2026-08-12T09:30:20Z', reason: Published to the CDN }
+    created_at: '2026-08-12T09:30:00Z'
+    updated_at: '2026-08-12T09:30:20Z'
+    last_event: published
+    last_event_at: '2026-08-12T09:30:20Z'
+  - media_id: 5a7c9e1b-3d5f-4a6c-8e0a-2b4d6f8a0c03
+    label: September release walkthrough
+    description: A 3-minute tour of the new features
+    asset_type: video
+    mime_type: video/mp4
+    storage_bucket: help-centre-video
+    object_key: releases/2026-09/walkthrough.mp4
+    source_url: https://cdn.example/help-centre/releases/2026-09/walkthrough.m3u8
+    checksum: 3e5a7c9e1b3d5f7a9c2e4a6c8e0b2d4f6a8c0e2b4d6f8a0c1e9f2c4e6a8b0d1f
+    file_size_bytes: 48213776
+    width_px: 1920
+    height_px: 1080
+    duration_seconds: 212
+    transcoding_profiles: [hls-1080p, hls-720p, hls-480p]
+    tag_preview: video, releases
+    status: available
+    state_history:
+      - { title: Uploaded, from: null, to: ingested, at: '2026-09-28T15:00:00Z', reason: Uploaded by Elena Park }
+      - { title: Processing, from: ingested, to: processing, at: '2026-09-28T15:01:00Z', reason: Transcoding three sizes }
+      - { title: Available, from: processing, to: available, at: '2026-09-28T15:14:00Z', reason: Transcoding finished }
+    created_at: '2026-09-28T15:00:00Z'
+    updated_at: '2026-09-28T15:14:00Z'
+    last_event: transcoded
+    last_event_at: '2026-09-28T15:14:00Z'
+  - media_id: 5a7c9e1b-3d5f-4a6c-8e0a-2b4d6f8a0c04
+    label: Usage-based billing launch banner
+    description: Hero image for the October launch
+    asset_type: image
+    mime_type: image/webp
+    storage_bucket: help-centre-assets
+    object_key: articles/usage-billing/launch-banner.webp
+    source_url: null
+    checksum: 5f7a9c2e4a6c8e0b2d4f6a8c0e2b4d6f8a0c1e9f2c4e6a8b0d1f3e5a7c9e1b3d
+    file_size_bytes: 356210
+    width_px: 2400
+    height_px: 1260
+    duration_seconds: null
+    transcoding_profiles: []
+    tag_preview: banner, launch
+    status: processing
+    state_history:
+      - { title: Uploaded, from: null, to: ingested, at: '2026-09-24T11:00:00Z', reason: Uploaded by Elena Park }
+      - { title: Processing, from: ingested, to: processing, at: '2026-09-24T11:01:00Z', reason: Waiting for brand approval }
+    created_at: '2026-09-24T11:00:00Z'
+    updated_at: '2026-09-24T11:01:00Z'
+    last_event: ingested
+    last_event_at: '2026-09-24T11:00:00Z'
+  - media_id: 5a7c9e1b-3d5f-4a6c-8e0a-2b4d6f8a0c05
+    label: Billing Q&A webinar
+    description: Audio from the August customer webinar
+    asset_type: audio
+    mime_type: audio/mpeg
+    storage_bucket: help-centre-audio
+    object_key: webinars/2026-08/billing-qa.mp3
+    source_url: https://cdn.example/help-centre/webinars/2026-08/billing-qa.mp3
+    checksum: 7a9c2e4a6c8e0b2d4f6a8c0e2b4d6f8a0c1e9f2c4e6a8b0d1f3e5a7c9e1b3d5f
+    file_size_bytes: 43920000
+    duration_seconds: 2745
+    width_px: null
+    height_px: null
+    transcoding_profiles: [mp3-128k]
+    tag_preview: webinar, audio
+    status: available
+    state_history:
+      - { title: Uploaded, from: null, to: ingested, at: '2026-08-27T18:00:00Z', reason: Uploaded by Marcus Hale }
+      - { title: Processing, from: ingested, to: processing, at: '2026-08-27T18:00:30Z', reason: Normalising loudness }
+      - { title: Available, from: processing, to: available, at: '2026-08-27T18:06:00Z', reason: Transcoding finished }
+    created_at: '2026-08-27T18:00:00Z'
+    updated_at: '2026-08-27T18:06:00Z'
+    last_event: transcoded
+    last_event_at: '2026-08-27T18:06:00Z'
+  - media_id: 5a7c9e1b-3d5f-4a6c-8e0a-2b4d6f8a0c06
+    label: Invoice template
+    description: Branded PDF invoice layout
+    asset_type: document
+    mime_type: application/pdf
+    storage_bucket: help-centre-assets
+    object_key: templates/invoice-template.pdf
+    source_url: https://cdn.example/help-centre/templates/invoice-template.pdf
+    checksum: 9c2e4a6c8e0b2d4f6a8c0e2b4d6f8a0c1e9f2c4e6a8b0d1f3e5a7c9e1b3d5f7a
+    file_size_bytes: 184320
+    width_px: null
+    height_px: null
+    duration_seconds: null
+    transcoding_profiles: []
+    tag_preview: template, invoices
+    status: available
+    state_history:
+      - { title: Uploaded, from: null, to: ingested, at: '2026-09-09T08:00:00Z', reason: Uploaded by Marcus Hale }
+      - { title: Processing, from: ingested, to: processing, at: '2026-09-09T08:00:05Z', reason: Scanning the PDF }
+      - { title: Available, from: processing, to: available, at: '2026-09-09T08:00:40Z', reason: Published to the CDN }
+    created_at: '2026-09-09T08:00:00Z'
+    updated_at: '2026-09-09T08:00:40Z'
+    last_event: published
+    last_event_at: '2026-09-09T08:00:40Z'
+  - media_id: 5a7c9e1b-3d5f-4a6c-8e0a-2b4d6f8a0c07
+    label: Pro plan pricing sheet (2025)
+    description: Pricing for the retired Pro plan
+    asset_type: document
+    mime_type: application/pdf
+    storage_bucket: help-centre-assets
+    object_key: pricing/pro-plan-2025.pdf
+    source_url: https://cdn.example/help-centre/pricing/pro-plan-2025.pdf
+    checksum: 2e4a6c8e0b2d4f6a8c0e2b4d6f8a0c1e9f2c4e6a8b0d1f3e5a7c9e1b3d5f7a9c
+    file_size_bytes: 96256
+    width_px: null
+    height_px: null
+    duration_seconds: null
+    transcoding_profiles: []
+    tag_preview: pricing, legacy
+    status: deprecated
+    state_history:
+      - { title: Uploaded, from: null, to: ingested, at: '2025-10-06T09:00:00Z', reason: Uploaded by Elena Park }
+      - { title: Processing, from: ingested, to: processing, at: '2025-10-06T09:00:05Z', reason: Scanning the PDF }
+      - { title: Available, from: processing, to: available, at: '2025-10-06T09:00:30Z', reason: Published to the CDN }
+      - { title: Deprecated, from: available, to: deprecated, at: '2026-04-30T09:00:00Z', reason: Pro plan migration complete }
+    created_at: '2025-10-06T09:00:00Z'
+    updated_at: '2026-04-30T09:00:00Z'
+    last_event: archived
+    last_event_at: '2026-04-30T09:00:00Z'
+  - media_id: 5a7c9e1b-3d5f-4a6c-8e0a-2b4d6f8a0c08
+    label: Product tour (raw upload)
+    description: Needs a re-upload after a failed transcode
+    asset_type: video
+    mime_type: video/quicktime
+    storage_bucket: help-centre-video
+    object_key: tours/product-tour-raw.mov
+    source_url: null
+    checksum: 4a6c8e0b2d4f6a8c0e2b4d6f8a0c1e9f2c4e6a8b0d1f3e5a7c9e1b3d5f7a9c2e
+    file_size_bytes: 612400112
+    width_px: 1920
+    height_px: 1080
+    duration_seconds: 95
+    transcoding_profiles: []
+    tag_preview: video, tour
+    status: ingested
+    state_history:
+      - { title: Uploaded, from: null, to: ingested, at: '2026-09-26T13:00:00Z', reason: Uploaded by Elena Park }
+      - { title: Processing, from: ingested, to: processing, at: '2026-09-26T13:02:00Z', reason: Transcoding three sizes }
+      - { title: Transcode failed, from: processing, to: ingested, at: '2026-09-26T13:20:00Z', reason: Unsupported codec; re-upload requested }
+    created_at: '2026-09-26T13:00:00Z'
+    updated_at: '2026-09-26T13:20:00Z'
+    last_event: ingested
+    last_event_at: '2026-09-26T13:20:00Z'

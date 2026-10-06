@@ -1,4 +1,5 @@
-import React from 'react';
+// @types/react 19 no longer declares a global JSX namespace; it is exported from 'react'.
+import type { JSX } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { ConversationThread } from '../../src/components/communication/ConversationThread.js';
@@ -134,4 +135,3 @@ function buildConversation(): Conversation {
     updated_at: messages[messages.length - 1]?.created_at ?? createdAt,
   };
 }
-

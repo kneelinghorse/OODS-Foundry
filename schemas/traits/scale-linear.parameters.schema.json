@@ -37,11 +37,24 @@
     "mode": {
       "type": "string",
       "description": "Distinguishes continuous vs band heuristics.",
-      "enum": ["continuous", "band"],
+      "enum": [
+        "continuous",
+        "band"
+      ],
       "default": "continuous"
+    },
+    "renderIntent": {
+      "type": "string",
+      "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand.",
+      "default": "{}"
     }
   },
-  "required": ["domainMin", "domainMax", "rangeMin", "rangeMax"],
+  "required": [
+    "domainMin",
+    "domainMax",
+    "rangeMin",
+    "rangeMax"
+  ],
   "additionalProperties": false,
   "examples": [
     {

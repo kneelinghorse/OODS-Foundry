@@ -38,7 +38,8 @@ const LayoutLayerTrait: TraitDefinition = {
       name: 'orderHint',
       type: 'string[]',
       required: false,
-      description: 'Optional list describing explicit bottom→top layer ordering.',
+      description:
+        'Optional list describing explicit bottom→top layer ordering. Entries name layers by mark options.id when set (preferred — repeated same-trait marks need distinct ids to be addressable), else by mark trait.',
     },
     {
       name: 'projection',

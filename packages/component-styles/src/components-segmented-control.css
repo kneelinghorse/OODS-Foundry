@@ -1,0 +1,130 @@
+/* s223-m02 (#2527 ruling 10): SegmentedControl, one choice from two to five options shown as joined segments. React, Vue
+ * and the HTML renderer write one markup: a radiogroup track of segments, each a label holding its native radio and its
+ * text. components.css imports this sheet ahead of its own rules and the HTML renderer inlines it in the same place.
+ *
+ * The track is the subtle fill at the control height of each size (xs 24, sm 28, md 32, lg 40: the button, input and
+ * select heights, #2502 ruling 9), inset 2px around its segments. The checked segment is the raised surface with a
+ * hairline ring and its label in the primary text colour; the others are muted. Every label is the control weight (500),
+ * so no segment's width moves with the selection. Each radio is transparent over its whole segment: it takes the clicks,
+ * and the shared focus rule in components.css draws its ring there, so nothing here paints focus. */
+:where(.oods-segmented-control, [data-oods-component='SegmentedControl']) {
+  --oods-segmented-control-block-size: var(--sys-control-height-md);
+  --oods-segmented-control-padding-inline: var(--sys-control-padding-inline);
+  --oods-segmented-control-font-size: var(--sys-text-scale-label-font-size);
+  --oods-segmented-control-line-height: var(--sys-text-scale-label-line-height);
+}
+
+/* The button's type and side padding at each size: caption 12/16 and 8px at xs, label 14/20 and 10px at sm, 12px at
+ * md, body-md 16/24 and 16px at lg. */
+:where(.oods-segmented-control, [data-oods-component='SegmentedControl'])[data-size='xs'] {
+  --oods-segmented-control-block-size: var(--sys-control-height-xs);
+  --oods-segmented-control-padding-inline: var(--sys-control-padding-inline-xs);
+  --oods-segmented-control-font-size: var(--sys-text-scale-caption-font-size);
+  --oods-segmented-control-line-height: var(--sys-text-scale-caption-line-height);
+}
+
+:where(.oods-segmented-control, [data-oods-component='SegmentedControl'])[data-size='sm'] {
+  --oods-segmented-control-block-size: var(--sys-control-height-sm);
+  --oods-segmented-control-padding-inline: var(--sys-control-padding-inline-sm);
+}
+
+:where(.oods-segmented-control, [data-oods-component='SegmentedControl'])[data-size='lg'] {
+  --oods-segmented-control-block-size: var(--sys-control-height-lg);
+  --oods-segmented-control-padding-inline: var(--sys-control-padding-inline-lg);
+  --oods-segmented-control-font-size: var(--sys-text-scale-body-md-font-size);
+  --oods-segmented-control-line-height: var(--sys-text-scale-body-md-line-height);
+}
+
+/* Equal segments, each as wide as the widest label, while the field has room for that. In a narrower field every segment
+ * keeps its whole label and only the shorter ones give up width; a label is never cut. A field too narrow for the labels
+ * themselves (five options at lg need about 380px) is outgrown, so on a phone use md or smaller for five. */
+.oods-segmented-control__track {
+  display: inline-grid;
+  grid-auto-columns: minmax(max-content, 1fr);
+  grid-auto-flow: column;
+  justify-self: start;
+  box-sizing: border-box;
+  block-size: var(--oods-segmented-control-block-size);
+  padding: var(--ref-space-ramp-050);
+  border-radius: var(--sys-radius-control);
+  background: var(--sys-surface-interactive-secondary-default);
+}
+
+.oods-segmented-control__option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding-inline: var(--oods-segmented-control-padding-inline);
+  border: 1px solid transparent;
+  border-radius: var(--sys-radius-control-sm);
+  color: var(--sys-text-muted);
+  font-size: var(--oods-segmented-control-font-size);
+  font-weight: var(--sys-text-scale-label-font-weight);
+  line-height: var(--oods-segmented-control-line-height);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+/* The radio fills its segment and paints nothing of its own, so its focus ring is drawn on the segment. The selector
+ * outranks the rule in components.css that sizes every radio in a component at 16px. */
+.oods-segmented-control__option > input.oods-segmented-control__input[type='radio'] {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  margin: 0;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  appearance: none;
+  cursor: inherit;
+}
+
+/* A hovered unchecked segment reads in the primary text colour; the :where() keeps it below the high-contrast rules. */
+.oods-segmented-control__option:where(:hover:not(:has(> :checked, > :disabled))) { color: var(--sys-text-primary); }
+
+.oods-segmented-control__option:has(> .oods-segmented-control__input:checked) {
+  border-color: var(--sys-border-subtle);
+  background: var(--sys-surface-raised);
+  color: var(--sys-text-primary);
+}
+
+.oods-segmented-control__option:has(> .oods-segmented-control__input:disabled) {
+  color: var(--sys-text-disabled);
+  cursor: not-allowed;
+}
+
+/* s223-m02 (#2527 ruling 10, after #2502 ruling 6): in high contrast the checked segment is Highlight with HighlightText,
+ * and every other segment is Canvas and CanvasText with a 1px CanvasText border. A disabled segment is GrayText, and a
+ * disabled checked one GrayText with Canvas text, so the choice still shows. */
+[data-theme='hc'] .oods-segmented-control__option:not(:where([data-theme='hc'] [data-theme]:not([data-theme='hc']) *)) {
+  forced-color-adjust: none;
+  border-color: CanvasText;
+  background: Canvas;
+  color: CanvasText;
+}
+
+[data-theme='hc'] .oods-segmented-control__option:has(> .oods-segmented-control__input:checked):not(:where([data-theme='hc'] [data-theme]:not([data-theme='hc']) *)) {
+  border-color: Highlight;
+  background: Highlight;
+  color: HighlightText;
+}
+
+[data-theme='hc'] .oods-segmented-control__option:has(> .oods-segmented-control__input:disabled):not(:where([data-theme='hc'] [data-theme]:not([data-theme='hc']) *)) {
+  border-color: GrayText;
+  color: GrayText;
+}
+
+[data-theme='hc'] .oods-segmented-control__option:has(> .oods-segmented-control__input:checked:disabled):not(:where([data-theme='hc'] [data-theme]:not([data-theme='hc']) *)) {
+  background: GrayText;
+  color: Canvas;
+}
+
+@media (forced-colors: active) {
+  .oods-segmented-control__option { forced-color-adjust: none; border-color: CanvasText; background: Canvas; color: CanvasText; }
+  .oods-segmented-control__option:has(> .oods-segmented-control__input:checked) { border-color: Highlight; background: Highlight; color: HighlightText; }
+  .oods-segmented-control__option:has(> .oods-segmented-control__input:disabled) { border-color: GrayText; color: GrayText; }
+  .oods-segmented-control__option:has(> .oods-segmented-control__input:checked:disabled) { background: GrayText; color: Canvas; }
+}

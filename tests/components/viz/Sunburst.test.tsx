@@ -70,7 +70,7 @@ describe('Sunburst', () => {
       render(<Sunburst data={nestedData} width={500} height={500} />);
 
       const chart = screen.getByTestId('sunburst-chart');
-      expect(chart).toHaveStyle({ width: '100%', maxWidth: '500px', height: '500px' });
+      expect(chart).toHaveStyle({ width: '500px', height: '500px' });
     });
 
     it('renders with aria-label from name prop', async () => {
@@ -84,7 +84,7 @@ describe('Sunburst', () => {
       render(<Sunburst data={nestedData} />);
 
       const chart = screen.getByTestId('sunburst-chart');
-      expect(chart).toHaveStyle({ width: '100%', maxWidth: '600px', height: '600px' });
+      expect(chart).toHaveStyle({ width: '600px', height: '600px' });
     });
   });
 
@@ -109,7 +109,7 @@ describe('Sunburst', () => {
 
   describe('v1.0 renderer constraint', () => {
     it('warns when non-echarts renderer is requested', async () => {
-      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => { });
 
       render(<Sunburst data={nestedData} renderer={'vega-lite' as 'echarts'} />);
 

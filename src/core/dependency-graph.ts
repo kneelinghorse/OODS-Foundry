@@ -5,7 +5,7 @@
  * validation and traversal functionality.
  */
 
-import { TraitDefinition, type TraitDependency } from './trait-definition.js';
+import { TraitDefinition } from './trait-definition.js';
 
 /**
  * Represents a node in the dependency graph
@@ -69,9 +69,11 @@ export class DependencyGraph {
     const node = this.nodes.get(traitId)!;
     node.trait = trait;
 
-    // Parse dependencies
+    // Parse dependencies (skip optional ones — they may not be present in the composition)
     if (trait.dependencies) {
       for (const dep of trait.dependencies) {
+        const isOptional = typeof dep !== 'string' && dep.optional === true;
+        if (isOptional) continue;
         const depName = typeof dep === 'string' ? dep : dep.trait;
         node.dependencies.add(depName);
 
@@ -246,9 +248,7 @@ export class DependencyGraph {
     for (const node of this.nodes.values()) {
       for (const depId of node.dependencies) {
         const depNode = this.nodes.get(depId);
-        const spec = findDependencySpec(node.trait?.dependencies, depId);
-        const optional = spec?.optional === true;
-        if ((!depNode || !depNode.trait) && !optional) {
+        if (!depNode || !depNode.trait) {
           errors.push({
             type: 'missing_dependency',
             message: `Trait "${node.id}" depends on "${depId}" which is not defined`,
@@ -350,27 +350,4 @@ export class DependencyGraph {
 
     return cloned;
   }
-}
-
-function findDependencySpec(
-  dependencies: TraitDefinition['dependencies'] | undefined,
-  targetId: string
-): TraitDependency | null {
-  if (!dependencies || dependencies.length === 0) {
-    return null;
-  }
-
-  for (const entry of dependencies) {
-    if (typeof entry === 'string') {
-      if (entry === targetId) {
-        return { trait: entry };
-      }
-      continue;
-    }
-    if (entry?.trait === targetId) {
-      return entry;
-    }
-  }
-
-  return null;
 }

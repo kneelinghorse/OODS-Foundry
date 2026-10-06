@@ -1,0 +1,5800 @@
+{
+  "schemaVersion": "1.0.0",
+  "kind": "component-capability-baseline",
+  "baselineCommit": "ae560bc22969c1fd81336730be4330c9115fc316",
+  "planningCommit": "8ce349076e7e3ba3f0b2f3f667d4fbb5c6a4b63b",
+  "controllingObligationDenominator": 109,
+  "rows": [
+    {
+      "id": "AddressCollectionPanel",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/core/Addressable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderAddressCollectionPanel"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#AddressCollectionPanel"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#AddressCollectionPanel"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-186/m02/live-consumers/cells/user-detail-showcase/react/report.json#/browser/requiredMounts/14",
+            "artifacts/product-reality/sprint-186/m02/live-consumers/cells/user-detail-showcase/react/report.json#/generation/sourceSha256",
+            "artifacts/product-reality/sprint-186/m02/live-consumers/cells/user-detail-showcase/vue/report.json#/browser/requiredMounts/14",
+            "artifacts/product-reality/sprint-186/m02/live-consumers/cells/user-detail-showcase/vue/report.json#/generation/sourceSha256",
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-detail/react/report.json#/browser/requiredMounts/16",
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-detail/react/report.json#/generation/sourceSha256",
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-detail/vue/report.json#/browser/requiredMounts/16",
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-detail/vue/report.json#/generation/sourceSha256"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "AddressEditor",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/core/Addressable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderAddressEditor"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#AddressEditor"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#AddressEditor"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-186/m05/recomposed-live-consumers/cells/user-form-showcase/react/report.json#/browser/requiredMounts/4",
+            "artifacts/product-reality/sprint-186/m05/recomposed-live-consumers/cells/user-form-showcase/vue/report.json#/browser/requiredMounts/4"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "AddressSummaryBadge",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/core/Addressable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderAddressSummaryBadge"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#AddressSummaryBadge"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#AddressSummaryBadge"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-186/m03/live-consumers/cells/user-list-showcase/react/report.json#/browser/requiredMounts/8",
+            "artifacts/product-reality/sprint-186/m03/live-consumers/cells/user-list-showcase/vue/report.json#/browser/requiredMounts/8",
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-list/react/report.json#/browser/requiredMounts/7",
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-list/vue/report.json#/browser/requiredMounts/7"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "AddressValidationTimeline",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/core/Addressable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderAddressValidationTimeline"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#AddressValidationTimeline"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#AddressValidationTimeline"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-186/m04/live-consumers/cells/user-timeline-showcase/react/report.json#/browser/requiredMounts/12",
+            "artifacts/product-reality/sprint-186/m04/live-consumers/cells/user-timeline-showcase/react/report.json#/generation/sourceSha256",
+            "artifacts/product-reality/sprint-186/m04/live-consumers/cells/user-timeline-showcase/vue/report.json#/browser/requiredMounts/12",
+            "artifacts/product-reality/sprint-186/m04/live-consumers/cells/user-timeline-showcase/vue/report.json#/generation/sourceSha256"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "ArchiveEvent",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/lifecycle/Archivable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderArchiveEvent"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "ArchivePill",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/lifecycle/Archivable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderArchivePill"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#ArchivePill"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#ArchivePill"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-187/m04/live-attempt-3/cells/fresh-Subscription-card/react/report.json#/browser/requiredMounts/5",
+            "artifacts/product-reality/sprint-187/m04/live-attempt-3/cells/fresh-Subscription-card/vue/report.json#/browser/requiredMounts/5"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "ArchiveSummary",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/lifecycle/Archivable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderArchiveSummary"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#ArchiveSummary"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#ArchiveSummary"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-187/m04/live-attempt-3/cells/fresh-Subscription-detail/react/report.json#/browser/requiredMounts/5",
+            "artifacts/product-reality/sprint-187/m04/live-attempt-3/cells/fresh-Subscription-detail/vue/report.json#/browser/requiredMounts/5"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "ArchivedRowOverlay",
+      "proposedClassification": "authoring-only",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/lifecycle/Archivable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "fallback",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderFallback"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "AuditEvent",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/lifecycle/Timestampable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderAuditEvent"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#AuditEvent"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#AuditEvent"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-186/m04/live-consumers/cells/user-timeline-showcase/react/report.json#/browser/requiredMounts/10",
+            "artifacts/product-reality/sprint-186/m04/live-consumers/cells/user-timeline-showcase/react/report.json#/generation/sourceSha256",
+            "artifacts/product-reality/sprint-186/m04/live-consumers/cells/user-timeline-showcase/vue/report.json#/browser/requiredMounts/10",
+            "artifacts/product-reality/sprint-186/m04/live-consumers/cells/user-timeline-showcase/vue/report.json#/generation/sourceSha256"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "AuditSummaryCard",
+      "proposedClassification": "authoring-only",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/lifecycle/Auditable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "fallback",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderFallback"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "AuditTimeline",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/lifecycle/Auditable.trait.yaml",
+            "traits/lifecycle/Timestampable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderAuditTimeline"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#AuditTimeline"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#AuditTimeline"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-184/m04/packed-consumers/report.json#AuditTimeline"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "Badge",
+      "proposedClassification": "native",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "versioned-v1",
+          "evidence": [
+            "packages/component-contracts/src/contracts.ts",
+            "packages/component-contracts/src/scenarios.ts"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderBadge"
+          ]
+        },
+        "react": {
+          "state": "implemented-unverified",
+          "evidence": [
+            "src/components/base/Badge.tsx",
+            "src/index.ts"
+          ]
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "Banner",
+      "proposedClassification": "native",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "versioned-v1",
+          "evidence": [
+            "packages/component-contracts/src/contracts.ts",
+            "packages/component-contracts/src/scenarios.ts"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderBanner"
+          ]
+        },
+        "react": {
+          "state": "implemented-unverified",
+          "evidence": [
+            "src/components/base/Banner.tsx",
+            "src/index.ts"
+          ]
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "BillingAmountInput",
+      "proposedClassification": "authoring-only",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/financial/Billable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "fallback",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderFallback"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "BillingCardMeta",
+      "proposedClassification": "authoring-only",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/financial/Billable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "fallback",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderFallback"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "BillingIntervalSelector",
+      "proposedClassification": "authoring-only",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/financial/Billable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "fallback",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderFallback"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "BillingSummaryBadge",
+      "proposedClassification": "authoring-only",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/financial/Billable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "fallback",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderFallback"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "Button",
+      "proposedClassification": "native",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "versioned-v1",
+          "evidence": [
+            "packages/component-contracts/src/contracts.ts",
+            "packages/component-contracts/src/scenarios.ts"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderButton"
+          ]
+        },
+        "react": {
+          "state": "implemented-unverified",
+          "evidence": [
+            "src/components/base/Button.tsx",
+            "src/index.ts"
+          ]
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "CancellationBadge",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/lifecycle/Cancellable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderCancellationBadge"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#CancellationBadge"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#CancellationBadge"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-187/m04/live-attempt-3/cells/fresh-Subscription-card/react/report.json#/browser/requiredMounts/4",
+            "artifacts/product-reality/sprint-187/m04/live-attempt-3/cells/fresh-Subscription-card/vue/report.json#/browser/requiredMounts/4"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "CancellationEvent",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/lifecycle/Cancellable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderCancellationEvent"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "CancellationForm",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/lifecycle/Cancellable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderCancellationForm"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#CancellationForm"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#CancellationForm"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-187/m04/live-attempt-3/cells/fresh-Subscription-form/react/report.json#/browser/requiredMounts/3",
+            "artifacts/product-reality/sprint-187/m04/live-attempt-3/cells/fresh-Subscription-form/vue/report.json#/browser/requiredMounts/3"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "CancellationSummary",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/lifecycle/Cancellable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderCancellationSummary"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#CancellationSummary"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#CancellationSummary"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-184/m04/packed-consumers/report.json#CancellationSummary"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "Card",
+      "proposedClassification": "native",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "versioned-v1",
+          "evidence": [
+            "packages/component-contracts/src/contracts.ts",
+            "packages/component-contracts/src/scenarios.ts"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderCard"
+          ]
+        },
+        "react": {
+          "state": "implemented-unverified",
+          "evidence": [
+            "src/components/base/Card.tsx",
+            "src/index.ts"
+          ]
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "CardHeader",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/content/Labelled.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderCardHeader"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#CardHeader"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#CardHeader"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-185/m04/live-consumers/cells/user-card-showcase/react/report.json#/browser/requiredMounts/24",
+            "artifacts/product-reality/sprint-185/m04/live-consumers/cells/user-card-showcase/vue/report.json#/browser/requiredMounts/24",
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-card/react/report.json#/browser/requiredMounts/3",
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-card/vue/report.json#/browser/requiredMounts/3"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "Checkbox",
+      "proposedClassification": "native",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "versioned-v1",
+          "evidence": [
+            "packages/component-contracts/src/contracts.ts",
+            "packages/component-contracts/src/scenarios.ts"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderCheckbox"
+          ]
+        },
+        "react": {
+          "state": "implemented-unverified",
+          "evidence": [
+            "src/components/base/Checkbox.tsx",
+            "src/index.ts"
+          ]
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "ClassificationBadge",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/core/Classifiable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderClassificationBadge"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#ClassificationBadge"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#ClassificationBadge"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-187/m02/live-attempt-3/cells/fresh-Product-list/react/report.json#/browser/requiredMounts/7",
+            "artifacts/product-reality/sprint-187/m02/live-attempt-3/cells/fresh-Product-list/vue/report.json#/browser/requiredMounts/7"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "ClassificationEditor",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/core/Classifiable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderClassificationEditor"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#ClassificationEditor"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#ClassificationEditor"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-187/m02/live-attempt-3/cells/fresh-Product-form/react/report.json#/browser/requiredMounts/6",
+            "artifacts/product-reality/sprint-187/m02/live-attempt-3/cells/fresh-Product-form/vue/report.json#/browser/requiredMounts/6"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "ClassificationPanel",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/core/Classifiable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderClassificationPanel"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#ClassificationPanel"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#ClassificationPanel"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-186/m01/live-consumers/cells/test-tagged-schema/react/report.json#/browser/requiredMounts/29",
+            "artifacts/product-reality/sprint-186/m01/live-consumers/cells/test-tagged-schema/vue/report.json#/browser/requiredMounts/29"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "ColorStatePicker",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/visual/Colorized.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderColorStatePicker"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "ColorSwatch",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/visual/Colorized.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderColorSwatch"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#ColorSwatch"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#ColorSwatch"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-185/m04/live-consumers/cells/the-academy-landing-v1/react/report.json#/browser/requiredMounts/22",
+            "artifacts/product-reality/sprint-185/m04/live-consumers/cells/the-academy-landing-v1/vue/report.json#/browser/requiredMounts/22"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "ColorizedBadge",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/visual/Colorized.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderColorizedBadge"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#ColorizedBadge"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#ColorizedBadge"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-185/m04/live-consumers/cells/the-academy-landing-v1/react/report.json#/browser/requiredMounts/5",
+            "artifacts/product-reality/sprint-185/m04/live-consumers/cells/the-academy-landing-v1/vue/report.json#/browser/requiredMounts/5"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "CommunicationDetailPanel",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/core/Communicable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderCommunicationDetailPanel"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "CycleProgressCard",
+      "proposedClassification": "authoring-only",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/financial/Billable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "fallback",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderFallback"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "DatePicker",
+      "proposedClassification": "native",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "versioned-v1",
+          "evidence": [
+            "packages/component-contracts/src/contracts.ts",
+            "packages/component-contracts/src/scenarios.ts"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderDatePicker"
+          ]
+        },
+        "react": {
+          "state": "implemented-unverified",
+          "evidence": [
+            "src/components/base/DatePicker.tsx",
+            "src/index.ts"
+          ]
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "DetailHeader",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/content/Labelled.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderDetailHeader"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#DetailHeader"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#DetailHeader"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-185/m04/live-consumers/cells/cmos-dashboard-redesign/react/report.json#/browser/requiredMounts/2",
+            "artifacts/product-reality/sprint-185/m04/live-consumers/cells/cmos-dashboard-redesign/vue/report.json#/browser/requiredMounts/2",
+            "artifacts/product-reality/sprint-185/m04/live-consumers/cells/cmos-messages-redesign/react/report.json#/browser/requiredMounts/2",
+            "artifacts/product-reality/sprint-185/m04/live-consumers/cells/cmos-messages-redesign/vue/report.json#/browser/requiredMounts/2",
+            "artifacts/product-reality/sprint-185/m04/live-consumers/cells/plan-form-dark/react/report.json#/browser/requiredMounts/1",
+            "artifacts/product-reality/sprint-185/m04/live-consumers/cells/plan-form-dark/vue/report.json#/browser/requiredMounts/1",
+            "artifacts/product-reality/sprint-185/m04/live-consumers/cells/pt-shop-parts-entry-router-v1/react/report.json#/browser/requiredMounts/2",
+            "artifacts/product-reality/sprint-185/m04/live-consumers/cells/pt-shop-parts-entry-router-v1/vue/report.json#/browser/requiredMounts/2",
+            "artifacts/product-reality/sprint-185/m04/live-consumers/cells/the-academy-landing-v1/react/report.json#/browser/requiredMounts/2",
+            "artifacts/product-reality/sprint-185/m04/live-consumers/cells/the-academy-landing-v1/vue/report.json#/browser/requiredMounts/2",
+            "artifacts/product-reality/sprint-186/m01/live-consumers/cells/test-tagged-schema/react/report.json#/browser/requiredMounts/3",
+            "artifacts/product-reality/sprint-186/m01/live-consumers/cells/test-tagged-schema/vue/report.json#/browser/requiredMounts/3",
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-detail/react/report.json#/browser/requiredMounts/3",
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-detail/vue/report.json#/browser/requiredMounts/3"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "FilterPanel",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/behavioral/Filterable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderFilterPanel"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#FilterPanel"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#FilterPanel"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-186/m01/live-consumers/cells/test-tagged-schema/react/report.json#/browser/requiredMounts/30",
+            "artifacts/product-reality/sprint-186/m01/live-consumers/cells/test-tagged-schema/vue/report.json#/browser/requiredMounts/30",
+            "artifacts/product-reality/sprint-187/m02/live-attempt-3/cells/fresh-Product-list/react/report.json#/browser/requiredMounts/3",
+            "artifacts/product-reality/sprint-187/m02/live-attempt-3/cells/fresh-Product-list/vue/report.json#/browser/requiredMounts/3"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "FormLabelGroup",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/content/Labelled.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderFormLabelGroup"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#FormLabelGroup"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#FormLabelGroup"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-187/m02/live-attempt-3/cells/fresh-Product-form/react/report.json#/browser/requiredMounts/2",
+            "artifacts/product-reality/sprint-187/m02/live-attempt-3/cells/fresh-Product-form/vue/report.json#/browser/requiredMounts/2"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "GeoFieldMappingForm",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/viz/spatial/geocodable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderGeoFieldMappingForm"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "GeoResolutionBadge",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/viz/spatial/geocodable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderGeoResolutionBadge"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "GeocodablePreview",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/viz/spatial/geocodable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderGeocodablePreview"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "Grid",
+      "proposedClassification": "native",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "versioned-v1",
+          "evidence": [
+            "packages/component-contracts/src/contracts.ts",
+            "packages/component-contracts/src/scenarios.ts"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderGrid"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "InlineLabel",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/content/Labelled.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderInlineLabel"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#InlineLabel"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#InlineLabel"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-187/m02/live-attempt-3/cells/fresh-Product-inline/react/report.json#/browser/requiredMounts/6",
+            "artifacts/product-reality/sprint-187/m02/live-attempt-3/cells/fresh-Product-inline/vue/report.json#/browser/requiredMounts/6"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "Input",
+      "proposedClassification": "native",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "versioned-v1",
+          "evidence": [
+            "packages/component-contracts/src/contracts.ts",
+            "packages/component-contracts/src/scenarios.ts"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderInput"
+          ]
+        },
+        "react": {
+          "state": "partial",
+          "evidence": [
+            "src/components/base/TextField.tsx",
+            "src/components/base/index.ts"
+          ]
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "LabelCell",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/content/Labelled.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderLabelCell"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#LabelCell"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#LabelCell"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-187/m02/live-attempt-3/cells/fresh-Product-list/react/report.json#/browser/requiredMounts/10",
+            "artifacts/product-reality/sprint-187/m02/live-attempt-3/cells/fresh-Product-list/vue/report.json#/browser/requiredMounts/10",
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-list/react/report.json#/browser/requiredMounts/12",
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-list/vue/report.json#/browser/requiredMounts/12"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "MembershipAuditTimeline",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/core/Authable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderMembershipAuditTimeline"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#MembershipAuditTimeline"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#MembershipAuditTimeline"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-186/m04/live-consumers/cells/user-timeline-showcase/react/report.json#/browser/requiredMounts/16",
+            "artifacts/product-reality/sprint-186/m04/live-consumers/cells/user-timeline-showcase/react/report.json#/generation/sourceSha256",
+            "artifacts/product-reality/sprint-186/m04/live-consumers/cells/user-timeline-showcase/vue/report.json#/browser/requiredMounts/16",
+            "artifacts/product-reality/sprint-186/m04/live-consumers/cells/user-timeline-showcase/vue/report.json#/generation/sourceSha256"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "MembershipPanel",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/core/Authable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderMembershipPanel"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#MembershipPanel"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#MembershipPanel"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-186/m02/live-consumers/cells/user-detail-showcase/react/report.json#/browser/requiredMounts/12",
+            "artifacts/product-reality/sprint-186/m02/live-consumers/cells/user-detail-showcase/react/report.json#/generation/sourceSha256",
+            "artifacts/product-reality/sprint-186/m02/live-consumers/cells/user-detail-showcase/vue/report.json#/browser/requiredMounts/12",
+            "artifacts/product-reality/sprint-186/m02/live-consumers/cells/user-detail-showcase/vue/report.json#/generation/sourceSha256",
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-detail/react/report.json#/browser/requiredMounts/14",
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-detail/react/report.json#/generation/sourceSha256",
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-detail/vue/report.json#/browser/requiredMounts/14",
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-detail/vue/report.json#/generation/sourceSha256"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "MessageEventTimeline",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/core/Communicable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderMessageEventTimeline"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#MessageEventTimeline"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#MessageEventTimeline"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-186/m04/live-consumers/cells/user-timeline-showcase/react/report.json#/browser/requiredMounts/18",
+            "artifacts/product-reality/sprint-186/m04/live-consumers/cells/user-timeline-showcase/react/report.json#/generation/sourceSha256",
+            "artifacts/product-reality/sprint-186/m04/live-consumers/cells/user-timeline-showcase/vue/report.json#/browser/requiredMounts/18",
+            "artifacts/product-reality/sprint-186/m04/live-consumers/cells/user-timeline-showcase/vue/report.json#/generation/sourceSha256"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "MessageStatusBadge",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/core/Communicable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderMessageStatusBadge"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#MessageStatusBadge"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#MessageStatusBadge"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-186/m03/live-consumers/cells/user-list-showcase/react/report.json#/browser/requiredMounts/4",
+            "artifacts/product-reality/sprint-186/m03/live-consumers/cells/user-list-showcase/vue/report.json#/browser/requiredMounts/4",
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-list/react/report.json#/browser/requiredMounts/4",
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-list/vue/report.json#/browser/requiredMounts/4"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "OwnerBadge",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/structural/Ownerable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderOwnerBadge"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#OwnerBadge"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#OwnerBadge"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-list/react/report.json#/browser/requiredMounts/14",
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-list/vue/report.json#/browser/requiredMounts/14"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "OwnershipMeta",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/structural/Ownerable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderOwnershipMeta"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#OwnershipMeta"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#OwnershipMeta"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-card/react/report.json#/browser/requiredMounts/9",
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-card/vue/report.json#/browser/requiredMounts/9"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "OwnershipSummary",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/structural/Ownerable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderOwnershipSummary"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#OwnershipSummary"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#OwnershipSummary"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-detail/react/report.json#/browser/requiredMounts/5",
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-detail/vue/report.json#/browser/requiredMounts/5"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "PaginationBar",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/behavioral/Pageable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderPaginationBar"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#PaginationBar"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#PaginationBar"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-184/m04/packed-consumers/report.json#PaginationBar"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "PaymentEventTimeline",
+      "proposedClassification": "authoring-only",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/financial/Billable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "fallback",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderFallback"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "PaymentTimeline",
+      "proposedClassification": "authoring-only",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/financial/Billable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "fallback",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderFallback"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "PreferenceEditor",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/core/Preferenceable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderPreferenceEditor"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#PreferenceEditor"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#PreferenceEditor"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-186/m05/recomposed-live-consumers/cells/user-form-showcase/react/report.json#/browser/requiredMounts/8",
+            "artifacts/product-reality/sprint-186/m05/recomposed-live-consumers/cells/user-form-showcase/vue/report.json#/browser/requiredMounts/8"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "PreferencePanel",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/core/Preferenceable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderPreferencePanel"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#PreferencePanel"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#PreferencePanel"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-186/m02/live-consumers/cells/user-detail-showcase/react/report.json#/browser/requiredMounts/16",
+            "artifacts/product-reality/sprint-186/m02/live-consumers/cells/user-detail-showcase/react/report.json#/generation/sourceSha256",
+            "artifacts/product-reality/sprint-186/m02/live-consumers/cells/user-detail-showcase/vue/report.json#/browser/requiredMounts/16",
+            "artifacts/product-reality/sprint-186/m02/live-consumers/cells/user-detail-showcase/vue/report.json#/generation/sourceSha256",
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-detail/react/report.json#/browser/requiredMounts/18",
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-detail/react/report.json#/generation/sourceSha256",
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-detail/vue/report.json#/browser/requiredMounts/18",
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-detail/vue/report.json#/generation/sourceSha256"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "PreferenceSummaryBadge",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/core/Preferenceable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderPreferenceSummaryBadge"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#PreferenceSummaryBadge"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#PreferenceSummaryBadge"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-186/m03/live-consumers/cells/user-list-showcase/react/report.json#/browser/requiredMounts/9",
+            "artifacts/product-reality/sprint-186/m03/live-consumers/cells/user-list-showcase/vue/report.json#/browser/requiredMounts/9",
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-list/react/report.json#/browser/requiredMounts/8",
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-list/vue/report.json#/browser/requiredMounts/8"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "PreferenceTimeline",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/core/Preferenceable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderPreferenceTimeline"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#PreferenceTimeline"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#PreferenceTimeline"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-186/m04/live-consumers/cells/user-timeline-showcase/react/report.json#/browser/requiredMounts/14",
+            "artifacts/product-reality/sprint-186/m04/live-consumers/cells/user-timeline-showcase/react/report.json#/generation/sourceSha256",
+            "artifacts/product-reality/sprint-186/m04/live-consumers/cells/user-timeline-showcase/vue/report.json#/browser/requiredMounts/14",
+            "artifacts/product-reality/sprint-186/m04/live-consumers/cells/user-timeline-showcase/vue/report.json#/generation/sourceSha256"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "PriceBadge",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/financial/Priceable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderPriceBadge"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#PriceBadge"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#PriceBadge"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-184/m04/packed-consumers/report.json#PriceBadge"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "PriceCardMeta",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/financial/Priceable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderPriceCardMeta"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#PriceCardMeta"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#PriceCardMeta"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-187/m04/live-attempt-3/cells/fresh-Subscription-card/react/report.json#/browser/requiredMounts/9",
+            "artifacts/product-reality/sprint-187/m04/live-attempt-3/cells/fresh-Subscription-card/vue/report.json#/browser/requiredMounts/9"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "PriceSummary",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/financial/Priceable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderPriceSummary"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#PriceSummary"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#PriceSummary"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-186/m01/live-consumers/cells/test-tagged-schema/react/report.json#/browser/requiredMounts/6",
+            "artifacts/product-reality/sprint-186/m01/live-consumers/cells/test-tagged-schema/vue/report.json#/browser/requiredMounts/6"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "RelativeTimestamp",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/lifecycle/Timestampable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderRelativeTimestamp"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#RelativeTimestamp"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#RelativeTimestamp"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-184/m04/packed-consumers/report.json#RelativeTimestamp"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "RoleAssignmentForm",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/core/Authable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderRoleAssignmentForm"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#RoleAssignmentForm"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#RoleAssignmentForm"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-186/m05/recomposed-live-consumers/cells/user-form-showcase/react/report.json#/browser/requiredMounts/9",
+            "artifacts/product-reality/sprint-186/m05/recomposed-live-consumers/cells/user-form-showcase/vue/report.json#/browser/requiredMounts/9"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "RoleBadgeList",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/core/Authable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderRoleBadgeList"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#RoleBadgeList"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#RoleBadgeList"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-186/m03/live-consumers/cells/user-list-showcase/react/report.json#/browser/requiredMounts/10",
+            "artifacts/product-reality/sprint-186/m03/live-consumers/cells/user-list-showcase/vue/report.json#/browser/requiredMounts/10",
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-list/react/report.json#/browser/requiredMounts/9",
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-list/vue/report.json#/browser/requiredMounts/9"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "SearchInput",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/behavioral/Searchable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderSearchInput"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#SearchInput"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#SearchInput"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-184/m04/packed-consumers/report.json#SearchInput"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "Select",
+      "proposedClassification": "native",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "versioned-v1",
+          "evidence": [
+            "packages/component-contracts/src/contracts.ts",
+            "packages/component-contracts/src/scenarios.ts"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderSelect"
+          ]
+        },
+        "react": {
+          "state": "implemented-unverified",
+          "evidence": [
+            "src/components/base/Select.tsx",
+            "src/index.ts"
+          ]
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "SortIndicator",
+      "proposedClassification": "authoring-only",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/behavioral/Sortable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "fallback",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderFallback"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "Stack",
+      "proposedClassification": "native",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "versioned-v1",
+          "evidence": [
+            "packages/component-contracts/src/contracts.ts",
+            "packages/component-contracts/src/scenarios.ts"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderStack"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "StateTransitionEvent",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/lifecycle/Stateful.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderStateTransitionEvent"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "StatusBadge",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/lifecycle/Stateful.trait.yaml",
+            "traits/visual/Statusable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderStatusBadge"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#StatusBadge"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#StatusBadge"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-184/m04/packed-consumers/report.json#StatusBadge"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "StatusColorLegend",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/visual/Colorized.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderStatusColorLegend"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "StatusSelector",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/lifecycle/Stateful.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderStatusSelector"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#StatusSelector"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#StatusSelector"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-186/m05/recomposed-live-consumers/cells/user-form-showcase/react/report.json#/browser/requiredMounts/2",
+            "artifacts/product-reality/sprint-186/m05/recomposed-live-consumers/cells/user-form-showcase/vue/report.json#/browser/requiredMounts/2",
+            "artifacts/product-reality/sprint-187/m02/live-attempt-3/cells/fresh-Product-form/react/report.json#/browser/requiredMounts/3",
+            "artifacts/product-reality/sprint-187/m02/live-attempt-3/cells/fresh-Product-form/vue/report.json#/browser/requiredMounts/3",
+            "artifacts/product-reality/sprint-187/m04/live-attempt-3/cells/fresh-Subscription-form/react/report.json#/browser/requiredMounts/2",
+            "artifacts/product-reality/sprint-187/m04/live-attempt-3/cells/fresh-Subscription-form/vue/report.json#/browser/requiredMounts/2"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "StatusTimeline",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/lifecycle/Stateful.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderStatusTimeline"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#StatusTimeline"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#StatusTimeline"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-184/m04/packed-consumers/report.json#StatusTimeline"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "Table",
+      "proposedClassification": "native",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "versioned-v1",
+          "evidence": [
+            "packages/component-contracts/src/contracts.ts",
+            "packages/component-contracts/src/scenarios.ts"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderTable"
+          ]
+        },
+        "react": {
+          "state": "implemented-unverified",
+          "evidence": [
+            "src/components/base/Table.tsx",
+            "src/index.ts"
+          ]
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "Tabs",
+      "proposedClassification": "native",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "versioned-v1",
+          "evidence": [
+            "packages/component-contracts/src/contracts.ts",
+            "packages/component-contracts/src/scenarios.ts"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderTabs"
+          ]
+        },
+        "react": {
+          "state": "implemented-unverified",
+          "evidence": [
+            "src/components/tabs/Tabs.tsx",
+            "src/index.ts"
+          ]
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "TagInput",
+      "proposedClassification": "native",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/behavioral/Taggable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderTagInput"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#TagInput"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#TagInput"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-186/m05/recomposed-live-consumers/cells/user-form-showcase/react/report.json#/browser/requiredMounts/3",
+            "artifacts/product-reality/sprint-186/m05/recomposed-live-consumers/cells/user-form-showcase/vue/report.json#/browser/requiredMounts/3"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "TagManager",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/behavioral/Taggable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderTagManager"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#TagManager"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#TagManager"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-186/m02/live-consumers/cells/user-detail-showcase/react/report.json#/browser/requiredMounts/4",
+            "artifacts/product-reality/sprint-186/m02/live-consumers/cells/user-detail-showcase/vue/report.json#/browser/requiredMounts/4",
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-detail/react/report.json#/browser/requiredMounts/6",
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-detail/vue/report.json#/browser/requiredMounts/6"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "TagPills",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/behavioral/Taggable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderTagPills"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#TagPills"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#TagPills"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-186/m03/live-consumers/cells/user-list-showcase/react/report.json#/browser/requiredMounts/15",
+            "artifacts/product-reality/sprint-186/m03/live-consumers/cells/user-list-showcase/vue/report.json#/browser/requiredMounts/15",
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-list/react/report.json#/browser/requiredMounts/16",
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-list/vue/report.json#/browser/requiredMounts/16"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "TagSummary",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/behavioral/Taggable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderTagSummary"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#TagSummary"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#TagSummary"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-card/react/report.json#/browser/requiredMounts/10",
+            "artifacts/product-reality/sprint-187/m03/live-attempt-2/cells/fresh-Organization-card/vue/report.json#/browser/requiredMounts/10"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "TemplatePicker",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/core/Communicable.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderTemplatePicker"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#TemplatePicker"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#TemplatePicker"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-186/m05/recomposed-live-consumers/cells/user-form-showcase/react/report.json#/browser/requiredMounts/10",
+            "artifacts/product-reality/sprint-186/m05/recomposed-live-consumers/cells/user-form-showcase/vue/report.json#/browser/requiredMounts/10"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "Text",
+      "proposedClassification": "native",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "versioned-v1",
+          "evidence": [
+            "packages/component-contracts/src/contracts.ts",
+            "packages/component-contracts/src/scenarios.ts"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderText"
+          ]
+        },
+        "react": {
+          "state": "implemented-unverified",
+          "evidence": [
+            "src/components/base/Text.tsx",
+            "src/index.ts"
+          ]
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "Textarea",
+      "proposedClassification": "native",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "versioned-v1",
+          "evidence": [
+            "packages/component-contracts/src/contracts.ts",
+            "packages/component-contracts/src/scenarios.ts"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderTextarea"
+          ]
+        },
+        "react": {
+          "state": "implemented-unverified",
+          "evidence": [
+            "src/components/base/Textarea.tsx",
+            "src/index.ts"
+          ]
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "TimelineEntryLabel",
+      "proposedClassification": "authoring-only",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/content/Labelled.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "fallback",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderFallback"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "VizAreaControls",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/viz/mark-area.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderVizAreaControls"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "VizAreaPreview",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/viz/mark-area.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderVizAreaPreview"
+          ]
+        },
+        "react": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-react/evidence/react-readiness.v1.json#VizAreaPreview"
+          ]
+        },
+        "vue": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "packages/components-vue/evidence/vue-readiness.v1.json#VizAreaPreview"
+          ]
+        },
+        "generatedConsumer": {
+          "state": "implemented-evidence-complete",
+          "evidence": [
+            "artifacts/product-reality/sprint-185/m04/live-consumers/cells/cmos-dashboard-redesign/react/report.json#/browser/requiredMounts/6",
+            "artifacts/product-reality/sprint-185/m04/live-consumers/cells/cmos-dashboard-redesign/vue/report.json#/browser/requiredMounts/6"
+          ]
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "VizAxisControls",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/viz/encoding-position-x.trait.yaml",
+            "traits/viz/encoding-position-y.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderVizAxisControls"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "VizAxisSummary",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/viz/encoding-position-x.trait.yaml",
+            "traits/viz/encoding-position-y.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderVizAxisSummary"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "VizColorControls",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/viz/encoding-color.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderVizColorControls"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "VizColorLegendConfig",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/viz/encoding-color.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderVizColorLegendConfig"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "VizEncodingBadge",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/viz/encoding-color.trait.yaml",
+            "traits/viz/encoding-position-x.trait.yaml",
+            "traits/viz/encoding-position-y.trait.yaml",
+            "traits/viz/encoding-size.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderVizEncodingBadge"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "VizHeatmapControls",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": []
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderVizHeatmapControls"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "VizHeatmapPreview",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": []
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderVizHeatmapPreview"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "VizLineControls",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/viz/mark-line.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderVizLineControls"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "VizLinePreview",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/viz/mark-line.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderVizLinePreview"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "VizMarkControls",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/viz/mark-bar.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderVizMarkControls"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "VizMarkPreview",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/viz/mark-bar.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderVizMarkPreview"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "VizOpacityControls",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": []
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderVizOpacityControls"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "VizOpacitySummary",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": []
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderVizOpacitySummary"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "VizPointControls",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/viz/mark-point.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderVizPointControls"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "VizPointPreview",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/viz/mark-point.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderVizPointPreview"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "VizRoleBadge",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/viz/mark-area.trait.yaml",
+            "traits/viz/mark-bar.trait.yaml",
+            "traits/viz/mark-line.trait.yaml",
+            "traits/viz/mark-point.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderVizRoleBadge"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "VizScaleControls",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/viz/scale-linear.trait.yaml",
+            "traits/viz/scale-temporal.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderVizScaleControls"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "VizScaleSummary",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/viz/scale-linear.trait.yaml",
+            "traits/viz/scale-temporal.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderVizScaleSummary"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "VizScatterControls",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": []
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderVizScatterControls"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "VizScatterPreview",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": []
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderVizScatterPreview"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "VizShapeControls",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": []
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderVizShapeControls"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "VizShapeLegend",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": []
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderVizShapeLegend"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "VizSizeControls",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/viz/encoding-size.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderVizSizeControls"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    },
+    {
+      "id": "VizSizeSummary",
+      "proposedClassification": "recipe",
+      "reconciliationState": "proposed-awaiting-derek-approval",
+      "surfaces": {
+        "contract": {
+          "state": "metadata-only",
+          "evidence": [
+            "traits/viz/encoding-size.trait.yaml"
+          ]
+        },
+        "metadata": {
+          "state": "available",
+          "evidence": [
+            "artifacts/structured-data/oods-components-2026-03-06.json"
+          ]
+        },
+        "html": {
+          "state": "mapped",
+          "evidence": [
+            "packages/mcp-server/src/render/component-map.ts#renderVizSizeSummary"
+          ]
+        },
+        "react": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "vue": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "generatedConsumer": {
+          "state": "unavailable",
+          "evidence": []
+        },
+        "accessibility": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "theme": {
+          "state": "unverified",
+          "evidence": []
+        },
+        "interaction": {
+          "state": "unverified",
+          "evidence": []
+        }
+      }
+    }
+  ]
+}

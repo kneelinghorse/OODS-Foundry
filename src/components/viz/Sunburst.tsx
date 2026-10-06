@@ -9,7 +9,7 @@ import type { HTMLAttributes, JSX } from 'react';
 import type { EChartsType } from 'echarts';
 
 import type { HierarchyInput } from '../../types/viz/network-flow.js';
-import type { NormalizedVizSpec } from '../../viz/spec/normalized-viz-spec.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
 import { adaptSunburstToECharts } from '../../viz/adapters/echarts/sunburst-adapter.js';
 import { SunburstA11yFallback } from './a11y/SunburstA11yFallback.js';
 
@@ -53,7 +53,7 @@ const DEFAULT_HEIGHT = 600;
  */
 function buildSpec(props: SunburstProps): NormalizedVizSpec {
   return {
-    $schema: 'https://oods.dev/viz-spec/v1',
+    $schema: 'https://oods-foundry.com/viz-spec/v1',
     id: 'component:sunburst',
     name: props.name ?? 'Sunburst',
     data: { values: [] },

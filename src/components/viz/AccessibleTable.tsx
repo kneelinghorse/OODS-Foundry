@@ -1,8 +1,8 @@
 import type { HTMLAttributes, JSX } from 'react';
-import type { NormalizedVizSpec } from '../../viz/spec/normalized-viz-spec.js';
-import type { VizDataAnalysis } from '../../viz/a11y/data-analysis.js';
-import { formatDimension, formatValue } from '../../viz/a11y/format.js';
-import { generateAccessibleTable } from '../../viz/a11y/table-generator.js';
+import type { NormalizedVizSpec } from '@oods/viz-core';
+import type { VizDataAnalysis } from '@oods/viz-core';
+import { formatDimension, formatValue } from '@oods/viz-core';
+import { generateAccessibleTable } from '@oods/viz-core';
 
 export interface AccessibleTableProps extends HTMLAttributes<HTMLDivElement> {
   readonly spec: NormalizedVizSpec;

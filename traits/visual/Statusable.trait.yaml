@@ -67,7 +67,7 @@ schema:
     type: string
     required: true
     description: |
-      Raw business status string (e.g., "active", "delinquent", "past_due").
+      Raw business status string (e.g., "active", "past_due", "unpaid").
       Resolved against the domain's status map to derive presentation data.
   domain:
     type: StatusDomain
@@ -151,8 +151,15 @@ semantics:
         - solid
 
 view_extensions:
+  # StatusBadge rather than Badge, for the reason lifecycle/Supersedable already records: the
+  # canonical Badge contract carries no field directive, so a Badge authored with these props is
+  # refused by the target contracts. Measured in s204-m02 against code.generate rather than assumed —
+  # Badge reds on THREE of the four props below (statusField, domainField and showIcon) in both React
+  # and Vue, while StatusBadge takes all four with zero errors. No object composes Statusable's list
+  # extension today, so this sat unexercised as a latent refusal rather than a visible break; every
+  # other context in this trait already authors StatusBadge.
   list:
-    - component: Badge
+    - component: StatusBadge
       position: after
       props:
         statusField: status
@@ -222,13 +229,10 @@ tokens:
   cmp.banner.border: "var(--sys-border-default)"
   cmp.banner.text: "var(--sys-text-default)"
 
-dependencies:
-  - trait: Stateful
-    required: false
-    description: |
-      Statusable can work standalone with static status strings.
-      When composed with Stateful, status values are driven by the
-      state machine and transition events flow through state_history.
+# Statusable can work standalone with static status strings.
+# When composed with Stateful, status values are driven by the state machine.
+# Stateful is optional — not listed as a dep to avoid required-dep enforcement.
+dependencies: []
 
 metadata:
   created: "2026-02-28"
@@ -252,8 +256,8 @@ metadata:
     - Ticket
     - User
   references:
-    - "src/components/statusables/statusRegistry.ts — StatusPresentation, StatusTone, tone inference, domain maps"
-    - "stories/traits/Statusable.stories.tsx — 7 sub-stories across 5 domains"
-    - "tokens/maps/saas-billing.status-map.json — domain status token map consumed by registry"
-    - "src/traits/Statusable/types.ts — StatusableViewData, StatusTransitionEvent interfaces"
-    - "src/traits/Statusable/utils.ts — formatStatus, resolveDisplayName utilities"
+    - "objects/provenance.v1.json#/references/ref-ca663a7c5731 — StatusPresentation, StatusTone, tone inference, domain maps"
+    - "objects/provenance.v1.json#/references/ref-24923e661958 — 7 sub-stories across 5 domains"
+    - "objects/provenance.v1.json#/references/ref-be33a98177f7 — domain status token map consumed by registry"
+    - "objects/provenance.v1.json#/references/ref-c373015a9045 — StatusableViewData, StatusTransitionEvent interfaces"
+    - "objects/provenance.v1.json#/references/ref-cc4cadcf82d5 — formatStatus, resolveDisplayName utilities"

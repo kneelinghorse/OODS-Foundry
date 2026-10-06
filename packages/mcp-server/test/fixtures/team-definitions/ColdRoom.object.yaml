@@ -1,0 +1,101 @@
+# Example input for oods-foundry.com (demos D3 and D6). An invented object, not a real client's.
+# A refrigerated room inside one of the Harbor warehouses. It composes the same Stockable trait as the
+# package's Warehouse example, so one edit to Stockable reaches both objects (product truth M39).
+object:
+  name: ColdRoom
+  version: 1.0.0
+  domain: acme.logistics
+  description: A refrigerated room inside a warehouse, holding goods that must stay cold.
+  tags:
+    - logistics
+    - inventory
+    - cold-chain
+
+traits:
+  - name: lifecycle/Timestampable
+    parameters:
+      recordedEvents:
+        - opened
+        - restocked
+      timezone: UTC
+  - name: Stockable
+    parameters:
+      capacityUnit: pallets
+
+schema:
+  coldroom_id:
+    type: uuid
+    required: true
+    description: Unique identifier for the cold room.
+  name:
+    type: string
+    required: true
+    description: The cold room's name.
+    examples:
+      - Dairy Room
+      - Produce Room
+      - Frozen Room
+      - Pharma Room
+  code:
+    type: string
+    required: true
+    description: Short code printed on the room's door.
+    examples:
+      - CR-01
+      - CR-02
+      - CR-03
+      - CR-04
+  target_temperature_c:
+    type: number
+    required: true
+    description: The temperature the room is held at, in degrees Celsius.
+    examples:
+      - 4
+      - 2
+      - -18
+      - 5
+  warehouse_id:
+    type: uuid
+    required: true
+    description: The warehouse the room is inside.
+    examples:
+      - 8a3f2c1e-5b6d-4e7f-9a0b-1c2d3e4f5a6b
+  warehouse_name:
+    type: string
+    required: false
+    description: The warehouse's name, shown in place of its id.
+    examples:
+      - Harbor Cold Store
+  created_at:
+    type: datetime
+    required: true
+    description: When the room was registered.
+    examples:
+      - '2026-02-01T09:00:00Z'
+  updated_at:
+    type: datetime
+    required: false
+    description: When the room's record last changed.
+    examples:
+      - '2026-09-18T10:00:00Z'
+
+relationships:
+  - target: Warehouse
+    via: warehouse_id
+    cardinality: many-to-one
+    label: Inside
+
+semantics:
+  name:
+    semantic_type: logistics.coldroom.name
+    token_mapping: tokenMap(text.primary)
+  warehouse_id:
+    semantic_type: logistics.coldroom.warehouse
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      displayLabelField: warehouse_name
+
+metadata:
+  owners:
+    - logistics-team
+  maturity: beta

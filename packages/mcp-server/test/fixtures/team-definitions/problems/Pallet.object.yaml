@@ -1,0 +1,13 @@
+# An object naming a trait no folder defines.
+object:
+  name: Pallet
+  version: 1.0.0
+  domain: acme.logistics
+  description: A pallet of goods.
+traits:
+  - name: Trackable
+schema:
+  pallet_id:
+    type: uuid
+    required: true
+    description: Unique identifier.

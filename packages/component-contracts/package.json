@@ -1,0 +1,60 @@
+{
+  "name": "@oods/component-contracts",
+  "version": "0.7.0",
+  "description": "Component contracts for OODS Foundry: each component's identity, props, events, states, token roles and accessibility obligations, with shared formatting helpers.",
+  "homepage": "https://oods-foundry.com/",
+  "bugs": {
+    "url": "https://github.com/kneelinghorse/OODS-Foundry/issues"
+  },
+  "keywords": [
+    "oods",
+    "oods-foundry",
+    "component-contracts",
+    "design-system",
+    "accessibility"
+  ],
+  "type": "module",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "files": [
+    "dist",
+    "registry",
+    "LICENSE",
+    "NOTICE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "rimraf dist && tsup --config tsup.config.ts",
+    "clean": "rimraf dist",
+    "typecheck": "tsc --noEmit --pretty false -p tsconfig.json",
+    "test": "vitest run --config vitest.config.ts",
+    "prepack": "pnpm run build"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./registry/intake": "./registry/component-intake.v1.json",
+    "./registry/reconciliation": "./registry/component-reconciliation.proposed.v2.json",
+    "./registry/capabilities": "./registry/component-capability-ledger.v1.json",
+    "./registry/capabilities/foundation-v1": "./registry/component-capability-foundation-v1.s182.v1.json",
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "packageManager": "pnpm@9.12.2",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kneelinghorse/OODS-Foundry.git",
+    "directory": "packages/component-contracts"
+  }
+}

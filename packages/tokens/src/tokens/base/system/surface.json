@@ -31,6 +31,11 @@
         "$value": "{theme.surface.disabled}",
         "$description": "Surface colour for disabled or inactive UI."
       },
+      "neutral": {
+        "$type": "color",
+        "$value": "{theme.status.neutral.surface}",
+        "$description": "Neutral surface for status-agnostic backgrounds and banners."
+      },
       "interactive": {
         "primary": {
           "default": {
@@ -48,6 +53,40 @@
             "$value": "{theme.surface.interactive.primary.pressed}",
             "$description": "Primary interactive surface pressed state."
           }
+        },
+        "secondary": {
+          "default": {
+            "$type": "color",
+            "$value": "{theme.surface.interactive.secondary.default}",
+            "$description": "The secondary action (a subtle fill), at rest."
+          },
+          "hover": {
+            "$type": "color",
+            "$value": "{theme.surface.interactive.secondary.hover}",
+            "$description": "The secondary action (a subtle fill), hovered."
+          },
+          "pressed": {
+            "$type": "color",
+            "$value": "{theme.surface.interactive.secondary.pressed}",
+            "$description": "The secondary action (a subtle fill), pressed."
+          }
+        },
+        "destructive": {
+          "default": {
+            "$type": "color",
+            "$value": "{theme.surface.interactive.destructive.default}",
+            "$description": "The destructive action, at rest."
+          },
+          "hover": {
+            "$type": "color",
+            "$value": "{theme.surface.interactive.destructive.hover}",
+            "$description": "The destructive action, hovered."
+          },
+          "pressed": {
+            "$type": "color",
+            "$value": "{theme.surface.interactive.destructive.pressed}",
+            "$description": "The destructive action, pressed."
+          }
         }
       }
     },
@@ -57,10 +96,30 @@
         "$value": "{theme.border.subtle}",
         "$description": "Default border for surfaces."
       },
+      "default": {
+        "$type": "color",
+        "$value": "{theme.border.subtle}",
+        "$description": "Default border alias. Used by Archivable and Stateful traits."
+      },
       "strong": {
         "$type": "color",
         "$value": "{theme.border.strong}",
         "$description": "High-emphasis border."
+      },
+      "neutral": {
+        "$type": "color",
+        "$value": "{theme.status.neutral.border}",
+        "$description": "Neutral border for status-agnostic containers and banners."
+      },
+      "interactive": {
+        "$type": "color",
+        "$value": "{theme.border.interactive}",
+        "$description": "Border of a control (input, select, checkbox, outline button), at least 3:1 against the surface it sits on."
+      },
+      "interactive-hover": {
+        "$type": "color",
+        "$value": "{theme.border.interactive-hover}",
+        "$description": "Border of a hovered control."
       }
     }
   }

@@ -1,14 +1,30 @@
+// @types/react 19 no longer declares a global JSX namespace; it is exported from 'react'.
+import type { JSX } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import React, { useMemo } from 'react';
-import type { NormalizedVizSpec } from '~/src/viz/spec/normalized-viz-spec.js';
-import { chartPatterns } from '~/src/viz/patterns/index.js';
-import { scoreResponsiveStrategies } from '~/src/viz/patterns/responsive-scorer.js';
+import { useMemo } from 'react';
+import type { NormalizedVizSpec } from '@oods/viz-core';
+import { chartPatterns, type PatternHeuristics } from '@oods/viz-core';
+import {
+  RESPONSIVE_BREAKPOINT_MIN_PX,
+  scoreResponsiveStrategies,
+} from '@oods/viz-core';
 import { BarChart } from '~/src/components/viz/BarChart';
 import { LineChart } from '~/src/components/viz/LineChart';
 import { AreaChart } from '~/src/components/viz/AreaChart';
 import { ScatterChart } from '~/src/components/viz/ScatterChart';
 import { BubbleChart } from '~/src/components/viz/BubbleChart';
 import { Heatmap } from '~/src/components/viz/Heatmap';
+
+// Vite is transitive here, not a root-resolvable type package. Keep the augmentation local
+// to the one eager/default glob shape this story executes instead of widening the story lens.
+declare global {
+  interface ImportMeta {
+    glob<T>(
+      pattern: string,
+      options: { readonly eager: true; readonly import: 'default' },
+    ): Record<string, T>;
+  }
+}
 
 type ResponsiveViewport = 'mobile' | 'tablet' | 'desktop';
 
@@ -44,25 +60,39 @@ function resolveSpec(pattern: (typeof chartPatterns)[number]): NormalizedVizSpec
 }
 
 function buildSchemaFromPattern(pattern: (typeof chartPatterns)[number]) {
+  // `chartPatterns` retains its literal registry union, so optional heuristic keys disappear
+  // from members that omit them even though every member satisfies PatternHeuristics.
+  const heuristics = pattern.heuristics as Pick<
+    PatternHeuristics,
+    'measures' | 'dimensions' | 'goal'
+  > & Partial<PatternHeuristics>;
+
   return {
-    measures: pattern.heuristics.measures.min,
-    dimensions: pattern.heuristics.dimensions.min,
-    temporals: pattern.heuristics.temporals?.min,
-    goal: pattern.heuristics.goal,
-    stacking: pattern.heuristics.stacking,
-    matrix: pattern.heuristics.matrix,
-    partToWhole: pattern.heuristics.partToWhole,
-    multiMetrics: pattern.heuristics.multiMetrics,
-    requiresGrouping: pattern.heuristics.requiresGrouping,
-    allowNegative: pattern.heuristics.allowNegative,
-    density: pattern.heuristics.density,
+    measures: heuristics.measures.min,
+    dimensions: heuristics.dimensions.min,
+    temporals: heuristics.temporals?.min,
+    goal: heuristics.goal,
+    stacking: heuristics.stacking,
+    matrix: heuristics.matrix,
+    partToWhole: heuristics.partToWhole,
+    multiMetrics: heuristics.multiMetrics,
+    requiresGrouping: heuristics.requiresGrouping,
+    allowNegative: heuristics.allowNegative,
+    density: heuristics.density,
   };
 }
 
-const viewportMaxWidth: Record<ResponsiveViewport, string> = {
-  mobile: 'max-w-[420px]',
-  tablet: 'max-w-[820px]',
-  desktop: 'max-w-full',
+/**
+ * s173 m04 — the story's `viewport` arg now selects a REAL canvas width.
+ *
+ * It used to select a Tailwind `max-w-[…]` class, which framed the cards at 420/820px on a
+ * canvas that stayed as wide as the browser. The recipes the gallery narrates are about what
+ * a chart does at a breakpoint, so the arg has to move the breakpoint, not draw a margin.
+ */
+const VIEWPORT_GLOBALS: Record<ResponsiveViewport, string> = {
+  mobile: 'oods-mobile',
+  tablet: 'oods-tablet',
+  desktop: 'oods-desktop',
 };
 
 export function PatternGalleryV2({ viewport = 'desktop' }: PatternGalleryV2Props): JSX.Element {
@@ -90,7 +120,7 @@ export function PatternGalleryV2({ viewport = 'desktop' }: PatternGalleryV2Props
       {cards.map(({ pattern, spec, ChartComponent, recipe }) => (
         <section
           key={pattern.id}
-          className={`rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm ${viewportMaxWidth[viewport]}`}
+          className="rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm"
         >
           <div className="flex flex-col gap-2">
             <div>
@@ -104,8 +134,10 @@ export function PatternGalleryV2({ viewport = 'desktop' }: PatternGalleryV2Props
               <code>{pattern.specPath}</code>
             </p>
             <p className="text-xs text-neutral-500">
-              <strong>Responsive ({recipe.breakpoint}):</strong> {recipe.layout} layout · score{' '}
-              {(recipe.score * 100).toFixed(0)}%
+              <strong>
+                Responsive ({recipe.breakpoint} ≥ {RESPONSIVE_BREAKPOINT_MIN_PX[recipe.breakpoint]}px):
+              </strong>{' '}
+              {recipe.layout} layout · score {(recipe.score * 100).toFixed(0)}%
             </p>
             <ul className="list-disc pl-5 text-xs text-neutral-500">
               {recipe.adjustments.map((adjustment) => (
@@ -123,13 +155,10 @@ export function PatternGalleryV2({ viewport = 'desktop' }: PatternGalleryV2Props
 }
 
 const meta: Meta<typeof PatternGalleryV2> = {
-  title: 'Visualization/Patterns/Pattern Gallery V2',
+  title: 'Visualization/Patterns/Responsive Library',
   component: PatternGalleryV2,
   parameters: {
     layout: 'fullscreen',
-    viewport: {
-      defaultViewport: 'responsive',
-    },
     docs: {
       description: {
         component:
@@ -155,4 +184,21 @@ export const Gallery: Story = {
   args: {
     viewport: 'desktop',
   },
+  globals: { viewport: { value: VIEWPORT_GLOBALS.desktop, isRotated: false } },
+};
+
+export const GalleryAtTablet: Story = {
+  name: 'Responsive Pattern Gallery (tablet)',
+  args: {
+    viewport: 'tablet',
+  },
+  globals: { viewport: { value: VIEWPORT_GLOBALS.tablet, isRotated: false } },
+};
+
+export const GalleryAtMobile: Story = {
+  name: 'Responsive Pattern Gallery (mobile)',
+  args: {
+    viewport: 'mobile',
+  },
+  globals: { viewport: { value: VIEWPORT_GLOBALS.mobile, isRotated: false } },
 };

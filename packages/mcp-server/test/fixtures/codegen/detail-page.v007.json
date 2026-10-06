@@ -1,0 +1,40 @@
+{
+  "status": "props-error",
+  "meta": {
+    "nodeCount": 9,
+    "componentCount": 7
+  },
+  "errors": [
+    {
+      "code": "OODS-V007",
+      "message": "Prop \"status\" is not in the canonical DetailHeader contract.",
+      "nodeId": "detail-header",
+      "component": "DetailHeader"
+    },
+    {
+      "code": "OODS-V007",
+      "message": "Prop \"owner\" is not in the canonical OwnershipSummary contract.",
+      "nodeId": "detail-ownership",
+      "component": "OwnershipSummary"
+    },
+    {
+      "code": "OODS-V007",
+      "message": "Prop \"team\" is not in the canonical OwnershipSummary contract.",
+      "nodeId": "detail-ownership",
+      "component": "OwnershipSummary"
+    },
+    {
+      "code": "OODS-V007",
+      "message": "Prop \"steps\" is not in the canonical StatusTimeline contract.",
+      "nodeId": "detail-status-timeline",
+      "component": "StatusTimeline"
+    },
+    {
+      "code": "OODS-V007",
+      "message": "Prop \"lastUpdated\" is not in the canonical ArchiveSummary contract.",
+      "nodeId": "detail-archive-summary",
+      "component": "ArchiveSummary"
+    }
+  ],
+  "historicalReadinessGolden": "detail-page.n015.json"
+}
