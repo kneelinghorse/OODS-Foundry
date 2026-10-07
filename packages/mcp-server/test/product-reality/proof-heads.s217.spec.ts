@@ -8,6 +8,7 @@ import { clearRuntimeLedgerMemo } from '../../src/lib/runtime-ledger.js';
 import { proofMatchesBuild } from '../../src/lib/visual-proof-ledger.js';
 import { projectToolSummary } from '../../src/lib/tool-ledger.js';
 import { latestPortableReceipt } from '../../../../scripts/product-reality/s193-tool-truth.mjs';
+import { advertisedName } from '../../../../scripts/runtime/tool-names.mjs';
 
 afterEach(() => { delete process.env.MCP_RUNTIME_CELLS_PATH; clearRuntimeLedgerMemo(); });
 
@@ -42,7 +43,7 @@ it('selects a complete passing archive by its recorded execution time, without a
   const write = (file: string, completedAt: string, status = 'pass', names = ['health']) => {
     const full = path.join(folder, 'artifacts/product-reality', file);
     fs.mkdirSync(path.dirname(full), { recursive: true });
-    fs.writeFileSync(full, JSON.stringify({ status, completedAt, manifest: { commit: 'a'.repeat(40), dirty: false }, tools: { count: names.length, names }, calls: { outcomes: Object.fromEntries(names.map(name => [name, { outcome: 'pass' }])) } }));
+    fs.writeFileSync(full, JSON.stringify({ status, completedAt, manifest: { commit: 'a'.repeat(40), dirty: false }, tools: { count: names.length, names: names.map(name => advertisedName(name)) }, calls: { outcomes: Object.fromEntries(names.map(name => [name, { outcome: 'pass' }])) } }));
   };
   try {
     write('sprint-999/e2e-old.json', '2026-01-01T00:00:00Z');

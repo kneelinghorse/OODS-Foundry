@@ -28,4 +28,4 @@ Use matching versions of the OODS packages. These packages are separate from the
 
 ## License
 
-Apache License 2.0. See [LICENSE](https://cdn.jsdelivr.net/npm/@oods/component-styles@0.7.0/LICENSE) and [NOTICE](https://cdn.jsdelivr.net/npm/@oods/component-styles@0.7.0/NOTICE). Generated output belongs to its user; installed package dependencies retain their own licenses.
+Apache License 2.0. See [LICENSE](https://cdn.jsdelivr.net/npm/@oods/component-styles@0.8.0/LICENSE) and [NOTICE](https://cdn.jsdelivr.net/npm/@oods/component-styles@0.8.0/NOTICE). Generated output belongs to its user; installed package dependencies retain their own licenses.

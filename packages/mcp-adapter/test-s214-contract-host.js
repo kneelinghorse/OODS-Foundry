@@ -15,7 +15,7 @@ test('stdio codegen supplies the contract host even before the first preview, wi
     client.notify('notifications/initialized');
     const mapping = JSON.parse(fs.readFileSync(path.join(root,'tests/fixtures/team-components/mappings.json'),'utf8'))[0];
     mapping.substitution.react.localPath = path.join(root,'tests/fixtures/team-components');
-    assert.equal((await client.callTool('map',{action:'create',...mapping})).status,'ok');
+    assert.equal((await client.callTool('component_map',{action:'create',...mapping})).status,'ok');
     const composed = await client.callTool('design_compose',{object:'Subscription',context:'detail'});
     assert.equal(composed.status,'ok');
     const generated = await client.callTool('code_generate',{schema:composed.schema,framework:'react'});

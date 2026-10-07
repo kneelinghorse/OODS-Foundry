@@ -1,0 +1,257 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ObjectImportInput",
+  "description": "Draft from local OpenAPI/JSON Schema files, inspect one staged draft, or explicitly accept a batch. No network access or code execution.",
+  "oneOf": [
+    {
+      "type": "object",
+      "required": [
+        "action",
+        "source"
+      ],
+      "properties": {
+        "action": {
+          "const": "draft"
+        },
+        "source": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Local file or folder. References must stay inside the source folder. Aggregate limit 128 MiB."
+            },
+            "content": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Inline JSON or YAML, at most 1 MiB."
+            },
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "description": "File name for inline provenance; no directories."
+            }
+          },
+          "oneOf": [
+            {
+              "required": [
+                "path"
+              ],
+              "not": {
+                "required": [
+                  "content"
+                ]
+              }
+            },
+            {
+              "required": [
+                "content"
+              ],
+              "not": {
+                "required": [
+                  "path"
+                ]
+              }
+            }
+          ],
+          "additionalProperties": false,
+          "description": "Local file/folder or inline schema. Used only by draft."
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "action",
+        "importId",
+        "object"
+      ],
+      "properties": {
+        "action": {
+          "const": "show"
+        },
+        "importId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "object": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Exact draft object name for show."
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "action",
+        "importId",
+        "objects"
+      ],
+      "properties": {
+        "action": {
+          "const": "apply"
+        },
+        "importId": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Content-addressed import id from draft. Required by show and apply."
+        },
+        "objects": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "name"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "proposals": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Explicitly accepted proposal ids from show; omitted means no traits."
+              }
+            },
+            "additionalProperties": false
+          },
+          "description": "Explicit accepted object names and optional proposal ids for apply."
+        },
+        "overwrite": {
+          "type": "boolean",
+          "default": false,
+          "description": "Allow replacing existing team objects."
+        },
+        "confirmShipped": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "Each shipped object name whose replacement is explicitly confirmed."
+        }
+      },
+      "additionalProperties": false
+    }
+  ],
+  "type": "object",
+  "required": [
+    "action"
+  ],
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "show",
+        "apply"
+      ],
+      "description": "Draft files without registration; show one draft; apply explicitly accepted objects and proposals."
+    },
+    "source": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Local file or folder. References must stay inside the source folder. Aggregate limit 128 MiB."
+        },
+        "content": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Inline JSON or YAML, at most 1 MiB."
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "File name for inline provenance; no directories."
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "path"
+          ],
+          "not": {
+            "required": [
+              "content"
+            ]
+          }
+        },
+        {
+          "required": [
+            "content"
+          ],
+          "not": {
+            "required": [
+              "path"
+            ]
+          }
+        }
+      ],
+      "additionalProperties": false,
+      "description": "Local file/folder or inline schema. Used only by draft."
+    },
+    "importId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Content-addressed import id from draft. Required by show and apply."
+    },
+    "object": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Exact draft object name for show."
+    },
+    "objects": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "proposals": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Explicitly accepted proposal ids from show; omitted means no traits."
+          }
+        },
+        "additionalProperties": false
+      },
+      "description": "Explicit accepted object names and optional proposal ids for apply."
+    },
+    "overwrite": {
+      "type": "boolean",
+      "default": false,
+      "description": "Allow replacing existing team objects."
+    },
+    "confirmShipped": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Each shipped object name whose replacement is explicitly confirmed."
+    }
+  }
+}

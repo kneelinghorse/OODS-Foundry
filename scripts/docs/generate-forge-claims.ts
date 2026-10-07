@@ -141,7 +141,7 @@ export async function collectFacts(): Promise<Facts> {
     return `${name}: ${value};`;
   }).join('\n');
   const toolGroups = [
-    ['Registry', ['catalog.list', 'object', 'structuredData.fetch', 'registry.snapshot', 'health']],
+    ['Registry', ['catalog.list', 'object', 'object.import', 'structuredData.fetch', 'registry.snapshot', 'health']],
     ['Generate &amp; review', ['design.compose', 'design.preview', 'repl', 'code.generate', 'pipeline', 'schema', 'fidelity.preview', 'map']],
     ['Charts', ['viz.render', 'dashboard.render', 'artifact.certify']],
     ['Tokens &amp; brand', ['tokens.build', 'brand.apply', 'brand.intake']],

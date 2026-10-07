@@ -24,7 +24,7 @@ const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..
 export const PACKAGE_DIR = "packages/foundry";
 /** What the package carries from packages/foundry, beside the terms files and runtime/. */
 // s223-m03 (#2527 ruling 16): facts.json publishes the README's and artifact_certify's numbers as data.
-export const PACKAGE_SOURCES = ["package.json", "bin/oods-foundry.js", "README.md", "TOOL-REFERENCE.md", "OBJECTS-AND-TRAITS.md", "BRANDS.md", "COMPONENTS.md", "QUICKSTART.md", "GENERATED-APPS.md", "quickstart", "shadcn", "skills", "server.json", "facts.json", "errors.json", "CHANGELOG.md", "SECURITY.md", "images"];
+export const PACKAGE_SOURCES = ["package.json", "bin/oods-foundry.js", "README.md", "TOOL-REFERENCE.md", "OBJECTS-AND-TRAITS.md", "BRANDS.md", "COMPONENTS.md", "QUICKSTART.md", "GENERATED-APPS.md", "quickstart", "shadcn", "skills", "server.json", "facts.json", "errors.json", "CHANGELOG.md", "SECURITY.md", "images", "IMPORTING-OBJECTS.md", "object-hub.schema.json"];
 
 const readJson = (file) => JSON.parse(fs.readFileSync(file, "utf8"));
 const sha256 = (file) => crypto.createHash("sha256").update(fs.readFileSync(file)).digest("hex");
@@ -47,7 +47,7 @@ export function checkPackageManifest(root = REPO_ROOT) {
   assert.deepEqual(manifest.bin, { [name.installKey]: "bin/oods-foundry.js" });
   assert.equal(manifest.engines?.node, `>=${nodeFloor()}`, "the package declares the runtime's Node floor");
   assert.equal(manifest.mcpName, "com.oods-foundry/foundry", "npm metadata must match the prepared MCP registry identity");
-  assert.deepEqual(manifest.files, ["bin/oods-foundry.js", "runtime/", "images/", "README.md", "TOOL-REFERENCE.md", "OBJECTS-AND-TRAITS.md", "BRANDS.md", "COMPONENTS.md", "QUICKSTART.md", "GENERATED-APPS.md", "quickstart/", "shadcn/", "skills/", "server.json", "facts.json", "errors.json", "CHANGELOG.md", "SECURITY.md", ...TERMS_FILES]);
+  assert.deepEqual(manifest.files, ["bin/oods-foundry.js", "runtime/", "images/", "README.md", "TOOL-REFERENCE.md", "OBJECTS-AND-TRAITS.md", "BRANDS.md", "COMPONENTS.md", "QUICKSTART.md", "GENERATED-APPS.md", "quickstart/", "shadcn/", "skills/", "server.json", "facts.json", "errors.json", "CHANGELOG.md", "SECURITY.md", ...TERMS_FILES, "IMPORTING-OBJECTS.md", "object-hub.schema.json"]);
   assert(fs.existsSync(path.join(root, PACKAGE_DIR, "quickstart/team-components/mappings.json")), "the batch mapping example ships beside Harbor components");
   return manifest;
 }

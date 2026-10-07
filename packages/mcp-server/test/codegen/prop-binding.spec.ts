@@ -293,6 +293,16 @@ describe('codegen prop binding', () => {
         expect(resolveFieldProps(amountNode, os)!.type).toBe('number');
       });
 
+      it.each([
+        ['email?', 'email'], ['url?', 'url'], ['date?', 'date'],
+        ['datetime?', 'datetime-local'], ['integer?', 'number'], ['number?', 'number'],
+      ])('keeps the browser control for nullable %s without making the field required', (type, expected) => {
+        const node: UiElement = { id: 'nullable', component: 'Input', props: { field: 'value' } };
+        const result = resolveFieldProps(node, { value: { type, required: false } });
+        expect(result!.type).toBe(expected);
+        expect(result!.required).toBeUndefined();
+      });
+
       it('returns humanized label for label-prop and status-prop components', () => {
         const node: UiElement = { id: 's', component: 'StatusBadge', props: { field: 'status' } };
         const result = resolveFieldProps(node, os);

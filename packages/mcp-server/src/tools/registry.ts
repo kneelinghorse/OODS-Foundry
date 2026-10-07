@@ -37,6 +37,7 @@ const FALLBACK_REGISTRY: ToolRegistry = {
     'map',
     'schema',
     'object',
+    'object.import',
     'repl',
   ],
   onDemand: [

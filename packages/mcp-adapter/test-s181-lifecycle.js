@@ -99,7 +99,7 @@ test('stdin EOF after a native health call closes the child and exits cleanly', 
     child.stdin.write(`${JSON.stringify({ jsonrpc: '2.0', method: 'notifications/initialized' })}\n`, 'utf8');
 
     const healthResponse = await client.request('tools/call', {
-      name: 'health',
+      name: 'health_check',
       arguments: {},
     });
     const health = JSON.parse(healthResponse.content[0].text);

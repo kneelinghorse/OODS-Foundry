@@ -1018,14 +1018,16 @@ type FieldValueKind = 'string' | 'number' | 'boolean' | 'object' | 'array' | 'un
 
 function fieldValueKind(entry: FieldSchemaEntry): FieldValueKind {
   if (entry.enum?.length) return 'string';
-  if (entry.type.endsWith('[]')) return 'array';
-  if (['string', 'datetime', 'email', 'date', 'url', 'uuid'].includes(entry.type)) {
+  // Nullable data retains its field kind; emitters handle the empty control value.
+  const type = entry.type.replace(/\?$/, '');
+  if (type.endsWith('[]')) return 'array';
+  if (['string', 'datetime', 'email', 'date', 'url', 'uuid'].includes(type)) {
     return 'string';
   }
-  if (entry.type === 'integer' || entry.type === 'number') return 'number';
-  if (entry.type === 'boolean') return 'boolean';
-  if (entry.type === 'object') return 'object';
-  if (entry.type === 'array') return 'array';
+  if (type === 'integer' || type === 'number') return 'number';
+  if (type === 'boolean') return 'boolean';
+  if (type === 'object') return 'object';
+  if (type === 'array') return 'array';
   return 'unknown';
 }
 

@@ -31,15 +31,15 @@ async function prepare(artifactVersion: string, packedVersion: string) {
 }
 
 describe('the unchanged generated artifact is tested against this release', () => {
-  it('records the intentional 0.6.2 to 0.7.0 compatibility proof without rewriting the artifact', async () => {
-    const result = await prepare('0.6.2', '0.7.0');
-    expect(result.localTarballs.find(row => row.name === '@oods/components-react')).toMatchObject({ version: '0.7.0', artifactVersion: '0.6.2' });
+  it.each(['0.7.0', '0.8.0'])('records the intentional 0.6.2 to %s compatibility proof without rewriting the artifact', async version => {
+    const result = await prepare('0.6.2', version);
+    expect(result.localTarballs.find(row => row.name === '@oods/components-react')).toMatchObject({ version, artifactVersion: '0.6.2' });
     expect(result.manifest.dependencies).toMatchObject({ '@oods/components-react': 'file:./tarballs/components-react.tgz' });
   });
   it('still accepts exact matching artifact and submitted versions', async () => {
     expect((await prepare('0.7.0', '0.7.0')).localTarballs).toHaveLength(4);
   });
-  it.each([['0.6.1', '0.7.0'], ['0.6.2', '0.8.0'], ['0.7.0', '0.6.2']])('rejects the unapproved %s to %s pair', async (artifactVersion, packedVersion) => {
+  it.each([['0.6.1', '0.7.0'], ['0.6.2', '0.9.0'], ['0.7.0', '0.6.2']])('rejects the unapproved %s to %s pair', async (artifactVersion, packedVersion) => {
     await expect(prepare(artifactVersion, packedVersion)).rejects.toThrow(`artifact declares ${artifactVersion} but the submitted tarball is ${packedVersion}`);
   });
   it('rejects a range even when it could resolve to the submitted version', async () => {

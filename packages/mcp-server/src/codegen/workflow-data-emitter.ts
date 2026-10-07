@@ -49,8 +49,11 @@ export function workflowSampleData(schema: UiSchema): { records: Array<Record<st
       // authored keys are used only when every one is present and distinct (samples that name an id for some records only
       // leave the others empty).
       const keys = field.examples ?? [];
-      if (name === idField && (keys.length < sampleCount || keys.some(key => key == null || key === '') || new Set(keys.map(String)).size < keys.length)) {
-        return value(field.type === 'uuid' ? `00000000-0000-4000-8000-${String(index + 1).padStart(12, '0')}` : ['integer', 'number'].includes(field.type) ? index + 1 : `sample-${index + 1}`, 'neutral unique preview record key');
+      const keyType = field.type.replace(/\?$/, '');
+      // Objects without an identifier can nominate their first field as a fallback. Never turn a
+      // boolean, array or document into a string key: its authored value still owns the field.
+      if (name === idField && ['string', 'uuid', 'integer', 'number'].includes(keyType) && (keys.length < sampleCount || keys.some(key => key == null || key === '') || new Set(keys.map(String)).size < keys.length)) {
+        return value(keyType === 'uuid' ? `00000000-0000-4000-8000-${String(index + 1).padStart(12, '0')}` : ['integer', 'number'].includes(keyType) ? index + 1 : `sample-${index + 1}`, 'neutral unique preview record key');
       }
       if (field.examples?.length) {
         const example = field.examples[(index + rotation) % field.examples.length];

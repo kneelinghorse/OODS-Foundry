@@ -7,7 +7,7 @@ import net from "node:net";
 import path from "node:path";
 import process from "node:process";
 import { spawn } from "node:child_process";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import {
   canonicalJson,
   RUNTIME_MANIFEST_FILE,
@@ -882,8 +882,8 @@ async function main() {
   );
   assert.equal(
     adapterPackage.version,
-    "0.7.0",
-    "adapter 0.7.0 preserves structured native errors and hosts the running-app preview",
+    "0.8.0",
+    "adapter 0.8.0 advertises the importer and removes legacy aliases",
   );
   assert.equal(
     manifest.packageVersions["@oods/mcp-adapter"],
@@ -908,6 +908,8 @@ async function main() {
   assert(!fs.existsSync(artifactsRoot), 'E2E cleanup owns only a newly created artifact tree');
   const oodsExisted = fs.existsSync(path.join(runtimeRoot, '.oods'));
   await fsp.mkdir(scratch, { recursive: true });
+  childEnvironment.OODS_FOUNDRY_HOME = path.join(scratch, 'home/.oods-foundry');
+  childEnvironment.OODS_OBJECTS_DIR = path.join(scratch, 'home/.oods-foundry/objects');
   childEnvironment.TMPDIR = scratch;
   childEnvironment.HOME = path.join(scratch, 'home');
   childEnvironment.npm_config_cache = path.join(scratch, 'npm-cache');
@@ -929,7 +931,8 @@ async function main() {
     }
     return args;
   };
-  assert.deepEqual(Object.keys(fixtures.tools).sort(), [...registry.auto].sort());
+  // The new importer journey below supplies its literal operand; historical fixture pins remain immutable.
+  assert.deepEqual(Object.keys(fixtures.tools).sort(), registry.auto.filter(name => name !== 'object.import').sort());
   const adapterPath = path.join(runtimeRoot, "packages/mcp-adapter/index.js");
   const adapterCwd = path.join(runtimeRoot, "packages/mcp-adapter");
   const runtimeInvocation = isolatedCommand(runtimeRoot, process.execPath, [adapterPath]);
@@ -982,10 +985,13 @@ async function main() {
     assert.deepEqual(health.tokens.defaultScope, { brand: 'A', theme: 'light', source: 'default' });
     // s233-m02 projects retained proof to the 16 shipped objects; no new sweep identity.
     const runtimeLedger = await loadJson(path.join(runtimeRoot, "packages/mcp-server/dist/registry/runtime-cells.v1.json"));
+    const measured = await loadJson(path.join(runtimeRoot, "packages/mcp-server/dist/registry/measured-on.v1.json"));
     assert.deepEqual(health.productReality.runtime, {
       cells: runtimeLedger.rows.length, pass: runtimeLedger.rows.filter(row => row.status === 'pass').length,
       typedGap: runtimeLedger.rows.filter(row => row.status === 'typed-gap').length, fail: runtimeLedger.rows.filter(row => row.status === 'fail').length,
       head: runtimeLedger.head, thisBuild: runtimeLedger.head === buildStamp.commit,
+      archiveSha256: runtimeLedger.archive.sha256,
+      measuredOn: measured.blocks.runtime.measuredOn,
     });
     const releaseLedger = await loadJson(path.join(runtimeRoot, "packages/mcp-server/dist/registry/release-cells.v1.json"));
     assert.equal(releaseLedger.rows.length, 42, 'The shipped release proof must contain the full reference-app population.');
@@ -1002,6 +1008,7 @@ async function main() {
       fail: releaseLedger.rows.filter(row => row.status === 'fail').length,
       // s211-m01: the proof names the archive it measured, and says whether that is this build.
       thisBuild: releaseLedger.bundleHead === buildStamp.commit,
+      measuredOn: measured.blocks.release.measuredOn,
     });
     // s194-m04: retired entries leave the live roster; health must match the shipped ledger.
     const toolLedger = await loadJson(path.join(runtimeRoot, "packages/mcp-server/dist/registry/tool-capability-ledger.v1.json"));
@@ -1018,7 +1025,10 @@ async function main() {
     // s195-m02: the extracted runtime carries the authored classification and
     // generated taxonomy; health must expose their reconciled Core Profile.
     const vizTaxonomy = await loadJson(path.join(runtimeRoot, 'packages/mcp-server/dist/registry/viz-taxonomy.v1.json'));
-    assert.deepEqual(health.productReality.viz, vizTaxonomy.summary);
+    const { VIZ_RECIPES_CENSUS } = await import(pathToFileURL(path.join(runtimeRoot, 'packages/viz-core/dist/index.js')));
+    assert.deepEqual(health.productReality.viz, { ...vizTaxonomy.summary,
+      certifiedChartTypes: VIZ_RECIPES_CENSUS.chartTypes, certifiedScopes: VIZ_RECIPES_CENSUS.certifiedScopes,
+      measuredOn: VIZ_RECIPES_CENSUS.measuredOn });
     // s222-m02 (#2502 ruling 12, I47): 22 offered patterns plus retiredPatterns: 1.
     assert.deepEqual(Object.fromEntries(['types', 'patterns', 'retiredPatterns', 'families', 'classified', 'coreCells'].map(key => [key, health.productReality.viz[key]])), { types: 13, patterns: 22, retiredPatterns: 1, families: 8, classified: 36, coreCells: 17 });
     assert.equal(health.productReality.viz.coreSurfaceComplete + health.productReality.viz.typedGaps, 17);
@@ -1112,7 +1122,8 @@ async function main() {
     // apply:true from the bundle emits the review kit only: shipped brand source and dist never move.
     // s213-m07: brand.apply checks the brand as the change would leave it (s213-m05), so the delta must pass the brand
     // contrast rules. The old unscoped delta also reached the dark theme, where a light canvas fails (OODS-V216).
-    const brandDelta = { base: { color: { brand: { B: { surface: { canvas: { $value: "oklch(0.98 0.003 265)" } } } } } } };
+    // The current chart-series guard also requires 3:1 against the canvas; a slight change from white keeps it valid.
+    const brandDelta = { base: { color: { brand: { B: { surface: { canvas: { $value: "oklch(0.999 0 286)" } } } } } } };
     const appliedBrand = await primary.callTool("brand_apply", { ...operand("brand.apply"), delta: brandDelta, apply: true });
     assert.equal(appliedBrand.receipt.sourceWritten, false, "portable brand.apply must not write shipped source");
     assert.deepEqual(appliedBrand.receipt.sourceFiles, []);
@@ -1201,12 +1212,21 @@ async function main() {
     assert.equal(loaded.version, 1); assert(loaded.schemaRef);
     const removedSchema = await primary.callTool("schema_store", fixtures.tools.schema.followups[1]);
     assert.equal(removedSchema.deleted, true);
+    const imported = await primary.callTool("object_import", { action: "draft", source: { name: "portable.json", content: JSON.stringify({ title: "PortableImport", type: "object", properties: { id: { type: "string" }, label: { type: "string" } } }) } });
+    assert.equal(imported.action, 'draft'); assert.equal(imported.objects.length, 1);
+    const importReview = await primary.callTool("object_import", { action: "show", importId: imported.importId, object: "PortableImport" });
+    assert(importReview.yaml.includes('PortableImport'));
+    const importApplied = await primary.callTool("object_import", { action: "apply", importId: imported.importId, objects: [{ name: "PortableImport" }] });
+    assert.equal(importApplied.action, 'apply'); assert.equal(importApplied.applied.length, 1);
+    await fsp.rm(path.join(childEnvironment.OODS_OBJECTS_DIR, 'PortableImport.object.yaml'));
+    await primary.callTool("object_registry", { action: "reload" });
     const object = await primary.callTool("object_registry", operand("object"));
     assert.equal(object.name, 'Subscription'); assert(object.traits.length > 0); assert.deepEqual(Object.keys(object.viewExtensions), ['card']);
     const rendered = await primary.callTool("schema_render", operand("repl"));
     assert.equal(rendered.status, 'ok'); assert(rendered.html.startsWith('<!DOCTYPE html>'));
     assert.deepEqual([...primary.calledTools].sort(), [...expectedToolNames].sort());
     const outcomes = {
+      'object.import': { outcome: 'pass', importId: imported.importId, applied: importApplied.applied },
       'tokens.build': { outcome: 'pass', apply: true, artifacts: appliedTokens.artifacts.length, preview: tokens.preview.summary },
       'structuredData.fetch': { outcome: 'pass', etag: data.etag },
       'brand.apply': { outcome: 'pass', dryRun: { apply: false, artifacts: 0, summary: brand.preview.summary },
@@ -1335,8 +1355,8 @@ async function main() {
   const fullTreeAfter = await treeDigest(runtimeRoot);
   assert.equal(
     primary.callCount + restarted.callCount,
-    31,
-    "portable runtime E2E must make 31 tools/call operations across both adapter processes",
+    35,
+    "portable runtime E2E must make 35 tools/call operations across both adapter processes",
   );
   calls.totalAcrossProcesses = primary.callCount + restarted.callCount;
   assert.equal(

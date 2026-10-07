@@ -832,7 +832,7 @@ export function resolveFieldProps(
       props.required = true;
     }
     if (!existing.type) {
-      const inputType = SEMANTIC_TYPE_TO_INPUT[entry.type];
+      const inputType = SEMANTIC_TYPE_TO_INPUT[entry.type.replace(/\?$/, '')];
       if (inputType) props.type = inputType;
     }
   } else if (node.component === 'Select' || node.component === 'DatePicker' || node.component === 'Combobox') {

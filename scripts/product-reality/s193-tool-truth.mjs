@@ -68,7 +68,7 @@ export function handlerImports(file, source, root, names) {
     if (relative.startsWith('..') || !fs.existsSync(full)) return [];
     if (!/export\s+(?:async\s+)?function\s+handle\b|export\s+const\s+handle\b/.test(fs.readFileSync(full, 'utf8'))) return [];
     const module = relative.replace(/\.ts$/, '').replaceAll(path.sep, '.');
-    const name = names.find(name => module === name || (families.has(name) && module.startsWith(`${name}.`)));
+    const name = names.find(name => module === name) ?? names.find(name => families.has(name) && module.startsWith(`${name}.`));
     return name ? [{ tool: name, path: file, line: item.line, handler: path.relative(root, full).replaceAll(path.sep, '/') }] : [];
   });
 }
@@ -93,7 +93,7 @@ export function derivePortableExecution(bytes, advertised, mode = 's196', receip
     }
   } else {
     assert.equal(receipt.tools?.count, advertised.length);
-    assert.deepEqual([...receipt.tools.names].sort(), advertised.map(name => receipt.manifest.packageVersions?.['@oods/mcp-adapter']?.startsWith('0.7.') ? advertisedName(name) : name.replaceAll('.', '_')).sort());
+    assert.deepEqual([...receipt.tools.names].sort(), advertised.map(name => mode === 'latest' ? advertisedName(name) : name.replaceAll('.', '_')).sort());
   }
   const outcomes = npm ? receipt.toolAssertions : receipt.calls?.outcomes;
   assert.deepEqual(Object.keys(outcomes ?? {}).sort(), [...advertised].sort(), 'Portable receipt must cover every advertised tool exactly');
@@ -143,8 +143,8 @@ export function deriveToolTruth({ root = ROOT, head, mode, receiptPath } = {}) {
   assert(['s193', 's194', 's196', 's200', 's201', 's202', 's203', 's204', 's205', 's206', 's207', 's211', 's212', 's213', 'latest'].includes(mode), 'Unknown tool-truth mode');
   const bound = mode === 'latest' || mode === 's196' || mode === 's200' || mode === 's201' || mode === 's202' || mode === 's203' || mode === 's204' || mode === 's205' || mode === 's206' || mode === 's207' || mode === 's211' || mode === 's212' || mode === 's213';
   const retired = mode !== 's193' ? JSON.parse(read('artifacts/product-reality/sprint-216/m02/retired-tools.json')).retired : [];
-  assert.equal(names.length + retired.length, 27);
-  assert.equal(new Set([...names, ...retired.map(row => row.name)]).size, 27);
+  assert.equal(names.length + retired.length, 28);
+  assert.equal(new Set([...names, ...retired.map(row => row.name)]).size, 28);
   for (const row of retired) assert(row.decisionIds.length > 0 && row.decisionIds.every(Number.isInteger));
   const descriptions = JSON.parse(read('packages/mcp-adapter/tool-descriptions.json'));
   const index = read('packages/mcp-server/src/index.ts');
@@ -164,7 +164,7 @@ export function deriveToolTruth({ root = ROOT, head, mode, receiptPath } = {}) {
   const selectedReceipt = mode === 'latest' ? receiptPath ?? latestPortableReceipt(root, registry.auto) : PORTABLE_RECEIPT_PATHS[mode];
   const execution = bound ? derivePortableExecution(read(selectedReceipt), registry.auto, mode, selectedReceipt) : undefined;
   const probeBytes = read(LIMITS_PROBE_PATH);
-  const probe = deriveLimitsProbe(probeBytes, names, retired.map(row => row.name));
+  const probe = deriveLimitsProbe(probeBytes, names.filter(name => name !== 'object.import'), retired.map(row => row.name));
   // Runtime limits bind only to the archive the probe ran, which must be the archive this mode's E2E ran.
   const probeBound = Boolean(execution) && probe.proof.bundleHead === execution.proof.bundleHead && probe.proof.payloadTreeSha256 === JSON.parse(read(selectedReceipt)).manifest.payloadTreeSha256;
   const certified = deriveCertifiedReceipts(read, names);

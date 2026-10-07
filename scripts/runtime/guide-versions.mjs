@@ -14,6 +14,7 @@ export function staleGuideVersions(markdown, version) {
   // All explicit OODS package pins count, including commands and CDN links. In prose, a bare
   // release in the product's current major line counts too. Other named tools and definition
   // versions inside fenced examples are not product release claims.
+  markdown = markdown.split('\n').filter(line => !line.includes('<!-- history -->')).join('\n');
   const named = [...markdown.matchAll(/(?:@oods\/[\w-]+@|OODS Foundry\s+(?:version\s+)?)(\d+\.\d+\.\d+(?:-[\w.-]+)?)/g)].map(match => match[1]);
   const prose = markdown.replace(/```[^\n]*\n[\s\S]*?```/g, '')
     .replace(/(?:Stage1|MCP Apps SDK reference host)\s+v?\d+\.\d+\.\d+/g, '')
@@ -28,12 +29,15 @@ export function checkGuideVersions(root, version = JSON.parse(fs.readFileSync(pa
 /** Change release references, preserving definition examples and explicitly named third-party versions. */
 export function updateGuideMarkdown(markdown, version) {
   const major = version.split('.')[0];
-  return markdown.split(/(```[^\n]*\n[\s\S]*?```)/g).map((part, index) => {
+  const history = new Map();
+  markdown = markdown.split('\n').map((line, index) => { if (!line.includes('<!-- history -->')) return line; const key = `HISTORY_LINE_${index}`; history.set(key, line); return key; }).join('\n');
+  const updated = markdown.split(/(```[^\n]*\n[\s\S]*?```)/g).map((part, index) => {
     part = part.replace(/((?:@oods\/[\w-]+@|OODS Foundry\s+(?:version\s+)?))\d+\.\d+\.\d+(?:-[\w.-]+)?/g, `$1${version}`);
     if (index % 2) return part;
     return part.replace(/(?:Stage1|MCP Apps SDK reference host)\s+v?\d+\.\d+\.\d+|`(?!@oods\/)[\w@/.-]+`\s+\d+\.\d+\.\d+|(?<![\w.])\d+\.\d+\.\d+(?:-[\w.-]+)?(?!\w|\.\w)/g,
       found => /^\d/.test(found) && found.split('.')[0] === major ? version : found);
   }).join('');
+  return updated.split('\n').map(line => history.get(line) ?? line).join('\n');
 }
 export function writeGuideVersions(root, version = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8')).version) {
   const changed = [];

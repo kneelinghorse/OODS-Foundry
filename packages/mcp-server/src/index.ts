@@ -136,6 +136,11 @@ const toolSpecs: Record<string, ToolSpec> = {
     inputSchema: './schemas/object.input.json',
     outputSchema: './schemas/object.output.json',
   },
+  'object.import': {
+    modulePath: './tools/object.import.js',
+    inputSchema: './schemas/object.import.input.json',
+    outputSchema: './schemas/object.import.output.json',
+  },
   'repl': {
     modulePath: './tools/repl.js',
     inputSchema: './schemas/repl.input.json',

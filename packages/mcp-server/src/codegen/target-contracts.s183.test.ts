@@ -298,6 +298,7 @@ describe('Sprint 183 target prop value contracts', () => {
 
   it.each([
     ['react', 'Input', 'boolean'],
+    ['react', 'Input', 'boolean?'],
     ['vue', 'Input', 'number'],
     ['react', 'Select', 'object'],
     ['vue', 'Select', 'integer'],
@@ -330,7 +331,7 @@ describe('Sprint 183 target prop value contracts', () => {
           nodeId: `${component.toLowerCase()}-node`,
           component,
           message: expect.stringMatching(
-            new RegExp(`field "value".*${fieldType === 'integer' ? 'number' : fieldType}.*${framework} target`, 'i'),
+            new RegExp(`field "value".*${fieldType === 'integer' ? 'number' : fieldType.replace(/\?$/, '')}.*${framework} target`, 'i'),
           ),
         }),
       ]));
@@ -350,6 +351,15 @@ describe('Sprint 183 target prop value contracts', () => {
     ['vue', 'DatePicker', 'date'],
     ['react', 'Checkbox', 'boolean'],
     ['vue', 'Checkbox', 'boolean'],
+    // s235: a nullable source field must still generate its declared control, including the HTML target.
+    ['react', 'Input', 'email?'],
+    ['vue', 'Input', 'email?'],
+    ['html', 'Input', 'datetime?'],
+    ['react', 'DatePicker', 'date?'],
+    ['vue', 'DatePicker', 'date?'],
+    ['react', 'Checkbox', 'boolean?'],
+    ['vue', 'Checkbox', 'boolean?'],
+    ['html', 'Checkbox', 'boolean?'],
   ] as const)(
     'emits a %s %s build when its %s field is assignable to the generated target prop',
     async (framework, component, fieldType) => {

@@ -226,6 +226,17 @@ export async function runNpmE2E({ tarball, workDir, out, libraryTarballs }) {
     const document = fs.readFileSync(path.join(rendered.payload.directory, "index.html"), "utf8");
     assert(document.includes("<title>Subscription detail</title>"), "the rendered document is titled after the screen");
 
+    const imported = await first.client.callTool("object_import", { action: "draft", source: { name: "installed.json", content: JSON.stringify({ title: "InstalledImport", type: "object", properties: { id: { type: "string" }, label: { type: "string" } } }) } });
+    assert.equal(imported.action, 'draft'); assert.equal(imported.objects.length, 1);
+    const reviewed = await first.client.callTool("object_import", { action: "show", importId: imported.importId, object: "InstalledImport" });
+    assert(reviewed.yaml.includes('InstalledImport'));
+    const applied = await first.client.callTool("object_import", { action: "apply", importId: imported.importId, objects: [{ name: "InstalledImport" }] });
+    assert.equal(applied.action, 'apply'); assert.equal(applied.applied.length, 1);
+    receipt.objectImport = { importId: imported.importId, stagingOutsideInstall: isInside(oodsHome, imported.directory), applied: applied.applied };
+    assert(receipt.objectImport.stagingOutsideInstall);
+    fs.rmSync(path.join(oodsHome, 'objects/InstalledImport.object.yaml'));
+    await first.client.callTool("object_registry", { action: "reload" });
+
     receipt.firstRun = {
       tools: first.tools.length,
       health: { status: health.status, serverVersion: health.server.version, proofs: health.productReality },
@@ -257,6 +268,7 @@ export async function runNpmE2E({ tarball, workDir, out, libraryTarballs }) {
 
   // Nothing escaped the work directory: the npm cache, the home and the temporary files all live under it.
   const assertions = {
+    'object.import': receipt.objectImport,
     health: receipt.firstRun.health, 'design.compose': receipt.firstRun.compose,
     'design.preview': receipt.firstRun.preview, 'viz.render': receipt.firstRun.certify,
     'artifact.certify': receipt.firstRun.certify, 'code.generate': receipt.firstRun.codeGenerate,

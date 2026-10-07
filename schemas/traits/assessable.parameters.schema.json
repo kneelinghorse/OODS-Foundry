@@ -12,8 +12,8 @@
       "uniqueItems": true,
       "items": {
         "type": "string",
-        "enum": ["violation", "passed", "needs_review", "not_applicable", "not_measured"],
-        "description": "A result state: violation, passed, needs_review, not_applicable or not_measured."
+        "enum": ["violation", "passed", "needs_review", "not_applicable", "not_measured", "measured", "measured_zero", "unknown"],
+        "description": "A result state: violation, passed, needs_review, not_applicable, not_measured, measured, measured_zero or unknown."
       }
     }
   },
@@ -21,6 +21,6 @@
   "additionalProperties": false,
   "examples": [
     { "recordedStates": ["violation"] },
-    { "recordedStates": ["violation", "passed", "needs_review", "not_applicable", "not_measured"] }
+    { "recordedStates": ["violation", "passed", "needs_review", "not_applicable", "not_measured", "measured", "measured_zero", "unknown"] }
   ]
 }

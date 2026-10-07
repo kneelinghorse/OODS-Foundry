@@ -78,7 +78,7 @@ const TRACKED_BOUNDARY_COUNTS = Object.freeze({
   // supersedable's, beside the lifecycle/Supersedable trait the delivery objects compose. Sprint 205 adds the
   // parameter schemas and definitions of core/Assessable and core/Provenanced.
   // Sprint 212 defines the two token export/map schemas at their existing public identifiers.
-  schemas: 62,
+  schemas: 63, // Object import hub contract.
   traits: 81,
   // Sprint 187 retains the existing 19 files plus the approved component/token refresh pair.
   // Sprint 188 retains three named component/token snapshot pairs (six files).

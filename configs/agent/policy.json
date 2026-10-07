@@ -267,7 +267,7 @@
     },
     {
       "name": "object",
-      "description": "Inspect, validate or register object and trait definitions. Use it when exploring object shapes with list/show; use catalog_list instead to choose components, structured_data_fetch for complete datasets, or registry_snapshot for mappings together with definitions. Returns definitions, composed traits/view extensions, validation findings or registry write/reload results. action selects list/show/validate/register/reload. includeInternal reveals hidden objects. validate/register accept YAML; register writes your configured folder after checking declared contexts, and overwrite replaces your own definition. Team objects may shadow shipped objects; traits cannot reuse shipped names. Relationships validate their target and field. Reload reads folders without restarting. Reference: TOOL-REFERENCE.md#object_registry; full schema: oods://schemas/object_registry.input.json.",
+      "description": "Inspect, validate or register object and trait definitions. Use object_import instead to draft from existing OpenAPI or JSON Schema files. Use it when exploring object shapes with list/show; use catalog_list instead to choose components, structured_data_fetch for complete datasets, or registry_snapshot for mappings together with definitions. Returns definitions, composed traits/view extensions, validation findings or registry write/reload results. action selects list/show/validate/register/reload. includeInternal reveals hidden objects. validate/register accept YAML; register writes your configured folder after checking declared contexts, and overwrite replaces your own definition. Team objects may shadow shipped objects; traits cannot reuse shipped names. Relationships validate their target and field. Reload reads folders without restarting. Reference: TOOL-REFERENCE.md#object_registry; full schema: oods://schemas/object_registry.input.json.",
       "modes": [
         "dry-run",
         "apply"
@@ -282,6 +282,20 @@
     {
       "name": "repl",
       "description": "Validate a UiSchema or render it as static HTML/fragments. Use it when checking schema/patch contracts or exporting static output; use design_preview for a running React/Vue app, code_generate for file sets, or schema_store for persistence. Returns validation diagnostics or rendered output with warnings and artifact references. action selects validate/render; mode selects full schema or patch, with schemaRef available for reuse. Render defaults to a document with token CSS; output.compact omits CSS. brand and output scope options affect documents; ignored fragment options are diagnosed. apply:true emits render artifacts; output.payloadMode:file writes payloads and returns paths. Reference: TOOL-REFERENCE.md#schema_render; full schema: oods://schemas/schema_render.input.json.",
+      "modes": [
+        "dry-run",
+        "apply"
+      ],
+      "approval": "optional",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "ratePerMinute": 20
+    },
+    {
+      "name": "object.import",
+      "description": "Draft objects from local OpenAPI or JSON Schema files. Use it when importing a schema you already have; use object_registry for hand-written object/trait YAML. Returns an importId, staged drafts/report, counts and a re-import diff. action=draft uses source.path or source.content without registering; show uses importId and object for YAML, graded proposals and unmapped elements; apply uses importId and explicit objects with accepted proposal ids. The batch validates and composes with rollback. overwrite replaces team objects; confirmShipped names each approved shipped replacement. No network references or code execution. Reference: TOOL-REFERENCE.md#object_import; full schema: oods://schemas/object_import.input.json.",
       "modes": [
         "dry-run",
         "apply"
@@ -313,7 +327,8 @@
         "map",
         "schema",
         "object",
-        "repl"
+        "repl",
+        "object.import"
       ],
       "notes": "Apply requests must include the approval header value defined above."
     },
@@ -335,7 +350,8 @@
         "map",
         "schema",
         "object",
-        "repl"
+        "repl",
+        "object.import"
       ],
       "notes": "Apply requires approval token and is rate limited to prevent context overrun."
     }

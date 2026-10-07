@@ -18,7 +18,7 @@ async function fixture() {
 }
 describe('candidate identity (s212 m04)', () => {
   it('accepts the canonical release/contact and retained package contract', async () => {
-    const { check } = await fixture(); expect(check()).toMatchObject({ version: '0.7.0', name: '@oods/foundry', homepage: 'https://oods-foundry.com/', bugs: { url: 'https://github.com/kneelinghorse/OODS-Foundry/issues' }, repository: { type: 'git', url: 'git+https://github.com/kneelinghorse/OODS-Foundry.git', directory: 'packages/foundry' } });
+    const { check } = await fixture(); expect(check()).toMatchObject({ version: read('package.json').version, name: '@oods/foundry', homepage: 'https://oods-foundry.com/', bugs: { url: 'https://github.com/kneelinghorse/OODS-Foundry/issues' }, repository: { type: 'git', url: 'git+https://github.com/kneelinghorse/OODS-Foundry.git', directory: 'packages/foundry' } });
   });
   it('refuses a package that lost the checked mapping example', async () => {
     const { dir, check } = await fixture();
@@ -52,7 +52,7 @@ describe('candidate identity (s212 m04)', () => {
     expect(text.match(/object-oriented design system/g)).toHaveLength(1);
     const urls = text.match(/https:\/\/cdn\.jsdelivr\.net\/npm\/[^)\s]+/g)!;
     expect(urls.length).toBeGreaterThan(3);
-    expect(urls.every(url => url.startsWith('https://cdn.jsdelivr.net/npm/@oods/foundry@0.7.0/'))).toBe(true);
+    expect(urls.every(url => url.startsWith(`https://cdn.jsdelivr.net/npm/@oods/foundry@${read('package.json').version}/`))).toBe(true);
   });
 });
 

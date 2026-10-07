@@ -9,7 +9,7 @@ Use Node.js 22.0.0 or newer on macOS or Linux and connect your MCP client as the
 In your project, install this version of OODS Foundry and copy its examples outside the installed runtime:
 
 ```sh
-npm install @oods/foundry@0.7.0
+npm install @oods/foundry@0.8.0
 cp -R node_modules/@oods/foundry/quickstart ./harbor-design-system
 ```
 
@@ -27,17 +27,17 @@ This run makes **23 tool calls**, including **six `design_preview` calls**. Leav
 
 Register Stockable, Warehouse and then ColdRoom. ColdRoom belongs to a Warehouse, so that object must exist first.
 
-<!-- first-change: trait-register object -->
+<!-- first-change: trait-register object_registry -->
 ```json
 {"action":"register","yaml":"<Stockable.trait.yaml>"}
 ```
 
-<!-- first-change: warehouse-register object -->
+<!-- first-change: warehouse-register object_registry -->
 ```json
 {"action":"register","yaml":"<Warehouse.object.yaml>"}
 ```
 
-<!-- first-change: coldroom-register object -->
+<!-- first-change: coldroom-register object_registry -->
 ```json
 {"action":"register","yaml":"<ColdRoom.object.yaml>"}
 ```
@@ -111,7 +111,7 @@ Append this placement to the existing list under `view_extensions.detail`:
 
 Register your complete edited file with `overwrite: true`:
 
-<!-- first-change: trait-edit object -->
+<!-- first-change: trait-edit object_registry -->
 ```json
 {"action":"register","yaml":"<Stockable.edited.trait.yaml>","overwrite":true}
 ```
@@ -175,7 +175,7 @@ Compare also lists the generated files whose hashes changed: the Warehouse list'
 
 Replace the edited file with your saved, untouched Stockable file and register it again:
 
-<!-- first-change: trait-restore object -->
+<!-- first-change: trait-restore object_registry -->
 ```json
 {"action":"register","yaml":"<Stockable.trait.yaml>","overwrite":true}
 ```

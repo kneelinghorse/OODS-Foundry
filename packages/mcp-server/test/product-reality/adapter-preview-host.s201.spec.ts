@@ -81,11 +81,11 @@ describe('the stdio adapter hosts the running-app preview (s201-m01)', () => {
     delete env.OODS_PREVIEW_HOST_URL;
     const rpc = new Rpc(env);
     const initialized = await rpc.request('initialize', { protocolVersion: '2024-11-05', capabilities: {}, clientInfo: { name: 's201-adapter-spec', version: '0.0.0' } });
-    expect(initialized.serverInfo).toEqual({ name: 'oods-foundry-adapter', version: '0.7.0' });
+    expect(initialized.serverInfo).toEqual({ name: 'oods-foundry-adapter', version: JSON.parse(fs.readFileSync(path.join(root, 'packages/mcp-adapter/package.json'), 'utf8')).version });
     rpc.notify('notifications/initialized');
     const listed = await rpc.request('tools/list', {});
     expect(listed.tools.map((tool: { name: string }) => tool.name)).toContain('design_preview');
-    expect(listed.tools).toHaveLength(19);
+    expect(listed.tools).toHaveLength(20);
     // s229: clients must receive the new source forms through the real adapter, not only native AJV.
     expect(JSON.stringify(listed.tools.find((tool: any) => tool.name === 'component_map').inputSchema)).toContain('shadcn');
     expect(JSON.stringify(listed.tools.find((tool: any) => tool.name === 'brand_create').inputSchema)).toContain('cssPath');

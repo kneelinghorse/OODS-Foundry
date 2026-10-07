@@ -650,6 +650,10 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
     cause: 'Brand creation lacks a usable brands folder or source checkout and token build.',
     fix: 'Configure a writable OODS_BRANDS_DIR with the supported token build available.' }],
 
+  ['OODS-V220', { code: 'OODS-V220', category: 'validation', message: 'Object import refused or rolled back', retryable: true, severity: 'error',
+    cause: 'Source, references, staging integrity, accepted proposals or composed batch failed validation.',
+    fix: 'Read the source pointer or rollback details, correct the input, draft again and explicitly accept the intended objects.' }],
+
   // ── Conflict ────────────────────────────────────────────────────────────
   ['OODS-C001', { code: 'OODS-C001', category: 'conflict', message: 'Schema ref missing after compose', retryable: false, severity: 'error',
     cause: 'The compose step completed without a schemaRef required by the pipeline.',
@@ -666,6 +670,10 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   ['OODS-C005', { code: 'OODS-C005', category: 'conflict', message: 'A brand with this id already exists; create never replaces a brand', retryable: false, severity: 'error',
     cause: 'Brand creation requested an id already held by a brand.',
     fix: 'Choose a new brand id; brand creation never replaces an existing brand.' }],
+
+  ['OODS-C006', { code: 'OODS-C006', category: 'conflict', message: 'Imported object would replace a shipped definition', retryable: true, severity: 'error',
+    cause: 'The accepted object shares a shipped name without its specific confirmation.',
+    fix: 'Review the staged object and name that exact object in confirmShipped if replacement is intended.' }],
 
   // ── Server Error ────────────────────────────────────────────────────────
   ['OODS-S001', { code: 'OODS-S001', category: 'server_error', message: 'Policy denied', retryable: false, severity: 'error',

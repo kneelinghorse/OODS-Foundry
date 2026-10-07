@@ -32,7 +32,10 @@ function unpack(tarball, directory) {
   fs.mkdirSync(directory, { recursive: true });
   run('tar', ['-xzf', tarball, '-C', directory]);
 }
-const receipt = { schemaVersion: '1.0.0', version, builderSelfCertified: false, libraries: [], adapter: null, status: 'running' };
+const referenceFile = path.join(output, 'reference.json');
+const reference = fs.existsSync(referenceFile) ? read(referenceFile) : { kind: 'published-npm', version };
+assert.equal(reference.version, version, 'Comparison reference must match this release');
+const receipt = { reference, schemaVersion: '1.0.0', version, builderSelfCertified: false, libraries: [], adapter: null, status: 'running' };
 const save = () => fs.writeFileSync(path.join(output, 'receipt.json'), JSON.stringify(receipt, null, 2) + '\n');
 try {
   for (const name of [...names, 'foundry']) {
@@ -91,7 +94,7 @@ try {
   }
   const expected = await inspect(publishedRuntime, 'npm-runtime');
   const actual = await inspect(root, 'source-runtime');
-  assert.equal(Buffer.byteLength(JSON.stringify(expected.list)), 79_716);
+  assert.equal(Buffer.byteLength(JSON.stringify(expected.list)), 82_191);
   assert.equal(JSON.stringify(actual.list), JSON.stringify(expected.list), 'Adapter tools/list must match published npm exactly');
   assert.equal(actual.health.registry.objects, 16);
   const retainedLedgerHashes = {};

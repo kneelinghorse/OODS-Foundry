@@ -884,6 +884,7 @@ function shouldImportVueRuntime(
 
 /** Map field type to a sensible ref() default value. */
 function fieldRefDefault(entry: FieldSchemaEntry): string {
+  if (entry.type.endsWith('?')) return 'null';
   if (entry.enum && entry.enum.length > 0) return javascriptSingleQuotedString(entry.enum[0]);
   if (entry.type.endsWith('[]')) return '[]';
   switch (entry.type) {

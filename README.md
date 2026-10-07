@@ -13,7 +13,7 @@ The optional `a11y_scan` tool checks the text and icon contrast pairs declared b
 Use Node.js 22.0.0 or newer on macOS or Linux. For a local server in Claude Code:
 
 ```sh
-claude mcp add oods-foundry -- npx -y @oods/foundry@0.7.0
+claude mcp add oods-foundry -- npx -y @oods/foundry@0.8.0
 claude mcp get oods-foundry
 ```
 
@@ -27,6 +27,17 @@ claude plugin install oods-foundry@oods-foundry
 Restart Claude Code and invoke `/oods-foundry:oods-foundry`. Ask your assistant to call `health_check`, then compose a `Subscription` in `detail` context. [The package guide](packages/foundry/README.md) includes Claude Desktop and Cursor configuration and explains local files and network access. [The walkthrough](packages/foundry/QUICKSTART.md) takes you from an object definition to a generated application.
 
 For a hosted connection, use the streamable HTTP endpoint `https://oods-foundry.com/mcp` in a compatible MCP client. The [website](https://oods-foundry.com/) describes its available tools. Local installation provides the full authoring workflow; the hosted service has its own tool surface and release schedule.
+
+### Docker stdio server
+
+Build the supplied Dockerfile, then keep stdin open for your MCP client:
+
+```sh
+docker build -t oods-foundry:0.8.0 .
+docker run --rm -i -v oods-data:/data oods-foundry:0.8.0
+```
+
+The image runs as the unprivileged `node` user. The volume preserves registered objects and import drafts. Mount schema files separately, for example `-v "$PWD/schemas:/schemas:ro"`, and give `object_import` their container paths. The running-app preview binds to loopback inside the container; use the local npm installation for browser previews on the host.
 
 ## Source and releases
 

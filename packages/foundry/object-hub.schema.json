@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oods-foundry.com/schemas/object-hub.schema.json",
+  "title": "OODS Object Import Hub",
+  "description": "JSON Schema 2020-12 with explicit OODS annotations. Object YAML remains the accepted canonical record.",
+  "type": "object",
+  "required": ["$schema", "$defs", "x-oods"],
+  "properties": {
+    "$schema": { "const": "https://json-schema.org/draft/2020-12/schema" },
+    "$defs": { "type": "object", "additionalProperties": { "$ref": "#/$defs/schema" } },
+    "x-oods": { "$ref": "#/$defs/annotations" }
+  },
+  "additionalProperties": true,
+  "$defs": {
+    "origin": {
+      "type": "object", "required": ["file", "pointer"],
+      "properties": { "file": { "type": "string" }, "pointer": { "type": "string", "pattern": "^(/|$)" } },
+      "additionalProperties": false
+    },
+    "annotations": {
+      "type": "object",
+      "properties": {
+        "version": { "const": 1 },
+        "relationships": {
+          "type": "array", "items": {
+            "type": "object", "required": ["target", "via", "cardinality", "label"],
+            "properties": {
+              "target": { "type": "string" }, "via": { "type": "string" }, "label": { "type": "string" },
+              "cardinality": { "enum": ["one-to-one", "one-to-many", "many-to-one", "many-to-many"] }
+            }, "additionalProperties": false
+          }
+        },
+        "enumLabels": { "type": "object", "additionalProperties": { "type": "string" } },
+        "localeLabels": { "type": "object", "additionalProperties": { "type": "object", "additionalProperties": { "type": "string" } } },
+        "currency": { "type": "object", "required": ["field"], "properties": { "field": { "type": "string" }, "minorUnits": { "type": "integer", "minimum": 1 } }, "additionalProperties": false },
+        "unit": { "type": "object", "properties": { "field": { "type": "string" }, "symbol": { "type": "string" } }, "additionalProperties": false },
+        "lifecycle": { "type": "object", "properties": { "field": { "type": "string" }, "states": { "type": "array", "items": { "type": "string" } }, "initialState": { "type": "string" } }, "additionalProperties": false },
+        "history": { "type": "object", "properties": { "field": { "type": "string" }, "timestampField": { "type": "string" } }, "additionalProperties": false },
+        "traitProposals": {
+          "type": "array", "items": {
+            "type": "object", "required": ["name", "grade", "evidence"],
+            "properties": {
+              "name": { "type": "string" }, "parameters": { "type": "object" },
+              "grade": { "enum": ["strong", "medium", "weak"] },
+              "evidence": { "type": "array", "minItems": 1, "items": { "type": "object", "required": ["file", "pointer", "reason"], "properties": { "file": { "type": "string" }, "pointer": { "type": "string" }, "reason": { "type": "string" }, "kind": { "enum": ["declaration", "structure", "name"] } }, "additionalProperties": false } }
+            }, "additionalProperties": false
+          }
+        },
+        "sources": { "type": "array", "items": { "type": "object", "required": ["file", "bytes", "sha256"], "properties": { "file": { "type": "string" }, "bytes": { "type": "integer", "minimum": 0 }, "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" } }, "additionalProperties": false } },
+        "provenance": { "type": "object", "additionalProperties": { "$ref": "#/$defs/origin" } },
+        "sourceNames": { "type": "object", "additionalProperties": { "type": "string" } }
+      }, "additionalProperties": false
+    },
+    "schema": {
+      "anyOf": [
+        { "type": "boolean" },
+        { "type": "object", "properties": {
+          "x-oods": { "$ref": "#/$defs/annotations" },
+          "properties": { "type": "object", "additionalProperties": { "$ref": "#/$defs/schema" } },
+          "$defs": { "type": "object", "additionalProperties": { "$ref": "#/$defs/schema" } },
+          "items": { "$ref": "#/$defs/schema" },
+          "additionalProperties": { "$ref": "#/$defs/schema" },
+          "allOf": { "type": "array", "items": { "$ref": "#/$defs/schema" } },
+          "oneOf": { "type": "array", "items": { "$ref": "#/$defs/schema" } },
+          "anyOf": { "type": "array", "items": { "$ref": "#/$defs/schema" } }
+        }, "additionalProperties": true }
+      ]
+    }
+  }
+}

@@ -1069,8 +1069,10 @@ function inferFormSlotIntentFromFields(
   const counts: Record<string, number> = {};
 
   for (const fieldName of fieldNames) {
-    const field = schema[fieldName];
-    if (!field) continue;
+    const entry = schema[fieldName];
+    if (!entry) continue;
+    // Nullability does not turn a boolean/date/email into a generic text control.
+    const field = { ...entry, type: entry.type.replace(/\?$/, '') };
 
     const semanticType = semantics?.[fieldName]?.semantic_type?.toLowerCase() ?? '';
     let intent = 'form-input';
@@ -1749,11 +1751,17 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
   // must not influence generic control selection or its primary field binding.
   // s206-m01: a list-behavior trait's view state (search query, filter count, page) is placed on no screen.
   // s213-m01: neither is a field the object's contract never supplies (unavailable).
+  // Imported schemas carry explicit access direction. Do not expose write-only samples on read screens,
+  // or place read-only fields in editable forms. The stored definition retains the complete source contract.
+  if (composed) {
+    const visible = Object.fromEntries(Object.entries(composed.schema).filter(([, field]) => layoutType === 'form' ? !field.readOnly : !field.writeOnly));
+    composed = { ...composed, schema: visible, samples: composed.samples?.map(sample => Object.fromEntries(Object.entries(sample).filter(([key]) => Object.hasOwn(visible, key)))) };
+  }
   const recordFields = composed ? Object.fromEntries(Object.entries(composed.schema).filter(([name, field]) => !viewState.has(name) && field.unavailable !== true)) : undefined;
   const formFields = composed && layoutType === 'form'
     ? Object.fromEntries(Object.entries(recordFields!).filter(([, field]) => (
       Boolean(field.validation?.enum?.length)
-      || ['string', 'datetime', 'email', 'date', 'url', 'uuid', 'integer', 'number', 'boolean'].includes(field.type)
+      || ['string', 'datetime', 'email', 'date', 'url', 'uuid', 'integer', 'number', 'boolean'].includes(field.type.replace(/\?$/, ''))
     )))
     : undefined;
 

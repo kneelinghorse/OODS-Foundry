@@ -60,7 +60,7 @@
       ]
     }
   ],
-  "head": "7eadd70b15012da968f56e700bbcf6a1059baebd",
+  "head": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7",
   "builderSelfCertified": false,
   "methodology": {
     "testImportLocation": "Where a spec that imports the tool's handler module lives: packages/mcp-server/test/product-reality, then test/contracts, then any other mcp-server spec. A literal runtime import is source evidence that a test reaches the handler, not proof of invocation, passing execution or browser certification. Grouped action imports roll up to their registered family. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not count.",
@@ -70,26 +70,26 @@
     "portableExecution": "Per-tool pass or typed dependency outcomes for the exercised inputs from the hash-bound packaged-runtime E2E receipt. Its bundle head and dirty state are retained separately from this source census head. Certification is the independent review's."
   },
   "portableExecution": {
-    "path": "artifacts/product-reality/sprint-233/m03/npm/20261006T121245Z-29584/e2e-npm-node24.json",
-    "sha256": "sha256:e574b48c637a952c780728d34d545948259751ae779c286f33d246d0c4ced070",
-    "bundleHead": "7eadd70b15012da968f56e700bbcf6a1059baebd",
+    "path": "artifacts/product-reality/sprint-235/m04/candidate-5/e2e-host2.json",
+    "sha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
+    "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7",
     "dirty": false,
-    "tools": 19,
-    "pass": 19,
+    "tools": 20,
+    "pass": 20,
     "typed": 0
   },
   "summary": {
-    "entries": 20,
-    "auto": 19,
+    "entries": 21,
+    "auto": 20,
     "onDemand": 1,
     "byTestImportLocation": {
-      "test/product-reality": 19,
+      "test/product-reality": 20,
       "test/contracts": 1,
       "other-spec": 0,
       "none": 0
     },
     "autoByTestImportLocation": {
-      "test/product-reality": 19,
+      "test/product-reality": 20,
       "test/contracts": 0,
       "other-spec": 0,
       "none": 0
@@ -100,8 +100,8 @@
       "other-spec": 0,
       "none": 0
     },
-    "portableE2E": 19,
-    "caveats": 32,
+    "portableE2E": 20,
+    "caveats": 34,
     "portableLimits": 0
   },
   "rows": [
@@ -191,18 +191,18 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1086
+          "line": 1096
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1090
+          "line": 1100
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:e574b48c637a952c780728d34d545948259751ae779c286f33d246d0c4ced070",
-        "bundleHead": "7eadd70b15012da968f56e700bbcf6a1059baebd"
+        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
+        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
       },
       "caveats": [
         {
@@ -334,14 +334,14 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1103
+          "line": 1113
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:e574b48c637a952c780728d34d545948259751ae779c286f33d246d0c4ced070",
-        "bundleHead": "7eadd70b15012da968f56e700bbcf6a1059baebd"
+        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
+        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
       },
       "caveats": []
     },
@@ -451,18 +451,18 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1107
+          "line": 1117
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1116
+          "line": 1127
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:e574b48c637a952c780728d34d545948259751ae779c286f33d246d0c4ced070",
-        "bundleHead": "7eadd70b15012da968f56e700bbcf6a1059baebd"
+        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
+        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
       },
       "caveats": [
         {
@@ -593,14 +593,14 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1136
+          "line": 1147
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:e574b48c637a952c780728d34d545948259751ae779c286f33d246d0c4ced070",
-        "bundleHead": "7eadd70b15012da968f56e700bbcf6a1059baebd"
+        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
+        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
       },
       "caveats": [
         {
@@ -733,14 +733,14 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1140
+          "line": 1151
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:e574b48c637a952c780728d34d545948259751ae779c286f33d246d0c4ced070",
-        "bundleHead": "7eadd70b15012da968f56e700bbcf6a1059baebd"
+        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
+        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
       },
       "caveats": [
         {
@@ -1387,18 +1387,18 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1179
+          "line": 1190
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1182
+          "line": 1193
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:e574b48c637a952c780728d34d545948259751ae779c286f33d246d0c4ced070",
-        "bundleHead": "7eadd70b15012da968f56e700bbcf6a1059baebd"
+        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
+        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
       },
       "caveats": [
         {
@@ -1975,6 +1975,11 @@
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
+            "path": "packages/mcp-server/test/importer/importer.spec.ts",
+            "line": 11,
+            "handler": "packages/mcp-server/src/tools/design.compose.ts"
+          },
+          {
             "path": "packages/mcp-server/test/objects/capture.spec.ts",
             "line": 5,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
@@ -2107,14 +2112,14 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1143
+          "line": 1154
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:e574b48c637a952c780728d34d545948259751ae779c286f33d246d0c4ced070",
-        "bundleHead": "7eadd70b15012da968f56e700bbcf6a1059baebd"
+        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
+        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
       },
       "caveats": [
         {
@@ -2317,14 +2322,14 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1146
+          "line": 1157
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:e574b48c637a952c780728d34d545948259751ae779c286f33d246d0c4ced070",
-        "bundleHead": "7eadd70b15012da968f56e700bbcf6a1059baebd"
+        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
+        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
       },
       "caveats": [
         {
@@ -2477,14 +2482,14 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1185
+          "line": 1196
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:e574b48c637a952c780728d34d545948259751ae779c286f33d246d0c4ced070",
-        "bundleHead": "7eadd70b15012da968f56e700bbcf6a1059baebd"
+        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
+        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
       },
       "caveats": [
         {
@@ -2637,18 +2642,18 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 956
+          "line": 959
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1300
+          "line": 1320
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:e574b48c637a952c780728d34d545948259751ae779c286f33d246d0c4ced070",
-        "bundleHead": "7eadd70b15012da968f56e700bbcf6a1059baebd"
+        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
+        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
       },
       "caveats": [
         {
@@ -2752,14 +2757,14 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1188
+          "line": 1199
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:e574b48c637a952c780728d34d545948259751ae779c286f33d246d0c4ced070",
-        "bundleHead": "7eadd70b15012da968f56e700bbcf6a1059baebd"
+        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
+        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
       },
       "caveats": []
     },
@@ -3079,14 +3084,14 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1079
+          "line": 1089
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:e574b48c637a952c780728d34d545948259751ae779c286f33d246d0c4ced070",
-        "bundleHead": "7eadd70b15012da968f56e700bbcf6a1059baebd"
+        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
+        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
       },
       "caveats": []
     },
@@ -3216,26 +3221,26 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1031
+          "line": 1041
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1035
+          "line": 1045
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1039
+          "line": 1049
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1043
+          "line": 1053
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:e574b48c637a952c780728d34d545948259751ae779c286f33d246d0c4ced070",
-        "bundleHead": "7eadd70b15012da968f56e700bbcf6a1059baebd"
+        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
+        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
       },
       "caveats": [
         {
@@ -3471,18 +3476,18 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1081
+          "line": 1091
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1082
+          "line": 1092
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:e574b48c637a952c780728d34d545948259751ae779c286f33d246d0c4ced070",
-        "bundleHead": "7eadd70b15012da968f56e700bbcf6a1059baebd"
+        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
+        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
       },
       "caveats": [
         {
@@ -3574,14 +3579,14 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1190
+          "line": 1201
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:e574b48c637a952c780728d34d545948259751ae779c286f33d246d0c4ced070",
-        "bundleHead": "7eadd70b15012da968f56e700bbcf6a1059baebd"
+        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
+        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
       },
       "caveats": [
         {
@@ -3836,22 +3841,22 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1192
+          "line": 1203
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1194
+          "line": 1205
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1196
+          "line": 1207
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:e574b48c637a952c780728d34d545948259751ae779c286f33d246d0c4ced070",
-        "bundleHead": "7eadd70b15012da968f56e700bbcf6a1059baebd"
+        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
+        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
       },
       "caveats": [
         {
@@ -4004,22 +4009,22 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1198
+          "line": 1209
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1200
+          "line": 1211
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1202
+          "line": 1213
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:e574b48c637a952c780728d34d545948259751ae779c286f33d246d0c4ced070",
-        "bundleHead": "7eadd70b15012da968f56e700bbcf6a1059baebd"
+        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
+        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
       },
       "caveats": [
         {
@@ -4042,10 +4047,10 @@
       "registration": "auto",
       "advertisedClaim": {
         "name": "object_registry",
-        "description": "Inspect, validate or register object and trait definitions. Use it when exploring object shapes with list/show; use catalog_list instead to choose components, structured_data_fetch for complete datasets, or registry_snapshot for mappings together with definitions. Returns definitions, composed traits/view extensions, validation findings or registry write/reload results. action selects list/show/validate/register/reload. includeInternal reveals hidden objects. validate/register accept YAML; register writes your configured folder after checking declared contexts, and overwrite replaces your own definition. Team objects may shadow shipped objects; traits cannot reuse shipped names. Relationships validate their target and field. Reload reads folders without restarting. Reference: TOOL-REFERENCE.md#object_registry; full schema: oods://schemas/object_registry.input.json.",
+        "description": "Inspect, validate or register object and trait definitions. Use object_import instead to draft from existing OpenAPI or JSON Schema files. Use it when exploring object shapes with list/show; use catalog_list instead to choose components, structured_data_fetch for complete datasets, or registry_snapshot for mappings together with definitions. Returns definitions, composed traits/view extensions, validation findings or registry write/reload results. action selects list/show/validate/register/reload. includeInternal reveals hidden objects. validate/register accept YAML; register writes your configured folder after checking declared contexts, and overwrite replaces your own definition. Team objects may shadow shipped objects; traits cannot reuse shipped names. Relationships validate their target and field. Reload reads folders without restarting. Reference: TOOL-REFERENCE.md#object_registry; full schema: oods://schemas/object_registry.input.json.",
         "inputSchemaDescription": "Grouped action-parameter tool for the object registry (list, show, validate, register, reload). The top-level `action` selects which per-action contract applies; each branch reproduces the exact body of the per-action input schema (object.<action>.input.json) with the discriminator key `action` added to its allowed properties."
       },
-      "claimHash": "sha256:d77faf3ba2bc5e3a3aa3ce7e1a552fe34ff942401cf5a3850f620f2aee817416",
+      "claimHash": "sha256:282b093ae0de0eecf8d065283dd3bd0be0ad92cad173b1ac05f2d24a92a20950",
       "inputSchemaPath": "packages/mcp-server/src/schemas/object.input.json",
       "inputSchemaHash": "sha256:faa1df490eca8ee8db6932c46efdc08f2f8d98ab65b8acf29d2f1e98520c4a66",
       "testImportLocation": "test/product-reality",
@@ -4055,6 +4060,11 @@
             "path": "packages/mcp-server/test/product-reality/first-run.s206.spec.ts",
             "line": 17,
             "handler": "packages/mcp-server/src/tools/object.show.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/product-reality/object-import.s235.spec.ts",
+            "line": 18,
+            "handler": "packages/mcp-server/src/tools/object.register.ts"
           },
           {
             "path": "packages/mcp-server/test/product-reality/object.s194.spec.ts",
@@ -4095,6 +4105,16 @@
           }
         ],
         "other-spec": [
+          {
+            "path": "packages/mcp-server/test/importer/importer.spec.ts",
+            "line": 9,
+            "handler": "packages/mcp-server/src/tools/object.validate.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/importer/importer.spec.ts",
+            "line": 10,
+            "handler": "packages/mcp-server/src/tools/object.register.ts"
+          },
           {
             "path": "packages/mcp-server/test/objects/capture.spec.ts",
             "line": 7,
@@ -4218,27 +4238,31 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1204
+          "line": 1222
+        },
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 1223
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:e574b48c637a952c780728d34d545948259751ae779c286f33d246d0c4ced070",
-        "bundleHead": "7eadd70b15012da968f56e700bbcf6a1059baebd"
+        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
+        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
       },
       "caveats": [
         {
           "kind": "documented-limit",
           "file": "packages/mcp-server/src/tools/object.validate.ts",
           "reason": "A team's own trait may place only the components the runtime ships; validate and register refuse any other component. Mapped implementations replace shipped ids; new catalog components are not supported.",
-          "line": 280
+          "line": 284
         },
         {
           "kind": "documented-limit",
           "file": "packages/mcp-server/src/tools/object.register.ts",
           "reason": "register writes only where OODS_OBJECTS_DIR or OODS_TRAITS_DIR points. The npm launcher sets them under ~/.oods-foundry; from the runtime archive or a source checkout they have no default and register returns OODS-N023 until they are set.",
-          "line": 69
+          "line": 74
         }
       ]
     },
@@ -4503,14 +4527,14 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1206
+          "line": 1225
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:e574b48c637a952c780728d34d545948259751ae779c286f33d246d0c4ced070",
-        "bundleHead": "7eadd70b15012da968f56e700bbcf6a1059baebd"
+        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
+        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
       },
       "caveats": [
         {
@@ -4530,6 +4554,66 @@
           "file": "packages/mcp-server/src/tools/repl.validate.ts",
           "reason": "Opt-in validation inspects shared-renderer HTML and declared component CSS token pairs for every built scope. It reports static findings and unmeasured pairs; browser-computed colour, keyboard/focus interaction and screen-reader behavior are outside this check.",
           "line": 98
+        }
+      ]
+    },
+    {
+      "name": "object.import",
+      "registration": "auto",
+      "advertisedClaim": {
+        "name": "object_import",
+        "description": "Draft objects from local OpenAPI or JSON Schema files. Use it when importing a schema you already have; use object_registry for hand-written object/trait YAML. Returns an importId, staged drafts/report, counts and a re-import diff. action=draft uses source.path or source.content without registering; show uses importId and object for YAML, graded proposals and unmapped elements; apply uses importId and explicit objects with accepted proposal ids. The batch validates and composes with rollback. overwrite replaces team objects; confirmShipped names each approved shipped replacement. No network references or code execution. Reference: TOOL-REFERENCE.md#object_import; full schema: oods://schemas/object_import.input.json.",
+        "inputSchemaDescription": "Draft from local OpenAPI/JSON Schema files, inspect one staged draft, or explicitly accept a batch. No network access or code execution."
+      },
+      "claimHash": "sha256:92d744e9c9d85fd71d113854d55185c0643c558bed2f39d306542a995403c8df",
+      "inputSchemaPath": "packages/mcp-server/src/schemas/object.import.input.json",
+      "inputSchemaHash": "sha256:4f8c6d6b65abaa0fb99d482a1d8feed8a649e7e170513ee080b9af3a635411a6",
+      "testImportLocation": "test/product-reality",
+      "testImports": {
+        "test/product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/object-import.s235.spec.ts",
+            "line": 17,
+            "handler": "packages/mcp-server/src/tools/object.import.ts"
+          }
+        ],
+        "test/contracts": [],
+        "other-spec": []
+      },
+      "certifiedReceipts": [],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 1215
+        },
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 1217
+        },
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 1219
+        }
+      ],
+      "portableLimits": [],
+      "portableOutcome": {
+        "outcome": "pass",
+        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
+        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
+      },
+      "caveats": [
+        {
+          "kind": "documented-limit",
+          "file": "packages/mcp-server/src/importer/source.ts",
+          "reason": "Local files only, aggregate128MiB cap. Network, outside-folder and named-anchor references are refused; unresolved local pointers are explicitly unmapped.",
+          "line": 15
+        },
+        {
+          "kind": "documented-limit",
+          "file": "packages/mcp-server/src/tools/object.import.ts",
+          "reason": "Explicit acceptance only; detected batch failures restore prior definitions. This rollback does not provide crash or power-loss recovery.",
+          "line": 135
         }
       ]
     },

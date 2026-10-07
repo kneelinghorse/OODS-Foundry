@@ -22,6 +22,8 @@ export interface FieldValidation {
 }
 
 export interface FieldDefinition {
+  readOnly?: boolean;
+  writeOnly?: boolean;
   type: string;
   required: boolean;
   description: string;

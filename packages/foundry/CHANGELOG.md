@@ -2,6 +2,19 @@
 
 What changed in each version of OODS Foundry, in the terms you use it in.
 
+## 0.8.0
+
+- npm package repository and issue links now point to the public Apache-2.0 source. The first-change quickstart uses `object_registry` throughout.
+- The eight pre-0.7 tool-name aliases are removed; use the names listed by your client.
+- Generated application library dependencies remain pinned to 0.6.2, their retained tested implementation. Those pins move only with a separately measured library update; the tool release version does not change them.
+- The 200 retained runtime cells are a projection of the 0.4.1 sweep onto the current public objects. They are not a new 0.8.0 runtime sweep.
+- Adds a Docker stdio image and the importer contract, hub schema and export recipes.
+- Updates the bundled MCP SDK to 1.31.0 for GHSA-6qxp-vccf-f47h.
+
+- Adds `object_import` with draft/show/apply. The default roster grows from 19 to 20 tools; its compact `tools/list` is 82,191 UTF-8 bytes (previously 79,716), measured from the JSON tool array.
+
+- Object validation now checks trait parameter values against their parameter schemas, including defaults and cross-parameter enum membership. Invalid values are errors; shipped objects remain valid.
+
 ## 0.7.0
 
 - Tools have consistent names, short titles, complete behavior hints and descriptions that explain when to choose a related tool. Full input schemas remain available on demand; server validation is unchanged.
@@ -22,7 +35,7 @@ What changed in each version of OODS Foundry, in the terms you use it in.
 | `object` | `object_registry` |
 | `repl` | `schema_render` |
 
-Old names still answer, with a warning, through 0.7.x and stop in 0.8.0. Existing objects, traits, brands and mappings remain compatible.
+Old names answered with a warning through 0.7.x; those eight aliases are removed in 0.8.0. Existing objects, traits, brands and mappings remain compatible.
 
 ## 0.6.2
 

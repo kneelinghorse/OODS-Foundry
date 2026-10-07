@@ -1,6 +1,6 @@
 # Security
 
-This note describes OODS Foundry 0.7.0. It does not claim a completed network audit.
+This note describes OODS Foundry 0.8.0. It does not claim a completed network audit.
 
 ## What runs on your machine
 
@@ -34,7 +34,7 @@ These are source-qualified configuration statements, not a claim that every exec
 Before a release is published, every package in its runtime archive is checked, name and version, against npm's
 advisory data. The package's own manifest declares no dependencies because the runtime travels inside it, so the check
 reads the archive itself. A high or critical advisory stops the release unless an exception names that package,
-version and advisory with a reason and a decision. 0.7.0 has no exception.
+version and advisory with a reason and a decision. 0.8.0 has no exception.
 
 Earlier release checks caught high-severity advisories in `brace-expansion`, `style-dictionary`,
 `expr-eval-fork` and `tmp`. The affected dependencies were upgraded or removed. Apache ECharts was also upgraded

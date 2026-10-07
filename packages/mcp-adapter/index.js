@@ -372,7 +372,7 @@ async function main() {
   const uiOffered = () => (negotiation.extension || negotiation.forced) && previewApp.current() !== null;
 
   // Map MCP name → internal name for dispatch
-  const nameMap = new Map(toolManifest.flatMap(t => [[t.mcpName, t.internalName], [legacyName(t.internalName), t.internalName]]));
+  const nameMap = new Map(toolManifest.map(t => [t.mcpName, t.internalName]));
   const fullSchemas = new Map(toolManifest.map(t => [`${SCHEMA_RESOURCE_PREFIX}${t.mcpName}.input.json`, `${t.internalName}.input.json`]));
 
   server.setRequestHandler(ListToolsRequestSchema, async () => {
@@ -454,8 +454,6 @@ async function main() {
         content: [{ type: 'text', text: `Unknown tool: ${name}${hint}` }],
       };
     }
-    const warning = name !== advertisedName(internalName)
-      ? [{ type: 'text', text: `Warning: ${name} is deprecated; use ${advertisedName(internalName)}. This alias is supported through 0.7.x and removed in 0.8.0.` }] : [];
     try {
       let context;
       if (internalName === 'design.preview') {
@@ -482,7 +480,6 @@ async function main() {
             type: 'text',
             text: typeof result === 'string' ? result : JSON.stringify(result, null, 2),
           },
-          ...warning,
         ],
         ...(structured ? { structuredContent: structured } : {}),
       };
@@ -498,7 +495,7 @@ async function main() {
         };
         return {
           isError: true,
-          content: [{ type: 'text', text: JSON.stringify({ error: structured }, null, 2) }, ...warning],
+          content: [{ type: 'text', text: JSON.stringify({ error: structured }, null, 2) }],
         };
       }
       const message = error instanceof Error ? error.message : String(error);
@@ -507,7 +504,7 @@ async function main() {
       const guidance = isSpawnError && !message.includes(SPAWN_ADVICE) ? `\n\nTo fix: ${SPAWN_ADVICE}` : '';
       return {
         isError: true,
-        content: [{ type: 'text', text: `Tool ${name} failed: ${message}${guidance}` }, ...warning],
+        content: [{ type: 'text', text: `Tool ${name} failed: ${message}${guidance}` }],
       };
     }
   });

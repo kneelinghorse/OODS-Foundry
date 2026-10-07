@@ -11,6 +11,7 @@ import { parseProblem } from '../objects/definition-folders.js';
 import { listObjects, normalizeObjectDocument, objectEntry, objectRefusal, userObjectsFolder } from '../objects/object-loader.js';
 import { hasTrait, listTraits, loadTrait, traitEntry, traitRefusal, userTraitsFolder } from '../objects/trait-loader.js';
 import { relationshipProblems, type RelationshipProblem } from '../objects/relationships.js';
+import { parameterProblems } from '../objects/parameter-validation.js';
 import { composeObject } from '../objects/trait-composer.js';
 import { supportsContext } from '../objects/supported-contexts.js';
 import { populateObjectSchema } from '../compose/object-slot-filler.js';
@@ -34,7 +35,7 @@ export type ObjectValidateInput = { yaml: string };
 
 export type DefinitionProblem = {
   kind: RelationshipProblem['kind'] | 'malformed' | 'not-a-definition' | 'invalid-name' | 'missing-header' | 'invalid-trait-reference' | 'unknown-trait'
-    | 'missing-parameter' | 'invalid-field' | 'unknown-context' | 'unknown-component' | 'invalid-view' | 'invalid-state-machine'
+    | 'invalid-parameter' | 'missing-parameter' | 'invalid-field' | 'unknown-context' | 'unknown-component' | 'invalid-view' | 'invalid-state-machine'
     | 'shipped-name' | 'duplicate' | 'compose-failed' | 'money-units' | 'trait-conflict' | 'invalid-version';
   path?: string;
   message: string;
@@ -112,7 +113,7 @@ function checkFields(schema: unknown, owner: string, errors: DefinitionProblem[]
   }
 }
 
-function checkObject(document: Record<string, unknown>, result: Checked) {
+function checkObject(document: Record<string, unknown>, result: Checked, available: readonly string[]) {
   const { errors, warnings } = result;
   checkUnknownKeys(document, OBJECT_KEYS, warnings);
   const name = checkHeader(document.object, 'object', ['name', 'version', 'domain', 'description'], errors);
@@ -151,6 +152,9 @@ function checkObject(document: Record<string, unknown>, result: Checked) {
         if (parameter.required && parameter.default === undefined && !(parameter.name in given)) {
           errors.push({ kind: 'missing-parameter', path: `${at}.parameters.${parameter.name}`, message: `The trait "${trait.name}" requires the parameter "${parameter.name}" (${parameter.description}).` });
         }
+      }
+      for (const problem of parameterProblems(reference.name, given)) {
+        errors.push({ kind: 'invalid-parameter', path: `${at}.parameters${problem.path}`, message: problem.message });
       }
       const declared = new Set(definition.parameters.map(parameter => parameter.name));
       for (const parameter of Object.keys(given)) {
@@ -206,7 +210,7 @@ function checkObject(document: Record<string, unknown>, result: Checked) {
     errors.push({ kind: 'compose-failed', message: `Composing ${name} with its traits failed: ${(error as Error).message}` });
     return;
   }
-  errors.push(...relationshipProblems(document.relationships, name!, composed.schema, listObjects()));
+  errors.push(...relationshipProblems(document.relationships, name!, composed.schema, available));
   // s213-m03 (finding 7): money and its units come only from declared semantics, so say where a declaration is missing.
   const fields = shape.objectSchema ?? {};
   for (const [field, entry] of Object.entries(fields)) {
@@ -315,7 +319,7 @@ function checkTrait(document: Record<string, unknown>, result: Checked) {
 }
 
 /** Validate one definition; `register` calls this first and writes only what passes. */
-export function validateDefinition(yaml: string): Checked {
+export function validateDefinition(yaml: string, available: readonly string[] = listObjects()): Checked {
   const result: Checked = { kind: null, name: null, valid: false, errors: [], warnings: [], contexts: [], folder: null };
   let document: unknown;
   try {
@@ -336,7 +340,7 @@ export function validateDefinition(yaml: string): Checked {
   if (isMap(document.object)) {
     result.kind = 'object';
     result.folder = userObjectsFolder();
-    checkObject(document, result);
+    checkObject(document, result, available);
   } else {
     result.kind = 'trait';
     result.folder = userTraitsFolder();

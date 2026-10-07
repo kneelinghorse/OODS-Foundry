@@ -3,9 +3,9 @@
 
 Native tool handlers for OODS Forge. Build from the repository root with `pnpm --filter @oods/mcp-server run build`; start with `pnpm --filter @oods/mcp-server start`. MCP clients normally use the [stdio adapter](../mcp-adapter/) or [HTTP bridge](../mcp-bridge/).
 
-The registry advertises 19 tools by default and 1 on demand (20 total). Enable on-demand entries with `MCP_TOOLSET=all` or select them with `MCP_EXTRA_TOOLS`.
+The registry advertises 20 tools by default and 1 on demand (21 total). Enable on-demand entries with `MCP_TOOLSET=all` or select them with `MCP_EXTRA_TOOLS`.
 
-The retained portable adapter E2E records outcomes for 19 advertised tools on the packaged runtime built at `7eadd70b1` (a builder's receipt, not yet certified): 19 results and no typed dependency limit. The exercised inputs do not cover every input; the tool ledger records 32 known limits, listed in Tool-Specs.
+The retained portable adapter E2E records outcomes for 20 advertised tools on the packaged runtime built at `d59cb600a` (a builder's receipt, not yet certified): 20 results and no typed dependency limit. The exercised inputs do not cover every input; the tool ledger records 34 known limits, listed in Tool-Specs.
 
 | Default tool / actions | Recorded runtime outcome | Known limits |
 | --- | --- | --- |
@@ -28,6 +28,7 @@ The retained portable adapter E2E records outcomes for 19 advertised tools on th
 | `schema_store` (`save`/`load`/`list`/`delete`) | pass | 1 |
 | `object_registry` (`list`/`show`/`validate`/`register`/`reload`) | pass | 2 |
 | `schema_render` (`render`/`validate`) | pass | 3 |
+| `object_import` (`draft`/`show`/`apply`) | pass | 2 |
 
 | On-demand tool | Recorded runtime outcome | Known limits |
 | --- | --- | --- |

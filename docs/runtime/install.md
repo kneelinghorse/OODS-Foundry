@@ -34,7 +34,7 @@ The extracted directory is what every configuration below calls `/path/to/oods-f
 
 ## Connect a client
 
-All three clients speak to the same stdio adapter and see the same 19 tools by default. The server is registered under the name `oods-foundry`.
+All three clients speak to the same stdio adapter and see the same 20 tools by default. The server is registered under the name `oods-foundry`.
 
 ### Claude Code
 
@@ -43,7 +43,7 @@ claude mcp add oods-foundry -- node /path/to/oods-foundry-runtime/packages/mcp-a
 claude mcp get oods-foundry
 ```
 
-`Status: ✓ Connected` means the adapter started and answered. Options go after the name: `claude mcp add oods-foundry -s user -e MCP_TOOLSET=all -- node /path/to/oods-foundry-runtime/packages/mcp-adapter/index.js` registers it for every project and adds the on-demand tools (20 in all); an `-e` before the name is read as a variable and refused. `claude mcp remove oods-foundry` undoes it.
+`Status: ✓ Connected` means the adapter started and answered. Options go after the name: `claude mcp add oods-foundry -s user -e MCP_TOOLSET=all -- node /path/to/oods-foundry-runtime/packages/mcp-adapter/index.js` registers it for every project and adds the on-demand tools (21 in all); an `-e` before the name is read as a variable and refused. `claude mcp remove oods-foundry` undoes it.
 
 ### Agent skill, plugin and registry entry
 
@@ -59,12 +59,12 @@ The server is also listed in the official MCP registry as `com.oods-foundry/foun
 The npm package also carries the skill as plain files at `skills/oods-foundry/`. Claude Code does not discover skills in `node_modules`, so install the package in your project first, then copy the whole folder into your project's skill directory:
 
 ```sh
-npm install @oods/foundry@0.7.0
+npm install @oods/foundry@0.8.0
 mkdir -p .claude/skills
 cp -R node_modules/@oods/foundry/skills/oods-foundry .claude/skills/
 ```
 
-Restart Claude Code and invoke `/oods-foundry`, with the server connected as above. Other agents can read [SKILL.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.7.0/skills/oods-foundry/SKILL.md) and its bundled quickstart reference directly, or copy the folder into their own supported skill location. The skill explains the calls, receipts and unchecked work; installing the plain files does not register an MCP server.
+Restart Claude Code and invoke `/oods-foundry`, with the server connected as above. Other agents can read [SKILL.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.8.0/skills/oods-foundry/SKILL.md) and its bundled quickstart reference directly, or copy the folder into their own supported skill location. The skill explains the calls, receipts and unchecked work; installing the plain files does not register an MCP server.
 
 ### Claude Desktop
 
@@ -107,7 +107,7 @@ Reload the Cursor window.
 
 ### The design preview inside the conversation
 
-`design_preview` returns the generated screen running in a browser. A client that renders MCP Apps can show it inside the conversation, where you edit the composition, compare two versions side by side, accept one and request changes. The MCP Apps SDK reference host v1.7.5 rendered React and Vue inside the conversation with `OODS_MCP_APPS_UI=1` through a local HTTP-to-stdio relay; its default initialize request advertises no UI capability and receives text instead. That run used a fixed-file serving adjustment for the hidden repository checkout. No Claude Desktop or Cursor run is recorded; the two lines below come from their documentation. Any other client gets the same result as text, with links to the preview in your browser, served on 127.0.0.1.
+`design_preview` returns the generated screen running in a browser. A client that renders MCP Apps can show it inside the conversation, where you edit the composition, compare two versions side by side, accept one and request changes. The MCP Apps SDK reference host v1.7.5 rendered React and Vue inside the conversation with `OODS_MCP_APPS_UI=1` through a local HTTP-to-stdio relay; its default initialize request advertises no UI capability and receives text instead. That run used a fixed-file serving adjustment for the source checkout. No Claude Desktop or Cursor run is recorded; the two lines below come from their documentation. Any other client gets the same result as text, with links to the preview in your browser, served on 127.0.0.1.
 
 - **Claude Desktop**, by its documentation, renders an app from a local server only with Developer Mode on, and keeps the tool list and the app it fetched until you choose Reload MCP Configuration after you replace the runtime with a newer one.
 - **Cursor**, by its documentation, renders MCP Apps from version 2.6. Reload the window after you replace the runtime with a newer one.
@@ -117,7 +117,7 @@ Register `oods-foundry` directly, beside any other entry such as an MCP hub, not
 
 ## First run
 
-Ask the assistant to run `health_check`: it answers `status: "ok"` with the registry counts and `server.version` (`0.7.0`). The ten-minute first run on the package page (<https://www.npmjs.com/package/@oods/foundry>) works the same from the archive.
+Ask the assistant to run `health_check`: it answers `status: "ok"` with the registry counts and `server.version` (`0.8.0`). The ten-minute first run on the package page (<https://www.npmjs.com/package/@oods/foundry>) works the same from the archive.
 
 ## Settings
 
@@ -125,7 +125,7 @@ Environment variables are optional; every default is the documented one. Set the
 
 | Variable | Default | Effect |
 | --- | --- | --- |
-| `MCP_TOOLSET` | `default` | `default` advertises 19 tools; `all` adds the 1 on-demand tools, 20 in all. |
+| `MCP_TOOLSET` | `default` | `default` advertises 20 tools; `all` adds the 1 on-demand tools, 21 in all. |
 | `MCP_EXTRA_TOOLS` | (none) | Comma-separated on-demand tools added to the default surface, for example `a11y.scan`. |
 | `MCP_ROLE` | `designer` | Policy role (`designer` or `maintainer`). |
 | `MCP_SCHEMA_STORE_ROOT` | the extracted directory's `packages/mcp-server` | Where saved schemas, every composed and previewed version, and file-mode output are kept. |
@@ -139,7 +139,7 @@ Environment variables are optional; every default is the documented one. Set the
 
 ## Component substitution and runnable screens
 
-OODS Foundry supports your own components by substitution in React and Vue: map a shipped id to a package, exact version and export. Set localPath to your absolute package folder for preview bundling; keep it outside the runtime. Mappings default to ~/.oods-foundry/mappings/component-mappings.json; MCP_MAPPINGS_PATH overrides that file. New components beyond the shipped catalog are not supported. The package's [COMPONENTS.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.7.0/COMPONENTS.md) explains prop translations, frozen previews and advisory contract reports.
+OODS Foundry supports your own components by substitution in React and Vue: map a shipped id to a package, exact version and export. Set localPath to your absolute package folder for preview bundling; keep it outside the runtime. Mappings default to ~/.oods-foundry/mappings/component-mappings.json; MCP_MAPPINGS_PATH overrides that file. New components beyond the shipped catalog are not supported. The package's [COMPONENTS.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.8.0/COMPONENTS.md) explains prop translations, frozen previews and advisory contract reports.
 
 For a runnable single screen request code_generate with options.output set to application. Its package.json pins the @oods libraries and your mapped packages at exact versions; run npm install, then npm run build and npm run dev. A mapped package that is not on a registry installs from its own tarball or folder. The sample app labels its data and actions that need your application's handlers.
 
@@ -157,4 +157,4 @@ Some identifiers keep the product's earlier name: the runtime manifest and SBOM 
 
 ## Feedback
 
-This page describes version 0.7.0 with adapter 0.7.0; the manifest inside the archive names the exact source commit. What you noticed is the point of this release: a screen that reads wrong, a certification you disagree with, install friction, a sentence that did not make sense. Open an [issue](https://github.com/kneelinghorse/OODS-Foundry/issues) with the tool call as you made it, what came back and what you expected. A short note is worth more than a polished one.
+This page describes version 0.8.0 with adapter 0.8.0; the manifest inside the archive names the exact source commit. What you noticed is the point of this release: a screen that reads wrong, a certification you disagree with, install friction, a sentence that did not make sense. Open an [issue](https://github.com/kneelinghorse/OODS-Foundry/issues) with the tool call as you made it, what came back and what you expected. A short note is worth more than a polished one.

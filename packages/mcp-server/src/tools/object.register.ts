@@ -8,6 +8,7 @@
  * survives restarts and upgrades.
  */
 
+import { withDefinitionWrite } from '../objects/definition-write.js';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { ToolError } from '../errors/tool-error.js';
@@ -57,6 +58,10 @@ async function composeContexts(name: string): Promise<ContextCheck[]> {
 }
 
 export async function handle(input: ObjectRegisterInput): Promise<ObjectRegisterOutput> {
+  return withDefinitionWrite(() => registerDefinition(input));
+}
+
+async function registerDefinition(input: ObjectRegisterInput): Promise<ObjectRegisterOutput> {
   const checked = validateDefinition(input.yaml);
   const refuse = (errors: DefinitionProblem[], contexts: ContextCheck[] = []) => new ToolError('OODS-V215',
     `${checked.kind === 'trait' ? 'Trait' : 'Object'} ${checked.name ? `"${checked.name}" ` : ''}was not registered: ${errors.map(error => error.message).join(' ')}`,
