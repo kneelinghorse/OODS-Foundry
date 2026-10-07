@@ -1638,6 +1638,7 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
   let objectUsed: ObjectUsedInfo | undefined;
   let readOnly = false;
   let readTab: string | undefined;
+  let listColumns: Array<{ field: string; label?: string }> | undefined;
   let viewState = new Set<string>();
 
   if (effectiveObject) {
@@ -1653,6 +1654,7 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
       }
       readOnly = isReadOnly(objectDef);
       readTab = objectDef.metadata?.detailTab;
+      listColumns = objectDef.metadata?.listColumns;
       composed = composeObject(objectDef);
       viewState = viewStateFields(objectDef, composed);
       objectUsed = buildObjectUsedInfo(composed);
@@ -1755,7 +1757,13 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
   // or place read-only fields in editable forms. The stored definition retains the complete source contract.
   if (composed) {
     const visible = Object.fromEntries(Object.entries(composed.schema).filter(([, field]) => layoutType === 'form' ? !field.readOnly : !field.writeOnly));
-    composed = { ...composed, schema: visible, samples: composed.samples?.map(sample => Object.fromEntries(Object.entries(sample).filter(([key]) => Object.hasOwn(visible, key)))) };
+    const hidden = new Set(Object.keys(composed.schema).filter(field => !Object.hasOwn(visible, field)));
+    const semantics = Object.fromEntries(Object.entries(composed.semantics).map(([field, semantic]) => {
+      const ui_hints = { ...semantic.ui_hints };
+      for (const key of ['displayLabelField', 'displayFallbackField']) if (typeof ui_hints[key] === 'string' && hidden.has(ui_hints[key] as string)) delete ui_hints[key];
+      return [field, { ...semantic, ui_hints }];
+    }));
+    composed = { ...composed, schema: visible, semantics, samples: composed.samples?.map(sample => Object.fromEntries(Object.entries(sample).filter(([key]) => Object.hasOwn(visible, key)))) };
   }
   const recordFields = composed ? Object.fromEntries(Object.entries(composed.schema).filter(([name, field]) => !viewState.has(name) && field.unavailable !== true)) : undefined;
   const formFields = composed && layoutType === 'form'
@@ -2193,7 +2201,7 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
     }
   }
 
-  if (composed && effectiveContext) populateCollections(schema, effectiveContext, composed.object.name, composed.traits.find(trait => trait.ref.name === 'behavioral/Searchable')?.ref.parameters?.placeholder as string | undefined);
+  if (composed && effectiveContext) populateCollections(schema, effectiveContext, composed.object.name, composed.traits.find(trait => trait.ref.name === 'behavioral/Searchable')?.ref.parameters?.placeholder as string | undefined, listColumns);
   if (composed && effectiveContext) reconcileFormDetail(schema, effectiveContext, composed, input.preferences?.tabLabels, readTab, viewState);
   // Reconciled trait panels retain their slot identity; report the same confidence as their selection.
   const stampConfidence = (node: UiElement): void => {

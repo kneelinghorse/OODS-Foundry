@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "ObjectImportInput",
-  "description": "Draft from local OpenAPI/JSON Schema files, inspect one staged draft, or explicitly accept a batch. No network access or code execution.",
+  "description": "Draft from local OpenAPI, JSON Schema, Postgres DDL/migrations, Prisma, dbt, OData or GraphQL files, inspect one staged draft, or explicitly accept a batch. No network access or code execution.",
   "oneOf": [
     {
       "type": "object",
@@ -24,12 +24,25 @@
             "content": {
               "type": "string",
               "minLength": 1,
-              "description": "Inline JSON or YAML, at most 1 MiB."
+              "description": "Inline schema text, at most 1 MiB. Set format for SQL, Prisma, OData XML or GraphQL SDL."
             },
             "name": {
               "type": "string",
               "minLength": 1,
               "description": "File name for inline provenance; no directories."
+            },
+            "format": {
+              "type": "string",
+              "enum": [
+                "openapi",
+                "json-schema",
+                "sql",
+                "prisma",
+                "dbt",
+                "odata",
+                "graphql"
+              ],
+              "description": "Explicit source format; inferred from file extension or document when omitted."
             }
           },
           "oneOf": [
@@ -169,12 +182,25 @@
         "content": {
           "type": "string",
           "minLength": 1,
-          "description": "Inline JSON or YAML, at most 1 MiB."
+          "description": "Inline schema text, at most 1 MiB. Set format for SQL, Prisma, OData XML or GraphQL SDL."
         },
         "name": {
           "type": "string",
           "minLength": 1,
           "description": "File name for inline provenance; no directories."
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "openapi",
+            "json-schema",
+            "sql",
+            "prisma",
+            "dbt",
+            "odata",
+            "graphql"
+          ],
+          "description": "Explicit source format; inferred from file extension or document when omitted."
         }
       },
       "oneOf": [

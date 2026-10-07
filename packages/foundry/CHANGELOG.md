@@ -2,6 +2,19 @@
 
 What changed in each version of OODS Foundry, in the terms you use it in.
 
+## 0.9.0
+
+- The default roster remains 20 tools. Its compact `tools/list` is 82,520 UTF-8 bytes (0.8.0: 82,191), measured from the JSON tool array.
+
+- Import Postgres DDL and ordered Prisma, Drizzle, Flyway or golang-migrate migrations, including keys, constraints, comments and read-only views.
+- Import Prisma models and multi-file schemas with relations, native types, source mappings and declared defaults.
+- Import dbt manifests and properties folders, including column tests, static semantic declarations and snapshot history. No SQL or Jinja is evaluated.
+- Import OData v2/v4 CSDL XML or JSON with declared titles, list columns, detail sections, display text, currency, value lists and read-only capabilities.
+- Import GraphQL SDL or introspection with enums, input objects, relationships and declared scalar formats. Resolvers are never run.
+- Every format uses the same draft/show/explicit-acceptance flow. Trait suggestions now use structural and declared evidence across the trait library; counts include each proposed trait. Accepted-trait fields are distinguished from source removals on re-import.
+- Imported screens use record titles or identifiers, varied valid samples, source help, date-only formatting and relationship pickers. Lifecycle/history traits add timelines; read-only sources omit forms. Hand-written objects can declare list columns too.
+- Unreachable references are reported and skipped without fetching them. Folder escapes still refuse the import. Streamed, hashed staging supports the Oracle Financials corpus without one giant JSON string.
+
 ## 0.8.0
 
 - npm package repository and issue links now point to the public Apache-2.0 source. The first-change quickstart uses `object_registry` throughout.

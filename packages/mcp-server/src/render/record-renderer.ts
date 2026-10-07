@@ -28,7 +28,7 @@ export function bindRecordSchema(schema: UiSchema, model: Record<string, unknown
     const entry = fields[field];
     const value = raw(field, row);
     const shown = String(value ?? '').trim() ? value : raw(entry?.displayFallbackField, row);
-    return isReferenceField(entry) || isReferenceField(fields[entry?.displayFallbackField ?? '']) ? formatRecordLabel(shown) : shown;
+    return isReferenceField(entry) || isReferenceField(fields[entry?.displayFallbackField ?? '']) ? formatRecordLabel(shown, entry?.semanticType === 'text.label') : typeof shown === 'number' ? String(shown) : shown;
   };
   const walk = (source: UiElement, row: Record<string, unknown>, suffix = ''): UiElement[] => {
     if (source.state && source.state !== (row.uiState ?? 'success') && !(source.state === 'success' && row.uiState === 'empty' && collectionSources([source]).has('rows'))) return [];
@@ -63,7 +63,7 @@ export function bindRecordSchema(schema: UiSchema, model: Record<string, unknown
           ? formatReferenceLabel(raw(field, row), raw(fields[field]?.displayLabelField, row), fieldLabel(field.replace(/_ids?$/, '')))
           : formatReadOnlyValue(raw(field, row), fields[field]!.type, Boolean(fields[field]!.enum), fields[field]!.format);
         else if (content.isChildren) {
-          if (/date|time/.test(fields[field]!.type) && value) value = formatDateTime(String(value));
+          if (/date|time/.test(fields[field]!.type) && value) value = formatDateTime(String(value), { dateOnly: fields[field]!.type.replace(/\?$/, '') === 'date' });
           else if (typeof value === 'boolean') value = value ? 'Yes' : 'No';
           else if (Array.isArray(value)) value = value.join(', ');
         }

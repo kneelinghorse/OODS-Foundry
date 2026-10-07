@@ -60,7 +60,7 @@
       ]
     }
   ],
-  "head": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7",
+  "head": "eb3520932d1d4c533ad271a345dd85333dd4311b",
   "builderSelfCertified": false,
   "methodology": {
     "testImportLocation": "Where a spec that imports the tool's handler module lives: packages/mcp-server/test/product-reality, then test/contracts, then any other mcp-server spec. A literal runtime import is source evidence that a test reaches the handler, not proof of invocation, passing execution or browser certification. Grouped action imports roll up to their registered family. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not count.",
@@ -1260,6 +1260,26 @@
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
           },
           {
+            "path": "packages/mcp-server/test/importer/importer.spec.ts",
+            "line": 12,
+            "handler": "packages/mcp-server/src/tools/code.generate.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/importer/screens.s236.spec.ts",
+            "line": 131,
+            "handler": "packages/mcp-server/src/tools/code.generate.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/importer/screens.s236.spec.ts",
+            "line": 215,
+            "handler": "packages/mcp-server/src/tools/code.generate.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/importer/screens.s236.spec.ts",
+            "line": 233,
+            "handler": "packages/mcp-server/src/tools/code.generate.ts"
+          },
+          {
             "path": "packages/mcp-server/test/objects/capture.spec.ts",
             "line": 6,
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
@@ -1977,6 +1997,11 @@
           {
             "path": "packages/mcp-server/test/importer/importer.spec.ts",
             "line": 11,
+            "handler": "packages/mcp-server/src/tools/design.compose.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/importer/screens.s236.spec.ts",
+            "line": 9,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
@@ -4047,10 +4072,10 @@
       "registration": "auto",
       "advertisedClaim": {
         "name": "object_registry",
-        "description": "Inspect, validate or register object and trait definitions. Use object_import instead to draft from existing OpenAPI or JSON Schema files. Use it when exploring object shapes with list/show; use catalog_list instead to choose components, structured_data_fetch for complete datasets, or registry_snapshot for mappings together with definitions. Returns definitions, composed traits/view extensions, validation findings or registry write/reload results. action selects list/show/validate/register/reload. includeInternal reveals hidden objects. validate/register accept YAML; register writes your configured folder after checking declared contexts, and overwrite replaces your own definition. Team objects may shadow shipped objects; traits cannot reuse shipped names. Relationships validate their target and field. Reload reads folders without restarting. Reference: TOOL-REFERENCE.md#object_registry; full schema: oods://schemas/object_registry.input.json.",
+        "description": "Inspect, validate or register object and trait definitions. Use object_import instead to draft from existing schema files. Use it when exploring object shapes with list/show; use catalog_list instead to choose components, structured_data_fetch for complete datasets, or registry_snapshot for mappings together with definitions. Returns definitions, composed traits/view extensions, validation findings or registry write/reload results. action selects list/show/validate/register/reload. includeInternal reveals hidden objects. validate/register accept YAML; register writes your configured folder after checking declared contexts, and overwrite replaces your own definition. Team objects may shadow shipped objects; traits cannot reuse shipped names. Relationships validate their target and field. Reload reads folders without restarting. Reference: TOOL-REFERENCE.md#object_registry; full schema: oods://schemas/object_registry.input.json.",
         "inputSchemaDescription": "Grouped action-parameter tool for the object registry (list, show, validate, register, reload). The top-level `action` selects which per-action contract applies; each branch reproduces the exact body of the per-action input schema (object.<action>.input.json) with the discriminator key `action` added to its allowed properties."
       },
-      "claimHash": "sha256:282b093ae0de0eecf8d065283dd3bd0be0ad92cad173b1ac05f2d24a92a20950",
+      "claimHash": "sha256:a0d89636868f1b1f27f627603308c29085573c474c89efcd2e3b70380f9c3715",
       "inputSchemaPath": "packages/mcp-server/src/schemas/object.input.json",
       "inputSchemaHash": "sha256:faa1df490eca8ee8db6932c46efdc08f2f8d98ab65b8acf29d2f1e98520c4a66",
       "testImportLocation": "test/product-reality",
@@ -4113,6 +4138,11 @@
           {
             "path": "packages/mcp-server/test/importer/importer.spec.ts",
             "line": 10,
+            "handler": "packages/mcp-server/src/tools/object.register.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/importer/screens.s236.spec.ts",
+            "line": 8,
             "handler": "packages/mcp-server/src/tools/object.register.ts"
           },
           {
@@ -4256,7 +4286,7 @@
           "kind": "documented-limit",
           "file": "packages/mcp-server/src/tools/object.validate.ts",
           "reason": "A team's own trait may place only the components the runtime ships; validate and register refuse any other component. Mapped implementations replace shipped ids; new catalog components are not supported.",
-          "line": 284
+          "line": 288
         },
         {
           "kind": "documented-limit",
@@ -4562,12 +4592,12 @@
       "registration": "auto",
       "advertisedClaim": {
         "name": "object_import",
-        "description": "Draft objects from local OpenAPI or JSON Schema files. Use it when importing a schema you already have; use object_registry for hand-written object/trait YAML. Returns an importId, staged drafts/report, counts and a re-import diff. action=draft uses source.path or source.content without registering; show uses importId and object for YAML, graded proposals and unmapped elements; apply uses importId and explicit objects with accepted proposal ids. The batch validates and composes with rollback. overwrite replaces team objects; confirmShipped names each approved shipped replacement. No network references or code execution. Reference: TOOL-REFERENCE.md#object_import; full schema: oods://schemas/object_import.input.json.",
-        "inputSchemaDescription": "Draft from local OpenAPI/JSON Schema files, inspect one staged draft, or explicitly accept a batch. No network access or code execution."
+        "description": "Draft objects from local OpenAPI, JSON Schema, Postgres DDL/migrations, Prisma, dbt, OData or GraphQL files. Use it when importing a schema you already have; use object_registry for hand-written object/trait YAML. Returns an importId, staged drafts/report, counts and a re-import diff. action=draft uses source.path or source.content without registering; show uses importId and object for YAML, graded proposals and unmapped elements; apply uses importId and explicit objects with accepted proposal ids. The batch validates and composes with rollback. overwrite replaces team objects; confirmShipped names each approved shipped replacement. Unreachable references are reported and skipped; no network fetch or code execution. Reference: TOOL-REFERENCE.md#object_import; full schema: oods://schemas/object_import.input.json.",
+        "inputSchemaDescription": "Draft from local OpenAPI, JSON Schema, Postgres DDL/migrations, Prisma, dbt, OData or GraphQL files, inspect one staged draft, or explicitly accept a batch. No network access or code execution."
       },
-      "claimHash": "sha256:92d744e9c9d85fd71d113854d55185c0643c558bed2f39d306542a995403c8df",
+      "claimHash": "sha256:1079af042a665e4a4078f64125cdf482af60606892cbc637af9cdc5096a1732d",
       "inputSchemaPath": "packages/mcp-server/src/schemas/object.import.input.json",
-      "inputSchemaHash": "sha256:4f8c6d6b65abaa0fb99d482a1d8feed8a649e7e170513ee080b9af3a635411a6",
+      "inputSchemaHash": "sha256:7399b97576eae9015384162d30ef491ccc7842751f15953fcce317345706de7c",
       "testImportLocation": "test/product-reality",
       "testImports": {
         "test/product-reality": [
@@ -4578,7 +4608,13 @@
           }
         ],
         "test/contracts": [],
-        "other-spec": []
+        "other-spec": [
+          {
+            "path": "packages/mcp-server/test/importer/screens.s236.spec.ts",
+            "line": 10,
+            "handler": "packages/mcp-server/src/tools/object.import.ts"
+          }
+        ]
       },
       "certifiedReceipts": [],
       "portableE2E": true,
@@ -4613,7 +4649,7 @@
           "kind": "documented-limit",
           "file": "packages/mcp-server/src/tools/object.import.ts",
           "reason": "Explicit acceptance only; detected batch failures restore prior definitions. This rollback does not provide crash or power-loss recovery.",
-          "line": 135
+          "line": 141
         }
       ]
     },

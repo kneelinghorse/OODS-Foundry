@@ -73,6 +73,8 @@ export interface ObjectMetadata {
   supportedContexts?: string[];
   /** The name of a detail screen's tab of read-only record fields ("Details" when absent). */
   detailTab?: string;
+  /** Ordered record fields displayed in each list row; shared by imports and hand-written objects. */
+  listColumns?: Array<{ field: string; label?: string }>;
   owners?: string[];
   steward?: string;
   maturity?: string;

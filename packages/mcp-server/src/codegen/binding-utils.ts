@@ -70,7 +70,7 @@ export function displayFieldExpression(
 
 /** Reference identity is declared by type or the shared ownership semantic, never guessed from its value. */
 export function isReferenceField(entry: FieldSchemaEntry | undefined): boolean {
-  return Boolean(entry && (/^uuid(?:\[\])?\??$/.test(entry.type) || entry.semanticType === 'ownership.owner.id'));
+  return Boolean(entry && (/^uuid(?:\[\])?\??$/.test(entry.type) || entry.semanticType === 'ownership.owner.id' || typeof entry.displayLabelField === 'string'));
 }
 
 export function referenceFieldExpression(field: string, fields: Record<string, FieldSchemaEntry> | undefined): string {
@@ -83,8 +83,14 @@ export function referenceFieldExpression(field: string, fields: Record<string, F
 function namingFieldExpression(field: string, fields: Record<string, FieldSchemaEntry> | undefined): string {
   const expression = displayFieldExpression(field, fields);
   const entry = ownFieldSchemaEntry(fields, field);
-  return isReferenceField(entry) || entry?.displayFallbackField && isReferenceField(ownFieldSchemaEntry(fields, entry.displayFallbackField))
-    ? `formatRecordLabel(${expression})` : expression;
+  if (isReferenceField(entry) || entry?.displayFallbackField && isReferenceField(ownFieldSchemaEntry(fields, entry.displayFallbackField))) {
+    // The retained consumer library has a one-argument formatter. Shorten an imported UUID before that call.
+    const label = entry?.semanticType === 'text.label'
+      ? `String(${expression} ?? '').replace(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i, value => 'Record …' + value.slice(-8))`
+      : expression;
+    return `formatRecordLabel(${label})`;
+  }
+  return /^(integer|number)\??$/.test(entry?.type ?? '') ? `String(${expression} ?? '')` : expression;
 }
 
 const NAMING_COMPONENTS = new Set(['Text', 'CardHeader', 'DetailHeader', 'InlineLabel', 'LabelCell', 'TimelineEntryLabel', 'ArchivedRowOverlay']);
@@ -1435,12 +1441,12 @@ export function slotDateHelperSource(typescript: boolean): string {
   const returns = typescript ? ': string' : '';
   const cast = typescript ? ' as string | number | Date' : '';
   return [
-    `function ${SLOT_DATE_HELPER}(value${valueType})${returns} {`,
+    `function ${SLOT_DATE_HELPER}(value${valueType}, dateOnly = false)${returns} {`,
     "  if (value == null || value === '') return '';",
     `  const date = new Date(value${cast});`,
     "  if (!Number.isFinite(date.getTime())) return '';",
     "  return new Intl.DateTimeFormat('en-US', {",
-    "    dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC',",
+    "    dateStyle: 'medium', ...(dateOnly ? {} : { timeStyle: 'short'" + (typescript ? " as const" : "") + " }), timeZone: 'UTC',",
     '  }).format(date);',
     '}',
   ].join('\n');
@@ -1461,10 +1467,10 @@ export function hasSlotBoundDates(
 ): boolean {
   return nodes.some(node => {
     const field = node.props?.field;
+    const entry = typeof field === 'string' ? ownFieldSchemaEntry(objectSchema, field) : undefined;
     const bound = node.component === 'Text'
-      && node.meta?.intent !== 'read-only-field'
-      && typeof field === 'string'
-      && isDateFieldEntry(ownFieldSchemaEntry(objectSchema, field));
+      && (node.meta?.intent !== 'read-only-field' || entry?.type.replace(/\?$/, '') === 'date')
+      && isDateFieldEntry(entry);
     return bound || hasSlotBoundDates(node.children ?? [], objectSchema);
   });
 }

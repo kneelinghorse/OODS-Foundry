@@ -32,7 +32,7 @@ describe('s191 craft values agree across render targets', () => {
   });
   it('keeps only a declared audit log and derives currency help from the converting control', () => {
     const schema: UiSchema = { version: '2026.02', objectSchema: { audit_log: { type: 'object[]' }, amount: { type: 'integer', description: 'Minor units.' } }, screens: [{ id: 'root', component: 'Stack', children: [{ id: 'real', component: 'AuditTimeline', props: { auditLogField: 'audit_log' } }, { id: 'missing', component: 'AuditTimeline', props: { auditLogField: 'state_history' } }, { id: 'unbound', component: 'AuditTimeline' }] }] };
-    const composed = { traits: [] } as unknown as ComposedObject;
+    const composed = { traits: [], semantics: {} } as unknown as ComposedObject;
     reconcileFormDetail(schema, 'detail', composed);
     expect(walk(schema.screens).filter(node => node.component === 'AuditTimeline').map(node => node.id)).toEqual(['real']);
     schema.screens = [{ id: 'amount', component: 'BillingAmountInput', props: { amountField: 'amount', currency: 'eur' } }];

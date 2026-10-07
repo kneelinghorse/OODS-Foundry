@@ -14,8 +14,8 @@
         "type": "string",
         "minLength": 1,
         "maxLength": 32,
-        "pattern": "^[a-z0-9_-]+$",
-        "description": "Individual state identifier."
+        "pattern": "^[A-Za-z0-9_-]+$",
+        "description": "Case-sensitive state identifier; source enum values retain their spelling."
       }
     },
     "initialState": {
@@ -23,7 +23,7 @@
       "description": "State assigned when an entity is created.",
       "minLength": 1,
       "maxLength": 32,
-      "pattern": "^[a-z0-9_-]+$",
+      "pattern": "^[A-Za-z0-9_-]+$",
       "enum": {
         "$data": "1/states"
       }

@@ -40,7 +40,7 @@ describe('s198 detail craft preserves readable, labelled record values', () => {
       { id: 'detail-header', component: 'Stack', children: [{ id: 'editor', component: 'Input', props: { field: 'name' } }] },
       { id: 'body', component: 'Card', children: [{ id: 'tabs', component: 'Tabs', children: [{ id: 'empty', component: 'Card' }] }] },
     ] }] };
-    const composed = { object: { name: 'Test' }, traits: [{ ref: { name: 'Billable', parameters: { minorUnits: 1000 } }, definition: {} }] } as unknown as ComposedObject;
+    const composed = { object: { name: 'Test' }, semantics: {}, traits: [{ ref: { name: 'Billable', parameters: { minorUnits: 1000 } }, definition: {} }] } as unknown as ComposedObject;
     reconcileFormDetail(schema, 'detail', composed);
     const once = structuredClone(schema);
     expect(walk(schema.screens).filter(node => node.component === 'Input')).toEqual([]);

@@ -1,3 +1,5 @@
+import { recordKeyField } from '../objects/record-identity.js';
+import { loadObject } from '../objects/object-loader.js';
 import type { UiElement, UiSchema } from '../schemas/generated.js';
 import type { ComposedObject } from '../objects/trait-composer.js';
 import { fieldLabel, fieldHelp } from './label-generator.js';
@@ -51,6 +53,8 @@ const boundFields = (props: Record<string, unknown> | undefined): string[] => Ob
 export function reconcileFormDetail(schema: UiSchema, context: string, composed: ComposedObject, tabLabels?: string[], readTab = 'Details', viewState: ReadonlySet<string> = new Set()): void {
   if (context === 'form') {
     const fields = schema.objectSchema ?? {};
+    let relationships: NonNullable<ReturnType<typeof loadObject>['relationships']> = [];
+    try { relationships = loadObject(composed.object.name).relationships ?? []; } catch { /* Inline composition has no registry entry. */ }
     const owned = new Set<string>();
     const fieldEditors = new Set<string>();
     // Keep the authored classification editor beside the scalar editor; repairing
@@ -58,6 +62,10 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
     for (const screen of schema.screens) walk(screen, parent => {
       parent.children = parent.children?.flatMap(node => {
         const field = node.props?.field;
+        // A fallback header with no record binding says only Details. Let the shell name this form.
+        if (/^form-title-/.test(node.id) && node.meta?.intent === 'slot:title' && node.component === 'DetailHeader'
+          && !node.props?.titleField && !node.props?.title && !node.children?.length
+          && !(typeof field === 'string' && fields[field])) return [];
         // An unfilled Text title can acquire an arbitrary scalar during field wiring (Plan's heading became "0").
         // Let the screen shell name the form; keep authored headings and real editors intact.
         if (/^form-title-/.test(node.id) && node.meta?.intent === 'slot:title' && node.component === 'Text'
@@ -98,6 +106,7 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
       && !isInternalField(name, fields) && !isUnavailableField(name, fields));
     const fieldStack = schema.screens.map(screen => findNode(screen, node => /^form-fields-/.test(node.id))).find(Boolean);
     if (fieldStack) for (const [name, entry] of missing) {
+      fieldEditors.add(name);
       const type = entry.type.replace(/\?$/, '');
       const component = entry.enum?.length ? 'Select' : type === 'boolean' ? 'Checkbox' : 'Input';
       fieldStack.children ??= [];
@@ -137,9 +146,21 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
         const requested = composed.semantics?.[field as string]?.ui_hints?.component;
         if (typeof requested === 'string' && Object.hasOwn(requestedControls, requested) && fieldControls.has(node.component) && requestedControls[requested]!(type, entry)) node.component = requested;
         // A Labelled object's `label` is its display name; the form calls it that.
-        const defaultLabel = field === 'label' && !fields.name && !fields.title && !fields.display_name ? 'Name' : fieldLabel(field as string);
+        const declaredLabel = composed.semantics?.[field as string]?.ui_hints?.label;
+        const defaultLabel = typeof declaredLabel === 'string' ? declaredLabel : field === 'label' && !fields.name && !fields.title && !fields.display_name ? 'Name' : fieldLabel(field as string);
         // s223-m02: the description is help only where the control's contract has help (a SegmentedControl has none).
-        node.props = { ...node.props, label: node.props?.label === entry.description || !node.props?.label || node.props.label === fieldLabel(field as string) ? defaultLabel : node.props.label, ...(entry.description && contractHas(node.component, 'help') ? { help: fieldHelp(field as string, entry.description) } : {}) };
+        node.props = { ...node.props, label: node.props?.label === entry.description || !node.props?.label || node.props.label === field || node.props.label === fieldLabel(field as string) ? defaultLabel : node.props.label, ...(entry.description && contractHas(node.component, 'help') ? { help: fieldHelp(field as string, entry.description) } : {}) };
+        const relationship = relationships.find(edge => edge.via === field);
+        if (relationship && !type.endsWith('[]')) {
+          const target = loadObject(relationship.target);
+          const keys = Object.keys(target.schema);
+          const id = recordKeyField(target)!;
+          const title = keys.find(key => target.semantics[key]?.semantic_type === 'text.label') ?? keys.find(key => /^(name|title|label)$/.test(key)) ?? id;
+          const options = (target.samples ?? []).filter(row => row[id] !== undefined).map(row => ({ value: String(row[id]), label: String(row[title] ?? row[id]) }));
+          node.component = 'Select';
+          node.props = { field, label: typeof declaredLabel === 'string' ? declaredLabel : relationship.label && relationship.label !== field ? fieldLabel(relationship.label) : defaultLabel, options, ...(entry.description ? { help: entry.description } : {}) };
+          node.bindings = { onChange: `handleChange_${field}` };
+        }
         if (entry.type.replace(/\?$/, '') === 'datetime' && ['Input', 'DatePicker'].includes(node.component)) {
           node.component = 'Input'; node.props.type = 'datetime-local';
         }
@@ -189,12 +210,12 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
   const fieldRow = (name: string, id: string): UiElement => {
     // s213-m03 (finding 7): an amount is money, and in minor units, only as its semantics declare (populateObjectSchema);
     // a declared major-unit amount shows through PriceBadge, which formats major units, never divided by 100.
-    const money = fields[name]?.money?.currencyField && /^(?:integer|number)$/.test(fields[name]?.type ?? '') ? fields[name]!.money! : undefined;
+    const money = fields[name]?.money?.currencyField && /^(?:integer|number)\??$/.test(fields[name]?.type ?? '') ? fields[name]!.money! : undefined;
     const value: UiElement = !money ? { id: `${id}-value`, meta: { intent: 'read-only-field' }, component: 'Text', props: { field: name } }
       : money.minorUnits ? { id: `${id}-value`, meta: { intent: 'read-only-field' }, component: 'BillingSummaryBadge', props: { amountField: name, currencyField: money.currencyField, minorUnits: money.minorUnits, showInterval: false } }
         : { id: `${id}-value`, meta: { intent: 'read-only-field' }, component: 'PriceBadge', props: { amountField: name, currencyField: money.currencyField } };
     return { id: `${id}-read-field`, component: 'Stack', children: [
-      { id: `${id}-label`, component: 'Text', props: { as: 'strong', content: fieldLabel(name.replace(/_minor$/, '').replace(/_id$/, '')) } },
+      { id: `${id}-label`, component: 'Text', props: { as: 'strong', content: composed.semantics[name]?.ui_hints?.label ?? fieldLabel(name.replace(/_minor$/, '').replace(/_id$/, '')) } },
       value,
     ] };
   };
@@ -206,6 +227,7 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
   for (const screen of schema.screens) {
     // The record's own identifiers are available in Reference details, not presented as unresolved relationships.
     const covered = new Set([identifier, 'id'].filter((name): name is string => Boolean(name && fields[name]?.type === 'uuid')));
+    for (const [name, field] of Object.entries(fields)) if (field.semanticType === 'identifier.primary' && /^uuid\??$/.test(field.type)) covered.add(name);
     // A resolved reference already displays its declared name; do not repeat the name as a second field.
     for (const field of Object.values(fields)) if (field.displayLabelField) covered.add(field.displayLabelField);
     walk(screen, node => {

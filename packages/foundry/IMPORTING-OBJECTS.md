@@ -4,9 +4,9 @@
 
 ## Files in
 
-Supported inputs are JSON or YAML files containing OpenAPI/Swagger 2.0, OpenAPI 3.0–3.2, JSON Schema draft-07 or 2020-12, or the [OODS hub](object-hub.schema.json). Pass one local file, a folder of JSON/YAML files, or inline content up to 1 MiB. Files have a combined limit of 128 MiB, checked before reading. Folder entries are processed in deterministic order.
+Supported inputs are OpenAPI/Swagger 2.0, OpenAPI 3.0–3.2, JSON Schema draft-07 or 2020-12, Postgres DDL and migrations, Prisma schemas, dbt manifests/projects, OData CSDL XML/JSON, GraphQL SDL/introspection, or the [OODS hub](object-hub.schema.json). Pass one local file, a schema folder, or inline content up to 1 MiB. `source.format` can select `openapi`, `json-schema`, `sql`, `prisma`, `dbt`, `odata` or `graphql`; otherwise the document and extension select the reader. Files have a combined limit of 128 MiB, checked before reading. Folder entries are processed in deterministic order.
 
-OODS Foundry does not fetch a URL, connect to an API/database, import a module, or run your code. Local JSON Pointer `$ref`s and relative file references are supported within the source folder. References that escape it, including through symlinks, are refused with the source file and pointer. Named anchors are refused explicitly. Download remote specs yourself before importing them.
+OODS Foundry does not fetch a URL, connect to an API/database, import a module, or run your code. Local JSON Pointer `$ref`s and relative file references are supported within the source folder. References that escape it, including through symlinks, are refused with the source file and pointer. Unreachable network and absolute references, missing local files and named anchors are reported at their file/pointer and skipped; nothing is fetched. Download remote specs yourself before importing them.
 
 ```json
 {"action":"draft","source":{"path":"/path/to/openapi.json"}}
@@ -14,7 +14,7 @@ OODS Foundry does not fetch a URL, connect to an API/database, import a module, 
 
 The response gives an `importId`, counts, object names in dependency order, shipped-name clashes, proposal grades, and a diff-file path. Large listings are explicitly truncated in the response; `order.json` has the complete order and cycles. Nothing is registered at this step.
 
-The complete bundle is in `~/.oods-foundry/imports/<importId>/`, beside your objects and traits, outside the package install. A portable installation may set `OODS_FOUNDRY_HOME` before starting the server. `objects/` holds the draft YAML, `hub.json` the normalized schemas, `report.json` every outcome, and `diff.json` the comparison with currently registered definitions. `import.json` is content-addressed; editing it invalidates the import. To hand-edit a draft, use `object_registry` to validate and register that YAML.
+The complete bundle is in `~/.oods-foundry/imports/<importId>/`, beside your objects and traits, outside the package install. A portable installation may set `OODS_FOUNDRY_HOME` before starting the server. `objects/` holds the draft YAML, `hub.json` the normalized schemas, `report.json` every outcome, and `diff.json` the comparison with currently registered definitions. `import.json` is content-addressed and binds the hashes of its separately streamed hub and report; editing any of them invalidates the import. To hand-edit a draft, use `object_registry` to validate and register that YAML.
 
 ## Review and accept
 
@@ -22,7 +22,7 @@ The complete bundle is in `~/.oods-foundry/imports/<importId>/`, beside your obj
 {"action":"show","importId":"<from draft>","object":"YourObject"}
 ```
 
-`show` returns one draft's YAML, proposals with evidence and grades, unmapped elements, and the re-import comparison. A re-import reports added, removed and changed fields, trait and relationship changes, and potentially affected list/detail/form screens. It compares the unaccepted base draft with your effective registered definition, including previously accepted traits; review those differences before overwriting.
+`show` returns one draft's YAML, proposals with evidence and grades, unmapped elements, and the re-import comparison. A re-import reports added, removed and changed fields, trait and relationship changes, and potentially affected list/detail/form/timeline screens. It compares the unaccepted base draft with your effective registered definition, with previously accepted trait contributions listed separately as `traitFields`, rather than false removals; review those differences before overwriting.
 
 A name alone is weak evidence and never raises a proposal's grade. Types, enums, formats and read-only declarations provide structural evidence. Trait parameter schemas validate every proposal; an invalid proposal is shown with errors and cannot be accepted. Proposals add a trait's canonical fields and views, so check that its fields express your model. Nothing is silently applied.
 
@@ -30,7 +30,7 @@ A name alone is weak evidence and never raises a proposal's grade. Types, enums,
 {"action":"apply","importId":"<from draft>","objects":[{"name":"YourObject","proposals":["<accepted proposal id>"]}]}
 ```
 
-Omit `proposals` to accept an object with no traits. Accept dependencies in the same call unless they are already registered. The batch validates all definitions, writes them in dependency order, and composes list, detail and form transiently. Cyclic relationships are retained: all files exist before composition. A write or composition failure restores previous files byte for byte and removes newly created files. A filesystem lock excludes concurrent registration/import writes; this is rollback on operation failure, not a crash-recovery database transaction.
+Omit `proposals` to accept an object with no traits. Accept dependencies in the same call unless they are already registered. The batch validates all definitions, writes them in dependency order, and composes each supported context transiently, including timeline where declared or contributed by an accepted lifecycle/history trait. Read-only sources omit form. Cyclic relationships are retained: all files exist before composition. A write or composition failure restores previous files byte for byte and removes newly created files. A filesystem lock excludes concurrent registration/import writes; this is rollback on operation failure, not a crash-recovery database transaction.
 
 `overwrite: true` permits replacing your existing objects. A shipped-name replacement additionally requires that exact name in `confirmShipped`, for example `"confirmShipped":["User"]`. Reviewing one shipped replacement does not authorize another.
 
@@ -61,4 +61,26 @@ Run the export in your own trusted project, save the resulting JSON, then give o
 
 Converters cannot represent every transformation, refinement or runtime behavior as JSON Schema. Review their export diagnostics and the import report. OODS Foundry's accepted YAML stays the canonical object definition; another discovery tool can produce the documented hub without access to OODS Foundry internals.
 
-Broken local JSON Pointers are preserved as `x-oods-unresolved-ref` with an unmapped link and source location; they never become invented relationships. Network, outside-folder, and named-anchor references are refused. Traversal is bounded to 160 nesting levels and ten million values, including YAML alias expansion.
+Broken local JSON Pointers are preserved as `x-oods-unresolved-ref` with an unmapped link and source location; they never become invented relationships. Network and named-anchor references are reported and skipped. Outside-folder and escaping-symlink references refuse the whole import before an outside read. Traversal is bounded to 160 nesting levels and ten million values, including YAML alias expansion.
+
+Imported records use declared titles or natural keys, then identifiers. Samples are deterministic and checked against enum, pattern, format and bounds; unsatisfiable sample constraints are reported. Field help comes only from source descriptions. Date-only values display without a time. Declared relationships use related sample records in form pickers; applications supply their live choices.
+
+## Postgres DDL and migrations
+
+Pass a `.sql` file or migration folder, or `source.format: "sql"` with inline SQL. The reader parses schema declarations and replays them in memory; it never connects to a database or executes SQL. It reads columns/types, NOT NULL, literal defaults, enum types, primary/unique keys, scalar foreign keys, comments, literal CHECK comparisons/IN lists, and direct-column view projections. `now()` supplies timestamp evidence without evaluation. Views are read-only. Composite foreign keys, complex view expressions, procedural SQL and unsupported syntax are individually reported.
+
+Prisma migration timestamp folders, Flyway numeric versions, golang-migrate `.up.sql` files and Rails `structure.sql` work as files. Drizzle follows `meta/_journal.json`; unlisted SQL and down/undo migrations are reported and skipped. ALTER, DROP and RENAME update the replayed schema. Postgres is the supported dialect; MySQL and SQL Server dialect support remains later work, with unsupported statements reported rather than guessed.
+
+## Prisma and dbt
+
+Pass `format: "prisma"` with a `.prisma` file or a schema folder. Models, enums, native types, keys, literal defaults and documentation are projected. Relation navigation uses its declared foreign key when available. Generated defaults and `@updatedAt` are read-only; source table/column mappings remain in the hub. Generators and datasource declarations are never executed.
+
+Pass `format: "dbt"` with a manifest or a project properties folder. A compiled manifest is authoritative when supplied. YAML models, sources, snapshots, column tests, constraints and semantic declarations provide fields and relationships; both standalone semantic models and embedded column entities/dimensions with simple metrics are supported. All dbt objects are read-only. Snapshots include history and offer Supersedable. Jinja, SQL expressions, custom tests and dynamic descriptions are reported without execution. Missing types stay unmapped; a familiar column name does not supply a type.
+
+## OData and GraphQL
+
+OData accepts CSDL JSON or XML/EDMX (`format: "odata"`). Entity/complex types, enums, keys, inheritance and navigation references become hub schemas. Draft names use local type names with deterministic collision suffixes; full service names stay in provenance. Scalar navigation uses its declared foreign key in one editor, including v2 association constraints. HeaderInfo names records, LineItem supplies `metadata.listColumns`, FieldGroup/Facets group details, Common labels/text/value lists shape fields and pickers, ISO currency pairs supply money semantics, literal units label values, and capability restrictions remove forms when inserts and updates are prohibited. Nullable display text is supported. Dynamic units, unresolved translation tokens and unsupported vocabulary expressions stay preserved and reported. XML refuses DTD/entity declarations; vocabulary URLs are never fetched. XML and JSON retain their respective nullability defaults.
+
+GraphQL accepts SDL (`.graphql`/`.gql`) or introspection JSON (`format: "graphql"`). Objects and input objects draft separately. Enums, nullability, lists, descriptions and deprecation metadata are retained; interfaces and unions remain alternatives, not merged records. Object fields become relationships. Operation roots and resolvers are not run. Custom scalar names do not supply types: only explicitly supported `@specifiedBy` URLs provide format evidence. Duplicate field declarations are reported and the first stays in effect.
+
+Hand-written objects can use `metadata.listColumns: [{field: name, label: Name}, {field: total}]` to select and order fields in list rows. Every column must name a composed field. Source annotation support uses the same object contract.

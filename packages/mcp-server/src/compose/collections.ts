@@ -1,4 +1,5 @@
 import type { FieldSchemaEntry, UiElement, UiSchema } from '../schemas/generated.js';
+import { fieldLabel } from './label-generator.js';
 import { enumOptionLabel } from './internal-fields.js';
 import { recordNameField, recordSummaryField } from './record-label.js';
 
@@ -62,7 +63,7 @@ export function populateListStates(schema: UiSchema): void {
 }
 
 /** Collection data belongs to the screen; objectSchema still describes one record. */
-export function populateCollections(schema: UiSchema, context: string, objectName: string, searchPlaceholder?: string): void {
+export function populateCollections(schema: UiSchema, context: string, objectName: string, searchPlaceholder?: string, listColumns?: Array<{ field: string; label?: string }>): void {
   if (!schema.objectSchema || !['list', 'timeline', 'inline'].includes(context)) return;
   const fields = schema.objectSchema;
   const keyField = Object.keys(fields).find(name => name === 'id')
@@ -112,6 +113,15 @@ export function populateCollections(schema: UiSchema, context: string, objectNam
           && !(labelField !== 'label' && node.props?.field === 'label')),
         ...(billing && !rowNodes.includes(billing) ? [billing] : []),
       ];
+      if (listColumns?.length) {
+        const columns = listColumns.filter(column => fields[column.field]);
+        if (columns.length) content.splice(0, content.length, ...columns.map((column, index): UiElement => ({
+          id: `${items.id}-column-${index}`, component: 'Stack', children: [
+            { id: `${items.id}-column-${index}-label`, component: 'Text', props: { text: column.label ?? fieldLabel(column.field), size: 'sm' } },
+            fields[column.field]?.money?.currencyField ? { id: `${items.id}-column-${index}-value`, component: fields[column.field].money?.minorUnits ? 'BillingSummaryBadge' : 'PriceBadge', props: { amountField: column.field, currencyField: fields[column.field].money?.currencyField, ...(fields[column.field].money?.minorUnits ? { minorUnits: fields[column.field].money?.minorUnits, showInterval: false } : {}) } } : { id: `${items.id}-column-${index}-value`, component: 'Text', props: { field: column.field } },
+          ],
+        })));
+      }
       for (const node of content) {
         if (['RelativeTimestamp', 'StatusBadge'].includes(node.component) && node.props) delete node.props.label;
         if (node.component === 'StatusBadge' && typeof node.props?.field === 'string') { node.props.statusField = node.props.field; delete node.props.field; }

@@ -78,7 +78,7 @@ export async function runFirstChange({ client, packageRoot, workDir, out, enviro
       const result = await client.callTool(step.tool, input);
       calls.push({ id: step.id, tool: step.tool, input, startedAt: new Date(started).toISOString(), durationMs: Date.now() - started });
       results[step.id] = result; write(`${step.id}.output.json`, result);
-      if (step.tool === 'object') assert.equal(result.status, input.overwrite ? 'updated' : 'created', JSON.stringify(result));
+      if (['object', 'object_registry'].includes(step.tool)) assert.equal(result.status, input.overwrite ? 'updated' : 'created', JSON.stringify(result));
       else assert.equal(result.status, 'ok', JSON.stringify(result));
       const screenVersion = /^(.*)-v([123])$/.exec(step.id);
       if (step.tool === 'design_compose' && screenVersion) {
@@ -181,7 +181,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   await registerPreviewHost(server, { compositionsDir: resolveCompositionsDir(), runtimeDir: path.join(root, 'packages/mcp-bridge/dist/preview-runtime') });
   await server.listen({ port: 0, host: '127.0.0.1' });
   const host = `http://127.0.0.1:${server.server.address().port}`;
-  const client = { callTool: async (name: string, input: any) => name === 'object' ? object(input) : name === 'design_compose' ? compose(input) : preview(input, { previewHostUrl: host }) };
+  const client = { callTool: async (name: string, input: any) => ['object', 'object_registry'].includes(name) ? object(input) : name === 'design_compose' ? compose(input) : preview(input, { previewHostUrl: host }) };
   const browser = await chromium.launch({ headless: true });
   try {
     const run = await runFirstChange({ client, packageRoot: path.join(root, 'packages/foundry'), workDir, out, environment });

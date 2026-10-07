@@ -96,6 +96,13 @@
             "type": "string",
             "minLength": 1
           }
+        },
+        "proposalTraits": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
         }
       },
       "additionalProperties": false
@@ -183,7 +190,8 @@
                   "enum": [
                     "list",
                     "detail",
-                    "form"
+                    "form",
+                    "timeline"
                   ]
                 }
               }

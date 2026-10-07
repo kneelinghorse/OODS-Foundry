@@ -23,6 +23,7 @@ export function objectLabel(object: string): string {
 
 /** The plural the workflow app also uses for its list heading, with the common English endings. */
 export function pluralLabel(label: string): string {
+  if (/s$/i.test(label) && !/(?:ss|us)$/i.test(label)) return label;
   if (/(?:s|x|z|ch|sh)$/i.test(label)) return `${label}es`;
   if (/[^aeiou]y$/i.test(label)) return `${label.slice(0, -1)}ies`;
   return `${label}s`;

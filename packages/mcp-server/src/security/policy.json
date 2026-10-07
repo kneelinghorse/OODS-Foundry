@@ -272,7 +272,7 @@
     },
     {
       "tool": "object.import",
-      "description": "Draft objects from local OpenAPI or JSON Schema files. Use it when importing a schema you already have; use object_registry for hand-written object/trait YAML. Returns an importId, staged drafts/report, counts and a re-import diff. action=draft uses source.path or source.content without registering; show uses importId and object for YAML, graded proposals and unmapped elements; apply uses importId and explicit objects with accepted proposal ids. The batch validates and composes with rollback. overwrite replaces team objects; confirmShipped names each approved shipped replacement. No network references or code execution. Reference: TOOL-REFERENCE.md#object_import; full schema: oods://schemas/object_import.input.json.",
+      "description": "Draft objects from local OpenAPI, JSON Schema, Postgres DDL/migrations, Prisma, dbt, OData or GraphQL files. Use it when importing a schema you already have; use object_registry for hand-written object/trait YAML. Returns an importId, staged drafts/report, counts and a re-import diff. action=draft uses source.path or source.content without registering; show uses importId and object for YAML, graded proposals and unmapped elements; apply uses importId and explicit objects with accepted proposal ids. The batch validates and composes with rollback. overwrite replaces team objects; confirmShipped names each approved shipped replacement. Unreachable references are reported and skipped; no network fetch or code execution. Reference: TOOL-REFERENCE.md#object_import; full schema: oods://schemas/object_import.input.json.",
       "allow": [
         "designer",
         "maintainer"

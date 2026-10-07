@@ -3,8 +3,9 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { dump } from 'js-yaml';
+import { writeCanonical, hashStagedFile } from '../importer/staging-json.js';
 import { draftSource, type Draft, type ImportResult } from '../importer/draft.js';
-import { canonical, hash, ImportProblem, type SourceInput } from '../importer/source.js';
+import { canonical, ImportProblem, type SourceInput } from '../importer/source.js';
 import { listObjects, loadObject, objectEntry, userObjectsFolder } from '../objects/object-loader.js';
 import { composeObject } from '../objects/trait-composer.js';
 import { withDefinitionWrite } from '../objects/definition-write.js';
@@ -18,7 +19,7 @@ export type ObjectImportInput =
   | { action: 'draft'; source: SourceInput }
   | { action: 'show'; importId: string; object: string }
   | { action: 'apply'; importId: string; objects: Array<{ name: string; proposals?: string[] }>; overwrite?: boolean; confirmShipped?: string[] };
-export type ImportDiff = { name: string; status: 'new' | 'changed' | 'unchanged'; fields: { added: string[]; removed: string[]; changed: string[] }; screens: string[]; traitsChanged: boolean; relationshipsChanged: boolean };
+export type ImportDiff = { name: string; status: 'new' | 'changed' | 'unchanged'; fields: { added: string[]; removed: string[]; changed: string[] }; screens: string[]; traitsChanged: boolean; relationshipsChanged: boolean; traitFields?: string[] };
 const contexts = ['list', 'detail', 'form'] as const;
 
 function stagingRoot(): string {
@@ -30,57 +31,60 @@ function stagedPath(importId: string): string {
   return path.join(stagingRoot(), importId);
 }
 function stage(result: ImportResult): { importId: string; directory: string } {
-  const bytes = canonical(result);
-  const importId = `import-${hash(bytes)}`;
-  const directory = stagedPath(importId);
   fs.mkdirSync(stagingRoot(), { recursive: true, mode: 0o700 });
-  if (fs.existsSync(directory)) {
-    if (fs.lstatSync(directory).isSymbolicLink() || hash(fs.readFileSync(path.join(directory, 'import.json'))) !== importId.slice(7)) throw new ToolError('OODS-V220', 'Existing staging content failed its hash check; draft into a clean Foundry home.');
-    return { importId, directory };
-  }
   const partial = fs.mkdtempSync(path.join(stagingRoot(), '.partial-'));
   try {
     fs.mkdirSync(path.join(partial, 'objects'));
     for (const draft of result.drafts) fs.writeFileSync(path.join(partial, 'objects', `${draft.name}.object.yaml`), draft.yaml, { mode: 0o600 });
-    fs.writeFileSync(path.join(partial, 'hub.json'), canonical(result.hub), { mode: 0o600 });
-    fs.writeFileSync(path.join(partial, 'report.json'), canonical({ counts: result.counts, elements: result.report }), { mode: 0o600 });
+    const files = {
+      hub: writeCanonical(path.join(partial, 'hub.json'), result.hub),
+      report: writeCanonical(path.join(partial, 'report.json'), { counts: result.counts, elements: result.report }),
+    };
     fs.writeFileSync(path.join(partial, 'order.json'), canonical({ objects: result.drafts.map(draft => draft.name), cycles: result.cycles }), { mode: 0o600 });
-    fs.writeFileSync(path.join(partial, 'import.json'), bytes, { mode: 0o600 });
-    fs.renameSync(partial, directory);
+    const digest = writeCanonical(path.join(partial, 'import.json'), { storageVersion: 2, files, contentHash: result.contentHash, counts: result.counts, cycles: result.cycles, drafts: result.drafts });
+    const importId = `import-${digest}`, directory = stagedPath(importId);
+    if (fs.existsSync(directory)) {
+      if (fs.lstatSync(directory).isSymbolicLink() || hashStagedFile(path.join(directory, 'import.json')) !== digest
+        || hashStagedFile(path.join(directory, 'hub.json')) !== files.hub || hashStagedFile(path.join(directory, 'report.json')) !== files.report) throw new ToolError('OODS-V220', 'Existing staging content failed its hash check; draft into a clean Foundry home.');
+    } else fs.renameSync(partial, directory);
+    return { importId, directory };
   } finally { fs.rmSync(partial, { recursive: true, force: true }); }
-  return { importId, directory };
 }
-function read(importId: string): ImportResult {
+function read(importId: string, includeReport = false): Pick<ImportResult, 'drafts' | 'report'> {
   const directory = stagedPath(importId);
   try {
     if (fs.lstatSync(directory).isSymbolicLink()) throw new Error('staging folder is a symbolic link');
     const file = path.join(directory, 'import.json');
-    if (fs.lstatSync(file).isSymbolicLink()) throw new Error('staged content is a symbolic link');
-    const bytes = fs.readFileSync(file);
-    if (hash(bytes) !== importId.slice(7)) throw new Error('content hash mismatch');
-    return JSON.parse(bytes.toString('utf8'));
+    if (hashStagedFile(file) !== importId.slice(7)) throw new Error('content hash mismatch');
+    const imported = JSON.parse(fs.readFileSync(file, 'utf8'));
+    if (imported.storageVersion === 2) {
+      for (const name of ['hub', 'report']) if (hashStagedFile(path.join(directory, `${name}.json`)) !== imported.files[name]) throw new Error(`${name} content hash mismatch`);
+      imported.report = includeReport ? JSON.parse(fs.readFileSync(path.join(directory, 'report.json'), 'utf8')).elements : [];
+    }
+    return imported;
   } catch (error) { throw new ToolError('OODS-V220', `Cannot read staged import ${importId}: ${(error as Error).message}. Run draft again.`); }
 }
 
 /** Differences describe the unaccepted base draft against the effective registered object, including accepted traits. */
 export function diffDraft(draft: Draft): ImportDiff {
   const existing = objectEntry(draft.name);
-  if (!existing) return { name: draft.name, status: 'new', fields: { added: Object.keys(draft.definition.schema).sort(), removed: [], changed: [] }, screens: [...contexts], traitsChanged: false, relationshipsChanged: !!draft.dependencies.length };
+  if (!existing) return { name: draft.name, status: 'new', fields: { added: Object.keys(draft.definition.schema).sort(), removed: [], changed: [] }, screens: [...(draft.definition.metadata.supportedContexts ?? contexts)], traitsChanged: false, relationshipsChanged: !!draft.dependencies.length };
   const prior = loadObject(draft.name), before = composeObject(prior), after = composeObject(draft.definition);
   const oldFields = before.schema, newFields = after.schema;
+  const traitFields = Object.keys(oldFields).filter(field => !Object.hasOwn(prior.schema, field) && !Object.hasOwn(newFields, field)).sort();
   const fields = {
     added: Object.keys(newFields).filter(field => !Object.hasOwn(oldFields, field)).sort(),
-    removed: Object.keys(oldFields).filter(field => !Object.hasOwn(newFields, field)).sort(),
+    removed: Object.keys(oldFields).filter(field => !Object.hasOwn(newFields, field) && !traitFields.includes(field)).sort(),
     changed: Object.keys(newFields).filter(field => Object.hasOwn(oldFields, field) && canonical([oldFields[field], before.semantics[field]]) !== canonical([newFields[field], after.semantics[field]])).sort(),
   };
   const traitsChanged = canonical(prior.traits) !== canonical(draft.definition.traits);
   const relationshipsChanged = canonical(prior.relationships ?? []) !== canonical(draft.definition.relationships ?? []);
   const metadataChanged = canonical([prior.object, prior.metadata, prior.samples, prior.tokens]) !== canonical([draft.definition.object, draft.definition.metadata, draft.definition.samples, draft.definition.tokens]);
   const changed = traitsChanged || relationshipsChanged || metadataChanged || Object.values(fields).some(list => list.length);
-  return { name: draft.name, status: changed ? 'changed' : 'unchanged', fields, screens: changed ? [...contexts] : [], traitsChanged, relationshipsChanged };
+  return { name: draft.name, status: changed ? 'changed' : 'unchanged', fields, screens: changed ? [...new Set([...(prior.metadata.supportedContexts ?? contexts), ...(draft.definition.metadata.supportedContexts ?? contexts)])] : [], traitsChanged, relationshipsChanged, traitFields };
 }
 
-async function apply(input: Extract<ObjectImportInput, { action: 'apply' }>, imported: ImportResult) {
+async function apply(input: Extract<ObjectImportInput, { action: 'apply' }>, imported: Pick<ImportResult, 'drafts' | 'report'>) {
   return withDefinitionWrite(async () => {
     reloadDefinitions();
     const folder = userObjectsFolder();
@@ -103,6 +107,7 @@ async function apply(input: Extract<ObjectImportInput, { action: 'apply' }>, imp
         if (definition.traits.some(trait => trait.name === proposal.trait.name)) throw new ToolError('OODS-V220', `Two accepted proposals configure ${proposal.trait.name} on ${draft.name}; choose one.`);
         definition.traits.push(proposal.trait);
       }
+      if (definition.traits.some(trait => ['Stateful', 'Supersedable', 'Auditable'].includes(trait.name.split('/').pop()!)) && !definition.metadata.supportedContexts?.includes('timeline')) definition.metadata.supportedContexts?.push('timeline');
       const yaml = dump(definition, { noRefs: true, sortKeys: true, lineWidth: 120 });
       const checked = validateDefinition(yaml, available);
       if (!checked.valid) throw new ToolError('OODS-V220', `${draft.name} was not applied: ${checked.errors.map(error => error.message).join(' ')}`, { errors: checked.errors });
@@ -125,11 +130,12 @@ async function apply(input: Extract<ObjectImportInput, { action: 'apply' }>, imp
       }
       reloadDefinitions();
       for (const write of writes) {
-        for (const context of contexts) {
+        const supported = loadObject(write.name).metadata.supportedContexts ?? [...contexts];
+        for (const context of supported as Array<'list' | 'detail' | 'form' | 'timeline'>) {
           const result = await compose({ object: write.name, context, options: { transient: true } });
           if (result.status !== 'ok') throw new Error(`${write.name}/${context}: ${(result.errors ?? []).map(error => error.message).join('; ')}`);
         }
-        checks.push({ name: write.name, contexts: [...contexts] });
+        checks.push({ name: write.name, contexts: supported });
       }
     } catch (error) {
       const restoreErrors: string[] = [];
@@ -157,13 +163,13 @@ export async function handle(input: ObjectImportInput) {
         objects: result.drafts.slice(0, 80).map(draft => draft.name), objectsTruncated: result.drafts.length > 80,
         shippedClashes: result.drafts.filter(draft => { const entry = objectEntry(draft.name); return entry?.source === 'shipped' || !!entry?.replaces; }).map(draft => draft.name).slice(0, 30),
         diff: { new: diffs.filter(d => d.status === 'new').length, changed: diffs.filter(d => d.status === 'changed').length, unchanged: diffs.filter(d => d.status === 'unchanged').length, file: path.join(staged.directory, 'diff.json') },
-        proposalGrades: { strong: 0, medium: 0, weak: 0 }, cycleCount: result.cycles.length,
+        proposalTraits: {} as Record<string, number>, proposalGrades: { strong: 0, medium: 0, weak: 0 }, cycleCount: result.cycles.length,
         files: { hub: 'hub.json', report: 'report.json', order: 'order.json', objects: 'objects/' },
       };
-      for (const proposal of result.drafts.flatMap(draft => draft.proposals)) summary.proposalGrades[proposal.grade]++;
+      for (const proposal of result.drafts.flatMap(draft => draft.proposals)) { summary.proposalGrades[proposal.grade]++; summary.proposalTraits[proposal.trait.name] = (summary.proposalTraits[proposal.trait.name] ?? 0) + 1; }
       return summary;
     }
-    const imported = read(input.importId);
+    const imported = read(input.importId, input.action === 'show');
     if (input.action === 'show') {
       const draft = imported.drafts.find(d => d.name === input.object);
       if (!draft) throw new ToolError('OODS-N005', `${input.object} is not in this import.`);

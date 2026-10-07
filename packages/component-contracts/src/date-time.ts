@@ -1,12 +1,12 @@
 import { billingSummary, formatBillingAmount } from './billing.js';
 
 /** A stable display policy shared by generated screens, components, and SSR. */
-export function formatDateTime(value: string | number | Date | null | undefined, options: { locale?: string; timeZone?: string } = {}): string {
+export function formatDateTime(value: string | number | Date | null | undefined, options: { locale?: string; timeZone?: string; dateOnly?: boolean } = {}): string {
   if (value == null || value === '') return '';
   const date = new Date(value);
   if (!Number.isFinite(date.getTime())) return '';
   return new Intl.DateTimeFormat(options.locale ?? 'en-US', {
-    dateStyle: 'medium', timeStyle: 'short', timeZone: options.timeZone ?? 'UTC',
+    dateStyle: 'medium', ...(options.dateOnly ? {} : { timeStyle: 'short' as const }), timeZone: options.timeZone ?? 'UTC',
   }).format(date);
 }
 
@@ -57,7 +57,8 @@ export function formatDeclaredNumber(value: unknown, format: NumberDisplayFormat
 /** Format declared scalar display fields without changing the underlying record. */
 export function formatReadOnlyValue(value: unknown, type: string, code = false, format?: NumberDisplayFormat): string {
   if (value == null || value === '') return 'Not recorded';
-  if (type === 'date' || type === 'datetime') return formatDateTime(value as string | number | Date) || 'Invalid date';
+  type = type.replace(/\?$/, '');
+  if (type === 'date' || type === 'datetime') return formatDateTime(value as string | number | Date, { dateOnly: type === 'date' }) || 'Invalid date';
   if (typeof value === 'boolean') return value ? 'Yes' : 'No';
   if (format && !Array.isArray(value)) {
     const formatted = formatDeclaredNumber(value, format);
@@ -153,6 +154,6 @@ export function ownershipPhrase(ownerLabel?: unknown, ownerType?: unknown, role?
 }
 
 /** Keep authored record keys and the Transaction fallback; UUIDs belong in technical inspection. */
-export function formatRecordLabel(value: unknown): string {
-  return typeof value === 'string' && UUID_REFERENCE.test(value.trim()) ? 'Record name unavailable' : String(value ?? '');
+export function formatRecordLabel(value: unknown, readableIdentifier = false): string {
+  return typeof value === 'string' && UUID_REFERENCE.test(value.trim()) ? readableIdentifier ? `Record …${value.trim().slice(-8)}` : 'Record name unavailable' : String(value ?? '');
 }

@@ -11,16 +11,16 @@ export function canonical(value: unknown): string {
   return JSON.stringify(value, (_key, entry) => isMap(entry) ? Object.fromEntries(Object.keys(entry).sort().map(key => [key, entry[key]])) : entry);
 }
 export type Origin = { file: string; pointer: string };
-export type SourceInput = { path?: string; content?: string; name?: string };
+export type SourceInput = { path?: string; content?: string; name?: string; format?: 'openapi' | 'json-schema' | 'sql' | 'prisma' | 'dbt' | 'odata' | 'graphql' };
 export const MAX_SOURCE_BYTES = 128 * 1024 * 1024;
 const MAX_INLINE_BYTES = 1024 * 1024;
 const forbiddenPath = (value: string) => /^[a-z][a-z0-9+.-]*:/i.test(value) || value.startsWith('//') || value.includes('\\') || value.includes('\0');
 export class ImportProblem extends Error {
-  constructor(public readonly code: 'input' | 'reference' | 'unresolved' | 'size' | 'schema', message: string, public readonly origin?: Origin) {
+  constructor(public readonly code: 'input' | 'reference' | 'escape' | 'unresolved' | 'size' | 'schema', message: string, public readonly origin?: Origin) {
     super(`${origin ? `${origin.file}#${origin.pointer}: ` : ''}${message}`);
   }
 }
-export type Document = { file: string; value: MapValue; bytes: number; sha256: string };
+export type Document = { file: string; value: MapValue; bytes: number; sha256: string; text?: string };
 
 /** Files are read once, after containment and byte checks. There is no network resolver. */
 export class Sources {
@@ -28,13 +28,15 @@ export class Sources {
   readonly entries: string[];
   private readonly root: string | undefined;
   private bytes = 0;
+  readonly format: SourceInput['format'];
 
   constructor(input: SourceInput) {
+    this.format = input.format;
     if ((input.path === undefined) === (input.content === undefined)) throw new ImportProblem('input', 'Supply exactly one local path or inline content.');
     if (input.content !== undefined) {
       const bytes = Buffer.byteLength(input.content, 'utf8');
       if (bytes > MAX_INLINE_BYTES) throw new ImportProblem('size', 'Inline input exceeds 1 MiB; use a local file.');
-      const name = input.name ?? 'Inline';
+      const name = input.name ?? (input.format === 'sql' ? 'Inline.sql' : input.format === 'prisma' ? 'Inline.prisma' : input.format === 'graphql' && !input.content.trimStart().startsWith('{') ? 'Inline.graphql' : input.format === 'odata' && input.content.trimStart().startsWith('<') ? 'Inline.xml' : 'Inline');
       if (forbiddenPath(name) || path.basename(name) !== name) throw new ImportProblem('input', 'An inline name must be a file name, without a path or URL.');
       this.entries = [name];
       this.parse(name, input.content, bytes);
@@ -50,17 +52,21 @@ export class Sources {
           // Do not follow directory symlinks or import arbitrary team code.
           if (item.isSymbolicLink()) throw new ImportProblem('reference', 'Symbolic links in source folders are refused.', { file: path.relative(this.root!, candidate), pointer: '' });
           if (item.isDirectory()) scan(candidate);
-          else if (/\.(json|ya?ml)$/i.test(item.name)) files.push(path.relative(this.root!, candidate).split(path.sep).join('/'));
+          else if (/\.(json|ya?ml|sql|prisma|graphql|gql|xml|edmx)$/i.test(item.name)) files.push(path.relative(this.root!, candidate).split(path.sep).join('/'));
         }
       };
       if (directory) scan(file); else files.push(path.basename(file));
-      if (!files.length) throw new ImportProblem('input', 'The folder contains no JSON or YAML files.');
+      if (!files.length) throw new ImportProblem('input', 'The folder contains no supported schema files.');
       this.entries = files.sort();
       for (const name of this.entries) this.read(name);
     }
   }
 
   private parse(file: string, text: string, bytes: number): Document {
+    if (/\.(sql|prisma|graphql|gql|xml|edmx)$/i.test(file) || ['sql', 'prisma', 'graphql'].includes(this.format ?? '') && !text.trimStart().startsWith('{') || this.format === 'odata' && text.trimStart().startsWith('<')) {
+      const document = { file, value: {}, text, bytes, sha256: hash(text) };
+      this.documents.set(file, document); return document;
+    }
     let value: unknown;
     try { value = text.trimStart().startsWith('{') ? JSON.parse(text) : load(text, { schema: JSON_SCHEMA, json: false }); }
     catch (error) { throw new ImportProblem('input', `Invalid JSON/YAML: ${(error as Error).message}`, { file, pointer: '' }); }
@@ -77,12 +83,12 @@ export class Sources {
     if (forbiddenPath(file) || path.isAbsolute(file)) throw new ImportProblem('reference', 'Only relative references inside the source folder are accepted.', from);
     const candidate = path.resolve(this.root, file);
     const relative = path.relative(this.root, candidate);
-    if (relative === '..' || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) throw new ImportProblem('reference', 'Reference leaves the source folder.', from);
+    if (relative === '..' || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) throw new ImportProblem('escape', 'Reference leaves the source folder.', from);
     let real: string;
     try { real = fs.realpathSync(candidate); }
     catch { throw new ImportProblem('reference', `Referenced file does not exist: ${file}`, from); }
     const realRelative = path.relative(this.root, real);
-    if (realRelative === '..' || realRelative.startsWith(`..${path.sep}`) || path.isAbsolute(realRelative)) throw new ImportProblem('reference', 'Reference follows a symbolic link outside the source folder.', from);
+    if (realRelative === '..' || realRelative.startsWith(`..${path.sep}`) || path.isAbsolute(realRelative)) throw new ImportProblem('escape', 'Reference follows a symbolic link outside the source folder.', from);
     const stat = fs.statSync(real);
     if (!stat.isFile()) throw new ImportProblem('reference', 'Reference must name a regular file.', from);
     if (stat.size + this.bytes > MAX_SOURCE_BYTES) throw new ImportProblem('size', 'Source files exceed the 128 MiB aggregate limit (checked before reading).', from ?? { file, pointer: '' });

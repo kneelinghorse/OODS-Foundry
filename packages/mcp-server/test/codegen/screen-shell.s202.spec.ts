@@ -22,6 +22,9 @@ describe('the generated shell is a page: one main landmark and one level-one hea
     expect(pluralLabel('Subscription')).toBe('Subscriptions');
     expect(pluralLabel('Address')).toBe('Addresses');
     expect(pluralLabel('Policy')).toBe('Policies');
+    expect(pluralLabel('Customers')).toBe('Customers');
+    expect(pluralLabel('Orders')).toBe('Orders');
+    expect(pluralLabel('Status')).toBe('Statuses');
     expect(screenTitle('Subscription', 'list')).toBe('Subscriptions');
     expect(screenTitle('Subscription', 'form')).toBe('Subscription form');
     expect(screenTitle('Subscription', 'timeline')).toBe('Subscription timeline');

@@ -1161,7 +1161,8 @@ function headerRecipeFieldIssues(node: UiElement, schema: UiSchema): CodegenIssu
       `Field ${JSON.stringify(field)} referenced by ${node.component}.${prop} does not exist in objectSchema.`,
       node,
     )];
-    if (fieldValueKind(entry) !== 'string') return [issue(
+    const numericRecordTitle = prop === 'titleField' && entry.semanticType === 'text.label' && /^(integer|number)\??$/.test(entry.type);
+    if (fieldValueKind(entry) !== 'string' && !numericRecordTitle) return [issue(
       `Field ${JSON.stringify(field)} referenced by ${node.component}.${prop} must contain string data.`,
       node,
     )];

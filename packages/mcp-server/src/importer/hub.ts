@@ -1,3 +1,8 @@
+import { readOdata } from './readers/odata.js';
+import { readGraphql } from './readers/graphql.js';
+import { readPrisma } from './readers/prisma.js';
+import { readDbt } from './readers/dbt.js';
+import { readSql } from './readers/sql.js';
 import fs from 'node:fs';
 import Ajv2020Import from 'ajv/dist/2020.js';
 import { Sources, ImportProblem, canonical, escapePointer, hash, isMap, walk, type MapValue, type Origin, type SourceInput } from './source.js';
@@ -30,6 +35,16 @@ const schemaArrays = new Set(['allOf', 'oneOf', 'anyOf', 'prefixItems']);
 
 export function normalizeSource(input: SourceInput): Normalized {
   const sources = new Sources(input);
+  const documents = [...sources.documents.values()];
+  const format = input.format ?? (documents.some(doc => /\.(xml|edmx)$/i.test(doc.file) || doc.value.$Version) ? 'odata'
+    : documents.some(doc => /\.(graphql|gql)$/i.test(doc.file) || doc.value.__schema || doc.value.data?.__schema) ? 'graphql' : documents.some(doc => /\.prisma$/i.test(doc.file)) ? 'prisma'
+    : documents.some(doc => /(?:^|\/)dbt_project\.ya?ml$/.test(doc.file) || doc.value.metadata?.dbt_schema_version || Array.isArray(doc.value.models) || Array.isArray(doc.value.snapshots) || Array.isArray(doc.value.semantic_models)) ? 'dbt'
+      : documents.some(doc => /\.sql$/i.test(doc.file)) ? 'sql' : undefined);
+  const projection = format === 'odata' ? readOdata(documents) : format === 'graphql' ? readGraphql(documents) : format === 'sql' ? readSql(documents) : format === 'prisma' ? readPrisma(documents) : format === 'dbt' ? readDbt(documents) : undefined;
+  if (projection) {
+    for (const doc of sources.documents.values()) doc.value = {};
+    sources.documents.values().next().value!.value = projection.value;
+  }
   const schemas = new Map<string, { origin: Origin; value: MapValue; sourceName: string }>();
   const report = new Map<string, ReportEntry>();
   const addReport = (entry: ReportEntry) => { report.set(`${identity(entry)}:${entry.kind}`, entry); };
@@ -37,11 +52,11 @@ export function normalizeSource(input: SourceInput): Normalized {
     if (!isMap(value)) return;
     schemas.set(identity(origin), { origin, value, sourceName });
   };
-  // Broken local pointers in public specs are named in the report, never guessed. Security failures still abort.
+  // Unreachable references are named and skipped. Containment violations still abort before any read.
   const resolve = (reference: string, origin: Origin) => {
     try { return sources.ref(reference, origin); }
     catch (error) {
-      if (!(error instanceof ImportProblem) || error.code !== 'unresolved') throw error;
+      if (!(error instanceof ImportProblem) || !['unresolved', 'reference'].includes(error.code)) throw error;
       addReport({ ...origin, kind: 'link', outcome: 'unmapped', reason: error.message });
       return undefined;
     }
@@ -80,7 +95,7 @@ export function normalizeSource(input: SourceInput): Normalized {
       if (isApi && !['definitions', 'components', 'paths'].includes(key)) addReport({ file, pointer: `/${escapePointer(key)}`, kind: 'keyword', outcome: 'unmapped', reason: 'API metadata/transport configuration has no object projection; source subtree retained in the input.' });
     }
   }
-  if (!schemas.size) throw new ImportProblem('schema', 'No named or root schemas were found.');
+  if (!schemas.size && !projection) throw new ImportProblem('schema', 'No named or root schemas were found.');
 
   // Find references and nested named definitions in schema positions, not inside examples or arbitrary annotations.
   const discover = (schema: unknown, origin: Origin) => {
@@ -104,7 +119,8 @@ export function normalizeSource(input: SourceInput): Normalized {
   const names = new Map<string, string>();
   const used = new Set<string>();
   for (const [key, schema] of [...schemas.entries()].sort(([a], [b]) => a < b ? -1 : 1)) {
-    const base = pascalName(schema.sourceName);
+    // CSDL namespaces identify a service, not a user-facing object. Full identity stays in sourceNames and references.
+    const base = pascalName(format === 'odata' ? schema.sourceName.split('.').pop()! : schema.sourceName);
     let name = base;
     if (used.has(name)) name += hash(key).slice(0, 10);
     used.add(name); names.set(key, name);
@@ -162,6 +178,11 @@ export function normalizeSource(input: SourceInput): Normalized {
         entry.reason = 'Boolean exclusive bound upgraded to the 2020-12 numeric bound.';
       } else if ((key === 'minimum' && value.exclusiveMinimum === true) || (key === 'maximum' && value.exclusiveMaximum === true) || (key === 'additionalItems' && Array.isArray(value.items))) continue;
       else Object.defineProperty(result, key, { value: copy(child, at, dest), enumerable: true, writable: true, configurable: true });
+      if (['minimum', 'maximum', 'exclusiveMinimum', 'exclusiveMaximum', 'multipleOf'].includes(key) && typeof result[key] === 'string') {
+        if (/^-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$/.test(result[key]) && Number.isFinite(Number(result[key]))) {
+          result[key] = Number(result[key]); entry.reason = 'Numeric string bound normalized to a JSON Schema number; original location retained.';
+        } else { delete result[key]; result[`x-oods-invalid-${key}`] = child; entry.reason = 'Invalid numeric bound preserved as source annotation and omitted from executable validation.'; }
+      }
       if (key === 'enum' && Array.isArray(child)) child.forEach((_item, i) => addReport({ file: at.file, pointer: `${at.pointer}/${i}`, object: owner, kind: 'enum', outcome: 'unmapped', reason: 'Enum member retained; field projection determines whether it is used.' }));
       addReport(entry);
     }
@@ -179,9 +200,27 @@ export function normalizeSource(input: SourceInput): Normalized {
     hub['x-oods'].sourceNames[name] = schema.sourceName;
     addReport({ ...schema.origin, object: name, kind: 'schema', outcome: 'unmapped', reason: 'Schema retained in the hub; draft projection pending.' });
   }
+  for (const schema of Object.values(hub.$defs)) for (const edge of schema['x-oods']?.relationships ?? []) {
+    edge.target = Object.keys(hub['x-oods'].sourceNames).find(name => hub['x-oods'].sourceNames[name] === edge.target) ?? edge.target;
+  }
   for (const name of Object.keys(hub.$defs)) walk(hub.$defs[name], (_value, pointer) => {
     if (!provenance[pointer]) provenance[pointer] = provenance[pointer.slice(0, pointer.lastIndexOf('/'))] ?? provenance[`/$defs/${name}`];
   }, `/$defs/${name}`);
+  if (projection) {
+    const remap = (origin: Origin): Origin => {
+      let pointer = origin.pointer;
+      while (pointer) {
+        const match = projection.origins[pointer];
+        if (match) return { file: match.file, pointer: match.pointer + origin.pointer.slice(pointer.length) };
+        pointer = pointer.slice(0, pointer.lastIndexOf('/'));
+      }
+      return origin;
+    };
+    for (const [pointer, origin] of Object.entries(provenance)) provenance[pointer] = remap(origin);
+    const entries = [...report.values()]; report.clear();
+    for (const entry of entries) addReport({ ...entry, ...remap(entry) });
+    for (const entry of projection.report) addReport(entry);
+  }
   if (!validateHubSchema(hub)) throw new ImportProblem('schema', `Invalid x-oods hub annotation: ${ajv.errorsText(hubContract.errors ?? ajv.errors)}`);
   return { hub, report: [...report.values()].sort((a, b) => `${identity(a)}:${a.kind}` < `${identity(b)}:${b.kind}` ? -1 : 1), contentHash: `sha256:${hash(canonical(hub['x-oods'].sources))}` };
 }

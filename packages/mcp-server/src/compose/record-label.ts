@@ -37,7 +37,7 @@ export function recordNameField(objectName: string | undefined, fields: Record<s
     ?? (lower ? ordered.find(name => new RegExp(`\\.${lower}\\.(name|title|number|label|headline|subject)$`).test(semantic(name))) : undefined)
     ?? ordered.find(name => ['name', 'title', 'label', `${lower}_name`, `${lower}_title`, `${lower}_number`].includes(name))
     ?? ordered.find(name => /_name$/.test(name) && bare(fields[name]!.type) === 'string')
-    ?? ordered.find(name => fields[name]!.required && bare(fields[name]!.type) === 'string' && !fields[name]!.enum?.length && !isIdentifier(name) && !isDate(name));
+    ?? (definition?.object.domain === 'imported' ? undefined : ordered.find(name => fields[name]!.required && bare(fields[name]!.type) === 'string' && !fields[name]!.enum?.length && !isIdentifier(name) && !isDate(name)));
 }
 
 /**

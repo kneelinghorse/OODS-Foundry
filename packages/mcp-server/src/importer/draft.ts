@@ -1,3 +1,6 @@
+import { identifierField, recordKeyField } from '../objects/record-identity.js';
+import { sampleValue } from './samples.js';
+import { suggestTraits } from './proposals.js';
 import { dump } from 'js-yaml';
 import { validateDefinition } from '../tools/object.validate.js';
 import { normalizeObjectDocument } from '../objects/object-loader.js';
@@ -27,7 +30,8 @@ function intersect(left: MapValue, right: MapValue): MapValue {
     if (key === 'properties') {
       result.properties = { ...a };
       for (const field of Object.keys(b)) Object.defineProperty(result.properties, field, { value: Object.hasOwn(a, field) ? { allOf: [a[field], b[field]] } : b[field], enumerable: true, configurable: true, writable: true });
-    } else if (key === 'required') result[key] = [...new Set([...a, ...b])].sort();
+    } else if (key.startsWith('x-') && key !== 'x-oods-conflict') result[key] = isMap(a) && isMap(b) ? { ...a, ...b } : b;
+    else if (key === 'required') result[key] = [...new Set([...a, ...b])].sort();
     else if (key === 'enum') result[key] = a.filter((v: unknown) => b.some((other: unknown) => canonical(v) === canonical(other)));
     else if (key === 'type') {
       const shared = (Array.isArray(a) ? a : [a]).filter(v => (Array.isArray(b) ? b : [b]).includes(v));
@@ -100,6 +104,8 @@ export function draftSource(input: SourceInput): ImportResult {
     const fields: Record<string, FieldDefinition> = {}, semantics: Record<string, SemanticMapping> = {};
     const relationships: NonNullable<ObjectDefinition['relationships']> = [];
     const proposals: Proposal[] = [];
+    const sampleSchemas: Record<string, MapValue> = {};
+    const samples: Array<Record<string, unknown>> = [{}, {}, {}, {}, {}];
     const propose = (trait: TraitReference, grade: Proposal['grade'], evidence: Proposal['evidence']) => {
       const errors = hasTrait(trait.name) ? parameterProblems(trait.name, trait.parameters ?? {}).map(p => p.message) : [`Unknown trait ${trait.name}`];
       for (const item of evidence) {
@@ -162,17 +168,21 @@ export function draftSource(input: SourceInput): ImportResult {
       }
       if (!type) { markField('unmapped', 'Nested documents, maps and unconstrained fields are retained in the hub; the scalar object editor cannot represent them.'); continue; }
       const validation: MapValue = Object.fromEntries(Object.entries(schema).filter(([key]) => fieldConstraints.has(key)));
+      if (schema.type === 'array' && isMap(schema.items) && !target) validation.items = schema.items;
       if (Array.isArray(schema.enum) && schema.enum.filter((v: unknown) => v !== null).every((v: unknown) => typeof v === 'string')) validation.enum = schema.enum.filter((v: unknown) => v !== null);
-      const definition: FieldDefinition = { type: type + (nullable ? '?' : ''), required: (shape.required ?? []).includes(field), description: text(schema.description, text(schema.title, field.replace(/_/g, ' '))) };
+      const definition: FieldDefinition = { type: type + (nullable ? '?' : ''), required: (shape.required ?? []).includes(field), description: text(schema.description, '') };
       if (Object.keys(validation).length) definition.validation = validation;
       if (schema.default !== undefined && !target) definition.default = schema.default;
       if (schema.readOnly === true) definition.readOnly = true;
       if (schema.writeOnly === true) definition.writeOnly = true;
-      const examples = schema.examples ?? (schema.example !== undefined ? [schema.example] : undefined);
-      if (Array.isArray(examples) && examples.length && !target && !schema.writeOnly) definition.examples = examples.filter((v: unknown) => !validation.enum || validation.enum.includes(v));
-      if (!definition.examples?.length && !schema.writeOnly) {
-        const sample = validation.enum?.[0] ?? schema.default ?? (type === 'boolean' ? true : type === 'integer' || type === 'number' ? Math.max(schema.minimum ?? 1, 1) : type.endsWith('[]') ? [] : type === 'datetime' ? '2026-01-01T12:00:00Z' : type === 'date' ? '2026-01-01' : type === 'email' ? 'example@example.com' : type === 'url' ? 'https://example.com' : type === 'uuid' ? '00000000-0000-4000-8000-000000000001' : target ? `${target}-example` : `Example ${field.replace(/_/g, ' ')}`);
-        definition.examples = [sample];
+      sampleSchemas[field] = schema;
+      if (!schema.writeOnly && !target) {
+        const sampleSchema = { ...schema, ...(nullable ? { type: [schema.type, 'null'] } : {}) };
+        for (let i = 0; i < samples.length; i++) {
+          const value = sampleValue(sampleSchema, /^(name|title|label|display_name)$/i.test(field) ? name : field, i);
+          if (value !== undefined) Object.defineProperty(samples[i], field, { value, enumerable: true, writable: true });
+        }
+        if (!samples.some(sample => Object.hasOwn(sample, field))) report.push({ ...fieldOrigin, object: name, kind: 'keyword', outcome: 'unmapped', reason: 'No valid illustrative sample could be generated within the source constraints; sample omitted.' });
       }
       Object.defineProperty(fields, field, { value: definition, enumerable: true });
       markField('mapped', target && objectNames.has(target) ? 'Mapped to a relationship identifier field; referenced object data stays in the related object.' : 'Mapped to an object field; unsupported constraints remain explicitly listed in the report.');
@@ -184,25 +194,40 @@ export function draftSource(input: SourceInput): ImportResult {
         }
       }
       const annotation = schema['x-oods'];
+      if (schema.title || annotation?.label || annotation?.detailGroup || annotation?.semanticType || annotation?.displayLabelField || annotation?.unit || annotation?.primaryKey) semantics[field] = {
+        semantic_type: annotation?.semanticType ?? (annotation?.primaryKey ? 'identifier.primary' : 'text.value'), token_mapping: 'tokenMap(text.primary)',
+        ui_hints: { ...(annotation?.primaryKey ? { primaryKey: true } : {}), ...(schema.title || annotation?.label ? { label: annotation?.label ?? schema.title } : {}), ...(annotation?.detailGroup ? { detail_group: annotation.detailGroup } : {}), ...(annotation?.displayLabelField ? { displayLabelField: annotation.displayLabelField } : {}), ...(annotation?.unit ? { unit: annotation.unit } : {}) },
+      };
       if (isMap(annotation?.currency) && typeof annotation.currency.field === 'string') {
-        semantics[field] = { semantic_type: 'money.amount', token_mapping: 'tokenMap(text.primary)', ui_hints: { component: 'CurrencyAmount', currencyField: annotation.currency.field, ...(annotation.currency.minorUnits ? { minorUnits: annotation.currency.minorUnits } : {}) } };
+        semantics[field] = { semantic_type: 'money.amount', token_mapping: 'tokenMap(text.primary)', ui_hints: { ...semantics[field]?.ui_hints, component: 'CurrencyAmount', currencyField: annotation.currency.field, ...(annotation.currency.minorUnits ? { minorUnits: annotation.currency.minorUnits } : {}) } };
         mark(provenance[`${fieldPath}/x-oods`], 'mapped', 'Explicit currency and unit declaration becomes money semantics.');
       }
       if (Array.isArray(validation.enum) && validation.enum.length > 1) propose({ name: 'Stateful', parameters: { states: validation.enum, initialState: validation.enum.includes(schema.default) ? schema.default : validation.enum[0] } }, 'medium', [{ ...fieldOrigin, pointer: `${fieldOrigin.pointer}/enum`, kind: 'structure', reason: 'String enum supplies possible states; lifecycle meaning and initial state require acceptance.' }]);
-      else if (type === 'datetime') propose({ name: 'Timestampable', parameters: {} }, schema.readOnly ? 'strong' : 'medium', [{ ...fieldOrigin, pointer: `${fieldOrigin.pointer}/format`, kind: 'structure', reason: `date-time format${schema.readOnly ? ' and readOnly' : ''} provides timestamp evidence; audit meaning requires acceptance.` }]);
+      else if (type === 'datetime') propose({ name: 'Timestampable', parameters: {} }, schema.readOnly || schema['x-oods']?.generatedTimestamp ? 'strong' : 'medium', [{ ...fieldOrigin, pointer: `${fieldOrigin.pointer}/format`, kind: 'structure', reason: `date-time format${schema.readOnly ? ' and readOnly' : ''} provides timestamp evidence; audit meaning requires acceptance.` }]);
       else if (/^(status|state)$/i.test(field)) propose({ name: 'Stateful', parameters: {} }, 'weak', [{ ...fieldOrigin, kind: 'name', reason: 'Name alone suggests status; no state values or lifecycle structure were declared.' }]);
     }
     const annotations = shape['x-oods'];
     for (const declared of Array.isArray(annotations?.traitProposals) ? annotations.traitProposals : []) {
       if (isMap(declared) && typeof declared.name === 'string') propose({ name: declared.name, parameters: declared.parameters ?? {} }, declared.evidence.every((e: MapValue) => e.kind === 'name') ? 'weak' : declared.grade, declared.evidence);
     }
+    suggestTraits({ ...shape, title: name }, shape.properties, field => fieldOrigins(field)[0]?.origin ?? origin, propose, (field, reason) => report.push({ ...(fieldOrigins(field)[0]?.origin ?? origin), object: name, kind: 'keyword', outcome: 'unmapped', reason }));
+    for (const edge of annotations?.relationships ?? []) if (fields[edge.via] && objectNames.has(edge.target) && !relationships.some(item => item.via === edge.via)) relationships.push(edge);
+    const title = annotations?.titleField ?? Object.keys(fields).find(field => /^(name|title|label|display_name)$/i.test(field))
+      ?? Object.keys(fields).find(field => [name.toLowerCase(), name.toLowerCase().replace(/s$/, '')].some(prefix => ['name', 'title', 'label'].some(suffix => field.replace(/_/g, '').toLowerCase() === prefix + suffix)))
+      ?? Object.keys(fields).find(field => sampleSchemas[field]?.['x-oods']?.unique && !sampleSchemas[field]?.format && !sampleSchemas[field]?.enum)
+      ?? Object.keys(fields).find(field => sampleSchemas[field]?.['x-oods']?.primaryKey && identifierField(field))
+      ?? Object.keys(fields).find(field => sampleSchemas[field]?.['x-oods']?.primaryKey && !['date', 'date-time'].includes(sampleSchemas[field]?.format))
+      ?? Object.keys(fields).find(field => identifierField(field));
+    if (title && fields[title]) semantics[title] = { ...semantics[title], semantic_type: 'text.label', token_mapping: 'tokenMap(text.primary)' };
+    if (annotations?.summaryField && fields[annotations.summaryField]) semantics[annotations.summaryField] = { semantic_type: 'text.summary', token_mapping: 'tokenMap(text.secondary)' };
+    const supportedContexts = ['list', 'detail', ...(shape.readOnly || annotations?.readOnly || Object.values(fields).every(field => field.readOnly) ? [] : ['form']), ...(annotations?.lifecycle || annotations?.history ? ['timeline'] : [])];
     if (!Object.keys(fields).length) { objectNames.delete(name); mark(origin, 'unmapped', 'No fields can be projected without choosing a variant or inventing a scalar conversion.', 'schema'); continue; }
-    const definition = normalizeObjectDocument({ object: { name, version: '1.0.0', domain: 'imported', description: text(shape.description, `Imported ${hub['x-oods'].sourceNames[name]} schema. Samples without source examples are illustrative.`) }, schema: fields, traits: [], semantics, relationships,
-      metadata: { supportedContexts: ['list', 'detail', 'form'], references: [`${origin.file}#${origin.pointer}`] } });
+    const definition = normalizeObjectDocument({ object: { name, version: '1.0.0', domain: 'imported', description: text(shape.description, `Imported ${hub['x-oods'].sourceNames[name]} schema. Samples without source examples are illustrative.`) }, schema: fields, traits: [], semantics, relationships, samples,
+      metadata: { supportedContexts, ...(annotations?.listColumns ? { listColumns: annotations.listColumns.filter((column: MapValue) => fields[column.field]) } : {}), references: [`${origin.file}#${origin.pointer}`] } });
     // Exercise the same composition and field-contract materialization as object.validate before issuing a draft.
     const composed = composeObject(definition);
     populateObjectSchema({ version: '2026.02', screens: [{ id: 'import-shape', component: 'Stack' }] } as UiSchema, composed.schema, composed.semantics, composed.traits, composed.samples);
-    mark(origin, 'mapped', 'Drafted an object with list, detail and form contexts; no traits applied.', 'schema');
+    mark(origin, 'mapped', `Drafted an object with ${supportedContexts.join(', ')} contexts; no traits applied.`, 'schema');
     for (const key of ['type', 'properties', 'required', 'allOf', 'title', 'description']) mark(provenance[`${base}/${key}`], 'mapped', 'Projected into the object definition.');
     drafts.push({ name, sourceName: hub['x-oods'].sourceNames[name], origin, definition, yaml: '', proposals: proposals.sort((a, b) => a.id < b.id ? -1 : 1), dependencies: [] });
   }
@@ -214,6 +239,14 @@ export function draftSource(input: SourceInput): ImportResult {
       for (const entry of report) if (entry.object === draft.name && entry.kind === 'link' && entry.reason.includes(edge.target)) { entry.outcome = 'unmapped'; entry.reason = `Target ${edge.target} has no projectable object; identifier field retained, relationship not registered.`; }
       return false;
     });
+    for (const edge of draft.definition.relationships) {
+      const target = drafts.find(item => item.name === edge.target)!;
+      const id = recordKeyField(target.definition)!;
+      for (const [i, row] of (draft.definition.samples ?? []).entries()) {
+        const value = target.definition.samples?.[i]?.[id];
+        if (value !== undefined) row[edge.via] = draft.definition.schema[edge.via].type.replace(/\?$/, '').endsWith('[]') ? [String(value)] : /^integer|^number/.test(draft.definition.schema[edge.via].type) ? Number(value) : String(value);
+      }
+    }
     draft.dependencies = [...new Set(draft.definition.relationships.map(edge => edge.target))].sort();
     const annotations = hub.$defs[draft.name]['x-oods'] ?? {};
     const proposalPath = `/$defs/${draft.name}/x-oods/traitProposals`;

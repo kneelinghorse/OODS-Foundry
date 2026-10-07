@@ -586,7 +586,7 @@ export function populateObjectSchema(
 
     const label = semantics?.[fieldName]?.ui_hints?.displayLabelField;
     if (typeof label === 'string') {
-      if (label === fieldName || !Object.hasOwn(fieldSchema, label) || fieldSchema[label].type !== 'string') throw new Error(`Invalid reference label for ${fieldName}: ${label}`);
+      if (label === fieldName || !Object.hasOwn(fieldSchema, label) || !/^string\??$/.test(fieldSchema[label].type)) throw new Error(`Invalid reference label for ${fieldName}: ${label}`);
       entry.displayLabelField = label;
     }
 

@@ -412,6 +412,8 @@ function reactFieldExpression(
   }
   if (node.component === 'Text' && isChildren && entry && node.meta?.intent === 'read-only-field') {
     if (isReferenceField(entry)) return referenceFieldExpression(sourceField as string, objectSchema);
+    // The retained consumer library predates date-only formatting; lower through the existing local helper.
+    if (entry.type.replace(/\?$/, '') === 'date') return `${fieldName} == null || ${fieldName} === '' ? 'Not recorded' : ${SLOT_DATE_HELPER}(${fieldName}, true) || 'Invalid date'`;
     const code = Boolean(entry.enum?.length || /(?:status|state|event\.type|collection_method|pricing_model|interval)$/.test(entry.semanticType ?? ''));
     // s223-m01 (#2527 ruling 4): a declared number format (percent, quantity) travels with the field.
     return `formatReadOnlyValue(${fieldName}, ${JSON.stringify(entry.type.replace(/\?$/, ''))}, ${code}${entry.format ? `, ${JSON.stringify(entry.format)}` : ''})`;
@@ -424,7 +426,7 @@ function reactFieldExpression(
   // module-local helper so the artifact's declared dependency surface does not move; the guard
   // The helper is emitted only when the lowered JSX reads it.
   if (node.component === 'Text' && isChildren && isDateFieldEntry(entry)) {
-    return `${SLOT_DATE_HELPER}(${fieldName})`;
+    return `${SLOT_DATE_HELPER}(${fieldName}${entry?.type.replace(/\?$/, '') === 'date' ? ', true' : ''})`;
   }
   if (node.component === 'Text' && isChildren && entry?.type === 'boolean') {
     return `${fieldName} == null ? '' : ${fieldName} ? 'Yes' : 'No'`;

@@ -180,12 +180,22 @@ describe('codegen prop binding', () => {
     });
   });
 
+  it('keeps boolean values typed until their display formatter so false remains No', () => {
+    const flag: UiSchema = { version: '2026.03', objectSchema: { active: { type: 'boolean', required: true } },
+      screens: [{ id: 'flag', component: 'Text', props: { field: 'active' } }] };
+    for (const emit of [reactEmit, vueEmit]) {
+      expect(emit(flag, defaultOptions).code).toContain("active == null ? '' : active ? 'Yes' : 'No'");
+    }
+    expect(htmlEmit(flag, { ...defaultOptions, sampleModel: { active: false } }).code).toContain('>No</span>');
+  });
+
   describe('React emitter', () => {
     it('injects field names as JSX children for children-strategy components', () => {
       const result = reactEmit(schema, defaultOptions);
       expect(result.status).toBe('ok');
       expect(result.code).toContain('{name}');
-      expect(result.code).toContain('{price}');
+      // Text's child contract is a string, including a numeric imported title.
+      expect(result.code).toContain("{String(price ?? '')}");
     });
 
     it('injects field names as status prop for status-strategy components', () => {
@@ -210,7 +220,8 @@ describe('codegen prop binding', () => {
       const result = vueEmit(schema, defaultOptions);
       expect(result.status).toBe('ok');
       expect(result.code).toContain('{{ name }}');
-      expect(result.code).toContain('{{ price }}');
+      // Vue Text shares the string child contract with React.
+      expect(result.code).toContain("{{ String(price ?? '') }}");
     });
 
     it('injects field names as :status binding for status-strategy', () => {

@@ -210,6 +210,10 @@ function checkObject(document: Record<string, unknown>, result: Checked, availab
     errors.push({ kind: 'compose-failed', message: `Composing ${name} with its traits failed: ${(error as Error).message}` });
     return;
   }
+  const columns = definition.metadata.listColumns;
+  if (columns !== undefined && (!Array.isArray(columns) || columns.some(column => !isMap(column) || typeof column.field !== 'string' || !Object.hasOwn(composed.schema, column.field) || (column.label !== undefined && typeof column.label !== 'string')))) {
+    errors.push({ kind: 'malformed', path: 'metadata.listColumns', message: 'listColumns must name existing composed fields with optional text labels.' });
+  }
   errors.push(...relationshipProblems(document.relationships, name!, composed.schema, available));
   // s213-m03 (finding 7): money and its units come only from declared semantics, so say where a declaration is missing.
   const fields = shape.objectSchema ?? {};

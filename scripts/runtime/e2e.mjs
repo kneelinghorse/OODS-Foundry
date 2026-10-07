@@ -882,8 +882,8 @@ async function main() {
   );
   assert.equal(
     adapterPackage.version,
-    "0.8.0",
-    "adapter 0.8.0 advertises the importer and removes legacy aliases",
+    "0.9.0",
+    "adapter 0.9.0 advertises the importer and removes legacy aliases",
   );
   assert.equal(
     manifest.packageVersions["@oods/mcp-adapter"],

@@ -80,9 +80,9 @@ describe('React emitter — prop destructuring', () => {
 
   it('JSX references field variables that are destructured from props', () => {
     const result = reactEmit(schema, tsTokensOpts);
-    // JSX should use {name}, {price}, etc. which are now destructured
+    // Destructured numeric values meet Text's string child contract.
     expect(result.code).toContain('{name}');
-    expect(result.code).toContain('{price}');
+    expect(result.code).toContain("{String(price ?? '')}");
   });
 
   it('omits destructuring when no objectSchema', () => {
