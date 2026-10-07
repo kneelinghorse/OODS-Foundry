@@ -16,7 +16,7 @@ export async function preparePreviewComponents(hostUrl: string, directory: strin
     let shadcn;
     // A newly composed version has no frozen preview yet, even when the caller supplies its version number.
     if ((!explicit || !record.componentPackages) && source?.shadcn) {
-      try { shadcn = inspectShadcn(source.shadcn, source.export); }
+      try { shadcn = inspectShadcn(source.shadcn, source.export, framework as PreviewFramework); }
       catch (error) { throw new ToolError('OODS-V217', error instanceof Error ? error.message : String(error)); }
     }
     return { framework, specifier: sourceSpecifier(substitution.source), version: sourceVersion(substitution.source), ...(source?.localPath ? { localPath: source.localPath } : {}), isShadcn: Boolean(substitution.source.shadcn), ...(shadcn ? { shadcn } : {}) };

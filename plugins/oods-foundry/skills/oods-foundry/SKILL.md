@@ -27,7 +27,7 @@ again and a chart-only request needs only health, rendering and certification.
 8. `object_registry`, `action: "register"` — register the validated object; read all context checks.
 9. `component_map`, `action: "create", apply: true` — substitute a shipped component identity using the team's exact package,
    version, export and prop translations; use an absolute `localPath` for preview bundling, or map several with
-   a `mappings` list or an absolute `mappingsPath` to a checked mapping file; React teams on shadcn/ui's Radix or Base UI base can install the shipped adapters and map their project modules as [COMPONENTS.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.9.0/COMPONENTS.md) describes.
+   a `mappings` list or an absolute `mappingsPath` to a checked mapping file; React teams on shadcn/ui's Radix or Base UI base and Vue teams on shadcn-vue / Reka UI can install the shipped adapters and map their project modules as [COMPONENTS.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.10.0/COMPONENTS.md) describes.
 10. `design_compose` — name the object, context and brand/theme; retain `schemaRef`, `compositionId` and version.
 11. `viz_render` — pass actual rows and matching encodings; request `includeNormalizedSpec` and `includeA11y`.
 12. `artifact_certify` — pass that `normalizedSpec` and the same brand/theme. For ECharts-primary charts also pass

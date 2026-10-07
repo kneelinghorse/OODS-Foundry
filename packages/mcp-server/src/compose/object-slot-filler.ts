@@ -554,7 +554,7 @@ export function populateObjectSchema(
       : fieldDef.default;
     if (declaredDefault !== undefined) entry.default = structuredClone(declaredDefault);
     // Stateful's authored initial state is the sample history origin, not enum order.
-    if (fieldName === 'status' && entry.default === undefined) {
+    if ((fieldName === 'status' || traits.some(trait => trait.ref.name.split('/').pop() === 'Stateful' && trait.ref.fieldBindings?.status === fieldName)) && entry.default === undefined) {
       const lifecycle = traits.find(trait => trait.ref.name.split('/').pop() === 'Stateful');
       const initial = lifecycle?.ref.parameters?.initialState ?? lifecycle?.definition.parameters.find(parameter => parameter.name === 'initialState')?.default;
       if (typeof initial === 'string') entry.default = initial;

@@ -17,6 +17,31 @@ const schema: UiSchema = { version: '2026.02', screens: [{ id: 'screen', compone
 ] }] };
 afterEach(() => vi.restoreAllMocks());
 describe('accessibility grades built scopes and the rendered screen', () => {
+  it('grades each intent state using its own variable overrides, and still catches a real failing state', async () => {
+    vi.spyOn(document, 'readComponentCssForDocument').mockReturnValue(`[data-oods-component='Button'] { color:var(--oods-button-text, #fff); background:var(--oods-button-background, #111); }
+      [data-oods-component='Button'][data-intent='primary'] { --oods-button-text:#fff; --oods-button-background:#111; --oods-button-background-hover:#222; --oods-button-background-pressed:#fff; }
+      [data-oods-component='Button'][data-intent='secondary'] { --oods-button-text:#111; --oods-button-background:#fff; --oods-button-background-hover:#eee; --oods-button-background-pressed:#ddd; }
+      [data-oods-component='Button']:hover:not(:disabled) { background:var(--oods-button-background-hover); }
+      [data-oods-component='Button']:active:not(:disabled) { background:var(--oods-button-background-pressed); }`);
+    const report = (await scan({})).structuredData as any;
+    const states = report.rules.filter((rule: any) => rule.brand === 'A' && rule.theme === 'light' && /:hover|:active/.test(rule.selector));
+    expect(states).toHaveLength(4);
+    expect(states.every((rule: any) => rule.selector.includes('data-intent'))).toBe(true);
+    expect(states.filter((rule: any) => rule.status === 'fail')).toEqual([expect.objectContaining({ selector: "[data-oods-component='Button'][data-intent='primary']:active:not(:disabled)", ratio: 1, threshold: 4.5, contrastKind: 'text' })]);
+  });
+
+  it('uses 3:1 for progress and meter marks without lowering the text threshold', async () => {
+    vi.spyOn(document, 'readComponentCssForDocument').mockReturnValue(`[data-oods-component='CycleProgressCard'] progress { color:#888; background:#fff; }
+      [data-oods-component='Meter'] meter { color:#888; background:#fff; }
+      [data-oods-component='Text'] { color:#888; background:#fff; }
+      [data-oods-component='CycleProgressCard'] progress.bad { color:#eee; background:#fff; }`);
+    const rules = ((await scan({})).structuredData as any).rules.filter((rule: any) => rule.brand === 'A' && rule.theme === 'light');
+    expect(rules.filter((rule: any) => rule.status === 'pass')).toHaveLength(2);
+    expect(rules.slice(0, 2).every((rule: any) => rule.contrastKind === 'non-text' && rule.threshold === 3)).toBe(true);
+    expect(rules[2]).toMatchObject({ status: 'fail', contrastKind: 'text', threshold: 4.5 });
+    expect(rules[3]).toMatchObject({ status: 'fail', contrastKind: 'non-text', threshold: 3 });
+  });
+
   it('visits every built brand/theme, including team scopes, and never reads the legacy token snapshot', async () => {
     const scopes = structuredClone(tokens.readTokenScopes());
     (scopes as any).Team = structuredClone(scopes.A);

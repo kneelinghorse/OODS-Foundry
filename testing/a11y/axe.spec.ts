@@ -41,10 +41,10 @@ describe('Accessibility contract configuration', () => {
     expect(impacts.has('critical')).toBe(true);
   });
 
-  it('targets WCAG 2.1 AA rules via axe runOnly tags', () => {
+  it('targets WCAG 2.2 AA rules via axe runOnly tags', () => {
     const runOnly = typedContract.axe?.runOnly;
     expect(runOnly?.type).toBe('tag');
-    expect(runOnly?.values).toEqual(expect.arrayContaining(['wcag2a', 'wcag21aa']));
+    expect(runOnly?.values).toEqual(expect.arrayContaining(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']));
   });
 
   it('provides a curated set of stories with tagged variants', () => {

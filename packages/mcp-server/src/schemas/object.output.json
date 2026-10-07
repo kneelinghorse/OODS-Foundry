@@ -128,7 +128,8 @@
             "properties": {
               "name": { "type": "string" },
               "alias": { "type": ["string", "null"] },
-              "parameters": { "type": ["object", "null"] }
+              "parameters": { "type": ["object", "null"] },
+              "fieldBindings": { "type": "object", "additionalProperties": { "type": ["string", "null"] } }
             },
             "required": ["name", "alias", "parameters"],
             "additionalProperties": false

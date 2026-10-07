@@ -60,7 +60,7 @@
       ]
     }
   ],
-  "head": "eb3520932d1d4c533ad271a345dd85333dd4311b",
+  "head": "867f29346095587218cf9d9e7b834fd09bf38b7b",
   "builderSelfCertified": false,
   "methodology": {
     "testImportLocation": "Where a spec that imports the tool's handler module lives: packages/mcp-server/test/product-reality, then test/contracts, then any other mcp-server spec. A literal runtime import is source evidence that a test reaches the handler, not proof of invocation, passing execution or browser certification. Grouped action imports roll up to their registered family. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not count.",
@@ -101,7 +101,7 @@
       "none": 0
     },
     "portableE2E": 20,
-    "caveats": 34,
+    "caveats": 35,
     "portableLimits": 0
   },
   "rows": [
@@ -502,12 +502,12 @@
       "registration": "auto",
       "advertisedClaim": {
         "name": "brand_create",
-        "description": "Create and inspect brands from token documents or a six-value recipe. Use it when adding a brand; use brand_apply to edit an existing brand or tokens_build to compile current sources. Returns templates, validation reports, derived recipes with provenance/gaps, or a created brand and build results. action selects template, validate, derive or create. derive accepts exactly one of tokens, css or cssPath; review gaps before creating. create validates every theme, refuses replacement, writes into your brands folder and builds tokens. Template and validation calls write nothing. Reference: TOOL-REFERENCE.md#brand_create; full schema: oods://schemas/brand_create.input.json.",
-        "inputSchemaDescription": "derive reads a team's DTCG tokens or a shadcn CSS theme into a partial recipe with provenance, gaps and warnings, writing nothing. Create a brand from token values or a recipe. template returns every slot of a brand with its meaning and a starting value, or from a recipe the complete brand it gives, graded; validate checks the filled documents or a recipe and writes nothing; create writes a brand that passes into the brands folder and runs the token build."
+        "description": "Create and inspect brands from token documents or a six-value recipe. Use it when adding a brand; use brand_apply to edit an existing brand or tokens_build to compile current sources. Returns templates, validation reports, derived recipes with provenance/gaps, or a created brand and build results. action selects template, validate, derive, create, draft, show or apply. draft reads a local DTCG file with token names and light/dark modes; show reviews slot evidence and fallbacks; apply with draftId and accept:true validates and creates the reviewed brand. derive accepts exactly one of tokens, css or cssPath; review gaps before creating. create validates every theme, refuses replacement, writes into your brands folder and builds tokens. Template and validation calls write nothing. Reference: TOOL-REFERENCE.md#brand_create; full schema: oods://schemas/brand_create.input.json.",
+        "inputSchemaDescription": "derive reads a team's DTCG tokens or a shadcn CSS theme into a partial recipe with provenance, gaps and warnings, writing nothing. Create a brand from token values or a recipe. template returns every slot of a brand with its meaning and a starting value, or from a recipe the complete brand it gives, graded; validate checks the filled documents or a recipe and writes nothing; create writes a brand that passes into the brands folder and runs the token build. draft reads a local DTCG file, retains supported token names and light/dark modes, and reports slot evidence/fallbacks; show reviews the content-addressed draft; apply with accept:true validates and writes the whole reviewed brand atomically."
       },
-      "claimHash": "sha256:fbe137308122afb9ec935d848ca0c0272ebcea40307097d6c4d82aebb660af00",
+      "claimHash": "sha256:e4822503dc96b12b1cdf3590cacd9ad9f690da368a787d89a7812770a24a3f90",
       "inputSchemaPath": "packages/mcp-server/src/schemas/brand.intake.input.json",
-      "inputSchemaHash": "sha256:ecfa79f4821a1d6ee3910ed0ef4993be9941b599f2951e377d2ba2a5db578ae2",
+      "inputSchemaHash": "sha256:41c37b008154af3c33d8f77e240b2401ba5e445bd499fcae1b0f592ee8dfe4fe",
       "testImportLocation": "test/product-reality",
       "testImports": {
         "test/product-reality": [
@@ -564,6 +564,11 @@
             "path": "packages/mcp-server/test/brands/user-brands.s213.spec.ts",
             "line": 21,
             "handler": "packages/mcp-server/src/tools/brand.intake.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/intake/intake.s237.spec.ts",
+            "line": 8,
+            "handler": "packages/mcp-server/src/tools/brand.intake.ts"
           }
         ]
       },
@@ -607,13 +612,13 @@
           "kind": "documented-limit",
           "file": "packages/mcp-server/src/tools/brand.intake.ts",
           "reason": "From an extracted runtime archive with no brands folder set, create is refused with OODS-N025; the npm launcher sets ~/.oods-foundry/brands, where create writes a brand and builds it, outside the runtime.",
-          "line": 82
+          "line": 89
         },
         {
           "kind": "documented-limit",
           "file": "packages/mcp-server/src/lib/brand-template.ts",
-          "reason": "derive accepts a team's own DTCG token names to infer a recipe with provenance and gaps. Generated apps still use OODS Foundry's slot names; the team's names are not carried into them. Missing values must be supplied before create.",
-          "line": 24
+          "reason": "The legacy derive/create route infers and fills OODS slots. Draft/apply preserves supported team DTCG names and aliases, with explicit slot bindings and unmatched reasons for unsupported values; unbound slots retain the template. Creating either brand requires explicit acceptance.",
+          "line": 25
         }
       ]
     },
@@ -756,10 +761,10 @@
       "registration": "auto",
       "advertisedClaim": {
         "name": "code_generate",
-        "description": "Generate React/Vue file sets or a standalone static HTML document from a validated UiSchema. Use it when a schema already exists; use design_compose instead to choose a layout or pipeline_run to compose, validate, render and generate together. Returns versioned artifacts, exact dependencies, required domain handlers and validationReceipt. Supply schema or schemaRef before its 30-minute expiry. profile selects draft/build/release; build performs static checks, while release verifies supplied evidence without rerunning it. options.output selects component/application and options.payloadMode:file returns file references. Domain actions require consumer handlers. React shadcn mappings support components/apps; workflows refuse them. Reference: TOOL-REFERENCE.md#code_generate; full schema: oods://schemas/code_generate.input.json.",
+        "description": "Generate React/Vue file sets or a standalone static HTML document from a validated UiSchema. Use it when a schema already exists; use design_compose instead to choose a layout or pipeline_run to compose, validate, render and generate together. Returns versioned artifacts, exact dependencies, required domain handlers and validationReceipt. Supply schema or schemaRef before its 30-minute expiry. profile selects draft/build/release; build performs static checks, while release verifies supplied evidence without rerunning it. options.output selects component/application and options.payloadMode:file returns file references. Domain actions require consumer handlers. React and Vue shadcn mappings support components, screen apps and workflow apps. Reference: TOOL-REFERENCE.md#code_generate; full schema: oods://schemas/code_generate.input.json.",
         "inputSchemaDescription": "Generate framework-specific code from a validated UiSchema. A workflow schema generates a runnable React or Vue application with navigation, local store and deterministic sample data."
       },
-      "claimHash": "sha256:048bb3da273695d2dd5211bb7e043bbcaa5d515c7e42b6303dfbf87e3364ba7d",
+      "claimHash": "sha256:50b60c1d9d5f379c92a38c6819bbacc37a74933bd0b2a77513958db8cfd373eb",
       "inputSchemaPath": "packages/mcp-server/src/schemas/code.generate.input.json",
       "inputSchemaHash": "sha256:7ac189654487421b1cbcd7d22627635b47e7365f87d0db0bb6f8fff791b6309a",
       "testImportLocation": "test/product-reality",
@@ -1257,6 +1262,11 @@
           {
             "path": "packages/mcp-server/test/e2e/tier1-acceptance.e2e.spec.ts",
             "line": 10,
+            "handler": "packages/mcp-server/src/tools/code.generate.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/importer/field-bindings.s237.spec.ts",
+            "line": 14,
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
           },
           {
@@ -1992,6 +2002,11 @@
           {
             "path": "packages/mcp-server/test/e2e/object-codegen-pipeline.spec.ts",
             "line": 10,
+            "handler": "packages/mcp-server/src/tools/design.compose.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/importer/field-bindings.s237.spec.ts",
+            "line": 13,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
@@ -3645,12 +3660,12 @@
       "registration": "auto",
       "advertisedClaim": {
         "name": "component_map",
-        "description": "Manage component substitutions in your user mapping store. Use it when connecting your React/Vue component exports or React shadcn source to OODS components; use catalog_list to find OODS component names. Returns mapping entries, resolved matches or per-entry write outcomes. action selects apply/create/list/resolve/update/delete. create accepts a single entry, mappings list or mappingsPath; lists validate completely before one write. substitution supplies exports and prop translations with exact package versions or installed localPath. React shadcn mappings use an installed project and module instead. Compose snapshots mappings; generation/preview apply them. apply controls mutation where supported. Reference: TOOL-REFERENCE.md#component_map; full schema: oods://schemas/component_map.input.json.",
-        "inputSchemaDescription": "Manage mappings in your user folder (create, list, resolve, update, delete, apply). Create accepts one mapping, a mappings list, or an absolute mappingsPath to a checked mapping file; the list is validated whole and written atomically. Optional substitutions name a shipped OODS Foundry component and React/Vue package exports with prop translations validated against its contract. Legacy Stage1 annotations remain round-trip data."
+        "description": "Manage component substitutions in your user mapping store. Use it when connecting your React/Vue component exports or React/Vue shadcn source to OODS components; use catalog_list to find OODS component names. Returns mapping entries, resolved matches or per-entry write outcomes. action selects draft/show/apply/create/list/resolve/update/delete. draft reads local shadcn or built Storybook files without executing code; show exposes evidence, adapter files and unmatched elements; apply with draftId and accept ids validates and atomically registers reviewed mappings. create accepts a single entry, mappings list or mappingsPath; lists validate completely before one write. substitution supplies exports and prop translations with exact package versions or installed localPath. React/Vue shadcn mappings use an installed project and module instead. Compose snapshots mappings; generation/preview apply them. apply controls mutation where supported. Reference: TOOL-REFERENCE.md#component_map; full schema: oods://schemas/component_map.input.json.",
+        "inputSchemaDescription": "Manage mappings in your user folder (create, list, resolve, update, delete, apply). Create accepts one mapping, a mappings list, or an absolute mappingsPath to a checked mapping file; the list is validated whole and written atomically. Optional substitutions name a shipped OODS Foundry component and React/Vue package exports with prop translations validated against its contract. Legacy Stage1 annotations remain round-trip data. draft reads a local shadcn project or built Storybook without executing code or fetching. show exposes every proposed adapter and unmatched source element. apply with draftId and explicitly accepted proposal ids validates and atomically registers the batch, installing only reviewed new adapter files."
       },
-      "claimHash": "sha256:41f0917988fcc26fd60f5995a6b67115f4caab18640ac5b02ddcd9ac63caf6ea",
+      "claimHash": "sha256:ae245a6e39bda6de9d134c45ac696635d423a31bb0583705b14da3e1c9d66bba",
       "inputSchemaPath": "packages/mcp-server/src/schemas/map.input.json",
-      "inputSchemaHash": "sha256:259513ba85fc1412357280a8f596ad658133f2e73f46af34e5c0f27b63209c17",
+      "inputSchemaHash": "sha256:5a1ea58c88834f1fa1b4414728448ede92d6d7b7713a8873ccf10e6c4b1fd9d3",
       "testImportLocation": "test/product-reality",
       "testImports": {
         "test/product-reality": [
@@ -3747,6 +3762,11 @@
             "handler": "packages/mcp-server/src/tools/map.update.ts"
           },
           {
+            "path": "packages/mcp-server/test/contracts/shadcn-vue.s237.spec.ts",
+            "line": 9,
+            "handler": "packages/mcp-server/src/tools/map.ts"
+          },
+          {
             "path": "packages/mcp-server/test/contracts/stage1-integration.spec.ts",
             "line": 16,
             "handler": "packages/mcp-server/src/tools/map.create.ts"
@@ -3777,6 +3797,16 @@
             "path": "packages/mcp-server/test/e2e/map-apply.test.ts",
             "line": 6,
             "handler": "packages/mcp-server/src/tools/map.apply.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/intake/intake.s237.spec.ts",
+            "line": 7,
+            "handler": "packages/mcp-server/src/tools/map.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/intake/intake.s237.spec.ts",
+            "line": 14,
+            "handler": "packages/mcp-server/src/tools/map.create.ts"
           },
           {
             "path": "packages/mcp-server/test/scale/map.apply.scale.spec.ts",
@@ -3895,6 +3925,12 @@
           "file": "packages/mcp-server/src/tools/map.create.ts",
           "reason": "Trait discovery uses live shipped and team folders. Unknown trait annotations are retained with a warning; substitution props and imports are validated before persistence.",
           "line": 54
+        },
+        {
+          "kind": "documented-limit",
+          "file": "packages/mcp-server/src/intake/components.ts",
+          "reason": "File intake drafts structural evidence, not behavioral certification. Unresolved props, missing primitives and Storybook entries without local defining source remain unmatched. Acceptance is explicit; a differing existing adapter is never overwritten. React Aria is unsupported.",
+          "line": 26
         }
       ]
     },
@@ -4130,6 +4166,16 @@
           }
         ],
         "other-spec": [
+          {
+            "path": "packages/mcp-server/test/importer/field-bindings.s237.spec.ts",
+            "line": 10,
+            "handler": "packages/mcp-server/src/tools/object.register.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/importer/field-bindings.s237.spec.ts",
+            "line": 11,
+            "handler": "packages/mcp-server/src/tools/object.validate.ts"
+          },
           {
             "path": "packages/mcp-server/test/importer/importer.spec.ts",
             "line": 9,
@@ -4610,6 +4656,11 @@
         "test/contracts": [],
         "other-spec": [
           {
+            "path": "packages/mcp-server/test/importer/field-bindings.s237.spec.ts",
+            "line": 12,
+            "handler": "packages/mcp-server/src/tools/object.import.ts"
+          },
+          {
             "path": "packages/mcp-server/test/importer/screens.s236.spec.ts",
             "line": 10,
             "handler": "packages/mcp-server/src/tools/object.import.ts"
@@ -4658,10 +4709,10 @@
       "registration": "on-demand",
       "advertisedClaim": {
         "name": "a11y_scan",
-        "description": "Grade built token contrast and optional static screen accessibility. Use it when checking component token pairs and HTML structure; use artifact_certify for chart pillars or design_preview for measured browser evidence. Returns measured pairs, document findings and explicit unmeasured cases. Without a schema it checks every built brand/theme; a UiSchema scopes pairs to its components and adds static HTML checks. Dynamic/inherited/system paints remain unmeasured. Browser layout, keyboard/focus and screen-reader behavior are not tested. apply:true writes the report, transcript and bundle index; omission writes nothing. Reference: TOOL-REFERENCE.md#a11y_scan; full schema: oods://schemas/a11y_scan.input.json.",
+        "description": "Grade built token contrast and optional static screen accessibility. Use it when checking component token pairs and HTML structure; use artifact_certify for chart pillars or design_preview for measured browser evidence. Checks button states per intent, text at 4.5:1, and icons/progress/meter marks at 3:1. Returns measured pairs, document findings and explicit unmeasured cases. Without a schema it checks every built brand/theme; a UiSchema scopes pairs to its components and adds static HTML checks. Dynamic/inherited/system paints remain unmeasured. Browser layout, keyboard/focus and screen-reader behavior are not tested. apply:true writes the report, transcript and bundle index; omission writes nothing. Reference: TOOL-REFERENCE.md#a11y_scan; full schema: oods://schemas/a11y_scan.input.json.",
         "inputSchemaDescription": "Checks declared foreground/background pairs derived from shared component CSS against current built tokens for every registered brand and theme, including team brands. With a UiSchema, renders through the shared HTML renderer and checks document language/title, one main landmark, unique IDs, ARIA reference targets, control names/labels, image alternatives, chart SVG name/description, and heading names/order. Reports unresolved inherited surfaces, dynamic CSS, alpha compositing and OS colours as unmeasured. Does not check browser-computed colour/layout, keyboard/focus interaction or screen-reader behavior; no complete WCAG conformance claim."
       },
-      "claimHash": "sha256:33768a4146aeb4584a308b96f755eeed73926065c7d14323b1c6757e95637b77",
+      "claimHash": "sha256:125f47752dabf15130d91dc204652f7d3a03417fc6b5027af24a0a97cd7773a9",
       "inputSchemaPath": "packages/mcp-server/src/schemas/a11y.scan.input.json",
       "inputSchemaHash": "sha256:cfec569d62915c689b188964d252c216a2609ad5239ed4306f494a9675b8ae36",
       "testImportLocation": "test/contracts",

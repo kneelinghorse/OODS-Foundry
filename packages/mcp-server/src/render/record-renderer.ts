@@ -47,7 +47,7 @@ export function bindRecordSchema(schema: UiSchema, model: Record<string, unknown
       if (binding.sourceProp === 'statesParameter') value = row.allowedTransitions;
       if (node.component === 'PreferenceEditor' && binding.sourceProp === 'documentField') value = JSON.stringify(value ?? {}, null, 2);
       if (typeof field === 'string' && ['titleField', 'labelField'].includes(binding.sourceProp)) value = display(field, row);
-      if (typeof field === 'string' && binding.sourceProp === 'ownerIdField' && ['label', 'ownerLabel'].includes(binding.targetProp)) value = formatReferenceLabel(value, raw(fields[field]?.displayLabelField, row), fieldLabel(field.replace(/_ids?$/, '')));
+      if (typeof field === 'string' && binding.sourceProp === 'ownerIdField' && ['label', 'ownerLabel'].includes(binding.targetProp)) value = formatReferenceLabel(value, raw(fields[field]?.displayLabelField, row) ?? fields[field]?.referenceLabels?.[String(raw(field, row))], fieldLabel(field.replace(/_ids?$/, '')));
       // s223-m02 (#2527 ruling 13i): the address panel prints the record's addresses as React and Vue do.
       if (node.component === 'AddressCollectionPanel' && binding.targetProp === 'summary') value = addressCollectionSummary(value);
       props[binding.targetProp] = value;
@@ -60,7 +60,7 @@ export function bindRecordSchema(schema: UiSchema, model: Record<string, unknown
         if (node.component === 'RelativeTimestamp') value ??= raw(authored.fallbackField, row);
         if (content.isChildren || ['label', 'title'].includes(content.propName ?? '')) value = display(field, row);
         if (source.meta?.intent === 'read-only-field') value = isReferenceField(fields[field])
-          ? formatReferenceLabel(raw(field, row), raw(fields[field]?.displayLabelField, row), fieldLabel(field.replace(/_ids?$/, '')))
+          ? formatReferenceLabel(raw(field, row), raw(fields[field]?.displayLabelField, row) ?? fields[field]?.referenceLabels?.[String(raw(field, row))], fieldLabel(field.replace(/_ids?$/, '')))
           : formatReadOnlyValue(raw(field, row), fields[field]!.type, Boolean(fields[field]!.enum), fields[field]!.format);
         else if (content.isChildren) {
           if (/date|time/.test(fields[field]!.type) && value) value = formatDateTime(String(value), { dateOnly: fields[field]!.type.replace(/\?$/, '') === 'date' });

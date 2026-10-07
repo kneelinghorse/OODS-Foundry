@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://designlab.local/schemas/map.input.json",
   "title": "map input",
-  "description": "Manage mappings in your user folder (create, list, resolve, update, delete, apply). Create accepts one mapping, a mappings list, or an absolute mappingsPath to a checked mapping file; the list is validated whole and written atomically. Optional substitutions name a shipped OODS Foundry component and React/Vue package exports with prop translations validated against its contract. Legacy Stage1 annotations remain round-trip data.",
+  "description": "Manage mappings in your user folder (create, list, resolve, update, delete, apply). Create accepts one mapping, a mappings list, or an absolute mappingsPath to a checked mapping file; the list is validated whole and written atomically. Optional substitutions name a shipped OODS Foundry component and React/Vue package exports with prop translations validated against its contract. Legacy Stage1 annotations remain round-trip data. draft reads a local shadcn project or built Storybook without executing code or fetching. show exposes every proposed adapter and unmatched source element. apply with draftId and explicitly accepted proposal ids validates and atomically registers the batch, installing only reviewed new adapter files.",
   "type": "object",
   "required": [
     "action"
@@ -15,7 +15,9 @@
         "list",
         "resolve",
         "update",
-        "delete"
+        "delete",
+        "draft",
+        "show"
       ],
       "description": "Selects the per-action handler to invoke."
     }
@@ -30,7 +32,12 @@
         },
         "required": [
           "action"
-        ]
+        ],
+        "not": {
+          "required": [
+            "draftId"
+          ]
+        }
       },
       "then": {
         "type": "object",
@@ -287,7 +294,7 @@
                   "type": "string",
                   "minLength": 1
                 },
-                "minItems": 1,
+                "minItems": 0,
                 "description": "Replace OODS trait list."
               },
               "confidence": {
@@ -547,7 +554,7 @@
                           "project": {
                             "type": "string",
                             "pattern": "^/[\\s\\S]*$",
-                            "description": "Absolute React shadcn project directory containing components.json and installed Tailwind 4 with Vite or PostCSS. Radix and Base UI bases are supported; React Aria and unknown styles are refused."
+                            "description": "Absolute shadcn project directory containing components.json and installed Tailwind 4 with Vite or PostCSS. React supports Radix and Base UI; Vue supports shadcn-vue on Reka. React Aria and unknown styles are refused."
                           },
                           "module": {
                             "type": "string",
@@ -663,7 +670,7 @@
                           "project": {
                             "type": "string",
                             "pattern": "^/[\\s\\S]*$",
-                            "description": "Absolute React shadcn project directory containing components.json and installed Tailwind 4 with Vite or PostCSS. Radix and Base UI bases are supported; React Aria and unknown styles are refused."
+                            "description": "Absolute shadcn project directory containing components.json and installed Tailwind 4 with Vite or PostCSS. React supports Radix and Base UI; Vue supports shadcn-vue on Reka. React Aria and unknown styles are refused."
                           },
                           "module": {
                             "type": "string",
@@ -713,7 +720,25 @@
                 },
                 "description": "Version 2 component substitution: a OODS Foundry id, React and/or Vue package exports, and OODS Foundry-to-team prop translations. Legacy trait-only mappings remain valid."
               }
-            }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "not": {
+                    "required": [
+                      "substitution"
+                    ]
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "oodsTraits": {
+                      "minItems": 1
+                    }
+                  }
+                }
+              }
+            ]
           },
           "apply": {
             "type": "boolean",
@@ -753,6 +778,123 @@
             "description": "Accepted for bridge dry-run/apply mode parity and ignored: this action behaves the same with or without apply (update and delete always write)."
           }
         }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "draft"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "const": "draft"
+          },
+          "source": {
+            "type": "object",
+            "properties": {
+              "project": {
+                "type": "string",
+                "pattern": "^/[\\s\\S]*$"
+              },
+              "format": {
+                "enum": [
+                  "shadcn",
+                  "storybook"
+                ]
+              },
+              "storybook": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "project",
+              "format"
+            ],
+            "additionalProperties": false
+          },
+          "externalSystem": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "source"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "show"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "const": "show"
+          },
+          "draftId": {
+            "type": "string",
+            "pattern": "^components-[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "draftId"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "apply"
+          }
+        },
+        "required": [
+          "action",
+          "draftId"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "const": "apply"
+          },
+          "draftId": {
+            "type": "string",
+            "pattern": "^components-[a-f0-9]{64}$"
+          },
+          "accept": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "draftId",
+          "accept"
+        ]
       }
     }
   ],
@@ -1580,7 +1722,7 @@
                     "project": {
                       "type": "string",
                       "pattern": "^/[\\s\\S]*$",
-                      "description": "Absolute React shadcn project directory containing components.json and installed Tailwind 4 with Vite or PostCSS. Radix and Base UI bases are supported; React Aria and unknown styles are refused."
+                      "description": "Absolute shadcn project directory containing components.json and installed Tailwind 4 with Vite or PostCSS. React supports Radix and Base UI; Vue supports shadcn-vue on Reka. React Aria and unknown styles are refused."
                     },
                     "module": {
                       "type": "string",
@@ -1696,7 +1838,7 @@
                     "project": {
                       "type": "string",
                       "pattern": "^/[\\s\\S]*$",
-                      "description": "Absolute React shadcn project directory containing components.json and installed Tailwind 4 with Vite or PostCSS. Radix and Base UI bases are supported; React Aria and unknown styles are refused."
+                      "description": "Absolute shadcn project directory containing components.json and installed Tailwind 4 with Vite or PostCSS. React supports Radix and Base UI; Vue supports shadcn-vue on Reka. React Aria and unknown styles are refused."
                     },
                     "module": {
                       "type": "string",
@@ -1766,7 +1908,7 @@
             "type": "string",
             "minLength": 1
           },
-          "minItems": 1,
+          "minItems": 0,
           "description": "OODS trait names this component maps to."
         },
         "propMappings": {
@@ -2228,7 +2370,25 @@
         "action": {
           "const": "create"
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "not": {
+              "required": [
+                "substitution"
+              ]
+            }
+          },
+          "then": {
+            "properties": {
+              "oodsTraits": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
     },
     "MappingEntry": {
       "allOf": [

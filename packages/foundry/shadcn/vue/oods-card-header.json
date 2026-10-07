@@ -1,0 +1,20 @@
+{
+  "$schema": "https://shadcn-vue.com/schema/registry-item.json",
+  "name": "oods-card-header",
+  "type": "registry:component",
+  "title": "OODS Foundry CardHeader",
+  "description": "Vue adapter for OODS CardHeader on shadcn-vue / Reka UI. Preserves the shipped Vue props, slots and event contract; team components supply styling.",
+  "dependencies": [
+    "@oods/components-vue@0.10.0"
+  ],
+  "registryDependencies": [
+    "card"
+  ],
+  "files": [
+    {
+      "path": "components/oods/card-header.vue",
+      "type": "registry:component",
+      "content": "<script lang=\"ts\">\nimport { defineComponent, h, Fragment, Text } from 'vue';\nimport { CardHeader as Contract } from '@oods/components-vue';\nimport { CardHeader, CardTitle, CardDescription } from '@/components/ui/card';\n\n// Reuse the shipped Vue prop defaults and event vocabulary; the rendered parts belong to the team.\nexport default defineComponent({\n  name: 'OodsCardHeaderAdapter',\n  inheritAttrs: false,\n  props: Contract.props,\n  emits: Array.isArray(Contract.emits) ? Contract.emits : Object.keys(Contract.emits ?? {}),\n  setup(props: any, { attrs, slots }: any) {\n    const first = (...values: any[]) => values.find(value => typeof value === 'string' && value.trim());\n    const flatten = (nodes: any[]): any[] => nodes.flatMap(node => node.type === Fragment ? flatten(node.children ?? []) : [node]);\n    return () => {\n      const content = flatten(slots.default?.() ?? []);\n      const scalar = content.every(node => node.type === Text) ? content.map(node => node.children).join('') : undefined;\n      const title = first(scalar, props.title, props.label, props.text) ?? 'Card';\n      const details = first(props.supporting, props.supportingText, props.subtitle, props.description);\n      const heading = /^h[1-6]$/.test(props.as ?? '') ? props.as : `h${Number.isFinite(props.level) ? Math.max(1, Math.min(6, Math.trunc(props.level))) : 2}`;\n      return h('header', { ...attrs, 'data-oods-component': undefined, 'data-oods-adapter': 'CardHeader' }, [h(CardHeader, {}, { default: () => content.length && scalar === undefined ? content : [\n        h(CardTitle, {}, { default: () => h(heading, title) }), details && details.trim() !== title.trim() ? h(CardDescription, {}, { default: () => details }) : null,\n      ] })]);\n    };\n  },\n});\n</script>\n"
+    }
+  ]
+}

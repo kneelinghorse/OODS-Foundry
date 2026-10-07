@@ -168,9 +168,21 @@ export const UNBRIDGED_TOKENS = Object.freeze([
  * @param {Map<string, string>} resolvedByPath  dotted token path -> resolved CSS value
  * @param {string[]} selectors                  the D9 selector list for this cell
  */
-export function renderBridgeBlock(scope, resolvedByPath, selectors) {
+export function renderBridgeBlock(scope, resolvedByPath, selectors, names) {
   const lines = [];
   const missing = [];
+  for (const [name, value] of Object.entries(names?.variables ?? {})) {
+    if (!/^--[A-Za-z_][A-Za-z0-9_-]*$/.test(name) || typeof value !== 'string' || /[;{}<>\n\r\\]/.test(value) || /url\s*\(|var\s*\(|!important/i.test(value)) throw new Error(`Invalid team CSS token ${name}`);
+    lines.push(`  ${name}: ${value};`);
+  }
+
+  for (const [slot, variable] of Object.entries(names?.slots ?? {})) {
+    const namespace = names?.namespaces?.[slot];
+    if (namespace) {
+      if (!/^--[A-Za-z_][A-Za-z0-9_-]*$/.test(namespace) || !Object.hasOwn(names.variables, variable)) throw new Error(`Invalid team slot alias ${slot}`);
+      lines.push(`  ${namespace}: var(${variable});`);
+    }
+  }
 
   for (const { slot, tokenPath, token } of SEMANTIC_BRIDGE) {
     const fullPath = token ? token.replace('{brand}', scope.brand) : `color.brand.${scope.brand}.${tokenPath}`;
@@ -179,7 +191,10 @@ export function renderBridgeBlock(scope, resolvedByPath, selectors) {
       missing.push(fullPath);
       continue;
     }
-    lines.push(`  ${slot}: ${value};`);
+    const relative = token ? token.replace(/\.brand\.\{brand\}/, '') : tokenPath;
+    const named = names?.slots?.[relative];
+    if (named && !Object.hasOwn(names.variables, named)) throw new Error(`Missing team token ${named}`);
+    lines.push(`  ${slot}: ${named ? `var(${named})` : value};`);
   }
 
   if (missing.length > 0) {

@@ -1,3 +1,4 @@
+import { componentContracts } from '@oods/component-contracts';
 import { unitFieldLabel } from './unit-field-label.js';
 /**
  * Tab/section label generator (s62-m05).
@@ -56,7 +57,8 @@ export function populateFieldLabels(schema: UiSchema): void {
     const entry = typeof field === 'string' ? schema.objectSchema?.[field] : undefined;
     const anonymousSlot = node.props?.label === undefined && /^field-\d+$/.test(node.meta?.label ?? '');
     const placeholder = typeof node.props?.label === 'string' && /^Field \d+$/.test(node.props.label);
-    if (entry && typeof field === 'string' && (anonymousSlot || placeholder || node.props?.label === entry.description)) {
+    const contract = (componentContracts as Readonly<Record<string, { props: readonly string[] } | undefined>>)[node.component];
+    if ((!contract || contract.props.includes('label')) && entry && typeof field === 'string' && (anonymousSlot || placeholder || node.props?.label === entry.description)) {
       node.props = { ...node.props, label: fieldLabel(field) };
     }
     node.children?.forEach(visit);

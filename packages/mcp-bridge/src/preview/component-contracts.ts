@@ -85,7 +85,7 @@ async function measure(page: Page, report: SubstitutionContractReport, scenario:
   if (contract.name?.strategy !== 'none') {
     const name = exists ? await target.first().evaluate(element => {
       const labels = (element as HTMLInputElement).labels;
-      return labels?.length ? Array.from(labels).map(label => label.textContent).join(' ').trim() : (element.getAttribute('aria-label') ?? element.textContent ?? '').trim();
+      return labels?.length ? Array.from(labels).map(label => { const copy = label.cloneNode(true) as HTMLElement; copy.querySelectorAll('[aria-hidden="true"]').forEach(node => node.remove()); return copy.textContent; }).join(' ').trim() : (element.getAttribute('aria-label') ?? element.textContent ?? '').trim();
     }) : '';
     set('name', name.length > 0, `Observed accessible label text: ${JSON.stringify(name)}.`);
   } else set('name', true, 'The shared contract explicitly declares no owned accessible-name requirement.');
@@ -149,7 +149,7 @@ async function measure(page: Page, report: SubstitutionContractReport, scenario:
   } else if (report.component === 'Input') {
     const input = root.locator('input');
     if (await input.count()) {
-      const data = await input.evaluate(element => { const input = element as HTMLInputElement; return { id: input.id, label: Array.from(input.labels ?? []).map(label => label.textContent).join(' '), type: input.type, value: input.value, required: input.required, invalid: input.getAttribute('aria-invalid'), description: (input.getAttribute('aria-describedby') ?? '').split(' ').map(id => document.getElementById(id)?.textContent ?? '').join(' ') }; });
+      const data = await input.evaluate(element => { const input = element as HTMLInputElement; return { id: input.id, label: Array.from(input.labels ?? []).map(label => { const copy = label.cloneNode(true) as HTMLElement; copy.querySelectorAll('[aria-hidden="true"]').forEach(node => node.remove()); return copy.textContent; }).join(' '), type: input.type, value: input.value, required: input.required, invalid: input.getAttribute('aria-invalid'), description: (input.getAttribute('aria-describedby') ?? '').split(' ').map(id => document.getElementById(id)?.textContent ?? '').join(' ') }; });
       for (const name of ['id', 'label', 'type', 'value', 'required'] as const) set(`prop:${name}`, data[name] === scenario.props[name], `Native field ${name}: ${JSON.stringify(data[name])}.`);
       const help = data.description.includes(String(scenario.props.help)), validation = data.invalid === 'true' && data.description.includes('Enter a valid email');
       set('prop:help', help, `Associated description: ${data.description}`); set('prop:validation', validation, `aria-invalid=${data.invalid}; associated description: ${data.description}`);

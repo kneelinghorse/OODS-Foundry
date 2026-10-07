@@ -1,0 +1,21 @@
+{
+  "$schema": "https://shadcn-vue.com/schema/registry-item.json",
+  "name": "oods-tag-input",
+  "type": "registry:component",
+  "title": "OODS Foundry TagInput",
+  "description": "Vue adapter for OODS TagInput on shadcn-vue / Reka UI. Preserves text-value callbacks and labels; the OODS contract does not add or remove tags.",
+  "dependencies": [
+    "@oods/components-vue@0.10.0"
+  ],
+  "registryDependencies": [
+    "input",
+    "badge"
+  ],
+  "files": [
+    {
+      "path": "components/oods/tag-input.vue",
+      "type": "registry:component",
+      "content": "<script lang=\"ts\">\nimport { defineComponent, h, useId } from 'vue';\nimport { TagInput as Contract } from '@oods/components-vue';\nimport { Input } from '@/components/ui/input';\nimport { Badge } from '@/components/ui/badge';\n\n// Reuse the shipped Vue prop defaults and event vocabulary; the rendered parts belong to the team.\nexport default defineComponent({\n  name: 'OodsTagInputAdapter',\n  inheritAttrs: false,\n  props: Contract.props,\n  emits: Array.isArray(Contract.emits) ? Contract.emits : Object.keys(Contract.emits ?? {}),\n  setup(props: any, { attrs, slots, emit }: any) {\n    const id = `oods-tag-${useId()}`;\n    return () => { const title = [props.title, props.label, props.heading, props.name].find(value => typeof value === 'string' && value.trim()) ?? 'Tag Input'; const subtitle = [props.description, props.subtitle, props.hint].find(value => typeof value === 'string' && value.trim());\n      return h('fieldset', { ...attrs, 'data-oods-component': undefined, class: ['grid gap-2', attrs.class], 'data-oods-adapter': 'TagInput' }, [h('legend', title), subtitle ? h('p', subtitle) : null,\n        ...(slots.default?.() ?? [h('label', { for: id }, 'Tag'), h(Input, { id, name: 'tag', modelValue: props.modelValue ?? props.value, placeholder: props.placeholder,\n          'onUpdate:modelValue': (value: string | number) => { emit('update:modelValue', String(value)); emit('input', String(value)); }, onChange: (event: Event) => emit('change', (event.target as HTMLInputElement).value),\n        }), h('div', { class: 'flex flex-wrap gap-2', 'data-tag-list': 'true' }, (props.tags ?? []).map((tag: any) => h(Badge, { variant: 'secondary', 'data-tag-item': 'true' }, { default: () => typeof tag === 'object' ? tag.label ?? tag.name ?? tag.role ?? tag.value ?? tag.id ?? '' : String(tag) }))) ]),\n      ]); };\n\n  },\n});\n</script>\n"
+    }
+  ]
+}

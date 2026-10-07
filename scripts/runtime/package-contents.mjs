@@ -87,9 +87,9 @@ export function packageContentFindings(entries, { contact, ownerName, receipts =
   const packageManifest = packageEntry ? JSON.parse(packageEntry.bytes.toString("utf8")) : null;
   const release = packageManifest?.name === "@oods/foundry" ? packageManifest.version : null;
   const members = new Set(entries.map((entry) => entry.path));
-  if (release) for (const name of ["mappings", "oods-button", "oods-card", "oods-status-badge", "oods-tabs", "oods-select", "oods-search-input", "oods-pagination-bar", "oods-banner", "oods-input", "oods-textarea", "oods-checkbox", "oods-date-picker", "oods-tag-input", "oods-status-selector", "oods-card-header", "oods-price-badge"]) {
-    const file = `shadcn/${name}.json`;
-    if (!members.has(file)) add("missing-shadcn-item", file, "Ship the sixteen OODS adapters and their checked mapping list.");
+  if (release) for (const prefix of ["", "vue/"]) for (const name of ["registry", "mappings", "oods-button", "oods-card", "oods-status-badge", "oods-tabs", "oods-select", "oods-search-input", "oods-pagination-bar", "oods-banner", "oods-input", "oods-textarea", "oods-checkbox", "oods-date-picker", "oods-tag-input", "oods-status-selector", "oods-card-header", "oods-price-badge"]) {
+    const file = `shadcn/${prefix}${name}.json`;
+    if (!members.has(file)) add("missing-shadcn-item", file, "Ship the sixteen React and Vue OODS adapters, catalogs and checked mapping lists.");
   }
   if (release && members.has("quickstart/team-components/package.json") && !members.has("quickstart/team-components/mappings.json")) add("missing-mapping-example", "quickstart/team-components/mappings.json", "Ship the checked-list template beside the example package.");
   const directories = new Set([...members].flatMap((member) => member.split("/").slice(0, -1).map((_, index, parts) => parts.slice(0, index + 1).join("/"))));

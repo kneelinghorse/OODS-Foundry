@@ -85,9 +85,9 @@ describe('a team’s copied TSX is a checked portable substitution source', () =
     const input = mapping(); input.substitution.react = make() as any;
     await expect(create(input)).rejects.toMatchObject({ opiCode: 'OODS-V219', message: expect.stringMatching(message) }); expect(fs.existsSync(path.join(directory, 'mappings.json'))).toBe(false);
   });
-  it('refuses package+shadcn, Vue shadcn, and event value maps with named reasons', () => {
+  it('refuses package+shadcn and event value maps with named reasons', () => {
     expect(() => validateSubstitution({ component: 'Button', react: { ...implementation(), package: 'team' } })).toThrow(/components.json:1:.*exclusive/);
-    expect(() => validateSubstitution({ component: 'Button', vue: implementation() })).toThrow(/components.json:1:.*React only/);
+    expect(() => inspectShadcn(implementation().shadcn, 'Button', 'vue')).toThrow(/expected vue shadcn source, found react/);
     expect(() => validateSubstitution({ component: 'Button', react: { package: 'team', export: 'Button', props: { onActivate: { name: 'onClick', values: { a: 'b' } } } } })).toThrow(/event translations may rename only/);
   });
   it('checks a nested type-only dependency and an escaping symlink, and never partially writes a batch', async () => {
@@ -102,9 +102,14 @@ describe('a team’s copied TSX is a checked portable substitution source', () =
     fs.symlinkSync(path.join(directory, 'outside.tsx'), path.join(project, 'src/components/oods/escape.tsx'));
     expect(() => inspectShadcn({ project, module: '@/components/oods/escape' }, 'Escape')).toThrow(/source must stay inside/);
   });
-  it('refuses workflow application output by name instead of emitting an app without its source', async () => {
-    await create(mapping()); const result = generated(); result.files = [{ path: 'src/ListPage.tsx', contents: result.code }, { path: 'package.json', contents: '{"dependencies":{}}' }];
-    expect(() => substituteGeneratedComponents(result, schema(), true)).toThrow(/workflow application output are not supported/);
+  it('packages a routed application with the same source closure as a single screen', async () => {
+    await create(mapping()); const result = generated(); screenApp(result, schema(), { typescript: true } as any, {});
+    result.files!.find(file => file.path === 'src/GeneratedUI.tsx')!.path = 'src/ListPage.tsx';
+    result.files = result.files!.filter(file => file.path !== 'vite.config.mjs');
+    substituteGeneratedComponents(result, schema(), true);
+    expect(result.files!.some(file => file.path === 'src/components/ui/button.tsx')).toBe(true);
+    expect(result.files!.find(file => file.path === 'vite.config.mjs')!.contents).toContain('tailwindcss');
+    expect(result.files!.find(file => file.path === 'src/main.tsx')!.contents).toContain('index.css');
   });
   it('checks updates before replacing the saved mapping', async () => {
     await create(mapping()); const before = fs.readFileSync(path.join(directory, 'mappings.json'), 'utf8');

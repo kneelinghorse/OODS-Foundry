@@ -46,7 +46,7 @@ export function suggestTraits(shape: MapValue, fields: Record<string, MapValue>,
     propose({ name: 'Supersedable', parameters: { states: ['active', 'superseded'], initialState: 'active' } }, 'medium', [...validity.map(([field]) => evidence(field, 'Timestamp pair with an open-ended nullable boundary.')[0]), ...evidence(current[0], 'Current-row flag beside validity boundaries suggests type-2 history; confirm replacement meaning.')]);
   }
 
-  if (annotation.lifecycle?.states?.length) propose({ name: 'Stateful', parameters: { states: annotation.lifecycle.states, initialState: annotation.lifecycle.initialState ?? annotation.lifecycle.states[0] } }, 'strong', evidence(annotation.lifecycle.field ?? '', 'Explicit lifecycle state declaration.', 'declaration'));
+  if (annotation.lifecycle?.states?.length) propose({ name: 'Stateful', ...(fields[annotation.lifecycle.field] ? { fieldBindings: { status: annotation.lifecycle.field } } : {}), parameters: { states: annotation.lifecycle.states, initialState: annotation.lifecycle.initialState ?? annotation.lifecycle.states[0] } }, 'strong', evidence(annotation.lifecycle.field ?? '', 'Explicit lifecycle state declaration.', 'declaration'));
   if (annotation.history) propose({ name: 'Supersedable', parameters: {} }, 'strong', evidence(annotation.history.field ?? '', 'Declared record history; review whether revisions replace one another before accepting Supersedable.', 'declaration'));
   for (const relationship of annotation.relationships ?? []) {
     const field = relationship.via;

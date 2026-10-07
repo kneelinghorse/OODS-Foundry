@@ -84,3 +84,29 @@ OData accepts CSDL JSON or XML/EDMX (`format: "odata"`). Entity/complex types, e
 GraphQL accepts SDL (`.graphql`/`.gql`) or introspection JSON (`format: "graphql"`). Objects and input objects draft separately. Enums, nullability, lists, descriptions and deprecation metadata are retained; interfaces and unions remain alternatives, not merged records. Object fields become relationships. Operation roots and resolvers are not run. Custom scalar names do not supply types: only explicitly supported `@specifiedBy` URLs provide format evidence. Duplicate field declarations are reported and the first stays in effect.
 
 Hand-written objects can use `metadata.listColumns: [{field: name, label: Name}, {field: total}]` to select and order fields in list rows. Every column must name a composed field. Source annotation support uses the same object contract.
+
+## Accepted trait field bindings
+
+A proposal carries one configuration per trait and all of its evidence. Accepting a Timestampable or Stateful proposal records `fieldBindings` on the trait reference, so screens and generated React and Vue apps use the original source fields. An alternative configuration stays in the report with its reason; review the selected binding before accepting.
+
+Hand-written object definitions can use the same declaration:
+
+```yaml
+traits:
+  - name: Stateful
+    parameters:
+      states: [open, closed]
+      initialState: open
+    fieldBindings:
+      status: state
+  - name: Timestampable
+    fieldBindings:
+      created_at: placedAt
+      updated_at: updatedAt
+      last_event: null
+      last_event_at: null
+```
+
+Binding targets must be fields declared in the object's schema with a matching type. `null` explicitly omits a canonical field the source does not provide, including its view bindings. Without `fieldBindings`, a trait keeps its existing fields and behavior. Imported proposals explicitly omit every canonical record field the source does not supply. A proposal with no supported field bindings says that it contributes no record views. A single supplied creation time also serves the list timestamp. Timestamped objects can show that fact on their timeline without invented lifecycle events.
+
+Detail screens resolve related records from the same sample lookup used by form pickers. OData `Common.Text` supports a local label field or one navigation hop through a declared foreign-key constraint, such as `Agency/Name`. Generated lookup labels contain imported samples only: connect your application's relationship data for real records. Declared list-column labels take precedence over field semantics labels, then the human-readable field name.

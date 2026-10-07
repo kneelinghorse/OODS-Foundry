@@ -1,3 +1,4 @@
+import { recordEventAliases } from './collection-emitter.js';
 import { chartNodes } from './chart-declaration.js';
 import { VIZ_SVG_PROPS } from '@oods/component-contracts';
 import type { UiSchema, UiElement, FieldSchemaEntry } from '../schemas/generated.js';
@@ -115,6 +116,9 @@ export function workflowDataFiles(schema: UiSchema): Array<{ path: string; conte
   const workflow = schema.workflow!;
   const fields = schema.objectSchema!;
   const { idField } = workflow.data;
+  const aliases = recordEventAliases(fields);
+  const statusField = Object.keys(fields).find(field => fields[field].semanticType === 'status.state') ?? 'status';
+  const updatedField = aliases.updated_at ?? 'updated_at';
   const titleField = recordTitleField(workflow.object, fields, idField);
   const sortField = statedListSortField(schema, titleField);
   const records = workflowSampleRecords(schema);
@@ -181,7 +185,7 @@ export function history(record: DomainRecord): HistoryEntry[] {
   return Array.isArray(value) ? value.filter((entry): entry is HistoryEntry => !!entry && typeof entry === 'object' && typeof entry.to === 'string' && typeof entry.at === 'string') : [];
 }
 export function collectionEvents(record: DomainRecord): CollectionEvent[] {
-  return recordCollectionEvents(record, ${JSON.stringify({ historyField: eventCollection?.historyField, payments: paymentSources, minorUnits: workflow.data.minorUnits })});
+  return recordCollectionEvents(${Object.keys(aliases).length ? `{ ...record, ${Object.entries(aliases).map(([canonical, source]) => `${JSON.stringify(canonical)}: (record as Record<string, unknown>)[${JSON.stringify(source)}]`).join(', ')} }` : 'record'}, ${JSON.stringify({ historyField: eventCollection?.historyField, payments: paymentSources, minorUnits: workflow.data.minorUnits })});
 }
 export function createStore(options: StoreOptions = {}) {
   let records = structuredClone(options.seed ?? (options.empty ? [] : sampleData));
@@ -205,22 +209,22 @@ export function createStore(options: StoreOptions = {}) {
     if (!previous) throw new Error('Cannot save a missing record');
     const values = record as Record<string, unknown>;
     const before = previous as Record<string, unknown>;
-    const changed = Object.keys(values).filter((name) => Object.hasOwn(fieldTypes, name) && name !== 'state_history' && name !== 'updated_at' && JSON.stringify(values[name]) !== JSON.stringify(before[name]));
+    const changed = Object.keys(values).filter((name) => Object.hasOwn(fieldTypes, name) && name !== 'state_history' && name !== ${JSON.stringify(updatedField)} && JSON.stringify(values[name]) !== JSON.stringify(before[name]));
     if (changed.length === 0) return save(record);
     const at = now();
     const next = structuredClone(record);
     const target = next as Record<string, unknown>;
-    if (Object.hasOwn(fieldTypes, 'updated_at')) target.updated_at = at;${billingCycle ? `
+    if (Object.hasOwn(fieldTypes, ${JSON.stringify(updatedField)})) target[${JSON.stringify(updatedField)}] = at;${billingCycle ? `
     // Billable's billing-anchor reset: new terms (price, currency or interval) on an active record start a new billing
     // period now, its payment due and pending. A period field the edit itself set is kept. Recorded payments are history:
     // they keep the currency they were paid in.
-    const restarted = changed.some((name) => name === 'amount' || name === 'currency' || name === 'billing_interval') && target.status === 'active';
+    const restarted = changed.some((name) => name === 'amount' || name === 'currency' || name === 'billing_interval') && target${statusField === 'status' ? '.status' : `[${JSON.stringify(statusField)}]`} === 'active';
     if (restarted) for (const [name, value] of Object.entries(restartedBillingPeriod(at, typeof target.billing_interval === 'string' ? target.billing_interval : undefined))) if (Object.hasOwn(fieldTypes, name) && !changed.includes(name)) target[name] = value;
     if (changed.includes('currency') && Array.isArray(target.payment_history)) target.payment_history = target.payment_history.map((row) => row && typeof row === 'object' && !('currency' in row) ? { ...row, currency: before.currency } : row);` : ''}
     if (Object.hasOwn(fieldTypes, 'state_history')) {
-      const status = String(target.status ?? before.status ?? '');
-      const moved = changed.includes('status');
-      const entry: HistoryEntry = { title: moved ? String(status).split(/[_-]/).filter(Boolean).map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' ') : 'Updated', from: moved ? String(before.status ?? '') : null, to: status, at, reason: 'Edited ' + changed.map((name) => fieldLabels[name] ?? name).join(', ')${billingCycle ? " + (restarted ? '; a new billing period started' : '')" : ''} };
+      const status = String(target${statusField === 'status' ? '.status' : `[${JSON.stringify(statusField)}]`} ?? before${statusField === 'status' ? '.status' : `[${JSON.stringify(statusField)}]`} ?? '');
+      const moved = changed.includes(${JSON.stringify(statusField)});
+      const entry: HistoryEntry = { title: moved ? String(status).split(/[_-]/).filter(Boolean).map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' ') : 'Updated', from: moved ? String(before${statusField === 'status' ? '.status' : `[${JSON.stringify(statusField)}]`} ?? '') : null, to: status, at, reason: 'Edited ' + changed.map((name) => fieldLabels[name] ?? name).join(', ')${billingCycle ? " + (restarted ? '; a new billing period started' : '')" : ''} };
       target.state_history = [...history(next), entry];
     }
     const events: readonly string[] = ${JSON.stringify(eventNames)};
@@ -268,15 +272,15 @@ export function createStore(options: StoreOptions = {}) {
       if (mode === 'none') throw new Error('This record has no cancelled state to move to');
       const immediate = mode === 'immediate';
       const target = immediate ? 'cancelled' : 'pending_cancellation';
-      if (values.is_archived || values.status === 'terminated' || values.status === 'pending_cancellation' || (immediate && ['completed', 'cancelled', 'final'].includes(String(values.status)))) throw new Error('This record cannot be cancelled in its current state');
+      if (values.is_archived || values${statusField === 'status' ? '.status' : `[${JSON.stringify(statusField)}]`} === 'terminated' || values${statusField === 'status' ? '.status' : `[${JSON.stringify(statusField)}]`} === 'pending_cancellation' || (immediate && ['completed', 'cancelled', 'final'].includes(String(values${statusField === 'status' ? '.status' : `[${JSON.stringify(statusField)}]`})))) throw new Error('This record cannot be cancelled in its current state');
       ${workflow.data.cancellationRequiresReason ? `if (!reason.trim()) throw new Error('Enter a cancellation reason');
       if (!code || (${JSON.stringify(workflow.data.cancellationReasonCodes ?? [])}.length > 0 && !(${JSON.stringify(workflow.data.cancellationReasonCodes ?? [])} as readonly string[]).includes(code))) throw new Error('Choose an allowed cancellation reason code');` : ''}
       const at = now();
       const deferred = target === 'pending_cancellation' && atPeriodEnd;${billingCycle ? `
       // Ending at the period's end cancels the renewal: a payment due at or after that end will not be taken.
       if (deferred && typeof values.next_payment_due_at === 'string' && typeof values.current_period_end === 'string' && Date.parse(values.next_payment_due_at) >= Date.parse(values.current_period_end)) values.next_payment_due_at = undefined;` : ''}
-      const entry: HistoryEntry = { title: target === 'cancelled' ? 'Cancelled' : 'Pending Cancellation', from: String(values.status), to: target, at, reason: reason.trim(), code, atPeriodEnd: deferred };
-      Object.assign(record, { status: target, cancellation_reason: reason.trim(), cancellation_reason_code: code, ${fields.cancel_at_period_end && !fields.cancel_at_period_end.unavailable ? 'cancel_at_period_end: deferred, ' : ''}cancellation_requested_at: at, ${cancelEvent ? `last_event: ${JSON.stringify(cancelEvent)}, ${fields.last_event_at && !fields.last_event_at.unavailable ? 'last_event_at: at, ' : ''}` : ''}state_history: [...history(record), entry], updated_at: at });
+      const entry: HistoryEntry = { title: target === 'cancelled' ? 'Cancelled' : 'Pending Cancellation', from: String(values${statusField === 'status' ? '.status' : `[${JSON.stringify(statusField)}]`}), to: target, at, reason: reason.trim(), code, atPeriodEnd: deferred };
+      Object.assign(record, { [${JSON.stringify(statusField)}]: target, cancellation_reason: reason.trim(), cancellation_reason_code: code, ${fields.cancel_at_period_end && !fields.cancel_at_period_end.unavailable ? 'cancel_at_period_end: deferred, ' : ''}cancellation_requested_at: at, ${cancelEvent ? `last_event: ${JSON.stringify(cancelEvent)}, ${fields.last_event_at && !fields.last_event_at.unavailable ? 'last_event_at: at, ' : ''}` : ''}state_history: [...history(record), entry], [${JSON.stringify(updatedField)}]: at });
       return save(record);
     },
     archive(id: string) { return setArchived(id, true); },

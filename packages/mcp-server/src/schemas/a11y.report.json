@@ -83,7 +83,8 @@
           "threshold",
           "ratio",
           "foreground",
-          "background"
+          "background",
+          "contrastKind"
         ],
         "properties": {
           "ruleId": {
@@ -181,6 +182,13 @@
               }
             },
             "additionalProperties": false
+          },
+          "contrastKind": {
+            "enum": [
+              "text",
+              "non-text"
+            ],
+            "description": "Declared text pairs require 4.5:1; icons and progress/meter marks require 3:1."
           }
         },
         "additionalProperties": false

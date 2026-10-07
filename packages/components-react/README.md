@@ -32,4 +32,4 @@ Use matching versions of the OODS packages. These packages are separate from the
 
 ## License
 
-Apache License 2.0. See [LICENSE](https://cdn.jsdelivr.net/npm/@oods/components-react@0.9.0/LICENSE) and [NOTICE](https://cdn.jsdelivr.net/npm/@oods/components-react@0.9.0/NOTICE). Generated output belongs to its user; installed package dependencies retain their own licenses.
+Apache License 2.0. See [LICENSE](https://cdn.jsdelivr.net/npm/@oods/components-react@0.10.0/LICENSE) and [NOTICE](https://cdn.jsdelivr.net/npm/@oods/components-react@0.10.0/NOTICE). Generated output belongs to its user; installed package dependencies retain their own licenses.

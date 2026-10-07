@@ -7,14 +7,14 @@ The default listener is `127.0.0.1:4466`; `MCP_BRIDGE_PORT` overrides the port. 
 
 The registry advertises 20 tools by default and 1 on demand (21 total). Enable on-demand entries with `MCP_TOOLSET=all` or select them with `MCP_EXTRA_TOOLS`.
 
-The retained portable adapter E2E records outcomes for 20 advertised tools on the packaged runtime built at `d59cb600a` (a builder's receipt, not yet certified): 20 results and no typed dependency limit. The exercised inputs do not cover every input; the tool ledger records 34 known limits, listed in Tool-Specs.
+The retained portable adapter E2E records outcomes for 20 advertised tools on the packaged runtime built at `d59cb600a` (a builder's receipt, not yet certified): 20 results and no typed dependency limit. The exercised inputs do not cover every input; the tool ledger records 35 known limits, listed in Tool-Specs.
 
 | Default tool / actions | Recorded runtime outcome | Known limits |
 | --- | --- | --- |
 | `tokens_build` | pass | 1 |
 | `structured_data_fetch` | pass | 0 |
 | `brand_apply` | pass | 3 |
-| `brand_create` (`derive`/`template`/`validate`/`create`) | pass | 2 |
+| `brand_create` (`derive`/`template`/`validate`/`create`/`draft`/`show`/`apply`) | pass | 2 |
 | `catalog_list` | pass | 1 |
 | `code_generate` | pass | 3 |
 | `design_compose` | pass | 1 |
@@ -26,7 +26,7 @@ The retained portable adapter E2E records outcomes for 20 advertised tools on th
 | `dashboard_render` | pass | 1 |
 | `artifact_certify` | pass | 1 |
 | `fidelity_preview` | pass | 3 |
-| `component_map` (`create`/`list`/`resolve`/`update`/`delete`/`apply`) | pass | 2 |
+| `component_map` (`create`/`list`/`resolve`/`update`/`delete`/`draft`/`show`/`apply`) | pass | 3 |
 | `schema_store` (`save`/`load`/`list`/`delete`) | pass | 1 |
 | `object_registry` (`list`/`show`/`validate`/`register`/`reload`) | pass | 2 |
 | `schema_render` (`render`/`validate`) | pass | 3 |

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://shadcn-vue.com/schema/registry-item.json",
+  "name": "oods-search-input",
+  "type": "registry:component",
+  "title": "OODS Foundry SearchInput",
+  "description": "Vue adapter for OODS SearchInput on shadcn-vue / Reka UI. Preserves the shipped Vue props, slots and event contract; team components supply styling.",
+  "dependencies": [
+    "@oods/components-vue@0.10.0"
+  ],
+  "registryDependencies": [
+    "input",
+    "label",
+    "button"
+  ],
+  "files": [
+    {
+      "path": "components/oods/search-input.vue",
+      "type": "registry:component",
+      "content": "<script lang=\"ts\">\nimport { defineComponent, h, ref, useId, onBeforeUnmount } from 'vue';\nimport { SearchInput as Contract } from '@oods/components-vue';\nimport { Input } from '@/components/ui/input';\nimport { Label } from '@/components/ui/label';\nimport { Button } from '@/components/ui/button';\n\n// Reuse the shipped Vue prop defaults and event vocabulary; the rendered parts belong to the team.\nexport default defineComponent({\n  name: 'OodsSearchInputAdapter',\n  inheritAttrs: false,\n  props: Contract.props,\n  emits: Array.isArray(Contract.emits) ? Contract.emits : Object.keys(Contract.emits ?? {}),\n  setup(props: any, { attrs, emit }: any) {\n    const generated = useId(), local = ref(props.defaultValue);\n    let timer: ReturnType<typeof setTimeout> | undefined;\n    onBeforeUnmount(() => clearTimeout(timer));\n    const current = () => props.modelValue ?? props.value ?? local.value;\n    const search = (value: string) => { if (value && value.length < Math.max(0, props.minQueryLength)) return; emit('valueChange', value); emit('update', value); emit('search', value); };\n    const update = (value: string | number) => { const next = String(value); if (props.modelValue === undefined && props.value === undefined) local.value = next; emit('update:modelValue', next); emit('input', next); clearTimeout(timer); const delay = Math.max(0, props.debounceMs || props.debounce || 0); if (delay) timer = setTimeout(() => search(next), delay); else search(next); };\n    const clear = () => { if (props.disabled || !current()) return; update(''); emit('clear'); };\n    return () => { const id = props.id ?? `oods-search-${generated}`; return h('div', { ...attrs, 'data-oods-component': undefined, class: ['flex flex-wrap items-center gap-2', attrs.class], role: 'search', 'aria-label': attrs['aria-label'] ?? props.label ?? props.placeholder, 'data-oods-adapter': 'SearchInput' }, [\n      props.label ? h(Label, { for: id }, { default: () => props.label }) : null,\n      h(Input, { id, type: 'search', modelValue: current(), 'onUpdate:modelValue': update, placeholder: props.placeholder, disabled: props.disabled, 'aria-label': props.label ? undefined : attrs['aria-label'] ?? props.placeholder,\n        onKeydown: (event: KeyboardEvent) => { if (event.key === 'Escape') clear(); if (event.key === 'Enter') { event.preventDefault(); clearTimeout(timer); if (!props.disabled) search(current()); } },\n      }), props.clearable && current() ? h(Button, { type: 'button', variant: 'ghost', disabled: props.disabled, 'aria-label': 'Clear search', onClick: clear }, { default: () => '×' }) : null,\n    ]); };\n\n  },\n});\n</script>\n"
+    }
+  ]
+}

@@ -464,6 +464,11 @@
           },
           "description": "Allowed values for enum-constrained fields."
         },
+        "referenceLabels": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "Related sample record keys to labels. Replace this lookup with application data in production."
+        },
         "displayLabelField": {
           "type": "string",
           "description": "Explicit related-name field in this record. Display-only; requires the reference value and never replaces its identifier."
@@ -704,7 +709,7 @@
                         "project": {
                           "type": "string",
                           "pattern": "^/[\\s\\S]*$",
-                          "description": "Absolute React shadcn project directory containing components.json and installed Tailwind 4."
+                          "description": "Absolute React/Vue shadcn project directory containing components.json and installed Tailwind 4."
                         },
                         "module": {
                           "type": "string",
@@ -820,7 +825,7 @@
                         "project": {
                           "type": "string",
                           "pattern": "^/[\\s\\S]*$",
-                          "description": "Absolute React shadcn project directory containing components.json and installed Tailwind 4."
+                          "description": "Absolute React/Vue shadcn project directory containing components.json and installed Tailwind 4."
                         },
                         "module": {
                           "type": "string",

@@ -5,7 +5,7 @@ import { spawn } from 'node:child_process';
 
 /** Checked by the server's static inspector; all paths except project are project-relative. */
 export interface ShadcnClosure {
-  base?: 'radix' | 'base'; style?: string;
+  framework?: 'react' | 'vue'; base?: 'radix' | 'base' | 'reka'; style?: string;
   project: string; module: string; file: string; css: string; files: string[]; hashFiles: string[];
   paths: Record<string, string[]>; dependencies: Record<string, string>; imports: string[]; closureHash: string;
 }
@@ -33,7 +33,7 @@ export function shadcnAlias(source: ShadcnClosure, specifier: string): string | 
     const capture = star < 0 ? '' : specifier.slice(star, specifier.length - (key.length - star - 1));
     for (const target of targets) {
       const base = target.replace('*', capture);
-      const relative = [base, ...['.tsx', '.ts', '.js', '.jsx', '.json', '/index.ts', '/index.tsx'].map(ext => base + ext)].find(file => source.files.includes(file));
+      const relative = [base, ...['.vue', '.tsx', '.ts', '.js', '.jsx', '.json', '/index.ts', '/index.tsx'].map(ext => base + ext)].find(file => source.files.includes(file));
       if (relative) return shadcnFile(source, relative);
     }
     throw new Error(`Shadcn alias '${specifier}' is outside its checked closure`);
@@ -93,7 +93,7 @@ process.stdin.on('end', async () => { try {
     },
   });
   const scanner = new Scanner({ sources: [] });
-  const candidates = scanner.scanFiles([...source.files.filter(file => /\.(tsx?|jsx?)$/.test(file)).map(file => ({ content: fs.readFileSync(path.join(process.cwd(), file), 'utf8'), extension: path.extname(file).slice(1) })), { content: source.screen, extension: 'tsx' }]);
+  const candidates = scanner.scanFiles([...source.files.filter(file => /\.(tsx?|jsx?|vue)$/.test(file)).map(file => ({ content: fs.readFileSync(path.join(process.cwd(), file), 'utf8'), extension: path.extname(file).slice(1) })), { content: source.screen, extension: 'tsx' }]);
   let css = compiler.build(candidates);
   css = css.replace(/url\(([^)]+)\)/gi, (all, raw) => {
     const url = raw.trim().replace(/^['"]|['"]$/g, '');

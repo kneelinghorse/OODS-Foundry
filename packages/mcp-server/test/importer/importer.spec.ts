@@ -114,9 +114,15 @@ it('grades structural evidence independently of names, never applies proposals, 
   const result = from({ title: 'Record', type: 'object', properties: { status: { type: 'string' }, category: { type: 'string', enum: ['red', 'blue'] }, happened: { type: 'string', format: 'date-time', readOnly: true }, strange: { type: 'string', enum: ['A space', 'TOO-UPPER'] } } });
   expect(result.drafts[0].definition.traits).toEqual([]);
   const proposals = result.drafts[0].proposals;
-  expect(proposals.filter(p => p.grade === 'weak')[0].evidence[0].kind).toBe('name');
+  const lifecycle = proposals.find(p => p.trait.name === 'Stateful')!;
+  expect(lifecycle.grade).toBe('medium');
+  expect(lifecycle.evidence.some(item => item.kind === 'name')).toBe(true);
+  expect(proposals.filter(p => p.trait.name === 'Stateful')).toHaveLength(1);
   expect(proposals.filter(p => p.grade === 'strong')[0].evidence[0].kind).toBe('structure');
-  expect(proposals.some(p => p.grade === 'medium' && !p.valid && p.errors.length)).toBe(true);
+  expect(result.report.some(entry => entry.outcome === 'unmapped' && entry.reason.includes('Alternative Stateful configuration'))).toBe(true);
+  const invalid = from({ title: 'InvalidState', properties: { value: { type: 'string', enum: ['A space', 'TOO-UPPER'] } } }).drafts[0].proposals[0];
+  expect(invalid.valid).toBe(false);
+  expect(invalid.errors.length).toBeGreaterThan(0);
 });
 it('gives every retained hub value a source file and pointer', () => {
   const result = from({ title: 'Widget', ...schema });

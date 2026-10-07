@@ -1,69 +1,140 @@
 {
-  "description": "Curated Storybook stories that must pass the accessibility contract (axe WCAG 2.2 AA) in PR CI.",
+  "description": "Curated Storybook accessibility contract checked by the local accessibility release gate (axe WCAG 2.2 AA; serious/critical failures).",
   "owner": "Design System Team",
-  "failOnImpact": ["serious", "critical"],
+  "failOnImpact": [
+    "serious",
+    "critical"
+  ],
   "axe": {
     "runOnly": {
       "type": "tag",
-      "values": ["wcag2a", "wcag21aa"]
+      "values": [
+        "wcag2a",
+        "wcag2aa",
+        "wcag21a",
+        "wcag21aa",
+        "wcag22aa"
+      ]
     },
     "rules": {
-      "color-contrast": { "enabled": false }
+      "color-contrast": {
+        "enabled": false
+      }
     }
   },
   "stories": [
     {
       "id": "components-button--primary",
-      "title": "Components/Button — Primary CTA",
-      "tags": ["controls", "focus", "keyboard"],
+      "title": "Components/Button \u2014 Primary CTA",
+      "tags": [
+        "controls",
+        "focus",
+        "keyboard"
+      ],
       "variants": [
-        { "name": "Theme • Light", "query": "globals=theme:light" },
-        { "name": "Theme • Dark", "query": "globals=theme:dark" }
+        {
+          "name": "Theme \u2022 Light",
+          "query": "globals=theme:light"
+        },
+        {
+          "name": "Theme \u2022 Dark",
+          "query": "globals=theme:dark"
+        }
       ]
     },
     {
       "id": "components-banner--primary",
-      "title": "Components/Banner — Inline Status",
-      "tags": ["status", "aria-live", "links"],
+      "title": "Components/Banner \u2014 Inline Status",
+      "tags": [
+        "status",
+        "aria-live",
+        "links"
+      ],
       "variants": [
-        { "name": "Theme • Light", "query": "globals=theme:light" },
-        { "name": "Theme • Dark", "query": "globals=theme:dark" }
+        {
+          "name": "Theme \u2022 Light",
+          "query": "globals=theme:light"
+        },
+        {
+          "name": "Theme \u2022 Dark",
+          "query": "globals=theme:dark"
+        }
       ]
     },
     {
       "id": "components-tabs--primary",
-      "title": "Components/Tabs — Keyboard Navigation",
-      "tags": ["navigation", "aria-roles", "keyboard"],
+      "title": "Components/Tabs \u2014 Keyboard Navigation",
+      "tags": [
+        "navigation",
+        "aria-roles",
+        "keyboard"
+      ],
       "variants": [
-        { "name": "Theme • Light", "query": "globals=theme:light" },
-        { "name": "Theme • Dark", "query": "globals=theme:dark" }
+        {
+          "name": "Theme \u2022 Light",
+          "query": "globals=theme:light"
+        },
+        {
+          "name": "Theme \u2022 Dark",
+          "query": "globals=theme:dark"
+        }
       ]
     },
     {
       "id": "patterns-form--help-error-text-demo",
-      "title": "Patterns/Form — Help vs Error Text",
-      "tags": ["forms", "aria-invalid", "feedback"],
+      "title": "Patterns/Form \u2014 Help vs Error Text",
+      "tags": [
+        "forms",
+        "aria-invalid",
+        "feedback"
+      ],
       "variants": [
-        { "name": "Theme • Light", "query": "globals=theme:light" },
-        { "name": "Theme • Dark", "query": "globals=theme:dark" }
+        {
+          "name": "Theme \u2022 Light",
+          "query": "globals=theme:light"
+        },
+        {
+          "name": "Theme \u2022 Dark",
+          "query": "globals=theme:dark"
+        }
       ]
     },
     {
       "id": "billing-subscription-form--contract-adjustments",
-      "title": "Billing/Subscription.Form — Contract Adjustments",
-      "tags": ["forms", "aria-describedby", "validation"],
+      "title": "Billing/Subscription.Form \u2014 Contract Adjustments",
+      "tags": [
+        "forms",
+        "aria-describedby",
+        "validation"
+      ],
       "variants": [
-        { "name": "Theme • Light", "query": "globals=theme:light" },
-        { "name": "Theme • Dark", "query": "globals=theme:dark" }
+        {
+          "name": "Theme \u2022 Light",
+          "query": "globals=theme:light"
+        },
+        {
+          "name": "Theme \u2022 Dark",
+          "query": "globals=theme:dark"
+        }
       ]
     },
     {
       "id": "billing-invoice-detail--finance-dossier",
-      "title": "Billing/Invoice.Detail — Finance Dossier",
-      "tags": ["detail-view", "aria-labelledby", "landmarks"],
+      "title": "Billing/Invoice.Detail \u2014 Finance Dossier",
+      "tags": [
+        "detail-view",
+        "aria-labelledby",
+        "landmarks"
+      ],
       "variants": [
-        { "name": "Theme • Light", "query": "globals=theme:light" },
-        { "name": "Theme • Dark", "query": "globals=theme:dark" }
+        {
+          "name": "Theme \u2022 Light",
+          "query": "globals=theme:light"
+        },
+        {
+          "name": "Theme \u2022 Dark",
+          "query": "globals=theme:dark"
+        }
       ]
     }
   ]

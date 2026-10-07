@@ -1,7 +1,7 @@
 import { recordCollectionEvents } from '@oods/component-contracts';
 import type { UiElement, UiSchema } from '../schemas/generated.js';
 import { snakeToCamel } from './binding-utils.js';
-import { recordEventsProjection } from './collection-emitter.js';
+import { recordEventsProjection, recordEventAliases } from './collection-emitter.js';
 import { recordTitleField } from '../compose/record-label.js';
 import { neutralFieldValue, shownSampleRecord, sortRecordsAsStated, statedListSortField, workflowSampleRecords } from './workflow-data-emitter.js';
 
@@ -41,7 +41,7 @@ export function deriveConsumerModel(schema: UiSchema, established: Record<string
   // s220-m01 (#2461): a timeline shows the record's own events, as a generated screen does when it is passed none.
   if (sources.has('events')) {
     const projection = recordEventsProjection(schema.screens, schema.objectSchema ?? {});
-    model.events = projection ? recordCollectionEvents(Object.fromEntries(projection.keys.map(name => [name, model[camel(name)]])), projection.options) : [];
+    model.events = projection ? recordCollectionEvents(Object.fromEntries([...projection.keys.map(name => [name, model[camel(name)]]), ...Object.entries(projection.aliases).map(([canonical, source]) => [canonical, model[camel(source)]])]), projection.options) : [];
   }
   if (schemaNodes(schema).some(node => node.state)) model.uiState = 'success';
   return model;
@@ -76,7 +76,7 @@ export function seedPreviewModel({ schema, context, object, workflowSchema, esta
     if (context === 'timeline' && !Object.hasOwn(established, 'events')) {
       const payment = schemaNodes(schema).find(node => node.component === 'PaymentEventTimeline');
       const payments = payment ? [{ field: payment.props?.lastPaymentField, title: 'Last payment' }, { field: payment.props?.nextPaymentField, title: 'Next payment' }].filter((entry): entry is { field: string; title: string } => typeof entry.field === 'string') : [];
-      model.events = recordCollectionEvents(shown!, { payments, minorUnits: workflowSchema.workflow?.data.minorUnits });
+      model.events = recordCollectionEvents({ ...shown!, ...Object.fromEntries(Object.entries(recordEventAliases(schema.objectSchema ?? {})).map(([canonical, source]) => [canonical, shown?.[source]])) }, { payments, minorUnits: workflowSchema.workflow?.data.minorUnits });
     }
     if (context === 'list' && !Object.hasOwn(established, 'rows')) {
       // s213-m01 (review finding 1): the list's sort control says "Name A–Z" before anyone sorts, so the seeded rows

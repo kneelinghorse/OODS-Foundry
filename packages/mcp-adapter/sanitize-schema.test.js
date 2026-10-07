@@ -491,9 +491,9 @@ describe('sanitizeSchema — per-action arguments of the action tools stay liste
     const source = dispatcher('map');
     const listed = sanitizeSchema(source);
     expect(Object.keys(listed.properties).sort()).toEqual([
-      'action', 'apply', 'capabilities', 'confidence', 'cursor', 'disambiguation_decisions', 'externalComponent', 'externalSystem',
+      'accept', 'action', 'apply', 'capabilities', 'confidence', 'cursor', 'disambiguation_decisions', 'draftId', 'externalComponent', 'externalSystem',
       'id', 'limit', 'mappings', 'mappingsPath', 'metadata', 'minConfidence', 'oodsTraits',
-      'preferred_terms', 'projection_variants', 'propMappings', 'report', 'reportPath', 'substitution', 'updates',
+      'preferred_terms', 'projection_variants', 'propMappings', 'report', 'reportPath', 'source', 'substitution', 'updates',
     ].sort());
     expect(listed.required).toEqual(['action']);
     expect(listed).not.toHaveProperty('allOf');
@@ -505,6 +505,10 @@ describe('sanitizeSchema — per-action arguments of the action tools stay liste
     for (const name of ['substitution', 'oodsTraits', 'mappings', 'mappingsPath']) {
       expect(listed.properties[name].description, name).toMatch(/Actions: create\.$/);
     }
+    // Static intake must expose its source, review identity and explicit acceptance at discovery time.
+    expect(listed.properties.source.description).toBe('Actions: draft (required).');
+    expect(listed.properties.draftId.description).toBe('Actions: show (required), apply (required).');
+    expect(listed.properties.accept).toMatchObject({ type: 'array', minItems: 1, description: 'Actions: apply (required).' });
     // A batch call does not take these single-create fields, so discovery must not call them required for create.
     expect(listed.properties.externalSystem.description).not.toContain('create (required)');
   });

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://shadcn-vue.com/schema/registry-item.json",
+  "name": "oods-price-badge",
+  "type": "registry:component",
+  "title": "OODS Foundry PriceBadge",
+  "description": "Vue adapter for OODS PriceBadge on shadcn-vue / Reka UI. Preserves the shipped Vue props, slots and event contract; team components supply styling.",
+  "dependencies": [
+    "@oods/components-vue@0.10.0",
+    "@oods/component-contracts@0.10.0"
+  ],
+  "registryDependencies": [
+    "badge"
+  ],
+  "files": [
+    {
+      "path": "components/oods/price-badge.vue",
+      "type": "registry:component",
+      "content": "<script lang=\"ts\">\nimport { defineComponent, h } from 'vue';\nimport { PriceBadge as Contract } from '@oods/components-vue';\nimport { Badge } from '@/components/ui/badge';\nimport { currencyMinorUnits } from '@oods/component-contracts';\n\n// Reuse the shipped Vue prop defaults and event vocabulary; the rendered parts belong to the team.\nexport default defineComponent({\n  name: 'OodsPriceBadgeAdapter',\n  inheritAttrs: false,\n  props: Contract.props,\n  emits: Array.isArray(Contract.emits) ? Contract.emits : Object.keys(Contract.emits ?? {}),\n  setup(props: any, { attrs, slots }: any) {\n    return () => {\n      const currency = props.currency ?? props.currencyCode;\n      const cents = props.amountCents ?? props.unitAmountCents;\n      const amount = cents === undefined ? props.amount ?? props.unitAmount : cents / currencyMinorUnits(currency, props.minorUnits);\n      let formatted = 'Price';\n      if (amount !== undefined && Number.isFinite(amount)) {\n        try { formatted = new Intl.NumberFormat('en-US', currency ? { style: 'currency', currency: currency.toUpperCase() } : { maximumFractionDigits: 2 }).format(amount); }\n        catch { formatted = `${currency?.toUpperCase() ?? ''} ${amount.toFixed(2)}`.trim(); }\n      }\n      return h(Badge, { ...attrs, 'data-oods-component': undefined, variant: props.emphasis === 'solid' ? 'default' : 'secondary',\n        'data-oods-adapter': 'PriceBadge', 'data-price': 'true', 'data-currency': currency?.toUpperCase(), title: attrs.title ?? props.label,\n      }, { default: () => slots.default?.() ?? props.label ?? props.value ?? formatted });\n    };\n  },\n});\n</script>\n"
+    }
+  ]
+}

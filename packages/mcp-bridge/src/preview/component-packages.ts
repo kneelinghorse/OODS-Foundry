@@ -42,11 +42,11 @@ export function inspectComponentPackages(requests: ComponentPackageRequest[], re
     if (request?.shadcn) {
       const source = request.shadcn;
       try {
-        if (request.framework !== 'react' || request.specifier !== source.module || !path.isAbsolute(source.project)) throw new Error('invalid React shadcn source');
+        if (!['react', 'vue'].includes(request.framework) || (source.framework ?? 'react') !== request.framework || request.specifier !== source.module || !path.isAbsolute(source.project)) throw new Error('invalid framework or shadcn source');
         const contentHash = shadcnHash(source);
-        const key = `react:${source.module}`;
+        const key = `${request.framework}:${source.module}`;
         if (found.has(key) && found.get(key)!.directory !== source.project) throw new Error('one module cannot resolve from two shadcn projects');
-        found.set(key, { framework: 'react', name: source.module, version: contentHash, directory: source.project, contentHash, shadcn: { ...source, closureHash: contentHash } });
+        found.set(key, { framework: request.framework, name: source.module, version: contentHash, directory: source.project, contentHash, shadcn: { ...source, closureHash: contentHash } });
       } catch (error) { throw new ComponentPackageError(source.module, error instanceof Error ? error.message : String(error)); }
       continue;
     }

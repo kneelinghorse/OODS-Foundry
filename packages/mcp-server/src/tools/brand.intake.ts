@@ -1,4 +1,6 @@
 import fs from 'node:fs';
+import { draftTokens, type TokenDraftInput } from '../intake/tokens.js';
+import { readIntake, stageIntake } from '../intake/stage.js';
 import path from 'node:path';
 import { deriveBrand, type BrandDerivation, type BrandDeriveHints } from '../lib/brand-derive.js';
 import { deriveBrandFromCss } from '../lib/brand-derive-css.js';
@@ -31,6 +33,9 @@ import {
 
 /** s222-m01 (#2502 ruling 3): validate and create take a brand recipe in place of the documents. */
 export type BrandIntakeInput =
+  | ({ action:'draft' } & TokenDraftInput)
+  | { action:'show'; draftId:string }
+  | { action:'apply'; draftId:string; accept:true }
   | { action: 'derive'; tokens?: unknown; css?: string; cssPath?: string; hints?: BrandDeriveHints }
   | { action: 'template'; from?: BrandTemplateSource }
   | { action: 'validate'; brand_id?: string; documents?: unknown; recipe?: unknown }
@@ -45,6 +50,8 @@ function source(input: { documents?: unknown; recipe?: unknown }, action: string
 }
 
 export type BrandIntakeOutput =
+  | ({ action:'draft'; draftId:string; file:string } & ReturnType<typeof draftTokens>)
+  | ({ action:'show'; draftId:string } & ReturnType<typeof draftTokens>)
   | BrandDerivation
   | ({ action: 'template' } & BrandTemplate)
   | ({ action: 'validate' } & BrandValidationReport)
@@ -128,6 +135,16 @@ async function create(input: { brand_id: string; documents?: unknown; recipe?: u
 
 export async function handle(input: BrandIntakeInput): Promise<BrandIntakeOutput> {
   switch (input?.action) {
+    case 'draft': {
+      const draft = draftTokens(input);
+      return { action:'draft', ...stageIntake('brand',draft), ...draft };
+    }
+    case 'show': return { action:'show',draftId:input.draftId,...readIntake<ReturnType<typeof draftTokens>>('brand',input.draftId) };
+    case 'apply': {
+      if(input.accept !== true) throw new ToolError('OODS-V001','Brand intake requires explicit accept:true after reviewing show.');
+      const draft = readIntake<ReturnType<typeof draftTokens>>('brand',input.draftId);
+      return create({brand_id:draft.brand_id,documents:draft.documents});
+    }
     case 'derive': {
       if ([input.tokens, input.css, input.cssPath].filter(value => value !== undefined).length !== 1) throw new ToolError('OODS-V001', 'derive takes exactly one of tokens, css or cssPath.', { field: 'tokens' });
       if (input.tokens !== undefined) return deriveBrand(input.tokens, input.hints);

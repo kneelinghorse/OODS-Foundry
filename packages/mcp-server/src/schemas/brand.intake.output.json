@@ -250,6 +250,72 @@
         "brands": { "type": "array", "items": { "type": "string" }, "description": "The brands this server has after the build." },
         "report": { "$ref": "#/$defs/report" }
       }
+    },
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "enum": [
+            "draft",
+            "show"
+          ]
+        },
+        "draftId": {
+          "type": "string"
+        },
+        "file": {
+          "type": "string"
+        },
+        "brand_id": {
+          "type": "string"
+        },
+        "source": {
+          "type": "object"
+        },
+        "contentHash": {
+          "type": "string"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "documents": {
+          "type": "object"
+        },
+        "inventory": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "report": {
+          "type": "object"
+        },
+        "counts": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "action",
+        "draftId",
+        "brand_id",
+        "counts"
+      ],
+      "additionalProperties": false
     }
   ],
   "$defs": {

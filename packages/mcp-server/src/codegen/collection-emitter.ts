@@ -44,27 +44,38 @@ export function collectionProps(nodes: readonly UiElement[], fields: Record<stri
 /** The record keys recordCollectionEvents reads besides a record's history and payment fields. */
 const RECORD_EVENT_KEYS = ['payment_history', 'amount', 'currency', 'billing_interval', 'created_at', 'last_event', 'last_event_at', 'issued_at', 'period_start', 'ownership_transferred_at', 'archived_at', 'restored_at', 'archive_reason', 'cancellation_requested_at', 'cancellation_reason'];
 
+/** The shared event formatter keeps its canonical API; only explicitly bound audit semantics supply aliases. */
+export function recordEventAliases(fields: Record<string, FieldSchemaEntry>): Record<string, string> {
+  const aliases = Object.fromEntries([['created_at', 'audit.created_at'], ['updated_at', 'audit.updated_at'], ['last_event', 'audit.event.type'], ['last_event_at', 'audit.event.timestamp']].flatMap(([canonical, semantic]) => {
+    const source = Object.keys(fields).find(field => !fields[field].unavailable && fields[field].semanticType === semantic);
+    return source && source !== canonical ? [[canonical, source]] : [];
+  }));
+  if (aliases.updated_at && !fields.last_event_at && !aliases.last_event_at) aliases.last_event_at = aliases.updated_at;
+  return aliases;
+}
+
 /**
  * s220-m01 (#2461): the events a timeline shows when its consumer passes none are the record's own, projected the way its
  * workflow store and the preview project them (recordCollectionEvents). A standalone Subscription timeline received the
  * record's history, showed it under "State transitions", and said "No events yet" above it.
  */
-export function recordEventsProjection(nodes: readonly UiElement[], fields: Record<string, FieldSchemaEntry>): { keys: string[]; options: { historyField?: string; payments: Array<{ field: string; title: string }>; minorUnits?: number } } | undefined {
+export function recordEventsProjection(nodes: readonly UiElement[], fields: Record<string, FieldSchemaEntry>): { keys: string[]; aliases: Record<string, string>; options: { historyField?: string; payments: Array<{ field: string; title: string }>; minorUnits?: number } } | undefined {
   const collection = walk(nodes).find(node => node.collection?.source === 'events')?.collection;
   if (!collection) return undefined;
   const payment = walk(nodes).find(node => node.component === 'PaymentEventTimeline');
   const payments = payment ? [{ field: payment.props?.lastPaymentField, title: 'Last payment' }, { field: payment.props?.nextPaymentField, title: 'Next payment' }]
     .filter((entry): entry is { field: string; title: string } => typeof entry.field === 'string') : [];
   const historyField = collection.historyField;
-  const keys = [...new Set([historyField ?? 'state_history', ...payments.map(entry => entry.field), ...RECORD_EVENT_KEYS])].filter(name => fields[name] && !fields[name]!.unavailable);
+  const aliases = recordEventAliases(fields);
+  const keys = [...new Set([...Object.values(aliases), historyField ?? 'state_history', ...payments.map(entry => entry.field), ...RECORD_EVENT_KEYS])].filter(name => fields[name] && !fields[name]!.unavailable);
   const minorUnits = fields.amount?.money?.minorUnits;
-  return { keys, options: { ...(historyField ? { historyField } : {}), payments, ...(minorUnits ? { minorUnits } : {}) } };
+  return { keys, aliases, options: { ...(historyField ? { historyField } : {}), payments, ...(minorUnits ? { minorUnits } : {}) } };
 }
 
 export function recordEventsExpression(nodes: readonly UiElement[], fields: Record<string, FieldSchemaEntry>): string | undefined {
   const projection = recordEventsProjection(nodes, fields);
   if (!projection) return undefined;
-  return `recordCollectionEvents({ ${projection.keys.map(name => `${name}: ${snakeToCamel(name)}`).join(', ')} }, ${literal(projection.options)})`;
+  return `recordCollectionEvents({ ${[...projection.keys.map(name => `${name}: ${snakeToCamel(name)}`), ...Object.entries(projection.aliases).map(([canonical, source]) => `${canonical}: ${snakeToCamel(source)}`)].join(', ')} }, ${literal(projection.options)})`;
 }
 
 /** React defaults a timeline's events to the record's own; Vue cannot (a props default is hoisted out of setup), so it reads timelineEvents(). */

@@ -1,4 +1,4 @@
-import { recordKeyField } from '../objects/record-identity.js';
+import { relationshipOptions } from './relationship-options.js';
 import { loadObject } from '../objects/object-loader.js';
 import type { UiElement, UiSchema } from '../schemas/generated.js';
 import type { ComposedObject } from '../objects/trait-composer.js';
@@ -51,10 +51,17 @@ const boundFields = (props: Record<string, unknown> | undefined): string[] => Ob
  * own read-only fields (an object's metadata.detailTab; "Details" when it declares none).
  */
 export function reconcileFormDetail(schema: UiSchema, context: string, composed: ComposedObject, tabLabels?: string[], readTab = 'Details', viewState: ReadonlySet<string> = new Set()): void {
+  const fields = schema.objectSchema ?? {};
+  let relationships: NonNullable<ReturnType<typeof loadObject>['relationships']> = [];
+  try { relationships = loadObject(composed.object.name).relationships ?? []; } catch { /* Inline composition has no registry entry. */ }
+  if (context !== 'form') for (const relationship of relationships) {
+    // A record's explicitly declared name field remains its source of truth.
+    if (!fields[relationship.via] || fields[relationship.via].displayLabelField) continue;
+    const options = relationshipOptions(relationship, composed.semantics[relationship.via]);
+    // An empty lookup has no label to resolve and must not reclassify an authored string identifier.
+    if (options.length) fields[relationship.via].referenceLabels = Object.fromEntries(options.map(option => [option.value, option.label]));
+  }
   if (context === 'form') {
-    const fields = schema.objectSchema ?? {};
-    let relationships: NonNullable<ReturnType<typeof loadObject>['relationships']> = [];
-    try { relationships = loadObject(composed.object.name).relationships ?? []; } catch { /* Inline composition has no registry entry. */ }
     const owned = new Set<string>();
     const fieldEditors = new Set<string>();
     // Keep the authored classification editor beside the scalar editor; repairing
@@ -152,11 +159,7 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
         node.props = { ...node.props, label: node.props?.label === entry.description || !node.props?.label || node.props.label === field || node.props.label === fieldLabel(field as string) ? defaultLabel : node.props.label, ...(entry.description && contractHas(node.component, 'help') ? { help: fieldHelp(field as string, entry.description) } : {}) };
         const relationship = relationships.find(edge => edge.via === field);
         if (relationship && !type.endsWith('[]')) {
-          const target = loadObject(relationship.target);
-          const keys = Object.keys(target.schema);
-          const id = recordKeyField(target)!;
-          const title = keys.find(key => target.semantics[key]?.semantic_type === 'text.label') ?? keys.find(key => /^(name|title|label)$/.test(key)) ?? id;
-          const options = (target.samples ?? []).filter(row => row[id] !== undefined).map(row => ({ value: String(row[id]), label: String(row[title] ?? row[id]) }));
+          const options = relationshipOptions(relationship, composed.semantics[field as string]);
           node.component = 'Select';
           node.props = { field, label: typeof declaredLabel === 'string' ? declaredLabel : relationship.label && relationship.label !== field ? fieldLabel(relationship.label) : defaultLabel, options, ...(entry.description ? { help: entry.description } : {}) };
           node.bindings = { onChange: `handleChange_${field}` };
@@ -194,14 +197,13 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
     }
   }
   if (context !== 'detail' && context !== 'dashboard') return;
-  const fields = schema.objectSchema ?? {};
   const groupOf = (field: string): string | undefined => { const group = composed.semantics?.[field]?.ui_hints?.detail_group; return typeof group === 'string' && group.trim() ? group : undefined; };
   const listBadges = composed.traits.flatMap(trait => (trait.definition.view_extensions?.list ?? []).map(extension => ({ component: extension.component, sourceTrait: trait.ref.name, props: resolveTraitRecipeProps(trait, extension) })));
-  const statefulStatus = listBadges.filter(entry => entry.component === 'StatusBadge' && entry.sourceTrait.startsWith('lifecycle/Stateful'));
+  const statefulStatus = listBadges.filter(entry => entry.component === 'StatusBadge' && entry.sourceTrait.split('/').pop() === 'Stateful');
   const headerStatusFields = new Set(['status', ...statefulStatus.flatMap(entry => boundFields(entry.props))]);
   const isControl = (node: UiElement) => controls.has(node.component) || (VIZ_CONTROL_IDS as readonly string[]).includes(node.component) || /(?:Editor|Form|Picker|Selector)$/.test(node.component);
   const traitFields = new Set(composed.traits.flatMap(trait => Object.keys(trait.definition.schema ?? {})));
-  const summaryField = (name: string) => !traitFields.has(name) || ['created_at', 'updated_at', 'last_event', 'last_event_at'].includes(name) || /(?:_minor|_id|_code)$/.test(name);
+  const summaryField = (name: string) => !traitFields.has(name) || /^audit\./.test(fields[name]?.semanticType ?? '') || ['created_at', 'updated_at', 'last_event', 'last_event_at'].includes(name) || /(?:_minor|_id|_code)$/.test(name);
   const isScalar = (name: string) => /^(?:string|uuid|email|url|integer|number|boolean|date|datetime)\??$/.test(fields[name]?.type ?? '');
   // s206-m01: the heading names the record with the field its object declares (recordTitleField). A record named only
   // by its prose (a CMOS decision has no title) keeps the identifier as its heading; the prose renders in full below.
@@ -262,6 +264,8 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
       if (!node.children?.length && ['MembershipPanel', 'PreferencePanel', 'ClassificationPanel'].includes(node.component) && !['summary', 'text', 'body', 'emptyMessage'].some(key => node.props?.[key])) {
         const names = node.component === 'MembershipPanel' ? [node.props?.membershipsField] : node.component === 'ClassificationPanel' ? ['primary_category_id', node.props?.tagsField] : [node.props?.namespaceField, 'preference_version'];
         node.children = names.filter((name): name is string => typeof name === 'string' && Boolean(fields[name])).map(name => fieldRow(name, `${node.id}-${name}`));
+        // A low-evidence slot selected by a name must not leave an empty domain heading.
+        if (!node.children.length && node.meta?.intent?.startsWith('slot:') && !Object.keys(node.props ?? {}).length) return undefined;
       }
       // s223-m02 (#2527 ruling 13i, #2521): an address panel shows the record's addresses through its bound summary (codegen),
       // on a single screen as in a workflow. Read rows here would replace that summary, so a saved address would never read

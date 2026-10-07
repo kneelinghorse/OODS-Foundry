@@ -25,7 +25,7 @@ const require = createRequire(import.meta.url);
 const AXE_SOURCE = readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8');
 
 const DRAWER_STORY = 'contexts-view-collapse--drawer-at-wide-container';
-const WCAG_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
+const WCAG_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 
 interface AxeRunSummary {
   readonly violations: Array<{ id: string; impact: string | null; nodes: number; help: string }>;

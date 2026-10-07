@@ -4,7 +4,7 @@ RUN apt-get update \
  && apt-get install -y --no-install-recommends tar ca-certificates \
  && rm -rf /var/lib/apt/lists/*
 # Release verification can install the exact frozen tarball from a minimal build context.
-ARG OODS_PACKAGE=@oods/foundry@0.9.0
+ARG OODS_PACKAGE=@oods/foundry@0.10.0
 RUN --mount=type=bind,target=/input npm install --global "${OODS_PACKAGE}" \
  && npm cache clean --force
 RUN mkdir /data && chown node:node /data

@@ -161,7 +161,7 @@
                     "project": {
                       "type": "string",
                       "pattern": "^/[\\s\\S]*$",
-                      "description": "Absolute React shadcn project directory containing components.json and installed Tailwind 4 with Vite or PostCSS. Radix and Base UI bases are supported; React Aria and unknown styles are refused."
+                      "description": "Absolute shadcn project directory containing components.json and installed Tailwind 4 with Vite or PostCSS. React supports Radix and Base UI; Vue supports shadcn-vue on Reka. React Aria and unknown styles are refused."
                     },
                     "module": {
                       "type": "string",
@@ -277,7 +277,7 @@
                     "project": {
                       "type": "string",
                       "pattern": "^/[\\s\\S]*$",
-                      "description": "Absolute React shadcn project directory containing components.json and installed Tailwind 4 with Vite or PostCSS. Radix and Base UI bases are supported; React Aria and unknown styles are refused."
+                      "description": "Absolute shadcn project directory containing components.json and installed Tailwind 4 with Vite or PostCSS. React supports Radix and Base UI; Vue supports shadcn-vue on Reka. React Aria and unknown styles are refused."
                     },
                     "module": {
                       "type": "string",
@@ -344,7 +344,7 @@
         "oodsTraits": {
           "type": "array",
           "items": { "type": "string", "minLength": 1 },
-          "minItems": 1,
+          "minItems": 0,
           "description": "OODS trait names this component maps to."
         },
         "propMappings": {
@@ -563,7 +563,25 @@
             }
           }
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "not": {
+              "required": [
+                "substitution"
+              ]
+            }
+          },
+          "then": {
+            "properties": {
+              "oodsTraits": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
     },
     "MappingEntry": {
       "allOf": [

@@ -254,7 +254,7 @@ function substitutionCatalog(framework: CodegenFramework, substitutions: readonl
     if (framework === 'html') throw new Error('HTML artifacts cannot substitute framework components.');
     if (entry.source.shadcn) {
       const closure = entry.source.shadcn;
-      if (framework !== 'react' || entry.source.package || entry.source.version || !CONTENT_HASH.test(closure.closureHash) || !closure.module || closure.file.startsWith('/') || closure.file.split('/').includes('..')) throw new Error('Invalid portable shadcn substitution identity.');
+      if ((closure.framework ?? 'react') !== framework || entry.source.package || entry.source.version || !CONTENT_HASH.test(closure.closureHash) || !closure.module || closure.file.startsWith('/') || closure.file.split('/').includes('..')) throw new Error('Invalid portable shadcn substitution identity.');
       // Reuse the semantic prop checks with a harmless locator; no filesystem inspection is performed here.
       validateSubstitution({ component: entry.component, [framework]: { ...entry.source, shadcn: { project: '/project', module: closure.module } } });
       const local = (specifier: string) => specifier === closure.module || Object.keys(closure.paths).some(alias => alias.includes('*') ? specifier.startsWith(alias.slice(0, alias.indexOf('*'))) && specifier.endsWith(alias.slice(alias.indexOf('*') + 1)) : specifier === alias);
@@ -262,10 +262,10 @@ function substitutionCatalog(framework: CodegenFramework, substitutions: readonl
       for (const specifier of closure.imports) { imports.add(specifier); if (local(specifier)) localImports.add(specifier); }
       for (const integration of ['@tailwindcss/vite', '@tailwindcss/postcss']) if (closure.dependencies[integration]) imports.add(integration);
       for (const [name, version] of Object.entries(closure.dependencies)) {
-        if (dependencyCatalogEntry(name) && !['react', 'react-dom'].includes(name)) continue;
+        if (dependencyCatalogEntry(name) && !['react', 'react-dom', 'vue', '@vue/server-renderer'].includes(name)) continue;
         if (!PACKAGE_NAME.test(name) || !EXACT_VERSION.test(version)) throw new Error(`Invalid shadcn dependency ${name}@${version}.`);
         if (entries.has(name) && entries.get(name)!.version !== version) throw new Error(`Conflicting shadcn dependency versions for ${name}.`);
-        entries.set(name, { version, kind: ['react', 'react-dom'].includes(name) ? 'peerDependency' : 'dependency' });
+        entries.set(name, { version, kind: ['react', 'react-dom', 'vue'].includes(name) ? 'peerDependency' : 'dependency' });
       }
     } else validateSubstitution({ component: entry.component, [framework]: entry.source });
     if (entry.packageContentHash !== undefined && !CONTENT_HASH.test(entry.packageContentHash)) throw new Error(`Team package ${entry.source.package} has an invalid content hash.`);

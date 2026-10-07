@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://designlab.local/schemas/brand.intake.input.json",
   "title": "brand.intake input",
-  "description": "derive reads a team's DTCG tokens or a shadcn CSS theme into a partial recipe with provenance, gaps and warnings, writing nothing. Create a brand from token values or a recipe. template returns every slot of a brand with its meaning and a starting value, or from a recipe the complete brand it gives, graded; validate checks the filled documents or a recipe and writes nothing; create writes a brand that passes into the brands folder and runs the token build.",
+  "description": "derive reads a team's DTCG tokens or a shadcn CSS theme into a partial recipe with provenance, gaps and warnings, writing nothing. Create a brand from token values or a recipe. template returns every slot of a brand with its meaning and a starting value, or from a recipe the complete brand it gives, graded; validate checks the filled documents or a recipe and writes nothing; create writes a brand that passes into the brands folder and runs the token build. draft reads a local DTCG file, retains supported token names and light/dark modes, and reports slot evidence/fallbacks; show reviews the content-addressed draft; apply with accept:true validates and writes the whole reviewed brand atomically.",
   "type": "object",
   "required": ["action"],
   "examples": [
@@ -11,7 +11,11 @@
   ],
   "properties": {
     "action": {
-      "enum": ["derive", "template", "validate", "create"],
+      "enum": ["derive", "template", "validate", "create",
+        "draft",
+        "show",
+        "apply"
+      ],
       "description": "'derive' reads your own tokens or shadcn theme CSS into a partial recipe with provenance and gaps, writing nothing; 'template' returns the documents to fill: every slot of the light (base), dark and high-contrast (hc) themes with its meaning and a starting value; 'validate' checks filled documents (missing and unknown slots, types, colours, the fixed slots, the brand contrast rules and the chart marks on the canvas in every theme) and writes nothing; 'create' writes a brand that validates into the brands folder, runs the token build and makes the brand usable at once. create never replaces a brand."
     }
   },
@@ -129,6 +133,151 @@
         "required": ["brand_id"],
         "oneOf": [{ "required": ["documents"] }, { "required": ["recipe"] }],
         "additionalProperties": false
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "draft"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "const": "draft"
+          },
+          "brand_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string",
+                "pattern": "^/[\\s\\S]*$"
+              },
+              "modes": {
+                "type": "object",
+                "properties": {
+                  "base": {
+                    "type": "string"
+                  },
+                  "dark": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          },
+          "bindings": {
+            "type": "object",
+            "properties": {
+              "base": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              },
+              "dark": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            },
+            "additionalProperties": false
+          },
+          "from": {
+            "type": "object",
+            "properties": {
+              "brand": {
+                "type": "string",
+                "format": "oods-brand"
+              },
+              "preset": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "source",
+          "brand_id"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "show"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "const": "show"
+          },
+          "draftId": {
+            "type": "string",
+            "pattern": "^brand-[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "draftId"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "const": "apply"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "const": "apply"
+          },
+          "draftId": {
+            "type": "string",
+            "pattern": "^brand-[a-f0-9]{64}$"
+          },
+          "accept": {
+            "const": true
+          }
+        },
+        "required": [
+          "draftId",
+          "accept"
+        ]
       }
     }
   ],

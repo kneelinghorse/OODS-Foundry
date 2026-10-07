@@ -1,6 +1,6 @@
 {
   "name": "@oods/foundry-mcp",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "private": true,
   "description": "Agent-first MCP interface and toolchain for the OODS Foundry design system",
   "type": "module",
@@ -151,7 +151,8 @@
     "state:token-breaking": "PR_LABELS=token-change:breaking TOKEN_GOV_BASE_REF=${TOKEN_GOV_BASE_REF:-origin/OODS-pro} node scripts/state-assessment.mjs --tokens",
     "bridge": "pnpm --filter @oods/mcp-bridge start",
     "bridge:dev": "pnpm --filter @oods/mcp-bridge dev",
-    "verify:brand-cascade": "node scripts/quality/brand-cascade-browser-proof.mjs"
+    "verify:brand-cascade": "node scripts/quality/brand-cascade-browser-proof.mjs",
+    "a11y:release": "node scripts/a11y-release.mjs"
   },
   "keywords": [
     "design-system",
@@ -261,7 +262,7 @@
     "zod": "^4.1.12"
   },
   "peerDependencies": {
-    "@oods/tokens": "0.9.0"
+    "@oods/tokens": "0.10.0"
   },
   "peerDependenciesMeta": {
     "@oods/tokens": {

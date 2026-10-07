@@ -882,8 +882,8 @@ async function main() {
   );
   assert.equal(
     adapterPackage.version,
-    "0.9.0",
-    "adapter 0.9.0 advertises the importer and removes legacy aliases",
+    "0.10.0",
+    "adapter 0.10.0 advertises accepted file intake and Vue team components",
   );
   assert.equal(
     manifest.packageVersions["@oods/mcp-adapter"],

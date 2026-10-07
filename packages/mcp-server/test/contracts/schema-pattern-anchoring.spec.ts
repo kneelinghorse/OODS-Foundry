@@ -102,7 +102,7 @@ describe('strict-client schema compatibility: every advertised input-schema patt
   });
 
   it('keeps absolute CSS and shadcn project paths equivalent to the old prefix check', () => {
-    const paths = allPatterns().filter(hit => hit.at.endsWith('/cssPath') || hit.at.endsWith('/shadcn/properties/project'));
+    const paths = allPatterns().filter(hit => hit.at.endsWith('/cssPath') || hit.at.endsWith('/shadcn/properties/project') || hit.at.endsWith('/source/properties/project') || hit.at.endsWith('/source/properties/path'));
     expect(paths.length).toBeGreaterThan(0);
     for (const hit of paths) {
       const validate = getAjv().compile({ type: 'string', pattern: hit.pattern });

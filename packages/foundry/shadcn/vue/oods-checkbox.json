@@ -1,0 +1,21 @@
+{
+  "$schema": "https://shadcn-vue.com/schema/registry-item.json",
+  "name": "oods-checkbox",
+  "type": "registry:component",
+  "title": "OODS Foundry Checkbox",
+  "description": "Vue adapter for OODS Checkbox on shadcn-vue / Reka UI. Uses the team Reka checkbox button and its boolean model events, replacing the native-input keyboard target. Reka supplies the native form input within forms.",
+  "dependencies": [
+    "@oods/components-vue@0.10.0"
+  ],
+  "registryDependencies": [
+    "checkbox",
+    "label"
+  ],
+  "files": [
+    {
+      "path": "components/oods/checkbox.vue",
+      "type": "registry:component",
+      "content": "<script lang=\"ts\">\nimport { defineComponent, h, ref, useId } from 'vue';\nimport { Checkbox as Contract } from '@oods/components-vue';\nimport { Checkbox } from '@/components/ui/checkbox';\nimport { Label } from '@/components/ui/label';\n\n// Reuse the shipped Vue prop defaults and event vocabulary; the rendered parts belong to the team.\nexport default defineComponent({\n  name: 'OodsCheckboxAdapter',\n  inheritAttrs: false,\n  props: Contract.props,\n  emits: Array.isArray(Contract.emits) ? Contract.emits : Object.keys(Contract.emits ?? {}),\n  setup(props: any, { attrs, slots, emit }: any) {\n    const generated = useId(), local = ref(props.defaultChecked), native = ref<HTMLInputElement>();\n    const change = (value: boolean | 'indeterminate') => { const next = value === true; if (native.value) { native.value.checked = next; native.value.dispatchEvent(new Event('change', { bubbles: true })); } if (props.modelValue === undefined && props.checked === undefined) local.value = next; emit('update:modelValue', next); emit('change', next); };\n    return () => {\n      const id = props.id ?? `oods-checkbox-${generated}`, help = slots.help?.() ?? props.help, validation = slots.validation?.() ?? props.validation?.message;\n      return h('div', { class: 'grid gap-2', 'data-oods-adapter': 'Checkbox' }, [\n        h('input', { id, ref: native, type: 'checkbox', class: 'sr-only', tabIndex: -1, 'aria-hidden': 'true', name: props.name, disabled: props.disabled, required: props.required, checked: props.modelValue ?? props.checked ?? local.value }),\n        h('div', { class: 'flex items-center gap-2' }, [h(Checkbox, { ...attrs, 'data-oods-component': undefined, id: id + '-control', required: props.required, disabled: props.disabled,\n          modelValue: props.modelValue ?? props.checked ?? local.value, 'onUpdate:modelValue': change,\n          'aria-invalid': props.validation?.state === 'error' || undefined, 'aria-describedby': [attrs['aria-describedby'], help ? id + '-help' : '', validation ? id + '-validation' : ''].filter(Boolean).join(' ') || undefined,\n        }), h(Label, { for: id + '-control' }, { default: () => [slots.label?.() ?? props.label, props.required ? h('span', { 'aria-hidden': 'true' }, '*') : null] })]),\n        help ? h('p', { id: id + '-help', class: 'text-sm' }, help) : null,\n        validation ? h('p', { id: id + '-validation', role: props.validation?.state === 'error' ? 'alert' : undefined }, validation) : null,\n      ]);\n    };\n  },\n});\n</script>\n"
+    }
+  ]
+}

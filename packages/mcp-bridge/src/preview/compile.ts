@@ -2,6 +2,7 @@ import { compileShadcnCss, shadcnAlias, shadcnFile, shadcnHash } from './shadcn.
 import { createHash } from 'node:crypto';
 import path from 'node:path';
 import fs from 'node:fs';
+import { createRequire } from 'node:module';
 import { ComponentPackageError, packageContentHash, packageName, type ComponentPackage } from './component-packages.js';
 import type { Plugin } from 'esbuild';
 import { loadEsbuild } from './runtime.js';
@@ -164,6 +165,24 @@ async function compile(artifact: PreviewArtifact, format: CompileFormat, package
       build.onLoad({ filter: /.*/, namespace: 'oods-runtime-esm' }, args => ({ contents: `import * as runtime from ${JSON.stringify(args.path)}; module.exports = runtime;`, loader: 'js' }));
       build.onLoad({ filter: /.*/, namespace: 'oods-dropped' }, () => ({ contents: 'export {};', loader: 'js' }));
       build.onLoad({ filter: /.*/, namespace: 'oods-runtime' }, args => ({ contents: `const runtime = globalThis.${RUNTIME_GLOBAL}; if (!runtime || !runtime[${JSON.stringify(args.path)}]) throw new Error(${JSON.stringify(`The preview app runtime does not provide ${args.path}`)}); module.exports = runtime[${JSON.stringify(args.path)}];`, loader: 'js' }));
+      build.onLoad({ filter: /\.vue$/, namespace: 'file' }, args => {
+        if (!sfc) return { errors: [{ text: `A Vue team component cannot be bundled into ${artifact.framework}` }] };
+        const source = [...projects.values()].find(source => source.files.includes(path.relative(source.project, args.path).split(path.sep).join('/')));
+        if (!source) return { errors: [{ text: `Vue source is outside its checked closure: ${args.path}` }] };
+        const { descriptor, errors } = sfc.parse(fs.readFileSync(shadcnFile(source, path.relative(source.project, args.path)), 'utf8'), { filename: args.path });
+        if (errors.length) return { errors: errors.map(error => ({ text: String(error) })) };
+        if (descriptor.styles.length || descriptor.script?.src || descriptor.template?.src) return { errors: [{ text: 'Shadcn Vue sources must keep styles in tailwind.css and scripts/templates inline' }] };
+        // Imported prop types require TypeScript's resolver from the accepted project's installation.
+        sfc.registerTS(() => createRequire(path.join(source.project, 'package.json'))('typescript'));
+        const id = `oods-${createHash('sha256').update(args.path).digest('hex').slice(0, 8)}`;
+        if (!descriptor.script && !descriptor.scriptSetup) {
+          const template = sfc.compileTemplate({ source: descriptor.template?.content ?? '', filename: args.path, id });
+          if (template.errors.length) return { errors: template.errors.map(error => ({ text: String(error) })) };
+          return { contents: `${template.code}\nexport default { render };`, loader: 'js', resolveDir: path.dirname(args.path) };
+        }
+        const script = sfc.compileScript(descriptor, { id, inlineTemplate: true, templateOptions: { compilerOptions: { mode: 'module' } }, fs: { fileExists: fs.existsSync, readFile: file => fs.readFileSync(file, 'utf8') } });
+        return { contents: script.content, loader: script.lang === 'ts' ? 'ts' : 'js', resolveDir: path.dirname(args.path) };
+      });
       build.onLoad({ filter: /\.css$/, namespace: 'file' }, args => {
         const css = fs.readFileSync(args.path, 'utf8');
         if (/@import\b/i.test(css) || [...css.matchAll(/url\(([^)]+)\)/gi)].some(match => !/^(?:data:|#)/i.test(match[1]!.trim().replace(/^['"]|['"]$/g, '')))) return { errors: [{ text: `Team stylesheet ${args.path} must inline its imported styles and assets before previewing` }] };

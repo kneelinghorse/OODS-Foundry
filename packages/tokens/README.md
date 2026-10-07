@@ -50,4 +50,4 @@ Use matching versions of the OODS packages. These packages are separate from the
 
 ## License
 
-Apache License 2.0. See [LICENSE](https://cdn.jsdelivr.net/npm/@oods/tokens@0.9.0/LICENSE) and [NOTICE](https://cdn.jsdelivr.net/npm/@oods/tokens@0.9.0/NOTICE). The DM Sans font files are under the SIL Open Font License 1.1; NOTICE carries that licence and where the files come from. Generated output belongs to its user; installed package dependencies retain their own licenses.
+Apache License 2.0. See [LICENSE](https://cdn.jsdelivr.net/npm/@oods/tokens@0.10.0/LICENSE) and [NOTICE](https://cdn.jsdelivr.net/npm/@oods/tokens@0.10.0/NOTICE). The DM Sans font files are under the SIL Open Font License 1.1; NOTICE carries that licence and where the files come from. Generated output belongs to its user; installed package dependencies retain their own licenses.

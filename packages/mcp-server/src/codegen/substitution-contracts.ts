@@ -41,7 +41,7 @@ export async function checkSubstitutionContracts(framework: 'react' | 'vue', sub
     try {
       let artifact = scenarioArtifact(framework, entry, schema);
       const source = mappings.find(mapping => mapping.mappingId === entry.mappingId)?.substitution[framework];
-      const shadcn = source?.shadcn ? inspectShadcn(source.shadcn, source.export) : undefined;
+      const shadcn = source?.shadcn ? inspectShadcn(source.shadcn, source.export, framework) : undefined;
       const inspected = await fetch(`${host}/preview/component-packages`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ packages: [{ framework, specifier: sourceSpecifier(entry.source), version: sourceVersion(entry.source), localPath: source?.localPath, shadcn }] }), signal: AbortSignal.timeout(Math.max(1, Math.min(30_000, deadline - Date.now()))) });
       if (!inspected.ok) throw new Error((await inspected.text()).slice(0, 500));
       const { packages } = await inspected.json() as { packages: Array<{ name: string; version: string; contentHash: string }> };

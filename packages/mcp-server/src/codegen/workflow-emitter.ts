@@ -275,7 +275,7 @@ ${collectionEditors.size ? "    // Collection editors dispatch whole domain valu
     if (known) dependencies[name] = known.version;
   }
   files.push({ path: 'package.json', contents: JSON.stringify({ name: `${schema.workflow.object.toLowerCase()}-workflow-${framework}`, version: '1.0.0', private: true, type: 'module', engines: { node: GENERATED_APP_NODE_FLOOR }, scripts: { dev: 'vite --host 127.0.0.1', build: `${framework === 'vue' ? 'vue-tsc' : 'tsc'} --noEmit && vite build`, typecheck: `${framework === 'vue' ? 'vue-tsc' : 'tsc'} --noEmit` }, dependencies, devDependencies: { '@types/node': '20.19.21', typescript: '5.9.3', vite: '6.4.3', ...(framework === 'react' ? { '@types/react': '19.2.2', '@types/react-dom': '19.2.1' } : { 'vue-tsc': '3.3.11' }) } }, null, 2) + '\n' });
-  files.push({ path: 'README.md', contents: '# Generated workflow\n\nRun `npm install`, then `npm run build` and `npm run dev`. The screens receive data and actions from src/App; src/application.ts and src/store.ts supply a local sample workflow. Connect your own data, navigation and action handlers for your application.\n\nA new generation is a complete new app and merges nothing into your app. Keep your changes in your own files, and see GENERATED-APPS.md in @oods/foundry.\n' });
+  files.push({ path: 'README.md', contents: '# Generated workflow\n\nRun `npm install`, then `npm run build` and `npm run dev`. The screens receive data and actions from src/App; src/application.ts and src/store.ts supply a local sample workflow. Connect your own data, navigation and action handlers for your application. Related-record label lookups contain the imported sample records only; supply your own relationship lookup data for real records.\n\nA new generation is a complete new app and merges nothing into your app. Keep your changes in your own files, and see GENERATED-APPS.md in @oods/foundry.\n' });
   return { status: 'ok', framework, code: app, fileExtension: extension, files, imports: [...imports], actions, warnings };
 }
 
@@ -363,22 +363,22 @@ body { margin: 0; background: var(--sys-surface-canvas); color: var(--sys-text-p
 .workflow-heading h1 { margin: var(--cmp-spacing-stack-xs) 0 var(--cmp-spacing-stack-lg); font-family: var(--sys-text-scale-heading-xl-font-family); font-size: var(--sys-text-scale-heading-xl-font-size); font-weight: var(--sys-text-scale-heading-xl-font-weight); line-height: var(--sys-text-scale-heading-xl-line-height); letter-spacing: var(--sys-text-scale-heading-xl-letter-spacing); }
 .workflow-mode { color: var(--sys-text-secondary); font-size: var(--sys-text-scale-caption-font-size); }
 .workflow-app > nav { display: flex; gap: var(--sys-control-gap-tight); padding-bottom: var(--cmp-spacing-stack-lg); flex-wrap: wrap; }
-.workflow-app button { cursor: pointer; font: inherit; border: 1px solid var(--sys-border-strong); padding: var(--cmp-button-padding-block-sm) var(--cmp-button-padding-inline-sm); background: var(--sys-surface-raised); border-radius: var(--cmp-button-radius); color: inherit; }
-.workflow-app button:disabled { opacity: .5; cursor: default; }
-.workflow-app button[aria-current="page"] { background: var(--sys-surface-interactive-primary-default); color: var(--sys-text-on-interactive); border-color: var(--sys-surface-interactive-primary-default); }
+.workflow-app button:not(:where([data-oods-adapter], [data-oods-adapter] *)) { cursor: pointer; font: inherit; border: 1px solid var(--sys-border-strong); padding: var(--cmp-button-padding-block-sm) var(--cmp-button-padding-inline-sm); background: var(--sys-surface-raised); border-radius: var(--cmp-button-radius); color: inherit; }
+.workflow-app button:not(:where([data-oods-adapter], [data-oods-adapter] *)):disabled { opacity: .5; cursor: default; }
+.workflow-app button:not(:where([data-oods-adapter], [data-oods-adapter] *))[aria-current="page"] { background: var(--sys-surface-interactive-primary-default); color: var(--sys-text-on-interactive); border-color: var(--sys-surface-interactive-primary-default); }
 .workflow-app :focus-visible { outline: var(--cmp-focus-width) solid var(--cmp-focus-outer); outline-offset: var(--cmp-focus-offset); }
 @media (forced-colors: active) {
-  .workflow-app button[aria-current="page"] { background: Highlight; color: HighlightText; border-color: Highlight; outline-color: CanvasText; forced-color-adjust: none; }
+  .workflow-app button:not(:where([data-oods-adapter], [data-oods-adapter] *))[aria-current="page"] { background: Highlight; color: HighlightText; border-color: Highlight; outline-color: CanvasText; forced-color-adjust: none; }
 }
 .workflow-app label { font-family: var(--sys-text-scale-label-md-font-family); font-size: var(--sys-text-scale-label-md-font-size); font-weight: var(--sys-text-scale-label-md-font-weight); line-height: var(--sys-text-scale-label-md-line-height); }
-.workflow-app input:not([type="checkbox"]), .workflow-app select { font: inherit; max-width: 100%; border: 1px solid var(--sys-border-strong); border-radius: var(--cmp-input-radius); padding: var(--cmp-input-padding-block) var(--cmp-input-padding-inline); color: inherit; background: var(--sys-surface-raised); }
+.workflow-app input:not([type="checkbox"]):not(:where([data-oods-adapter], [data-oods-adapter] *)), .workflow-app select:not(:where([data-oods-adapter], [data-oods-adapter] *)) { font: inherit; max-width: 100%; border: 1px solid var(--sys-border-strong); border-radius: var(--cmp-input-radius); padding: var(--cmp-input-padding-block) var(--cmp-input-padding-inline); color: inherit; background: var(--sys-surface-raised); }
 .workflow-content { padding: var(--sys-space-inset-default); border: 1px solid var(--sys-border-subtle); border-radius: var(--cmp-card-radius); background: var(--sys-surface-raised); box-shadow: var(--cmp-card-shadow-offset-x) var(--cmp-card-shadow-offset-y) var(--cmp-card-shadow-blur) var(--cmp-card-shadow-spread) var(--cmp-card-shadow-color); min-width: 0; overflow-wrap: anywhere; }
 .workflow-app label:has(input[type="checkbox"]) { display: flex; flex-direction: row; align-items: center; }
 .workflow-field { margin-bottom: var(--cmp-spacing-stack-lg); }
 .workflow-content [data-layout="inline"] { flex-wrap: wrap; gap: var(--cmp-spacing-inline-sm); }
 .workflow-content [data-layout="inline"] > [data-oods-component="SearchInput"], .workflow-content [data-layout="inline"] > [data-oods-component="Select"] { flex: 1 1 180px; min-width: 0; }
 .workflow-content [data-oods-component="PriceBadge"] { white-space: nowrap; }
-.workflow-content textarea { font: inherit; border: 1px solid var(--sys-border-strong); border-radius: var(--cmp-input-radius); padding: var(--cmp-input-padding-block) var(--cmp-input-padding-inline); color: inherit; background: var(--sys-surface-raised); }
+.workflow-content textarea:not(:where([data-oods-adapter], [data-oods-adapter] *)) { font: inherit; border: 1px solid var(--sys-border-strong); border-radius: var(--cmp-input-radius); padding: var(--cmp-input-padding-block) var(--cmp-input-padding-inline); color: inherit; background: var(--sys-surface-raised); }
 .workflow-content [data-oods-component="Stack"], .workflow-content [data-oods-component="Tabs"] { min-width: 0; }
 .workflow-content .oods-tab, .workflow-content .oods-tab-list [aria-haspopup="menu"] { flex-shrink: 0; white-space: nowrap; }
 .workflow-content .oods-tab-list { overflow: visible; }

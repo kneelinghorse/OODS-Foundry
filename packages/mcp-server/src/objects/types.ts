@@ -60,6 +60,8 @@ export interface TraitReference {
   name: string;
   alias?: string;
   parameters?: Record<string, unknown>;
+  /** Canonical trait field -> declared object field; null explicitly omits an unsupported field. */
+  fieldBindings?: Record<string, string | null>;
 }
 
 export interface ChangelogEntry {

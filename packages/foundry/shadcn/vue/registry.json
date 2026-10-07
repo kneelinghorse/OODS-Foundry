@@ -1,0 +1,341 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "oods-foundry-vue",
+  "homepage": "https://oods-foundry.com",
+  "items": [
+    {
+      "$schema": "https://shadcn-vue.com/schema/registry-item.json",
+      "name": "oods-button",
+      "type": "registry:component",
+      "title": "OODS Foundry Button",
+      "description": "Vue adapter for OODS Button on shadcn-vue / Reka UI. Danger uses solid destructive/background tokens in both themes; success and warning use secondary because shadcn has no distinct palettes.",
+      "dependencies": [
+        "@oods/components-vue@0.10.0"
+      ],
+      "registryDependencies": [
+        "button"
+      ],
+      "files": [
+        {
+          "path": "components/oods/button.vue",
+          "type": "registry:component",
+          "content": "<script lang=\"ts\">\nimport { defineComponent, h } from 'vue';\nimport { Button as Contract } from '@oods/components-vue';\nimport { Button } from '@/components/ui/button';\n\n// Reuse the shipped Vue prop defaults and event vocabulary; the rendered parts belong to the team.\nexport default defineComponent({\n  name: 'OodsButtonAdapter',\n  inheritAttrs: false,\n  props: Contract.props,\n  emits: Array.isArray(Contract.emits) ? Contract.emits : Object.keys(Contract.emits ?? {}),\n  setup(props: any, { attrs, slots, emit }: any) {\n    return () => h(Button, { ...attrs, 'data-oods-component': undefined, type: props.type, disabled: props.disabled,\n      variant: ({ primary: 'default', neutral: 'outline', secondary: 'secondary', success: 'secondary', warning: 'secondary', danger: 'destructive', ghost: 'ghost' } as any)[props.intent] ?? 'default',\n      size: props.size === 'md' ? 'default' : props.size === 'xs' ? 'sm' : props.size,\n      class: [props.intent === 'danger' ? 'bg-destructive text-background hover:bg-destructive dark:bg-destructive dark:hover:bg-destructive' : '', attrs.class],\n      'data-oods-adapter': 'Button', onClick: (event: MouseEvent) => emit('activate', event),\n    }, { default: () => slots.default?.() ?? props.content });\n  },\n});\n</script>\n"
+        }
+      ]
+    },
+    {
+      "$schema": "https://shadcn-vue.com/schema/registry-item.json",
+      "name": "oods-card",
+      "type": "registry:component",
+      "title": "OODS Foundry Card",
+      "description": "Vue adapter for OODS Card on shadcn-vue / Reka UI. Preserves the shipped Vue props, slots and event contract; team components supply styling.",
+      "dependencies": [
+        "@oods/components-vue@0.10.0"
+      ],
+      "registryDependencies": [
+        "card"
+      ],
+      "files": [
+        {
+          "path": "components/oods/card.vue",
+          "type": "registry:component",
+          "content": "<script lang=\"ts\">\nimport { defineComponent, h } from 'vue';\nimport { Card as Contract } from '@oods/components-vue';\nimport { Card } from '@/components/ui/card';\n\n// Reuse the shipped Vue prop defaults and event vocabulary; the rendered parts belong to the team.\nexport default defineComponent({\n  name: 'OodsCardAdapter',\n  inheritAttrs: false,\n  props: Contract.props,\n  emits: Array.isArray(Contract.emits) ? Contract.emits : Object.keys(Contract.emits ?? {}),\n  setup(props: any, { attrs, slots }: any) {\n    return () => h(['div','article','section','aside','main','li'].includes(props.as) ? props.as : 'div', {\n      ...attrs, 'data-oods-component': undefined, 'data-oods-adapter': 'Card', 'data-elevated': String(props.elevated),\n    }, [h(Card, { class: props.elevated ? 'shadow-lg' : undefined }, slots)]);\n  },\n});\n</script>\n"
+        }
+      ]
+    },
+    {
+      "$schema": "https://shadcn-vue.com/schema/registry-item.json",
+      "name": "oods-status-badge",
+      "type": "registry:component",
+      "title": "OODS Foundry StatusBadge",
+      "description": "Vue adapter for OODS StatusBadge on shadcn-vue / Reka UI. Critical/danger uses destructive/background; other tones use default/secondary without distinct status colours.",
+      "dependencies": [
+        "@oods/components-vue@0.10.0",
+        "@oods/component-contracts@0.10.0"
+      ],
+      "registryDependencies": [
+        "badge"
+      ],
+      "files": [
+        {
+          "path": "components/oods/status-badge.vue",
+          "type": "registry:component",
+          "content": "<script lang=\"ts\">\nimport { defineComponent, h } from 'vue';\nimport { StatusBadge as Contract } from '@oods/components-vue';\nimport { Badge } from '@/components/ui/badge';\nimport { getStatusPresentation, resolveStatusIcon, statusIconMarkup } from '@oods/component-contracts';\n\n// Reuse the shipped Vue prop defaults and event vocabulary; the rendered parts belong to the team.\nexport default defineComponent({\n  name: 'OodsStatusBadgeAdapter',\n  inheritAttrs: false,\n  props: Contract.props,\n  emits: Array.isArray(Contract.emits) ? Contract.emits : Object.keys(Contract.emits ?? {}),\n  setup(props: any, { attrs, slots }: any) {\n    return () => {\n      const status = props.status ?? props.value ?? 'unknown';\n      const presentation = getStatusPresentation(props.domain, status);\n      const tone = props.tone && props.tone !== 'lifecycle' ? props.tone : presentation.tone;\n      const danger = tone === 'critical' || tone === 'danger';\n      const icon = resolveStatusIcon(presentation.iconName);\n      return h(Badge, { ...attrs, role: attrs.role ?? 'status', 'data-oods-component': undefined, variant: danger ? 'destructive' : props.emphasis === 'solid' || props.variant === 'solid' ? 'default' : 'secondary',\n        class: [danger ? 'bg-destructive text-background dark:bg-destructive' : '', attrs.class],\n        'data-oods-adapter': 'StatusBadge', 'data-status': status, 'data-tone': tone, 'data-domain': props.domain,\n        title: attrs.title ?? presentation.description, 'aria-label': attrs['aria-label'] ?? props.label ?? `Status: ${presentation.label}`,\n      }, { default: () => [slots.icon?.() ?? (props.showIcon && icon ? h('span', { 'aria-hidden': 'true', innerHTML: statusIconMarkup(icon) }) : null), slots.default?.() ?? props.content ?? presentation.label] });\n    };\n  },\n});\n</script>\n"
+        }
+      ]
+    },
+    {
+      "$schema": "https://shadcn-vue.com/schema/registry-item.json",
+      "name": "oods-tabs",
+      "type": "registry:component",
+      "title": "OODS Foundry Tabs",
+      "description": "Vue adapter for OODS Tabs on shadcn-vue / Reka UI. The tab list scrolls horizontally; overflowLabel and the overflow menu are not implemented.",
+      "dependencies": [
+        "@oods/components-vue@0.10.0"
+      ],
+      "registryDependencies": [
+        "tabs"
+      ],
+      "files": [
+        {
+          "path": "components/oods/tabs.vue",
+          "type": "registry:component",
+          "content": "<script lang=\"ts\">\nimport { defineComponent, h, ref } from 'vue';\nimport { Tabs as Contract } from '@oods/components-vue';\nimport { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';\n\n// Reuse the shipped Vue prop defaults and event vocabulary; the rendered parts belong to the team.\nexport default defineComponent({\n  name: 'OodsTabsAdapter',\n  inheritAttrs: false,\n  props: Contract.props,\n  emits: Array.isArray(Contract.emits) ? Contract.emits : Object.keys(Contract.emits ?? {}),\n  setup(props: any, { attrs, slots, emit }: any) {\n    const local = ref(props.defaultSelectedId ?? props.items.find((item: any) => !item.disabled && !item.isDisabled)?.id);\n    const selected = () => props.items.find((item: any) => item.id === (props.selectedId ?? local.value) && !item.disabled && !item.isDisabled)?.id ?? props.items.find((item: any) => !item.disabled && !item.isDisabled)?.id;\n    const change = (value: string | number) => { const id = String(value); if (id === selected()) return; if (props.selectedId === undefined) local.value = id; emit('update:selectedId', id); emit('change', id); };\n    return () => h(Tabs, { ...attrs, 'data-oods-component': undefined, modelValue: selected(), 'onUpdate:modelValue': change, 'data-oods-adapter': 'Tabs' }, { default: () => [\n      h('div', { class: 'max-w-full overflow-x-auto' }, [h(TabsList, { 'aria-label': props.ariaLabel }, { default: () => props.items.map((item: any) => h(TabsTrigger, {\n        value: item.id, disabled: item.disabled || item.isDisabled, 'data-tab-id': item.id,\n      }, { default: () => slots.itemLabel?.({ item, selected: item.id === selected() }) ?? item.label })) })]),\n      ...props.items.map((item: any) => h(TabsContent, { value: item.id }, { default: () => slots.panel?.({ item, selected: item.id === selected() }) ?? item.panel })),\n    ] });\n  },\n});\n</script>\n"
+        }
+      ]
+    },
+    {
+      "$schema": "https://shadcn-vue.com/schema/registry-item.json",
+      "name": "oods-select",
+      "type": "registry:component",
+      "title": "OODS Foundry Select",
+      "description": "Vue adapter for OODS Select on shadcn-vue / Reka UI. Reka combobox keyboard interaction replaces native select interaction. Empty reset options retain their label and emit/submit an empty string.",
+      "dependencies": [
+        "@oods/components-vue@0.10.0"
+      ],
+      "registryDependencies": [
+        "select",
+        "label"
+      ],
+      "files": [
+        {
+          "path": "components/oods/select.vue",
+          "type": "registry:component",
+          "content": "<script lang=\"ts\">\nimport { defineComponent, h, ref, useId } from 'vue';\nimport { Select as Contract } from '@oods/components-vue';\nimport { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';\nimport { Label } from '@/components/ui/label';\n\n// Reuse the shipped Vue prop defaults and event vocabulary; the rendered parts belong to the team.\nexport default defineComponent({\n  name: 'OodsSelectAdapter',\n  inheritAttrs: false,\n  props: Contract.props,\n  emits: Array.isArray(Contract.emits) ? Contract.emits : Object.keys(Contract.emits ?? {}),\n  setup(props: any, { attrs, slots, emit }: any) {\n    const generated = useId(), local = ref(props.defaultValue ?? ''), native = ref<HTMLInputElement>();\n    return () => {\n      const id = props.id ?? `oods-select-${generated}`;\n      const status = false;\n      if (status && slots.default) return h('div', { ...attrs, 'data-oods-component': undefined, 'data-oods-adapter': 'Select' }, slots.default());\n      const choices = (props.options ?? props.states ?? (status ? ['draft','active','inactive'] : [])).map((option: any) => typeof option === 'object' ? { ...option, value: String(option.value ?? option.id ?? option.name ?? ''), label: option.label ?? option.name ?? String(option.value ?? option.id ?? '') } : { value: String(option), label: String(option) });\n      // Reka reserves ''; keep the public empty option and never leak the transport value into forms or events.\n      let empty = '__oods_empty_option__';\n      while (choices.some((option: any) => option.value === empty)) empty += '_';\n      const selected = String(props.modelValue ?? props.value ?? props.status ?? local.value);\n      const change = (value: unknown) => { const next = value === empty ? '' : String(value ?? ''); if (native.value) { native.value.value = next; native.value.dispatchEvent(new Event('change', { bubbles: true })); } if (props.modelValue === undefined && props.value === undefined) local.value = next; emit('update:modelValue', next); emit('change', next); };\n      const name = props.name ?? (status ? 'status' : undefined);\n      const label = slots.label?.() ?? props.label ?? props.title ?? (status ? 'Status' : undefined);\n      const help = slots.help?.() ?? props.help, validation = slots.validation?.() ?? props.validation?.message;\n      return h('div', { class: 'grid gap-2', 'data-oods-adapter': 'Select' }, [\n        label ? h(Label, { for: id + '-control' }, { default: () => label }) : null,\n        h('input', { id, ref: native, type: 'hidden', name, value: selected, disabled: props.disabled }),\n        h(Select, { modelValue: selected === '' && choices.some((option: any) => option.value === '') ? empty : selected, 'onUpdate:modelValue': change, disabled: props.disabled, required: props.required }, { default: () => [\n          h(SelectTrigger, { ...attrs, 'data-oods-component': undefined, id: id + '-control', 'aria-invalid': props.validation?.state === 'error' || undefined, 'aria-describedby': [attrs['aria-describedby'], help ? id + '-help' : '', validation ? id + '-validation' : ''].filter(Boolean).join(' ') || undefined }, { default: () => h(SelectValue, { placeholder: props.placeholder }, { default: () => choices.find((option: any) => option.value === selected)?.label ?? props.placeholder }) }),\n          h(SelectContent, {}, { default: () => choices.map((option: any) => h(SelectItem, { value: option.value === '' ? empty : option.value, disabled: option.disabled }, { default: () => slots.option?.({ option }) ?? option.label })) }),\n        ] }),\n        help ? h('p', { id: id + '-help', class: 'text-sm' }, help) : null,\n        validation ? h('p', { id: id + '-validation', role: props.validation?.state === 'error' ? 'alert' : undefined }, validation) : null,\n      ]);\n    };\n  },\n});\n</script>\n"
+        }
+      ]
+    },
+    {
+      "$schema": "https://shadcn-vue.com/schema/registry-item.json",
+      "name": "oods-search-input",
+      "type": "registry:component",
+      "title": "OODS Foundry SearchInput",
+      "description": "Vue adapter for OODS SearchInput on shadcn-vue / Reka UI. Preserves the shipped Vue props, slots and event contract; team components supply styling.",
+      "dependencies": [
+        "@oods/components-vue@0.10.0"
+      ],
+      "registryDependencies": [
+        "input",
+        "label",
+        "button"
+      ],
+      "files": [
+        {
+          "path": "components/oods/search-input.vue",
+          "type": "registry:component",
+          "content": "<script lang=\"ts\">\nimport { defineComponent, h, ref, useId, onBeforeUnmount } from 'vue';\nimport { SearchInput as Contract } from '@oods/components-vue';\nimport { Input } from '@/components/ui/input';\nimport { Label } from '@/components/ui/label';\nimport { Button } from '@/components/ui/button';\n\n// Reuse the shipped Vue prop defaults and event vocabulary; the rendered parts belong to the team.\nexport default defineComponent({\n  name: 'OodsSearchInputAdapter',\n  inheritAttrs: false,\n  props: Contract.props,\n  emits: Array.isArray(Contract.emits) ? Contract.emits : Object.keys(Contract.emits ?? {}),\n  setup(props: any, { attrs, emit }: any) {\n    const generated = useId(), local = ref(props.defaultValue);\n    let timer: ReturnType<typeof setTimeout> | undefined;\n    onBeforeUnmount(() => clearTimeout(timer));\n    const current = () => props.modelValue ?? props.value ?? local.value;\n    const search = (value: string) => { if (value && value.length < Math.max(0, props.minQueryLength)) return; emit('valueChange', value); emit('update', value); emit('search', value); };\n    const update = (value: string | number) => { const next = String(value); if (props.modelValue === undefined && props.value === undefined) local.value = next; emit('update:modelValue', next); emit('input', next); clearTimeout(timer); const delay = Math.max(0, props.debounceMs || props.debounce || 0); if (delay) timer = setTimeout(() => search(next), delay); else search(next); };\n    const clear = () => { if (props.disabled || !current()) return; update(''); emit('clear'); };\n    return () => { const id = props.id ?? `oods-search-${generated}`; return h('div', { ...attrs, 'data-oods-component': undefined, class: ['flex flex-wrap items-center gap-2', attrs.class], role: 'search', 'aria-label': attrs['aria-label'] ?? props.label ?? props.placeholder, 'data-oods-adapter': 'SearchInput' }, [\n      props.label ? h(Label, { for: id }, { default: () => props.label }) : null,\n      h(Input, { id, type: 'search', modelValue: current(), 'onUpdate:modelValue': update, placeholder: props.placeholder, disabled: props.disabled, 'aria-label': props.label ? undefined : attrs['aria-label'] ?? props.placeholder,\n        onKeydown: (event: KeyboardEvent) => { if (event.key === 'Escape') clear(); if (event.key === 'Enter') { event.preventDefault(); clearTimeout(timer); if (!props.disabled) search(current()); } },\n      }), props.clearable && current() ? h(Button, { type: 'button', variant: 'ghost', disabled: props.disabled, 'aria-label': 'Clear search', onClick: clear }, { default: () => '×' }) : null,\n    ]); };\n\n  },\n});\n</script>\n"
+        }
+      ]
+    },
+    {
+      "$schema": "https://shadcn-vue.com/schema/registry-item.json",
+      "name": "oods-pagination-bar",
+      "type": "registry:component",
+      "title": "OODS Foundry PaginationBar",
+      "description": "Vue adapter for OODS PaginationBar on shadcn-vue / Reka UI. Uses the team Reka pagination controls; page and page-size events preserve the Vue contract.",
+      "dependencies": [
+        "@oods/components-vue@0.10.0"
+      ],
+      "registryDependencies": [
+        "pagination"
+      ],
+      "files": [
+        {
+          "path": "components/oods/pagination-bar.vue",
+          "type": "registry:component",
+          "content": "<script lang=\"ts\">\nimport { defineComponent, h, ref, useId } from 'vue';\nimport { PaginationBar as Contract } from '@oods/components-vue';\nimport { Pagination, PaginationContent, PaginationItem, PaginationPrevious, PaginationNext, PaginationEllipsis } from '@/components/ui/pagination';\n\n// Reuse the shipped Vue prop defaults and event vocabulary; the rendered parts belong to the team.\nexport default defineComponent({\n  name: 'OodsPaginationBarAdapter',\n  inheritAttrs: false,\n  props: Contract.props,\n  emits: Array.isArray(Contract.emits) ? Contract.emits : Object.keys(Contract.emits ?? {}),\n  setup(props: any, { attrs, emit }: any) {\n    const id = `oods-page-${useId()}`, goto = ref('');\n    return () => {\n      const size = Number.isFinite(props.pageSize) && props.pageSize > 0 ? Math.floor(props.pageSize) : 25;\n      const count = Math.max(0, Math.floor(props.totalPages ?? Math.ceil(props.totalItems / size)));\n      const page = count ? Math.max(1, Math.min(Math.floor(props.page), count)) : 1;\n      const go = (value: number) => { const next = Math.max(1, Math.min(Math.floor(value), count)); if (!count || !Number.isFinite(next) || next === page) return; emit('update:page', next); emit('pageChange', next); emit('change', next); emit('update', next); };\n      return h(Pagination, { ...attrs, 'data-oods-component': undefined, page, itemsPerPage: size, total: count * size, 'onUpdate:page': go, class: ['flex flex-wrap items-center gap-3', attrs.class], 'aria-label': attrs['aria-label'] ?? 'Pagination', 'data-oods-adapter': 'PaginationBar' }, { default: () => [\n        props.showItemRange ? h('span', `${props.totalItems} ${props.totalItems === 1 ? 'record' : 'records'}`) : null,\n        props.showItemRange && props.totalItems > 0 && count > 1 ? h('span', `Showing ${(page - 1) * size + 1}–${Math.min(page * size, props.totalItems)} of ${props.totalItems}`) : null,\n        count > 1 ? h(PaginationContent, {}, { default: ({ items }: any) => [h(PaginationPrevious, { 'aria-label': 'Previous page' }), ...items.map((item: any, index: number) => item.type === 'page' ? h(PaginationItem, { key: index, value: item.value, isActive: item.value === page, 'aria-label': `Page ${item.value}` }, { default: () => item.value }) : h(PaginationEllipsis, { key: index })), h(PaginationNext, { 'aria-label': 'Next page' })] }) : null,\n        count > 1 ? h('span', `Page ${page} of ${count}`) : null,\n        props.showPageSizeSelector ? h('label', ['Items per page', h('select', { value: size, onChange: (event: Event) => emit('pageSizeChange', Number((event.target as HTMLSelectElement).value)) }, props.pageSizeOptions.map((value: number) => h('option', { value }, String(value))))]) : null,\n        props.showGotoPage ? h('form', { onSubmit: (event: Event) => { event.preventDefault(); go(Number(goto.value)); } }, [h('label', { for: id }, 'Go to page'), h('input', { id, type: 'number', min: 1, max: Math.max(1, count), value: goto.value, onInput: (event: Event) => { goto.value = (event.target as HTMLInputElement).value; } }), h('button', { type: 'submit' }, 'Go')]) : null,\n      ] });\n    };\n  },\n});\n</script>\n"
+        }
+      ]
+    },
+    {
+      "$schema": "https://shadcn-vue.com/schema/registry-item.json",
+      "name": "oods-banner",
+      "type": "registry:component",
+      "title": "OODS Foundry Banner",
+      "description": "Vue adapter for OODS Banner on shadcn-vue / Reka UI. Critical/danger uses destructive/background; other tones use the default Alert palette.",
+      "dependencies": [
+        "@oods/components-vue@0.10.0",
+        "@oods/component-contracts@0.10.0"
+      ],
+      "registryDependencies": [
+        "alert",
+        "button"
+      ],
+      "files": [
+        {
+          "path": "components/oods/banner.vue",
+          "type": "registry:component",
+          "content": "<script lang=\"ts\">\nimport { defineComponent, h } from 'vue';\nimport { Banner as Contract } from '@oods/components-vue';\nimport { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';\nimport { Button } from '@/components/ui/button';\nimport { getStatusPresentation } from '@oods/component-contracts';\n\n// Reuse the shipped Vue prop defaults and event vocabulary; the rendered parts belong to the team.\nexport default defineComponent({\n  name: 'OodsBannerAdapter',\n  inheritAttrs: false,\n  props: Contract.props,\n  emits: Array.isArray(Contract.emits) ? Contract.emits : Object.keys(Contract.emits ?? {}),\n  setup(props: any, { attrs, slots, emit }: any) {\n    return () => { const presentation = getStatusPresentation(props.domain, props.status ?? 'unknown'); const tone = props.tone ?? presentation.tone; const danger = tone === 'critical' || tone === 'danger';\n      return h(Alert, { ...attrs, 'data-oods-component': undefined, variant: danger ? 'destructive' : 'default', role: danger ? 'alert' : 'status', 'aria-live': danger ? 'assertive' : 'polite',\n        class: [danger ? 'bg-destructive text-background dark:bg-destructive [&_*]:text-inherit' : '', attrs.class], 'data-oods-adapter': 'Banner', 'data-tone': tone,\n      }, { default: () => [props.title || props.status || slots.title ? h(AlertTitle, {}, { default: () => slots.title?.() ?? (props.title || presentation.label) }) : null,\n        h(AlertDescription, {}, { default: () => [props.detail ? h('p', props.detail) : null, slots.default?.() ?? props.content, slots.actions?.()] }),\n        props.dismissLabel ? h(Button, { type: 'button', variant: 'ghost', 'aria-label': props.dismissLabel, onClick: () => emit('dismiss') }, { default: () => '×' }) : null,\n      ] }); };\n\n  },\n});\n</script>\n"
+        }
+      ]
+    },
+    {
+      "$schema": "https://shadcn-vue.com/schema/registry-item.json",
+      "name": "oods-input",
+      "type": "registry:component",
+      "title": "OODS Foundry Input",
+      "description": "Vue adapter for OODS Input on shadcn-vue / Reka UI. Preserves the shipped Vue props, slots and event contract; team components supply styling.",
+      "dependencies": [
+        "@oods/components-vue@0.10.0",
+        "@oods/component-contracts@0.10.0"
+      ],
+      "registryDependencies": [
+        "input",
+        "label"
+      ],
+      "files": [
+        {
+          "path": "components/oods/input.vue",
+          "type": "registry:component",
+          "content": "<script lang=\"ts\">\nimport { defineComponent, h, ref, useId } from 'vue';\nimport { Input as Contract } from '@oods/components-vue';\nimport { Input } from '@/components/ui/input';\nimport { Label } from '@/components/ui/label';\nimport { dateTimeInputValue } from '@oods/component-contracts';\n\n// Reuse the shipped Vue prop defaults and event vocabulary; the rendered parts belong to the team.\nexport default defineComponent({\n  name: 'OodsInputAdapter',\n  inheritAttrs: false,\n  props: Contract.props,\n  emits: Array.isArray(Contract.emits) ? Contract.emits : Object.keys(Contract.emits ?? {}),\n  setup(props: any, { attrs, slots, emit }: any) {\n    const generated = useId(), local = ref(props.defaultValue);\n    const update = (value: string | number) => { const next = String(value); if (props.modelValue === undefined && props.value === undefined) local.value = next; emit('update:modelValue', next); emit('input', next); };\n    return () => {\n      const id = props.id ?? `oods-input-${generated}`, value = props.modelValue ?? props.value ?? local.value;\n      const help = slots.help?.() ?? props.help, validation = slots.validation?.() ?? props.validation?.message;\n      const described = [attrs['aria-describedby'], help ? id + '-help' : '', validation ? id + '-validation' : ''].filter(Boolean).join(' ') || undefined;\n      return h('div', { class: 'grid gap-2', 'data-oods-adapter': 'Input' }, [\n        slots.label || props.label ? h(Label, { for: id }, { default: () => [slots.label?.() ?? props.label, props.required ? h('span', { 'aria-hidden': 'true' }, '*') : null] }) : null,\n        h(Input, { ...attrs, 'data-oods-component': undefined, id, type: props.type, name: props.name, modelValue: props.type === 'datetime-local' ? dateTimeInputValue(value) : value,\n          'onUpdate:modelValue': update, onChange: (event: Event) => emit('change', (event.target as HTMLInputElement).value),\n          class: [props.inputClass, attrs.class], rows: props.rows, placeholder: props.placeholder, required: props.required, disabled: props.disabled, readonly: props.readOnly,\n          min: props.min, max: props.max, step: props.step, 'aria-invalid': props.validation?.state === 'error' || undefined, 'aria-describedby': described,\n          'aria-errormessage': props.validation?.state === 'error' ? id + '-validation' : undefined,\n        }),\n        help ? h('p', { id: id + '-help', class: 'text-sm' }, help) : null,\n        validation ? h('p', { id: id + '-validation', role: props.validation?.state === 'error' ? 'alert' : undefined, class: 'text-sm' }, validation) : null,\n      ]);\n    };\n  },\n});\n</script>\n"
+        }
+      ]
+    },
+    {
+      "$schema": "https://shadcn-vue.com/schema/registry-item.json",
+      "name": "oods-textarea",
+      "type": "registry:component",
+      "title": "OODS Foundry Textarea",
+      "description": "Vue adapter for OODS Textarea on shadcn-vue / Reka UI. Preserves the shipped Vue props, slots and event contract; team components supply styling.",
+      "dependencies": [
+        "@oods/components-vue@0.10.0"
+      ],
+      "registryDependencies": [
+        "textarea",
+        "label"
+      ],
+      "files": [
+        {
+          "path": "components/oods/textarea.vue",
+          "type": "registry:component",
+          "content": "<script lang=\"ts\">\nimport { defineComponent, h, ref, useId } from 'vue';\nimport { Textarea as Contract } from '@oods/components-vue';\nimport { Textarea } from '@/components/ui/textarea';\nimport { Label } from '@/components/ui/label';\n\n// Reuse the shipped Vue prop defaults and event vocabulary; the rendered parts belong to the team.\nexport default defineComponent({\n  name: 'OodsTextareaAdapter',\n  inheritAttrs: false,\n  props: Contract.props,\n  emits: Array.isArray(Contract.emits) ? Contract.emits : Object.keys(Contract.emits ?? {}),\n  setup(props: any, { attrs, slots, emit }: any) {\n    const generated = useId(), local = ref(props.defaultValue);\n    const update = (value: string | number) => { const next = String(value); if (props.modelValue === undefined && props.value === undefined) local.value = next; emit('update:modelValue', next); emit('input', next); };\n    return () => {\n      const id = props.id ?? `oods-textarea-${generated}`, value = props.modelValue ?? props.value ?? local.value;\n      const help = slots.help?.() ?? props.help, validation = slots.validation?.() ?? props.validation?.message;\n      const described = [attrs['aria-describedby'], help ? id + '-help' : '', validation ? id + '-validation' : ''].filter(Boolean).join(' ') || undefined;\n      return h('div', { class: 'grid gap-2', 'data-oods-adapter': 'Textarea' }, [\n        slots.label || props.label ? h(Label, { for: id }, { default: () => [slots.label?.() ?? props.label, props.required ? h('span', { 'aria-hidden': 'true' }, '*') : null] }) : null,\n        h(Textarea, { ...attrs, 'data-oods-component': undefined, id, type: undefined, name: props.name, modelValue: value,\n          'onUpdate:modelValue': update, onChange: (event: Event) => emit('change', (event.target as HTMLInputElement).value),\n          class: [props.inputClass, attrs.class], rows: props.rows, placeholder: props.placeholder, required: props.required, disabled: props.disabled, readonly: props.readOnly,\n          min: props.min, max: props.max, step: props.step, 'aria-invalid': props.validation?.state === 'error' || undefined, 'aria-describedby': described,\n          'aria-errormessage': props.validation?.state === 'error' ? id + '-validation' : undefined,\n        }),\n        help ? h('p', { id: id + '-help', class: 'text-sm' }, help) : null,\n        validation ? h('p', { id: id + '-validation', role: props.validation?.state === 'error' ? 'alert' : undefined, class: 'text-sm' }, validation) : null,\n      ]);\n    };\n  },\n});\n</script>\n"
+        }
+      ]
+    },
+    {
+      "$schema": "https://shadcn-vue.com/schema/registry-item.json",
+      "name": "oods-checkbox",
+      "type": "registry:component",
+      "title": "OODS Foundry Checkbox",
+      "description": "Vue adapter for OODS Checkbox on shadcn-vue / Reka UI. Uses the team Reka checkbox button and its boolean model events, replacing the native-input keyboard target. Reka supplies the native form input within forms.",
+      "dependencies": [
+        "@oods/components-vue@0.10.0"
+      ],
+      "registryDependencies": [
+        "checkbox",
+        "label"
+      ],
+      "files": [
+        {
+          "path": "components/oods/checkbox.vue",
+          "type": "registry:component",
+          "content": "<script lang=\"ts\">\nimport { defineComponent, h, ref, useId } from 'vue';\nimport { Checkbox as Contract } from '@oods/components-vue';\nimport { Checkbox } from '@/components/ui/checkbox';\nimport { Label } from '@/components/ui/label';\n\n// Reuse the shipped Vue prop defaults and event vocabulary; the rendered parts belong to the team.\nexport default defineComponent({\n  name: 'OodsCheckboxAdapter',\n  inheritAttrs: false,\n  props: Contract.props,\n  emits: Array.isArray(Contract.emits) ? Contract.emits : Object.keys(Contract.emits ?? {}),\n  setup(props: any, { attrs, slots, emit }: any) {\n    const generated = useId(), local = ref(props.defaultChecked), native = ref<HTMLInputElement>();\n    const change = (value: boolean | 'indeterminate') => { const next = value === true; if (native.value) { native.value.checked = next; native.value.dispatchEvent(new Event('change', { bubbles: true })); } if (props.modelValue === undefined && props.checked === undefined) local.value = next; emit('update:modelValue', next); emit('change', next); };\n    return () => {\n      const id = props.id ?? `oods-checkbox-${generated}`, help = slots.help?.() ?? props.help, validation = slots.validation?.() ?? props.validation?.message;\n      return h('div', { class: 'grid gap-2', 'data-oods-adapter': 'Checkbox' }, [\n        h('input', { id, ref: native, type: 'checkbox', class: 'sr-only', tabIndex: -1, 'aria-hidden': 'true', name: props.name, disabled: props.disabled, required: props.required, checked: props.modelValue ?? props.checked ?? local.value }),\n        h('div', { class: 'flex items-center gap-2' }, [h(Checkbox, { ...attrs, 'data-oods-component': undefined, id: id + '-control', required: props.required, disabled: props.disabled,\n          modelValue: props.modelValue ?? props.checked ?? local.value, 'onUpdate:modelValue': change,\n          'aria-invalid': props.validation?.state === 'error' || undefined, 'aria-describedby': [attrs['aria-describedby'], help ? id + '-help' : '', validation ? id + '-validation' : ''].filter(Boolean).join(' ') || undefined,\n        }), h(Label, { for: id + '-control' }, { default: () => [slots.label?.() ?? props.label, props.required ? h('span', { 'aria-hidden': 'true' }, '*') : null] })]),\n        help ? h('p', { id: id + '-help', class: 'text-sm' }, help) : null,\n        validation ? h('p', { id: id + '-validation', role: props.validation?.state === 'error' ? 'alert' : undefined }, validation) : null,\n      ]);\n    };\n  },\n});\n</script>\n"
+        }
+      ]
+    },
+    {
+      "$schema": "https://shadcn-vue.com/schema/registry-item.json",
+      "name": "oods-date-picker",
+      "type": "registry:component",
+      "title": "OODS Foundry DatePicker",
+      "description": "Vue adapter for OODS DatePicker on shadcn-vue / Reka UI. Uses the team Input with native type=date, matching the shipped Vue DatePicker contract; no extra calendar popup.",
+      "dependencies": [
+        "@oods/components-vue@0.10.0"
+      ],
+      "registryDependencies": [
+        "input",
+        "label"
+      ],
+      "files": [
+        {
+          "path": "components/oods/date-picker.vue",
+          "type": "registry:component",
+          "content": "<script lang=\"ts\">\nimport { defineComponent, h, ref, useId } from 'vue';\nimport { DatePicker as Contract } from '@oods/components-vue';\nimport { Input } from '@/components/ui/input';\nimport { Label } from '@/components/ui/label';\n\n// Reuse the shipped Vue prop defaults and event vocabulary; the rendered parts belong to the team.\nexport default defineComponent({\n  name: 'OodsDatePickerAdapter',\n  inheritAttrs: false,\n  props: Contract.props,\n  emits: Array.isArray(Contract.emits) ? Contract.emits : Object.keys(Contract.emits ?? {}),\n  setup(props: any, { attrs, slots, emit }: any) {\n    const generated = useId(), local = ref(props.defaultValue);\n    const update = (value: string | number) => { const next = String(value); if (props.modelValue === undefined && props.value === undefined) local.value = next; emit('update:modelValue', next); emit('input', next); };\n    return () => {\n      const id = props.id ?? `oods-date-picker-${generated}`, value = props.modelValue ?? props.value ?? local.value;\n      const help = slots.help?.() ?? props.help, validation = slots.validation?.() ?? props.validation?.message;\n      const described = [attrs['aria-describedby'], help ? id + '-help' : '', validation ? id + '-validation' : ''].filter(Boolean).join(' ') || undefined;\n      return h('div', { class: 'grid gap-2', 'data-oods-adapter': 'DatePicker' }, [\n        slots.label || props.label ? h(Label, { for: id }, { default: () => [slots.label?.() ?? props.label, props.required ? h('span', { 'aria-hidden': 'true' }, '*') : null] }) : null,\n        h(Input, { ...attrs, 'data-oods-component': undefined, id, type: 'date', name: props.name, modelValue: value,\n          'onUpdate:modelValue': update, onChange: (event: Event) => emit('change', (event.target as HTMLInputElement).value),\n          class: [props.inputClass, attrs.class], rows: props.rows, placeholder: props.placeholder, required: props.required, disabled: props.disabled, readonly: props.readOnly,\n          min: props.min, max: props.max, step: props.step, 'aria-invalid': props.validation?.state === 'error' || undefined, 'aria-describedby': described,\n          'aria-errormessage': props.validation?.state === 'error' ? id + '-validation' : undefined,\n        }),\n        help ? h('p', { id: id + '-help', class: 'text-sm' }, help) : null,\n        validation ? h('p', { id: id + '-validation', role: props.validation?.state === 'error' ? 'alert' : undefined, class: 'text-sm' }, validation) : null,\n      ]);\n    };\n  },\n});\n</script>\n"
+        }
+      ]
+    },
+    {
+      "$schema": "https://shadcn-vue.com/schema/registry-item.json",
+      "name": "oods-tag-input",
+      "type": "registry:component",
+      "title": "OODS Foundry TagInput",
+      "description": "Vue adapter for OODS TagInput on shadcn-vue / Reka UI. Preserves text-value callbacks and labels; the OODS contract does not add or remove tags.",
+      "dependencies": [
+        "@oods/components-vue@0.10.0"
+      ],
+      "registryDependencies": [
+        "input",
+        "badge"
+      ],
+      "files": [
+        {
+          "path": "components/oods/tag-input.vue",
+          "type": "registry:component",
+          "content": "<script lang=\"ts\">\nimport { defineComponent, h, useId } from 'vue';\nimport { TagInput as Contract } from '@oods/components-vue';\nimport { Input } from '@/components/ui/input';\nimport { Badge } from '@/components/ui/badge';\n\n// Reuse the shipped Vue prop defaults and event vocabulary; the rendered parts belong to the team.\nexport default defineComponent({\n  name: 'OodsTagInputAdapter',\n  inheritAttrs: false,\n  props: Contract.props,\n  emits: Array.isArray(Contract.emits) ? Contract.emits : Object.keys(Contract.emits ?? {}),\n  setup(props: any, { attrs, slots, emit }: any) {\n    const id = `oods-tag-${useId()}`;\n    return () => { const title = [props.title, props.label, props.heading, props.name].find(value => typeof value === 'string' && value.trim()) ?? 'Tag Input'; const subtitle = [props.description, props.subtitle, props.hint].find(value => typeof value === 'string' && value.trim());\n      return h('fieldset', { ...attrs, 'data-oods-component': undefined, class: ['grid gap-2', attrs.class], 'data-oods-adapter': 'TagInput' }, [h('legend', title), subtitle ? h('p', subtitle) : null,\n        ...(slots.default?.() ?? [h('label', { for: id }, 'Tag'), h(Input, { id, name: 'tag', modelValue: props.modelValue ?? props.value, placeholder: props.placeholder,\n          'onUpdate:modelValue': (value: string | number) => { emit('update:modelValue', String(value)); emit('input', String(value)); }, onChange: (event: Event) => emit('change', (event.target as HTMLInputElement).value),\n        }), h('div', { class: 'flex flex-wrap gap-2', 'data-tag-list': 'true' }, (props.tags ?? []).map((tag: any) => h(Badge, { variant: 'secondary', 'data-tag-item': 'true' }, { default: () => typeof tag === 'object' ? tag.label ?? tag.name ?? tag.role ?? tag.value ?? tag.id ?? '' : String(tag) }))) ]),\n      ]); };\n\n  },\n});\n</script>\n"
+        }
+      ]
+    },
+    {
+      "$schema": "https://shadcn-vue.com/schema/registry-item.json",
+      "name": "oods-status-selector",
+      "type": "registry:component",
+      "title": "OODS Foundry StatusSelector",
+      "description": "Vue adapter for OODS StatusSelector on shadcn-vue / Reka UI. Reka combobox keyboard interaction replaces native select interaction. Authored default slots are preserved.",
+      "dependencies": [
+        "@oods/components-vue@0.10.0"
+      ],
+      "registryDependencies": [
+        "select",
+        "label"
+      ],
+      "files": [
+        {
+          "path": "components/oods/status-selector.vue",
+          "type": "registry:component",
+          "content": "<script lang=\"ts\">\nimport { defineComponent, h, ref, useId } from 'vue';\nimport { StatusSelector as Contract } from '@oods/components-vue';\nimport { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';\nimport { Label } from '@/components/ui/label';\n\n// Reuse the shipped Vue prop defaults and event vocabulary; the rendered parts belong to the team.\nexport default defineComponent({\n  name: 'OodsStatusSelectorAdapter',\n  inheritAttrs: false,\n  props: Contract.props,\n  emits: Array.isArray(Contract.emits) ? Contract.emits : Object.keys(Contract.emits ?? {}),\n  setup(props: any, { attrs, slots, emit }: any) {\n    const generated = useId(), local = ref(props.defaultValue ?? ''), native = ref<HTMLInputElement>();\n    return () => {\n      const id = props.id ?? attrs.id ?? `oods-status-selector-${generated}`;\n      const status = true;\n      if (status && slots.default) return h('div', { ...attrs, 'data-oods-component': undefined, 'data-oods-adapter': 'StatusSelector' }, slots.default());\n      const choices = (props.options ?? props.states ?? (status ? ['draft','active','inactive'] : [])).map((option: any) => typeof option === 'object' ? { ...option, value: String(option.value ?? option.id ?? option.name ?? ''), label: option.label ?? option.name ?? String(option.value ?? option.id ?? '') } : { value: String(option), label: String(option) });\n      // Reka reserves ''; keep the public empty option and never leak the transport value into forms or events.\n      let empty = '__oods_empty_option__';\n      while (choices.some((option: any) => option.value === empty)) empty += '_';\n      const selected = String(props.modelValue ?? props.value ?? props.status ?? local.value);\n      const change = (value: unknown) => { const next = value === empty ? '' : String(value ?? ''); if (native.value) { native.value.value = next; native.value.dispatchEvent(new Event('change', { bubbles: true })); } if (props.modelValue === undefined && props.value === undefined) local.value = next; emit('update:modelValue', next); emit('change', next); };\n      const name = props.name ?? (status ? 'status' : undefined);\n      const label = slots.label?.() ?? props.label ?? props.title ?? (status ? 'Status' : undefined);\n      const help = slots.help?.() ?? props.help, validation = slots.validation?.() ?? props.validation?.message;\n      return h('div', { class: 'grid gap-2', 'data-oods-adapter': 'StatusSelector' }, [\n        label ? h(Label, { for: id + '-control' }, { default: () => label }) : null,\n        h('input', { id, ref: native, type: 'hidden', name, value: selected, disabled: props.disabled }),\n        h(Select, { modelValue: selected === '' && choices.some((option: any) => option.value === '') ? empty : selected, 'onUpdate:modelValue': change, disabled: props.disabled, required: props.required }, { default: () => [\n          h(SelectTrigger, { ...attrs, 'data-oods-component': undefined, id: id + '-control', 'aria-invalid': props.validation?.state === 'error' || undefined, 'aria-describedby': [attrs['aria-describedby'], help ? id + '-help' : '', validation ? id + '-validation' : ''].filter(Boolean).join(' ') || undefined }, { default: () => h(SelectValue, { placeholder: props.placeholder }, { default: () => choices.find((option: any) => option.value === selected)?.label ?? props.placeholder }) }),\n          h(SelectContent, {}, { default: () => choices.map((option: any) => h(SelectItem, { value: option.value === '' ? empty : option.value, disabled: option.disabled }, { default: () => slots.option?.({ option }) ?? option.label })) }),\n        ] }),\n        help ? h('p', { id: id + '-help', class: 'text-sm' }, help) : null,\n        validation ? h('p', { id: id + '-validation', role: props.validation?.state === 'error' ? 'alert' : undefined }, validation) : null,\n      ]);\n    };\n  },\n});\n</script>\n"
+        }
+      ]
+    },
+    {
+      "$schema": "https://shadcn-vue.com/schema/registry-item.json",
+      "name": "oods-card-header",
+      "type": "registry:component",
+      "title": "OODS Foundry CardHeader",
+      "description": "Vue adapter for OODS CardHeader on shadcn-vue / Reka UI. Preserves the shipped Vue props, slots and event contract; team components supply styling.",
+      "dependencies": [
+        "@oods/components-vue@0.10.0"
+      ],
+      "registryDependencies": [
+        "card"
+      ],
+      "files": [
+        {
+          "path": "components/oods/card-header.vue",
+          "type": "registry:component",
+          "content": "<script lang=\"ts\">\nimport { defineComponent, h, Fragment, Text } from 'vue';\nimport { CardHeader as Contract } from '@oods/components-vue';\nimport { CardHeader, CardTitle, CardDescription } from '@/components/ui/card';\n\n// Reuse the shipped Vue prop defaults and event vocabulary; the rendered parts belong to the team.\nexport default defineComponent({\n  name: 'OodsCardHeaderAdapter',\n  inheritAttrs: false,\n  props: Contract.props,\n  emits: Array.isArray(Contract.emits) ? Contract.emits : Object.keys(Contract.emits ?? {}),\n  setup(props: any, { attrs, slots }: any) {\n    const first = (...values: any[]) => values.find(value => typeof value === 'string' && value.trim());\n    const flatten = (nodes: any[]): any[] => nodes.flatMap(node => node.type === Fragment ? flatten(node.children ?? []) : [node]);\n    return () => {\n      const content = flatten(slots.default?.() ?? []);\n      const scalar = content.every(node => node.type === Text) ? content.map(node => node.children).join('') : undefined;\n      const title = first(scalar, props.title, props.label, props.text) ?? 'Card';\n      const details = first(props.supporting, props.supportingText, props.subtitle, props.description);\n      const heading = /^h[1-6]$/.test(props.as ?? '') ? props.as : `h${Number.isFinite(props.level) ? Math.max(1, Math.min(6, Math.trunc(props.level))) : 2}`;\n      return h('header', { ...attrs, 'data-oods-component': undefined, 'data-oods-adapter': 'CardHeader' }, [h(CardHeader, {}, { default: () => content.length && scalar === undefined ? content : [\n        h(CardTitle, {}, { default: () => h(heading, title) }), details && details.trim() !== title.trim() ? h(CardDescription, {}, { default: () => details }) : null,\n      ] })]);\n    };\n  },\n});\n</script>\n"
+        }
+      ]
+    },
+    {
+      "$schema": "https://shadcn-vue.com/schema/registry-item.json",
+      "name": "oods-price-badge",
+      "type": "registry:component",
+      "title": "OODS Foundry PriceBadge",
+      "description": "Vue adapter for OODS PriceBadge on shadcn-vue / Reka UI. Preserves the shipped Vue props, slots and event contract; team components supply styling.",
+      "dependencies": [
+        "@oods/components-vue@0.10.0",
+        "@oods/component-contracts@0.10.0"
+      ],
+      "registryDependencies": [
+        "badge"
+      ],
+      "files": [
+        {
+          "path": "components/oods/price-badge.vue",
+          "type": "registry:component",
+          "content": "<script lang=\"ts\">\nimport { defineComponent, h } from 'vue';\nimport { PriceBadge as Contract } from '@oods/components-vue';\nimport { Badge } from '@/components/ui/badge';\nimport { currencyMinorUnits } from '@oods/component-contracts';\n\n// Reuse the shipped Vue prop defaults and event vocabulary; the rendered parts belong to the team.\nexport default defineComponent({\n  name: 'OodsPriceBadgeAdapter',\n  inheritAttrs: false,\n  props: Contract.props,\n  emits: Array.isArray(Contract.emits) ? Contract.emits : Object.keys(Contract.emits ?? {}),\n  setup(props: any, { attrs, slots }: any) {\n    return () => {\n      const currency = props.currency ?? props.currencyCode;\n      const cents = props.amountCents ?? props.unitAmountCents;\n      const amount = cents === undefined ? props.amount ?? props.unitAmount : cents / currencyMinorUnits(currency, props.minorUnits);\n      let formatted = 'Price';\n      if (amount !== undefined && Number.isFinite(amount)) {\n        try { formatted = new Intl.NumberFormat('en-US', currency ? { style: 'currency', currency: currency.toUpperCase() } : { maximumFractionDigits: 2 }).format(amount); }\n        catch { formatted = `${currency?.toUpperCase() ?? ''} ${amount.toFixed(2)}`.trim(); }\n      }\n      return h(Badge, { ...attrs, 'data-oods-component': undefined, variant: props.emphasis === 'solid' ? 'default' : 'secondary',\n        'data-oods-adapter': 'PriceBadge', 'data-price': 'true', 'data-currency': currency?.toUpperCase(), title: attrs.title ?? props.label,\n      }, { default: () => slots.default?.() ?? props.label ?? props.value ?? formatted });\n    };\n  },\n});\n</script>\n"
+        }
+      ]
+    }
+  ]
+}

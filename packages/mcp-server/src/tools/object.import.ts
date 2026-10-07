@@ -75,7 +75,7 @@ export function diffDraft(draft: Draft): ImportDiff {
   const fields = {
     added: Object.keys(newFields).filter(field => !Object.hasOwn(oldFields, field)).sort(),
     removed: Object.keys(oldFields).filter(field => !Object.hasOwn(newFields, field) && !traitFields.includes(field)).sort(),
-    changed: Object.keys(newFields).filter(field => Object.hasOwn(oldFields, field) && canonical([oldFields[field], before.semantics[field]]) !== canonical([newFields[field], after.semantics[field]])).sort(),
+    changed: Object.keys(newFields).filter(field => Object.hasOwn(oldFields, field) && canonical([prior.schema[field] ?? oldFields[field], prior.schema[field] ? prior.semantics[field] : before.semantics[field]]) !== canonical([newFields[field], after.semantics[field]])).sort(),
   };
   const traitsChanged = canonical(prior.traits) !== canonical(draft.definition.traits);
   const relationshipsChanged = canonical(prior.relationships ?? []) !== canonical(draft.definition.relationships ?? []);
@@ -107,7 +107,7 @@ async function apply(input: Extract<ObjectImportInput, { action: 'apply' }>, imp
         if (definition.traits.some(trait => trait.name === proposal.trait.name)) throw new ToolError('OODS-V220', `Two accepted proposals configure ${proposal.trait.name} on ${draft.name}; choose one.`);
         definition.traits.push(proposal.trait);
       }
-      if (definition.traits.some(trait => ['Stateful', 'Supersedable', 'Auditable'].includes(trait.name.split('/').pop()!)) && !definition.metadata.supportedContexts?.includes('timeline')) definition.metadata.supportedContexts?.push('timeline');
+      if (definition.traits.some(trait => ['Stateful', 'Supersedable', 'Auditable', 'Timestampable'].includes(trait.name.split('/').pop()!)) && !definition.metadata.supportedContexts?.includes('timeline')) definition.metadata.supportedContexts?.push('timeline');
       const yaml = dump(definition, { noRefs: true, sortKeys: true, lineWidth: 120 });
       const checked = validateDefinition(yaml, available);
       if (!checked.valid) throw new ToolError('OODS-V220', `${draft.name} was not applied: ${checked.errors.map(error => error.message).join(' ')}`, { errors: checked.errors });

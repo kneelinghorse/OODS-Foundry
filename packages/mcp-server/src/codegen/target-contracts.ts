@@ -1084,6 +1084,8 @@ function fieldContractIssues(
       node,
     )];
   }
+  // Collection sort/filter controls bind query strings; field names the record column, not the control value.
+  if (node.collectionControl === 'sort' || node.collectionControl === 'filter') return [];
   // The field exists; this container names its collection without any
   // renderer reading it as data, so the directive is consumed unbound.
   if (FIELD_CONSUMED_UNBOUND.has(node.component)) return [];

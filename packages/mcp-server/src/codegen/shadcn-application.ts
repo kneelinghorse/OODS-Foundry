@@ -8,16 +8,17 @@ export function packageShadcnApplication(result: CodegenResult, substitutions: E
   const shadcn = substitutions.filter(entry => entry.source.shadcn);
   if (!shadcn.length) return;
   const files = result.files!;
-  if (!files.some(file => file.path === 'src/GeneratedUI.tsx')) throw new Error('Shadcn substitutions in workflow application output are not supported; generate each screen as a React component or single-screen application.');
+  const framework = result.framework === 'vue' ? 'vue' : 'react';
   const manifestFile = files.find(file => file.path === 'package.json')!;
   const manifest = JSON.parse(manifestFile.contents);
   const paths: Record<string, string[]> = {};
   const styles = new Set<string>();
   for (const entry of shadcn) {
     const source = entry.source.shadcn!;
-    const project = mappings.find(mapping => mapping.mappingId === entry.mappingId)!.substitution.react!.shadcn!.project;
+    if ((source.framework ?? 'react') !== framework) throw new Error('Shadcn application source framework does not match the generated application.');
+    const project = mappings.find(mapping => mapping.mappingId === entry.mappingId)!.substitution[framework]!.shadcn!.project;
     for (const relative of source.files) {
-      const encoding = /\.(?:[cm]?[jt]sx?|json|css|svg|txt)$/.test(relative) ? undefined : 'base64' as const;
+      const encoding = /\.(?:[cm]?[jt]sx?|vue|json|css|svg|txt)$/.test(relative) ? undefined : 'base64' as const;
       const contents = fs.readFileSync(path.join(project, relative)).toString(encoding ?? 'utf8');
       const previous = files.find(file => file.path === relative);
       if (previous && (previous.contents !== contents || previous.encoding !== encoding)) throw new Error(`Shadcn source file '${relative}' collides with another generated or mapped file.`);
@@ -30,7 +31,7 @@ export function packageShadcnApplication(result: CodegenResult, substitutions: E
     for (const [name, version] of Object.entries(source.dependencies)) {
       // The mapped project owns React pins; shipped OODS packages retain their release pin.
       if (name.startsWith('@oods/')) continue;
-      if (!['react', 'react-dom'].includes(name) && manifest.dependencies[name] && manifest.dependencies[name] !== version) throw new Error(`Shadcn dependency '${name}' has conflicting installed versions.`);
+      if (!['react', 'react-dom', 'vue', '@vue/server-renderer'].includes(name) && manifest.dependencies[name] && manifest.dependencies[name] !== version) throw new Error(`Shadcn dependency '${name}' has conflicting installed versions.`);
       manifest.dependencies[name] = version;
     }
     styles.add(source.css);
@@ -39,15 +40,18 @@ export function packageShadcnApplication(result: CodegenResult, substitutions: E
     if (targets.length !== 1 || alias.includes('*') && !alias.endsWith('/*') || targets[0]!.includes('*') && !targets[0]!.endsWith('/*')) throw new Error(`Shadcn application alias '${alias}' requires one exact target or a trailing /* wildcard.`);
     return `{ find: ${JSON.stringify(alias.replace(/\/\*$/, ''))}, replacement: decodeURIComponent(new URL(${JSON.stringify(targets[0]!.replace(/\/\*$/, ''))}, import.meta.url).pathname) }`;
   });
-  const config = files.find(file => file.path === 'vite.config.mjs')!;
+  let config = files.find(file => file.path === 'vite.config.mjs');
+  if (!config) { config = { path: 'vite.config.mjs', contents: '' }; files.push(config); }
   const integration = manifest.dependencies['@tailwindcss/vite'] ? '@tailwindcss/vite' : '@tailwindcss/postcss';
   if (!manifest.dependencies[integration]) throw new Error('Shadcn application requires an inspected Tailwind Vite or PostCSS integration.');
-  config.contents = `import tailwindcss from '${integration}';\nexport default { plugins: [${integration === '@tailwindcss/vite' ? 'tailwindcss()' : ''}], resolve: { alias: [${aliases.join(', ')}] }, css: { postcss: { plugins: [${integration === '@tailwindcss/postcss' ? 'tailwindcss()' : ''}] } } };\n`;
+  config.contents = `${framework === 'vue' ? "import vue from '@vitejs/plugin-vue';\n" : ''}import tailwindcss from '${integration}';\nexport default { plugins: [${framework === 'vue' ? 'vue(), ' : ''}${integration === '@tailwindcss/vite' ? 'tailwindcss()' : ''}], resolve: { alias: [${aliases.join(', ')}] }, css: { postcss: { plugins: [${integration === '@tailwindcss/postcss' ? 'tailwindcss()' : ''}] } } };\n`;
   const tsconfigFile = files.find(file => file.path === 'tsconfig.json')!;
   const tsconfig = JSON.parse(tsconfigFile.contents); tsconfig.compilerOptions.paths = paths;
-  tsconfig.include = ['src', ...new Set(shadcn.flatMap(entry => entry.source.shadcn!.files.filter(file => /\.(tsx?|jsx?)$/.test(file))))];
+  // Honor the accepted projects' explicit declaration-file setting; generated source stays strict.
+  if (shadcn.every(entry => entry.source.shadcn!.skipLibCheck === true)) tsconfig.compilerOptions.skipLibCheck = true;
+  tsconfig.include = ['src', ...new Set(shadcn.flatMap(entry => entry.source.shadcn!.files.filter(file => /\.(tsx?|jsx?|vue)$/.test(file))))];
   tsconfigFile.contents = JSON.stringify(tsconfig, null, 2) + '\n';
-  const main = files.find(file => file.path === 'src/main.tsx')!;
+  const main = files.find(file => file.path === (framework === 'vue' ? 'src/main.ts' : 'src/main.tsx'))!;
   main.contents += [...styles].map(css => `import ${JSON.stringify('./' + path.posix.relative('src', css))};`).join('\n') + '\n';
   for (const entry of shadcn) for (const specifier of [...entry.source.shadcn!.imports, integration]) if (!result.imports.includes(specifier)) result.imports.push(specifier);
   manifestFile.contents = JSON.stringify(manifest, null, 2) + '\n';

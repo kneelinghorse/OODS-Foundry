@@ -6,11 +6,12 @@ import { createHash } from 'node:crypto';
 import { transformSync } from 'esbuild';
 import { parse } from 'acorn';
 import postcss from 'postcss';
+import { parse as parseSfc } from '@vue/compiler-sfc';
 import { exportsName } from './map.local-package.js';
 
 export interface ShadcnSource { project: string; module: string }
 export interface ShadcnClosure {
-  base?: 'radix' | 'base'; style?: string; themeRequirement?: string;
+  skipLibCheck?: boolean; framework?: 'react' | 'vue'; base?: 'radix' | 'base' | 'reka'; style?: string; themeRequirement?: string;
   module: string; file: string; css: string; files: string[]; hashFiles: string[];
   paths: Record<string, string[]>; dependencies: Record<string, string>; imports: string[]; closureHash: string;
 }
@@ -34,7 +35,7 @@ function within(project: string, file: string): string {
   return file;
 }
 function resolveFile(project: string, target: string, importer: string, line = 1): string {
-  const file = [target, ...['.tsx', '.ts', '.jsx', '.js', '.mjs', '.json', '.css'].map(ext => target + ext), ...['index.tsx', 'index.ts', 'index.js'].map(name => path.join(target, name))]
+  const file = [target, ...['.vue', '.tsx', '.ts', '.jsx', '.js', '.mjs', '.json', '.css'].map(ext => target + ext), ...['index.tsx', 'index.ts', 'index.js'].map(name => path.join(target, name))]
     .find(candidate => fs.existsSync(candidate) && fs.statSync(candidate).isFile());
   if (!file) return fail(importer, `module does not exist: ${target}`, line);
   try { return within(project, fs.realpathSync(file)); } catch (error) { return fail(importer, error instanceof Error ? error.message : String(error), line); }
@@ -47,15 +48,15 @@ export function resolveShadcnAlias(project: string, paths: Record<string, string
     const capture = star < 0 ? '' : specifier.slice(star, specifier.length - (key.length - star - 1));
     for (const target of targets) {
       const candidate = path.resolve(project, target.replace('*', capture));
-      if ([candidate, ...['.tsx', '.ts', '.jsx', '.js', '.json', '/index.tsx', '/index.ts'].map(ext => candidate + ext)].some(file => fs.existsSync(file) && fs.statSync(file).isFile())) return candidate;
+      if ([candidate, ...['.vue', '.tsx', '.ts', '.jsx', '.js', '.json', '/index.tsx', '/index.ts'].map(ext => candidate + ext)].some(file => fs.existsSync(file) && fs.statSync(file).isFile())) return candidate;
     }
     return path.resolve(project, targets[0]!.replace('*', capture));
   }
   return undefined;
 }
-function readPaths(project: string, hashFiles: Set<string>): Record<string, string[]> {
+function readPaths(project: string, hashFiles: Set<string>, compilerOptions: { skipLibCheck?: boolean }): Record<string, string[]> {
   const seen = new Set<string>();
-  const visit = (file: string): Record<string, string[]> => {
+  const visit = (file: string, options = compilerOptions): Record<string, string[]> => {
     file = resolveFile(project, file, file);
     if (seen.has(file)) return {};
     seen.add(file); hashFiles.add(posix(path.relative(project, file)));
@@ -64,8 +65,9 @@ function readPaths(project: string, hashFiles: Set<string>): Record<string, stri
     if (config.extends) {
       if (typeof config.extends !== 'string' || !config.extends.startsWith('.')) fail(file, 'only project-relative tsconfig extends is supported');
       const target = path.resolve(path.dirname(file), config.extends);
-      inherited = visit(fs.existsSync(target) ? target : target + '.json');
+      inherited = visit(fs.existsSync(target) ? target : target + '.json', options);
     }
+    if (typeof config.compilerOptions?.skipLibCheck === 'boolean') options.skipLibCheck = config.compilerOptions.skipLibCheck;
     if (config.compilerOptions?.paths) {
       const base = path.resolve(path.dirname(file), config.compilerOptions.baseUrl ?? '.');
       for (const [key, values] of Object.entries(config.compilerOptions.paths)) {
@@ -73,11 +75,17 @@ function readPaths(project: string, hashFiles: Set<string>): Record<string, stri
         inherited[key] = (values as string[]).map(value => posix(path.relative(project, within(project, path.resolve(base, value)))));
       }
     }
-    if (Object.keys(inherited).length) return inherited;
+    const ownsPaths = Object.keys(inherited).length > 0;
+    const referencedOptions: Array<{ skipLibCheck?: boolean }> = [];
     for (const reference of config.references ?? []) {
       const target = path.resolve(path.dirname(file), reference.path);
-      Object.assign(inherited, visit(fs.existsSync(target) && fs.statSync(target).isFile() ? target : fs.existsSync(target + '.json') ? target + '.json' : path.join(target, 'tsconfig.json')));
+      const childOptions: { skipLibCheck?: boolean } = {};
+      const childPaths = visit(fs.existsSync(target) && fs.statSync(target).isFile() ? target : fs.existsSync(target + '.json') ? target + '.json' : path.join(target, 'tsconfig.json'), childOptions);
+      if (!ownsPaths) Object.assign(inherited, childPaths);
+      referencedOptions.push(childOptions);
     }
+    // Vite roots commonly declare aliases while app/node references own compiler settings.
+    if (options.skipLibCheck === undefined && referencedOptions.length && referencedOptions.every(child => child.skipLibCheck === true)) options.skipLibCheck = true;
     return inherited;
   };
   return visit(path.join(project, 'tsconfig.json'));
@@ -116,26 +124,29 @@ export function shadcnClosureHash(project: string, files: string[], dependencies
   hash.update(JSON.stringify(Object.fromEntries(Object.entries(dependencies).sort(([a], [b]) => a.localeCompare(b)))));
   return `sha256:${hash.digest('hex')}`;
 }
-export function inspectShadcn(source: ShadcnSource, exported: string): InspectedShadcn {
+export function inspectShadcn(source: ShadcnSource, exported: string, expectedFramework: 'react' | 'vue' = 'react'): InspectedShadcn {
   const project = fs.existsSync(source.project) ? fs.realpathSync(source.project) : fail(path.join(source.project, 'components.json'), 'project does not exist');
   const configFile = path.join(project, 'components.json');
   const config = readJson(configFile);
+  const framework = /shadcn-vue/.test(config.$schema ?? '') || typeof config.typescript === 'boolean' ? 'vue' : 'react';
+  if (framework !== expectedFramework) fail(configFile, `expected ${expectedFramework} shadcn source, found ${framework}`);
   const style = config.style;
-  const base = typeof style === 'string' && /^base-[a-z0-9-]+$/.test(style) ? 'base'
+  const base = framework === 'vue' ? (['new-york', 'default'].includes(style) || /^reka-[a-z0-9-]+$/.test(style) ? 'reka' : undefined) : typeof style === 'string' && /^base-[a-z0-9-]+$/.test(style) ? 'base'
     : typeof style === 'string' && (/^radix-[a-z0-9-]+$/.test(style) || ['new-york', 'default'].includes(style)) ? 'radix' : undefined;
-  if (!base) fail(configFile, `unsupported shadcn style '${String(style)}'; supported bases: Radix (radix-*, new-york, default) and Base UI (base-*). React Aria is not supported.`);
+  if (!base) fail(configFile, `unsupported shadcn style '${String(style)}'; supported bases: ${framework === 'vue' ? 'Reka (reka-*, new-york, default)' : 'Radix (radix-*, new-york, default) and Base UI (base-*)'}. React Aria is not supported.`);
   if (!/^[A-Za-z@#_$][A-Za-z0-9@#_$./-]*$/.test(source.module)) fail(configFile, 'module must be a portable project alias import, without absolute paths or executable syntax');
-  if (config.tsx !== true) fail(configFile, 'shadcn source requires tsx: true');
+  if (framework === 'react' && config.tsx !== true) fail(configFile, 'shadcn source requires tsx: true');
   if (typeof config.tailwind?.css !== 'string') fail(configFile, 'tailwind.css must name the project CSS entry');
   const css = resolveFile(project, path.resolve(project, config.tailwind.css), configFile);
   const aliases = Object.values(config.aliases ?? {}).filter((value): value is string => typeof value === 'string');
   if (!aliases.some(alias => source.module === alias || source.module.startsWith(alias + '/'))) fail(configFile, `module '${source.module}' must start with an alias declared in components.json`);
   const hashFiles = new Set<string>(['components.json']);
-  const paths = readPaths(project, hashFiles);
+  const compilerOptions: { skipLibCheck?: boolean } = {};
+  const paths = readPaths(project, hashFiles, compilerOptions);
   const target = resolveShadcnAlias(project, paths, source.module);
   if (!target) fail(path.join(project, 'tsconfig.json'), `no TypeScript paths alias resolves '${source.module}'`);
   const file = resolveFile(project, target!, configFile);
-  if (!/\.(tsx|ts)$/.test(file)) fail(file, 'mapped shadcn module must be a .tsx or .ts file');
+  if (!(framework === 'vue' ? /\.(vue|ts|js)$/ : /\.(tsx|ts)$/).test(file)) fail(file, `mapped shadcn module has an unsupported ${framework} extension`);
   const dependencies: Record<string, string> = {};
   const imports = new Set<string>();
   const tailwind = installed(project, 'tailwindcss', css);
@@ -161,7 +172,7 @@ export function inspectShadcn(source: ShadcnSource, exported: string): Inspected
     const contents = fs.readFileSync(absolute); bytes += contents.length;
     const raw = contents.toString('utf8');
     if (files.size > 10000 || bytes > 64 * 1024 * 1024) fail(absolute, 'source closure exceeds 10,000 files or 64 MiB');
-    if (!/\.(?:[cm]?[jt]sx?|css)$/.test(absolute)) return;
+    if (!/\.(?:[cm]?[jt]sx?|vue|css)$/.test(absolute)) return;
     if (absolute.endsWith('.css')) {
       const sheet = postcss.parse(raw, { from: absolute });
       const remote = (value: string) => /^(?:[a-z][a-z0-9+.-]*:|\/\/|#)/i.test(value);
@@ -184,8 +195,12 @@ export function inspectShadcn(source: ShadcnSource, exported: string): Inspected
       return;
     }
     try {
-      const inspectionSource = raw.replace(/\bimport\s+type\b/g, 'import').replace(/\bexport\s+type(?=\s*[{*])/g, 'export');
-      const code = transformSync(inspectionSource, { loader: absolute.endsWith('.tsx') ? 'tsx' : absolute.endsWith('.ts') ? 'ts' : 'jsx', sourcefile: absolute, jsx: 'preserve', tsconfigRaw: { compilerOptions: { verbatimModuleSyntax: true } } }).code;
+      const descriptor = absolute.endsWith('.vue') ? parseSfc(raw, { filename: absolute }) : undefined;
+      if (descriptor?.errors.length) fail(absolute, String(descriptor.errors[0]));
+      if (descriptor && (descriptor.descriptor.styles.length || descriptor.descriptor.script?.src || descriptor.descriptor.template?.src)) fail(absolute, 'shadcn Vue sources must keep styles in tailwind.css and scripts/templates inline');
+      const script = descriptor ? [descriptor.descriptor.script?.content, descriptor.descriptor.scriptSetup?.content].filter(Boolean).join('\n') : raw;
+      const inspectionSource = script.replace(/\bimport\s+type\b/g, 'import').replace(/\bexport\s+type(?=\s*[{*])/g, 'export');
+      const code = transformSync(inspectionSource, { loader: absolute.endsWith('.tsx') ? 'tsx' : /\.(ts|vue)$/.test(absolute) ? 'ts' : 'jsx', sourcefile: absolute, jsx: 'preserve', tsconfigRaw: { compilerOptions: { verbatimModuleSyntax: true } } }).code;
       // JSX is lowered only for static inspection; no evaluated import or project hook.
       const stripped = transformSync(code, { loader: 'jsx', sourcefile: absolute, jsx: 'transform' }).code;
       const tree = parse(stripped, { ecmaVersion: 'latest', sourceType: 'module', locations: true }) as any;
@@ -201,7 +216,9 @@ export function inspectShadcn(source: ShadcnSource, exported: string): Inspected
   };
   visit(file); visit(css);
   if (dependencies.react) dependencies['react-dom'] = installed(project, 'react-dom', configFile).version;
-  if (!exportsName(file, exported, new Set(), (entry) => transformSync(fs.readFileSync(entry, 'utf8'), { loader: entry.endsWith('.tsx') ? 'tsx' : 'ts', jsx: 'transform', sourcefile: entry }).code, (specifier, importer) => resolve(specifier, importer) ?? installed(project, specifier, importer).file)) fail(file, `module does not statically export '${exported}'`);
+  if (framework === 'vue') dependencies.vue = installed(project, 'vue', file).version;
+  if (dependencies.vue) dependencies['@vue/server-renderer'] = installed(project, '@vue/server-renderer', installed(project, 'vue', configFile).file).version;
+  if (!exportsName(file, exported, new Set(), (entry) => entry.endsWith('.vue') ? 'export default {};' : transformSync(fs.readFileSync(entry, 'utf8'), { loader: entry.endsWith('.tsx') ? 'tsx' : 'ts', jsx: 'transform', sourcefile: entry }).code, (specifier, importer) => resolve(specifier, importer) ?? installed(project, specifier, importer).file)) fail(file, `module does not statically export '${exported}'`);
   const sorted = [...hashFiles].sort();
-  return { project, base, style, themeRequirement: 'Dark component output needs an ancestor with both data-theme="dark" and class="dark"; shadcn parts retain their light palette in hc.', module: source.module, file: posix(path.relative(project, file)), css: posix(path.relative(project, css)), files: [...files].sort(), hashFiles: sorted, paths, dependencies, imports: [...imports].sort(), closureHash: shadcnClosureHash(project, sorted, dependencies) };
+  return { project, ...compilerOptions, framework, base, style, themeRequirement: 'Dark component output needs an ancestor with both data-theme="dark" and class="dark"; shadcn parts retain their light palette in hc.', module: source.module, file: posix(path.relative(project, file)), css: posix(path.relative(project, css)), files: [...files].sort(), hashFiles: sorted, paths, dependencies, imports: [...imports].sort(), closureHash: shadcnClosureHash(project, sorted, dependencies) };
 }

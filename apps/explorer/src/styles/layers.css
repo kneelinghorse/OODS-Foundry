@@ -1,7 +1,7 @@
 @import '@oods/tokens/css';
 
 /*
- * s223-m02 (#2527 ruling 13 h): the theme slots are @oods/tokens' own. Through 0.4.0 this file declared them by hand
+ * s223-m02 (decision 2527, ruling 13 h): the theme slots are @oods/tokens' own. Through 0.4.0 this file declared them by hand
  * from the 0.3 reference scale (--ref-color-neutral-50, --ref-color-primary-500 and the rest), which 0.4.0 removed
  * from the package, so they resolved against the frozen 0.3 copy in this folder's tokens.css. The package declares
  * every --theme-* slot on :root (brand A, light) with its dark value as --theme-dark-*, and each brand and theme under

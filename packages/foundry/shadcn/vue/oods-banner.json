@@ -1,0 +1,22 @@
+{
+  "$schema": "https://shadcn-vue.com/schema/registry-item.json",
+  "name": "oods-banner",
+  "type": "registry:component",
+  "title": "OODS Foundry Banner",
+  "description": "Vue adapter for OODS Banner on shadcn-vue / Reka UI. Critical/danger uses destructive/background; other tones use the default Alert palette.",
+  "dependencies": [
+    "@oods/components-vue@0.10.0",
+    "@oods/component-contracts@0.10.0"
+  ],
+  "registryDependencies": [
+    "alert",
+    "button"
+  ],
+  "files": [
+    {
+      "path": "components/oods/banner.vue",
+      "type": "registry:component",
+      "content": "<script lang=\"ts\">\nimport { defineComponent, h } from 'vue';\nimport { Banner as Contract } from '@oods/components-vue';\nimport { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';\nimport { Button } from '@/components/ui/button';\nimport { getStatusPresentation } from '@oods/component-contracts';\n\n// Reuse the shipped Vue prop defaults and event vocabulary; the rendered parts belong to the team.\nexport default defineComponent({\n  name: 'OodsBannerAdapter',\n  inheritAttrs: false,\n  props: Contract.props,\n  emits: Array.isArray(Contract.emits) ? Contract.emits : Object.keys(Contract.emits ?? {}),\n  setup(props: any, { attrs, slots, emit }: any) {\n    return () => { const presentation = getStatusPresentation(props.domain, props.status ?? 'unknown'); const tone = props.tone ?? presentation.tone; const danger = tone === 'critical' || tone === 'danger';\n      return h(Alert, { ...attrs, 'data-oods-component': undefined, variant: danger ? 'destructive' : 'default', role: danger ? 'alert' : 'status', 'aria-live': danger ? 'assertive' : 'polite',\n        class: [danger ? 'bg-destructive text-background dark:bg-destructive [&_*]:text-inherit' : '', attrs.class], 'data-oods-adapter': 'Banner', 'data-tone': tone,\n      }, { default: () => [props.title || props.status || slots.title ? h(AlertTitle, {}, { default: () => slots.title?.() ?? (props.title || presentation.label) }) : null,\n        h(AlertDescription, {}, { default: () => [props.detail ? h('p', props.detail) : null, slots.default?.() ?? props.content, slots.actions?.()] }),\n        props.dismissLabel ? h(Button, { type: 'button', variant: 'ghost', 'aria-label': props.dismissLabel, onClick: () => emit('dismiss') }, { default: () => '×' }) : null,\n      ] }); };\n\n  },\n});\n</script>\n"
+    }
+  ]
+}

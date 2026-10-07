@@ -44,8 +44,7 @@ reported; an achromatic colour with no hue cannot supply a hue. Optional `hints`
 instead of silently falling back to inference. Recipe font names allow letters, digits, spaces and hyphens (64 characters).
 
 Dark and high contrast are generated from the recipe. The same contrast rules apply: 84 pairs in light and dark,
-83 graded pairs and one stated exemption in high contrast, plus 7 chart pairs per theme. Your token names are not
-carried into generated apps; the recipe supplies the values for OODS roles. Optional status families and mono font not
+83 graded pairs and one stated exemption in high contrast, plus 7 chart pairs per theme. This recipe flow supplies values for OODS roles. Use the reviewed file intake below to preserve your token names in generated apps. Optional status families and mono font not
 found in the document remain absent from the recipe; the recipe generator's documented defaults apply at creation.
 
 ### From a shadcn/ui theme
@@ -153,3 +152,25 @@ make a new one to see the chart in the new colours.
 high-contrast scopes, and imports it from the screen (or, for a workflow app, from `App`). The app's `@oods/tokens`
 carries the shipped brands; this file carries yours, so the app needs nothing else to show it. The file is part of the
 artifact and of its content hash.
+
+
+## Keep your token names
+
+Use `brand_create` to draft from a local DTCG file. It reads data only, follows aliases within that file, and never fetches or runs project code. Group `$type` is inherited. Supported colors, dimensions, durations, numeric values, font families and cubic-bezier values become scoped custom properties; unsupported values, alias cycles, CSS-name collisions and reserved OODS names are reported individually. Dots become hyphens: `team.color.primary` becomes `--team-color-primary`.
+
+```json
+{"action":"draft","brand_id":"Team","source":{"path":"/absolute/team/tokens.json","modes":{"base":"light","dark":"dark"}},"bindings":{"base":{"surface.canvas":"light.team.canvas","text.primary":"light.team.ink"},"dark":{"surface.canvas":"dark.team.canvas","text.primary":"dark.team.ink"}}}
+```
+
+`modes` selects dot-separated groups in the document. Top-level `light` and `dark` groups are recognized when both are present. Without declared modes the same tokens are available in each theme; the reader does not invent a dark palette. Mode prefixes are omitted from custom property names so the same variable takes the declared theme's value. Shared tokens remain available in both modes.
+
+Explicit `bindings` name OODS slots and exact source token paths. A token may also declare `$extensions: {"org.oods.intake": {"slot": "surface.canvas"}}`. Otherwise only a unique matching type and value can bind a template slot; token names alone do not decide. Every unbound slot is identified as a template fallback. `from.brand` or `from.preset` chooses the starting template, default A. High contrast keeps the checked template. Review all fallbacks and unmatched tokens before acceptance.
+
+```json
+{"action":"show","draftId":"brand-<sha256>"}
+{"action":"apply","draftId":"brand-<sha256>","accept":true}
+```
+
+Acceptance covers the whole reviewed brand, its retained token values and the listed template fallbacks. Apply uses the existing contrast/type checks, refuses replacement and rolls back a failed token build. An invalid draft cannot apply; adjust bindings/source and draft again. CSS emits the team's names and aliases bound `--theme-*` slots to them. Generated React and Vue apps carry that stylesheet. Existing brands and the recipe flow keep their previous behavior.
+
+The files retain this mapping in `org.oods.intake` metadata. The named variable must equal the slot literal used for contrast grading. When editing a bound slot through `brand_apply`, update that variable as well (or deliberately remove its slot binding); mismatches are refused rather than bypassing contrast checks.

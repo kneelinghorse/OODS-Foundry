@@ -72,7 +72,8 @@ describe('s213-m04: brands from the token build', () => {
     // viz.render and dashboard.render (input and output), artifact.certify (input and output), tokens.build,
     // brand.apply, repl and repl.render, and the UI schema's three chart declarations.
     // s213-m05 adds two: brand.intake's template starts from an existing brand (from.brand, input and output).
-    expect(fields).toHaveLength(20);
+    // s237: token intake also starts from a declared, registered brand.
+    expect(fields).toHaveLength(21);
   });
 
   it('an unknown brand is refused at call time, and the answer names the brands there are', () => {

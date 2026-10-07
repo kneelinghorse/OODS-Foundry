@@ -259,7 +259,20 @@ async function renderCssBundle() {
     const resolvedByPath = new Map(
       dictionary.allTokens.map((token) => [token.path.join('.'), getTokenValue(token)]),
     );
-    const bridge = renderBridgeBlock(scope, resolvedByPath, selectors);
+    const namesFile = resolve(packageRoot, 'src/tokens/brands', scope.brand, `${scope.theme === 'light' ? 'base' : scope.theme}.json`);
+    const themeNames = JSON.parse(await fs.readFile(namesFile, 'utf8')).$extensions?.['org.oods.intake'];
+    const baseNames = scope.theme === 'base' ? themeNames : JSON.parse(await fs.readFile(resolve(packageRoot, 'src/tokens/brands', scope.brand, 'base.json'), 'utf8')).$extensions?.['org.oods.intake'];
+    // Radius/font are shared across themes; color aliases are scoped to their declared mode.
+    const names = themeNames || baseNames ? { variables: { ...baseNames?.variables, ...themeNames?.variables }, slots: { ...Object.fromEntries(Object.entries(baseNames?.slots ?? {}).filter(([slot]) => /^(radius|font)\./.test(slot))), ...themeNames?.slots } } : undefined;
+    if (names) {
+      names.namespaces = Object.fromEntries(Object.keys(names.slots).map(slot => {
+        const full = slot.startsWith('viz.') ? slot : /^(radius|font)\./.test(slot) ? slot.replace('.', `.brand.${scope.brand}.`) : `color.brand.${scope.brand}.${slot}`;
+        const token = dictionary.allTokens.find(value => value.path.join('.') === full);
+        if (!token) throw new Error(`Named token slot ${scope.brand}/${scope.theme}/${slot} did not resolve`);
+        return [slot, `--${token.name}`];
+      }));
+    }
+    const bridge = renderBridgeBlock(scope, resolvedByPath, selectors, names);
     scopeOutputs.push(bridge);
     blocks.push(`/**\n * brand ${scope.brand} · theme ${scope.theme} — semantic bridge\n */\n${bridge}`);
   }

@@ -10,7 +10,7 @@ import { ToolError } from '../errors/tool-error.js';
 import type { ReplIssue, UiSchema } from '../schemas/generated.js';
 
 type StyleRule = { selector: string; declarations: Record<string, string>; keys: string[]; media: string };
-type Pair = StyleRule & { foreground: string; background?: string; threshold: number };
+type Pair = StyleRule & { foreground: string; background?: string; threshold: number; contrastKind: 'text' | 'non-text' };
 type Element = { tagName?: string; attrs?: Array<{ name: string; value: string }>; childNodes?: Element[]; value?: string; parentNode?: Element };
 export const SCREEN_RULES = ['document-language', 'document-title', 'main-landmark', 'unique-id', 'aria-reference', 'control-name', 'image-alt', 'svg-name-description', 'heading-name-order'] as const;
 const NOT_CHECKED = ['Browser-computed colour and layout', 'Keyboard, focus order and interaction', 'Screen-reader behavior', 'Dynamic CSS, inherited surfaces without a declared pair, and operating-system colours', 'Standalone fills, borders and selector combinations without a declared text/icon pair'];
@@ -46,8 +46,17 @@ function stylesheetPairs(css: string): Pair[] {
     if (!color(rule) && !background(rule) && !(base && overridesPair)) continue;
     const foreground = color(rule) ?? (base && color(base));
     if (!foreground) continue;
-    pairs.push({ ...rule, declarations: { ...base?.declarations, ...rule.declarations }, foreground,
-      background: background(rule) ?? (base && background(base)), threshold: /icon|\bsvg\b/.test(rule.selector) ? 3 : 4.5 });
+    const contrastKind = /icon|\b(?:svg|progress|meter)\b/.test(rule.selector) ? 'non-text' : 'text';
+    // The shared hover/active rules consume variables supplied by each intent. Grading
+    // them against only the generic button base invents a colour pair no intent renders.
+    const intents = base && rule.keys.includes('component:Button') && /:(?:hover|active)\b/.test(rule.selector) && !/data-intent/.test(rule.selector)
+      ? rules.filter(candidate => candidate.selector.startsWith(base.selector) && /data-intent/.test(candidate.selector)
+        && !/:(?:hover|active|disabled)\b/.test(candidate.selector) && Object.keys(candidate.declarations).some(key => key.startsWith('--oods-button-')))
+      : [];
+    for (const intent of intents.length ? intents : [undefined]) pairs.push({ ...rule,
+      selector: intent ? intent.selector + rule.selector.slice(base!.selector.length) : rule.selector,
+      declarations: { ...base?.declarations, ...intent?.declarations, ...rule.declarations }, foreground,
+      background: background(rule) ?? (base && background(base)), contrastKind, threshold: contrastKind === 'non-text' ? 3 : 4.5 });
   }
   return pairs;
 }
@@ -174,7 +183,7 @@ export async function checkBuiltScreen(schema?: UiSchema) {
       const status = disabled ? 'not-applicable' : ratio === null ? 'unmeasured' : ratio >= pair.threshold ? 'pass' : 'fail';
       return { ruleId: `${brand}/${theme}/css-${index + 1}`, brand, theme, selector: pair.selector, target: pair.selector,
         foreground: { token: pair.foreground, value: foreground ?? null, hex: fg ?? null }, background: { token: pair.background ?? null, value: background ?? null, hex: bg ?? null },
-        threshold: pair.threshold, ratio, passed: status === 'pass', status,
+        contrastKind: pair.contrastKind, threshold: pair.threshold, ratio, passed: status === 'pass', status,
         ...(disabled ? { reason: 'Inactive controls are exempt from this contrast threshold.' } : ratio === null ? { reason: 'The declared pair needs an inherited surface, dynamic CSS, alpha compositing or operating-system colours; no measured pass is claimed.' } : {}) };
     });
   }));

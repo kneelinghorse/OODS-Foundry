@@ -36,14 +36,14 @@ export const OodsCheckbox = React.forwardRef<HTMLInputElement, CheckboxProps>(fu
   const validationId = validation?.id ?? `${id}-validation`;
   const descriptions = [describedBy, details ? `${id}-description` : '', validation?.message ? validationId : ''].filter(Boolean).join(' ') || undefined;
   return <div className={className} style={style} data-density={density} data-validation-state={validation?.state} data-oods-component={undefined} data-oods-adapter="Checkbox">
-    <input {...props} ref={native} type="checkbox" checked={checked} defaultChecked={checked === undefined ? defaultChecked : undefined} disabled={disabled} readOnly={readOnly} required={required}
+    <input {...props} id={id} ref={native} type="checkbox" checked={checked} defaultChecked={checked === undefined ? defaultChecked : undefined} disabled={disabled} readOnly={readOnly} required={required}
       className="sr-only" tabIndex={-1} aria-hidden="true" data-oods-component={undefined}
       onChange={event => { onChange?.(event); if (!event.defaultPrevented) { const next = event.currentTarget.checked; if (checked === undefined) setLocal(next); onCheckedChange?.(next); onUpdate?.(next); } }} />
     <div className="flex items-center gap-2">
-      <Checkbox id={id} checked={selected} disabled={disabled} required={required} aria-readonly={readOnly || undefined}
+      <Checkbox id={`${id}-control`} checked={selected} disabled={disabled} required={required} aria-readonly={readOnly || undefined}
         className={checkboxClassName} style={checkboxStyle} aria-label={ariaLabel} aria-describedby={descriptions} aria-invalid={props['aria-invalid'] ?? (validation?.state === 'error' || undefined)}
         onCheckedChange={() => { if (!readOnly && !resetting.current) native.current?.click(); }} />
-      <Label htmlFor={id}>{label}{required && requiredIndicator !== null ? requiredIndicator ?? <span aria-hidden="true"> *</span> : null}</Label>
+      <Label htmlFor={`${id}-control`}>{label}{required && requiredIndicator !== null ? requiredIndicator ?? <span aria-hidden="true"> *</span> : null}</Label>
     </div>
     {details ? <p id={`${id}-description`} className="text-sm text-muted-foreground">{details}</p> : null}
     {validation?.message ? <p id={validationId} role={validation.state === 'error' ? 'alert' : 'status'} aria-live={validation.state === 'error' ? 'assertive' : 'polite'}>{validation.message}</p> : null}

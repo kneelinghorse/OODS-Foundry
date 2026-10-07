@@ -22,6 +22,7 @@ export type ObjectShowTraitEntry = {
   name: string;
   alias: string | null;
   parameters: Record<string, unknown> | null;
+  fieldBindings?: Record<string, string | null>;
 };
 
 export type ObjectShowOutput = {
@@ -105,6 +106,7 @@ export async function handle(input: ObjectShowInput): Promise<ObjectShowOutput> 
     name: t.ref.name,
     alias: t.ref.alias ?? null,
     parameters: t.ref.parameters ?? null,
+    ...(t.ref.fieldBindings ? { fieldBindings: t.ref.fieldBindings } : {}),
   }));
 
   // Optionally filter view_extensions to a single context

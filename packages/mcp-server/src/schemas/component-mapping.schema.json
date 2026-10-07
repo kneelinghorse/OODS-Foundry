@@ -162,7 +162,7 @@
                     "project": {
                       "type": "string",
                       "pattern": "^/[\\s\\S]*$",
-                      "description": "Absolute React shadcn project directory containing components.json and installed Tailwind 4."
+                      "description": "Absolute React/Vue shadcn project directory containing components.json and installed Tailwind 4."
                     },
                     "module": {
                       "type": "string",
@@ -278,7 +278,7 @@
                     "project": {
                       "type": "string",
                       "pattern": "^/[\\s\\S]*$",
-                      "description": "Absolute React shadcn project directory containing components.json and installed Tailwind 4."
+                      "description": "Absolute React/Vue shadcn project directory containing components.json and installed Tailwind 4."
                     },
                     "module": {
                       "type": "string",
@@ -346,7 +346,7 @@
         "oodsTraits": {
           "type": "array",
           "items": { "type": "string", "minLength": 1 },
-          "minItems": 1,
+          "minItems": 0,
           "description": "OODS trait names this component maps to (e.g., ['Stateful', 'Taggable'])."
         },
         "propMappings": {
@@ -366,7 +366,25 @@
           "description": "Draft v1.4.0-gated cross-surface identity relation. map create and apply write it when supplied, update sets or removes it, and resolution returns it unchanged; nothing else reads it.",
           "items": { "$ref": "#/$defs/ProjectionVariant" }
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "not": {
+              "required": [
+                "substitution"
+              ]
+            }
+          },
+          "then": {
+            "properties": {
+              "oodsTraits": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
     },
     "PropMapping": {
       "type": "object",

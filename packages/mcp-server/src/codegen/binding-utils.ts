@@ -70,12 +70,14 @@ export function displayFieldExpression(
 
 /** Reference identity is declared by type or the shared ownership semantic, never guessed from its value. */
 export function isReferenceField(entry: FieldSchemaEntry | undefined): boolean {
-  return Boolean(entry && (/^uuid(?:\[\])?\??$/.test(entry.type) || entry.semanticType === 'ownership.owner.id' || typeof entry.displayLabelField === 'string'));
+  return Boolean(entry && (/^uuid(?:\[\])?\??$/.test(entry.type) || entry.semanticType === 'ownership.owner.id' || typeof entry.displayLabelField === 'string' || entry.referenceLabels !== undefined));
 }
 
 export function referenceFieldExpression(field: string, fields: Record<string, FieldSchemaEntry> | undefined): string {
   const label = ownFieldSchemaEntry(fields, field)?.displayLabelField;
-  const resolved = label && ownFieldSchemaEntry(fields, label) ? snakeToCamel(label) : 'undefined';
+  const labels = ownFieldSchemaEntry(fields, field)?.referenceLabels;
+  const lookup = labels ? `(Object.entries(${JSON.stringify(labels)}).find(([key]) => key === String(${snakeToCamel(field)}))?.[1])` : 'undefined';
+  const resolved = label && ownFieldSchemaEntry(fields, label) ? labels ? `(${snakeToCamel(label)} ?? ${lookup})` : snakeToCamel(label) : lookup;
   return `formatReferenceLabel(${snakeToCamel(field)}, ${resolved}, ${javascriptSingleQuotedString(field === 'id' ? 'Record' : fieldLabel(field.replace(/_ids?$/, '')))})`;
 }
 
@@ -983,9 +985,12 @@ export function resolveFrameworkChildContent(
       && ownFieldSchemaEntry(objectSchema, fallbackField)
       ? ` ?? ${snakeToCamel(fallbackField)}`
       : '';
+    // Package datetime props accept absence, but a nullable database column may end this fallback chain.
+    const terminalField = typeof fallbackField === 'string' && fallback ? fallbackField : sourceField;
+    const nullable = ownFieldSchemaEntry(objectSchema, terminalField)?.type.endsWith('?');
     return {
       strategy: 'value-prop',
-      fieldName: `${snakeToCamel(sourceField)}${fallback}`,
+      fieldName: `${snakeToCamel(sourceField)}${fallback}${nullable ? ' ?? undefined' : ''}`,
       propName: 'datetime',
       isChildren: false,
     };

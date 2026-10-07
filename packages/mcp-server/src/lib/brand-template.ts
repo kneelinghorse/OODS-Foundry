@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import { namedTokens, NAMED_TOKENS_EXTENSION, type NamedTokens } from './named-tokens.js';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 import {
@@ -390,6 +391,7 @@ export function checkBrand(options: BrandCheckOptions): { report: BrandValidatio
       issues.push({ rule: 'document-missing', theme, message: `No ${catalogue.themes[theme].label} document (documents.${theme}).` });
       continue;
     }
+    try { namedTokens(document); } catch (error) { issues.push({rule:'type-mismatch',theme,message:`Named token metadata: ${error instanceof Error ? error.message : String(error)}`}); }
     const given = leaves(document);
     themes[theme].provided = given.filter(([slot]) => expectedSet.has(slot)).length;
     for (const [slot, node] of given) {
@@ -458,7 +460,7 @@ export function checkBrand(options: BrandCheckOptions): { report: BrandValidatio
   const usableId = brandId !== null && !issues.some(issue => issue.rule === 'brand-id-rule');
   const everyValue = BRAND_THEMES.every(theme => catalogue.themes[theme].slots.every(({ slot }) => colours[theme].has(slot) || shapes[theme].has(slot)));
   if (!usableId || !everyValue) return { report };
-  const texts = Object.fromEntries(BRAND_THEMES.map(theme => [theme, brandFileText(brandId, theme, catalogue, colours[theme], shapes[theme])])) as Record<BrandTheme, string>;
+  const texts = Object.fromEntries(BRAND_THEMES.map(theme => [theme, brandFileText(brandId, theme, catalogue, colours[theme], shapes[theme], (() => { try { return namedTokens(documents[theme]); } catch { return undefined; } })())])) as Record<BrandTheme, string>;
   const { prefix } = brandWriteTarget();
   report.files = BRAND_THEMES.map(theme => ({
     theme,
@@ -559,7 +561,7 @@ function gradeTheme(theme: BrandTheme, colours: Map<string, Colour>, issues: Bra
  * One brand file as the brands folder holds it: colour slots under color.brand.<id>, the radius and font under
  * radius.brand.<id> and font.brand.<id> (s222-m01), chart slots under viz.
  */
-function brandFileText(brandId: string, theme: BrandTheme, catalogue: BrandTemplateCatalogue, colours: Map<string, Colour>, shapes: Map<string, ShapeValue>): string {
+function brandFileText(brandId: string, theme: BrandTheme, catalogue: BrandTemplateCatalogue, colours: Map<string, Colour>, shapes: Map<string, ShapeValue>, names?: NamedTokens): string {
   const brand: BrandDocument = {};
   const viz: BrandDocument = {};
   const shape: BrandDocument = {};
@@ -581,7 +583,7 @@ function brandFileText(brandId: string, theme: BrandTheme, catalogue: BrandTempl
     if (slot.startsWith('viz.')) setLeaf(viz, slot.slice('viz.'.length), leaf);
     else setLeaf(brand, slot, leaf);
   }
-  const document = { $schema: DTCG_SCHEMA, color: { brand: { [brandId]: brand } }, ...shape, ...(Object.keys(viz).length > 0 ? { viz } : {}) };
+  const document = { $schema: DTCG_SCHEMA, ...(names ? { $extensions: { [NAMED_TOKENS_EXTENSION]: names } } : {}), color: { brand: { [brandId]: brand } }, ...shape, ...(Object.keys(viz).length > 0 ? { viz } : {}) };
   return `${JSON.stringify(document, null, 2)}\n`;
 }
 
@@ -601,7 +603,7 @@ export function brandDocumentsFromFiles(brandId: string, files: Record<BrandThem
     const others = Object.fromEntries(Object.entries(file?.color?.brand ?? {}).filter(([id]) => id !== brandId));
     // Anything outside color.brand.<id>, radius.brand.<id>, font.brand.<id> and viz stays in the document, so the check
     // reports it instead of dropping it.
-    const document: BrandDocument = { ...own };
+    const document: BrandDocument = { ...own, ...(file.$extensions?.[NAMED_TOKENS_EXTENSION] ? { $extensions: { [NAMED_TOKENS_EXTENSION]: file.$extensions[NAMED_TOKENS_EXTENSION] } } : {}) };
     for (const group of ['radius', 'font']) {
       const tree = file?.[group];
       if (tree === undefined) continue;

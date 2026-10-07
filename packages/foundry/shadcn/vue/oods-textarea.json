@@ -1,0 +1,21 @@
+{
+  "$schema": "https://shadcn-vue.com/schema/registry-item.json",
+  "name": "oods-textarea",
+  "type": "registry:component",
+  "title": "OODS Foundry Textarea",
+  "description": "Vue adapter for OODS Textarea on shadcn-vue / Reka UI. Preserves the shipped Vue props, slots and event contract; team components supply styling.",
+  "dependencies": [
+    "@oods/components-vue@0.10.0"
+  ],
+  "registryDependencies": [
+    "textarea",
+    "label"
+  ],
+  "files": [
+    {
+      "path": "components/oods/textarea.vue",
+      "type": "registry:component",
+      "content": "<script lang=\"ts\">\nimport { defineComponent, h, ref, useId } from 'vue';\nimport { Textarea as Contract } from '@oods/components-vue';\nimport { Textarea } from '@/components/ui/textarea';\nimport { Label } from '@/components/ui/label';\n\n// Reuse the shipped Vue prop defaults and event vocabulary; the rendered parts belong to the team.\nexport default defineComponent({\n  name: 'OodsTextareaAdapter',\n  inheritAttrs: false,\n  props: Contract.props,\n  emits: Array.isArray(Contract.emits) ? Contract.emits : Object.keys(Contract.emits ?? {}),\n  setup(props: any, { attrs, slots, emit }: any) {\n    const generated = useId(), local = ref(props.defaultValue);\n    const update = (value: string | number) => { const next = String(value); if (props.modelValue === undefined && props.value === undefined) local.value = next; emit('update:modelValue', next); emit('input', next); };\n    return () => {\n      const id = props.id ?? `oods-textarea-${generated}`, value = props.modelValue ?? props.value ?? local.value;\n      const help = slots.help?.() ?? props.help, validation = slots.validation?.() ?? props.validation?.message;\n      const described = [attrs['aria-describedby'], help ? id + '-help' : '', validation ? id + '-validation' : ''].filter(Boolean).join(' ') || undefined;\n      return h('div', { class: 'grid gap-2', 'data-oods-adapter': 'Textarea' }, [\n        slots.label || props.label ? h(Label, { for: id }, { default: () => [slots.label?.() ?? props.label, props.required ? h('span', { 'aria-hidden': 'true' }, '*') : null] }) : null,\n        h(Textarea, { ...attrs, 'data-oods-component': undefined, id, type: undefined, name: props.name, modelValue: value,\n          'onUpdate:modelValue': update, onChange: (event: Event) => emit('change', (event.target as HTMLInputElement).value),\n          class: [props.inputClass, attrs.class], rows: props.rows, placeholder: props.placeholder, required: props.required, disabled: props.disabled, readonly: props.readOnly,\n          min: props.min, max: props.max, step: props.step, 'aria-invalid': props.validation?.state === 'error' || undefined, 'aria-describedby': described,\n          'aria-errormessage': props.validation?.state === 'error' ? id + '-validation' : undefined,\n        }),\n        help ? h('p', { id: id + '-help', class: 'text-sm' }, help) : null,\n        validation ? h('p', { id: id + '-validation', role: props.validation?.state === 'error' ? 'alert' : undefined, class: 'text-sm' }, validation) : null,\n      ]);\n    };\n  },\n});\n</script>\n"
+    }
+  ]
+}

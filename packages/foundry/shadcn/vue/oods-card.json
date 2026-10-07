@@ -1,0 +1,20 @@
+{
+  "$schema": "https://shadcn-vue.com/schema/registry-item.json",
+  "name": "oods-card",
+  "type": "registry:component",
+  "title": "OODS Foundry Card",
+  "description": "Vue adapter for OODS Card on shadcn-vue / Reka UI. Preserves the shipped Vue props, slots and event contract; team components supply styling.",
+  "dependencies": [
+    "@oods/components-vue@0.10.0"
+  ],
+  "registryDependencies": [
+    "card"
+  ],
+  "files": [
+    {
+      "path": "components/oods/card.vue",
+      "type": "registry:component",
+      "content": "<script lang=\"ts\">\nimport { defineComponent, h } from 'vue';\nimport { Card as Contract } from '@oods/components-vue';\nimport { Card } from '@/components/ui/card';\n\n// Reuse the shipped Vue prop defaults and event vocabulary; the rendered parts belong to the team.\nexport default defineComponent({\n  name: 'OodsCardAdapter',\n  inheritAttrs: false,\n  props: Contract.props,\n  emits: Array.isArray(Contract.emits) ? Contract.emits : Object.keys(Contract.emits ?? {}),\n  setup(props: any, { attrs, slots }: any) {\n    return () => h(['div','article','section','aside','main','li'].includes(props.as) ? props.as : 'div', {\n      ...attrs, 'data-oods-component': undefined, 'data-oods-adapter': 'Card', 'data-elevated': String(props.elevated),\n    }, [h(Card, { class: props.elevated ? 'shadow-lg' : undefined }, slots)]);\n  },\n});\n</script>\n"
+    }
+  ]
+}

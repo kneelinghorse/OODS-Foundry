@@ -79,6 +79,37 @@ function withoutBindings(traitDef: TraitDefinition, drop: (binding: { field: str
   return { ...traitDef, view_extensions };
 }
 
+/** Resolve once, before any consumer reads a trait's fields, semantics or view recipes. */
+function bindTraitFields(trait: TraitDefinition, ref: TraitReference, object: ObjectDefinition): TraitDefinition {
+  const bindings = ref.fieldBindings;
+  if (bindings === undefined) return trait;
+  if (!bindings || typeof bindings !== 'object' || Array.isArray(bindings)) throw new Error(`${ref.name}.fieldBindings must be a mapping.`);
+  const targets = new Set<string>();
+  for (const [field, target] of Object.entries(bindings)) {
+    if (!Object.hasOwn(trait.schema, field)) throw new Error(`${ref.name}.fieldBindings names unknown trait field ${field}.`);
+    if (target === null) continue;
+    if (typeof target !== 'string' || !Object.hasOwn(object.schema ?? {}, target)) throw new Error(`${ref.name}.${field} must bind a declared object field or null.`);
+    if (targets.has(target) || target !== field && Object.hasOwn(trait.schema, target) && !Object.hasOwn(bindings, target)) throw new Error(`${ref.name}.fieldBindings binds more than one field to ${target}.`);
+    if (trait.schema[field].type.replace(/\?$/, '') !== object.schema[target].type.replace(/\?$/, '')) throw new Error(`${ref.name}.${field} and ${target} must have the same field type.`);
+    targets.add(target);
+  }
+  const name = (field: string) => Object.hasOwn(bindings, field) ? bindings[field] : field;
+  const remap = <T>(fields: Record<string, T>): Record<string, T> => Object.fromEntries(Object.entries(fields).flatMap(([field, value]) => name(field) === null ? [] : [[name(field)!, value]]));
+  const supported = { ...trait, view_extensions: Object.fromEntries(Object.entries(trait.view_extensions).map(([context, extensions]) => [context, extensions.filter(extension =>
+    !Object.entries(extension.props ?? {}).some(([key, value]) => ['field', 'amountField', 'statusField'].includes(key) && typeof value === 'string' && name(value) === null
+      && !(extension.component === 'RelativeTimestamp' && typeof extension.props?.fallbackField === 'string' && name(extension.props.fallbackField) !== null)),
+  )])) };
+  const filtered = withoutBindings(supported, ({ field }) => name(field) === null);
+  return {
+    ...filtered, schema: remap(trait.schema), semantics: remap(trait.semantics),
+    view_extensions: Object.fromEntries(Object.entries(filtered.view_extensions).map(([context, extensions]) => [context, extensions.map(extension => ({
+      ...extension, ...(extension.props ? { props: Object.fromEntries(Object.entries(extension.props).map(([key, value]) => [key,
+        (key === 'field' || key.endsWith('Field')) && typeof value === 'string' ? name(value) : value,
+      ])) } : {}),
+    }))])),
+  };
+}
+
 const BOUND_MARK_PREVIEWS: Readonly<Record<string, { chartType: string; component: string }>> = {
   MarkArea: { chartType: 'area', component: 'VizAreaPreview' },
   MarkBar: { chartType: 'bar', component: 'VizMarkPreview' },
@@ -174,7 +205,10 @@ export function composeObject(objectDef: ObjectDefinition): ComposedObject {
     }
     // A field the object never supplies — declared unavailable (an upstream API withholds a record's owner) or inapplicable
     // (above) — is bound by no trait view; a view left with no bound record field is not placed (s213-m01, finding 2).
+    traitDef = bindTraitFields(traitDef, ref, objectDef);
     if (unavailable.size) traitDef = withoutBindings(traitDef, binding => unavailable.has(binding.field));
+    // RelativeTimestamp needs a primary value even when only creation time is supplied.
+    if (ref.fieldBindings) traitDef = { ...traitDef, view_extensions: Object.fromEntries(Object.entries(traitDef.view_extensions).map(([context, extensions]) => [context, extensions.map(extension => extension.component === 'RelativeTimestamp' && !extension.props?.field && extension.props?.fallbackField ? { ...extension, props: { ...extension.props, field: extension.props.fallbackField } } : extension)])) };
     resolvedTraits.push({ ref, definition: traitDef });
 
     // Merge trait schema fields (collision = last-trait-wins with warning)
@@ -231,7 +265,11 @@ export function composeObject(objectDef: ObjectDefinition): ComposedObject {
 
   // 3. Overlay object semantic mappings
   for (const [field, mapping] of Object.entries(objectDef.semantics ?? {})) {
-    semantics[field] = mapping;
+    const bound = traits.some(trait => Object.values(trait.fieldBindings ?? {}).includes(field));
+    semantics[field] = bound && semantics[field] ? { ...semantics[field], ...mapping,
+      semantic_type: mapping.semantic_type === 'text.value' ? semantics[field].semantic_type : mapping.semantic_type,
+      ui_hints: { ...semantics[field].ui_hints, ...mapping.ui_hints },
+    } : mapping;
   }
 
   // 4. Overlay object tokens (final override)

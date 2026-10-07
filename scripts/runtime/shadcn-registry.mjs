@@ -32,8 +32,38 @@ for (const [name, component, registryDependencies, limit] of items) {
     dependencies, registryDependencies, files: [{ path: `components/oods/${name}.tsx`, target: `components/oods/${name}.tsx`, type: 'registry:component', content }] };
   generated.push([`oods-${name}.json`, item]);
 }
-generated.push(['mappings.json', { mappings: items.map(([name, component]) => ({ externalSystem: 'shadcn', externalComponent: `Oods${component}`, oodsTraits: ['Stateful'], substitution: { component, react: { shadcn: { project: '<shadcn-project>', module: `@/components/oods/${name}` }, export: `Oods${component}` } } })) }]);
+generated.push(['mappings.json', { mappings: items.map(([name, component]) => ({ externalSystem: 'shadcn', externalComponent: `Oods${component}`, oodsTraits: [], substitution: { component, react: { shadcn: { project: '<shadcn-project>', module: `@/components/oods/${name}` }, export: `Oods${component}` } } })) }]);
+const vueItems = items.map(([name, component, dependencies]) => {
+  const content = fs.readFileSync(path.join(root, 'scripts/runtime/shadcn-vue', `oods-${name}.vue`), 'utf8');
+  const limits = {
+    tabs: 'The tab list scrolls horizontally; overflowLabel and the overflow menu are not implemented.',
+    select: 'Reka combobox keyboard interaction replaces native select interaction. Empty reset options retain their label and emit/submit an empty string.',
+    'status-selector': 'Reka combobox keyboard interaction replaces native select interaction. Authored default slots are preserved.',
+    checkbox: 'Uses the team Reka checkbox button and its boolean model events, replacing the native-input keyboard target. Reka supplies the native form input within forms.',
+    'date-picker': 'Uses the team Input with native type=date, matching the shipped Vue DatePicker contract; no extra calendar popup.',
+    'tag-input': 'Preserves text-value callbacks and labels; the OODS contract does not add or remove tags.',
+    'pagination-bar': 'Uses the team Reka pagination controls; page and page-size events preserve the Vue contract.',
+    button: 'Danger uses solid destructive/background tokens in both themes; success and warning use secondary because shadcn has no distinct palettes.',
+    'status-badge': 'Critical/danger uses destructive/background; other tones use default/secondary without distinct status colours.',
+    banner: 'Critical/danger uses destructive/background; other tones use the default Alert palette.',
+  };
+  return { $schema: 'https://shadcn-vue.com/schema/registry-item.json', name: `oods-${name}`, type: 'registry:component',
+    title: `OODS Foundry ${component}`, description: `Vue adapter for OODS ${component} on shadcn-vue / Reka UI. ${limits[name] ?? 'Preserves the shipped Vue props, slots and event contract; team components supply styling.'}`,
+    dependencies: [`@oods/components-vue@${version}`, ...(content.includes("from '@oods/component-contracts'") ? [`@oods/component-contracts@${version}`] : [])],
+    registryDependencies: name === 'date-picker' ? ['input', 'label'] : name === 'tag-input' ? ['input', 'badge'] : name === 'status-selector' ? ['select', 'label'] : dependencies,
+    files: [{ path: `components/oods/${name}.vue`, type: 'registry:component', content }], component };
+});
+const intake = { react: generated.filter(([name]) => name !== 'mappings.json').map(([, item]) => ({ ...item, component: item.title.replace('OODS Foundry ', '') })), vue: vueItems };
+for (const { component, ...item } of vueItems) generated.push([`vue/oods-${item.name.replace(/^oods-/, '')}.json`, item]);
+generated.push(['vue/mappings.json', { mappings: items.map(([name, component]) => ({ externalSystem: 'shadcn', externalComponent: `Oods${component}`, oodsTraits: [], substitution: { component, vue: { shadcn: { project: '<shadcn-vue-project>', module: `@/components/oods/${name}.vue` }, export: 'default' } } })) }]);
+for (const [prefix, catalog] of [['', intake.react], ['vue/', vueItems]]) {
+  generated.push([`${prefix}registry.json`, { $schema: 'https://ui.shadcn.com/schema/registry.json', name: `oods-foundry${prefix ? '-vue' : ''}`, homepage: 'https://oods-foundry.com', items: catalog.map(({ component, ...item }) => item) }]);
+}
+const intakePath = path.join(root, 'packages/mcp-server/registry/shadcn-adapters.json');
+const intakeText = JSON.stringify(intake, null, 2) + '\n';
 let stale = false;
+if (process.argv.includes('--check')) { if (!fs.existsSync(intakePath) || fs.readFileSync(intakePath, 'utf8') !== intakeText) { console.error('Stale intake adapter catalog'); stale = true; } }
+else fs.writeFileSync(intakePath, intakeText);
 for (const [name, value] of generated) {
   const destination = path.join(root, 'packages/foundry/shadcn', name), text = JSON.stringify(value, null, 2) + '\n';
   if (process.argv.includes('--check')) { if (!fs.existsSync(destination) || fs.readFileSync(destination, 'utf8') !== text) { console.error(`Stale shadcn item: ${name}`); stale = true; } }

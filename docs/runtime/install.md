@@ -59,12 +59,12 @@ The server is also listed in the official MCP registry as `com.oods-foundry/foun
 The npm package also carries the skill as plain files at `skills/oods-foundry/`. Claude Code does not discover skills in `node_modules`, so install the package in your project first, then copy the whole folder into your project's skill directory:
 
 ```sh
-npm install @oods/foundry@0.9.0
+npm install @oods/foundry@0.10.0
 mkdir -p .claude/skills
 cp -R node_modules/@oods/foundry/skills/oods-foundry .claude/skills/
 ```
 
-Restart Claude Code and invoke `/oods-foundry`, with the server connected as above. Other agents can read [SKILL.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.9.0/skills/oods-foundry/SKILL.md) and its bundled quickstart reference directly, or copy the folder into their own supported skill location. The skill explains the calls, receipts and unchecked work; installing the plain files does not register an MCP server.
+Restart Claude Code and invoke `/oods-foundry`, with the server connected as above. Other agents can read [SKILL.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.10.0/skills/oods-foundry/SKILL.md) and its bundled quickstart reference directly, or copy the folder into their own supported skill location. The skill explains the calls, receipts and unchecked work; installing the plain files does not register an MCP server.
 
 ### Claude Desktop
 
@@ -117,7 +117,7 @@ Register `oods-foundry` directly, beside any other entry such as an MCP hub, not
 
 ## First run
 
-Ask the assistant to run `health_check`: it answers `status: "ok"` with the registry counts and `server.version` (`0.9.0`). The ten-minute first run on the package page (<https://www.npmjs.com/package/@oods/foundry>) works the same from the archive.
+Ask the assistant to run `health_check`: it answers `status: "ok"` with the registry counts and `server.version` (`0.10.0`). The ten-minute first run on the package page (<https://www.npmjs.com/package/@oods/foundry>) works the same from the archive.
 
 ## Settings
 
@@ -139,7 +139,7 @@ Environment variables are optional; every default is the documented one. Set the
 
 ## Component substitution and runnable screens
 
-OODS Foundry supports your own components by substitution in React and Vue: map a shipped id to a package, exact version and export. Set localPath to your absolute package folder for preview bundling; keep it outside the runtime. Mappings default to ~/.oods-foundry/mappings/component-mappings.json; MCP_MAPPINGS_PATH overrides that file. New components beyond the shipped catalog are not supported. The package's [COMPONENTS.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.9.0/COMPONENTS.md) explains prop translations, frozen previews and advisory contract reports.
+OODS Foundry supports your own components by substitution in React and Vue: map a shipped id to a package, exact version and export. Set localPath to your absolute package folder for preview bundling; keep it outside the runtime. Mappings default to ~/.oods-foundry/mappings/component-mappings.json; MCP_MAPPINGS_PATH overrides that file. New components beyond the shipped catalog are not supported. The package's [COMPONENTS.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.10.0/COMPONENTS.md) explains prop translations, frozen previews and advisory contract reports.
 
 For a runnable single screen request code_generate with options.output set to application. Its package.json pins the @oods libraries and your mapped packages at exact versions; run npm install, then npm run build and npm run dev. A mapped package that is not on a registry installs from its own tarball or folder. The sample app labels its data and actions that need your application's handlers.
 
@@ -157,4 +157,4 @@ Some identifiers keep the product's earlier name: the runtime manifest and SBOM 
 
 ## Feedback
 
-This page describes version 0.9.0 with adapter 0.9.0; the manifest inside the archive names the exact source commit. What you noticed is the point of this release: a screen that reads wrong, a certification you disagree with, install friction, a sentence that did not make sense. Open an [issue](https://github.com/kneelinghorse/OODS-Foundry/issues) with the tool call as you made it, what came back and what you expected. A short note is worth more than a polished one.
+This page describes version 0.10.0 with adapter 0.10.0; the manifest inside the archive names the exact source commit. What you noticed is the point of this release: a screen that reads wrong, a certification you disagree with, install friction, a sentence that did not make sense. Open an [issue](https://github.com/kneelinghorse/OODS-Foundry/issues) with the tool call as you made it, what came back and what you expected. A short note is worth more than a polished one.

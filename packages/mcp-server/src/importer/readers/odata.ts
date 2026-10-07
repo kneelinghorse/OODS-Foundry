@@ -161,6 +161,12 @@ export function readOdata(documents: Document[]): ReaderResult {
         if (['Common.Label', 'sap:label'].includes(vocabulary) && typeof annotation === 'string') hints.label = annotation;
         else if (vocabulary === 'Core.Description' && typeof annotation === 'string') property.description = annotation;
         else if (vocabulary === 'Common.Text' && localPath(annotation)) hints.displayLabelField = localPath(annotation);
+        else if (vocabulary === 'Common.Text' && pathOf(annotation)?.split('/').length === 2) {
+          const [navigation, label] = pathOf(annotation)!.split('/');
+          const nav = value[navigation];
+          if (nav?.$Kind === 'NavigationProperty' && !nav.$Collection && Object.hasOwn(nav.$ReferentialConstraint ?? {}, field)) hints.referenceLabelField = label;
+          else mapped = false;
+        }
         else if (['Core.Computed', 'Core.Immutable'].includes(vocabulary)) { if (bool(annotation)) property.readOnly = true; }
         else if (vocabulary === 'sap:updatable' || vocabulary === 'sap:creatable') { if (annotation === 'false') property.readOnly = true; }
         else if (vocabulary === 'sap:display-format' && annotation === 'Date') { property.type = 'string'; property.format = 'date'; }

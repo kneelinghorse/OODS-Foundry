@@ -11,7 +11,7 @@ export const OodsButton = React.forwardRef<HTMLButtonElement, ButtonProps>(funct
     : intent === 'success' || intent === 'warning' ? 'secondary' : intent;
   // Keep normal-size destructive text readable using the team's solid tokens in both themes.
   const destructiveClass = variant === 'destructive' ? 'bg-destructive text-background hover:bg-destructive dark:bg-destructive dark:hover:bg-destructive' : undefined;
-  return <Button {...props} ref={ref} className={[destructiveClass, className].filter(Boolean).join(' ')} variant={variant} size={size === 'md' ? 'default' : size}
+  return <Button {...props} ref={ref} className={[destructiveClass, className].filter(Boolean).join(' ')} variant={variant} size={size === 'md' ? 'default' : size === 'xs' ? 'sm' : size}
     asChild={asChild} {...(asChild ? {} : { type: type ?? 'button' })} data-oods-component={undefined} data-oods-adapter="Button"
     data-intent={intent} onClick={event => { onClick?.(event); if (!event.defaultPrevented) onActivate?.(event); }}>
     {children ?? content}

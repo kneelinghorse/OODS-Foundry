@@ -47,7 +47,6 @@ export function validateSubstitution(value: unknown): asserts value is Component
     if (source.localPath !== undefined && (typeof source.localPath !== 'string' || !path.isAbsolute(source.localPath))) fail(`${prefix}.localPath`, 'expected an absolute package directory');
     if (source.shadcn !== undefined) {
       const invalid = (message: string): never => { throw new ToolError('OODS-V219', `${object(source.shadcn) && typeof source.shadcn.project === 'string' ? path.join(source.shadcn.project, 'components.json') : prefix}:1: ${message}`); };
-      if (framework !== 'react') invalid('vue.shadcn is not supported: shadcn sources are React only');
       if (source.package !== undefined || source.version !== undefined || source.localPath !== undefined) invalid('shadcn is exclusive with package, version and localPath');
       if (!object(source.shadcn) || typeof source.shadcn.project !== 'string' || !path.isAbsolute(source.shadcn.project) || typeof source.shadcn.module !== 'string' || !source.shadcn.module) invalid('shadcn requires an absolute project and a module import');
       for (const key of Object.keys(source.shadcn as object)) if (!['project', 'module'].includes(key)) invalid(`unknown shadcn field '${key}'`);

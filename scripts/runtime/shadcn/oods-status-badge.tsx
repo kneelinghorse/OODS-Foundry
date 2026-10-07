@@ -17,7 +17,7 @@ export const OodsStatusBadge = React.forwardRef<HTMLSpanElement, StatusBadgeProp
   const name = resolveStatusIcon(presentation.iconName);
   const mark = showIcon ? icon ?? (name ? <span aria-hidden="true" dangerouslySetInnerHTML={{ __html: statusIconMarkup(name) }} /> : null) : null;
   const destructiveClass = destructive ? 'bg-destructive text-background dark:bg-destructive [a]:hover:bg-destructive' : undefined;
-  return <Badge {...props} ref={ref} className={[destructiveClass, className].filter(Boolean).join(' ')} variant={destructive ? 'destructive' : solid ? 'default' : 'secondary'}
+  return <Badge {...props} role={props.role ?? 'status'} ref={ref} className={[destructiveClass, className].filter(Boolean).join(' ')} variant={destructive ? 'destructive' : solid ? 'default' : 'secondary'}
     data-oods-component={undefined} data-oods-adapter="StatusBadge" data-status={state} data-domain={domain} data-tone={resolvedTone}
     title={title ?? presentation.description} aria-label={ariaLabel ?? label ?? `Status: ${presentation.label}`}>
     {iconPosition === 'start' ? mark : null}{children ?? content ?? presentation.label}{iconPosition === 'end' ? mark : null}

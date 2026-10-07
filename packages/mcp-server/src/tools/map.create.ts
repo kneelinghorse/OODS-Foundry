@@ -63,7 +63,7 @@ export function checkSubstitution(input: MapCreateInput, mappings: ComponentMapp
   for (const framework of ['react', 'vue'] as const) {
     const source = input.substitution[framework];
     if (!source) continue;
-    try { if (source.shadcn) inspectShadcn(source.shadcn, source.export); else validateLocalImplementation(source); }
+    try { if (source.shadcn) inspectShadcn(source.shadcn, source.export, framework); else validateLocalImplementation(source); }
     catch (error) { throw new Error(`substitution.${framework}: ${error instanceof Error ? error.message : String(error)}`); }
   }
 }
@@ -170,4 +170,33 @@ export function handle(input: MapCreateBatchInput): Promise<MapCreateBatchOutput
 export function handle(input: MapCreateInput | MapCreateBatchInput): Promise<MapCreateOutput | MapCreateBatchOutput>;
 export async function handle(input: MapCreateInput | MapCreateBatchInput): Promise<MapCreateOutput | MapCreateBatchOutput> {
   return 'mappings' in input || 'mappingsPath' in input ? createBatch(input as MapCreateBatchInput) : createSingle(input as MapCreateInput);
+}
+
+/** Reviewed intake may add a missing framework to the existing owner, but never silently replace one. */
+export function applyIntakeMappings(inputs: MapCreateInput[]): { ids:string[]; etag:string } {
+  const doc = loadMappings();
+  const ids:string[] = [];
+  for (const input of inputs) {
+    if (!validateEntry(input)) throw new ToolError('OODS-V219', `Invalid reviewed mapping: ${JSON.stringify(validateEntry.errors)}`);
+    if (!input.substitution) throw new ToolError('OODS-V219', 'A reviewed component mapping needs a substitution.');
+    validateSubstitution(input.substitution);
+    const owner = doc.mappings.find(mapping => mapping.substitution?.component === input.substitution!.component);
+    const candidate = structuredClone(input);
+    if (owner) {
+      for (const framework of ['react','vue'] as const) {
+        const incoming = candidate.substitution![framework], prior = owner.substitution![framework];
+        if (incoming && prior && JSON.stringify(incoming) !== JSON.stringify(prior)) throw new ToolError('OODS-V219', `${owner.id} already supplies ${framework}; use update for an intentional replacement.`);
+      }
+      candidate.substitution = { ...owner.substitution!, ...candidate.substitution! };
+    }
+    checkSubstitution(candidate, doc.mappings.filter(mapping => mapping !== owner));
+    if (owner) { owner.substitution = candidate.substitution; ids.push(owner.id); }
+    else {
+      const mapping = mappingRecord(candidate);
+      if (doc.mappings.some(entry => entry.id === mapping.id)) throw new ToolError('OODS-V219', `Mapping id ${mapping.id} already exists.`);
+      append(doc, candidate, mapping); ids.push(mapping.id);
+    }
+  }
+  saveMappings(doc);
+  return { ids, etag:computeMappingsEtag(doc) };
 }

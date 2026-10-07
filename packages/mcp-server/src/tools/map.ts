@@ -8,6 +8,7 @@
  * unchanged per-action handler. Zero functionality is added or removed here —
  * the per-action handlers and their schemas remain the source of truth.
  */
+import { handle as intakeHandle, type MapIntakeInput } from './map.intake.js';
 import { handle as applyHandle } from './map.apply.js';
 import { handle as createHandle } from './map.create.js';
 import { handle as listHandle } from './map.list.js';
@@ -31,9 +32,10 @@ import type {
   MapUpdateOutput,
 } from './types.js';
 
-type MapAction = 'apply' | 'create' | 'list' | 'resolve' | 'update' | 'delete';
+type MapAction = 'draft' | 'show' | 'apply' | 'create' | 'list' | 'resolve' | 'update' | 'delete';
 
 type MapGroupInput =
+  | MapIntakeInput
   | ({ action: 'apply' } & MapApplyInput)
   | ({ action: 'create' } & (MapCreateInput | MapCreateBatchInput))
   | ({ action: 'list' } & MapListInput)
@@ -42,6 +44,7 @@ type MapGroupInput =
   | ({ action: 'delete' } & MapDeleteInput);
 
 type MapGroupOutput =
+  | Awaited<ReturnType<typeof intakeHandle>>
   | MapApplyOutput
   | MapCreateOutput
   | MapCreateBatchOutput
@@ -59,7 +62,11 @@ type MapGroupOutput =
 export async function handle(input: MapGroupInput): Promise<MapGroupOutput> {
   const action = (input as { action?: MapAction }).action;
   switch (action) {
+    case 'draft':
+    case 'show':
+      return intakeHandle(input as MapIntakeInput);
     case 'apply':
+      if ('draftId' in input) return intakeHandle(input as MapIntakeInput);
       return applyHandle(input as MapApplyInput);
     case 'create':
       return createHandle(input as MapCreateInput | MapCreateBatchInput);

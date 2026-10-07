@@ -122,9 +122,9 @@ describe('schemas/map.input — grouped input compiles + parity', () => {
     expect(typeof validateGrouped).toBe('function');
   });
 
-  it('action enum lists exactly the six per-action names', () => {
+  it('action enum lists the six legacy actions and reviewed intake actions', () => {
     expect(groupedInput.properties.action.enum.slice().sort()).toEqual(
-      [...ACTIONS].sort(),
+      [...ACTIONS, 'draft', 'show'].sort(),
     );
   });
 
@@ -262,7 +262,7 @@ describe('tools/map — grouped dispatch routes to per-action handlers', () => {
     expect(file).toEqual(inline);
     expect(validateGroupedOut(inline)).toBe(true);
     expect(inline).toMatchObject({ status: 'error', applied: false, entries: [
-      { index: 0, id: 'team-button', status: 'invalid', errors: [{ code: 'OODS-V219' }] },
+      { index: 0, id: 'team-button', status: 'invalid', errors: expect.arrayContaining([expect.objectContaining({ code: 'OODS-V219' })]) },
     ] });
     expect(fs.existsSync(path.join(tmpDir, 'component-mappings.json'))).toBe(false);
   });

@@ -23,13 +23,13 @@ export const OodsSelect = React.forwardRef<HTMLSelectElement, SelectProps>(funct
     native.current.dispatchEvent(new Event('change', { bubbles: true }));
   };
   return <div className={className} style={style} data-oods-component={undefined} data-oods-adapter="Select">
-    <Label htmlFor={id}>{label}{required && requiredIndicator !== false ? <span aria-hidden="true"> *</span> : null}</Label>
-    <select ref={native} name={name} value={selected} disabled={disabled} tabIndex={-1} aria-hidden="true" style={{ display: 'none' }}
+    <Label htmlFor={`${id}-control`}>{label}{required && requiredIndicator !== false ? <span aria-hidden="true"> *</span> : null}</Label>
+    <select id={id} ref={native} name={name} value={selected} disabled={disabled} tabIndex={-1} aria-hidden="true" style={{ display: 'none' }}
       onChange={event => { onChange?.(event); if (!event.defaultPrevented) { const next = event.currentTarget.value; if (value === undefined) setLocal(next); onValueChange?.(next); onUpdate?.(next); } }}>
       <option value="">{placeholder}</option>{options.map(option => <option key={option.value} value={option.value} disabled={option.disabled}>{option.label}</option>)}
     </select>
     <Select value={selected || (options.some(option => option.value === '') ? empty : '')} disabled={disabled} required={required} onValueChange={change}>
-      <SelectTrigger id={id} aria-label={ariaLabel} aria-describedby={descriptions} aria-invalid={validation?.state === 'error' || undefined}
+      <SelectTrigger id={`${id}-control`} aria-label={ariaLabel} aria-describedby={descriptions} aria-invalid={validation?.state === 'error' || undefined}
         size={density === 'compact' ? 'sm' : 'default'} className={selectClassName} style={selectStyle}><SelectValue placeholder={placeholder}>{options.find(option => String(option.value) === selected)?.label ?? placeholder}</SelectValue></SelectTrigger>
       <SelectContent>{children ?? options.map(option => <SelectItem key={option.value} value={option.value || empty} disabled={option.disabled}>{option.label}</SelectItem>)}</SelectContent>
     </Select>

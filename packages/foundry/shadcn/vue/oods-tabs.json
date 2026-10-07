@@ -1,0 +1,20 @@
+{
+  "$schema": "https://shadcn-vue.com/schema/registry-item.json",
+  "name": "oods-tabs",
+  "type": "registry:component",
+  "title": "OODS Foundry Tabs",
+  "description": "Vue adapter for OODS Tabs on shadcn-vue / Reka UI. The tab list scrolls horizontally; overflowLabel and the overflow menu are not implemented.",
+  "dependencies": [
+    "@oods/components-vue@0.10.0"
+  ],
+  "registryDependencies": [
+    "tabs"
+  ],
+  "files": [
+    {
+      "path": "components/oods/tabs.vue",
+      "type": "registry:component",
+      "content": "<script lang=\"ts\">\nimport { defineComponent, h, ref } from 'vue';\nimport { Tabs as Contract } from '@oods/components-vue';\nimport { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';\n\n// Reuse the shipped Vue prop defaults and event vocabulary; the rendered parts belong to the team.\nexport default defineComponent({\n  name: 'OodsTabsAdapter',\n  inheritAttrs: false,\n  props: Contract.props,\n  emits: Array.isArray(Contract.emits) ? Contract.emits : Object.keys(Contract.emits ?? {}),\n  setup(props: any, { attrs, slots, emit }: any) {\n    const local = ref(props.defaultSelectedId ?? props.items.find((item: any) => !item.disabled && !item.isDisabled)?.id);\n    const selected = () => props.items.find((item: any) => item.id === (props.selectedId ?? local.value) && !item.disabled && !item.isDisabled)?.id ?? props.items.find((item: any) => !item.disabled && !item.isDisabled)?.id;\n    const change = (value: string | number) => { const id = String(value); if (id === selected()) return; if (props.selectedId === undefined) local.value = id; emit('update:selectedId', id); emit('change', id); };\n    return () => h(Tabs, { ...attrs, 'data-oods-component': undefined, modelValue: selected(), 'onUpdate:modelValue': change, 'data-oods-adapter': 'Tabs' }, { default: () => [\n      h('div', { class: 'max-w-full overflow-x-auto' }, [h(TabsList, { 'aria-label': props.ariaLabel }, { default: () => props.items.map((item: any) => h(TabsTrigger, {\n        value: item.id, disabled: item.disabled || item.isDisabled, 'data-tab-id': item.id,\n      }, { default: () => slots.itemLabel?.({ item, selected: item.id === selected() }) ?? item.label })) })]),\n      ...props.items.map((item: any) => h(TabsContent, { value: item.id }, { default: () => slots.panel?.({ item, selected: item.id === selected() }) ?? item.panel })),\n    ] });\n  },\n});\n</script>\n"
+    }
+  ]
+}

@@ -9,7 +9,10 @@
     { "$ref": "#/$defs/ListOutput" },
     { "$ref": "#/$defs/ResolveOutput" },
     { "$ref": "#/$defs/UpdateOutput" },
-    { "$ref": "#/$defs/DeleteOutput" }
+    { "$ref": "#/$defs/DeleteOutput" },
+    {
+      "$ref": "#/$defs/IntakeOutput"
+    }
   ],
   "$defs": {
     "ApplyOutput": {
@@ -482,6 +485,80 @@
           "items": { "type": "string", "minLength": 1 }
         }
       }
+    },
+    "IntakeOutput": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "enum": [
+            "draft",
+            "show",
+            "apply"
+          ]
+        },
+        "draftId": {
+          "type": "string"
+        },
+        "file": {
+          "type": "string"
+        },
+        "contentHash": {
+          "type": "string"
+        },
+        "counts": {
+          "type": "object"
+        },
+        "proposals": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "source": {
+          "type": "object"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "inventory": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "applied": {
+          "type": "boolean"
+        },
+        "ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "etag": {
+          "type": "string"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "action",
+        "draftId"
+      ],
+      "additionalProperties": false
     }
   }
 }

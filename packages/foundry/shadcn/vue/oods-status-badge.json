@@ -1,0 +1,21 @@
+{
+  "$schema": "https://shadcn-vue.com/schema/registry-item.json",
+  "name": "oods-status-badge",
+  "type": "registry:component",
+  "title": "OODS Foundry StatusBadge",
+  "description": "Vue adapter for OODS StatusBadge on shadcn-vue / Reka UI. Critical/danger uses destructive/background; other tones use default/secondary without distinct status colours.",
+  "dependencies": [
+    "@oods/components-vue@0.10.0",
+    "@oods/component-contracts@0.10.0"
+  ],
+  "registryDependencies": [
+    "badge"
+  ],
+  "files": [
+    {
+      "path": "components/oods/status-badge.vue",
+      "type": "registry:component",
+      "content": "<script lang=\"ts\">\nimport { defineComponent, h } from 'vue';\nimport { StatusBadge as Contract } from '@oods/components-vue';\nimport { Badge } from '@/components/ui/badge';\nimport { getStatusPresentation, resolveStatusIcon, statusIconMarkup } from '@oods/component-contracts';\n\n// Reuse the shipped Vue prop defaults and event vocabulary; the rendered parts belong to the team.\nexport default defineComponent({\n  name: 'OodsStatusBadgeAdapter',\n  inheritAttrs: false,\n  props: Contract.props,\n  emits: Array.isArray(Contract.emits) ? Contract.emits : Object.keys(Contract.emits ?? {}),\n  setup(props: any, { attrs, slots }: any) {\n    return () => {\n      const status = props.status ?? props.value ?? 'unknown';\n      const presentation = getStatusPresentation(props.domain, status);\n      const tone = props.tone && props.tone !== 'lifecycle' ? props.tone : presentation.tone;\n      const danger = tone === 'critical' || tone === 'danger';\n      const icon = resolveStatusIcon(presentation.iconName);\n      return h(Badge, { ...attrs, role: attrs.role ?? 'status', 'data-oods-component': undefined, variant: danger ? 'destructive' : props.emphasis === 'solid' || props.variant === 'solid' ? 'default' : 'secondary',\n        class: [danger ? 'bg-destructive text-background dark:bg-destructive' : '', attrs.class],\n        'data-oods-adapter': 'StatusBadge', 'data-status': status, 'data-tone': tone, 'data-domain': props.domain,\n        title: attrs.title ?? presentation.description, 'aria-label': attrs['aria-label'] ?? props.label ?? `Status: ${presentation.label}`,\n      }, { default: () => [slots.icon?.() ?? (props.showIcon && icon ? h('span', { 'aria-hidden': 'true', innerHTML: statusIconMarkup(icon) }) : null), slots.default?.() ?? props.content ?? presentation.label] });\n    };\n  },\n});\n</script>\n"
+    }
+  ]
+}

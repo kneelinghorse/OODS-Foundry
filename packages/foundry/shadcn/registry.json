@@ -1,0 +1,360 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "oods-foundry",
+  "homepage": "https://oods-foundry.com",
+  "items": [
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "oods-button",
+      "type": "registry:component",
+      "title": "OODS Foundry Button",
+      "description": "React adapter for OODS Button on shadcn/ui's Radix and Base UI bases. Danger/destructive uses solid bg-destructive and text-background, including hover and dark, to preserve text contrast with the team’s tokens. Primary preserves the team’s primary/primary-foreground token pair. Success and warning intents use the secondary variant; shadcn has no distinct success/warning palettes.",
+      "dependencies": [
+        "@oods/components-react@0.10.0"
+      ],
+      "registryDependencies": [
+        "button"
+      ],
+      "files": [
+        {
+          "path": "components/oods/button.tsx",
+          "target": "components/oods/button.tsx",
+          "type": "registry:component",
+          "content": "import * as React from 'react';\nimport type { ButtonProps } from '@oods/components-react';\nimport { Button } from '@/registry/new-york-v4/ui/button';\n\nexport const OodsButton = React.forwardRef<HTMLButtonElement, ButtonProps>(function OodsButton(\n  { content, children, intent = 'neutral', size = 'md', type, asChild = false, className, onClick, onActivate, ...props }, ref,\n) {\n  const variant = intent === 'danger' || intent === 'destructive' ? 'destructive'\n    : intent === 'primary' ? 'default'\n    : intent === 'neutral' ? 'secondary'\n    : intent === 'success' || intent === 'warning' ? 'secondary' : intent;\n  // Keep normal-size destructive text readable using the team's solid tokens in both themes.\n  const destructiveClass = variant === 'destructive' ? 'bg-destructive text-background hover:bg-destructive dark:bg-destructive dark:hover:bg-destructive' : undefined;\n  return <Button {...props} ref={ref} className={[destructiveClass, className].filter(Boolean).join(' ')} variant={variant} size={size === 'md' ? 'default' : size === 'xs' ? 'sm' : size}\n    asChild={asChild} {...(asChild ? {} : { type: type ?? 'button' })} data-oods-component={undefined} data-oods-adapter=\"Button\"\n    data-intent={intent} onClick={event => { onClick?.(event); if (!event.defaultPrevented) onActivate?.(event); }}>\n    {children ?? content}\n  </Button>;\n});\n"
+        }
+      ]
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "oods-card",
+      "type": "registry:component",
+      "title": "OODS Foundry Card",
+      "description": "React adapter for OODS Card on shadcn/ui's Radix and Base UI bases. Semantic as containers wrap the shadcn Card.",
+      "dependencies": [
+        "@oods/components-react@0.10.0"
+      ],
+      "registryDependencies": [
+        "card"
+      ],
+      "files": [
+        {
+          "path": "components/oods/card.tsx",
+          "target": "components/oods/card.tsx",
+          "type": "registry:component",
+          "content": "import * as React from 'react';\nimport type { CardProps } from '@oods/components-react';\nimport { Card } from '@/registry/new-york-v4/ui/card';\n\nexport const OodsCard = React.forwardRef<HTMLElement, CardProps>(function OodsCard(\n  { as = 'div', elevated = false, className, children, ...props }, ref,\n) {\n  const classes = ['px-4', elevated ? 'shadow-lg' : 'shadow-none', className].filter(Boolean).join(' ');\n  if (as === 'div') return <Card {...props} ref={ref as React.Ref<HTMLDivElement>} className={classes} data-oods-component={undefined} data-oods-adapter=\"Card\">{children}</Card>;\n  const Tag = as;\n  return <Tag {...props} ref={ref} data-oods-component={undefined} data-oods-adapter=\"Card\"><Card className={classes}>{children}</Card></Tag>;\n});\n"
+        }
+      ]
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "oods-status-badge",
+      "type": "registry:component",
+      "title": "OODS Foundry StatusBadge",
+      "description": "React adapter for OODS StatusBadge on shadcn/ui's Radix and Base UI bases. Status text and icons come from the OODS registry. Critical/danger uses destructive with solid bg-destructive and text-background in both themes; other tones use the team's default or secondary badge palette, without distinct status colours. compact and readOnly retain the OODS implementation's no-op behavior.",
+      "dependencies": [
+        "@oods/components-react@0.10.0",
+        "@oods/component-contracts@0.10.0"
+      ],
+      "registryDependencies": [
+        "badge"
+      ],
+      "files": [
+        {
+          "path": "components/oods/status-badge.tsx",
+          "target": "components/oods/status-badge.tsx",
+          "type": "registry:component",
+          "content": "import * as React from 'react';\nimport type { StatusBadgeProps } from '@oods/components-react';\nimport { getStatusPresentation, resolveStatusIcon, statusIconMarkup } from '@oods/component-contracts';\nimport { Badge } from '@/registry/new-york-v4/ui/badge';\n\nexport const OodsStatusBadge = React.forwardRef<HTMLSpanElement, StatusBadgeProps>(function OodsStatusBadge(\n  { status, value, label, children, content, domain = 'subscription', tone, emphasis = 'subtle', variant,\n    showIcon = true, icon, iconPosition = 'start', title, field, statusField, domainField, readOnly, compact,\n    'aria-label': ariaLabel, className, ...props }, ref,\n) {\n  void [field, statusField, domainField, readOnly, compact];\n  const state = status ?? value ?? 'unknown';\n  const presentation = getStatusPresentation(domain, state);\n  const resolvedTone = tone && tone !== 'lifecycle' ? tone : presentation.tone;\n  const destructive = resolvedTone === 'critical' || resolvedTone === 'danger';\n  const solid = variant === 'solid' || emphasis === 'solid';\n  const name = resolveStatusIcon(presentation.iconName);\n  const mark = showIcon ? icon ?? (name ? <span aria-hidden=\"true\" dangerouslySetInnerHTML={{ __html: statusIconMarkup(name) }} /> : null) : null;\n  const destructiveClass = destructive ? 'bg-destructive text-background dark:bg-destructive [a]:hover:bg-destructive' : undefined;\n  return <Badge {...props} role={props.role ?? 'status'} ref={ref} className={[destructiveClass, className].filter(Boolean).join(' ')} variant={destructive ? 'destructive' : solid ? 'default' : 'secondary'}\n    data-oods-component={undefined} data-oods-adapter=\"StatusBadge\" data-status={state} data-domain={domain} data-tone={resolvedTone}\n    title={title ?? presentation.description} aria-label={ariaLabel ?? label ?? `Status: ${presentation.label}`}>\n    {iconPosition === 'start' ? mark : null}{children ?? content ?? presentation.label}{iconPosition === 'end' ? mark : null}\n  </Badge>;\n});\n"
+        }
+      ]
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "oods-tabs",
+      "type": "registry:component",
+      "title": "OODS Foundry Tabs",
+      "description": "React adapter for OODS Tabs on shadcn/ui's Radix and Base UI bases. The tab list scrolls horizontally. overflowLabel and the OODS overflow menu are not implemented.",
+      "dependencies": [
+        "@oods/components-react@0.10.0"
+      ],
+      "registryDependencies": [
+        "tabs"
+      ],
+      "files": [
+        {
+          "path": "components/oods/tabs.tsx",
+          "target": "components/oods/tabs.tsx",
+          "type": "registry:component",
+          "content": "import * as React from 'react';\nimport type { TabsProps } from '@oods/components-react';\nimport { Tabs, TabsList, TabsTrigger, TabsContent } from '@/registry/new-york-v4/ui/tabs';\n\nexport const OodsTabs = React.forwardRef<HTMLDivElement, TabsProps>(function OodsTabs(\n  { items, selectedId, defaultSelectedId, size = 'md', overflowLabel, ariaLabel, onChange, onUpdate, dir, 'aria-label': nativeLabel, ...props }, ref,\n) {\n  void overflowLabel; // This adapter scrolls the tab list; it has no overflow menu.\n  const [local, setLocal] = React.useState(defaultSelectedId ?? items.find(item => !item.disabled && !item.isDisabled)?.id);\n  const selected = selectedId ?? local;\n  const notified = React.useRef(selected); notified.current = selected;\n  const select = (id: string) => {\n    if (id === notified.current) return;\n    notified.current = id;\n    if (selectedId === undefined) setLocal(id);\n    onChange?.(id); onUpdate?.(id);\n  };\n  return <Tabs {...props} ref={ref} value={selected} defaultValue={defaultSelectedId} dir={dir === 'ltr' || dir === 'rtl' ? dir : undefined}\n    data-oods-component={undefined} data-oods-adapter=\"Tabs\" data-size={size} onValueChange={select}>\n    <div className=\"max-w-full overflow-x-auto\"><TabsList aria-label={ariaLabel ?? nativeLabel}>\n      {items.map(item => <TabsTrigger key={item.id} data-tab-id={item.id} value={item.id} disabled={item.disabled || item.isDisabled} onFocus={item.disabled || item.isDisabled ? undefined : () => select(item.id)}\n        className={size === 'sm' ? 'text-xs' : size === 'lg' ? 'text-base' : undefined}>{item.label}</TabsTrigger>)}\n    </TabsList></div>\n    {items.map(item => <TabsContent key={item.id} value={item.id}>{item.panel}</TabsContent>)}\n  </Tabs>;\n});\n"
+        }
+      ]
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "oods-select",
+      "type": "registry:component",
+      "title": "OODS Foundry Select",
+      "description": "React adapter for OODS Select on shadcn/ui's Radix and Base UI bases. The visible control is a shadcn combobox, not a native select. A hidden native select preserves form values and native onChange events. Native option children, multiple, native size and native-select keyboard contracts are not supported; pass options.",
+      "dependencies": [
+        "@oods/components-react@0.10.0"
+      ],
+      "registryDependencies": [
+        "select",
+        "label"
+      ],
+      "files": [
+        {
+          "path": "components/oods/select.tsx",
+          "target": "components/oods/select.tsx",
+          "type": "registry:component",
+          "content": "import * as React from 'react';\nimport type { SelectProps } from '@oods/components-react';\nimport { Label } from '@/registry/new-york-v4/ui/label';\nimport { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/registry/new-york-v4/ui/select';\n\nexport const OodsSelect = React.forwardRef<HTMLSelectElement, SelectProps>(function OodsSelect(\n  { id, label, options = [], value, defaultValue, placeholder, required, disabled, name, help, description, validation,\n    onChange, onValueChange, onUpdate, className, style, selectClassName, selectStyle, density, requiredIndicator,\n    children, 'aria-describedby': describedBy, 'aria-label': ariaLabel }, ref,\n) {\n  const native = React.useRef<HTMLSelectElement>(null);\n  React.useImperativeHandle(ref, () => native.current!);\n  const [local, setLocal] = React.useState(String(defaultValue ?? ''));\n  const selected = value === undefined ? local : String(value);\n  const empty = '__oods_empty_option__';\n  const details = help ?? description;\n  const helpId = `${id}-help`, validationId = validation?.id ?? `${id}-validation`;\n  const descriptions = [describedBy, details ? helpId : '', validation?.message ? validationId : ''].filter(Boolean).join(' ') || undefined;\n  // Keep a real native change event for generated OODS handlers and native form submission.\n  const change = (next: string | null) => {\n    if (!native.current) return;\n    native.current.value = next === empty ? '' : next ?? '';\n    native.current.dispatchEvent(new Event('change', { bubbles: true }));\n  };\n  return <div className={className} style={style} data-oods-component={undefined} data-oods-adapter=\"Select\">\n    <Label htmlFor={`${id}-control`}>{label}{required && requiredIndicator !== false ? <span aria-hidden=\"true\"> *</span> : null}</Label>\n    <select id={id} ref={native} name={name} value={selected} disabled={disabled} tabIndex={-1} aria-hidden=\"true\" style={{ display: 'none' }}\n      onChange={event => { onChange?.(event); if (!event.defaultPrevented) { const next = event.currentTarget.value; if (value === undefined) setLocal(next); onValueChange?.(next); onUpdate?.(next); } }}>\n      <option value=\"\">{placeholder}</option>{options.map(option => <option key={option.value} value={option.value} disabled={option.disabled}>{option.label}</option>)}\n    </select>\n    <Select value={selected || (options.some(option => option.value === '') ? empty : '')} disabled={disabled} required={required} onValueChange={change}>\n      <SelectTrigger id={`${id}-control`} aria-label={ariaLabel} aria-describedby={descriptions} aria-invalid={validation?.state === 'error' || undefined}\n        size={density === 'compact' ? 'sm' : 'default'} className={selectClassName} style={selectStyle}><SelectValue placeholder={placeholder}>{options.find(option => String(option.value) === selected)?.label ?? placeholder}</SelectValue></SelectTrigger>\n      <SelectContent>{children ?? options.map(option => <SelectItem key={option.value} value={option.value || empty} disabled={option.disabled}>{option.label}</SelectItem>)}</SelectContent>\n    </Select>\n    {details ? <p id={helpId} className=\"text-sm text-muted-foreground\">{details}</p> : null}\n    {validation?.message ? <p id={validationId} role={validation.state === 'error' ? 'alert' : undefined}>{validation.message}</p> : null}\n  </div>;\n});\n"
+        }
+      ]
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "oods-search-input",
+      "type": "registry:component",
+      "title": "OODS Foundry SearchInput",
+      "description": "React adapter for OODS SearchInput on shadcn/ui's Radix and Base UI bases. Search value, debounce, minimum query length and clear events retain their meanings.",
+      "dependencies": [
+        "@oods/components-react@0.10.0"
+      ],
+      "registryDependencies": [
+        "input",
+        "label",
+        "button"
+      ],
+      "files": [
+        {
+          "path": "components/oods/search-input.tsx",
+          "target": "components/oods/search-input.tsx",
+          "type": "registry:component",
+          "content": "import * as React from 'react';\nimport type { SearchInputProps } from '@oods/components-react';\nimport { Input } from '@/registry/new-york-v4/ui/input';\nimport { Label } from '@/registry/new-york-v4/ui/label';\nimport { Button } from '@/registry/new-york-v4/ui/button';\n\nexport const OodsSearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(function OodsSearchInput(\n  { id, label = 'Search', value, defaultValue = '', placeholder = 'Search…', clearable = true, debounceMs, debounce,\n    minQueryLength = 0, field, placeholderParameter, debounceParameter, minQueryLengthParameter, clearableParameter,\n    onChange, onValueChange, onUpdate, onSearch, onClear, onKeyDown, className, disabled, ...props }, ref,\n) {\n  void [field, placeholderParameter, debounceParameter, minQueryLengthParameter, clearableParameter];\n  const instance = React.useId();\n  const inputId = id ?? `oods-search-${instance.replaceAll(':', '')}`;\n  const [local, setLocal] = React.useState(defaultValue);\n  const current = value ?? local;\n  const timer = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);\n  React.useEffect(() => () => clearTimeout(timer.current), []);\n  const update = (next: string) => {\n    if (value === undefined) setLocal(next);\n    clearTimeout(timer.current);\n    const emit = () => { if (next.length >= minQueryLength || next === '') { onValueChange?.(next); onUpdate?.(next); onSearch?.(next); } };\n    const delay = Math.max(0, debounceMs ?? debounce ?? 0);\n    if (delay) timer.current = setTimeout(emit, delay); else emit();\n  };\n  const clear = () => { onClear?.(); update(''); };\n  return <div role=\"search\" aria-label={label} className={className} data-oods-component={undefined} data-oods-adapter=\"SearchInput\">\n    <Label htmlFor={inputId}>{label}</Label><div className=\"flex gap-2\">\n      <Input {...props} ref={ref} id={inputId} type=\"search\" placeholder={placeholder} disabled={disabled} value={current}\n        onChange={event => { onChange?.(event); if (!event.defaultPrevented) update(event.currentTarget.value); }}\n        onKeyDown={event => { onKeyDown?.(event); if (!event.defaultPrevented && event.key === 'Escape' && current) clear(); }} />\n      {clearable && current ? <Button type=\"button\" variant=\"ghost\" disabled={disabled} aria-label=\"Clear search\" onClick={clear}>×</Button> : null}\n    </div>\n  </div>;\n});\n"
+        }
+      ]
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "oods-pagination-bar",
+      "type": "registry:component",
+      "title": "OODS Foundry PaginationBar",
+      "description": "React adapter for OODS PaginationBar on shadcn/ui's Radix and Base UI bases. Page links use anchors, not buttons; disabled links prevent navigation and leave the tab order.",
+      "dependencies": [
+        "@oods/components-react@0.10.0"
+      ],
+      "registryDependencies": [
+        "pagination"
+      ],
+      "files": [
+        {
+          "path": "components/oods/pagination-bar.tsx",
+          "target": "components/oods/pagination-bar.tsx",
+          "type": "registry:component",
+          "content": "import * as React from 'react';\nimport type { PaginationBarProps } from '@oods/components-react';\nimport { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationPrevious, PaginationNext, PaginationEllipsis } from '@/registry/new-york-v4/ui/pagination';\n\nexport const OodsPaginationBar = React.forwardRef<HTMLElement, PaginationBarProps>(function OodsPaginationBar(\n  { page = 1, pageSize = 25, totalItems = 0, totalPages: supplied, pageSizeOptions = [10, 25, 50, 100],\n    showPageSizeSelector = false, showGotoPage = false, showItemRange = true, onPageChange, onPageSizeChange, onChange, onUpdate,\n    pageField, pageSizeField, totalItemsField, totalPagesField, pageSizeOptionsParameter, showPageSizeSelectorParameter,\n    showGotoPageParameter, showItemRangeParameter, className, 'aria-label': label = 'Pagination', ...props }, ref,\n) {\n  void [pageField, pageSizeField, totalItemsField, totalPagesField, pageSizeOptionsParameter, showPageSizeSelectorParameter, showGotoPageParameter, showItemRangeParameter];\n  const size = Number.isFinite(pageSize) && pageSize > 0 ? Math.floor(pageSize) : 25;\n  const count = Math.max(0, Math.floor(supplied ?? Math.ceil(Math.max(0, totalItems) / size)));\n  const current = count ? Math.max(1, Math.min(Math.floor(page), count)) : 1;\n  const go = (next: number) => { const target = Math.max(1, Math.min(Math.floor(next), count)); if (count && Number.isFinite(target) && target !== current) { onPageChange?.(target); onChange?.(target); onUpdate?.(target); } };\n  const numbers = count <= 7 ? Array.from({ length: count }, (_, i) => i + 1) : [...new Set([1, current - 1, current, current + 1, count])].filter(n => n >= 1 && n <= count).sort((a, b) => a - b);\n  const pages: Array<number | string> = [];\n  numbers.forEach((n, index) => { if (index && n - numbers[index - 1] > 1) pages.push(`gap-${n}`); pages.push(n); });\n  const link = (target: number, disabled = false) => ({ href: '#', role: 'link' as const, 'aria-disabled': disabled || undefined, tabIndex: disabled ? -1 : 0, onClick: (event: React.MouseEvent<HTMLAnchorElement>) => { event.preventDefault(); if (!disabled) go(target); } });\n  return <Pagination {...props} ref={ref} aria-label={label} data-oods-component={undefined} data-oods-adapter=\"PaginationBar\" className={['flex-wrap items-center gap-3', className].filter(Boolean).join(' ')}>\n    {showItemRange ? <><span>{`${totalItems} ${totalItems === 1 ? 'record' : 'records'}`}</span>{totalItems > 0 && count > 1 ? <span>{`Showing ${(current - 1) * size + 1}–${Math.min(current * size, totalItems)} of ${totalItems}`}</span> : null}</> : null}\n    {count > 1 ? <><PaginationContent>\n      <PaginationItem><PaginationPrevious {...link(current - 1, current <= 1)} aria-label=\"Previous page\" /></PaginationItem>\n      {pages.map(n => <PaginationItem key={n}>{typeof n === 'number' ? <PaginationLink {...link(n)} isActive={n === current} aria-label={`Page ${n}`}>{n}</PaginationLink> : <PaginationEllipsis />}</PaginationItem>)}\n      <PaginationItem><PaginationNext {...link(current + 1, current >= count)} aria-label=\"Next page\" /></PaginationItem>\n    </PaginationContent><span>{`Page ${current} of ${count}`}</span></> : null}\n    {showPageSizeSelector ? <label>Items per page<select aria-label=\"Items per page\" value={size} onChange={event => onPageSizeChange?.(Number(event.currentTarget.value))}>{pageSizeOptions.map(option => <option key={option} value={option}>{option}</option>)}</select></label> : null}\n    {showGotoPage ? <label>Go to page<input type=\"number\" min={1} max={Math.max(1, count)} defaultValue={current} onKeyDown={event => { if (event.key === 'Enter') go(Number(event.currentTarget.value)); }} /></label> : null}\n  </Pagination>;\n});\n"
+        }
+      ]
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "oods-banner",
+      "type": "registry:component",
+      "title": "OODS Foundry Banner",
+      "description": "React adapter for OODS Banner on shadcn/ui's Radix and Base UI bases. Critical/danger uses destructive with solid bg-destructive and text-background in both themes, with its description inheriting the foreground; other tones use the team's default Alert palette. Distinct success/warning/info colours and solid emphasis are not implemented.",
+      "dependencies": [
+        "@oods/components-react@0.10.0",
+        "@oods/component-contracts@0.10.0"
+      ],
+      "registryDependencies": [
+        "alert",
+        "button"
+      ],
+      "files": [
+        {
+          "path": "components/oods/banner.tsx",
+          "target": "components/oods/banner.tsx",
+          "type": "registry:component",
+          "content": "import * as React from 'react';\nimport type { BannerProps } from '@oods/components-react';\nimport { getStatusPresentation, resolveStatusIcon, statusIconMarkup } from '@oods/component-contracts';\nimport { Alert, AlertTitle, AlertDescription } from '@/registry/new-york-v4/ui/alert';\nimport { Button } from '@/registry/new-york-v4/ui/button';\n\nexport const OodsBanner = React.forwardRef<HTMLDivElement, BannerProps>(function OodsBanner(\n  { title, detail, description, content, children, status, domain = 'subscription', tone, emphasis = 'subtle', icon,\n    showIcon, actions, onDismiss, dismissLabel = 'Dismiss notification', className, ...props }, ref,\n) {\n  const presentation = status ? getStatusPresentation(domain, status) : undefined;\n  const resolvedTone = tone ?? presentation?.tone ?? 'neutral';\n  const critical = resolvedTone === 'critical' || resolvedTone === 'danger';\n  const heading = title ?? presentation?.label ?? status;\n  const body = detail ?? description ?? children ?? content ?? presentation?.description;\n  const name = resolveStatusIcon(presentation?.iconName);\n  const mark = icon ?? (name ? <span aria-hidden=\"true\" dangerouslySetInnerHTML={{ __html: statusIconMarkup(name) }} /> : null);\n  const destructiveClass = critical ? 'bg-destructive text-background *:data-[slot=alert-description]:text-inherit' : undefined;\n  return <Alert {...props} ref={ref} className={[destructiveClass, className].filter(Boolean).join(' ')} variant={critical ? 'destructive' : 'default'} role={critical ? 'alert' : 'status'}\n    aria-live={critical ? 'assertive' : 'polite'} data-oods-component={undefined} data-oods-adapter=\"Banner\" data-tone={resolvedTone} data-emphasis={emphasis}>\n    {(showIcon ?? Boolean(mark)) ? mark : null}{heading ? <AlertTitle>{heading}</AlertTitle> : null}\n    {body ? <AlertDescription>{body}</AlertDescription> : null}{actions}\n    {onDismiss ? <Button type=\"button\" variant=\"ghost\" aria-label={dismissLabel} onClick={onDismiss}>×</Button> : null}\n  </Alert>;\n});\n"
+        }
+      ]
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "oods-input",
+      "type": "registry:component",
+      "title": "OODS Foundry Input",
+      "description": "React adapter for OODS Input on shadcn/ui's Radix and Base UI bases. Native input props, datetime-local normalization, label, help, validation and value callbacks retain their meanings; density uses team spacing rather than OODS pixel dimensions.",
+      "dependencies": [
+        "@oods/components-react@0.10.0",
+        "@oods/component-contracts@0.10.0"
+      ],
+      "registryDependencies": [
+        "input",
+        "label"
+      ],
+      "files": [
+        {
+          "path": "components/oods/input.tsx",
+          "target": "components/oods/input.tsx",
+          "type": "registry:component",
+          "content": "import * as React from 'react';\nimport type { InputProps } from '@oods/components-react';\nimport { dateTimeInputValue } from '@oods/component-contracts';\nimport { Input } from '@/registry/new-york-v4/ui/input';\nimport { Label } from '@/registry/new-york-v4/ui/label';\n\nexport const OodsInput = React.forwardRef<HTMLInputElement, InputProps>(function OodsInput(\n  { id, label, help, description, validation, density = 'comfortable', requiredIndicator, className, style,\n    inputClassName, inputStyle, onChange, onValueChange, onUpdate, required, type = 'text', 'aria-describedby': describedBy, ...props }, ref,\n) {\n  if (type === 'datetime-local') {\n    if (props.value !== undefined) props.value = dateTimeInputValue(props.value);\n    if (props.defaultValue !== undefined) props.defaultValue = dateTimeInputValue(props.defaultValue);\n  }\n  const details = help ?? description;\n  const validationId = validation?.id ?? `${id}-validation`;\n  const descriptions = [describedBy, details ? `${id}-description` : '', validation?.message ? validationId : ''].filter(Boolean).join(' ') || undefined;\n  return <div className={className} style={style} data-density={density} data-validation-state={validation?.state} data-oods-component={undefined} data-oods-adapter=\"Input\">\n    <Label htmlFor={id}>{label}{required && requiredIndicator !== null ? requiredIndicator ?? <span aria-hidden=\"true\"> *</span> : null}</Label>\n    <Input {...props} ref={ref} id={id} type={type} required={required} className={[density === 'compact' ? 'py-1' : '', inputClassName].filter(Boolean).join(' ')} style={inputStyle}\n      data-oods-component={undefined} data-validation-state={validation?.state} aria-describedby={descriptions} aria-invalid={props['aria-invalid'] ?? (validation?.state === 'error' || undefined)}\n      onChange={event => { onChange?.(event); if (!event.defaultPrevented) { onValueChange?.(event.currentTarget.value); onUpdate?.(event.currentTarget.value); } }} />\n    {details ? <p id={`${id}-description`} className=\"text-sm text-muted-foreground\">{details}</p> : null}\n    {validation?.message ? <p id={validationId} role={validation.state === 'error' ? 'alert' : 'status'} aria-live={validation.state === 'error' ? 'assertive' : 'polite'}>{validation.message}</p> : null}\n  </div>;\n});\n"
+        }
+      ]
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "oods-textarea",
+      "type": "registry:component",
+      "title": "OODS Foundry Textarea",
+      "description": "React adapter for OODS Textarea on shadcn/ui's Radix and Base UI bases. Native textarea props, four-row default, label, help, validation and value callbacks retain their meanings; density uses team spacing rather than OODS pixel dimensions.",
+      "dependencies": [
+        "@oods/components-react@0.10.0"
+      ],
+      "registryDependencies": [
+        "textarea",
+        "label"
+      ],
+      "files": [
+        {
+          "path": "components/oods/textarea.tsx",
+          "target": "components/oods/textarea.tsx",
+          "type": "registry:component",
+          "content": "import * as React from 'react';\nimport type { TextareaProps } from '@oods/components-react';\nimport { Textarea } from '@/registry/new-york-v4/ui/textarea';\nimport { Label } from '@/registry/new-york-v4/ui/label';\n\nexport const OodsTextarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(function OodsTextarea(\n  { id, label, help, description, validation, density = 'comfortable', requiredIndicator, className, style,\n    textareaClassName, textareaStyle, onChange, onValueChange, onUpdate, required, rows = 4, 'aria-describedby': describedBy, ...props }, ref,\n) {\n\n  const details = help ?? description;\n  const validationId = validation?.id ?? `${id}-validation`;\n  const descriptions = [describedBy, details ? `${id}-description` : '', validation?.message ? validationId : ''].filter(Boolean).join(' ') || undefined;\n  return <div className={className} style={style} data-density={density} data-validation-state={validation?.state} data-oods-component={undefined} data-oods-adapter=\"Textarea\">\n    <Label htmlFor={id}>{label}{required && requiredIndicator !== null ? requiredIndicator ?? <span aria-hidden=\"true\"> *</span> : null}</Label>\n    <Textarea {...props} ref={ref} id={id} rows={rows} required={required} className={[density === 'compact' ? 'py-1' : '', textareaClassName].filter(Boolean).join(' ')} style={textareaStyle}\n      data-oods-component={undefined} data-validation-state={validation?.state} aria-describedby={descriptions} aria-invalid={props['aria-invalid'] ?? (validation?.state === 'error' || undefined)}\n      onChange={event => { onChange?.(event); if (!event.defaultPrevented) { onValueChange?.(event.currentTarget.value); onUpdate?.(event.currentTarget.value); } }} />\n    {details ? <p id={`${id}-description`} className=\"text-sm text-muted-foreground\">{details}</p> : null}\n    {validation?.message ? <p id={validationId} role={validation.state === 'error' ? 'alert' : 'status'} aria-live={validation.state === 'error' ? 'assertive' : 'polite'}>{validation.message}</p> : null}\n  </div>;\n});\n"
+        }
+      ]
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "oods-checkbox",
+      "type": "registry:component",
+      "title": "OODS Foundry Checkbox",
+      "description": "React adapter for OODS Checkbox on shadcn/ui's Radix and Base UI bases. The visible control is the team checkbox. A visually hidden native checkbox preserves the input ref, native onChange and form values. Native input event handlers other than onChange apply to that hidden input, not the visible control; density is metadata only.",
+      "dependencies": [
+        "@oods/components-react@0.10.0"
+      ],
+      "registryDependencies": [
+        "checkbox",
+        "label"
+      ],
+      "files": [
+        {
+          "path": "components/oods/checkbox.tsx",
+          "target": "components/oods/checkbox.tsx",
+          "type": "registry:component",
+          "content": "import * as React from 'react';\nimport type { CheckboxProps } from '@oods/components-react';\nimport { Checkbox } from '@/registry/new-york-v4/ui/checkbox';\nimport { Label } from '@/registry/new-york-v4/ui/label';\n\nexport const OodsCheckbox = React.forwardRef<HTMLInputElement, CheckboxProps>(function OodsCheckbox(\n  { id, label, help, description, validation, density = 'comfortable', requiredIndicator, className, style,\n    checkboxClassName, checkboxStyle, onChange, onCheckedChange, onUpdate, required, checked, defaultChecked,\n    disabled, readOnly, 'aria-describedby': describedBy, 'aria-label': ariaLabel, ...props }, ref,\n) {\n  const native = React.useRef<HTMLInputElement>(null);\n  React.useImperativeHandle(ref, () => native.current!);\n  const [local, setLocal] = React.useState(defaultChecked ?? false);\n  const selected = checked ?? local;\n  const resetting = React.useRef(false);\n  React.useEffect(() => {\n    const input = native.current;\n    const form = input?.form;\n    if (!input || !form) return;\n    const reset = (event: Event) => {\n      // Team checkbox primitives also observe reset. Preserve native reset's lack of change events.\n      resetting.current = true;\n      queueMicrotask(() => {\n        resetting.current = false;\n        if (!event.defaultPrevented && checked === undefined) {\n          // The browser resets the property without running React's native value setter.\n          input.checked = input.checked;\n          setLocal(input.checked);\n        }\n      });\n    };\n    form.addEventListener('reset', reset, true);\n    return () => form.removeEventListener('reset', reset, true);\n  }, [checked, props.form]);\n  const details = help ?? description;\n  const validationId = validation?.id ?? `${id}-validation`;\n  const descriptions = [describedBy, details ? `${id}-description` : '', validation?.message ? validationId : ''].filter(Boolean).join(' ') || undefined;\n  return <div className={className} style={style} data-density={density} data-validation-state={validation?.state} data-oods-component={undefined} data-oods-adapter=\"Checkbox\">\n    <input {...props} id={id} ref={native} type=\"checkbox\" checked={checked} defaultChecked={checked === undefined ? defaultChecked : undefined} disabled={disabled} readOnly={readOnly} required={required}\n      className=\"sr-only\" tabIndex={-1} aria-hidden=\"true\" data-oods-component={undefined}\n      onChange={event => { onChange?.(event); if (!event.defaultPrevented) { const next = event.currentTarget.checked; if (checked === undefined) setLocal(next); onCheckedChange?.(next); onUpdate?.(next); } }} />\n    <div className=\"flex items-center gap-2\">\n      <Checkbox id={`${id}-control`} checked={selected} disabled={disabled} required={required} aria-readonly={readOnly || undefined}\n        className={checkboxClassName} style={checkboxStyle} aria-label={ariaLabel} aria-describedby={descriptions} aria-invalid={props['aria-invalid'] ?? (validation?.state === 'error' || undefined)}\n        onCheckedChange={() => { if (!readOnly && !resetting.current) native.current?.click(); }} />\n      <Label htmlFor={`${id}-control`}>{label}{required && requiredIndicator !== null ? requiredIndicator ?? <span aria-hidden=\"true\"> *</span> : null}</Label>\n    </div>\n    {details ? <p id={`${id}-description`} className=\"text-sm text-muted-foreground\">{details}</p> : null}\n    {validation?.message ? <p id={validationId} role={validation.state === 'error' ? 'alert' : 'status'} aria-live={validation.state === 'error' ? 'assertive' : 'polite'}>{validation.message}</p> : null}\n  </div>;\n});\n"
+        }
+      ]
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "oods-date-picker",
+      "type": "registry:component",
+      "title": "OODS Foundry DatePicker",
+      "description": "React adapter for OODS DatePicker on shadcn/ui's Radix and Base UI bases. Keeps the native date input and adds the team calendar/popover, including min, max, step, disabled and readOnly. pickerClassName/pickerStyle apply to the native input; density is metadata only.",
+      "dependencies": [
+        "@oods/components-react@0.10.0"
+      ],
+      "registryDependencies": [
+        "input",
+        "label",
+        "calendar",
+        "popover",
+        "button"
+      ],
+      "files": [
+        {
+          "path": "components/oods/date-picker.tsx",
+          "target": "components/oods/date-picker.tsx",
+          "type": "registry:component",
+          "content": "import * as React from 'react';\nimport type { DatePickerProps } from '@oods/components-react';\nimport { Input } from '@/registry/new-york-v4/ui/input';\nimport { Label } from '@/registry/new-york-v4/ui/label';\nimport { Button } from '@/registry/new-york-v4/ui/button';\nimport { Calendar } from '@/registry/new-york-v4/ui/calendar';\nimport { Popover, PopoverTrigger, PopoverContent } from '@/registry/new-york-v4/ui/popover';\n\nconst dateValue = (date: Date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;\nconst parseDate = (value: unknown) => {\n  if (typeof value !== 'string' || !/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return undefined;\n  const date = new Date(`${value}T12:00:00`);\n  return Number.isFinite(date.getTime()) && dateValue(date) === value ? date : undefined;\n};\n\nexport const OodsDatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(function OodsDatePicker(\n  { id, label, help, description, validation, density = 'comfortable', requiredIndicator, className, style,\n    inputClassName, inputStyle, pickerClassName, pickerStyle, onChange, onValueChange, onUpdate, required,\n    value, defaultValue, disabled, readOnly, min, max, step, 'aria-describedby': describedBy, ...props }, ref,\n) {\n  const native = React.useRef<HTMLInputElement>(null);\n  React.useImperativeHandle(ref, () => native.current!);\n  const [local, setLocal] = React.useState(String(defaultValue ?? ''));\n  const [open, setOpen] = React.useState(false);\n  const selected = value === undefined ? local : String(value);\n  const details = help ?? description;\n  const validationId = validation?.id ?? `${id}-validation`;\n  const descriptions = [describedBy, details ? `${id}-description` : '', validation?.message ? validationId : ''].filter(Boolean).join(' ') || undefined;\n  const disallowed = (date: Date) => {\n    const next = dateValue(date);\n    if ((parseDate(min) && next < String(min)) || (parseDate(max) && next > String(max))) return true;\n    const interval = step === 'any' ? 1 : Number(step ?? 1);\n    const base = parseDate(min) ?? parseDate(String(value ?? defaultValue ?? '')) ?? new Date('1970-01-01T12:00:00');\n    return interval > 0 && Math.round((Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) - Date.UTC(base.getFullYear(), base.getMonth(), base.getDate())) / 86400000) % interval !== 0;\n  };\n  const choose = (next: string) => {\n    if (!native.current || disabled || readOnly) return;\n    // Bypass React's value tracker so the existing native onChange contract sees the calendar edit.\n    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!.set!.call(native.current, next);\n    native.current.dispatchEvent(new Event('input', { bubbles: true }));\n    setOpen(false);\n    native.current.focus();\n  };\n  return <div className={className} style={style} data-density={density} data-validation-state={validation?.state} data-oods-component={undefined} data-oods-adapter=\"DatePicker\">\n    <Label htmlFor={id}>{label}{required && requiredIndicator !== null ? requiredIndicator ?? <span aria-hidden=\"true\"> *</span> : null}</Label>\n    <div className=\"flex items-center gap-2\">\n      <Input {...props} ref={native} id={id} type=\"date\" value={value} defaultValue={defaultValue} disabled={disabled} readOnly={readOnly} required={required} min={min} max={max} step={step}\n        className={[inputClassName, pickerClassName].filter(Boolean).join(' ')} style={{ ...inputStyle, ...pickerStyle }} data-oods-component={undefined}\n        aria-describedby={descriptions} aria-invalid={props['aria-invalid'] ?? (validation?.state === 'error' || undefined)}\n        onChange={event => { onChange?.(event); const next = event.currentTarget.value; if (value === undefined) setLocal(next); if (!event.defaultPrevented) { onValueChange?.(next); onUpdate?.(next); } }} />\n      <Popover open={open} onOpenChange={next => { if (next && value === undefined) setLocal(native.current?.value ?? ''); setOpen(next); }}>\n        <PopoverTrigger disabled={disabled || readOnly} aria-label={`Open calendar for ${typeof label === 'string' ? label : id}`} className=\"inline-flex h-9 items-center rounded-md border bg-background px-3 text-sm text-foreground\">Calendar</PopoverTrigger>\n        <PopoverContent className=\"w-auto p-2\">\n          <Calendar mode=\"single\" selected={parseDate(selected)} defaultMonth={parseDate(selected)} disabled={disallowed} onSelect={date => { if (date) choose(dateValue(date)); }} />\n          <Button type=\"button\" variant=\"ghost\" onClick={() => choose('')}>Clear date</Button>\n        </PopoverContent>\n      </Popover>\n    </div>\n    {details ? <p id={`${id}-description`} className=\"text-sm text-muted-foreground\">{details}</p> : null}\n    {validation?.message ? <p id={validationId} role={validation.state === 'error' ? 'alert' : 'status'} aria-live={validation.state === 'error' ? 'assertive' : 'polite'}>{validation.message}</p> : null}\n  </div>;\n});\n"
+        }
+      ]
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "oods-tag-input",
+      "type": "registry:component",
+      "title": "OODS Foundry TagInput",
+      "description": "React adapter for OODS TagInput on shadcn/ui's Radix and Base UI bases. Preserves the OODS text-value callbacks and displayed tag list, including record labels and authored children. The OODS contract does not create or remove tags; this adapter does not add those behaviours.",
+      "dependencies": [
+        "@oods/components-react@0.10.0"
+      ],
+      "registryDependencies": [
+        "input-group",
+        "badge"
+      ],
+      "files": [
+        {
+          "path": "components/oods/tag-input.tsx",
+          "target": "components/oods/tag-input.tsx",
+          "type": "registry:component",
+          "content": "import * as React from 'react';\nimport type { TagInputProps } from '@oods/components-react';\nimport { InputGroup, InputGroupInput } from '@/registry/new-york-v4/ui/input-group';\nimport { Badge } from '@/registry/new-york-v4/ui/badge';\n\nexport const OodsTagInput = React.forwardRef<HTMLFieldSetElement, TagInputProps>(function OodsTagInput(\n  { title, label, heading, name, description, subtitle, hint, tags, value, placeholder, children, className, onChange, onValueChange, onUpdate, ...props }, ref,\n) {\n  const firstText = (...values: Array<string | undefined>) => values.find(value => value?.trim());\n  const titleText = firstText(title, label, heading, name) ?? 'Tag Input';\n  const details = firstText(description, subtitle, hint);\n  const inputId = React.useId();\n  const items = (tags ?? []).flatMap(entry => {\n    if (entry === undefined || entry === null) return [];\n    if (typeof entry === 'object' && !Array.isArray(entry)) {\n      const record = entry as Record<string, unknown>;\n      const value = ['label', 'name', 'role', 'value', 'id'].map(key => record[key]).find(value => ['string', 'number', 'boolean'].includes(typeof value) && String(value).length > 0);\n      return value === undefined ? [] : [String(value)];\n    }\n    const value = typeof entry === 'object' ? JSON.stringify(entry) : String(entry);\n    return value ? [value] : [];\n  });\n  const authored = React.Children.toArray(children).some(node => typeof node !== 'string' || node.trim().length > 0);\n  return <fieldset {...props} ref={ref} className={className} data-oods-component={undefined} data-oods-adapter=\"TagInput\" data-form-type=\"tag-input\">\n    <legend className=\"font-medium\">{titleText}</legend>\n    {details ? <p className=\"text-sm text-muted-foreground\">{details}</p> : null}\n    {authored ? children : <>\n      <label htmlFor={inputId} className=\"text-sm font-medium\">Tag</label>\n      <InputGroup><InputGroupInput id={inputId} type=\"text\" name=\"tag\" placeholder={firstText(placeholder)} value={value}\n        onChange={event => { onChange?.(event); if (!event.defaultPrevented) { onValueChange?.(event.currentTarget.value); onUpdate?.(event.currentTarget.value); } }} /></InputGroup>\n      {items.length ? <div data-tag-list=\"true\" className=\"mt-2 flex flex-wrap gap-1\">{items.map((tag, index) => <Badge key={index} variant=\"secondary\" data-tag-item=\"true\">{tag}</Badge>)}</div> : null}\n    </>}\n  </fieldset>;\n});\n"
+        }
+      ]
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "oods-status-selector",
+      "type": "registry:component",
+      "title": "OODS Foundry StatusSelector",
+      "description": "React adapter for OODS StatusSelector on shadcn/ui's Radix and Base UI bases. Preserves status/value, normalized options/states, authored children, help and native change callbacks. The visible control uses shadcn combobox keyboard interaction rather than a native select.",
+      "dependencies": [
+        "@oods/components-react@0.10.0",
+        "@oods/component-contracts@0.10.0"
+      ],
+      "registryDependencies": [
+        "select"
+      ],
+      "files": [
+        {
+          "path": "components/oods/status-selector.tsx",
+          "target": "components/oods/status-selector.tsx",
+          "type": "registry:component",
+          "content": "import * as React from 'react';\nimport type { StatusSelectorProps } from '@oods/components-react';\nimport { formatReadOnlyValue } from '@oods/component-contracts';\nimport { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/registry/new-york-v4/ui/select';\n\nexport const OodsStatusSelector = React.forwardRef<HTMLDivElement, StatusSelectorProps>(function OodsStatusSelector(\n  { label, title, help, options, states, value, status, children, className, onChange, onValueChange, onUpdate, ...props }, ref,\n) {\n  const instance = React.useId();\n  const native = React.useRef<HTMLSelectElement>(null);\n  const choices = (options ?? states ?? ['draft', 'active', 'inactive']).flatMap(entry => {\n    if (entry === undefined || entry === null) return [];\n    if (typeof entry === 'object' && !Array.isArray(entry)) {\n      const record = entry as Record<string, unknown>;\n      const text = (key: string) => typeof record[key] === 'string' && record[key].length > 0 ? record[key] as string : undefined;\n      const value = text('value') ?? text('id') ?? text('label') ?? '';\n      const label = text('label') ?? text('name') ?? formatReadOnlyValue(value, 'string', true);\n      return value || label ? [{ value, label }] : [];\n    }\n    const value = typeof entry === 'object' ? JSON.stringify(entry) : String(entry);\n    return value ? [{ value, label: formatReadOnlyValue(value, 'string', true) }] : [];\n  });\n  const [local, setLocal] = React.useState(status?.trim() ? status : choices[0]?.value ?? '');\n  const selected = value ?? local;\n  const empty = '__oods_empty_option__';\n  const labelText = [label, title].find(value => value?.trim()) ?? 'Status';\n  const authored = React.Children.toArray(children).some(node => typeof node !== 'string' || node.trim().length > 0);\n  return <div {...props} ref={ref} className={className} data-oods-component={undefined} data-oods-adapter=\"StatusSelector\" data-summary-type=\"status-selector\">\n    {authored ? children : <>\n      <label id={`${instance}-label`} htmlFor={instance} className=\"text-sm font-medium\">{labelText}</label>\n      <select ref={native} name=\"status\" value={selected} tabIndex={-1} aria-hidden=\"true\" style={{ display: 'none' }}\n        onChange={event => { onChange?.(event); if (!event.defaultPrevented) { const next = event.currentTarget.value; if (value === undefined) setLocal(next); onValueChange?.(next); onUpdate?.(next); } }}>\n        {choices.length ? choices.map((choice, index) => <option key={index} value={choice.value}>{choice.label}</option>) : <option value=\"\">Select...</option>}\n      </select>\n      <Select value={selected || empty} onValueChange={next => { if (native.current) { native.current.value = next === empty ? '' : next ?? ''; native.current.dispatchEvent(new Event('change', { bubbles: true })); } }}>\n        <SelectTrigger id={instance} aria-labelledby={`${instance}-label`} aria-describedby={help ? `${instance}-help` : undefined}><SelectValue>{choices.find(choice => choice.value === selected)?.label ?? 'Select...'}</SelectValue></SelectTrigger>\n        <SelectContent>{choices.length ? choices.map((choice, index) => <SelectItem key={index} value={choice.value || empty}>{choice.label}</SelectItem>) : <SelectItem value={empty}>Select...</SelectItem>}</SelectContent>\n      </Select>\n    </>}\n    {help ? <p id={`${instance}-help`} className=\"text-sm text-muted-foreground\">{help}</p> : null}\n  </div>;\n});\n"
+        }
+      ]
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "oods-card-header",
+      "type": "registry:component",
+      "title": "OODS Foundry CardHeader",
+      "description": "React adapter for OODS CardHeader on shadcn/ui's Radix and Base UI bases. Preserves the semantic header, heading level/as, title aliases, scalar/authored children and non-duplicated supporting copy. The team CardTitle and CardDescription supply the visual parts.",
+      "dependencies": [
+        "@oods/components-react@0.10.0"
+      ],
+      "registryDependencies": [
+        "card"
+      ],
+      "files": [
+        {
+          "path": "components/oods/card-header.tsx",
+          "target": "components/oods/card-header.tsx",
+          "type": "registry:component",
+          "content": "import * as React from 'react';\nimport type { CardHeaderProps, HeaderElement } from '@oods/components-react';\nimport { CardHeader, CardTitle, CardDescription } from '@/registry/new-york-v4/ui/card';\n\nexport const OodsCardHeader = React.forwardRef<HTMLElement, CardHeaderProps>(function OodsCardHeader(\n  { title, label, text, supporting, supportingText, subtitle, description, level, as, children, className, ...props }, ref,\n) {\n  const firstText = (...values: Array<string | undefined>) => values.find(value => value?.trim());\n  const flatten = (value: React.ReactNode): React.ReactNode[] => React.Children.toArray(value).flatMap(node => React.isValidElement<{ children?: React.ReactNode }>(node) && node.type === React.Fragment ? flatten(node.props.children) : [node]);\n  const nodes = flatten(children);\n  const authored = nodes.some(node => typeof node !== 'string' && typeof node !== 'number');\n  const scalar = authored ? undefined : nodes.join('');\n  const heading = scalar?.trim() ? scalar : firstText(title, label, text) ?? 'Card';\n  const details = firstText(supporting, supportingText, subtitle, description);\n  const Heading = (as && /^h[1-6]$/.test(as) ? as : `h${Number.isFinite(level) ? Math.max(1, Math.min(6, Math.trunc(level!))) : 2}`) as HeaderElement;\n  return <header {...props} ref={ref} className={className} data-oods-component={undefined} data-oods-adapter=\"CardHeader\">\n    <CardHeader>{authored ? children : <>\n      <CardTitle><Heading>{heading}</Heading></CardTitle>\n      {details && details.trim() !== heading.trim() ? <CardDescription data-oods-supporting=\"true\">{details}</CardDescription> : null}\n    </>}</CardHeader>\n  </header>;\n});\n"
+        }
+      ]
+    },
+    {
+      "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+      "name": "oods-price-badge",
+      "type": "registry:component",
+      "title": "OODS Foundry PriceBadge",
+      "description": "React adapter for OODS PriceBadge on shadcn/ui's Radix and Base UI bases. Preserves amount and currency precedence, currency minor units, label/children/value fallback and emphasis. Binding metadata props field, amountField, currencyField, intervalField and minorUnitsParameter retain the OODS no-op behavior.",
+      "dependencies": [
+        "@oods/components-react@0.10.0",
+        "@oods/component-contracts@0.10.0"
+      ],
+      "registryDependencies": [
+        "badge"
+      ],
+      "files": [
+        {
+          "path": "components/oods/price-badge.tsx",
+          "target": "components/oods/price-badge.tsx",
+          "type": "registry:component",
+          "content": "import * as React from 'react';\nimport type { PriceBadgeProps } from '@oods/components-react';\nimport { currencyMinorUnits } from '@oods/component-contracts';\nimport { Badge } from '@/registry/new-york-v4/ui/badge';\n\nexport const OodsPriceBadge = React.forwardRef<HTMLSpanElement, PriceBadgeProps>(function OodsPriceBadge(\n  { amountCents, unitAmountCents, minorUnits, amount, unitAmount, currency, currencyCode, label, value, children,\n    emphasis = 'subtle', field, amountField, currencyField, intervalField, minorUnitsParameter, ...props }, ref,\n) {\n  void [field, amountField, currencyField, intervalField, minorUnitsParameter];\n  const cents = amountCents ?? unitAmountCents;\n  const code = currency ?? currencyCode;\n  const price = cents === undefined ? amount ?? unitAmount : cents / currencyMinorUnits(code, minorUnits);\n  let formatted: React.ReactNode = value ?? 'Price';\n  if (price !== undefined && Number.isFinite(price)) {\n    if (!code) formatted = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(price);\n    else try { formatted = new Intl.NumberFormat(undefined, { style: 'currency', currency: code.toUpperCase() }).format(price); }\n    catch { formatted = `${code.toUpperCase()} ${price.toFixed(2)}`; }\n  }\n  return <Badge {...props} ref={ref} variant={emphasis === 'solid' ? 'default' : 'secondary'}\n    data-oods-component={undefined} data-oods-adapter=\"PriceBadge\" data-badge-variant=\"price\" data-price=\"true\" data-currency={code?.toUpperCase()}>\n    {label ?? children ?? formatted}\n  </Badge>;\n});\n"
+        }
+      ]
+    }
+  ]
+}

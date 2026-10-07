@@ -192,7 +192,7 @@
         "designer",
         "maintainer"
       ],
-      "description": "Opens, compares and lists composition versions; compare generates missing artifacts for both sides before returning a usable link; edit and accept record a new version and accepted.json in the compositions store. Team packages or checked React shadcn project closures are read and bundled. The project's installed Tailwind 4 compiles its CSS in a timed child process; aliases resolve explicitly. Closure or mapping changes record a new version and compiled snapshots stay in the composition store. No package scripts run and runtime files are not written. Never saves or edits a schema.",
+      "description": "Opens, compares and lists composition versions; compare generates missing artifacts for both sides before returning a usable link; edit and accept record a new version and accepted.json in the compositions store. Team packages or checked React/Vue shadcn project closures are read and bundled. The project's installed Tailwind 4 compiles its CSS in a timed child process; aliases resolve explicitly. Closure or mapping changes record a new version and compiled snapshots stay in the composition store. No package scripts run and runtime files are not written. Never saves or edits a schema.",
       "writes": [
         ".oods/compositions/**"
       ],
@@ -227,7 +227,7 @@
       "timeoutMs": 60000,
       "ratePerMinute": 30,
       "concurrency": 1,
-      "description": "create accepts one mapping, mappings (a list), or mappingsPath (an absolute JSON file path). It checks the entire input, duplicate identities and shipped components, and local package name, exact version and exports before one all-or-nothing write. React substitutions may instead name shadcn project/module; create and update check its TypeScript export, aliases, local import closure, installed dependencies and Tailwind 4 before saving. apply false is a dry run; list calls return per-entry outcomes. Package mappings keep their shape."
+      "description": "create accepts one mapping, mappings (a list), or mappingsPath (an absolute JSON file path). It checks the entire input, duplicate identities and shipped components, and local package name, exact version and exports before one all-or-nothing write. React/Vue substitutions may instead name shadcn project/module; create and update check its TypeScript export, aliases, local import closure, installed dependencies and Tailwind 4 before saving. apply false is a dry run; list calls return per-entry outcomes. Package mappings keep their shape."
     },
     {
       "tool": "schema",

@@ -2201,7 +2201,7 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
     }
   }
 
-  if (composed && effectiveContext) populateCollections(schema, effectiveContext, composed.object.name, composed.traits.find(trait => trait.ref.name === 'behavioral/Searchable')?.ref.parameters?.placeholder as string | undefined, listColumns);
+  if (composed && effectiveContext) populateCollections(schema, effectiveContext, composed.object.name, composed.traits.find(trait => trait.ref.name === 'behavioral/Searchable')?.ref.parameters?.placeholder as string | undefined, listColumns, composed.semantics);
   if (composed && effectiveContext) reconcileFormDetail(schema, effectiveContext, composed, input.preferences?.tabLabels, readTab, viewState);
   // Reconciled trait panels retain their slot identity; report the same confidence as their selection.
   const stampConfidence = (node: UiElement): void => {

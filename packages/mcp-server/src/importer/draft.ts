@@ -5,7 +5,7 @@ import { dump } from 'js-yaml';
 import { validateDefinition } from '../tools/object.validate.js';
 import { normalizeObjectDocument } from '../objects/object-loader.js';
 import { parameterProblems } from '../objects/parameter-validation.js';
-import { hasTrait } from '../objects/trait-loader.js';
+import { hasTrait, loadTrait } from '../objects/trait-loader.js';
 import { composeObject } from '../objects/trait-composer.js';
 import { populateObjectSchema } from '../compose/object-slot-filler.js';
 import type { ObjectDefinition, FieldDefinition, SemanticMapping, TraitReference } from '../objects/types.js';
@@ -112,8 +112,17 @@ export function draftSource(input: SourceInput): ImportResult {
         const entries = byOrigin.get(`${item.file}#${item.pointer}`) ?? [];
         for (const entry of entries) if (entry.kind === 'keyword') { entry.outcome = 'proposed'; entry.reason = `Evidence for ${trait.name}; acceptance required.`; }
       }
+      const previous = proposals.find(proposal => proposal.trait.name === trait.name);
+      if (previous) {
+        if (canonical(previous.trait) !== canonical(trait)) report.push({ ...evidence[0], object: name, kind: 'keyword', outcome: 'unmapped', reason: `Alternative ${trait.name} configuration retained as evidence; one configuration is proposed by evidence grade, then source field order. ${errors.length ? errors.join('; ') : 'Review the selected field binding before acceptance.'}` });
+        const rank = { strong: 3, medium: 2, weak: 1 };
+        if (rank[grade] > rank[previous.grade] || grade === previous.grade && previous.errors.length > 0 && !errors.length) { previous.trait = trait; previous.grade = grade; previous.errors = errors; previous.valid = !errors.length; }
+        previous.evidence.push(...evidence.filter(item => !previous.evidence.some(old => canonical(old) === canonical(item))));
+        previous.id = hash(canonical({ name, trait: previous.trait, evidence: previous.evidence })).slice(0, 16);
+        return;
+      }
       proposals.push({ id: hash(canonical({ name, trait, evidence })).slice(0, 16), trait, grade, evidence, valid: !errors.length, errors,
-        effects: `Acceptance adds ${trait.name}'s canonical fields and views. Review field alignment; no trait is applied to this draft.` });
+        effects: trait.fieldBindings ? `Acceptance adds ${trait.name}'s views with the declared fieldBindings; null bindings omit unsupported fields. No trait is applied to this draft.` : `Acceptance adds ${trait.name}'s canonical fields and views. Review field alignment; no trait is applied to this draft.` });
     };
     // Inherited fields keep the original declaration's provenance, including same-folder references.
     const fieldOrigins = (field: string): Array<{ path: string; origin: Origin }> => {
@@ -154,6 +163,7 @@ export function draftSource(input: SourceInput): ImportResult {
       }
       let target = targetName(referenceSchema), many = false;
       if (schema.type === 'array') { many = true; if (isMap(schema.items)) target = targetName(schema.items); }
+      const objectTarget = target && objectNames.has(target);
       let type: string | undefined;
       if (target && objectNames.has(target)) {
         type = many ? 'string[]' : 'string';
@@ -168,15 +178,16 @@ export function draftSource(input: SourceInput): ImportResult {
       }
       if (!type) { markField('unmapped', 'Nested documents, maps and unconstrained fields are retained in the hub; the scalar object editor cannot represent them.'); continue; }
       const validation: MapValue = Object.fromEntries(Object.entries(schema).filter(([key]) => fieldConstraints.has(key)));
-      if (schema.type === 'array' && isMap(schema.items) && !target) validation.items = schema.items;
+      if (schema.type === 'array' && isMap(schema.items) && !objectTarget) validation.items = effective(schema.items, hub);
       if (Array.isArray(schema.enum) && schema.enum.filter((v: unknown) => v !== null).every((v: unknown) => typeof v === 'string')) validation.enum = schema.enum.filter((v: unknown) => v !== null);
       const definition: FieldDefinition = { type: type + (nullable ? '?' : ''), required: (shape.required ?? []).includes(field), description: text(schema.description, '') };
       if (Object.keys(validation).length) definition.validation = validation;
-      if (schema.default !== undefined && !target) definition.default = schema.default;
+      if (schema.default !== undefined && !objectTarget) definition.default = schema.default;
       if (schema.readOnly === true) definition.readOnly = true;
       if (schema.writeOnly === true) definition.writeOnly = true;
+      if (schema.type === 'array' && isMap(schema.items) && !objectTarget) schema = { ...schema, items: effective(schema.items, hub) };
       sampleSchemas[field] = schema;
-      if (!schema.writeOnly && !target) {
+      if (!schema.writeOnly && !objectTarget) {
         const sampleSchema = { ...schema, ...(nullable ? { type: [schema.type, 'null'] } : {}) };
         for (let i = 0; i < samples.length; i++) {
           const value = sampleValue(sampleSchema, /^(name|title|label|display_name)$/i.test(field) ? name : field, i);
@@ -194,24 +205,43 @@ export function draftSource(input: SourceInput): ImportResult {
         }
       }
       const annotation = schema['x-oods'];
-      if (schema.title || annotation?.label || annotation?.detailGroup || annotation?.semanticType || annotation?.displayLabelField || annotation?.unit || annotation?.primaryKey) semantics[field] = {
+      if (schema.title || annotation?.label || annotation?.detailGroup || annotation?.semanticType || annotation?.displayLabelField || annotation?.referenceLabelField || annotation?.unit || annotation?.primaryKey) semantics[field] = {
         semantic_type: annotation?.semanticType ?? (annotation?.primaryKey ? 'identifier.primary' : 'text.value'), token_mapping: 'tokenMap(text.primary)',
-        ui_hints: { ...(annotation?.primaryKey ? { primaryKey: true } : {}), ...(schema.title || annotation?.label ? { label: annotation?.label ?? schema.title } : {}), ...(annotation?.detailGroup ? { detail_group: annotation.detailGroup } : {}), ...(annotation?.displayLabelField ? { displayLabelField: annotation.displayLabelField } : {}), ...(annotation?.unit ? { unit: annotation.unit } : {}) },
+        ui_hints: { ...(annotation?.primaryKey ? { primaryKey: true } : {}), ...(schema.title || annotation?.label ? { label: annotation?.label ?? schema.title } : {}), ...(annotation?.detailGroup ? { detail_group: annotation.detailGroup } : {}), ...(annotation?.referenceLabelField ? { referenceLabelField: annotation.referenceLabelField } : {}), ...(annotation?.displayLabelField ? { displayLabelField: annotation.displayLabelField } : {}), ...(annotation?.unit ? { unit: annotation.unit } : {}) },
       };
       if (isMap(annotation?.currency) && typeof annotation.currency.field === 'string') {
         semantics[field] = { semantic_type: 'money.amount', token_mapping: 'tokenMap(text.primary)', ui_hints: { ...semantics[field]?.ui_hints, component: 'CurrencyAmount', currencyField: annotation.currency.field, ...(annotation.currency.minorUnits ? { minorUnits: annotation.currency.minorUnits } : {}) } };
         mark(provenance[`${fieldPath}/x-oods`], 'mapped', 'Explicit currency and unit declaration becomes money semantics.');
       }
-      if (Array.isArray(validation.enum) && validation.enum.length > 1) propose({ name: 'Stateful', parameters: { states: validation.enum, initialState: validation.enum.includes(schema.default) ? schema.default : validation.enum[0] } }, 'medium', [{ ...fieldOrigin, pointer: `${fieldOrigin.pointer}/enum`, kind: 'structure', reason: 'String enum supplies possible states; lifecycle meaning and initial state require acceptance.' }]);
-      else if (type === 'datetime') propose({ name: 'Timestampable', parameters: {} }, schema.readOnly || schema['x-oods']?.generatedTimestamp ? 'strong' : 'medium', [{ ...fieldOrigin, pointer: `${fieldOrigin.pointer}/format`, kind: 'structure', reason: `date-time format${schema.readOnly ? ' and readOnly' : ''} provides timestamp evidence; audit meaning requires acceptance.` }]);
-      else if (/^(status|state)$/i.test(field)) propose({ name: 'Stateful', parameters: {} }, 'weak', [{ ...fieldOrigin, kind: 'name', reason: 'Name alone suggests status; no state values or lifecycle structure were declared.' }]);
+      if (Array.isArray(validation.enum) && validation.enum.length > 1) propose({ name: 'Stateful', fieldBindings: { status: field }, parameters: { states: validation.enum, initialState: validation.enum.includes(schema.default) ? schema.default : validation.enum[0] } }, 'medium', [{ ...fieldOrigin, pointer: `${fieldOrigin.pointer}/enum`, kind: 'structure', reason: 'String enum supplies possible states; lifecycle meaning and initial state require acceptance.' }]);
+      else if (/^(status|state)$/i.test(field)) propose({ name: 'Stateful', fieldBindings: { status: field }, parameters: {} }, 'weak', [{ ...fieldOrigin, kind: 'name', reason: 'Name alone suggests status; no state values or lifecycle structure were declared.' }]);
+    }
+    const timestamps = Object.entries(sampleSchemas).filter(([, schema]) => schema.format === 'date-time');
+    if (timestamps.length) {
+      const created = timestamps.find(([field]) => /^created_?at$/i.test(field)) ?? timestamps.find(([field]) => !/^updated_?at$/i.test(field));
+      const updated = timestamps.find(([field]) => /^updated_?at$/i.test(field));
+      const fieldBindings = Object.fromEntries(Object.keys(loadTrait('Timestampable').schema).map(field => [field, fields[field] ? field : null]));
+      fieldBindings.created_at = created?.[0] ?? null;
+      fieldBindings.updated_at = updated?.[0] ?? null;
+      propose({ name: 'Timestampable', parameters: {}, fieldBindings }, timestamps.some(([, schema]) => schema.readOnly || schema['x-oods']?.generatedTimestamp) ? 'strong' : 'medium', timestamps.map(([field, schema]) => ({
+        ...(fieldOrigins(field)[0]?.origin ?? origin), kind: 'structure' as const,
+        reason: `date-time format${schema.readOnly ? ' and readOnly' : ''} provides timestamp evidence for ${field}; review the proposed audit role before acceptance.`,
+      })));
     }
     const annotations = shape['x-oods'];
     for (const declared of Array.isArray(annotations?.traitProposals) ? annotations.traitProposals : []) {
-      if (isMap(declared) && typeof declared.name === 'string') propose({ name: declared.name, parameters: declared.parameters ?? {} }, declared.evidence.every((e: MapValue) => e.kind === 'name') ? 'weak' : declared.grade, declared.evidence);
+      if (isMap(declared) && typeof declared.name === 'string') propose({ name: declared.name, parameters: declared.parameters ?? {}, ...(declared.fieldBindings ? { fieldBindings: declared.fieldBindings } : {}) }, declared.evidence.every((e: MapValue) => e.kind === 'name') ? 'weak' : declared.grade, declared.evidence);
     }
     suggestTraits({ ...shape, title: name }, shape.properties, field => fieldOrigins(field)[0]?.origin ?? origin, propose, (field, reason) => report.push({ ...(fieldOrigins(field)[0]?.origin ?? origin), object: name, kind: 'keyword', outcome: 'unmapped', reason }));
     for (const edge of annotations?.relationships ?? []) if (fields[edge.via] && objectNames.has(edge.target) && !relationships.some(item => item.via === edge.via)) relationships.push(edge);
+    // Acceptance cannot invent facts the source does not supply. View-state traits are deliberately not record data.
+    for (const proposal of proposals) if (hasTrait(proposal.trait.name)) {
+      const trait = loadTrait(proposal.trait.name);
+      if (trait.trait.tags?.includes('list-behavior')) continue;
+      proposal.trait.fieldBindings = { ...Object.fromEntries(Object.keys(trait.schema).map(field => [field, fields[field] ? field : null])), ...proposal.trait.fieldBindings };
+      proposal.id = hash(canonical({ name, trait: proposal.trait, evidence: proposal.evidence })).slice(0, 16);
+      proposal.effects = `Acceptance binds ${proposal.trait.name} to the declared source fields and omits canonical fields with null bindings. ${Object.values(proposal.trait.fieldBindings).some(Boolean) ? 'Review the bindings and audit roles.' : 'No source fields implement this trait yet; acceptance contributes no record views.'} No trait is applied to this draft.`;
+    }
     const title = annotations?.titleField ?? Object.keys(fields).find(field => /^(name|title|label|display_name)$/i.test(field))
       ?? Object.keys(fields).find(field => [name.toLowerCase(), name.toLowerCase().replace(/s$/, '')].some(prefix => ['name', 'title', 'label'].some(suffix => field.replace(/_/g, '').toLowerCase() === prefix + suffix)))
       ?? Object.keys(fields).find(field => sampleSchemas[field]?.['x-oods']?.unique && !sampleSchemas[field]?.format && !sampleSchemas[field]?.enum)
@@ -224,6 +254,10 @@ export function draftSource(input: SourceInput): ImportResult {
     if (!Object.keys(fields).length) { objectNames.delete(name); mark(origin, 'unmapped', 'No fields can be projected without choosing a variant or inventing a scalar conversion.', 'schema'); continue; }
     const definition = normalizeObjectDocument({ object: { name, version: '1.0.0', domain: 'imported', description: text(shape.description, `Imported ${hub['x-oods'].sourceNames[name]} schema. Samples without source examples are illustrative.`) }, schema: fields, traits: [], semantics, relationships, samples,
       metadata: { supportedContexts, ...(annotations?.listColumns ? { listColumns: annotations.listColumns.filter((column: MapValue) => fields[column.field]) } : {}), references: [`${origin.file}#${origin.pointer}`] } });
+    for (const proposal of proposals) if (proposal.valid) {
+      try { composeObject({ ...definition, traits: [proposal.trait] }); }
+      catch (error) { proposal.valid = false; proposal.errors.push((error as Error).message); }
+    }
     // Exercise the same composition and field-contract materialization as object.validate before issuing a draft.
     const composed = composeObject(definition);
     populateObjectSchema({ version: '2026.02', screens: [{ id: 'import-shape', component: 'Stack' }] } as UiSchema, composed.schema, composed.semantics, composed.traits, composed.samples);
@@ -257,6 +291,10 @@ export function draftSource(input: SourceInput): ImportResult {
     draft.yaml = dump(JSON.parse(canonical(draft.definition)), { noRefs: true, sortKeys: true, lineWidth: 120 });
     const checked = validateDefinition(draft.yaml, [...drafted]);
     if (!checked.valid) throw new Error(`Draft ${draft.name} does not validate: ${checked.errors.map(error => error.message).join('; ')}`);
+  }
+  for (const entry of report) if (!entry.object) {
+    const owner = drafts.filter(draft => entry.file === draft.origin.file && (entry.pointer === draft.origin.pointer || entry.pointer.startsWith(draft.origin.pointer + '/'))).sort((a, b) => b.origin.pointer.length - a.origin.pointer.length)[0];
+    if (owner) entry.object = owner.name;
   }
   const ordered = dependencyOrder(drafts);
   const counts = { total: report.length, mapped: 0, proposed: 0, unmapped: 0, fields: 0, mappedFields: 0 };

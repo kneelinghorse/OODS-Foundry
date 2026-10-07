@@ -85,12 +85,12 @@ export function substituteGeneratedComponents(result: CodegenResult, schema: UiS
   if (result.status !== 'ok') return [];
   const framework = result.framework;
   const entries = activeSubstitutions(schema);
-  if (framework !== 'react') {
+  {
     const components = new Set<string>();
     const visit = (node: UiSchema['screens'][number]) => { components.add(node.component); node.children?.forEach(visit); };
     schema.screens.forEach(visit);
     // Screen action controls are emitted outside the schema tree.
-    for (const match of result.code.matchAll(/import \{ ([^}]+) \} from '@oods\/components-vue'/g)) for (const name of match[1]!.split(',')) components.add(name.trim().split(/\s+as\s+/)[0]!);
+    if (framework !== 'html') for (const match of result.code.matchAll(new RegExp(`import \\{ ([^}]+) \\} from '@oods/components-${framework}'`, 'g'))) for (const name of match[1]!.split(',')) components.add(name.trim().split(/\s+as\s+/)[0]!);
     if (framework === 'html') {
       const visitHtml = (node: { attrs?: Array<{ name: string; value: string }>; childNodes?: any[] }) => {
         const component = node.attrs?.find(attr => attr.name === 'data-oods-component')?.value;
@@ -99,8 +99,9 @@ export function substituteGeneratedComponents(result: CodegenResult, schema: UiS
       };
       visitHtml(parseFragment(result.code));
     }
-    for (const entry of entries) if (entry.substitution.react?.shadcn && (framework === 'html' || !entry.substitution.vue) && components.has(entry.substitution.component)) {
-      result.warnings.push({ code: 'OODS-V218', component: entry.substitution.component, message: `Mapping '${entry.mappingId}' is React-only shadcn source; ${framework} output keeps the OODS Foundry component.` });
+    for (const entry of entries) if ((entry.substitution.react?.shadcn || entry.substitution.vue?.shadcn) && (framework === 'html' || !entry.substitution[framework]) && components.has(entry.substitution.component)) {
+      const source = entry.substitution.react?.shadcn ? entry.substitution.vue?.shadcn ? 'React/Vue' : 'React-only' : 'Vue-only';
+      result.warnings.push({ code: 'OODS-V218', component: entry.substitution.component, message: `Mapping '${entry.mappingId}' is ${source} shadcn source; ${framework} output keeps the OODS Foundry component.` });
     }
   }
   if (framework === 'html') return [];
@@ -114,12 +115,16 @@ export function substituteGeneratedComponents(result: CodegenResult, schema: UiS
       if (!entry) { remaining.push(declaration); continue; }
       const source = entry.substitution[framework]!;
       const { localPath: _localPath, shadcn, ...implementation } = source;
-      let emitted: EmittedSubstitution;
-      if (shadcn) {
-        const { project: _project, ...closure } = inspectShadcn(shadcn, source.export);
-        emitted = { mappingId: entry.mappingId, component, source: { ...implementation, shadcn: closure } };
-      } else emitted = { mappingId: entry.mappingId, component, source: { ...implementation, version: exactVersion(source) } };
-      used.set(component, emitted);
+      // A workflow imports the same component in several screens. Inspect its closure once per
+      // generation call; a later call still re-reads the project and detects every source change.
+      let emitted = used.get(component);
+      if (!emitted) {
+        if (shadcn) {
+          const { project: _project, ...closure } = inspectShadcn(shadcn, source.export, framework);
+          emitted = { mappingId: entry.mappingId, component, source: { ...implementation, shadcn: closure } };
+        } else emitted = { mappingId: entry.mappingId, component, source: { ...implementation, version: exactVersion(source) } };
+        used.set(component, emitted);
+      }
       mapped.push({ ...emitted, local, alias: `__Mapped${component}` });
     }
     if (!mapped.length) return _match;

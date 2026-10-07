@@ -1400,7 +1400,8 @@ describe('map.create checks a whole team mapping list before one write', () => {
   });
 
   it('names the bad entry and saves none of the list, including its otherwise valid entries', async () => {
-    const mappings = [entry(), { ...entry('TeamInput', 'Input'), oodsTraits: [] }];
+    // Empty traits are valid for component-only intake; an unknown target is still an invalid batch entry.
+    const mappings = [entry(), entry('TeamInput', 'MissingContract')];
     const result = await createHandle({ mappings, apply: true });
     expect(result).toMatchObject({ status: 'error', applied: false, entries: [
       { index: 0, status: 'valid', applied: false },

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+  <edmx:Reference Uri="http://127.0.0.1:47391/vocabularies/UI.xml">
+    <edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="http://127.0.0.1:47391/vocabularies/Common.xml">
+    <edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Common"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="http://127.0.0.1:47391/vocabularies/Measures.xml">
+    <edmx:Include Namespace="Org.OData.Measures.V1" Alias="Measures"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="http://127.0.0.1:47391/vocabularies/Capabilities.xml">
+    <edmx:Include Namespace="Org.OData.Capabilities.V1" Alias="Capabilities"/>
+  </edmx:Reference>
+  <edmx:DataServices>
+    <Schema Namespace="com.example.travel" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <EntityType Name="Trip">
+        <Key><PropertyRef Name="TripUUID"/></Key>
+        <Property Name="TripUUID" Type="Edm.Guid" Nullable="false"/>
+        <Property Name="TripID" Type="Edm.String" MaxLength="8" Nullable="false"/>
+        <Property Name="Description" Type="Edm.String" MaxLength="120"/>
+        <Property Name="BeginDate" Type="Edm.Date"/>
+        <Property Name="EndDate" Type="Edm.Date"/>
+        <Property Name="TotalPrice" Type="Edm.Decimal" Precision="15" Scale="2"/>
+        <Property Name="CurrencyCode" Type="Edm.String" MaxLength="3"/>
+        <Property Name="AgencyID" Type="Edm.String" MaxLength="6"/>
+        <NavigationProperty Name="Agency" Type="com.example.travel.Agency">
+          <ReferentialConstraint Property="AgencyID" ReferencedProperty="AgencyID"/>
+        </NavigationProperty>
+      </EntityType>
+      <EntityType Name="Agency">
+        <Key><PropertyRef Name="AgencyID"/></Key>
+        <Property Name="AgencyID" Type="Edm.String" MaxLength="6" Nullable="false"/>
+        <Property Name="Name" Type="Edm.String" MaxLength="80"/>
+        <Property Name="City" Type="Edm.String" MaxLength="40"/>
+      </EntityType>
+      <EntityContainer Name="Container">
+        <EntitySet Name="Trips" EntityType="com.example.travel.Trip">
+          <NavigationPropertyBinding Path="Agency" Target="Agencies"/>
+        </EntitySet>
+        <EntitySet Name="Agencies" EntityType="com.example.travel.Agency"/>
+      </EntityContainer>
+      <Annotations Target="com.example.travel.Trip">
+        <Annotation Term="UI.HeaderInfo">
+          <Record Type="UI.HeaderInfoType">
+            <PropertyValue Property="TypeName" String="Trip"/>
+            <PropertyValue Property="TypeNamePlural" String="Trips"/>
+            <PropertyValue Property="Title">
+              <Record Type="UI.DataField"><PropertyValue Property="Value" Path="Description"/></Record>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+        <Annotation Term="UI.LineItem">
+          <Collection>
+            <Record Type="UI.DataField"><PropertyValue Property="Value" Path="TripID"/></Record>
+            <Record Type="UI.DataField"><PropertyValue Property="Value" Path="Description"/></Record>
+            <Record Type="UI.DataField"><PropertyValue Property="Value" Path="BeginDate"/></Record>
+            <Record Type="UI.DataField"><PropertyValue Property="Value" Path="TotalPrice"/></Record>
+          </Collection>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="com.example.travel.Trip/TotalPrice">
+        <Annotation Term="Measures.ISOCurrency" Path="CurrencyCode"/>
+        <Annotation Term="Common.Label" String="Total price"/>
+      </Annotations>
+      <Annotations Target="com.example.travel.Trip/BeginDate">
+        <Annotation Term="Common.Label" String="Starts on"/>
+      </Annotations>
+      <Annotations Target="com.example.travel.Trip/AgencyID">
+        <Annotation Term="Common.Label" String="Agency"/>
+        <Annotation Term="Common.Text" Path="Agency/Name"/>
+      </Annotations>
+      <Annotations Target="com.example.travel.Container/Agencies">
+        <Annotation Term="Capabilities.InsertRestrictions"><Record><PropertyValue Property="Insertable" Bool="false"/></Record></Annotation>
+        <Annotation Term="Capabilities.UpdateRestrictions"><Record><PropertyValue Property="Updatable" Bool="false"/></Record></Annotation>
+      </Annotations>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

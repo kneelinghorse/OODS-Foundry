@@ -1,0 +1,20 @@
+{
+  "$schema": "https://shadcn-vue.com/schema/registry-item.json",
+  "name": "oods-button",
+  "type": "registry:component",
+  "title": "OODS Foundry Button",
+  "description": "Vue adapter for OODS Button on shadcn-vue / Reka UI. Danger uses solid destructive/background tokens in both themes; success and warning use secondary because shadcn has no distinct palettes.",
+  "dependencies": [
+    "@oods/components-vue@0.10.0"
+  ],
+  "registryDependencies": [
+    "button"
+  ],
+  "files": [
+    {
+      "path": "components/oods/button.vue",
+      "type": "registry:component",
+      "content": "<script lang=\"ts\">\nimport { defineComponent, h } from 'vue';\nimport { Button as Contract } from '@oods/components-vue';\nimport { Button } from '@/components/ui/button';\n\n// Reuse the shipped Vue prop defaults and event vocabulary; the rendered parts belong to the team.\nexport default defineComponent({\n  name: 'OodsButtonAdapter',\n  inheritAttrs: false,\n  props: Contract.props,\n  emits: Array.isArray(Contract.emits) ? Contract.emits : Object.keys(Contract.emits ?? {}),\n  setup(props: any, { attrs, slots, emit }: any) {\n    return () => h(Button, { ...attrs, 'data-oods-component': undefined, type: props.type, disabled: props.disabled,\n      variant: ({ primary: 'default', neutral: 'outline', secondary: 'secondary', success: 'secondary', warning: 'secondary', danger: 'destructive', ghost: 'ghost' } as any)[props.intent] ?? 'default',\n      size: props.size === 'md' ? 'default' : props.size === 'xs' ? 'sm' : props.size,\n      class: [props.intent === 'danger' ? 'bg-destructive text-background hover:bg-destructive dark:bg-destructive dark:hover:bg-destructive' : '', attrs.class],\n      'data-oods-adapter': 'Button', onClick: (event: MouseEvent) => emit('activate', event),\n    }, { default: () => slots.default?.() ?? props.content });\n  },\n});\n</script>\n"
+    }
+  ]
+}
