@@ -59,7 +59,17 @@ function declaredLicense(manifest) {
   return "(not declared)";
 }
 
+// Declared homepages that no longer resolve (checked 2026-10-08; website audit LINK-7): the project's repository root
+// is named instead, so every link in the notices opens.
+const MOVED_HOMEPAGES = new Map([
+  ["lower-case", "https://github.com/blakeembrey/change-case"],
+  ["no-case", "https://github.com/blakeembrey/change-case"],
+  ["@opentelemetry/api-logs", "https://github.com/open-telemetry/opentelemetry-js"],
+  ["@opentelemetry/sdk-logs", "https://github.com/open-telemetry/opentelemetry-js"],
+]);
+
 function projectUrl(manifest) {
+  if (MOVED_HOMEPAGES.has(manifest.name)) return MOVED_HOMEPAGES.get(manifest.name);
   if (typeof manifest.homepage === "string" && /^https?:\/\//.test(manifest.homepage)) {
     return manifest.homepage.trim();
   }

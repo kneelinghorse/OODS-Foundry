@@ -1,3 +1,4 @@
+import { withPublicEvidence } from '../lib/public-evidence.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -304,7 +305,7 @@ export async function handle(input?: HealthInput): Promise<HealthOutput> {
     tokens: tokenInfo,
     schemas: schemaInfo,
     latency,
-    productReality: { runtime, release, tools, html, fidelity, viz },
+    productReality: withPublicEvidence({ runtime, release, tools, html, fidelity, viz }),
     dslVersion: CURRENT_VERSION,
     ...(warnings.length > 0 ? { warnings } : {}),
   };

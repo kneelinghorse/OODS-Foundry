@@ -97,8 +97,7 @@
             "inline",
             "file"
           ],
-          "default": "inline",
-          "description": "inline (default) returns the artifact in the response. file writes every artifact file plus artifact.json beside the saved-schema store (<store>/../payloads/code.generate-<digest>/) and returns a payload block of file references; the artifact is then omitted from the response and code is empty."
+          "description": "Unset: inline, unless the artifact would exceed 100,000 characters, in which case it is written as with file and warning OODS-W004 says so. inline returns the artifact in the response. file writes every artifact file plus artifact.json beside the saved-schema store (<store>/../payloads/code.generate-<digest>/) and returns a payload block of file references; the artifact is then omitted from the response and code is empty."
         },
         "output": {
           "type": "string",

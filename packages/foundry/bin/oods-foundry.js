@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// OODS Foundry's command, which an MCP client starts with `npx -y @oods/foundry` (s211-m03).
+// OODS Foundry's command, which an MCP client starts with `npx -y @oods/foundry`.
 //
 // The package carries the release archive and its manifest under runtime/. On first start the archive is checked
 // against the digest its manifest records and unpacked once into ~/.oods-foundry/runtime/<version>-<digest>; every
@@ -9,9 +9,9 @@
 //
 // What you make (compositions, saved schemas, file-mode output) is kept in ~/.oods-foundry too, so it survives
 // upgrades. Set MCP_SCHEMA_STORE_ROOT to keep it somewhere else. Your own objects and traits are read from
-// ~/.oods-foundry/objects and ~/.oods-foundry/traits after the ones Forge ships (s213-m03); set OODS_OBJECTS_DIR and
+// ~/.oods-foundry/objects and ~/.oods-foundry/traits after the shipped ones; set OODS_OBJECTS_DIR and
 // OODS_TRAITS_DIR to read them from somewhere else. Your own brands are kept in ~/.oods-foundry/brands and built there,
-// outside the runtime (s213-m06); set OODS_BRANDS_DIR to keep them somewhere else.
+// outside the runtime; set OODS_BRANDS_DIR to keep them somewhere else.
 import { spawnSync } from 'node:child_process';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -20,7 +20,10 @@ import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const PACKAGE_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const HOME = path.join(os.homedir(), '.oods-foundry');
+// OODS_FOUNDRY_HOME moves everything kept here at once (the Docker image sets it to its /data volume); the importer
+// and the intake drafts read the same variable.
+const HOME = process.env.OODS_FOUNDRY_HOME ? path.resolve(process.env.OODS_FOUNDRY_HOME) : path.join(os.homedir(), '.oods-foundry');
+process.env.OODS_FOUNDRY_HOME = HOME;
 const MARKER = '.unpacked.json';
 const say = (message) => process.stderr.write(`[oods-foundry] ${message}\n`);
 const fail = (message) => {
@@ -29,7 +32,7 @@ const fail = (message) => {
 };
 
 const pkg = JSON.parse(fs.readFileSync(path.join(PACKAGE_DIR, 'package.json'), 'utf8'));
-// The package's Node floor, checked before anything is unpacked (s220-m02). The adapter checks the same floor again
+// The package's Node floor, checked before anything is unpacked. The adapter checks the same floor again
 // when a runtime is started straight from its archive.
 const floor = /^>=\s*(\d+)\.(\d+)\.(\d+)$/.exec(pkg.engines?.node ?? '')?.slice(1).map(Number);
 const node = process.versions.node.split('.').map(Number);

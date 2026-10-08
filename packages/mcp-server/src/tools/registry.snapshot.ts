@@ -25,8 +25,15 @@ export async function handle(input: RegistrySnapshotInput): Promise<RegistrySnap
   }
 
   const payload = componentsResult.payload as ComponentsPayload;
-  const traits = indexTraits(payload.traits);
-  const objects = indexObjects(payload.objects);
+  // s238 (0.10.1): the whole registry with every schema, view extension and token map is about 410,000 characters,
+  // more than Claude clients take in one reply. The default is a summary; detail:'full' (optionally with names)
+  // returns the complete definitions.
+  const detail = input?.detail === 'full' ? 'full' : 'summary';
+  const wanted = Array.isArray(input?.names) && input.names.length ? new Set(input.names) : null;
+  const pick = <T>(index: Record<string, T>): Record<string, T> => wanted ? Object.fromEntries(Object.entries(index).filter(([name]) => wanted.has(name))) as Record<string, T> : index;
+  const traits = pick(indexTraits(payload.traits, detail));
+  const objects = pick(indexObjects(payload.objects, detail));
+  const notFound = wanted ? [...wanted].filter(name => !(name in traits) && !(name in objects)).sort() : [];
   const generatedAt = latestIso([mappingsDoc.generatedAt, componentsResult.generatedAt, payload.generatedAt]);
 
   const snapshotBase = {
@@ -34,6 +41,8 @@ export async function handle(input: RegistrySnapshotInput): Promise<RegistrySnap
     traits,
     objects,
     generatedAt,
+    detail,
+    ...(notFound.length ? { notFound } : {}),
     registry: liveRegistrySummary({ includeInternal }),
   };
 
@@ -43,7 +52,7 @@ export async function handle(input: RegistrySnapshotInput): Promise<RegistrySnap
   };
 }
 
-function indexTraits(values: unknown[] | undefined): Record<string, RegistrySnapshotTraitInfo> {
+function indexTraits(values: unknown[] | undefined, detail: 'summary' | 'full'): Record<string, RegistrySnapshotTraitInfo> {
   const output: Record<string, RegistrySnapshotTraitInfo> = Object.create(null);
 
   for (const value of values ?? []) {
@@ -51,7 +60,7 @@ function indexTraits(values: unknown[] | undefined): Record<string, RegistrySnap
     const entry = value as Record<string, unknown>;
     const name = typeof entry.name === 'string' ? entry.name : null;
     const version = typeof entry.version === 'string' ? entry.version : null;
-    const description = typeof entry.description === 'string' ? entry.description : '';
+    const description = brief(typeof entry.description === 'string' ? entry.description : '', detail);
     const category = typeof entry.category === 'string' ? entry.category : 'unknown';
     if (!name || !version) continue;
 
@@ -64,21 +73,21 @@ function indexTraits(values: unknown[] | undefined): Record<string, RegistrySnap
       ...(Array.isArray(entry.contexts)
         ? { contexts: entry.contexts.filter((item): item is string => typeof item === 'string') }
         : {}),
-      ...(Array.isArray(entry.viewExtensions)
+      ...(detail === 'full' && Array.isArray(entry.viewExtensions)
         ? { viewExtensions: entry.viewExtensions.filter((item): item is Record<string, unknown> => !!item && typeof item === 'object') }
         : {}),
-      ...(Array.isArray(entry.parameters)
+      ...(detail === 'full' && Array.isArray(entry.parameters)
         ? { parameters: entry.parameters.filter((item): item is Record<string, unknown> => !!item && typeof item === 'object') }
         : {}),
-      ...(entry.schema && typeof entry.schema === 'object' ? { schema: entry.schema as Record<string, unknown> } : {}),
-      ...(entry.semantics && typeof entry.semantics === 'object'
+      ...(detail === 'full' && entry.schema && typeof entry.schema === 'object' ? { schema: entry.schema as Record<string, unknown> } : {}),
+      ...(detail === 'full' && entry.semantics && typeof entry.semantics === 'object'
         ? { semantics: entry.semantics as Record<string, unknown> }
         : {}),
-      ...(entry.tokens && typeof entry.tokens === 'object' ? { tokens: entry.tokens as Record<string, unknown> } : {}),
+      ...(detail === 'full' && entry.tokens && typeof entry.tokens === 'object' ? { tokens: entry.tokens as Record<string, unknown> } : {}),
       ...(Array.isArray(entry.dependencies)
         ? { dependencies: entry.dependencies.filter((item): item is string => typeof item === 'string') }
         : {}),
-      ...(entry.metadata && typeof entry.metadata === 'object'
+      ...(detail === 'full' && entry.metadata && typeof entry.metadata === 'object'
         ? { metadata: entry.metadata as Record<string, unknown> }
         : {}),
       ...(Array.isArray(entry.objects)
@@ -91,7 +100,7 @@ function indexTraits(values: unknown[] | undefined): Record<string, RegistrySnap
   return output;
 }
 
-function indexObjects(values: unknown[] | undefined): Record<string, RegistrySnapshotObjectInfo> {
+function indexObjects(values: unknown[] | undefined, detail: 'summary' | 'full'): Record<string, RegistrySnapshotObjectInfo> {
   const output: Record<string, RegistrySnapshotObjectInfo> = Object.create(null);
 
   for (const value of values ?? []) {
@@ -100,7 +109,7 @@ function indexObjects(values: unknown[] | undefined): Record<string, RegistrySna
     const name = typeof entry.name === 'string' ? entry.name : null;
     const version = typeof entry.version === 'string' ? entry.version : null;
     const domain = typeof entry.domain === 'string' ? entry.domain : null;
-    const description = typeof entry.description === 'string' ? entry.description : '';
+    const description = brief(typeof entry.description === 'string' ? entry.description : '', detail);
     if (!name || !version || !domain) continue;
 
     output[name] = {
@@ -116,7 +125,7 @@ function indexObjects(values: unknown[] | undefined): Record<string, RegistrySna
               .map((trait) => ({
                 reference: String(trait.reference ?? ''),
                 ...(trait.alias === null || typeof trait.alias === 'string' ? { alias: (trait.alias ?? null) as string | null } : {}),
-                ...(trait.parameters && typeof trait.parameters === 'object'
+                ...(detail === 'full' && trait.parameters && typeof trait.parameters === 'object'
                   ? { parameters: trait.parameters as Record<string, unknown> }
                   : {}),
               }))
@@ -124,11 +133,11 @@ function indexObjects(values: unknown[] | undefined): Record<string, RegistrySna
           }
         : {}),
       ...(Array.isArray(entry.fields) ? { fields: entry.fields.filter((item): item is string => typeof item === 'string') } : {}),
-      ...(entry.semantics && typeof entry.semantics === 'object'
+      ...(detail === 'full' && entry.semantics && typeof entry.semantics === 'object'
         ? { semantics: entry.semantics as Record<string, unknown> }
         : {}),
-      ...(entry.tokens && typeof entry.tokens === 'object' ? { tokens: entry.tokens as Record<string, unknown> } : {}),
-      ...(entry.metadata && typeof entry.metadata === 'object'
+      ...(detail === 'full' && entry.tokens && typeof entry.tokens === 'object' ? { tokens: entry.tokens as Record<string, unknown> } : {}),
+      ...(detail === 'full' && entry.metadata && typeof entry.metadata === 'object'
         ? { metadata: entry.metadata as Record<string, unknown> }
         : {}),
       ...(entry.visibility === 'public' || entry.visibility === 'internal' ? { visibility: entry.visibility } : {}),
@@ -137,6 +146,13 @@ function indexObjects(values: unknown[] | undefined): Record<string, RegistrySna
   }
 
   return output;
+}
+
+/** A summary keeps a description's first paragraph on one line, at most 240 characters; full detail keeps all of it. */
+function brief(description: string, detail: 'summary' | 'full'): string {
+  if (detail === 'full') return description;
+  const first = description.split(/\n\s*\n/)[0]!.replace(/\s+/g, ' ').trim();
+  return first.length > 240 ? `${first.slice(0, 239).trimEnd()}…` : first;
 }
 
 function latestIso(values: Array<string | null | undefined>): string {

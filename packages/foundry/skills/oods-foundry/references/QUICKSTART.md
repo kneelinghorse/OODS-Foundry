@@ -9,11 +9,9 @@ Use Node.js 22.0.0 or newer on macOS or Linux and connect your MCP client as the
 In your project, install this version of OODS Foundry and copy its examples outside the installed runtime:
 
 ```sh
-npm install @oods/foundry@0.10.0
+npm install @oods/foundry@0.10.1
 cp -R node_modules/@oods/foundry/quickstart ./harbor-design-system
 ```
-
-For a release candidate, install its supplied OODS Foundry tarball in the first command. The remaining steps are identical.
 
 The input folder contains `harbor.tokens.json`, `Stockable.trait.yaml`, `Warehouse.object.yaml`, `ColdRoom.object.yaml` and `team-components/`. Replace their example values with your design system's values as you go. The brand document maps colour values into OODS Foundry's named roles; it is not an automatic importer for every design-token format. Keep the base, dark and high-contrast documents and their role names.
 
@@ -364,7 +362,7 @@ Call `code_generate` to receive a complete single-screen app rather than only a 
 {"schemaRef":"<schemaRef>","framework":"vue","profile":"build","options":{"output":"application","brand":"Harbor","theme":"light","payloadMode":"file"}}
 ```
 
-Each result names its payload directory, artifact content hash, dependencies and `validationReceipt`. The content hashes a clean run of this walkthrough produces are in the package's `quickstart/expected.json`. The build profile checks source statically; read `notChecked` for compilation and browser work that has not run. Copy each artifact's files into a separate app folder. Its package.json pins, at exact versions, the OODS packages its code imports, which install from npm, and the example team package. The example package is on no registry, so first install the local `harbor-example-components-1.0.0.tgz` by its path, then follow the install block (`npm install`, then `npm run build`) and run `npm run dev`. For an unpublished release candidate, install its supplied OODS tarballs the same way.
+Each result names its payload directory, artifact content hash, dependencies and `validationReceipt`. The content hashes a clean run of this walkthrough produces are in the package's `quickstart/expected.json`. The build profile checks source statically; read `notChecked` for compilation and browser work that has not run. Copy each artifact's files into a separate app folder. Its package.json pins, at exact versions, the OODS packages its code imports, which install from npm, and the example team package. The example package is on no registry, so first install the local `harbor-example-components-1.0.0.tgz` by its path, then follow the install block (`npm install`, then `npm run build`) and run `npm run dev`.
 
 The screen labels its sample data. Connect actions to your application before shipping: the preview's integration notice means that no domain record was changed. Request `context: "workflow"` when you want multiple screens with a local sample store; that store does not supply production persistence.
 

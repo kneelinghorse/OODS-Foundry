@@ -170,7 +170,8 @@ export async function runNpmE2E({ tarball, workDir, out, libraryTarballs }) {
     receipt.lastCall = { tool: name, state: 'returned' }; writeReceipt(); return result;
   };
   try {
-    assert.deepEqual(first.initialized.serverInfo, { name: "oods-foundry-adapter", version: adapterVersion });
+    // 0.10.1: serverInfo also carries the title, website and icon the registry entry declares.
+    assert.deepEqual(first.initialized.serverInfo, { name: "oods-foundry-adapter", version: adapterVersion, title: "OODS Foundry", websiteUrl: "https://oods-foundry.com/", icons: [{ src: "https://oods-foundry.com/icon-512.png", mimeType: "image/png", sizes: ["512x512"] }] });
     assert.deepEqual(first.tools.map((tool) => tool.name), registry.auto.map((name) => surface[name].name), "the client lists the default surface with underscore names");
     const [runtimeEntry, ...others] = fs.readdirSync(path.join(oodsHome, "runtime"));
     assert.equal(others.length, 0, "one unpacked runtime");

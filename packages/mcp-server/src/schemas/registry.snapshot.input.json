@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://designlab.local/schemas/registry.snapshot.input.json",
   "title": "registry.snapshot input",
-  "description": "Bulk-read recorded mappings plus live shipped and registered team traits and objects. Reports definition loader issues, including shadowed names. Draft preferred_terms, disambiguation_decisions and capabilities are not snapshot outputs.",
+  "description": "Bulk-read recorded mappings plus live shipped and registered team traits and objects. Reports definition loader issues, including shadowed names. The default summary leaves out each trait's and object's schema, parameters, view extensions, semantics, tokens and metadata; detail full returns them, optionally only for named traits and objects. Draft preferred_terms, disambiguation_decisions and capabilities are not snapshot outputs.",
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -10,6 +10,25 @@
       "type": "boolean",
       "default": false,
       "description": "Also list OODS Foundry's internal (non-business) objects, after the business objects. Without it they are left out and registry.hiddenInternal counts them."
+    },
+    "detail": {
+      "type": "string",
+      "enum": [
+        "summary",
+        "full"
+      ],
+      "default": "summary",
+      "description": "summary (default), or full definitions, best with names."
+    },
+    "names": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Exact trait and object names; misses go in notFound."
     }
   }
 }

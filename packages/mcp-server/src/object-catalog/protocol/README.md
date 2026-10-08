@@ -1,9 +1,8 @@
-# Object Catalog protocol contracts (Forge-owned)
+# Object Catalog protocol contracts (owned by OODS Foundry)
 
-These files are the semantic-protocol contract data Forge owns (decision #634).
-They were relocated here in **s106-m02** out of the deleted `src/concordance/`
-tree when the Concordance integration was torn down (decision #633). Concordance
-was sunset; there is no external upstream to coordinate with anymore.
+These files are the semantic-protocol contract data OODS Foundry owns.
+They moved here from an earlier integration that has since been removed; there is
+no external upstream to coordinate with.
 
 | File | Role | Consumed by |
 |------|------|-------------|

@@ -23,6 +23,8 @@ import {
   withTargetResolution,
 } from '../codegen/validation-profile.js';
 import { validateGeneratedArtifact } from '../codegen/artifact-envelope.js';
+import type { ToolContext } from '../lib/tool-context.js';
+import { INLINE_PAYLOAD_LIMIT, payloadDigest, payloadTooLarge, writePayload, type PayloadMode, type PayloadReceipt } from '../lib/payload-store.js';
 
 type PipelineStep = 'compose' | 'validate' | 'render' | 'codegen' | 'save';
 
@@ -59,6 +61,8 @@ export type PipelineInput = {
     showConfidence?: boolean;
     /** Confidence threshold for low-confidence CSS class. Default 0.5. */
     confidenceThreshold?: number;
+    /** Unset: inline unless the output would exceed one reply; file writes the HTML and the artifact to disk. */
+    payloadMode?: PayloadMode;
   };
 };
 
@@ -93,8 +97,11 @@ export type PipelineOutput = {
   code?: {
     framework: CodegenFramework;
     styling: CodegenStyling;
-    artifact: GeneratedArtifact;
+    /** Omitted when the output went to files; payload lists them. */
+    artifact?: GeneratedArtifact;
   };
+  /** s238: the rendered HTML and the artifact's files, written to disk instead of returned (payloadMode). */
+  payload?: PayloadReceipt & { reason: string };
   saved?: {
     name: string;
     version: number;
@@ -236,7 +243,7 @@ function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
 }
 
-export async function handle(input: PipelineInput): Promise<PipelineOutput> {
+export async function handle(input: PipelineInput, context: ToolContext = {}): Promise<PipelineOutput> {
   const startedAt = Date.now();
   const steps: PipelineStep[] = [];
   const rc = loadOodsrc();
@@ -282,6 +289,21 @@ export async function handle(input: PipelineInput): Promise<PipelineOutput> {
     output.pipeline.steps = [...steps];
     output.pipeline.stepLatency = stepLatency;
     output.pipeline.duration = Math.max(1, Date.now() - startedAt);
+
+    // s238 (0.10.1): the rendered page and the generated files can exceed what one reply should carry (a detail screen
+    // is about 250,000 characters). Unless the caller chose, they go to disk and the response lists the files.
+    const requested = input.options?.payloadMode;
+    const artifact = output.code?.artifact;
+    if (!output.error && (output.render?.html || artifact) && (requested === 'file' || payloadTooLarge(requested, JSON.stringify(output).length, context.sizedReply))) {
+      const files = [
+        ...(output.render?.html ? [{ path: 'render/index.html', contents: output.render.html }] : []),
+        ...(artifact ? [...artifact.files.map(file => ({ path: `code/${file.path}`, contents: file.contents, ...((file as { encoding?: 'base64' }).encoding ? { encoding: (file as { encoding?: 'base64' }).encoding } : {}) })), { path: 'code/artifact.json', contents: JSON.stringify(artifact, null, 2) + '\n' }] : []),
+      ];
+      const receipt = writePayload(`pipeline-${payloadDigest(files.map(file => `${file.path}\n${file.contents}`).join('\n'))}`, files);
+      output.payload = { ...receipt, reason: requested === 'file' ? 'payloadMode file' : `The page and the generated files exceed ${INLINE_PAYLOAD_LIMIT.toLocaleString('en-US')} characters; pass options.payloadMode "inline" to receive them in the response.` };
+      if (output.render) delete output.render.html;
+      if (output.code) delete output.code.artifact;
+    }
 
     // Compute metrics and summary if compose succeeded
     if (composedSchema && !output.error) {
@@ -424,6 +446,8 @@ export async function handle(input: PipelineInput): Promise<PipelineOutput> {
           includeTree: false,
         },
         output: {
+          // The pipeline decides where the whole output goes (options.payloadMode).
+          payloadMode: 'inline',
           compact: renderCompact,
           ...(input.options?.showConfidence ? { showConfidence: true } : {}),
           ...(input.options?.confidenceThreshold !== undefined ? { confidenceThreshold: input.options.confidenceThreshold } : {}),
@@ -470,6 +494,8 @@ export async function handle(input: PipelineInput): Promise<PipelineOutput> {
       options: {
         styling,
         ...(typescript !== undefined ? { typescript } : {}),
+        // The pipeline checks the artifact envelope itself and decides where the whole output goes (payloadMode).
+        payloadMode: 'inline',
       },
     });
     stepLatency.codegen = Date.now() - stepStart;

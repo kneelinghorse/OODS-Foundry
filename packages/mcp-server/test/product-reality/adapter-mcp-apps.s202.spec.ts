@@ -73,7 +73,7 @@ describe('the stdio adapter speaks MCP Apps (s202-m02)', () => {
     for (const built of ['packages/mcp-server/dist/index.js', 'packages/mcp-bridge/dist/preview/standalone.js', 'packages/mcp-bridge/dist/preview-app/app.html']) expect(fs.existsSync(path.join(root, built)), `${built} must be built`).toBe(true);
     const rpc = new Rpc(store());
     const initialized = await rpc.initialize({});
-    expect(initialized.serverInfo).toEqual({ name: 'oods-foundry-adapter', version: JSON.parse(fs.readFileSync(path.join(root, 'packages/mcp-adapter/package.json'), 'utf8')).version });
+    expect(initialized.serverInfo).toEqual({ name: 'oods-foundry-adapter', version: JSON.parse(fs.readFileSync(path.join(root, 'packages/mcp-adapter/package.json'), 'utf8')).version, title: 'OODS Foundry', websiteUrl: 'https://oods-foundry.com/', icons: [{ src: 'https://oods-foundry.com/icon-512.png', mimeType: 'image/png', sizes: ['512x512'] }] });
     expect(initialized.capabilities).toEqual({ tools: {}, resources: {}, extensions: { [UI_EXTENSION]: {} } });
     const { tools } = await rpc.request('tools/list');
     expect(tools).toHaveLength(20);

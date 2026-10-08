@@ -1,6 +1,6 @@
 {
   "schema": "oods-foundry-errors/v1",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "codes": [
     {
       "code": "OODS-A11Y-R-01",
@@ -3843,6 +3843,27 @@
       "message": "A dry-run render returns no HTML",
       "cause": "The render ran as a dry run and returned validation without HTML.",
       "fix": "Set apply to true to receive rendered HTML.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "object_import",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-W004",
+      "family": "W",
+      "category": "validation",
+      "severity": "warning",
+      "retryable": false,
+      "message": "A large output was written to files",
+      "cause": "No payload mode was chosen and the output would exceed 100,000 characters, more than one reply should carry.",
+      "fix": "Read the files the payload block lists, or pass payloadMode \"inline\" to receive the output in the response.",
       "tools": [
         "a11y_scan",
         "code_generate",

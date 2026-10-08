@@ -559,7 +559,7 @@
                           "module": {
                             "type": "string",
                             "minLength": 1,
-                            "description": "Project import beginning with a components.json alias and resolved by TypeScript paths; React only."
+                            "description": "Project import beginning with a components.json alias and resolved by TypeScript paths."
                           }
                         }
                       }
@@ -675,7 +675,7 @@
                           "module": {
                             "type": "string",
                             "minLength": 1,
-                            "description": "Project import beginning with a components.json alias and resolved by TypeScript paths; React only."
+                            "description": "Project import beginning with a components.json alias and resolved by TypeScript paths."
                           }
                         }
                       }
@@ -718,7 +718,7 @@
                     ]
                   }
                 },
-                "description": "Version 2 component substitution: a OODS Foundry id, React and/or Vue package exports, and OODS Foundry-to-team prop translations. Legacy trait-only mappings remain valid."
+                "description": "Version 2 component substitution: an OODS Foundry id, React and/or Vue package exports, and OODS Foundry-to-team prop translations. Legacy trait-only mappings remain valid."
               }
             },
             "allOf": [
@@ -1727,7 +1727,7 @@
                     "module": {
                       "type": "string",
                       "minLength": 1,
-                      "description": "Project import beginning with a components.json alias and resolved by TypeScript paths; React only."
+                      "description": "Project import beginning with a components.json alias and resolved by TypeScript paths."
                     }
                   }
                 }
@@ -1843,7 +1843,7 @@
                     "module": {
                       "type": "string",
                       "minLength": 1,
-                      "description": "Project import beginning with a components.json alias and resolved by TypeScript paths; React only."
+                      "description": "Project import beginning with a components.json alias and resolved by TypeScript paths."
                     }
                   }
                 }
@@ -1886,7 +1886,7 @@
               ]
             }
           },
-          "description": "Version 2 component substitution: a OODS Foundry id, React and/or Vue package exports, and OODS Foundry-to-team prop translations. Legacy trait-only mappings remain valid."
+          "description": "Version 2 component substitution: an OODS Foundry id, React and/or Vue package exports, and OODS Foundry-to-team prop translations. Legacy trait-only mappings remain valid."
         },
         "apply": {
           "type": "boolean",

@@ -94,7 +94,15 @@ function resolveEnabledTools(registry) {
     .split(/[,\s]+/)
     .map(s => s.trim())
     .filter(Boolean);
-  return [...registry.auto, ...extras.filter(t => registry.onDemand.includes(t))];
+  // Accept the name clients list (a11y_scan) as well as the internal one (a11y.scan), and say which names did nothing.
+  const byListedName = new Map(registry.onDemand.map(name => [advertisedName(name), name]));
+  const wanted = [];
+  for (const entry of extras) {
+    const internal = registry.onDemand.includes(entry) ? entry : byListedName.get(entry);
+    if (internal) wanted.push(internal);
+    else console.error(`[oods-mcp-adapter] MCP_EXTRA_TOOLS: "${entry}" is not an on-demand tool; on-demand tools: ${[...byListedName.keys()].join(', ')}`);
+  }
+  return [...registry.auto, ...new Set(wanted)];
 }
 
 const TOOL_SURFACE = JSON.parse(fs.readFileSync(new URL('./tool-surface.json', import.meta.url), 'utf8'));
@@ -363,8 +371,10 @@ async function main() {
   const previewHostEntry = resolvePreviewHostEntry();
   const previewHost = previewHostEntry ? new PreviewHost({ entry: previewHostEntry, serverCwd: NATIVE_SERVER_DIR }) : null;
   const previewApp = new PreviewApp(PREVIEW_APP_CANDIDATES);
+  // s238 (website audit DIR-12): clients that show serverInfo get the product's title, website and square mark, the
+  // same icon the registry entry declares.
   const server = new Server(
-    { name: PRODUCT.serverName, version: ADAPTER_VERSION },
+    { name: PRODUCT.serverName, version: ADAPTER_VERSION, title: PRODUCT.product, websiteUrl: 'https://oods-foundry.com/', icons: [{ src: 'https://oods-foundry.com/icon-512.png', mimeType: 'image/png', sizes: ['512x512'] }] },
     { capabilities: { tools: {}, resources: {}, extensions: { [UI_EXTENSION]: {} } } }
   );
   // Bilateral: the preview app is offered only to a client that advertised the extension (or an operator who forced it).
@@ -469,7 +479,8 @@ async function main() {
         try { context = { previewHostUrl: await previewHost.ensure() }; }
         catch (error) { console.error(`[oods-mcp-adapter] code.generate contract host unavailable: ${error.message}`); }
       }
-      const result = await client.run(internalName, args ?? {}, context);
+      // s238 (0.10.1): a reply to an MCP client is sized for it; the native tools write oversized output to files.
+      const result = await client.run(internalName, args ?? {}, { ...context, sizedReply: true });
       // design_preview carries its result as structuredContent too (for the app, never for the model); the text is unchanged.
       const structured = internalName === 'design.preview' && result && typeof result === 'object' && !Array.isArray(result)
         ? { ...result, ...(uiOffered() ? { resources: previewResources(result, previewApp.current()) } : {}) }

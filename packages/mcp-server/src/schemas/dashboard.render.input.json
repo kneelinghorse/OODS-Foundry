@@ -3,7 +3,7 @@
   "$id": "https://designlab.local/schemas/dashboard.render.input.json",
   "title": "Dashboard render input",
   "type": "object",
-  "description": "Render a composed, decision-centric DASHBOARD (the fixed metric-overview template: KPI row + trend + breakdown + optional geo) from a declarative DashboardSpec IR. Carries shared datasets, heterogeneous panels (any of the 11 of the 13 viz.render chartTypes (chord and flow_map are viz.render-only, decision #881), or kpi tiles), layout hints, cross-filter links, and a dashboard-level a11y block. The server composes each panel through the in-process viz.render engine, resolves the layout (m02), computes KPIs (m03), and applies any active cross-filter selection (m03/m04). Option C: per-chart specs are unchanged; this IR sits above them.",
+  "description": "Render a composed, decision-centric DASHBOARD (the fixed metric-overview template: KPI row + trend + breakdown + optional geo) from a declarative DashboardSpec IR. Carries shared datasets, heterogeneous panels (any of the 11 of the 13 viz.render chartTypes (chord and flow_map are viz.render-only), or kpi tiles), layout hints, cross-filter links, and a dashboard-level a11y block. The server composes each panel through the in-process viz.render engine, resolves the layout, computes KPIs, and applies any active cross-filter selection. Per-chart specs are unchanged; this IR sits above them.",
   "required": [
     "schemaVersion",
     "datasets",
@@ -45,7 +45,7 @@
     "panels": {
       "type": "array",
       "minItems": 1,
-      "description": "Heterogeneous panels: chart (11 of the 13 viz.render chartTypes; chord and flow_map are viz.render-only, decision #881 — plus its data branch) or kpi tiles.",
+      "description": "Heterogeneous panels: chart (11 of the 13 viz.render chartTypes; chord and flow_map are viz.render-only — plus its data branch) or kpi tiles.",
       "items": {
         "$ref": "#/$defs/Panel"
       }
@@ -186,7 +186,7 @@
       }
     },
     "Panel": {
-      "description": "A dashboard panel: a chart panel (11 of the 13 viz.render chartTypes; chord and flow_map are viz.render-only, decision #881 — plus its data branch) or a kpi tile. Discriminated on `kind`.",
+      "description": "A dashboard panel: a chart panel (11 of the 13 viz.render chartTypes; chord and flow_map are viz.render-only — plus its data branch) or a kpi tile. Discriminated on `kind`.",
       "oneOf": [
         {
           "$ref": "#/$defs/ChartPanel"
@@ -204,7 +204,7 @@
         "kind",
         "chartType"
       ],
-      "description": "A chart panel — a viz.render-shaped descriptor: chartType (11 of the 13 viz.render chartTypes; chord and flow_map are viz.render-only, decision #881) + the matching data branch + encodings. Tabular types (bar/line/area/scatter/heatmap) bind a shared dataset via `datasetId` + `encodings`; treemap/sunburst take `hierarchy`; sankey takes `sankey`; force_graph takes `network`; choropleth/bubble_map take `geo`.",
+      "description": "A chart panel — a viz.render-shaped descriptor: chartType (11 of the 13 viz.render chartTypes; chord and flow_map are viz.render-only) + the matching data branch + encodings. Tabular types (bar/line/area/scatter/heatmap) bind a shared dataset via `datasetId` + `encodings`; treemap/sunburst take `hierarchy`; sankey takes `sankey`; force_graph takes `network`; choropleth/bubble_map take `geo`.",
       "properties": {
         "id": {
           "type": "string",
@@ -236,7 +236,7 @@
             "choropleth",
             "bubble_map"
           ],
-          "description": "11 of the 13 viz.render chartTypes; chord and flow_map are viz.render-only (decision #881)."
+          "description": "11 of the 13 viz.render chartTypes; chord and flow_map are viz.render-only."
         },
         "datasetId": {
           "type": "string",
@@ -472,7 +472,7 @@
             "latest"
           ],
           "default": "sum",
-          "description": "Point-in-time aggregate. Adds 'latest' (most recent value by row order, or by the explicit periodField when set) to the viz.render aggregate set, for point-in-time KPIs. CELL TYPES : `count`/`distinct` accept any non-null cell; the other six read numeric cells only and raise OODS-V160 when the field has values but none of them numeric (pre-s175 they returned a silent 0)."
+          "description": "Point-in-time aggregate. Adds 'latest' (most recent value by row order, or by the explicit periodField when set) to the viz.render aggregate set, for point-in-time KPIs. CELL TYPES : `count`/`distinct` accept any non-null cell; the other six read numeric cells only and raise OODS-V160 when the field has values but none of them numeric."
         },
         "comparison": {
           "$ref": "#/$defs/KpiComparison"
@@ -960,7 +960,7 @@
     "DashboardLayout": {
       "type": "object",
       "additionalProperties": false,
-      "description": "Optional layout hints consumed by the m02 deterministic auto-layout resolver. Absent hints -> declared panel order + KPI-row-first defaults; the resolver emits abstract {x,y,w,h} (renderer-agnostic, the client sizes the canvas).",
+      "description": "Optional layout hints consumed by the deterministic auto-layout resolver. Absent hints -> declared panel order + KPI-row-first defaults; the resolver emits abstract {x,y,w,h} (renderer-agnostic, the client sizes the canvas).",
       "properties": {
         "columns": {
           "type": "integer",

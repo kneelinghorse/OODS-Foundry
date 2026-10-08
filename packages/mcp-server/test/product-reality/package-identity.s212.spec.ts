@@ -31,7 +31,8 @@ describe('candidate identity (s212 m04)', () => {
     expect(links('https://github.com/kneelinghorse/OODS-Foundry/issues')).toEqual([]);
     expect(links('git+https://github.com/kneelinghorse/OODS-Foundry.git')).toEqual([]);
     expect(links('https://github.com/kneelinghorse/oods-foundry-claude-plugin.git')).toEqual([]);
-    expect(links('https://github.com/kneelinghorse/OODS-Forge')).toHaveLength(1);
+    // The private development repository, built from its parts so public source never carries the link itself.
+    expect(links(['https://github.com/kneelinghorse', ['OODS', 'Forge'].join('-')].join('/'))).toHaveLength(1);
     expect(links('https://github.com/kneelinghorse/OODS-Foundry-private')).toHaveLength(1);
     expect(links('https://github.com/kneelinghorse/OODS-Foundry.git-private')).toHaveLength(1);
   });

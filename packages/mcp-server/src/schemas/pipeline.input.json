@@ -69,7 +69,7 @@
     },
     "actionMappings": {
       "type": "array",
-      "description": "Stage1 BridgeSummary action_mappings, flat verb-keyed entries. See docs/integration/stage1-oods-contract.md §2c.",
+      "description": "Stage1 bridge-summary action mappings: flat, verb-keyed entries.",
       "items": {
         "type": "object",
         "additionalProperties": true,
@@ -144,6 +144,7 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "payloadMode": { "type": "string", "enum": ["inline", "file"], "description": "Unset: inline up to 100,000 characters, else file. file writes the page and the artifact beside the saved-schema store and returns payload references instead." },
         "skipValidation": {
           "type": "boolean",
           "description": "Skip the validate step (default false)."

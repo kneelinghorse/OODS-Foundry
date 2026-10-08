@@ -4,7 +4,7 @@ A new generation returns a complete set of files. For application and workflow o
 
 With `options.payloadMode: "file"`, `code_generate` writes beside the saved-schema store, under `payloads/code.generate-<12 hex>/`, and returns that directory. Different emitted content gets a different folder. Identical output reuses the same folder and overwrites its generated files without an edit warning. A definition change that does not affect emitted content can therefore reuse the folder. Treat these payload folders as outputs to copy from, not places to develop your app. The default inline mode returns the artifact and its files in the tool response instead.
 
-Generated application library dependencies remain pinned to 0.6.2, the retained tested implementation. They move only after a separately measured library update; a newer tool release does not itself advance those pins. <!-- history -->
+Use one version of the OODS packages together. Apps that `@oods/foundry` generates pin the tested 0.6.2 set of OODS libraries; keep those pins unless you upgrade all of them together. A newer `@oods/foundry` release does not move them by itself; they move only after the libraries are tested again. <!-- history -->
 
 ## File ownership
 

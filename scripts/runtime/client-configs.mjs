@@ -126,15 +126,19 @@ export function collectInstallFacts() {
   const registry = readJson("packages/mcp-server/src/tools/registry.json");
   const adapter = readJson("packages/mcp-adapter/package.json");
   const root = readJson("package.json");
+  const foundry = readJson("packages/foundry/package.json");
   return {
     previewPlatforms: previewPlatformMatrix(),
     version: root.version,
-    headline: readJson("packages/foundry/package.json").description.split(". ")[0] + ".",
+    headline: foundry.description.split(". ")[0] + ".",
     product: NAME.product,
     npmPackage: NAME.npmPackage,
     contact: readJson("configs/license/holder.json").contact,
-    // Links from the package README resolve on the npm page and in the package alike: the CDN serves published files.
+    // Images and the terms files resolve on the npm page and in the package alike: the CDN serves published files.
     cdnBase: `https://cdn.jsdelivr.net/npm/${NAME.npmPackage}@${root.version}/`,
+    // Guides link to the public source at this release's tag, where GitHub renders them and #fragments scroll; the CDN
+    // serves Markdown as raw text.
+    sourceBase: `${foundry.repository.url.replace(/^git\+/, "").replace(/\.git$/, "")}/blob/v${root.version}/`,
     npmPage: `https://www.npmjs.com/package/${NAME.npmPackage}`,
     autoTools: registry.auto.length,
     allTools: registry.auto.length + registry.onDemand.length,
@@ -147,6 +151,15 @@ export function collectInstallFacts() {
     chartTypes: readJson("packages/mcp-server/src/schemas/viz.render.input.json").properties.chartType.enum.length,
   };
 }
+
+/** A document in the public source at this release's tag. The file must exist here, so a link cannot point at nothing. */
+export function sourceLink(facts, file) {
+  assert(fs.existsSync(path.join(REPO_ROOT, file.split("#")[0])), `no ${file} to link to`);
+  return `${facts.sourceBase}${file}`;
+}
+
+/** "the on-demand tool", or "the 2 on-demand tools". */
+const onDemandTools = (facts) => facts.allTools - facts.autoTools === 1 ? "the on-demand tool" : `the ${facts.allTools - facts.autoTools} on-demand tools`;
 
 /**
  * Preview documentation: the README lists dashboard_render among the tools, and the first
@@ -175,11 +188,12 @@ const ARCHIVE_COMMAND = `node ${RUNTIME_DIR_PLACEHOLDER}/${ADAPTER_ENTRY}`;
 
 const ENVIRONMENT = (facts) => ({
   MCP_TOOLSET: `default (${facts.autoTools} tools) | all (${facts.allTools} tools)`,
-  MCP_EXTRA_TOOLS: "comma-separated on-demand tools to add to the default surface, for example a11y.scan",
+  MCP_EXTRA_TOOLS: "comma-separated on-demand tools to add to the default surface, for example a11y_scan",
   MCP_ROLE: "designer (default) | maintainer",
   MCP_SCHEMA_STORE_ROOT: "where saved schemas, composed versions and file-mode output are kept; default ~/.oods-foundry from npm, the extracted directory from the archive",
   OODS_NODE_PATH: "absolute path of the Node binary the adapter should start the server with; default: the Node running the adapter",
   OODS_MCP_APPS_UI: "1 offers the design preview app to a client that did not negotiate the MCP Apps extension; default: unset, only clients that negotiated it",
+  OODS_FOUNDRY_HOME: "folder where import and intake drafts are staged and, when started with npx, the runtime and the default folders for saved schemas, objects, traits, brands and mappings are kept; default ~/.oods-foundry",
   OODS_OBJECTS_DIR: "folder your own objects are read from, after the ones OODS Foundry ships; default ~/.oods-foundry/objects from npm, unset from the archive",
   OODS_TRAITS_DIR: "folder your own traits are read from, after the ones OODS Foundry ships; default ~/.oods-foundry/traits from npm, unset from the archive",
   OODS_BRANDS_DIR: "folder your own brands are kept and built in, outside the runtime; default ~/.oods-foundry/brands from npm, unset from the archive",
@@ -190,11 +204,11 @@ const ENVIRONMENT = (facts) => ({
 // labelled as the clients' documentation: no Claude Desktop or Cursor run is recorded (s213-m02).
 const TEXT_FALLBACK = "otherwise the result is text with links to the preview in the browser, served on 127.0.0.1";
 const DIRECT_REGISTRATION = `Register ${SERVER_NAME} directly, beside any other entry such as an MCP hub, not behind it: the preview app reaches the conversation only when the client talks to the server itself or a hub passes the MCP Apps extension, the tool's _meta.ui and resources/read through.`;
-const ARCHIVE_ALTERNATIVE = `Sent the runtime archive instead of using npm: use command node with args ["${RUNTIME_DIR_PLACEHOLDER}/${ADAPTER_ENTRY}"], where ${RUNTIME_DIR_PLACEHOLDER} is the absolute path you extracted ${RUNTIME_ARCHIVE_FILE} into (install.md beside the archive).`;
+const ARCHIVE_ALTERNATIVE = `To run the runtime archive instead (the npm package carries it at runtime/${RUNTIME_ARCHIVE_FILE}), use command node with args ["${RUNTIME_DIR_PLACEHOLDER}/${ADAPTER_ENTRY}"], where ${RUNTIME_DIR_PLACEHOLDER} is the absolute path you extracted it into; ${INSTALL_DOC} in the public source gives the steps.`;
 const NOTES = (facts) => [
   `The client runs ${NPX_COMMAND}. The first start downloads the package and unpacks its runtime once into ~/.oods-foundry/runtime/; later starts reuse it.`,
   `The node and npx the client starts must be Node ${facts.nodeFloor} or newer; if the client cannot find npx, put its full path (what which npx prints) in command and give the client an env PATH that includes the directory of node.`,
-  `Default surface: ${facts.autoTools} tools. MCP_TOOLSET=all adds the ${facts.allTools - facts.autoTools} on-demand tools (${facts.allTools} in all).`,
+  `Default surface: ${facts.autoTools} tools. MCP_TOOLSET=all adds ${onDemandTools(facts)} (${facts.allTools} in all).`,
   ARCHIVE_ALTERNATIVE,
 ];
 
@@ -261,9 +275,13 @@ export function renderConfigs(facts) {
 const json = (value) => `\`\`\`json\n${JSON.stringify(value, null, 2)}\n\`\`\``;
 const GENERATED = (from) => `<!-- Generated by scripts/runtime/client-configs.mjs from ${from}. Do not edit; run \`node scripts/runtime/client-configs.mjs\` and verify with \`--check\`. -->`;
 
-/** The clients' design-preview behaviour, the same in both guides. */
+/**
+ * The clients' design-preview behaviour, the same in both guides. The reference-host run was made on a 0.2.1
+ * pre-release build (artifacts/product-reality/sprint-218/m03/packed-identity.json), so the paragraph names that version
+ * and carries the history mark that keeps a release bump from rewriting it.
+ */
 const PREVIEW_IN_CONVERSATION = (facts, replaced) => [
-  "`design_preview` returns the generated screen running in a browser. A client that renders MCP Apps can show it inside the conversation, where you edit the composition, compare two versions side by side, accept one and request changes. The MCP Apps SDK reference host v1.7.5 rendered React and Vue inside the conversation with `OODS_MCP_APPS_UI=1` through a local HTTP-to-stdio relay; its default initialize request advertises no UI capability and receives text instead. That run used a fixed-file serving adjustment for the source checkout. No Claude Desktop or Cursor run is recorded; the two lines below come from their documentation. Any other client gets the same result as text, with links to the preview in your browser, served on 127.0.0.1.",
+  "`design_preview` returns the generated screen running in a browser. A client that renders MCP Apps can show it inside the conversation, where you edit the composition, compare two versions side by side, accept one and request changes. On a 0.2.1 pre-release build, the MCP Apps SDK reference host v1.7.5 rendered React and Vue inside the conversation with `OODS_MCP_APPS_UI=1` through a local HTTP-to-stdio relay; its default initialize request advertises no UI capability and receives text instead. That host ran with a one-line change to how it serves its sandbox page. No Claude Desktop or Cursor run is recorded; the two lines below come from their documentation. Any other client gets the same result as text, with links to the preview in your browser, served on 127.0.0.1. <!-- history -->",
   "",
   `- **Claude Desktop**, by its documentation, renders an app from a local server only with Developer Mode on, and keeps the tool list and the app it fetched until you choose Reload MCP Configuration after ${replaced}.`,
   `- **Cursor**, by its documentation, renders MCP Apps from version 2.6. Reload the window after ${replaced}.`,
@@ -277,12 +295,13 @@ const SETTINGS = (facts, storeDefault, folderDefault) => [
   "",
   "| Variable | Default | Effect |",
   "| --- | --- | --- |",
-  `| \`MCP_TOOLSET\` | \`default\` | \`default\` advertises ${facts.autoTools} tools; \`all\` adds the ${facts.allTools - facts.autoTools} on-demand tools, ${facts.allTools} in all. |`,
-  "| `MCP_EXTRA_TOOLS` | (none) | Comma-separated on-demand tools added to the default surface, for example `a11y.scan`. |",
+  `| \`MCP_TOOLSET\` | \`default\` | \`default\` advertises ${facts.autoTools} tools; \`all\` adds ${onDemandTools(facts)}, ${facts.allTools} in all. |`,
+  "| `MCP_EXTRA_TOOLS` | (none) | Comma-separated on-demand tools added to the default surface, for example `a11y_scan`. |",
   "| `MCP_ROLE` | `designer` | Policy role (`designer` or `maintainer`). |",
   `| \`MCP_SCHEMA_STORE_ROOT\` | ${storeDefault} | Where saved schemas, every composed and previewed version, and file-mode output are kept. |`,
   "| `OODS_NODE_PATH` | the Node running the adapter | Node binary used to start the native server. |",
   "| `OODS_MCP_APPS_UI` | (unset) | `1` offers the preview app on `design_preview` even to a client that did not negotiate the MCP Apps extension. |",
+  "| `OODS_FOUNDRY_HOME` | `~/.oods-foundry` | Where import and intake drafts are staged and, when started with npx, where the runtime and every default folder below are kept. The Docker image sets it to `/data`. |",
   `| \`OODS_OBJECTS_DIR\` | ${folderDefault("objects")} | Folder your own objects are read from, after the ones ${facts.product} ships; the \`object_registry\` tool's \`register\` writes there. |`,
   `| \`OODS_TRAITS_DIR\` | ${folderDefault("traits")} | Folder your own traits are read from, after the ones ${facts.product} ships. |`,
   `| \`OODS_BRANDS_DIR\` | ${folderDefault("brands")} | Folder your own brands are kept in and built in, outside the runtime; \`brand_create\`'s \`create\` writes there. |`,
@@ -300,7 +319,7 @@ const REQUIREMENTS = (facts, extra) => [
 /** Identifiers that keep the product's earlier name (lock ruling #2463e): saved files and clients depend on them. */
 const LEGACY_IDENTIFIERS = "Some identifiers keep the product's earlier name: the runtime manifest and SBOM formats (`forge-runtime-manifest/v1`, `forge-runtime-sbom-lite/v1`), the readiness attestation (`forge-readiness-attestation/v1`) and the preview app's resource address (`ui://oods-forge/preview/…`). Saved files and clients depend on them, so they stay as they are. They are identifiers, not product names.";
 
-const FEEDBACK = (facts) => `What you noticed is the point of this release: a screen that reads wrong, a certification you disagree with, install friction, a sentence that did not make sense. Open an [issue](https://github.com/kneelinghorse/OODS-Foundry/issues) with the tool call as you made it, what came back and what you expected. A short note is worth more than a polished one.`;
+const FEEDBACK = (facts) => `Bug reports and feedback are welcome in [Issues](https://github.com/kneelinghorse/OODS-Foundry/issues): a screen that reads wrong, a certification you disagree with, install friction, a sentence that did not make sense. Include the tool call as you made it, what came back and what you expected. A short note is worth more than a polished one.`;
 
 const ADOPTION = (facts) => [
   "### Agent skill, plugin and registry entry",
@@ -321,12 +340,13 @@ const ADOPTION = (facts) => [
   "cp -R node_modules/@oods/foundry/skills/oods-foundry .claude/skills/",
   "```",
   "",
-  `Restart Claude Code and invoke \`/oods-foundry\`, with the server connected as above. Other agents can read [SKILL.md](${facts.cdnBase}skills/oods-foundry/SKILL.md) and its bundled quickstart reference directly, or copy the folder into their own supported skill location. The skill explains the calls, receipts and unchecked work; installing the plain files does not register an MCP server.`,
+  `Restart Claude Code and invoke \`/oods-foundry\`, with the server connected as above. Other agents can read [SKILL.md](${sourceLink(facts, "packages/foundry/skills/oods-foundry/SKILL.md")}) and its bundled quickstart reference directly, or copy the folder into their own supported skill location. The skill explains the calls, receipts and unchecked work; installing the plain files does not register an MCP server.`,
   "",
 ];
 
 export function renderPackageReadme(facts) {
   const cdn = (file) => `${facts.cdnBase}${file}`;
+  const guide = (file) => sourceLink(facts, `packages/foundry/${file}`);
   const commands = claudeCodeCommands(NPX_COMMAND);
   const lines = [
     GENERATED("the product name source, the tool registry and the runtime manifest module"),
@@ -376,11 +396,11 @@ export function renderPackageReadme(facts) {
     "",
     ...PREVIEW_IN_CONVERSATION(facts, "a newer version installs"),
     "",
-    "## The first run, in ten minutes",
+    "## The first run",
     "",
-    `To change one trait and predict which screens follow, start with [the first change in the QUICKSTART](${cdn("QUICKSTART.md")}#the-first-change).`,
+    `To change one trait and predict which screens follow, start with [the first change in the QUICKSTART](${guide("QUICKSTART.md")}#the-first-change).`,
     "",
-    `Your client lists these tool names: ${facts.toolNames.map((name) => `\`${name}\``).join(", ")}. Ask your assistant for each step below; it makes the call. Detailed parameters and limits are in [TOOL-REFERENCE.md](${cdn("TOOL-REFERENCE.md")}). One rule shapes the run: a \`schemaRef\` lives in the server your client started, for 30 minutes and for that conversation, so make steps 2 to 6 in one conversation.`,
+    `Your client lists these tool names: ${facts.toolNames.map((name) => `\`${name}\``).join(", ")}. Ask your assistant for each step below; it makes the call. Detailed parameters and limits are in [TOOL-REFERENCE.md](${guide("TOOL-REFERENCE.md")}). One rule shapes the run: a \`schemaRef\` lives in the server your client started, for 30 minutes and for that conversation, so make steps 2 to 6 in one conversation.`,
     "",
     `1. **Check the server.** Ask for \`health_check\`. It answers \`status: "ok"\` with the registry counts (objects, traits, components), \`server.version\` (\`${facts.version}\`) and \`server.uptime\` in milliseconds.`,
     "2. **Compose one screen.** `design_compose` with `{\"object\": \"Subscription\", \"context\": \"detail\"}` answers `status: \"ok\"`, a `schemaRef` such as `compose-dae744a8`, `objectUsed` (the object, its version, the traits and the fields it composed) and one entry in `selections` per slot, naming the component chosen, the reason and any available review evidence. Missing confidence is not inferred; layout detection and intent selection use keyword rules.",
@@ -403,25 +423,30 @@ export function renderPackageReadme(facts) {
     "",
     "## Your own objects and traits",
     "",
-    "The runtime ships 16 objects: 11 public reference objects and 5 internal capture objects.",
+    `${facts.product} ships 11 business objects, plus 5 internal capture objects (16 in the runtime).`,
     "",
-    `${facts.product} composes from the objects and traits it ships and from yours. Put a \`*.object.yaml\` file in \`~/.oods-foundry/objects\` and a \`*.trait.yaml\` file in \`~/.oods-foundry/traits\`, or ask your assistant to use the \`object_registry\` tool: \`validate\` checks a definition without writing it, \`register\` writes it into your folder once it validates and composes in every context it declares, and \`reload\` reads the folders again without a restart. An object of yours with a shipped object's name is used in its place; a trait of yours cannot reuse a shipped trait's name. \`object_registry\` \`list\` and \`health_check\` name every file that is not in use and why. Your folders are outside the unpacked runtime, so they survive upgrades. A trait of yours can place only the components ${facts.product} ships (\`catalog_list\` names them); mapped implementations can come from your own components by substitution. The authoring guide is [OBJECTS-AND-TRAITS.md](${cdn("OBJECTS-AND-TRAITS.md")}).`,
+    `${facts.product} composes from the objects and traits it ships and from yours. Put a \`*.object.yaml\` file in \`~/.oods-foundry/objects\` and a \`*.trait.yaml\` file in \`~/.oods-foundry/traits\`, or ask your assistant to use the \`object_registry\` tool: \`validate\` checks a definition without writing it, \`register\` writes it into your folder once it validates and composes in every context it declares, and \`reload\` reads the folders again without a restart. An object of yours with a shipped object's name is used in its place; a trait of yours cannot reuse a shipped trait's name. \`object_registry\` \`list\` and \`health_check\` name every file that is not in use and why. Your folders are outside the unpacked runtime, so they survive upgrades. A trait of yours can place only the components ${facts.product} ships (\`catalog_list\` names them); mapped implementations can come from your own components by substitution. The authoring guide is [OBJECTS-AND-TRAITS.md](${guide("OBJECTS-AND-TRAITS.md")}).`,
+    "",
+    "## Import your objects",
+    "",
+    `\`object_import\` drafts ${facts.product} objects from the schema files your team already has: OpenAPI or Swagger, JSON Schema, Postgres DDL and migrations, Prisma, dbt, OData and GraphQL. It reads local files, or content you pass inline; it never fetches a URL, connects to an API or database, or runs your code. \`draft\` writes reviewable drafts to \`~/.oods-foundry/imports/\` and registers nothing, \`show\` returns one draft with its trait proposals and their evidence, and \`apply\` registers only the objects and proposals you accept. The guide is [IMPORTING-OBJECTS.md](${guide("IMPORTING-OBJECTS.md")}).`,
     "",
     "## Your own brands",
     "",
-    `${facts.product} renders in the brands it ships and in yours. Ask your assistant to use the \`brand_create\` tool. Use \`derive\` with your own DTCG tokens or shadcn theme CSS to get a recipe with source paths and named gaps, then review it and fill the gaps before \`create\`. The recipe has six values: the neutral's hue and tint, the accent's hue, whether the primary action is the neutral or the accent, the corner radius and the font. \`template\` with \`from.recipe\` returns the complete brand it gives, graded; \`template\` alone returns every slot of a brand with what it paints and a starting value, for you to fill. \`validate\` checks a recipe or your values (the contrast of every pair included) without writing, and \`create\` writes the brand into \`~/.oods-foundry/brands\` and builds it there, outside the unpacked runtime, so every tool, the preview and the apps you generate use it at once. \`brand_apply\` changes your brand the same checked way. A generated React or Vue app for your brand carries its stylesheet. Your brands survive upgrades; the first start of a new version rebuilds them. The guide is [BRANDS.md](${cdn("BRANDS.md")}).`,
+    `${facts.product} renders in the brands it ships and in yours. Ask your assistant to use the \`brand_create\` tool. Use \`derive\` with your own DTCG tokens or shadcn theme CSS to get a recipe with source paths and named gaps, then review it and fill the gaps before \`create\`. The recipe has six values: the neutral's hue and tint, the accent's hue, whether the primary action is the neutral or the accent, the corner radius and the font. \`template\` with \`from.recipe\` returns the complete brand it gives, graded; \`template\` alone returns every slot of a brand with what it paints and a starting value, for you to fill. \`validate\` checks a recipe or your values (the contrast of every pair included) without writing, and \`create\` writes the brand into \`~/.oods-foundry/brands\` and builds it there, outside the unpacked runtime, so every tool, the preview and the apps you generate use it at once. \`brand_apply\` changes your brand the same checked way. A generated React or Vue app for your brand carries its stylesheet. To keep your team's token names, \`draft\` reads a local DTCG token file, \`show\` returns the draft for review and \`apply\` builds the brand once you accept it; its CSS then uses your names. Your brands survive upgrades; the first start of a new version rebuilds them. The guide is [BRANDS.md](${guide("BRANDS.md")}).`,
     "",
     "## Your own components",
     "",
-    `${facts.product} supports your own components by substitution in React and Vue: map a shipped component id to your package, exact version and export, then compose as usual. One \`component_map\` create call can check a list from \`mappingsPath\` before writing all of it. The preview bundles your local package and code generation imports it. React projects on shadcn/ui’s Radix or Base UI base and Tailwind 4 can map their copied source files, install the sixteen shipped registry adapters and use their own theme in previews and generated apps. Mapped components carry advisory contract reports with met, unmet and not-checked obligations; this is not blanket conformance. New components beyond the shipped catalog are not supported. See [COMPONENTS.md](${cdn("COMPONENTS.md")}).`,
+    `${facts.product} supports your own components by substitution in React and Vue: map a shipped component id to your package, exact version and export, then compose as usual. One \`component_map\` create call can check a list from \`mappingsPath\` before writing all of it. The preview bundles your local package and code generation imports it. React projects on shadcn/ui’s Radix or Base UI base and Tailwind 4 can map their copied source files, install the sixteen shipped registry adapters and use their own theme in previews and generated apps. Vue projects on shadcn-vue with Reka UI do the same with the sixteen Vue adapters. Mapped components carry advisory contract reports with met, unmet and not-checked obligations; this is not blanket conformance. New components beyond the shipped catalog are not supported. See [COMPONENTS.md](${guide("COMPONENTS.md")}).`,
     "",
-    `For a single screen, ask for code_generate with options.output set to application. It includes an entry, Vite configuration and a package.json that pins the @oods libraries and your mapped packages at exact versions; run \`npm install\`, then \`npm run build\`. A mapped package that is not on a registry installs from its own tarball or folder. The sample app marks its data and actions that still need your application's handlers.`,
+    // The library pins are deliberate (GENERATED-APPS.md says the same), so the line carries the history mark.
+    `For a single screen, ask for code_generate with options.output set to application. It includes an entry, Vite configuration and a package.json that pins the @oods libraries and your mapped packages at exact versions; run \`npm install\`, then \`npm run build\`. A mapped package that is not on a registry installs from its own tarball or folder. The sample app marks its data and actions that still need your application's handlers. Generated code pins the tested 0.6.2 set of OODS libraries. Use one version of the OODS packages together: keep those pins unless you upgrade all of them together. <!-- history -->`,
     "",
-    `When a definition changes, [GENERATED-APPS.md](${cdn("GENERATED-APPS.md")}) explains which generated files to replace, which are your starting points, and how to keep your data and action wiring in your own files.`,
+    `When a definition changes, [GENERATED-APPS.md](${guide("GENERATED-APPS.md")}) explains which generated files to replace, which are your starting points, and how to keep your data and action wiring in your own files.`,
     "",
     "## Bring your own design system",
     "",
-    `Follow [the quickstart](${cdn("QUICKSTART.md")}): your colour tokens become a brand, your trait and object define a Warehouse, and your component package replaces a shipped Button. The same sequence composes a screen, certifies a chart, opens a running preview, and generates React and Vue application files. All example inputs ship in the package's quickstart/ folder; no source checkout is required. The package also ships \`quickstart/expected.json\`, the hashes the quickstart's React app, Vue app and chart come out with, and \`facts.json\`, the facts this page states, each with where it comes from. Beside \`facts.json\`, \`errors.json\` lists the runtime's error codes, severity, cause, fix and tools.`,
+    `Follow [the quickstart](${guide("QUICKSTART.md")}): your colour tokens become a brand, your trait and object define a Warehouse, and your component package replaces a shipped Button. The same sequence composes a screen, certifies a chart, opens a running preview, and generates React and Vue application files. All example inputs ship in the package's quickstart/ folder; you need nothing from the source repository. The package also ships \`quickstart/expected.json\`, the hashes the quickstart's React app, Vue app and chart come out with, and \`facts.json\`, the facts this page states, each with where it comes from. Beside \`facts.json\`, \`errors.json\` lists the runtime's error codes, severity, cause, fix and tools.`,
     "",
     "## Limits",
     "",
@@ -441,7 +466,9 @@ export function renderPackageReadme(facts) {
     "",
     "See [OODS Foundry](https://oods-foundry.com/), [a trait change across screens](https://oods-foundry.com/demos/trait-change), [the Harbor walkthrough](https://oods-foundry.com/demos/harbor), and [the chart playground](https://oods-foundry.com/charts/playground).",
     "",
-    "The website's [read-only MCP endpoint](https://oods-foundry.com/mcp) uses Streamable HTTP. Hosted names follow the version pinned by the website. The [website's hosted-tool guide](https://oods-foundry.com/agents#hosted-tools) describes these narrower inputs. Local stdio provides the full toolset for your own files, objects, brands and generated applications.",
+    // The endpoint answers MCP POSTs only, so a browser that follows a link to it gets 405: show it as code and link the
+    // words to the website's guide. The website owns the hosted surface: 9 read-only tools at the version it pins.
+    `The website's [read-only MCP endpoint](https://oods-foundry.com/agents#hosted-tools), \`https://oods-foundry.com/mcp\`, uses Streamable HTTP. It is the hosted connector for claude.ai and other remote clients: a read-only subset of 9 tools, among them catalog, registry and chart tools, with narrower inputs. Hosted names follow the version pinned by the website. Local stdio provides the full toolset for your own files, objects, brands and generated applications: this package advertises ${facts.autoTools} tools by default (${facts.allTools} in all), and the Claude Code plugin runs this package. In Claude Code, use the plugin; you do not need both.`,
     "",
     "## Where things go",
     "",
@@ -454,9 +481,9 @@ export function renderPackageReadme(facts) {
     "",
     `To remove ${facts.product}, remove the client entry and delete \`~/.oods-foundry\`.`,
     "",
-    "## Without npm",
+    "## The runtime archive",
     "",
-    `The same runtime also comes as an archive, \`${RUNTIME_ARCHIVE_FILE}\`, with its own short install guide. It needs no package manager: you extract it and point your client at \`node\` and its adapter.`,
+    `The npm package carries the same runtime as an archive, at \`runtime/${RUNTIME_ARCHIVE_FILE}\`. The archive runs without a package manager: you extract it and point your client at \`node\` and its adapter. [The archive install guide](${sourceLink(facts, INSTALL_DOC)}) gives the steps.`,
     "",
     "## Legacy identifiers",
     "",
@@ -468,7 +495,7 @@ export function renderPackageReadme(facts) {
     "",
     "## License",
     "",
-    `${facts.product} is licensed under the Apache License 2.0 ([LICENSE](${cdn("LICENSE")}), [NOTICE](${cdn("NOTICE")})). ${GENERATED_OUTPUT} The third-party packages inside keep their own licenses ([THIRD-PARTY-NOTICES.md](${cdn("THIRD-PARTY-NOTICES.md")})). Security notes are in [SECURITY.md](${cdn("SECURITY.md")}) and changes by version in [CHANGELOG.md](${cdn("CHANGELOG.md")}).`,
+    `${facts.product} is licensed under the Apache License 2.0 ([LICENSE](${cdn("LICENSE")}), [NOTICE](${cdn("NOTICE")})). ${GENERATED_OUTPUT} The third-party packages inside keep their own licenses ([THIRD-PARTY-NOTICES.md](${cdn("THIRD-PARTY-NOTICES.md")})). Security notes are in [SECURITY.md](${guide("SECURITY.md")}) and changes by version in [CHANGELOG.md](${guide("CHANGELOG.md")}).`,
     "",
   ];
   return lines.join("\n");
@@ -480,14 +507,12 @@ export function renderInstallDoc(facts) {
     GENERATED("the product name source, the tool registry and the runtime manifest module"),
     `# Install ${facts.product} from the archive`,
     "",
-    `Most people install ${facts.product} from npm: every client runs \`${NPX_COMMAND}\`, and the package page, <${facts.npmPage}>, gives the first run. This page is for the runtime archive sent directly. It holds the same runtime and needs no package manager.`,
+    `Most people install ${facts.product} from npm: every client runs \`${NPX_COMMAND}\`, and the package page, <${facts.npmPage}>, gives the first run. This page is for running the runtime archive itself, which needs no package manager. The npm package carries it at \`runtime/${RUNTIME_ARCHIVE_FILE}\`, and [building from source](build.md) produces it too.`,
     "",
-    "## What you were sent",
+    "## What you need",
     "",
     `- \`${RUNTIME_ARCHIVE_FILE}\`: the runtime (MCP server, stdio adapter, preview host, tokens, component packages, registry data and the production dependency closure).`,
-    `- \`${RUNTIME_ARCHIVE_SHA256_FILE}\`: the SHA-256 of the archive.`,
-    `- Possibly \`${RUNTIME_MANIFEST_FILE}\` (the source commit, package versions, Node floor and payload digests) and \`${RUNTIME_SBOM_FILE}\` (every third-party package in the archive with its integrity hash).`,
-    "- This page.",
+    `- \`${RUNTIME_MANIFEST_FILE}\`, beside it: the source commit, package versions, Node floor and payload digests, and the archive's SHA-256 as \`archive.sha256\`. Building from source also writes \`${RUNTIME_ARCHIVE_SHA256_FILE}\` and \`${RUNTIME_SBOM_FILE}\` (every third-party package in the archive with its integrity hash).`,
     "",
     `Inside the archive, \`LICENSE\`, \`NOTICE\` and \`THIRD-PARTY-NOTICES.md\` sit at the root. ${facts.product} is licensed under the Apache License 2.0. ${GENERATED_OUTPUT}`,
     "",
@@ -497,11 +522,11 @@ export function renderInstallDoc(facts) {
     "",
     "## Verify and extract",
     "",
-    `Run these in the directory that holds the archive and its digest file. The archive has no top-level folder, so always extract into a directory you created for it; the commands use \`~/${NAME.archiveBase}\`, and any absolute path works.`,
+    `Run these in the directory that holds the archive, and compare the digest the first command prints with \`archive.sha256\` in the manifest. The archive has no top-level folder, so always extract into a directory you created for it; the commands use \`~/${NAME.archiveBase}\`, and any absolute path works.`,
     "",
     "```sh",
-    `shasum -a 256 -c ${RUNTIME_ARCHIVE_SHA256_FILE}        # macOS`,
-    `sha256sum --check ${RUNTIME_ARCHIVE_SHA256_FILE}        # Linux`,
+    `shasum -a 256 ${RUNTIME_ARCHIVE_FILE}        # macOS`,
+    `sha256sum ${RUNTIME_ARCHIVE_FILE}            # Linux`,
     `mkdir -p ~/${NAME.archiveBase}`,
     `tar -xzf ${RUNTIME_ARCHIVE_FILE} -C ~/${NAME.archiveBase}`,
     "```",
@@ -544,7 +569,7 @@ export function renderInstallDoc(facts) {
     "",
     "## First run",
     "",
-    `Ask the assistant to run \`health_check\`: it answers \`status: "ok"\` with the registry counts and \`server.version\` (\`${facts.version}\`). The ten-minute first run on the package page (<${facts.npmPage}>) works the same from the archive.`,
+    `Ask the assistant to run \`health_check\`: it answers \`status: "ok"\` with the registry counts and \`server.version\` (\`${facts.version}\`). The first run on the package page (<${facts.npmPage}>) works the same from the archive.`,
     "",
     "## Settings",
     "",
@@ -552,7 +577,7 @@ export function renderInstallDoc(facts) {
     "",
     "## Component substitution and runnable screens",
     "",
-    `${facts.product} supports your own components by substitution in React and Vue: map a shipped id to a package, exact version and export. Set localPath to your absolute package folder for preview bundling; keep it outside the runtime. Mappings default to ~/.oods-foundry/mappings/component-mappings.json; MCP_MAPPINGS_PATH overrides that file. New components beyond the shipped catalog are not supported. The package's [COMPONENTS.md](https://cdn.jsdelivr.net/npm/@oods/foundry@${facts.version}/COMPONENTS.md) explains prop translations, frozen previews and advisory contract reports.`,
+    `${facts.product} supports your own components by substitution in React and Vue: map a shipped id to a package, exact version and export. Set localPath to your absolute package folder for preview bundling; keep it outside the runtime. Mappings default to ~/.oods-foundry/mappings/component-mappings.json; MCP_MAPPINGS_PATH overrides that file. New components beyond the shipped catalog are not supported. The package's [COMPONENTS.md](${sourceLink(facts, "packages/foundry/COMPONENTS.md")}) explains prop translations, frozen previews and advisory contract reports.`,
     "",
     "For a runnable single screen request code_generate with options.output set to application. Its package.json pins the @oods libraries and your mapped packages at exact versions; run npm install, then npm run build and npm run dev. A mapped package that is not on a registry installs from its own tarball or folder. The sample app labels its data and actions that need your application's handlers.",
     "",

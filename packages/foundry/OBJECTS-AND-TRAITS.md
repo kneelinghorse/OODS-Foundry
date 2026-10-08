@@ -2,8 +2,9 @@
 
 OODS Foundry composes screens from **objects** (the things your product is about: a warehouse, an invoice, a user) and
 **traits** (capabilities an object composes: a lifecycle, prices, stock levels). It ships objects such as `Subscription`
-and `User` and traits such as `lifecycle/Stateful`; `object_registry` `list` names them, leaving out the internal objects that model
-OODS's own work unless you ask with `"includeInternal": true`. This guide is for adding your own, so
+and `User` and traits such as `lifecycle/Stateful`; `object_registry` `list` names them, leaving out the five internal
+capture objects (Run, Finding, CapturedArtifact, Comparison and ComparisonSignal) unless you ask with
+`"includeInternal": true`. This guide is for adding your own, so
 `design_compose`, `code_generate` and `design_preview` work with them as they do with the shipped ones.
 
 ## Where they live
@@ -159,7 +160,7 @@ view_extensions:             # what the trait places on each screen: list, card,
       props: { field: units_on_hand }
 ```
 
-A trait of yours can place only the components OODS Foundry ships; `catalog_list` names them. Your own components can replace those ids through substitution; see [COMPONENTS.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.10.0/COMPONENTS.md).
+A trait of yours can place only the components OODS Foundry ships; `catalog_list` names them. Your own components can replace those ids through substitution; see [COMPONENTS.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.10.1/COMPONENTS.md).
 
 ## Checking and registering
 
@@ -198,7 +199,7 @@ limits of the composer apply to every object, yours and shipped:
 
 ## HTML, relationships and wireframes
 
-The packed team journey verified HTML, a relationship diagram and a composed wireframe from the same registered Warehouse on Node 24.6.0 and on Node 22.0.0, the floor. Its brand, objects, traits and mappings stay outside the unpacked runtime; generation leaves the shipped readiness attestation unchanged. These are builder measurements, not independent certification.
+A run of the npm package, measured on 0.10.0, verified HTML, a relationship diagram and a composed wireframe from the same registered Warehouse on Node 24.6.0 and on Node 22.0.0, the floor. Its brand, objects, traits and mappings stay outside the unpacked runtime; generation leaves the shipped readiness attestation unchanged. These are builder measurements, not independent certification. <!-- history -->
 
 For static sample HTML, compose your object, then call `code_generate`:
 

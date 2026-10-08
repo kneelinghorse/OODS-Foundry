@@ -34,9 +34,10 @@ export const MARKER_END = '<!-- license-holder:end -->';
 /**
  * The holder's statement on generated output (#2372), rendered into README, the npm README and the FAQ. s224-m01 (#2542
  * ruling 7): the fonts the package bundles keep their own licence in whatever carries them, and generated HTML that embeds
- * them carries their notice (packages/mcp-server/src/render/document.ts inlineTokenFonts).
+ * them carries their notice (packages/mcp-server/src/render/document.ts inlineTokenFonts). The dependencies generated code
+ * installs are Apache-2.0 except what @oods/tokens bundles under its NOTICE: those fonts and the Radix Colors calibration.
  */
-export const GENERATED_OUTPUT = `What ${PRODUCT_NAME} generates for you is yours. You may use, change and distribute generated code, markup, styles and other output under any terms you choose, without including ${PRODUCT_NAME}'s LICENSE or NOTICE. The fonts ${PRODUCT_NAME} bundles (Geist, Geist Mono and DM Sans) stay under the SIL Open Font License 1.1 wherever they go, so generated HTML that embeds them carries their notice. The ${PRODUCT_NAME} packages that generated code installs as dependencies remain under the Apache License 2.0.`;
+export const GENERATED_OUTPUT = `What ${PRODUCT_NAME} generates for you is yours. You may use, change and distribute generated code, markup, styles and other output under any terms you choose, without including ${PRODUCT_NAME}'s LICENSE or NOTICE. The fonts ${PRODUCT_NAME} bundles (Geist, Geist Mono and DM Sans) stay under the SIL Open Font License 1.1 wherever they go, so generated HTML that embeds them carries their notice. The ${PRODUCT_NAME} packages that generated code installs as dependencies remain under the Apache License 2.0, except those fonts and the colour calibration derived from Radix Colors in \`@oods/tokens\`, which keep the licences in its NOTICE.`;
 
 const read = (relative) => fs.readFileSync(path.join(ROOT, relative), 'utf8');
 const sha256 = (text) => createHash('sha256').update(text).digest('hex');
@@ -74,7 +75,9 @@ export const THIRD_PARTY_SECTIONS = {
 export function holderSpans(holder) {
   return {
     'README.md': `Copyright ${holder.year} ${holder.holder} (${holder.url}). ${PRODUCT_NAME} is licensed under the Apache License 2.0 (SPDX \`${SPDX_ID}\`), the text in [LICENSE](LICENSE), with the notice in [NOTICE](NOTICE). Questions: ${holder.contact}.`,
-    'docs/LICENSE-FAQ.md': `${holder.holder} (${holder.url}). Questions go to ${holder.contact}.`,
+    // Decision #2736: public questions go to the Issues, or to the general address at the holder's domain for anything
+    // private; holder.contact stays the security-report address the SECURITY files give.
+    'docs/LICENSE-FAQ.md': `${holder.holder} (${holder.url}). Questions go to [GitHub Issues](https://github.com/kneelinghorse/OODS-Foundry/issues), or to hello@${new URL(holder.url).hostname} for anything you would rather not post publicly.`,
   };
 }
 

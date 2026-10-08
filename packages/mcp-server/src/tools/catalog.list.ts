@@ -1,3 +1,4 @@
+import { withPublicEvidence } from '../lib/public-evidence.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -1059,7 +1060,7 @@ export async function handle(input: CatalogListInput): Promise<CatalogListOutput
     return {
       // s222-m03 (#2502 ruling 15): business objects first; internal ones only with includeInternal.
       registry: liveRegistrySummary({ includeInternal: input.includeInternal === true }),
-      components,
+      components: withPublicEvidence(components),
       totalCount,
       returnedCount,
       page,

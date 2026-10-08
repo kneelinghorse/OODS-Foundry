@@ -1,4 +1,5 @@
 import { handle as renderHandle } from './repl.render.js';
+import type { ToolContext } from '../lib/tool-context.js';
 import { handle as validateHandle } from './repl.validate.js';
 import type {
   ReplRenderInput,
@@ -23,10 +24,10 @@ export type ReplGroupedInput =
 
 export type ReplGroupedOutput = ReplRenderOutput | ReplValidateOutput;
 
-export async function handle(input: any): Promise<any> {
+export async function handle(input: any, context?: ToolContext): Promise<any> {
   switch (input.action as ReplGroupedInput['action']) {
     case 'render':
-      return renderHandle(input as ReplRenderInput);
+      return renderHandle(input as ReplRenderInput, context);
     case 'validate':
       return validateHandle(input as ReplValidateInput);
     default: {

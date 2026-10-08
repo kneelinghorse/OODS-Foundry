@@ -166,8 +166,15 @@ Use `brand_create` to draft from a local DTCG file. It reads data only, follows 
 
 Explicit `bindings` name OODS slots and exact source token paths. A token may also declare `$extensions: {"org.oods.intake": {"slot": "surface.canvas"}}`. Otherwise only a unique matching type and value can bind a template slot; token names alone do not decide. Every unbound slot is identified as a template fallback. `from.brand` or `from.preset` chooses the starting template, default A. High contrast keeps the checked template. Review all fallbacks and unmatched tokens before acceptance.
 
+Call `show` with the returned `draftId`:
+
 ```json
 {"action":"show","draftId":"brand-<sha256>"}
+```
+
+Then call `apply` to accept it:
+
+```json
 {"action":"apply","draftId":"brand-<sha256>","accept":true}
 ```
 

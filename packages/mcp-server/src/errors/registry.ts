@@ -59,6 +59,9 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   ['OODS-W003', { code: 'OODS-W003', category: 'validation', message: 'A dry-run render returns no HTML', retryable: false, severity: 'warning',
     cause: 'The render ran as a dry run and returned validation without HTML.',
     fix: 'Set apply to true to receive rendered HTML.' }],
+  ['OODS-W004', { code: 'OODS-W004', category: 'validation', message: 'A large output was written to files', retryable: false, severity: 'warning',
+    cause: 'No payload mode was chosen and the output would exceed 100,000 characters, more than one reply should carry.',
+    fix: 'Read the files the payload block lists, or pass payloadMode "inline" to receive the output in the response.' }],
 
   // ── Validation: Input & Schema ──────────────────────────────────────────
   ['OODS-V001', { code: 'OODS-V001', category: 'validation', message: 'Input validation failed', retryable: true, severity: 'error',

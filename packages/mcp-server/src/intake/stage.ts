@@ -15,6 +15,7 @@ export function stageIntake(kind: 'components'|'brand', value: unknown) {
 export function readIntake<T>(kind: 'components'|'brand', draftId: string): T {
   if (!new RegExp(`^${kind}-[a-f0-9]{64}$`).test(draftId)) throw new Error('Invalid draftId; use the id returned by draft');
   const file = path.join(root(), draftId + '.json');
+  if (!fs.existsSync(file)) throw new Error(`No ${kind === 'brand' ? 'brand' : 'component'} draft ${draftId}. Run draft again; the same source gives the same id.`);
   if (fs.lstatSync(file).isSymbolicLink()) throw new Error('Staged symbolic links are refused');
   const text = fs.readFileSync(file, 'utf8');
   if (`${kind}-${hash(text)}` !== draftId) throw new Error('Draft hash mismatch; draft again before accepting');

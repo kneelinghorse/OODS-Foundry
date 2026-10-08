@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { toExternalName } from './tool-names.js';
 
 type ToolRegistry = {
   auto: string[];
@@ -68,10 +69,13 @@ export function resolveBridgeToolSurface(
     }
   }
 
+  // Accept the names clients list (a11y_scan) as well as the internal ones (a11y.scan).
+  const byListedName = new Map([...auto, ...onDemand].map((name) => [toExternalName(name), name]));
   const unknownExtras: string[] = [];
   for (const name of extraTools) {
-    if (auto.has(name) || onDemand.has(name)) {
-      enabled.add(name);
+    const internal = auto.has(name) || onDemand.has(name) ? name : byListedName.get(name);
+    if (internal) {
+      enabled.add(internal);
     } else {
       unknownExtras.push(name);
     }

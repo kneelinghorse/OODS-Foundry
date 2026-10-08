@@ -11,6 +11,18 @@ import { SchemaStore } from '../schema-store/index.js';
  * Forge state already lives and never inside the runtime bundle.
  */
 export type PayloadMode = 'inline' | 'file';
+
+/**
+ * s238 (0.10.1): when a caller leaves payloadMode unset, a payload above this many characters goes to files instead.
+ * Anthropic documents ~150,000 characters as a connector's largest tool result, and Claude Code saves results over
+ * 50,000 characters to a file; 100,000 keeps every client's reply readable. An explicit 'inline' is always honoured.
+ */
+export const INLINE_PAYLOAD_LIMIT = 100_000;
+export const payloadTooLarge = (requested: PayloadMode | undefined, characters: number, sizedReply: boolean | undefined): boolean => sizedReply === true && requested === undefined && characters > INLINE_PAYLOAD_LIMIT;
+export const largePayloadWarning = (characters: number, field: string) => ({
+  code: 'OODS-W004',
+  message: `The output comes to about ${characters.toLocaleString('en-US')} characters, more than one reply should carry, so it was written to files listed in payload. Pass ${field} "inline" to receive it in the response.`,
+});
 export interface PayloadFileRef { path: string; bytes: number; sha256: string }
 export interface PayloadReceipt { mode: 'file'; directory: string; bytes: number; files: PayloadFileRef[] }
 

@@ -28,7 +28,7 @@
     "brand": {
       "type": "string",
       "format": "oods-brand",
-      "description": "Brand to render (s169 m04). Optional with NO default: omitting it preserves the previous behaviour byte-for-byte, including the document's data-brand=\"default\". Uppercase 'A' or 'B' exactly. Applies to output.format='document' only — the 'fragments' branch emits no <html> element to carry data-brand, so fragments diagnose an ignored brand with OODS-W001."
+      "description": "Brand to render. Optional with NO default: omitting it preserves the previous behaviour byte-for-byte, including the document's data-brand=\"default\". Uppercase 'A' or 'B' exactly. Applies to output.format='document' only — the 'fragments' branch emits no <html> element to carry data-brand, so fragments diagnose an ignored brand with OODS-W001."
     },
     "options": {
       "type": "object",
@@ -91,8 +91,7 @@
         "payloadMode": {
           "type": "string",
           "enum": ["inline", "file"],
-          "default": "inline",
-          "description": "inline (default) returns html (or fragments and css) in the response. file writes index.html (or fragments.json and css.json) beside the saved-schema store (<store>/../payloads/repl.render-<digest>/) and returns a payload block of file references instead; html, fragments and css are then omitted."
+          "description": "Unset: inline, unless the output would exceed 100,000 characters, in which case it is written as with file and warning OODS-W004 says so. inline returns html (or fragments and css) in the response. file writes index.html (or fragments.json and css.json) beside the saved-schema store (<store>/../payloads/repl.render-<digest>/) and returns a payload block of file references instead; html, fragments and css are then omitted."
         }
       },
       "additionalProperties": false

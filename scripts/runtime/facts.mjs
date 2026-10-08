@@ -103,7 +103,8 @@ export const renderFacts = (facts) => `${JSON.stringify(facts, null, 2)}\n`;
 /**
  * Where the package's prose states a fact differently from facts.json: the README's requirements, install and plugin
  * sentences, and artifact_certify's reference guide (its ACCURACY paragraph's codes, its equivalence-rule count and its
- * certified scopes). Empty when they agree; a number in prose cannot drift from the data without failing --check.
+ * certified scopes with the release they were measured on). Empty when they agree; a number in prose cannot drift from
+ * the data without failing --check.
  */
 export function proseDisagreements(document, { readme, certifyDescription }) {
   const { facts } = document;
@@ -122,7 +123,8 @@ export function proseDisagreements(document, { readme, certifyDescription }) {
     if (JSON.stringify(stated) !== JSON.stringify(published)) findings.push(`artifact_certify's ACCURACY paragraph names ${stated.join(", ")}; facts.json has ${published.join(", ")}`);
   }
   expectIn("artifact_certify's reference guide", certifyDescription, `The ${facts.equivalenceRules.count} equivalence rules`);
-  expectIn("artifact_certify's reference guide", certifyDescription, `All ${facts.certifiedChartScopes.chartTypes} chart types render and certify conformantly in the ${facts.certifiedChartScopes.value} measured light/dark/HC and A/B scopes`);
+  // The scopes are a census measured on one release; the sentence says which, as facts.json and health_check do.
+  expectIn("artifact_certify's reference guide", certifyDescription, `All ${facts.certifiedChartScopes.chartTypes} chart types render and certify conformantly in the ${facts.certifiedChartScopes.value} measured light/dark/HC and A/B scopes, measured on ${facts.certifiedChartScopes.measuredOn.version}`);
   return findings;
 }
 

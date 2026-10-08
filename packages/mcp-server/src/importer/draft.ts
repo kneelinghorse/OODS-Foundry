@@ -190,7 +190,7 @@ export function draftSource(input: SourceInput): ImportResult {
       if (!schema.writeOnly && !objectTarget) {
         const sampleSchema = { ...schema, ...(nullable ? { type: [schema.type, 'null'] } : {}) };
         for (let i = 0; i < samples.length; i++) {
-          const value = sampleValue(sampleSchema, /^(name|title|label|display_name)$/i.test(field) ? name : field, i);
+          const value = sampleValue(sampleSchema, /^(name|title|label|display_?name|full_?name)$/i.test(field) ? name : field, i);
           if (value !== undefined) Object.defineProperty(samples[i], field, { value, enumerable: true, writable: true });
         }
         if (!samples.some(sample => Object.hasOwn(sample, field))) report.push({ ...fieldOrigin, object: name, kind: 'keyword', outcome: 'unmapped', reason: 'No valid illustrative sample could be generated within the source constraints; sample omitted.' });

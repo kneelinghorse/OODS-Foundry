@@ -1,6 +1,6 @@
 # Security
 
-This note describes OODS Foundry 0.10.0. It does not claim a completed network audit.
+This note describes OODS Foundry 0.10.1. It does not claim a completed network audit.
 
 ## What runs on your machine
 
@@ -34,13 +34,24 @@ These are source-qualified configuration statements, not a claim that every exec
 Before a release is published, every package in its runtime archive is checked, name and version, against npm's
 advisory data. The package's own manifest declares no dependencies because the runtime travels inside it, so the check
 reads the archive itself. A high or critical advisory stops the release unless an exception names that package,
-version and advisory with a reason and a decision. 0.10.0 has no exception.
+version and advisory with a reason and a decision. 0.10.1 has no exception.
 
-Earlier release checks caught high-severity advisories in `brace-expansion`, `style-dictionary`,
-`expr-eval-fork` and `tmp`. The affected dependencies were upgraded or removed. Apache ECharts was also upgraded
-to fix a moderate cross-site scripting advisory. The [CHANGELOG](CHANGELOG.md) records the affected releases,
-dependency versions and advisory identifiers. Those checks matched package names and versions; they did not
-establish that an OODS Foundry tool reached the affected code. The current token build requires Node.js 22 or later.
+Earlier releases fixed these advisories by upgrading or removing the affected dependency. The
+[CHANGELOG](CHANGELOG.md) names the release that made each change.
+
+- `brace-expansion` 5.0.9: GHSA-6j4f-fj2g-mc7p and GHSA-qhr7-859c-m2p7 (high, denial of service through
+  uncontrolled recursion) and GHSA-q2hr-2g5m-vwhr (moderate, quadratic-time expansion). Upgraded to 5.0.12.
+- `style-dictionary` 4.4.0: GHSA-vj5c-m527-mpff (high, prototype pollution in a token-conversion utility). The token
+  build moved to Style Dictionary 5.5.5.
+- `expr-eval-fork` 2.0.2: GHSA-jc85-fpwf-qm7x (high, unsafe evaluation of supplied functions). Upgraded to 3.0.3.
+- `tmp` 0.2.5: GHSA-ph9p-34f9-6g65 (high, path traversal through temporary-file options). Removed with
+  `patch-package`, which brought it.
+- `@modelcontextprotocol/sdk` 1.30.0: GHSA-6qxp-vccf-f47h (high, an OAuth client could send credentials to an
+  authorization server the MCP server chose). Upgraded to 1.31.0.
+- Apache ECharts 6.0.0: GHSA-fgmj-fm8m-jvvx (moderate, cross-site scripting). Upgraded to 6.1.0.
+
+These were matches by package name and version; they did not establish that an OODS Foundry tool reached the
+affected code. The current token build requires Node.js 22 or later.
 
 ## Reporting a problem
 

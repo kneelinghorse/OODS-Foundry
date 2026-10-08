@@ -1,5 +1,5 @@
 /**
- * The Forge design preview as an MCP App (Sprint 202 m03, m04): the generated React or Vue app actually running inside the
+ * The OODS Foundry design preview as an MCP App (Sprint 202 m03, m04): the generated React or Vue app actually running inside the
  * host's sandbox, with the Sprint 201 page's lineage, versions and measurements beside it, and the acts that decide a
  * design from the conversation. The bridge build inlines the runtime (React, ReactDOM, Vue, the foundation packages and
  * their CSS) in this document; the version record, the lineage list and the compiled module for the mounted framework,

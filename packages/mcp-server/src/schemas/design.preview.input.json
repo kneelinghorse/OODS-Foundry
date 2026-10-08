@@ -187,7 +187,7 @@
     "contextItems": {
       "type": "array",
       "maxItems": 200,
-      "description": "Decisions and evidence about this object that YOU already fetched, shown beside the running preview and stored on the version. OODS Foundry opens no database, store or network connection belonging to CMOS, TraceLab or Hive and never will: a direct reader would couple the portable bundle to another product's schema. Every item must carry its own provenance \u2014 source, id, title, the query that produced it and when you fetched it \u2014 because OODS Foundry cannot re-run your search to check it. An item naming a different object from the one on screen is refused with OODS-V207 and nothing is written; a malformed item is refused with OODS-V206.",
+      "description": "Decisions and evidence about this object that YOU already fetched, shown beside the running preview and stored on the version. OODS Foundry opens no other product's database, store or network connection: a direct reader would couple the portable bundle to another product's schema. Every item must carry its own provenance \u2014 source, id, title, the query that produced it and when you fetched it \u2014 because OODS Foundry cannot re-run your search to check it. An item naming a different object from the one on screen is refused with OODS-V207 and nothing is written; a malformed item is refused with OODS-V206.",
       "items": {
         "type": "object",
         "required": [
@@ -202,7 +202,7 @@
           "source": {
             "type": "string",
             "minLength": 1,
-            "description": "Where it came from, as your own tool names it: cmos.decisions, tracelab.evidence, hive.person."
+            "description": "Where it came from, as your own tool names it, for example decisions.log, evidence.search or people.directory."
           },
           "id": {
             "type": "string",

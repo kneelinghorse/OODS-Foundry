@@ -28,6 +28,8 @@
       "type": "string",
       "pattern": "^[A-Fa-f0-9]{64}$"
     },
+    "detail": { "type": "string", "enum": ["summary", "full"], "description": "The detail level of traits and objects in this snapshot." },
+    "notFound": { "type": "array", "items": { "type": "string" }, "description": "Requested names that match no trait or object." },
     "generatedAt": {
       "type": "string",
       "format": "date-time"

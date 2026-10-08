@@ -52,6 +52,8 @@ function stage(result: ImportResult): { importId: string; directory: string } {
 }
 function read(importId: string, includeReport = false): Pick<ImportResult, 'drafts' | 'report'> {
   const directory = stagedPath(importId);
+  // An unknown id is the caller's to fix; say so without a filesystem error or the home folder's path.
+  if (!fs.existsSync(directory)) throw new ToolError('OODS-V220', `No staged import ${importId}. Run draft again; the same source gives the same id.`);
   try {
     if (fs.lstatSync(directory).isSymbolicLink()) throw new Error('staging folder is a symbolic link');
     const file = path.join(directory, 'import.json');

@@ -2,6 +2,35 @@
 
 What changed in each version of OODS Foundry, in the terms you use it in.
 
+## 0.10.1
+
+- Install lines: the public repository's README installs the current release with `npx -y @oods/foundry`, and its Docker commands name no version. A release check now fails when a release document names an older `@oods/foundry`.
+- Release notes: this changelog adds the 0.10.0 entry it shipped without, and a release check fails when it does not open with the package's version. The `@oods/tokens` changelog is up to date.
+- Tool reference: TOOL-REFERENCE.md describes every action the tools accept, including the draft, show and apply actions of `component_map` and `brand_create`.
+- Counts and measurement versions: the guides count 11 business objects, plus 5 internal capture objects (16 in the runtime), and name the version each measurement was made on.
+- Links: the README's guide links open the rendered guides in the public repository at this release. The hosted endpoint is shown as an address, not a link, and the README says how the hosted connector, this package and the Claude Code plugin relate.
+- Contacts: questions go to GitHub Issues, or to the address in the license FAQ. Security reports go to the address in SECURITY.md, which now lists the advisory identifiers of earlier fixes.
+- Listing: the MCP Registry entry has a title, OODS Foundry, and an icon.
+- Compact replies: `registry_snapshot` answers with a summary by default, each trait and object without its schema, view extensions and tokens: about 45,000 characters instead of about 410,000. Pass `detail: "full"` for complete definitions, and `names` to limit them to the traits and objects you name.
+- Large output goes to files: `code_generate`, `schema_render` and `pipeline_run` write output larger than 100,000 characters to files and list them, unless you ask for `payloadMode: "inline"`. Warning `OODS-W004` says when that happened.
+- Imported samples: objects imported without examples get sample values that read like real data, such as emails, people's names, cities, ISO currency and country codes, amounts and record codes, instead of "email 3" or "cu3". Every value still meets the field's constraints.
+- `MCP_EXTRA_TOOLS` accepts the listed name `a11y_scan` as well as `a11y.scan`, and names any entry that matches no on-demand tool.
+- Docker: `OODS_FOUNDRY_HOME` now moves everything the server keeps, so the image keeps registered objects, traits, brands, mappings and saved schemas on its `/data` volume across runs.
+- A draft or import id that does not exist gets an error naming the id and saying to draft again, instead of a file-system error.
+- `health_check` and `catalog_list` name build-record receipts by file instead of citing paths that are not in the package.
+- The design preview page is titled "OODS Foundry design preview", and the server's own information carries the title, website and icon.
+
+## 0.10.0
+
+- `component_map` drafts mappings from a local shadcn/ui or shadcn-vue project, or from a built Storybook. `show` lists each proposal with its evidence and prop translations, and what stayed unmatched; `apply` writes only the proposals you accept, all at once. Drafting never runs project code or fetches anything.
+- `brand_create` drafts a brand from a local DTCG token file and keeps your token names, aliases and light and dark values in the CSS of generated apps. `show` and `apply` review and accept it. Values it cannot use are reported, and token names alone never decide which OODS slot a token fills.
+- Sixteen shadcn-vue adapters on Reka UI ship under `shadcn/vue/`. Vue previews and routed workflow apps use your mapped components, and the React and Vue registry files can be installed from version-pinned URLs. React Aria is still not supported.
+- Imported objects bind accepted traits to their own fields. Related-record labels, enum and array samples, OData text references, lifecycle controls and timestamps read better, and unsupported trait facts and empty panels are left out.
+- The contrast of static button states and the non-text contrast threshold for progress indicators are corrected. Accessibility reports keep the results that were not measured or are incomplete.
+- Fixes empty Vue filters, saving and reopening custom controls, style collisions between team controls, and badge semantics for assistive technology. React and Vue Membership workflows from Cal.com's public schema were rehearsed in public shadcn projects using Primer token names, at 1440 and 390 pixels wide in light and dark.
+
+Generated apps still pin the tested 0.6.2 set of OODS libraries. A component proposal is structural evidence, not proof of behaviour; Storybook entries without a local defining source stay unmatched.
+
 ## 0.9.0
 
 - The default roster remains 20 tools. Its compact `tools/list` is 82,520 UTF-8 bytes (0.8.0: 82,191), measured from the JSON tool array.
@@ -13,7 +42,7 @@ What changed in each version of OODS Foundry, in the terms you use it in.
 - Import GraphQL SDL or introspection with enums, input objects, relationships and declared scalar formats. Resolvers are never run.
 - Every format uses the same draft/show/explicit-acceptance flow. Trait suggestions now use structural and declared evidence across the trait library; counts include each proposed trait. Accepted-trait fields are distinguished from source removals on re-import.
 - Imported screens use record titles or identifiers, varied valid samples, source help, date-only formatting and relationship pickers. Lifecycle/history traits add timelines; read-only sources omit forms. Hand-written objects can declare list columns too.
-- Unreachable references are reported and skipped without fetching them. Folder escapes still refuse the import. Streamed, hashed staging supports the Oracle Financials corpus without one giant JSON string.
+- Unreachable references are reported and skipped without fetching them. Folder escapes still refuse the import. Streamed, hashed staging handles large schema sets without building one giant JSON string.
 
 ## 0.8.0
 
@@ -32,7 +61,7 @@ What changed in each version of OODS Foundry, in the terms you use it in.
 
 - Tools have consistent names, short titles, complete behavior hints and descriptions that explain when to choose a related tool. Full input schemas remain available on demand; server validation is unchanged.
 - The initial tool list is smaller. The detailed parameter and return reference ships in TOOL-REFERENCE.md.
-- The runtime ships 16 objects: 11 public reference objects and 5 internal capture objects. The 12 research, delivery and intelligence objects remain available from the repository checkout.
+- OODS Foundry ships 11 business objects, plus 5 internal capture objects (16 in the runtime). The 12 research, delivery and intelligence objects are no longer shipped.
 - The Claude Code plugin includes installation instructions and a README. OODS Foundry remains free under Apache-2.0.
 
 ### Tool renames
@@ -56,13 +85,12 @@ Old names answered with a warning through 0.7.x; those eight aliases are removed
 - A standalone Subscription component chart uses the same authored sample as its preview and application: eleven EUR payments, including the refund, matching the header and payments panel.
 - OODS-V218 now explains both unmet component contracts and React-only shadcn mappings that keep the OODS Foundry component in Vue or HTML output; the components guide names that behavior.
 - Source verification keeps explicit measured time limits, gives nested claims checks enough time under load, and reports an ignored stale package instead of checking its license against a newer source tree.
-- Release tool evidence can read all nineteen outcomes from the npm package proof. The source health ledger can be refreshed after that proof without rebuilding the frozen package.
 
 ## 0.6.1
 
 - Destructive shadcn Button, StatusBadge and Banner text uses solid backgrounds and foregrounds from the team's tokens. The Radix and Base UI fixtures measure 4.77:1 in light and 6.85:1 in dark. This fixes the reported light-theme Delete (3.98:1) and Past Due (3.66:1) cases.
 - Native trait-form placeholders keep the input placeholder token at full opacity when a host stylesheet supplies translucent placeholder text.
-- The root TypeScript check goes from 159 errors to zero, and runs beside the final release verification. Copied shadcn sources compile in their consuming projects; closed-sprint proof producers retain explicit compilation dispositions.
+- Copied shadcn sources compile in their consuming projects.
 - A first shadcn preview accepts the composition's returned version before a package snapshot exists. Already frozen previews keep their stored bytes.
 - COMPONENTS.md installs the local OODS Foundry package before its adapter files are used, and gives the tested Vite/Radix and Next.js/Base UI routes through derive, map, compose, preview, generate and run.
 - OBJECTS-AND-TRAITS.md explains why Plan's equivalent period date fields can select DatePicker and native date Input during form composition.
@@ -506,8 +534,7 @@ it to the classes above.
 **Generated apps**
 
 - Code generated around a component of yours declares `__Mapped<Name>`, `__Contract<Name>`, `__mappedProps`,
-  `__vueDefineComponent` and `__vueH`. It named them after the product (`__ForgeTeam<Name>`, `__ForgeContract<Name>`,
-  `__forgeTeamProps`, `__forgeDefineComponent`, `__forgeH`).
+  `__vueDefineComponent` and `__vueH`. They replace earlier internal identifiers.
 - The quickstart's example team buttons take the page's font.
 
 **Objects**
@@ -631,7 +658,7 @@ The first version installed from npm, and the first under the name OODS Foundry.
 - The tool list shows each action's own arguments for `schema_render`, `schema_store`, `object_registry` and `component_map`.
 - `health_check` reports the release version.
 - A `schema_render` render without `apply: true` says it was a dry run and how to get the HTML.
-- A dotted tool name such as `design_compose` gets a hint to use `design_compose`.
+- A dotted tool name such as `design.compose` gets a hint to use `design_compose`.
 - `catalog_list` answers with a brief list by default: name, categories and one readiness label per component.
 - A generated app's result says where its `@oods` packages come from and how to install them.
 

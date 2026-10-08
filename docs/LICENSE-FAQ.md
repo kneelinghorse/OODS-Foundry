@@ -6,13 +6,13 @@ OODS Foundry is licensed under the Apache License 2.0 ([LICENSE](../LICENSE), wi
 
 **Who holds the copyright?**
 <!-- license-holder:start -->
-System Systems LLC (https://aquex.ai). Questions go to derek@derekn.com.
+System Systems LLC (https://aquex.ai). Questions go to [GitHub Issues](https://github.com/kneelinghorse/OODS-Foundry/issues), or to hello@aquex.ai for anything you would rather not post publicly.
 <!-- license-holder:end -->
 
-**Is what OODS Foundry generates mine?** Yes. What OODS Foundry generates for you is yours. You may use, change and distribute generated code, markup, styles and other output under any terms you choose, without including OODS Foundry's LICENSE or NOTICE. The fonts OODS Foundry bundles (Geist, Geist Mono and DM Sans) stay under the SIL Open Font License 1.1 wherever they go, so generated HTML that embeds them carries their notice. The OODS Foundry packages that generated code installs as dependencies remain under the Apache License 2.0.
+**Is what OODS Foundry generates mine?** Yes. What OODS Foundry generates for you is yours. You may use, change and distribute generated code, markup, styles and other output under any terms you choose, without including OODS Foundry's LICENSE or NOTICE. The fonts OODS Foundry bundles (Geist, Geist Mono and DM Sans) stay under the SIL Open Font License 1.1 wherever they go, so generated HTML that embeds them carries their notice. The OODS Foundry packages that generated code installs as dependencies remain under the Apache License 2.0, except those fonts and the colour calibration derived from Radix Colors in `@oods/tokens`, which keep the licences in its NOTICE.
 
 **May I use the OODS Foundry name?** The license grants no rights to it (section 6), beyond describing where your copy came from. Don't name a fork or product so that it looks like OODS Foundry itself.
 
-**How are contributions licensed?** Under the Apache License 2.0, as section 5 provides; there is no separate grant and no CLA.
+**How are contributions licensed?** This repository does not accept contributions; see [CONTRIBUTING.md](../CONTRIBUTING.md).
 
 **What about earlier versions?** `@oods/foundry` 0.2.0 on npm was published under the PolyForm Noncommercial License 1.0.0 and keeps it; later versions are Apache 2.0.

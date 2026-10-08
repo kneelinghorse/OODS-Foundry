@@ -1,6 +1,6 @@
 # Browser design loop
 
-Run from the Forge build worktree. `pnpm design:loop serve` packs the five foundation packages once, installs isolated Vite consumers from those tarballs, and keeps both servers and Chromium running. Cold installation is paid once. The controller binds 127.0.0.1:4477; React and Vue use 4478 and 4479. `--port N` moves all three ports. `--state DIR` selects the pack/install receipt directory; the default is a repository-specific temporary directory. Consumers are separate temporary directories outside the workspace.
+Run from the repository root. `pnpm design:loop serve` packs the five foundation packages once, installs isolated Vite consumers from those tarballs, and keeps both servers and Chromium running. Cold installation is paid once. The controller binds 127.0.0.1:4477; React and Vue use 4478 and 4479. `--port N` moves all three ports. `--state DIR` selects the pack/install receipt directory; the default is a repository-specific temporary directory. Consumers are separate temporary directories outside the workspace.
 
 `pnpm design:loop status` reports ports, PID, consumer roots, package versions/hashes, isolation and startup timing. Stop with Ctrl-C in the serve terminal (or SIGTERM to the reported PID). Temporary directories are retained for inspection. To observe component or CSS package changes, rebuild and restart serve to repack; composer/emitter changes take effect on every render invocation without restarting.
 

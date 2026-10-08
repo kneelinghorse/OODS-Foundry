@@ -623,9 +623,13 @@ async function initializeAndList(client, expectedVersion, expectedToolNames, neg
     clientInfo: { name: "forge-portable-runtime-e2e", version: "0.1.0" },
   });
   assert.equal(initialized.protocolVersion, protocolVersion);
+  // 0.10.1: serverInfo also carries the title, website and icon the registry entry declares.
   assert.deepEqual(initialized.serverInfo, {
     name: "oods-foundry-adapter",
     version: expectedVersion,
+    title: "OODS Foundry",
+    websiteUrl: "https://oods-foundry.com/",
+    icons: [{ src: "https://oods-foundry.com/icon-512.png", mimeType: "image/png", sizes: ["512x512"] }],
   });
   // Resources and the extension are advertised to every client; only the tool's pointer to the app is negotiated.
   assert.deepEqual(initialized.capabilities, { tools: {}, resources: {}, extensions: { [UI_EXTENSION]: {} } });
@@ -882,8 +886,8 @@ async function main() {
   );
   assert.equal(
     adapterPackage.version,
-    "0.10.0",
-    "adapter 0.10.0 advertises accepted file intake and Vue team components",
+    "0.10.1",
+    "adapter 0.10.1 sizes replies for the client and accepts the listed on-demand tool names",
   );
   assert.equal(
     manifest.packageVersions["@oods/mcp-adapter"],
@@ -1187,13 +1191,15 @@ async function main() {
       assert(runtime.ok, 'preview host runtime served');
     }
     mcpApps.preview = await proveCompositionResources(primary, previewResult, preview, mcpApps.app.uri, manifest);
-    const generated = await primary.callTool("code_generate", operand("code.generate"));
+    // 0.10.1: a reply to an MCP client writes output over 100,000 characters to files unless it asks for inline; this E2E reads the artifacts inline.
+    const inlineCode = { ...operand("code.generate"), options: { ...(operand("code.generate").options ?? {}), payloadMode: "inline" } };
+    const generated = await primary.callTool("code_generate", inlineCode);
     assert.equal(generated.status, 'ok');
     assertGeneratedArtifact(generated.artifact, 'react');
-    const generatedVue = await primary.callTool("code_generate", { ...operand("code.generate"), framework: 'vue' });
+    const generatedVue = await primary.callTool("code_generate", { ...inlineCode, framework: 'vue' });
     assert.equal(generatedVue.status, 'ok');
     assertGeneratedArtifact(generatedVue.artifact, 'vue');
-    const run = await primary.callTool("pipeline_run", operand("pipeline"));
+    const run = await primary.callTool("pipeline_run", { ...operand("pipeline"), options: { ...(operand("pipeline").options ?? {}), payloadMode: "inline" } });
     assert.equal(run.error, undefined, JSON.stringify(run.error));
     assertGeneratedArtifact(run.code?.artifact, 'react');
     const snapshot = await primary.callTool("registry_snapshot", operand("registry.snapshot"));
@@ -1222,7 +1228,7 @@ async function main() {
     await primary.callTool("object_registry", { action: "reload" });
     const object = await primary.callTool("object_registry", operand("object"));
     assert.equal(object.name, 'Subscription'); assert(object.traits.length > 0); assert.deepEqual(Object.keys(object.viewExtensions), ['card']);
-    const rendered = await primary.callTool("schema_render", operand("repl"));
+    const rendered = await primary.callTool("schema_render", { ...operand("repl"), output: { ...(operand("repl").output ?? {}), payloadMode: "inline" } });
     assert.equal(rendered.status, 'ok'); assert(rendered.html.startsWith('<!DOCTYPE html>'));
     assert.deepEqual([...primary.calledTools].sort(), [...expectedToolNames].sort());
     const outcomes = {

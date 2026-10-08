@@ -159,6 +159,7 @@ Codes this tool can return, derived from the shipped module graph in `@oods/foun
 | `OODS-W001` | warning | Fragment output ignores document scope options |
 | `OODS-W002` | warning | Non-strict fragments reclassify unknown-component errors per node |
 | `OODS-W003` | warning | A dry-run render returns no HTML |
+| `OODS-W004` | warning | A large output was written to files |
 
 ## Example Request
 

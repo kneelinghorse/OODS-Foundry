@@ -6,6 +6,6 @@ The authored change to the generated theme sets `--primary` and `--ring` in both
 
 Sprint 231 also pairs the authored blue dark primary with the existing `--foreground` token through `--primary-foreground: var(--foreground)`. The original default nova foreground is appropriate for its pale dark primary, but produced 3.543:1 against this authored blue. Primary adapters preserve the team’s primary token pair. The Sprint 231 before receipts retain the original fixture.
 
-The no-plugin `postcss.config.mjs` prevents Vite from reading this repository's parent Tailwind 3 PostCSS configuration. OODS adapters are installed from the Foundry registry items by the proof; they are not fixture source.
+The no-plugin `postcss.config.mjs` prevents Vite from reading this repository's parent Tailwind 3 PostCSS configuration. OODS adapters are installed from the OODS Foundry registry items by the proof; they are not fixture source.
 
 Run `npm ci` then `npm run build` in a copy under the sprint checkout's `.tmp/`.

@@ -133,16 +133,22 @@ async function create(input: { brand_id: string; documents?: unknown; recipe?: u
   };
 }
 
+/** A staged brand draft, or a validation error naming the draftId (an unknown or altered draft is the caller's to fix). */
+function reviewedDraft(draftId: string): ReturnType<typeof draftTokens> {
+  try { return readIntake<ReturnType<typeof draftTokens>>('brand', draftId); }
+  catch (error) { throw new ToolError('OODS-V001', error instanceof Error ? error.message : String(error), { field: 'draftId' }); }
+}
+
 export async function handle(input: BrandIntakeInput): Promise<BrandIntakeOutput> {
   switch (input?.action) {
     case 'draft': {
       const draft = draftTokens(input);
       return { action:'draft', ...stageIntake('brand',draft), ...draft };
     }
-    case 'show': return { action:'show',draftId:input.draftId,...readIntake<ReturnType<typeof draftTokens>>('brand',input.draftId) };
+    case 'show': return { action:'show',draftId:input.draftId,...reviewedDraft(input.draftId) };
     case 'apply': {
       if(input.accept !== true) throw new ToolError('OODS-V001','Brand intake requires explicit accept:true after reviewing show.');
-      const draft = readIntake<ReturnType<typeof draftTokens>>('brand',input.draftId);
+      const draft = reviewedDraft(input.draftId);
       return create({brand_id:draft.brand_id,documents:draft.documents});
     }
     case 'derive': {

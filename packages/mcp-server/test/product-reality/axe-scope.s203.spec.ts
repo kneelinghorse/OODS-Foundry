@@ -57,7 +57,7 @@ describe('the conversation view shows the stored measurement rather than re-runn
         const subtreeRun = evaluated(await run(document.getElementById('app')));
         // What the conversation view actually is: the design mounted beside this app's own chrome, in one document.
         const chrome = document.createElement('div');
-        chrome.innerHTML = '<h1>Forge design preview</h1><img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=">';
+        chrome.innerHTML = '<h1>OODS Foundry design preview</h1><img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=">';
         document.body.insertBefore(chrome, document.body.firstChild);
         const documentRunBesideChrome = await run(document);
         chrome.remove();

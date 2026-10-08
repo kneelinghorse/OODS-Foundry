@@ -28,6 +28,7 @@
     }
   ],
   "properties": {
+    "payload": { "type": "object", "additionalProperties": false, "required": ["mode", "directory", "bytes", "files", "reason"], "description": "The rendered page and the generated files, written to disk instead of returned (payloadMode).", "properties": { "mode": { "const": "file" }, "directory": { "type": "string" }, "bytes": { "type": "integer", "minimum": 0 }, "files": { "type": "array", "items": { "type": "object", "additionalProperties": false, "required": ["path", "bytes", "sha256"], "properties": { "path": { "type": "string" }, "bytes": { "type": "integer", "minimum": 0 }, "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" } } } }, "reason": { "type": "string" } } },
     "validationReceipt": {
       "$ref": "#/$defs/validationReceipt",
       "description": "Mandatory generation-profile disclosure. Pipeline preserves code.generate checks and accepted caller-supplied evidence envelopes, verifies the child receipt against the requested profile and artifact, and records target resolution provenance."
@@ -135,11 +136,7 @@
     "code": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "framework",
-        "styling",
-        "artifact"
-      ],
+      "required": ["framework", "styling"],
       "properties": {
         "framework": {
           "type": "string",

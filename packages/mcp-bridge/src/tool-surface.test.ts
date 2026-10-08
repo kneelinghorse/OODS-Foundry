@@ -69,4 +69,15 @@ describe('resolveBridgeToolSurface', () => {
     expect(surface.unknownExtras).toEqual(['unknown.tool']);
     expect(surface.registrySource).toMatch(/tools\/registry\.json$/);
   });
+
+  it('accepts the listed name a11y_scan, the one the README and clients show', () => {
+    const surface = resolveBridgeToolSurface(
+      serverCwd,
+      bridgeConfig.tools.allowed,
+      { MCP_TOOLSET: 'default', MCP_EXTRA_TOOLS: 'a11y_scan' } as NodeJS.ProcessEnv,
+    );
+
+    expect(surface.enabled).toContain('a11y.scan');
+    expect(surface.unknownExtras).toEqual([]);
+  });
 });

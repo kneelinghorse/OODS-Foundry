@@ -24,10 +24,13 @@ export const HOMEPAGE = "https://oods-foundry.com/";
 export const PUBLIC_REPOSITORY = "git+https://github.com/kneelinghorse/OODS-Foundry.git";
 export const ISSUES = "https://github.com/kneelinghorse/OODS-Foundry/issues";
 /**
- * Release documents outside the six packages: the plugin's copies of the foundry skill (client-configs.mjs keeps them in
- * step with packages/foundry) and the install guide that goes beside the runtime archive.
+ * Release documents outside the six packages: the plugin's README and its copies of the foundry skill (client-configs.mjs
+ * keeps the copies in step with packages/foundry), the archive install guide, and the overlays the public source export
+ * writes at the repository root. The 0.10.0 snapshot's front page still installed @oods/foundry@0.8.0 because nothing
+ * checked the overlay README; it is checked and rewritten like every other release document now.
  */
-const RELEASE_MARKDOWN = Object.freeze(["plugins/oods-foundry/skills/oods-foundry/SKILL.md", "plugins/oods-foundry/skills/oods-foundry/references/QUICKSTART.md", "docs/runtime/install.md"]);
+const RELEASE_MARKDOWN = Object.freeze(["plugins/oods-foundry/README.md", "plugins/oods-foundry/skills/oods-foundry/SKILL.md", "plugins/oods-foundry/skills/oods-foundry/references/QUICKSTART.md", "docs/runtime/install.md",
+  "scripts/public-export/overlays/README.md", "scripts/public-export/overlays/CONTRIBUTING.md", "scripts/public-export/overlays/SECURITY.md"]);
 const HISTORY_MARK = "<!-- history -->";
 const VERSION_REFERENCE = /@oods\/([a-z][a-z-]*)@(\d+\.\d+\.\d+)/g;
 
@@ -65,6 +68,15 @@ export function staleVersionReferences(file, text, versions) {
   return text.split("\n").flatMap((line, index) => line.includes(HISTORY_MARK) ? [] : [...line.matchAll(VERSION_REFERENCE)]
     .filter(([, name, version]) => versions[`@oods/${name}`] && versions[`@oods/${name}`] !== version)
     .map(([reference, name]) => ({ file, line: index + 1, reference, current: `@oods/${name}@${versions[`@oods/${name}`]}` })));
+}
+
+/**
+ * A shipped changelog must open with its package's own version: @oods/foundry 0.10.0 shipped a changelog whose newest
+ * entry was 0.9.0, and @oods/tokens' stopped at 0.4.3 for six releases, so readers saw no notes for the release they had.
+ */
+export function changelogProblems(file, text, version) {
+  const first = /^## (\d+\.\d+\.\d+)(?![\w.])/m.exec(text)?.[1];
+  return first === version ? [] : [`${file}: its first entry is ${first ? `## ${first}` : "missing"}, not ## ${version}; add this release's notes at the top`];
 }
 
 export const legalLink = (name, version, document) => `https://cdn.jsdelivr.net/npm/${name}@${version}/${document}`;
@@ -106,6 +118,8 @@ export function audit(root = REPO_ROOT) {
     let next = isHistory(file) ? text : text.split("\n").map((line) => line.includes(HISTORY_MARK) ? line
       : line.replace(VERSION_REFERENCE, (reference, name) => versions[`@oods/${name}`] ? `@oods/${name}@${versions[`@oods/${name}`]}` : reference)).join("\n");
     for (const stale of staleVersionReferences(file, text, versions)) problems.push(`${stale.file}:${stale.line}: ${stale.reference} is not the current ${stale.current}`);
+    const changelogOf = /^packages\/([^/]+)\/CHANGELOG\.md$/.exec(file)?.[1];
+    if (changelogOf) problems.push(...changelogProblems(file, text, versions[`@oods/${changelogOf}`]));
     const library = /^packages\/([^/]+)\/README\.md$/.exec(file)?.[1];
     if (library && library !== "foundry") {
       const name = `@oods/${library}`;

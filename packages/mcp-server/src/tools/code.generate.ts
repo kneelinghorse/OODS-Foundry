@@ -27,7 +27,7 @@ import { buildGeneratedArtifact } from '../codegen/artifact-envelope.js';
 import { preflightTargetContracts } from '../codegen/target-contracts.js';
 import { preflightNormalizationSafety } from '../codegen/normalization-safety.js';
 import { preflightStateContract } from '../codegen/state-contract.js';
-import { writePayload } from '../lib/payload-store.js';
+import { largePayloadWarning, payloadTooLarge, writePayload } from '../lib/payload-store.js';
 import { brandStylesheet } from '../lib/user-brands.js';
 import { hasMappedRenderer } from '../render/component-map.js';
 import {
@@ -531,7 +531,12 @@ export async function handle(
     if (report.summary.unmet) allWarnings.push({ code: 'OODS-V218', component: report.component, message: `Team ${report.component}: ${report.summary.unmet} unmet contract obligations (${report.obligations.filter(row => row.status === 'unmet').map(row => row.id).join(', ')}). Generation remains available.` });
   }
 
-  if (input.options?.payloadMode === 'file') {
+  // s238 (0.10.1): left unset, payloadMode is inline unless the files would overflow one reply (the artifact and the
+  // main file's copy in code), in which case they go to disk as with payloadMode 'file', with OODS-W004 saying why.
+  const inlineCharacters = input.options?.payloadMode === undefined && dependencies.sizedReply ? JSON.stringify(artifact).length + result.code.length : 0;
+  const tooLarge = payloadTooLarge(input.options?.payloadMode, inlineCharacters, dependencies.sizedReply);
+  if (tooLarge) allWarnings.push(largePayloadWarning(inlineCharacters, 'options.payloadMode'));
+  if (input.options?.payloadMode === 'file' || tooLarge) {
     // The artifact and its files go to disk beside the saved-schema store; the response keeps the receipt and the references.
     try {
       const payload = writePayload(`code.generate-${artifact.contentHash.replace(/^sha256:/, '').slice(0, 12)}`, [

@@ -1,6 +1,6 @@
 # OODS Foundry
 
-OODS Foundry is an open source (Apache-2.0) design-system engine that your AI assistant drives over MCP. Describe a screen by its object and context, such as a subscription detail view. Foundry composes governed components and design tokens, generates React or Vue code, and renders charts from your data.
+OODS Foundry is an object-oriented design system that extends the one you already have. Your AI assistant drives it over MCP. Describe a screen by its object and context, such as a subscription detail view. OODS Foundry composes governed components and design tokens, generates React or Vue code, and renders charts from your data.
 
 Use it when your product has recurring objects and workflows, your screens need to share rules across frameworks and themes, or you want generated UI to follow an existing design system. You can define your own objects, traits, brand and component mappings.
 
@@ -13,7 +13,7 @@ The optional `a11y_scan` tool checks the text and icon contrast pairs declared b
 Use Node.js 22.0.0 or newer on macOS or Linux. For a local server in Claude Code:
 
 ```sh
-claude mcp add oods-foundry -- npx -y @oods/foundry@0.8.0
+claude mcp add oods-foundry -- npx -y @oods/foundry
 claude mcp get oods-foundry
 ```
 
@@ -33,8 +33,8 @@ For a hosted connection, use the streamable HTTP endpoint `https://oods-foundry.
 Build the supplied Dockerfile, then keep stdin open for your MCP client:
 
 ```sh
-docker build -t oods-foundry:0.8.0 .
-docker run --rm -i -v oods-data:/data oods-foundry:0.8.0
+docker build -t oods-foundry .
+docker run --rm -i -v oods-data:/data oods-foundry
 ```
 
 The image runs as the unprivileged `node` user. The volume preserves registered objects and import drafts. Mount schema files separately, for example `-v "$PWD/schemas:/schemas:ro"`, and give `object_import` their container paths. The running-app preview binds to loopback inside the container; use the local npm installation for browser previews on the host.

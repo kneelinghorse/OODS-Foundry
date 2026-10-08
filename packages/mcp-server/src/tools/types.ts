@@ -850,6 +850,10 @@ export type MapApplyOutput = {
 export type RegistrySnapshotInput = {
   /** List OODS Foundry's internal objects too, after the business objects. */
   includeInternal?: boolean;
+  /** summary (the default) gives each trait and object without its schema, view extensions and tokens; full gives everything. */
+  detail?: 'summary' | 'full';
+  /** Only these traits and objects, by exact name. */
+  names?: string[];
 };
 
 export type RegistrySnapshotTraitInfo = {

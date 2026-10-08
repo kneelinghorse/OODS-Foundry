@@ -25,8 +25,8 @@ OODS Foundry's mapped-component reports distinguish met, unmet and not-checked o
 
 ## Limits
 
-Use matching versions of the OODS packages. These packages are separate from the local MCP server, `@oods/foundry`. For an unpublished release candidate, install the supplied tarballs together instead of resolving them from npm.
+Use one version of the OODS packages together. Apps that `@oods/foundry` generates pin the tested 0.6.2 set; keep those pins unless you upgrade all of them together. These packages are separate from the local MCP server, `@oods/foundry`. <!-- history -->
 
 ## License
 
-Apache License 2.0. See [LICENSE](https://cdn.jsdelivr.net/npm/@oods/component-contracts@0.10.0/LICENSE) and [NOTICE](https://cdn.jsdelivr.net/npm/@oods/component-contracts@0.10.0/NOTICE). Generated output belongs to its user; installed package dependencies retain their own licenses.
+Apache License 2.0. See [LICENSE](https://cdn.jsdelivr.net/npm/@oods/component-contracts@0.10.1/LICENSE) and [NOTICE](https://cdn.jsdelivr.net/npm/@oods/component-contracts@0.10.1/NOTICE). Generated output belongs to its user; installed package dependencies retain their own licenses.

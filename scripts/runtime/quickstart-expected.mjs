@@ -47,7 +47,7 @@ export function expectedFrom(runs) {
     vue: { contentHash: first.hashes.vue },
     chart: { contentHash: first.hashes.chart },
     runs: runs.map((run) => ({ node: run.node, source: run.source })),
-    notes: ["react and vue are the generated applications' contentHash; chart is viz_render's contentHash of the quickstart chart.", "Preview hashes are not listed: they differ between Node versions."],
+    notes: ["react and vue are the generated applications' contentHash, prefixed sha256: as code_generate returns it; chart is viz_render's contentHash of the quickstart chart, a bare hexadecimal SHA-256 as viz_render returns it.", "Preview hashes are not listed: they differ between Node versions."],
   };
 }
 

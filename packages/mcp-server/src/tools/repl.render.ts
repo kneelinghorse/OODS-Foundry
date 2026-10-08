@@ -27,7 +27,8 @@ import type {
   UiSchema,
 } from '../schemas/generated.js';
 import { resolveSchemaRef, unavailableSchemaRef } from './schema-ref.js';
-import { payloadDigest, writePayload } from '../lib/payload-store.js';
+import { largePayloadWarning, payloadDigest, payloadTooLarge, writePayload } from '../lib/payload-store.js';
+import type { ToolContext } from '../lib/tool-context.js';
 
 function asWarnings(issues: ReplIssue[]): ReplIssue[] {
   return issues.map((entry) => ({ ...entry, severity: entry.severity ?? 'warning' }));
@@ -121,7 +122,7 @@ function toFragmentRenderIssue(nodeId: string, component: string, message: strin
   };
 }
 
-export async function handle(input: ReplRenderInput): Promise<ReplRenderOutput> {
+export async function handle(input: ReplRenderInput, context: ToolContext = {}): Promise<ReplRenderOutput> {
   const mode = input.mode ?? 'full';
   const registry = loadComponentRegistry();
   const errors: ReplIssue[] = [];
@@ -334,7 +335,12 @@ export async function handle(input: ReplRenderInput): Promise<ReplRenderOutput> 
     }
 
     output.output = { format, strict, ...(compact ? { compact } : {}) };
-    if (input.output?.payloadMode === 'file' && (output.html !== undefined || output.fragments !== undefined)) {
+    // s238 (0.10.1): a document with its token CSS is about 680,000 characters. Left unset, payloadMode is inline
+    // unless the output would overflow one reply; then it is written as with 'file', and OODS-W004 says why.
+    const renderedCharacters = input.output?.payloadMode === undefined && context.sizedReply ? (output.html?.length ?? 0) + (output.fragments !== undefined ? JSON.stringify(output.fragments).length : 0) + (output.css !== undefined ? JSON.stringify(output.css).length : 0) : 0;
+    const tooLarge = payloadTooLarge(input.output?.payloadMode, renderedCharacters, context.sizedReply);
+    if (tooLarge && (output.html !== undefined || output.fragments !== undefined)) warnings.push(largePayloadWarning(renderedCharacters, 'output.payloadMode'));
+    if ((input.output?.payloadMode === 'file' || tooLarge) && (output.html !== undefined || output.fragments !== undefined)) {
       // The rendered document (or the fragment set) goes to disk beside the saved-schema store; the response keeps the references.
       const files = output.html !== undefined
         ? [{ path: 'index.html', contents: output.html }]

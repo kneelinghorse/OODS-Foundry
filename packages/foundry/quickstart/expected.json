@@ -1,6 +1,6 @@
 {
   "schema": "oods-foundry-quickstart-expected/v1",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "react": {
     "contentHash": "sha256:800e792fc696672da715e3a9324ae791d814b142d95f07f955b9133beed8e747"
   },
@@ -21,7 +21,7 @@
     }
   ],
   "notes": [
-    "react and vue are the generated applications' contentHash; chart is viz_render's contentHash of the quickstart chart.",
+    "react and vue are the generated applications' contentHash, prefixed sha256: as code_generate returns it; chart is viz_render's contentHash of the quickstart chart, a bare hexadecimal SHA-256 as viz_render returns it.",
     "Preview hashes are not listed: they differ between Node versions."
   ]
 }

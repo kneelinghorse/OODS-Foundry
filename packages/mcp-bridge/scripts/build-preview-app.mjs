@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Builds dist/preview-app/app.html once per package build: the Forge design preview as one self-contained
+// Builds dist/preview-app/app.html once per package build: the OODS Foundry design preview as one self-contained
 // MCP App resource (Sprint 202). The app with the MCP Apps SDK (@modelcontextprotocol/ext-apps), the runtime the
 // generated app runs on (React, ReactDOM, Vue, the foundation packages) and the runtime CSS are inlined, so the
 // resource works under the host's default CSP (inline scripts and styles only, no network). The manifest records
@@ -100,6 +100,10 @@ async function main() {
   for (const marker of Object.keys(markers)) if (!template.includes(marker)) throw new Error(`preview-app/index.html lacks ${marker}`);
   if (rewritten.length && !new RegExp(`container:\\s*${APP_CONTAINER}\\s*/\\s*inline-size`).test(template)) throw new Error(`preview-app/index.html must give the app frame container ${APP_CONTAINER} / inline-size: the runtime's width queries are answered there.`);
   if (/<meta[^>]+Content-Security-Policy/i.test(template)) throw new Error('The app template must not declare a CSP; the host default applies.');
+  // The page title is the product's preview title, the name the adapter gives the resource (product.json).
+  const { previewTitle } = JSON.parse(fs.readFileSync(path.join(PACKAGE_ROOT, '..', 'mcp-adapter', 'product.json'), 'utf8'));
+  const title = /<title>([^<]*)<\/title>/.exec(template)?.[1];
+  if (title !== previewTitle) throw new Error(`preview-app/index.html title is ${JSON.stringify(title)}; product.json previewTitle is ${JSON.stringify(previewTitle)}.`);
   if (/\ssrc=["']https?:|\shref=["']https?:|url\(\s*["']?https?:/i.test(template)) throw new Error('The app template must not reference the network.');
   // Function replacers: the bundled scripts carry `$&` and friends, which a string replacement would expand.
   let html = template;

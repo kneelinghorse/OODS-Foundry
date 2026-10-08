@@ -193,12 +193,31 @@ export function renderRetiredTools(retired: ToolSpecSources['ledger']['retired']
   ].join('\n');
 }
 
+/**
+ * Every value of a tool's root `action` enum that its TOOL-REFERENCE.md section never names, as "tool_name: action".
+ * Every tool description sends agents to that section; 0.10.0 shipped component_map draft/show and brand_create
+ * draft/show/apply with no word there, so the reference contradicted the server.
+ */
+export function undocumentedActions(sources: Pick<ToolSpecSources, 'dispatch' | 'schemas' | 'references'>, names: readonly string[]): string[] {
+  return names.flatMap(name => {
+    const input = sources.dispatch[name]?.input;
+    const actions = input ? sources.schemas[input]?.properties?.action?.enum : undefined;
+    if (!Array.isArray(actions)) return [];
+    const section = sources.references[name] ?? '';
+    return actions.map(String)
+      .filter(action => !new RegExp(`(?<![\\w-])${action.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![\\w-])`).test(section))
+      .map(action => `${advertisedName(name)}: ${action}`);
+  });
+}
+
 export function renderToolSpecs(sources: ToolSpecSources): string {
   const { registry, ledger, components } = sources;
   const names = [...registry.auto, ...registry.onDemand];
   if (new Set(names).size !== names.length) throw new Error('Duplicate registry tool');
   if (names.some(name => !sources.dispatch[name]) || Object.keys(sources.dispatch).some(name => !names.includes(name))) throw new Error('Dispatcher/registry tool mismatch');
   if (ledger.rows.length !== names.length || names.some(name => ledger.rows.filter(row => row.name === name).length !== 1)) throw new Error('Ledger/registry tool mismatch');
+  const undocumented = undocumentedActions(sources, names);
+  if (undocumented.length) throw new Error(`packages/foundry/TOOL-REFERENCE.md does not name these actions in their tool's section: ${undocumented.join(', ')}`);
   const rootParameters = names.reduce((total, name) => total + Object.keys(sources.schemas[sources.dispatch[name].input]?.properties ?? {}).length, 0);
   const lines = [
     '# MCP Tool Specs (v1.0)', '',

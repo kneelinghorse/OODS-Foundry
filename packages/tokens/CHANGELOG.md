@@ -1,5 +1,15 @@
 # Changelog
 
+`@oods/tokens` is released at the same version as `@oods/foundry`. The [`@oods/foundry` changelog](https://github.com/kneelinghorse/OODS-Foundry/blob/main/packages/foundry/CHANGELOG.md) lists what each release changed in the product.
+
+## 0.10.1
+
+- The README names `brand_create`, the tool that makes a brand from your colour tokens (it was `brand_intake` before 0.7.0), and all three bundled typefaces, Geist, Geist Mono and DM Sans. Token values, fonts and the stylesheet are unchanged.
+
+## 0.4.4 to 0.10.0
+
+Only the version changed, and the README links that name it: every file in `dist`, and NOTICE, are 0.4.3's. From 0.8.0 the package's issue link points to the public repository's Issues, and its repository field names `packages/tokens` there.
+
 ## 0.4.3
 
 The package follows the 0.4.3 release; its token values and brand recipes are unchanged from 0.4.2.

@@ -284,7 +284,7 @@
   "$defs": {
     "recipe": {
       "type": "object",
-      "description": "A brand recipe (s222-m01): the neutral (a hue and a tint of 0 to 0.03), the accent hue, whether the primary action is the neutral (near-black in light, near-white in dark) or the accent, the control radius in px, and the sans family. Every colour, the radius set and the font stacks follow from it, graded like any brand.",
+      "description": "A brand recipe: the neutral (a hue and a tint of 0 to 0.03), the accent hue, whether the primary action is the neutral (near-black in light, near-white in dark) or the accent, the control radius in px, and the sans family. Every colour, the radius set and the font stacks follow from it, graded like any brand.",
       "required": ["neutralHue", "neutralChroma", "accentHue", "primary", "radius", "font"],
       "additionalProperties": false,
       "properties": {

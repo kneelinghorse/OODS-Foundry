@@ -94,7 +94,7 @@ try {
   }
   const expected = await inspect(publishedRuntime, 'npm-runtime');
   const actual = await inspect(root, 'source-runtime');
-  assert.equal(Buffer.byteLength(JSON.stringify(expected.list)), 84_264);
+  assert.equal(Buffer.byteLength(JSON.stringify(expected.list)), 84_893);
   assert.equal(JSON.stringify(actual.list), JSON.stringify(expected.list), 'Adapter tools/list must match published npm exactly');
   assert.equal(actual.health.registry.objects, 16);
   const retainedLedgerHashes = {};
@@ -114,11 +114,13 @@ try {
   const release = await import(pathToFileURL(path.join(root, 'packages/mcp-server/dist/lib/release-ledger.js')));
   const tools = await import(pathToFileURL(path.join(root, 'packages/mcp-server/dist/lib/tool-ledger.js')));
   const visual = await import(pathToFileURL(path.join(root, 'packages/mcp-server/dist/lib/visual-proof-ledger.js')));
+  const { withPublicEvidence } = await import(pathToFileURL(path.join(root, 'packages/mcp-server/dist/lib/public-evidence.js')));
   const releaseSummary = release.readReleaseSummary();
   const committed = { runtime: runtime.readRuntimeSummary(), release: { ...releaseSummary, head: releaseSummary.bundleHead }, tools: tools.readToolSummary(), html: visual.readVisualProofSummary('html'), fidelity: visual.readVisualProofSummary('fidelity') };
   for (const [kind, summary] of Object.entries(committed)) {
     const served = { ...actual.health.productReality[kind] }; delete served.thisBuild; delete served.measuredOn;
-    assert.deepEqual(served, summary, `${kind}: public health must retain the committed/private proof identity`);
+    // s238: health names receipts that are not in the package by file, so compare the same projection of the ledger.
+    assert.deepEqual(served, withPublicEvidence(summary), `${kind}: public health must retain the committed/private proof identity`);
   }
   // Publication itself can add a later measured receipt. Keep that difference visible without
   // confusing proof refreshes with the npm tool-contract equivalence checked above.

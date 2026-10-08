@@ -3,9 +3,9 @@
 
 OODS Foundry is an object-oriented design system that extends the one you already have. Your AI assistant drives it over MCP. You name a screen by its object and its context, such as `Subscription` and `detail`; OODS Foundry composes it from its governed components (each has a versioned contract, React and Vue implementations and verified accessibility and theme evidence) and design tokens, generates it as React or Vue code, renders charts from your data, and certifies the charts it renders against accuracy, accessibility, contrast and determinism rules. It runs on your machine as a local MCP server for Claude Desktop, Claude Code or Cursor, and advertises 20 tools by default (21 in all).
 
-![The page a preview link opens: a generated Subscription detail screen running in React](https://cdn.jsdelivr.net/npm/@oods/foundry@0.10.0/images/preview-page-subscription-detail-light.png)
+![The page a preview link opens: a generated Subscription detail screen running in React](https://cdn.jsdelivr.net/npm/@oods/foundry@0.10.1/images/preview-page-subscription-detail-light.png)
 
-This document describes version 0.10.0. Check the [npm package page](https://www.npmjs.com/package/@oods/foundry) for published availability.
+This document describes version 0.10.1. Check the [npm package page](https://www.npmjs.com/package/@oods/foundry) for published availability.
 
 ## Requirements
 
@@ -41,12 +41,12 @@ The server is also listed in the official MCP registry as `com.oods-foundry/foun
 The npm package also carries the skill as plain files at `skills/oods-foundry/`. Claude Code does not discover skills in `node_modules`, so install the package in your project first, then copy the whole folder into your project's skill directory:
 
 ```sh
-npm install @oods/foundry@0.10.0
+npm install @oods/foundry@0.10.1
 mkdir -p .claude/skills
 cp -R node_modules/@oods/foundry/skills/oods-foundry .claude/skills/
 ```
 
-Restart Claude Code and invoke `/oods-foundry`, with the server connected as above. Other agents can read [SKILL.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.10.0/skills/oods-foundry/SKILL.md) and its bundled quickstart reference directly, or copy the folder into their own supported skill location. The skill explains the calls, receipts and unchecked work; installing the plain files does not register an MCP server.
+Restart Claude Code and invoke `/oods-foundry`, with the server connected as above. Other agents can read [SKILL.md](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.10.1/packages/foundry/skills/oods-foundry/SKILL.md) and its bundled quickstart reference directly, or copy the folder into their own supported skill location. The skill explains the calls, receipts and unchecked work; installing the plain files does not register an MCP server.
 
 ### Claude Desktop
 
@@ -91,7 +91,7 @@ Reload the Cursor window. The server shows up in the MCP settings with its tools
 
 ### The design preview inside the conversation
 
-`design_preview` returns the generated screen running in a browser. A client that renders MCP Apps can show it inside the conversation, where you edit the composition, compare two versions side by side, accept one and request changes. The MCP Apps SDK reference host v1.7.5 rendered React and Vue inside the conversation with `OODS_MCP_APPS_UI=1` through a local HTTP-to-stdio relay; its default initialize request advertises no UI capability and receives text instead. That run used a fixed-file serving adjustment for the source checkout. No Claude Desktop or Cursor run is recorded; the two lines below come from their documentation. Any other client gets the same result as text, with links to the preview in your browser, served on 127.0.0.1.
+`design_preview` returns the generated screen running in a browser. A client that renders MCP Apps can show it inside the conversation, where you edit the composition, compare two versions side by side, accept one and request changes. On a 0.2.1 pre-release build, the MCP Apps SDK reference host v1.7.5 rendered React and Vue inside the conversation with `OODS_MCP_APPS_UI=1` through a local HTTP-to-stdio relay; its default initialize request advertises no UI capability and receives text instead. That host ran with a one-line change to how it serves its sandbox page. No Claude Desktop or Cursor run is recorded; the two lines below come from their documentation. Any other client gets the same result as text, with links to the preview in your browser, served on 127.0.0.1. <!-- history -->
 
 - **Claude Desktop**, by its documentation, renders an app from a local server only with Developer Mode on, and keeps the tool list and the app it fetched until you choose Reload MCP Configuration after a newer version installs.
 - **Cursor**, by its documentation, renders MCP Apps from version 2.6. Reload the window after a newer version installs.
@@ -99,13 +99,13 @@ Reload the Cursor window. The server shows up in the MCP settings with its tools
 
 Register `oods-foundry` directly, beside any other entry such as an MCP hub, not behind it. The app reaches the conversation only when the client talks to the server itself, or when a hub passes the MCP Apps extension (`io.modelcontextprotocol/ui`), the tool's `_meta.ui` and `resources/read` through to it. When a client connects, the server writes one line to its standard error naming the client and whether it negotiated the extension; the client's log for the `oods-foundry` server shows whether the app was offered.
 
-## The first run, in ten minutes
+## The first run
 
-To change one trait and predict which screens follow, start with [the first change in the QUICKSTART](https://cdn.jsdelivr.net/npm/@oods/foundry@0.10.0/QUICKSTART.md#the-first-change).
+To change one trait and predict which screens follow, start with [the first change in the QUICKSTART](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.10.1/packages/foundry/QUICKSTART.md#the-first-change).
 
-Your client lists these tool names: `tokens_build`, `structured_data_fetch`, `brand_apply`, `brand_create`, `catalog_list`, `code_generate`, `design_compose`, `design_preview`, `pipeline_run`, `health_check`, `registry_snapshot`, `viz_render`, `dashboard_render`, `artifact_certify`, `fidelity_preview`, `component_map`, `schema_store`, `object_registry`, `schema_render`, `object_import`. Ask your assistant for each step below; it makes the call. Detailed parameters and limits are in [TOOL-REFERENCE.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.10.0/TOOL-REFERENCE.md). One rule shapes the run: a `schemaRef` lives in the server your client started, for 30 minutes and for that conversation, so make steps 2 to 6 in one conversation.
+Your client lists these tool names: `tokens_build`, `structured_data_fetch`, `brand_apply`, `brand_create`, `catalog_list`, `code_generate`, `design_compose`, `design_preview`, `pipeline_run`, `health_check`, `registry_snapshot`, `viz_render`, `dashboard_render`, `artifact_certify`, `fidelity_preview`, `component_map`, `schema_store`, `object_registry`, `schema_render`, `object_import`. Ask your assistant for each step below; it makes the call. Detailed parameters and limits are in [TOOL-REFERENCE.md](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.10.1/packages/foundry/TOOL-REFERENCE.md). One rule shapes the run: a `schemaRef` lives in the server your client started, for 30 minutes and for that conversation, so make steps 2 to 6 in one conversation.
 
-1. **Check the server.** Ask for `health_check`. It answers `status: "ok"` with the registry counts (objects, traits, components), `server.version` (`0.10.0`) and `server.uptime` in milliseconds.
+1. **Check the server.** Ask for `health_check`. It answers `status: "ok"` with the registry counts (objects, traits, components), `server.version` (`0.10.1`) and `server.uptime` in milliseconds.
 2. **Compose one screen.** `design_compose` with `{"object": "Subscription", "context": "detail"}` answers `status: "ok"`, a `schemaRef` such as `compose-dae744a8`, `objectUsed` (the object, its version, the traits and the fields it composed) and one entry in `selections` per slot, naming the component chosen, the reason and any available review evidence. Missing confidence is not inferred; layout detection and intent selection use keyword rules.
 3. **See it running.** `design_preview` with `{"object": "Subscription", "context": "detail"}` answers with one link per framework to the generated React and Vue screen, mounted with generated sample records and running on 127.0.0.1. Open one in your browser.
 4. **Certify a chart.** Ask for `viz_render` with
@@ -120,31 +120,35 @@ Your client lists these tool names: `tokens_build`, `structured_data_fetch`, `br
 
 Steps 5 and 6 use file mode in every client: their inline results are larger than some clients accept from one tool (Claude Code accepts 25,000 tokens by default, `MAX_MCP_OUTPUT_TOKENS`), and a file is easier to open anyway.
 
-![A generated Subscription list in the dark theme](https://cdn.jsdelivr.net/npm/@oods/foundry@0.10.0/images/subscription-list-dark.png)
+![A generated Subscription list in the dark theme](https://cdn.jsdelivr.net/npm/@oods/foundry@0.10.1/images/subscription-list-dark.png)
 
-![A four-bar chart from viz_render with no size given](https://cdn.jsdelivr.net/npm/@oods/foundry@0.10.0/images/chart-bar-default-light.png)
+![A four-bar chart from viz_render with no size given](https://cdn.jsdelivr.net/npm/@oods/foundry@0.10.1/images/chart-bar-default-light.png)
 
 ## Your own objects and traits
 
-The runtime ships 16 objects: 11 public reference objects and 5 internal capture objects.
+OODS Foundry ships 11 business objects, plus 5 internal capture objects (16 in the runtime).
 
-OODS Foundry composes from the objects and traits it ships and from yours. Put a `*.object.yaml` file in `~/.oods-foundry/objects` and a `*.trait.yaml` file in `~/.oods-foundry/traits`, or ask your assistant to use the `object_registry` tool: `validate` checks a definition without writing it, `register` writes it into your folder once it validates and composes in every context it declares, and `reload` reads the folders again without a restart. An object of yours with a shipped object's name is used in its place; a trait of yours cannot reuse a shipped trait's name. `object_registry` `list` and `health_check` name every file that is not in use and why. Your folders are outside the unpacked runtime, so they survive upgrades. A trait of yours can place only the components OODS Foundry ships (`catalog_list` names them); mapped implementations can come from your own components by substitution. The authoring guide is [OBJECTS-AND-TRAITS.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.10.0/OBJECTS-AND-TRAITS.md).
+OODS Foundry composes from the objects and traits it ships and from yours. Put a `*.object.yaml` file in `~/.oods-foundry/objects` and a `*.trait.yaml` file in `~/.oods-foundry/traits`, or ask your assistant to use the `object_registry` tool: `validate` checks a definition without writing it, `register` writes it into your folder once it validates and composes in every context it declares, and `reload` reads the folders again without a restart. An object of yours with a shipped object's name is used in its place; a trait of yours cannot reuse a shipped trait's name. `object_registry` `list` and `health_check` name every file that is not in use and why. Your folders are outside the unpacked runtime, so they survive upgrades. A trait of yours can place only the components OODS Foundry ships (`catalog_list` names them); mapped implementations can come from your own components by substitution. The authoring guide is [OBJECTS-AND-TRAITS.md](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.10.1/packages/foundry/OBJECTS-AND-TRAITS.md).
+
+## Import your objects
+
+`object_import` drafts OODS Foundry objects from the schema files your team already has: OpenAPI or Swagger, JSON Schema, Postgres DDL and migrations, Prisma, dbt, OData and GraphQL. It reads local files, or content you pass inline; it never fetches a URL, connects to an API or database, or runs your code. `draft` writes reviewable drafts to `~/.oods-foundry/imports/` and registers nothing, `show` returns one draft with its trait proposals and their evidence, and `apply` registers only the objects and proposals you accept. The guide is [IMPORTING-OBJECTS.md](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.10.1/packages/foundry/IMPORTING-OBJECTS.md).
 
 ## Your own brands
 
-OODS Foundry renders in the brands it ships and in yours. Ask your assistant to use the `brand_create` tool. Use `derive` with your own DTCG tokens or shadcn theme CSS to get a recipe with source paths and named gaps, then review it and fill the gaps before `create`. The recipe has six values: the neutral's hue and tint, the accent's hue, whether the primary action is the neutral or the accent, the corner radius and the font. `template` with `from.recipe` returns the complete brand it gives, graded; `template` alone returns every slot of a brand with what it paints and a starting value, for you to fill. `validate` checks a recipe or your values (the contrast of every pair included) without writing, and `create` writes the brand into `~/.oods-foundry/brands` and builds it there, outside the unpacked runtime, so every tool, the preview and the apps you generate use it at once. `brand_apply` changes your brand the same checked way. A generated React or Vue app for your brand carries its stylesheet. Your brands survive upgrades; the first start of a new version rebuilds them. The guide is [BRANDS.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.10.0/BRANDS.md).
+OODS Foundry renders in the brands it ships and in yours. Ask your assistant to use the `brand_create` tool. Use `derive` with your own DTCG tokens or shadcn theme CSS to get a recipe with source paths and named gaps, then review it and fill the gaps before `create`. The recipe has six values: the neutral's hue and tint, the accent's hue, whether the primary action is the neutral or the accent, the corner radius and the font. `template` with `from.recipe` returns the complete brand it gives, graded; `template` alone returns every slot of a brand with what it paints and a starting value, for you to fill. `validate` checks a recipe or your values (the contrast of every pair included) without writing, and `create` writes the brand into `~/.oods-foundry/brands` and builds it there, outside the unpacked runtime, so every tool, the preview and the apps you generate use it at once. `brand_apply` changes your brand the same checked way. A generated React or Vue app for your brand carries its stylesheet. To keep your team's token names, `draft` reads a local DTCG token file, `show` returns the draft for review and `apply` builds the brand once you accept it; its CSS then uses your names. Your brands survive upgrades; the first start of a new version rebuilds them. The guide is [BRANDS.md](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.10.1/packages/foundry/BRANDS.md).
 
 ## Your own components
 
-OODS Foundry supports your own components by substitution in React and Vue: map a shipped component id to your package, exact version and export, then compose as usual. One `component_map` create call can check a list from `mappingsPath` before writing all of it. The preview bundles your local package and code generation imports it. React projects on shadcn/ui’s Radix or Base UI base and Tailwind 4 can map their copied source files, install the sixteen shipped registry adapters and use their own theme in previews and generated apps. Mapped components carry advisory contract reports with met, unmet and not-checked obligations; this is not blanket conformance. New components beyond the shipped catalog are not supported. See [COMPONENTS.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.10.0/COMPONENTS.md).
+OODS Foundry supports your own components by substitution in React and Vue: map a shipped component id to your package, exact version and export, then compose as usual. One `component_map` create call can check a list from `mappingsPath` before writing all of it. The preview bundles your local package and code generation imports it. React projects on shadcn/ui’s Radix or Base UI base and Tailwind 4 can map their copied source files, install the sixteen shipped registry adapters and use their own theme in previews and generated apps. Vue projects on shadcn-vue with Reka UI do the same with the sixteen Vue adapters. Mapped components carry advisory contract reports with met, unmet and not-checked obligations; this is not blanket conformance. New components beyond the shipped catalog are not supported. See [COMPONENTS.md](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.10.1/packages/foundry/COMPONENTS.md).
 
-For a single screen, ask for code_generate with options.output set to application. It includes an entry, Vite configuration and a package.json that pins the @oods libraries and your mapped packages at exact versions; run `npm install`, then `npm run build`. A mapped package that is not on a registry installs from its own tarball or folder. The sample app marks its data and actions that still need your application's handlers.
+For a single screen, ask for code_generate with options.output set to application. It includes an entry, Vite configuration and a package.json that pins the @oods libraries and your mapped packages at exact versions; run `npm install`, then `npm run build`. A mapped package that is not on a registry installs from its own tarball or folder. The sample app marks its data and actions that still need your application's handlers. Generated code pins the tested 0.6.2 set of OODS libraries. Use one version of the OODS packages together: keep those pins unless you upgrade all of them together. <!-- history -->
 
-When a definition changes, [GENERATED-APPS.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.10.0/GENERATED-APPS.md) explains which generated files to replace, which are your starting points, and how to keep your data and action wiring in your own files.
+When a definition changes, [GENERATED-APPS.md](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.10.1/packages/foundry/GENERATED-APPS.md) explains which generated files to replace, which are your starting points, and how to keep your data and action wiring in your own files.
 
 ## Bring your own design system
 
-Follow [the quickstart](https://cdn.jsdelivr.net/npm/@oods/foundry@0.10.0/QUICKSTART.md): your colour tokens become a brand, your trait and object define a Warehouse, and your component package replaces a shipped Button. The same sequence composes a screen, certifies a chart, opens a running preview, and generates React and Vue application files. All example inputs ship in the package's quickstart/ folder; no source checkout is required. The package also ships `quickstart/expected.json`, the hashes the quickstart's React app, Vue app and chart come out with, and `facts.json`, the facts this page states, each with where it comes from. Beside `facts.json`, `errors.json` lists the runtime's error codes, severity, cause, fix and tools.
+Follow [the quickstart](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.10.1/packages/foundry/QUICKSTART.md): your colour tokens become a brand, your trait and object define a Warehouse, and your component package replaces a shipped Button. The same sequence composes a screen, certifies a chart, opens a running preview, and generates React and Vue application files. All example inputs ship in the package's quickstart/ folder; you need nothing from the source repository. The package also ships `quickstart/expected.json`, the hashes the quickstart's React app, Vue app and chart come out with, and `facts.json`, the facts this page states, each with where it comes from. Beside `facts.json`, `errors.json` lists the runtime's error codes, severity, cause, fix and tools.
 
 ## Limits
 
@@ -158,12 +162,13 @@ Environment variables are optional; every default is the documented one. Set the
 
 | Variable | Default | Effect |
 | --- | --- | --- |
-| `MCP_TOOLSET` | `default` | `default` advertises 20 tools; `all` adds the 1 on-demand tools, 21 in all. |
-| `MCP_EXTRA_TOOLS` | (none) | Comma-separated on-demand tools added to the default surface, for example `a11y.scan`. |
+| `MCP_TOOLSET` | `default` | `default` advertises 20 tools; `all` adds the on-demand tool, 21 in all. |
+| `MCP_EXTRA_TOOLS` | (none) | Comma-separated on-demand tools added to the default surface, for example `a11y_scan`. |
 | `MCP_ROLE` | `designer` | Policy role (`designer` or `maintainer`). |
 | `MCP_SCHEMA_STORE_ROOT` | `~/.oods-foundry` | Where saved schemas, every composed and previewed version, and file-mode output are kept. |
 | `OODS_NODE_PATH` | the Node running the adapter | Node binary used to start the native server. |
 | `OODS_MCP_APPS_UI` | (unset) | `1` offers the preview app on `design_preview` even to a client that did not negotiate the MCP Apps extension. |
+| `OODS_FOUNDRY_HOME` | `~/.oods-foundry` | Where import and intake drafts are staged and, when started with npx, where the runtime and every default folder below are kept. The Docker image sets it to `/data`. |
 | `OODS_OBJECTS_DIR` | `~/.oods-foundry/objects` | Folder your own objects are read from, after the ones OODS Foundry ships; the `object_registry` tool's `register` writes there. |
 | `OODS_TRAITS_DIR` | `~/.oods-foundry/traits` | Folder your own traits are read from, after the ones OODS Foundry ships. |
 | `OODS_BRANDS_DIR` | `~/.oods-foundry/brands` | Folder your own brands are kept in and built in, outside the runtime; `brand_create`'s `create` writes there. |
@@ -178,7 +183,7 @@ In the server implementation, trace export is disabled unless `OODS_OTLP_ENDPOIN
 
 See [OODS Foundry](https://oods-foundry.com/), [a trait change across screens](https://oods-foundry.com/demos/trait-change), [the Harbor walkthrough](https://oods-foundry.com/demos/harbor), and [the chart playground](https://oods-foundry.com/charts/playground).
 
-The website's [read-only MCP endpoint](https://oods-foundry.com/mcp) uses Streamable HTTP. Hosted names follow the version pinned by the website. The [website's hosted-tool guide](https://oods-foundry.com/agents#hosted-tools) describes these narrower inputs. Local stdio provides the full toolset for your own files, objects, brands and generated applications.
+The website's [read-only MCP endpoint](https://oods-foundry.com/agents#hosted-tools), `https://oods-foundry.com/mcp`, uses Streamable HTTP. It is the hosted connector for claude.ai and other remote clients: a read-only subset of 9 tools, among them catalog, registry and chart tools, with narrower inputs. Hosted names follow the version pinned by the website. Local stdio provides the full toolset for your own files, objects, brands and generated applications: this package advertises 20 tools by default (21 in all), and the Claude Code plugin runs this package. In Claude Code, use the plugin; you do not need both.
 
 ## Where things go
 
@@ -191,9 +196,9 @@ The website's [read-only MCP endpoint](https://oods-foundry.com/mcp) uses Stream
 
 To remove OODS Foundry, remove the client entry and delete `~/.oods-foundry`.
 
-## Without npm
+## The runtime archive
 
-The same runtime also comes as an archive, `oods-foundry-runtime.tar.gz`, with its own short install guide. It needs no package manager: you extract it and point your client at `node` and its adapter.
+The npm package carries the same runtime as an archive, at `runtime/oods-foundry-runtime.tar.gz`. The archive runs without a package manager: you extract it and point your client at `node` and its adapter. [The archive install guide](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.10.1/docs/runtime/install.md) gives the steps.
 
 ## Legacy identifiers
 
@@ -201,8 +206,8 @@ Some identifiers keep the product's earlier name: the runtime manifest and SBOM 
 
 ## Feedback
 
-What you noticed is the point of this release: a screen that reads wrong, a certification you disagree with, install friction, a sentence that did not make sense. Open an [issue](https://github.com/kneelinghorse/OODS-Foundry/issues) with the tool call as you made it, what came back and what you expected. A short note is worth more than a polished one.
+Bug reports and feedback are welcome in [Issues](https://github.com/kneelinghorse/OODS-Foundry/issues): a screen that reads wrong, a certification you disagree with, install friction, a sentence that did not make sense. Include the tool call as you made it, what came back and what you expected. A short note is worth more than a polished one.
 
 ## License
 
-OODS Foundry is licensed under the Apache License 2.0 ([LICENSE](https://cdn.jsdelivr.net/npm/@oods/foundry@0.10.0/LICENSE), [NOTICE](https://cdn.jsdelivr.net/npm/@oods/foundry@0.10.0/NOTICE)). What OODS Foundry generates for you is yours. You may use, change and distribute generated code, markup, styles and other output under any terms you choose, without including OODS Foundry's LICENSE or NOTICE. The fonts OODS Foundry bundles (Geist, Geist Mono and DM Sans) stay under the SIL Open Font License 1.1 wherever they go, so generated HTML that embeds them carries their notice. The OODS Foundry packages that generated code installs as dependencies remain under the Apache License 2.0. The third-party packages inside keep their own licenses ([THIRD-PARTY-NOTICES.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.10.0/THIRD-PARTY-NOTICES.md)). Security notes are in [SECURITY.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.10.0/SECURITY.md) and changes by version in [CHANGELOG.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.10.0/CHANGELOG.md).
+OODS Foundry is licensed under the Apache License 2.0 ([LICENSE](https://cdn.jsdelivr.net/npm/@oods/foundry@0.10.1/LICENSE), [NOTICE](https://cdn.jsdelivr.net/npm/@oods/foundry@0.10.1/NOTICE)). What OODS Foundry generates for you is yours. You may use, change and distribute generated code, markup, styles and other output under any terms you choose, without including OODS Foundry's LICENSE or NOTICE. The fonts OODS Foundry bundles (Geist, Geist Mono and DM Sans) stay under the SIL Open Font License 1.1 wherever they go, so generated HTML that embeds them carries their notice. The OODS Foundry packages that generated code installs as dependencies remain under the Apache License 2.0, except those fonts and the colour calibration derived from Radix Colors in `@oods/tokens`, which keep the licences in its NOTICE. The third-party packages inside keep their own licenses ([THIRD-PARTY-NOTICES.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.10.1/THIRD-PARTY-NOTICES.md)). Security notes are in [SECURITY.md](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.10.1/packages/foundry/SECURITY.md) and changes by version in [CHANGELOG.md](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.10.1/packages/foundry/CHANGELOG.md).
