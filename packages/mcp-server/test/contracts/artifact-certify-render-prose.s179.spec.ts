@@ -99,7 +99,9 @@ describe("artifact.certify advertised ECharts render truth (s179 m05)", () => {
   it("preserves detailed render-measured contrast in the linked reference and keeps the bridge aligned", () => {
     // A reconnect must not receive the retired spec-only or warn-first contract from the bridge.
     expect(policyDescription).toBe(adapterDescriptions["artifact.certify"]);
-    expect(adapterDescriptions["artifact.certify"]).toContain("TOOL-REFERENCE.md");
+    // s239 (#2743): a description links only what the model can read (the full schema resource); the detailed prose
+    // stays in TOOL-REFERENCE.md, checked below.
+    expect(adapterDescriptions["artifact.certify"]).toContain("oods://schemas/artifact_certify.input.json");
     for (const description of [reference]) {
       expect(description).toContain(
         "Cartesian charts and ECharts calls with data grade actual rendered paints",

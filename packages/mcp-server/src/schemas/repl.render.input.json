@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://designlab.local/schemas/repl.render.input.json",
-  "title": "Agentic REPL render input",
+  "$id": "https://oods-foundry.com/schemas/repl.render.input.json",
+  "title": "schema_render render input",
   "type": "object",
   "properties": {
     "mode": {
@@ -17,7 +17,7 @@
     },
     "schemaRef": {
       "type": "string",
-      "description": "Reference to a cached UiSchema returned by design.compose."
+      "description": "Reference to a cached UiSchema returned by design_compose."
     },
     "patch": {
       "$ref": "./repl.patch.json"
@@ -80,18 +80,18 @@
         },
         "tokenOverlay": {
           "type": "object",
-          "description": "Inline token-delta object resolved to a scoped :root{} override; applied only in document output (format=document), diagnosed as ignored for fragments with OODS-W001; distinct from the FS-resolved named brandOverlay on fidelity.preview.",
+          "description": "Inline token-delta object resolved to a scoped :root{} override; applied only in document output (format=document), diagnosed as ignored for fragments with OODS-W001; distinct from the FS-resolved named brandOverlay on fidelity_preview.",
           "additionalProperties": true
         },
         "skinOverlay": {
           "type": "object",
-          "description": "Inline measured-COLOUR delta resolved against the OODS Foundry-owned style library to a scoped :root{} override on the --sys-/--ref- skin (distinct from tokenOverlay's --oods- token path); applied only in document output (format=document), gated by apply===true. An unmapped logical key fails loud with OODS-V140. Lands in the same components <style> block as tokenOverlay; default-absent is byte-identical.",
+          "description": "Inline measured-colour delta resolved against the OODS Foundry-owned style library to a scoped :root{} override on the --sys-/--ref- skin (distinct from tokenOverlay's --oods- token path); applied only in document output (format=document), gated by apply===true. An unmapped logical key fails loud with OODS-V140. Lands in the same components <style> block as tokenOverlay; default-absent is byte-identical.",
           "additionalProperties": true
         },
         "payloadMode": {
           "type": "string",
           "enum": ["inline", "file"],
-          "description": "Unset: inline, unless the output would exceed 100,000 characters, in which case it is written as with file and warning OODS-W004 says so. inline returns html (or fragments and css) in the response. file writes index.html (or fragments.json and css.json) beside the saved-schema store (<store>/../payloads/repl.render-<digest>/) and returns a payload block of file references instead; html, fragments and css are then omitted."
+          "description": "Unset: inline, unless the output would exceed 100,000 characters, in which case it is written as with file and warning OODS-W004 says so. inline returns html (or fragments and css) in the response. file writes index.html (or fragments.json and css.json) beside the saved-schema store (<store>/../payloads/schema_render action=render-<digest>/) and returns a payload block of file references instead; html, fragments and css are then omitted."
         }
       },
       "additionalProperties": false
@@ -104,7 +104,7 @@
   "allOf": [
     {
       "if": {
-        "properties": { "mode": { "const": "full" } },
+        "properties": { "mode": { "type": "string", "const": "full" } },
         "required": ["mode"]
       },
       "then": {
@@ -125,7 +125,7 @@
     },
     {
       "if": {
-        "properties": { "mode": { "const": "patch" } },
+        "properties": { "mode": { "type": "string", "const": "patch" } },
         "required": ["mode"]
       },
       "then": {

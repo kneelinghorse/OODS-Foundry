@@ -3,6 +3,7 @@
   "type": "object",
   "properties": {
     "kind": {
+      "type": "string",
       "enum": [
         "object",
         "trait"
@@ -16,6 +17,7 @@
       "description": "The file in your folder that now holds the definition."
     },
     "status": {
+      "type": "string",
       "enum": [
         "created",
         "updated"
@@ -34,6 +36,7 @@
             "type": "string"
           },
           "status": {
+            "type": "string",
             "enum": [
               "ok",
               "error"
@@ -53,7 +56,7 @@
         ],
         "additionalProperties": false
       },
-      "description": "An object composed through design.compose in every context it declares (empty for a trait)."
+      "description": "An object composed through design_compose in every context it declares (empty for a trait)."
     },
     "warnings": {
       "type": "array",
@@ -142,6 +145,7 @@
             "description": "A file that was not used, or something about one that is, and why.",
             "properties": {
               "kind": {
+                "type": "string",
                 "enum": [
                   "malformed",
                   "unnamed",
@@ -153,6 +157,7 @@
                 ]
               },
               "severity": {
+                "type": "string",
                 "enum": [
                   "error",
                   "notice"

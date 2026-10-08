@@ -24,7 +24,7 @@ import {
 } from '../codegen/validation-profile.js';
 import { validateGeneratedArtifact } from '../codegen/artifact-envelope.js';
 import type { ToolContext } from '../lib/tool-context.js';
-import { INLINE_PAYLOAD_LIMIT, payloadDigest, payloadTooLarge, writePayload, type PayloadMode, type PayloadReceipt } from '../lib/payload-store.js';
+import { INLINE_PAYLOAD_LIMIT, largePayloadWarning, payloadDigest, payloadTooLarge, writePayload, type PayloadMode, type PayloadReceipt } from '../lib/payload-store.js';
 
 type PipelineStep = 'compose' | 'validate' | 'render' | 'codegen' | 'save';
 
@@ -68,6 +68,8 @@ export type PipelineInput = {
 
 export type PipelineOutput = {
   validationReceipt: CodegenValidationReceipt;
+  /** s239: OODS-W004 when the page and the generated files went to files because they were too large to return. */
+  warnings?: Array<{ code: string; message: string }>;
   schemaRef?: string;
   schemaRefCreatedAt?: string;
   schemaRefExpiresAt?: string;
@@ -294,7 +296,8 @@ export async function handle(input: PipelineInput, context: ToolContext = {}): P
     // is about 250,000 characters). Unless the caller chose, they go to disk and the response lists the files.
     const requested = input.options?.payloadMode;
     const artifact = output.code?.artifact;
-    if (!output.error && (output.render?.html || artifact) && (requested === 'file' || payloadTooLarge(requested, JSON.stringify(output).length, context.sizedReply))) {
+    const characters = JSON.stringify(output).length;
+    if (!output.error && (output.render?.html || artifact) && (requested === 'file' || payloadTooLarge(requested, characters, context.sizedReply))) {
       const files = [
         ...(output.render?.html ? [{ path: 'render/index.html', contents: output.render.html }] : []),
         ...(artifact ? [...artifact.files.map(file => ({ path: `code/${file.path}`, contents: file.contents, ...((file as { encoding?: 'base64' }).encoding ? { encoding: (file as { encoding?: 'base64' }).encoding } : {}) })), { path: 'code/artifact.json', contents: JSON.stringify(artifact, null, 2) + '\n' }] : []),
@@ -303,6 +306,9 @@ export async function handle(input: PipelineInput, context: ToolContext = {}): P
       output.payload = { ...receipt, reason: requested === 'file' ? 'payloadMode file' : `The page and the generated files exceed ${INLINE_PAYLOAD_LIMIT.toLocaleString('en-US')} characters; pass options.payloadMode "inline" to receive them in the response.` };
       if (output.render) delete output.render.html;
       if (output.code) delete output.code.artifact;
+      // s239: the site found no OODS-W004 on this path although the 0.10.1 CHANGELOG promised it, as code_generate and
+      // schema_render give it; a caller that chose file mode needs no warning.
+      if (requested !== 'file') output.warnings = [...(output.warnings ?? []), largePayloadWarning(characters, 'options.payloadMode')];
     }
 
     // Compute metrics and summary if compose succeeded

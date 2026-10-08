@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://designlab.local/schemas/artifact.certify.input.json",
-  "title": "Artifact certify input",
-  "description": "Certify an OODS Foundry NormalizedVizSpec at a CSS theme and brand (default light/A). The handler validates the permissive spec boundary against the authoritative viz-core IR schema. ECharts-primary IR is metadata-only: supply the same data operand used by viz.render for render-backed determinism, contrast and accuracy. Without data, categorical ECharts contrast reconstructs the scoped baked palette and makes no rendered-carrier measurement claim. HC contrast is exempt with reason forced-colors and no numeric grade; determinism, a11y and accuracy retain their normal evaluation. The data-backed ECharts paints come from the rendered projected option; geo render evidence remains exempt with no canvas ratio.",
+  "$id": "https://oods-foundry.com/schemas/artifact.certify.input.json",
+  "title": "artifact_certify input",
+  "description": "Certify an OODS Foundry NormalizedVizSpec at a CSS theme and brand (default light/A). The handler validates the permissive spec boundary against the authoritative viz-core IR schema. ECharts-primary IR is metadata-only: supply the same data operand used by viz_render for render-backed determinism, contrast and accuracy. Without data, categorical ECharts contrast reconstructs the scoped baked palette and makes no rendered-carrier measurement claim. HC contrast is exempt with reason forced-colors and no numeric grade; determinism, a11y and accuracy retain their normal evaluation. The data-backed ECharts paints come from the rendered projected option; geo render evidence remains exempt with no canvas ratio.",
   "type": "object",
   "required": [
     "spec"
@@ -10,13 +10,13 @@
   "properties": {
     "spec": {
       "type": "object",
-      "description": "A OODS Foundry NormalizedVizSpec intermediate representation — the same IR viz.render emits as normalizedSpec. Validated authoritatively by the handler's assertNormalizedVizSpec.",
+      "description": "An OODS Foundry normalized chart spec: the normalizedSpec that viz_render returns. The handler validates it against the full spec schema.",
       "additionalProperties": true
     },
     "data": {
       "type": "object",
       "$comment": "MIRRORED COPY: the five branch subschemas below ($defs.hierarchyBranch / sankeyBranch / chordBranch / networkBranch / geoBranch, plus $defs.hierarchyNode) are copied VERBATIM from packages/mcp-server/src/schemas/viz.render.input.json's properties.{hierarchy,sankey,chord,network,geo} and $defs.hierarchyNode. A cross-schema $ref is not resolvable in this AJV setup (the same constraint this file's `spec` description records), so the copy is deliberate and DECLARED. Keep-in-step mechanism: test/tools/artifact.certify.data-operand.spec.ts asserts each branch here is deep-equal to its viz.render source, so a divergence fails the suite rather than shipping a lying contract.",
-      "description": "OPTIONAL operand for the 8 ECharts-primary types (treemap/sunburst/sankey/force_graph/choropleth/bubble_map/flow_map/chord): the SAME data branch viz.render takes, so certify re-emits the option the render path would emit for this (spec, data) pair. EXACTLY ONE branch, and it must be the branch the IR's mark trait requires (MarkTreemap/MarkSunburst -> hierarchy, MarkSankey -> sankey, MarkChord -> chord, MarkGraph -> network, MarkChoropleth/MarkBubble/MarkFlow -> geo); a mismatch is a structured error. Supplying `data` alongside a CARTESIAN IR (MarkBar/MarkLine/MarkPoint/MarkArea/MarkRect) or an unmodeled mark is also a structured error — those paths compile from the IR itself, so the operand would be dead input. Omitting `data` is always valid: the verdict then rates the spec alone, with determinism and accuracy honestly 'unchecked' and a note saying why.",
+      "description": "Optional operand for the 8 ECharts-primary types (treemap/sunburst/sankey/force_graph/choropleth/bubble_map/flow_map/chord): the same data branch viz_render takes, so certify re-emits the option the render path would emit for this (spec, data) pair. Exactly one branch, and it must be the branch the IR's mark trait requires (MarkTreemap/MarkSunburst -> hierarchy, MarkSankey -> sankey, MarkChord -> chord, MarkGraph -> network, MarkChoropleth/MarkBubble/MarkFlow -> geo); a mismatch is a structured error. Supplying `data` alongside a cartesian IR (MarkBar/MarkLine/MarkPoint/MarkArea/MarkRect) or an unmodeled mark is also a structured error — those paths compile from the IR itself, so the operand would be dead input. Omitting `data` is always valid: the verdict then rates the spec alone, with determinism and accuracy honestly 'unchecked' and a note saying why.",
       "minProperties": 1,
       "maxProperties": 1,
       "properties": {
@@ -52,13 +52,13 @@
       "type": "string",
       "format": "oods-brand",
       "default": "A",
-      "description": "CSS brand scope, matching viz.render for the same normalized spec and data operand."
+      "description": "CSS brand scope, matching viz_render for the same normalized spec and data operand."
     }
   },
   "additionalProperties": false,
   "$defs": {
     "hierarchyBranch": {
-      "description": "Hierarchy data for chartType 'treemap' or 'sunburst' (explicit-only) — used INSTEAD of rows/datasetRef + x/y encodings. A discriminated union on 'type': 'adjacency_list' (flat nodes linked by parentId; a node whose parent is missing becomes its own root) or 'nested' (a single root node with children).",
+      "description": "Hierarchy data for chartType 'treemap' or 'sunburst' (explicit-only) — used instead of rows/datasetRef + x/y encodings. A discriminated union on 'type': 'adjacency_list' (flat nodes linked by parentId; a node whose parent is missing becomes its own root) or 'nested' (a single root node with children).",
       "oneOf": [
         {
           "type": "object",
@@ -68,6 +68,7 @@
           ],
           "properties": {
             "type": {
+              "type": "string",
               "const": "adjacency_list"
             },
             "data": {
@@ -113,6 +114,7 @@
           ],
           "properties": {
             "type": {
+              "type": "string",
               "const": "nested"
             },
             "data": {
@@ -125,7 +127,7 @@
     },
     "sankeyBranch": {
       "type": "object",
-      "description": "Flow data for chartType 'sankey' (explicit-only) — used INSTEAD of rows/datasetRef + x/y encodings. Nodes plus value-weighted links; every link MUST carry a numeric 'value' (the link width IS the flow magnitude) and reference existing node names.",
+      "description": "Flow data for chartType 'sankey' (explicit-only) — used instead of rows/datasetRef + x/y encodings. Nodes plus value-weighted links; every link must carry a numeric 'value' (the link width IS the flow magnitude) and reference existing node names.",
       "required": [
         "nodes",
         "links"
@@ -184,7 +186,7 @@
     },
     "chordBranch": {
       "type": "object",
-      "description": "Chord data for chartType 'chord' (explicit-only) — used INSTEAD of rows/datasetRef + x/y encodings. A native ECharts ribbon diagram: a ring of category arcs connected by weighted ribbons. Sankey-shaped — nodes plus value-weighted links; every link MUST carry a numeric 'value' (the ribbon width IS the flow magnitude) and reference existing node names — a link naming a node absent from 'nodes' fails loud (OODS-V147).",
+      "description": "Chord data for chartType 'chord' (explicit-only) — used instead of rows/datasetRef + x/y encodings. A native ECharts ribbon diagram: a ring of category arcs connected by weighted ribbons. Sankey-shaped — nodes plus value-weighted links; every link must carry a numeric 'value' (the ribbon width IS the flow magnitude) and reference existing node names — a link naming a node absent from 'nodes' fails loud (OODS-V147).",
       "required": [
         "nodes",
         "links"
@@ -243,7 +245,7 @@
     },
     "networkBranch": {
       "type": "object",
-      "description": "Network data for chartType 'force_graph' (explicit-only) — used INSTEAD of rows/datasetRef + x/y encodings. Nodes (each with a unique 'id'; an optional 'group' drives category colour) and directed links (optional numeric 'value'). Every link MUST reference existing node ids — a link naming a node absent from 'nodes' fails loud (OODS-V147).",
+      "description": "Network data for chartType 'force_graph' (explicit-only) — used instead of rows/datasetRef + x/y encodings. Nodes (each with a unique 'id'; an optional 'group' drives category colour) and directed links (optional numeric 'value'). Every link must reference existing node ids — a link naming a node absent from 'nodes' fails loud (OODS-V147).",
       "required": [
         "nodes",
         "links"
@@ -275,7 +277,7 @@
         },
         "links": {
           "type": "array",
-          "description": "Directed edges between nodes (an empty array is allowed for an all-isolated-nodes graph). Each 'source'/'target' MUST match a node 'id' (a dangling ref fails loud, OODS-V147). Directed: source→target and target→source are distinct edges. Each (source, target) pair should be unique — a duplicate directed edge double-counts and is flagged with a warning (OODS-V148).",
+          "description": "Directed edges between nodes (an empty array is allowed for an all-isolated-nodes graph). Each 'source'/'target' must match a node 'id' (a dangling ref fails loud, OODS-V147). Directed: source→target and target→source are distinct edges. Each (source, target) pair should be unique — a duplicate directed edge double-counts and is flagged with a warning (OODS-V148).",
           "items": {
             "type": "object",
             "required": [
@@ -303,7 +305,7 @@
     },
     "geoBranch": {
       "type": "object",
-      "description": "Geo data for chartType 'choropleth', 'bubble_map', or 'flow_map' (explicit-only) — used INSTEAD of rows/datasetRef + x/y encodings. Carries INLINE geometry (a GeoJSON FeatureCollection in 'geojson', or a TopoJSON Topology in 'topojson' + 'topoObjectName'), an optional 'join' that merges tabular 'rows' into features by key, and the per-type encoding: 'valueField' colours regions for choropleth; 'longitudeField'/'latitudeField' (+ optional 'sizeField'/'colorField') place points for bubble_map; 'originLongitudeField'/'originLatitudeField'/'destinationLongitudeField'/'destinationLatitudeField' (+ optional 'strengthField'/'curvature') draw origin→destination ARCS for flow_map. Geometry is supplied INLINE — it is never fetched over the network. NOTE: geo specs are NOT self-contained (unlike treemap/sankey): the resolved FeatureCollection rides back on echartsSpec.__registration and the client re-registers the map by name before rendering. Geometry payloads can be large (a world atlas is ~100KB) — prefer a pre-simplified TopoJSON.",
+      "description": "Geo data for chartType 'choropleth', 'bubble_map', or 'flow_map' (explicit-only) — used instead of rows/datasetRef + x/y encodings. Carries inline geometry (a GeoJSON FeatureCollection in 'geojson', or a TopoJSON Topology in 'topojson' + 'topoObjectName'), an optional 'join' that merges tabular 'rows' into features by key, and the per-type encoding: 'valueField' colours regions for choropleth; 'longitudeField'/'latitudeField' (+ optional 'sizeField'/'colorField') place points for bubble_map; 'originLongitudeField'/'originLatitudeField'/'destinationLongitudeField'/'destinationLatitudeField' (+ optional 'strengthField'/'curvature') draw origin→destination arcs for flow_map. Geometry is supplied inline — it is never fetched over the network. Note: geo specs are not self-contained (unlike treemap/sankey): the resolved FeatureCollection rides back on echartsSpec.__registration and the client re-registers the map by name before rendering. Geometry payloads can be large (a world atlas is ~100KB) — prefer a pre-simplified TopoJSON.",
       "properties": {
         "geojson": {
           "type": "object",
@@ -390,22 +392,22 @@
         "originLongitudeField": {
           "type": "string",
           "minLength": 1,
-          "description": "Flow map: the row field holding the ORIGIN longitude. Required for flow_map."
+          "description": "Flow map: the row field holding the origin longitude. Required for flow_map."
         },
         "originLatitudeField": {
           "type": "string",
           "minLength": 1,
-          "description": "Flow map: the row field holding the ORIGIN latitude. Required for flow_map."
+          "description": "Flow map: the row field holding the origin latitude. Required for flow_map."
         },
         "destinationLongitudeField": {
           "type": "string",
           "minLength": 1,
-          "description": "Flow map: the row field holding the DESTINATION longitude. Required for flow_map."
+          "description": "Flow map: the row field holding the destination longitude. Required for flow_map."
         },
         "destinationLatitudeField": {
           "type": "string",
           "minLength": 1,
-          "description": "Flow map: the row field holding the DESTINATION latitude. Required for flow_map."
+          "description": "Flow map: the row field holding the destination latitude. Required for flow_map."
         },
         "strengthField": {
           "type": "string",

@@ -364,7 +364,7 @@ export function renderPackageReadme(facts) {
     "",
     "## Install",
     "",
-    `Every client starts the same command, \`${NPX_COMMAND}\`, and registers it under the name \`${SERVER_NAME}\`. The first start downloads the package and unpacks its runtime once into \`~/.oods-foundry/runtime/\`; later starts reuse it.`,
+    `Every client starts the same command, \`${NPX_COMMAND}\`, and registers it under the name \`${SERVER_NAME}\`. The first start downloads the package and unpacks its runtime once into \`~/.oods-foundry/runtime/\`; it answers your client straight away, tool calls wait until the runtime is in place, and the unpack finishes even if the client stops waiting. Later starts reuse it. With \`MCP_EXTRA_TOOLS\` set, the first start answers only once the runtime is unpacked; \`MCP_TOOLSET=all\` does not wait.`,
     "",
     "### Claude Code",
     "",
@@ -601,17 +601,56 @@ export function renderInstallDoc(facts) {
   return lines.join("\n");
 }
 
+/**
+ * s239 (plugin directory review, F-12/F-15/F-17): a skill folder is copied whole, into the plugin or a project's
+ * .claude/skills, so its references must stand alone. The skill's QUICKSTART drops the walkthrough's test markers (the
+ * release proofs and tests read them from packages/foundry/QUICKSTART.md, never from a skill copy) and links the files the
+ * skill does not carry at this release's public tag. `<!-- history -->` marks stay: the version checks read them.
+ */
+const SKILL_QUICKSTART_WORDING = (facts) => [
+  ["connect your MCP client as the package README describes.",
+    `connect your MCP client as [the package README](${sourceLink(facts, "packages/foundry/README.md")}) describes; the Claude Code plugin connects it for you.`],
+  ["See `OBJECTS-AND-TRAITS.md` for field types, money semantics, number formats, form controls and name-collision rules.",
+    `[OBJECTS-AND-TRAITS.md](${sourceLink(facts, "packages/foundry/OBJECTS-AND-TRAITS.md")}) documents field types, money semantics, number formats, form controls and name-collision rules.`],
+  ["are in the package's `quickstart/expected.json`.", "are in `quickstart/expected.json` in the `@oods/foundry` package you installed above."],
+];
+const TEST_MARKER = /^<!-- (?:quickstart|first-change|first-change-edit): [^\n]*-->\n/gm;
+
+export function skillQuickstart(text, facts) {
+  let out = text.replace(TEST_MARKER, "");
+  for (const [from, to] of SKILL_QUICKSTART_WORDING(facts)) {
+    assert(out.includes(from), `packages/foundry/QUICKSTART.md no longer says "${from}"; update the skill copy's wording in client-configs.mjs`);
+    out = out.split(from).join(to);
+  }
+  assert(!/<!--(?! history -->)/.test(out), "an HTML comment other than a history mark survived in the skill's QUICKSTART copy");
+  return out;
+}
+
+/**
+ * The skill's COMPONENTS.md is the package guide the skill used to send Claude to on a CDN (F-12), bundled: everything
+ * before its versioned registry URLs, whose remote installs the skill does not need, with BRANDS.md linked at the tag.
+ */
+export function skillComponents(text, facts) {
+  const end = text.indexOf("\n### Versioned registry URLs\n");
+  assert(end > 0, "packages/foundry/COMPONENTS.md no longer has its versioned registry URLs section; update skillComponents in client-configs.mjs");
+  assert(text.includes("](./BRANDS.md)"), "packages/foundry/COMPONENTS.md no longer links ./BRANDS.md; update skillComponents in client-configs.mjs");
+  return `${text.slice(0, end).replaceAll("](./BRANDS.md)", `](${sourceLink(facts, "packages/foundry/BRANDS.md")})`).trimEnd()}\n`;
+}
+
 export function renderAll() {
   const facts = collectInstallFacts();
   const skill = fs.readFileSync(path.join(REPO_ROOT, "plugins/oods-foundry/skills/oods-foundry/SKILL.md"), "utf8");
-  const quickstart = fs.readFileSync(path.join(REPO_ROOT, "packages/foundry/QUICKSTART.md"), "utf8");
+  const quickstart = skillQuickstart(fs.readFileSync(path.join(REPO_ROOT, "packages/foundry/QUICKSTART.md"), "utf8"), facts);
   const generatedApps = fs.readFileSync(path.join(REPO_ROOT, "packages/foundry/GENERATED-APPS.md"), "utf8");
+  const components = skillComponents(fs.readFileSync(path.join(REPO_ROOT, "packages/foundry/COMPONENTS.md"), "utf8"), facts);
   return { [PACKAGE_README]: renderPackageReadme(facts), [INSTALL_DOC]: renderInstallDoc(facts), ...renderConfigs(facts),
     "packages/foundry/skills/oods-foundry/SKILL.md": skill,
     "packages/foundry/skills/oods-foundry/references/QUICKSTART.md": quickstart,
     "plugins/oods-foundry/skills/oods-foundry/references/QUICKSTART.md": quickstart,
     "packages/foundry/skills/oods-foundry/references/GENERATED-APPS.md": generatedApps,
-    "plugins/oods-foundry/skills/oods-foundry/references/GENERATED-APPS.md": generatedApps };
+    "plugins/oods-foundry/skills/oods-foundry/references/GENERATED-APPS.md": generatedApps,
+    "packages/foundry/skills/oods-foundry/references/COMPONENTS.md": components,
+    "plugins/oods-foundry/skills/oods-foundry/references/COMPONENTS.md": components };
 }
 
 const isCli =

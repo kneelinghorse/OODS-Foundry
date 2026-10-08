@@ -2,6 +2,20 @@
 
 What changed in each version of OODS Foundry, in the terms you use it in.
 
+## 0.10.2
+
+- First start: the server answers your client at once while it unpacks its runtime in the background, so Claude Code no longer gives up on a first install (it waits 30 seconds; the unpack can take a minute). Tool calls wait until the runtime is ready. An unpack finishes even if the client gives up, a second start waits for it instead of unpacking again, and folders left by interrupted unpacks are removed. With `MCP_EXTRA_TOOLS` set, the first start still waits for the unpack.
+- Charts take inline data only: a chart spec with a `url` or `href` anywhere outside its inline rows, or an image URL in chart options, is refused with `OODS-V126`, which names the field. No chart tool fetches a URL or reads a file because of its input, and a link in a spec can no longer stop the server.
+- Tool listings: every tool carries its title in `annotations.title` as well, which directory portals read. Every parameter has a type, and every array says what it holds. Schema ids live at `https://oods-foundry.com/schemas/<file>`. Schema text uses the tools' real names and plain language.
+- The server describes itself in `instructions`, which clients such as Claude Code read when they search tools, and it answers `resources/templates/list`.
+- Clients: Gemini CLI's added `wait_for_previous` argument is ignored instead of failing validation. A tool schema no longer advertises the custom `oods-brand` format, which strict validators reject. `pipeline_run` and `dashboard_render` advertise schemas small enough that Codex keeps their parameter descriptions.
+- `structured_data_fetch` writes an export larger than 100,000 characters to a file and lists it, unless you ask for `payloadMode: "inline"`, as `code_generate`, `schema_render` and `pipeline_run` do. The components export is about 1.1 million characters.
+- `pipeline_run` gives warning `OODS-W004` when it writes the page and the generated files to files, as 0.10.1 said it would.
+- `code_generate` is marked as able to destroy work: identical output reuses its folder and overwrites the files there, edits included.
+- Imported objects: composing a screen from an object that declares no view extensions, such as a fresh import, no longer warns "Available contexts: none". Samples read like real data for titles, handles, display names, roles, departments and categories, and an end or due date falls after its start date. A field the generator cannot place still gets a distinct, numbered label.
+- The hub schema that ships beside `IMPORTING-OBJECTS.md`, `object-hub.schema.json`, is the contract the importer checks. From 0.9.0 to 0.10.1 that copy was older: it refused `fieldBindings` and fourteen field annotations the importer accepts, such as `label`, `titleField` and `listColumns`. Packing now fails if the two copies differ.
+- Claude Code plugin: the listing has a display name, an icon, and documentation, support and privacy links. Its README gives example prompts, says where the plugin works, discloses everything it runs, fetches and writes, and has a troubleshooting section. Its skill links only files it bundles.
+
 ## 0.10.1
 
 - Install lines: the public repository's README installs the current release with `npx -y @oods/foundry`, and its Docker commands name no version. A release check now fails when a release document names an older `@oods/foundry`.

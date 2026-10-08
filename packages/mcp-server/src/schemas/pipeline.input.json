@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://designlab.local/schemas/pipeline.input.json",
-  "title": "Pipeline input",
+  "$id": "https://oods-foundry.com/schemas/pipeline.input.json",
+  "title": "pipeline_run input",
   "description": "Execute the full design pipeline (compose -> validate -> render -> codegen) in a single call. A workflow schema generates a runnable React or Vue application with navigation, local store and deterministic sample data.",
   "type": "object",
   "additionalProperties": false,
@@ -24,7 +24,7 @@
     "layout": {
       "type": "string",
       "enum": ["dashboard", "form", "detail", "list", "card", "timeline", "landing", "auto"],
-      "description": "Layout template to use. 'landing' is a content/marketing page (hero + sections + CTA), not bound to a data object. 'auto' infers the best template from intent keywords."
+      "description": "Layout template. 'landing' is a content page (hero, sections, call to action) bound to no object; 'auto' picks one from the intent."
     },
     "preferences": {
       "type": "object",
@@ -69,7 +69,7 @@
     },
     "actionMappings": {
       "type": "array",
-      "description": "Stage1 bridge-summary action mappings: flat, verb-keyed entries.",
+      "description": "action mappings: flat, verb-keyed entries.",
       "items": {
         "type": "object",
         "additionalProperties": true,
@@ -98,12 +98,12 @@
     "profile": {
       "type": "string",
       "enum": ["draft", "build", "release"],
-      "description": "Validation profile forwarded unchanged to code.generate, including its workflow-state contract gate. build is the default blocking gate of static checks; the static gate does not install or run the generated application."
+      "description": "Validation profile passed to code_generate. build, the default, blocks on static checks; static checks do not install or run the generated app."
     },
     "releaseEvidence": {
       "type": "object",
       "additionalProperties": false,
-      "description": "Hash-bound release evidence forwarded unchanged to code.generate.",
+      "description": "Hash-bound release evidence forwarded unchanged to code_generate.",
       "properties": {
         "rendered": { "$ref": "#/$defs/releaseEvidenceItem" },
         "interaction": { "$ref": "#/$defs/releaseEvidenceItem" },
@@ -194,7 +194,7 @@
         "contentHash"
       ],
       "properties": {
-        "status": { "const": "passed" },
+        "status": { "type": "string", "const": "passed" },
         "artifactContentHash": {
           "type": "string",
           "pattern": "^sha256:[a-f0-9]{64}$",

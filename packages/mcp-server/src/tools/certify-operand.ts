@@ -22,7 +22,7 @@
 // channel, sankey duplicates become certify's own V158 accuracy rule (m03), and
 // chord/force_graph duplicates stay render-side warnings.
 
-import { validateSankeyInput, type SankeyInput } from '@oods/viz-core';
+import { externalOperandErrors, validateSankeyInput, type SankeyInput } from '@oods/viz-core';
 import {
   ECHARTS_PRIMARY,
   echartsPrimaryTypeForMarkTrait,
@@ -109,6 +109,12 @@ export function resolveCertifyOperand(
   }
 
   const branchData = data[branch];
+  // s239: the same refusal viz.render applies before building (an image, link or address
+  // in a node or link field), so certify refuses exactly what the render path refuses.
+  const refused = externalOperandErrors(['data', branch], branchData);
+  if (refused.length > 0) {
+    return fail('OODS-V126', refused.map((error) => error.message).join(' '));
+  }
   const invalid = validateBranchData(chartType, branchData);
   if (invalid) {
     return invalid;

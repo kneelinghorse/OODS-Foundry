@@ -129,10 +129,13 @@ export function collectViewExtensions(
   const warnings: string[] = [];
   const ranked = collectRankedEntries(composed, context);
 
-  if (ranked.length === 0) {
+  // s239 (site SITE-11): an object that declares no view extensions at all, such as a fresh import, is composed from its
+  // fields by design, so only a context missing beside others the object declares is worth a warning.
+  const declared = Object.keys(composed.viewExtensions);
+  if (ranked.length === 0 && declared.length > 0) {
     warnings.push(
       `No view_extensions found for context "${context}" in object "${composed.object.name}". ` +
-        `Available contexts: ${Object.keys(composed.viewExtensions).join(', ') || 'none'}`,
+        `Available contexts: ${declared.join(', ')}`,
     );
   }
 

@@ -19,7 +19,7 @@
 
 import { compile } from 'vega-lite';
 import type { TopLevelSpec } from 'vega-lite';
-import { parse, View, textMetrics, type Spec } from 'vega';
+import { parse, View, textMetrics, type Loader, type Spec } from 'vega';
 import { createFirstAppearanceRemap } from './first-appearance-remap.js';
 import { accessibleSvg } from './svg-accessibility.js';
 
@@ -47,8 +47,9 @@ export interface RenderVegaLiteToSvgOptions {
 /**
  * Render a Vega-Lite spec to a deterministic, headless SVG string.
  *
- * @throws if the spec fails to compile or parse (the caller decides the fallback;
- *   `dashboard.render` emits an a11y-described error placeholder per seam (b)).
+ * @throws if the spec fails to compile or parse, or names a URL or file to load (the
+ *   caller decides the fallback; `dashboard.render` emits an a11y-described error
+ *   placeholder per seam (b)).
  */
 export async function renderVegaLiteToSvg(
   spec: VegaLiteSpec,
@@ -73,7 +74,8 @@ export async function renderVegaLiteWithSpec(
   const branded = prepareSpecForBrand(spec, options);
   const compiled = compile(branded);
   preserveQuantizedSymbolLegends(branded, compiled.spec);
-  const view = new View(parse(compiled.spec), { renderer: 'none' });
+  const refused: string[] = [];
+  const view = new View(parse(compiled.spec), { renderer: 'none', loader: refusingLoader(refused) });
   // Silence Vega's logger so warnings never leak to stdout/stderr (and so output
   // is purely the SVG string). None = 0.
   view.logLevel(0);
@@ -81,12 +83,42 @@ export async function renderVegaLiteWithSpec(
   try {
     await view.runAsync();
     const svg = await view.toSVG();
+    if (refused.length > 0) {
+      throw new Error(`Chart rendering refused ${[...new Set(refused)].map((uri) => JSON.stringify(uri)).join(', ')}: a chart renders only the data it carries inline and never fetches a URL or reads a file. Pass the rows inline as values instead.`);
+    }
     const title = typeof spec.title === 'object' && !Array.isArray(spec.title) ? spec.title?.text : spec.title;
     return { svg: accessibleSvg(normalizeAutoIds(svg), title, spec.description), vegaSpec: compiled.spec };
   } finally {
     // Release the dataflow + any pending timers so repeated renders don't leak.
     view.finalize();
   }
+}
+
+/**
+ * A Vega loader that loads nothing (s239). Vega's default Node loader fetches http(s)
+ * URLs and reads file paths a spec names (data.url, a lookup's from.data.url, an image
+ * mark's url), which would let chart input send requests from the server and probe its
+ * disk. Every load and every data or image sanitize is refused and recorded, so the
+ * render fails naming the address. A link is recorded too but resolves to an empty
+ * href instead of rejecting: Vega's SVG string renderer reads a link's sanitize result
+ * without a null check, so a rejection there is an uncaught TypeError that ends the
+ * process.
+ */
+function refusingLoader(refused: string[]): Loader {
+  const refuse = async (uri: string): Promise<never> => {
+    refused.push(String(uri));
+    throw new Error(`Refused to load ${JSON.stringify(uri)}: chart rendering never fetches a URL or reads a file.`);
+  };
+  return {
+    load: refuse,
+    http: refuse,
+    file: refuse,
+    sanitize: async (uri, options) => {
+      if (options?.context !== 'href') return refuse(uri);
+      refused.push(String(uri));
+      return { href: '' };
+    },
+  };
 }
 
 /**

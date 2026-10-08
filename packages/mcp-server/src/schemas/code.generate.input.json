@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://designlab.local/schemas/code.generate.input.json",
-  "title": "Code export input",
+  "$id": "https://oods-foundry.com/schemas/code.generate.input.json",
+  "title": "code_generate input",
   "description": "Generate framework-specific code from a validated UiSchema. A workflow schema generates a runnable React or Vue application with navigation, local store and deterministic sample data.",
   "type": "object",
   "required": [
@@ -14,7 +14,7 @@
     },
     "schemaRef": {
       "type": "string",
-      "description": "Reference to a cached UiSchema returned by design.compose."
+      "description": "Reference to a cached UiSchema returned by design_compose."
     },
     "framework": {
       "type": "string",
@@ -97,7 +97,7 @@
             "inline",
             "file"
           ],
-          "description": "Unset: inline, unless the artifact would exceed 100,000 characters, in which case it is written as with file and warning OODS-W004 says so. inline returns the artifact in the response. file writes every artifact file plus artifact.json beside the saved-schema store (<store>/../payloads/code.generate-<digest>/) and returns a payload block of file references; the artifact is then omitted from the response and code is empty."
+          "description": "Unset: inline, unless the artifact would exceed 100,000 characters, in which case it is written as with file and warning OODS-W004 says so. inline returns the artifact in the response. file writes every artifact file plus artifact.json beside the saved-schema store (<store>/../payloads/code_generate-<digest>/) and returns a payload block of file references; the artifact is then omitted from the response and code is empty."
         },
         "output": {
           "type": "string",
@@ -141,6 +141,7 @@
       ],
       "properties": {
         "status": {
+          "type": "string",
           "const": "passed"
         },
         "artifactContentHash": {

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "ObjectImportOutput",
+  "title": "object_import output",
   "anyOf": [
     {
       "type": "object",
@@ -21,6 +21,7 @@
       ],
       "properties": {
         "action": {
+          "type": "string",
           "const": "draft"
         },
         "importId": {
@@ -120,6 +121,7 @@
       ],
       "properties": {
         "action": {
+          "type": "string",
           "const": "show"
         },
         "importId": {
@@ -162,6 +164,7 @@
       ],
       "properties": {
         "action": {
+          "type": "string",
           "const": "apply"
         },
         "importId": {
@@ -187,6 +190,7 @@
               "contexts": {
                 "type": "array",
                 "items": {
+                  "type": "string",
                   "enum": [
                     "list",
                     "detail",

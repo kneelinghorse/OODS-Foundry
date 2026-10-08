@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://designlab.local/schemas/dashboard.render.output.json",
-  "title": "Dashboard render output",
-  "description": "A composed metric-overview dashboard: the resolved abstract layout, per-panel compiled payloads (chart specs / KPI values / a11y-described error placeholders), the declared cross-filter links, the dashboard-level a11y block, and ONE dashboard-level specRef for pipeline reuse. Per-panel viz.render specRefs are suppressed; geo panels preserve their echartsSpec.__registration FeatureCollection.",
+  "$id": "https://oods-foundry.com/schemas/dashboard.render.output.json",
+  "title": "dashboard_render output",
+  "description": "A composed metric-overview dashboard: the resolved abstract layout, per-panel compiled payloads (chart specs / KPI values / a11y-described error placeholders), the declared cross-filter links, the dashboard-level a11y block, and one dashboard-level specRef for pipeline reuse. Per-panel viz_render specRefs are suppressed; geo panels preserve their echartsSpec.__registration FeatureCollection.",
   "type": "object",
   "required": [
     "status",
@@ -32,7 +32,7 @@
     },
     "layout": {
       "type": "array",
-      "description": "The resolved abstract grid placements (m02), one per rendered panel.",
+      "description": "The resolved grid placements, one per rendered panel.",
       "items": {
         "$ref": "#/$defs/placement"
       }
@@ -50,7 +50,7 @@
     },
     "tokenCssRef": {
       "type": "string",
-      "description": "Deferred token CSS reference when compact mode is on (use tokens.build)."
+      "description": "Deferred token CSS reference when compact mode is on (use tokens_build)."
     },
     "html": {
       "type": "string",
@@ -68,7 +68,7 @@
     },
     "contentHash": {
       "type": "string",
-      "description": "Deterministic SHA-256 (hex) over the canonicalized composed payload ({panels, layout}) — the content IDENTITY of exactly what specRef caches. Unlike specRef (a random, expiring cache handle), contentHash is stable: same input yields the same hash. panels[].contentHash, panels[].normalizedSpec, and outputHtmlHash are attached after this hash is computed and sit OUTSIDE the hashed projection. Default-on; omitted only on error outputs."
+      "description": "Deterministic SHA-256 (hex) over the canonicalized composed payload ({panels, layout}) — the content identity of exactly what specRef caches. Unlike specRef (a random, expiring cache handle), contentHash is stable: same input yields the same hash. panels[].contentHash, panels[].normalizedSpec, and outputHtmlHash are attached after this hash is computed and sit outside the hashed projection. Default-on; omitted only on error outputs."
     },
     "outputHtmlHash": {
       "type": "string",
@@ -113,7 +113,7 @@
         "brand": {
           "type": "string",
           "format": "oods-brand",
-          "description": "Echoes input.brand, and ONLY when it was supplied (s169 m04) — an absent brand leaves this object byte-identical to before the field existed."
+          "description": "Echoes input.brand, and only when it was supplied (s169 m04) — an absent brand leaves this object byte-identical to before the field existed."
         }
       }
     },
@@ -216,6 +216,7 @@
           "type": "string"
         },
         "kind": {
+          "type": "string",
           "const": "chart"
         },
         "title": {
@@ -243,12 +244,12 @@
         },
         "contentHash": {
           "type": "string",
-          "description": "The successful panel's viz.render contentHash, equal to a standalone viz.render call over the identical resolved spec and data. Attached after the dashboard hash and outside its {panels, layout} projection. This receipt is brand-INVARIANT because brand applies later at dashboard HTML/SVG emission; it proves this-call content determinism, not certified-matrix renderHashEpoch coverage."
+          "description": "The successful panel's viz_render contentHash, equal to a standalone viz_render call over the identical resolved spec and data. Attached after the dashboard hash and outside its {panels, layout} projection. This receipt is brand-invariant because brand applies later at dashboard HTML/SVG emission; it proves this-call content determinism, not certified-matrix renderHashEpoch coverage."
         },
         "normalizedSpec": {
           "type": "object",
           "additionalProperties": true,
-          "description": "The panel's intermediate NormalizedVizSpec IR, present only when output.includeNormalizedSpec=true. Attached after the dashboard hash and outside its {panels, layout} projection for direct artifact.certify round-trips."
+          "description": "The panel's intermediate NormalizedVizSpec IR, present only when output.includeNormalizedSpec=true. Attached after the dashboard hash and outside its {panels, layout} projection for direct artifact_certify round-trips."
         },
         "a11yDescription": {
           "type": "string"
@@ -261,7 +262,7 @@
     "structuredA11y": {
       "type": "object",
       "additionalProperties": false,
-      "description": "Structured two-part text alternative (accessible data table + narrative summary) for this panel, derived from the SAME data source the panel renders from. Present only when the dashboard output.includeA11y is true (additive; default-off keeps the wire byte-identical).",
+      "description": "Structured two-part text alternative (accessible data table + narrative summary) for this panel, derived from the same data source the panel renders from. Present only when the dashboard output.includeA11y is true (additive; default-off keeps the wire byte-identical).",
       "properties": {
         "table": {
           "type": "object",
@@ -366,6 +367,7 @@
           "type": "string"
         },
         "kind": {
+          "type": "string",
           "const": "kpi"
         },
         "title": {
@@ -422,12 +424,13 @@
         "error"
       ],
       "additionalProperties": false,
-      "description": "Partial-panel error policy (SEAM b, default 'placeholder'): a panel that failed to render, kept in-place and a11y-described, so it does not void the dashboard.",
+      "description": "Partial-panel error policy (default 'placeholder'): a panel that failed to render, kept in-place and a11y-described, so it does not void the dashboard.",
       "properties": {
         "id": {
           "type": "string"
         },
         "kind": {
+          "type": "string",
           "const": "error"
         },
         "title": {
@@ -549,7 +552,7 @@
         "findings"
       ],
       "additionalProperties": false,
-      "description": "Structured findings from the four-pair token contrast preflight — present ONLY when output.contrastScan=true. Machine-readable mirror of the OODS-V135 warnings (the failing brand-token colour pairs from scanBrandContrast). This is not whole-dashboard WCAG certification. ABSENT on the default path, so the default render stays byte-identical.",
+      "description": "Structured findings from the four-pair token contrast preflight — present only when output.contrastScan=true. Machine-readable mirror of the OODS-V135 warnings (the failing brand-token colour pairs from scanBrandContrast). This is not whole-dashboard WCAG certification. Absent on the default path, so the default render stays byte-identical.",
       "properties": {
         "findings": {
           "type": "array",
@@ -570,7 +573,7 @@
             "gradedPairs": {
               "type": "integer",
               "minimum": 0,
-              "description": "How many brand-token pairs were actually MEASURED (s169 m04). `failing: 0` on its own cannot distinguish \"checked every pair and all passed\" from \"checked nothing\" — and until s169 it silently meant the second, because the resolved tokens are rgb() strings the ratio function rejected and the rejection was swallowed. A consumer should treat gradedPairs < the expected pair count as an incomplete scan, not a clean one."
+              "description": "How many brand-token pairs were actually measured (s169 m04). `failing: 0` on its own cannot distinguish \"checked every pair and all passed\" from \"checked nothing\" — and until s169 it silently meant the second, because the resolved tokens are rgb() strings the ratio function rejected and the rejection was swallowed. A consumer should treat gradedPairs < the expected pair count as an incomplete scan, not a clean one."
             }
           }
         }

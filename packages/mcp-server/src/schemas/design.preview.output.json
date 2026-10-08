@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://designlab.local/schemas/design.preview.output.json",
-  "title": "Design preview output",
+  "$id": "https://oods-foundry.com/schemas/design.preview.output.json",
+  "title": "design_preview output",
   "description": "The URL of the composition version running in the preview host, one per compiled framework, with its lineage (composition, version, parent, operation, head), the schema hash and the compiled module digests. An unreachable host throws OODS-N021 before any record is written; an unknown composition or version throws OODS-N022. action compare returns the what-changed between two versions instead. action edit records a new version from one operation and opens it; action versions lists a composition's versions and the accepted one; action accept records a version as accepted and returns the acceptance.",
   "anyOf": [
     {
@@ -30,8 +30,9 @@
       "additionalProperties": false,
       "properties": {
         "warnings": {"type": "array", "description": "Advisory warnings for unmet team component contract obligations; preview remains available.", "items": {"type": "object", "required": ["code", "component", "message"], "additionalProperties": false, "properties": {"code": {"type": "string"}, "component": {"type": "string"}, "message": {"type": "string"}}}},
-        "componentContracts": {"type": "array", "description": "Advisory shared-scenario component reports. Each declared obligation is met, unmet or not checked with a reason; browser availability never blocks generation.", "items": {"type": "object", "required": ["schemaVersion", "framework", "mappingId", "component", "source", "contractVersion", "scenarioId", "obligations", "summary"], "additionalProperties": false, "properties": {"schemaVersion": {"const": "1"}, "framework": {"enum": ["react", "vue"]}, "mappingId": {"type": "string"}, "component": {"type": "string"}, "contractVersion": {"type": "string"}, "scenarioId": {"type": ["string", "null"]}, "source": {"type": "object", "required": ["export"], "additionalProperties": false, "properties": {"package": {"type": "string"}, "export": {"type": "string"}, "version": {"type": "string"}, "packageContentHash": {"type": "string"}, "shadcn": {"type": "object", "additionalProperties": false, "required": ["module", "file", "closureHash"], "properties": {"module": {"type": "string"}, "file": {"type": "string"}, "closureHash": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"}}}}, "oneOf": [{"required": ["package", "version"], "not": {"required": ["shadcn"]}}, {"required": ["shadcn"], "not": {"anyOf": [{"required": ["package"]}, {"required": ["version"]}]}}]}, "checkedAt": {"type": "string"}, "browser": {"type": "string"}, "adapterContentHash": {"type": "string"}, "contractContentHash": {"type": "string"}, "obligations": {"type": "array", "items": {"type": "object", "required": ["id", "requirement", "status", "reason"], "additionalProperties": false, "properties": {"id": {"type": "string"}, "requirement": {"type": "string"}, "status": {"enum": ["met", "unmet", "not-checked"]}, "reason": {"type": "string", "minLength": 1}}}}, "summary": {"type": "object", "required": ["met", "unmet", "not-checked"], "additionalProperties": false, "properties": {"met": {"type": "integer", "minimum": 0}, "unmet": {"type": "integer", "minimum": 0}, "not-checked": {"type": "integer", "minimum": 0}}}}}},
+        "componentContracts": {"type": "array", "description": "Advisory shared-scenario component reports. Each declared obligation is met, unmet or not checked with a reason; browser availability never blocks generation.", "items": {"type": "object", "required": ["schemaVersion", "framework", "mappingId", "component", "source", "contractVersion", "scenarioId", "obligations", "summary"], "additionalProperties": false, "properties": {"schemaVersion": {"type": "string", "const": "1"}, "framework": {"type": "string", "enum": ["react", "vue"]}, "mappingId": {"type": "string"}, "component": {"type": "string"}, "contractVersion": {"type": "string"}, "scenarioId": {"type": ["string", "null"]}, "source": {"type": "object", "required": ["export"], "additionalProperties": false, "properties": {"package": {"type": "string"}, "export": {"type": "string"}, "version": {"type": "string"}, "packageContentHash": {"type": "string"}, "shadcn": {"type": "object", "additionalProperties": false, "required": ["module", "file", "closureHash"], "properties": {"module": {"type": "string"}, "file": {"type": "string"}, "closureHash": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"}}}}, "oneOf": [{"required": ["package", "version"], "not": {"required": ["shadcn"]}}, {"required": ["shadcn"], "not": {"anyOf": [{"required": ["package"]}, {"required": ["version"]}]}}]}, "checkedAt": {"type": "string"}, "browser": {"type": "string"}, "adapterContentHash": {"type": "string"}, "contractContentHash": {"type": "string"}, "obligations": {"type": "array", "items": {"type": "object", "required": ["id", "requirement", "status", "reason"], "additionalProperties": false, "properties": {"id": {"type": "string"}, "requirement": {"type": "string"}, "status": {"type": "string", "enum": ["met", "unmet", "not-checked"]}, "reason": {"type": "string", "minLength": 1}}}}, "summary": {"type": "object", "required": ["met", "unmet", "not-checked"], "additionalProperties": false, "properties": {"met": {"type": "integer", "minimum": 0}, "unmet": {"type": "integer", "minimum": 0}, "not-checked": {"type": "integer", "minimum": 0}}}}}},
         "status": {
+          "type": "string",
           "const": "ok"
         },
         "action": {
@@ -215,7 +216,7 @@
             "notMeasured"
           ],
           "additionalProperties": false,
-          "description": "What this version carries as measured and what it does not: the code.generate validation receipt per framework, artifact.certify for every placed chart, axe-core per framework and brand/theme scope run inside the running page. The page's measurement panel says the same; nothing is claimed that did not run.",
+          "description": "What this version carries as measured and what it does not: the code_generate validation receipt per framework, artifact_certify for every placed chart, axe-core per framework and brand/theme scope run inside the running page. The page's measurement panel says the same; nothing is claimed that did not run.",
           "properties": {
             "validation": {
               "type": "array",
@@ -395,9 +396,11 @@
       "additionalProperties": false,
       "properties": {
         "status": {
+          "type": "string",
           "const": "ok"
         },
         "action": {
+          "type": "string",
           "const": "compare"
         },
         "left": {
@@ -717,9 +720,11 @@
       "additionalProperties": false,
       "properties": {
         "status": {
+          "type": "string",
           "const": "ok"
         },
         "action": {
+          "type": "string",
           "const": "versions"
         },
         "compositionId": {
@@ -861,9 +866,11 @@
       "additionalProperties": false,
       "properties": {
         "status": {
+          "type": "string",
           "const": "ok"
         },
         "action": {
+          "type": "string",
           "const": "accept"
         },
         "compositionId": {

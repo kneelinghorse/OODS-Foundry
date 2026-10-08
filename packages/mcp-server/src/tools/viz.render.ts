@@ -22,6 +22,7 @@ import {
   buildVizSpecFromRows,
   convertToEChartsTreeData,
   describeMeasureContext,
+  externalOperandErrors,
   generateAccessibleTable,
   generateNarrativeSummary,
   toEChartsOption,
@@ -690,6 +691,13 @@ function renderEChartsPrimary(
       compact,
       false,
     );
+  }
+
+  // s239: node and link fields become ECharts data-item options, so an image, link or
+  // address in them is refused before any option is built; no output can reference one.
+  const refused = externalOperandErrors([config.dataBranch], branchData);
+  if (refused.length > 0) {
+    return errorOut('OODS-V126', refused.map((error) => error.message).join(' '), compact, false);
   }
 
   // V145 (sprint-147 m03, Fork D): an explicit color `range` is a CARTESIAN-only

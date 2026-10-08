@@ -531,15 +531,17 @@ describe('s170 m01 R4 — aggregation hiding', () => {
     expect(result.notes.join(' ')).toContain("'variance'");
   });
 
-  it('url-only data leaves the collapse half unevaluable — silent, counted out, and noted', () => {
+  // s239: a data url is now refused by assertNormalizedVizSpec (renderers must never fetch it),
+  // so an IR without inline rows is a named data reference.
+  it('data without inline rows leaves the collapse half unevaluable — silent, counted out, and noted', () => {
     const spec = assertNormalizedVizSpec({
       ...builtAggregateBar(COLLAPSING_ROWS, OVERRIDE),
-      data: { url: 'https://example.test/revenue.json', format: 'json' },
+      data: { name: 'revenue' },
     });
     const result = evaluate(spec);
     expect(result.findings).toEqual([]);
     expect(result.rulesEvaluated).toBe(3);
-    expect(result.notes.join(' ')).toContain('referenced by url');
+    expect(result.notes.join(' ')).toContain('carries no rows');
   });
 
   it('FACET/LAYER axis: the group key includes facet fields, so a per-facet identity stays silent', () => {

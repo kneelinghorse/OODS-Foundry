@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "object output",
+  "title": "object_registry output",
   "description": "Grouped output for the object registry family (list, show, validate, register, reload). anyOf (not oneOf) — per-action outputs are structurally distinct here, but anyOf is the safe consolidation contract: a handler result is valid if it matches the corresponding per-action output body. Each branch is the verbatim body of object.<action>.output.json.",
   "anyOf": [
     {
@@ -25,8 +25,8 @@
                 "type": "array",
                 "items": { "type": "string" }
               },
-              "visibility": { "enum": ["public", "internal"], "description": "public: a business object. internal: one of OODS Foundry's own non-business objects, listed only with includeInternal." },
-              "source": { "enum": ["shipped", "user"], "description": "shipped: OODS Foundry's own. user: from your folder." },
+              "visibility": { "type": "string", "enum": ["public", "internal"], "description": "public: a business object. internal: one of OODS Foundry's own non-business objects, listed only with includeInternal." },
+              "source": { "type": "string", "enum": ["shipped", "user"], "description": "shipped: OODS Foundry's own. user: from your folder." },
               "replaces": { "type": "string", "description": "The shipped file your object is used in place of." }
             },
             "required": ["name", "domain", "version", "maturity", "description", "traits", "fieldCount", "tags", "visibility", "source"],
@@ -62,8 +62,8 @@
             "type": "object",
             "description": "A file that was not used, or something about one that is, and why.",
             "properties": {
-              "kind": { "enum": ["malformed", "unnamed", "duplicate", "replaces-shipped", "shipped-name", "unknown-trait", "unreadable-folder"] },
-              "severity": { "enum": ["error", "notice"], "description": "error: the definition is not in use. notice: it is in use, and this is worth knowing." },
+              "kind": { "type": "string", "enum": ["malformed", "unnamed", "duplicate", "replaces-shipped", "shipped-name", "unknown-trait", "unreadable-folder"] },
+              "severity": { "type": "string", "enum": ["error", "notice"], "description": "error: the definition is not in use. notice: it is in use, and this is worth knowing." },
               "file": { "type": "string", "description": "A shipped file relative to the runtime root; a file of yours as an absolute path." },
               "name": { "type": "string" },
               "message": { "type": "string" }
@@ -98,6 +98,7 @@
                 "type": "string"
               },
               "cardinality": {
+                "type": "string",
                 "enum": [
                   "one-to-one",
                   "one-to-many",
@@ -194,7 +195,7 @@
           "items": { "type": "string" }
         },
         "filePath": { "type": "string" },
-        "source": { "enum": ["shipped", "user"], "description": "shipped: OODS Foundry's own. user: from your folder." },
+        "source": { "type": "string", "enum": ["shipped", "user"], "description": "shipped: OODS Foundry's own. user: from your folder." },
         "replaces": { "type": "string", "description": "The shipped file your object is used in place of." }
       },
       "required": ["name", "version", "domain", "description", "tags", "maturity", "traits", "schema", "semantics", "viewExtensions", "tokens", "warnings", "filePath", "source"],
@@ -204,6 +205,7 @@
       "type": "object",
       "properties": {
         "kind": {
+          "type": ["string","null"],
           "enum": [
             "object",
             "trait",
@@ -225,6 +227,7 @@
             "type": "object",
             "properties": {
               "kind": {
+                "type": "string",
                 "enum": [
                   "malformed",
                   "not-a-definition",
@@ -305,6 +308,7 @@
       "type": "object",
       "properties": {
         "kind": {
+          "type": "string",
           "enum": [
             "object",
             "trait"
@@ -318,6 +322,7 @@
           "description": "The file in your folder that now holds the definition."
         },
         "status": {
+          "type": "string",
           "enum": [
             "created",
             "updated"
@@ -336,6 +341,7 @@
                 "type": "string"
               },
               "status": {
+                "type": "string",
                 "enum": [
                   "ok",
                   "error"
@@ -355,7 +361,7 @@
             ],
             "additionalProperties": false
           },
-          "description": "An object composed through design.compose in every context it declares (empty for a trait)."
+          "description": "An object composed through design_compose in every context it declares (empty for a trait)."
         },
         "warnings": {
           "type": "array",
@@ -444,6 +450,7 @@
                 "description": "A file that was not used, or something about one that is, and why.",
                 "properties": {
                   "kind": {
+                    "type": "string",
                     "enum": [
                       "malformed",
                       "unnamed",
@@ -455,6 +462,7 @@
                     ]
                   },
                   "severity": {
+                    "type": "string",
                     "enum": [
                       "error",
                       "notice"
@@ -583,6 +591,7 @@
             "description": "A file that was not used, or something about one that is, and why.",
             "properties": {
               "kind": {
+                "type": "string",
                 "enum": [
                   "malformed",
                   "unnamed",
@@ -594,6 +603,7 @@
                 ]
               },
               "severity": {
+                "type": "string",
                 "enum": [
                   "error",
                   "notice"

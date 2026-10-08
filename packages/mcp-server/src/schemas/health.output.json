@@ -151,7 +151,7 @@
               "$ref": "#/$defs/measuredOn"
             },
             "archiveSha256": {
-              "description": "s223-m03: the runtime archive the measured run executed, when its ledger recorded one.",
+              "description": "the runtime archive the measured run executed, when its ledger recorded one.",
               "type": [
                 "string",
                 "null"
@@ -161,7 +161,7 @@
           }
         },
         "viz": {
-          "description": "Generated visualization taxonomy and Core Analytics Profile census. patterns counts the patterns viz.render offers and retiredPatterns the retired ones. Surface-complete cells have public SVG backing; typed gaps, retired cells and retired patterns retain reasons in the taxonomy. Counts do not imply certification. Null when the taxonomy is missing or invalid.",
+          "description": "Generated visualization taxonomy and Core Analytics Profile census. patterns counts the patterns viz_render offers and retiredPatterns the retired ones. Surface-complete cells have public SVG backing; typed gaps, retired cells and retired patterns retain reasons in the taxonomy. Counts do not imply certification. Null when the taxonomy is missing or invalid.",
           "type": [
             "object",
             "null"
@@ -222,12 +222,12 @@
               "$ref": "#/$defs/measuredOn"
             },
             "certifiedChartTypes": {
-              "description": "s223-m03: chart types the census certified (VIZ_RECIPES_CENSUS).",
+              "description": "chart types the chart census certified.",
               "type": "integer",
               "minimum": 0
             },
             "certifiedScopes": {
-              "description": "s223-m03: light/dark/hc and A/B scopes the census measured as certified and conformant; measuredOn says what it ran on.",
+              "description": "Brand (A, B) and theme (light, dark, high-contrast) scopes the census measured as certified and conformant; measuredOn says what it ran on.",
               "type": "integer",
               "minimum": 0
             }
@@ -625,6 +625,7 @@
                 "description": "A file that was not used, or something about one that is, and why.",
                 "properties": {
                   "kind": {
+                    "type": "string",
                     "enum": [
                       "malformed",
                       "unnamed",
@@ -636,6 +637,7 @@
                     ]
                   },
                   "severity": {
+                    "type": "string",
                     "enum": [
                       "error",
                       "notice"
@@ -728,6 +730,7 @@
               "type": "string"
             },
             "source": {
+              "type": "string",
               "enum": [
                 "env",
                 "default"
@@ -737,7 +740,7 @@
           "description": "Configured default chosen from built scopes; never an observed active consumer scope. Null when no scopes are built."
         },
         "registry": {
-          "description": "The brand registry : the brands this server can use, read from the token build, and the brand folders the build reads (the shipped package's, and the team's since s213-m06), compared with the build. Every issue is also a warning.",
+          "description": "The brand registry: the brands this server can use, read from the token build, and the brand folders the build reads (the shipped package's and the team's), compared with the build. Every issue is also a warning.",
           "type": "object",
           "additionalProperties": false,
           "required": [
@@ -785,6 +788,7 @@
                     ]
                   },
                   "kind": {
+                    "type": "string",
                     "enum": [
                       "no-brand-list",
                       "not-built",
@@ -871,7 +875,7 @@
   },
   "$defs": {
     "measuredOn": {
-      "description": "s223-m03: what this measurement was made on: the release version the measured source declared, the head it was measured at, and the archive it ran from (null when it measured the source or recorded no archive). Null when the stamp does not match the head this block reports.",
+      "description": "what this measurement was made on: the release version the measured source declared, the head it was measured at, and the archive it ran from (null when it measured the source or recorded no archive). Null when the stamp does not match the head this block reports.",
       "type": [
         "object",
         "null"

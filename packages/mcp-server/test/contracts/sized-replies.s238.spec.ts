@@ -6,6 +6,7 @@ import { handle as compose } from '../../src/tools/design.compose.js';
 import { handle as codegen } from '../../src/tools/code.generate.js';
 import { handle as render } from '../../src/tools/repl.render.js';
 import { handle as pipeline } from '../../src/tools/pipeline.js';
+import { handle as fetchData } from '../../src/tools/structuredData.fetch.js';
 import { INLINE_PAYLOAD_LIMIT } from '../../src/lib/payload-store.js';
 
 // A Subscription detail screen came back as about 409,000 characters from code_generate, 680,000 from schema_render
@@ -45,6 +46,8 @@ describe('replies to a client fit in one reply', () => {
   it('pipeline_run lists the page and the generated files instead of carrying them, unless asked for inline', async () => {
     const sized = await pipeline({ object: 'Subscription', context: 'list', framework: 'react' } as never, client);
     expect(sized.error).toBeUndefined();
+    // s239: the site's 0.10.1 report found this path wrote files without saying so.
+    expect(sized.warnings?.map(warning => warning.code)).toEqual(['OODS-W004']);
     expect(sized.payload?.files.some(file => file.path === 'render/index.html')).toBe(true);
     expect(sized.payload?.files.some(file => file.path === 'code/artifact.json')).toBe(true);
     expect(sized.code?.artifact).toBeUndefined();
@@ -52,5 +55,23 @@ describe('replies to a client fit in one reply', () => {
     const inline = await pipeline({ object: 'Subscription', context: 'list', framework: 'react', options: { payloadMode: 'inline' } } as never, client);
     expect(inline.code?.artifact).toBeTruthy();
     expect(inline.payload).toBeUndefined();
+    expect(inline.warnings).toBeUndefined();
+  });
+
+  // s239 (#2743): the components export is about 1.1 million characters (roughly 278,000 tokens) with no other way to narrow it.
+  it('structured_data_fetch writes an oversized export to a file, says why, and leaves direct and inline calls whole', async () => {
+    const sized = await fetchData({ dataset: 'components' }, client);
+    expect(sized.payload).toBeUndefined();
+    expect(sized.payloadIncluded).toBe(false);
+    expect(sized.payloadFile?.files.map(file => file.path)).toEqual(['components.json']);
+    expect(sized.payloadFile!.bytes).toBeGreaterThan(INLINE_PAYLOAD_LIMIT);
+    expect(JSON.parse(fs.readFileSync(path.join(sized.payloadFile!.directory, 'components.json'), 'utf8')).components.length).toBeGreaterThan(0);
+    expect(sized.warnings?.some(warning => warning.includes('payloadMode'))).toBe(true);
+    expect(size(sized)).toBeLessThan(10_000);
+    const inline = await fetchData({ dataset: 'components', payloadMode: 'inline' }, client);
+    expect(inline.payload).toBeTruthy();
+    const direct = await fetchData({ dataset: 'components' });
+    expect(direct.payload).toBeTruthy();
+    expect(direct.payloadFile).toBeUndefined();
   });
 });

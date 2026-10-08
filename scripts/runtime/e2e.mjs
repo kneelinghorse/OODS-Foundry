@@ -886,8 +886,8 @@ async function main() {
   );
   assert.equal(
     adapterPackage.version,
-    "0.10.1",
-    "adapter 0.10.1 sizes replies for the client and accepts the listed on-demand tool names",
+    "0.10.2",
+    "adapter 0.10.2 answers directory rules (annotations.title, typed schemas), instructions and Gemini's added argument",
   );
   assert.equal(
     manifest.packageVersions["@oods/mcp-adapter"],

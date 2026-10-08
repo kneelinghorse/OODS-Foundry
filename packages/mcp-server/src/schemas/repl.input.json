@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://designlab.local/schemas/repl.input.json",
-  "title": "Agentic REPL (grouped) input",
-  "description": "Grouped action-parameter tool consolidating repl.render and repl.validate. Select the per-action body via the top-level `action` discriminator. Each branch reproduces the exact body of the corresponding per-action input schema, with `action` added to the allowed property set. Per-action handlers, schemas, and the external repl_render/repl_validate tools are unchanged; this is a zero-functionality-loss bolt-on.",
+  "$id": "https://oods-foundry.com/schemas/repl.input.json",
+  "title": "schema_render input",
+  "description": "Grouped action-parameter tool consolidating schema_render action=render and schema_render action=validate. Select the per-action body via the top-level `action` discriminator. Each branch reproduces the exact body of the corresponding per-action input schema, with `action` added to the allowed property set. Per-action handlers, schemas, and the external repl_render/repl_validate tools are unchanged; this is a zero-functionality-loss bolt-on.",
   "type": "object",
   "required": [
     "action"
@@ -14,7 +14,7 @@
         "render",
         "validate"
       ],
-      "description": "Selects the per-action handler. 'render' -> repl.render, 'validate' -> repl.validate."
+      "description": "Selects the per-action handler. 'render' -> schema_render action=render, 'validate' -> schema_render action=validate."
     }
   },
   "allOf": [
@@ -22,6 +22,7 @@
       "if": {
         "properties": {
           "action": {
+            "type": "string",
             "const": "render"
           }
         },
@@ -33,6 +34,7 @@
         "type": "object",
         "properties": {
           "action": {
+            "type": "string",
             "const": "render"
           },
           "mode": {
@@ -48,7 +50,7 @@
           },
           "schemaRef": {
             "type": "string",
-            "description": "Reference to a cached UiSchema returned by design.compose."
+            "description": "Reference to a cached UiSchema returned by design_compose."
           },
           "patch": {
             "$ref": "./repl.patch.json"
@@ -111,12 +113,12 @@
               },
               "tokenOverlay": {
                 "type": "object",
-                "description": "Inline token-delta object resolved to a scoped :root{} override; applied only in document output (format=document), diagnosed as ignored for fragments with OODS-W001; distinct from the FS-resolved named brandOverlay on fidelity.preview.",
+                "description": "Inline token-delta object resolved to a scoped :root{} override; applied only in document output (format=document), diagnosed as ignored for fragments with OODS-W001; distinct from the FS-resolved named brandOverlay on fidelity_preview.",
                 "additionalProperties": true
               },
               "skinOverlay": {
                 "type": "object",
-                "description": "Inline measured-COLOUR delta resolved against the OODS Foundry-owned style library to a scoped :root{} override on the --sys-/--ref- skin (distinct from tokenOverlay's --oods- token path); applied only in document output (format=document), gated by apply===true. An unmapped logical key fails loud with OODS-V140. Lands in the same components <style> block as tokenOverlay; default-absent is byte-identical.",
+                "description": "Inline measured-colour delta resolved against the OODS Foundry-owned style library to a scoped :root{} override on the --sys-/--ref- skin (distinct from tokenOverlay's --oods- token path); applied only in document output (format=document), gated by apply===true. An unmapped logical key fails loud with OODS-V140. Lands in the same components <style> block as tokenOverlay; default-absent is byte-identical.",
                 "additionalProperties": true
               },
               "payloadMode": {
@@ -125,7 +127,7 @@
                   "inline",
                   "file"
                 ],
-                "description": "Unset: inline, unless the output would exceed 100,000 characters, in which case it is written as with file and warning OODS-W004 says so. inline returns html (or fragments and css) in the response. file writes index.html (or fragments.json and css.json) beside the saved-schema store (<store>/../payloads/repl.render-<digest>/) and returns a payload block of file references instead; html, fragments and css are then omitted."
+                "description": "Unset: inline, unless the output would exceed 100,000 characters, in which case it is written as with file and warning OODS-W004 says so. inline returns html (or fragments and css) in the response. file writes index.html (or fragments.json and css.json) beside the saved-schema store (<store>/../payloads/schema_render action=render-<digest>/) and returns a payload block of file references instead; html, fragments and css are then omitted."
               }
             },
             "additionalProperties": false
@@ -140,6 +142,7 @@
             "if": {
               "properties": {
                 "mode": {
+                  "type": "string",
                   "const": "full"
                 }
               },
@@ -189,6 +192,7 @@
             "if": {
               "properties": {
                 "mode": {
+                  "type": "string",
                   "const": "patch"
                 }
               },
@@ -211,6 +215,7 @@
       "if": {
         "properties": {
           "action": {
+            "type": "string",
             "const": "validate"
           }
         },
@@ -222,6 +227,7 @@
         "type": "object",
         "properties": {
           "action": {
+            "type": "string",
             "const": "validate"
           },
           "mode": {
@@ -237,7 +243,7 @@
           },
           "schemaRef": {
             "type": "string",
-            "description": "Reference to a cached UiSchema returned by design.compose."
+            "description": "Reference to a cached UiSchema returned by design_compose."
           },
           "patch": {
             "$ref": "./repl.patch.json",
@@ -277,6 +283,7 @@
             "if": {
               "properties": {
                 "mode": {
+                  "type": "string",
                   "const": "full"
                 }
               },
@@ -326,6 +333,7 @@
             "if": {
               "properties": {
                 "mode": {
+                  "type": "string",
                   "const": "patch"
                 }
               },

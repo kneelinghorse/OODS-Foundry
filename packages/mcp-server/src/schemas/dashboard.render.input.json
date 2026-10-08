@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://designlab.local/schemas/dashboard.render.input.json",
-  "title": "Dashboard render input",
+  "$id": "https://oods-foundry.com/schemas/dashboard.render.input.json",
+  "title": "dashboard_render input",
   "type": "object",
-  "description": "Render a composed, decision-centric DASHBOARD (the fixed metric-overview template: KPI row + trend + breakdown + optional geo) from a declarative DashboardSpec IR. Carries shared datasets, heterogeneous panels (any of the 11 of the 13 viz.render chartTypes (chord and flow_map are viz.render-only), or kpi tiles), layout hints, cross-filter links, and a dashboard-level a11y block. The server composes each panel through the in-process viz.render engine, resolves the layout, computes KPIs, and applies any active cross-filter selection. Per-chart specs are unchanged; this IR sits above them.",
+  "description": "Render a composed, decision-centric dashboard (the fixed metric-overview template: KPI row + trend + breakdown + optional geo) from a declarative DashboardSpec IR. Carries shared datasets, heterogeneous panels (any of the 11 of the 13 viz_render chartTypes (chord and flow_map are viz_render-only), or kpi tiles), layout hints, cross-filter links, and a dashboard-level a11y block. The server composes each panel through the in-process viz_render engine, resolves the layout, computes KPIs, and applies any active cross-filter selection. Per-chart specs are unchanged; this IR sits above them.",
   "required": [
     "schemaVersion",
     "datasets",
@@ -23,6 +23,7 @@
       "description": "CSS token theme for chart pixels, default light. HC emits the declared scope colors verbatim, including CSS system colors; their computed paints require a forced-colors browser. A renderer that substitutes undeclared paints is typed-deferred instead of returning misleading HC pixels. No server-side system-color hex palette is invented."
     },
     "schemaVersion": {
+      "type": "string",
       "const": "v0.1",
       "description": "IR version discriminant (V01 convention). A future template/shape change bumps to v0.2."
     },
@@ -37,7 +38,7 @@
     "datasets": {
       "type": "array",
       "minItems": 1,
-      "description": "SEAM (a) cross-panel DATA-SHARING. Shared, named tabular datasets. Tabular chart panels and KPI panels reference one by `datasetId`; sharing a dataset is what makes cross-filter possible (panels filter the same dimensional space).",
+      "description": "Shared, named tabular datasets. chart and KPI panels reference one by datasetId; panels that share a dataset can cross-filter each other.",
       "items": {
         "$ref": "#/$defs/Dataset"
       }
@@ -45,7 +46,7 @@
     "panels": {
       "type": "array",
       "minItems": 1,
-      "description": "Heterogeneous panels: chart (11 of the 13 viz.render chartTypes; chord and flow_map are viz.render-only — plus its data branch) or kpi tiles.",
+      "description": "Heterogeneous panels: chart (11 of the 13 viz_render chartTypes; chord and flow_map are viz_render-only — plus its data branch) or kpi tiles.",
       "items": {
         "$ref": "#/$defs/Panel"
       }
@@ -55,7 +56,7 @@
     },
     "links": {
       "type": "array",
-      "description": "Declared panel relationships, returned in the result and rendered as a labelled reference list in HTML. They do not apply filters. Active cross-filtering uses selection and crossFilter.",
+      "description": "Declared panel relationships, returned and shown as a labelled list in HTML. They apply no filters; cross-filtering uses selection and crossFilter.",
       "items": {
         "$ref": "#/$defs/DashboardLink"
       }
@@ -70,34 +71,34 @@
         "omit"
       ],
       "default": "placeholder",
-      "description": "SEAM (b) partial-panel ERROR policy. 'placeholder' = render an a11y-described error panel in-place (default — don't void the dashboard); 'omit' = drop the failed panel from the layout."
+      "description": "What a failed panel does: 'placeholder' (default) shows an accessible error panel in its place; 'omit' drops it from the layout."
     },
     "resolveMeasures": {
       "type": "boolean",
       "default": true,
-      "description": "Phase-3 governed-measure RESOLUTION switch. When true, a KPI panel carrying a `measureRef` has it resolved against the governed-measure registry BEFORE compute: the registry's entityField/aggregate OVERRIDE the author's field/aggregate, and any default comparison/threshold fills only where the author omitted them. An unknown measureRef under this flag becomes an a11y-described error panel (OODS-V130) routed through `onPanelError`, NOT a silent value. DEFAULT true resolves supplied refs. Explicit false opts out of reference resolution; measureRef-only KPI panels then fail OODS-V137 because no field resolves. Inputs without refs retain their rendered bytes. A render-call control (like `selection`/`output`), so it lives only on the tool input — NOT in the DashboardSpec IR; it never reaches computeKpi (resolution is strictly input-side and is never echoed onto output panels)."
+      "description": "Phase-3 governed-measure resolution switch. When true, a KPI panel carrying a `measureRef` has it resolved against the governed-measure registry before compute: the registry's entityField/aggregate override the author's field/aggregate, and any default comparison/threshold fills only where the author omitted them. An unknown measureRef under this flag becomes an a11y-described error panel (OODS-V130) routed through `onPanelError`, not a silent value. Default true resolves supplied refs. Explicit false opts out of reference resolution; measureRef-only KPI panels then fail OODS-V137 because no field resolves. Inputs without refs retain their rendered bytes. A render-call control (like `selection`/`output`), so it lives only on the tool input — not in the DashboardSpec IR; it never reaches computeKpi (resolution is strictly input-side and is never echoed onto output panels)."
     },
     "strictFields": {
       "type": "boolean",
       "default": false,
-      "description": "Field-presence STRICT switch. When true, a referenced field absent from EVERY resolved (non-empty) row is surfaced as OODS-V131 at the ingestion boundary instead of a silent value:0 / confident-wrong spec: a KPI panel's field (+ periodField) and a tabular chart panel's encoding fields (x/y/color/size/shape/detail) must each be a key in >=1 row, else the panel is routed through `onPanelError` (placeholder = a11y-described error panel; omit = warning + drop). DEFAULT false keeps the legacy silent-empty behavior byte-identical. Scoped to field-presence ONLY — the frozen-D6 missing-datasetId silent-empty path (empty rows) is unchanged. A render-call control (like resolveMeasures); never reaches computeKpi."
+      "description": "Field-presence strict switch. When true, a referenced field absent from every resolved (non-empty) row is surfaced as OODS-V131 at the ingestion boundary instead of a silent value:0 / confident-wrong spec: a KPI panel's field (+ periodField) and a tabular chart panel's encoding fields (x/y/color/size/shape/detail) must each be a key in >=1 row, else the panel is routed through `onPanelError` (placeholder = a11y-described error panel; omit = warning + drop). Default false keeps the legacy silent-empty behavior byte-identical. Scoped to field-presence only — the frozen-D6 missing-datasetId silent-empty path (empty rows) is unchanged. A render-call control (like resolveMeasures); never reaches computeKpi."
     },
     "strictDatasets": {
       "type": "boolean",
       "default": false,
-      "description": "Unknown-datasetId STRICT switch. When true, a KPI panel whose datasetId is NOT present in datasets[] fails through onPanelError (OODS-V139). A KNOWN dataset that filters/cross-filters to zero rows STILL renders value:0 (unchanged). Does NOT affect chart panels (their missing-datasetId path keeps OODS-V123). Default false = the legacy frozen-D6 silent-empty behavior, byte-identical."
+      "description": "Unknown-datasetId strict switch. When true, a KPI panel whose datasetId is not present in datasets[] fails through onPanelError (OODS-V139). A known dataset that filters/cross-filters to zero rows still renders value:0 (unchanged). Does not affect chart panels (their missing-datasetId path keeps OODS-V123). Default false = the legacy frozen-D6 silent-empty behavior, byte-identical."
     },
     "a11yEquivalence": {
       "type": "boolean",
       "default": true,
-      "description": "A11y equivalence CERTIFY-AT-EMISSION switch. DEFAULT ON. Each cartesian chart panel's emission is checked against the accessible-equivalence engine: an error-severity failure makes an error panel (first per-rule OODS-<rule.id> code), warn-severity failures fold into the dashboard `warnings` as OODS-<rule.id> prefixed with the originating panel id. Default builder output is conformant-BY-CONSTRUCTION ; set false to opt out for agent-supplied non-conformant panels. Scoped to cartesian chart panels (ECharts-primary/geo panels are excluded)."
+      "description": "A11y equivalence certify-at-emission switch. Default ON. Each cartesian chart panel's emission is checked against the accessible-equivalence engine: an error-severity failure makes an error panel (first per-rule OODS-<rule.id> code), warn-severity failures fold into the dashboard `warnings` as OODS-<rule.id> prefixed with the originating panel id. Default builder output is conformant by construction; set false to opt out for agent-supplied non-conformant panels. Scoped to cartesian chart panels (ECharts-primary/geo panels are excluded)."
     },
     "a11y": {
       "$ref": "#/$defs/DashboardA11ySpec"
     },
     "tokenCssRef": {
       "type": "string",
-      "description": "SEAM (e) TOKEN strategy. One dashboard-level deferred token CSS reference (e.g. 'tokens.build'); tokens stay deferred to the consumer CSS bundle (viz.render compact posture). When supplied, this exact reference is returned in compact output. KPI threshold colors are NOT resolved inline."
+      "description": "Token strategy. One dashboard-level deferred token CSS reference (e.g. 'tokens_build'); tokens stay deferred to the consumer CSS bundle (viz_render compact posture). When supplied, this exact reference is returned in compact output. KPI threshold colors are not resolved inline."
     },
     "brand": {
       "type": "string",
@@ -106,14 +107,14 @@
     },
     "selection": {
       "type": "object",
-      "description": "Optional accumulated cross-filter SelectionState, keyed by sourceWidgetId (one active selection per source). When present, each panel's rows are cross-filtered (skip-self + AND-across-sources) before render/KPI compute; absent -> the unfiltered dashboard.",
+      "description": "Optional accumulated cross-filter SelectionState, keyed by sourceWidgetId (one active selection per source). When present, each panel's rows are cross-filtered (skip-self + and-across-sources) before render/KPI compute; absent -> the unfiltered dashboard.",
       "additionalProperties": {
         "$ref": "#/$defs/Selection"
       }
     },
     "output": {
       "type": "object",
-      "description": "Optional render output controls (mirrors viz.render).",
+      "description": "Optional render output controls (mirrors viz_render).",
       "additionalProperties": false,
       "properties": {
         "compact": {
@@ -129,7 +130,7 @@
         "includeNormalizedSpec": {
           "type": "boolean",
           "default": false,
-          "description": "When true, also return each successfully rendered chart panel's intermediate NormalizedVizSpec IR on panels[].normalizedSpec. This is one call-level opt-in mirroring viz.render; KPI and error panels are unchanged, and the emitted IR sits outside the dashboard contentHash projection."
+          "description": "When true, also return each successfully rendered chart panel's intermediate NormalizedVizSpec IR on panels[].normalizedSpec. This is one call-level opt-in mirroring viz_render; KPI and error panels are unchanged, and the emitted IR sits outside the dashboard contentHash projection."
         },
         "html": {
           "type": "boolean",
@@ -139,22 +140,22 @@
         "dataTable": {
           "type": "boolean",
           "default": false,
-          "description": "A11y completeness. When true AND output.html is set, append a screen-reader-only data-table inside each tabular chart <figure> whose cells equal the charted rows (the chart's encoding columns). DEFAULT false keeps the HTML byte-identical."
+          "description": "A11y completeness. When true and output.html is set, append a screen-reader-only data-table inside each tabular chart <figure> whose cells equal the charted rows (the chart's encoding columns). Default false keeps the HTML byte-identical."
         },
         "contrastScan": {
           "type": "boolean",
           "default": false,
-          "description": "A11y completeness. When true, run the four-pair token contrast preflight over the export's ALREADY-RESOLVED brand-token colour pairs (no filesystem read) and push OODS-V135 warnings for any pair below its WCAG threshold. This is a token preflight, not whole-dashboard WCAG certification. DEFAULT false emits nothing."
+          "description": "A11y completeness. When true, run the four-pair token contrast preflight over the export's already-resolved brand-token colour pairs (no filesystem read) and push OODS-V135 warnings for any pair below its WCAG threshold. This is a token preflight, not whole-dashboard WCAG certification. Default false emits nothing."
         },
         "dataQualityField": {
           "type": "string",
           "minLength": 1,
-          "description": "A11y completeness. When set (e.g. 'flag') AND output.dataTable is on, tally that column's data-quality codes (FAOSTAT E=estimated / I=imputed / X=external / blank=official) into a <caption> footnote per data-table. Pure presentation over a parameter — no OODS Foundry-side fetch."
+          "description": "A11y completeness. When set (e.g. 'flag') and output.dataTable is on, tally that column's data-quality codes (FAOSTAT E=estimated / I=imputed / X=external / blank=official) into a <caption> footnote per data-table. Pure presentation over a parameter — no OODS Foundry-side fetch."
         },
         "includeA11y": {
           "type": "boolean",
           "default": false,
-          "description": "When true, attach a STRUCTURED two-part text alternative (accessible data table + narrative summary) to each chart panel result (panels[].a11y), derived from the SAME data source the panel renders from — for cartesian and non-cartesian panels alike. DEFAULT false keeps the wire byte-identical (panels carry only a11yDescription)."
+          "description": "When true, attach a structured two-part text alternative (accessible data table + narrative summary) to each chart panel result (panels[].a11y), derived from the same data source the panel renders from — for cartesian and non-cartesian panels alike. Default false keeps the wire byte-identical (panels carry only a11yDescription)."
         }
       }
     }
@@ -177,7 +178,7 @@
           "type": "array",
           "minItems": 1,
           "maxItems": 5000,
-          "description": "Flat tabular rows (field name -> value), bounded like viz.render.",
+          "description": "Flat tabular rows (field name -> value), bounded like viz_render.",
           "items": {
             "type": "object",
             "additionalProperties": true
@@ -186,7 +187,7 @@
       }
     },
     "Panel": {
-      "description": "A dashboard panel: a chart panel (11 of the 13 viz.render chartTypes; chord and flow_map are viz.render-only — plus its data branch) or a kpi tile. Discriminated on `kind`.",
+      "description": "A dashboard panel: a chart panel (11 of the 13 viz_render chartTypes; chord and flow_map are viz_render-only — plus its data branch) or a kpi tile. Discriminated on `kind`.",
       "oneOf": [
         {
           "$ref": "#/$defs/ChartPanel"
@@ -204,7 +205,7 @@
         "kind",
         "chartType"
       ],
-      "description": "A chart panel — a viz.render-shaped descriptor: chartType (11 of the 13 viz.render chartTypes; chord and flow_map are viz.render-only) + the matching data branch + encodings. Tabular types (bar/line/area/scatter/heatmap) bind a shared dataset via `datasetId` + `encodings`; treemap/sunburst take `hierarchy`; sankey takes `sankey`; force_graph takes `network`; choropleth/bubble_map take `geo`.",
+      "description": "A chart panel — a viz_render-shaped descriptor: chartType (11 of the 13 viz_render chartTypes; chord and flow_map are viz_render-only) + the matching data branch + encodings. Tabular types (bar/line/area/scatter/heatmap) bind a shared dataset via `datasetId` + `encodings`; treemap/sunburst take `hierarchy`; sankey takes `sankey`; force_graph takes `network`; choropleth/bubble_map take `geo`.",
       "properties": {
         "id": {
           "type": "string",
@@ -212,6 +213,7 @@
           "description": "Unique stable identifier for this chart panel within the dashboard; duplicate panel ids are rejected with OODS-C003."
         },
         "kind": {
+          "type": "string",
           "const": "chart"
         },
         "title": {
@@ -219,7 +221,7 @@
         },
         "description": {
           "type": "string",
-          "description": "Optional per-panel accessibility description override (flat string, mirrors the viz.render input)."
+          "description": "Optional per-panel accessibility description override (flat string, mirrors the viz_render input)."
         },
         "chartType": {
           "type": "string",
@@ -236,7 +238,7 @@
             "choropleth",
             "bubble_map"
           ],
-          "description": "11 of the 13 viz.render chartTypes; chord and flow_map are viz.render-only."
+          "description": "11 of the 13 viz_render chartTypes; chord and flow_map are viz_render-only."
         },
         "datasetId": {
           "type": "string",
@@ -261,7 +263,7 @@
         "measureRef": {
           "type": "string",
           "minLength": 1,
-          "description": "OPTIONAL governed-measure reference. When `resolveMeasures` is set, the resolved registry entry's governed context (displayName/unit/format/threshold/comparison) DECORATES this chart panel's a11y narrative as a leading measure finding. NARRATIVE-ONLY: unlike KpiPanel.measureRef it does NOT rewrite the chart's compute inputs (resolveMeasurePanel is KPI-typed); the chart's encodings/data branch are untouched. An UNKNOWN measureRef under resolveMeasures is a hard error (OODS-V130), mirroring the KPI path (governance consistency). Absent or flag-off === byte-identical."
+          "description": "Optional governed-measure reference. When `resolveMeasures` is set, the resolved registry entry's governed context (displayName/unit/format/threshold/comparison) decorates this chart panel's a11y narrative as a leading measure finding. Narrative-only: unlike KpiPanel.measureRef it does not rewrite the chart's compute inputs (resolveMeasurePanel is KPI-typed); the chart's encodings/data branch are untouched. An unknown measureRef under resolveMeasures is a hard error (OODS-V130), mirroring the KPI path (governance consistency). Absent or flag-off === byte-identical."
         }
       },
       "allOf": [
@@ -272,6 +274,7 @@
             ],
             "properties": {
               "chartType": {
+                "type": "string",
                 "enum": [
                   "bar",
                   "line",
@@ -304,6 +307,7 @@
             ],
             "properties": {
               "chartType": {
+                "type": "string",
                 "enum": [
                   "treemap",
                   "sunburst"
@@ -324,6 +328,7 @@
             ],
             "properties": {
               "chartType": {
+                "type": "string",
                 "const": "sankey"
               }
             }
@@ -341,6 +346,7 @@
             ],
             "properties": {
               "chartType": {
+                "type": "string",
                 "const": "force_graph"
               }
             }
@@ -358,6 +364,7 @@
             ],
             "properties": {
               "chartType": {
+                "type": "string",
                 "const": "choropleth"
               }
             }
@@ -394,6 +401,7 @@
             ],
             "properties": {
               "chartType": {
+                "type": "string",
                 "const": "bubble_map"
               }
             }
@@ -431,6 +439,7 @@
           "description": "Unique stable identifier for this KPI panel within the dashboard; duplicate panel ids are rejected with OODS-C003."
         },
         "kind": {
+          "type": "string",
           "const": "kpi"
         },
         "title": {
@@ -447,12 +456,12 @@
         "field": {
           "type": "string",
           "minLength": 1,
-          "description": "The metric field aggregated into the KPI value. CELL TYPES : `count` and `distinct` are defined over every NON-NULL cell of this field regardless of type — COUNT(field), never rows.length — while the numeric aggregates (sum/average/median/min/max/latest) read only cells that parse as numbers, in BOTH the row-order and `periodField` series builders. A field that HAS values but none numeric fails LOUD for a numeric aggregate (OODS-V160 at dashboard.render, routed through onPanelError) instead of returning a plausible 0; a field absent from every row has zero non-null cells and keeps the ratified value:0."
+          "description": "The metric field aggregated into the KPI value. Cell types : `count` and `distinct` are defined over every non-null cell of this field regardless of type — count(field), never rows.length — while the numeric aggregates (sum/average/median/min/max/latest) read only cells that parse as numbers, in both the row-order and `periodField` series builders. A field that has values but none numeric fails loud for a numeric aggregate (OODS-V160 at dashboard_render, routed through onPanelError) instead of returning a plausible 0; a field absent from every row has zero non-null cells and keeps the ratified value:0."
         },
         "periodField": {
           "type": "string",
           "minLength": 1,
-          "description": "Optional name of the time column. When present, the KPI metric series is built along a parsed and sorted period axis (via analysis/temporal.ts) instead of dataset row order: aggregate 'latest' is the max period, the sparkline is period-ordered, and comparison.basis 'window'/'prior_period' slice by DISTINCT periods (not rows). Rows with an unparseable period cell are dropped; duplicate periods keep all rows in stable order. Absent keeps the sparkline, aggregate 'latest', and the 'window'/'prior_period' bases on dataset row order (as in v0.1); the KPI trendDirection is reported 'flat' unless a comparison baseline resolves, because a first-vs-last read of arbitrary row order is not a real trend."
+          "description": "Optional name of the time column. When present, the KPI metric series is built along a parsed and sorted period axis (via analysis/temporal.ts) instead of dataset row order: aggregate 'latest' is the max period, the sparkline is period-ordered, and comparison.basis 'window'/'prior_period' slice by distinct periods (not rows). Rows with an unparseable period cell are dropped; duplicate periods keep all rows in stable order. Absent keeps the sparkline, aggregate 'latest', and the 'window'/'prior_period' bases on dataset row order (as in v0.1); the KPI trendDirection is reported 'flat' unless a comparison baseline resolves, because a first-vs-last read of arbitrary row order is not a real trend."
         },
         "measureRef": {
           "type": "string",
@@ -472,7 +481,7 @@
             "latest"
           ],
           "default": "sum",
-          "description": "Point-in-time aggregate. Adds 'latest' (most recent value by row order, or by the explicit periodField when set) to the viz.render aggregate set, for point-in-time KPIs. CELL TYPES : `count`/`distinct` accept any non-null cell; the other six read numeric cells only and raise OODS-V160 when the field has values but none of them numeric."
+          "description": "Point-in-time aggregate. Adds 'latest' (most recent value by row order, or by the explicit periodField when set) to the viz_render aggregate set, for point-in-time KPIs. Cell types : `count`/`distinct` accept any non-null cell; the other six read numeric cells only and raise OODS-V160 when the field has values but none of them numeric."
         },
         "comparison": {
           "$ref": "#/$defs/KpiComparison"
@@ -508,7 +517,7 @@
         },
         "field": {
           "type": "string",
-          "description": "RESERVED (v0.2): a future sibling-baseline column name. NOT the prior_period key; under an explicit KpiPanel.periodField, prior_period/window are derived from the DISTINCT periods of the metric series itself. Unread in v1."
+          "description": "Reserved (v0.2): a future sibling-baseline column name. Not the prior_period key; under an explicit KpiPanel.periodField, prior_period/window are derived from the distinct periods of the metric series itself. Unread in v1."
         },
         "value": {
           "type": "number",
@@ -524,7 +533,7 @@
     "KpiThreshold": {
       "type": "object",
       "additionalProperties": false,
-      "description": "Threshold / anomaly metadata. SEMANTIC only (direction/value) — colors do NOT resolve inline (SEAM e: tokens deferred to the consumer CSS bundle). computeKpi computes the breach flag and, when an anomaly detector is set, the anomaly flag (stats.ts stddev/tukey); the narrative verbalizes both.",
+      "description": "Threshold / anomaly metadata. Semantic only (direction/value) — colors do not resolve inline (tokens deferred to the consumer CSS bundle). computeKpi computes the breach flag and, when an anomaly detector is set, the anomaly flag (stats.ts stddev/tukey); the narrative verbalizes both.",
       "properties": {
         "direction": {
           "type": "string",
@@ -550,7 +559,7 @@
     "Encodings": {
       "type": "object",
       "additionalProperties": false,
-      "description": "Channel -> field bindings for tabular chart panels (mirrors the viz.render encodings shape).",
+      "description": "Channel -> field bindings for tabular chart panels (mirrors the viz_render encodings shape).",
       "properties": {
         "x": {
           "$ref": "#/$defs/EncodingBinding"
@@ -676,7 +685,7 @@
       ]
     },
     "HierarchyData": {
-      "description": "Hierarchy data for treemap/sunburst panels — discriminated union on 'type' (mirrors the viz.render hierarchy branch).",
+      "description": "Hierarchy data for treemap/sunburst panels — discriminated union on 'type' (mirrors the viz_render hierarchy branch).",
       "oneOf": [
         {
           "type": "object",
@@ -687,6 +696,7 @@
           "additionalProperties": false,
           "properties": {
             "type": {
+              "type": "string",
               "const": "adjacency_list"
             },
             "data": {
@@ -731,6 +741,7 @@
           "additionalProperties": false,
           "properties": {
             "type": {
+              "type": "string",
               "const": "nested"
             },
             "data": {
@@ -769,7 +780,7 @@
         "links"
       ],
       "additionalProperties": false,
-      "description": "Flow data for a sankey panel — nodes plus value-weighted links (mirrors the viz.render sankey branch).",
+      "description": "Flow data for a sankey panel — nodes plus value-weighted links (mirrors the viz_render sankey branch).",
       "properties": {
         "nodes": {
           "type": "array",
@@ -826,7 +837,7 @@
         "links"
       ],
       "additionalProperties": false,
-      "description": "Network data for a force_graph panel — nodes plus directed links (mirrors the viz.render network branch). An empty links array is allowed.",
+      "description": "Network data for a force_graph panel — nodes plus directed links (mirrors the viz_render network branch). An empty links array is allowed.",
       "properties": {
         "nodes": {
           "type": "array",
@@ -880,7 +891,7 @@
     "GeoData": {
       "type": "object",
       "additionalProperties": false,
-      "description": "Geo data for choropleth/bubble_map panels — inline geometry + per-type encoding (mirrors the viz.render geo branch). Geometry is supplied INLINE, never fetched.",
+      "description": "Geo data for choropleth/bubble_map panels — inline geometry + per-type encoding (mirrors the viz_render geo branch). Geometry is supplied inline, never fetched.",
       "properties": {
         "geojson": {
           "type": "object",
@@ -1078,7 +1089,7 @@
         "description"
       ],
       "additionalProperties": false,
-      "description": "SEAM (d) dashboard-level accessibility: a cross-panel summary + reading/focus order. The per-chart AccessibilitySpec stays per-panel; this is the dashboard envelope.",
+      "description": "dashboard-level accessibility: a cross-panel summary + reading/focus order. The per-chart AccessibilitySpec stays per-panel; this is the dashboard envelope.",
       "properties": {
         "description": {
           "type": "string",

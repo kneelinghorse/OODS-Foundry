@@ -40,6 +40,21 @@ describe('compact discovery without weaker server validation', () => {
     expect(compact.properties.patch.type).toEqual(['object', 'array']);
   });
 
+  it('gives every advertised array an items schema, because strict clients reject one without it', () => {
+    const missing = [];
+    const walk = (node, at) => {
+      if (!node || typeof node !== 'object') return;
+      if ([node.type].flat().includes('array') && node.items === undefined) missing.push(at);
+      for (const [key, child] of Object.entries(node.properties ?? {})) walk(child, `${at}.${key}`);
+      if (node.items) walk(node.items, `${at}[]`);
+      if (node.additionalProperties && typeof node.additionalProperties === 'object') walk(node.additionalProperties, `${at}{}`);
+    };
+    for (const name of Object.keys(surface)) walk(advertisedSchema(read(`../mcp-server/src/schemas/${name}.input.json`)), name);
+    expect(missing).toEqual([]);
+    const union = advertisedSchema({ type: 'object', properties: { delta: { oneOf: [{ type: 'object' }, { type: 'array', items: { type: 'string' } }] } } });
+    expect(union.properties.delta).toMatchObject({ type: ['object', 'array'], items: { type: 'string' } });
+  });
+
   it('names summarized nested fields without falsely rejecting them in discovery', () => {
     const schema = { type: 'object', properties: { options: { type: 'object', properties: {
       config: { type: 'object', properties: { title: { type: 'string' }, rows: { type: 'array' } }, required: ['rows'], additionalProperties: false },

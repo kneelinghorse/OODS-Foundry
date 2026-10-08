@@ -107,8 +107,8 @@
         "portable": {
           "type": "object",
           "properties": {
-            "sourceWrites": { "const": "skipped" },
-            "tokenBuild": { "const": "skipped" },
+            "sourceWrites": { "type": "string", "const": "skipped" },
+            "tokenBuild": { "type": "string", "const": "skipped" },
             "reason": { "type": "string" }
           },
           "required": ["sourceWrites", "tokenBuild", "reason"],
@@ -120,7 +120,7 @@
           "items": {
             "type": "object",
             "properties": {
-              "theme": { "enum": ["base", "dark", "hc"] },
+              "theme": { "type": "string", "enum": ["base", "dark", "hc"] },
               "slot": { "type": "string" },
               "before": {},
               "after": {}
@@ -136,7 +136,7 @@
         },
         "validation": {
           "type": "object",
-          "description": "The brand as the change would leave it, checked like brand.intake validate (slots, colours, the fixed slots, the brand contrast rules). apply writes nothing unless valid is true.",
+          "description": "The brand as the change would leave it, checked like brand_create validate (slots, colours, the fixed slots, the brand contrast rules). apply writes nothing unless valid is true.",
           "properties": {
             "valid": { "type": "boolean" },
             "brand_id": { "type": ["string", "null"] },

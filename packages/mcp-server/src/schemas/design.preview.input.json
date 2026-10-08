@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://designlab.local/schemas/design.preview.input.json",
-  "title": "Design preview input",
+  "$id": "https://oods-foundry.com/schemas/design.preview.input.json",
+  "title": "design_preview input",
   "description": "Open a composition version as the generated React or Vue app actually running in a browser: either an existing compositionId (and optional version) or an object and context composed now as a new composition. The preview host (in the HTTP bridge, or started by the stdio adapter) compiles the artifact and serves it at one URL per version with its lineage and brand, theme and width controls. action \"compare\" prepares missing generated artifacts for both versions in the requested frameworks, then returns the structural what-changed (including props on and inside slots and objectSchema fields in the definition category; identical requires equal schema hashes) between this version and `against` (regions, slots, nodes, props, field order, seed, artifact file hashes) with the side-by-side URL. action \"accept\" records the version as the composition's accepted version with a snapshot of its measurements.",
   "type": "object",
   "additionalProperties": false,
@@ -21,7 +21,7 @@
     "compositionId": {
       "type": "string",
       "pattern": "^cmp-[a-f0-9]{12}$",
-      "description": "An existing composition from design.compose; with no version, its latest version opens."
+      "description": "An existing composition from design_compose; with no version, its latest version opens."
     },
     "version": {
       "type": "integer",
@@ -187,7 +187,7 @@
     "contextItems": {
       "type": "array",
       "maxItems": 200,
-      "description": "Decisions and evidence about this object that YOU already fetched, shown beside the running preview and stored on the version. OODS Foundry opens no other product's database, store or network connection: a direct reader would couple the portable bundle to another product's schema. Every item must carry its own provenance \u2014 source, id, title, the query that produced it and when you fetched it \u2014 because OODS Foundry cannot re-run your search to check it. An item naming a different object from the one on screen is refused with OODS-V207 and nothing is written; a malformed item is refused with OODS-V206.",
+      "description": "Decisions and evidence about this object that you already fetched, shown beside the running preview and stored on the version. OODS Foundry opens no other product's database, store or network connection: a direct reader would couple the portable bundle to another product's schema. Every item must carry its own provenance \u2014 source, id, title, the query that produced it and when you fetched it \u2014 because OODS Foundry cannot re-run your search to check it. An item naming a different object from the one on screen is refused with OODS-V207 and nothing is written; a malformed item is refused with OODS-V206.",
       "items": {
         "type": "object",
         "required": [
@@ -285,12 +285,12 @@
     "runPath": {
       "type": "string",
       "minLength": 1,
-      "description": "A Stage1 run directory on this machine (out/stage1/<suite>/<run-uuid>) whose REAL records this version shows: the run itself for Run, its findings for Finding, its attested artifacts for CapturedArtifact. OODS Foundry reads the run only through structuredData.fetch's admitted run-view kinds (run_manifest, a11y_report 2.2.0/2.3.0, report_index 1.0.0/1.1.0, a11y_evidence 1.1.0/1.2.0), every file under the run manifest's sha256 attestation, and never calls Stage1 or writes into the run. A path that is not one Stage1 run is refused with OODS-V212, an artifact outside the admitted contract with OODS-V213, and a composition that is not Run, Finding or CapturedArtifact, or a version already showing a different capture identity or manifest, with OODS-V214; each refusal writes nothing. Nothing is proposed, applied or queued: a person reads the run view."
+      "description": "A Stage1 run directory on this machine (out/stage1/<suite>/<run-uuid>) whose real records this version shows: the run itself for Run, its findings for Finding, its attested artifacts for CapturedArtifact. OODS Foundry reads the run only through structured_data_fetch's admitted run-view kinds (run_manifest, a11y_report 2.2.0/2.3.0, report_index 1.0.0/1.1.0, a11y_evidence 1.1.0/1.2.0), every file under the run manifest's sha256 attestation, and never calls Stage1 or writes into the run. A path that is not one Stage1 run is refused with OODS-V212, an artifact outside the admitted contract with OODS-V213, and a composition that is not Run, Finding or CapturedArtifact, or a version already showing a different capture identity or manifest, with OODS-V214; each refusal writes nothing. Nothing is proposed, applied or queued: a person reads the run view."
     },
     "observationRunPath": {
       "type": "string",
       "minLength": 1,
-      "description": "A Stage1 run directory on this machine (out/stage1/<suite>/<run-uuid>). OODS Foundry reads its identity_graph and object_rollup through structuredData.fetch, compares them with this version's own schema for the object on screen, and stores the rows beside the running app on both surfaces: observed-only, composed-only, agreeing and disagreeing, each disagreement naming its axis (entity, input, data-bound), and every row naming the Stage1 run, target, artifact and capture time beside the OODS Foundry object, context and URN. The rows are evidence a person judges; nothing is proposed, applied or queued. OODS Foundry opens no other product's store and writes nothing into the run. A path that is not one Stage1 run is refused with OODS-V208, an artifact outside the accepted schema_version with OODS-V209, and a composition whose object the registry does not hold with OODS-V210; each refusal writes nothing. An edit carries the rows onto the new version and marks every one, because they compared the design as it was."
+      "description": "A Stage1 run directory on this machine (out/stage1/<suite>/<run-uuid>). OODS Foundry reads its identity_graph and object_rollup through structured_data_fetch, compares them with this version's own schema for the object on screen, and stores the rows beside the running app on both surfaces: observed-only, composed-only, agreeing and disagreeing, each disagreement naming its axis (entity, input, data-bound), and every row naming the Stage1 run, target, artifact and capture time beside the OODS Foundry object, context and URN. The rows are evidence a person judges; nothing is proposed, applied or queued. OODS Foundry opens no other product's store and writes nothing into the run. A path that is not one Stage1 run is refused with OODS-V208, an artifact outside the accepted schema_version with OODS-V209, and a composition whose object the registry does not hold with OODS-V210; each refusal writes nothing. An edit carries the rows onto the new version and marks every one, because they compared the design as it was."
     },
     "presentation": {
       "type": "string",

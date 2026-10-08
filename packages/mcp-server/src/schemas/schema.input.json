@@ -1,13 +1,14 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "schema input (grouped)",
-  "description": "Grouped action-parameter tool for the schema family (save, load, list, delete). The `action` field selects the per-action handler; each branch reproduces the exact body of the corresponding per-action input schema plus the discriminator key. Uses plain JSON-Schema if/then (no AJV discriminator keyword).",
+  "description": "Grouped action-parameter tool for the schema family (save, load, list, delete). The `action` field selects the per-action handler; each branch reproduces the exact body of the corresponding per-action input schema plus the discriminator key. Uses plain JSON Schema if/then, with no discriminator keyword.",
   "type": "object",
   "required": [
     "action"
   ],
   "properties": {
     "action": {
+      "type": "string",
       "enum": [
         "save",
         "load",
@@ -22,6 +23,7 @@
       "if": {
         "properties": {
           "action": {
+            "type": "string",
             "const": "save"
           }
         },
@@ -37,6 +39,7 @@
         ],
         "properties": {
           "action": {
+            "type": "string",
             "const": "save"
           },
           "name": {
@@ -48,7 +51,7 @@
           "schemaRef": {
             "type": "string",
             "minLength": 1,
-            "description": "Reference to an in-memory schema produced by design.compose."
+            "description": "Reference to an in-memory schema produced by design_compose."
           },
           "tags": {
             "type": "array",
@@ -74,6 +77,7 @@
       "if": {
         "properties": {
           "action": {
+            "type": "string",
             "const": "load"
           }
         },
@@ -88,6 +92,7 @@
         ],
         "properties": {
           "action": {
+            "type": "string",
             "const": "load"
           },
           "name": {
@@ -107,6 +112,7 @@
       "if": {
         "properties": {
           "action": {
+            "type": "string",
             "const": "list"
           }
         },
@@ -118,6 +124,7 @@
         "additionalProperties": false,
         "properties": {
           "action": {
+            "type": "string",
             "const": "list"
           },
           "object": {
@@ -146,6 +153,7 @@
       "if": {
         "properties": {
           "action": {
+            "type": "string",
             "const": "delete"
           }
         },
@@ -160,6 +168,7 @@
         ],
         "properties": {
           "action": {
+            "type": "string",
             "const": "delete"
           },
           "name": {

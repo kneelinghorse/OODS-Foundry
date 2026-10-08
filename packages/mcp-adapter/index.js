@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { spawn } from 'node:child_process';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { ErrorCode, McpError, ListToolsRequestSchema, CallToolRequestSchema, ListResourcesRequestSchema, ReadResourceRequestSchema } from '@modelcontextprotocol/sdk/types.js';
+import { ErrorCode, McpError, ListToolsRequestSchema, CallToolRequestSchema, ListResourcesRequestSchema, ListResourceTemplatesRequestSchema, ReadResourceRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { advertisedSchema } from './advertised-schema.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -107,6 +107,12 @@ function resolveEnabledTools(registry) {
 
 const TOOL_SURFACE = JSON.parse(fs.readFileSync(new URL('./tool-surface.json', import.meta.url), 'utf8'));
 const SCHEMA_RESOURCE_PREFIX = 'oods://schemas/';
+const SERVER_INSTRUCTIONS = 'OODS Foundry is an object-oriented design system. Its tools read the component, object and trait registry; '
+  + 'draft objects from schema files a team already has (OpenAPI, JSON Schema, Postgres, Prisma, dbt, OData, GraphQL); compose list, '
+  + 'detail, form and timeline screens from objects and traits; generate them as React or Vue; create and apply brands from design '
+  + 'tokens; and render data-bound charts and certify them for accessibility equivalence, determinism, contrast and accuracy. '
+  + 'health_check reports the version and what is loaded. Each tool\'s annotations say whether it writes. Saved work stays on this '
+  + 'machine under ~/.oods-foundry; applying a component mapping also writes adapter files into the project it names. Charts take inline data only.';
 const legacyName = name => name.replace(/\./g, '_');
 const advertisedName = name => TOOL_SURFACE[name]?.name ?? legacyName(name);
 
@@ -358,14 +364,18 @@ async function main() {
   const policy = loadPolicy();
 
   // Build the tool manifest: MCP name, internal name, description, input schema, annotations
-  const toolManifest = enabled.map(internalName => ({
-    internalName,
-    mcpName: advertisedName(internalName),
-    title: TOOL_SURFACE[internalName]?.title ?? internalName,
-    description: descriptions[internalName] || `OODS tool: ${internalName}`,
-    inputSchema: loadInputSchema(internalName),
-    annotations: deriveAnnotations(internalName, policy),
-  }));
+  const toolManifest = enabled.map(internalName => {
+    const title = TOOL_SURFACE[internalName]?.title ?? internalName;
+    return {
+      internalName,
+      mcpName: advertisedName(internalName),
+      title,
+      description: descriptions[internalName] || `OODS tool: ${internalName}`,
+      inputSchema: loadInputSchema(internalName),
+      // s239 (#2743): directories read the display name from annotations.title (MCP ToolAnnotations), not only Tool.title.
+      annotations: { title, ...deriveAnnotations(internalName, policy) },
+    };
+  });
 
   const client = new NativeOodsClient({ cwd: NATIVE_SERVER_DIR, role: DEFAULT_ROLE });
   const previewHostEntry = resolvePreviewHostEntry();
@@ -375,7 +385,8 @@ async function main() {
   // same icon the registry entry declares.
   const server = new Server(
     { name: PRODUCT.serverName, version: ADAPTER_VERSION, title: PRODUCT.product, websiteUrl: 'https://oods-foundry.com/', icons: [{ src: 'https://oods-foundry.com/icon-512.png', mimeType: 'image/png', sizes: ['512x512'] }] },
-    { capabilities: { tools: {}, resources: {}, extensions: { [UI_EXTENSION]: {} } } }
+    // s239 (#2743): instructions are what Claude Code's tool search reads at session start; they describe, never steer.
+    { capabilities: { tools: {}, resources: {}, extensions: { [UI_EXTENSION]: {} } }, instructions: SERVER_INSTRUCTIONS }
   );
   // Bilateral: the preview app is offered only to a client that advertised the extension (or an operator who forced it).
   let negotiation = readNegotiation(undefined);
@@ -452,8 +463,20 @@ async function main() {
     return { contents: [{ uri, mimeType, text }] };
   });
 
+  // s239: the readable resource families, so a client listing templates gets them instead of "Method not found".
+  server.setRequestHandler(ListResourceTemplatesRequestSchema, async () => ({
+    resourceTemplates: [
+      { uriTemplate: `${SCHEMA_RESOURCE_PREFIX}{file}`, name: 'tool schemas', title: 'Tool Schemas', description: 'Full server validation schemas, one JSON Schema file per tool and the files they reference.', mimeType: 'application/schema+json' },
+      { uriTemplate: `${COMPOSITION_RESOURCE_PREFIX}{compositionId}/{version}/{framework}.js{?brand,theme}`, name: 'composition module', title: 'Composition Module', description: 'The compiled module of one composition version, framework react or vue.', mimeType: 'text/javascript' },
+      { uriTemplate: `${COMPOSITION_RESOURCE_PREFIX}{compositionId}/{version}/{framework}.css{?brand,theme}`, name: 'composition styles', title: 'Composition Styles', description: 'The stylesheet of one composition version, framework react or vue.', mimeType: 'text/css' },
+    ],
+  }));
+
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
-    const { name, arguments: args } = request.params;
+    const { name } = request.params;
+    // s239: Gemini CLI adds wait_for_previous to every call and forwards it (google-gemini/gemini-cli#27403, not
+    // planned); no OODS tool declares it, so it is dropped rather than failing validation as an unknown field.
+    const { wait_for_previous: _clientScheduling, ...args } = request.params.arguments ?? {};
     const internalName = nameMap.get(name);
     if (!internalName) {
       // s211-m01: the docs name tools with dots (design.compose); the wire names use underscores.

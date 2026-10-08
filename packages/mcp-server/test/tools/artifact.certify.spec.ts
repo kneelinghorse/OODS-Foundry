@@ -1028,23 +1028,25 @@ describe('artifact.certify — accuracy pillar (s170 m02)', () => {
 
     // On the CERTIFIED path, a rule that cannot resolve its operand is not counted and does
     // not fail the pillar — rulesEvaluated is what tells a reader coverage was incomplete.
-    const urlData = {
+    // (s239: a data url is refused before certification, since rendering it would fetch it;
+    // a named data reference is how an IR carries no inline rows.)
+    const namedData = {
       ...buildVizSpecFromRows({
         rows: COLLAPSING,
         chartType: 'bar',
         encodings: { x: { field: 'region' }, y: { field: 'revenue', aggregate: 'sum' } } as never,
         description: NO_DISCLOSURE,
       }).spec,
-      data: { url: 'https://example.test/revenue.json', format: 'json' as const },
+      data: { name: 'revenue' },
     };
-    const out = await certify(urlData);
+    const out = await certify(namedData);
     expect(out.pillars?.accuracy).toBe('pass');
     expect(out.accuracySummary).toEqual({ rulesEvaluated: 3, failing: 0 });
-    expect(out.notes?.join(' ')).toContain('referenced by url');
+    expect(out.notes?.join(' ')).toContain('carries no rows');
     // The accuracy pillar contributed NOTHING to the verdict here: no OODS-V15x finding, and
     // R4 stayed silent because its collapse half was unevaluable — which is exactly what
     // rulesEvaluated:3 is for. (This spec is conformant:false for a PRE-EXISTING a11y reason
-    // — url-referenced data means no inline values, so A11Y-R-03/R-04 error. Asserting
+    // — data without inline values, so A11Y-R-03/R-04 error. Asserting
     // conformant:true here would have been asserting something untrue about a different
     // pillar; the accuracy claim is the one this test makes.)
     expect((out.findings ?? []).filter((f) => /^OODS-V15\d$/.test(f.code))).toEqual([]);

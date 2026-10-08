@@ -80,6 +80,7 @@
         "description": "A file that was not used, or something about one that is, and why.",
         "properties": {
           "kind": {
+            "type": "string",
             "enum": [
               "malformed",
               "unnamed",
@@ -91,6 +92,7 @@
             ]
           },
           "severity": {
+            "type": "string",
             "enum": [
               "error",
               "notice"

@@ -27,7 +27,8 @@ describe('a11y.scan says what it checks (s221-m03)', () => {
     expect(advertised).not.toMatch(STALE);
     expect(readme).not.toMatch(STALE);
     expect(reference).not.toMatch(STALE);
-    expect(advertised).toContain("TOOL-REFERENCE.md");
+    // s239 (#2743): descriptions link the tool's full schema instead of TOOL-REFERENCE.md, a file the model cannot open.
+    expect(advertised).toContain('Full schema: oods://schemas/a11y_scan.input.json');
   });
 
   it('names the declared component pairs, their thresholds and the built scopes', () => {

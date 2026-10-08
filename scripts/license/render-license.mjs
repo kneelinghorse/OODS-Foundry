@@ -10,8 +10,8 @@
  * whose sha256 must equal configs/license/apache-2.0.sha256 (#2372).
  * Outputs: LICENSE (the canonical text, unchanged) and NOTICE (the product name and the holder, then any
  * third-party notices from configs/license/third-party/)
- * at the root and in each licensed package, and the holder span between the license-holder
- * markers in README.md and docs/LICENSE-FAQ.md.
+ * at the root and in each licensed package, the holder span between the license-holder
+ * markers in README.md and docs/LICENSE-FAQ.md, and the Claude Code plugin manifest's author.
  */
 import { createHash } from 'node:crypto';
 import fs from 'node:fs';
@@ -81,6 +81,18 @@ export function holderSpans(holder) {
   };
 }
 
+/**
+ * s239 (plugin directory review, F-20): the plugin's directory listing names the holder as its author, with the general
+ * address at the holder's domain (decision #2736), so the manifest's author is rendered here like every other holder
+ * carrier. The author's url stays the product site the manifest gives.
+ */
+export const PLUGIN_MANIFEST = 'plugins/oods-foundry/.claude-plugin/plugin.json';
+export function renderPluginManifest(text, holder) {
+  const manifest = JSON.parse(text);
+  const author = { name: holder.holder, url: manifest.author?.url, email: `hello@${new URL(holder.url).hostname}` };
+  return `${JSON.stringify({ ...manifest, author }, null, 2)}\n`;
+}
+
 function renderSpan(document, span, file) {
   const start = document.indexOf(MARKER_START), end = document.indexOf(MARKER_END);
   if (start < 0 || end < 0 || end < start || document.indexOf(MARKER_START, start + 1) >= 0) throw new Error(`${file} must carry exactly one license-holder marker pair`);
@@ -95,6 +107,7 @@ export function renderAll(root = ROOT) {
   const sections = (file) => (THIRD_PARTY_SECTIONS[file] ?? []).map(source => `\n${fs.readFileSync(path.join(root, source), 'utf8')}`).join('');
   const outputs = Object.fromEntries([...LICENSE_FILES.map(file => [file, canonical.text]), ...NOTICE_FILES.map(file => [file, notice + sections(file)])]);
   for (const [file, span] of Object.entries(holderSpans(holder))) outputs[file] = renderSpan(fs.readFileSync(path.join(root, file), 'utf8'), span, file);
+  outputs[PLUGIN_MANIFEST] = renderPluginManifest(fs.readFileSync(path.join(root, PLUGIN_MANIFEST), 'utf8'), holder);
   return { holder, canonical, outputs };
 }
 

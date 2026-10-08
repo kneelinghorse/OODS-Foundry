@@ -13,6 +13,8 @@ import type {
 import { ToolError } from '../errors/tool-error.js';
 import { readDerivedAnalysis } from '../lib/derived-analysis.js';
 import { withLiveRegistry } from '../lib/live-registry.js';
+import { largePayloadWarning, payloadDigest, payloadTooLarge, writePayload } from '../lib/payload-store.js';
+import type { ToolContext } from '../lib/tool-context.js';
 
 /**
  * Stage1 structured artifact kinds and the schema_versions OODS currently accepts.
@@ -545,7 +547,19 @@ async function handleRunViewFetch(input: StructuredDataFetchInput & { kind: RunV
   };
 }
 
-export async function handle(input: StructuredDataFetchInput): Promise<StructuredDataFetchOutput> {
+// s239 (#2743): the components export is about 1.1 million characters, far more than a Claude client takes in one reply, so a
+// call the MCP adapter sized gets a large payload as a file, as code_generate, schema_render and pipeline_run already do.
+export async function handle(input: StructuredDataFetchInput, context: ToolContext = {}): Promise<StructuredDataFetchOutput> {
+  const output = await fetchStructuredData(input);
+  if (output.payload === undefined) return output;
+  const text = JSON.stringify(output.payload);
+  if (input.payloadMode !== 'file' && !payloadTooLarge(input.payloadMode, text.length, context.sizedReply)) return output;
+  const payloadFile = writePayload(`structured_data_fetch-${payloadDigest(text)}`, [{ path: `${output.dataset ?? output.kind ?? 'payload'}.json`, contents: text }]);
+  const warnings = input.payloadMode === 'file' ? output.warnings : [...(output.warnings ?? []), largePayloadWarning(text.length, 'payloadMode').message];
+  return { ...output, payload: undefined, payloadIncluded: false, payloadFile, ...(warnings ? { warnings } : {}) };
+}
+
+async function fetchStructuredData(input: StructuredDataFetchInput): Promise<StructuredDataFetchOutput> {
   if (input.kind === 'derived_analysis') {
     if (!input.runPath || input.listVersions || input.version) throw new ToolError('OODS-V202', 'structuredData.fetch derived_analysis requires runPath and does not support version/listVersions.');
     const view = readDerivedAnalysis(path.resolve(REPO_ROOT, input.runPath));

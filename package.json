@@ -1,6 +1,6 @@
 {
   "name": "@oods/foundry-mcp",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "private": true,
   "description": "Agent-first MCP interface and toolchain for the OODS Foundry design system",
   "type": "module",
@@ -37,7 +37,7 @@
     "docs:tools": "tsx scripts/docs/generate-tool-specs.ts",
     "docs:claims": "tsx scripts/docs/generate-forge-claims.ts",
     "viz:gate": "node scripts/product-reality/s199-chart-gate.mjs",
-    "docs:check": "pnpm run docs:api -- --check && tsx scripts/product-reality/s195-viz-taxonomy.ts --check && tsx scripts/product-reality/s195-pattern-census.ts --check --observations artifacts/product-reality/sprint-226/m01/charts/pattern-observations.json && pnpm run docs:components -- --check && pnpm run docs:tools -- --check && pnpm run docs:claims -- --check && node scripts/runtime/client-configs.mjs --check && node scripts/docs/package-docs.mjs --check && node scripts/product-reality/s221-markup-parity.mjs --check && node scripts/product-reality/s221-contract-props.mjs --check && node scripts/product-reality/s221-component-prop-types.mjs --check && node scripts/runtime/facts.mjs --check && node scripts/runtime/errors.mjs --check && node scripts/runtime/shadcn-registry.mjs --check && tsx scripts/product-reality/s223-measured-on.ts --check",
+    "docs:check": "pnpm run docs:api -- --check && tsx scripts/product-reality/s195-viz-taxonomy.ts --check && tsx scripts/product-reality/s195-pattern-census.ts --check --observations artifacts/product-reality/sprint-239/m03/charts/pattern-observations.json && pnpm run docs:components -- --check && pnpm run docs:tools -- --check && pnpm run docs:claims -- --check && node scripts/runtime/client-configs.mjs --check && node scripts/docs/package-docs.mjs --check && node scripts/product-reality/s221-markup-parity.mjs --check && node scripts/product-reality/s221-contract-props.mjs --check && node scripts/product-reality/s221-component-prop-types.mjs --check && node scripts/runtime/facts.mjs --check && node scripts/runtime/errors.mjs --check && node scripts/runtime/shadcn-registry.mjs --check && tsx scripts/product-reality/s223-measured-on.ts --check",
     "refresh:data": "node scripts/refresh-data.mjs",
     "pkg:build": "tsx scripts/pkg/build.ts",
     "pkg:version": "tsx scripts/pkg/version.ts",
@@ -261,7 +261,7 @@
     "zod": "^4.1.12"
   },
   "peerDependencies": {
-    "@oods/tokens": "0.10.1"
+    "@oods/tokens": "0.10.2"
   },
   "peerDependenciesMeta": {
     "@oods/tokens": {

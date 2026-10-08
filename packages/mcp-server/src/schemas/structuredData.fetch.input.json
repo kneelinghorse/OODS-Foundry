@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "structuredData.fetch.input.json",
-  "title": "structuredData.fetch input",
-  "description": "Read structured datasets or Stage1 rollups. listVersions and version are dataset-only; kind mode rejects these options with structuredData.fetch-specific OODS-V202.",
+  "title": "structured_data_fetch input",
+  "description": "Read structured datasets or Stage1 rollups. listVersions and version are dataset-only; kind mode rejects these options with structured_data_fetch-specific OODS-V202.",
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -45,6 +45,11 @@
       "type": "boolean",
       "default": false,
       "description": "Live components dataset only: also list OODS Foundry's internal (non-business) objects, after the business objects. Without it they are left out and registry.hiddenInternal counts them; a dated export is served unchanged."
+    },
+    "payloadMode": {
+      "type": "string",
+      "enum": ["inline", "file"],
+      "description": "Unset: inline, unless the payload exceeds 100,000 characters; then it is written to a file and warning OODS-W004 says so. inline always returns it; file always writes it and returns payloadFile."
     }
   },
   "oneOf": [

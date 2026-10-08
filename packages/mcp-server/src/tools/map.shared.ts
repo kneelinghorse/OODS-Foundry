@@ -111,7 +111,7 @@ export function loadMappings(): MappingsDoc {
     const now = new Date().toISOString();
     return {
       $schema:
-        "https://designlab.local/schemas/component-mapping.schema.json",
+        "https://oods-foundry.com/schemas/component-mapping.schema.json",
       generatedAt: now,
       version: now.slice(0, 10),
       stats: { mappingCount: 0, systemCount: 0 },

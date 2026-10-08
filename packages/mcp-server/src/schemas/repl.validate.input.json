@@ -1,14 +1,14 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://designlab.local/schemas/repl.validate.input.json",
-  "title": "Agentic REPL validate input",
+  "$id": "https://oods-foundry.com/schemas/repl.validate.input.json",
+  "title": "schema_render validate input",
   "type": "object",
   "properties": {
     "mode": { "type": "string", "enum": ["full", "patch"], "default": "full" },
     "schema": { "$ref": "./repl.ui.schema.json" },
     "schemaRef": {
       "type": "string",
-      "description": "Reference to a cached UiSchema returned by design.compose."
+      "description": "Reference to a cached UiSchema returned by design_compose."
     },
     "patch": {
       "$ref": "./repl.patch.json",
@@ -31,14 +31,14 @@
   },
   "allOf": [
     {
-      "if": { "properties": { "mode": { "const": "full" } }, "required": ["mode"] },
+      "if": { "properties": { "mode": { "type": "string", "const": "full" } }, "required": ["mode"] },
       "then": { "anyOf": [{ "required": ["schema"] }, { "required": ["schemaRef"] }] }
     },
     {
       "if": { "not": { "required": ["mode"] } },
       "then": { "anyOf": [{ "required": ["schema"] }, { "required": ["schemaRef"] }] }
     },
-    { "if": { "properties": { "mode": { "const": "patch" } }, "required": ["mode"] }, "then": { "required": ["patch"] } }
+    { "if": { "properties": { "mode": { "type": "string", "const": "patch" } }, "required": ["mode"] }, "then": { "required": ["patch"] } }
   ],
   "additionalProperties": false
 }

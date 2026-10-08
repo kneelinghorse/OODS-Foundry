@@ -125,7 +125,7 @@ cd team-app
 From the shadcn project, install OODS Foundry locally. Connecting the MCP server with `npx` does not install a package into that project, and the next command needs its registry files:
 
 ```bash
-npm install @oods/foundry@0.10.1
+npm install @oods/foundry@0.10.2
 ```
 
 Install the sixteen adapters from that package in one call:

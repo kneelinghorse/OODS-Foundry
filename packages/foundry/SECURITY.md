@@ -1,6 +1,6 @@
 # Security
 
-This note describes OODS Foundry 0.10.1. It does not claim a completed network audit.
+This note describes OODS Foundry 0.10.2. It does not claim a completed network audit.
 
 ## What runs on your machine
 
@@ -34,7 +34,7 @@ These are source-qualified configuration statements, not a claim that every exec
 Before a release is published, every package in its runtime archive is checked, name and version, against npm's
 advisory data. The package's own manifest declares no dependencies because the runtime travels inside it, so the check
 reads the archive itself. A high or critical advisory stops the release unless an exception names that package,
-version and advisory with a reason and a decision. 0.10.1 has no exception.
+version and advisory with a reason and a decision. 0.10.2 has no exception.
 
 Earlier releases fixed these advisories by upgrading or removing the affected dependency. The
 [CHANGELOG](CHANGELOG.md) names the release that made each change.

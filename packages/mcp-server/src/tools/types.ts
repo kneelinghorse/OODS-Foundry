@@ -148,6 +148,8 @@ export type StructuredDataFetchInput = {
   listVersions?: boolean;
   /** Live components dataset only: list OODS Foundry's internal objects too, after the business objects. */
   includeInternal?: boolean;
+  /** s239: unset writes a payload over 100,000 characters to a file when the MCP adapter sized the call; file always does. */
+  payloadMode?: 'inline' | 'file';
 };
 
 export type StructuredDataFetchOutput = {
@@ -168,6 +170,8 @@ export type StructuredDataFetchOutput = {
   warnings?: string[];
   meta?: Record<string, unknown>;
   payload?: Record<string, unknown>;
+  /** s239: where the payload was written instead of being returned inline. */
+  payloadFile?: { mode: 'file'; directory: string; bytes: number; files: Array<{ path: string; bytes: number; sha256: string }> };
   availableVersions?: string[];
   requestedVersion?: string | null;
   resolvedVersion?: string | null;

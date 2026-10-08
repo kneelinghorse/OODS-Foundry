@@ -1,11 +1,12 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "object input",
+  "title": "object_registry input",
   "description": "Grouped action-parameter tool for the object registry (list, show, validate, register, reload). The top-level `action` selects which per-action contract applies; each branch reproduces the exact body of the per-action input schema (object.<action>.input.json) with the discriminator key `action` added to its allowed properties.",
   "type": "object",
   "required": ["action"],
   "properties": {
     "action": {
+      "type": "string",
       "enum": ["list", "show", "validate", "register", "reload"],
       "description": "Selects the per-action contract: 'list' returns the objects in use with their source, business objects first and internal ones only with includeInternal, and every file not in use; 'show' returns the full composed definition for one object; 'validate' checks an object or trait definition without writing; 'register' writes one into your folder once it validates and composes; 'reload' re-reads the folders without a restart."
     }
@@ -13,13 +14,13 @@
   "allOf": [
     {
       "if": {
-        "properties": { "action": { "const": "list" } },
+        "properties": { "action": { "type": "string", "const": "list" } },
         "required": ["action"]
       },
       "then": {
         "type": "object",
         "properties": {
-          "action": { "const": "list" },
+          "action": { "type": "string", "const": "list" },
           "domain": {
             "type": "string",
             "description": "Filter to objects in a specific domain (e.g. 'core.identity', 'saas.billing')"
@@ -44,13 +45,13 @@
     },
     {
       "if": {
-        "properties": { "action": { "const": "show" } },
+        "properties": { "action": { "type": "string", "const": "show" } },
         "required": ["action"]
       },
       "then": {
         "type": "object",
         "properties": {
-          "action": { "const": "show" },
+          "action": { "type": "string", "const": "show" },
           "name": {
             "type": "string",
             "description": "Object name to look up (e.g. 'User', 'Product', 'Invoice')"
@@ -68,6 +69,7 @@
       "if": {
         "properties": {
           "action": {
+            "type": "string",
             "const": "validate"
           }
         },
@@ -79,6 +81,7 @@
         "type": "object",
         "properties": {
           "action": {
+            "type": "string",
             "const": "validate"
           },
           "yaml": {
@@ -97,6 +100,7 @@
       "if": {
         "properties": {
           "action": {
+            "type": "string",
             "const": "register"
           }
         },
@@ -108,6 +112,7 @@
         "type": "object",
         "properties": {
           "action": {
+            "type": "string",
             "const": "register"
           },
           "yaml": {
@@ -131,6 +136,7 @@
       "if": {
         "properties": {
           "action": {
+            "type": "string",
             "const": "reload"
           }
         },
@@ -142,6 +148,7 @@
         "type": "object",
         "properties": {
           "action": {
+            "type": "string",
             "const": "reload"
           }
         },

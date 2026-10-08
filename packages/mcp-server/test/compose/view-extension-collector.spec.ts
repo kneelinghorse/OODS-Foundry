@@ -125,6 +125,14 @@ describe('collectViewExtensions — props', () => {
 /* ------------------------------------------------------------------ */
 
 describe('collectViewExtensions — empty context', () => {
+  it('composes an object that declares no view extensions from its fields without a warning', () => {
+    // A fresh import declares none; every screen composed from it warned "Available contexts: none" (site SITE-11).
+    const composed = { ...getSubscription(), traits: [], viewExtensions: {} };
+    const result = collectViewExtensions(composed, 'list');
+    expect(result.plan).toHaveLength(0);
+    expect(result.warnings).toEqual([]);
+  });
+
   it('returns empty plan with warning for unknown context', () => {
     const composed = getSubscription();
     const result = collectViewExtensions(composed, 'nonexistent');

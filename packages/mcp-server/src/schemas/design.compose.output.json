@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://designlab.local/schemas/design.compose.output.json",
-  "title": "Design compose output",
+  "$id": "https://oods-foundry.com/schemas/design.compose.output.json",
+  "title": "design_compose output",
   "description": "Generated UiSchema with component selections and validation result.",
   "type": "object",
   "required": ["status", "layout", "schema", "selections", "warnings"],
@@ -21,7 +21,7 @@
     },
     "schemaRef": {
       "type": "string",
-      "description": "Server-managed reference to the generated schema for reuse in validate/render/code.generate."
+      "description": "Server-managed reference to the generated schema for reuse in validate/render/code_generate."
     },
     "schemaRefCreatedAt": {
       "type": "string",

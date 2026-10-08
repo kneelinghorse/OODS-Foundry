@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://designlab.local/schemas/map.apply.output.json",
-  "title": "map.apply output",
+  "$id": "https://oods-foundry.com/schemas/map.apply.output.json",
+  "title": "component_map action=apply output",
   "description": "Dry-run or apply report for Stage1 reconciliation verdict routing.",
   "type": "object",
   "required": ["applied", "skipped", "queued", "conflicted", "errors", "diff", "etag"],
@@ -114,7 +114,7 @@
       "properties": {
         "objectId": { "type": "string", "minLength": 1 },
         "name": { "type": "string", "minLength": 1 },
-        "action": { "const": "skip" },
+        "action": { "type": "string", "const": "skip" },
         "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
         "recommendedOodsTraits": {
           "type": "array",
@@ -150,7 +150,7 @@
         },
         "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
         "threshold": { "type": "number", "minimum": 0, "maximum": 1 },
-        "queueReason": { "const": "below_confidence" },
+        "queueReason": { "type": "string", "const": "below_confidence" },
         "recommendedOodsTraits": {
           "type": "array",
           "items": { "type": "string", "minLength": 1 },
@@ -168,7 +168,7 @@
       "properties": {
         "objectId": { "type": "string", "minLength": 1 },
         "name": { "type": "string", "minLength": 1 },
-        "action": { "const": "conflict" },
+        "action": { "type": "string", "const": "conflict" },
         "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
         "existingMapId": { "type": "string", "minLength": 1 },
         "reason": { "type": "string", "minLength": 1 }

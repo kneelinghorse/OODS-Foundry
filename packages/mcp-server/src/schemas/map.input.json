@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://designlab.local/schemas/map.input.json",
-  "title": "map input",
+  "$id": "https://oods-foundry.com/schemas/map.input.json",
+  "title": "component_map input",
   "description": "Manage mappings in your user folder (create, list, resolve, update, delete, apply). Create accepts one mapping, a mappings list, or an absolute mappingsPath to a checked mapping file; the list is validated whole and written atomically. Optional substitutions name a shipped OODS Foundry component and React/Vue package exports with prop translations validated against its contract. Legacy Stage1 annotations remain round-trip data. draft reads a local shadcn project or built Storybook without executing code or fetching. show exposes every proposed adapter and unmatched source element. apply with draftId and explicitly accepted proposal ids validates and atomically registers the batch, installing only reviewed new adapter files.",
   "type": "object",
   "required": [
@@ -9,6 +9,7 @@
   ],
   "properties": {
     "action": {
+      "type": "string",
       "enum": [
         "apply",
         "create",
@@ -27,6 +28,7 @@
       "if": {
         "properties": {
           "action": {
+            "type": "string",
             "const": "apply"
           }
         },
@@ -44,6 +46,7 @@
         "additionalProperties": false,
         "properties": {
           "action": {
+            "type": "string",
             "const": "apply"
           },
           "apply": {
@@ -95,6 +98,7 @@
       "if": {
         "properties": {
           "action": {
+            "type": "string",
             "const": "create"
           }
         },
@@ -133,6 +137,7 @@
                   "type": "array",
                   "minItems": 1,
                   "items": {
+                    "type": "object",
                     "description": "A single-create payload without action or apply; the handler checks every value against MappingEntry and returns OODS-V219 per-entry outcomes for invalid entries."
                   },
                   "description": "Create entries, each without apply. All entries are checked before one atomic write."
@@ -143,6 +148,7 @@
                   "description": "Absolute path to a JSON document { mappings: [...] }, using the same entry shape."
                 },
                 "action": {
+                  "type": "string",
                   "const": "create"
                 }
               },
@@ -179,6 +185,7 @@
       "if": {
         "properties": {
           "action": {
+            "type": "string",
             "const": "list"
           }
         },
@@ -191,6 +198,7 @@
         "additionalProperties": false,
         "properties": {
           "action": {
+            "type": "string",
             "const": "list"
           },
           "externalSystem": {
@@ -220,6 +228,7 @@
       "if": {
         "properties": {
           "action": {
+            "type": "string",
             "const": "resolve"
           }
         },
@@ -236,6 +245,7 @@
         "additionalProperties": false,
         "properties": {
           "action": {
+            "type": "string",
             "const": "resolve"
           },
           "externalSystem": {
@@ -259,6 +269,7 @@
       "if": {
         "properties": {
           "action": {
+            "type": "string",
             "const": "update"
           }
         },
@@ -275,6 +286,7 @@
         "additionalProperties": false,
         "properties": {
           "action": {
+            "type": "string",
             "const": "update"
           },
           "id": {
@@ -342,6 +354,7 @@
                           "additionalProperties": false,
                           "properties": {
                             "type": {
+                              "type": "string",
                               "const": "enum"
                             },
                             "mapping": {
@@ -362,6 +375,7 @@
                           "additionalProperties": false,
                           "properties": {
                             "type": {
+                              "type": "string",
                               "const": "boolean_to_string"
                             },
                             "trueValue": {
@@ -381,6 +395,7 @@
                           "additionalProperties": false,
                           "properties": {
                             "type": {
+                              "type": "string",
                               "const": "template"
                             },
                             "pattern": {
@@ -396,6 +411,7 @@
                           "additionalProperties": false,
                           "properties": {
                             "type": {
+                              "type": "string",
                               "const": "identity"
                             }
                           }
@@ -751,6 +767,7 @@
       "if": {
         "properties": {
           "action": {
+            "type": "string",
             "const": "delete"
           }
         },
@@ -766,6 +783,7 @@
         "additionalProperties": false,
         "properties": {
           "action": {
+            "type": "string",
             "const": "delete"
           },
           "id": {
@@ -784,6 +802,7 @@
       "if": {
         "properties": {
           "action": {
+            "type": "string",
             "const": "draft"
           }
         },
@@ -796,6 +815,7 @@
         "additionalProperties": false,
         "properties": {
           "action": {
+            "type": "string",
             "const": "draft"
           },
           "source": {
@@ -806,6 +826,7 @@
                 "pattern": "^/[\\s\\S]*$"
               },
               "format": {
+                "type": "string",
                 "enum": [
                   "shadcn",
                   "storybook"
@@ -835,6 +856,7 @@
       "if": {
         "properties": {
           "action": {
+            "type": "string",
             "const": "show"
           }
         },
@@ -847,6 +869,7 @@
         "additionalProperties": false,
         "properties": {
           "action": {
+            "type": "string",
             "const": "show"
           },
           "draftId": {
@@ -863,6 +886,7 @@
       "if": {
         "properties": {
           "action": {
+            "type": "string",
             "const": "apply"
           }
         },
@@ -876,6 +900,7 @@
         "additionalProperties": false,
         "properties": {
           "action": {
+            "type": "string",
             "const": "apply"
           },
           "draftId": {
@@ -1104,7 +1129,7 @@
         },
         "projection_variants": {
           "type": "array",
-          "description": "Stage1 v1.5.0 cross-surface identity variants. When present on a candidate_object, map.apply threads them through to the persisted mapping on both create and patch verdicts.",
+          "description": "Stage1 v1.5.0 cross-surface identity variants. When present on a candidate_object, component_map action=apply threads them through to the persisted mapping on both create and patch verdicts.",
           "items": {
             "type": "object",
             "required": [
@@ -1158,6 +1183,7 @@
           "if": {
             "properties": {
               "action": {
+                "type": "string",
                 "const": "patch"
               }
             }
@@ -1174,6 +1200,7 @@
           "if": {
             "properties": {
               "action": {
+                "type": "string",
                 "const": "skip"
               }
             }
@@ -1189,6 +1216,7 @@
           "if": {
             "properties": {
               "action": {
+                "type": "string",
                 "const": "conflict"
               }
             }
@@ -1270,7 +1298,7 @@
         "decided_at"
       ],
       "additionalProperties": false,
-      "description": "Draft v1.4.0-gated review-decision payload. OODS accepts the shape but current map.apply handlers ignore it.",
+      "description": "Draft v1.4.0-gated review-decision payload. OODS accepts the shape but current component_map action=apply handlers ignore it.",
       "properties": {
         "decision_id": {
           "type": "string",
@@ -1541,6 +1569,7 @@
       "additionalProperties": false,
       "properties": {
         "kind": {
+          "type": "string",
           "const": "reconciliation_report"
         },
         "schema_version": {
@@ -1948,6 +1977,7 @@
                     "additionalProperties": false,
                     "properties": {
                       "type": {
+                        "type": "string",
                         "const": "enum"
                       },
                       "mapping": {
@@ -1968,6 +1998,7 @@
                     "additionalProperties": false,
                     "properties": {
                       "type": {
+                        "type": "string",
                         "const": "boolean_to_string"
                       },
                       "trueValue": {
@@ -1987,6 +2018,7 @@
                     "additionalProperties": false,
                     "properties": {
                       "type": {
+                        "type": "string",
                         "const": "template"
                       },
                       "pattern": {
@@ -2002,6 +2034,7 @@
                     "additionalProperties": false,
                     "properties": {
                       "type": {
+                        "type": "string",
                         "const": "identity"
                       }
                     }
@@ -2036,7 +2069,7 @@
         },
         "disambiguation_decisions": {
           "type": "array",
-          "description": "Draft v1.4.0-gated review-decision events to APPEND to the registry's top-level disambiguation_decisions[]. Additive stub only; does not gate mapping creation. Each entry uses the Stage1 disambiguation_decision shape.",
+          "description": "Draft v1.4.0-gated review-decision events to append to the registry's top-level disambiguation_decisions[]. Additive stub only; does not gate mapping creation. Each entry uses the Stage1 disambiguation_decision shape.",
           "items": {
             "type": "object",
             "required": [
@@ -2152,7 +2185,7 @@
         },
         "preferred_terms": {
           "type": "array",
-          "description": "Draft v1.4.0-gated canonical-term entities to APPEND to the registry's top-level preferred_terms[]. Each entry uses the Stage1 preferred_term entity shape.",
+          "description": "Draft v1.4.0-gated canonical-term entities to append to the registry's top-level preferred_terms[]. Each entry uses the Stage1 preferred_term entity shape.",
           "items": {
             "type": "object",
             "required": [
@@ -2166,6 +2199,7 @@
             "additionalProperties": false,
             "properties": {
               "entity_type": {
+                "type": "string",
                 "const": "preferred_term"
               },
               "id": {
@@ -2214,7 +2248,7 @@
         },
         "capabilities": {
           "type": "array",
-          "description": "Draft v1.4.0-gated first-class capability entities to APPEND to the registry's top-level capabilities[]. Each entry uses the Stage1 capability entity shape.",
+          "description": "Draft v1.4.0-gated first-class capability entities to append to the registry's top-level capabilities[]. Each entry uses the Stage1 capability entity shape.",
           "items": {
             "type": "object",
             "required": [
@@ -2227,6 +2261,7 @@
             "additionalProperties": false,
             "properties": {
               "entity_type": {
+                "type": "string",
                 "const": "capability"
               },
               "id": {
@@ -2368,6 +2403,7 @@
           }
         },
         "action": {
+          "type": "string",
           "const": "create"
         }
       },

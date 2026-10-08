@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://designlab.local/schemas/artifact.certify.output.json",
-  "title": "Artifact certify output",
+  "$id": "https://oods-foundry.com/schemas/artifact.certify.output.json",
+  "title": "artifact_certify output",
   "description": "Certification of an OODS Foundry NormalizedVizSpec. Cartesian charts use the existing Vega-Lite profile; ECharts-primary charts with matching data use the declared operand profile without a Vega compile leg. Both report coverage certified and a boolean folded conformance verdict. The operand profile requires passing a11y-equivalence, stable determinism, contrast neither fail nor ungradeable, and at least one evaluated clean accuracy rule. Spec-only ECharts calls remain uncertified with conformant null and explicit missing-operand notes. Findings, not-applicable rules, rule counts and per-pillar verdicts expose what actually ran; evaluator or render faults never become a passing operand verdict. Render determinism identifies the projected option and independently repeated normalized SVG where available, within the certified runtime matrix; a geometry-free bubble map retains only its option proof with its stated limitation.",
   "type": "object",
   "required": [
@@ -55,7 +55,7 @@
           "preconditionAbsent": {
             "type": "string",
             "minLength": 1,
-            "description": "The DECLARED positive precondition the chart lacked, e.g. 'an x or y positional encoding binding'. Never empty: not-applicable is never a bare assertion."
+            "description": "The declared positive precondition the chart lacked, e.g. 'an x or y positional encoding binding'. Never empty: not-applicable is never a bare assertion."
           }
         },
         "additionalProperties": false
@@ -94,11 +94,11 @@
         },
         "contentHash": {
           "type": "string",
-          "description": "SHA-256 (hex) of the canonicalized emission. Cartesian: the canonicalized Vega-Lite compile — the same contentHash viz.render emits for this IR; the render never feeds this hash (render↔certify hash identity is a shipped invariant). ECharts-primary (s172): the canonicalized JSON-projected ECharts option, replaying viz.render's exact projection (the tooltip formatter closure dropped, __joinDiagnostics stripped, __registration KEPT) — so it equals viz.render's contentHash FOR THE SAME (spec, data) PAIR GIVEN TO BOTH TOOLS. certify asserts nothing about what the CALLER rendered (the renderHash leg is certify's own render), and hash identity across processes assumes one installed @oods/tokens bundle version."
+          "description": "SHA-256 (hex) of the canonicalized emission. Cartesian: the canonicalized Vega-Lite compile — the same contentHash viz_render emits for this IR; the render never feeds this hash (render↔certify hash identity is a shipped invariant). ECharts-primary (s172): the canonicalized JSON-projected ECharts option, replaying viz_render's exact projection (the tooltip formatter closure dropped, __joinDiagnostics stripped, __registration kept) — so it equals viz_render's contentHash for the same (spec, data) pair given TO both tools. certify asserts nothing about what the caller rendered (the renderHash leg is certify's own render), and hash identity across processes assumes one installed @oods/tokens bundle version."
         },
         "renderHash": {
           "type": "string",
-          "description": "OPTIONAL SHA-256 (hex) of the first normalized SVG certify rendered through @oods/viz-render. Present exactly when server-side rendering succeeded: on cartesian charts (including contrast-exempt charts) and on renderable ECharts-primary calls with `data`. The second independent render is the stability proof. Absent on spec-only ECharts calls, a typed first-render fault, ECharts bubble_map without inline geometry. contentHash remains the emitted artifact identity; renderHash is the rendered-picture witness. The normalization/runtime contract and render-hash epoch are pinned in packages/viz-render/certified-matrix.json."
+          "description": "Optional SHA-256 (hex) of the first normalized SVG certify rendered through @oods/viz-render. Present exactly when server-side rendering succeeded: on cartesian charts (including contrast-exempt charts) and on renderable ECharts-primary calls with `data`. The second independent render is the stability proof. Absent on spec-only ECharts calls, a typed first-render fault, ECharts bubble_map without inline geometry. contentHash remains the emitted artifact identity; renderHash is the rendered-picture witness. The normalization/runtime contract and render-hash epoch are pinned in packages/viz-render/certified-matrix.json."
         }
       },
       "additionalProperties": false
@@ -120,7 +120,7 @@
             "fail",
             "unchecked"
           ],
-          "description": "Pass when the complete rule evaluation has no error-severity failure or evaluator fault; fail otherwise. Ordinary warnings and declared not-applicable rules retain their channels without failing the pillar. ECharts evaluates the same operand-built table and narrative as viz.render; without data it stays unchecked. A whole-engine fault or incomplete rule population is fail with a note, never unchecked or pass."
+          "description": "Pass when the complete rule evaluation has no error-severity failure or evaluator fault; fail otherwise. Ordinary warnings and declared not-applicable rules retain their channels without failing the pillar. ECharts evaluates the same operand-built table and narrative as viz_render; without data it stays unchecked. A whole-engine fault or incomplete rule population is fail with a note, never unchecked or pass."
         },
         "determinism": {
           "type": "string",
@@ -191,6 +191,7 @@
         ],
         "properties": {
           "theme": {
+            "type": "string",
             "enum": [
               "light",
               "dark",
@@ -202,6 +203,7 @@
             "format": "oods-brand"
           },
           "verdict": {
+            "type": "string",
             "enum": [
               "pass",
               "fail",
@@ -214,6 +216,7 @@
             "type": "boolean"
           },
           "evidence": {
+            "type": "string",
             "enum": [
               "render",
               "baked-palette",
@@ -224,6 +227,7 @@
             "type": "string"
           },
           "reason": {
+            "type": "string",
             "const": "forced-colors",
             "description": "HC contrast is delegated to the user agent forced-colors palette; no numeric server grade is claimed."
           }
@@ -233,6 +237,7 @@
             "if": {
               "properties": {
                 "theme": {
+                  "type": "string",
                   "const": "hc"
                 }
               },
@@ -246,9 +251,11 @@
               ],
               "properties": {
                 "verdict": {
+                  "type": "string",
                   "const": "exempt"
                 },
                 "measured": {
+                  "type": "boolean",
                   "const": false
                 }
               }

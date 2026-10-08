@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://designlab.local/schemas/style-library-contribution.schema.json",
+  "$id": "https://oods-foundry.com/schemas/style-library-contribution.schema.json",
   "title": "Style-Library Contribution (divergent-inspector → OODS Foundry)",
-  "description": "DRAFT. The INBOUND format divergent-inspector uses to send a measured style fingerprint BACK to OODS Foundry: the counterpart to the s123 OODS Foundry-owned style-library-artifact.schema.json (the key→var SKIN map). This is a DISTINCT artifact with a DISTINCT name — the artifact is the MAPPING OODS Foundry owns; this is the CONTRIBUTION a consumer sends in. NO runtime ingestion loader/validator exists yet: per the s123 'lock the pipe at n=8 first' posture, ingestion is deferred until the format is ratified. SKIP-LISTED from generated.ts (NON_SCHEMA_DATA_FILES in schemas-tools/generate-types.ts) so this draft never emits a type for an unratified format — generated.ts stays byte-identical; the file still bundles to dist/ via the package.json wildcard cp. Three blocks: (1) brand_apply — a measured DTCG delta shaped like brand.apply.input.json so it can round-trip through the live apply path; (2) confidence — per-path confidence + evidence gates; (3) signatures — measured surface fingerprints shaped like the map.create projection_variant. Root is intentionally permissive (no required block) for the co-author pass — see OPEN QUESTION (a).",
+  "description": "Draft. The inbound format divergent-inspector uses to send a measured style fingerprint back to OODS Foundry: the counterpart to the s123 OODS Foundry-owned style-library-artifact.schema.json (the key→var skin map). This is a distinct artifact with a distinct name — the artifact is the mapping OODS Foundry owns; this is the contribution a consumer sends in. NO runtime ingestion loader/validator exists yet: per the s123 'lock the pipe at n=8 first' posture, ingestion is deferred until the format is ratified. Skip-listed from generated.ts (NON_SCHEMA_DATA_FILES in schemas-tools/generate-types.ts) so this draft never emits a type for an unratified format — generated.ts stays byte-identical; the file still bundles to dist/ via the package.json wildcard cp. Three blocks: (1) brand_apply — a measured DTCG delta shaped like brand_apply.input.json so it can round-trip through the live apply path; (2) confidence — per-path confidence + evidence gates; (3) signatures — measured surface fingerprints shaped like the component_map action=create projection_variant. Root is intentionally permissive (no required block) for the co-author pass — see open question (a).",
   "type": "object",
   "additionalProperties": false,
   "properties": {
@@ -14,7 +14,7 @@
     },
     "source": {
       "type": "object",
-      "description": "Provenance of the contribution. PROPOSED ANSWER to OPEN QUESTION (d) [collision/re-run disambiguation]: run_id + measured_at disambiguate two runs that return the same signature id+surface+selector. Flagged for co-author sanity-check.",
+      "description": "Provenance of the contribution. Proposed answer to open question (d) [collision/re-run disambiguation]: run_id + measured_at disambiguate two runs that return the same signature id+surface+selector. Flagged for co-author sanity-check.",
       "additionalProperties": false,
       "properties": {
         "tool": { "type": "string", "minLength": 1, "description": "Emitting tool, e.g. 'divergent-inspector'." },
@@ -24,7 +24,7 @@
     },
     "brand_apply": {
       "type": "object",
-      "description": "Measured token delta, shaped to drop into brand.apply (mirrors brand.apply.input.json so a contribution can round-trip the live apply path). OPEN QUESTION (a): one brand+delta per invocation (what brand.apply takes today) vs a BATCH (array of these) when divergent measures many surfaces in one run — root is left permissive pending this call. OPEN QUESTION (c): does divergent's measured delta match brand.apply's delta EXACTLY — object-only (alias) here, or must OODS Foundry also accept the RFC-6902 patch-array form plus a normalization step?",
+      "description": "Measured token delta, shaped to drop into brand_apply (mirrors brand_apply.input.json so a contribution can round-trip the live apply path). Open question (a): one brand+delta per invocation (what brand_apply takes today) vs a batch (array of these) when divergent measures many surfaces in one run — root is left permissive pending this call. Open question (c): does divergent's measured delta match brand_apply's delta exactly — object-only (alias) here, or must OODS Foundry also accept the RFC-6902 patch-array form plus a normalization step?",
       "additionalProperties": false,
       "required": ["delta"],
       "properties": {
@@ -37,10 +37,10 @@
           "type": "string",
           "enum": ["alias", "patch"],
           "default": "alias",
-          "description": "alias = DTCG dot-path→value object; patch = RFC-6902 ops. brand.apply gates the delta shape on this exact enum."
+          "description": "alias = DTCG dot-path→value object; patch = RFC-6902 ops. Brand_apply gates the delta shape on this exact enum."
         },
         "delta": {
-          "description": "Measured token changes. alias form = a map of DTCG dot-path (e.g. 'color.surface.default') to value; patch form = RFC-6902 ops. Matches brand.apply.input.json's delta oneOf so it round-trips.",
+          "description": "Measured token changes. alias form = a map of DTCG dot-path (e.g. 'color.surface.default') to value; patch form = RFC-6902 ops. Matches brand_apply.input.json's delta oneOf so it round-trips.",
           "oneOf": [
             {
               "type": "object",
@@ -66,7 +66,7 @@
     },
     "confidence": {
       "type": "object",
-      "description": "Per-path measurement confidence + evidence, keyed by the SAME DTCG dot-path used in brand_apply.delta (alias form). Lets OODS Foundry gate which measured deltas it trusts before they reach the skin. Record<path, {confidence, evidence}>.",
+      "description": "Per-path measurement confidence + evidence, keyed by the same DTCG dot-path used in brand_apply.delta (alias form). Lets OODS Foundry gate which measured deltas it trusts before they reach the skin. Record<path, {confidence, evidence}>.",
       "additionalProperties": {
         "type": "object",
         "additionalProperties": false,
@@ -88,7 +88,7 @@
     },
     "signatures": {
       "type": "array",
-      "description": "Measured surface fingerprints, each shaped like a map.create projection_variant (id, surface, external_component?, capability_id?, selector?, confidence?, evidence_chain?, metadata). metadata is additionalProperties:true and LOAD-BEARING — it carries the measured fingerprint payload. OPEN QUESTION (b): which of these fields does divergent actually populate? external_component / capability_id / selector are all optional in the live projection_variant shape.",
+      "description": "Measured surface fingerprints, each shaped like a component_map action=create projection_variant (id, surface, external_component?, capability_id?, selector?, confidence?, evidence_chain?, metadata). metadata is additionalProperties:true and load-bearing — it carries the measured fingerprint payload. Open question (b): which of these fields does divergent actually populate? external_component / capability_id / selector are all optional in the live projection_variant shape.",
       "items": {
         "type": "object",
         "required": ["id", "surface"],
@@ -108,7 +108,7 @@
           "metadata": {
             "type": "object",
             "additionalProperties": true,
-            "description": "LOAD-BEARING open bag — carries the measured style fingerprint payload (the reason this block is shaped like projection_variant)."
+            "description": "Load-bearing open bag — carries the measured style fingerprint payload (the reason this block is shaped like projection_variant)."
           }
         }
       }

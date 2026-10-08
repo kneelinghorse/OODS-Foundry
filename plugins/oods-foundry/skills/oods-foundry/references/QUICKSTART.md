@@ -2,14 +2,14 @@
 
 Change one trait and predict which screens follow it. The first run uses the shipped Warehouse and ColdRoom examples; the Harbor walkthrough that follows adds your colour tokens and component, generates an app, and renders and certifies a separate chart. Chart certification does not certify the surrounding application.
 
-Use Node.js 22.0.0 or newer on macOS or Linux and connect your MCP client as the package README describes. The calls below use the underscore names your client lists. Start with a fresh user-data folder if you already registered any of these example names; creation does not silently overwrite existing work. Keep each walkthrough in one server session because schema references expire.
+Use Node.js 22.0.0 or newer on macOS or Linux and connect your MCP client as [the package README](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.10.2/packages/foundry/README.md) describes; the Claude Code plugin connects it for you. The calls below use the underscore names your client lists. Start with a fresh user-data folder if you already registered any of these example names; creation does not silently overwrite existing work. Keep each walkthrough in one server session because schema references expire.
 
 ## Get the editable inputs
 
 In your project, install this version of OODS Foundry and copy its examples outside the installed runtime:
 
 ```sh
-npm install @oods/foundry@0.10.1
+npm install @oods/foundry@0.10.2
 cp -R node_modules/@oods/foundry/quickstart ./harbor-design-system
 ```
 
@@ -25,17 +25,14 @@ This run makes **23 tool calls**, including **six `design_preview` calls**. Leav
 
 Register Stockable, Warehouse and then ColdRoom. ColdRoom belongs to a Warehouse, so that object must exist first.
 
-<!-- first-change: trait-register object_registry -->
 ```json
 {"action":"register","yaml":"<Stockable.trait.yaml>"}
 ```
 
-<!-- first-change: warehouse-register object_registry -->
 ```json
 {"action":"register","yaml":"<Warehouse.object.yaml>"}
 ```
 
-<!-- first-change: coldroom-register object_registry -->
 ```json
 {"action":"register","yaml":"<ColdRoom.object.yaml>"}
 ```
@@ -44,29 +41,24 @@ Register Stockable, Warehouse and then ColdRoom. ColdRoom belongs to a Warehouse
 
 Retain the `compositionId` for each screen. These calls create version 1.
 
-<!-- first-change: warehouse-detail-v1 design_compose -->
 ```json
 {"object":"Warehouse","context":"detail"}
 ```
 
-<!-- first-change: coldroom-detail-v1 design_compose -->
 ```json
 {"object":"ColdRoom","context":"detail"}
 ```
 
-<!-- first-change: warehouse-list-v1 design_compose -->
 ```json
 {"object":"Warehouse","context":"list"}
 ```
 
-<!-- first-change: subscription-detail-v1 design_compose -->
 ```json
 {"object":"Subscription","context":"detail"}
 ```
 
 Open Warehouse detail with `design_preview`; keep the returned browser link.
 
-<!-- first-change: warehouse-before design_preview -->
 ```json
 {"compositionId":"<warehouse-detail>","version":1}
 ```
@@ -79,14 +71,12 @@ A trait places a field on a screen through `view_extensions`, and this edit name
 
 In your copied `Stockable.trait.yaml`, change the version under `trait` from `1.0.0` to:
 
-<!-- first-change-edit: version -->
 ```yaml
 version: 1.1.0
 ```
 
 Add this field inside `schema`, beside the existing fields:
 
-<!-- first-change-edit: schema -->
 ```yaml
 last_counted_at:
   type: datetime
@@ -98,7 +88,6 @@ last_counted_at:
 
 Append this placement to the existing list under `view_extensions.detail`:
 
-<!-- first-change-edit: detail -->
 ```yaml
 - component: Text
   position: main
@@ -109,29 +98,24 @@ Append this placement to the existing list under `view_extensions.detail`:
 
 Register your complete edited file with `overwrite: true`:
 
-<!-- first-change: trait-edit object_registry -->
 ```json
 {"action":"register","yaml":"<Stockable.edited.trait.yaml>","overwrite":true}
 ```
 
 Compose the same screens again, passing each saved id. These calls create version 2.
 
-<!-- first-change: warehouse-detail-v2 design_compose -->
 ```json
 {"object":"Warehouse","context":"detail","compositionId":"<warehouse-detail>"}
 ```
 
-<!-- first-change: coldroom-detail-v2 design_compose -->
 ```json
 {"object":"ColdRoom","context":"detail","compositionId":"<coldroom-detail>"}
 ```
 
-<!-- first-change: warehouse-list-v2 design_compose -->
 ```json
 {"object":"Warehouse","context":"list","compositionId":"<warehouse-list>"}
 ```
 
-<!-- first-change: subscription-detail-v2 design_compose -->
 ```json
 {"object":"Subscription","context":"detail","compositionId":"<subscription-detail>"}
 ```
@@ -140,22 +124,18 @@ Compose the same screens again, passing each saved id. These calls create versio
 
 Compare version 1 with version 2 for each screen, then open the returned compare links.
 
-<!-- first-change: warehouse-detail-compare design_preview -->
 ```json
 {"action":"compare","compositionId":"<warehouse-detail>","version":1,"against":{"version":2}}
 ```
 
-<!-- first-change: coldroom-detail-compare design_preview -->
 ```json
 {"action":"compare","compositionId":"<coldroom-detail>","version":1,"against":{"version":2}}
 ```
 
-<!-- first-change: warehouse-list-compare design_preview -->
 ```json
 {"action":"compare","compositionId":"<warehouse-list>","version":1,"against":{"version":2}}
 ```
 
-<!-- first-change: subscription-detail-compare design_preview -->
 ```json
 {"action":"compare","compositionId":"<subscription-detail>","version":1,"against":{"version":2}}
 ```
@@ -173,36 +153,30 @@ Compare also lists the generated files whose hashes changed: the Warehouse list'
 
 Replace the edited file with your saved, untouched Stockable file and register it again:
 
-<!-- first-change: trait-restore object_registry -->
 ```json
 {"action":"register","yaml":"<Stockable.trait.yaml>","overwrite":true}
 ```
 
 Compose each screen once more, using its same id, to create version 3. All four return to their version 1 schema hash.
 
-<!-- first-change: warehouse-detail-v3 design_compose -->
 ```json
 {"object":"Warehouse","context":"detail","compositionId":"<warehouse-detail>"}
 ```
 
-<!-- first-change: coldroom-detail-v3 design_compose -->
 ```json
 {"object":"ColdRoom","context":"detail","compositionId":"<coldroom-detail>"}
 ```
 
-<!-- first-change: warehouse-list-v3 design_compose -->
 ```json
 {"object":"Warehouse","context":"list","compositionId":"<warehouse-list>"}
 ```
 
-<!-- first-change: subscription-detail-v3 design_compose -->
 ```json
 {"object":"Subscription","context":"detail","compositionId":"<subscription-detail>"}
 ```
 
 Compare Warehouse detail version 1 against version 3: it is identical.
 
-<!-- first-change: warehouse-restored design_preview -->
 ```json
 {"action":"compare","compositionId":"<warehouse-detail>","version":1,"against":{"version":3}}
 ```
@@ -227,28 +201,24 @@ Replace `<harbor.tokens.json>` with the parsed JSON document, `<Stockable.trait.
 
 Ask your assistant to make each named call. Start with `health_check`:
 
-<!-- quickstart: health health_check -->
 ```json
 {}
 ```
 
 Then `brand_create` with `template` to inspect the roles and descriptions:
 
-<!-- quickstart: template brand_create -->
 ```json
 {"action":"template"}
 ```
 
 The supplied Harbor document has a complete set of values. Change values, then call `brand_create` with `validate`. Fix each reported issue before creating the brand; a failed contrast check includes the pair, measured ratio and required floor.
 
-<!-- quickstart: brand-validate brand_create -->
 ```json
 {"action":"validate","brand_id":"Harbor","documents":"<harbor.tokens.json>"}
 ```
 
 When `valid` is true, create it:
 
-<!-- quickstart: brand-create brand_create -->
 ```json
 {"action":"create","brand_id":"Harbor","documents":"<harbor.tokens.json>"}
 ```
@@ -259,37 +229,32 @@ The result names the written files and token build. Your brand lives outside the
 
 `Stockable` supplies stock fields and views; `Warehouse` combines it with shipped lifecycle traits and authors ten sample warehouses. Their authored values keep each site's operating status, status history, stock, last restock, manager and operating organization coherent, so the detail screen shows no placeholders. Start with `object_registry` to validate the trait:
 
-<!-- quickstart: trait-validate object_registry -->
 ```json
 {"action":"validate","yaml":"<Stockable.trait.yaml>"}
 ```
 
 Register it only after `valid: true`:
 
-<!-- quickstart: trait-register object_registry -->
 ```json
 {"action":"register","yaml":"<Stockable.trait.yaml>"}
 ```
 
 Validate and register the object after its trait exists:
 
-<!-- quickstart: object-validate object_registry -->
 ```json
 {"action":"validate","yaml":"<Warehouse.object.yaml>"}
 ```
 
-<!-- quickstart: object-register object_registry -->
 ```json
 {"action":"register","yaml":"<Warehouse.object.yaml>"}
 ```
 
-Read the returned context checks. A missing trait or invalid definition is reported with its cause and registration is refused. See `OBJECTS-AND-TRAITS.md` for field types, money semantics, number formats, form controls and name-collision rules.
+Read the returned context checks. A missing trait or invalid definition is reported with its cause and registration is refused. [OBJECTS-AND-TRAITS.md](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.10.2/packages/foundry/OBJECTS-AND-TRAITS.md) documents field types, money semantics, number formats, form controls and name-collision rules.
 
 ### Substitute your component
 
 The example Button expects `caption` and `appearance`, so this mapping translates OODS Foundry's `content` and `intent`. Call `component_map`:
 
-<!-- quickstart: mapping component_map -->
 ```json
 {
   "action":"create","apply":true,"externalSystem":"harbor",
@@ -314,7 +279,6 @@ This replaces a shipped identity; it does not add a new catalog identity. The pa
 
 Call `design_compose` and retain its `schemaRef`, `compositionId` and version:
 
-<!-- quickstart: compose design_compose -->
 ```json
 {"object":"Warehouse","context":"detail","preferences":{"brand":"Harbor","theme":"light"}}
 ```
@@ -325,14 +289,12 @@ The result contains the composed schema, object and trait provenance, selections
 
 Call `viz_render` with explicit rows from the example stock records:
 
-<!-- quickstart: chart viz_render -->
 ```json
 {"chartType":"bar","brand":"Harbor","theme":"light","rows":[{"warehouse":"Lakeside Distribution","pallets":640},{"warehouse":"North Yard","pallets":760},{"warehouse":"Harbor Cold Store","pallets":2400}],"encodings":{"x":{"field":"warehouse","type":"nominal"},"y":{"field":"pallets","type":"quantitative"}},"output":{"includeNormalizedSpec":true,"includeA11y":true}}
 ```
 
 Then call `artifact_certify` with that returned normalized specification and the same brand/theme:
 
-<!-- quickstart: certify artifact_certify -->
 ```json
 {"spec":"<normalizedSpec>","brand":"Harbor","theme":"light"}
 ```
@@ -343,7 +305,6 @@ Read `conformant`, each pillar, and its findings. For this Cartesian chart, cert
 
 Call `design_preview` for the saved composition:
 
-<!-- quickstart: preview design_preview -->
 ```json
 {"compositionId":"<compositionId>","version":1}
 ```
@@ -352,17 +313,15 @@ Open the returned React or Vue `appUrl`. Inspect the Warehouse name, stock statu
 
 Call `code_generate` to receive a complete single-screen app rather than only a component:
 
-<!-- quickstart: react code_generate -->
 ```json
 {"schemaRef":"<schemaRef>","framework":"react","profile":"build","options":{"output":"application","brand":"Harbor","theme":"light","payloadMode":"file"}}
 ```
 
-<!-- quickstart: vue code_generate -->
 ```json
 {"schemaRef":"<schemaRef>","framework":"vue","profile":"build","options":{"output":"application","brand":"Harbor","theme":"light","payloadMode":"file"}}
 ```
 
-Each result names its payload directory, artifact content hash, dependencies and `validationReceipt`. The content hashes a clean run of this walkthrough produces are in the package's `quickstart/expected.json`. The build profile checks source statically; read `notChecked` for compilation and browser work that has not run. Copy each artifact's files into a separate app folder. Its package.json pins, at exact versions, the OODS packages its code imports, which install from npm, and the example team package. The example package is on no registry, so first install the local `harbor-example-components-1.0.0.tgz` by its path, then follow the install block (`npm install`, then `npm run build`) and run `npm run dev`.
+Each result names its payload directory, artifact content hash, dependencies and `validationReceipt`. The content hashes a clean run of this walkthrough produces are in `quickstart/expected.json` in the `@oods/foundry` package you installed above. The build profile checks source statically; read `notChecked` for compilation and browser work that has not run. Copy each artifact's files into a separate app folder. Its package.json pins, at exact versions, the OODS packages its code imports, which install from npm, and the example team package. The example package is on no registry, so first install the local `harbor-example-components-1.0.0.tgz` by its path, then follow the install block (`npm install`, then `npm run build`) and run `npm run dev`.
 
 The screen labels its sample data. Connect actions to your application before shipping: the preview's integration notice means that no domain record was changed. Request `context: "workflow"` when you want multiple screens with a local sample store; that store does not supply production persistence.
 

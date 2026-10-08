@@ -7,6 +7,8 @@
  * The package is packages/foundry (its launcher, README, authoring guide, CHANGELOG, SECURITY note and images) plus the terms files and
  * the archive with its manifest under runtime/. It ships exactly the closure the archive ships, because it carries the
  * archive itself. Nothing is packed when a package-contents rule refuses a file, in the package or inside the archive.
+ * s239: runtime/ also carries what the archive's server answers to initialize and tools/list, recorded from that server
+ * (scripts/runtime/first-start.mjs) and checked again on the packed tarball, for the launcher to answer while it unpacks.
  * Publishing is not this script's: the review publishes on the owner's yes.
  */
 import assert from "node:assert/strict";
@@ -16,6 +18,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { runtimeReceipts } from "./assemble.mjs";
+import { FIRST_START_FILE } from "./first-start.mjs";
 import { RUNTIME_ARCHIVE_FILE, RUNTIME_ARCHIVE_SHA256_FILE, RUNTIME_MANIFEST_FILE, TERMS_FILES } from "./manifest.mjs";
 import { ownerFacts, packageContentFindings, readTree } from "./package-contents.mjs";
 import { nodeFloor } from "./client-configs.mjs";
@@ -73,6 +76,10 @@ export function buildPackage({ archiveDir, outDir, workDir }) {
     assert.equal(fs.readdirSync(directory).length, 0, `${label} must be empty: ${directory}`);
   }
   const manifest = checkPackageManifest();
+  // s239: the hub contract ships twice under one $id, beside IMPORTING-OBJECTS.md and in the runtime, where the importer
+  // compiles it. 0.9.0 to 0.10.1 updated only the runtime copy, so the package published a contract the importer contradicted.
+  assert(fs.readFileSync(path.join(REPO_ROOT, PACKAGE_DIR, "object-hub.schema.json")).equals(fs.readFileSync(path.join(REPO_ROOT, "schemas/import/object-hub.schema.json"))),
+    "object-hub.schema.json beside IMPORTING-OBJECTS.md must be the hub contract the importer compiles, schemas/import/object-hub.schema.json");
   const archivePath = path.join(archiveDir, RUNTIME_ARCHIVE_FILE);
   const runtimeManifest = readJson(path.join(archiveDir, RUNTIME_MANIFEST_FILE));
   const digest = sha256(archivePath);
@@ -87,15 +94,19 @@ export function buildPackage({ archiveDir, outDir, workDir }) {
   fs.copyFileSync(archivePath, path.join(stage, "runtime", RUNTIME_ARCHIVE_FILE));
   fs.copyFileSync(path.join(archiveDir, RUNTIME_MANIFEST_FILE), path.join(stage, "runtime", RUNTIME_MANIFEST_FILE));
 
-  // The package's own files, then every file inside the archive it carries.
+  // Every file inside the archive, then the package's own files, its first-start answers among them.
   const owner = ownerFacts(REPO_ROOT);
   const cdnBase = `https://cdn.jsdelivr.net/npm/${manifest.name}@${manifest.version}/`;
-  assertNoFindings("package contents", packageContentFindings(readTree(stage), { ...owner, cdnBase }));
   const unpacked = path.join(workDir, "unpacked");
   fs.mkdirSync(unpacked);
   const tar = spawnSync("tar", ["-xzf", archivePath, "-C", unpacked], { encoding: "utf8" });
   assert.equal(tar.status, 0, `tar could not unpack the archive: ${tar.stderr}`);
   assertNoFindings("archive contents", packageContentFindings(readTree(unpacked), { ...owner, receipts: runtimeReceipts() }));
+  // s239: what this archive's server answers to initialize and tools/list, which the launcher answers while it unpacks.
+  const firstStart = (args) => spawnSync(process.execPath, [path.join(REPO_ROOT, "scripts/runtime/first-start.mjs"), ...args, "--runtime", unpacked], { encoding: "utf8" });
+  const recorded = firstStart(["write", "--archive-sha256", digest, "--out", path.join(stage, "runtime", FIRST_START_FILE)]);
+  assert.equal(recorded.status, 0, `the first-start answers could not be recorded: ${recorded.stderr}`);
+  assertNoFindings("package contents", packageContentFindings(readTree(stage), { ...owner, cdnBase }));
 
   // Pack with a throwaway npm cache and empty user and global npm configuration (npm refuses one file for both).
   for (const config of ["npmrc-user", "npmrc-global"]) fs.writeFileSync(path.join(workDir, config), "");
@@ -107,8 +118,11 @@ export function buildPackage({ archiveDir, outDir, workDir }) {
   const shipped = report.files.map((file) => file.path).sort();
   const staged = readTree(stage).map((entry) => entry.path).sort();
   assert.deepEqual(shipped, staged, "the tarball must hold exactly the staged files");
+  // The release check, on the packed bytes: the answers it ships are what its archive's server answers.
+  const checked = firstStart(["check", "--package", tarball]);
+  assert.equal(checked.status, 0, `the packed first-start answers are not the server's: ${checked.stderr}`);
   return { tarball, sha256: sha256(tarball), size: fs.statSync(tarball).size, unpackedSize: report.unpackedSize, entryCount: report.entryCount,
-    name: report.name, version: report.version, archiveSha256: digest, files: shipped };
+    name: report.name, version: report.version, archiveSha256: digest, files: shipped, firstStart: JSON.parse(checked.stdout) };
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

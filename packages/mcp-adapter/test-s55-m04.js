@@ -85,13 +85,18 @@ const READ_ONLY_TOOLS = ['catalog.list', 'structuredData.fetch', 'health', 'regi
   'viz.render', 'dashboard.render', 'artifact.certify', 'fidelity.preview'];
 // s213-m02: these record a composition version or write a file payload, so a client must not be told they are
 // read-only; they only add new files to their own stores, so they are not destructive either.
-const ADDITIVE_TOOLS = ['design.compose', 'design.preview', 'code.generate'];
+const ADDITIVE_TOOLS = ['design.compose', 'design.preview'];
+// s239 (#2743): code.generate's payload folder is named by its content, so identical output reuses it and overwrites the
+// files there, edits included (GENERATED-APPS.md); a client must be told it can destroy work.
+const OVERWRITING_TOOLS = ['code.generate'];
 // s213-m03: object's register writes a team's definition into its own folder and, with overwrite: true, replaces one of
 // the team's files, so it is a writer that is not only additive.
 // s213-m05: brand.intake's create writes a brand into the brands folder and runs the token build, which rewrites the
 // token package's dist, so it is a writer too.
 const WRITE_TOOLS = ['tokens.build', 'brand.apply', 'repl',
-  'a11y.scan', 'map', 'schema', 'pipeline', 'object', 'brand.intake'];
+  'a11y.scan', 'map', 'schema', 'pipeline', 'object', 'brand.intake',
+  // s239: object.import (0.8.0) registers drafted objects into the team's folder and, with overwrite, replaces them.
+  'object.import', ...OVERWRITING_TOOLS];
 
 test('Read-only tools have readOnlyHint: true', () => {
   for (const tool of READ_ONLY_TOOLS) {

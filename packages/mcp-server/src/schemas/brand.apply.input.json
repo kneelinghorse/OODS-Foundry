@@ -55,7 +55,7 @@
   "allOf": [
     {
       "if": {
-        "properties": { "strategy": { "const": "patch" } },
+        "properties": { "strategy": { "type": "string", "const": "patch" } },
         "required": ["strategy"]
       },
       "then": {

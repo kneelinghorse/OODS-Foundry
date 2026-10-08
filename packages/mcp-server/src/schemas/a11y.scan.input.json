@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://designlab.local/schemas/a11y.scan.input.json",
-  "title": "a11y.scan input",
+  "$id": "https://oods-foundry.com/schemas/a11y.scan.input.json",
+  "title": "a11y_scan input",
   "description": "Checks declared foreground/background pairs derived from shared component CSS against current built tokens for every registered brand and theme, including team brands. With a UiSchema, renders through the shared HTML renderer and checks document language/title, one main landmark, unique IDs, ARIA reference targets, control names/labels, image alternatives, chart SVG name/description, and heading names/order. Reports unresolved inherited surfaces, dynamic CSS, alpha compositing and OS colours as unmeasured. Does not check browser-computed colour/layout, keyboard/focus interaction or screen-reader behavior; no complete WCAG conformance claim.",
   "type": "object",
   "properties": {

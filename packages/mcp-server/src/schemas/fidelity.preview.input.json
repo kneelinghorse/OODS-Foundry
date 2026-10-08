@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://designlab.local/schemas/fidelity.preview.input.json",
-  "title": "Fidelity preview input",
+  "$id": "https://oods-foundry.com/schemas/fidelity.preview.input.json",
+  "title": "fidelity_preview input",
   "description": "Render OODS Foundry object relationships or composed component trees. Exactly one object, objects set, schemaRef, UiSchema, fixture or legacy manifest. Wireframes follow regions/components/field bindings; composition diagrams show containment. Named fixtures are packaged registry data.",
   "type": "object",
   "additionalProperties": false,
@@ -65,7 +65,8 @@
       "properties": {
         "entities": {
           "type": "array",
-          "description": "Object Catalog entities to render."
+          "description": "Object Catalog entities to render.",
+          "items": { "type": "object", "description": "One Object Catalog entity." }
         }
       }
     },
@@ -134,7 +135,7 @@
     "schemaRef": {
       "type": "string",
       "minLength": 1,
-      "description": "Cached UiSchema from design.compose or schema load; missing/expired refs return a typed error."
+      "description": "Cached UiSchema from design_compose or schema load; missing/expired refs return a typed error."
     },
     "context": {
       "type": "string",

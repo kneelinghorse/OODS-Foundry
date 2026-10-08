@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://designlab.local/schemas/brand.intake.input.json",
-  "title": "brand.intake input",
+  "$id": "https://oods-foundry.com/schemas/brand.intake.input.json",
+  "title": "brand_create input",
   "description": "derive reads a team's DTCG tokens or a shadcn CSS theme into a partial recipe with provenance, gaps and warnings, writing nothing. Create a brand from token values or a recipe. template returns every slot of a brand with its meaning and a starting value, or from a recipe the complete brand it gives, graded; validate checks the filled documents or a recipe and writes nothing; create writes a brand that passes into the brands folder and runs the token build. draft reads a local DTCG file, retains supported token names and light/dark modes, and reports slot evidence/fallbacks; show reviews the content-addressed draft; apply with accept:true validates and writes the whole reviewed brand atomically.",
   "type": "object",
   "required": ["action"],
@@ -11,6 +11,7 @@
   ],
   "properties": {
     "action": {
+      "type": "string",
       "enum": ["derive", "template", "validate", "create",
         "draft",
         "show",
@@ -21,11 +22,11 @@
   },
   "allOf": [
     {
-      "if": { "properties": { "action": { "const": "derive" } }, "required": ["action"] },
+      "if": { "properties": { "action": { "type": "string", "const": "derive" } }, "required": ["action"] },
       "then": {
         "type": "object", "oneOf": [{ "required": ["tokens"] }, { "required": ["css"] }, { "required": ["cssPath"] }], "additionalProperties": false,
         "properties": {
-          "action": { "const": "derive" },
+          "action": { "type": "string", "const": "derive" },
           "tokens": { "type": "object", "description": "A DTCG document with your own token names. Group $type is inherited; {group.token} aliases resolve inside the document." },
           "css": { "type": "string", "description": "A shadcn theme CSS entry, in place of tokens. Reads light :root/html custom properties in selector lists and nested blocks, plus @theme inline fonts; returns each value's source and gaps without running CSS imports or writing anything." },
           "cssPath": { "type": "string", "pattern": "^/[\\s\\S]*$", "description": "Absolute path to the shadcn theme CSS entry, in place of tokens or css. Read only." },
@@ -45,13 +46,13 @@
     },
     {
       "if": {
-        "properties": { "action": { "const": "template" } },
+        "properties": { "action": { "type": "string", "const": "template" } },
         "required": ["action"]
       },
       "then": {
         "type": "object",
         "properties": {
-          "action": { "const": "template" },
+          "action": { "type": "string", "const": "template" },
           "from": {
             "type": "object",
             "description": "Where the starting values come from: an existing brand (default A), optionally with one of the shipped presets over it; or a recipe, which gives the complete brand, graded.",
@@ -76,13 +77,13 @@
     },
     {
       "if": {
-        "properties": { "action": { "const": "validate" } },
+        "properties": { "action": { "type": "string", "const": "validate" } },
         "required": ["action"]
       },
       "then": {
         "type": "object",
         "properties": {
-          "action": { "const": "validate" },
+          "action": { "type": "string", "const": "validate" },
           "brand_id": {
             "type": "string",
             "minLength": 1,
@@ -106,13 +107,13 @@
     },
     {
       "if": {
-        "properties": { "action": { "const": "create" } },
+        "properties": { "action": { "type": "string", "const": "create" } },
         "required": ["action"]
       },
       "then": {
         "type": "object",
         "properties": {
-          "action": { "const": "create" },
+          "action": { "type": "string", "const": "create" },
           "brand_id": {
             "type": "string",
             "minLength": 1,
@@ -139,6 +140,7 @@
       "if": {
         "properties": {
           "action": {
+            "type": "string",
             "const": "draft"
           }
         },
@@ -151,6 +153,7 @@
         "additionalProperties": false,
         "properties": {
           "action": {
+            "type": "string",
             "const": "draft"
           },
           "brand_id": {
@@ -224,6 +227,7 @@
       "if": {
         "properties": {
           "action": {
+            "type": "string",
             "const": "show"
           }
         },
@@ -236,6 +240,7 @@
         "additionalProperties": false,
         "properties": {
           "action": {
+            "type": "string",
             "const": "show"
           },
           "draftId": {
@@ -252,6 +257,7 @@
       "if": {
         "properties": {
           "action": {
+            "type": "string",
             "const": "apply"
           }
         },
@@ -264,6 +270,7 @@
         "additionalProperties": false,
         "properties": {
           "action": {
+            "type": "string",
             "const": "apply"
           },
           "draftId": {
@@ -271,6 +278,7 @@
             "pattern": "^brand-[a-f0-9]{64}$"
           },
           "accept": {
+            "type": "boolean",
             "const": true
           }
         },
@@ -291,7 +299,7 @@
         "neutralHue": { "type": "number", "minimum": 0, "maximum": 360 },
         "neutralChroma": { "type": "number", "minimum": 0, "maximum": 0.03 },
         "accentHue": { "type": "number", "minimum": 0, "maximum": 360 },
-        "primary": { "enum": ["neutral", "accent"] },
+        "primary": { "type": "string", "enum": ["neutral", "accent"] },
         "radius": { "type": "number", "minimum": 0, "maximum": 16 },
         "font": { "type": "string", "minLength": 1, "maxLength": 64 },
         "fontMono": { "type": "string", "minLength": 1, "maxLength": 64 },

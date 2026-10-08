@@ -21,8 +21,8 @@
             "type": "array",
             "items": { "type": "string" }
           },
-          "visibility": { "enum": ["public", "internal"], "description": "public: a business object. internal: one of OODS Foundry's own non-business objects, listed only with includeInternal." },
-          "source": { "enum": ["shipped", "user"], "description": "shipped: OODS Foundry's own. user: from your folder." },
+          "visibility": { "type": "string", "enum": ["public", "internal"], "description": "public: a business object. internal: one of OODS Foundry's own non-business objects, listed only with includeInternal." },
+          "source": { "type": "string", "enum": ["shipped", "user"], "description": "shipped: OODS Foundry's own. user: from your folder." },
           "replaces": { "type": "string", "description": "The shipped file your object is used in place of." }
         },
         "required": ["name", "domain", "version", "maturity", "description", "traits", "fieldCount", "tags", "visibility", "source"],
@@ -58,8 +58,8 @@
         "type": "object",
         "description": "A file that was not used, or something about one that is, and why.",
         "properties": {
-          "kind": { "enum": ["malformed", "unnamed", "duplicate", "replaces-shipped", "shipped-name", "unknown-trait", "unreadable-folder"] },
-          "severity": { "enum": ["error", "notice"], "description": "error: the definition is not in use. notice: it is in use, and this is worth knowing." },
+          "kind": { "type": "string", "enum": ["malformed", "unnamed", "duplicate", "replaces-shipped", "shipped-name", "unknown-trait", "unreadable-folder"] },
+          "severity": { "type": "string", "enum": ["error", "notice"], "description": "error: the definition is not in use. notice: it is in use, and this is worth knowing." },
           "file": { "type": "string", "description": "A shipped file relative to the runtime root; a file of yours as an absolute path." },
           "name": { "type": "string" },
           "message": { "type": "string" }

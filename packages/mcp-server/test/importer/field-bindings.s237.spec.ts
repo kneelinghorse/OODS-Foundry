@@ -176,3 +176,11 @@ it('keeps authored string identities raw when the declared relationship has no l
   const bound = bindRecordSchema(result.schema, record);
   expect(bound.screens.flatMap(nodes).some(node => node.props?.text === record.sourceCaptureId)).toBe(true);
 });
+
+it('ships the hub contract the importer compiles beside IMPORTING-OBJECTS.md', () => {
+  // s239: the package's copy stayed at 0.8.0 while 0.9.0 and Sprint 237's field bindings changed only the runtime's, so
+  // 0.9.0 to 0.10.1 published, under the same $id, a hub schema that refused fieldBindings and the field annotations.
+  const root = path.resolve(import.meta.dirname, '../../../..');
+  expect(fs.readFileSync(path.join(root, 'packages/foundry/object-hub.schema.json'), 'utf8'))
+    .toBe(fs.readFileSync(path.join(root, 'schemas/import/object-hub.schema.json'), 'utf8'));
+});

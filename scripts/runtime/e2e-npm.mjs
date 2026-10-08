@@ -123,7 +123,7 @@ async function start(tarball, workDir, env, timeoutMs) {
   const startMs = Date.now() - began;
   client.notify("notifications/initialized");
   const { tools } = await client.request("tools/list", {});
-  return { client, initialized, tools, startMs };
+  return { client, initialized, tools, startMs, began };
 }
 
 /** The team's journey (s213-m07), run by this node binary under tsx so the floor run covers it too. */
@@ -173,16 +173,26 @@ export async function runNpmE2E({ tarball, workDir, out, libraryTarballs }) {
     // 0.10.1: serverInfo also carries the title, website and icon the registry entry declares.
     assert.deepEqual(first.initialized.serverInfo, { name: "oods-foundry-adapter", version: adapterVersion, title: "OODS Foundry", websiteUrl: "https://oods-foundry.com/", icons: [{ src: "https://oods-foundry.com/icon-512.png", mimeType: "image/png", sizes: ["512x512"] }] });
     assert.deepEqual(first.tools.map((tool) => tool.name), registry.auto.map((name) => surface[name].name), "the client lists the default surface with underscore names");
-    const [runtimeEntry, ...others] = fs.readdirSync(path.join(oodsHome, "runtime"));
+    // s239: the launcher answers initialize and tools/list while it unpacks, and tool calls wait for the server, so the
+    // unpack is awaited here on the first start's budget.
+    const runtimeRoot = path.join(oodsHome, "runtime");
+    const isUnpacked = () => fs.existsSync(runtimeRoot) && fs.readdirSync(runtimeRoot).some((entry) => fs.existsSync(path.join(runtimeRoot, entry, ".unpacked.json")));
+    while (!isUnpacked()) {
+      assert(Date.now() - first.began < FIRST_START_TIMEOUT_MS, "the first start did not unpack the runtime in time");
+      await new Promise((resolve) => setTimeout(resolve, 250));
+    }
+    const runtimeReadyMs = Date.now() - first.began;
+    const health = await first.client.callTool("health_check", {});
+    assert.match(first.client.stderrBuffer, /\[oods-foundry\] first start of .*: unpacking the runtime into .* \(once\)\./);
+    const [runtimeEntry, ...others] = fs.readdirSync(runtimeRoot);
     assert.equal(others.length, 0, "one unpacked runtime");
     assert.match(runtimeEntry, new RegExp(`^${packageManifest.version.replace(/\./g, "\\.")}-[0-9a-f]{12}$`));
     const runtimeDir = path.join(oodsHome, "runtime", runtimeEntry);
     assert.equal(readJson(path.join(runtimeDir, ".unpacked.json")).version, packageManifest.version);
-    assert.match(first.client.stderrBuffer, /\[oods-foundry\] first start of .*: unpacking the runtime into .* \(once\)\./);
     receipt.manifest = readJson(path.join(runtimeDir, RUNTIME_MANIFEST_FILE));
-    receipt.firstStart = { ms: first.startMs, runtime: path.relative(home, runtimeDir) };
+    receipt.firstStart = { ms: first.startMs, runtimeReadyMs, runtime: path.relative(home, runtimeDir) };
+    assert.deepEqual((await first.client.request("tools/list", {})).tools, first.tools, "the server lists what the first start answered before it ran");
 
-    const health = await first.client.callTool("health_check", {});
     assert.equal(health.status, "ok", JSON.stringify(health));
     assert.equal(health.server.version, readJson(path.join(REPO_ROOT, "package.json")).version, "health reports the release version");
 

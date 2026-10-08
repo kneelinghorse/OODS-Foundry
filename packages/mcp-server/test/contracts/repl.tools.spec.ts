@@ -18,10 +18,10 @@ const validateRenderOutput = ajv.compile(renderOutputSchema);
 describe('Ajv schema registration', () => {
   it('preloads sibling schemas for repl.render/repl.validate refs', () => {
     for (const id of [
-      'https://designlab.local/schemas/repl.render.input.json',
-      'https://designlab.local/schemas/repl.validate.input.json',
-      'https://designlab.local/schemas/repl.patch.json',
-      'https://designlab.local/schemas/repl.ui.schema.json'
+      'https://oods-foundry.com/schemas/repl.render.input.json',
+      'https://oods-foundry.com/schemas/repl.validate.input.json',
+      'https://oods-foundry.com/schemas/repl.patch.json',
+      'https://oods-foundry.com/schemas/repl.ui.schema.json'
     ]) {
       expect(ajv.getSchema(id)).toBeTruthy();
     }

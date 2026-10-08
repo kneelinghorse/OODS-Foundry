@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://designlab.local/schemas/map.output.json",
-  "title": "map output",
-  "description": "Grouped output for the map family. anyOf (NOT oneOf) of each per-action output body — per-action outputs share fields like status/etag and would match more than one branch, which would fail oneOf.",
+  "$id": "https://oods-foundry.com/schemas/map.output.json",
+  "title": "component_map output",
+  "description": "Grouped output for the map family. anyOf (not oneOf) of each per-action output body — per-action outputs share fields like status/etag and would match more than one branch, which would fail oneOf.",
   "anyOf": [
     { "$ref": "#/$defs/ApplyOutput" },
     { "$ref": "#/$defs/CreateOutput" },
@@ -110,6 +110,7 @@
           "additionalProperties": false,
           "properties": {
             "status": {
+              "type": "string",
               "enum": ["ok", "error"]
             },
             "etag": {
@@ -126,6 +127,7 @@
                 "additionalProperties": false,
                 "properties": {
                   "code": {
+                    "type": "string",
                     "const": "OODS-V219"
                   },
                   "message": { "type": "string" },
@@ -143,6 +145,7 @@
                   "index": { "type": "integer", "minimum": 0 },
                   "id": { "type": "string" },
                   "status": {
+                    "type": "string",
                     "enum": ["valid", "invalid"]
                   },
                   "applied": { "type": "boolean" },
@@ -161,6 +164,7 @@
                       "additionalProperties": false,
                       "properties": {
                         "code": {
+                          "type": "string",
                           "const": "OODS-V219"
                         },
                         "message": { "type": "string" },
@@ -376,7 +380,7 @@
       "properties": {
         "objectId": { "type": "string", "minLength": 1 },
         "name": { "type": "string", "minLength": 1 },
-        "action": { "const": "skip" },
+        "action": { "type": "string", "const": "skip" },
         "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
         "recommendedOodsTraits": {
           "type": "array",
@@ -412,7 +416,7 @@
         },
         "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
         "threshold": { "type": "number", "minimum": 0, "maximum": 1 },
-        "queueReason": { "const": "below_confidence" },
+        "queueReason": { "type": "string", "const": "below_confidence" },
         "recommendedOodsTraits": {
           "type": "array",
           "items": { "type": "string", "minLength": 1 },
@@ -430,7 +434,7 @@
       "properties": {
         "objectId": { "type": "string", "minLength": 1 },
         "name": { "type": "string", "minLength": 1 },
-        "action": { "const": "conflict" },
+        "action": { "type": "string", "const": "conflict" },
         "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
         "existingMapId": { "type": "string", "minLength": 1 },
         "reason": { "type": "string", "minLength": 1 }
@@ -490,6 +494,7 @@
       "type": "object",
       "properties": {
         "action": {
+          "type": "string",
           "enum": [
             "draft",
             "show",

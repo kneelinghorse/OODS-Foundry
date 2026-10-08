@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://designlab.local/schemas/map.create.output.json",
-  "title": "map.create output",
+  "$id": "https://oods-foundry.com/schemas/map.create.output.json",
+  "title": "component_map action=create output",
   "description": "The existing single mapping result, or the per-entry validation and application outcomes of one list.",
   "anyOf": [
     {
@@ -61,6 +61,7 @@
       "additionalProperties": false,
       "properties": {
         "status": {
+          "type": "string",
           "enum": ["ok", "error"]
         },
         "etag": {
@@ -79,6 +80,7 @@
             "additionalProperties": false,
             "properties": {
               "code": {
+                "type": "string",
                 "const": "OODS-V219"
               },
               "message": { "type": "string" },
@@ -99,6 +101,7 @@
               },
               "id": { "type": "string" },
               "status": {
+                "type": "string",
                 "enum": ["valid", "invalid"]
               },
               "applied": {
@@ -119,6 +122,7 @@
                   "additionalProperties": false,
                   "properties": {
                     "code": {
+                      "type": "string",
                       "const": "OODS-V219"
                     },
                     "message": { "type": "string" },

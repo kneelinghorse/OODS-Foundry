@@ -19,7 +19,22 @@ it('illustrates common string fields the way real records read', () => {
   expect(sampleValue(string(), 'memo', 0)).toBe('Example memo for record 1.');
   expect(sampleValue(string({ maxLength: 8 }), 'TripID', 0)).toBe('TRIP-001');
   expect(sampleValue(string({ maxLength: 6 }), 'AgencyID', 2)).toBe('AG-003');
-  expect(sampleValue(string(), 'subject', 0)).toBe('Subject 1');
+  // s239: the site's second report still found numbered labels ("Subject 3", "Handle 3") for fields it did not recognise.
+  expect(sampleValue(string(), 'subject', 0)).toBe('Quarterly review');
+  expect(sampleValue(string(), 'handle', 0)).toBe('ava.martin');
+  expect(sampleValue(string(), 'displayName', 1)).toBe('Ben Okafor');
+  expect(sampleValue(string(), 'jobTitle', 0)).toBe('Designer');
+  expect(sampleValue(string(), 'department', 2)).toBe('Operations');
+  expect(sampleValue(string(), 'category', 1)).toBe('Priority');
+  // A field the generator still cannot place keeps a numbered, distinct label rather than a guess.
+  expect(sampleValue(string(), 'widgetSpec', 0)).toBe('Widget spec 1');
+});
+
+it('dates an end, due or expiry field after the record start, not on the same day', () => {
+  const date = string({ format: 'date' });
+  expect(sampleValue(date, 'startDate', 0)).toBe('2026-01-01');
+  expect(sampleValue(date, 'endDate', 0)).toBe('2026-01-15');
+  expect(sampleValue(string({ format: 'date-time' }), 'due_at', 2)).toBe('2026-01-17T12:00:00Z');
 });
 
 it('illustrates amounts, ages and years with ordinary values inside the constraints', () => {

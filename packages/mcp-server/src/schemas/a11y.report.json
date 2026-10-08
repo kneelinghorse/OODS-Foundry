@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://designlab.local/schemas/a11y.report.json",
+  "$id": "https://oods-foundry.com/schemas/a11y.report.json",
   "title": "a11y scan report",
   "description": "Declared component CSS token-pair grades for every built brand/theme, plus optional static shared-renderer HTML checks. No browser-computed colour or complete WCAG conformance claim.",
   "type": "object",
@@ -59,6 +59,7 @@
           "minimum": 0
         },
         "complianceStatus": {
+          "type": "string",
           "enum": [
             "issues-found",
             "partial",
@@ -109,6 +110,7 @@
             "type": "boolean"
           },
           "status": {
+            "type": "string",
             "enum": [
               "pass",
               "fail",
@@ -184,6 +186,7 @@
             "additionalProperties": false
           },
           "contrastKind": {
+            "type": "string",
             "enum": [
               "text",
               "non-text"
@@ -294,6 +297,7 @@
                 "type": "string"
               },
               "severity": {
+                "type": "string",
                 "enum": [
                   "warning",
                   "error",

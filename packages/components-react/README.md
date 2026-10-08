@@ -32,4 +32,4 @@ Use one version of the OODS packages together. Apps that `@oods/foundry` generat
 
 ## License
 
-Apache License 2.0. See [LICENSE](https://cdn.jsdelivr.net/npm/@oods/components-react@0.10.1/LICENSE) and [NOTICE](https://cdn.jsdelivr.net/npm/@oods/components-react@0.10.1/NOTICE). Generated output belongs to its user; installed package dependencies retain their own licenses.
+Apache License 2.0. See [LICENSE](https://cdn.jsdelivr.net/npm/@oods/components-react@0.10.2/LICENSE) and [NOTICE](https://cdn.jsdelivr.net/npm/@oods/components-react@0.10.2/NOTICE). Generated output belongs to its user; installed package dependencies retain their own licenses.

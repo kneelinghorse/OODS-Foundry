@@ -2,6 +2,10 @@ import { sanitizeSchema } from './sanitize-schema.js';
 
 const retained = ['type', 'enum', 'const', 'default', 'required', 'minimum', 'maximum', 'minLength', 'maxLength', 'minItems', 'maxItems', 'pattern', 'format', 'additionalProperties'];
 const jsonTypes = ['object', 'array', 'string', 'number', 'boolean', 'null'];
+// s239: a client validator compiling the advertised schema knows only the JSON Schema formats; a custom one (oods-brand)
+// stops strict compilers, so it stays in the server's own validation and is not advertised.
+const standardFormats = new Set(['date-time', 'date', 'time', 'duration', 'email', 'idn-email', 'hostname', 'idn-hostname', 'ipv4', 'ipv6',
+  'uri', 'uri-reference', 'iri', 'iri-reference', 'uuid', 'uri-template', 'json-pointer', 'relative-json-pointer', 'regex']);
 const words = name => name.replace(/([a-z])([A-Z])/g, '$1 $2').replaceAll('_', ' ');
 const parameterDescriptions = {
   apply: 'Write on true; otherwise preview.', theme: 'Token theme.', options: 'Operation options.',
@@ -38,15 +42,30 @@ export function advertisedSchema(schema, readExternalSchema = () => undefined) {
     if (value.items) return ['array'];
     return jsonTypes;
   };
+  // The item types of every array form a referenced schema can take, so a collapsed reference still says what its arrays hold.
+  const itemTypes = (value, root, seen = new Set()) => {
+    if (!value || typeof value !== 'object') return [];
+    if (value.$ref) {
+      if (seen.has(value)) return [];
+      const { target, document } = resolve(value.$ref, root);
+      return itemTypes(target, document, new Set([...seen, value]));
+    }
+    const choices = value.oneOf ?? value.anyOf;
+    if (choices) return [...new Set(choices.flatMap(choice => itemTypes(choice, root, seen)))];
+    return value.items ? types(value.items, root, seen) : [];
+  };
   const sanitized = sanitizeSchema(schema, true, true, ref => {
     const { target, document } = resolve(ref, schema);
     const inferred = types(target, document);
+    const items = inferred.includes('array') ? itemTypes(target, document) : [];
     return { type: inferred.length === 1 ? inferred[0] : inferred,
-      description: target?.description ?? `Structured input; read the full schema (${ref}) for its contract.` };
+      description: target?.description ?? `Structured input; read the full schema (${ref}) for its contract.`,
+      ...(items.length && !items.includes('array') ? { items: { type: items.length === 1 ? items[0] : items } } : {}) };
   });
   function compact(value, name, depth) {
     if (!value || typeof value !== 'object' || Array.isArray(value)) return value;
     const result = Object.fromEntries(retained.filter(key => key in value).map(key => [key, value[key]]));
+    if (result.format !== undefined && !standardFormats.has(result.format)) delete result.format;
     const alternatives = value.oneOf ?? value.anyOf;
     const variants = alternatives?.map(item => compact(item, name, depth));
     result.type ??= variants ? [...new Set(variants.flatMap(variant => variant.type ?? jsonTypes))]
@@ -71,6 +90,11 @@ export function advertisedSchema(schema, readExternalSchema = () => undefined) {
       }
     }
     if (value.items) result.items = compact(value.items, `${name} item`, depth + 1);
+    // s239 (#2743): strict clients (VS Code, Copilot) reject an array type without items, so a union keeps its array
+    // variant's items and an unconstrained array says so explicitly.
+    if ([result.type].flat().includes('array') && result.items === undefined) {
+      result.items = variants?.find(variant => [variant.type].flat().includes('array') && variant.items)?.items ?? {};
+    }
     if (result.additionalProperties && typeof result.additionalProperties === 'object') {
       result.additionalProperties = compact(result.additionalProperties, `${name} entry`, depth + 1);
     }

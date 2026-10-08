@@ -102,7 +102,7 @@ describe('authored pattern translation (s195-m03)', () => {
     ['transforms', (spec: NormalizedVizSpec) => { spec.transforms = [{ type: 'filter', params: { field: 'headcount', value: 10 } }]; }, 'transforms:'],
     ['named datasets', (spec: NormalizedVizSpec) => { spec.datasets = { detail: [{ value: 10 }] }; }, 'datasets:'],
     ['mark data source', (spec: NormalizedVizSpec) => { spec.marks[0].from = 'detail'; }, 'marks.from:'],
-    ['external data', (spec: NormalizedVizSpec) => { spec.data = { url: 'https://example.invalid/data.json' }; }, 'data:'],
+    ['named data', (spec: NormalizedVizSpec) => { spec.data = { name: 'detail' }; }, 'data:'],
     ['unmapped mark option', (spec: NormalizedVizSpec) => { spec.marks[0].options = { inventedStyle: 'unmapped' }; }, 'marks.options.inventedStyle:'],
     ['unknown mark', (spec: NormalizedVizSpec) => { spec.marks[0].trait = 'MarkUnknown'; }, 'marks.trait:'],
   ] as const)('does not silently flatten newly authored %s into a known renderable id', (_label, change, reasonPrefix) => {
@@ -111,6 +111,12 @@ describe('authored pattern translation (s195-m03)', () => {
     const result = translatePattern(spec);
     expect(result.status).toBe('authoring-only');
     if (result.status === 'authoring-only') expect(result.reasons.some(reason => reason.startsWith(reasonPrefix))).toBe(true);
+  });
+
+  it('refuses external data as invalid IR before translating (s239: renderers never fetch a data url)', () => {
+    const spec = simple();
+    spec.data = { url: 'https://example.invalid/data.json' };
+    expect(() => translatePattern(spec)).toThrow(/^data\.url is not accepted/);
   });
 
   it('requires x/y and bounded rows before entering the public explicit path', () => {

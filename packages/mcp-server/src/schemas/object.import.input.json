@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "ObjectImportInput",
+  "title": "object_import input",
   "description": "Draft from local OpenAPI, JSON Schema, Postgres DDL/migrations, Prisma, dbt, OData or GraphQL files, inspect one staged draft, or explicitly accept a batch. No network access or code execution.",
   "oneOf": [
     {
@@ -11,6 +11,7 @@
       ],
       "properties": {
         "action": {
+          "type": "string",
           "const": "draft"
         },
         "source": {
@@ -82,6 +83,7 @@
       ],
       "properties": {
         "action": {
+          "type": "string",
           "const": "show"
         },
         "importId": {
@@ -105,6 +107,7 @@
       ],
       "properties": {
         "action": {
+          "type": "string",
           "const": "apply"
         },
         "importId": {

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://designlab.local/schemas/map.create.input.json",
-  "title": "map.create input",
+  "$id": "https://oods-foundry.com/schemas/map.create.input.json",
+  "title": "component_map action=create input",
   "description": "Create one mapping, or a checked list inline or from an absolute JSON file path. List writes are all or nothing.",
   "type": "object",
   "allOf": [
@@ -29,6 +29,7 @@
             "type": "array",
             "minItems": 1,
             "items": {
+              "type": "object",
               "description": "A single-create payload without action or apply; the handler checks every value against MappingEntry and returns OODS-V219 per-entry outcomes for invalid entries."
             },
             "description": "Create entries, each without apply. All entries are checked before one atomic write."
@@ -366,7 +367,7 @@
                     "required": ["type", "mapping"],
                     "additionalProperties": false,
                     "properties": {
-                      "type": { "const": "enum" },
+                      "type": { "type": "string", "const": "enum" },
                       "mapping": { "type": "object", "additionalProperties": { "type": "string" } }
                     }
                   },
@@ -375,7 +376,7 @@
                     "required": ["type", "trueValue", "falseValue"],
                     "additionalProperties": false,
                     "properties": {
-                      "type": { "const": "boolean_to_string" },
+                      "type": { "type": "string", "const": "boolean_to_string" },
                       "trueValue": { "type": "string" },
                       "falseValue": { "type": "string" }
                     }
@@ -385,7 +386,7 @@
                     "required": ["type", "pattern"],
                     "additionalProperties": false,
                     "properties": {
-                      "type": { "const": "template" },
+                      "type": { "type": "string", "const": "template" },
                       "pattern": { "type": "string" }
                     }
                   },
@@ -394,7 +395,7 @@
                     "required": ["type"],
                     "additionalProperties": false,
                     "properties": {
-                      "type": { "const": "identity" }
+                      "type": { "type": "string", "const": "identity" }
                     }
                   }
                 ],
@@ -420,7 +421,7 @@
         },
         "disambiguation_decisions": {
           "type": "array",
-          "description": "Draft v1.4.0-gated review-decision events to APPEND to the registry's top-level disambiguation_decisions[]. Additive stub only; does not gate mapping creation. Each entry uses the Stage1 disambiguation_decision shape.",
+          "description": "Draft v1.4.0-gated review-decision events to append to the registry's top-level disambiguation_decisions[]. Additive stub only; does not gate mapping creation. Each entry uses the Stage1 disambiguation_decision shape.",
           "items": {
             "type": "object",
             "required": ["decision_id", "decision_type", "scope", "status", "target_kind", "target_id", "selected_value", "rationale", "decided_at"],
@@ -456,13 +457,13 @@
         },
         "preferred_terms": {
           "type": "array",
-          "description": "Draft v1.4.0-gated canonical-term entities to APPEND to the registry's top-level preferred_terms[]. Each entry uses the Stage1 preferred_term entity shape.",
+          "description": "Draft v1.4.0-gated canonical-term entities to append to the registry's top-level preferred_terms[]. Each entry uses the Stage1 preferred_term entity shape.",
           "items": {
             "type": "object",
             "required": ["entity_type", "id", "slug", "label", "aliases", "scope"],
             "additionalProperties": false,
             "properties": {
-              "entity_type": { "const": "preferred_term" },
+              "entity_type": { "type": "string", "const": "preferred_term" },
               "id": { "type": "string", "minLength": 1 },
               "slug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
               "label": { "type": "string", "minLength": 1 },
@@ -476,13 +477,13 @@
         },
         "capabilities": {
           "type": "array",
-          "description": "Draft v1.4.0-gated first-class capability entities to APPEND to the registry's top-level capabilities[]. Each entry uses the Stage1 capability entity shape.",
+          "description": "Draft v1.4.0-gated first-class capability entities to append to the registry's top-level capabilities[]. Each entry uses the Stage1 capability entity shape.",
           "items": {
             "type": "object",
             "required": ["entity_type", "id", "slug", "name", "canonical_verb"],
             "additionalProperties": false,
             "properties": {
-              "entity_type": { "const": "capability" },
+              "entity_type": { "type": "string", "const": "capability" },
               "id": { "type": "string", "minLength": 1 },
               "slug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
               "name": { "type": "string", "minLength": 1 },

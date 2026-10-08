@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://designlab.local/schemas/component-mapping.schema.json",
+  "$id": "https://oods-foundry.com/schemas/component-mapping.schema.json",
   "title": "Component Mapping Schema",
   "description": "Version 2 mapping records: legacy external-to-trait annotations and optional validated OODS Foundry-to-team component substitutions, stored outside the runtime.",
   "type": "object",
@@ -417,6 +417,7 @@
           "additionalProperties": false,
           "properties": {
             "type": {
+              "type": "string",
               "const": "enum",
               "description": "Enum value mapping: source value lookup to target value."
             },
@@ -433,6 +434,7 @@
           "additionalProperties": false,
           "properties": {
             "type": {
+              "type": "string",
               "const": "boolean_to_string",
               "description": "Convert boolean to string representation."
             },
@@ -452,6 +454,7 @@
           "additionalProperties": false,
           "properties": {
             "type": {
+              "type": "string",
               "const": "template",
               "description": "String interpolation using {{value}} placeholder."
             },
@@ -467,6 +470,7 @@
           "additionalProperties": false,
           "properties": {
             "type": {
+              "type": "string",
               "const": "identity",
               "description": "Pass-through, no transformation."
             }
@@ -596,7 +600,7 @@
       "required": ["entity_type", "id", "slug", "label", "aliases", "scope"],
       "additionalProperties": false,
       "properties": {
-        "entity_type": { "const": "preferred_term" },
+        "entity_type": { "type": "string", "const": "preferred_term" },
         "id": { "type": "string", "minLength": 1 },
         "slug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
         "label": { "type": "string", "minLength": 1 },
@@ -618,7 +622,7 @@
       "required": ["entity_type", "id", "slug", "name", "canonical_verb"],
       "additionalProperties": false,
       "properties": {
-        "entity_type": { "const": "capability" },
+        "entity_type": { "type": "string", "const": "capability" },
         "id": { "type": "string", "minLength": 1 },
         "slug": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
         "name": { "type": "string", "minLength": 1 },

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://designlab.local/schemas/stage1-preferred-term-entity.json",
+  "$id": "https://oods-foundry.com/schemas/stage1-preferred-term-entity.json",
   "title": "Stage1 preferred term entity",
   "description": "Draft v1.4.0-gated OODS registry entity for promoted disambiguation/canonical-term decisions. Additive stub only.",
   "type": "object",
@@ -8,6 +8,7 @@
   "additionalProperties": false,
   "properties": {
     "entity_type": {
+      "type": "string",
       "const": "preferred_term"
     },
     "id": {

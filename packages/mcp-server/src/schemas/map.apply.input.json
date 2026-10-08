@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://designlab.local/schemas/map.apply.input.json",
-  "title": "map.apply input",
+  "$id": "https://oods-foundry.com/schemas/map.apply.input.json",
+  "title": "component_map action=apply input",
   "description": "Apply Stage1 reconciliation verdicts to the component-mapping registry. Accepts exactly one of inline report or reportPath.",
   "type": "object",
   "additionalProperties": false,
@@ -145,7 +145,7 @@
         },
         "projection_variants": {
           "type": "array",
-          "description": "Stage1 v1.5.0 cross-surface identity variants. When present on a candidate_object, map.apply threads them through to the persisted mapping on both create and patch verdicts.",
+          "description": "Stage1 v1.5.0 cross-surface identity variants. When present on a candidate_object, component_map action=apply threads them through to the persisted mapping on both create and patch verdicts.",
           "items": {
             "type": "object",
             "required": ["id", "surface"],
@@ -171,17 +171,17 @@
       },
       "allOf": [
         {
-          "if": { "properties": { "action": { "const": "patch" } } },
+          "if": { "properties": { "action": { "type": "string", "const": "patch" } } },
           "then": {
             "required": ["existing_map_id", "diff", "verdict_reasoning"]
           }
         },
         {
-          "if": { "properties": { "action": { "const": "skip" } } },
+          "if": { "properties": { "action": { "type": "string", "const": "skip" } } },
           "then": { "required": ["existing_map_id", "verdict_reasoning"] }
         },
         {
-          "if": { "properties": { "action": { "const": "conflict" } } },
+          "if": { "properties": { "action": { "type": "string", "const": "conflict" } } },
           "then": { "required": ["existing_map_id", "verdict_reasoning"] }
         }
       ]
@@ -227,7 +227,7 @@
         "decided_at"
       ],
       "additionalProperties": false,
-      "description": "Draft v1.4.0-gated review-decision payload. OODS accepts the shape but current map.apply handlers ignore it.",
+      "description": "Draft v1.4.0-gated review-decision payload. OODS accepts the shape but current component_map action=apply handlers ignore it.",
       "properties": {
         "decision_id": { "type": "string", "minLength": 1 },
         "decision_type": {
@@ -371,7 +371,7 @@
       ],
       "additionalProperties": false,
       "properties": {
-        "kind": { "const": "reconciliation_report" },
+        "kind": { "type": "string", "const": "reconciliation_report" },
         "schema_version": { "type": "string", "minLength": 1 },
         "generated_at": { "type": "string", "format": "date-time" },
         "target": {

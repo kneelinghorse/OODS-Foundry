@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "structuredData.fetch.output.json",
-  "title": "structuredData.fetch output",
+  "title": "structured_data_fetch output",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -112,6 +112,18 @@
     "payload": {
       "type": "object",
       "description": "Payload contents when payloadIncluded=true."
+    },
+    "payloadFile": {
+      "type": "object",
+      "description": "Where the payload was written instead of being returned (payloadMode file, or a sized call over 100,000 characters); the directory is beside the saved-schema store.",
+      "required": ["mode", "directory", "bytes", "files"],
+      "properties": {
+        "mode": { "type": "string", "const": "file" },
+        "directory": { "type": "string" },
+        "bytes": { "type": "integer", "minimum": 0 },
+        "files": { "type": "array", "items": { "type": "object", "required": ["path", "bytes", "sha256"], "properties": { "path": { "type": "string" }, "bytes": { "type": "integer", "minimum": 0 }, "sha256": { "type": "string" } }, "additionalProperties": false } }
+      },
+      "additionalProperties": false
     },
     "availableVersions": {
       "type": "array",

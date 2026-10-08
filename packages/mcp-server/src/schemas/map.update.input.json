@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://designlab.local/schemas/map.update.input.json",
-  "title": "map.update input",
+  "$id": "https://oods-foundry.com/schemas/map.update.input.json",
+  "title": "component_map action=update input",
   "description": "Partially update an existing component-to-trait mapping.",
   "type": "object",
   "required": ["id", "updates"],
@@ -307,7 +307,7 @@
                     "required": ["type", "mapping"],
                     "additionalProperties": false,
                     "properties": {
-                      "type": { "const": "enum" },
+                      "type": { "type": "string", "const": "enum" },
                       "mapping": { "type": "object", "additionalProperties": { "type": "string" } }
                     }
                   },
@@ -316,7 +316,7 @@
                     "required": ["type", "trueValue", "falseValue"],
                     "additionalProperties": false,
                     "properties": {
-                      "type": { "const": "boolean_to_string" },
+                      "type": { "type": "string", "const": "boolean_to_string" },
                       "trueValue": { "type": "string" },
                       "falseValue": { "type": "string" }
                     }
@@ -326,7 +326,7 @@
                     "required": ["type", "pattern"],
                     "additionalProperties": false,
                     "properties": {
-                      "type": { "const": "template" },
+                      "type": { "type": "string", "const": "template" },
                       "pattern": { "type": "string" }
                     }
                   },
@@ -335,7 +335,7 @@
                     "required": ["type"],
                     "additionalProperties": false,
                     "properties": {
-                      "type": { "const": "identity" }
+                      "type": { "type": "string", "const": "identity" }
                     }
                   }
                 ],

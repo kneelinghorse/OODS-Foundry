@@ -1,14 +1,14 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://designlab.local/schemas/code.generate.output.json",
-  "title": "Code export output",
+  "$id": "https://oods-foundry.com/schemas/code.generate.output.json",
+  "title": "code_generate output",
   "description": "Versioned generated artifact from a UiSchema. Legacy single-source fields remain as deprecated compatibility aliases.",
   "type": "object",
   "required": ["status", "framework", "code", "fileExtension", "imports", "warnings", "validationReceipt"],
   "allOf": [
     {
       "if": {
-        "properties": { "status": { "const": "ok" } },
+        "properties": { "status": { "type": "string", "const": "ok" } },
         "required": ["status"]
       },
       "then": {
@@ -19,7 +19,7 @@
               { "$ref": "#/$defs/buildChecksCompleted" },
               {
                 "if": {
-                  "properties": { "profile": { "const": "release" } },
+                  "properties": { "profile": { "type": "string", "const": "release" } },
                   "required": ["profile"]
                 },
                 "then": { "$ref": "#/$defs/releaseSuccessReceipt" }
@@ -32,7 +32,7 @@
     }
   ],
   "properties": {
-    "componentContracts": {"type": "array", "description": "Advisory shared-scenario component reports. Each declared obligation is met, unmet or not checked with a reason; browser availability never blocks generation.", "items": {"type": "object", "required": ["schemaVersion", "framework", "mappingId", "component", "source", "contractVersion", "scenarioId", "obligations", "summary"], "additionalProperties": false, "properties": {"schemaVersion": {"const": "1"}, "framework": {"enum": ["react", "vue"]}, "mappingId": {"type": "string"}, "component": {"type": "string"}, "contractVersion": {"type": "string"}, "scenarioId": {"type": ["string", "null"]}, "source": {"type": "object", "required": ["export"], "additionalProperties": false, "properties": {"package": {"type": "string"}, "export": {"type": "string"}, "version": {"type": "string"}, "packageContentHash": {"type": "string"}, "shadcn": {"type": "object", "additionalProperties": false, "required": ["module", "file", "closureHash"], "properties": {"framework": {"enum": ["react", "vue"]}, "base": {"enum": ["radix", "base", "reka"]}, "style": {"type": "string"}, "themeRequirement": {"type": "string"}, "module": {"type": "string"}, "file": {"type": "string"}, "closureHash": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"}}}}, "oneOf": [{"required": ["package", "version"], "not": {"required": ["shadcn"]}}, {"required": ["shadcn"], "not": {"anyOf": [{"required": ["package"]}, {"required": ["version"]}]}}]}, "checkedAt": {"type": "string"}, "browser": {"type": "string"}, "adapterContentHash": {"type": "string"}, "contractContentHash": {"type": "string"}, "obligations": {"type": "array", "items": {"type": "object", "required": ["id", "requirement", "status", "reason"], "additionalProperties": false, "properties": {"id": {"type": "string"}, "requirement": {"type": "string"}, "status": {"enum": ["met", "unmet", "not-checked"]}, "reason": {"type": "string", "minLength": 1}}}}, "summary": {"type": "object", "required": ["met", "unmet", "not-checked"], "additionalProperties": false, "properties": {"met": {"type": "integer", "minimum": 0}, "unmet": {"type": "integer", "minimum": 0}, "not-checked": {"type": "integer", "minimum": 0}}}}}},
+    "componentContracts": {"type": "array", "description": "Advisory shared-scenario component reports. Each declared obligation is met, unmet or not checked with a reason; browser availability never blocks generation.", "items": {"type": "object", "required": ["schemaVersion", "framework", "mappingId", "component", "source", "contractVersion", "scenarioId", "obligations", "summary"], "additionalProperties": false, "properties": {"schemaVersion": {"type": "string", "const": "1"}, "framework": {"type": "string", "enum": ["react", "vue"]}, "mappingId": {"type": "string"}, "component": {"type": "string"}, "contractVersion": {"type": "string"}, "scenarioId": {"type": ["string", "null"]}, "source": {"type": "object", "required": ["export"], "additionalProperties": false, "properties": {"package": {"type": "string"}, "export": {"type": "string"}, "version": {"type": "string"}, "packageContentHash": {"type": "string"}, "shadcn": {"type": "object", "additionalProperties": false, "required": ["module", "file", "closureHash"], "properties": {"framework": {"type": "string", "enum": ["react", "vue"]}, "base": {"type": "string", "enum": ["radix", "base", "reka"]}, "style": {"type": "string"}, "themeRequirement": {"type": "string"}, "module": {"type": "string"}, "file": {"type": "string"}, "closureHash": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"}}}}, "oneOf": [{"required": ["package", "version"], "not": {"required": ["shadcn"]}}, {"required": ["shadcn"], "not": {"anyOf": [{"required": ["package"]}, {"required": ["version"]}]}}]}, "checkedAt": {"type": "string"}, "browser": {"type": "string"}, "adapterContentHash": {"type": "string"}, "contractContentHash": {"type": "string"}, "obligations": {"type": "array", "items": {"type": "object", "required": ["id", "requirement", "status", "reason"], "additionalProperties": false, "properties": {"id": {"type": "string"}, "requirement": {"type": "string"}, "status": {"type": "string", "enum": ["met", "unmet", "not-checked"]}, "reason": {"type": "string", "minLength": 1}}}}, "summary": {"type": "object", "required": ["met", "unmet", "not-checked"], "additionalProperties": false, "properties": {"met": {"type": "integer", "minimum": 0}, "unmet": {"type": "integer", "minimum": 0}, "not-checked": {"type": "integer", "minimum": 0}}}}}},
     "status": {
       "type": "string",
       "enum": ["ok", "error"],
@@ -52,7 +52,7 @@
       "description": "payloadMode file: where the large output was written instead of being returned inline; the directory is beside the saved-schema store (<store>/../payloads/<tool>-<digest>).",
       "required": ["mode", "directory", "bytes", "files"],
       "properties": {
-        "mode": { "const": "file" },
+        "mode": { "type": "string", "const": "file" },
         "directory": { "type": "string", "description": "Absolute directory holding the written files." },
         "bytes": { "type": "integer", "minimum": 0, "description": "Total bytes written." },
         "files": {
@@ -144,8 +144,9 @@
       "additionalProperties": false,
       "required": ["schemaVersion", "framework", "files", "dependencies", "actions", "contentHash"],
       "properties": {
-        "substitutions": {"type": "array", "items": {"type": "object", "required": ["mappingId", "component", "source"], "additionalProperties": false, "properties": {"packageContentHash": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"}, "mappingId": {"type": "string", "minLength": 1}, "component": {"type": "string"}, "source": {"type": "object", "required": ["export"], "additionalProperties": false, "properties": {"package": {"type": "string", "minLength": 1}, "export": {"type": "string", "pattern": "^[A-Za-z_$][\\w$]*$"}, "passthrough": {"type": "boolean", "default": true, "description": "Unlisted OODS Foundry props keep their names. False drops unlisted optional props; required props must be translated."}, "props": {"type": "object", "additionalProperties": {"type": "object", "required": ["name"], "additionalProperties": false, "properties": {"name": {"type": "string", "pattern": "^[A-Za-z_$][\\w$]*$"}, "values": {"type": "object", "additionalProperties": {"type": ["string", "number", "boolean", "null"]}}}}, "description": "OODS Foundry prop to team prop, with optional scalar value map; values not in the map are preserved. Children, slots and event bindings keep their framework conventions."}, "version": {"type": "string", "pattern": "^(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$", "description": "Exact team package version; code generation needs this or an installed package manifest."}, "shadcn": {"type": "object", "additionalProperties": false, "required": ["module", "file", "closureHash", "css", "files", "hashFiles", "paths", "dependencies", "imports"], "properties": {"framework": {"enum": ["react", "vue"]}, "base": {"enum": ["radix", "base", "reka"]}, "style": {"type": "string"}, "themeRequirement": {"type": "string"}, "module": {"type": "string"}, "file": {"type": "string"}, "closureHash": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"}, "css": {"type": "string"}, "files": {"type": "array", "items": {"type": "string"}}, "hashFiles": {"type": "array", "items": {"type": "string"}}, "skipLibCheck": {"type": "boolean"}, "paths": {"type": "object", "additionalProperties": {"type": "array", "items": {"type": "string"}}}, "dependencies": {"type": "object", "additionalProperties": {"type": "string"}}, "imports": {"type": "array", "items": {"type": "string"}}}}}, "oneOf": [{"required": ["package", "version"], "not": {"required": ["shadcn"]}}, {"required": ["shadcn"], "not": {"anyOf": [{"required": ["package"]}, {"required": ["version"]}]}}]}}}},
+        "substitutions": {"type": "array", "items": {"type": "object", "required": ["mappingId", "component", "source"], "additionalProperties": false, "properties": {"packageContentHash": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"}, "mappingId": {"type": "string", "minLength": 1}, "component": {"type": "string"}, "source": {"type": "object", "required": ["export"], "additionalProperties": false, "properties": {"package": {"type": "string", "minLength": 1}, "export": {"type": "string", "pattern": "^[A-Za-z_$][\\w$]*$"}, "passthrough": {"type": "boolean", "default": true, "description": "Unlisted OODS Foundry props keep their names. False drops unlisted optional props; required props must be translated."}, "props": {"type": "object", "additionalProperties": {"type": "object", "required": ["name"], "additionalProperties": false, "properties": {"name": {"type": "string", "pattern": "^[A-Za-z_$][\\w$]*$"}, "values": {"type": "object", "additionalProperties": {"type": ["string", "number", "boolean", "null"]}}}}, "description": "OODS Foundry prop to team prop, with optional scalar value map; values not in the map are preserved. Children, slots and event bindings keep their framework conventions."}, "version": {"type": "string", "pattern": "^(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$", "description": "Exact team package version; code generation needs this or an installed package manifest."}, "shadcn": {"type": "object", "additionalProperties": false, "required": ["module", "file", "closureHash", "css", "files", "hashFiles", "paths", "dependencies", "imports"], "properties": {"framework": {"type": "string", "enum": ["react", "vue"]}, "base": {"type": "string", "enum": ["radix", "base", "reka"]}, "style": {"type": "string"}, "themeRequirement": {"type": "string"}, "module": {"type": "string"}, "file": {"type": "string"}, "closureHash": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"}, "css": {"type": "string"}, "files": {"type": "array", "items": {"type": "string"}}, "hashFiles": {"type": "array", "items": {"type": "string"}}, "skipLibCheck": {"type": "boolean"}, "paths": {"type": "object", "additionalProperties": {"type": "array", "items": {"type": "string"}}}, "dependencies": {"type": "object", "additionalProperties": {"type": "string"}}, "imports": {"type": "array", "items": {"type": "string"}}}}}, "oneOf": [{"required": ["package", "version"], "not": {"required": ["shadcn"]}}, {"required": ["shadcn"], "not": {"anyOf": [{"required": ["package"]}, {"required": ["version"]}]}}]}}}},
         "schemaVersion": {
+          "type": "string",
           "const": "1.0.0",
           "description": "Version of the generated artifact envelope contract."
         },
@@ -184,7 +185,7 @@
           "description": "Safe relative POSIX path within the generated artifact."
         },
         "contents": { "type": "string" },
-        "encoding": { "const": "base64", "description": "Binary contents are base64; omitted for UTF-8 text. File contentHash hashes the serialized contents; payload file receipts hash the decoded bytes." },
+        "encoding": { "type": "string", "const": "base64", "description": "Binary contents are base64; omitted for UTF-8 text. File contentHash hashes the serialized contents; payload file receipts hash the decoded bytes." },
         "contentHash": { "$ref": "#/$defs/contentHash" }
       }
     },
@@ -233,13 +234,14 @@
       "type": "object",
       "additionalProperties": false,
       "allOf": [
-        { "if": { "properties": { "profile": { "const": "release" } }, "required": ["profile"] }, "then": { "required": ["evidenceVerification"] } },
+        { "if": { "properties": { "profile": { "type": "string", "const": "release" } }, "required": ["profile"] }, "then": { "required": ["evidenceVerification"] } },
         { "$ref": "#/$defs/validationReceiptPartition" },
         { "$ref": "#/$defs/validationProfilePolicy" }
       ],
       "required": ["profile", "defaulted", "rationale", "axes", "checks", "notChecked", "evidence"],
       "properties": {
         "evidenceVerification": {
+          "type": "string",
           "const": "file-verified-not-re-executed",
           "description": "Release evidence references are format-checked and bound to the generated artifact hash, not independently re-executed."
         },
@@ -337,76 +339,76 @@
       "type": "object",
       "allOf": [
         { "oneOf": [
-          { "properties": { "checks": { "contains": { "const": "schema-structure" } } } },
-          { "properties": { "notChecked": { "contains": { "const": "schema-structure" } } } }
+          { "properties": { "checks": { "contains": { "type": "string", "const": "schema-structure" } } } },
+          { "properties": { "notChecked": { "contains": { "type": "string", "const": "schema-structure" } } } }
         ] },
         { "oneOf": [
-          { "properties": { "checks": { "contains": { "const": "component-registry" } } } },
-          { "properties": { "notChecked": { "contains": { "const": "component-registry" } } } }
+          { "properties": { "checks": { "contains": { "type": "string", "const": "component-registry" } } } },
+          { "properties": { "notChecked": { "contains": { "type": "string", "const": "component-registry" } } } }
         ] },
         { "oneOf": [
-          { "properties": { "checks": { "contains": { "const": "state-contract" } } } },
-          { "properties": { "notChecked": { "contains": { "const": "state-contract" } } } }
+          { "properties": { "checks": { "contains": { "type": "string", "const": "state-contract" } } } },
+          { "properties": { "notChecked": { "contains": { "type": "string", "const": "state-contract" } } } }
         ] },
         { "oneOf": [
-          { "properties": { "checks": { "contains": { "const": "target-readiness" } } } },
-          { "properties": { "notChecked": { "contains": { "const": "target-readiness" } } } }
+          { "properties": { "checks": { "contains": { "type": "string", "const": "target-readiness" } } } },
+          { "properties": { "notChecked": { "contains": { "type": "string", "const": "target-readiness" } } } }
         ] },
         { "oneOf": [
-          { "properties": { "checks": { "contains": { "const": "normalization-fidelity" } } } },
-          { "properties": { "notChecked": { "contains": { "const": "normalization-fidelity" } } } }
+          { "properties": { "checks": { "contains": { "type": "string", "const": "normalization-fidelity" } } } },
+          { "properties": { "notChecked": { "contains": { "type": "string", "const": "normalization-fidelity" } } } }
         ] },
         { "oneOf": [
-          { "properties": { "checks": { "contains": { "const": "binding-contract" } } } },
-          { "properties": { "notChecked": { "contains": { "const": "binding-contract" } } } }
+          { "properties": { "checks": { "contains": { "type": "string", "const": "binding-contract" } } } },
+          { "properties": { "notChecked": { "contains": { "type": "string", "const": "binding-contract" } } } }
         ] },
         { "oneOf": [
-          { "properties": { "checks": { "contains": { "const": "props-contract" } } } },
-          { "properties": { "notChecked": { "contains": { "const": "props-contract" } } } }
+          { "properties": { "checks": { "contains": { "type": "string", "const": "props-contract" } } } },
+          { "properties": { "notChecked": { "contains": { "type": "string", "const": "props-contract" } } } }
         ] },
         { "oneOf": [
-          { "properties": { "checks": { "contains": { "const": "slots-contract" } } } },
-          { "properties": { "notChecked": { "contains": { "const": "slots-contract" } } } }
+          { "properties": { "checks": { "contains": { "type": "string", "const": "slots-contract" } } } },
+          { "properties": { "notChecked": { "contains": { "type": "string", "const": "slots-contract" } } } }
         ] },
         { "oneOf": [
-          { "properties": { "checks": { "contains": { "const": "events-contract" } } } },
-          { "properties": { "notChecked": { "contains": { "const": "events-contract" } } } }
+          { "properties": { "checks": { "contains": { "type": "string", "const": "events-contract" } } } },
+          { "properties": { "notChecked": { "contains": { "type": "string", "const": "events-contract" } } } }
         ] },
         { "oneOf": [
-          { "properties": { "checks": { "contains": { "const": "dependency-closure" } } } },
-          { "properties": { "notChecked": { "contains": { "const": "dependency-closure" } } } }
+          { "properties": { "checks": { "contains": { "type": "string", "const": "dependency-closure" } } } },
+          { "properties": { "notChecked": { "contains": { "type": "string", "const": "dependency-closure" } } } }
         ] },
         { "oneOf": [
-          { "properties": { "checks": { "contains": { "const": "fallback-policy" } } } },
-          { "properties": { "notChecked": { "contains": { "const": "fallback-policy" } } } }
+          { "properties": { "checks": { "contains": { "type": "string", "const": "fallback-policy" } } } },
+          { "properties": { "notChecked": { "contains": { "type": "string", "const": "fallback-policy" } } } }
         ] },
         { "oneOf": [
-          { "properties": { "checks": { "contains": { "const": "rendered-evidence" } } } },
-          { "properties": { "notChecked": { "contains": { "const": "rendered-evidence" } } } }
+          { "properties": { "checks": { "contains": { "type": "string", "const": "rendered-evidence" } } } },
+          { "properties": { "notChecked": { "contains": { "type": "string", "const": "rendered-evidence" } } } }
         ] },
         { "oneOf": [
-          { "properties": { "checks": { "contains": { "const": "interaction-evidence" } } } },
-          { "properties": { "notChecked": { "contains": { "const": "interaction-evidence" } } } }
+          { "properties": { "checks": { "contains": { "type": "string", "const": "interaction-evidence" } } } },
+          { "properties": { "notChecked": { "contains": { "type": "string", "const": "interaction-evidence" } } } }
         ] },
         { "oneOf": [
-          { "properties": { "checks": { "contains": { "const": "accessibility-evidence" } } } },
-          { "properties": { "notChecked": { "contains": { "const": "accessibility-evidence" } } } }
+          { "properties": { "checks": { "contains": { "type": "string", "const": "accessibility-evidence" } } } },
+          { "properties": { "notChecked": { "contains": { "type": "string", "const": "accessibility-evidence" } } } }
         ] },
         { "oneOf": [
-          { "properties": { "checks": { "contains": { "const": "theme-evidence" } } } },
-          { "properties": { "notChecked": { "contains": { "const": "theme-evidence" } } } }
+          { "properties": { "checks": { "contains": { "type": "string", "const": "theme-evidence" } } } },
+          { "properties": { "notChecked": { "contains": { "type": "string", "const": "theme-evidence" } } } }
         ] },
         { "oneOf": [
-          { "properties": { "checks": { "contains": { "const": "determinism-evidence" } } } },
-          { "properties": { "notChecked": { "contains": { "const": "determinism-evidence" } } } }
+          { "properties": { "checks": { "contains": { "type": "string", "const": "determinism-evidence" } } } },
+          { "properties": { "notChecked": { "contains": { "type": "string", "const": "determinism-evidence" } } } }
         ] },
         { "oneOf": [
-          { "properties": { "checks": { "contains": { "const": "performance-evidence" } } } },
-          { "properties": { "notChecked": { "contains": { "const": "performance-evidence" } } } }
+          { "properties": { "checks": { "contains": { "type": "string", "const": "performance-evidence" } } } },
+          { "properties": { "notChecked": { "contains": { "type": "string", "const": "performance-evidence" } } } }
         ] },
         { "oneOf": [
-          { "properties": { "checks": { "contains": { "const": "certification-evidence" } } } },
-          { "properties": { "notChecked": { "contains": { "const": "certification-evidence" } } } }
+          { "properties": { "checks": { "contains": { "type": "string", "const": "certification-evidence" } } } },
+          { "properties": { "notChecked": { "contains": { "type": "string", "const": "certification-evidence" } } } }
         ] }
       ]
     },
@@ -414,54 +416,55 @@
       "type": "object",
       "allOf": [
         {
-          "if": { "properties": { "profile": { "const": "draft" } }, "required": ["profile"] },
+          "if": { "properties": { "profile": { "type": "string", "const": "draft" } }, "required": ["profile"] },
           "then": {
             "properties": {
-              "rationale": { "const": "Draft reports target and fallback gaps without claiming a runnable artifact." },
+              "rationale": { "type": "string", "const": "Draft reports target and fallback gaps without claiming a runnable artifact." },
               "axes": {
                 "properties": {
-                  "scope": { "const": "structural" },
-                  "enforcement": { "const": "advisory" },
-                  "fallback": { "const": "visible" }
+                  "scope": { "type": "string", "const": "structural" },
+                  "enforcement": { "type": "string", "const": "advisory" },
+                  "fallback": { "type": "string", "const": "visible" }
                 }
               },
-              "evidence": { "properties": { "required": { "const": [] } } }
+              "evidence": { "properties": { "required": { "type": "array", "const": [] } } }
             }
           }
         },
         {
-          "if": { "properties": { "profile": { "const": "build" } }, "required": ["profile"] },
+          "if": { "properties": { "profile": { "type": "string", "const": "build" } }, "required": ["profile"] },
           "then": {
             "properties": {
-              "rationale": { "const": "Build is the default blocking gate: target, bindings, dependencies and fallbacks must resolve under static checks; the static gate does not install or run the generated application." },
+              "rationale": { "type": "string", "const": "Build is the default blocking gate: target, bindings, dependencies and fallbacks must resolve under static checks; the static gate does not install or run the generated application." },
               "axes": {
                 "properties": {
-                  "scope": { "const": "generated-artifact" },
-                  "enforcement": { "const": "blocking" },
-                  "fallback": { "const": "forbidden" }
+                  "scope": { "type": "string", "const": "generated-artifact" },
+                  "enforcement": { "type": "string", "const": "blocking" },
+                  "fallback": { "type": "string", "const": "forbidden" }
                 }
               },
-              "evidence": { "properties": { "required": { "const": [] } } }
+              "evidence": { "properties": { "required": { "type": "array", "const": [] } } }
             }
           }
         },
         {
-          "if": { "properties": { "profile": { "const": "release" } }, "required": ["profile"] },
+          "if": { "properties": { "profile": { "type": "string", "const": "release" } }, "required": ["profile"] },
           "then": {
             "properties": {
               "rationale": {
+                "type": "string",
                 "const": "Release adds six local JSON evidence files with verified byte hashes, passed status and artifact binding to the build gate, and records server-owned certification as not applicable for generated UI targets."
               },
               "axes": {
                 "properties": {
-                  "scope": { "const": "release-evidence" },
-                  "enforcement": { "const": "blocking" },
-                  "fallback": { "const": "forbidden" }
+                  "scope": { "type": "string", "const": "release-evidence" },
+                  "enforcement": { "type": "string", "const": "blocking" },
+                  "fallback": { "type": "string", "const": "forbidden" }
                 }
               },
               "evidence": {
                 "properties": {
-                  "required": { "const": ["rendered", "interaction", "accessibility", "theme", "determinism", "performance"] }
+                  "required": { "type": "array", "const": ["rendered", "interaction", "accessibility", "theme", "determinism", "performance"] }
                 }
               }
             }
@@ -474,16 +477,16 @@
       "properties": {
         "checks": {
           "allOf": [
-            { "contains": { "const": "schema-structure" } },
-            { "contains": { "const": "component-registry" } },
-            { "contains": { "const": "state-contract" } },
-            { "contains": { "const": "target-readiness" } },
-            { "contains": { "const": "normalization-fidelity" } },
-            { "contains": { "const": "binding-contract" } },
-            { "contains": { "const": "props-contract" } },
-            { "contains": { "const": "slots-contract" } },
-            { "contains": { "const": "events-contract" } },
-            { "contains": { "const": "dependency-closure" } }
+            { "contains": { "type": "string", "const": "schema-structure" } },
+            { "contains": { "type": "string", "const": "component-registry" } },
+            { "contains": { "type": "string", "const": "state-contract" } },
+            { "contains": { "type": "string", "const": "target-readiness" } },
+            { "contains": { "type": "string", "const": "normalization-fidelity" } },
+            { "contains": { "type": "string", "const": "binding-contract" } },
+            { "contains": { "type": "string", "const": "props-contract" } },
+            { "contains": { "type": "string", "const": "slots-contract" } },
+            { "contains": { "type": "string", "const": "events-contract" } },
+            { "contains": { "type": "string", "const": "dependency-closure" } }
           ]
         }
       },
@@ -496,6 +499,7 @@
                   "target": {
                     "properties": {
                       "resolved": {
+                        "type": "string",
                         "const": "html"
                       }
                     }
@@ -508,6 +512,7 @@
             "properties": {
               "checks": {
                 "contains": {
+                  "type": "string",
                   "const": "fallback-policy"
                 }
               }
@@ -523,34 +528,34 @@
           "properties": {
             "checks": {
               "allOf": [
-                { "contains": { "const": "rendered-evidence" } },
-                { "contains": { "const": "interaction-evidence" } },
-                { "contains": { "const": "accessibility-evidence" } },
-                { "contains": { "const": "theme-evidence" } },
-                { "contains": { "const": "determinism-evidence" } },
-                { "contains": { "const": "performance-evidence" } },
-                { "contains": { "const": "certification-evidence" } }
+                { "contains": { "type": "string", "const": "rendered-evidence" } },
+                { "contains": { "type": "string", "const": "interaction-evidence" } },
+                { "contains": { "type": "string", "const": "accessibility-evidence" } },
+                { "contains": { "type": "string", "const": "theme-evidence" } },
+                { "contains": { "type": "string", "const": "determinism-evidence" } },
+                { "contains": { "type": "string", "const": "performance-evidence" } },
+                { "contains": { "type": "string", "const": "certification-evidence" } }
               ]
             },
             "evidence": {
               "properties": {
-                "provided": { "const": ["rendered", "interaction", "accessibility", "theme", "determinism", "performance"] },
-                "missing": { "const": [] },
-                "mismatched": { "const": [] },
+                "provided": { "type": "array", "const": ["rendered", "interaction", "accessibility", "theme", "determinism", "performance"] },
+                "missing": { "type": "array", "const": [] },
+                "mismatched": { "type": "array", "const": [] },
                 "accepted": {
                   "minItems": 6,
                   "maxItems": 6,
                   "prefixItems": [
-                    { "properties": { "class": { "const": "rendered" } } },
-                    { "properties": { "class": { "const": "interaction" } } },
-                    { "properties": { "class": { "const": "accessibility" } } },
-                    { "properties": { "class": { "const": "theme" } } },
-                    { "properties": { "class": { "const": "determinism" } } },
-                    { "properties": { "class": { "const": "performance" } } }
+                    { "properties": { "class": { "type": "string", "const": "rendered" } } },
+                    { "properties": { "class": { "type": "string", "const": "interaction" } } },
+                    { "properties": { "class": { "type": "string", "const": "accessibility" } } },
+                    { "properties": { "class": { "type": "string", "const": "theme" } } },
+                    { "properties": { "class": { "type": "string", "const": "determinism" } } },
+                    { "properties": { "class": { "type": "string", "const": "performance" } } }
                   ]
                 },
                 "notApplicable": {
-                  "contains": { "properties": { "class": { "const": "certification" } } }
+                  "contains": { "properties": { "class": { "type": "string", "const": "certification" } } }
                 }
               }
             }
@@ -582,7 +587,7 @@
           "type": "string",
           "enum": ["rendered", "interaction", "accessibility", "theme", "determinism", "performance"]
         },
-        "status": { "const": "passed" },
+        "status": { "type": "string", "const": "passed" },
         "artifactContentHash": { "$ref": "#/$defs/contentHash" },
         "reference": {
           "type": "string",

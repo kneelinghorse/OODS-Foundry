@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://designlab.local/schemas/repl.ui.schema.json",
-  "title": "Agentic REPL UI Schema",
+  "$id": "https://oods-foundry.com/schemas/repl.ui.schema.json",
+  "title": "OODS Foundry UI schema",
   "type": "object",
   "required": [
     "version",
@@ -49,17 +49,17 @@
       "type": "string",
       "minLength": 1,
       "maxLength": 64,
-      "description": "Sample-data seed recorded by design.compose (preferences.seed): rotates the deterministic sample records generated for previews and workflow apps. Absent: the authored order."
+      "description": "Sample-data seed recorded by design_compose (preferences.seed): rotates the deterministic sample records generated for previews and workflow apps. Absent: the authored order."
     }
   },
   "additionalProperties": false,
   "$defs": {
     "chartDeclaration": {
       "title": "ChartDeclaration",
-      "description": "Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Edge-array charts bind a declared neighborhood array: sorted distinct node ids, row-ordered directed links, optional bidirectional reverse links deduplicated by ordered pair, without numeric values or groups. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.",
+      "description": "Read-only chart rendered by public viz_render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Edge-array charts bind a declared neighborhood array: sorted distinct node ids, row-ordered directed links, optional bidirectional reverse links deduplicated by ordered pair, without numeric values or groups. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.",
       "oneOf": [
         {
-          "description": "Read-only payment chart rendered by public viz.render during code generation. A bar chart draws one bar per recorded payment on an axis of payment dates; an area chart draws the payments as one series over time. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.",
+          "description": "Read-only payment chart rendered by public viz_render during code generation. A bar chart draws one bar per recorded payment on an axis of payment dates; an area chart draws the payments as one series over time. Workflow SVGs are static per seed record; consumers may replace the typed svg prop.",
           "type": "object",
           "additionalProperties": false,
           "required": [
@@ -72,12 +72,14 @@
           ],
           "properties": {
             "chartType": {
+              "type": "string",
               "enum": [
                 "bar",
                 "area"
               ]
             },
             "source": {
+              "type": "string",
               "const": "payment-events"
             },
             "dateFields": {
@@ -119,6 +121,7 @@
           ],
           "properties": {
             "chartType": {
+              "type": "string",
               "enum": [
                 "bar",
                 "line",
@@ -128,6 +131,7 @@
               ]
             },
             "source": {
+              "type": "string",
               "const": "record-array"
             },
             "dataField": {
@@ -172,17 +176,17 @@
                 "minProperties": 1,
                 "additionalProperties": true
               },
-              "description": "Authored sample rows, including explicitly labelled synthetic examples, copied into the declared array field of generated sample records. These exact records supply public viz.render; no separate synthetic chart series is invented."
+              "description": "Authored sample rows, including explicitly labelled synthetic examples, copied into the declared array field of generated sample records. These exact records supply public viz_render; no separate synthetic chart series is invented."
             },
             "minorUnits": {
               "type": "number",
               "exclusiveMinimum": 0,
-              "description": "Money (s223-m01), declared with currencyField: the y encoding's field holds amounts in minor units. Generation divides each row's value by minorUnits, as the payment-events source does, and formats the y axis in the record's currency (\"$,f\": $12,000 for USD, £12,000 for GBP)."
+              "description": "Money, declared with currencyField: the y encoding's field holds amounts in minor units. Generation divides each row's value by minorUnits, as the payment-events source does, and formats the y axis in the record's currency (\"$,f\": $12,000 for USD, £12,000 for GBP)."
             },
             "currencyField": {
               "type": "string",
               "minLength": 1,
-              "description": "Money (s223-m01), declared with minorUnits: the charted record's field holding its ISO 4217 currency code (Invoice's currency). Its symbol prints on the y axis and the code in the chart's accessible description."
+              "description": "Money, declared with minorUnits: the charted record's field holding its ISO 4217 currency code (Invoice's currency). Its symbol prints on the y axis and the code in the chart's accessible description."
             },
             "brand": {
               "type": "string",
@@ -202,9 +206,11 @@
           ],
           "properties": {
             "chartType": {
+              "type": "string",
               "const": "force_graph"
             },
             "source": {
+              "type": "string",
               "const": "edge-array"
             },
             "dataField": {
@@ -498,6 +504,7 @@
           "additionalProperties": false
         },
         "format": {
+          "type": "string",
           "enum": [
             "percent",
             "quantity"
@@ -602,7 +609,7 @@
         },
         "headingExcerpt": {
           "type": "boolean",
-          "description": "Set on a slot-bound Text that stands in as a heading for a record whose object carries no title field, so the generated artifact shows the field's FIRST LINE rather than the whole value. A CMOS Decision is the case this exists for: its only content is decision_text, up to 8,418 characters, and a card header that printed all of it — or printed a stored timestamp instead, which is what it did — says nothing about the record. Scoped to the heading on purpose: the same field must still render IN FULL on a detail, which previous verification certified at 390 in both frameworks."
+          "description": "Set on a slot-bound Text that stands in as a heading for a record whose object has no title field, so the generated screen shows the field's first line rather than the whole value. It suits records whose only content is one long text field, where a header printing all of it, or a stored timestamp, would say nothing about the record. It applies to the heading only: the same field still renders in full on a detail screen."
         },
         "substitution": {
           "type": "object",
@@ -937,6 +944,7 @@
           ],
           "properties": {
             "source": {
+              "type": "string",
               "enum": [
                 "rows",
                 "events"
@@ -958,6 +966,7 @@
           "additionalProperties": false
         },
         "collectionControl": {
+          "type": "string",
           "enum": [
             "search",
             "filter",
@@ -1086,7 +1095,7 @@
               "type": "string",
               "minLength": 1,
               "maxLength": 64,
-              "description": "Label format of this channel's axis (x, y) or legend: a d3-format specifier such as \"$,f\" or \",.0f\" (d3-time-format for a temporal field). \"$\" prints the currency symbol: the currency's, else $. Without a precision, labels take the precision of the tick step, so neighbouring ticks never print the same text. Carried in the normalized spec, so artifact.certify replays it."
+              "description": "Label format of this channel's axis (x, y) or legend: a d3-format specifier such as \"$,f\" or \",.0f\" (d3-time-format for a temporal field). \"$\" prints the currency symbol: the currency's, else $. Without a precision, labels take the precision of the tick step, so neighbouring ticks never print the same text. Carried in the normalized spec, so artifact_certify replays it."
             },
             "currency": {
               "type": "string",
@@ -1096,7 +1105,7 @@
             "titleField": {
               "type": "string",
               "minLength": 1,
-              "description": "Declared charts only: a field of the charted record whose text titles this axis, so each record's chart names its own unit (Usage's y axis reads the record's unit_label, \"API calls\"). Generation resolves it into title before viz.render; a record without that text takes title, and a chart with neither fails."
+              "description": "Declared charts only: a field of the charted record whose text titles this axis, so each record's chart names its own unit (Usage's y axis reads the record's unit_label, \"API calls\"). Generation resolves it into title before viz_render; a record without that text takes title, and a chart with neither fails."
             }
           },
           "additionalProperties": false

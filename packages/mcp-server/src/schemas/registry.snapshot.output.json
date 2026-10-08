@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://designlab.local/schemas/registry.snapshot.output.json",
-  "title": "registry.snapshot output",
+  "$id": "https://oods-foundry.com/schemas/registry.snapshot.output.json",
+  "title": "registry_snapshot output",
   "description": "Single-call bulk snapshot of the mapping registry plus trait/object catalogs.",
   "type": "object",
   "required": ["maps", "traits", "objects", "etag", "generatedAt"],
@@ -110,7 +110,7 @@
         "semantics": { "type": "object" },
         "tokens": { "type": "object" },
         "metadata": { "type": "object" },
-        "visibility": { "enum": ["public", "internal"], "description": "public: a business object. internal: one of OODS Foundry's own non-business objects, listed only with includeInternal." },
+        "visibility": { "type": "string", "enum": ["public", "internal"], "description": "public: a business object. internal: one of OODS Foundry's own non-business objects, listed only with includeInternal." },
         "source": { "type": "string" }
       }
     }

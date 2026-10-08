@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://designlab.local/schemas/repl.render.output.json",
-  "title": "Agentic REPL render output",
+  "$id": "https://oods-foundry.com/schemas/repl.render.output.json",
+  "title": "schema_render render output",
   "type": "object",
   "required": [
     "status",
@@ -94,7 +94,7 @@
     },
     "tokenCssRef": {
       "type": "string",
-      "description": "Reference to the token CSS artifact when compact mode is enabled. Use tokens.build to obtain the full CSS."
+      "description": "Reference to the token CSS artifact when compact mode is enabled. Use tokens_build to obtain the full CSS."
     },
     "fragments": {
       "type": "object",
@@ -139,7 +139,7 @@
       "description": "payloadMode file: where the large output was written instead of being returned inline; the directory is beside the saved-schema store (<store>/../payloads/<tool>-<digest>).",
       "required": ["mode", "directory", "bytes", "files"],
       "properties": {
-        "mode": { "const": "file" },
+        "mode": { "type": "string", "const": "file" },
         "directory": { "type": "string", "description": "Absolute directory holding the written files." },
         "bytes": { "type": "integer", "minimum": 0, "description": "Total bytes written." },
         "files": {

@@ -8,6 +8,10 @@ description: Use OODS Foundry when a team wants its screens built from its own o
 Use the connected OODS Foundry MCP server. Clients expose lowercase tool names joined by underscores, sometimes prefixed by the
 server name. Start with `health_check`; if the server is unavailable, explain what connection is missing. Do not substitute
 an invented response. Node.js 22.0.0 or newer and macOS or Linux are the recorded environments; Windows is untested.
+In chat on claude.ai or in the Claude apps, this plugin's local server does not run, and at most the hosted read-only
+connector is connected. Its tools cover the health, catalog, registry and chart steps: its `artifact_certify` takes the
+`viz_render` input as `chart`, and its `design_preview` looks up recorded screens. Registration, mapping, composition,
+running previews and code generation need the local server.
 
 For a team's design system, read [the quickstart](references/QUICKSTART.md) for complete arguments and editable npm
 inputs. Keep calls that share a `schemaRef` in one server session: references expire after 30 minutes. Use the team's
@@ -27,7 +31,10 @@ again and a chart-only request needs only health, rendering and certification.
 8. `object_registry`, `action: "register"` — register the validated object; read all context checks.
 9. `component_map`, `action: "create", apply: true` — substitute a shipped component identity using the team's exact package,
    version, export and prop translations; use an absolute `localPath` for preview bundling, or map several with
-   a `mappings` list or an absolute `mappingsPath` to a checked mapping file; React teams on shadcn/ui's Radix or Base UI base and Vue teams on shadcn-vue / Reka UI can install the shipped adapters and map their project modules as [COMPONENTS.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.10.1/COMPONENTS.md) describes.
+   a `mappings` list or an absolute `mappingsPath` to a checked mapping file. Read [COMPONENTS.md](references/COMPONENTS.md)
+   before mapping: it covers prop translations, checked mapping files, drafting mappings from a project, and the shipped
+   adapters that React teams on shadcn/ui's Radix or Base UI base and Vue teams on shadcn-vue / Reka UI install to map
+   their project modules.
 10. `design_compose` — name the object, context and brand/theme; retain `schemaRef`, `compositionId` and version.
 11. `viz_render` — pass actual rows and matching encodings; request `includeNormalizedSpec` and `includeA11y`.
 12. `artifact_certify` — pass that `normalizedSpec` and the same brand/theme. For ECharts-primary charts also pass
@@ -46,13 +53,16 @@ to make an unrelated design task work.
 Inspect `status`, typed errors, warnings and findings from every call. Validation may report `valid`; certification
 reports `conformant`, pillar results and evaluated rules. A tool returning successfully is not evidence that every
 check passed. Fix reported input issues before following dependent steps.
-Beside `facts.json`, the package's `errors.json` lists each runtime error code, severity, cause, fix and tools.
+An error reply carries a typed `code`, such as `OODS-V001`, a `message` and a `retryable` flag.
 
 For generated code retain `artifact.contentHash`, dependency versions, `validationReceipt` and file-mode paths.
 Read `notChecked` and its reasons: build-profile source checks do not mean the app was compiled or mounted in a
-browser. Follow the returned install block, install the matching dependencies, run the app's build, mount it, and
-compare it with the preview at desktop and phone widths. Preserve the resulting logs and screenshots alongside the
-receipt. A mapped component's met/unmet/not-checked obligations are advisory, not blanket compatibility.
+browser, so say which checks did not run. If the user wants the generated app verified, follow the returned install
+block, install the matching dependencies, run the app's build, mount it, compare it with the preview at desktop and
+phone widths, and keep the resulting logs and screenshots with the receipt. A mapped component's met/unmet/not-checked
+obligations are advisory, not blanket compatibility. When the user generates again after a definition changes, read
+[GENERATED-APPS.md](references/GENERATED-APPS.md) before replacing files: it says which generated files to replace and
+which are starting points the team now owns.
 
 For a chart, retain the render hash, normalized specification, data operand and certification findings. Certification
 checks chart specifications only; it does not certify the surrounding screen or application. A rule whose

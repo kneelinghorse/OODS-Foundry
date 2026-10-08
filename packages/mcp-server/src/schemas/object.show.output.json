@@ -163,6 +163,7 @@
       "type": "string"
     },
     "source": {
+      "type": "string",
       "enum": [
         "shipped",
         "user"
@@ -192,6 +193,7 @@
             "type": "string"
           },
           "cardinality": {
+            "type": "string",
             "enum": [
               "one-to-one",
               "one-to-many",
