@@ -4,6 +4,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { getAjv } from '../lib/ajv.js';
+import { handle as readHandle } from './schema.read.js';
 import { handle as groupHandle } from './schema/index.js';
 import { handle as saveHandle } from './schema/save.js';
 import { handle as loadHandle } from './schema/load.js';
@@ -21,6 +22,7 @@ const ajv = getAjv();
 
 // Per-action (OLD) input schemas + grouped input schema.
 const groupedInput = loadSchema('schema.input.json');
+const readInput = loadSchema('schema.read.input.json');
 const groupedOutput = loadSchema('schema.output.json');
 const perActionInput: Record<string, any> = {
   save: loadSchema('schema.save.input.json'),
@@ -37,6 +39,7 @@ const perActionOutput: Record<string, any> = {
 
 // Compile once. AJV with useDefaults mutates the validated value in place.
 const validateGroupedIn = ajv.compile(groupedInput);
+const validateReadIn = ajv.compile(readInput);
 const validateGroupedOut = ajv.compile(groupedOutput);
 const validatePerIn: Record<string, any> = Object.fromEntries(
   Object.entries(perActionInput).map(([k, v]) => [k, ajv.compile(v)]),
@@ -75,6 +78,7 @@ describe('schema grouped tool — input schema parity', () => {
   });
 
   for (const action of ACTIONS) {
+    const validateGroupedIn = ['load', 'list'].includes(action) ? validateReadIn : ajv.compile(groupedInput);
     describe(`action=${action}`, () => {
       it('valid payload is valid under BOTH old per-action and grouped schema', () => {
         const perOk = validatePerIn[action](structuredClone(VALID[action]));
@@ -123,7 +127,7 @@ describe('schema grouped tool — input schema parity', () => {
   it('rejects a payload whose body belongs to a different action than the discriminator', () => {
     // action=load but carrying save-only keys (schemaRef) — load branch is
     // additionalProperties:false so this must fail.
-    expect(validateGroupedIn({ action: 'load', name: 'x', schemaRef: 'schema://abc' })).toBe(false);
+    expect(validateReadIn({ action: 'load', name: 'x', schemaRef: 'schema://abc' })).toBe(false);
   });
 });
 
@@ -201,7 +205,7 @@ describe('schema grouped tool — dispatch routing (hermetic, tmp store)', () =>
 
   it('routes action=list to the list handler (empty store -> same bare-array result)', async () => {
     const direct = await listHandle({});
-    const viaGroup = await groupHandle({ action: 'list' });
+    const viaGroup = await readHandle({ action: 'list' });
     expect(viaGroup).toEqual(direct);
     expect(Array.isArray(viaGroup)).toBe(true);
   });
@@ -211,7 +215,7 @@ describe('schema grouped tool — dispatch routing (hermetic, tmp store)', () =>
       () => null,
       (e) => e,
     );
-    const groupErr = await groupHandle({ action: 'load', name: 'does-not-exist' }).then(
+    const groupErr = await readHandle({ action: 'load', name: 'does-not-exist' }).then(
       () => null,
       (e) => e,
     );

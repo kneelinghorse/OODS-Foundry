@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "object_import input",
-  "description": "Draft from local OpenAPI, JSON Schema, Postgres DDL/migrations, Prisma, dbt, OData or GraphQL files, inspect one staged draft, or explicitly accept a batch. No network access or code execution.",
+  "description": "object_import input: draft, apply.",
   "oneOf": [
     {
       "type": "object",
@@ -79,30 +79,6 @@
       "required": [
         "action",
         "importId",
-        "object"
-      ],
-      "properties": {
-        "action": {
-          "type": "string",
-          "const": "show"
-        },
-        "importId": {
-          "type": "string",
-          "minLength": 1
-        },
-        "object": {
-          "type": "string",
-          "minLength": 1,
-          "description": "Exact draft object name for show."
-        }
-      },
-      "additionalProperties": false
-    },
-    {
-      "type": "object",
-      "required": [
-        "action",
-        "importId",
         "objects"
       ],
       "properties": {
@@ -136,6 +112,29 @@
                   "minLength": 1
                 },
                 "description": "Explicitly accepted proposal ids from show; omitted means no traits."
+              },
+              "currencies": {
+                "type": "object",
+                "description": "Explicit money declarations by numeric field. Values name a string currency field and optional minorUnits (for example 100 for cents). No field name implies money.",
+                "additionalProperties": {
+                  "type": "object",
+                  "required": [
+                    "field"
+                  ],
+                  "properties": {
+                    "field": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "Declared currency-code field on this object."
+                    },
+                    "minorUnits": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "description": "Divisor converting minor to major units."
+                    }
+                  },
+                  "additionalProperties": false
+                }
               }
             },
             "additionalProperties": false
@@ -169,10 +168,9 @@
       "type": "string",
       "enum": [
         "draft",
-        "show",
         "apply"
       ],
-      "description": "Draft files without registration; show one draft; apply explicitly accepted objects and proposals."
+      "description": "Choose draft, apply."
     },
     "source": {
       "type": "object",
@@ -236,11 +234,6 @@
       "minLength": 1,
       "description": "Content-addressed import id from draft. Required by show and apply."
     },
-    "object": {
-      "type": "string",
-      "minLength": 1,
-      "description": "Exact draft object name for show."
-    },
     "objects": {
       "type": "array",
       "minItems": 1,
@@ -262,6 +255,29 @@
               "minLength": 1
             },
             "description": "Explicitly accepted proposal ids from show; omitted means no traits."
+          },
+          "currencies": {
+            "type": "object",
+            "description": "Explicit money declarations by numeric field. Values name a string currency field and optional minorUnits (for example 100 for cents). No field name implies money.",
+            "additionalProperties": {
+              "type": "object",
+              "required": [
+                "field"
+              ],
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Declared currency-code field on this object."
+                },
+                "minorUnits": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "description": "Divisor converting minor to major units."
+                }
+              },
+              "additionalProperties": false
+            }
           }
         },
         "additionalProperties": false

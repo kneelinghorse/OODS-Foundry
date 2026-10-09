@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "design_versions output",
+  "type": "object",
+  "required": [
+    "status",
+    "action",
+    "compositionId",
+    "latest",
+    "versions",
+    "accepted",
+    "durationMs"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "status": {
+      "type": "string",
+      "const": "ok"
+    },
+    "action": {
+      "type": "string",
+      "const": "versions"
+    },
+    "compositionId": {
+      "type": "string"
+    },
+    "latest": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "versions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "version",
+          "parentVersion",
+          "operation",
+          "createdAt",
+          "schemaHash",
+          "head",
+          "artifacts"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "version": {
+            "type": "integer"
+          },
+          "parentVersion": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "operation": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "schemaHash": {
+            "type": "string"
+          },
+          "head": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "artifacts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "accepted": {
+      "description": "The standing acceptance (the last one in accepted.json), or null when no version was accepted.",
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "required": [
+            "version",
+            "acceptedAt",
+            "acceptances"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "version": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "acceptedAt": {
+              "type": "string"
+            },
+            "acceptances": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        }
+      ]
+    },
+    "durationMs": {
+      "type": "number",
+      "minimum": 0
+    }
+  }
+}

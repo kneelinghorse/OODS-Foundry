@@ -190,7 +190,7 @@ export function draftSource(input: SourceInput): ImportResult {
       if (!schema.writeOnly && !objectTarget) {
         const sampleSchema = { ...schema, ...(nullable ? { type: [schema.type, 'null'] } : {}) };
         for (let i = 0; i < samples.length; i++) {
-          const value = sampleValue(sampleSchema, /^(name|title|label|display_?name|full_?name)$/i.test(field) ? name : field, i);
+          const value = sampleValue(sampleSchema, field, i, name);
           if (value !== undefined) Object.defineProperty(samples[i], field, { value, enumerable: true, writable: true });
         }
         if (!samples.some(sample => Object.hasOwn(sample, field))) report.push({ ...fieldOrigin, object: name, kind: 'keyword', outcome: 'unmapped', reason: 'No valid illustrative sample could be generated within the source constraints; sample omitted.' });
@@ -205,6 +205,7 @@ export function draftSource(input: SourceInput): ImportResult {
         }
       }
       const annotation = schema['x-oods'];
+      if (['integer', 'number'].includes(schema.type) && !annotation?.currency) report.push({ ...fieldOrigin, object: name, kind: 'keyword', outcome: 'mapped', reason: `Numeric field ${field} remains a number. At acceptance, objects[].currencies can explicitly bind it to a currency field and optional minorUnits.` });
       if (schema.title || annotation?.label || annotation?.detailGroup || annotation?.semanticType || annotation?.displayLabelField || annotation?.referenceLabelField || annotation?.unit || annotation?.primaryKey) semantics[field] = {
         semantic_type: annotation?.semanticType ?? (annotation?.primaryKey ? 'identifier.primary' : 'text.value'), token_mapping: 'tokenMap(text.primary)',
         ui_hints: { ...(annotation?.primaryKey ? { primaryKey: true } : {}), ...(schema.title || annotation?.label ? { label: annotation?.label ?? schema.title } : {}), ...(annotation?.detailGroup ? { detail_group: annotation.detailGroup } : {}), ...(annotation?.referenceLabelField ? { referenceLabelField: annotation.referenceLabelField } : {}), ...(annotation?.displayLabelField ? { displayLabelField: annotation.displayLabelField } : {}), ...(annotation?.unit ? { unit: annotation.unit } : {}) },
@@ -242,14 +243,24 @@ export function draftSource(input: SourceInput): ImportResult {
       proposal.id = hash(canonical({ name, trait: proposal.trait, evidence: proposal.evidence })).slice(0, 16);
       proposal.effects = `Acceptance binds ${proposal.trait.name} to the declared source fields and omits canonical fields with null bindings. ${Object.values(proposal.trait.fieldBindings).some(Boolean) ? 'Review the bindings and audit roles.' : 'No source fields implement this trait yet; acceptance contributes no record views.'} No trait is applied to this draft.`;
     }
-    const title = annotations?.titleField ?? Object.keys(fields).find(field => /^(name|title|label|display_name)$/i.test(field))
-      ?? Object.keys(fields).find(field => [name.toLowerCase(), name.toLowerCase().replace(/s$/, '')].some(prefix => ['name', 'title', 'label'].some(suffix => field.replace(/_/g, '').toLowerCase() === prefix + suffix)))
-      ?? Object.keys(fields).find(field => sampleSchemas[field]?.['x-oods']?.unique && !sampleSchemas[field]?.format && !sampleSchemas[field]?.enum)
-      ?? Object.keys(fields).find(field => sampleSchemas[field]?.['x-oods']?.primaryKey && identifierField(field))
-      ?? Object.keys(fields).find(field => sampleSchemas[field]?.['x-oods']?.primaryKey && !['date', 'date-time'].includes(sampleSchemas[field]?.format))
-      ?? Object.keys(fields).find(field => identifierField(field));
-    if (title && fields[title]) semantics[title] = { ...semantics[title], semantic_type: 'text.label', token_mapping: 'tokenMap(text.primary)' };
-    if (annotations?.summaryField && fields[annotations.summaryField]) semantics[annotations.summaryField] = { semantic_type: 'text.summary', token_mapping: 'tokenMap(text.secondary)' };
+    const prose = (field: string) => /^(description|summary|notes?|memo|comments?|body|details|bio|remarks)$/i.test(field)
+      || /\.(text|body|content|summary|description)$/.test(semantics[field]?.semantic_type ?? '')
+      || samples.some(row => typeof row[field] === 'string' && (String(row[field]).length > 100 || /[.!?]\s+\S/.test(String(row[field]))));
+    const plain = (field: string) => fields[field].type.replace(/\?$/, '') === 'string' && !sampleSchemas[field]?.format
+      && !sampleSchemas[field]?.enum && !sampleSchemas[field]?.pattern && !/^(currency|currency_?code|ccy|locale|language|status|state)$/i.test(field) && !identifierField(field) && !relationships.some(edge => edge.via === field) && !prose(field);
+    const declaredTitle = typeof annotations?.titleField === 'string' && fields[annotations.titleField] ? annotations.titleField : undefined;
+    const title = declaredTitle && !prose(declaredTitle) ? declaredTitle
+      : Object.keys(fields).find(field => plain(field) && /^(name|title|label|display_?name|subject|headline|handle)$/i.test(field))
+        ?? Object.keys(fields).find(field => plain(field) && [name.toLowerCase(), name.toLowerCase().replace(/s$/, '')].some(prefix => ['name', 'title', 'label'].some(suffix => field.replace(/_/g, '').toLowerCase() === prefix + suffix)))
+        ?? Object.keys(fields).find(field => plain(field) && sampleSchemas[field]?.['x-oods']?.unique)
+        ?? Object.keys(fields).find(field => plain(field) && fields[field].required)
+        ?? Object.keys(fields).find(field => sampleSchemas[field]?.['x-oods']?.primaryKey && !['uuid', 'date', 'date-time'].includes(sampleSchemas[field]?.format))
+        ?? Object.keys(fields).find(field => identifierField(field) && !relationships.some(edge => edge.via === field) && !['uuid', 'date', 'date-time'].includes(sampleSchemas[field]?.format))
+        ?? Object.keys(fields).find(field => sampleSchemas[field]?.['x-oods']?.primaryKey && !['date', 'date-time'].includes(sampleSchemas[field]?.format))
+        ?? Object.keys(fields).find(field => identifierField(field));
+    if (title && fields[title]) semantics[title] = { ...semantics[title], semantic_type: (/^(integer|number)\??$/.test(fields[title].type) || identifierField(title)) ? `object.${name}.number` : 'text.label', token_mapping: 'tokenMap(text.primary)' };
+    const summary = annotations?.summaryField ?? (declaredTitle && prose(declaredTitle) ? declaredTitle : undefined);
+    if (summary && fields[summary]) semantics[summary] = { ...semantics[summary], semantic_type: 'text.summary', token_mapping: 'tokenMap(text.secondary)' };
     const supportedContexts = ['list', 'detail', ...(shape.readOnly || annotations?.readOnly || Object.values(fields).every(field => field.readOnly) ? [] : ['form']), ...(annotations?.lifecycle || annotations?.history ? ['timeline'] : [])];
     if (!Object.keys(fields).length) { objectNames.delete(name); mark(origin, 'unmapped', 'No fields can be projected without choosing a variant or inventing a scalar conversion.', 'schema'); continue; }
     const definition = normalizeObjectDocument({ object: { name, version: '1.0.0', domain: 'imported', description: text(shape.description, `Imported ${hub['x-oods'].sourceNames[name]} schema. Samples without source examples are illustrative.`) }, schema: fields, traits: [], semantics, relationships, samples,
@@ -277,7 +288,9 @@ export function draftSource(input: SourceInput): ImportResult {
       const target = drafts.find(item => item.name === edge.target)!;
       const id = recordKeyField(target.definition)!;
       for (const [i, row] of (draft.definition.samples ?? []).entries()) {
-        const value = target.definition.samples?.[i]?.[id];
+        const rows = target.definition.samples ?? [];
+        const offset = rows.length > 1 ? 1 + parseInt(hash(`${draft.name}:${edge.via}:${edge.target}`).slice(0, 8), 16) % (rows.length - 1) : 0;
+        const value = rows[(i + offset) % rows.length]?.[id];
         if (value !== undefined) row[edge.via] = draft.definition.schema[edge.via].type.replace(/\?$/, '').endsWith('[]') ? [String(value)] : /^integer|^number/.test(draft.definition.schema[edge.via].type) ? Number(value) : String(value);
       }
     }

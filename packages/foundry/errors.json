@@ -1,6 +1,6 @@
 {
   "schema": "oods-foundry-errors/v1",
-  "version": "0.10.2",
+  "version": "0.11.0",
   "codes": [
     {
       "code": "OODS-A11Y-R-01",
@@ -25,6 +25,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -53,6 +55,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -81,6 +85,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -109,6 +115,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -137,6 +145,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -165,6 +175,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -193,6 +205,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -221,6 +235,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -249,6 +265,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -277,6 +295,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -305,6 +325,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -333,6 +355,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -361,6 +385,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -389,6 +415,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -417,6 +445,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -445,6 +475,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -565,7 +597,9 @@
       "fix": "Use overwrite only for an intended replacement, or rename the conflicting definition or file.",
       "tools": [
         "object_registry",
-        "object_import"
+        "object_import",
+        "object_import_read",
+        "object_register"
       ]
     },
     {
@@ -578,7 +612,8 @@
       "cause": "Brand creation requested an id already held by a brand.",
       "fix": "Choose a new brand id; brand creation never replaces an existing brand.",
       "tools": [
-        "brand_create"
+        "brand_create",
+        "brand_read"
       ]
     },
     {
@@ -591,7 +626,8 @@
       "cause": "The accepted object shares a shipped name without its specific confirmation.",
       "fix": "Review the staged object and name that exact object in confirmShipped if replacement is intended.",
       "tools": [
-        "object_import"
+        "object_import",
+        "object_import_read"
       ]
     },
     {
@@ -712,20 +748,26 @@
         "artifact_certify",
         "brand_apply",
         "brand_create",
+        "brand_read",
         "catalog_list",
         "code_generate",
         "dashboard_render",
         "design_compose",
         "design_preview",
+        "design_versions",
         "fidelity_preview",
         "health_check",
         "component_map",
+        "component_map_read",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "registry_snapshot",
         "schema_render",
         "schema_store",
+        "schema_read",
         "structured_data_fetch",
         "tokens_build",
         "viz_render"
@@ -741,7 +783,8 @@
       "cause": "No saved schema exists under the requested name.",
       "fix": "List saved schemas and load an existing name, or save the schema first.",
       "tools": [
-        "schema_store"
+        "schema_store",
+        "schema_read"
       ]
     },
     {
@@ -759,14 +802,18 @@
         "dashboard_render",
         "design_compose",
         "design_preview",
+        "design_versions",
         "fidelity_preview",
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "registry_snapshot",
         "schema_render",
         "schema_store",
+        "schema_read",
         "structured_data_fetch",
         "viz_render"
       ]
@@ -786,14 +833,18 @@
         "dashboard_render",
         "design_compose",
         "design_preview",
+        "design_versions",
         "fidelity_preview",
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "registry_snapshot",
         "schema_render",
         "schema_store",
+        "schema_read",
         "structured_data_fetch",
         "viz_render"
       ]
@@ -815,6 +866,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -836,6 +889,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -859,6 +914,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "registry_snapshot",
         "schema_render",
@@ -882,6 +939,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -903,6 +962,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -920,12 +981,15 @@
         "a11y_scan",
         "brand_apply",
         "brand_create",
+        "brand_read",
         "code_generate",
         "design_compose",
         "design_preview",
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "tokens_build"
@@ -979,6 +1043,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -1069,9 +1135,12 @@
         "code_generate",
         "design_compose",
         "design_preview",
+        "design_versions",
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -1087,7 +1156,9 @@
       "fix": "Set OODS_OBJECTS_DIR or OODS_TRAITS_DIR to a writable team folder.",
       "tools": [
         "object_registry",
-        "object_import"
+        "object_import",
+        "object_import_read",
+        "object_register"
       ]
     },
     {
@@ -1101,7 +1172,8 @@
       "fix": "Run the token build before requesting a brand template.",
       "tools": [
         "brand_apply",
-        "brand_create"
+        "brand_create",
+        "brand_read"
       ]
     },
     {
@@ -1114,7 +1186,8 @@
       "cause": "Brand creation lacks a usable brands folder or source checkout and token build.",
       "fix": "Configure a writable OODS_BRANDS_DIR with the supported token build available.",
       "tools": [
-        "brand_create"
+        "brand_create",
+        "brand_read"
       ]
     },
     {
@@ -1131,20 +1204,26 @@
         "artifact_certify",
         "brand_apply",
         "brand_create",
+        "brand_read",
         "catalog_list",
         "code_generate",
         "dashboard_render",
         "design_compose",
         "design_preview",
+        "design_versions",
         "fidelity_preview",
         "health_check",
         "component_map",
+        "component_map_read",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "registry_snapshot",
         "schema_render",
         "schema_store",
+        "schema_read",
         "structured_data_fetch",
         "tokens_build",
         "viz_render"
@@ -1164,20 +1243,26 @@
         "artifact_certify",
         "brand_apply",
         "brand_create",
+        "brand_read",
         "catalog_list",
         "code_generate",
         "dashboard_render",
         "design_compose",
         "design_preview",
+        "design_versions",
         "fidelity_preview",
         "health_check",
         "component_map",
+        "component_map_read",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "registry_snapshot",
         "schema_render",
         "schema_store",
+        "schema_read",
         "structured_data_fetch",
         "tokens_build",
         "viz_render"
@@ -1223,20 +1308,26 @@
         "artifact_certify",
         "brand_apply",
         "brand_create",
+        "brand_read",
         "catalog_list",
         "code_generate",
         "dashboard_render",
         "design_compose",
         "design_preview",
+        "design_versions",
         "fidelity_preview",
         "health_check",
         "component_map",
+        "component_map_read",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "registry_snapshot",
         "schema_render",
         "schema_store",
+        "schema_read",
         "structured_data_fetch",
         "tokens_build",
         "viz_render"
@@ -1256,20 +1347,26 @@
         "artifact_certify",
         "brand_apply",
         "brand_create",
+        "brand_read",
         "catalog_list",
         "code_generate",
         "dashboard_render",
         "design_compose",
         "design_preview",
+        "design_versions",
         "fidelity_preview",
         "health_check",
         "component_map",
+        "component_map_read",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "registry_snapshot",
         "schema_render",
         "schema_store",
+        "schema_read",
         "structured_data_fetch",
         "tokens_build",
         "viz_render"
@@ -1289,20 +1386,26 @@
         "artifact_certify",
         "brand_apply",
         "brand_create",
+        "brand_read",
         "catalog_list",
         "code_generate",
         "dashboard_render",
         "design_compose",
         "design_preview",
+        "design_versions",
         "fidelity_preview",
         "health_check",
         "component_map",
+        "component_map_read",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "registry_snapshot",
         "schema_render",
         "schema_store",
+        "schema_read",
         "structured_data_fetch",
         "tokens_build",
         "viz_render"
@@ -1326,6 +1429,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "registry_snapshot",
         "schema_render",
@@ -1365,6 +1470,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -1425,6 +1532,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -1474,6 +1583,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "tokens_build"
@@ -1498,6 +1609,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -1521,6 +1634,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -1556,6 +1671,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -1571,7 +1688,9 @@
       "fix": "Restore write access to the configured folder and register the definition again.",
       "tools": [
         "object_registry",
-        "object_import"
+        "object_import",
+        "object_import_read",
+        "object_register"
       ]
     },
     {
@@ -1584,7 +1703,8 @@
       "cause": "The token build failed after brand creation, so the new brand was removed.",
       "fix": "Fix the token-build error and create the brand again.",
       "tools": [
-        "brand_create"
+        "brand_create",
+        "brand_read"
       ]
     },
     {
@@ -1601,20 +1721,26 @@
         "artifact_certify",
         "brand_apply",
         "brand_create",
+        "brand_read",
         "catalog_list",
         "code_generate",
         "dashboard_render",
         "design_compose",
         "design_preview",
+        "design_versions",
         "fidelity_preview",
         "health_check",
         "component_map",
+        "component_map_read",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "registry_snapshot",
         "schema_render",
         "schema_store",
+        "schema_read",
         "structured_data_fetch",
         "tokens_build",
         "viz_render"
@@ -1634,20 +1760,26 @@
         "artifact_certify",
         "brand_apply",
         "brand_create",
+        "brand_read",
         "catalog_list",
         "code_generate",
         "dashboard_render",
         "design_compose",
         "design_preview",
+        "design_versions",
         "fidelity_preview",
         "health_check",
         "component_map",
+        "component_map_read",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "registry_snapshot",
         "schema_render",
         "schema_store",
+        "schema_read",
         "structured_data_fetch",
         "tokens_build",
         "viz_render"
@@ -1671,9 +1803,12 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
-        "schema_store"
+        "schema_store",
+        "schema_read"
       ]
     },
     {
@@ -1687,7 +1822,8 @@
       "fix": "Use only letters, numbers, hyphens and underscores in the schema name.",
       "tools": [
         "pipeline_run",
-        "schema_store"
+        "schema_store",
+        "schema_read"
       ]
     },
     {
@@ -1723,6 +1859,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -1744,6 +1882,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -1765,6 +1905,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -1786,6 +1928,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -1807,6 +1951,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -1828,6 +1974,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -1850,6 +1998,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -1871,6 +2021,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -1893,6 +2045,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -1915,6 +2069,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -1936,6 +2092,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -1958,6 +2116,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -1979,6 +2139,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -2000,6 +2162,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -2021,6 +2185,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -2042,6 +2208,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -2063,6 +2231,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -2111,6 +2281,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -2132,6 +2304,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -2153,6 +2327,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -2174,6 +2350,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -2195,6 +2373,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -2216,6 +2396,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -2237,6 +2419,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -2258,6 +2442,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -2279,6 +2465,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -2300,6 +2488,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -2323,6 +2513,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -2346,6 +2538,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -2369,6 +2563,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -2394,6 +2590,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -2419,6 +2617,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -2443,6 +2643,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -2467,6 +2669,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -2492,6 +2696,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -2515,6 +2721,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -2538,6 +2746,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -2574,6 +2784,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -2609,6 +2821,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -2633,6 +2847,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -2681,6 +2897,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -2729,6 +2947,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -2752,6 +2972,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -2775,6 +2997,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -2798,6 +3022,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -2822,6 +3048,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -2845,6 +3073,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -2883,6 +3113,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -2908,6 +3140,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -2933,6 +3167,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -2958,6 +3194,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -2983,6 +3221,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -3008,6 +3248,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -3033,6 +3275,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -3058,6 +3302,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -3083,6 +3329,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -3108,6 +3356,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -3133,6 +3383,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -3156,6 +3408,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -3210,6 +3464,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -3232,6 +3488,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -3255,6 +3513,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -3280,6 +3540,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -3305,6 +3567,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -3330,6 +3594,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -3355,6 +3621,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -3380,6 +3648,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -3405,6 +3675,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -3430,6 +3702,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -3455,6 +3729,8 @@
         "health_check",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -3478,6 +3754,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render",
         "viz_render"
@@ -3525,9 +3803,12 @@
         "code_generate",
         "design_compose",
         "design_preview",
+        "design_versions",
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -3549,6 +3830,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -3648,6 +3931,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -3708,6 +3993,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -3723,7 +4010,8 @@
       "fix": "Correct the reported brand fields and contrast pairs before applying or creating it.",
       "tools": [
         "brand_apply",
-        "brand_create"
+        "brand_create",
+        "brand_read"
       ]
     },
     {
@@ -3756,6 +4044,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -3776,8 +4066,11 @@
         "design_preview",
         "fidelity_preview",
         "component_map",
+        "component_map_read",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "registry_snapshot",
         "schema_render"
@@ -3793,7 +4086,8 @@
       "cause": "Source, references, staging integrity, accepted proposals or composed batch failed validation.",
       "fix": "Read the source pointer or rollback details, correct the input, draft again and explicitly accept the intended objects.",
       "tools": [
-        "object_import"
+        "object_import",
+        "object_import_read"
       ]
     },
     {
@@ -3813,6 +4107,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -3834,6 +4130,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -3855,6 +4153,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "schema_render"
       ]
@@ -3876,6 +4176,8 @@
         "fidelity_preview",
         "object_registry",
         "object_import",
+        "object_import_read",
+        "object_register",
         "pipeline_run",
         "registry_snapshot",
         "schema_render",

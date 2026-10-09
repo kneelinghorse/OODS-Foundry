@@ -2,14 +2,14 @@
 
 Change one trait and predict which screens follow it. The first run uses the shipped Warehouse and ColdRoom examples; the Harbor walkthrough that follows adds your colour tokens and component, generates an app, and renders and certifies a separate chart. Chart certification does not certify the surrounding application.
 
-Use Node.js 22.0.0 or newer on macOS or Linux and connect your MCP client as [the package README](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.10.2/packages/foundry/README.md) describes; the Claude Code plugin connects it for you. The calls below use the underscore names your client lists. Start with a fresh user-data folder if you already registered any of these example names; creation does not silently overwrite existing work. Keep each walkthrough in one server session because schema references expire.
+Use Node.js 22.0.0 or newer on macOS or Linux and connect your MCP client as [the package README](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.11.0/packages/foundry/README.md) describes; the Claude Code plugin connects it for you. The calls below use the underscore names your client lists. Start with a fresh user-data folder if you already registered any of these example names; creation does not silently overwrite existing work. Keep each walkthrough in one server session because schema references expire.
 
 ## Get the editable inputs
 
 In your project, install this version of OODS Foundry and copy its examples outside the installed runtime:
 
 ```sh
-npm install @oods/foundry@0.10.2
+npm install @oods/foundry@0.11.0
 cp -R node_modules/@oods/foundry/quickstart ./harbor-design-system
 ```
 
@@ -205,13 +205,13 @@ Ask your assistant to make each named call. Start with `health_check`:
 {}
 ```
 
-Then `brand_create` with `template` to inspect the roles and descriptions:
+Then `brand_read` with `template` to inspect the roles and descriptions:
 
 ```json
 {"action":"template"}
 ```
 
-The supplied Harbor document has a complete set of values. Change values, then call `brand_create` with `validate`. Fix each reported issue before creating the brand; a failed contrast check includes the pair, measured ratio and required floor.
+The supplied Harbor document has a complete set of values. Change values, then call `brand_read` with `validate`. Fix each reported issue before creating the brand; a failed contrast check includes the pair, measured ratio and required floor.
 
 ```json
 {"action":"validate","brand_id":"Harbor","documents":"<harbor.tokens.json>"}
@@ -249,7 +249,7 @@ Validate and register the object after its trait exists:
 {"action":"register","yaml":"<Warehouse.object.yaml>"}
 ```
 
-Read the returned context checks. A missing trait or invalid definition is reported with its cause and registration is refused. [OBJECTS-AND-TRAITS.md](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.10.2/packages/foundry/OBJECTS-AND-TRAITS.md) documents field types, money semantics, number formats, form controls and name-collision rules.
+Read the returned context checks. A missing trait or invalid definition is reported with its cause and registration is refused. [OBJECTS-AND-TRAITS.md](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.11.0/packages/foundry/OBJECTS-AND-TRAITS.md) documents field types, money semantics, number formats, form controls and name-collision rules.
 
 ### Substitute your component
 

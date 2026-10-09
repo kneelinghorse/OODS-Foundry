@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oods-foundry.com/schemas/design.versions.input.json",
+  "title": "design_versions input",
+  "description": "design_versions input: versions.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "versions"
+      ],
+      "description": "Choose versions."
+    },
+    "compositionId": {
+      "type": "string",
+      "pattern": "^cmp-[a-f0-9]{12}$",
+      "description": "An existing composition from design_compose; with no version, its latest version opens."
+    }
+  },
+  "required": [
+    "compositionId"
+  ]
+}

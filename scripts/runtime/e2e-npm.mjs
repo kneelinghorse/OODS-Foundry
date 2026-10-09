@@ -202,6 +202,9 @@ export async function runNpmE2E({ tarball, workDir, out, libraryTarballs }) {
     assert(composed.schema.screens.length > 0 && Object.keys(composed.schema.objectSchema).includes('subscription_id'));
 
     const preview = await first.client.callTool("design_preview", { object: "Subscription", context: "detail" });
+    const versions = await first.client.callTool('design_versions', { action: 'versions', compositionId: preview.compositionId });
+    assert.equal(versions.latest, preview.version); assert.equal(versions.versions.length, 1);
+    receipt.designVersions = { latest: versions.latest, compositionId: versions.compositionId };
     assert.equal(preview.status, "ok");
     assert.equal(preview.previews.length, 2, "both frameworks compile from the unpacked runtime");
     assert(isInside(oodsHome, preview.recordPath), `the version is kept in ~/.oods-foundry: ${preview.recordPath}`);
@@ -239,7 +242,7 @@ export async function runNpmE2E({ tarball, workDir, out, libraryTarballs }) {
 
     const imported = await first.client.callTool("object_import", { action: "draft", source: { name: "installed.json", content: JSON.stringify({ title: "InstalledImport", type: "object", properties: { id: { type: "string" }, label: { type: "string" } } }) } });
     assert.equal(imported.action, 'draft'); assert.equal(imported.objects.length, 1);
-    const reviewed = await first.client.callTool("object_import", { action: "show", importId: imported.importId, object: "InstalledImport" });
+    const reviewed = await first.client.callTool("object_import_read", { action: "show", importId: imported.importId, object: "InstalledImport" });
     assert(reviewed.yaml.includes('InstalledImport'));
     const applied = await first.client.callTool("object_import", { action: "apply", importId: imported.importId, objects: [{ name: "InstalledImport" }] });
     assert.equal(applied.action, 'apply'); assert.equal(applied.applied.length, 1);
@@ -279,7 +282,8 @@ export async function runNpmE2E({ tarball, workDir, out, libraryTarballs }) {
 
   // Nothing escaped the work directory: the npm cache, the home and the temporary files all live under it.
   const assertions = {
-    'object.import': receipt.objectImport,
+    'object.import': receipt.objectImport, 'object.import.read': receipt.objectImport,
+    'design.versions': receipt.designVersions,
     health: receipt.firstRun.health, 'design.compose': receipt.firstRun.compose,
     'design.preview': receipt.firstRun.preview, 'viz.render': receipt.firstRun.certify,
     'artifact.certify': receipt.firstRun.certify, 'code.generate': receipt.firstRun.codeGenerate,

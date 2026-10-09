@@ -160,16 +160,16 @@ view_extensions:             # what the trait places on each screen: list, card,
       props: { field: units_on_hand }
 ```
 
-A trait of yours can place only the components OODS Foundry ships; `catalog_list` names them. Your own components can replace those ids through substitution; see [COMPONENTS.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.10.2/COMPONENTS.md).
+A trait of yours can place only the components OODS Foundry ships; `catalog_list` names them. Your own components can replace those ids through substitution; see [COMPONENTS.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.11.0/COMPONENTS.md).
 
 ## Checking and registering
 
-Ask your assistant to use the `object_registry` tool with the whole file as `yaml`:
+Ask your assistant to use `object_registry` to validate or reload, and `object_register` to save, with the whole file as `yaml`:
 
 1. `{"action": "validate", "yaml": "<the file>"}` parses it, checks the header and fields, resolves every trait, checks
    the contexts, and composes the object with its traits. It answers `valid`, the `errors` with where each is, the
    composer's `warnings`, and the contexts the object composes. Nothing is written.
-2. `{"action": "register", "yaml": "<the file>"}` validates, writes `<Name>.object.yaml` (or `.trait.yaml`) into your
+2. `object_register` with `{"action": "register", "yaml": "<the file>"}` validates, writes `<Name>.object.yaml` (or `.trait.yaml`) into your
    folder, reads the folders again and composes the object in every context it declares. If anything fails, your folder
    is left exactly as it was and the answer says why (`OODS-V215`). A name you already registered is replaced only with
    `"overwrite": true` (`OODS-C004`).

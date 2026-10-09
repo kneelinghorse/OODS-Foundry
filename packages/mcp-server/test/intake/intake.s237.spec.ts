@@ -1,3 +1,4 @@
+import { handle as mapReadWriteSplit } from '../../src/tools/map.read.js';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -40,7 +41,7 @@ it('drafts deterministic structural shadcn mappings, keeps counts complete, and 
  shadcn();const network=vi.spyOn(globalThis,'fetch');
  const input={action:'draft' as const,source:{project:folder,format:'shadcn' as const}};
  const first:any=await map(input),second:any=await map(input);expect(first.draftId).toBe(second.draftId);
- const shown:any=await map({action:'show',draftId:first.draftId});
+ const shown:any=await mapReadWriteSplit({action:'show',draftId:first.draftId});
  expect(shown.proposals.map((p:any)=>p.mapping.substitution.component)).toContain('Button');
  expect(shown.proposals.find((p:any)=>p.mapping.substitution.component==='Button').translations.intent.values.danger).toBe('destructive');
  expect(shown.inventory.some((entry:any)=>entry.kind==='prop')).toBe(true);

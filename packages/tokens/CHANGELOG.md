@@ -2,6 +2,10 @@
 
 `@oods/tokens` is released at the same version as `@oods/foundry`. The [`@oods/foundry` changelog](https://github.com/kneelinghorse/OODS-Foundry/blob/main/packages/foundry/CHANGELOG.md) lists what each release changed in the product.
 
+## 0.11.0
+
+Version aligned with OODS Foundry 0.11.0 and its generated application dependency pins.
+
 ## 0.10.2
 
 - Only the version changed. Token values, fonts and the stylesheet are 0.10.1's.

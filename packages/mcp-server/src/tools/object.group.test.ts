@@ -47,6 +47,7 @@ const compile = (schema: any) => ajv.compile(schema);
 // Compile once. The grouped validator is shared; AJV mutates in place via useDefaults,
 // so each defaults assertion clones its payload before validating.
 const validateGroupedIn = compile(groupedInput);
+const validateWriteIn = compile(readSchema('object.write.input.json'));
 const validateGroupedOut = compile(groupedOutput);
 
 const clone = <T>(v: T): T => JSON.parse(JSON.stringify(v));
@@ -96,6 +97,7 @@ const CASES = {
 describe('tools/object grouped schema — input parity', () => {
   for (const action of ['list', 'show', 'validate', 'register', 'reload'] as const) {
     const validatePerActionIn = compile(PER_ACTION[action].input);
+    const validateInput = action === 'register' ? validateWriteIn : validateGroupedIn;
 
     describe(`action="${action}"`, () => {
       for (const body of CASES[action].valid) {
@@ -104,8 +106,8 @@ describe('tools/object grouped schema — input parity', () => {
           const okOld = validatePerActionIn(clone(body));
           expect(okOld, JSON.stringify(validatePerActionIn.errors)).toBe(true);
           // Grouped schema sees the body WITH the discriminator added.
-          const okGrouped = validateGroupedIn(clone({ action, ...body }));
-          expect(okGrouped, JSON.stringify(validateGroupedIn.errors)).toBe(true);
+          const okGrouped = validateInput(clone({ action, ...body }));
+          expect(okGrouped, JSON.stringify(validateInput.errors)).toBe(true);
         });
       }
 
@@ -113,7 +115,7 @@ describe('tools/object grouped schema — input parity', () => {
         it(`invalid payload ${JSON.stringify(body)} fails the grouped schema`, () => {
           // It must also fail the old schema (sanity on the test fixture).
           expect(validatePerActionIn(clone(body))).toBe(false);
-          expect(validateGroupedIn(clone({ action, ...body }))).toBe(false);
+          expect(validateInput(clone({ action, ...body }))).toBe(false);
         });
       }
     });

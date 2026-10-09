@@ -1,0 +1,871 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "object_register output",
+  "description": "Grouped output for the object registry family (list, show, validate, register, reload). anyOf (not oneOf) \u2014 per-action outputs are structurally distinct here, but anyOf is the safe consolidation contract: a handler result is valid if it matches the corresponding per-action output body. Each branch is the verbatim body of object.<action>.output.json.",
+  "anyOf": [
+    {
+      "type": "object",
+      "properties": {
+        "objects": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "domain": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              },
+              "maturity": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "description": {
+                "type": "string"
+              },
+              "traits": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "fieldCount": {
+                "type": "integer"
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "visibility": {
+                "type": "string",
+                "enum": [
+                  "public",
+                  "internal"
+                ],
+                "description": "public: a business object. internal: one of OODS Foundry's own non-business objects, listed only with includeInternal."
+              },
+              "source": {
+                "type": "string",
+                "enum": [
+                  "shipped",
+                  "user"
+                ],
+                "description": "shipped: OODS Foundry's own. user: from your folder."
+              },
+              "replaces": {
+                "type": "string",
+                "description": "The shipped file your object is used in place of."
+              }
+            },
+            "required": [
+              "name",
+              "domain",
+              "version",
+              "maturity",
+              "description",
+              "traits",
+              "fieldCount",
+              "tags",
+              "visibility",
+              "source"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "totalCount": {
+          "type": "integer"
+        },
+        "hiddenInternal": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Internal objects that match the filters but were left out because includeInternal was not set."
+        },
+        "filters": {
+          "type": "object",
+          "properties": {
+            "domain": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "maturity": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "trait": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "domain",
+            "maturity",
+            "trait"
+          ],
+          "additionalProperties": false
+        },
+        "folders": {
+          "type": "object",
+          "description": "Your objects and traits folders (OODS_OBJECTS_DIR, OODS_TRAITS_DIR); null when none is set.",
+          "properties": {
+            "objects": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "traits": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "objects",
+            "traits"
+          ],
+          "additionalProperties": false
+        },
+        "issues": {
+          "type": "array",
+          "description": "Every file in the shipped folders or yours that is not in use, and every replacement, with the reason.",
+          "items": {
+            "type": "object",
+            "description": "A file that was not used, or something about one that is, and why.",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "malformed",
+                  "unnamed",
+                  "duplicate",
+                  "replaces-shipped",
+                  "shipped-name",
+                  "unknown-trait",
+                  "unreadable-folder"
+                ]
+              },
+              "severity": {
+                "type": "string",
+                "enum": [
+                  "error",
+                  "notice"
+                ],
+                "description": "error: the definition is not in use. notice: it is in use, and this is worth knowing."
+              },
+              "file": {
+                "type": "string",
+                "description": "A shipped file relative to the runtime root; a file of yours as an absolute path."
+              },
+              "name": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind",
+              "severity",
+              "file",
+              "message"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "objects",
+        "totalCount",
+        "hiddenInternal",
+        "filters",
+        "folders",
+        "issues"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "relationships": {
+          "type": "array",
+          "description": "Authored type associations, never inferred from UUID names.",
+          "items": {
+            "type": "object",
+            "required": [
+              "target",
+              "via",
+              "cardinality",
+              "label"
+            ],
+            "properties": {
+              "target": {
+                "type": "string"
+              },
+              "via": {
+                "type": "string"
+              },
+              "cardinality": {
+                "type": "string",
+                "enum": [
+                  "one-to-one",
+                  "one-to-many",
+                  "many-to-one",
+                  "many-to-many"
+                ]
+              },
+              "label": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "domain": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "maturity": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "traits": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "alias": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "parameters": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "fieldBindings": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "name",
+              "alias",
+              "parameters"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "schema": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "required": {
+                "type": "boolean"
+              },
+              "description": {
+                "type": "string"
+              },
+              "default": {},
+              "defaultFromParameter": {
+                "type": "string"
+              },
+              "validation": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "type",
+              "required",
+              "description"
+            ],
+            "additionalProperties": true
+          }
+        },
+        "semantics": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "semantic_type": {
+                "type": "string"
+              },
+              "token_mapping": {
+                "type": "string"
+              },
+              "ui_hints": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "boolean",
+                    "number"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "semantic_type",
+              "token_mapping"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "viewExtensions": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "component": {
+                  "type": "string"
+                },
+                "position": {
+                  "type": "string"
+                },
+                "priority": {
+                  "type": "number"
+                },
+                "props": {
+                  "type": "object"
+                }
+              },
+              "required": [
+                "component"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "tokens": {
+          "type": "object"
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "filePath": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string",
+          "enum": [
+            "shipped",
+            "user"
+          ],
+          "description": "shipped: OODS Foundry's own. user: from your folder."
+        },
+        "replaces": {
+          "type": "string",
+          "description": "The shipped file your object is used in place of."
+        }
+      },
+      "required": [
+        "name",
+        "version",
+        "domain",
+        "description",
+        "tags",
+        "maturity",
+        "traits",
+        "schema",
+        "semantics",
+        "viewExtensions",
+        "tokens",
+        "warnings",
+        "filePath",
+        "source"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "object",
+            "trait",
+            null
+          ]
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "valid": {
+          "type": "boolean"
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "malformed",
+                  "not-a-definition",
+                  "invalid-name",
+                  "invalid-version",
+                  "trait-conflict",
+                  "missing-header",
+                  "invalid-trait-reference",
+                  "unknown-trait",
+                  "missing-parameter",
+                  "invalid-parameter",
+                  "invalid-field",
+                  "unknown-context",
+                  "unknown-component",
+                  "invalid-view",
+                  "invalid-state-machine",
+                  "shipped-name",
+                  "duplicate",
+                  "compose-failed",
+                  "money-units",
+                  "invalid-relationship",
+                  "unknown-relationship-target",
+                  "unknown-relationship-field"
+                ]
+              },
+              "path": {
+                "type": "string",
+                "description": "Where in the definition, for example traits[1].name or schema.capacity."
+              },
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind",
+              "message"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "contexts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "An object: the contexts it composes. A trait: the contexts its views extend."
+        },
+        "replaces": {
+          "type": "string",
+          "description": "The shipped object yours would be used in place of."
+        },
+        "folder": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Where register would write it; null when no folder is set."
+        }
+      },
+      "required": [
+        "kind",
+        "name",
+        "valid",
+        "errors",
+        "warnings",
+        "contexts",
+        "folder"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "object",
+            "trait"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "file": {
+          "type": "string",
+          "description": "The file in your folder that now holds the definition."
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "created",
+            "updated"
+          ]
+        },
+        "replaces": {
+          "type": "string",
+          "description": "The shipped file your object is used in place of."
+        },
+        "contexts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "context": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "ok",
+                  "error"
+                ]
+              },
+              "messages": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "context",
+              "status",
+              "messages"
+            ],
+            "additionalProperties": false
+          },
+          "description": "An object composed through design_compose in every context it declares (empty for a trait)."
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "registry": {
+          "type": "object",
+          "properties": {
+            "folders": {
+              "type": "object",
+              "description": "Your objects and traits folders (OODS_OBJECTS_DIR, OODS_TRAITS_DIR); null when none is set.",
+              "properties": {
+                "objects": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "traits": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "objects",
+                "traits"
+              ],
+              "additionalProperties": false
+            },
+            "objects": {
+              "type": "object",
+              "properties": {
+                "total": {
+                  "type": "integer"
+                },
+                "shipped": {
+                  "type": "integer"
+                },
+                "user": {
+                  "type": "integer"
+                },
+                "replacingShipped": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Your objects used in place of a shipped object of the same name."
+                }
+              },
+              "required": [
+                "total",
+                "shipped",
+                "user",
+                "replacingShipped"
+              ],
+              "additionalProperties": false
+            },
+            "traits": {
+              "type": "object",
+              "properties": {
+                "total": {
+                  "type": "integer"
+                },
+                "shipped": {
+                  "type": "integer"
+                },
+                "user": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "total",
+                "shipped",
+                "user"
+              ],
+              "additionalProperties": false
+            },
+            "issues": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "description": "A file that was not used, or something about one that is, and why.",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "malformed",
+                      "unnamed",
+                      "duplicate",
+                      "replaces-shipped",
+                      "shipped-name",
+                      "unknown-trait",
+                      "unreadable-folder"
+                    ]
+                  },
+                  "severity": {
+                    "type": "string",
+                    "enum": [
+                      "error",
+                      "notice"
+                    ],
+                    "description": "error: the definition is not in use. notice: it is in use, and this is worth knowing."
+                  },
+                  "file": {
+                    "type": "string",
+                    "description": "A shipped file relative to the runtime root; a file of yours as an absolute path."
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "message": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "kind",
+                  "severity",
+                  "file",
+                  "message"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "folders",
+            "objects",
+            "traits",
+            "issues"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "kind",
+        "name",
+        "file",
+        "status",
+        "contexts",
+        "warnings",
+        "registry"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "folders": {
+          "type": "object",
+          "description": "Your objects and traits folders (OODS_OBJECTS_DIR, OODS_TRAITS_DIR); null when none is set.",
+          "properties": {
+            "objects": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "traits": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "objects",
+            "traits"
+          ],
+          "additionalProperties": false
+        },
+        "objects": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "integer"
+            },
+            "shipped": {
+              "type": "integer"
+            },
+            "user": {
+              "type": "integer"
+            },
+            "replacingShipped": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Your objects used in place of a shipped object of the same name."
+            }
+          },
+          "required": [
+            "total",
+            "shipped",
+            "user",
+            "replacingShipped"
+          ],
+          "additionalProperties": false
+        },
+        "traits": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "integer"
+            },
+            "shipped": {
+              "type": "integer"
+            },
+            "user": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "total",
+            "shipped",
+            "user"
+          ],
+          "additionalProperties": false
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "description": "A file that was not used, or something about one that is, and why.",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "malformed",
+                  "unnamed",
+                  "duplicate",
+                  "replaces-shipped",
+                  "shipped-name",
+                  "unknown-trait",
+                  "unreadable-folder"
+                ]
+              },
+              "severity": {
+                "type": "string",
+                "enum": [
+                  "error",
+                  "notice"
+                ],
+                "description": "error: the definition is not in use. notice: it is in use, and this is worth knowing."
+              },
+              "file": {
+                "type": "string",
+                "description": "A shipped file relative to the runtime root; a file of yours as an absolute path."
+              },
+              "name": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind",
+              "severity",
+              "file",
+              "message"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "folders",
+        "objects",
+        "traits",
+        "issues"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

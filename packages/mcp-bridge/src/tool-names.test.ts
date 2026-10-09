@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { buildToolNameMaps, legacyToolWarning, resolveInternalToolName, toExternalName } from './tool-names.js';
+import { buildToolNameMaps, resolveInternalToolName, toExternalName } from './tool-names.js';
 
 const surface = JSON.parse(fs.readFileSync(new URL('../../mcp-adapter/tool-surface.json', import.meta.url), 'utf8'));
 
@@ -11,12 +11,11 @@ describe('advertised tool names', () => {
     for (const [internal, entry] of Object.entries<any>(surface)) {
       const legacy = internal.replaceAll('.', '_');
       expect(toExternalName(internal)).toBe(entry.name);
-      for (const name of [entry.name, internal, legacy]) expect(resolveInternalToolName(name, maps.externalToInternal)).toBe(internal);
-      if (legacy !== entry.name) {
-        expect(maps.allowedExternalTools.has(legacy)).toBe(false);
-        expect(legacyToolWarning(legacy, internal)).toContain(`use ${entry.name}`);
-      } else expect(legacyToolWarning(legacy, internal)).toBeUndefined();
-      expect(legacyToolWarning(entry.name, internal)).toBeUndefined();
+      expect(resolveInternalToolName(entry.name, maps.externalToInternal)).toBe(internal);
+      for (const removed of [internal, legacy].filter(name => name !== entry.name)) {
+        expect(resolveInternalToolName(removed, maps.externalToInternal)).toBeUndefined();
+        expect(maps.allowedExternalTools.has(removed)).toBe(false);
+      }
     }
   });
 

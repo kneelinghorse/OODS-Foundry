@@ -6,7 +6,7 @@ import { createRequire } from 'node:module';
 import { createServer } from 'node:http';
 import { once } from 'node:events';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { handle as intake } from '../../src/tools/brand.intake.js';
+import { handle as intake } from '../../src/tools/brand.read.js';
 import { handle as apply } from '../../src/tools/brand.apply.js';
 import { handle as tokens } from '../../src/tools/tokens.build.js';
 import { handle as fidelity } from '../../src/tools/fidelity.preview.js';
@@ -63,14 +63,14 @@ describe('s194 brand seam crosses real tool and browser boundaries', () => {
   it('a validated brand change moves source, chart SVG, generated app CSS and a governed component in B/dark', async () => {
     // s213-m05: brand.intake validates brand B with the change (the brand contrast rules included) before it is applied.
     const templateInput = { action: 'template' as const, from: { brand: 'B' } };
-    wire('brand.intake', 'input', templateInput);
+    wire('brand.read', 'input', templateInput);
     const template = await intake(templateInput) as any;
-    wire('brand.intake', 'output', template);
+    wire('brand.read', 'output', template);
     template.documents.dark.text.primary.$value = '#ffddee';
     const validateInput = { action: 'validate' as const, documents: template.documents };
-    wire('brand.intake', 'input', validateInput);
+    wire('brand.read', 'input', validateInput);
     const accepted = await intake(validateInput) as any;
-    wire('brand.intake', 'output', accepted);
+    wire('brand.read', 'output', accepted);
     expect(accepted.issues).toEqual([]);
     const input = validateInput;
     const applyInput = { brand: 'B', strategy: 'alias' as const, delta: { dark: { color: { brand: { B: colorDocument('#ffddee') } } } }, apply: false };

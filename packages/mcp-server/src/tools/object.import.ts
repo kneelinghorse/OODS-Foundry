@@ -1,3 +1,4 @@
+import { refuseMovedAction, requireAction } from './action-moves.js';
 /** File-only drafting is staged separately; only explicit apply mutates accepted team definitions. */
 import fs from 'node:fs';
 import os from 'node:os';
@@ -18,7 +19,7 @@ import { handle as compose } from './design.compose.js';
 export type ObjectImportInput =
   | { action: 'draft'; source: SourceInput }
   | { action: 'show'; importId: string; object: string }
-  | { action: 'apply'; importId: string; objects: Array<{ name: string; proposals?: string[] }>; overwrite?: boolean; confirmShipped?: string[] };
+  | { action: 'apply'; importId: string; objects: Array<{ name: string; proposals?: string[]; currencies?: Record<string, { field: string; minorUnits?: number }> }>; overwrite?: boolean; confirmShipped?: string[] };
 export type ImportDiff = { name: string; status: 'new' | 'changed' | 'unchanged'; fields: { added: string[]; removed: string[]; changed: string[] }; screens: string[]; traitsChanged: boolean; relationshipsChanged: boolean; traitFields?: string[] };
 const contexts = ['list', 'detail', 'form'] as const;
 
@@ -101,6 +102,16 @@ async function apply(input: Extract<ObjectImportInput, { action: 'apply' }>, imp
     for (const draft of drafts) {
       const selection = selected.get(draft.name)!;
       const definition: ObjectDefinition = structuredClone(draft.definition);
+      for (const [amount, currency] of Object.entries(selection.currencies ?? {})) {
+        if (!Object.hasOwn(definition.schema, amount) || !/^(integer|number)\??$/.test(definition.schema[amount].type)
+          || !Object.hasOwn(definition.schema, currency.field) || !/^string\??$/.test(definition.schema[currency.field].type)
+          || currency.minorUnits !== undefined && (!Number.isInteger(currency.minorUnits) || currency.minorUnits < 1)) {
+          throw new ToolError('OODS-V220', `Invalid currency declaration for ${draft.name}.${amount}: choose a numeric amount and a string currency field, with positive integer minorUnits if needed.`);
+        }
+        definition.semantics[amount] = { semantic_type: 'money.amount', token_mapping: 'tokenMap(text.primary)',
+          ui_hints: { ...definition.semantics[amount]?.ui_hints, component: 'CurrencyAmount', currencyField: currency.field,
+            ...(currency.minorUnits !== undefined ? { minorUnits: currency.minorUnits } : {}) } };
+      }
       const ids = new Set(selection.proposals ?? []);
       if (ids.size !== (selection.proposals ?? []).length) throw new ToolError('OODS-V220', `Repeated proposal for ${draft.name}.`);
       for (const id of ids) {
@@ -152,7 +163,7 @@ async function apply(input: Extract<ObjectImportInput, { action: 'apply' }>, imp
   });
 }
 
-export async function handle(input: ObjectImportInput) {
+async function execute(input: ObjectImportInput) {
   try {
     if (input.action === 'draft') {
       const result = draftSource(input.source);
@@ -184,4 +195,14 @@ export async function handle(input: ObjectImportInput) {
     if (error instanceof ToolError) throw error;
     throw new ToolError('OODS-V220', `Object import failed: ${(error as Error).message}`, error instanceof ImportProblem ? { code: error.code, origin: error.origin } : undefined);
   }
+}
+
+export async function handle(input: ObjectImportInput) {
+  refuseMovedAction('object.import', input);
+  return execute(input);
+}
+
+export async function readHandle(input: ObjectImportInput) {
+  requireAction(input, ['show'], 'object_import_read');
+  return execute(input);
 }

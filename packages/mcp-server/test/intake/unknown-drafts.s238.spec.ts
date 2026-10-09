@@ -2,9 +2,11 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { afterEach, beforeEach, expect, it } from 'vitest';
-import { handle as map } from '../../src/tools/map.js';
+import { handle as mapRead } from '../../src/tools/map.read.js';
 import { handle as brand } from '../../src/tools/brand.intake.js';
+import { handle as brandRead } from '../../src/tools/brand.read.js';
 import { handle as objectImport } from '../../src/tools/object.import.js';
+import { handle as objectImportRead } from '../../src/tools/object.import.read.js';
 
 // A draft id the caller mistyped or that came from another home folder is the caller's to fix. In 0.10.0 the three
 // draft tools answered with the operating system's ENOENT text and the absolute path of the user's home folder, and
@@ -36,18 +38,18 @@ function expectCallerError(error: { opiCode?: string; message: string }, code: s
   expect(error.message).not.toContain(folder);
 }
 
-it('brand_create show and apply name the missing brand draft as a validation error', async () => {
+it('brand_read show and brand_create apply name the missing brand draft as a validation error', async () => {
   for (const input of [{ action: 'show', draftId: `brand-${zeros}` }, { action: 'apply', draftId: `brand-${zeros}`, accept: true }]) {
-    expectCallerError(await failure(() => brand(input as never)), 'OODS-V001', new RegExp(`No brand draft brand-${zeros}`));
+    expectCallerError(await failure(() => (input.action === 'show' ? brandRead : brand)(input as never)), 'OODS-V001', new RegExp(`No brand draft brand-${zeros}`));
   }
 });
 
-it('component_map show names the missing component draft', async () => {
-  expectCallerError(await failure(() => map({ action: 'show', draftId: `components-${zeros}` } as never)), 'OODS-V219', new RegExp(`No component draft components-${zeros}`));
+it('component_map_read show names the missing component draft', async () => {
+  expectCallerError(await failure(() => mapRead({ action: 'show', draftId: `components-${zeros}` } as never)), 'OODS-V219', new RegExp(`No component draft components-${zeros}`));
 });
 
-it('object_import show and apply name the missing staged import', async () => {
+it('object_import_read show and object_import apply name the missing staged import', async () => {
   for (const input of [{ action: 'show', importId: `import-${zeros}`, object: 'Order' }, { action: 'apply', importId: `import-${zeros}`, objects: [{ name: 'Order' }] }]) {
-    expectCallerError(await failure(() => objectImport(input as never)), 'OODS-V220', new RegExp(`No staged import import-${zeros}`));
+    expectCallerError(await failure(() => (input.action === 'show' ? objectImportRead : objectImport)(input as never)), 'OODS-V220', new RegExp(`No staged import import-${zeros}`));
   }
 });

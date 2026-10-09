@@ -25,6 +25,7 @@ const readSchema = (rel: string): any =>
   JSON.parse(fs.readFileSync(path.join(SCHEMAS, rel), 'utf8'));
 
 const groupedInput = readSchema('map.input.json');
+const readInput = readSchema('map.read.input.json');
 const groupedOutput = readSchema('map.output.json');
 
 const perActionInput: Record<string, any> = {
@@ -110,6 +111,7 @@ const INVALID_BODY: Record<string, any> = {
 
 const ajv = getAjv();
 const validateGrouped = ajv.compile(groupedInput);
+const validateRead = ajv.compile(readInput);
 const validateGroupedOut = ajv.compile(groupedOutput);
 const perActionValidators: Record<string, any> = Object.fromEntries(
   ACTIONS.map((a) => [a, ajv.compile(perActionInput[a])]),
@@ -122,13 +124,15 @@ describe('schemas/map.input — grouped input compiles + parity', () => {
     expect(typeof validateGrouped).toBe('function');
   });
 
-  it('action enum lists the six legacy actions and reviewed intake actions', () => {
+  it('each family lists only its read or write actions', () => {
     expect(groupedInput.properties.action.enum.slice().sort()).toEqual(
-      [...ACTIONS, 'draft', 'show'].sort(),
+      ['apply', 'create', 'delete', 'draft', 'update'],
     );
+    expect(readInput.properties.action.enum.slice().sort()).toEqual(['list', 'resolve', 'show']);
   });
 
   for (const action of ACTIONS) {
+    const validateGrouped = ['list', 'resolve'].includes(action) ? validateRead : ajv.compile(groupedInput);
     describe(`action="${action}"`, () => {
       it('VALID body validates under BOTH old per-action and grouped schema', () => {
         const old = clone(VALID_BODY[action]);
@@ -268,7 +272,7 @@ describe('tools/map — grouped dispatch routes to per-action handlers', () => {
   });
 
   it('routes action="list" identically to the per-action handler (read-only)', async () => {
-    const { handle: groupHandle } = await import('./map.js');
+    const { handle: groupHandle } = await import('./map.read.js');
     const { handle: listHandle } = await import('./map.list.js');
     const direct = await listHandle({ externalSystem: 'material' } as any);
     const viaGroup = await groupHandle({
@@ -279,7 +283,7 @@ describe('tools/map — grouped dispatch routes to per-action handlers', () => {
   });
 
   it('routes action="resolve" identically to the per-action handler (read-only)', async () => {
-    const { handle: groupHandle } = await import('./map.js');
+    const { handle: groupHandle } = await import('./map.read.js');
     const { handle: resolveHandle } = await import('./map.resolve.js');
     const args = { externalSystem: 'material', externalComponent: 'Button' };
     const direct = await resolveHandle(args as any);

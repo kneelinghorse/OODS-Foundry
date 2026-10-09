@@ -8,9 +8,11 @@
  * Exits 1 when any error-level rule fails.
  */
 import fs from 'node:fs';
+import { schemaBytes } from './schema-size.mjs';
 import { spawn } from 'node:child_process';
 
 export const RULES = {
+  'schema-size': { level: 'warn', source: 'Codex json_schema/compaction.rs: DEFAULT_COMPACT_TOOL_SCHEMA_BYTES = 5000; viz_render is the documented exception.' },
   'tool-name': { level: 'error', source: 'https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/implement-tool-use (name ^[a-zA-Z0-9_-]{1,64}$)' },
   'tool-name-prefixed': { level: 'error', source: 'Claude Code exposes MCP tools as mcp__<server>__<tool>; the API name limit (64) applies to the prefixed name' },
   'title': { level: 'error', source: 'https://modelcontextprotocol.io/specification/2025-06-18/server/tools (Tool.title)' },
@@ -125,6 +127,8 @@ export function checkTools(tools, { serverName = 'oods-foundry', serverInfo, ins
     }
     if (typeof tool.description !== 'string' || tool.description.trim().length < 20) add(name, 'description', 'description', 'missing or shorter than 20 characters');
     const schema = tool.inputSchema;
+    const bytes = schemaBytes(schema);
+    if (bytes > 5000) add(name, 'schema-size', 'inputSchema', `${bytes} normalized UTF-8 bytes exceeds 5000${name === 'viz_render' ? '; known exception preserves chart parameter descriptions' : ''}`);
     if (!isObj(schema) || schema.type !== 'object') add(name, 'input-object', 'inputSchema.type', `is ${JSON.stringify(schema?.type)}`);
     else {
       for (const key of ['allOf', 'anyOf', 'oneOf', 'not']) if (schema[key] !== undefined) add(name, 'root-combinator', `inputSchema.${key}`, 'root-level combinator');

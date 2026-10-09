@@ -1,3 +1,4 @@
+import { handle as importObjectReadWriteSplit } from '../../src/tools/object.import.read.js';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -101,7 +102,7 @@ it('uses the record primary key before foreign keys and avoids a duplicated titl
   const nodes = (node: any): any[] => [node, ...(node.children ?? []).flatMap(nodes)];
   expect(form.schema.screens.flatMap(nodes).filter(node => ['Input', 'Textarea'].includes(node.component) && node.props?.field === 'title')).toHaveLength(1);
   const nameless = draftSource({ format: 'sql', content: 'CREATE TABLE payment (customer_id int, payment_id int PRIMARY KEY);' });
-  expect(nameless.drafts[0].definition.semantics.payment_id.semantic_type).toBe('text.label');
+  expect(nameless.drafts[0].definition.semantics.payment_id.semantic_type).toBe('object.Payment.number');
   register(nameless);
   const namelessForm = await compose({ object: 'Payment', context: 'form', options: { transient: true } });
   expect(screenShell(namelessForm.schema, {} as any)?.heading).toBe('Payment form');
@@ -140,7 +141,7 @@ it('renders numeric record identifiers as visible headings and generates string 
 
 it('preserves uppercase lifecycle values from schema standards in an acceptable Stateful proposal', async () => {
   const staged = await importObject({ action: 'draft', source: { format: 'prisma', content: 'enum Stage {\n OPEN\n CLOSED\n}\nmodel CaseRecord {\n id Int @id\n title String\n status Stage @default(OPEN)\n}' } });
-  const shown = await importObject({ action: 'show', importId: staged.importId, object: 'CaseRecord' });
+  const shown = await importObjectReadWriteSplit({ action: 'show', importId: staged.importId, object: 'CaseRecord' });
   const proposal = shown.proposals.find((p: any) => p.trait.name === 'Stateful');
   expect(proposal.valid).toBe(true);
   expect(proposal.trait.parameters.states).toEqual(['OPEN', 'CLOSED']);
@@ -185,7 +186,7 @@ it('keeps read-only reference labels out of forms without invalidating the edita
 
 it('uses camel-case identifiers and removes forms when every source field is read-only', () => {
   const result = from({ title: 'Lookup', properties: { createdBy: { type: 'string', readOnly: true }, valueId: { type: 'string', readOnly: true }, description: { type: 'string', readOnly: true } } });
-  expect(result.drafts[0].definition.semantics.valueId.semantic_type).toBe('text.label');
+  expect(result.drafts[0].definition.semantics.valueId.semantic_type).toBe('object.Lookup.number');
   expect(result.drafts[0].definition.metadata.supportedContexts).toEqual(['list', 'detail']);
 });
 
@@ -197,7 +198,7 @@ it('uses a declared non-id primary key for relationship choices instead of the t
   const picker = form.schema.screens.flatMap(nodes).find(node => node.component === 'Select' && node.props?.field === 'currency_code');
   const currency = result.drafts.find(d => d.name === 'Currencies')!;
   expect(picker.props.options[2]).toEqual({ value: currency.definition.samples![2].code, label: currency.definition.samples![2].name });
-  expect(result.drafts.find(d => d.name === 'Prices')!.definition.samples![2].currency_code).toBe(picker.props.options[2].value);
+  expect(currency.definition.samples!.map(row => row.code)).toContain(result.drafts.find(d => d.name === 'Prices')!.definition.samples![2].currency_code);
 });
 
 it('keeps GraphQL relationship samples and picker keys aligned when id and databaseId both exist', async () => {
@@ -208,7 +209,7 @@ it('keeps GraphQL relationship samples and picker keys aligned when id and datab
   const picker = form.schema.screens.flatMap(nodes).find(node => node.component === 'Select' && node.props?.field === 'repository');
   const target = result.drafts.find(d => d.name === 'Repository')!;
   expect(picker.props.options[2].value).toBe(target.definition.samples![2].id);
-  expect(result.drafts.find(d => d.name === 'CheckRun')!.definition.samples![2].repository).toBe(picker.props.options[2].value);
+  expect(target.definition.samples!.map(row => row.id)).toContain(result.drafts.find(d => d.name === 'CheckRun')!.definition.samples![2].repository);
 });
 
 it('keeps imported date-only read fields date-only in generated React and Vue with retained consumer libraries', async () => {

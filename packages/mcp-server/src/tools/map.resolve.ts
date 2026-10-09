@@ -22,7 +22,7 @@ export async function handle(input: MapResolveInput): Promise<MapResolveOutput> 
       status: 'not_found',
       message:
         `No mapping found for ${input.externalSystem}/${input.externalComponent}. ` +
-        'Use map.list to see available systems, or map.create with apply=true to add one.',
+        'Use component_map_read with action=list to see available systems, or component_map with action=create and apply=true to add one.',
     };
   }
 

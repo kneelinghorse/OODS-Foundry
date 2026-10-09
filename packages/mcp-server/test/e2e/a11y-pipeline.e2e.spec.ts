@@ -74,7 +74,7 @@ describe('a11y pipeline e2e', () => {
       schema: testSchema,
       options: { checkA11y: true },
     };
-    const result = await runBridgeTool<ReplValidateOutput>(bridge!.port, 'repl', { action: 'validate', ...input });
+    const result = await runBridgeTool<ReplValidateOutput>(bridge!.port, 'schema_render', { action: 'validate', ...input });
 
     expect(result.status).toBeDefined();
     expect(result.mode).toBe('full');
@@ -92,7 +92,7 @@ describe('a11y pipeline e2e', () => {
     // Step 1: validate with a11y
     const validateResult = await runBridgeTool<ReplValidateOutput>(
       bridge!.port,
-      'repl',
+      'schema_render',
       { action: 'validate', mode: 'full', schema: testSchema, options: { checkA11y: true } },
     );
     expect(validateResult.status).toBe('ok');
@@ -100,7 +100,7 @@ describe('a11y pipeline e2e', () => {
     // Step 2: render the same schema — verify the pipeline doesn't break
     const renderResult = await runBridgeTool<ReplRenderOutput>(
       bridge!.port,
-      'repl',
+      'schema_render',
       { action: 'render', mode: 'full', schema: testSchema },
     );
     // Render should return a structured response (status + mode present)

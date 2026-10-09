@@ -60,7 +60,7 @@
       ]
     }
   ],
-  "head": "d2157be6208aef4c07f9aa6d45b6bdf85fa1f3ce",
+  "head": "101fb413c804769aaab9430423d1cb34fbdcb65a",
   "builderSelfCertified": false,
   "methodology": {
     "testImportLocation": "Where a spec that imports the tool's handler module lives: packages/mcp-server/test/product-reality, then test/contracts, then any other mcp-server spec. A literal runtime import is source evidence that a test reaches the handler, not proof of invocation, passing execution or browser certification. Grouped action imports roll up to their registered family. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not count.",
@@ -70,26 +70,26 @@
     "portableExecution": "Per-tool pass or typed dependency outcomes for the exercised inputs from the hash-bound packaged-runtime E2E receipt. Its bundle head and dirty state are retained separately from this source census head. Certification is the independent review's."
   },
   "portableExecution": {
-    "path": "artifacts/product-reality/sprint-235/m04/candidate-5/e2e-host2.json",
-    "sha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
-    "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7",
+    "path": "artifacts/product-reality/sprint-240/m04/candidate-3/e2e-npm-node24-b.json",
+    "sha256": "sha256:9b741abecdea5dab91873d35a77155837bbcd9f6dff8ae57fc0f212e2c82dbca",
+    "bundleHead": "101fb413c804769aaab9430423d1cb34fbdcb65a",
     "dirty": false,
-    "tools": 20,
-    "pass": 20,
+    "tools": 26,
+    "pass": 26,
     "typed": 0
   },
   "summary": {
-    "entries": 21,
-    "auto": 20,
+    "entries": 27,
+    "auto": 26,
     "onDemand": 1,
     "byTestImportLocation": {
-      "test/product-reality": 20,
+      "test/product-reality": 26,
       "test/contracts": 1,
       "other-spec": 0,
       "none": 0
     },
     "autoByTestImportLocation": {
-      "test/product-reality": 20,
+      "test/product-reality": 26,
       "test/contracts": 0,
       "other-spec": 0,
       "none": 0
@@ -100,7 +100,7 @@
       "other-spec": 0,
       "none": 0
     },
-    "portableE2E": 20,
+    "portableE2E": 26,
     "caveats": 35,
     "portableLimits": 0
   },
@@ -133,7 +133,7 @@
           },
           {
             "path": "packages/mcp-server/test/contracts/portable-token-dependencies.s196.spec.ts",
-            "line": 5,
+            "line": 6,
             "handler": "packages/mcp-server/src/tools/tokens.build.ts"
           },
           {
@@ -201,8 +201,8 @@
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
-        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
+        "receiptSha256": "sha256:9b741abecdea5dab91873d35a77155837bbcd9f6dff8ae57fc0f212e2c82dbca",
+        "bundleHead": "101fb413c804769aaab9430423d1cb34fbdcb65a"
       },
       "caveats": [
         {
@@ -218,10 +218,10 @@
       "registration": "auto",
       "advertisedClaim": {
         "name": "structured_data_fetch",
-        "description": "Fetch live registry datasets, archived token/export data, or captured-run artifacts. Use it when you need complete machine-readable data; use catalog_list instead for component selection, object_registry for one object's definition, or registry_snapshot for mappings together with traits and objects. Returns data with provenance, version and cache metadata. dataset selects registry/export mode; version pins an archived export and listVersions lists dates. kind plus runPath selects captured artifacts, while derived_analysis reads an analysis directory via runPath; version/listVersions are refused in kind mode. includeInternal exposes hidden objects, and ifNoneMatch checks the canonical payload ETag. Full schema: oods://schemas/structured_data_fetch.input.json.",
+        "description": "Fetch live registry datasets, archived token/export data, or captured-run artifacts. Use it when you need complete datasets; catalog_list selects components and object_registry reads definitions. Returns data with provenance, version and cache metadata. dataset selects registry/export mode; version pins an archived export and listVersions lists dates. kind plus runPath selects captured artifacts, while derived_analysis reads an analysis directory via runPath; version/listVersions are refused in kind mode. includeInternal exposes hidden objects, and ifNoneMatch checks the canonical payload ETag. Full schema: oods://schemas/structured_data_fetch.input.json.",
         "inputSchemaDescription": "Read structured datasets or Stage1 rollups. listVersions and version are dataset-only; kind mode rejects these options with structured_data_fetch-specific OODS-V202."
       },
-      "claimHash": "sha256:2132d6d735cf5378d99e9cc97874346a0e04ca116fc3f61e7b86fb453c0b3b47",
+      "claimHash": "sha256:ff50b0ed378073c2615bcf4a2f5dd2f43b348435ebfd0db9741e4d257f6d18b0",
       "inputSchemaPath": "packages/mcp-server/src/schemas/structuredData.fetch.input.json",
       "inputSchemaHash": "sha256:5ef358fb615a3753660c0d7b1901ffa9b2ba18f4744b5907bf07b334dc8e8191",
       "testImportLocation": "test/product-reality",
@@ -345,8 +345,8 @@
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
-        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
+        "receiptSha256": "sha256:9b741abecdea5dab91873d35a77155837bbcd9f6dff8ae57fc0f212e2c82dbca",
+        "bundleHead": "101fb413c804769aaab9430423d1cb34fbdcb65a"
       },
       "caveats": []
     },
@@ -393,7 +393,7 @@
           },
           {
             "path": "packages/mcp-server/test/contracts/portable-token-dependencies.s196.spec.ts",
-            "line": 6,
+            "line": 7,
             "handler": "packages/mcp-server/src/tools/brand.apply.ts"
           },
           {
@@ -420,7 +420,7 @@
         "other-spec": [
           {
             "path": "packages/mcp-server/test/brands/brand-intake.s213.spec.ts",
-            "line": 26,
+            "line": 27,
             "handler": "packages/mcp-server/src/tools/brand.apply.ts"
           },
           {
@@ -466,8 +466,8 @@
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
-        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
+        "receiptSha256": "sha256:9b741abecdea5dab91873d35a77155837bbcd9f6dff8ae57fc0f212e2c82dbca",
+        "bundleHead": "101fb413c804769aaab9430423d1cb34fbdcb65a"
       },
       "caveats": [
         {
@@ -507,20 +507,15 @@
       "registration": "auto",
       "advertisedClaim": {
         "name": "brand_create",
-        "description": "Create brands from token documents or a six-value recipe. Use it when adding a brand; use brand_apply to edit an existing brand or tokens_build to compile current sources. Returns templates, validation reports, recipes with provenance/gaps, or created brands and build results. action selects template, validate, derive, create, draft, show or apply. draft reads a local DTCG file with token names and light/dark modes; show reviews slot evidence and fallbacks; apply with draftId and accept:true validates and creates the reviewed brand. derive accepts exactly one of tokens, css or cssPath; review gaps before creating. create validates every theme, refuses replacement, writes into your brands folder and builds tokens. Template and validation calls write nothing. Full schema: oods://schemas/brand_create.input.json.",
-        "inputSchemaDescription": "derive reads a team's DTCG tokens or a shadcn CSS theme into a partial recipe with provenance, gaps and warnings, writing nothing. Create a brand from token values or a recipe. template returns every slot of a brand with its meaning and a starting value, or from a recipe the complete brand it gives, graded; validate checks the filled documents or a recipe and writes nothing; create writes a brand that passes into the brands folder and runs the token build. draft reads a local DTCG file, retains supported token names and light/dark modes, and reports slot evidence/fallbacks; show reviews the content-addressed draft; apply with accept:true validates and writes the whole reviewed brand atomically."
+        "description": "Create a brand or stage a local token intake draft. Use it when adding a brand; use brand_read for templates, validation, derivation and draft review, or brand_apply to edit a brand. Returns a staged draft or created brand with build results. apply needs draftId and accept:true. create accepts filled documents or a recipe, validates all themes, refuses replacement and removes a brand whose build fails. Full schema: oods://schemas/brand_create.input.json.",
+        "inputSchemaDescription": "brand_create input: create, draft, apply."
       },
-      "claimHash": "sha256:1a6e5b07f939b5d49a08353f3ea5c5fd74baf49d798706d88635f0901a0b9f5b",
+      "claimHash": "sha256:1049623f5428efef28479ac0d24d7463d01a642ccedb2f187125983c2cb25fb7",
       "inputSchemaPath": "packages/mcp-server/src/schemas/brand.intake.input.json",
-      "inputSchemaHash": "sha256:8fdddc2ab70a9fcf8c609f0866886eb22b67becee7a7868f444380a876ebb543",
+      "inputSchemaHash": "sha256:8789d953cb01767dc1429c1b92a61fc856036eefc6e541d6750683f73127f651",
       "testImportLocation": "test/product-reality",
       "testImports": {
         "test/product-reality": [
-          {
-            "path": "packages/mcp-server/test/product-reality/brand-seam.s194.spec.ts",
-            "line": 9,
-            "handler": "packages/mcp-server/src/tools/brand.intake.ts"
-          },
           {
             "path": "packages/mcp-server/test/product-reality/preview-token-build.s217.spec.ts",
             "line": 7,
@@ -535,14 +530,14 @@
           },
           {
             "path": "packages/mcp-server/test/contracts/portable-token-dependencies.s196.spec.ts",
-            "line": 7,
+            "line": 8,
             "handler": "packages/mcp-server/src/tools/brand.intake.ts"
           }
         ],
         "other-spec": [
           {
             "path": "packages/mcp-server/test/brands/brand-derive-css.s229.spec.ts",
-            "line": 6,
+            "line": 7,
             "handler": "packages/mcp-server/src/tools/brand.intake.ts"
           },
           {
@@ -552,17 +547,7 @@
           },
           {
             "path": "packages/mcp-server/test/brands/brand-intake.s213.spec.ts",
-            "line": 25,
-            "handler": "packages/mcp-server/src/tools/brand.intake.ts"
-          },
-          {
-            "path": "packages/mcp-server/test/brands/hc-system-colours.s221.spec.ts",
-            "line": 11,
-            "handler": "packages/mcp-server/src/tools/brand.intake.ts"
-          },
-          {
-            "path": "packages/mcp-server/test/brands/quickstart-harbor.s222.spec.ts",
-            "line": 10,
+            "line": 26,
             "handler": "packages/mcp-server/src/tools/brand.intake.ts"
           },
           {
@@ -572,7 +557,7 @@
           },
           {
             "path": "packages/mcp-server/test/intake/intake.s237.spec.ts",
-            "line": 8,
+            "line": 9,
             "handler": "packages/mcp-server/src/tools/brand.intake.ts"
           },
           {
@@ -608,21 +593,21 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1151
+          "line": 1154
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
-        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
+        "receiptSha256": "sha256:9b741abecdea5dab91873d35a77155837bbcd9f6dff8ae57fc0f212e2c82dbca",
+        "bundleHead": "101fb413c804769aaab9430423d1cb34fbdcb65a"
       },
       "caveats": [
         {
           "kind": "documented-limit",
           "file": "packages/mcp-server/src/tools/brand.intake.ts",
           "reason": "From an extracted runtime archive with no brands folder set, create is refused with OODS-N025; the npm launcher sets ~/.oods-foundry/brands, where create writes a brand and builds it, outside the runtime.",
-          "line": 89
+          "line": 90
         },
         {
           "kind": "documented-limit",
@@ -633,14 +618,100 @@
       ]
     },
     {
+      "name": "brand.read",
+      "registration": "auto",
+      "advertisedClaim": {
+        "name": "brand_read",
+        "description": "Read brand templates, validate documents, derive recipes or inspect staged drafts. Use it when preparing a brand without saving; use brand_create to stage or create it. Returns complete template slots, validation findings, a recipe with provenance and gaps, or draft evidence. derive takes exactly one of tokens, css or absolute cssPath. Template replies use compact JSON so all themes fit inline. Full schema: oods://schemas/brand_read.input.json.",
+        "inputSchemaDescription": "brand_read input: template, validate, derive, show."
+      },
+      "claimHash": "sha256:3eac8ecce8291b75a273e016995fcd92f428db74300ac67c791fde6e353b1b1e",
+      "inputSchemaPath": "packages/mcp-server/src/schemas/brand.read.input.json",
+      "inputSchemaHash": "sha256:7ca14462b4c0b3edaf0e6acfeca4c943d73c57390f439ef82383f4fe291a82a4",
+      "testImportLocation": "test/product-reality",
+      "testImports": {
+        "test/product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/brand-seam.s194.spec.ts",
+            "line": 9,
+            "handler": "packages/mcp-server/src/tools/brand.read.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/product-reality/read-write-split.s240.spec.ts",
+            "line": 9,
+            "handler": "packages/mcp-server/src/tools/brand.read.ts"
+          }
+        ],
+        "test/contracts": [
+          {
+            "path": "packages/mcp-server/test/contracts/portable-claims.s196.spec.ts",
+            "line": 10,
+            "handler": "packages/mcp-server/src/tools/brand.read.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/contracts/portable-token-dependencies.s196.spec.ts",
+            "line": 1,
+            "handler": "packages/mcp-server/src/tools/brand.read.ts"
+          }
+        ],
+        "other-spec": [
+          {
+            "path": "packages/mcp-server/test/brands/brand-derive-css.s229.spec.ts",
+            "line": 1,
+            "handler": "packages/mcp-server/src/tools/brand.read.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/brands/brand-derive.s228.spec.ts",
+            "line": 7,
+            "handler": "packages/mcp-server/src/tools/brand.read.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/brands/brand-intake.s213.spec.ts",
+            "line": 1,
+            "handler": "packages/mcp-server/src/tools/brand.read.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/brands/hc-system-colours.s221.spec.ts",
+            "line": 11,
+            "handler": "packages/mcp-server/src/tools/brand.read.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/brands/quickstart-harbor.s222.spec.ts",
+            "line": 10,
+            "handler": "packages/mcp-server/src/tools/brand.read.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/intake/unknown-drafts.s238.spec.ts",
+            "line": 7,
+            "handler": "packages/mcp-server/src/tools/brand.read.ts"
+          }
+        ]
+      },
+      "certifiedReceipts": [],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 1151
+        }
+      ],
+      "portableLimits": [],
+      "portableOutcome": {
+        "outcome": "pass",
+        "receiptSha256": "sha256:9b741abecdea5dab91873d35a77155837bbcd9f6dff8ae57fc0f212e2c82dbca",
+        "bundleHead": "101fb413c804769aaab9430423d1cb34fbdcb65a"
+      },
+      "caveats": []
+    },
+    {
       "name": "catalog.list",
       "registration": "auto",
       "advertisedClaim": {
         "name": "catalog_list",
-        "description": "List components from the live component-contract registry. Use it when choosing components by category, trait or rendering context; use structured_data_fetch instead for complete datasets, object_registry for full object definitions, or registry_snapshot for mappings together with traits and objects. Returns component names, categories, readiness labels and availableCategories; detail controls added tags, contexts, regions, traits and evidence. includeInternal exposes hidden registry objects. Readiness evidence retains the build it measured and does not certify a new composition. Full schema: oods://schemas/catalog_list.input.json.",
+        "description": "List components from the live component-contract registry. Use it when selecting components; structured_data_fetch returns complete datasets. Returns component names, categories, readiness labels and availableCategories; detail controls added tags, contexts, regions, traits and evidence. includeInternal exposes hidden registry objects. Readiness evidence retains the build it measured and does not certify a new composition. Full schema: oods://schemas/catalog_list.input.json.",
         "inputSchemaDescription": ""
       },
-      "claimHash": "sha256:19565821d71c622cf7af58e566824c95c5ee33a133af4b63a0a8c29c35f36831",
+      "claimHash": "sha256:76682cdce702f8a238af1e4c139ce3968a6fe2f5fa932a04daaa812ca421d60f",
       "inputSchemaPath": "packages/mcp-server/src/schemas/catalog.list.input.json",
       "inputSchemaHash": "sha256:f94e98074cf3a8135284237243930a8208071af236cbb639836d252b54a07c44",
       "testImportLocation": "test/product-reality",
@@ -753,14 +824,14 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1155
+          "line": 1159
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
-        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
+        "receiptSha256": "sha256:9b741abecdea5dab91873d35a77155837bbcd9f6dff8ae57fc0f212e2c82dbca",
+        "bundleHead": "101fb413c804769aaab9430423d1cb34fbdcb65a"
       },
       "caveats": [
         {
@@ -1129,7 +1200,7 @@
           },
           {
             "path": "packages/mcp-server/test/contracts/portable-claims.s196.spec.ts",
-            "line": 11,
+            "line": 12,
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
           },
           {
@@ -1291,7 +1362,7 @@
           },
           {
             "path": "packages/mcp-server/test/importer/field-bindings.s237.spec.ts",
-            "line": 14,
+            "line": 15,
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
           },
           {
@@ -1301,17 +1372,17 @@
           },
           {
             "path": "packages/mcp-server/test/importer/screens.s236.spec.ts",
-            "line": 131,
+            "line": 132,
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
           },
           {
             "path": "packages/mcp-server/test/importer/screens.s236.spec.ts",
-            "line": 215,
+            "line": 216,
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
           },
           {
             "path": "packages/mcp-server/test/importer/screens.s236.spec.ts",
-            "line": 233,
+            "line": 234,
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
           },
           {
@@ -1336,7 +1407,7 @@
           },
           {
             "path": "packages/mcp-server/test/objects/team-definitions.s213.spec.ts",
-            "line": 19,
+            "line": 20,
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
           },
           {
@@ -1346,7 +1417,7 @@
           },
           {
             "path": "packages/mcp-server/test/tools/design.preview.s201.spec.ts",
-            "line": 14,
+            "line": 15,
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
           },
           {
@@ -1442,18 +1513,18 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1196
+          "line": 1202
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1199
+          "line": 1205
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
-        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
+        "receiptSha256": "sha256:9b741abecdea5dab91873d35a77155837bbcd9f6dff8ae57fc0f212e2c82dbca",
+        "bundleHead": "101fb413c804769aaab9430423d1cb34fbdcb65a"
       },
       "caveats": [
         {
@@ -1646,6 +1717,11 @@
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
+            "path": "packages/mcp-server/test/product-reality/read-write-split.s240.spec.ts",
+            "line": 13,
+            "handler": "packages/mcp-server/src/tools/design.compose.ts"
+          },
+          {
             "path": "packages/mcp-server/test/product-reality/recipe-header-fields.s185.spec.ts",
             "line": 9,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
@@ -1677,7 +1753,7 @@
           },
           {
             "path": "packages/mcp-server/test/product-reality/schema.s194.spec.ts",
-            "line": 6,
+            "line": 7,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
@@ -1811,7 +1887,7 @@
           },
           {
             "path": "packages/mcp-server/test/brands/brand-intake.s213.spec.ts",
-            "line": 27,
+            "line": 28,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
@@ -2036,7 +2112,7 @@
           },
           {
             "path": "packages/mcp-server/test/importer/field-bindings.s237.spec.ts",
-            "line": 13,
+            "line": 14,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
@@ -2045,8 +2121,13 @@
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
-            "path": "packages/mcp-server/test/importer/screens.s236.spec.ts",
+            "path": "packages/mcp-server/test/importer/readable-screens.s240.spec.ts",
             "line": 9,
+            "handler": "packages/mcp-server/src/tools/design.compose.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/importer/screens.s236.spec.ts",
+            "line": 10,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
@@ -2076,7 +2157,7 @@
           },
           {
             "path": "packages/mcp-server/test/objects/team-definitions.s213.spec.ts",
-            "line": 18,
+            "line": 19,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
@@ -2101,12 +2182,12 @@
           },
           {
             "path": "packages/mcp-server/test/tools/design.preview.accept.s202.spec.ts",
-            "line": 11,
+            "line": 12,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
             "path": "packages/mcp-server/test/tools/design.preview.s201.spec.ts",
-            "line": 15,
+            "line": 16,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
@@ -2182,14 +2263,14 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1158
+          "line": 1162
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
-        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
+        "receiptSha256": "sha256:9b741abecdea5dab91873d35a77155837bbcd9f6dff8ae57fc0f212e2c82dbca",
+        "bundleHead": "101fb413c804769aaab9430423d1cb34fbdcb65a"
       },
       "caveats": [
         {
@@ -2211,12 +2292,12 @@
       "registration": "auto",
       "advertisedClaim": {
         "name": "design_preview",
-        "description": "Open a versioned composition as a running React/Vue app with recorded measurements. Use it when reviewing generated behavior or edits; use fidelity_preview instead for static diagrams, wireframes or mockups. Returns preview URLs, composition lineage, editable fields and measured/notMeasured evidence. Supply compositionId/version or object/context; action selects render, edit, compare or versions. Edits create a new version. framework and preferences select rendering; contextItems attach fetched evidence. runPath selects captured-run records, analysisPath selects derived comparisons, and recordId chooses an exact record. Writes version artifacts and measurements; domain actions still require consumer integration. Full schema: oods://schemas/design_preview.input.json.",
-        "inputSchemaDescription": "Open a composition version as the generated React or Vue app actually running in a browser: either an existing compositionId (and optional version) or an object and context composed now as a new composition. The preview host (in the HTTP bridge, or started by the stdio adapter) compiles the artifact and serves it at one URL per version with its lineage and brand, theme and width controls. action \"compare\" prepares missing generated artifacts for both versions in the requested frameworks, then returns the structural what-changed (including props on and inside slots and objectSchema fields in the definition category; identical requires equal schema hashes) between this version and `against` (regions, slots, nodes, props, field order, seed, artifact file hashes) with the side-by-side URL. action \"accept\" records the version as the composition's accepted version with a snapshot of its measurements."
+        "description": "Render, compare, edit or accept a running React/Vue composition. Use it when reviewing generated behavior; use design_versions to inspect lineage without starting a host, or fidelity_preview for static drawings. Returns preview URLs, editable fields and measured or unmeasured evidence. Supply compositionId/version or object/context. Edits create versions; compare generates missing artifacts. accept records the generated version and a snapshot of its measurements as accepted, preserving prior acceptances. Full schema: oods://schemas/design_preview.input.json.",
+        "inputSchemaDescription": "design_preview input: render, compare, edit, accept."
       },
-      "claimHash": "sha256:10e3a38cbe4c64a445f5666da66576b9be853418b78ad00873081d59c7cc8f3c",
+      "claimHash": "sha256:fea39aec1fdc405c8f66727587b0f938349f40d56c59ba2cc96c0421f60056a4",
       "inputSchemaPath": "packages/mcp-server/src/schemas/design.preview.input.json",
-      "inputSchemaHash": "sha256:eb1ca7ba11496ff7239525a14543aecd10a182b814cbc62ed04d4da4c84eeb28",
+      "inputSchemaHash": "sha256:72b2a2d7f318e21f31dc9383103900f5527ede50f4efb9ec8732698d4fefce8d",
       "testImportLocation": "test/product-reality",
       "testImports": {
         "test/product-reality": [
@@ -2304,7 +2385,7 @@
         "test/contracts": [
           {
             "path": "packages/mcp-server/test/contracts/portable-claims.s196.spec.ts",
-            "line": 10,
+            "line": 11,
             "handler": "packages/mcp-server/src/tools/design.preview.ts"
           },
           {
@@ -2321,12 +2402,12 @@
           },
           {
             "path": "packages/mcp-server/test/tools/design.preview.accept.s202.spec.ts",
-            "line": 12,
+            "line": 13,
             "handler": "packages/mcp-server/src/tools/design.preview.ts"
           },
           {
             "path": "packages/mcp-server/test/tools/design.preview.s201.spec.ts",
-            "line": 20,
+            "line": 21,
             "handler": "packages/mcp-server/src/tools/design.preview.ts"
           },
           {
@@ -2392,14 +2473,14 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1161
+          "line": 1165
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
-        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
+        "receiptSha256": "sha256:9b741abecdea5dab91873d35a77155837bbcd9f6dff8ae57fc0f212e2c82dbca",
+        "bundleHead": "101fb413c804769aaab9430423d1cb34fbdcb65a"
       },
       "caveats": [
         {
@@ -2425,6 +2506,56 @@
           "line": 50
         }
       ]
+    },
+    {
+      "name": "design.versions",
+      "registration": "auto",
+      "advertisedClaim": {
+        "name": "design_versions",
+        "description": "Read a composition's versions and accepted version. Use it when inspecting saved lineage; use design_preview to render, edit, compare or accept. Returns version metadata, latest and acceptance summary. Supply compositionId. Starts no preview host and returns no running URL. Full schema: oods://schemas/design_versions.input.json.",
+        "inputSchemaDescription": "design_versions input: versions."
+      },
+      "claimHash": "sha256:93808c21398a8d03eafdd3c2f183c48695a76e1f33e65e61db70e18047ee4849",
+      "inputSchemaPath": "packages/mcp-server/src/schemas/design.versions.input.json",
+      "inputSchemaHash": "sha256:edd5b6f144abfac6078519c14f7656ba20b03acedd0c4b53c8b9ee250dcad24d",
+      "testImportLocation": "test/product-reality",
+      "testImports": {
+        "test/product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/read-write-split.s240.spec.ts",
+            "line": 11,
+            "handler": "packages/mcp-server/src/tools/design.versions.ts"
+          }
+        ],
+        "test/contracts": [],
+        "other-spec": [
+          {
+            "path": "packages/mcp-server/test/tools/design.preview.accept.s202.spec.ts",
+            "line": 1,
+            "handler": "packages/mcp-server/src/tools/design.versions.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/tools/design.preview.s201.spec.ts",
+            "line": 1,
+            "handler": "packages/mcp-server/src/tools/design.versions.ts"
+          }
+        ]
+      },
+      "certifiedReceipts": [],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 1169
+        }
+      ],
+      "portableLimits": [],
+      "portableOutcome": {
+        "outcome": "pass",
+        "receiptSha256": "sha256:9b741abecdea5dab91873d35a77155837bbcd9f6dff8ae57fc0f212e2c82dbca",
+        "bundleHead": "101fb413c804769aaab9430423d1cb34fbdcb65a"
+      },
+      "caveats": []
     },
     {
       "name": "pipeline",
@@ -2494,7 +2625,7 @@
           },
           {
             "path": "packages/mcp-server/test/contracts/portable-claims.s196.spec.ts",
-            "line": 12,
+            "line": 13,
             "handler": "packages/mcp-server/src/tools/pipeline.ts"
           },
           {
@@ -2557,14 +2688,14 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1202
+          "line": 1208
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
-        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
+        "receiptSha256": "sha256:9b741abecdea5dab91873d35a77155837bbcd9f6dff8ae57fc0f212e2c82dbca",
+        "bundleHead": "101fb413c804769aaab9430423d1cb34fbdcb65a"
       },
       "caveats": [
         {
@@ -2666,7 +2797,7 @@
           },
           {
             "path": "packages/mcp-server/test/objects/team-definitions.s213.spec.ts",
-            "line": 20,
+            "line": 21,
             "handler": "packages/mcp-server/src/tools/health.ts"
           },
           {
@@ -2726,14 +2857,14 @@
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1326
+          "line": 1340
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
-        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
+        "receiptSha256": "sha256:9b741abecdea5dab91873d35a77155837bbcd9f6dff8ae57fc0f212e2c82dbca",
+        "bundleHead": "101fb413c804769aaab9430423d1cb34fbdcb65a"
       },
       "caveats": [
         {
@@ -2761,10 +2892,10 @@
       "registration": "auto",
       "advertisedClaim": {
         "name": "registry_snapshot",
-        "description": "Read mappings together with active traits and objects in one snapshot. Use it when needing a combined registry view and canonical ETag; use catalog_list instead to choose components, structured_data_fetch for an individual dataset, or object_registry to inspect/register a definition. Returns mappings, traits, objects, generatedAt, ETag and registry loader issues. Defaults to a summary; detail full adds schemas. includeInternal exposes hidden objects; otherwise hiddenInternal counts omitted entries. Team definitions and shadowing are reported from live sources. This read-only call writes no snapshot file. Historical mapping fields remain stored data and do not imply current capabilities. Full schema: oods://schemas/registry_snapshot.input.json.",
+        "description": "Read mappings together with active traits and objects in one snapshot. Use it when reading combined registry data; object_registry reads one definition and object_register saves one. Returns mappings, traits, objects, generatedAt, ETag and registry loader issues. Defaults to a summary; detail full adds schemas. includeInternal exposes hidden objects; otherwise hiddenInternal counts omitted entries. Team definitions and shadowing are reported from live sources. This read-only call writes no snapshot file. Historical mapping fields remain stored data and do not imply current capabilities. Full schema: oods://schemas/registry_snapshot.input.json.",
         "inputSchemaDescription": "Bulk-read recorded mappings plus live shipped and registered team traits and objects. Reports definition loader issues, including shadowed names. The default summary leaves out each trait's and object's schema, parameters, view extensions, semantics, tokens and metadata; detail full returns them, optionally only for named traits and objects. Draft preferred_terms, disambiguation_decisions and capabilities are not snapshot outputs."
       },
-      "claimHash": "sha256:0dae0282cd12520cc9cf83e927ee4eb61b7f8c3e5bc18a13376351202d943da0",
+      "claimHash": "sha256:93ab60b103fa58a59b292b2e249cf041a4d0304e3673c06be6d68da83262732a",
       "inputSchemaPath": "packages/mcp-server/src/schemas/registry.snapshot.input.json",
       "inputSchemaHash": "sha256:a3868c66ee0f3a97b51916ebc5d82cd3667f25262223a92fe7977854d1fc1301",
       "testImportLocation": "test/product-reality",
@@ -2772,7 +2903,7 @@
         "test/product-reality": [
           {
             "path": "packages/mcp-server/test/product-reality/map-compose.s194.spec.ts",
-            "line": 6,
+            "line": 7,
             "handler": "packages/mcp-server/src/tools/registry.snapshot.ts"
           }
         ],
@@ -2842,14 +2973,14 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1205
+          "line": 1211
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
-        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
+        "receiptSha256": "sha256:9b741abecdea5dab91873d35a77155837bbcd9f6dff8ae57fc0f212e2c82dbca",
+        "bundleHead": "101fb413c804769aaab9430423d1cb34fbdcb65a"
       },
       "caveats": []
     },
@@ -2978,7 +3109,7 @@
         "other-spec": [
           {
             "path": "packages/mcp-server/test/brands/brand-intake.s213.spec.ts",
-            "line": 28,
+            "line": 29,
             "handler": "packages/mcp-server/src/tools/viz.render.ts"
           },
           {
@@ -3053,7 +3184,7 @@
           },
           {
             "path": "packages/mcp-server/test/tools/design.preview.s201.spec.ts",
-            "line": 16,
+            "line": 17,
             "handler": "packages/mcp-server/src/tools/viz.render.ts"
           },
           {
@@ -3180,8 +3311,8 @@
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
-        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
+        "receiptSha256": "sha256:9b741abecdea5dab91873d35a77155837bbcd9f6dff8ae57fc0f212e2c82dbca",
+        "bundleHead": "101fb413c804769aaab9430423d1cb34fbdcb65a"
       },
       "caveats": []
     },
@@ -3334,8 +3465,8 @@
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
-        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
+        "receiptSha256": "sha256:9b741abecdea5dab91873d35a77155837bbcd9f6dff8ae57fc0f212e2c82dbca",
+        "bundleHead": "101fb413c804769aaab9430423d1cb34fbdcb65a"
       },
       "caveats": [
         {
@@ -3505,7 +3636,7 @@
           },
           {
             "path": "packages/mcp-server/test/tools/design.preview.s201.spec.ts",
-            "line": 13,
+            "line": 14,
             "handler": "packages/mcp-server/src/tools/artifact.certify.ts"
           },
           {
@@ -3586,8 +3717,8 @@
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
-        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
+        "receiptSha256": "sha256:9b741abecdea5dab91873d35a77155837bbcd9f6dff8ae57fc0f212e2c82dbca",
+        "bundleHead": "101fb413c804769aaab9430423d1cb34fbdcb65a"
       },
       "caveats": [
         {
@@ -3679,14 +3810,14 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1207
+          "line": 1213
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
-        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
+        "receiptSha256": "sha256:9b741abecdea5dab91873d35a77155837bbcd9f6dff8ae57fc0f212e2c82dbca",
+        "bundleHead": "101fb413c804769aaab9430423d1cb34fbdcb65a"
       },
       "caveats": [
         {
@@ -3720,12 +3851,12 @@
       "registration": "auto",
       "advertisedClaim": {
         "name": "component_map",
-        "description": "Manage component substitutions in your mapping store. Use it when connecting React/Vue exports or shadcn source to OODS components; use catalog_list to find component names. Returns entries, matches or per-entry write outcomes. action selects draft/show/apply/create/list/resolve/update/delete. draft reads local shadcn or built Storybook files without executing code; show exposes evidence, adapter files and unmatched elements; apply with draftId and accept ids validates and atomically registers reviewed mappings. create accepts a single entry, mappings list or mappingsPath; lists validate completely before one write. substitution supplies exports and prop translations with exact package versions or installed localPath. React/Vue shadcn mappings use an installed project and module instead. Compose snapshots mappings; generation/preview apply them. apply controls mutation where supported. Full schema: oods://schemas/component_map.input.json.",
-        "inputSchemaDescription": "Manage mappings in your user folder (create, list, resolve, update, delete, apply). Create accepts one mapping, a mappings list, or an absolute mappingsPath to a checked mapping file; the list is validated whole and written atomically. Optional substitutions name a shipped OODS Foundry component and React/Vue package exports with prop translations validated against its contract. Legacy Stage1 annotations remain round-trip data. draft reads a local shadcn project or built Storybook without executing code or fetching. show exposes every proposed adapter and unmatched source element. apply with draftId and explicitly accepted proposal ids validates and atomically registers the batch, installing only reviewed new adapter files."
+        "description": "Write component substitutions or stage an intake draft. Use it when connecting React/Vue exports, shadcn source or built Storybook files; use component_map_read to list, resolve or review drafts. Returns staged evidence or write outcomes. apply with draftId requires accepted ids and writes adapters and mappings atomically. create takes one entry, mappings or mappingsPath; create and report-based apply preview unless apply:true. update and delete always write. Full schema: oods://schemas/component_map.input.json.",
+        "inputSchemaDescription": "Stage or write component mappings."
       },
-      "claimHash": "sha256:a040d273766fb3eb01ea84a11f60c56ee7ff8398c41f3364df7386536a921ddd",
+      "claimHash": "sha256:9d0055964172349a264a561b61fe58cfb4c9bed5daa2de36b8972253d4994c06",
       "inputSchemaPath": "packages/mcp-server/src/schemas/map.input.json",
-      "inputSchemaHash": "sha256:25f047d99190712f94740196fc46d55b42e79f9e7f42196b04a16320d18cda85",
+      "inputSchemaHash": "sha256:c967b66bf9b4c35c70600ae232a1e9386a158476545a6060d12c7d1788c6c4bf",
       "testImportLocation": "test/product-reality",
       "testImports": {
         "test/product-reality": [
@@ -3860,18 +3991,13 @@
           },
           {
             "path": "packages/mcp-server/test/intake/intake.s237.spec.ts",
-            "line": 7,
+            "line": 8,
             "handler": "packages/mcp-server/src/tools/map.ts"
           },
           {
             "path": "packages/mcp-server/test/intake/intake.s237.spec.ts",
-            "line": 14,
+            "line": 15,
             "handler": "packages/mcp-server/src/tools/map.create.ts"
-          },
-          {
-            "path": "packages/mcp-server/test/intake/unknown-drafts.s238.spec.ts",
-            "line": 5,
-            "handler": "packages/mcp-server/src/tools/map.ts"
           },
           {
             "path": "packages/mcp-server/test/scale/map.apply.scale.spec.ts",
@@ -3895,42 +4021,32 @@
           },
           {
             "path": "packages/mcp-server/src/tools/map.group.test.ts",
-            "line": 254,
+            "line": 258,
             "handler": "packages/mcp-server/src/tools/map.ts"
           },
           {
             "path": "packages/mcp-server/src/tools/map.group.test.ts",
-            "line": 271,
-            "handler": "packages/mcp-server/src/tools/map.ts"
-          },
-          {
-            "path": "packages/mcp-server/src/tools/map.group.test.ts",
-            "line": 272,
+            "line": 276,
             "handler": "packages/mcp-server/src/tools/map.list.ts"
           },
           {
             "path": "packages/mcp-server/src/tools/map.group.test.ts",
-            "line": 282,
-            "handler": "packages/mcp-server/src/tools/map.ts"
-          },
-          {
-            "path": "packages/mcp-server/src/tools/map.group.test.ts",
-            "line": 283,
+            "line": 287,
             "handler": "packages/mcp-server/src/tools/map.resolve.ts"
           },
           {
             "path": "packages/mcp-server/src/tools/map.group.test.ts",
-            "line": 292,
+            "line": 296,
             "handler": "packages/mcp-server/src/tools/map.ts"
           },
           {
             "path": "packages/mcp-server/src/tools/map.group.test.ts",
-            "line": 293,
+            "line": 297,
             "handler": "packages/mcp-server/src/tools/map.apply.ts"
           },
           {
             "path": "packages/mcp-server/src/tools/map.group.test.ts",
-            "line": 301,
+            "line": 305,
             "handler": "packages/mcp-server/src/tools/map.ts"
           }
         ]
@@ -3961,29 +4077,25 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1209
+          "line": 1215
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1211
-        },
-        {
-          "path": "scripts/runtime/e2e.mjs",
-          "line": 1213
+          "line": 1219
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
-        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
+        "receiptSha256": "sha256:9b741abecdea5dab91873d35a77155837bbcd9f6dff8ae57fc0f212e2c82dbca",
+        "bundleHead": "101fb413c804769aaab9430423d1cb34fbdcb65a"
       },
       "caveats": [
         {
           "kind": "documented-limit",
           "file": "packages/foundry/TOOL-REFERENCE.md",
           "reason": "Compose records substitutions and React/Vue codegen emits team imports, translated props and exact dependencies. Preview bundles installed or localPath packages and freezes them per version. Shared-scenario checks execute through the generated adapters when the preview host has a browser. Unavailable and unimplemented probes remain not-checked, and unmet obligations warn without refusing generation. Legacy Stage1 coercion labels remain annotations.",
-          "line": 92
+          "line": 106
         },
         {
           "kind": "documented-limit",
@@ -4000,16 +4112,81 @@
       ]
     },
     {
+      "name": "map.read",
+      "registration": "auto",
+      "advertisedClaim": {
+        "name": "component_map_read",
+        "description": "Read component substitutions and staged intake evidence. Use it when listing mappings, resolving an external component or reviewing a draftId; use component_map to stage or apply changes. Returns entries, matches or draft evidence including proposed adapters and unmatched elements. Reads local stores without generating adapters or changing project files. Full schema: oods://schemas/component_map_read.input.json.",
+        "inputSchemaDescription": "component_map_read input: list, resolve, show."
+      },
+      "claimHash": "sha256:d9c1bca075f087c08cdf03a541e993bab5c945419f2ba2365f22ef0fc512b681",
+      "inputSchemaPath": "packages/mcp-server/src/schemas/map.read.input.json",
+      "inputSchemaHash": "sha256:dd12e499219fe173f730d56b9eb3d97027fcff098edddc2d4fb773de75a883db",
+      "testImportLocation": "test/product-reality",
+      "testImports": {
+        "test/product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/map-compose.s194.spec.ts",
+            "line": 6,
+            "handler": "packages/mcp-server/src/tools/map.read.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/product-reality/read-write-split.s240.spec.ts",
+            "line": 8,
+            "handler": "packages/mcp-server/src/tools/map.read.ts"
+          }
+        ],
+        "test/contracts": [],
+        "other-spec": [
+          {
+            "path": "packages/mcp-server/test/intake/intake.s237.spec.ts",
+            "line": 1,
+            "handler": "packages/mcp-server/src/tools/map.read.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/intake/unknown-drafts.s238.spec.ts",
+            "line": 5,
+            "handler": "packages/mcp-server/src/tools/map.read.ts"
+          },
+          {
+            "path": "packages/mcp-server/src/tools/map.group.test.ts",
+            "line": 275,
+            "handler": "packages/mcp-server/src/tools/map.read.ts"
+          },
+          {
+            "path": "packages/mcp-server/src/tools/map.group.test.ts",
+            "line": 286,
+            "handler": "packages/mcp-server/src/tools/map.read.ts"
+          }
+        ]
+      },
+      "certifiedReceipts": [],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 1217
+        }
+      ],
+      "portableLimits": [],
+      "portableOutcome": {
+        "outcome": "pass",
+        "receiptSha256": "sha256:9b741abecdea5dab91873d35a77155837bbcd9f6dff8ae57fc0f212e2c82dbca",
+        "bundleHead": "101fb413c804769aaab9430423d1cb34fbdcb65a"
+      },
+      "caveats": []
+    },
+    {
       "name": "schema",
       "registration": "auto",
       "advertisedClaim": {
         "name": "schema_store",
-        "description": "Save, load, list or delete named composition schemas. Use it when retaining a UiSchema across sessions or past its 30-minute reference expiry; use schema_render to validate/render it or object_registry to manage object definitions. Returns the selected stored schema, listing or write result. action selects the operation; save/load/delete use name. Every save overwrites that name and increments its version; only the latest is loadable. apply is accepted but ignored: save and delete always write. Full tool JSON schemas are separate MCP resources, not entries in this store. Full schema: oods://schemas/schema_store.input.json.",
-        "inputSchemaDescription": "Grouped action-parameter tool for the schema family (save, load, list, delete). The `action` field selects the per-action handler; each branch reproduces the exact body of the corresponding per-action input schema plus the discriminator key. Uses plain JSON Schema if/then, with no discriminator keyword."
+        "description": "Save or delete a named composition schema. Use it when retaining a UiSchema across sessions; use schema_read to list or load saved schemas. Returns the saved metadata or deletion result. save takes schemaRef, overwrites that name and increments its version; only the latest is loadable. Both actions write immediately. Full schema: oods://schemas/schema_store.input.json.",
+        "inputSchemaDescription": "schema_store input: save, delete."
       },
-      "claimHash": "sha256:6e02c0e2c01c4de0f2a3b9f233ecac9397e684b39d668a0d9fcd6e70ac29d1f5",
+      "claimHash": "sha256:c842954d7dd2bdf571369eeed294249ae3c871758223430e93aac539a153043a",
       "inputSchemaPath": "packages/mcp-server/src/schemas/schema.input.json",
-      "inputSchemaHash": "sha256:dd1cd8f7255ce1c6513434d60026743ea636dc95ca479b95561dc6ec227f82c4",
+      "inputSchemaHash": "sha256:d103263dadb2233e3348f60cbd8b3547fc07c27c91fa16b176e23ab4051cfac2",
       "testImportLocation": "test/product-reality",
       "testImports": {
         "test/product-reality": [
@@ -4020,7 +4197,7 @@
           },
           {
             "path": "packages/mcp-server/test/product-reality/schema.s194.spec.ts",
-            "line": 5,
+            "line": 6,
             "handler": "packages/mcp-server/src/tools/schema/index.ts"
           }
         ],
@@ -4064,27 +4241,27 @@
           },
           {
             "path": "packages/mcp-server/src/tools/schema.group.test.ts",
-            "line": 7,
+            "line": 8,
             "handler": "packages/mcp-server/src/tools/schema/index.ts"
           },
           {
             "path": "packages/mcp-server/src/tools/schema.group.test.ts",
-            "line": 8,
+            "line": 9,
             "handler": "packages/mcp-server/src/tools/schema/save.ts"
           },
           {
             "path": "packages/mcp-server/src/tools/schema.group.test.ts",
-            "line": 9,
+            "line": 10,
             "handler": "packages/mcp-server/src/tools/schema/load.ts"
           },
           {
             "path": "packages/mcp-server/src/tools/schema.group.test.ts",
-            "line": 10,
+            "line": 11,
             "handler": "packages/mcp-server/src/tools/schema/list.ts"
           },
           {
             "path": "packages/mcp-server/src/tools/schema.group.test.ts",
-            "line": 11,
+            "line": 12,
             "handler": "packages/mcp-server/src/tools/schema/delete.ts"
           },
           {
@@ -4135,22 +4312,18 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1215
+          "line": 1221
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1217
-        },
-        {
-          "path": "scripts/runtime/e2e.mjs",
-          "line": 1219
+          "line": 1225
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
-        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
+        "receiptSha256": "sha256:9b741abecdea5dab91873d35a77155837bbcd9f6dff8ae57fc0f212e2c82dbca",
+        "bundleHead": "101fb413c804769aaab9430423d1cb34fbdcb65a"
       },
       "caveats": [
         {
@@ -4169,16 +4342,66 @@
       ]
     },
     {
+      "name": "schema.read",
+      "registration": "auto",
+      "advertisedClaim": {
+        "name": "schema_read",
+        "description": "Read saved composition schemas. Use it when listing saved work or loading a named schema; use schema_store to save or delete one. Returns metadata or the schema with a new process-local schemaRef, valid for 30 minutes. Tool input schemas are separate MCP resources. Full schema: oods://schemas/schema_read.input.json.",
+        "inputSchemaDescription": "schema_read input: list, load."
+      },
+      "claimHash": "sha256:682c4fc91522faece162eb594930b1da7f15c100d6ab270da919da68cb275284",
+      "inputSchemaPath": "packages/mcp-server/src/schemas/schema.read.input.json",
+      "inputSchemaHash": "sha256:c1a184cfe4964e50784dce485ebb8b3f4bd4c7901072c17f4b47034d887c1211",
+      "testImportLocation": "test/product-reality",
+      "testImports": {
+        "test/product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/read-write-split.s240.spec.ts",
+            "line": 7,
+            "handler": "packages/mcp-server/src/tools/schema.read.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/product-reality/schema.s194.spec.ts",
+            "line": 1,
+            "handler": "packages/mcp-server/src/tools/schema.read.ts"
+          }
+        ],
+        "test/contracts": [],
+        "other-spec": [
+          {
+            "path": "packages/mcp-server/src/tools/schema.group.test.ts",
+            "line": 7,
+            "handler": "packages/mcp-server/src/tools/schema.read.ts"
+          }
+        ]
+      },
+      "certifiedReceipts": [],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 1223
+        }
+      ],
+      "portableLimits": [],
+      "portableOutcome": {
+        "outcome": "pass",
+        "receiptSha256": "sha256:9b741abecdea5dab91873d35a77155837bbcd9f6dff8ae57fc0f212e2c82dbca",
+        "bundleHead": "101fb413c804769aaab9430423d1cb34fbdcb65a"
+      },
+      "caveats": []
+    },
+    {
       "name": "object",
       "registration": "auto",
       "advertisedClaim": {
         "name": "object_registry",
-        "description": "Inspect, validate or register object and trait definitions. Use object_import instead to draft from existing schema files. Use it when exploring object shapes with list/show; use catalog_list instead to choose components, structured_data_fetch for complete datasets, or registry_snapshot for mappings together with definitions. Returns definitions, composed traits/view extensions, validation findings or registry write/reload results. action selects list/show/validate/register/reload. includeInternal reveals hidden objects. validate/register accept YAML; register writes your configured folder after checking declared contexts, and overwrite replaces your own definition. Team objects may shadow shipped objects; traits cannot reuse shipped names. Relationships validate their target and field. Reload reads folders without restarting. Full schema: oods://schemas/object_registry.input.json.",
-        "inputSchemaDescription": "Grouped action-parameter tool for the object registry (list, show, validate, register, reload). The top-level `action` selects which per-action contract applies; each branch reproduces the exact body of the per-action input schema (object.<action>.input.json) with the discriminator key `action` added to its allowed properties."
+        "description": "Read object and trait definitions or validate YAML without saving. Use it when exploring shapes or checking a definition; use object_register to save one or object_import to draft from a schema file. Returns definitions, composed traits, validation findings or cache reload status. includeInternal reveals hidden objects; reload clears only process caches. Full schema: oods://schemas/object_registry.input.json.",
+        "inputSchemaDescription": "object_registry input: list, show, validate, reload."
       },
-      "claimHash": "sha256:f062e22df514c5288affba3b24f208186abf1469d462a6fdeaa53a902d5b0c29",
+      "claimHash": "sha256:c91591a64235e2501779cfb51b87df30c8d48dadd3f7b9f6711cec77847300bf",
       "inputSchemaPath": "packages/mcp-server/src/schemas/object.input.json",
-      "inputSchemaHash": "sha256:dc584c8468f343306eb6c6187b71aa6789b21481af654fb273abb620bdbedfe1",
+      "inputSchemaHash": "sha256:57f444777efd2b286c7f1a38bba40bbae8136d7fae42185000b11f2c2b43b603",
       "testImportLocation": "test/product-reality",
       "testImports": {
         "test/product-reality": [
@@ -4189,13 +4412,23 @@
           },
           {
             "path": "packages/mcp-server/test/product-reality/object-import.s235.spec.ts",
-            "line": 18,
+            "line": 20,
             "handler": "packages/mcp-server/src/tools/object.register.ts"
           },
           {
             "path": "packages/mcp-server/test/product-reality/object.s194.spec.ts",
             "line": 2,
             "handler": "packages/mcp-server/src/tools/object.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/product-reality/read-write-split.s240.spec.ts",
+            "line": 5,
+            "handler": "packages/mcp-server/src/tools/object.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/product-reality/read-write-split.s240.spec.ts",
+            "line": 12,
+            "handler": "packages/mcp-server/src/tools/object.register.ts"
           }
         ],
         "test/contracts": [
@@ -4233,12 +4466,12 @@
         "other-spec": [
           {
             "path": "packages/mcp-server/test/importer/field-bindings.s237.spec.ts",
-            "line": 10,
+            "line": 11,
             "handler": "packages/mcp-server/src/tools/object.register.ts"
           },
           {
             "path": "packages/mcp-server/test/importer/field-bindings.s237.spec.ts",
-            "line": 11,
+            "line": 12,
             "handler": "packages/mcp-server/src/tools/object.validate.ts"
           },
           {
@@ -4252,8 +4485,13 @@
             "handler": "packages/mcp-server/src/tools/object.register.ts"
           },
           {
+            "path": "packages/mcp-server/test/importer/readable-screens.s240.spec.ts",
+            "line": 10,
+            "handler": "packages/mcp-server/src/tools/object.register.ts"
+          },
+          {
             "path": "packages/mcp-server/test/importer/screens.s236.spec.ts",
-            "line": 8,
+            "line": 9,
             "handler": "packages/mcp-server/src/tools/object.register.ts"
           },
           {
@@ -4317,13 +4555,8 @@
             "handler": "packages/mcp-server/src/tools/object.ts"
           },
           {
-            "path": "packages/mcp-server/test/objects/team-definitions-rollback.s213.spec.ts",
-            "line": 24,
-            "handler": "packages/mcp-server/src/tools/object.ts"
-          },
-          {
             "path": "packages/mcp-server/test/objects/team-definitions.s213.spec.ts",
-            "line": 17,
+            "line": 18,
             "handler": "packages/mcp-server/src/tools/object.ts"
           },
           {
@@ -4379,18 +4612,18 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1228
+          "line": 1234
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1229
+          "line": 1237
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
-        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
+        "receiptSha256": "sha256:9b741abecdea5dab91873d35a77155837bbcd9f6dff8ae57fc0f212e2c82dbca",
+        "bundleHead": "101fb413c804769aaab9430423d1cb34fbdcb65a"
       },
       "caveats": [
         {
@@ -4408,14 +4641,64 @@
       ]
     },
     {
+      "name": "object.write",
+      "registration": "auto",
+      "advertisedClaim": {
+        "name": "object_register",
+        "description": "Register an object or trait from reviewed YAML. Use it when saving a definition; use object_registry to list, inspect or validate without writing. Returns the saved definition and registry result. overwrite replaces your own definition. Team objects may shadow shipped objects; traits cannot reuse shipped names. Relationships must name valid targets and fields. Full schema: oods://schemas/object_register.input.json.",
+        "inputSchemaDescription": "object_register input: register."
+      },
+      "claimHash": "sha256:15fbaa7c77e399012a7c025ce8c3f8e7b63f9d7b34f37b919d8846130d87e230",
+      "inputSchemaPath": "packages/mcp-server/src/schemas/object.write.input.json",
+      "inputSchemaHash": "sha256:01dec6b43e4f97f3cb76e01387cf88a5c9e6d4dcb1061d9b686417970da11b16",
+      "testImportLocation": "test/product-reality",
+      "testImports": {
+        "test/product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/read-write-split.s240.spec.ts",
+            "line": 6,
+            "handler": "packages/mcp-server/src/tools/object.write.ts"
+          }
+        ],
+        "test/contracts": [],
+        "other-spec": [
+          {
+            "path": "packages/mcp-server/test/objects/team-definitions-rollback.s213.spec.ts",
+            "line": 24,
+            "handler": "packages/mcp-server/src/tools/object.write.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/objects/team-definitions.s213.spec.ts",
+            "line": 1,
+            "handler": "packages/mcp-server/src/tools/object.write.ts"
+          }
+        ]
+      },
+      "certifiedReceipts": [],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 1235
+        }
+      ],
+      "portableLimits": [],
+      "portableOutcome": {
+        "outcome": "pass",
+        "receiptSha256": "sha256:9b741abecdea5dab91873d35a77155837bbcd9f6dff8ae57fc0f212e2c82dbca",
+        "bundleHead": "101fb413c804769aaab9430423d1cb34fbdcb65a"
+      },
+      "caveats": []
+    },
+    {
       "name": "repl",
       "registration": "auto",
       "advertisedClaim": {
         "name": "schema_render",
-        "description": "Validate a UiSchema or render it as static HTML/fragments. Use it when checking schema/patch contracts or exporting static output; use design_preview for a running React/Vue app, code_generate for file sets, or schema_store for persistence. Returns validation diagnostics or rendered output with warnings and artifact references. action selects validate/render; mode selects full schema or patch, with schemaRef available for reuse. Render defaults to a document with token CSS; output.compact omits CSS. brand and output scope options affect documents; ignored fragment options are diagnosed. apply:true emits render artifacts; output.payloadMode:file writes payloads and returns paths, as does an oversized document unless inline. Full schema: oods://schemas/schema_render.input.json.",
+        "description": "Validate a UiSchema or render static HTML and fragments. Use it when checking schema or patch contracts; use design_preview for a running app or schema_store to save. Returns diagnostics or rendered output. action selects validate/render; mode selects full/patch. apply:true enables rendering, without saving a schema. Render includes token CSS unless output.compact; oversized output or output.payloadMode:file writes only reply payloads. brand and scope options affect documents; ignored fragment options are diagnosed. Full schema: oods://schemas/schema_render.input.json.",
         "inputSchemaDescription": "Grouped action-parameter tool consolidating schema_render action=render and schema_render action=validate. Select the per-action body via the top-level `action` discriminator. Each branch reproduces the exact body of the corresponding per-action input schema, with `action` added to the allowed property set. Per-action handlers, schemas, and the external repl_render/repl_validate tools are unchanged; this is a zero-functionality-loss bolt-on."
       },
-      "claimHash": "sha256:ca30a42935e3b6eb228a912a422458525531f1123b4692b84417d243724c192d",
+      "claimHash": "sha256:b75f86b076d93ddec7b5993cac5f3eba786770f5294422566927194d6561be10",
       "inputSchemaPath": "packages/mcp-server/src/schemas/repl.input.json",
       "inputSchemaHash": "sha256:c97edc583219a78c6ee907bc8f7fea3dc14c629de311e73e791cc1468a152143",
       "testImportLocation": "test/product-reality",
@@ -4673,14 +4956,14 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1231
+          "line": 1239
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
-        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
+        "receiptSha256": "sha256:9b741abecdea5dab91873d35a77155837bbcd9f6dff8ae57fc0f212e2c82dbca",
+        "bundleHead": "101fb413c804769aaab9430423d1cb34fbdcb65a"
       },
       "caveats": [
         {
@@ -4708,18 +4991,18 @@
       "registration": "auto",
       "advertisedClaim": {
         "name": "object_import",
-        "description": "Draft objects from local OpenAPI, JSON Schema, Postgres DDL/migrations, Prisma, dbt, OData or GraphQL files. Use it when importing a schema you already have; use object_registry for hand-written object/trait YAML. Returns an importId, staged drafts/report, counts and a re-import diff. action=draft uses source.path or source.content without registering; show uses importId and object for YAML, graded proposals and unmapped elements; apply uses importId and explicit objects with accepted proposal ids. The batch validates and composes with rollback. overwrite replaces team objects; confirmShipped names each approved shipped replacement. Unreachable references are reported and skipped; no network fetch or code execution. Full schema: oods://schemas/object_import.input.json.",
-        "inputSchemaDescription": "Draft from local OpenAPI, JSON Schema, Postgres DDL/migrations, Prisma, dbt, OData or GraphQL files, inspect one staged draft, or explicitly accept a batch. No network access or code execution."
+        "description": "Draft objects from local OpenAPI, JSON Schema, Postgres SQL, Prisma, dbt, OData or GraphQL files, then apply accepted proposals. Use it when importing a schema; use object_import_read to review a staged object. Returns importId, staged files, proposal counts and re-import differences, or batch registration results. draft takes source.path or source.content; apply requires explicit objects and proposal ids. overwrite replaces team objects; confirmShipped names approved shipped replacements. No network fetch or code execution. Full schema: oods://schemas/object_import.input.json.",
+        "inputSchemaDescription": "object_import input: draft, apply."
       },
-      "claimHash": "sha256:1af2c7fdd6c425f3638ecacfa5b3dd22fc5ae22d7e1ba1b8e4722cb4f9ababec",
+      "claimHash": "sha256:f9206fa173fe894b2bcc811d73bfd147048a7a66285fb1c8c6c0d52225fbfca0",
       "inputSchemaPath": "packages/mcp-server/src/schemas/object.import.input.json",
-      "inputSchemaHash": "sha256:1264b02c3fd644f90ebf5a797c71009e12ed12e7d8b57f00a2624d8db1355681",
+      "inputSchemaHash": "sha256:3ef6f8655cbc11b27a89f6c2dd565faace408e21b036457c52d89096b98d2f32",
       "testImportLocation": "test/product-reality",
       "testImports": {
         "test/product-reality": [
           {
             "path": "packages/mcp-server/test/product-reality/object-import.s235.spec.ts",
-            "line": 17,
+            "line": 18,
             "handler": "packages/mcp-server/src/tools/object.import.ts"
           }
         ],
@@ -4727,17 +5010,22 @@
         "other-spec": [
           {
             "path": "packages/mcp-server/test/importer/field-bindings.s237.spec.ts",
-            "line": 12,
+            "line": 13,
+            "handler": "packages/mcp-server/src/tools/object.import.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/importer/readable-screens.s240.spec.ts",
+            "line": 7,
             "handler": "packages/mcp-server/src/tools/object.import.ts"
           },
           {
             "path": "packages/mcp-server/test/importer/screens.s236.spec.ts",
-            "line": 10,
+            "line": 11,
             "handler": "packages/mcp-server/src/tools/object.import.ts"
           },
           {
             "path": "packages/mcp-server/test/intake/unknown-drafts.s238.spec.ts",
-            "line": 7,
+            "line": 8,
             "handler": "packages/mcp-server/src/tools/object.import.ts"
           }
         ]
@@ -4747,22 +5035,18 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1221
+          "line": 1227
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1223
-        },
-        {
-          "path": "scripts/runtime/e2e.mjs",
-          "line": 1225
+          "line": 1231
         }
       ],
       "portableLimits": [],
       "portableOutcome": {
         "outcome": "pass",
-        "receiptSha256": "sha256:1a35cf31d2ab7a2e4c29a0f8a99cde814d40992f48ef1c22ae99753cb442cd5c",
-        "bundleHead": "d59cb600a7d8279ceb50c4354c91b2df00eef6b7"
+        "receiptSha256": "sha256:9b741abecdea5dab91873d35a77155837bbcd9f6dff8ae57fc0f212e2c82dbca",
+        "bundleHead": "101fb413c804769aaab9430423d1cb34fbdcb65a"
       },
       "caveats": [
         {
@@ -4775,9 +5059,74 @@
           "kind": "documented-limit",
           "file": "packages/mcp-server/src/tools/object.import.ts",
           "reason": "Explicit acceptance only; detected batch failures restore prior definitions. This rollback does not provide crash or power-loss recovery.",
-          "line": 143
+          "line": 154
         }
       ]
+    },
+    {
+      "name": "object.import.read",
+      "registration": "auto",
+      "advertisedClaim": {
+        "name": "object_import_read",
+        "description": "Read one staged object import. Use it when reviewing YAML, graded proposals and unmapped elements before acceptance; use object_import to draft or apply. Returns the named object, proposals and differences from its registered definition. Supply importId and the exact object name. Reading never rewrites the staged report. Full schema: oods://schemas/object_import_read.input.json.",
+        "inputSchemaDescription": "object_import_read input: show."
+      },
+      "claimHash": "sha256:53cd3fcc4999ee0fd84478b8d355f7cf8259a432d32ffeee30bb5ca5b7e85418",
+      "inputSchemaPath": "packages/mcp-server/src/schemas/object.import.read.input.json",
+      "inputSchemaHash": "sha256:f0e44570d2f9cdd8a231debdab094fc1543a3cf87bdeb2ad5f7b4902a89dc073",
+      "testImportLocation": "test/product-reality",
+      "testImports": {
+        "test/product-reality": [
+          {
+            "path": "packages/mcp-server/test/product-reality/object-import.s235.spec.ts",
+            "line": 19,
+            "handler": "packages/mcp-server/src/tools/object.import.read.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/product-reality/read-write-split.s240.spec.ts",
+            "line": 10,
+            "handler": "packages/mcp-server/src/tools/object.import.read.ts"
+          }
+        ],
+        "test/contracts": [],
+        "other-spec": [
+          {
+            "path": "packages/mcp-server/test/importer/field-bindings.s237.spec.ts",
+            "line": 1,
+            "handler": "packages/mcp-server/src/tools/object.import.read.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/importer/readable-screens.s240.spec.ts",
+            "line": 8,
+            "handler": "packages/mcp-server/src/tools/object.import.read.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/importer/screens.s236.spec.ts",
+            "line": 1,
+            "handler": "packages/mcp-server/src/tools/object.import.read.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/intake/unknown-drafts.s238.spec.ts",
+            "line": 9,
+            "handler": "packages/mcp-server/src/tools/object.import.read.ts"
+          }
+        ]
+      },
+      "certifiedReceipts": [],
+      "portableE2E": true,
+      "portableE2ERefs": [
+        {
+          "path": "scripts/runtime/e2e.mjs",
+          "line": 1229
+        }
+      ],
+      "portableLimits": [],
+      "portableOutcome": {
+        "outcome": "pass",
+        "receiptSha256": "sha256:9b741abecdea5dab91873d35a77155837bbcd9f6dff8ae57fc0f212e2c82dbca",
+        "bundleHead": "101fb413c804769aaab9430423d1cb34fbdcb65a"
+      },
+      "caveats": []
     },
     {
       "name": "a11y.scan",

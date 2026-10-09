@@ -1,3 +1,4 @@
+import { handle as previewReadWriteSplit } from '../../src/tools/design.versions.js';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -71,8 +72,9 @@ describe('design.preview action accept records the accepted version with its mea
     // An acceptance is not a version.
     expect(fs.readdirSync(path.join(compositionsDir, id, 'versions')).filter(name => name.endsWith('.json')).sort()).toEqual(['1.json', '2.json']);
 
-    const versions = await preview({ action: 'versions', compositionId: id }, context);
-    expect(validate(versions), JSON.stringify(validate.errors)).toBe(true);
+    const versions = await previewReadWriteSplit({ action: 'versions', compositionId: id }, context);
+    const validateVersions = getAjv().compile(JSON.parse(fs.readFileSync(path.resolve('src/schemas/design.versions.output.json'), 'utf8')));
+    expect(validateVersions(versions), JSON.stringify(validateVersions.errors)).toBe(true);
     expect(versions).toMatchObject({ action: 'versions', latest: 2, accepted: { version: 2, acceptedAt: second.accepted.acceptedAt, acceptances: 2 } });
     // The browser page's host reads the same record.
     expect(await (await fetch(`${hostUrl}/preview/${id}/versions.json`)).json()).toMatchObject({ accepted: { version: 2, acceptances: 2, supersedes: { version: 1 } } });
@@ -88,6 +90,6 @@ describe('design.preview action accept records the accepted version with its mea
     const id = composed.compositionId!;
     await expect(preview({ action: 'accept', compositionId: id, version: 1 }, context)).rejects.toMatchObject({ opiCode: 'OODS-V205', message: expect.stringMatching(/has not been generated/) });
     expect(fs.existsSync(acceptedPath(compositionsDir, id))).toBe(false);
-    expect(await preview({ action: 'versions', compositionId: id }, context)).toMatchObject({ action: 'versions', accepted: null });
+    expect(await previewReadWriteSplit({ action: 'versions', compositionId: id }, context)).toMatchObject({ action: 'versions', accepted: null });
   }, 120_000);
 });

@@ -1,0 +1,1656 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://oods-foundry.com/schemas/map.read.input.json",
+  "title": "component_map_read input",
+  "description": "component_map_read input: list, resolve, show.",
+  "type": "object",
+  "required": [
+    "action"
+  ],
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "list",
+        "resolve",
+        "show"
+      ],
+      "description": "Choose list, resolve, show."
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "type": "string",
+            "const": "list"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "type": "string",
+            "const": "list"
+          },
+          "externalSystem": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Filter mappings to a specific external system (e.g., 'team')."
+          },
+          "cursor": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Pagination cursor. Use the previous page's nextCursor to continue. When cursor or limit is provided, pagination defaults to 100 items per page."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 500,
+            "description": "Page size for pagination. Omitting both cursor and limit preserves the legacy full-list response."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "type": "string",
+            "const": "resolve"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "required": [
+          "externalSystem",
+          "externalComponent"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "type": "string",
+            "const": "resolve"
+          },
+          "externalSystem": {
+            "type": "string",
+            "minLength": 1,
+            "description": "External design system name (e.g., 'team')."
+          },
+          "externalComponent": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Component name in the external system (e.g., 'Button')."
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "action": {
+            "type": "string",
+            "const": "show"
+          }
+        },
+        "required": [
+          "action"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "type": "string",
+            "const": "show"
+          },
+          "draftId": {
+            "type": "string",
+            "pattern": "^components-[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "draftId"
+        ]
+      }
+    }
+  ],
+  "$defs": {
+    "EvidenceRef": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "AlternateInterpretation": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "required": [
+            "role",
+            "score",
+            "reasoning"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "role": {
+              "type": "string",
+              "minLength": 1
+            },
+            "score": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "reasoning": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      ]
+    },
+    "AlternateVerb": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "required": [
+            "verb_id",
+            "score",
+            "reasoning"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "verb_id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "score": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "reasoning": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      ]
+    },
+    "CandidateDiffField": {
+      "type": "object",
+      "required": [
+        "field"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "field": {
+          "type": "string",
+          "minLength": 1
+        },
+        "from": {},
+        "to": {}
+      }
+    },
+    "CandidateDiff": {
+      "type": "object",
+      "required": [
+        "added_traits",
+        "removed_traits",
+        "changed_fields"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "added_traits": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "removed_traits": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "changed_fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CandidateDiffField"
+          }
+        }
+      }
+    },
+    "CandidateObject": {
+      "type": "object",
+      "required": [
+        "object_id",
+        "name",
+        "role",
+        "confidence",
+        "recommended_oods_traits",
+        "action",
+        "reasoning"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "object_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "role": {
+          "type": "string",
+          "minLength": 1
+        },
+        "inferred_role": {
+          "type": "string",
+          "minLength": 1
+        },
+        "inferred_role_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "recommended_oods_traits": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "recommended_domain": {
+          "type": "string",
+          "minLength": 1
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "create",
+            "patch",
+            "skip",
+            "conflict"
+          ]
+        },
+        "reasoning": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verdict_reasoning": {
+          "type": "string",
+          "minLength": 1
+        },
+        "existing_map_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "external_component": {
+          "type": "string",
+          "minLength": 1
+        },
+        "diff": {
+          "$ref": "#/$defs/CandidateDiff"
+        },
+        "alternate_interpretations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AlternateInterpretation"
+          }
+        },
+        "evidence_chain": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          }
+        },
+        "projection_variants": {
+          "type": "array",
+          "description": "Stage1 v1.5.0 cross-surface identity variants. When present on a candidate_object, component_map action=apply threads them through to the persisted mapping on both create and patch verdicts.",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "surface"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "surface": {
+                "type": "string",
+                "minLength": 1
+              },
+              "external_component": {
+                "type": "string",
+                "minLength": 1
+              },
+              "capability_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "selector": {
+                "type": "string",
+                "minLength": 1
+              },
+              "confidence": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "evidence_chain": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "metadata": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "type": "string",
+                "const": "patch"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "existing_map_id",
+              "diff",
+              "verdict_reasoning"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "type": "string",
+                "const": "skip"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "existing_map_id",
+              "verdict_reasoning"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "action": {
+                "type": "string",
+                "const": "conflict"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "existing_map_id",
+              "verdict_reasoning"
+            ]
+          }
+        }
+      ]
+    },
+    "ActionPrecondition": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "auth",
+            "role",
+            "state",
+            "data"
+          ]
+        },
+        "description": {
+          "type": "string"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "evidence_chain": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          }
+        }
+      }
+    },
+    "DisambiguationAlternative": {
+      "type": "object",
+      "required": [
+        "value"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "type": "string",
+          "minLength": 1
+        },
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "reasoning": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "DisambiguationDecision": {
+      "type": "object",
+      "required": [
+        "decision_id",
+        "decision_type",
+        "scope",
+        "status",
+        "target_kind",
+        "target_id",
+        "selected_value",
+        "rationale",
+        "decided_at"
+      ],
+      "additionalProperties": false,
+      "description": "Draft v1.4.0-gated review-decision payload. OODS accepts the shape but current component_map action=apply handlers ignore it.",
+      "properties": {
+        "decision_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "decision_type": {
+          "type": "string",
+          "enum": [
+            "preferred_name",
+            "preferred_role",
+            "mapping_rejection",
+            "canonical_term"
+          ]
+        },
+        "scope": {
+          "type": "string",
+          "enum": [
+            "run",
+            "target",
+            "registry"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "proposed",
+            "accepted",
+            "rejected",
+            "promoted"
+          ]
+        },
+        "target_kind": {
+          "type": "string",
+          "enum": [
+            "candidate_object",
+            "candidate_action",
+            "preferred_term"
+          ]
+        },
+        "target_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "selected_value": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1
+        },
+        "alternatives": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/DisambiguationAlternative"
+          }
+        },
+        "preferred_term_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "decided_by": {
+          "type": "string",
+          "enum": [
+            "human",
+            "agent",
+            "system"
+          ]
+        },
+        "decided_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "CandidateAction": {
+      "type": "object",
+      "required": [
+        "action_id",
+        "name",
+        "verb"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "action_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verb": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_object_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "suggested_oods_trait": {
+          "type": "string",
+          "minLength": 1
+        },
+        "suggested_action": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reasoning": {
+          "type": "string",
+          "minLength": 1
+        },
+        "alternate_verbs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AlternateVerb"
+          }
+        },
+        "preconditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ActionPrecondition"
+          }
+        }
+      }
+    },
+    "Conflict": {
+      "type": "object",
+      "required": [
+        "type",
+        "description",
+        "severity"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "severity": {
+          "type": "string",
+          "enum": [
+            "info",
+            "warning",
+            "error"
+          ]
+        },
+        "action_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "object_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "existing_map_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "RegistryFetchTelemetry": {
+      "type": "object",
+      "required": [
+        "source",
+        "entries_count"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "type": "string",
+          "enum": [
+            "pre-supplied",
+            "transport",
+            "empty-fallback"
+          ]
+        },
+        "entries_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Manifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "inputs": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "oods_registry_fetch": {
+              "$ref": "#/$defs/RegistryFetchTelemetry"
+            }
+          }
+        }
+      }
+    },
+    "ReconciliationSummary": {
+      "type": "object",
+      "required": [
+        "mode",
+        "existing_map_count",
+        "verdict_counts"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "type": "string",
+          "minLength": 1
+        },
+        "existing_map_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "verdict_counts": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "create": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "patch": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "skip": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "conflict": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      }
+    },
+    "ReconciliationReport": {
+      "type": "object",
+      "required": [
+        "kind",
+        "schema_version",
+        "generated_at",
+        "target",
+        "candidate_objects"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "type": "string",
+          "const": "reconciliation_report"
+        },
+        "schema_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "generated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "target": {
+          "type": "object",
+          "required": [
+            "id"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "url": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        },
+        "candidate_objects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CandidateObject"
+          },
+          "minItems": 1
+        },
+        "candidate_actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CandidateAction"
+          }
+        },
+        "candidate_traits": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "conflicts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Conflict"
+          }
+        },
+        "coverage_gaps": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "validation_failures": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "disambiguation_decisions": {
+          "type": "array",
+          "description": "Draft v1.4.0-gated review-decision ingress. Optional and ignored by current v1.3.x write-side behavior.",
+          "items": {
+            "$ref": "#/$defs/DisambiguationDecision"
+          }
+        },
+        "manifest": {
+          "$ref": "#/$defs/Manifest"
+        },
+        "reconciliation_summary": {
+          "$ref": "#/$defs/ReconciliationSummary"
+        }
+      }
+    },
+    "SingleCreate": {
+      "type": "object",
+      "required": [
+        "externalSystem",
+        "externalComponent",
+        "oodsTraits"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "substitution": {
+          "type": "object",
+          "required": [
+            "component"
+          ],
+          "additionalProperties": false,
+          "anyOf": [
+            {
+              "required": [
+                "react"
+              ]
+            },
+            {
+              "required": [
+                "vue"
+              ]
+            }
+          ],
+          "properties": {
+            "component": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The shipped OODS Foundry component id being replaced."
+            },
+            "react": {
+              "type": "object",
+              "required": [
+                "export"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "localPath": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Absolute built package directory used by preview; omitted from consumer source imports."
+                },
+                "package": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "export": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z_$][\\w$]*$"
+                },
+                "version": {
+                  "type": "string",
+                  "pattern": "^(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$",
+                  "description": "Exact team package version; code generation needs this or an installed package manifest."
+                },
+                "passthrough": {
+                  "type": "boolean",
+                  "default": true,
+                  "description": "Unlisted OODS Foundry props keep their names. False drops unlisted optional props; required props must be translated."
+                },
+                "props": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object",
+                    "required": [
+                      "name"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "pattern": "^[A-Za-z_$][\\w$]*$"
+                      },
+                      "values": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "description": "OODS Foundry prop to team prop, with optional scalar value map; values not in the map are preserved. Children, slots and event bindings keep their framework conventions."
+                },
+                "shadcn": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "project",
+                    "module"
+                  ],
+                  "properties": {
+                    "project": {
+                      "type": "string",
+                      "pattern": "^/[\\s\\S]*$",
+                      "description": "Absolute shadcn project directory containing components.json and installed Tailwind 4 with Vite or PostCSS. React supports Radix and Base UI; Vue supports shadcn-vue on Reka. React Aria and unknown styles are refused."
+                    },
+                    "module": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "Project import beginning with a components.json alias and resolved by TypeScript paths."
+                    }
+                  }
+                }
+              },
+              "oneOf": [
+                {
+                  "required": [
+                    "package"
+                  ],
+                  "not": {
+                    "required": [
+                      "shadcn"
+                    ]
+                  }
+                },
+                {
+                  "required": [
+                    "shadcn"
+                  ],
+                  "not": {
+                    "anyOf": [
+                      {
+                        "required": [
+                          "package"
+                        ]
+                      },
+                      {
+                        "required": [
+                          "version"
+                        ]
+                      },
+                      {
+                        "required": [
+                          "localPath"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            "vue": {
+              "type": "object",
+              "required": [
+                "export"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "localPath": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Absolute built package directory used by preview; omitted from consumer source imports."
+                },
+                "package": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "export": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z_$][\\w$]*$"
+                },
+                "version": {
+                  "type": "string",
+                  "pattern": "^(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$",
+                  "description": "Exact team package version; code generation needs this or an installed package manifest."
+                },
+                "passthrough": {
+                  "type": "boolean",
+                  "default": true,
+                  "description": "Unlisted OODS Foundry props keep their names. False drops unlisted optional props; required props must be translated."
+                },
+                "props": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object",
+                    "required": [
+                      "name"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "pattern": "^[A-Za-z_$][\\w$]*$"
+                      },
+                      "values": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "description": "OODS Foundry prop to team prop, with optional scalar value map; values not in the map are preserved. Children, slots and event bindings keep their framework conventions."
+                },
+                "shadcn": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "project",
+                    "module"
+                  ],
+                  "properties": {
+                    "project": {
+                      "type": "string",
+                      "pattern": "^/[\\s\\S]*$",
+                      "description": "Absolute shadcn project directory containing components.json and installed Tailwind 4 with Vite or PostCSS. React supports Radix and Base UI; Vue supports shadcn-vue on Reka. React Aria and unknown styles are refused."
+                    },
+                    "module": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "Project import beginning with a components.json alias and resolved by TypeScript paths."
+                    }
+                  }
+                }
+              },
+              "oneOf": [
+                {
+                  "required": [
+                    "package"
+                  ],
+                  "not": {
+                    "required": [
+                      "shadcn"
+                    ]
+                  }
+                },
+                {
+                  "required": [
+                    "shadcn"
+                  ],
+                  "not": {
+                    "anyOf": [
+                      {
+                        "required": [
+                          "package"
+                        ]
+                      },
+                      {
+                        "required": [
+                          "version"
+                        ]
+                      },
+                      {
+                        "required": [
+                          "localPath"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "description": "Version 2 component substitution: an OODS Foundry id, React and/or Vue package exports, and OODS Foundry-to-team prop translations. Legacy trait-only mappings remain valid."
+        },
+        "apply": {
+          "type": "boolean",
+          "description": "When true, write changes to disk."
+        },
+        "externalSystem": {
+          "type": "string",
+          "minLength": 1,
+          "description": "External design system name (for example, 'team')."
+        },
+        "externalComponent": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Component name in the external system (e.g., 'Button', 'TextField')."
+        },
+        "oodsTraits": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0,
+          "description": "OODS trait names this component maps to."
+        },
+        "propMappings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "externalProp",
+              "oodsProp"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "externalProp": {
+                "type": "string",
+                "minLength": 1
+              },
+              "oodsProp": {
+                "type": "string",
+                "minLength": 1
+              },
+              "coercion": {
+                "description": "Legacy external-to-OODS Foundry annotation: a structured hint, raw captured label, or null. Stored and resolved as data; use substitution.props for executable OODS Foundry-to-team translation.",
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "mapping"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "enum"
+                      },
+                      "mapping": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "trueValue",
+                      "falseValue"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "boolean_to_string"
+                      },
+                      "trueValue": {
+                        "type": "string"
+                      },
+                      "falseValue": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "type",
+                      "pattern"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "template"
+                      },
+                      "pattern": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "type"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "identity"
+                      }
+                    }
+                  }
+                ],
+                "default": null
+              }
+            }
+          },
+          "description": "Property translations from external to OODS prop names."
+        },
+        "confidence": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "manual"
+          ],
+          "default": "manual",
+          "description": "'auto' for machine-generated, 'manual' for human-curated."
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "author": {
+              "type": "string"
+            },
+            "notes": {
+              "type": "string"
+            }
+          }
+        },
+        "disambiguation_decisions": {
+          "type": "array",
+          "description": "Draft v1.4.0-gated review-decision events to append to the registry's top-level disambiguation_decisions[]. Additive stub only; does not gate mapping creation. Each entry uses the Stage1 disambiguation_decision shape.",
+          "items": {
+            "type": "object",
+            "required": [
+              "decision_id",
+              "decision_type",
+              "scope",
+              "status",
+              "target_kind",
+              "target_id",
+              "selected_value",
+              "rationale",
+              "decided_at"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "decision_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "decision_type": {
+                "type": "string",
+                "enum": [
+                  "preferred_name",
+                  "preferred_role",
+                  "mapping_rejection",
+                  "canonical_term"
+                ]
+              },
+              "scope": {
+                "type": "string",
+                "enum": [
+                  "run",
+                  "target",
+                  "registry"
+                ]
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "proposed",
+                  "accepted",
+                  "rejected",
+                  "promoted"
+                ]
+              },
+              "target_kind": {
+                "type": "string",
+                "enum": [
+                  "candidate_object",
+                  "candidate_action",
+                  "preferred_term"
+                ]
+              },
+              "target_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "selected_value": {
+                "type": "string",
+                "minLength": 1
+              },
+              "rationale": {
+                "type": "string",
+                "minLength": 1
+              },
+              "alternatives": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "value"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "value": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "score": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "reasoning": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              },
+              "preferred_term_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "decided_by": {
+                "type": "string",
+                "enum": [
+                  "human",
+                  "agent",
+                  "system"
+                ]
+              },
+              "decided_at": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "metadata": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "preferred_terms": {
+          "type": "array",
+          "description": "Draft v1.4.0-gated canonical-term entities to append to the registry's top-level preferred_terms[]. Each entry uses the Stage1 preferred_term entity shape.",
+          "items": {
+            "type": "object",
+            "required": [
+              "entity_type",
+              "id",
+              "slug",
+              "label",
+              "aliases",
+              "scope"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "entity_type": {
+                "type": "string",
+                "const": "preferred_term"
+              },
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "slug": {
+                "type": "string",
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "label": {
+                "type": "string",
+                "minLength": 1
+              },
+              "aliases": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "scope": {
+                "type": "string",
+                "enum": [
+                  "target",
+                  "registry"
+                ]
+              },
+              "domain": {
+                "type": "string",
+                "minLength": 1
+              },
+              "source_decision_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "metadata": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "capabilities": {
+          "type": "array",
+          "description": "Draft v1.4.0-gated first-class capability entities to append to the registry's top-level capabilities[]. Each entry uses the Stage1 capability entity shape.",
+          "items": {
+            "type": "object",
+            "required": [
+              "entity_type",
+              "id",
+              "slug",
+              "name",
+              "canonical_verb"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "entity_type": {
+                "type": "string",
+                "const": "capability"
+              },
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "slug": {
+                "type": "string",
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "canonical_verb": {
+                "type": "string",
+                "minLength": 1
+              },
+              "aliases": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "oods_traits": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "projection_variant_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "preconditions": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "type"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "auth",
+                        "role",
+                        "state",
+                        "data"
+                      ]
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "confidence": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    "evidence_chain": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              },
+              "metadata": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "projection_variants": {
+          "type": "array",
+          "description": "Stage1 v1.5.0 cross-surface identity variants. Each element describes one surface-specific projection of this component mapping (desktop/mobile/modal/sidebar).",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "surface"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Stable identifier for the projection variant."
+              },
+              "surface": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Surface label such as desktop, mobile, modal, or sidebar."
+              },
+              "external_component": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Surface-specific component label when it differs from the canonical map name."
+              },
+              "capability_id": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Optional first-class capability entity linked to this projection."
+              },
+              "selector": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Representative selector or cluster signature."
+              },
+              "confidence": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "Confidence of the cross-surface identity merge."
+              },
+              "evidence_chain": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                },
+                "description": "Evidence supporting the identity-resolution link."
+              },
+              "metadata": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "Open metadata bag for future relation details."
+              }
+            }
+          }
+        },
+        "action": {
+          "type": "string",
+          "const": "create"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "not": {
+              "required": [
+                "substitution"
+              ]
+            }
+          },
+          "then": {
+            "properties": {
+              "oodsTraits": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "MappingEntry": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/SingleCreate"
+        },
+        {
+          "not": {
+            "anyOf": [
+              {
+                "required": [
+                  "apply"
+                ]
+              },
+              {
+                "required": [
+                  "action"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

@@ -19,6 +19,11 @@
     "title": "Create Brand",
     "idempotentHint": false
   },
+  "brand.read": {
+    "name": "brand_read",
+    "title": "Read Brand Data",
+    "idempotentHint": true
+  },
   "catalog.list": {
     "name": "catalog_list",
     "title": "List Components",
@@ -38,6 +43,11 @@
     "name": "design_preview",
     "title": "Preview Running Design",
     "idempotentHint": false
+  },
+  "design.versions": {
+    "name": "design_versions",
+    "title": "Read Design Versions",
+    "idempotentHint": true
   },
   "pipeline": {
     "name": "pipeline_run",
@@ -76,28 +86,48 @@
   },
   "map": {
     "name": "component_map",
-    "title": "Manage Component Mappings",
+    "title": "Write Component Mappings",
     "idempotentHint": false
+  },
+  "map.read": {
+    "name": "component_map_read",
+    "title": "Read Component Mappings",
+    "idempotentHint": true
   },
   "schema": {
     "name": "schema_store",
-    "title": "Manage Saved Schemas",
+    "title": "Save Or Delete Schemas",
     "idempotentHint": false
+  },
+  "schema.read": {
+    "name": "schema_read",
+    "title": "Read Saved Schemas",
+    "idempotentHint": true
   },
   "object": {
     "name": "object_registry",
-    "title": "Manage Object Registry",
+    "title": "Read Object Registry",
+    "idempotentHint": true
+  },
+  "object.write": {
+    "name": "object_register",
+    "title": "Register Object Or Trait",
     "idempotentHint": false
   },
   "repl": {
     "name": "schema_render",
     "title": "Render Or Validate Schema",
-    "idempotentHint": false
+    "idempotentHint": true
   },
   "object.import": {
     "name": "object_import",
     "title": "Import Objects",
     "idempotentHint": false
+  },
+  "object.import.read": {
+    "name": "object_import_read",
+    "title": "Read Import Draft",
+    "idempotentHint": true
   },
   "a11y.scan": {
     "name": "a11y_scan",

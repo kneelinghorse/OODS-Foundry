@@ -28,6 +28,8 @@ export function bindRecordSchema(schema: UiSchema, model: Record<string, unknown
     const entry = fields[field];
     const value = raw(field, row);
     const shown = String(value ?? '').trim() ? value : raw(entry?.displayFallbackField, row);
+    const numberedObject = entry?.semanticType?.match(/^object\.([^.]+)\.number$/)?.[1];
+    if (numberedObject && /^(?:[A-Z]{1,4}-)?\d+$/.test(String(shown ?? ''))) return `${fieldLabel(numberedObject)} ${Number(String(shown).replace(/^[A-Z]{1,4}-/, ''))}`;
     return isReferenceField(entry) || isReferenceField(fields[entry?.displayFallbackField ?? '']) ? formatRecordLabel(shown, entry?.semanticType === 'text.label') : typeof shown === 'number' ? String(shown) : shown;
   };
   const walk = (source: UiElement, row: Record<string, unknown>, suffix = ''): UiElement[] => {

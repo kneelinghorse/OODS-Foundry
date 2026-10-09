@@ -49,7 +49,7 @@ const TITLES = ['Quarterly review', 'Renewal reminder', 'Welcome aboard', 'Invoi
 const ROLES = ['Designer', 'Engineer', 'Analyst', 'Manager', 'Coordinator'];
 const DEPARTMENTS = ['Finance', 'Design', 'Operations', 'Sales', 'Support'];
 const CATEGORIES = ['General', 'Priority', 'Standard', 'Internal', 'External'];
-const LATER = new Set(['end', 'ends', 'due', 'expires', 'expiry', 'expiration', 'until', 'finish', 'finished', 'close', 'closed', 'completed', 'deadline', 'to']);
+const LATER = new Set(['end', 'ends', 'due', 'expires', 'expiry', 'expiration', 'until', 'finish', 'finished', 'close', 'closed', 'completed', 'deadline', 'to', 'ship', 'shipped', 'shipping', 'dispatch', 'dispatched', 'delivery', 'delivered']);
 const PROSE = new Set(['description', 'summary', 'notes', 'note', 'memo', 'comment', 'comments', 'body', 'details', 'bio', 'remarks']);
 const CODES = new Set(['id', 'key', 'ref', 'reference', 'code', 'sku', 'number', 'no']);
 
@@ -73,7 +73,7 @@ function namedString(schema: MapValue, field: string, index: number): string | u
   if (has('city', 'town')) return pick(CITIES, index);
   if (has('street') || (has('address') && has('line')) || /^address[_-]?\d$/i.test(field)) return pick(STREETS, index);
   if (has('zip', 'postcode') || (has('postal') && has('code'))) return pick(POSTAL_CODES, index);
-  if (has('company', 'organization', 'organisation', 'employer', 'vendor', 'supplier') && (last === 'name' || w.length === 1)) return pick(COMPANIES, index);
+  if (has('company', 'organization', 'organisation', 'employer', 'vendor', 'supplier', 'agency') && (last === 'name' || w.length === 1)) return pick(COMPANIES, index);
   if (has('handle', 'username', 'login', 'nickname') || (has('user', 'screen') && last === 'name')) return `${pick(FIRST_NAMES, index).toLowerCase()}.${pick(LAST_NAMES, index).toLowerCase()}`;
   if (has('full', 'display', 'contact', 'customer', 'person') && last === 'name') return `${pick(FIRST_NAMES, index)} ${pick(LAST_NAMES, index)}`;
   if ((has('job') && last === 'title') || ['role', 'position', 'occupation'].includes(last)) return pick(ROLES, index);
@@ -105,7 +105,7 @@ function namedNumber(type: string, field: string, index: number): number | undef
 }
 
 /** Bounded, deterministic illustrative data. Every candidate is checked before it can reach a screen. */
-export function sampleValue(schema: MapValue, field: string, index: number): unknown {
+export function sampleValue(schema: MapValue, field: string, index: number, objectName?: string): unknown {
   const examples = schema.examples ?? (schema.example !== undefined ? [schema.example] : []);
   const supplied = Array.isArray(examples) ? examples.filter(value => validSample(schema, value)) : [];
   if (index < supplied.length) return supplied[index];
@@ -148,7 +148,14 @@ export function sampleValue(schema: MapValue, field: string, index: number): unk
       'iso-4217': ['USD', 'EUR', 'GBP'][index % 3], 'iso-3166-1-alpha-2': ['US', 'GB', 'CA'][index % 3],
     };
     if (!schema.format) {
-      const named = namedString(schema, field, index);
+      const kind = words(objectName ?? '').join('');
+      const isName = /^(name|title|label|display_?name|full_?name)$/i.test(field);
+      const kindField = /^(user|person|shopper|customer|agent|member|employee|contact)s?$/i.test(kind) ? 'fullName'
+        : /^(team|department|organization|organisation|company|agency|role|category)s?$/i.test(kind) ? kind.replace(/s$/, '')
+        : /^(product|item)s?$/i.test(kind) ? 'productName' : field;
+      const candidateField = isName ? kindField : /^id$/i.test(field) && objectName ? `${objectName}Id` : field;
+      const named = isName && kindField === 'productName' ? pick(['Studio desk', 'Task lamp', 'Notebook set', 'Monitor stand', 'Travel mug'], index)
+        : namedString(schema, candidateField, index);
       if (named !== undefined && validSample(schema, named)) return named;
     }
     const label = words(field).join(' ') || field;

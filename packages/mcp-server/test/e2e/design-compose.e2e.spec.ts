@@ -68,7 +68,7 @@ describe('design.compose bridge E2E', () => {
     expect(composed.validation?.status).toBe('ok');
 
     // Step 2: Render the composed schema through bridge
-    const rendered = await runBridgeTool(bridge!.port, 'repl', { action: 'render',
+    const rendered = await runBridgeTool(bridge!.port, 'schema_render', { action: 'render',
       mode: 'full',
       schema: composed.schema,
       apply: true,
@@ -86,7 +86,7 @@ describe('design.compose bridge E2E', () => {
     });
     expect(composed.status).toBe('ok');
 
-    const rendered = await runBridgeTool(bridge!.port, 'repl', { action: 'render',
+    const rendered = await runBridgeTool(bridge!.port, 'schema_render', { action: 'render',
       mode: 'full',
       schema: composed.schema,
       apply: true,

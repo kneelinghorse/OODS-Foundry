@@ -489,7 +489,7 @@ async function main() {
     }
     try {
       let context;
-      if (internalName === 'design.preview') {
+      if (internalName === 'design.preview' && args.action !== 'versions') {
         // Start the preview host now, so the native call can hand back a URL that already serves.
         if (!previewHost) {
           console.error('[oods-mcp-adapter] design.preview: no preview host is built (packages/mcp-bridge/dist/preview/standalone.js); the native server will report OODS-N021');
@@ -512,7 +512,7 @@ async function main() {
         content: [
           {
             type: 'text',
-            text: typeof result === 'string' ? result : JSON.stringify(result, null, 2),
+            text: typeof result === 'string' ? result : JSON.stringify(result, null, internalName === 'brand.read' && args.action === 'template' ? 0 : 2),
           },
         ],
         ...(structured ? { structuredContent: structured } : {}),

@@ -4,6 +4,7 @@ import path from 'node:path';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { getAjv } from '../../src/lib/ajv.js';
 import inputSchema from '../../src/schemas/object.import.input.json' assert { type: 'json' };
+import readInputSchema from '../../src/schemas/object.import.read.input.json' assert { type: 'json' };
 import outputSchema from '../../src/schemas/object.import.output.json' assert { type: 'json' };
 
 let failObject: string | undefined;
@@ -15,12 +16,15 @@ vi.mock('../../src/tools/design.compose.js', async original => {
   }) };
 });
 const { handle } = await import('../../src/tools/object.import.js');
+const { handle: readHandle } = await import('../../src/tools/object.import.read.js');
 const { handle: register, reloadDefinitions } = await import('../../src/tools/object.register.js');
 const { listObjects, loadObject } = await import('../../src/objects/object-loader.js');
 const inputValid = getAjv().compile(inputSchema), outputValid = getAjv().compile(outputSchema);
+const readInputValid = getAjv().compile(readInputSchema);
 const call = async (input: Parameters<typeof handle>[0]): Promise<any> => {
-  expect(inputValid(input), JSON.stringify(inputValid.errors)).toBe(true);
-  const output = await handle(input);
+  const validate = input.action === 'show' ? readInputValid : inputValid;
+  expect(validate(input), JSON.stringify(validate.errors)).toBe(true);
+  const output = await (input.action === 'show' ? readHandle : handle)(input);
   expect(outputValid(output), JSON.stringify(outputValid.errors)).toBe(true);
   return output;
 };
@@ -107,7 +111,7 @@ it('refuses tampered staging and path traversal import ids', async () => {
   const staged=await draft();
   fs.appendFileSync(path.join(staged.directory,'import.json'),' ');
   await expect(call({action:'show',importId:staged.importId,object:'ImportedWidget'})).rejects.toThrow(/hash mismatch/);
-  await expect(handle({action:'show',importId:'../../escape',object:'ImportedWidget'})).rejects.toThrow(/Invalid import id/);
+  await expect(readHandle({action:'show',importId:'../../escape',object:'ImportedWidget'})).rejects.toThrow(/Invalid import id/);
 });
 it('does not accept an unknown or invalid proposal and keeps register/import under the same lock', async () => {
   const staged=await draft();

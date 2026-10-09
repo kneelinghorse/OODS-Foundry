@@ -22,13 +22,13 @@ again and a chart-only request needs only health, rendering and certification.
 ## Ordered quickstart calls
 
 1. `health_check` — check `status`, version, registered objects and any rejected user definitions.
-2. `brand_create`, `action: "template"` — inspect the colour roles.
-3. `brand_create`, `action: "validate"` — validate the team's base/dark/high-contrast documents.
+2. `brand_read`, `action: "template"` — inspect the colour roles.
+3. `brand_read`, `action: "validate"` — validate the team's base/dark/high-contrast documents.
 4. `brand_create`, `action: "create"` — after `valid: true`, create the requested brand in the user's data folder.
 5. `object_registry`, `action: "validate"` — validate the team's trait YAML.
-6. `object_registry`, `action: "register"` — register the validated trait.
+6. `object_register`, `action: "register"` — register the validated trait.
 7. `object_registry`, `action: "validate"` — validate its object YAML now that the trait exists.
-8. `object_registry`, `action: "register"` — register the validated object; read all context checks.
+8. `object_register`, `action: "register"` — register the validated object; read all context checks.
 9. `component_map`, `action: "create", apply: true` — substitute a shipped component identity using the team's exact package,
    version, export and prop translations; use an absolute `localPath` for preview bundling, or map several with
    a `mappings` list or an absolute `mappingsPath` to a checked mapping file. Read [COMPONENTS.md](references/COMPONENTS.md)

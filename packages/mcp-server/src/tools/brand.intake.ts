@@ -1,3 +1,4 @@
+import { refuseMovedAction, requireAction } from './action-moves.js';
 import fs from 'node:fs';
 import { draftTokens, type TokenDraftInput } from '../intake/tokens.js';
 import { readIntake, stageIntake } from '../intake/stage.js';
@@ -139,7 +140,7 @@ function reviewedDraft(draftId: string): ReturnType<typeof draftTokens> {
   catch (error) { throw new ToolError('OODS-V001', error instanceof Error ? error.message : String(error), { field: 'draftId' }); }
 }
 
-export async function handle(input: BrandIntakeInput): Promise<BrandIntakeOutput> {
+async function execute(input: BrandIntakeInput): Promise<BrandIntakeOutput> {
   switch (input?.action) {
     case 'draft': {
       const draft = draftTokens(input);
@@ -176,4 +177,14 @@ export async function handle(input: BrandIntakeInput): Promise<BrandIntakeOutput
     default:
       throw new ToolError('OODS-V001', `Unknown action ${JSON.stringify((input as { action?: unknown })?.action)}; brand.intake takes derive, template, validate or create.`, { field: 'action' });
   }
+}
+
+export async function handle(input: BrandIntakeInput) {
+  refuseMovedAction('brand.intake', input);
+  return execute(input);
+}
+
+export async function readHandle(input: BrandIntakeInput) {
+  requireAction(input, ['template', 'validate', 'derive', 'show'], 'brand_read');
+  return execute(input);
 }

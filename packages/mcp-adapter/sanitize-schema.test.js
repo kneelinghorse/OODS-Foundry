@@ -491,8 +491,8 @@ describe('sanitizeSchema — per-action arguments of the action tools stay liste
     const source = dispatcher('map');
     const listed = sanitizeSchema(source);
     expect(Object.keys(listed.properties).sort()).toEqual([
-      'accept', 'action', 'apply', 'capabilities', 'confidence', 'cursor', 'disambiguation_decisions', 'draftId', 'externalComponent', 'externalSystem',
-      'id', 'limit', 'mappings', 'mappingsPath', 'metadata', 'minConfidence', 'oodsTraits',
+      'accept', 'action', 'apply', 'capabilities', 'confidence', 'disambiguation_decisions', 'draftId', 'externalComponent', 'externalSystem',
+      'id', 'mappings', 'mappingsPath', 'metadata', 'minConfidence', 'oodsTraits',
       'preferred_terms', 'projection_variants', 'propMappings', 'report', 'reportPath', 'source', 'substitution', 'updates',
     ].sort());
     expect(listed.required).toEqual(['action']);
@@ -507,7 +507,7 @@ describe('sanitizeSchema — per-action arguments of the action tools stay liste
     }
     // Static intake must expose its source, review identity and explicit acceptance at discovery time.
     expect(listed.properties.source.description).toBe('Actions: draft (required).');
-    expect(listed.properties.draftId.description).toBe('Actions: show (required), apply (required).');
+    expect(listed.properties.draftId.description).toBe('Actions: apply (required).');
     expect(listed.properties.accept).toMatchObject({ type: 'array', minItems: 1, description: 'Actions: apply (required).' });
     // A batch call does not take these single-create fields, so discovery must not call them required for create.
     expect(listed.properties.externalSystem.description).not.toContain('create (required)');
@@ -544,7 +544,7 @@ describe('sanitizeSchema — per-action arguments of the action tools stay liste
 
   it('names the actions that require an argument, and folds a description that only shortens another', () => {
     const { properties } = sanitizeSchema(dispatcher('schema'));
-    expect(properties.name.description).toBe('Saved schema name in slug format (letters, numbers, hyphens, underscores). Actions: save (required), load (required), delete (required).');
+    expect(properties.name.description).toBe('Saved schema name in slug format (letters, numbers, hyphens, underscores). Actions: save (required), delete (required).');
     expect(sanitizeSchema(dispatcher('object')).properties.name.description).toMatch(/Actions: show \(required\)\.$/);
   });
 

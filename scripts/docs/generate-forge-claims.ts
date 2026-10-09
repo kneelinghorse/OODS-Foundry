@@ -141,10 +141,10 @@ export async function collectFacts(): Promise<Facts> {
     return `${name}: ${value};`;
   }).join('\n');
   const toolGroups = [
-    ['Registry', ['catalog.list', 'object', 'object.import', 'structuredData.fetch', 'registry.snapshot', 'health']],
-    ['Generate &amp; review', ['design.compose', 'design.preview', 'repl', 'code.generate', 'pipeline', 'schema', 'fidelity.preview', 'map']],
+    ['Registry', ['catalog.list', 'object', 'object.write', 'object.import', 'object.import.read', 'structuredData.fetch', 'registry.snapshot', 'health']],
+    ['Generate &amp; review', ['design.compose', 'design.preview', 'design.versions', 'repl', 'code.generate', 'pipeline', 'schema', 'schema.read', 'fidelity.preview', 'map', 'map.read']],
     ['Charts', ['viz.render', 'dashboard.render', 'artifact.certify']],
-    ['Tokens &amp; brand', ['tokens.build', 'brand.apply', 'brand.intake']],
+    ['Tokens &amp; brand', ['tokens.build', 'brand.apply', 'brand.intake', 'brand.read']],
   ] as const;
   const grouped = toolGroups.flatMap(([, names]) => [...names]);
   if (JSON.stringify([...grouped].sort()) !== JSON.stringify([...registry.auto].sort())) throw new Error('Tool grouping must cover the live auto roster exactly.');

@@ -3,6 +3,7 @@ import path from 'node:path';
 import os from 'node:os';
 import { afterAll, beforeAll, expect, it } from 'vitest';
 import { handle as map } from '../../src/tools/map.js';
+import { handle as readMap } from '../../src/tools/map.read.js';
 import { handle as snapshot } from '../../src/tools/registry.snapshot.js';
 import { wire, retain, repositoryRoot } from '../helpers/wire-boundary.js';
 
@@ -49,21 +50,21 @@ it('map persists and resolves external mappings; draft fields are stored, not ad
     expect(changed).not.toHaveProperty(key);
   }
   const resolveInput = { action: 'resolve' as const, externalSystem: 's194-external', externalComponent: 'savebutton' };
-  wire('map', 'input', resolveInput);
-  const resolved = await map(resolveInput);
-  wire('map', 'output', resolved);
+  wire('map.read', 'input', resolveInput);
+  const resolved = await readMap(resolveInput);
+  wire('map.read', 'output', resolved);
   expect(resolved).toMatchObject({ status: 'ok', mapping: { id: created.mapping.id }, propTranslations: [{ externalProp: 'state', oodsProp: 'status', coercionType: 'enum', coercionDetail: { mapping: { busy: 'pending' } } }] });
   // A surfaced preferred-term label is deliberately not an executable alias.
-  const preferred = await map({ ...resolveInput, externalComponent: fixture.preferred_terms[0].label });
-  wire('map', 'output', preferred);
+  const preferred = await readMap({ ...resolveInput, externalComponent: fixture.preferred_terms[0].label });
+  wire('map.read', 'output', preferred);
   expect(preferred).toMatchObject({ status: 'not_found' });
   const deleteInput = { action: 'delete' as const, id: created.mapping.id };
   wire('map', 'input', deleteInput);
   const deleted = await map(deleteInput);
   wire('map', 'output', deleted);
   expect(deleted).toMatchObject({ status: 'ok', deleted: { id: created.mapping.id } });
-  const absent = await map(resolveInput);
-  wire('map', 'output', absent);
+  const absent = await readMap(resolveInput);
+  wire('map.read', 'output', absent);
   expect(absent).toMatchObject({ status: 'not_found' });
   const last = await snapshot({});
   wire('registry.snapshot', 'output', last);

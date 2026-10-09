@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "schema input (grouped)",
-  "description": "Grouped action-parameter tool for the schema family (save, load, list, delete). The `action` field selects the per-action handler; each branch reproduces the exact body of the corresponding per-action input schema plus the discriminator key. Uses plain JSON Schema if/then, with no discriminator keyword.",
+  "title": "schema_store input",
+  "description": "schema_store input: save, delete.",
   "type": "object",
   "required": [
     "action"
@@ -11,11 +11,9 @@
       "type": "string",
       "enum": [
         "save",
-        "load",
-        "list",
         "delete"
       ],
-      "description": "Selects the schema-family operation to dispatch."
+      "description": "Choose save, delete."
     }
   },
   "allOf": [
@@ -65,86 +63,6 @@
             "type": "string",
             "minLength": 1,
             "description": "Optional author metadata."
-          },
-          "apply": {
-            "type": "boolean",
-            "description": "Accepted for bridge dry-run/apply mode parity and ignored: this action behaves the same with or without apply (save and delete always write)."
-          }
-        }
-      }
-    },
-    {
-      "if": {
-        "properties": {
-          "action": {
-            "type": "string",
-            "const": "load"
-          }
-        },
-        "required": [
-          "action"
-        ]
-      },
-      "then": {
-        "additionalProperties": false,
-        "required": [
-          "name"
-        ],
-        "properties": {
-          "action": {
-            "type": "string",
-            "const": "load"
-          },
-          "name": {
-            "type": "string",
-            "minLength": 1,
-            "pattern": "^[a-zA-Z0-9_-]+$",
-            "description": "Saved schema name in slug format."
-          },
-          "apply": {
-            "type": "boolean",
-            "description": "Accepted for bridge dry-run/apply mode parity and ignored: this action behaves the same with or without apply (save and delete always write)."
-          }
-        }
-      }
-    },
-    {
-      "if": {
-        "properties": {
-          "action": {
-            "type": "string",
-            "const": "list"
-          }
-        },
-        "required": [
-          "action"
-        ]
-      },
-      "then": {
-        "additionalProperties": false,
-        "properties": {
-          "action": {
-            "type": "string",
-            "const": "list"
-          },
-          "object": {
-            "type": "string",
-            "minLength": 1
-          },
-          "context": {
-            "type": "string",
-            "minLength": 1
-          },
-          "tags": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "minLength": 1
-            }
-          },
-          "apply": {
-            "type": "boolean",
-            "description": "Accepted for bridge dry-run/apply mode parity and ignored: this action behaves the same with or without apply (save and delete always write)."
           }
         }
       }
@@ -175,10 +93,6 @@
             "type": "string",
             "minLength": 1,
             "pattern": "^[a-zA-Z0-9_-]+$"
-          },
-          "apply": {
-            "type": "boolean",
-            "description": "Accepted for bridge dry-run/apply mode parity and ignored: this action behaves the same with or without apply (save and delete always write)."
           }
         }
       }

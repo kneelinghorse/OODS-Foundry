@@ -1,3 +1,4 @@
+import { refuseMovedAction } from './action-moves.js';
 /**
  * object — grouped action-parameter tool for the object registry.
  *
@@ -31,6 +32,7 @@ export type ObjectGroupedInput =
 export type ObjectGroupedOutput = ObjectListOutput | ObjectShowOutput | ObjectValidateOutput | ObjectRegisterOutput | ObjectReloadOutput;
 
 export async function handle(input: any): Promise<ObjectGroupedOutput> {
+  refuseMovedAction('object', input);
   const action = input?.action as ObjectAction;
   switch (action) {
     case 'list':

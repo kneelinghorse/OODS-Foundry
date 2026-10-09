@@ -1,6 +1,6 @@
 # Bring your own objects
 
-`object_import` reads a schema your team already has and drafts OODS Foundry objects. Review the drafts and accept the objects and trait proposals you want. `object_registry` remains the tool for hand-written object or trait YAML.
+`object_import` reads a schema your team already has and drafts OODS Foundry objects. Review the drafts and accept the objects and trait proposals you want. `object_registry` validates hand-written object or trait YAML; `object_register` saves it.
 
 ## Files in
 
@@ -14,9 +14,11 @@ OODS Foundry does not fetch a URL, connect to an API/database, import a module, 
 
 The response gives an `importId`, counts, object names in dependency order, shipped-name clashes, proposal grades, and a diff-file path. Large listings are explicitly truncated in the response; `order.json` has the complete order and cycles. Nothing is registered at this step.
 
-The complete bundle is in `~/.oods-foundry/imports/<importId>/`, beside your objects and traits, outside the package install. A portable installation may set `OODS_FOUNDRY_HOME` before starting the server. `objects/` holds the draft YAML, `hub.json` the normalized schemas, `report.json` every outcome, and `diff.json` the comparison with currently registered definitions. `import.json` is content-addressed and binds the hashes of its separately streamed hub and report; editing any of them invalidates the import. To hand-edit a draft, use `object_registry` to validate and register that YAML.
+The complete bundle is in `~/.oods-foundry/imports/<importId>/`, beside your objects and traits, outside the package install. A portable installation may set `OODS_FOUNDRY_HOME` before starting the server. `objects/` holds the draft YAML, `hub.json` the normalized schemas, `report.json` every outcome, and `diff.json` the comparison with currently registered definitions. `import.json` is content-addressed and binds the hashes of its separately streamed hub and report; editing any of them invalidates the import. To hand-edit a draft, use `object_registry` to validate and `object_register` to save that YAML.
 
 ## Review and accept
+
+Call `object_import_read`:
 
 ```json
 {"action":"show","importId":"<from draft>","object":"YourObject"}
@@ -81,7 +83,7 @@ Pass `format: "dbt"` with a manifest or a project properties folder. A compiled 
 
 OData accepts CSDL JSON or XML/EDMX (`format: "odata"`). Entity/complex types, enums, keys, inheritance and navigation references become hub schemas. Draft names use local type names with deterministic collision suffixes; full service names stay in provenance. Scalar navigation uses its declared foreign key in one editor, including v2 association constraints. HeaderInfo names records, LineItem supplies `metadata.listColumns`, FieldGroup/Facets group details, Common labels/text/value lists shape fields and pickers, ISO currency pairs supply money semantics, literal units label values, and capability restrictions remove forms when inserts and updates are prohibited. Nullable display text is supported. Dynamic units, unresolved translation tokens and unsupported vocabulary expressions stay preserved and reported. XML refuses DTD/entity declarations; vocabulary URLs are never fetched. XML and JSON retain their respective nullability defaults.
 
-GraphQL accepts SDL (`.graphql`/`.gql`) or introspection JSON (`format: "graphql"`). Objects and input objects draft separately. Enums, nullability, lists, descriptions and deprecation metadata are retained; interfaces and unions remain alternatives, not merged records. Object fields become relationships. Operation roots and resolvers are not run. Custom scalar names do not supply types: only explicitly supported `@specifiedBy` URLs provide format evidence. Duplicate field declarations are reported and the first stays in effect.
+GraphQL accepts SDL (`.graphql`/`.gql`) or introspection JSON (`format: "graphql"`). Object types draft as records; mutation input types remain explicitly reported and are not drafted as records. Enums, nullability, lists, descriptions and deprecation metadata are retained; interfaces and unions remain alternatives, not merged records. Object fields become relationships. Operation roots and resolvers are not run. Custom scalar names do not supply types: only explicitly supported `@specifiedBy` URLs provide format evidence. Duplicate field declarations are reported and the first stays in effect.
 
 Hand-written objects can use `metadata.listColumns: [{field: name, label: Name}, {field: total}]` to select and order fields in list rows. Every column must name a composed field. Source annotation support uses the same object contract.
 
@@ -110,3 +112,13 @@ traits:
 Binding targets must be fields declared in the object's schema with a matching type. `null` explicitly omits a canonical field the source does not provide, including its view bindings. Without `fieldBindings`, a trait keeps its existing fields and behavior. Imported proposals explicitly omit every canonical record field the source does not supply. A proposal with no supported field bindings says that it contributes no record views. A single supplied creation time also serves the list timestamp. Timestamped objects can show that fact on their timeline without invented lifecycle events.
 
 Detail screens resolve related records from the same sample lookup used by form pickers. OData `Common.Text` supports a local label field or one navigation hop through a declared foreign-key constraint, such as `Agency/Name`. Generated lookup labels contain imported samples only: connect your application's relationship data for real records. Declared list-column labels take precedence over field semantics labels, then the human-readable field name.
+
+## Declare money when accepting
+
+A numeric field remains a number until its currency is declared in the source or explicitly accepted. Use `object_import_read` with `action: "show"` to review a draft, then add `currencies` to its accepted object:
+
+```json
+{"action":"apply","importId":"<reviewed importId>","objects":[{"name":"Order","proposals":["<reviewed proposal id>"],"currencies":{"total":{"field":"currency"}}}]}
+```
+
+The currency field must be a declared string field. Add `minorUnits: 100` for amounts stored as cents; omit it for major units. The whole batch is validated before any definition changes.

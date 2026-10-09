@@ -243,18 +243,14 @@
     },
     {
       "tool": "object",
-      "description": "Run one object-registry operation. Set `action` to list (the objects in use, shipped or your own, business objects first; OODS Foundry's internal objects are listed only when includeInternal is true, each entry carries its visibility and hiddenInternal counts the ones left out; and every definition file not in use with the reason), show (full object definition incl. composed traits and view extensions), validate (check an object or trait definition given as YAML, and compose it, without writing), register (write it into your folder, OODS_OBJECTS_DIR or OODS_TRAITS_DIR, from npm ~/.oods-foundry/objects and traits, once it validates and composes in every context it declares; overwrite: true replaces one of yours) or reload (read the folders again without a restart). Your object with a shipped object's name is used in its place and reported; your trait cannot reuse a shipped trait's name. A trait of yours places only components OODS Foundry ships. Consolidates the former object.* tools. Optional relationships declare target, via field, cardinality and label; validate/register return typed errors for unknown targets or fields, and show exposes the declarations.",
       "allow": [
         "designer",
         "maintainer"
       ],
-      "writes": [
-        "${OODS_OBJECTS_DIR}/*.object.yaml",
-        "${OODS_TRAITS_DIR}/*.trait.yaml"
-      ],
       "timeoutMs": 30000,
       "ratePerMinute": 60,
-      "concurrency": 1
+      "concurrency": 1,
+      "readOnly": true
     },
     {
       "tool": "repl",
@@ -262,12 +258,10 @@
         "designer",
         "maintainer"
       ],
-      "writes": [
-        "${BASE}/${DATE}/**"
-      ],
       "timeoutMs": 30000,
       "ratePerMinute": 60,
-      "concurrency": 4
+      "concurrency": 4,
+      "readOnly": true
     },
     {
       "tool": "object.import",
@@ -283,6 +277,75 @@
       "timeoutMs": 120000,
       "ratePerMinute": 20,
       "concurrency": 1
+    },
+    {
+      "tool": "object.write",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "writes": [
+        "${OODS_OBJECTS_DIR}/*.object.yaml",
+        "${OODS_TRAITS_DIR}/*.trait.yaml"
+      ],
+      "timeoutMs": 30000,
+      "ratePerMinute": 60,
+      "concurrency": 1
+    },
+    {
+      "tool": "schema.read",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "timeoutMs": 30000,
+      "ratePerMinute": 30,
+      "concurrency": 1,
+      "readOnly": true
+    },
+    {
+      "tool": "map.read",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "timeoutMs": 60000,
+      "ratePerMinute": 30,
+      "concurrency": 1,
+      "readOnly": true
+    },
+    {
+      "tool": "brand.read",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "timeoutMs": 120000,
+      "ratePerMinute": 30,
+      "concurrency": 1,
+      "readOnly": true
+    },
+    {
+      "tool": "object.import.read",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "timeoutMs": 120000,
+      "ratePerMinute": 20,
+      "concurrency": 1,
+      "readOnly": true
+    },
+    {
+      "tool": "design.versions",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "timeoutMs": 150000,
+      "ratePerMinute": 10,
+      "concurrency": 1,
+      "readOnly": true
     }
   ],
   "limits": {

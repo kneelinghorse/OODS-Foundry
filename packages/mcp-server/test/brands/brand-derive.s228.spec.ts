@@ -4,6 +4,7 @@ import path from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
 import { recipeProblems } from '@oods/tokens/recipe';
 import { handle } from '../../src/tools/brand.intake.js';
+import { handle as readHandle } from '../../src/tools/brand.read.js';
 import { deriveBrand } from '../../src/lib/brand-derive.js';
 import { getAjv } from '../../src/lib/ajv.js';
 import { refreshTokenBundle } from '../../src/lib/token-build.js';
@@ -12,7 +13,7 @@ import { resetTokensCssCache } from '../../src/render/document.js';
 const root = path.resolve(import.meta.dirname, '../../../..');
 const fixture = (name: string) => JSON.parse(fs.readFileSync(path.join(root, `tests/fixtures/team-tokens/${name}.tokens.json`), 'utf8'));
 const validators = ['input', 'output'].map(direction => {
-  const schema = JSON.parse(fs.readFileSync(path.join(root, `packages/mcp-server/src/schemas/brand.intake.${direction}.json`), 'utf8'));
+  const schema = JSON.parse(fs.readFileSync(path.join(root, `packages/mcp-server/src/schemas/brand.read.${direction}.json`), 'utf8'));
   return getAjv().getSchema(schema.$id) ?? getAjv().compile(schema);
 });
 const work = fs.mkdtempSync(path.join(os.tmpdir(), 's228-derive-'));
@@ -54,7 +55,7 @@ describe('s228: a team can inspect where each recipe value came from before crea
     const input = { action: 'derive' as const, tokens: fixture('complete') };
     const before = JSON.stringify(input);
     expect(validators[0](input), JSON.stringify(validators[0].errors)).toBe(true);
-    const result = await handle(input);
+    const result = await readHandle(input);
     expect(validators[1](result), JSON.stringify(validators[1].errors)).toBe(true);
     expect(result.action).toBe('derive');
     if (result.action !== 'derive') throw new Error('derive response expected');

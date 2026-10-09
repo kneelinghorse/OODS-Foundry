@@ -42,12 +42,12 @@
     },
     {
       "name": "brand.intake",
-      "description": "Create and inspect brands from token documents or a six-value recipe. Use it when adding a brand; use brand_apply to edit an existing brand or tokens_build to compile current sources. Returns templates, validation reports, derived recipes with provenance/gaps, or a created brand and build results. action selects template, validate, derive or create. derive accepts exactly one of tokens, css or cssPath; review gaps before creating. create validates every theme, refuses replacement, writes into your brands folder and builds tokens. Template and validation calls write nothing. Full schema: oods://schemas/brand_create.input.json.",
+      "description": "Create a brand or stage a local token intake draft. Use it when adding a brand; use brand_read for templates, validation, derivation and draft review, or brand_apply to edit a brand. Returns a staged draft or created brand with build results. apply needs draftId and accept:true. create accepts filled documents or a recipe, validates all themes, refuses replacement and removes a brand whose build fails. Full schema: oods://schemas/brand_create.input.json.",
       "modes": [
         "dry-run",
         "apply"
       ],
-      "approval": "optional",
+      "approval": "required",
       "allow": [
         "designer",
         "maintainer"
@@ -56,7 +56,7 @@
     },
     {
       "name": "a11y.scan",
-      "description": "Grade built token contrast and optional static screen accessibility. Use it when checking component token pairs and HTML structure; use artifact_certify for chart pillars or design_preview for measured browser evidence. Returns measured pairs, document findings and explicit unmeasured cases. Without a schema it checks every built brand/theme; a UiSchema scopes pairs to its components and adds static HTML checks. Dynamic/inherited/system paints remain unmeasured. Browser layout, keyboard/focus and screen-reader behavior are not tested. apply:true writes the report, transcript and bundle index; omission writes nothing. Full schema: oods://schemas/a11y_scan.input.json.",
+      "description": "Grade built token contrast and optional static screen accessibility. Use it when checking component token pairs and HTML structure; use artifact_certify for chart pillars or design_preview for measured browser evidence. Checks button states per intent, text at 4.5:1, and icons/progress/meter marks at 3:1. Returns measured pairs, document findings and explicit unmeasured cases. Without a schema it checks every built brand/theme; a UiSchema scopes pairs to its components and adds static HTML checks. Dynamic/inherited/system paints remain unmeasured. Browser layout, keyboard/focus and screen-reader behavior are not tested. apply:true writes the report, transcript and bundle index; omission writes nothing. Full schema: oods://schemas/a11y_scan.input.json.",
       "modes": [
         "dry-run"
       ],
@@ -83,7 +83,7 @@
     },
     {
       "name": "structuredData.fetch",
-      "description": "Fetch live registry datasets, archived token/export data, or captured-run artifacts. Use it when you need complete machine-readable data; use catalog_list instead for component selection, object_registry for one object's definition, or registry_snapshot for mappings together with traits and objects. Returns data with provenance, version and cache metadata. dataset selects registry/export mode; version pins an archived export and listVersions lists dates. kind plus runPath selects captured artifacts, while derived_analysis reads an analysis directory via runPath; version/listVersions are refused in kind mode. includeInternal exposes hidden objects, and ifNoneMatch checks the canonical payload ETag. Full schema: oods://schemas/structured_data_fetch.input.json.",
+      "description": "Fetch live registry datasets, archived token/export data, or captured-run artifacts. Use it when you need complete datasets; catalog_list selects components and object_registry reads definitions. Returns data with provenance, version and cache metadata. dataset selects registry/export mode; version pins an archived export and listVersions lists dates. kind plus runPath selects captured artifacts, while derived_analysis reads an analysis directory via runPath; version/listVersions are refused in kind mode. includeInternal exposes hidden objects, and ifNoneMatch checks the canonical payload ETag. Full schema: oods://schemas/structured_data_fetch.input.json.",
       "modes": [
         "dry-run"
       ],
@@ -96,7 +96,7 @@
     },
     {
       "name": "catalog.list",
-      "description": "List components from the live component-contract registry. Use it when choosing components by category, trait or rendering context; use structured_data_fetch instead for complete datasets, object_registry for full object definitions, or registry_snapshot for mappings together with traits and objects. Returns component names, categories, readiness labels and availableCategories; detail controls added tags, contexts, regions, traits and evidence. includeInternal exposes hidden registry objects. Readiness evidence retains the build it measured and does not certify a new composition. Full schema: oods://schemas/catalog_list.input.json.",
+      "description": "List components from the live component-contract registry. Use it when selecting components; structured_data_fetch returns complete datasets. Returns component names, categories, readiness labels and availableCategories; detail controls added tags, contexts, regions, traits and evidence. includeInternal exposes hidden registry objects. Readiness evidence retains the build it measured and does not certify a new composition. Full schema: oods://schemas/catalog_list.input.json.",
       "modes": [
         "dry-run"
       ],
@@ -109,7 +109,7 @@
     },
     {
       "name": "code.generate",
-      "description": "Generate React/Vue file sets or a standalone static HTML document from a validated UiSchema. Use it when a schema already exists; use design_compose instead to choose a layout or pipeline_run to compose, validate, render and generate together. Returns versioned artifacts, exact dependencies, required domain handlers and validationReceipt. Supply schema or schemaRef before its 30-minute expiry. profile selects draft/build/release; build performs static checks, while release verifies supplied evidence without rerunning it. options.output selects component/application and options.payloadMode:file returns file references. Domain actions require consumer handlers. React and Vue shadcn mappings support components, screen apps and workflow apps. Full schema: oods://schemas/code_generate.input.json.",
+      "description": "Generate React/Vue file sets or a standalone static HTML document from a validated UiSchema. Use it when a schema already exists; use design_compose instead to choose a layout or pipeline_run to compose, validate, render and generate together. Returns versioned artifacts, exact dependencies, required domain handlers and validationReceipt. Supply schema or schemaRef before its 30-minute expiry. profile selects draft/build/release; build performs static checks, while release verifies supplied evidence without rerunning it. options.output selects component/application; options.payloadMode:file returns file references, as does oversized output unless inline. Domain actions require consumer handlers. React and Vue shadcn mappings support components, screen apps and workflow apps. Full schema: oods://schemas/code_generate.input.json.",
       "modes": [
         "dry-run"
       ],
@@ -135,7 +135,7 @@
     },
     {
       "name": "pipeline",
-      "description": "Run composition, validation, rendering and code generation in one call. Use it when starting from an object/context or intent and needing generated output; use design_compose instead to inspect layout first or code_generate for an existing schema. Returns step results, schemaRef with expiry, versioned artifacts, dependencies and validationReceipt. options controls validation/render skipping and optional static accessibility checks; save persists the schema beyond its process-local 30-minute reference. Generation validation forwards draft/build/release without downgrade. Release verifies supplied evidence without rerunning it; unresolved accessibility pairs stay unmeasured. Calls may write composition and saved-schema records. Full schema: oods://schemas/pipeline_run.input.json.",
+      "description": "Run composition, validation, rendering and code generation in one call. Use it when starting from an object/context or intent and needing generated output; use design_compose instead to inspect layout first or code_generate for an existing schema. Returns step results, schemaRef with expiry, versioned artifacts, dependencies and validationReceipt. options controls validation/render skipping and optional static accessibility checks; save persists the schema beyond its process-local 30-minute reference. Generation validation forwards draft/build/release without downgrade. Release verifies supplied evidence without rerunning it; unresolved accessibility pairs stay unmeasured. Oversized output goes to files unless options.payloadMode is inline. Calls may write composition and saved-schema records. Full schema: oods://schemas/pipeline_run.input.json.",
       "modes": [
         "dry-run"
       ],
@@ -200,7 +200,7 @@
     },
     {
       "name": "registry.snapshot",
-      "description": "Read mappings together with active traits and objects in one snapshot. Use it when needing a combined registry view and canonical ETag; use catalog_list instead to choose components, structured_data_fetch for an individual dataset, or object_registry to inspect/register a definition. Returns mappings, traits, objects, generatedAt, ETag and registry loader issues. includeInternal exposes hidden objects; otherwise hiddenInternal counts omitted entries. Team definitions and shadowing are reported from live sources. This read-only call writes no snapshot file. Historical mapping fields remain stored data and do not imply current capabilities. Full schema: oods://schemas/registry_snapshot.input.json.",
+      "description": "Read mappings together with active traits and objects in one snapshot. Use it when reading combined registry data; object_registry reads one definition and object_register saves one. Returns mappings, traits, objects, generatedAt, ETag and registry loader issues. Defaults to a summary; detail full adds schemas. includeInternal exposes hidden objects; otherwise hiddenInternal counts omitted entries. Team definitions and shadowing are reported from live sources. This read-only call writes no snapshot file. Historical mapping fields remain stored data and do not imply current capabilities. Full schema: oods://schemas/registry_snapshot.input.json.",
       "modes": [
         "dry-run"
       ],
@@ -213,11 +213,12 @@
     },
     {
       "name": "design.preview",
-      "description": "Open a versioned composition as a running React/Vue app with recorded measurements. Use it when reviewing generated behavior or edits; use fidelity_preview instead for static diagrams, wireframes or mockups. Returns preview URLs, composition lineage, editable fields and measured/notMeasured evidence. Supply compositionId/version or object/context; action selects render, edit, compare or versions. Edits create a new version. framework and preferences select rendering; contextItems attach fetched evidence. runPath selects captured-run records, analysisPath selects derived comparisons, and recordId chooses an exact record. Writes version artifacts and measurements; domain actions still require consumer integration. Full schema: oods://schemas/design_preview.input.json.",
+      "description": "Render, compare, edit or accept a running React/Vue composition. Use it when reviewing generated behavior; use design_versions to inspect lineage without starting a host, or fidelity_preview for static drawings. Returns preview URLs, editable fields and measured or unmeasured evidence. Supply compositionId/version or object/context. Edits create versions; compare generates missing artifacts. accept records the generated version and a snapshot of its measurements as accepted, preserving prior acceptances. Full schema: oods://schemas/design_preview.input.json.",
       "modes": [
-        "dry-run"
+        "dry-run",
+        "apply"
       ],
-      "approval": "optional",
+      "approval": "required",
       "allow": [
         "designer",
         "maintainer"
@@ -239,12 +240,12 @@
     },
     {
       "name": "map",
-      "description": "Manage component substitutions in your user mapping store. Use it when connecting your React/Vue component exports or React/Vue shadcn source to OODS components; use catalog_list to find OODS component names. Returns mapping entries, resolved matches or per-entry write outcomes. action selects apply/create/list/resolve/update/delete. create accepts a single entry, mappings list or mappingsPath; lists validate completely before one write. substitution supplies exports and prop translations with exact package versions or installed localPath. React/Vue shadcn mappings use an installed project and module instead. Compose snapshots mappings; generation/preview apply them. apply controls mutation where supported. Full schema: oods://schemas/component_map.input.json.",
+      "description": "Write component substitutions or stage an intake draft. Use it when connecting React/Vue exports, shadcn source or built Storybook files; use component_map_read to list, resolve or review drafts. Returns staged evidence or write outcomes. apply with draftId requires accepted ids and writes adapters and mappings atomically. create takes one entry, mappings or mappingsPath; create and report-based apply preview unless apply:true. update and delete always write. Full schema: oods://schemas/component_map.input.json.",
       "modes": [
         "dry-run",
         "apply"
       ],
-      "approval": "optional",
+      "approval": "required",
       "allow": [
         "designer",
         "maintainer"
@@ -253,12 +254,12 @@
     },
     {
       "name": "schema",
-      "description": "Save, load, list or delete named composition schemas. Use it when retaining a UiSchema across sessions or past its 30-minute reference expiry; use schema_render to validate/render it or object_registry to manage object definitions. Returns the selected stored schema, listing or write result. action selects the operation; save/load/delete use name. Every save overwrites that name and increments its version; only the latest is loadable. apply is accepted but ignored: save and delete always write. Full tool JSON schemas are separate MCP resources, not entries in this store. Full schema: oods://schemas/schema_store.input.json.",
+      "description": "Save or delete a named composition schema. Use it when retaining a UiSchema across sessions; use schema_read to list or load saved schemas. Returns the saved metadata or deletion result. save takes schemaRef, overwrites that name and increments its version; only the latest is loadable. Both actions write immediately. Full schema: oods://schemas/schema_store.input.json.",
       "modes": [
         "dry-run",
         "apply"
       ],
-      "approval": "optional",
+      "approval": "required",
       "allow": [
         "designer",
         "maintainer"
@@ -267,10 +268,9 @@
     },
     {
       "name": "object",
-      "description": "Inspect, validate or register object and trait definitions. Use object_import instead to draft from existing schema files. Use it when exploring object shapes with list/show; use catalog_list instead to choose components, structured_data_fetch for complete datasets, or registry_snapshot for mappings together with definitions. Returns definitions, composed traits/view extensions, validation findings or registry write/reload results. action selects list/show/validate/register/reload. includeInternal reveals hidden objects. validate/register accept YAML; register writes your configured folder after checking declared contexts, and overwrite replaces your own definition. Team objects may shadow shipped objects; traits cannot reuse shipped names. Relationships validate their target and field. Reload reads folders without restarting. Full schema: oods://schemas/object_registry.input.json.",
+      "description": "Read object and trait definitions or validate YAML without saving. Use it when exploring shapes or checking a definition; use object_register to save one or object_import to draft from a schema file. Returns definitions, composed traits, validation findings or cache reload status. includeInternal reveals hidden objects; reload clears only process caches. Full schema: oods://schemas/object_registry.input.json.",
       "modes": [
-        "dry-run",
-        "apply"
+        "dry-run"
       ],
       "approval": "optional",
       "allow": [
@@ -281,7 +281,7 @@
     },
     {
       "name": "repl",
-      "description": "Validate a UiSchema or render it as static HTML/fragments. Use it when checking schema/patch contracts or exporting static output; use design_preview for a running React/Vue app, code_generate for file sets, or schema_store for persistence. Returns validation diagnostics or rendered output with warnings and artifact references. action selects validate/render; mode selects full schema or patch, with schemaRef available for reuse. Render defaults to a document with token CSS; output.compact omits CSS. brand and output scope options affect documents; ignored fragment options are diagnosed. apply:true emits render artifacts; output.payloadMode:file writes payloads and returns paths. Full schema: oods://schemas/schema_render.input.json.",
+      "description": "Validate a UiSchema or render static HTML and fragments. Use it when checking schema or patch contracts; use design_preview for a running app or schema_store to save. Returns diagnostics or rendered output. action selects validate/render; mode selects full/patch. apply:true enables rendering, without saving a schema. Render includes token CSS unless output.compact; oversized output or output.payloadMode:file writes only reply payloads. brand and scope options affect documents; ignored fragment options are diagnosed. Full schema: oods://schemas/schema_render.input.json.",
       "modes": [
         "dry-run",
         "apply"
@@ -295,10 +295,37 @@
     },
     {
       "name": "object.import",
-      "description": "Draft objects from local OpenAPI, JSON Schema, Postgres DDL/migrations, Prisma, dbt, OData or GraphQL files. Use it when importing a schema you already have; use object_registry for hand-written object/trait YAML. Returns an importId, staged drafts/report, counts and a re-import diff. action=draft uses source.path or source.content without registering; show uses importId and object for YAML, graded proposals and unmapped elements; apply uses importId and explicit objects with accepted proposal ids. The batch validates and composes with rollback. overwrite replaces team objects; confirmShipped names each approved shipped replacement. Unreachable references are reported and skipped; no network fetch or code execution. Full schema: oods://schemas/object_import.input.json.",
+      "description": "Draft objects from local OpenAPI, JSON Schema, Postgres SQL, Prisma, dbt, OData or GraphQL files, then apply accepted proposals. Use it when importing a schema; use object_import_read to review a staged object. Returns importId, staged files, proposal counts and re-import differences, or batch registration results. draft takes source.path or source.content; apply requires explicit objects and proposal ids. overwrite replaces team objects; confirmShipped names approved shipped replacements. No network fetch or code execution. Full schema: oods://schemas/object_import.input.json.",
       "modes": [
         "dry-run",
         "apply"
+      ],
+      "approval": "required",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "ratePerMinute": 20
+    },
+    {
+      "name": "object.write",
+      "description": "Register an object or trait from reviewed YAML. Use it when saving a definition; use object_registry to list, inspect or validate without writing. Returns the saved definition and registry result. overwrite replaces your own definition. Team objects may shadow shipped objects; traits cannot reuse shipped names. Relationships must name valid targets and fields. Full schema: oods://schemas/object_register.input.json.",
+      "modes": [
+        "dry-run",
+        "apply"
+      ],
+      "approval": "required",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "ratePerMinute": 20
+    },
+    {
+      "name": "schema.read",
+      "description": "Read saved composition schemas. Use it when listing saved work or loading a named schema; use schema_store to save or delete one. Returns metadata or the schema with a new process-local schemaRef, valid for 30 minutes. Tool input schemas are separate MCP resources. Full schema: oods://schemas/schema_read.input.json.",
+      "modes": [
+        "dry-run"
       ],
       "approval": "optional",
       "allow": [
@@ -306,6 +333,58 @@
         "maintainer"
       ],
       "ratePerMinute": 20
+    },
+    {
+      "name": "map.read",
+      "description": "Read component substitutions and staged intake evidence. Use it when listing mappings, resolving an external component or reviewing a draftId; use component_map to stage or apply changes. Returns entries, matches or draft evidence including proposed adapters and unmatched elements. Reads local stores without generating adapters or changing project files. Full schema: oods://schemas/component_map_read.input.json.",
+      "modes": [
+        "dry-run"
+      ],
+      "approval": "optional",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "ratePerMinute": 20
+    },
+    {
+      "name": "brand.read",
+      "description": "Read brand templates, validate documents, derive recipes or inspect staged drafts. Use it when preparing a brand without saving; use brand_create to stage or create it. Returns complete template slots, validation findings, a recipe with provenance and gaps, or draft evidence. derive takes exactly one of tokens, css or absolute cssPath. Template replies use compact JSON so all themes fit inline. Full schema: oods://schemas/brand_read.input.json.",
+      "modes": [
+        "dry-run"
+      ],
+      "approval": "optional",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "ratePerMinute": 30
+    },
+    {
+      "name": "object.import.read",
+      "description": "Read one staged object import. Use it when reviewing YAML, graded proposals and unmapped elements before acceptance; use object_import to draft or apply. Returns the named object, proposals and differences from its registered definition. Supply importId and the exact object name. Reading never rewrites the staged report. Full schema: oods://schemas/object_import_read.input.json.",
+      "modes": [
+        "dry-run"
+      ],
+      "approval": "optional",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "ratePerMinute": 20
+    },
+    {
+      "name": "design.versions",
+      "description": "Read a composition's versions and accepted version. Use it when inspecting saved lineage; use design_preview to render, edit, compare or accept. Returns version metadata, latest and acceptance summary. Supply compositionId. Starts no preview host and returns no running URL. Full schema: oods://schemas/design_versions.input.json.",
+      "modes": [
+        "dry-run"
+      ],
+      "approval": "optional",
+      "allow": [
+        "designer",
+        "maintainer"
+      ],
+      "ratePerMinute": 10
     }
   ],
   "connectors": [
@@ -325,10 +404,14 @@
         "viz.render",
         "dashboard.render",
         "map",
+        "map.read",
         "schema",
+        "schema.read",
         "object",
+        "object.write",
         "repl",
-        "object.import"
+        "object.import",
+        "object.import.read"
       ],
       "notes": "Apply requests must include the approval header value defined above."
     },
@@ -348,10 +431,14 @@
         "viz.render",
         "dashboard.render",
         "map",
+        "map.read",
         "schema",
+        "schema.read",
         "object",
+        "object.write",
         "repl",
-        "object.import"
+        "object.import",
+        "object.import.read"
       ],
       "notes": "Apply requires approval token and is rate limited to prevent context overrun."
     }

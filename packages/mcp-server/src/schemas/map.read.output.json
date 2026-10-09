@@ -1,0 +1,895 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://oods-foundry.com/schemas/map.read.output.json",
+  "title": "component_map_read output",
+  "description": "Grouped output for the map family. anyOf (not oneOf) of each per-action output body \u2014 per-action outputs share fields like status/etag and would match more than one branch, which would fail oneOf.",
+  "anyOf": [
+    {
+      "$ref": "#/$defs/ApplyOutput"
+    },
+    {
+      "$ref": "#/$defs/CreateOutput"
+    },
+    {
+      "$ref": "#/$defs/ListOutput"
+    },
+    {
+      "$ref": "#/$defs/ResolveOutput"
+    },
+    {
+      "$ref": "#/$defs/UpdateOutput"
+    },
+    {
+      "$ref": "#/$defs/DeleteOutput"
+    },
+    {
+      "$ref": "#/$defs/IntakeOutput"
+    }
+  ],
+  "$defs": {
+    "ApplyOutput": {
+      "type": "object",
+      "required": [
+        "applied",
+        "skipped",
+        "queued",
+        "conflicted",
+        "errors",
+        "diff",
+        "etag"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "applied": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AppliedRoute"
+          }
+        },
+        "skipped": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SkippedRoute"
+          }
+        },
+        "queued": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/QueuedRoute"
+          }
+        },
+        "conflicted": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ConflictRoute"
+          }
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ApplyError"
+          }
+        },
+        "diff": {
+          "$ref": "#/$defs/DiffSummary"
+        },
+        "conflictArtifactPath": {
+          "type": "string",
+          "minLength": 1
+        },
+        "etag": {
+          "type": "string",
+          "pattern": "^[A-Fa-f0-9]{64}$"
+        }
+      }
+    },
+    "CreateOutput": {
+      "anyOf": [
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "mapping",
+            "etag"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "ok",
+                "error"
+              ]
+            },
+            "mapping": {
+              "type": "object",
+              "description": "The created mapping record."
+            },
+            "etag": {
+              "type": "string",
+              "pattern": "^[A-Fa-f0-9]{64}$",
+              "description": "SHA256 ETag of the updated mappings file."
+            },
+            "applied": {
+              "type": "boolean",
+              "description": "Whether the mapping was persisted to disk."
+            },
+            "warnings": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Non-fatal warnings (e.g., unknown traits)."
+            },
+            "errors": {
+              "type": "object",
+              "required": [
+                "message",
+                "details"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "message": {
+                  "type": "string"
+                },
+                "details": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "field",
+                      "message",
+                      "keyword"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "field": {
+                        "type": "string"
+                      },
+                      "message": {
+                        "type": "string"
+                      },
+                      "keyword": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              },
+              "description": "Agent-friendly error details following formatValidationErrors()."
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "entries",
+            "etag",
+            "applied"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "ok",
+                "error"
+              ]
+            },
+            "etag": {
+              "type": "string",
+              "pattern": "^[A-Fa-f0-9]{64}$",
+              "description": "SHA256 ETag of the updated mappings file."
+            },
+            "applied": {
+              "type": "boolean"
+            },
+            "errors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "code",
+                  "message"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "const": "OODS-V219"
+                  },
+                  "message": {
+                    "type": "string"
+                  },
+                  "field": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "index",
+                  "id",
+                  "status",
+                  "applied"
+                ],
+                "properties": {
+                  "index": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "id": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "valid",
+                      "invalid"
+                    ]
+                  },
+                  "applied": {
+                    "type": "boolean"
+                  },
+                  "mapping": {
+                    "type": "object"
+                  },
+                  "warnings": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "errors": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "type": "string",
+                          "const": "OODS-V219"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "field": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ListOutput": {
+      "type": "object",
+      "required": [
+        "mappings",
+        "totalCount",
+        "stats",
+        "etag"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "mappings": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Matching mapping records."
+        },
+        "totalCount": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of mappings returned."
+        },
+        "stats": {
+          "type": "object",
+          "required": [
+            "mappingCount",
+            "systemCount"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "mappingCount": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "systemCount": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "etag": {
+          "type": "string",
+          "pattern": "^[A-Fa-f0-9]{64}$",
+          "description": "Current ETag of the mappings file."
+        },
+        "nextCursor": {
+          "type": "string",
+          "description": "Pagination cursor for the next page when additional mappings remain."
+        }
+      }
+    },
+    "ResolveOutput": {
+      "type": "object",
+      "required": [
+        "status"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "ok",
+            "not_found"
+          ]
+        },
+        "mapping": {
+          "type": "object",
+          "description": "The resolved mapping record (present when status=ok)."
+        },
+        "propTranslations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "externalProp",
+              "oodsProp"
+            ],
+            "additionalProperties": true,
+            "properties": {
+              "externalProp": {
+                "type": "string"
+              },
+              "oodsProp": {
+                "type": "string"
+              },
+              "coercionType": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "coercionDetail": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              }
+            }
+          },
+          "description": "Flattened prop translations with coercion details."
+        },
+        "message": {
+          "type": "string",
+          "description": "Explanation when status=not_found."
+        }
+      }
+    },
+    "UpdateOutput": {
+      "type": "object",
+      "required": [
+        "status"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "ok",
+            "error"
+          ]
+        },
+        "mapping": {
+          "type": "object",
+          "description": "The updated mapping record (present when status=ok)."
+        },
+        "etag": {
+          "type": "string",
+          "description": "SHA256 etag of the mappings file after update."
+        },
+        "changes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of fields that were changed."
+        },
+        "message": {
+          "type": "string",
+          "description": "Error or informational message."
+        }
+      }
+    },
+    "DeleteOutput": {
+      "type": "object",
+      "required": [
+        "status"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "ok",
+            "error"
+          ]
+        },
+        "deleted": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "externalSystem": {
+              "type": "string"
+            },
+            "externalComponent": {
+              "type": "string"
+            }
+          },
+          "description": "Summary of the deleted mapping."
+        },
+        "etag": {
+          "type": "string",
+          "description": "SHA256 etag of the mappings file after deletion."
+        },
+        "message": {
+          "type": "string",
+          "description": "Error message when status=error."
+        }
+      }
+    },
+    "CandidateDiffField": {
+      "type": "object",
+      "required": [
+        "field"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "field": {
+          "type": "string",
+          "minLength": 1
+        },
+        "from": {},
+        "to": {}
+      }
+    },
+    "CandidateDiff": {
+      "type": "object",
+      "required": [
+        "added_traits",
+        "removed_traits",
+        "changed_fields"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "added_traits": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "removed_traits": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "changed_fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CandidateDiffField"
+          }
+        }
+      }
+    },
+    "AppliedRoute": {
+      "type": "object",
+      "required": [
+        "objectId",
+        "name",
+        "action",
+        "confidence",
+        "recommendedOodsTraits",
+        "reason",
+        "persisted"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "objectId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "create",
+            "patch"
+          ]
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "recommendedOodsTraits": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "existingMapId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mappingId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "persisted": {
+          "type": "boolean"
+        },
+        "diff": {
+          "$ref": "#/$defs/CandidateDiff"
+        }
+      }
+    },
+    "SkippedRoute": {
+      "type": "object",
+      "required": [
+        "objectId",
+        "name",
+        "action",
+        "confidence",
+        "recommendedOodsTraits",
+        "reason",
+        "persisted"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "objectId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "action": {
+          "type": "string",
+          "const": "skip"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "recommendedOodsTraits": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "existingMapId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mappingId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "persisted": {
+          "type": "boolean"
+        },
+        "diff": {
+          "$ref": "#/$defs/CandidateDiff"
+        }
+      }
+    },
+    "QueuedRoute": {
+      "type": "object",
+      "required": [
+        "objectId",
+        "name",
+        "action",
+        "confidence",
+        "threshold",
+        "queueReason",
+        "recommendedOodsTraits",
+        "reason"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "objectId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "create",
+            "patch",
+            "skip",
+            "conflict"
+          ]
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "threshold": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "queueReason": {
+          "type": "string",
+          "const": "below_confidence"
+        },
+        "recommendedOodsTraits": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "existingMapId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "diff": {
+          "$ref": "#/$defs/CandidateDiff"
+        }
+      }
+    },
+    "ConflictRoute": {
+      "type": "object",
+      "required": [
+        "objectId",
+        "name",
+        "action",
+        "confidence",
+        "reason"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "objectId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "action": {
+          "type": "string",
+          "const": "conflict"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "existingMapId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "ApplyError": {
+      "type": "object",
+      "required": [
+        "message"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "objectId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "create",
+            "patch",
+            "skip",
+            "conflict"
+          ]
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1
+        },
+        "details": {
+          "type": "object"
+        }
+      }
+    },
+    "DiffSummary": {
+      "type": "object",
+      "required": [
+        "create",
+        "patch",
+        "skip",
+        "conflict",
+        "queued",
+        "changedFields",
+        "addedTraits",
+        "removedTraits"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "create": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "patch": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "skip": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "conflict": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "queued": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "changedFields": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "addedTraits": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "removedTraits": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "IntakeOutput": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "show",
+            "apply"
+          ]
+        },
+        "draftId": {
+          "type": "string"
+        },
+        "file": {
+          "type": "string"
+        },
+        "contentHash": {
+          "type": "string"
+        },
+        "counts": {
+          "type": "object"
+        },
+        "proposals": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "source": {
+          "type": "object"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "inventory": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "applied": {
+          "type": "boolean"
+        },
+        "ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "etag": {
+          "type": "string"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "action",
+        "draftId"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

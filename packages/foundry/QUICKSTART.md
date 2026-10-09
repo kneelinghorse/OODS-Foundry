@@ -9,7 +9,7 @@ Use Node.js 22.0.0 or newer on macOS or Linux and connect your MCP client as the
 In your project, install this version of OODS Foundry and copy its examples outside the installed runtime:
 
 ```sh
-npm install @oods/foundry@0.10.2
+npm install @oods/foundry@0.11.0
 cp -R node_modules/@oods/foundry/quickstart ./harbor-design-system
 ```
 
@@ -25,17 +25,17 @@ This run makes **23 tool calls**, including **six `design_preview` calls**. Leav
 
 Register Stockable, Warehouse and then ColdRoom. ColdRoom belongs to a Warehouse, so that object must exist first.
 
-<!-- first-change: trait-register object_registry -->
+<!-- first-change: trait-register object_register -->
 ```json
 {"action":"register","yaml":"<Stockable.trait.yaml>"}
 ```
 
-<!-- first-change: warehouse-register object_registry -->
+<!-- first-change: warehouse-register object_register -->
 ```json
 {"action":"register","yaml":"<Warehouse.object.yaml>"}
 ```
 
-<!-- first-change: coldroom-register object_registry -->
+<!-- first-change: coldroom-register object_register -->
 ```json
 {"action":"register","yaml":"<ColdRoom.object.yaml>"}
 ```
@@ -109,7 +109,7 @@ Append this placement to the existing list under `view_extensions.detail`:
 
 Register your complete edited file with `overwrite: true`:
 
-<!-- first-change: trait-edit object_registry -->
+<!-- first-change: trait-edit object_register -->
 ```json
 {"action":"register","yaml":"<Stockable.edited.trait.yaml>","overwrite":true}
 ```
@@ -173,7 +173,7 @@ Compare also lists the generated files whose hashes changed: the Warehouse list'
 
 Replace the edited file with your saved, untouched Stockable file and register it again:
 
-<!-- first-change: trait-restore object_registry -->
+<!-- first-change: trait-restore object_register -->
 ```json
 {"action":"register","yaml":"<Stockable.trait.yaml>","overwrite":true}
 ```
@@ -232,16 +232,16 @@ Ask your assistant to make each named call. Start with `health_check`:
 {}
 ```
 
-Then `brand_create` with `template` to inspect the roles and descriptions:
+Then `brand_read` with `template` to inspect the roles and descriptions:
 
-<!-- quickstart: template brand_create -->
+<!-- quickstart: template brand_read -->
 ```json
 {"action":"template"}
 ```
 
-The supplied Harbor document has a complete set of values. Change values, then call `brand_create` with `validate`. Fix each reported issue before creating the brand; a failed contrast check includes the pair, measured ratio and required floor.
+The supplied Harbor document has a complete set of values. Change values, then call `brand_read` with `validate`. Fix each reported issue before creating the brand; a failed contrast check includes the pair, measured ratio and required floor.
 
-<!-- quickstart: brand-validate brand_create -->
+<!-- quickstart: brand-validate brand_read -->
 ```json
 {"action":"validate","brand_id":"Harbor","documents":"<harbor.tokens.json>"}
 ```
@@ -266,7 +266,7 @@ The result names the written files and token build. Your brand lives outside the
 
 Register it only after `valid: true`:
 
-<!-- quickstart: trait-register object_registry -->
+<!-- quickstart: trait-register object_register -->
 ```json
 {"action":"register","yaml":"<Stockable.trait.yaml>"}
 ```
@@ -278,7 +278,7 @@ Validate and register the object after its trait exists:
 {"action":"validate","yaml":"<Warehouse.object.yaml>"}
 ```
 
-<!-- quickstart: object-register object_registry -->
+<!-- quickstart: object-register object_register -->
 ```json
 {"action":"register","yaml":"<Warehouse.object.yaml>"}
 ```

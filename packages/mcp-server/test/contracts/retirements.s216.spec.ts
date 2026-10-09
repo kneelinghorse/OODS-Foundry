@@ -12,7 +12,7 @@ describe('s216 retirement removes callable promises, not just documentation', ()
     const registry = loadToolRegistry();
     const names = [...registry.auto, ...registry.onDemand].sort();
     expect(registry.onDemand).toEqual(['a11y.scan']);
-    expect(names).toHaveLength(21);
+    expect(names).toHaveLength(27);
     expect(read('configs/agent/policy.json').tools.map((row: any) => row.name).sort()).toEqual(names);
     expect(read('packages/mcp-server/src/security/policy.json').rules.map((row: any) => row.tool).sort()).toEqual(names);
     expect(resolveToolRegistry({ MCP_TOOLSET: 'all', MCP_EXTRA_TOOLS: retired.join(',') })).toMatchObject({ enabled: names, unknownExtras: retired });

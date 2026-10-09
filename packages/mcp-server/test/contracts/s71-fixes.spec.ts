@@ -127,7 +127,7 @@ describe('Sprint 71 fixes', () => {
     });
 
     it('documents schema (action=save) as persistence path', () => {
-      expect(descriptions['schema']).toMatch(/persist|TTL/i);
+      expect(descriptions['schema']).toContain('retaining a UiSchema across sessions');
     });
 
     it('documents availableCategories for catalog.list', () => {

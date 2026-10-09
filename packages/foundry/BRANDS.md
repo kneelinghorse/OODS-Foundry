@@ -18,14 +18,14 @@ archive the variable has no default: set it to create a brand.
 
 ## From your own tokens
 
-`brand_create` accepts your team's DTCG document without renaming its groups or tokens:
+`brand_read` accepts your team's DTCG document without renaming its groups or tokens:
 
 ```json
 {"action":"derive","tokens":{"color":{"brand":{"500":{"$type":"color","$value":"#387d47"}}}}}
 ```
 
 It returns a partial `recipe`, `provenance` for each value (source path, raw and resolved value, and rule), `gaps` with
-candidate paths, and `warnings`. It writes nothing. Review the result, fill every required gap, then call
+candidate paths, and `warnings`. It writes nothing. Review the result, fill every required gap, then call `brand_create` with
 `{"action":"create","brand_id":"Meadow","recipe":{...}}`. Creation grades the complete brand before writing it.
 
 | Value | Derivation rule |
@@ -86,7 +86,7 @@ The quickest way is a recipe: six values from which every colour, the radius set
 
 `status` can also set the hue, and optionally the chroma, of `info`, `success`, `warning`, `critical` and `archive`.
 
-Ask your assistant to use the `brand_create` tool:
+Ask your assistant to use `brand_read` for template and validate, then `brand_create` for create:
 
 1. `{"action": "template", "from": {"recipe": {"neutralHue": 286, "neutralChroma": 0, "accentHue": 267, "primary":
    "neutral", "radius": 6, "font": "Geist"}}}` returns the complete brand the recipe gives: one document per theme,

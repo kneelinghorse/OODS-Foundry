@@ -57,7 +57,7 @@ describe('the reference host renders the preview app from the adapter under the 
     const host = await ReferenceHost.open({ negotiate: false });
     hosts.push(host);
     const { tools } = await host.listTools();
-    expect(tools).toHaveLength(20);
+    expect(tools).toHaveLength(26);
     expect(tools.find(tool => tool.name === 'design_preview')!._meta).toBeUndefined();
     await expect(host.render('design_preview', { object: 'Subscription', context: 'card' })).rejects.toThrow(/did not offer the preview app/);
     expect(host.rpc.negotiationReceipt()).toMatch(/not advertised/);

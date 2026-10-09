@@ -62,7 +62,9 @@ export function displayFieldExpression(
   fields: Record<string, FieldSchemaEntry> | undefined,
   access: (name: string) => string = snakeToCamel,
 ): string {
-  const primary = access(field);
+  const primaryValue = access(field);
+  const numberedObject = ownFieldSchemaEntry(fields, field)?.semanticType?.match(/^object\.([^.]+)\.number$/)?.[1];
+  const primary = numberedObject ? `(String(${primaryValue} ?? '').match(/^(?:[A-Z]{1,4}-)?\\d+$/) ? ${javascriptSingleQuotedString(fieldLabel(numberedObject) + ' ')} + Number(String(${primaryValue}).replace(/^[A-Z]{1,4}-/, '')) : ${primaryValue})` : primaryValue;
   const fallback = ownFieldSchemaEntry(fields, field)?.displayFallbackField;
   if (!fallback || fallback === field || !ownFieldSchemaEntry(fields, fallback)) return primary;
   return `(String(${primary} ?? '').trim() ? ${primary} : ${access(fallback)})`;

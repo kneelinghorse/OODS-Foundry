@@ -2,88 +2,42 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://oods-foundry.com/schemas/brand.intake.input.json",
   "title": "brand_create input",
-  "description": "derive reads a team's DTCG tokens or a shadcn CSS theme into a partial recipe with provenance, gaps and warnings, writing nothing. Create a brand from token values or a recipe. template returns every slot of a brand with its meaning and a starting value, or from a recipe the complete brand it gives, graded; validate checks the filled documents or a recipe and writes nothing; create writes a brand that passes into the brands folder and runs the token build. draft reads a local DTCG file, retains supported token names and light/dark modes, and reports slot evidence/fallbacks; show reviews the content-addressed draft; apply with accept:true validates and writes the whole reviewed brand atomically.",
+  "description": "brand_create input: create, draft, apply.",
   "type": "object",
-  "required": ["action"],
-  "examples": [
-    { "action": "template", "from": { "preset": "corporate-blue" } },
-    { "action": "template", "from": { "recipe": { "neutralHue": 286, "neutralChroma": 0, "accentHue": 267, "primary": "neutral", "radius": 6, "font": "Geist" } } }
+  "required": [
+    "action"
   ],
   "properties": {
     "action": {
       "type": "string",
-      "enum": ["derive", "template", "validate", "create",
+      "enum": [
+        "create",
         "draft",
-        "show",
         "apply"
       ],
-      "description": "'derive' reads your own tokens or shadcn theme CSS into a partial recipe with provenance and gaps, writing nothing; 'template' returns the documents to fill: every slot of the light (base), dark and high-contrast (hc) themes with its meaning and a starting value; 'validate' checks filled documents (missing and unknown slots, types, colours, the fixed slots, the brand contrast rules and the chart marks on the canvas in every theme) and writes nothing; 'create' writes a brand that validates into the brands folder, runs the token build and makes the brand usable at once. create never replaces a brand."
+      "description": "Choose create, draft, apply."
     }
   },
   "allOf": [
     {
-      "if": { "properties": { "action": { "type": "string", "const": "derive" } }, "required": ["action"] },
-      "then": {
-        "type": "object", "oneOf": [{ "required": ["tokens"] }, { "required": ["css"] }, { "required": ["cssPath"] }], "additionalProperties": false,
-        "properties": {
-          "action": { "type": "string", "const": "derive" },
-          "tokens": { "type": "object", "description": "A DTCG document with your own token names. Group $type is inherited; {group.token} aliases resolve inside the document." },
-          "css": { "type": "string", "description": "A shadcn theme CSS entry, in place of tokens. Reads light :root/html custom properties in selector lists and nested blocks, plus @theme inline fonts; returns each value's source and gaps without running CSS imports or writing anything." },
-          "cssPath": { "type": "string", "pattern": "^/[\\s\\S]*$", "description": "Absolute path to the shadcn theme CSS entry, in place of tokens or css. Read only." },
-          "hints": {
-            "type": "object", "additionalProperties": false,
-            "description": "Exact dot-separated token paths, or CSS custom property names, that override inference. Invalid hints produce gaps, never silent fallback.",
-            "properties": {
-              "accent": { "type": "string", "minLength": 1 },
-              "neutral": { "type": "string", "minLength": 1 },
-              "radius": { "type": "string", "minLength": 1 },
-              "font": { "type": "string", "minLength": 1 },
-              "fontMono": { "type": "string", "minLength": 1 }
-            }
-          }
-        }
-      }
-    },
-    {
       "if": {
-        "properties": { "action": { "type": "string", "const": "template" } },
-        "required": ["action"]
-      },
-      "then": {
-        "type": "object",
         "properties": {
-          "action": { "type": "string", "const": "template" },
-          "from": {
-            "type": "object",
-            "description": "Where the starting values come from: an existing brand (default A), optionally with one of the shipped presets over it; or a recipe, which gives the complete brand, graded.",
-            "properties": {
-              "brand": {
-                "type": "string",
-                "format": "oods-brand",
-                "description": "An existing brand whose values the template starts from. Default: A."
-              },
-              "preset": {
-                "type": "string",
-                "minLength": 1,
-                "description": "A shipped preset id whose values go over the brand's; every template response lists the presets and what each sets."
-              },
-              "recipe": { "$ref": "#/$defs/recipe" }
-            },
-            "additionalProperties": false
+          "action": {
+            "type": "string",
+            "const": "create"
           }
         },
-        "additionalProperties": false
-      }
-    },
-    {
-      "if": {
-        "properties": { "action": { "type": "string", "const": "validate" } },
-        "required": ["action"]
+        "required": [
+          "action"
+        ]
       },
       "then": {
         "type": "object",
         "properties": {
-          "action": { "type": "string", "const": "validate" },
+          "action": {
+            "type": "string",
+            "const": "create"
+          },
           "brand_id": {
             "type": "string",
             "minLength": 1,
@@ -93,46 +47,41 @@
             "type": "object",
             "description": "The filled template: one plain design-token document per theme, brand-relative (surface.canvas, not color.brand.<id>.surface.canvas), each slot {\"$type\": \"color\", \"$value\": \"<CSS colour>\"}.",
             "properties": {
-              "base": { "type": "object", "description": "The light theme." },
-              "dark": { "type": "object", "description": "The dark theme." },
-              "hc": { "type": "object", "description": "The high-contrast theme." }
+              "base": {
+                "type": "object",
+                "description": "The light theme."
+              },
+              "dark": {
+                "type": "object",
+                "description": "The dark theme."
+              },
+              "hc": {
+                "type": "object",
+                "description": "The high-contrast theme."
+              }
             },
             "additionalProperties": false
           },
-          "recipe": { "$ref": "#/$defs/recipe", "description": "A brand recipe in place of documents: the brand it gives is checked, and for create written, like filled documents." }
+          "recipe": {
+            "$ref": "#/$defs/recipe",
+            "description": "A brand recipe in place of documents: the brand it gives is checked, and for create written, like filled documents."
+          }
         },
-        "oneOf": [{ "required": ["documents"] }, { "required": ["recipe"] }],
-        "additionalProperties": false
-      }
-    },
-    {
-      "if": {
-        "properties": { "action": { "type": "string", "const": "create" } },
-        "required": ["action"]
-      },
-      "then": {
-        "type": "object",
-        "properties": {
-          "action": { "type": "string", "const": "create" },
-          "brand_id": {
-            "type": "string",
-            "minLength": 1,
-            "description": "The id the brand will have. Checked when given: capitals then digits (ACME, A1) or a letter then lower-case letters and digits (Acme, acme2), at most 32 characters, and no existing brand's id in any case."
+        "required": [
+          "brand_id"
+        ],
+        "oneOf": [
+          {
+            "required": [
+              "documents"
+            ]
           },
-          "documents": {
-            "type": "object",
-            "description": "The filled template: one plain design-token document per theme, brand-relative (surface.canvas, not color.brand.<id>.surface.canvas), each slot {\"$type\": \"color\", \"$value\": \"<CSS colour>\"}.",
-            "properties": {
-              "base": { "type": "object", "description": "The light theme." },
-              "dark": { "type": "object", "description": "The dark theme." },
-              "hc": { "type": "object", "description": "The high-contrast theme." }
-            },
-            "additionalProperties": false
-          },
-          "recipe": { "$ref": "#/$defs/recipe", "description": "A brand recipe in place of documents: the brand it gives is checked, and for create written, like filled documents." }
-        },
-        "required": ["brand_id"],
-        "oneOf": [{ "required": ["documents"] }, { "required": ["recipe"] }],
+          {
+            "required": [
+              "recipe"
+            ]
+          }
+        ],
         "additionalProperties": false
       }
     },
@@ -228,36 +177,6 @@
         "properties": {
           "action": {
             "type": "string",
-            "const": "show"
-          }
-        },
-        "required": [
-          "action"
-        ]
-      },
-      "then": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "action": {
-            "type": "string",
-            "const": "show"
-          },
-          "draftId": {
-            "type": "string",
-            "pattern": "^brand-[a-f0-9]{64}$"
-          }
-        },
-        "required": [
-          "draftId"
-        ]
-      }
-    },
-    {
-      "if": {
-        "properties": {
-          "action": {
-            "type": "string",
             "const": "apply"
           }
         },
@@ -293,24 +212,74 @@
     "recipe": {
       "type": "object",
       "description": "A brand recipe: the neutral (a hue and a tint of 0 to 0.03), the accent hue, whether the primary action is the neutral (near-black in light, near-white in dark) or the accent, the control radius in px, and the sans family. Every colour, the radius set and the font stacks follow from it, graded like any brand.",
-      "required": ["neutralHue", "neutralChroma", "accentHue", "primary", "radius", "font"],
+      "required": [
+        "neutralHue",
+        "neutralChroma",
+        "accentHue",
+        "primary",
+        "radius",
+        "font"
+      ],
       "additionalProperties": false,
       "properties": {
-        "neutralHue": { "type": "number", "minimum": 0, "maximum": 360 },
-        "neutralChroma": { "type": "number", "minimum": 0, "maximum": 0.03 },
-        "accentHue": { "type": "number", "minimum": 0, "maximum": 360 },
-        "primary": { "type": "string", "enum": ["neutral", "accent"] },
-        "radius": { "type": "number", "minimum": 0, "maximum": 16 },
-        "font": { "type": "string", "minLength": 1, "maxLength": 64 },
-        "fontMono": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "neutralHue": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 360
+        },
+        "neutralChroma": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.03
+        },
+        "accentHue": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 360
+        },
+        "primary": {
+          "type": "string",
+          "enum": [
+            "neutral",
+            "accent"
+          ]
+        },
+        "radius": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 16
+        },
+        "font": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "fontMono": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
         "status": {
           "type": "object",
           "description": "Status hues, each { hue, chroma? }: info, success, warning, critical, archive.",
           "additionalProperties": {
             "type": "object",
-            "required": ["hue"],
+            "required": [
+              "hue"
+            ],
             "additionalProperties": false,
-            "properties": { "hue": { "type": "number", "minimum": 0, "maximum": 360 }, "chroma": { "type": "number", "minimum": 0, "maximum": 1.5 } }
+            "properties": {
+              "hue": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 360
+              },
+              "chroma": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1.5
+              }
+            }
           }
         }
       }

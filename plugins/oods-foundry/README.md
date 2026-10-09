@@ -2,11 +2,11 @@
 
 OODS Foundry is an object-oriented design system that extends the one you already have. This plugin gives Claude the OODS Foundry MCP server and the `oods-foundry` skill. With them, Claude registers your objects, traits and brand, substitutes your components for shipped ones, composes screens, previews them running in React and Vue, and generates React or Vue code. It also renders charts from data you give it and certifies the chart specifications it renders; that certification does not cover the surrounding screen or app.
 
-OODS Foundry is open source under the Apache License 2.0. The source of this release is tagged [v0.10.2](https://github.com/kneelinghorse/OODS-Foundry/tree/v0.10.2) in the [OODS Foundry repository](https://github.com/kneelinghorse/OODS-Foundry). Bug reports and feedback go to its [Issues](https://github.com/kneelinghorse/OODS-Foundry/issues).
+OODS Foundry is open source under the Apache License 2.0. The source of this release is tagged [v0.11.0](https://github.com/kneelinghorse/OODS-Foundry/tree/v0.11.0) in the [OODS Foundry repository](https://github.com/kneelinghorse/OODS-Foundry). Bug reports and feedback go to its [Issues](https://github.com/kneelinghorse/OODS-Foundry/issues).
 
 ## Install
 
-The plugin runs the pinned `npx -y @oods/foundry@0.10.2`. It needs Node.js 22.0.0 or newer on macOS or Linux.
+The plugin runs the pinned `npx -y @oods/foundry@0.11.0`. It needs Node.js 22.0.0 or newer on macOS or Linux.
 
 If you found OODS Foundry in Anthropic's plugin directory, add it from there: run `/plugin directory` in Claude Code 2.1.287 or later, or open Customize > Plugins on claude.ai or in the Claude desktop app. A plugin you add on claude.ai reaches Claude Code as a synced plugin the next time you start a session signed in to the same account.
 
@@ -33,7 +33,7 @@ The skill's quickstart reference walks through bringing your own colour tokens, 
 
 ## Where it works
 
-- **Claude Code** (the terminal, the IDE extensions and the desktop app's Code tab): the whole plugin, meaning the local MCP server, which advertises 20 tools by default, and the skill.
+- **Claude Code** (the terminal, the IDE extensions and the desktop app's Code tab): the whole plugin, meaning the local MCP server, which advertises 26 tools by default, and the skill.
 - **Cowork**: the local server starts only when the Cowork session runs on your computer, and it needs Node.js 22 or newer there. This has not been tested.
 - **Chat** on claude.ai and in the Claude apps: only the skill loads, because chat does not start local MCP servers. For tools in chat, add the hosted connector at `https://oods-foundry.com/mcp`. It gives 9 read-only tools: health, the component catalog and registry, chart rendering and certification, recorded screens and tool schemas. Some share a name with a local tool but do less: the hosted `design_preview` looks up recorded screens, and the hosted `artifact_certify` takes the `viz_render` input. Registering, mapping, composing, previewing and generating need this plugin's local server. In Claude Code, use this plugin; you do not need both.
 
@@ -49,7 +49,7 @@ By default it sends nothing to OODS Foundry or anyone else.
 - **Files it writes.** What you make is written under `~/.oods-foundry`: saved schemas, composed versions and file-mode output, and your own objects, traits, brands, component mappings and drafts. Applying an accepted shadcn component draft also writes the new adapter files into that project; it never overwrites an existing file.
 - **Optional traffic.** Trace export stays off unless you set `OODS_OTLP_ENDPOINT`. Contract checks connect to a remote browser only if you name one with `OODS_PLAYWRIGHT_WS_ENDPOINT`.
 
-The package's [SECURITY.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.10.2/SECURITY.md) has more detail. The runtime archive's SHA-256 is recorded in the package's `runtime/oods-foundry-runtime.manifest.json`.
+The package's [SECURITY.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.11.0/SECURITY.md) has more detail. The runtime archive's SHA-256 is recorded in the package's `runtime/oods-foundry-runtime.manifest.json`.
 
 ## Troubleshooting
 

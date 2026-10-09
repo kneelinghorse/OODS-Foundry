@@ -8,6 +8,10 @@ Generated code comes with a receipt naming the static checks performed and the w
 
 The optional `a11y_scan` tool checks the text and icon contrast pairs declared by the component stylesheet in every built brand and theme. Given a screen schema, it also renders the screen and checks its document accessibility rules; see the [tool reference](packages/foundry/TOOL-REFERENCE.md#a11y_scan) for scope and thresholds.
 
+## Try the five-minute demo
+
+[Turn Cal.com’s real schema into React and Vue screens in your own shadcn components](docs/demo/README.md). Follow the prompts, review what is proposed, accept it, and open list, detail, form and timeline in light or dark.
+
 ## Install
 
 Use Node.js 22.0.0 or newer on macOS or Linux. For a local server in Claude Code:

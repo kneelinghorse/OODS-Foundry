@@ -1,3 +1,4 @@
+import { refuseMovedAction } from '../action-moves.js';
 import { handle as saveHandle } from './save.js';
 import { handle as loadHandle } from './load.js';
 import { handle as listHandle } from './list.js';
@@ -18,6 +19,7 @@ import { handle as deleteHandle } from './delete.js';
 export type SchemaAction = 'save' | 'load' | 'list' | 'delete';
 
 export async function handle(input: any): Promise<any> {
+  refuseMovedAction('schema', input);
   const action: SchemaAction = input?.action;
   switch (action) {
     case 'save':

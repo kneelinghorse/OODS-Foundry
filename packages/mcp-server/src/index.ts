@@ -1,4 +1,5 @@
 import './load-env.js';
+import { refuseMovedAction } from './tools/action-moves.js';
 import fs from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import Fastify from 'fastify';
@@ -35,6 +36,37 @@ function register(
 type ToolSpec = { modulePath: string; inputSchema: string; outputSchema: string };
 
 const toolSpecs: Record<string, ToolSpec> = {
+  'object.write': {
+    modulePath: './tools/object.write.js',
+    inputSchema: './schemas/object.write.input.json',
+    outputSchema: './schemas/object.write.output.json',
+  },
+  'schema.read': {
+    modulePath: './tools/schema.read.js',
+    inputSchema: './schemas/schema.read.input.json',
+    outputSchema: './schemas/schema.read.output.json',
+  },
+  'map.read': {
+    modulePath: './tools/map.read.js',
+    inputSchema: './schemas/map.read.input.json',
+    outputSchema: './schemas/map.read.output.json',
+  },
+  'brand.read': {
+    modulePath: './tools/brand.read.js',
+    inputSchema: './schemas/brand.read.input.json',
+    outputSchema: './schemas/brand.read.output.json',
+  },
+  'object.import.read': {
+    modulePath: './tools/object.import.read.js',
+    inputSchema: './schemas/object.import.read.input.json',
+    outputSchema: './schemas/object.import.read.output.json',
+  },
+  'design.versions': {
+    modulePath: './tools/design.versions.js',
+    inputSchema: './schemas/design.versions.input.json',
+    outputSchema: './schemas/design.versions.output.json',
+  },
+
   'tokens.build': {
     modulePath: './tools/tokens.build.js',
     inputSchema: './schemas/tokens.build.input.json',
@@ -238,6 +270,7 @@ async function stdioLoop() {
         }
         const span = startToolSpan({ toolName: tool, role, requestId });
         try {
+          refuseMovedAction(tool, input);
           const reg = tools[tool];
           const validateIn = ajv.compile(reg.inputSchema);
           if (!validateIn(input)) {

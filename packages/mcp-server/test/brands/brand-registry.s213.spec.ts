@@ -73,7 +73,8 @@ describe('s213-m04: brands from the token build', () => {
     // brand.apply, repl and repl.render, and the UI schema's three chart declarations.
     // s213-m05 adds two: brand.intake's template starts from an existing brand (from.brand, input and output).
     // s237: token intake also starts from a declared, registered brand.
-    expect(fields).toHaveLength(21);
+    // s240: the read family has its own from.brand contract.
+    expect(fields).toHaveLength(22);
   });
 
   it('an unknown brand is refused at call time, and the answer names the brands there are', () => {

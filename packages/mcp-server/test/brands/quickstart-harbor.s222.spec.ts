@@ -7,7 +7,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { handle as intake } from '../../src/tools/brand.intake.js';
+import { handle as intake } from '../../src/tools/brand.read.js';
 import { recipeDocuments } from '../../src/lib/brand-template.js';
 
 const root = path.resolve(import.meta.dirname, '../../../..');

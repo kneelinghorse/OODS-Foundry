@@ -29,20 +29,20 @@ describe('bridge preserves action-family input contracts', () => {
       child!.stdout.on('data', chunk => { output += chunk; const match = output.match(/listening on :(\d+)/); if (match) resolve(Number(match[1])); });
       child!.once('error', reject); child!.once('exit', code => reject(new Error(`Bridge exited ${code}: ${logs}`)));
     });
-    const call = async (tool: string, input: Record<string, unknown>) => {
-      const response = await fetch(`http://127.0.0.1:${port}/run`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tool, input }) });
+    const call = async (tool: string, input: Record<string, unknown>, approved = false) => {
+      const response = await fetch(`http://127.0.0.1:${port}/run`, { method: 'POST', headers: { 'Content-Type': 'application/json', ...(approved ? { 'X-Bridge-Approval': 'granted' } : {}) }, body: JSON.stringify({ tool, input }) });
       return { status: response.status, body: await response.json() as any };
     };
     const listed = await call('object_registry', { action: 'list' });
     expect(listed.status, JSON.stringify(listed.body)).toBe(200);
     expect(listed.body.tool).toBe('object_registry');
-    const template = await call('brand_create', { action: 'template' });
+    const template = await call('brand_read', { action: 'template' });
     expect(template.status, JSON.stringify(template.body)).toBe(200);
     const dry = await call('component_map', { action: 'create', externalSystem: 'bridge-test', externalComponent: 'Button', oodsTraits: ['Stateful'] });
     expect(dry.status, JSON.stringify(dry.body)).toBe(200);
     expect(dry.body.mode).toBe('dry-run');
     expect(fs.existsSync(path.join(store, 'mappings.json'))).toBe(false);
-    const applied = await call('component_map', { action: 'create', externalSystem: 'bridge-test', externalComponent: 'Button', oodsTraits: ['Stateful'], apply: true });
+    const applied = await call('component_map', { action: 'create', externalSystem: 'bridge-test', externalComponent: 'Button', oodsTraits: ['Stateful'], apply: true }, true);
     expect(applied.status, JSON.stringify(applied.body)).toBe(200);
     expect(applied.body.mode).toBe('apply');
     expect(fs.existsSync(path.join(store, 'mappings.json'))).toBe(true);
@@ -50,11 +50,11 @@ describe('bridge preserves action-family input contracts', () => {
     expect(denied.status).toBe(403);
     expect(denied.body.error.details.reason).toBe('READ_ONLY_ENFORCED');
     const alias = await call('object', { action: 'list' });
-    expect(alias.status, JSON.stringify(alias.body)).toBe(200);
-    expect(alias.body.warnings).toEqual(['Warning: object is deprecated; use object_registry. This alias is supported through 0.7.x and removed in 0.8.0.']);
-    const invalid = await call('object', { action: 'unsupported' });
+    expect(alias.status).toBe(403);
+    expect(alias.body.error.details.reason).toBe('FORBIDDEN_TOOL');
+    const invalid = await call('object_registry', { action: 'unsupported' });
     expect(invalid.status).toBe(400);
     expect(invalid.body.error.code).toBe('OODS-V001');
-    expect(invalid.body.warnings).toEqual(alias.body.warnings);
+
   }, 120_000);
 });

@@ -38,7 +38,7 @@ async function runBridgeRender(port: number, input: ReplRenderInput): Promise<Re
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({
-      tool: 'repl',
+      tool: 'schema_render',
       input: { action: 'render', ...input },
     }),
   });

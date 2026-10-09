@@ -69,19 +69,19 @@ const store = () => { const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'oods-ad
 const sha256 = (value: string) => createHash('sha256').update(value).digest('hex');
 
 describe('the stdio adapter speaks MCP Apps (s202-m02)', () => {
-  it('keeps the Sprint 201 surface for a client that does not advertise the extension: 20 tools, no _meta.ui, the text result, and says so on stderr', async () => {
+  it('keeps the Sprint 201 surface for a client that does not advertise the extension: 26 tools, no _meta.ui, the text result, and says so on stderr', async () => {
     for (const built of ['packages/mcp-server/dist/index.js', 'packages/mcp-bridge/dist/preview/standalone.js', 'packages/mcp-bridge/dist/preview-app/app.html']) expect(fs.existsSync(path.join(root, built)), `${built} must be built`).toBe(true);
     const rpc = new Rpc(store());
     const initialized = await rpc.initialize({});
     expect(initialized.serverInfo).toEqual({ name: 'oods-foundry-adapter', version: JSON.parse(fs.readFileSync(path.join(root, 'packages/mcp-adapter/package.json'), 'utf8')).version, title: 'OODS Foundry', websiteUrl: 'https://oods-foundry.com/', icons: [{ src: 'https://oods-foundry.com/icon-512.png', mimeType: 'image/png', sizes: ['512x512'] }] });
     expect(initialized.capabilities).toEqual({ tools: {}, resources: {}, extensions: { [UI_EXTENSION]: {} } });
     const { tools } = await rpc.request('tools/list');
-    expect(tools).toHaveLength(20);
+    expect(tools).toHaveLength(26);
     expect(tools.every((tool: { _meta?: unknown }) => tool._meta === undefined)).toBe(true);
     // The listed resource exists for every client; only the tool's pointer is negotiated.
     const { resources } = await rpc.request('resources/list');
     expect(resources.filter((resource: { mimeType: string }) => resource.mimeType === APP_MIME)).toHaveLength(1);
-    expect(resources.filter((resource: { uri: string }) => resource.uri.startsWith('oods://schemas/'))).toHaveLength(20);
+    expect(resources.filter((resource: { uri: string }) => resource.uri.startsWith('oods://schemas/'))).toHaveLength(26);
     expect(resources[0]).toMatchObject({ mimeType: APP_MIME, name: 'OODS Foundry design preview', title: 'OODS Foundry design preview' });
     expect(resources[0].uri).toMatch(/^ui:\/\/oods-forge\/preview\/[a-f0-9]{12}\/app\.html$/);
     const result = await rpc.request('tools/call', { name: 'design_preview', arguments: { object: 'Subscription', context: 'card' } });
@@ -100,7 +100,7 @@ describe('the stdio adapter speaks MCP Apps (s202-m02)', () => {
     const rpc = new Rpc(store());
     await rpc.initialize({ extensions: { [UI_EXTENSION]: { mimeTypes: [APP_MIME] } } });
     const { tools } = await rpc.request('tools/list');
-    expect(tools).toHaveLength(20);
+    expect(tools).toHaveLength(26);
     const preview = tools.find((tool: { name: string }) => tool.name === 'design_preview');
     const { resources } = await rpc.request('resources/list');
     const appUri: string = resources[0].uri;

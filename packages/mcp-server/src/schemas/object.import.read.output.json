@@ -1,0 +1,210 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "object_import_read output",
+  "anyOf": [
+    {
+      "type": "object",
+      "required": [
+        "action",
+        "importId",
+        "directory",
+        "contentHash",
+        "counts",
+        "objectCount",
+        "objects",
+        "objectsTruncated",
+        "shippedClashes",
+        "diff",
+        "proposalGrades",
+        "cycleCount",
+        "files"
+      ],
+      "properties": {
+        "action": {
+          "type": "string",
+          "const": "draft"
+        },
+        "importId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "directory": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contentHash": {
+          "type": "string",
+          "minLength": 1
+        },
+        "counts": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "objectCount": {
+          "type": "integer"
+        },
+        "objects": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "objectsTruncated": {
+          "type": "boolean"
+        },
+        "shippedClashes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "diff": {
+          "type": "object",
+          "properties": {
+            "new": {
+              "type": "integer"
+            },
+            "changed": {
+              "type": "integer"
+            },
+            "unchanged": {
+              "type": "integer"
+            },
+            "file": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "additionalProperties": false
+        },
+        "proposalGrades": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        },
+        "cycleCount": {
+          "type": "integer"
+        },
+        "files": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "proposalTraits": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "action",
+        "importId",
+        "name",
+        "yaml",
+        "proposals",
+        "unmapped",
+        "diff"
+      ],
+      "properties": {
+        "action": {
+          "type": "string",
+          "const": "show"
+        },
+        "importId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "yaml": {
+          "type": "string",
+          "minLength": 1
+        },
+        "proposals": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "unmapped": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "diff": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "action",
+        "importId",
+        "applied",
+        "count"
+      ],
+      "properties": {
+        "action": {
+          "type": "string",
+          "const": "apply"
+        },
+        "importId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "count": {
+          "type": "integer"
+        },
+        "applied": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "contexts"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "contexts": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "list",
+                    "detail",
+                    "form",
+                    "timeline"
+                  ]
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  ]
+}

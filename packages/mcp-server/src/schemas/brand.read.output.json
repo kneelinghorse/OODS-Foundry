@@ -1,0 +1,746 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oods-foundry.com/schemas/brand.read.output.json",
+  "title": "brand_read output",
+  "description": "derive: a partial recipe, per-value provenance, gaps and warnings; writes nothing. template: the documents to fill with the rules they must meet. validate: a report of every problem (valid is true when there are none) and the files create would write with their sha256 and bytes. create: the brand's written files, the token build's exit code and the brands the server now has.",
+  "anyOf": [
+    {
+      "type": "object",
+      "required": [
+        "action",
+        "recipe",
+        "provenance",
+        "gaps",
+        "warnings"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "type": "string",
+          "const": "derive"
+        },
+        "recipe": {
+          "type": "object",
+          "description": "Only values supported by the tokens. Fill gaps, then pass this recipe to create for grading and writing.",
+          "additionalProperties": false,
+          "properties": {
+            "neutralHue": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 360
+            },
+            "neutralChroma": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 0.03
+            },
+            "accentHue": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 360
+            },
+            "primary": {
+              "type": "string",
+              "enum": [
+                "neutral",
+                "accent"
+              ]
+            },
+            "radius": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 16
+            },
+            "font": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "fontMono": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "status": {
+              "type": "object",
+              "description": "Status hues, each { hue, chroma? }: info, success, warning, critical, archive.",
+              "additionalProperties": {
+                "type": "object",
+                "required": [
+                  "hue"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "hue": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 360
+                  },
+                  "chroma": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1.5
+                  }
+                }
+              }
+            }
+          }
+        },
+        "provenance": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": [
+              "sources",
+              "rule"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "sources": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "path",
+                    "value",
+                    "resolvedValue"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    },
+                    "value": {},
+                    "resolvedValue": {}
+                  }
+                }
+              },
+              "rule": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "gaps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "field",
+              "reason",
+              "candidates"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "field": {
+                "type": "string"
+              },
+              "reason": {
+                "type": "string"
+              },
+              "candidates": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "type": "object",
+      "required": [
+        "action",
+        "from",
+        "slots",
+        "documents",
+        "fixed",
+        "presets",
+        "rules"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "type": "string",
+          "const": "template"
+        },
+        "from": {
+          "type": "object",
+          "anyOf": [
+            {
+              "required": [
+                "brand"
+              ]
+            },
+            {
+              "required": [
+                "recipe"
+              ]
+            }
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "brand": {
+              "type": "string",
+              "format": "oods-brand"
+            },
+            "preset": {
+              "type": "string"
+            },
+            "recipe": {
+              "type": "object",
+              "description": "The recipe the documents were made from."
+            }
+          }
+        },
+        "slots": {
+          "$ref": "#/$defs/perTheme",
+          "description": "How many slots each theme has."
+        },
+        "documents": {
+          "type": "object",
+          "description": "One brand-relative DTCG document per theme; each slot's $description is its meaning.",
+          "required": [
+            "base",
+            "dark",
+            "hc"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "base": {
+              "type": "object"
+            },
+            "dark": {
+              "type": "object"
+            },
+            "hc": {
+              "type": "object"
+            }
+          }
+        },
+        "fixed": {
+          "type": "array",
+          "description": "Slots a brand may not change, with the value they keep and why.",
+          "items": {
+            "type": "object",
+            "required": [
+              "theme",
+              "slot",
+              "value",
+              "reason"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "theme": {
+                "$ref": "#/$defs/theme"
+              },
+              "slot": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              },
+              "reason": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "presets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "description"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "rules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "report": {
+          "$ref": "#/$defs/report",
+          "description": "From a recipe: the grading of its brand, as validate reports it."
+        },
+        "adjustments": {
+          "type": "object",
+          "description": "From a recipe: every colour role a contrast rule moved off its scale step, light and dark.",
+          "additionalProperties": false,
+          "properties": {
+            "light": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "dark": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "allOf": [
+        {
+          "$ref": "#/$defs/report"
+        },
+        {
+          "type": "object",
+          "required": [
+            "action"
+          ],
+          "properties": {
+            "action": {
+              "type": "string",
+              "const": "validate"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "object",
+      "required": [
+        "action",
+        "created",
+        "brand_id",
+        "folder",
+        "files",
+        "build",
+        "brands",
+        "report"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "type": "string",
+          "const": "create"
+        },
+        "created": {
+          "type": "boolean",
+          "const": true
+        },
+        "brand_id": {
+          "type": "string"
+        },
+        "folder": {
+          "type": "string",
+          "description": "The brands folder the files were written in: the team's (OODS_BRANDS_DIR), or the token package's in a source checkout."
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/file"
+          }
+        },
+        "build": {
+          "type": "object",
+          "required": [
+            "exitCode",
+            "durationMs"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "exitCode": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "durationMs": {
+              "type": "number"
+            }
+          }
+        },
+        "brands": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The brands this server has after the build."
+        },
+        "report": {
+          "$ref": "#/$defs/report"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "show"
+          ]
+        },
+        "draftId": {
+          "type": "string"
+        },
+        "file": {
+          "type": "string"
+        },
+        "brand_id": {
+          "type": "string"
+        },
+        "source": {
+          "type": "object"
+        },
+        "contentHash": {
+          "type": "string"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "documents": {
+          "type": "object"
+        },
+        "inventory": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "report": {
+          "type": "object"
+        },
+        "counts": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "action",
+        "draftId",
+        "brand_id",
+        "counts"
+      ],
+      "additionalProperties": false
+    }
+  ],
+  "$defs": {
+    "theme": {
+      "type": "string",
+      "enum": [
+        "base",
+        "dark",
+        "hc"
+      ]
+    },
+    "perTheme": {
+      "type": "object",
+      "required": [
+        "base",
+        "dark",
+        "hc"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "base": {
+          "type": "integer"
+        },
+        "dark": {
+          "type": "integer"
+        },
+        "hc": {
+          "type": "integer"
+        }
+      }
+    },
+    "file": {
+      "type": "object",
+      "required": [
+        "theme",
+        "path",
+        "sha256",
+        "bytes"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "theme": {
+          "$ref": "#/$defs/theme"
+        },
+        "path": {
+          "type": "string",
+          "description": "Relative to the folder create writes in: the team's brands folder, or the token package in a source checkout."
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "contrast": {
+      "type": "object",
+      "required": [
+        "graded",
+        "passed",
+        "failed",
+        "ungraded"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "graded": {
+          "type": "integer"
+        },
+        "passed": {
+          "type": "integer"
+        },
+        "failed": {
+          "type": "integer"
+        },
+        "ungraded": {
+          "type": "integer",
+          "description": "Pairs with a missing or unreadable colour, each reported as its own issue."
+        },
+        "systemColoursResolvedIn": {
+          "type": "string",
+          "description": "High contrast: where its system colours were resolved to grade a pair of two system colours, which passes only if it passes in every one."
+        },
+        "exempt": {
+          "type": "integer",
+          "description": "Pairs this theme does not grade, each for a stated reason (in high contrast, the focus ring on the primary fill)."
+        },
+        "charts": {
+          "type": "object",
+          "required": [
+            "graded",
+            "passed",
+            "failed",
+            "ungraded"
+          ],
+          "additionalProperties": false,
+          "description": "The chart marks, counted apart from the brand contrast rules: the one-series colour and the six series at 3:1 on surface.canvas. In high contrast they are system colours, graded as a pair of two system colours is.",
+          "properties": {
+            "graded": {
+              "type": "integer"
+            },
+            "passed": {
+              "type": "integer"
+            },
+            "failed": {
+              "type": "integer"
+            },
+            "ungraded": {
+              "type": "integer",
+              "description": "Marks with a missing or unreadable colour, each reported as its own issue."
+            }
+          }
+        }
+      }
+    },
+    "report": {
+      "type": "object",
+      "required": [
+        "valid",
+        "brand_id",
+        "themes",
+        "issues",
+        "contrast"
+      ],
+      "properties": {
+        "action": {
+          "type": "string",
+          "const": "validate"
+        },
+        "valid": {
+          "type": "boolean"
+        },
+        "brand_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "themes": {
+          "type": "object",
+          "required": [
+            "base",
+            "dark",
+            "hc"
+          ],
+          "additionalProperties": false,
+          "patternProperties": {
+            "^(base|dark|hc)$": {
+              "type": "object",
+              "required": [
+                "label",
+                "slots",
+                "provided"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "label": {
+                  "type": "string"
+                },
+                "slots": {
+                  "type": "integer"
+                },
+                "provided": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "rule",
+              "message"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "rule": {
+                "type": "string",
+                "enum": [
+                  "brand-id-missing",
+                  "brand-id-rule",
+                  "brand-id-taken",
+                  "document-missing",
+                  "slot-missing",
+                  "slot-unknown",
+                  "slot-not-token",
+                  "type-not-color",
+                  "value-not-colour",
+                  "colour-transparent",
+                  "system-colour-outside-hc",
+                  "slot-fixed",
+                  "contrast",
+                  "hc-mixed-pair",
+                  "type-mismatch",
+                  "value-not-dimension",
+                  "value-not-font",
+                  "recipe-invalid"
+                ]
+              },
+              "theme": {
+                "$ref": "#/$defs/theme"
+              },
+              "slot": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "pair": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "foreground",
+                  "background"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "foreground": {
+                    "type": "string"
+                  },
+                  "background": {
+                    "type": "string"
+                  }
+                }
+              },
+              "ratio": {
+                "type": "number"
+              },
+              "threshold": {
+                "type": "number"
+              },
+              "resolutions": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "High contrast, a pair of two system colours: the platforms and color-schemes where it missed its floor."
+              },
+              "origin": {
+                "type": "string",
+                "enum": [
+                  "authored",
+                  "inherited"
+                ],
+                "description": "A chart mark that misses its floor: inherited when its value is brand A's for the theme, where a template starts every slot, so set viz.* for your canvas; authored otherwise."
+              }
+            }
+          }
+        },
+        "contrast": {
+          "type": "object",
+          "required": [
+            "base",
+            "dark",
+            "hc"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "base": {
+              "$ref": "#/$defs/contrast"
+            },
+            "dark": {
+              "$ref": "#/$defs/contrast"
+            },
+            "hc": {
+              "$ref": "#/$defs/contrast"
+            }
+          }
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/file"
+          },
+          "description": "The files create writes, with the sha256 and bytes OODS Foundry computes."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -148,14 +148,14 @@ const TOOL_FIXTURE_PINS = Object.freeze([
   {
     "tool": "map",
     "fixture": "s194-map.json",
-    "sha256": "8d3350cc21ddf3ad1fa1658850b0e4918ba584cabe108ad5dd0b54d3c548a6c0",
-    "bytes": 458
+    "sha256": "cf4ba6d02b343bf9123caf6dfa1bcf0e73ec4d6c9262209bfe2b5e74a306808e",
+    "bytes": 437
   },
   {
     "tool": "schema",
     "fixture": "s194-schema.json",
-    "sha256": "0d4c4b37fbae4e653a4492cf7a1fe47905bc2c5821a188cd3c10b605afb2277f",
-    "bytes": 393
+    "sha256": "5719e5338c3ea82bb498b1e2a8272fe0726d3fc348e16a0cbf8d9c70d5f49ff7",
+    "bytes": 353
   },
   {
     "tool": "object",
@@ -886,8 +886,8 @@ async function main() {
   );
   assert.equal(
     adapterPackage.version,
-    "0.10.2",
-    "adapter 0.10.2 answers directory rules (annotations.title, typed schemas), instructions and Gemini's added argument",
+    "0.11.0",
+    "adapter 0.11.0 splits reads from writes",
   );
   assert.equal(
     manifest.packageVersions["@oods/mcp-adapter"],
@@ -1148,7 +1148,11 @@ async function main() {
     const brandSourceAfter = await treeDigest(brandSourceRoot);
     assert.equal(brandSourceAfter.sha256, brandSourceBefore.sha256, "portable brand.apply changed shipped brand source");
     assert.equal(brandSourceAfter.sha256, manifest.brandSourceTree.sha256);
-    const intake = await primary.callTool("brand_create", operand("brand.intake"));
+    const intake = await primary.callTool("brand_read", operand("brand.intake"));
+    const draftBrandFile = path.join(scratch, "brand-input.json");
+    fs.writeFileSync(draftBrandFile, JSON.stringify(intake.documents.base));
+    const stagedBrand = await primary.callTool("brand_create", { action: "draft", brand_id: "Portableproof", source: { path: draftBrandFile } });
+    assert(stagedBrand.draftId);
     // s213-m05: brand.intake is template, validate and create; the fixture asks for the template from a shipped preset.
     // s222-m01 added 28 colour, radius and font slots; s222-m02 the 26 light chart slots (a brand's charts are its own).
     assert.deepEqual(intake.slots, { base: 103, dark: 96, hc: 96 }); assert(intake.documents?.base && intake.documents?.dark && intake.documents?.hc);
@@ -1162,6 +1166,8 @@ async function main() {
     const previewResult = primary.lastResult;
     assert.equal(preview.status, 'ok');
     assert.match(preview.previewUrl, /^http:\/\/127\.0\.0\.1:\d+\/preview\/cmp-[a-f0-9]{12}\/1\?framework=react&brand=A&theme=light$/);
+    const versions = await primary.callTool("design_versions", { action: "versions", compositionId: preview.compositionId });
+    assert.equal(versions.latest, preview.version);
     assert.equal(preview.version, 1); assert.equal(preview.parentVersion, null); assert.equal(preview.operation, 'compose');
     assert.equal(preview.head, manifest.commit, 'the version records the bundle head');
     assert(Number.isInteger(preview.host.port) && preview.host.port > 0, 'preview host port must be reported');
@@ -1208,24 +1214,26 @@ async function main() {
     assert.equal(fidelity.status, 'ok'); assert.equal(fidelity.fixture, '(inline)'); assert(fidelity.html.includes('Subscription'));
     const mapped = await primary.callTool("component_map", operand("map"));
     assert.equal(mapped.applied, true); assert(mapped.mapping.id);
-    const resolved = await primary.callTool("component_map", fixtures.tools.map.followups[0]);
+    const resolved = await primary.callTool("component_map_read", fixtures.tools.map.followups[0]);
     assert.equal(resolved.mapping.id, mapped.mapping.id);
     const removedMap = await primary.callTool("component_map", { ...fixtures.tools.map.followups[1], id: mapped.mapping.id });
     assert.equal(removedMap.deleted.id, mapped.mapping.id);
     const saved = await primary.callTool("schema_store", operand("schema"));
     assert.equal(saved.version, 1);
-    const loaded = await primary.callTool("schema_store", fixtures.tools.schema.followups[0]);
+    const loaded = await primary.callTool("schema_read", fixtures.tools.schema.followups[0]);
     assert.equal(loaded.version, 1); assert(loaded.schemaRef);
     const removedSchema = await primary.callTool("schema_store", fixtures.tools.schema.followups[1]);
     assert.equal(removedSchema.deleted, true);
     const imported = await primary.callTool("object_import", { action: "draft", source: { name: "portable.json", content: JSON.stringify({ title: "PortableImport", type: "object", properties: { id: { type: "string" }, label: { type: "string" } } }) } });
     assert.equal(imported.action, 'draft'); assert.equal(imported.objects.length, 1);
-    const importReview = await primary.callTool("object_import", { action: "show", importId: imported.importId, object: "PortableImport" });
+    const importReview = await primary.callTool("object_import_read", { action: "show", importId: imported.importId, object: "PortableImport" });
     assert(importReview.yaml.includes('PortableImport'));
     const importApplied = await primary.callTool("object_import", { action: "apply", importId: imported.importId, objects: [{ name: "PortableImport" }] });
     assert.equal(importApplied.action, 'apply'); assert.equal(importApplied.applied.length, 1);
     await fsp.rm(path.join(childEnvironment.OODS_OBJECTS_DIR, 'PortableImport.object.yaml'));
     await primary.callTool("object_registry", { action: "reload" });
+    const registered = await primary.callTool("object_register", { action: "register", yaml: "object:\n  name: PortableRegistered\n  version: 1.0.0\n  domain: demo\n  description: Portable registration fixture\nschema:\n  id:\n    type: string\n    required: true\n    description: Record identifier\n" });
+    assert(registered.file);
     const object = await primary.callTool("object_registry", operand("object"));
     assert.equal(object.name, 'Subscription'); assert(object.traits.length > 0); assert.deepEqual(Object.keys(object.viewExtensions), ['card']);
     const rendered = await primary.callTool("schema_render", { ...operand("repl"), output: { ...(operand("repl").output ?? {}), payloadMode: "inline" } });
@@ -1238,7 +1246,13 @@ async function main() {
       'brand.apply': { outcome: 'pass', dryRun: { apply: false, artifacts: 0, summary: brand.preview.summary },
         applied: { apply: true, artifacts: appliedBrand.artifacts.length, tokensChanged: brandDiagnostics.tokensChanged, sourceWritten: false, build: null,
           portable: appliedBrand.receipt.portable, brandSourceSha256: brandSourceAfter.sha256, brandSourceUnchanged: true } },
-      'brand.intake': { outcome: 'pass', brand: intake.brand_id ?? 'template', slots: intake.slots },
+      'brand.intake': { outcome: 'pass', draftId: stagedBrand.draftId },
+      'brand.read': { outcome: 'pass', slots: intake.slots },
+      'design.versions': { outcome: 'pass', latest: versions.latest },
+      'object.write': { outcome: 'pass', file: registered.file },
+      'object.import.read': { outcome: 'pass', importId: imported.importId, object: importReview.object },
+      'schema.read': { outcome: 'pass', version: loaded.version },
+      'map.read': { outcome: 'pass', resolved },
       'catalog.list': { outcome: 'pass', count: catalog.totalCount },
       'design.compose': { outcome: 'pass', schemaHash: sha256(canonicalJson(composed.schema)) },
       'design.preview': { outcome: 'pass', compositionId: preview.compositionId, version: preview.version, previewUrl: preview.previewUrl, hostPort: preview.host.port, schemaHash: preview.schemaHash,

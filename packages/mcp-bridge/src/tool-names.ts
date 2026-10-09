@@ -8,14 +8,6 @@ export function toExternalName(internal: string): string {
   return toolSurface[internal]?.name ?? internal.replace(/\./g, '_');
 }
 
-/** Only renamed 0.6.2 wire names are aliases; dotted native calls remain supported. */
-export function legacyToolWarning(name: string, internal: string): string | undefined {
-  const current = toExternalName(internal);
-  return name === internal.replace(/\./g, '_') && name !== current
-    ? `Warning: ${name} is deprecated; use ${current}. This alias is supported through 0.7.x and removed in 0.8.0.`
-    : undefined;
-}
-
 export type ToolNameMaps = {
   externalToInternal: Map<string, string>;
   internalToExternal: Map<string, string>;
@@ -29,7 +21,6 @@ export function buildToolNameMaps(internalTools: Iterable<string>): ToolNameMaps
   for (const internal of internalTools) {
     const external = toExternalName(internal);
     externalToInternal.set(external, internal);
-    externalToInternal.set(internal.replace(/\./g, '_'), internal);
     internalToExternal.set(internal, external);
   }
 
@@ -41,5 +32,5 @@ export function buildToolNameMaps(internalTools: Iterable<string>): ToolNameMaps
 }
 
 export function resolveInternalToolName(externalOrInternal: string, externalToInternal: Map<string, string>): string | undefined {
-  return externalToInternal.get(externalOrInternal) ?? externalToInternal.get(toExternalName(externalOrInternal));
+  return externalToInternal.get(externalOrInternal);
 }

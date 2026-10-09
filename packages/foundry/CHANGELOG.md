@@ -2,6 +2,26 @@
 
 What changed in each version of OODS Foundry, in the terms you use it in.
 
+## 0.11.0
+
+Read-only tool actions have their own registered boundaries. Moved actions refuse without writing and name the replacement tool. The default roster is 26 tools; a11y_scan is the 27th on demand. The hosted site's object_registry remains the read tool, with its existing action/allOf contract.
+
+| Previous tool | Read actions in 0.11.0 | Write actions in 0.11.0 |
+| --- | --- | --- |
+| object_registry | object_registry: list, show, validate, reload | object_register: register |
+| schema_store | schema_read: list, load | schema_store: save, delete |
+| component_map | component_map_read: list, resolve, show | component_map: draft, apply, create, update, delete |
+| brand_create | brand_read: template, validate, derive, show | brand_create: draft, create, apply |
+| object_import | object_import_read: show | object_import: draft, apply |
+| design_preview | design_versions: versions | design_preview: render, compare, edit, accept |
+| schema_render | schema_render: validate, render | — |
+
+Read-only calls may create oversized reply payloads. They never stage drafts, change project files, save definitions or versions, or start a preview host. Drafting remains a write. tokens_build, brand_apply and a11y_scan remain write tools, including their preview modes. schema_store no longer advertises ignored apply flags; component_map removes them on update/delete.
+
+Imported screens choose names and subjects as headings, preserve prose summaries, vary related samples independently, and order shipping dates after order dates. Currency can be explicitly declared when accepting an import. Timelines no longer emit a false missing-extension warning. GraphQL mutation input types remain in the import report instead of becoming record objects.
+
+The complete brand template uses compact JSON to fit Claude Code's inline display. Split input schemas remain below Codex's 5,000-byte compaction threshold. The discovery budget remains 85,000 UTF-8 bytes.
+
 ## 0.10.2
 
 - First start: the server answers your client at once while it unpacks its runtime in the background, so Claude Code no longer gives up on a first install (it waits 30 seconds; the unpack can take a minute). Tool calls wait until the runtime is ready. An unpack finishes even if the client gives up, a second start waits for it instead of unpacking again, and folders left by interrupted unpacks are removed. With `MCP_EXTRA_TOOLS` set, the first start still waits for the unpack.

@@ -20,7 +20,7 @@ import { registerArtifactEndpoints } from './endpoints/artifacts.js';
 import { buildErrorPayload, normalizeRunErrorCode, sendError, statusForCode } from './middleware/errors.js';
 import { rateLimitOptions } from './middleware/rate-limit.js';
 import { listenOnLoopback, PortInUseError, refuseForeignHosts } from './listen.js';
-import { buildToolNameMaps, legacyToolWarning, resolveInternalToolName } from './tool-names.js';
+import { buildToolNameMaps, resolveInternalToolName } from './tool-names.js';
 import { resolveBridgeToolSurface } from './tool-surface.js';
 import { registerBridgeHealth } from './health.js';
 import { resolveBridgeArtifacts, activeTokenPackageRoot, resolveTokenPackageRoot } from './runtime-paths.js';
@@ -280,7 +280,7 @@ async function main() {
       });
       return;
     }
-    // Accept both external (underscore) and internal (dot) names for backward compatibility
+    // Only current public names are accepted at the HTTP boundary.
     const internalTool = resolveInternalToolName(externalTool, EXTERNAL_TO_INTERNAL);
     if (!internalTool) {
       sendError(reply, 403, 'POLICY_DENIED', `Tool not allowed: ${externalTool}`, {
@@ -289,7 +289,6 @@ async function main() {
       return;
     }
     const tool = internalTool; // Use internal name for all downstream operations
-    const aliasWarning = legacyToolWarning(externalTool, internalTool);
 
     const input = { ...(body.input ?? {}) };
     const role = typeof body.role === 'string' && body.role.trim().length ? body.role.trim() : undefined;
@@ -348,7 +347,6 @@ async function main() {
         preview: result?.preview ?? null,
         artifactsDetail: result?.artifactsDetail ?? null,
         result: result ?? null,
-        ...(aliasWarning ? { warnings: [aliasWarning] } : {}),
       };
       return normalized;
     } catch (err: any) {
@@ -367,7 +365,6 @@ async function main() {
           details,
           incidentId: typeof err?.incidentId === 'string' ? err.incidentId : undefined,
         }),
-        ...(aliasWarning ? { warnings: [aliasWarning] } : {}),
       });
     }
   });

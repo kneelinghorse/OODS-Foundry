@@ -32,7 +32,7 @@ The extracted directory is what every configuration below calls `/path/to/oods-f
 
 ## Connect a client
 
-All three clients speak to the same stdio adapter and see the same 20 tools by default. The server is registered under the name `oods-foundry`.
+All three clients speak to the same stdio adapter and see the same 26 tools by default. The server is registered under the name `oods-foundry`.
 
 ### Claude Code
 
@@ -41,7 +41,7 @@ claude mcp add oods-foundry -- node /path/to/oods-foundry-runtime/packages/mcp-a
 claude mcp get oods-foundry
 ```
 
-`Status: ✓ Connected` means the adapter started and answered. Options go after the name: `claude mcp add oods-foundry -s user -e MCP_TOOLSET=all -- node /path/to/oods-foundry-runtime/packages/mcp-adapter/index.js` registers it for every project and adds the on-demand tools (21 in all); an `-e` before the name is read as a variable and refused. `claude mcp remove oods-foundry` undoes it.
+`Status: ✓ Connected` means the adapter started and answered. Options go after the name: `claude mcp add oods-foundry -s user -e MCP_TOOLSET=all -- node /path/to/oods-foundry-runtime/packages/mcp-adapter/index.js` registers it for every project and adds the on-demand tools (27 in all); an `-e` before the name is read as a variable and refused. `claude mcp remove oods-foundry` undoes it.
 
 ### Agent skill, plugin and registry entry
 
@@ -57,12 +57,12 @@ The server is also listed in the official MCP registry as `com.oods-foundry/foun
 The npm package also carries the skill as plain files at `skills/oods-foundry/`. Claude Code does not discover skills in `node_modules`, so install the package in your project first, then copy the whole folder into your project's skill directory:
 
 ```sh
-npm install @oods/foundry@0.10.2
+npm install @oods/foundry@0.11.0
 mkdir -p .claude/skills
 cp -R node_modules/@oods/foundry/skills/oods-foundry .claude/skills/
 ```
 
-Restart Claude Code and invoke `/oods-foundry`, with the server connected as above. Other agents can read [SKILL.md](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.10.2/packages/foundry/skills/oods-foundry/SKILL.md) and its bundled quickstart reference directly, or copy the folder into their own supported skill location. The skill explains the calls, receipts and unchecked work; installing the plain files does not register an MCP server.
+Restart Claude Code and invoke `/oods-foundry`, with the server connected as above. Other agents can read [SKILL.md](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.11.0/packages/foundry/skills/oods-foundry/SKILL.md) and its bundled quickstart reference directly, or copy the folder into their own supported skill location. The skill explains the calls, receipts and unchecked work; installing the plain files does not register an MCP server.
 
 ### Claude Desktop
 
@@ -115,7 +115,7 @@ Register `oods-foundry` directly, beside any other entry such as an MCP hub, not
 
 ## First run
 
-Ask the assistant to run `health_check`: it answers `status: "ok"` with the registry counts and `server.version` (`0.10.2`). The first run on the package page (<https://www.npmjs.com/package/@oods/foundry>) works the same from the archive.
+Ask the assistant to run `health_check`: it answers `status: "ok"` with the registry counts and `server.version` (`0.11.0`). The first run on the package page (<https://www.npmjs.com/package/@oods/foundry>) works the same from the archive.
 
 ## Settings
 
@@ -123,14 +123,14 @@ Environment variables are optional; every default is the documented one. Set the
 
 | Variable | Default | Effect |
 | --- | --- | --- |
-| `MCP_TOOLSET` | `default` | `default` advertises 20 tools; `all` adds the on-demand tool, 21 in all. |
+| `MCP_TOOLSET` | `default` | `default` advertises 26 tools; `all` adds the on-demand tool, 27 in all. |
 | `MCP_EXTRA_TOOLS` | (none) | Comma-separated on-demand tools added to the default surface, for example `a11y_scan`. |
 | `MCP_ROLE` | `designer` | Policy role (`designer` or `maintainer`). |
 | `MCP_SCHEMA_STORE_ROOT` | the extracted directory's `packages/mcp-server` | Where saved schemas, every composed and previewed version, and file-mode output are kept. |
 | `OODS_NODE_PATH` | the Node running the adapter | Node binary used to start the native server. |
 | `OODS_MCP_APPS_UI` | (unset) | `1` offers the preview app on `design_preview` even to a client that did not negotiate the MCP Apps extension. |
 | `OODS_FOUNDRY_HOME` | `~/.oods-foundry` | Where import and intake drafts are staged and, when started with npx, where the runtime and every default folder below are kept. The Docker image sets it to `/data`. |
-| `OODS_OBJECTS_DIR` | (unset) | Folder your own objects are read from, after the ones OODS Foundry ships; the `object_registry` tool's `register` writes there. |
+| `OODS_OBJECTS_DIR` | (unset) | Folder your own objects are read from, after the ones OODS Foundry ships; the `object_register` tool's `register` writes there. |
 | `OODS_TRAITS_DIR` | (unset) | Folder your own traits are read from, after the ones OODS Foundry ships. |
 | `OODS_BRANDS_DIR` | (unset) | Folder your own brands are kept in and built in, outside the runtime; `brand_create`'s `create` writes there. |
 | `OODS_MAPPINGS_DIR` | `~/.oods-foundry/mappings` | Folder your component mappings are kept in (`component-mappings.json`), outside the runtime; `component_map` writes there. |
@@ -138,7 +138,7 @@ Environment variables are optional; every default is the documented one. Set the
 
 ## Component substitution and runnable screens
 
-OODS Foundry supports your own components by substitution in React and Vue: map a shipped id to a package, exact version and export. Set localPath to your absolute package folder for preview bundling; keep it outside the runtime. Mappings default to ~/.oods-foundry/mappings/component-mappings.json; MCP_MAPPINGS_PATH overrides that file. New components beyond the shipped catalog are not supported. The package's [COMPONENTS.md](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.10.2/packages/foundry/COMPONENTS.md) explains prop translations, frozen previews and advisory contract reports.
+OODS Foundry supports your own components by substitution in React and Vue: map a shipped id to a package, exact version and export. Set localPath to your absolute package folder for preview bundling; keep it outside the runtime. Mappings default to ~/.oods-foundry/mappings/component-mappings.json; MCP_MAPPINGS_PATH overrides that file. New components beyond the shipped catalog are not supported. The package's [COMPONENTS.md](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.11.0/packages/foundry/COMPONENTS.md) explains prop translations, frozen previews and advisory contract reports.
 
 For a runnable single screen request code_generate with options.output set to application. Its package.json pins the @oods libraries and your mapped packages at exact versions; run npm install, then npm run build and npm run dev. A mapped package that is not on a registry installs from its own tarball or folder. The sample app labels its data and actions that need your application's handlers.
 
@@ -156,4 +156,4 @@ Some identifiers keep the product's earlier name: the runtime manifest and SBOM 
 
 ## Feedback
 
-This page describes version 0.10.2 with adapter 0.10.2; the manifest inside the archive names the exact source commit. Bug reports and feedback are welcome in [Issues](https://github.com/kneelinghorse/OODS-Foundry/issues): a screen that reads wrong, a certification you disagree with, install friction, a sentence that did not make sense. Include the tool call as you made it, what came back and what you expected. A short note is worth more than a polished one.
+This page describes version 0.11.0 with adapter 0.11.0; the manifest inside the archive names the exact source commit. Bug reports and feedback are welcome in [Issues](https://github.com/kneelinghorse/OODS-Foundry/issues): a screen that reads wrong, a certification you disagree with, install friction, a sentence that did not make sense. Include the tool call as you made it, what came back and what you expected. A short note is worth more than a polished one.

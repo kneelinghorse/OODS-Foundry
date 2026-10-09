@@ -85,10 +85,10 @@ describe('the stdio adapter hosts the running-app preview (s201-m01)', () => {
     rpc.notify('notifications/initialized');
     const listed = await rpc.request('tools/list', {});
     expect(listed.tools.map((tool: { name: string }) => tool.name)).toContain('design_preview');
-    expect(listed.tools).toHaveLength(20);
+    expect(listed.tools).toHaveLength(26);
     // s229: clients must receive the new source forms through the real adapter, not only native AJV.
     expect(JSON.stringify(listed.tools.find((tool: any) => tool.name === 'component_map').inputSchema)).toContain('shadcn');
-    expect(JSON.stringify(listed.tools.find((tool: any) => tool.name === 'brand_create').inputSchema)).toContain('cssPath');
+    expect(JSON.stringify(listed.tools.find((tool: any) => tool.name === 'brand_read').inputSchema)).toContain('cssPath');
     const health = await rpc.call('health_check', {});
     expect(health.status).toBe('ok');
     // Lazy: nothing about a preview host has happened yet.

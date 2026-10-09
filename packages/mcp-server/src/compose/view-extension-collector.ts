@@ -132,7 +132,7 @@ export function collectViewExtensions(
   // s239 (site SITE-11): an object that declares no view extensions at all, such as a fresh import, is composed from its
   // fields by design, so only a context missing beside others the object declares is worth a warning.
   const declared = Object.keys(composed.viewExtensions);
-  if (ranked.length === 0 && declared.length > 0) {
+  if (ranked.length === 0 && declared.length > 0 && context !== 'timeline') {
     warnings.push(
       `No view_extensions found for context "${context}" in object "${composed.object.name}". ` +
         `Available contexts: ${declared.join(', ')}`,

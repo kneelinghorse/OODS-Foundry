@@ -8,7 +8,7 @@
  * Highlight and HighlightText differ by platform, so a pair passes only if it passes on macOS and Linux, light and dark.
  */
 import { describe, expect, it } from 'vitest';
-import { handle as intake } from '../../src/tools/brand.intake.js';
+import { handle as intake } from '../../src/tools/brand.read.js';
 
 const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value));
 const set = (document: any, slot: string, value: string) => { slot.split('.').reduce((node, key) => node[key], document).$value = value; };

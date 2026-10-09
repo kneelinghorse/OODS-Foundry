@@ -126,14 +126,14 @@
       {
         "tool": "map",
         "fixture": "s194-map.json",
-        "sha256": "8d3350cc21ddf3ad1fa1658850b0e4918ba584cabe108ad5dd0b54d3c548a6c0",
-        "bytes": 458
+        "sha256": "cf4ba6d02b343bf9123caf6dfa1bcf0e73ec4d6c9262209bfe2b5e74a306808e",
+        "bytes": 437
       },
       {
         "tool": "schema",
         "fixture": "s194-schema.json",
-        "sha256": "0d4c4b37fbae4e653a4492cf7a1fe47905bc2c5821a188cd3c10b605afb2277f",
-        "bytes": 393
+        "sha256": "5719e5338c3ea82bb498b1e2a8272fe0726d3fc348e16a0cbf8d9c70d5f49ff7",
+        "bytes": 353
       },
       {
         "tool": "object",
@@ -146,6 +146,37 @@
         "fixture": "s194-repl.json",
         "sha256": "73dbeaafc7be460a95e3d63bfdb18d17a25ab373af44416a84e5e14ca5ba2fe1",
         "bytes": 193
+      }
+    ]
+  },
+  "s240_fixture_migration": {
+    "reason": "Remove ignored apply arguments from component_map delete and schema_store save/delete; retained recipes now match the writer-only schemas.",
+    "original": [
+      {
+        "tool": "map",
+        "fixture": "s194-map.json",
+        "sha256": "8d3350cc21ddf3ad1fa1658850b0e4918ba584cabe108ad5dd0b54d3c548a6c0",
+        "bytes": 458
+      },
+      {
+        "tool": "schema",
+        "fixture": "s194-schema.json",
+        "sha256": "0d4c4b37fbae4e653a4492cf7a1fe47905bc2c5821a188cd3c10b605afb2277f",
+        "bytes": 393
+      }
+    ],
+    "current": [
+      {
+        "tool": "map",
+        "fixture": "s194-map.json",
+        "sha256": "cf4ba6d02b343bf9123caf6dfa1bcf0e73ec4d6c9262209bfe2b5e74a306808e",
+        "bytes": 437
+      },
+      {
+        "tool": "schema",
+        "fixture": "s194-schema.json",
+        "sha256": "5719e5338c3ea82bb498b1e2a8272fe0726d3fc348e16a0cbf8d9c70d5f49ff7",
+        "bytes": 353
       }
     ]
   }

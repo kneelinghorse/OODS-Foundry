@@ -1,8 +1,10 @@
 # object_import
 
-> Draft objects from local OpenAPI, JSON Schema, Postgres DDL/migrations, Prisma, dbt, OData or GraphQL files. Use it when importing a schema you already have; use object_registry for hand-written object/trait YAML. Returns an importId, staged drafts/report, counts and a re-import diff. action=draft uses source.path or source.content without registering; show uses importId and object for YAML, graded proposals and unmapped elements; apply uses importId and explicit objects with accepted proposal ids. The batch validates and composes with rollback. overwrite replaces team objects; confirmShipped names each approved shipped replacement. Unreachable references are reported and skipped; no network fetch or code execution. Full schema: oods://schemas/object_import.input.json.
+> Draft objects from local OpenAPI, JSON Schema, Postgres SQL, Prisma, dbt, OData or GraphQL files, then apply accepted proposals. Use it when importing a schema; use object_import_read to review a staged object. Returns importId, staged files, proposal counts and re-import differences, or batch registration results. draft takes source.path or source.content; apply requires explicit objects and proposal ids. overwrite replaces team objects; confirmShipped names approved shipped replacements. No network fetch or code execution. Full schema: oods://schemas/object_import.input.json.
 
-Use `draft` with local OpenAPI 2.0–3.2, JSON Schema draft-07/2020-12, Postgres DDL or migrations, Prisma, dbt, OData CSDL XML/JSON, or GraphQL SDL/introspection. Give a file, folder, or bounded inline `source.content`; `source.format` can select the reader. The response names the `importId`, counts, review folder and re-import diff; it writes no team definitions. `show` takes that ID and one `object` name and returns YAML, graded trait proposals, unmapped elements and changed fields/screens. `apply` takes explicit `objects: [{name, proposals?: [id]}]`; no proposal is selected implicitly. Dependencies must already exist or be selected in the same batch. `overwrite: true` permits replacing team objects; each shipped replacement needs its exact name in `confirmShipped`. Apply validates the whole selection, writes in dependency order and composes every supported context, including lifecycle/history timelines; read-only sources omit forms. A failure restores prior files. Review bundles live under `OODS_FOUNDRY_HOME/imports` (default `~/.oods-foundry/imports`). Unreachable references are reported and skipped; folder escapes refuse the import. No network fetch, SQL execution, code execution or template evaluation occurs. The format limits, export recipes and hub contract ship in `IMPORTING-OBJECTS.md` and `object-hub.schema.json`. Use `object_registry` to inspect or author an individual definition.
+Actions: `draft`, `apply`.
+
+Draft objects from local OpenAPI, JSON Schema, Postgres SQL, Prisma, dbt, OData or GraphQL files, then apply accepted proposals. Use it when importing a schema; use object_import_read to review a staged object. Returns importId, staged files, proposal counts and re-import differences, or batch registration results. draft takes source.path or source.content; apply requires explicit objects and proposal ids. overwrite replaces team objects; confirmShipped names approved shipped replacements. No network fetch or code execution. Full schema: oods://schemas/object_import.input.json.
 
 **Registration:** auto
 
@@ -10,14 +12,13 @@ Use `draft` with local OpenAPI 2.0–3.2, JSON Schema draft-07/2020-12, Postgres
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| `action` | `draft` \| `show` \| `apply` | Yes |  | Draft files without registration; show one draft; apply explicitly accepted objects and proposals. |
+| `action` | `draft` \| `apply` | Yes |  | Choose draft, apply. |
 | `source` | object | No |  | Local file/folder or inline schema. Used only by draft. |
 | `source.path` | string | No |  | Local file or folder. References must stay inside the source folder. Aggregate limit 128 MiB. |
 | `source.content` | string | No |  | Inline schema text, at most 1 MiB. Set format for SQL, Prisma, OData XML or GraphQL SDL. |
 | `source.name` | string | No |  | File name for inline provenance; no directories. |
 | `source.format` | `openapi` \| `json-schema` \| `sql` \| `prisma` \| `dbt` \| `odata` \| `graphql` | No |  | Explicit source format; inferred from file extension or document when omitted. |
 | `importId` | string | No |  | Content-addressed import id from draft. Required by show and apply. |
-| `object` | string | No |  | Exact draft object name for show. |
 | `objects` | object[] | No |  | Explicit accepted object names and optional proposal ids for apply. |
 | `overwrite` | boolean | No | `false` | Allow replacing existing team objects. |
 | `confirmShipped` | string[] | No |  | Each shipped object name whose replacement is explicitly confirmed. |

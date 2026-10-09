@@ -3,20 +3,22 @@
 
 Native tool handlers for OODS Foundry. Build from the repository root with `pnpm --filter @oods/mcp-server run build`; start with `pnpm --filter @oods/mcp-server start`. MCP clients normally use the [stdio adapter](../mcp-adapter/) or [HTTP bridge](../mcp-bridge/).
 
-The registry advertises 20 tools by default and 1 on demand (21 total). Enable on-demand entries with `MCP_TOOLSET=all` or select them with `MCP_EXTRA_TOOLS`.
+The registry advertises 26 tools by default and 1 on demand (27 total). Enable on-demand entries with `MCP_TOOLSET=all` or select them with `MCP_EXTRA_TOOLS`.
 
-The retained portable adapter E2E records outcomes for 20 advertised tools on the packaged runtime built at `d59cb600a` (recorded by the build, not independently certified): 20 results and no typed dependency limit. The exercised inputs do not cover every input; the [tool ledger](../mcp-server/registry/tool-capability-ledger.v1.json) records 35 known limits.
+The retained portable adapter E2E records outcomes for 26 advertised tools on the packaged runtime built at `101fb413c` (recorded by the build, not independently certified): 26 results and no typed dependency limit. The exercised inputs do not cover every input; the [tool ledger](../mcp-server/registry/tool-capability-ledger.v1.json) records 35 known limits.
 
 | Default tool / actions | Recorded runtime outcome | Known limits |
 | --- | --- | --- |
 | `tokens_build` | pass | 1 |
 | `structured_data_fetch` | pass | 0 |
 | `brand_apply` | pass | 3 |
-| `brand_create` (`derive`/`template`/`validate`/`create`/`draft`/`show`/`apply`) | pass | 2 |
+| `brand_create` (`create`/`draft`/`apply`) | pass | 2 |
+| `brand_read` (`template`/`validate`/`derive`/`show`) | pass | 0 |
 | `catalog_list` | pass | 1 |
 | `code_generate` | pass | 3 |
 | `design_compose` | pass | 1 |
-| `design_preview` (`render`/`compare`/`edit`/`versions`/`accept`) | pass | 3 |
+| `design_preview` (`render`/`compare`/`edit`/`accept`) | pass | 3 |
+| `design_versions` (`versions`) | pass | 0 |
 | `pipeline_run` | pass | 2 |
 | `health_check` | pass | 2 |
 | `registry_snapshot` | pass | 0 |
@@ -24,11 +26,15 @@ The retained portable adapter E2E records outcomes for 20 advertised tools on th
 | `dashboard_render` | pass | 1 |
 | `artifact_certify` | pass | 1 |
 | `fidelity_preview` | pass | 3 |
-| `component_map` (`create`/`list`/`resolve`/`update`/`delete`/`draft`/`show`/`apply`) | pass | 3 |
-| `schema_store` (`save`/`load`/`list`/`delete`) | pass | 1 |
-| `object_registry` (`list`/`show`/`validate`/`register`/`reload`) | pass | 2 |
+| `component_map` (`create`/`update`/`delete`/`draft`/`apply`) | pass | 3 |
+| `component_map_read` (`list`/`resolve`/`show`) | pass | 0 |
+| `schema_store` (`save`/`delete`) | pass | 1 |
+| `schema_read` (`list`/`load`) | pass | 0 |
+| `object_registry` (`list`/`show`/`validate`/`reload`) | pass | 2 |
+| `object_register` (`register`) | pass | 0 |
 | `schema_render` (`render`/`validate`) | pass | 3 |
-| `object_import` (`draft`/`show`/`apply`) | pass | 2 |
+| `object_import` (`draft`/`apply`) | pass | 2 |
+| `object_import_read` (`show`) | pass | 0 |
 
 | On-demand tool | Recorded runtime outcome | Known limits |
 | --- | --- | --- |

@@ -86,7 +86,7 @@ it('dbt snapshots declare history and semantic models add typed dimensions, meas
   const orders = result.drafts.find(d => d.name === 'Orders')!;
   expect(orders.definition.schema.revenue.type).toBe('number');
   expect(orders.definition.schema.ordered_at.type).toBe('datetime');
-  expect(orders.definition.semantics.order_id.semantic_type).toBe('text.label');
+  expect(orders.definition.semantics.order_id.semantic_type).toBe('object.Orders.number');
 });
 it('reads manifest resource/test nodes without invoking a dbt command', () => {
   const result = dbt({ metadata: { dbt_schema_version: 'https://schemas.getdbt.com/dbt/manifest/v12.json' }, nodes: {

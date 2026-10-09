@@ -1,3 +1,4 @@
+import { handle as schemaReadWriteSplit } from '../../src/tools/schema.read.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
@@ -11,15 +12,15 @@ it('schema round-trips actual composed schemas, versions, metadata and deletion 
   const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'oods-s194-store-'));
   const previousRoot = process.env.MCP_SCHEMA_STORE_ROOT, previousDir = process.env.MCP_SCHEMA_STORE_DIR;
   process.env.MCP_SCHEMA_STORE_ROOT = temp; process.env.MCP_SCHEMA_STORE_DIR = '.oods/schemas';
-  const call = async (input: any) => { wire('schema', 'input', input); const result = await schema(input); wire('schema', 'output', result); return result; };
+  const call = async (input: any) => { const reading = ['list', 'load'].includes(input.action); const tool = reading ? 'schema.read' : 'schema'; wire(tool, 'input', input); const result = await (reading ? schemaReadWriteSplit : schema)(input); wire(tool, 'output', result); return result; };
   try {
     const composed = await compose({ object: 'Subscription', context: 'detail' });
     expect(composed.status).toBe('ok');
     const bytes = JSON.stringify(composed.schema);
-    const input = { action: 'save', name: 's194-subscription', schemaRef: composed.schemaRef, author: 's194', tags: ['s194'], apply: false };
+    const input = { action: 'save', name: 's194-subscription', schemaRef: composed.schemaRef, author: 's194', tags: ['s194'] };
     const saved = await call(input);
     expect(saved.version).toBe(1);
-    // apply is a documented bridge parity key: save persists on call.
+    // Saving is always a write; its schema no longer advertises an ignored apply flag.
     const file = path.join(temp, '.oods/schemas/s194-subscription.json');
     expect(JSON.parse(fs.readFileSync(file, 'utf8')).schema).toEqual(composed.schema);
     const loaded = await call({ action: 'load', name: input.name });
@@ -36,11 +37,11 @@ it('schema round-trips actual composed schemas, versions, metadata and deletion 
     expect(listed[0]).toMatchObject({ name: input.name, version: 2 });
     // ETags and conditional requests are not in the saved-schema contract.
     expect(saved).not.toHaveProperty('etag'); expect(loaded).not.toHaveProperty('etag');
-    const deleted = await call({ action: 'delete', name: input.name, apply: false });
+    const deleted = await call({ action: 'delete', name: input.name });
     expect(deleted).toMatchObject({ deleted: true, schema: { name: input.name, version: 2 } });
     expect(fs.existsSync(file)).toBe(false);
     expect(await call({ action: 'list' })).toEqual([]);
-    await expect(schema({ action: 'load', name: input.name })).rejects.toMatchObject({ opiCode: 'OODS-N002' });
+    await expect(schemaReadWriteSplit({ action: 'load', name: input.name })).rejects.toMatchObject({ opiCode: 'OODS-N002' });
     expect(JSON.stringify(composed.schema)).toBe(bytes);
     retain('schema', { saved, loaded, repeated, listed, deleted, schemaUnchanged: true, limitation: 'Monotonic versions and schemaRef identity; no ETag or conditional-request API.' });
   } finally {

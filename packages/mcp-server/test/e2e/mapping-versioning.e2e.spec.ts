@@ -51,7 +51,7 @@ async function stopBridge(proc: BridgeProcess): Promise<void> {
 async function runBridgeTool(port: number, tool: string, input: Record<string, unknown>): Promise<any> {
   const response = await fetch(`http://127.0.0.1:${port}/run`, {
     method: 'POST',
-    headers: { 'content-type': 'application/json' },
+    headers: { 'content-type': 'application/json', ...(input.apply === true ? { 'X-Bridge-Approval': 'granted' } : {}) },
     body: JSON.stringify({ tool, input }),
   });
   const payload = await response.json();
@@ -112,7 +112,7 @@ describe('mapping + versioning bridge E2E', () => {
   });
 
   it('map.create → map.list → map.resolve round-trip via bridge (multi-system)', async () => {
-    const createdMaterial = await runBridgeTool(bridge!.port, 'map', { action: 'create',
+    const createdMaterial = await runBridgeTool(bridge!.port, 'component_map', { action: 'create',
       apply: true,
       externalSystem: 'material',
       externalComponent: 'Button',
@@ -123,7 +123,7 @@ describe('mapping + versioning bridge E2E', () => {
       confidence: 'auto',
     });
 
-    const createdChakra = await runBridgeTool(bridge!.port, 'map', { action: 'create',
+    const createdChakra = await runBridgeTool(bridge!.port, 'component_map', { action: 'create',
       apply: true,
       externalSystem: 'chakra',
       externalComponent: 'Button',
@@ -144,21 +144,21 @@ describe('mapping + versioning bridge E2E', () => {
     expect(createdChakra.etag).toMatch(/^[a-f0-9]{64}$/);
     expect(createdChakra.applied).toBe(true);
 
-    const materialListed = await runBridgeTool(bridge!.port, 'map', { action: 'list',
+    const materialListed = await runBridgeTool(bridge!.port, 'component_map_read', { action: 'list',
       externalSystem: 'material',
     });
 
     expect(materialListed.totalCount).toBeGreaterThanOrEqual(1);
     expect(materialListed.mappings.some((m: any) => m.id === 'material-button')).toBe(true);
 
-    const chakraListed = await runBridgeTool(bridge!.port, 'map', { action: 'list',
+    const chakraListed = await runBridgeTool(bridge!.port, 'component_map_read', { action: 'list',
       externalSystem: 'chakra',
     });
 
     expect(chakraListed.totalCount).toBeGreaterThanOrEqual(1);
     expect(chakraListed.mappings.some((m: any) => m.id === 'chakra-button')).toBe(true);
 
-    const resolvedMaterial = await runBridgeTool(bridge!.port, 'map', { action: 'resolve',
+    const resolvedMaterial = await runBridgeTool(bridge!.port, 'component_map_read', { action: 'resolve',
       externalSystem: 'material',
       externalComponent: 'Button',
     });
@@ -169,7 +169,7 @@ describe('mapping + versioning bridge E2E', () => {
     expect(resolvedMaterial.propTranslations.length).toBe(1);
     expect(resolvedMaterial.propTranslations[0].coercionType).toBe('enum');
 
-    const resolvedChakra = await runBridgeTool(bridge!.port, 'map', { action: 'resolve',
+    const resolvedChakra = await runBridgeTool(bridge!.port, 'component_map_read', { action: 'resolve',
       externalSystem: 'chakra',
       externalComponent: 'Button',
     });
@@ -182,7 +182,7 @@ describe('mapping + versioning bridge E2E', () => {
   });
 
   it('structuredData.fetch listVersions via bridge', async () => {
-    const result = await runBridgeTool(bridge!.port, 'structuredData_fetch', {
+    const result = await runBridgeTool(bridge!.port, 'structured_data_fetch', {
       dataset: 'components',
       listVersions: true,
     });
@@ -194,14 +194,14 @@ describe('mapping + versioning bridge E2E', () => {
 
   it('structuredData.fetch versioned request via bridge', async () => {
     // Use a known version date
-    const versions = await runBridgeTool(bridge!.port, 'structuredData_fetch', {
+    const versions = await runBridgeTool(bridge!.port, 'structured_data_fetch', {
       dataset: 'components',
       listVersions: true,
     });
 
     const latestVersion = versions.availableVersions[versions.availableVersions.length - 1];
 
-    const result = await runBridgeTool(bridge!.port, 'structuredData_fetch', {
+    const result = await runBridgeTool(bridge!.port, 'structured_data_fetch', {
       dataset: 'components',
       version: latestVersion,
       includePayload: false,

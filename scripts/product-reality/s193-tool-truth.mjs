@@ -143,8 +143,8 @@ export function deriveToolTruth({ root = ROOT, head, mode, receiptPath } = {}) {
   assert(['s193', 's194', 's196', 's200', 's201', 's202', 's203', 's204', 's205', 's206', 's207', 's211', 's212', 's213', 'latest'].includes(mode), 'Unknown tool-truth mode');
   const bound = mode === 'latest' || mode === 's196' || mode === 's200' || mode === 's201' || mode === 's202' || mode === 's203' || mode === 's204' || mode === 's205' || mode === 's206' || mode === 's207' || mode === 's211' || mode === 's212' || mode === 's213';
   const retired = mode !== 's193' ? JSON.parse(read('artifacts/product-reality/sprint-216/m02/retired-tools.json')).retired : [];
-  assert.equal(names.length + retired.length, 28);
-  assert.equal(new Set([...names, ...retired.map(row => row.name)]).size, 28);
+  assert.equal(names.length + retired.length, 34);
+  assert.equal(new Set([...names, ...retired.map(row => row.name)]).size, 34);
   for (const row of retired) assert(row.decisionIds.length > 0 && row.decisionIds.every(Number.isInteger));
   const descriptions = JSON.parse(read('packages/mcp-adapter/tool-descriptions.json'));
   const index = read('packages/mcp-server/src/index.ts');
@@ -164,7 +164,7 @@ export function deriveToolTruth({ root = ROOT, head, mode, receiptPath } = {}) {
   const selectedReceipt = mode === 'latest' ? receiptPath ?? latestPortableReceipt(root, registry.auto) : PORTABLE_RECEIPT_PATHS[mode];
   const execution = bound ? derivePortableExecution(read(selectedReceipt), registry.auto, mode, selectedReceipt) : undefined;
   const probeBytes = read(LIMITS_PROBE_PATH);
-  const probe = deriveLimitsProbe(probeBytes, names.filter(name => name !== 'object.import'), retired.map(row => row.name));
+  const probe = deriveLimitsProbe(probeBytes, names.filter(name => !['object.import', 'object.write', 'schema.read', 'map.read', 'brand.read', 'object.import.read', 'design.versions'].includes(name)), retired.map(row => row.name));
   // Runtime limits bind only to the archive the probe ran, which must be the archive this mode's E2E ran.
   const probeBound = Boolean(execution) && probe.proof.bundleHead === execution.proof.bundleHead && probe.proof.payloadTreeSha256 === JSON.parse(read(selectedReceipt)).manifest.payloadTreeSha256;
   const certified = deriveCertifiedReceipts(read, names);

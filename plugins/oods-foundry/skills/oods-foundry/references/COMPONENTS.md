@@ -104,6 +104,18 @@ package from your registry, or from its own tarball or folder when it is not on 
 No package is published by generation. Sample data is labelled, and actions needing your application show an integration
 notice; wire your data, navigation and persistence handlers before shipping.
 
+## Draft adapters from a project
+
+`component_map` with `action: "draft"` and `source: {project: "<absolute project path>", format: "shadcn"}` stores proposals for the copied components it can support. Inspect the draft with `component_map_read` `action: "show"`, then accept the reviewed proposal IDs with `component_map` `action: "apply"`. Drafting and applying both write; no `apply: true` parameter is needed for those actions.
+
+Before applying adapters, install the OODS libraries in the team project as well as its own dependencies. For React:
+
+```bash
+npm install @oods/components-react@0.11.0 @oods/component-contracts@0.11.0 @oods/component-styles@0.11.0 @oods/tokens@0.11.0
+```
+
+For Vue, replace `@oods/components-react` with `@oods/components-vue` at the same version. Connecting the MCP server alone does not install these project dependencies. A missing dependency is reported before any adapter is written. If the manifest changes after drafting, draft again before applying.
+
 ## shadcn/ui
 
 A React project using shadcn/ui's **Radix or Base UI base and Tailwind 4** can map its own copied components. Keep `components.json`, the TypeScript path aliases, the CSS entry, and the installed dependencies in the project. The base is read from `components.json`: supported bases are Radix (`radix-*`, legacy `new-york` and `default`) and Base UI (`base-*`). React Aria (`aria-*`) and unknown styles are refused at map creation with OODS-V219 naming the style found and these supported bases. Vue projects on shadcn-vue / Reka UI use the Vue adapters below.
@@ -125,7 +137,7 @@ cd team-app
 From the shadcn project, install OODS Foundry locally. Connecting the MCP server with `npx` does not install a package into that project, and the next command needs its registry files:
 
 ```bash
-npm install @oods/foundry@0.10.2
+npm install @oods/foundry@0.11.0
 ```
 
 Install the sixteen adapters from that package in one call:
@@ -154,7 +166,7 @@ Each React implementation uses this source form instead of `package`, `version` 
 
 Create and substitution-changing updates check the named export, local imports, aliases, CSS entry, Tailwind version and installed bare dependencies without executing the component. Dependencies resolve from the importing file, through the project’s installed package layout. Tailwind 4 accepts either @tailwindcss/vite or @tailwindcss/postcss. Updating only notes, confidence or oodsTraits does not need the source project. Use `design_compose`, `design_preview` and `code_generate` as above. Preview compiles the project's Tailwind and theme; changes to mapped source files, their imports, configuration or CSS create a new latest version. Unrelated project files do not. Explicit old versions retain their compiled output.
 
-Component output imports the project's module. React output begins with `'use client'`, so Next.js App Router can mount it. Place its files in the project, supply its declared props and action callbacks, and set the surrounding container's `data-brand` and `data-theme` for the chosen OODS brand and theme. For dark, that ancestor needs both `data-theme="dark"` and `class="dark"`. In hc the team's parts keep their light palette because shadcn has no hc theme. Application output remains a Vite application, including when the source project uses Next.js. It copies the needed source files, local assets and CSS, configures aliases and Tailwind, and pins dependencies to their installed versions. The emitted metadata records the base and style, project-relative paths and closure hashes, with no absolute project path. React and Vue mappings apply to their own framework. Single-screen and routed workflow applications both copy the checked source closure. HTML keeps OODS components; a mapping missing the requested framework reports `OODS-V218`. See [BRANDS.md](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.10.2/packages/foundry/BRANDS.md) to derive an OODS brand from the same CSS theme.
+Component output imports the project's module. React output begins with `'use client'`, so Next.js App Router can mount it. Place its files in the project, supply its declared props and action callbacks, and set the surrounding container's `data-brand` and `data-theme` for the chosen OODS brand and theme. For dark, that ancestor needs both `data-theme="dark"` and `class="dark"`. In hc the team's parts keep their light palette because shadcn has no hc theme. Application output remains a Vite application, including when the source project uses Next.js. It copies the needed source files, local assets and CSS, configures aliases and Tailwind, and pins dependencies to their installed versions. The emitted metadata records the base and style, project-relative paths and closure hashes, with no absolute project path. React and Vue mappings apply to their own framework. Single-screen and routed workflow applications both copy the checked source closure. HTML keeps OODS components; a mapping missing the requested framework reports `OODS-V218`. See [BRANDS.md](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.11.0/packages/foundry/BRANDS.md) to derive an OODS brand from the same CSS theme.
 
 The proven project layouts are npm + Vite, pnpm's isolated linker + Vite, a hoisted npm workspace, and npm + Next.js App Router, measured on 0.6.0. The two committed fixtures use shadcn CLI 4.21.1: Vite with Radix and Next.js with Base UI. Their generated screens pass each project's own production build, measured on 0.7.0. Yarn PnP, Bun and a Turbopack-only development server are not proven. <!-- history -->
 
@@ -162,19 +174,19 @@ CSS derivation reports font gaps when Next.js supplies the font variables throug
 
 ### From the mapped project to a running screen
 
-Keep these calls in the same MCP session. The CSS entry is `tailwind.css` in your project's `components.json` (the Vite example uses `src/index.css`; the Next.js example uses `app/globals.css`). Call `brand_create` with its absolute path:
+Keep these calls in the same MCP session. The CSS entry is `tailwind.css` in your project's `components.json` (the Vite example uses `src/index.css`; the Next.js example uses `app/globals.css`). Call `brand_read` with its absolute path:
 
 ```json
 {"action":"derive","cssPath":"/absolute/path/to/team-app/src/index.css"}
 ```
 
-Read `gaps` and complete the returned `recipe` with your team's choices before `validate` and `create`, as [BRANDS.md](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.10.2/packages/foundry/BRANDS.md) describes. A neutral shadcn theme has no accent hue to derive: choose one explicitly. For a trial, `accentHue: 262` is an example choice, not a colour inferred from that theme. A default Next.js project declares Geist and Geist Mono in `app/layout.tsx`; those family names can fill its font gaps. Replace `<completed recipe>` below with the complete JSON object, not a string, and choose an unused brand id:
+Read `gaps` and complete the returned `recipe` with your team's choices before `brand_read` `validate` and `brand_create` `create`, as [BRANDS.md](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.11.0/packages/foundry/BRANDS.md) describes. A neutral shadcn theme has no accent hue to derive: choose one explicitly. For a trial, `accentHue: 262` is an example choice, not a colour inferred from that theme. A default Next.js project declares Geist and Geist Mono in `app/layout.tsx`; those family names can fill its font gaps. Replace `<completed recipe>` below with the complete JSON object, not a string, and choose an unused brand id:
 
 ```json
 {"action":"validate","brand_id":"Teambrand","recipe":"<completed recipe>"}
 ```
 
-After `valid: true`, create it:
+After `valid: true`, call `brand_create` to create it:
 
 ```json
 {"action":"create","brand_id":"Teambrand","recipe":"<completed recipe>"}
@@ -273,7 +285,7 @@ A draft is evidence for review, not behavioral conformance. Generate and preview
 
 ### shadcn-vue / Reka UI
 
-Use `component_map` draft/show/apply on the installed project as described above. The reader recognizes `https://shadcn-vue.com/schema.json` and the `typescript` flag, including `reka-*`, legacy `new-york` and `default` styles. Vue proposals use `.vue` modules with `export: "default"`; an accepted Vue proposal joins the same mapping that owns the React implementation. Review the full draft before accepting its proposal ids.
+Use `component_map` draft/apply and `component_map_read` show on the installed project as described above. The reader recognizes `https://shadcn-vue.com/schema.json` and the `typescript` flag, including `reka-*`, legacy `new-york` and `default` styles. Vue proposals use `.vue` modules with `export: "default"`; an accepted Vue proposal joins the same mapping that owns the React implementation. Review the full draft before accepting its proposal ids.
 
 The package ships the same sixteen adapters under `shadcn/vue/`. To install an item manually from your project:
 

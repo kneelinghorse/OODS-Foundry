@@ -1,3 +1,4 @@
+import { refuseMovedAction } from './action-moves.js';
 /**
  * map grouped MCP tool handler.
  *
@@ -60,6 +61,7 @@ type MapGroupOutput =
  * The extra `action` key is ignored by each per-action handler.
  */
 export async function handle(input: MapGroupInput): Promise<MapGroupOutput> {
+  refuseMovedAction('map', input);
   const action = (input as { action?: MapAction }).action;
   switch (action) {
     case 'draft':

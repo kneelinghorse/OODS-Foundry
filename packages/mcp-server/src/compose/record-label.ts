@@ -34,7 +34,7 @@ export function recordNameField(objectName: string | undefined, fields: Record<s
   const isIdentifier = (name: string) => /(^|_)id$/i.test(name) || /\.id$/.test(fields[name]?.semanticType ?? '');
   const isDate = (name: string) => ['date', 'datetime'].includes(bare(fields[name]?.type));
   return ordered.find(name => semantic(name) === 'text.label')
-    ?? (lower ? ordered.find(name => new RegExp(`\\.${lower}\\.(name|title|number|label|headline|subject)$`).test(semantic(name))) : undefined)
+    ?? (lower ? ordered.find(name => new RegExp(`\\.${lower}\\.(name|title|number|label|headline|subject)$`, 'i').test(semantic(name))) : undefined)
     ?? ordered.find(name => ['name', 'title', 'label', `${lower}_name`, `${lower}_title`, `${lower}_number`].includes(name))
     ?? ordered.find(name => /_name$/.test(name) && bare(fields[name]!.type) === 'string')
     ?? (definition?.object.domain === 'imported' ? undefined : ordered.find(name => fields[name]!.required && bare(fields[name]!.type) === 'string' && !fields[name]!.enum?.length && !isIdentifier(name) && !isDate(name)));

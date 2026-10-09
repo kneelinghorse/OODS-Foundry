@@ -50,6 +50,7 @@ export function readGraphql(documents: Document[]): ReaderResult {
   };
   for (const [name, { node, origin, fields }] of declarations) {
     if (node.kind.startsWith('Scalar')) continue;
+    if (node.kind.startsWith('InputObject')) { note(origin, 'GraphQL input type retained in source; a request argument is not a record object.'); continue; }
     if (roots.has(name)) { note(origin, 'Operation root retained in source; queries, subscriptions and mutations are not record objects.'); continue; }
     const base = `/$defs/${escapePointer(name)}`; origins[base] = origin;
     const schema: MapValue = node.kind.startsWith('Enum') ? { type: 'string', enum: node.values.map((value: MapValue) => value.name.value), 'x-graphql-enum': node.values.map((value: MapValue) => ({ name: value.name.value, description: value.description?.value, directives: directives(value) })) }

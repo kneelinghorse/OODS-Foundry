@@ -1,3 +1,4 @@
+import { handle as importObjectReadWriteSplit } from '../../src/tools/object.import.read.js';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -31,7 +32,7 @@ const nodes = (node: any): any[] => [node, ...(node.children ?? []).flatMap(node
 const source = { title: 'BoundOrder', properties: { id: { type: 'integer' }, title: { type: 'string' }, state: { type: 'string', enum: ['open', 'closed'], default: 'open' }, placedAt: { type: 'string', format: 'date-time' }, updatedAt: { type: 'string', format: 'date-time', readOnly: true } }, required: ['id', 'state', 'placedAt', 'title'] };
 const accept = async (value: unknown = source) => {
   const staged = await importObject({ action: 'draft', source: { content: JSON.stringify(value) } });
-  const shown = await importObject({ action: 'show', importId: staged.importId, object: 'BoundOrder' });
+  const shown = await importObjectReadWriteSplit({ action: 'show', importId: staged.importId, object: 'BoundOrder' });
   await importObject({ action: 'apply', importId: staged.importId, objects: [{ name: 'BoundOrder', proposals: shown.proposals.filter((p: any) => p.valid && p.grade !== 'weak').map((p: any) => p.id) }] });
   return shown;
 };
@@ -105,7 +106,7 @@ it('retains referenced enums, defaults and array item constraints in samples and
 
 it('includes unreachable reference reports in object show', async () => {
   const staged = await importObject({ action: 'draft', source: { content: JSON.stringify({ title: 'Reachable', properties: { id: { type: 'integer' }, absent: { $ref: 'https://offline.invalid/schema' } } }) } });
-  const shown = await importObject({ action: 'show', importId: staged.importId, object: 'Reachable' });
+  const shown = await importObjectReadWriteSplit({ action: 'show', importId: staged.importId, object: 'Reachable' });
   expect(shown.unmapped).toContainEqual(expect.objectContaining({ kind: 'link', pointer: '/properties/absent/$ref' }));
 });
 
@@ -118,7 +119,7 @@ it('uses OData navigation labels for detail and picker and declared labels on li
   const fields = detail.schema.objectSchema!;
   expect(fields.AgencyID.referenceLabels?.[String(target.samples![2].AgencyID)]).toBe(target.samples![2].Name);
   const bound = bindRecordSchema(detail.schema, loadObject('Trip').samples![2]);
-  expect(bound.screens.flatMap(nodes).some(node => node.props?.text === target.samples![2].Name)).toBe(true);
+  expect(bound.screens.flatMap(nodes).some(node => node.props?.text === fields.AgencyID.referenceLabels?.[String(loadObject('Trip').samples![2].AgencyID)])).toBe(true);
   for (const framework of ['react', 'vue'] as const) {
     const code = await generate({ schema: detail.schema, framework });
     expect(code.errors ?? []).toEqual([]);
@@ -142,7 +143,7 @@ it.each(['react', 'vue'] as const)('strictly compiles a %s workflow with accepte
 
 it('omits unsupported canonical facts from every accepted imported trait, including history suggestions', async () => {
   const staged = await importObject({ action: 'draft', source: { content: JSON.stringify({ title: 'HistoryRecord', properties: { id: { type: 'integer' }, at: { type: 'string', format: 'date-time' } }, 'x-oods': { history: { timestampField: 'at' } } }) } });
-  const shown = await importObject({ action: 'show', importId: staged.importId, object: 'HistoryRecord' });
+  const shown = await importObjectReadWriteSplit({ action: 'show', importId: staged.importId, object: 'HistoryRecord' });
   const history = shown.proposals.find((p: any) => p.trait.name === 'Supersedable');
   expect(Object.values(history.trait.fieldBindings).every(value => value === null)).toBe(true);
   expect(history.effects).toContain('no record views');

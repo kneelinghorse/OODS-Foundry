@@ -16,7 +16,7 @@ it('preserves the pinned portable recipes while object_import uses its draft/sho
   // The new importer creates its review ID at runtime; e2e.mjs exercises and records that lifecycle.
   // Do not rewrite the historical fixture provenance to imply it covered a tool introduced later.
   expect(registry.auto).toContain('object.import');
-  expect(pins.map((pin: any) => pin.tool).sort()).toEqual(registry.auto.filter((name: string) => name !== 'object.import').sort());
+  expect(pins.map((pin: any) => pin.tool).sort()).toEqual(registry.auto.filter((name: string) => !['object.import', 'object.write', 'schema.read', 'map.read', 'brand.read', 'object.import.read', 'design.versions'].includes(name)).sort());
   const state: Record<string, any> = {
     compose: await compose({ object: 'Subscription', context: 'card' }),
     viz: await render(JSON.parse(read(directory + 'd3-viz-bar.json'))),
@@ -30,8 +30,12 @@ it('preserves the pinned portable recipes while object_import uses its draft/sho
     for (const [key, binding] of Object.entries(recipe.bindings) as Array<[string, string]>) {
       const [producer, field] = binding.split('.'); args[key] = state[producer][field];
     }
-    wire(recipe.tool, 'input', args);
-    for (const followup of recipe.followups ?? []) wire(recipe.tool, 'input', followup);
+    // The historical operands are retained; split read actions use their new validator.
+    const currentTool = (input: any) => recipe.tool === 'brand.intake' && input.action === 'template' ? 'brand.read'
+      : recipe.tool === 'map' && input.action === 'resolve' ? 'map.read'
+      : recipe.tool === 'schema' && input.action === 'load' ? 'schema.read' : recipe.tool;
+    wire(currentTool(args), 'input', args);
+    for (const followup of recipe.followups ?? []) wire(currentTool(followup), 'input', followup);
   }
   expect(JSON.stringify(state)).toBe(before);
 });

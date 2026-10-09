@@ -1,3 +1,4 @@
+import { handle as intakeReadWriteSplit } from '../../src/tools/brand.read.js';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -67,7 +68,7 @@ describe('s196 portable token dependencies', () => {
     // validate reads only the template the token build ships (dist/brand-template.json): no brand source, no build.
     fs.copyFileSync(path.join(root, 'packages/tokens/dist/brand-template.json'), path.join(tokenRoot, 'dist/brand-template.json'));
     const build = vi.spyOn(tokenBuild, 'runTokenBuild');
-    const result = await intake({ action: 'validate', documents: { dark: { text: { primary: { $type: 'color', $value: 'not a colour' } } } } }) as any;
+    const result = await intakeReadWriteSplit({ action: 'validate', documents: { dark: { text: { primary: { $type: 'color', $value: 'not a colour' } } } } }) as any;
     expect(result.valid).toBe(false);
     expect(result.issues).toContainEqual(expect.objectContaining({ rule: 'value-not-colour', theme: 'dark', slot: 'text.primary' }));
     expect(build).not.toHaveBeenCalled();

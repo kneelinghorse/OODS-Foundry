@@ -156,9 +156,10 @@ export function populateCollections(schema: UiSchema, context: string, objectNam
         sortIndicator.bindings = { ...sortIndicator.bindings, onChange: 'handleSortChange' };
         if (screen.bindings) delete screen.bindings.onSort;
       }
+      const numericLabel = /^(integer|number)\??$/.test(fields[labelField]?.type ?? '');
       toolbar.children = [
         ...(search ? [search] : []), ...(filter && filterField ? [filter] : []), ...(sortIndicator ? [sortIndicator] : []),
-        ...(sortIndicator ? [] : [{ id: `${toolbar.id}-sort`, component: 'Select', collectionControl: 'sort' as const, props: { field: labelField, label: 'Sort', options: [{ value: 'asc', label: 'Name A–Z' }, { value: 'desc', label: 'Name Z–A' }] } }]),
+        ...(sortIndicator ? [] : [{ id: `${toolbar.id}-sort`, component: 'Select', collectionControl: 'sort' as const, props: { field: labelField, label: 'Sort', options: [{ value: 'asc', label: numericLabel ? 'Number ascending' : 'Name A–Z' }, { value: 'desc', label: numericLabel ? 'Number descending' : 'Name Z–A' }] } }]),
       ];
       if (overlay?.props?.separateTab) screen.children!.splice(screen.children!.indexOf(items), 1, {
         id: `${items.id}-archive-tabs`, component: 'Tabs', collectionControl: 'archive',

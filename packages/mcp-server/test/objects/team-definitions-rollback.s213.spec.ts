@@ -21,7 +21,7 @@ vi.mock('../../src/tools/design.compose.js', async (importOriginal) => {
 
 const { clearObjectCache, listObjects } = await import('../../src/objects/object-loader.js');
 const { clearTraitCache } = await import('../../src/objects/trait-loader.js');
-const { handle: objectTool } = await import('../../src/tools/object.js');
+const { handle: objectTool } = await import('../../src/tools/object.write.js');
 
 const FIXTURES = path.join(path.dirname(fileURLToPath(import.meta.url)), '../fixtures/team-definitions');
 const fixture = (name: string) => fs.readFileSync(path.join(FIXTURES, name), 'utf8');

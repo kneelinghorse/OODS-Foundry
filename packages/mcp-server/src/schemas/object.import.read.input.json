@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "object_import_read input",
+  "description": "object_import_read input: show.",
+  "oneOf": [
+    {
+      "type": "object",
+      "required": [
+        "action",
+        "importId",
+        "object"
+      ],
+      "properties": {
+        "action": {
+          "type": "string",
+          "const": "show"
+        },
+        "importId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "object": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Exact draft object name for show."
+        }
+      },
+      "additionalProperties": false
+    }
+  ],
+  "type": "object",
+  "required": [
+    "action"
+  ],
+  "properties": {
+    "action": {
+      "type": "string",
+      "enum": [
+        "show"
+      ],
+      "description": "Choose show."
+    },
+    "importId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Content-addressed import id from draft. Required by show and apply."
+    },
+    "object": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Exact draft object name for show."
+    }
+  }
+}

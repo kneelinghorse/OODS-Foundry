@@ -1,3 +1,4 @@
+import { refuseMovedAction } from './action-moves.js';
 import { tokenCssHash } from '../lib/token-build.js';
 import { createHash } from 'node:crypto';
 import path from 'node:path';
@@ -15,7 +16,7 @@ import { readComparisonView, selectComparisonRecord, assertComparisonMatches, st
 import { ContextRefusal, carryContextForward, objectUrn, validateContext, type StoredContext } from '../lib/preview-context.js';
 import { carryObservationForward, observeForVersion, type StoredObservation } from '../lib/preview-observation.js';
 import { listObjects, loadObject } from '../objects/object-loader.js';
-import { appendAcceptance, attachToVersion, latestVersion, listVersions, readAccepted, readForgeHead, readVersion, resolveCompositionsDir, versionPath, writeVersion, type CompositionVersion, type PreviewBrand, type PreviewFramework, type PreviewTheme } from '../lib/composition-store.js';
+import { appendAcceptance, attachToVersion, latestVersion, readAccepted, readForgeHead, readVersion, resolveCompositionsDir, versionPath, writeVersion, type CompositionVersion, type PreviewBrand, type PreviewFramework, type PreviewTheme } from '../lib/composition-store.js';
 import { fieldKeyOf } from './design.compose.js';
 import { chartNodes } from '../codegen/chart-declaration.js';
 import type { UiElement } from '../schemas/generated.js';
@@ -29,7 +30,6 @@ import { DEFAULT_BRAND, knownBrands } from '../lib/brand-registry.js';
 type DesignPreviewOutput = DesignPreviewOutputSchema.DesignPreviewOutput;
 type RenderOutput = Exclude<DesignPreviewOutput, { action: 'compare' } | { action: 'versions' } | { action: 'accept' }>;
 type CompareOutput = Extract<DesignPreviewOutput, { action: 'compare' }>;
-type VersionsOutput = Extract<DesignPreviewOutput, { action: 'versions' }>;
 type AcceptOutput = Extract<DesignPreviewOutput, { action: 'accept' }>;
 type EditInput = NonNullable<DesignPreviewInputSchema.DesignPreviewInput['edit']>;
 type PreviewEntry = RenderOutput['previews'][number];
@@ -87,6 +87,7 @@ async function probeHost(hostUrl: string): Promise<HostStatus> {
 
 /** Open a composition version (or compose a new one) as the generated app running in the preview host; or compare two versions. */
 export async function handle(input: DesignPreviewInputSchema.DesignPreviewInput, context?: ToolContext): Promise<DesignPreviewOutput> {
+  refuseMovedAction('design.preview', input);
   const started = performance.now();
   const hostUrl = resolvePreviewHostUrl(context);
   if (!hostUrl) throw unreachable('no preview host is configured; call through the HTTP bridge or the stdio adapter, which host it, or set OODS_PREVIEW_HOST_URL to a running host', { hostUrl: null });
@@ -106,7 +107,6 @@ export async function handle(input: DesignPreviewInputSchema.DesignPreviewInput,
     throw new ToolError('OODS-V203', 'design.preview needs either compositionId (with an optional version) or object and context', { input: Object.keys(input) });
   }
   if (input.action === 'compare') return compare(input, hostUrl, compositionsDir, started);
-  if (input.action === 'versions') return versions(input, hostUrl, compositionsDir, started);
   if (input.action === 'accept') return accept(input, hostUrl, compositionsDir, started);
 
   // s205-m04: a run view is read FIRST, so a path that is not a run (OODS-V212), an artifact outside the admitted
@@ -403,20 +403,6 @@ async function applyEdit(compositionsDir: string, parent: CompositionVersion, ed
   // The run the parent showed stays the subject: the new version re-reads the same run (see handle).
   if (parent.runView) await attachToVersion(compositionsDir, composed.compositionId, composed.version, { runView: parent.runView });
   return readVersion(compositionsDir, composed.compositionId, composed.version);
-}
-
-/** The composition's versions with their lineage and the URL each opens at. */
-async function versions(input: DesignPreviewInputSchema.DesignPreviewInput, hostUrl: string, compositionsDir: string, started: number): Promise<VersionsOutput> {
-  if (!input.compositionId) throw new ToolError('OODS-V203', 'design.preview action versions needs compositionId', { input: Object.keys(input) });
-  const entries = await listVersions(compositionsDir, input.compositionId);
-  const acceptances = (await readAccepted(compositionsDir, input.compositionId))?.acceptances ?? [];
-  const standing = acceptances.at(-1);
-  return {
-    status: 'ok', action: 'versions', compositionId: input.compositionId, latest: entries.at(-1)!.version,
-    versions: entries.map(entry => ({ ...entry, url: `${hostUrl}/preview/${input.compositionId}/${entry.version}` })),
-    accepted: standing ? { version: standing.version, acceptedAt: standing.acceptedAt, acceptances: acceptances.length } : null,
-    host: { url: hostUrl, port: Number(new URL(hostUrl).port), compositionsDir }, durationMs: performance.now() - started,
-  };
 }
 
 const refuseAccept = (reason: string, details: Record<string, unknown>) => new ToolError('OODS-V205', `design.preview action accept: ${reason}`, details);

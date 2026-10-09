@@ -922,7 +922,7 @@ async function prepareManifest(
       // against the exact 0.7.0 libraries; Sprints 235–238 carry those pins into 0.8.0, 0.9.0, 0.10.0 and 0.10.1.
       // Keep both versions in localTarballs;
       // no other mismatch is accepted and the artifact itself is never rewritten.
-      const preservedArtifactUpgrade = version === '0.6.2' && ['0.7.0', '0.8.0', '0.9.0', '0.10.0', '0.10.1', '0.10.2'].includes(packed.version);
+      const preservedArtifactUpgrade = version === '0.6.2' && ['0.7.0', '0.8.0', '0.9.0', '0.10.0', '0.10.1', '0.10.2', '0.11.0'].includes(packed.version);
       if (packed.version !== version && !preservedArtifactUpgrade) {
         throw new Error(
           `${dependency.name}: artifact declares ${version} but the submitted tarball is ${packed.version}.`,
