@@ -4,7 +4,6 @@ import { enumOptionLabel } from './internal-fields.js';
 import { recordNameField, recordSummaryField } from './record-label.js';
 
 const walk = (nodes: UiElement[]): UiElement[] => nodes.flatMap(node => [node, ...walk(node.children ?? [])]);
-const shortName = (name: string) => name.replaceAll('_', ' ').replace(/^./, letter => letter.toUpperCase());
 
 /** Row recipes whose visible text is always a record value. */
 const ROW_VALUE_COMPONENTS = new Set(['Text', 'LabelCell', 'StatusBadge', 'RelativeTimestamp', 'TagPills', 'PriceBadge', 'BillingSummaryBadge', 'ArchivePill', 'CancellationBadge', 'ArchivedRowOverlay', 'OwnerBadge', 'InlineLabel', 'ColorizedBadge']);
@@ -117,7 +116,7 @@ export function populateCollections(schema: UiSchema, context: string, objectNam
         const columns = listColumns.filter(column => fields[column.field]);
         if (columns.length) content.splice(0, content.length, ...columns.map((column, index): UiElement => ({
           id: `${items.id}-column-${index}`, component: 'Stack', children: [
-            { id: `${items.id}-column-${index}-label`, component: 'Text', props: { text: column.label ?? semantics?.[column.field]?.ui_hints?.label ?? fieldLabel(column.field), size: 'sm' } },
+            { id: `${items.id}-column-${index}-label`, component: 'Text', props: { text: column.label ?? fields[column.field]?.displayLabel ?? semantics?.[column.field]?.ui_hints?.label ?? fieldLabel(column.field), size: 'sm' } },
             fields[column.field]?.money?.currencyField ? { id: `${items.id}-column-${index}-value`, component: fields[column.field].money?.minorUnits ? 'BillingSummaryBadge' : 'PriceBadge', props: { amountField: column.field, currencyField: fields[column.field].money?.currencyField, ...(fields[column.field].money?.minorUnits ? { minorUnits: fields[column.field].money?.minorUnits, showInterval: false } : {}) } } : { id: `${items.id}-column-${index}-value`, component: 'Text', props: { field: column.field } },
           ],
         })));
@@ -150,16 +149,17 @@ export function populateCollections(schema: UiSchema, context: string, objectNam
       if (search) { search.bindings = undefined; search.collectionControl = 'search'; search.props = { label: 'Search', placeholder: searchPlaceholder?.trim() || 'Search records', clearable: true }; }
       if (filter && filterField) {
         filter.component = 'Select'; filter.children = undefined; filter.bindings = undefined; filter.collectionControl = 'filter';
-        filter.props = { ...(filterField !== 'status' ? { field: filterField } : {}), label: shortName(filterField), options: [{ value: '', label: /(?:^|_)(?:status|state)$/.test(filterField) ? 'All states' : 'All' }, ...(fields[filterField]!.enum ?? []).map(value => ({ value: String(value), label: enumOptionLabel(String(value)) }))] };
+        filter.props = { ...(filterField !== 'status' ? { field: filterField } : {}), label: fields[filterField]?.displayLabel ?? fieldLabel(filterField), options: [{ value: '', label: /(?:^|_)(?:status|state)$/.test(filterField) ? 'All states' : 'All' }, ...(fields[filterField]!.enum ?? []).map(value => ({ value: String(value), label: enumOptionLabel(String(value), fields[filterField]!.enumLabels) }))] };
       }
       if (sortIndicator) {
         sortIndicator.bindings = { ...sortIndicator.bindings, onChange: 'handleSortChange' };
         if (screen.bindings) delete screen.bindings.onSort;
       }
-      const numericLabel = /^(integer|number)\??$/.test(fields[labelField]?.type ?? '');
+      const numericLabel = !fields[labelField]?.titleReferences?.length && /^(integer|number)\??$/.test(fields[labelField]?.type ?? '');
+      const sortLabel = fields[labelField]?.titleReferences?.length ? fields[labelField]!.titleReferences!.map(name => fields[name]?.displayLabel ?? fieldLabel(name)).join(' · ') : fields[labelField]?.displayLabel ?? fieldLabel(labelField);
       toolbar.children = [
         ...(search ? [search] : []), ...(filter && filterField ? [filter] : []), ...(sortIndicator ? [sortIndicator] : []),
-        ...(sortIndicator ? [] : [{ id: `${toolbar.id}-sort`, component: 'Select', collectionControl: 'sort' as const, props: { field: labelField, label: 'Sort', options: [{ value: 'asc', label: numericLabel ? 'Number ascending' : 'Name A–Z' }, { value: 'desc', label: numericLabel ? 'Number descending' : 'Name Z–A' }] } }]),
+        ...(sortIndicator ? [] : [{ id: `${toolbar.id}-sort`, component: 'Select', collectionControl: 'sort' as const, props: { field: labelField, label: 'Sort', options: [{ value: 'asc', label: numericLabel ? `${sortLabel} ascending` : `${sortLabel} A–Z` }, { value: 'desc', label: numericLabel ? `${sortLabel} descending` : `${sortLabel} Z–A` }] } }]),
       ];
       if (overlay?.props?.separateTab) screen.children!.splice(screen.children!.indexOf(items), 1, {
         id: `${items.id}-archive-tabs`, component: 'Tabs', collectionControl: 'archive',

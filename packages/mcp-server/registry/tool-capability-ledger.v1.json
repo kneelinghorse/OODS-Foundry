@@ -60,7 +60,7 @@
       ]
     }
   ],
-  "head": "101fb413c804769aaab9430423d1cb34fbdcb65a",
+  "head": "b8ef6fbdee8aec1a2fe214eeb62bd2ea1c76a976",
   "builderSelfCertified": false,
   "methodology": {
     "testImportLocation": "Where a spec that imports the tool's handler module lives: packages/mcp-server/test/product-reality, then test/contracts, then any other mcp-server spec. A literal runtime import is source evidence that a test reaches the handler, not proof of invocation, passing execution or browser certification. Grouped action imports roll up to their registered family. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not count.",
@@ -218,12 +218,12 @@
       "registration": "auto",
       "advertisedClaim": {
         "name": "structured_data_fetch",
-        "description": "Fetch live registry datasets, archived token/export data, or captured-run artifacts. Use it when you need complete datasets; catalog_list selects components and object_registry reads definitions. Returns data with provenance, version and cache metadata. dataset selects registry/export mode; version pins an archived export and listVersions lists dates. kind plus runPath selects captured artifacts, while derived_analysis reads an analysis directory via runPath; version/listVersions are refused in kind mode. includeInternal exposes hidden objects, and ifNoneMatch checks the canonical payload ETag. Full schema: oods://schemas/structured_data_fetch.input.json.",
+        "description": "Fetch live registry datasets, archived token/export data, or captured-run artifacts. Use it when you need complete datasets; catalog_list selects components and object_registry reads definitions. Returns data with provenance, version and cache metadata. Full remains the default; detail:summary gives section counts and meta.next for inline pages; follow meta.next until absent. dataset selects registry/export mode; version pins an archived export and listVersions lists dates. kind plus runPath selects captured artifacts, while derived_analysis reads an analysis directory via runPath; version/listVersions are refused in kind mode. includeInternal exposes hidden objects, and ifNoneMatch checks the canonical payload ETag. Full schema: oods://schemas/structured_data_fetch.input.json.",
         "inputSchemaDescription": "Read structured datasets or Stage1 rollups. listVersions and version are dataset-only; kind mode rejects these options with structured_data_fetch-specific OODS-V202."
       },
-      "claimHash": "sha256:ff50b0ed378073c2615bcf4a2f5dd2f43b348435ebfd0db9741e4d257f6d18b0",
+      "claimHash": "sha256:40c7e3ab6f548e2b002b28c1aa639123aec411f0d475b452171f73b60a3ba0d0",
       "inputSchemaPath": "packages/mcp-server/src/schemas/structuredData.fetch.input.json",
-      "inputSchemaHash": "sha256:5ef358fb615a3753660c0d7b1901ffa9b2ba18f4744b5907bf07b334dc8e8191",
+      "inputSchemaHash": "sha256:a1980e3280b776d8333d77d5cbb47c658dac458019110f2b6cf4cc8e273c2820",
       "testImportLocation": "test/product-reality",
       "testImports": {
         "test/product-reality": [
@@ -244,6 +244,11 @@
           }
         ],
         "test/contracts": [
+          {
+            "path": "packages/mcp-server/test/contracts/dataset-paging.s241.spec.ts",
+            "line": 2,
+            "handler": "packages/mcp-server/src/tools/structuredData.fetch.ts"
+          },
           {
             "path": "packages/mcp-server/test/contracts/live-registry.s216.spec.ts",
             "line": 5,
@@ -298,6 +303,11 @@
           },
           {
             "path": "packages/mcp-server/test/tools/stage1-admission.s225.spec.ts",
+            "line": 7,
+            "handler": "packages/mcp-server/src/tools/structuredData.fetch.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/tools/stage1-admission.s241.spec.ts",
             "line": 7,
             "handler": "packages/mcp-server/src/tools/structuredData.fetch.ts"
           },
@@ -708,12 +718,12 @@
       "registration": "auto",
       "advertisedClaim": {
         "name": "catalog_list",
-        "description": "List components from the live component-contract registry. Use it when selecting components; structured_data_fetch returns complete datasets. Returns component names, categories, readiness labels and availableCategories; detail controls added tags, contexts, regions, traits and evidence. includeInternal exposes hidden registry objects. Readiness evidence retains the build it measured and does not certify a new composition. Full schema: oods://schemas/catalog_list.input.json.",
+        "description": "List components from the live component-contract registry. Use it when selecting components; structured_data_fetch returns complete datasets. Returns component names, categories, readiness labels and availableCategories; detail controls added tags, contexts, regions, traits and evidence. includeInternal exposes hidden registry objects. Filtered calls without detail default to full pages of 10; nextPage continues. Explicit detail preserves unpaged output. Readiness evidence retains the build it measured and does not certify a new composition. Full schema: oods://schemas/catalog_list.input.json.",
         "inputSchemaDescription": ""
       },
-      "claimHash": "sha256:76682cdce702f8a238af1e4c139ce3968a6fe2f5fa932a04daaa812ca421d60f",
+      "claimHash": "sha256:4dd84963e59f61dee6d63c3853569b026ff29d54a996a47f9c44c31f4f95f8b1",
       "inputSchemaPath": "packages/mcp-server/src/schemas/catalog.list.input.json",
-      "inputSchemaHash": "sha256:f94e98074cf3a8135284237243930a8208071af236cbb639836d252b54a07c44",
+      "inputSchemaHash": "sha256:d6101fbf2de78dae9519e24f1aff1e0b7ee003ddcd0fb91050fda9d0c3df8e0a",
       "testImportLocation": "test/product-reality",
       "testImports": {
         "test/product-reality": [
@@ -757,6 +767,11 @@
           {
             "path": "packages/mcp-server/test/contracts/catalog.list.spec.ts",
             "line": 5,
+            "handler": "packages/mcp-server/src/tools/catalog.list.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/contracts/dataset-paging.s241.spec.ts",
+            "line": 3,
             "handler": "packages/mcp-server/src/tools/catalog.list.ts"
           },
           {
@@ -1368,6 +1383,11 @@
           {
             "path": "packages/mcp-server/test/importer/importer.spec.ts",
             "line": 12,
+            "handler": "packages/mcp-server/src/tools/code.generate.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/importer/readable-screens.s241.spec.ts",
+            "line": 7,
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
           },
           {
@@ -2022,7 +2042,7 @@
           },
           {
             "path": "packages/mcp-server/test/codegen/showcase.s219.spec.ts",
-            "line": 200,
+            "line": 201,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
@@ -2123,6 +2143,11 @@
           {
             "path": "packages/mcp-server/test/importer/readable-screens.s240.spec.ts",
             "line": 9,
+            "handler": "packages/mcp-server/src/tools/design.compose.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/importer/readable-screens.s241.spec.ts",
+            "line": 6,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
@@ -2277,7 +2302,7 @@
           "kind": "documented-limit",
           "file": "packages/mcp-server/src/tools/design.compose.ts",
           "reason": "An intent sentence is matched against keyword tables. A sentence with no layout keyword uses the dashboard default without numeric confidence and reports OODS-V116; no object is chosen. Naming an object and a context is the reliable input.",
-          "line": 318,
+          "line": 319,
           "observed": {
             "receiptSha256": "sha256:d17b61cf074ca5f736b21ed71f9dcbc630408ac2bebb18d7cb63c2de23176be9",
             "probes": [
@@ -2989,12 +3014,12 @@
       "registration": "auto",
       "advertisedClaim": {
         "name": "viz_render",
-        "description": "Render one data-bound chart from rows or a structured data operand. Use it when creating chart output; use artifact_certify instead to grade a normalized chart or dashboard_render for multiple panels and KPIs. Returns Vega-Lite or ECharts specs, chart identities and requested SVG/accessibility output. pattern uses bundled data and forbids explicit data/encoding/presentation overrides. Otherwise use chartType plus encodings, omit chartType for recommendations, or supply structured intent. ECharts-primary families require their matching hierarchy/network/geo operand. brand/theme controls pixels; output.includeNormalizedSpec returns the IR required by artifact_certify. Temporal rendering uses UTC. Charts take inline data only; URLs, images and links in the input are refused. Full schema: oods://schemas/viz_render.input.json.",
+        "description": "Render one data-bound chart from rows or a structured data operand. Use it when creating chart output; use artifact_certify instead to grade a normalized chart or dashboard_render for multiple panels and KPIs. Returns Vega-Lite or ECharts specs, chart identities and requested SVG/accessibility output. pattern uses bundled data and forbids explicit data/encoding/presentation overrides. Otherwise use chartType plus encodings, omit chartType for recommendations, or supply structured intent. ECharts-primary families require their matching hierarchy/network/geo operand. brand/theme controls pixels; output.includeNormalizedSpec returns the IR required by artifact_certify. Temporal rendering uses UTC. For native ECharts after JSON transport, restore currency and precision with @oods/foundry/echarts.js. Charts take inline data only; URLs, images and links in the input are refused. Full schema: oods://schemas/viz_render.input.json.",
         "inputSchemaDescription": "Render a real, data-bound visualization. Supply a registered pattern identity to preserve its source data and presentation, chartType + encodings for explicit mode, or rows/datasetRef for suggest or structured-intent mode. Retired patterns are not offered; structurally unsupported patterns return OODS-V167; pattern conflicts with explicit data, intent, or source identity/presentation overrides return OODS-V166. Brand, theme and output controls remain available."
       },
-      "claimHash": "sha256:6c5bae353509cf5c267216e4cee649686de4cbe336dce6901b648ff1a6aee086",
+      "claimHash": "sha256:342aac2830ed68d2ebbfd05731e2ef8d05303a5135852fde9935478c2cf2fb55",
       "inputSchemaPath": "packages/mcp-server/src/schemas/viz.render.input.json",
-      "inputSchemaHash": "sha256:4bd5ba3701f09192ae15767c75a27309dfc54f1eff83f525245c1e5c6e977635",
+      "inputSchemaHash": "sha256:50d13e6bc045b52c03238dd3615e9070374000fd5d2296a6c7559b87e95df3c6",
       "testImportLocation": "test/product-reality",
       "testImports": {
         "test/product-reality": [
@@ -4095,7 +4120,7 @@
           "kind": "documented-limit",
           "file": "packages/foundry/TOOL-REFERENCE.md",
           "reason": "Compose records substitutions and React/Vue codegen emits team imports, translated props and exact dependencies. Preview bundles installed or localPath packages and freezes them per version. Shared-scenario checks execute through the generated adapters when the preview host has a browser. Unavailable and unimplemented probes remain not-checked, and unmet obligations warn without refusing generation. Legacy Stage1 coercion labels remain annotations.",
-          "line": 106
+          "line": 110
         },
         {
           "kind": "documented-limit",
@@ -4487,6 +4512,11 @@
           {
             "path": "packages/mcp-server/test/importer/readable-screens.s240.spec.ts",
             "line": 10,
+            "handler": "packages/mcp-server/src/tools/object.register.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/importer/readable-screens.s241.spec.ts",
+            "line": 8,
             "handler": "packages/mcp-server/src/tools/object.register.ts"
           },
           {
@@ -5016,6 +5046,11 @@
           {
             "path": "packages/mcp-server/test/importer/readable-screens.s240.spec.ts",
             "line": 7,
+            "handler": "packages/mcp-server/src/tools/object.import.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/importer/readable-screens.s241.spec.ts",
+            "line": 5,
             "handler": "packages/mcp-server/src/tools/object.import.ts"
           },
           {

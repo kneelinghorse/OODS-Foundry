@@ -232,7 +232,7 @@ const LayeredOverlayTrait = {
 
   metadata: {
     created: '2025-11-29',
-    owners: ['viz@oods.systems', 'spatial@oods.systems'],
+    owners: ['Viz team', 'Spatial team'],
     maturity: 'alpha',
     conflicts_with: [],
     accessibility: {

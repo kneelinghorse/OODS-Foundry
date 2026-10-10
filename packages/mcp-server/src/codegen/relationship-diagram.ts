@@ -89,7 +89,7 @@ export function relationshipDiagram(source: { object?: string; objects?: string[
   const id = `relationships-${createHash('sha256').update(JSON.stringify([names, edges, brand, theme])).digest('hex').slice(0, 12)}`;
   const width = Math.ceil(graph.graph().width!), height = Math.ceil(graph.graph().height!);
   const title = `Relationships: ${roots.join(', ')}`;
-  const description = `${names.length} object types and ${edges.length} declared associations. Arrows point from source to target. Labels state source-relative cardinality and the via field; they do not assert live referential integrity. ${edges.map(edge => `${edge.source} to ${edge.target}: ${edge.label}, ${edge.cardinality}, via ${edge.via}.`).join(' ')}`;
+  const description = `${names.length} object ${names.length === 1 ? 'type' : 'types'} and ${edges.length} declared ${edges.length === 1 ? 'association' : 'associations'}. Arrows point from source to target. Labels state source-relative cardinality and the via field; they do not assert live referential integrity. ${edges.map(edge => `${edge.source} to ${edge.target}: ${edge.label}, ${edge.cardinality}, via ${edge.via}.`).join(' ')}`;
   const text = (lines: string[], x: number, y: number, size = 13) => `<text x="${x}" y="${y}" fill="${palette.text}" font-size="${size}">${lines.map((line, i) => `<tspan x="${x}" dy="${i ? 19 : 0}">${escape(line)}</tspan>`).join('')}</text>`;
   const edgeMarkup = edges.map((edge, index) => {
     const placed = graph.edge({ v: edge.source, w: edge.target, name: String(index) });

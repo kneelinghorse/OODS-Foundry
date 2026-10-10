@@ -141,6 +141,13 @@ it('counts reserved and colliding CSS names as unmatched without guessing a rena
  expect(draft.inventory.filter(entry=>entry.path==='theme.primary').every(entry=>entry.status==='unmatched')).toBe(true);
  expect(draft.inventory.find(entry=>entry.path==='team-primary')?.reason).toMatch(/collision/);
 });
+it('preserves Stage1 native custom-property names, aliases and reserved-name refusal',()=>{
+ write('tokens.json',{'--team-primary':{$type:'color',$value:'#005ea2'},'--team-link':{$type:'color',$value:'{--team-primary}'},'--sys-text':{$type:'color',$value:'#000'},'team-link':{$type:'color',$value:'#fff'}});
+ const draft=draftTokens({brand_id:'Stage1names',source:{path:path.join(folder,'tokens.json')}});
+ expect(draft.inventory.find(entry=>entry.path==='--team-link')).toMatchObject({status:'preserved',variable:'--team-link'});
+ expect(draft.inventory.find(entry=>entry.path==='--sys-text')?.status).toBe('unmatched');
+ expect(draft.inventory.find(entry=>entry.path==='team-link')?.reason).toMatch(/collision/);
+});
 it('preserves the nonempty legacy trait-only mapping requirement',()=>{
  const validate=getAjv().compile(mapSchema);
  expect(validate({action:'create',externalSystem:'team',externalComponent:'Legacy',oodsTraits:[]})).toBe(false);

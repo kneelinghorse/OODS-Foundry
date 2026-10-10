@@ -16,13 +16,21 @@
     },
     "status": {
       "type": "string",
-      "enum": ["stable", "beta", "planned"],
+      "enum": [
+        "stable",
+        "beta",
+        "planned"
+      ],
       "description": "Filter by legacy static-HTML status only: 'stable' = mapped HTML renderer; 'planned' = HTML fallback. Consult productReality.surfaces for React/Vue, generated-consumer and maturity evidence."
     },
     "detail": {
       "type": "string",
-      "enum": ["brief", "summary", "full"],
-      "description": "Response detail level. Defaults to brief for unfiltered calls (each component's name, categories and one readiness label) and to full when filters are provided. summary adds tags, contexts, regions, traits and status; the evidence behind the readiness label is only in full."
+      "enum": [
+        "brief",
+        "summary",
+        "full"
+      ],
+      "description": "Defaults to brief unfiltered, full with filters. Both defaults are paged (filtered: 10 entries). summary adds tags, contexts, regions and traits; full includes evidence. Explicit detail without paging preserves the unbounded legacy request."
     },
     "page": {
       "type": "integer",
@@ -32,7 +40,7 @@
     "pageSize": {
       "type": "integer",
       "minimum": 1,
-      "description": "Number of components per page."
+      "description": "Components per page. Filtered calls without detail default to 10; nextPage gives the next call."
     },
     "includeInternal": {
       "type": "boolean",

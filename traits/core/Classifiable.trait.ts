@@ -200,7 +200,7 @@ const ClassifiableTrait = {
   metadata: {
     created: '2025-11-18',
     updated: '2025-11-18',
-    owners: ['core@oods.systems', 'taxonomy@oods.systems'],
+    owners: ['Core team', 'Taxonomy team'],
     maturity: 'draft',
     references: [
       'R21.4_Deep-Dive-Implementation-Research-for-the-Classifiable-Core-Trait.md',

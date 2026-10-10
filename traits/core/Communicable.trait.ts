@@ -225,7 +225,7 @@ const CommunicableTrait = {
 
   metadata: {
     created: '2025-11-20',
-    owners: ['notifications@oods.systems'],
+    owners: ['Notifications team'],
     maturity: 'experimental',
     accessibility: {
       keyboard: 'ChannelGrid arranges buttons in linear tab order with roving focus for template previews.',

@@ -42,7 +42,7 @@ describe('Addressable trait definition', () => {
   it('exports TypeScript definition with defaults and tokens', () => {
     expect(AddressableTraitModule.parameters?.[0]?.default).toEqual(DEFAULT_ROLES);
     expect(AddressableTraitModule.tokens).toHaveProperty('location.address.card.bg');
-    expect(AddressableTraitModule.metadata?.owners).toContain('core@oods.systems');
+    expect(AddressableTraitModule.metadata?.owners).toContain('Core team');
   });
 
   it('validates parameters through the shared validator', () => {

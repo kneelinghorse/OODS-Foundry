@@ -181,7 +181,7 @@ const EncodingColorTrait = {
 
   metadata: {
     created: '2025-11-15',
-    owners: ['viz@oods.systems', 'accessibility@oods.systems'],
+    owners: ['Viz team', 'Accessibility team'],
     maturity: 'alpha',
     accessibility: {
       rule_reference: 'A11Y-R-01',

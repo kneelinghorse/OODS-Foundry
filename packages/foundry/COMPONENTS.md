@@ -111,7 +111,7 @@ notice; wire your data, navigation and persistence handlers before shipping.
 Before applying adapters, install the OODS libraries in the team project as well as its own dependencies. For React:
 
 ```bash
-npm install @oods/components-react@0.11.0 @oods/component-contracts@0.11.0 @oods/component-styles@0.11.0 @oods/tokens@0.11.0
+npm install @oods/components-react@0.11.1 @oods/component-contracts@0.11.1 @oods/component-styles@0.11.1 @oods/tokens@0.11.1
 ```
 
 For Vue, replace `@oods/components-react` with `@oods/components-vue` at the same version. Connecting the MCP server alone does not install these project dependencies. A missing dependency is reported before any adapter is written. If the manifest changes after drafting, draft again before applying.
@@ -137,7 +137,7 @@ cd team-app
 From the shadcn project, install OODS Foundry locally. Connecting the MCP server with `npx` does not install a package into that project, and the next command needs its registry files:
 
 ```bash
-npm install @oods/foundry@0.11.0
+npm install @oods/foundry@0.11.1
 ```
 
 Install the sixteen adapters from that package in one call:

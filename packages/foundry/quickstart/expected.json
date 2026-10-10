@@ -1,11 +1,11 @@
 {
   "schema": "oods-foundry-quickstart-expected/v1",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "react": {
-    "contentHash": "sha256:800e792fc696672da715e3a9324ae791d814b142d95f07f955b9133beed8e747"
+    "contentHash": "sha256:1fab377b1322e7e3188d8a5f211606cf42988104f599bb079731a58c2eed2e84"
   },
   "vue": {
-    "contentHash": "sha256:0b35fcfe0fae11a02deb3b756a80300704af70bb21c095bd371912965af7acce"
+    "contentHash": "sha256:021fd31b7b0242f69af0deb7bc1f1d13bee694a8e0f5971e70108196bd0dc177"
   },
   "chart": {
     "contentHash": "746f8e9673217fc6b24f4441db7ababcc269eb84555aac1a9af9960d6e1f360a"
@@ -13,15 +13,13 @@
   "runs": [
     {
       "node": "24.6.0",
-      "source": "release-candidate tarballs"
+      "receipt": "artifacts/product-reality/sprint-241/m05/candidate-2-quickstarts/quickstart-node24/receipt.json",
+      "freezeHead": "01505a03b2277996089255bd55647f79443a743f"
     },
     {
       "node": "22.0.0",
-      "source": "release-candidate tarballs"
+      "receipt": "artifacts/product-reality/sprint-241/m05/candidate-2-quickstarts/quickstart-node22/receipt.json",
+      "freezeHead": "01505a03b2277996089255bd55647f79443a743f"
     }
-  ],
-  "notes": [
-    "react and vue are the generated applications' contentHash, prefixed sha256: as code_generate returns it; chart is viz_render's contentHash of the quickstart chart, a bare hexadecimal SHA-256 as viz_render returns it.",
-    "Preview hashes are not listed: they differ between Node versions."
   ]
 }

@@ -537,25 +537,25 @@
 }
 :where([data-viz-svg]) { min-inline-size: 0; }
 :where([data-viz-svg]) > svg { display: block; inline-size: 100%; max-inline-size: var(--oods-viz-width, 100%); block-size: auto; }
-/* A placed chart carries a narrow render beside the design-size one; the figure measures its own inline size and shows the narrow render at 600px or less, so axis text keeps its size on a phone column instead of scaling with the SVG (Sprint 202 m01). */
+/* A placed chart carries a narrow render beside the design-size one; the figure measures its own inline size and shows the narrow render below the design SVG's intrinsic 730px width, so axis text keeps its size on a phone column instead of scaling with the SVG (Sprint 202 m01). */
 :where([data-viz-rendered='true'][data-viz-narrow='true']) { container-type: inline-size; }
 :where([data-viz-svg-narrow]) { display: none; min-inline-size: 0; }
-:where([data-viz-svg-narrow]) > svg { display: block; inline-size: 100%; block-size: auto; }
-@container (max-width: 600px) {
+:where([data-viz-svg-narrow]) > svg { display: block; inline-size: 100%; max-inline-size: calc(302px * 1.25); margin-inline: auto; block-size: auto; }
+@container (max-width: 729px) {
   :where([data-viz-narrow='true']) > [data-viz-svg] { display: none; }
   :where([data-viz-narrow='true']) > [data-viz-svg-narrow] { display: block; }
 }
 /* s213-m01 (Sprint 212 review finding 5): a figure with a wide render fills its column. The design render grows until
- * the figure is 900px wide, then the render drawn for a desktop column takes over, so the chart spans the screen near
+ * the figure is 1130px wide, then the render drawn for a desktop column takes over, so the chart spans the screen near
  * design scale; it used to stop at its design width, half of a 1440 detail screen. */
 :where([data-viz-rendered='true'][data-viz-wide='true']) { container-type: inline-size; }
 :where([data-viz-svg-wide]) { display: none; min-inline-size: 0; }
 :where([data-viz-svg-wide]) > svg { display: block; inline-size: 100%; block-size: auto; }
 /* Each render is drawn at most 1.25 times its own size, so a 10px axis label never passes 12.5px (#2347): the design
- * render reaches about 1.23 times before the wide one takes over, and the wide render, 1130px wide, stops growing here. */
+ * render stops at 1.25 times while waiting for the wide render to fit, and the wide render, 1130px wide, stops growing here. */
 :where([data-viz-svg-wide]) > svg { max-inline-size: calc(1130px * 1.25); }
-:where([data-viz-wide='true']) > [data-viz-svg] > svg { max-inline-size: none; }
-@container (min-width: 900px) {
+:where([data-viz-wide='true']) > [data-viz-svg] > svg { max-inline-size: calc(730px * 1.25); margin-inline: auto; }
+@container (min-width: 1130px) {
   :where([data-viz-wide='true']) > [data-viz-svg] { display: none; }
   :where([data-viz-wide='true']) > [data-viz-svg-wide] { display: block; }
 }

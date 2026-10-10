@@ -194,7 +194,7 @@ const StatusableTrait = {
 
   metadata: {
     created: '2026-02-28',
-    owners: ['design@oods.systems', 'engineering@oods.systems'],
+    owners: ['Design team', 'Engineering team'],
     maturity: 'experimental',
     accessibility: {
       keyboard: 'Badge and Banner elements are not interactive; no keyboard handling required.',

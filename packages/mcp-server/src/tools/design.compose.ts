@@ -47,6 +47,7 @@ import type { FieldDefinition, SemanticMapping, StateMachineDefinition, TraitAct
 import { resolveIntentObject, fuzzyMatchObject } from '../compose/intent-object-resolver.js';
 import { populateCollections, populateListStates } from '../compose/collections.js';
 import { reconcileFormDetail, KEPT_BESIDE_PATTERN } from '../compose/form-detail.js';
+import { populateRecordDisplay } from '../compose/record-display.js';
 import { populateObjectSchema, populateBindings, fillSlotsWithObject, wireFieldProps, applySelectionsToSchema, dropUnfilledInteractiveSlots, neutralizeUnfilledSurfaceSlots, bindCardHeadingField } from '../compose/object-slot-filler.js';
 import { enforceResultStateFamily } from '../compose/result-state.js';
 import { nameStatusTables } from '../compose/status-table.js';
@@ -2178,6 +2179,7 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
   // 3b. Populate object schema, field→component wiring, and bindings for codegen
   if (composed) {
     populateObjectSchema(schema, composed.schema, composed.semantics, composed.traits, composed.samples);
+    populateRecordDisplay(schema, composed);
     if (layoutType === 'form' && formFieldGroups) {
       applyFormFieldBindingsFromGroups(
         schema,

@@ -41,7 +41,7 @@ describe('s225: a detail badge says which field it represents', () => {
     const details = nodes.find(node => node.props?.label === 'Details')!;
     const labels = details.children!.map(row => row.children?.[0]?.props?.content);
     // s227-m01: a temperature suffix uses degrees; field ordering stays exactly as authored.
-    expect(labels).toEqual(['Target temperature (°C)', 'Warehouse', 'Stock level', 'Units on hand', 'Capacity units', 'Created at', 'Updated at', 'Last event', 'Last event at']);
+    expect(labels).toEqual(['Target temperature (°C)', 'Inside', 'Stock level', 'Units on hand', 'Capacity units', 'Created at', 'Updated at', 'Last event', 'Last event at']);
     for (const framework of ['react', 'vue', 'html'] as const) {
       const result = await generate({ schema: composed.schema, framework } as never);
       expect(result.status).toBe('ok');

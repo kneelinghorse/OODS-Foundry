@@ -28,6 +28,7 @@ import {
   resolveFieldProps,
   isReferenceField,
   referenceFieldExpression,
+  statusTimelineCondition,
   isDateFieldEntry,
   slotDateHelperSource,
   SLOT_DATE_HELPER,
@@ -412,6 +413,9 @@ function reactFieldExpression(
   }
   if (node.component === 'Text' && isChildren && entry && node.meta?.intent === 'read-only-field') {
     if (isReferenceField(entry)) return referenceFieldExpression(sourceField as string, objectSchema);
+    if (entry.enum?.length) return fieldName;
+    // A labelled identifier row keeps its ID; the join projection belongs to record titles.
+    if (entry.titleReferences?.length) fieldName = snakeToCamel(sourceField as string);
     // The retained consumer library predates date-only formatting; lower through the existing local helper.
     if (entry.type.replace(/\?$/, '') === 'date') return `${fieldName} == null || ${fieldName} === '' ? 'Not recorded' : ${SLOT_DATE_HELPER}(${fieldName}, true) || 'Invalid date'`;
     const code = Boolean(entry.enum?.length || /(?:status|state|event\.type|collection_method|pricing_model|interval)$/.test(entry.semanticType ?? ''));
@@ -471,8 +475,9 @@ function emitNode(
   const controlledProp = localBinding ? reactControlledProp(localBinding) : null;
   const recipeProps = resolveFrameworkRecipeProps(node, objectSchema, options.workflowCollections);
   const anchor = screenActionAnchor(node);
+  const timelineCondition = statusTimelineCondition(node, objectSchema);
   const finish = (code: string): string => wrapReactStateNode(
-    wrapReactScreenActionSurface(anchor ? `${code}\n${REACT_ACTION_ANCHORS[anchor]}` : code, node, bindingAnalysis, options.objectName, objectSchema, Boolean(options.workflowCollections)),
+    wrapReactScreenActionSurface(timelineCondition ? `{${timelineCondition} ? (${code}) : null}` : anchor ? `${code}\n${REACT_ACTION_ANCHORS[anchor]}` : code, node, bindingAnalysis, options.objectName, objectSchema, Boolean(options.workflowCollections)),
     node.state,
     localBinding,
     node.state === 'success' && collectionSources([node]).has('rows'),

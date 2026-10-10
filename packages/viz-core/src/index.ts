@@ -32,6 +32,7 @@ export * from './spec/spatial.js';
 // Spec -> renderer adapters (pure, headless transformers)
 export * from './adapters/vega-lite-adapter.js';
 export * from './adapters/echarts-adapter.js';
+export { restoreEChartsFormats } from './adapters/echarts-format.js';
 export * from './adapters/echarts-interactions.js';
 export * from './adapters/renderer-selector.js';
 

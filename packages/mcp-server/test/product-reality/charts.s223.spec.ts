@@ -132,13 +132,14 @@ describe('chart words describe the record (#2527 ruling 5)', () => {
 });
 
 describe('a dashboard fits a phone (#2527 ruling 8)', () => {
-  it('shrinks each chart to its panel with one stylesheet rule', async () => {
+  it('selects an authored chart size that fits its panel', async () => {
     const out = await dashboard({ schemaVersion: 'v0.1', datasets: [{ id: 'sales', rows: [{ region: 'West', revenue: 100 }, { region: 'East', revenue: 80 }] }], panels: [{ id: 'breakdown', kind: 'chart', chartType: 'bar', datasetId: 'sales', encodings: { x: 'region', y: { field: 'revenue', aggregate: 'sum' } } }], a11y: { description: 'Revenue by region.' }, output: { html: true } } as never);
     expect(out.status).toBe('ok');
-    expect(out.html).toContain('.oods-chart>svg{display:block;max-width:100%;height:auto}');
+    expect(out.html).toContain('container-type:inline-size');
+    expect(out.html).toContain('@container(min-width:');
     // The kpi sparkline keeps its own sizing; the rule reaches only a chart panel's SVG. s224-m01 (#2542 ruling 4): a Vega
     // chart's phone render, in its own wrapper, precedes the span render the rule sizes.
-    expect(out.html).toMatch(/<figure class="oods-panel oods-chart"[^>]*>(?:<figcaption>[^<]*<\/figcaption>)?(?:<div class="oods-chart-phone"><svg\b[\s\S]*?<\/svg><\/div>)?<svg\b[^>]*viewBox=/);
+    expect(out.html).toMatch(/<div class="oods-chart-size-0"><svg\b[^>]*viewBox=/);
     expect(sha(out.html!)).toBe(out.outputHtmlHash);
   });
 });

@@ -7,7 +7,7 @@
       "title": "OODS Foundry Button",
       "description": "React adapter for OODS Button on shadcn/ui's Radix and Base UI bases. Danger/destructive uses solid bg-destructive and text-background, including hover and dark, to preserve text contrast with the team’s tokens. Primary preserves the team’s primary/primary-foreground token pair. Success and warning intents use the secondary variant; shadcn has no distinct success/warning palettes.",
       "dependencies": [
-        "@oods/components-react@0.11.0"
+        "@oods/components-react@0.11.1"
       ],
       "registryDependencies": [
         "button"
@@ -29,7 +29,7 @@
       "title": "OODS Foundry Card",
       "description": "React adapter for OODS Card on shadcn/ui's Radix and Base UI bases. Semantic as containers wrap the shadcn Card.",
       "dependencies": [
-        "@oods/components-react@0.11.0"
+        "@oods/components-react@0.11.1"
       ],
       "registryDependencies": [
         "card"
@@ -51,8 +51,8 @@
       "title": "OODS Foundry StatusBadge",
       "description": "React adapter for OODS StatusBadge on shadcn/ui's Radix and Base UI bases. Status text and icons come from the OODS registry. Critical/danger uses destructive with solid bg-destructive and text-background in both themes; other tones use the team's default or secondary badge palette, without distinct status colours. compact and readOnly retain the OODS implementation's no-op behavior.",
       "dependencies": [
-        "@oods/components-react@0.11.0",
-        "@oods/component-contracts@0.11.0"
+        "@oods/components-react@0.11.1",
+        "@oods/component-contracts@0.11.1"
       ],
       "registryDependencies": [
         "badge"
@@ -74,7 +74,7 @@
       "title": "OODS Foundry Tabs",
       "description": "React adapter for OODS Tabs on shadcn/ui's Radix and Base UI bases. The tab list scrolls horizontally. overflowLabel and the OODS overflow menu are not implemented.",
       "dependencies": [
-        "@oods/components-react@0.11.0"
+        "@oods/components-react@0.11.1"
       ],
       "registryDependencies": [
         "tabs"
@@ -96,7 +96,7 @@
       "title": "OODS Foundry Select",
       "description": "React adapter for OODS Select on shadcn/ui's Radix and Base UI bases. The visible control is a shadcn combobox, not a native select. A hidden native select preserves form values and native onChange events. Native option children, multiple, native size and native-select keyboard contracts are not supported; pass options.",
       "dependencies": [
-        "@oods/components-react@0.11.0"
+        "@oods/components-react@0.11.1"
       ],
       "registryDependencies": [
         "select",
@@ -119,7 +119,7 @@
       "title": "OODS Foundry SearchInput",
       "description": "React adapter for OODS SearchInput on shadcn/ui's Radix and Base UI bases. Search value, debounce, minimum query length and clear events retain their meanings.",
       "dependencies": [
-        "@oods/components-react@0.11.0"
+        "@oods/components-react@0.11.1"
       ],
       "registryDependencies": [
         "input",
@@ -143,7 +143,7 @@
       "title": "OODS Foundry PaginationBar",
       "description": "React adapter for OODS PaginationBar on shadcn/ui's Radix and Base UI bases. Page links use anchors, not buttons; disabled links prevent navigation and leave the tab order.",
       "dependencies": [
-        "@oods/components-react@0.11.0"
+        "@oods/components-react@0.11.1"
       ],
       "registryDependencies": [
         "pagination"
@@ -165,8 +165,8 @@
       "title": "OODS Foundry Banner",
       "description": "React adapter for OODS Banner on shadcn/ui's Radix and Base UI bases. Critical/danger uses destructive with solid bg-destructive and text-background in both themes, with its description inheriting the foreground; other tones use the team's default Alert palette. Distinct success/warning/info colours and solid emphasis are not implemented.",
       "dependencies": [
-        "@oods/components-react@0.11.0",
-        "@oods/component-contracts@0.11.0"
+        "@oods/components-react@0.11.1",
+        "@oods/component-contracts@0.11.1"
       ],
       "registryDependencies": [
         "alert",
@@ -189,8 +189,8 @@
       "title": "OODS Foundry Input",
       "description": "React adapter for OODS Input on shadcn/ui's Radix and Base UI bases. Native input props, datetime-local normalization, label, help, validation and value callbacks retain their meanings; density uses team spacing rather than OODS pixel dimensions.",
       "dependencies": [
-        "@oods/components-react@0.11.0",
-        "@oods/component-contracts@0.11.0"
+        "@oods/components-react@0.11.1",
+        "@oods/component-contracts@0.11.1"
       ],
       "registryDependencies": [
         "input",
@@ -213,7 +213,7 @@
       "title": "OODS Foundry Textarea",
       "description": "React adapter for OODS Textarea on shadcn/ui's Radix and Base UI bases. Native textarea props, four-row default, label, help, validation and value callbacks retain their meanings; density uses team spacing rather than OODS pixel dimensions.",
       "dependencies": [
-        "@oods/components-react@0.11.0"
+        "@oods/components-react@0.11.1"
       ],
       "registryDependencies": [
         "textarea",
@@ -236,7 +236,7 @@
       "title": "OODS Foundry Checkbox",
       "description": "React adapter for OODS Checkbox on shadcn/ui's Radix and Base UI bases. The visible control is the team checkbox. A visually hidden native checkbox preserves the input ref, native onChange and form values. Native input event handlers other than onChange apply to that hidden input, not the visible control; density is metadata only.",
       "dependencies": [
-        "@oods/components-react@0.11.0"
+        "@oods/components-react@0.11.1"
       ],
       "registryDependencies": [
         "checkbox",
@@ -259,7 +259,7 @@
       "title": "OODS Foundry DatePicker",
       "description": "React adapter for OODS DatePicker on shadcn/ui's Radix and Base UI bases. Keeps the native date input and adds the team calendar/popover, including min, max, step, disabled and readOnly. pickerClassName/pickerStyle apply to the native input; density is metadata only.",
       "dependencies": [
-        "@oods/components-react@0.11.0"
+        "@oods/components-react@0.11.1"
       ],
       "registryDependencies": [
         "input",
@@ -285,7 +285,7 @@
       "title": "OODS Foundry TagInput",
       "description": "React adapter for OODS TagInput on shadcn/ui's Radix and Base UI bases. Preserves the OODS text-value callbacks and displayed tag list, including record labels and authored children. The OODS contract does not create or remove tags; this adapter does not add those behaviours.",
       "dependencies": [
-        "@oods/components-react@0.11.0"
+        "@oods/components-react@0.11.1"
       ],
       "registryDependencies": [
         "input-group",
@@ -308,8 +308,8 @@
       "title": "OODS Foundry StatusSelector",
       "description": "React adapter for OODS StatusSelector on shadcn/ui's Radix and Base UI bases. Preserves status/value, normalized options/states, authored children, help and native change callbacks. The visible control uses shadcn combobox keyboard interaction rather than a native select.",
       "dependencies": [
-        "@oods/components-react@0.11.0",
-        "@oods/component-contracts@0.11.0"
+        "@oods/components-react@0.11.1",
+        "@oods/component-contracts@0.11.1"
       ],
       "registryDependencies": [
         "select"
@@ -331,7 +331,7 @@
       "title": "OODS Foundry CardHeader",
       "description": "React adapter for OODS CardHeader on shadcn/ui's Radix and Base UI bases. Preserves the semantic header, heading level/as, title aliases, scalar/authored children and non-duplicated supporting copy. The team CardTitle and CardDescription supply the visual parts.",
       "dependencies": [
-        "@oods/components-react@0.11.0"
+        "@oods/components-react@0.11.1"
       ],
       "registryDependencies": [
         "card"
@@ -353,8 +353,8 @@
       "title": "OODS Foundry PriceBadge",
       "description": "React adapter for OODS PriceBadge on shadcn/ui's Radix and Base UI bases. Preserves amount and currency precedence, currency minor units, label/children/value fallback and emphasis. Binding metadata props field, amountField, currencyField, intervalField and minorUnitsParameter retain the OODS no-op behavior.",
       "dependencies": [
-        "@oods/components-react@0.11.0",
-        "@oods/component-contracts@0.11.0"
+        "@oods/components-react@0.11.1",
+        "@oods/component-contracts@0.11.1"
       ],
       "registryDependencies": [
         "badge"
@@ -378,7 +378,7 @@
       "title": "OODS Foundry Button",
       "description": "Vue adapter for OODS Button on shadcn-vue / Reka UI. Danger uses solid destructive/background tokens in both themes; success and warning use secondary because shadcn has no distinct palettes.",
       "dependencies": [
-        "@oods/components-vue@0.11.0"
+        "@oods/components-vue@0.11.1"
       ],
       "registryDependencies": [
         "button"
@@ -399,7 +399,7 @@
       "title": "OODS Foundry Card",
       "description": "Vue adapter for OODS Card on shadcn-vue / Reka UI. Preserves the shipped Vue props, slots and event contract; team components supply styling.",
       "dependencies": [
-        "@oods/components-vue@0.11.0"
+        "@oods/components-vue@0.11.1"
       ],
       "registryDependencies": [
         "card"
@@ -420,8 +420,8 @@
       "title": "OODS Foundry StatusBadge",
       "description": "Vue adapter for OODS StatusBadge on shadcn-vue / Reka UI. Critical/danger uses destructive/background; other tones use default/secondary without distinct status colours.",
       "dependencies": [
-        "@oods/components-vue@0.11.0",
-        "@oods/component-contracts@0.11.0"
+        "@oods/components-vue@0.11.1",
+        "@oods/component-contracts@0.11.1"
       ],
       "registryDependencies": [
         "badge"
@@ -442,7 +442,7 @@
       "title": "OODS Foundry Tabs",
       "description": "Vue adapter for OODS Tabs on shadcn-vue / Reka UI. The tab list scrolls horizontally; overflowLabel and the overflow menu are not implemented.",
       "dependencies": [
-        "@oods/components-vue@0.11.0"
+        "@oods/components-vue@0.11.1"
       ],
       "registryDependencies": [
         "tabs"
@@ -463,7 +463,7 @@
       "title": "OODS Foundry Select",
       "description": "Vue adapter for OODS Select on shadcn-vue / Reka UI. Reka combobox keyboard interaction replaces native select interaction. Empty reset options retain their label and emit/submit an empty string.",
       "dependencies": [
-        "@oods/components-vue@0.11.0"
+        "@oods/components-vue@0.11.1"
       ],
       "registryDependencies": [
         "select",
@@ -485,7 +485,7 @@
       "title": "OODS Foundry SearchInput",
       "description": "Vue adapter for OODS SearchInput on shadcn-vue / Reka UI. Preserves the shipped Vue props, slots and event contract; team components supply styling.",
       "dependencies": [
-        "@oods/components-vue@0.11.0"
+        "@oods/components-vue@0.11.1"
       ],
       "registryDependencies": [
         "input",
@@ -508,7 +508,7 @@
       "title": "OODS Foundry PaginationBar",
       "description": "Vue adapter for OODS PaginationBar on shadcn-vue / Reka UI. Uses the team Reka pagination controls; page and page-size events preserve the Vue contract.",
       "dependencies": [
-        "@oods/components-vue@0.11.0"
+        "@oods/components-vue@0.11.1"
       ],
       "registryDependencies": [
         "pagination"
@@ -529,8 +529,8 @@
       "title": "OODS Foundry Banner",
       "description": "Vue adapter for OODS Banner on shadcn-vue / Reka UI. Critical/danger uses destructive/background; other tones use the default Alert palette.",
       "dependencies": [
-        "@oods/components-vue@0.11.0",
-        "@oods/component-contracts@0.11.0"
+        "@oods/components-vue@0.11.1",
+        "@oods/component-contracts@0.11.1"
       ],
       "registryDependencies": [
         "alert",
@@ -552,8 +552,8 @@
       "title": "OODS Foundry Input",
       "description": "Vue adapter for OODS Input on shadcn-vue / Reka UI. Preserves the shipped Vue props, slots and event contract; team components supply styling.",
       "dependencies": [
-        "@oods/components-vue@0.11.0",
-        "@oods/component-contracts@0.11.0"
+        "@oods/components-vue@0.11.1",
+        "@oods/component-contracts@0.11.1"
       ],
       "registryDependencies": [
         "input",
@@ -575,7 +575,7 @@
       "title": "OODS Foundry Textarea",
       "description": "Vue adapter for OODS Textarea on shadcn-vue / Reka UI. Preserves the shipped Vue props, slots and event contract; team components supply styling.",
       "dependencies": [
-        "@oods/components-vue@0.11.0"
+        "@oods/components-vue@0.11.1"
       ],
       "registryDependencies": [
         "textarea",
@@ -597,7 +597,7 @@
       "title": "OODS Foundry Checkbox",
       "description": "Vue adapter for OODS Checkbox on shadcn-vue / Reka UI. Uses the team Reka checkbox button and its boolean model events, replacing the native-input keyboard target. Reka supplies the native form input within forms.",
       "dependencies": [
-        "@oods/components-vue@0.11.0"
+        "@oods/components-vue@0.11.1"
       ],
       "registryDependencies": [
         "checkbox",
@@ -619,7 +619,7 @@
       "title": "OODS Foundry DatePicker",
       "description": "Vue adapter for OODS DatePicker on shadcn-vue / Reka UI. Uses the team Input with native type=date, matching the shipped Vue DatePicker contract; no extra calendar popup.",
       "dependencies": [
-        "@oods/components-vue@0.11.0"
+        "@oods/components-vue@0.11.1"
       ],
       "registryDependencies": [
         "input",
@@ -641,7 +641,7 @@
       "title": "OODS Foundry TagInput",
       "description": "Vue adapter for OODS TagInput on shadcn-vue / Reka UI. Preserves text-value callbacks and labels; the OODS contract does not add or remove tags.",
       "dependencies": [
-        "@oods/components-vue@0.11.0"
+        "@oods/components-vue@0.11.1"
       ],
       "registryDependencies": [
         "input",
@@ -663,7 +663,7 @@
       "title": "OODS Foundry StatusSelector",
       "description": "Vue adapter for OODS StatusSelector on shadcn-vue / Reka UI. Reka combobox keyboard interaction replaces native select interaction. Authored default slots are preserved.",
       "dependencies": [
-        "@oods/components-vue@0.11.0"
+        "@oods/components-vue@0.11.1"
       ],
       "registryDependencies": [
         "select",
@@ -685,7 +685,7 @@
       "title": "OODS Foundry CardHeader",
       "description": "Vue adapter for OODS CardHeader on shadcn-vue / Reka UI. Preserves the shipped Vue props, slots and event contract; team components supply styling.",
       "dependencies": [
-        "@oods/components-vue@0.11.0"
+        "@oods/components-vue@0.11.1"
       ],
       "registryDependencies": [
         "card"
@@ -706,8 +706,8 @@
       "title": "OODS Foundry PriceBadge",
       "description": "Vue adapter for OODS PriceBadge on shadcn-vue / Reka UI. Preserves the shipped Vue props, slots and event contract; team components supply styling.",
       "dependencies": [
-        "@oods/components-vue@0.11.0",
-        "@oods/component-contracts@0.11.0"
+        "@oods/components-vue@0.11.1",
+        "@oods/component-contracts@0.11.1"
       ],
       "registryDependencies": [
         "badge"

@@ -131,10 +131,10 @@ describe('Sprint 182 shared component style contract', () => {
     expect(frame).toContain('min-block-size: var(--oods-viz-height, 360px);');
   });
 
-  it('s202-m01 shows a placed chart\'s narrow render at 600px or less of figure width through a container query', () => {
+  it('s241 keeps the narrow render until the next native 730px render fits the figure', () => {
     expect(css).toContain(":where([data-viz-rendered='true'][data-viz-narrow='true']) { container-type: inline-size; }");
     expect(css).toContain(':where([data-viz-svg-narrow]) { display: none; min-inline-size: 0; }');
-    expect(css).toMatch(/@container \(max-width: 600px\) \{\s*:where\(\[data-viz-narrow='true'\]\) > \[data-viz-svg\] \{ display: none; \}\s*:where\(\[data-viz-narrow='true'\]\) > \[data-viz-svg-narrow\] \{ display: block; \}\s*\}/);
+    expect(css).toMatch(/@container \(max-width: 729px\) \{\s*:where\(\[data-viz-narrow='true'\]\) > \[data-viz-svg\] \{ display: none; \}\s*:where\(\[data-viz-narrow='true'\]\) > \[data-viz-svg-narrow\] \{ display: block; \}\s*\}/);
   });
 
   it('s182-m01a keeps shared high-contrast controls on matching system colors', () => {

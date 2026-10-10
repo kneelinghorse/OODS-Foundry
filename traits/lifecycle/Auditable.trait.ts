@@ -137,7 +137,7 @@ const AuditableTrait = {
 
   metadata: {
     created: '2026-02-28',
-    owners: ['compliance@oods.systems', 'engineering@oods.systems'],
+    owners: ['Compliance team', 'Engineering team'],
     maturity: 'experimental',
     accessibility: {
       keyboard: 'AuditTimeline entries are not interactive. Summary card expand/collapse is keyboard navigable.',

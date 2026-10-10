@@ -194,7 +194,7 @@ const ScaleLinearTrait = {
 
   metadata: {
     created: '2025-11-15',
-    owners: ['viz@oods.systems', 'platform@oods.systems'],
+    owners: ['Viz team', 'Platform team'],
     maturity: 'alpha',
     regionsUsed: ['detail', 'form'],
     allows: ['EncodingPositionX', 'EncodingPositionY', 'EncodingSize', 'EncodingColor'],

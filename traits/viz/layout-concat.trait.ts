@@ -163,7 +163,7 @@ const LayoutConcatTrait: TraitDefinition = {
 
   metadata: {
     created: '2025-11-16',
-    owners: ['viz@oods.systems'],
+    owners: ['Viz team'],
     maturity: 'beta',
   },
 };

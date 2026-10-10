@@ -577,6 +577,12 @@ export function populateObjectSchema(
     if (semantics?.[fieldName]?.semantic_type) {
       entry.semanticType = semantics[fieldName].semantic_type;
     }
+    const displayLabel = semantics?.[fieldName]?.ui_hints?.label;
+    if (typeof displayLabel === 'string') entry.displayLabel = displayLabel;
+    const enumLabels = semantics?.[fieldName]?.ui_hints?.enumLabels;
+    if (enumLabels && typeof enumLabels === 'object' && !Array.isArray(enumLabels)) {
+      entry.enumLabels = Object.fromEntries(Object.entries(enumLabels).filter((pair): pair is [string, string] => typeof pair[1] === 'string'));
+    }
 
     const fallback = semantics?.[fieldName]?.ui_hints?.displayFallbackField;
     if (typeof fallback === 'string') {
@@ -941,7 +947,7 @@ function applyBoundFieldProps(
 
   if (node.component === 'Select' && fieldEntry.enum && fieldEntry.enum.length > 0) {
     if (!nextProps.options) {
-      nextProps.options = fieldEntry.enum.map(value => ({ value, label: enumOptionLabel(value) }));
+      nextProps.options = fieldEntry.enum.map(value => ({ value, label: enumOptionLabel(value, fieldEntry.enumLabels) }));
     }
   }
 

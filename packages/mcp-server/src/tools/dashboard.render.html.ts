@@ -282,14 +282,8 @@ const NOMINAL_ROW_HEIGHT_PX = 160;
 const VEGA_PADDING_PX = 5;
 /** s222-m02 follow-up: the chart marks whose discrete x labels the export keeps level when they fit the panel. */
 const LEVEL_LABEL_MARKS = ['bar', 'line', 'area'] as const;
-/**
- * s224-m01 (#2542 ruling 4): the box of a chart's phone render. At 600px and below the stylesheet stacks every panel full
- * width, and at 390 a chart panel's content box is 332px (390, less 16px of page padding, 12px of panel padding and a 1px
- * border on each side). The span render shrank into it (a 6/12 chart's 600px, so its 10px axis text drew at 5.5px); this
- * one is drawn 332px wide, so at 390 its text draws at its authored size and a narrower phone shrinks it little. It is
- * 180px tall, as a placed chart's narrow render is (codegen/chart-assets.ts), close to the 177px the span render showed.
- */
-const PHONE_CHART_PX = { width: 332, height: 180 } as const;
+/** 360px viewport less page padding, panel padding and borders; never scale below authored text size. */
+const PHONE_CHART_PX = { width: 302, height: 260 } as const;
 
 async function renderPanelCell(
   panel: PanelResult,
@@ -313,12 +307,12 @@ async function renderPanelCell(
   const span = placement && columns > 0
     ? { width: Math.round((placement.w / columns) * NOMINAL_DASHBOARD_WIDTH_PX), height: placement.h * NOMINAL_ROW_HEIGHT_PX }
     : undefined;
-  const svg = scopedSvgIds(await drawChart(panel, span), `panel-${position}-span`);
-  // s224-m01 (#2542 ruling 4): a Vega chart is drawn again for a phone, with ids of its own (scopedSvgIds). An ECharts
-  // panel keeps its span render at every width: at the phone box ECharts laid the choropleth's map under its legend's
-  // value labels, and the force graph's nodes against its legend (that layout is the ECharts adapters').
-  const phone = isVegaPanel(panel) ? assertHcSvgPaints(scopedSvgIds(await drawChart(panel, PHONE_CHART_PX), `panel-${position}-phone`), scope) : undefined;
-  return chartCell(panel.title, panel.a11yDescription, assertHcSvgPaints(svg, scope), phone, style, table, dataQualityField);
+  const wide = span ?? { width: 600, height: 320 };
+  const boxes = [PHONE_CHART_PX, ...(wide.width > 600 ? [{ width: 600, height: wide.height }] : []), ...(wide.width > PHONE_CHART_PX.width ? [wide] : [])];
+  const variants = [];
+  for (const [index, box] of boxes.entries()) variants.push({ width: box.width,
+    svg: assertHcSvgPaints(scopedSvgIds(await drawChart(panel, box), `panel-${position}-${index}`), scope) });
+  return chartCell(panel.title, panel.a11yDescription, variants, position, style, table, dataQualityField);
 }
 
 /** A chart panel with a non-empty `spec`, a Vega-Lite spec the export renders to SVG; otherwise an ECharts option. */
@@ -379,24 +373,25 @@ function kpiCell(panel: Extract<PanelResult, { kind: 'kpi' }>, style: string): s
 function chartCell(
   title: string | undefined,
   a11yDescription: string | undefined,
-  svg: string,
-  phone: string | undefined,
+  variants: Array<{ width: number; svg: string }>,
+  position: number,
   style: string,
   table: ChartTableData | undefined,
   dataQualityField: string | undefined,
 ): string {
   const parts: string[] = [
-    `<figure class="oods-panel oods-chart" role="figure"${style}${ariaLabelAttr(a11yDescription ?? title)}>`,
+    `<figure class="oods-panel oods-chart" data-chart-panel="${position}" role="figure"${style}${ariaLabelAttr(a11yDescription ?? title)}>`,
   ];
   if (title) {
     parts.push(`<figcaption>${esc(title)}</figcaption>`);
   }
-  // s224-m01 (#2542 ruling 4): the phone render, just before the span render it replaces at 600px and below. The
-  // stylesheet shows one of the two and gives the other display:none, so assistive technology reads one chart.
-  if (phone !== undefined) {
-    parts.push(`<div class="oods-chart-phone">${phone}</div>`);
-  }
-  parts.push(svg);
+  for (const [index, variant] of variants.entries()) parts.push(`<div class="oods-chart-size-${index}"${index ? ' style="display:none"' : ''}>${variant.svg}</div>`);
+  // Each larger render takes over only when its intrinsic width fits. No chart text is scaled down at the breakpoints.
+  const rules = variants.slice(1).map((variant, index) => {
+    const selector = `[data-chart-panel="${position}"]>`;
+    return `@container(min-width:${variant.width}px){${selector}.oods-chart-size-${index}{display:none!important}${selector}.oods-chart-size-${index + 1}{display:block!important}}`;
+  });
+  parts.push(`<style>${rules.join('')}</style>`);
   // SR-only data-table (m07 piece B) — the chart's data, accessible to a screen reader.
   if (table) {
     parts.push(dataTableHtml(table, dataQualityField));
@@ -509,7 +504,7 @@ function styleBlock(columns: number): string {
     `.oods-dashboard-summary{margin:0 0 12px;font-size:14px;color:var(--oods-color-muted,#555)}`,
     `.oods-dashboard-narrative{margin:0 0 12px;font-size:13px;color:var(--oods-color-muted,#555)}`,
     `.oods-dashboard-grid{display:grid;grid-template-columns:repeat(${columns},1fr);gap:12px}`,
-    `@media(max-width:600px){.oods-dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.oods-dashboard-grid>.oods-panel{grid-column:1/-1!important;grid-row:auto!important;min-width:0;margin:0}.oods-dashboard-grid>.oods-kpi{grid-column:auto!important}}`,
+    `@media(max-width:1024px){.oods-dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.oods-dashboard-grid>.oods-panel{grid-column:1/-1!important;grid-row:auto!important;min-width:0;margin:0}.oods-dashboard-grid>.oods-kpi{grid-column:auto!important}}`,
     `.oods-panel{background:var(--oods-color-panel-bg,#ffffff);border:1px solid var(--oods-color-panel-border,#e2e2e2);border-radius:8px;padding:12px;box-sizing:border-box}`,
     `.oods-dashboard-links{grid-column:1/-1;font-size:13px}.oods-dashboard-links h2{font-size:16px}`,
     `.oods-kpi-sparkline{display:block;width:100%;max-width:200px;height:48px;color:var(--oods-color-accent)}`,
@@ -521,15 +516,7 @@ function styleBlock(columns: number): string {
     `.oods-trend-decreasing{color:var(--oods-color-negative,#b42318)}`,
     `.oods-trend-flat{color:var(--oods-color-muted,#555)}`,
     `.oods-chart figcaption{font-size:13px;color:var(--oods-color-muted,#555);margin-bottom:8px}`,
-    // s223-m01 (#2527 ruling 8): a chart is drawn at its span of the nominal 1200px page (a 6/12 panel is a 600px SVG),
-    // so at 390 it was wider than its stacked panel and the page scrolled sideways; it shrinks to its panel instead.
-    `.oods-chart>svg{display:block;max-width:100%;height:auto}`,
-    // s224-m01 (#2542 ruling 4): at 600px and below, where the panels stack full width, a chart with a phone render
-    // (PHONE_CHART_PX, drawn for that column, so its axis text keeps its authored size) shows it in place of the span render
-    // that follows it; above, the span render as before. Not a container query on the figure: a 6/12 panel at 1440 is
-    // 592px inside, and a 4/12 or 5/12 one narrower still, so no figure width separates a phone's column from a desktop panel.
-    `.oods-chart-phone{display:none}.oods-chart-phone>svg{display:block;max-width:100%;height:auto}`,
-    `@media(max-width:600px){.oods-chart-phone{display:block}.oods-chart-phone+svg{display:none}}`,
+    `.oods-chart{container-type:inline-size;margin:0;min-width:0}.oods-chart>[class^="oods-chart-size-"]>svg{display:block;max-width:100%;height:auto;margin-inline:auto}`,
     `.oods-placeholder-title{margin:0 0 4px;font-size:13px}`,
     `.oods-placeholder-note{margin:0;font-size:13px;color:var(--oods-color-muted,#555)}`,
     `.oods-visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}`,

@@ -17,7 +17,7 @@ import { contrastOnGround, LAND_CONTRAST, resolveColor } from './geo-token-color
 import { getVizScaleTokens } from '../../tokens/scale-token-mapper.js';
 import type { DataRecord } from './geo-data-joiner.js';
 import { applyHcEchartsChrome, resolveOodsEchartsChrome } from '../../tokens/oods-echarts-chrome.js';
-import { withTitleBand } from './titled-geo.js';
+import { phoneGeoLayout, withTitleBand } from './titled-geo.js';
 
 const DEFAULT_MAP_NAME = 'custom-geo';
 const DEFAULT_CURVENESS = 0.3;
@@ -245,6 +245,7 @@ export function adaptFlowLineToECharts(
   const option = pruneUndefined({
     backgroundColor: chrome.background,
     geo: withTitleBand(result.geo, spec.name),
+    media: phoneGeoLayout(spec.name, result.visualMap, chrome.visualMapLabel),
     // Bake the visualMap tick label onto text-neutral when a strength-driven scale exists
     // (memo §6); the flow visualMap is show:false, so this is inert-but-consistent chrome.
     visualMap: result.visualMap

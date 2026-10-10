@@ -34,7 +34,7 @@ export function draftTokens(input:TokenDraftInput) {
     const usable=new Map<string,{token:Token;type:string;value:unknown;css:string;variable:string}>();
     for(const token of selected) {
       const relative=prefix&&token.path.startsWith(prefix+'.')?token.path.slice(prefix.length+1):token.path;
-      const variable='--'+relative.replace(/\./g,'-');
+      const variable=(relative.startsWith('--')?'':'--')+relative.replace(/\./g,'-');
       try {
         if(reservedTokenName(variable)||!/^--[A-Za-z_][A-Za-z0-9_-]*$/.test(variable))throw new Error('Token name is not a portable CSS custom property; rename or provide a supported export');
         const resolved=resolve(token),css=tokenCss(resolved.type,resolved.value);

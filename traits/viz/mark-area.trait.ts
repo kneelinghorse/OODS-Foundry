@@ -209,7 +209,7 @@ const MarkAreaTrait = {
 
   metadata: {
     created: '2025-11-15',
-    owners: ['viz@oods.systems', 'design@oods.systems'],
+    owners: ['Viz team', 'Design team'],
     maturity: 'alpha',
     conflicts_with: ['MarkBar', 'MarkLine', 'MarkPoint'],
     accessibility: {

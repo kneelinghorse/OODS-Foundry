@@ -173,7 +173,7 @@ const ScaleTemporalTrait = {
 
   metadata: {
     created: '2025-11-15',
-    owners: ['viz@oods.systems'],
+    owners: ['Viz team'],
     maturity: 'alpha',
     regionsUsed: ['detail', 'form'],
     allows: ['EncodingPositionX', 'EncodingPositionY'],

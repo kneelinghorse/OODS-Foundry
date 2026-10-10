@@ -140,6 +140,9 @@ export type Stage1RollupKind =
 
 export type StructuredDataFetchInput = {
   dataset?: StructuredDataset;
+  detail?: 'summary' | 'full';
+  page?: number;
+  pageSize?: number;
   kind?: Stage1RollupKind;
   runPath?: string;
   ifNoneMatch?: string;
@@ -496,6 +499,7 @@ export type CatalogListOutput = {
   page: number;
   pageSize: number;
   hasMore: boolean;
+  nextPage?: CatalogListInput;
   detail: CatalogListDetail;
   generatedAt: string;
   stats: {

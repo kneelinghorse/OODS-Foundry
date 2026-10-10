@@ -94,7 +94,7 @@ try {
   }
   const expected = await inspect(publishedRuntime, 'npm-runtime');
   const actual = await inspect(root, 'source-runtime');
-  assert.equal(Buffer.byteLength(JSON.stringify(expected.list)), 84_612);
+  assert(Buffer.byteLength(JSON.stringify(expected.list)) <= 85_000, 'The frozen tool list must fit its 85,000-byte budget');
   assert.equal(JSON.stringify(actual.list), JSON.stringify(expected.list), 'Adapter tools/list must match published npm exactly');
   assert.equal(actual.health.registry.objects, 16);
   const retainedLedgerHashes = {};

@@ -2,6 +2,7 @@ import { addressCollectionSummary, formatDateTime, formatReadOnlyValue, formatRe
 import type { UiElement, UiSchema } from '../schemas/generated.js';
 import type { CodegenOptions } from '../codegen/types.js';
 import { isReferenceField, resolveFieldProps, resolveFrameworkChildContent, resolveFrameworkRecipeProps, snakeToCamel } from '../codegen/binding-utils.js';
+import { recordDisplayValue } from '../compose/record-display.js';
 import { fieldLabel } from '../compose/label-generator.js';
 import { collectionSources } from '../codegen/collection-emitter.js';
 import { withHtmlActions, HTML_INTERACTIONS } from './html-interactions.js';
@@ -26,10 +27,8 @@ export function bindRecordSchema(schema: UiSchema, model: Record<string, unknown
   const raw = (field: unknown, row: Record<string, unknown>): unknown => typeof field === 'string' ? row[snakeToCamel(field)] ?? row[field] : undefined;
   const display = (field: string, row: Record<string, unknown>): unknown => {
     const entry = fields[field];
-    const value = raw(field, row);
-    const shown = String(value ?? '').trim() ? value : raw(entry?.displayFallbackField, row);
-    const numberedObject = entry?.semanticType?.match(/^object\.([^.]+)\.number$/)?.[1];
-    if (numberedObject && /^(?:[A-Z]{1,4}-)?\d+$/.test(String(shown ?? ''))) return `${fieldLabel(numberedObject)} ${Number(String(shown).replace(/^[A-Z]{1,4}-/, ''))}`;
+    const shown = recordDisplayValue(field, fields, name => raw(name, row));
+    if (!entry?.titleReferences?.length && (entry?.referenceLabels || entry?.displayLabelField)) return formatReferenceLabel(raw(field, row), raw(entry.displayLabelField, row) ?? entry.referenceLabels?.[String(raw(field, row))], entry.displayLabel ?? fieldLabel(field));
     return isReferenceField(entry) || isReferenceField(fields[entry?.displayFallbackField ?? '']) ? formatRecordLabel(shown, entry?.semanticType === 'text.label') : typeof shown === 'number' ? String(shown) : shown;
   };
   const walk = (source: UiElement, row: Record<string, unknown>, suffix = ''): UiElement[] => {
@@ -48,7 +47,7 @@ export function bindRecordSchema(schema: UiSchema, model: Record<string, unknown
       if (binding.sourceProp === 'minorUnitsParameter' && binding.targetProp === 'minorUnits') value = fields[String(authored.amountField)]?.money?.minorUnits;
       if (binding.sourceProp === 'statesParameter') value = row.allowedTransitions;
       if (node.component === 'PreferenceEditor' && binding.sourceProp === 'documentField') value = JSON.stringify(value ?? {}, null, 2);
-      if (typeof field === 'string' && ['titleField', 'labelField'].includes(binding.sourceProp)) value = display(field, row);
+      if (typeof field === 'string' && (['titleField', 'labelField'].includes(binding.sourceProp) || binding.targetProp === 'content' && node.component === 'StatusBadge')) value = display(field, row);
       if (typeof field === 'string' && binding.sourceProp === 'ownerIdField' && ['label', 'ownerLabel'].includes(binding.targetProp)) value = formatReferenceLabel(value, raw(fields[field]?.displayLabelField, row) ?? fields[field]?.referenceLabels?.[String(raw(field, row))], fieldLabel(field.replace(/_ids?$/, '')));
       // s223-m02 (#2527 ruling 13i): the address panel prints the record's addresses as React and Vue do.
       if (node.component === 'AddressCollectionPanel' && binding.targetProp === 'summary') value = addressCollectionSummary(value);
@@ -63,7 +62,7 @@ export function bindRecordSchema(schema: UiSchema, model: Record<string, unknown
         if (content.isChildren || ['label', 'title'].includes(content.propName ?? '')) value = display(field, row);
         if (source.meta?.intent === 'read-only-field') value = isReferenceField(fields[field])
           ? formatReferenceLabel(raw(field, row), raw(fields[field]?.displayLabelField, row) ?? fields[field]?.referenceLabels?.[String(raw(field, row))], fieldLabel(field.replace(/_ids?$/, '')))
-          : formatReadOnlyValue(raw(field, row), fields[field]!.type, Boolean(fields[field]!.enum), fields[field]!.format);
+          : fields[field]!.enum?.length ? display(field, row) : formatReadOnlyValue(raw(field, row), fields[field]!.type, false, fields[field]!.format);
         else if (content.isChildren) {
           if (/date|time/.test(fields[field]!.type) && value) value = formatDateTime(String(value), { dateOnly: fields[field]!.type.replace(/\?$/, '') === 'date' });
           else if (typeof value === 'boolean') value = value ? 'Yes' : 'No';
@@ -78,7 +77,8 @@ export function bindRecordSchema(schema: UiSchema, model: Record<string, unknown
     if (typeof field === 'string' && ['Input', 'Checkbox', 'Switch', 'Select', 'SegmentedControl', 'Combobox', 'Textarea', 'DatePicker'].includes(node.component) && !source.collectionControl) props.name ??= field;
     delete props.field;
     delete props.fallbackField;
-    if (node.component === 'StatusBadge' && props.status !== undefined) props.label = formatReadOnlyValue(props.status, 'string', true);
+    if (node.component === 'StatusTimeline' && !source.children?.length && !['events', 'history', 'entries', 'stateHistory'].some(key => Array.isArray(props[key]) && (props[key] as unknown[]).length)) return [];
+    if (node.component === 'StatusBadge' && props.status !== undefined) props.label = props.content ?? formatReadOnlyValue(props.status, 'string', true);
     if (source.collectionControl) props['data-oods-control'] = source.collectionControl;
     if (source.collectionControl === 'open') {
       props.className = [props.className, 'oods-collection-row'].filter(Boolean).join(' '); props['data-oods-action'] = 'handleRowClick';

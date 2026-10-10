@@ -1,9 +1,24 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
-  "required": ["components", "totalCount", "returnedCount", "page", "pageSize", "hasMore", "detail", "generatedAt", "stats", "availableCategories"],
+  "required": [
+    "components",
+    "totalCount",
+    "returnedCount",
+    "page",
+    "pageSize",
+    "hasMore",
+    "detail",
+    "generatedAt",
+    "stats",
+    "availableCategories"
+  ],
   "properties": {
-    "registry": { "type": "object", "description": "Live object and trait names, source and any unused/shadowed definitions.", "additionalProperties": true },
+    "registry": {
+      "type": "object",
+      "description": "Live object and trait names, source and any unused/shadowed definitions.",
+      "additionalProperties": true
+    },
     "obligationScope": {
       "type": "object",
       "description": "Current accepted catalog scope ruling, independent of historical row classification proposals and target capability evidence. Retained obligations are not implementation or maturity claims.",
@@ -44,7 +59,8 @@
         "classificationStatus": {
           "type": "string",
           "enum": [
-            "historical-proposals-unapproved", "proposed-awaiting-approval"
+            "historical-proposals-unapproved",
+            "proposed-awaiting-approval"
           ]
         }
       },
@@ -58,16 +74,34 @@
           {
             "type": "object",
             "description": "A brief entry (detail brief, the unfiltered default).",
-            "required": ["name", "categories", "readiness"],
+            "required": [
+              "name",
+              "categories",
+              "readiness"
+            ],
             "properties": {
-              "name": { "type": "string" },
-              "description": { "type": "string", "minLength": 1 },
-              "categories": { "type": "array", "items": { "type": "string" } },
-              "readiness": { "$ref": "#/$defs/componentReadiness" }
+              "name": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string",
+                "minLength": 1
+              },
+              "categories": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "readiness": {
+                "$ref": "#/$defs/componentReadiness"
+              }
             },
             "additionalProperties": false
           },
-          { "$ref": "#/$defs/componentEntry" }
+          {
+            "$ref": "#/$defs/componentEntry"
+          }
         ]
       }
     },
@@ -97,7 +131,11 @@
     },
     "detail": {
       "type": "string",
-      "enum": ["brief", "summary", "full"],
+      "enum": [
+        "brief",
+        "summary",
+        "full"
+      ],
       "description": "Detail level applied to component entries."
     },
     "generatedAt": {
@@ -106,7 +144,10 @@
     },
     "stats": {
       "type": "object",
-      "required": ["componentCount", "traitCount"],
+      "required": [
+        "componentCount",
+        "traitCount"
+      ],
       "properties": {
         "componentCount": {
           "type": "integer",
@@ -128,7 +169,9 @@
     },
     "availableCategories": {
       "type": "array",
-      "items": { "type": "string" },
+      "items": {
+        "type": "string"
+      },
       "description": "All available category values that can be used for filtering. Sorted alphabetically."
     },
     "suggestions": {
@@ -137,11 +180,18 @@
       "properties": {
         "traits": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "description": "Closest matching trait names."
         }
       },
       "additionalProperties": false
+    },
+    "nextPage": {
+      "type": "object",
+      "description": "Arguments for the next catalog_list call, absent on the last page.",
+      "additionalProperties": true
     }
   },
   "$defs": {
@@ -150,55 +200,88 @@
       "description": "Each prop by name: its TypeScript type as the declaration writes it, and whether it is optional.",
       "additionalProperties": {
         "type": "object",
-        "required": ["type", "optional"],
+        "required": [
+          "type",
+          "optional"
+        ],
         "additionalProperties": false,
         "properties": {
-          "type": { "type": "string" },
-          "optional": { "type": "boolean" }
+          "type": {
+            "type": "string"
+          },
+          "optional": {
+            "type": "boolean"
+          }
         }
       }
     },
     "componentReadiness": {
       "type": "string",
-      "enum": ["proven-in-generated-apps", "react-and-vue", "incomplete"],
+      "enum": [
+        "proven-in-generated-apps",
+        "react-and-vue",
+        "incomplete"
+      ],
       "description": "One label from the measured surfaces: proven-in-generated-apps = React and Vue implementations with evidence, placed in a generated app that passed the runtime gates; react-and-vue = implemented in both with evidence, not yet placed in a generated app; incomplete = a framework implementation or its evidence is missing. The evidence is productReality, in detail full."
     },
     "componentEntry": {
       "type": "object",
-      "required": ["name", "displayName", "categories", "tags", "contexts", "regions", "traits", "status"],
+      "required": [
+        "name",
+        "displayName",
+        "categories",
+        "tags",
+        "contexts",
+        "regions",
+        "traits",
+        "status"
+      ],
       "properties": {
         "name": {
           "type": "string",
           "description": "Component name (e.g., 'Button', 'Card')"
         },
-        "description": { "type": "string", "minLength": 1 },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
         "displayName": {
           "type": "string",
           "description": "Human-readable display name"
         },
         "categories": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "description": "Component categories (e.g., ['core'], ['data'])"
         },
         "tags": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "description": "Component tags for search and discovery"
         },
         "contexts": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "description": "Rendering contexts where component can be used"
         },
         "regions": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "description": "UI regions where component can appear"
         },
         "traits": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "description": "List of trait capabilities (e.g., ['Editable', 'Searchable'])"
         },
         "productReality": {
@@ -207,14 +290,20 @@
         },
         "status": {
           "type": "string",
-          "enum": ["stable", "beta", "planned"],
+          "enum": [
+            "stable",
+            "beta",
+            "planned"
+          ],
           "description": "Legacy static-HTML renderer status only. 'stable' = has a mapped HTML renderer; 'planned' = the HTML renderer falls back. This is not a React, Vue, code-generation, or release-readiness claim."
         },
         "maturity": {
           "type": "string",
           "description": "Maturity indicator derived from the source trait (e.g., 'stable', 'beta', 'draft')."
         },
-        "readiness": { "$ref": "#/$defs/componentReadiness" },
+        "readiness": {
+          "$ref": "#/$defs/componentReadiness"
+        },
         "deprecated_since": {
           "type": "string",
           "description": "DSL version since which this component is deprecated. When set, tools surface deprecation warnings in meta.warnings."
@@ -232,11 +321,18 @@
         "propTypes": {
           "type": "object",
           "description": "The React and Vue components' props, with their types, from the published declarations of @oods/components-react and @oods/components-vue (detail=full only).",
-          "required": ["react", "vue"],
+          "required": [
+            "react",
+            "vue"
+          ],
           "additionalProperties": false,
           "properties": {
-            "react": { "$ref": "#/$defs/targetPropTypes" },
-            "vue": { "$ref": "#/$defs/targetPropTypes" }
+            "react": {
+              "$ref": "#/$defs/targetPropTypes"
+            },
+            "vue": {
+              "$ref": "#/$defs/targetPropTypes"
+            }
           }
         },
         "slots": {
@@ -247,7 +343,9 @@
             "properties": {
               "accept": {
                 "type": "array",
-                "items": { "type": "string" }
+                "items": {
+                  "type": "string"
+                }
               },
               "role": {
                 "type": "string"
@@ -260,11 +358,18 @@
           "description": "References into Storybook `.stories.tsx` files (usage patterns + minimal snippets, detail=full only).",
           "items": {
             "type": "object",
-            "required": ["kind", "path", "snippet"],
+            "required": [
+              "kind",
+              "path",
+              "snippet"
+            ],
             "properties": {
               "kind": {
                 "type": "string",
-                "enum": ["storybook", "code-connect"],
+                "enum": [
+                  "storybook",
+                  "code-connect"
+                ],
                 "description": "Reference kind."
               },
               "path": {
@@ -292,7 +397,10 @@
     },
     "capabilityEvidence": {
       "type": "object",
-      "required": ["state", "evidence"],
+      "required": [
+        "state",
+        "evidence"
+      ],
       "properties": {
         "state": {
           "type": "string",
@@ -301,7 +409,10 @@
         },
         "evidence": {
           "type": "array",
-          "items": { "type": "string", "minLength": 1 },
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
           "uniqueItems": true,
           "description": "Repo-relative evidence references supporting the state."
         },
@@ -315,27 +426,73 @@
     },
     "componentProductReality": {
       "type": "object",
-      "required": ["schemaVersion", "proposedClassification", "reconciliationState", "surfaces"],
+      "required": [
+        "schemaVersion",
+        "proposedClassification",
+        "reconciliationState",
+        "surfaces"
+      ],
       "properties": {
-        "schemaVersion": { "type": "string", "minLength": 1 },
+        "schemaVersion": {
+          "type": "string",
+          "minLength": 1
+        },
         "proposedClassification": {
           "type": "string",
-          "enum": ["native", "recipe", "alias", "authoring-only", "merged", "retired"]
+          "enum": [
+            "native",
+            "recipe",
+            "alias",
+            "authoring-only",
+            "merged",
+            "retired"
+          ]
         },
-        "reconciliationState": { "type": "string", "minLength": 1 },
+        "reconciliationState": {
+          "type": "string",
+          "minLength": 1
+        },
         "surfaces": {
           "type": "object",
-          "required": ["contract", "metadata", "html", "react", "vue", "generatedConsumer", "accessibility", "theme", "interaction"],
+          "required": [
+            "contract",
+            "metadata",
+            "html",
+            "react",
+            "vue",
+            "generatedConsumer",
+            "accessibility",
+            "theme",
+            "interaction"
+          ],
           "properties": {
-            "contract": { "$ref": "#/$defs/capabilityEvidence" },
-            "metadata": { "$ref": "#/$defs/capabilityEvidence" },
-            "html": { "$ref": "#/$defs/capabilityEvidence" },
-            "react": { "$ref": "#/$defs/capabilityEvidence" },
-            "vue": { "$ref": "#/$defs/capabilityEvidence" },
-            "generatedConsumer": { "$ref": "#/$defs/capabilityEvidence" },
-            "accessibility": { "$ref": "#/$defs/capabilityEvidence" },
-            "theme": { "$ref": "#/$defs/capabilityEvidence" },
-            "interaction": { "$ref": "#/$defs/capabilityEvidence" }
+            "contract": {
+              "$ref": "#/$defs/capabilityEvidence"
+            },
+            "metadata": {
+              "$ref": "#/$defs/capabilityEvidence"
+            },
+            "html": {
+              "$ref": "#/$defs/capabilityEvidence"
+            },
+            "react": {
+              "$ref": "#/$defs/capabilityEvidence"
+            },
+            "vue": {
+              "$ref": "#/$defs/capabilityEvidence"
+            },
+            "generatedConsumer": {
+              "$ref": "#/$defs/capabilityEvidence"
+            },
+            "accessibility": {
+              "$ref": "#/$defs/capabilityEvidence"
+            },
+            "theme": {
+              "$ref": "#/$defs/capabilityEvidence"
+            },
+            "interaction": {
+              "$ref": "#/$defs/capabilityEvidence"
+            }
           },
           "additionalProperties": false
         }

@@ -194,7 +194,7 @@ const EncodingPositionXTrait = {
 
   metadata: {
     created: '2025-11-15',
-    owners: ['viz@oods.systems', 'engineering@oods.systems'],
+    owners: ['Viz team', 'Engineering team'],
     maturity: 'alpha',
     accessibility: {
       rule_reference: 'A11Y-R-05',

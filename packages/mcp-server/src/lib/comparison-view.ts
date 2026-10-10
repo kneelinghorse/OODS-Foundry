@@ -25,7 +25,7 @@ const noun = (family: string, count: number) => (FAMILY_NOUN[family] ?? [`${fami
 const humanize = (value: string) => familyWords(value).replace(/^./, letter => letter.toUpperCase());
 /** The day a retained instant falls on, in UTC, so the same words render in every host timezone (Sprint 196). */
 export const dayLabel = (iso: string) => { const date = new Date(iso); return Number.isNaN(date.getTime()) ? iso : date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' }); };
-type Family = { family: string; verdict?: string; conformant?: number; off_system?: number; live_distinct_values?: number; ds_token_values?: number; excluded_by_alpha_policy?: { live?: number; ds?: number }; resolutions?: Array<{ live_value?: string }>; live_basis?: string; explained_values?: number; excluded_values?: number; empty_reason?: string; occurrences?: { total: number; compared: number; not_painted: number | null; third_party: number | null; browser_default: number | null }; by_typeface?: Array<{ typeface: string; comparand: string; conformant: number; explained_values: number; off_system: number; no_comparand_values: number }> };
+type Family = { family: string; verdict?: string; conformant?: number; off_system?: number; live_distinct_values?: number; ds_token_values?: number; excluded_by_alpha_policy?: { live?: number; ds?: number }; resolutions?: Array<{ live_value?: string; detail?: { stroke?: { color: string; x: number; y: number; blur: number; spread: number; inset: boolean } } }>; eligibility?: { effect_style_values?: number; stroke_color_values?: number }; live_basis?: string; explained_values?: number; excluded_values?: number; empty_reason?: string; occurrences?: { total: number; compared: number; not_painted: number | null; third_party: number | null; browser_default: number | null }; by_typeface?: Array<{ typeface: string; comparand: string; conformant: number; explained_values: number; off_system: number; no_comparand_values: number }> };
 /** The live sizes a font-size join counted but neither matched nor signalled, and the typefaces they are set in when the retained bytes say. */
 export type Uncompared = { count: number; families: string[] };
 const listWords = (items: string[]) => items.length < 2 ? items.join('') : `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}`;
@@ -46,7 +46,14 @@ export function familySentence(row: Family | undefined, family: string, offValue
     const occurrences = row.occurrences;
     const categories = occurrences ? ` Occurrences: ${occurrences.compared} compared of ${occurrences.total} sampled; not painted ${occurrences.not_painted ?? 'not recorded'}; third party ${occurrences.third_party ?? 'not recorded'}; browser default ${occurrences.browser_default ?? 'not recorded'}.` : '';
     const faces = family === 'font_size' && row.by_typeface?.length ? ` By typeface: ${row.by_typeface.map(face => `${face.typeface} (${familyWords(face.comparand)}): ${face.conformant} exact, ${face.explained_values} explained, ${face.off_system} off-system, ${face.no_comparand_values} without a comparand`).join('; ')}.` : '';
-    return counts + alphaNote + categories + faces;
+    const eligibility = row.eligibility;
+    const eligible = eligibility?.effect_style_values !== undefined || eligibility?.stroke_color_values !== undefined
+      ? ` Eligible design values: ${eligibility.effect_style_values ?? 'not recorded'} effect styles; ${eligibility.stroke_color_values ?? 'not recorded'} stroke colors.` : '';
+    const strokes = (row.resolutions ?? []).flatMap(resolution => {
+      const stroke = resolution.detail?.stroke;
+      return stroke ? [`${stroke.color}, ${stroke.x}px/${stroke.y}px offset, ${stroke.blur}px blur, ${stroke.spread}px spread, ${stroke.inset ? 'inset' : 'outer'}`] : [];
+    });
+    return counts + alphaNote + categories + faces + eligible + (strokes.length ? ` Recorded strokes: ${[...new Set(strokes)].join('; ')}. Geometry is retained; stroke matching judges color.` : '');
   }
   if (!row || row.verdict !== 'joined') return notJoined;
   const live = row.live_distinct_values ?? 0, ok = row.conformant ?? 0, off = row.off_system ?? 0, ds = row.ds_token_values ?? 0;
@@ -79,7 +86,7 @@ export function readComparisonView(analysisPath: string): ComparisonView {
   const admitted = readDerivedAnalysis(analysisPath);
   const { analysis, report, figTokens, manifest } = admitted;
   const target = manifest.targets[0].name;
-  const rawContract = report.schema_version === '1.4.0';
+  const rawContract = ['1.4.0', '2.0.0'].includes(report.schema_version);
   const rerunFingerprint = (analysis.passes_rerun as readonly string[]).includes('style.fingerprint');
   const provenance = { provenance_source: 'Stage1', provenance_record: analysis.analysis_run_id, provenance_method: `${analysis.passes_rerun.join(', ')}; ${rerunFingerprint ? 'fingerprint recomputed from retained evidence' : 'retained capture inputs copied, not rerun'}`, provenance_at: analysis.analyzed_at };
   const families: Family[] = Array.isArray(report.value_join?.families) ? report.value_join.families : [];
@@ -100,6 +107,8 @@ export function readComparisonView(analysisPath: string): ComparisonView {
     return { count, families: sizes === count ? candidates.map(({ entry }: any) => String(entry.family)) : [] };
   };
   const kit = figTokens?.source.file_label;
+  const tokenNote = figTokens?.version === '1.6.0'
+    ? ` Token extract: ${figTokens.tokens.length} tokens, ${figTokens.tokens.filter((token: any) => token.soft_deleted).length} marked deleted; ${figTokens.collections?.length ?? 0} collections; ${figTokens.tokens.flatMap((token: any) => token.values ?? []).filter((value: any) => value.reference).length} values carry references in their recorded modes. Scopes: ${[...new Set(figTokens.tokens.flatMap((token: any) => token.scopes ?? []))].join(', ') || 'none recorded'}. Deleted entries and collection defaults remain source metadata.` : '';
   const designSource = analysis.inputs.some(input => input.path === 'artifacts/design_source_tokens.json');
   const joined = ['color', 'radius', 'font_size'].map(family => ({ family, row: join(family) })).filter((entry): entry is { family: string; row: Family } => entry.row?.verdict === 'joined');
   const byFamily = new Map<string, number>();
@@ -108,12 +117,12 @@ export function readComparisonView(analysisPath: string): ComparisonView {
   const summary: Row = { comparison_id: analysis.analysis_run_id, title: `Comparison · ${target}`,
     // s211-m02: the capture and analysis days are the page header's line; the description does not repeat them.
     description: `Stage1 compared the live ${target} site with its design values${kit ? ` (${kit})` : ''}: ${joined.length ? joined.map(entry => familyClause(entry.row, entry.family)).join('; ') : 'no completed value join was recorded'}. ${count} signal${count === 1 ? '' : 's'}.`,
-    measurement_basis: rawContract ? 'Drift report 1.4.0: raw values where recorded, cluster medians only when the report says so. Exact token matches remain conformant; explained values are separate. Ratios from 1.3.0 and 1.4.0 are different measurements and are not compared here.' : `Drift report ${report.schema_version}: historical value comparison; its ratios are not comparable with 1.4.0 raw-value ratios.`,
+    measurement_basis: rawContract ? `Drift report ${report.schema_version}: raw values where recorded, cluster medians only when the report says so. Exact token matches remain conformant; explained values are separate. Ratios from 1.3.0 and 1.4.0 are different measurements and are not compared here.` : `Drift report ${report.schema_version}: historical value comparison; its ratios are not comparable with 1.4.0 raw-value ratios.`,
     other_families: ['spacing', 'border_color', 'shadow', 'font_weight'].filter(family => join(family)).map(family => `${humanize(family)}: ${familySentence(join(family), family, offValues(family))}`).join('\n') || 'Not recorded on this analysis.',
     explained_values: rawContract ? [...new Set((report.value_join?.explained ?? []).map((entry: any) => familyWords(String(entry.category))))].join(', ') || 'No separately explained values recorded.' : 'Not recorded on this analysis.',
     colors: familySentence(join('color'), 'color', offValues('color')), radius: familySentence(join('radius'), 'radius', offValues('radius')), font_size: familySentence(join('font_size'), 'font_size', offValues('font_size'), uncomparedFontSizes()),
     signals: count ? `${count} signal${count === 1 ? '' : 's'}: ${[...byFamily.entries()].map(([family, n]) => `${n} ${family}`).join(', ')}.` : 'No signals were recorded.',
-    design_comparand: kit ? `${kit} (Figma local tokens); ${rerunFingerprint ? 'live fingerprint recomputed from retained capture evidence' : 'retained capture inputs were copied, not rerun'}.` : designSource ? 'Design-source tokens retained; see each signal’s design comparand.' : 'No design comparand retained',
+    design_comparand: kit ? `${kit} (Figma local tokens); ${rerunFingerprint ? 'live fingerprint recomputed from retained capture evidence' : 'retained capture inputs were copied, not rerun'}.${tokenNote}` : designSource ? 'Design-source tokens retained; see each signal’s design comparand.' : 'No design comparand retained',
     result_state: admitted.resultState, target_name: target, source_capture_id: analysis.source.run_id, captured_at: analysis.source.captured_at, source_manifest_at: admitted.sourceManifest.environment.timestamp, analyzed_at: analysis.analyzed_at,
     result_note: admitted.resultNote, copied_inputs: analysis.inputs.filter(input => input.origin === 'source_capture').length,
     execution_note: `Only ${analysis.passes_rerun.join(' and ')} reran${analysis.stage1_version ? ` with Stage1 ${analysis.stage1_version}` : ''}. Capture, authentication and redaction were not performed.`, ...provenance, provenance_locator: 'manifest.json#/analysis',
@@ -140,7 +149,7 @@ export function readComparisonView(analysisPath: string): ComparisonView {
       // type caveat in its description and measurement limit instead of a state Forge assigned.
       result_state: admitted.resultState,
       severity: humanize(String(signal.severity_level)), severity_basis: (signal.severity_basis as string[]).map(humanize).join(', '), tolerance: describeTolerance(signal.tolerance),
-      measurement_limit: rawContract ? 'Drift report 1.4.0: raw values where retained, with separately explained occurrences; exact matches alone are conformant. Not comparable with 1.3.0 ratios.' : family === 'font_size' ? typeLimit : 'Exact recorded comparison; sampled occurrences are weight, not proof of broader coverage.',
+      measurement_limit: rawContract ? `Drift report ${report.schema_version}: raw values where retained, with separately explained occurrences; exact matches alone are conformant. Not comparable with 1.3.0 ratios.` : family === 'font_size' ? typeLimit : 'Exact recorded comparison; sampled occurrences are weight, not proof of broader coverage.',
       signal_class: humanize(String(signal.class)), comparison_id: analysis.analysis_run_id, source_capture_id: analysis.source.run_id,
       live_comparand: describe('live'), design_comparand: describe('design'), kit_label: kit ?? 'No design comparand retained', ...provenance, provenance_locator: `artifacts/drift_report.json#/signals/${n}`,
     };

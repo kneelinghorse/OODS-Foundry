@@ -169,7 +169,7 @@ const AuthableTrait = {
 
   metadata: {
     created: '2025-11-19',
-    owners: ['security@oods.systems', 'platform@oods.systems'],
+    owners: ['Security team', 'Platform team'],
     maturity: 'experimental',
     accessibility: {
       keyboard: 'RoleAssignmentForm keeps role filter + add/remove buttons in a linear tab order.',

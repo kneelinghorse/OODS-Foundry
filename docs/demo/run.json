@@ -1,17 +1,28 @@
 {
-  "version": "0.11.0",
+  "version": "0.11.1",
   "builderSelfCertified": false,
   "conversation": {
-    "client": "Claude Code 2.1.294",
-    "candidateHead": "101fb413c804769aaab9430423d1cb34fbdcb65a",
-    "tarballSha256": "25309d2adba4ab30d9bea75096c10abe78e34ffc9360cfa0da25709a94e2883d",
+    "client": "Claude Code 2.0.76",
+    "candidateHead": "01505a03b2277996089255bd55647f79443a743f",
+    "tarballSha256": "f70d6bf2b73de0fdf94f1fa1383f5ea3637cd3f80b97c6db732825c3aa62ad14",
     "freshProfile": true,
-    "emptyNpmCache": true
+    "emptyNpmCache": true,
+    "acceptedObjects": 102,
+    "acceptedMembershipTraits": [
+      "Timestampable"
+    ],
+    "declinedMembershipTraits": [
+      "Stateful",
+      "Ownerable"
+    ],
+    "confirmedShippedDefinition": [
+      "User"
+    ]
   },
   "capture": {
-    "freezeHead": "74da4ff4cee8b8cb6857e24195f8ec3d1a63f130",
-    "archiveSha256": "343c5a288b2613c396738a8ae2691ecddea145e24dc198ece486815ee93e53cb",
-    "method": "Replay the candidate conversation's compose/generate calls with unchanged accepted inputs on the frozen 0.11.0 runtime.",
+    "freezeHead": "37e13fe2c88cf4bb7578e0a5a09da61b2023e568",
+    "archiveSha256": "0cc5696713777710ac4f01206c02464f64b74abf383b77131eaef95151119b6c",
+    "method": "Replay the candidate conversation\u2019s compose/generate calls with byte-identical accepted inputs on the frozen 0.11.1 runtime. Generated app files are unchanged. Screens include a saved role, relationship and checkbox edit.",
     "screensInspected": 32,
     "axeViolations": 0,
     "pageErrors": 0,
@@ -19,86 +30,102 @@
   },
   "images": [
     {
-      "path": "images/react-timeline-1440-dark.png",
-      "sha256": "5b047fb8723e2dcfeda70607c01e6f2c8edef00077b6c1bf0da2eef160fb87a5"
-    },
-    {
-      "path": "images/react-timeline-1440-light.png",
-      "sha256": "8473ae58658bcbe44f309788c562f29f71ca4062e8a06c95d9ebfa7a694ce52c"
-    },
-    {
-      "path": "images/vue-form-1440-dark.png",
-      "sha256": "bd92d5c9a0ce6d90c2b796a9069dc4ad5c20d0a2071668b616aa136522dc027d"
-    },
-    {
-      "path": "images/vue-form-1440-light.png",
-      "sha256": "7cb3548305ff98d2f0661684c2d3ff24b1af4f3122a3203d3dbc4d43eafcbdfa"
+      "path": "images/react-detail-1440-dark.png",
+      "sha256": "7120dd88bc49f69036bb4fb13c1825e8258f886fe24642e2ac308000ce16921d"
     },
     {
       "path": "images/react-detail-1440-light.png",
-      "sha256": "51578620a7963a7c4d83047669887b0bce7ae27fffd37332af830846ab407951"
-    },
-    {
-      "path": "images/react-form-1440-dark.png",
-      "sha256": "e1c34169344a9a63022fc6b24cc0d6073f935b9641c281a45e375a39577ae2ac"
-    },
-    {
-      "path": "images/react-list-1440-light.png",
-      "sha256": "97d7870f87a8d25336a224f6f0ddce91e584337fb836dcc57eda31e41eed9e7f"
-    },
-    {
-      "path": "images/vue-form-390-light.png",
-      "sha256": "49134f846d183f0361ab8c08f04a4446d98be6c70157077bc8d5c67b6616a8ed"
-    },
-    {
-      "path": "images/vue-timeline-1440-dark.png",
-      "sha256": "7b3a1c022d3d5a4b22cd4b0c769ea453a3e55e6b7e2a219234b97db15840d630"
+      "sha256": "ab0589751581033b41353690598166962490a4dbe2b2242df8d3f615f84394e3"
     },
     {
       "path": "images/react-detail-390-dark.png",
-      "sha256": "615d2ce5b97d8f53d2e081e9111b435d5d0a97e61e7581b5e070b93cf8681405"
+      "sha256": "0476d7c6105bf7ff39ab6213deb1f6a351062ed996e8001abd49d4688d4575a1"
     },
     {
-      "path": "images/vue-list-1440-dark.png",
-      "sha256": "2e37127ec097062670866680d890896899bf4d9128d75f37ab2a20bc9f9796f2"
+      "path": "images/react-form-1440-dark.png",
+      "sha256": "304a033badbdbef6f84bc562933e4a3993d908b652f24ada697d86214b82bead"
     },
     {
       "path": "images/react-form-1440-light.png",
-      "sha256": "af76f7f7d7889c4f8220abd36b6614cafe597c191ba75f92bfa8a4354c2d1a96"
-    },
-    {
-      "path": "images/vue-detail-1440-dark.png",
-      "sha256": "b276d5faaab1f44ba52f43bff639d6d455ba118ff79def2450776e6ead096cdf"
-    },
-    {
-      "path": "images/react-detail-1440-dark.png",
-      "sha256": "3d82a09ca4952f9257f82cb092e9fa662cd9debdd2ad8880bc280c7816bbbb92"
-    },
-    {
-      "path": "images/vue-list-1440-light.png",
-      "sha256": "2ba20b78056bd089115a8bfe4eb5b6bcd183b28b3c952a44b2a87b3b8a926d66"
+      "sha256": "2214e9a0698c23b8502f5398abafc9760e8b355f424007df7090921d3dbec95d"
     },
     {
       "path": "images/react-list-1440-dark.png",
-      "sha256": "033ccb6e280e953d8de5c407c54219656d4000cea4c27e04996efc0dd6b35668"
+      "sha256": "4a88375331f64386cd62d8083872e22ada1ce5e7c2e015640793feaa4f55b102"
+    },
+    {
+      "path": "images/react-list-1440-light.png",
+      "sha256": "c475833e5b59944f728815cf022d738f3802b11f68ef6f00fe5354e9ed7aee74"
+    },
+    {
+      "path": "images/react-timeline-1440-dark.png",
+      "sha256": "4d5d3493e99c7b70b5f98dd631aadb6a8714691a64f94524540e269309c4b9a1"
+    },
+    {
+      "path": "images/react-timeline-1440-light.png",
+      "sha256": "727635472521bc2d9e3965e547a7005e350368bdd6ec109f22dd700be03872b8"
+    },
+    {
+      "path": "images/vue-detail-1440-dark.png",
+      "sha256": "d0e24e533665df86f4faadba528274c70773210c08a6529117db19fceab25c8c"
     },
     {
       "path": "images/vue-detail-1440-light.png",
-      "sha256": "027060148ce8b913038eb2106effcfea04c48aa8d017c80cfe18823d14413ebd"
+      "sha256": "86d6d1b75ddcc18a998cdda4312591fbba4e414e032740e3d2b983874ff553e1"
+    },
+    {
+      "path": "images/vue-form-1440-dark.png",
+      "sha256": "51101c245d1cea652d3a0a39bfbdf9ec4f3a7d2ca6fdb79d579edf75fe3c1202"
+    },
+    {
+      "path": "images/vue-form-1440-light.png",
+      "sha256": "58d1da43b7e844396043eadd70863c861bb3ed6fcc87561f014806a3b2c7020a"
+    },
+    {
+      "path": "images/vue-form-390-light.png",
+      "sha256": "8f53e12385e03ebfd827d1033815846df7d728c06ac574542825068234af109c"
+    },
+    {
+      "path": "images/vue-list-1440-dark.png",
+      "sha256": "580732cdf03e8b8a470b6c8808b8aef19d1aafeaaa070c581937036fdaa19d6c"
+    },
+    {
+      "path": "images/vue-list-1440-light.png",
+      "sha256": "8b8a737bccdbf9a863c81ee69b5fa5c67f902efefb47a50b9ce037fbc9b0572a"
+    },
+    {
+      "path": "images/vue-timeline-1440-dark.png",
+      "sha256": "df9f1c8896ffde74123129de68eb4933a221ec4ec5632a3ff5cd6937ad10919c"
     },
     {
       "path": "images/vue-timeline-1440-light.png",
-      "sha256": "0eb6fa304b365d1a7a7014e7afe5af2d1312ed04f1a40494723e8886750969cd"
+      "sha256": "0175099d898bdee37cc230be0ab01a4dee67266644488c783a7ac0f3c9f6a3dc"
     }
   ],
   "recording": {
     "path": "images/membership-workflow.gif",
-    "sha256": "a01de1b2dce1c73549d443f3b9be96ecdb9eeb63bab31f7b2c68e520e9f70269",
+    "sha256": "c73912a364ff4d7c58bef7f8e508066f1dfb37f5b9cacd381af473ed0cfb14df",
+    "source": "Playwright recording of the unchanged frozen React workflow, all four routes in light and dark",
+    "width": 1024,
+    "height": 720,
+    "duration": "23.760000",
+    "nb_frames": "190",
     "format": "gif",
-    "source": "Playwright recording of the unchanged final-freeze React workflow, all four routes in light and dark",
-    "freezeHead": "74da4ff4cee8b8cb6857e24195f8ec3d1a63f130",
-    "durationMs": 24010,
-    "frames": 192,
-    "inspected": true
+    "freezeHead": "37e13fe2c88cf4bb7578e0a5a09da61b2023e568",
+    "durationMs": 23760,
+    "frames": 190,
+    "trimmedLeadSeconds": 0.125,
+    "inspected": true,
+    "inspectedFrames": [
+      0,
+      24,
+      47,
+      71,
+      94,
+      118,
+      142,
+      165,
+      189
+    ]
   }
 }

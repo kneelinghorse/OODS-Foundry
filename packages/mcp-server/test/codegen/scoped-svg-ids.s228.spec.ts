@@ -57,11 +57,13 @@ describe('each embedded chart render owns its ids and ECharts hover classes (s22
     other.series[0]!.itemStyle.color.colorStops = [{ offset: 0, color: '#a84719' }, { offset: 1, color: '#eab58c' }];
     const html = await composeDashboardHtml({ title: 'Warehouse connections', columns: 12, panels: ['North network', 'South network'].map((name, index) => ({ id: `panel-${index}`, kind: 'chart', title: name, echartsSpec: index === 0 ? option : other } as any)), layout: [{ id: 'panel-0', x: 0, y: 0, w: 6, h: 2 }, { id: 'panel-1', x: 6, y: 0, w: 6, h: 2 }], a11y: {} as any });
     const ids = uniqueSvgIds(html);
-    expect(ids.some(id => id.includes('panel-0-span'))).toBe(true);
-    expect(ids.some(id => id.includes('panel-1-span'))).toBe(true);
+    // Every panel's phone and full-width render has its own id scope.
+    for (const panel of [0, 1]) for (const variant of [0, 1]) {
+      expect(ids.some(id => id.includes(`panel-${panel}-${variant}-`))).toBe(true);
+    }
     expect(() => uniqueSvgIds(html + `<svg><g id="${ids[0]}"/></svg>`)).toThrow('unique');
     retain('dashboard-scoped.html', html);
-    retain('dashboard-before.html', html.replace(/oods-(id|zr)-panel-\d+-span-(\d+)/g, 'oods-$1-$2'));
+    retain('dashboard-before.html', html.replace(/oods-(id|zr)-panel-\d+-\d+-(\d+)/g, 'oods-$1-$2'));
   });
 
   it.each(['react', 'vue'] as const)('generated %s heatmap owns all nine render id sets, and the check bites on a planted duplicate', async framework => {

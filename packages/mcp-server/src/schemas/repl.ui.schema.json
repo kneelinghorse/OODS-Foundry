@@ -470,6 +470,20 @@
           },
           "description": "Allowed values for enum-constrained fields."
         },
+        "displayLabel": {
+          "type": "string",
+          "description": "Human-readable field label, shared by read screens and controls."
+        },
+        "enumLabels": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "Authored enum display labels; keys remain the stored values."
+        },
+        "titleReferences": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Required reference fields whose resolved labels title an otherwise unnamed record, in declaration order. Falls back to this field when none resolves; never changes stored values."
+        },
         "referenceLabels": {
           "type": "object",
           "additionalProperties": { "type": "string" },

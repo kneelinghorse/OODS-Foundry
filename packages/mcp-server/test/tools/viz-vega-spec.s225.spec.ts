@@ -30,7 +30,7 @@ const sized = { chartType: 'bar', rows: [{ category: 'First', value: 17 }, { cat
 
 describe('s225: output.includeVegaSpec returns what the emitter actually parsed', () => {
   for (const [name, svgHash] of [
-    ['correlation-matrix', 'dc95ce083313333441f265f62f0faecb5eb6cdc0a9cd86b5272c1cd9560ba79a'],
+    ['correlation-matrix', '9bf33ce6644cd526c7b19dd4348a387557999ce94e22fb41452711df1129f706'],
     ['diverging-bar', 'abc88303cb4033bf7506aa93037a5c91ac12c4781d689e1ca7b4badd96b62345'],
     ['time-grid-heatmap', 'a1d5970861cb9ec139841a74d135cc59bb592e4fa27504862f5f5e59805fcd1f'],
     ['sized-bar', 'dd8ec2607b690a147f0cfc2461ab919ee14419f0a47b6db72ae668927feb4dd9'],
@@ -41,7 +41,7 @@ describe('s225: output.includeVegaSpec returns what the emitter actually parsed'
     const result = wire('viz.render', 'output', await handle(request as never)) as any;
     expect(result.status).toBe('ok'); expect(result.vegaSpec).toBeDefined();
     expect(baseline.vegaSpec).toBeUndefined(); expect(baseline.output.includeVegaSpec).toBeUndefined();
-    expect(result.svgHash).toBe(svgHash); // Recorded from the 0.4.2 producer before the fix; SVG changes are out of scope.
+    expect(result.svgHash).toBe(svgHash); // s241 changes only correlation table wording; the other three render controls stay pinned.
     expect(stable(result)).toEqual(stable(baseline));
     const replayed = await draw(JSON.parse(JSON.stringify(result.vegaSpec)));
     expect(drawing(replayed)).toBe(drawing(result.svg));

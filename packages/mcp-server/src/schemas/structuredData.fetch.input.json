@@ -8,13 +8,27 @@
   "properties": {
     "dataset": {
       "type": "string",
-      "enum": ["components", "tokens", "manifest"],
+      "enum": [
+        "components",
+        "tokens",
+        "manifest"
+      ],
       "description": "Local structured dataset to return (components/tokens/manifest). Mutually exclusive with kind+runPath."
     },
     "kind": {
       "type": "string",
-      "enum": ["identity_graph", "capability_rollup", "object_rollup", "drift_report", "derived_analysis", "a11y_report", "report_index", "a11y_evidence", "run_manifest"],
-      "description": "Stage1 structured artifact kind to read from runPath. Requires runPath; mutually exclusive with dataset. The rollups (identity_graph, capability_rollup, object_rollup, drift_report 1.0.0–1.4.0) and the run-view kinds at their pinned versions: a11y_report 2.2.0–2.5.0, report_index 1.0.0/1.1.0, a11y_evidence (evidence manifest 1.1.0–1.4.0, every per-page axe file read only when its sha256 matches the run manifest's attestation) and run_manifest (historical unstamped shape or schema_version 1.0.0 through 1.7.0; a suite's root, which records its targets, is refused). derived_analysis reads a directory containing manifest.analysis, admitting analysis 1.0.0/1.1.0, run_manifest 1.0.0–1.7.0, drift_report 1.0.0–1.4.0, report_index 1.1.0 and fig_local_tokens version 1.0.0/1.3.0/1.5.0 with retained-file attestation, lineage, realpath and JSON-pointer checks. Any other version is refused."
+      "enum": [
+        "identity_graph",
+        "capability_rollup",
+        "object_rollup",
+        "drift_report",
+        "derived_analysis",
+        "a11y_report",
+        "report_index",
+        "a11y_evidence",
+        "run_manifest"
+      ],
+      "description": "Stage1 artifact kind, with runPath; excludes dataset. Admits run_manifest through 1.8.0, a11y_report 2.2.0\u20132.5.0 and 3.0.0, drift_report 1.0.0\u20131.4.0 and 2.0.0, report_index 1.0.0/1.1.0 and a11y_evidence 1.1.0\u20131.4.0. derived_analysis admits analysis 1.0.0/1.1.0, fig_local_tokens 1.0.0/1.3.0/1.5.0/1.6.0 and style_fingerprint 1.3.0/1.4.0, with retained-file digests, lineage and JSON Pointer checks. Earlier admitted versions remain readable; unknown versions and suite roots are refused."
     },
     "runPath": {
       "type": "string",
@@ -48,18 +62,53 @@
     },
     "payloadMode": {
       "type": "string",
-      "enum": ["inline", "file"],
+      "enum": [
+        "inline",
+        "file"
+      ],
       "description": "Unset: inline, unless the payload exceeds 100,000 characters; then it is written to a file and warning OODS-W004 says so. inline always returns it; file always writes it and returns payloadFile."
+    },
+    "detail": {
+      "type": "string",
+      "enum": [
+        "summary",
+        "full"
+      ],
+      "description": "Dataset only. summary returns section counts and the call for page 1; full (default) preserves the dataset."
+    },
+    "page": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Dataset only: read a 1-based page of lossless JSON Pointer entries, each reply below 100,000 characters. Omit for full data."
+    },
+    "pageSize": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 100,
+      "description": "Dataset entries per page, default 10, also bounded by serialized size. Reply meta gives next and full calls."
     }
   },
   "oneOf": [
     {
-      "required": ["dataset"],
-      "not": { "required": ["kind"] }
+      "required": [
+        "dataset"
+      ],
+      "not": {
+        "required": [
+          "kind"
+        ]
+      }
     },
     {
-      "required": ["kind", "runPath"],
-      "not": { "required": ["dataset"] }
+      "required": [
+        "kind",
+        "runPath"
+      ],
+      "not": {
+        "required": [
+          "dataset"
+        ]
+      }
     }
   ]
 }

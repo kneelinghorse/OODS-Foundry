@@ -23,7 +23,7 @@ describe('Labelled trait', () => {
   it('parses TypeScript definition and exposes documentation metadata', () => {
     const def = LabelledTraitModule;
 
-    expect(def.metadata?.owners).toContain('uxcopy@oods.systems');
+    expect(def.metadata?.owners).toContain('Uxcopy team');
     expect(def.tokens).toHaveProperty('text.placeholder.default.color');
   });
 

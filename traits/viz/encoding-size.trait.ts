@@ -199,7 +199,7 @@ const EncodingSizeTrait = {
 
   metadata: {
     created: '2025-11-15',
-    owners: ['viz@oods.systems', 'research@oods.systems'],
+    owners: ['Viz team', 'Research team'],
     maturity: 'alpha',
     accessibility: {
       rule_reference: 'A11Y-R-02',

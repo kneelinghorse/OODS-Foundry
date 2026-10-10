@@ -109,7 +109,7 @@ describe('design.compose — form field differentiation', () => {
     }
 
     const role = nodes.find(node => node.component === 'Select' && node.props?.field === 'role');
-    expect(role?.props?.options).toEqual([{ value: 'end_user', label: 'End User' }, { value: 'admin', label: 'Admin' }, { value: 'owner', label: 'Owner' }, { value: 'billing', label: 'Billing' }]);
+    expect(role?.props?.options).toEqual([{ value: 'end_user', label: 'End user' }, { value: 'admin', label: 'Admin' }, { value: 'owner', label: 'Owner' }, { value: 'billing', label: 'Billing' }]);
 
     const generated = await generate({
       framework,

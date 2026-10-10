@@ -173,7 +173,7 @@ const StatefulTrait = {
   metadata: {
     created: '2025-10-12',
     updated: '2026-02-28',
-    owners: ['design@oods.systems', 'engineering@oods.systems'],
+    owners: ['Design team', 'Engineering team'],
     maturity: 'stable',
     accessibility: {
       keyboard:

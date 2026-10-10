@@ -119,7 +119,7 @@
     },
     "echartsSpec": {
       "type": "object",
-      "description": "Compiled ECharts option. Primary ECharts chart types include scoped OODS canvas, borders, labels and title chrome. Series palettes use the same scope; where no themed palette exists they retain the light palette.",
+      "description": "Compiled ECharts option. Primary ECharts chart types include scoped OODS canvas, borders, labels and title chrome. Series palettes use the same scope; where no themed palette exists they retain the light palette. Formatted axes/tooltips carry JSON-safe __oodsFormat descriptors. Pass the option through restoreEChartsFormats from @oods/foundry/echarts.js before echarts.setOption; no code evaluation is required.",
       "additionalProperties": true
     },
     "normalizedSpec": {
@@ -283,7 +283,7 @@
     },
     "lowConfidence": {
       "type": "boolean",
-      "description": "Suggest mode only: true when no pattern matched confidently — the chartType is a low-confidence fallback rather than a positive recommendation (the previously-silent bar default, now surfaced)."
+      "description": "Suggest mode only: true when no pattern matched confidently \u2014 the chartType is a low-confidence fallback rather than a positive recommendation (the previously-silent bar default, now surfaced)."
     },
     "svg": {
       "type": "string",
@@ -358,7 +358,7 @@
     },
     "contentHash": {
       "type": "string",
-      "description": "Deterministic SHA-256 (hex) over the canonicalized primary payload (the Vega-Lite spec, or the JSON-projected ECharts option for ECharts-primary types) — the content identity of exactly what specRef caches. Unlike specRef (a random, expiring cache handle), contentHash is stable across calls: the same input yields the same hash. Default-on; omitted only on error outputs."
+      "description": "Deterministic SHA-256 (hex) over the canonicalized primary payload (the Vega-Lite spec, or the JSON-projected ECharts option for ECharts-primary types) \u2014 the content identity of exactly what specRef caches. Unlike specRef (a random, expiring cache handle), contentHash is stable across calls: the same input yields the same hash. Default-on; omitted only on error outputs."
     },
     "tokenCssRef": {
       "type": "string",

@@ -13,7 +13,7 @@ These are **generated sample records**, not Cal.com customer data. This five-min
 With Node.js 22 or newer and Claude Code installed:
 
 ```sh
-claude mcp add oods-foundry -- npx -y @oods/foundry@0.11.0
+claude mcp add oods-foundry -- npx -y @oods/foundry@0.11.1
 ```
 
 Restart Claude Code in a scratch workspace. Download the [pinned Prisma schema](https://raw.githubusercontent.com/calcom/cal.com/54343aa685ae8f33159d2f485ec4a57bad5c574a/packages/prisma/schema.prisma) into it. The importer reads that local file; it never connects to a database.
@@ -21,7 +21,7 @@ Restart Claude Code in a scratch workspace. Download the [pinned Prisma schema](
 Use your own shadcn project, or scratch copies of the [React](https://github.com/satnaing/shadcn-admin/tree/e16c87f213a5ba5e45964e9b67c792105ec74d26) and [Vue](https://github.com/Whbbit1999/shadcn-vue-admin/tree/303cf63f6c8ecdd43408ae991c904daa2aad2dd8) examples used here. Keep their manifests, aliases, CSS and installed dependencies. Before asking OODS Foundry to apply adapters, install its libraries **in the component project**:
 
 ```sh
-npm install @oods/components-react@0.11.0 @oods/component-contracts@0.11.0 @oods/component-styles@0.11.0 @oods/tokens@0.11.0
+npm install @oods/components-react@0.11.1 @oods/component-contracts@0.11.1 @oods/component-styles@0.11.1 @oods/tokens@0.11.1
 ```
 
 For Vue, replace `@oods/components-react` with `@oods/components-vue` at the same version. The MCP connection does not install these project dependencies. See [the component guide](../../packages/foundry/COMPONENTS.md) for supported project layouts.
@@ -34,15 +34,15 @@ The assistant calls `object_import` with `action: "draft"` and `source: {path: "
 
 Our draft contained **102 objects** and **183 valid trait proposals**: 69 strong and 114 medium. It also reported unsupported source elements and relationship cycles. Review the report; an import does not reproduce every Prisma constraint.
 
-Membership has no name field. Its integer identifier becomes “Membership 1”; Team and User references show names such as Design and Elena Novak. Timestampable binds the declared dates. Stateful proposes treating `role` as the displayed state/filter; that is a demo choice, **not authorization logic**. Ownerable has no field bindings here and contributes no record view.
+Membership has no name field. Its title joins its required Team and User references, such as “Design · Elena Novak”; the list uses the same title. References read “Team”, “User” and “Custom Role” in both detail and form. Stored enum values remain `OWNER`, `ADMIN` and `MEMBER`, while the screens show Owner, Admin and Member. We accept Timestampable for the declared dates. We decline Stateful because these are roles, not lifecycle states, and decline Ownerable because its proposed field bindings are empty. No status-history panel is shown without events.
 
 For money, a decimal called `total` is not enough. At acceptance, explicitly declare a currency sibling with `currencies: {total: {field: "currency"}}`; add `minorUnits: 100` only if the amount uses minor units. See [importing objects](../../packages/foundry/IMPORTING-OBJECTS.md).
 
 ## 3. Accept reviewed objects and component mappings
 
-> For this scratch demo, accept the valid strong and medium proposals we reviewed and confirm the shipped User-name overlap. Leave weak or invalid proposals unaccepted. Then draft mappings from my local shadcn project and show what is supported before applying them.
+> For this scratch demo, apply all 102 object definitions so their references resolve. Accept only Membership’s Timestampable proposal; leave the other trait proposals unaccepted. Confirm replacing the shipped User definition with the reviewed Cal.com User definition: Membership’s integer user references need that definition. Then draft mappings from my local shadcn project and show what is supported before applying them.
 
-`object_import` applies an explicit `objects: [{name, proposals: ["<proposal-id>"]}]` selection. Confirming a shipped-name overlap permits that team definition; review it deliberately.
+`object_import` applies an explicit `objects: [{name, proposals: ["<proposal-id>"]}]` selection. Use an empty proposals array for a definition without accepted traits. Confirming the User-name overlap with `confirmShipped: ["User"]` permits that team definition; review its identity and relationships deliberately.
 
 `component_map` drafts with `source: {project: "<absolute project folder>", format: "shadcn"}`. Inspect the result through `component_map_read`, then approve the chosen proposal IDs with `component_map` `action: "apply"`, `draftId` and `accept`. Those actions do not take an extra `apply: true` flag.
 
@@ -67,19 +67,19 @@ npm run build
 npm run dev
 ```
 
-The generated manifests intentionally pin the published compatible OODS libraries at 0.6.2. We built the unchanged files against those versions; the MCP tool that generated them was the 0.11.0 candidate. Your application still owns the database, authorization, navigation integration and production persistence.
+The generated manifests intentionally pin the published compatible OODS libraries at 0.6.2. We built the unchanged files against those versions; the MCP tool that generated them was the 0.11.1 candidate. Your application still owns the database, authorization, navigation integration and production persistence.
 
 ![Vue Membership form on a phone](images/vue-form-390-light.png)
 
 ## What happened in the recorded run
 
-One Claude Code conversation used a fresh profile and an empty npm cache, with the unpublished 0.11.0 tarball standing in for npm. `brand_read template` fit inline with all three themes. No imported objects, samples or composed schemas were hand-edited. The public images and recording replay those composition and generation calls against the final 0.11.0 freeze, using the same accepted inputs.
+One Claude Code conversation used a fresh profile and an empty npm cache, with the unpublished 0.11.1 tarball standing in for npm. `brand_read template` fit inline with all three themes. No imported objects, samples or composed schemas were hand-edited. The public images and recording replay those composition and generation calls against the final 0.11.1 freeze, using the same accepted inputs.
 
-The first adapter applies refused missing OODS dependencies without writing adapters. After installing those libraries, we re-drafted and applied. An extra `apply: true` argument was also refused and removed. Those corrections are included in the steps above.
+The first incomplete object selections were refused atomically because their relationship targets were missing. The successful batch applied 101 definitions but kept the shipped UUID-based User, leaving Cal.com’s integer user references unresolved. A continuation accepted the reviewed Cal.com User definition with no traits, for 102 imported definitions in total. The only accepted trait is Membership’s Timestampable. Two component-mapping calls also supplied an unsupported `apply: true`; both were refused and corrected. The prompts above describe the final accepted choices, not every attempted call.
 
 Both apps passed their TypeScript checks and production builds. We exercised all four routes in both frameworks at 1440 and 390 pixels, in light and dark: 32 screenshots inspected, no page errors or overflow, and no axe WCAG 2.2 A/AA violations. Role filtering reduced five rows to two and reset to five; changing a role, related record and checkbox survived saving and reopening the form. The timeline uses the record's created/updated dates and has no false missing-extension warning.
 
-The component contract reports still describe adapter limitations. Passing these example interactions is not certification of a whole application. The detail view's state-history panel has no supplied state-change events; the separate timeline shows the declared timestamp events. [Run identities and image hashes](run.json) identify the candidate and the final capture.
+The component contract reports still describe adapter limitations. Passing these example interactions is not certification of a whole application. The timeline shows the declared timestamp events; roles remain roles, without a status-history panel. [Run identities and image hashes](run.json) identify the candidate and the final capture.
 
 ## Sources and licenses
 

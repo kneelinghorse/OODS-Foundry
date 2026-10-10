@@ -234,7 +234,7 @@ const ArchivableTrait = {
   metadata: {
     created: '2025-10-12',
     updated: '2026-02-28',
-    owners: ['lifecycle@oods.systems', 'compliance@oods.systems'],
+    owners: ['Lifecycle team', 'Compliance team'],
     maturity: 'stable',
     accessibility: {
       keyboard:

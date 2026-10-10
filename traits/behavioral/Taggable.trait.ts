@@ -223,7 +223,7 @@ const TaggableTrait = {
   metadata: {
     created: '2025-10-12',
     updated: '2026-02-28',
-    owners: ['design@oods.systems', 'taxonomy@oods.systems'],
+    owners: ['Design team', 'Taxonomy team'],
     maturity: 'stable',
     accessibility: {
       keyboard:

@@ -2,6 +2,16 @@
 
 What changed in each version of OODS Foundry, in the terms you use it in.
 
+## 0.11.1
+
+Imported screens use the form's reference labels, readable enum words, joined-record titles and field-specific sort labels. The Cal.com Membership demo accepts timestamps and declines role-as-status; roles stay roles. The public demo is rebuilt from the release candidate.
+
+Charts retain authored text size on phones and tablets. Narrow maps and graphs reserve room for legends; placed charts switch between native renders with bounded growth. ECharts JSON carries currency, precision, locale and UTC format descriptors, restored in browsers by `@oods/foundry/echarts.js`. The relationship diagram and heatmap use distinct, grammatical labels. The advertised `viz_render` schema fits Codex's 5,000-byte limit; full validation remains available as an MCP resource.
+
+`structured_data_fetch` keeps full output by default and adds opt-in summary and lossless inline pages (10 entries by default, maximum 100, bounded by serialized size). **Changed default:** filtered `catalog_list` calls without explicit detail return full pages of 10 with `nextPage`; explicit detail preserves previous unpaged output. Owner metadata uses team role names.
+
+Stage1 0.6.0 contract versions are admitted alongside earlier versions. Missing accessibility scores remain absent; stroke eligibility and token alias/mode metadata are shown without regrading. Retire the lossy `tools/stage1-dtcg` adapter: use Stage1's native `dtcg-export`, then review and explicitly accept a `brand_create` draft.
+
 ## 0.11.0
 
 Read-only tool actions have their own registered boundaries. Moved actions refuse without writing and name the replacement tool. The default roster is 26 tools; a11y_scan is the 27th on demand. The hosted site's object_registry remains the read tool, with its existing action/allOf contract.

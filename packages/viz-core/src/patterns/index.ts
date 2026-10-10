@@ -870,14 +870,14 @@ const registry = [
         {
           role: 'dimension',
           type: 'nominal',
-          name: 'Metric / feature (row)',
+          name: 'Row metric',
           example: 'Feature name',
           description: 'Y-axis domain, matches column list.',
         },
         {
           role: 'dimension',
           type: 'nominal',
-          name: 'Metric / feature (column)',
+          name: 'Column metric',
           example: 'Metric name',
           description: 'X-axis domain.',
         },

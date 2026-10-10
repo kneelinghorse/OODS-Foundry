@@ -87,7 +87,7 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
         const type = entry.type.replace(/\?$/, '');
         node.component = entry.enum?.length ? 'Select' : type === 'boolean' ? 'Checkbox'
           : type === 'string' && /description|reason|notes|body|content|instructions/.test(String(field)) ? 'Textarea' : 'Input';
-        node.props = { field, ...(entry.enum?.length ? { options: entry.enum.map(value => ({ value, label: enumOptionLabel(value) })) } : {}),
+        node.props = { field, ...(entry.enum?.length ? { options: entry.enum.map(value => ({ value, label: enumOptionLabel(value, entry.enumLabels) })) } : {}),
           ...(['number', 'integer'].includes(type) ? { type: 'number' } : ['email', 'url', 'date'].includes(type) ? { type } : {}) };
         node.bindings = { onChange: `handleChange_${field}` };
         return [node, classification];
@@ -118,7 +118,7 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
       const component = entry.enum?.length ? 'Select' : type === 'boolean' ? 'Checkbox' : 'Input';
       fieldStack.children ??= [];
       fieldStack.children.push({ id: `${fieldStack.id}-required-${name}`, component,
-        props: { field: name, ...(entry.enum?.length ? { options: entry.enum.map(value => ({ value, label: enumOptionLabel(value) })) } : {}) },
+        props: { field: name, ...(entry.enum?.length ? { options: entry.enum.map(value => ({ value, label: enumOptionLabel(value, entry.enumLabels) })) } : {}) },
         bindings: { onChange: `handleChange_${name}` } });
     }
     for (const screen of schema.screens) walk(screen, node => {
@@ -154,14 +154,14 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
         if (typeof requested === 'string' && Object.hasOwn(requestedControls, requested) && fieldControls.has(node.component) && requestedControls[requested]!(type, entry)) node.component = requested;
         // A Labelled object's `label` is its display name; the form calls it that.
         const declaredLabel = composed.semantics?.[field as string]?.ui_hints?.label;
-        const defaultLabel = typeof declaredLabel === 'string' ? declaredLabel : field === 'label' && !fields.name && !fields.title && !fields.display_name ? 'Name' : fieldLabel(field as string);
+        const defaultLabel = entry.displayLabel ?? (typeof declaredLabel === 'string' ? declaredLabel : field === 'label' && !fields.name && !fields.title && !fields.display_name ? 'Name' : fieldLabel(field as string));
         // s223-m02: the description is help only where the control's contract has help (a SegmentedControl has none).
         node.props = { ...node.props, label: node.props?.label === entry.description || !node.props?.label || node.props.label === field || node.props.label === fieldLabel(field as string) ? defaultLabel : node.props.label, ...(entry.description && contractHas(node.component, 'help') ? { help: fieldHelp(field as string, entry.description) } : {}) };
         const relationship = relationships.find(edge => edge.via === field);
         if (relationship && !type.endsWith('[]')) {
           const options = relationshipOptions(relationship, composed.semantics[field as string]);
           node.component = 'Select';
-          node.props = { field, label: typeof declaredLabel === 'string' ? declaredLabel : relationship.label && relationship.label !== field ? fieldLabel(relationship.label) : defaultLabel, options, ...(entry.description ? { help: entry.description } : {}) };
+          node.props = { field, label: entry.displayLabel ?? defaultLabel, options, ...(entry.description ? { help: entry.description } : {}) };
           node.bindings = { onChange: `handleChange_${field}` };
         }
         if (entry.type.replace(/\?$/, '') === 'datetime' && ['Input', 'DatePicker'].includes(node.component)) {
@@ -217,7 +217,7 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
       : money.minorUnits ? { id: `${id}-value`, meta: { intent: 'read-only-field' }, component: 'BillingSummaryBadge', props: { amountField: name, currencyField: money.currencyField, minorUnits: money.minorUnits, showInterval: false } }
         : { id: `${id}-value`, meta: { intent: 'read-only-field' }, component: 'PriceBadge', props: { amountField: name, currencyField: money.currencyField } };
     return { id: `${id}-read-field`, component: 'Stack', children: [
-      { id: `${id}-label`, component: 'Text', props: { as: 'strong', content: composed.semantics[name]?.ui_hints?.label ?? fieldLabel(name.replace(/_minor$/, '').replace(/_id$/, '')) } },
+      { id: `${id}-label`, component: 'Text', props: { as: 'strong', content: fields[name]?.displayLabel ?? composed.semantics[name]?.ui_hints?.label ?? fieldLabel(name.replace(/_minor$/, '').replace(/_id$/, '')) } },
       value,
     ] };
   };

@@ -205,6 +205,10 @@ export function adaptGraphToECharts(spec: NormalizedVizSpec, input: NetworkInput
     backgroundColor: chrome.background,
     color: palette,
     series: [series],
+    media: [{ query: { maxWidth: 420 }, option: {
+      series: [{ top: paintedTitle(graphSpec) ? 48 : 24, bottom: 72, left: 40, right: 90, width: 'auto', height: 'auto' }],
+      legend: { show: scope.theme !== 'hc' && categories.length > 0, top: 'auto', bottom: 8, left: 8, right: 8, type: 'scroll', orient: 'horizontal', textStyle: { color: chrome.visualMapLabel }, pageTextStyle: { color: chrome.visualMapLabel }, pageIconColor: chrome.visualMapLabel },
+    } }],
     tooltip: generateGraphTooltip(),
     legend: scope.theme !== 'hc' && categories.length > 0 ? generateGraphLegend(categories, graphSpec, chrome.visualMapLabel) : undefined,
     aria: { enabled: true, description: graphSpec.a11y?.description },

@@ -32,26 +32,23 @@ function recordBinding(binding: DeclaredBinding, record: Record<string, unknown>
 }
 
 /**
- * Placed charts render at twice the former 360 wide so the detail card shows them at design size; the preview never scales
- * an SVG above this width. s222-m02 (#2502 ruling 12): every render is at most 320px tall as displayed, at any width the
- * figure's CSS draws it: the design render (730×250 with Vega's padding) is shown up to the 900px switch, 308px tall there;
- * the narrow one (370×190) up to 600px, 308px; the wide one (1130×250) up to 1.25 times its width, 312px. They were 400,
- * 220 and 440 tall, so the payment chart stood 554px tall on a 1440 screen.
+ * Three authored sizes keep axis text at least its native size. CSS switches only once the next SVG fits,
+ * and caps enlargement at 1.25x; all three remain under 320px tall, including Vega's padding.
  */
 export const PLACED_CHART_SIZE = { width: 720, height: 240 } as const;
 /** The same chart at the narrow size the figure switches to below PLACED_CHART_NARROW_BREAKPOINT px, so axis text keeps its size on a phone column instead of scaling with the SVG. */
-export const PLACED_CHART_NARROW_SIZE = { width: 360, height: 180 } as const;
+export const PLACED_CHART_NARROW_SIZE = { width: 292, height: 240 } as const;
 /** Figure inline size (CSS px) at and below which the figure shows the narrow render (component-styles' container query). */
-export const PLACED_CHART_NARROW_BREAKPOINT = 600;
+export const PLACED_CHART_NARROW_BREAKPOINT = 729;
 /**
  * s213-m01 (Sprint 212 review finding 5): the same chart drawn for a desktop column. The design render stopped at its
  * 720px width, half of a 1440 detail screen; the figure now fills its column and shows this render from
- * PLACED_CHART_WIDE_BREAKPOINT up, so axis text stays near design size (0.8x to 1.25x across the switch, as the narrow
+ * PLACED_CHART_WIDE_BREAKPOINT up, so axis text stays near design size (1x to 1.25x across the switch, as the narrow
  * render already is on a phone).
  */
 export const PLACED_CHART_WIDE_SIZE = { width: 1120, height: 240 } as const;
 /** Figure inline size (CSS px) at and above which the figure shows the wide render (component-styles' container query). */
-export const PLACED_CHART_WIDE_BREAKPOINT = 900;
+export const PLACED_CHART_WIDE_BREAKPOINT = 1130;
 /** Every placed chart renders without a painted title: the figure heading carries the chart's name (Sprint 202 m01). */
 export const PLACED_CHART_OUTPUT = { svg: true, titlePlacement: 'figure', ...PLACED_CHART_SIZE } as const;
 export const PLACED_CHART_NARROW_OUTPUT = { svg: true, titlePlacement: 'figure', ...PLACED_CHART_NARROW_SIZE } as const;

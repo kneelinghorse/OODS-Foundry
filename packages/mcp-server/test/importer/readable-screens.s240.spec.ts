@@ -53,11 +53,12 @@ it('does not offer GraphQL mutation inputs as record objects', () => {
   expect(result.report.some(entry => entry.reason.includes('input type'))).toBe(true);
 });
 
-it('names a numeric heading sort as numeric instead of promising a name sort', async () => {
+// s241: the sort names its actual field, not the field's data type.
+it('names a numeric heading sort by its identifier field', async () => {
   const staged = await importObjects({ action: 'draft', source: { format: 'prisma', content: 'model Membership {\n id Int @id\n accepted Boolean\n}' } }) as any;
   await importObjects({ action: 'apply', importId: staged.importId, objects: [{ name: 'Membership', proposals: [] }] });
   const screen = await compose({ object: 'Membership', context: 'list', options: { transient: true } });
   const walk = (nodes: any[]): any[] => nodes.flatMap(node => [node, ...walk(node.children ?? [])]);
   const sort = walk(screen.schema.screens).find(node => node.collectionControl === 'sort');
-  expect(sort.props).toMatchObject({ field: 'id', options: [{ value: 'asc', label: 'Number ascending' }, { value: 'desc', label: 'Number descending' }] });
+  expect(sort.props).toMatchObject({ field: 'id', options: [{ value: 'asc', label: 'Id ascending' }, { value: 'desc', label: 'Id descending' }] });
 });

@@ -13,7 +13,7 @@ import { registerGeoJson, type GeoRegistration } from './echarts-geo-registratio
 import { createVisualMapForScale } from './echarts-visualmap-generator.js';
 import { resolveColor } from './geo-token-color.js';
 import { applyHcEchartsChrome, resolveOodsEchartsChrome } from '../../tokens/oods-echarts-chrome.js';
-import { withTitleBand } from './titled-geo.js';
+import { phoneGeoLayout, withTitleBand } from './titled-geo.js';
 
 const DEFAULT_MAP_NAME = 'custom-geo';
 // Geo region fills/borders stay via resolveColor on the UNIFIED --oods-sys-* namespace
@@ -211,6 +211,7 @@ export function adaptChoroplethToECharts(
   const option = pruneUndefined({
     backgroundColor: chrome.background,
     geo: withTitleBand(result.geo, spec.name),
+    media: phoneGeoLayout(spec.name, result.visualMap, chrome.visualMapLabel),
     // Bake the visualMap numeric-tick label onto text-neutral (8.13:1 on the baked
     // canvas) — ECharts-default today, so ungraded chrome; the tripwire covers it (memo §6).
     visualMap: { ...result.visualMap, textStyle: { color: chrome.visualMapLabel } },

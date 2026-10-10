@@ -27,7 +27,9 @@ export function isUnavailableField(name: string, fields: Record<string, FieldSch
   return fields[name]?.unavailable === true;
 }
 
-/** Enum values become option labels the way status badges print them: every word capitalised. */
-export function enumOptionLabel(value: string): string {
-  return value.split(/[_\-\s]+/).filter(Boolean).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
+/** Display wording never changes an enum's stored value; an authored label wins. */
+export function enumOptionLabel(value: string, labels?: Record<string, string>): string {
+  if (labels && Object.hasOwn(labels, value)) return labels[value]!;
+  const words = value.replace(/([a-z0-9])([A-Z])/g, '$1 $2').split(/[_\-\s]+/).filter(Boolean).join(' ').toLowerCase();
+  return words.charAt(0).toUpperCase() + words.slice(1);
 }

@@ -190,7 +190,7 @@ const LayoutFacetTrait: TraitDefinition = {
 
   metadata: {
     created: '2025-11-16',
-    owners: ['viz@oods.systems'],
+    owners: ['Viz team'],
     maturity: 'beta',
     references: [
       'docs/viz/normalized-viz-spec.md',

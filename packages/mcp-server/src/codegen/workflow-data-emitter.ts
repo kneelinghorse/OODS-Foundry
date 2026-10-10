@@ -5,6 +5,7 @@ import type { UiSchema, UiElement, FieldSchemaEntry } from '../schemas/generated
 import { displayFieldExpression, mapFieldType, snakeToCamel } from './binding-utils.js';
 import { fieldLabel } from '../compose/label-generator.js';
 import { recordTitleField } from '../compose/record-label.js';
+import { recordDisplayValue } from '../compose/record-display.js';
 import { cancellationMode } from '../objects/cancellation-mode.js';
 
 /** The chart-assets.ts export holding one render prop's SVG per record: svg -> chartSvgByRecord (as chart-assets.ts writes it). */
@@ -94,8 +95,8 @@ export function statedListSortField(schema: UiSchema, titleField: string): strin
 
 /** Records in the stated order, ascending, compared exactly as the generated store compares them (a stable sort). */
 export function sortRecordsAsStated<T extends Record<string, unknown>>(records: readonly T[], field: string, fields: Record<string, FieldSchemaEntry>): T[] {
-  const fallback = fields[field]?.displayFallbackField;
-  const shown = (record: T) => fallback && fallback !== field && Object.hasOwn(fields, fallback) && !String(record[field] ?? '').trim() ? record[fallback] : record[field];
+  const shown = (record: T) => fields[field]?.titleReferences?.length || fields[field]?.displayFallbackField
+    ? recordDisplayValue(field, fields, name => record[name]) : record[field];
   return [...records].sort((a, b) => {
     const left = shown(a), right = shown(b);
     return typeof left === 'number' && typeof right === 'number' ? left - right : String(left).localeCompare(String(right));
@@ -255,7 +256,7 @@ export function createStore(options: StoreOptions = {}) {
       });
       const sort = query.sort ?? sortField;
       filtered.sort((a, b) => {
-        const left = ${fields[sortField]?.displayFallbackField ? `sort === sortField ? ${displayFieldExpression(sortField, fields, name => `a[${JSON.stringify(name)}]`)} : a[sort]` : 'a[sort]'}; const right = ${fields[sortField]?.displayFallbackField ? `sort === sortField ? ${displayFieldExpression(sortField, fields, name => `b[${JSON.stringify(name)}]`)} : b[sort]` : 'b[sort]'};
+        const left = ${(fields[sortField]?.displayFallbackField || fields[sortField]?.titleReferences?.length) ? `sort === sortField ? ${displayFieldExpression(sortField, fields, name => `a[${JSON.stringify(name)}]`)} : a[sort]` : 'a[sort]'}; const right = ${(fields[sortField]?.displayFallbackField || fields[sortField]?.titleReferences?.length) ? `sort === sortField ? ${displayFieldExpression(sortField, fields, name => `b[${JSON.stringify(name)}]`)} : b[sort]` : 'b[sort]'};
         const order = typeof left === 'number' && typeof right === 'number' ? left - right : String(left).localeCompare(String(right));
         return (query.descending ? -1 : 1) * order;
       });

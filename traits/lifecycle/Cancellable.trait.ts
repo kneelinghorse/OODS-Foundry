@@ -171,7 +171,7 @@ const CancellableTrait = {
 
   metadata: {
     created: '2025-10-12',
-    owners: ['lifecycle@oods.systems', 'support@oods.systems'],
+    owners: ['Lifecycle team', 'Support team'],
     maturity: 'stable',
     accessibility: {
       keyboard: 'Supports toggling of cancellation switches.',

@@ -114,7 +114,7 @@ describe('strict-client schema compatibility: every advertised input-schema patt
 
 describe('viz.render intent.measureRef keeps the sprint-131 governed-reference acceptance', () => {
   const schema = JSON.parse(fs.readFileSync(path.join(SCHEMAS, 'viz.render.input.json'), 'utf8'));
-  const pattern: string = schema.properties.intent.properties.measureRef.pattern;
+  const pattern: string = schema.$defs.intentInput.properties.measureRef.pattern;
   const validate = getAjv().compile({ type: 'string', pattern });
 
   it('pins the anchored pattern (a future tightening to `.+` is a contract change, not a compat fix)', () => {

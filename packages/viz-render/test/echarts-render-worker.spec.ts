@@ -39,8 +39,9 @@ type ProjectedOption = Record<string, unknown>;
 // m01's chrome, so the seeded layout moved with it, as at s197-m05; convergence and the RNG isolation are unchanged
 // (artifacts/product-reality/sprint-222/m02/charts/geometry/ holds the pinned and the new render). The edges then took the
 // opacity at which they reach 3:1 over the canvas (the s222-m02 follow-up), which the option carries into the seed too.
+// s241: phone media changes the full-option seed; before/after and repeats are retained in m02/graph-epoch.
 const CONVERGED_CANONICAL_FORCE_HASH =
-  "cb86be8c59eb264b819a17b9ec94cd61385002f6b03468dca8821029e1807e53";
+  "a917bc8387756fca735878ca08edfb40f4689193c2db6b9c208775dd010b68d2";
 
 const optionFor = (chartType: string): ProjectedOption => {
   const operand = ECHARTS_OPERAND_CASES.find(

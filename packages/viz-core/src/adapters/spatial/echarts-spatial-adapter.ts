@@ -10,7 +10,7 @@ import { buildChoropleth, type ChoroplethBuildResult } from './echarts-choroplet
 import { buildBubbleSeries, type BubbleBuildResult } from './echarts-bubble-adapter.js';
 import { buildFlowLineSeries, type FlowLineBuildResult } from './echarts-flow-line-adapter.js';
 import type { DataRecord } from './geo-data-joiner.js';
-import { withTitleBand } from './titled-geo.js';
+import { phoneGeoLayout, withTitleBand } from './titled-geo.js';
 
 export interface EChartsSpatialAdapterInput {
   readonly spec: SpatialSpec;
@@ -125,6 +125,7 @@ export function adaptToECharts(input: EChartsSpatialAdapterInput): EChartsSpatia
 
   const option: EChartsOption = pruneUndefined({
     geo: withTitleBand(geo, spec.name),
+    media: phoneGeoLayout(spec.name, visualMaps),
     visualMap:
       visualMaps.length === 0 ? undefined : visualMaps.length === 1 ? visualMaps[0] : (visualMaps as VisualMapComponentOption[]),
     series,

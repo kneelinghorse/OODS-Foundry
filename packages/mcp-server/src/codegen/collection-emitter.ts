@@ -1,6 +1,6 @@
 import { reactBindingReads } from './react-binding-reads.js';
 import type { FieldSchemaEntry, UiElement } from '../schemas/generated.js';
-import { mapFieldType, snakeToCamel } from './binding-utils.js';
+import { displayFieldExpression, mapFieldType, snakeToCamel } from './binding-utils.js';
 import { escapeDoubleQuotedAttribute, javascriptSingleQuotedString } from './emission-safety.js';
 import type { CodegenIssue } from './types.js';
 import { readableCode, reads, templateExpressions } from './vue-unread-declarations.js';
@@ -167,8 +167,8 @@ export function emitCollectionNode(
     case 'open': {
       const key = `String(${snakeToCamel(String(node.props?.field))})`;
       // s222-m03 (#2502 ruling 16): the row's accessible name is the record's title (its key when the title is empty).
-      const labelField = rowLabelField ? snakeToCamel(rowLabelField) : undefined;
-      const name = labelField && labelField !== snakeToCamel(String(node.props?.field)) ? `String(${labelField} || ${key})` : key;
+      const labelField = rowLabelField ? displayFieldExpression(rowLabelField, fields) : undefined;
+      const name = labelField ? `String(${labelField} || ${key})` : key;
       return `<Button ${id} type="button" ${react ? 'className' : 'class'}="oods-collection-row" ${attr('aria-label', name)} ${attr('data-record-id', key)} ${on('Click', react ? `() => handleRowClick(${key})` : `handleRowClick(${key})`)}>${children()}</Button>`;
     }
     case 'event': {

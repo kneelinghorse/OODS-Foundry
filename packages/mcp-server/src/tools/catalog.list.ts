@@ -994,7 +994,7 @@ export async function handle(input: CatalogListInput): Promise<CatalogListOutput
     // s211-m01: the unfiltered default is brief. Page 1 of the old summary was 96 KB of evidence paths per component.
     const detail: CatalogListDetail = input.detail ?? (hasFilters ? 'full' : 'brief');
     const paginationRequested = input.page !== undefined || input.pageSize !== undefined;
-    const applyDefaultPagination = !input.detail && !hasFilters;
+    const applyDefaultPagination = !input.detail;
     const shouldPaginate = paginationRequested || applyDefaultPagination;
 
     const totalCount = filteredCatalog.length;
@@ -1004,7 +1004,7 @@ export async function handle(input: CatalogListInput): Promise<CatalogListOutput
     if (totalCount === 0) {
       pageSize = 0;
     } else if (shouldPaginate) {
-      pageSize = Math.max(1, input.pageSize ?? DEFAULT_PAGE_SIZE);
+      pageSize = Math.max(1, input.pageSize ?? (hasFilters && !input.detail ? 10 : DEFAULT_PAGE_SIZE));
     } else {
       pageSize = totalCount;
     }
@@ -1066,6 +1066,7 @@ export async function handle(input: CatalogListInput): Promise<CatalogListOutput
       page,
       pageSize,
       hasMore,
+      ...(hasMore ? { nextPage: { ...input, page: page + 1, pageSize } } : {}),
       detail,
       generatedAt: componentsData.generatedAt || new Date().toISOString(),
       // The scope ruling is governance, not a brief answer: summary and full carry it (s211-m01).

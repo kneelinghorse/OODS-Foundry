@@ -35,15 +35,15 @@ describe('placed charts name themselves in the figure heading and carry a narrow
     }
     expect(PLACED_CHART_OUTPUT).toEqual({ svg: true, titlePlacement: 'figure', ...PLACED_CHART_SIZE });
     // s222-m02 (#2502 ruling 12): at most 320px tall as displayed at every width the figure CSS draws each render (the
-    // design render up to the 900px switch, the narrow one up to 600px, the wide one to 1.25 times its width).
+    // each render is capped at 1.25x; switching waits until the next native width fits (s241).)
     expect(PLACED_CHART_SIZE).toEqual({ width: 720, height: 240 });
-    expect(PLACED_CHART_NARROW_OUTPUT).toEqual({ svg: true, titlePlacement: 'figure', width: 360, height: 180 });
-    expect(PLACED_CHART_NARROW_BREAKPOINT).toBe(600);
+    expect(PLACED_CHART_NARROW_OUTPUT).toEqual({ svg: true, titlePlacement: 'figure', width: 292, height: 240 });
+    expect(PLACED_CHART_NARROW_BREAKPOINT).toBe(729);
     expect(PLACED_CHART_WIDE_OUTPUT).toEqual({ svg: true, titlePlacement: 'figure', width: 1120, height: 240 });
-    expect(PLACED_CHART_WIDE_BREAKPOINT).toBe(900);
+    expect(PLACED_CHART_WIDE_BREAKPOINT).toBe(1130);
     const displayed = (render: { width: number; height: number }, shownUpTo: number) => shownUpTo * (render.height + 10) / (render.width + 10);
-    expect(displayed(PLACED_CHART_SIZE, PLACED_CHART_WIDE_BREAKPOINT)).toBeLessThanOrEqual(320);
-    expect(displayed({ width: 360, height: 180 }, PLACED_CHART_NARROW_BREAKPOINT)).toBeLessThanOrEqual(320);
+    expect(displayed(PLACED_CHART_SIZE, 730 * 1.25)).toBeLessThanOrEqual(320);
+    expect(displayed({ width: 292, height: 240 }, 302 * 1.25)).toBeLessThanOrEqual(320);
     expect(displayed({ width: 1120, height: 240 }, 1130 * 1.25)).toBeLessThanOrEqual(320);
     // s222-m02 (F7): every theme's renders, light at the design path, dark and hc beside it; the generation theme's (light
     // here) are the ones measurement certifies.
@@ -65,7 +65,7 @@ describe('placed charts name themselves in the figure heading and carry a narrow
     expect(painted(node.props!.svgNarrow as string, title)).toBe(false);
     expect(painted(node.props!.svgWide as string, title)).toBe(false);
     expect(node.props!.svg as string).toMatch(/viewBox="0 0 730 250"/);
-    expect(node.props!.svgNarrow as string).toMatch(/viewBox="0 0 370 190"/);
+    expect(node.props!.svgNarrow as string).toMatch(/viewBox="0 0 302 250"/);
     // Every render is a file of the artifact, design size first and light first, so the consumer carries the same bytes
     // the figure shows; the dark and hc renders are the same chart in those themes (their canvas is the theme's).
     expect(prepared.files.map(file => file.path)).toEqual(requests.flatMap(placed => PLACED_CHART_THEMES.flatMap(theme => [placed.themes[theme].path, placed.themes[theme].narrow.path, placed.themes[theme].wide.path])));

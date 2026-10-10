@@ -185,7 +185,7 @@ describe('wireFieldProps', () => {
     // Select's runtime contract consumes labeled records, so a bare enum array
     // cannot become the options prop even though its values are valid strings.
     expect(choices[0].props?.options).toEqual([
-      { value: 'end_user', label: 'End User' },
+      { value: 'end_user', label: 'End user' },
       { value: 'admin', label: 'Admin' },
     ]);
     expect(choices[1].props?.options).toEqual(authoredOptions);

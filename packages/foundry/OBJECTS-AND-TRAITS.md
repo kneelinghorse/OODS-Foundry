@@ -160,7 +160,7 @@ view_extensions:             # what the trait places on each screen: list, card,
       props: { field: units_on_hand }
 ```
 
-A trait of yours can place only the components OODS Foundry ships; `catalog_list` names them. Your own components can replace those ids through substitution; see [COMPONENTS.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.11.0/COMPONENTS.md).
+A trait of yours can place only the components OODS Foundry ships; `catalog_list` names them. Your own components can replace those ids through substitution; see [COMPONENTS.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.11.1/COMPONENTS.md).
 
 ## Checking and registering
 

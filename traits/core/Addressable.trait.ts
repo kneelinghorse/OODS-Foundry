@@ -145,7 +145,7 @@ const AddressableTrait = {
 
   metadata: {
     created: '2025-11-17',
-    owners: ['core@oods.systems', 'platform@oods.systems'],
+    owners: ['Core team', 'Platform team'],
     maturity: 'experimental',
     accessibility: {
       keyboard: 'AddressEditor keeps focus order aligned with field order.',

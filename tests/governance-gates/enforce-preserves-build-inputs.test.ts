@@ -26,7 +26,7 @@
  * ── WHY A SUBPROCESS ──
  * The property under test is a side effect of a process on the filesystem plus its exit code
  * and stdout. Neither script exports anything (m02 adds the seams); a subprocess is the only
- * honest observer. Precedent: tests/tools/stage1-dtcg-cli-containment.test.ts.
+ * honest observer. Precedent: the retired Stage1 DTCG CLI containment check (Sprint 169).
  */
 import { describe, expect, it, beforeAll, beforeEach, afterAll } from 'vitest';
 import { execFile } from 'node:child_process';

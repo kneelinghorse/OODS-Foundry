@@ -50,8 +50,8 @@ const ROLLUP_ALLOWED_SCHEMA_VERSIONS: Record<RollupKind, string[]> = {
   identity_graph: ['1.1.0', '1.2.0'],
   capability_rollup: ['1.1.0', '1.2.0'],
   object_rollup: ['1.0.0', '1.1.0', '1.2.0'],
-  // Reviewed through Stage1's 1.4.0 raw-value contract; ratios across versions are different measurements.
-  drift_report: ['1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0'],
+  // Reviewed through Stage1's 2.0.0 raw-value contract; ratios across versions are different measurements.
+  drift_report: ['1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0', '2.0.0'],
 };
 
 /**
@@ -67,14 +67,15 @@ const ROLLUP_ALLOWED_SCHEMA_VERSIONS: Record<RollupKind, string[]> = {
  * capture-browser/first-party coverage semantics, and 2.5.0 adds optional guided state labels. Evidence 1.3.0 adds
  * complete axe targets and pass/inapplicable rule IDs; 1.4.0 adds capture tier and first-party health. Existing
  * finding, review and score fields are unchanged. Review: artifacts/product-reality/sprint-225/m03/review.md.
+ * s241: Stage1 0.6.0 removes scores from a11y 3.0 and manifest 1.8; missing scores stay absent.
  * Every artifact and per-page evidence file read still requires the run manifest's sha256 attestation.
  * Other artifact kinds are not admitted by this run-view contract; index metadata is descriptive only.
  */
 const RUN_VIEW_KINDS = {
-  a11y_report: { file: 'artifacts/a11y_report.json', payloadKind: 'a11y_report', versionField: 'schema_version', accepted: ['2.2.0', '2.3.0', '2.4.0', '2.5.0'] },
+  a11y_report: { file: 'artifacts/a11y_report.json', payloadKind: 'a11y_report', versionField: 'schema_version', accepted: ['2.2.0', '2.3.0', '2.4.0', '2.5.0', '3.0.0'] },
   report_index: { file: 'artifacts/report-index.json', payloadKind: 'report_index', versionField: 'schema_version', accepted: ['1.0.0', '1.1.0'] },
   a11y_evidence: { file: 'evidence/a11y/a11y_manifest.json', payloadKind: 'a11y_evidence_manifest', versionField: 'version', accepted: ['1.1.0', '1.2.0', '1.3.0', '1.4.0'] },
-  run_manifest: { file: 'manifest.json', payloadKind: null, versionField: 'schema_version', accepted: ['1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0', '1.5.0', '1.6.0', '1.7.0'] },
+  run_manifest: { file: 'manifest.json', payloadKind: null, versionField: 'schema_version', accepted: ['1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0', '1.5.0', '1.6.0', '1.7.0', '1.8.0'] },
 } as const;
 export type RunViewKind = keyof typeof RUN_VIEW_KINDS;
 export const RUN_VIEW_ADMITTED: Readonly<Record<RunViewKind, readonly string[]>> = {
@@ -559,7 +560,47 @@ export async function handle(input: StructuredDataFetchInput, context: ToolConte
   return { ...output, payload: undefined, payloadIncluded: false, payloadFile, ...(warnings ? { warnings } : {}) };
 }
 
+/** Lossless dataset pages: JSON pointers retain section identity without repeating large metadata. */
+function datasetProjection(input: StructuredDataFetchInput, payload: Record<string, unknown>): { payload: Record<string, unknown>; meta: Record<string, unknown> } {
+  const { detail: _detail, page: _page, pageSize: _size, ifNoneMatch: _etag, includePayload: _included, ...base } = input;
+  const full = { ...base, detail: 'full', payloadMode: 'file' };
+  const paged = input.page !== undefined || input.pageSize !== undefined;
+  if (input.detail === 'summary') {
+    if (paged) throw new ToolError('OODS-V202', 'Use detail full with page to read entries; summary is one reply.');
+    return { payload: { sections: Object.entries(payload).map(([name, value]) => ({ name, type: Array.isArray(value) ? 'array' : value === null ? 'null' : typeof value, ...(value && typeof value === 'object' ? { count: Object.keys(value).length } : {}) })) }, meta: { detail: 'summary', next: { ...base, detail: 'full', page: 1, pageSize: 10, payloadMode: 'inline' }, full } };
+  }
+  if (!paged) return { payload, meta: { detail: 'full', next: { ...base, page: 1, pageSize: 10, payloadMode: 'inline' }, full } };
+  const pageSize = input.pageSize ?? 10;
+  const page = input.page ?? 1;
+  if (!Number.isInteger(pageSize) || pageSize < 1 || pageSize > 100 || !Number.isInteger(page) || page < 1) throw new ToolError('OODS-V202', 'page must be a positive integer; pageSize must be 1–100.');
+  const entries: Array<{ path: string; value: unknown }> = [];
+  const escape = (key: string) => key.replace(/~/g, '~0').replace(/\//g, '~1');
+  const add = (pointer: string, value: unknown): void => {
+    if (JSON.stringify({ path: pointer, value }, null, 2).length <= 30_000) { entries.push({ path: pointer, value }); return; }
+    if (value && typeof value === 'object' && Object.keys(value).length) {
+      entries.push({ path: pointer, value: Array.isArray(value) ? [] : {} });
+      for (const [key, child] of Object.entries(value)) add(`${pointer}/${escape(key)}`, child);
+    } else throw new ToolError('OODS-V202', `Dataset value at ${pointer} cannot fit inline. Request payloadMode file without page or pageSize.`);
+  };
+  for (const [section, value] of Object.entries(payload)) {
+    if (value && typeof value === 'object' && Object.keys(value).length) {
+      entries.push({ path: `/${escape(section)}`, value: Array.isArray(value) ? [] : {} });
+      for (const [key, child] of Object.entries(value)) add(`/${escape(section)}/${escape(key)}`, child);
+    } else add(`/${escape(section)}`, value);
+  }
+  const pages: typeof entries[] = [[]];
+  for (const entry of entries) {
+    let last = pages[pages.length - 1]!;
+    if (last.length && (last.length >= pageSize || JSON.stringify({ entries: [...last, entry] }, null, 2).length > 85_000)) { last = []; pages.push(last); }
+    last.push(entry);
+  }
+  const selected = pages[page - 1] ?? [];
+  const nextPage = page < pages.length ? page + 1 : null;
+  return { payload: { entries: selected }, meta: { detail: 'full', pagination: { page, pageSize, totalCount: entries.length, returnedCount: selected.length, totalPages: pages.length, nextPage }, ...(nextPage ? { next: { ...base, detail: 'full', page: nextPage, pageSize, payloadMode: 'inline' } } : {}), full, format: 'entries use JSON Pointer paths into the complete dataset; pageSize is a maximum, also bounded by serialized size' } };
+}
+
 async function fetchStructuredData(input: StructuredDataFetchInput): Promise<StructuredDataFetchOutput> {
+  if (input.kind && (input.detail !== undefined || input.page !== undefined || input.pageSize !== undefined)) throw new ToolError('OODS-V202', 'detail, page and pageSize apply to dataset reads only.');
   if (input.kind === 'derived_analysis') {
     if (!input.runPath || input.listVersions || input.version) throw new ToolError('OODS-V202', 'structuredData.fetch derived_analysis requires runPath and does not support version/listVersions.');
     const view = readDerivedAnalysis(path.resolve(REPO_ROOT, input.runPath));
@@ -648,7 +689,10 @@ async function fetchStructuredData(input: StructuredDataFetchInput): Promise<Str
   const live = dataset === 'components' && !input.version;
   // s222-m03 (#2502 ruling 15): the live projection lists internal objects only with includeInternal.
   const payload = live ? withLiveRegistry(stored, { includeInternal: input.includeInternal === true }) : stored;
-  const etag = computeStructuredDataEtag(payload);
+  const projection = datasetProjection(input, payload);
+  const sourceEtag = computeStructuredDataEtag(payload);
+  const etag = input.detail === 'summary' || input.page !== undefined || input.pageSize !== undefined
+    ? computeStructuredDataEtag({ sourceEtag, detail: input.detail ?? 'full', page: input.page ?? 1, pageSize: input.pageSize ?? 10 }) : sourceEtag;
   const matched = Boolean(input.ifNoneMatch && input.ifNoneMatch === etag);
   const payloadIncluded = includePayload && !matched;
   const validation = validatePayload(dataset, payload);
@@ -672,8 +716,8 @@ async function fetchStructuredData(input: StructuredDataFetchInput): Promise<Str
     schemaValidated: validation.ok,
     validationErrors: validation.errors.length ? validation.errors : undefined,
     warnings: warnings.length ? warnings : undefined,
-    meta: { ...metaFor(dataset, payload as Record<string, any>), source: live ? 'live-registry' : 'committed-export' },
-    payload: payloadIncluded ? (payload as Record<string, unknown>) : undefined,
+    meta: { ...metaFor(dataset, payload as Record<string, any>), source: live ? 'live-registry' : 'committed-export', sourceEtag, validationScope: 'complete-dataset', ...projection.meta },
+    payload: payloadIncluded ? projection.payload : undefined,
     ...(requestedVersion !== null ? { requestedVersion } : {}),
     ...(resolvedVersion !== null ? { resolvedVersion } : {}),
   };

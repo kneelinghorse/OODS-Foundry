@@ -1,6 +1,6 @@
 # Membership screen gallery
 
-[Back to the walkthrough](README.md). All records are generated samples. Click an image to inspect the full capture.
+[Back to the walkthrough](README.md). Captured from the frozen 0.11.1 candidate. All records are generated samples. Click an image to inspect the full capture.
 
 ## React
 

@@ -57,14 +57,14 @@ describe('list rows show record values, not field names', () => {
 });
 
 describe('filter options read like the badges', () => {
-  it('capitalises every lifecycle option', () => {
-    expect(enumOptionLabel('pending_cancellation')).toBe('Pending Cancellation');
+  it('uses sentence case for every lifecycle option', () => {
+    expect(enumOptionLabel('pending_cancellation')).toBe('Pending cancellation');
     const filter = walk(schemas.get('Subscription')!.screens).find(node => node.collectionControl === 'filter')!;
     const labels = (filter.props!.options as Array<{ value: string; label: string }>).map(option => option.label);
-    expect(labels).toContain('Pending Cancellation');
-    expect(labels).toContain('Past Due');
+    expect(labels).toContain('Pending cancellation');
+    expect(labels).toContain('Past due');
     expect(labels.filter(label => label !== 'All states').every(label => /^[A-Z]/.test(label))).toBe(true);
-    expect(file('Subscription', 'src/screens/List.tsx')).toContain('Pending Cancellation');
+    expect(file('Subscription', 'src/screens/List.tsx')).toContain('Pending cancellation');
     expect(file('Subscription', 'src/screens/List.tsx')).not.toContain("label: 'pending cancellation'");
   });
 });

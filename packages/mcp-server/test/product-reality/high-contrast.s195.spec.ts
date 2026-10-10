@@ -75,8 +75,8 @@ describe('HC scope at the public wire (s195-m05)', () => {
     const panels = inputs.filter(item => !['chord', 'flow_map'].includes(item.chartType!)).map(({ rows, output, name, ...item }: any) => ({ ...item, ...(name ? { title: name } : {}), id: item.chartType, kind: 'chart', ...(rows ? { datasetId: 'sales' } : {}) }));
     const request = { schemaVersion: 'v0.1', theme: 'hc', datasets: [{ id: 'sales', rows: SALES }], panels, onPanelError, a11y: { description: 'Measured HC render coverage.' }, output: { html: true } };
     const result = wire('dashboard.render', 'output', await dashboard(wire('dashboard.render', 'input', request) as never));
-    // s224-m01 (#2542 ruling 4): the five Vega panels' phone renders make 16 SVGs for 11 panels.
-    expect(result.html?.match(/<svg\b/g)).toHaveLength(16);
+    // s241: every panel has an authored narrow render; only one size is visible at a time.
+    expect(result.html?.match(/<svg\b/g)).toHaveLength(22);
     expect(result.panels).toHaveLength(11);
     expect(result.panels.filter(panel => panel.kind === 'error')).toEqual([]);
     expect(result.warnings.filter(issue => issue.code === 'OODS-V165')).toEqual([]);

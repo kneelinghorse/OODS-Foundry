@@ -254,10 +254,10 @@ describe('dashboard.render — output.html export (sprint-115 m03)', () => {
     expect(html.trimEnd().endsWith('</html>')).toBe(true);
     expect(out.output).toEqual({ compact: true, html: true }); // echoed control
 
-    // Three chart panels plus the computed KPI sparkline render inline SVG. s224-m01 (#2542 ruling 4): each Vega chart
-    // panel also carries its phone render (the ECharts geo panel keeps one render).
+    // Every chart, including ECharts geo, carries a native phone and desktop render.
+    // Three two-size panels plus the KPI sparkline remain self-contained (s241).
     const svgCount = (html.match(/<svg/g) ?? []).length;
-    expect(svgCount).toBe(6);
+    expect(svgCount).toBe(7);
     expect(html).toContain('class="oods-kpi-sparkline"');
 
     // KPI tile carries the computed value + its a11y string.
@@ -346,7 +346,7 @@ describe('dashboard.render — on-brand + accessible export (sprint-115 m04)', (
     expect(html).toContain('role="region"'); // dashboard container
     expect(html).toContain('Revenue overview dashboard.'); // cross-panel summary
     expect(html).toMatch(/<section class="oods-panel oods-kpi"[^>]*aria-label=/); // KPI tile labelled
-    expect(html).toMatch(/<figure class="oods-panel oods-chart" role="figure"[^>]*aria-label=/); // chart figure labelled
+    expect(html).toMatch(/<figure class="oods-panel oods-chart"[^>]*role="figure"[^>]*aria-label=/); // chart figure labelled
     expect(html).not.toContain('oods-placeholder-geo'); // no geo placeholder
     expect(html).toMatch(/role="figure"[^>]*aria-label="Choropleth/); // geo chart a11y-described
   });

@@ -230,6 +230,13 @@ export function deriveMountObligations(schema: UiSchema, source: string, model: 
   };
   schema.screens.forEach((node) => visit(node));
   for (const node of schemaNodes(schema)) {
+    // s241: an empty status history is absent; real events and authored child content remain required.
+    if (!inactive.has(node.id) && node.component === 'StatusTimeline' && !node.children?.length) {
+      const authored = ['events', 'history', 'entries', 'stateHistory'].some(key => Array.isArray(node.props?.[key]) && (node.props![key] as unknown[]).length > 0);
+      const field = node.props?.historyField;
+      const history = typeof field === 'string' && schema.objectSchema?.[field] ? model[modelKey(field)] : undefined;
+      if (!authored && !(Array.isArray(history) && history.length)) inactive.set(node.id, `status history ${node.id} has no events (s241-m01)`);
+    }
     if (!inactive.has(node.id) && emptyTraitEventCard(node, model)) inactive.set(node.id, `event card ${node.id} with no event renders nothing (s223-m01, #2527 ruling 7)`);
     if (!inactive.has(node.id) && hiddenDefaultChip(node, model)) inactive.set(node.id, `default chip ${node.id} hidden by hideWhenFalse (s223-m01, #2527 ruling 7)`);
     if (!inactive.has(node.id) && hiddenDefaultSummary(node, model)) inactive.set(node.id, `default summary ${node.id} hidden by hideWhenDefault (s224-m01, #2542 ruling 6)`);

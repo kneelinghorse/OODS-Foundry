@@ -100,9 +100,9 @@ describe('public SVG contract', () => {
     const first = await dashboard(request); const second = await dashboard(request);
     expect(first.status, JSON.stringify(first.errors)).toBe('ok');
     expect(first.panels).toHaveLength(11); expect(first.panels.every(panel => panel.kind === 'chart')).toBe(true);
-    // s224-m01 (#2542 ruling 4): each of the five Vega panels also carries its phone render (332x180, shown below 600px),
+    // s241: all eleven panels carry a narrow render selected only while the full render does not fit,
     // so 11 panels write 16 SVGs; the six ECharts panels keep one each.
-    expect(first.html?.match(/<svg\b/g)).toHaveLength(16);
+    expect(first.html?.match(/<svg\b/g)).toHaveLength(22);
     expect(first.html).not.toContain('class="oods-panel oods-placeholder');
     expect(first.outputHtmlHash).toBe(sha256(first.html!)); expect(second.html).toBe(first.html);
     const failed = await dashboard({ ...request, strictFields: true, panels: [{ id: 'bad', kind: 'chart', chartType: 'bar', datasetId: 'sales', encodings: { x: 'region', y: 'missing' } }] });
@@ -157,7 +157,7 @@ describe('public scoped SVG contract', () => {
       expect(first.html).toBe(second.html); expect(first.outputHtmlHash).toBe(sha256(first.html!));
       const svgs = first.html!.match(/<svg\b[\s\S]*?<\/svg>/g)!;
       // s224-m01 (#2542 ruling 4): the five Vega panels' phone renders paint the same canvas as their desktop renders.
-      expect(svgs).toHaveLength(16);
+      expect(svgs).toHaveLength(22);
       for (const svg of svgs) expect(canvasFill(svg)).toBe(toHex(resolveTokenToColor('--sys-surface-canvas', { brand, theme })!));
       if (theme === 'light') light = first.html;
       else expect(first.html).not.toBe(light);

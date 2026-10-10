@@ -19,7 +19,7 @@ const MarkGraphTrait = {
     detail: [{ component: 'VizGraphPreview', position: 'top', priority: 60, props: { svgParameter: 'previewSvg' } }],
   },
   metadata: {
-    created: '2026-09-14', updated: '2026-09-14', owners: ['viz@oods.systems'], maturity: 'alpha', regionsUsed: ['detail'],
+    created: '2026-09-14', updated: '2026-09-14', owners: ['Viz team'], maturity: 'alpha', regionsUsed: ['detail'],
     accessibility: { notes: 'The wrapper names the static graph; node identifiers and the description remain available without color or interaction.' },
   },
 } as const satisfies TraitDefinition;

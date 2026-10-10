@@ -76,10 +76,10 @@ describe('artifact.certify input schema — the mirrored branch $defs (s172 m01)
   const BRANCHES = ['hierarchy', 'sankey', 'chord', 'network', 'geo'] as const;
 
   it.each(BRANCHES)(
-    '$defs.%sBranch is deep-equal to viz.render.input.json properties.%s (a copy, not a paraphrase)',
+    '$defs.%sBranch is deep-equal to viz.render.input.json $defs.%sInput (a copy, not a paraphrase)',
     (branch) => {
       const mirrored = (certifyInputSchema as any).$defs[`${branch}Branch`];
-      const source = vizRenderInputSchema.properties[branch];
+      const source = vizRenderInputSchema.$defs[`${branch}Input`];
       expect(mirrored).toEqual(source);
     },
   );
@@ -97,7 +97,7 @@ describe('artifact.certify input schema — the mirrored branch $defs (s172 m01)
   it('the keep-in-step check can discriminate: a mutated copy is NOT deep-equal to the source', () => {
     const mutated = JSON.parse(JSON.stringify((certifyInputSchema as any).$defs.sankeyBranch));
     mutated.properties.links.minItems = 99;
-    expect(mutated).not.toEqual(vizRenderInputSchema.properties.sankey);
+    expect(mutated).not.toEqual(vizRenderInputSchema.$defs.sankeyInput);
   });
 });
 

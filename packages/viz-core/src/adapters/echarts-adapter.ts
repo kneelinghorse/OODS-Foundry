@@ -10,7 +10,7 @@ import type {
 } from '../spec/normalized-viz-spec.js';
 import { applyEChartsLayout, facetRenderedCellFilter } from './echarts-layout-mapper.js';
 import { resolveScaleBindings, type ScaleResolution } from './scale-resolver.js';
-import { numberFormatLocale, numberFormatDefaultLocale, timeFormatDefaultLocale } from 'vega-format';
+import { createTooltipFormatter, escapeHtml, formatEChartsValue, type EChartsWireFormat } from './echarts-format.js';
 import { BAR_MAX_THICKNESS, CURRENCY_FORMAT, currencyNumberLocale } from './vega-lite-adapter.js';
 import { isMarkRectGrid, heatmapColorIsMeasure, getEncodingBinding, aggregateMarkRectCells } from '../a11y/data-analysis.js';
 import { getVizScaleTokens } from '../tokens/scale-token-mapper.js';
@@ -441,15 +441,7 @@ function chartCurrency(spec: NormalizedVizSpec): string | undefined {
 
 /** ECharts chooses its own ticks. Vega's floating formatter preserves each tick's precision when none is authored. */
 function bindingFormatter(binding: EncodingBinding, currency?: string): ((value: unknown) => string) | undefined {
-  const format = binding.format ?? (binding.currency ? CURRENCY_FORMAT : undefined);
-  if (format === undefined) return undefined;
-  if (binding.type === 'temporal' || binding.scale === 'temporal' || binding.timeUnit) {
-    const formatted = timeFormatDefaultLocale().utcFormat(format);
-    return value => formatted(new Date(value as string | number));
-  }
-  const locale = currency ? numberFormatLocale(currencyNumberLocale(currency)) : numberFormatDefaultLocale();
-  const formatted = locale.formatFloat(format);
-  return value => formatted(Number(value));
+  return formatEChartsValue(wireBinding(binding, currency));
 }
 
 function inferSmooth(mark: NormalizedMark): boolean | undefined {
@@ -650,7 +642,7 @@ function createAxis(channel: 'x' | 'y', binding?: EncodingBinding, currency?: st
     type: inferAxisType(channel, binding),
     name: binding.title,
     nameLocation: 'end' as const,
-    axisLabel: binding.format !== undefined || binding.currency ? { formatter: bindingFormatter(binding, currency) } : undefined,
+    axisLabel: binding.format !== undefined || binding.currency ? { formatter: bindingFormatter(binding, currency), __oodsFormat: wireBinding(binding, currency) } : undefined,
     boundaryGap: binding.channel === 'x' ? true : undefined,
   });
 }
@@ -851,7 +843,10 @@ function buildTooltip(spec: NormalizedVizSpec, currency: string | undefined, ban
   if (!interaction || interaction.rule.bindTo !== 'tooltip') {
     const formatted = bindings.some(binding => binding.format !== undefined || binding.currency);
     return { trigger: 'axis', axisPointer: { type: 'shadow' },
-      ...(formatted ? { formatter: createAxisTooltipFormatter(spec, currency, bands) } : {}) };
+      ...(formatted ? { formatter: createAxisTooltipFormatter(spec, currency, bands), __oodsFormat: { version: 1, series: spec.marks.flatMap((mark, index) => {
+        const fields = Object.values(mergeEncodings(convertEncodingMap(spec.encoding), convertEncodingMap(mark.encodings))).map(binding => wireBinding(binding!, currency));
+        return bands.some(band => band.markIndex === index) ? [fields, fields] : [fields];
+      }) } } : {}) };
   }
 
   return removeUndefined({
@@ -859,7 +854,15 @@ function buildTooltip(spec: NormalizedVizSpec, currency: string | undefined, ban
     appendToBody: true,
     className: 'oods-viz-tooltip',
     formatter: createTooltipFormatter(interaction.rule.fields, formatters),
+    __oodsFormat: { version: 1, fields: interaction.rule.fields.map(field => wireBinding(bindings.find(binding => binding.field === field && (binding.format || binding.currency)) ?? bindings.find(binding => binding.field === field) ?? { field }, currency)) },
   });
+}
+
+/** Declarative formatting only; raw numeric data and scale positions are unchanged by JSON transport. */
+function wireBinding(binding: Pick<EncodingBinding, 'field' | 'type' | 'format' | 'currency' | 'scale' | 'timeUnit'>, currency?: string): EChartsWireFormat {
+  return removeUndefined({ version: 1 as const, field: binding.field, temporal: binding.type === 'temporal' || binding.scale === 'temporal' || Boolean(binding.timeUnit),
+    format: binding.format ?? (binding.currency ? CURRENCY_FORMAT : undefined), currency,
+    locale: currency ? currencyNumberLocale(currency) : { decimal: '.', thousands: ',', grouping: [3], currency: ['$', ''] as [string, string] } });
 }
 
 function findTooltipInteraction(interactions?: NormalizedVizSpec['interactions']): NormalizedInteraction | undefined {
@@ -897,49 +900,6 @@ function createAxisTooltipFormatter(spec: NormalizedVizSpec, currency: string | 
       return name + formatter(item);
     }).join('');
   };
-}
-
-function escapeHtml(value: unknown): string {
-  return String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
-}
-
-function createTooltipFormatter(fields: readonly string[], formatters: ReadonlyMap<string, ((value: unknown) => string) | undefined>): (params: unknown) => string {
-  return (params: unknown) => {
-    const datum = extractDatum(params);
-
-    if (!datum) {
-      return '';
-    }
-
-    const rows = fields
-      .map((field) => {
-        const raw = datum[field as keyof typeof datum];
-        const value = raw == null ? '—' : formatters.get(field)?.(raw) ?? raw;
-        return `<div class="oods-viz-tooltip__row"><span class="oods-viz-tooltip__label">${escapeHtml(field)}: </span><span class="oods-viz-tooltip__value">${escapeHtml(value)}</span></div>`;
-      })
-      .join('');
-
-    return `<div class="oods-viz-tooltip__content">${rows}</div>`;
-  };
-}
-
-function extractDatum(params: unknown): Record<string, unknown> | undefined {
-  if (Array.isArray(params)) {
-    const [first] = params;
-    if (first && typeof first === 'object' && first !== null && typeof (first as { data?: unknown }).data === 'object') {
-      return (first as { data: Record<string, unknown> }).data;
-    }
-    return undefined;
-  }
-
-  if (params && typeof params === 'object') {
-    const record = params as { data?: unknown };
-    if (record.data && typeof record.data === 'object') {
-      return record.data as Record<string, unknown>;
-    }
-  }
-
-  return undefined;
 }
 
 function buildUserMeta(spec: NormalizedVizSpec): EChartsOption['usermeta'] {

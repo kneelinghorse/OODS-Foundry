@@ -353,11 +353,13 @@ describe('catalog.list', () => {
     }
   });
 
-  it('should return totalCount matching filtered results', async () => {
+  it('keeps the filtered total distinct from the bounded default page', async () => {
     const input: CatalogListInput = { category: 'core' };
     const output: CatalogListOutput = await handle(input);
 
-    expect(output.totalCount).toBe(output.components.length);
+    expect(output.totalCount).toBeGreaterThan(output.components.length);
+    expect(output.components).toHaveLength(10);
+    expect(output.nextPage).toMatchObject({ category: 'core', page: 2, pageSize: 10 });
     expect(output.returnedCount).toBe(output.components.length);
   });
 

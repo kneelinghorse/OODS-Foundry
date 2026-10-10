@@ -96,7 +96,8 @@ const TRACKED_BOUNDARY_COUNTS = Object.freeze({
   // Sprint 224 adds the m01 pair (the two detail recipes' hideWhenDefault), which the manifest serves.
   // Sprint 225 adds the reviewed Stage1 capture-object export pair.
   // Sprint 233 adds the 2026-10-06 public-only component/token pair.
-  "artifacts/structured-data": 63,
+  // Sprint 241 retains its owner-role refresh pair; only the manifest closure ships.
+  "artifacts/structured-data": 65,
 });
 
 export const ABSOLUTE_PATH_EXEMPTIONS = new Set([

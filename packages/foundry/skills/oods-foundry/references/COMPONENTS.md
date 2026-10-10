@@ -111,7 +111,7 @@ notice; wire your data, navigation and persistence handlers before shipping.
 Before applying adapters, install the OODS libraries in the team project as well as its own dependencies. For React:
 
 ```bash
-npm install @oods/components-react@0.11.0 @oods/component-contracts@0.11.0 @oods/component-styles@0.11.0 @oods/tokens@0.11.0
+npm install @oods/components-react@0.11.1 @oods/component-contracts@0.11.1 @oods/component-styles@0.11.1 @oods/tokens@0.11.1
 ```
 
 For Vue, replace `@oods/components-react` with `@oods/components-vue` at the same version. Connecting the MCP server alone does not install these project dependencies. A missing dependency is reported before any adapter is written. If the manifest changes after drafting, draft again before applying.
@@ -137,7 +137,7 @@ cd team-app
 From the shadcn project, install OODS Foundry locally. Connecting the MCP server with `npx` does not install a package into that project, and the next command needs its registry files:
 
 ```bash
-npm install @oods/foundry@0.11.0
+npm install @oods/foundry@0.11.1
 ```
 
 Install the sixteen adapters from that package in one call:
@@ -166,7 +166,7 @@ Each React implementation uses this source form instead of `package`, `version` 
 
 Create and substitution-changing updates check the named export, local imports, aliases, CSS entry, Tailwind version and installed bare dependencies without executing the component. Dependencies resolve from the importing file, through the project’s installed package layout. Tailwind 4 accepts either @tailwindcss/vite or @tailwindcss/postcss. Updating only notes, confidence or oodsTraits does not need the source project. Use `design_compose`, `design_preview` and `code_generate` as above. Preview compiles the project's Tailwind and theme; changes to mapped source files, their imports, configuration or CSS create a new latest version. Unrelated project files do not. Explicit old versions retain their compiled output.
 
-Component output imports the project's module. React output begins with `'use client'`, so Next.js App Router can mount it. Place its files in the project, supply its declared props and action callbacks, and set the surrounding container's `data-brand` and `data-theme` for the chosen OODS brand and theme. For dark, that ancestor needs both `data-theme="dark"` and `class="dark"`. In hc the team's parts keep their light palette because shadcn has no hc theme. Application output remains a Vite application, including when the source project uses Next.js. It copies the needed source files, local assets and CSS, configures aliases and Tailwind, and pins dependencies to their installed versions. The emitted metadata records the base and style, project-relative paths and closure hashes, with no absolute project path. React and Vue mappings apply to their own framework. Single-screen and routed workflow applications both copy the checked source closure. HTML keeps OODS components; a mapping missing the requested framework reports `OODS-V218`. See [BRANDS.md](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.11.0/packages/foundry/BRANDS.md) to derive an OODS brand from the same CSS theme.
+Component output imports the project's module. React output begins with `'use client'`, so Next.js App Router can mount it. Place its files in the project, supply its declared props and action callbacks, and set the surrounding container's `data-brand` and `data-theme` for the chosen OODS brand and theme. For dark, that ancestor needs both `data-theme="dark"` and `class="dark"`. In hc the team's parts keep their light palette because shadcn has no hc theme. Application output remains a Vite application, including when the source project uses Next.js. It copies the needed source files, local assets and CSS, configures aliases and Tailwind, and pins dependencies to their installed versions. The emitted metadata records the base and style, project-relative paths and closure hashes, with no absolute project path. React and Vue mappings apply to their own framework. Single-screen and routed workflow applications both copy the checked source closure. HTML keeps OODS components; a mapping missing the requested framework reports `OODS-V218`. See [BRANDS.md](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.11.1/packages/foundry/BRANDS.md) to derive an OODS brand from the same CSS theme.
 
 The proven project layouts are npm + Vite, pnpm's isolated linker + Vite, a hoisted npm workspace, and npm + Next.js App Router, measured on 0.6.0. The two committed fixtures use shadcn CLI 4.21.1: Vite with Radix and Next.js with Base UI. Their generated screens pass each project's own production build, measured on 0.7.0. Yarn PnP, Bun and a Turbopack-only development server are not proven. <!-- history -->
 
@@ -180,7 +180,7 @@ Keep these calls in the same MCP session. The CSS entry is `tailwind.css` in you
 {"action":"derive","cssPath":"/absolute/path/to/team-app/src/index.css"}
 ```
 
-Read `gaps` and complete the returned `recipe` with your team's choices before `brand_read` `validate` and `brand_create` `create`, as [BRANDS.md](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.11.0/packages/foundry/BRANDS.md) describes. A neutral shadcn theme has no accent hue to derive: choose one explicitly. For a trial, `accentHue: 262` is an example choice, not a colour inferred from that theme. A default Next.js project declares Geist and Geist Mono in `app/layout.tsx`; those family names can fill its font gaps. Replace `<completed recipe>` below with the complete JSON object, not a string, and choose an unused brand id:
+Read `gaps` and complete the returned `recipe` with your team's choices before `brand_read` `validate` and `brand_create` `create`, as [BRANDS.md](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.11.1/packages/foundry/BRANDS.md) describes. A neutral shadcn theme has no accent hue to derive: choose one explicitly. For a trial, `accentHue: 262` is an example choice, not a colour inferred from that theme. A default Next.js project declares Geist and Geist Mono in `app/layout.tsx`; those family names can fill its font gaps. Replace `<completed recipe>` below with the complete JSON object, not a string, and choose an unused brand id:
 
 ```json
 {"action":"validate","brand_id":"Teambrand","recipe":"<completed recipe>"}

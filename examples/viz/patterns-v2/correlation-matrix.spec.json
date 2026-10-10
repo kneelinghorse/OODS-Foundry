@@ -26,8 +26,8 @@
     {
       "trait": "MarkRect",
       "encodings": {
-        "x": { "field": "featureX", "trait": "EncodingPositionX", "channel": "x", "scale": "band", "title": "Metric" },
-        "y": { "field": "featureY", "trait": "EncodingPositionY", "channel": "y", "scale": "band", "title": "Metric" },
+        "x": { "field": "featureX", "trait": "EncodingPositionX", "channel": "x", "scale": "band", "title": "Column metric" },
+        "y": { "field": "featureY", "trait": "EncodingPositionY", "channel": "y", "scale": "band", "title": "Row metric" },
         "color": {
           "field": "correlation",
           "trait": "EncodingColor",
@@ -39,8 +39,8 @@
     }
   ],
   "encoding": {
-    "x": { "field": "featureX", "trait": "EncodingPositionX", "channel": "x", "scale": "band", "title": "Metric" },
-    "y": { "field": "featureY", "trait": "EncodingPositionY", "channel": "y", "scale": "band", "title": "Metric" },
+    "x": { "field": "featureX", "trait": "EncodingPositionX", "channel": "x", "scale": "band", "title": "Column metric" },
+    "y": { "field": "featureY", "trait": "EncodingPositionY", "channel": "y", "scale": "band", "title": "Row metric" },
     "color": { "field": "correlation", "trait": "EncodingColor", "channel": "color", "scale": "diverging", "title": "Correlation" }
   },
   "config": {

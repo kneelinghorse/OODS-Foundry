@@ -192,10 +192,10 @@ describe('dashboard.render output.html export goldens (sprint-115 m05)', () => {
   it('ECharts-primary HTML draws normalized SVG with an accessible figure', async () => {
     const out = await handle(METRIC_OVERVIEW_HTML);
     expect(out.html).not.toContain('oods-placeholder-geo');
-    // Three chart panels plus the computed KPI's accessible sparkline. s224-m01 (#2542 ruling 4): the two Vega panels each
-    // carry a phone render too, which the stylesheet shows in place of the span render at 600px and below.
-    expect(out.html?.match(/<svg/g)).toHaveLength(6);
-    expect(out.html?.match(/<div class="oods-chart-phone"><svg/g)).toHaveLength(2);
+    // Each chart panel has a native narrow render, including ECharts; the KPI adds one sparkline.
+    // Narrow containers select their authored variant rather than shrinking desktop labels.
+    expect(out.html?.match(/<svg/g)).toHaveLength(7);
+    expect(out.html?.match(/<div class="oods-chart-size-0"[^>]*><svg/g)).toHaveLength(3);
     expect(out.html?.match(/class="oods-kpi-sparkline"/g)).toHaveLength(1);
     expect(out.html).toContain('aria-label="Choropleth map of regional values."');
     expect(out.html).not.toContain('<canvas');

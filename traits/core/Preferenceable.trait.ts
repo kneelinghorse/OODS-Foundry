@@ -198,7 +198,7 @@ const PreferenceableTrait = {
 
   metadata: {
     created: '2025-11-18',
-    owners: ['core@oods.systems', 'platform@oods.systems'],
+    owners: ['Core team', 'Platform team'],
     maturity: 'experimental',
     accessibility: {
       keyboard: 'PreferenceEditor supports section-by-section keyboard traversal via namespace headings.',

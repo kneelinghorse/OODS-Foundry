@@ -116,7 +116,7 @@ const LabelledTrait = {
 
   metadata: {
     created: '2025-10-12',
-    owners: ['design@oods.systems', 'uxcopy@oods.systems'],
+    owners: ['Design team', 'Uxcopy team'],
     maturity: 'stable',
     accessibility: {
       keyboard: 'n/a',

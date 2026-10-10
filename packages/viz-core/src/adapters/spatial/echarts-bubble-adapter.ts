@@ -49,7 +49,7 @@ import { tokenColorAtLightness, tokenLightness } from '../echarts/token-resolver
 import { getVizScaleTokens } from '../../tokens/scale-token-mapper.js';
 import type { DataRecord } from './geo-data-joiner.js';
 import { applyHcEchartsChrome, resolveOodsEchartsChrome } from '../../tokens/oods-echarts-chrome.js';
-import { withTitleBand } from './titled-geo.js';
+import { phoneGeoLayout, withTitleBand } from './titled-geo.js';
 
 const DEFAULT_MAP_NAME = 'custom-geo';
 const DEFAULT_BUBBLE_RANGE: [number, number] = [6, 28];
@@ -401,6 +401,7 @@ export function adaptBubbleToECharts(
   const option = pruneUndefined({
     backgroundColor: chrome.background,
     geo: withTitleBand(result.geo, spec.name),
+    media: phoneGeoLayout(spec.name, result.visualMap, chrome.visualMapLabel),
     // Bake the visualMap tick label onto text-neutral when a value-driven scale is shown
     // (memo §6); no visualMap → nothing to bake.
     visualMap: result.visualMap

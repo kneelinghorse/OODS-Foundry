@@ -7,6 +7,9 @@ import type { UiElement, FieldSchemaEntry } from '../schemas/generated.js';
 import { getContentStrategy, type ContentStrategy } from './content-strategy.js';
 import { javascriptSingleQuotedString } from './emission-safety.js';
 import { fieldLabel } from '../compose/label-generator.js';
+import { enumOptionLabel } from '../compose/internal-fields.js';
+
+const displayMap = (labels: Record<string, string>): string => `{${Object.entries(labels).map(([key, value]) => `${javascriptSingleQuotedString(key)}:${javascriptSingleQuotedString(value)}`).join(',')}}`;
 
 // ---------------------------------------------------------------------------
 // Field type mapping (object schema → TypeScript types)
@@ -63,8 +66,22 @@ export function displayFieldExpression(
   access: (name: string) => string = snakeToCamel,
 ): string {
   const primaryValue = access(field);
-  const numberedObject = ownFieldSchemaEntry(fields, field)?.semanticType?.match(/^object\.([^.]+)\.number$/)?.[1];
-  const primary = numberedObject ? `(String(${primaryValue} ?? '').match(/^(?:[A-Z]{1,4}-)?\\d+$/) ? ${javascriptSingleQuotedString(fieldLabel(numberedObject) + ' ')} + Number(String(${primaryValue}).replace(/^[A-Z]{1,4}-/, '')) : ${primaryValue})` : primaryValue;
+  const entry = ownFieldSchemaEntry(fields, field);
+  const numberedObject = entry?.semanticType?.match(/^object\.([^.]+)\.number$/)?.[1];
+  let primary = numberedObject ? `(String(${primaryValue} ?? '').match(/^(?:[A-Z]{1,4}-)?\\d+$/) ? ${javascriptSingleQuotedString(fieldLabel(numberedObject) + ' ')} + Number(String(${primaryValue}).replace(/^[A-Z]{1,4}-/, '')) : ${primaryValue})` : primaryValue;
+  if (entry?.enum?.length) {
+    const labels = Object.fromEntries(entry.enum.map(value => [value, enumOptionLabel(value, entry.enumLabels)]));
+    primary = `(Object.entries(${displayMap(labels)}).find(([key]) => key === String(${primaryValue}))?.[1] ?? ${primaryValue})`;
+  }
+  if (entry?.titleReferences?.length) {
+    const labels = entry.titleReferences.filter(name => ownFieldSchemaEntry(fields, name)).map(name => {
+      const reference = fields![name]!;
+      const lookup = reference.referenceLabels ? `Object.entries(${displayMap(reference.referenceLabels)}).find(function([key]) { return key === String(${access(name)}); })?.[1]` : 'undefined';
+      const label = reference.displayLabelField && ownFieldSchemaEntry(fields, reference.displayLabelField) ? `(${access(reference.displayLabelField)} ?? ${lookup})` : lookup;
+      return `(${access(name)} == null || String(${access(name)}) === '' ? undefined : ${label})`;
+    });
+    primary = `([${labels.join(', ')}].filter(function(value) { return typeof value === 'string' ? value.trim() : false; }).join(' · ') || ${primary})`;
+  }
   const fallback = ownFieldSchemaEntry(fields, field)?.displayFallbackField;
   if (!fallback || fallback === field || !ownFieldSchemaEntry(fields, fallback)) return primary;
   return `(String(${primary} ?? '').trim() ? ${primary} : ${access(fallback)})`;
@@ -78,15 +95,24 @@ export function isReferenceField(entry: FieldSchemaEntry | undefined): boolean {
 export function referenceFieldExpression(field: string, fields: Record<string, FieldSchemaEntry> | undefined): string {
   const label = ownFieldSchemaEntry(fields, field)?.displayLabelField;
   const labels = ownFieldSchemaEntry(fields, field)?.referenceLabels;
-  const lookup = labels ? `(Object.entries(${JSON.stringify(labels)}).find(([key]) => key === String(${snakeToCamel(field)}))?.[1])` : 'undefined';
+  const lookup = labels ? `(Object.entries(${displayMap(labels)}).find(([key]) => key === String(${snakeToCamel(field)}))?.[1])` : 'undefined';
   const resolved = label && ownFieldSchemaEntry(fields, label) ? labels ? `(${snakeToCamel(label)} ?? ${lookup})` : snakeToCamel(label) : lookup;
-  return `formatReferenceLabel(${snakeToCamel(field)}, ${resolved}, ${javascriptSingleQuotedString(field === 'id' ? 'Record' : fieldLabel(field.replace(/_ids?$/, '')))})`;
+  return `formatReferenceLabel(${snakeToCamel(field)}, ${resolved}, ${javascriptSingleQuotedString(ownFieldSchemaEntry(fields, field)?.displayLabel ?? (field === 'id' ? 'Record' : fieldLabel(field.replace(/(?:_ids?|Ids?)$/, ''))))})`;
+}
+
+/** A status-history panel is useful only when it has events; authored child content remains visible. */
+export function statusTimelineCondition(node: UiElement, fields?: Record<string, FieldSchemaEntry>): string | undefined {
+  if (node.component !== 'StatusTimeline' || node.children?.length) return undefined;
+  if (['events', 'history', 'entries', 'stateHistory'].some(key => Array.isArray(node.props?.[key]) && (node.props![key] as unknown[]).length)) return undefined;
+  const field = node.props?.historyField;
+  return typeof field === 'string' && ownFieldSchemaEntry(fields, field) ? `(${snakeToCamel(field)}?.length ?? 0) > 0` : 'false';
 }
 
 /** Naming displays preserve their authored fallback, while a raw UUID is available only in inspection. */
 function namingFieldExpression(field: string, fields: Record<string, FieldSchemaEntry> | undefined): string {
   const expression = displayFieldExpression(field, fields);
   const entry = ownFieldSchemaEntry(fields, field);
+  if (!entry?.titleReferences?.length && (entry?.referenceLabels || entry?.displayLabelField)) return referenceFieldExpression(field, fields);
   if (isReferenceField(entry) || entry?.displayFallbackField && isReferenceField(ownFieldSchemaEntry(fields, entry.displayFallbackField))) {
     // The retained consumer library has a one-argument formatter. Shorten an imported UUID before that call.
     const label = entry?.semanticType === 'text.label'
@@ -788,12 +814,6 @@ function humanizeFieldName(fieldName: string): string {
     .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-function humanizeEnumValue(value: string): string {
-  return value
-    .replace(/[-_]/g, ' ')
-    .replace(/\b\w/g, (c) => c.toUpperCase());
-}
-
 export interface FieldPropEnrichment {
   label?: string;
   placeholder?: string;
@@ -828,7 +848,7 @@ export function resolveFieldProps(
     && (strategy === 'label-prop' || strategy === 'status-prop')
     && !['StatusTimeline', 'ArchivePill', 'CancellationBadge'].includes(node.component)
   ) {
-    props.label = humanizeFieldName(fieldProp);
+    props.label = entry.displayLabel ?? humanizeFieldName(fieldProp);
   }
 
   // Only canonical Input accepts all three of these native-input props. Other
@@ -859,7 +879,7 @@ export function resolveFieldProps(
     !existing.options &&
     ['Select', 'StatusSelector', 'SegmentedControl', 'Combobox'].includes(node.component)
   ) {
-    props.options = entry.enum.map((v) => ({ label: humanizeEnumValue(v), value: v }));
+    props.options = entry.enum.map((v) => ({ label: enumOptionLabel(v, entry.enumLabels), value: v }));
   }
 
   return Object.keys(props).length > 0 ? props : null;
@@ -1303,6 +1323,13 @@ export function resolveFrameworkRecipeProps(
   const bindings: FrameworkRecipePropBinding[] = [];
   const consumedProps = new Set<string>();
   const boundTargets = new Set<string>();
+  if (node.component === 'StatusBadge' && props.content === undefined && !node.children?.length) {
+    const field = props.statusField ?? props.field;
+    if (typeof field === 'string' && ownFieldSchemaEntry(objectSchema, field)?.enum?.length) {
+      bindings.push({ sourceProp: typeof props.statusField === 'string' ? 'statusField' : 'field', targetProp: 'content', expression: displayFieldExpression(field, objectSchema) });
+      boundTargets.add('content');
+    }
+  }
   // Workflows own the collection record and read it through their store's helpers.
   const collectionField = props.field;
   if (workflowCollections && typeof collectionField === 'string' && ownFieldSchemaEntry(objectSchema, collectionField)?.type === 'AddressableEntry[]') {
