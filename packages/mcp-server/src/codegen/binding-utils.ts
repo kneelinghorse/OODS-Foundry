@@ -114,11 +114,7 @@ function namingFieldExpression(field: string, fields: Record<string, FieldSchema
   const entry = ownFieldSchemaEntry(fields, field);
   if (!entry?.titleReferences?.length && (entry?.referenceLabels || entry?.displayLabelField)) return referenceFieldExpression(field, fields);
   if (isReferenceField(entry) || entry?.displayFallbackField && isReferenceField(ownFieldSchemaEntry(fields, entry.displayFallbackField))) {
-    // The retained consumer library has a one-argument formatter. Shorten an imported UUID before that call.
-    const label = entry?.semanticType === 'text.label'
-      ? `String(${expression} ?? '').replace(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i, value => 'Record …' + value.slice(-8))`
-      : expression;
-    return `formatRecordLabel(${label})`;
+    return `formatRecordLabel(${expression}${entry?.semanticType === 'text.label' ? ', true' : ''})`;
   }
   return /^(integer|number)\??$/.test(entry?.type ?? '') ? `String(${expression} ?? '')` : expression;
 }
@@ -1503,7 +1499,7 @@ export function hasSlotBoundDates(
     const field = node.props?.field;
     const entry = typeof field === 'string' ? ownFieldSchemaEntry(objectSchema, field) : undefined;
     const bound = node.component === 'Text'
-      && (node.meta?.intent !== 'read-only-field' || entry?.type.replace(/\?$/, '') === 'date')
+      && node.meta?.intent !== 'read-only-field'
       && isDateFieldEntry(entry);
     return bound || hasSlotBoundDates(node.children ?? [], objectSchema);
   });

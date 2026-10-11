@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { chromium } from 'playwright';
 import { it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { handle as generate } from '../../src/tools/code.generate.js';
 import { deriveConsumerModel } from '../../src/codegen/preview-model.js';
@@ -77,4 +78,56 @@ it.each(['react', 'vue'] as const)('sets the shadcn dark class for %s applicatio
     expect(css).toContain('[data-theme="dark"] { color-scheme: dark; }');
     expect(css).toContain('[data-theme="light"], [data-theme="hc"] { color-scheme: light; }');
   }
+});
+
+// The screen contributes its own 24px inset. At 390px, the old additional 24px
+// application gutter shrank the 302px native chart and its axis labels to 294px.
+it.each(['react', 'vue'] as const)('keeps room for native chart text in the %s phone application shell', async framework => {
+  const result = await generate({ schema, framework, options: { output: 'application' } });
+  expect(result.status).toBe('ok');
+  const css = result.artifact!.files.find(file => file.path === 'src/app.css')!.contents;
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    for (const width of [390, 1024]) {
+      await page.setViewportSize({ width, height: 600 });
+      await page.setContent(`<style>${css}</style><main class="screen-app"><main style="padding:24px"><figure style="margin:0"></figure></main></main>`);
+      const figureWidth = await page.locator('figure').evaluate(node => node.getBoundingClientRect().width);
+      if (width === 390) expect(figureWidth).toBeGreaterThanOrEqual(302);
+      else expect(figureWidth).toBe(928); // Preserve the existing desktop shell.
+    }
+  } finally { await browser.close(); }
+});
+
+it('keeps the first and last payment dates inside the phone SVG without dropping payments', async () => {
+  const { handle: render } = await import('../../src/tools/viz.render.js');
+  const dates = ['Jan 15', 'Feb 15', 'Mar 15', 'Apr 15', 'May 17', 'Jun 15', 'Jul 15', 'Aug 15', 'Aug 16', 'Aug 19', 'Sep 15'];
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage({ viewport: { width: 390, height: 600 } });
+    for (const theme of ['light', 'dark', 'hc'] as const) {
+      const result = await render({ chartType: 'bar', theme,
+        rows: dates.map((date, index) => ({ payment: `${date}, 2026`, amount: index === 9 ? -19 : 19 })) as any,
+        encodings: { x: { field: 'payment', type: 'ordinal', sort: 'none', title: 'Payment date' }, y: { field: 'amount', aggregate: 'sum', currency: 'EUR', title: 'Amount' } },
+        output: { svg: true, width: 292, height: 240, titlePlacement: 'figure' } });
+      expect(result.status, JSON.stringify(result.errors)).toBe('ok');
+      await page.setContent(result.svg!);
+      const measured = await page.evaluate(() => {
+        const svg = document.querySelector('svg')!, bounds = svg.getBoundingClientRect();
+        const axis = [...svg.querySelectorAll('[aria-roledescription="axis"]')].find(node => node.getAttribute('aria-label')?.startsWith('X-axis'))!;
+        return { bars: svg.querySelectorAll('[aria-roledescription="bar"]').length,
+          labels: [...axis.querySelectorAll('.role-axis-label text')].filter(node => getComputedStyle(node).opacity !== '0').map(node => {
+            const box = node.getBoundingClientRect();
+            const lines = [...node.querySelectorAll('tspan')].map(line => line.textContent);
+            return { text: lines.length ? lines.join(', ') : node.textContent, left: box.left - bounds.left, right: bounds.right - box.right };
+          }) };
+      });
+      expect(measured.bars).toBe(11);
+      expect(measured.labels.map(label => label.text)).toEqual(expect.arrayContaining(['Jan 15, 2026', 'Sep 15, 2026']));
+      for (const label of measured.labels) {
+        expect(label.left, `${theme}: ${label.text} left edge`).toBeGreaterThanOrEqual(-0.5);
+        expect(label.right, `${theme}: ${label.text} right edge`).toBeGreaterThanOrEqual(-0.5);
+      }
+    }
+  } finally { await browser.close(); }
 });

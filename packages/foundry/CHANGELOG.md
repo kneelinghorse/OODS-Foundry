@@ -2,6 +2,16 @@
 
 What changed in each version of OODS Foundry, in the terms you use it in.
 
+## 0.11.2
+
+Generated React and Vue applications now pin the OODS release that generated them. Earlier releases kept their application libraries at 0.6.2, so apps missed the current responsive chart styles. New apps receive the current chart breakpoints and bounded sizing. Date-only fields and readable record labels now use the shared library instead of copies in the generator. Standalone apps use a 16 px phone gutter so charts retain native-sized axis labels at 390 px. Phone charts wrap full dates onto two lines and align the edge labels inside the SVG, keeping every payment and refund visible.
+
+Existing apps can keep their original pins. To upgrade, regenerate the app or move all four OODS library pins together. The generated manifest and install advice agree, and a release check rejects pins that differ from the six published packages.
+
+Mapped Vue timeline entries have the same inner padding as React. Other mapped cards retain their layout. The public demo is regenerated with 0.11.2 pins.
+
+The a11y-tools and Tailwind variant package commands now collect their existing suites. Tailwind context variants resolve the current system tokens while preserving explicit token overrides. Release verification runs every package suite and root verification whole, sequentially.
+
 ## 0.11.1
 
 Imported screens use the form's reference labels, readable enum words, joined-record titles and field-specific sort labels. The Cal.com Membership demo accepts timestamps and declines role-as-status; roles stay roles. The public demo is rebuilt from the release candidate.

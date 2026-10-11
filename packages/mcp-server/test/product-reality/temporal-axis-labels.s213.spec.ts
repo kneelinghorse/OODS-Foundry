@@ -22,7 +22,8 @@ const WEEKDAY_TICK = /^(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun) \d{2}$/;
 function xAxisLabels(svg: string): string[] {
   const axis = svg.split('<g class="mark-group role-axis"').find(part => part.includes('aria-label="X-axis')) ?? '';
   const labels = /class="mark-text role-axis-label"[^>]*>([\s\S]*?)<\/g>/.exec(axis)?.[1] ?? '';
-  return [...labels.matchAll(/<text\b([^>]*)>([^<]*)<\/text>/g)].filter(match => !/opacity="0"/.test(match[1]!)).map(match => match[2]!);
+  // A phone label can use tspans for its year; those are still one complete date label.
+  return [...labels.matchAll(/<text\b([^>]*)>([\s\S]*?)<\/text>/g)].filter(match => !/opacity="0"/.test(match[1]!)).map(match => match[2]!.replace(/<[^>]*>/g, ''));
 }
 
 describe('a date axis names the month on every day tick (s213-m01)', () => {

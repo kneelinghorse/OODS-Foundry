@@ -4,7 +4,7 @@
 
 ```js
 // tailwind.config.js
-import { createContextVariantsPlugin } from '@oods/tw-variants';
+import createContextVariantsPlugin from '@oods/tw-variants';
 
 export default {
   content: ['./src/**/*.{ts,tsx,html}'],

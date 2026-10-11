@@ -60,7 +60,7 @@
       ]
     }
   ],
-  "head": "b8ef6fbdee8aec1a2fe214eeb62bd2ea1c76a976",
+  "head": "7c1127f35fd6577ce43ff79edd12231e48714e09",
   "builderSelfCertified": false,
   "methodology": {
     "testImportLocation": "Where a spec that imports the tool's handler module lives: packages/mcp-server/test/product-reality, then test/contracts, then any other mcp-server spec. A literal runtime import is source evidence that a test reaches the handler, not proof of invocation, passing execution or browser certification. Grouped action imports roll up to their registered family. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not count.",
@@ -1225,7 +1225,7 @@
           },
           {
             "path": "packages/mcp-server/test/contracts/runnable-screen.s214.spec.ts",
-            "line": 4,
+            "line": 5,
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
           },
           {
@@ -1402,7 +1402,7 @@
           },
           {
             "path": "packages/mcp-server/test/importer/screens.s236.spec.ts",
-            "line": 234,
+            "line": 232,
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
           },
           {
@@ -3126,6 +3126,11 @@
             "handler": "packages/mcp-server/src/tools/viz.render.ts"
           },
           {
+            "path": "packages/mcp-server/test/contracts/runnable-screen.s214.spec.ts",
+            "line": 103,
+            "handler": "packages/mcp-server/src/tools/viz.render.ts"
+          },
+          {
             "path": "packages/mcp-server/test/contracts/temporal-docs.s196.spec.ts",
             "line": 4,
             "handler": "packages/mcp-server/src/tools/viz.render.ts"
@@ -3959,7 +3964,7 @@
           },
           {
             "path": "packages/mcp-server/test/contracts/runnable-screen.s214.spec.ts",
-            "line": 56,
+            "line": 57,
             "handler": "packages/mcp-server/src/tools/map.create.ts"
           },
           {

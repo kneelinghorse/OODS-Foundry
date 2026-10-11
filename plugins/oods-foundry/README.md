@@ -6,7 +6,7 @@ OODS Foundry is open source under the Apache License 2.0. The source of this rel
 
 ## Install
 
-The plugin runs the pinned `npx -y @oods/foundry@0.11.1`. It needs Node.js 22.0.0 or newer on macOS or Linux.
+The plugin runs the pinned `npx -y @oods/foundry@0.11.2`. It needs Node.js 22.0.0 or newer on macOS or Linux.
 
 If you found OODS Foundry in Anthropic's plugin directory, add it from there: run `/plugin directory` in Claude Code 2.1.287 or later, or open Customize > Plugins on claude.ai or in the Claude desktop app. A plugin you add on claude.ai reaches Claude Code as a synced plugin the next time you start a session signed in to the same account.
 
@@ -49,7 +49,7 @@ By default it sends nothing to OODS Foundry or anyone else.
 - **Files it writes.** What you make is written under `~/.oods-foundry`: saved schemas, composed versions and file-mode output, and your own objects, traits, brands, component mappings and drafts. Applying an accepted shadcn component draft also writes the new adapter files into that project; it never overwrites an existing file.
 - **Optional traffic.** Trace export stays off unless you set `OODS_OTLP_ENDPOINT`. Contract checks connect to a remote browser only if you name one with `OODS_PLAYWRIGHT_WS_ENDPOINT`.
 
-The package's [SECURITY.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.11.1/SECURITY.md) has more detail. The runtime archive's SHA-256 is recorded in the package's `runtime/oods-foundry-runtime.manifest.json`.
+The package's [SECURITY.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.11.2/SECURITY.md) has more detail. The runtime archive's SHA-256 is recorded in the package's `runtime/oods-foundry-runtime.manifest.json`.
 
 ## Troubleshooting
 

@@ -1,4 +1,6 @@
 import path from 'node:path';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import type { PluginAPI } from 'tailwindcss/types/config';
 import plugin from '../src/index.js';
@@ -21,7 +23,17 @@ const tokensPath = path.resolve(
   '../../tokens/dist/tailwind/tokens.json',
 );
 
-const createHarness = () => {
+const temporary: string[] = [];
+afterEach(() => temporary.splice(0).forEach(directory => rmSync(directory, { recursive: true })));
+const tokenFixture = (flat: Record<string, { cssVariable: string }>) => {
+  const directory = mkdtempSync(path.join(tmpdir(), 'tw-variants-'));
+  temporary.push(directory);
+  const file = path.join(directory, 'tokens.json');
+  writeFileSync(file, JSON.stringify({ prefix: 'test', flat }));
+  return file;
+};
+
+const createHarness = (source = tokensPath) => {
   const addBaseCalls: BaseCall[] = [];
   const addVariantCalls: VariantCall[] = [];
 
@@ -39,7 +51,7 @@ const createHarness = () => {
     e: (value: string) => value.replace(/:/g, '\\:'),
   };
 
-  const pluginInstance = plugin({ tokensPath });
+  const pluginInstance = plugin({ tokensPath: source });
   const handler = typeof pluginInstance === 'function'
     ? pluginInstance
     : (pluginInstance as { handler: (api: PluginAPI) => void }).handler;
@@ -63,9 +75,12 @@ describe('@oods/tw-variants plugin', () => {
     expect(rule['--context-spacing-inset-compact']).toBe(
       'var(--oods-spacing-inset-compact)',
     );
-    expect(rule['--context-typography-scale-heading-lg']).toBe(
-      'var(--oods-text-scale-heading-lg)',
-    );
+    // A typography composite expands into real scalar CSS properties.
+    for (const property of ['font-family', 'font-size', 'font-weight', 'letter-spacing', 'line-height']) {
+      expect(rule[`--context-typography-scale-heading-lg-${property}`]).toBe(
+        `var(--oods-text-scale-heading-lg-${property})`,
+      );
+    }
     expect(rule['--context-typography-line-height-tight']).toBe(
       'var(--oods-text-line-height-tight)',
     );
@@ -78,24 +93,32 @@ describe('@oods/tw-variants plugin', () => {
 
     expect(rule).toBeDefined();
     expect(rule['--context-surface-status-info-surface']).toBe(
-      'var(--oods-status-info-surface)',
+      'var(--oods-sys-status-info-surface)',
     );
     expect(rule['--context-surface-status-success-surface']).toBe(
-      'var(--oods-status-success-surface)',
+      'var(--oods-sys-status-success-surface)',
     );
   });
 
   it('falls back to prefixed variables when tokens are missing', () => {
-    const { mergedBase } = createHarness();
+    const { mergedBase } = createHarness(tokenFixture({}));
     const rule = mergedBase['.context-form [data-region="header"]'];
 
     expect(rule).toBeDefined();
     expect(rule['--context-spacing-inset-default']).toBe(
-      'var(--oods-spacing-inset-default)',
+      'var(--test-spacing-inset-default)',
     );
     expect(rule['--context-typography-scale-heading-lg']).toBe(
-      'var(--oods-text-scale-heading-lg)',
+      'var(--test-text-scale-heading-lg)',
     );
+  });
+
+  it('keeps an explicit semantic token ahead of its system alias', () => {
+    const { mergedBase } = createHarness(tokenFixture({
+      'sys-surface-default': { cssVariable: '--system-surface' },
+      'surface-default': { cssVariable: '--team-surface' },
+    }));
+    expect(mergedBase['.context-list [data-region="header"]']['--context-surface-default']).toBe('var(--team-surface)');
   });
 
   it('registers composable context and region variants', () => {

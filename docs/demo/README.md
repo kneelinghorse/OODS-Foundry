@@ -13,7 +13,7 @@ These are **generated sample records**, not Cal.com customer data. This five-min
 With Node.js 22 or newer and Claude Code installed:
 
 ```sh
-claude mcp add oods-foundry -- npx -y @oods/foundry@0.11.1
+claude mcp add oods-foundry -- npx -y @oods/foundry@0.11.2
 ```
 
 Restart Claude Code in a scratch workspace. Download the [pinned Prisma schema](https://raw.githubusercontent.com/calcom/cal.com/54343aa685ae8f33159d2f485ec4a57bad5c574a/packages/prisma/schema.prisma) into it. The importer reads that local file; it never connects to a database.
@@ -21,10 +21,10 @@ Restart Claude Code in a scratch workspace. Download the [pinned Prisma schema](
 Use your own shadcn project, or scratch copies of the [React](https://github.com/satnaing/shadcn-admin/tree/e16c87f213a5ba5e45964e9b67c792105ec74d26) and [Vue](https://github.com/Whbbit1999/shadcn-vue-admin/tree/303cf63f6c8ecdd43408ae991c904daa2aad2dd8) examples used here. Keep their manifests, aliases, CSS and installed dependencies. Before asking OODS Foundry to apply adapters, install its libraries **in the component project**:
 
 ```sh
-npm install @oods/components-react@0.11.1 @oods/component-contracts@0.11.1 @oods/component-styles@0.11.1 @oods/tokens@0.11.1
+npm install @oods/components-react@0.11.2 @oods/component-contracts@0.11.2 @oods/component-styles@0.11.2 @oods/tokens@0.11.2
 ```
 
-For Vue, replace `@oods/components-react` with `@oods/components-vue` at the same version. The MCP connection does not install these project dependencies. See [the component guide](../../packages/foundry/COMPONENTS.md) for supported project layouts.
+For Vue, replace `@oods/components-react` with `@oods/components-vue` at the same version. For the pinned Vue example, add `--legacy-peer-deps` to this component-project install to accommodate its upstream Vite plugin’s peer range. Generated app installs use plain `npm install`. The MCP connection does not install these project dependencies. See [the component guide](../../packages/foundry/COMPONENTS.md) for supported project layouts.
 
 ## 2. Ask for a draft, then inspect it
 
@@ -67,19 +67,21 @@ npm run build
 npm run dev
 ```
 
-The generated manifests intentionally pin the published compatible OODS libraries at 0.6.2. We built the unchanged files against those versions; the MCP tool that generated them was the 0.11.1 candidate. Your application still owns the database, authorization, navigation integration and production persistence.
+Generated apps pin the OODS release that generated them; to upgrade, regenerate the app or move all four pins together.
 
 ![Vue Membership form on a phone](images/vue-form-390-light.png)
 
 ## What happened in the recorded run
 
-One Claude Code conversation used a fresh profile and an empty npm cache, with the unpublished 0.11.1 tarball standing in for npm. `brand_read template` fit inline with all three themes. No imported objects, samples or composed schemas were hand-edited. The public images and recording replay those composition and generation calls against the final 0.11.1 freeze, using the same accepted inputs.
+The original Claude Code conversation used a fresh profile and an empty npm cache with the 0.11.1 candidate. `brand_read template` fit inline with all three themes. <!-- history -->
+
+For 0.11.2, we replayed the same pinned sources and accepted choices, regenerated both applications, and installed the four matching packed release libraries in each. No imported objects, samples, composed schemas or generated files were hand-edited. The screenshots show those rebuilt apps. The existing React recording is retained: all eight route/theme views were recaptured and visually compared, and its displayed content and layout are unchanged.
 
 The first incomplete object selections were refused atomically because their relationship targets were missing. The successful batch applied 101 definitions but kept the shipped UUID-based User, leaving Cal.com’s integer user references unresolved. A continuation accepted the reviewed Cal.com User definition with no traits, for 102 imported definitions in total. The only accepted trait is Membership’s Timestampable. Two component-mapping calls also supplied an unsupported `apply: true`; both were refused and corrected. The prompts above describe the final accepted choices, not every attempted call.
 
-Both apps passed their TypeScript checks and production builds. We exercised all four routes in both frameworks at 1440 and 390 pixels, in light and dark: 32 screenshots inspected, no page errors or overflow, and no axe WCAG 2.2 A/AA violations. Role filtering reduced five rows to two and reset to five; changing a role, related record and checkbox survived saving and reopening the form. The timeline uses the record's created/updated dates and has no false missing-extension warning.
+Both apps passed their TypeScript checks and production builds. We exercised all four routes in both frameworks at 1440 and 390 pixels, in light and dark: 32 screenshots inspected, no page errors or overflow, and no axe WCAG 2.2 A/AA violations. Role filtering reduced five rows to two and reset to five; changing a role, related record and checkbox survived saving and reopening the form. The timeline uses the record's created/updated dates and has no false missing-extension warning. Vue timeline entries now have the same measured 16 px inner padding as React; other screens retain their layout.
 
-The component contract reports still describe adapter limitations. Passing these example interactions is not certification of a whole application. The timeline shows the declared timestamp events; roles remain roles, without a status-history panel. [Run identities and image hashes](run.json) identify the candidate and the final capture.
+The component contract reports still describe adapter limitations. Passing these example interactions is not certification of a whole application. The timeline shows the declared timestamp events; roles remain roles, without a status-history panel. [Run identities and image hashes](run.json) identify the original conversation, current candidate capture and retained recording.
 
 ## Sources and licenses
 

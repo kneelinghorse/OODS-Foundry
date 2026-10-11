@@ -30,8 +30,8 @@ async function prepare(artifactVersion: string, packedVersion: string) {
   return result;
 }
 
-describe('the unchanged generated artifact is tested against this release', () => {
-  it.each(['0.7.0', '0.8.0', '0.9.0', '0.10.0', '0.10.1', '0.10.2', '0.11.0'])('records the intentional 0.6.2 to %s compatibility proof without rewriting the artifact', async version => {
+describe('historical generated artifacts retain their explicit upgrade proofs', () => {
+  it.each(['0.7.0', '0.8.0', '0.9.0', '0.10.0', '0.10.1', '0.10.2', '0.11.0', '0.11.1', '0.11.2'])('records the intentional 0.6.2 to %s compatibility proof without rewriting the artifact', async version => {
     const result = await prepare('0.6.2', version);
     expect(result.localTarballs.find(row => row.name === '@oods/components-react')).toMatchObject({ version, artifactVersion: '0.6.2' });
     expect(result.manifest.dependencies).toMatchObject({ '@oods/components-react': 'file:./tarballs/components-react.tgz' });

@@ -416,8 +416,6 @@ function reactFieldExpression(
     if (entry.enum?.length) return fieldName;
     // A labelled identifier row keeps its ID; the join projection belongs to record titles.
     if (entry.titleReferences?.length) fieldName = snakeToCamel(sourceField as string);
-    // The retained consumer library predates date-only formatting; lower through the existing local helper.
-    if (entry.type.replace(/\?$/, '') === 'date') return `${fieldName} == null || ${fieldName} === '' ? 'Not recorded' : ${SLOT_DATE_HELPER}(${fieldName}, true) || 'Invalid date'`;
     const code = Boolean(entry.enum?.length || /(?:status|state|event\.type|collection_method|pricing_model|interval)$/.test(entry.semanticType ?? ''));
     // s223-m01 (#2527 ruling 4): a declared number format (percent, quantity) travels with the field.
     return `formatReadOnlyValue(${fieldName}, ${JSON.stringify(entry.type.replace(/\?$/, ''))}, ${code}${entry.format ? `, ${JSON.stringify(entry.format)}` : ''})`;

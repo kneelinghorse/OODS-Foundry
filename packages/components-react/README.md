@@ -28,8 +28,8 @@ Generated sample screens identify their sample data. A workflow's local store is
 
 ## Limits
 
-Use one version of the OODS packages together. Apps that `@oods/foundry` generates pin the tested 0.6.2 set; keep those pins unless you upgrade all of them together. These packages are separate from the local MCP server, `@oods/foundry`. <!-- history -->
+Generated apps pin the OODS release that generated them; to upgrade, regenerate the app or move all four pins together. These packages are separate from the local MCP server, `@oods/foundry`.
 
 ## License
 
-Apache License 2.0. See [LICENSE](https://cdn.jsdelivr.net/npm/@oods/components-react@0.11.1/LICENSE) and [NOTICE](https://cdn.jsdelivr.net/npm/@oods/components-react@0.11.1/NOTICE). Generated output belongs to its user; installed package dependencies retain their own licenses.
+Apache License 2.0. See [LICENSE](https://cdn.jsdelivr.net/npm/@oods/components-react@0.11.2/LICENSE) and [NOTICE](https://cdn.jsdelivr.net/npm/@oods/components-react@0.11.2/NOTICE). Generated output belongs to its user; installed package dependencies retain their own licenses.

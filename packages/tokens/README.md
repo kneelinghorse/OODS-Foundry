@@ -46,8 +46,8 @@ To turn your colour tokens into an OODS Foundry brand, use `brand_create` throug
 
 ## Limits
 
-Use one version of the OODS packages together. Apps that `@oods/foundry` generates pin the tested 0.6.2 set; keep those pins unless you upgrade all of them together. These packages are separate from the local MCP server, `@oods/foundry`. <!-- history -->
+Generated apps pin the OODS release that generated them; to upgrade, regenerate the app or move all four pins together. These packages are separate from the local MCP server, `@oods/foundry`.
 
 ## License
 
-Apache License 2.0. See [LICENSE](https://cdn.jsdelivr.net/npm/@oods/tokens@0.11.1/LICENSE) and [NOTICE](https://cdn.jsdelivr.net/npm/@oods/tokens@0.11.1/NOTICE). The Geist, Geist Mono and DM Sans font files are under the SIL Open Font License 1.1, and the colour calibration derived from Radix Colors (`dist/radix-calibration.json`) is under the MIT License; NOTICE carries those licences and where the files come from. Generated output belongs to its user; installed package dependencies retain their own licenses.
+Apache License 2.0. See [LICENSE](https://cdn.jsdelivr.net/npm/@oods/tokens@0.11.2/LICENSE) and [NOTICE](https://cdn.jsdelivr.net/npm/@oods/tokens@0.11.2/NOTICE). The Geist, Geist Mono and DM Sans font files are under the SIL Open Font License 1.1, and the colour calibration derived from Radix Colors (`dist/radix-calibration.json`) is under the MIT License; NOTICE carries those licences and where the files come from. Generated output belongs to its user; installed package dependencies retain their own licenses.

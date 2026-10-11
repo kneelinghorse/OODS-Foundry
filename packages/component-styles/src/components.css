@@ -2029,6 +2029,10 @@ div.oods-field[data-oods-component='Checkbox'] { display: grid; grid-template-co
 
 /* A record's events read as one timeline: each event sits on a rail at the left instead of in a card of its own. */
 [data-oods-collection='events'] > .oods-collection { gap: 0; }
+/* Vue's mapped Card wraps the team's surface. Match React's inset only for event entries. */
+[data-oods-collection='events'] > .oods-collection > li > [data-oods-adapter='Card'] > [data-oods-card-surface] {
+  padding-inline: var(--sys-inset-md, 1rem);
+}
 [data-oods-collection='events'] > .oods-collection > li > :is(.oods-card, [data-oods-component='Card']) {
   gap: var(--sys-control-gap-compact, 0.25rem);
   padding: 0 0 var(--sys-stack-md, 1rem) var(--sys-inset-md, 1rem);

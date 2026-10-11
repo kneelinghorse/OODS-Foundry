@@ -80,21 +80,36 @@ function smallCategoricalDefaults(spec: NormalizedVizSpec): { width: number; hei
  * judgement at the narrowest width, because its content hash never depends on a render size; viz.render applies this to
  * the copy it draws at an explicit width. A single-view bar chart over at most 12 categories whose labels the compile
  * did not already level; anything else is returned unchanged. At phone widths, long labels stay level and Vega samples
- * overlaps instead of rotating full dates into the plot (s231-m04). Every mark and its full accessible label remains.
+ * overlaps instead of rotating full dates into the plot (s231-m04). Flush the edge bands so their full dates stay
+ * inside the SVG, wrapping the year onto a second line for full dates (s242). Every mark and its full accessible label remains.
  */
 export function withRenderWidthLabels<T extends object>(compiled: T, renderWidth: number, marks: readonly string[] = ['bar']): T {
-  const view = compiled as { mark?: unknown; encoding?: Record<string, { field?: string; type?: string } | undefined>; data?: { values?: unknown }; config?: { axisX?: Record<string, unknown> } & Record<string, unknown> };
+  const view = compiled as { mark?: unknown; encoding?: Record<string, { field?: string; type?: string; axis?: Record<string, unknown> | null } | undefined>; data?: { values?: unknown }; config?: { axisX?: Record<string, unknown> } & Record<string, unknown> };
   const mark = typeof view.mark === 'string' ? view.mark : (view.mark as { type?: unknown } | undefined)?.type;
   const x = view.encoding?.x;
   const y = view.encoding?.y;
   // `marks`: the dashboard export also levels a line's or an area's discrete x labels (s222-m02 follow-up).
   if (typeof mark !== 'string' || !marks.includes(mark) || !x?.field || (x.type !== 'nominal' && x.type !== 'ordinal') || y?.type !== 'quantitative') return compiled;
-  if (view.config?.axisX?.labelAngle !== undefined || !Array.isArray(view.data?.values)) return compiled;
+  if (x.axis === null || view.config?.axisX?.labelAngle !== undefined || !Array.isArray(view.data?.values)) return compiled;
   const categories = [...new Set((view.data.values as Array<Record<string, unknown>>).map((row) => String(row?.[x.field!] ?? '')))];
   if (categories.length === 0 || categories.length > SMALL_CATEGORICAL_MAX) return compiled;
   const fits = labelsFit(categories, renderWidth);
   if (!fits && (renderWidth > NARROWEST_RENDER_WIDTH || view.config?.axisX?.labelOverlap !== undefined)) return compiled;
-  return { ...compiled, config: { ...view.config, axisX: { ...view.config?.axisX, labelAngle: 0, ...(!fits ? { labelOverlap: 'greedy' } : {}) } } };
+  const wrapDates = !fits && categories.length > 2 && x.axis?.values === undefined && x.axis?.labelExpr === undefined
+    && view.config?.axisX?.labelExpr === undefined && categories.every(value => /^[A-Z][a-z]{2} \d{1,2}, \d{4}$/.test(value));
+  return { ...compiled,
+    // Keep the range endpoints and a middle date; greedy sampling alone can discard the final date.
+    ...(wrapDates ? { encoding: { ...view.encoding, x: { ...x, axis: { ...x.axis, values: [categories[0], categories[Math.floor(categories.length / 2)], categories.at(-1)] } } } } : {}),
+    config: { ...view.config, axisX: { ...view.config?.axisX, labelAngle: 0, ...(!fits ? {
+    labelOverlap: 'greedy',
+    ...(wrapDates ? { labelExpr: "split(datum.label, ', ')" } : {}),
+    // Vega's flush threshold must cover a band; true only covers 1px and misses the last category.
+    ...(view.config?.axisX?.labelFlush === undefined ? {
+      labelFlush: Math.ceil(renderWidth / categories.length),
+      // Align at the outer band edges, leaving the middle ticks room for a full date too.
+      labelFlushOffset: view.config?.axisX?.labelFlushOffset ?? { expr: `width / ${categories.length * 2}` },
+    } : {}),
+  } : {}) } } };
 }
 /**
  * s222-m02 (#2502 ruling 12): a chart drawn at a known size labels about five y values at most. Vega-Lite's default,

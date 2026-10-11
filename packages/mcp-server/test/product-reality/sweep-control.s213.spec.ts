@@ -5,6 +5,7 @@ vi.setConfig({ testTimeout: 180_000 });
 
 import fs from 'node:fs';
 import net from 'node:net';
+import os from 'node:os';
 import path from 'node:path';
 import { spawn, spawnSync, type ChildProcess } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
@@ -27,8 +28,8 @@ import { StopController, assertBrowserCapacity, crashedCell, promotionIssues, re
 const root = fileURLToPath(new URL('../../../../', import.meta.url));
 const playwrightCore = path.join(root, 'node_modules/.pnpm/playwright-core@1.56.1/node_modules/playwright-core');
 const children: ChildProcess[] = [];
-/** An ignored scratch folder inside the repository (packages/components-react/.cache is gitignored). */
-const scratch = () => { const directory = path.join(root, 'packages/components-react/.cache'); fs.mkdirSync(directory, { recursive: true }); return directory; };
+/** Follow the test runner's isolated scratch root. */
+const scratch = () => os.tmpdir();
 afterEach(() => { for (const child of children.splice(0)) child.kill('SIGKILL'); });
 
 const freePort = () => new Promise<number>(resolve => { const server = net.createServer(); server.listen(0, '127.0.0.1', () => { const { port } = server.address() as net.AddressInfo; server.close(() => resolve(port)); }); });

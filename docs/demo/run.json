@@ -1,5 +1,5 @@
 {
-  "version": "0.11.1",
+  "version": "0.11.2",
   "builderSelfCertified": false,
   "conversation": {
     "client": "Claude Code 2.0.76",
@@ -17,29 +17,46 @@
     ],
     "confirmedShippedDefinition": [
       "User"
-    ]
+    ],
+    "version": "0.11.1"
   },
   "capture": {
-    "freezeHead": "37e13fe2c88cf4bb7578e0a5a09da61b2023e568",
-    "archiveSha256": "0cc5696713777710ac4f01206c02464f64b74abf383b77131eaef95151119b6c",
-    "method": "Replay the candidate conversation\u2019s compose/generate calls with byte-identical accepted inputs on the frozen 0.11.1 runtime. Generated app files are unchanged. Screens include a saved role, relationship and checkbox edit.",
+    "candidateHead": "effa2bb4698bc0da1a8e5e01ba85d7c449c2a106",
+    "archiveSha256": "95b8b016d8c537539935b1f5e61d2c3520dc371c12a7061b8d177ea39c08fe28",
+    "method": "Replay the same pinned source inputs and accepted choices through the packed 0.11.2 runtime. Install the four matching release tarballs per framework without workspace links, then typecheck and build unchanged generated files. Screens include a saved role, relationship and checkbox edit.",
     "screensInspected": 32,
     "axeViolations": 0,
     "pageErrors": 0,
-    "horizontalOverflow": false
+    "horizontalOverflow": false,
+    "generatedLibraries": {
+      "react": {
+        "@oods/tokens": "0.11.2",
+        "@oods/component-contracts": "0.11.2",
+        "@oods/component-styles": "0.11.2",
+        "@oods/components-react": "0.11.2"
+      },
+      "vue": {
+        "@oods/tokens": "0.11.2",
+        "@oods/component-contracts": "0.11.2",
+        "@oods/component-styles": "0.11.2",
+        "@oods/components-vue": "0.11.2"
+      }
+    },
+    "timelineInnerPaddingPx": 16,
+    "nonTimelineGeometryChangedByPaddingFix": false
   },
   "images": [
     {
       "path": "images/react-detail-1440-dark.png",
-      "sha256": "7120dd88bc49f69036bb4fb13c1825e8258f886fe24642e2ac308000ce16921d"
+      "sha256": "6b3a2896af2352c085802018e72dbdc92dab945d65def1123900653ca56a3924"
     },
     {
       "path": "images/react-detail-1440-light.png",
-      "sha256": "ab0589751581033b41353690598166962490a4dbe2b2242df8d3f615f84394e3"
+      "sha256": "f887c83f1678f53ab30788c5c2a5e1c29cf28194fa13ed1603637af9eac4af97"
     },
     {
       "path": "images/react-detail-390-dark.png",
-      "sha256": "0476d7c6105bf7ff39ab6213deb1f6a351062ed996e8001abd49d4688d4575a1"
+      "sha256": "c34b5c992bbb158d2bf92a7b0a0b2fe041cf59a4431f2cfebc29093c4693ee09"
     },
     {
       "path": "images/react-form-1440-dark.png",
@@ -51,27 +68,27 @@
     },
     {
       "path": "images/react-list-1440-dark.png",
-      "sha256": "4a88375331f64386cd62d8083872e22ada1ce5e7c2e015640793feaa4f55b102"
+      "sha256": "eba94512800b594effe9b53c709c13d8c708b20c512a63e93ccf84344a46dce3"
     },
     {
       "path": "images/react-list-1440-light.png",
-      "sha256": "c475833e5b59944f728815cf022d738f3802b11f68ef6f00fe5354e9ed7aee74"
+      "sha256": "13e70f7c36bcfabaa06a5639ae13f14bd3127c34977a0d044678099952ba78ae"
     },
     {
       "path": "images/react-timeline-1440-dark.png",
-      "sha256": "4d5d3493e99c7b70b5f98dd631aadb6a8714691a64f94524540e269309c4b9a1"
+      "sha256": "d4806bf6729589256b32bbd300e733083ab4081f3334a0a50a7d4f29ef05bfb3"
     },
     {
       "path": "images/react-timeline-1440-light.png",
-      "sha256": "727635472521bc2d9e3965e547a7005e350368bdd6ec109f22dd700be03872b8"
+      "sha256": "e2e3fe22aee2abbc6321206d92227cc23adae822b08b1bbfc6789a735d2265fd"
     },
     {
       "path": "images/vue-detail-1440-dark.png",
-      "sha256": "d0e24e533665df86f4faadba528274c70773210c08a6529117db19fceab25c8c"
+      "sha256": "ae47adfff41122e38e7e25d4115ae90677b3ef117b35043f000ce9acc7ec29cd"
     },
     {
       "path": "images/vue-detail-1440-light.png",
-      "sha256": "86d6d1b75ddcc18a998cdda4312591fbba4e414e032740e3d2b983874ff553e1"
+      "sha256": "c3c7d35f5b32c15527f933cae85444f373ff750f730028d6fe0f6def5ac0ce46"
     },
     {
       "path": "images/vue-form-1440-dark.png",
@@ -87,19 +104,19 @@
     },
     {
       "path": "images/vue-list-1440-dark.png",
-      "sha256": "580732cdf03e8b8a470b6c8808b8aef19d1aafeaaa070c581937036fdaa19d6c"
+      "sha256": "241f27d3d842740c564fd404f3e7254b78833809313f2cb02f76b431ea630735"
     },
     {
       "path": "images/vue-list-1440-light.png",
-      "sha256": "8b8a737bccdbf9a863c81ee69b5fa5c67f902efefb47a50b9ce037fbc9b0572a"
+      "sha256": "74e38ec1a3180655f414d3a0a971f78574222111b376679d341d4fdfe049a6d3"
     },
     {
       "path": "images/vue-timeline-1440-dark.png",
-      "sha256": "df9f1c8896ffde74123129de68eb4933a221ec4ec5632a3ff5cd6937ad10919c"
+      "sha256": "d0a7370fb61636ec248d590b15e11e69f0d358a16bfab2a62f91ad0bda28bc8e"
     },
     {
       "path": "images/vue-timeline-1440-light.png",
-      "sha256": "0175099d898bdee37cc230be0ab01a4dee67266644488c783a7ac0f3c9f6a3dc"
+      "sha256": "0571cdae62c95bfc11d8ba69f3125f870692d548ef2715cd1ca92dbfaea007ca"
     }
   ],
   "recording": {
@@ -126,6 +143,9 @@
       142,
       165,
       189
-    ]
+    ],
+    "version": "0.11.1",
+    "retainedAtVersion": "0.11.2",
+    "retentionReason": "All eight route/theme views were recaptured from the 0.11.2 React app and visually compared with the original GIF. The displayed content and layout are unchanged; the Vue-only timeline inset does not appear in this React recording."
   }
 }

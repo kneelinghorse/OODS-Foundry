@@ -12,7 +12,7 @@ export default defineComponent({
   setup(props: any, { attrs, slots }: any) {
     return () => h(['div','article','section','aside','main','li'].includes(props.as) ? props.as : 'div', {
       ...attrs, 'data-oods-component': undefined, 'data-oods-adapter': 'Card', 'data-elevated': String(props.elevated),
-    }, [h(Card, { class: props.elevated ? 'shadow-lg' : undefined }, slots)]);
+    }, [h(Card, { 'data-oods-card-surface': '', class: props.elevated ? 'shadow-lg' : undefined }, slots)]);
   },
 });
 </script>

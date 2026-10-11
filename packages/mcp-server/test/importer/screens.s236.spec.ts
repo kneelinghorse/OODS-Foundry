@@ -11,7 +11,7 @@ import { handle as compose } from '../../src/tools/design.compose.js';
 import { diffDraft, handle as importObject } from '../../src/tools/object.import.js';
 import { recordNameField } from '../../src/compose/record-label.js';
 import { screenShell } from '../../src/codegen/screen-shell.js';
-import { formatReadOnlyValue } from '../../../component-contracts/src/date-time.js';
+import { formatReadOnlyValue, formatRecordLabel } from '../../../component-contracts/src/date-time.js';
 
 let folder: string;
 beforeEach(() => {
@@ -212,35 +212,34 @@ it('keeps GraphQL relationship samples and picker keys aligned when id and datab
   expect(target.definition.samples!.map(row => row.id)).toContain(result.drafts.find(d => d.name === 'CheckRun')!.definition.samples![2].repository);
 });
 
-it('keeps imported date-only read fields date-only in generated React and Vue with retained consumer libraries', async () => {
+it('delegates imported date-only read fields to the release library in React and Vue', async () => {
   const { handle: generate } = await import('../../src/tools/code.generate.js');
-  const { slotDateHelperSource, SLOT_DATE_HELPER } = await import('../../src/codegen/binding-utils.js');
+  const { SLOT_DATE_HELPER } = await import('../../src/codegen/binding-utils.js');
   const schema = { version: '2026.02', objectSchema: { day: { type: 'date?', required: false, examples: ['2026-01-02'] } }, screens: [{ id: 'day', component: 'Text', props: { field: 'day' }, meta: { intent: 'read-only-field' } }] } as any;
   for (const framework of ['react', 'vue'] as const) {
     const generated = await generate({ schema, framework });
     expect(generated.errors ?? []).toEqual([]);
-    expect(generated.code).toContain(`function ${SLOT_DATE_HELPER}(`);
-    expect(generated.code).toContain(`${SLOT_DATE_HELPER}(day, true)`);
-    expect(generated.code).toContain('Not recorded');
-    expect(generated.code).toContain('Invalid date');
-    expect(generated.code).not.toContain('formatReadOnlyValue(day');
+    expect(generated.code).not.toContain(`function ${SLOT_DATE_HELPER}(`);
+    expect(generated.code).toContain('formatReadOnlyValue(day, "date", false)');
   }
-  const display = new Function(`${slotDateHelperSource(false)}; return ${SLOT_DATE_HELPER};`)();
-  expect(display('2026-01-02', true)).toBe('Jan 2, 2026');
+  expect(formatReadOnlyValue('2026-01-02', 'date', false)).toBe('Jan 2, 2026');
+  expect(formatReadOnlyValue(null, 'date', false)).toBe('Not recorded');
+  expect(formatReadOnlyValue('invalid', 'date', false)).toBe('Invalid date');
 });
 
-it('shortens imported UUID titles before calling the retained one-argument consumer formatter', async () => {
+it('asks the release library for readable imported UUID titles while preserving authored keys', async () => {
   const { resolveFrameworkChildContent } = await import('../../src/codegen/binding-utils.js');
   const { handle: generate } = await import('../../src/tools/code.generate.js');
   const fields = { id: { type: 'uuid', required: true, semanticType: 'text.label' } };
   const node = { id: 'title', component: 'Text', props: { field: 'id' } };
   const expression = resolveFrameworkChildContent(node, fields)!.fieldName;
   const calls: unknown[][] = [];
-  const legacyFormatter = (...args: unknown[]) => { calls.push(args); return String(args[0] ?? ''); };
+  const formatter = (value: unknown, readableIdentifier?: boolean) => { calls.push([value, readableIdentifier]); return formatRecordLabel(value, readableIdentifier); };
   const display = new Function('id', 'formatRecordLabel', `return ${expression};`);
-  expect(display('00000000-0000-4000-8000-000000000123', legacyFormatter)).toBe('Record …00000123');
-  expect(display('ORDER-123', legacyFormatter)).toBe('ORDER-123');
-  expect(calls.every(args => args.length === 1)).toBe(true);
+  expect(display('00000000-0000-4000-8000-000000000123', formatter)).toBe('Record …00000123');
+  expect(display('ORDER-123', formatter)).toBe('ORDER-123');
+  expect(calls).toEqual([['00000000-0000-4000-8000-000000000123', true], ['ORDER-123', true]]);
+  expect(expression).not.toContain('.replace(');
   for (const framework of ['react', 'vue'] as const) {
     const generated = await generate({ schema: { version: '2026.02', objectSchema: fields, screens: [node] }, framework });
     expect(generated.errors ?? []).toEqual([]);

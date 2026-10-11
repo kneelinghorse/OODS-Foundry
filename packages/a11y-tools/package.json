@@ -26,7 +26,7 @@
     "build": "rimraf dist && tsup --config tsup.config.ts",
     "clean": "rimraf dist",
     "prepack": "pnpm run build",
-    "test": "vitest run"
+    "test": "pnpm -C ../.. exec vitest run --project guardrails"
   },
   "dependencies": {
     "colorjs.io": "0.5.2"

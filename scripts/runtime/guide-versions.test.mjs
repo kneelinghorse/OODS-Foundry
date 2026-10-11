@@ -32,7 +32,7 @@ test('authored guide updates leave generated README and release history to their
 });
 
 test('explicit historical library pins stay historical when tool releases advance', () => {
-  const line = 'Generated libraries retain 0.6.2 until re-measured. <!-- history -->';
+  const line = 'Apps generated before 0.11.2 pinned the 0.6.2 libraries. <!-- history -->';
   assert.deepEqual(staleGuideVersions(line, '0.8.0'), []);
   assert.equal(updateGuideMarkdown(line, '0.8.0'), line);
 });

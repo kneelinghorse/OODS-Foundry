@@ -8,9 +8,10 @@ describe('narrow categorical dates leave the plot readable', () => {
     const input = compiled();
     const before = structuredClone(input);
     const drawn = withRenderWidthLabels(input, 360);
-    expect(drawn.config.axisX).toEqual({ labelColor: '#000', labelAngle: 0, labelOverlap: 'greedy' });
+    expect(drawn.config.axisX).toEqual({ labelColor: '#000', labelAngle: 0, labelOverlap: 'greedy', labelFlush: 33, labelFlushOffset: { expr: 'width / 22' }, labelExpr: "split(datum.label, ', ')" });
     expect(input).toEqual(before);
     expect(drawn.data).toBe(input.data);
+    expect((drawn.encoding.x as any).axis.values).toEqual(['Jan 15, 2026', 'Jun 15, 2026', 'Sep 15, 2026']);
   });
 
   it('keeps the existing desktop choice and authored angle or overlap preferences', () => {
@@ -20,6 +21,16 @@ describe('narrow categorical dates leave the plot readable', () => {
     expect(withRenderWidthLabels(angle, 360)).toBe(angle);
     const overlap = { ...input, config: { axisX: { labelOverlap: false } } };
     expect(withRenderWidthLabels(overlap, 360)).toBe(overlap);
+    const flush = { ...input, config: { axisX: { labelFlush: false } } };
+    expect(withRenderWidthLabels(flush, 360).config.axisX.labelFlush).toBe(false);
+    const format = { ...input, config: { axisX: { labelExpr: 'datum.label' } } };
+    expect(withRenderWidthLabels(format, 360).config.axisX.labelExpr).toBe('datum.label');
     expect(withRenderWidthLabels(input, 500)).toBe(input);
+  });
+
+  it('keeps an explicitly hidden date axis hidden at phone width', () => {
+    const input = compiled();
+    const hidden = { ...input, encoding: { ...input.encoding, x: { ...input.encoding.x, axis: null } } };
+    expect(withRenderWidthLabels(hidden, 360)).toBe(hidden);
   });
 });

@@ -156,6 +156,14 @@ const loadTokensIndex = (tokensPath: string): TokensIndex => {
     });
   }
 
+  // Context expressions use semantic names; current exports put those under sys.
+  // An explicitly exported short name still takes precedence over the alias.
+  for (const [tokenKey, meta] of [...entries]) {
+    if (tokenKey.startsWith('sys-') && !entries.has(tokenKey.slice(4))) {
+      entries.set(tokenKey.slice(4), { ...meta, tokenKey: tokenKey.slice(4) });
+    }
+  }
+
   return { prefix, entries };
 };
 

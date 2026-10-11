@@ -67,8 +67,8 @@ function installFor(dependencies: readonly GeneratedDependency[], substitutions:
     const manifestPath = path.join(REPO_ROOT, 'packages', name.slice('@oods/'.length), 'package.json');
     const manifest = fs.existsSync(manifestPath) ? JSON.parse(fs.readFileSync(manifestPath, 'utf8')) as { version: string; dependencies?: Record<string, string> } : { version };
     packages.set(name, { name, version });
-    // The published OODS libraries use exact same-release cross-pins. When a discovery-only
-    // release retains older generated artifacts, their transitive pins stay with that release too.
+    // Published OODS libraries use exact same-release cross-pins, so their transitive
+    // dependencies follow the version requested by the generated artifact.
     for (const [dependency, range] of Object.entries(manifest.dependencies ?? {})) if (dependency.startsWith('@oods/')) {
       visit(dependency, range === manifest.version ? version : range);
     }
