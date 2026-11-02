@@ -1,0 +1,108 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "oods-foundry",
+  "version": "0.11.3",
+  "description": "Read the OODS Foundry design system's components, objects, traits and design tokens, draw charts from rows you provide and check them for accessibility, contrast, determinism and accuracy, and look up its recorded React and Vue screens. Read-only; no account.",
+  "author": {
+    "name": "System Systems LLC",
+    "url": "https://oods-foundry.com"
+  },
+  "homepage": "https://oods-foundry.com",
+  "repository": "https://github.com/kneelinghorse/OODS-Foundry",
+  "license": "Apache-2.0",
+  "keywords": [
+    "design system",
+    "components",
+    "design tokens",
+    "charts",
+    "accessibility",
+    "react",
+    "vue"
+  ],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "OODS Foundry",
+        "shortDescription": "Components, objects and charts",
+        "longDescription": "OODS Foundry is an open source (Apache-2.0), object-oriented design system. Screens are composed from objects (such as Subscription or Invoice), the traits they are built from (such as Timestampable or Archivable) and the contexts they appear in (list, detail, form, timeline), and generated as React or Vue.\n\nThis plugin reads OODS Foundry's published release through its hosted endpoint:\n- Look up components by trait, context, category or status.\n- Read an object's composed definition: its traits, fields and view extensions.\n- Read the design token and manifest datasets, a page at a time.\n- Draw a chart from rows you provide, in two brands and in light, dark or high-contrast themes, and get its certification: accessibility equivalence, determinism, contrast and accuracy, each with its result.\n- Look up a recorded screen, such as the Subscription detail screen in React or Vue, with its link and content hash.\n- Read any OODS Foundry tool's input or output schema.\n\nIt is for people who build product UI or maintain a design system and want to check what OODS Foundry defines before they use it.\n\nLimitations: every tool is read-only. It changes nothing and needs no account, and the server keeps charts and replies only in memory until it restarts (see the privacy policy). It reads OODS Foundry's own definitions, not yours, and does not generate code for your project. Charts take up to 500 inline rows and never fetch data from an address. Certification covers charts only, not a whole screen or application. Each reply names the pinned OODS Foundry version.",
+        "developerName": "System Systems LLC",
+        "category": "Developer Tools",
+        "capabilities": [
+          "Look up components",
+          "Read object definitions",
+          "Read design tokens",
+          "Draw and certify charts",
+          "Look up recorded screens",
+          "Read tool schemas"
+        ],
+        "websiteURL": "https://oods-foundry.com",
+        "supportURL": "https://github.com/kneelinghorse/OODS-Foundry/issues",
+        "privacyPolicyURL": "https://oods-foundry.com/privacy",
+        "termsOfServiceURL": "https://oods-foundry.com/terms",
+        "defaultPrompt": [
+          "List the OODS Foundry components that have the Searchable trait and are used in list screens.",
+          "Draw a bar chart of subscriptions by status (active 17, draft 5, archived 3) and tell me what its certification found.",
+          "What traits and fields does the Subscription object have in OODS Foundry?"
+        ],
+        "composerIcon": "./assets/logo.png",
+        "logo": "./assets/logo.png"
+      },
+      "review": {
+        "test_cases": {
+          "positive": [
+            {
+              "description": "Find components by trait and context",
+              "prompt": "List the OODS Foundry components that have the Searchable trait and are used in list screens.",
+              "tools_triggered": "catalog_list",
+              "expected_behavior": "Calls catalog_list with trait Searchable and context list and reports the one matching component, SearchInput, with what the reply says about it. It does not add components the reply does not list."
+            },
+            {
+              "description": "Draw and certify a chart from rows in the prompt",
+              "prompt": "Using OODS Foundry, draw a bar chart of subscriptions by status (active 17, draft 5, archived 3) in the dark theme and tell me what its certification found.",
+              "tools_triggered": "viz_render",
+              "expected_behavior": "Calls viz_render with chartType bar, theme dark and the three rows inline, then reports the certification from the reply: conformant, with accessibility equivalence, determinism, contrast and accuracy each passing. It does not invent values or checks."
+            },
+            {
+              "description": "Read an object's definition",
+              "prompt": "What traits and fields does the Subscription object have in OODS Foundry?",
+              "tools_triggered": "object_registry",
+              "expected_behavior": "Calls object_registry with action show and name Subscription, then lists its six traits (Stateful, Cancellable, Timestampable, Billable, Archivable and MarkBar) and summarizes its fields, such as status, amount, currency and billing_interval, from the reply."
+            },
+            {
+              "description": "Look up a recorded screen",
+              "prompt": "Find OODS Foundry's recorded Subscription detail screen in React and give me its link and content hash.",
+              "tools_triggered": "design_preview",
+              "expected_behavior": "Calls design_preview with object Subscription, context detail and framework react, and returns the screen's https://oods-foundry.com link and its sha256 content hash. It does not claim a new screen was generated."
+            },
+            {
+              "description": "Check the service, its version, brands and themes",
+              "prompt": "Which OODS Foundry version is this service running, and which brands and themes can it draw with?",
+              "tools_triggered": "health_check",
+              "expected_behavior": "Calls health_check and reports the version it is pinned to, the brands A and B and the themes light, dark and high contrast, from the reply."
+            }
+          ],
+          "negative": [
+            {
+              "description": "Deleting a definition, which the plugin cannot do. Every tool is read-only and none deletes or changes anything, so the model should say it cannot delete the object and must not report a deletion.",
+              "prompt": "Delete the Subscription object from the OODS Foundry registry."
+            },
+            {
+              "description": "Fetching data from an outside address, which the plugin never does. The chart tools take rows inline and fetch nothing, so the model should ask for the rows (or use rows pasted in the conversation) and must not claim it downloaded the file.",
+              "prompt": "Use OODS Foundry to download https://example.com/sales.csv and chart it."
+            },
+            {
+              "description": "Saving work for later, which the plugin cannot do. No tool saves brands or anything else, so the model should say it cannot save the colors and must not claim they were saved.",
+              "prompt": "Save my brand colors (primary #0055FF) to OODS Foundry so my team can reuse them."
+            }
+          ]
+        },
+        "commerce": false,
+        "commerce_description": "OODS Foundry sells nothing and processes no payments."
+      },
+      "publication": {
+        "countries": [],
+        "release_notes": "First release in the plugin directory: OODS Foundry's hosted endpoint (https://oods-foundry.com/mcp) with nine read-only tools, and one skill for using them."
+      }
+    }
+  }
+}

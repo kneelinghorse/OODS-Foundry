@@ -144,20 +144,21 @@ function readJson(filePath: string): Record<string, unknown> {
   return JSON.parse(fs.readFileSync(filePath, 'utf8'));
 }
 
-function stableSort(value: unknown): unknown {
-  if (Array.isArray(value)) {
-    return value.map((entry) => stableSort(entry));
-  }
+/**
+ * The refresh script's canonical form, json.dumps(sort_keys=True, separators=(',', ':')): keys in sorted order at every
+ * depth. JSON.stringify cannot keep that order for integer-like keys such as a colour scale's "50" and "100", because a
+ * JavaScript object always lists them first, in numeric order. So the tokens export hashed differently here than in
+ * the manifest the refresh wrote, and every tokens reply warned of a mismatch (s243).
+ */
+function canonicalJson(value: unknown): string {
+  if (value && typeof (value as { toJSON?: unknown }).toJSON === 'function') return canonicalJson((value as { toJSON: () => unknown }).toJSON());
+  if (Array.isArray(value)) return `[${value.map((entry) => canonicalJson(entry ?? null)).join(',')}]`;
   if (value && typeof value === 'object') {
-    const entries = Object.entries(value as Record<string, unknown>);
-    entries.sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
-    const ordered: Record<string, unknown> = Object.create(null);
-    for (const [key, val] of entries) {
-      ordered[key] = stableSort(val);
-    }
-    return ordered;
+    const record = value as Record<string, unknown>;
+    const keys = Object.keys(record).filter((key) => record[key] !== undefined).sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
+    return `{${keys.map((key) => `${JSON.stringify(key)}:${canonicalJson(record[key])}`).join(',')}}`;
   }
-  return value;
+  return JSON.stringify(value);
 }
 
 export function computeStructuredDataEtag(payload: unknown): string {
@@ -168,7 +169,7 @@ export function computeStructuredDataEtag(payload: unknown): string {
   if (base && typeof base === 'object' && !Array.isArray(base)) {
     delete (base as Record<string, unknown>).generatedAt;
   }
-  const canonical = JSON.stringify(stableSort(base));
+  const canonical = canonicalJson(base);
   return crypto.createHash('sha256').update(canonical).digest('hex');
 }
 

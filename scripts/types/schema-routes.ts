@@ -48,4 +48,7 @@ export const SCHEMA_ROUTES: Record<string, SchemaRoute> = {
   'viz/spatial-spec.schema.json': 'skip',
   'viz/sunburst-output.schema.json': 'skip',
   'viz/treemap-output.schema.json': 'skip',
+  // s235 (1de34186ff): the importer validates hubs against this schema at run time and keeps its own hand-written
+  // Hub type (packages/mcp-server/src/importer/hub.ts), so a generated form would have no importers.
+  'import/object-hub.schema.json': 'skip',
 };

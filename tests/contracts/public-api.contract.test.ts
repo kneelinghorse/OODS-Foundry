@@ -82,6 +82,7 @@ describe('Installable package self-containment', () => {
 
   it('keeps the source workspace dependency but publishes no workspace protocol', () => {
     const sourcePackage = JSON.parse(readFileSync(path.join(ROOT, 'package.json'), 'utf8')) as {
+      version: string;
       devDependencies?: Record<string, string>;
       peerDependencies?: Record<string, string>;
       peerDependenciesMeta?: Record<string, { optional?: boolean }>;
@@ -100,8 +101,9 @@ describe('Installable package self-containment', () => {
       'Source development must keep resolving the canonical viz-core workspace package.'
     ).toBe('workspace:*');
     expect(distPackage.dependencies).not.toHaveProperty('@oods/viz-core');
-    expect(sourcePackage.peerDependencies?.['@oods/tokens']).toBe('^0.1.0');
-    expect(distPackage.peerDependencies?.['@oods/tokens']).toBe('^0.1.0');
+    // Since 0.3.0 (728e3489b1) the six packages release together and each pins @oods/tokens to its own version.
+    expect(sourcePackage.peerDependencies?.['@oods/tokens']).toBe(sourcePackage.version);
+    expect(distPackage.peerDependencies?.['@oods/tokens']).toBe(sourcePackage.version);
     expect(distPackage.peerDependencies).toMatchObject(sourcePackage.peerDependencies ?? {});
     expect(distPackage.peerDependenciesMeta).toEqual(sourcePackage.peerDependenciesMeta);
     expect(distPackage.peerDependenciesMeta?.['@oods/tokens']).toEqual({ optional: false });

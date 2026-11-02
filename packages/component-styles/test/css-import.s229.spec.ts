@@ -16,7 +16,8 @@ it('the public CSS path resolves as a typed module; the untyped path cannot reso
     const host = { ...ts.sys, fileExists: (file: string) => file.startsWith(directory + path.sep) && ts.sys.fileExists(file), directoryExists: (file: string) => file.startsWith(directory + path.sep) && ts.sys.directoryExists(file), readFile: (file: string) => file.startsWith(directory + path.sep) ? ts.sys.readFile(file) : undefined };
     const resolved = () => ts.resolveModuleName('@oods/component-styles/css', consumer, { module: ts.ModuleKind.ESNext, moduleResolution: ts.ModuleResolutionKind.Bundler }, host).resolvedModule;
     fs.writeFileSync(path.join(target, 'package.json'), JSON.stringify(manifest));
-    expect(resolved()?.resolvedFileName).toBe(path.join(target, 'dist/css.d.ts'));
+    // TypeScript reports the real path, and macOS's default temp folder sits behind the /var symlink.
+    expect(resolved()?.resolvedFileName).toBe(fs.realpathSync(path.join(target, 'dist/css.d.ts')));
     delete manifest.exports['./css'].types;
     fs.writeFileSync(path.join(target, 'package.json'), JSON.stringify(manifest));
     expect(resolved()).toBeUndefined();

@@ -2,6 +2,16 @@
 
 What changed in each version of OODS Foundry, in the terms you use it in.
 
+## 0.11.3
+
+`structured_data_fetch` no longer warns of a "Manifest ETag mismatch" on every tokens reply. The release's tokens export and its manifest always agreed, but the server sorted keys such as a colour scale's "50" and "100" differently from the tool that wrote the manifest. The tokens dataset's ETag now matches its manifest, so a cached `ifNoneMatch` value for tokens is matched once more after one fresh read.
+
+The six Mark trait parameter schemas (MarkArea, MarkBar, MarkLine, MarkPoint, MarkRect and MarkGraph) now carry the same chart declaration as the public compose schema: they name `viz_render`, carry no internal tags, and give the chart `source` a type. Validation is unchanged.
+
+The runtime's MCP SDK moves from 1.31.0 to 1.32.2, body-parser from 2.3.0 to 2.4.0 (with Express 5.3.0) and zod from 3.25.76 to 4.6.7. They fix four high-severity advisories: GHSA-22jm-h49p-29qw and GHSA-46jr-4wx8-v453 in the SDK, GHSA-27r3-jxmh-p828 in body-parser and GHSA-mrhx-c7xc-m3w5 in zod. The runtime's third-party closure is 451 packages (it was 453).
+
+Newly generated applications pin 0.11.3.
+
 ## 0.11.2
 
 Generated React and Vue applications now pin the OODS release that generated them. Earlier releases kept their application libraries at 0.6.2, so apps missed the current responsive chart styles. New apps receive the current chart breakpoints and bounded sizing. Date-only fields and readable record labels now use the shared library instead of copies in the generator. Standalone apps use a 16 px phone gutter so charts retain native-sized axis labels at 390 px. Phone charts wrap full dates onto two lines and align the edge labels inside the SVG, keeping every payment and refund visible.

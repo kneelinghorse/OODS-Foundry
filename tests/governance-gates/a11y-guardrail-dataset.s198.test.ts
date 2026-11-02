@@ -29,9 +29,12 @@ describe('the accessibility reader honors the typed palette dataset', () => {
     const log = vi.spyOn(console, 'log').mockImplementation(() => {});
     try {
       const all = await loadGuardrails(path.resolve('tools/a11y/guardrails/relative-color.csv'));
-      expect(all).toHaveLength(67);
-      expect(await parse(csv)).toEqual(all.filter(row => row.checkType === 'relative-color'));
-      expect(log).toHaveBeenCalledWith(expect.stringContaining('61 palette rows are owned by tokens-validate'));
+      // s222-m01 (35ad91f3a9) rebuilt the palette rows for 12-step brand scales, so the counts come from the dataset.
+      const relative = all.filter(row => row.checkType === 'relative-color');
+      expect(all).toHaveLength(csv.trim().split('\n').length - 1);
+      expect(relative).toHaveLength(6);
+      expect(await parse(csv)).toEqual(relative);
+      expect(log).toHaveBeenCalledWith(expect.stringContaining(`${all.length - relative.length} palette rows are owned by tokens-validate`));
     } finally { log.mockRestore(); }
   });
   it.each(['Infinity', '-Infinity'])('rejects non-finite limit %s', async value => {

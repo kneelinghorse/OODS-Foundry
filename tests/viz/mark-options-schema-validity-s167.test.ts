@@ -292,11 +292,16 @@ function declaredOptions(): DeclaredOption[] {
   return out;
 }
 
-/** Build output, dependencies and workflow scratch — never fixture sources. */
+/** Build output, dependencies and workflow scratch — never fixture sources. `.tmp` holds a sprint's scratch (such as the
+ * public-export preview, a copy of the examples) and `.worktrees` holds whole sprint checkouts. */
 const SKIP_DIRS = new Set([
   'node_modules', '.git', '.claude', 'dist', 'build', 'coverage', 'storybook-static',
-  '.next', '.turbo',
+  '.next', '.turbo', '.tmp', '.worktrees',
 ]);
+
+/** Committed mark-bearing inputs that a package's own tests read. Their mark defs are checked with the corpus, but they
+ * are not product examples. Sprint 232 added the payment input that viz-core's ECharts adapter specs use. */
+const PACKAGE_TEST_INPUTS = ['packages/viz-core/test/fixtures/s232-payment.json'];
 
 interface WholeSpecFixture {
   readonly rel: string;
@@ -376,7 +381,8 @@ describe('s168 m02 — allowlist + translation table (FF#22 corrective)', () => 
     const declaration = graph.properties.chart.oneOf[0];
     expect(declaration.additionalProperties).toBe(false);
     expect(declaration.properties.chartType).toEqual({ const: 'force_graph' });
-    expect(declaration.properties.source).toEqual({ const: 'edge-array' });
+    // The public declaration types every parameter (s239: the connector portal flags an untyped one).
+    expect(declaration.properties.source).toEqual({ type: 'string', const: 'edge-array' });
   });
 
   it('covers every declared trait option key', () => {
@@ -667,12 +673,14 @@ describe('s168 m02 — allowlist + translation table (FF#22 corrective)', () => 
       if (errors.length) failures.push(`${rel} :: ${errors.join(' ; ')}`);
     }
 
-    expect(checked, 'the corpus definition stopped matching — re-derive it').toHaveLength(44);
-    expect(checked).toEqual(expect.arrayContaining([
+    expect(checked).toEqual(expect.arrayContaining(PACKAGE_TEST_INPUTS));
+    const products = checked.filter((rel) => !PACKAGE_TEST_INPUTS.includes(rel));
+    expect(products, 'the corpus definition stopped matching — re-derive it').toHaveLength(44);
+    expect(products).toEqual(expect.arrayContaining([
       'examples/viz/patterns-v2/waterfall.spec.json',
       'examples/viz/patterns-v2/histogram.spec.json',
     ]));
-    expect(checked.sort()).toEqual(wholeSpecFixtures().map(({ rel }) => rel).sort());
+    expect(products.sort()).toEqual(wholeSpecFixtures().map(({ rel }) => rel).sort());
     expect(failures, `schema-invalid mark defs:\n  ${failures.join('\n  ')}`).toEqual([]);
   }, 60_000);
 });

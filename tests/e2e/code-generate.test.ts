@@ -41,10 +41,11 @@ describe('code.generate E2E — registration', () => {
     const policy = readJson<PolicyDoc>('packages/mcp-server/src/security/policy.json');
     const rule = policy.rules.find((r) => r.tool === 'code.generate');
     expect(rule).toBeDefined();
-    // s213-m02 (#2351): file payload mode writes a new payload directory, so the policy declares an additive writer and
-    // clients are no longer told the tool is read-only.
+    // s213-m02 (#2351): file payload mode writes a payload directory, so the tool is a writer, not read-only. s239's review
+    // (artifacts/product-reality/sprint-239/m01/reports/anthropic-plugin.md, F-11) then found identical output reuses that
+    // folder and overwrites its files, so the rule is no longer additive and clients are told the tool is destructive.
     expect(rule!.readOnly).toBeUndefined();
-    expect(rule!.additive).toBe(true);
+    expect(rule!.additive).toBeUndefined();
     expect(rule!.writes).toEqual(['.oods/payloads/**']);
     expect(rule!.allow).toContain('designer');
     expect(rule!.allow).toContain('maintainer');
@@ -81,7 +82,8 @@ describe('code.generate E2E — bridge parity', () => {
 
     expect(maps.allowedExternalTools.has('code_generate')).toBe(true);
     expect(resolveInternalToolName('code_generate', maps.externalToInternal)).toBe('code.generate');
-    expect(resolveInternalToolName('code.generate', maps.externalToInternal)).toBe('code.generate');
+    // 0.11.0 (9ee860c146) accepts only published names; the dotted internal name is no longer a wire name.
+    expect(resolveInternalToolName('code.generate', maps.externalToInternal)).toBeUndefined();
   });
 });
 

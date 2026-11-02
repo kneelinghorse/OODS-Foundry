@@ -72,9 +72,16 @@ test('zod is a direct dependency in package.json', () => {
   assert.ok(PKG.dependencies.zod, 'zod should be listed in dependencies');
 });
 
-test('zod version is compatible with SDK (^3.23.8+)', () => {
-  const ver = PKG.dependencies.zod;
-  assert.ok(ver.includes('3.2'), `Expected zod ^3.23+, got ${ver}`);
+test('zod version is one the SDK accepts', () => {
+  // s243-m04: SDK 1.32 accepts zod "^3.25 || ^4.0", and the adapter moved to zod 4 for GHSA-mrhx-c7xc-m3w5, so the
+  // check reads the installed SDK's own range instead of a fixed major.
+  const read = (name) => JSON.parse(readFileSync(path.join(__dirname, 'node_modules', name, 'package.json'), 'utf8'));
+  const sdk = read('@modelcontextprotocol/sdk');
+  const major = (range) => Number(range.trim().replace(/^[\^~>=\s]*/, '').split('.')[0]);
+  const accepted = (sdk.peerDependencies?.zod ?? sdk.dependencies.zod).split('||').map(major);
+  const installed = read('zod').version;
+  assert.ok(accepted.includes(major(installed)), `SDK accepts zod ${accepted.join(' or ')}, installed ${installed}`);
+  assert.ok(accepted.includes(major(PKG.dependencies.zod)), `SDK accepts zod ${accepted.join(' or ')}, declared ${PKG.dependencies.zod}`);
 });
 
 test('zod is resolvable (available for use)', async () => {

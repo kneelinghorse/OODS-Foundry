@@ -2,6 +2,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
+import { load } from 'js-yaml';
+import { resolveTokenToColor } from '@oods/viz-core';
 import { buildGeneratedArtifact } from '../../packages/mcp-server/src/codegen/artifact-envelope.js';
 import { consumerEntries } from '../../scripts/design-loop/serve.js';
 import { compareReceipts, diff } from '../../scripts/design-loop/diff.js';
@@ -35,10 +37,15 @@ describe('Design-loop observations remain evidence rather than repaired output',
     await render({ compose: { object: 'Subscription', context: 'list' }, framework: 'react', output });
     const model = requests[0]!.model;
     const rows = model.rows as Array<Record<string, unknown>>;
-    expect(rows).toHaveLength(9);
+    // s222-m03 (#2502 ruling 14): an object's authored samples seed one record each, so the list shows Subscription's
+    // live samples, read here from the object definition rather than counted by hand.
+    const { samples } = load(await fs.readFile(new URL('../../objects/core/Subscription.object.yaml', import.meta.url), 'utf8')) as { samples: Array<{ subscription_id: string; plan_name: string; is_archived?: boolean }> };
+    const live = samples.filter(sample => !sample.is_archived);
+    expect(rows).toHaveLength(live.length);
     expect(model.collectionQuery).toEqual({ page: 1, pageSize: 10, total: rows.length });
     expect(new Set(rows.map(row => row.subscriptionId)).size).toBe(rows.length);
-    expect(rows.every(row => !row.isArchived && / Plan$/.test(String(row.planName)))).toBe(true);
+    expect(rows.map(row => `${row.subscriptionId} ${row.planName}`).sort()).toEqual(live.map(sample => `${sample.subscription_id} ${sample.plan_name}`).sort());
+    expect(rows.every(row => !row.isArchived)).toBe(true);
     // s213-m01 (finding 1): the list shows its rows in the order its sort control states, Name A–Z. The other screens
     // show the same seeded record they always did, which is no longer the list's third row, so it is found by its id.
     const names = rows.map(row => String(row.planName));
@@ -49,8 +56,9 @@ describe('Design-loop observations remain evidence rather than repaired output',
       expect(shown, `${context}: the record it shows is one of the list's`).toBeDefined();
       expect(requests.at(-1)!.model.planName).toBe(shown!.planName);
       expect(requests.at(-1)!.model.amount).toBe(shown!.amount);
-      expect(requests.at(-1)!.model.cancellationRequestedAt).toBeUndefined();
-      expect(requests.at(-1)!.model.archivedAt).toBeUndefined();
+      // Authored samples write unset dates as null, so "not requested" and "not archived" mean null or absent.
+      expect(requests.at(-1)!.model.cancellationRequestedAt ?? null).toBeNull();
+      expect(requests.at(-1)!.model.archivedAt ?? null).toBeNull();
       if (context === 'timeline') expect((requests.at(-1)!.model.events as Array<{ title: string }>).some(event => event.title === 'Last payment')).toBe(true);
     }
     await render({ compose: { object: 'Subscription', context: 'list' }, framework: 'react', output, model: { rows: [], collectionQuery: { total: 0 }, uiState: 'empty' } });
@@ -147,8 +155,10 @@ describe('theme receipts (s191)', () => {
   it('requires measured colors for version 1.1 while preserving version 1.0 readers', async () => {
     const updated: any = { ...receipt(), version: '1.1', theme: 'dark', brand: 'B' };
     await expect(validateReceipt(updated)).rejects.toThrow();
-    updated.views[0].measurements.bodyBackground = 'oklch(0.18 0.008 265)';
-    updated.views[0].measurements.chartCanvasFills = ['oklch(0.18 0.008 265)'];
+    // The brand's canvas token, not a copy of its value: B/dark has changed since s191.
+    const canvas = resolveTokenToColor('--sys-surface-canvas', { theme: 'dark', brand: 'B' })!;
+    updated.views[0].measurements.bodyBackground = canvas;
+    updated.views[0].measurements.chartCanvasFills = [canvas];
     await expect(validateReceipt(updated)).resolves.toBeUndefined();
     const { verifyTheme } = await import('../../scripts/design-loop/common.js');
     expect(() => verifyTheme(updated)).not.toThrow();

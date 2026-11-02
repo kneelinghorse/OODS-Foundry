@@ -30,26 +30,33 @@ describe('bridge policy contracts', () => {
     expect(replRender?.modes ?? []).toContain('apply');
   });
 
-  it('does not mark the grouped repl tool as read-only in mcp-server security policy', () => {
+  // s240-m01 (#2750, #2751): the 0.11.0 read/write split moved saving to schema_store, so the grouped repl tool
+  // (schema_render) only renders and validates. The writes it used to declare now belong to the store.
+  it('marks the grouped repl tool read-only and keeps the writes on the schema store', () => {
     const policy = readJson<ServerSecurityPolicyDoc>('packages/mcp-server/src/security/policy.json');
     const replRender = policy.rules.find((rule) => rule.tool === 'repl');
+    const store = policy.rules.find((rule) => rule.tool === 'schema');
 
     expect(replRender).toBeDefined();
-    expect(replRender?.readOnly).not.toBe(true);
-    expect(replRender?.writes?.length ?? 0).toBeGreaterThan(0);
+    expect(replRender?.readOnly).toBe(true);
+    expect(replRender?.writes ?? []).toEqual([]);
+    expect(store?.readOnly).not.toBe(true);
+    expect(store?.writes?.length ?? 0).toBeGreaterThan(0);
   });
 });
 
 describe('bridge tool-name translation', () => {
-  it('maps dot-delimited names to underscore-delimited external names and accepts both forms', () => {
-    const internalTools = ['structuredData.fetch', 'repl.render', 'health'];
-    const maps = buildToolNameMaps(internalTools);
+  // 0.7.0 (b8c19eacce) published names from tool-surface.json, and 0.11.0 (9ee860c146) stopped accepting the
+  // pre-0.7 underscore aliases and dotted internal names, so only a tool's published name resolves.
+  it('maps internal names to their published external names and accepts only those', () => {
+    const maps = buildToolNameMaps(['structuredData.fetch', 'repl', 'health']);
 
-    expect(maps.allowedExternalTools.has('structuredData_fetch')).toBe(true);
-    expect(maps.allowedExternalTools.has('repl_render')).toBe(true);
-    expect(resolveInternalToolName('structuredData_fetch', maps.externalToInternal)).toBe('structuredData.fetch');
-    expect(resolveInternalToolName('structuredData.fetch', maps.externalToInternal)).toBe('structuredData.fetch');
-    expect(resolveInternalToolName('repl_render', maps.externalToInternal)).toBe('repl.render');
-    expect(resolveInternalToolName('repl.render', maps.externalToInternal)).toBe('repl.render');
+    expect([...maps.allowedExternalTools].sort()).toEqual(['health_check', 'schema_render', 'structured_data_fetch']);
+    expect(resolveInternalToolName('structured_data_fetch', maps.externalToInternal)).toBe('structuredData.fetch');
+    expect(resolveInternalToolName('schema_render', maps.externalToInternal)).toBe('repl');
+    expect(resolveInternalToolName('health_check', maps.externalToInternal)).toBe('health');
+    for (const retired of ['structuredData.fetch', 'structuredData_fetch', 'repl', 'health']) {
+      expect(resolveInternalToolName(retired, maps.externalToInternal)).toBeUndefined();
+    }
   });
 });

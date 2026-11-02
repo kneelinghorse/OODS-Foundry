@@ -10,7 +10,25 @@ export interface AssessableTraitParameters {
    * @minItems 1
    */
   recordedStates: [
-    'violation' | 'passed' | 'needs_review' | 'not_applicable' | 'not_measured',
-    ...('violation' | 'passed' | 'needs_review' | 'not_applicable' | 'not_measured')[]
+    (
+      | 'violation'
+      | 'passed'
+      | 'needs_review'
+      | 'not_applicable'
+      | 'not_measured'
+      | 'measured'
+      | 'measured_zero'
+      | 'unknown'
+    ),
+    ...(
+      | 'violation'
+      | 'passed'
+      | 'needs_review'
+      | 'not_applicable'
+      | 'not_measured'
+      | 'measured'
+      | 'measured_zero'
+      | 'unknown'
+    )[]
   ];
 }

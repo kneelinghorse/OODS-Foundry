@@ -11,7 +11,8 @@
  * Outputs: LICENSE (the canonical text, unchanged) and NOTICE (the product name and the holder, then any
  * third-party notices from configs/license/third-party/)
  * at the root and in each licensed package, the holder span between the license-holder
- * markers in README.md and docs/LICENSE-FAQ.md, and the Claude Code plugin manifest's author.
+ * markers in README.md and docs/LICENSE-FAQ.md, the Claude Code plugin manifest's author, and the OpenAI plugin
+ * package's author and developerName.
  */
 import { createHash } from 'node:crypto';
 import fs from 'node:fs';
@@ -93,6 +94,18 @@ export function renderPluginManifest(text, holder) {
   return `${JSON.stringify({ ...manifest, author }, null, 2)}\n`;
 }
 
+/**
+ * s243: OpenAI's plugin package names the holder as its author and as the listing's developerName, so both are rendered
+ * here too. Its author url stays the product site, and it carries no email: support goes through the listing's supportURL.
+ */
+export const OPENAI_PLUGIN_MANIFEST = 'submissions/openai/oods-foundry/plugin.json';
+export function renderOpenAiPluginManifest(text, holder) {
+  const manifest = JSON.parse(text);
+  const openai = manifest.extensions['com.openai'];
+  const extensions = { ...manifest.extensions, 'com.openai': { ...openai, interface: { ...openai.interface, developerName: holder.holder } } };
+  return `${JSON.stringify({ ...manifest, author: { name: holder.holder, url: manifest.author?.url }, extensions }, null, 2)}\n`;
+}
+
 function renderSpan(document, span, file) {
   const start = document.indexOf(MARKER_START), end = document.indexOf(MARKER_END);
   if (start < 0 || end < 0 || end < start || document.indexOf(MARKER_START, start + 1) >= 0) throw new Error(`${file} must carry exactly one license-holder marker pair`);
@@ -108,6 +121,7 @@ export function renderAll(root = ROOT) {
   const outputs = Object.fromEntries([...LICENSE_FILES.map(file => [file, canonical.text]), ...NOTICE_FILES.map(file => [file, notice + sections(file)])]);
   for (const [file, span] of Object.entries(holderSpans(holder))) outputs[file] = renderSpan(fs.readFileSync(path.join(root, file), 'utf8'), span, file);
   outputs[PLUGIN_MANIFEST] = renderPluginManifest(fs.readFileSync(path.join(root, PLUGIN_MANIFEST), 'utf8'), holder);
+  outputs[OPENAI_PLUGIN_MANIFEST] = renderOpenAiPluginManifest(fs.readFileSync(path.join(root, OPENAI_PLUGIN_MANIFEST), 'utf8'), holder);
   return { holder, canonical, outputs };
 }
 

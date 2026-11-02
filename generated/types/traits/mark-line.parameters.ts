@@ -1,7 +1,7 @@
 // Auto-generated from traits/mark-line.parameters.schema.json. Do not edit manually.
 
 /**
- * Read-only chart rendered by public viz.render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Edge-array charts bind a declared neighborhood array: sorted distinct node ids, row-ordered directed links, optional bidirectional reverse links deduplicated by ordered pair, without numeric values or groups. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
+ * Read-only chart rendered by public viz_render during code generation. Payment events retain the Subscription projection. Record-array charts bind a declared object array and use authored sampleRows to seed generated sample records, with no separate generated chart series. Edge-array charts bind a declared neighborhood array: sorted distinct node ids, row-ordered directed links, optional bidirectional reverse links deduplicated by ordered pair, without numeric values or groups. Static SVG assets are keyed by seed record identity; consumers can replace the typed svg prop. One distinct chart declaration is supported per generated object; repeated identical projections share the same asset.
  */
 export type MarkLineChartDeclaration = {
   chartType: 'line';
@@ -22,7 +22,7 @@ export type MarkLineChartDeclaration = {
     detail?: MarkLineChartEncodingBinding;
   };
   /**
-   * Authored sample rows, including explicitly labelled synthetic examples, copied into the declared array field of generated sample records. These exact records supply public viz.render; no separate synthetic chart series is invented.
+   * Authored sample rows, including explicitly labelled synthetic examples, copied into the declared array field of generated sample records. These exact records supply public viz_render; no separate synthetic chart series is invented.
    *
    * @minItems 1
    */
@@ -35,11 +35,11 @@ export type MarkLineChartDeclaration = {
     }[]
   ];
   /**
-   * Money (s223-m01), declared with currencyField: the y encoding's field holds amounts in minor units. Generation divides each row's value by minorUnits, as the payment-events source does, and formats the y axis in the record's currency ("$,f": $12,000 for USD, £12,000 for GBP).
+   * Money, declared with currencyField: the y encoding's field holds amounts in minor units. Generation divides each row's value by minorUnits, as the payment-events source does, and formats the y axis in the record's currency ("$,f": $12,000 for USD, £12,000 for GBP).
    */
   minorUnits?: number;
   /**
-   * Money (s223-m01), declared with minorUnits: the charted record's field holding its ISO 4217 currency code (Invoice's currency). Its symbol prints on the y axis and the code in the chart's accessible description.
+   * Money, declared with minorUnits: the charted record's field holding its ISO 4217 currency code (Invoice's currency). Its symbol prints on the y axis and the code in the chart's accessible description.
    */
   currencyField?: string;
   brand?: string;

@@ -9,7 +9,7 @@ import { afterAll, describe, expect, it } from 'vitest';
 /**
  * s211-m01: the bridge on its fixed port 4466 ran `health` for `Host: attacker.example:4466` with no token, and the
  * preview host the adapter starts answered the same way. Both entry points now refuse a foreign Host before any route.
- * Runs both servers from source on free ports (never 4466, which pm2's bridge holds).
+ * Runs both servers from source on free ports (never 4466, which the live bridge holds).
  */
 const packageRoot = path.resolve(fileURLToPath(import.meta.url), '../..');
 const tsx = path.resolve(packageRoot, '../../node_modules/.bin/tsx');

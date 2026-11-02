@@ -8,6 +8,7 @@ import { handle as catalog } from '../../src/tools/catalog.list.js';
 import { handle as register } from '../../src/tools/object.register.js';
 import { clearObjectCache } from '../../src/objects/object-loader.js';
 import { clearTraitCache } from '../../src/objects/trait-loader.js';
+import { createHash } from 'node:crypto';
 
 let dir: string;
 beforeEach(() => {
@@ -80,6 +81,15 @@ describe('registry tools discover definitions that this process actually uses', 
     const result = await fetchData({ dataset: 'tokens', ifNoneMatch: '0'.repeat(64) });
     expect(result.matched).toBe(false);
     expect(result.warnings).toContainEqual(expect.stringContaining('Manifest ETag mismatch'));
+  });
+
+  // s243: the refresh script writes manifest ETags with Python's json.dumps(sort_keys=True). A JavaScript object lists
+  // integer-like keys ("50", "100") first and numerically, so the committed tokens export used to fail its own check.
+  it('hashes integer-like keys in the refresh script\'s order, so the committed tokens export matches its manifest', async () => {
+    const result = await fetchData({ dataset: 'tokens' });
+    expect(result.warnings ?? []).not.toContainEqual(expect.stringContaining('Manifest ETag mismatch'));
+    const refreshForm = '{"100":1,"50":2,"a":{"10":true,"9":false}}';
+    expect(computeStructuredDataEtag({ 50: 2, 100: 1, a: { 9: false, 10: true }, generatedAt: 'ignored' })).toBe(createHash('sha256').update(refreshForm).digest('hex'));
   });
 
   it('names a malformed manifest as a typed error, instead of pretending no dataset exists', async () => {
