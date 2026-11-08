@@ -1,6 +1,6 @@
 trait:
   name: Auditable
-  version: 1.0.0
+  version: 1.1.0
   description: |
     Compliance-grade audit trail trait that captures state transitions with actor,
     reason, and timestamp metadata. Auditable observes Stateful transitions and
@@ -16,7 +16,8 @@ trait:
     - Audit Log: append-only array of AuditEntry records
     - Transition Capture: from_state → to_state with timestamp, actor, and reason
     - Retention Policy: configurable retention period for log entries
-    - Actor Tracking: optional actor_id capture for accountability
+    - Actor Tracking: optional actor_id capture for accountability, with the optional names of who
+      acted, who it acted for and who approved it (actor_name, on_behalf_of_name, approved_by_name)
     - Reason Enforcement: optional requirement for transition justification
   category: lifecycle
   tags:
@@ -81,8 +82,39 @@ schema:
           required: false
           requiredFromParameter: trackActorId
           description: |
-            Identifier of the user or system that triggered the transition.
+            Identifier of the person, agent or system that triggered the transition.
             Required when trackActorId parameter is true.
+        # s244-m01 (#2829): every recorded change can name who acted, who it acted for and who approved it. All
+        # optional, following Relationship's source_id/source_name pattern; only a *_name names a party.
+        actor_name:
+          type: string
+          required: false
+          description: Who acted, as shown ("Billing Agent").
+        actor_kind:
+          type: string
+          required: false
+          description: What kind of actor acted (person, agent or system), as the Actor trait names them.
+          validation:
+            enum:
+              - person
+              - agent
+              - system
+        on_behalf_of_name:
+          type: string
+          required: false
+          description: The person or organization the actor acted for ("Tidewater Co-op").
+        on_behalf_of_id:
+          type: string
+          required: false
+          description: Identifier of the person or organization the actor acted for.
+        approved_by_name:
+          type: string
+          required: false
+          description: Who approved the change, when someone did ("Ruth Adeyemi").
+        approved_by_id:
+          type: string
+          required: false
+          description: Identifier of who approved the change.
         reason:
           type: string
           required: false

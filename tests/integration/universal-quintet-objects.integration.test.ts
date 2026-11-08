@@ -37,7 +37,8 @@ describe('Canonical object registry integration', () => {
         { name: 'preference_document', layer: 'trait' },
         { name: 'preference_version', layer: 'trait' },
       ],
-      expectedTraits: ['Addressable', 'Stateful', 'Timestampable', 'Taggable', 'Preferenceable', 'Authable', 'Communicable'],
+      // s244-m01 (#2829): a user is a person who can act, so User composes Actor; no field changed.
+      expectedTraits: ['Actor', 'Addressable', 'Stateful', 'Timestampable', 'Taggable', 'Preferenceable', 'Authable', 'Communicable'],
       unionSnippet: "role: 'end_user' | 'admin' | 'owner' | 'billing';",
     },
     {
@@ -67,7 +68,8 @@ describe('Canonical object registry integration', () => {
       name: 'Relationship',
       expectedFields: ['relationship_type', 'source_id', 'direction', 'neighborhood'],
       expectedTraits: ['Labelled', 'Stateful', 'Timestampable', 'Ownerable', 'Taggable', 'MarkGraph'],
-      unionSnippet: "relationship_type: 'membership' | 'ownership' | 'follows' | 'depends_on' | 'references';",
+      // s244-m01 (#2829): the delegation type, a grant from a person or organization to the actor acting for them.
+      unionSnippet: "relationship_type: 'membership' | 'ownership' | 'follows' | 'depends_on' | 'references' | 'delegation';",
     },
     {
       name: 'Subscription',

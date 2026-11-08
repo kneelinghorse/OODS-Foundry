@@ -1,0 +1,69 @@
+trait:
+  name: Actor
+  version: 1.0.0
+  description: |
+    The ability to act: an object that composes Actor can be assigned work, hold a role, own a record and appear in
+    a record's history as the one who made a change. User composes it as a person; Agent composes it as an agent.
+
+    An agent is an actor, not a user. In OODS an object is what its traits make it, so an AI agent that acts
+    inside a product is an object of its own, and what it shares with a person's account is this trait. Platforms that
+    stored their agents as users did so because their roles and audit logs could point only at users; here the places
+    that name an actor accept any object that composes Actor:
+
+      a history entry   actor_id and actor_kind name who acted (Stateful's state_history, Auditable's audit_log)
+      a membership      actor_id with actor_kind holds a role in an organization (Authable's membership_records)
+      a delegation      a Relationship of type delegation, from the person or organization acted for, to the actor
+      an owner          Ownerable's owner_id with owner_type
+
+    The kind is a parameter, never a record field: every record of an object is the same kind of actor, so a User's
+    records and screens are unchanged by composing it. An actor of kind agent is marked "Agent" beside its name in
+    list, card and detail views, so no one reads an agent's record as a person's. actor_kind on a history entry or a
+    membership uses the same three words.
+  category: core
+  tags:
+    - actor
+    - identity
+    - agent
+    - delegation
+    - accountability
+
+parameters:
+  - name: kind
+    type: string
+    required: true
+    description: |
+      What every record of this object is when it acts: person (someone's own account), agent (software that acts,
+      on its own behalf or for someone) or system (the product itself, such as a scheduled job). An agent is marked
+      "Agent" beside its name.
+    default: person
+    validation:
+      enum:
+        - person
+        - agent
+        - system
+
+# Actor adds no record field: what it carries is the kind, a parameter, and the right to be named where an actor is.
+schema: {}
+
+dependencies: []
+
+metadata:
+  created: "2026-11-07"
+  owners:
+    - Core team
+    - Identity team
+  maturity: alpha
+  accessibility:
+    keyboard: Actor adds no interactive control.
+    screenreader: An agent's "Agent" badge is text beside its name, so it is read with the name.
+  # Actor declares no recipe of its own: an agent's badge in list, card and detail is placed by the composer, since no
+  # view extension can depend on the kind parameter.
+  regionsUsed: []
+  examples:
+    - User
+    - Agent
+  references:
+    - "Microsoft Entra Agent ID: agentIdentity inherits servicePrincipal, with owners and a required sponsor"
+    - "draft-wzdk-scim-agent-resource-00: an Agent resource beside User and Group, with optional owners"
+    - "GitHub GraphQL: the Actor interface, implemented by User, Bot, Organization, Mannequin and EnterpriseUserAccount"
+    - "RFC 8693 §4.1: the act (actor) claim names the acting party to whom authority has been delegated"

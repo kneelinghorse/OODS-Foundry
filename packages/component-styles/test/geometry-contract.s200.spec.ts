@@ -196,8 +196,9 @@ describe('s200-m02 geometry contract: one scale, consumed', () => {
       [/@media \(min-width: 48rem\)/, "the width from which a record's read-only rows take two columns (Sprint 221 m02, #2482 ruling 7)"],
       [/@container \(max-width: 729px\)/, "a placed chart's narrow-render breakpoint, measured on the figure (Sprint 202 m01)"],
       [/@container \(min-width: 1130px\)/, "a placed chart's wide-render breakpoint, measured on the figure (Sprint 241 m02)"],
-      [/max-inline-size: calc\((?:302|730)px \* 1\.25\); margin-inline: auto;/, "narrow and design charts grow at most 1.25x and stay centered until the next authored width fits (Sprint 241 m02)"],
-      [/^:where\(\[data-viz-svg-wide\]\) > svg \{ max-inline-size: calc\(1130px \* 1\.25\); \}$/, "the wide render grows to 1.25 times its 1130px width and no further (Sprint 213 m01, #2347)"],
+      // s244-m04: the caps take the size each render was requested at (292, 720 and 1120px), not Vega's 10px-padded size.
+      [/max-inline-size: calc\((?:292|720)px \* 1\.25\); margin-inline: auto;/, "narrow and design charts grow at most 1.25x and stay centered until the next authored width fits (Sprint 241 m02)"],
+      [/^:where\(\[data-viz-svg-wide\]\) > svg \{ max-inline-size: calc\(1120px \* 1\.25\); \}$/, "the wide render grows to 1.25 times its requested 1120px width and no further (Sprint 213 m01, #2347)"],
       [/grid-template-columns: repeat\(var\(--oods-grid-columns, auto-fit\), minmax\(min\(100%, var\(--oods-grid-min-column, 16rem\)\), 1fr\)\)/, 'grid column minimum from the component prop'],
       [/grid-template-columns: repeat\(auto-fill, minmax\(min\(100%, max\(var\(--oods-grid-min-column, 16rem\), \(100% - \(var\(--oods-grid-columns\) - 1\) \* var\(--oods-layout-gap, var\(--cmp-spacing-stack-default, 1rem\)\)\) \/ var\(--oods-grid-columns\)\)\), 1fr\)\)/, 'a numeric column count as a maximum: its share of the container, never below the column minimum (Sprint 206)'],
     ];

@@ -79,10 +79,11 @@ const signalSchema = {
 const states = ['measured', 'measured_zero', 'not_measured', 'not_applicable', 'needs_review'];
 const validators = {
   manifest: getAjv().compile(manifestSchema),
-  report: getAjv().compile(object({ kind: { const: 'drift_report' }, schema_version: { enum: ['1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0', '2.0.0'] }, generated_at: date, current_run: object({ id: string }), signals: { type: 'array', items: signalSchema } })),
+  report: getAjv().compile(object({ kind: { const: 'drift_report' }, schema_version: { enum: ['1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0', '2.0.0', '2.1.0'] }, generated_at: date, current_run: object({ id: string }), signals: { type: 'array', items: signalSchema } })),
   index: getAjv().compile(object({ kind: { const: 'report_index' }, schema_version: { const: '1.1.0' }, run_id: string, generated_at: date, artifacts: { type: 'array', items: object({ type: string, path: relative, result_state: { enum: states }, result_note: string }, ['type', 'path']) } })),
   // 1.6.0 retains mode-aware references, collections, scopes and soft-deleted entries as source facts.
-  tokens: getAjv().compile(object({ kind: { const: 'fig_local_tokens' }, version: { enum: ['1.0.0', '1.3.0', '1.5.0', '1.6.0'] }, source: object({ file_label: string, fig_version: { type: 'integer', minimum: 0 } }), tokens: { type: 'array', items: { type: 'object' } } })),
+  // s244-m04 (next step 1845): 1.7.0 adds a text style's recorded fontWeight, fontLineHeight, lineHeight and letterSpacing.
+  tokens: getAjv().compile(object({ kind: { const: 'fig_local_tokens' }, version: { enum: ['1.0.0', '1.3.0', '1.5.0', '1.6.0', '1.7.0'] }, source: object({ file_label: string, fig_version: { type: 'integer', minimum: 0 } }), tokens: { type: 'array', items: { type: 'object' } } })),
 };
 const hash = (bytes: Buffer) => createHash('sha256').update(bytes).digest('hex');
 function refuse(message: string): never { throw new ToolError('OODS-N007', `Derived analysis refused: ${message}. Nothing was written.`); }

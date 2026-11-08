@@ -1,6 +1,6 @@
 object:
   name: Relationship
-  version: 1.1.0
+  version: 1.2.0
   domain: core.graph
   description: Canonical graph edge linking two entities with lifecycle, ownership, and tagging semantics.
   tags:
@@ -93,7 +93,11 @@ schema:
   relationship_type:
     type: string
     required: true
-    description: Semantic type describing the edge between the source and target.
+    # s244-m01 (#2829): a delegation is a grant from the person or organization acted for (the source) to the actor
+    # that acts for them, such as an agent (the target). Its scope and end are written in its label and description,
+    # and its lifecycle carries the grant: proposed (requested), active, paused, then terminated (revoked) or completed
+    # (expired). No field is added for it, so no existing relationship gains an empty row.
+    description: Semantic type describing the edge between the source and target; a delegation is a grant from the person or organization acted for (the source) to the actor acting for them (the target).
     validation:
       enum:
         - membership
@@ -101,6 +105,7 @@ schema:
         - follows
         - depends_on
         - references
+        - delegation
   direction:
     type: string
     required: true
@@ -192,6 +197,9 @@ metadata:
     - Platform team
   steward: Graph team
   changelog:
+    - version: 1.2.0
+      date: "2026-11-07"
+      description: Added the delegation relationship type, a grant from a person or organization to the actor that acts for them; no new fields.
     - version: 1.1.0
       date: "2026-09-14"
       description: Declared neighborhood edge array and a read-only graph of explicitly synthetic connected relationship examples.
@@ -199,9 +207,10 @@ metadata:
       date: "2025-10-16"
       description: Initial Universal Quintet baseline.
 
-# Eight authored sample relationships between the sample users, organizations and services. Each is proposed, then
-# confirmed (the lifecycle's initial state is proposed); its direction and bidirectional flag agree, and the last event
-# is the latest recorded change.
+# Eight authored sample relationships between the sample users, organizations, services and agents. Each is proposed,
+# then confirmed (the lifecycle's initial state is proposed); its direction and bidirectional flag agree, and the last
+# event is the latest recorded change. The last two are delegations (s244): a grant from an organization to the agent
+# that acts for it, its scope and end in its description, requested, granted and, for Marlow Yoga, revoked.
 samples:
   - label: Dana Whitfield — Northwind Traders
     description: Workspace owner membership
@@ -372,56 +381,56 @@ samples:
     updated_at: '2026-03-02T20:00:00Z'
     last_event: reactivated
     last_event_at: '2026-03-02T20:00:00Z'
-  - label: Jonah Marlow — Marlow Yoga
-    description: Former workspace owner membership
-    relationship_type: membership
-    source_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d07
-    source_name: Jonah Marlow
-    target_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a06
-    target_name: Marlow Yoga
+  - label: Marlow Yoga — Scheduling Agent
+    description: Acted for Marlow Yoga on class bookings until the studio closed
+    relationship_type: delegation
+    source_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a06
+    source_name: Marlow Yoga
+    target_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a07
+    target_name: Scheduling Agent
     direction: unidirectional
     is_bidirectional: false
     neighborhood:
-      - { source_id: Jonah Marlow, target_id: Marlow Yoga, is_bidirectional: false }
-    strength: high
+      - { source_id: Marlow Yoga, target_id: Scheduling Agent, is_bidirectional: false }
+    strength: medium
     origin_source: manual
     owner_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a06
     owner_type: organization
     owner_name: Marlow Yoga
-    tags: [primary]
-    tag_count: 1
+    tags: [primary, manual]
+    tag_count: 2
     status: terminated
     state_history:
-      - { title: Created, from: null, to: proposed, at: '2026-01-05T10:15:00Z', reason: Created with the workspace }
-      - { title: Confirmed, from: proposed, to: active, at: '2026-01-05T10:15:30Z', reason: Confirmed by the workspace owner }
-      - { title: Ended, from: active, to: terminated, at: '2026-07-10T09:00:00Z', reason: Studio closed }
-    created_at: '2026-01-05T10:15:00Z'
+      - { title: Requested, from: null, to: proposed, at: '2026-01-12T10:00:00Z', reason: Requested for the class waitlist, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d07, actor_name: Jonah Marlow, actor_kind: person }
+      - { title: Granted, from: proposed, to: active, at: '2026-01-19T10:00:00Z', reason: Granted for class bookings, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d07, actor_name: Jonah Marlow, actor_kind: person }
+      - { title: Revoked, from: active, to: terminated, at: '2026-07-10T09:00:00Z', reason: Revoked when the studio closed, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d07, actor_name: Jonah Marlow, actor_kind: person }
+    created_at: '2026-01-12T10:00:00Z'
     updated_at: '2026-07-10T09:00:00Z'
     last_event: terminated
     last_event_at: '2026-07-10T09:00:00Z'
-  - label: Priya Raman — Blue Harbor Studio
-    description: Workspace admin membership
-    relationship_type: membership
-    source_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d03
-    source_name: Priya Raman
-    target_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a02
-    target_name: Blue Harbor Studio
+  - label: Tidewater Co-op — Billing Agent
+    description: Acts for Tidewater Co-op on invoices and payments until 31 Dec 2026
+    relationship_type: delegation
+    source_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05
+    source_name: Tidewater Co-op
+    target_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01
+    target_name: Billing Agent
     direction: unidirectional
     is_bidirectional: false
     neighborhood:
-      - { source_id: Priya Raman, target_id: Blue Harbor Studio, is_bidirectional: false }
+      - { source_id: Tidewater Co-op, target_id: Billing Agent, is_bidirectional: false }
     strength: high
     origin_source: manual
-    owner_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a02
+    owner_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05
     owner_type: organization
-    owner_name: Blue Harbor Studio
+    owner_name: Tidewater Co-op
     tags: [primary, manual]
     tag_count: 2
     status: active
     state_history:
-      - { title: Created, from: null, to: proposed, at: '2026-09-19T10:00:00Z', reason: Created with the workspace }
-      - { title: Confirmed, from: proposed, to: active, at: '2026-09-19T10:00:30Z', reason: Confirmed by the workspace owner }
-    created_at: '2026-09-19T10:00:00Z'
-    updated_at: '2026-09-19T10:00:30Z'
+      - { title: Requested, from: null, to: proposed, at: '2026-08-20T21:30:00Z', reason: Requested to match bank transfers to invoices, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02, actor_name: Ruth Adeyemi, actor_kind: person }
+      - { title: Granted, from: proposed, to: active, at: '2026-09-01T21:00:00Z', reason: Granted until 31 Dec 2026, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02, actor_name: Ruth Adeyemi, actor_kind: person }
+    created_at: '2026-08-20T21:30:00Z'
+    updated_at: '2026-09-01T21:00:00Z'
     last_event: activated
-    last_event_at: '2026-09-19T10:00:30Z'
+    last_event_at: '2026-09-01T21:00:00Z'

@@ -1,3 +1,4 @@
+import { historyAttribution } from './attribution.js';
 import { formatDateTime, formatReadOnlyValue } from './date-time.js';
 
 export interface TraitEventValues {
@@ -20,12 +21,14 @@ export function traitEventRows(kind: TraitEventKind, values: TraitEventValues) {
         const from = text(row.from_state ?? row.from); const to = text(row.to_state ?? row.to) ?? values.status ?? 'State changed';
         const transition = from ? `${formatReadOnlyValue(from, 'string', true)} → ${formatReadOnlyValue(to, 'string', true)}` : formatReadOnlyValue(to, 'string', true);
         const title = text(row.title ?? row.label);
-        return { title: title && title !== transition && !title.endsWith(` · ${transition}`) ? `${title} · ${transition}` : title ?? transition, at: text(row.transitioned_at ?? row.timestamp ?? row.at), actor: text(row.actor_id ?? row.actor), reason: text(row.reason) };
+        // s244-m01 (#2829): a named entry says who acted, for whom and who approved; its actor id is not printed beside the name.
+        const attribution = historyAttribution(row);
+        return { title: title && title !== transition && !title.endsWith(` · ${transition}`) ? `${title} · ${transition}` : title ?? transition, at: text(row.transitioned_at ?? row.timestamp ?? row.at), ...(attribution ? { attribution: attribution.text } : {}), actor: attribution?.namesActor ? undefined : text(row.actor_id ?? row.actor), reason: text(row.reason) };
       });
   return rows.map(value => {
-    const row = value as { title: string; at?: string; actor?: string; reason?: string; code?: string };
+    const { attribution, ...row } = value as { title: string; at?: string; attribution?: string; actor?: string; reason?: string; code?: string };
     const at = row.at && formatDateTime(row.at) ? row.at : undefined;
-    return { ...row, code: row.code ? formatReadOnlyValue(row.code, 'string', true) : undefined, at, time: at ? formatDateTime(at) : 'Time not recorded', actor: values.showActor === false ? undefined : row.actor, reason: values.showReason === false ? undefined : row.reason };
+    return { ...row, code: row.code ? formatReadOnlyValue(row.code, 'string', true) : undefined, at, time: at ? formatDateTime(at) : 'Time not recorded', ...(attribution && values.showActor !== false ? { attribution } : {}), actor: values.showActor === false ? undefined : row.actor, reason: values.showReason === false ? undefined : row.reason };
   });
 }
 

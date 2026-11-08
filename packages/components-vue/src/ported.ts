@@ -322,6 +322,9 @@ function renderTimelineEvent(
         ? h('time', { 'data-timeline-time': 'true', datetime: event.timestamp }, formatDateTime(event.timestamp))
         : null,
       event.detail ? h('p', { class: 'oods-timeline__detail', 'data-timeline-detail': 'true' }, event.detail) : null,
+      showActorId && event.attribution
+        ? h('p', { class: 'oods-timeline__actor', 'data-timeline-attribution': 'true' }, event.attribution)
+        : null,
       showActorId && event.actorId
         ? h('p', { class: 'oods-timeline__actor', 'data-timeline-actor': 'true' }, `Actor: ${event.actorId}`)
         : null,

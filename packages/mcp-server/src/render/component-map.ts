@@ -1,4 +1,4 @@
-import { recipeItemLabels, traitEventRows, type TraitEventKind, auditSummary, initialSort, ariaSort, assertStaticSvg, svgCarriesTitle, vizPreviewLayers, VIZ_THEME_SVG_PROPS, type VizPreviewLayer } from '@oods/component-contracts';
+import { historyAttribution, recipeItemLabels, traitEventRows, type TraitEventKind, auditSummary, initialSort, ariaSort, assertStaticSvg, svgCarriesTitle, vizPreviewLayers, VIZ_THEME_SVG_PROPS, type VizPreviewLayer } from '@oods/component-contracts';
 import { getStatusPresentation, resolveStatusIcon, statusIconMarkup } from '@oods/component-contracts';
 import { currencyMinorUnits, dateTimeInputValue, formatDateTime, formatReadOnlyValue, summaryValue, formatReferenceLabel, formatPriceAmount, formatPriceCode, ownershipPhrase } from '@oods/component-contracts';
 import { billingCycle, billingPaymentRows, billingPaymentSummary, BILLING_INTERVALS, BILLING_MINOR_UNITS, billingAmountMessage, billingAmountText, billingIntervalMessage, billingSummary, formatBillingAmount } from '@oods/component-contracts';
@@ -1432,6 +1432,8 @@ type TimelineItem = {
   timestamp?: string;
   detail?: string;
   actor?: string;
+  /** s244-m01 (#2829): who acted, for whom and who approved (historyAttribution). */
+  attribution?: string;
   reason?: string;
 };
 
@@ -1453,7 +1455,9 @@ function normalizeTimelineItems(raw: unknown, lifecycle = false): TimelineItem[]
       const label = firstSerialized(entry, ['label', 'title']) ?? (code ? humanize(code) : undefined) ?? firstSerialized(entry, ['text', 'name']) ?? (lifecycle && to ? (from ? `${humanize(from)} → ${humanize(to)}` : humanize(to)) : 'Event');
       const timestamp = firstSerialized(entry, ['timestamp', 'datetime', 'time', 'at', 'createdAt', 'updatedAt']);
       const detail = lifecycle ? firstSerialized(entry, ['detail', 'description', 'message']) ?? (to ? (from ? `${humanize(from)} → ${humanize(to)}` : humanize(to)) : undefined) : firstSerialized(entry, ['detail', 'description', 'reason', 'message', 'from', 'to']);
-      items.push({ label, timestamp, detail, ...(lifecycle ? { actor: firstSerialized(entry, ['actorId', 'actor_id', 'actor']), reason: firstSerialized(entry, ['reason']) } : {}) });
+      // s244-m01 (#2829): a named entry reads its attribution in place of its actor id, as in React and Vue.
+      const attribution = lifecycle ? historyAttribution(entry) : undefined;
+      items.push({ label, timestamp, detail, ...(lifecycle ? { actor: attribution?.namesActor ? undefined : firstSerialized(entry, ['actorId', 'actor_id', 'actor']), ...(attribution ? { attribution: attribution.text } : {}), reason: firstSerialized(entry, ['reason']) } : {}) });
       continue;
     }
     items.push({ label: serializePropValue(entry) });
@@ -1485,9 +1489,10 @@ function renderTimelineContainer(node: UiElement, childrenHtml: string, options:
             ? `<time data-timeline-time="true" datetime="${escapeHtml(item.timestamp)}">${escapeHtml(formatDateTime(item.timestamp))}</time>`
             : '';
           const detailHtml = item.detail ? `<p data-timeline-detail="true">${escapeHtml(item.detail)}</p>` : '';
+          const attributionHtml = item.attribution && props.showActorId !== false ? `<p data-timeline-attribution="true">${escapeHtml(item.attribution)}</p>` : '';
           const actorHtml = item.actor && props.showActorId !== false ? `<p>Actor: ${escapeHtml(item.actor)}</p>` : '';
           const reasonHtml = item.reason && props.showReason !== false ? `<p>Reason: ${escapeHtml(item.reason)}</p>` : '';
-          return `<li><article data-timeline-event="true"><p data-timeline-label="true">${escapeHtml(item.label)}</p>${timeHtml}${detailHtml}${actorHtml}${reasonHtml}</article></li>`;
+          return `<li><article data-timeline-event="true"><p data-timeline-label="true">${escapeHtml(item.label)}</p>${timeHtml}${detailHtml}${attributionHtml}${actorHtml}${reasonHtml}</article></li>`;
         })
         .join('')
       : '<li data-timeline-empty="true">No events</li>';
@@ -1609,7 +1614,7 @@ function renderTraitEvent(node: UiElement, kind: TraitEventKind, defaultTitle: s
   const rows = traitEventRows(kind, props);
   // s223-m01 (#2527 ruling 7): a card with no events renders nothing, as in React and Vue.
   if (!rows.length) return '';
-  const content = `<ol>${rows.map(row => `<li><strong>${escapeHtml(row.title)}</strong><p>${row.at ? `<time datetime="${escapeHtml(row.at)}">${escapeHtml(row.time)}</time>` : escapeHtml(row.time)}</p>${row.actor ? `<p>Actor: ${escapeHtml(row.actor)}</p>` : ''}${row.reason ? `<p>Reason: ${escapeHtml(row.reason)}</p>` : ''}${row.code ? `<p>Code: ${escapeHtml(row.code)}</p>` : ''}</li>`).join('')}</ol>`;
+  const content = `<ol>${rows.map(row => `<li><strong>${escapeHtml(row.title)}</strong><p>${row.at ? `<time datetime="${escapeHtml(row.at)}">${escapeHtml(row.time)}</time>` : escapeHtml(row.time)}</p>${row.attribution ? `<p>${escapeHtml(row.attribution)}</p>` : ''}${row.actor ? `<p>Actor: ${escapeHtml(row.actor)}</p>` : ''}${row.reason ? `<p>Reason: ${escapeHtml(row.reason)}</p>` : ''}${row.code ? `<p>Code: ${escapeHtml(row.code)}</p>` : ''}</li>`).join('')}</ol>`;
   return `<article id="${escapeHtml(node.id)}" class="oods-trait-recipe" data-oods-component="${node.component}" aria-label="${escapeHtml(title)}"><h2>${escapeHtml(title)}</h2>${content}</article>`;
 }
 function renderArchiveEvent(node: UiElement): string { return renderTraitEvent(node, 'archive', 'Archive events'); }
@@ -1642,12 +1647,19 @@ type SummaryOptions = {
   fields: SummaryField[];
 };
 
+/** s244-m04: a prop a summary or meta shows as a field's value is content, as React's and Vue's components consume it,
+ * so it never also becomes an attribute. OwnershipSummary's and OwnershipMeta's `role` is the owner's role ("Sponsor" on
+ * Agent, an authored role on Organization), and the HTML renderer wrote it out as an invalid ARIA role. */
+function fieldAttributeKeys(fields: SummaryField[]): string[] {
+  return fields.flatMap(field => field.keys).filter(key => isHtmlAttribute(key, GENERIC_HTML_ATTRS));
+}
+
 function renderSummarySection(node: UiElement, childrenHtml: string, options: SummaryOptions): string {
   const props = isRecord(node.props) ? node.props : {};
   const title = firstSerialized(props, ['title', 'label', 'heading', 'name']) ?? displayLabel(node) ?? options.defaultTitle;
   const attrs = buildAttributes(node, {
     allowedHtmlAttrs: GENERIC_HTML_ATTRS,
-    consumedProps: new Set(['title', 'label', 'heading', 'name']),
+    consumedProps: new Set(['title', 'label', 'heading', 'name', ...fieldAttributeKeys(options.fields)]),
     dataOverrides: { 'data-summary-type': options.summaryType },
   });
 
@@ -1702,6 +1714,7 @@ function renderMetaInline(node: UiElement, childrenHtml: string, options: MetaOp
   const props = isRecord(node.props) ? node.props : {};
   const attrs = buildAttributes(node, {
     allowedHtmlAttrs: GENERIC_HTML_ATTRS,
+    consumedProps: new Set(fieldAttributeKeys(options.fields)),
     dataOverrides: { 'data-meta-type': options.metaType },
   });
   if (hasChildrenHtml(childrenHtml)) {
@@ -1821,7 +1834,7 @@ function renderOwnershipMeta(node: UiElement, childrenHtml = ''): string {
   if (!hasChildrenHtml(childrenHtml) && props.ownerLabel !== undefined) {
     const phrase = ownershipPhrase(props.ownerLabel, firstSerialized(props, ['ownerType', 'owner_type']), firstSerialized(props, ['role', 'ownershipRole']));
     if (phrase) {
-      const attrs = buildAttributes(node, { allowedHtmlAttrs: GENERIC_HTML_ATTRS, dataOverrides: { 'data-meta-type': 'ownership' } });
+      const attrs = buildAttributes(node, { allowedHtmlAttrs: GENERIC_HTML_ATTRS, consumedProps: new Set(['role']), dataOverrides: { 'data-meta-type': 'ownership' } });
       return `<div${attrs}><span data-meta-item="true">${escapeHtml(phrase)}</span></div>`;
     }
   }

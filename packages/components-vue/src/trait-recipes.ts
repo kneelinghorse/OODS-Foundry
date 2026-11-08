@@ -9,7 +9,7 @@ function eventRecipe(id: string, kind: TraitEventKind, title: string) {
     const rows = traitEventRows(kind, props);
     // s223-m01 (#2527 ruling 7): a card with no events renders nothing, as in React and HTML.
     if (!rows.length) return null;
-    return h('article', { id: props.id, class: 'oods-trait-recipe', 'data-oods-component': id, 'aria-label': props.title }, [h('h2', props.title), h('ol', rows.map((row, index) => h('li', { key: index }, [h('strong', row.title), h('p', row.at ? h('time', { datetime: row.at }, row.time) : row.time), row.actor && h('p', `Actor: ${row.actor}`), row.reason && h('p', `Reason: ${row.reason}`), row.code && h('p', `Code: ${row.code}`)])))]);
+    return h('article', { id: props.id, class: 'oods-trait-recipe', 'data-oods-component': id, 'aria-label': props.title }, [h('h2', props.title), h('ol', rows.map((row, index) => h('li', { key: index }, [h('strong', row.title), h('p', row.at ? h('time', { datetime: row.at }, row.time) : row.time), row.attribution && h('p', row.attribution), row.actor && h('p', `Actor: ${row.actor}`), row.reason && h('p', `Reason: ${row.reason}`), row.code && h('p', `Code: ${row.code}`)])))]);
   } });
 }
 export const ArchiveEvent = eventRecipe('ArchiveEvent', 'archive', 'Archive events');

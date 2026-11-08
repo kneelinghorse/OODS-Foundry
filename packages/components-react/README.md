@@ -32,4 +32,4 @@ Generated apps pin the OODS release that generated them; to upgrade, regenerate 
 
 ## License
 
-Apache License 2.0. See [LICENSE](https://cdn.jsdelivr.net/npm/@oods/components-react@0.11.3/LICENSE) and [NOTICE](https://cdn.jsdelivr.net/npm/@oods/components-react@0.11.3/NOTICE). Generated output belongs to its user; installed package dependencies retain their own licenses.
+Apache License 2.0. See [LICENSE](https://cdn.jsdelivr.net/npm/@oods/components-react@0.12.0/LICENSE) and [NOTICE](https://cdn.jsdelivr.net/npm/@oods/components-react@0.12.0/NOTICE). Generated output belongs to its user; installed package dependencies retain their own licenses.

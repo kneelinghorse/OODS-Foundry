@@ -1,6 +1,6 @@
 trait:
   name: Stateful
-  version: 2.0.0
+  version: 2.1.0
   description: |
     Normalizes lifecycle state transitions, exposes canonical status semantics, and provides
     optional transition governance for production workflows. Many objects compose Stateful
@@ -96,6 +96,15 @@ schema:
         - actor_id: string (user/system who triggered the transition, optional)
         - reason: string (human-readable justification, required when requireTransitionReason is true)
         - transition_metadata: Record<string, unknown> (arbitrary context, optional)
+
+      Every recorded change can name who acted, who it acted for and who approved it. All optional,
+      following Relationship's source_id/source_name pattern; only a *_name names a party, and an entry that names
+      no one renders as it always has:
+        - actor_name: string (who acted, as shown: "Billing Agent")
+        - actor_kind: string (person, agent or system: the Actor trait's kinds)
+        - on_behalf_of_name / on_behalf_of_id: string (the person or organization it acted for)
+        - approved_by_name / approved_by_id: string (who approved the change, when someone did)
+      StatusTimeline then reads "Billing Agent for Tidewater Co-op · approved by Ruth Adeyemi".
     default: []
 
   allowed_transitions:
@@ -175,7 +184,7 @@ dependencies: []
 
 metadata:
   created: "2025-10-12"
-  updated: "2026-02-28"
+  updated: "2026-11-07"
   owners:
     - Design team
     - Engineering team

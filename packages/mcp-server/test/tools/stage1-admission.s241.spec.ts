@@ -66,9 +66,11 @@ describe('Stage1 0.6.0 contracts retain facts without inventing scores (s241)', 
     expect(readComparisonView(zero(true)).admitted.resultState).toBe('measured');
     expect(() => readComparisonView(zero(false))).toThrow('result state contradicts');
   });
+  // s244-m04 (next step 1845): Stage1 0.7.0's drift_report 2.1.0 and fig_local_tokens 1.7.0 are admitted, so the next
+  // versions are the unknown ones.
   it.each([
-    ['drift_report.json', 'schema_version', '2.1.0'],
-    ['fig_local_tokens.json', 'version', '1.7.0'],
+    ['drift_report.json', 'schema_version', '2.2.0'],
+    ['fig_local_tokens.json', 'version', '1.8.0'],
     ['style_fingerprint.json', 'schema_version', '1.5.0'],
   ])('refuses unknown %s versions with the admitted versions named', (file, key, version) => {
     expect(() => readComparisonView(fixture('analysis', (name, data) => { if (name.endsWith(file)) data[key] = version; }))).toThrow(/accepted:/);

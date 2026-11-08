@@ -10,7 +10,7 @@ function eventRecipe(id: string, kind: TraitEventKind, title: string) {
     // s223-m01 (#2527 ruling 7): an event that never happened is not content, so a card with no events renders nothing.
     if (!rows.length) return null;
     return <article id={elementId} className="oods-trait-recipe" data-oods-component={id} aria-label={heading}>
-      <h2>{heading}</h2><ol>{rows.map((row, index) => <li key={index}><strong>{row.title}</strong><p>{row.at ? <time dateTime={row.at}>{row.time}</time> : row.time}</p>{row.actor && <p>Actor: {row.actor}</p>}{row.reason && <p>Reason: {row.reason}</p>}{row.code && <p>Code: {row.code}</p>}</li>)}</ol>
+      <h2>{heading}</h2><ol>{rows.map((row, index) => <li key={index}><strong>{row.title}</strong><p>{row.at ? <time dateTime={row.at}>{row.time}</time> : row.time}</p>{row.attribution && <p>{row.attribution}</p>}{row.actor && <p>Actor: {row.actor}</p>}{row.reason && <p>Reason: {row.reason}</p>}{row.code && <p>Code: {row.code}</p>}</li>)}</ol>
     </article>;
   };
 }

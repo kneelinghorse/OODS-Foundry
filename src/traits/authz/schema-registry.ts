@@ -13,7 +13,7 @@ const ajv = new Ajv({
 });
 addFormats(ajv);
 
-export const AUTHZ_REGISTRY_VERSION = '1.0.0';
+export const AUTHZ_REGISTRY_VERSION = '1.1.0';
 
 const KNOWN_SCHEMA_IDS = ['role', 'permission', 'membership', 'role-hierarchy'] as const;
 export type AuthzSchemaId = (typeof KNOWN_SCHEMA_IDS)[number];

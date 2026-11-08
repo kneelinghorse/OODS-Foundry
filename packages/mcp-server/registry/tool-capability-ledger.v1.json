@@ -60,7 +60,7 @@
       ]
     }
   ],
-  "head": "7c1127f35fd6577ce43ff79edd12231e48714e09",
+  "head": "ba875102efc838d87774f1bbed058437844b65c9",
   "builderSelfCertified": false,
   "methodology": {
     "testImportLocation": "Where a spec that imports the tool's handler module lives: packages/mcp-server/test/product-reality, then test/contracts, then any other mcp-server spec. A literal runtime import is source evidence that a test reaches the handler, not proof of invocation, passing execution or browser certification. Grouped action imports roll up to their registered family. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not count.",
@@ -191,11 +191,11 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1100
+          "line": 1101
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1104
+          "line": 1105
         }
       ],
       "portableLimits": [],
@@ -223,7 +223,7 @@
       },
       "claimHash": "sha256:40c7e3ab6f548e2b002b28c1aa639123aec411f0d475b452171f73b60a3ba0d0",
       "inputSchemaPath": "packages/mcp-server/src/schemas/structuredData.fetch.input.json",
-      "inputSchemaHash": "sha256:a1980e3280b776d8333d77d5cbb47c658dac458019110f2b6cf4cc8e273c2820",
+      "inputSchemaHash": "sha256:81d4b41ec207f65c9a615237a8c7dfe0917484457a481f5e74685c4f45a5900d",
       "testImportLocation": "test/product-reality",
       "testImports": {
         "test/product-reality": [
@@ -349,7 +349,7 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1117
+          "line": 1118
         }
       ],
       "portableLimits": [],
@@ -466,11 +466,11 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1121
+          "line": 1122
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1131
+          "line": 1132
         }
       ],
       "portableLimits": [],
@@ -603,7 +603,7 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1154
+          "line": 1155
         }
       ],
       "portableLimits": [],
@@ -702,7 +702,7 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1151
+          "line": 1152
         }
       ],
       "portableLimits": [],
@@ -839,7 +839,7 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1159
+          "line": 1160
         }
       ],
       "portableLimits": [],
@@ -1406,6 +1406,11 @@
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
           },
           {
+            "path": "packages/mcp-server/test/objects/actor.s244.spec.ts",
+            "line": 21,
+            "handler": "packages/mcp-server/src/tools/code.generate.ts"
+          },
+          {
             "path": "packages/mcp-server/test/objects/capture.spec.ts",
             "line": 6,
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
@@ -1428,6 +1433,11 @@
           {
             "path": "packages/mcp-server/test/objects/team-definitions.s213.spec.ts",
             "line": 20,
+            "handler": "packages/mcp-server/src/tools/code.generate.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/render/ownership-role.s244.spec.ts",
+            "line": 4,
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
           },
           {
@@ -1533,11 +1543,11 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1202
+          "line": 1203
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1205
+          "line": 1206
         }
       ],
       "portableLimits": [],
@@ -2042,7 +2052,7 @@
           },
           {
             "path": "packages/mcp-server/test/codegen/showcase.s219.spec.ts",
-            "line": 201,
+            "line": 203,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
@@ -2156,6 +2166,11 @@
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
+            "path": "packages/mcp-server/test/objects/actor.s244.spec.ts",
+            "line": 20,
+            "handler": "packages/mcp-server/src/tools/design.compose.ts"
+          },
+          {
             "path": "packages/mcp-server/test/objects/capture.spec.ts",
             "line": 5,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
@@ -2188,6 +2203,11 @@
           {
             "path": "packages/mcp-server/test/objects/visibility.s222.spec.ts",
             "line": 17,
+            "handler": "packages/mcp-server/src/tools/design.compose.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/render/ownership-role.s244.spec.ts",
+            "line": 3,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
@@ -2288,7 +2308,7 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1162
+          "line": 1163
         }
       ],
       "portableLimits": [],
@@ -2498,7 +2518,7 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1165
+          "line": 1166
         }
       ],
       "portableLimits": [],
@@ -2571,7 +2591,7 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1169
+          "line": 1170
         }
       ],
       "portableLimits": [],
@@ -2676,6 +2696,11 @@
             "handler": "packages/mcp-server/src/tools/pipeline.ts"
           },
           {
+            "path": "packages/mcp-server/test/objects/actor.s244.spec.ts",
+            "line": 22,
+            "handler": "packages/mcp-server/src/tools/pipeline.ts"
+          },
+          {
             "path": "packages/mcp-server/test/tools/pipeline.compact.spec.ts",
             "line": 2,
             "handler": "packages/mcp-server/src/tools/pipeline.ts"
@@ -2713,7 +2738,7 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1208
+          "line": 1209
         }
       ],
       "portableLimits": [],
@@ -2882,7 +2907,7 @@
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1340
+          "line": 1341
         }
       ],
       "portableLimits": [],
@@ -2922,7 +2947,7 @@
       },
       "claimHash": "sha256:93ab60b103fa58a59b292b2e249cf041a4d0304e3673c06be6d68da83262732a",
       "inputSchemaPath": "packages/mcp-server/src/schemas/registry.snapshot.input.json",
-      "inputSchemaHash": "sha256:a3868c66ee0f3a97b51916ebc5d82cd3667f25262223a92fe7977854d1fc1301",
+      "inputSchemaHash": "sha256:307dad745f57b3685c517be46518fe745920dab46676dd1dc143e685e41d4ebc",
       "testImportLocation": "test/product-reality",
       "testImports": {
         "test/product-reality": [
@@ -2998,7 +3023,7 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1211
+          "line": 1212
         }
       ],
       "portableLimits": [],
@@ -3335,7 +3360,7 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1093
+          "line": 1094
         }
       ],
       "portableLimits": [],
@@ -3477,19 +3502,19 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1045
+          "line": 1046
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1049
+          "line": 1050
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1053
+          "line": 1054
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1057
+          "line": 1058
         }
       ],
       "portableLimits": [],
@@ -3737,11 +3762,11 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1095
+          "line": 1096
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1096
+          "line": 1097
         }
       ],
       "portableLimits": [],
@@ -3840,7 +3865,7 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1213
+          "line": 1214
         }
       ],
       "portableLimits": [],
@@ -4107,11 +4132,11 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1215
+          "line": 1216
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1219
+          "line": 1220
         }
       ],
       "portableLimits": [],
@@ -4195,7 +4220,7 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1217
+          "line": 1218
         }
       ],
       "portableLimits": [],
@@ -4342,11 +4367,11 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1221
+          "line": 1222
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1225
+          "line": 1226
         }
       ],
       "portableLimits": [],
@@ -4410,7 +4435,7 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1223
+          "line": 1224
         }
       ],
       "portableLimits": [],
@@ -4530,6 +4555,11 @@
             "handler": "packages/mcp-server/src/tools/object.register.ts"
           },
           {
+            "path": "packages/mcp-server/test/objects/actor.s244.spec.ts",
+            "line": 23,
+            "handler": "packages/mcp-server/src/tools/object.validate.ts"
+          },
+          {
             "path": "packages/mcp-server/test/objects/capture.spec.ts",
             "line": 7,
             "handler": "packages/mcp-server/src/tools/object.ts"
@@ -4647,11 +4677,11 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1234
+          "line": 1235
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1237
+          "line": 1238
         }
       ],
       "portableLimits": [],
@@ -4714,7 +4744,7 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1235
+          "line": 1236
         }
       ],
       "portableLimits": [],
@@ -4991,7 +5021,7 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1239
+          "line": 1240
         }
       ],
       "portableLimits": [],
@@ -5075,11 +5105,11 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1227
+          "line": 1228
         },
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1231
+          "line": 1232
         }
       ],
       "portableLimits": [],
@@ -5157,7 +5187,7 @@
       "portableE2ERefs": [
         {
           "path": "scripts/runtime/e2e.mjs",
-          "line": 1229
+          "line": 1230
         }
       ],
       "portableLimits": [],

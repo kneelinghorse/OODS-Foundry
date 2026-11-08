@@ -1,6 +1,6 @@
 trait:
   name: Authable
-  version: 1.0.0
+  version: 1.1.0
   description: |
     Role-based access control extension pack grounded in the R21.2 membership pattern.
     Encodes roles, permissions, memberships, and adjacency edges for tenant-aware RBAC.
@@ -67,7 +67,7 @@ schema:
   membership_records:
     type: AuthzMembershipDocument[]
     required: true
-    description: SaaS membership triple (user_id, organization_id, role_id) with UNIQUE constraint (TABLE 4).
+    description: SaaS membership triple (member, organization_id, role_id) with UNIQUE constraint (TABLE 4). The member is a user (user_id) or any other actor (actor_id with actor_kind, such as an agent), exactly one of the two.
     default: []
   role_hierarchy_edges:
     type: AuthzRoleHierarchyEdge[]
@@ -86,7 +86,7 @@ semantics:
     token_mapping: tokenMap(authorization.memberships)
     ui_hints:
       component: MembershipMatrix
-      uniqueConstraint: user_id+organization_id+role_id
+      uniqueConstraint: user_id|actor_id+organization_id+role_id
   role_catalog:
     semantic_type: authorization.roles
     token_mapping: tokenMap(authorization.roles)

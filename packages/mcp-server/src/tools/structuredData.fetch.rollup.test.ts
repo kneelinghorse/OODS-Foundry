@@ -283,7 +283,7 @@ describe('structuredData.fetch rollup mode', () => {
     } catch (err) {
       expect(err).toBeInstanceOf(ToolError);
       expect((err as ToolError).message).toMatch(/Unsupported schema_version "9\.0\.0"/);
-      expect((err as any).details?.accepted).toEqual(['1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0', '2.0.0']);
+      expect((err as any).details?.accepted).toEqual(['1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0', '2.0.0', '2.1.0']);
     }
   });
 

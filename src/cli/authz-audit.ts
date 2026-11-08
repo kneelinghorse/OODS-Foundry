@@ -141,7 +141,8 @@ export function auditOrgAccess(
         details: { membershipId: membership.id, roleId: membership.role_id },
       });
     }
-    if (!users.has(membership.user_id)) {
+    // s244-m01: an actor's membership (actor_id) names no user, so only a user's is checked against the users.
+    if (membership.user_id !== undefined && !users.has(membership.user_id)) {
       issues.push({
         code: 'unknown_user_membership',
         message: `Membership ${membership.id} references unknown user ${membership.user_id}.`,

@@ -171,10 +171,10 @@ setInterval(() => {}, 1000);
     expect(promotionIssues(stopped, true)).toEqual(expect.arrayContaining([expect.stringContaining('the run is partial (stopped by SIGTERM'), expect.stringContaining('population must contain exactly')]));
     // Even a ledger with every cell is refused while it carries the partial record.
     expect(promotionIssues({ ...complete, partial: { stoppedBy: null, unrun: [] } }, true)[0]).toContain('the run is partial');
-    // A crashed worker is a failed cell with its log, never a missing one.
-    const crash = crashedCell(rows[0]!, head, runId, 1, 'cells/Article/card/react/process.log');
+    // A crashed worker is a failed cell with its log, never a missing one. s244-m02 (#2829): Agent sorts first.
+    const crash = crashedCell(rows[0]!, head, runId, 1, 'cells/Agent/card/react/process.log');
     const crashed = { ...complete, rows: [crash, ...rows.slice(1)], summary: summarize([crash, ...rows.slice(1)]) };
-    expect(validateRuntimeLedger(crashed, true)).toContain('Article/card/react failed');
+    expect(validateRuntimeLedger(crashed, true)).toContain('Agent/card/react failed');
     // Combining the paused run with a later one is a union of runs, whatever the rows say.
     const later = rows.slice(stoppedAfter).map(row => ({ ...row, runId: 'run-2' }));
     const union = { ...complete, rows: [...kept, ...later], summary: summarize([...kept, ...later]) };

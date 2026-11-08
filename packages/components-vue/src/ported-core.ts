@@ -1,4 +1,4 @@
-import { getStatusPresentation, resolveStatusIcon, type StatusIconName } from '@oods/component-contracts';
+import { getStatusPresentation, historyAttribution, resolveStatusIcon, type StatusIconName } from '@oods/component-contracts';
 import type { ComponentTone } from './types.js';
 
 export type TimelineEvent = {
@@ -6,6 +6,8 @@ export type TimelineEvent = {
   timestamp?: string;
   detail?: string;
   actorId?: string;
+  /** s244-m01 (#2829): who acted, for whom and who approved, from the entry's *_name fields (historyAttribution). */
+  attribution?: string;
   reason?: string;
 };
 
@@ -86,6 +88,8 @@ export function normalizeTimelineEvents(raw: unknown): TimelineEvent[] {
     }
     const from = firstText(entry, ['from']);
     const to = firstText(entry, ['to']);
+    // s244-m01 (#2829): a named entry reads its attribution in place of its actor id, as in React and HTML.
+    const attribution = historyAttribution(entry);
     events.push({
       label: firstText(entry, ['label', 'title'])
         ?? (firstText(entry, ['event', 'status', 'state']) ? statusLabel(firstText(entry, ['event', 'status', 'state'])!) : undefined)
@@ -94,7 +98,8 @@ export function normalizeTimelineEvents(raw: unknown): TimelineEvent[] {
         ?? 'Event',
       timestamp: firstText(entry, ['timestamp', 'datetime', 'time', 'at', 'createdAt', 'updatedAt']),
       detail: firstText(entry, ['detail', 'description', 'message']) ?? (to ? (from ? `${statusLabel(from)} → ${statusLabel(to)}` : statusLabel(to)) : undefined),
-      actorId: firstText(entry, ['actorId', 'actor_id', 'actor']),
+      actorId: attribution?.namesActor ? undefined : firstText(entry, ['actorId', 'actor_id', 'actor']),
+      ...(attribution ? { attribution: attribution.text } : {}),
       reason: firstText(entry, ['reason']),
     });
   }

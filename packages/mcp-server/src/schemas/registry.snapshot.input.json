@@ -26,7 +26,8 @@
       "uniqueItems": true,
       "items": {
         "type": "string",
-        "minLength": 1
+        "minLength": 1,
+        "description": "One trait or object name, such as Stateful or Subscription."
       },
       "description": "Exact trait and object names; misses go in notFound."
     }

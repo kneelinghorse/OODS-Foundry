@@ -12,6 +12,12 @@ export interface StateTransition {
   readonly timestamp: string;
   readonly reason?: string;
   readonly actor_id?: string;
+  readonly actor_name?: string;
+  readonly actor_kind?: 'person' | 'agent' | 'system';
+  readonly on_behalf_of_name?: string;
+  readonly on_behalf_of_id?: string;
+  readonly approved_by_name?: string;
+  readonly approved_by_id?: string;
 }
 
 export interface Organization {
@@ -156,7 +162,7 @@ export interface Organization {
   last_event_at?: string;
 
   /**
-   * Membership records (user_id, organization_id, role_id) enforcing UNIQUE triples per R21.2 Part 2.2.
+   * Membership records (member, organization_id, role_id) enforcing UNIQUE triples per R21.2 Part 2.2. The member is a user (user_id) or any other actor (actor_id with actor_kind, such as an agent), exactly one of the two.
    *
    * Source: Authable (trait)
    *

@@ -110,6 +110,12 @@ function bindTraitFields(trait: TraitDefinition, ref: TraitReference, object: Ob
   };
 }
 
+/** s244-m01: the kind an Actor reference declares, else the trait's default (person). */
+export function actorKind(ref: TraitReference, traitDef: TraitDefinition): string | undefined {
+  const declared = ref.parameters?.kind ?? traitDef.parameters.find(parameter => parameter.name === 'kind')?.default;
+  return typeof declared === 'string' ? declared : undefined;
+}
+
 const BOUND_MARK_PREVIEWS: Readonly<Record<string, { chartType: string; component: string }>> = {
   MarkArea: { chartType: 'area', component: 'VizAreaPreview' },
   MarkBar: { chartType: 'bar', component: 'VizMarkPreview' },
@@ -202,6 +208,13 @@ export function composeObject(objectDef: ObjectDefinition): ComposedObject {
         },
       }], card: (traitDef.view_extensions?.card ?? []).filter(extension => extension.component !== 'CancellationBadge') } };
       if (cancellation === 'none') warnings.push(`${objectDef.object.name} is Cancellable, but its lifecycle declares neither "cancelled" nor "pending_cancellation", so a cancellation has no state to move to.`);
+    }
+    // s244-m01 (#2829): an agent is an actor, not a user. Actor's kind is a parameter and it adds no record field, and no
+    // view extension can depend on a parameter, so an agent's mark is placed here: "Agent" beside its name in list, card
+    // and detail, in the existing Badge. A person or a system composes Actor with nothing more on its screens.
+    if (traitDef.trait.name === 'Actor' && actorKind(ref, traitDef) === 'agent') {
+      const badge = (position: string, priority?: number): ViewExtension => ({ component: 'Badge', position, ...(priority === undefined ? {} : { priority }), props: { label: 'Agent', tone: 'info' } });
+      traitDef = { ...traitDef, view_extensions: { list: [badge('after')], card: [badge('before')], detail: [badge('top', 90)] } };
     }
     // A field the object never supplies — declared unavailable (an upstream API withholds a record's owner) or inapplicable
     // (above) — is bound by no trait view; a view left with no bound record field is not placed (s213-m01, finding 2).

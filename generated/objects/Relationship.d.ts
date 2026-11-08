@@ -12,6 +12,12 @@ export interface StateTransition {
   readonly timestamp: string;
   readonly reason?: string;
   readonly actor_id?: string;
+  readonly actor_name?: string;
+  readonly actor_kind?: 'person' | 'agent' | 'system';
+  readonly on_behalf_of_name?: string;
+  readonly on_behalf_of_id?: string;
+  readonly approved_by_name?: string;
+  readonly approved_by_id?: string;
 }
 
 export interface Relationship {
@@ -141,11 +147,11 @@ export interface Relationship {
   relationship_id: string;
 
   /**
-   * Semantic type describing the edge between the source and target.
+   * Semantic type describing the edge between the source and target; a delegation is a grant from the person or organization acted for (the source) to the actor acting for them (the target).
    *
    * Source: Relationship (object override)
    */
-  relationship_type: 'membership' | 'ownership' | 'follows' | 'depends_on' | 'references';
+  relationship_type: 'membership' | 'ownership' | 'follows' | 'depends_on' | 'references' | 'delegation';
 
   /**
    * Identifier of the source node in the relationship.

@@ -65,6 +65,24 @@ describe('derived-analysis admission: evidence must establish a comparison, not 
     expect(snapshot(dir)).toEqual(before);
     await expect(readRunView(dir)).rejects.toMatchObject({ opiCode: 'OODS-V213', message: expect.stringContaining('not a captured run') });
   });
+  it('s244-m04 (next step 1845): admits Stage1 0.7.0, drift_report 2.1.0 and fig_local_tokens 1.7.0, keeping their additive fields as recorded', async () => {
+    const dir = fixture();
+    // drift_report 2.1.0: every value_join counts the deleted .fig tokens it left out; signals are unchanged.
+    edit(dir, 'artifacts/drift_report.json', data => { data.schema_version = '2.1.0'; data.value_join = { families: [], left_out: { soft_deleted: { tokens: 2, by_kind: { color: 1, text_style: 1 } } } }; });
+    // fig_local_tokens 1.7.0: a text style records its font weight, line height and letter spacing, as the .fig does.
+    const body = { name: 'Body', kind: 'text_style', value: { fontFamily: 'Public Sans', fontSize: 16, fontStyle: 'Regular', fontWeight: 400, fontLineHeight: 1.215, lineHeight: { value: 1.62, units: 'RAW' }, letterSpacing: { value: 0, units: 'PERCENT' } } };
+    edit(dir, 'artifacts/fig_local_tokens.json', data => { data.version = '1.7.0'; data.tokens.push(body); });
+    const view = readDerivedAnalysis(dir);
+    expect(view.report.schema_version).toBe('2.1.0');
+    expect(view.report.signals).toHaveLength(1);
+    expect((view.report as any).value_join.left_out).toEqual({ soft_deleted: { tokens: 2, by_kind: { color: 1, text_style: 1 } } });
+    expect((view.figTokens as any).version).toBe('1.7.0');
+    expect((view.figTokens as any).tokens.at(-1)).toEqual(body);
+    expect((await fetchStructured({ kind: 'derived_analysis', runPath: dir })).meta).toMatchObject({ signalCount: 1, resultState: 'measured' });
+    // A version Stage1 has not published stays refused.
+    edit(dir, 'artifacts/fig_local_tokens.json', data => { data.version = '1.8.0'; });
+    expect(() => readDerivedAnalysis(dir)).toThrow(/1\.7\.0/);
+  });
   it.each(['measured_zero', 'not_measured', 'needs_review', undefined])('preserves %s independently from a zero count', state => {
     const dir = fixture();
     edit(dir, 'artifacts/drift_report.json', data => { data.signals = []; });

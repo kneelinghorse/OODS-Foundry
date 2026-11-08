@@ -1,3 +1,4 @@
+import { historyAttribution } from './attribution.js';
 import { billingSummary, formatBillingAmount } from './billing.js';
 
 /** A stable display policy shared by generated screens, components, and SSR. */
@@ -29,6 +30,8 @@ export interface CollectionEvent {
   at: string;
   description: string;
   kind: 'state' | 'payment';
+  /** s244-m01 (#2829): who acted, for whom and who approved, when the history entry names them (historyAttribution). */
+  attribution?: string;
 }
 
 /** Invalid dates cannot participate in a chronological view; ties retain source order. */
@@ -80,7 +83,8 @@ export function recordCollectionEvents(record: Record<string, unknown>, options:
     const at = entry.at ?? entry.transitioned_at;
     const state = entry.to ?? entry.to_state;
     if (typeof at !== 'string' || typeof state !== 'string') return [];
-    return [{ id: 'state-' + index, title: String(entry.title ?? state.split(/[_-]/).filter(Boolean).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' ')), at, description: String(entry.reason ?? ''), kind: 'state' as const }];
+    const attribution = historyAttribution(entry)?.text;
+    return [{ id: 'state-' + index, title: String(entry.title ?? state.split(/[_-]/).filter(Boolean).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' ')), at, description: String(entry.reason ?? ''), kind: 'state' as const, ...(attribution ? { attribution } : {}) }];
   }) : [];
   // s220-m01 (#2461): a payment the record has recorded is described by its own amount, never the current price. After an
   // edit to the price, "Last payment Sep 3" read the new "€19.99 · yearly" beside a chart of the €149.00 actually paid.

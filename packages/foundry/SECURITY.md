@@ -1,6 +1,6 @@
 # Security
 
-This note describes OODS Foundry 0.11.3. It does not claim a completed network audit.
+This note describes OODS Foundry 0.12.0. It does not claim a completed network audit.
 
 ## What runs on your machine
 
@@ -34,7 +34,7 @@ These are source-qualified configuration statements, not a claim that every exec
 Before a release is published, every package in its runtime archive is checked, name and version, against npm's
 advisory data. The package's own manifest declares no dependencies because the runtime travels inside it, so the check
 reads the archive itself. A high or critical advisory stops the release unless an exception names that package,
-version and advisory with a reason and a decision. 0.11.3 has no exception.
+version and advisory with a reason and a decision. 0.12.0 has no exception.
 
 Releases up to this one fixed these advisories by upgrading or removing the affected dependency. The
 [CHANGELOG](CHANGELOG.md) names the release that made each change.
@@ -50,11 +50,11 @@ Releases up to this one fixed these advisories by upgrading or removing the affe
   authorization server the MCP server chose). Upgraded to 1.31.0.
 - `@modelcontextprotocol/sdk` 1.31.0: GHSA-22jm-h49p-29qw (high, experimental tasks were not tied to the session that
   created them) and GHSA-46jr-4wx8-v453 (high, one HTTP request within the default size limit could exhaust server
-  memory during validation). Upgraded to 1.32.2 in 0.11.3.
+  memory during validation). Upgraded to 1.32.2 in 0.11.3. <!-- history -->
 - `body-parser` 2.3.0: GHSA-27r3-jxmh-p828 (high, denial of service through trailing bytes after a compressed request
-  body). Upgraded to 2.4.0 in 0.11.3.
+  body). Upgraded to 2.4.0 in 0.11.3. <!-- history -->
 - `zod` 3.25.76: GHSA-mrhx-c7xc-m3w5 (high, memory exhaustion while validating oversized constrained collections).
-  Upgraded to 4.6.7 in 0.11.3.
+  Upgraded to 4.6.7 in 0.11.3. <!-- history -->
 - Apache ECharts 6.0.0: GHSA-fgmj-fm8m-jvvx (moderate, cross-site scripting). Upgraded to 6.1.0.
 
 These were matches by package name and version; they did not establish that an OODS Foundry tool reached the

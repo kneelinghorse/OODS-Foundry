@@ -63,6 +63,25 @@ function effective(schema: MapValue, hub: Hub, active = new Set<string>()): MapV
   return intersect(result, own);
 }
 
+/**
+ * s244-m03 (#2835): proto3's JSON mapping writes an enum field as an anyOf (or oneOf) of its string values, its
+ * `^X_UNSPECIFIED$` sentinel pattern and/or its int32 wire form (A2A's TaskStatus.state). That union is the string enum:
+ * the sentinel is not a value of the field and the integer is the same values on the wire. Anything else stays a union.
+ */
+export function protobufEnum(schema: MapValue, hub: Hub): { key: 'anyOf' | 'oneOf'; index: number; values: string[] } | undefined {
+  const key = Array.isArray(schema.anyOf) ? 'anyOf' : Array.isArray(schema.oneOf) ? 'oneOf' : undefined;
+  if (!key || schema.anyOf && schema.oneOf) return undefined;
+  const branches = (schema[key] as unknown[]).map(branch => isMap(branch) ? effective(branch, hub) : branch);
+  if (branches.length < 2 || branches.length > 3 || !branches.every(isMap)) return undefined;
+  const stringEnum = (branch: MapValue) => branch.type === 'string' && Array.isArray(branch.enum) && branch.enum.length > 0 && branch.enum.every((value: unknown) => typeof value === 'string');
+  const sentinel = (branch: MapValue) => branch.type === 'string' && branch.enum === undefined && typeof branch.pattern === 'string' && /^\^[A-Z0-9_]*UNSPECIFIED\$$/.test(branch.pattern);
+  const wire = (branch: MapValue) => branch.type === 'integer' && branch.enum === undefined;
+  const enums = branches.flatMap((branch, index) => stringEnum(branch as MapValue) ? [index] : []);
+  if (enums.length !== 1 || !branches.every((branch, index) => index === enums[0] || sentinel(branch as MapValue) || wire(branch as MapValue))) return undefined;
+  const values = ((branches[enums[0]] as MapValue).enum as string[]).filter(value => !/(?:^|_)UNSPECIFIED$/.test(value));
+  return values.length ? { key, index: enums[0], values } : undefined;
+}
+
 export function dependencyOrder(drafts: Draft[]): { drafts: Draft[]; cycles: string[][] } {
   const byName = new Map(drafts.map(draft => [draft.name, draft]));
   const ordered: Draft[] = [], done = new Set<string>(), active: string[] = [], cycles: string[][] = [];
@@ -95,6 +114,16 @@ export function draftSource(input: SourceInput): ImportResult {
   };
   const shapes = new Map(Object.keys(hub.$defs).sort().map(name => [name, effective(hub.$defs[name], hub)]));
   const objectNames = new Set([...shapes.entries()].filter(([, shape]) => isMap(shape.properties) && Object.keys(shape.properties).length && !shape['x-oods-conflict']).map(([name]) => name));
+  /** s244-m03 (#2836): the one state enum a referenced record holds (its field named state or status), when it holds exactly one. */
+  const statusStates = (target: string): { field: string; values: string[]; protobuf?: ReturnType<typeof protobufEnum> } | undefined => {
+    const found = Object.entries(shapes.get(target)?.properties ?? {}).filter(([name]) => /^(state|status)$/i.test(name)).flatMap(([name, property]) => {
+      if (!isMap(property)) return [];
+      const declared = effective(property, hub), protobuf = protobufEnum(declared, hub);
+      const values = protobuf?.values ?? (declared.type === 'string' && Array.isArray(declared.enum) && declared.enum.every((value: unknown) => typeof value === 'string') ? declared.enum as string[] : undefined);
+      return values && values.length > 1 ? [{ field: name, values, protobuf }] : [];
+    });
+    return found.length === 1 ? found[0] : undefined;
+  };
   const drafts: Draft[] = [];
   for (const [name, shape] of shapes) {
     const base = `/$defs/${name}`, origin = provenance[base];
@@ -156,6 +185,16 @@ export function draftSource(input: SourceInput): ImportResult {
         referenceSchema = branch;
         schema = intersect(effective(branch, hub), rest);
       }
+      // s244-m03 (#2835): a proto3 JSON enum union is its string values; the UNSPECIFIED sentinel is not a value.
+      const protobuf = protobufEnum(schema, hub);
+      if (protobuf) {
+        // The default proto3 writes is the sentinel's wire value (0), which names no state; a named default is kept.
+        const { oneOf: _one, anyOf: _any, default: fallback, ...rest } = schema;
+        schema = { ...rest, type: 'string', enum: protobuf.values, ...(protobuf.values.includes(fallback) ? { default: fallback } : {}) };
+        for (const place of places) for (const pointer of Object.keys(provenance).filter(key => key.startsWith(`${place.path}/${protobuf.key}`))) {
+          mark(provenance[pointer], 'mapped', 'A proto3 JSON enum union is read as its string values; the UNSPECIFIED sentinel and the int32 wire form are not values.');
+        }
+      }
       if (Array.isArray(schema.type)) {
         nullable = nullable || schema.type.includes('null');
         const types = schema.type.filter((type: string) => type !== 'null');
@@ -163,6 +202,15 @@ export function draftSource(input: SourceInput): ImportResult {
       }
       let target = targetName(referenceSchema), many = false;
       if (schema.type === 'array') { many = true; if (isMap(schema.items)) target = targetName(schema.items); }
+      // s244-m03 (#2836): a status reference whose target holds one state enum is this record's lifecycle (A2A's Task.status
+      // -> TaskStatus.state). The field is flattened to those states so Stateful binds a real value; the target stays its
+      // own draft, its state field included.
+      const followed = !many && target && objectNames.has(target) && /^(status|state)$/i.test(field) ? statusStates(target) : undefined;
+      if (followed) {
+        for (const place of places) mark(provenance[`${place.path}/$ref`], 'mapped', `Status reference followed to ${target}.${followed.field}; the field holds its ${followed.values.length} states and ${target} stays its own draft.`, 'link');
+        schema = { type: 'string', enum: followed.values, ...(typeof schema.description === 'string' ? { description: schema.description } : {}) };
+        target = undefined;
+      }
       const objectTarget = target && objectNames.has(target);
       let type: string | undefined;
       if (target && objectNames.has(target)) {
@@ -214,7 +262,13 @@ export function draftSource(input: SourceInput): ImportResult {
         semantics[field] = { semantic_type: 'money.amount', token_mapping: 'tokenMap(text.primary)', ui_hints: { ...semantics[field]?.ui_hints, component: 'CurrencyAmount', currencyField: annotation.currency.field, ...(annotation.currency.minorUnits ? { minorUnits: annotation.currency.minorUnits } : {}) } };
         mark(provenance[`${fieldPath}/x-oods`], 'mapped', 'Explicit currency and unit declaration becomes money semantics.');
       }
-      if (Array.isArray(validation.enum) && validation.enum.length > 1) propose({ name: 'Stateful', fieldBindings: { status: field }, parameters: { states: validation.enum, initialState: validation.enum.includes(schema.default) ? schema.default : validation.enum[0] } }, 'medium', [{ ...fieldOrigin, pointer: `${fieldOrigin.pointer}/enum`, kind: 'structure', reason: 'String enum supplies possible states; lifecycle meaning and initial state require acceptance.' }]);
+      const targetOrigin = followed ? provenance[`/$defs/${escapePointer(targetName(referenceSchema)!)}/properties/${escapePointer(followed.field)}`] : undefined;
+      const enumEvidence = followed && targetOrigin
+        ? { ...targetOrigin, pointer: `${targetOrigin.pointer}${followed.protobuf ? `/${followed.protobuf.key}/${followed.protobuf.index}` : ''}/enum`, reason: `The status reference to ${targetName(referenceSchema)} is followed one step: its ${followed.field} enum supplies the possible states, on this record's ${field} field; lifecycle meaning and initial state require acceptance.` }
+        : protobuf
+          ? { ...fieldOrigin, pointer: `${fieldOrigin.pointer}/${protobuf.key}/${protobuf.index}/enum`, reason: 'A proto3 JSON enum (string values beside the UNSPECIFIED sentinel and the int32 wire form) supplies possible states; the sentinel is not a state. Lifecycle meaning and initial state require acceptance.' }
+          : { ...fieldOrigin, pointer: `${fieldOrigin.pointer}/enum`, reason: 'String enum supplies possible states; lifecycle meaning and initial state require acceptance.' };
+      if (Array.isArray(validation.enum) && validation.enum.length > 1) propose({ name: 'Stateful', fieldBindings: { status: field }, parameters: { states: validation.enum, initialState: validation.enum.includes(schema.default) ? schema.default : validation.enum[0] } }, 'medium', [{ ...enumEvidence, kind: 'structure' }]);
       else if (/^(status|state)$/i.test(field)) propose({ name: 'Stateful', fieldBindings: { status: field }, parameters: {} }, 'weak', [{ ...fieldOrigin, kind: 'name', reason: 'Name alone suggests status; no state values or lifecycle structure were declared.' }]);
     }
     const timestamps = Object.entries(sampleSchemas).filter(([, schema]) => schema.format === 'date-time');

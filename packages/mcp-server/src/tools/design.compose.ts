@@ -803,8 +803,15 @@ function applyPatternGroupWrappers(
         : undefined
     );
 
-    // A trait recipe already owns this slot; generic grouping must not erase it.
-    if (slotName && patternGroups[slotName] && !isTraitRecipe(el.component)) {
+    // A trait recipe already owns this slot; generic grouping must not erase it. s244-m02: so does a trait panel that
+    // binds several fields of its own, none of them the pattern's (Authable's MembershipPanel on Agent, whose one tab
+    // panel shares the first tab with the status-timeline fields): it is a section like a recipe, as it is on User and
+    // Organization, where it holds a tab of its own. A component bound to one outside field is still kept beside the
+    // group below (s213-m03).
+    const ownFields = Object.entries(el.props ?? {}).filter(([key, value]) => (key === 'field' || key.endsWith('Field')) && typeof value === 'string').map(([, value]) => value as string);
+    const panelOwnsSlot = ownFields.length > 1 && slotName !== undefined && patternGroups[slotName] !== undefined
+      && !ownFields.some(field => patternGroups[slotName]!.matchedFields.includes(field));
+    if (slotName && patternGroups[slotName] && !isTraitRecipe(el.component) && !panelOwnsSlot) {
       const pattern = patternGroups[slotName];
 
       const fieldChildren: UiElement[] = pattern.matchedFields

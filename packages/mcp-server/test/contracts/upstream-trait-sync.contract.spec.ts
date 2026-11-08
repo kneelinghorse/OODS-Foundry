@@ -95,7 +95,8 @@ describe('New traits discoverable in structured data', () => {
     const traits = await fetchTraits();
     const auditable = findTrait(traits, 'Auditable');
 
-    expect(auditable.version).toBe('1.0.0');
+    // s244-m01 (#2832): 1.1.0 declares the optional history names on audit_log entries; still v1.
+    expect(auditable.version).toBe('1.1.0');
     expect(auditable.category).toBe('lifecycle');
     const paramNames = auditable.parameters.map((p) => p.name);
     expect(paramNames).toContain('retentionDays');

@@ -11,6 +11,7 @@ import {
   type PermissionInput,
 } from '@/schemas/authz/permission.schema.js';
 import {
+  membershipMemberId,
   normalizeMembership,
   type MembershipDocument,
   type MembershipInput,
@@ -25,8 +26,9 @@ type MembershipKey = `${string}|${string}|${string}`;
 
 const DEFAULT_CLOCK = (): string => TimeService.toIsoString(TimeService.nowSystem());
 
-function membershipKey(userId: string, organizationId: string, roleId: string): MembershipKey {
-  return `${userId}|${organizationId}|${roleId}`;
+/** s244-m01: a member is a user or an actor (membershipMemberId); either id keys the UNIQUE triple. */
+function membershipKey(memberId: string, organizationId: string, roleId: string): MembershipKey {
+  return `${memberId}|${organizationId}|${roleId}`;
 }
 
 function normalizeName(value: string): string {
@@ -143,7 +145,7 @@ export class AuthableTrait {
       clock: this.clock,
       generateId: () => membership.id ?? this.generateMembershipId(),
     });
-    const key = membershipKey(normalized.user_id, normalized.organization_id, normalized.role_id);
+    const key = membershipKey(membershipMemberId(normalized), normalized.organization_id, normalized.role_id);
     const existingId = this.membershipIndex.get(key);
     if (existingId) {
       const existing = this.membershipMap.get(existingId);
@@ -268,7 +270,7 @@ export class AuthableTrait {
 
   private storeMembership(membership: MembershipDocument): void {
     this.membershipMap.set(membership.id, membership);
-    const key = membershipKey(membership.user_id, membership.organization_id, membership.role_id);
+    const key = membershipKey(membershipMemberId(membership), membership.organization_id, membership.role_id);
     this.membershipIndex.set(key, membership.id);
   }
 

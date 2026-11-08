@@ -121,7 +121,7 @@ describe('structuredData.fetch drift_report read-side allow-list (s95-m02)', () 
     );
   }
 
-  it.each(['1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0', '2.0.0'])('accepts reviewed drift_report schema_version %s with empty signals[]', async version => {
+  it.each(['1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0', '2.0.0', '2.1.0'])('accepts reviewed drift_report schema_version %s with empty signals[]', async version => {
     writeDriftReport(version);
     const result = await handle({ kind: 'drift_report', runPath: artifactsDir });
 
@@ -141,7 +141,7 @@ describe('structuredData.fetch drift_report read-side allow-list (s95-m02)', () 
     } catch (err) {
       expect(err).toBeInstanceOf(ToolError);
       expect((err as ToolError).message).toMatch(/Unsupported schema_version "9\.0\.0"/);
-      expect((err as any).details?.accepted).toEqual(['1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0', '2.0.0']);
+      expect((err as any).details?.accepted).toEqual(['1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0', '2.0.0', '2.1.0']);
     }
   });
 });

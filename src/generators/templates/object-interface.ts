@@ -57,6 +57,12 @@ export function renderObjectInterfaceFile(options: ObjectInterfaceTemplateOption
   readonly timestamp: string;
   readonly reason?: string;
   readonly actor_id?: string;
+  readonly actor_name?: string;
+  readonly actor_kind?: 'person' | 'agent' | 'system';
+  readonly on_behalf_of_name?: string;
+  readonly on_behalf_of_id?: string;
+  readonly approved_by_name?: string;
+  readonly approved_by_id?: string;
 }
 
 ` : '';

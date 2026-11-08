@@ -872,6 +872,9 @@ function isFieldCompatibleWithNode(
   // A typed chart fragment or SVG is authored as a whole; a spare domain field
   // must not replace it or turn its declared recipe into a generic field reader.
   if (node.props?.intentParameter !== undefined || node.props?.svgParameter !== undefined) return false;
+  // s244-m02 (#2831): a Badge whose label is authored (an agent's "Agent" mark) says the same on every record. A spare
+  // field bound to it would count as placed and lose its detail row (Agent's allowed_actions did).
+  if (node.component === 'Badge' && (typeof node.props?.label === 'string' || typeof node.props?.content === 'string')) return false;
   if (AUTO_BIND_COMPONENT_BLACKLIST.has(node.component)) {
     return false;
   }

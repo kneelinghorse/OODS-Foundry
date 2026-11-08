@@ -1,6 +1,6 @@
 import type { QueryResultRow } from 'pg';
 
-import { MembershipSchema, type MembershipDocument } from '@/schemas/authz/membership.schema.js';
+import { parseMembership, type MembershipDocument } from '@/schemas/authz/membership.schema.js';
 
 import { cloneParams, nowIso, type RuntimeLogger, type SqlExecutor } from './runtime-types.js';
 
@@ -103,7 +103,7 @@ export class MembershipService {
   }
 
   private toMembership(row: MembershipRow): MembershipDocument {
-    return MembershipSchema.parse({
+    return parseMembership({
       id: row.id,
       user_id: row.user_id,
       organization_id: row.organization_id,

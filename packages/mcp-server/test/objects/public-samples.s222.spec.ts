@@ -16,7 +16,7 @@ import type { FieldSchemaEntry, UiSchema } from '../../src/schemas/generated.js'
 import { SUBSCRIPTION_TRANSITIONS } from '../../../../src/domain/billing/states.js';
 
 type Sample = Record<string, unknown>;
-const PUBLIC = ['User', 'Organization', 'Product', 'Subscription', 'Transaction', 'Relationship', 'Article', 'Media', 'Invoice', 'Plan', 'Usage'];
+const PUBLIC = ['User', 'Organization', 'Product', 'Subscription', 'Transaction', 'Relationship', 'Article', 'Media', 'Invoice', 'Plan', 'Usage', 'Agent'];
 
 function prepared(name: string) {
   const definition = loadObject(name);

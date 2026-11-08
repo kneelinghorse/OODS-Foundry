@@ -111,7 +111,8 @@ export function exportOrgEntitlements(
 ): OrgEntitlementExport {
   const organization = ensureOrganization(findOrganization(dataset, organizationId), organizationId);
   const memberships = listMembershipsForOrganization(dataset, organizationId);
-  const uniqueUserIds = Array.from(new Set(memberships.map((membership) => membership.user_id)));
+  // s244-m01: an organization's members may include actors (actor_id); this export covers its users' entitlements.
+  const uniqueUserIds = Array.from(new Set(memberships.flatMap((membership) => (membership.user_id ? [membership.user_id] : []))));
   const trait = createTrait(dataset);
 
   const members = uniqueUserIds.map((userId) => exportUserEntitlements(userId, organizationId, dataset, trait));

@@ -115,6 +115,8 @@ export function bindRecordSchema(schema: UiSchema, model: Record<string, unknown
       node.children = event.kind === 'payment' && payment ? [{ ...payment, id: `${node.id}-payment`, props: { ...payment.props, event } }] : [
         { id: `${node.id}-title`, component: 'Text', props: { as: 'strong', text: event.title } },
         { id: `${node.id}-time`, component: 'RelativeTimestamp', props: { datetime: event.at } },
+        // s244-m01 (#2829): who acted, for whom and who approved, when the history entry names them (as React and Vue print it).
+        ...(typeof event.attribution === 'string' && event.attribution ? [{ id: `${node.id}-attribution`, component: 'Text', props: { as: 'p', text: event.attribution } }] : []),
         { id: `${node.id}-description`, component: 'Text', props: { text: event.description } },
       ];
     } else node.children = source.children?.flatMap(child => walk(child, row, suffix));

@@ -51,7 +51,8 @@ const ROLLUP_ALLOWED_SCHEMA_VERSIONS: Record<RollupKind, string[]> = {
   capability_rollup: ['1.1.0', '1.2.0'],
   object_rollup: ['1.0.0', '1.1.0', '1.2.0'],
   // Reviewed through Stage1's 2.0.0 raw-value contract; ratios across versions are different measurements.
-  drift_report: ['1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0', '2.0.0'],
+  // s244-m04 (next step 1845): Stage1 0.7.0's 2.1.0 adds value_join.left_out.soft_deleted counts; signals are unchanged.
+  drift_report: ['1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0', '2.0.0', '2.1.0'],
 };
 
 /**

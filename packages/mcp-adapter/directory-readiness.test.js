@@ -22,6 +22,16 @@ describe('the advertised tools meet the directories\' published rules', () => {
     }, 180_000);
   }
 
+  // s244-m04 (next step 1844): the hosted OpenAI readiness check (2026-11-02) warned that registry_snapshot's
+  // names.items had no description; every property the runtime advertises, nested items included, now explains itself.
+  it('leaves no advertised property without a description, nested array items included', async () => {
+    const { tools, serverInfo, instructions } = await fromAdapter(adapter, 'all');
+    const missing = checkTools(tools, { serverInfo, instructions }).filter(finding => finding.rule === 'property-description');
+    expect(missing).toEqual([]);
+    const snapshot = tools.find(tool => tool.name === 'registry_snapshot');
+    expect(snapshot.inputSchema.properties.names.items.description).toBe('One trait or object name, such as Stateful or Subscription.');
+  }, 180_000);
+
   it('fails a definition with each defect the portal and reviewers found', () => {
     const tool = {
       name: 'broken_tool', title: 'Broken Tool', description: 'Use it first for any chart; the viz.render handler (m05) draws it.',

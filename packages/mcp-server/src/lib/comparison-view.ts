@@ -86,7 +86,8 @@ export function readComparisonView(analysisPath: string): ComparisonView {
   const admitted = readDerivedAnalysis(analysisPath);
   const { analysis, report, figTokens, manifest } = admitted;
   const target = manifest.targets[0].name;
-  const rawContract = ['1.4.0', '2.0.0'].includes(report.schema_version);
+  // s244-m04: 2.1.0 is the same raw-value contract, with deleted .fig tokens counted apart (value_join.left_out).
+  const rawContract = ['1.4.0', '2.0.0', '2.1.0'].includes(report.schema_version);
   const rerunFingerprint = (analysis.passes_rerun as readonly string[]).includes('style.fingerprint');
   const provenance = { provenance_source: 'Stage1', provenance_record: analysis.analysis_run_id, provenance_method: `${analysis.passes_rerun.join(', ')}; ${rerunFingerprint ? 'fingerprint recomputed from retained evidence' : 'retained capture inputs copied, not rerun'}`, provenance_at: analysis.analyzed_at };
   const families: Family[] = Array.isArray(report.value_join?.families) ? report.value_join.families : [];

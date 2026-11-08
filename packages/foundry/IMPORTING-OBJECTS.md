@@ -28,6 +28,22 @@ Call `object_import_read`:
 
 A name alone is weak evidence and never raises a proposal's grade. Types, enums, formats and read-only declarations provide structural evidence. Trait parameter schemas validate every proposal; an invalid proposal is shown with errors and cannot be accepted. Proposals add a trait's canonical fields and views, so check that its fields express your model. Nothing is silently applied.
 
+### Agent records and work states
+
+An agent is an actor, not a user: in OODS it is an object of its own that composes `Actor` (kind agent). Where a schema carries the evidence, the importer proposes the agent traits, graded on structure:
+
+| Evidence in the schema | Proposal | Grade |
+|---|---|---|
+| `owners` or `sponsors` referencing a user, group, organization, team or directory record | `Ownerable` (sponsors as a user or team) | medium |
+| A run-as, on-behalf-of, acting-for or identity-parent field referencing a user or other principal | `Actor` (kind agent); model the grant as a `Relationship` of type `delegation` | medium |
+| An `is_bot`, `app` or `is_agent` flag beside a reference to an app or installation record, or a type field declared `"agent"` | `Actor` (kind agent) | medium |
+| An `active` or `enabled` flag | `Stateful` with two states; the flag binds no status until you map it to one | weak |
+| Any of these field names with no reference or declaration behind it | the same trait | weak |
+
+A per-record bot or app flag says some records are agents; OODS keeps agents in an object of their own, so separate people from agents before accepting `Actor` as an agent. A boolean named `owner` is a role flag, not an owner reference.
+
+Work states arrive through `Stateful`. A proto3 JSON enum (its string values beside an `*_UNSPECIFIED` sentinel pattern and the int32 wire form, as in A2A's `TaskStatus.state`) is read as its string values, without the sentinel. A `status` or `state` field that references a record holding one state enum is flattened to those states, so A2A's `Task` is proposed `Stateful` with its eight task states, and `TaskStatus` stays its own object.
+
 ```json
 {"action":"apply","importId":"<from draft>","objects":[{"name":"YourObject","proposals":["<accepted proposal id>"]}]}
 ```

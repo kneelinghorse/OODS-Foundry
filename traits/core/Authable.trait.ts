@@ -1,6 +1,6 @@
 import type { TraitDefinition } from '../../src/core/trait-definition.ts';
 
-export const AUTHABLE_TRAIT_VERSION = '1.0.0';
+export const AUTHABLE_TRAIT_VERSION = '1.1.0';
 
 const AuthableTrait = {
   trait: {
@@ -79,7 +79,7 @@ const AuthableTrait = {
       type: 'AuthzMembershipDocument[]',
       required: true,
       description:
-        'Membership records (user_id, organization_id, role_id) enforcing UNIQUE triples per R21.2 Part 2.2.',
+        'Membership records (member, organization_id, role_id) enforcing UNIQUE triples per R21.2 Part 2.2. The member is a user (user_id) or any other actor (actor_id with actor_kind, such as an agent), exactly one of the two.',
       default: [],
     },
     role_hierarchy_edges: {
@@ -102,7 +102,7 @@ const AuthableTrait = {
       token_mapping: 'tokenMap(authorization.memberships)',
       ui_hints: {
         component: 'MembershipMatrix',
-        uniqueConstraint: 'user_id+organization_id+role_id',
+        uniqueConstraint: 'user_id|actor_id+organization_id+role_id',
       },
     },
     role_catalog: {

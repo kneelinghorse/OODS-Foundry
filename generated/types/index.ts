@@ -4,6 +4,7 @@ export * from './classification/classification-metadata';
 export * from './classification/tag';
 export * from './preferences/notification-preferences';
 export * from './token-mapping';
+export * from './traits/actor.parameters';
 export * from './traits/addressable.parameters';
 export * from './traits/archivable.parameters';
 export * from './traits/assessable.parameters';

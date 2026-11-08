@@ -3,6 +3,24 @@ import type { TraitReference } from '../objects/types.js';
 import { isMap, type MapValue, type Origin } from './source.js';
 
 type Propose = (trait: TraitReference, grade: Proposal['grade'], evidence: Proposal['evidence']) => void;
+
+/** The named schema a field points at, one level through a nullable union or an array's items. */
+function referenceOf(schema: MapValue): { target: string; many: boolean } | undefined {
+  if (!isMap(schema)) return undefined;
+  const union = Array.isArray(schema.anyOf) ? schema.anyOf : Array.isArray(schema.oneOf) ? schema.oneOf : undefined;
+  if (union?.length === 2 && union.some((branch: MapValue) => branch?.type === 'null')) return referenceOf(union.find((branch: MapValue) => branch?.type !== 'null'));
+  const name = (value: MapValue) => isMap(value) && typeof value.$ref === 'string' && value.$ref.startsWith('#/$defs/') ? value.$ref.slice(8).replace(/~1/g, '/').replace(/~0/g, '~') : undefined;
+  if (schema.type === 'array' || Array.isArray(schema.type) && schema.type.includes('array')) { const target = name(schema.items); return target ? { target, many: true } : undefined; }
+  const target = name(schema);
+  return target ? { target, many: false } : undefined;
+}
+/** s244-m03 (#2837): a record that people or groups are named by: a user, an account, an organization, a team, a group or a directory object. */
+const PRINCIPAL = /^(user|account|organi[sz]ation|team|group|directoryobject|person|member|principal)$/i;
+const principal = (target: string) => PRINCIPAL.test(target.split('.').pop() ?? target);
+/** A boolean field, nullable or not (OData and JSON Schema write a nullable one as type [boolean, null]). */
+const boolean = (schema: MapValue) => schema.type === 'boolean' || Array.isArray(schema.type) && schema.type.includes('boolean') && schema.type.every((type: string) => type === 'boolean' || type === 'null');
+/** An app or installation record beside a bot flag says the flagged records are an app's (an agent's). */
+const APP = /^(app|application|installation|integration|oauthapp|oauthapplication|bot|botprofile|serviceprincipal)$/i;
 /** A structural match suggests a capability for review, not an assertion of domain meaning. */
 export function suggestTraits(shape: MapValue, fields: Record<string, MapValue>, originOf: (field: string) => Origin, propose: Propose, note: (field: string, reason: string) => void): void {
   const entries = Object.entries(fields);
@@ -51,8 +69,43 @@ export function suggestTraits(shape: MapValue, fields: Record<string, MapValue>,
   for (const relationship of annotation.relationships ?? []) {
     const field = relationship.via;
     if (relationship.target === shape.title && !annotation.history) propose({ name: 'Classifiable', parameters: { classification_mode: 'taxonomy', hierarchy_storage_model: 'adjacency_list' } }, 'medium', evidence(field, 'A declared self-referencing key can represent an adjacency hierarchy; confirm taxonomy meaning.'));
-    if (/^(User|Account|Organization|Team)$/i.test(relationship.target)) propose({ name: 'Ownerable', parameters: {} }, 'medium', evidence(field, 'Declared foreign key to a principal record; confirm ownership rather than another association.'));
+    // s244-m03 (#2837): group and directory-object targets name principals too (Microsoft Graph's owners and sponsors).
+    if (principal(relationship.target)) propose({ name: 'Ownerable', parameters: {} }, 'medium', evidence(field, 'Declared foreign key to a principal record; confirm ownership rather than another association.'));
   }
   if (annotation.archive) propose({ name: 'Archivable', parameters: {} }, 'strong', evidence(annotation.archive.field, 'Explicit archive marker.', 'declaration'));
+
+  // s244-m03 (#2837): agent records (an agent is an actor, not a user). A field's name is name evidence and grades weak; a
+  // reference to a principal or an app record is the structure that backs it (medium). Nothing applies without acceptance.
+  const named = (field: string, reason: string) => [{ ...originOf(field), kind: 'name' as const, reason }];
+  // Sponsors before owners: an agent's sponsor is a person or a team, and the first configuration of a grade is kept.
+  for (const [field, schema] of [...entries].sort(([a], [b]) => Number(/^sponsors?$/i.test(b)) - Number(/^sponsors?$/i.test(a)))) {
+    const reference = referenceOf(schema);
+    const toPrincipal = reference && principal(reference.target) ? reference.target : undefined;
+    // A boolean named owner is a role flag (Linear's User.owner), never a reference to who owns the record.
+    if (/^(owners?|sponsors?)$/i.test(field) && !boolean(schema)) {
+      const sponsor = /^sponsors?$/i.test(field);
+      const trait = { name: 'Ownerable', parameters: sponsor ? { ownerTypes: ['user', 'team'], primaryOwnerType: 'user' } : {}, ...(toPrincipal && !reference!.many ? { fieldBindings: { owner_id: field } } : {}) };
+      if (toPrincipal) propose(trait, 'medium', evidence(field, `${sponsor ? 'Sponsors' : 'Owners'} reference ${toPrincipal} records: the people or groups ${sponsor ? 'who answer for this record' : 'who own this record'}; confirm ownership before accepting.`));
+      else propose(trait, 'weak', named(field, `Name alone suggests ${sponsor ? 'sponsors' : 'owners'}; the field references no person, group or directory record.`));
+    }
+    if (/^(run_?as(_?user)?|runs_?as|on_?behalf_?of(_?(user|id))?|acting_?(as|for)|identity_?parent(_?id)?)$/i.test(field)) {
+      if (toPrincipal) propose({ name: 'Actor', parameters: { kind: 'agent' } }, 'medium', evidence(field, `This record acts as or for a ${toPrincipal} record: an agent acting under a delegation. Model the grant as a Relationship of type delegation from that ${toPrincipal} to this record.`));
+      else propose({ name: 'Actor', parameters: { kind: 'agent' } }, 'weak', named(field, 'Name alone suggests this record acts as or for someone else (a delegation); the field references no person or principal record.'));
+    }
+    if (boolean(schema) && /^(is_?bot|bot|is_?app(_?user)?|app|is_?agent|agent)$/i.test(field)) {
+      const app = entries.find(([other, value]) => other !== field && APP.test((referenceOf(value)?.target ?? '').split('.').pop() ?? ''));
+      const flagged = `Records with ${field} true are agents (an app or a bot); OODS keeps an agent in an object of its own, so separate people from agents before accepting Actor as an agent.`;
+      if (app) propose({ name: 'Actor', parameters: { kind: 'agent' } }, 'medium', [...evidence(field, flagged), ...evidence(app[0], `The ${field} flag sits beside a reference to ${referenceOf(app[1])!.target}, the app the flagged records belong to.`)]);
+      else propose({ name: 'Actor', parameters: { kind: 'agent' } }, 'weak', named(field, `${flagged} Only the flag's name says so: no app or installation reference sits beside it.`));
+    }
+    const constant = schema.const ?? (Array.isArray(schema.enum) && schema.enum.length === 1 ? schema.enum[0] : undefined);
+    if (/^(resource_?type|type|kind|object)$/i.test(field) && constant === 'agent') {
+      propose({ name: 'Actor', parameters: { kind: 'agent' } }, 'medium', evidence(field, `Every record declares ${field} "agent": the records are agents.`));
+    }
+    if (boolean(schema) && /^(active|is_?active|enabled|is_?enabled|account_?enabled)$/i.test(field)) {
+      const states = /enabled/i.test(field) ? ['enabled', 'disabled'] : ['active', 'inactive'];
+      propose({ name: 'Stateful', parameters: { states, initialState: states[0] } }, 'weak', named(field, `A boolean named ${field} is a two-state lifecycle (${states.join(', ')}). The source records a flag, not a state, so acceptance binds no status field until the flag is mapped to one.`));
+    }
+  }
   if (annotation.sortFields?.length) propose({ name: 'Sortable', parameters: { sortableFields: annotation.sortFields, defaultSortField: annotation.sortFields[0] } }, 'strong', evidence(annotation.sortFields[0], 'Declared sortable fields.', 'declaration'));
 }

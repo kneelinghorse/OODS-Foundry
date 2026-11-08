@@ -1,4 +1,4 @@
-import { currencyMinorUnits, formatDateTime, formatReadOnlyValue } from '@oods/component-contracts';
+import { currencyMinorUnits, formatDateTime, formatReadOnlyValue, historyAttribution } from '@oods/component-contracts';
 import * as React from 'react';
 
 import { Input } from './fields.js';
@@ -177,6 +177,8 @@ export type TimelineEvent = {
   readonly actor?: string;
   readonly actorId?: string;
   readonly actor_id?: string;
+  /** s244-m01 (#2829): who acted, for whom and who approved, from the entry's *_name fields (historyAttribution). */
+  readonly attribution?: string;
   readonly reason?: React.ReactNode;
   readonly detail?: React.ReactNode;
   readonly description?: React.ReactNode;
@@ -205,6 +207,9 @@ function normalizeTimelineEvents(values: readonly unknown[]): TimelineEvent[] {
     }
     const from = eventText(value, ['from']);
     const to = eventText(value, ['to']);
+    // s244-m01 (#2829): a named entry reads "Billing Agent for Tidewater Co-op · approved by Ruth Adeyemi" in place of its
+    // actor id; an entry that names no one keeps its "Actor: <id>" line.
+    const attribution = historyAttribution(value);
     return [{
       id: eventText(value, ['id']) ?? `event-${index}`,
       label: eventText(value, ['label', 'title'])
@@ -217,8 +222,9 @@ function normalizeTimelineEvents(values: readonly unknown[]): TimelineEvent[] {
       status: eventText(value, ['status']),
       state: eventText(value, ['state']),
       timestamp: eventText(value, ['timestamp', 'datetime', 'time', 'at', 'createdAt', 'updatedAt']),
-      actor: eventText(value, ['actorId', 'actor_id', 'actor']),
-      actorId: eventText(value, ['actorId', 'actor_id']),
+      actor: attribution?.namesActor ? undefined : eventText(value, ['actorId', 'actor_id', 'actor']),
+      actorId: attribution?.namesActor ? undefined : eventText(value, ['actorId', 'actor_id']),
+      ...(attribution ? { attribution: attribution.text } : {}),
       reason: eventText(value, ['reason']),
       detail: eventText(value, ['detail', 'description', 'message']) ?? (to ? (from ? `${humanize(from)} → ${humanize(to)}` : humanize(to)) : undefined),
     }];
@@ -354,6 +360,7 @@ const TimelinePrimitive = React.forwardRef<HTMLDivElement, TimelinePrimitiveProp
                     <p className="oods-timeline__label" data-timeline-label="true">{eventLabel}</p>
                     {timestamp ? <time data-timeline-time="true" dateTime={timestamp}>{formatDateTime(timestamp)}</time> : null}
                     {detail ? <p className="oods-timeline__detail" data-timeline-detail="true">{detail}</p> : null}
+                    {showActorId && event.attribution ? <p className="oods-timeline__actor" data-timeline-attribution="true">{event.attribution}</p> : null}
                     {showActorId && actor ? <p className="oods-timeline__actor" data-timeline-actor="true">Actor: {actor}</p> : null}
                     {showReason && event.reason ? <p className="oods-timeline__reason" data-timeline-reason="true">Reason: {event.reason}</p> : null}
                   </article>

@@ -1,6 +1,6 @@
 object:
   name: User
-  version: 1.4.0
+  version: 1.5.0
   domain: core.identity
   description: Canonical identity record representing a platform user across lifecycle contexts.
   tags:
@@ -9,6 +9,10 @@ object:
     - core
 
 traits:
+  # s244-m01 (#2829): a user is a person who can act. Actor adds no field, so User's records and screens are unchanged.
+  - name: core/Actor
+    parameters:
+      kind: person
   - name: lifecycle/Stateful
     alias: UserLifecycle
     parameters:
@@ -146,6 +150,9 @@ metadata:
   steward: Design team
   maturity: stable
   changelog:
+    - version: 1.5.0
+      date: "2026-11-07"
+      description: Composed the Actor trait as a person, so a user is named where an actor is (history, memberships, delegations); no field or screen changed.
     - version: 1.4.0
       date: "2025-11-20"
       description: Composed Authable trait to attach RBAC memberships and entitlement exports.

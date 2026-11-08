@@ -139,6 +139,15 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
       node.children = node.children?.filter(child => !(controls.has(child.component) && typeof child.props?.field === 'string' && (isInternalField(child.props.field, fields) || isUnavailableField(child.props.field, fields))));
       // The object's own scalar role field is the role editor; a membership Role Assignment beside it is a duplicate Role field.
       node.children = node.children?.filter(child => !(child.component === 'RoleAssignmentForm' && fieldEditors.has('role')));
+      // s244-m02: a Role Assignment placed in a field slot inherits that slot's record field (Agent's status), but it edits
+      // memberships through its membershipField, never a record field: the inherited binding is dropped, as Organization's
+      // Role Assignment has none, and the field keeps its own editor.
+      node.children = node.children?.map(child => {
+        if (child.component !== 'RoleAssignmentForm' || typeof child.props?.field !== 'string') return child;
+        const { field: _field, label: _label, help: _help, ...props } = child.props;
+        const { onChange: _change, ...bindings } = child.bindings ?? {};
+        return { ...child, props, ...(Object.keys(bindings).length ? { bindings } : { bindings: undefined }) };
+      });
       // The Labelled heading group only echoes the label input above the same form.
       node.children = node.children?.filter(child => !(child.component === 'FormLabelGroup' && !child.children?.length && fields[String(child.props?.labelField ?? 'label')]));
       const field = node.props?.field;

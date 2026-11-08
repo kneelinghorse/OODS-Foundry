@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/07/schema",
+  "$id": "https://trait-engine.dev/schemas/traits/actor",
+  "title": "Actor Trait Parameters",
+  "description": "Configuration contract for the Actor trait: what every record of the object is when it acts.",
+  "type": "object",
+  "properties": {
+    "kind": {
+      "type": "string",
+      "enum": ["person", "agent", "system"],
+      "description": "person (someone's own account), agent (software that acts, on its own behalf or for someone) or system (the product itself). An agent is marked \"Agent\" beside its name."
+    }
+  },
+  "required": ["kind"],
+  "additionalProperties": false,
+  "examples": [
+    { "kind": "person" },
+    { "kind": "agent" }
+  ]
+}

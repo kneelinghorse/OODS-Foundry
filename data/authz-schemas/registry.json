@@ -1,6 +1,6 @@
 {
   "id": "authz-rbac-registry",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "schemas": [
     {
       "id": "role",
@@ -101,7 +101,7 @@
     {
       "id": "membership",
       "title": "Membership (Tenant Junction)",
-      "description": "User↔Organization↔Role triple described in R21.2 Part 2.2 / TABLE 4.",
+      "description": "Member↔Organization↔Role triple described in R21.2 Part 2.2 / TABLE 4. The member is a user (user_id) or any other actor (actor_id with actor_kind), exactly one of the two.",
       "status": "stable",
       "citation": "R21.2 Part 2.2 & TABLE 4",
       "schema": {
@@ -109,7 +109,7 @@
         "$schema": "http://json-schema.org/draft-07/schema#",
         "type": "object",
         "additionalProperties": false,
-        "required": ["id", "user_id", "organization_id", "role_id", "created_at", "updated_at"],
+        "required": ["id", "organization_id", "role_id", "created_at", "updated_at"],
         "properties": {
           "id": {
             "type": "string",
@@ -118,6 +118,16 @@
           "user_id": {
             "type": "string",
             "format": "uuid"
+          },
+          "actor_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The member when it is not a user: any object that composes the Actor trait, such as an Agent."
+          },
+          "actor_kind": {
+            "type": "string",
+            "enum": ["person", "agent", "system"],
+            "description": "What kind of actor actor_id names, as the Actor trait names them."
           },
           "organization_id": {
             "type": "string",
@@ -136,7 +146,21 @@
             "format": "date-time"
           }
         },
-        "description": "UNIQUE(user_id, organization_id, role_id) enforced in persistence layer"
+        "oneOf": [
+          {
+            "required": ["user_id"],
+            "properties": { "user_id": { "type": "string", "format": "uuid" }, "actor_id": false, "actor_kind": false }
+          },
+          {
+            "required": ["actor_id", "actor_kind"],
+            "properties": {
+              "actor_id": { "type": "string", "format": "uuid" },
+              "actor_kind": { "type": "string", "enum": ["person", "agent", "system"] },
+              "user_id": false
+            }
+          }
+        ],
+        "description": "UNIQUE(user_id or actor_id, organization_id, role_id) enforced in persistence layer; exactly one of user_id or actor_id names the member"
       },
       "uiSchema": {
         "created_at": {

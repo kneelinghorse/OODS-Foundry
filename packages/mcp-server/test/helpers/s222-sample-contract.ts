@@ -45,3 +45,35 @@ export function s222Field<T extends Record<string, unknown>>(object: string, nam
   const displayLabelField = REFERENCE_LABELS[object]?.[name];
   return { ...original, ...(semanticType ? { semanticType } : {}), ...(displayLabelField ? { displayLabelField } : {}) };
 }
+
+/**
+ * s244-m01 (#2832): Stateful's state_history documents the optional names every recorded change can carry (who acted,
+ * who it acted for, who approved it). It is the one change this sprint makes to a Sprint 188 baseline field: the text
+ * below is appended to the field's description, and every other key is held to the baseline exactly.
+ */
+export const S244_STATE_HISTORY_NAMES = '\nEvery recorded change can name who acted, who it acted for and who approved it. All optional,\nfollowing Relationship\'s source_id/source_name pattern; only a *_name names a party, and an entry that names\nno one renders as it always has:\n  - actor_name: string (who acted, as shown: "Billing Agent")\n  - actor_kind: string (person, agent or system: the Actor trait\'s kinds)\n  - on_behalf_of_name / on_behalf_of_id: string (the person or organization it acted for)\n  - approved_by_name / approved_by_id: string (who approved the change, when someone did)\nStatusTimeline then reads "Billing Agent for Tidewater Co-op \u00b7 approved by Ruth Adeyemi".\n';
+
+/** s244-m01 (#2833): Authable's membership names a user or any other actor, exactly one of the two. */
+const S244_MEMBERSHIP = {
+  before: 'SaaS membership triple (user_id, organization_id, role_id) with UNIQUE constraint (TABLE 4).',
+  after: 'SaaS membership triple (member, organization_id, role_id) with UNIQUE constraint (TABLE 4). The member is a user (user_id) or any other actor (actor_id with actor_kind, such as an agent), exactly one of the two.',
+};
+
+/** s244-m01 (#2834): Relationship's type gains delegation, a grant from the person or organization acted for to the actor. */
+const S244_RELATIONSHIP_TYPE = {
+  before: 'Semantic type describing the edge between the source and target.',
+  after: 'Semantic type describing the edge between the source and target; a delegation is a grant from the person or organization acted for (the source) to the actor acting for them (the target).',
+};
+
+/**
+ * A baseline field as Sprint 244 declares it: state_history's description gains the names paragraph, membership_records'
+ * description names any actor as a member, and Relationship's relationship_type gains delegation; nothing else moves.
+ */
+export function s244Field<T extends Record<string, unknown>>(object: string, name: string, field: T): T {
+  if (name === 'state_history' && typeof field.description === 'string') return { ...field, description: field.description + S244_STATE_HISTORY_NAMES };
+  if (name === 'membership_records' && field.description === S244_MEMBERSHIP.before) return { ...field, description: S244_MEMBERSHIP.after };
+  if (object === 'Relationship' && name === 'relationship_type' && field.description === S244_RELATIONSHIP_TYPE.before && Array.isArray(field.enum)) {
+    return { ...field, description: S244_RELATIONSHIP_TYPE.after, enum: [...field.enum, 'delegation'] };
+  }
+  return field;
+}

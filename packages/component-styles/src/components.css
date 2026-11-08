@@ -540,7 +540,7 @@
 /* A placed chart carries a narrow render beside the design-size one; the figure measures its own inline size and shows the narrow render below the design SVG's intrinsic 730px width, so axis text keeps its size on a phone column instead of scaling with the SVG (Sprint 202 m01). */
 :where([data-viz-rendered='true'][data-viz-narrow='true']) { container-type: inline-size; }
 :where([data-viz-svg-narrow]) { display: none; min-inline-size: 0; }
-:where([data-viz-svg-narrow]) > svg { display: block; inline-size: 100%; max-inline-size: calc(302px * 1.25); margin-inline: auto; block-size: auto; }
+:where([data-viz-svg-narrow]) > svg { display: block; inline-size: 100%; max-inline-size: calc(292px * 1.25); margin-inline: auto; block-size: auto; }
 @container (max-width: 729px) {
   :where([data-viz-narrow='true']) > [data-viz-svg] { display: none; }
   :where([data-viz-narrow='true']) > [data-viz-svg-narrow] { display: block; }
@@ -552,9 +552,12 @@
 :where([data-viz-svg-wide]) { display: none; min-inline-size: 0; }
 :where([data-viz-svg-wide]) > svg { display: block; inline-size: 100%; block-size: auto; }
 /* Each render is drawn at most 1.25 times its own size, so a 10px axis label never passes 12.5px (#2347): the design
- * render stops at 1.25 times while waiting for the wide render to fit, and the wide render, 1130px wide, stops growing here. */
-:where([data-viz-svg-wide]) > svg { max-inline-size: calc(1130px * 1.25); }
-:where([data-viz-wide='true']) > [data-viz-svg] > svg { max-inline-size: calc(730px * 1.25); margin-inline: auto; }
+ * render stops at 1.25 times while waiting for the wide render to fit, and the wide render stops growing here.
+ * s244-m04: each cap is 1.25 times the size the render was requested at (292, 720 and 1120px). Vega pads its render by
+ * 10px (302, 730, 1130) and so stops a little below 1.25 times; ECharts draws the requested size, and a relationship
+ * graph was drawn up to 1.27 times while the caps took Vega's padded sizes. */
+:where([data-viz-svg-wide]) > svg { max-inline-size: calc(1120px * 1.25); }
+:where([data-viz-wide='true']) > [data-viz-svg] > svg { max-inline-size: calc(720px * 1.25); margin-inline: auto; }
 @container (min-width: 1130px) {
   :where([data-viz-wide='true']) > [data-viz-svg] { display: none; }
   :where([data-viz-wide='true']) > [data-viz-svg-wide] { display: block; }

@@ -2,6 +2,26 @@
 
 What changed in each version of OODS Foundry, in the terms you use it in.
 
+## 0.12.0
+
+An agent is an actor, not a user. `Agent` is the twelfth public object: an AI agent that acts inside a product, with a required sponsor (a person or a team), roles, a lifecycle (draft, active, paused, retired), what it can do, who it acts for, and its approval rules (allowed, ask first, never). It shares one trait with `User`, the new `Actor` trait: the ability to act. An agent is marked "Agent" beside its name in lists, cards and its own page. The page `docs/concepts/agents-as-actors.md` explains the model.
+
+Every recorded change can name who acted, who it acted for and who approved it: optional `actor_name` and `actor_id`, `actor_kind`, `on_behalf_of_name` and `on_behalf_of_id`, and `approved_by_name` and `approved_by_id` on `Stateful` history and `Auditable` log entries. Timelines, audit summaries, state-transition rows and generated apps print them as one line, such as "Billing Agent for Tidewater Co-op · approved by Ruth Adeyemi". A history without names reads exactly as before. `@oods/component-contracts` exports the `historyAttribution` helper they share.
+
+`Authable` memberships can name any actor: `actor_id` with `actor_kind` in place of `user_id`, exactly one of the two. Every membership that validated before still validates. `Relationship` gains the `delegation` type, a grant from a person or organization to the agent acting for them; no field is added.
+
+`object_import` recognizes agents where the schema says so. A proto3 JSON enum (A2A's task states) is read as its values, without its `UNSPECIFIED` sentinel, and a `status` field that references a record holding one state enum takes those states, so A2A's `Task` is proposed `Stateful` with its eight states. Owners and sponsors that reference people or groups, run-as and on-behalf-of references, bot or app flags beside an app reference, and enabled flags propose `Ownerable`, `Actor` (as an agent) and `Stateful`, each graded by its structure. A field's name alone stays weak evidence, and nothing is applied without your acceptance.
+
+`structured_data_fetch` reads Stage1 0.7.0's captures: `drift_report` 2.1.0, which counts the deleted .fig tokens a comparison left out, and `fig_local_tokens` 1.7.0, whose text styles record their font weight, line height and letter spacing. Earlier versions stay readable. `registry_snapshot`'s `names` items now carry a description, which directories check for every advertised property.
+
+Changed: `User` composes `Actor` as a person and is 1.5.0; its fields and screens are unchanged. Two of `Relationship`'s sample records are now delegations, in place of two memberships, and `Transaction`'s third sample is Tidewater Co-op's bank transfer, whose history shows the agent's change. A team's own trait named `Actor` is no longer used, because a shipped trait now has that name; give yours another name.
+
+Fixed: a placed chart drawn by ECharts, such as `Relationship`'s graph, now stops growing at 1.25 times its size like every other chart, so its 10px labels never pass 12.5px. It was drawn at up to 1.27 times, because the width caps took the size of Vega's renders, which are 10px larger than requested. The caps now take each render's requested size (292, 720 and 1,120px), so Vega's charts stop growing 12.5px sooner.
+
+Fixed: HTML screens no longer write an owner's role into the element's ARIA role. `OwnershipSummary` and `OwnershipMeta` show the role as text, as they do in React and Vue; the HTML renderer had also written it as `role="Reseller of record"` on Organization's screens and as an empty `role=""` on Relationship's and Plan's.
+
+Newly generated applications pin 0.12.0.
+
 ## 0.11.3
 
 `structured_data_fetch` no longer warns of a "Manifest ETag mismatch" on every tokens reply. The release's tokens export and its manifest always agreed, but the server sorted keys such as a colour scale's "50" and "100" differently from the tool that wrote the manifest. The tokens dataset's ETag now matches its manifest, so a cached `ifNoneMatch` value for tokens is matched once more after one fresh read.

@@ -1,3 +1,4 @@
+import { historyAttribution } from './attribution.js';
 import { formatDateTime } from './date-time.js';
 
 export interface AuditSummaryValues {
@@ -16,7 +17,10 @@ export function auditSummary({ auditLog = [], lastN = 5 }: AuditSummaryValues) {
     .filter(row => Number.isFinite(row.time)).sort((a, b) => b.time - a.time || a.index - b.index);
   const latest = dated[0]?.entry;
   const at = latest ? String(latest.transitioned_at) : undefined;
-  const actor = typeof latest?.actor_id === 'string' && latest.actor_id.trim() ? latest.actor_id : 'Not recorded';
+  // s244-m01 (#2829): the last actor is named as every history line names it; an entry that names no one keeps its id.
+  const attribution = historyAttribution(latest);
+  const id = typeof latest?.actor_id === 'string' && latest.actor_id.trim() ? latest.actor_id : 'Not recorded';
+  const actor = attribution?.namesActor ? attribution.text : attribution ? `${id} · ${attribution.text}` : id;
   const limit = Number.isFinite(lastN) ? Math.max(0, Math.floor(lastN)) : 5;
   return { count: records.length, at, actor, timestamp: formatDateTime(at) || 'Not recorded', recent: dated.slice(0, limit).map(row => row.entry) };
 }

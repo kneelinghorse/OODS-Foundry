@@ -1,0 +1,318 @@
+object:
+  name: Agent
+  version: 1.0.0
+  domain: core.identity
+  description: An AI agent that acts inside a product, for the people and organizations it is granted to act for.
+  tags:
+    - universal
+    - identity
+    - core
+    - agent
+
+# s244-m02 (#2829): an agent is an actor, not a user. It is an object of its own and shares one trait with User, Actor: the
+# ability to act. It answers to a sponsor (a person or team), holds roles, has a lifecycle of its own, and acts for others
+# only under a delegation (a Relationship of type delegation from the person or organization to the agent). Approval is a
+# rule per action (allowed, ask first, never), never a property of the agent's identity. Every field is one line of text:
+# a list is written as one string with its items separated by "; ", and "None" when it is empty.
+traits:
+  - name: core/Actor
+    parameters:
+      kind: agent
+  - name: lifecycle/Stateful
+    alias: AgentLifecycle
+    parameters:
+      states:
+        - draft
+        - active
+        - paused
+        - retired
+      initialState: draft
+  - name: structural/Ownerable
+    alias: AgentSponsor
+    parameters:
+      ownerTypes:
+        - user
+        - team
+      primaryOwnerType: user
+      allowTransfer: true
+  - name: core/Authable
+    alias: AgentRoles
+    parameters:
+      hierarchyDepthLimit: 5
+  - name: lifecycle/Timestampable
+    alias: AgentAuditTrail
+    parameters:
+      recordedEvents:
+        - created
+        - activated
+        - paused
+        - retired
+        - updated
+      timezone: UTC
+
+schema:
+  agent_id:
+    type: uuid
+    required: true
+    description: Primary identifier for the agent.
+  name:
+    type: string
+    required: true
+    description: The name the agent is shown by, in its own record and in every history it appears in.
+    validation:
+      minLength: 1
+      maxLength: 80
+  description:
+    type: string
+    required: false
+    description: What the agent is for, in one line.
+    validation:
+      maxLength: 160
+  provider:
+    type: string
+    required: true
+    description: Who built or runs the agent.
+  skills:
+    type: string
+    required: true
+    description: What the agent can do, separated by "; " (Look up orders; Draft replies; Issue refunds).
+  acts_for:
+    type: string
+    required: true
+    description: Who the agent acts for, one phrase per grant (organization · scope · until), grants separated by "; ".
+  allowed_actions:
+    type: string
+    required: true
+    description: Actions the agent takes without asking, separated by "; "; None when there are none.
+  asks_first_for:
+    type: string
+    required: true
+    description: Actions the agent asks a person to approve before taking, separated by "; "; None when there are none.
+  never_allowed:
+    type: string
+    required: true
+    description: Actions the agent never takes, separated by "; "; None when there are none.
+  owner_name:
+    type: string
+    required: false
+    description: Display name of the person or team that sponsors the agent.
+
+semantics:
+  agent_id:
+    semantic_type: identity.agent.id
+    token_mapping: tokenMap(identity.id.primary)
+  name:
+    semantic_type: identity.agent.name
+    token_mapping: tokenMap(identity.name.primary)
+  # The one-line summary under the agent's name in lists.
+  description:
+    semantic_type: text.summary
+    token_mapping: tokenMap(identity.description.summary)
+  provider:
+    semantic_type: identity.agent.provider
+    token_mapping: tokenMap(text.body.*)
+  skills:
+    semantic_type: identity.agent.skills
+    token_mapping: tokenMap(text.body.*)
+  acts_for:
+    semantic_type: identity.agent.acts_for
+    token_mapping: tokenMap(text.body.*)
+  allowed_actions:
+    semantic_type: identity.agent.approval.allowed
+    token_mapping: tokenMap(text.body.*)
+  asks_first_for:
+    semantic_type: identity.agent.approval.ask_first
+    token_mapping: tokenMap(text.body.*)
+  never_allowed:
+    semantic_type: identity.agent.approval.never
+    token_mapping: tokenMap(text.body.*)
+  # structural/Ownerable's owner reference: the agent's sponsor, named by owner_name.
+  owner_id:
+    semantic_type: ownership.owner.id
+    token_mapping: tokenMap(ownership.owner.id)
+    ui_hints:
+      component: OwnerReference
+      ownerTypeField: owner_type
+      displayLabelField: owner_name
+
+tokens:
+  identity.id.primary: "var(--text-strong)"
+  identity.name.primary: "var(--text-strong)"
+  identity.description.summary: "var(--text-subtle)"
+
+metadata:
+  owners:
+    - Identity team
+    - Platform team
+  steward: Design team
+  maturity: alpha
+  changelog:
+    - version: 1.0.0
+      date: "2026-11-07"
+      description: Initial Agent object, the twelfth public reference object; an agent is an actor, not a user.
+
+# Seven authored sample agents, one at each of seven sample organizations, each sponsored by a person or team there and
+# granted to act for it (the Relationship samples hold two of the grants as delegations). An agent is created as a draft
+# (the lifecycle's initial state); each history ends in the agent's status, names who made each change, and its last
+# event is the latest recorded change. A list is one line with its items separated by "; ", and None when it is empty.
+samples:
+  - agent_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01
+    name: Billing Agent
+    description: Matches payments to invoices for Tidewater Co-op
+    provider: Built by Tidewater's finance team
+    skills: Look up invoices; Match payments to invoices; Resend payments; Draft replies
+    acts_for: Tidewater Co-op · invoices and payments · until 31 Dec 2026
+    allowed_actions: Look up invoices; Match payments to invoices
+    asks_first_for: Resend a payment; Dispute a charge
+    never_allowed: Change bank details; Close the account
+    owner_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02
+    owner_type: user
+    ownership_role: Sponsor
+    owner_name: Ruth Adeyemi
+    session_roles: [Billing]
+    status: active
+    state_history:
+      - { title: Created, from: null, to: draft, at: '2026-08-20T21:00:00Z', reason: Set up to match bank transfers to invoices, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02, actor_name: Ruth Adeyemi, actor_kind: person }
+      - { title: Activated, from: draft, to: active, at: '2026-09-01T21:00:00Z', reason: Approved after two weeks of supervised matching, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02, actor_name: Ruth Adeyemi, actor_kind: person }
+    created_at: '2026-08-20T21:00:00Z'
+    updated_at: '2026-09-01T21:00:00Z'
+    last_event: activated
+    last_event_at: '2026-09-01T21:00:00Z'
+  - agent_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a02
+    name: Support Agent
+    description: Answers order questions for Northwind Traders
+    provider: Built by Northwind's support team
+    skills: Answer order questions; Track shipments; Draft replies
+    acts_for: Northwind Traders · customer replies · until 30 Jun 2027
+    allowed_actions: Track shipments; Draft replies
+    asks_first_for: Send a reply; Offer a discount code
+    never_allowed: Cancel an order; Change a delivery address
+    owner_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d01
+    owner_type: user
+    ownership_role: Sponsor
+    owner_name: Dana Whitfield
+    session_roles: [Support]
+    status: active
+    state_history:
+      - { title: Created, from: null, to: draft, at: '2026-03-02T15:00:00Z', reason: Set up for the spring order rush, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d01, actor_name: Dana Whitfield, actor_kind: person }
+      - { title: Activated, from: draft, to: active, at: '2026-03-09T15:00:00Z', reason: Replies reviewed and approved for customers, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d01, actor_name: Dana Whitfield, actor_kind: person }
+    created_at: '2026-03-02T15:00:00Z'
+    updated_at: '2026-03-09T15:00:00Z'
+    last_event: activated
+    last_event_at: '2026-03-09T15:00:00Z'
+  - agent_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a03
+    name: Order Agent
+    description: Reserves stock for Summit Outfitters and its reseller
+    provider: Built by Summit's e-commerce team
+    skills: Check stock; Reserve items; Update orders
+    acts_for: Summit Outfitters · online orders · until 31 Mar 2027; Harbor Channel Partners · reseller orders · until 31 Dec 2026
+    allowed_actions: Check stock; Reserve items for 24 hours
+    asks_first_for: Split a shipment; Upgrade shipping
+    never_allowed: Issue a refund; Delete an order
+    owner_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d08
+    owner_type: user
+    ownership_role: Sponsor
+    owner_name: Arjun Mehta
+    session_roles: [Orders]
+    status: active
+    state_history:
+      - { title: Created, from: null, to: draft, at: '2026-05-04T16:00:00Z', reason: Set up for online orders, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d08, actor_name: Arjun Mehta, actor_kind: person }
+      - { title: Activated, from: draft, to: active, at: '2026-05-11T16:00:00Z', reason: Stock checks matched the warehouse counts, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d08, actor_name: Arjun Mehta, actor_kind: person }
+      - { title: Paused, from: active, to: paused, at: '2026-06-30T18:00:00Z', reason: Paused while single sign-on was reset, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d08, actor_name: Arjun Mehta, actor_kind: person }
+      - { title: Resumed, from: paused, to: active, at: '2026-07-01T15:00:00Z', reason: Single sign-on restored, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d08, actor_name: Arjun Mehta, actor_kind: person }
+    created_at: '2026-05-04T16:00:00Z'
+    updated_at: '2026-07-01T15:00:00Z'
+    last_event: activated
+    last_event_at: '2026-07-01T15:00:00Z'
+  - agent_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a04
+    name: Booking Agent
+    description: Books and reschedules sessions for Blue Harbor Studio
+    provider: Built by Blue Harbor Studio
+    skills: Book sessions; Reschedule sessions; Send reminders
+    acts_for: Blue Harbor Studio · session bookings · until 31 Jan 2027
+    allowed_actions: Send reminders
+    asks_first_for: Book a session; Reschedule a session
+    never_allowed: Charge a card; Cancel a membership
+    owner_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d03
+    owner_type: user
+    ownership_role: Sponsor
+    owner_name: Priya Raman
+    session_roles: [Bookings]
+    status: paused
+    state_history:
+      - { title: Created, from: null, to: draft, at: '2026-09-19T11:00:00Z', reason: Set up with the studio's trial, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d03, actor_name: Priya Raman, actor_kind: person }
+      - { title: Activated, from: draft, to: active, at: '2026-09-19T12:00:00Z', reason: Reminders tested on two sessions, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d03, actor_name: Priya Raman, actor_kind: person }
+      - { title: Paused, from: active, to: paused, at: '2026-09-21T09:30:00Z', reason: Paused until the studio's new calendar is ready, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d03, actor_name: Priya Raman, actor_kind: person }
+    created_at: '2026-09-19T11:00:00Z'
+    updated_at: '2026-09-21T09:30:00Z'
+    last_event: paused
+    last_event_at: '2026-09-21T09:30:00Z'
+  - agent_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a05
+    name: Inventory Agent
+    description: Counts flour and butter stock for Lindqvist Bakery
+    provider: Built by Lindqvist Bakery
+    skills: Count stock; Suggest supplier orders
+    acts_for: None
+    allowed_actions: Count stock
+    asks_first_for: Place a supplier order
+    never_allowed: Change prices
+    owner_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d04
+    owner_type: user
+    ownership_role: Sponsor
+    owner_name: Tomas Lindqvist
+    session_roles: [Inventory]
+    status: draft
+    state_history:
+      - { title: Created, from: null, to: draft, at: '2026-10-05T07:00:00Z', reason: Drafted before the winter baking season, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d04, actor_name: Tomas Lindqvist, actor_kind: person }
+      - { title: Activated, from: draft, to: active, at: '2026-10-12T07:00:00Z', reason: Counts checked against a week of deliveries, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d04, actor_name: Tomas Lindqvist, actor_kind: person }
+      - { title: Back to draft, from: active, to: draft, at: '2026-10-19T07:00:00Z', reason: Taken back to draft while its counting rules are rewritten, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d04, actor_name: Tomas Lindqvist, actor_kind: person }
+    created_at: '2026-10-05T07:00:00Z'
+    updated_at: '2026-10-19T07:00:00Z'
+    last_event: updated
+    last_event_at: '2026-10-19T07:00:00Z'
+  - agent_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a06
+    name: Collections Agent
+    description: Sends payment reminders for Kestrel Print Co.
+    provider: Built by Kestrel's accounts team
+    skills: Send payment reminders; Record promises to pay
+    acts_for: Kestrel Print Co. · overdue invoices · until 31 Dec 2026
+    allowed_actions: Record a promise to pay
+    asks_first_for: Send a payment reminder
+    never_allowed: Pass an account to collections; Add a late fee
+    owner_id: team_kestrel_accounts
+    owner_type: team
+    ownership_role: Sponsor
+    owner_name: Accounts team
+    session_roles: [Collections]
+    status: paused
+    state_history:
+      - { title: Created, from: null, to: draft, at: '2026-02-02T10:00:00Z', reason: Set up for overdue invoices, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d05, actor_name: Grace Okafor, actor_kind: person }
+      - { title: Activated, from: draft, to: active, at: '2026-02-09T10:00:00Z', reason: Reminder wording approved by the accounts team, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d05, actor_name: Grace Okafor, actor_kind: person }
+      - { title: Paused, from: active, to: paused, at: '2026-09-23T16:00:00Z', reason: Paused while the reminders are rewritten, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d05, actor_name: Grace Okafor, actor_kind: person }
+    created_at: '2026-02-02T10:00:00Z'
+    updated_at: '2026-09-23T16:00:00Z'
+    last_event: paused
+    last_event_at: '2026-09-23T16:00:00Z'
+  - agent_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a07
+    name: Scheduling Agent
+    description: Offered waitlist places for Marlow Yoga until it closed
+    provider: Built by Marlow Yoga
+    skills: Book classes; Send waitlist offers
+    acts_for: None
+    allowed_actions: Send waitlist offers
+    asks_first_for: Book a class
+    never_allowed: Charge a card
+    owner_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d07
+    owner_type: user
+    ownership_role: Sponsor
+    owner_name: Jonah Marlow
+    session_roles: [Scheduling]
+    status: retired
+    state_history:
+      - { title: Created, from: null, to: draft, at: '2026-01-12T10:00:00Z', reason: Set up for the class waitlist, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d07, actor_name: Jonah Marlow, actor_kind: person }
+      - { title: Activated, from: draft, to: active, at: '2026-01-19T10:00:00Z', reason: Waitlist offers checked for a week, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d07, actor_name: Jonah Marlow, actor_kind: person }
+      - { title: Retired, from: active, to: retired, at: '2026-07-10T09:00:00Z', reason: Studio closed; its grant was revoked, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d07, actor_name: Jonah Marlow, actor_kind: person }
+    created_at: '2026-01-12T10:00:00Z'
+    updated_at: '2026-07-10T09:00:00Z'
+    last_event: retired
+    last_event_at: '2026-07-10T09:00:00Z'

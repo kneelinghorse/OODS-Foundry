@@ -10,7 +10,9 @@ import { ParameterValidator } from '../../src/validation/parameter-validator.ts'
 
 const OBJECTS_ROOT = path.resolve('objects', 'core');
 const TRAIT_ROOTS = [path.resolve('traits'), path.resolve('examples/traits')];
+// s244-m02 (#2829): Agent joins objects/core and resolves through the same pipeline.
 const CANONICAL_OBJECTS = [
+  'Agent',
   'Organization',
   'Product',
   'Relationship',
